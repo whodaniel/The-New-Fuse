@@ -9,6 +9,7 @@ import { LayoutProvider } from './contexts/LayoutContext';
 import { ThemeProvider } from './providers/ThemeProvider';
 
 import SubdomainRouter from './routers/SubdomainRouter';
+import { ShortcutsHelp } from './components/layout/ShortcutsHelp';
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ const AppContent: React.FC = () => {
   return (
     <>
       <SubdomainRouter />
+      <ShortcutsHelp />
       {showMonitor && <PerformanceMonitor position="bottom-right" compact={true} />}
     </>
   );

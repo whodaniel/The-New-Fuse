@@ -1,83 +1,69 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { 
+  GlassCard as Card,
+  PremiumButton as Button,
+  PremiumInput as Input,
+  PremiumSelect as Select,
+} from '@/components/ui/premium';
 import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 const EmbeddingPreference = () => {
-    return (<div className="container mx-auto py-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Embedding Preferences</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <div className="text-sm font-medium">
-                Default Embedding Model
-              </div>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select model"/>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ada">text-embedding-ada-002</SelectItem>
-                  <SelectItem value="bge">bge-large-en</SelectItem>
-                  <SelectItem value="e5">e5-large-v2</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+    return (<div className=\"container mx-auto py-6\">
+      <Card title=\"Embedding Preferences\" gradient=\"purple\">
+        <div className=\"space-y-6\">
+          <div className=\"space-y-6\">
+            <Select 
+              label=\"Default Embedding Model\"
+              options={[
+                { value: 'ada', label: 'text-embedding-ada-002' },
+                { value: 'bge', label: 'bge-large-en' },
+                { value: 'e5', label: 'e5-large-v2' },
+              ]}
+            />
 
-            <div className="space-y-2">
-              <div className="text-sm font-medium">
-                Embedding Dimensions
-              </div>
-              <Input type="number" placeholder="1536"/>
-              <p className="text-sm text-gray-500">
-                Higher dimensions may provide better accuracy but require more computational resources
-              </p>
-            </div>
+            <Input 
+              label=\"Embedding Dimensions\" 
+              type=\"number\" 
+              placeholder=\"1536\"
+              hint=\"Higher dimensions may provide better accuracy but require more computational resources\"
+            />
 
-            <div className="space-y-2">
-              <div className="text-sm font-medium">
-                Batch Size
-              </div>
-              <Input type="number" placeholder="32"/>
-              <p className="text-sm text-gray-500">
-                Number of texts to embed in parallel
-              </p>
-            </div>
+            <Input 
+              label=\"Batch Size\" 
+              type=\"number\" 
+              placeholder=\"32\"
+              hint=\"Number of texts to embed in parallel\"
+            />
 
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <Switch id="cache-embeddings"/>
-                <div className="text-sm font-medium">
+            <div className=\"space-y-4 pt-2\">
+              <div className=\"flex items-center space-x-2\">
+                <Switch id=\"cache-embeddings\"/>
+                <div className=\"text-sm font-medium text-white\">
                   Cache Embeddings
                 </div>
               </div>
-              <p className="text-sm text-gray-500 pl-14">
+              <p className=\"text-xs text-gray-500 pl-14\">
                 Store embeddings in cache to improve performance for frequently accessed content
               </p>
             </div>
 
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <Switch id="normalize-embeddings"/>
-                <div className="text-sm font-medium">
+            <div className=\"space-y-4\">
+              <div className=\"flex items-center space-x-2\">
+                <Switch id=\"normalize-embeddings\"/>
+                <div className=\"text-sm font-medium text-white\">
                   Normalize Embeddings
                 </div>
               </div>
-              <p className="text-sm text-gray-500 pl-14">
+              <p className=\"text-xs text-gray-500 pl-14\">
                 L2 normalize embedding vectors before storing
               </p>
             </div>
           </div>
 
-          <div className="pt-4 flex justify-end space-x-2">
-            <Button variant="outline">Reset to Defaults</Button>
-            <Button>Save Changes</Button>
+          <div className=\"pt-6 flex justify-end space-x-2 border-t border-white/5\">
+            <Button variant=\"outline\">Reset to Defaults</Button>
+            <Button variant=\"primary\">Save Changes</Button>
           </div>
-        </CardContent>
+        </div>
       </Card>
     </div>);
 };

@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui/premium';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -136,10 +127,10 @@ export function MCPMarketplace() {
     <div className="container mx-auto py-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">MCP Server Marketplace</h1>
-        <Button variant="outline" onClick={fetchServers} disabled={loading}>
+        <PremiumButton variant="outline" onClick={fetchServers} disabled={loading}>
           {loading ? <Icons.spinner className="mr-2 h-4 w-4 animate-spin" /> : <Icons.refresh className="mr-2 h-4 w-4" />}
           Refresh
-        </Button>
+        </PremiumButton>
       </div>
       
       <Tabs defaultValue="browse" value={activeTab} onValueChange={setActiveTab} className="mb-6">
@@ -151,7 +142,7 @@ export function MCPMarketplace() {
         
         <div className="flex gap-4 mb-6">
           <div className="flex-1">
-            <Input
+            <PremiumInput
               type="search"
               placeholder="Search servers..."
               value={searchQuery}
@@ -325,18 +316,15 @@ function ServerCard({
   isInstalled: boolean;
 }) {
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <div className="flex justify-between items-start">
-          <CardTitle className="text-xl">{server.name}</CardTitle>
+    <GlassCard className="p-6">
+        <div className="flex justify-between items-start mb-2">
+          <h3 className="text-xl font-semibold text-white">{server.name}</h3>
           <Badge variant="outline">{server.category}</Badge>
         </div>
-        <CardDescription className="flex items-center gap-2">
+        <div className="flex items-center gap-2 text-sm text-gray-400 mb-3">
           <span>{server.publisher}</span>
-          <span className="text-sm text-muted-foreground">v{server.version}</span>
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+          <span>v{server.version}</span>
+        </div>
         <p className="line-clamp-3 text-sm text-muted-foreground mb-3">{server.description}</p>
         <div className="flex items-center justify-between">
           <StarRating rating={server.rating} />
@@ -354,21 +342,20 @@ function ServerCard({
             </Badge>
           )}
         </div>
-      </CardContent>
-      <CardFooter className="flex justify-between">
-        <Button variant="outline" size="sm" onClick={onViewDetails}>
+      <div className="flex justify-between mt-4 pt-4 border-t border-white/10">
+        <PremiumButton variant="outline" size="sm" onClick={onViewDetails}>
           View Details
-        </Button>
-        <Button 
-          variant={isInstalled ? "secondary" : "default"} 
-          size="sm" 
+        </PremiumButton>
+        <PremiumButton
+          variant={isInstalled ? "secondary" : "primary"}
+          size="sm"
           onClick={onInstall}
           disabled={isInstalled}
         >
           {isInstalled ? "Installed" : "Install"}
-        </Button>
-      </CardFooter>
-    </Card>
+        </PremiumButton>
+      </div>
+    </GlassCard>
   );
 }
 
@@ -451,13 +438,13 @@ function ServerDetailsDialog({
               </code>
             </div>
             
-            <Button 
+            <PremiumButton
               className="w-full" 
               onClick={onInstall}
               disabled={isInstalled}
             >
               {isInstalled ? "Already Installed" : "Install Server"}
-            </Button>
+            </PremiumButton>
           </div>
         </div>
       </DialogContent>
@@ -578,7 +565,7 @@ function ServerInstallDialog({
                             {isRequired && <span className="text-destructive"> *</span>}
                           </FormLabel>
                           <FormControl>
-                            <Input
+                            <PremiumInput
                               {...field}
                               type={prop.type === 'number' ? 'number' : 'text'}
                               placeholder={prop.description}
@@ -606,12 +593,12 @@ function ServerInstallDialog({
             )}
             
             <DialogFooter>
-              <Button variant="outline" type="button" onClick={onClose}>
+              <PremiumButton variant="outline" type="button" onClick={onClose}>
                 Cancel
-              </Button>
-              <Button type="submit">
+              </PremiumButton>
+              <PremiumButton type="submit">
                 Install
-              </Button>
+              </PremiumButton>
             </DialogFooter>
           </form>
         </Form>

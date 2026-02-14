@@ -4,12 +4,13 @@ import { useLayout } from '../../contexts/LayoutContext';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { Footer } from './Footer';
+import { ShortcutsHelp } from './ShortcutsHelp';
 
 export default function MainLayout() {
     const { layout } = useLayout();
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-background relative">
             <Header />
             <div className="flex h-[calc(100vh-4rem)]">
                 <Sidebar className={layout.sidebarOpen ? 'w-64' : 'w-16'} />
@@ -18,6 +19,7 @@ export default function MainLayout() {
                 </main>
             </div>
             <Footer />
+            <ShortcutsHelp />
         </div>
     );
 }

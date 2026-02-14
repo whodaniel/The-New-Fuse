@@ -1,5 +1,8 @@
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import {
+  PremiumButton as Button,
+  PremiumInput as Input,
+  GlassCard,
+} from '@/components/ui/premium';
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverBody } from '@/components/ui/popover';
 import { NodeProperties, NodeToolbox, WorkflowCanvas } from '@/components/workflow';
@@ -250,7 +253,7 @@ const WorkflowBuilder: React.FC = () => {
                 </span>
               </Button>
               <Button
-                variant="default"
+                variant="primary"
                 size="sm"
                 onClick={handleSaveWorkflow}
                 disabled={isSaving}

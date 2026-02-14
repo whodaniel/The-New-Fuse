@@ -10,4 +10,4 @@ COPY openclaw.json /root/.openclaw/openclaw.json
 ENV PORT=8080
 EXPOSE 8080
 
-ENTRYPOINT ["openclaw", "gateway", "start", "--port", "8080", "--bind", "0.0.0.0", "--allow-unconfigured"]
+ENTRYPOINT ["openclaw", "gateway", "run", "--port", "8080", "--bind", "0.0.0.0", "--allow-unconfigured"]

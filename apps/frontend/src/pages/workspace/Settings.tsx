@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui/premium';
 import * as Dialog from '@/components/ui/dialog';
 import { AlertTriangle } from 'lucide-react';
 import { useWorkspace } from '@/hooks/useWorkspace';
@@ -46,42 +44,30 @@ const WorkspaceSettings = () => {
       </div>
 
       <form onSubmit={handleUpdateWorkspace}>
-        <Card>
-          <CardHeader>
-            <CardTitle>General Settings</CardTitle>
-            <CardDescription>Update your workspace information</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <GlassCard title="General Settings" subtitle="Update your workspace information">
+          <div className="space-y-4">
             <div>
               <label htmlFor="name" className="text-sm font-medium">
                 Workspace Name
               </label>
-              <Input id="name" defaultValue={currentWorkspace === null || currentWorkspace === void 0 ? void 0 : currentWorkspace.name} className="mt-1"/>
+              <PremiumInput id="name" defaultValue={currentWorkspace === null || currentWorkspace === void 0 ? void 0 : currentWorkspace.name} className="mt-1"/>
             </div>
             <div>
               <label htmlFor="description" className="text-sm font-medium">
                 Description
               </label>
-              <Input id="description" defaultValue={currentWorkspace === null || currentWorkspace === void 0 ? void 0 : currentWorkspace.description} className="mt-1"/>
+              <PremiumInput id="description" defaultValue={currentWorkspace === null || currentWorkspace === void 0 ? void 0 : currentWorkspace.description} className="mt-1"/>
             </div>
-            <Button type="submit">Save Changes</Button>
-          </CardContent>
-        </Card>
+            <PremiumButton type="submit">Save Changes</PremiumButton>
+          </div>
+        </GlassCard>
       </form>
 
-      <Card className="border-destructive">
-        <CardHeader>
-          <CardTitle className="text-destructive">Danger Zone</CardTitle>
-          <CardDescription>
-            Irreversible and destructive actions
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Button variant="destructive" onClick={() => setShowDeleteDialog(true)}>
+      <GlassCard title="Danger Zone" subtitle="Irreversible and destructive actions" className="border-destructive">
+          <PremiumButton variant="danger" onClick={() => setShowDeleteDialog(true)}>
             Delete Workspace
-          </Button>
-        </CardContent>
-      </Card>
+          </PremiumButton>
+      </GlassCard>
 
       <Dialog.Root open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <Dialog.Content>
@@ -100,13 +86,13 @@ const WorkspaceSettings = () => {
                 Please type <span className="font-medium">{currentWorkspace === null || currentWorkspace === void 0 ? void 0 : currentWorkspace.name}</span> to confirm
               </p>
             </div>
-            <Input value={deleteConfirmation} onChange={(e) => setDeleteConfirmation(e.target.value)} placeholder="Enter workspace name"/>
+            <PremiumInput value={deleteConfirmation} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDeleteConfirmation(e.target.value)} placeholder="Enter workspace name"/>
           </div>
 
           <Dialog.Footer>
-            <Button variant="destructive" onClick={handleDeleteWorkspace} disabled={deleteConfirmation !== (currentWorkspace === null || currentWorkspace === void 0 ? void 0 : currentWorkspace.name)}>
+            <PremiumButton variant="danger" onClick={handleDeleteWorkspace} disabled={deleteConfirmation !== (currentWorkspace === null || currentWorkspace === void 0 ? void 0 : currentWorkspace.name)}>
               Delete Workspace
-            </Button>
+            </PremiumButton>
           </Dialog.Footer>
         </Dialog.Content>
       </Dialog.Root>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { GlassCard } from '@/components/ui/premium';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAgent } from '@/hooks/useAgent';
 import AgentStatus from '@/components/agents/AgentStatus';
@@ -30,14 +30,7 @@ const AgentDetails = () => {
         return <div>Error loading agent details</div>;
     }
     return (<div className="container mx-auto p-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">
-            {agent.name}
-            <AgentStatus status={agent.status} className="ml-2" variant={getStatusBadgeVariant(agent.status)}/>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+      <GlassCard title={agent.name} className="p-6">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList>
               <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -48,11 +41,7 @@ const AgentDetails = () => {
 
             <TabsContent value="overview">
               <div className="grid gap-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Agent Information</CardTitle>
-                  </CardHeader>
-                  <CardContent>
+                <GlassCard title="Agent Information">
                     <dl className="grid grid-cols-2 gap-4">
                       <div>
                         <dt className="text-sm font-medium text-gray-500">Type</dt>
@@ -75,8 +64,7 @@ const AgentDetails = () => {
                         <dd className="text-lg">{agent.tasksCompleted}</dd>
                       </div>
                     </dl>
-                  </CardContent>
-                </Card>
+                </GlassCard>
               </div>
             </TabsContent>
 
@@ -92,8 +80,7 @@ const AgentDetails = () => {
               <AgentSettings agent={agent}/>
             </TabsContent>
           </Tabs>
-        </CardContent>
-      </Card>
+      </GlassCard>
     </div>);
 };
 export default AgentDetails;

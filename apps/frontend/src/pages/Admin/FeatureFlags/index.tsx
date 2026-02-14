@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { FeatureFlagConditionsEditor } from '../../../components/AdminPanel/FeatureFlagConditions';
 import { FeatureFlag, FeatureFlagConditions } from '@the-new-fuse/types/featureFlags';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import {
+  GlassCard as Card,
+  PremiumButton as Button,
+  PremiumInput as Input,
+} from '@/components/ui/premium';
 import { toast } from '@/components/ui/toast';
 import { Switch } from '@/components/ui/switch';
 import { Tabs } from '@/components/ui/tabs';
-import { Input } from '@/components/ui/input';
 
 export default function FeatureFlagsAdmin() {
   const [features, setFeatures] = useState<FeatureFlag[]>([]);
@@ -90,10 +92,10 @@ export default function FeatureFlagsAdmin() {
   }
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Feature Flags</h1>
-        <Button onClick={() => setSelectedFeature({
+    <div className=\"p-6\">
+      <div className=\"flex justify-between items-center mb-6\">
+        <h1 className=\"text-2xl font-bold text-white\">Feature Flags</h1>
+        <Button variant=\"primary\" onClick={() => setSelectedFeature({
           name: '',
           description: '',
           enabled: false,
@@ -105,20 +107,19 @@ export default function FeatureFlagsAdmin() {
         </Button>
       </div>
 
-      <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
-        <Card className="p-4">
-          <h2 className="text-xl font-semibold mb-4">Feature List</h2>
-          <div className="space-y-4">
+      <div className=\"grid gap-6 grid-cols-1 lg:grid-cols-2\">
+        <Card title=\"Feature List\" gradient=\"blue\">
+          <div className=\"space-y-4\">
             {features.map((feature: any) => (
-              <Card key={feature.id} className="p-4 hover:bg-secondary/50 cursor-pointer"
+              <Card key={feature.id} gradient=\"purple\" hover className=\"cursor-pointer\"
                 onClick={() => {
                   setSelectedFeature(feature);
                   setEditingConditions(feature.conditions || {});
                 }}>
-                <div className="flex items-center justify-between">
+                <div className=\"flex items-center justify-between\">
                   <div>
-                    <h3 className="font-medium">{feature.name}</h3>
-                    <p className="text-sm text-muted-foreground">{feature.description}</p>
+                    <h3 className=\"font-medium text-white\">{feature.name}</h3>
+                    <p className=\"text-sm text-gray-400\">{feature.description}</p>
                   </div>
                   <Switch
                     checked={feature.enabled}
@@ -126,9 +127,9 @@ export default function FeatureFlagsAdmin() {
                     onClick={(e) => e.stopPropagation()}
                   />
                 </div>
-                <div className="flex gap-2 mt-2 text-sm">
-                  <span className="bg-primary/10 px-2 py-1 rounded">{feature.stage}</span>
-                  <span className="bg-primary/10 px-2 py-1 rounded">{feature.priority}</span>
+                <div className=\"flex gap-2 mt-2 text-sm\">
+                  <span className=\"bg-blue-500/20 text-blue-400 px-2 py-1 rounded border border-blue-500/20\">{feature.stage}</span>
+                  <span className=\"bg-purple-500/20 text-purple-400 px-2 py-1 rounded border border-purple-500/20\">{feature.priority}</span>
                 </div>
               </Card>
             ))}
@@ -136,15 +137,15 @@ export default function FeatureFlagsAdmin() {
         </Card>
 
         {selectedFeature && (
-          <Card className="p-4">
-            <div className="flex justify-between items-start mb-4">
-              <h2 className="text-xl font-semibold">
-                {selectedFeature.id ? 'Edit Feature' : 'New Feature'}
-              </h2>
+          <Card 
+            title={selectedFeature.id ? 'Edit Feature' : 'New Feature'} 
+            gradient=\"orange\"
+          >
+            <div className=\"absolute top-6 right-6\">
               {selectedFeature.id && (
                 <Button
-                  variant="destructive"
-                  size="sm"
+                  variant=\"danger\"
+                  size=\"sm\"
                   onClick={() => deleteFeature(selectedFeature.id)}
                 >
                   Delete
@@ -152,7 +153,7 @@ export default function FeatureFlagsAdmin() {
               )}
             </div>
 
-            <Tabs defaultValue="details">
+            <Tabs defaultValue=\"details\">
               <Tabs.List>
                 <Tabs.Trigger value="details">Details</Tabs.Trigger>
                 <Tabs.Trigger value="conditions">Conditions</Tabs.Trigger>
@@ -246,38 +247,34 @@ export default function FeatureFlagsAdmin() {
                 />
               </Tabs.Content>
 
-              <Tabs.Content value="metrics" className="mt-4">
+              <Tabs.Content value=\"metrics\" className=\"mt-4\">
                 {selectedFeature.id ? (
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <Card className="p-4">
-                        <h4 className="font-medium mb-2">Usage</h4>
-                        <div className="text-2xl font-bold">
+                  <div className=\"space-y-4\">
+                    <div className=\"grid grid-cols-2 gap-4\">
+                      <Card title=\"Usage\" gradient=\"blue\">
+                        <div className=\"text-2xl font-bold text-white\">
                           {selectedFeature.metadata?.metrics?.usageCount || 0}
                         </div>
                       </Card>
-                      <Card className="p-4">
-                        <h4 className="font-medium mb-2">Errors</h4>
-                        <div className="text-2xl font-bold text-destructive">
+                      <Card title=\"Errors\" gradient=\"red\">
+                        <div className=\"text-2xl font-bold text-red-400\">
                           {selectedFeature.metadata?.metrics?.errors || 0}
                         </div>
                       </Card>
-                      <Card className="p-4">
-                        <h4 className="font-medium mb-2">Exposures</h4>
-                        <div className="text-2xl font-bold">
+                      <Card title=\"Exposures\" gradient=\"purple\">
+                        <div className=\"text-2xl font-bold text-white\">
                           {selectedFeature.metadata?.metrics?.exposures || 0}
                         </div>
                       </Card>
-                      <Card className="p-4">
-                        <h4 className="font-medium mb-2">Positive Evaluations</h4>
-                        <div className="text-2xl font-bold text-success">
+                      <Card title=\"Positive Evaluations\" gradient=\"green\">
+                        <div className=\"text-2xl font-bold text-green-400\">
                           {selectedFeature.metadata?.metrics?.positiveEvaluations || 0}
                         </div>
                       </Card>
                     </div>
-                    <div>
-                      <h4 className="font-medium mb-2">Last Used</h4>
-                      <div>
+                    <div className=\"p-4 rounded-xl bg-black/20 border border-white/5\">
+                      <h4 className=\"font-medium text-gray-400 mb-1\">Last Used</h4>
+                      <div className=\"text-white\">
                         {selectedFeature.metadata?.metrics?.lastUsed
                           ? new Date(selectedFeature.metadata.metrics.lastUsed).toLocaleString()
                           : 'Never'}
@@ -292,9 +289,9 @@ export default function FeatureFlagsAdmin() {
               </Tabs.Content>
             </Tabs>
 
-            <div className="flex justify-end mt-6 space-x-2">
+            <div className=\"flex justify-end mt-6 space-x-2\">
               <Button
-                variant="outline"
+                variant=\"outline\"
                 onClick={() => {
                   setSelectedFeature(null);
                   setEditingConditions({});
@@ -303,6 +300,7 @@ export default function FeatureFlagsAdmin() {
                 Cancel
               </Button>
               <Button
+                variant=\"primary\"
                 onClick={() => {
                   if (selectedFeature.id) {
                     updateFeature(selectedFeature.id, {

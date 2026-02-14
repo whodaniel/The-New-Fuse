@@ -1,7 +1,6 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { GlassCard, PremiumButton } from '@/components/ui/premium';
 import { Plus } from 'lucide-react';
 import { WorkspaceLayout } from './WorkspaceLayout';
 import { useWorkspace } from '@/hooks/useWorkspace';
@@ -21,17 +20,12 @@ const WorkspaceRoutes = () => {
             </p>
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>No workspaces found</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Button onClick={createWorkspace} className="w-full">
+          <GlassCard title="No workspaces found">
+              <PremiumButton onClick={createWorkspace} fullWidth>
                 <Plus className="mr-2 h-4 w-4"/>
                 Create Workspace
-              </Button>
-            </CardContent>
-          </Card>
+              </PremiumButton>
+          </GlassCard>
         </div>
       </div>);
     }

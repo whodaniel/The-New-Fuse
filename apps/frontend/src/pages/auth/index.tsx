@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { GlassCard } from '@/components/ui/premium';
 import { useAuth } from '@/hooks/useAuth';
 
 const Login = React.lazy(() => import('./Login'));
@@ -12,14 +12,9 @@ const SSO = React.lazy(() => import('./SSO'));
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
-      <Card className="w-full max-w-lg">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl text-center font-bold">
-            Welcome to The New Fuse
-          </CardTitle>
-        </CardHeader>
-        <CardContent>{children}</CardContent>
-      </Card>
+      <GlassCard title="Welcome to The New Fuse" className="w-full max-w-lg p-6">
+        {children}
+      </GlassCard>
     </div>
   );
 };

@@ -35,6 +35,8 @@ export interface MemoryMetadata {
   relevanceScore?: number;
   expiresAt?: Date;
   isPrivate: boolean;
+  path?: string; // For documents
+  classification?: 'TOP_SECRET' | 'CONFIDENTIAL' | 'INTERNAL' | 'PUBLIC';
 }
 
 // Memory Query Types
@@ -50,6 +52,9 @@ export interface MemoryQuery {
     end: Date;
   };
   includeMetadata?: boolean;
+  // Security context
+  userRole?: string;
+  subscriptionTier?: string;
 }
 
 export interface MemorySearchResult {

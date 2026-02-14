@@ -8,6 +8,7 @@ import { VectorMemorySystem } from './VectorMemorySystem';
 import { MemoryContent, MemoryQuery, MemoryQueryResult, MemoryContentType } from '../types/memory';
 import { ServiceState } from '../constants/types';
 import { BaseError } from '../utils/errors';
+import { PermissionManager, UserRole, SubscriptionTier } from '../security/permission-manager';
 
 @Injectable()
 export class MemoryManager {
@@ -133,14 +134,26 @@ export class MemoryManager {
 
     // Combine and sort results
     const combinedResults = allResults.flatMap((result) => result.results);
-    combinedResults.sort((a, b) => b.relevanceScore - a.relevanceScore);
+
+    // Apply security filtering
+    const filteredResults = combinedResults.filter((result) => {
+      const path = result.content.metadata.path;
+      if (!path) return true; // No path, assume accessible or handled elsewhere
+
+      const role = (query.userRole as UserRole) || UserRole.USER;
+      const tier = (query.subscriptionTier as SubscriptionTier) || SubscriptionTier.STARTER;
+
+      return PermissionManager.canAccess(role, tier, path, query.agentId);
+    });
+
+    filteredResults.sort((a, b) => b.relevanceScore - a.relevanceScore);
 
     // Apply limit across all results
-    const limitedResults = query.limit ? combinedResults.slice(0, query.limit) : combinedResults;
+    const limitedResults = query.limit ? filteredResults.slice(0, query.limit) : filteredResults;
 
     return {
       results: limitedResults,
-      totalCount: combinedResults.length,
+      totalCount: filteredResults.length,
       queryTime: totalQueryTime,
       suggestions: this.combineSuggestions(allResults.map((r) => r.suggestions || [])),
     };

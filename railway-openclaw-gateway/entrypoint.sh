@@ -1,14 +1,25 @@
 #!/bin/bash
 set -e
 
+# Railway persistent volume path used by OpenClaw runtime.
+STATE_DIR="${OPENCLAW_STATE_DIR:-/data/.openclaw}"
+CONFIG_PATH="${OPENCLAW_CONFIG_PATH:-${STATE_DIR}/openclaw.json}"
+AUTH_PROFILES_PATH="${STATE_DIR}/agents/main/agent/auth-profiles.json"
+
+# Seed runtime config from image defaults if missing.
+mkdir -p "$(dirname "${CONFIG_PATH}")" "$(dirname "${AUTH_PROFILES_PATH}")"
+if [ ! -f "${CONFIG_PATH}" ] && [ -f /root/.openclaw/openclaw.json ]; then
+  cp /root/.openclaw/openclaw.json "${CONFIG_PATH}"
+fi
+
 # Configuration Injection
 echo "Configuring OpenClaw Gateway..."
 node -e "
   const fs = require('fs');
   const path = require('path');
-  const cfgPath = '/root/.openclaw/openclaw.json';
+  const cfgPath = process.env.OPENCLAW_CONFIG_PATH || '/data/.openclaw/openclaw.json';
   const kiloAuthPath = '/root/.local/share/kilo/auth.json';
-  const authProfilesPath = '/root/.openclaw/agents/main/agent/auth-profiles.json';
+  const authProfilesPath = process.env.OPENCLAW_AUTH_PROFILES_PATH || '/data/.openclaw/agents/main/agent/auth-profiles.json';
 
   const toBool = (value) => String(value || '').toLowerCase() === 'true';
 
@@ -27,10 +38,16 @@ node -e "
       }
 
       // Port override from Railway
+      // Note: If using proxy.js, the gateway should listen on the internal port (19001)
       if (process.env.PORT) {
         if (!cfg.gateway) cfg.gateway = {};
-        cfg.gateway.port = parseInt(process.env.PORT, 10);
+        cfg.gateway.port = parseInt(process.env.OPENCLAW_INTERNAL_PORT || '19001', 10);
       }
+
+      // Railway runtime should run the foreground gateway process directly
+      // and bypass service-manager assumptions.
+      if (!cfg.gateway) cfg.gateway = {};
+      cfg.gateway.mode = process.env.OPENCLAW_GATEWAY_MODE || 'local';
 
       // Kilo API Key
       if (process.env.KILO_API_KEY) {
@@ -170,5 +187,7 @@ node -e "
 # Use Railway's PORT (required for Railway deployments)
 GATEWAY_PORT="${PORT:-8080}"
 
-echo "Starting OpenClaw gateway on 0.0.0.0:${GATEWAY_PORT}..."
-exec openclaw gateway start --allow-unconfigured --bind 0.0.0.0 --port "${GATEWAY_PORT}"
+echo "Starting OpenClaw gateway on bind=lan port=${GATEWAY_PORT}..."
+export OPENCLAW_CONFIG_PATH="${CONFIG_PATH}"
+export OPENCLAW_AUTH_PROFILES_PATH="${AUTH_PROFILES_PATH}"
+exec node /proxy.js

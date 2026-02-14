@@ -1,31 +1,38 @@
-"use strict";
 'use client';
-Object.defineProperty(exports, "__esModule", { value: true });
-import react_1 from 'react';
-import react_force_graph_1 from 'react-force-graph';
-import card_1 from '@/components/ui/card';
-import websocket_1 from '../services/websocket';
+import React, { useRef, useState, useEffect } from 'react';
+import { ForceGraph3D } from 'react-force-graph';
+import { GlassCard } from '@/components/ui/premium';
+import { webSocketService } from '../services/websocket';
+
 export function DynamicKnowledgeGraph() {
-    const fgRef = (0, react_1.useRef)();
-    const [graphData, setGraphData] = (0, react_1.useState)({ nodes: [], links: [] });
-    (0, react_1.useEffect)(() => {
-        websocket_1.webSocketService.on('knowledgeGraphUpdate', setGraphData);
+    const fgRef = useRef<any>();
+    const [graphData, setGraphData] = useState({ nodes: [], links: [] });
+
+    useEffect(() => {
+        webSocketService.on('knowledgeGraphUpdate', setGraphData);
         return () => {
-            websocket_1.webSocketService.off('knowledgeGraphUpdate', setGraphData);
+            webSocketService.off('knowledgeGraphUpdate', setGraphData);
         };
     }, []);
-    return (<card_1.Card className="w-full h-[600px]">
-      <card_1.CardHeader>
-        <card_1.CardTitle>Dynamic Knowledge Graph</card_1.CardTitle>
-      </card_1.CardHeader>
-      <card_1.CardContent className="h-full">
-        <react_force_graph_1.ForceGraph3D ref={fgRef} graphData={graphData} nodeLabel="name" nodeAutoColorBy="group" linkDirectionalParticles={2} linkDirectionalParticleSpeed={d => d.value * 0.001} nodeThreeObject={(node: any) => {
-            const sprite = new SpriteText(node.name);
-            sprite.color = node.color;
-            sprite.textHeight = 8;
-            return sprite;
-        }}/>
-      </card_1.CardContent>
-    </card_1.Card>);
+
+    return (
+      <GlassCard title="Dynamic Knowledge Graph" className="w-full h-[600px]">
+        <div className="h-full">
+          <ForceGraph3D
+            ref={fgRef}
+            graphData={graphData}
+            nodeLabel="name"
+            nodeAutoColorBy="group"
+            linkDirectionalParticles={2}
+            linkDirectionalParticleSpeed={(d: any) => d.value * 0.001}
+            nodeThreeObject={(node: any) => {
+                const sprite = new (window as any).SpriteText(node.name);
+                sprite.color = node.color;
+                sprite.textHeight = 8;
+                return sprite;
+            }}
+          />
+        </div>
+      </GlassCard>
+    );
 }
-;

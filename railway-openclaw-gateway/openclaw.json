@@ -1,10 +1,11 @@
 {
   "gateway": {
-    "port": 8080,
+    "port": 19001,
     "bind": "lan",
     "auth": {
       "token": "${OPENCLAW_GATEWAY_TOKEN}"
-    }
+    },
+    "trustedProxies": ["100.64.0.0/10"]
   },
   "models": {
     "mode": "merge",

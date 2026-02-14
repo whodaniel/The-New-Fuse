@@ -1,6 +1,5 @@
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { GlassCard, PremiumButton } from '@/components/ui/premium';
 import {
   ArrowRight,
   BarChart3,
@@ -30,11 +29,9 @@ const FeatureCard = ({
   description: string;
   color?: string;
 }) => (
-  <Card
-    className="group hover:shadow-lg transition-all duration-300 border-0 bg-linear-to-br from-white to-gray-50 hover:from-gray-50 hover:to-white focus-within:ring-4 focus-within:ring-blue-500/20"
-    role="listitem"
+  <GlassCard
+    className="group hover:shadow-lg transition-all duration-300 p-6"
   >
-    <CardContent className="p-6">
       <div
         className={`w-12 h-12 rounded-lg bg-linear-to-br from-${color}-500 to-${color}-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}
         aria-hidden="true"
@@ -43,8 +40,7 @@ const FeatureCard = ({
       </div>
       <h3 className="text-lg font-semibold mb-2 text-gray-900">{title}</h3>
       <p className="text-gray-600 text-sm leading-relaxed">{description}</p>
-    </CardContent>
-  </Card>
+  </GlassCard>
 );
 
 export const Features = () => {
@@ -88,13 +84,12 @@ export const Features = () => {
                 role="group"
                 aria-label="Call to action buttons"
               >
-                <Button
-                  asChild
+                <PremiumButton
                   size="lg"
                   className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 group focus:ring-4 focus:ring-white/50"
                   aria-label="Get started with The New Fuse features"
+                  onClick={() => window.location.href = '/auth/register'}
                 >
-                  <Link to="/auth/register">
                     <Rocket
                       className="mr-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300"
                       aria-hidden="true"
@@ -104,17 +99,16 @@ export const Features = () => {
                       className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300"
                       aria-hidden="true"
                     />
-                  </Link>
-                </Button>
-                <Button
-                  asChild
+                </PremiumButton>
+                <PremiumButton
                   size="lg"
                   variant="outline"
                   className="border-white/30 text-white hover:bg-white/10 px-8 py-4 text-lg focus:ring-4 focus:ring-white/50"
                   aria-label="Learn more about features"
+                  onClick={() => window.location.href = '/'}
                 >
-                  <Link to="/">Back to Home</Link>
-                </Button>
+                  Back to Home
+                </PremiumButton>
               </div>
             </div>
           </div>
@@ -242,7 +236,7 @@ export const Features = () => {
               </div>
 
               <div className="space-y-4">
-                <Card className="flex items-center space-x-4 p-4 rounded-lg bg-white border border-gray-100 hover:border-blue-200 transition-colors duration-300">
+                <GlassCard className="flex items-center space-x-4 p-4 rounded-lg">
                   <div className="shrink-0">
                     <Code className="h-6 w-6 text-blue-600" />
                   </div>
@@ -252,8 +246,8 @@ export const Features = () => {
                       Full-stack TypeScript with React, Node.js, and NestJS framework
                     </p>
                   </div>
-                </Card>
-                <Card className="flex items-center space-x-4 p-4 rounded-lg bg-white border border-gray-100 hover:border-blue-200 transition-colors duration-300">
+                </GlassCard>
+                <GlassCard className="flex items-center space-x-4 p-4 rounded-lg">
                   <div className="shrink-0">
                     <Network className="h-6 w-6 text-blue-600" />
                   </div>
@@ -263,8 +257,8 @@ export const Features = () => {
                       Native support for MCP and A2A protocols for agent communication
                     </p>
                   </div>
-                </Card>
-                <Card className="flex items-center space-x-4 p-4 rounded-lg bg-white border border-gray-100 hover:border-blue-200 transition-colors duration-300">
+                </GlassCard>
+                <GlassCard className="flex items-center space-x-4 p-4 rounded-lg">
                   <div className="shrink-0">
                     <Terminal className="h-6 w-6 text-blue-600" />
                   </div>
@@ -274,7 +268,7 @@ export const Features = () => {
                       Rich CLI tools, VS Code extension, and comprehensive documentation
                     </p>
                   </div>
-                </Card>
+                </GlassCard>
               </div>
             </div>
           </div>
@@ -299,29 +293,27 @@ export const Features = () => {
                 role="group"
                 aria-label="Get started actions"
               >
-                <Button
-                  asChild
+                <PremiumButton
                   size="lg"
                   className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 group focus:ring-4 focus:ring-white/50"
                   aria-label="Get started free with The New Fuse"
+                  onClick={() => window.location.href = '/auth/register'}
                 >
-                  <Link to="/auth/register">
                     Get Started Free
                     <ArrowRight
                       className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300"
                       aria-hidden="true"
                     />
-                  </Link>
-                </Button>
-                <Button
-                  asChild
+                </PremiumButton>
+                <PremiumButton
                   size="lg"
                   variant="outline"
                   className="border-white/30 text-white hover:bg-white/10 px-8 py-4 text-lg focus:ring-4 focus:ring-white/50"
                   aria-label="Access your dashboard"
+                  onClick={() => window.location.href = '/auth/login'}
                 >
-                  <Link to="/auth/login">Access Dashboard</Link>
-                </Button>
+                  Access Dashboard
+                </PremiumButton>
               </div>
             </div>
           </div>

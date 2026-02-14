@@ -195,6 +195,47 @@ export class CostOptimizedRouter {
       maxConcurrency: 5,
     });
 
+    // Free Providers (Arbitrage Swarm)
+    registry.set('minimax-m2.5:free', {
+      agentId: 'minimax-m2.5:free',
+      costPerTask: 0.0,
+      intelligenceLevel: 4,
+      capabilities: ['complex-reasoning', 'code-generation', 'large-context', 'fast-responses'],
+      averageExecutionTime: 2000,
+      successRate: 0.94,
+      maxConcurrency: 20,
+    });
+
+    registry.set('z-ai/glm-5:free', {
+      agentId: 'z-ai/glm-5:free',
+      costPerTask: 0.0,
+      intelligenceLevel: 5,
+      capabilities: ['advanced-reasoning', 'complex-problem-solving', 'research', 'large-context'],
+      averageExecutionTime: 3000,
+      successRate: 0.95,
+      maxConcurrency: 15,
+    });
+
+    registry.set('glm-4.7-free', {
+      agentId: 'glm-4.7-free',
+      costPerTask: 0.0,
+      intelligenceLevel: 4,
+      capabilities: ['reasoning', 'text-processing', 'code-generation'],
+      averageExecutionTime: 1800,
+      successRate: 0.92,
+      maxConcurrency: 10,
+    });
+
+    registry.set('google-ai-mode', {
+      agentId: 'google-ai-mode',
+      costPerTask: 0.0,
+      intelligenceLevel: 4,
+      capabilities: ['research', 'web-search', 'fact-checking', 'deep-analysis'],
+      averageExecutionTime: 5000,
+      successRate: 0.96,
+      maxConcurrency: 5,
+    });
+
     return registry;
   }
 

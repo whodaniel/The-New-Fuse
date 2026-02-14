@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Handle, Position } from 'reactflow';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { GlassCard } from '@/components/ui/premium';
 import { LLMSelector } from '@/components/LLMSelection/LLMSelector';
 import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
+import { PremiumInput, PremiumButton } from '@/components/ui/premium';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
 import { 
   Tabs, 
   TabsContent, 
@@ -79,14 +78,14 @@ export const LLMNode: React.FC<LLMNodeProps> = ({
   };
 
   return (
-    <Card className="w-[320px] shadow-md border-2 border-primary/20">
-      <CardHeader className="p-3 bg-primary/5">
-        <CardTitle className="text-sm font-medium flex items-center">
+    <GlassCard className="w-[320px] shadow-md border-2 border-primary/20">
+      <div className="p-3 bg-primary/5">
+        <h3 className="text-sm font-medium flex items-center">
           <Bot className="mr-2 h-4 w-4" />
           <span className="flex-1 truncate">{data.label || 'LLM Node'}</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-3">
+        </h3>
+      </div>
+      <div className="p-3">
         <Tabs defaultValue="prompt">
           <TabsList className="w-full">
             <TabsTrigger value="prompt" className="flex-1">
@@ -140,7 +139,7 @@ export const LLMNode: React.FC<LLMNodeProps> = ({
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1">
                 <Label htmlFor="maxTokens" className="text-xs">Max Tokens</Label>
-                <Input
+                <PremiumInput
                   id="maxTokens"
                   type="number"
                   value={data.maxTokens || 256}
@@ -153,7 +152,7 @@ export const LLMNode: React.FC<LLMNodeProps> = ({
               
               <div className="space-y-1">
                 <Label htmlFor="temperature" className="text-xs">Temperature</Label>
-                <Input
+                <PremiumInput
                   id="temperature"
                   type="number"
                   value={data.temperature || 0.7}
@@ -170,7 +169,7 @@ export const LLMNode: React.FC<LLMNodeProps> = ({
           <TabsContent value="test" className="mt-3 space-y-3">
             <div className="space-y-2">
               <Label htmlFor="testInput" className="text-xs">Test Input (Optional)</Label>
-              <Input
+              <PremiumInput
                 id="testInput"
                 value={testInput}
                 onChange={(e) => setTestInput(e.target.value)}
@@ -179,14 +178,14 @@ export const LLMNode: React.FC<LLMNodeProps> = ({
               />
             </div>
             
-            <Button 
-              size="sm" 
-              onClick={handleTestNode} 
+            <PremiumButton
+              size="sm"
+              onClick={handleTestNode}
               disabled={testing}
               className="w-full text-xs"
             >
               {testing ? 'Testing...' : 'Test Node'}
-            </Button>
+            </PremiumButton>
             
             {testResult && (
               <div className="space-y-1 mt-2">
@@ -198,8 +197,8 @@ export const LLMNode: React.FC<LLMNodeProps> = ({
             )}
           </TabsContent>
         </Tabs>
-      </CardContent>
-      
+      </div>
+
       {/* Input handle */}
       <Handle
         type="target"
@@ -217,6 +216,6 @@ export const LLMNode: React.FC<LLMNodeProps> = ({
         className="w-2 h-2 -mr-1 bg-primary"
         isConnectable={isConnectable}
       />
-    </Card>
+    </GlassCard>
   );
 };

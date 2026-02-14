@@ -1,8 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui/premium';
 import { ScrollArea } from './ui/scroll-area';
 import { Draggable } from './ui/draggable';
 import { webSocketService } from '../services/websocket';
@@ -43,19 +41,15 @@ export function TaskBoard() {
     };
 
     return (
-        <Card className="w-full h-full">
-            <CardHeader>
-                <CardTitle>Task Board</CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col h-full">
+        <GlassCard title="Task Board" className="w-full h-full">
                 <div className="flex space-x-2 mb-4">
-                    <Input
+                    <PremiumInput
                         value={newTaskTitle}
                         onChange={(e) => setNewTaskTitle(e.target.value)}
                         placeholder="New task title"
                         onKeyPress={(e) => e.key === 'Enter' && handleAddTask()}
                     />
-                    <Button onClick={handleAddTask}>Add Task</Button>
+                    <PremiumButton onClick={handleAddTask}>Add Task</PremiumButton>
                 </div>
                 <div className="flex-grow flex space-x-4">
                     {['todo', 'inProgress', 'done'].map((status) => (
@@ -68,16 +62,15 @@ export function TaskBoard() {
                                     .filter((task) => task.status === status)
                                     .map((task) => (
                                         <Draggable key={task.id} id={task.id} onDragEnd={(newStatus) => handleDragEnd(task.id, newStatus)}>
-                                            <Card className="mb-2 p-2">
+                                            <GlassCard className="mb-2 p-2">
                                                 <p>{task.title}</p>
-                                            </Card>
+                                            </GlassCard>
                                         </Draggable>
                                     ))}
                             </ScrollArea>
                         </div>
                     ))}
                 </div>
-            </CardContent>
-        </Card>
+        </GlassCard>
     );
 }

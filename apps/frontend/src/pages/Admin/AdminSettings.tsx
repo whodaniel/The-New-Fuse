@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { 
+  GlassCard as Card,
+  PremiumButton as Button,
+  PremiumInput as Input,
+  PremiumSelect as Select,
+} from '@/components/ui/premium';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { AlertCircle, Save, RefreshCw, Shield, Database, Server, Users } from 'lucide-react';
@@ -205,159 +207,147 @@ const AdminSettings: React.FC = () => {
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+    <div className=\"p-6 max-w-6xl mx-auto space-y-6\">
+      <div className=\"flex items-center justify-between\">
         <div>
-          <h1 className="text-3xl font-bold">Admin Settings</h1>
-          <p className="text-gray-600 mt-2">Manage system-wide configuration and security settings</p>
+          <h1 className=\"text-3xl font-bold text-white\">Admin Settings</h1>
+          <p className=\"text-gray-400 mt-2\">Manage system-wide configuration and security settings</p>
         </div>
-        <div className="flex gap-2">
+        <div className=\"flex gap-2\">
           <Button
-            variant="outline"
+            variant=\"outline\"
             onClick={fetchSettings}
             disabled={loading}
+            icon={RefreshCw}
+            className={loading ? 'animate-spin' : ''}
           >
-            <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
           <Button
+            variant=\"primary\"
             onClick={saveSettings}
             disabled={loading}
+            icon={Save}
             className={saved ? 'bg-green-600 hover:bg-green-700' : ''}
           >
-            <Save className="w-4 h-4 mr-2" />
             {saved ? 'Saved!' : 'Save Changes'}
           </Button>
         </div>
       </div>
 
-      <Tabs defaultValue="system" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="system" className="flex items-center gap-2">
-            <Server className="w-4 h-4" />
+      <Tabs defaultValue=\"system\" className=\"space-y-6\">
+        <TabsList className=\"grid w-full grid-cols-4\">
+          <TabsTrigger value=\"system\" className=\"flex items-center gap-2\">
+            <Server className=\"w-4 h-4\" />
             System
           </TabsTrigger>
-          <TabsTrigger value="security" className="flex items-center gap-2">
-            <Shield className="w-4 h-4" />
+          <TabsTrigger value=\"security\" className=\"flex items-center gap-2\">
+            <Shield className=\"w-4 h-4\" />
             Security
           </TabsTrigger>
-          <TabsTrigger value="database" className="flex items-center gap-2">
-            <Database className="w-4 h-4" />
+          <TabsTrigger value=\"database\" className=\"flex items-center gap-2\">
+            <Database className=\"w-4 h-4\" />
             Database
           </TabsTrigger>
-          <TabsTrigger value="notifications" className="flex items-center gap-2">
-            <AlertCircle className="w-4 h-4" />
+          <TabsTrigger value=\"notifications\" className=\"flex items-center gap-2\">
+            <AlertCircle className=\"w-4 h-4\" />
             Notifications
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="system" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>System Configuration</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="maintenance-mode">Maintenance Mode</Label>
-                  <div className="flex items-center space-x-2">
+        <TabsContent value=\"system\" className=\"space-y-6\">
+          <Card title=\"System Configuration\" gradient=\"blue\">
+            <div className=\"space-y-6\">
+              <div className=\"grid grid-cols-2 gap-6\">
+                <div className=\"space-y-2\">
+                  <Label htmlFor=\"maintenance-mode\" className=\"text-gray-300\">Maintenance Mode</Label>
+                  <div className=\"flex items-center space-x-2\">
                     <Switch
-                      id="maintenance-mode"
+                      id=\"maintenance-mode\"
                       checked={settings.system.maintenanceMode}
                       onCheckedChange={(checked) => updateSystemSettings('maintenanceMode', checked)}
                     />
-                    <span className="text-sm text-gray-600">
+                    <span className=\"text-sm text-gray-400\">
                       {settings.system.maintenanceMode ? 'Enabled' : 'Disabled'}
                     </span>
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="debug-mode">Debug Mode</Label>
-                  <div className="flex items-center space-x-2">
+                <div className=\"space-y-2\">
+                  <Label htmlFor=\"debug-mode\" className=\"text-gray-300\">Debug Mode</Label>
+                  <div className=\"flex items-center space-x-2\">
                     <Switch
-                      id="debug-mode"
+                      id=\"debug-mode\"
                       checked={settings.system.debugMode}
                       onCheckedChange={(checked) => updateSystemSettings('debugMode', checked)}
                     />
-                    <span className="text-sm text-gray-600">
+                    <span className=\"text-sm text-gray-400\">
                       {settings.system.debugMode ? 'Enabled' : 'Disabled'}
                     </span>
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="log-level">Log Level</Label>
+                <div className=\"space-y-2\">
                   <Select
+                    label=\"Log Level\"
                     value={settings.system.logLevel}
-                    onValueChange={(value) => updateSystemSettings('logLevel', value)}
-                  >
-                    <SelectTrigger id="log-level">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="error">Error</SelectItem>
-                      <SelectItem value="warn">Warning</SelectItem>
-                      <SelectItem value="info">Info</SelectItem>
-                      <SelectItem value="debug">Debug</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    onChange={(e: any) => updateSystemSettings('logLevel', e.target.value)}
+                    options={[
+                      { value: 'error', label: 'Error' },
+                      { value: 'warn', label: 'Warning' },
+                      { value: 'info', label: 'Info' },
+                      { value: 'debug', label: 'Debug' },
+                    ]}
+                  />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="backup-frequency">Backup Frequency</Label>
+                <div className=\"space-y-2\">
                   <Select
+                    label=\"Backup Frequency\"
                     value={settings.system.backupFrequency}
-                    onValueChange={(value) => updateSystemSettings('backupFrequency', value)}
-                  >
-                    <SelectTrigger id="backup-frequency">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="hourly">Hourly</SelectItem>
-                      <SelectItem value="daily">Daily</SelectItem>
-                      <SelectItem value="weekly">Weekly</SelectItem>
-                      <SelectItem value="monthly">Monthly</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    onChange={(e: any) => updateSystemSettings('backupFrequency', e.target.value)}
+                    options={[
+                      { value: 'hourly', label: 'Hourly' },
+                      { value: 'daily', label: 'Daily' },
+                      { value: 'weekly', label: 'Weekly' },
+                      { value: 'monthly', label: 'Monthly' },
+                    ]}
+                  />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="max-users">Max Concurrent Users</Label>
+                <div className=\"space-y-2\">
                   <Input
-                    id="max-users"
-                    type="number"
+                    label=\"Max Concurrent Users\"
+                    id=\"max-users\"
+                    type=\"number\"
                     value={settings.system.maxConcurrentUsers}
                     onChange={(e) => updateSystemSettings('maxConcurrentUsers', parseInt(e.target.value))}
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="session-timeout">Session Timeout (minutes)</Label>
+                <div className=\"space-y-2\">
                   <Input
-                    id="session-timeout"
-                    type="number"
+                    label=\"Session Timeout (minutes)\"
+                    id=\"session-timeout\"
+                    type=\"number\"
                     value={settings.system.sessionTimeout}
                     onChange={(e) => updateSystemSettings('sessionTimeout', parseInt(e.target.value))}
                   />
                 </div>
               </div>
-            </CardContent>
+            </div>
           </Card>
         </TabsContent>
 
-        <TabsContent value="security" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Security Settings</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="enforce-ssl">Enforce SSL</Label>
-                  <div className="flex items-center space-x-2">
+        <TabsContent value=\"security\" className=\"space-y-6\">
+          <Card title=\"Security Settings\" gradient=\"purple\">
+            <div className=\"space-y-6\">
+              <div className=\"grid grid-cols-2 gap-6\">
+                <div className=\"space-y-2\">
+                  <Label htmlFor=\"enforce-ssl\" className=\"text-gray-300\">Enforce SSL</Label>
+                  <div className=\"flex items-center space-x-2\">
                     <Switch
-                      id="enforce-ssl"
+                      id=\"enforce-ssl\"
                       checked={settings.security.enforceSSL}
                       onCheckedChange={(checked) => updateSecuritySettings('enforceSSL', checked)}
                     />
@@ -367,11 +357,11 @@ const AdminSettings: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="require-mfa">Require MFA</Label>
-                  <div className="flex items-center space-x-2">
+                <div className=\"space-y-2\">
+                  <Label htmlFor=\"require-mfa\" className=\"text-gray-300\">Require MFA</Label>
+                  <div className=\"flex items-center space-x-2\">
                     <Switch
-                      id="require-mfa"
+                      id=\"require-mfa\"
                       checked={settings.security.requireMFA}
                       onCheckedChange={(checked) => updateSecuritySettings('requireMFA', checked)}
                     />
@@ -382,188 +372,182 @@ const AdminSettings: React.FC = () => {
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Password Policy</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="min-length">Minimum Length</Label>
+              <div className=\"space-y-4 pt-6 border-t border-white/5\">
+                <h3 className=\"text-lg font-semibold text-white\">Password Policy</h3>
+                <div className=\"grid grid-cols-2 gap-4\">
+                  <div className=\"space-y-2\">
                     <Input
-                      id="min-length"
-                      type="number"
+                      label=\"Minimum Length\"
+                      id=\"min-length\"
+                      type=\"number\"
                       value={settings.security.passwordPolicy.minLength}
                       onChange={(e) => updatePasswordPolicy('minLength', parseInt(e.target.value))}
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="require-special">Require Special Characters</Label>
+                  <div className=\"space-y-2\">
+                    <Label htmlFor=\"require-special\" className=\"text-gray-300\">Require Special Characters</Label>
                     <Switch
-                      id="require-special"
+                      id=\"require-special\"
                       checked={settings.security.passwordPolicy.requireSpecialChars}
                       onCheckedChange={(checked) => updatePasswordPolicy('requireSpecialChars', checked)}
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="require-numbers">Require Numbers</Label>
+                  <div className=\"space-y-2\">
+                    <Label htmlFor=\"require-numbers\" className=\"text-gray-300\">Require Numbers</Label>
                     <Switch
-                      id="require-numbers"
+                      id=\"require-numbers\"
                       checked={settings.security.passwordPolicy.requireNumbers}
                       onCheckedChange={(checked) => updatePasswordPolicy('requireNumbers', checked)}
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="require-uppercase">Require Uppercase</Label>
+                  <div className=\"space-y-2\">
+                    <Label htmlFor=\"require-uppercase\" className=\"text-gray-300\">Require Uppercase</Label>
                     <Switch
-                      id="require-uppercase"
+                      id=\"require-uppercase\"
                       checked={settings.security.passwordPolicy.requireUppercase}
                       onCheckedChange={(checked) => updatePasswordPolicy('requireUppercase', checked)}
                     />
                   </div>
                 </div>
               </div>
-            </CardContent>
+            </div>
           </Card>
         </TabsContent>
 
-        <TabsContent value="database" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Database Configuration</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="pool-size">Connection Pool Size</Label>
+        <TabsContent value=\"database\" className=\"space-y-6\">
+          <Card title=\"Database Configuration\" gradient=\"orange\">
+            <div className=\"space-y-6\">
+              <div className=\"grid grid-cols-2 gap-6\">
+                <div className=\"space-y-2\">
                   <Input
-                    id="pool-size"
-                    type="number"
+                    label=\"Connection Pool Size\"
+                    id=\"pool-size\"
+                    type=\"number\"
                     value={settings.database.connectionPoolSize}
                     onChange={(e) => updateDatabaseSettings('connectionPoolSize', parseInt(e.target.value))}
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="query-timeout">Query Timeout (seconds)</Label>
+                <div className=\"space-y-2\">
                   <Input
-                    id="query-timeout"
-                    type="number"
+                    label=\"Query Timeout (seconds)\"
+                    id=\"query-timeout\"
+                    type=\"number\"
                     value={settings.database.queryTimeout}
                     onChange={(e) => updateDatabaseSettings('queryTimeout', parseInt(e.target.value))}
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="query-logging">Enable Query Logging</Label>
+                <div className=\"space-y-2\">
+                  <Label htmlFor=\"query-logging\" className=\"text-gray-300\">Enable Query Logging</Label>
                   <Switch
-                    id="query-logging"
+                    id=\"query-logging\"
                     checked={settings.database.enableQueryLogging}
                     onCheckedChange={(checked) => updateDatabaseSettings('enableQueryLogging', checked)}
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="auto-backup">Auto Backup</Label>
+                <div className=\"space-y-2\">
+                  <Label htmlFor=\"auto-backup\" className=\"text-gray-300\">Auto Backup</Label>
                   <Switch
-                    id="auto-backup"
+                    id=\"auto-backup\"
                     checked={settings.database.autoBackup}
                     onCheckedChange={(checked) => updateDatabaseSettings('autoBackup', checked)}
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="retention-days">Retention Days</Label>
+                <div className=\"space-y-2\">
                   <Input
-                    id="retention-days"
-                    type="number"
+                    label=\"Retention Days\"
+                    id=\"retention-days\"
+                    type=\"number\"
                     value={settings.database.retentionDays}
                     onChange={(e) => updateDatabaseSettings('retentionDays', parseInt(e.target.value))}
                   />
                 </div>
               </div>
-            </CardContent>
+            </div>
           </Card>
         </TabsContent>
 
-        <TabsContent value="notifications" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Notification Settings</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="email-notifications">Email Notifications</Label>
+        <TabsContent value=\"notifications\" className=\"space-y-6\">
+          <Card title=\"Notification Settings\" gradient=\"green\">
+            <div className=\"space-y-6\">
+              <div className=\"grid grid-cols-2 gap-6\">
+                <div className=\"space-y-2\">
+                  <Label htmlFor=\"email-notifications\" className=\"text-gray-300\">Email Notifications</Label>
                   <Switch
-                    id="email-notifications"
+                    id=\"email-notifications\"
                     checked={settings.notifications.emailNotifications}
                     onCheckedChange={(checked) => updateNotificationSettings('emailNotifications', checked)}
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="slack-integration">Slack Integration</Label>
+                <div className=\"space-y-2\">
+                  <Label htmlFor=\"slack-integration\" className=\"text-gray-300\">Slack Integration</Label>
                   <Switch
-                    id="slack-integration"
+                    id=\"slack-integration\"
                     checked={settings.notifications.slackIntegration}
                     onCheckedChange={(checked) => updateNotificationSettings('slackIntegration', checked)}
                   />
                 </div>
 
-                <div className="space-y-2 col-span-2">
-                  <Label htmlFor="webhook-url">Webhook URL</Label>
+                <div className=\"space-y-2 col-span-2\">
                   <Input
-                    id="webhook-url"
-                    type="url"
-                    placeholder="https://hooks.slack.com/..."
+                    label=\"Webhook URL\"
+                    id=\"webhook-url\"
+                    type=\"url\"
+                    placeholder=\"https://hooks.slack.com/...\"
                     value={settings.notifications.webhookUrl}
                     onChange={(e) => updateNotificationSettings('webhookUrl', e.target.value)}
                   />
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Alert Thresholds (%)</h3>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="cpu-threshold">CPU Usage</Label>
+              <div className=\"space-y-4 pt-6 border-t border-white/5\">
+                <h3 className=\"text-lg font-semibold text-white\">Alert Thresholds (%)</h3>
+                <div className=\"grid grid-cols-3 gap-4\">
+                  <div className=\"space-y-2\">
                     <Input
-                      id="cpu-threshold"
-                      type="number"
-                      min="0"
-                      max="100"
+                      label=\"CPU Usage\"
+                      id=\"cpu-threshold\"
+                      type=\"number\"
+                      min={0}
+                      max={100}
                       value={settings.notifications.alertThresholds.cpuUsage}
                       onChange={(e) => updateAlertThresholds('cpuUsage', parseInt(e.target.value))}
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="memory-threshold">Memory Usage</Label>
+                  <div className=\"space-y-2\">
                     <Input
-                      id="memory-threshold"
-                      type="number"
-                      min="0"
-                      max="100"
+                      label=\"Memory Usage\"
+                      id=\"memory-threshold\"
+                      type=\"number\"
+                      min={0}
+                      max={100}
                       value={settings.notifications.alertThresholds.memoryUsage}
                       onChange={(e) => updateAlertThresholds('memoryUsage', parseInt(e.target.value))}
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="disk-threshold">Disk Usage</Label>
+                  <div className=\"space-y-2\">
                     <Input
-                      id="disk-threshold"
-                      type="number"
-                      min="0"
-                      max="100"
+                      label=\"Disk Usage\"
+                      id=\"disk-threshold\"
+                      type=\"number\"
+                      min={0}
+                      max={100}
                       value={settings.notifications.alertThresholds.diskUsage}
                       onChange={(e) => updateAlertThresholds('diskUsage', parseInt(e.target.value))}
                     />
                   </div>
                 </div>
               </div>
-            </CardContent>
+            </div>
           </Card>
         </TabsContent>
       </Tabs>

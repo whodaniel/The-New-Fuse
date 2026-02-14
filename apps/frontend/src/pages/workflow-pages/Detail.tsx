@@ -1,12 +1,7 @@
-import { Button } from '@/components/ui/button';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+  PremiumButton as Button,
+  GlassCard,
+} from '@/components/ui/premium';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import WorkflowAnalytics from '@/components/workflow/WorkflowAnalytics';
 import { useWorkflow, Workflow } from '@/hooks';
@@ -94,15 +89,15 @@ const WorkflowDetail: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex space-x-2">
-          <Button variant="outline" asChild>
-            <Link to={`/workflows/builder?id=${workflow.id}`}>
-              <Edit className="h-4 w-4 mr-2" />
+        <div className=\"flex space-x-2\">
+          <Link to={`/workflows/builder?id=${workflow.id}`}>
+            <Button variant=\"outline\">
+              <Edit className=\"h-4 w-4 mr-2\" />
               Edit
-            </Link>
-          </Button>
-          <Button>
-            <Play className="h-4 w-4 mr-2" />
+            </Button>
+          </Link>
+          <Button variant=\"primary\">
+            <Play className=\"h-4 w-4 mr-2\" />
             Execute
           </Button>
         </div>
@@ -116,136 +111,102 @@ const WorkflowDetail: React.FC = () => {
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium">Nodes</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{workflow.nodes.length}</div>
-              </CardContent>
-            </Card>
+        <TabsContent value=\"overview\" className=\"space-y-6\">
+          <div className=\"grid grid-cols-1 md:grid-cols-3 gap-6\">
+            <GlassCard title=\"Nodes\" gradient=\"blue\">
+              <div className=\"text-2xl font-bold text-white\">{workflow.nodes.length}</div>
+            </GlassCard>
 
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium">Connections</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{workflow.edges.length}</div>
-              </CardContent>
-            </Card>
+            <GlassCard title=\"Connections\" gradient=\"purple\">
+              <div className=\"text-2xl font-bold text-white\">{workflow.edges.length}</div>
+            </GlassCard>
 
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium">Last Execution</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-sm text-muted-foreground">Never executed</div>
-              </CardContent>
-            </Card>
+            <GlassCard title=\"Last Execution\" gradient=\"cyan\">
+              <div className=\"text-sm text-gray-400\">Never executed</div>
+            </GlassCard>
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Description</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">
-                {workflow.description || 'No description provided.'}
-              </p>
-            </CardContent>
-          </Card>
+          <GlassCard title=\"Description\" gradient=\"green\">
+            <p className=\"text-gray-300\">
+              {workflow.description || 'No description provided.'}
+            </p>
+          </GlassCard>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Workflow Diagram</CardTitle>
-            </CardHeader>
-            <CardContent className="h-64 flex items-center justify-center bg-gray-50 rounded-md">
-              <div className="text-center">
-                <GitBranch className="h-12 w-12 text-gray-300 mx-auto mb-2" />
-                <p className="text-muted-foreground">
+          <GlassCard title=\"Workflow Diagram\" gradient=\"orange\">
+            <div className=\"h-64 flex items-center justify-center bg-black/20 rounded-md\">
+              <div className=\"text-center\">
+                <GitBranch className=\"h-12 w-12 text-gray-500 mx-auto mb-2\" />
+                <p className=\"text-gray-400\">
                   Open the workflow builder to view and edit the workflow diagram.
                 </p>
-                <Button variant="outline" className="mt-4" asChild>
-                  <Link to={`/workflows/builder?id=${workflow.id}`}>Open Workflow Builder</Link>
-                </Button>
+                <Link to={`/workflows/builder?id=${workflow.id}`}>
+                  <Button variant=\"outline\" className=\"mt-4\">Open Workflow Builder</Button>
+                </Link>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </GlassCard>
         </TabsContent>
 
-        <TabsContent value="executions">
-          <Card>
-            <CardHeader>
-              <CardTitle>Execution History</CardTitle>
-              <CardDescription>View the history of workflow executions.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8">
-                <Clock className="h-12 w-12 text-gray-300 mx-auto mb-2" />
-                <p className="text-muted-foreground">
-                  No executions yet. Execute the workflow to see results here.
-                </p>
-                <Button className="mt-4">
-                  <Play className="h-4 w-4 mr-2" />
-                  Execute Workflow
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+        <TabsContent value=\"executions\">
+          <GlassCard title=\"Execution History\" subtitle=\"View the history of workflow executions.\" gradient=\"blue\">
+            <div className=\"text-center py-8\">
+              <Clock className=\"h-12 w-12 text-gray-500 mx-auto mb-2\" />
+              <p className=\"text-gray-400\">
+                No executions yet. Execute the workflow to see results here.
+              </p>
+              <Button variant=\"primary\" className=\"mt-4\">
+                <Play className=\"h-4 w-4 mr-2\" />
+                Execute Workflow
+              </Button>
+            </div>
+          </GlassCard>
         </TabsContent>
 
-        <TabsContent value="settings">
-          <Card>
-            <CardHeader>
-              <CardTitle>Workflow Settings</CardTitle>
-              <CardDescription>Configure settings for this workflow.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-sm font-medium mb-1">Execution Mode</h3>
-                  <select
-                    id="execution-mode"
-                    aria-label="Execution Mode"
-                    className="w-full p-2 border rounded-md"
-                  >
-                    <option value="sequential">Sequential</option>
-                    <option value="parallel">Parallel</option>
-                  </select>
-                </div>
-
-                <div>
-                  <h3 className="text-sm font-medium mb-1">Error Handling</h3>
-                  <select
-                    id="error-handling"
-                    aria-label="Error Handling"
-                    className="w-full p-2 border rounded-md"
-                  >
-                    <option value="stop">Stop on Error</option>
-                    <option value="continue">Continue on Error</option>
-                    <option value="retry">Retry on Error</option>
-                  </select>
-                </div>
-
-                <div>
-                  <h3 className="text-sm font-medium mb-1">Timeout (seconds)</h3>
-                  <input
-                    id="timeout"
-                    type="number"
-                    aria-label="Timeout in seconds"
-                    className="w-full p-2 border rounded-md"
-                    defaultValue={300}
-                    min={1}
-                  />
-                </div>
+        <TabsContent value=\"settings\">
+          <GlassCard title=\"Workflow Settings\" subtitle=\"Configure settings for this workflow.\" gradient=\"purple\">
+            <div className=\"space-y-4\">
+              <div>
+                <h3 className=\"text-sm font-medium text-white mb-1\">Execution Mode</h3>
+                <select
+                  id=\"execution-mode\"
+                  aria-label=\"Execution Mode\"
+                  className=\"w-full p-2 border border-white/10 rounded-md bg-black/20 text-white\"
+                >
+                  <option value=\"sequential\">Sequential</option>
+                  <option value=\"parallel\">Parallel</option>
+                </select>
               </div>
-            </CardContent>
-            <CardFooter>
-              <Button>Save Settings</Button>
-            </CardFooter>
-          </Card>
+
+              <div>
+                <h3 className=\"text-sm font-medium text-white mb-1\">Error Handling</h3>
+                <select
+                  id=\"error-handling\"
+                  aria-label=\"Error Handling\"
+                  className=\"w-full p-2 border border-white/10 rounded-md bg-black/20 text-white\"
+                >
+                  <option value=\"stop\">Stop on Error</option>
+                  <option value=\"continue\">Continue on Error</option>
+                  <option value=\"retry\">Retry on Error</option>
+                </select>
+              </div>
+
+              <div>
+                <h3 className=\"text-sm font-medium text-white mb-1\">Timeout (seconds)</h3>
+                <input
+                  id=\"timeout\"
+                  type=\"number\"
+                  aria-label=\"Timeout in seconds\"
+                  className=\"w-full p-2 border border-white/10 rounded-md bg-black/20 text-white\"
+                  defaultValue={300}
+                  min={1}
+                />
+              </div>
+
+              <div className=\"pt-4\">
+                <Button variant=\"primary\">Save Settings</Button>
+              </div>
+            </div>
+          </GlassCard>
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-4">

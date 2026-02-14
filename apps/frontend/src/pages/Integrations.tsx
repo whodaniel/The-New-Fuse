@@ -1,6 +1,5 @@
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { GlassCard, PremiumButton } from '@/components/ui/premium';
 import {
   ArrowRight,
   Chrome,
@@ -24,15 +23,13 @@ const IntegrationCard = ({
   title: string;
   description: string;
 }) => (
-  <Card className="group hover:shadow-lg transition-all duration-300 border-0 bg-linear-to-br from-white to-gray-50 hover:from-gray-50 hover:to-white">
-    <CardContent className="p-6">
+  <GlassCard hover className="p-6">
       <div className="w-12 h-12 rounded-lg bg-linear-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
         <Icon className="h-6 w-6 text-white" />
       </div>
-      <h3 className="text-lg font-semibold mb-2 text-gray-900">{title}</h3>
-      <p className="text-gray-600 text-sm leading-relaxed">{description}</p>
-    </CardContent>
-  </Card>
+      <h3 className="text-lg font-semibold mb-2 text-white">{title}</h3>
+      <p className="text-gray-400 text-sm leading-relaxed">{description}</p>
+  </GlassCard>
 );
 
 export const Integrations = () => {
@@ -51,7 +48,7 @@ export const Integrations = () => {
             <p className="text-xl lg:text-2xl mb-10 text-blue-100 max-w-4xl mx-auto">
               The New Fuse integrates seamlessly with your existing workflow.
             </p>
-            <Button
+            <PremiumButton
               asChild
               size="lg"
               className="bg-white/90 text-slate-900 hover:bg-white px-8 py-4 text-lg font-semibold"
@@ -61,7 +58,7 @@ export const Integrations = () => {
                 Get Started
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
-            </Button>
+            </PremiumButton>
           </div>
         </section>
 
@@ -117,13 +114,13 @@ export const Integrations = () => {
             <p className="text-xl text-gray-600 mb-10 max-w-3xl mx-auto">
               Start integrating The New Fuse with your existing tools today.
             </p>
-            <Button
+            <PremiumButton
               asChild
               size="lg"
               className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg font-semibold"
             >
               <Link to="/auth/register">Get Started Free</Link>
-            </Button>
+            </PremiumButton>
           </div>
         </section>
       </main>

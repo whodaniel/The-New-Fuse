@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { GlassCard } from '@/components/ui/premium';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import React, { useState } from 'react';
 
@@ -60,11 +60,8 @@ export const Analytics: React.FC = () => {
 
         {/* Performance Tab */}
         <TabsContent value="performance">
-          <Card>
-            <CardHeader>
-              <CardTitle>System Performance</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <GlassCard title="System Performance">
+            <div>
               <div className="h-80 bg-gray-100 rounded-md p-4 flex items-center justify-center">
                 <div className="text-center">
                   <p className="text-gray-500 mb-4">Performance chart visualization</p>
@@ -77,17 +74,14 @@ export const Analytics: React.FC = () => {
                   </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </GlassCard>
         </TabsContent>
 
         {/* Resources Tab */}
         <TabsContent value="resources">
-          <Card>
-            <CardHeader>
-              <CardTitle>Resource Usage</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <GlassCard title="Resource Usage">
+            <div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 {resourceUsage.map((resource) => (
                   <div key={resource.name} className="p-4 bg-gray-50 rounded-md text-center">
@@ -99,36 +93,26 @@ export const Analytics: React.FC = () => {
               <div className="h-72 bg-gray-100 rounded-md p-4 flex items-center justify-center">
                 <p className="text-gray-500">Resource usage chart visualization</p>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </GlassCard>
         </TabsContent>
 
         {/* Knowledge Graph Tab */}
         <TabsContent value="knowledge">
-          <Card>
-            <CardHeader>
-              <CardTitle>Knowledge Graph Analysis</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <GlassCard title="Knowledge Graph Analysis">
               <div className="h-96 bg-gray-100 rounded-md p-4 flex items-center justify-center">
                 <p className="text-gray-500">Knowledge graph visualization</p>
               </div>
-            </CardContent>
-          </Card>
+          </GlassCard>
         </TabsContent>
 
         {/* Task Analysis Tab */}
         <TabsContent value="tasks">
-          <Card>
-            <CardHeader>
-              <CardTitle>Task Allocation Analysis</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <GlassCard title="Task Allocation Analysis">
               <div className="h-96 bg-gray-100 rounded-md p-4 flex items-center justify-center">
                 <p className="text-gray-500">Task allocation visualization</p>
               </div>
-            </CardContent>
-          </Card>
+          </GlassCard>
         </TabsContent>
       </Tabs>
     </div>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { GlassCard } from '@/components/ui/premium';
+import { PremiumButton } from '@/components/ui/premium';
+import { PremiumInput } from '@/components/ui/premium';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -80,14 +80,12 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = () => {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={handleReset}>
-            <RefreshCw className="h-4 w-4 mr-2" />
+          <PremiumButton variant="outline" onClick={handleReset} icon={RefreshCw}>
             Reset
-          </Button>
-          <Button onClick={handleSave} disabled={isLoading}>
-            <Save className="h-4 w-4 mr-2" />
+          </PremiumButton>
+          <PremiumButton onClick={handleSave} disabled={isLoading} icon={Save}>
             {isLoading ? 'Saving...' : 'Save Changes'}
-          </Button>
+          </PremiumButton>
         </div>
       </div>
 
@@ -112,14 +110,8 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = () => {
         </TabsList>
 
         <TabsContent value="display" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Display Preferences</CardTitle>
-              <CardDescription>
-                Customize how your dashboard looks and feels
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
+          <GlassCard title="Display Preferences" subtitle="Customize how your dashboard looks and feels">
+            <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label className="text-base">Dark Mode</Label>
@@ -168,19 +160,13 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = () => {
                   }
                 />
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </GlassCard>
         </TabsContent>
 
         <TabsContent value="data" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Data Management</CardTitle>
-              <CardDescription>
-                Configure data retention and display limits
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
+          <GlassCard title="Data Management" subtitle="Configure data retention and display limits">
+            <div className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="maxDataPoints">Max Data Points</Label>
@@ -222,19 +208,13 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = () => {
                   </Select>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </GlassCard>
         </TabsContent>
 
         <TabsContent value="notifications" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Notification Settings</CardTitle>
-              <CardDescription>
-                Manage alerts and notification preferences
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
+          <GlassCard title="Notification Settings" subtitle="Manage alerts and notification preferences">
+            <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label className="text-base">Show Notifications</Label>
@@ -272,13 +252,13 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = () => {
                   <Separator />
                   <div className="space-y-2">
                     <Label htmlFor="alertThreshold">Alert Threshold (%)</Label>
-                    <Input
+                    <PremiumInput
                       id="alertThreshold"
                       type="number"
                       min="0"
                       max="100"
                       value={settings.alertThreshold}
-                      onChange={(e) => 
+                      onChange={(e) =>
                         setSettings(prev => ({ ...prev, alertThreshold: e.target.value }))
                       }
                       className="max-w-xs"
@@ -289,19 +269,13 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = () => {
                   </div>
                 </>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </GlassCard>
         </TabsContent>
 
         <TabsContent value="performance" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Performance Settings</CardTitle>
-              <CardDescription>
-                Configure refresh rates and performance options
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
+          <GlassCard title="Performance Settings" subtitle="Configure refresh rates and performance options">
+            <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label className="text-base">Auto Refresh</Label>
@@ -364,8 +338,8 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = () => {
                   </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </GlassCard>
         </TabsContent>
       </Tabs>
     </div>

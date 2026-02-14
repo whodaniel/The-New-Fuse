@@ -1,6 +1,5 @@
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { GlassCard, PremiumButton } from '@/components/ui/premium';
 import { ArrowRight, Book, Clock, Headset, MessageCircle, Rocket } from 'lucide-react';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -16,18 +15,18 @@ const SupportOptionCard = ({
   description: string;
   buttonText: string;
 }) => (
-  <Card>
-    <CardContent className="p-6">
+  <GlassCard className="p-6">
+    <div>
       <div className="w-12 h-12 rounded-lg bg-linear-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-4">
         <Icon className="h-6 w-6 text-white" />
       </div>
       <h3 className="text-lg font-semibold mb-2 text-gray-900">{title}</h3>
       <p className="text-gray-600 text-sm mb-4">{description}</p>
-      <Button variant="outline" size="sm">
+      <PremiumButton variant="outline" size="sm">
         {buttonText}
-      </Button>
-    </CardContent>
-  </Card>
+      </PremiumButton>
+    </div>
+  </GlassCard>
 );
 
 export const Support = () => {
@@ -44,17 +43,16 @@ export const Support = () => {
             <p className="text-xl lg:text-2xl mb-10 text-blue-100 max-w-4xl mx-auto">
               We're here to help with any questions or issues you may have.
             </p>
-            <Button
-              asChild
-              size="lg"
-              className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg font-semibold"
-            >
-              <Link to="/auth/register">
+            <Link to="/auth/register">
+              <PremiumButton
+                size="lg"
+                className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg font-semibold"
+              >
                 <Rocket className="mr-2 h-5 w-5" />
                 Get Started
                 <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
+              </PremiumButton>
+            </Link>
           </div>
         </section>
 
@@ -98,13 +96,14 @@ export const Support = () => {
             <p className="text-xl text-gray-600 mb-10 max-w-3xl mx-auto">
               Our support team is available 24/7 to assist you.
             </p>
-            <Button
-              asChild
-              size="lg"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg font-semibold"
-            >
-              <Link to="/auth/register">Get Started</Link>
-            </Button>
+            <Link to="/auth/register">
+              <PremiumButton
+                size="lg"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg font-semibold"
+              >
+                Get Started
+              </PremiumButton>
+            </Link>
           </div>
         </section>
       </main>

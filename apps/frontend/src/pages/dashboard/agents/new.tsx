@@ -1,8 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sidebar } from '@/components/layout/Sidebar';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { PremiumButton } from '@/components/ui/premium';
+import { GlassCard } from '@/components/ui/premium';
 import { ArrowLeft } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -79,12 +79,11 @@ export const NewAgentPage = () => {
       
       <main className="flex-1 p-6 overflow-auto">
         <div className="max-w-3xl mx-auto">
-          <Button variant="ghost" className="mb-6" onClick={() => navigate('/dashboard/agents')}>
-            <ArrowLeft className="mr-2 h-4 w-4"/>
+          <PremiumButton variant="ghost" className="mb-6" onClick={() => navigate('/dashboard/agents')} icon={ArrowLeft}>
             Back to Agents
-          </Button>
+          </PremiumButton>
 
-          <Card className="p-6">
+          <GlassCard className="p-6">
             <div className="mb-6">
               <h1 className="text-3xl font-bold">Create New Agent</h1>
               <p className="text-muted-foreground">Configure your new AI agent</p>
@@ -93,7 +92,7 @@ export const NewAgentPage = () => {
             <div className="max-w-2xl">
               <NewAgentForm form={form} onSubmit={onSubmit}/>
             </div>
-          </Card>
+          </GlassCard>
         </div>
       </main>
     </div>);

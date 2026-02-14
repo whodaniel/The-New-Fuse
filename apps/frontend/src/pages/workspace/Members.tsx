@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { GlassCard, PremiumButton } from '@/components/ui/premium';
 import { Plus, MoreHorizontal } from 'lucide-react';
 import { useWorkspace } from '@/hooks/useWorkspace';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
+import { PremiumInput } from '@/components/ui/premium';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { webSocketService } from '@/services/websocket';
 
@@ -80,29 +79,22 @@ export default function WorkspaceMembers() {
             Manage your workspace members and their roles
           </p>
         </div>
-        <Button onClick={() => setShowInviteDialog(true)}>
+        <PremiumButton onClick={() => setShowInviteDialog(true)}>
           <Plus className="mr-2 h-4 w-4"/>
           Invite Member
-        </Button>
+        </PremiumButton>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Members</CardTitle>
-          <CardDescription>
-            {members.length} member{members.length !== 1 ? 's' : ''} in workspace
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+      <GlassCard title="Members" subtitle={`${members.length} member${members.length !== 1 ? 's' : ''} in workspace`}>
           <div className="space-y-4">
             {members.map((member) => (
               <div key={member.id} className="flex items-center justify-between py-2">
                 <div className="flex items-center space-x-4">
                   <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
                     {member.avatarUrl ? (
-                      <img 
-                        src={member.avatarUrl} 
-                        alt={member.name} 
+                      <img
+                        src={member.avatarUrl}
+                        alt={member.name}
                         className="h-full w-full rounded-full object-cover"
                       />
                     ) : (
@@ -119,10 +111,10 @@ export default function WorkspaceMembers() {
 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm">
+                    <PremiumButton variant="ghost" size="sm">
                       <span className="mr-2">{member.role}</span>
                       <MoreHorizontal className="h-4 w-4" />
-                    </Button>
+                    </PremiumButton>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     {member.role !== 'owner' && (
@@ -133,7 +125,7 @@ export default function WorkspaceMembers() {
                         <DropdownMenuItem onClick={() => handleRoleChange(member.id, 'member')}>
                           Make Member
                         </DropdownMenuItem>
-                        <DropdownMenuItem 
+                        <DropdownMenuItem
                           onClick={() => handleRemoveMember(member.id)}
                           className="text-destructive"
                         >
@@ -146,8 +138,7 @@ export default function WorkspaceMembers() {
               </div>
             ))}
           </div>
-        </CardContent>
-      </Card>
+      </GlassCard>
 
       <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
         <DialogContent>
@@ -163,7 +154,7 @@ export default function WorkspaceMembers() {
                 <label htmlFor="email" className="text-sm font-medium">
                   Email Address
                 </label>
-                <Input
+                <PremiumInput
                   id="email"
                   type="email"
                   value={inviteEmail}
@@ -174,16 +165,16 @@ export default function WorkspaceMembers() {
               </div>
             </div>
             <DialogFooter>
-              <Button
+              <PremiumButton
                 type="button"
                 variant="outline"
                 onClick={() => setShowInviteDialog(false)}
               >
                 Cancel
-              </Button>
-              <Button type="submit" disabled={isSubmitting}>
+              </PremiumButton>
+              <PremiumButton type="submit" disabled={isSubmitting}>
                 {isSubmitting ? 'Sending Invite...' : 'Send Invite'}
-              </Button>
+              </PremiumButton>
             </DialogFooter>
           </form>
         </DialogContent>

@@ -2,8 +2,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { PremiumButton } from '@/components/ui/premium';
+import { PremiumInput } from '@/components/ui/premium';
 import { useAuth } from '@/hooks/useAuth';
 const resetPasswordSchema = z.object({
     password: z.string().min(8, 'Password must be at least 8 characters'),
@@ -44,11 +44,11 @@ const ResetPassword = () => {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <Input label="New Password" type="password" error={!!errors.password} helperText={(_a = errors.password) === null || _a === void 0 ? void 0 : _a.message} {...register('password')}/>
-        <Input label="Confirm New Password" type="password" error={!!errors.confirmPassword} helperText={(_b = errors.confirmPassword) === null || _b === void 0 ? void 0 : _b.message} {...register('confirmPassword')}/>
-        <Button type="submit" className="w-full" loading={isSubmitting}>
+        <PremiumInput label="New Password" type="password" {...register('password')}/>
+        <PremiumInput label="Confirm New Password" type="password" {...register('confirmPassword')}/>
+        <PremiumButton type="submit" fullWidth loading={isSubmitting}>
           Reset Password
-        </Button>
+        </PremiumButton>
       </form>
     </div>);
 };

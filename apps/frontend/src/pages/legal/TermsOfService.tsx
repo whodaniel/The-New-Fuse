@@ -1,13 +1,9 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { GlassCard } from '@/components/ui/premium';
 const TermsOfService = () => {
     return (<div className="container mx-auto py-8 px-4">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">Terms of Service</CardTitle>
-          <p className="text-sm text-muted-foreground">Last updated: January 17, 2025</p>
-        </CardHeader>
-        <CardContent className="prose dark:prose-invert max-w-none">
+      <GlassCard title="Terms of Service" subtitle="Last updated: January 17, 2025">
+        <div className="prose dark:prose-invert max-w-none">
           <h2>1. Acceptance of Terms</h2>
           <p>
             By accessing and using The New Fuse website (https://thenewfuse.com), you accept and agree
@@ -99,8 +95,8 @@ const TermsOfService = () => {
             For any questions about these Terms of Service, please contact us at:
             legal@thenewfuse.com
           </p>
-        </CardContent>
-      </Card>
+        </div>
+      </GlassCard>
     </div>);
 };
 export default TermsOfService;

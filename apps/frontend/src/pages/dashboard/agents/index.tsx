@@ -3,7 +3,7 @@ import { BaseLayout } from '@/components/layout/BaseLayout';
 import { AgentForm } from '@/components/agents/AgentForm';
 import { AgentMetricsDisplay } from '@/components/agents/AgentMetrics';
 import { AgentFilters } from '@/components/agents/AgentFilters';
-import { Card } from '@/components/ui/card';
+import { GlassCard } from '@/components/ui/premium';
 import { toast } from 'react-toastify';
 export default function AgentsPage() {
     const [selectedAgentId, setSelectedAgentId] = useState(null);
@@ -32,7 +32,7 @@ export default function AgentsPage() {
     return (<BaseLayout className="p-6" showSidebar={true} showHeader={true}>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2">
-          <Card>
+          <GlassCard className="p-6">
             <div className="p-6">
               <h2 className="text-2xl font-bold mb-4">Create New Agent</h2>
               <AgentForm onSubmit={handleAgentSubmit} availableModels={['gpt-4', 'gpt-3.5-turbo', 'claude-v1']} availableCapabilities={[
@@ -42,14 +42,14 @@ export default function AgentsPage() {
             'audio-processing'
         ]}/>
             </div>
-          </Card>
+          </GlassCard>
 
-          {selectedAgentId && (<Card className="mt-6">
+          {selectedAgentId && (<GlassCard className="mt-6 p-6">
               <div className="p-6">
                 <h2 className="text-2xl font-bold mb-4">Agent Metrics</h2>
                 <AgentMetricsDisplay agentId={selectedAgentId} refreshInterval={30000} onMetricsUpdate={handleMetricsUpdate}/>
               </div>
-            </Card>)}
+            </GlassCard>)}
         </div>
 
         <div>

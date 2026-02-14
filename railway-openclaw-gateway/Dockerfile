@@ -11,6 +11,7 @@ RUN mkdir -p /root/.openclaw /root/.local/share/kilo
 COPY openclaw.json /root/.openclaw/openclaw.json
 COPY kilo-auth.json /root/.local/share/kilo/auth.json
 COPY entrypoint.sh /entrypoint.sh
+COPY proxy.js /proxy.js
 RUN chmod +x /entrypoint.sh
 
 # OpenClaw gateway port (Railway uses 8080 by default)

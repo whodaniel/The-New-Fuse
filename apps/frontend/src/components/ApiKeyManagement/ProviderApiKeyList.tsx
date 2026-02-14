@@ -11,7 +11,7 @@ interface ApiKey {
   provider: string;
 }
 
-export default function ProviderApiKeyList() {
+export function ProviderApiKeyList() {
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
   const [provider, setProvider] = useState('');
   const [apiKey, setApiKey] = useState('');

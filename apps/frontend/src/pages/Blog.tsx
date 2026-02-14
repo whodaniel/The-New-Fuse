@@ -1,6 +1,5 @@
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { GlassCard, PremiumButton } from '@/components/ui/premium';
 import { ArrowRight, Calendar, Newspaper, Rocket, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -15,21 +14,19 @@ const BlogPostCard = ({
   author: string;
   excerpt: string;
 }) => (
-  <Card>
-    <CardContent className="p-6">
+  <GlassCard className="p-6">
       <div className="flex items-center text-sm text-gray-500 mb-2">
         <Calendar className="h-4 w-4 mr-2" />
         <span>{date}</span>
         <User className="h-4 w-4 ml-4 mr-2" />
         <span>{author}</span>
       </div>
-      <h3 className="text-lg font-semibold mb-2 text-gray-900">{title}</h3>
-      <p className="text-gray-600 text-sm mb-4">{excerpt}</p>
-      <Button variant="outline" size="sm">
+      <h3 className="text-lg font-semibold mb-2 text-white">{title}</h3>
+      <p className="text-gray-400 text-sm mb-4">{excerpt}</p>
+      <PremiumButton variant="outline" size="sm">
         Read More
-      </Button>
-    </CardContent>
-  </Card>
+      </PremiumButton>
+  </GlassCard>
 );
 
 export const Blog = () => {
@@ -46,17 +43,16 @@ export const Blog = () => {
             <p className="text-xl lg:text-2xl mb-10 text-blue-100 max-w-4xl mx-auto">
               News, updates, and insights about AI collaboration and workflow automation.
             </p>
-            <Button
-              asChild
-              size="lg"
-              className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg font-semibold"
-            >
-              <Link to="/auth/register">
+            <Link to="/auth/register">
+              <PremiumButton
+                size="lg"
+                className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg font-semibold"
+              >
                 <Rocket className="mr-2 h-5 w-5" />
                 Get Started
                 <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
+              </PremiumButton>
+            </Link>
           </div>
         </section>
 
@@ -98,13 +94,14 @@ export const Blog = () => {
             <p className="text-xl text-gray-600 mb-10 max-w-3xl mx-auto">
               Subscribe to our newsletter for the latest AI collaboration news.
             </p>
-            <Button
-              asChild
-              size="lg"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg font-semibold"
-            >
-              <Link to="/auth/register">Get Started</Link>
-            </Button>
+            <Link to="/auth/register">
+              <PremiumButton
+                size="lg"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg font-semibold"
+              >
+                Get Started
+              </PremiumButton>
+            </Link>
           </div>
         </section>
       </main>

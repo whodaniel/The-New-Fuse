@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { 
+  GlassCard as Card,
+  PremiumButton as Button,
+  PremiumInput as Input,
+  PremiumSelect as Select,
+} from '@/components/ui/premium';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
@@ -210,158 +212,151 @@ const WorkspaceManagement: React.FC = () => {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+    <div className=\"p-6 max-w-7xl mx-auto space-y-6\">
+      <div className=\"flex items-center justify-between\">
         <div>
-          <h1 className="text-3xl font-bold">Workspace Management</h1>
-          <p className="text-gray-600 mt-2">Manage and monitor all workspaces in the system</p>
+          <h1 className=\"text-3xl font-bold text-white\">Workspace Management</h1>
+          <p className=\"text-gray-400 mt-2\">Manage and monitor all workspaces in the system</p>
         </div>
-        <Button onClick={() => setShowCreateDialog(true)}>
-          <Plus className="w-4 h-4 mr-2" />
+        <Button variant=\"primary\" onClick={() => setShowCreateDialog(true)}>
+          <Plus className=\"w-4 h-4 mr-2\" />
           Create Workspace
         </Button>
       </div>
 
       {/* Filters */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-wrap gap-4 items-center">
-            <div className="flex-1 min-w-[200px]">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="Search workspaces..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
+      <Card title=\"Filters\" gradient=\"blue\">
+        <div className=\"flex flex-wrap gap-4 items-center\">
+          <div className=\"flex-1 min-w-[200px]\">
+            <div className=\"relative\">
+              <Search className=\"absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4\" />
+              <Input
+                placeholder=\"Search workspaces...\"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className=\"pl-10\"
+              />
             </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[150px]" title="Filter by status">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
-                <SelectItem value="suspended">Suspended</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={planFilter} onValueChange={setPlanFilter}>
-              <SelectTrigger className="w-[150px]" title="Filter by plan">
-                <SelectValue placeholder="Plan" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Plans</SelectItem>
-                <SelectItem value="free">Free</SelectItem>
-                <SelectItem value="pro">Pro</SelectItem>
-                <SelectItem value="enterprise">Enterprise</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
-        </CardContent>
+          <Select 
+            value={statusFilter} 
+            onChange={(e: any) => setStatusFilter(e.target.value)}
+            options={[
+              { value: 'all', label: 'All Status' },
+              { value: 'active', label: 'Active' },
+              { value: 'inactive', label: 'Inactive' },
+              { value: 'suspended', label: 'Suspended' },
+            ]}
+          />
+          <Select 
+            value={planFilter} 
+            onChange={(e: any) => setPlanFilter(e.target.value)}
+            options={[
+              { value: 'all', label: 'All Plans' },
+              { value: 'free', label: 'Free' },
+              { value: 'pro', label: 'Pro' },
+              { value: 'enterprise', label: 'Enterprise' },
+            ]}
+          />
+        </div>
       </Card>
 
       {/* Workspace Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6\">
         {loading ? (
           Array.from({ length: 6 }).map((_, i) => (
-            <Card key={i} className="animate-pulse">
-              <CardContent className="p-6">
-                <div className="h-4 bg-gray-200 rounded mb-4"></div>
-                <div className="h-3 bg-gray-200 rounded mb-2"></div>
-                <div className="h-3 bg-gray-200 rounded mb-4"></div>
-                <div className="flex justify-between">
-                  <div className="h-6 bg-gray-200 rounded w-16"></div>
-                  <div className="h-6 bg-gray-200 rounded w-12"></div>
-                </div>
-              </CardContent>
+            <Card key={i} className=\"animate-pulse p-6\">
+              <div className=\"h-4 bg-white/10 rounded mb-4\"></div>
+              <div className=\"h-3 bg-white/10 rounded mb-2\"></div>
+              <div className=\"h-3 bg-white/10 rounded mb-4\"></div>
+              <div className=\"flex justify-between\">
+                <div className=\"h-6 bg-white/10 rounded w-16\"></div>
+                <div className=\"h-6 bg-white/10 rounded w-12\"></div>
+              </div>
             </Card>
           ))
         ) : (
           filteredWorkspaces.map((workspace) => (
-            <Card key={workspace.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <CardTitle className="text-lg">{workspace.name}</CardTitle>
-                    <p className="text-sm text-gray-600 mt-1">{workspace.description}</p>
-                  </div>
-                  <div className="flex gap-1">
-                    {getStatusBadge(workspace.status)}
-                    {getPlanBadge(workspace.plan)}
-                  </div>
+            <Card 
+              key={workspace.id} 
+              title={workspace.name} 
+              subtitle={workspace.description}
+              gradient=\"purple\"
+              hover
+            >
+              <div className=\"space-y-4\">
+                <div className=\"flex justify-end gap-1 mb-4\">
+                  {getStatusBadge(workspace.status)}
+                  {getPlanBadge(workspace.plan)}
                 </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Users className="w-4 h-4" />
+                
+                <div className=\"flex items-center gap-2 text-sm text-gray-400\">
+                  <Users className=\"w-4 h-4\" />
                   <span>Owner: {workspace.owner.name}</span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className=\"grid grid-cols-2 gap-4 text-sm\">
                   <div>
-                    <span className="text-gray-600">Members:</span>
-                    <span className="ml-1 font-medium">{workspace.members}</span>
+                    <span className=\"text-gray-400\">Members:</span>
+                    <span className=\"ml-1 font-medium text-white\">{workspace.members}</span>
                   </div>
                   <div>
-                    <span className="text-gray-600">Agents:</span>
-                    <span className="ml-1 font-medium">{workspace.agents}</span>
+                    <span className=\"text-gray-400\">Agents:</span>
+                    <span className=\"ml-1 font-medium text-white\">{workspace.agents}</span>
                   </div>
                   <div>
-                    <span className="text-gray-600">Workflows:</span>
-                    <span className="ml-1 font-medium">{workspace.workflows}</span>
+                    <span className=\"text-gray-400\">Workflows:</span>
+                    <span className=\"ml-1 font-medium text-white\">{workspace.workflows}</span>
                   </div>
                   <div>
-                    <span className="text-gray-600">Created:</span>
-                    <span className="ml-1 font-medium">{formatDate(workspace.createdAt)}</span>
+                    <span className=\"text-gray-400\">Created:</span>
+                    <span className=\"ml-1 font-medium text-white\">{formatDate(workspace.createdAt)}</span>
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Storage:</span>
-                    <span className="font-medium">{formatStorage(workspace.storage.used, workspace.storage.limit)}</span>
+                <div className=\"space-y-2\">
+                  <div className=\"flex justify-between text-sm\">
+                    <span className=\"text-gray-400\">Storage:</span>
+                    <span className=\"font-medium text-white\">{formatStorage(workspace.storage.used, workspace.storage.limit)}</span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className=\"w-full bg-white/10 rounded-full h-2\">
                     <div
-                      className="bg-blue-600 h-2 rounded-full"
+                      className=\"bg-blue-500 h-2 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]\"
                       style={{ width: `${Math.min(getStoragePercentage(workspace.storage.used, workspace.storage.limit), 100)}%` }}
                     ></div>
                   </div>
                 </div>
 
-                <div className="flex gap-2 pt-2">
+                <div className=\"flex gap-2 pt-2 border-t border-white/5\">
                   <Button
-                    variant="outline"
-                    size="sm"
+                    variant=\"outline\"
+                    size=\"sm\"
                     onClick={() => setSelectedWorkspace(workspace)}
+                    icon={Eye}
                   >
-                    <Eye className="w-4 h-4 mr-1" />
                     View
                   </Button>
                   {workspace.status === 'active' ? (
                     <Button
-                      variant="outline"
-                      size="sm"
+                      variant=\"outline\"
+                      size=\"sm\"
                       onClick={() => suspendWorkspace(workspace.id)}
+                      icon={Lock}
                     >
-                      <Lock className="w-4 h-4 mr-1" />
                       Suspend
                     </Button>
                   ) : (
                     <Button
-                      variant="outline"
-                      size="sm"
+                      variant=\"outline\"
+                      size=\"sm\"
                       onClick={() => activateWorkspace(workspace.id)}
+                      icon={Unlock}
                     >
-                      <Unlock className="w-4 h-4 mr-1" />
                       Activate
                     </Button>
                   )}
                 </div>
-              </CardContent>
+              </div>
             </Card>
           ))
         )}
@@ -387,96 +382,75 @@ const WorkspaceManagement: React.FC = () => {
                 <TabsTrigger value="settings">Settings</TabsTrigger>
               </TabsList>
 
-              <TabsContent value="overview" className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-lg">Workspace Info</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
+              <TabsContent value=\"overview\" className=\"space-y-4\">
+                <div className=\"grid grid-cols-2 gap-4\">
+                  <Card title=\"Workspace Info\" gradient=\"blue\">
+                    <div className=\"space-y-3\">
                       <div>
-                        <Label>Description</Label>
-                        <p className="text-sm text-gray-600">{selectedWorkspace.description}</p>
+                        <Label className=\"text-gray-400\">Description</Label>
+                        <p className=\"text-sm text-white\">{selectedWorkspace.description}</p>
                       </div>
                       <div>
-                        <Label>Owner</Label>
-                        <p className="text-sm">{selectedWorkspace.owner.name} ({selectedWorkspace.owner.email})</p>
+                        <Label className=\"text-gray-400\">Owner</Label>
+                        <p className=\"text-sm text-white\">{selectedWorkspace.owner.name} ({selectedWorkspace.owner.email})</p>
                       </div>
                       <div>
-                        <Label>Created</Label>
-                        <p className="text-sm">{formatDate(selectedWorkspace.createdAt)}</p>
+                        <Label className=\"text-gray-400\">Created</Label>
+                        <p className=\"text-sm text-white\">{formatDate(selectedWorkspace.createdAt)}</p>
                       </div>
                       <div>
-                        <Label>Last Activity</Label>
-                        <p className="text-sm">{formatDate(selectedWorkspace.lastActivity)}</p>
+                        <Label className=\"text-gray-400\">Last Activity</Label>
+                        <p className=\"text-sm text-white\">{formatDate(selectedWorkspace.lastActivity)}</p>
                       </div>
-                    </CardContent>
+                    </div>
                   </Card>
 
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-lg">Usage Statistics</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <div className="flex justify-between">
+                  <Card title=\"Usage Statistics\" gradient=\"purple\">
+                    <div className=\"space-y-3\">
+                      <div className=\"flex justify-between text-gray-300\">
                         <span>Members:</span>
-                        <span className="font-medium">{selectedWorkspace.members}</span>
+                        <span className=\"font-medium text-white\">{selectedWorkspace.members}</span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className=\"flex justify-between text-gray-300\">
                         <span>Agents:</span>
-                        <span className="font-medium">{selectedWorkspace.agents}</span>
+                        <span className=\"font-medium text-white\">{selectedWorkspace.agents}</span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className=\"flex justify-between text-gray-300\">
                         <span>Workflows:</span>
-                        <span className="font-medium">{selectedWorkspace.workflows}</span>
+                        <span className=\"font-medium text-white\">{selectedWorkspace.workflows}</span>
                       </div>
                       <div>
-                        <div className="flex justify-between mb-1">
+                        <div className=\"flex justify-between mb-1 text-sm text-gray-400\">
                           <span>Storage:</span>
-                          <span className="font-medium">{formatStorage(selectedWorkspace.storage.used, selectedWorkspace.storage.limit)}</span>
+                          <span className=\"font-medium text-white\">{formatStorage(selectedWorkspace.storage.used, selectedWorkspace.storage.limit)}</span>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div className=\"w-full bg-white/10 rounded-full h-2\">
                           <div
-                            className="bg-blue-600 h-2 rounded-full"
+                            className=\"bg-blue-500 h-2 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]\"
                             style={{ width: `${Math.min(getStoragePercentage(selectedWorkspace.storage.used, selectedWorkspace.storage.limit), 100)}%` }}
                           ></div>
                         </div>
                       </div>
-                    </CardContent>
+                    </div>
                   </Card>
                 </div>
               </TabsContent>
 
-              <TabsContent value="members">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Workspace Members</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-600">Member management functionality would be implemented here.</p>
-                  </CardContent>
+              <TabsContent value=\"members\">
+                <Card title=\"Workspace Members\" gradient=\"cyan\">
+                  <p className=\"text-gray-400 italic\">Member management functionality would be implemented here.</p>
                 </Card>
               </TabsContent>
 
-              <TabsContent value="activity">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Recent Activity</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-600">Activity logs and analytics would be displayed here.</p>
-                  </CardContent>
+              <TabsContent value=\"activity\">
+                <Card title=\"Recent Activity\" gradient=\"green\">
+                  <p className=\"text-gray-400 italic\">Activity logs and analytics would be displayed here.</p>
                 </Card>
               </TabsContent>
 
-              <TabsContent value="settings">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Workspace Settings</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-600">Workspace configuration options would be available here.</p>
-                  </CardContent>
+              <TabsContent value=\"settings\">
+                <Card title=\"Workspace Settings\" gradient=\"orange\">
+                  <p className=\"text-gray-400 italic\">Workspace configuration options would be available here.</p>
                 </Card>
               </TabsContent>
             </Tabs>
@@ -486,35 +460,30 @@ const WorkspaceManagement: React.FC = () => {
 
       {/* Create Workspace Dialog */}
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-        <DialogContent>
+        <DialogContent className=\"bg-slate-900 border-white/10\">
           <DialogHeader>
-            <DialogTitle>Create New Workspace</DialogTitle>
+            <DialogTitle className=\"text-white\">Create New Workspace</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
+          <div className=\"space-y-4\">
             <div>
-              <Label htmlFor="workspace-name">Workspace Name</Label>
-              <Input id="workspace-name" placeholder="Enter workspace name" />
+              <Input label=\"Workspace Name\" id=\"workspace-name\" placeholder=\"Enter workspace name\" />
             </div>
             <div>
-              <Label htmlFor="workspace-description">Description</Label>
-              <Input id="workspace-description" placeholder="Enter workspace description" />
+              <Input label=\"Description\" id=\"workspace-description\" placeholder=\"Enter workspace description\" />
             </div>
             <div>
-              <Label htmlFor="workspace-plan">Plan</Label>
-              <Select>
-                <SelectTrigger id="workspace-plan">
-                  <SelectValue placeholder="Select plan" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="free">Free</SelectItem>
-                  <SelectItem value="pro">Pro</SelectItem>
-                  <SelectItem value="enterprise">Enterprise</SelectItem>
-                </SelectContent>
-              </Select>
+              <Select 
+                label=\"Plan\"
+                options={[
+                  { value: 'free', label: 'Free' },
+                  { value: 'pro', label: 'Pro' },
+                  { value: 'enterprise', label: 'Enterprise' },
+                ]}
+              />
             </div>
-            <div className="flex gap-2 pt-4">
-              <Button className="flex-1">Create Workspace</Button>
-              <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
+            <div className=\"flex gap-2 pt-4\">
+              <Button variant=\"primary\" className=\"flex-1\">Create Workspace</Button>
+              <Button variant=\"outline\" onClick={() => setShowCreateDialog(false)}>
                 Cancel
               </Button>
             </div>

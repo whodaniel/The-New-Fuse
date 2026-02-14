@@ -1,13 +1,8 @@
-import { Button } from '@/components/ui/button';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+  PremiumButton as Button,
+  PremiumInput as Input,
+  GlassCard,
+} from '@/components/ui/premium';
 import { useWorkflow } from '@/hooks';
 import { WorkflowTemplate } from '@/services/WorkflowService';
 import { ChevronLeft, Copy, Loader2, Plus, Search } from 'lucide-react';
@@ -99,12 +94,12 @@ const WorkflowTemplates: React.FC = () => {
           </div>
         </div>
 
-        <Button asChild>
-          <Link to="/workflows/builder">
-            <Plus className="h-4 w-4 mr-2" />
+        <Link to=\"/workflows/builder\">
+          <Button variant=\"primary\">
+            <Plus className=\"h-4 w-4 mr-2\" />
             Create from Scratch
-          </Link>
-        </Button>
+          </Button>
+        </Link>
       </div>
 
       {loading ? (
@@ -113,45 +108,42 @@ const WorkflowTemplates: React.FC = () => {
         </div>
       ) : (
         <div className="flex flex-col md:flex-row gap-6">
-          <div className="md:w-64 space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Filters</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+          <div className=\"md:w-64 space-y-6\">
+            <GlassCard title=\"Filters\" gradient=\"blue\">
+              <div className=\"space-y-4\">
                 <div>
-                  <h3 className="text-sm font-medium mb-2">Category</h3>
-                  <div className="space-y-2">
-                    <div className="flex items-center">
+                  <h3 className=\"text-sm font-medium text-white mb-2\">Category</h3>
+                  <div className=\"space-y-2\">
+                    <div className=\"flex items-center\">
                       <input
-                        id="category-all"
-                        type="radio"
-                        name="category"
-                        className="h-4 w-4 text-primary border-gray-300 focus:ring-primary"
+                        id=\"category-all\"
+                        type=\"radio\"
+                        name=\"category\"
+                        className=\"h-4 w-4 text-blue-500 border-white/10 bg-black/20 focus:ring-blue-500\"
                         checked={selectedCategory === null}
                         onChange={() => setSelectedCategory(null)}
                       />
                       <label
-                        htmlFor="category-all"
-                        className="ml-2 text-sm text-gray-700 dark:text-gray-300"
+                        htmlFor=\"category-all\"
+                        className=\"ml-2 text-sm text-gray-300\"
                       >
                         All Categories
                       </label>
                     </div>
 
                     {categories.map((category) => (
-                      <div key={category} className="flex items-center">
+                      <div key={category} className=\"flex items-center\">
                         <input
                           id={`category-${category}`}
-                          type="radio"
-                          name="category"
-                          className="h-4 w-4 text-primary border-gray-300 focus:ring-primary"
+                          type=\"radio\"
+                          name=\"category\"
+                          className=\"h-4 w-4 text-blue-500 border-white/10 bg-black/20 focus:ring-blue-500\"
                           checked={selectedCategory === category}
                           onChange={() => setSelectedCategory(category)}
                         />
                         <label
                           htmlFor={`category-${category}`}
-                          className="ml-2 text-sm text-gray-700 dark:text-gray-300"
+                          className=\"ml-2 text-sm text-gray-300\"
                         >
                           {category}
                         </label>
@@ -161,38 +153,38 @@ const WorkflowTemplates: React.FC = () => {
                 </div>
 
                 <div>
-                  <h3 className="text-sm font-medium mb-2">Complexity</h3>
-                  <div className="space-y-2">
-                    <div className="flex items-center">
+                  <h3 className=\"text-sm font-medium text-white mb-2\">Complexity</h3>
+                  <div className=\"space-y-2\">
+                    <div className=\"flex items-center\">
                       <input
-                        id="complexity-all"
-                        type="radio"
-                        name="complexity"
-                        className="h-4 w-4 text-primary border-gray-300 focus:ring-primary"
+                        id=\"complexity-all\"
+                        type=\"radio\"
+                        name=\"complexity\"
+                        className=\"h-4 w-4 text-blue-500 border-white/10 bg-black/20 focus:ring-blue-500\"
                         checked={selectedComplexity === null}
                         onChange={() => setSelectedComplexity(null)}
                       />
                       <label
-                        htmlFor="complexity-all"
-                        className="ml-2 text-sm text-gray-700 dark:text-gray-300"
+                        htmlFor=\"complexity-all\"
+                        className=\"ml-2 text-sm text-gray-300\"
                       >
                         All Complexities
                       </label>
                     </div>
 
                     {complexities.map((complexity) => (
-                      <div key={complexity} className="flex items-center">
+                      <div key={complexity} className=\"flex items-center\">
                         <input
                           id={`complexity-${complexity}`}
-                          type="radio"
-                          name="complexity"
-                          className="h-4 w-4 text-primary border-gray-300 focus:ring-primary"
+                          type=\"radio\"
+                          name=\"complexity\"
+                          className=\"h-4 w-4 text-blue-500 border-white/10 bg-black/20 focus:ring-blue-500\"
                           checked={selectedComplexity === complexity}
                           onChange={() => setSelectedComplexity(complexity)}
                         />
                         <label
                           htmlFor={`complexity-${complexity}`}
-                          className="ml-2 text-sm text-gray-700 dark:text-gray-300 capitalize"
+                          className=\"ml-2 text-sm text-gray-300 capitalize\"
                         >
                           {complexity}
                         </label>
@@ -200,8 +192,8 @@ const WorkflowTemplates: React.FC = () => {
                     ))}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </GlassCard>
           </div>
 
           <div className="flex-1">
@@ -226,67 +218,64 @@ const WorkflowTemplates: React.FC = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredTemplates.map((template) => (
-                  <Card
+                  <GlassCard
                     key={template.id}
-                    className="overflow-hidden flex flex-col h-full hover:shadow-lg transition-shadow"
+                    title={template.name}
+                    subtitle={template.description}
+                    gradient=\"blue\"
+                    className=\"overflow-hidden flex flex-col h-full hover:shadow-lg transition-shadow\"
                   >
-                    <CardHeader className="pb-2">
-                      <div className="flex justify-between items-start">
-                        <CardTitle className="text-lg line-clamp-1" title={template.name}>
-                          {template.name}
-                        </CardTitle>
+                    <div className=\"grow space-y-4\">
+                      <div className=\"flex justify-between items-start mb-2\">
                         <span
                           className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${
                             template.complexity === 'low'
-                              ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                              ? 'bg-green-500/20 text-green-400'
                               : template.complexity === 'medium'
-                                ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
-                                : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                                ? 'bg-yellow-500/20 text-yellow-400'
+                                : 'bg-red-500/20 text-red-400'
                           }`}
                         >
                           {template.complexity}
                         </span>
                       </div>
-                      <CardDescription className="line-clamp-2 h-10">
-                        {template.description}
-                      </CardDescription>
-                    </CardHeader>
-
-                    <CardContent className="pb-2 grow">
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <span className="mr-4">Category: {template.category}</span>
-                        <span>
-                          Popularity: <span className="capitalize">{template.popularity}</span>
-                        </span>
+                      
+                      <div className=\"flex flex-col gap-1\">
+                        <div className=\"flex items-center text-sm text-gray-400\">
+                          <span className=\"mr-4\">Category: {template.category}</span>
+                          <span>
+                            Popularity: <span className=\"capitalize text-white\">{template.popularity}</span>
+                          </span>
+                        </div>
+                        <div className=\"flex items-center text-sm text-gray-400 mt-1\">
+                          <span className=\"mr-4\">Nodes: {template.nodes.length}</span>
+                          <span>Connections: {template.edges.length}</span>
+                        </div>
                       </div>
-                      <div className="flex items-center text-sm text-muted-foreground mt-1">
-                        <span className="mr-4">Nodes: {template.nodes.length}</span>
-                        <span>Connections: {template.edges.length}</span>
-                      </div>
-                    </CardContent>
 
-                    <CardFooter className="flex justify-between pt-4 border-t border-border">
-                      <Button
-                        variant="default"
-                        size="sm"
-                        className="w-full"
-                        onClick={() => handleUseTemplate(template.id)}
-                        disabled={processingTemplateId === template.id}
-                      >
-                        {processingTemplateId === template.id ? (
-                          <>
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                            Creating...
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="h-4 w-4 mr-2" />
-                            Use Template
-                          </>
-                        )}
-                      </Button>
-                    </CardFooter>
-                  </Card>
+                      <div className=\"pt-4 border-t border-white/5\">
+                        <Button
+                          variant=\"primary\"
+                          size=\"sm\"
+                          className=\"w-full\"
+                          onClick={() => handleUseTemplate(template.id)}
+                          disabled={processingTemplateId === template.id}
+                        >
+                          {processingTemplateId === template.id ? (
+                            <>
+                              <Loader2 className=\"h-4 w-4 mr-2 animate-spin\" />
+                              Creating...
+                            </>
+                          ) : (
+                            <>
+                              <Copy className=\"h-4 w-4 mr-2\" />
+                              Use Template
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  </GlassCard>
                 ))}
               </div>
             )}

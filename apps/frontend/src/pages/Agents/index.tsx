@@ -1,5 +1,5 @@
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
+import { PremiumInput } from '@/components/ui/premium';
 import { GlassCard, PremiumButton } from '@/components/ui/premium';
 import { agentService, type Agent } from '@/services/AgentService';
 import { motion } from 'framer-motion';
@@ -189,7 +189,7 @@ const Agents: React.FC = () => {
         <div className="flex flex-col md:flex-row gap-lg">
           <div className="relative flex-1">
             <Search className="absolute left-lg top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-            <Input
+            <PremiumInput
               placeholder="Search agents by name or description..."
               className="h-14 pl-14 text-base bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
               value={searchQuery}

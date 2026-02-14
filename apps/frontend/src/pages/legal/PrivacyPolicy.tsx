@@ -1,13 +1,9 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { GlassCard } from '@/components/ui/premium';
 const PrivacyPolicy = () => {
     return (<div className="container mx-auto py-8 px-4">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">Privacy Policy</CardTitle>
-          <p className="text-sm text-muted-foreground">Last updated: January 17, 2025</p>
-        </CardHeader>
-        <CardContent className="prose dark:prose-invert max-w-none">
+      <GlassCard title="Privacy Policy" subtitle="Last updated: January 17, 2025">
+        <div className="prose dark:prose-invert max-w-none">
           <h2>1. Introduction</h2>
           <p>
             Welcome to The New Fuse ("we," "our," or "us"). We respect your privacy and are committed
@@ -75,8 +71,8 @@ const PrivacyPolicy = () => {
             © 2025 Daniel Adam Goldberg. All rights reserved. The New Fuse and all related content,
             software, and services are the intellectual property of Daniel Adam Goldberg.
           </p>
-        </CardContent>
-      </Card>
+        </div>
+      </GlassCard>
     </div>);
 };
 export default PrivacyPolicy;
