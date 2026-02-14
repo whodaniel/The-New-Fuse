@@ -1,33 +1,39 @@
-"use strict";
 'use client';
-Object.defineProperty(exports, "__esModule", { value: true });
-import react_1 from 'react';
-import card_1 from '@/components/ui/card';
-import button_1 from '@/components/ui/button';
-import input_1 from '@/components/ui/input';
-import label_1 from '@/components/ui/label';
-import websocket_1 from '../services/websocket';
+import { Label } from '@/components/ui/label';
+import { GlassCard as Card } from '@/components/ui/premium/GlassCard';
+import { PremiumButton as Button } from '@/components/ui/premium/PremiumButton';
+import { PremiumInput as Input } from '@/components/ui/premium/PremiumInput';
+import { useState } from 'react';
+import { webSocketService } from '../services/websocket';
+
 export function WebhookManager() {
-    const [webhookUrl, setWebhookUrl] = (0, react_1.useState)('');
-    const handleAddWebhook = () => {
-        if (webhookUrl) {
-            websocket_1.webSocketService.send('addWebhook', { url: webhookUrl });
-            setWebhookUrl('');
-        }
-    };
-    return (<card_1.Card className="w-full max-w-md">
-      <card_1.CardHeader>
-        <card_1.CardTitle>Webhook Manager</card_1.CardTitle>
-      </card_1.CardHeader>
-      <card_1.CardContent>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <label_1.Label htmlFor="webhookUrl">Webhook URL</label_1.Label>
-            <input_1.Input id="webhookUrl" value={webhookUrl} onChange={(e) => setWebhookUrl(e.target.value)} placeholder="https://example.com/webhook"/>
-          </div>
-          <button_1.Button onClick={handleAddWebhook} className="w-full">Add Webhook</button_1.Button>
+  const [webhookUrl, setWebhookUrl] = useState('');
+
+  const handleAddWebhook = () => {
+    if (webhookUrl) {
+      webSocketService.send('addWebhook', { url: webhookUrl });
+      setWebhookUrl('');
+    }
+  };
+
+  return (
+    <Card title="Webhook Manager" gradient="orange" className="w-full max-w-md">
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="webhookUrl" className="text-white">
+            Webhook URL
+          </Label>
+          <Input
+            id="webhookUrl"
+            value={webhookUrl}
+            onChange={(e) => setWebhookUrl(e.target.value)}
+            placeholder="https://example.com/webhook"
+          />
         </div>
-      </card_1.CardContent>
-    </card_1.Card>);
+        <Button onClick={handleAddWebhook} fullWidth variant="gradient">
+          Add Webhook
+        </Button>
+      </div>
+    </Card>
+  );
 }
-;

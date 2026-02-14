@@ -82,3 +82,27 @@ OPENCLAW_GATEWAY_TOKEN=your_token
 - **Fault tolerance**: Multiple orchestrators and fallback models
 - **Cost efficiency**: Free models (GLM-5, MiniMax M2.5)
 - **Extensibility**: MCP tools for any external integration
+
+### 6. Advanced Network Capabilities (New!)
+
+#### Dynamic Channel Management
+
+Agents can now programmatically create and manage channels using the **TNF
+Network MCP Skill**.
+
+- **Create Channel**: `tnf_create_channel(name="MyProject")`
+- **List Channels**: `tnf_list_channels()`
+- **List Agents**: `tnf_list_agents()`
+- **Invite Agent**: `tnf_invite_agent(agentId="...", channel="...")`
+
+#### Persistence
+
+- Channels created dynamically are persisted to Redis and survive relay
+  restarts.
+- Initial channels are always loaded from `MasterClock` config.
+
+#### Integration
+
+To use these capabilities, ensure the `tnf-network-mcp` server is running and
+configured in your agent's toolset. See `TNF_NETWORK_SKILL_USAGE.md` for full
+documentation.

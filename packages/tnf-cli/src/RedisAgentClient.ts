@@ -57,7 +57,8 @@ export class RedisAgentClient {
   private publisher: Redis | null = null;
   private subscriber: Redis | null = null;
   private agentInfo: AgentInfo | null = null;
-  private messageHandlers: Map<string, Array<(message: AgentMessage, channel: string) => void>> = new Map();
+  private messageHandlers: Map<string, Array<(message: AgentMessage, channel: string) => void>> =
+    new Map();
   private heartbeatTimer: NodeJS.Timeout | null = null;
   public currentConversation: string | null = null;
 
@@ -277,6 +278,44 @@ export class RedisAgentClient {
     }
 
     return agentList;
+  }
+
+  async createChannel(channelName: string) {
+    if (!this.publisher) throw new Error('Client not initialized');
+
+    // We send a message to the orchestrator channel requesting creation
+    // But since MasterClock listens to ingress (or checks types), we can publish a structured message
+    // Actually, MasterClock listens to redis ingress 'tnf:bus:ingress'
+
+    await this.publisher.publish(
+      'tnf:bus:ingress',
+      JSON.stringify({
+        type: 'CHANNEL_CREATE',
+        source: this.agentInfo?.id || 'unknown',
+        channel: channelName,
+        timestamp: Date.now(),
+        payload: { name: channelName },
+      })
+    );
+
+    return channelName;
+  }
+
+  async getChannels(): Promise<string[]> {
+    if (!this.publisher) return [];
+
+    // Query Redis directly for channels
+    const channels = await this.publisher.smembers('tnf:master:channels');
+
+    // Also merge with static config if needed, but MasterClock persists static to Redis on startup?
+    // Wait, MasterClock::joinAllChannels adds them to Redis if persistent logic was fully correct,
+    // but in my previous edit I only read from Redis.
+    // I should probably just return what's in Redis + maybe hardcoded defaults if Redis is empty.
+
+    const defaultChannels = ['Green', 'Blue', 'Red', 'Yellow', 'Purple', 'General'];
+    const allChannels = new Set([...defaultChannels, ...channels]);
+
+    return Array.from(allChannels);
   }
 
   async cleanup() {

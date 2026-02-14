@@ -1,6 +1,6 @@
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { PremiumInput as Input } from '@/components/ui/premium/PremiumInput';
 import {
   Select,
   SelectContent,

@@ -58,10 +58,10 @@
  * - LOG_LEVEL: debug|info|warn|error (default: info)
  */
 
-import WebSocket from 'ws';
-import { createClient, RedisClientType } from 'redis';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { createClient } from 'redis';
+import WebSocket from 'ws';
 
 // ============================================================================
 // CONFIGURATION
@@ -386,7 +386,9 @@ class MasterClock {
     this.redisSub = createClient({ url: CONFIG.REDIS_URL });
 
     this.redis.on('error', (err: any) => log('error', 'REDIS', `Client error: ${err.message}`));
-    this.redisSub.on('error', (err: any) => log('error', 'REDIS', `Subscriber error: ${err.message}`));
+    this.redisSub.on('error', (err: any) =>
+      log('error', 'REDIS', `Subscriber error: ${err.message}`)
+    );
 
     await this.redis.connect();
     await this.redisSub.connect();
@@ -475,19 +477,37 @@ class MasterClock {
     });
   }
 
-  joinAllChannels() {
-    for (const channel of CONFIG.CHANNELS) {
+  async joinAllChannels() {
+    const channelsToJoin = new Set(CONFIG.CHANNELS);
+
+    // Load persisted channels from Redis
+    if (this.redis) {
+      try {
+        const persistedChannels = await this.redis.sMembers(CONFIG.REDIS_KEYS.CHANNELS);
+        for (const ch of persistedChannels) {
+          channelsToJoin.add(ch);
+        }
+      } catch (e) {
+        log('warn', 'REDIS', 'Failed to load persisted channels', e);
+      }
+    }
+
+    for (const channel of channelsToJoin) {
       this.send({
         type: 'CHANNEL_CREATE',
         payload: { name: channel },
       });
 
-      this.channels.set(channel, {
-        members: new Set(),
-        lastActivity: Date.now(),
-        messageCount: 0,
-      });
+      if (!this.channels.has(channel)) {
+        this.channels.set(channel, {
+          members: new Set(),
+          lastActivity: Date.now(),
+          messageCount: 0,
+        });
+      }
     }
+
+    log('info', 'MASTER', `Managed Channels: ${Array.from(channelsToJoin).join(', ')}`);
 
     // Broadcast initial discovery
     setTimeout(() => this.broadcastDiscovery(), 2000);
@@ -672,6 +692,9 @@ class MasterClock {
       case 'AGENT_JOINED':
         this.handleAgentJoined(msg);
         break;
+      case 'CHANNEL_CREATE':
+        this.handleChannelCreate(msg);
+        break;
       case 'WELCOME':
         log('debug', 'RELAY', 'Welcome received', { clientId: msg.clientId });
         break;
@@ -766,6 +789,38 @@ class MasterClock {
         const newId = this.registry.assignAgentId(agentId, { channel });
         this.broadcastToChannel(channel, this.createAssignmentMessage(newId));
       }
+    }
+  }
+
+  async handleChannelCreate(msg: any) {
+    const channelName = msg.payload?.name || msg.channel;
+    if (!channelName) return;
+
+    if (!this.channels.has(channelName)) {
+      log('info', 'CHANNEL', `Dynamic channel creation request: ${channelName}`, {
+        requestedBy: msg.source,
+      });
+
+      // Create channel locally
+      this.channels.set(channelName, {
+        members: new Set(),
+        lastActivity: Date.now(),
+        messageCount: 0,
+      });
+
+      // Send CREATE to Relay (to ensure WebSocket rooms exist if needed)
+      this.send({
+        type: 'CHANNEL_CREATE',
+        payload: { name: channelName },
+      });
+
+      // Persist to Redis
+      if (this.redis) {
+        await this.redis.sAdd(CONFIG.REDIS_KEYS.CHANNELS, channelName);
+      }
+
+      // Broadcast new channel existence
+      this.broadcastToChannel('General', `📢 New channel created: ${channelName}`);
     }
   }
 

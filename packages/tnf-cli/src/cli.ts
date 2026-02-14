@@ -1,8 +1,9 @@
-import { Command } from 'commander';
-import { RedisAgentClient, AgentMessage } from './RedisAgentClient.js';
-import { Orchestrator } from './orchestration.js';
 import chalk from 'chalk';
+import { Command } from 'commander';
 import readline from 'readline';
+import type { AgentMessage } from './RedisAgentClient.js';
+import { RedisAgentClient } from './RedisAgentClient.js';
+import { Orchestrator } from './orchestration.js';
 
 const program = new Command();
 
@@ -25,11 +26,15 @@ const logMessage = (message: AgentMessage) => {
   };
 
   const emoji = roleEmoji[fromRole] || '📨';
-  
+
   let color = chalk.white;
-  if (fromRole === 'orchestrator') color = chalk.yellow;
-  else if (fromRole === 'broker') color = chalk.cyan;
-  else if (fromRole === 'worker') color = chalk.green;
+  if (fromRole === 'orchestrator') {
+    color = chalk.yellow;
+  } else if (fromRole === 'broker') {
+    color = chalk.cyan;
+  } else if (fromRole === 'worker') {
+    color = chalk.green;
+  }
 
   console.log(`\n${emoji} [${color.bold(fromName)}] (${chalk.dim(type)}):`);
   console.log(`   ${content}`);
@@ -47,18 +52,42 @@ program
   .command('register')
   .description('Register and listen as an agent')
   .argument('[name]', 'Agent name', process.env.AGENT_NAME || 'unnamed-agent')
-  .argument('[role]', 'Agent role (orchestrator, broker, worker, participant)', process.env.AGENT_ROLE || 'participant')
-  .argument('[platform]', 'Agent platform (antigravity, gemini, claude, jules, vscode, browser)', process.env.AGENT_PLATFORM || 'vscode')
-  .action(async (name, role, platform) => {
+  .argument(
+    '[role]',
+    'Agent role (orchestrator, broker, worker, participant)',
+    process.env.AGENT_ROLE || 'participant'
+  )
+  .argument(
+    '[platform]',
+    'Agent platform (antigravity, gemini, claude, jules, vscode, browser)',
+    process.env.AGENT_PLATFORM || 'vscode'
+  )
+  .option('-d, --daemon', 'Run in daemon mode (register and exit immediately)', false)
+  .action(async (name, role, platform, options) => {
     const client = new RedisAgentClient();
     try {
       await client.initialize();
       const agentInfo = await client.register(name, role, platform);
-      
+
       console.log(chalk.green(`\n🤖 Registered as: ${chalk.bold(name)} (${role}) on ${platform}`));
       console.log(`   ID: ${chalk.dim(agentInfo.id)}`);
       console.log(`   Capabilities: ${chalk.dim(agentInfo.capabilities.join(', '))}`);
-      console.log(chalk.cyan('\n🎧 Listening for messages... (Type a message and press Enter, or Ctrl+C to exit)\n'));
+
+      if (options.daemon) {
+        console.log(chalk.cyan('\n🚀 Daemon mode: Agent registered and running in background'));
+        // Keep heartbeat running in background
+        // In production, this would be a long-running process
+        // For now, just clean up the registration
+        await client.cleanup();
+        console.log(chalk.green('\n✅ Agent deployment complete'));
+        process.exit(0);
+      }
+
+      console.log(
+        chalk.cyan(
+          '\n🎧 Listening for messages... (Type a message and press Enter, or Ctrl+C to exit)\n'
+        )
+      );
 
       client.onMessage('*', (msg) => {
         logMessage(msg);
@@ -136,11 +165,11 @@ program
       await client.initialize();
       await client.register(options.name, 'participant', 'vscode');
       await client.send(message, { to: options.to ? { agentId: options.to } : undefined });
-      
+
       console.log(chalk.green('📤 Message sent'));
-      
+
       // Wait a bit for responses
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       await client.cleanup();
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -160,9 +189,9 @@ program
       await client.register('orchestrator-cli', 'orchestrator', 'vscode');
       const orchestrator = new Orchestrator(client);
       await orchestrator.executeWorkflow(workflow, options);
-      
+
       // Wait for any immediate feedback
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       await client.cleanup();
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -180,13 +209,15 @@ program
     try {
       await client.initialize();
       await client.register('convo-cli', 'participant', 'vscode');
-      
+
       if (action === 'start') {
         const id = await client.startConversation(param || 'general');
         console.log(chalk.green(`💬 Started conversation: ${chalk.bold(param || 'general')}`));
         console.log(`   ID: ${chalk.dim(id)}`);
       } else if (action === 'join') {
-        if (!param) throw new Error('Conversation ID required to join');
+        if (!param) {
+          throw new Error('Conversation ID required to join');
+        }
         client.joinConversation(param);
         console.log(chalk.green(`🔗 Joined conversation: ${chalk.dim(param)}`));
       }

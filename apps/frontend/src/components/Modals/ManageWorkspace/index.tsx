@@ -5,8 +5,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
 import { PremiumButton as Button } from '@/components/ui/premium/PremiumButton';
+import { PremiumInput as Input } from '@/components/ui/premium/PremiumInput';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { FileText, Link, Upload } from '@phosphor-icons/react';

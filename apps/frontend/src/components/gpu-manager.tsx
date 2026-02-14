@@ -1,51 +1,70 @@
-"use strict";
 'use client';
-Object.defineProperty(exports, "__esModule", { value: true });
-import react_1 from 'react';
-import card_1 from '@/components/ui/card';
-import button_1 from '@/components/ui/button';
-import table_1 from '@/components/ui/table';
-import websocket_1 from '../services/websocket';
-export function GPUManager() {
-    const [gpus, setGPUs] = (0, react_1.useState)([]);
-    (0, react_1.useEffect)(() => {
-        websocket_1.webSocketService.send('getAvailableGPUs', {});
-        websocket_1.webSocketService.on('gpuListUpdate', setGPUs);
-        return () => {
-            websocket_1.webSocketService.off('gpuListUpdate', () => { });
-        };
-    }, []);
-    const handleRentGPU = (gpuId) => {
-        websocket_1.webSocketService.send('rentGPU', { gpuId });
-    };
-    return (<card_1.Card className="w-full max-w-2xl">
-      <card_1.CardHeader>
-        <card_1.CardTitle>GPU Manager</card_1.CardTitle>
-      </card_1.CardHeader>
-      <card_1.CardContent>
-        <table_1.Table>
-          <table_1.TableHeader>
-            <table_1.TableRow>
-              <table_1.TableHead>GPU Model</table_1.TableHead>
-              <table_1.TableHead>VRAM</table_1.TableHead>
-              <table_1.TableHead>Status</table_1.TableHead>
-              <table_1.TableHead>Action</table_1.TableHead>
-            </table_1.TableRow>
-          </table_1.TableHeader>
-          <table_1.TableBody>
-            {gpus.map(gpu => (<table_1.TableRow key={gpu.id}>
-                <table_1.TableCell>{gpu.model}</table_1.TableCell>
-                <table_1.TableCell>{gpu.vram} GB</table_1.TableCell>
-                <table_1.TableCell>{gpu.status}</table_1.TableCell>
-                <table_1.TableCell>
-                  <button_1.Button onClick={() => handleRentGPU(gpu.id)} disabled={gpu.status !== 'available'}>
-                    Rent
-                  </button_1.Button>
-                </table_1.TableCell>
-              </table_1.TableRow>))}
-          </table_1.TableBody>
-        </table_1.Table>
-      </card_1.CardContent>
-    </card_1.Card>);
+import { GlassCard as Card } from '@/components/ui/premium/GlassCard';
+import { PremiumButton as Button } from '@/components/ui/premium/PremiumButton';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { useEffect, useState } from 'react';
+import { webSocketService } from '../services/websocket';
+
+interface GPU {
+  id: string;
+  model: string;
+  vram: number;
+  status: string;
 }
-;
+
+export function GPUManager() {
+  const [gpus, setGPUs] = useState<GPU[]>([]);
+
+  useEffect(() => {
+    webSocketService.send('getAvailableGPUs', {});
+    webSocketService.on('gpuListUpdate', setGPUs);
+    return () => {
+      webSocketService.off('gpuListUpdate', () => {});
+    };
+  }, []);
+
+  const handleRentGPU = (gpuId: string) => {
+    webSocketService.send('rentGPU', { gpuId });
+  };
+
+  return (
+    <Card title="GPU Manager" gradient="orange" className="w-full max-w-2xl">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="text-white">GPU Model</TableHead>
+            <TableHead className="text-white">VRAM</TableHead>
+            <TableHead className="text-white">Status</TableHead>
+            <TableHead className="text-white">Action</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {gpus.map((gpu) => (
+            <TableRow key={gpu.id}>
+              <TableCell className="text-white">{gpu.model}</TableCell>
+              <TableCell className="text-white">{gpu.vram} GB</TableCell>
+              <TableCell className="text-white">{gpu.status}</TableCell>
+              <TableCell>
+                <Button
+                  onClick={() => handleRentGPU(gpu.id)}
+                  disabled={gpu.status !== 'available'}
+                  variant="primary"
+                  size="sm"
+                >
+                  Rent
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </Card>
+  );
+}

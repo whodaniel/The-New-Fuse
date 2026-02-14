@@ -1,4 +1,4 @@
-import { Card, CardContent } from '@/components/ui/card';
+import { GlassCard as Card } from '@/components/ui/premium/GlassCard';
 import React from 'react';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
@@ -18,47 +18,42 @@ export const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ data }) 
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-sm font-medium">Success Rate</div>
-            <div className="text-2xl font-bold">{latestMetrics?.successRate}%</div>
-          </CardContent>
+        <Card title="Success Rate" gradient="blue" className="text-center">
+          <div className="text-2xl font-bold text-white">{latestMetrics?.successRate}%</div>
         </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-sm font-medium">Error Rate</div>
-            <div className="text-2xl font-bold">{latestMetrics?.errorRate}%</div>
-          </CardContent>
+        <Card title="Error Rate" gradient="red" className="text-center">
+          <div className="text-2xl font-bold text-white">{latestMetrics?.errorRate}%</div>
         </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-sm font-medium">Avg Response Time</div>
-            <div className="text-2xl font-bold">{latestMetrics?.responseTime}ms</div>
-          </CardContent>
+        <Card title="Avg Response Time" gradient="cyan" className="text-center">
+          <div className="text-2xl font-bold text-white">{latestMetrics?.responseTime}ms</div>
         </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-sm font-medium">Throughput</div>
-            <div className="text-2xl font-bold">{latestMetrics?.throughput}/s</div>
-          </CardContent>
+        <Card title="Throughput" gradient="green" className="text-center">
+          <div className="text-2xl font-bold text-white">{latestMetrics?.throughput}/s</div>
         </Card>
       </div>
 
-      <div className="h-[300px]">
+      <Card title="Performance Over Time" gradient="purple" className="h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
             <XAxis
               dataKey="timestamp"
               tickFormatter={(value) => new Date(value).toLocaleTimeString()}
+              stroke="rgba(255,255,255,0.5)"
             />
-            <YAxis />
-            <Tooltip labelFormatter={(value) => new Date(value).toLocaleString()} />
-            <Bar dataKey="successRate" fill="#82ca9d" name="Success Rate %" />
-            <Bar dataKey="errorRate" fill="#ff8042" name="Error Rate %" />
+            <YAxis stroke="rgba(255,255,255,0.5)" />
+            <Tooltip
+              labelFormatter={(value) => new Date(value).toLocaleString()}
+              contentStyle={{
+                backgroundColor: 'rgba(0,0,0,0.8)',
+                border: '1px solid rgba(255,255,255,0.1)',
+              }}
+            />
+            <Bar dataKey="successRate" fill="#8884d8" name="Success %" />
+            <Bar dataKey="errorRate" fill="#ff6b6b" name="Error %" />
           </BarChart>
         </ResponsiveContainer>
-      </div>
+      </Card>
     </div>
   );
 };
