@@ -13,12 +13,8 @@ COPY kilo-auth.json /root/.local/share/kilo/auth.json
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# OpenClaw gateway port
-ENV PORT=18789
-ENV OPENCLAW_GATEWAY_PORT=18789
-ENV OPENCLAW_GATEWAY_BIND=0.0.0.0
-ENV OPENCLAW_GATEWAY_MODE=cloud
-
-EXPOSE 18789
+# OpenClaw gateway port (Railway uses 8080 by default)
+ENV PORT=8080
+EXPOSE 8080
 
 ENTRYPOINT ["/entrypoint.sh"]
