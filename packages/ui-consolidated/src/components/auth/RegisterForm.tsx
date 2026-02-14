@@ -49,7 +49,7 @@ export function RegisterForm({
   onCancel,
   showCancel = false,
   className,
-}: RegisterFormProps): JSX.Element {
+}: RegisterFormProps): React.ReactElement {
   const { register, isLoading } = useAuthContext();
 
   const [name, setName] = useState('');
