@@ -28,18 +28,18 @@ export interface ProtectedRouteProps {
  * Protected route component
  * @param props Protected route props
  * @returns Protected route component
- * 
+ *
  * @example
  * // Basic usage
  * <ProtectedRoute>
  *   <Dashboard />
  * </ProtectedRoute>
- * 
+ *
  * // With custom fallback
  * <ProtectedRoute fallback={<Navigate to="/login" />}>
  *   <Dashboard />
  * </ProtectedRoute>
- * 
+ *
  * // With custom loading component
  * <ProtectedRoute loadingComponent={<LoadingSpinner />}>
  *   <Dashboard />
@@ -50,12 +50,12 @@ export function ProtectedRoute({
   fallback = null,
   showLoading = true,
   loadingComponent = <div>Loading...</div>,
-}: ProtectedRouteProps): JSX.Element {
+}: ProtectedRouteProps): React.ReactNode {
   const { isAuthenticated, isLoading } = useAuthContext();
-  
+
   if (isLoading && showLoading) {
     return <>{loadingComponent}</>;
   }
-  
+
   return <>{isAuthenticated ? children : fallback}</>;
 }
