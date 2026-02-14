@@ -434,6 +434,7 @@ export default function AgentsPage() {
                       setSearchTerm(e.target.value)
                     }
                     className="pl-10 w-64"
+                    aria-label="Search agents"
                   />
                 </div>
                 <div className="flex gap-2">
@@ -442,6 +443,7 @@ export default function AgentsPage() {
                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                       setTypeFilter(e.target.value)
                     }
+                    aria-label="Filter by agent type"
                   >
                     <option value="all">All Types</option>
                     <option value="chat">Chat</option>
@@ -454,6 +456,7 @@ export default function AgentsPage() {
                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                       setStatusFilter(e.target.value)
                     }
+                    aria-label="Filter by agent status"
                   >
                     <option value="all">All Status</option>
                     <option value="active">Active</option>
@@ -466,6 +469,7 @@ export default function AgentsPage() {
                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                       setSortBy(e.target.value)
                     }
+                    aria-label="Sort agents"
                   >
                     <option value="lastActive">Last Active</option>
                     <option value="name">Name</option>
@@ -740,9 +744,19 @@ export default function AgentsPage() {
                             <td className="px-6 py-4">
                               <div className="flex justify-end gap-2">
                                 <Link to={`/agents/${agent.id}`}>
-                                  <PremiumButton variant="ghost" size="sm" icon={Eye} />
+                              <PremiumButton
+                                variant="ghost"
+                                size="sm"
+                                icon={Eye}
+                                ariaLabel="View Agent Details"
+                              />
                                 </Link>
-                                <PremiumButton variant="ghost" size="sm" icon={Edit3} />
+                            <PremiumButton
+                              variant="ghost"
+                              size="sm"
+                              icon={Edit3}
+                              ariaLabel="Edit Agent"
+                            />
                                 <PremiumButton
                                   variant="ghost"
                                   size="sm"
@@ -753,6 +767,7 @@ export default function AgentsPage() {
                                     )
                                   }
                                   icon={agent.status === 'active' ? Square : Play}
+                              ariaLabel={agent.status === 'active' ? 'Stop Agent' : 'Start Agent'}
                                 />
                               </div>
                             </td>

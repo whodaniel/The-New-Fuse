@@ -95,7 +95,7 @@ interface PremiumSelectProps extends InputHTMLAttributes<HTMLSelectElement> {
   label?: string;
   error?: string;
   hint?: string;
-  options: { value: string; label: string }[];
+  options?: { value: string; label: string }[];
 }
 
 /**
@@ -107,6 +107,7 @@ export const PremiumSelect: React.FC<PremiumSelectProps> = ({
   hint,
   options = [],
   className = '',
+  children,
   ...props
 }) => {
   return (
@@ -121,6 +122,7 @@ export const PremiumSelect: React.FC<PremiumSelectProps> = ({
         className={`w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 transition-all duration-200 backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed ${error ? 'border-red-500/50' : ''} ${className}`}
         {...props}
       >
+        {children}
         {options.map((option) => (
           <option key={option.value} value={option.value} className="bg-slate-800">
             {option.label}
