@@ -16,6 +16,15 @@ import { ChatService } from './services/ChatService';
 import { MCPService, getMCPService } from './services/MCPService';
 import { ToolOrchestrationService } from './services/ToolOrchestrationService';
 import { WorkspaceService } from './services/WorkspaceService';
+import {
+  A2AProtocolService,
+  AGUIProtocolService,
+  AgentRegistryService,
+  CollectiveOrchestratorService,
+  MemoryBankService,
+  ProtocolTranslationService,
+  RelayServerService,
+} from './services/tnf-framework';
 import { log, logger } from './utils/logger';
 
 /**
