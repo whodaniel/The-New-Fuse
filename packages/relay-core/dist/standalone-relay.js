@@ -1,0 +1,868 @@
+#!/usr/bin/env node
+"use strict";
+/* eslint-disable no-console */
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TNFRelayServer = void 0;
+/**
+ * TNF Relay Server - Standalone WebSocket Relay
+ * Part of @the-new-fuse/relay-core package
+ *
+ * Usage:
+ *   pnpm run relay         # Start on default port 3000
+ *   PORT=3002 pnpm run relay  # Start on custom port
+ *
+ * Endpoints:
+ *   WebSocket: ws://localhost:3000/ws
+ *   Health:    http://localhost:3000/health
+ *   Agents:    http://localhost:3000/agents
+ *   Channels:  http://localhost:3000/channels
+ */
+const events_1 = require("events");
+const http_1 = __importDefault(require("http"));
+const ws_1 = __importStar(require("ws"));
+const JWTAuthService_1 = require("./auth/JWTAuthService");
+const conversation_state_machine_1 = require("./orchestrator/conversation-state-machine");
+const subscription_registry_1 = require("./orchestrator/subscription-registry");
+const redis_relay_bridge_1 = require("./redis-relay-bridge");
+const stall_detector_1 = require("./services/stall-detector");
+// Configuration
+const PORT = parseInt(process.env.PORT || '3000', 10);
+const HEARTBEAT_INTERVAL = 30000;
+const AGENT_TIMEOUT = 60000;
+// Relay Server Class
+class TNFRelayServer extends events_1.EventEmitter {
+    server;
+    wss;
+    agents = new Map();
+    sockets = new Map();
+    channels = new Map();
+    agentChannels = new Map();
+    heartbeatInterval = null;
+    port;
+    bridge = null;
+    authService;
+    stallDetector;
+    conversationManagers = new Map();
+    subscriptionRegistry;
+    constructor(port = PORT) {
+        super();
+        this.port = port;
+        this.authService = (0, JWTAuthService_1.createAuthService)();
+        this.subscriptionRegistry = new subscription_registry_1.SubscriptionRegistry();
+        // Create HTTP server
+        this.server = http_1.default.createServer(this.handleHttpRequest.bind(this));
+        // Create WebSocket server at /ws path
+        this.wss = new ws_1.WebSocketServer({ server: this.server, path: '/ws' });
+        // Setup WebSocket handlers
+        this.setupWebSocket();
+        // Create default channel
+        this.createDefaultChannel();
+        // Initialize stall detector for conversation recovery
+        this.stallDetector = (0, stall_detector_1.createStallDetector)({
+            stallThresholdMs: 3600000, // 60 minutes (increased from 45s)
+            checkIntervalMs: 5000, // Check every 5 seconds
+            maxRecoveryAttempts: 3,
+            autoRecover: true,
+        });
+        // Handle stall recovery events
+        this.stallDetector.on('recovery:message', (event) => {
+            this.sendRecoveryMessage(event.channelId, event.message, event.metadata);
+        });
+        this.stallDetector.on('conversation:stalled', (event) => {
+            console.log(`[Relay] Conversation stalled on channel ${event.channelId}`);
+            this.emit('conversation:stalled', event);
+        });
+        this.stallDetector.on('conversation:terminated', (event) => {
+            console.log(`[Relay] Conversation terminated on channel ${event.channelId}`);
+            this.emit('conversation:terminated', event);
+        });
+        this.stallDetector.on('conversation:recovered', (event) => {
+            console.log(`[Relay] Conversation recovered on channel ${event.channelId}`);
+            const manager = this.conversationManagers.get(event.channelId);
+            if (manager && manager.getPhase() === conversation_state_machine_1.ConversationPhase.STALLED) {
+                void manager.transition(conversation_state_machine_1.ConversationPhase.EXECUTION);
+            }
+        });
+        // Initialize Redis Bridge if enabled
+        if (process.env.ENABLE_REDIS_BRIDGE === 'true') {
+            this.bridge = (0, redis_relay_bridge_1.createRedisRelayBridge)();
+            this.bridge.on('connected', () => console.log('[Relay] Bridge connected to Redis'));
+            this.bridge.on('egress', (envelope) => {
+                // Handle message from Redis -> WebSocket
+                this.handleBridgeEgress(envelope);
+            });
+            this.bridge.connect().catch((err) => console.error('[Relay] Failed to connect bridge:', err));
+        }
+    }
+    handleHttpRequest(req, res) {
+        const { url } = req;
+        // CORS headers
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+        if (req.method === 'OPTIONS') {
+            res.writeHead(200);
+            res.end();
+            return;
+        }
+        res.setHeader('Content-Type', 'application/json');
+        switch (url) {
+            case '/':
+            case '/health':
+                res.writeHead(200);
+                res.end(JSON.stringify({
+                    status: 'ok',
+                    relay: 'running',
+                    version: '1.0.0',
+                    agents: this.agents.size,
+                    channels: this.channels.size,
+                    uptime: process.uptime(),
+                    timestamp: new Date().toISOString(),
+                }));
+                break;
+            case '/agents':
+                res.writeHead(200);
+                res.end(JSON.stringify(Array.from(this.agents.values())));
+                break;
+            case '/channels':
+                res.writeHead(200);
+                res.end(JSON.stringify(Array.from(this.channels.values())));
+                break;
+            case '/status':
+                res.writeHead(200);
+                res.end(JSON.stringify({
+                    agents: Array.from(this.agents.values()),
+                    channels: Array.from(this.channels.values()),
+                    connections: this.sockets.size,
+                }));
+                break;
+            default:
+                res.writeHead(404);
+                res.end(JSON.stringify({ error: 'Not found' }));
+        }
+    }
+    getOrCreateConversationManager(channelId) {
+        let manager = this.conversationManagers.get(channelId);
+        if (!manager) {
+            console.log(`[Relay] initializing conversation state machine for ${channelId}`);
+            manager = new conversation_state_machine_1.ConversationStateMachine(channelId);
+            // Hook up state machine events
+            manager.on('phase:changed', (event) => {
+                console.log(`[Relay] Phase changed in ${event.conversationId}: ${event.from} -> ${event.to}`);
+                // Broadcast phase change to channel
+                this.broadcastToChannel(event.conversationId, {
+                    id: `sys-${Date.now()}`,
+                    type: 'CHANNEL_MESSAGE',
+                    source: 'system',
+                    channel: event.conversationId,
+                    payload: {
+                        type: 'system',
+                        content: `Conversation phase changed to: ${event.to.toUpperCase()}`,
+                        metadata: {
+                            isSystemMessage: true,
+                            phase: event.to,
+                            previousPhase: event.from,
+                        },
+                    },
+                    timestamp: Date.now(),
+                });
+            });
+            this.conversationManagers.set(channelId, manager);
+        }
+        return manager;
+    }
+    setupWebSocket() {
+        this.wss.on('connection', (ws, req) => {
+            let agentId = null;
+            console.log(`[Relay] New connection from ${req.socket.remoteAddress}`);
+            // Send welcome message
+            this.send(ws, {
+                type: 'WELCOME',
+                payload: {
+                    message: 'Connected to TNF Relay',
+                    version: '1.0.0',
+                    timestamp: Date.now(),
+                },
+            });
+            // Handle messages
+            ws.on('message', (data) => {
+                try {
+                    const message = JSON.parse(data.toString());
+                    agentId = this.handleMessage(ws, message, agentId);
+                }
+                catch (e) {
+                    console.error('[Relay] Invalid message:', e.message);
+                    this.send(ws, { type: 'ERROR', payload: { message: 'Invalid JSON' } });
+                }
+            });
+            // Handle disconnect
+            ws.on('close', () => {
+                if (agentId) {
+                    this.handleAgentDisconnect(agentId);
+                }
+            });
+            ws.on('error', (err) => {
+                console.error('[Relay] WebSocket error:', err.message);
+            });
+        });
+    }
+    handleMessage(ws, message, currentAgentId) {
+        // Forward to Redis Bridge
+        if (this.bridge && currentAgentId && message.type !== 'PING') {
+            void this.bridge.handleRelayMessage(message, currentAgentId);
+        }
+        const { type, payload, source, channel } = message;
+        const agentId = source || currentAgentId;
+        console.log(`[Relay] ${type} from ${agentId || 'unknown'}`);
+        switch (type) {
+            case 'AGENT_REGISTER': {
+                // Authenticate if token provided
+                const token = payload?.token ||
+                    message?.token;
+                let verifiedToken = null;
+                if (token) {
+                    console.log(`[Relay] Authenticating agent via JWT...`);
+                    verifiedToken = this.authService.verifyToken(token);
+                    if (!verifiedToken) {
+                        console.warn(`[Relay] Authentication failed for agent. Invalid token.`);
+                        this.send(ws, {
+                            type: 'REGISTRATION_ERROR',
+                            payload: {
+                                error: 'Invalid or expired authentication token',
+                                code: 'AUTH_FAILED',
+                            },
+                        });
+                        return null;
+                    }
+                    console.log(`[Relay] ✅ Authenticated agent: ${verifiedToken.agentId}`);
+                }
+                const agentData = payload?.agent || {};
+                const id = verifiedToken?.agentId || agentData.id || agentId || `agent-${Date.now()}`;
+                const agent = {
+                    id,
+                    name: verifiedToken?.name || agentData.name || 'Unknown Agent',
+                    platform: verifiedToken?.platform || agentData.platform || 'unknown',
+                    status: 'active',
+                    capabilities: verifiedToken?.capabilities || agentData.capabilities || [],
+                    channels: agentData.channels || [],
+                    connectedAt: Date.now(),
+                    lastSeen: Date.now(),
+                    metadata: {
+                        ...agentData.metadata,
+                        authenticated: !!verifiedToken,
+                    },
+                };
+                this.agents.set(id, agent);
+                this.sockets.set(id, ws);
+                this.agentChannels.set(id, new Set(agent.channels));
+                // Register capabilities
+                for (const cap of agent.capabilities) {
+                    this.subscriptionRegistry.register(id, `capability:${cap}`);
+                }
+                console.log(`[Relay] Agent registered: ${agent.name} (${id})`);
+                this.emit('agent:registered', agent);
+                // Send current state to new agent
+                this.send(ws, {
+                    type: 'AGENT_LIST',
+                    payload: { agents: Array.from(this.agents.values()) },
+                });
+                this.send(ws, {
+                    type: 'CHANNEL_LIST',
+                    payload: { channels: Array.from(this.channels.values()) },
+                });
+                // Send registration confirmation with auth status
+                this.send(ws, {
+                    type: 'REGISTRATION_CONFIRMED',
+                    payload: {
+                        relayInfo: {
+                            id: 'relay-standalone',
+                            version: '1.0.0',
+                            authenticated: !!verifiedToken,
+                        },
+                    },
+                });
+                // Notify other agents
+                this.broadcast({
+                    type: 'AGENT_STATUS',
+                    payload: { agent },
+                }, id);
+                return id;
+            }
+            case 'AGENT_UNREGISTER': {
+                if (agentId) {
+                    this.handleAgentDisconnect(agentId);
+                }
+                return null;
+            }
+            case 'AGENT_LIST': {
+                this.send(ws, {
+                    type: 'AGENT_LIST',
+                    payload: { agents: Array.from(this.agents.values()) },
+                });
+                break;
+            }
+            case 'CHANNEL_LIST': {
+                this.send(ws, {
+                    type: 'CHANNEL_LIST',
+                    payload: { channels: Array.from(this.channels.values()) },
+                });
+                break;
+            }
+            case 'CHANNEL_CREATE': {
+                const rawName = payload?.name || 'Unnamed Channel';
+                const requestedName = rawName.trim();
+                const normalizedRequested = requestedName.toLowerCase().replace(/\s+/g, ' ');
+                // Check if a channel with this name already exists
+                let existingChannel = null;
+                for (const ch of this.channels.values()) {
+                    const normalizedExisting = ch.name.trim().toLowerCase().replace(/\s+/g, ' ');
+                    if (normalizedExisting === normalizedRequested) {
+                        existingChannel = ch;
+                        break;
+                    }
+                }
+                if (existingChannel) {
+                    // Channel exists - join it instead of creating duplicate
+                    console.log(`[Relay] Channel '${requestedName}' (normalized: '${normalizedRequested}') already exists (${existingChannel.id}), joining instead`);
+                    if (agentId && !existingChannel.members.includes(agentId)) {
+                        existingChannel.members.push(agentId);
+                    }
+                    if (agentId) {
+                        const myChannels = this.agentChannels.get(agentId) || new Set();
+                        myChannels.add(existingChannel.id);
+                        this.agentChannels.set(agentId, myChannels);
+                    }
+                    // Send confirmation with existing channel info
+                    this.send(ws, {
+                        type: 'CHANNEL_JOINED',
+                        payload: { channel: existingChannel, wasExisting: true },
+                    });
+                }
+                else {
+                    // Create new channel
+                    const channelId = `channel-${Date.now()}`;
+                    const newChannel = {
+                        id: channelId,
+                        name: requestedName,
+                        description: payload?.description || '',
+                        createdBy: agentId || 'unknown',
+                        createdAt: Date.now(),
+                        isPrivate: payload?.isPrivate || false,
+                        members: agentId ? [agentId] : [],
+                    };
+                    this.channels.set(channelId, newChannel);
+                    if (agentId) {
+                        const myChannels = this.agentChannels.get(agentId) || new Set();
+                        myChannels.add(channelId);
+                        this.agentChannels.set(agentId, myChannels);
+                    }
+                    // Send confirmation with new channel info
+                    this.send(ws, {
+                        type: 'CHANNEL_CREATED',
+                        payload: { channel: newChannel },
+                    });
+                }
+                this.broadcast({
+                    type: 'CHANNEL_LIST',
+                    payload: { channels: Array.from(this.channels.values()) },
+                });
+                break;
+            }
+            case 'CHANNEL_JOIN': {
+                const channelId = payload?.channelId;
+                const ch = this.channels.get(channelId);
+                if (ch && agentId) {
+                    if (!ch.members.includes(agentId)) {
+                        ch.members.push(agentId);
+                    }
+                    const myChannels = this.agentChannels.get(agentId) || new Set();
+                    myChannels.add(channelId);
+                    this.agentChannels.set(agentId, myChannels);
+                }
+                break;
+            }
+            case 'CHANNEL_LEAVE': {
+                const channelId = payload?.channelId;
+                const ch = this.channels.get(channelId);
+                if (ch && agentId) {
+                    ch.members = ch.members.filter((m) => m !== agentId);
+                    const myChannels = this.agentChannels.get(agentId);
+                    if (myChannels) {
+                        myChannels.delete(channelId);
+                    }
+                }
+                break;
+            }
+            case 'TASK_DISPATCH': {
+                const task = payload?.task;
+                const targetChannel = payload?.channelId || channel;
+                if (task && targetChannel) {
+                    this.dispatchTask(task, targetChannel);
+                }
+                break;
+            }
+            case 'CHANNEL_DELETE': {
+                const channelId = payload?.channelId;
+                if (this.channels.has(channelId)) {
+                    this.channels.delete(channelId);
+                    // Remove from all agent channel sets
+                    this.agentChannels.forEach((channels) => channels.delete(channelId));
+                    console.log(`[Relay] Channel deleted: ${channelId}`);
+                    this.broadcast({
+                        type: 'CHANNEL_LIST',
+                        payload: { channels: Array.from(this.channels.values()) },
+                    });
+                }
+                break;
+            }
+            case 'CHANNEL_PAUSE': {
+                const channelId = payload?.channelId;
+                if (channelId) {
+                    const manager = this.getOrCreateConversationManager(channelId);
+                    void manager.pause(); // async but we don't await
+                    console.log(`[Relay] Channel paused: ${channelId}`);
+                }
+                break;
+            }
+            case 'CHANNEL_RESUME': {
+                const channelId = payload?.channelId;
+                if (channelId) {
+                    const manager = this.getOrCreateConversationManager(channelId);
+                    void manager.resume(); // async but we don't await
+                    console.log(`[Relay] Channel resumed: ${channelId}`);
+                }
+                break;
+            }
+            case 'MESSAGE_SEND': {
+                const rawPayload = payload;
+                const to = rawPayload.to;
+                const content = rawPayload.content;
+                const messageType = rawPayload.messageType;
+                const metadata = rawPayload.metadata;
+                const msg = {
+                    id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                    type: messageType || 'text',
+                    from: agentId || 'unknown',
+                    to,
+                    content,
+                    channel,
+                    timestamp: Date.now(),
+                    metadata, // <-- PRESERVE metadata for loop prevention
+                };
+                this.emit('message', msg);
+                // Track activity for stall detection (skip system messages)
+                // Update conversation state if this is not a system message
+                if (channel && !metadata?.isSystemMessage && !metadata?.isRecoveryAttempt) {
+                    // Update conversation state machine
+                    const manager = this.getOrCreateConversationManager(channel);
+                    const currentPhase = manager.getPhase();
+                    // 1. Check for Pause
+                    if (currentPhase === conversation_state_machine_1.ConversationPhase.PAUSED) {
+                        // Do NOT record activity or update stall detector when paused
+                        console.log(`[Relay] Skipping activity record for paused channel: ${channel}`);
+                    }
+                    else {
+                        // 2. Auto-start if in initializing phase (User sent a message, so start it!)
+                        if (currentPhase === conversation_state_machine_1.ConversationPhase.INITIALIZING) {
+                            console.log(`[Relay] Auto-starting conversation in channel: ${channel}`);
+                            void manager.transition(conversation_state_machine_1.ConversationPhase.EXECUTION);
+                        }
+                        // 3. Record activity only if we are in an active phase
+                        // (This prevents stall detector from firing on a conversation that hasn't really started or is finished)
+                        if (currentPhase === conversation_state_machine_1.ConversationPhase.EXECUTION ||
+                            currentPhase === conversation_state_machine_1.ConversationPhase.STALLED ||
+                            currentPhase === conversation_state_machine_1.ConversationPhase.RECOVERY) {
+                            // Only track as conversation content if there's actual message content
+                            const msgPayload = message?.payload;
+                            const hasMessageContent = !!msgPayload?.content;
+                            this.stallDetector.recordActivity(channel, agentId || undefined, hasMessageContent);
+                            void manager.recordActivity();
+                        }
+                    }
+                }
+                if (to === 'broadcast') {
+                    if (channel) {
+                        // Broadcast to channel members
+                        const ch = this.channels.get(channel);
+                        if (ch) {
+                            ch.members.forEach((memberId) => {
+                                const memberWs = this.sockets.get(memberId);
+                                if (memberWs && memberWs.readyState === ws_1.default.OPEN) {
+                                    this.send(memberWs, {
+                                        type: 'CHANNEL_MESSAGE',
+                                        payload: msg,
+                                    });
+                                }
+                            });
+                        }
+                    }
+                    else {
+                        // Broadcast to all
+                        this.broadcast({
+                            type: 'MESSAGE_RECEIVE',
+                            payload: msg,
+                        });
+                    }
+                }
+                else if (to) {
+                    // Direct message
+                    const targetWs = this.sockets.get(to);
+                    if (targetWs && targetWs.readyState === ws_1.default.OPEN) {
+                        this.send(targetWs, {
+                            type: 'MESSAGE_RECEIVE',
+                            payload: msg,
+                        });
+                    }
+                }
+                break;
+            }
+            case 'HEARTBEAT': {
+                const agent = agentId ? this.agents.get(agentId) : null;
+                if (agent) {
+                    agent.lastSeen = Date.now();
+                }
+                break;
+            }
+            case 'AGENT_METADATA_UPDATE': {
+                const agentInfo = payload?.agent;
+                if (agentInfo) {
+                    // Update agent logic... we need to be careful with types here
+                    // For now, let's assume agentInfo is partial update
+                }
+                break;
+            }
+            default:
+                console.log(`[Relay] Unknown message type: ${type}`);
+        }
+        return currentAgentId;
+    }
+    handleAgentDisconnect(agentId) {
+        console.log(`[Relay] Agent disconnected: ${agentId}`);
+        const agent = this.agents.get(agentId);
+        this.agents.delete(agentId);
+        this.sockets.delete(agentId);
+        // Remove agent from all channel member lists
+        const agentChannelSet = this.agentChannels.get(agentId);
+        if (agentChannelSet) {
+            for (const channelId of agentChannelSet) {
+                const channel = this.channels.get(channelId);
+                if (channel) {
+                    channel.members = channel.members.filter((m) => m !== agentId);
+                }
+            }
+        }
+        this.agentChannels.delete(agentId);
+        this.subscriptionRegistry.clearAgent(agentId);
+        // Notify others
+        this.broadcast({
+            type: 'AGENT_STATUS',
+            payload: {
+                agent: { id: agentId, status: 'offline', name: agent?.name },
+            },
+        });
+        this.emit('agent:disconnected', { agentId, agent });
+    }
+    send(ws, message) {
+        if (ws.readyState === ws_1.default.OPEN) {
+            ws.send(JSON.stringify({
+                id: message.id || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                timestamp: Date.now(),
+                ...message,
+            }));
+        }
+    }
+    handleBridgeEgress(envelope) {
+        // Convert TNF Envelope back to Protocol Message format for WebSocket clients
+        const protocolMsg = {
+            id: envelope.id,
+            type: envelope.type === 'event' ? 'CHANNEL_MESSAGE' : 'MESSAGE_RECEIVE', // Map to existing types
+            source: envelope.from.agentId,
+            channel: envelope.context?.channelId,
+            payload: envelope.payload,
+            timestamp: new Date(envelope.timestamp).getTime(),
+        };
+        // Determine routing
+        if ('broadcast' in envelope.to && envelope.to.broadcast) {
+            // Broadcast to channel if specified, otherwise global
+            if (envelope.context?.channelId) {
+                this.broadcastToChannel(envelope.context.channelId, protocolMsg);
+            }
+            else {
+                this.broadcast(protocolMsg);
+            }
+        }
+        else if ('agentId' in envelope.to) {
+            // Direct message to specific agent
+            const targetSocket = this.sockets.get(envelope.to.agentId);
+            if (targetSocket && targetSocket.readyState === ws_1.default.OPEN) {
+                targetSocket.send(JSON.stringify(protocolMsg));
+            }
+        }
+    }
+    dispatchTask(task, channelId) {
+        console.log(`[Relay] Dispatching task ${task.id} to channel ${channelId}`);
+        // If specific targets are defined, prioritize them
+        if (task.targetAgents && task.targetAgents.length > 0) {
+            for (const targetAgentId of task.targetAgents) {
+                const targetSocket = this.sockets.get(targetAgentId);
+                if (targetSocket && targetSocket.readyState === ws_1.default.OPEN) {
+                    this.send(targetSocket, {
+                        type: 'TASK_ASSIGN',
+                        payload: { task },
+                        channel: channelId,
+                        timestamp: Date.now(),
+                    });
+                }
+            }
+        }
+        else if (task.requiredCapabilities && task.requiredCapabilities.length > 0) {
+            // Filter by capabilities
+            const channel = this.channels.get(channelId);
+            let dispatched = false;
+            if (channel) {
+                const capableAgents = channel.members.filter((agentId) => {
+                    return (task.requiredCapabilities?.every((cap) => {
+                        const subscribers = this.subscriptionRegistry.getSubscribers(`capability:${cap}`);
+                        return subscribers.includes(agentId);
+                    }) ?? false);
+                });
+                if (capableAgents.length > 0) {
+                    console.log(`[Relay] Dispatching task via capabilities to: ${capableAgents.join(', ')}`);
+                    capableAgents.forEach((agentId) => {
+                        const ws = this.sockets.get(agentId);
+                        if (ws && ws.readyState === ws_1.default.OPEN) {
+                            this.send(ws, {
+                                type: 'TASK_ASSIGN',
+                                payload: { task },
+                                channel: channelId,
+                                timestamp: Date.now(),
+                            });
+                        }
+                    });
+                    dispatched = true;
+                }
+            }
+            if (!dispatched) {
+                console.log(`[Relay] No agents with required capabilities found. Broadcasting to channel.`);
+                // Fallback to broadcast
+                this.broadcastToChannel(channelId, {
+                    type: 'TASK_ASSIGN',
+                    payload: { task },
+                    channel: channelId,
+                    timestamp: Date.now(),
+                });
+            }
+        }
+        else {
+            // Otherwise, broadcast to channel
+            this.broadcastToChannel(channelId, {
+                type: 'TASK_ASSIGN',
+                payload: { task },
+                channel: channelId,
+                timestamp: Date.now(),
+            });
+        }
+    }
+    broadcastToChannel(channelId, message) {
+        const channel = this.channels.get(channelId);
+        if (!channel) {
+            return;
+        }
+        channel.members.forEach((memberId) => {
+            const socket = this.sockets.get(memberId);
+            if (socket && socket.readyState === ws_1.default.OPEN) {
+                socket.send(JSON.stringify(message));
+            }
+        });
+    }
+    broadcast(message, excludeAgentId) {
+        const data = JSON.stringify({
+            id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            timestamp: Date.now(),
+            ...message,
+        });
+        this.sockets.forEach((ws, agentId) => {
+            if (agentId !== excludeAgentId && ws.readyState === ws_1.default.OPEN) {
+                ws.send(data);
+            }
+        });
+    }
+    /**
+     * Send a recovery message to wake up stalled conversations
+     */
+    sendRecoveryMessage(channelId, message, metadata) {
+        const ch = this.channels.get(channelId);
+        if (!ch) {
+            console.warn(`[Relay] Cannot send recovery message - channel ${channelId} not found`);
+            return;
+        }
+        const recoveryMsg = {
+            id: `recovery-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            type: 'system',
+            from: 'stall-detector',
+            to: 'broadcast',
+            content: message,
+            channel: channelId,
+            timestamp: Date.now(),
+            metadata: {
+                ...metadata,
+                isSystemMessage: true,
+                isRecoveryAttempt: true,
+            },
+        };
+        console.log(`[Relay] Sending recovery message to channel ${channelId}`);
+        // Broadcast to all channel members
+        ch.members.forEach((memberId) => {
+            const memberWs = this.sockets.get(memberId);
+            if (memberWs && memberWs.readyState === ws_1.default.OPEN) {
+                this.send(memberWs, {
+                    type: 'CHANNEL_MESSAGE',
+                    payload: recoveryMsg,
+                });
+            }
+        });
+    }
+    createDefaultChannel() {
+        this.channels.set('general', {
+            id: 'general',
+            name: 'General',
+            description: 'Default channel for all agents',
+            createdBy: 'system',
+            createdAt: Date.now(),
+            isPrivate: false,
+            members: [],
+        });
+    }
+    startHeartbeatMonitor() {
+        this.heartbeatInterval = setInterval(() => {
+            const now = Date.now();
+            this.agents.forEach((agent, agentId) => {
+                if (now - agent.lastSeen > AGENT_TIMEOUT) {
+                    console.log(`[Relay] Agent timeout: ${agentId}`);
+                    const ws = this.sockets.get(agentId);
+                    if (ws) {
+                        ws.close();
+                    }
+                    this.handleAgentDisconnect(agentId);
+                }
+            });
+        }, HEARTBEAT_INTERVAL);
+    }
+    start() {
+        return new Promise((resolve) => {
+            this.server.listen(this.port, () => {
+                console.log(`
+╔═════════════════════════════════════════════════════════════╗
+║           ⚡ TNF RELAY SERVER ⚡                             ║
+║                                                              ║
+║   WebSocket: ws://localhost:${this.port}/ws                        ║
+║   Health:    http://localhost:${this.port}/health                   ║
+║   Agents:    http://localhost:${this.port}/agents                   ║
+║   Channels:  http://localhost:${this.port}/channels                 ║
+║                                                              ║
+║   Features:  Stall Detection ✓  Auto-Recovery ✓             ║
+║   Part of @the-new-fuse/relay-core                           ║
+╚═════════════════════════════════════════════════════════════╝
+`);
+                this.startHeartbeatMonitor();
+                this.stallDetector.start(); // Start stall detection
+                console.log('[Relay] Stall detector started');
+                this.emit('started', { port: this.port });
+                resolve();
+            });
+        });
+    }
+    stop() {
+        return new Promise((resolve) => {
+            if (this.heartbeatInterval) {
+                clearInterval(this.heartbeatInterval);
+            }
+            // Stop stall detector
+            this.stallDetector.stop();
+            // Close all connections
+            this.sockets.forEach((ws) => ws.close());
+            this.wss.close(() => {
+                this.server.close(() => {
+                    console.log('[Relay] Server stopped');
+                    this.emit('stopped');
+                    resolve();
+                });
+            });
+        });
+    }
+    // Getters for external access
+    getAgents() {
+        return Array.from(this.agents.values());
+    }
+    getChannels() {
+        return Array.from(this.channels.values());
+    }
+    getAgent(id) {
+        return this.agents.get(id);
+    }
+    getChannel(id) {
+        return this.channels.get(id);
+    }
+}
+exports.TNFRelayServer = TNFRelayServer;
+// CLI entry point
+if (require.main === module) {
+    const relay = new TNFRelayServer(PORT);
+    relay.start().catch((err) => {
+        console.error('[Relay] Failed to start:', err);
+        process.exit(1);
+    });
+    // Graceful shutdown
+    // Graceful shutdown
+    process.on('SIGINT', () => {
+        void (async () => {
+            console.log('\n[Relay] Shutting down...');
+            await relay.stop();
+            process.exit(0);
+        })();
+    });
+    process.on('SIGTERM', () => {
+        void (async () => {
+            await relay.stop();
+            process.exit(0);
+        })();
+    });
+}
+exports.default = TNFRelayServer;
+//# sourceMappingURL=standalone-relay.js.map

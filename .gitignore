@@ -146,3 +146,6 @@ packages/google-sheets-mcp-server/credentials.json
 
 # Telemetry and monitoring IDs
 telemetry-id
+
+# Exceptions
+!packages/relay-core/dist/
