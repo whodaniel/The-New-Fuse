@@ -1,24 +1,18 @@
-import { LLMSelector } from '@/components/LLMSelection/LLMSelector';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
   FormControl,
   FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { GlassCard as Card } from '@/components/ui/premium/GlassCard';
 import { PremiumButton as Button } from '@/components/ui/premium/PremiumButton';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
+  PremiumInput as Input,
+  PremiumSelect as Select,
+  PremiumTextarea as Textarea,
+} from '@/components/ui/premium/PremiumInput';
 import { AgentType, ReasoningStrategy } from '@/types/api';
 import { z } from 'zod';
 
@@ -33,7 +27,7 @@ export const agentFormSchema = z.object({
   description: z.string().min(10, {
     message: 'Description must be at least 10 characters.',
   }),
-  llmProviderId: z.string().optional(), // New field for LLM provider
+  llmProviderId: z.string().optional(),
   capabilities: z
     .object({
       code_generation: z.boolean().optional(),
@@ -77,211 +71,87 @@ export const agentFormSchema = z.object({
   config: z.record(z.any()).optional(),
 });
 
-export const NewAgentForm = ({ form, onSubmit }) => {
+export const NewAgentForm = ({ form, onSubmit }: any) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-foreground">Name</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g. Data Analysis Assistant" {...field} />
-              </FormControl>
-              <FormDescription>A unique name for your agent</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <Card title="General Identity" gradient="blue">
+          <div className="space-y-6">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      label="Agent Name"
+                      placeholder="e.g. Data Analysis Assistant"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>A unique name for your agent</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-foreground">Description</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Describe what this agent does..."
-                  className="resize-none"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                A detailed description of the agent's purpose and capabilities
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Textarea
+                      label="Description"
+                      placeholder="Describe what this agent does..."
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    A detailed description of the agent's purpose and capabilities
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="type"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-foreground">Type</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select agent type" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value={AgentType.BASE}>Base</SelectItem>
-                  <SelectItem value={AgentType.ENHANCED}>Enhanced</SelectItem>
-                  <SelectItem value={AgentType.RESEARCH}>Research</SelectItem>
-                  <SelectItem value={AgentType.CASCADE}>Cascade</SelectItem>
-                  <SelectItem value={AgentType.WORKFLOW}>Workflow</SelectItem>
-                  <SelectItem value={AgentType.MARKETING}>Marketing</SelectItem>
-                  <SelectItem value={AgentType.TECHNICAL_SUPPORT}>Technical Support</SelectItem>
-                  <SelectItem value={AgentType.CUSTOMER_SUPPORT}>Customer Support</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormDescription>
-                The type of agent determines its base capabilities and behavior
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* New LLM Provider selector */}
-        <FormField
-          control={form.control}
-          name="llmProviderId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-foreground">LLM Provider</FormLabel>
-              <FormControl>
-                <LLMSelector
-                  selectedProviderId={field.value}
-                  onChange={field.onChange}
-                  description="Select the LLM provider to power this agent"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="space-y-6">
-          <h3 className="text-lg font-semibold">Core Capabilities</h3>
-          <div className="grid grid-cols-2 gap-4">
-            {Object.entries({
-              code_generation: 'Code Generation',
-              code_review: 'Code Review',
-              code_optimization: 'Code Optimization',
-              architecture_review: 'Architecture Review',
-              dependency_analysis: 'Dependency Analysis',
-              security_audit: 'Security Audit',
-              documentation: 'Documentation',
-              test_generation: 'Test Generation',
-              bug_analysis: 'Bug Analysis',
-              performance_analysis: 'Performance Analysis',
-              data_analysis: 'Data Analysis',
-              natural_language_processing: 'Natural Language Processing',
-            }).map(([key, label]) => (
-              <FormField
-                key={key}
-                control={form.control}
-                name={`capabilities.${key}`}
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                    </FormControl>
-                    <FormLabel className="text-sm font-normal">{label}</FormLabel>
-                  </FormItem>
-                )}
-              />
-            ))}
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Select
+                      label="Agent Type"
+                      value={field.value}
+                      onChange={(e: any) => field.onChange(e.target.value)}
+                      options={[
+                        { value: AgentType.BASE, label: 'Base' },
+                        { value: AgentType.ENHANCED, label: 'Enhanced' },
+                        { value: AgentType.RESEARCH, label: 'Research' },
+                        { value: AgentType.CASCADE, label: 'Cascade' },
+                        { value: AgentType.WORKFLOW, label: 'Workflow' },
+                        { value: AgentType.MARKETING, label: 'Marketing' },
+                      ]}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
-        </div>
+        </Card>
 
-        <div className="space-y-6">
-          <h3 className="text-lg font-semibold">Advanced Capabilities</h3>
-          <div className="grid grid-cols-2 gap-4">
-            {Object.entries({
-              virtual_browser: 'Virtual Browser',
-              web_automation: 'Web Automation',
-              project_analysis: 'Project Analysis',
-              knowledge_graph: 'Knowledge Graph',
-              taxonomy_system: 'Taxonomy System',
-              learning_system: 'Learning System',
-              agent_collaboration: 'Agent Collaboration',
-              communication_bus: 'Communication Bus',
-              protocol_handler: 'Protocol Handler',
-            }).map(([key, label]) => (
-              <FormField
-                key={key}
-                control={form.control}
-                name={`capabilities.${key}`}
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                    </FormControl>
-                    <FormLabel className="text-sm font-normal">{label}</FormLabel>
-                  </FormItem>
-                )}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          <h3 className="text-lg font-semibold">Reasoning Strategies</h3>
-          <div className="grid grid-cols-2 gap-4">
-            {Object.entries({
-              [ReasoningStrategy.DEDUCTIVE]: 'Deductive Reasoning',
-              [ReasoningStrategy.INDUCTIVE]: 'Inductive Reasoning',
-              [ReasoningStrategy.ABDUCTIVE]: 'Abductive Reasoning',
-              [ReasoningStrategy.ANALOGICAL]: 'Analogical Reasoning',
-            }).map(([key, label]) => (
-              <FormField
-                key={key}
-                control={form.control}
-                name="metadata.reasoningStrategies"
-                render={({ field }) => {
-                  var _a;
-                  return (
-                    <FormItem className="flex flex-row items-center space-x-3 space-y-0">
-                      <FormControl>
-                        <Checkbox
-                          checked={
-                            (_a = field.value) === null || _a === void 0 ? void 0 : _a.includes(key)
-                          }
-                          onCheckedChange={(checked) => {
-                            const current = field.value || [];
-                            field.onChange(
-                              checked ? [...current, key] : current.filter((value) => value !== key)
-                            );
-                          }}
-                        />
-                      </FormControl>
-                      <FormLabel className="text-sm font-normal">{label}</FormLabel>
-                    </FormItem>
-                  );
-                }}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          <h3 className="text-lg font-semibold">Skill Development</h3>
-          <div className="space-y-4">
+        <Card title="Skill Development" gradient="purple">
+          <div className="grid grid-cols-2 gap-6">
             <FormField
               control={form.control}
               name="metadata.skillDevelopment.currentLevel"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Current Skill Level (0-10)</FormLabel>
                   <FormControl>
                     <Input
+                      label="Current Skill Level (0-10)"
                       type="number"
                       min={0}
                       max={10}
@@ -298,9 +168,9 @@ export const NewAgentForm = ({ form, onSubmit }) => {
               name="metadata.skillDevelopment.targetLevel"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Target Skill Level (0-10)</FormLabel>
                   <FormControl>
                     <Input
+                      label="Target Skill Level (0-10)"
                       type="number"
                       min={0}
                       max={10}
@@ -312,33 +182,38 @@ export const NewAgentForm = ({ form, onSubmit }) => {
               )}
             />
           </div>
-        </div>
+        </Card>
 
-        <FormField
-          control={form.control}
-          name="metadata.communicationStyle"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Communication Style</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+        <Card title="Communication Style" gradient="cyan">
+          <FormField
+            control={form.control}
+            name="metadata.communicationStyle"
+            render={({ field }) => (
+              <FormItem>
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select communication style" />
-                  </SelectTrigger>
+                  <Select
+                    label="Style"
+                    value={field.value}
+                    onChange={(e: any) => field.onChange(e.target.value)}
+                    options={[
+                      { value: 'formal', label: 'Formal' },
+                      { value: 'casual', label: 'Casual' },
+                      { value: 'technical', label: 'Technical' },
+                      { value: 'friendly', label: 'Friendly' },
+                      { value: 'professional', label: 'Professional' },
+                    ]}
+                  />
                 </FormControl>
-                <SelectContent>
-                  <SelectItem value="formal">Formal</SelectItem>
-                  <SelectItem value="casual">Casual</SelectItem>
-                  <SelectItem value="technical">Technical</SelectItem>
-                  <SelectItem value="friendly">Friendly</SelectItem>
-                  <SelectItem value="professional">Professional</SelectItem>
-                </SelectContent>
-              </Select>
-            </FormItem>
-          )}
-        />
+              </FormItem>
+            )}
+          />
+        </Card>
 
-        <Button type="submit">Create Agent</Button>
+        <div className="pt-6">
+          <Button type="submit" fullWidth variant="gradient" size="lg">
+            Create Agent
+          </Button>
+        </div>
       </form>
     </Form>
   );

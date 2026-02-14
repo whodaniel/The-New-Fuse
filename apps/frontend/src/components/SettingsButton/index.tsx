@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { PremiumButton as Button } from '@/components/ui/premium/PremiumButton';
 import useUser from '@/hooks/useUser';
 import paths from '@/utils/paths';
 import { Settings } from 'lucide-react';

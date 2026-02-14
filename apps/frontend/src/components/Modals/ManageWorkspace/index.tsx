@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
-import { Upload, FileText, Link } from '@phosphor-icons/react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { PremiumButton as Button } from '@/components/ui/premium/PremiumButton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
+import { FileText, Link, Upload } from '@phosphor-icons/react';
+import React, { useState } from 'react';
 
 interface ManageWorkspaceProps {
   hideModal: () => void;
@@ -30,9 +36,7 @@ export function useManageWorkspaceModal(): ManageWorkspaceModalReturn {
   };
 }
 
-export default function ManageWorkspace({
-  hideModal,
-}: ManageWorkspaceProps) {
+export default function ManageWorkspace({ hideModal }: ManageWorkspaceProps) {
   return (
     <Dialog open={true} onOpenChange={hideModal}>
       <DialogContent className="max-w-4xl">
@@ -59,9 +63,7 @@ export default function ManageWorkspace({
               <div className="flex h-64 w-full items-center justify-center rounded-lg border-2 border-dashed border-border bg-muted">
                 <div className="text-center">
                   <Upload className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-                  <p className="mb-2 text-muted-foreground">
-                    Drop files here or click to browse
-                  </p>
+                  <p className="mb-2 text-muted-foreground">Drop files here or click to browse</p>
                   <p className="text-sm text-muted-foreground/80">
                     Supports PDF, DOC, TXT, and other text formats
                   </p>
@@ -76,7 +78,7 @@ export default function ManageWorkspace({
                       console.log('Files selected:', e.target.files);
                     }}
                   />
-                  <Button asChild className="mt-4">
+                  <Button className="mt-4">
                     <label htmlFor="file-upload">Select Files</label>
                   </Button>
                 </div>
@@ -86,15 +88,11 @@ export default function ManageWorkspace({
           <TabsContent value="link">
             <div className="space-y-4 p-4">
               <div>
-                <label className="mb-2 block text-sm font-medium">
-                  URL
-                </label>
+                <label className="mb-2 block text-sm font-medium">URL</label>
                 <Input type="url" placeholder="https://example.com" />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium">
-                  Title (optional)
-                </label>
+                <label className="mb-2 block text-sm font-medium">Title (optional)</label>
                 <Input type="text" placeholder="Document title" />
               </div>
               <Button>Add Link</Button>
@@ -103,15 +101,11 @@ export default function ManageWorkspace({
           <TabsContent value="text">
             <div className="space-y-4 p-4">
               <div>
-                <label className="mb-2 block text-sm font-medium">
-                  Title
-                </label>
+                <label className="mb-2 block text-sm font-medium">Title</label>
                 <Input type="text" placeholder="Document title" />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium">
-                  Content
-                </label>
+                <label className="mb-2 block text-sm font-medium">Content</label>
                 <Textarea
                   rows={10}
                   placeholder="Enter your text content here..."

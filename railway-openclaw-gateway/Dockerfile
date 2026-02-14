@@ -1,7 +1,7 @@
 FROM node:22-bookworm
 
 # Install OpenClaw globally
-RUN npm i -g openclaw@2026.2.6-3
+RUN npm i -g openclaw@2026.2.13
 
 # Create state directories
 ENV HOME=/root

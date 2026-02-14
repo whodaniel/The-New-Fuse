@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { PremiumButton as Button } from '@/components/ui/premium/PremiumButton';
 import { useA2ACommunication } from '@/hooks';
 import { ExecutionUpdate, workflowExecutionService } from '@/services/WorkflowExecutionService';
 import { Play, Square } from 'lucide-react';
@@ -135,13 +135,11 @@ export const WorkflowExecutionContext: React.FC<WorkflowExecutionContextProps> =
   return (
     <div className="absolute bottom-4 right-4 flex space-x-2">
       {isExecuting ? (
-        <Button variant="destructive" size="sm" onClick={handleAbortExecution}>
-          <Square className="h-4 w-4 mr-2" />
+        <Button variant="danger" size="sm" onClick={handleAbortExecution} icon={Square as any}>
           Stop Execution
         </Button>
       ) : (
-        <Button variant="default" size="sm" onClick={handleExecuteWorkflow}>
-          <Play className="h-4 w-4 mr-2" />
+        <Button variant="primary" size="sm" onClick={handleExecuteWorkflow} icon={Play as any}>
           Execute Workflow
         </Button>
       )}

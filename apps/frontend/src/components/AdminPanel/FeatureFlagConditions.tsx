@@ -1,6 +1,6 @@
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { GlassCard as Card } from '@/components/ui/premium/GlassCard';
 import { PremiumButton as Button } from '@/components/ui/premium/PremiumButton';
+import { PremiumInput as Input } from '@/components/ui/premium/PremiumInput';
 import { Switch } from '@/components/ui/switch';
 import { useState } from 'react';
 // Temporarily using local components instead of ui-consolidated
@@ -20,7 +20,7 @@ const DatePicker = ({
     type="date"
     value={value ? value.toISOString().split('T')[0] : ''}
     onChange={(e) => onChange(e.target.value ? new Date(e.target.value) : null)}
-    className="px-3 py-2 border border-gray-300 rounded-md"
+    className="px-3 py-2 border border-white/10 bg-black/20 rounded-md text-white"
   />
 );
 
@@ -36,10 +36,10 @@ const Select = ({
   <select
     value={value}
     onChange={(e) => onChange(e.target.value)}
-    className="px-3 py-2 border border-gray-300 rounded-md"
+    className="px-3 py-2 border border-white/10 bg-black/20 rounded-md text-white"
   >
     {options.map((option) => (
-      <option key={option.value} value={option.value}>
+      <option key={option.value} value={option.value} className="bg-slate-800">
         {option.label}
       </option>
     ))}
@@ -66,39 +66,45 @@ export function FeatureFlagConditionsEditor({
 
   return (
     <div className="space-y-6">
-      <div className="flex space-x-2 mb-4">
+      <div className="flex flex-wrap gap-2 mb-4">
         <Button
           variant={activeTab === 'environments' ? 'primary' : 'outline'}
+          size="sm"
           onClick={() => setActiveTab('environments')}
         >
           Environments
         </Button>
         <Button
           variant={activeTab === 'userGroups' ? 'primary' : 'outline'}
+          size="sm"
           onClick={() => setActiveTab('userGroups')}
         >
           User Groups
         </Button>
         <Button
           variant={activeTab === 'percentage' ? 'primary' : 'outline'}
+          size="sm"
           onClick={() => setActiveTab('percentage')}
         >
           Percentage
         </Button>
         <Button
           variant={activeTab === 'dateRange' ? 'primary' : 'outline'}
+          size="sm"
           onClick={() => setActiveTab('dateRange')}
         >
           Date Range
         </Button>
         <Button
           variant={activeTab === 'deviceTypes' ? 'primary' : 'outline'}
+          size="sm"
           onClick={() => setActiveTab('deviceTypes')}
         >
           Device Types
         </Button>
         <Button
           variant={activeTab === 'customRules' ? 'primary' : 'outline'}
+          size="sm"
           onClick={() => setActiveTab('customRules')}
         >
           Custom Rules
@@ -106,24 +112,24 @@ export function FeatureFlagConditionsEditor({
       </div>
 
       {activeTab === 'environments' && (
-        <Card className="p-4">
-          <h3 className="text-lg font-medium mb-4">Environment Targeting</h3>
+        <Card title="Environment Targeting" gradient="blue">
           <div className="space-y-2">
             {['development', 'testing', 'staging', 'production'].map((env) => (
               <div key={env} className="flex items-center space-x-2">
                 <Switch
                   checked={(conditions.environments || []).includes(env)}
                   onCheckedChange={(checked) => {
-                    const environments = new Set(conditions.environments || []);
+                    const envs = [...(conditions.environments || [])];
                     if (checked) {
-                      environments.add(env);
+                      envs.push(env);
                     } else {
-                      environments.delete(env);
+                      const index = envs.indexOf(env);
+                      if (index > -1) envs.splice(index, 1);
                     }
-                    updateConditions('environments', Array.from(environments));
+                    updateConditions('environments', envs);
                   }}
                 />
-                <span className="capitalize">{env}</span>
+                <span className="capitalize text-white">{env}</span>
               </div>
             ))}
           </div>
@@ -131,136 +137,86 @@ export function FeatureFlagConditionsEditor({
       )}
 
       {activeTab === 'userGroups' && (
-        <Card className="p-4">
-          <h3 className="text-lg font-medium mb-4">User Group Targeting</h3>
+        <Card title="User Group Targeting" gradient="purple">
           <div className="space-y-4">
-            {(conditions.userGroups || []).map((group, index) => (
-              <div key={index} className="flex items-center space-x-2">
-                <Input
-                  placeholder="Group ID"
-                  value={group.groupId}
-                  onChange={(e) => {
-                    const userGroups = [...(conditions.userGroups || [])];
-                    userGroups[index] = { ...group, groupId: e.target.value };
-                    updateConditions('userGroups', userGroups);
-                  }}
-                />
-                <Input
-                  placeholder="Group Name"
-                  value={group.name}
-                  onChange={(e) => {
-                    const userGroups = [...(conditions.userGroups || [])];
-                    userGroups[index] = { ...group, name: e.target.value };
-                    updateConditions('userGroups', userGroups);
-                  }}
-                />
-                <Button
-                  variant="destructive"
-                  onClick={() => {
-                    const userGroups = [...(conditions.userGroups || [])];
-                    userGroups.splice(index, 1);
-                    updateConditions('userGroups', userGroups);
-                  }}
-                >
-                  Remove
-                </Button>
-              </div>
-            ))}
-            <Button
-              onClick={() => {
-                const userGroups = [...(conditions.userGroups || [])];
-                userGroups.push({ groupId: '', name: '' });
-                updateConditions('userGroups', userGroups);
-              }}
-            >
-              Add Group
-            </Button>
+            <div className="space-y-2">
+              {['admin', 'beta-testers', 'internal', 'early-adopters'].map((group) => (
+                <div key={group} className="flex items-center space-x-2">
+                  <Switch
+                    checked={(conditions.userGroups || []).includes(group)}
+                    onCheckedChange={(checked) => {
+                      const groups = [...(conditions.userGroups || [])];
+                      if (checked) {
+                        groups.push(group);
+                      } else {
+                        const index = groups.indexOf(group);
+                        if (index > -1) groups.splice(index, 1);
+                      }
+                      updateConditions('userGroups', groups);
+                    }}
+                  />
+                  <span className="capitalize text-white">{group.replace('-', ' ')}</span>
+                </div>
+              ))}
+            </div>
+            <div className="pt-4 border-t border-white/10">
+              <p className="text-sm font-medium mb-2 text-white">
+                Specific User IDs (comma separated)
+              </p>
+              <Input
+                placeholder="user-123, user-456"
+                value={(conditions.userIds || []).join(', ')}
+                onChange={(e) =>
+                  updateConditions(
+                    'userIds',
+                    e.target.value
+                      .split(',')
+                      .map((s) => s.trim())
+                      .filter(Boolean)
+                  )
+                }
+              />
+            </div>
           </div>
         </Card>
       )}
 
       {activeTab === 'percentage' && (
-        <Card className="p-4">
-          <h3 className="text-lg font-medium mb-4">Percentage Rollout</h3>
+        <Card title="Rollout Percentage" gradient="cyan">
           <div className="space-y-4">
-            <div>
-              <label className="block text-sm mb-1">Percentage (0-100)</label>
+            <div className="flex items-center space-x-4">
               <Input
                 type="number"
                 min="0"
                 max="100"
-                value={conditions.percentage?.value || 0}
-                onChange={(e) => {
-                  updateConditions('percentage', {
-                    ...(conditions.percentage || {}),
-                    value: Number(e.target.value),
-                  });
-                }}
+                className="w-24"
+                value={conditions.rolloutPercentage || 0}
+                onChange={(e) => updateConditions('rolloutPercentage', parseInt(e.target.value))}
               />
+              <span className="text-white">% of users</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <Switch
-                checked={conditions.percentage?.sticky || false}
-                onCheckedChange={(checked) => {
-                  updateConditions('percentage', {
-                    ...(conditions.percentage || {}),
-                    sticky: checked,
-                  });
-                }}
-              />
-              <span>Sticky (consistent per user)</span>
-            </div>
+            <p className="text-sm text-gray-400">
+              Gradually roll out this feature to a percentage of your user base.
+            </p>
           </div>
         </Card>
       )}
 
       {activeTab === 'dateRange' && (
-        <Card className="p-4">
-          <h3 className="text-lg font-medium mb-4">Date Range</h3>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm mb-1">Start Date</label>
+        <Card title="Active Date Range" gradient="green">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-white">Start Date</label>
               <DatePicker
-                value={
-                  conditions.dateRange?.startDate ? new Date(conditions.dateRange.startDate) : null
-                }
-                onChange={(date) => {
-                  updateConditions('dateRange', {
-                    ...(conditions.dateRange || {}),
-                    startDate: date,
-                  });
-                }}
+                value={conditions.startDate ? new Date(conditions.startDate) : null}
+                onChange={(date) => updateConditions('startDate', date ? date.toISOString() : null)}
               />
             </div>
-            <div>
-              <label className="block text-sm mb-1">End Date</label>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-white">End Date</label>
               <DatePicker
-                value={
-                  conditions.dateRange?.endDate ? new Date(conditions.dateRange.endDate) : null
-                }
-                onChange={(date) => {
-                  updateConditions('dateRange', {
-                    ...(conditions.dateRange || {}),
-                    endDate: date,
-                  });
-                }}
-              />
-            </div>
-            <div>
-              <label className="block text-sm mb-1">Timezone</label>
-              <Select
-                value={conditions.dateRange?.timezone || 'UTC'}
-                onChange={(value) => {
-                  updateConditions('dateRange', {
-                    ...(conditions.dateRange || {}),
-                    timezone: value,
-                  });
-                }}
-                options={[
-                  { label: 'UTC', value: 'UTC' },
-                  { label: 'Local', value: 'local' },
-                  // Add more timezone options as needed
-                ]}
+                value={conditions.endDate ? new Date(conditions.endDate) : null}
+                onChange={(date) => updateConditions('endDate', date ? date.toISOString() : null)}
               />
             </div>
           </div>
@@ -268,24 +224,24 @@ export function FeatureFlagConditionsEditor({
       )}
 
       {activeTab === 'deviceTypes' && (
-        <Card className="p-4">
-          <h3 className="text-lg font-medium mb-4">Device Type Targeting</h3>
+        <Card title="Device Type Targeting" gradient="orange">
           <div className="space-y-2">
-            {['desktop', 'mobile', 'tablet'].map((device: any) => (
+            {['desktop', 'mobile', 'tablet', 'ios', 'android'].map((device) => (
               <div key={device} className="flex items-center space-x-2">
                 <Switch
                   checked={(conditions.deviceTypes || []).includes(device)}
                   onCheckedChange={(checked) => {
-                    const deviceTypes = new Set(conditions.deviceTypes || []);
+                    const devices = [...(conditions.deviceTypes || [])];
                     if (checked) {
-                      deviceTypes.add(device);
+                      devices.push(device);
                     } else {
-                      deviceTypes.delete(device);
+                      const index = devices.indexOf(device);
+                      if (index > -1) devices.splice(index, 1);
                     }
-                    updateConditions('deviceTypes', Array.from(deviceTypes));
+                    updateConditions('deviceTypes', devices);
                   }}
                 />
-                <span className="capitalize">{device}</span>
+                <span className="capitalize text-white">{device}</span>
               </div>
             ))}
           </div>
@@ -293,52 +249,18 @@ export function FeatureFlagConditionsEditor({
       )}
 
       {activeTab === 'customRules' && (
-        <Card className="p-4">
-          <h3 className="text-lg font-medium mb-4">Custom Rules</h3>
+        <Card title="Custom Targeting Rules" gradient="pink">
           <div className="space-y-4">
-            {(conditions.customRules || []).map((rule, index) => (
-              <div key={index} className="space-y-2">
-                <Input
-                  placeholder="Rule Name"
-                  value={rule.name}
-                  onChange={(e) => {
-                    const customRules = [...(conditions.customRules || [])];
-                    customRules[index] = { ...rule, name: e.target.value };
-                    updateConditions('customRules', customRules);
-                  }}
-                />
-                <textarea
-                  className="w-full h-[200px] border rounded p-2 font-mono text-sm"
-                  value={rule.condition}
-                  onChange={(e) => {
-                    const customRules = [...(conditions.customRules || [])];
-                    customRules[index] = { ...rule, condition: e.target.value };
-                    updateConditions('customRules', customRules);
-                  }}
-                />
-                <Button
-                  variant="destructive"
-                  onClick={() => {
-                    const customRules = [...(conditions.customRules || [])];
-                    customRules.splice(index, 1);
-                    updateConditions('customRules', customRules);
-                  }}
-                >
-                  Remove Rule
-                </Button>
-              </div>
-            ))}
-            <Button
-              onClick={() => {
-                const customRules = [...(conditions.customRules || [])];
-                customRules.push({
-                  name: '',
-                  condition: '// Return true to enable the feature\nreturn true;',
-                });
-                updateConditions('customRules', customRules);
-              }}
-            >
-              Add Custom Rule
+            <p className="text-sm text-gray-400">
+              Define complex targeting rules using JSON logic or custom predicates.
+            </p>
+            <div className="p-4 rounded-lg bg-black/40 border border-white/10">
+              <pre className="text-xs text-cyan-400">
+                {JSON.stringify(conditions.customRules || {}, null, 2)}
+              </pre>
+            </div>
+            <Button variant="outline" size="sm">
+              Edit Custom Rules
             </Button>
           </div>
         </Card>

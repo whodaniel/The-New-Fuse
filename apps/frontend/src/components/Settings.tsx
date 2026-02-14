@@ -1,8 +1,9 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { GlassCard as Card } from '@/components/ui/premium/GlassCard';
 import { PremiumButton as Button } from '@/components/ui/premium/PremiumButton';
-import { Switch } from '@/components/ui/switch';
+import {
+  PremiumInput as Input,
+  ToggleSwitch as Switch,
+} from '@/components/ui/premium/PremiumInput';
 import { Lock, Settings as SettingsIcon } from 'lucide-react';
 import React, { useState } from 'react';
 
@@ -23,28 +24,24 @@ export const Settings: React.FC = () => {
     webhookUrl: '',
   });
 
-  const handleToggle = (key: 'enableLogging' | 'debugMode') => (): void => {
-    setSettings((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
-
-  const handleTextChange =
-    (key: 'apiKey' | 'webhookUrl') =>
-    (event: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleToggle =
+    (key: 'enableLogging' | 'debugMode') =>
+    (checked: boolean): void => {
       setSettings((prev) => ({
         ...prev,
-        [key]: event.target.value,
+        [key]: checked,
       }));
     };
 
-  const handleMaxAgentsChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setSettings((prev) => ({
-      ...prev,
-      maxAgents: parseInt(event.target.value) || 0,
-    }));
-  };
+  const handleTextChange =
+    (key: 'apiKey' | 'webhookUrl' | 'maxAgents') =>
+    (event: React.ChangeEvent<HTMLInputElement>): void => {
+      const value = key === 'maxAgents' ? parseInt(event.target.value) || 0 : event.target.value;
+      setSettings((prev) => ({
+        ...prev,
+        [key]: value,
+      }));
+    };
 
   const handleVerifyConfig = (): void => {
     console.log('Verifying configuration:', settings);
@@ -52,118 +49,77 @@ export const Settings: React.FC = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* System Settings */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <SettingsIcon className="w-5 h-5" />
-              System Settings
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Enable Logging</Label>
-                <p className="text-sm text-gray-500">Record detailed system logs</p>
-              </div>
-              <Switch
-                checked={settings.enableLogging}
-                onCheckedChange={handleToggle('enableLogging')}
-              />
-            </div>
+        <Card title="System Settings" icon={SettingsIcon}>
+          <div className="space-y-4">
+            <Switch
+              label="Enable Logging"
+              description="Record detailed system logs"
+              checked={settings.enableLogging}
+              onChange={handleToggle('enableLogging')}
+            />
 
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Debug Mode</Label>
-                <p className="text-sm text-gray-500">Enable detailed debugging information</p>
-              </div>
-              <Switch checked={settings.debugMode} onCheckedChange={handleToggle('debugMode')} />
-            </div>
+            <Switch
+              label="Debug Mode"
+              description="Enable detailed debugging information"
+              checked={settings.debugMode}
+              onChange={handleToggle('debugMode')}
+            />
 
-            <div className="space-y-2">
-              <Label>Max Concurrent Agents</Label>
-              <p className="text-sm text-gray-500 mb-2">
-                Maximum number of agents that can run simultaneously
-              </p>
-              <Input
-                type="number"
-                value={settings.maxAgents}
-                onChange={handleMaxAgentsChange}
-                className="w-32"
-                min={1}
-                max={100}
-              />
-            </div>
-          </CardContent>
+            <Input
+              label="Max Concurrent Agents"
+              hint="Maximum number of agents that can run simultaneously"
+              type="number"
+              value={settings.maxAgents}
+              onChange={handleTextChange('maxAgents')}
+              min={1}
+              max={100}
+            />
+          </div>
         </Card>
 
         {/* API Configuration */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Lock className="w-5 h-5" />
-              API Configuration
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="apiKey">API Key</Label>
-              <Input
-                id="apiKey"
-                type="password"
-                placeholder="Enter your API key"
-                value={settings.apiKey}
-                onChange={handleTextChange('apiKey')}
-              />
-            </div>
+        <Card title="API Configuration" icon={Lock} gradient="purple">
+          <div className="space-y-4">
+            <Input
+              id="apiKey"
+              label="API Key"
+              type="password"
+              placeholder="Enter your API key"
+              value={settings.apiKey}
+              onChange={handleTextChange('apiKey')}
+            />
 
-            <div className="space-y-2">
-              <Label htmlFor="webhookUrl">Webhook URL</Label>
-              <Input
-                id="webhookUrl"
-                type="url"
-                placeholder="https://your-webhook-url.com"
-                value={settings.webhookUrl}
-                onChange={handleTextChange('webhookUrl')}
-              />
-            </div>
+            <Input
+              id="webhookUrl"
+              label="Webhook URL"
+              type="url"
+              placeholder="https://your-webhook-url.com"
+              value={settings.webhookUrl}
+              onChange={handleTextChange('webhookUrl')}
+            />
 
-            <Button onClick={handleVerifyConfig} fullWidth>
+            <Button onClick={handleVerifyConfig} fullWidth variant="gradient">
               Verify Configuration
             </Button>
-          </CardContent>
+          </div>
         </Card>
 
         {/* LLM Configuration placeholder */}
-        <Card>
-          <CardHeader>
-            <CardTitle>LLM Configuration</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-500">LLM selector component will be rendered here</p>
-          </CardContent>
+        <Card title="LLM Configuration">
+          <p className="text-gray-500">LLM selector component will be rendered here</p>
         </Card>
 
         {/* GPU Management placeholder */}
-        <Card>
-          <CardHeader>
-            <CardTitle>GPU Management</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-500">GPU manager component will be rendered here</p>
-          </CardContent>
+        <Card title="GPU Management" gradient="cyan">
+          <p className="text-gray-500">GPU manager component will be rendered here</p>
         </Card>
 
         {/* Webhook Management placeholder */}
-        <Card className="md:col-span-2">
-          <CardHeader>
-            <CardTitle>Webhook Management</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-500">Webhook manager component will be rendered here</p>
-          </CardContent>
+        <Card title="Webhook Management" className="md:col-span-2" gradient="green">
+          <p className="text-gray-500">Webhook manager component will be rendered here</p>
         </Card>
       </div>
     </div>
