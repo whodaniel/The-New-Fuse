@@ -1,4 +1,4 @@
-import { Card } from '@/components/ui/card';
+import { GlassCard as Card } from '@/components/ui/premium/GlassCard';
 import { PremiumButton as Button } from '@/components/ui/premium/PremiumButton';
 import { Progress } from '@/components/ui/progress';
 import {

@@ -1,6 +1,6 @@
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { PremiumButton as Button } from '@/components/ui/premium/PremiumButton';
+import { PremiumInput as Input } from '@/components/ui/premium/PremiumInput';
 import { Plus, X } from 'lucide-react';
 import React, { memo, useState } from 'react';
 import { NodeProps } from 'reactflow';

@@ -70,5 +70,5 @@ node -e "
 # Use Railway's PORT (required for Railway deployments)
 GATEWAY_PORT="${PORT:-8080}"
 
-echo "Starting OpenClaw gateway on port ${GATEWAY_PORT}..."
-exec openclaw gateway --allow-unconfigured --port "${GATEWAY_PORT}"
+echo "Starting OpenClaw gateway on 0.0.0.0:${GATEWAY_PORT}..."
+exec openclaw gateway start --allow-unconfigured --bind 0.0.0.0 --port "${GATEWAY_PORT}"

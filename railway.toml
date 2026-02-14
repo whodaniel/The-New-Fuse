@@ -106,6 +106,20 @@ healthcheckTimeout = 10
 startCommand = "/app/start.sh"
 restartPolicyType = "ON_FAILURE"
 
+# OpenClaw Sandbox Cloud Gateway - Agent mesh gateway for TNF network
+[services.openclaw-sandbox-cloud]
+builder = "DOCKERFILE"
+[services.openclaw-sandbox-cloud.build]
+dockerfilePath = "railway-openclaw-gateway/Dockerfile"
+watchPaths = ["railway-openclaw-gateway/**"]
+[services.openclaw-sandbox-cloud.deploy]
+port = 8080
+startCommand = "/entrypoint.sh"
+healthcheckPath = "/health"
+healthcheckTimeout = 60
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
 # Core Vector DB Service
 [services.core-vector-db]
 builder = "DOCKERFILE"
