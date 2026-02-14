@@ -521,7 +521,44 @@ body {
 }
 
 /* Ensure buttons show at least one icon */
-.action-btn:has(.codicon:empty) .icon-fallback,
-.send-btn:has(.codicon:empty) .icon-fallback {
-  display: inline-block;
+/* ============================================
+   Command Suggestions
+   ============================================ */
+.suggestions-popup {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+  display: flex !important; /* Force display when not hidden */
+  flex-direction: column;
+}
+
+.suggestions-popup.hidden {
+  display: none !important;
+}
+
+.suggestion-item {
+  padding: 8px 16px;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.suggestion-item:hover {
+  background: var(--bg-tertiary);
+}
+
+.suggestion-item .cmd {
+  font-weight: bold;
+  color: var(--accent-color);
+}
+
+.suggestion-item .desc {
+  color: var(--text-secondary);
+  font-size: 0.9em;
 }

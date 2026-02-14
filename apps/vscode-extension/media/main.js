@@ -41,6 +41,14 @@
     inputElement?.addEventListener('input', () => {
       inputElement.style.height = 'auto';
       inputElement.style.height = Math.min(inputElement.scrollHeight, 200) + 'px';
+
+      // Command suggestions
+      const value = inputElement.value;
+      if (value === '/') {
+        showCommandSuggestions();
+      } else {
+        hideCommandSuggestions();
+      }
     });
 
     // Action buttons
@@ -227,6 +235,52 @@
       if (countEl) {
         countEl.textContent = `📎 ${status.attachmentCount} file${status.attachmentCount > 1 ? 's' : ''} ready`;
       }
+    }
+  }
+
+  function showCommandSuggestions() {
+    let suggestionsEl = document.getElementById('command-suggestions');
+    if (!suggestionsEl) {
+      suggestionsEl = document.createElement('div');
+      suggestionsEl.id = 'command-suggestions';
+      suggestionsEl.className = 'suggestions-popup';
+      document.querySelector('.input-area').prepend(suggestionsEl);
+    }
+
+    const commands = [
+      { cmd: '/clear', desc: 'Clear chat history' },
+      { cmd: '/new', desc: 'Start new conversation' },
+      { cmd: '/status', desc: 'Show system status' },
+      { cmd: '/mcp', desc: 'MCP server management' },
+      { cmd: '/model', desc: 'Change AI model' },
+      { cmd: '/help', desc: 'Show help' },
+    ];
+
+    suggestionsEl.innerHTML = commands
+      .map(
+        (c) =>
+          `<div class="suggestion-item" data-cmd="${c.cmd}">
+        <span class="cmd">${c.cmd}</span>
+        <span class="desc">${c.desc}</span>
+       </div>`
+      )
+      .join('');
+
+    suggestionsEl.querySelectorAll('.suggestion-item').forEach((item) => {
+      item.addEventListener('click', () => {
+        inputElement.value = item.dataset.cmd + ' ';
+        inputElement.focus();
+        hideCommandSuggestions();
+      });
+    });
+
+    suggestionsEl.classList.remove('hidden');
+  }
+
+  function hideCommandSuggestions() {
+    const suggestionsEl = document.getElementById('command-suggestions');
+    if (suggestionsEl) {
+      suggestionsEl.classList.add('hidden');
     }
   }
 
