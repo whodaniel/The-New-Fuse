@@ -1,5 +1,5 @@
 import { SettingsButton } from '@/components/SettingsButton';
-import { Button } from '@/components/ui/button';
+import { IconButton } from '@/components/ui/premium/PremiumButton';
 import System from '@/models/system';
 import paths from '@/utils/paths';
 import { Gear, Question, SignOut } from '@phosphor-icons/react';
@@ -27,40 +27,34 @@ export const Footer: React.FC<FooterProps> = ({ className = '' }) => {
   return (
     <footer className={`flex items-center justify-between p-4 border-t ${className}`}>
       <div className="flex items-center space-x-4">
-        <Button
+        <IconButton
           variant="ghost"
-          size="icon"
+          icon={Question as any}
           onClick={() => setShowTooltips(!showTooltips)}
           data-tooltip-id="footer"
           data-tooltip-content={showTooltips ? 'Hide tooltips' : 'Show tooltips'}
-        >
-          <Question className="h-5 w-5" />
-        </Button>
+        />
 
         <Link to={paths.settings()}>
-          <Button
+          <IconButton
             variant="ghost"
-            size="icon"
+            icon={Gear as any}
             data-tooltip-id="footer"
             data-tooltip-content="Settings"
-          >
-            <Gear className="h-5 w-5" />
-          </Button>
+          />
         </Link>
 
         <SettingsButton className="md:hidden" />
       </div>
 
       <div className="flex items-center space-x-4">
-        <Button
+        <IconButton
           variant="ghost"
-          size="icon"
+          icon={SignOut as any}
           onClick={handleSignOut}
           data-tooltip-id="footer"
           data-tooltip-content="Sign out"
-        >
-          <SignOut className="h-5 w-5" />
-        </Button>
+        />
       </div>
 
       {showTooltips && !isMobile && (

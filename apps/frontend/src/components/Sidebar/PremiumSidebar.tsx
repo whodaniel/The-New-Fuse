@@ -44,6 +44,7 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
 
   const navigation = [
     { name: 'Home', href: '/', icon: Home },
+    { name: 'Command Center', href: '/command-center', icon: Zap },
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Analytics', href: '/analytics', icon: BarChart3 },
     { name: 'AI Portal', href: '/ai-portal', icon: BrainCircuit },

@@ -25,6 +25,9 @@ fi
 
 # Use Railway's PORT if available, otherwise default
 GATEWAY_PORT="${PORT:-${OPENCLAW_GATEWAY_PORT:-18789}}"
+GATEWAY_BIND="${OPENCLAW_GATEWAY_BIND:-0.0.0.0}"
 
-echo "Starting OpenClaw gateway on port ${GATEWAY_PORT}..."
-exec openclaw gateway start --port "${GATEWAY_PORT}" --bind "${OPENCLAW_GATEWAY_BIND:-0.0.0.0}"
+echo "Starting OpenClaw gateway on ${GATEWAY_BIND}:${GATEWAY_PORT}..."
+# In cloud environments, we MUST bind to 0.0.0.0 and use the injected PORT
+exec openclaw gateway start --port "${GATEWAY_PORT}" --bind "${GATEWAY_BIND}"
+

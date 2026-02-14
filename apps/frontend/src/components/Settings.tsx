@@ -1,7 +1,7 @@
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { PremiumButton as Button } from '@/components/ui/premium/PremiumButton';
 import { Switch } from '@/components/ui/switch';
 import { Lock, Settings as SettingsIcon } from 'lucide-react';
 import React, { useState } from 'react';
@@ -130,7 +130,7 @@ export const Settings: React.FC = () => {
               />
             </div>
 
-            <Button onClick={handleVerifyConfig} className="w-full">
+            <Button onClick={handleVerifyConfig} fullWidth>
               Verify Configuration
             </Button>
           </CardContent>
