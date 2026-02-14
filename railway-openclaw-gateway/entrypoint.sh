@@ -8,6 +8,9 @@ node -e "
   const path = require('path');
   const cfgPath = '/root/.openclaw/openclaw.json';
   const kiloAuthPath = '/root/.local/share/kilo/auth.json';
+  const authProfilesPath = '/root/.openclaw/agents/main/agent/auth-profiles.json';
+
+  const toBool = (value) => String(value || '').toLowerCase() === 'true';
 
   // Update openclaw.json
   if (fs.existsSync(cfgPath)) {
@@ -37,10 +40,107 @@ node -e "
         if (cfg.models.providers.kilocode) cfg.models.providers.kilocode.apiKey = process.env.KILO_API_KEY;
       }
 
+      // Optional: switch default model to Codex OAuth-backed model
+      const codexOAuthEnabled = toBool(process.env.OPENCLAW_USE_CODEX_OAUTH) ||
+        !!process.env.OPENAI_CODEX_REFRESH_TOKEN ||
+        !!process.env.OPENAI_CODEX_ACCESS_TOKEN;
+
+      if (codexOAuthEnabled) {
+        if (!cfg.agents) cfg.agents = {};
+        if (!cfg.agents.defaults) cfg.agents.defaults = {};
+        if (!cfg.agents.defaults.model) cfg.agents.defaults.model = {};
+
+        const primaryModel = process.env.OPENCLAW_MODEL_PRIMARY || 'copilot-proxy/gpt-5.2-codex';
+        const fallbackModels = (process.env.OPENCLAW_MODEL_FALLBACKS || 'copilot-proxy/gpt-5.1-codex,copilot-proxy/gpt-5-mini')
+          .split(',')
+          .map((m) => m.trim())
+          .filter(Boolean);
+
+        cfg.agents.defaults.model.primary = primaryModel;
+        cfg.agents.defaults.model.fallbacks = fallbackModels;
+        console.log('Configured Codex default model routing');
+      }
+
+      // UI Branding
+      if (process.env.OPENCLAW_UI_ASSISTANT_NAME || process.env.OPENCLAW_UI_ASSISTANT_AVATAR) {
+        if (!cfg.ui) cfg.ui = {};
+        if (!cfg.ui.assistant) cfg.ui.assistant = {};
+        if (process.env.OPENCLAW_UI_ASSISTANT_NAME) {
+          cfg.ui.assistant.name = process.env.OPENCLAW_UI_ASSISTANT_NAME;
+        }
+        if (process.env.OPENCLAW_UI_ASSISTANT_AVATAR) {
+          cfg.ui.assistant.avatar = process.env.OPENCLAW_UI_ASSISTANT_AVATAR;
+        }
+        console.log('Configured UI branding');
+      }
+
       fs.writeFileSync(cfgPath, JSON.stringify(cfg, null, 2));
       console.log('Updated openclaw.json configuration');
     } catch (e) {
       console.error('Error updating openclaw.json:', e);
+    }
+  }
+
+  // Update OpenClaw auth-profiles.json for Codex OAuth
+  if (process.env.OPENAI_CODEX_REFRESH_TOKEN || process.env.OPENAI_CODEX_ACCESS_TOKEN) {
+    try {
+      const authDir = path.dirname(authProfilesPath);
+      if (!fs.existsSync(authDir)) {
+        fs.mkdirSync(authDir, { recursive: true });
+      }
+
+      const now = Date.now();
+      const defaultExpiry = now + 30 * 24 * 60 * 60 * 1000; // 30 days
+      const profileKey = process.env.OPENAI_CODEX_PROFILE_KEY || 'openai-codex:default';
+      const accountId = process.env.OPENAI_CODEX_ACCOUNT_ID || 'default';
+      const refreshToken = process.env.OPENAI_CODEX_REFRESH_TOKEN || '';
+      const accessToken = process.env.OPENAI_CODEX_ACCESS_TOKEN || refreshToken;
+      const expires = Number(process.env.OPENAI_CODEX_EXPIRES || defaultExpiry);
+
+      let authProfiles = {
+        version: 1,
+        profiles: {},
+        order: {},
+        lastGood: {},
+        usageStats: {}
+      };
+
+      if (fs.existsSync(authProfilesPath)) {
+        try {
+          const raw = JSON.parse(fs.readFileSync(authProfilesPath, 'utf8'));
+          if (raw && typeof raw === 'object') {
+            authProfiles = {
+              version: raw.version || 1,
+              profiles: raw.profiles || {},
+              order: raw.order || {},
+              lastGood: raw.lastGood || {},
+              usageStats: raw.usageStats || {}
+            };
+          }
+        } catch (parseErr) {
+          console.warn('auth-profiles.json parse failed, rebuilding file:', parseErr.message);
+        }
+      }
+
+      authProfiles.profiles[profileKey] = {
+        type: 'oauth',
+        provider: 'openai-codex',
+        accountId,
+        access: accessToken,
+        refresh: refreshToken,
+        expires
+      };
+
+      const existingOrder = Array.isArray(authProfiles.order['openai-codex'])
+        ? authProfiles.order['openai-codex']
+        : [];
+      authProfiles.order['openai-codex'] = [profileKey, ...existingOrder.filter((k) => k !== profileKey)];
+      authProfiles.lastGood['openai-codex'] = profileKey;
+
+      fs.writeFileSync(authProfilesPath, JSON.stringify(authProfiles, null, 2));
+      console.log('Updated auth-profiles.json for openai-codex OAuth');
+    } catch (e) {
+      console.error('Error updating auth-profiles.json:', e);
     }
   }
 
