@@ -1,4 +1,4 @@
-FROM node:20-bookworm
+FROM node:22-bookworm
 
 # Install OpenClaw globally
 RUN npm i -g openclaw@2026.2.6-3
