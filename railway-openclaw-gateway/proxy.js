@@ -20,12 +20,23 @@ function isHealthPath(url) {
 }
 
 function proxyHttp(req, res) {
+  const headers = { ...req.headers };
+  // The OpenClaw gateway treats forwarded headers as a security boundary. Since this
+  // proxy is local-to-container, strip proxy headers before forwarding so the gateway
+  // doesn't require pairing for "non-local" clients behind an untrusted proxy.
+  delete headers['forwarded'];
+  delete headers['x-forwarded-for'];
+  delete headers['x-forwarded-host'];
+  delete headers['x-forwarded-proto'];
+  delete headers['x-forwarded-port'];
+  delete headers['x-real-ip'];
+
   const options = {
     host: TARGET_HOST,
     port: TARGET_PORT,
     method: req.method,
     path: req.url,
-    headers: { ...req.headers, host: `${TARGET_HOST}:${TARGET_PORT}` },
+    headers: { ...headers, host: `${TARGET_HOST}:${TARGET_PORT}` },
   };
 
   const upstream = http.request(options, (upstreamRes) => {
@@ -44,10 +55,23 @@ function proxyHttp(req, res) {
 
 function proxyWebSocket(req, socket, head) {
   const upstreamSocket = require('net').connect(TARGET_PORT, TARGET_HOST, () => {
+    const headers = { ...req.headers };
+    delete headers['forwarded'];
+    delete headers['x-forwarded-for'];
+    delete headers['x-forwarded-host'];
+    delete headers['x-forwarded-proto'];
+    delete headers['x-forwarded-port'];
+    delete headers['x-real-ip'];
+    // Rewrite Host and Origin to localhost so the gateway treats this as a local
+    // connection (otherwise "Loopback connection with non-local Host header" triggers
+    // pairing, and non-local Origin triggers "origin not allowed").
+    headers['host'] = `${TARGET_HOST}:${TARGET_PORT}`;
+    headers['origin'] = `http://${TARGET_HOST}:${TARGET_PORT}`;
+
     // Forward the initial HTTP upgrade request to upstream.
     upstreamSocket.write(
       `${req.method} ${req.url} HTTP/${req.httpVersion}\r\n` +
-        Object.entries(req.headers)
+        Object.entries(headers)
           .map(([k, v]) => `${k}: ${v}`)
           .join('\r\n') +
         '\r\n\r\n'
@@ -79,6 +103,8 @@ function startGateway() {
     '--allow-unconfigured',
     '--port',
     String(TARGET_PORT),
+    '--token',
+    String(process.env.OPENCLAW_GATEWAY_TOKEN),
   ];
 
   const child = spawn('openclaw', args, {
