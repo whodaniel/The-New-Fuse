@@ -447,7 +447,7 @@ func (al *AgentLoop) runLLMIteration(ctx context.Context, messages []providers.M
 
 		// Call LLM
 		response, err := al.provider.Chat(ctx, messages, providerToolDefs, al.model, map[string]interface{}{
-			"max_tokens":  8192,
+			"max_tokens":  al.contextWindow,
 			"temperature": 0.7,
 		})
 
