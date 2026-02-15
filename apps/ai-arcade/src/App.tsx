@@ -9,6 +9,7 @@ import LoginModal from './components/LoginModal';
 import UserProfile from './components/UserProfile';
 import { config } from './config';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import GenesisAuction from './pages/GenesisAuction';
 import { ArcadeService } from './services/ArcadeService';
 
 import type { AgentListing } from './services/ArcadeService';
@@ -267,9 +268,35 @@ function AppContent() {
 }
 
 function App() {
+  const [currentView, setCurrentView] = useState<'arcade' | 'genesis'>('arcade');
+
   return (
     <AuthProvider>
-      <AppContent />
+      {currentView === 'arcade' ? (
+        <>
+          <div className="fixed top-4 right-4 z-50">
+            <button
+              onClick={() => setCurrentView('genesis')}
+              className="bg-black/80 text-cyan-500 border border-cyan-500/50 px-4 py-2 rounded font-mono text-xs hover:bg-cyan-900/50 transition-colors"
+            >
+              ENTER GENESIS PROTOCOL
+            </button>
+          </div>
+          <AppContent />
+        </>
+      ) : (
+        <>
+          <div className="fixed top-4 right-4 z-50">
+            <button
+              onClick={() => setCurrentView('arcade')}
+              className="bg-black/80 text-orange-500 border border-orange-500/50 px-4 py-2 rounded font-mono text-xs hover:bg-orange-900/50 transition-colors"
+            >
+              RETURN TO ARCADE
+            </button>
+          </div>
+          <GenesisAuction />
+        </>
+      )}
     </AuthProvider>
   );
 }

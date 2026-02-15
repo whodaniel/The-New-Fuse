@@ -6,3 +6,13 @@ declare global {
     interface IntrinsicElements extends React.JSX.IntrinsicElements {}
   }
 }
+
+declare module '*.module.css' {
+  const classes: { [key: string]: string };
+  export default classes;
+}
+
+declare module '*.css' {
+  const content: any;
+  export default content;
+}

@@ -41,6 +41,11 @@ Documentation has been organized into logical categories.
 - [ARCHITECTURE_ANALYSIS_SUMMARY.md](ARCHITECTURE_ANALYSIS_SUMMARY.md) -
   Architecture analysis
 
+### Protocols & Primitives (New!)
+
+- [docs/protocols/UTP_SPEC_v1.0.md](docs/protocols/UTP_SPEC_v1.0.md) - Universal
+  Timeline Protocol (UTP)
+
 ### Code Quality & Refactoring
 
 - [CODE_DUPLICATION_REPORT.md](CODE_DUPLICATION_REPORT.md) - Duplication

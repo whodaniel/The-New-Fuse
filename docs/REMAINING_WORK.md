@@ -92,6 +92,14 @@ Here's the current status:
 - **Action**: Find or create these services
 - **Effort**: 4-6 hours if creating from scratch
 
+#### 7. Implement UTP Translators (New!) ❌
+
+- **Description**: Universal Timeline Protocol primitive implementation
+- **Translators needed**: Discord, Discourse, Slack, Git, Blockchain
+- **Action**: Build logic to map source-specific events to the UTP Primitive
+- **Effort**: 1-2 days
+- **Impact**: Enables unified Living Documentation across all platforms
+
 ---
 
 ### MEDIUM PRIORITY (Within 2 Weeks) - 3 Major Items
