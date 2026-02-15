@@ -1,12 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { WorkflowModel, WorkflowStepDefinition, WorkflowStatus, WorkflowStepType } from '@the-new-fuse/api-types/src/workflow';
-import { WorkflowVisualizer } from './WorkflowVisualizer';
+import {
+  WorkflowModel,
+  WorkflowStepDefinition,
+  WorkflowStepType,
+} from '@the-new-fuse/api-types/src/workflow';
+import { Edit, PlusCircle, Trash2 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '../../Button/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../Card/Card';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '../../Dialog/Dialog';
 import { Input } from '../../Input/Input';
 import { Textarea } from '../../Textarea/Textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '../../Card/Card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from '../../Dialog/Dialog';
-import { Trash2, Edit, PlusCircle } from 'lucide-react';
+import { WorkflowVisualizer } from './WorkflowVisualizer';
 
 // Explicitly define props interface for the component
 interface WorkflowEditorProps {
@@ -30,9 +42,9 @@ const WorkflowEditor: React.FC<WorkflowEditorProps> = ({ initialDefinition, onSa
     // Create a new step with default values
     const newStep: WorkflowStepDefinition = {
       id: `step-${Date.now().toString()}`,
-      name: "New Step",
+      name: 'New Step',
       type: WorkflowStepType.ACTION,
-      action: "custom.action",
+      action: 'custom.action',
       parameters: {},
       config: {},
       connections: [],
@@ -63,7 +75,7 @@ const WorkflowEditor: React.FC<WorkflowEditorProps> = ({ initialDefinition, onSa
       });
       setParamsError(null);
     } catch (_error) {
-      setParamsError("Invalid JSON format for parameters.");
+      setParamsError('Invalid JSON format for parameters.');
     }
   };
 
@@ -75,7 +87,7 @@ const WorkflowEditor: React.FC<WorkflowEditorProps> = ({ initialDefinition, onSa
 
     const updatedWorkflow = {
       ...workflow,
-      steps: updatedSteps
+      steps: updatedSteps,
     };
 
     setWorkflow(updatedWorkflow);
@@ -90,7 +102,7 @@ const WorkflowEditor: React.FC<WorkflowEditorProps> = ({ initialDefinition, onSa
 
     const updatedWorkflow = {
       ...workflow,
-      steps: updatedSteps
+      steps: updatedSteps,
     };
 
     setWorkflow(updatedWorkflow);
@@ -143,9 +155,7 @@ const WorkflowEditor: React.FC<WorkflowEditorProps> = ({ initialDefinition, onSa
         </CardHeader>
         <CardContent>
           {/* Workflow Visualization */}
-          <WorkflowVisualizer
-            definition={workflow}
-          />
+          <WorkflowVisualizer definition={workflow} />
 
           {/* Step Editor Dialog */}
           <Dialog>
@@ -163,32 +173,42 @@ const WorkflowEditor: React.FC<WorkflowEditorProps> = ({ initialDefinition, onSa
                   <Input
                     id="step-name"
                     value={editedStep.name}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleStepChange('name', e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      handleStepChange('name', e.target.value)
+                    }
                     placeholder="Step Name"
                   />
                   <Input
                     id="step-id"
                     value={editedStep.id}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleStepChange('id', e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      handleStepChange('id', e.target.value)
+                    }
                     placeholder="Step ID (unique)"
                     disabled={!isNewStep} // Disable ID editing for existing steps
                   />
-                   <Input
-                     id="step-type"
-                     value={editedStep.type}
-                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleStepChange('type', e.target.value as any)}
-                     placeholder="Step Type (e.g., action, condition)"
-                   />
-                   <Input
-                     id="step-action"
-                     value={editedStep.action}
-                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleStepChange('action', e.target.value)}
-                     placeholder="Action Name (e.g., http.request, data.transform)"
-                   />
+                  <Input
+                    id="step-type"
+                    value={editedStep.type}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      handleStepChange('type', e.target.value as any)
+                    }
+                    placeholder="Step Type (e.g., action, condition)"
+                  />
+                  <Input
+                    id="step-action"
+                    value={editedStep.action}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      handleStepChange('action', e.target.value)
+                    }
+                    placeholder="Action Name (e.g., http.request, data.transform)"
+                  />
                   <Textarea
                     id="step-params"
                     value={JSON.stringify(editedStep.parameters || {}, null, 2)}
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleParamsChange(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                      handleParamsChange(e.target.value)
+                    }
                     placeholder="Parameters (JSON format)"
                     rows={6}
                     className={paramsError ? 'border-destructive' : ''}
@@ -198,9 +218,13 @@ const WorkflowEditor: React.FC<WorkflowEditorProps> = ({ initialDefinition, onSa
                 </div>
                 <DialogFooter>
                   <DialogClose asChild>
-                    <Button type="button" variant="secondary">Cancel</Button>
+                    <Button type="button" variant="secondary">
+                      Cancel
+                    </Button>
                   </DialogClose>
-                  <Button type="button" onClick={handleSaveStep}>Save</Button>
+                  <Button type="button" onClick={handleSaveStep}>
+                    Save
+                  </Button>
                 </DialogFooter>
               </DialogContent>
             )}

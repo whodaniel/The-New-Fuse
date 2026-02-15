@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 interface GraphNode {
   id: string;
@@ -6,8 +6,8 @@ interface GraphNode {
   position?: { x: number; y: number };
   data: {
     label: string;
-    status?: "running" | "error" | "idle";
-    priority?: "high" | "medium" | "low";
+    status?: 'running' | 'error' | 'idle';
+    priority?: 'high' | 'medium' | 'low';
     metadata?: Record<string, string | number>;
     expanded?: boolean;
   };
@@ -79,7 +79,7 @@ export function useGraphWebSocket(options: UseGraphWebSocketOptions): UseGraphWe
   }, [url, autoConnect]);
 
   const updateLayout = useCallback((type: string) => {
-    setConfig(prev => ({ ...prev, layout: { type } }));
+    setConfig((prev) => ({ ...prev, layout: { type } }));
   }, []);
 
   const selectNodes = useCallback((_ids: string[]) => {

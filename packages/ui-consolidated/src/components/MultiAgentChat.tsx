@@ -1,19 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Agent, MultiAgentChatProps } from '../types/multi-agent-chat.types';
 import {
-  useMultiAgentChat,
-  EditIcon,
   DeleteIcon,
+  EditIcon,
   SettingsIcon,
   SystemIcon,
-  providerDetails
+  providerDetails,
+  useMultiAgentChat,
 } from './MultiAgentChatProvider';
-import { Agent, MultiAgentChatProps } from '../types/multi-agent-chat.types';
 
 // Agent Tag Component
 const AgentTag: React.FC<{ agent: Agent; onEdit: () => void; onDelete: () => void }> = ({
   agent,
   onEdit,
-  onDelete
+  onDelete,
 }) => (
   <div className="flex items-center gap-2 bg-gray-200 dark:bg-gray-700 rounded-full pr-3 pl-1 py-1">
     <img
@@ -36,10 +36,13 @@ const MessageBubble: React.FC<{
   message: any;
   agents: Agent[];
 }> = ({ message, agents }) => {
-  const agent = message.agentId ? agents.find(a => a.id === message.agentId) : null;
-  const Icon = message.sender === 'system' ? SystemIcon :
-    (agent && providerDetails[agent.llm as keyof typeof providerDetails]) ?
-    providerDetails[agent.llm as keyof typeof providerDetails].icon : null;
+  const agent = message.agentId ? agents.find((a) => a.id === message.agentId) : null;
+  const Icon =
+    message.sender === 'system'
+      ? SystemIcon
+      : agent && providerDetails[agent.llm as keyof typeof providerDetails]
+        ? providerDetails[agent.llm as keyof typeof providerDetails].icon
+        : null;
 
   const isYou = message.sender === 'You';
   const isSystem = message.sender === 'system';
@@ -47,11 +50,13 @@ const MessageBubble: React.FC<{
   const bubbleClass = isYou
     ? 'bg-blue-500 text-white self-end'
     : isSystem
-    ? 'bg-gray-500 text-white self-center text-center text-xs italic'
-    : 'bg-white dark:bg-gray-700 self-start';
+      ? 'bg-gray-500 text-white self-center text-center text-xs italic'
+      : 'bg-white dark:bg-gray-700 self-start';
 
   return (
-    <div className={`flex items-start gap-3 max-w-xl w-full ${isYou ? 'self-end flex-row-reverse' : 'self-start'}`}>
+    <div
+      className={`flex items-start gap-3 max-w-xl w-full ${isYou ? 'self-end flex-row-reverse' : 'self-start'}`}
+    >
       {!isYou && !isSystem && (
         <img
           src={agent?.profilePictureUrl || 'https://placehold.co/40x40/7c3aed/ffffff?text=A'}
@@ -103,7 +108,7 @@ const AgentModal: React.FC<{
 
   const generatePicture = async () => {
     if (!systemPrompt.trim()) {
-      setPicError("Please define a system prompt for the character first.");
+      setPicError('Please define a system prompt for the character first.');
       return;
     }
 
@@ -115,7 +120,7 @@ const AgentModal: React.FC<{
       const response = await generateImage({ prompt: picPrompt });
       setProfilePictureUrl(response.url);
     } catch (error) {
-      console.error("Profile picture generation failed:", error);
+      console.error('Profile picture generation failed:', error);
       setPicError("Couldn't generate a picture. Please try again.");
     }
 
@@ -126,15 +131,18 @@ const AgentModal: React.FC<{
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
-      <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-        <h2 className="text-xl font-bold mb-4">{agent ? "Edit Agent" : "Create Agent"}</h2>
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto"
+      >
+        <h2 className="text-xl font-bold mb-4">{agent ? 'Edit Agent' : 'Create Agent'}</h2>
 
         <div className="mb-4">
           <label className="block mb-1 font-semibold">Name</label>
           <input
             type="text"
             value={name}
-            onChange={e => setName(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
             required
             className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
           />
@@ -144,7 +152,7 @@ const AgentModal: React.FC<{
           <label className="block mb-1 font-semibold">System Prompt (Persona)</label>
           <textarea
             value={systemPrompt}
-            onChange={e => setSystemPrompt(e.target.value)}
+            onChange={(e) => setSystemPrompt(e.target.value)}
             required
             rows={4}
             className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
@@ -175,11 +183,13 @@ const AgentModal: React.FC<{
           <label className="block mb-1 font-semibold">LLM Provider</label>
           <select
             value={llm}
-            onChange={e => setLlm(e.target.value)}
+            onChange={(e) => setLlm(e.target.value)}
             className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
           >
-            {Object.entries(providerDetails).map(([key, {name}]) => (
-              <option key={key} value={key}>{name}</option>
+            {Object.entries(providerDetails).map(([key, { name }]) => (
+              <option key={key} value={key}>
+                {name}
+              </option>
             ))}
           </select>
         </div>
@@ -189,7 +199,7 @@ const AgentModal: React.FC<{
           <input
             type="text"
             value={model}
-            onChange={e => setModel(e.target.value)}
+            onChange={(e) => setModel(e.target.value)}
             required
             className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
             placeholder="e.g., gemini-2.0-flash"
@@ -231,7 +241,8 @@ const ScenarioModal: React.FC<{
       <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-lg">
         <h2 className="text-xl font-bold mb-4">Inject Scenario</h2>
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-          Describe a situation or topic to make the agents discuss it. This will clear the current context and start a new conversation.
+          Describe a situation or topic to make the agents discuss it. This will clear the current
+          context and start a new conversation.
         </p>
         <textarea
           value={text}
@@ -241,10 +252,7 @@ const ScenarioModal: React.FC<{
           placeholder="e.g., You are all trying to decide where to go for dinner..."
         />
         <div className="flex justify-end gap-3 mt-4">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg"
-          >
+          <button onClick={onClose} className="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">
             Cancel
           </button>
           <button
@@ -295,8 +303,10 @@ const RulesModal: React.FC<{
             required
             className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
           >
-            {agents.map(a => (
-              <option key={a.id} value={a.id}>{a.name}</option>
+            {agents.map((a) => (
+              <option key={a.id} value={a.id}>
+                {a.name}
+              </option>
             ))}
           </select>
           <span>➡️</span>
@@ -305,8 +315,10 @@ const RulesModal: React.FC<{
             required
             className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
           >
-            {agents.map(a => (
-              <option key={a.id} value={a.id}>{a.name}</option>
+            {agents.map((a) => (
+              <option key={a.id} value={a.id}>
+                {a.name}
+              </option>
             ))}
           </select>
           <button
@@ -318,14 +330,19 @@ const RulesModal: React.FC<{
         </form>
 
         <div className="space-y-2">
-          {rules.map(rule => {
-            const sourceAgent = agents.find(a => a.id === rule.sourceId);
-            const targetAgent = agents.find(a => a.id === rule.targetId);
+          {rules.map((rule) => {
+            const sourceAgent = agents.find((a) => a.id === rule.sourceId);
+            const targetAgent = agents.find((a) => a.id === rule.targetId);
             if (!sourceAgent || !targetAgent) return null;
 
             return (
-              <div key={rule.id} className="flex items-center justify-between bg-gray-100 dark:bg-gray-700 p-2 rounded">
-                <span>{sourceAgent.name} ➡️ {targetAgent.name}</span>
+              <div
+                key={rule.id}
+                className="flex items-center justify-between bg-gray-100 dark:bg-gray-700 p-2 rounded"
+              >
+                <span>
+                  {sourceAgent.name} ➡️ {targetAgent.name}
+                </span>
                 <button
                   onClick={() => deleteRule(rule.id)}
                   className="text-red-500 hover:text-red-700"
@@ -335,16 +352,11 @@ const RulesModal: React.FC<{
               </div>
             );
           })}
-          {rules.length === 0 && (
-            <p className="text-center text-gray-500">No rules defined.</p>
-          )}
+          {rules.length === 0 && <p className="text-center text-gray-500">No rules defined.</p>}
         </div>
 
         <div className="flex justify-end mt-6">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg"
-          >
+          <button onClick={onClose} className="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">
             Close
           </button>
         </div>
@@ -355,12 +367,12 @@ const RulesModal: React.FC<{
 
 // Main MultiAgentChat Component
 export const MultiAgentChat: React.FC<MultiAgentChatProps> = ({
-  className = "",
-  theme = "auto",
+  className = '',
+  theme = 'auto',
   onSessionStart,
   onSessionEnd,
   onMessageSent,
-  onAgentCreated
+  onAgentCreated,
 }) => {
   const {
     agents,
@@ -373,7 +385,7 @@ export const MultiAgentChat: React.FC<MultiAgentChatProps> = ({
     automateAll,
     injectScenario,
     session,
-    setMode
+    setMode,
   } = useMultiAgentChat();
 
   const [inputValue, setInputValue] = useState('');
@@ -392,7 +404,7 @@ export const MultiAgentChat: React.FC<MultiAgentChatProps> = ({
 
   // Scroll to bottom of messages
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   // Set initial recipient when agents change
@@ -413,7 +425,7 @@ export const MultiAgentChat: React.FC<MultiAgentChatProps> = ({
       id: `temp-${Date.now()}`,
       text: messageText,
       sender: senderId,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
   };
 
@@ -457,7 +469,9 @@ export const MultiAgentChat: React.FC<MultiAgentChatProps> = ({
   }
 
   return (
-    <div className={`grid grid-rows-[auto_1fr_auto] h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans ${className}`}>
+    <div
+      className={`grid grid-rows-[auto_1fr_auto] h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans ${className}`}
+    >
       {isAutomating && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex flex-col justify-center items-center z-50">
           <div className="w-16 h-16 border-8 border-dashed rounded-full animate-spin border-blue-500"></div>
@@ -481,15 +495,12 @@ export const MultiAgentChat: React.FC<MultiAgentChatProps> = ({
         onSend={handleScenarioSend}
       />
 
-      <RulesModal
-        isOpen={isRuleModalOpen}
-        onClose={() => setIsRuleModalOpen(false)}
-      />
+      <RulesModal isOpen={isRuleModalOpen} onClose={() => setIsRuleModalOpen(false)} />
 
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 shadow-sm p-3 z-10">
         <div className="flex items-center gap-3 overflow-x-auto pb-2">
-          {agents.map(agent => (
+          {agents.map((agent) => (
             <AgentTag
               key={agent.id}
               agent={agent}
@@ -553,7 +564,7 @@ export const MultiAgentChat: React.FC<MultiAgentChatProps> = ({
 
       {/* Messages */}
       <main className="p-4 overflow-y-auto flex flex-col space-y-4">
-        {messages.map(msg => (
+        {messages.map((msg) => (
           <MessageBubble key={msg.id} message={msg} agents={agents} />
         ))}
         <div ref={messagesEndRef} />
@@ -561,34 +572,44 @@ export const MultiAgentChat: React.FC<MultiAgentChatProps> = ({
 
       {/* Footer */}
       <footer className="bg-white dark:bg-gray-800 shadow-inner">
-        <div className={`transition-all duration-300 ease-in-out overflow-hidden ${isFooterExpanded ? 'max-h-40' : 'max-h-0'}`}>
+        <div
+          className={`transition-all duration-300 ease-in-out overflow-hidden ${isFooterExpanded ? 'max-h-40' : 'max-h-0'}`}
+        >
           <div className="p-2 border-b border-gray-200 dark:border-gray-700 grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="sender-select" className="text-xs text-gray-500">From:</label>
+              <label htmlFor="sender-select" className="text-xs text-gray-500">
+                From:
+              </label>
               <select
                 id="sender-select"
                 value={senderId}
-                onChange={e => setSenderId(e.target.value)}
+                onChange={(e) => setSenderId(e.target.value)}
                 disabled={agents.length === 0}
                 className="w-full p-2 border bg-transparent border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:border-blue-500 text-sm"
               >
                 <option value="You">You</option>
-                {agents.map(agent => (
-                  <option key={agent.id} value={agent.id}>{agent.name}</option>
+                {agents.map((agent) => (
+                  <option key={agent.id} value={agent.id}>
+                    {agent.name}
+                  </option>
                 ))}
               </select>
             </div>
             <div>
-              <label htmlFor="recipient-select" className="text-xs text-gray-500">To:</label>
+              <label htmlFor="recipient-select" className="text-xs text-gray-500">
+                To:
+              </label>
               <select
                 id="recipient-select"
                 value={recipientAgentId}
-                onChange={e => setRecipientAgentId(e.target.value)}
+                onChange={(e) => setRecipientAgentId(e.target.value)}
                 disabled={agents.length === 0}
                 className="w-full p-2 border bg-transparent border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:border-blue-500 text-sm"
               >
-                {agents.map(agent => (
-                  <option key={agent.id} value={agent.id}>{agent.name}</option>
+                {agents.map((agent) => (
+                  <option key={agent.id} value={agent.id}>
+                    {agent.name}
+                  </option>
                 ))}
               </select>
             </div>
@@ -607,8 +628,8 @@ export const MultiAgentChat: React.FC<MultiAgentChatProps> = ({
               id="message-input"
               type="text"
               value={inputValue}
-              onChange={e => setInputValue(e.target.value)}
-              onKeyPress={e => e.key === 'Enter' && handleSendMessage()}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
               placeholder="Type a message..."
               className="w-full p-2 pr-10 border bg-transparent border-gray-300 dark:border-gray-600 rounded-full focus:outline-none focus:border-blue-500"
             />
@@ -619,7 +640,12 @@ export const MultiAgentChat: React.FC<MultiAgentChatProps> = ({
             disabled={!inputValue.trim()}
           >
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M12 5l7 7-7 7" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 12h14M12 5l7 7-7 7"
+              />
             </svg>
           </button>
         </div>

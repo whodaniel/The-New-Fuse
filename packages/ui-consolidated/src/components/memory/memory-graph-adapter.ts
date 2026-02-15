@@ -3,8 +3,8 @@ interface GraphNode {
   type?: string;
   data: {
     label: string;
-    status?: "running" | "error" | "idle";
-    priority?: "high" | "medium" | "low";
+    status?: 'running' | 'error' | 'idle';
+    priority?: 'high' | 'medium' | 'low';
     metadata?: Record<string, string | number>;
   };
 }
