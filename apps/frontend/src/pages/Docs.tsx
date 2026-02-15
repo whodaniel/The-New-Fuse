@@ -1,5 +1,5 @@
 import { GlassCard, PremiumButton } from '@/components/ui/premium';
-import { BookOpen, Code, FileText, Search } from 'lucide-react';
+import { ArrowRight, BookOpen, Code, FileText, Search } from 'lucide-react';
 import React from 'react';
 import { Link } from 'react-router-dom';
 

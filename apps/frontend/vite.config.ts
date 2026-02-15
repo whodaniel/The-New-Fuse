@@ -80,6 +80,10 @@ export default defineConfig(({ mode }) => {
         'scheduler',
         '@types/react',
         '@types/react-dom',
+        'firebase',
+        '@firebase/app',
+        '@firebase/firestore',
+        '@firebase/auth',
       ],
       alias: {
         '@': path.resolve(__dirname, 'src'),
