@@ -98,6 +98,17 @@ node -e "
         console.log('Configured UI branding');
       }
 
+      // Discord Channel
+      if (process.env.OPENCLAW_CHANNELS_DISCORD_TOKEN) {
+        if (!cfg.channels) cfg.channels = {};
+        if (!cfg.channels.discord) cfg.channels.discord = {};
+        cfg.channels.discord.enabled = true;
+        cfg.channels.discord.token = process.env.OPENCLAW_CHANNELS_DISCORD_TOKEN;
+        cfg.channels.discord.groupPolicy = 'allowlist';
+        if (!cfg.channels.discord.dm) cfg.channels.discord.dm = { policy: 'pairing' };
+        console.log('Configured Discord channel');
+      }
+
       fs.writeFileSync(configPath, JSON.stringify(cfg, null, 2));
       console.log('Updated config:', configPath);
     } catch (e) {
