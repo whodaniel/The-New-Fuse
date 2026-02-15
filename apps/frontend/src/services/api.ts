@@ -1,5 +1,11 @@
 import { auth } from '@/lib/firebase';
-import axios from 'axios';
+import axios, { type AxiosRequestConfig } from 'axios';
+import { toast } from 'sonner';
+
+// Custom config type to allow silent requests
+interface CustomAxiosRequestConfig extends AxiosRequestConfig {
+  _silent?: boolean;
+}
 
 // Create an axios instance with default config
 const api = axios.create({
@@ -43,16 +49,51 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    const { response } = error;
+    const { response, config } = error;
+    // Cast config to our custom type to access _silent
+    const customConfig = config as CustomAxiosRequestConfig;
+    const isSilent = customConfig?._silent === true;
 
-    if (response && response.status === 401) {
-      // Handle unauthorized access
-      console.error('Unauthorized access. Please log in again.');
-      // You could trigger a logout or redirect to login here
+    // Network Error (no response)
+    if (!response) {
+      if (!isSilent) {
+        toast.error('Network Error. Please check your connection.');
+      }
+      return Promise.reject(error);
     }
 
-    if (response && response.status === 500) {
-      console.error('Server error. Please try again later.');
+    if (!isSilent) {
+      const errorMessage = response?.data?.message || 'Something went wrong';
+
+      switch (response.status) {
+        case 400:
+          // Validation Error
+          // If message is array (should be flattened by backend filter, but just in case)
+          const msg = Array.isArray(errorMessage) ? errorMessage.join(', ') : errorMessage;
+          toast.error(msg);
+          break;
+        case 401:
+          // Unauthorized
+          toast.error('Session expired. Please log in again.');
+          // Optional: Event bus emit for logout
+          break;
+        case 403:
+          // Forbidden
+          toast.error('You do not have permission to perform this action.');
+          break;
+        case 404:
+           // Not Found - sometimes we don't want to toast this (e.g. check user existence),
+           // but usually it's helpful.
+           toast.error(typeof errorMessage === 'string' ? errorMessage : 'Resource not found.');
+           break;
+        case 500:
+        case 502:
+        case 503:
+          toast.error('Server error. The team has been notified.');
+          break;
+        default:
+          toast.error(typeof errorMessage === 'string' ? errorMessage : 'An unexpected error occurred.');
+      }
     }
 
     return Promise.reject(error);
@@ -63,23 +104,36 @@ export default api;
 
 // Helper functions for common API operations
 export const apiService = {
-  get: async <T>(url: string, params?: any) => {
-    const response = await api.get<T>(url, { params });
+  get: async <T>(url: string, params?: any, config?: { silent?: boolean }) => {
+    const requestConfig: CustomAxiosRequestConfig = {
+      params,
+      _silent: config?.silent
+    };
+    const response = await api.get<T>(url, requestConfig);
     return response.data;
   },
 
-  post: async <T>(url: string, data: any) => {
-    const response = await api.post<T>(url, data);
+  post: async <T>(url: string, data: any, config?: { silent?: boolean }) => {
+    const requestConfig: CustomAxiosRequestConfig = {
+      _silent: config?.silent
+    };
+    const response = await api.post<T>(url, data, requestConfig);
     return response.data;
   },
 
-  put: async <T>(url: string, data: any) => {
-    const response = await api.put<T>(url, data);
+  put: async <T>(url: string, data: any, config?: { silent?: boolean }) => {
+    const requestConfig: CustomAxiosRequestConfig = {
+      _silent: config?.silent
+    };
+    const response = await api.put<T>(url, data, requestConfig);
     return response.data;
   },
 
-  delete: async <T>(url: string) => {
-    const response = await api.delete<T>(url);
+  delete: async <T>(url: string, config?: { silent?: boolean }) => {
+    const requestConfig: CustomAxiosRequestConfig = {
+      _silent: config?.silent
+    };
+    const response = await api.delete<T>(url, requestConfig);
     return response.data;
   },
 
