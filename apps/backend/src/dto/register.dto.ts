@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, Matches, MinLength } from 'class-validator';
 
 /**
  * Data Transfer Object for user registration
@@ -6,7 +6,7 @@ import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches, MinLength } from 'c
  * Validates registration data before creating a new user.
  * - Email must be valid and unique (uniqueness checked in service)
  * - Password must meet security requirements
- * - Name is optional but must be string if provided
+ * - Name is required and must be a string
  *
  * Security requirements for password:
  * - Minimum 8 characters
@@ -29,8 +29,8 @@ export class RegisterDto {
   })
   password: string;
 
-  @IsOptional()
   @IsString({ message: 'Name must be a string' })
+  @IsNotEmpty({ message: 'Name is required' })
   @MinLength(1, { message: 'Name cannot be empty' })
-  name?: string;
+  name: string;
 }

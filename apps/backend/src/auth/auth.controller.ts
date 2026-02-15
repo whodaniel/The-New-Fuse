@@ -3,20 +3,9 @@ import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { FirebaseAuthGuard } from './firebase-auth.guard';
 import { Request, Response } from 'express';
-import { IsEmail, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsString } from 'class-validator';
 import { JwtService } from '@nestjs/jwt';
-
-class RegisterDto {
-  @IsEmail()
-  email: string;
-
-  @IsString()
-  @MinLength(6)
-  password: string;
-
-  @IsString()
-  name: string;
-}
+import { RegisterDto } from '../dto/register.dto';
 
 class LoginDto {
   @IsEmail()
