@@ -183,7 +183,7 @@ const AgentModal: React.FC<{
           <label className="block mb-1 font-semibold">LLM Provider</label>
           <select
             value={llm}
-            onChange={(e) => setLlm(e.target.value)}
+            onChange={(e) => setLlm(e.target.value as any)}
             className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
           >
             {Object.entries(providerDetails).map(([key, { name }]) => (
