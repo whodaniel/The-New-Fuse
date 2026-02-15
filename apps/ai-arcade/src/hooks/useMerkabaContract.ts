@@ -25,7 +25,11 @@ export const useMerkabaContract = () => {
             contractConfig.abi.ERC20,
             signer
           );
-          const merkaba = new ethers.Contract(contractConfig.address.merkaba, [], signer); // TODO: Add ABI
+          const merkaba = new ethers.Contract(
+            contractConfig.address.merkaba,
+            contractConfig.abi.MerkabaCore,
+            signer
+          );
           const genesis = new ethers.Contract(
             contractConfig.address.genesis,
             contractConfig.abi.GenesisNode,
