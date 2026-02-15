@@ -15,7 +15,7 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": false,
-    "composite": true,
+    "composite": false,
     "declaration": true,
     "declarationDir": "dist",
     "baseUrl": ".",
@@ -28,7 +28,7 @@
       "@the-new-fuse/types": ["../types/src"],
       "@the-new-fuse/utils": ["../utils/src"]
     },
-    "rootDir": "src",
+
     "types": ["node", "jest", "react"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
