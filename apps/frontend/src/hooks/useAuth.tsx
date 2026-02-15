@@ -221,6 +221,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           domain: udUser.sub,
           walletAddress: udUser.wallet_address,
           walletType: udUser.wallet_type_hint,
+          message: udUser.eip4361_message,
+          signature: udUser.eip4361_signature,
         }),
       });
 

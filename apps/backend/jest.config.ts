@@ -12,6 +12,8 @@ module.exports = {
   moduleNameMapper: {
     '^@the-new-fuse/mcp-core/(.*)$': '<rootDir>/../../packages/mcp-core/src/$1',
     '^@the-new-fuse/mcp-core$': '<rootDir>/../../packages/mcp-core/src',
+    '^@the-new-fuse/database/(.*)$': '<rootDir>/../../packages/database/src/$1',
+    '^@the-new-fuse/database$': '<rootDir>/../../packages/database/src',
     '^@/(.*)$': '<rootDir>/src/$1',
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },

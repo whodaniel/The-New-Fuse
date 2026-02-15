@@ -1,5 +1,6 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { verifyMessage, Address, Hex } from 'viem';
 import { drizzleUserRepository } from '@the-new-fuse/database';
 import { EventBus } from '../events/event-bus.service';
 import { IdentityService } from '../services/identity.service';
@@ -82,9 +83,28 @@ export class AuthService {
   async findOrCreateUnstoppableDomainsUser(
     domain: string,
     walletAddress: string,
+    message: string,
+    signature: string,
     walletType?: string
   ) {
     this.logger.log(`Authenticating Unstoppable Domain: ${domain}`);
+
+    try {
+      // Verify the signature matches the message and address
+      // TODO: Parse message (EIP-4361) to verify nonce and expiration for replay protection
+      const isValid = await verifyMessage({
+        address: walletAddress as Address,
+        message,
+        signature: signature as Hex,
+      });
+
+      if (!isValid) {
+        throw new UnauthorizedException('Invalid signature');
+      }
+    } catch (error) {
+      this.logger.error(`Signature verification failed for ${walletAddress}`, error);
+      throw new UnauthorizedException('Signature verification failed');
+    }
 
     // Try to find user by wallet address first
     let user = await drizzleUserRepository.findByWalletAddress(walletAddress);
