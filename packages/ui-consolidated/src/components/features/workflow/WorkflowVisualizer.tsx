@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { WorkflowDefinition, WorkflowStep } from '../types';
+import { WorkflowModel, WorkflowStepDefinition } from '@the-new-fuse/api-types/src/workflow';
 import { Card, CardContent } from '../../Card/Card';
 import { Badge } from '../../Badge/Badge';
 import { ArrowRight } from 'lucide-react';
@@ -20,7 +20,7 @@ interface VisualizerEdge {
 }
 
 interface WorkflowVisualizerProps {
-  definition: WorkflowDefinition;
+  definition: WorkflowModel;
 }
 
 const WorkflowVisualizer: React.FC<WorkflowVisualizerProps> = ({ definition }) => {
@@ -31,20 +31,24 @@ const WorkflowVisualizer: React.FC<WorkflowVisualizerProps> = ({ definition }) =
     const xPosStep = 200;
     const yPosStep = 100;
 
-    definition.steps.forEach((step: WorkflowStep, index: number) => {
+    // Convert steps Record to array for iteration
+    const stepsArray = Object.values(definition.steps || {});
+
+    stepsArray.forEach((step: WorkflowStepDefinition, index: number) => {
       visualizerNodes.push({
         id: step.id,
-        data: { label: `${step.name} (${step.action})`, type: step.type },
+        data: { label: `${step.name} (${step.action || step.type})`, type: step.type },
         position: { x: index * xPosStep, y: yPos }, // Simple horizontal layout
         parentIds: [] // Initialize empty array for dependencies
       });
 
       // Create edges based on workflow relationships
       // Check if this step has dependencies (from older schema) or connections
-      if (Array.isArray(step.dependencies)) {
-        step.dependencies.forEach((parentId: string) => {
+      if (Array.isArray(step.connections)) {
+        step.connections.forEach((connection) => {
+          const parentId = typeof connection === 'string' ? connection : connection.stepId;
           // Ensure the parent step exists before creating an edge
-          if (definition.steps.some((s: WorkflowStep) => s.id === parentId)) {
+          if (stepsArray.some((s: WorkflowStepDefinition) => s.id === parentId)) {
             visualizerEdges.push({
               id: `e-${parentId}-${step.id}`,
               source: parentId,

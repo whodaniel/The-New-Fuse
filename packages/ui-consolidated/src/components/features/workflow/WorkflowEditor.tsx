@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { WorkflowModel, WorkflowStepDefinition, WorkflowStatus } from '@the-new-fuse/api-types/src/workflow'; // Updated import
-import { WorkflowBuilder } from '../../../api/src/services/WorkflowBuilder'; // This will be migrated later
+import { WorkflowModel, WorkflowStepDefinition, WorkflowStatus, WorkflowStepType } from '@the-new-fuse/api-types/src/workflow';
 import { WorkflowVisualizer } from './WorkflowVisualizer';
 import { Button } from '../../Button/Button';
 import { Input } from '../../Input/Input';
@@ -21,48 +20,24 @@ const WorkflowEditor: React.FC<WorkflowEditorProps> = ({ initialDefinition, onSa
   const [selectedStep, setSelectedStep] = useState<WorkflowStepDefinition | null>(null);
   const [isNewStep, setIsNewStep] = useState(false);
   const [paramsError, setParamsError] = useState<string | null>(null);
-  
-  // Initialize builder based on initial definition
-  const [builder] = useState(() => {
-    return new WorkflowBuilder(
-      initialDefinition.id,
-      initialDefinition.name,
-      initialDefinition.description
-    );
-  });
 
-  // Load initial steps
+  // Simple workflow state management without external builder
   useEffect(() => {
-    // Reset builder with initial definition steps
-    // Assuming initialDefinition.steps is an array in this context, need to convert to Record
-    const stepsRecord: Record<string, WorkflowStepDefinition> = {};
-    if (Array.isArray(initialDefinition.steps)) {
-      initialDefinition.steps.forEach((step: any) => {
-        stepsRecord[step.id] = step;
-      });
-    } else {
-      Object.assign(stepsRecord, initialDefinition.steps);
-    }
-
-    for (const stepId in stepsRecord) {
-      builder.addStep(stepsRecord[stepId]);
-    }
-    
-    setWorkflow(builder.build());
-  }, [initialDefinition, builder]);
+    setWorkflow(initialDefinition);
+  }, [initialDefinition]);
 
   const handleAddStep = () => {
     // Create a new step with default values
     const newStep: WorkflowStepDefinition = {
       id: `step-${Date.now().toString()}`,
       name: "New Step",
-      type: "action", // Assuming 'action' is a valid WorkflowStepType
+      type: WorkflowStepType.ACTION,
       action: "custom.action",
       parameters: {},
       config: {},
       connections: [],
     };
-    
+
     setEditedStep(newStep);
     setIsNewStep(true);
   };
@@ -94,45 +69,36 @@ const WorkflowEditor: React.FC<WorkflowEditorProps> = ({ initialDefinition, onSa
 
   const handleSaveStep = () => {
     if (!editedStep) return;
-    
-    if (isNewStep) {
-      builder.addStep(editedStep);
-    } else {
-      // Update existing step
-      // This is a simplified approach - in a real app you'd need to handle dependencies
-      const updatedSteps = { ...workflow.steps };
-      updatedSteps[editedStep.id] = editedStep;
-      
-      // Recreate workflow with updated steps
-      // This is simplified - in a real implementation you'd need to handle the graph structure
-      const updatedWorkflow = {
-        ...workflow,
-        steps: updatedSteps
-      };
-      
-      setWorkflow(updatedWorkflow);
-      builder.updateStep(editedStep.id, editedStep);
-    }
-    
-    // Refresh the workflow
-    setWorkflow(builder.build());
+
+    const updatedSteps = { ...workflow.steps };
+    updatedSteps[editedStep.id] = editedStep;
+
+    const updatedWorkflow = {
+      ...workflow,
+      steps: updatedSteps
+    };
+
+    setWorkflow(updatedWorkflow);
     setEditedStep(null);
   };
 
   const handleDeleteStep = () => {
     if (!selectedStep) return;
-    
-    // Remove step from builder
-    builder.removeStep(selectedStep.id);
-    
-    // Refresh the workflow
-    setWorkflow(builder.build());
+
+    const updatedSteps = { ...workflow.steps };
+    delete updatedSteps[selectedStep.id];
+
+    const updatedWorkflow = {
+      ...workflow,
+      steps: updatedSteps
+    };
+
+    setWorkflow(updatedWorkflow);
     setSelectedStep(null);
   };
 
   const handleSaveWorkflow = () => {
-    const updatedWorkflow = builder.build();
-    onSave(updatedWorkflow);
+    onSave(workflow);
   };
 
   // Helper component for action buttons that appear when a step is selected
@@ -143,7 +109,7 @@ const WorkflowEditor: React.FC<WorkflowEditorProps> = ({ initialDefinition, onSa
       // Show a confirmation dialog or delete immediately
       handleDeleteStep();
     };
-    
+
     return (
       <div className="flex space-x-2 mt-2">
         <Button onClick={onEdit} variant="outline" size="sm">
@@ -177,7 +143,7 @@ const WorkflowEditor: React.FC<WorkflowEditorProps> = ({ initialDefinition, onSa
         </CardHeader>
         <CardContent>
           {/* Workflow Visualization */}
-          <WorkflowVisualizer 
+          <WorkflowVisualizer
             definition={workflow}
           />
 
@@ -186,7 +152,7 @@ const WorkflowEditor: React.FC<WorkflowEditorProps> = ({ initialDefinition, onSa
             <DialogTrigger asChild>
               <span className="hidden">Open Step Editor</span>
             </DialogTrigger>
-            
+
             {/* Edit Step Dialog Content */}
             {editedStep && (
               <DialogContent className="sm:max-w-[600px]">

@@ -149,7 +149,7 @@ export const AgentCard: React.FC<AgentCardProps> = ({
       className={className}
       variant="default"
       size={compact ? "sm" : "default"}
-      hover={true}
+      hoverable={true}
     >
       <CardHeader>
         <div className="flex items-center justify-between">

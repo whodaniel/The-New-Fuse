@@ -196,7 +196,7 @@ export function GraphChart({
       {title && (
         <h3 className="text-lg font-semibold mb-4">{title}</h3>
       )}
-      <ResponsiveContainer width={width} height={height}>
+      <ResponsiveContainer width={width as number | `${number}%`} height={height as number | `${number}%`}>
         {renderChart()}
       </ResponsiveContainer>
     </div>

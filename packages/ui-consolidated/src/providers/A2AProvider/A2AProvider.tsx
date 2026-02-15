@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useA2A, A2AConnectionConfig, A2AHookReturn } from './useA2A';
+import { useA2A, A2AConnectionConfig, A2AHookReturn } from '../../hooks/useA2A';
 import { AgentRegistration, A2AMessage, AgentStatus } from '@the-new-fuse/a2a-core';
 
 interface A2AContextType extends A2AHookReturn {
@@ -17,12 +17,12 @@ export interface A2AProviderProps {
   agentRegistration?: Omit<AgentRegistration, 'agentId'>;
 }
 
-export function A2AProvider({ 
-  children, 
-  config, 
+export function A2AProvider({
+  children,
+  config,
   autoConnect = true,
   autoRegister = false,
-  agentRegistration 
+  agentRegistration
 }: A2AProviderProps) {
   const a2a = useA2A(config);
   const [agents, setAgents] = useState<AgentRegistration[]>([]);
@@ -130,10 +130,10 @@ export function useA2AContext(): A2AContextType {
 
 export function useA2AAgents() {
   const { agents, refreshAgents, discoverAgents } = useA2AContext();
-  
+
   const findAgentsByCapability = (capability: string) => {
-    return agents.filter(agent => 
-      agent.capabilities.some(cap => cap.name === capability)
+    return agents.filter(agent =>
+      agent.capabilities.some(cap => cap === capability)
     );
   };
 
@@ -203,7 +203,7 @@ export function useA2AConversations() {
   // Group messages by conversation
   useEffect(() => {
     const convMap = new Map<string, A2AMessage[]>();
-    
+
     messages.forEach(message => {
       if (message.conversationId) {
         if (!convMap.has(message.conversationId)) {

@@ -20,16 +20,12 @@
     "declarationDir": "dist",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@the-new-fuse/a2a-core": ["../a2a-core/src"],
-      "@the-new-fuse/api-client": ["../api-client/src"],
-      "@the-new-fuse/api-types/*": ["../api-types/*"],
-      "@the-new-fuse/hooks": ["../hooks/src"],
-      "@the-new-fuse/types": ["../types/src"],
-      "@the-new-fuse/utils": ["../utils/src"]
+      "@/*": ["./src/*"]
     },
-    "types": ["node", "jest", "react"]
+    "types": ["node", "jest", "react"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.stories.tsx"]
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.stories.tsx", "**/*.test.tsx"]
 }

@@ -5,8 +5,8 @@ import {
   AgentRegistration,
   AgentHeartbeat,
   AgentStatus,
-  MessageType,
-  Priority,
+  A2AMessageType,
+  A2APriority,
   A2AError
 } from '@the-new-fuse/a2a-core';
 
@@ -28,11 +28,11 @@ export interface A2AConnectionState {
 export interface A2AHookReturn {
   // Connection state
   connectionState: A2AConnectionState;
-  
+
   // Connection management
   connect: () => Promise<void>;
   disconnect: () => void;
-  
+
   // Messaging
   sendMessage: (message: Omit<A2AMessage, 'id' | 'timestamp' | 'fromAgent'>) => Promise<void>;
   sendRequest: (toAgent: string, payload: any, options?: {
@@ -43,27 +43,27 @@ export interface A2AHookReturn {
     channel?: string;
     topic?: string;
   }) => Promise<void>;
-  
+
   // Conversations
   joinConversation: (conversationId: string) => Promise<void>;
   leaveConversation: (conversationId: string) => Promise<void>;
-  
+
   // Agent discovery
   discoverAgents: (criteria?: {
     type?: string;
     capabilities?: string[];
     status?: AgentStatus;
   }) => Promise<AgentRegistration[]>;
-  
+
   // Health
   sendHeartbeat: (data: Omit<AgentHeartbeat, 'agentId' | 'timestamp'>) => Promise<void>;
-  
+
   // Event listeners
   onMessage: (callback: (message: A2AMessage) => void) => () => void;
   onAgentRegistered: (callback: (agent: AgentRegistration) => void) => () => void;
   onAgentDisconnected: (callback: (agentId: string) => void) => () => void;
   onError: (callback: (error: A2AError) => void) => () => void;
-  
+
   // Current data
   messages: A2AMessage[];
   connectedAgents: string[];
@@ -77,10 +77,10 @@ export function useA2A(config: A2AConnectionConfig): A2AHookReturn {
     error: null,
     lastHeartbeat: null
   });
-  
+
   const [messages, setMessages] = useState<A2AMessage[]>([]);
   const [connectedAgents, setConnectedAgents] = useState<string[]>([]);
-  
+
   const socketRef = useRef<Socket | null>(null);
   const eventListenersRef = useRef<Map<string, Set<Function>>>(new Map());
   const pendingRequestsRef = useRef<Map<string, {
@@ -108,7 +108,7 @@ export function useA2A(config: A2AConnectionConfig): A2AHookReturn {
       // Set up socket event listeners
       socket.on('connect', () => {
         setConnectionState(prev => ({ ...prev, connected: true, connecting: false }));
-        
+
         // Authenticate immediately after connection
         socket.emit('authenticate', {
           agentId: config.agentId,
@@ -118,11 +118,11 @@ export function useA2A(config: A2AConnectionConfig): A2AHookReturn {
       });
 
       socket.on('disconnect', () => {
-        setConnectionState(prev => ({ 
-          ...prev, 
-          connected: false, 
+        setConnectionState(prev => ({
+          ...prev,
+          connected: false,
           authenticated: false,
-          connecting: false 
+          connecting: false
         }));
         setConnectedAgents([]);
       });
@@ -132,8 +132,8 @@ export function useA2A(config: A2AConnectionConfig): A2AHookReturn {
       });
 
       socket.on('authentication:failed', (data: any) => {
-        setConnectionState(prev => ({ 
-          ...prev, 
+        setConnectionState(prev => ({
+          ...prev,
           error: data.message || 'Authentication failed',
           connecting: false
         }));
@@ -142,17 +142,17 @@ export function useA2A(config: A2AConnectionConfig): A2AHookReturn {
 
       socket.on('message:received', (message: A2AMessage) => {
         setMessages(prev => [...prev, message]);
-        
+
         // Handle responses to pending requests
-        if (message.type === MessageType.RESPONSE && message.requestId) {
-          const pending = pendingRequestsRef.current.get(message.requestId);
+        if (message.type === A2AMessageType.DATA_RESPONSE && message.metadata?.requestId) {
+          const pending = pendingRequestsRef.current.get(message.metadata.requestId);
           if (pending) {
             clearTimeout(pending.timeout);
-            pendingRequestsRef.current.delete(message.requestId);
+            pendingRequestsRef.current.delete(message.metadata.requestId);
             pending.resolve(message);
           }
         }
-        
+
         // Emit to listeners
         const listeners = eventListenersRef.current.get('message') || new Set();
         listeners.forEach(callback => callback(message));
@@ -176,7 +176,7 @@ export function useA2A(config: A2AConnectionConfig): A2AHookReturn {
       socket.on('error', (error: any) => {
         const a2aError = new A2AError(error.message || 'Unknown error', error.code || 'UNKNOWN');
         setConnectionState(prev => ({ ...prev, error: a2aError.message }));
-        
+
         const listeners = eventListenersRef.current.get('error') || new Set();
         listeners.forEach(callback => callback(a2aError));
       });
@@ -185,8 +185,8 @@ export function useA2A(config: A2AConnectionConfig): A2AHookReturn {
       socket.connect();
 
     } catch (error) {
-      setConnectionState(prev => ({ 
-        ...prev, 
+      setConnectionState(prev => ({
+        ...prev,
         error: error instanceof Error ? error.message : 'Connection failed',
         connecting: false
       }));
@@ -198,14 +198,14 @@ export function useA2A(config: A2AConnectionConfig): A2AHookReturn {
       socketRef.current.disconnect();
       socketRef.current = null;
     }
-    
+
     // Clear pending requests
     pendingRequestsRef.current.forEach(({ reject, timeout }) => {
       clearTimeout(timeout);
       reject(new Error('Connection closed'));
     });
     pendingRequestsRef.current.clear();
-    
+
     setConnectionState({
       connected: false,
       authenticated: false,
@@ -226,17 +226,16 @@ export function useA2A(config: A2AConnectionConfig): A2AHookReturn {
     const message: A2AMessage = {
       ...messageData,
       id: crypto.randomUUID(),
-      timestamp: new Date().toISOString(),
-      fromAgent: config.agentId,
-      protocolVersion: '1.0.0'
+      timestamp: Date.now(),
+      fromAgent: config.agentId
     };
 
     socketRef.current.emit('send:message', message);
   }, [config.agentId, connectionState.authenticated]);
 
   const sendRequest = useCallback(async (
-    toAgent: string, 
-    payload: any, 
+    toAgent: string,
+    payload: any,
     options: { timeout?: number; conversationId?: string } = {}
   ): Promise<A2AMessage> => {
     if (!socketRef.current?.connected || !connectionState.authenticated) {
@@ -260,15 +259,14 @@ export function useA2A(config: A2AConnectionConfig): A2AHookReturn {
 
       const message: A2AMessage = {
         id: crypto.randomUUID(),
-        protocolVersion: '1.0.0',
-        timestamp: new Date().toISOString(),
+        timestamp: Date.now(),
         fromAgent: config.agentId,
         toAgent,
-        type: MessageType.REQUEST,
-        priority: Priority.MEDIUM,
-        requestId,
+        type: A2AMessageType.DATA_REQUEST,
+        priority: A2APriority.MEDIUM,
         conversationId: options.conversationId,
-        payload
+        payload,
+        metadata: { requestId }
       };
 
       socketRef.current!.emit('send:message', message);
