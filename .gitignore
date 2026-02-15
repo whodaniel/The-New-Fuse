@@ -67,6 +67,11 @@ docs/BUSINESS_MODEL_*.md
 docs/AGENCY_REFACTORING_SUMMARY.md
 docs/ADAPTIVE_INSTANTIATION_PROTOCOL.md
 
+# Additional Private Data
+data/autobiography/
+data/utp_events/
+documentation/scrapes/
+
 
 # OS
 .DS_Store
