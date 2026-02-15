@@ -1,4 +1,4 @@
-import { ProviderApiKeyList } from '@/components/ApiKeyManagement/ProviderApiKeyList';
+import ProviderApiKeyList from '@/components/ApiKeyManagement/ProviderApiKeyList';
 import {
   GlassCard,
   PremiumButton,

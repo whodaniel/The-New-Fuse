@@ -1,7 +1,8 @@
 import { Suspense, lazy } from 'react';
 import { Link, Route, Routes, useLocation } from 'react-router-dom';
-import { PremiumLayout } from './layouts/PremiumLayout'; // Import PremiumLayout
-import { PublicLayout } from './layouts/PublicLayout';
+// Lazy load layouts for code splitting
+const PremiumLayout = lazy(() => import('./layouts/PremiumLayout'));
+const PublicLayout = lazy(() => import('./layouts/PublicLayout'));
 
 // Core components (keep loaded)
 import LoginPage from './pages/auth/Login';
@@ -208,7 +209,7 @@ const LazyPage = ({ name, path }: { name: string; path: string }) => (
   </div>
 );
 
-import SmartNavigation from './components/SmartNavigation';
+const SmartNavigation = lazy(() => import('./components/SmartNavigation'));
 
 // Remove the old ComprehensiveNavigation component and replace with SmartNavigation
 export default function ComprehensiveRouter() {
@@ -253,15 +254,18 @@ export default function ComprehensiveRouter() {
     <div>
       {/* Conditional Navigation - only show SmartNavigation on public pages if needed,
            and explicitly hide it on Auth, Onboarding, and 404 pages for a clean UX */}
-      {isPublicRoute &&
-        !location.pathname.startsWith('/auth') &&
-        !location.pathname.startsWith('/onboarding') &&
-        !['/404', '/login', '/register'].includes(location.pathname) &&
-        // Logic handled by PublicLayout now, but kept here for non-PublicLayout routes (like Auth)
-        Layout !== PublicLayout && <SmartNavigation />}
+      <Suspense fallback={<div className="h-16 bg-gray-900" />}>
+        {isPublicRoute &&
+          !location.pathname.startsWith('/auth') &&
+          !location.pathname.startsWith('/onboarding') &&
+          !['/404', '/login', '/register'].includes(location.pathname) &&
+          // Logic handled by PublicLayout now, but kept here for non-PublicLayout routes (like Auth)
+          Layout !== PublicLayout && <SmartNavigation />}
+      </Suspense>
 
-      <Layout>
-        <Suspense fallback={<LoadingFallback name="Page" />}>
+      <Suspense fallback={<LoadingFallback name="Layout" />}>
+        <Layout>
+          <Suspense fallback={<LoadingFallback name="Page" />}>
           <Routes>
             {/* Core Routes */}
             <Route path="/" element={<LandingRevolutionPage />} />
@@ -729,7 +733,8 @@ export default function ComprehensiveRouter() {
             />
           </Routes>
         </Suspense>
-      </Layout>
+        </Layout>
+      </Suspense>
     </div>
   );
 }
