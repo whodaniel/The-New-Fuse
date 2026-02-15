@@ -4,145 +4,141 @@ import { BaseService } from './BaseService';
  * Agent capability interface
  */
 export interface AgentCapability {
-  name: string;
-  description: string;
-  parameters?: Record<string, any>;
+    name: string;
+    description: string;
+    parameters?: Record<string, any>;
 }
 /**
  * Agent status enum
  */
 export declare enum AgentStatus {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  PENDING = 'PENDING',
-  ERROR = 'ERROR',
+    ACTIVE = "ACTIVE",
+    INACTIVE = "INACTIVE",
+    PENDING = "PENDING",
+    ERROR = "ERROR"
 }
 /**
  * Agent interface
  */
 export interface Agent {
-  id: string;
-  name: string;
-  description: string;
-  type: string;
-  capabilities: AgentCapability[];
-  status: AgentStatus;
-  metadata?: Record<string, any>;
-  createdAt: string;
-  updatedAt: string;
-  createdBy: string;
+    id: string;
+    name: string;
+    description: string;
+    type: string;
+    capabilities: AgentCapability[];
+    status: AgentStatus;
+    metadata?: Record<string, any>;
+    createdAt: string;
+    updatedAt: string;
+    createdBy: string;
 }
 /**
  * Agent creation data
  */
 export interface AgentCreateData {
-  name: string;
-  description?: string;
-  type: string;
-  capabilities: AgentCapability[];
-  metadata?: Record<string, any>;
+    name: string;
+    description?: string;
+    type: string;
+    capabilities: AgentCapability[];
+    metadata?: Record<string, any>;
 }
 /**
  * Agent update data
  */
 export interface AgentUpdateData {
-  name?: string;
-  description?: string;
-  type?: string;
-  capabilities?: AgentCapability[];
-  status?: AgentStatus;
-  metadata?: Record<string, any>;
+    name?: string;
+    description?: string;
+    type?: string;
+    capabilities?: AgentCapability[];
+    status?: AgentStatus;
+    metadata?: Record<string, any>;
 }
 /**
  * Agent execution result
  */
 export interface AgentExecutionResult {
-  id: string;
-  agentId: string;
-  action: string;
-  params: Record<string, any>;
-  result: any;
-  status: 'SUCCESS' | 'ERROR';
-  error?: string;
-  startedAt: string;
-  completedAt: string;
+    id: string;
+    agentId: string;
+    action: string;
+    params: Record<string, any>;
+    result: any;
+    status: 'SUCCESS' | 'ERROR';
+    error?: string;
+    startedAt: string;
+    completedAt: string;
 }
 /**
  * Agent service for managing agents and their capabilities
  */
 export declare class AgentService extends BaseService {
-  /**
-   * Create a new agent service
-   * @param api API client instance
-   */
-  constructor(api: ApiClient);
-  /**
-   * Get all agents
-   * @param options Query options (page, limit, status, type, etc.)
-   * @returns Promise with agents list
-   */
-  getAgents(options?: Record<string, any>): Promise<Agent[]>;
-  /**
-   * Get agent by ID
-   * @param id Agent ID
-   * @returns Promise with agent data
-   */
-  getAgentById(id: string): Promise<Agent>;
-  /**
-   * Create a new agent
-   * @param data Agent data
-   * @returns Promise with created agent data
-   */
-  createAgent(data: AgentCreateData): Promise<Agent>;
-  /**
-   * Update agent
-   * @param id Agent ID
-   * @param data Agent data to update
-   * @returns Promise with updated agent data
-   */
-  updateAgent(id: string, data: AgentUpdateData): Promise<Agent>;
-  /**
-   * Delete agent
-   * @param id Agent ID
-   * @returns Promise with deletion response
-   */
-  deleteAgent(id: string): Promise<{
-    success: boolean;
-    message: string;
-  }>;
-  /**
-   * Get agents by capability
-   * @param capability Agent capability name
-   * @param options Query options (page, limit, etc.)
-   * @returns Promise with agents list
-   */
-  getAgentsByCapability(capability: string, options?: Record<string, any>): Promise<Agent[]>;
-  /**
-   * Execute agent action
-   * @param id Agent ID
-   * @param action Action to execute
-   * @param params Action parameters
-   * @returns Promise with execution response
-   */
-  executeAction(
-    id: string,
-    action: string,
-    params?: Record<string, any>
-  ): Promise<AgentExecutionResult>;
-  /**
-   * Get agent execution history
-   * @param id Agent ID
-   * @param options Query options (page, limit, status, etc.)
-   * @returns Promise with execution history
-   */
-  getExecutionHistory(id: string, options?: Record<string, any>): Promise<AgentExecutionResult[]>;
-  /**
-   * Update agent status
-   * @param id Agent ID
-   * @param status New status
-   * @returns Promise with updated agent data
-   */
-  updateStatus(id: string, status: AgentStatus): Promise<Agent>;
+    /**
+     * Create a new agent service
+     * @param api API client instance
+     */
+    constructor(api: ApiClient);
+    /**
+     * Get all agents
+     * @param options Query options (page, limit, status, type, etc.)
+     * @returns Promise with agents list
+     */
+    getAgents(options?: Record<string, any>): Promise<Agent[]>;
+    /**
+     * Get agent by ID
+     * @param id Agent ID
+     * @returns Promise with agent data
+     */
+    getAgentById(id: string): Promise<Agent>;
+    /**
+     * Create a new agent
+     * @param data Agent data
+     * @returns Promise with created agent data
+     */
+    createAgent(data: AgentCreateData): Promise<Agent>;
+    /**
+     * Update agent
+     * @param id Agent ID
+     * @param data Agent data to update
+     * @returns Promise with updated agent data
+     */
+    updateAgent(id: string, data: AgentUpdateData): Promise<Agent>;
+    /**
+     * Delete agent
+     * @param id Agent ID
+     * @returns Promise with deletion response
+     */
+    deleteAgent(id: string): Promise<{
+        success: boolean;
+        message: string;
+    }>;
+    /**
+     * Get agents by capability
+     * @param capability Agent capability name
+     * @param options Query options (page, limit, etc.)
+     * @returns Promise with agents list
+     */
+    getAgentsByCapability(capability: string, options?: Record<string, any>): Promise<Agent[]>;
+    /**
+     * Execute agent action
+     * @param id Agent ID
+     * @param action Action to execute
+     * @param params Action parameters
+     * @returns Promise with execution response
+     */
+    executeAction(id: string, action: string, params?: Record<string, any>): Promise<AgentExecutionResult>;
+    /**
+     * Get agent execution history
+     * @param id Agent ID
+     * @param options Query options (page, limit, status, etc.)
+     * @returns Promise with execution history
+     */
+    getExecutionHistory(id: string, options?: Record<string, any>): Promise<AgentExecutionResult[]>;
+    /**
+     * Update agent status
+     * @param id Agent ID
+     * @param status New status
+     * @returns Promise with updated agent data
+     */
+    updateStatus(id: string, status: AgentStatus): Promise<Agent>;
 }
 /**
  * Create a new agent service
@@ -202,4 +198,3 @@ export declare class AgentService extends BaseService {
  * ```
  */
 export declare function createAgentService(api: ApiClient): AgentService;
-//# sourceMappingURL=agent.service.d.ts.map

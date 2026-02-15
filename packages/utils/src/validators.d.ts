@@ -22,4 +22,3 @@ export declare function isValidUuid(uuid: string): boolean;
  * Check if a string is JSON parseable
  */
 export declare function isValidJson(str: string): boolean;
-//# sourceMappingURL=validators.d.ts.map

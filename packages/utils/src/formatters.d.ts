@@ -18,4 +18,3 @@ export declare function formatDuration(ms: number): string;
  * Truncate a string to a specific length
  */
 export declare function truncate(str: string, length: number): string;
-//# sourceMappingURL=formatters.d.ts.map

@@ -5,7 +5,6 @@
  * NOTE: This function uses Node.js dns module and is only available in server environments.
  */
 export declare function isValidPublicUrl(url: string): Promise<{
-  valid: boolean;
-  reason?: string;
+    valid: boolean;
+    reason?: string;
 }>;
-//# sourceMappingURL=validators-server.d.ts.map

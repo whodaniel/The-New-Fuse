@@ -4,4 +4,3 @@ import { type ClassValue } from 'clsx';
  * Combines clsx for conditional class names and tailwind-merge for proper Tailwind CSS class merging.
  */
 export declare function cn(...inputs: ClassValue[]): string;
-//# sourceMappingURL=cn.d.ts.map
