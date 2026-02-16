@@ -140,6 +140,18 @@ export class DrizzleAuditLogsRepository {
   }
 
   /**
+   * Count distinct users active since the given date
+   */
+  async countActiveUsers(startDate: Date): Promise<number> {
+    const result = await db
+      .select({ count: sql<number>`count(distinct ${auditLogs.userId})` })
+      .from(auditLogs)
+      .where(gte(auditLogs.createdAt, startDate));
+
+    return Number(result[0]?.count ?? 0);
+  }
+
+  /**
    * Get recent audit logs for a specific user
    */
   async findByUserId(userId: string, limit: number = 50): Promise<AuditLogEntry[]> {

@@ -44,12 +44,15 @@ export class AdminMetricsController {
   @ApiOperation({ summary: 'Get dashboard metrics' })
   @ApiResponse({ status: 200, description: 'Dashboard metrics' })
   async getDashboardMetrics() {
+    // Calculate 24h ago for active user count
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
     const [totalUsers, activeUsers, totalAgents, activeAgents, totalWorkflows, auditLogCount] =
       await Promise.all([
         this.userRepository.count(),
-        this.getActiveUserCount(),
+        this.auditLogsRepository.countActiveUsers(oneDayAgo),
         this.agentRepository.count(),
-        this.getActiveAgentCount(),
+        this.agentRepository.countActive(),
         this.workflowRepository.count(),
         this.auditLogsRepository.count(),
       ]);
@@ -151,27 +154,6 @@ export class AdminMetricsController {
       activeUsers: Object.keys(userActivity).length,
       activityByUser: userActivity,
     };
-  }
-
-  /**
-   * Get active user count (users with activity in last 24 hours)
-   */
-  private async getActiveUserCount(): Promise<number> {
-    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    const recentLogs = await this.auditLogsRepository.findAll({
-      startDate: oneDayAgo,
-    });
-
-    const uniqueUsers = new Set(recentLogs.map((log) => log.userId).filter(Boolean));
-    return uniqueUsers.size;
-  }
-
-  /**
-   * Get active agent count
-   */
-  private async getActiveAgentCount(): Promise<number> {
-    const allAgents = await this.agentRepository.findAll();
-    return allAgents.filter((agent: any) => agent.status === 'ACTIVE').length;
   }
 
   /**

@@ -226,6 +226,18 @@ export class DrizzleAgentRepository {
   }
 
   /**
+   * Count total active agents across the system
+   */
+  async countActive(): Promise<number> {
+    const result = await db
+      .select({ count: sql<number>`cast(count(*) as integer)` })
+      .from(agents)
+      .where(and(eq(agents.status, 'ACTIVE'), isNull(agents.deletedAt)));
+
+    return Number(result[0]?.count ?? 0);
+  }
+
+  /**
    * Create or update agent metadata
    */
   async upsertMetadata(agentId: string, data: Partial<NewAgentMetadata>): Promise<AgentMetadata> {
