@@ -127,6 +127,7 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
                       : 'text-gray-400 hover:bg-white/5 hover:text-white hover:translate-x-1'
                   } ${isCollapsed ? 'justify-center' : ''}`}
                   title={isCollapsed ? item.name : undefined}
+                  aria-label={isCollapsed ? item.name : undefined}
                 >
                   <item.icon
                     className={`w-5 h-5 shrink-0 ${isActive ? 'text-blue-400' : 'text-gray-500 group-hover:text-gray-300'}`}
@@ -147,6 +148,7 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
             <button
               onClick={() => setIsCollapsed(!isCollapsed)}
               className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors w-full flex justify-center"
+              aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
               {isCollapsed ? (
                 <ChevronRight className="w-5 h-5" />
@@ -164,6 +166,7 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
                 isCollapsed ? 'justify-center' : ''
               }`}
               title={isCollapsed ? 'Sign Out' : undefined}
+              aria-label={isCollapsed ? 'Sign Out' : undefined}
             >
               <LogOut className="w-5 h-5 shrink-0" />
               {!isCollapsed && <span className="font-medium whitespace-nowrap">Sign Out</span>}
