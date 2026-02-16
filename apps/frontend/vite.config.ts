@@ -164,6 +164,9 @@ export default defineConfig(({ mode }) => {
         'class-validator': path.resolve(__dirname, 'src/stubs/class-validator.ts'),
         // Stub @uauth/js which has browser-incompatible @unstoppabledomains/resolution deps
         '@uauth/js': path.resolve(__dirname, 'src/stubs/uauth-js.ts'),
+        // Stub zlib to fix "Cannot read properties of undefined (reading 'Z_SYNC_FLUSH')"
+        zlib: path.resolve(__dirname, 'src/stubs/zlib.ts'),
+        'node:zlib': path.resolve(__dirname, 'src/stubs/zlib.ts'),
       },
     },
     define: {
