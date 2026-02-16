@@ -788,12 +788,10 @@
       // This is defensive: even if an upstream agent loops, the browser bridge stays usable.
       try {
         const now = Date.now();
-        // @ts-expect-error - dynamic runtime guard store
         const guard = this.__loopGuard || {
           counts: new Map(),
           mutedUntil: new Map(),
         };
-        // @ts-expect-error - persist
         this.__loopGuard = guard;
         const from = message.from || '';
         const channel = message.channel || '';

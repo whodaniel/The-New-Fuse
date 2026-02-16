@@ -212,6 +212,11 @@ class SimpleChatBridge {
       'textarea[placeholder*="Message" i]',
       'textarea[placeholder*="start chatting" i]',
 
+      // Perplexity (New 2025)
+      'textarea[placeholder*="Ask" i]',
+      'textarea[placeholder*="follow-up" i]',
+      'div[class*="search-bar-input"] textarea',
+
       // Gemini 2025+ patterns (highest priority - latest interface)
       'rich-textarea p[contenteditable="true"]',
       'rich-textarea p[data-placeholder]',
@@ -258,6 +263,11 @@ class SimpleChatBridge {
       '.chat-compose button.primary',
       '.chat-compose .btn.primary',
       '.chat-compose button[type="submit"]',
+
+      // Perplexity (New 2025)
+      'button[aria-label="Submit"]',
+      'button[aria-label="Send"]',
+      'div[class*="search-bar"] button:not([disabled])',
 
       // Gemini-specific - EXPANDED
       'button[aria-label*="Send" i]',
@@ -633,6 +643,9 @@ class SimpleChatBridge {
       'button[aria-label*="Stop response"]',
       'button[aria-label*="Stop generating"]',
       '[data-testid*="stop-button"]',
+      // Perplexity streaming
+      'button[aria-label="Pause"]',
+      'div[class*="sticky"] button svg[data-icon="pause"]',
     ];
 
     for (const selector of streamingIndicators) {
@@ -663,13 +676,37 @@ class SimpleChatBridge {
 
     const input = initialElements.input;
 
+    // React Scheduler Hack: Get the native setter to bypass React's virtual DOM blocking
+    // This is required for Perplexity, ChatGPT, and other React-heavy apps
+    const setNativeValue = (element: HTMLElement, value: string) => {
+      const { set: valueSetter } =
+        Object.getOwnPropertyDescriptor(element, 'value') ||
+        Object.getOwnPropertyDescriptor(Object.getPrototypeOf(element), 'value') ||
+        {};
+      const prototype = Object.getPrototypeOf(element);
+      const prototypeValueSetter = Object.getOwnPropertyDescriptor(prototype, 'value')?.set;
+
+      if (prototypeValueSetter && valueSetter !== prototypeValueSetter) {
+        prototypeValueSetter.call(element, value);
+      } else if (valueSetter) {
+        valueSetter.call(element, value);
+      } else {
+        (element as any).value = value;
+      }
+
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    };
+
     try {
       // Focus and clear the input
       input.focus();
       await this.delay(100);
 
+      const isContentEditable =
+        input.isContentEditable || input.getAttribute('contenteditable') === 'true';
+
       // Input simulation
-      if (input.isContentEditable || input.getAttribute('contenteditable') === 'true') {
+      if (isContentEditable) {
         // Use document.execCommand for reliable Rich Text Editor interaction
         // This simulates actual user typing events better than setting textContent
 
@@ -699,8 +736,11 @@ class SimpleChatBridge {
           );
         }
       } else {
-        (input as HTMLTextAreaElement).value = text;
-        input.dispatchEvent(new Event('input', { bubbles: true }));
+        // Textarea/Input handling
+        // Use the native setter to ensure React picks up the change
+        setNativeValue(input, text);
+        // Dispatch extra events for good measure
+        input.dispatchEvent(new Event('change', { bubbles: true }));
       }
 
       // Wait for UI to react to the text input
@@ -769,10 +809,19 @@ class SimpleChatBridge {
       input.dispatchEvent(enterEvent);
       console.log('[SimpleChatBridge] Dispatched Enter keydown on input');
 
-      // Wait and check if it worked
-      await this.delay(150);
-      if (inputWasCleared()) {
-        console.log('[SimpleChatBridge] Message sent via Enter key');
+      console.log('[SimpleChatBridge] Dispatched Enter keydown on input');
+
+      // Wait and check if it worked - INCREASED DELAY to prevent double-sending
+      await this.delay(500);
+
+      const wasCleared = inputWasCleared();
+      const isNowStreaming = this.isStreaming();
+
+      if (wasCleared || isNowStreaming) {
+        console.log('[SimpleChatBridge] Message sent via Enter key', {
+          wasCleared,
+          isNowStreaming,
+        });
         this.startWatchingForResponse(responsesBefore);
         return true;
       }
@@ -781,8 +830,9 @@ class SimpleChatBridge {
       if (sendButton) {
         sendButton.click();
         console.log('[SimpleChatBridge] Clicked send button directly');
-        await this.delay(150);
-        if (inputWasCleared()) {
+        // Check again with increased delay
+        await this.delay(500);
+        if (inputWasCleared() || this.isStreaming()) {
           console.log('[SimpleChatBridge] Message sent via button click');
           this.startWatchingForResponse(responsesBefore);
           return true;

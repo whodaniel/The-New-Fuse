@@ -25,8 +25,11 @@ RUN apk add --no-cache ca-certificates tzdata curl
 # Copy binary
 COPY --from=builder /src/build/picoclaw /usr/local/bin/picoclaw
 
-# Create picoclaw home directory
-RUN /usr/local/bin/picoclaw onboard
+# Copy railway entrypoint
+COPY entrypoint-railway.sh /usr/local/bin/entrypoint-railway.sh
+RUN chmod +x /usr/local/bin/entrypoint-railway.sh
 
-ENTRYPOINT ["picoclaw"]
-CMD ["gateway"]
+# Create picoclaw home directory
+RUN mkdir -p /root/.picoclaw/workspace
+
+ENTRYPOINT ["/usr/local/bin/entrypoint-railway.sh"]
