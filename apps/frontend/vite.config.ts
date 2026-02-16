@@ -196,7 +196,7 @@ export default defineConfig(({ mode }) => {
             mangle: {
               safari10: true, // Fix Safari 10+ bugs
             },
-            format: {
+            output: {
               comments: false, // Remove all comments
             },
           }
@@ -221,7 +221,8 @@ export default defineConfig(({ mode }) => {
           // Use hash-based filenames for better caching
           assetFileNames: (assetInfo) => {
             // Organize assets by type for better caching strategy
-            const info = assetInfo.name.split('.');
+            const name = assetInfo.name ?? '';
+            const info = name.split('.');
             const ext = info[info.length - 1];
             if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(ext)) {
               return `assets/images/[name].[hash][extname]`;
@@ -355,8 +356,10 @@ export default defineConfig(({ mode }) => {
           }
         : undefined,
       // Add CORS headers for development and SPA fallback
-      configureServer: (server) => {
-        server.middlewares.use((req, res, next) => {
+      configureServer: (server: {
+        middlewares: { use: (handler: (req: any, res: any, next: () => void) => void) => void };
+      }) => {
+        server.middlewares.use((req: any, res: any, next: () => void) => {
           res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins for development
           res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
           res.setHeader(
@@ -372,7 +375,7 @@ export default defineConfig(({ mode }) => {
         });
 
         // SPA fallback - serve index.html for all non-API routes
-        server.middlewares.use((req, res, next) => {
+        server.middlewares.use((req: any, res: any, next: () => void) => {
           if (
             req.url &&
             !req.url.startsWith('/api') &&
