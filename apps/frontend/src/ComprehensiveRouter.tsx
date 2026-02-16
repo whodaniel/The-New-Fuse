@@ -95,6 +95,7 @@ const APIAnalyticsFull = lazy(() => import('./pages/Admin/APIAnalyticsFull'));
 const ConfigurationManagement = lazy(() => import('./pages/Admin/ConfigurationManagement'));
 const AuditLogViewer = lazy(() => import('./pages/Admin/AuditLogViewer'));
 const BackupRestore = lazy(() => import('./pages/Admin/BackupRestore'));
+const OpenClawSecurity = lazy(() => import('./pages/Admin/OpenClawSecurity'));
 
 // Auth components
 const AuthIndexPage = lazy(() => import('./pages/auth'));
@@ -266,473 +267,492 @@ export default function ComprehensiveRouter() {
       <Suspense fallback={<LoadingFallback name="Layout" />}>
         <Layout>
           <Suspense fallback={<LoadingFallback name="Page" />}>
-          <Routes>
-            {/* Core Routes */}
-            <Route path="/" element={<LandingRevolutionPage />} />
-            <Route path="/home" element={<AllPages />} />
+            <Routes>
+              {/* Core Routes */}
+              <Route path="/" element={<LandingRevolutionPage />} />
+              <Route path="/home" element={<AllPages />} />
 
-            {/* Protected Core Routes */}
-            <Route
-              path="/dashboard"
-              element={
-                <RequireAuth>
-                  <Dashboard />
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/sophisticated-hub"
-              element={
-                <RequireAuth>
-                  <SophisticatedTNFHub />
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/hub"
-              element={
-                <RequireAuth>
-                  <Suspense fallback={<LoadingFallback name="Hub" />}>
-                    <ModernHub />
+              {/* Protected Core Routes */}
+              <Route
+                path="/dashboard"
+                element={
+                  <RequireAuth>
+                    <Dashboard />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/sophisticated-hub"
+                element={
+                  <RequireAuth>
+                    <SophisticatedTNFHub />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/hub"
+                element={
+                  <RequireAuth>
+                    <Suspense fallback={<LoadingFallback name="Hub" />}>
+                      <ModernHub />
+                    </Suspense>
+                  </RequireAuth>
+                }
+              />
+
+              {/* Resources Marketplace */}
+              <Route path="/resources" element={<ResourcesDashboard />} />
+
+              {/* All routes using LazyPage for now to avoid import issues */}
+              <Route path="/multi-agent-chat" element={<MultiAgentChat />} />
+              <Route path="/ai-portal" element={<AIAgentDashboard />} />
+              <Route path="/chat" element={<ChatPage />} />
+              <Route path="/ai-agents" element={<AIAgentRegistration />} />
+              <Route path="/agent-builder" element={<UnifiedAgentCreator />} />
+              <Route path="/agent-management" element={<AgentsPage />} />
+              <Route path="/agents" element={<AgentsPage />} />
+              <Route
+                path="/agents/new"
+                element={
+                  <Suspense fallback={<LoadingFallback name="Agent Creator" />}>
+                    <UnifiedAgentCreator />
                   </Suspense>
-                </RequireAuth>
-              }
-            />
+                }
+              />
+              <Route path="/agents/:id" element={<AgentDetail />} />
+              <Route path="/agents/:id/identity" element={<AgentIdentity />} />
+              <Route path="/observatory" element={<SystemObservatory />} />
+              <Route path="/command-center" element={<TNFCommandCenter />} />
+              <Route
+                path="/agents/onboard"
+                element={
+                  <Suspense fallback={<LoadingFallback name="Agent Onboarding" />}>
+                    <AgentOnboardPage />
+                  </Suspense>
+                }
+              />
+              <Route path="/agents/nft-marketplace" element={<NFTMarketplacePage />} />
+              <Route path="/agents/revenue-dashboard" element={<RevenueDashboardPage />} />
+              <Route path="/workspace/overview" element={<WorkspaceOverview />} />
+              <Route path="/workspace/analytics" element={<WorkspaceAnalytics />} />
+              <Route path="/workspace/members" element={<WorkspaceMembers />} />
+              <Route path="/workspace/settings" element={<WorkspaceSettings />} />
+              <Route path="/tasks" element={<TasksPage />} />
+              {/* Workflow Routes */}
+              <Route path="/workflows" element={<Workflows />} />
+              <Route path="/workflows/builder" element={<WorkflowBuilder />} />
+              <Route path="/workflows/executions" element={<WorkflowExecutionPage />} />
+              <Route path="/workflows/:id" element={<WorkflowDetailPage />} />
+              <Route path="/workflows/:id/execution" element={<WorkflowExecutionPage />} />
+              <Route path="/workflows/console" element={<ExecutionConsole />} />
+              <Route path="/workflows/advanced-builder" element={<WorkflowEditorWrapper />} />
+              <Route path="/workflows/templates" element={<WorkflowTemplatesPage />} />
+              <Route path="/workflows-enhanced" element={<WorkflowsEnhancedPage />} />
+              <Route path="/workflows/detail" element={<WorkflowDetailPage />} />
+              <Route path="/workflows/execution" element={<WorkflowExecutionPage />} />
+              {/* Master Admin Routes - Requires SUPER_ADMIN role */}
+              <Route
+                path="/admin"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <ComprehensiveAdminDashboard />
+                  </RequirePermission>
+                }
+              />
+              <Route
+                path="/admin/user-management"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <UserManagementFull />
+                  </RequirePermission>
+                }
+              />
+              <Route
+                path="/admin/system-metrics"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <SystemMetricsDashboard />
+                  </RequirePermission>
+                }
+              />
+              <Route
+                path="/admin/agent-management"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <AgentManagementFull />
+                  </RequirePermission>
+                }
+              />
+              <Route
+                path="/admin/database"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <DatabaseAdminPanel />
+                  </RequirePermission>
+                }
+              />
+              <Route
+                path="/admin/api-analytics"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <APIAnalyticsFull />
+                  </RequirePermission>
+                }
+              />
+              <Route
+                path="/admin/configuration"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <ConfigurationManagement />
+                  </RequirePermission>
+                }
+              />
+              <Route
+                path="/admin/audit-logs"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <AuditLogViewer />
+                  </RequirePermission>
+                }
+              />
+              <Route
+                path="/admin/backup-restore"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <BackupRestore />
+                  </RequirePermission>
+                }
+              />
+              <Route
+                path="/admin/system-health"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <SystemHealth />
+                  </RequirePermission>
+                }
+              />
+              <Route
+                path="/admin/feature-flags"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <AdminFeatureFlags />
+                  </RequirePermission>
+                }
+              />
+              <Route
+                path="/admin/port-management"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <AdminPortManagement />
+                  </RequirePermission>
+                }
+              />
+              <Route
+                path="/admin/workspaces"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <WorkspaceManagement />
+                  </RequirePermission>
+                }
+              />
+              <Route
+                path="/admin/settings"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <AdminSettings />
+                  </RequirePermission>
+                }
+              />
+              <Route
+                path="/admin/openclaw-security"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <OpenClawSecurity />
+                  </RequirePermission>
+                }
+              />
 
-            {/* Resources Marketplace */}
-            <Route path="/resources" element={<ResourcesDashboard />} />
+              {/* Legacy admin routes (kept for backwards compatibility) */}
+              <Route
+                path="/admin/users"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <AdminUserManagement />
+                  </RequirePermission>
+                }
+              />
 
-            {/* All routes using LazyPage for now to avoid import issues */}
-            <Route path="/multi-agent-chat" element={<MultiAgentChat />} />
-            <Route path="/ai-portal" element={<AIAgentDashboard />} />
-            <Route path="/chat" element={<ChatPage />} />
-            <Route path="/ai-agents" element={<AIAgentRegistration />} />
-            <Route path="/agent-builder" element={<UnifiedAgentCreator />} />
-            <Route path="/agent-management" element={<AgentsPage />} />
-            <Route path="/agents" element={<AgentsPage />} />
-            <Route
-              path="/agents/new"
-              element={
-                <Suspense fallback={<LoadingFallback name="Agent Creator" />}>
-                  <UnifiedAgentCreator />
-                </Suspense>
-              }
-            />
-            <Route path="/agents/:id" element={<AgentDetail />} />
-            <Route path="/agents/:id/identity" element={<AgentIdentity />} />
-            <Route path="/observatory" element={<SystemObservatory />} />
-            <Route path="/command-center" element={<TNFCommandCenter />} />
-            <Route
-              path="/agents/onboard"
-              element={
-                <Suspense fallback={<LoadingFallback name="Agent Onboarding" />}>
-                  <AgentOnboardPage />
-                </Suspense>
-              }
-            />
-            <Route path="/agents/nft-marketplace" element={<NFTMarketplacePage />} />
-            <Route path="/agents/revenue-dashboard" element={<RevenueDashboardPage />} />
-            <Route path="/workspace/overview" element={<WorkspaceOverview />} />
-            <Route path="/workspace/analytics" element={<WorkspaceAnalytics />} />
-            <Route path="/workspace/members" element={<WorkspaceMembers />} />
-            <Route path="/workspace/settings" element={<WorkspaceSettings />} />
-            <Route path="/tasks" element={<TasksPage />} />
-            {/* Workflow Routes */}
-            <Route path="/workflows" element={<Workflows />} />
-            <Route path="/workflows/builder" element={<WorkflowBuilder />} />
-            <Route path="/workflows/executions" element={<WorkflowExecutionPage />} />
-            <Route path="/workflows/:id" element={<WorkflowDetailPage />} />
-            <Route path="/workflows/:id/execution" element={<WorkflowExecutionPage />} />
-            <Route path="/workflows/console" element={<ExecutionConsole />} />
-            <Route path="/workflows/advanced-builder" element={<WorkflowEditorWrapper />} />
-            <Route path="/workflows/templates" element={<WorkflowTemplatesPage />} />
-            <Route path="/workflows-enhanced" element={<WorkflowsEnhancedPage />} />
-            <Route path="/workflows/detail" element={<WorkflowDetailPage />} />
-            <Route path="/workflows/execution" element={<WorkflowExecutionPage />} />
-            {/* Master Admin Routes - Requires SUPER_ADMIN role */}
-            <Route
-              path="/admin"
-              element={
-                <RequirePermission roles={['SUPER_ADMIN']}>
-                  <ComprehensiveAdminDashboard />
-                </RequirePermission>
-              }
-            />
-            <Route
-              path="/admin/user-management"
-              element={
-                <RequirePermission roles={['SUPER_ADMIN']}>
-                  <UserManagementFull />
-                </RequirePermission>
-              }
-            />
-            <Route
-              path="/admin/system-metrics"
-              element={
-                <RequirePermission roles={['SUPER_ADMIN']}>
-                  <SystemMetricsDashboard />
-                </RequirePermission>
-              }
-            />
-            <Route
-              path="/admin/agent-management"
-              element={
-                <RequirePermission roles={['SUPER_ADMIN']}>
-                  <AgentManagementFull />
-                </RequirePermission>
-              }
-            />
-            <Route
-              path="/admin/database"
-              element={
-                <RequirePermission roles={['SUPER_ADMIN']}>
-                  <DatabaseAdminPanel />
-                </RequirePermission>
-              }
-            />
-            <Route
-              path="/admin/api-analytics"
-              element={
-                <RequirePermission roles={['SUPER_ADMIN']}>
-                  <APIAnalyticsFull />
-                </RequirePermission>
-              }
-            />
-            <Route
-              path="/admin/configuration"
-              element={
-                <RequirePermission roles={['SUPER_ADMIN']}>
-                  <ConfigurationManagement />
-                </RequirePermission>
-              }
-            />
-            <Route
-              path="/admin/audit-logs"
-              element={
-                <RequirePermission roles={['SUPER_ADMIN']}>
-                  <AuditLogViewer />
-                </RequirePermission>
-              }
-            />
-            <Route
-              path="/admin/backup-restore"
-              element={
-                <RequirePermission roles={['SUPER_ADMIN']}>
-                  <BackupRestore />
-                </RequirePermission>
-              }
-            />
-            <Route
-              path="/admin/system-health"
-              element={
-                <RequirePermission roles={['SUPER_ADMIN']}>
-                  <SystemHealth />
-                </RequirePermission>
-              }
-            />
-            <Route
-              path="/admin/feature-flags"
-              element={
-                <RequirePermission roles={['SUPER_ADMIN']}>
-                  <AdminFeatureFlags />
-                </RequirePermission>
-              }
-            />
-            <Route
-              path="/admin/port-management"
-              element={
-                <RequirePermission roles={['SUPER_ADMIN']}>
-                  <AdminPortManagement />
-                </RequirePermission>
-              }
-            />
-            <Route
-              path="/admin/workspaces"
-              element={
-                <RequirePermission roles={['SUPER_ADMIN']}>
-                  <WorkspaceManagement />
-                </RequirePermission>
-              }
-            />
-            <Route
-              path="/admin/settings"
-              element={
-                <RequirePermission roles={['SUPER_ADMIN']}>
-                  <AdminSettings />
-                </RequirePermission>
-              }
-            />
+              {/* Agency Routes - Requires AGENCY_OWNER/AGENCY_ADMIN/AGENCY_MANAGER */}
+              <Route
+                path="/agency/dashboard"
+                element={
+                  <RequirePermission roles={['AGENCY_OWNER', 'AGENCY_ADMIN', 'AGENCY_MANAGER']}>
+                    <AgencyDashboard />
+                  </RequirePermission>
+                }
+              />
+              <Route path="/agency/onboard" element={<AgencyOnboarding />} />
 
-            {/* Legacy admin routes (kept for backwards compatibility) */}
-            <Route
-              path="/admin/users"
-              element={
-                <RequirePermission roles={['SUPER_ADMIN']}>
-                  <AdminUserManagement />
-                </RequirePermission>
-              }
-            />
+              {/* Other routes */}
+              <Route path="/mcp-hub" element={<MCPHub />} />
+              <Route path="/knowledge-hub" element={<KnowledgeHub />} />
+              <Route path="/a2a-control" element={<A2AControl />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/settings/general" element={<GeneralSettings />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/components" element={<ComponentsShowcase />} />
+              <Route path="/timeline-demo" element={<TimelineDemo />} />
+              <Route path="/graph-demo" element={<GraphDemo />} />
+              <Route path="/frontend-showcase" element={<FrontendShowcasePage />} />
+              <Route path="/debug" element={<DebugPageComponent />} />
+              <Route path="/build-info" element={<BuildInfoPage />} />
+              <Route path="/debug-routing" element={<DebugRoutingComponent />} />
+              <Route path="/all-pages" element={<AllPages />} />
+              <Route path="/analytics" element={<Analytics />} />
 
-            {/* Agency Routes - Requires AGENCY_OWNER/AGENCY_ADMIN/AGENCY_MANAGER */}
-            <Route
-              path="/agency/dashboard"
-              element={
-                <RequirePermission roles={['AGENCY_OWNER', 'AGENCY_ADMIN', 'AGENCY_MANAGER']}>
-                  <AgencyDashboard />
-                </RequirePermission>
-              }
-            />
-            <Route path="/agency/onboard" element={<AgencyOnboarding />} />
+              {/* Suggestions Routes */}
+              <Route path="/suggestions" element={<SuggestionsPage />} />
+              <Route path="/suggestions/new" element={<NewSuggestionPage />} />
+              <Route path="/suggestions/:id" element={<SuggestionDetailPage />} />
 
-            {/* Other routes */}
-            <Route path="/mcp-hub" element={<MCPHub />} />
-            <Route path="/knowledge-hub" element={<KnowledgeHub />} />
-            <Route path="/a2a-control" element={<A2AControl />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/settings/general" element={<GeneralSettings />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/components" element={<ComponentsShowcase />} />
-            <Route path="/timeline-demo" element={<TimelineDemo />} />
-            <Route path="/graph-demo" element={<GraphDemo />} />
-            <Route path="/frontend-showcase" element={<FrontendShowcasePage />} />
-            <Route path="/debug" element={<DebugPageComponent />} />
-            <Route path="/build-info" element={<BuildInfoPage />} />
-            <Route path="/debug-routing" element={<DebugRoutingComponent />} />
-            <Route path="/all-pages" element={<AllPages />} />
-            <Route path="/analytics" element={<Analytics />} />
+              {/* Admin routes have been consolidated above with permission guards */}
 
-            {/* Suggestions Routes */}
-            <Route path="/suggestions" element={<SuggestionsPage />} />
-            <Route path="/suggestions/new" element={<NewSuggestionPage />} />
-            <Route path="/suggestions/:id" element={<SuggestionDetailPage />} />
+              {/* Enhanced Auth Routes */}
+              <Route path="/auth" element={<AuthIndexPage />} />
+              <Route path="/auth/login" element={<LoginPage />} />
+              <Route path="/auth/register" element={<RegisterPage />} />
+              <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
+              <Route path="/auth/sso" element={<SSOPage />} />
+              <Route path="/auth/google-callback" element={<GoogleCallbackPage />} />
+              <Route path="/auth/oauth-callback" element={<OAuthCallbackPage />} />
+              <Route
+                path="/auth/unstoppable-callback"
+                element={<UnstoppableDomainsCallbackPage />}
+              />
 
-            {/* Admin routes have been consolidated above with permission guards */}
+              {/* Enhanced Landing Routes */}
+              <Route path="/landing" element={<LandingRevolutionPage />} />
+              <Route path="/pricing" element={<PricingPage />} />
+              <Route path="/community" element={<CommunityHubPage />} />
+              <Route path="/support" element={<SupportPage />} />
+              <Route path="/contact" element={<SupportPage />} />
+              <Route path="/onboarding" element={<OnboardingFlowPage />} />
+              <Route path="/docs" element={<DocsPage />} />
+              <Route path="/docs/*" element={<DocsPage />} />
+              {/* Brand Identity / Design System */}
+              <Route path="/brand" element={<BrandIdentityPage />} />
+              <Route path="/design-system" element={<BrandIdentityPage />} />
+              <Route path="/blog" element={<BlogPage />} />
 
-            {/* Enhanced Auth Routes */}
-            <Route path="/auth" element={<AuthIndexPage />} />
-            <Route path="/auth/login" element={<LoginPage />} />
-            <Route path="/auth/register" element={<RegisterPage />} />
-            <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
-            <Route path="/auth/sso" element={<SSOPage />} />
-            <Route path="/auth/google-callback" element={<GoogleCallbackPage />} />
-            <Route path="/auth/oauth-callback" element={<OAuthCallbackPage />} />
-            <Route path="/auth/unstoppable-callback" element={<UnstoppableDomainsCallbackPage />} />
+              {/* AI Agent Onboarding - Critical for autonomous agent self-registration (ULTIMATE_UX_DESIGNER_BRIEF) */}
+              <Route
+                path="/onboarding/ai-agent"
+                element={
+                  <Suspense fallback={<LoadingFallback name="AI Agent Onboarding" />}>
+                    <AIAgentOnboardingPage />
+                  </Suspense>
+                }
+              />
 
-            {/* Enhanced Landing Routes */}
-            <Route path="/landing" element={<LandingRevolutionPage />} />
-            <Route path="/pricing" element={<PricingPage />} />
-            <Route path="/community" element={<CommunityHubPage />} />
-            <Route path="/support" element={<SupportPage />} />
-            <Route path="/contact" element={<SupportPage />} />
-            <Route path="/onboarding" element={<OnboardingFlowPage />} />
-            <Route path="/docs" element={<DocsPage />} />
-            <Route path="/docs/*" element={<DocsPage />} />
-            {/* Brand Identity / Design System */}
-            <Route path="/brand" element={<BrandIdentityPage />} />
-            <Route path="/design-system" element={<BrandIdentityPage />} />
-            <Route path="/blog" element={<BlogPage />} />
+              {/* Enhanced Workspace Routes - Fixed duplications */}
+              <Route path="/workspace-chat" element={<WorkspaceChatPage />} />
 
-            {/* AI Agent Onboarding - Critical for autonomous agent self-registration (ULTIMATE_UX_DESIGNER_BRIEF) */}
-            <Route
-              path="/onboarding/ai-agent"
-              element={
-                <Suspense fallback={<LoadingFallback name="AI Agent Onboarding" />}>
-                  <AIAgentOnboardingPage />
-                </Suspense>
-              }
-            />
+              {/* Enhanced Task Routes */}
+              <Route path="/tasks/new" element={<NewTaskPage />} />
+              <Route path="/tasks/:id" element={<TaskDetailPage />} />
+              <Route path="/tasks/:id/edit" element={<TaskEditPage />} />
 
-            {/* Enhanced Workspace Routes - Fixed duplications */}
-            <Route path="/workspace-chat" element={<WorkspaceChatPage />} />
+              {/* Enhanced Dashboard Routes */}
+              <Route path="/dashboard/agents" element={<AgentDashboard />} />
+              <Route path="/dashboard/agents/new" element={<UnifiedAgentCreator />} />
+              <Route path="/dashboard/agents/:id" element={<AgentDetail />} />
 
-            {/* Enhanced Task Routes */}
-            <Route path="/tasks/new" element={<NewTaskPage />} />
-            <Route path="/tasks/:id" element={<TaskDetailPage />} />
-            <Route path="/tasks/:id/edit" element={<TaskEditPage />} />
+              {/* Enhanced Settings Routes */}
+              <Route path="/settings/appearance" element={<SettingsAppearance />} />
+              <Route path="/settings/notifications" element={<SettingsNotifications />} />
+              <Route path="/settings/security" element={<SettingsSecurity />} />
+              <Route path="/settings/api" element={<SettingsAPI />} />
+              <Route path="/general-settings" element={<GeneralSettings />} />
+              <Route
+                path="/general-settings/embedding"
+                element={<GeneralSettingsEmbeddingPage />}
+              />
 
-            {/* Enhanced Dashboard Routes */}
-            <Route path="/dashboard/agents" element={<AgentDashboard />} />
-            <Route path="/dashboard/agents/new" element={<UnifiedAgentCreator />} />
-            <Route path="/dashboard/agents/:id" element={<AgentDetail />} />
+              {/* Enhanced Component Routes */}
+              <Route path="/frontend-showcase" element={<FrontendShowcasePage />} />
+              <Route path="/layout-example" element={<LayoutExamples />} />
+              <Route path="/simple-test" element={<SimpleTestPage />} />
 
-            {/* Enhanced Settings Routes */}
-            <Route path="/settings/appearance" element={<SettingsAppearance />} />
-            <Route path="/settings/notifications" element={<SettingsNotifications />} />
-            <Route path="/settings/security" element={<SettingsSecurity />} />
-            <Route path="/settings/api" element={<SettingsAPI />} />
-            <Route path="/general-settings" element={<GeneralSettings />} />
-            <Route path="/general-settings/embedding" element={<GeneralSettingsEmbeddingPage />} />
+              {/* Additional Routes */}
+              <Route path="/test" element={<TestPage />} />
+              <Route path="/unauthorized" element={<UnauthorizedPage />} />
+              <Route path="/ai-agent-portal" element={<AIAgentRegistration />} />
 
-            {/* Enhanced Component Routes */}
-            <Route path="/frontend-showcase" element={<FrontendShowcasePage />} />
-            <Route path="/layout-example" element={<LayoutExamples />} />
-            <Route path="/simple-test" element={<SimpleTestPage />} />
+              {/* Critical Missing Routes */}
+              <Route path="/dashboard/analytics" element={<Analytics />} />
+              <Route path="/dashboard/settings" element={<DashboardSettings />} />
+              <Route path="/components-showcase" element={<ComponentsShowcase />} />
+              <Route path="/not-found" element={<NotFound />} />
 
-            {/* Additional Routes */}
-            <Route path="/test" element={<TestPage />} />
-            <Route path="/unauthorized" element={<UnauthorizedPage />} />
-            <Route path="/ai-agent-portal" element={<AIAgentRegistration />} />
+              {/* Preview Routes */}
+              <Route path="/preview/onboarding" element={<OnboardingPreviewPage />} />
 
-            {/* Critical Missing Routes */}
-            <Route path="/dashboard/analytics" element={<Analytics />} />
-            <Route path="/dashboard/settings" element={<DashboardSettings />} />
-            <Route path="/components-showcase" element={<ComponentsShowcase />} />
-            <Route path="/not-found" element={<NotFound />} />
+              {/* Remaining Specialized Settings Routes */}
+              <Route
+                path="/workspace-settings/llm-selection"
+                element={<WorkspaceLLMSelectionPage />}
+              />
+              <Route
+                path="/workspace-settings/chat-model"
+                element={<WorkspaceLLMSelectionPage />}
+              />
+              <Route
+                path="/workspace-settings/agent-model"
+                element={
+                  <AgentModelSelectionPage
+                    provider="default"
+                    workspace={{ agentModel: 'default' }}
+                    setHasChanges={() => {}}
+                  />
+                }
+              />
 
-            {/* Preview Routes */}
-            <Route path="/preview/onboarding" element={<OnboardingPreviewPage />} />
+              {/* Admin Tools Routes */}
+              <Route path="/admin/agents/skills" element={<AdminAgentSkillsPage />} />
+              <Route
+                path="/admin/agents/web-search"
+                element={
+                  <Suspense fallback={<LoadingFallback name="Web Search Selection" />}>
+                    <WebSearchSelection />
+                  </Suspense>
+                }
+              />
 
-            {/* Remaining Specialized Settings Routes */}
-            <Route
-              path="/workspace-settings/llm-selection"
-              element={<WorkspaceLLMSelectionPage />}
-            />
-            <Route path="/workspace-settings/chat-model" element={<WorkspaceLLMSelectionPage />} />
-            <Route
-              path="/workspace-settings/agent-model"
-              element={
-                <AgentModelSelectionPage
-                  provider="default"
-                  workspace={{ agentModel: 'default' }}
-                  setHasChanges={() => {}}
-                />
-              }
-            />
+              {/* Main workspace page */}
+              <Route path="/main" element={<MainPage />} />
 
-            {/* Admin Tools Routes */}
-            <Route path="/admin/agents/skills" element={<AdminAgentSkillsPage />} />
-            <Route
-              path="/admin/agents/web-search"
-              element={
-                <Suspense fallback={<LoadingFallback name="Web Search Selection" />}>
-                  <WebSearchSelection />
-                </Suspense>
-              }
-            />
+              {/* Live View - Real-time AI browser activity */}
+              <Route
+                path="/live-view"
+                element={
+                  <Suspense fallback={<LoadingFallback name="Live View" />}>
+                    <LiveViewPage />
+                  </Suspense>
+                }
+              />
 
-            {/* Main workspace page */}
-            <Route path="/main" element={<MainPage />} />
+              {/* AI Command Center - Multiple AI chats in iframes */}
+              <Route
+                path="/ai-command-center"
+                element={
+                  <Suspense fallback={<LoadingFallback name="AI Command Center" />}>
+                    <AICommandCenter />
+                  </Suspense>
+                }
+              />
 
-            {/* Live View - Real-time AI browser activity */}
-            <Route
-              path="/live-view"
-              element={
-                <Suspense fallback={<LoadingFallback name="Live View" />}>
-                  <LiveViewPage />
-                </Suspense>
-              }
-            />
+              <Route
+                path="/admin/layout"
+                element={<LazyPage name="Admin Layout" path="/admin/layout" />}
+              />
+              <Route path="/multi-agent-chat-demo" element={<MultiAgentChat />} />
+              <Route
+                path="/api/admin/database"
+                element={<LazyPage name="Admin Database API" path="/api/admin/database" />}
+              />
+              <Route
+                path="/api/admin/features"
+                element={<LazyPage name="Admin Features API" path="/api/admin/features" />}
+              />
+              <Route
+                path="/package/dashboard"
+                element={<LazyPage name="Package Dashboard" path="/package/dashboard" />}
+              />
+              <Route
+                path="/package/login"
+                element={<LazyPage name="Package Login" path="/package/login" />}
+              />
+              <Route
+                path="/package/agents"
+                element={<LazyPage name="Package Agents" path="/package/agents" />}
+              />
+              <Route
+                path="/package/workflows"
+                element={<LazyPage name="Package Workflows" path="/package/workflows" />}
+              />
+              <Route
+                path="/profile"
+                element={
+                  <Suspense fallback={<LoadingFallback name="User Profile" />}>
+                    <UserProfilePage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/user/profile"
+                element={
+                  <Suspense fallback={<LoadingFallback name="User Profile" />}>
+                    <UserProfilePage />
+                  </Suspense>
+                }
+              />
 
-            {/* AI Command Center - Multiple AI chats in iframes */}
-            <Route
-              path="/ai-command-center"
-              element={
-                <Suspense fallback={<LoadingFallback name="AI Command Center" />}>
-                  <AICommandCenter />
-                </Suspense>
-              }
-            />
+              {/* HTML prototype routes (for reference) */}
+              <Route
+                path="/html/dashboard"
+                element={<LazyPage name="HTML Dashboard Prototype" path="/html/dashboard" />}
+              />
+              <Route
+                path="/html/admin"
+                element={<LazyPage name="HTML Admin Prototype" path="/html/admin" />}
+              />
+              <Route
+                path="/html/agents"
+                element={<LazyPage name="HTML Agents Prototype" path="/html/agents" />}
+              />
+              <Route
+                path="/html/chat"
+                element={<LazyPage name="HTML Chat Prototype" path="/html/chat" />}
+              />
+              <Route
+                path="/html/tasks"
+                element={<LazyPage name="HTML Tasks Prototype" path="/html/tasks" />}
+              />
+              <Route
+                path="/html/workflows"
+                element={<LazyPage name="HTML Workflows Prototype" path="/html/workflows" />}
+              />
 
-            <Route
-              path="/admin/layout"
-              element={<LazyPage name="Admin Layout" path="/admin/layout" />}
-            />
-            <Route path="/multi-agent-chat-demo" element={<MultiAgentChat />} />
-            <Route
-              path="/api/admin/database"
-              element={<LazyPage name="Admin Database API" path="/api/admin/database" />}
-            />
-            <Route
-              path="/api/admin/features"
-              element={<LazyPage name="Admin Features API" path="/api/admin/features" />}
-            />
-            <Route
-              path="/package/dashboard"
-              element={<LazyPage name="Package Dashboard" path="/package/dashboard" />}
-            />
-            <Route
-              path="/package/login"
-              element={<LazyPage name="Package Login" path="/package/login" />}
-            />
-            <Route
-              path="/package/agents"
-              element={<LazyPage name="Package Agents" path="/package/agents" />}
-            />
-            <Route
-              path="/package/workflows"
-              element={<LazyPage name="Package Workflows" path="/package/workflows" />}
-            />
-            <Route
-              path="/profile"
-              element={
-                <Suspense fallback={<LoadingFallback name="User Profile" />}>
-                  <UserProfilePage />
-                </Suspense>
-              }
-            />
-            <Route
-              path="/user/profile"
-              element={
-                <Suspense fallback={<LoadingFallback name="User Profile" />}>
-                  <UserProfilePage />
-                </Suspense>
-              }
-            />
-
-            {/* HTML prototype routes (for reference) */}
-            <Route
-              path="/html/dashboard"
-              element={<LazyPage name="HTML Dashboard Prototype" path="/html/dashboard" />}
-            />
-            <Route
-              path="/html/admin"
-              element={<LazyPage name="HTML Admin Prototype" path="/html/admin" />}
-            />
-            <Route
-              path="/html/agents"
-              element={<LazyPage name="HTML Agents Prototype" path="/html/agents" />}
-            />
-            <Route
-              path="/html/chat"
-              element={<LazyPage name="HTML Chat Prototype" path="/html/chat" />}
-            />
-            <Route
-              path="/html/tasks"
-              element={<LazyPage name="HTML Tasks Prototype" path="/html/tasks" />}
-            />
-            <Route
-              path="/html/workflows"
-              element={<LazyPage name="HTML Workflows Prototype" path="/html/workflows" />}
-            />
-
-            {/* Error Handling */}
-            <Route
-              path="/404"
-              element={
-                <Suspense fallback={<LoadingFallback name="Page Not Found" />}>
-                  <NotFound />
-                </Suspense>
-              }
-            />
-            <Route
-              path="*"
-              element={
-                <div className="p-8 text-center">
-                  <h1 className="text-3xl font-bold text-red-600 mb-4">404 - Page Not Found</h1>
-                  <p className="text-gray-600 mb-4">The page you are looking for does not exist.</p>
-                  <Link
-                    to="/"
-                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
-                  >
-                    Go Home
-                  </Link>
-                </div>
-              }
-            />
-          </Routes>
-        </Suspense>
+              {/* Error Handling */}
+              <Route
+                path="/404"
+                element={
+                  <Suspense fallback={<LoadingFallback name="Page Not Found" />}>
+                    <NotFound />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="*"
+                element={
+                  <div className="p-8 text-center">
+                    <h1 className="text-3xl font-bold text-red-600 mb-4">404 - Page Not Found</h1>
+                    <p className="text-gray-600 mb-4">
+                      The page you are looking for does not exist.
+                    </p>
+                    <Link
+                      to="/"
+                      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+                    >
+                      Go Home
+                    </Link>
+                  </div>
+                }
+              />
+            </Routes>
+          </Suspense>
         </Layout>
       </Suspense>
     </div>

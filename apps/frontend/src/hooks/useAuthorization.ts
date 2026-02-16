@@ -10,7 +10,7 @@ export const useAuthorization = () => {
   const { user } = useAuth();
 
   // Specific override for the Super Admin / Master Admin
-  const isBizSynthMasterAdmin = user?.email === 'owner@example.com';
+  const isBizSynthMasterAdmin = user?.email?.toLowerCase() === 'owner@example.com';
 
   const hasRole = (roles: string[]): boolean => {
     if (!user) return false;

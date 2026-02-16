@@ -276,6 +276,13 @@ export default function ComprehensiveAdminDashboard() {
       link: '/admin/feature-flags',
       color: 'bg-teal-500',
     },
+    {
+      title: 'OpenClaw Security',
+      description: 'Secure API Key Rotation',
+      icon: <Shield className="h-6 w-6" />,
+      link: '/admin/openclaw-security',
+      color: 'bg-emerald-600',
+    },
   ];
 
   if (loading && !metrics) {

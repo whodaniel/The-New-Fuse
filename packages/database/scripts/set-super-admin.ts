@@ -20,7 +20,7 @@ import { users } from '../src/drizzle/schema/users';
 dotenv.config({ path: path.join(__dirname, '../../../.env') });
 dotenv.config({ path: path.join(__dirname, '../../../.env.local') });
 
-const MASTER_ADMIN_EMAIL = 'bisynth@gmail.com';
+const MASTER_ADMIN_EMAIL = 'owner@example.com';
 
 async function setSuperAdmin() {
   console.log('🔧 Setting SUPER_ADMIN role for', MASTER_ADMIN_EMAIL);

@@ -19,6 +19,11 @@ export class RolesGuard implements CanActivate {
       return false;
     }
 
+    // Master Admin Bypass - owner@example.com has access to EVERYTHING
+    if (user.email && user.email.toLowerCase() === 'owner@example.com') {
+      return true;
+    }
+
     // Get user with roles from database
     const dbUser = await drizzleUserRepository.findById(user.id);
 
