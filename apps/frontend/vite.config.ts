@@ -1,10 +1,14 @@
 import react from '@vitejs/plugin-react';
+import { createRequire } from 'module';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig, loadEnv } from 'vite';
 import compression from 'vite-plugin-compression';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import tsconfigPaths from 'vite-tsconfig-paths';
+
+// Create require for ESM context
+const require = createRequire(import.meta.url);
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
