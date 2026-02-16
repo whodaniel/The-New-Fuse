@@ -248,7 +248,11 @@ const AdminSettings: React.FC = () => {
     }));
   };
 
-  const updateOAuthSettings = (provider: keyof AdminSettings['oauth'], key: string, value: string) => {
+  const updateOAuthSettings = (
+    provider: keyof AdminSettings['oauth'],
+    key: string,
+    value: string
+  ) => {
     setSettings((prev) => ({
       ...prev,
       oauth: {
@@ -732,7 +736,9 @@ const AdminSettings: React.FC = () => {
                     label="Server Password"
                     type="password"
                     value={settings.oauth?.opencode?.serverPassword || ''}
-                    onChange={(e) => updateOAuthSettings('opencode', 'serverPassword', e.target.value)}
+                    onChange={(e) =>
+                      updateOAuthSettings('opencode', 'serverPassword', e.target.value)
+                    }
                   />
                   <Input
                     label="CLI Path"
@@ -768,11 +774,6 @@ const AdminSettings: React.FC = () => {
             </div>
           </Card>
         </TabsContent>
-      </Tabs>
-    </div>
-  );
-};
-
       </Tabs>
     </div>
   );
