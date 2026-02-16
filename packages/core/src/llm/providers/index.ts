@@ -7,3 +7,5 @@
 
 export * from './AnthropicProvider';
 export * from './GeminiProvider';
+export * from './OpenCodeApiProvider';
+export * from './OpenCodeCliProvider';

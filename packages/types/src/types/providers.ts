@@ -2,8 +2,26 @@
  * Types related to LLM providers and models
  */
 
+export enum LLMProviderType {
+  OPENAI = 'openai',
+  ANTHROPIC = 'anthropic',
+  GEMINI = 'gemini',
+  OPENROUTER = 'openrouter',
+  LITELLM = 'litellm',
+  DEEPSEEK = 'deepseek',
+  QWEN = 'qwen',
+  COPILOT = 'copilot',
+  CLAUDE_CLI = 'claude-cli',
+  GEMINI_CLI = 'gemini-cli',
+  JULES_CLI = 'jules-cli',
+  AIDER_CLI = 'aider-cli',
+  OPENCODE = 'opencode',
+  OPENCODE_CLI = 'opencode-cli',
+  CUSTOM_CLI = 'custom-cli',
+}
+
 export interface ModelCost {
-  input: number;  // Cost per 1K tokens for input
+  input: number; // Cost per 1K tokens for input
   output: number; // Cost per 1K tokens for output
 }
 

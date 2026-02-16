@@ -725,7 +725,7 @@ with the user independently without going through the main agent.
 
 **2. Configure**
 
-```json
+````json
 {
   "agents": {
     "defaults": {
@@ -743,7 +743,26 @@ with the user independently without going through the main agent.
     }
   }
 }
-```
+
+### OAuth Configuration (Optional)
+
+For providers that support OAuth (like Google/Gemini or custom Enterprise setups), you can configure the OAuth parameters directly:
+
+```json
+{
+  "providers": {
+    "gemini": {
+       "client_id": "your-client-id.apps.googleusercontent.com",
+       "client_secret": "your-client-secret",
+       "issuer": "https://accounts.google.com",
+       "scopes": "openid profile email"
+    }
+  }
+}
+````
+
+These fields (`client_id`, `client_secret`, `issuer`, `scopes`) enable the
+built-in Generic OAuth flow.
 
 **3. Run**
 

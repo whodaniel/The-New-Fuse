@@ -78,7 +78,11 @@ export type LLMProviderType =
   | 'gemini-cli' // Google Gemini CLI
   | 'jules-cli' // Jules AI CLI
   | 'aider-cli' // Aider coding assistant
+  | 'opencode-cli' // OpenCode CLI
   | 'custom-cli'; // Custom CLI command
+
+// OpenCode provider types (can be used as both CLI and API)
+export type OpenCodeProviderType = 'opencode-cli' | 'opencode-api';
 
 export interface LLMProviderConfig {
   type: LLMProviderType;

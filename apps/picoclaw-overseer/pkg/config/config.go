@@ -182,11 +182,16 @@ type ProvidersConfig struct {
 }
 
 type ProviderConfig struct {
-	APIKey      string `json:"api_key" env:"PICOCLAW_PROVIDERS_{{.Name}}_API_KEY"`
-	APIBase     string `json:"api_base" env:"PICOCLAW_PROVIDERS_{{.Name}}_API_BASE"`
-	Proxy       string `json:"proxy,omitempty" env:"PICOCLAW_PROVIDERS_{{.Name}}_PROXY"`
-	AuthMethod  string `json:"auth_method,omitempty" env:"PICOCLAW_PROVIDERS_{{.Name}}_AUTH_METHOD"`
-	ConnectMode string `json:"connect_mode,omitempty" env:"PICOCLAW_PROVIDERS_{{.Name}}_CONNECT_MODE"` //only for Github Copilot, `stdio` or `grpc`
+	APIKey       string `json:"api_key" env:"PICOCLAW_PROVIDERS_{{.Name}}_API_KEY"`
+	APIBase      string `json:"api_base" env:"PICOCLAW_PROVIDERS_{{.Name}}_API_BASE"`
+	Proxy        string `json:"proxy,omitempty" env:"PICOCLAW_PROVIDERS_{{.Name}}_PROXY"`
+	AuthMethod   string `json:"auth_method,omitempty" env:"PICOCLAW_PROVIDERS_{{.Name}}_AUTH_METHOD"`
+	ConnectMode  string `json:"connect_mode,omitempty" env:"PICOCLAW_PROVIDERS_{{.Name}}_CONNECT_MODE"` //only for Github Copilot, `stdio` or `grpc`
+	ClientID     string `json:"client_id,omitempty" env:"PICOCLAW_PROVIDERS_{{.Name}}_CLIENT_ID"`
+	ClientSecret string `json:"client_secret,omitempty" env:"PICOCLAW_PROVIDERS_{{.Name}}_CLIENT_SECRET"`
+	Issuer       string `json:"issuer,omitempty" env:"PICOCLAW_PROVIDERS_{{.Name}}_ISSUER"`
+	Scopes       string `json:"scopes,omitempty" env:"PICOCLAW_PROVIDERS_{{.Name}}_SCOPES"`
+	AuthPort     int    `json:"auth_port,omitempty" env:"PICOCLAW_PROVIDERS_{{.Name}}_AUTH_PORT"`
 }
 
 type GatewayConfig struct {

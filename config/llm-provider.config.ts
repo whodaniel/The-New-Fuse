@@ -27,6 +27,16 @@ export const llmProviderConfig = ConfigModule.forRoot({
           apiKey: process.env.LITELLM_API_KEY,
           baseURL: process.env.LITELLM_BASE_URL || 'http://localhost:4000',
         },
+        opencode: {
+          apiKey: process.env.OPENCODE_API_KEY,
+          model: process.env.OPENCODE_MODEL || 'anthropic/claude-sonnet-4-5',
+          baseURL: process.env.OPENCODE_BASE_URL || 'http://localhost:4096',
+          serverPassword: process.env.OPENCODE_SERVER_PASSWORD,
+        },
+        'opencode-cli': {
+          apiKey: process.env.OPENCODE_CLI_PATH || 'opencode',
+          model: process.env.OPENCODE_CLI_MODEL || 'anthropic/claude-sonnet-4-5',
+        },
       },
       encryption: {
         key: process.env.ENCRYPTION_KEY,
@@ -48,6 +58,7 @@ export interface LLMProviderConfig {
       baseURL?: string;
       maxRetries?: number;
       timeout?: number;
+      serverPassword?: string;
     };
   };
   encryption: {

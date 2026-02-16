@@ -93,7 +93,12 @@
     },
     "gemini": {
       "api_key": "",
-      "api_base": ""
+      "api_base": "",
+      "client_id": "YOUR_GOOGLE_CLIENT_ID",
+      "client_secret": "YOUR_GOOGLE_CLIENT_SECRET",
+      "issuer": "https://accounts.google.com",
+      "scopes": "openid profile email",
+      "auth_port": 1455
     },
     "vllm": {
       "api_key": "",

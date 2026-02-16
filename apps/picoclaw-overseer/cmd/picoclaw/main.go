@@ -805,23 +805,109 @@ func authLoginCmd() {
 
 	if provider == "" {
 		fmt.Println("Error: --provider is required")
-		fmt.Println("Supported providers: openai, anthropic")
+		fmt.Println("Supported providers: openai, anthropic, gemini, google, zhipu, etc.")
 		return
 	}
 
-	switch provider {
-	case "openai":
-		authLoginOpenAI(useDeviceCode)
-	case "anthropic":
+	// Load config to check for existing OAuth settings
+	appCfg, err := loadConfig()
+	if err != nil {
+		fmt.Printf("Error loading config: %v\n", err)
+		os.Exit(1)
+	}
+
+	// Check if we should use OAuth
+	useOAuth := false
+	if provider == "openai" || provider == "google" || provider == "gemini" || max(len(provider), 0) > 0 {
+		// Basic heuristic: if it's a known OAuth provider or config has ClientID, try OAuth
+		pCfg := getProviderConfigRef(appCfg, provider)
+		if pCfg != nil && (pCfg.ClientID != "" || provider == "openai") {
+			useOAuth = true
+		}
+	}
+
+	if useOAuth {
+		authLoginOAuth(provider, appCfg, useDeviceCode)
+	} else {
 		authLoginPasteToken(provider)
-	default:
-		fmt.Printf("Unsupported provider: %s\n", provider)
-		fmt.Println("Supported providers: openai, anthropic")
 	}
 }
 
-func authLoginOpenAI(useDeviceCode bool) {
-	cfg := auth.OpenAIOAuthConfig()
+func getProviderConfigRef(cfg *config.Config, provider string) *config.ProviderConfig {
+	switch provider {
+	case "openai":
+		return &cfg.Providers.OpenAI
+	case "anthropic":
+		return &cfg.Providers.Anthropic
+	case "openrouter":
+		return &cfg.Providers.OpenRouter
+	case "groq":
+		return &cfg.Providers.Groq
+	case "zhipu":
+		return &cfg.Providers.Zhipu
+	case "vllm":
+		return &cfg.Providers.VLLM
+	case "gemini", "google":
+		return &cfg.Providers.Gemini
+	case "nvidia":
+		return &cfg.Providers.Nvidia
+	case "moonshot":
+		return &cfg.Providers.Moonshot
+	case "shengsuanyun":
+		return &cfg.Providers.ShengSuanYun
+	case "deepseek":
+		return &cfg.Providers.DeepSeek
+	case "github_copilot":
+		return &cfg.Providers.GitHubCopilot
+	default:
+		return nil
+	}
+}
+
+func authLoginOAuth(provider string, appCfg *config.Config, useDeviceCode bool) {
+	pCfg := getProviderConfigRef(appCfg, provider)
+	if pCfg == nil {
+		fmt.Printf("Unknown provider for OAuth: %s\n", provider)
+		os.Exit(1)
+	}
+
+	// Default to OpenAI settings if missing, for backward compatibility
+	var cfg auth.OAuthProviderConfig
+	if provider == "openai" && pCfg.ClientID == "" {
+		cfg = auth.OpenAIOAuthConfig()
+	} else {
+		if pCfg.ClientID == "" || pCfg.Issuer == "" {
+			fmt.Printf("Error: ClientID and Issuer required for %s OAuth.\n", provider)
+			fmt.Println("Please configure them in ~/.picoclaw/config.json or use env vars.")
+			os.Exit(1)
+		}
+		cfg = auth.OAuthProviderConfig{
+			Issuer:   pCfg.Issuer,
+			ClientID: pCfg.ClientID,
+			Scopes:   pCfg.Scopes,
+			Port:     pCfg.AuthPort,
+		}
+		if cfg.Scopes == "" {
+			cfg.Scopes = "openid profile email"
+		}
+		if cfg.Port == 0 {
+			cfg.Port = 1455 // Default port
+		}
+	}
+
+	// Allow config override even for OpenAI defaults if ClientID is set
+	if pCfg.ClientID != "" {
+		cfg.ClientID = pCfg.ClientID
+	}
+	if pCfg.Issuer != "" {
+		cfg.Issuer = pCfg.Issuer
+	}
+	if pCfg.Scopes != "" {
+		cfg.Scopes = pCfg.Scopes
+	}
+	if pCfg.AuthPort != 0 {
+		cfg.Port = pCfg.AuthPort
+	}
 
 	var cred *auth.AuthCredential
 	var err error
@@ -836,18 +922,19 @@ func authLoginOpenAI(useDeviceCode bool) {
 		fmt.Printf("Login failed: %v\n", err)
 		os.Exit(1)
 	}
+	
+	// Force provider name in credential to match requested
+	cred.Provider = provider
 
-	if err := auth.SetCredential("openai", cred); err != nil {
+	if err := auth.SetCredential(provider, cred); err != nil {
 		fmt.Printf("Failed to save credentials: %v\n", err)
 		os.Exit(1)
 	}
 
-	appCfg, err := loadConfig()
-	if err == nil {
-		appCfg.Providers.OpenAI.AuthMethod = "oauth"
-		if err := config.SaveConfig(getConfigPath(), appCfg); err != nil {
-			fmt.Printf("Warning: could not update config: %v\n", err)
-		}
+	// Update auth method in config
+	pCfg.AuthMethod = "oauth"
+	if err := config.SaveConfig(getConfigPath(), appCfg); err != nil {
+		fmt.Printf("Warning: could not update config: %v\n", err)
 	}
 
 	fmt.Println("Login successful!")

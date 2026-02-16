@@ -117,6 +117,85 @@ LiteLLM provides a unified interface to **100+ LLM providers**:
 - Vertex AI
 - Cohere, Mistral, DeepSeek, Qwen, etc.
 
+### OpenCode (Recommended for Local/Private)
+
+OpenCode is a specialized provider for local execution and private deployments,
+supporting both CLI-based (local) and API-based (remote/containerized)
+interactions.
+
+| Mode    | Use Case                                     | Setup                              |
+| ------- | -------------------------------------------- | ---------------------------------- |
+| **CLI** | Local development, direct binary execution   | Requires `opencode` binary in path |
+| **API** | Server/Container deployment, shared instance | Requires `opencode-server` running |
+
+**Features**:
+
+- **Dual Mode**: Seamlessly switch between local CLI and remote API.
+- **Tool Execution**: Native support for executing local tools (CLI mode).
+- **Session Management**: Persistent sessions for stateful interactions.
+- **Secure**: Optional password protection for API access.
+
+#### OpenCode Configuration
+
+**Environment Variables**:
+
+```bash
+# OpenCode API (Server-based)
+OPENCODE_API_KEY=your_api_key
+OPENCODE_BASE_URL=http://localhost:4096
+OPENCODE_SERVER_PASSWORD=your_password
+OPENCODE_MODEL=anthropic/claude-sonnet-4-5
+
+# OpenCode CLI
+OPENCODE_CLI_PATH=opencode
+OPENCODE_CLI_MODEL=anthropic/claude-sonnet-4-5
+```
+
+**Provider Implementations**:
+
+```typescript
+// OpenCode API Provider
+import { OpenCodeApiProvider } from '@the-new-fuse/core/llm/providers';
+
+const opencodeApi = new OpenCodeApiProvider({
+  apiKey: process.env.OPENCODE_API_KEY,
+  baseURL: process.env.OPENCODE_BASE_URL || 'http://localhost:4096',
+  serverPassword: process.env.OPENCODE_SERVER_PASSWORD,
+  modelName: 'anthropic/claude-sonnet-4-5',
+});
+
+// OpenCode CLI Provider
+import { OpenCodeCliProvider } from '@the-new-fuse/core/llm/providers';
+
+const opencodeCli = new OpenCodeCliProvider({
+  cliPath: process.env.OPENCODE_CLI_PATH || 'opencode',
+  modelName: 'anthropic/claude-sonnet-4-5',
+});
+```
+
+**Starting OpenCode Server**:
+
+```bash
+# Default server (localhost:4096)
+opencode serve
+
+# Custom port
+opencode serve --port 4096
+
+# With authentication
+OPENCODE_SERVER_PASSWORD=your-password opencode serve
+
+# With CORS for development
+opencode serve --cors http://localhost:5173
+```
+
+**Key Implementation Details**:
+
+- `OpenCodeApiProvider`: Uses HTTP API for server-based deployments
+- `OpenCodeCliProvider`: Spawns the opencode binary locally
+- Session management for stateful interactions
+- Health check via `/global/health` endpoint
+
 ---
 
 ## Quick Start
@@ -161,6 +240,14 @@ OPENAI_MODEL=gpt-4o
 # LiteLLM Proxy (optional)
 LITELLM_API_KEY=sk-xxxxx
 LITELLM_BASE_URL=http://localhost:4000
+
+# OpenCode Configuration
+# CLI Mode
+OPENCODE_CLI_PATH=/usr/local/bin/opencode
+OPENCODE_MODEL=anthropic/claude-sonnet-4-5
+# API Mode
+OPENCODE_BASE_URL=http://localhost:4096
+OPENCODE_SERVER_PASSWORD=your-secure-password
 
 # Default provider
 DEFAULT_LLM_PROVIDER=anthropic
@@ -234,6 +321,12 @@ export const llmProviderConfig = ConfigModule.forRoot({
           apiKey: process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_API_KEY,
           model: process.env.GEMINI_MODEL || 'gemini-2.0-flash-exp',
         },
+        opencode: {
+          cliPath: process.env.OPENCODE_CLI_PATH,
+          baseUrl: process.env.OPENCODE_BASE_URL,
+          serverPassword: process.env.OPENCODE_SERVER_PASSWORD,
+          model: process.env.OPENCODE_MODEL,
+        },
         // ... other providers
       },
       defaultProvider: process.env.DEFAULT_LLM_PROVIDER || 'openai',
@@ -262,6 +355,61 @@ CREATE TABLE llm_configs (
   updated_at TIMESTAMP DEFAULT NOW()
 );
 ```
+
+### OAuth Configuration (PicoClaw)
+
+The PicoClaw overseer supports dynamic OAuth providers for authentication:
+
+**Configuration in `apps/picoclaw-overseer/pkg/config/config.go`**:
+
+```go
+type ProviderConfig struct {
+    ClientID     string   `json:"clientId"`
+    ClientSecret string   `json:"clientSecret"`
+    Issuer       string   `json:"issuer"`
+    Scopes       []string `json:"scopes"`
+    AuthPort     int      `json:"authPort"`
+}
+```
+
+**Supported OAuth Providers**:
+
+| Provider        | Config Fields                          | Description                   |
+| --------------- | -------------------------------------- | ----------------------------- |
+| Gemini (Google) | ClientID, ClientSecret, Issuer, Scopes | Google OAuth for Gemini API   |
+| GitHub Copilot  | ClientID, ClientSecret                 | GitHub OAuth for Copilot      |
+| Anthropic       | API Key                                | Direct API key authentication |
+
+**Setting up OAuth**:
+
+1. Update `config.json` with OAuth credentials:
+
+```json
+{
+  "providers": {
+    "gemini": {
+      "oauth": {
+        "clientId": "your-client-id",
+        "clientSecret": "your-client-secret",
+        "issuer": "https://accounts.google.com",
+        "scopes": [
+          "https://www.googleapis.com/auth/generative-language.retriever",
+          "https://www.googleapis.com/auth/generative-language.tuning"
+        ]
+      }
+    },
+    "github": {
+      "oauth": {
+        "clientId": "your-github-client-id",
+        "clientSecret": "your-github-client-secret"
+      }
+    }
+  }
+}
+```
+
+2. The generic OAuth flow in `cmd/picoclaw/main.go` handles the authentication
+   automatically.
 
 ---
 
@@ -763,18 +911,22 @@ console.log(`Agent usage:`, stats.agentUsage);
 
 ## Environment Variables Reference
 
-| Variable                | Required | Default                      | Description          |
-| ----------------------- | -------- | ---------------------------- | -------------------- |
-| `ANTHROPIC_API_KEY`     | Yes\*    | -                            | Anthropic API key    |
-| `ANTHROPIC_MODEL`       | No       | `claude-3-5-sonnet-20241022` | Default Claude model |
-| `ANTHROPIC_BASE_URL`    | No       | -                            | Custom API endpoint  |
-| `ANTHROPIC_MAX_RETRIES` | No       | `3`                          | Max retry attempts   |
-| `ANTHROPIC_TIMEOUT`     | No       | `600000`                     | Timeout in ms        |
-| `GEMINI_API_KEY`        | Yes\*    | -                            | Google AI API key    |
-| `GOOGLE_AI_API_KEY`     | Yes\*    | -                            | Alternative var name |
-| `GEMINI_MODEL`          | No       | `gemini-2.0-flash-exp`       | Default Gemini model |
-| `LITELLM_BASE_URL`      | No       | `http://localhost:4000`      | LiteLLM proxy URL    |
-| `DEFAULT_LLM_PROVIDER`  | No       | `openai`                     | Default provider     |
+| Variable                   | Required | Default                       | Description            |
+| -------------------------- | -------- | ----------------------------- | ---------------------- |
+| `ANTHROPIC_API_KEY`        | Yes\*    | -                             | Anthropic API key      |
+| `ANTHROPIC_MODEL`          | No       | `claude-3-5-sonnet-20241022`  | Default Claude model   |
+| `ANTHROPIC_BASE_URL`       | No       | -                             | Custom API endpoint    |
+| `ANTHROPIC_MAX_RETRIES`    | No       | `3`                           | Max retry attempts     |
+| `ANTHROPIC_TIMEOUT`        | No       | `600000`                      | Timeout in ms          |
+| `GEMINI_API_KEY`           | Yes\*    | -                             | Google AI API key      |
+| `GOOGLE_AI_API_KEY`        | Yes\*    | -                             | Alternative var name   |
+| `GEMINI_MODEL`             | No       | `gemini-2.0-flash-exp`        | Default Gemini model   |
+| `LITELLM_BASE_URL`         | No       | `http://localhost:4000`       | LiteLLM proxy URL      |
+| `OPENCODE_CLI_PATH`        | No       | `opencode`                    | Path to CLI binary     |
+| `OPENCODE_BASE_URL`        | No       | `http://localhost:4096`       | API Server URL         |
+| `OPENCODE_SERVER_PASSWORD` | No       | -                             | API Server Password    |
+| `OPENCODE_MODEL`           | No       | `anthropic/claude-sonnet-4-5` | Default OpenCode model |
+| `DEFAULT_LLM_PROVIDER`     | No       | `openai`                      | Default provider       |
 
 \* At least one provider's API key is required
 

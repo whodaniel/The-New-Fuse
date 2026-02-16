@@ -173,3 +173,8 @@ telemetry-id
 
 # Exceptions
 !packages/relay-core/dist/
+
+# Configuration files with secrets
+config.json
+**/config.json
+

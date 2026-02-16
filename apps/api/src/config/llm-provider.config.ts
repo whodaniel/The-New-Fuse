@@ -13,5 +13,19 @@ export default () => ({
       maxTokens: parseInt(process.env.ANTHROPIC_MAX_TOKENS || '4000'),
       temperature: parseFloat(process.env.ANTHROPIC_TEMPERATURE || '0.7'),
     },
+    opencode: {
+      apiKey: process.env.OPENCODE_API_KEY,
+      model: process.env.OPENCODE_MODEL || 'anthropic/claude-sonnet-4-5',
+      baseURL: process.env.OPENCODE_BASE_URL || 'http://localhost:4096',
+      serverPassword: process.env.OPENCODE_SERVER_PASSWORD,
+      maxTokens: parseInt(process.env.OPENCODE_MAX_TOKENS || '4000'),
+      temperature: parseFloat(process.env.OPENCODE_TEMPERATURE || '0.7'),
+    },
+    'opencode-cli': {
+      cliPath: process.env.OPENCODE_CLI_PATH || 'opencode',
+      model: process.env.OPENCODE_CLI_MODEL || 'anthropic/claude-sonnet-4-5',
+      maxTokens: parseInt(process.env.OPENCODE_CLI_MAX_TOKENS || '4000'),
+      temperature: parseFloat(process.env.OPENCODE_CLI_TEMPERATURE || '0.7'),
+    },
   },
 });

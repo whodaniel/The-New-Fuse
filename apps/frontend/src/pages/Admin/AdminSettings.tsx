@@ -51,6 +51,27 @@ interface AdminSettings {
       diskUsage: number;
     };
   };
+  oauth: {
+    gemini: {
+      clientId: string;
+      clientSecret: string;
+      issuer: string;
+      scopes: string;
+    };
+    github: {
+      clientId: string;
+      clientSecret: string;
+    };
+    anthropic: {
+      apiKey: string;
+    };
+    opencode: {
+      baseUrl: string;
+      serverPassword?: string;
+      cliPath?: string;
+      model?: string;
+    };
+  };
 }
 
 const AdminSettings: React.FC = () => {
@@ -92,6 +113,27 @@ const AdminSettings: React.FC = () => {
         cpuUsage: 80,
         memoryUsage: 85,
         diskUsage: 90,
+      },
+    },
+    oauth: {
+      gemini: {
+        clientId: '',
+        clientSecret: '',
+        issuer: 'https://accounts.google.com',
+        scopes: 'openid profile email',
+      },
+      github: {
+        clientId: '',
+        clientSecret: '',
+      },
+      anthropic: {
+        apiKey: '',
+      },
+      opencode: {
+        baseUrl: 'http://localhost:4096',
+        serverPassword: '',
+        cliPath: 'opencode',
+        model: 'anthropic/claude-sonnet-4-5',
       },
     },
   });
@@ -206,6 +248,19 @@ const AdminSettings: React.FC = () => {
     }));
   };
 
+  const updateOAuthSettings = (provider: keyof AdminSettings['oauth'], key: string, value: string) => {
+    setSettings((prev) => ({
+      ...prev,
+      oauth: {
+        ...prev.oauth,
+        [provider]: {
+          ...prev.oauth[provider],
+          [key]: value,
+        },
+      },
+    }));
+  };
+
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
@@ -238,7 +293,7 @@ const AdminSettings: React.FC = () => {
       </div>
 
       <Tabs defaultValue="system" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="system" className="flex items-center gap-2">
             <Server className="w-4 h-4" />
             System
@@ -254,6 +309,10 @@ const AdminSettings: React.FC = () => {
           <TabsTrigger value="notifications" className="flex items-center gap-2">
             <AlertCircle className="w-4 h-4" />
             Notifications
+          </TabsTrigger>
+          <TabsTrigger value="integrations" className="flex items-center gap-2">
+            <RefreshCw className="w-4 h-4" />
+            Integrations
           </TabsTrigger>
         </TabsList>
 
@@ -598,6 +657,122 @@ const AdminSettings: React.FC = () => {
             </div>
           </Card>
         </TabsContent>
+        {/* New OAuth Integrations Tab */}
+        <TabsContent value="integrations" className="space-y-6">
+          <Card title="OAuth Integrations" gradient="purple">
+            <div className="space-y-8">
+              {/* Gemini Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                  Gemini (Google)
+                </h3>
+                <div className="grid grid-cols-2 gap-6">
+                  <Input
+                    label="Client ID"
+                    value={settings.oauth?.gemini?.clientId || ''}
+                    onChange={(e) => updateOAuthSettings('gemini', 'clientId', e.target.value)}
+                    placeholder="apps.googleusercontent.com"
+                  />
+                  <Input
+                    label="Client Secret"
+                    type="password"
+                    value={settings.oauth?.gemini?.clientSecret || ''}
+                    onChange={(e) => updateOAuthSettings('gemini', 'clientSecret', e.target.value)}
+                  />
+                  <Input
+                    label="Issuer"
+                    value={settings.oauth?.gemini?.issuer || 'https://accounts.google.com'}
+                    onChange={(e) => updateOAuthSettings('gemini', 'issuer', e.target.value)}
+                  />
+                  <Input
+                    label="Scopes"
+                    value={settings.oauth?.gemini?.scopes || 'openid profile email'}
+                    onChange={(e) => updateOAuthSettings('gemini', 'scopes', e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="border-t border-white/5" />
+
+              {/* GitHub Copilot Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                  GitHub Copilot
+                </h3>
+                <div className="grid grid-cols-2 gap-6">
+                  <Input
+                    label="Client ID"
+                    value={settings.oauth?.github?.clientId || ''}
+                    onChange={(e) => updateOAuthSettings('github', 'clientId', e.target.value)}
+                  />
+                  <Input
+                    label="Client Secret"
+                    type="password"
+                    value={settings.oauth?.github?.clientSecret || ''}
+                    onChange={(e) => updateOAuthSettings('github', 'clientSecret', e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="border-t border-white/5" />
+
+              {/* OpenCode Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                  OpenCode
+                </h3>
+                <div className="grid grid-cols-2 gap-6">
+                  <Input
+                    label="API URL"
+                    value={settings.oauth?.opencode?.baseUrl || 'http://localhost:4096'}
+                    onChange={(e) => updateOAuthSettings('opencode', 'baseUrl', e.target.value)}
+                    placeholder="http://localhost:4096"
+                  />
+                  <Input
+                    label="Server Password"
+                    type="password"
+                    value={settings.oauth?.opencode?.serverPassword || ''}
+                    onChange={(e) => updateOAuthSettings('opencode', 'serverPassword', e.target.value)}
+                  />
+                  <Input
+                    label="CLI Path"
+                    value={settings.oauth?.opencode?.cliPath || 'opencode'}
+                    onChange={(e) => updateOAuthSettings('opencode', 'cliPath', e.target.value)}
+                    placeholder="/usr/local/bin/opencode"
+                  />
+                  <Input
+                    label="Default Model"
+                    value={settings.oauth?.opencode?.model || 'anthropic/claude-sonnet-4-5'}
+                    onChange={(e) => updateOAuthSettings('opencode', 'model', e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="border-t border-white/5" />
+
+              {/* Anthropic Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                  Anthropic
+                </h3>
+                <div className="grid grid-cols-1 gap-6">
+                  <Input
+                    label="API Key"
+                    type="password"
+                    value={settings.oauth?.anthropic?.apiKey || ''}
+                    onChange={(e) => updateOAuthSettings('anthropic', 'apiKey', e.target.value)}
+                    placeholder="sk-ant-api..."
+                  />
+                </div>
+              </div>
+            </div>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+};
+
       </Tabs>
     </div>
   );
