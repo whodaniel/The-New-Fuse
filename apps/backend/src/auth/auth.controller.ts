@@ -99,18 +99,25 @@ export class AuthController {
   }
 
   @Post('unstoppable-domains')
-  async unstoppableDomainsAuth(@Body() body: { domain: string; walletAddress: string; walletType?: string }) {
-    const { domain, walletAddress, walletType } = body;
+  async unstoppableDomainsAuth(@Body() body: { domain: string; walletAddress: string; walletType?: string; message: string; signature: string }) {
+    const { domain, walletAddress, walletType, message, signature } = body;
 
     // Validate input
     if (!domain || !walletAddress) {
       throw new Error('Domain and wallet address are required');
     }
 
+    // Validate signature presence
+    if (!message || !signature) {
+      throw new Error('Message and signature are required for authentication');
+    }
+
     // Find or create user with Unstoppable Domain
     const user = await this.authService.findOrCreateUnstoppableDomainsUser(
       domain,
       walletAddress,
+      message,
+      signature,
       walletType,
     );
 
