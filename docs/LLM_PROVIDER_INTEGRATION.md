@@ -105,7 +105,25 @@ enabling:
 | ----------- | ------------ | --------- | ------------------ |
 | gpt-4o-mini | Level 3      | $0.10     | Fast, affordable   |
 | gpt-4o      | Level 4      | $0.50     | Production default |
+| gpt-4o      | Level 4      | $0.50     | Production default |
 | gpt-4-turbo | Level 4      | $0.60     | Extended context   |
+
+### Kilo (Free Tier Available)
+
+Kilo provides access to powerful free models like GLM 5.0 and MiniMax via a
+unified gateway.
+
+| Model             | Intelligence | Cost/Task | Use Case                 |
+| ----------------- | ------------ | --------- | ------------------------ |
+| z-ai/glm-5:free   | Level 4      | $0.00     | **Best free model**      |
+| minimax-m2.5:free | Level 3.5    | $0.00     | Fast, capable free model |
+
+**Features**:
+
+- Truly free tier models
+- OpenAI-compatible API
+- High availability
+- Direct integration in PicoClaw & OpenClaw
 
 ### LiteLLM (Proxy)
 
@@ -194,7 +212,63 @@ opencode serve --cors http://localhost:5173
 - `OpenCodeApiProvider`: Uses HTTP API for server-based deployments
 - `OpenCodeCliProvider`: Spawns the opencode binary locally
 - Session management for stateful interactions
+- Session management for stateful interactions
 - Health check via `/global/health` endpoint
+
+### PicoClaw & Kilo Integration
+
+PicoClaw has native support for Kilo, allowing you to run powerful agents
+completely for free using the `z-ai/glm-5:free` model.
+
+**PicoClaw Configuration (`~/.picoclaw/config.json`)**:
+
+```json
+{
+  "agents": {
+    "defaults": {
+      "provider": "kilo",
+      "model": "z-ai/glm-5:free"
+    }
+  },
+  "providers": {
+    "kilo": {
+      "api_key": "your-kilo-api-key",
+      "api_base": "https://api.kilo.ai/api/gateway"
+    }
+  }
+}
+```
+
+**OpenClaw Configuration (`openclaw.json`)**:
+
+```json
+{
+  "models": {
+    "providers": {
+      "kilo": {
+        "baseUrl": "https://api.kilo.ai/api/gateway/",
+        "apiKey": "${KILO_API_KEY}",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "z-ai/glm-5:free",
+            "name": "GLM 5.0 (Free)",
+            "contextWindow": 200000,
+            "maxTokens": 32000
+          }
+        ]
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "kilo/z-ai/glm-5:free"
+      }
+    }
+  }
+}
+```
 
 ---
 
@@ -247,7 +321,12 @@ OPENCODE_CLI_PATH=/usr/local/bin/opencode
 OPENCODE_MODEL=anthropic/claude-sonnet-4-5
 # API Mode
 OPENCODE_BASE_URL=http://localhost:4096
+OPENCODE_BASE_URL=http://localhost:4096
 OPENCODE_SERVER_PASSWORD=your-secure-password
+
+# Kilo Configuration
+KILO_API_KEY=your-kilo-key
+
 
 # Default provider
 DEFAULT_LLM_PROVIDER=anthropic
@@ -926,6 +1005,7 @@ console.log(`Agent usage:`, stats.agentUsage);
 | `OPENCODE_BASE_URL`        | No       | `http://localhost:4096`       | API Server URL         |
 | `OPENCODE_SERVER_PASSWORD` | No       | -                             | API Server Password    |
 | `OPENCODE_MODEL`           | No       | `anthropic/claude-sonnet-4-5` | Default OpenCode model |
+| `KILO_API_KEY`             | No       | -                             | Kilo API key           |
 | `DEFAULT_LLM_PROVIDER`     | No       | `openai`                      | Default provider       |
 
 \* At least one provider's API key is required

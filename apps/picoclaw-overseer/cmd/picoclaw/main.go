@@ -805,7 +805,7 @@ func authLoginCmd() {
 
 	if provider == "" {
 		fmt.Println("Error: --provider is required")
-		fmt.Println("Supported providers: openai, anthropic, gemini, google, zhipu, etc.")
+		fmt.Println("Supported providers: openai, anthropic, kilo, gemini, google, zhipu, etc.")
 		return
 	}
 
@@ -818,7 +818,7 @@ func authLoginCmd() {
 
 	// Check if we should use OAuth
 	useOAuth := false
-	if provider == "openai" || provider == "google" || provider == "gemini" || max(len(provider), 0) > 0 {
+	if provider == "openai" || provider == "google" || provider == "gemini" || provider == "kilo" || max(len(provider), 0) > 0 {
 		// Basic heuristic: if it's a known OAuth provider or config has ClientID, try OAuth
 		pCfg := getProviderConfigRef(appCfg, provider)
 		if pCfg != nil && (pCfg.ClientID != "" || provider == "openai") {
@@ -859,6 +859,8 @@ func getProviderConfigRef(cfg *config.Config, provider string) *config.ProviderC
 		return &cfg.Providers.DeepSeek
 	case "github_copilot":
 		return &cfg.Providers.GitHubCopilot
+	case "kilo":
+		return &cfg.Providers.Kilo
 	default:
 		return nil
 	}
@@ -922,7 +924,7 @@ func authLoginOAuth(provider string, appCfg *config.Config, useDeviceCode bool) 
 		fmt.Printf("Login failed: %v\n", err)
 		os.Exit(1)
 	}
-	
+
 	// Force provider name in credential to match requested
 	cred.Provider = provider
 

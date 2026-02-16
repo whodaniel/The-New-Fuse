@@ -179,6 +179,7 @@ type ProvidersConfig struct {
 	ShengSuanYun  ProviderConfig `json:"shengsuanyun"`
 	DeepSeek      ProviderConfig `json:"deepseek"`
 	GitHubCopilot ProviderConfig `json:"github_copilot"`
+	Kilo          ProviderConfig `json:"kilo"`
 }
 
 type ProviderConfig struct {

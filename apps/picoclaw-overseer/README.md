@@ -77,7 +77,11 @@ core functionality.
 a Mac mini.
 
 ⚡️ **Lightning Fast**: 400X Faster startup time, boot in 1 second even in 0.6GHz
+⚡️ **Lightning Fast**: 400X Faster startup time, boot in 1 second even in 0.6GHz
 single core.
+
+🆓 **Free To Use**: Native integration with **Kilo**, providing unlimited access
+to GLM-5 and MiniMax models for free!
 
 🌍 **True Portability**: Single self-contained binary across RISC-V, ARM, and
 x86, One-click to Go!
@@ -90,6 +94,7 @@ Agent-generated core with human-in-the-loop refinement.
 | **Language**                  | TypeScript    | Python                   | **Go**                                    |
 | **RAM**                       | >1GB          | >100MB                   | **< 10MB**                                |
 | **Startup**</br>(0.8GHz core) | >500s         | >30s                     | **<1s**                                   |
+| **Model Cost**                | Custom Keys   | Custom Keys              | **Free (Kilo)**                           |
 | **Cost**                      | Mac Mini 599$ | Most Linux SBC </br>~50$ | **Any Linux Board**</br>**As low as 10$** |
 
 <img src="assets/compare.jpg" alt="PicoClaw" width="512">
@@ -709,6 +714,7 @@ with the user independently without going through the main agent.
 | Provider                   | Purpose                                 | Get API Key                                            |
 | -------------------------- | --------------------------------------- | ------------------------------------------------------ |
 | `gemini`                   | LLM (Gemini direct)                     | [aistudio.google.com](https://aistudio.google.com)     |
+| `kilo`                     | LLM (**FREE**, GLM-5 / MiniMax)         | [api.kilo.ai](https://api.kilo.ai)                     |
 | `zhipu`                    | LLM (Zhipu direct)                      | [bigmodel.cn](bigmodel.cn)                             |
 | `openrouter(To be tested)` | LLM (recommended, access to all models) | [openrouter.ai](https://openrouter.ai)                 |
 | `anthropic(To be tested)`  | LLM (Claude direct)                     | [console.anthropic.com](https://console.anthropic.com) |

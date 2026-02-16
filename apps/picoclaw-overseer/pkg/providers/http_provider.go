@@ -322,6 +322,14 @@ func CreateProvider(cfg *config.Config) (LLMProvider, error) {
 				apiBase = "localhost:4321"
 			}
 			return NewGitHubCopilotProvider(apiBase, cfg.Providers.GitHubCopilot.ConnectMode, model)
+		case "kilo":
+			if cfg.Providers.Kilo.APIKey != "" {
+				apiKey = cfg.Providers.Kilo.APIKey
+				apiBase = cfg.Providers.Kilo.APIBase
+				if apiBase == "" {
+					apiBase = "https://api.kilo.ai/api/gateway"
+				}
+			}
 
 		}
 

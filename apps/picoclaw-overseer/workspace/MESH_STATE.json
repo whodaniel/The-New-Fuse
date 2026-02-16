@@ -1,0 +1,10 @@
+{
+  "last_updated": "2026-02-16T12:29:33Z",
+  "active_sessions": [],
+  "pending_tasks": [],
+  "completed_tasks": [],
+  "billing_safety": {
+    "status": "verified",
+    "primary_model": "configured"
+  }
+}
