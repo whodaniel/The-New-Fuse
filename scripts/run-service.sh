@@ -11,19 +11,9 @@ echo "Listing current directory:"
 ls -la
 
 if [ "$SERVICE_PATH" = "frontend" ]; then
-  echo "Starting frontend service with Caddy reverse proxy..."
-  echo "PORT=${PORT:-3000}"
-  echo "BACKEND_INTERNAL_URL=${BACKEND_INTERNAL_URL:-not set}"
-
-  # Copy built static files to Caddy's serving directory
-  cp -r dist/* /srv/
-
-  # Set Caddy storage directories (writable by non-root user)
-  export XDG_DATA_HOME=/data
-  export XDG_CONFIG_HOME=/config
-
-  # Start Caddy with the Caddyfile (serves static files + proxies /api/* to backend)
-  exec caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
+  echo "Starting frontend service..."
+  # Use http-server for production serving of static files (avoids Vite preview permission issues)
+  exec npx --yes http-server dist -p ${PORT:-3000} -a 0.0.0.0 --cors
 else
   echo "Starting backend service: $SERVICE_PATH..."
 

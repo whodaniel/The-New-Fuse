@@ -74,9 +74,7 @@ ARG SERVICE_PATH
 ARG SERVICE_ROOT=apps
 ARG PNPM_VERSION=10.22.0
 
-# Enable community repo for Caddy and install dependencies
-RUN echo "https://dl-cdn.alpinelinux.org/alpine/v$(cat /etc/alpine-release | cut -d'.' -f1,2)/community" >> /etc/apk/repositories && \
-    apk add --no-cache netcat-openbsd curl caddy && \
+RUN apk add --no-cache netcat-openbsd curl && \
     npm install -g pnpm@${PNPM_VERSION} && \
     ln -sf /usr/local/bin/pnpm /bin/pnpm && \
     ln -sf /usr/local/bin/pnpm /usr/bin/pnpm && \
@@ -112,13 +110,6 @@ RUN echo "Runner stage - checking node_modules symlink for n8n-workflows..." && 
 # Copy scripts from builder stage with executable permissions (before switching to non-root user)
 COPY --from=builder --chmod=755 /app/scripts/run-service.sh ./${SERVICE_ROOT}/${SERVICE_PATH}/run-service.sh
 COPY --from=builder --chmod=755 /app/scripts/healthcheck.sh ./${SERVICE_ROOT}/${SERVICE_PATH}/healthcheck.sh
-
-# Copy Caddyfile for frontend reverse proxy (if it exists)
-COPY --from=builder /app/apps/frontend/Caddyfile /etc/caddy/Caddyfile
-
-# Create directories for Caddy (frontend service) with proper permissions
-RUN mkdir -p /srv /data/caddy /config/caddy && \
-    chown -R app-user:app-user /srv /data/caddy /config/caddy /etc/caddy
 
 # Switch to non-root user for security
 USER app-user
