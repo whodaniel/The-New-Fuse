@@ -142,6 +142,8 @@ export default defineConfig(({ mode }) => {
         'firebase/app',
         'firebase/auth',
         'firebase/firestore',
+        '@firebase/app',
+        '@firebase/auth',
         '@firebase/firestore',
         'framer-motion', // Pre-bundle framer-motion to avoid circular dependency issues
         'react',
@@ -388,6 +390,18 @@ export default defineConfig(({ mode }) => {
       host: '0.0.0.0',
       port: parseInt(env.VITE_PREVIEW_PORT || '4173'),
       strictPort: false,
+    },
+    // Force Vite to bundle Firebase internal packages instead of treating them as external
+    ssr: {
+      noExternal: [
+        '@firebase/auth',
+        '@firebase/app',
+        '@firebase/firestore',
+        '@firebase/util',
+        '@firebase/component',
+        '@firebase/logger',
+        'firebase',
+      ],
     },
   };
 });

@@ -70,6 +70,8 @@
     "ethers": "^6.15.0",
     "file-saver": "^2.0.5",
     "firebase": "^12.6.0",
+    "@firebase/app": "^0.14.0",
+    "@firebase/auth": "^1.10.0",
     "framer-motion": "^12.27.0",
     "gsap": "^3.13.0",
     "he": "^1.2.0",
