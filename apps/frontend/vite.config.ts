@@ -177,30 +177,13 @@ export default defineConfig(({ mode }) => {
       outDir: 'dist',
       assetsDir: 'assets',
       sourcemap: !isProduction, // Disable sourcemaps in production for smaller bundles
-      minify: isProduction ? 'terser' : false,
+      minify: isProduction ? 'esbuild' : false,
       target: 'es2020',
       // Performance optimizations
       cssMinify: isProduction,
       cssCodeSplit: true, // Enable CSS code splitting
       // Reduce chunk size warning limit to catch large bundles earlier
       chunkSizeWarningLimit: 500,
-      // Advanced terser options for production
-      terserOptions: isProduction
-        ? {
-            compress: {
-              drop_console: false, // Enable console.* calls for debugging
-              drop_debugger: true,
-              // pure_funcs: ['console.log', 'console.info', 'console.debug'], // Remove specific console methods
-              passes: 2, // Multiple compression passes for better results
-            },
-            mangle: {
-              safari10: true, // Fix Safari 10+ bugs
-            },
-            output: {
-              comments: false, // Remove all comments
-            },
-          }
-        : undefined,
       rollupOptions: {
         input: {
           main: path.resolve(__dirname, 'index.html'),
