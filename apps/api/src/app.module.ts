@@ -37,6 +37,7 @@ import { ClaudeDevAutomationModule } from './modules/ClaudeDevAutomationModule';
 import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.module';
 import { ExportModule } from './modules/export/export.module';
 import { PromptTemplatesModule } from './modules/prompt-templates.module';
+import { ResourcesModule } from './modules/resources/resources.module';
 import { SecurityModule } from './modules/security/security.module';
 import { TaskModule } from './modules/task/task.module'; // Migrated to Drizzle ORM
 import { TNFAutonomousModule } from './modules/tnf-autonomous.module';
@@ -111,6 +112,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     MonitoringModule, // Wallet Platform Monitoring
     WorkflowTemplatesModule,
     PromptTemplatesModule,
+    ResourcesModule,
     BrandConsistencyAgentModule, // Self-Improving Brand Consistency Agent
     BrowserHubSwarmModule, // Browser Hub Improvement Agent Swarm
     // GraphqlModule, // TEMPORARILY DISABLED: GraphQL has HttpAdapterHost DI issue - REST API still works

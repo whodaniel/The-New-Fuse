@@ -45,11 +45,9 @@ async function setSuperAdmin() {
     const existingUsers = await db.select().from(users).where(eq(users.email, MASTER_ADMIN_EMAIL));
 
     if (existingUsers.length === 0) {
-      console.log('⚠️  User not found. Please register this email first.');
-      console.log('\nOptions:');
-      console.log('1. Register via the frontend at /register');
-      console.log('2. Create user via API');
-      console.log('3. Use a database seed script');
+      console.log('⚠️  User not found. Please register this email first via /register.');
+      // We cannot insert without a password hash, and we can't generate one easily here without bcrypt issues.
+      // So we wait for registration.
       await client.end();
       process.exit(1);
     }

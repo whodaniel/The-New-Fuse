@@ -184,6 +184,125 @@ node -e "
     }
   }
 
+  // Update auth-profiles.json for Anthropic OAuth (Claude subscription)
+  if (process.env.ANTHROPIC_OAUTH_REFRESH_TOKEN || process.env.ANTHROPIC_OAUTH_ACCESS_TOKEN) {
+    try {
+      const authDir = path.dirname(authProfilesPath);
+      if (!fs.existsSync(authDir)) {
+        fs.mkdirSync(authDir, { recursive: true });
+      }
+
+      const now = Date.now();
+      const defaultExpiry = now + 24 * 60 * 60 * 1000; // 24 hours
+      const profileKey = 'anthropic:default';
+      const refreshToken = process.env.ANTHROPIC_OAUTH_REFRESH_TOKEN || '';
+      const accessToken = process.env.ANTHROPIC_OAUTH_ACCESS_TOKEN || refreshToken;
+      const expires = Number(process.env.ANTHROPIC_OAUTH_EXPIRES || defaultExpiry);
+
+      let authProfiles = {
+        version: 1,
+        profiles: {},
+        order: {},
+        lastGood: {},
+        usageStats: {}
+      };
+
+      if (fs.existsSync(authProfilesPath)) {
+        try {
+          const raw = JSON.parse(fs.readFileSync(authProfilesPath, 'utf8'));
+          if (raw && typeof raw === 'object') {
+            authProfiles = {
+              version: raw.version || 1,
+              profiles: raw.profiles || {},
+              order: raw.order || {},
+              lastGood: raw.lastGood || {},
+              usageStats: raw.usageStats || {}
+            };
+          }
+        } catch (parseErr) {
+          console.warn('auth-profiles.json parse failed, rebuilding file:', parseErr.message);
+        }
+      }
+
+      authProfiles.profiles[profileKey] = {
+        type: 'oauth',
+        provider: 'anthropic',
+        access: accessToken,
+        refresh: refreshToken,
+        expires
+      };
+
+      authProfiles.lastGood['anthropic'] = profileKey;
+
+      fs.writeFileSync(authProfilesPath, JSON.stringify(authProfiles, null, 2));
+      console.log('Updated auth-profiles.json for Anthropic OAuth');
+    } catch (e) {
+      console.error('Error updating auth-profiles.json for Anthropic:', e);
+    }
+  }
+
+  // Update auth-profiles.json for Google Antigravity OAuth (fallback)
+  if (process.env.GOOGLE_ANTIGRAVITY_REFRESH_TOKEN || process.env.GOOGLE_ANTIGRAVITY_ACCESS_TOKEN) {
+    try {
+      const authDir = path.dirname(authProfilesPath);
+      if (!fs.existsSync(authDir)) {
+        fs.mkdirSync(authDir, { recursive: true });
+      }
+
+      const now = Date.now();
+      const defaultExpiry = now + 60 * 60 * 1000; // 1 hour
+      const profileKey = process.env.GOOGLE_ANTIGRAVITY_PROFILE_KEY || 'google-antigravity:default';
+      const refreshToken = process.env.GOOGLE_ANTIGRAVITY_REFRESH_TOKEN || '';
+      const accessToken = process.env.GOOGLE_ANTIGRAVITY_ACCESS_TOKEN || refreshToken;
+      const expires = Number(process.env.GOOGLE_ANTIGRAVITY_EXPIRES || defaultExpiry);
+      const email = process.env.GOOGLE_ANTIGRAVITY_EMAIL || '';
+      const projectId = process.env.GOOGLE_ANTIGRAVITY_PROJECT_ID || '';
+
+      let authProfiles = {
+        version: 1,
+        profiles: {},
+        order: {},
+        lastGood: {},
+        usageStats: {}
+      };
+
+      if (fs.existsSync(authProfilesPath)) {
+        try {
+          const raw = JSON.parse(fs.readFileSync(authProfilesPath, 'utf8'));
+          if (raw && typeof raw === 'object') {
+            authProfiles = {
+              version: raw.version || 1,
+              profiles: raw.profiles || {},
+              order: raw.order || {},
+              lastGood: raw.lastGood || {},
+              usageStats: raw.usageStats || {}
+            };
+          }
+        } catch (parseErr) {
+          console.warn('auth-profiles.json parse failed, rebuilding:', parseErr.message);
+        }
+      }
+
+      const profile = {
+        type: 'oauth',
+        provider: 'google-antigravity',
+        access: accessToken,
+        refresh: refreshToken,
+        expires
+      };
+      if (email) profile.email = email;
+      if (projectId) profile.projectId = projectId;
+
+      authProfiles.profiles[profileKey] = profile;
+      authProfiles.lastGood['google-antigravity'] = profileKey;
+
+      fs.writeFileSync(authProfilesPath, JSON.stringify(authProfiles, null, 2));
+      console.log('Updated auth-profiles.json for Google Antigravity OAuth');
+    } catch (e) {
+      console.error('Error updating auth-profiles.json for Google Antigravity:', e);
+    }
+  }
+
   // Update kilo auth.json
   if (process.env.KILO_REFRESH_TOKEN) {
     try {
