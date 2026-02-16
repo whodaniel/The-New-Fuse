@@ -84,7 +84,12 @@ export default defineConfig(({ mode }) => {
         '@firebase/app',
         '@firebase/firestore',
         '@firebase/auth',
+        '@firebase/util',
+        '@firebase/component',
       ],
+      // Ensure proper module resolution for Firebase packages
+      mainFields: ['module', 'main'],
+      conditions: ['import', 'module', 'browser', 'default'],
       alias: {
         '@': path.resolve(__dirname, 'src'),
         // Note: @the-new-fuse/core is NOT aliased because it contains Node.js-only code
@@ -116,6 +121,14 @@ export default defineConfig(({ mode }) => {
         'class-validator': path.resolve(__dirname, 'src/stubs/class-validator.ts'),
         // Stub @uauth/js which has browser-incompatible @unstoppabledomains/resolution deps
         '@uauth/js': path.resolve(__dirname, 'src/stubs/uauth-js.ts'),
+        // Firebase internal package resolution - fixes pnpm isolated linker issues
+        // These aliases ensure @firebase/* packages resolve correctly when firebase imports them
+        '@firebase/app': require.resolve('@firebase/app/dist/esm/index.esm2017.js'),
+        '@firebase/auth': require.resolve('@firebase/auth/dist/esm/index.esm2017.js'),
+        '@firebase/firestore': require.resolve('@firebase/firestore/dist/index.esm.js'),
+        '@firebase/util': require.resolve('@firebase/util/dist/esm/index.esm2017.js'),
+        '@firebase/component': require.resolve('@firebase/component/dist/index.esm.js'),
+        '@firebase/logger': require.resolve('@firebase/logger/dist/esm/index.esm2017.js'),
       },
     },
     define: {
@@ -153,8 +166,6 @@ export default defineConfig(({ mode }) => {
         '@emotion/is-prop-valid',
       ],
       exclude: [
-        '@firebase/app-types',
-        '@firebase/app-compat',
         '@types/d3',
         '@types/file-saver',
         // Exclude Node.js-only modules that break browser
@@ -379,15 +390,7 @@ export default defineConfig(({ mode }) => {
     },
     // Force Vite to bundle Firebase internal packages instead of treating them as external
     ssr: {
-      noExternal: [
-        '@firebase/auth',
-        '@firebase/app',
-        '@firebase/firestore',
-        '@firebase/util',
-        '@firebase/component',
-        '@firebase/logger',
-        'firebase',
-      ],
+      noExternal: ['firebase', /^@firebase\//],
     },
   };
 });
