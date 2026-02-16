@@ -19,17 +19,9 @@
     "declaration": true,
     "declarationDir": "dist",
     "baseUrl": ".",
-    "rootDir": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@the-new-fuse/a2a-core": ["../a2a-core/src"],
-      "@the-new-fuse/api-client": ["../api-client/src"],
-      "@the-new-fuse/api-types": ["../api-types/src"],
-      "@the-new-fuse/hooks": ["../hooks/src"],
-      "@the-new-fuse/types": ["../types/src"],
-      "@the-new-fuse/utils": ["../utils/src"]
+      "@/*": ["./src/*"]
     },
-
     "types": ["node", "jest", "react"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
