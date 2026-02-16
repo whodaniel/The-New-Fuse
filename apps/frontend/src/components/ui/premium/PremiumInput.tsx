@@ -5,8 +5,9 @@ interface PremiumInputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
   hint?: string;
-  icon?: LucideIcon;
+  icon?: LucideIcon | React.ElementType;
   iconPosition?: 'left' | 'right';
+  containerClassName?: string;
 }
 
 /**
@@ -19,33 +20,39 @@ export const PremiumInput: React.FC<PremiumInputProps> = ({
   icon: Icon,
   iconPosition = 'left',
   className = '',
+  containerClassName = '',
+  id,
   ...props
 }) => {
+  // Check if icon is a React element or a component (defensive check)
+  const IconComponent = Icon ? (Icon as React.ElementType) : null;
+
   return (
-    <div className="space-y-2">
+    <div className={`space-y-2 ${containerClassName}`}>
       {label && (
-        <label className="block text-sm font-medium text-gray-300" htmlFor={props.id}>
+        <label className="block text-sm font-medium text-gray-300" htmlFor={id}>
           {label}
         </label>
       )}
 
       <div className="relative">
-        {Icon && iconPosition === 'left' && (
-          <div className="absolute left-3 top-1/2 -translate-y-1/2">
-            <Icon className="w-5 h-5 text-gray-400" />
+        {IconComponent && iconPosition === 'left' && (
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
+            <IconComponent className="w-5 h-5 text-gray-400" />
           </div>
         )}
 
         <input
+          id={id}
           className={`w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 transition-all duration-200 backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed ${
-            Icon && iconPosition === 'left' ? 'pl-10' : ''
-          } ${Icon && iconPosition === 'right' ? 'pr-10' : ''} ${error ? 'border-red-500/50' : ''} ${className}`}
+            IconComponent && iconPosition === 'left' ? 'pl-10' : ''
+          } ${IconComponent && iconPosition === 'right' ? 'pr-10' : ''} ${error ? 'border-red-500/50' : ''} ${className}`}
           {...props}
         />
 
-        {Icon && iconPosition === 'right' && (
-          <div className="absolute right-3 top-1/2 -translate-y-1/2">
-            <Icon className="w-5 h-5 text-gray-400" />
+        {IconComponent && iconPosition === 'right' && (
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+            <IconComponent className="w-5 h-5 text-gray-400" />
           </div>
         )}
       </div>
