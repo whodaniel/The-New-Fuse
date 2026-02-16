@@ -2,13 +2,31 @@ import react from '@vitejs/plugin-react';
 import { createRequire } from 'module';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig, loadEnv, Plugin } from 'vite';
 import compression from 'vite-plugin-compression';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 // Create require for ESM context
 const require = createRequire(import.meta.url);
+
+// Plugin to resolve ethers Node.js-only modules to browser versions
+function ethersBrowserResolve(): Plugin {
+  return {
+    name: 'ethers-browser-resolve',
+    enforce: 'pre',
+    resolveId(source, importer) {
+      // Redirect ethers IPC socket provider to browser version
+      if (source === './provider-ipcsocket.js' && importer && importer.includes('ethers')) {
+        return path.resolve(
+          __dirname,
+          '../../node_modules/ethers/lib.esm/providers/provider-ipcsocket-browser.js'
+        );
+      }
+      return null;
+    },
+  };
+}
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
@@ -36,6 +54,8 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [
+      // Resolve ethers Node.js-only modules to browser versions
+      ethersBrowserResolve(),
       react(),
       tsconfigPaths({
         ignoreConfigErrors: true,
@@ -43,7 +63,26 @@ export default defineConfig(({ mode }) => {
       }),
       // Provide Node.js polyfills for browser (required by ethers.js, @uauth, etc.)
       nodePolyfills({
-        include: ['buffer', 'process', 'stream', 'util', 'crypto'],
+        include: [
+          'buffer',
+          'process',
+          'stream',
+          'util',
+          'crypto',
+          'zlib',
+          'http',
+          'https',
+          'url',
+          'net',
+          'tls',
+          'fs',
+          'path',
+          'os',
+          'dns',
+          'http2',
+          'child_process',
+          'vm',
+        ],
         globals: {
           Buffer: true,
           global: true,
@@ -125,14 +164,6 @@ export default defineConfig(({ mode }) => {
         'class-validator': path.resolve(__dirname, 'src/stubs/class-validator.ts'),
         // Stub @uauth/js which has browser-incompatible @unstoppabledomains/resolution deps
         '@uauth/js': path.resolve(__dirname, 'src/stubs/uauth-js.ts'),
-        // Firebase internal package resolution - fixes pnpm isolated linker issues
-        // These aliases ensure @firebase/* packages resolve correctly when firebase imports them
-        '@firebase/app': require.resolve('@firebase/app/dist/esm/index.esm2017.js'),
-        '@firebase/auth': require.resolve('@firebase/auth/dist/esm/index.esm2017.js'),
-        '@firebase/firestore': require.resolve('@firebase/firestore/dist/index.esm.js'),
-        '@firebase/util': require.resolve('@firebase/util/dist/esm/index.esm2017.js'),
-        '@firebase/component': require.resolve('@firebase/component/dist/index.esm.js'),
-        '@firebase/logger': require.resolve('@firebase/logger/dist/esm/index.esm2017.js'),
       },
     },
     define: {
