@@ -15,10 +15,11 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": false,
-    "composite": true,
+    "composite": false,
     "declaration": true,
     "declarationDir": "dist",
     "baseUrl": ".",
+    "rootDir": ".",
     "paths": {
       "@/*": ["./src/*"],
       "@the-new-fuse/a2a-core": ["../a2a-core/src"],

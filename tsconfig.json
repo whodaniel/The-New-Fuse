@@ -13,7 +13,6 @@
     { "path": "./packages/prompt-templating" },
     { "path": "./packages/feature-suggestions" },
     { "path": "./packages/port-management" },
-    { "path": "./packages/ui-consolidated" },
     { "path": "./packages/database" }
   ]
 }
