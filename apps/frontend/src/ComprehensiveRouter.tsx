@@ -20,7 +20,6 @@ const TimelineDemo = lazy(() => import('./pages/timeline-demo'));
 const GraphDemo = lazy(() =>
   import('./pages/graph-demo').then((module) => ({ default: module.GraphDemo }))
 );
-const AdminPanel = lazy(() => import('./pages/Admin/AdminPanel'));
 const TasksPage = lazy(() => import('./pages/Tasks/TasksPage'));
 const AgencyDashboard = lazy(() => import('./pages/Agency/AgencyDashboard'));
 const AgencyOnboarding = lazy(() => import('./pages/Agency/AgencyOnboarding'));

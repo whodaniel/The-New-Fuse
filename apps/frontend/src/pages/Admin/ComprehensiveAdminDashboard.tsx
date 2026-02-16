@@ -20,10 +20,8 @@ import {
   Users,
   XCircle,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-
-import dashboardService from '../../services/dashboard.service';
 
 interface SystemMetrics {
   totalUsers: number;
@@ -61,6 +59,21 @@ interface Alert {
   resolved: boolean;
 }
 
+const DashboardSkeleton = () => (
+  <div className="p-8 max-w-7xl mx-auto space-y-8 animate-pulse">
+    <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mb-8"></div>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {[1, 2, 3, 4].map((i) => (
+        <div key={i} className="h-32 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+      ))}
+    </div>
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="lg:col-span-2 h-96 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+      <div className="h-96 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+    </div>
+  </div>
+);
+
 export default function ComprehensiveAdminDashboard() {
   const [metrics, setMetrics] = useState<SystemMetrics | null>(null);
   const [recentActivities, setRecentActivities] = useState<RecentActivity[]>([]);
@@ -68,104 +81,6 @@ export default function ComprehensiveAdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<'1h' | '24h' | '7d' | '30d'>('24h');
-
-  // Mock performance data for charts
-  const performanceData = [
-    { time: '00:00', cpu: 45, memory: 62, requests: 1200 },
-    { time: '04:00', cpu: 32, memory: 58, requests: 800 },
-    { time: '08:00', cpu: 68, memory: 72, requests: 3500 },
-    { time: '12:00', cpu: 78, memory: 76, requests: 4200 },
-    { time: '16:00', cpu: 85, memory: 80, requests: 4800 },
-    { time: '20:00', cpu: 52, memory: 68, requests: 2100 },
-  ];
-
-  const apiUsageData = [
-    { name: 'Auth', value: 4200 },
-    { name: 'Users', value: 3100 },
-    { name: 'Agents', value: 2800 },
-    { name: 'Chat', value: 5200 },
-    { name: 'Other', value: 1500 },
-  ];
-
-  const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444'];
-
-  const loadDashboardData = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await dashboardService.getAdminDashboardMetrics();
-
-      const uptimeSeconds = data.system.uptime || 0;
-      const days = Math.floor(uptimeSeconds / (24 * 60 * 60));
-      const hours = Math.floor((uptimeSeconds % (24 * 60 * 60)) / (60 * 60));
-      const uptimeStr = `${days} days, ${hours} hours`;
-
-      setMetrics({
-        totalUsers: data.users?.total || 0,
-        activeUsers: data.users?.active || 0,
-        totalWorkspaces: data.workspaces?.total || 0,
-        activeWorkspaces: data.workspaces?.active || 0,
-        totalAgents: data.agents?.total || 0,
-        runningAgents: data.agents?.active || 0,
-        systemUptime: uptimeStr,
-        serverHealth: data.system?.health || 'healthy',
-        memoryUsage: data.system?.memory?.percentage || 0,
-        cpuUsage: data.system?.cpu?.usage || 0,
-        diskUsage: data.system?.disk?.percentage || 0,
-        networkTraffic: data.system?.network?.traffic || 0,
-        apiRequests: data.api?.requests || 0,
-        apiErrors: data.api?.errors || 0,
-        databaseConnections: data.system?.db?.connections || 0,
-        cacheHitRate: data.system?.cache?.hitRate || 0,
-      });
-
-      const activities: RecentActivity[] = (data.auditLogs || []).map((log: any) => ({
-        id: log.id,
-        type: log.resourceType || 'system',
-        user: log.userId || 'System',
-        action: log.action,
-        timestamp: new Date(log.createdAt),
-        status: log.status === 'success' ? 'success' : 'error',
-      }));
-      setRecentActivities(activities);
-      setAlerts(data.alerts || []);
-    } catch (error) {
-      setError('Failed to load dashboard data.');
-      console.error('Error loading dashboard data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadDashboardData();
-    const interval = setInterval(loadDashboardData, 30000);
-    return () => clearInterval(interval);
-  }, [timeRange]);
-
-  const getHealthBadge = (health: SystemMetrics['serverHealth']) => {
-    const badges = {
-      healthy: 'bg-green-100 text-green-800 border-green-200',
-      warning: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      critical: 'bg-red-100 text-red-800 border-red-200',
-    };
-    return badges[health];
-  };
-
-  const getHealthIcon = (health: SystemMetrics['serverHealth']) => {
-    const icons = {
-      healthy: <CheckCircle className="h-5 w-5 text-green-500" />,
-      warning: <AlertCircle className="h-5 w-5 text-yellow-500" />,
-      critical: <XCircle className="h-5 w-5 text-red-500" />,
-    };
-    return icons[health];
-  };
-
-  const getUsageColor = (usage: number) => {
-    if (usage < 50) return 'bg-green-500';
-    if (usage < 80) return 'bg-yellow-500';
-    return 'bg-red-500';
-  };
 
   const formatTimestamp = (date: Date) => {
     const now = new Date();
@@ -286,7 +201,20 @@ export default function ComprehensiveAdminDashboard() {
   ];
 
   if (loading && !metrics) {
-    return <DashboardSkeleton />;
+    return (
+      <div className="p-8 max-w-7xl mx-auto space-y-8 animate-pulse">
+        <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mb-8"></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-32 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+          ))}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 h-96 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+          <div className="h-96 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+        </div>
+      </div>
+    );
   }
 
   if (error) {

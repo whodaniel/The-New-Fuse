@@ -15,7 +15,7 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": false,
-    "composite": false,
+    "composite": true,
     "declaration": true,
     "declarationDir": "dist",
     "baseUrl": ".",
