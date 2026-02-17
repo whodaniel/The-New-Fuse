@@ -23,6 +23,7 @@ interface ServiceInterface {
   workflow?: any;
   monitoring?: any;
   claudeDev?: any;
+  agentGrants?: any;
 }
 
 /**
@@ -259,6 +260,25 @@ export class TheNewFuseMCPServer {
             required: ['title', 'description'],
           },
         },
+
+        // Agent Delegate / LLM Proxy
+        {
+          name: 'delegate_llm_request',
+          description:
+            'Securely proxy an LLM request using a delegated grant token. Enforces rate limits, token budgets, and cost caps.',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              provider: { type: 'string', description: 'LLM Provider (e.g. openai, anthropic)' },
+              grantToken: { type: 'string', description: 'The delegated agent grant token' },
+              payload: {
+                type: 'object',
+                description: 'The standard completion/chat payload for the target provider',
+              },
+            },
+            required: ['provider', 'grantToken', 'payload'],
+          },
+        },
       ] as Tool[],
     }));
 
@@ -309,6 +329,10 @@ export class TheNewFuseMCPServer {
             return await this.handleListTasks(args);
           case 'create_task':
             return await this.handleCreateTask(args);
+
+          // Agent Delegate
+          case 'delegate_llm_request':
+            return await this.handleDelegateLlmRequest(args);
 
           default:
             throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${name}`);
@@ -797,6 +821,31 @@ export class TheNewFuseMCPServer {
         },
       ],
     };
+  }
+
+  // Agent Delegate Handlers
+  private async handleDelegateLlmRequest(args: any) {
+    if (this.services.agentGrants) {
+      const { provider, grantToken, payload } = args;
+      try {
+        const result = await this.services.agentGrants.proxy(provider, grantToken, payload);
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(result, null, 2),
+            },
+          ],
+        };
+      } catch (error: any) {
+        throw new McpError(
+          ErrorCode.InternalError,
+          `LLM Delegation Failed: ${error.message || String(error)}`
+        );
+      }
+    }
+
+    throw new McpError(ErrorCode.InternalError, 'Agent Grants Service not initialized');
   }
 
   /**

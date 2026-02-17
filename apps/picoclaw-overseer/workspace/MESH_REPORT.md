@@ -1,6 +1,6 @@
 # Mesh Report
 
-**Generated:** 2026-02-16 15:29:32 UTC
+**Generated:** 2026-02-16 22:29:33 UTC
 
 ## Status: ✅ NOMINAL
 
@@ -24,7 +24,9 @@
 ### Billing Safety
 
 - **Status:** ✅ Verified
-- **Primary Model:** Configured correctly
+- **Provider:** kilo
+- **Primary Model:** z-ai/glm-5:free
+- **Free Tier:** Yes ✓
 
 ### Conflicts
 
@@ -35,5 +37,6 @@
 ## Summary
 
 The mesh is in a quiet state with no active sessions. All systems operational.
+Billing safety confirmed with free-tier model configuration.
 
-_Last heartbeat: 2026-02-16 15:29:32_
+_Last heartbeat: 2026-02-16 22:29:33_

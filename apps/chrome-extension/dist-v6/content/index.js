@@ -745,6 +745,11 @@
         });
         return entries.length;
       }
+      // Perplexity Fallback (Expanded)
+      const perplexity = document.querySelectorAll(
+        'div.prose, div[class*="prose"], div[data-testid*="answer"], div.font-sans.text-base.text-text-main'
+      ).length;
+      if (perplexity > 0) return perplexity;
       // Generic assistant-like message fallback
       const generic = document.querySelectorAll(
         '[data-message-author-role="assistant"], [class*="assistant-message"], [class*="model-response"]'
@@ -797,6 +802,18 @@
           return text;
         }
       }
+      // Perplexity Fallback (Expanded)
+      const perplexityResponses = document.querySelectorAll(
+        'div.prose, div[class*="prose"], div[data-testid*="answer"], div.font-sans.text-base.text-text-main'
+      );
+      if (perplexityResponses.length > 0) {
+        // Get the last one
+        const last = perplexityResponses[perplexityResponses.length - 1];
+        const text = cleanText(last);
+        // Perplexity often has "Sources" or "Related" sections at the bottom, we might need to be careful
+        // But usually 'prose' contains the main answer.
+        if (text) return text;
+      }
       // Narrow generic fallback to assistant-role only
       const generic = document.querySelectorAll('[data-message-author-role="assistant"]');
       if (generic.length > 0) {
@@ -817,9 +834,6 @@
         'button[aria-label*="Stop response"]',
         'button[aria-label*="Stop generating"]',
         '[data-testid*="stop-button"]',
-        // Perplexity streaming
-        'button[aria-label="Pause"]',
-        'div[class*="sticky"] button svg[data-icon="pause"]',
       ];
       for (const selector of streamingIndicators) {
         const el = document.querySelector(selector);
@@ -897,9 +911,17 @@
           }
         } else {
           // Textarea/Input handling
-          // Use the native setter to ensure React picks up the change
-          setNativeValue(input, text);
-          // Dispatch extra events for good measure
+          // Reverting to stable v5 logic: direct value + input event
+          input.value = text;
+          input.dispatchEvent(
+            new InputEvent('input', {
+              bubbles: true,
+              cancelable: true,
+              inputType: 'insertText',
+              data: text,
+            })
+          );
+          // Also dispatch change for form listeners
           input.dispatchEvent(new Event('change', { bubbles: true }));
         }
         // Wait for UI to react to the text input
@@ -1149,95 +1171,100 @@
    * Custom Element Guard for Chrome Extension
    * Prevents the "A custom element with name ... has already been defined" error
    * by patching customElements.define to safely check existence first.
+   *
+   * Enhanced for Perplexity: handles sandboxed iframes where customElements may be null.
    */
-  try {
-    // GLOBAL ERROR LISTENER: Catch errors that bypass our patch (including scheduler module errors)
-    window.addEventListener(
-      'error',
-      (event) => {
-        if (
-          event.message &&
-          (event.message.includes('mce-autosize-textarea') ||
-            event.message.includes('already been defined') ||
-            event.message.includes('already been used') ||
-            event.message.includes('Failed to resolve module specifier') ||
-            event.message.includes('scheduler'))
-        ) {
-          event.preventDefault();
-          event.stopImmediatePropagation();
-          return;
-        }
-      },
-      true
-    ); // Capture phase
-    // Also catch unhandled promise rejections for module loading failures
-    window.addEventListener(
-      'unhandledrejection',
-      (event) => {
-        if (
-          event.reason &&
-          event.reason.message &&
-          (event.reason.message.includes('Failed to resolve module specifier') ||
-            event.reason.message.includes('scheduler') ||
-            event.reason.message.includes('already been defined'))
-        ) {
-          event.preventDefault();
-          return;
-        }
-      },
-      true
-    );
-    const originalDefine =
-      typeof customElements !== 'undefined' && customElements ? customElements.define : undefined;
-    if (originalDefine) {
-      // Only patch if not already patched (check for our marker)
-      if (
-        typeof customElements !== 'undefined' &&
-        customElements &&
-        customElements.define &&
-        !customElements.define.__isSafeGuarded
-      ) {
-        customElements.define = function (name, constructor, options) {
-          // SWALLOW known problematic elements
-          if (name === 'mce-autosize-textarea') {
-            if (customElements.get(name)) return;
-          }
-          if (customElements.get(name)) {
-            // Silently skip - already defined
+  // Entire guard is wrapped: only execute if customElements is available
+  if (typeof globalThis.customElements !== 'undefined' && globalThis.customElements !== null) {
+    try {
+      // GLOBAL ERROR LISTENER: Catch errors that bypass our patch (including scheduler module errors)
+      window.addEventListener(
+        'error',
+        (event) => {
+          if (
+            event.message &&
+            (event.message.includes('mce-autosize-textarea') ||
+              event.message.includes('already been defined') ||
+              event.message.includes('already been used') ||
+              event.message.includes('Failed to resolve module specifier') ||
+              event.message.includes('scheduler') ||
+              // Catch null customElements access
+              (event.message.includes('Cannot read properties of null') &&
+                event.message.includes('customElements')))
+          ) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
             return;
           }
-          try {
-            originalDefine.call(this, name, constructor, options);
-          } catch (e) {
-            if (e.message && e.message.includes('already been defined')) {
-              // Silently skip collision
+        },
+        true
+      ); // Capture phase
+      // Also catch unhandled promise rejections for module loading failures
+      window.addEventListener(
+        'unhandledrejection',
+        (event) => {
+          if (
+            event.reason &&
+            event.reason.message &&
+            (event.reason.message.includes('Failed to resolve module specifier') ||
+              event.reason.message.includes('scheduler') ||
+              event.reason.message.includes('already been defined') ||
+              (event.reason.message.includes('Cannot read properties of null') &&
+                event.reason.message.includes('customElements')))
+          ) {
+            event.preventDefault();
+            return;
+          }
+        },
+        true
+      );
+      const originalDefine = globalThis.customElements.define;
+      if (originalDefine) {
+        // Only patch if not already patched (check for our marker)
+        if (globalThis.customElements.define && !globalThis.customElements.define.__isSafeGuarded) {
+          globalThis.customElements.define = function (name, constructor, options) {
+            // SWALLOW known problematic elements
+            if (name === 'mce-autosize-textarea') {
+              if (globalThis.customElements.get(name)) return;
+            }
+            if (globalThis.customElements.get(name)) {
+              // Silently skip - already defined
               return;
             }
-            throw e;
+            try {
+              originalDefine.call(this, name, constructor, options);
+            } catch (e) {
+              if (e.message && e.message.includes('already been defined')) {
+                // Silently skip collision
+                return;
+              }
+              throw e;
+            }
+          };
+          // Mark as guarded
+          globalThis.customElements.define.__isSafeGuarded = true;
+          // Lock the customElements object itself to prevent polyfills from replacing it
+          try {
+            const originalCustomElements = globalThis.customElements;
+            Object.defineProperty(globalThis, 'customElements', {
+              get() {
+                return originalCustomElements;
+              },
+              set(v) {
+                // Silently prevent overwriting
+              },
+              configurable: false,
+            });
+          } catch (e) {
+            // Ignore if already non-configurable
           }
-        };
-        // Mark as guarded
-        customElements.define.__isSafeGuarded = true;
-        // Lock the customElements object itself to prevent polyfills from replacing it
-        try {
-          const originalCustomElements = window.customElements;
-          Object.defineProperty(window, 'customElements', {
-            get() {
-              return originalCustomElements;
-            },
-            set(v) {
-              // Silently prevent overwriting
-            },
-            configurable: false,
-          });
-        } catch (e) {
-          // Ignore if already non-configurable
         }
       }
+    } catch (e) {
+      // Silently fail - guard is optional
     }
-  } catch (e) {
-    // Silently fail - guard is optional
-  } // ./src/v6/content/injectable/FloatingPanel.ts
+  } // else: customElements not available (sandboxed iframe), skip guard entirely
+  // ./src/v6/content/injectable/FloatingPanel.ts
 
   /**
    * Fuse Connect v6 - Enhanced Floating Panel
@@ -1342,28 +1369,17 @@
      */
     requestConnectionState() {
       chrome.runtime.sendMessage({ type: 'GET_STATE' }, (response) => {
-        if (response) {
-          console.log('[FuseConnect] Received state from background:', response);
-          this.connectionStatus = response.connectionStatus || 'disconnected';
-          this.agents = response.agents || [];
-          this.channels = response.channels || [];
-          // CRITICAL FIX: Do NOT overwrite myAgentId if it has already been set by setAgentId()
-          // The response.agentId from GET_STATE is the Browser Agent ID (browser-XXXXX),
-          // NOT the page agent ID (page-agent-XXXXX) which is what we need for self-detection.
-          // Only use response.agentId as a fallback if we don't have one yet AND it's a page-agent.
-          if (!this.myAgentId && response.agentId?.startsWith('page-agent-')) {
-            this.myAgentId = response.agentId;
-          }
-          // Restore current channel if we have one stored (tab-specific)
-          // Use panel-specific key to prevent cross-tab sync
-          const channelKey = `fuse_channel_${this.panelId}`;
-          chrome.storage.local.get([channelKey], (result) => {
-            if (result[channelKey]) {
-              this.currentChannel = result[channelKey];
-            }
-            this.update();
-          });
+        this.connectionStatus = response.connectionStatus || 'disconnected';
+        this.agents = response.agents || [];
+        this.channels = response.channels || [];
+        // Save Browser Agent ID for loop prevention
+        if (response.browserAgentId) {
+          this.browserAgentId = response.browserAgentId;
         }
+        if (response.agentId) {
+          this.myAgentId = response.agentId;
+        }
+        this.update();
       });
     }
     /**
@@ -3332,12 +3348,18 @@
           if (message.message) {
             const msg = message.message;
             // PRIMARY SELF-DETECTION: Use metadata.senderId (most reliable)
-            // This is set by the originating tab when broadcasting
-            const isFromSelf = msg.metadata?.senderId === this.myAgentId;
+            const senderIdFromMeta = msg.metadata?.senderId;
+            const isFromSelf =
+              senderIdFromMeta === this.myAgentId ||
+              msg.from === this.myAgentId ||
+              senderIdFromMeta === this.browserAgentId ||
+              msg.from === this.browserAgentId;
             // FALLBACK SELF-DETECTION: Check common self-identifiers
-            const isFromSelfFallback =
-              msg.from === 'You' || msg.from === this.myAgentId || msg.from?.includes(this.panelId);
+            const isFromSelfFallback = msg.from === 'You' || msg.from === 'You (Fuse)';
             const isOwnMessage = isFromSelf || isFromSelfFallback;
+            if (isOwnMessage) {
+              console.log('[FuseConnect] Identified self-message');
+            }
             // DEDUPE LOCK: Prevent doubled Human input.
             // Check if we already have a message with this content from ourselves in a short window.
             // This stops the "Optimistic UI" local push from colliding with the "Relay Roundtrip" back-broadcast.
@@ -5685,25 +5707,18 @@
                   // FIXED: Only exact matches count as self-messages
                   // Check BOTH msg.from AND senderId metadata
                   // The senderId in metadata is the ORIGINAL sender (the tab/agent that initiated the message)
-                  const isSelfMessage =
-                    msg.from === this.pageAgentId || senderFromMetadata === this.pageAgentId;
-                  // CRITICAL FIX: Messages come from Browser Agent but the REAL sender is in metadata
-                  // We want to BLOCK messages if:
-                  // 1. They came from 'You' (user typing in panel)
-                  // 2. The senderId matches THIS tab's page agent (our own messages)
-                  // We want to ALLOW messages if:
-                  // - They came from a DIFFERENT page agent (another tab) or external CLI agent
-                  // - Even if msg.from is 'Browser Agent' - that's just the relay!
-                  const isFromSelf = isSelfMessage || senderFromMetadata === this.pageAgentId;
-                  const isFromYou = msg.from === 'You';
-                  // An external message is anything NOT from us and NOT from 'You'
-                  const isExternalAgent = !isFromYou && !isFromSelf;
+                  const isFromSelf =
+                    msg.from === this.pageAgentId ||
+                    senderFromMetadata === this.pageAgentId ||
+                    msg.from === 'You';
+                  // Also check browser agent ID if we can get it from storage or background
+                  // This is a safety margin against late pageAgentId assignment
+                  const isExternalAgent = !isFromSelf;
                   // Debug logging to trace agent identification
                   console.log('[FuseConnect v6] 📨 Message received:', {
                     from: msg.from,
                     senderId: senderFromMetadata,
                     myAgentId: this.pageAgentId,
-                    isSelfMessage,
                     isFromSelf,
                     isExternalAgent,
                     messageType: msg.messageType,

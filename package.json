@@ -15,6 +15,8 @@
     "dev:backend": "turbo run dev --filter=@the-new-fuse/backend-app",
     "relay": "turbo run relay --filter=@the-new-fuse/relay-core",
     "relay:start": "pnpm --filter @the-new-fuse/relay-core run relay",
+    "relay:monitor": "node scripts/relay-channel-monitor.cjs",
+    "relay:monitor:green": "CHANNEL_MODE=include CHANNEL_INCLUDE=green node scripts/relay-channel-monitor.cjs",
     "master-clock": "pnpm --filter @the-new-fuse/relay-core run master-clock",
     "master-clock:dev": "pnpm --filter @the-new-fuse/relay-core run master-clock:dev",
     "orchestrate": "pnpm --filter @the-new-fuse/relay-core run orchestrate",

@@ -154,30 +154,19 @@ export class EnhancedFloatingPanel {
    */
   private requestConnectionState(): void {
     chrome.runtime.sendMessage({ type: 'GET_STATE' }, (response) => {
-      if (response) {
-        console.log('[FuseConnect] Received state from background:', response);
-        this.connectionStatus = response.connectionStatus || 'disconnected';
-        this.agents = response.agents || [];
-        this.channels = response.channels || [];
+      this.connectionStatus = response.connectionStatus || 'disconnected';
+      this.agents = response.agents || [];
+      this.channels = response.channels || [];
 
-        // CRITICAL FIX: Do NOT overwrite myAgentId if it has already been set by setAgentId()
-        // The response.agentId from GET_STATE is the Browser Agent ID (browser-XXXXX),
-        // NOT the page agent ID (page-agent-XXXXX) which is what we need for self-detection.
-        // Only use response.agentId as a fallback if we don't have one yet AND it's a page-agent.
-        if (!this.myAgentId && response.agentId?.startsWith('page-agent-')) {
-          this.myAgentId = response.agentId;
-        }
-
-        // Restore current channel if we have one stored (tab-specific)
-        // Use panel-specific key to prevent cross-tab sync
-        const channelKey = `fuse_channel_${this.panelId}`;
-        chrome.storage.local.get([channelKey], (result) => {
-          if (result[channelKey]) {
-            this.currentChannel = result[channelKey];
-          }
-          this.update();
-        });
+      // Save Browser Agent ID for loop prevention
+      if (response.browserAgentId) {
+        (this as any).browserAgentId = response.browserAgentId;
       }
+
+      if (response.agentId) {
+        this.myAgentId = response.agentId;
+      }
+      this.update();
     });
   }
 
@@ -2300,14 +2289,20 @@ export class EnhancedFloatingPanel {
           const msg = message.message;
 
           // PRIMARY SELF-DETECTION: Use metadata.senderId (most reliable)
-          // This is set by the originating tab when broadcasting
-          const isFromSelf = msg.metadata?.senderId === this.myAgentId;
+          const senderIdFromMeta = msg.metadata?.senderId;
+          const isFromSelf =
+            senderIdFromMeta === this.myAgentId ||
+            msg.from === this.myAgentId ||
+            senderIdFromMeta === (this as any).browserAgentId ||
+            msg.from === (this as any).browserAgentId;
 
           // FALLBACK SELF-DETECTION: Check common self-identifiers
-          const isFromSelfFallback =
-            msg.from === 'You' || msg.from === this.myAgentId || msg.from?.includes(this.panelId);
+          const isFromSelfFallback = msg.from === 'You' || msg.from === 'You (Fuse)';
 
           const isOwnMessage = isFromSelf || isFromSelfFallback;
+          if (isOwnMessage) {
+            console.log('[FuseConnect] Identified self-message');
+          }
 
           // DEDUPE LOCK: Prevent doubled Human input.
           // Check if we already have a message with this content from ourselves in a short window.

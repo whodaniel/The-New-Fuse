@@ -1,6 +1,10 @@
 /**
  * Drizzle Repositories Index
  */
+export {
+  DrizzleAgentApiGrantRepository,
+  drizzleAgentApiGrantRepository,
+} from './agent-api-grant.repository';
 export { DrizzleAgentRepository, drizzleAgentRepository } from './agent.repository';
 export { DrizzleApiLogsRepository, drizzleApiLogsRepository } from './api-logs.repository';
 export {
@@ -22,6 +26,10 @@ export {
   DrizzlePromptTemplateRepository,
   drizzlePromptTemplateRepository,
 } from './prompt-template.repository';
+export {
+  DrizzleProviderApiKeyRepository,
+  drizzleProviderApiKeyRepository,
+} from './provider-api-key.repository';
 export { DrizzleTaskRepository, drizzleTaskRepository } from './task.repository';
 export { DrizzleUserRepository, drizzleUserRepository } from './user.repository';
 export { DrizzleWalletRepository, drizzleWalletRepository } from './wallet.repository';

@@ -36,10 +36,17 @@ Documentation has been organized into logical categories.
 - [ARCHITECTURE_STANDARDS.md](ARCHITECTURE_STANDARDS.md) - Architectural
   standards and patterns
 - [MONOREPO_ARCHITECTURE.md](MONOREPO_ARCHITECTURE.md) - Monorepo structure
+- [docs/ARCHITECTURE_PATTERN_INDEX.md](docs/ARCHITECTURE_PATTERN_INDEX.md) -
+  Cross-cutting architecture patterns index
 - [ARCHITECTURAL_CONSISTENCY_REPORT.md](ARCHITECTURAL_CONSISTENCY_REPORT.md) -
   Consistency analysis
 - [ARCHITECTURE_ANALYSIS_SUMMARY.md](ARCHITECTURE_ANALYSIS_SUMMARY.md) -
   Architecture analysis
+
+### Chrome Extension Autonomy
+
+- [apps/chrome-extension/docs/POPUP_AUTONOMY_QUICK_GUIDE.md](apps/chrome-extension/docs/POPUP_AUTONOMY_QUICK_GUIDE.md) -
+  Popup autonomy controls quick guide
 
 ### Protocols & Primitives (New!)
 
@@ -172,6 +179,8 @@ Documentation has been organized into logical categories.
   Visual checklist
 - [UI_UX_TRANSFORMATION_ROADMAP.md](UI_UX_TRANSFORMATION_ROADMAP.md) -
   Transformation roadmap
+- [docs/SAAS_FRONTEND_OVERHAUL_PLAN.md](docs/SAAS_FRONTEND_OVERHAUL_PLAN.md) -
+  Frontend consolidation and refactor execution plan
 
 ### Landing Page & Marketing
 

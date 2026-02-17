@@ -82,17 +82,19 @@ api.interceptors.response.use(
           toast.error('You do not have permission to perform this action.');
           break;
         case 404:
-           // Not Found - sometimes we don't want to toast this (e.g. check user existence),
-           // but usually it's helpful.
-           toast.error(typeof errorMessage === 'string' ? errorMessage : 'Resource not found.');
-           break;
+          // Not Found - sometimes we don't want to toast this (e.g. check user existence),
+          // but usually it's helpful.
+          toast.error(typeof errorMessage === 'string' ? errorMessage : 'Resource not found.');
+          break;
         case 500:
         case 502:
         case 503:
           toast.error('Server error. The team has been notified.');
           break;
         default:
-          toast.error(typeof errorMessage === 'string' ? errorMessage : 'An unexpected error occurred.');
+          toast.error(
+            typeof errorMessage === 'string' ? errorMessage : 'An unexpected error occurred.'
+          );
       }
     }
 
@@ -107,7 +109,7 @@ export const apiService = {
   get: async <T>(url: string, params?: any, config?: { silent?: boolean }) => {
     const requestConfig: CustomAxiosRequestConfig = {
       params,
-      _silent: config?.silent
+      _silent: config?.silent,
     };
     const response = await api.get<T>(url, requestConfig);
     return response.data;
@@ -115,7 +117,7 @@ export const apiService = {
 
   post: async <T>(url: string, data: any, config?: { silent?: boolean }) => {
     const requestConfig: CustomAxiosRequestConfig = {
-      _silent: config?.silent
+      _silent: config?.silent,
     };
     const response = await api.post<T>(url, data, requestConfig);
     return response.data;
@@ -123,7 +125,7 @@ export const apiService = {
 
   put: async <T>(url: string, data: any, config?: { silent?: boolean }) => {
     const requestConfig: CustomAxiosRequestConfig = {
-      _silent: config?.silent
+      _silent: config?.silent,
     };
     const response = await api.put<T>(url, data, requestConfig);
     return response.data;
@@ -131,7 +133,7 @@ export const apiService = {
 
   delete: async <T>(url: string, config?: { silent?: boolean }) => {
     const requestConfig: CustomAxiosRequestConfig = {
-      _silent: config?.silent
+      _silent: config?.silent,
     };
     const response = await api.delete<T>(url, requestConfig);
     return response.data;
@@ -190,6 +192,40 @@ export const apiService = {
   getProviderApiKeys: async () => {
     // Returns only metadata (id, provider), NOT the key itself
     const response = await api.get<{ id: string; provider: string }[]>('/api/provider-keys');
+    return response.data;
+  },
+
+  getAgentApiGrants: async () => {
+    const response = await api.get<any[]>('/api/agent-grants');
+    return response.data;
+  },
+
+  createAgentApiGrant: async (payload: {
+    agentId: string;
+    provider: string;
+    allowedModels?: string[];
+    maxRequestsPerMinute?: number;
+    dailyTokenBudget?: number;
+    monthlyUsdCapCents?: number;
+    expiresAt: string;
+  }) => {
+    const response = await api.post<{ grant: any; accessToken: string }>(
+      '/api/agent-grants',
+      payload
+    );
+    return response.data;
+  },
+
+  revokeAgentApiGrant: async (id: string) => {
+    const response = await api.post(`/api/agent-grants/${id}/revoke`, {});
+    return response.data;
+  },
+
+  rotateAgentApiGrant: async (id: string) => {
+    const response = await api.post<{ grant: any; accessToken: string }>(
+      `/api/agent-grants/${id}/rotate`,
+      {}
+    );
     return response.data;
   },
 };

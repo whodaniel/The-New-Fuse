@@ -1,3 +1,4 @@
+import { AgentGrantList } from '@/components/ApiKeyManagement/AgentGrantList';
 import { ProviderApiKeyList } from '@/components/ApiKeyManagement/ProviderApiKeyList';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -141,6 +142,7 @@ export default function API() {
       <div className="grid gap-6">
         {/* Provider API Keys - Self-contained Card */}
         <ProviderApiKeyList />
+        <AgentGrantList />
 
         {/* Personal Access Tokens */}
         <Card>

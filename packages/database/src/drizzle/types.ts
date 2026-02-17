@@ -4,6 +4,8 @@
  */
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
+  agentApiGrants,
+  agentApiGrantUsage,
   agentCapabilityRegistry,
   agentDirectoryEntries,
   agentMemories,
@@ -38,6 +40,7 @@ import {
   promptSnippets,
   promptTemplates,
   promptVersions,
+  providerApiKeys,
   readReceipts,
   registeredEntities,
   resourceAllocations,
@@ -235,6 +238,13 @@ export type NewBusinessMetric = InferInsertModel<typeof businessMetrics>;
 
 export type ErrorLog = InferSelectModel<typeof errorLogs>;
 export type NewErrorLog = InferInsertModel<typeof errorLogs>;
+
+export type ProviderApiKey = InferSelectModel<typeof providerApiKeys>;
+export type NewProviderApiKey = InferInsertModel<typeof providerApiKeys>;
+export type AgentApiGrant = InferSelectModel<typeof agentApiGrants>;
+export type NewAgentApiGrant = InferInsertModel<typeof agentApiGrants>;
+export type AgentApiGrantUsage = InferSelectModel<typeof agentApiGrantUsage>;
+export type NewAgentApiGrantUsage = InferInsertModel<typeof agentApiGrantUsage>;
 
 // =============================================================================
 // WORKSPACE TYPES

@@ -1,3 +1,4 @@
+import { AgentGrantList } from '@/components/ApiKeyManagement/AgentGrantList';
 import { ProviderApiKeyList } from '@/components/ApiKeyManagement/ProviderApiKeyList';
 import {
   GlassCard,
@@ -522,6 +523,9 @@ export default function Settings() {
                       </div>
 
                       <ProviderApiKeyList />
+                      <div className="mt-6">
+                        <AgentGrantList />
+                      </div>
 
                       <div className="mt-8 pt-6 border-t border-white/10">
                         <h3 className="text-lg font-medium text-white mb-4">Legacy Settings</h3>

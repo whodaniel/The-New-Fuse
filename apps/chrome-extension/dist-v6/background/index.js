@@ -74,13 +74,14 @@
     }
     async init() {
       console.log('[FuseConnect v6] Background service initializing...');
+      // CRITICAL: Setup handlers SYNCHRONOUSLY before any awaits
+      // This prevents "Receiving end does not exist" errors in the popup
+      this.setupMessageHandlers();
+      this.setupCommands();
       // Get or create agent ID
       this.agentId = await this.getOrCreateAgentId();
       // Load saved state
       await this.loadSavedState();
-      // Setup handlers
-      this.setupMessageHandlers();
-      this.setupCommands();
       // Start health checks (but don't auto-connect immediately)
       this.startHealthChecks();
       // Start periodic cleanup to prevent memory leaks
@@ -1032,6 +1033,16 @@
             sendResponse({ success: true });
             break;
           case 'GET_STATE':
+            // Find the page agent for this tab if it exists
+            let tabPageAgentId = null;
+            if (sender.tab?.id) {
+              for (const [id, agent] of this.agents) {
+                if (agent.metadata?.tabId === sender.tab.id) {
+                  tabPageAgentId = id;
+                  break;
+                }
+              }
+            }
             sendResponse({
               connectionStatus:
                 this.primaryConnection?.readyState === WebSocket.OPEN
@@ -1041,7 +1052,8 @@
               channels: Array.from(this.channels.values()),
               joinedChannels: Array.from(this.joinedChannels),
               nodes: Object.fromEntries(this.nodeStatus),
-              agentId: this.agentId,
+              agentId: tabPageAgentId || this.agentId, // Use page-specific ID if available
+              browserAgentId: this.agentId,
               autoConnect: this.autoConnect,
             });
             break;
@@ -1355,13 +1367,24 @@ Format as JSON array:
           case 'CHAT_DETECTED':
             // 1. Register this tab as a distinct Agent
             if (sender.tab?.id) {
-              const pageAgentId = `page-agent-${sender.tab.id}-${Math.random().toString(36).substr(2, 5)}`;
+              // REUSE existing agent ID for this tab if it exists
+              let pageAgentId = null;
+              for (const [id, agent] of this.agents) {
+                if (agent.metadata?.tabId === sender.tab.id) {
+                  pageAgentId = id;
+                  break;
+                }
+              }
+              if (!pageAgentId) {
+                pageAgentId = `page-agent-${sender.tab.id}-${Math.random().toString(36).substr(2, 5)}`;
+              }
               const hostname = sender.tab.url ? new URL(sender.tab.url).hostname : 'page';
               // Clean hostname for better display (e.g. "gemini.google.com" -> "Gemini")
               let platformName = hostname;
-              if (hostname.includes('google.com')) platformName = 'Gemini';
+              if (hostname.includes('gemini.google')) platformName = 'Gemini';
               else if (hostname.includes('openai.com')) platformName = 'ChatGPT';
               else if (hostname.includes('claude.ai')) platformName = 'Claude';
+              else if (hostname.includes('perplexity.ai')) platformName = 'Perplexity';
               this.registerPageAgent(
                 pageAgentId,
                 `AI Chat (${platformName})`,
@@ -1369,11 +1392,14 @@ Format as JSON array:
                 sender.tab.id
               );
               // 2. Broadcast availability
+              const message = {
+                type: 'AGENT_STATUS',
+                agent: this.agents.get(pageAgentId),
+              };
               this.broadcastToTabs(message);
               // 3. Return the assigned Agent ID to the tab so it knows who it is
               sendResponse({ success: true, agentId: pageAgentId });
             } else {
-              this.broadcastToTabs(message);
               sendResponse({ success: true });
             }
             break;
@@ -1395,8 +1421,8 @@ Format as JSON array:
               if (!this.recentMessageHashes.has(responseHash)) {
                 this.recentMessageHashes.set(responseHash, now);
                 // Get sender's agent ID from message metadata (set by content script)
-                // The content script sets metadata.agentId = this.pageAgentId when it detects the AI response
-                let senderId = message.metadata?.agentId || message.senderId;
+                // PRIMARY SELF-DETECTION: Use metadata.senderId (most reliable)
+                let senderId = message.metadata?.senderId || message.senderId;
                 // Fallback: construct from tab ID if not provided
                 if (!senderId && sender.tab?.id) {
                   senderId = `page-agent-${sender.tab.id}`;

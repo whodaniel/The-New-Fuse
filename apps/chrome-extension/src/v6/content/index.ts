@@ -578,28 +578,20 @@ class FuseConnectContentScript {
                 // FIXED: Only exact matches count as self-messages
                 // Check BOTH msg.from AND senderId metadata
                 // The senderId in metadata is the ORIGINAL sender (the tab/agent that initiated the message)
-                const isSelfMessage =
-                  msg.from === this.pageAgentId || senderFromMetadata === this.pageAgentId;
+                const isFromSelf =
+                  msg.from === this.pageAgentId ||
+                  senderFromMetadata === this.pageAgentId ||
+                  msg.from === 'You';
 
-                // CRITICAL FIX: Messages come from Browser Agent but the REAL sender is in metadata
-                // We want to BLOCK messages if:
-                // 1. They came from 'You' (user typing in panel)
-                // 2. The senderId matches THIS tab's page agent (our own messages)
-                // We want to ALLOW messages if:
-                // - They came from a DIFFERENT page agent (another tab) or external CLI agent
-                // - Even if msg.from is 'Browser Agent' - that's just the relay!
-                const isFromSelf = isSelfMessage || senderFromMetadata === this.pageAgentId;
-                const isFromYou = msg.from === 'You';
-
-                // An external message is anything NOT from us and NOT from 'You'
-                const isExternalAgent = !isFromYou && !isFromSelf;
+                // Also check browser agent ID if we can get it from storage or background
+                // This is a safety margin against late pageAgentId assignment
+                const isExternalAgent = !isFromSelf;
 
                 // Debug logging to trace agent identification
                 console.log('[FuseConnect v6] 📨 Message received:', {
                   from: msg.from,
                   senderId: senderFromMetadata,
                   myAgentId: this.pageAgentId,
-                  isSelfMessage,
                   isFromSelf,
                   isExternalAgent,
                   messageType: msg.messageType,

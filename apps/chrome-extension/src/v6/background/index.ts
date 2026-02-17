@@ -27,6 +27,9 @@ const STORAGE_KEYS = {
   joinedChannels: 'fuse_joined_channels',
   knownNodes: 'fuse_known_nodes',
   autoConnect: 'fuse_auto_connect',
+  autoMonitor: 'fuse_auto_monitor',
+  autoMasterClock: 'fuse_auto_master_clock',
+  autoWakePing: 'fuse_auto_wake_ping',
 };
 
 // Default node configuration
@@ -67,6 +70,12 @@ class BackgroundService {
   private messageQueue: ProtocolMessage[] = [];
   private pendingPageAgents: Agent[] = []; // Queue for page agents waiting for connection
   private autoConnect: boolean = true; // Default to TRUE for agent operation
+  private autoMonitor: boolean = true;
+  private autoMasterClock: boolean = true;
+  private autoWakePing: boolean = true;
+  private lastAutonomyStartAt: number = 0;
+  private lastWakePingAt: Map<string, number> = new Map();
+  private channelLastActivityAt: Map<string, number> = new Map();
   private connectionAttempts: number = 0;
   private maxInitialAttempts: number = 1; // Only try once on startup
 
@@ -79,6 +88,7 @@ class BackgroundService {
   private heartbeatTimer: number | null = null;
   private healthCheckTimer: number | null = null;
   private cleanupTimer: number | null = null; // Periodic cleanup to prevent memory leaks
+  private stallWatchdogTimer: number | null = null;
 
   constructor() {
     this.init();
@@ -87,15 +97,16 @@ class BackgroundService {
   private async init(): Promise<void> {
     console.log('[FuseConnect v6] Background service initializing...');
 
+    // CRITICAL: Setup handlers SYNCHRONOUSLY before any awaits
+    // This prevents "Receiving end does not exist" errors in the popup
+    this.setupMessageHandlers();
+    this.setupCommands();
+
     // Get or create agent ID
     this.agentId = await this.getOrCreateAgentId();
 
     // Load saved state
     await this.loadSavedState();
-
-    // Setup handlers
-    this.setupMessageHandlers();
-    this.setupCommands();
 
     // Start health checks (but don't auto-connect immediately)
     this.startHealthChecks();
@@ -147,8 +158,15 @@ class BackgroundService {
     if (isAvailable) {
       this.connectToNode('relay', DEFAULT_NODES.relay);
     } else {
-      console.log('[FuseConnect v6] Relay not available - use Services tab to start it');
+      console.log('[FuseConnect v6] Relay not available - attempting autonomous startup');
       this.updateNodeStatus('relay', DEFAULT_NODES.relay, 'disconnected');
+      this.sendNativeMessage({ action: 'start', service: 'relay' }).then(() => {
+        setTimeout(() => {
+          this.connectionAttempts = 0;
+          this.connectToNode('relay', DEFAULT_NODES.relay);
+          this.ensureAutonomousServices('relay_auto_bootstrap');
+        }, 3000);
+      });
     }
   }
 
@@ -192,6 +210,9 @@ class BackgroundService {
       STORAGE_KEYS.joinedChannels,
       STORAGE_KEYS.knownNodes,
       STORAGE_KEYS.autoConnect,
+      STORAGE_KEYS.autoMonitor,
+      STORAGE_KEYS.autoMasterClock,
+      STORAGE_KEYS.autoWakePing,
       STORAGE_KEYS.settings,
     ]);
 
@@ -210,10 +231,22 @@ class BackgroundService {
 
     // Load auto-connect preference (default true)
     this.autoConnect = result[STORAGE_KEYS.autoConnect] ?? true;
+    this.autoMonitor = result[STORAGE_KEYS.autoMonitor] ?? true;
+    this.autoMasterClock = result[STORAGE_KEYS.autoMasterClock] ?? true;
+    this.autoWakePing = result[STORAGE_KEYS.autoWakePing] ?? true;
 
     // Also check settings object
     if (result[STORAGE_KEYS.settings]?.autoReconnect !== undefined) {
       this.autoConnect = result[STORAGE_KEYS.settings].autoReconnect;
+    }
+    if (result[STORAGE_KEYS.settings]?.autoMonitor !== undefined) {
+      this.autoMonitor = !!result[STORAGE_KEYS.settings].autoMonitor;
+    }
+    if (result[STORAGE_KEYS.settings]?.autoMasterClock !== undefined) {
+      this.autoMasterClock = !!result[STORAGE_KEYS.settings].autoMasterClock;
+    }
+    if (result[STORAGE_KEYS.settings]?.autoWakePing !== undefined) {
+      this.autoWakePing = !!result[STORAGE_KEYS.settings].autoWakePing;
     }
   }
 
@@ -254,6 +287,7 @@ class BackgroundService {
 
         // Start heartbeat
         this.startHeartbeat();
+        this.ensureAutonomousServices('relay_connected');
 
         // Flush queued messages
         this.flushMessageQueue();
@@ -296,6 +330,9 @@ class BackgroundService {
         // Only auto-reconnect if enabled and we've connected before
         if (this.autoConnect && this.connectionAttempts === 0) {
           this.scheduleReconnect(nodeType, url);
+        }
+        if (nodeType === 'relay') {
+          this.stopStallWatchdog();
         }
       };
 
@@ -480,6 +517,13 @@ class BackgroundService {
     this.broadcastToTabs({
       type: 'AGENTS_UPDATE',
       agents: Array.from(this.agents.values()),
+    });
+    this.frontloadPageAgentContext(agent);
+    this.sendActivityEvent('page_agent_registered', {
+      pageAgentId: id,
+      tabId: tabId || null,
+      platform,
+      channels: agent.channels,
     });
   }
 
@@ -781,6 +825,9 @@ class BackgroundService {
       case 'CHANNEL_MESSAGE':
       case 'MESSAGE_RECEIVE':
         const agentMessage = message.payload as AgentMessage;
+        if (agentMessage?.channel) {
+          this.channelLastActivityAt.set(agentMessage.channel, Date.now());
+        }
         // best-effort transcript persistence at the edge
         this.appendTranscriptFromRelay(agentMessage);
         this.handleAgentMessage(agentMessage);
@@ -1148,6 +1195,127 @@ class BackgroundService {
     });
   }
 
+  private async sendActivityEvent(
+    eventType: string,
+    metadata: Record<string, unknown> = {},
+    channel = 'fuse-activity-log'
+  ): Promise<void> {
+    this.send({
+      type: 'MESSAGE_SEND',
+      to: 'broadcast',
+      channel,
+      content: `[ACTIVITY] ${eventType}`,
+      messageType: 'event',
+      metadata: {
+        senderId: this.agentId,
+        eventType,
+        ts: Date.now(),
+        ...metadata,
+      },
+    });
+  }
+
+  private async ensureAutonomousServices(reason: string): Promise<void> {
+    const sinceLastStart = Date.now() - this.lastAutonomyStartAt;
+    if (sinceLastStart < 15000) {
+      return;
+    }
+    this.lastAutonomyStartAt = Date.now();
+
+    if (this.autoMonitor) {
+      await this.sendNativeMessage({ action: 'start', service: 'monitor' });
+    }
+    if (this.autoMasterClock) {
+      await this.sendNativeMessage({ action: 'start', service: 'masterClock' });
+    }
+
+    this.startStallWatchdog();
+    this.sendActivityEvent('autonomy_services_ensured', {
+      reason,
+      autoMonitor: this.autoMonitor,
+      autoMasterClock: this.autoMasterClock,
+      autoWakePing: this.autoWakePing,
+    });
+  }
+
+  private startStallWatchdog(): void {
+    if (this.stallWatchdogTimer || !this.autoWakePing) {
+      return;
+    }
+
+    this.stallWatchdogTimer = setInterval(() => {
+      if (!this.primaryConnection || this.primaryConnection.readyState !== WebSocket.OPEN) {
+        return;
+      }
+      const now = Date.now();
+      for (const [channelId] of this.channels) {
+        if (!this.joinedChannels.has(channelId)) {
+          continue;
+        }
+        const lastActivity = this.channelLastActivityAt.get(channelId) || 0;
+        if (lastActivity && now - lastActivity < 90000) {
+          continue;
+        }
+        const last = this.lastWakePingAt.get(channelId) || 0;
+        if (now - last < 120000) {
+          continue;
+        }
+
+        const pingId = `wake-${channelId}-${now}`;
+        this.lastWakePingAt.set(channelId, now);
+        this.send({
+          type: 'MESSAGE_SEND',
+          to: 'broadcast',
+          channel: channelId,
+          content: `[WAKE_PING ${pingId}] Stall check from browser orchestrator`,
+          messageType: 'event',
+          metadata: {
+            senderId: this.agentId,
+            eventType: 'wake_ping',
+            pingId,
+            reason: 'stall-watchdog',
+          },
+        });
+        this.sendActivityEvent('wake_ping_sent', { pingId, channelId, reason: 'stall-watchdog' });
+      }
+    }, 30000) as unknown as number;
+  }
+
+  private stopStallWatchdog(): void {
+    if (this.stallWatchdogTimer) {
+      clearInterval(this.stallWatchdogTimer);
+      this.stallWatchdogTimer = null;
+    }
+  }
+
+  private frontloadPageAgentContext(agent: Agent): void {
+    if (!agent.metadata?.tabId) {
+      return;
+    }
+    const joinedChannels = Array.from(this.joinedChannels);
+    chrome.tabs.sendMessage(agent.metadata.tabId as number, {
+      type: 'FUSE_ONBOARDING_CONTEXT',
+      payload: {
+        browserAgentId: this.agentId,
+        pageAgentId: agent.id,
+        channels: joinedChannels,
+        knownAgents: Array.from(this.agents.values()).map((a) => ({
+          id: a.id,
+          name: a.name,
+          platform: a.platform,
+          status: a.status,
+        })),
+        capabilities: agent.capabilities || [],
+        relayUrl: DEFAULT_NODES.relay,
+        policy: {
+          heartbeat: true,
+          wakePing: this.autoWakePing,
+          autonomous: true,
+        },
+      },
+    });
+  }
+
   /**
    * Setup message handlers from popup/content
    */
@@ -1166,6 +1334,17 @@ class BackgroundService {
           break;
 
         case 'GET_STATE':
+          // Find the page agent for this tab if it exists
+          let tabPageAgentId = null;
+          if (sender.tab?.id) {
+            for (const [id, agent] of this.agents) {
+              if (agent.metadata?.tabId === sender.tab.id) {
+                tabPageAgentId = id;
+                break;
+              }
+            }
+          }
+
           sendResponse({
             connectionStatus:
               this.primaryConnection?.readyState === WebSocket.OPEN ? 'connected' : 'disconnected',
@@ -1173,8 +1352,12 @@ class BackgroundService {
             channels: Array.from(this.channels.values()),
             joinedChannels: Array.from(this.joinedChannels),
             nodes: Object.fromEntries(this.nodeStatus),
-            agentId: this.agentId,
+            agentId: tabPageAgentId || this.agentId, // Use page-specific ID if available
+            browserAgentId: this.agentId,
             autoConnect: this.autoConnect,
+            autoMonitor: this.autoMonitor,
+            autoMasterClock: this.autoMasterClock,
+            autoWakePing: this.autoWakePing,
           });
           break;
 
@@ -1183,6 +1366,57 @@ class BackgroundService {
           chrome.storage.local.set({ [STORAGE_KEYS.autoConnect]: message.enabled });
           sendResponse({ success: true });
           break;
+
+        case 'SET_AUTONOMY_SETTINGS':
+          if (message.autoMonitor !== undefined) {
+            this.autoMonitor = !!message.autoMonitor;
+          }
+          if (message.autoMasterClock !== undefined) {
+            this.autoMasterClock = !!message.autoMasterClock;
+          }
+          if (message.autoWakePing !== undefined) {
+            this.autoWakePing = !!message.autoWakePing;
+          }
+          chrome.storage.local.set({
+            [STORAGE_KEYS.autoMonitor]: this.autoMonitor,
+            [STORAGE_KEYS.autoMasterClock]: this.autoMasterClock,
+            [STORAGE_KEYS.autoWakePing]: this.autoWakePing,
+          });
+          if (this.autoWakePing) {
+            this.startStallWatchdog();
+          } else {
+            this.stopStallWatchdog();
+          }
+          sendResponse({ success: true });
+          break;
+
+        case 'START_AUTONOMY':
+          this.ensureAutonomousServices('manual_start').then(() => sendResponse({ success: true }));
+          return true;
+
+        case 'STOP_AUTONOMY':
+          this.stopStallWatchdog();
+          Promise.all([
+            this.sendNativeMessage({ action: 'stop', service: 'monitor' }),
+            this.sendNativeMessage({ action: 'stop', service: 'masterClock' }),
+          ]).then(() => sendResponse({ success: true }));
+          return true;
+
+        case 'GET_AUTONOMY_STATUS':
+          this.sendNativeMessage({ action: 'status' }).then((status) => {
+            sendResponse({
+              success: true,
+              settings: {
+                autoMonitor: this.autoMonitor,
+                autoMasterClock: this.autoMasterClock,
+                autoWakePing: this.autoWakePing,
+              },
+              monitor: status?.services?.monitor || null,
+              masterClock: status?.services?.masterClock || null,
+              relay: status?.services?.relay || null,
+            });
+          });
+          return true;
 
         case 'START_RELAY':
           // Start relay via native messaging
@@ -1193,6 +1427,7 @@ class BackgroundService {
               setTimeout(() => {
                 this.connectionAttempts = 0;
                 this.connectToNode('relay', DEFAULT_NODES.relay);
+                this.ensureAutonomousServices('relay_started');
               }, 3000);
             }
           });
@@ -1316,6 +1551,11 @@ Format as JSON array:
             messageType: 'text',
             metadata: message.metadata, // <-- PRESERVE SENDER INFO
           });
+          this.sendActivityEvent('broadcast_message', {
+            channel: message.channel || null,
+            senderId: message.senderId || message.metadata?.senderId || null,
+            contentPreview: String(message.content || '').substring(0, 120),
+          });
           sendResponse({ success: true });
           break;
 
@@ -1356,6 +1596,10 @@ Format as JSON array:
             description: message.description,
             isPrivate: message.isPrivate || false,
           });
+          this.sendActivityEvent('channel_create', {
+            channelId: newChannel.id,
+            name: message.name,
+          });
           sendResponse({ success: true, channel: newChannel });
           break;
 
@@ -1371,6 +1615,7 @@ Format as JSON array:
             type: 'JOINED_CHANNELS_UPDATE',
             joinedChannels: Array.from(this.joinedChannels),
           });
+          this.sendActivityEvent('channel_join', { channelId: message.channelId });
           sendResponse({ success: true });
           break;
 
@@ -1386,6 +1631,7 @@ Format as JSON array:
             type: 'JOINED_CHANNELS_UPDATE',
             joinedChannels: Array.from(this.joinedChannels),
           });
+          this.sendActivityEvent('channel_leave', { channelId: message.channelId });
           sendResponse({ success: true });
           break;
 
@@ -1406,6 +1652,7 @@ Format as JSON array:
             type: 'CHANNEL_DELETE',
             channelId: channelIdToDelete,
           });
+          this.sendActivityEvent('channel_delete', { channelId: channelIdToDelete });
           sendResponse({ success: true });
           break;
 
@@ -1496,6 +1743,23 @@ Format as JSON array:
           sendResponse({ success: true });
           break;
 
+        case 'DISCOVER_AGENTS':
+          if (this.primaryConnection) {
+            this.send({ type: 'AGENT_LIST' });
+            this.send({ type: 'CHANNEL_LIST' });
+          }
+          sendResponse({ success: true });
+          break;
+
+        case 'ACTIVITY_EVENT':
+          this.sendActivityEvent(message.eventType || 'unknown', {
+            channel: message.channel || null,
+            senderId: message.senderId || null,
+            ...(message.metadata || {}),
+          });
+          sendResponse({ success: true });
+          break;
+
         case 'INJECT_MESSAGE':
           // Forward message injection request to active tab's content script
           // This handles messages from the FloatingPanel that need to be injected into the page's chat
@@ -1519,13 +1783,26 @@ Format as JSON array:
         case 'CHAT_DETECTED':
           // 1. Register this tab as a distinct Agent
           if (sender.tab?.id) {
-            const pageAgentId = `page-agent-${sender.tab.id}-${Math.random().toString(36).substr(2, 5)}`;
+            // REUSE existing agent ID for this tab if it exists
+            let pageAgentId = null;
+            for (const [id, agent] of this.agents) {
+              if (agent.metadata?.tabId === sender.tab.id) {
+                pageAgentId = id;
+                break;
+              }
+            }
+
+            if (!pageAgentId) {
+              pageAgentId = `page-agent-${sender.tab.id}-${Math.random().toString(36).substr(2, 5)}`;
+            }
+
             const hostname = sender.tab.url ? new URL(sender.tab.url).hostname : 'page';
             // Clean hostname for better display (e.g. "gemini.google.com" -> "Gemini")
             let platformName = hostname;
-            if (hostname.includes('google.com')) platformName = 'Gemini';
+            if (hostname.includes('gemini.google')) platformName = 'Gemini';
             else if (hostname.includes('openai.com')) platformName = 'ChatGPT';
             else if (hostname.includes('claude.ai')) platformName = 'Claude';
+            else if (hostname.includes('perplexity.ai')) platformName = 'Perplexity';
 
             this.registerPageAgent(
               pageAgentId,
@@ -1535,12 +1812,15 @@ Format as JSON array:
             );
 
             // 2. Broadcast availability
+            const message = {
+              type: 'AGENT_STATUS',
+              agent: this.agents.get(pageAgentId),
+            };
             this.broadcastToTabs(message);
 
             // 3. Return the assigned Agent ID to the tab so it knows who it is
             sendResponse({ success: true, agentId: pageAgentId });
           } else {
-            this.broadcastToTabs(message);
             sendResponse({ success: true });
           }
           break;
@@ -1568,8 +1848,8 @@ Format as JSON array:
               this.recentMessageHashes.set(responseHash, now);
 
               // Get sender's agent ID from message metadata (set by content script)
-              // The content script sets metadata.agentId = this.pageAgentId when it detects the AI response
-              let senderId = message.metadata?.agentId || message.senderId;
+              // PRIMARY SELF-DETECTION: Use metadata.senderId (most reliable)
+              let senderId = message.metadata?.senderId || message.senderId;
 
               // Fallback: construct from tab ID if not provided
               if (!senderId && sender.tab?.id) {
@@ -1680,6 +1960,7 @@ Format as JSON array:
       clearInterval(this.heartbeatTimer);
       this.heartbeatTimer = null;
     }
+    this.stopStallWatchdog();
 
     // Update status
     this.updateNodeStatus('relay', DEFAULT_NODES.relay, 'disconnected');

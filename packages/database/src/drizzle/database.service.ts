@@ -20,14 +20,20 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { sql } from 'drizzle-orm';
 import { Database, db, queryClient } from './client';
 import {
+  drizzleAgentApiGrantRepository,
+  DrizzleAgentApiGrantRepository,
   drizzleAgentRepository,
   DrizzleAgentRepository,
+  drizzleApiLogsRepository,
+  DrizzleApiLogsRepository,
   drizzleChatRepository,
   DrizzleChatRepository,
   drizzleJulesRepository,
   DrizzleJulesRepository,
   drizzleLLMConfigRepository,
   DrizzleLLMConfigRepository,
+  drizzleProviderApiKeyRepository,
+  DrizzleProviderApiKeyRepository,
   drizzleTaskRepository,
   DrizzleTaskRepository,
   drizzleUserRepository,
@@ -125,6 +131,13 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   }
 
   /**
+   * Agent API grant repository for delegated provider access controls
+   */
+  get agentApiGrants(): DrizzleAgentApiGrantRepository {
+    return drizzleAgentApiGrantRepository;
+  }
+
+  /**
    * Jules repository for Jules integration operations
    */
   get jules(): DrizzleJulesRepository {
@@ -167,6 +180,13 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   }
 
   /**
+   * API logs repository
+   */
+  get apiLogs(): DrizzleApiLogsRepository {
+    return drizzleApiLogsRepository;
+  }
+
+  /**
    * Wallet repository for wallet and transaction operations
    */
   get wallets(): DrizzleWalletRepository {
@@ -178,6 +198,13 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
    */
   get llmConfigs(): DrizzleLLMConfigRepository {
     return drizzleLLMConfigRepository;
+  }
+
+  /**
+   * Provider API key repository for per-user secret storage
+   */
+  get providerApiKeys(): DrizzleProviderApiKeyRepository {
+    return drizzleProviderApiKeyRepository;
   }
 
   // ==========================================================================

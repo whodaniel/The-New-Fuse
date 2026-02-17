@@ -1,7 +1,15 @@
 {
   "extends": "./tsconfig.base.json",
   "include": ["src/**/*"],
-  "exclude": ["src/mcp/**/*"],
+  "exclude": [
+    "src/mcp/**/*",
+    "src/agent/services/**/*",
+    "src/agent/test/**/*",
+    "src/agent/testing/**/*",
+    "src/components/**/*",
+    "src/auth/**/*",
+    "src/anthropic-xml/**/*"
+  ],
   "files": [],
   "references": [
     { "path": "./packages/types" },

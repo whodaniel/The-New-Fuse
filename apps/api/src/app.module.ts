@@ -15,10 +15,13 @@ import { AppService } from './app.service';
 import { CacheService } from './cache/cache.service';
 import llmProviderConfig from './config/llm-provider.config';
 import securityConfig from './config/security.config';
+import { AgentGrantsController } from './controllers/agent-grants.controller';
+import { AgentProxyController } from './controllers/agent-proxy.controller';
 import { HealthController } from './controllers/health.controller';
 import { MCPController } from './controllers/mcp.controller';
 import { ModelsController } from './controllers/models.controller';
 import { N8nWorkflowsController } from './controllers/n8n-workflows.controller';
+import { ProviderKeysController } from './controllers/provider-keys.controller';
 import { SystemController } from './controllers/system.controller';
 import { UserManagementController } from './controllers/user-management.controller';
 import { WebSocketController } from './controllers/websocket.controller';
@@ -44,6 +47,8 @@ import { TNFAutonomousModule } from './modules/tnf-autonomous.module';
 import { WebhooksModule } from './modules/webhooks/webhooks.module'; // Migrated to Drizzle ORM
 import { WorkflowTemplatesModule } from './modules/workflow-templates.module';
 import { MonitoringModule } from './monitoring/monitoring.module';
+import { AgentApiGrantsService } from './services/agent-api-grants.service';
+import { ProviderKeysService } from './services/provider-keys.service';
 import { SmartAccountModule } from './smart-accounts/smart-account.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { WalletsModule } from './wallets/wallets.module';
@@ -125,12 +130,15 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     HealthController, // CRITICAL: Health checks for monitoring/K8s
     LLMProviderController,
     MCPController, // MCP server management (20+ endpoints)
+    AgentGrantsController,
+    AgentProxyController,
     ModelsController, // AI model provider selection
     SystemController,
     UserManagementController, // User CRUD operations
     WebSocketController,
     WorkflowController,
     WorkspaceController, // Multi-workspace support
+    ProviderKeysController, // Per-user provider API key management
     N8nWorkflowsController,
   ],
   providers: [
@@ -143,6 +151,8 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
       useClass: MockLLMRegistry,
     },
     LLMProviderService,
+    ProviderKeysService,
+    AgentApiGrantsService,
     // Middleware
     SecurityValidationMiddleware,
     CsrfProtectionMiddleware,

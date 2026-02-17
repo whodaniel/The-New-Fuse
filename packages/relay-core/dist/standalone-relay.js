@@ -55,6 +55,7 @@ exports.TNFRelayServer = void 0;
  */
 const events_1 = require("events");
 const http_1 = __importDefault(require("http"));
+const redis_1 = require("redis");
 const ws_1 = __importStar(require("ws"));
 const JWTAuthService_1 = require("./auth/JWTAuthService");
 const conversation_state_machine_1 = require("./orchestrator/conversation-state-machine");
@@ -80,11 +81,24 @@ class TNFRelayServer extends events_1.EventEmitter {
     stallDetector;
     conversationManagers = new Map();
     subscriptionRegistry;
+    activityRedis = null;
+    activityRedisConnectPromise = null;
+    activityPersistenceEnabled;
+    activityPersistenceRequired;
+    activityStreamKey;
+    activityChannelPrefix;
+    activityMaxLen;
     constructor(port = PORT) {
         super();
         this.port = port;
         this.authService = (0, JWTAuthService_1.createAuthService)();
         this.subscriptionRegistry = new subscription_registry_1.SubscriptionRegistry();
+        this.activityPersistenceEnabled = process.env.ENABLE_ACTIVITY_PERSISTENCE !== 'false';
+        this.activityPersistenceRequired = process.env.ACTIVITY_PERSISTENCE_REQUIRED !== 'false';
+        this.activityStreamKey = process.env.ACTIVITY_STREAM_KEY || 'tnf:activity:stream';
+        this.activityChannelPrefix =
+            process.env.ACTIVITY_CHANNEL_STREAM_PREFIX || 'tnf:activity:channel:';
+        this.activityMaxLen = parseInt(process.env.ACTIVITY_STREAM_MAXLEN || '100000', 10);
         // Create HTTP server
         this.server = http_1.default.createServer(this.handleHttpRequest.bind(this));
         // Create WebSocket server at /ws path
@@ -129,9 +143,30 @@ class TNFRelayServer extends events_1.EventEmitter {
             });
             this.bridge.connect().catch((err) => console.error('[Relay] Failed to connect bridge:', err));
         }
+        if (this.activityPersistenceEnabled) {
+            this.activityRedis = (0, redis_1.createClient)({
+                url: process.env.ACTIVITY_REDIS_URL || process.env.REDIS_URL || 'redis://localhost:6379',
+            });
+            this.activityRedis.on('error', (err) => {
+                console.error('[Relay] Activity Redis client error:', err.message);
+            });
+            this.activityRedisConnectPromise = this.activityRedis
+                .connect()
+                .then(() => {
+                console.log(`[Relay] Activity persistence enabled -> stream ${this.activityStreamKey}`);
+            })
+                .catch((err) => {
+                console.error('[Relay] Failed to connect activity Redis:', err.message);
+                this.activityPersistenceEnabled = false;
+                this.activityRedis = null;
+                throw err;
+            });
+        }
     }
     handleHttpRequest(req, res) {
-        const { url } = req;
+        const urlString = req.url || '/';
+        const parsedUrl = new URL(urlString, `http://${req.headers.host || 'localhost'}`);
+        const pathname = parsedUrl.pathname;
         // CORS headers
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -142,7 +177,11 @@ class TNFRelayServer extends events_1.EventEmitter {
             return;
         }
         res.setHeader('Content-Type', 'application/json');
-        switch (url) {
+        if (pathname === '/activity/recent') {
+            void this.handleActivityRecentEndpoint(parsedUrl, res);
+            return;
+        }
+        switch (pathname) {
             case '/':
             case '/health':
                 res.writeHead(200);
@@ -175,6 +214,42 @@ class TNFRelayServer extends events_1.EventEmitter {
             default:
                 res.writeHead(404);
                 res.end(JSON.stringify({ error: 'Not found' }));
+        }
+    }
+    async handleActivityRecentEndpoint(parsedUrl, res) {
+        if (!this.activityPersistenceEnabled || !this.activityRedis) {
+            res.writeHead(503);
+            res.end(JSON.stringify({
+                error: 'Activity persistence is disabled',
+                enabled: this.activityPersistenceEnabled,
+            }));
+            return;
+        }
+        const channelId = parsedUrl.searchParams.get('channel');
+        const rawCount = parsedUrl.searchParams.get('count') || '100';
+        const count = Math.min(Math.max(parseInt(rawCount, 10) || 100, 1), 500);
+        const streamKey = channelId
+            ? `${this.activityChannelPrefix}${channelId}`
+            : this.activityStreamKey;
+        try {
+            const entries = await this.activityRedis.xRevRange(streamKey, '+', '-', { COUNT: count });
+            const events = entries.map((entry) => ({
+                streamId: entry.id,
+                ...this.parseActivityFields(entry.message),
+            }));
+            res.writeHead(200);
+            res.end(JSON.stringify({
+                stream: streamKey,
+                count: events.length,
+                events,
+            }));
+        }
+        catch (err) {
+            res.writeHead(500);
+            res.end(JSON.stringify({
+                error: 'Failed to read activity stream',
+                details: err instanceof Error ? err.message : String(err),
+            }));
         }
     }
     getOrCreateConversationManager(channelId) {
@@ -486,6 +561,7 @@ class TNFRelayServer extends events_1.EventEmitter {
                     metadata, // <-- PRESERVE metadata for loop prevention
                 };
                 this.emit('message', msg);
+                void this.persistActivityMessage(message, msg);
                 // Track activity for stall detection (skip system messages)
                 // Update conversation state if this is not a system message
                 if (channel && !metadata?.isSystemMessage && !metadata?.isRecoveryAttempt) {
@@ -571,6 +647,131 @@ class TNFRelayServer extends events_1.EventEmitter {
                 console.log(`[Relay] Unknown message type: ${type}`);
         }
         return currentAgentId;
+    }
+    shouldPersistActivityMessage(rawMessage, msg) {
+        const messageType = msg.type || '';
+        const metadata = msg.metadata || {};
+        const eventType = metadata.eventType;
+        return (msg.channel === 'fuse-activity-log' ||
+            messageType === 'event' ||
+            messageType === 'activity' ||
+            typeof eventType === 'string');
+    }
+    async persistActivityMessage(rawMessage, msg) {
+        if (!this.activityPersistenceEnabled || !this.activityRedis) {
+            return;
+        }
+        if (!this.shouldPersistActivityMessage(rawMessage, msg)) {
+            return;
+        }
+        const payload = (rawMessage.payload || {});
+        const metadata = (msg.metadata || {});
+        const activityChannel = typeof metadata.activityChannel === 'string' && metadata.activityChannel
+            ? metadata.activityChannel
+            : undefined;
+        const resolvedChannel = activityChannel || msg.channel;
+        const event = {
+            id: msg.id,
+            relayTimestamp: Date.now(),
+            originalTimestamp: typeof rawMessage.timestamp === 'number'
+                ? rawMessage.timestamp
+                : typeof payload.timestamp === 'number'
+                    ? payload.timestamp
+                    : undefined,
+            type: msg.type,
+            eventType: typeof metadata.eventType === 'string' ? metadata.eventType : undefined,
+            source: msg.from,
+            channel: msg.channel,
+            activityChannel: activityChannel,
+            content: msg.content,
+            metadata,
+        };
+        const fields = {
+            id: event.id,
+            relayTimestamp: String(event.relayTimestamp),
+            type: event.type,
+            source: event.source,
+            channel: event.channel || '',
+            activityChannel: event.activityChannel || '',
+            content: event.content || '',
+            metadata: JSON.stringify(event.metadata || {}),
+        };
+        if (typeof event.originalTimestamp === 'number') {
+            fields.originalTimestamp = String(event.originalTimestamp);
+        }
+        if (typeof event.eventType === 'string' && event.eventType) {
+            fields.eventType = event.eventType;
+        }
+        try {
+            const streamId = await this.activityRedis.xAdd(this.activityStreamKey, '*', fields, {
+                TRIM: {
+                    strategy: 'MAXLEN',
+                    strategyModifier: '~',
+                    threshold: this.activityMaxLen,
+                },
+            });
+            event.streamId = streamId;
+            if (resolvedChannel) {
+                await this.activityRedis.xAdd(`${this.activityChannelPrefix}${resolvedChannel}`, '*', fields, {
+                    TRIM: {
+                        strategy: 'MAXLEN',
+                        strategyModifier: '~',
+                        threshold: this.activityMaxLen,
+                    },
+                });
+            }
+        }
+        catch (err) {
+            console.error('[Relay] Failed to persist activity event:', err instanceof Error ? err.message : String(err));
+        }
+    }
+    parseActivityFields(fields) {
+        let parsedMetadata;
+        const metadata = fields.metadata;
+        if (metadata) {
+            try {
+                parsedMetadata = JSON.parse(metadata);
+            }
+            catch {
+                parsedMetadata = { raw: metadata };
+            }
+        }
+        return {
+            id: fields.id || '',
+            relayTimestamp: parseInt(fields.relayTimestamp || '0', 10),
+            originalTimestamp: fields.originalTimestamp
+                ? parseInt(fields.originalTimestamp, 10)
+                : undefined,
+            type: fields.type || 'event',
+            eventType: fields.eventType || undefined,
+            source: fields.source || 'unknown',
+            channel: fields.channel || undefined,
+            activityChannel: fields.activityChannel || undefined,
+            content: fields.content || '',
+            metadata: parsedMetadata,
+        };
+    }
+    async ensureActivityPersistenceReady() {
+        if (!this.activityPersistenceEnabled) {
+            if (this.activityPersistenceRequired) {
+                throw new Error('Activity persistence is disabled. Set ENABLE_ACTIVITY_PERSISTENCE=true or ACTIVITY_PERSISTENCE_REQUIRED=false.');
+            }
+            return;
+        }
+        if (!this.activityRedis || !this.activityRedisConnectPromise) {
+            if (this.activityPersistenceRequired) {
+                throw new Error('Activity persistence Redis client is unavailable');
+            }
+            return;
+        }
+        try {
+            await this.activityRedisConnectPromise;
+        }
+        catch (err) {
+            if (this.activityPersistenceRequired) {
+                throw new Error(`Activity persistence Redis connection failed: ${err instanceof Error ? err.message : String(err)}`);
+            }
+        }
     }
     handleAgentDisconnect(agentId) {
         console.log(`[Relay] Agent disconnected: ${agentId}`);
@@ -785,9 +986,12 @@ class TNFRelayServer extends events_1.EventEmitter {
         }, HEARTBEAT_INTERVAL);
     }
     start() {
-        return new Promise((resolve) => {
-            this.server.listen(this.port, () => {
-                console.log(`
+        return new Promise((resolve, reject) => {
+            void this
+                .ensureActivityPersistenceReady()
+                .then(() => {
+                this.server.listen(this.port, () => {
+                    console.log(`
 ╔═════════════════════════════════════════════════════════════╗
 ║           ⚡ TNF RELAY SERVER ⚡                             ║
 ║                                                              ║
@@ -800,11 +1004,16 @@ class TNFRelayServer extends events_1.EventEmitter {
 ║   Part of @the-new-fuse/relay-core                           ║
 ╚═════════════════════════════════════════════════════════════╝
 `);
-                this.startHeartbeatMonitor();
-                this.stallDetector.start(); // Start stall detection
-                console.log('[Relay] Stall detector started');
-                this.emit('started', { port: this.port });
-                resolve();
+                    this.startHeartbeatMonitor();
+                    this.stallDetector.start(); // Start stall detection
+                    console.log('[Relay] Stall detector started');
+                    this.emit('started', { port: this.port });
+                    resolve();
+                });
+            })
+                .catch((err) => {
+                console.error('[Relay] Startup blocked:', err.message);
+                reject(err);
             });
         });
     }
@@ -819,9 +1028,23 @@ class TNFRelayServer extends events_1.EventEmitter {
             this.sockets.forEach((ws) => ws.close());
             this.wss.close(() => {
                 this.server.close(() => {
-                    console.log('[Relay] Server stopped');
-                    this.emit('stopped');
-                    resolve();
+                    const finalize = async () => {
+                        if (this.activityRedis) {
+                            try {
+                                await this.activityRedis.quit();
+                            }
+                            catch (err) {
+                                console.warn('[Relay] Failed to close activity Redis cleanly:', err instanceof Error ? err.message : String(err));
+                            }
+                            finally {
+                                this.activityRedis = null;
+                            }
+                        }
+                        console.log('[Relay] Server stopped');
+                        this.emit('stopped');
+                        resolve();
+                    };
+                    void finalize();
                 });
             });
         });

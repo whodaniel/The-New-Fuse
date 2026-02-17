@@ -1,5 +1,8 @@
-// Stub implementation
-export const CurrentUser: unknown, key: string, descriptor: PropertyDescriptor)  = () => (target> {
-    return descriptor;
-  };
+import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+
+export const CurrentUser = createParamDecorator((data: unknown, ctx: ExecutionContext) => {
+  const request = ctx.switchToHttp().getRequest();
+  return request.user;
+});
+
 export default CurrentUser;

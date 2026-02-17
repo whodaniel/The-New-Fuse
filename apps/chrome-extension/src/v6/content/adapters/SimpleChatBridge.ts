@@ -564,6 +564,12 @@ class SimpleChatBridge {
       return entries.length;
     }
 
+    // Perplexity Fallback (Expanded)
+    const perplexity = document.querySelectorAll(
+      'div.prose, div[class*="prose"], div[data-testid*="answer"], div.font-sans.text-base.text-text-main'
+    ).length;
+    if (perplexity > 0) return perplexity;
+
     // Generic assistant-like message fallback
     const generic = document.querySelectorAll(
       '[data-message-author-role="assistant"], [class*="assistant-message"], [class*="model-response"]'
@@ -620,6 +626,19 @@ class SimpleChatBridge {
       }
     }
 
+    // Perplexity Fallback (Expanded)
+    const perplexityResponses = document.querySelectorAll(
+      'div.prose, div[class*="prose"], div[data-testid*="answer"], div.font-sans.text-base.text-text-main'
+    );
+    if (perplexityResponses.length > 0) {
+      // Get the last one
+      const last = perplexityResponses[perplexityResponses.length - 1];
+      const text = cleanText(last);
+      // Perplexity often has "Sources" or "Related" sections at the bottom, we might need to be careful
+      // But usually 'prose' contains the main answer.
+      if (text) return text;
+    }
+
     // Narrow generic fallback to assistant-role only
     const generic = document.querySelectorAll('[data-message-author-role="assistant"]');
     if (generic.length > 0) {
@@ -643,9 +662,6 @@ class SimpleChatBridge {
       'button[aria-label*="Stop response"]',
       'button[aria-label*="Stop generating"]',
       '[data-testid*="stop-button"]',
-      // Perplexity streaming
-      'button[aria-label="Pause"]',
-      'div[class*="sticky"] button svg[data-icon="pause"]',
     ];
 
     for (const selector of streamingIndicators) {
@@ -737,9 +753,17 @@ class SimpleChatBridge {
         }
       } else {
         // Textarea/Input handling
-        // Use the native setter to ensure React picks up the change
-        setNativeValue(input, text);
-        // Dispatch extra events for good measure
+        // Reverting to stable v5 logic: direct value + input event
+        (input as HTMLTextAreaElement).value = text;
+        input.dispatchEvent(
+          new InputEvent('input', {
+            bubbles: true,
+            cancelable: true,
+            inputType: 'insertText',
+            data: text,
+          })
+        );
+        // Also dispatch change for form listeners
         input.dispatchEvent(new Event('change', { bubbles: true }));
       }
 

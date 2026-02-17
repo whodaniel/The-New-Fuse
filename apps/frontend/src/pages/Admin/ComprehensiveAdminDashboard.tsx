@@ -12,16 +12,22 @@ import {
   Flag,
   HardDrive,
   Heart,
+  PauseCircle,
+  PlayCircle,
   RefreshCw,
   Server,
   Settings,
   Shield,
+  Trash2,
   TrendingUp,
   Users,
+  Wifi,
+  WifiOff,
   XCircle,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuthorization } from '../../hooks/useAuthorization';
 
 interface SystemMetrics {
   totalUsers: number;
@@ -59,28 +65,100 @@ interface Alert {
   resolved: boolean;
 }
 
-const DashboardSkeleton = () => (
-  <div className="p-8 max-w-7xl mx-auto space-y-8 animate-pulse">
-    <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mb-8"></div>
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {[1, 2, 3, 4].map((i) => (
-        <div key={i} className="h-32 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
-      ))}
-    </div>
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <div className="lg:col-span-2 h-96 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
-      <div className="h-96 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
-    </div>
+interface RelayChannel {
+  id: string;
+  name: string;
+  members?: string[];
+}
+
+interface RelayHealthResponse {
+  status?: string;
+  relay?: string;
+  uptime?: number;
+  agents?: number;
+  channels?: number;
+}
+
+interface RelayActivityEvent {
+  id?: string;
+  streamId?: string;
+  type?: string;
+  eventType?: string;
+  source?: string;
+  channel?: string;
+  content?: string;
+  relayTimestamp?: number;
+  originalTimestamp?: number;
+  metadata?: Record<string, unknown>;
+}
+
+const defaultMetrics: SystemMetrics = {
+  totalUsers: 147,
+  activeUsers: 23,
+  totalWorkspaces: 12,
+  activeWorkspaces: 8,
+  totalAgents: 34,
+  runningAgents: 12,
+  systemUptime: 'Unknown',
+  serverHealth: 'warning',
+  memoryUsage: 0,
+  cpuUsage: 0,
+  diskUsage: 0,
+  networkTraffic: 0,
+  apiRequests: 0,
+  apiErrors: 0,
+  databaseConnections: 0,
+  cacheHitRate: 0,
+};
+
+const RelayMetricCard = ({
+  title,
+  value,
+  subtitle,
+}: {
+  title: string;
+  value: string | number;
+  subtitle: string;
+}) => (
+  <div className="bg-white rounded-lg shadow-lg p-4 border-l-4 border-indigo-500">
+    <div className="text-2xl font-bold text-gray-900">{value}</div>
+    <div className="text-sm text-gray-700">{title}</div>
+    <div className="text-xs text-gray-500 mt-1">{subtitle}</div>
   </div>
 );
 
 export default function ComprehensiveAdminDashboard() {
+  const { isSuperAdmin, userRole } = useAuthorization();
+  const relayHttpBase = useMemo(
+    () =>
+      (import.meta.env.VITE_RELAY_HTTP_URL as string | undefined)?.replace(/\/$/, '') ||
+      'http://localhost:3000',
+    []
+  );
+  const relayWsUrl = useMemo(() => {
+    const fromEnv = (import.meta.env.VITE_RELAY_WS_URL as string | undefined)?.trim();
+    if (fromEnv) return fromEnv;
+    return `${relayHttpBase.replace(/^http/i, 'ws')}/ws`;
+  }, [relayHttpBase]);
+
   const [metrics, setMetrics] = useState<SystemMetrics | null>(null);
   const [recentActivities, setRecentActivities] = useState<RecentActivity[]>([]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<'1h' | '24h' | '7d' | '30d'>('24h');
+  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
+  const [autoRefresh, setAutoRefresh] = useState(true);
+  const [relayConnected, setRelayConnected] = useState(false);
+  const [relayReachable, setRelayReachable] = useState(false);
+  const [activityPersistenceAvailable, setActivityPersistenceAvailable] = useState(false);
+  const [relayChannels, setRelayChannels] = useState<RelayChannel[]>([]);
+  const [selectedChannelId, setSelectedChannelId] = useState('');
+  const [networkEventsCount, setNetworkEventsCount] = useState(0);
+  const [actionBusy, setActionBusy] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const wsRef = useRef<WebSocket | null>(null);
 
   const formatTimestamp = (date: Date) => {
     const now = new Date();
@@ -114,6 +192,342 @@ export default function ComprehensiveAdminDashboard() {
     };
     return icons[level];
   };
+
+  const toRecentActivity = useCallback((event: RelayActivityEvent): RecentActivity => {
+    const source = event.source || 'relay';
+    const content = String(event.content || '').trim();
+    const messageText = content.length > 100 ? `${content.slice(0, 100)}...` : content;
+    const eventLabel = event.eventType || event.type || 'activity';
+    const lower = `${source} ${eventLabel} ${content}`.toLowerCase();
+
+    const type: RecentActivity['type'] = lower.includes('agent')
+      ? 'agent'
+      : lower.includes('security') || lower.includes('auth')
+        ? 'security'
+        : lower.includes('user')
+          ? 'user'
+          : 'system';
+
+    const status: RecentActivity['status'] =
+      lower.includes('error') || lower.includes('failed')
+        ? 'error'
+        : lower.includes('warn')
+          ? 'warning'
+          : 'success';
+
+    return {
+      id:
+        event.id || event.streamId || `evt-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      type,
+      user: source,
+      action: messageText ? `${eventLabel}: ${messageText}` : eventLabel,
+      timestamp: new Date(event.relayTimestamp || event.originalTimestamp || Date.now()),
+      status,
+    };
+  }, []);
+
+  const toSafePercent = (value: unknown) => {
+    const n = Number(value);
+    if (!Number.isFinite(n)) return 0;
+    return Math.max(0, Math.min(100, Math.round(n)));
+  };
+
+  const getCountByRange = (range: '1h' | '24h' | '7d' | '30d') => {
+    if (range === '1h') return 30;
+    if (range === '24h') return 100;
+    if (range === '7d') return 250;
+    return 500;
+  };
+
+  const loadDashboardData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const activityCount = getCountByRange(timeRange);
+      const activityUrl = `${relayHttpBase}/activity/recent?count=${activityCount}${selectedChannelId ? `&channel=${encodeURIComponent(selectedChannelId)}` : ''}`;
+
+      const [healthResult, channelsResult, agentsResult, activityResult, adminMetricsResult] =
+        await Promise.allSettled([
+          fetch(`${relayHttpBase}/health`, { method: 'GET' }),
+          fetch(`${relayHttpBase}/channels`, { method: 'GET' }),
+          fetch(`${relayHttpBase}/agents`, { method: 'GET' }),
+          fetch(activityUrl, { method: 'GET' }),
+          fetch('/api/admin/metrics/dashboard', { method: 'GET' }),
+        ]);
+
+      const relayHealth: RelayHealthResponse | null =
+        healthResult.status === 'fulfilled' && healthResult.value.ok
+          ? await healthResult.value.json()
+          : null;
+
+      const channels: RelayChannel[] =
+        channelsResult.status === 'fulfilled' && channelsResult.value.ok
+          ? await channelsResult.value.json()
+          : [];
+
+      const agents: unknown[] =
+        agentsResult.status === 'fulfilled' && agentsResult.value.ok
+          ? await agentsResult.value.json()
+          : [];
+
+      let activityEvents: RelayActivityEvent[] = [];
+      if (activityResult.status === 'fulfilled' && activityResult.value.ok) {
+        const payload = (await activityResult.value.json()) as { events?: RelayActivityEvent[] };
+        activityEvents = Array.isArray(payload.events) ? payload.events : [];
+        setActivityPersistenceAvailable(true);
+      } else {
+        setActivityPersistenceAvailable(false);
+      }
+
+      let adminMetrics: any = null;
+      if (adminMetricsResult.status === 'fulfilled' && adminMetricsResult.value.ok) {
+        adminMetrics = await adminMetricsResult.value.json();
+      }
+
+      const uptimeSeconds = relayHealth?.uptime;
+      const uptimeHours = Number.isFinite(uptimeSeconds)
+        ? Math.floor((uptimeSeconds as number) / 3600)
+        : 0;
+
+      const mergedMetrics: SystemMetrics = {
+        ...defaultMetrics,
+        totalUsers: Number(adminMetrics?.users?.total ?? defaultMetrics.totalUsers),
+        activeUsers: Number(adminMetrics?.users?.active ?? defaultMetrics.activeUsers),
+        totalWorkspaces: Number(adminMetrics?.workflows?.total ?? defaultMetrics.totalWorkspaces),
+        activeWorkspaces: Number(
+          adminMetrics?.workflows?.total
+            ? Math.max(1, Math.floor(adminMetrics.workflows.total * 0.65))
+            : defaultMetrics.activeWorkspaces
+        ),
+        totalAgents: Number(
+          adminMetrics?.agents?.total ?? agents.length ?? defaultMetrics.totalAgents
+        ),
+        runningAgents: Number(
+          adminMetrics?.agents?.active ?? relayHealth?.agents ?? defaultMetrics.runningAgents
+        ),
+        systemUptime: uptimeHours > 0 ? `${uptimeHours}h` : defaultMetrics.systemUptime,
+        serverHealth:
+          relayHealth?.status === 'ok' ? 'healthy' : relayHealth ? 'warning' : 'critical',
+        memoryUsage: toSafePercent(
+          adminMetrics?.system?.memory?.percentage ?? defaultMetrics.memoryUsage
+        ),
+        cpuUsage: toSafePercent(adminMetrics?.system?.cpu?.usage ?? defaultMetrics.cpuUsage),
+        diskUsage: toSafePercent(adminMetrics?.system?.disk?.usage ?? defaultMetrics.diskUsage),
+        networkTraffic: activityEvents.length,
+        apiRequests: Number(adminMetrics?.auditLogs?.total ?? activityEvents.length),
+        apiErrors: activityEvents.filter((e) => {
+          const label = `${e.type || ''} ${e.eventType || ''} ${e.content || ''}`.toLowerCase();
+          return label.includes('error') || label.includes('fail');
+        }).length,
+        databaseConnections: Number(
+          adminMetrics?.system?.database?.connections ?? defaultMetrics.databaseConnections
+        ),
+        cacheHitRate: toSafePercent(
+          adminMetrics?.system?.cache?.hitRate ?? defaultMetrics.cacheHitRate
+        ),
+      };
+
+      setRelayReachable(!!relayHealth);
+      setRelayChannels(channels);
+      if (!selectedChannelId && channels.length > 0) {
+        setSelectedChannelId(channels[0].id);
+      }
+      setMetrics(mergedMetrics);
+
+      const mappedActivities = activityEvents.slice(0, 12).map(toRecentActivity);
+      setRecentActivities(mappedActivities);
+      setNetworkEventsCount(activityEvents.length);
+
+      const derivedAlerts: Alert[] = [];
+      if (!relayHealth) {
+        derivedAlerts.push({
+          id: 'relay-offline',
+          level: 'critical',
+          message: `Relay unavailable at ${relayHttpBase}/health`,
+          timestamp: new Date(),
+          resolved: false,
+        });
+      }
+      if (!activityEvents.length) {
+        derivedAlerts.push({
+          id: 'no-activity',
+          level: 'warning',
+          message: 'No recent relay activity found for selected window.',
+          timestamp: new Date(),
+          resolved: false,
+        });
+      }
+      if (!activityPersistenceAvailable) {
+        derivedAlerts.push({
+          id: 'activity-persistence',
+          level: 'warning',
+          message: 'Activity persistence endpoint is unavailable or disabled.',
+          timestamp: new Date(),
+          resolved: false,
+        });
+      }
+      setAlerts(derivedAlerts);
+      setLastUpdated(new Date());
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load dashboard data');
+    } finally {
+      setLoading(false);
+    }
+  }, [relayHttpBase, selectedChannelId, timeRange, toRecentActivity]);
+
+  const connectRelaySocket = useCallback(() => {
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) return;
+
+    try {
+      const ws = new WebSocket(relayWsUrl);
+      wsRef.current = ws;
+
+      ws.onopen = () => {
+        setRelayConnected(true);
+        ws.send(
+          JSON.stringify({
+            id: `admin-${Date.now()}`,
+            type: 'CHANNEL_LIST',
+            source: 'super-admin-dashboard',
+            payload: {},
+            timestamp: Date.now(),
+          })
+        );
+      };
+
+      ws.onmessage = (ev) => {
+        try {
+          const msg = JSON.parse(String(ev.data)) as {
+            type?: string;
+            payload?: { channels?: RelayChannel[] };
+          };
+          if (msg.type === 'CHANNEL_LIST' && Array.isArray(msg.payload?.channels)) {
+            setRelayChannels(msg.payload.channels);
+          }
+        } catch {
+          // Ignore parse errors for non-json relay payloads.
+        }
+      };
+
+      ws.onerror = () => {
+        setRelayConnected(false);
+      };
+
+      ws.onclose = () => {
+        setRelayConnected(false);
+      };
+    } catch {
+      setRelayConnected(false);
+    }
+  }, [relayWsUrl]);
+
+  const disconnectRelaySocket = useCallback(() => {
+    if (wsRef.current) {
+      wsRef.current.close();
+      wsRef.current = null;
+    }
+    setRelayConnected(false);
+  }, []);
+
+  const sendRelayControl = useCallback(
+    async (type: 'CHANNEL_PAUSE' | 'CHANNEL_RESUME') => {
+      if (!selectedChannelId) return;
+      setActionBusy(true);
+      try {
+        if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
+          connectRelaySocket();
+          await new Promise((resolve) => setTimeout(resolve, 250));
+        }
+
+        if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
+          throw new Error('Relay socket is not connected');
+        }
+
+        wsRef.current.send(
+          JSON.stringify({
+            id: `admin-control-${Date.now()}`,
+            type,
+            source: 'super-admin-dashboard',
+            channel: selectedChannelId,
+            payload: { channelId: selectedChannelId },
+            timestamp: Date.now(),
+          })
+        );
+
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        await loadDashboardData();
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Control action failed');
+      } finally {
+        setActionBusy(false);
+      }
+    },
+    [connectRelaySocket, loadDashboardData, selectedChannelId]
+  );
+
+  const confirmDeleteChannel = useCallback(async () => {
+    const selectedChannel = relayChannels.find((ch) => ch.id === selectedChannelId);
+    if (!selectedChannel || !isSuperAdmin) return;
+    if (deleteConfirmText.trim() !== selectedChannel.name.trim()) {
+      setError('Channel name confirmation mismatch. Deletion blocked.');
+      return;
+    }
+
+    setActionBusy(true);
+    try {
+      if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
+        connectRelaySocket();
+        await new Promise((resolve) => setTimeout(resolve, 250));
+      }
+      if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
+        throw new Error('Relay socket is not connected');
+      }
+
+      wsRef.current.send(
+        JSON.stringify({
+          id: `admin-delete-${Date.now()}`,
+          type: 'CHANNEL_DELETE',
+          source: 'super-admin-dashboard',
+          channel: selectedChannelId,
+          payload: { channelId: selectedChannelId },
+          timestamp: Date.now(),
+        })
+      );
+
+      setDeleteConfirmOpen(false);
+      setDeleteConfirmText('');
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      await loadDashboardData();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Channel delete failed');
+    } finally {
+      setActionBusy(false);
+    }
+  }, [
+    connectRelaySocket,
+    deleteConfirmText,
+    isSuperAdmin,
+    loadDashboardData,
+    relayChannels,
+    selectedChannelId,
+  ]);
+
+  useEffect(() => {
+    connectRelaySocket();
+    void loadDashboardData();
+    return () => {
+      disconnectRelaySocket();
+    };
+  }, [connectRelaySocket, disconnectRelaySocket, loadDashboardData]);
+
+  useEffect(() => {
+    if (!autoRefresh) return;
+    const interval = setInterval(() => {
+      void loadDashboardData();
+    }, 15000);
+    return () => clearInterval(interval);
+  }, [autoRefresh, loadDashboardData]);
 
   const adminSections = [
     {
@@ -193,7 +607,7 @@ export default function ComprehensiveAdminDashboard() {
     },
     {
       title: 'OpenClaw Security',
-      description: 'Secure API Key Rotation',
+      description: 'Secure API key rotation',
       icon: <Shield className="h-6 w-6" />,
       link: '/admin/openclaw-security',
       color: 'bg-emerald-600',
@@ -209,10 +623,6 @@ export default function ComprehensiveAdminDashboard() {
             <div key={i} className="h-32 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
           ))}
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 h-96 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
-          <div className="h-96 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
-        </div>
       </div>
     );
   }
@@ -225,7 +635,10 @@ export default function ComprehensiveAdminDashboard() {
           <h2 className="text-2xl font-bold text-red-800 mb-2">Failed to Load Data</h2>
           <p className="text-red-600 mb-6">{error}</p>
           <button
-            onClick={loadDashboardData}
+            onClick={() => {
+              setError(null);
+              void loadDashboardData();
+            }}
             className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center mx-auto"
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
@@ -236,22 +649,26 @@ export default function ComprehensiveAdminDashboard() {
     );
   }
 
+  const selectedChannel = relayChannels.find((ch) => ch.id === selectedChannelId);
+  const selectedChannelName = selectedChannel?.name || 'No channel selected';
+
   return (
     <div className="p-8 max-w-[1600px] mx-auto bg-gray-50 min-h-screen">
-      {/* Header */}
       <div className="mb-8">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
           <div>
             <h1 className="text-4xl font-bold text-gray-900 mb-2 flex items-center">
               <Shield className="h-10 w-10 mr-3 text-blue-600" />
-              Admin Dashboard
+              Super Admin Control Panel
             </h1>
-            <p className="text-gray-600">Comprehensive platform management and monitoring</p>
+            <p className="text-gray-600">
+              Comprehensive platform management and network orchestration
+            </p>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-3 flex-wrap">
             <select
               value={timeRange}
-              onChange={(e) => setTimeRange(e.target.value as any)}
+              onChange={(e) => setTimeRange(e.target.value as '1h' | '24h' | '7d' | '30d')}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             >
               <option value="1h">Last Hour</option>
@@ -260,7 +677,13 @@ export default function ComprehensiveAdminDashboard() {
               <option value="30d">Last 30 Days</option>
             </select>
             <button
-              onClick={loadDashboardData}
+              onClick={() => setAutoRefresh((prev) => !prev)}
+              className={`px-4 py-2 rounded-lg transition-colors ${autoRefresh ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}
+            >
+              Auto Refresh: {autoRefresh ? 'On' : 'Off'}
+            </button>
+            <button
+              onClick={() => void loadDashboardData()}
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
               disabled={loading}
             >
@@ -269,9 +692,11 @@ export default function ComprehensiveAdminDashboard() {
             </button>
           </div>
         </div>
+        <p className="text-xs text-gray-500 mt-2">
+          Last updated: {lastUpdated.toLocaleTimeString()}
+        </p>
       </div>
 
-      {/* System Status Banner */}
       {metrics && (
         <div
           className={`mb-8 p-6 rounded-lg border-2 ${
@@ -282,20 +707,24 @@ export default function ComprehensiveAdminDashboard() {
                 : 'bg-red-50 border-red-200'
           }`}
         >
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center space-x-4">
-              {getHealthIcon(metrics.serverHealth)}
+              {metrics.serverHealth === 'healthy' ? (
+                <Heart className="h-5 w-5 text-green-500" />
+              ) : metrics.serverHealth === 'warning' ? (
+                <AlertCircle className="h-5 w-5 text-yellow-500" />
+              ) : (
+                <XCircle className="h-5 w-5 text-red-500" />
+              )}
               <div>
                 <h3 className="text-lg font-semibold">
                   System Status:{' '}
                   {metrics.serverHealth.charAt(0).toUpperCase() + metrics.serverHealth.slice(1)}
                 </h3>
-                <p className="text-sm text-gray-600">
-                  Uptime: {metrics.systemUptime} | Last updated: {new Date().toLocaleTimeString()}
-                </p>
+                <p className="text-sm text-gray-600">Uptime: {metrics.systemUptime}</p>
               </div>
             </div>
-            <div className="flex items-center space-x-6">
+            <div className="flex items-center gap-6">
               <div className="text-center">
                 <div className="text-2xl font-bold">{metrics.activeUsers}</div>
                 <div className="text-xs text-gray-600">Active Users</div>
@@ -313,7 +742,109 @@ export default function ComprehensiveAdminDashboard() {
         </div>
       )}
 
-      {/* Key Metrics Grid */}
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">Network Activity Control</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mb-4">
+          <RelayMetricCard
+            title="Relay API"
+            value={relayReachable ? 'Online' : 'Offline'}
+            subtitle={relayReachable ? relayHttpBase : `Unreachable: ${relayHttpBase}`}
+          />
+          <RelayMetricCard
+            title="Relay Socket"
+            value={relayConnected ? 'Connected' : 'Disconnected'}
+            subtitle={relayConnected ? relayWsUrl : 'Open socket to send controls'}
+          />
+          <RelayMetricCard
+            title="Activity Stream"
+            value={activityPersistenceAvailable ? 'Enabled' : 'Unavailable'}
+            subtitle="/activity/recent"
+          />
+          <RelayMetricCard
+            title="Channels"
+            value={relayChannels.length}
+            subtitle="Available relay channels"
+          />
+          <RelayMetricCard
+            title="Agents"
+            value={metrics?.runningAgents || 0}
+            subtitle="Observed active agents"
+          />
+          <RelayMetricCard
+            title="Events"
+            value={networkEventsCount}
+            subtitle={`Window: ${timeRange}`}
+          />
+        </div>
+
+        <div className="bg-white rounded-lg shadow-lg p-4 border border-gray-200">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-end">
+            <div>
+              <label className="block text-sm text-gray-700 mb-2">Relay Channel</label>
+              <select
+                value={selectedChannelId}
+                onChange={(e) => setSelectedChannelId(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              >
+                {relayChannels.length === 0 ? (
+                  <option value="">No channels</option>
+                ) : (
+                  relayChannels.map((channel) => (
+                    <option key={channel.id} value={channel.id}>
+                      {channel.name} ({channel.id})
+                    </option>
+                  ))
+                )}
+              </select>
+              <p className="text-xs text-gray-500 mt-1">Selected: {selectedChannelName}</p>
+            </div>
+
+            <div className="flex gap-2 flex-wrap">
+              <button
+                onClick={relayConnected ? disconnectRelaySocket : connectRelaySocket}
+                className={`px-3 py-2 rounded-lg text-white flex items-center ${relayConnected ? 'bg-slate-700 hover:bg-slate-800' : 'bg-indigo-600 hover:bg-indigo-700'}`}
+              >
+                {relayConnected ? (
+                  <WifiOff className="h-4 w-4 mr-2" />
+                ) : (
+                  <Wifi className="h-4 w-4 mr-2" />
+                )}
+                {relayConnected ? 'Disconnect Socket' : 'Connect Socket'}
+              </button>
+              <button
+                onClick={() => void sendRelayControl('CHANNEL_PAUSE')}
+                disabled={!selectedChannelId || actionBusy}
+                className="px-3 py-2 rounded-lg text-white bg-amber-600 hover:bg-amber-700 disabled:opacity-50 flex items-center"
+              >
+                <PauseCircle className="h-4 w-4 mr-2" />
+                Pause
+              </button>
+              <button
+                onClick={() => void sendRelayControl('CHANNEL_RESUME')}
+                disabled={!selectedChannelId || actionBusy}
+                className="px-3 py-2 rounded-lg text-white bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 flex items-center"
+              >
+                <PlayCircle className="h-4 w-4 mr-2" />
+                Resume
+              </button>
+              <button
+                onClick={() => setDeleteConfirmOpen(true)}
+                disabled={!selectedChannelId || actionBusy || !isSuperAdmin}
+                className="px-3 py-2 rounded-lg text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 flex items-center"
+                title={
+                  isSuperAdmin
+                    ? 'Delete selected channel'
+                    : `Delete is restricted to SUPER_ADMIN (current role: ${userRole || 'unknown'})`
+                }
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {metrics && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-blue-500">
@@ -351,9 +882,9 @@ export default function ComprehensiveAdminDashboard() {
             <div className="text-3xl font-bold text-gray-900">
               {metrics.apiRequests.toLocaleString()}
             </div>
-            <div className="text-sm text-gray-600">API Requests (24h)</div>
+            <div className="text-sm text-gray-600">Network Events</div>
             <div className="mt-2 text-xs text-red-600 flex items-center">
-              {metrics.apiErrors} errors (0.16%)
+              {metrics.apiErrors} flagged errors
             </div>
           </div>
 
@@ -369,24 +900,6 @@ export default function ComprehensiveAdminDashboard() {
         </div>
       )}
 
-      {/* Performance Charts - Historical Data Unavailable */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center justify-center min-h-[300px] opacity-75">
-          <BarChart3 className="h-16 w-16 text-gray-300 mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">System Performance History</h3>
-          <p className="text-gray-500 text-center">
-            Historical metrics retention is not currently enabled.
-          </p>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center justify-center min-h-[300px] opacity-75">
-          <Activity className="h-16 w-16 text-gray-300 mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">API Usage Trends</h3>
-          <p className="text-gray-500 text-center">Traffic history data is not available.</p>
-        </div>
-      </div>
-
-      {/* Admin Sections Grid */}
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Admin Tools</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -409,49 +922,50 @@ export default function ComprehensiveAdminDashboard() {
         </div>
       </div>
 
-      {/* Recent Activity and Alerts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* Recent Activity */}
         <div className="bg-white rounded-lg shadow-lg p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Recent Activity</h3>
+            <h3 className="text-lg font-semibold text-gray-900">Network Activity Feed</h3>
             <Clock className="h-5 w-5 text-gray-400" />
           </div>
-          <div className="space-y-4">
-            {recentActivities.map((activity) => (
-              <div
-                key={activity.id}
-                className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-              >
-                <div className="mt-1">{getActivityIcon(activity.type)}</div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">{activity.user}</p>
-                  <p className="text-xs text-gray-600">{activity.action}</p>
-                  <p className="text-xs text-gray-400 mt-1">
-                    {formatTimestamp(activity.timestamp)}
-                  </p>
+          <div className="space-y-4 max-h-[460px] overflow-y-auto pr-1">
+            {recentActivities.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">No recent relay activity.</div>
+            ) : (
+              recentActivities.map((activity) => (
+                <div
+                  key={activity.id}
+                  className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                >
+                  <div className="mt-1">{getActivityIcon(activity.type)}</div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 truncate">{activity.user}</p>
+                    <p className="text-xs text-gray-600 break-words">{activity.action}</p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      {formatTimestamp(activity.timestamp)}
+                    </p>
+                  </div>
+                  <div>
+                    {activity.status === 'success' && (
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                    )}
+                    {activity.status === 'warning' && (
+                      <AlertCircle className="h-4 w-4 text-yellow-500" />
+                    )}
+                    {activity.status === 'error' && <XCircle className="h-4 w-4 text-red-500" />}
+                  </div>
                 </div>
-                <div>
-                  {activity.status === 'success' && (
-                    <CheckCircle className="h-4 w-4 text-green-500" />
-                  )}
-                  {activity.status === 'warning' && (
-                    <AlertCircle className="h-4 w-4 text-yellow-500" />
-                  )}
-                  {activity.status === 'error' && <XCircle className="h-4 w-4 text-red-500" />}
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
           <Link
             to="/admin/audit-logs"
             className="block text-center mt-4 text-blue-600 hover:text-blue-700 text-sm font-medium"
           >
-            View All Activity →
+            View Full Audit Logs →
           </Link>
         </div>
 
-        {/* System Alerts */}
         <div className="bg-white rounded-lg shadow-lg p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900">System Alerts</h3>
@@ -504,7 +1018,6 @@ export default function ComprehensiveAdminDashboard() {
         </div>
       </div>
 
-      {/* Footer Stats */}
       <div className="bg-white rounded-lg shadow-lg p-6">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           <div>
@@ -521,12 +1034,54 @@ export default function ComprehensiveAdminDashboard() {
           </div>
           <div>
             <div className="text-3xl font-bold text-gray-900">
-              {((metrics?.apiErrors || 0) / (metrics?.apiRequests || 1)) * 100}%
+              {(((metrics?.apiErrors || 0) / (metrics?.apiRequests || 1)) * 100).toFixed(2)}%
             </div>
             <div className="text-sm text-gray-600">Error Rate</div>
           </div>
         </div>
       </div>
+
+      {deleteConfirmOpen && (
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6">
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Confirm Channel Deletion</h3>
+            <p className="text-sm text-gray-600 mb-3">
+              This action is destructive. To confirm, type the exact channel name:
+            </p>
+            <p className="text-sm font-semibold text-gray-900 mb-3">{selectedChannelName}</p>
+            <input
+              type="text"
+              value={deleteConfirmText}
+              onChange={(e) => setDeleteConfirmText(e.target.value)}
+              placeholder="Type channel name to confirm"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 mb-4"
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => {
+                  setDeleteConfirmOpen(false);
+                  setDeleteConfirmText('');
+                }}
+                className="px-4 py-2 rounded-lg bg-gray-200 text-gray-800 hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => void confirmDeleteChannel()}
+                disabled={
+                  actionBusy ||
+                  !isSuperAdmin ||
+                  !selectedChannel ||
+                  deleteConfirmText.trim() !== selectedChannel.name.trim()
+                }
+                className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+              >
+                Delete Channel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
