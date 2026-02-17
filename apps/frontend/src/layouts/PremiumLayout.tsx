@@ -14,7 +14,7 @@ export const PremiumLayout: React.FC<PremiumLayoutProps> = ({ children }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
-    <div className="min-h-screen w-full text-gray-100 font-sans selection:bg-blue-500/30 border-4 border-yellow-500">
+    <div className="min-h-screen w-full text-gray-100 font-sans selection:bg-blue-500/30">
       <Toaster
         position="top-right"
         toastOptions={{

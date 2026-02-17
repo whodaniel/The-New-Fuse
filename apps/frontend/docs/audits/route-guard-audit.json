@@ -1,0 +1,158 @@
+{
+  "generatedAt": "2026-02-17T20:51:51.515Z",
+  "counts": {
+    "sidebarPaths": 21,
+    "missingRoutes": 0,
+    "adminUnguarded": 0,
+    "unguardedReview": 0
+  },
+  "sidebarGuardReport": [
+    {
+      "path": "/admin",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/agents",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequireAuth",
+      "redirect": false
+    },
+    {
+      "path": "/channels",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "redirect",
+      "redirect": true
+    },
+    {
+      "path": "/chat",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequireAuth",
+      "redirect": false
+    },
+    {
+      "path": "/command-center",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequireAuth",
+      "redirect": false
+    },
+    {
+      "path": "/config",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "redirect",
+      "redirect": true
+    },
+    {
+      "path": "/cron-jobs",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "redirect",
+      "redirect": true
+    },
+    {
+      "path": "/debug",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequireAuth",
+      "redirect": false
+    },
+    {
+      "path": "/docs",
+      "access": "public",
+      "status": "ok",
+      "guard": "none",
+      "redirect": false
+    },
+    {
+      "path": "/instances",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "redirect",
+      "redirect": true
+    },
+    {
+      "path": "/logs",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "redirect",
+      "redirect": true
+    },
+    {
+      "path": "/nodes",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "redirect",
+      "redirect": true
+    },
+    {
+      "path": "/observatory",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequireAuth",
+      "redirect": false
+    },
+    {
+      "path": "/overview",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "redirect",
+      "redirect": true
+    },
+    {
+      "path": "/resources",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequireAuth",
+      "redirect": false
+    },
+    {
+      "path": "/sessions",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "redirect",
+      "redirect": true
+    },
+    {
+      "path": "/settings",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequireAuth",
+      "redirect": false
+    },
+    {
+      "path": "/skills",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "redirect",
+      "redirect": true
+    },
+    {
+      "path": "/tasks",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequireAuth",
+      "redirect": false
+    },
+    {
+      "path": "/usage",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "redirect",
+      "redirect": true
+    },
+    {
+      "path": "/workflows",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequireAuth",
+      "redirect": false
+    }
+  ]
+}

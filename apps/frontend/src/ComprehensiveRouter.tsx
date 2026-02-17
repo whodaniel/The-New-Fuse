@@ -1,5 +1,6 @@
 import { Suspense, lazy } from 'react';
-import { Link, Route, Routes, useLocation } from 'react-router-dom';
+import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { LEGACY_REDIRECTS } from './config/legacyRedirects';
 // Lazy load layouts for code splitting
 const PremiumLayout = lazy(() => import('./layouts/PremiumLayout'));
 const PublicLayout = lazy(() => import('./layouts/PublicLayout'));
@@ -146,6 +147,8 @@ const SimpleTestPage = lazy(() => import('./pages/SimpleTest'));
 const ChatPage = lazy(() => import('./pages/chat/ChatPage'));
 
 // Legal pages
+const PrivacyPolicyPage = lazy(() => import('./pages/legal/PrivacyPolicy'));
+const TermsOfServicePage = lazy(() => import('./pages/legal/TermsOfService'));
 
 // Workspace pages
 
@@ -270,6 +273,13 @@ export default function ComprehensiveRouter() {
               {/* Core Routes */}
               <Route path="/" element={<LandingRevolutionPage />} />
               <Route path="/home" element={<AllPages />} />
+              {LEGACY_REDIRECTS.map((redirect) => (
+                <Route
+                  key={`legacy-redirect:${redirect.from}`}
+                  path={redirect.from}
+                  element={<Navigate to={redirect.to} replace />}
+                />
+              ))}
 
               {/* Protected Core Routes */}
               <Route
@@ -300,16 +310,37 @@ export default function ComprehensiveRouter() {
               />
 
               {/* Resources Marketplace */}
-              <Route path="/resources" element={<ResourcesDashboard />} />
+              <Route
+                path="/resources"
+                element={
+                  <RequireAuth>
+                    <ResourcesDashboard />
+                  </RequireAuth>
+                }
+              />
 
               {/* All routes using LazyPage for now to avoid import issues */}
               <Route path="/multi-agent-chat" element={<MultiAgentChat />} />
               <Route path="/ai-portal" element={<AIAgentDashboard />} />
-              <Route path="/chat" element={<ChatPage />} />
+              <Route
+                path="/chat"
+                element={
+                  <RequireAuth>
+                    <ChatPage />
+                  </RequireAuth>
+                }
+              />
               <Route path="/ai-agents" element={<AIAgentRegistration />} />
               <Route path="/agent-builder" element={<UnifiedAgentCreator />} />
               <Route path="/agent-management" element={<AgentsPage />} />
-              <Route path="/agents" element={<AgentsPage />} />
+              <Route
+                path="/agents"
+                element={
+                  <RequireAuth>
+                    <AgentsPage />
+                  </RequireAuth>
+                }
+              />
               <Route
                 path="/agents/new"
                 element={
@@ -320,8 +351,22 @@ export default function ComprehensiveRouter() {
               />
               <Route path="/agents/:id" element={<AgentDetail />} />
               <Route path="/agents/:id/identity" element={<AgentIdentity />} />
-              <Route path="/observatory" element={<SystemObservatory />} />
-              <Route path="/command-center" element={<TNFCommandCenter />} />
+              <Route
+                path="/observatory"
+                element={
+                  <RequireAuth>
+                    <SystemObservatory />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/command-center"
+                element={
+                  <RequireAuth>
+                    <TNFCommandCenter />
+                  </RequireAuth>
+                }
+              />
               <Route
                 path="/agents/onboard"
                 element={
@@ -336,9 +381,23 @@ export default function ComprehensiveRouter() {
               <Route path="/workspace/analytics" element={<WorkspaceAnalytics />} />
               <Route path="/workspace/members" element={<WorkspaceMembers />} />
               <Route path="/workspace/settings" element={<WorkspaceSettings />} />
-              <Route path="/tasks" element={<TasksPage />} />
+              <Route
+                path="/tasks"
+                element={
+                  <RequireAuth>
+                    <TasksPage />
+                  </RequireAuth>
+                }
+              />
               {/* Workflow Routes */}
-              <Route path="/workflows" element={<Workflows />} />
+              <Route
+                path="/workflows"
+                element={
+                  <RequireAuth>
+                    <Workflows />
+                  </RequireAuth>
+                }
+              />
               <Route path="/workflows/builder" element={<WorkflowBuilder />} />
               <Route path="/workflows/executions" element={<WorkflowExecutionPage />} />
               <Route path="/workflows/:id" element={<WorkflowDetailPage />} />
@@ -496,7 +555,14 @@ export default function ComprehensiveRouter() {
               <Route path="/mcp-hub" element={<MCPHub />} />
               <Route path="/knowledge-hub" element={<KnowledgeHub />} />
               <Route path="/a2a-control" element={<A2AControl />} />
-              <Route path="/settings" element={<Settings />} />
+              <Route
+                path="/settings"
+                element={
+                  <RequireAuth>
+                    <Settings />
+                  </RequireAuth>
+                }
+              />
               <Route path="/settings/general" element={<GeneralSettings />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
@@ -504,7 +570,14 @@ export default function ComprehensiveRouter() {
               <Route path="/timeline-demo" element={<TimelineDemo />} />
               <Route path="/graph-demo" element={<GraphDemo />} />
               <Route path="/frontend-showcase" element={<FrontendShowcasePage />} />
-              <Route path="/debug" element={<DebugPageComponent />} />
+              <Route
+                path="/debug"
+                element={
+                  <RequireAuth>
+                    <DebugPageComponent />
+                  </RequireAuth>
+                }
+              />
               <Route path="/build-info" element={<BuildInfoPage />} />
               <Route path="/debug-routing" element={<DebugRoutingComponent />} />
               <Route path="/all-pages" element={<AllPages />} />
@@ -540,6 +613,8 @@ export default function ComprehensiveRouter() {
               <Route path="/onboarding" element={<OnboardingFlowPage />} />
               <Route path="/docs" element={<DocsPage />} />
               <Route path="/docs/*" element={<DocsPage />} />
+              <Route path="/legal/privacy" element={<PrivacyPolicyPage />} />
+              <Route path="/legal/terms" element={<TermsOfServicePage />} />
               {/* Brand Identity / Design System */}
               <Route path="/brand" element={<BrandIdentityPage />} />
               <Route path="/design-system" element={<BrandIdentityPage />} />

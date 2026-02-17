@@ -2,10 +2,9 @@
  * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
-import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import { PremiumSidebar } from '../PremiumSidebar';
-import { BrowserRouter } from 'react-router-dom';
 
 // Mock useAuth
 const mockLogout = vi.fn();
@@ -13,6 +12,12 @@ vi.mock('../../../hooks/useAuth', () => ({
   useAuth: () => ({
     logout: mockLogout,
     user: { name: 'Test User' },
+  }),
+}));
+
+vi.mock('../../../hooks/useAuthorization', () => ({
+  useAuthorization: () => ({
+    hasRole: () => true,
   }),
 }));
 
@@ -26,7 +31,6 @@ vi.mock('react-router-dom', async () => {
     }),
   };
 });
-
 
 const renderSidebar = (props: any = {}) => {
   const defaultProps = {
@@ -62,9 +66,8 @@ describe('PremiumSidebar Accessibility', () => {
 
   it('navigation links have aria-label matching name when collapsed', () => {
     renderSidebar({ isCollapsed: true });
-    // Navigation items: Home, Dashboard, etc.
-    const homeLink = screen.getByLabelText('Home');
-    expect(homeLink).toBeInTheDocument();
+    const chatLink = screen.getByLabelText('Chat');
+    expect(chatLink).toBeInTheDocument();
   });
 
   it('logout button has aria-label "Sign Out" when collapsed', () => {

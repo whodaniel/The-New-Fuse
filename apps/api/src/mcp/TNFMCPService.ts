@@ -69,6 +69,7 @@ export class TNFMCPService implements OnModuleInit {
         chat: !!this.chatService,
         workflow: !!this.workflowService,
         claudeDev: !!this.claudeDevService,
+        agentGrants: !!this.agentGrantsService,
       },
       timestamp: new Date().toISOString(),
     };

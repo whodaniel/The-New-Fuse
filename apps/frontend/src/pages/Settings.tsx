@@ -25,7 +25,7 @@ import {
   User,
   Zap,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type TabType = 'general' | 'account' | 'appearance' | 'notifications' | 'api';
 
@@ -82,7 +82,8 @@ export default function Settings() {
   const { theme, setTheme } = useTheme();
   const [activeTab, setActiveTab] = useState<TabType>('general');
   const [saving, setSaving] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
   // Toggle states for notifications
   const [emailNotif, setEmailNotif] = useState(true);
@@ -91,7 +92,7 @@ export default function Settings() {
   const [apiAccess, setApiAccess] = useState(true);
   const [autoSave, setAutoSave] = useState(false);
 
-  useState(() => {
+  useEffect(() => {
     const saved = localStorage.getItem('tnf_settings');
     if (saved) {
       try {
@@ -105,31 +106,32 @@ export default function Settings() {
         console.error('Failed to parse settings', e);
       }
     }
-  });
+  }, []);
 
   const handleSave = async () => {
+    setSaveError(null);
+    setSaveSuccess(false);
     setSaving(true);
-    // Persist to localStorage for now
-    localStorage.setItem(
-      'tnf_settings',
-      JSON.stringify({
-        emailNotif,
-        pushNotif,
-        agentNotif,
-        apiAccess,
-        autoSave,
-        language: 'english', // default
-        timezone: 'utc', // default
-      })
-    );
-    await new Promise((resolve) => setTimeout(resolve, 600)); // Small delay for UX feedback
-    setSaving(false);
-  };
-
-  const handleCopyApiKey = () => {
-    navigator.clipboard.writeText(import.meta.env.VITE_STRIPE_API_KEY || 'mock-api-key-xxxx');
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      localStorage.setItem(
+        'tnf_settings',
+        JSON.stringify({
+          emailNotif,
+          pushNotif,
+          agentNotif,
+          apiAccess,
+          autoSave,
+          language: 'english',
+          timezone: 'utc',
+        })
+      );
+      setSaveSuccess(true);
+    } catch (error) {
+      console.error('Failed to save settings', error);
+      setSaveError('Failed to persist settings. Please try again.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -269,6 +271,10 @@ export default function Settings() {
                         >
                           {saving ? 'Saving...' : 'Save Changes'}
                         </PremiumButton>
+                        {saveError && <p className="text-sm text-red-400 mt-2">{saveError}</p>}
+                        {saveSuccess && (
+                          <p className="text-sm text-emerald-400 mt-2">Settings saved.</p>
+                        )}
                       </div>
                     </div>
                   </GlassCard>
@@ -299,9 +305,9 @@ export default function Settings() {
                         </div>
                         <div>
                           <p className="text-xl font-semibold text-white">
-                            {user?.displayName || 'User'}
+                            {user?.displayName || 'Account'}
                           </p>
-                          <p className="text-gray-400">{user?.email || 'user@example.com'}</p>
+                          <p className="text-gray-400">{user?.email || ''}</p>
                           <div className="flex items-center gap-2 mt-2">
                             <span className="px-2 py-1 rounded-full text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/20">
                               <Shield className="w-3 h-3 inline mr-1" />
@@ -411,7 +417,6 @@ export default function Settings() {
                                 <Settings2 className="w-6 h-6 text-white" />
                               </div>
                               <span className="text-gray-400 font-medium">System</span>
-                              <span className="text-xs text-gray-500">Coming soon</span>
                             </div>
                           </motion.div>
                         </div>

@@ -27,7 +27,7 @@ import {
   WifiOff,
   Zap,
 } from 'lucide-react';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { GlassCard } from '../components/ui/premium/GlassCard';
 import { PremiumButton } from '../components/ui/premium/PremiumButton';
 
@@ -77,6 +77,30 @@ interface LogEntry {
   source: string;
   message: string;
 }
+
+const DEFAULT_MESH_INSTANCES: MeshInstance[] = [
+  {
+    id: 'local-desktop',
+    name: 'Local Desktop',
+    url: 'ws://127.0.0.1:18789',
+    status: 'offline',
+    lastCheck: 0,
+  },
+  {
+    id: 'cloud-primary',
+    name: 'Cloud Primary',
+    url: 'https://openclaw-cloud-production-934c.up.railway.app',
+    status: 'offline',
+    lastCheck: 0,
+  },
+  {
+    id: 'sandbox',
+    name: 'Sandbox',
+    url: 'ws://127.0.0.1:18791',
+    status: 'offline',
+    lastCheck: 0,
+  },
+];
 
 // ============================================================================
 // MESH HEALTH COMPONENT
@@ -263,7 +287,11 @@ const MetricsPanel: React.FC<{ metrics: SystemMetrics }> = ({ metrics }) => {
 // TASK QUEUE PANEL
 // ============================================================================
 
-const TaskQueuePanel: React.FC<{ tasks: TaskItem[] }> = ({ tasks }) => {
+const TaskQueuePanel: React.FC<{
+  tasks: TaskItem[];
+  loading: boolean;
+  error: string | null;
+}> = ({ tasks, loading, error }) => {
   const getPriorityColor = (priority: TaskItem['priority']) => {
     switch (priority) {
       case 'critical':
@@ -298,7 +326,11 @@ const TaskQueuePanel: React.FC<{ tasks: TaskItem[] }> = ({ tasks }) => {
       </h3>
 
       <div className="space-y-2 max-h-64 overflow-y-auto">
-        {tasks.length === 0 ? (
+        {loading ? (
+          <div className="text-center text-gray-500 py-4">Loading task queue...</div>
+        ) : error ? (
+          <div className="text-center text-red-400 py-4">{error}</div>
+        ) : tasks.length === 0 ? (
           <div className="text-center text-gray-500 py-4">No pending tasks</div>
         ) : (
           tasks.slice(0, 10).map((task) => (
@@ -325,7 +357,11 @@ const TaskQueuePanel: React.FC<{ tasks: TaskItem[] }> = ({ tasks }) => {
 // LOGS PANEL
 // ============================================================================
 
-const LogsPanel: React.FC<{ logs: LogEntry[] }> = ({ logs }) => {
+const LogsPanel: React.FC<{
+  logs: LogEntry[];
+  loading: boolean;
+  error: string | null;
+}> = ({ logs, loading, error }) => {
   const getLevelColor = (level: LogEntry['level']) => {
     switch (level) {
       case 'error':
@@ -347,7 +383,11 @@ const LogsPanel: React.FC<{ logs: LogEntry[] }> = ({ logs }) => {
       </h3>
 
       <div className="space-y-1 max-h-64 overflow-y-auto font-mono text-xs">
-        {logs.length === 0 ? (
+        {loading ? (
+          <div className="text-center text-gray-500 py-4">Loading logs...</div>
+        ) : error ? (
+          <div className="text-center text-red-400 py-4">{error}</div>
+        ) : logs.length === 0 ? (
           <div className="text-center text-gray-500 py-4">No recent logs</div>
         ) : (
           logs.slice(0, 20).map((log, i) => (
@@ -409,29 +449,8 @@ const QuickActionsPanel: React.FC<{
 
 export const TNFCommandCenter: React.FC = () => {
   // State
-  const [meshInstances, setMeshInstances] = useState<MeshInstance[]>([
-    {
-      id: 'local-desktop',
-      name: 'Local Desktop',
-      url: 'ws://127.0.0.1:18789',
-      status: 'offline',
-      lastCheck: 0,
-    },
-    {
-      id: 'cloud-primary',
-      name: 'Cloud Primary',
-      url: 'https://openclaw-cloud-production-934c.up.railway.app',
-      status: 'offline',
-      lastCheck: 0,
-    },
-    {
-      id: 'sandbox',
-      name: 'Sandbox',
-      url: 'ws://127.0.0.1:18791',
-      status: 'offline',
-      lastCheck: 0,
-    },
-  ]);
+  const [meshInstances, setMeshInstances] = useState<MeshInstance[]>(DEFAULT_MESH_INSTANCES);
+  const meshInstancesRef = useRef<MeshInstance[]>(DEFAULT_MESH_INSTANCES);
 
   const [agentActivities, setAgentActivities] = useState<AgentActivity[]>([]);
   const [metrics, setMetrics] = useState<SystemMetrics>({
@@ -444,7 +463,41 @@ export const TNFCommandCenter: React.FC = () => {
   const [tasks, setTasks] = useState<TaskItem[]>([]);
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [loading, setLoading] = useState(false);
+  const [tasksLoading, setTasksLoading] = useState(false);
+  const [tasksError, setTasksError] = useState<string | null>(null);
+  const [logsLoading, setLogsLoading] = useState(false);
+  const [logsError, setLogsError] = useState<string | null>(null);
   const [lastRefresh, setLastRefresh] = useState(0);
+
+  useEffect(() => {
+    meshInstancesRef.current = meshInstances;
+  }, [meshInstances]);
+
+  const fetchFirstJson = useCallback(async (paths: string[]): Promise<any> => {
+    for (const path of paths) {
+      try {
+        const response = await fetch(path, { headers: { 'Content-Type': 'application/json' } });
+        if (!response.ok) {
+          continue;
+        }
+        return response.json();
+      } catch (_error) {
+        continue;
+      }
+    }
+    throw new Error(`All endpoints failed: ${paths.join(', ')}`);
+  }, []);
+
+  const fetchOptionalJson = useCallback(
+    async (paths: string[]): Promise<any | null> => {
+      try {
+        return await fetchFirstJson(paths);
+      } catch (_error) {
+        return null;
+      }
+    },
+    [fetchFirstJson]
+  );
 
   // Fetch mesh health
   const fetchMeshHealth = useCallback(async () => {
@@ -453,10 +506,15 @@ export const TNFCommandCenter: React.FC = () => {
 
     // Check each mesh instance
     const updatedInstances = await Promise.all(
-      meshInstances.map(async (instance) => {
+      meshInstancesRef.current.map(async (instance) => {
         try {
+          const healthUrl = instance.url
+            .replace(/^ws:\/\//, 'http://')
+            .replace(/^wss:\/\//, 'https://')
+            .replace(/\/$/, '')
+            .concat('/health');
           const start = Date.now();
-          const response = await fetch(`${instance.url}/health`, {
+          const response = await fetch(healthUrl, {
             method: 'GET',
             signal: AbortSignal.timeout(5000),
           });
@@ -509,58 +567,122 @@ export const TNFCommandCenter: React.FC = () => {
 
     setLastRefresh(now);
     setLoading(false);
-  }, [meshInstances]);
+  }, []);
 
-  // Fetch agent activities from Cloudflare
+  // Fetch agent activities from local orchestrator API
   const fetchAgentActivities = useCallback(async () => {
     try {
-      const response = await fetch(
-        'https://tnf-agent-orchestration.bizsynth.workers.dev/agent-status'
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setAgentActivities(data.activities || []);
-        setMetrics((prev) => ({
-          ...prev,
-          activeAgents:
-            data.activities?.filter(
-              (a: AgentActivity) => a.status === 'thinking' || a.status === 'working'
-            ).length || 0,
-        }));
-      }
+      const data = await fetchFirstJson(['/api/orchestrator/agents', '/orchestrator/agents']);
+      const mappedActivities: AgentActivity[] = (data?.agents || []).map((agent: any) => ({
+        sessionKey: agent.agentId || 'unknown-agent',
+        status:
+          agent.status === 'active'
+            ? 'working'
+            : agent.status === 'stalled'
+              ? 'error'
+              : agent.status === 'failed'
+                ? 'error'
+                : 'idle',
+        currentTool: agent.currentTask,
+        lastActivity: agent.lastActivity ? new Date(agent.lastActivity).getTime() : Date.now(),
+      }));
+      setAgentActivities(mappedActivities);
+      setMetrics((prev) => ({
+        ...prev,
+        activeAgents: mappedActivities.filter((a) => a.status === 'working').length,
+      }));
     } catch (error) {
       console.error('Failed to fetch agent activities:', error);
+      setAgentActivities([]);
     }
-  }, []);
+  }, [fetchFirstJson]);
 
-  // Fetch tasks
+  // Fetch task queue and recent failed-job logs
   const fetchTasks = useCallback(async () => {
-    // TODO: Wire to real task queue
-    // For now, show placeholder
-    setTasks([
-      {
-        id: '1',
-        title: 'Agent Activity Pulse Implementation',
-        status: 'in_progress',
-        priority: 'high',
-        createdAt: Date.now() - 3600000,
-      },
-      {
-        id: '2',
-        title: 'Jules Session Triage (3130712200087854334)',
-        status: 'pending',
-        priority: 'medium',
-        createdAt: Date.now() - 7200000,
-      },
-      {
-        id: '3',
-        title: 'Move entire UI into TNF branding',
-        status: 'pending',
-        priority: 'critical',
-        createdAt: Date.now() - 86400000,
-      },
-    ]);
-  }, []);
+    const queues = [
+      'agent-execution',
+      'report-generation',
+      'data-sync',
+      'email',
+      'cleanup',
+    ] as const;
+    setTasksLoading(true);
+    setLogsLoading(true);
+    setTasksError(null);
+    setLogsError(null);
+    try {
+      const [stats, ...queuePayloads] = await Promise.all([
+        fetchOptionalJson(['/api/jobs/stats', '/jobs/stats']),
+        ...queues.flatMap((queueName) => [
+          fetchOptionalJson([
+            `/api/jobs/queues/${queueName}/active?limit=6`,
+            `/jobs/queues/${queueName}/active?limit=6`,
+          ]),
+          fetchOptionalJson([
+            `/api/jobs/queues/${queueName}/failed?limit=4`,
+            `/jobs/queues/${queueName}/failed?limit=4`,
+          ]),
+        ]),
+      ]);
+
+      const taskItems: TaskItem[] = [];
+      const fetchedLogs: LogEntry[] = [];
+      for (let i = 0; i < queues.length; i++) {
+        const activeJobs = queuePayloads[i * 2] || [];
+        const failedJobs = queuePayloads[i * 2 + 1] || [];
+
+        for (const job of activeJobs) {
+          taskItems.push({
+            id: `${queues[i]}:${String(job.id)}`,
+            title: job.data?.task || job.name || `Active job in ${queues[i]}`,
+            status: 'in_progress',
+            priority: 'high',
+            assignee: job.data?.agentId || job.data?.userId || undefined,
+            createdAt: Number(job.timestamp) || Date.now(),
+          });
+        }
+        for (const job of failedJobs) {
+          fetchedLogs.push({
+            timestamp: Number(job.timestamp) || Date.now(),
+            level: 'error',
+            source: queues[i],
+            message: job.failedReason || `Failed job: ${job.name || 'unknown'}`,
+          });
+          taskItems.push({
+            id: `${queues[i]}:failed:${String(job.id)}`,
+            title: job.data?.task || job.name || `Failed job in ${queues[i]}`,
+            status: 'blocked',
+            priority: 'critical',
+            assignee: job.data?.agentId || job.data?.userId || undefined,
+            createdAt: Number(job.timestamp) || Date.now(),
+          });
+        }
+      }
+
+      setTasks(taskItems.sort((a, b) => b.createdAt - a.createdAt));
+      setLogs((prev) =>
+        [...fetchedLogs, ...prev.filter((entry) => entry.source === 'command-center')]
+          .sort((a, b) => b.timestamp - a.timestamp)
+          .slice(0, 100)
+      );
+      setMetrics((prev) => ({
+        ...prev,
+        messagesProcessed: Number(stats?.overall?.completedJobs || 0),
+        errorRate:
+          Number(stats?.overall?.totalJobs || 0) > 0
+            ? Number(stats?.overall?.failedJobs || 0) / Number(stats?.overall?.totalJobs || 1)
+            : 0,
+      }));
+    } catch (error) {
+      console.error('Failed to fetch task queue data:', error);
+      setTasks([]);
+      setTasksError('Task queue backend unavailable.');
+      setLogsError('Logs backend unavailable.');
+    } finally {
+      setTasksLoading(false);
+      setLogsLoading(false);
+    }
+  }, [fetchOptionalJson]);
 
   // Handle quick actions
   const handleAction = useCallback((action: string) => {
@@ -649,12 +771,12 @@ export const TNFCommandCenter: React.FC = () => {
         {/* Center Column */}
         <div className="space-y-6">
           <MetricsPanel metrics={metrics} />
-          <TaskQueuePanel tasks={tasks} />
+          <TaskQueuePanel tasks={tasks} loading={tasksLoading} error={tasksError} />
         </div>
 
         {/* Right Column */}
         <div className="space-y-6">
-          <LogsPanel logs={logs} />
+          <LogsPanel logs={logs} loading={logsLoading} error={logsError} />
 
           {/* Embedded Observatory Link */}
           <GlassCard className="p-4">

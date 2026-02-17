@@ -1,21 +1,8 @@
-import {
-  BarChart2,
-  Bot,
-  BrainCircuit,
-  Briefcase,
-  CheckSquare,
-  GitBranch,
-  Home,
-  LayoutGrid,
-  Library,
-  Lightbulb,
-  MessageSquare,
-  Settings,
-  Shield,
-} from 'lucide-react';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { SIDEBAR_NAVIGATION } from '../../config/sidebarNavigation';
 import { useLayout } from '../../contexts/LayoutContext';
+import { useAuthorization } from '../../hooks/useAuthorization';
 import { useAuth } from '../../providers/AuthProvider';
 
 interface SidebarProps {
@@ -44,99 +31,29 @@ export function Sidebar({ className = '' }: SidebarProps) {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
 
-  const navItems: NavItem[] = [
-    {
-      name: 'Home',
-      path: '/',
-      icon: <Home className="h-5 w-5" />,
-      requiresAuth: false,
-      gradient: 'blue',
-    },
-    {
-      name: 'Dashboard',
-      path: '/dashboard',
-      icon: <LayoutGrid className="h-5 w-5" />,
-      requiresAuth: true,
-      gradient: 'purple',
-    },
-    {
-      name: 'Analytics',
-      path: '/analytics',
-      icon: <BarChart2 className="h-5 w-5" />,
-      requiresAuth: true,
-      gradient: 'green',
-    },
-    {
-      name: 'AI Portal',
-      path: '/ai-portal',
-      icon: <BrainCircuit className="h-5 w-5" />,
-      requiresAuth: true,
-      gradient: 'cyan',
-    },
-    {
-      name: 'Agents',
-      path: '/agents',
-      icon: <Bot className="h-5 w-5" />,
-      requiresAuth: true,
-      gradient: 'pink',
-    },
-    {
-      name: 'Multi-Agent Chat',
-      path: '/multi-agent-chat',
-      icon: <MessageSquare className="h-5 w-5" />,
-      requiresAuth: false,
-      gradient: 'blue',
-    },
-    {
-      name: 'Workflows',
-      path: '/workflows',
-      icon: <GitBranch className="h-5 w-5" />,
-      requiresAuth: true,
-      gradient: 'purple',
-    },
-    {
-      name: 'Tasks',
-      path: '/tasks',
-      icon: <CheckSquare className="h-5 w-5" />,
-      requiresAuth: true,
-      gradient: 'green',
-    },
-    {
-      name: 'Workspace',
-      path: '/workspace/overview',
-      icon: <Briefcase className="h-5 w-5" />,
-      requiresAuth: true,
-      gradient: 'orange',
-    },
-    {
-      name: 'Resources',
-      path: '/resources',
-      icon: <Library className="h-5 w-5" />,
-      requiresAuth: true,
-      gradient: 'cyan',
-    },
-    {
-      name: 'Suggestions',
-      path: '/suggestions',
-      icon: <Lightbulb className="h-5 w-5" />,
-      requiresAuth: true,
-      gradient: 'pink',
-    },
-    {
-      name: 'Admin',
-      path: '/admin/panel',
-      icon: <Shield className="h-5 w-5" />,
-      requiresAuth: true,
-      gradient: 'orange',
-    },
-    {
-      name: 'Settings',
-      path: '/settings',
-      icon: <Settings className="h-5 w-5" />,
-      requiresAuth: true,
-      gradient: 'blue',
-    },
-  ];
+  const { hasRole } = useAuthorization();
+  const navItems: NavItem[] = SIDEBAR_NAVIGATION.map((item, idx) => {
+    const gradientOrder: NavItem['gradient'][] = [
+      'blue',
+      'purple',
+      'green',
+      'orange',
+      'pink',
+      'cyan',
+    ];
+    const Icon = item.icon;
+    return {
+      name: item.name,
+      path: item.href,
+      icon: <Icon className="h-5 w-5" />,
+      requiresAuth: item.href !== '/',
+      gradient: gradientOrder[idx % gradientOrder.length],
+    };
+  }).filter((item) => {
+    const source = SIDEBAR_NAVIGATION.find((s) => s.href === item.path);
+    if (!source?.requiredRoles || source.requiredRoles.length === 0) return true;
+    return hasRole(source.requiredRoles);
+  });
 
   const filteredNavItems = navItems.filter((item) => !item.requiresAuth || isAuthenticated);
 

@@ -1,11 +1,13 @@
 import {
   Activity,
+  AlertTriangle,
   Brain,
   Cpu,
   Database,
   FileText,
   Globe,
   Layers,
+  Loader2,
   Maximize,
   Network,
   RefreshCcw,
@@ -66,6 +68,30 @@ type SemanticEdge = {
   animated?: boolean;
 };
 
+type TopologyNode = {
+  id: string;
+  data: { label: string };
+  position: { x: number; y: number };
+  type?: string;
+};
+
+type TopologyEdge = {
+  id: string;
+  source: string;
+  target: string;
+  animated?: boolean;
+};
+
+type ObservatoryMetrics = {
+  activeNodes: number | null;
+  agencies: number | null;
+  throughput: number | null;
+  securityStatus: 'healthy' | 'degraded' | 'unknown';
+  networkLatencyMs: number | null;
+  memoryUsagePercent: number | null;
+  activeAgentRatePercent: number | null;
+};
+
 function slugId(label: string): string {
   return label
     .toLowerCase()
@@ -91,20 +117,172 @@ function categorizeAgent(name: string): string {
 export const SystemObservatory: React.FC = () => {
   const [activeLayer, setActiveLayer] = useState<'topology' | 'semantic' | 'metrics'>('topology');
   const [agentIndex, setAgentIndex] = useState<AgentIndex | null>(null);
+  const [agentIndexLoading, setAgentIndexLoading] = useState(true);
+  const [agentIndexError, setAgentIndexError] = useState<string | null>(null);
   const [agentSearch, setAgentSearch] = useState<string>('');
   const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
   const [selectedDocPath, setSelectedDocPath] = useState<string | null>(null);
+  const [topologyGraph, setTopologyGraph] = useState<{
+    nodes: TopologyNode[];
+    edges: TopologyEdge[];
+  }>({
+    nodes: [],
+    edges: [],
+  });
+  const [topologyLoading, setTopologyLoading] = useState(true);
+  const [topologyError, setTopologyError] = useState<string | null>(null);
+  const [metrics, setMetrics] = useState<ObservatoryMetrics>({
+    activeNodes: null,
+    agencies: null,
+    throughput: null,
+    securityStatus: 'unknown',
+    networkLatencyMs: null,
+    memoryUsagePercent: null,
+    activeAgentRatePercent: null,
+  });
+
+  const fetchFirstJson = async (paths: string[]) => {
+    for (const path of paths) {
+      try {
+        const response = await fetch(path);
+        if (!response.ok) continue;
+        const text = await response.text();
+        return text ? JSON.parse(text) : {};
+      } catch {
+        // try next endpoint alias
+      }
+    }
+    return null;
+  };
+
+  const unwrap = (payload: any) => {
+    if (!payload || typeof payload !== 'object') return {};
+    if (payload.data && typeof payload.data === 'object') return payload.data;
+    return payload;
+  };
+
+  const loadTopologyAndMetrics = async () => {
+    setTopologyLoading(true);
+    setTopologyError(null);
+    try {
+      const [agentsPayload, orchestratorHealthPayload, systemHealthPayload, systemMetricsPayload] =
+        await Promise.all([
+          fetchFirstJson(['/api/orchestrator/agents', '/orchestrator/agents']),
+          fetchFirstJson(['/api/orchestrator/health', '/orchestrator/health']),
+          fetchFirstJson(['/api/system/health', '/system/health', '/api/health', '/health']),
+          fetchFirstJson(['/api/system/metrics', '/system/metrics']),
+        ]);
+
+      const agentsData = unwrap(agentsPayload);
+      const orchestratorHealth = unwrap(orchestratorHealthPayload);
+      const systemHealth = unwrap(systemHealthPayload);
+      const systemMetrics = unwrap(systemMetricsPayload);
+      const agents = Array.isArray(agentsData.agents) ? agentsData.agents : [];
+
+      const nodes: TopologyNode[] = [
+        {
+          id: 'orchestrator',
+          data: { label: 'Orchestrator' },
+          position: { x: 320, y: 40 },
+          type: 'input',
+        },
+      ];
+      const edges: TopologyEdge[] = [];
+
+      agents.slice(0, 80).forEach((agent: any, idx: number) => {
+        const status = typeof agent.status === 'string' ? agent.status : 'unknown';
+        const agentId = String(agent.agentId ?? agent.id ?? `agent-${idx}`);
+        const column = idx % 4;
+        const row = Math.floor(idx / 4);
+        nodes.push({
+          id: `agent:${agentId}`,
+          data: { label: `${agentId} (${status})` },
+          position: { x: 40 + column * 190, y: 150 + row * 90 },
+        });
+        edges.push({
+          id: `edge:orchestrator:${agentId}`,
+          source: 'orchestrator',
+          target: `agent:${agentId}`,
+          animated: status === 'active' || status === 'online',
+        });
+      });
+
+      setTopologyGraph({ nodes, edges });
+      if (agents.length === 0) {
+        setTopologyError('No active orchestrator agents are currently reporting.');
+      }
+
+      const totalAgents = Number((orchestratorHealth?.metrics?.totalAgents ?? agents.length) || 0);
+      const activeAgents = Number(
+        orchestratorHealth?.metrics?.activeAgents ??
+          agents.filter((a: any) => a?.status === 'active' || a?.status === 'online').length
+      );
+      const throughput =
+        Number(systemMetrics?.api?.requestsPerSecond ?? systemMetrics?.requestsPerSecond ?? NaN) ||
+        null;
+      const memoryUsage =
+        Number(systemMetrics?.memory?.usagePercent ?? systemMetrics?.memoryUsage ?? NaN) || null;
+      const networkLatency =
+        Number(
+          systemMetrics?.api?.averageResponseTimeMs ??
+            systemMetrics?.api?.avgResponseTime ??
+            systemMetrics?.avgResponseTime
+        ) || null;
+      const healthStatus = String(systemHealth?.status ?? 'unknown').toLowerCase();
+
+      setMetrics({
+        activeNodes: agents.length,
+        agencies: agentIndex
+          ? new Set(agentIndex.agents.map((a) => categorizeAgent(a.name))).size
+          : null,
+        throughput,
+        securityStatus:
+          healthStatus === 'healthy' || healthStatus === 'ok'
+            ? 'healthy'
+            : healthStatus === 'degraded' || healthStatus === 'warning'
+              ? 'degraded'
+              : 'unknown',
+        networkLatencyMs: networkLatency,
+        memoryUsagePercent: memoryUsage,
+        activeAgentRatePercent:
+          totalAgents > 0 ? Math.round((activeAgents / totalAgents) * 100) : null,
+      });
+    } catch (error) {
+      setTopologyGraph({ nodes: [], edges: [] });
+      setTopologyError(
+        error instanceof Error ? error.message : 'Failed to load observatory topology'
+      );
+      setMetrics((prev) => ({
+        ...prev,
+        activeNodes: null,
+        throughput: null,
+        networkLatencyMs: null,
+        memoryUsagePercent: null,
+        activeAgentRatePercent: null,
+      }));
+    } finally {
+      setTopologyLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // Load static index generated by scripts/observatory/build-agent-index.ts
-    // Served from: apps/frontend/public/observatory/agents.index.json
+    setAgentIndexLoading(true);
+    setAgentIndexError(null);
     fetch('/observatory/agents.index.json')
       .then((r) =>
         r.ok ? r.json() : Promise.reject(new Error(`Failed to load agent index (${r.status})`))
       )
       .then((json) => setAgentIndex(json))
-      .catch(() => setAgentIndex(null));
+      .catch((error) => {
+        setAgentIndex(null);
+        setAgentIndexError(error instanceof Error ? error.message : 'Failed to load agent index');
+      })
+      .finally(() => setAgentIndexLoading(false));
   }, []);
+
+  useEffect(() => {
+    void loadTopologyAndMetrics();
+  }, [agentIndex?.generatedAt]);
 
   const filteredAgents = useMemo(() => {
     const agents = agentIndex?.agents ?? [];
@@ -399,7 +577,22 @@ export const SystemObservatory: React.FC = () => {
         <div className="xl:col-span-3 h-full">
           {activeLayer === 'topology' && (
             <div className="h-full">
-              <GraphVisualizer nodes={MOCK_NODES} edges={MOCK_EDGES} />
+              {topologyLoading ? (
+                <div className="h-full rounded-xl border border-white/10 bg-black/30 flex items-center justify-center text-gray-400 text-sm">
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Loading live topology...
+                </div>
+              ) : topologyGraph.nodes.length > 0 ? (
+                <GraphVisualizer
+                  nodes={topologyGraph.nodes as any}
+                  edges={topologyGraph.edges as any}
+                />
+              ) : (
+                <div className="h-full rounded-xl border border-white/10 bg-black/30 flex flex-col items-center justify-center text-gray-400 text-sm px-6 text-center">
+                  <AlertTriangle className="w-5 h-5 mb-2 text-amber-400" />
+                  <div>{topologyError ?? 'No topology data available from backend.'}</div>
+                </div>
+              )}
             </div>
           )}
           {activeLayer === 'semantic' && (
@@ -416,7 +609,11 @@ export const SystemObservatory: React.FC = () => {
                         Agents
                       </div>
                       <div className="text-[10px] text-gray-600 font-mono">
-                        {agentIndex ? `${agentIndex.counts.agentDefinitions} loaded` : 'Loading…'}
+                        {agentIndexLoading
+                          ? 'Loading…'
+                          : agentIndex
+                            ? `${agentIndex.counts.agentDefinitions} loaded`
+                            : 'Unavailable'}
                       </div>
                     </div>
                   </div>
@@ -435,6 +632,11 @@ export const SystemObservatory: React.FC = () => {
                 </div>
 
                 <div className="flex-1 overflow-auto pr-1 space-y-2">
+                  {agentIndexError && (
+                    <div className="text-xs text-red-300 border border-red-500/30 bg-red-500/10 rounded-md p-2">
+                      {agentIndexError}
+                    </div>
+                  )}
                   {agentsByCategory.map(([category, agents]) => (
                     <details
                       key={category}
@@ -520,10 +722,40 @@ export const SystemObservatory: React.FC = () => {
           )}
           {activeLayer === 'metrics' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
-              <MetricsCard title="Network Latency" color="blue" />
-              <MetricsCard title="Throughput (msg/s)" color="purple" />
-              <MetricsCard title="Memory Usage" color="emerald" />
-              <MetricsCard title="Agent Satisfaction" color="amber" />
+              <MetricsCard
+                title="Network Latency"
+                color="blue"
+                value={metrics.networkLatencyMs !== null ? `${metrics.networkLatencyMs}ms` : 'N/A'}
+                progress={
+                  metrics.networkLatencyMs !== null
+                    ? Math.max(0, 100 - Math.min(metrics.networkLatencyMs, 100))
+                    : 0
+                }
+              />
+              <MetricsCard
+                title="Throughput (req/s)"
+                color="purple"
+                value={metrics.throughput !== null ? `${metrics.throughput}` : 'N/A'}
+                progress={metrics.throughput !== null ? Math.min(100, metrics.throughput) : 0}
+              />
+              <MetricsCard
+                title="Memory Usage"
+                color="emerald"
+                value={
+                  metrics.memoryUsagePercent !== null ? `${metrics.memoryUsagePercent}%` : 'N/A'
+                }
+                progress={metrics.memoryUsagePercent ?? 0}
+              />
+              <MetricsCard
+                title="Agent Activity"
+                color="amber"
+                value={
+                  metrics.activeAgentRatePercent !== null
+                    ? `${metrics.activeAgentRatePercent}%`
+                    : 'N/A'
+                }
+                progress={metrics.activeAgentRatePercent ?? 0}
+              />
             </div>
           )}
         </div>
@@ -537,22 +769,28 @@ export const SystemObservatory: React.FC = () => {
           <GlassCard className="p-6 border-white/5 space-y-6">
             <SidebarStat
               label="Active Nodes"
-              value="142"
+              value={metrics.activeNodes !== null ? String(metrics.activeNodes) : 'N/A'}
               icon={<Cpu className="text-blue-400" />}
             />
             <SidebarStat
               label="Agencies"
-              value="12"
+              value={metrics.agencies !== null ? String(metrics.agencies) : 'N/A'}
               icon={<Layers className="text-purple-400" />}
             />
             <SidebarStat
-              label="Throughput"
-              value="2.4k/s"
+              label="Throughput (req/s)"
+              value={metrics.throughput !== null ? String(metrics.throughput) : 'N/A'}
               icon={<Zap className="text-amber-400" />}
             />
             <SidebarStat
               label="Security Level"
-              value="Level 4"
+              value={
+                metrics.securityStatus === 'healthy'
+                  ? 'Healthy'
+                  : metrics.securityStatus === 'degraded'
+                    ? 'Degraded'
+                    : 'Unknown'
+              }
               icon={<Shield className="text-emerald-400" />}
             />
           </GlassCard>
@@ -812,7 +1050,11 @@ export const SystemObservatory: React.FC = () => {
             <p className="text-xs text-gray-400 leading-relaxed mb-4">
               New agents are automatically indexed into the semantic space and message bus.
             </p>
-            <PremiumButton variant="outline" className="w-full text-[10px] py-1 h-8">
+            <PremiumButton
+              variant="outline"
+              className="w-full text-[10px] py-1 h-8"
+              onClick={() => void loadTopologyAndMetrics()}
+            >
               Re-scan Fleet
             </PremiumButton>
           </GlassCard>
@@ -865,10 +1107,12 @@ const SidebarStat: React.FC<{ label: string; value: string; icon: React.ReactNod
   </div>
 );
 
-const MetricsCard: React.FC<{ title: string; color: 'blue' | 'purple' | 'emerald' | 'amber' }> = ({
-  title,
-  color,
-}) => {
+const MetricsCard: React.FC<{
+  title: string;
+  color: 'blue' | 'purple' | 'emerald' | 'amber';
+  value: string;
+  progress: number;
+}> = ({ title, color, value, progress }) => {
   const colors = {
     blue: 'border-blue-500/30 text-blue-400',
     purple: 'border-purple-500/30 text-purple-400',
@@ -883,9 +1127,12 @@ const MetricsCard: React.FC<{ title: string; color: 'blue' | 'purple' | 'emerald
         <Activity className="w-24 h-24" />
       </div>
       <div className="text-[10px] font-black uppercase tracking-[0.2em] mb-1">{title}</div>
-      <div className="text-2xl font-bold text-white">NORMALIZED</div>
+      <div className="text-2xl font-bold text-white">{value}</div>
       <div className="mt-4 h-1 w-full bg-white/5 rounded-full overflow-hidden">
-        <div className="h-full w-2/3 bg-current" />
+        <div
+          className="h-full bg-current"
+          style={{ width: `${Math.max(0, Math.min(progress, 100))}%` }}
+        />
       </div>
     </GlassCard>
   );
@@ -896,21 +1143,5 @@ const SmallAction: React.FC<{ icon: React.ReactNode }> = ({ icon }) => (
     {React.cloneElement(icon as React.ReactElement, { className: 'w-4 h-4' })}
   </button>
 );
-
-const MOCK_NODES = [
-  { id: '1', data: { label: 'US-East-1' }, position: { x: 250, y: 50 }, type: 'input' },
-  { id: '2', data: { label: 'EU-Central-1' }, position: { x: 100, y: 150 } },
-  { id: '3', data: { label: 'AP-South-1' }, position: { x: 400, y: 150 } },
-  { id: '4', data: { label: 'Relay-Core' }, position: { x: 250, y: 250 }, type: 'output' },
-];
-
-const MOCK_EDGES = [
-  { id: 'e1-2', source: '1', target: '2', animated: true },
-  { id: 'e1-3', source: '1', target: '3', animated: true },
-  { id: 'e2-4', source: '2', target: '4' },
-  { id: 'e3-4', source: '3', target: '4' },
-];
-
-// MOCK_SEMANTIC_CLUSTERS removed: Semantic tab now loads real agent index from /observatory/agents.index.json
 
 export default SystemObservatory;

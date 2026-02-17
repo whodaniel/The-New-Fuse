@@ -1,30 +1,9 @@
-import {
-  Activity,
-  BarChart3,
-  Bot,
-  BrainCircuit,
-  Briefcase,
-  ChevronLeft,
-  ChevronRight,
-  Cpu,
-  Eye,
-  Globe,
-  Home,
-  LayoutDashboard,
-  LayoutGrid,
-  Library,
-  Lightbulb,
-  Lock,
-  LogOut,
-  MessageSquare,
-  Settings,
-  Workflow,
-  X,
-  Zap,
-} from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, LogOut, X, Zap } from 'lucide-react';
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
+import { SIDEBAR_NAVIGATION, type SidebarNavItem } from '../../config/sidebarNavigation';
 import { useAuth } from '../../hooks/useAuth';
+import { useAuthorization } from '../../hooks/useAuthorization';
 
 interface PremiumSidebarProps {
   isOpen: boolean;
@@ -41,27 +20,31 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
 }) => {
   const { pathname } = useLocation();
   const { logout } = useAuth();
+  const { hasRole } = useAuthorization();
 
-  const navigation = [
-    { name: 'Home', href: '/', icon: Home },
-    { name: 'Command Center', href: '/command-center', icon: Zap },
-    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'Analytics', href: '/analytics', icon: BarChart3 },
-    { name: 'AI Portal', href: '/ai-portal', icon: BrainCircuit },
-    { name: 'AI Agents', href: '/agents', icon: Bot },
-    { name: 'Multi-chat', href: '/multi-agent-chat', icon: MessageSquare },
-    { name: 'Live View', href: '/live-view', icon: Activity },
-    { name: 'AI Command', href: '/ai-command-center', icon: Cpu },
-    { name: 'Observatory', href: '/observatory', icon: Eye },
-    { name: 'Workflows', href: '/workflows', icon: Workflow },
-    { name: 'Tasks', href: '/tasks', icon: Briefcase },
-    { name: 'Workspace', href: '/workspace/overview', icon: LayoutGrid },
-    { name: 'Resources', href: '/resources', icon: Library },
-    { name: 'Hub', href: '/hub', icon: Globe },
-    { name: 'Suggestions', href: '/suggestions', icon: Lightbulb },
-    { name: 'Admin', href: '/admin', icon: Lock },
-    { name: 'Settings', href: '/settings', icon: Settings },
+  const navigation = SIDEBAR_NAVIGATION.filter((item) => {
+    if (!item.requiredRoles || item.requiredRoles.length === 0) return true;
+    return hasRole(item.requiredRoles);
+  });
+  const sections: Array<{ key: SidebarNavItem['section']; label: string }> = [
+    { key: 'core', label: 'Core' },
+    { key: 'control', label: 'Control' },
+    { key: 'agent', label: 'Agent' },
+    { key: 'settings', label: 'Settings' },
+    { key: 'resources', label: 'Resources' },
   ];
+  const advancedItems = navigation.filter((item) => item.section === 'advanced');
+  const hasAdvancedItems = advancedItems.length > 0;
+  const isAdvancedRouteActive = advancedItems.some((item) =>
+    item.href === '/'
+      ? pathname === '/'
+      : pathname === item.href || pathname.startsWith(`${item.href}/`)
+  );
+  const [showAdvanced, setShowAdvanced] = React.useState(isAdvancedRouteActive);
+
+  React.useEffect(() => {
+    if (isAdvancedRouteActive) setShowAdvanced(true);
+  }, [isAdvancedRouteActive]);
 
   const handleLogout = async () => {
     try {
@@ -113,34 +96,102 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
           </div>
 
           {/* Navigation Links */}
-          <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-1">
-            {navigation.map((item) => {
-              const isActive = pathname.startsWith(item.href);
+          <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-4">
+            {sections.map((section) => {
+              const sectionItems = navigation.filter((item) => item.section === section.key);
+              if (sectionItems.length === 0) return null;
+
               return (
-                <NavLink
-                  key={item.name}
-                  to={item.href}
-                  onClick={() => setIsOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
-                    isActive
-                      ? 'bg-blue-600/10 text-blue-400 border border-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.15)]'
-                      : 'text-gray-400 hover:bg-white/5 hover:text-white hover:translate-x-1'
-                  } ${isCollapsed ? 'justify-center' : ''}`}
-                  title={isCollapsed ? item.name : undefined}
-                  aria-label={isCollapsed ? item.name : undefined}
-                >
-                  <item.icon
-                    className={`w-5 h-5 shrink-0 ${isActive ? 'text-blue-400' : 'text-gray-500 group-hover:text-gray-300'}`}
-                  />
+                <div key={section.key}>
                   {!isCollapsed && (
-                    <span className="font-medium whitespace-nowrap">{item.name}</span>
+                    <div className="px-2 pb-2 text-[11px] tracking-wide uppercase text-gray-500">
+                      {section.label}
+                    </div>
                   )}
-                  {isActive && !isCollapsed && (
-                    <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(59,130,246,0.8)]" />
-                  )}
-                </NavLink>
+                  <div className="space-y-1">
+                    {sectionItems.map((item) => {
+                      const isActive =
+                        item.href === '/'
+                          ? pathname === '/'
+                          : pathname === item.href || pathname.startsWith(`${item.href}/`);
+                      return (
+                        <NavLink
+                          key={item.name}
+                          to={item.href}
+                          onClick={() => setIsOpen(false)}
+                          className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
+                            isActive
+                              ? 'bg-blue-600/10 text-blue-400 border border-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.15)]'
+                              : 'text-gray-400 hover:bg-white/5 hover:text-white hover:translate-x-1'
+                          } ${isCollapsed ? 'justify-center' : ''}`}
+                          title={isCollapsed ? item.name : undefined}
+                          aria-label={isCollapsed ? item.name : undefined}
+                        >
+                          <item.icon
+                            className={`w-5 h-5 shrink-0 ${isActive ? 'text-blue-400' : 'text-gray-500 group-hover:text-gray-300'}`}
+                          />
+                          {!isCollapsed && (
+                            <span className="font-medium whitespace-nowrap">{item.name}</span>
+                          )}
+                          {isActive && !isCollapsed && (
+                            <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(59,130,246,0.8)]" />
+                          )}
+                        </NavLink>
+                      );
+                    })}
+                  </div>
+                </div>
               );
             })}
+
+            {hasAdvancedItems && !isCollapsed && (
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setShowAdvanced((prev) => !prev)}
+                  className="w-full px-2 pb-2 text-[11px] tracking-wide uppercase text-gray-500 flex items-center justify-between hover:text-gray-300 transition-colors"
+                  aria-expanded={showAdvanced}
+                  aria-controls="advanced-nav-items"
+                >
+                  <span>Advanced</span>
+                  {showAdvanced ? (
+                    <ChevronUp className="w-3.5 h-3.5" />
+                  ) : (
+                    <ChevronDown className="w-3.5 h-3.5" />
+                  )}
+                </button>
+                {showAdvanced && (
+                  <div id="advanced-nav-items" className="space-y-1">
+                    {advancedItems.map((item) => {
+                      const isActive =
+                        item.href === '/'
+                          ? pathname === '/'
+                          : pathname === item.href || pathname.startsWith(`${item.href}/`);
+                      return (
+                        <NavLink
+                          key={item.name}
+                          to={item.href}
+                          onClick={() => setIsOpen(false)}
+                          className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
+                            isActive
+                              ? 'bg-blue-600/10 text-blue-400 border border-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.15)]'
+                              : 'text-gray-400 hover:bg-white/5 hover:text-white hover:translate-x-1'
+                          }`}
+                        >
+                          <item.icon
+                            className={`w-5 h-5 shrink-0 ${isActive ? 'text-blue-400' : 'text-gray-500 group-hover:text-gray-300'}`}
+                          />
+                          <span className="font-medium whitespace-nowrap">{item.name}</span>
+                          {isActive && (
+                            <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(59,130,246,0.8)]" />
+                          )}
+                        </NavLink>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
           </nav>
 
           {/* Collapse Toggle */}

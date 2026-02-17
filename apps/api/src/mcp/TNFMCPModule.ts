@@ -1,10 +1,13 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 import { DatabaseModule } from '@the-new-fuse/database';
 import { WebSocketGateway } from '../gateways/websocket.gateway';
 import {
   WORKFLOW_ENGINE_PROVIDER,
   WORKFLOW_EXECUTOR_PROVIDER,
 } from '../providers/workflow-stubs.provider';
+import { AgentApiGrantsService } from '../services/agent-api-grants.service';
 import { AgentService } from '../services/agent.service';
 import { ChatService } from '../services/chat.service';
 import { ClaudeDevAutomationService } from '../services/ClaudeDevAutomationService';
@@ -14,13 +17,14 @@ import { TNFMCPService } from './TNFMCPService';
 
 @Module({
   // DatabaseModule provides PrismaService (Drizzle-backed) for all services
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, ConfigModule, JwtModule],
   providers: [
     TNFMCPService,
     AgentService,
     ChatService,
     WorkflowService,
     ClaudeDevAutomationService,
+    AgentApiGrantsService,
     WebSocketGateway,
     // Stub providers for WorkflowService dependencies (until real implementations are available)
     WORKFLOW_ENGINE_PROVIDER,

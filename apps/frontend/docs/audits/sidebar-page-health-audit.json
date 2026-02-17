@@ -1,0 +1,311 @@
+{
+  "generatedAt": "2026-02-17T21:33:15.340Z",
+  "counts": {
+    "total": 21,
+    "working": 19,
+    "partialMedium": 2,
+    "partialHigh": 0,
+    "broken": 0
+  },
+  "results": [
+    {
+      "name": "Admin",
+      "route": "/admin",
+      "targetRoute": "/admin",
+      "component": "ComprehensiveAdminDashboard",
+      "file": "pages/Admin/ComprehensiveAdminDashboard.tsx",
+      "surface": "admin",
+      "risk": 11,
+      "status": "partial-medium-risk",
+      "hits": [
+        {
+          "id": "randomized_behavior",
+          "count": 1
+        },
+        {
+          "id": "timeout_simulation",
+          "count": 4
+        },
+        {
+          "id": "raw_fetch",
+          "count": 5
+        }
+      ]
+    },
+    {
+      "name": "Agents",
+      "route": "/agents",
+      "targetRoute": "/agents",
+      "component": "AgentsPage",
+      "file": "pages/AgentsRevolution.tsx",
+      "surface": "app",
+      "risk": 0,
+      "status": "working",
+      "hits": []
+    },
+    {
+      "name": "Channels",
+      "route": "/channels",
+      "targetRoute": "/command-center",
+      "component": "TNFCommandCenter",
+      "file": "pages/TNFCommandCenter.tsx",
+      "surface": "app",
+      "risk": 2,
+      "status": "working",
+      "hits": [
+        {
+          "id": "raw_fetch",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "name": "Chat",
+      "route": "/chat",
+      "targetRoute": "/chat",
+      "component": "ChatPage",
+      "file": "pages/chat/ChatPage.tsx",
+      "surface": "app",
+      "risk": 4,
+      "status": "working",
+      "hits": [
+        {
+          "id": "timeout_simulation",
+          "count": 4
+        }
+      ]
+    },
+    {
+      "name": "Command Center",
+      "route": "/command-center",
+      "targetRoute": "/command-center",
+      "component": "TNFCommandCenter",
+      "file": "pages/TNFCommandCenter.tsx",
+      "surface": "app",
+      "risk": 2,
+      "status": "working",
+      "hits": [
+        {
+          "id": "raw_fetch",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "name": "Config",
+      "route": "/config",
+      "targetRoute": "/settings",
+      "component": "Settings",
+      "file": "pages/Settings.tsx",
+      "surface": "app",
+      "risk": 0,
+      "status": "working",
+      "hits": []
+    },
+    {
+      "name": "Cron Jobs",
+      "route": "/cron-jobs",
+      "targetRoute": "/tasks",
+      "component": "TasksPage",
+      "file": "pages/Tasks/TasksPage.tsx",
+      "surface": "app",
+      "risk": 1,
+      "status": "working",
+      "hits": [
+        {
+          "id": "timeout_simulation",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "name": "Debug",
+      "route": "/debug",
+      "targetRoute": "/debug",
+      "component": "DebugPageComponent",
+      "file": "pages/Debug.tsx",
+      "surface": "app",
+      "risk": 0,
+      "status": "working",
+      "hits": []
+    },
+    {
+      "name": "Docs",
+      "route": "/docs",
+      "targetRoute": "/docs",
+      "component": "DocsPage",
+      "file": "pages/Docs.tsx",
+      "surface": "app",
+      "risk": 0,
+      "status": "working",
+      "hits": []
+    },
+    {
+      "name": "Instances",
+      "route": "/instances",
+      "targetRoute": "/observatory",
+      "component": "SystemObservatory",
+      "file": "pages/SystemObservatory.tsx",
+      "surface": "app",
+      "risk": 2,
+      "status": "working",
+      "hits": [
+        {
+          "id": "raw_fetch",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "name": "Logs",
+      "route": "/logs",
+      "targetRoute": "/admin/audit-logs",
+      "component": "AuditLogViewer",
+      "file": "pages/Admin/AuditLogViewer.tsx",
+      "surface": "admin",
+      "risk": 1,
+      "status": "working",
+      "hits": [
+        {
+          "id": "raw_fetch",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "name": "Nodes",
+      "route": "/nodes",
+      "targetRoute": "/observatory",
+      "component": "SystemObservatory",
+      "file": "pages/SystemObservatory.tsx",
+      "surface": "app",
+      "risk": 2,
+      "status": "working",
+      "hits": [
+        {
+          "id": "raw_fetch",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "name": "Observatory",
+      "route": "/observatory",
+      "targetRoute": "/observatory",
+      "component": "SystemObservatory",
+      "file": "pages/SystemObservatory.tsx",
+      "surface": "app",
+      "risk": 2,
+      "status": "working",
+      "hits": [
+        {
+          "id": "raw_fetch",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "name": "Overview",
+      "route": "/overview",
+      "targetRoute": "/dashboard",
+      "component": "Dashboard",
+      "file": "components/Dashboard.tsx",
+      "surface": "app",
+      "risk": 0,
+      "status": "working",
+      "hits": []
+    },
+    {
+      "name": "Resources",
+      "route": "/resources",
+      "targetRoute": "/resources",
+      "component": "ResourcesDashboard",
+      "file": "pages/Resources/ResourcesDashboard.tsx",
+      "surface": "app",
+      "risk": 0,
+      "status": "working",
+      "hits": []
+    },
+    {
+      "name": "Sessions",
+      "route": "/sessions",
+      "targetRoute": "/multi-agent-chat",
+      "component": "MultiAgentChat",
+      "file": "components/MultiAgentChat.tsx",
+      "surface": "app",
+      "risk": 0,
+      "status": "working",
+      "hits": []
+    },
+    {
+      "name": "Settings",
+      "route": "/settings",
+      "targetRoute": "/settings",
+      "component": "Settings",
+      "file": "pages/Settings.tsx",
+      "surface": "app",
+      "risk": 0,
+      "status": "working",
+      "hits": []
+    },
+    {
+      "name": "Skills",
+      "route": "/skills",
+      "targetRoute": "/resources",
+      "component": "ResourcesDashboard",
+      "file": "pages/Resources/ResourcesDashboard.tsx",
+      "surface": "app",
+      "risk": 0,
+      "status": "working",
+      "hits": []
+    },
+    {
+      "name": "Tasks",
+      "route": "/tasks",
+      "targetRoute": "/tasks",
+      "component": "TasksPage",
+      "file": "pages/Tasks/TasksPage.tsx",
+      "surface": "app",
+      "risk": 1,
+      "status": "working",
+      "hits": [
+        {
+          "id": "timeout_simulation",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "name": "Usage",
+      "route": "/usage",
+      "targetRoute": "/analytics",
+      "component": "Analytics",
+      "file": "pages/dashboard/Analytics.tsx",
+      "surface": "app",
+      "risk": 5,
+      "status": "partial-medium-risk",
+      "hits": [
+        {
+          "id": "raw_fetch",
+          "count": 5
+        }
+      ]
+    },
+    {
+      "name": "Workflows",
+      "route": "/workflows",
+      "targetRoute": "/workflows",
+      "component": "Workflows",
+      "file": "pages/Workflows.tsx",
+      "surface": "app",
+      "risk": 1,
+      "status": "working",
+      "hits": [
+        {
+          "id": "timeout_simulation",
+          "count": 1
+        }
+      ]
+    }
+  ]
+}

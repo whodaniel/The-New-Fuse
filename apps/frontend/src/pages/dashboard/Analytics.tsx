@@ -109,6 +109,16 @@ const itemVariants = {
   },
 };
 
+const coerceArray = <T,>(value: unknown): T[] => (Array.isArray(value) ? (value as T[]) : []);
+const coerceObject = (value: unknown): Record<string, any> =>
+  value && typeof value === 'object' && !Array.isArray(value) ? (value as Record<string, any>) : {};
+
+const unwrapApiData = (payload: unknown): Record<string, any> => {
+  const obj = coerceObject(payload);
+  if (obj.data && typeof obj.data === 'object') return coerceObject(obj.data);
+  return obj;
+};
+
 // Custom dark-themed tooltip for charts
 const CustomTooltip = ({
   active,
@@ -138,6 +148,7 @@ const CustomTooltip = ({
 const Analytics = () => {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState('7d');
   const [refreshing, setRefreshing] = useState(false);
   const { toast } = useToast();
@@ -149,107 +160,122 @@ const Analytics = () => {
   const fetchAnalyticsData = async () => {
     try {
       setLoading(true);
+      setErrorMessage(null);
 
-      // Fetch from multiple endpoints
-      await Promise.all([
+      const responses = await Promise.all([
         fetch(`/api/analytics/default/overview?timeframe=${timeRange}`),
         fetch(`/api/analytics/default/performance?timeframe=${timeRange}`),
         fetch(`/api/analytics/default/providers/performance?timeframe=${timeRange}`),
         fetch(`/api/analytics/default/quality-trends?timeframe=${timeRange}`),
       ]);
 
-      // Mock data for now - replace with actual API responses
-      const mockData: AnalyticsData = {
+      const failed = responses.find((response) => !response.ok);
+      if (failed) {
+        throw new Error(`Analytics endpoint request failed (${failed.status})`);
+      }
+
+      const [overviewPayload, performancePayload, providersPayload, qualityPayload] =
+        await Promise.all(
+          responses.map(async (response) => {
+            const text = await response.text();
+            return text ? JSON.parse(text) : {};
+          })
+        );
+
+      const overviewData = unwrapApiData(overviewPayload);
+      const performanceDataRaw = unwrapApiData(performancePayload);
+      const providersDataRaw = unwrapApiData(providersPayload);
+      const qualityDataRaw = unwrapApiData(qualityPayload);
+
+      const providerPerformance = coerceArray<AnalyticsData['providerPerformance'][number]>(
+        providersDataRaw.providerPerformance ?? providersDataRaw.providers ?? providersDataRaw.items
+      ).map((provider) => ({
+        provider: provider.provider ?? provider.name ?? 'Unknown',
+        totalRequests: Number(provider.totalRequests ?? provider.requests ?? 0),
+        successRate: Number(provider.successRate ?? 0),
+        avgLatency: Number(provider.avgLatency ?? provider.latency ?? 0),
+        costPerRequest: Number(provider.costPerRequest ?? provider.cost ?? 0),
+      }));
+
+      const totalProviderCost = providerPerformance.reduce(
+        (sum, p) => sum + p.totalRequests * p.costPerRequest,
+        0
+      );
+
+      const normalizedData: AnalyticsData = {
         overview: {
-          totalAgents: 24,
-          activeAgents: 18,
-          totalInteractions: 15420,
-          successRate: 98.5,
-          averageResponseTime: 245,
-          totalWorkflows: 156,
+          totalAgents: Number(overviewData.totalAgents ?? 0),
+          activeAgents: Number(overviewData.activeAgents ?? 0),
+          totalInteractions: Number(
+            overviewData.totalInteractions ?? overviewData.totalRequests ?? 0
+          ),
+          successRate: Number(overviewData.successRate ?? 0),
+          averageResponseTime: Number(
+            overviewData.averageResponseTime ?? overviewData.avgResponseTime ?? 0
+          ),
+          totalWorkflows: Number(overviewData.totalWorkflows ?? 0),
         },
         performance: {
-          timeRange: '7d',
-          dataPoints: Array.from({ length: 7 }, (_, i) => ({
-            timestamp: new Date(Date.now() - (6 - i) * 24 * 60 * 60 * 1000).toLocaleDateString(),
-            requests: Math.floor(Math.random() * 1000) + 500,
-            responses: Math.floor(Math.random() * 900) + 450,
-            errors: Math.floor(Math.random() * 50) + 5,
-            avgResponseTime: Math.floor(Math.random() * 200) + 100,
+          timeRange,
+          dataPoints: coerceArray<AnalyticsData['performance']['dataPoints'][number]>(
+            performanceDataRaw.dataPoints ??
+              performanceDataRaw.performance ??
+              performanceDataRaw.items
+          ).map((point) => ({
+            timestamp: String(point.timestamp ?? point.date ?? point.label ?? ''),
+            requests: Number(point.requests ?? 0),
+            responses: Number(point.responses ?? 0),
+            errors: Number(point.errors ?? 0),
+            avgResponseTime: Number(point.avgResponseTime ?? point.latency ?? 0),
           })),
         },
-        agentMetrics: [
-          {
-            agentId: 'agent-1',
-            agentName: 'Data Analyzer',
-            totalTasks: 342,
-            successRate: 99.2,
-            avgResponseTime: 156,
-            lastActive: '2 minutes ago',
-          },
-          {
-            agentId: 'agent-2',
-            agentName: 'Report Generator',
-            totalTasks: 289,
-            successRate: 97.8,
-            avgResponseTime: 203,
-            lastActive: '5 minutes ago',
-          },
-          {
-            agentId: 'agent-3',
-            agentName: 'Content Creator',
-            totalTasks: 198,
-            successRate: 98.5,
-            avgResponseTime: 189,
-            lastActive: '12 minutes ago',
-          },
-        ],
-        qualityTrends: Array.from({ length: 30 }, (_, i) => ({
-          date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toLocaleDateString(),
-          qualityScore: Math.floor(Math.random() * 10) + 90,
-          userSatisfaction: Math.floor(Math.random() * 10) + 85,
-          errorRate: Math.floor(Math.random() * 5) + 1,
+        agentMetrics: coerceArray<AnalyticsData['agentMetrics'][number]>(
+          overviewData.agentMetrics ?? performanceDataRaw.agentMetrics ?? []
+        ).map((agent) => ({
+          agentId: String(agent.agentId ?? agent.id ?? ''),
+          agentName: String(agent.agentName ?? agent.name ?? 'Unknown Agent'),
+          totalTasks: Number(agent.totalTasks ?? agent.tasks ?? 0),
+          successRate: Number(agent.successRate ?? 0),
+          avgResponseTime: Number(agent.avgResponseTime ?? 0),
+          lastActive: String(agent.lastActive ?? 'N/A'),
         })),
-        providerPerformance: [
-          {
-            provider: 'OpenAI',
-            totalRequests: 5420,
-            successRate: 99.1,
-            avgLatency: 145,
-            costPerRequest: 0.002,
-          },
-          {
-            provider: 'Anthropic',
-            totalRequests: 3892,
-            successRate: 98.7,
-            avgLatency: 203,
-            costPerRequest: 0.003,
-          },
-          {
-            provider: 'Google',
-            totalRequests: 2108,
-            successRate: 97.9,
-            avgLatency: 189,
-            costPerRequest: 0.0015,
-          },
-        ],
+        qualityTrends: coerceArray<AnalyticsData['qualityTrends'][number]>(
+          qualityDataRaw.qualityTrends ?? qualityDataRaw.items ?? qualityDataRaw
+        ).map((trend) => ({
+          date: String(trend.date ?? trend.timestamp ?? ''),
+          qualityScore: Number(trend.qualityScore ?? 0),
+          userSatisfaction: Number(trend.userSatisfaction ?? 0),
+          errorRate: Number(trend.errorRate ?? trend.errors ?? 0),
+        })),
+        providerPerformance,
         costAnalysis: {
-          totalCost: 2847.5,
-          costByProvider: [
-            { provider: 'OpenAI', cost: 1247.5, percentage: 43.8 },
-            { provider: 'Anthropic', cost: 892.3, percentage: 31.3 },
-            { provider: 'Google', cost: 707.7, percentage: 24.9 },
-          ],
-          dailyCosts: Array.from({ length: 30 }, (_, i) => ({
-            date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toLocaleDateString(),
-            cost: Math.floor(Math.random() * 100) + 50,
+          totalCost: Number(
+            overviewData.costAnalysis?.totalCost ??
+              providersDataRaw.costAnalysis?.totalCost ??
+              totalProviderCost
+          ),
+          costByProvider: coerceArray<AnalyticsData['costAnalysis']['costByProvider'][number]>(
+            overviewData.costAnalysis?.costByProvider ??
+              providersDataRaw.costAnalysis?.costByProvider
+          ).map((provider) => ({
+            provider: provider.provider ?? provider.name ?? 'Unknown',
+            cost: Number(provider.cost ?? 0),
+            percentage: Number(provider.percentage ?? 0),
+          })),
+          dailyCosts: coerceArray<AnalyticsData['costAnalysis']['dailyCosts'][number]>(
+            overviewData.costAnalysis?.dailyCosts ?? providersDataRaw.costAnalysis?.dailyCosts
+          ).map((daily) => ({
+            date: String(daily.date ?? daily.timestamp ?? ''),
+            cost: Number(daily.cost ?? 0),
           })),
         },
       };
 
-      setData(mockData);
+      setData(normalizedData);
     } catch (error) {
       console.error('Error fetching analytics:', error);
+      setErrorMessage(error instanceof Error ? error.message : 'Failed to load analytics data');
+      setData(null);
       toast({
         title: 'Error',
         description: 'Failed to load analytics data',
@@ -301,6 +327,23 @@ const Analytics = () => {
         >
           <Loader2 className="w-12 h-12 text-purple-500" />
         </motion.div>
+      </div>
+    );
+  }
+
+  if (errorMessage) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+        <GlassCard className="max-w-md">
+          <div className="p-8 text-center">
+            <Zap className="w-12 h-12 text-red-400 mx-auto mb-4" />
+            <p className="text-gray-300 font-medium">Unable to load analytics</p>
+            <p className="text-gray-500 text-sm mt-2">{errorMessage}</p>
+            <PremiumButton onClick={handleRefresh} className="mt-4" icon={RefreshCw}>
+              Retry
+            </PremiumButton>
+          </div>
+        </GlassCard>
       </div>
     );
   }
