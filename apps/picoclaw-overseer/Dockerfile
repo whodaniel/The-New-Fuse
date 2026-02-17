@@ -7,12 +7,12 @@ RUN apk add --no-cache git make
 
 WORKDIR /src
 
-# Cache dependencies
-COPY go.mod go.sum ./
+# Cache dependencies - use correct path for Railway root context
+COPY apps/picoclaw-overseer/go.mod apps/picoclaw-overseer/go.sum ./
 RUN go mod download
 
-# Copy source and build
-COPY . .
+# Copy source and build - use correct path for Railway root context
+COPY apps/picoclaw-overseer/ .
 RUN make build
 
 # ============================================================
@@ -25,8 +25,8 @@ RUN apk add --no-cache ca-certificates tzdata curl busybox-extras
 # Copy binary
 COPY --from=builder /src/build/picoclaw /usr/local/bin/picoclaw
 
-# Copy railway entrypoint
-COPY entrypoint-railway.sh /usr/local/bin/entrypoint-railway.sh
+# Copy railway entrypoint - use correct path for Railway root context
+COPY apps/picoclaw-overseer/entrypoint-railway.sh /usr/local/bin/entrypoint-railway.sh
 RUN chmod +x /usr/local/bin/entrypoint-railway.sh
 
 # Create picoclaw home directory
