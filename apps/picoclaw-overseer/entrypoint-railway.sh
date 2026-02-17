@@ -1,5 +1,5 @@
 #!/bin/sh
-# Railway entrypoint - writes config from env vars then starts picoclaw
+# Railway entrypoint for picoclaw - writes config from env vars then starts picoclaw
 
 CONFIG_FILE="/root/.picoclaw/config.json"
 
