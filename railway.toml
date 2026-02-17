@@ -158,3 +158,40 @@ watchPaths = ["packages/core-vector-db/**", "packages/core/**"]
 [services.core-vector-db.deploy]
 healthcheckPath = "/health"
 restartPolicyType = "ON_FAILURE"
+
+# PicoClaw Fleet - Go-based agent instances for testing and research
+# PicoClaw Tester - Endpoint probing and model validation
+[services.picoclaw-tester]
+builder = "DOCKERFILE"
+[services.picoclaw-tester.build]
+dockerfilePath = "apps/picoclaw-overseer/Dockerfile"
+watchPaths = ["apps/picoclaw-overseer/**"]
+[services.picoclaw-tester.deploy]
+healthcheckPath = "/health.json"
+healthcheckTimeout = 30
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
+# PicoClaw Subject - Model testing target
+[services.picoclaw-subject]
+builder = "DOCKERFILE"
+[services.picoclaw-subject.build]
+dockerfilePath = "apps/picoclaw-overseer/Dockerfile"
+watchPaths = ["apps/picoclaw-overseer/**"]
+[services.picoclaw-subject.deploy]
+healthcheckPath = "/health.json"
+healthcheckTimeout = 30
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
+# PicoClaw Perplexity - Research specialist
+[services.picoclaw-perplexity]
+builder = "DOCKERFILE"
+[services.picoclaw-perplexity.build]
+dockerfilePath = "apps/picoclaw-overseer/Dockerfile"
+watchPaths = ["apps/picoclaw-overseer/**"]
+[services.picoclaw-perplexity.deploy]
+healthcheckPath = "/health.json"
+healthcheckTimeout = 30
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
