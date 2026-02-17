@@ -78,6 +78,21 @@ interface LogEntry {
   message: string;
 }
 
+interface EndpointResolution<T = any> {
+  data: T;
+  source: string;
+  usedFallback: boolean;
+}
+
+interface CommandCenterDataSources {
+  meshHealth: string;
+  agentActivity: string;
+  taskStats: string;
+  taskQueues: string;
+}
+
+const SOURCE_UNRESOLVED = 'unresolved';
+
 const DEFAULT_MESH_INSTANCES: MeshInstance[] = [
   {
     id: 'local-desktop',
@@ -443,6 +458,23 @@ const QuickActionsPanel: React.FC<{
   );
 };
 
+const SourceBadge: React.FC<{ label: string; value: string }> = ({ label, value }) => {
+  const normalized = value.toLowerCase();
+  const isUnavailable = normalized.includes('unavailable') || value === SOURCE_UNRESOLVED;
+  const isFallback = normalized.includes('fallback');
+  const tone = isUnavailable
+    ? 'border-red-500/40 bg-red-500/10 text-red-300'
+    : isFallback
+      ? 'border-amber-500/40 bg-amber-500/10 text-amber-300'
+      : 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300';
+
+  return (
+    <div className={`rounded-full border px-2 py-1 text-[10px] font-mono ${tone}`}>
+      <span className="text-gray-300">{label}:</span> {value}
+    </div>
+  );
+};
+
 // ============================================================================
 // MAIN COMMAND CENTER
 // ============================================================================
@@ -468,30 +500,51 @@ export const TNFCommandCenter: React.FC = () => {
   const [logsLoading, setLogsLoading] = useState(false);
   const [logsError, setLogsError] = useState<string | null>(null);
   const [lastRefresh, setLastRefresh] = useState(0);
+  const [dataSources, setDataSources] = useState<CommandCenterDataSources>({
+    meshHealth: 'instance /health direct',
+    agentActivity: SOURCE_UNRESOLVED,
+    taskStats: SOURCE_UNRESOLVED,
+    taskQueues: SOURCE_UNRESOLVED,
+  });
 
   useEffect(() => {
     meshInstancesRef.current = meshInstances;
   }, [meshInstances]);
 
-  const fetchFirstJson = useCallback(async (paths: string[]): Promise<any> => {
-    for (const path of paths) {
-      try {
-        const response = await fetch(path, { headers: { 'Content-Type': 'application/json' } });
-        if (!response.ok) {
+  const fetchFirstJson = useCallback(
+    async (paths: string[], contextLabel: string): Promise<EndpointResolution> => {
+      for (let idx = 0; idx < paths.length; idx++) {
+        const path = paths[idx];
+        const usedFallback = idx > 0;
+        try {
+          const response = await fetch(path, { headers: { 'Content-Type': 'application/json' } });
+          if (!response.ok) {
+            continue;
+          }
+          const text = await response.text();
+          if (usedFallback) {
+            console.warn(
+              `[TNF Command Center] ${contextLabel} using fallback endpoint: ${paths[0]} -> ${path}`
+            );
+          }
+          return {
+            data: text ? JSON.parse(text) : {},
+            source: path,
+            usedFallback,
+          };
+        } catch (_error) {
           continue;
         }
-        return response.json();
-      } catch (_error) {
-        continue;
       }
-    }
-    throw new Error(`All endpoints failed: ${paths.join(', ')}`);
-  }, []);
+      throw new Error(`All endpoints failed: ${paths.join(', ')}`);
+    },
+    []
+  );
 
   const fetchOptionalJson = useCallback(
-    async (paths: string[]): Promise<any | null> => {
+    async (paths: string[], contextLabel: string): Promise<EndpointResolution | null> => {
       try {
-        return await fetchFirstJson(paths);
+        return await fetchFirstJson(paths, contextLabel);
       } catch (_error) {
         return null;
       }
@@ -572,7 +625,11 @@ export const TNFCommandCenter: React.FC = () => {
   // Fetch agent activities from local orchestrator API
   const fetchAgentActivities = useCallback(async () => {
     try {
-      const data = await fetchFirstJson(['/api/orchestrator/agents', '/orchestrator/agents']);
+      const result = await fetchFirstJson(
+        ['/api/orchestrator/agents', '/orchestrator/agents'],
+        'agent activity'
+      );
+      const data = result.data;
       const mappedActivities: AgentActivity[] = (data?.agents || []).map((agent: any) => ({
         sessionKey: agent.agentId || 'unknown-agent',
         status:
@@ -591,9 +648,17 @@ export const TNFCommandCenter: React.FC = () => {
         ...prev,
         activeAgents: mappedActivities.filter((a) => a.status === 'working').length,
       }));
+      setDataSources((prev) => ({
+        ...prev,
+        agentActivity: `${result.source}${result.usedFallback ? ' (fallback)' : ''}`,
+      }));
     } catch (error) {
       console.error('Failed to fetch agent activities:', error);
       setAgentActivities([]);
+      setDataSources((prev) => ({
+        ...prev,
+        agentActivity: 'unavailable',
+      }));
     }
   }, [fetchFirstJson]);
 
@@ -611,19 +676,41 @@ export const TNFCommandCenter: React.FC = () => {
     setTasksError(null);
     setLogsError(null);
     try {
-      const [stats, ...queuePayloads] = await Promise.all([
-        fetchOptionalJson(['/api/jobs/stats', '/jobs/stats']),
+      const [statsResult, ...queuePayloadResults] = await Promise.all([
+        fetchOptionalJson(['/api/jobs/stats', '/jobs/stats'], 'task statistics'),
         ...queues.flatMap((queueName) => [
-          fetchOptionalJson([
-            `/api/jobs/queues/${queueName}/active?limit=6`,
-            `/jobs/queues/${queueName}/active?limit=6`,
-          ]),
-          fetchOptionalJson([
-            `/api/jobs/queues/${queueName}/failed?limit=4`,
-            `/jobs/queues/${queueName}/failed?limit=4`,
-          ]),
+          fetchOptionalJson(
+            [
+              `/api/jobs/queues/${queueName}/active?limit=6`,
+              `/jobs/queues/${queueName}/active?limit=6`,
+            ],
+            `queue active jobs (${queueName})`
+          ),
+          fetchOptionalJson(
+            [
+              `/api/jobs/queues/${queueName}/failed?limit=4`,
+              `/jobs/queues/${queueName}/failed?limit=4`,
+            ],
+            `queue failed jobs (${queueName})`
+          ),
         ]),
       ]);
+      const stats = statsResult?.data;
+      const queuePayloads = queuePayloadResults.map((item) => item?.data ?? null);
+      const queueSources = Array.from(
+        new Set(
+          queuePayloadResults
+            .filter((item): item is EndpointResolution => item !== null)
+            .map((item) => item.source)
+        )
+      );
+      const anyQueueFallback = queuePayloadResults.some((item) => item?.usedFallback);
+      const queueSourceSummary =
+        queueSources.length === 0
+          ? 'unavailable'
+          : queueSources.length === 1
+            ? queueSources[0]
+            : `${queueSources[0]} +${queueSources.length - 1}`;
 
       const taskItems: TaskItem[] = [];
       const fetchedLogs: LogEntry[] = [];
@@ -673,11 +760,23 @@ export const TNFCommandCenter: React.FC = () => {
             ? Number(stats?.overall?.failedJobs || 0) / Number(stats?.overall?.totalJobs || 1)
             : 0,
       }));
+      setDataSources((prev) => ({
+        ...prev,
+        taskStats: statsResult
+          ? `${statsResult.source}${statsResult.usedFallback ? ' (fallback)' : ''}`
+          : 'unavailable',
+        taskQueues: `${queueSourceSummary}${anyQueueFallback ? ' (fallback)' : ''}`,
+      }));
     } catch (error) {
       console.error('Failed to fetch task queue data:', error);
       setTasks([]);
       setTasksError('Task queue backend unavailable.');
       setLogsError('Logs backend unavailable.');
+      setDataSources((prev) => ({
+        ...prev,
+        taskStats: 'unavailable',
+        taskQueues: 'unavailable',
+      }));
     } finally {
       setTasksLoading(false);
       setLogsLoading(false);
@@ -736,6 +835,12 @@ export const TNFCommandCenter: React.FC = () => {
           <p className="text-gray-400 text-sm mt-1">
             Unified control panel for The New Fuse + OpenClaw Mesh
           </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <SourceBadge label="Mesh" value={dataSources.meshHealth} />
+            <SourceBadge label="Agents" value={dataSources.agentActivity} />
+            <SourceBadge label="Queue Stats" value={dataSources.taskStats} />
+            <SourceBadge label="Queue Streams" value={dataSources.taskQueues} />
+          </div>
         </div>
         <div className="flex items-center gap-4">
           <div className="text-sm text-gray-500">

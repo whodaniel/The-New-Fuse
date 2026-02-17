@@ -92,6 +92,21 @@ type ObservatoryMetrics = {
   activeAgentRatePercent: number | null;
 };
 
+type EndpointResolution<T = any> = {
+  data: T;
+  source: string;
+  usedFallback: boolean;
+};
+
+type ObservatoryDataSources = {
+  orchestratorAgents: string;
+  orchestratorHealth: string;
+  systemHealth: string;
+  systemMetrics: string;
+};
+
+const SOURCE_UNRESOLVED = 'unresolved';
+
 function slugId(label: string): string {
   return label
     .toLowerCase()
@@ -140,14 +155,34 @@ export const SystemObservatory: React.FC = () => {
     memoryUsagePercent: null,
     activeAgentRatePercent: null,
   });
+  const [dataSources, setDataSources] = useState<ObservatoryDataSources>({
+    orchestratorAgents: SOURCE_UNRESOLVED,
+    orchestratorHealth: SOURCE_UNRESOLVED,
+    systemHealth: SOURCE_UNRESOLVED,
+    systemMetrics: SOURCE_UNRESOLVED,
+  });
 
-  const fetchFirstJson = async (paths: string[]) => {
-    for (const path of paths) {
+  const fetchFirstJson = async (
+    paths: string[],
+    contextLabel: string
+  ): Promise<EndpointResolution | null> => {
+    for (let idx = 0; idx < paths.length; idx++) {
+      const path = paths[idx];
+      const usedFallback = idx > 0;
       try {
         const response = await fetch(path);
         if (!response.ok) continue;
         const text = await response.text();
-        return text ? JSON.parse(text) : {};
+        if (usedFallback) {
+          console.warn(
+            `[System Observatory] ${contextLabel} using fallback endpoint: ${paths[0]} -> ${path}`
+          );
+        }
+        return {
+          data: text ? JSON.parse(text) : {},
+          source: path,
+          usedFallback,
+        };
       } catch {
         // try next endpoint alias
       }
@@ -165,18 +200,36 @@ export const SystemObservatory: React.FC = () => {
     setTopologyLoading(true);
     setTopologyError(null);
     try {
-      const [agentsPayload, orchestratorHealthPayload, systemHealthPayload, systemMetricsPayload] =
+      const [agentsResult, orchestratorHealthResult, systemHealthResult, systemMetricsResult] =
         await Promise.all([
-          fetchFirstJson(['/api/orchestrator/agents', '/orchestrator/agents']),
-          fetchFirstJson(['/api/orchestrator/health', '/orchestrator/health']),
-          fetchFirstJson(['/api/system/health', '/system/health', '/api/health', '/health']),
-          fetchFirstJson(['/api/system/metrics', '/system/metrics']),
+          fetchFirstJson(
+            ['/api/orchestrator/agents', '/orchestrator/agents'],
+            'orchestrator agents'
+          ),
+          fetchFirstJson(
+            ['/api/orchestrator/health', '/orchestrator/health'],
+            'orchestrator health'
+          ),
+          fetchFirstJson(
+            ['/api/system/health', '/system/health', '/api/health', '/health'],
+            'system health'
+          ),
+          fetchFirstJson(['/api/system/metrics', '/system/metrics'], 'system metrics'),
         ]);
 
-      const agentsData = unwrap(agentsPayload);
-      const orchestratorHealth = unwrap(orchestratorHealthPayload);
-      const systemHealth = unwrap(systemHealthPayload);
-      const systemMetrics = unwrap(systemMetricsPayload);
+      const formatSource = (result: EndpointResolution | null) =>
+        result ? `${result.source}${result.usedFallback ? ' (fallback)' : ''}` : 'unavailable';
+      setDataSources({
+        orchestratorAgents: formatSource(agentsResult),
+        orchestratorHealth: formatSource(orchestratorHealthResult),
+        systemHealth: formatSource(systemHealthResult),
+        systemMetrics: formatSource(systemMetricsResult),
+      });
+
+      const agentsData = unwrap(agentsResult?.data);
+      const orchestratorHealth = unwrap(orchestratorHealthResult?.data);
+      const systemHealth = unwrap(systemHealthResult?.data);
+      const systemMetrics = unwrap(systemMetricsResult?.data);
       const agents = Array.isArray(agentsData.agents) ? agentsData.agents : [];
 
       const nodes: TopologyNode[] = [
@@ -208,7 +261,9 @@ export const SystemObservatory: React.FC = () => {
       });
 
       setTopologyGraph({ nodes, edges });
-      if (agents.length === 0) {
+      if (!agentsResult) {
+        setTopologyError('Orchestrator topology endpoints unavailable.');
+      } else if (agents.length === 0) {
         setTopologyError('No active orchestrator agents are currently reporting.');
       }
 
@@ -547,6 +602,12 @@ export const SystemObservatory: React.FC = () => {
             <p className="text-gray-500 font-mono text-sm uppercase tracking-widest">
               Global Fleet Intelligence & Node Topology
             </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <SourceBadge label="Agents" value={dataSources.orchestratorAgents} />
+              <SourceBadge label="Orchestrator" value={dataSources.orchestratorHealth} />
+              <SourceBadge label="System Health" value={dataSources.systemHealth} />
+              <SourceBadge label="System Metrics" value={dataSources.systemMetrics} />
+            </div>
           </div>
         </div>
 
@@ -1070,6 +1131,23 @@ export const SystemObservatory: React.FC = () => {
           </div>
         </div>
       </div>
+    </div>
+  );
+};
+
+const SourceBadge: React.FC<{ label: string; value: string }> = ({ label, value }) => {
+  const normalized = value.toLowerCase();
+  const isUnavailable = normalized.includes('unavailable') || value === SOURCE_UNRESOLVED;
+  const isFallback = normalized.includes('fallback');
+  const tone = isUnavailable
+    ? 'border-red-500/40 bg-red-500/10 text-red-300'
+    : isFallback
+      ? 'border-amber-500/40 bg-amber-500/10 text-amber-300'
+      : 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300';
+
+  return (
+    <div className={`rounded-full border px-2 py-1 text-[10px] font-mono ${tone}`}>
+      <span className="text-gray-300">{label}:</span> {value}
     </div>
   );
 };

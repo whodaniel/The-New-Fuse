@@ -31,19 +31,26 @@ export class SecurityLoggingService {
   private readonly securityLogger: winston.Logger;
 
   constructor(private configService: ConfigService) {
-    const isProduction = process.env.NODE_ENV === 'production';
-    const logDir = isProduction ? '/tmp/logs' : 'logs';
+    // Check for production or Railway environment - use console-only logging
+    const isProduction = process.env.NODE_ENV === 'production' || process.env.RAILWAY_ENVIRONMENT;
 
-    // Main application logger
+    // Main application logger - console only
     const appTransports: any[] = [
       new winston.transports.Console({
         format: winston.format.combine(winston.format.colorize(), winston.format.simple()),
       }),
     ];
 
-    // Only add file logging in development or when writable dir exists
+    // Only add file logging in local development (not in production or Railway)
     if (!isProduction) {
       try {
+        // Ensure logs directory exists and is writable
+        const fs = require('fs');
+        const logDir = 'logs';
+        if (!fs.existsSync(logDir)) {
+          fs.mkdirSync(logDir, { recursive: true });
+        }
+
         appTransports.push(
           new (winston.transports as any).DailyRotateFile({
             filename: `${logDir}/app-%DATE%.log`,
@@ -54,16 +61,12 @@ export class SecurityLoggingService {
           })
         );
       } catch (error: any) {
-        if (error.code === 'EACCES') {
-          console.warn('File logging disabled: No write permission for logs directory.');
-        } else {
-          console.warn('Failed to initialize file logging, using console only:', error);
-        }
+        console.warn('File logging disabled:', error.message);
       }
     }
 
     this.logger = winston.createLogger({
-      level: 'info',
+      level: process.env.LOG_LEVEL || 'info',
       format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
       transports: appTransports,
     });
@@ -75,8 +78,15 @@ export class SecurityLoggingService {
       }),
     ];
 
+    // Only add file logging in local development
     if (!isProduction) {
       try {
+        const fs = require('fs');
+        const logDir = 'logs';
+        if (!fs.existsSync(logDir)) {
+          fs.mkdirSync(logDir, { recursive: true });
+        }
+
         securityTransports.push(
           new (winston.transports as any).DailyRotateFile({
             filename: `${logDir}/security-%DATE%.log`,
@@ -87,16 +97,12 @@ export class SecurityLoggingService {
           })
         );
       } catch (error: any) {
-        if (error.code === 'EACCES') {
-          console.warn('Security file logging disabled: No write permission for logs directory.');
-        } else {
-          console.warn('Failed to initialize security file logging, using console only:', error);
-        }
+        console.warn('Security file logging disabled:', error.message);
       }
     }
 
     this.securityLogger = winston.createLogger({
-      level: 'info',
+      level: process.env.LOG_LEVEL || 'info',
       format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
       transports: securityTransports,
     });
