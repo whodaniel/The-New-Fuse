@@ -5,17 +5,17 @@ export interface LegacyRedirect {
 
 // Compatibility redirects to preserve legacy entry points while consolidating IA.
 export const LEGACY_REDIRECTS: LegacyRedirect[] = [
-  // OpenClaw-style operational aliases - REMOVED conflicting entries that are now handled in ComprehensiveRouter
-  // { from: '/overview', to: '/dashboard' }, -> Now /workspace/overview
-  // { from: '/channels', to: '/command-center' }, -> Now lazy page
-  // { from: '/instances', to: '/observatory' }, -> Now lazy page
-  // { from: '/sessions', to: '/multi-agent-chat' }, -> Now lazy page
-  // { from: '/usage', to: '/analytics' }, -> Now lazy page
-  // { from: '/cron-jobs', to: '/tasks' }, -> Now lazy page
-  // { from: '/skills', to: '/resources' }, -> Now /admin/agents/skills
-  // { from: '/nodes', to: '/observatory' }, -> Now lazy page
-  // { from: '/config', to: '/settings' }, -> Now /admin/configuration
-  // { from: '/logs', to: '/admin/audit-logs' }, -> Handled in router, can remove here or keep (removed for consistency)
+  // OpenClaw-style operational aliases
+  { from: '/overview', to: '/dashboard' },
+  { from: '/channels', to: '/command-center' },
+  { from: '/instances', to: '/observatory' },
+  { from: '/sessions', to: '/multi-agent-chat' },
+  { from: '/usage', to: '/analytics' },
+  { from: '/cron-jobs', to: '/tasks' },
+  { from: '/skills', to: '/resources' },
+  { from: '/nodes', to: '/observatory' },
+  { from: '/config', to: '/settings' },
+  { from: '/logs', to: '/admin/audit-logs' },
 
   { from: '/admin/panel', to: '/admin' },
   { from: '/team', to: '/workspace/members' },

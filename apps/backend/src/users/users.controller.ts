@@ -13,7 +13,6 @@ import {
   Req,
   ForbiddenException
 } from '@nestjs/common';
-import { Request } from 'express';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -58,12 +57,15 @@ export class UsersController {
   async update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
-    @Req() req: Request & { user: { id: string } }
+    @Req() req: Request
   ) {
-    // Security: Prevent IDOR - Users can only update their own account
-    if (req.user.id !== id) {
-      throw new ForbiddenException('You can only update your own account');
+    // 🛡️ Sentinel: IDOR Protection
+    // Ensure user can only update their own account
+    const user = req.user as any;
+    if (user.id !== id) {
+      throw new ForbiddenException('You can only update your own profile');
     }
+
     return this.usersService.update(id, updateUserDto);
   }
 
@@ -105,12 +107,15 @@ export class UsersController {
   async updateProfile(
     @Param('id') id: string,
     @Body() updateProfileDto: UpdateProfileDto,
-    @Req() req: Request & { user: { id: string } }
+    @Req() req: Request
   ): Promise<ProfileResponseDto> {
-    // Security: Prevent IDOR - Users can only update their own profile
-    if (req.user.id !== id) {
+    // 🛡️ Sentinel: IDOR Protection
+    // Ensure user can only update their own profile
+    const user = req.user as any;
+    if (user.id !== id) {
       throw new ForbiddenException('You can only update your own profile');
     }
+
     return this.usersService.updateProfile(id, updateProfileDto);
   }
 }

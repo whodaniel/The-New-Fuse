@@ -86,8 +86,7 @@ describe('UsersController', () => {
 
       mockUsersService.updateProfile.mockResolvedValue(mockUpdatedProfile);
 
-      const mockRequest = { user: { id: userId } };
-      const result = await controller.updateProfile(userId, updateDto, mockRequest as any);
+      const result = await controller.updateProfile(userId, updateDto, { user: { id: userId } } as any);
 
       expect(result).toEqual(mockUpdatedProfile);
       expect(service.updateProfile).toHaveBeenCalledWith(userId, updateDto);
@@ -123,8 +122,7 @@ describe('UsersController', () => {
 
       mockUsersService.updateProfile.mockResolvedValue(mockUpdatedProfile);
 
-      const mockRequest = { user: { id: userId } };
-      const result = await controller.updateProfile(userId, updateDto, mockRequest as any);
+      const result = await controller.updateProfile(userId, updateDto, { user: { id: userId } } as any);
 
       expect(result).toEqual(mockUpdatedProfile);
       expect(service.updateProfile).toHaveBeenCalledWith(userId, updateDto);

@@ -62,7 +62,7 @@
   "author": "The New Fuse Team",
   "license": "MIT",
   "dependencies": {
-    "@nestjs/common": "^11.1.14",
+    "@nestjs/common": "^11.1.10",
     "@the-new-fuse/relay-core": "workspace:*",
     "events": "^3.3.0",
     "fs-extra": "^11.3.2",
@@ -76,7 +76,7 @@
     "@types/semver": "^7.7.1",
     "@typescript-eslint/eslint-plugin": "^8.49.0",
     "@typescript-eslint/parser": "^8.49.0",
-    "eslint": "^10.0.0",
+    "eslint": "^9.38.0",
     "jest": "^30.2.0",
     "minimatch": "^10.0.1",
     "rimraf": "^6.0.1",

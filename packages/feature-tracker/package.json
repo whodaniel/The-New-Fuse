@@ -17,7 +17,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
-    "@nestjs/common": "^11.1.14",
+    "@nestjs/common": "^11.1.10",
     "@the-new-fuse/core": "workspace:*",
     "@the-new-fuse/types": "workspace:*",
     "@the-new-fuse/utils": "workspace:*",
@@ -36,7 +36,7 @@
     "@types/selenium-webdriver": "^4.35.1",
     "@typescript-eslint/eslint-plugin": "^8.49.0",
     "@typescript-eslint/parser": "^8.49.0",
-    "eslint": "^10.0.0",
+    "eslint": "^9.38.0",
     "jest": "^30.2.0",
     "rimraf": "^6.0.1",
     "ts-jest": "^29.4.6",

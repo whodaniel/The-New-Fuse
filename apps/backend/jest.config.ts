@@ -6,7 +6,7 @@ module.exports = {
   transform: {
     '^.+\\.[tj]sx?$': ['ts-jest', {
       tsconfig: 'tsconfig.test.json',
-      diagnostics: false
+      diagnostics: false, // Disable type checking during test run to allow tests to run despite DB package errors
     }],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],

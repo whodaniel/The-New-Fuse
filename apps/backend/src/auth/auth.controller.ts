@@ -6,11 +6,6 @@ import { Request, Response } from 'express';
 import { RegisterDto } from '../dto/register.dto';
 import { AuthService } from './auth.service';
 import { FirebaseAuthGuard } from './firebase-auth.guard';
-import { Request, Response } from 'express';
-import { IsEmail, IsString } from 'class-validator';
-import { JwtService } from '@nestjs/jwt';
-import { RegisterDto } from '../dto/register.dto';
-import { UsersService } from '../users/users.service';
 
 class LoginDto {
   @IsEmail()
@@ -20,12 +15,11 @@ class LoginDto {
   password: string;
 }
 
-@Controller('api/auth')
+@Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly jwtService: JwtService,
-    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService
   ) {}
 
   @Post('register')
@@ -59,9 +53,8 @@ export class AuthController {
   }
 
   @Get('me')
-  @UseGuards(FirebaseAuthGuard)
-  async getProfile(@Req() req: any) {
-    return req.user;
+  async getCurrentUser(@Req() req: Request) {
+    return this.authService.resolveCurrentUserFromAuthHeader(req.headers.authorization);
   }
 
   @Get('google')

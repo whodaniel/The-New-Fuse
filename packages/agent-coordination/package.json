@@ -20,11 +20,11 @@
     "clean": "rimraf dist .tsbuildinfo tsconfig.tsbuildinfo"
   },
   "dependencies": {
-    "@nestjs/common": "^11.1.14",
+    "@nestjs/common": "^11.1.10",
     "@nestjs/config": "^4.0.2",
     "@the-new-fuse/a2a-core": "workspace:^",
     "@the-new-fuse/infrastructure": "workspace:*",
-    "bullmq": "^5.69.3",
+    "bullmq": "^5.34.2",
     "ioredis": "^5.8.1",
     "msgpack-lite": "^0.1.26",
     "rxjs": "^7.8.2",

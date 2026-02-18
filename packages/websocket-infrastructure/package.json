@@ -18,9 +18,9 @@
     "clean": "rimraf dist tsconfig.tsbuildinfo"
   },
   "dependencies": {
-    "@nestjs/common": "^11.1.14",
-    "@nestjs/platform-socket.io": "^11.1.14",
-    "@nestjs/websockets": "^11.1.14",
+    "@nestjs/common": "^11.1.10",
+    "@nestjs/platform-socket.io": "^11.1.10",
+    "@nestjs/websockets": "^11.1.10",
     "@socket.io/redis-adapter": "^8.3.0",
     "compression": "^1.8.1",
     "ioredis": "^5.8.1",
@@ -41,7 +41,7 @@
     "@types/uuid": "^11.0.0",
     "@typescript-eslint/eslint-plugin": "^8.49.0",
     "@typescript-eslint/parser": "^8.49.0",
-    "eslint": "^10.0.0",
+    "eslint": "^9.38.0",
     "eslint-config-prettier": "^10.1.8",
     "jest": "^30.2.0",
     "prettier": "^3.6.2",

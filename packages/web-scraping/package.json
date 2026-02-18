@@ -18,8 +18,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@nestjs/common": "^11.1.14",
-    "@nestjs/websockets": "^11.1.14",
+    "@nestjs/common": "^11.1.10",
+    "@nestjs/websockets": "^11.1.10",
     "@the-new-fuse/ap2-protocol": "workspace:^",
     "@the-new-fuse/mcp-core": "workspace:^",
     "@the-new-fuse/utils": "workspace:^",
@@ -37,7 +37,7 @@
     "@types/mime-types": "^2.1.4",
     "@types/node": "^24.0.13",
     "@types/url-parse": "^1.4.11",
-    "eslint": "^10.0.0",
+    "eslint": "^8.57.1",
     "jest": "^30.2.0",
     "ts-jest": "^29.4.6",
     "typescript": "^5.8.3"
