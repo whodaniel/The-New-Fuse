@@ -82,6 +82,8 @@ interface ProtocolMessage {
   channel?: string;
   payload?: unknown;
   timestamp?: number;
+  resource?: any;
+  metadata?: Record<string, unknown>;
 }
 
 interface PersistedActivityEvent {

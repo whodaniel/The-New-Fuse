@@ -21,9 +21,9 @@ export { TNFRelayServer } from './standalone-relay';
 export * from './services/stall-detector';
 
 // Protocol
-export * from './protocol/tnf-envelope';
 export * from './protocol/resource-protocol';
 export * from './protocol/task-protocol';
+export * from './protocol/tnf-envelope';
 
 // Bridges
 export * from './redis-relay-bridge';
