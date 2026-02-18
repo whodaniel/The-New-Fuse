@@ -3,16 +3,20 @@
 # ============================================================
 FROM golang:1.26.0-alpine AS builder
 
+# APP_PATH defaults to repo-root-relative path (railway up / git deploys).
+# Override with APP_PATH=. if build context is apps/picoclaw-overseer directly.
+ARG APP_PATH=apps/picoclaw-overseer
+
 RUN apk add --no-cache git make
 
 WORKDIR /src
 
-# Cache dependencies - use correct path for Railway root context
-COPY apps/picoclaw-overseer/go.mod apps/picoclaw-overseer/go.sum ./
+# Cache dependencies
+COPY ${APP_PATH}/go.mod ${APP_PATH}/go.sum ./
 RUN go mod download
 
-# Copy source and build - use correct path for Railway root context
-COPY apps/picoclaw-overseer/ .
+# Copy source and build
+COPY ${APP_PATH}/ .
 RUN make build
 
 # ============================================================
@@ -20,13 +24,15 @@ RUN make build
 # ============================================================
 FROM alpine:3.23
 
+ARG APP_PATH=apps/picoclaw-overseer
+
 RUN apk add --no-cache ca-certificates tzdata curl busybox-extras
 
 # Copy binary
 COPY --from=builder /src/build/picoclaw /usr/local/bin/picoclaw
 
-# Copy railway entrypoint - use correct path for Railway root context
-COPY apps/picoclaw-overseer/entrypoint-railway.sh /usr/local/bin/entrypoint-railway.sh
+# Copy railway entrypoint
+COPY ${APP_PATH}/entrypoint-railway.sh /usr/local/bin/entrypoint-railway.sh
 RUN chmod +x /usr/local/bin/entrypoint-railway.sh
 
 # Create picoclaw home directory
