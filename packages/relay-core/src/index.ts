@@ -22,6 +22,8 @@ export * from './services/stall-detector';
 
 // Protocol
 export * from './protocol/tnf-envelope';
+export * from './protocol/resource-protocol';
+export * from './protocol/task-protocol';
 
 // Bridges
 export * from './redis-relay-bridge';

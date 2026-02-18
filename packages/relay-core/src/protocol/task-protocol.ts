@@ -1,3 +1,5 @@
+import { ResourceStrategy } from './resource-protocol';
+
 export interface OrchestrationTask {
   id: string;
   type: 'question' | 'generation' | 'analysis' | 'review' | 'continuation';
@@ -20,6 +22,9 @@ export interface OrchestrationTask {
   // Chaining
   dependencies?: string[]; // Task IDs that must complete first
   nextTasks?: string[]; // Tasks to trigger on completion
+
+  // Resource Strategy
+  resourceStrategy?: ResourceStrategy;
 
   // Metadata
   correlationId: string;

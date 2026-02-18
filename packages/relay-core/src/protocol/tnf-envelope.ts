@@ -13,6 +13,8 @@ import crypto from 'crypto';
 
 import { z } from 'zod';
 
+import { ResourceStrategy } from './resource-protocol';
+
 /**
  * Message Types
  */
@@ -23,6 +25,7 @@ export const MessageType = z.enum([
   'state-sync',   // State synchronization
   'query',        // Information request
   'response',     // Response to query/task
+  'resource-negotiate', // Resource/Quota management
 ]);
 
 export type MessageType = z.infer<typeof MessageType>;
@@ -75,6 +78,9 @@ export const TNFEnvelope = z.object({
   
   // Context
   context: MessageContext.optional(),
+  
+  // Resource Control (NEW PRIMITIVE)
+  resource: ResourceStrategy.optional().describe('Strategic resource/account handling instructions'),
   
   // Metadata
   metadata: z.record(z.string(), z.unknown()).optional().describe('Additional metadata'),
