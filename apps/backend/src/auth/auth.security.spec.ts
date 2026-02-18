@@ -8,6 +8,7 @@ import { IdentityService } from '../services/identity.service';
 import { UnauthorizedException } from '@nestjs/common';
 import { verifyMessage } from 'viem';
 import { drizzleUserRepository } from '@the-new-fuse/database';
+import { ConfigService } from '@nestjs/config';
 
 // We need to mock the module that exports drizzleUserRepository
 jest.mock('@the-new-fuse/database', () => ({
@@ -23,6 +24,17 @@ jest.mock('viem', () => ({
   // verifyMessage is named export, we mock it.
   // Address and Hex are types so they don't need mocking but strict ESM might complain if not exported.
   // However, types are erased at runtime so it should be fine.
+}));
+
+jest.mock('firebase-admin', () => ({
+  apps: [],
+  credential: {
+    applicationDefault: jest.fn(),
+  },
+  initializeApp: jest.fn(),
+  auth: () => ({
+    verifyIdToken: jest.fn(),
+  }),
 }));
 
 describe('AuthService Security', () => {
@@ -57,6 +69,10 @@ describe('AuthService Security', () => {
         {
           provide: IdentityService,
           useValue: { mintMachineID: jest.fn() },
+        },
+        {
+          provide: ConfigService,
+          useValue: { get: jest.fn() },
         },
       ],
     }).compile();

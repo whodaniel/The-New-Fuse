@@ -31,14 +31,28 @@ export class RolesGuard implements CanActivate {
       return false;
     }
 
-    // Check primary role
-    if (roles.includes(dbUser.role)) {
+    // Normalize required roles to uppercase for comparison
+    const requiredRoles = roles.map(role => role.toUpperCase());
+    
+    // Normalize user roles
+    const userRole = dbUser.role ? dbUser.role.toUpperCase() : '';
+    const userRoles = dbUser.roles && Array.isArray(dbUser.roles) 
+      ? dbUser.roles.map((r: string) => r.toUpperCase()) 
+      : [];
+
+    // SUPER_ADMIN Bypass
+    if (userRole === 'SUPER_ADMIN' || userRoles.includes('SUPER_ADMIN')) {
       return true;
     }
 
-    // Check roles array if it exists (schema has both role and roles)
-    if (dbUser.roles && Array.isArray(dbUser.roles)) {
-      return dbUser.roles.some((r: string) => roles.includes(r));
+    // Check primary role
+    if (requiredRoles.includes(userRole)) {
+      return true;
+    }
+
+    // Check roles array
+    if (userRoles.some((r: string) => requiredRoles.includes(r))) {
+      return true;
     }
 
     return false;
