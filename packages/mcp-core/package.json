@@ -83,7 +83,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.26.0",
-    "ajv": "^8.17.1",
+    "ajv": "^8.18.0",
     "ws": "^8.18.3",
     "uuid": "^13.0.0",
     "winston": "^3.18.3",
