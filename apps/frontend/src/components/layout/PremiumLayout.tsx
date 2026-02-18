@@ -23,6 +23,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useLayout } from '../../contexts/LayoutContext';
 import { useAuth } from '../../providers/AuthProvider';
 import { useTheme } from '../../providers/ThemeProvider';
+import { Tooltip } from '../ui/tooltip';
 
 interface PremiumLayoutProps {
   children: ReactNode;
@@ -51,7 +52,6 @@ export const PremiumLayout: React.FC<PremiumLayoutProps> = ({
   const { user, logout } = useAuth();
   const { layout, toggleSidebar } = useLayout();
   const { theme, setTheme } = useTheme();
-  const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -92,13 +92,15 @@ export const PremiumLayout: React.FC<PremiumLayoutProps> = ({
 
                 {/* Desktop Sidebar Toggle */}
                 {showSidebar && (
-                  <button
-                    onClick={toggleSidebar}
-                    className="hidden md:block p-2 rounded-lg text-white hover:bg-white/10 transition-all duration-200"
-                    aria-label="Toggle sidebar"
-                  >
-                    <Menu className="h-6 w-6" />
-                  </button>
+                  <Tooltip label={layout.sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}>
+                    <button
+                      onClick={toggleSidebar}
+                      className="hidden md:block p-2 rounded-lg text-white hover:bg-white/10 transition-all duration-200"
+                      aria-label="Toggle sidebar"
+                    >
+                      <Menu className="h-6 w-6" />
+                    </button>
+                  </Tooltip>
                 )}
 
                 {/* Logo */}
@@ -127,34 +129,46 @@ export const PremiumLayout: React.FC<PremiumLayoutProps> = ({
               {/* Right Section */}
               <div className="flex items-center gap-3">
                 {/* Theme Toggle */}
-                <button
-                  onClick={toggleTheme}
-                  className="p-2 rounded-lg text-white hover:bg-white/10 transition-all duration-200"
-                  aria-label="Toggle theme"
-                >
-                  {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-                </button>
+                <Tooltip label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}>
+                  <button
+                    onClick={toggleTheme}
+                    className="p-2 rounded-lg text-white hover:bg-white/10 transition-all duration-200"
+                    aria-label="Toggle theme"
+                  >
+                    {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                  </button>
+                </Tooltip>
 
                 {/* Notifications */}
-                <button className="relative p-2 rounded-lg text-white hover:bg-white/10 transition-all duration-200">
-                  <Bell className="h-5 w-5" />
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                </button>
+                <Tooltip label="Notifications">
+                  <button
+                    className="relative p-2 rounded-lg text-white hover:bg-white/10 transition-all duration-200"
+                    aria-label="Notifications"
+                  >
+                    <Bell className="h-5 w-5" />
+                    <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                  </button>
+                </Tooltip>
 
                 {/* User Menu */}
                 {user && (
                   <div className="relative">
-                    <button
-                      onClick={() => setUserMenuOpen(!userMenuOpen)}
-                      className="flex items-center gap-2 p-2 rounded-lg text-white hover:bg-white/10 transition-all duration-200"
-                    >
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold">
-                        {user.name?.charAt(0) || user.email?.charAt(0) || 'U'}
-                      </div>
-                      <ChevronDown
-                        className={`h-4 w-4 transition-transform duration-200 ${userMenuOpen ? 'rotate-180' : ''}`}
-                      />
-                    </button>
+                    <Tooltip label="User menu">
+                      <button
+                        onClick={() => setUserMenuOpen(!userMenuOpen)}
+                        className="flex items-center gap-2 p-2 rounded-lg text-white hover:bg-white/10 transition-all duration-200"
+                        aria-label="User menu"
+                        aria-expanded={userMenuOpen}
+                        aria-haspopup="true"
+                      >
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold">
+                          {user.name?.charAt(0) || user.email?.charAt(0) || 'U'}
+                        </div>
+                        <ChevronDown
+                          className={`h-4 w-4 transition-transform duration-200 ${userMenuOpen ? 'rotate-180' : ''}`}
+                        />
+                      </button>
+                    </Tooltip>
 
                     {/* User Dropdown Menu */}
                     {userMenuOpen && (
