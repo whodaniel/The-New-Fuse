@@ -80,20 +80,23 @@ interface ProtocolMessage {
 
 ### Message Types
 
-| Type              | Direction        | Description                  |
-| ----------------- | ---------------- | ---------------------------- |
-| `WELCOME`         | Server → Client  | Sent on connection           |
-| `AGENT_REGISTER`  | Client → Server  | Register as an agent         |
-| `AGENT_LIST`      | Both             | Request/receive agent list   |
-| `AGENT_STATUS`    | Server → Clients | Agent status change          |
-| `CHANNEL_LIST`    | Both             | Request/receive channel list |
-| `CHANNEL_CREATE`  | Client → Server  | Create a new channel         |
-| `CHANNEL_JOIN`    | Client → Server  | Join a channel               |
-| `CHANNEL_LEAVE`   | Client → Server  | Leave a channel              |
-| `MESSAGE_SEND`    | Client → Server  | Send a message               |
-| `MESSAGE_RECEIVE` | Server → Client  | Receive a message            |
-| `CHANNEL_MESSAGE` | Server → Client  | Channel broadcast            |
-| `HEARTBEAT`       | Client → Server  | Keep connection alive        |
+| Type                     | Direction              | Description                                   |
+| ------------------------ | ---------------------- | --------------------------------------------- |
+| `WELCOME`                | Server → Client        | Sent on connection                            |
+| `AGENT_REGISTER`         | Client → Server        | Register as an agent                          |
+| `AGENT_LIST`             | Both                   | Request/receive agent list                    |
+| `AGENT_STATUS`           | Server → Clients       | Agent status change                           |
+| `CHANNEL_LIST`           | Both                   | Request/receive channel list                  |
+| `CHANNEL_CREATE`         | Client → Server        | Create a new channel                          |
+| `CHANNEL_JOIN`           | Client → Server        | Join a channel                                |
+| `CHANNEL_LEAVE`          | Client → Server        | Leave a channel                               |
+| `MESSAGE_SEND`           | Client → Server        | Send a message                                |
+| `MESSAGE_RECEIVE`        | Server → Client        | Receive a message                             |
+| `CHANNEL_MESSAGE`        | Server → Client        | Channel broadcast                             |
+| `HEARTBEAT`              | Client → Server        | Keep connection alive                         |
+| `SUPER_CYCLE_REGISTER`   | Process → Master Clock | Register scheduled process in super-cycle     |
+| `SUPER_CYCLE_HEARTBEAT`  | Process → Master Clock | Report scheduled process heartbeat/status     |
+| `SUPER_CYCLE_UNREGISTER` | Process → Master Clock | Remove scheduled process from active registry |
 
 ### Agent Registration
 
@@ -209,3 +212,26 @@ const channels = relay.getChannels();
 // Stop
 await relay.stop();
 ```
+
+## Super-Cycle Registration (Scheduled Jobs/Cron)
+
+Use the relay-core super-cycle client to register and heartbeat any scheduled
+automation process against the TNF Master Clock state:
+
+```bash
+cd packages/relay-core
+
+# Register once (for startup)
+pnpm run super-cycle:event -- --action register --process-id jules-autonomous-loop --name "Jules Autonomous Loop" --kind cron --owner ci
+
+# Heartbeat each run/tick
+pnpm run super-cycle:event -- --action heartbeat --process-id jules-autonomous-loop --status running --result success --metadata '{"source":"cron"}'
+
+# View centralized super-cycle state snapshot
+pnpm run super-cycle:status
+```
+
+Master Clock writes this into Redis:
+
+- `tnf:master:state` field `superCycle` (snapshot + stats)
+- `tnf:master:super-cycle` hash (per-process records)

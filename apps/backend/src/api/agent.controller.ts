@@ -12,6 +12,7 @@ import {
 import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { db, drizzleAgentRepository, drizzleUserRepository } from '@the-new-fuse/database';
 import { IsArray, IsEnum, IsObject, IsOptional, IsString } from 'class-validator';
+import { TnfRegistryService } from './tnf-registry.service';
 
 // Define local enums to avoid Prisma dependency
 export enum AgentType {
@@ -103,7 +104,7 @@ export class UpdateAgentDto {
 @ApiTags('Agents')
 @Controller('api/agents')
 export class AgentController {
-  constructor() {}
+  constructor(private readonly tnfRegistryService: TnfRegistryService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new agent' })
@@ -146,7 +147,28 @@ export class AgentController {
   @Get('discover')
   @ApiOperation({ summary: 'Discover agents' })
   async discoverAgents(): Promise<any[]> {
-    return db.query.agents.findMany();
+    try {
+      return await this.tnfRegistryService.getDiscoverableAgents();
+    } catch {
+      // Legacy fallback while V2 adoption is in progress.
+      return db.query.agents.findMany();
+    }
+  }
+
+  @Get('frontload')
+  @ApiOperation({ summary: 'Get canonical TNF V2 frontload snapshot' })
+  async getFrontloadSnapshot(): Promise<any> {
+    try {
+      return await this.tnfRegistryService.getFrontloadSnapshot();
+    } catch {
+      const legacyAgents = await db.query.agents.findMany();
+      return {
+        source: 'legacy_agents_fallback',
+        generatedAt: new Date().toISOString(),
+        counts: { agents: legacyAgents.length },
+        agents: legacyAgents,
+      };
+    }
   }
 
   @Get(':id')

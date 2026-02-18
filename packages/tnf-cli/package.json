@@ -7,6 +7,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
+    "tnf": "./dist/cli.js",
     "tnf-agent": "./dist/cli.js"
   },
   "scripts": {

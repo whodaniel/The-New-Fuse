@@ -1,3 +1,4 @@
+import { ResourceStrategy } from './resource-protocol';
 export interface OrchestrationTask {
     id: string;
     type: 'question' | 'generation' | 'analysis' | 'review' | 'continuation';
@@ -12,6 +13,7 @@ export interface OrchestrationTask {
     maxRetries: number;
     dependencies?: string[];
     nextTasks?: string[];
+    resourceStrategy?: ResourceStrategy;
     correlationId: string;
     parentTaskId?: string;
     createdAt: number;

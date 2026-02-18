@@ -42,6 +42,17 @@ function checkPort(port, host = "127.0.0.1", timeoutMs = 500) {
   });
 }
 
+function isLocalDatabaseUrl(url) {
+  if (!url) return true;
+  const lower = String(url).toLowerCase();
+  return (
+    lower.includes("localhost") ||
+    lower.includes("127.0.0.1") ||
+    lower.includes("::1") ||
+    lower.startsWith("sqlite:")
+  );
+}
+
 async function main() {
   if (!exists(".agent")) {
     console.error("FAIL: run this from TNF repo root (missing .agent/).");
@@ -115,6 +126,21 @@ async function main() {
   ];
   for (const p of generated) {
     console.log(`- ${exists(p) ? "OK" : "MISSING"} ${p}`);
+  }
+
+  console.log("\n[6] Cloud-Rooted DB Policy");
+  const dbUrl = process.env.DATABASE_URL || "";
+  const allowLocal = process.env.TNF_ALLOW_LOCAL_DB === "1";
+  const cloudRequired = process.env.TNF_REQUIRE_CLOUD_DB !== "0";
+  if (!dbUrl) {
+    hardFail = true;
+    console.log("- FAIL DATABASE_URL is not set");
+  } else if (cloudRequired && !allowLocal && isLocalDatabaseUrl(dbUrl)) {
+    hardFail = true;
+    console.log("- FAIL DATABASE_URL is local while TNF requires cloud-rooted execution");
+    console.log("- Hint: use cloud DATABASE_URL or set TNF_ALLOW_LOCAL_DB=1 for temporary override");
+  } else {
+    console.log("- OK DATABASE_URL policy check passed");
   }
 
   console.log(`\nDoctor result: ${hardFail ? "FAIL" : "PASS"}`);

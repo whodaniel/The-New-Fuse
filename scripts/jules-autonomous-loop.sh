@@ -10,6 +10,7 @@ mkdir -p "$LOG_DIR"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 LOG_FILE="$LOG_DIR/jules-autonomous-loop-$STAMP.log"
 SESSIONS_TMP="$LOG_DIR/jules-loop-sessions-$STAMP.txt"
+PUBLISH_TMP="$LOG_DIR/jules-loop-publish-$STAMP.txt"
 
 log() {
   echo "[$(date +%H:%M:%S)] $*" | tee -a "$LOG_FILE"
@@ -56,10 +57,23 @@ if [[ -f ".agent/jules-logs/pipeline-state.json" ]]; then
   else
     log "No sessions require plan approval."
   fi
+
+  jq -r '.sessions | to_entries[] | select((.value.branch == null or .value.branch == "") and (.value.status == "COMPLETED" or .value.status == "REVIEW")) | .key' \
+    ".agent/jules-logs/pipeline-state.json" > "$PUBLISH_TMP" || true
 fi
 
-log "Publishing completed sessions as branches."
-node scripts/jules-pipeline.cjs publish | tee -a "$LOG_FILE" || true
+if [[ -s "$PUBLISH_TMP" ]]; then
+  publish_count="$(wc -l < "$PUBLISH_TMP" | tr -d ' ')"
+  log "Publishing $publish_count completed/review sessions via worktree-safe publisher."
+  node scripts/jules-publish-prs.cjs \
+    --sessions-file "$PUBLISH_TMP" \
+    --mode publish \
+    --limit "$publish_count" \
+    --repo whodaniel/fuse \
+    --base main | tee -a "$LOG_FILE" || true
+else
+  log "No completed/review sessions need publishing."
+fi
 
 log "Creating/fetching PRs for published branches."
 node scripts/jules-pipeline.cjs pr | tee -a "$LOG_FILE" || true

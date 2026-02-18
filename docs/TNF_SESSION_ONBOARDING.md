@@ -9,6 +9,16 @@ sessions.
 pnpm run tnf:onboard
 ```
 
+Cloud policy:
+
+- `tnf:onboard`, `tnf:doctor`, and `tnf:audit:synergy` are cloud-rooted by
+  default.
+- They require `DATABASE_URL` and reject localhost/sqlite targets unless
+  `TNF_ALLOW_LOCAL_DB=1` is set.
+- Keep `TNF_REQUIRE_CLOUD_DB` unset (or `1`) to enforce cloud-first behavior.
+- Backend startup paths also enforce this via
+  `apps/backend/src/config/cloud-root-policy.ts`.
+
 This command prints:
 
 - TNF frontload checklist

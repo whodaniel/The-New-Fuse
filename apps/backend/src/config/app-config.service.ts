@@ -1,5 +1,6 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { validateCloudRootPolicy } from './cloud-root-policy';
 
 /**
  * Centralized Application Configuration Service
@@ -48,6 +49,16 @@ export class AppConfigService implements OnModuleInit {
     // If we're in production, enforce stricter requirements
     if (nodeEnv === 'production') {
       this.validateProductionConfig(errors);
+    }
+
+    // Enforce cloud-rooted execution policy for runtime data stores
+    const cloudPolicy = validateCloudRootPolicy(
+      nodeEnv,
+      this.configService.get<string>('DATABASE_URL'),
+      this.configService.get<string>('REDIS_URL')
+    );
+    if (!cloudPolicy.ok && cloudPolicy.reason) {
+      errors.push(cloudPolicy.reason);
     }
 
     // Fail fast if any validation errors occurred

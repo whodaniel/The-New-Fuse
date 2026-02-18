@@ -14,6 +14,8 @@ export * from './utils/Logger';
 export * from './utils/MessageRouter';
 export { TNFRelayServer } from './standalone-relay';
 export * from './services/stall-detector';
+export * from './protocol/resource-protocol';
+export * from './protocol/task-protocol';
 export * from './protocol/tnf-envelope';
 export * from './redis-relay-bridge';
 //# sourceMappingURL=index.d.ts.map

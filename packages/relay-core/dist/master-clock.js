@@ -76,6 +76,7 @@ const CONFIG = {
     RECOVERY_INTERVAL: parseInt(process.env.RECOVERY_INTERVAL || '') || 10000, // 10 seconds
     ONBOARDING_TIMEOUT: parseInt(process.env.ONBOARDING_TIMEOUT || '') || 30000, // 30 seconds
     MAX_RECOVERY_ATTEMPTS: 5,
+    SUPER_CYCLE_STALE_THRESHOLD: parseInt(process.env.SUPER_CYCLE_STALE_THRESHOLD || '') || 90000, // 90 seconds
     // Connections
     RELAY_URL: process.env.RELAY_URL || 'ws://localhost:3000/ws',
     REDIS_URL: process.env.REDIS_URL,
@@ -89,6 +90,7 @@ const CONFIG = {
         TASKS: 'tnf:master:tasks:pending',
         LOGS: 'tnf:master:logs',
         STATE: 'tnf:master:state',
+        SUPER_CYCLE: 'tnf:master:super-cycle',
         INGRESS: 'tnf:bus:ingress',
         EGRESS_PREFIX: 'tnf:bus:egress',
     },
@@ -243,6 +245,7 @@ class MasterClock {
     heartbeatInterval;
     stallCheckInterval;
     channels;
+    scheduledProcesses;
     recoveryAttempts;
     metrics;
     reconnectTimer = null;
@@ -256,6 +259,7 @@ class MasterClock {
         this.heartbeatInterval = null;
         this.stallCheckInterval = null;
         this.channels = new Map(); // channelId -> { members, lastActivity }
+        this.scheduledProcesses = new Map();
         this.recoveryAttempts = new Map(); // agentId -> attempts
         this.metrics = {
             heartbeatsSent: 0,
@@ -423,6 +427,7 @@ class MasterClock {
     sendHeartbeat() {
         const now = Date.now();
         const stats = this.registry.getStats();
+        const superCycleStats = this.getSuperCycleStats();
         // Heartbeat to relay
         this.send({
             type: 'HEARTBEAT',
@@ -431,6 +436,7 @@ class MasterClock {
                 role: 'ORCHESTRATOR',
                 timestamp: now,
                 stats,
+                superCycle: superCycleStats,
                 channels: CONFIG.CHANNELS,
             },
         });
@@ -441,9 +447,11 @@ class MasterClock {
                 sessionId: this.sessionId,
                 lastHeartbeat: now,
                 stats,
+                superCycle: superCycleStats,
                 isActive: true,
             }))
                 .catch(() => { });
+            this.persistSuperCycleState(now).catch(() => { });
         }
         this.metrics.heartbeatsSent++;
         // Log status periodically (every 10th heartbeat)
@@ -490,6 +498,7 @@ class MasterClock {
                 this.broadcastAgentOffline(agent.agentId);
             }
         }
+        this.checkForStaleScheduledProcesses();
     }
     attemptRecovery(agentId, attemptNumber) {
         this.recoveryAttempts.set(agentId, attemptNumber);
@@ -531,26 +540,49 @@ class MasterClock {
     }
     processMessage(msg, source) {
         this.metrics.messagesProcessed++;
-        switch (msg.type) {
+        const normalized = this.normalizeIncomingMessage(msg);
+        if (!normalized)
+            return;
+        switch (normalized.type) {
             case 'CHANNEL_MESSAGE':
-                this.handleChannelMessage(msg);
+                this.handleChannelMessage(normalized);
                 break;
             case 'HEARTBEAT':
-                this.handleAgentHeartbeat(msg);
+                this.handleAgentHeartbeat(normalized);
                 break;
             case 'AGENT_REGISTER':
-                this.handleAgentRegistration(msg);
+                this.handleAgentRegistration(normalized);
                 break;
             case 'AGENT_JOINED':
-                this.handleAgentJoined(msg);
+                this.handleAgentJoined(normalized);
                 break;
             case 'CHANNEL_CREATE':
-                this.handleChannelCreate(msg);
+                this.handleChannelCreate(normalized);
+                break;
+            case 'SUPER_CYCLE_REGISTER':
+                this.handleSuperCycleRegistration(normalized);
+                break;
+            case 'SUPER_CYCLE_HEARTBEAT':
+                this.handleSuperCycleHeartbeat(normalized);
+                break;
+            case 'SUPER_CYCLE_UNREGISTER':
+                this.handleSuperCycleUnregister(normalized);
                 break;
             case 'WELCOME':
-                log('debug', 'RELAY', 'Welcome received', { clientId: msg.clientId });
+                log('debug', 'RELAY', 'Welcome received', { clientId: normalized.clientId });
                 break;
         }
+    }
+    normalizeIncomingMessage(msg) {
+        if (!msg)
+            return null;
+        if (msg.type)
+            return msg;
+        // TNF envelope compatibility over Redis ingress.
+        if (msg.payload?.originalMessage?.type) {
+            return msg.payload.originalMessage;
+        }
+        return null;
     }
     handleChannelMessage(msg) {
         const content = msg.payload?.content || '';
@@ -611,6 +643,64 @@ class MasterClock {
             for (const channel of CONFIG.CHANNELS) {
                 this.broadcastToChannel(channel, this.createAssignmentMessage(agentId));
             }
+        }
+    }
+    handleSuperCycleRegistration(msg) {
+        const payload = msg.payload || {};
+        const processId = payload.processId || payload.name || msg.source;
+        if (!processId)
+            return;
+        const existing = this.scheduledProcesses.get(processId);
+        const now = Date.now();
+        const next = {
+            processId,
+            name: payload.name || existing?.name || processId,
+            kind: payload.kind || existing?.kind || 'scheduled-job',
+            owner: payload.owner || existing?.owner || 'unknown',
+            status: payload.status || existing?.status || 'registered',
+            registeredAt: existing?.registeredAt || now,
+            lastHeartbeat: now,
+            lastRunAt: payload.lastRunAt || existing?.lastRunAt,
+            lastResult: payload.lastResult || existing?.lastResult,
+            metadata: { ...(existing?.metadata || {}), ...(payload.metadata || {}) },
+            stale: false,
+            heartbeatCount: (existing?.heartbeatCount || 0) + 1,
+        };
+        this.scheduledProcesses.set(processId, next);
+        log('info', 'SUPER-CYCLE', `Registered process ${processId}`, {
+            processId,
+            kind: next.kind,
+            owner: next.owner,
+        });
+    }
+    handleSuperCycleHeartbeat(msg) {
+        const payload = msg.payload || {};
+        const processId = payload.processId || payload.name || msg.source;
+        if (!processId)
+            return;
+        const existing = this.scheduledProcesses.get(processId);
+        if (!existing) {
+            this.handleSuperCycleRegistration({
+                ...msg,
+                payload: { ...payload, processId, status: payload.status || 'running' },
+            });
+            return;
+        }
+        existing.lastHeartbeat = Date.now();
+        existing.status = payload.status || existing.status || 'running';
+        existing.lastRunAt = payload.lastRunAt || existing.lastRunAt;
+        existing.lastResult = payload.lastResult || existing.lastResult;
+        existing.metadata = { ...existing.metadata, ...(payload.metadata || {}) };
+        existing.stale = false;
+        existing.heartbeatCount += 1;
+    }
+    handleSuperCycleUnregister(msg) {
+        const payload = msg.payload || {};
+        const processId = payload.processId || payload.name || msg.source;
+        if (!processId)
+            return;
+        if (this.scheduledProcesses.delete(processId)) {
+            log('info', 'SUPER-CYCLE', `Unregistered process ${processId}`, { processId });
         }
     }
     handleAgentJoined(msg) {
@@ -770,6 +860,47 @@ Acknowledge by sending: [${agentId}] Ready for duty!
         if (lower.includes('file') || lower.includes('document'))
             capabilities.push('file-handling');
         return capabilities;
+    }
+    checkForStaleScheduledProcesses() {
+        const now = Date.now();
+        for (const [processId, process] of this.scheduledProcesses) {
+            const isStale = now - process.lastHeartbeat > CONFIG.SUPER_CYCLE_STALE_THRESHOLD;
+            if (isStale && !process.stale) {
+                process.stale = true;
+                process.status = 'stalled';
+                log('warn', 'SUPER-CYCLE', `Scheduled process stale: ${processId}`, {
+                    processId,
+                    ageMs: now - process.lastHeartbeat,
+                });
+            }
+        }
+    }
+    getSuperCycleStats() {
+        const processes = Array.from(this.scheduledProcesses.values());
+        return {
+            total: processes.length,
+            healthy: processes.filter((p) => !p.stale).length,
+            stale: processes.filter((p) => p.stale).length,
+        };
+    }
+    async persistSuperCycleState(now) {
+        if (!this.redis)
+            return;
+        const processes = Array.from(this.scheduledProcesses.values()).sort((a, b) => a.processId.localeCompare(b.processId));
+        await this.redis.hSet(CONFIG.REDIS_KEYS.STATE, 'superCycle', JSON.stringify({
+            lastUpdated: now,
+            staleThresholdMs: CONFIG.SUPER_CYCLE_STALE_THRESHOLD,
+            stats: this.getSuperCycleStats(),
+            processes,
+        }));
+        const processState = {};
+        for (const process of processes) {
+            processState[process.processId] = JSON.stringify(process);
+        }
+        await this.redis.del(CONFIG.REDIS_KEYS.SUPER_CYCLE);
+        if (Object.keys(processState).length > 0) {
+            await this.redis.hSet(CONFIG.REDIS_KEYS.SUPER_CYCLE, processState);
+        }
     }
     // --------------------------------------------------------------------------
     // SHUTDOWN

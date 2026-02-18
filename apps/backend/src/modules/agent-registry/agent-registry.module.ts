@@ -10,7 +10,7 @@ import {
 } from './services';
 
 @Module({
-  imports: [DrizzleModule.forRootAsync(), EventEmitterModule.forRoot()],
+  imports: [DrizzleModule.forRootAsync(), EventEmitterModule],
   controllers: [AgentRegistryController],
   providers: [
     AgentRegistrationService,

@@ -21,6 +21,7 @@ exports.isEventMessage = isEventMessage;
 exports.requiresResponse = requiresResponse;
 const crypto_1 = __importDefault(require("crypto"));
 const zod_1 = require("zod");
+const resource_protocol_1 = require("./resource-protocol");
 /**
  * Message Types
  */
@@ -31,6 +32,7 @@ exports.MessageType = zod_1.z.enum([
     'state-sync', // State synchronization
     'query', // Information request
     'response', // Response to query/task
+    'resource-negotiate', // Resource/Quota management
 ]);
 /**
  * Agent Identity
@@ -70,6 +72,8 @@ exports.TNFEnvelope = zod_1.z.object({
     payload: zod_1.z.record(zod_1.z.string(), zod_1.z.unknown()).describe('Message-specific data'),
     // Context
     context: exports.MessageContext.optional(),
+    // Resource Control (NEW PRIMITIVE)
+    resource: resource_protocol_1.ResourceStrategy.optional().describe('Strategic resource/account handling instructions'),
     // Metadata
     metadata: zod_1.z.record(zod_1.z.string(), zod_1.z.unknown()).optional().describe('Additional metadata'),
 });

@@ -19,6 +19,7 @@ export declare const MessageType: z.ZodEnum<{
     "state-sync": "state-sync";
     query: "query";
     response: "response";
+    "resource-negotiate": "resource-negotiate";
 }>;
 export type MessageType = z.infer<typeof MessageType>;
 /**
@@ -63,6 +64,7 @@ export declare const TNFEnvelope: z.ZodObject<{
         "state-sync": "state-sync";
         query: "query";
         response: "response";
+        "resource-negotiate": "resource-negotiate";
     }>;
     from: z.ZodObject<{
         agentId: z.ZodString;
@@ -97,6 +99,33 @@ export declare const TNFEnvelope: z.ZodObject<{
         sequenceId: z.ZodOptional<z.ZodNumber>;
         parentMessageId: z.ZodOptional<z.ZodString>;
     }, z.core.$strip>>;
+    resource: z.ZodOptional<z.ZodObject<{
+        tier: z.ZodDefault<z.ZodEnum<{
+            free: "free";
+            pro: "pro";
+            enterprise: "enterprise";
+            shared: "shared";
+            anonymous: "anonymous";
+        }>>;
+        poolId: z.ZodOptional<z.ZodString>;
+        selection: z.ZodDefault<z.ZodEnum<{
+            "round-robin": "round-robin";
+            "least-used": "least-used";
+            sequential: "sequential";
+            random: "random";
+            "priority-pro": "priority-pro";
+        }>>;
+        onQuotaExhausted: z.ZodDefault<z.ZodEnum<{
+            "switch-account": "switch-account";
+            "switch-tier": "switch-tier";
+            wait: "wait";
+            fail: "fail";
+            negotiate: "negotiate";
+        }>>;
+        maxRetries: z.ZodDefault<z.ZodNumber>;
+        minIntelligence: z.ZodOptional<z.ZodNumber>;
+        maxLatency: z.ZodOptional<z.ZodNumber>;
+    }, z.core.$strip>>;
     metadata: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
 }, z.core.$strip>;
 export type TNFEnvelope = z.infer<typeof TNFEnvelope>;
@@ -108,10 +137,10 @@ export declare const TaskPayload: z.ZodObject<{
     parameters: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
     timeout: z.ZodOptional<z.ZodNumber>;
     priority: z.ZodDefault<z.ZodEnum<{
-        critical: "critical";
-        high: "high";
         low: "low";
+        high: "high";
         normal: "normal";
+        critical: "critical";
     }>>;
 }, z.core.$strip>;
 export type TaskPayload = z.infer<typeof TaskPayload>;

@@ -987,8 +987,7 @@ class TNFRelayServer extends events_1.EventEmitter {
     }
     start() {
         return new Promise((resolve, reject) => {
-            void this
-                .ensureActivityPersistenceReady()
+            void this.ensureActivityPersistenceReady()
                 .then(() => {
                 this.server.listen(this.port, () => {
                     console.log(`

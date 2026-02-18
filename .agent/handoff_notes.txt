@@ -345,3 +345,35 @@ Session: February 18, 2026 (cont.) - 15x Jules Follow-Up + PR Orchestration Meth
 - Added runbook: `docs/JULES_PR_FOLLOWUP_PLAYBOOK.md`.
 - Added session manifest: `.agent/jules-logs/jules-15-session-ids.txt`.
 - Latest observed state during follow-up: sessions oscillating between COMPLETED/IN_PROGRESS, still no PR URLs emitted in `outputs.pullRequest` yet.
+
+---
+Session: February 18, 2026 - Super-Cycle + TNF CLI + Super Admin Hardening
+
+Summary:
+- Added super-cycle process registration and stale detection into `packages/relay-core/src/master-clock.ts`.
+- Added `packages/relay-core/src/super-cycle-client.ts` and relay-core scripts `super-cycle:event` / `super-cycle:status`.
+- Updated relay architecture docs for super-cycle event contract and Redis state keys.
+- Unified TNF command surface under `tnf` and added root launcher `./tnf`.
+- Implemented Super Admin command gating in `packages/tnf-cli/src/cli.ts` for sensitive commands.
+- Updated onboarding guidance to prefer `./tnf onboard`.
+- Added detailed dated doc: `docs/session-2026-02-18-super-cycle-cli-hardening.md`.
+
+Security / Access Control:
+- Protected command groups now require Super Admin authentication:
+  - `tnf master-clock *`
+  - `tnf super-cycle *`
+  - `tnf jules loop|merge-open|cron-install`
+  - `tnf relay start`
+  - `tnf run <script>`
+- Expected env secret: `TNF_SUPER_ADMIN_TOKEN`.
+- Input token accepted via `--super-admin-token`, `TNF_SUPER_ADMIN_INPUT_TOKEN`, or `CI_SUPER_ADMIN_TOKEN`.
+
+Verification Notes:
+- `tnf` command/help routes validated.
+- Protected command denied correctly when super-admin secret not configured.
+- `tnf-cli` type-check validated via no-emit command using `/tmp` tsbuildinfo due local EPERM on package dist/tsbuildinfo writes in this environment.
+
+Next Session Priorities:
+1. Configure `TNF_SUPER_ADMIN_TOKEN` in cloud runtime + CI secrets.
+2. Drive all orchestration and scheduled automation through `tnf ...` entrypoints.
+3. Ensure cloud schedulers emit `SUPER_CYCLE_HEARTBEAT` on every run for centralized visibility.

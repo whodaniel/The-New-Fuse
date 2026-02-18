@@ -35,6 +35,8 @@ Object.defineProperty(exports, "TNFRelayServer", { enumerable: true, get: functi
 // Stall detection and recovery
 __exportStar(require("./services/stall-detector"), exports);
 // Protocol
+__exportStar(require("./protocol/resource-protocol"), exports);
+__exportStar(require("./protocol/task-protocol"), exports);
 __exportStar(require("./protocol/tnf-envelope"), exports);
 // Bridges
 __exportStar(require("./redis-relay-bridge"), exports);

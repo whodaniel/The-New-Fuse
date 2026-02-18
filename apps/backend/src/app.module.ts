@@ -14,6 +14,7 @@ import { AppConfigModule } from './config/app-config.module';
 import { EventBus } from './events/event-bus.service';
 // import { JobsModule } from './jobs/jobs.module'; // Temporarily disabled - requires Redis
 import { AgentExecutionsModule } from './modules/agent-executions/agent-executions.module';
+import { AgentRegistryModule } from './modules/agent-registry/agent-registry.module';
 import { FilesModule } from './modules/files/files.module';
 import { MassModule } from './modules/mass/mass.module';
 import { MCPModule } from './modules/mcp/mcp.module';
@@ -71,6 +72,7 @@ import { UsersModule } from './users/users.module';
     MassModule,
     // JobsModule, // Temporarily disabled - requires Redis/Bull which causes dependency injection errors on Railway
     AgentExecutionsModule,
+    AgentRegistryModule,
     WorkflowTemplatesModule,
     FilesModule,
     SystemMetricsModule,
