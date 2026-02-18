@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MCPService = void 0;
-const events_1 = require("events");
+import { EventEmitter } from 'events';
 /**
  * Model Context Protocol (MCP) Service
  *
@@ -9,7 +6,7 @@ const events_1 = require("events");
  * This service is focused on agent-tool interactions, separate from
  * direct agent-to-agent communication.
  */
-class MCPService extends events_1.EventEmitter {
+export class MCPService extends EventEmitter {
     agentId;
     agentName;
     debug;
@@ -55,8 +52,7 @@ class MCPService extends events_1.EventEmitter {
             const errorResponse = {
                 toolName,
                 requestId,
-                success: false,
-                error: `Tool '${toolName}' not found`,
+                success: false, error: `Tool '${toolName}' not found`,
                 timestamp: new Date().toISOString()
             };
             this.emit('tool:error', errorResponse);
@@ -140,5 +136,4 @@ class MCPService extends events_1.EventEmitter {
         }
     }
 }
-exports.MCPService = MCPService;
 //# sourceMappingURL=MCPService.js.map

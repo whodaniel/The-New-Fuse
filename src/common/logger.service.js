@@ -1,10 +1,7 @@
-"use strict";
 /**
  * Simple Logger Service for MCP Server
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Logger = void 0;
-class Logger {
+export class Logger {
     context;
     constructor(context) {
         this.context = context || 'Logger';
@@ -12,18 +9,11 @@ class Logger {
     formatMessage(level, message, ...args) {
         const timestamp = new Date().toISOString();
         const contextStr = this.context ? `[${this.context}] ` : '';
-        const argsStr = args.length > 0
-            ? ` ${args
-                .map((arg) => (typeof arg === 'object' ? JSON.stringify(arg) : String(arg)))
-                .join(' ')}`
-            : '';
+        const argsStr = args.length > 0 ? ` ${args.map(arg => typeof arg === 'object' ? JSON.stringify(arg) : String(arg)).join(' ')}` : '';
         return `${timestamp} [${level}] ${contextStr}${message}${argsStr}`;
     }
     log(message, ...args) {
         console.log(this.formatMessage('LOG', message, ...args));
-    }
-    info(message, ...args) {
-        this.log(message, ...args);
     }
     error(message, ...args) {
         console.error(this.formatMessage('ERROR', message, ...args));
@@ -41,5 +31,4 @@ class Logger {
         this.context = context;
     }
 }
-exports.Logger = Logger;
 //# sourceMappingURL=logger.service.js.map

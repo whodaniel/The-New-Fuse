@@ -1,10 +1,14 @@
+"use strict";
 /**
  * MCP Redis Client Implementation
  *
  * This file implements a Redis client that connects to Redis through the MCP framework.
  * It supports all Redis operations and SSL/TLS configuration.
  */
-export class MCPRedisClient {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MCPRedisClient = void 0;
+exports.createMCPRedisClient = createMCPRedisClient;
+class MCPRedisClient {
     client;
     config;
     isConnected = false;
@@ -37,8 +41,7 @@ export class MCPRedisClient {
         return null;
     }
     async set(key, value, ttl) {
-        // In a real implementation, this would call the MCP Redis service
-        console.log(`MCP Redis SET ${key} ${value} ${ttl ? `EX ${ttl}` : ''}`);
+        // In a real implementation, this would call the MCP Redis service console.log(`MCP Redis SET ${key} ${value} ${ttl ? `EX ${ttl}` : ''}`);
         return 'OK';
     }
     async del(key) {
@@ -258,10 +261,11 @@ export class MCPRedisClient {
         return [];
     }
 }
+exports.MCPRedisClient = MCPRedisClient;
 /**
  * Create an MCP Redis client with the given configuration
  */
-export function createMCPRedisClient(config) {
+function createMCPRedisClient(config) {
     return new MCPRedisClient(config);
 }
 //# sourceMappingURL=redis-client.js.map

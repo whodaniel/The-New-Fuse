@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,45 +7,35 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.RedisService = void 0;
-const common_1 = require("@nestjs/common");
-const config_1 = require("@nestjs/config");
-const ioredis_1 = __importDefault(require("ioredis"));
-const LoggingService_ts_1 = require("../services/LoggingService.ts");
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { createRedisClient } from '../redis/redis-client';
+import { LoggingService } from './loggingService';
 let RedisService = class RedisService {
     configService;
     client = null;
+    publisher = null;
+    subscriber = null;
     logger;
     constructor(configService) {
         this.configService = configService;
-        this.logger = new LoggingService_ts_1.LoggingService('RedisService');
-        this.connect();
+        this.logger = new LoggingService('RedisService');
+        // Fire and forget; connection method is async
+        void this.connect();
     }
     async connect() {
         if (this.client) {
             return;
         }
         try {
-            const options = {
-                host: this.configService.get('REDIS_HOST', 'localhost'),
-                port: this.configService.get('REDIS_PORT', 6379),
-                password: this.configService.get('REDIS_PASSWORD'),
-                db: this.configService.get('REDIS_DB', 0),
-            };
-            this.client = new ioredis_1.default(options);
-            this.client.on('error', (error) => {
-                this.logger.error('Redis connection error:', error);
-            });
-            this.client.on('connect', () => {
-                this.logger.info('Connected to Redis');
-            });
+            // Use shared client factory for consistency with repository conventions
+            this.client = await createRedisClient();
+            this.publisher = await createRedisClient();
+            this.subscriber = await createRedisClient();
         }
         catch (error) {
-            this.logger.error('Failed to create Redis connection:', error);
+            this.logger.error('Failed to create Redis connection: ' +
+                (error instanceof Error ? error.message : String(error)));
             throw error;
         }
     }
@@ -54,6 +43,14 @@ let RedisService = class RedisService {
         if (this.client) {
             await this.client.quit();
             this.client = null;
+        }
+        if (this.publisher) {
+            await this.publisher.quit();
+            this.publisher = null;
+        }
+        if (this.subscriber) {
+            await this.subscriber.quit();
+            this.subscriber = null;
         }
     }
     getClient() {
@@ -85,12 +82,24 @@ let RedisService = class RedisService {
     }
     async flushDb() {
         const client = this.getClient();
-        await client.flushdb();
+        await client.flushDb();
+    }
+    async publish(channel, message) {
+        if (!this.publisher) {
+            throw new Error('Redis publisher not initialized');
+        }
+        return this.publisher.publish(channel, message);
+    }
+    async getSubscriber() {
+        if (!this.subscriber) {
+            throw new Error('Redis subscriber not initialized');
+        }
+        return this.subscriber;
     }
 };
-exports.RedisService = RedisService;
-exports.RedisService = RedisService = __decorate([
-    (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [config_1.ConfigService])
+RedisService = __decorate([
+    Injectable(),
+    __metadata("design:paramtypes", [ConfigService])
 ], RedisService);
+export { RedisService };
 //# sourceMappingURL=redis.service.js.map

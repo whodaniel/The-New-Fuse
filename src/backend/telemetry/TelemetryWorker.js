@@ -1,23 +1,20 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.TelemetryWorker = exports.TelemetryType = exports.TelemetryEvent = void 0;
-const events_1 = require("events");
-const redis_1 = require("redis");
+import { EventEmitter } from 'events';
+import { createClient } from 'redis';
 /**
  * Events that can be emitted by the TelemetryWorker
  */
-var TelemetryEvent;
+export var TelemetryEvent;
 (function (TelemetryEvent) {
     TelemetryEvent["RECEIVED"] = "telemetry:received";
     TelemetryEvent["PROCESSED"] = "telemetry:processed";
     TelemetryEvent["STORED"] = "telemetry:stored";
     TelemetryEvent["ERROR"] = "telemetry:error";
     TelemetryEvent["BATCH_COMPLETE"] = "telemetry:batch_complete";
-})(TelemetryEvent || (exports.TelemetryEvent = TelemetryEvent = {}));
+})(TelemetryEvent || (TelemetryEvent = {}));
 /**
  * Types of telemetry data that can be processed
  */
-var TelemetryType;
+export var TelemetryType;
 (function (TelemetryType) {
     TelemetryType["TRACE"] = "trace";
     TelemetryType["SPAN"] = "span";
@@ -25,12 +22,12 @@ var TelemetryType;
     TelemetryType["TOOL_USAGE"] = "tool_usage";
     TelemetryType["AGENT_STATUS"] = "agent_status";
     TelemetryType["CUSTOM"] = "custom";
-})(TelemetryType || (exports.TelemetryType = TelemetryType = {}));
+})(TelemetryType || (TelemetryType = {}));
 /**
  * TelemetryWorker handles processing and storage of monitoring data
  * from both VS Code extensions and web clients.
  */
-class TelemetryWorker extends events_1.EventEmitter {
+export class TelemetryWorker extends EventEmitter {
     redisClient = null;
     eventQueue = [];
     isProcessing = false;
@@ -66,7 +63,7 @@ class TelemetryWorker extends events_1.EventEmitter {
      */
     async initRedisClient() {
         try {
-            this.redisClient = (0, redis_1.createClient)({ url: this.options.redisUrl });
+            this.redisClient = createClient({ url: this.options.redisUrl });
             this.redisClient.on('error', (err) => {
                 console.error('[TelemetryWorker] Redis error:', err);
                 this.emit(TelemetryEvent.ERROR, { source: 'redis', error: err });
@@ -192,8 +189,7 @@ class TelemetryWorker extends events_1.EventEmitter {
      * Process tool usage telemetry events
      */
     async processToolUsageEvents(events) {
-        // Store in database, update aggregates, etc.
-        console.log(`[TelemetryWorker] Processing ${events.length} tool usage events`);
+        // Store in database, update aggregates, etc. console.log(`[TelemetryWorker] Processing ${events.length} tool usage events`);
         // Example: update tool usage metrics in Redis
         if (this.redisClient) {
             for (const event of events) {
@@ -201,181 +197,170 @@ class TelemetryWorker extends events_1.EventEmitter {
                     const toolId = event.metadata?.toolId;
                     const agentId = event.sourceId;
                     if (toolId) {
-                        // Increment tool usage count
-                        await this.redisClient.incr(`metrics:tool:${toolId}:count`);
-                        // Increment agent-specific tool usage
-                        await this.redisClient.incr(`metrics:agent:${agentId}:tool:${toolId}:count`);
-                        // Add to recent tools used
-                        await this.redisClient.lPush(`metrics:recent_tools`, JSON.stringify({
-                            toolId,
+                        // Increment tool usage count await this.redisClient.incr(`metrics:tool:${toolId}:count`);
+                        // Increment agent-specific tool usage await this.redisClient.incr(`metrics:agent:${agentId}:tool:${toolId}:count`);
+                        // Add to recent tools used await this.redisClient.lPush(`metrics:recent_tools`, JSON.stringify({
+                        toolId,
                             agentId,
-                            timestamp: event.timestamp
-                        }));
-                        // Trim the recent tools list
-                        await this.redisClient.lTrim(`metrics:recent_tools`, 0, 999);
+                            timestamp;
+                        event.timestamp;
                     }
+                    ;
+                    // Trim the recent tools list await this.redisClient.lTrim(`metrics:recent_tools`, 0, 999);
                 }
-                catch (error) {
-                    console.error('[TelemetryWorker] Error updating tool metrics:', error);
-                }
-            }
-        }
-        this.emit(TelemetryEvent.PROCESSED, { type: TelemetryType.TOOL_USAGE, count: events.length });
-    }
-    /**
-     * Process agent status telemetry events
-     */
-    async processAgentStatusEvents(events) {
-        console.log(`[TelemetryWorker] Processing ${events.length} agent status events`);
-        // Process agent status updates (active, idle, error)
-        if (this.redisClient) {
-            for (const event of events) {
-                try {
-                    const agentId = event.sourceId;
-                    const status = event.metadata?.status;
-                    if (status) {
-                        // Update agent status
-                        await this.redisClient.hSet(`agents:status`, agentId, status);
-                        // Add to status history
-                        await this.redisClient.lPush(`agents:${agentId}:status_history`, JSON.stringify({
-                            status,
-                            timestamp: event.timestamp
-                        }));
-                        // Trim history
-                        await this.redisClient.lTrim(`agents:${agentId}:status_history`, 0, 99);
-                    }
-                }
-                catch (error) {
-                    console.error('[TelemetryWorker] Error updating agent status:', error);
+                finally {
                 }
             }
-        }
-        this.emit(TelemetryEvent.PROCESSED, { type: TelemetryType.AGENT_STATUS, count: events.length });
-    }
-    /**
-     * Process trace-related telemetry events
-     */
-    async processTraceEvents(events, type) {
-        console.log(`[TelemetryWorker] Processing ${events.length} ${type} events`);
-        // Store trace data (traces, spans, generations)
-        if (this.redisClient) {
-            for (const event of events) {
-                try {
-                    // Store the full event
-                    const key = `${type}:${event.id}`;
-                    await this.redisClient.set(key, JSON.stringify(event));
-                    // Update indexes
-                    await this.redisClient.zAdd(`index:${type}:by_time`, {
-                        score: event.timestamp,
-                        value: event.id
-                    });
-                    // Update source index
-                    await this.redisClient.zAdd(`index:${type}:by_source:${event.source}`, {
-                        score: event.timestamp,
-                        value: event.id
-                    });
-                }
-                catch (error) {
-                    console.error(`[TelemetryWorker] Error storing ${type} event:`, error);
-                }
+            try { }
+            catch (error) {
+                console.error('[TelemetryWorker] Error updating tool metrics:', error);
             }
         }
-        this.emit(TelemetryEvent.PROCESSED, { type, count: events.length });
-    }
-    /**
-     * Process generic telemetry events
-     */
-    async processGenericEvents(events) {
-        // Basic processing for unknown event types
-        console.log(`[TelemetryWorker] Processing ${events.length} generic events`);
-        this.emit(TelemetryEvent.PROCESSED, { type: 'generic', count: events.length });
-    }
-    /**
-     * Send batch to Langfuse
-     */
-    async sendToLangfuse(batch) {
-        if (!this.langfuseClient)
-            return;
-        try {
-            for (const event of batch) {
-                switch (event.type) {
-                    case TelemetryType.TRACE:
-                        this.langfuseClient.trace({
-                            id: event.id,
-                            name: event.metadata?.name || 'Unnamed Trace',
-                            metadata: event.metadata
-                        });
-                        break;
-                    case TelemetryType.SPAN:
-                        if (event.metadata?.traceId) {
-                            this.langfuseClient.getTrace(event.metadata.traceId).span({
-                                id: event.id,
-                                name: event.metadata?.name || 'Unnamed Span',
-                                metadata: event.metadata
-                            });
-                        }
-                        break;
-                    case TelemetryType.GENERATION:
-                        if (event.metadata?.traceId) {
-                            this.langfuseClient.getTrace(event.metadata.traceId).generation({
-                                id: event.id,
-                                name: event.metadata?.name || `${event.metadata?.provider || 'Unknown'} Generation`,
-                                startTime: new Date(event.timestamp),
-                                endTime: new Date(event.metadata?.endTimestamp || event.timestamp),
-                                model: event.metadata?.model,
-                                modelParameters: event.metadata?.parameters,
-                                prompt: event.metadata?.prompt,
-                                completion: event.metadata?.completion,
-                                usage: event.metadata?.usage,
-                                metadata: event.metadata
-                            });
-                        }
-                        break;
-                    case TelemetryType.TOOL_USAGE:
-                        if (event.metadata?.traceId) {
-                            this.langfuseClient.getTrace(event.metadata.traceId).span({
-                                id: event.id,
-                                name: `Tool: ${event.metadata?.toolId || 'Unknown Tool'}`,
-                                metadata: {
-                                    toolId: event.metadata?.toolId,
-                                    agentId: event.sourceId,
-                                    executionTime: event.metadata?.executionTime,
-                                    success: event.metadata?.success,
-                                    ...event.metadata
-                                }
-                            });
-                        }
-                        break;
-                }
-            }
-            // Force flush to Langfuse
-            await this.langfuseClient.flush();
-        }
-        catch (error) {
-            console.error('[TelemetryWorker] Error sending to Langfuse:', error);
-            this.emit(TelemetryEvent.ERROR, { source: 'langfuse', error });
-        }
-    }
-    /**
-     * Shutdown the worker
-     */
-    async shutdown() {
-        // Clear interval
-        if (this.flushInterval) {
-            clearInterval(this.flushInterval);
-        }
-        // Flush any remaining events
-        await this.flush();
-        // Disconnect Redis
-        if (this.redisClient) {
-            await this.redisClient.disconnect();
-        }
-        // Flush langfuse
-        if (this.langfuseClient) {
-            await this.langfuseClient.flush();
-        }
-        console.log('[TelemetryWorker] Shutdown complete');
     }
 }
-exports.TelemetryWorker = TelemetryWorker;
+this.emit(TelemetryEvent.PROCESSED, { type: TelemetryType.TOOL_USAGE, count: events.length });
+async;
+processAgentStatusEvents(events, TelemetryData[]);
+Promise < void  > { console, : .log(`[TelemetryWorker] Processing ${events.length} agent status events`),
+    : .redisClient };
+{
+    for (const event of events) {
+        try {
+            const agentId = event.sourceId;
+            const status = event.metadata?.status;
+            if (status) {
+                // Update agent status await this.redisClient.hSet(`agents:status`, agentId, status);
+                // Add to status history await this.redisClient.lPush(`agents:${agentId}:status_history`, JSON.stringify({
+                status,
+                    timestamp;
+                event.timestamp;
+            }
+            ;
+            // Trim history await this.redisClient.lTrim(`agents:${agentId}:status_history`, 0, 99);
+        }
+        finally {
+        }
+    }
+    try { }
+    catch (error) {
+        console.error('[TelemetryWorker] Error updating agent status:', error);
+    }
+}
+this.emit(TelemetryEvent.PROCESSED, { type: TelemetryType.AGENT_STATUS, count: events.length });
+async;
+processTraceEvents(events, TelemetryData[], type, TelemetryType);
+Promise < void  > { console, : .log(`[TelemetryWorker] Processing ${events.length} ${type} events`),
+    : .redisClient };
+{
+    for (const event of events) {
+        try {
+            // Store the full event const key = `${type}:${event.id}`;
+            await this.redisClient.set(key, JSON.stringify(event));
+            // Update indexes await this.redisClient.zAdd(`index:${type}:by_time`, {
+            score: event.timestamp,
+                value;
+            event.id;
+        }
+        finally { }
+        ;
+        // Update source index await this.redisClient.zAdd(`index:${type}:by_source:${event.source}`, {
+        score: event.timestamp,
+            value;
+        event.id;
+    }
+    ;
+}
+try { }
+catch (error) {
+    console.error(`[TelemetryWorker] Error storing ${type} event:`, error);
+}
+this.emit(TelemetryEvent.PROCESSED, { type, count: events.length });
+async;
+processGenericEvents(events, TelemetryData[]);
+Promise < void  > {
+    // Basic processing for unknown event types console.log(`[TelemetryWorker] Processing ${events.length} generic events`);
+    this: .emit(TelemetryEvent.PROCESSED, { type: 'generic', count: events.length })
+};
+async;
+sendToLangfuse(batch, TelemetryData[]);
+Promise < void  > {
+    : .langfuseClient, return: ,
+    try: {
+        for(, event, of, batch) {
+            switch (event.type) {
+                case TelemetryType.TRACE:
+                    this.langfuseClient.trace({
+                        id: event.id,
+                        name: event.metadata?.name || 'Unnamed Trace',
+                        metadata: event.metadata
+                    });
+                    break;
+                case TelemetryType.SPAN:
+                    if (event.metadata?.traceId) {
+                        this.langfuseClient.getTrace(event.metadata.traceId).span({
+                            id: event.id,
+                            name: event.metadata?.name || 'Unnamed Span',
+                            metadata: event.metadata
+                        });
+                    }
+                    break;
+                case TelemetryType.GENERATION:
+                    if (event.metadata?.traceId) {
+                        this.langfuseClient.getTrace(event.metadata.traceId).generation({
+                            id: event.id, name: event.metadata?.name || `${event.metadata?.provider || 'Unknown'} Generation`,
+                            startTime: new Date(event.timestamp),
+                            endTime: new Date(event.metadata?.endTimestamp || event.timestamp),
+                            model: event.metadata?.model,
+                            modelParameters: event.metadata?.parameters,
+                            prompt: event.metadata?.prompt,
+                            completion: event.metadata?.completion,
+                            usage: event.metadata?.usage,
+                            metadata: event.metadata
+                        });
+                    }
+                    break;
+                case TelemetryType.TOOL_USAGE:
+                    if (event.metadata?.traceId) {
+                        this.langfuseClient.getTrace(event.metadata.traceId).span({
+                            id: event.id, name: `Tool: ${event.metadata?.toolId || 'Unknown Tool'}`,
+                            metadata: {
+                                toolId: event.metadata?.toolId,
+                                agentId: event.sourceId,
+                                executionTime: event.metadata?.executionTime,
+                                success: event.metadata?.success,
+                                ...event.metadata
+                            }
+                        });
+                    }
+                    break;
+            }
+        }
+        // Force flush to Langfuse
+        ,
+        // Force flush to Langfuse
+        await, this: .langfuseClient.flush()
+    }, catch(error) {
+        console.error('[TelemetryWorker] Error sending to Langfuse:', error);
+        this.emit(TelemetryEvent.ERROR, { source: 'langfuse', error });
+    }
+};
+async;
+shutdown();
+Promise < void  > {
+    : .flushInterval
+};
+{
+    clearInterval(this.flushInterval);
+}
+// Flush any remaining events
+await this.flush();
+// Disconnect Redis
+if (this.redisClient) {
+    await this.redisClient.disconnect();
+}
+// Flush langfuse
+if (this.langfuseClient) {
+    await this.langfuseClient.flush();
+}
+console.log('[TelemetryWorker] Shutdown complete');
 //# sourceMappingURL=TelemetryWorker.js.map

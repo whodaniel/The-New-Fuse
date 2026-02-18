@@ -1,5 +1,5 @@
-import { MCPRAGClientService } from './mcp-rag-client.service.js';
-import { RAGConfigurationService } from './rag-configuration.service.js';
+import { MCPRAGClientService } from './mcp-rag-client.service';
+import { RAGConfigurationService } from './rag-configuration.service';
 export interface DocumentationUpdateResult {
     timestamp: string;
     totalSources: number;

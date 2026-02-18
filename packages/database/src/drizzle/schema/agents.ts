@@ -13,26 +13,17 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
-import {
-  agentStatusEnum,
-  agentTypeEnum,
-  tnfEntityTypeEnum,
-  tnfNamespaceEnum,
-} from './enums';
+import { agentStatusEnum, agentTypeEnum } from './enums';
 import { users } from './users';
 
 // =============================================================================
-// AGENT / TNF ENTITY
+// AGENT
 // =============================================================================
 
 export const agents = pgTable('agents', {
   id: uuid('id').primaryKey().defaultRandom(),
-  tnfId: varchar('tnf_id', { length: 255 }).unique(), // Semantic ID: TNF:TYPE:NAMESPACE:NAME:INSTANCE
   name: varchar('name', { length: 255 }).notNull(),
-  entityType: tnfEntityTypeEnum('entity_type').default('AGENT').notNull(),
-  namespace: tnfNamespaceEnum('namespace').default('USER').notNull(),
-  instance: varchar('instance', { length: 100 }),
-  type: agentTypeEnum('type').default('BASIC').notNull(),
+  type: agentTypeEnum('type').notNull(),
   status: agentStatusEnum('status').default('INACTIVE').notNull(),
   description: text('description'),
   systemPrompt: text('system_prompt'),

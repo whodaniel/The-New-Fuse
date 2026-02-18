@@ -4,9 +4,9 @@
  * This file provides a factory function to create Redis clients.
  * It supports both standard Redis clients and MCP Redis clients.
  */
-import { RedisService } from '../types/redis/service.tsx';
-import { RedisConnectionOptions } from '../utils/redis/connection.tsx';
-import { MCPRedisConfig } from '../mcp/redis-client.js';
+import { RedisService } from '../types/redis/service';
+import { RedisConnectionOptions } from '../utils/redis/connection';
+import { MCPRedisConfig } from '../mcp/redis-client';
 export type RedisClientType = 'standard' | 'mcp';
 export interface RedisFactoryOptions {
     type: RedisClientType;

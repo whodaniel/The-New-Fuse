@@ -11,7 +11,7 @@ exports.createRedisClient = createRedisClient;
 exports.getRedisUrl = getRedisUrl;
 exports.createRedisClientFromUrl = createRedisClientFromUrl;
 const redis_1 = require("redis");
-const logger_js_1 = require("./logger.js");
+const logger_1 = require("./logger");
 /**
  * Default Redis configurations for different environments
  */
@@ -49,7 +49,7 @@ function getRedisConfig(env) {
     const environment = env ||
         process.env.NODE_ENV ||
         'development';
-    logger_js_1.redisClientLogger.debug(`Getting Redis configuration for environment: ${environment}`);
+    logger_1.redisClientLogger.debug(`Getting Redis configuration for environment: ${environment}`);
     // Get default config for environment
     const defaultConfig = DEFAULT_CONFIGS[environment] || DEFAULT_CONFIGS.development;
     // Override with environment variables if provided
@@ -65,7 +65,7 @@ function getRedisConfig(env) {
             undefined,
         reconnectStrategy: defaultConfig.reconnectStrategy
     };
-    logger_js_1.redisClientLogger.debug(`Redis configuration: ${JSON.stringify({
+    logger_1.redisClientLogger.debug(`Redis configuration: ${JSON.stringify({
         ...config,
         password: config.password ? '******' : undefined
     })}`);
@@ -104,18 +104,15 @@ async function createRedisClient(configOrEnv) {
     // Determine configuration
     let config;
     if (typeof configOrEnv === 'string') {
-        // If a string is provided, treat it as an environment
-        logger_js_1.redisClientLogger.info(`Creating Redis client for environment: ${configOrEnv}`);
+        // If a string is provided, treat it as an environment logger.info(`Creating Redis client for environment: ${configOrEnv}`);
         config = getRedisConfig(configOrEnv);
     }
     else if (configOrEnv) {
-        // If an object is provided, use it as the configuration
-        logger_js_1.redisClientLogger.info(`Creating Redis client with custom configuration`);
+        // If an object is provided, use it as the configuration logger.info(`Creating Redis client with custom configuration`);
         config = configOrEnv;
     }
     else {
-        // Otherwise, get configuration from environment
-        logger_js_1.redisClientLogger.info(`Creating Redis client with environment-based configuration`);
+        // Otherwise, get configuration from environment logger.info(`Creating Redis client with environment-based configuration`);
         config = getRedisConfig();
     }
     // Create Redis client
@@ -123,28 +120,28 @@ async function createRedisClient(configOrEnv) {
     const client = (0, redis_1.createClient)(options);
     // Set up event handlers
     client.on('error', (err) => {
-        logger_js_1.redisClientLogger.error(`Redis client error: ${err.message}`, { error: err });
+        logger_1.redisClientLogger.error(`Redis client error: ${err.message}`, { error: err });
     });
     client.on('connect', () => {
-        logger_js_1.redisClientLogger.info(`Redis client connected to ${config.host}:${config.port}`);
+        logger_1.redisClientLogger.info(`Redis client connected to ${config.host}:${config.port}`);
     });
     client.on('reconnecting', () => {
-        logger_js_1.redisClientLogger.warn(`Redis client reconnecting to ${config.host}:${config.port}`);
+        logger_1.redisClientLogger.warn(`Redis client reconnecting to ${config.host}:${config.port}`);
     });
     client.on('ready', () => {
-        logger_js_1.redisClientLogger.info(`Redis client ready`);
+        logger_1.redisClientLogger.info(`Redis client ready`);
     });
     client.on('end', () => {
-        logger_js_1.redisClientLogger.info(`Redis client connection closed`);
+        logger_1.redisClientLogger.info(`Redis client connection closed`);
     });
     // Connect to Redis
     try {
-        logger_js_1.redisClientLogger.debug(`Connecting to Redis at ${config.host}:${config.port}`);
+        logger_1.redisClientLogger.debug(`Connecting to Redis at ${config.host}:${config.port}`);
         await client.connect();
-        logger_js_1.redisClientLogger.info(`Successfully connected to Redis at ${config.host}:${config.port}`);
+        logger_1.redisClientLogger.info(`Successfully connected to Redis at ${config.host}:${config.port}`);
     }
     catch (error) {
-        logger_js_1.redisClientLogger.error(`Failed to connect to Redis at ${config.host}:${config.port}`, { error });
+        logger_1.redisClientLogger.error(`Failed to connect to Redis at ${config.host}:${config.port}`, { error });
         throw error;
     }
     return client;
@@ -155,8 +152,7 @@ async function createRedisClient(configOrEnv) {
 function getRedisUrl(config) {
     const conf = config || getRedisConfig();
     const protocol = conf.tls ? 'rediss' : 'redis';
-    const auth = conf.password ?
-        `${conf.username ? conf.username + ':' : ''}${conf.password}@` :
+    const auth = conf.password ? `${conf.username ? conf.username + ':' : ''}${conf.password}@` :
         '';
     return `${protocol}://${auth}${conf.host}:${conf.port}${conf.db !== undefined ? '/' + conf.db : ''}`;
 }
@@ -166,32 +162,32 @@ function getRedisUrl(config) {
 async function createRedisClientFromUrl(url) {
     // Mask password in URL for logging
     const maskedUrl = url.replace(/\/\/([^:]+):([^@]+)@/, '//\\1:******@');
-    logger_js_1.redisClientLogger.info(`Creating Redis client from URL: ${maskedUrl}`);
+    logger_1.redisClientLogger.info(`Creating Redis client from URL: ${maskedUrl}`);
     const client = (0, redis_1.createClient)({ url });
     // Set up event handlers
     client.on('error', (err) => {
-        logger_js_1.redisClientLogger.error(`Redis client error: ${err.message}`, { error: err });
+        logger_1.redisClientLogger.error(`Redis client error: ${err.message}`, { error: err });
     });
     client.on('connect', () => {
-        logger_js_1.redisClientLogger.info(`Redis client connected via URL`);
+        logger_1.redisClientLogger.info(`Redis client connected via URL`);
     });
     client.on('reconnecting', () => {
-        logger_js_1.redisClientLogger.warn(`Redis client reconnecting via URL`);
+        logger_1.redisClientLogger.warn(`Redis client reconnecting via URL`);
     });
     client.on('ready', () => {
-        logger_js_1.redisClientLogger.info(`Redis client ready`);
+        logger_1.redisClientLogger.info(`Redis client ready`);
     });
     client.on('end', () => {
-        logger_js_1.redisClientLogger.info(`Redis client connection closed`);
+        logger_1.redisClientLogger.info(`Redis client connection closed`);
     });
     // Connect to Redis
     try {
-        logger_js_1.redisClientLogger.debug(`Connecting to Redis via URL`);
+        logger_1.redisClientLogger.debug(`Connecting to Redis via URL`);
         await client.connect();
-        logger_js_1.redisClientLogger.info(`Successfully connected to Redis via URL`);
+        logger_1.redisClientLogger.info(`Successfully connected to Redis via URL`);
     }
     catch (error) {
-        logger_js_1.redisClientLogger.error(`Failed to connect to Redis via URL`, { error });
+        logger_1.redisClientLogger.error(`Failed to connect to Redis via URL`, { error });
         throw error;
     }
     return client;

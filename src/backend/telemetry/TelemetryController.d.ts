@@ -1,4 +1,4 @@
-import { TelemetryData } from './TelemetryWorker.js';
+import { TelemetryData } from './TelemetryWorker';
 /**
  * Controller for handling telemetry data from clients
  */
@@ -20,23 +20,20 @@ export declare class TelemetryController {
     getAgentActivity(): Promise<{
         agents: {
             agentId: string;
-            status: string;
+            status: unknown;
         }[];
     }>;
     /**
      * Get tool usage metrics
      */
     getToolUsage(limitStr?: string): Promise<{
-        tools: {
-            toolId: string;
-            count: number;
-        }[];
+        tools: any;
     }>;
     /**
      * Get recent traces
      */
     getRecentTraces(limitStr?: string): Promise<{
-        traces: any[];
+        traces: any;
     }>;
 }
 //# sourceMappingURL=TelemetryController.d.ts.map

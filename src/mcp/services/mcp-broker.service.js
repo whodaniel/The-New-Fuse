@@ -1,3 +1,4 @@
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,15 +9,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var MCPBrokerService_1;
-import { Injectable, Logger } from '@nestjs/common';
-import { Redis } from 'ioredis';
-import { ConfigService } from '@nestjs/config';
-import { MCPAgentServer } from '../MCPAgentServer.tsx';
-import { MCPChatServer } from '../MCPChatServer.tsx';
-import { MCPWorkflowServer } from '../MCPWorkflowServer.tsx';
-import { MCPFuseServer } from '../MCPFuseServer.tsx';
-import { MCPFileCoordinationServer } from '../MCPFileCoordinationServer.tsx';
-import { MCPRAGServer } from '../MCPRAGServer.tsx';
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MCPBrokerService = void 0;
+const common_1 = require("@nestjs/common");
+const ioredis_1 = require("ioredis");
+const config_1 = require("@nestjs/config");
+const MCPAgentServer_1 = require("../MCPAgentServer");
+const MCPChatServer_1 = require("../MCPChatServer");
+const MCPWorkflowServer_1 = require("../MCPWorkflowServer");
+const MCPFuseServer_1 = require("../MCPFuseServer");
+const MCPFileCoordinationServer_1 = require("../MCPFileCoordinationServer");
+const MCPRAGServer_1 = require("../MCPRAGServer");
 /**
  * MCP Broker Service
  *
@@ -34,7 +37,7 @@ let MCPBrokerService = MCPBrokerService_1 = class MCPBrokerService {
     fuseServer;
     fileCoordinationServer;
     ragServer;
-    logger = new Logger(MCPBrokerService_1.name);
+    logger = new common_1.Logger(MCPBrokerService_1.name);
     publisher;
     subscriber;
     servers = new Map();
@@ -74,8 +77,8 @@ let MCPBrokerService = MCPBrokerService_1 = class MCPBrokerService {
     async connect() {
         const redisUrl = this.configService.get('REDIS_URL') || 'redis://localhost:6379';
         try {
-            this.publisher = new Redis(redisUrl);
-            this.subscriber = new Redis(redisUrl);
+            this.publisher = new ioredis_1.Redis(redisUrl);
+            this.subscriber = new ioredis_1.Redis(redisUrl);
             this.logger.log('Connected to Redis');
         }
         catch (error) {
@@ -155,8 +158,7 @@ let MCPBrokerService = MCPBrokerService_1 = class MCPBrokerService {
      * Handle broadcast message
      */
     async handleBroadcastMessage(message) {
-        // Process broadcast message
-        this.logger.debug(`Processing broadcast message: ${JSON.stringify(message)}`);
+        // Process broadcast message this.logger.debug(`Processing broadcast message: ${JSON.stringify(message)}`);
         // Route to appropriate server
         const serverName = message.payload.server;
         const server = this.servers.get(serverName);
@@ -232,8 +234,7 @@ let MCPBrokerService = MCPBrokerService_1 = class MCPBrokerService {
      * Send response message
      */
     async sendResponse(originalMessage, result) {
-        const response = {
-            id: `${originalMessage.id}_response`,
+        const response = { id: `${originalMessage.id}_response`,
             timestamp: new Date().toISOString(),
             sender: originalMessage.recipient || 'mcp-broker',
             recipient: originalMessage.sender,
@@ -262,8 +263,7 @@ let MCPBrokerService = MCPBrokerService_1 = class MCPBrokerService {
      * Send error message
      */
     async sendError(originalMessage, errorMessage) {
-        const response = {
-            id: `${originalMessage.id}_error`,
+        const response = { id: `${originalMessage.id}_error`,
             timestamp: new Date().toISOString(),
             sender: originalMessage.recipient || 'mcp-broker',
             recipient: originalMessage.sender,
@@ -300,8 +300,7 @@ let MCPBrokerService = MCPBrokerService_1 = class MCPBrokerService {
             throw new Error(`Unknown MCP server: ${serverName}`);
         }
         // Create message
-        const message = {
-            id: `mcp_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+        const message = { id: `mcp_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
             timestamp: new Date().toISOString(),
             sender,
             recipient,
@@ -384,15 +383,15 @@ let MCPBrokerService = MCPBrokerService_1 = class MCPBrokerService {
         return tools;
     }
 };
-MCPBrokerService = MCPBrokerService_1 = __decorate([
-    Injectable(),
-    __metadata("design:paramtypes", [ConfigService,
-        MCPAgentServer,
-        MCPChatServer,
-        MCPWorkflowServer,
-        MCPFuseServer,
-        MCPFileCoordinationServer,
-        MCPRAGServer])
+exports.MCPBrokerService = MCPBrokerService;
+exports.MCPBrokerService = MCPBrokerService = MCPBrokerService_1 = __decorate([
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [config_1.ConfigService,
+        MCPAgentServer_1.MCPAgentServer,
+        MCPChatServer_1.MCPChatServer,
+        MCPWorkflowServer_1.MCPWorkflowServer,
+        MCPFuseServer_1.MCPFuseServer,
+        MCPFileCoordinationServer_1.MCPFileCoordinationServer,
+        MCPRAGServer_1.MCPRAGServer])
 ], MCPBrokerService);
-export { MCPBrokerService };
 //# sourceMappingURL=mcp-broker.service.js.map

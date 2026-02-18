@@ -1,72 +1,36 @@
-"use strict";
 /**
  * Roo Agent Automation Service Implementation
  *
  * This file contains the main service implementation that will be placed
  * in the services directory of The New Fuse platform.
  */
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var RooAgentAutomationService_1;
-var _a;
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.RooAgentAutomationService = void 0;
-const common_1 = require("@nestjs/common");
-const events_1 = require("events");
-const fs = __importStar(require("fs/promises"));
-const path = __importStar(require("path"));
-const os = __importStar(require("os"));
-const RooCodeCommunication_1 = require("./RooCodeCommunication");
-const MCPService_1 = require("./MCPService");
-const A2AConfig_1 = require("../config/A2AConfig");
+var _a, _b, _c;
+import { Injectable, Logger } from '@nestjs/common';
+import { EventEmitter } from 'events';
+import * as fs from 'fs/promises';
+import * as path from 'path';
+import * as os from 'os';
+import { RooCodeCommunication } from './RooCodeCommunication';
+import { MCPService } from './MCPService';
+import { ConfigurationManager } from '../config/A2AConfig';
 // Import the templates and configurations from the main artifact
-const roo_agent_templates_1 = require("./roo-agent-templates");
+import { AGENT_TEMPLATES, MCP_SERVERS, TEAM_CONFIGURATIONS } from './roo-agent-templates';
 /**
  * Main Agent Automation Service
  */
-let RooAgentAutomationService = RooAgentAutomationService_1 = class RooAgentAutomationService extends events_1.EventEmitter {
+let RooAgentAutomationService = RooAgentAutomationService_1 = class RooAgentAutomationService extends EventEmitter {
     agentOrchestrator;
-    logger = new common_1.Logger(RooAgentAutomationService_1.name);
+    logger = new Logger(RooAgentAutomationService_1.name);
     config;
     mcpService;
     communicationService;
@@ -77,9 +41,9 @@ let RooAgentAutomationService = RooAgentAutomationService_1 = class RooAgentAuto
         super();
         this.agentOrchestrator = agentOrchestrator;
         this.mcpService = mcpService;
-        this.config = config || A2AConfig_1.ConfigurationManager.getInstance();
+        this.config = config || ConfigurationManager.getInstance();
         // Initialize communication service
-        this.communicationService = new RooCodeCommunication_1.RooCodeCommunication({
+        this.communicationService = new RooCodeCommunication({
             agentId: 'tnf-agent-automation',
             targetAgentId: 'roo-code'
         });
@@ -132,7 +96,7 @@ let RooAgentAutomationService = RooAgentAutomationService_1 = class RooAgentAuto
      * Create a new agent with the specified configuration
      */
     async createAgent(options) {
-        const template = roo_agent_templates_1.AGENT_TEMPLATES[options.templateKey];
+        const template = AGENT_TEMPLATES[options.templateKey];
         if (!template) {
             throw new Error(`Template '${options.templateKey}' not found`);
         }
@@ -255,8 +219,7 @@ let RooAgentAutomationService = RooAgentAutomationService_1 = class RooAgentAuto
                 // File doesn't exist, use default structure
             }
             const profileKey = `${config.slug}-profile`;
-            profiles[profileKey] = {
-                name: `${config.name} Profile`,
+            profiles[profileKey] = { name: `${config.name} Profile`,
                 provider: 'anthropic',
                 model: config.preferredModel || 'claude-3-sonnet',
                 temperature: config.temperature || 0.3,
@@ -291,7 +254,7 @@ let RooAgentAutomationService = RooAgentAutomationService_1 = class RooAgentAuto
                 mcpConfig.mcpServers = {};
             }
             for (const serverKey of serverKeys) {
-                const serverConfig = roo_agent_templates_1.MCP_SERVERS[serverKey];
+                const serverConfig = MCP_SERVERS[serverKey];
                 if (serverConfig) {
                     mcpConfig.mcpServers[serverConfig.name] = {
                         type: serverConfig.type || 'stdio',
@@ -377,7 +340,7 @@ let RooAgentAutomationService = RooAgentAutomationService_1 = class RooAgentAuto
      * Create a full development team setup
      */
     async createDevelopmentTeam(teamType) {
-        const teamConfig = roo_agent_templates_1.TEAM_CONFIGURATIONS[teamType];
+        const teamConfig = TEAM_CONFIGURATIONS[teamType];
         if (!teamConfig) {
             throw new Error(`Team type '${teamType}' not found`);
         }
@@ -420,8 +383,8 @@ let RooAgentAutomationService = RooAgentAutomationService_1 = class RooAgentAuto
      * List all available agent templates
      */
     getAvailableTemplates() {
-        return Object.keys(roo_agent_templates_1.AGENT_TEMPLATES).map(key => {
-            const template = roo_agent_templates_1.AGENT_TEMPLATES[key];
+        return Object.keys(AGENT_TEMPLATES).map(key => {
+            const template = AGENT_TEMPLATES[key];
             return {
                 key,
                 name: template.name,
@@ -435,11 +398,11 @@ let RooAgentAutomationService = RooAgentAutomationService_1 = class RooAgentAuto
      * List all available team configurations
      */
     getAvailableTeams() {
-        return Object.keys(roo_agent_templates_1.TEAM_CONFIGURATIONS).map(key => ({
+        return Object.keys(TEAM_CONFIGURATIONS).map(key => ({
             key,
-            name: roo_agent_templates_1.TEAM_CONFIGURATIONS[key].name,
-            description: roo_agent_templates_1.TEAM_CONFIGURATIONS[key].description,
-            members: roo_agent_templates_1.TEAM_CONFIGURATIONS[key].members
+            name: TEAM_CONFIGURATIONS[key].name,
+            description: TEAM_CONFIGURATIONS[key].description,
+            members: TEAM_CONFIGURATIONS[key].members
         }));
     }
     /**
@@ -531,9 +494,9 @@ let RooAgentAutomationService = RooAgentAutomationService_1 = class RooAgentAuto
         }
     }
 };
-exports.RooAgentAutomationService = RooAgentAutomationService;
-exports.RooAgentAutomationService = RooAgentAutomationService = RooAgentAutomationService_1 = __decorate([
-    (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [MCPService_1.MCPService, typeof (_a = typeof AgentOrchestrator !== "undefined" && AgentOrchestrator) === "function" ? _a : Object, A2AConfig_1.ConfigurationManager])
+RooAgentAutomationService = RooAgentAutomationService_1 = __decorate([
+    Injectable(),
+    __metadata("design:paramtypes", [typeof (_a = typeof MCPService !== "undefined" && MCPService) === "function" ? _a : Object, typeof (_b = typeof AgentOrchestrator !== "undefined" && AgentOrchestrator) === "function" ? _b : Object, typeof (_c = typeof ConfigurationManager !== "undefined" && ConfigurationManager) === "function" ? _c : Object])
 ], RooAgentAutomationService);
+export { RooAgentAutomationService };
 //# sourceMappingURL=RooAgentAutomationService.js.map

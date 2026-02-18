@@ -27,6 +27,11 @@ require_cmd gh
 require_cmd jules
 require_cmd jq
 
+if [[ -f ".env.local" ]]; then
+  # shellcheck disable=SC1091
+  set -a && source .env.local && set +a
+fi
+
 log "Starting autonomous Jules loop."
 
 if [[ -n "$TASK_FILE" ]]; then
@@ -66,4 +71,3 @@ log "Final status snapshot."
 node scripts/jules-pipeline.cjs status | tee -a "$LOG_FILE" || true
 
 log "Autonomous Jules loop complete."
-

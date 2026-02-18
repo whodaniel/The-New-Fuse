@@ -424,22 +424,3 @@ export type OfferStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'CANCELLED' | 'E
 export type WalletType = 'SMART_ACCOUNT' | 'EOA' | 'MULTI_SIG';
 
 export type TransactionStatus = 'PENDING' | 'CONFIRMED' | 'FAILED' | 'CANCELLED';
-
-export type TNFEntityType =
-  | 'LLM'
-  | 'HARNESS'
-  | 'AGENT'
-  | 'SESSION'
-  | 'HUMAN'
-  | 'TOOL'
-  | 'SERVICE';
-
-export type TNFNamespace =
-  | 'BASE'
-  | 'SYSTEM'
-  | 'USER'
-  | 'TEMP'
-  | 'PERSIST'
-  | 'OWNER'
-  | 'ADMIN'
-  | 'MEMBER';

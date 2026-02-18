@@ -7,7 +7,7 @@
 import { OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Redis as RedisClient } from 'ioredis';
-import { RedisConfig, RedisEnvironment } from './redis-client.js';
+import { RedisConfig, RedisEnvironment } from './redis-client';
 /**
  * Redis Service class
  */

@@ -1,10 +1,7 @@
 import {
-  confirmPasswordReset,
   createUserWithEmailAndPassword,
-  fetchSignInMethodsForEmail,
   User as FirebaseUser,
   onAuthStateChanged,
-  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -35,8 +32,6 @@ interface AuthContextType {
   register: (name: string, email: string, password: string) => Promise<UserCredential>;
   signInWithGoogle: () => Promise<UserCredential>;
   loginWithUnstoppableDomains?: (udUser: any) => Promise<void>;
-  forgotPassword: (email: string) => Promise<void>;
-  resetPassword: (oobCode: string, newPassword: string) => Promise<void>;
   logout: () => Promise<void>;
   error: string | null;
 }
@@ -49,8 +44,6 @@ const AuthContext = createContext<AuthContextType>({
   login: async () => ({}) as UserCredential,
   register: async () => ({}) as UserCredential,
   signInWithGoogle: async () => ({}) as UserCredential,
-  forgotPassword: async () => {},
-  resetPassword: async () => {},
   logout: async () => {},
   error: null,
 });
@@ -174,25 +167,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         return result;
       } catch (error: any) {
-        let msg = 'Invalid email or password';
-        if (
-          error.code === 'auth/invalid-credential' ||
-          error.code === 'auth/wrong-password' ||
-          error.code === 'auth/user-not-found'
-        ) {
-          // Check if this email exists under a different provider (e.g. Google)
-          try {
-            const methods = await fetchSignInMethodsForEmail(auth, email);
-            if (methods.length > 0 && !methods.includes('password')) {
-              const providerName = methods.includes('google.com') ? 'Google' : methods[0];
-              msg = `This email is linked to ${providerName} sign-in. Please use the "${providerName}" button to log in.`;
-            }
-          } catch {
-            // fetchSignInMethodsForEmail may be disabled; fall through to generic message
-          }
-        }
-        setError(msg);
-        throw new Error(msg);
+        setError(error.message || 'Failed to login');
+        throw error;
       } finally {
         setIsLoading(false);
       }
@@ -257,38 +233,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(false);
     }
   }, [fetchUserDetails]);
-
-  // Send password reset email via Firebase
-  const forgotPassword = useCallback(async (email: string) => {
-    setError(null);
-    try {
-      const actionCodeSettings = {
-        url: `${window.location.origin}/auth/reset-password`,
-        handleCodeInApp: true,
-      };
-      await sendPasswordResetEmail(auth, email, actionCodeSettings);
-    } catch (error: any) {
-      const msg = error.code === 'auth/user-not-found'
-        ? 'No account found with this email address.'
-        : error.message || 'Failed to send password reset email';
-      setError(msg);
-      throw new Error(msg);
-    }
-  }, []);
-
-  // Confirm password reset with Firebase oobCode
-  const resetPassword = useCallback(async (oobCode: string, newPassword: string) => {
-    setError(null);
-    try {
-      await confirmPasswordReset(auth, oobCode, newPassword);
-    } catch (error: any) {
-      const msg = error.code === 'auth/invalid-action-code'
-        ? 'This reset link has expired or already been used. Please request a new one.'
-        : error.message || 'Failed to reset password';
-      setError(msg);
-      throw new Error(msg);
-    }
-  }, []);
 
   // Login with Unstoppable Domains
   const loginWithUnstoppableDomains = useCallback(async (udUser: any) => {
@@ -362,8 +306,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         register,
         signInWithGoogle,
         loginWithUnstoppableDomains,
-        forgotPassword,
-        resetPassword,
         logout,
         error,
       }}

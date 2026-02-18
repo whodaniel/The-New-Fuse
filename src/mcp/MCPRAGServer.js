@@ -1,3 +1,4 @@
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,11 +9,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var MCPRAGServer_1;
-import { Injectable, Logger } from '@nestjs/common';
-import { MCPRAGClientService } from './services/mcp-rag-client.service.js';
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MCPRAGServer = void 0;
+const common_1 = require("@nestjs/common");
+const mcp_rag_client_service_1 = require("./services/mcp-rag-client.service");
 let MCPRAGServer = MCPRAGServer_1 = class MCPRAGServer {
     ragClient;
-    logger = new Logger(MCPRAGServer_1.name);
+    logger = new common_1.Logger(MCPRAGServer_1.name);
     constructor(ragClient) {
         this.ragClient = ragClient;
     }
@@ -260,8 +263,7 @@ let MCPRAGServer = MCPRAGServer_1 = class MCPRAGServer {
                     return await this.ragClient.searchCopilotDocs(arguments_.topic, arguments_.include_examples, arguments_.max_results);
                 case 'get_rag_status':
                     return await this.ragClient.getRAGStatus();
-                default:
-                    throw new Error(`Unknown tool: ${name}`);
+                default: throw new Error(`Unknown tool: ${name}`);
             }
         }
         catch (error) {
@@ -325,8 +327,7 @@ let MCPRAGServer = MCPRAGServer_1 = class MCPRAGServer {
                         }
                     ]
                 };
-            default:
-                throw new Error(`Unknown method: ${method}`);
+            default: throw new Error(`Unknown method: ${method}`);
         }
     }
     /**
@@ -397,9 +398,9 @@ let MCPRAGServer = MCPRAGServer_1 = class MCPRAGServer {
         return results;
     }
 };
-MCPRAGServer = MCPRAGServer_1 = __decorate([
-    Injectable(),
-    __metadata("design:paramtypes", [MCPRAGClientService])
+exports.MCPRAGServer = MCPRAGServer;
+exports.MCPRAGServer = MCPRAGServer = MCPRAGServer_1 = __decorate([
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [mcp_rag_client_service_1.MCPRAGClientService])
 ], MCPRAGServer);
-export { MCPRAGServer };
 //# sourceMappingURL=MCPRAGServer.js.map

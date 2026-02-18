@@ -76,6 +76,18 @@ function sep() {
   log('─'.repeat(50));
 }
 
+function clearIndexLock() {
+  const lockFile = path.join(REPO_ROOT, '.git/index.lock');
+  if (fs.existsSync(lockFile)) {
+    try {
+      fs.unlinkSync(lockFile);
+      log('WARNING: Removed stale .git/index.lock');
+    } catch (error) {
+      log(`WARNING: Failed to remove .git/index.lock: ${String(error.message || error)}`);
+    }
+  }
+}
+
 function normalizeJulesStatus(rawStatus) {
   const value = String(rawStatus || '')
     .trim()
@@ -220,11 +232,7 @@ async function cmdPublish() {
   log(`Base commit: ${baseCommit.slice(0, 12)}\n`);
 
   // Remove stale lock if present
-  const lockFile = path.join(REPO_ROOT, '.git/index.lock');
-  if (fs.existsSync(lockFile)) {
-    log('WARNING: Removing stale .git/index.lock');
-    fs.unlinkSync(lockFile);
-  }
+  clearIndexLock();
 
   const toPublish = Object.values(state.sessions).filter(
     (s) =>
@@ -269,11 +277,13 @@ async function cmdPublish() {
       log(`  Patch: ${Buffer.byteLength(pullResult.stdout, 'utf8')} bytes`);
 
       // Apply patch to working tree (needs main repo for --3way object store)
+      clearIndexLock();
       log(`  Applying patch (--3way)...`);
       const applyResult = shSafe(`git apply --3way --ignore-whitespace ${patchFile}`);
       log(`  apply exit=${applyResult.status}`);
 
       // Stage everything (including conflict markers from --3way)
+      clearIndexLock();
       sh('git add -A');
 
       // Check if anything actually changed vs HEAD
@@ -341,9 +351,12 @@ async function cmdPublish() {
     } catch (err) {
       log(`  ❌ Exception: ${err.message.slice(0, 150)}`);
       // Always restore clean state
+      clearIndexLock();
       shSafe('git restore --staged . 2>/dev/null; git restore . 2>/dev/null');
       shSafe('git clean -fd apps/ packages/ src/ 2>/dev/null');
       if (fs.existsSync(patchFile)) fs.unlinkSync(patchFile);
+    } finally {
+      clearIndexLock();
     }
 
     log('');
