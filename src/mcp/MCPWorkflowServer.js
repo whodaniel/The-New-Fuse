@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,64 +7,61 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var _a;
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MCPWorkflowServer = void 0;
-const common_1 = require("@nestjs/common");
-const zod_1 = require("zod");
-const MCPServer_1 = require("./MCPServer");
+import { Injectable } from "@nestjs/common";
+import { z } from "zod";
+import { MCPServer } from './MCPServer.tsx';
 // Schema for workflow node execution
-const nodeExecutionSchema = zod_1.z.object({
-    workflowId: zod_1.z.string(),
-    nodeId: zod_1.z.string(),
-    inputs: zod_1.z.record(zod_1.z.string(), zod_1.z.any()).optional(),
-    context: zod_1.z.record(zod_1.z.string(), zod_1.z.any()).optional(),
-    executionId: zod_1.z.string().optional(),
+const nodeExecutionSchema = z.object({
+    workflowId: z.string(),
+    nodeId: z.string(),
+    inputs: z.record(z.string(), z.any()).optional(),
+    context: z.record(z.string(), z.any()).optional(),
+    executionId: z.string().optional(),
 });
 // Schema for workflow composition
-const workflowCompositionSchema = zod_1.z.object({
-    name: zod_1.z.string(),
-    description: zod_1.z.string().optional(),
-    nodes: zod_1.z.array(zod_1.z.object({
-        id: zod_1.z.string(),
-        type: zod_1.z.string(),
-        position: zod_1.z
+const workflowCompositionSchema = z.object({
+    name: z.string(),
+    description: z.string().optional(),
+    nodes: z.array(z.object({
+        id: z.string(),
+        type: z.string(),
+        position: z
             .object({
-            x: zod_1.z.number(),
-            y: zod_1.z.number(),
+            x: z.number(),
+            y: z.number(),
         })
             .optional(),
-        data: zod_1.z.record(zod_1.z.string(), zod_1.z.any()).optional(),
+        data: z.record(z.string(), z.any()).optional(),
     })),
-    edges: zod_1.z.array(zod_1.z.object({
-        id: zod_1.z.string(),
-        source: zod_1.z.string(),
-        target: zod_1.z.string(),
-        sourceHandle: zod_1.z.string().optional(),
-        targetHandle: zod_1.z.string().optional(),
+    edges: z.array(z.object({
+        id: z.string(),
+        source: z.string(),
+        target: z.string(),
+        sourceHandle: z.string().optional(),
+        targetHandle: z.string().optional(),
     })),
-    metadata: zod_1.z.record(zod_1.z.string(), zod_1.z.any()).optional(),
+    metadata: z.record(z.string(), z.any()).optional(),
 });
 // Schema for workflow monitoring
-const workflowMonitorSchema = zod_1.z.object({
-    workflowId: zod_1.z.string(),
-    executionId: zod_1.z.string().optional(),
-    events: zod_1.z
-        .array(zod_1.z.enum(["start", "complete", "error", "node_start", "node_complete"]))
+const workflowMonitorSchema = z.object({
+    workflowId: z.string(),
+    executionId: z.string().optional(),
+    events: z
+        .array(z.enum(["start", "complete", "error", "node_start", "node_complete"]))
         .optional(),
-    duration: zod_1.z.number().optional(), // Duration in seconds
+    duration: z.number().optional(), // Duration in seconds
 });
 // Schema for workflow control
-const workflowControlSchema = zod_1.z.object({
-    workflowId: zod_1.z.string(),
-    action: zod_1.z.enum(["pause", "resume", "stop"]),
-    reason: zod_1.z.string().optional(),
+const workflowControlSchema = z.object({
+    workflowId: z.string(),
+    action: z.enum(["pause", "resume", "stop"]),
+    reason: z.string().optional(),
 });
 /**
  * MCP Server implementation for the Workflow System
  * Provides capabilities for workflow execution, composition, and monitoring
  */
-let MCPWorkflowServer = class MCPWorkflowServer extends MCPServer_1.MCPServer {
+let MCPWorkflowServer = class MCPWorkflowServer extends MCPServer {
     workflowExecutionRepository; // Would normally inject a TypeORM repository here
     constructor(options = {}) {
         super({
@@ -148,7 +144,8 @@ let MCPWorkflowServer = class MCPWorkflowServer extends MCPServer_1.MCPServer {
      */
     async composeWorkflow(params) {
         // Implementation for workflow composition
-        return { id: `workflow-${Date.now()}`,
+        return {
+            id: `workflow-${Date.now()}`,
             ...params,
             status: "draft",
             createdAt: new Date(),
@@ -185,7 +182,8 @@ let MCPWorkflowServer = class MCPWorkflowServer extends MCPServer_1.MCPServer {
         });
         return {
             workflowId: params.workflowId,
-            status: params.action === "stop" ? "stopped" : params.action, message: `Workflow ${params.workflowId} ${params.action}ed successfully`,
+            status: params.action === "stop" ? "stopped" : params.action,
+            message: `Workflow ${params.workflowId} ${params.action}ed successfully`,
         };
     }
     // Helper methods
@@ -238,9 +236,9 @@ let MCPWorkflowServer = class MCPWorkflowServer extends MCPServer_1.MCPServer {
         return (maxEnd - minStart) / 1000; // Duration in seconds
     }
 };
-exports.MCPWorkflowServer = MCPWorkflowServer;
-exports.MCPWorkflowServer = MCPWorkflowServer = __decorate([
-    (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [typeof (_a = typeof MCPServer_1.MCPServerOptions !== "undefined" && MCPServer_1.MCPServerOptions) === "function" ? _a : Object])
+MCPWorkflowServer = __decorate([
+    Injectable(),
+    __metadata("design:paramtypes", [Object])
 ], MCPWorkflowServer);
+export { MCPWorkflowServer };
 //# sourceMappingURL=MCPWorkflowServer.js.map

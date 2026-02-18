@@ -1,11 +1,11 @@
 import { OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { MCPAgentServer } from '../MCPAgentServer';
-import { MCPChatServer } from '../MCPChatServer';
-import { MCPWorkflowServer } from '../MCPWorkflowServer';
-import { MCPFuseServer } from '../MCPFuseServer';
-import { MCPFileCoordinationServer } from '../MCPFileCoordinationServer';
-import { MCPRAGServer } from '../MCPRAGServer';
+import { MCPAgentServer } from '../MCPAgentServer.tsx';
+import { MCPChatServer } from '../MCPChatServer.tsx';
+import { MCPWorkflowServer } from '../MCPWorkflowServer.tsx';
+import { MCPFuseServer } from '../MCPFuseServer.tsx';
+import { MCPFileCoordinationServer } from '../MCPFileCoordinationServer.tsx';
+import { MCPRAGServer } from '../MCPRAGServer.tsx';
 /**
  * Message interface for MCP communication
  */

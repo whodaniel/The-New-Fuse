@@ -1,6 +1,6 @@
 import Redis from "ioredis";
-import { RedisConnectionOptions } from '../utils/redis/connection';
-import { RedisService } from '../types/redis/service';
+import { RedisConnectionOptions } from '../utils/redis/connection.tsx';
+import { RedisService } from '../types/redis/service.tsx';
 export declare class RedisServiceImpl implements RedisService {
     client: Redis;
     constructor(options?: RedisConnectionOptions | string);

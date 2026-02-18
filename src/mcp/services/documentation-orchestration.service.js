@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9,16 +8,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var DocumentationOrchestrationService_1;
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.DocumentationOrchestrationService = void 0;
-const common_1 = require("@nestjs/common");
-const schedule_1 = require("@nestjs/schedule");
-const mcp_rag_client_service_1 = require("./mcp-rag-client.service");
-const rag_configuration_service_1 = require("./rag-configuration.service");
+import { Injectable, Logger } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { MCPRAGClientService } from './mcp-rag-client.service.js';
+import { RAGConfigurationService } from './rag-configuration.service.js';
 let DocumentationOrchestrationService = DocumentationOrchestrationService_1 = class DocumentationOrchestrationService {
     ragClient;
     ragConfig;
-    logger = new common_1.Logger(DocumentationOrchestrationService_1.name);
+    logger = new Logger(DocumentationOrchestrationService_1.name);
     isUpdating = false;
     lastUpdateResult = null;
     constructor(ragClient, ragConfig) {
@@ -102,7 +99,8 @@ let DocumentationOrchestrationService = DocumentationOrchestrationService_1 = cl
                         case 'nestjs':
                             crawlResult = await this.ragClient.crawlNestJSDocs(crawlOptions.url, crawlOptions.max_depth, crawlOptions.max_pages);
                             break;
-                        default: throw new Error(`Unknown documentation source: ${source}`);
+                        default:
+                            throw new Error(`Unknown documentation source: ${source}`);
                     }
                     const duration = Date.now() - sourceStartTime;
                     result.results[source] = {
@@ -282,16 +280,16 @@ let DocumentationOrchestrationService = DocumentationOrchestrationService_1 = cl
         };
     }
 };
-exports.DocumentationOrchestrationService = DocumentationOrchestrationService;
 __decorate([
-    (0, schedule_1.Cron)(schedule_1.CronExpression.EVERY_DAY_AT_2AM),
+    Cron(CronExpression.EVERY_DAY_AT_2AM),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], DocumentationOrchestrationService.prototype, "scheduledDocumentationUpdate", null);
-exports.DocumentationOrchestrationService = DocumentationOrchestrationService = DocumentationOrchestrationService_1 = __decorate([
-    (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [mcp_rag_client_service_1.MCPRAGClientService,
-        rag_configuration_service_1.RAGConfigurationService])
+DocumentationOrchestrationService = DocumentationOrchestrationService_1 = __decorate([
+    Injectable(),
+    __metadata("design:paramtypes", [MCPRAGClientService,
+        RAGConfigurationService])
 ], DocumentationOrchestrationService);
+export { DocumentationOrchestrationService };
 //# sourceMappingURL=documentation-orchestration.service.js.map

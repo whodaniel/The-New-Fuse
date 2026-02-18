@@ -1,6 +1,4 @@
-import { MCPAgentServer, MCPChatServer, MCPWorkflowServer } from './servers';
-import { MCPServerOptions, MCPToolParams } from './types';
-import { MCPFileCoordinationServer } from './MCPFileCoordinationServer';
+import { MCPFileCoordinationServer } from './MCPFileCoordinationServer.tsx';
 export declare class MCPFuseServer {
     private readonly agentServer;
     private readonly chatServer;

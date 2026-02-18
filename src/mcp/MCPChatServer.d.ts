@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { MCPServer, MCPServerOptions } from './MCPServer';
+import { MCPServer, MCPServerOptions } from './MCPServer.tsx';
 declare const contextualMessageSchema: z.ZodObject<{
     sender: z.ZodString;
     recipient: z.ZodOptional<z.ZodString>;
@@ -18,9 +18,9 @@ declare const codeCollabSchema: z.ZodObject<{
     conversationId: z.ZodString;
     action: z.ZodEnum<{
         execute: "execute";
-        edit: "edit";
         view: "view";
         comment: "comment";
+        edit: "edit";
     }>;
     codeBlock: z.ZodObject<{
         id: z.ZodString;
@@ -36,8 +36,8 @@ declare const conversationGroupSchema: z.ZodObject<{
     name: z.ZodString;
     participants: z.ZodArray<z.ZodString>;
     type: z.ZodEnum<{
-        direct: "direct";
         group: "group";
+        direct: "direct";
         channel: "channel";
     }>;
     metadata: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodAny>>;

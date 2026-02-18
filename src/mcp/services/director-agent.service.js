@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9,10 +8,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var DirectorAgentService_1;
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.DirectorAgentService = void 0;
-const common_1 = require("@nestjs/common");
-const mcp_broker_service_1 = require("./mcp-broker.service");
+import { Injectable, Logger } from '@nestjs/common';
+import { MCPBrokerService } from './mcp-broker.service.tsx';
 /**
  * Director Agent Service
  *
@@ -21,7 +18,7 @@ const mcp_broker_service_1 = require("./mcp-broker.service");
  */
 let DirectorAgentService = DirectorAgentService_1 = class DirectorAgentService {
     mcpBroker;
-    logger = new common_1.Logger(DirectorAgentService_1.name);
+    logger = new Logger(DirectorAgentService_1.name);
     tasks = new Map();
     agents = new Set();
     constructor(mcpBroker) {
@@ -37,10 +34,12 @@ let DirectorAgentService = DirectorAgentService_1 = class DirectorAgentService {
     async handleCommand(message) {
         this.logger.debug(`Director received command: ${JSON.stringify(message)}`);
         // Create task from command
-        const task = { id: `task_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+        const task = {
+            id: `task_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
             type: message.payload.action,
             status: 'pending',
-            priority: message.metadata?.priority || 'medium', description: `Execute ${message.payload.action} on ${message.payload.server}`,
+            priority: message.metadata?.priority || 'medium',
+            description: `Execute ${message.payload.action} on ${message.payload.server}`,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             metadata: {
@@ -78,7 +77,8 @@ let DirectorAgentService = DirectorAgentService_1 = class DirectorAgentService {
         task.updatedAt = new Date().toISOString();
         // Store updated task
         this.tasks.set(task.id, task);
-        // Notify completion this.logger.log(`Task ${task.id} completed`);
+        // Notify completion
+        this.logger.log(`Task ${task.id} completed`);
     }
     /**
      * Handle error message
@@ -103,7 +103,8 @@ let DirectorAgentService = DirectorAgentService_1 = class DirectorAgentService {
         task.updatedAt = new Date().toISOString();
         // Store updated task
         this.tasks.set(task.id, task);
-        // Notify failure this.logger.error(`Task ${task.id} failed: ${task.error}`);
+        // Notify failure
+        this.logger.error(`Task ${task.id} failed: ${task.error}`);
     }
     /**
      * Process task
@@ -126,7 +127,8 @@ let DirectorAgentService = DirectorAgentService_1 = class DirectorAgentService {
                 task.assignedTo = assignedAgent;
                 this.tasks.set(task.id, task);
                 // Forward task to assigned agent
-                // Implementation depends on how agents are integrated this.logger.log(`Task ${task.id} assigned to ${assignedAgent}`);
+                // Implementation depends on how agents are integrated
+                this.logger.log(`Task ${task.id} assigned to ${assignedAgent}`);
             }
             else {
                 // Handle directly through MCP Broker
@@ -200,7 +202,8 @@ let DirectorAgentService = DirectorAgentService_1 = class DirectorAgentService {
     async createTask(type, description, params = {}, options = {}) {
         const { priority = 'medium', metadata = {} } = options;
         // Create task
-        const task = { id: `task_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+        const task = {
+            id: `task_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
             type,
             status: 'pending',
             priority,
@@ -219,9 +222,9 @@ let DirectorAgentService = DirectorAgentService_1 = class DirectorAgentService {
         return task;
     }
 };
-exports.DirectorAgentService = DirectorAgentService;
-exports.DirectorAgentService = DirectorAgentService = DirectorAgentService_1 = __decorate([
-    (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [mcp_broker_service_1.MCPBrokerService])
+DirectorAgentService = DirectorAgentService_1 = __decorate([
+    Injectable(),
+    __metadata("design:paramtypes", [MCPBrokerService])
 ], DirectorAgentService);
+export { DirectorAgentService };
 //# sourceMappingURL=director-agent.service.js.map

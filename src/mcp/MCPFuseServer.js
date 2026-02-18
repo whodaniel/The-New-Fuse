@@ -1,14 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MCPFuseServer = void 0;
-const logger_1 = require("@/utils/logger");
-class MCPFuseServer {
+import { Logger } from "@/utils/logger";
+export class MCPFuseServer {
     agentServer;
     chatServer;
     workflowServer;
     fileCoordinationServer;
     options;
-    logger = new logger_1.Logger(MCPFuseServer.name);
+    logger = new Logger(MCPFuseServer.name);
     constructor(agentServer, chatServer, workflowServer, fileCoordinationServer, options = {}) {
         this.agentServer = agentServer;
         this.chatServer = chatServer;
@@ -42,5 +39,4 @@ class MCPFuseServer {
         }), {});
     }
 }
-exports.MCPFuseServer = MCPFuseServer;
 //# sourceMappingURL=MCPFuseServer.js.map

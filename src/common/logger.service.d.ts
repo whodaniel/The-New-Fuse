@@ -6,6 +6,7 @@ export declare class Logger {
     constructor(context?: string);
     private formatMessage;
     log(message: string, ...args: any[]): void;
+    info(message: string, ...args: any[]): void;
     error(message: string, ...args: any[]): void;
     warn(message: string, ...args: any[]): void;
     debug(message: string, ...args: any[]): void;

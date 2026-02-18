@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,62 +7,59 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var _a;
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MCPChatServer = void 0;
-const common_1 = require("@nestjs/common");
-const zod_1 = require("zod");
-const MCPServer_1 = require("./MCPServer");
+import { Injectable } from "@nestjs/common";
+import { z } from "zod";
+import { MCPServer } from './MCPServer.tsx';
 // Schema for contextual messaging
-const contextualMessageSchema = zod_1.z.object({
-    sender: zod_1.z.string(),
-    recipient: zod_1.z.string().optional(),
-    content: zod_1.z.string(),
-    context: zod_1.z.object({
-        conversationId: zod_1.z.string(),
-        threadId: zod_1.z.string().optional(),
-        metadata: zod_1.z.record(zod_1.z.string(), zod_1.z.any()).optional(),
+const contextualMessageSchema = z.object({
+    sender: z.string(),
+    recipient: z.string().optional(),
+    content: z.string(),
+    context: z.object({
+        conversationId: z.string(),
+        threadId: z.string().optional(),
+        metadata: z.record(z.string(), z.any()).optional(),
     }),
-    attachments: zod_1.z
-        .array(zod_1.z.object({
-        type: zod_1.z.string(),
-        content: zod_1.z.any(),
+    attachments: z
+        .array(z.object({
+        type: z.string(),
+        content: z.any(),
     }))
         .optional(),
 });
 // Schema for code collaboration
-const codeCollabSchema = zod_1.z.object({
-    conversationId: zod_1.z.string(),
-    action: zod_1.z.enum(["edit", "view", "comment", "execute"]),
-    codeBlock: zod_1.z.object({
-        id: zod_1.z.string(),
-        language: zod_1.z.string(),
-        content: zod_1.z.string(),
-        lineStart: zod_1.z.number().optional(),
-        lineEnd: zod_1.z.number().optional(),
-        filename: zod_1.z.string().optional(),
+const codeCollabSchema = z.object({
+    conversationId: z.string(),
+    action: z.enum(["edit", "view", "comment", "execute"]),
+    codeBlock: z.object({
+        id: z.string(),
+        language: z.string(),
+        content: z.string(),
+        lineStart: z.number().optional(),
+        lineEnd: z.number().optional(),
+        filename: z.string().optional(),
     }),
-    metadata: zod_1.z.record(zod_1.z.string(), zod_1.z.any()).optional(),
+    metadata: z.record(z.string(), z.any()).optional(),
 });
 // Schema for conversation group creation
-const conversationGroupSchema = zod_1.z.object({
-    name: zod_1.z.string(),
-    participants: zod_1.z.array(zod_1.z.string()),
-    type: zod_1.z.enum(["direct", "group", "channel"]),
-    metadata: zod_1.z.record(zod_1.z.string(), zod_1.z.any()).optional(),
+const conversationGroupSchema = z.object({
+    name: z.string(),
+    participants: z.array(z.string()),
+    type: z.enum(["direct", "group", "channel"]),
+    metadata: z.record(z.string(), z.any()).optional(),
 });
 // Schema for resource attachment
-const resourceAttachmentSchema = zod_1.z.object({
-    resourceType: zod_1.z.string(),
-    resourceId: zod_1.z.string(),
-    messageId: zod_1.z.string(),
-    metadata: zod_1.z.record(zod_1.z.string(), zod_1.z.any()).optional(),
+const resourceAttachmentSchema = z.object({
+    resourceType: z.string(),
+    resourceId: z.string(),
+    messageId: z.string(),
+    metadata: z.record(z.string(), z.any()).optional(),
 });
 /**
  * MCP Server implementation for the Chat System
  * Provides capabilities for contextual messaging and code collaboration
  */
-let MCPChatServer = class MCPChatServer extends MCPServer_1.MCPServer {
+let MCPChatServer = class MCPChatServer extends MCPServer {
     constructor(options = {}) {
         super({
             ...options,
@@ -169,9 +165,9 @@ let MCPChatServer = class MCPChatServer extends MCPServer_1.MCPServer {
         }
     }
 };
-exports.MCPChatServer = MCPChatServer;
-exports.MCPChatServer = MCPChatServer = __decorate([
-    (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [typeof (_a = typeof MCPServer_1.MCPServerOptions !== "undefined" && MCPServer_1.MCPServerOptions) === "function" ? _a : Object])
+MCPChatServer = __decorate([
+    Injectable(),
+    __metadata("design:paramtypes", [Object])
 ], MCPChatServer);
+export { MCPChatServer };
 //# sourceMappingURL=MCPChatServer.js.map

@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -10,22 +9,20 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var MCPFileCoordinationServer_1;
 var _a, _b, _c;
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MCPFileCoordinationServer = void 0;
-const common_1 = require("@nestjs/common");
-const types_1 = require("./types");
-const FileCreationCoordinationService_1 = require("../vscode-extension/src/coordination/FileCreationCoordinationService");
-const FileCoordinationManager_1 = require("../vscode-extension/src/coordination/FileCoordinationManager");
+import { Injectable, Logger } from '@nestjs/common';
+import { MCPServer, MCPServerOptions } from './types.js';
+import { FileCreationCoordinationService } from '../vscode-extension/src/coordination/FileCreationCoordinationService';
+import { FileCoordinationManager } from '../vscode-extension/src/coordination/FileCoordinationManager';
 /**
  * MCP Server for File Creation Coordination System
  *
  * This server exposes file coordination capabilities through the MCP protocol,
  * allowing agents to coordinate file creation activities across the system.
  */
-let MCPFileCoordinationServer = MCPFileCoordinationServer_1 = class MCPFileCoordinationServer extends types_1.MCPServer {
+let MCPFileCoordinationServer = MCPFileCoordinationServer_1 = class MCPFileCoordinationServer extends MCPServer {
     coordinationService;
     coordinationManager;
-    logger = new common_1.Logger(MCPFileCoordinationServer_1.name);
+    logger = new Logger(MCPFileCoordinationServer_1.name);
     constructor(coordinationService, coordinationManager, options = {}) {
         super(options);
         this.coordinationService = coordinationService;
@@ -306,7 +303,8 @@ let MCPFileCoordinationServer = MCPFileCoordinationServer_1 = class MCPFileCoord
             };
             this.coordinationService.registerCustomParticipant(participant);
             return {
-                success: true, message: `Participant ${params.agentName} registered successfully`
+                success: true,
+                message: `Participant ${params.agentName} registered successfully`
             };
         }
         catch (error) {
@@ -318,7 +316,8 @@ let MCPFileCoordinationServer = MCPFileCoordinationServer_1 = class MCPFileCoord
         try {
             await this.coordinationService.unregisterParticipant(params.agentId);
             return {
-                success: true, message: `Participant ${params.agentId} unregistered successfully`
+                success: true,
+                message: `Participant ${params.agentId} unregistered successfully`
             };
         }
         catch (error) {
@@ -336,7 +335,8 @@ let MCPFileCoordinationServer = MCPFileCoordinationServer_1 = class MCPFileCoord
             });
             return {
                 success: true,
-                sessionId: result.sessionId, message: `File creation initiated at ${params.filePath}`
+                sessionId: result.sessionId,
+                message: `File creation initiated at ${params.filePath}`
             };
         }
         catch (error) {
@@ -441,9 +441,9 @@ let MCPFileCoordinationServer = MCPFileCoordinationServer_1 = class MCPFileCoord
         return this.tools;
     }
 };
-exports.MCPFileCoordinationServer = MCPFileCoordinationServer;
-exports.MCPFileCoordinationServer = MCPFileCoordinationServer = MCPFileCoordinationServer_1 = __decorate([
-    (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [typeof (_a = typeof FileCreationCoordinationService_1.FileCreationCoordinationService !== "undefined" && FileCreationCoordinationService_1.FileCreationCoordinationService) === "function" ? _a : Object, typeof (_b = typeof FileCoordinationManager_1.FileCoordinationManager !== "undefined" && FileCoordinationManager_1.FileCoordinationManager) === "function" ? _b : Object, typeof (_c = typeof types_1.MCPServerOptions !== "undefined" && types_1.MCPServerOptions) === "function" ? _c : Object])
+MCPFileCoordinationServer = MCPFileCoordinationServer_1 = __decorate([
+    Injectable(),
+    __metadata("design:paramtypes", [typeof (_a = typeof FileCreationCoordinationService !== "undefined" && FileCreationCoordinationService) === "function" ? _a : Object, typeof (_b = typeof FileCoordinationManager !== "undefined" && FileCoordinationManager) === "function" ? _b : Object, typeof (_c = typeof MCPServerOptions !== "undefined" && MCPServerOptions) === "function" ? _c : Object])
 ], MCPFileCoordinationServer);
+export { MCPFileCoordinationServer };
 //# sourceMappingURL=MCPFileCoordinationServer.js.map

@@ -19,7 +19,7 @@ exports.RedisService = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const logger_1 = require("./logger");
-const redis_client_1 = require("./redis-client");
+const redis_client_js_1 = require("./redis-client.js");
 /**
  * Redis Service class
  */
@@ -48,7 +48,7 @@ let RedisService = class RedisService {
         }
         logger_1.redisServiceLogger.info('Initializing Redis service');
         try {
-            this.client = await (0, redis_client_1.createRedisClient)(configOrEnv);
+            this.client = await (0, redis_client_js_1.createRedisClient)(configOrEnv);
             this.isConnected = true;
             logger_1.redisServiceLogger.info('Redis service initialized successfully');
         }

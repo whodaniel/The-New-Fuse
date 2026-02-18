@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,15 +7,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 var MCPRAGClientService_1;
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MCPRAGClientService = void 0;
-const common_1 = require("@nestjs/common");
-const config_1 = require("@nestjs/config");
-const axios_1 = __importDefault(require("axios"));
+import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import axios from 'axios';
 /**
  * MCP RAG Client Service
  *
@@ -25,14 +19,14 @@ const axios_1 = __importDefault(require("axios"));
  */
 let MCPRAGClientService = MCPRAGClientService_1 = class MCPRAGClientService {
     configService;
-    logger = new common_1.Logger(MCPRAGClientService_1.name);
+    logger = new Logger(MCPRAGClientService_1.name);
     httpClient;
     ragServerUrl;
     isConnected = false;
     constructor(configService) {
         this.configService = configService;
         this.ragServerUrl = this.configService.get('MCP_RAG_SERVER_URL', 'http://localhost:3001');
-        this.httpClient = axios_1.default.create({
+        this.httpClient = axios.create({
             baseURL: this.ragServerUrl,
             timeout: 30000, // 30 second timeout for crawling operations
             headers: {
@@ -210,7 +204,8 @@ let MCPRAGClientService = MCPRAGClientService_1 = class MCPRAGClientService {
      * Search for TypeScript specific information
      */
     async searchTypeScriptDocs(query) {
-        return this.performRAGQuery({ query: `TypeScript: ${query}`,
+        return this.performRAGQuery({
+            query: `TypeScript: ${query}`,
             max_results: 8,
             threshold: 0.75,
         });
@@ -219,7 +214,8 @@ let MCPRAGClientService = MCPRAGClientService_1 = class MCPRAGClientService {
      * Search for NestJS specific information
      */
     async searchNestJSDocs(query) {
-        return this.performRAGQuery({ query: `NestJS: ${query}`,
+        return this.performRAGQuery({
+            query: `NestJS: ${query}`,
             max_results: 8,
             threshold: 0.75,
         });
@@ -283,9 +279,9 @@ let MCPRAGClientService = MCPRAGClientService_1 = class MCPRAGClientService {
         return this.isConnected;
     }
 };
-exports.MCPRAGClientService = MCPRAGClientService;
-exports.MCPRAGClientService = MCPRAGClientService = MCPRAGClientService_1 = __decorate([
-    (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [config_1.ConfigService])
+MCPRAGClientService = MCPRAGClientService_1 = __decorate([
+    Injectable(),
+    __metadata("design:paramtypes", [ConfigService])
 ], MCPRAGClientService);
+export { MCPRAGClientService };
 //# sourceMappingURL=mcp-rag-client.service.js.map

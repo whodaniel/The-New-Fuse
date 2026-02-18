@@ -7,8 +7,8 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createRedisClient = createRedisClient;
-const redis_service_1 = require("./redis.service");
-const redis_client_1 = require("../mcp/redis-client");
+const redis_service_tsx_1 = require("./redis.service.tsx");
+const redis_client_js_1 = require("../mcp/redis-client.js");
 /**
  * Create a Redis client based on the specified type and configuration
  *
@@ -19,9 +19,9 @@ function createRedisClient(options) {
     const { type, config } = options;
     switch (type) {
         case 'standard':
-            return (0, redis_service_1.createRedisService)(config);
+            return (0, redis_service_tsx_1.createRedisService)(config);
         case 'mcp':
-            return (0, redis_client_1.createMCPRedisClient)(config);
+            return (0, redis_client_js_1.createMCPRedisClient)(config);
         default:
             throw new Error(`Unsupported Redis client type: ${type}`);
     }

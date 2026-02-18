@@ -1,3 +1,4 @@
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -10,8 +11,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Controller, Post, Body, Get, Query, HttpException, HttpStatus } from '@nestjs/common';
-import { TelemetryWorker } from './TelemetryWorker';
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TelemetryController = void 0;
+const common_1 = require("@nestjs/common");
+const TelemetryWorker_js_1 = require("./TelemetryWorker.js");
 /**
  * Controller for handling telemetry data from clients
  */
@@ -19,7 +22,7 @@ let TelemetryController = class TelemetryController {
     telemetryWorker;
     constructor() {
         // Initialize the telemetry worker with environment variables
-        this.telemetryWorker = new TelemetryWorker({
+        this.telemetryWorker = new TelemetryWorker_js_1.TelemetryWorker({
             redisUrl: process.env.REDIS_URL || 'redis://localhost:6379',
             enableLangfuse: process.env.ENABLE_LANGFUSE === 'true',
             langfusePublicKey: process.env.LANGFUSE_PUBLIC_KEY || '',
@@ -34,7 +37,7 @@ let TelemetryController = class TelemetryController {
         try {
             const { events } = payload;
             if (!Array.isArray(events)) {
-                throw new HttpException('Invalid payload: events must be an array', HttpStatus.BAD_REQUEST);
+                throw new common_1.HttpException('Invalid payload: events must be an array', common_1.HttpStatus.BAD_REQUEST);
             }
             // Process each event
             const promises = events.map(event => this.telemetryWorker.process(event));
@@ -42,7 +45,7 @@ let TelemetryController = class TelemetryController {
             return { success: true, processed: events.length };
         }
         catch (error) {
-            throw new HttpException(`Failed to process telemetry events: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new common_1.HttpException(`Failed to process telemetry events: ${error.message}`, common_1.HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     /**
@@ -73,7 +76,7 @@ let TelemetryController = class TelemetryController {
             return { agents };
         }
         catch (error) {
-            throw new HttpException(`Failed to get agent activity: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new common_1.HttpException(`Failed to get agent activity: ${error.message}`, common_1.HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     /**
@@ -101,7 +104,7 @@ let TelemetryController = class TelemetryController {
             return { tools: sortedTools };
         }
         catch (error) {
-            throw new HttpException(`Failed to get tool usage: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new common_1.HttpException(`Failed to get tool usage: ${error.message}`, common_1.HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     /**
@@ -128,40 +131,40 @@ let TelemetryController = class TelemetryController {
             return { traces: validTraces };
         }
         catch (error) {
-            throw new HttpException(`Failed to get recent traces: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new common_1.HttpException(`Failed to get recent traces: ${error.message}`, common_1.HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 };
+exports.TelemetryController = TelemetryController;
 __decorate([
-    Post('events'),
-    __param(0, Body()),
+    (0, common_1.Post)('events'),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], TelemetryController.prototype, "receiveEvents", null);
 __decorate([
-    Get('agents/activity'),
+    (0, common_1.Get)('agents/activity'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], TelemetryController.prototype, "getAgentActivity", null);
 __decorate([
-    Get('tools/usage'),
-    __param(0, Query('limit')),
+    (0, common_1.Get)('tools/usage'),
+    __param(0, (0, common_1.Query)('limit')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], TelemetryController.prototype, "getToolUsage", null);
 __decorate([
-    Get('traces/recent'),
-    __param(0, Query('limit')),
+    (0, common_1.Get)('traces/recent'),
+    __param(0, (0, common_1.Query)('limit')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], TelemetryController.prototype, "getRecentTraces", null);
-TelemetryController = __decorate([
-    Controller('api/telemetry'),
+exports.TelemetryController = TelemetryController = __decorate([
+    (0, common_1.Controller)('api/telemetry'),
     __metadata("design:paramtypes", [])
 ], TelemetryController);
-export { TelemetryController };
 //# sourceMappingURL=TelemetryController.js.map

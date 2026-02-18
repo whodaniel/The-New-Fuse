@@ -87,5 +87,25 @@ export declare class TelemetryWorker extends EventEmitter {
      * Process tool usage telemetry events
      */
     private processToolUsageEvents;
+    /**
+     * Process agent status telemetry events
+     */
+    private processAgentStatusEvents;
+    /**
+     * Process trace-related telemetry events
+     */
+    private processTraceEvents;
+    /**
+     * Process generic telemetry events
+     */
+    private processGenericEvents;
+    /**
+     * Send batch to Langfuse
+     */
+    private sendToLangfuse;
+    /**
+     * Shutdown the worker
+     */
+    shutdown(): Promise<void>;
 }
 //# sourceMappingURL=TelemetryWorker.d.ts.map

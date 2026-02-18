@@ -1,7 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { MCPServer, MCPToolParams, MCPServerOptions } from './types';
-import { FileCreationCoordinationService } from '../vscode-extension/src/coordination/FileCreationCoordinationService';
-import { FileCoordinationManager } from '../vscode-extension/src/coordination/FileCoordinationManager';
+import { MCPServer } from './types.js';
 /**
  * MCP Server for File Creation Coordination System
  *

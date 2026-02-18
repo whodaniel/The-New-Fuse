@@ -1,4 +1,4 @@
-import { MCPBrokerService } from './mcp-broker.service';
+import { MCPBrokerService } from './mcp-broker.service.tsx';
 /**
  * Task interface for Director Agent
  */

@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9,13 +8,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var RAGConfigurationService_1;
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.RAGConfigurationService = void 0;
-const common_1 = require("@nestjs/common");
-const config_1 = require("@nestjs/config");
+import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 let RAGConfigurationService = RAGConfigurationService_1 = class RAGConfigurationService {
     configService;
-    logger = new common_1.Logger(RAGConfigurationService_1.name);
+    logger = new Logger(RAGConfigurationService_1.name);
     config;
     constructor(configService) {
         this.configService = configService;
@@ -124,9 +121,9 @@ let RAGConfigurationService = RAGConfigurationService_1 = class RAGConfiguration
         };
     }
 };
-exports.RAGConfigurationService = RAGConfigurationService;
-exports.RAGConfigurationService = RAGConfigurationService = RAGConfigurationService_1 = __decorate([
-    (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [config_1.ConfigService])
+RAGConfigurationService = RAGConfigurationService_1 = __decorate([
+    Injectable(),
+    __metadata("design:paramtypes", [ConfigService])
 ], RAGConfigurationService);
+export { RAGConfigurationService };
 //# sourceMappingURL=rag-configuration.service.js.map

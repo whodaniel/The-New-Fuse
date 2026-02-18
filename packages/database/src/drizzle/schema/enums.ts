@@ -329,3 +329,28 @@ export const entityStatusEnum = pgEnum('EntityStatus', [
   'PENDING',
   'FAILED',
 ]);
+
+// =============================================================================
+// TNF MODULAR ID SYSTEM ENUMS
+// =============================================================================
+
+export const tnfEntityTypeEnum = pgEnum('TNFEntityType', [
+  'LLM',
+  'HARNESS',
+  'AGENT',
+  'SESSION',
+  'HUMAN',
+  'TOOL',
+  'SERVICE',
+]);
+
+export const tnfNamespaceEnum = pgEnum('TNFNamespace', [
+  'BASE',
+  'SYSTEM',
+  'USER',
+  'TEMP',
+  'PERSIST',
+  'OWNER',
+  'ADMIN',
+  'MEMBER',
+]);

@@ -4,7 +4,7 @@
  * This file implements a Redis client that connects to Redis through the MCP framework.
  * It supports all Redis operations and SSL/TLS configuration.
  */
-import { RedisService } from '../types/redis/service';
+import { RedisService } from '../types/redis/service.tsx';
 export interface MCPRedisConfig {
     host: string;
     port: number;

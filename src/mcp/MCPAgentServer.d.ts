@@ -1,23 +1,29 @@
-import { z } from 'zod';
-import { MCPServer } from './MCPServer';
-import { AgentService } from '../agents/agent.service';
-declare const agentCapabilitySchema: z.ZodObject<{
-    id: z.ZodString;
-    name: z.ZodString;
-    description: z.ZodString;
-    version: z.ZodString;
-    parameters: z.ZodOptional<z.ZodRecord<z.core.$ZodRecordKey, z.core.SomeType>>;
-    returns: z.ZodOptional<z.ZodRecord<z.core.$ZodRecordKey, z.core.SomeType>>;
-}, z.core.$strip>;
+import { MCPServer, MCPServerOptions } from './MCPServer.js';
+/**
+ * Simple Agent Service interface for capability registration
+ */
+interface AgentServiceInterface {
+    registerCapability(capability: unknown): Promise<{
+        id: string;
+        [key: string]: unknown;
+    }>;
+}
 export declare class MCPAgentServer extends MCPServer {
-    private readonly agentService;
+    private readonly agentService?;
     private apiToolRegistrar;
     private apiValidator;
-    constructor(agentService: AgentService, options?: MCPServerOptions);
-    registerNewCapability(capability: z.infer<typeof agentCapabilitySchema>): Promise<{
+    constructor(options?: MCPServerOptions, agentService?: AgentServiceInterface | undefined);
+    registerNewCapability(capability: any): Promise<{
         success: boolean;
         capabilityId: string;
     }>;
+    registerAgentAPI(agentId: string, apiSpec: unknown): Promise<void>;
+    routeAgentMessage(_message: unknown): Promise<{
+        status: string;
+        messageId: string;
+    }>;
+    discoverAgents(_params: unknown): Promise<unknown[]>;
+    broadcastMessage(_msg: unknown): Promise<void>;
     private validateCapability;
     private notifyCapabilityUpdate;
 }
