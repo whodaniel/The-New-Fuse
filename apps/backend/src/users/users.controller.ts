@@ -9,7 +9,9 @@ import {
   Query,
   UseGuards,
   HttpStatus,
-  HttpCode
+  HttpCode,
+  Req,
+  ForbiddenException
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -18,6 +20,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { UpdateProfileDto, ProfileResponseDto } from './dto/profile.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { Request } from 'express';
 
 @ApiTags('users')
 @Controller('users')
@@ -53,8 +56,16 @@ export class UsersController {
   @ApiOperation({ summary: 'Update user' })
   async update(
     @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto
+    @Body() updateUserDto: UpdateUserDto,
+    @Req() req: Request
   ) {
+    // 🛡️ Sentinel: IDOR Protection
+    // Ensure user can only update their own account
+    const user = req.user as any;
+    if (user.id !== id) {
+      throw new ForbiddenException('You can only update your own profile');
+    }
+
     return this.usersService.update(id, updateUserDto);
   }
 
@@ -95,8 +106,16 @@ export class UsersController {
   @ApiResponse({ status: 404, description: 'User not found' })
   async updateProfile(
     @Param('id') id: string,
-    @Body() updateProfileDto: UpdateProfileDto
+    @Body() updateProfileDto: UpdateProfileDto,
+    @Req() req: Request
   ): Promise<ProfileResponseDto> {
+    // 🛡️ Sentinel: IDOR Protection
+    // Ensure user can only update their own profile
+    const user = req.user as any;
+    if (user.id !== id) {
+      throw new ForbiddenException('You can only update your own profile');
+    }
+
     return this.usersService.updateProfile(id, updateProfileDto);
   }
 }
