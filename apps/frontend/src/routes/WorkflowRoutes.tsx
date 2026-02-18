@@ -7,12 +7,12 @@ import { Routes, Route } from 'react-router-dom';
 import { WorkflowProvider } from '../contexts/WorkflowContext';
 
 // Lazy load components for better performance
-const WorkflowsPage = React.lazy(() => import('../pages/Workflows/index'));
-const WorkflowBuilder = React.lazy(() => import('../pages/Workflows/Builder'));
-const ModernBuilder = React.lazy(() => import('../pages/Workflows/ModernBuilder'));
-const WorkflowDetail = React.lazy(() => import('../pages/Workflows/Detail'));
-const WorkflowExecution = React.lazy(() => import('../pages/Workflows/Execution'));
-const WorkflowTemplates = React.lazy(() => import('../pages/Workflows/Templates'));
+const WorkflowsPage = React.lazy(() => import('../pages/Workflows.tsx'));
+const WorkflowBuilder = React.lazy(() => import('../pages/workflow-pages/Builder'));
+const ModernBuilder = React.lazy(() => import('../pages/workflow-pages/ModernBuilder'));
+const WorkflowDetail = React.lazy(() => import('../pages/workflow-pages/Detail'));
+const WorkflowExecution = React.lazy(() => import('../pages/workflow-pages/Execution'));
+const WorkflowTemplates = React.lazy(() => import('../pages/workflow-pages/Templates'));
 
 const WorkflowRoutes: React.FC = () => {
   return (
