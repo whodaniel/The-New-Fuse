@@ -1,5 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import { GlassCard, PremiumButton, PremiumInput, PremiumSelect } from '@/components/ui/premium';
+import { useDebounce } from '@/hooks/useDebounce';
 import { agentService, type Agent } from '@/services/AgentService';
 import {
   ArrowRight,
@@ -12,17 +13,18 @@ import {
   FileCode,
   Layers,
   Loader2,
+  LucideIcon,
   Plus,
   Search,
   Sparkles,
   TrendingUp,
   Zap,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Icon mapping for agent types
-const typeIcons: Record<string, React.ElementType> = {
+const typeIcons: Record<string, LucideIcon> = {
   development: Code2,
   analytics: Database,
   content: FileCode,
@@ -58,7 +60,7 @@ interface UIAgent {
     successRate: number;
     avgResponseTime: string;
   };
-  icon: React.ElementType;
+  icon: LucideIcon;
   gradient: string;
 }
 
@@ -84,6 +86,92 @@ const transformAgent = (agent: Agent): UIAgent => {
   };
 };
 
+// Memoized Agent Card Component to prevent re-renders
+const AgentCard = memo(({ agent }: { agent: UIAgent }) => {
+  const navigate = useNavigate();
+  const Icon = agent.icon;
+
+  return (
+    <GlassCard
+      onClick={() => navigate(`/agents/${agent.id}`)}
+      className="group relative p-10 rounded-3xl hover:border-white/30 transition-all duration-500 cursor-pointer overflow-hidden border border-white/10"
+    >
+      {/* Gradient Overlay on Hover */}
+      <div
+        className={`absolute inset-0 bg-linear-to-br ${agent.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
+      />
+
+      <div className="relative z-10 space-y-6">
+        {/* Header */}
+        <div className="flex justify-between items-start">
+          <div
+            className={`w-20 h-20 rounded-2xl bg-linear-to-br ${agent.gradient} flex items-center justify-center shadow-2xl group-hover:scale-110 transform transition-transform`}
+          >
+            <Icon className="w-10 h-10 text-white" />
+          </div>
+          <div className="flex items-center gap-3">
+            {agent.status === 'Active' ? (
+              <Badge className="px-4 py-2 bg-green-500/20 text-green-400 border-green-500/30 font-semibold">
+                <CheckCircle2 className="w-4 h-4 mr-2" />
+                Active
+              </Badge>
+            ) : (
+              <Badge className="px-4 py-2 bg-yellow-500/20 text-yellow-400 border-yellow-500/30 font-semibold">
+                <Clock className="w-4 h-4 mr-2" />
+                Paused
+              </Badge>
+            )}
+          </div>
+        </div>
+
+        {/* Content */}
+        <div>
+          <h3 className="text-4xl font-black text-white mb-3 group-hover:text-transparent group-hover:bg-linear-to-r group-hover:from-blue-400 group-hover:to-purple-400 group-hover:bg-clip-text transition-all">
+            {agent.name}
+          </h3>
+          <p className="text-xl font-semibold text-blue-400 mb-4">{agent.tagline}</p>
+          <p className="text-lg text-gray-400 leading-relaxed">{agent.description}</p>
+        </div>
+
+        {/* Metrics */}
+        <div className="grid grid-cols-3 gap-6 pt-6 border-t border-white/10">
+          <div>
+            <p className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-2">
+              Tasks
+            </p>
+            <p className="text-2xl font-bold text-white">
+              {agent.metrics.tasksCompleted.toLocaleString()}
+            </p>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-2">
+              Success
+            </p>
+            <p className="text-2xl font-bold text-green-400">{agent.metrics.successRate}%</p>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-2">
+              Speed
+            </p>
+            <p className="text-2xl font-bold text-blue-400">{agent.metrics.avgResponseTime}</p>
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div className="flex items-center justify-between pt-6 border-t border-white/10">
+          <span className="text-sm text-gray-500 font-medium">{agent.category}</span>
+          <span className="flex items-center gap-2 text-blue-400 font-bold group-hover:gap-4 transition-all">
+            View Details
+            <ArrowRight className="w-5 h-5" />
+          </span>
+        </div>
+      </div>
+    </GlassCard>
+  );
+});
+
+AgentCard.displayName = 'AgentCard';
+
 /**
  * AGENTS PAGE REVOLUTION
  * Bold. Modern. Premium.
@@ -92,6 +180,9 @@ const transformAgent = (agent: Agent): UIAgent => {
 export const AgentsRevolution = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  // Debounce search query to prevent excessive filtering and re-renders
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+
   const [filterCategory, setFilterCategory] = useState('All');
   const [filterStatus, setFilterStatus] = useState('All');
   const [agents, setAgents] = useState<UIAgent[]>([]);
@@ -117,11 +208,11 @@ export const AgentsRevolution = () => {
     fetchAgents();
   }, []);
 
-  // Filter logic
+  // Filter logic using debounced search query
   const filteredAgents = agents.filter((agent) => {
     const matchesSearch =
-      agent.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      agent.tagline.toLowerCase().includes(searchQuery.toLowerCase());
+      agent.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+      agent.tagline.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
     const matchesCategory = filterCategory === 'All' || agent.category === filterCategory;
     const matchesStatus = filterStatus === 'All' || agent.status === filterStatus;
     return matchesSearch && matchesCategory && matchesStatus;
@@ -241,86 +332,7 @@ export const AgentsRevolution = () => {
         {/* AGENTS GRID - BOLD CARDS */}
         <div className="grid md:grid-cols-2 gap-8">
           {filteredAgents.map((agent) => (
-            <GlassCard
-              key={agent.id}
-              onClick={() => navigate(`/agents/${agent.id}`)}
-              className="group relative p-10 rounded-3xl hover:border-white/30 transition-all duration-500 cursor-pointer overflow-hidden border border-white/10"
-            >
-              {/* Gradient Overlay on Hover */}
-              <div
-                className={`absolute inset-0 bg-linear-to-br ${agent.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
-              />
-
-              <div className="relative z-10 space-y-6">
-                {/* Header */}
-                <div className="flex justify-between items-start">
-                  <div
-                    className={`w-20 h-20 rounded-2xl bg-linear-to-br ${agent.gradient} flex items-center justify-center shadow-2xl group-hover:scale-110 transform transition-transform`}
-                  >
-                    <agent.icon className="w-10 h-10 text-white" />
-                  </div>
-                  <div className="flex items-center gap-3">
-                    {agent.status === 'Active' ? (
-                      <Badge className="px-4 py-2 bg-green-500/20 text-green-400 border-green-500/30 font-semibold">
-                        <CheckCircle2 className="w-4 h-4 mr-2" />
-                        Active
-                      </Badge>
-                    ) : (
-                      <Badge className="px-4 py-2 bg-yellow-500/20 text-yellow-400 border-yellow-500/30 font-semibold">
-                        <Clock className="w-4 h-4 mr-2" />
-                        Paused
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div>
-                  <h3 className="text-4xl font-black text-white mb-3 group-hover:text-transparent group-hover:bg-linear-to-r group-hover:from-blue-400 group-hover:to-purple-400 group-hover:bg-clip-text transition-all">
-                    {agent.name}
-                  </h3>
-                  <p className="text-xl font-semibold text-blue-400 mb-4">{agent.tagline}</p>
-                  <p className="text-lg text-gray-400 leading-relaxed">{agent.description}</p>
-                </div>
-
-                {/* Metrics */}
-                <div className="grid grid-cols-3 gap-6 pt-6 border-t border-white/10">
-                  <div>
-                    <p className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-2">
-                      Tasks
-                    </p>
-                    <p className="text-2xl font-bold text-white">
-                      {agent.metrics.tasksCompleted.toLocaleString()}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-2">
-                      Success
-                    </p>
-                    <p className="text-2xl font-bold text-green-400">
-                      {agent.metrics.successRate}%
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-2">
-                      Speed
-                    </p>
-                    <p className="text-2xl font-bold text-blue-400">
-                      {agent.metrics.avgResponseTime}
-                    </p>
-                  </div>
-                </div>
-
-                {/* CTA */}
-                <div className="flex items-center justify-between pt-6 border-t border-white/10">
-                  <span className="text-sm text-gray-500 font-medium">{agent.category}</span>
-                  <span className="flex items-center gap-2 text-blue-400 font-bold group-hover:gap-4 transition-all">
-                    View Details
-                    <ArrowRight className="w-5 h-5" />
-                  </span>
-                </div>
-              </div>
-            </GlassCard>
+            <AgentCard key={agent.id} agent={agent} />
           ))}
         </div>
 
