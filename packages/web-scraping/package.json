@@ -18,8 +18,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@nestjs/common": "^11.1.10",
-    "@nestjs/websockets": "^11.1.10",
+    "@nestjs/common": "^11.1.14",
+    "@nestjs/websockets": "^11.1.14",
     "@the-new-fuse/ap2-protocol": "workspace:^",
     "@the-new-fuse/mcp-core": "workspace:^",
     "@the-new-fuse/utils": "workspace:^",
