@@ -1,6 +1,6 @@
 # Route Guard Audit
 
-Generated: 2026-02-17T20:51:51.515Z
+Generated: 2026-02-18T11:33:52.954Z
 
 ## Counts
 
@@ -20,7 +20,7 @@ Generated: 2026-02-17T20:51:51.515Z
 - `/chat` | access: `authenticated` | status: `ok` | guard: `RequireAuth` |
   redirect: `false`
 - `/command-center` | access: `authenticated` | status: `ok` | guard:
-  `RequireAuth` | redirect: `false`
+  `RequirePermission` | redirect: `false`
 - `/config` | access: `authenticated` | status: `ok` | guard: `redirect` |
   redirect: `true`
 - `/cron-jobs` | access: `authenticated` | status: `ok` | guard: `redirect` |
@@ -34,8 +34,8 @@ Generated: 2026-02-17T20:51:51.515Z
   redirect: `true`
 - `/nodes` | access: `authenticated` | status: `ok` | guard: `redirect` |
   redirect: `true`
-- `/observatory` | access: `authenticated` | status: `ok` | guard: `RequireAuth`
-  | redirect: `false`
+- `/observatory` | access: `authenticated` | status: `ok` | guard:
+  `RequirePermission` | redirect: `false`
 - `/overview` | access: `authenticated` | status: `ok` | guard: `redirect` |
   redirect: `true`
 - `/resources` | access: `authenticated` | status: `ok` | guard: `RequireAuth` |

@@ -1,11 +1,11 @@
-import { Controller, Post, Body, UseGuards, Get, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
+import { IsEmail, IsString } from 'class-validator';
+import { Request, Response } from 'express';
+import { RegisterDto } from '../dto/register.dto';
 import { AuthService } from './auth.service';
 import { FirebaseAuthGuard } from './firebase-auth.guard';
-import { Request, Response } from 'express';
-import { IsEmail, IsString } from 'class-validator';
-import { JwtService } from '@nestjs/jwt';
-import { RegisterDto } from '../dto/register.dto';
 
 class LoginDto {
   @IsEmail()
@@ -19,7 +19,7 @@ class LoginDto {
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly jwtService: JwtService,
+    private readonly jwtService: JwtService
   ) {}
 
   @Post('register')
@@ -50,6 +50,11 @@ export class AuthController {
   async logout(@Req() req: Request) {
     const token = req.headers.authorization?.split('Bearer ')[1];
     return this.authService.logout(token);
+  }
+
+  @Get('me')
+  async getCurrentUser(@Req() req: Request) {
+    return this.authService.resolveCurrentUserFromAuthHeader(req.headers.authorization);
   }
 
   @Get('google')
@@ -99,7 +104,16 @@ export class AuthController {
   }
 
   @Post('unstoppable-domains')
-  async unstoppableDomainsAuth(@Body() body: { domain: string; walletAddress: string; walletType?: string; message: string; signature: string }) {
+  async unstoppableDomainsAuth(
+    @Body()
+    body: {
+      domain: string;
+      walletAddress: string;
+      walletType?: string;
+      message: string;
+      signature: string;
+    }
+  ) {
     const { domain, walletAddress, walletType, message, signature } = body;
 
     // Validate input
@@ -118,7 +132,7 @@ export class AuthController {
       walletAddress,
       message,
       signature,
-      walletType,
+      walletType
     );
 
     // Generate JWT token

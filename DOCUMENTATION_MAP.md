@@ -1,24 +1,26 @@
 # The New Fuse - Comprehensive Documentation Map
 
-**Total Documentation Files:** 1,218 **Last Updated:** 2025-12-20
+**Total Documentation Files:** 1,200+ **Last Updated:** 2026-02-18
 
 This document provides a complete map of all documentation in The New Fuse
 project, showing categorization, relationships, and recommended navigation
 paths.
 
+**See [README.md](./README.md) for the full codebase architecture overview.**
+
 ---
 
-## ⭐ Progressive Ideas Map (Living)
+## Progressive Ideas Map (Living)
 
 Rule (Daniel): **Every progressive original idea goes here immediately.** No
 orphan ideas.
 
-### 2026-02-09 — TNF × OpenClaw × Cloudflare
+### 2026-02-09 — TNF x OpenClaw x Cloudflare
 
 1. **TNF SharedState as canonical truth layer** (receipts + permissions +
    projections + deterministic withdraw/deposit)
-2. **Cloud OpenClaw Gateway runtime** integrated with TNF (Telegram-first → full
-   tool/browse)
+2. **Cloud OpenClaw Gateway runtime** integrated with TNF (Telegram-first ->
+   full tool/browse)
 3. **Gates of Truth enforcement** (proof refs required; anti-fake-progress)
 4. **Universal Taskboard + Loose Ends with automations** (staleness checks,
    receipts per state change)
@@ -30,7 +32,7 @@ orphan ideas.
    deposit/withdraw/mirror)
 9. **Browser automation at scale** (Cloudflare Browser Rendering + replayable
    traces)
-10. **Public reference deployment** (one-click “child of two protocols”)
+10. **Public reference deployment** (one-click "child of two protocols")
 
 ## Quick Navigation
 
@@ -49,7 +51,7 @@ orphan ideas.
 | [Security](#security)                                      | 23    | ⭐⭐⭐   |
 | [Chrome Extension](#chrome-extension)                      | 13    | ⭐       |
 | [MCP Integration](#mcp-integration)                        | 18    | ⭐⭐     |
-| [Database & Prisma](#database--prisma)                     | 8     | ⭐⭐     |
+| [Database & Drizzle ORM](#database--drizzle-orm)           | 8     | ⭐⭐     |
 | [Project Management](#project-management)                  | 61    | ⭐⭐     |
 
 ---
@@ -586,12 +588,11 @@ orphan ideas.
 
 ---
 
-## Database & Prisma
+## Database & Drizzle ORM
 
 **Main Documentation:**
 
 - [packages/database/README.md](./packages/database/README.md)
-- [db/README.md](./db/README.md)
 - [docs/database/README.md](./docs/database/README.md)
 
 **Sync Core:**
@@ -638,35 +639,48 @@ orphan ideas.
 ### Documentation Hierarchy
 
 ```
-README.md (Root Entry Point)
+README.md (Root Entry Point — full codebase architecture overview)
 ├── QUICK_START_GUIDE.md (Fast Setup)
 ├── PRODUCTION_READINESS.md (Current Status)
-├── DOCUMENTATION_INDEX.md (Master Index)
+├── DOCUMENTATION_MAP.md (This file — navigation guide)
 │
 ├── Architecture & Design
-│   ├── ARCHITECTURE_STANDARDS.md
-│   ├── DESIGN_SYSTEM_DOCUMENTATION.md
-│   └── MONOREPO_ARCHITECTURE.md
+│   ├── docs/architecture/ARCHITECTURE_STANDARDS.md
+│   ├── docs/PREMIUM_THEME_MANIFEST.md (Design System)
+│   └── docs/architecture/MONOREPO_ARCHITECTURE.md
 │
-├── Backend Development
-│   ├── apps/backend/README.md
-│   ├── apps/backend/API_EXAMPLES.md
-│   └── apps/api/src/graphql/README.md
+├── Core Services
+│   ├── apps/api/ (NestJS API — port 3001)
+│   ├── apps/api-gateway/ (NestJS Gateway — port 3005)
+│   ├── apps/frontend/ (React + Vite — port 3000)
+│   ├── apps/backend/ (Secondary NestJS — port 3004)
+│   └── apps/relay-server/ (WebSocket relay hub)
 │
-├── Frontend Development
-│   ├── apps/frontend/README.md
-│   ├── apps/frontend/QUICK_START.md
-│   └── docs/DESIGN_SYSTEM_DOCUMENTATION.md
-│
-├── Agent System
+├── Agent System & Protocols
 │   ├── docs/agents/COMPLETE-AGENT-GUIDE.md
 │   ├── docs/AGENT_COMMUNICATION_PROTOCOL.md
-│   └── .claude/agents/ (127+ agent definitions)
+│   ├── packages/relay-core/ (TNF Envelope, protocol translators)
+│   ├── packages/a2a-core/ (A2A v0.3.0)
+│   ├── packages/mcp-core/ (MCP client/server/broker)
+│   └── .agent/ (16 agent personas, 15+ skills)
+│
+├── Client Extensions
+│   ├── apps/chrome-extension/ (V7 — Claude/Gemini/ChatGPT/Perplexity)
+│   ├── apps/vscode-extension/ (v9.1.0 — multi-LLM, A2A, MCP)
+│   └── apps/electron-desktop/ (Electron desktop app)
+│
+├── AI Infrastructure
+│   ├── apps/picoclaw-overseer/ (Go — edge AI agents)
+│   ├── OpenClaw Mesh (3 Railway cloud instances — Claude Pro OAuth)
+│   └── apps/mcp-servers/ (MCP tool servers)
+│
+├── Database (Drizzle ORM + PostgreSQL)
+│   └── packages/database/ (~15 schema tables)
 │
 ├── Deployment
 │   ├── docs/deployment/DEPLOYMENT_GUIDE.md
 │   ├── docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md
-│   └── docs/DOCKER.md
+│   └── railway.toml (15+ Railway services)
 │
 └── Testing & Quality
     ├── docs/testing/TESTING_SETUP_COMPLETE.md
@@ -681,36 +695,43 @@ README.md (Root Entry Point)
 ### Multi-Agent Systems
 
 - Agent System Documentation
-- Backend API (Agent Registry Module)
-- Workflows & Automation
+- packages/relay-core (TNF Envelope, Master Agent Registry)
+- packages/a2a-core (A2A v0.3.0)
+- packages/workflow-engine (distributed execution)
 - MCP Integration
 
 ### Real-time Communication
 
-- Backend & API (WebSocket)
-- Agent Communication Protocol
+- packages/relay-core (WebSocket relay, Redis pub/sub)
+- Agent Communication Protocol (TNF Envelope)
 - Chat Rooms Module
-- Relay Server
+- Relay Server (apps/relay-server)
+- Chrome Extension (WebSocket to relay)
+
+### Protocol Translation
+
+- packages/relay-core/src/protocol/ (ProtocolTranslator)
+- A2A, AG-UI, OpenAI, Anthropic XML, LangChain, CrewAI adapters
+- packages/mcp-core (MCP client/server)
 
 ### Browser Automation
 
-- Chrome Extension
-- Agent System (Browser Hub Swarm)
-- Workflows & Automation
+- Chrome Extension (V7 — Claude/Gemini/ChatGPT/Perplexity injection)
+- Cloud Sandbox (Playwright)
+- OpenClaw Mesh (cloud AI endpoints)
 
 ### Data Management
 
-- Database & Prisma
-- Backend API
-- Sync Core
-- Caching
+- packages/database (Drizzle ORM + PostgreSQL)
+- packages/core-vector-db (Qdrant + ChromaDB)
+- Redis (caching, pub/sub, job queues)
 
 ### User Interface
 
-- Frontend & UI
-- Design System
-- Chrome Extension
-- Tauri Desktop
+- apps/frontend (React + Vite + Premium UI)
+- apps/visualization-hub (D3.js agent network)
+- apps/vscode-extension (VS Code panels)
+- apps/electron-desktop (Electron + Chakra UI)
 
 ---
 
@@ -779,5 +800,5 @@ specific implementation sessions. Consider:
 
 ---
 
-**Last Updated:** 2025-12-20 **Maintained By:** Development Team **Next
-Review:** 2026-01-20
+**Last Updated:** 2026-02-18 **Maintained By:** Development Team **Next
+Review:** 2026-03-18

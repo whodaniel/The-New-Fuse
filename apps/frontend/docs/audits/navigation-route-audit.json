@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-02-17T20:51:51.475Z",
+  "generatedAt": "2026-02-18T11:33:52.899Z",
   "counts": {
-    "routerPaths": 146,
+    "routerPaths": 147,
     "redirectFromPaths": 25,
-    "effectiveRouterPaths": 171,
+    "effectiveRouterPaths": 172,
     "allPagesPaths": 158,
     "canonicalSidebarPaths": 21,
     "canonicalSidebarNotInRouter": 0,
     "sidebarPaths": 21,
     "sidebarNotInRouter": 0,
     "allPagesNotInRouter": 0,
-    "routerNotInAllPages": 0
+    "routerNotInAllPages": 1
   },
   "paths": {
     "routerPaths": [
@@ -26,6 +26,7 @@
       "/admin/audit-logs",
       "/admin/backup-restore",
       "/admin/configuration",
+      "/admin/control-panel",
       "/admin/database",
       "/admin/feature-flags",
       "/admin/layout",
@@ -201,6 +202,7 @@
       "/admin/audit-logs",
       "/admin/backup-restore",
       "/admin/configuration",
+      "/admin/control-panel",
       "/admin/dashboard",
       "/admin/database",
       "/admin/experimental-features",
@@ -575,6 +577,6 @@
     },
     "sidebarNotInRouter": [],
     "allPagesNotInRouter": [],
-    "routerNotInAllPages": []
+    "routerNotInAllPages": ["/admin/control-panel"]
   }
 }

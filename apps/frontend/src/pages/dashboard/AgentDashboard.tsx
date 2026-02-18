@@ -4,8 +4,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
+  Activity,
   AlertTriangle,
+  ArrowRight,
   BarChart,
   CheckCircle,
   Clock,
@@ -21,9 +24,25 @@ import {
   Search,
   User,
   XCircle,
+  Zap,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { GlassCard, StatsCard } from '../../components/ui/premium/GlassCard';
+import { PremiumButton } from '../../components/ui/premium/PremiumButton';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: { y: 0, opacity: 1 },
+};
 
 interface Agent {
   id: string;
@@ -58,99 +77,6 @@ const AgentDashboard: React.FC = () => {
   const [sortBy, setSortBy] = useState<string>('lastActive');
   const [showFilters, setShowFilters] = useState(false);
 
-  // Mock data for development
-  const mockAgents: Agent[] = [
-    {
-      id: '1',
-      name: 'Customer Support Bot',
-      description:
-        'Handles customer inquiries and support tickets with natural language processing.',
-      type: 'conversational',
-      status: 'active',
-      lastActive: '2024-01-15T10:30:00Z',
-      totalTasks: 1247,
-      successRate: 94.5,
-      averageResponseTime: 1.2,
-      model: 'GPT-4',
-      deployment: 'cloud',
-      owner: 'Sarah Johnson',
-      createdAt: '2024-01-01T00:00:00Z',
-      tags: ['customer-service', 'nlp', 'production'],
-      metrics: {
-        tasksToday: 45,
-        tasksThisWeek: 312,
-        errorRate: 5.5,
-        uptime: 99.2,
-      },
-    },
-    {
-      id: '2',
-      name: 'Data Analyzer Pro',
-      description: 'Automated data analysis and report generation for business intelligence.',
-      type: 'data-analysis',
-      status: 'active',
-      lastActive: '2024-01-15T09:45:00Z',
-      totalTasks: 856,
-      successRate: 98.1,
-      averageResponseTime: 3.7,
-      model: 'Claude-3',
-      deployment: 'hybrid',
-      owner: 'Mike Chen',
-      createdAt: '2024-01-05T00:00:00Z',
-      tags: ['analytics', 'reporting', 'bi'],
-      metrics: {
-        tasksToday: 12,
-        tasksThisWeek: 89,
-        errorRate: 1.9,
-        uptime: 97.8,
-      },
-    },
-    {
-      id: '3',
-      name: 'Content Creator',
-      description: 'Generates marketing content, blog posts, and social media updates.',
-      type: 'content-generation',
-      status: 'inactive',
-      lastActive: '2024-01-14T16:20:00Z',
-      totalTasks: 423,
-      successRate: 91.2,
-      averageResponseTime: 2.1,
-      model: 'GPT-3.5',
-      deployment: 'cloud',
-      owner: 'Emma Davis',
-      createdAt: '2024-01-10T00:00:00Z',
-      tags: ['content', 'marketing', 'social-media'],
-      metrics: {
-        tasksToday: 0,
-        tasksThisWeek: 67,
-        errorRate: 8.8,
-        uptime: 95.4,
-      },
-    },
-    {
-      id: '4',
-      name: 'Workflow Automator',
-      description: 'Automates repetitive business processes and task workflows.',
-      type: 'task-automation',
-      status: 'error',
-      lastActive: '2024-01-15T08:15:00Z',
-      totalTasks: 2134,
-      successRate: 89.7,
-      averageResponseTime: 0.8,
-      model: 'Custom Model',
-      deployment: 'local',
-      owner: 'Alex Rodriguez',
-      createdAt: '2023-12-20T00:00:00Z',
-      tags: ['automation', 'workflows', 'rpa'],
-      metrics: {
-        tasksToday: 8,
-        tasksThisWeek: 156,
-        errorRate: 10.3,
-        uptime: 87.2,
-      },
-    },
-  ];
-
   useEffect(() => {
     fetchAgents();
   }, []);
@@ -162,12 +88,11 @@ const AgentDashboard: React.FC = () => {
         const data = await response.json();
         setAgents(data);
       } else {
-        // Use mock data as fallback
-        setAgents(mockAgents);
+        setAgents([]);
       }
     } catch (error) {
       console.error('Failed to fetch agents:', error);
-      setAgents(mockAgents);
+      setAgents([]);
     } finally {
       setLoading(false);
     }
@@ -288,358 +213,328 @@ const AgentDashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+      className="min-h-screen bg-slate-950 text-slate-100 selection:bg-cyan-500/30 font-sans"
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Agent Dashboard</h1>
-              <p className="mt-2 text-gray-600 dark:text-gray-300">
-                Monitor and manage your AI agents
+        <motion.div variants={itemVariants} className="mb-10">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="relative">
+              <div className="absolute -left-4 top-0 bottom-0 w-1 bg-cyan-500 rounded-full shadow-[0_0_15px_rgba(6,182,212,0.5)]" />
+              <h1 className="text-4xl font-black tracking-tight text-white flex items-center gap-3">
+                Agent{' '}
+                <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+                  Fleet Terminal
+                </span>
+              </h1>
+              <p className="mt-2 text-slate-400 font-medium">
+                Orchestrate and manage your distributed AI intelligence mesh
               </p>
             </div>
-            <Link
-              to="/dashboard/agents/new"
-              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            <PremiumButton
+              onClick={() => navigate('/dashboard/agents/new')}
+              variant="indigo"
+              className="shadow-[0_0_30px_rgba(79,70,229,0.3)] hover:shadow-[0_0_40px_rgba(79,70,229,0.5)] transition-all duration-500 scale-105"
             >
               <Plus className="w-5 h-5 mr-2" />
-              Create Agent
-            </Link>
+              Initialize New Agent
+            </PremiumButton>
           </div>
-        </div>
+        </motion.div>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
-                <Cpu className="w-6 h-6 text-blue-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Agents</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{agents.length}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
-                <CheckCircle className="w-6 h-6 text-green-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {agents.filter((a) => a.status === 'active').length}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-yellow-100 dark:bg-yellow-900 rounded-lg">
-                <BarChart className="w-6 h-6 text-yellow-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Avg Success Rate
-                </p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {agents.length > 0
-                    ? Math.round(agents.reduce((sum, a) => sum + a.successRate, 0) / agents.length)
-                    : 0}
-                  %
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-purple-100 dark:bg-purple-900 rounded-lg">
-                <Clock className="w-6 h-6 text-purple-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Tasks Today</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {agents.reduce((sum, a) => sum + a.metrics.tasksToday, 0)}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+          <StatsCard
+            label="Total Agents"
+            value={agents.length}
+            icon={Cpu}
+            gradient="blue"
+            change="+1 provisioned"
+            changeType="positive"
+          />
+          <StatsCard
+            label="Active Nodes"
+            value={agents.filter((a) => a.status === 'active').length}
+            icon={CheckCircle}
+            gradient="cyan"
+            change="Online"
+            changeType="positive"
+          />
+          <StatsCard
+            label="Avg Sync Rate"
+            value={`${agents.length > 0 ? Math.round(agents.reduce((sum, a) => sum + a.successRate, 0) / agents.length) : 0}%`}
+            icon={Zap}
+            gradient="indigo"
+            change="Last 24h"
+            changeType="neutral"
+          />
+          <StatsCard
+            label="Tasks Orchestrated"
+            value={agents.reduce((sum, a) => sum + a.metrics.tasksToday, 0)}
+            icon={Activity}
+            gradient="purple"
+            change="Today"
+            changeType="positive"
+          />
+        </motion.div>
 
         {/* Filters and Search */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex flex-col sm:flex-row gap-4">
+        <motion.div
+          variants={itemVariants}
+          className="bg-white/5 backdrop-blur-3xl border border-white/10 rounded-2xl shadow-2xl p-6 mb-8 hover:border-white/20 transition-all group"
+        >
+          <div className="flex flex-col lg:flex-row gap-6">
             <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <div className="relative group/search">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within/search:text-cyan-400 transition-colors" />
                 <input
                   type="text"
-                  placeholder="Search agents..."
+                  placeholder="Search agent signature or tags..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                  className="w-full pl-12 pr-4 py-3 bg-slate-900/50 border border-white/5 rounded-xl focus:ring-2 focus:ring-cyan-500/50 focus:border-transparent text-white placeholder-slate-500 transition-all font-mono text-sm"
                 />
               </div>
             </div>
 
-            <div className="flex gap-2">
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                title="Filter by status"
-              >
-                <option value="all">All Status</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-                <option value="error">Error</option>
-                <option value="training">Training</option>
-              </select>
+            <div className="flex flex-wrap gap-3">
+              <div className="flex gap-2">
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="px-4 py-2 bg-slate-900/50 border border-white/10 rounded-xl text-slate-300 focus:ring-2 focus:ring-cyan-500/50 text-sm font-bold tracking-widest uppercase appearance-none cursor-pointer"
+                  title="Filter by status"
+                >
+                  <option value="all">Any Status</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                  <option value="error">Critical</option>
+                  <option value="training">Learning</option>
+                </select>
 
-              <select
-                value={typeFilter}
-                onChange={(e) => setTypeFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                title="Filter by type"
-              >
-                <option value="all">All Types</option>
-                <option value="conversational">Conversational</option>
-                <option value="task-automation">Task Automation</option>
-                <option value="data-analysis">Data Analysis</option>
-                <option value="content-generation">Content Generation</option>
-              </select>
+                <select
+                  value={typeFilter}
+                  onChange={(e) => setTypeFilter(e.target.value)}
+                  className="px-4 py-2 bg-slate-900/50 border border-white/10 rounded-xl text-slate-300 focus:ring-2 focus:ring-cyan-500/50 text-sm font-bold tracking-widest uppercase appearance-none cursor-pointer"
+                  title="Filter by type"
+                >
+                  <option value="all">Any Type</option>
+                  <option value="conversational">Sync: Conv</option>
+                  <option value="task-automation">Sync: Auto</option>
+                  <option value="data-analysis">Sync: Anal</option>
+                  <option value="content-generation">Sync: Gen</option>
+                </select>
+              </div>
 
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                title="Sort by"
-              >
-                <option value="lastActive">Last Active</option>
-                <option value="name">Name</option>
-                <option value="status">Status</option>
-                <option value="successRate">Success Rate</option>
-                <option value="totalTasks">Total Tasks</option>
-              </select>
+              <div className="h-full w-px bg-white/10 mx-2 hidden lg:block" />
 
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                title="Toggle Filters"
+                className={`p-3 rounded-xl border transition-all ${showFilters ? 'bg-cyan-500 border-cyan-400 text-white shadow-[0_0_20px_rgba(6,182,212,0.4)]' : 'bg-white/5 border-white/10 text-slate-400 hover:border-white/20'}`}
+                title="Advanced Controls"
               >
                 <Filter className="w-5 h-5" />
               </button>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Agents Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {sortedAgents.map((agent) => (
-            <div
-              key={agent.id}
-              className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow"
-            >
-              <div className="p-6">
-                {/* Header */}
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">
-                      {getTypeIcon(agent.type)}
+        <motion.div
+          variants={itemVariants}
+          className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8"
+        >
+          <AnimatePresence mode="popLayout">
+            {sortedAgents.map((agent) => (
+              <motion.div
+                layout
+                key={agent.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.3 }}
+              >
+                <GlassCard className="h-full relative overflow-hidden group/card hover:shadow-[0_0_50px_rgba(0,0,0,0.5)] border-white/5 hover:border-cyan-500/30 p-0">
+                  {/* Status Pulse Border */}
+                  <div
+                    className={`absolute top-0 right-0 w-32 h-32 opacity-10 blur-3xl rounded-full translate-x-16 -translate-y-16 transition-all duration-500 ${
+                      agent.status === 'active'
+                        ? 'bg-emerald-500 group-hover/card:opacity-30'
+                        : agent.status === 'error'
+                          ? 'bg-red-500'
+                          : 'bg-slate-500'
+                    }`}
+                  />
+
+                  <div className="p-6">
+                    {/* Header */}
+                    <div className="flex items-start justify-between mb-6">
+                      <div className="flex items-center space-x-4">
+                        <div className="p-3 bg-slate-900 border border-white/5 rounded-2xl group-hover/card:border-cyan-500/50 group-hover/card:bg-slate-800 transition-all duration-500">
+                          {getTypeIcon(agent.type)}
+                        </div>
+                        <div>
+                          <h3 className="text-xl font-bold text-white group-hover/card:text-cyan-400 transition-colors">
+                            {agent.name}
+                          </h3>
+                          <div className="flex items-center space-x-2 mt-1">
+                            <div
+                              className={`w-2 h-2 rounded-full ${connected ? 'animate-pulse' : ''} ${
+                                agent.status === 'active'
+                                  ? 'bg-emerald-500 shadow-[0_0_8px_#10b981]'
+                                  : agent.status === 'error'
+                                    ? 'bg-red-500 shadow-[0_0_8px_#ef4444]'
+                                    : 'bg-slate-500'
+                              }`}
+                            />
+                            <span className="text-[10px] uppercase font-black tracking-widest text-slate-500">
+                              {agent.status}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button className="p-2 hover:bg-white/10 rounded-xl transition-colors text-slate-500 hover:text-white">
+                            <MoreVertical className="w-5 h-5" />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align="end"
+                          className="bg-slate-900 border-white/10 text-white rounded-xl shadow-2xl backdrop-blur-xl"
+                        >
+                          <DropdownMenuItem
+                            onClick={() => handleAgentAction(agent.id, 'edit')}
+                            className="hover:bg-white/10 cursor-pointer p-3"
+                          >
+                            <Pencil className="w-4 h-4 mr-3 text-cyan-400" />
+                            Signature Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              handleAgentAction(
+                                agent.id,
+                                agent.status === 'active' ? 'pause' : 'start'
+                              )
+                            }
+                            className="hover:bg-white/10 cursor-pointer p-3"
+                          >
+                            {agent.status === 'active' ? (
+                              <>
+                                <Pause className="w-4 h-4 mr-3 text-yellow-500" />
+                                Suspend Node
+                              </>
+                            ) : (
+                              <>
+                                <Play className="w-4 h-4 mr-3 text-emerald-500" />
+                                Engage Node
+                              </>
+                            )}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => navigate(`/dashboard/agents/${agent.id}`)}
+                            className="hover:bg-white/10 cursor-pointer p-3"
+                          >
+                            <BarChart className="w-4 h-4 mr-3 text-purple-400" />
+                            Deep Analytics
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                        {agent.name}
-                      </h3>
-                      <div className="flex items-center space-x-2">
-                        {getStatusIcon(agent.status)}
-                        <span className="text-sm text-gray-500 dark:text-gray-400 capitalize">
-                          {agent.status}
-                        </span>
+
+                    {/* Description */}
+                    <p className="text-sm text-slate-400 mb-6 line-clamp-2 leading-relaxed font-medium">
+                      {agent.description}
+                    </p>
+
+                    {/* Metrics Grid */}
+                    <div className="grid grid-cols-2 gap-4 mb-8">
+                      <div className="bg-white/2 p-3 rounded-xl border border-white/5">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-1">
+                          Success
+                        </p>
+                        <p className="text-lg font-bold text-white tabular-nums">
+                          {agent.successRate}%
+                        </p>
+                      </div>
+                      <div className="bg-white/2 p-3 rounded-xl border border-white/5">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-1">
+                          Total Load
+                        </p>
+                        <p className="text-lg font-bold text-white tabular-nums">
+                          {agent.totalTasks.toLocaleString()}
+                        </p>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="relative">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <button
-                          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-                          title="Agent Options"
+                    {/* Footer Tags */}
+                    <div className="flex flex-wrap gap-2 pt-6 border-t border-white/5">
+                      <div className="flex items-center gap-2 px-3 py-1 bg-slate-900 rounded-full border border-white/5 text-[10px] font-bold text-slate-400">
+                        {getDeploymentIcon(agent.deployment)}
+                        {agent.model}
+                      </div>
+                      {agent.tags.slice(0, 2).map((tag) => (
+                        <span
+                          key={tag}
+                          className="px-3 py-1 bg-cyan-500/10 text-cyan-400 text-[10px] font-bold rounded-full uppercase tracking-tighter"
                         >
-                          <MoreVertical className="w-5 h-5 text-gray-500" />
-                        </button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        align="end"
-                        className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* Interactive Action Bar */}
+                    <div className="mt-6 flex items-center justify-between opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 bg-slate-900/80 backdrop-blur-xl -mx-6 -mb-6 p-4 border-t border-cyan-500/20">
+                      <div className="text-[10px] text-slate-500 font-mono">
+                        SIG://{agent.id.slice(0, 12)}
+                      </div>
+                      <Link
+                        to={`/dashboard/agents/${agent.id}`}
+                        className="flex items-center gap-2 text-[10px] font-black text-cyan-400 tracking-widest hover:text-cyan-300 uppercase"
                       >
-                        <DropdownMenuItem onClick={() => handleAgentAction(agent.id, 'edit')}>
-                          <Pencil className="w-4 h-4 mr-2" />
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() =>
-                            handleAgentAction(
-                              agent.id,
-                              agent.status === 'active' ? 'pause' : 'start'
-                            )
-                          }
-                        >
-                          {agent.status === 'active' ? (
-                            <>
-                              <Pause className="w-4 h-4 mr-2" />
-                              Pause
-                            </>
-                          ) : (
-                            <>
-                              <Play className="w-4 h-4 mr-2" />
-                              Start
-                            </>
-                          )}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => navigate(`/dashboard/agents/${agent.id}`)}>
-                          <BarChart className="w-4 h-4 mr-2" />
-                          View Details
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                        Open Insight
+                        <ArrowRight className="w-3 h-3" />
+                      </Link>
+                    </div>
                   </div>
-                </div>
-
-                {/* Description */}
-                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
-                  {agent.description}
-                </p>
-
-                {/* Metrics */}
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Success Rate</p>
-                    <p className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {agent.successRate}%
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Total Tasks</p>
-                    <p className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {agent.totalTasks.toLocaleString()}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Avg Response</p>
-                    <p className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {agent.averageResponseTime}s
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Uptime</p>
-                    <p className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {agent.metrics.uptime}%
-                    </p>
-                  </div>
-                </div>
-
-                {/* Tags */}
-                <div className="flex flex-wrap gap-1 mb-4">
-                  {agent.tags.slice(0, 3).map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                  {agent.tags.length > 3 && (
-                    <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs rounded-full">
-                      +{agent.tags.length - 3}
-                    </span>
-                  )}
-                </div>
-
-                {/* Footer */}
-                <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
-                    {getDeploymentIcon(agent.deployment)}
-                    <span>{agent.model}</span>
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    {agent.status === 'active' && (
-                      <button
-                        onClick={() => handleAgentAction(agent.id, 'pause')}
-                        className="p-1 text-gray-500 hover:text-yellow-600 transition-colors"
-                        title="Pause Agent"
-                      >
-                        <Pause className="w-4 h-4" />
-                      </button>
-                    )}
-
-                    {agent.status === 'inactive' && (
-                      <button
-                        onClick={() => handleAgentAction(agent.id, 'start')}
-                        className="p-1 text-gray-500 hover:text-green-600 transition-colors"
-                        title="Start Agent"
-                      >
-                        <Play className="w-4 h-4" />
-                      </button>
-                    )}
-
-                    <Link
-                      to={`/dashboard/agents/${agent.id}`}
-                      className="p-1 text-gray-500 hover:text-blue-600 transition-colors"
-                      title="View Details"
-                    >
-                      <BarChart className="w-4 h-4" />
-                    </Link>
-
-                    <button
-                      onClick={() => handleAgentAction(agent.id, 'edit')}
-                      className="p-1 text-gray-500 hover:text-blue-600 transition-colors"
-                      title="Edit Agent"
-                    >
-                      <Pencil className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Last Active */}
-                <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                  Last active: {formatTimeAgo(agent.lastActive)}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </motion.div>
 
         {/* Empty State */}
         {sortedAgents.length === 0 && (
-          <div className="text-center py-12">
-            <Cpu className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-              No agents found
-            </h3>
-            <p className="text-gray-600 dark:text-gray-300 mb-4">
-              {searchTerm || statusFilter !== 'all' || typeFilter !== 'all'
-                ? 'Try adjusting your search or filters'
-                : 'Get started by creating your first AI agent'}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center py-32"
+          >
+            <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-8 border border-white/10 shadow-[0_0_40px_rgba(255,255,255,0.05)]">
+              <Cpu className="w-10 h-10 text-slate-600 animate-pulse" />
+            </div>
+            <h3 className="text-2xl font-bold text-white mb-3">No entities detected in sector</h3>
+            <p className="text-slate-500 max-w-md mx-auto mb-10 font-medium">
+              Sector synchronization returned zero active agent signatures. Initialize a new entity
+              to begin orchestration.
             </p>
-            <Link
-              to="/dashboard/agents/new"
-              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            <PremiumButton
+              onClick={() => navigate('/dashboard/agents/new')}
+              variant="cyan"
+              size="lg"
             >
-              <Plus className="w-5 h-5 mr-2" />
-              Create Agent
-            </Link>
-          </div>
+              <Plus className="w-5 h-5 mr-3" />
+              Initialize Sector
+            </PremiumButton>
+          </motion.div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

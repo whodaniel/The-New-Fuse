@@ -1,17 +1,27 @@
 # Sidebar Page Health Audit
 
-Generated: 2026-02-17T21:33:15.340Z
+Generated: 2026-02-18T11:33:52.970Z
 
 ## Counts
 
 - total: 21
-- working: 19
+- working: 14
 - partial-medium-risk: 2
-- partial-high-risk: 0
+- partial-high-risk: 5
 - broken: 0
 
 ## Page Results
 
+- `/channels` -> target `/command-center` -> `pages/TNFCommandCenter.tsx` |
+  status: `partial-high-risk` | risk: 34 | hits: fallback_demo:16, raw_fetch:2
+- `/command-center` -> target `/command-center` -> `pages/TNFCommandCenter.tsx`
+  | status: `partial-high-risk` | risk: 34 | hits: fallback_demo:16, raw_fetch:2
+- `/instances` -> target `/observatory` -> `pages/SystemObservatory.tsx` |
+  status: `partial-high-risk` | risk: 22 | hits: fallback_demo:10, raw_fetch:2
+- `/nodes` -> target `/observatory` -> `pages/SystemObservatory.tsx` | status:
+  `partial-high-risk` | risk: 22 | hits: fallback_demo:10, raw_fetch:2
+- `/observatory` -> target `/observatory` -> `pages/SystemObservatory.tsx` |
+  status: `partial-high-risk` | risk: 22 | hits: fallback_demo:10, raw_fetch:2
 - `/admin` -> target `/admin` -> `pages/Admin/ComprehensiveAdminDashboard.tsx` |
   status: `partial-medium-risk` | risk: 11 | hits: randomized_behavior:1,
   timeout_simulation:4, raw_fetch:5
@@ -19,16 +29,6 @@ Generated: 2026-02-17T21:33:15.340Z
   `partial-medium-risk` | risk: 5 | hits: raw_fetch:5
 - `/chat` -> target `/chat` -> `pages/chat/ChatPage.tsx` | status: `working` |
   risk: 4 | hits: timeout_simulation:4
-- `/channels` -> target `/command-center` -> `pages/TNFCommandCenter.tsx` |
-  status: `working` | risk: 2 | hits: raw_fetch:2
-- `/command-center` -> target `/command-center` -> `pages/TNFCommandCenter.tsx`
-  | status: `working` | risk: 2 | hits: raw_fetch:2
-- `/instances` -> target `/observatory` -> `pages/SystemObservatory.tsx` |
-  status: `working` | risk: 2 | hits: raw_fetch:2
-- `/nodes` -> target `/observatory` -> `pages/SystemObservatory.tsx` | status:
-  `working` | risk: 2 | hits: raw_fetch:2
-- `/observatory` -> target `/observatory` -> `pages/SystemObservatory.tsx` |
-  status: `working` | risk: 2 | hits: raw_fetch:2
 - `/cron-jobs` -> target `/tasks` -> `pages/Tasks/TasksPage.tsx` | status:
   `working` | risk: 1 | hits: timeout_simulation:1
 - `/logs` -> target `/admin/audit-logs` -> `pages/Admin/AuditLogViewer.tsx` |

@@ -6,6 +6,32 @@ export interface PermissionCheck {
   tenantId?: string;
 }
 
+const normalizeRole = (role: string | undefined | null): string => {
+  if (!role) return '';
+
+  const normalized = role
+    .trim()
+    .replace(/^role[:_\s-]*/i, '')
+    .replace(/[\s-]+/g, '_')
+    .toUpperCase();
+
+  const aliases: Record<string, string> = {
+    SUPERADMIN: 'SUPER_ADMIN',
+    SUPER_ADMINISTRATOR: 'SUPER_ADMIN',
+    SUPER_USER: 'SUPER_ADMIN',
+    AGENCYADMIN: 'AGENCY_ADMIN',
+    AGENCYOWNER: 'AGENCY_OWNER',
+    AGENCYMANAGER: 'AGENCY_MANAGER',
+    AGENTOPERATOR: 'AGENT_OPERATOR',
+  };
+
+  return aliases[normalized] || normalized;
+};
+
+const normalizeRoles = (roles: Array<string | undefined | null>): string[] => {
+  return Array.from(new Set(roles.map(normalizeRole).filter(Boolean)));
+};
+
 export const useAuthorization = () => {
   const { user } = useAuth();
 
@@ -14,26 +40,23 @@ export const useAuthorization = () => {
 
   const hasRole = (roles: string[]): boolean => {
     if (!user) return false;
+    const requiredRoles = normalizeRoles(roles);
 
     // Override for BizSynth Super Admin
-    if (
-      isBizSynthMasterAdmin &&
-      roles.some((r) => ['SUPER_ADMIN', 'ADMIN'].includes(r.toUpperCase()))
-    ) {
+    if (isBizSynthMasterAdmin && requiredRoles.some((r) => ['SUPER_ADMIN', 'ADMIN'].includes(r))) {
       return true;
     }
 
     // Check if user.roles array includes any of the required roles
     // Support both single 'role' field and 'roles' array
     if (Array.isArray((user as any).roles) && (user as any).roles.length > 0) {
-      return roles.some((role) =>
-        (user as any).roles.map((r: string) => r.toUpperCase()).includes(role.toUpperCase())
-      );
+      const userRoles = normalizeRoles((user as any).roles);
+      return requiredRoles.some((role) => userRoles.includes(role));
     }
 
     // Fallback to single role check
     if (user.role) {
-      return roles.map((r) => r.toUpperCase()).includes(user.role.toUpperCase());
+      return requiredRoles.includes(normalizeRole(user.role));
     }
 
     return false;
@@ -44,9 +67,9 @@ export const useAuthorization = () => {
 
     let baseRoles: string[] = [];
     if (Array.isArray((user as any).roles)) {
-      baseRoles = (user as any).roles.map((r: string) => r.toUpperCase());
+      baseRoles = normalizeRoles((user as any).roles);
     } else if (user.role) {
-      baseRoles = [user.role.toUpperCase()];
+      baseRoles = normalizeRoles([user.role]);
     }
 
     // Inject SUPER_ADMIN for the master email if not present
@@ -126,7 +149,7 @@ export const useAuthorization = () => {
     isAdmin: hasRole(['SUPER_ADMIN', 'ADMIN']),
     isDeveloper: hasRole(['DEVELOPER']),
     // User info
-    userRole: isBizSynthMasterAdmin ? 'SUPER_ADMIN' : user?.role?.toUpperCase() || undefined,
+    userRole: isBizSynthMasterAdmin ? 'SUPER_ADMIN' : normalizeRole(user?.role) || undefined,
     userRoles: effectiveRoles,
     // Helper to filter items by tenancy
     filterByTenancy: <T extends { tenantId?: string; agencyId?: string }>(items: T[]): T[] => {

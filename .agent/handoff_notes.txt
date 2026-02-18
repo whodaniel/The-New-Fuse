@@ -254,3 +254,94 @@ Contains:
 
 ---
 
+
+---
+Session: February 18, 2026 - TNF Delegation Fanout + Super Admin Auth Reliability
+
+## Delegation Actions
+- Verified available agent CLIs: `openclaw`, `jules`, `claude`, `kilo`.
+- Launched 15 concurrent Jules sessions against `whodaniel/fuse`:
+  - 5x auth/SUPER_ADMIN reliability audits
+  - 5x navigation/route reliability audits
+  - 5x TNF framework-evolution audits
+- Session IDs documented in `docs/TNF_DELEGATION_RUN_2026-02-18.md`.
+
+## Code Fixes Applied
+1. **Backend `GET /auth/me` implemented**
+   - File: `apps/backend/src/auth/auth.controller.ts`
+   - File: `apps/backend/src/auth/auth.service.ts`
+   - Added `resolveCurrentUserFromAuthHeader()` with:
+     - local JWT verification path
+     - fallback token payload decode path for non-local tokens
+     - DB-backed user resolution by email/id
+     - normalized role/roles response payload
+2. **JWT payload enrichment on login/register**
+   - File: `apps/backend/src/auth/auth.service.ts`
+   - Token now carries `role` and `roles`; response user includes role fields.
+3. **Frontend auth hardening**
+   - File: `apps/frontend/src/hooks/useAuth.tsx`
+   - `/auth/me` fetch now tries multiple endpoint forms and requires JSON content-type.
+   - Added dual token key sync (`auth_token` + `authToken`) for backward compatibility.
+4. **Frontend API token fallback fix**
+   - File: `apps/frontend/src/services/api.ts`
+   - Request interceptor fallback now reads `auth_token` OR `authToken`.
+
+## Verification
+- `pnpm --filter @the-new-fuse/backend build` ✅
+- `pnpm --filter @the-new-fuse/frontend-app build` ✅ (with existing bundle-size warnings)
+
+## Remaining
+- Pull and merge actionable findings from active Jules sessions as they complete.
+- Run authenticated link-level e2e crawl once app is up with a reproducible auth fixture/session.
+
+Session: February 18, 2026 - Jules API Key Placement + Guarded Fallback
+
+- Stored Jules API secret in local gitignored runtime config: `.env.local` (`JULES_API_KEY`).
+- Added guarded API fallback in `scripts/jules-integration.cjs`:
+  - CLI remains primary.
+  - API only attempted when CLI is insufficient (auth/repo/timeout/unavailable/unknown).
+  - API usage requires allowlisted agent (`JULES_API_ALLOWED_AGENTS`) and privileged context (`TNF_LOCAL_AUTH=true` or `TNF_ACTOR_ROLE=SUPER_ADMIN`) unless explicitly disabled.
+- Added env templates for reproducible setup in `.env.local.template` and `.env.example`.
+- Current fallback status is `missing_base_url`; set `JULES_API_BASE_URL` to activate real API fallback.
+- Ran `node scripts/jules-monitor.cjs once` under local auth context:
+  - Completed: 38
+  - In Progress: 10
+  - Failed: 2
+
+Session: February 18, 2026 (cont.) - Official Jules API Discovery + Activation
+
+- Verified official Jules API docs and endpoint shape:
+  - Base URL: `https://jules.googleapis.com`
+  - Auth header: `X-Goog-Api-Key: <JULES_API_KEY>`
+  - Example verified endpoint: `GET /v1alpha/sources`
+- Updated `scripts/jules-integration.cjs` fallback to official API contract:
+  - default base URL set to `https://jules.googleapis.com`
+  - switched auth from Bearer to `X-Goog-Api-Key`
+  - session create fallback now targets `POST /v1alpha/sessions`
+  - list fallback now targets `GET /v1alpha/sessions`
+  - pull fallback returns `GET /v1alpha/sessions/{id}/activities` payload (note: no direct CLI patch-apply equivalent)
+- Policy gates preserved:
+  - allowlisted agent required
+  - local auth or SUPER_ADMIN context required unless explicitly disabled
+- Loaded `.env.local` and confirmed fallback gate status: `enabled`.
+- Live probe with configured key returned HTTP 200:
+  - `curl -H "X-Goog-Api-Key: ..." "https://jules.googleapis.com/v1alpha/sources?pageSize=5"`
+- No session pulling/applying performed; delegated Jules sessions left to continue running.
+
+Session: February 18, 2026 (cont.) - 15x Jules Follow-Up + PR Orchestration Method
+
+- Confirmed all 15 fanout sessions reached initial completion state.
+- Measured initial completion window from API timestamps:
+  - Earliest create: 2026-02-18T12:16:05.890Z
+  - Latest initial completion update: 2026-02-18T12:32:19.389Z
+  - Duration: ~16m14s for 15-way batch.
+- Verified Jules REST discovery methods include `sessions.sendMessage` and `sessions.approvePlan`, but no explicit PR-create RPC.
+- Sent PR-trigger follow-up prompt to all 15 sessions via `POST /v1alpha/sessions/{id}:sendMessage`.
+- Built reusable orchestration automation: `scripts/jules-pr-orchestrator.cjs`
+  - `status` - snapshot states + PR coverage + timing.
+  - `trigger-pr` - sends PR follow-up to completed/no-PR sessions.
+  - `watch` - loops status, re-triggers as needed, regenerates handoff boards.
+  - `handoff` - emits merge queue markdown with links/actions.
+- Added runbook: `docs/JULES_PR_FOLLOWUP_PLAYBOOK.md`.
+- Added session manifest: `.agent/jules-logs/jules-15-session-ids.txt`.
+- Latest observed state during follow-up: sessions oscillating between COMPLETED/IN_PROGRESS, still no PR URLs emitted in `outputs.pullRequest` yet.

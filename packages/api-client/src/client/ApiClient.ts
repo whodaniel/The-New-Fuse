@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 
 /**
  * API response interface
@@ -60,7 +60,13 @@ export class ApiClient {
    * @param options API client options
    */
   constructor(options: ApiClientOptions) {
-    const { baseURL, headers = {}, timeout = 30000, withCredentials = false, tokenStorage } = options;
+    const {
+      baseURL,
+      headers = {},
+      timeout = 30000,
+      withCredentials = false,
+      tokenStorage,
+    } = options;
 
     this.tokenStorage = tokenStorage;
 
@@ -102,7 +108,7 @@ export class ApiClient {
       (response) => response,
       async (error: AxiosError) => {
         const originalRequest = error.config;
-        
+
         // Handle token refresh
         if (
           error.response?.status === 401 &&
@@ -154,18 +160,17 @@ export class ApiClient {
       }
 
       // Create a new axios instance to avoid interceptors
-      const response = await axios.post(
-        `${this.client.defaults.baseURL}/auth/refresh`,
-        { refreshToken }
-      );
+      const response = await axios.post(`${this.client.defaults.baseURL}/auth/refresh`, {
+        refreshToken,
+      });
 
       const { accessToken, refreshToken: newRefreshToken } = response.data;
-      
+
       if (accessToken && newRefreshToken) {
         await this.tokenStorage.setTokens(accessToken, newRefreshToken);
         return accessToken;
       }
-      
+
       return null;
     } catch (error) {
       await this.tokenStorage.clearTokens();
@@ -178,9 +183,33 @@ export class ApiClient {
    * @param error Axios error
    * @returns Formatted API error
    */
+  private sanitizeErrorMessage(input: unknown): string {
+    const fallback = 'Request failed';
+    if (input == null) return fallback;
+
+    const asString = Array.isArray(input)
+      ? input.map((item) => String(item)).join(', ')
+      : String(input);
+    const compact = asString.replace(/\s+/g, ' ').trim();
+
+    const looksLikePromptDump =
+      compact.includes('Codebase Overview') ||
+      compact.includes('What It Is') ||
+      compact.includes('Core Services');
+
+    if (!compact || looksLikePromptDump || compact.length > 220) {
+      return 'Request failed due to an unexpected server response.';
+    }
+
+    return compact;
+  }
+
   private formatError(error: AxiosError): ApiError {
+    const rawMessage = (error as any)?.response?.data?.message;
     return {
-      message: (error as any)?.response?.data?.message || (error instanceof Error ? error.message : 'Unknown error'),
+      message: this.sanitizeErrorMessage(
+        rawMessage || (error instanceof Error ? error.message : 'Unknown error')
+      ),
       status: error.response?.status || 500,
       data: error.response?.data,
     };

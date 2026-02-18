@@ -15,6 +15,27 @@ const api = axios.create({
   },
 });
 
+const sanitizeErrorMessage = (input: unknown): string => {
+  const fallback = 'Request failed. Please try again.';
+  if (input == null) return fallback;
+
+  const asString = Array.isArray(input)
+    ? input.map((item) => String(item)).join(', ')
+    : String(input);
+
+  const compact = asString.replace(/\s+/g, ' ').trim();
+  const looksLikePromptDump =
+    compact.includes('Codebase Overview') ||
+    compact.includes('What It Is') ||
+    compact.includes('Core Services');
+
+  if (!compact || looksLikePromptDump || compact.length > 220) {
+    return 'Request failed due to an unexpected server response.';
+  }
+
+  return compact;
+};
+
 // Add a request interceptor to add the auth token to every request
 api.interceptors.request.use(
   async (config) => {
@@ -31,7 +52,7 @@ api.interceptors.request.use(
       }
     } else {
       // If Firebase is not available, check for token in localStorage (fallback)
-      const token = localStorage.getItem('authToken');
+      const token = localStorage.getItem('auth_token') || localStorage.getItem('authToken');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -63,14 +84,13 @@ api.interceptors.response.use(
     }
 
     if (!isSilent) {
-      const errorMessage = response?.data?.message || 'Something went wrong';
+      const rawMessage = response?.data?.message || 'Something went wrong';
+      const errorMessage = sanitizeErrorMessage(rawMessage);
 
       switch (response.status) {
         case 400:
           // Validation Error
-          // If message is array (should be flattened by backend filter, but just in case)
-          const msg = Array.isArray(errorMessage) ? errorMessage.join(', ') : errorMessage;
-          toast.error(msg);
+          toast.error(errorMessage);
           break;
         case 401:
           // Unauthorized

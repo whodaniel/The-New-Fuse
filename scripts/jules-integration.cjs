@@ -24,6 +24,17 @@ const CONFIG = {
   retryDelay: 2000, // 2 seconds between retries
   maxParallel: 5,
   logDir: '.agent/jules-logs',
+  api: {
+    baseUrl: process.env.JULES_API_BASE_URL || 'https://jules.googleapis.com',
+    key: process.env.JULES_API_KEY || '',
+    timeoutMs: Number(process.env.JULES_API_TIMEOUT_MS || 30000),
+    allowedAgents: (process.env.JULES_API_ALLOWED_AGENTS || '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean),
+    // Security gate: API access requires local auth context OR explicit SUPER_ADMIN role.
+    requirePrivilegedAuth: process.env.JULES_API_REQUIRE_PRIVILEGED_AUTH !== 'false',
+  },
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -84,9 +95,107 @@ function executeCommand(command) {
     if (errorMessage.includes('timeout')) {
       return { success: false, error: errorMessage, errorCode: 'TIMEOUT' };
     }
+    if (
+      errorMessage.includes('service is currently unavailable') ||
+      errorMessage.includes('UNAVAILABLE') ||
+      errorMessage.includes('503')
+    ) {
+      return { success: false, error: errorMessage, errorCode: 'SERVICE_UNAVAILABLE' };
+    }
 
     return { success: false, error: errorMessage, errorCode: 'UNKNOWN' };
   }
+}
+
+function isTruthy(value) {
+  return ['1', 'true', 'yes', 'on'].includes(String(value || '').toLowerCase());
+}
+
+function hasPrivilegedAuthContext() {
+  const localAuth = isTruthy(process.env.TNF_LOCAL_AUTH) || isTruthy(process.env.LOCAL_AUTH);
+  const superAdminRole = String(process.env.TNF_ACTOR_ROLE || '').toUpperCase() === 'SUPER_ADMIN';
+  return localAuth || superAdminRole;
+}
+
+function isAgentAllowedForApi() {
+  const allowed = CONFIG.api.allowedAgents;
+  if (allowed.length === 0) return false;
+  const agentName = String(
+    process.env.AGENT_NAME || process.env.TNF_AGENT_NAME || process.env.CODEX_AGENT_NAME || 'codex'
+  ).trim();
+  return !!agentName && allowed.includes(agentName);
+}
+
+function canUseJulesApiFallback() {
+  if (!CONFIG.api.baseUrl || !CONFIG.api.key) return false;
+  if (!isAgentAllowedForApi()) return false;
+  if (CONFIG.api.requirePrivilegedAuth && !hasPrivilegedAuthContext()) return false;
+  return true;
+}
+
+function getApiFallbackStatus() {
+  if (!CONFIG.api.baseUrl) return 'missing_base_url';
+  if (!CONFIG.api.key) return 'missing_api_key';
+  if (!isAgentAllowedForApi()) return 'agent_not_allowlisted';
+  if (CONFIG.api.requirePrivilegedAuth && !hasPrivilegedAuthContext()) {
+    return 'missing_privileged_auth_context';
+  }
+  return 'enabled';
+}
+
+async function julesApiRequest(method, route, body) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), CONFIG.api.timeoutMs);
+  const base = CONFIG.api.baseUrl.replace(/\/$/, '');
+
+  try {
+    const response = await fetch(`${base}${route}`, {
+      method,
+      headers: {
+        'X-Goog-Api-Key': CONFIG.api.key,
+        'Content-Type': 'application/json',
+      },
+      body: body ? JSON.stringify(body) : undefined,
+      signal: controller.signal,
+    });
+
+    const text = await response.text();
+    let parsed;
+    try {
+      parsed = text ? JSON.parse(text) : null;
+    } catch {
+      parsed = { raw: text };
+    }
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: `Jules API ${method} ${route} failed (${response.status})`,
+        errorCode: `API_${response.status}`,
+        details: parsed,
+      };
+    }
+
+    return { success: true, data: parsed };
+  } catch (error) {
+    return {
+      success: false,
+      error: `Jules API request failed: ${error.message || String(error)}`,
+      errorCode: 'API_REQUEST_FAILED',
+    };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function shouldTryApiFallback(errorCode) {
+  return [
+    'REPO_NOT_CONNECTED',
+    'AUTH_REQUIRED',
+    'TIMEOUT',
+    'SERVICE_UNAVAILABLE',
+    'UNKNOWN',
+  ].includes(errorCode);
 }
 
 /**
@@ -147,6 +256,44 @@ function createSession(description, options = {}) {
   return executeCommand(command);
 }
 
+async function createSessionWithFallback(description, options = {}) {
+  const cliResult = createSession(description, options);
+  if (cliResult.success || !shouldTryApiFallback(cliResult.errorCode) || !canUseJulesApiFallback()) {
+    return cliResult;
+  }
+
+  const repo = options.repo || CONFIG.defaultRepo;
+  const sourceName = options.source || `sources/github/${repo}`;
+
+  const apiResult = await julesApiRequest('POST', '/v1alpha/sessions', {
+    prompt: description,
+    sourceContext: {
+      source: sourceName,
+      githubRepoContext: {
+        startingBranch: options.startingBranch || 'main',
+      },
+    },
+    title: options.title || description.substring(0, 80),
+    automationMode: options.automationMode || 'AUTO_CREATE_PR',
+  });
+
+  if (!apiResult.success) {
+    return cliResult;
+  }
+
+  return {
+    success: true,
+    output: JSON.stringify(
+      {
+        source: 'jules_api_fallback',
+        result: apiResult.data,
+      },
+      null,
+      2
+    ),
+  };
+}
+
 /**
  * List all sessions
  * @param {Object} [filters] - Optional filters
@@ -185,6 +332,35 @@ function listSessions(filters = {}) {
   }
 
   return filtered;
+}
+
+async function listSessionsWithFallback(filters = {}) {
+  const cliSessions = listSessions(filters);
+  if (cliSessions.length > 0 || !canUseJulesApiFallback()) {
+    return cliSessions;
+  }
+
+  const pageSize = Number(process.env.JULES_API_PAGE_SIZE || 50);
+  const apiResult = await julesApiRequest('GET', `/v1alpha/sessions?pageSize=${pageSize}`);
+  if (!apiResult.success || !Array.isArray(apiResult.data?.sessions)) {
+    return cliSessions;
+  }
+
+  let sessions = apiResult.data.sessions.map((s) => ({
+    id: String(s.id || ''),
+    description: String(s.description || s.task || ''),
+    repo: String(s.repo || s.repository || ''),
+    lastActive: String(s.lastActive || s.updatedAt || ''),
+    status: normalizeStatus(String(s.status || 'unknown')),
+  }));
+
+  if (filters.status) {
+    sessions = sessions.filter((s) => s.status === filters.status);
+  }
+  if (filters.repo) {
+    sessions = sessions.filter((s) => s.repo.includes(filters.repo));
+  }
+  return sessions;
 }
 
 /**
@@ -253,6 +429,33 @@ function pullSession(sessionId, apply = false) {
     command += ' --apply';
   }
   return executeCommand(command);
+}
+
+async function pullSessionWithFallback(sessionId, apply = false) {
+  const cliResult = pullSession(sessionId, apply);
+  if (cliResult.success || !shouldTryApiFallback(cliResult.errorCode) || !canUseJulesApiFallback()) {
+    return cliResult;
+  }
+
+  const activitiesRoute = `/v1alpha/sessions/${encodeURIComponent(sessionId)}/activities?pageSize=100`;
+  const apiResult = await julesApiRequest('GET', activitiesRoute);
+  if (!apiResult.success) {
+    return cliResult;
+  }
+
+  return {
+    success: true,
+    output: JSON.stringify(
+      {
+        source: 'jules_api_fallback',
+        note: 'Jules REST API does not directly provide a CLI-style patch apply. Returning session activities.',
+        applyRequested: !!apply,
+        result: apiResult.data,
+      },
+      null,
+      2
+    ),
+  };
 }
 
 /**
@@ -402,11 +605,13 @@ async function main() {
       console.log(`  Installed: ${status.installed ? '✅' : '❌'}`);
       console.log(`  Authenticated: ${status.authenticated ? '✅' : '❌'}`);
       console.log(`  Version: ${status.version || 'N/A'}`);
+      console.log(`  API Fallback Enabled: ${canUseJulesApiFallback() ? '✅' : '❌'}`);
+      console.log(`  API Fallback Status: ${getApiFallbackStatus()}`);
       break;
 
     case 'list':
       const filterArg = args[1];
-      let sessions = listSessions();
+      let sessions = await listSessionsWithFallback();
 
       if (filterArg === '--completed') {
         sessions = sessions.filter((s) => s.status === 'Completed');
@@ -428,7 +633,7 @@ async function main() {
         console.log('Usage: node jules-integration.js new <description>');
         process.exit(1);
       }
-      const result = createSession(description);
+      const result = await createSessionWithFallback(description);
       console.log(result.success ? '✅ Session created' : `❌ Failed: ${result.error}`);
       break;
 
@@ -439,7 +644,7 @@ async function main() {
         console.log('Usage: node jules-integration.js pull <session_id> [--apply]');
         process.exit(1);
       }
-      const pullResult = pullSession(sessionId, apply);
+      const pullResult = await pullSessionWithFallback(sessionId, apply);
       console.log(pullResult.success ? pullResult.output : `❌ Failed: ${pullResult.error}`);
       break;
 
@@ -471,11 +676,14 @@ module.exports = {
 
   // Session management
   createSession,
+  createSessionWithFallback,
   listSessions,
+  listSessionsWithFallback,
   getSession,
 
   // Result management
   pullSession,
+  pullSessionWithFallback,
   teleportSession,
 
   // Batch operations

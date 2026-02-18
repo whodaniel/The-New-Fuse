@@ -1,18 +1,43 @@
-import { Globe } from 'lucide-react';
+import {
+  BarChart3,
+  Bot,
+  Boxes,
+  ChevronDown,
+  ClipboardList,
+  Compass,
+  Cpu,
+  Database,
+  Globe,
+  Layout,
+  LogOut,
+  Menu,
+  MessageSquare,
+  Network,
+  Package,
+  Plus,
+  Settings,
+  Shield,
+  SquareTerminal,
+  User,
+  Workflow,
+  Zap,
+} from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 import { useAuth } from '../hooks/useAuth';
+import { useAuthorization } from '../hooks/useAuthorization';
 
 // Smart Navigation Component that adapts based on authentication status and user role
 function SmartNavigation() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const location = useLocation();
   const { isAuthenticated, user, logout } = useAuth();
+  const { isSuperAdmin, isAdmin: isAnyAdmin } = useAuthorization();
   const navRef = useRef<HTMLDivElement>(null);
 
   // Check if user has admin role
-  const isAdmin = user?.role === 'admin' || user?.role === 'administrator';
+  const isAdmin = isAnyAdmin || user?.role === 'admin' || user?.role === 'administrator';
   const isPublicPage =
     [
       '/',
@@ -130,306 +155,284 @@ function SmartNavigation() {
     );
   }
 
-  // Authenticated User Navigation
+  // Authenticated User Navigation - Premium Obsidian Theme
   return (
-    <nav ref={navRef} className="bg-blue-600 text-white p-4 shadow-lg relative">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <Link to="/dashboard" className="text-xl font-bold hover:text-blue-200 transition-colors">
-          🚀 The New Fuse
-        </Link>
+    <nav
+      ref={navRef}
+      className="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-xl border-b border-white/10"
+    >
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="flex justify-between h-16 items-center">
+          <div className="flex items-center gap-8">
+            <Link to="/dashboard" className="flex items-center group">
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <Zap className="w-5 h-5 text-white" />
+              </div>
+              <span className="ml-3 text-lg font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
+                THE NEW FUSE
+              </span>
+            </Link>
 
-        <div className="flex items-center space-x-2 flex-wrap">
-          <Link to="/dashboard" className="hover:text-blue-200 px-3 py-2 rounded transition-colors">
-            📊 Dashboard
-          </Link>
+            <div className="hidden lg:flex items-center gap-1">
+              <Link
+                to="/dashboard"
+                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  location.pathname === '/dashboard'
+                    ? 'bg-white/10 text-white'
+                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                Dashboard
+              </Link>
 
-          {/* AI Agents Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => toggleDropdown('agents')}
-              className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-blue-700 flex items-center"
-            >
-              🤖 AI Agents <span className="ml-1">▼</span>
-            </button>
-            {activeDropdown === 'agents' && (
-              <div className="absolute top-full left-0 mt-1 bg-white text-black rounded shadow-lg z-50 min-w-48">
-                <Link to="/agents" className="block px-4 py-2 hover:bg-gray-100">
-                  📋 All Agents
-                </Link>
-                <Link to="/agents/new" className="block px-4 py-2 hover:bg-gray-100">
-                  ➕ Create Agent
-                </Link>
-                <Link
-                  to="/ai-command-center"
-                  className="block px-4 py-2 hover:bg-gray-100 font-bold text-blue-600"
+              {/* Operations Menu */}
+              <div className="relative">
+                <button
+                  onClick={() => toggleDropdown('operations')}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${
+                    ['/agents', '/workflows', '/tasks'].some((p) => location.pathname.startsWith(p))
+                      ? 'bg-blue-500/10 text-blue-400'
+                      : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  }`}
                 >
-                  🎛️ AI Command Center
-                </Link>
-                <Link
-                  to="/live-view"
-                  className="block px-4 py-2 hover:bg-gray-100 font-bold text-purple-600"
+                  <SquareTerminal className="w-4 h-4" />
+                  Operations
+                  <ChevronDown
+                    className={`w-3 h-3 transition-transform ${activeDropdown === 'operations' ? 'rotate-180' : ''}`}
+                  />
+                </button>
+                {activeDropdown === 'operations' && (
+                  <div className="absolute top-full left-0 mt-2 w-64 bg-slate-900 border border-white/10 rounded-xl shadow-2xl p-2 z-50 overflow-hidden">
+                    <div className="px-3 py-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                      Core Fleet
+                    </div>
+                    <Link
+                      to="/agents"
+                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg group"
+                    >
+                      <Bot className="w-4 h-4 text-cyan-400" />
+                      <div>
+                        <div className="text-sm font-medium text-slate-200">Agent Fleet</div>
+                        <div className="text-[10px] text-slate-500">Manage autonomous swarms</div>
+                      </div>
+                    </Link>
+                    <Link
+                      to="/agents/new"
+                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
+                    >
+                      <Plus className="w-4 h-4 text-slate-400" />
+                      <span className="text-sm">Quick Create Agent</span>
+                    </Link>
+                    <div className="my-2 border-t border-white/5" />
+                    <div className="px-3 py-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                      Automation
+                    </div>
+                    <Link
+                      to="/workflows"
+                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
+                    >
+                      <Workflow className="w-4 h-4 text-purple-400" />
+                      <span className="text-sm">Workflows</span>
+                    </Link>
+                    <Link
+                      to="/tasks"
+                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
+                    >
+                      <ClipboardList className="w-4 h-4 text-emerald-400" />
+                      <span className="text-sm">Task Management</span>
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Ecosystem Menu */}
+              <div className="relative">
+                <button
+                  onClick={() => toggleDropdown('ecosystem')}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${
+                    activeDropdown === 'ecosystem'
+                      ? 'bg-cyan-500/10 text-cyan-400'
+                      : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  }`}
                 >
-                  👁️ Live View
-                </Link>
-                <Link to="/agents/unified-creator" className="block px-4 py-2 hover:bg-gray-100">
-                  🚀 Unified Creator
-                </Link>
-                <Link to="/dashboard/agents" className="block px-4 py-2 hover:bg-gray-100">
-                  📊 Agent Dashboard
-                </Link>
+                  <Compass className="w-4 h-4" />
+                  Ecosystem
+                  <ChevronDown
+                    className={`w-3 h-3 transition-transform ${activeDropdown === 'ecosystem' ? 'rotate-180' : ''}`}
+                  />
+                </button>
+                {activeDropdown === 'ecosystem' && (
+                  <div className="absolute top-full left-0 mt-2 w-64 bg-slate-900 border border-white/10 rounded-xl shadow-2xl p-2 z-50">
+                    <Link
+                      to="/sophisticated-hub"
+                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
+                    >
+                      <Layout className="w-4 h-4 text-cyan-400" />
+                      <span className="text-sm">Sophisticated Hub</span>
+                    </Link>
+                    <Link
+                      to="/mcp-hub"
+                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
+                    >
+                      <Boxes className="w-4 h-4 text-orange-400" />
+                      <span className="text-sm">MCP Protocol Hub</span>
+                    </Link>
+                    <Link
+                      to="/resources"
+                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
+                    >
+                      <Package className="w-4 h-4 text-pink-400" />
+                      <span className="text-sm">Marketplace</span>
+                    </Link>
+                    <Link
+                      to="/knowledge-hub"
+                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
+                    >
+                      <Database className="w-4 h-4 text-blue-400" />
+                      <span className="text-sm">Knowledge Base</span>
+                    </Link>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
 
-          {/* Explore Hubs Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => toggleDropdown('explore')}
-              className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-cyan-700 flex items-center"
-            >
-              🌐 Explore <span className="ml-1">▼</span>
-            </button>
-            {activeDropdown === 'explore' && (
-              <div className="absolute top-full left-0 mt-1 bg-white text-black rounded shadow-lg z-50 min-w-56">
-                <Link
-                  to="/sophisticated-hub"
-                  className="block px-4 py-2 hover:bg-gray-100 font-bold text-cyan-600"
+              {/* Intelligence Menu */}
+              <div className="relative">
+                <button
+                  onClick={() => toggleDropdown('intelligence')}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${
+                    activeDropdown === 'intelligence'
+                      ? 'bg-purple-500/10 text-purple-400'
+                      : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  }`}
                 >
-                  🏛️ Sophisticated Hub
-                </Link>
-                <Link to="/hub" className="block px-4 py-2 hover:bg-gray-100">
-                  🏙️ Modern Hub
-                </Link>
-                <Link to="/mcp-hub" className="block px-4 py-2 hover:bg-gray-100">
-                  🔌 MCP Hub
-                </Link>
-                <Link to="/knowledge-hub" className="block px-4 py-2 hover:bg-gray-100">
-                  🧠 Knowledge Hub
-                </Link>
-                <Link to="/a2a-control" className="block px-4 py-2 hover:bg-gray-100">
-                  🎮 A2A Control
-                </Link>
-                <Link to="/agency/dashboard" className="block px-4 py-2 hover:bg-gray-100">
-                  🏢 Agency Dashboard
-                </Link>
-                <div className="border-t border-gray-100 my-1"></div>
-                <Link
-                  to="/all-pages"
-                  className="block px-4 py-2 hover:bg-gray-100 font-medium text-blue-600"
+                  <Cpu className="w-4 h-4" />
+                  Intelligence
+                  <ChevronDown
+                    className={`w-3 h-3 transition-transform ${activeDropdown === 'intelligence' ? 'rotate-180' : ''}`}
+                  />
+                </button>
+                {activeDropdown === 'intelligence' && (
+                  <div className="absolute top-full left-0 mt-2 w-72 bg-slate-900 border border-white/10 rounded-xl shadow-2xl p-2 z-50">
+                    <Link
+                      to="/ai-command-center"
+                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
+                    >
+                      <MessageSquare className="w-4 h-4 text-blue-400" />
+                      <div>
+                        <div className="text-sm font-medium text-slate-200">Command Center</div>
+                        <div className="text-[10px] text-slate-500">
+                          Multi-agent chat environment
+                        </div>
+                      </div>
+                    </Link>
+                    <Link
+                      to="/live-view"
+                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
+                    >
+                      <Globe className="w-4 h-4 text-purple-400" />
+                      <span className="text-sm">Live Viewer (Cloud Sandbox)</span>
+                    </Link>
+                    <Link
+                      to="/observatory"
+                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
+                    >
+                      <Network className="w-4 h-4 text-emerald-400" />
+                      <span className="text-sm">System Observatory</span>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            {isAdmin && (
+              <div className="relative">
+                <button
+                  onClick={() => toggleDropdown('admin')}
+                  className="w-10 h-10 flex items-center justify-center rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors border border-red-500/20"
                 >
-                  📁 Site Directory (All Pages)
-                </Link>
+                  <Shield className="w-5 h-5" />
+                </button>
+                {activeDropdown === 'admin' && (
+                  <div className="absolute top-full right-0 mt-2 w-64 bg-slate-900 border border-white/10 rounded-xl shadow-2xl p-2 z-50">
+                    <div className="px-3 py-2 text-[10px] font-bold text-red-500 uppercase tracking-widest">
+                      System Administration
+                    </div>
+                    {isSuperAdmin && (
+                      <Link
+                        to="/admin/control-panel"
+                        className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg text-red-400 font-bold border-b border-white/5 mb-1"
+                      >
+                        <Zap className="w-4 h-4" />
+                        MASTER CONTROL
+                      </Link>
+                    )}
+                    <Link
+                      to="/admin/dashboard"
+                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
+                    >
+                      <BarChart3 className="w-4 h-4 text-slate-400" />
+                      <span className="text-sm">Admin Analytics</span>
+                    </Link>
+                    <Link
+                      to="/admin/users"
+                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
+                    >
+                      <User className="w-4 h-4 text-slate-400" />
+                      <span className="text-sm">Identity Management</span>
+                    </Link>
+                  </div>
+                )}
               </div>
             )}
-          </div>
 
-          {/* Workflows Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => toggleDropdown('workflows')}
-              className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-indigo-600 flex items-center"
-            >
-              🔄 Workflows <span className="ml-1">▼</span>
-            </button>
-            {activeDropdown === 'workflows' && (
-              <div className="absolute top-full left-0 mt-1 bg-white text-black rounded shadow-lg z-50 min-w-48">
-                <Link to="/workflows" className="block px-4 py-2 hover:bg-gray-100">
-                  🔄 All Workflows
-                </Link>
-                <Link to="/workflows/builder" className="block px-4 py-2 hover:bg-gray-100">
-                  🛠️ Workflow Builder
-                </Link>
-                <Link to="/workflows/templates" className="block px-4 py-2 hover:bg-gray-100">
-                  📄 Templates
-                </Link>
-                <Link to="/workflows/executions" className="block px-4 py-2 hover:bg-gray-100">
-                  📊 Executions
-                </Link>
-              </div>
-            )}
-          </div>
-
-          {/* Resources Marketplace Link */}
-          <Link
-            to="/resources"
-            className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-linear-to-r from-purple-600 to-pink-600"
-          >
-            📦 Resources
-          </Link>
-
-          {/* Tasks Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => toggleDropdown('tasks')}
-              className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-green-600 flex items-center"
-            >
-              📋 Tasks <span className="ml-1">▼</span>
-            </button>
-            {activeDropdown === 'tasks' && (
-              <div className="absolute top-full left-0 mt-1 bg-white text-black rounded shadow-lg z-50 min-w-48">
-                <Link to="/tasks" className="block px-4 py-2 hover:bg-gray-100">
-                  📋 All Tasks
-                </Link>
-                <Link to="/tasks/new" className="block px-4 py-2 hover:bg-gray-100">
-                  ➕ New Task
-                </Link>
-                <Link to="/suggestions" className="block px-4 py-2 hover:bg-gray-100">
-                  💡 Suggestions
-                </Link>
-              </div>
-            )}
-          </div>
-
-          {/* Workspace Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => toggleDropdown('workspace')}
-              className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-purple-600 flex items-center"
-            >
-              🏢 Workspace <span className="ml-1">▼</span>
-            </button>
-            {activeDropdown === 'workspace' && (
-              <div className="absolute top-full left-0 mt-1 bg-white text-black rounded shadow-lg z-50 min-w-48">
-                <Link to="/workspace/overview" className="block px-4 py-2 hover:bg-gray-100">
-                  📋 Overview
-                </Link>
-                <Link to="/workspace/analytics" className="block px-4 py-2 hover:bg-gray-100">
-                  📊 Analytics
-                </Link>
-                <Link to="/workspace/members" className="block px-4 py-2 hover:bg-gray-100">
-                  👥 Members
-                </Link>
-                <Link to="/workspace/chat" className="block px-4 py-2 hover:bg-gray-100">
-                  💬 Chat
-                </Link>
-                <Link to="/workspace/settings" className="block px-4 py-2 hover:bg-gray-100">
-                  ⚙️ Settings
-                </Link>
-              </div>
-            )}
-          </div>
-
-          {/* Observatory Link */}
-          <Link
-            to="/observatory"
-            className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-blue-700 flex items-center gap-2"
-          >
-            <Globe className="w-4 h-4" /> Observatory
-          </Link>
-
-          {/* Analytics Link */}
-          <Link to="/analytics" className="hover:text-blue-200 px-3 py-2 rounded transition-colors">
-            📊 Analytics
-          </Link>
-
-          {/* Admin Dropdown - Only show for admin users */}
-          {isAdmin && (
             <div className="relative">
               <button
-                onClick={() => toggleDropdown('admin')}
-                className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-red-600 flex items-center"
+                onClick={() => toggleDropdown('user')}
+                className="flex items-center gap-2 p-1.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
               >
-                👨‍💼 Admin <span className="ml-1">▼</span>
+                <div className="w-7 h-7 bg-blue-500 rounded-lg flex items-center justify-center text-[10px] font-bold">
+                  {user?.name?.substring(0, 2).toUpperCase() || 'BS'}
+                </div>
+                <ChevronDown className="w-3 h-3 text-slate-500" />
               </button>
-              {activeDropdown === 'admin' && (
-                <div className="absolute top-full left-0 mt-1 bg-white text-black rounded shadow-lg z-50 min-w-48">
-                  <Link to="/admin/dashboard" className="block px-4 py-2 hover:bg-gray-100">
-                    📊 Admin Dashboard
-                  </Link>
-                  <Link to="/admin/users" className="block px-4 py-2 hover:bg-gray-100">
-                    👥 User Management
-                  </Link>
-                  <Link to="/admin/workspaces" className="block px-4 py-2 hover:bg-gray-100">
-                    🏢 Workspaces
-                  </Link>
-                  <Link to="/admin/system-health" className="block px-4 py-2 hover:bg-gray-100">
-                    💚 System Health
-                  </Link>
-                  <Link to="/admin/feature-flags" className="block px-4 py-2 hover:bg-gray-100">
-                    🏴 Feature Flags
-                  </Link>
-                  <Link to="/admin/settings" className="block px-4 py-2 hover:bg-gray-100">
-                    ⚙️ Admin Settings
-                  </Link>
-                  <div className="border-t border-gray-100 my-1"></div>
+              {activeDropdown === 'user' && (
+                <div className="absolute top-full right-0 mt-2 w-56 bg-slate-900 border border-white/10 rounded-xl shadow-2xl p-2 z-50">
+                  <div className="px-3 py-2">
+                    <div className="text-sm font-medium text-white">{user?.name}</div>
+                    <div className="text-[10px] text-slate-500 truncate">{user?.email}</div>
+                  </div>
+                  <div className="my-1 border-t border-white/10" />
                   <Link
-                    to="/all-pages"
-                    className="block px-4 py-2 hover:bg-gray-100 font-bold text-blue-600"
+                    to="/profile"
+                    className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
                   >
-                    📁 All Pages Directory
+                    <User className="w-4 h-4 text-slate-400" />
+                    <span className="text-sm">Profile</span>
                   </Link>
+                  <Link
+                    to="/settings"
+                    className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
+                  >
+                    <Settings className="w-4 h-4 text-slate-400" />
+                    <span className="text-sm">Account Settings</span>
+                  </Link>
+                  <div className="my-1 border-t border-white/10" />
+                  <button
+                    onClick={() => logout()}
+                    className="w-full flex items-center gap-3 px-3 py-2 hover:bg-red-500/10 rounded-lg text-red-400 transition-colors"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span className="text-sm">Sign Out</span>
+                  </button>
                 </div>
               )}
             </div>
-          )}
 
-          {/* Settings Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => toggleDropdown('settings')}
-              className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-gray-600 flex items-center"
-            >
-              ⚙️ Settings <span className="ml-1">▼</span>
+            <button className="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 text-slate-400 hover:text-white transition-colors">
+              <Menu className="w-6 h-6" />
             </button>
-            {activeDropdown === 'settings' && (
-              <div className="absolute top-full left-0 mt-1 bg-white text-black rounded shadow-lg z-50 min-w-48">
-                <Link to="/settings" className="block px-4 py-2 hover:bg-gray-100">
-                  ⚙️ General
-                </Link>
-                <Link to="/settings/appearance" className="block px-4 py-2 hover:bg-gray-100">
-                  🎨 Appearance
-                </Link>
-                <Link to="/settings/notifications" className="block px-4 py-2 hover:bg-gray-100">
-                  🔔 Notifications
-                </Link>
-                <Link to="/settings/security" className="block px-4 py-2 hover:bg-gray-100">
-                  🔒 Security
-                </Link>
-                <Link to="/settings/api" className="block px-4 py-2 hover:bg-gray-100">
-                  🔌 API Settings
-                </Link>
-              </div>
-            )}
-          </div>
-
-          {/* User Menu */}
-          <div className="relative">
-            <button
-              onClick={() => toggleDropdown('user')}
-              className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-gray-700 flex items-center"
-            >
-              👤 User <span className="ml-1">▼</span>
-            </button>
-            {activeDropdown === 'user' && (
-              <div className="absolute top-full right-0 mt-1 bg-white text-black rounded shadow-lg z-50 min-w-48">
-                <Link to="/profile" className="block px-4 py-2 hover:bg-gray-100">
-                  👤 Profile
-                </Link>
-                <Link to="/settings" className="block px-4 py-2 hover:bg-gray-100">
-                  ⚙️ Settings
-                </Link>
-                <Link
-                  to="/all-pages"
-                  className="block px-4 py-2 hover:bg-gray-100 font-bold text-blue-600"
-                >
-                  📁 Site Directory (All Pages)
-                </Link>
-                <div className="border-t border-gray-200"></div>
-                <button
-                  onClick={async () => {
-                    try {
-                      await logout();
-                      setActiveDropdown(null);
-                    } catch (error) {
-                      console.error('Logout failed:', error);
-                    }
-                  }}
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600"
-                >
-                  🚪 Sign Out
-                </button>
-              </div>
-            )}
           </div>
         </div>
       </div>

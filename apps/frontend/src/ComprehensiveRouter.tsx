@@ -96,6 +96,7 @@ const ConfigurationManagement = lazy(() => import('./pages/Admin/ConfigurationMa
 const AuditLogViewer = lazy(() => import('./pages/Admin/AuditLogViewer'));
 const BackupRestore = lazy(() => import('./pages/Admin/BackupRestore'));
 const OpenClawSecurity = lazy(() => import('./pages/Admin/OpenClawSecurity'));
+const SuperAdminControlPanel = lazy(() => import('./pages/Admin/SuperAdminControlPanel'));
 
 // Auth components
 const AuthIndexPage = lazy(() => import('./pages/auth'));
@@ -255,15 +256,12 @@ export default function ComprehensiveRouter() {
 
   return (
     <div>
-      {/* Conditional Navigation - only show SmartNavigation on public pages if needed,
-           and explicitly hide it on Auth, Onboarding, and 404 pages for a clean UX */}
-      <Suspense fallback={<div className="h-16 bg-gray-900" />}>
-        {isPublicRoute &&
-          !location.pathname.startsWith('/auth') &&
+      {/* Primary Universal Navigation */}
+      <Suspense fallback={<div className="h-16 bg-slate-950 border-b border-white/10" />}>
+        {!location.pathname.startsWith('/auth') &&
           !location.pathname.startsWith('/onboarding') &&
           !['/404', '/login', '/register'].includes(location.pathname) &&
-          // Logic handled by PublicLayout now, but kept here for non-PublicLayout routes (like Auth)
-          Layout !== PublicLayout && <SmartNavigation />}
+          !hasOwnLayout && <SmartNavigation />}
       </Suspense>
 
       <Suspense fallback={<LoadingFallback name="Layout" />}>
@@ -354,17 +352,17 @@ export default function ComprehensiveRouter() {
               <Route
                 path="/observatory"
                 element={
-                  <RequireAuth>
+                  <RequirePermission roles={['SUPER_ADMIN']}>
                     <SystemObservatory />
-                  </RequireAuth>
+                  </RequirePermission>
                 }
               />
               <Route
                 path="/command-center"
                 element={
-                  <RequireAuth>
+                  <RequirePermission roles={['SUPER_ADMIN']}>
                     <TNFCommandCenter />
-                  </RequireAuth>
+                  </RequirePermission>
                 }
               />
               <Route
@@ -430,6 +428,14 @@ export default function ComprehensiveRouter() {
                 element={
                   <RequirePermission roles={['SUPER_ADMIN']}>
                     <SystemMetricsDashboard />
+                  </RequirePermission>
+                }
+              />
+              <Route
+                path="/admin/control-panel"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <SuperAdminControlPanel />
                   </RequirePermission>
                 }
               />
@@ -711,9 +717,11 @@ export default function ComprehensiveRouter() {
               <Route
                 path="/live-view"
                 element={
-                  <Suspense fallback={<LoadingFallback name="Live View" />}>
-                    <LiveViewPage />
-                  </Suspense>
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <Suspense fallback={<LoadingFallback name="Live View" />}>
+                      <LiveViewPage />
+                    </Suspense>
+                  </RequirePermission>
                 }
               />
 
@@ -721,9 +729,11 @@ export default function ComprehensiveRouter() {
               <Route
                 path="/ai-command-center"
                 element={
-                  <Suspense fallback={<LoadingFallback name="AI Command Center" />}>
-                    <AICommandCenter />
-                  </Suspense>
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <Suspense fallback={<LoadingFallback name="AI Command Center" />}>
+                      <AICommandCenter />
+                    </Suspense>
+                  </RequirePermission>
                 }
               />
 

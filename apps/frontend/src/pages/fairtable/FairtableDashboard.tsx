@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react';
 import {
   Activity,
   Calendar,
@@ -8,8 +7,9 @@ import {
   MoreVertical,
   Plus,
   TrendingUp,
-  Users
+  Users,
 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { WorkspaceApiService } from '../../api/workspace';
 // TODO: Import when packages are properly configured
@@ -45,52 +45,8 @@ const FairtableDashboard: React.FC = () => {
       const response = await workspaceService.getCurrentWorkspace();
 
       if (response.success && response.data) {
-        // For now, use mock data until the actual API endpoint is implemented
-        // In a real implementation, this would use response.data.tables or similar
-        const mockTables: Table[] = [
-          {
-            id: '1',
-            name: 'Project Management',
-            description: 'Track all development projects and their status',
-            recordCount: 45,
-            lastModified: '2024-01-15',
-            collaborators: 5,
-            viewType: 'kanban',
-            status: 'active',
-          },
-          {
-            id: '2',
-            name: 'Customer Database',
-            description: 'Comprehensive customer information and interactions',
-            recordCount: 234,
-            lastModified: '2024-01-14',
-            collaborators: 3,
-            viewType: 'grid',
-            status: 'active',
-          },
-          {
-            id: '3',
-            name: 'Content Calendar',
-            description: 'Editorial calendar for content planning and scheduling',
-            recordCount: 67,
-            lastModified: '2024-01-13',
-            collaborators: 4,
-            viewType: 'timeline',
-            status: 'active',
-          },
-          {
-            id: '4',
-            name: 'Inventory Tracking',
-            description: 'Product inventory and stock management',
-            recordCount: 89,
-            lastModified: '2024-01-12',
-            collaborators: 2,
-            viewType: 'grid',
-            status: 'draft',
-          },
-        ];
-
-        setTables(mockTables);
+        const actualTables: Table[] = (response.data as any)?.tables || [];
+        setTables(actualTables);
       } else {
         throw new Error(response.error || 'Failed to load workspace data');
       }
@@ -156,7 +112,9 @@ const FairtableDashboard: React.FC = () => {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
             Fairtable Dashboard
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">Manage your databases, tables, and collaborative workspaces</p>
+          <p className="text-gray-600 dark:text-gray-400">
+            Manage your databases, tables, and collaborative workspaces
+          </p>
         </div>
 
         <button
@@ -171,12 +129,39 @@ const FairtableDashboard: React.FC = () => {
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {[
-          { icon: Database, bg: 'bg-blue-100', color: 'text-blue-600', label: 'Active Tables', value: tables.length },
-          { icon: Activity, bg: 'bg-green-100', color: 'text-green-600', label: 'Total Records', value: tables.reduce((sum, table) => sum + table.recordCount, 0) },
-          { icon: Users, bg: 'bg-purple-100', color: 'text-purple-600', label: 'Collaborators', value: tables.reduce((sum, table) => sum + table.collaborators, 0) },
-          { icon: TrendingUp, bg: 'bg-orange-100', color: 'text-orange-600', label: 'Uptime', value: '94%' },
+          {
+            icon: Database,
+            bg: 'bg-blue-100',
+            color: 'text-blue-600',
+            label: 'Active Tables',
+            value: tables.length,
+          },
+          {
+            icon: Activity,
+            bg: 'bg-green-100',
+            color: 'text-green-600',
+            label: 'Total Records',
+            value: tables.reduce((sum, table) => sum + table.recordCount, 0),
+          },
+          {
+            icon: Users,
+            bg: 'bg-purple-100',
+            color: 'text-purple-600',
+            label: 'Collaborators',
+            value: tables.reduce((sum, table) => sum + table.collaborators, 0),
+          },
+          {
+            icon: TrendingUp,
+            bg: 'bg-orange-100',
+            color: 'text-orange-600',
+            label: 'Uptime',
+            value: '94%',
+          },
         ].map((stat, idx) => (
-          <div key={idx} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 flex items-center gap-4">
+          <div
+            key={idx}
+            className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 flex items-center gap-4"
+          >
             <div className={`p-3 rounded-lg ${stat.bg} ${stat.color} dark:bg-opacity-20`}>
               <stat.icon className="w-6 h-6" />
             </div>
@@ -191,18 +176,14 @@ const FairtableDashboard: React.FC = () => {
       {/* Tables Grid */}
       <div>
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Your Tables
-          </h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Your Tables</h2>
           <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-500 dark:text-gray-400">
-              View as:
-            </span>
+            <span className="text-sm text-gray-500 dark:text-gray-400">View as:</span>
             <div className="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
               {[
                 { id: 'grid', icon: Grid },
                 { id: 'kanban', icon: Columns },
-                { id: 'timeline', icon: Calendar }
+                { id: 'timeline', icon: Calendar },
               ].map((view) => (
                 <button
                   key={view.id}
@@ -234,7 +215,9 @@ const FairtableDashboard: React.FC = () => {
                     <h3 className="font-semibold text-lg text-gray-900 dark:text-white">
                       {table.name}
                     </h3>
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium capitalize ${getStatusColor(table.status)}`}>
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-xs font-medium capitalize ${getStatusColor(table.status)}`}
+                    >
                       {table.status}
                     </span>
                   </div>

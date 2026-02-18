@@ -37,6 +37,7 @@
     "@firebase/app": "^0.14.8",
     "@firebase/auth": "^1.12.0",
     "@firebase/firestore": "^4.11.0",
+    "@firebase/util": "^1.13.0",
     "@hello-pangea/dnd": "^18.0.1",
     "@heroicons/react": "^2.1.5",
     "@hookform/resolvers": "^5.2.2",

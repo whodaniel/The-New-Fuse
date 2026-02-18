@@ -56,6 +56,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const apiBaseUrl = (import.meta.env.VITE_API_URL || '/api').replace(/\/$/, '');
+
+  const setAuthToken = (token: string) => {
+    localStorage.setItem('auth_token', token);
+    localStorage.setItem('authToken', token);
+  };
+
+  const clearAuthToken = () => {
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('authToken');
+  };
+
   // Map Firebase user to our User type
   const mapUser = (firebaseUser: FirebaseUser): User => {
     return {
@@ -68,31 +80,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Fetch user details from backend to get actual role
-  const fetchUserDetails = useCallback(async (token: string): Promise<Partial<User> | null> => {
-    try {
-      const response = await fetch('/api/auth/me', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  const fetchUserDetails = useCallback(
+    async (token: string): Promise<Partial<User> | null> => {
+      const endpoints = [`${apiBaseUrl}/auth/me`, '/api/auth/me', '/auth/me'];
 
-      if (!response.ok) {
-        console.error('Failed to fetch user details:', response.statusText);
+      try {
+        for (const endpoint of endpoints) {
+          const response = await fetch(endpoint, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!response.ok) {
+            continue;
+          }
+
+          const contentType = response.headers.get('content-type') || '';
+          if (!contentType.includes('application/json')) {
+            continue;
+          }
+
+          const userData = await response.json();
+          return {
+            role: userData.role || 'user',
+            roles: userData.roles || (userData.role ? [userData.role] : ['user']),
+            agencyId: userData.agencyId,
+            tenantId: userData.tenantId,
+          };
+        }
+
+        console.error('Failed to fetch user details from all /auth/me endpoints');
+        return null;
+      } catch (error) {
+        console.error('Error fetching user details:', error);
         return null;
       }
-
-      const userData = await response.json();
-      return {
-        role: userData.role || 'user',
-        roles: userData.roles || (userData.role ? [userData.role] : ['user']),
-        agencyId: userData.agencyId,
-        tenantId: userData.tenantId,
-      };
-    } catch (error) {
-      console.error('Error fetching user details:', error);
-      return null;
-    }
-  }, []);
+    },
+    [apiBaseUrl]
+  );
 
   // Check auth on mount
   useEffect(() => {
@@ -100,7 +126,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (firebaseUser) {
         const mappedUser = mapUser(firebaseUser);
         const token = await firebaseUser.getIdToken();
-        localStorage.setItem('auth_token', token);
+        setAuthToken(token);
 
         // Fetch user details from backend to get actual role
         const userDetails = await fetchUserDetails(token);
@@ -111,7 +137,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       } else {
         setUser(null);
-        localStorage.removeItem('auth_token');
+        clearAuthToken();
       }
       setIsLoading(false);
     });
@@ -233,7 +259,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { token, user: backendUser } = await response.json();
 
       // Store token
-      localStorage.setItem('auth_token', token);
+      setAuthToken(token);
 
       // Set user state
       setUser({
@@ -259,7 +285,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await signOut(auth);
 
       // Clear local storage
-      localStorage.removeItem('auth_token');
+      clearAuthToken();
 
       // Clear user state
       setUser(null);

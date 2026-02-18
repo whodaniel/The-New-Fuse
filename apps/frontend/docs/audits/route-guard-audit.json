@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T20:51:51.515Z",
+  "generatedAt": "2026-02-18T11:33:52.954Z",
   "counts": {
     "sidebarPaths": 21,
     "missingRoutes": 0,
@@ -39,7 +39,7 @@
       "path": "/command-center",
       "access": "authenticated",
       "status": "ok",
-      "guard": "RequireAuth",
+      "guard": "RequirePermission",
       "redirect": false
     },
     {
@@ -95,7 +95,7 @@
       "path": "/observatory",
       "access": "authenticated",
       "status": "ok",
-      "guard": "RequireAuth",
+      "guard": "RequirePermission",
       "redirect": false
     },
     {

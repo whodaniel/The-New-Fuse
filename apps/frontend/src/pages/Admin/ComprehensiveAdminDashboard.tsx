@@ -93,14 +93,14 @@ interface RelayActivityEvent {
 }
 
 const defaultMetrics: SystemMetrics = {
-  totalUsers: 147,
-  activeUsers: 23,
-  totalWorkspaces: 12,
-  activeWorkspaces: 8,
-  totalAgents: 34,
-  runningAgents: 12,
-  systemUptime: 'Unknown',
-  serverHealth: 'warning',
+  totalUsers: 0,
+  activeUsers: 0,
+  totalWorkspaces: 0,
+  activeWorkspaces: 0,
+  totalAgents: 0,
+  runningAgents: 0,
+  systemUptime: '0h',
+  serverHealth: 'critical',
   memoryUsage: 0,
   cpuUsage: 0,
   diskUsage: 0,

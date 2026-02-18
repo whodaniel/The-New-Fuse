@@ -1,0 +1,34 @@
+# TNF Agent Bootstrap
+
+This repository uses TNF frontloading. Start every new AI terminal session with:
+
+```bash
+pnpm run tnf:onboard
+```
+
+## Mandatory Context Files
+
+1. `.agent/SYSTEM_PROMPT.md`
+2. `.agent/context/resource-map.md`
+3. `.agent/context/agent-onboarding.md`
+4. `.agent/workflows/frontload.md`
+5. `.agent/handoff_notes.txt` (if present)
+
+## Where Resources Live
+
+- TNF specialized agents: `.agent/agents/*.md`
+- Claude specialized agents: `.claude/agents/*.md`
+- TNF skills: `.agent/skills/**/SKILL.md`
+- Claude skills: `.claude/skills/*.md`
+- Gemini workspace docs: `.gemini/*`
+- MCP config source of truth: `data/mcp_config.json`
+
+## Immediate TNF Protocol
+
+At session start, the agent should:
+
+1. Confirm TNF identity from `.agent/SYSTEM_PROMPT.md`.
+2. Load capabilities from `.agent/context/resource-map.md`.
+3. Recover prior state from `.agent/handoff_notes.txt` and planning files.
+4. Use MCP and specialized agents from the inventory printed by
+   `pnpm run tnf:onboard`.

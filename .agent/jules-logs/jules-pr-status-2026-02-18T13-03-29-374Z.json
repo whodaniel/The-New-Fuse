@@ -1,0 +1,159 @@
+{
+  "sessions": [
+    {
+      "title": "TNF auth reliability audit: find root causes for SUPER_ADMIN denial paths and malformed /api/auth/me responses; produce prioritized patch plan with tests.",
+      "createTime": "2026-02-18T12:16:06.009973481Z",
+      "updateTime": "2026-02-18T13:03:06.982289Z",
+      "state": "IN_PROGRESS",
+      "url": "https://jules.google.com/session/13278036095613230897",
+      "id": "13278036095613230897",
+      "outputs": [{}],
+      "prUrls": []
+    },
+    {
+      "title": "TNF auth reliability audit: find root causes for SUPER_ADMIN denial paths and malformed /api/auth/me responses; produce prioritized patch plan with tests.",
+      "createTime": "2026-02-18T12:16:06.179935728Z",
+      "updateTime": "2026-02-18T13:02:26.488175Z",
+      "state": "COMPLETED",
+      "url": "https://jules.google.com/session/13370314413267781877",
+      "id": "13370314413267781877",
+      "outputs": [{}],
+      "prUrls": []
+    },
+    {
+      "title": "TNF auth reliability audit: find root causes for SUPER_ADMIN denial paths and malformed /api/auth/me responses; produce prioritized patch plan with tests.",
+      "createTime": "2026-02-18T12:16:06.182736579Z",
+      "updateTime": "2026-02-18T13:03:10.108484Z",
+      "state": "IN_PROGRESS",
+      "url": "https://jules.google.com/session/7718760999911759326",
+      "id": "7718760999911759326",
+      "outputs": [{}],
+      "prUrls": []
+    },
+    {
+      "title": "TNF auth reliability audit: find root causes for SUPER_ADMIN denial paths and malformed /api/auth/me responses; produce prioritized patch plan with tests.",
+      "createTime": "2026-02-18T12:16:06.196685486Z",
+      "updateTime": "2026-02-18T13:03:10.108127Z",
+      "state": "IN_PROGRESS",
+      "url": "https://jules.google.com/session/1088966058175793672",
+      "id": "1088966058175793672",
+      "outputs": [{}],
+      "prUrls": []
+    },
+    {
+      "title": "TNF auth reliability audit: find root causes for SUPER_ADMIN denial paths and malformed /api/auth/me responses; produce prioritized patch plan with tests.",
+      "createTime": "2026-02-18T12:16:06.209738460Z",
+      "updateTime": "2026-02-18T13:03:11.008426Z",
+      "state": "IN_PROGRESS",
+      "url": "https://jules.google.com/session/755027740041054619",
+      "id": "755027740041054619",
+      "outputs": [{}],
+      "prUrls": []
+    },
+    {
+      "title": "TNF framework evolution audit: propose high-impact changes for orchestration reliability, delegation protocols, observability, and CI quality gates with measurable KPIs.",
+      "createTime": "2026-02-18T12:16:05.890042273Z",
+      "updateTime": "2026-02-18T13:03:12.605047Z",
+      "state": "IN_PROGRESS",
+      "url": "https://jules.google.com/session/1755614659670526610",
+      "id": "1755614659670526610",
+      "outputs": [{}],
+      "prUrls": []
+    },
+    {
+      "title": "TNF framework evolution audit: propose high-impact changes for orchestration reliability, delegation protocols, observability, and CI quality gates with measurable KPIs.",
+      "createTime": "2026-02-18T12:16:06.056639182Z",
+      "updateTime": "2026-02-18T13:02:43.797450Z",
+      "state": "COMPLETED",
+      "url": "https://jules.google.com/session/8222347146543029492",
+      "id": "8222347146543029492",
+      "outputs": [{}],
+      "prUrls": []
+    },
+    {
+      "title": "TNF framework evolution audit: propose high-impact changes for orchestration reliability, delegation protocols, observability, and CI quality gates with measurable KPIs.",
+      "createTime": "2026-02-18T12:16:06.057180881Z",
+      "updateTime": "2026-02-18T13:03:14.100006Z",
+      "state": "IN_PROGRESS",
+      "url": "https://jules.google.com/session/5565502105291666283",
+      "id": "5565502105291666283",
+      "outputs": [{}],
+      "prUrls": []
+    },
+    {
+      "title": "TNF framework evolution audit: propose high-impact changes for orchestration reliability, delegation protocols, observability, and CI quality gates with measurable KPIs.",
+      "createTime": "2026-02-18T12:16:06.080958562Z",
+      "updateTime": "2026-02-18T13:03:22.692326Z",
+      "state": "IN_PROGRESS",
+      "url": "https://jules.google.com/session/15368575867305462260",
+      "id": "15368575867305462260",
+      "outputs": [{}],
+      "prUrls": []
+    },
+    {
+      "title": "TNF framework evolution audit: propose high-impact changes for orchestration reliability, delegation protocols, observability, and CI quality gates with measurable KPIs.",
+      "createTime": "2026-02-18T12:16:06.086237090Z",
+      "updateTime": "2026-02-18T13:03:17.371719Z",
+      "state": "IN_PROGRESS",
+      "url": "https://jules.google.com/session/11745836152721475767",
+      "id": "11745836152721475767",
+      "outputs": [{}],
+      "prUrls": []
+    },
+    {
+      "title": "TNF navigation reliability audit: enumerate broken/incomplete routes, dead links, unauthorized redirects, and route guard mismatches; provide concrete fix list by file.",
+      "createTime": "2026-02-18T12:16:32.123662131Z",
+      "updateTime": "2026-02-18T13:02:45.113871Z",
+      "state": "COMPLETED",
+      "url": "https://jules.google.com/session/8960992051512967510",
+      "id": "8960992051512967510",
+      "outputs": [{}],
+      "prUrls": []
+    },
+    {
+      "title": "TNF navigation reliability audit: enumerate broken/incomplete routes, dead links, unauthorized redirects, and route guard mismatches; provide concrete fix list by file.",
+      "createTime": "2026-02-18T12:16:32.217155590Z",
+      "updateTime": "2026-02-18T13:03:27.219289Z",
+      "state": "COMPLETED",
+      "url": "https://jules.google.com/session/11886948570812029762",
+      "id": "11886948570812029762",
+      "outputs": [{}],
+      "prUrls": []
+    },
+    {
+      "title": "TNF navigation reliability audit: enumerate broken/incomplete routes, dead links, unauthorized redirects, and route guard mismatches; provide concrete fix list by file.",
+      "createTime": "2026-02-18T12:16:32.238879700Z",
+      "updateTime": "2026-02-18T13:03:21.208090Z",
+      "state": "IN_PROGRESS",
+      "url": "https://jules.google.com/session/3514615550722288111",
+      "id": "3514615550722288111",
+      "outputs": [{}],
+      "prUrls": []
+    },
+    {
+      "title": "TNF navigation reliability audit: enumerate broken/incomplete routes, dead links, unauthorized redirects, and route guard mismatches; provide concrete fix list by file.",
+      "createTime": "2026-02-18T12:16:32.251274672Z",
+      "updateTime": "2026-02-18T13:03:24.060823Z",
+      "state": "IN_PROGRESS",
+      "url": "https://jules.google.com/session/17424110114054724450",
+      "id": "17424110114054724450",
+      "outputs": [{}],
+      "prUrls": []
+    },
+    {
+      "title": "TNF navigation reliability audit: enumerate broken/incomplete routes, dead links, unauthorized redirects, and route guard mismatches; provide concrete fix list by file.",
+      "createTime": "2026-02-18T12:16:32.259870088Z",
+      "updateTime": "2026-02-18T13:02:52.631839Z",
+      "state": "COMPLETED",
+      "url": "https://jules.google.com/session/17972429597558174297",
+      "id": "17972429597558174297",
+      "outputs": [{}],
+      "prUrls": []
+    }
+  ],
+  "timing": {
+    "windowMs": 2841329,
+    "minCreate": 1771416965890,
+    "maxUpdate": 1771419807219
+  }
+}
