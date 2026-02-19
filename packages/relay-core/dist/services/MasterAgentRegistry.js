@@ -1093,9 +1093,9 @@ class MasterAgentRegistry extends events_1.EventEmitter {
                                 // We need to be careful with nested jsonb updates in Prisma
                                 // Usually we'd fetch and merge if using raw prisma,
                                 // but for this implementation we assume the metadata/config structure is handled
-                                metrics: agent.metrics
-                            }
-                        }
+                                metrics: agent.metrics,
+                            },
+                        },
                     },
                     updatedAt: new Date(),
                 },

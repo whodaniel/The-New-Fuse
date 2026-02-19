@@ -5,6 +5,7 @@
  * enabling agent-to-agent communication through standardized MCP protocols.
  */
 
+import { EventEmitter } from 'events';
 import type {
   Agent,
   AgentCapabilityDiscovery,
@@ -52,7 +53,7 @@ const DEFAULT_CONFIG: MCPAgentIntegrationConfig = {
 /**
  * MCPAgentIntegration class implementation
  */
-export class MCPAgentIntegration implements IMCPAgentIntegration {
+export class MCPAgentIntegration extends EventEmitter implements IMCPAgentIntegration {
   private config: MCPAgentIntegrationConfig;
   private broker: IMCPBroker;
   private client: IMCPClient;
@@ -66,6 +67,7 @@ export class MCPAgentIntegration implements IMCPAgentIntegration {
     client: IMCPClient,
     config: Partial<MCPAgentIntegrationConfig> = {}
   ) {
+    super();
     this.broker = broker;
     this.client = client;
     this.config = { ...DEFAULT_CONFIG, ...config };
