@@ -57,7 +57,6 @@ agents, 40 skills, and 11 workflows to our existing agent ecosystem.
 │   ├── performance-profiling/
 │   ├── plan-writing/
 │   ├── powershell-windows/
-│   ├── prisma-expert/
 │   ├── python-patterns/
 │   ├── react-patterns/
 │   ├── red-team-tactics/
@@ -92,7 +91,7 @@ agents, 40 skills, and 11 workflows to our existing agent ecosystem.
 
 - **frontend-specialist** - React, UI/UX, modern web frameworks
 - **backend-specialist** - APIs, business logic, server architecture
-- **database-architect** - Schema design, SQL, Prisma ORM
+- **database-architect** - Schema design, SQL
 - **mobile-developer** - iOS, Android, React Native
 - **game-developer** - Game logic, mechanics, development
 
@@ -142,7 +141,6 @@ agents, 40 skills, and 11 workflows to our existing agent ecosystem.
 ### Database
 
 - `database-design` - Schema design, optimization
-- `prisma-expert` - Prisma ORM, migrations (Aligns with TNF stack!)
 
 ### TypeScript/JavaScript
 
@@ -226,8 +224,7 @@ decorators.
 
 ### 2. **Database Expertise**
 
-`prisma-expert` and `database-design` skills complement our PostgreSQL + Prisma
-ORM stack.
+`database-design` skill complements our PostgreSQL database architecture.
 
 ### 3. **React & Frontend**
 

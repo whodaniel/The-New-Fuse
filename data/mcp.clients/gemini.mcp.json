@@ -7,7 +7,7 @@
   "mcpServers": {
     "tnf-enhanced-mcp-server": {
       "command": "node",
-      "args": ["--loader", "tsx/esm", "./src/mcp/enhanced-tnf-mcp-server.ts"],
+      "args": ["--import", "tsx", "./src/mcp/enhanced-tnf-mcp-server.ts"],
       "env": {
         "TNF_API_BASE_URL": "http://localhost:8080/v1",
         "NODE_ENV": "development"
@@ -28,9 +28,9 @@
         "Security enhancements"
       ]
     },
-    "tnf-complete-api-wrapper": {
+    "complete-api-mcp-server": {
       "command": "node",
-      "args": ["--loader", "tsx/esm", "./src/mcp/complete-api-mcp-server.ts"],
+      "args": ["--import", "tsx", "./src/mcp/complete-api-mcp-server.ts"],
       "env": {
         "TNF_API_BASE_URL": "http://localhost:8080/v1",
         "NODE_ENV": "development"
@@ -55,7 +55,7 @@
     },
     "tnf-mcp-config-manager": {
       "command": "node",
-      "args": ["--loader", "tsx/esm", "./src/mcp/tnf-mcp-config-manager.ts"],
+      "args": ["--import", "tsx", "./src/mcp/tnf-mcp-config-manager.ts"],
       "env": {
         "TNF_CORE_PATH": "./data",
         "LOG_LEVEL": "info"
