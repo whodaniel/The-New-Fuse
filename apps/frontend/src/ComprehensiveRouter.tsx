@@ -79,6 +79,11 @@ import TestPage from './pages/Test';
 const SuggestionsPage = lazy(() => import('./pages/Suggestions'));
 const NewSuggestionPage = lazy(() => import('./pages/Suggestions/New'));
 const SuggestionDetailPage = lazy(() => import('./pages/Suggestions/Detail'));
+const GoalsPage = lazy(() => import('./pages/Goals'));
+const GoalDetailPage = lazy(() => import('./pages/Goals/Detail'));
+const PlansPage = lazy(() => import('./pages/Plans'));
+const PlanDetailPage = lazy(() => import('./pages/Plans/Detail'));
+const TimelinePage = lazy(() => import('./pages/Timeline'));
 
 // Additional Admin components
 const AdminUserManagement = lazy(() => import('./pages/Admin/UserManagement'));
@@ -593,6 +598,11 @@ export default function ComprehensiveRouter() {
               <Route path="/suggestions" element={<SuggestionsPage />} />
               <Route path="/suggestions/new" element={<NewSuggestionPage />} />
               <Route path="/suggestions/:id" element={<SuggestionDetailPage />} />
+              <Route path="/goals" element={<GoalsPage />} />
+              <Route path="/goals/:id" element={<GoalDetailPage />} />
+              <Route path="/plans" element={<PlansPage />} />
+              <Route path="/plans/:id" element={<PlanDetailPage />} />
+              <Route path="/timeline" element={<TimelinePage />} />
 
               {/* Admin routes have been consolidated above with permission guards */}
 

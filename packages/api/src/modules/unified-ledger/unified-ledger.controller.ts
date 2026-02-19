@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { UnifiedLedgerService } from './unified-ledger.service';
 import { UnifiedRecordKind, UnifiedRecordStatus } from './unified-ledger.types';
 
@@ -18,6 +18,11 @@ export class UnifiedLedgerController {
   @Get('unified-ledger/records/:id')
   async get(@Param('id') id: string) {
     return this.ledger.getRecord(id);
+  }
+
+  @Get('unified-ledger/records/:id/connections')
+  async connections(@Param('id') id: string) {
+    return this.ledger.getRecordConnections(id);
   }
 
   @Post('unified-ledger/records')
@@ -59,9 +64,28 @@ export class UnifiedLedgerController {
   async timeline(
     @Query('recordId') recordId?: string,
     @Query('goalId') goalId?: string,
-    @Query('planId') planId?: string
+    @Query('planId') planId?: string,
+    @Query('eventType') eventType?: string,
+    @Query('actor') actor?: string,
+    @Query('dateFrom') dateFrom?: string,
+    @Query('dateTo') dateTo?: string
   ) {
-    return this.ledger.listTimelineEvents({ recordId, goalId, planId });
+    return this.ledger.listTimelineEvents({ recordId, goalId, planId, eventType, actor, dateFrom, dateTo });
+  }
+
+  @Get('timeline/events/:id')
+  async timelineEvent(@Param('id') id: string) {
+    return this.ledger.getTimelineEvent(id);
+  }
+
+  @Post('timeline/events')
+  async createTimelineEvent(@Body() body: any) {
+    return this.ledger.createTimelineEvent(body);
+  }
+
+  @Patch('timeline/events/:id')
+  async patchTimelineEvent(@Param('id') id: string, @Body() body: any) {
+    return this.ledger.updateTimelineEvent(id, body);
   }
 
   @Post('goals')
@@ -72,6 +96,11 @@ export class UnifiedLedgerController {
   @Get('goals')
   async listGoals() {
     return this.ledger.listGoals();
+  }
+
+  @Get('goals/:id')
+  async getGoal(@Param('id') id: string) {
+    return this.ledger.getGoal(id);
   }
 
   @Post('goals/:id/link-record')
@@ -87,6 +116,20 @@ export class UnifiedLedgerController {
     return this.ledger.addGoalMilestone(id, body);
   }
 
+  @Patch('goals/:id/milestones/:milestoneId')
+  async updateMilestone(
+    @Param('id') id: string,
+    @Param('milestoneId') milestoneId: string,
+    @Body() body: any
+  ) {
+    return this.ledger.updateGoalMilestone(id, milestoneId, body);
+  }
+
+  @Delete('goals/:id/milestones/:milestoneId')
+  async deleteMilestone(@Param('id') id: string, @Param('milestoneId') milestoneId: string) {
+    return this.ledger.removeGoalMilestone(id, milestoneId);
+  }
+
   @Post('plans')
   async createPlan(@Body() body: any) {
     return this.ledger.createPlan(body);
@@ -95,6 +138,11 @@ export class UnifiedLedgerController {
   @Get('plans')
   async listPlans() {
     return this.ledger.listPlans();
+  }
+
+  @Get('plans/:id')
+  async getPlan(@Param('id') id: string) {
+    return this.ledger.getPlan(id);
   }
 
   @Post('plans/:id/link')

@@ -106,7 +106,8 @@ export interface TimelineEvent {
     | 'goal_linked'
     | 'plan_created'
     | 'plan_linked'
-    | 'milestone_updated';
+    | 'milestone_updated'
+    | 'historical_event';
   actor: string;
   timestamp: string;
   payload: Record<string, unknown>;

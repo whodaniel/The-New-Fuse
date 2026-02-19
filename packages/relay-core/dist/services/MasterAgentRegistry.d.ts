@@ -64,6 +64,8 @@ export interface MasterAgentProfile {
         collaboration: number;
         stagnationCount: number;
         escalationCount: number;
+        leverageRank: number;
+        totalSavingsCents: number;
     };
     todoList: MasterAgentTodo[];
     registeredAt: Date;
@@ -272,7 +274,7 @@ export declare class MasterAgentRegistry extends EventEmitter {
      * PUBLIC API METHODS
      */
     getAgentProfile(agentId: string): MasterAgentProfile | undefined;
-    getAllAgents(): MasterAgentProfile[];
+    getAllAgentProfiles(): MasterAgentProfile[];
     getSystemMetrics(): SystemWideMetrics;
     getMerkleTreeRoot(): string | undefined;
     getSpreadsheetIntegration(): SpreadsheetIntegration;
@@ -281,6 +283,10 @@ export declare class MasterAgentRegistry extends EventEmitter {
      * Update agent capabilities
      */
     updateAgentCapabilities(agentId: string, capabilities: Partial<MasterAgentProfile['capabilities']>): Promise<boolean>;
+    /**
+     * Update agent metrics
+     */
+    updateAgentMetrics(agentId: string, metrics: Partial<MasterAgentProfile['metrics']>): Promise<boolean>;
     recordAgentHeartbeat(agentId: string): Promise<boolean>;
     /**
      * Add task to agent - missing method for tests

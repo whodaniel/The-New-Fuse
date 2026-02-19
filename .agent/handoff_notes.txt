@@ -377,3 +377,123 @@ Next Session Priorities:
 1. Configure `TNF_SUPER_ADMIN_TOKEN` in cloud runtime + CI secrets.
 2. Drive all orchestration and scheduled automation through `tnf ...` entrypoints.
 3. Ensure cloud schedulers emit `SUPER_CYCLE_HEARTBEAT` on every run for centralized visibility.
+
+Session: February 19, 2026 - Unified Ledger Primary Graph + Timeline/Goal/Plan UI Pass
+
+## Completed
+- Added primary record graph endpoint in unified ledger:
+  - `GET /api/unified-ledger/records/:id/connections`
+  - implemented in both `apps/api` and `packages/api` unified-ledger modules.
+- Creation flow now lands directly in linkage context:
+  - New task -> `/tasks/:id`
+  - New suggestion -> `/suggestions/:id`
+- Detail pages upgraded with core connected model:
+  - `apps/frontend/src/pages/Tasks/Detail.tsx`
+  - `apps/frontend/src/pages/Suggestions/Detail.tsx`
+  - now include:
+    - connected goals/plans
+    - timeline event feed
+    - create/link goal and plan actions
+- Notes/comments now persist as feedback iterations via:
+  - `POST /api/unified-ledger/records/:id/feedback`
+  - wired through `addFeedbackIteration` in `apps/frontend/src/services/unifiedLedgerApi.ts`.
+- Added overview routes and pages:
+  - `/goals` -> `apps/frontend/src/pages/Goals/index.tsx`
+  - `/plans` -> `apps/frontend/src/pages/Plans/index.tsx`
+  - routes in `apps/frontend/src/ComprehensiveRouter.tsx`.
+- Added feature-suggestions timeline adapter bridge:
+  - `packages/feature-suggestions/src/services/unifiedLedgerTimeline.service.ts`
+  - export added in `packages/feature-suggestions/src/index.ts`.
+
+## Validation
+- `pnpm --filter @the-new-fuse/feature-suggestions build` ✅
+- `pnpm --filter @the-new-fuse/relay-core build` ✅
+- `@the-new-fuse/api` still blocked by pre-existing auth typing errors in:
+  - `packages/api/src/controllers/auth.controller.ts:178`
+  - `packages/api/src/controllers/auth.controller.ts:327`
+
+## Next recommended pass
+1. Embed visual timeline component (`TimelineView` / `EnhancedTimelineView`) into task/suggestion detail pages, using `UnifiedLedgerTimelineService`.
+2. Add goal detail and plan detail routes with milestone editing and connection graph nodes.
+3. Add orchestration status board that correlates relay `TASK_ASSIGN` with ledger timeline records.
+
+Session: February 19, 2026 - Primary Historical Timeline Persistence + Planning Linkage Pass
+
+## Completed
+- Added first-class historical timeline write endpoint in both API runtimes:
+  - `POST /api/timeline/events`
+  - Files:
+    - `packages/api/src/modules/unified-ledger/unified-ledger.controller.ts`
+    - `packages/api/src/modules/unified-ledger/unified-ledger.service.ts`
+    - `packages/api/src/modules/unified-ledger/unified-ledger.types.ts`
+    - `apps/api/src/modules/unified-ledger/unified-ledger.controller.ts`
+    - `apps/api/src/modules/unified-ledger/unified-ledger.service.ts`
+    - `apps/api/src/modules/unified-ledger/unified-ledger.types.ts`
+- Added timeline event type support for explicit historical entries:
+  - `historical_event`
+- Frontend API client now supports timeline event creation:
+  - `apps/frontend/src/services/unifiedLedgerApi.ts` (`createTimelineEvent`)
+- Connected goals/plans pages to chronology persistence and display:
+  - `apps/frontend/src/pages/Goals/index.tsx`
+  - `apps/frontend/src/pages/Plans/index.tsx`
+  - Both pages now:
+    - create historical events with optional explicit timestamp
+    - link event to selected goal/plan
+    - display recent events per entity
+- Upgraded shared hooks package from placeholders to live unified API flows:
+  - `packages/hooks/src/hooks/useFeatureSuggestions.ts`
+  - `packages/hooks/src/hooks/useTimeline.ts`
+- Upgraded timeline adapters/services to emit persisted chronology events:
+  - `packages/feature-suggestions/src/services/unifiedLedgerTimeline.service.ts`
+  - `apps/frontend/src/features/timeline/services/timeline.service.tsx`
+- Updated unification doc:
+  - `docs/UNIFIED_LEDGER_TIMELINE_GOALS_PLAN.md`
+
+## Validation
+- `pnpm --filter @the-new-fuse/hooks build` ✅
+- `pnpm --filter @the-new-fuse/feature-suggestions build` ✅
+- `pnpm --filter @the-new-fuse/api build` ✅
+- `pnpm --filter ./apps/frontend build` ✅
+
+## Next Suggested Pass
+1. Add timeline detail route with filters across `recordId`, `goalId`, `planId`, and date range.
+2. Add milestone CRUD UI that writes both milestone changes and aligned `historical_event` entries.
+3. Add server-side dedupe/validation guard for `POST /timeline/events` to prevent accidental duplicate ingestion from relays/adapters.
+
+Session: February 19, 2026 - Timeline Filters/Edit + Goal/Plan Detail Routes + Dedupe Guards
+
+## Completed
+- Implemented primary timeline operations endpoint expansion in both API runtimes:
+  - `GET /api/timeline/events` now supports `eventType`, `actor`, `dateFrom`, `dateTo` filters.
+  - `GET /api/timeline/events/:id`
+  - `PATCH /api/timeline/events/:id`
+- Added server-side timeline validation + dedupe guard in both runtimes:
+  - requires at least one reference (`recordId` | `goalId` | `planId`)
+  - validates referenced entities exist
+  - validates event type against allowed set
+  - dedupes same scope+type+actor+payload within 60 seconds
+- Added goal/plan retrieval + milestone lifecycle endpoints in both runtimes:
+  - `GET /api/goals/:id`
+  - `PATCH /api/goals/:id/milestones/:milestoneId`
+  - `DELETE /api/goals/:id/milestones/:milestoneId`
+  - `GET /api/plans/:id`
+- Extended frontend API client:
+  - `apps/frontend/src/services/unifiedLedgerApi.ts`
+  - added: `listRecords`, `getTimelineEvent`, `updateTimelineEvent`, `getGoal`, `updateGoalMilestone`, `deleteGoalMilestone`, `getPlan`.
+- Added new routed pages:
+  - `apps/frontend/src/pages/Timeline/index.tsx` (`/timeline`)
+  - `apps/frontend/src/pages/Goals/Detail.tsx` (`/goals/:id`)
+  - `apps/frontend/src/pages/Plans/Detail.tsx` (`/plans/:id`)
+  - routes added in `apps/frontend/src/ComprehensiveRouter.tsx`
+- Linked overview pages to details:
+  - `apps/frontend/src/pages/Goals/index.tsx`
+  - `apps/frontend/src/pages/Plans/index.tsx`
+
+## Validation
+- `pnpm --filter @the-new-fuse/api build` ✅
+- `pnpm --filter ./apps/frontend build` ✅
+
+## Next Suggested Pass
+1. Add optimistic UI + inline validation errors on `/timeline` event edit/create forms.
+2. Add explicit graph visualization widget (node/edge) for goal/plan detail pages.
+3. Add timeline event soft-delete with audit trail to avoid irreversible edits.

@@ -47,6 +47,7 @@ export declare class TNFRelayServer extends EventEmitter {
     private bridge;
     private authService;
     private stallDetector;
+    private logger;
     private conversationManagers;
     private subscriptionRegistry;
     private activityRedis;

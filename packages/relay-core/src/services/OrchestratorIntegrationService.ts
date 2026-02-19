@@ -1,29 +1,22 @@
 /**
  * Orchestrator Integration Service
- * 
+ *
  * Integrates all orchestration components:
  * - Handoff template system
- * - Heartbeat monitoring 
+ * - Heartbeat monitoring
  * - Cleanup service
  * - Agent swarm coordination
  * - State preservation with Redis, NestJS, RAG, and Graph systems
  */
 
 import { EventEmitter } from 'events';
-import { Logger } from '../utils/Logger.js';
-import { CleanupService } from './CleanupService.js';
-import { HeartbeatMonitoringService } from './HeartbeatMonitoringService.js';
-// import { AgentHandoffTemplateService } from '../../../src/services/AgentHandoffTemplateService.js';
+import { Logger } from '../utils/Logger';
+import { CleanupService } from './CleanupService';
+import { HeartbeatMonitoringService } from './HeartbeatMonitoringService';
+import { StallDetector } from './stall-detector';
+import { AgentHandoffTemplateService } from './shared/StubServices';
 
-// Stub implementation
-class AgentHandoffTemplateService {
-  generateHandoffTemplate(type: string, data: any): string {
-    return `Handoff template for ${type}`;
-  }
-  createHandoffPrompt(type: string, data: any): Promise<string> {
-    return Promise.resolve(`Handoff prompt for ${type}`);
-  }
-}
+
 
 export interface OrchestratorConfig {
   workspaceRoot: string;
@@ -41,6 +34,12 @@ export interface OrchestratorConfig {
     maxRetries: number;
     escalationDelay: number;
     stagnationThresholdMs: number;
+  };
+  stall: {
+    stallThresholdMs: number;
+    checkIntervalMs: number;
+    maxRecoveryAttempts: number;
+    autoRecover: boolean;
   };
   cleanup: {
     backupDirectory: string;
@@ -76,6 +75,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
   private config: OrchestratorConfig;
   private cleanupService: CleanupService;
   private heartbeatService: HeartbeatMonitoringService;
+  private stallDetector: StallDetector;
   private handoffService: AgentHandoffTemplateService;
   private taskStates: Map<string, TaskState> = new Map();
   private isInitialized: boolean = false;
@@ -88,6 +88,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
     // Initialize core services
     this.cleanupService = new CleanupService(config.workspaceRoot, logger);
     this.heartbeatService = new HeartbeatMonitoringService(config.heartbeat, logger);
+    this.stallDetector = new StallDetector(logger, config.stall);
     this.handoffService = new AgentHandoffTemplateService();
 
     this.setupEventHandlers();
@@ -111,6 +112,10 @@ export class OrchestratorIntegrationService extends EventEmitter {
         this.heartbeatService.start();
         this.logger.info('Heartbeat monitoring service started');
       }
+
+      // Start stall detection
+      this.stallDetector.start();
+      this.logger.info('Stall detection service started');
 
       // Initialize state preservation systems
       if (this.config.enableStatePreservation) {
@@ -140,6 +145,9 @@ export class OrchestratorIntegrationService extends EventEmitter {
     if (this.config.enableHeartbeatMonitoring) {
       this.heartbeatService.stop();
     }
+
+    // Stop stall detection
+    this.stallDetector.stop();
 
     // Final cleanup if needed
     if (this.config.enableCleanup) {
@@ -176,6 +184,19 @@ export class OrchestratorIntegrationService extends EventEmitter {
       this.handleTaskReassignment(data);
     });
 
+    // Stall detector events
+    this.stallDetector.on('conversation:stalled', (event) => {
+      this.handleConversationStalled(event);
+    });
+
+    this.stallDetector.on('conversation:recovered', (data) => {
+      this.logger.info(`Conversation ${data.conversationId} recovered from stall`);
+    });
+
+    this.stallDetector.on('recovery:message', (data) => {
+      this.emit('broadcast_recovery_message', data);
+    });
+
     // Task state management events
     this.on('task_started', (taskData) => {
       this.recordTaskStart(taskData);
@@ -196,13 +217,13 @@ export class OrchestratorIntegrationService extends EventEmitter {
   private async initializeStatePreservation(): Promise<void> {
     // Redis state preservation
     await this.initializeRedisStatePreservation();
-    
+
     // Todo/Task management integration
     await this.initializeTodoManagement();
-    
+
     // RAG system integration for context preservation
     await this.initializeRAGIntegration();
-    
+
     // Graph database integration for relationship mapping
     await this.initializeGraphIntegration();
   }
@@ -212,7 +233,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
    */
   private async initializeRedisStatePreservation(): Promise<void> {
     this.logger.info('Initializing Redis state preservation');
-    
+
     // Redis integration would connect to existing RedisTransport
     this.emit('redis_state_preservation_ready', {
       host: this.config.redis.host,
@@ -226,7 +247,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
    */
   private async initializeTodoManagement(): Promise<void> {
     this.logger.info('Initializing todo/task management integration');
-    
+
     // Integration with existing todo systems
     this.emit('todo_management_ready', {
       features: ['task_tracking', 'progress_monitoring', 'state_persistence']
@@ -238,7 +259,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
    */
   private async initializeRAGIntegration(): Promise<void> {
     this.logger.info('Initializing RAG integration for context preservation');
-    
+
     // RAG system for maintaining conversational context across handoffs
     this.emit('rag_integration_ready', {
       features: ['context_embedding', 'semantic_search', 'handoff_context_retrieval']
@@ -250,7 +271,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
    */
   private async initializeGraphIntegration(): Promise<void> {
     this.logger.info('Initializing Graph database integration');
-    
+
     // Graph database for agent relationship mapping and workflow dependencies
     this.emit('graph_integration_ready', {
       features: ['agent_relationships', 'task_dependencies', 'workflow_graphs']
@@ -258,11 +279,43 @@ export class OrchestratorIntegrationService extends EventEmitter {
   }
 
   /**
+   * Handle conversation stall detection
+   */
+  private async handleConversationStalled(event: any): Promise<void> {
+    this.logger.warn(`Conversation stalled: ${event.conversationId} in channel ${event.channelId}`);
+
+    // Log to task history if applicable
+    const taskState = this.taskStates.get(event.conversationId);
+    if (taskState) {
+      taskState.status = 'stalled';
+      taskState.stagnationCount++;
+    }
+
+    this.emit('conversation_stall_handled', event);
+  }
+
+  /**
+   * Record conversation activity
+   */
+  public recordConversationActivity(channelId: string, agentId?: string, hasContent: boolean = true): void {
+    if (this.isInitialized) {
+      this.stallDetector.recordActivity(channelId, agentId, hasContent);
+    }
+  }
+
+  /**
+   * Get stall statistics
+   */
+  public getStallStats() {
+    return this.stallDetector.getStats();
+  }
+
+  /**
    * Handle stagnation detection
    */
   private async handleStagnationDetected(alert: any): Promise<void> {
     this.logger.warn(`Stagnation detected for agent ${alert.agentId}: ${alert.stagnationType}`);
-    
+
     // Update task state
     const taskState = this.taskStates.get(alert.taskId);
     if (taskState) {
@@ -273,7 +326,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
 
     // Create anti-stagnation handoff prompt
     const handoffPrompt = await this.createAntiStagnationHandoff(alert);
-    
+
     this.emit('anti_stagnation_handoff_created', {
       agentId: alert.agentId,
       taskId: alert.taskId,
@@ -287,7 +340,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
    */
   private async handleAgentPingRequired(data: any): Promise<void> {
     this.logger.info(`Ping required for agent ${data.agentId}`);
-    
+
     // Generate wake-up prompt using handoff template system
     const wakeUpPrompt = await this.handoffService.createHandoffPrompt(
       'agent-wake-up',
@@ -310,7 +363,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
    */
   private async handleEscalationRequired(data: any): Promise<void> {
     this.logger.warn(`Escalation required for agent ${data.originalAgent}`);
-    
+
     // Create escalation handoff with full context preservation
     const escalationHandoff = await this.handoffService.createHandoffPrompt(
       'master-orchestrator-handoff',
@@ -336,7 +389,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
    */
   private async handleHumanInterventionRequired(data: any): Promise<void> {
     this.logger.error(`Human intervention required for agent ${data.agentId}`);
-    
+
     // Create human notification with comprehensive context
     const humanNotification = {
       agentId: data.agentId,
@@ -356,7 +409,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
    */
   private async handleTaskReassignment(data: any): Promise<void> {
     this.logger.info(`Task reassignment required for ${data.originalAgent}`);
-    
+
     // Preserve task context and create reassignment handoff
     const taskContext = await this.getTaskContext(data.taskId);
     const reassignmentHandoff = await this.handoffService.createHandoffPrompt(
@@ -472,7 +525,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
     if (taskState) {
       taskState.lastUpdate = new Date();
       taskState.context = { ...taskState.context, ...taskData.progress };
-      
+
       // Record activity in heartbeat service
       this.heartbeatService.recordActivity(
         taskState.agentId,
@@ -490,7 +543,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
     if (taskState) {
       taskState.status = 'completed';
       taskState.lastUpdate = new Date();
-      
+
       // Record final activity
       this.heartbeatService.recordActivity(
         taskState.agentId,
@@ -544,7 +597,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
    */
   private async performFinalCleanup(): Promise<void> {
     this.logger.info('Performing final orchestrator cleanup');
-    
+
     const cleanupResult = await this.cleanupService.executeCleanup({
       dryRun: this.config.cleanup.dryRun,
       createBackups: this.config.cleanup.createBackups,
@@ -562,8 +615,8 @@ export class OrchestratorIntegrationService extends EventEmitter {
     const tasks = Array.from(this.taskStates.values());
     const completedTasks = tasks.filter(t => t.status === 'completed');
     const stalledTasks = tasks.filter(t => t.status === 'stalled');
-    
-    const avgDuration = completedTasks.length > 0 
+
+    const avgDuration = completedTasks.length > 0
       ? completedTasks.reduce((sum, t) => sum + (Date.now() - t.startTime.getTime()), 0) / completedTasks.length
       : 0;
 

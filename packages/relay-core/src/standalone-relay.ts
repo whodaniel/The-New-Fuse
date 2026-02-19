@@ -30,6 +30,7 @@ import {
 import { SubscriptionRegistry } from './orchestrator/subscription-registry';
 import { createRedisRelayBridge } from './redis-relay-bridge';
 import { createStallDetector } from './services/stall-detector';
+import { Logger } from './utils/Logger';
 
 import type { JWTAuthService } from './auth/JWTAuthService';
 import type { OrchestrationTask } from './protocol/task-protocol';
@@ -113,6 +114,7 @@ export class TNFRelayServer extends EventEmitter {
   private bridge: RedisRelayBridge | null = null;
   private authService: JWTAuthService;
   private stallDetector: StallDetector;
+  private logger: Logger;
   private conversationManagers: Map<string, ConversationStateMachine> = new Map();
   private subscriptionRegistry: SubscriptionRegistry;
   private activityRedis: RedisClientType | null = null;
@@ -135,6 +137,9 @@ export class TNFRelayServer extends EventEmitter {
       process.env.ACTIVITY_CHANNEL_STREAM_PREFIX || 'tnf:activity:channel:';
     this.activityMaxLen = parseInt(process.env.ACTIVITY_STREAM_MAXLEN || '100000', 10);
 
+    // Create logger
+    this.logger = new Logger((process.env.LOG_LEVEL as any) || 'info', process.env.WORKSPACE_DIR || process.cwd());
+
     // Create HTTP server
     this.server = http.createServer(this.handleHttpRequest.bind(this));
 
@@ -148,7 +153,7 @@ export class TNFRelayServer extends EventEmitter {
     this.createDefaultChannel();
 
     // Initialize stall detector for conversation recovery
-    this.stallDetector = createStallDetector({
+    this.stallDetector = createStallDetector(this.logger, {
       stallThresholdMs: 3600000, // 60 minutes (increased from 45s)
       checkIntervalMs: 5000, // Check every 5 seconds
       maxRecoveryAttempts: 3,

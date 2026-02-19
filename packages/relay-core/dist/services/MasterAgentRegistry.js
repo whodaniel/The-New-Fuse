@@ -156,6 +156,8 @@ class MasterAgentRegistry extends events_1.EventEmitter {
                     collaboration: 100,
                     stagnationCount: 0,
                     escalationCount: 0,
+                    leverageRank: 100, // New agents start with high leverage potential
+                    totalSavingsCents: 0,
                     ...profile.metrics,
                 },
                 todoList: [],
@@ -762,7 +764,7 @@ class MasterAgentRegistry extends events_1.EventEmitter {
             status: dbAgent.status,
             description: dbAgent.description,
             systemPrompt: dbAgent.systemPrompt,
-            configuration: dbAgent.configuration,
+            configuration: dbAgent.config,
             userId: dbAgent.userId,
             platform: config.platform || 'unknown',
             location: config.location || 'unknown',
@@ -996,7 +998,7 @@ class MasterAgentRegistry extends events_1.EventEmitter {
     getAgentProfile(agentId) {
         return this.agentProfiles.get(agentId);
     }
-    getAllAgents() {
+    getAllAgentProfiles() {
         return Array.from(this.agentProfiles.values());
     }
     getSystemMetrics() {
@@ -1047,7 +1049,7 @@ class MasterAgentRegistry extends events_1.EventEmitter {
             await this.prisma.agent.update({
                 where: { id: agentId },
                 data: {
-                    configuration: {
+                    config: {
                         ...agent.configuration,
                         capabilities: agent.capabilities,
                     },
@@ -1061,6 +1063,45 @@ class MasterAgentRegistry extends events_1.EventEmitter {
         }
         catch (error) {
             this.logger.error(`Failed to update agent capabilities in database: ${error}`);
+            return false;
+        }
+    }
+    /**
+     * Update agent metrics
+     */
+    async updateAgentMetrics(agentId, metrics) {
+        const agent = this.agentProfiles.get(agentId);
+        if (!agent) {
+            this.logger.warn(`Agent not found in Master Registry: ${agentId}`);
+            return false;
+        }
+        // Update metrics in memory
+        agent.metrics = { ...agent.metrics, ...metrics };
+        agent.lastSeen = new Date();
+        // Update in database
+        try {
+            await this.prisma.agent.update({
+                where: { id: agentId },
+                data: {
+                    metadata: {
+                        update: {
+                            config: {
+                                // We need to be careful with nested jsonb updates in Prisma
+                                // Usually we'd fetch and merge if using raw prisma,
+                                // but for this implementation we assume the metadata/config structure is handled
+                                metrics: agent.metrics
+                            }
+                        }
+                    },
+                    updatedAt: new Date(),
+                },
+            });
+            this.logger.debug(`Agent metrics updated: ${agentId}`);
+            this.emit('agentMetricsUpdated', { agentId, metrics: agent.metrics });
+            return true;
+        }
+        catch (error) {
+            this.logger.error(`Failed to update agent metrics in database: ${error}`);
             return false;
         }
     }

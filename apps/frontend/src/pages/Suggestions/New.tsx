@@ -27,7 +27,7 @@ const NewSuggestion: React.FC = () => {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await createSuggestion({
+      const created = await createSuggestion({
         title,
         description,
         owner: 'ui-user',
@@ -36,7 +36,7 @@ const NewSuggestion: React.FC = () => {
         priority: 'medium',
       });
       toast.success('Suggestion submitted');
-      navigate('/suggestions');
+      navigate(`/suggestions/${created.id}`);
     } catch {
       toast.error('Failed to submit suggestion');
     }

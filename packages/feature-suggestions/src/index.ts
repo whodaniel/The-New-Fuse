@@ -33,3 +33,4 @@ export type {
 
 // Export service types
 export * from './services/types';
+export { UnifiedLedgerTimelineService } from './services/unifiedLedgerTimeline.service';

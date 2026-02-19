@@ -9,7 +9,7 @@
  * - State preservation with Redis, NestJS, RAG, and Graph systems
  */
 import { EventEmitter } from 'events';
-import { Logger } from '../utils/Logger.js';
+import { Logger } from '../utils/Logger';
 export interface OrchestratorConfig {
     workspaceRoot: string;
     enableHeartbeatMonitoring: boolean;
@@ -26,6 +26,12 @@ export interface OrchestratorConfig {
         maxRetries: number;
         escalationDelay: number;
         stagnationThresholdMs: number;
+    };
+    stall: {
+        stallThresholdMs: number;
+        checkIntervalMs: number;
+        maxRecoveryAttempts: number;
+        autoRecover: boolean;
     };
     cleanup: {
         backupDirectory: string;
@@ -58,6 +64,7 @@ export declare class OrchestratorIntegrationService extends EventEmitter {
     private config;
     private cleanupService;
     private heartbeatService;
+    private stallDetector;
     private handoffService;
     private taskStates;
     private isInitialized;
@@ -94,6 +101,25 @@ export declare class OrchestratorIntegrationService extends EventEmitter {
      * Initialize Graph database integration
      */
     private initializeGraphIntegration;
+    /**
+     * Handle conversation stall detection
+     */
+    private handleConversationStalled;
+    /**
+     * Record conversation activity
+     */
+    recordConversationActivity(channelId: string, agentId?: string, hasContent?: boolean): void;
+    /**
+     * Get stall statistics
+     */
+    getStallStats(): {
+        total: number;
+        active: number;
+        stalled: number;
+        completed: number;
+        terminated: number;
+        totalRecoveryAttempts: number;
+    };
     /**
      * Handle stagnation detection
      */

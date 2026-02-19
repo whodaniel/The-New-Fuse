@@ -121,7 +121,7 @@ const NewTask: React.FC = () => {
         progressPercent: formData.status === 'completed' ? 100 : 0,
       },
     })
-      .then(() => navigate('/tasks'))
+      .then((created) => navigate(`/tasks/${created.id}`))
       .catch((error) => console.error('Failed to create task:', error));
   };
 

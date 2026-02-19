@@ -76,6 +76,12 @@ export class RelayServer extends EventEmitter {
           escalationDelay: 300000, // 5 minutes
           stagnationThresholdMs: 900000, // 15 minutes
         },
+        stall: {
+          stallThresholdMs: 30000, // 30 seconds
+          checkIntervalMs: 5000, // 5 seconds
+          maxRecoveryAttempts: 3,
+          autoRecover: true,
+        },
         cleanup: {
           backupDirectory: `${config.workspaceDir}/backups`,
           dryRun: false,

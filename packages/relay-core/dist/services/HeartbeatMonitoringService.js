@@ -8,16 +8,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HeartbeatMonitoringService = void 0;
 const events_1 = require("events");
-// import { AgentHandoffTemplateService } from '../../../src/services/AgentHandoffTemplateService.js';
-// Stub implementation
-class AgentHandoffTemplateService {
-    generateHandoffTemplate(type, data) {
-        return `Handoff template for ${type}`;
-    }
-    createHandoffPrompt(type, data) {
-        return Promise.resolve(`Handoff prompt for ${type}`);
-    }
-}
+const StubServices_1 = require("./shared/StubServices");
 class HeartbeatMonitoringService extends events_1.EventEmitter {
     logger;
     config;
@@ -31,7 +22,7 @@ class HeartbeatMonitoringService extends events_1.EventEmitter {
         super();
         this.config = config;
         this.logger = logger;
-        this.handoffTemplateService = new AgentHandoffTemplateService();
+        this.handoffTemplateService = new StubServices_1.AgentHandoffTemplateService();
     }
     /**
      * Start heartbeat monitoring

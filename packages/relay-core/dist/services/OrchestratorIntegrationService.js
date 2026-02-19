@@ -12,23 +12,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrchestratorIntegrationService = void 0;
 const events_1 = require("events");
-const CleanupService_js_1 = require("./CleanupService.js");
-const HeartbeatMonitoringService_js_1 = require("./HeartbeatMonitoringService.js");
-// import { AgentHandoffTemplateService } from '../../../src/services/AgentHandoffTemplateService.js';
-// Stub implementation
-class AgentHandoffTemplateService {
-    generateHandoffTemplate(type, data) {
-        return `Handoff template for ${type}`;
-    }
-    createHandoffPrompt(type, data) {
-        return Promise.resolve(`Handoff prompt for ${type}`);
-    }
-}
+const CleanupService_1 = require("./CleanupService");
+const HeartbeatMonitoringService_1 = require("./HeartbeatMonitoringService");
+const stall_detector_1 = require("./stall-detector");
+const StubServices_1 = require("./shared/StubServices");
 class OrchestratorIntegrationService extends events_1.EventEmitter {
     logger;
     config;
     cleanupService;
     heartbeatService;
+    stallDetector;
     handoffService;
     taskStates = new Map();
     isInitialized = false;
@@ -37,9 +30,10 @@ class OrchestratorIntegrationService extends events_1.EventEmitter {
         this.config = config;
         this.logger = logger;
         // Initialize core services
-        this.cleanupService = new CleanupService_js_1.CleanupService(config.workspaceRoot, logger);
-        this.heartbeatService = new HeartbeatMonitoringService_js_1.HeartbeatMonitoringService(config.heartbeat, logger);
-        this.handoffService = new AgentHandoffTemplateService();
+        this.cleanupService = new CleanupService_1.CleanupService(config.workspaceRoot, logger);
+        this.heartbeatService = new HeartbeatMonitoringService_1.HeartbeatMonitoringService(config.heartbeat, logger);
+        this.stallDetector = new stall_detector_1.StallDetector(logger, config.stall);
+        this.handoffService = new StubServices_1.AgentHandoffTemplateService();
         this.setupEventHandlers();
     }
     /**
@@ -58,6 +52,9 @@ class OrchestratorIntegrationService extends events_1.EventEmitter {
                 this.heartbeatService.start();
                 this.logger.info('Heartbeat monitoring service started');
             }
+            // Start stall detection
+            this.stallDetector.start();
+            this.logger.info('Stall detection service started');
             // Initialize state preservation systems
             if (this.config.enableStatePreservation) {
                 await this.initializeStatePreservation();
@@ -83,6 +80,8 @@ class OrchestratorIntegrationService extends events_1.EventEmitter {
         if (this.config.enableHeartbeatMonitoring) {
             this.heartbeatService.stop();
         }
+        // Stop stall detection
+        this.stallDetector.stop();
         // Final cleanup if needed
         if (this.config.enableCleanup) {
             await this.performFinalCleanup();
@@ -110,6 +109,16 @@ class OrchestratorIntegrationService extends events_1.EventEmitter {
         });
         this.heartbeatService.on('task_reassignment_required', (data) => {
             this.handleTaskReassignment(data);
+        });
+        // Stall detector events
+        this.stallDetector.on('conversation:stalled', (event) => {
+            this.handleConversationStalled(event);
+        });
+        this.stallDetector.on('conversation:recovered', (data) => {
+            this.logger.info(`Conversation ${data.conversationId} recovered from stall`);
+        });
+        this.stallDetector.on('recovery:message', (data) => {
+            this.emit('broadcast_recovery_message', data);
         });
         // Task state management events
         this.on('task_started', (taskData) => {
@@ -176,6 +185,33 @@ class OrchestratorIntegrationService extends events_1.EventEmitter {
         this.emit('graph_integration_ready', {
             features: ['agent_relationships', 'task_dependencies', 'workflow_graphs']
         });
+    }
+    /**
+     * Handle conversation stall detection
+     */
+    async handleConversationStalled(event) {
+        this.logger.warn(`Conversation stalled: ${event.conversationId} in channel ${event.channelId}`);
+        // Log to task history if applicable
+        const taskState = this.taskStates.get(event.conversationId);
+        if (taskState) {
+            taskState.status = 'stalled';
+            taskState.stagnationCount++;
+        }
+        this.emit('conversation_stall_handled', event);
+    }
+    /**
+     * Record conversation activity
+     */
+    recordConversationActivity(channelId, agentId, hasContent = true) {
+        if (this.isInitialized) {
+            this.stallDetector.recordActivity(channelId, agentId, hasContent);
+        }
+    }
+    /**
+     * Get stall statistics
+     */
+    getStallStats() {
+        return this.stallDetector.getStats();
     }
     /**
      * Handle stagnation detection

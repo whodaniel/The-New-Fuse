@@ -5,7 +5,7 @@
  * Provides fallback mechanisms for stalled communications and automatic recovery
  */
 import { EventEmitter } from 'events';
-import { Logger } from '../utils/Logger.js';
+import { Logger } from '../utils/Logger';
 export interface HeartbeatConfig {
     intervalMs: number;
     timeoutMs: number;

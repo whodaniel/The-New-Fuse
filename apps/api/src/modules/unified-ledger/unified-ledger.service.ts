@@ -279,13 +279,91 @@ export class UnifiedLedgerService implements OnModuleInit {
     recordId?: string;
     goalId?: string;
     planId?: string;
+    eventType?: string;
+    actor?: string;
+    dateFrom?: string;
+    dateTo?: string;
   }): Promise<TimelineEvent[]> {
     await this.ensureLoaded();
+    const from = params?.dateFrom ? this.normalizeTimestamp(params.dateFrom) : undefined;
+    const to = params?.dateTo ? this.normalizeTimestamp(params.dateTo) : undefined;
     return this.store.timelineEvents
       .filter((e) => (params?.recordId ? e.recordId === params.recordId : true))
       .filter((e) => (params?.goalId ? e.goalId === params.goalId : true))
       .filter((e) => (params?.planId ? e.planId === params.planId : true))
+      .filter((e) => (params?.eventType ? e.eventType === params.eventType : true))
+      .filter((e) => (params?.actor ? e.actor === params.actor : true))
+      .filter((e) => (from ? e.timestamp >= from : true))
+      .filter((e) => (to ? e.timestamp <= to : true))
       .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+  }
+
+  async getTimelineEvent(id: string): Promise<TimelineEvent | null> {
+    await this.ensureLoaded();
+    return this.store.timelineEvents.find((e) => e.id === id) || null;
+  }
+
+  async createTimelineEvent(input: {
+    recordId?: string;
+    goalId?: string;
+    planId?: string;
+    eventType?: TimelineEvent['eventType'];
+    actor?: string;
+    timestamp?: string;
+    payload?: Record<string, unknown>;
+  }): Promise<TimelineEvent> {
+    await this.ensureLoaded();
+    this.validateTimelineRefs(input);
+    const timestamp = input.timestamp ? this.normalizeTimestamp(input.timestamp) : new Date().toISOString();
+    const eventType = this.validateEventType(input.eventType);
+    const deduped = this.findDuplicateTimelineEvent({
+      recordId: input.recordId,
+      goalId: input.goalId,
+      planId: input.planId,
+      eventType,
+      actor: input.actor || 'system',
+      timestamp,
+      payload: input.payload || {},
+    });
+    if (deduped) {
+      return deduped;
+    }
+    const event: TimelineEvent = {
+      id: `evt_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`,
+      recordId: input.recordId,
+      goalId: input.goalId,
+      planId: input.planId,
+      eventType,
+      actor: input.actor || 'system',
+      timestamp,
+      payload: input.payload || {},
+    };
+    this.store.timelineEvents.push(event);
+    await this.persist();
+    return event;
+  }
+
+  async updateTimelineEvent(
+    id: string,
+    patch: {
+      actor?: string;
+      timestamp?: string;
+      payload?: Record<string, unknown>;
+    }
+  ): Promise<TimelineEvent | null> {
+    await this.ensureLoaded();
+    const idx = this.store.timelineEvents.findIndex((e) => e.id === id);
+    if (idx < 0) return null;
+    const current = this.store.timelineEvents[idx];
+    const updated: TimelineEvent = {
+      ...current,
+      actor: patch.actor || current.actor,
+      timestamp: patch.timestamp ? this.normalizeTimestamp(patch.timestamp) : current.timestamp,
+      payload: patch.payload ? { ...current.payload, ...patch.payload } : current.payload,
+    };
+    this.store.timelineEvents[idx] = updated;
+    await this.persist();
+    return updated;
   }
 
   async createGoal(input: {
@@ -321,6 +399,11 @@ export class UnifiedLedgerService implements OnModuleInit {
   async listGoals(): Promise<GoalRecord[]> {
     await this.ensureLoaded();
     return [...this.store.goals].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+  }
+
+  async getGoal(goalId: string): Promise<GoalRecord | null> {
+    await this.ensureLoaded();
+    return this.store.goals.find((g) => g.id === goalId) || null;
   }
 
   async linkGoalToRecord(
@@ -386,6 +469,69 @@ export class UnifiedLedgerService implements OnModuleInit {
     return updated;
   }
 
+  async updateGoalMilestone(
+    goalId: string,
+    milestoneId: string,
+    patch: {
+      title?: string;
+      dueAt?: string;
+      status?: 'pending' | 'in_progress' | 'completed' | 'blocked';
+    }
+  ): Promise<GoalRecord | null> {
+    await this.ensureLoaded();
+    const idx = this.store.goals.findIndex((g) => g.id === goalId);
+    if (idx < 0) return null;
+    const current = this.store.goals[idx];
+    const milestones = current.milestones.map((m) =>
+      m.id === milestoneId
+        ? {
+            ...m,
+            title: patch.title || m.title,
+            dueAt: patch.dueAt ?? m.dueAt,
+            status: patch.status || m.status,
+          }
+        : m
+    );
+    if (!milestones.some((m) => m.id === milestoneId)) return null;
+    const updated: GoalRecord = {
+      ...current,
+      milestones,
+      updatedAt: new Date().toISOString(),
+    };
+    this.store.goals[idx] = updated;
+    this.pushEvent({
+      goalId,
+      eventType: 'milestone_updated',
+      actor: 'system',
+      payload: { milestoneId, patch },
+    });
+    await this.persist();
+    return updated;
+  }
+
+  async removeGoalMilestone(goalId: string, milestoneId: string): Promise<GoalRecord | null> {
+    await this.ensureLoaded();
+    const idx = this.store.goals.findIndex((g) => g.id === goalId);
+    if (idx < 0) return null;
+    const current = this.store.goals[idx];
+    const milestones = current.milestones.filter((m) => m.id !== milestoneId);
+    if (milestones.length === current.milestones.length) return null;
+    const updated: GoalRecord = {
+      ...current,
+      milestones,
+      updatedAt: new Date().toISOString(),
+    };
+    this.store.goals[idx] = updated;
+    this.pushEvent({
+      goalId,
+      eventType: 'milestone_updated',
+      actor: 'system',
+      payload: { milestoneId, removed: true },
+    });
+    await this.persist();
+    return updated;
+  }
+
   async createPlan(input: {
     name: string;
     objective: string;
@@ -426,6 +572,21 @@ export class UnifiedLedgerService implements OnModuleInit {
   async listPlans(): Promise<ProjectPlanRecord[]> {
     await this.ensureLoaded();
     return [...this.store.plans].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+  }
+
+  async getPlan(planId: string): Promise<ProjectPlanRecord | null> {
+    await this.ensureLoaded();
+    return this.store.plans.find((p) => p.id === planId) || null;
+  }
+
+  async getRecordConnections(recordId: string): Promise<{
+    goals: GoalRecord[];
+    plans: ProjectPlanRecord[];
+  }> {
+    await this.ensureLoaded();
+    const goals = this.store.goals.filter((g) => g.linkedRecordIds.includes(recordId));
+    const plans = this.store.plans.filter((p) => p.linkedRecordIds.includes(recordId));
+    return { goals, plans };
   }
 
   async linkPlan(
@@ -522,5 +683,81 @@ export class UnifiedLedgerService implements OnModuleInit {
     if (v === 'high') return 'high';
     if (v === 'low') return 'low';
     return 'medium';
+  }
+
+  private normalizeTimestamp(value: string): string {
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) {
+      throw new Error(`Invalid timestamp: ${value}`);
+    }
+    return parsed.toISOString();
+  }
+
+  private validateEventType(value?: string): TimelineEvent['eventType'] {
+    const allowed: TimelineEvent['eventType'][] = [
+      'record_created',
+      'record_updated',
+      'record_voted',
+      'feedback_iteration_added',
+      'functional_link_added',
+      'goal_created',
+      'goal_linked',
+      'plan_created',
+      'plan_linked',
+      'milestone_updated',
+      'historical_event',
+    ];
+    if (!value) return 'historical_event';
+    if (!allowed.includes(value as TimelineEvent['eventType'])) {
+      throw new Error(`Invalid eventType: ${value}`);
+    }
+    return value as TimelineEvent['eventType'];
+  }
+
+  private validateTimelineRefs(input: {
+    recordId?: string;
+    goalId?: string;
+    planId?: string;
+    payload?: Record<string, unknown>;
+  }): void {
+    if (!input.recordId && !input.goalId && !input.planId) {
+      throw new Error('Timeline event must reference at least one entity');
+    }
+    if (input.payload && typeof input.payload !== 'object') {
+      throw new Error('Timeline payload must be an object');
+    }
+    if (input.recordId && !this.store.records.some((r) => r.id === input.recordId)) {
+      throw new Error(`Unknown recordId: ${input.recordId}`);
+    }
+    if (input.goalId && !this.store.goals.some((g) => g.id === input.goalId)) {
+      throw new Error(`Unknown goalId: ${input.goalId}`);
+    }
+    if (input.planId && !this.store.plans.some((p) => p.id === input.planId)) {
+      throw new Error(`Unknown planId: ${input.planId}`);
+    }
+  }
+
+  private findDuplicateTimelineEvent(candidate: {
+    recordId?: string;
+    goalId?: string;
+    planId?: string;
+    eventType: TimelineEvent['eventType'];
+    actor: string;
+    timestamp: string;
+    payload: Record<string, unknown>;
+  }): TimelineEvent | null {
+    const candidateTs = new Date(candidate.timestamp).getTime();
+    const payloadKey = JSON.stringify(candidate.payload || {});
+    const existing = this.store.timelineEvents.find((e) => {
+      if (e.recordId !== candidate.recordId) return false;
+      if (e.goalId !== candidate.goalId) return false;
+      if (e.planId !== candidate.planId) return false;
+      if (e.eventType !== candidate.eventType) return false;
+      if (e.actor !== candidate.actor) return false;
+      if (JSON.stringify(e.payload || {}) !== payloadKey) return false;
+      const existingTs = new Date(e.timestamp).getTime();
+      return Math.abs(existingTs - candidateTs) <= 60_000;
+    });
+    return existing || null;
   }
 }

@@ -5,6 +5,7 @@
  * @package @the-new-fuse/relay-core
  */
 import { EventEmitter } from 'events';
+import { Logger } from '../utils/Logger';
 export interface ConversationState {
     conversationId: string;
     channelId: string;
@@ -34,9 +35,10 @@ export interface StallDetectorConfig {
 export declare class StallDetector extends EventEmitter {
     private conversations;
     private config;
+    private logger;
     private checkInterval;
     private recoveryPrompts;
-    constructor(config?: Partial<StallDetectorConfig>);
+    constructor(logger: Logger, config?: Partial<StallDetectorConfig>);
     /**
      * Start monitoring for stalls
      */
@@ -90,5 +92,5 @@ export declare class StallDetector extends EventEmitter {
      */
     cleanup(maxAgeMs?: number): number;
 }
-export declare function createStallDetector(config?: Partial<StallDetectorConfig>): StallDetector;
+export declare function createStallDetector(logger: Logger, config?: Partial<StallDetectorConfig>): StallDetector;
 //# sourceMappingURL=stall-detector.d.ts.map

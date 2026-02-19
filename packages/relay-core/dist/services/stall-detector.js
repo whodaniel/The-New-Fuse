@@ -19,6 +19,7 @@ const DEFAULT_CONFIG = {
 class StallDetector extends events_1.EventEmitter {
     conversations = new Map();
     config;
+    logger;
     checkInterval = null;
     recoveryPrompts = [
         '[SYSTEM] The conversation appears to have stalled. Please continue with your next response.',
@@ -26,20 +27,21 @@ class StallDetector extends events_1.EventEmitter {
         '[SYSTEM] Auto-continuation: What should be the next step in this conversation?',
         '[SYSTEM] This is an automated check. Please respond or indicate completion.',
     ];
-    constructor(config = {}) {
+    constructor(logger, config = {}) {
         super();
         this.config = { ...DEFAULT_CONFIG, ...config };
-        console.log('[StallDetector] Initialized with config:', this.config);
+        this.logger = logger;
+        this.logger.info(`[StallDetector] Initialized with threshold: ${this.config.stallThresholdMs}ms`);
     }
     /**
      * Start monitoring for stalls
      */
     start() {
         if (this.checkInterval) {
-            console.warn('[StallDetector] Already running');
+            this.logger.warn('[StallDetector] Already running');
             return;
         }
-        console.log('[StallDetector] Starting stall monitoring...');
+        this.logger.info('[StallDetector] Starting stall monitoring...');
         this.checkInterval = setInterval(() => this.checkForStalls(), this.config.checkIntervalMs);
     }
     /**
@@ -49,7 +51,7 @@ class StallDetector extends events_1.EventEmitter {
         if (this.checkInterval) {
             clearInterval(this.checkInterval);
             this.checkInterval = null;
-            console.log('[StallDetector] Stopped monitoring');
+            this.logger.info('[StallDetector] Stopped monitoring');
         }
     }
     /**
@@ -69,7 +71,7 @@ class StallDetector extends events_1.EventEmitter {
                 recoveryAttempts: 0,
             };
             this.conversations.set(id, state);
-            console.log(`[StallDetector] Tracking new conversation: ${id}`);
+            this.logger.info(`[StallDetector] Tracking new conversation: ${id}`);
         }
         return id;
     }
@@ -94,7 +96,7 @@ class StallDetector extends events_1.EventEmitter {
                 }
                 // If was stalled, mark as active again
                 if (wasStalled) {
-                    console.log(`[StallDetector] Conversation ${id} recovered!`);
+                    this.logger.info(`[StallDetector] Conversation ${id} recovered!`);
                     state.status = 'active';
                     this.emit('conversation:recovered', { conversationId: id, channelId });
                 }
@@ -150,7 +152,7 @@ class StallDetector extends events_1.EventEmitter {
                 if (state.status === 'active') {
                     // Just became stalled
                     state.status = 'stalled';
-                    console.log(`[StallDetector] Conversation ${id} stalled (idle: ${idleTime}ms, messages: ${state.messageCount})`);
+                    this.logger.warn(`[StallDetector] Conversation ${id} stalled (idle: ${idleTime}ms, messages: ${state.messageCount})`);
                 }
                 // Check if we should attempt recovery
                 if (this.config.autoRecover && state.recoveryAttempts < this.config.maxRecoveryAttempts) {
@@ -164,7 +166,7 @@ class StallDetector extends events_1.EventEmitter {
                 }
                 else if (state.recoveryAttempts >= this.config.maxRecoveryAttempts) {
                     // Max recovery attempts reached
-                    console.log(`[StallDetector] Conversation ${id} terminated after ${state.recoveryAttempts} recovery attempts`);
+                    this.logger.error(`[StallDetector] Conversation ${id} terminated after ${state.recoveryAttempts} recovery attempts`);
                     state.status = 'terminated';
                     this.emit('conversation:terminated', {
                         conversationId: id,
@@ -188,7 +190,7 @@ class StallDetector extends events_1.EventEmitter {
             idleTimeMs: Date.now() - state.lastActivityAt,
             recoveryAttempt: state.recoveryAttempts,
         };
-        console.log(`[StallDetector] Recovery attempt ${state.recoveryAttempts} for conversation ${state.conversationId}`);
+        this.logger.warn(`[StallDetector] Recovery attempt ${state.recoveryAttempts} for conversation ${state.conversationId}`);
         // Emit event for relay to handle
         this.emit('conversation:stalled', event);
         // Select recovery prompt based on attempt number
@@ -265,13 +267,13 @@ class StallDetector extends events_1.EventEmitter {
             }
         }
         if (cleaned > 0) {
-            console.log(`[StallDetector] Cleaned up ${cleaned} old conversations`);
+            this.logger.info(`[StallDetector] Cleaned up ${cleaned} old conversations`);
         }
         return cleaned;
     }
 }
 exports.StallDetector = StallDetector;
-function createStallDetector(config) {
-    return new StallDetector(config);
+function createStallDetector(logger, config) {
+    return new StallDetector(logger, config);
 }
 //# sourceMappingURL=stall-detector.js.map

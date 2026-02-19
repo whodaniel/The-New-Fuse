@@ -6,6 +6,7 @@
  */
 
 import { EventEmitter } from 'events';
+import { Logger } from '../utils/Logger';
 
 export interface ConversationState {
   conversationId: string;
@@ -47,6 +48,7 @@ const DEFAULT_CONFIG: StallDetectorConfig = {
 export class StallDetector extends EventEmitter {
   private conversations: Map<string, ConversationState> = new Map();
   private config: StallDetectorConfig;
+  private logger: Logger;
   private checkInterval: NodeJS.Timeout | null = null;
   private recoveryPrompts: string[] = [
     '[SYSTEM] The conversation appears to have stalled. Please continue with your next response.',
@@ -55,10 +57,11 @@ export class StallDetector extends EventEmitter {
     '[SYSTEM] This is an automated check. Please respond or indicate completion.',
   ];
 
-  constructor(config: Partial<StallDetectorConfig> = {}) {
+  constructor(logger: Logger, config: Partial<StallDetectorConfig> = {}) {
     super();
     this.config = { ...DEFAULT_CONFIG, ...config };
-    console.log('[StallDetector] Initialized with config:', this.config);
+    this.logger = logger;
+    this.logger.info(`[StallDetector] Initialized with threshold: ${this.config.stallThresholdMs}ms`);
   }
 
   /**
@@ -66,11 +69,11 @@ export class StallDetector extends EventEmitter {
    */
   start(): void {
     if (this.checkInterval) {
-      console.warn('[StallDetector] Already running');
+      this.logger.warn('[StallDetector] Already running');
       return;
     }
 
-    console.log('[StallDetector] Starting stall monitoring...');
+    this.logger.info('[StallDetector] Starting stall monitoring...');
     this.checkInterval = setInterval(() => this.checkForStalls(), this.config.checkIntervalMs);
   }
 
@@ -81,7 +84,7 @@ export class StallDetector extends EventEmitter {
     if (this.checkInterval) {
       clearInterval(this.checkInterval);
       this.checkInterval = null;
-      console.log('[StallDetector] Stopped monitoring');
+      this.logger.info('[StallDetector] Stopped monitoring');
     }
   }
 
@@ -103,7 +106,7 @@ export class StallDetector extends EventEmitter {
         recoveryAttempts: 0,
       };
       this.conversations.set(id, state);
-      console.log(`[StallDetector] Tracking new conversation: ${id}`);
+      this.logger.info(`[StallDetector] Tracking new conversation: ${id}`);
     }
 
     return id;
@@ -137,7 +140,7 @@ export class StallDetector extends EventEmitter {
 
         // If was stalled, mark as active again
         if (wasStalled) {
-          console.log(`[StallDetector] Conversation ${id} recovered!`);
+          this.logger.info(`[StallDetector] Conversation ${id} recovered!`);
           state.status = 'active';
           this.emit('conversation:recovered', { conversationId: id, channelId });
         }
@@ -203,7 +206,7 @@ export class StallDetector extends EventEmitter {
         if (state.status === 'active') {
           // Just became stalled
           state.status = 'stalled';
-          console.log(
+          this.logger.warn(
             `[StallDetector] Conversation ${id} stalled (idle: ${idleTime}ms, messages: ${state.messageCount})`
           );
         }
@@ -220,7 +223,7 @@ export class StallDetector extends EventEmitter {
           }
         } else if (state.recoveryAttempts >= this.config.maxRecoveryAttempts) {
           // Max recovery attempts reached
-          console.log(
+          this.logger.error(
             `[StallDetector] Conversation ${id} terminated after ${state.recoveryAttempts} recovery attempts`
           );
           state.status = 'terminated';
@@ -248,7 +251,7 @@ export class StallDetector extends EventEmitter {
       recoveryAttempt: state.recoveryAttempts,
     };
 
-    console.log(
+    this.logger.warn(
       `[StallDetector] Recovery attempt ${state.recoveryAttempts} for conversation ${state.conversationId}`
     );
 
@@ -351,13 +354,13 @@ export class StallDetector extends EventEmitter {
     }
 
     if (cleaned > 0) {
-      console.log(`[StallDetector] Cleaned up ${cleaned} old conversations`);
+      this.logger.info(`[StallDetector] Cleaned up ${cleaned} old conversations`);
     }
 
     return cleaned;
   }
 }
 
-export function createStallDetector(config?: Partial<StallDetectorConfig>): StallDetector {
-  return new StallDetector(config);
+export function createStallDetector(logger: Logger, config?: Partial<StallDetectorConfig>): StallDetector {
+  return new StallDetector(logger, config);
 }

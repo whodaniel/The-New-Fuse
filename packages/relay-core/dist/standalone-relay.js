@@ -62,6 +62,7 @@ const conversation_state_machine_1 = require("./orchestrator/conversation-state-
 const subscription_registry_1 = require("./orchestrator/subscription-registry");
 const redis_relay_bridge_1 = require("./redis-relay-bridge");
 const stall_detector_1 = require("./services/stall-detector");
+const Logger_1 = require("./utils/Logger");
 // Configuration
 const PORT = parseInt(process.env.PORT || '3000', 10);
 const HEARTBEAT_INTERVAL = 30000;
@@ -79,6 +80,7 @@ class TNFRelayServer extends events_1.EventEmitter {
     bridge = null;
     authService;
     stallDetector;
+    logger;
     conversationManagers = new Map();
     subscriptionRegistry;
     activityRedis = null;
@@ -99,6 +101,8 @@ class TNFRelayServer extends events_1.EventEmitter {
         this.activityChannelPrefix =
             process.env.ACTIVITY_CHANNEL_STREAM_PREFIX || 'tnf:activity:channel:';
         this.activityMaxLen = parseInt(process.env.ACTIVITY_STREAM_MAXLEN || '100000', 10);
+        // Create logger
+        this.logger = new Logger_1.Logger(process.env.LOG_LEVEL || 'info', process.env.WORKSPACE_DIR || process.cwd());
         // Create HTTP server
         this.server = http_1.default.createServer(this.handleHttpRequest.bind(this));
         // Create WebSocket server at /ws path
@@ -108,7 +112,7 @@ class TNFRelayServer extends events_1.EventEmitter {
         // Create default channel
         this.createDefaultChannel();
         // Initialize stall detector for conversation recovery
-        this.stallDetector = (0, stall_detector_1.createStallDetector)({
+        this.stallDetector = (0, stall_detector_1.createStallDetector)(this.logger, {
             stallThresholdMs: 3600000, // 60 minutes (increased from 45s)
             checkIntervalMs: 5000, // Check every 5 seconds
             maxRecoveryAttempts: 3,

@@ -379,6 +379,13 @@ async function main() {
       environment: 'railway',
       status: 'offline',
     },
+    {
+      tnf_id: 'TNF:HARNESS:sys:openclaw:fleet',
+      name: 'OpenClaw Fleet Cluster',
+      platform: 'OpenClaw',
+      environment: 'production',
+      status: 'active',
+    },
 
     // PicoClaw
     {
@@ -630,6 +637,24 @@ async function main() {
       description: 'Deep research agent',
       definition_source: 'picoclaw config',
       agent_type: 'ANALYZER',
+      is_system: true,
+      access_level: 'admin',
+    },
+    {
+      tnf_id: 'TNF:AGENT:sys:primitive-master',
+      name: 'Primitive Master',
+      description: 'LLM leverage and harness custodian',
+      definition_source: '.agent/agents/primitive-master.md',
+      agent_type: 'COORDINATOR',
+      is_system: true,
+      access_level: 'admin',
+    },
+    {
+      tnf_id: 'TNF:AGENT:sys:categorization-master',
+      name: 'Categorization Master',
+      description: 'Taxonomy and registry architect',
+      definition_source: '.agent/agents/categorization-master.md',
+      agent_type: 'COORDINATOR',
       is_system: true,
       access_level: 'admin',
     },

@@ -145,12 +145,12 @@ File:         ./dashboard-analytics.md (project root)
 
 ### Implementation Priority Order
 
-| Priority | Phase      | Agents                                                     | When to Use               |
-| -------- | ---------- | ---------------------------------------------------------- | ------------------------- |
-| **P0**   | Foundation | `database-architect` → `security-auditor`                  | If project needs DB       |
-| **P1**   | Core       | `backend-specialist`                                       | If project has backend    |
-| **P2**   | UI/UX      | `frontend-specialist` OR `mobile-developer`                | Web OR Mobile (not both!) |
-| **P3**   | Polish     | `test-engineer`, `performance-optimizer`, `seo-specialist` | Based on needs            |
+| Priority | Phase      | Agents                                                                                                  | When to Use               |
+| -------- | ---------- | ------------------------------------------------------------------------------------------------------- | ------------------------- |
+| **P0**   | Foundation | `database-architect` → `security-auditor`                                                               | If project needs DB       |
+| **P1**   | Core       | `backend-specialist`                                                                                    | If project has backend    |
+| **P2**   | UI/UX      | `frontend-specialist` OR `mobile-developer`                                                             | Web OR Mobile (not both!) |
+| **P3**   | Polish     | `test-engineer`, `performance-optimizer`, `seo-specialist`, `primitive-master`, `categorization-master` | Based on needs            |
 
 > 🔴 **Agent Selection Rule:**
 >

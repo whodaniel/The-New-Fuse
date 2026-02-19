@@ -73,6 +73,11 @@ export interface ProjectPlanRecord {
   updatedAt: string;
 }
 
+export interface RecordConnections {
+  goals: GoalRecord[];
+  plans: ProjectPlanRecord[];
+}
+
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
 
 async function parse<T>(res: Response): Promise<T> {
@@ -85,6 +90,23 @@ async function parse<T>(res: Response): Promise<T> {
 
 export async function listTasks(): Promise<LedgerRecord[]> {
   return parse<LedgerRecord[]>(await fetch('/api/tasks'));
+}
+
+export async function listRecords(params?: {
+  kind?: LedgerRecord['kind'];
+  status?: LedgerStatus;
+  q?: string;
+}): Promise<LedgerRecord[]> {
+  const search = new URLSearchParams();
+  if (params?.kind) search.set('kind', params.kind);
+  if (params?.status) search.set('status', params.status);
+  if (params?.q) search.set('q', params.q);
+  const suffix = search.toString() ? `?${search.toString()}` : '';
+  return parse<LedgerRecord[]>(await fetch(`/api/unified-ledger/records${suffix}`));
+}
+
+export async function getRecordConnections(recordId: string): Promise<RecordConnections> {
+  return parse<RecordConnections>(await fetch(`/api/unified-ledger/records/${recordId}/connections`));
 }
 
 export async function getTask(id: string): Promise<LedgerRecord | null> {
@@ -146,13 +168,56 @@ export async function listTimelineEvents(params?: {
   recordId?: string;
   goalId?: string;
   planId?: string;
+  eventType?: string;
+  actor?: string;
+  dateFrom?: string;
+  dateTo?: string;
 }): Promise<TimelineEvent[]> {
   const search = new URLSearchParams();
   if (params?.recordId) search.set('recordId', params.recordId);
   if (params?.goalId) search.set('goalId', params.goalId);
   if (params?.planId) search.set('planId', params.planId);
+  if (params?.eventType) search.set('eventType', params.eventType);
+  if (params?.actor) search.set('actor', params.actor);
+  if (params?.dateFrom) search.set('dateFrom', params.dateFrom);
+  if (params?.dateTo) search.set('dateTo', params.dateTo);
   const suffix = search.toString() ? `?${search.toString()}` : '';
   return parse<TimelineEvent[]>(await fetch(`/api/timeline/events${suffix}`));
+}
+
+export async function getTimelineEvent(id: string): Promise<TimelineEvent | null> {
+  return parse<TimelineEvent | null>(await fetch(`/api/timeline/events/${id}`));
+}
+
+export async function createTimelineEvent(input: {
+  recordId?: string;
+  goalId?: string;
+  planId?: string;
+  eventType?: string;
+  actor?: string;
+  timestamp?: string;
+  payload?: Record<string, unknown>;
+}): Promise<TimelineEvent> {
+  return parse<TimelineEvent>(
+    await fetch('/api/timeline/events', {
+      method: 'POST',
+      headers: JSON_HEADERS,
+      body: JSON.stringify(input),
+    })
+  );
+}
+
+export async function updateTimelineEvent(
+  id: string,
+  input: { actor?: string; timestamp?: string; payload?: Record<string, unknown> }
+): Promise<TimelineEvent | null> {
+  return parse<TimelineEvent | null>(
+    await fetch(`/api/timeline/events/${id}`, {
+      method: 'PATCH',
+      headers: JSON_HEADERS,
+      body: JSON.stringify(input),
+    })
+  );
 }
 
 export async function createGoal(input: {
@@ -174,6 +239,10 @@ export async function listGoals(): Promise<GoalRecord[]> {
   return parse<GoalRecord[]>(await fetch('/api/goals'));
 }
 
+export async function getGoal(id: string): Promise<GoalRecord | null> {
+  return parse<GoalRecord | null>(await fetch(`/api/goals/${id}`));
+}
+
 export async function linkGoalToRecord(
   goalId: string,
   recordId: string,
@@ -184,6 +253,52 @@ export async function linkGoalToRecord(
       method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify({ recordId, actor }),
+    })
+  );
+}
+
+export async function addGoalMilestone(
+  goalId: string,
+  input: {
+    title: string;
+    dueAt?: string;
+    status?: 'pending' | 'in_progress' | 'completed' | 'blocked';
+  }
+): Promise<GoalRecord | null> {
+  return parse<GoalRecord | null>(
+    await fetch(`/api/goals/${goalId}/milestones`, {
+      method: 'POST',
+      headers: JSON_HEADERS,
+      body: JSON.stringify(input),
+    })
+  );
+}
+
+export async function updateGoalMilestone(
+  goalId: string,
+  milestoneId: string,
+  input: {
+    title?: string;
+    dueAt?: string;
+    status?: 'pending' | 'in_progress' | 'completed' | 'blocked';
+  }
+): Promise<GoalRecord | null> {
+  return parse<GoalRecord | null>(
+    await fetch(`/api/goals/${goalId}/milestones/${milestoneId}`, {
+      method: 'PATCH',
+      headers: JSON_HEADERS,
+      body: JSON.stringify(input),
+    })
+  );
+}
+
+export async function deleteGoalMilestone(
+  goalId: string,
+  milestoneId: string
+): Promise<GoalRecord | null> {
+  return parse<GoalRecord | null>(
+    await fetch(`/api/goals/${goalId}/milestones/${milestoneId}`, {
+      method: 'DELETE',
     })
   );
 }
@@ -209,12 +324,35 @@ export async function listPlans(): Promise<ProjectPlanRecord[]> {
   return parse<ProjectPlanRecord[]>(await fetch('/api/plans'));
 }
 
+export async function getPlan(id: string): Promise<ProjectPlanRecord | null> {
+  return parse<ProjectPlanRecord | null>(await fetch(`/api/plans/${id}`));
+}
+
 export async function linkPlan(
   planId: string,
   input: { goalId?: string; recordId?: string; actor?: string }
 ): Promise<ProjectPlanRecord | null> {
   return parse<ProjectPlanRecord | null>(
     await fetch(`/api/plans/${planId}/link`, {
+      method: 'POST',
+      headers: JSON_HEADERS,
+      body: JSON.stringify(input),
+    })
+  );
+}
+
+export async function addFeedbackIteration(
+  recordId: string,
+  input: {
+    hypothesis: string;
+    evidence: string[];
+    confidence: number;
+    accepted: boolean;
+    notes?: string;
+  }
+): Promise<LedgerRecord | null> {
+  return parse<LedgerRecord | null>(
+    await fetch(`/api/unified-ledger/records/${recordId}/feedback`, {
       method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify(input),
