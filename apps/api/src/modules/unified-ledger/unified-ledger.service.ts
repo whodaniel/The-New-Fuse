@@ -20,7 +20,8 @@ type CreateRecordInput = Partial<UnifiedTaskRecord> &
 @Injectable()
 export class UnifiedLedgerService implements OnModuleInit {
   private readonly logger = new Logger(UnifiedLedgerService.name);
-  private readonly storePath = path.join(process.cwd(), 'data', 'unified-task-ledger.json');
+  private readonly defaultStorePath = path.join(process.cwd(), 'data', 'unified-task-ledger.json');
+  private storePath = this.resolveStorePath();
   private store: UnifiedLedgerStore = { records: [], timelineEvents: [], goals: [], plans: [] };
   private initialized = false;
 
@@ -632,7 +633,7 @@ export class UnifiedLedgerService implements OnModuleInit {
     if (this.initialized) return;
 
     try {
-      await fs.mkdir(path.dirname(this.storePath), { recursive: true });
+      await this.ensureStoreDirectory();
       const content = await fs.readFile(this.storePath, 'utf8');
       const parsed = JSON.parse(content) as Partial<UnifiedLedgerStore>;
       this.store = {
@@ -651,8 +652,37 @@ export class UnifiedLedgerService implements OnModuleInit {
   }
 
   private async persist(): Promise<void> {
-    await fs.mkdir(path.dirname(this.storePath), { recursive: true });
+    await this.ensureStoreDirectory();
     await fs.writeFile(this.storePath, JSON.stringify(this.store, null, 2), 'utf8');
+  }
+
+  private resolveStorePath(): string {
+    const explicitPath = process.env.UNIFIED_LEDGER_STORE_PATH?.trim();
+    if (explicitPath) return explicitPath;
+    return this.defaultStorePath;
+  }
+
+  private async ensureStoreDirectory(): Promise<void> {
+    try {
+      await fs.mkdir(path.dirname(this.storePath), { recursive: true });
+    } catch (error) {
+      if (!this.isPermissionError(error) || this.storePath.startsWith('/tmp/')) {
+        throw error;
+      }
+
+      const fallbackPath = path.join('/tmp', 'tnf-data', 'unified-task-ledger.json');
+      this.logger.warn(
+        `No write permission for ${this.storePath}; falling back to ${fallbackPath}`
+      );
+      this.storePath = fallbackPath;
+      await fs.mkdir(path.dirname(this.storePath), { recursive: true });
+    }
+  }
+
+  private isPermissionError(error: unknown): boolean {
+    if (!error || typeof error !== 'object') return false;
+    const code = 'code' in error ? String((error as { code?: string }).code) : '';
+    return code === 'EACCES' || code === 'EPERM' || code === 'EROFS';
   }
 
   private makeId(kind: UnifiedRecordKind): string {
