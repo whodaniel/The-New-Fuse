@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# Add standard paths (for node, pnpm, etc.)
+export PATH="/usr/local/bin:/opt/homebrew/bin:$HOME/.nvm/versions/node/v22.16.0/bin:$HOME/.nvm/versions/node/v20.19.5/bin:$HOME/.nvm/versions/node/v18.20.8/bin:$HOME/.local/share/pnpm:./node_modules/.bin:$PATH"
+
+set -e
+
+REMOTE_NAME="$1"
+REMOTE_URL="$2"
+
+# Enforce private-doc gate only for public remote pushes.
+if [ "$REMOTE_NAME" != "origin" ] && ! echo "$REMOTE_URL" | grep -q "github.com/whodaniel/fuse"; then
+  exit 0
+fi
+
+CHANGED_FILES="$(git diff --name-only --diff-filter=ACMR @{u}..HEAD 2>/dev/null || true)"
+
+if [ -z "$CHANGED_FILES" ]; then
+  exit 0
+fi
+
+echo "$CHANGED_FILES" | xargs node scripts/check-private-docs.cjs

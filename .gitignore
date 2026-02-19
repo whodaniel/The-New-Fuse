@@ -67,6 +67,23 @@ docs/BUSINESS_MODEL_*.md
 docs/AGENCY_REFACTORING_SUMMARY.md
 docs/ADAPTIVE_INSTANTIATION_PROTOCOL.md
 
+# Local-only planning/session docs (do not publish)
+docs/strategy/
+docs/session-*.md
+docs/UNIFIED_LEDGER_TIMELINE_GOALS_PLAN.md
+docs/TNF_DELEGATION_RUN_*.md
+docs/project-management/*PLAN*.md
+docs/project-management/*ROADMAP*.md
+docs/project-management/*INVENTORY*.md
+docs/project-management/*SUMMARY*.md
+docs/project-management/*audit*.md
+docs/project-management/*analysis*.md
+.agent/handoff_notes.txt
+.agent/memories.md
+.agent/runtime-state.json
+.agent/jules-logs/
+.agent/session-logs/
+
 # Additional Private Data
 data/autobiography/
 data/utp_events/
@@ -177,4 +194,3 @@ telemetry-id
 # Configuration files with secrets
 config.json
 **/config.json
-
