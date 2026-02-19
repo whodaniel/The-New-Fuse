@@ -1,4 +1,4 @@
-import { Inject, Optional, UseGuards } from '@nestjs/common';
+import { Inject, Logger, Optional, UnauthorizedException, UseGuards } from '@nestjs/common';
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -10,6 +10,8 @@ import { Server, Socket } from 'socket.io';
 import { WsAuthGuard } from '../auth/ws-auth.guard'; // Changed from @/auth/ws-auth.guard
 import { CacheService } from '../cache/cache.service'; // Changed from @/cache/cache.service
 import { UnifiedMonitoringService } from '../types/core';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 @WebSocketGateway({
   cors: {
@@ -21,8 +23,12 @@ export class WebsocketGateway implements OnGatewayConnection, OnGatewayDisconnec
   @WebSocketServer()
   server!: Server;
 
+  private readonly logger = new Logger(WebsocketGateway.name);
+
   constructor(
     private cache: CacheService,
+    private jwtService: JwtService,
+    private configService: ConfigService,
     @Optional()
     @Inject('UnifiedMonitoringService')
     private monitoring?: UnifiedMonitoringService
@@ -30,7 +36,31 @@ export class WebsocketGateway implements OnGatewayConnection, OnGatewayDisconnec
 
   async handleConnection(client: Socket) {
     try {
-      const userId = client.handshake.auth.token;
+      const token = client.handshake.auth.token || client.handshake.headers.authorization;
+      
+      if (!token) {
+        this.logger.warn(`WebSocket connection rejected - no token provided for client ${client.id}`);
+        client.disconnect();
+        return;
+      }
+
+      // Validate JWT token before caching
+      let userId: string;
+      try {
+        const payload = this.jwtService.verify(token, {
+          secret: this.configService.get<string>('JWT_SECRET'),
+        });
+        userId = payload.sub || payload.userId || payload.id;
+        
+        if (!userId) {
+          throw new Error('No user ID in token payload');
+        }
+      } catch (error) {
+        this.logger.warn(`WebSocket connection rejected - invalid token for client ${client.id}`);
+        client.disconnect();
+        return;
+      }
+
       await this.cache.set(`socket:${client.id}`, userId);
       await this.cache.sadd(`online_users`, userId);
 

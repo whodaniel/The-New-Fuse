@@ -164,7 +164,10 @@ export class TransactionsService {
 
   private async submitUserOperation(userOp: any): Promise<string> {
     // Submit UserOperation to Bundler service
-    const bundlerUrl = process.env.BUNDLER_URL || 'https://api.alchemy.com/v2/your-api-key';
+    const bundlerUrl = process.env.BUNDLER_URL;
+    if (!bundlerUrl) {
+      throw new Error('BUNDLER_URL environment variable is required');
+    }
 
     try {
       const response = await fetch(bundlerUrl, {

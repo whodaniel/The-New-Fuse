@@ -58,14 +58,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const apiBaseUrl = (import.meta.env.VITE_API_URL || '/api').replace(/\/$/, '');
 
+  const AUTH_TOKEN_KEY = 'auth_token'; // Single source of truth for token storage
+
   const setAuthToken = (token: string) => {
-    localStorage.setItem('auth_token', token);
-    localStorage.setItem('authToken', token);
+    localStorage.setItem(AUTH_TOKEN_KEY, token);
   };
 
   const clearAuthToken = () => {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('authToken');
+    localStorage.removeItem(AUTH_TOKEN_KEY);
+  };
+
+  const getAuthToken = () => {
+    return localStorage.getItem(AUTH_TOKEN_KEY);
   };
 
   // Map Firebase user to our User type

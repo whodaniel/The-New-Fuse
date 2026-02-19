@@ -7,7 +7,13 @@ export const config = {
     name: process.env.DB_NAME,
   },
   jwt: {
-    secret: process.env.JWT_SECRET || 'your-secret-key',
+    secret: (() => {
+      const secret = process.env.JWT_SECRET;
+      if (!secret) {
+        throw new Error('JWT_SECRET environment variable is required');
+      }
+      return secret;
+    })(),
     expiresIn: '24h',
   },
   google: {

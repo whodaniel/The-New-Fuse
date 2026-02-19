@@ -142,6 +142,9 @@ export class Web3authService implements OnModuleInit {
     };
 
     const secret = process.env.WEB3AUTH_JWT_SECRET;
+    if (!secret) {
+      throw new Error('WEB3AUTH_JWT_SECRET environment variable is required');
+    }
     return jwt.sign(payload, secret, { algorithm: 'HS256' });
   }
 

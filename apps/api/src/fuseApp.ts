@@ -7,9 +7,15 @@ import { Pool } from 'pg';
 import { performance } from 'perf_hooks';
 import IORedis from 'ioredis'; // Default import for ioredis
 
-// Configuration
-const SECRET_KEY = process.env.SECRET_KEY || 'dev';
-const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://user:password@localhost:5432/chat';
+// Configuration - Environment variables are required
+const SECRET_KEY = process.env.SECRET_KEY;
+if (!SECRET_KEY) {
+  throw new Error('SECRET_KEY environment variable is required');
+}
+const DATABASE_URL = process.env.DATABASE_URL;
+if (!DATABASE_URL) {
+  throw new Error('DATABASE_URL environment variable is required');
+}
 const SESSION_LIFETIME = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 // Initialize database connection
