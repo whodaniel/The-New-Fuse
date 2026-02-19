@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { createTask } from '@/services/unifiedLedgerApi';
 import { Calendar, ChevronLeft, Clock, Paperclip, Plus, Save, Tag, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -90,10 +91,38 @@ const NewTask: React.FC = () => {
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // In a real app, we would send this data to the server
-    // For now, just navigate back to the tasks list
-    navigate('/tasks');
+    const statusMap: Record<string, string> = {
+      not_started: 'submitted',
+      in_progress: 'in_progress',
+      pending_review: 'under_review',
+      completed: 'completed',
+    };
+    const priorityMap: Record<string, string> = {
+      low: 'low',
+      medium: 'medium',
+      high: 'high',
+      critical: 'critical',
+    };
+
+    createTask({
+      title: formData.title,
+      description: formData.description,
+      status: (statusMap[formData.status] as any) || 'submitted',
+      priority: (priorityMap[formData.priority] as any) || 'medium',
+      owner: 'ui-user',
+      assignee: formData.assignedTo || undefined,
+      tags: formData.tags,
+      metadata: {
+        category: formData.category,
+        dueDate: formData.dueDate,
+        estimatedHours: formData.estimatedHours,
+      },
+      fractal: {
+        progressPercent: formData.status === 'completed' ? 100 : 0,
+      },
+    })
+      .then(() => navigate('/tasks'))
+      .catch((error) => console.error('Failed to create task:', error));
   };
 
   return (

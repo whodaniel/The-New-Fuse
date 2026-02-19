@@ -44,6 +44,7 @@ import { ResourcesModule } from './modules/resources/resources.module';
 import { SecurityModule } from './modules/security/security.module';
 import { TaskModule } from './modules/task/task.module'; // Migrated to Drizzle ORM
 import { TNFAutonomousModule } from './modules/tnf-autonomous.module';
+import { UnifiedLedgerModule } from './modules/unified-ledger/unified-ledger.module';
 import { WebhooksModule } from './modules/webhooks/webhooks.module'; // Migrated to Drizzle ORM
 import { WorkflowTemplatesModule } from './modules/workflow-templates.module';
 import { MonitoringModule } from './monitoring/monitoring.module';
@@ -118,6 +119,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     WorkflowTemplatesModule,
     PromptTemplatesModule,
     ResourcesModule,
+    UnifiedLedgerModule,
     BrandConsistencyAgentModule, // Self-Improving Brand Consistency Agent
     BrowserHubSwarmModule, // Browser Hub Improvement Agent Swarm
     // GraphqlModule, // TEMPORARILY DISABLED: GraphQL has HttpAdapterHost DI issue - REST API still works

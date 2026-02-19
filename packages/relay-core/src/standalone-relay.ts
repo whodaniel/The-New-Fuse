@@ -1025,6 +1025,7 @@ export class TNFRelayServer extends EventEmitter {
 
   public dispatchTask(task: OrchestrationTask, channelId: string): void {
     console.log(`[Relay] Dispatching task ${task.id} to channel ${channelId}`);
+    void this.persistTaskDispatch(task, channelId);
 
     // If specific targets are defined, prioritize them
     if (task.targetAgents && task.targetAgents.length > 0) {
@@ -1089,6 +1090,27 @@ export class TNFRelayServer extends EventEmitter {
         channel: channelId,
         timestamp: Date.now(),
       });
+    }
+  }
+
+  private async persistTaskDispatch(task: OrchestrationTask, channelId: string): Promise<void> {
+    const ingestUrl =
+      process.env.LEDGER_INGEST_URL ||
+      'http://localhost:3001/api/unified-ledger/ingest/orchestration';
+
+    try {
+      await (globalThis as any).fetch(ingestUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'TASK_DISPATCH',
+          action: 'relay_dispatch',
+          channelId,
+          task,
+        }),
+      });
+    } catch (error) {
+      console.warn('[Relay] Failed to persist task dispatch to unified ledger:', error);
     }
   }
 

@@ -6,6 +6,7 @@ import {
   PremiumInput,
   PremiumSelect,
 } from '@/components/ui/premium';
+import { listTasks } from '@/services/unifiedLedgerApi';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   AlertCircle,
@@ -47,62 +48,42 @@ export default function TasksPage() {
   const [priorityFilter, setPriorityFilter] = useState('all');
   const [sortBy, setSortBy] = useState('dueDate');
 
-  // Mock data - replace with API call
   useEffect(() => {
-    setTimeout(() => {
-      setTasks([
-        {
-          id: '1',
-          title: 'Implement user authentication system',
-          description: 'Create a secure authentication system with JWT tokens and password hashing',
-          status: 'in-progress',
-          priority: 'high',
-          assignee: 'John Doe',
-          assigneeAvatar: '👤',
-          dueDate: '2024-01-20T00:00:00Z',
-          createdAt: '2024-01-10T00:00:00Z',
-          updatedAt: '2024-01-15T00:00:00Z',
-          tags: ['backend', 'security', 'authentication'],
-          progress: 65,
-          workspaceId: 'ws1',
-          workspaceName: 'Development Team',
-        },
-        {
-          id: '2',
-          title: 'Design new landing page',
-          description:
-            'Create a modern, responsive landing page design with improved conversion rates',
-          status: 'pending',
-          priority: 'medium',
-          assignee: 'Jane Smith',
-          assigneeAvatar: '👩',
-          dueDate: '2024-01-25T00:00:00Z',
-          createdAt: '2024-01-12T00:00:00Z',
-          updatedAt: '2024-01-14T00:00:00Z',
-          tags: ['design', 'frontend', 'ui/ux'],
-          progress: 0,
-          workspaceId: 'ws2',
-          workspaceName: 'Design Team',
-        },
-        {
-          id: '3',
-          title: 'Setup CI/CD pipeline',
-          description: 'Configure automated testing and deployment pipeline using GitHub Actions',
-          status: 'completed',
-          priority: 'high',
-          assignee: 'Bob Wilson',
-          assigneeAvatar: '👨',
-          dueDate: '2024-01-15T00:00:00Z',
-          createdAt: '2024-01-05T00:00:00Z',
-          updatedAt: '2024-01-15T00:00:00Z',
-          tags: ['devops', 'automation', 'deployment'],
-          progress: 100,
-          workspaceId: 'ws1',
-          workspaceName: 'Development Team',
-        },
-      ]);
-      setLoading(false);
-    }, 1000);
+    const load = async () => {
+      try {
+        const records = await listTasks();
+        const mapped: Task[] = records.map((r) => ({
+          id: r.id,
+          title: r.title,
+          description: r.description,
+          status:
+            r.status === 'in_progress'
+              ? 'in-progress'
+              : r.status === 'completed'
+                ? 'completed'
+                : r.status === 'rejected' || r.status === 'failed'
+                  ? 'cancelled'
+                  : 'pending',
+          priority: r.priority === 'critical' || r.priority === 'urgent' ? 'urgent' : r.priority,
+          assignee: r.assignee || r.owner || 'Unassigned',
+          assigneeAvatar: '🤖',
+          dueDate: r.updatedAt,
+          createdAt: r.createdAt,
+          updatedAt: r.updatedAt,
+          tags: r.tags || [],
+          progress: r.fractal?.progressPercent || 0,
+          workspaceId: 'tnf',
+          workspaceName: 'Unified Ledger',
+        }));
+        setTasks(mapped);
+      } catch (error) {
+        console.error('Failed to load tasks:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
   }, []);
 
   const getStatusBadge = (status: Task['status']) => {

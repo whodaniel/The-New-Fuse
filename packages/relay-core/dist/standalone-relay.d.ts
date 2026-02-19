@@ -70,6 +70,7 @@ export declare class TNFRelayServer extends EventEmitter {
     private send;
     private handleBridgeEgress;
     dispatchTask(task: OrchestrationTask, channelId: string): void;
+    private persistTaskDispatch;
     private broadcastToChannel;
     private broadcast;
     /**

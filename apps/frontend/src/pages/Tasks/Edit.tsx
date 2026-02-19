@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/premium';
 import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { getTask, updateTask } from '@/services/unifiedLedgerApi';
 import { Calendar, ChevronLeft, Clock, Paperclip, Plus, Save, Tag, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -20,25 +21,6 @@ const mockAgents = [
   { id: 4, name: 'BugHunter', avatar: 'BH' },
   { id: 5, name: 'APIIntegrator', avatar: 'AI' },
 ];
-
-// Mock task data
-const mockTaskData = {
-  id: 1,
-  title: 'Implement new API endpoint',
-  description:
-    'Create a new REST API endpoint for user authentication that supports both username/password and OAuth flows. The endpoint should validate inputs, handle errors appropriately, and return standardized responses.',
-  status: 'in_progress',
-  priority: 'high',
-  category: 'development',
-  assignedTo: '1', // CodeAssistant
-  dueDate: '2023-06-15',
-  estimatedHours: '4',
-  tags: ['API', 'Authentication', 'Backend'],
-  attachments: [
-    { name: 'api-spec.md', type: 'document', size: '24KB', url: '#' },
-    { name: 'auth-flow.png', type: 'image', size: '156KB', url: '#' },
-  ],
-};
 
 /**
  * Edit Task page component
@@ -63,12 +45,32 @@ const EditTask: React.FC = () => {
 
   // Load task data
   useEffect(() => {
-    // In a real app, we would fetch the task data from the server
-    // For now, use the mock data
-    setFormData({
-      ...mockTaskData,
-      newTag: '',
-    });
+    if (!id) return;
+    getTask(id)
+      .then((row) => {
+        if (!row) return;
+        setFormData({
+          title: row.title,
+          description: row.description,
+          status:
+            row.status === 'in_progress'
+              ? 'in_progress'
+              : row.status === 'completed'
+                ? 'completed'
+                : row.status === 'under_review'
+                  ? 'pending_review'
+                  : 'not_started',
+          priority:
+            row.priority === 'urgent' || row.priority === 'critical' ? 'critical' : row.priority,
+          category: String((row.metadata as any)?.category || 'development'),
+          assignedTo: row.assignee || '',
+          dueDate: String((row.metadata as any)?.dueDate || row.updatedAt),
+          estimatedHours: String((row.metadata as any)?.estimatedHours || ''),
+          tags: row.tags || [],
+          newTag: '',
+        });
+      })
+      .catch((error) => console.error('Failed to load task for edit:', error));
   }, [id]);
 
   // Handle input change
@@ -114,10 +116,34 @@ const EditTask: React.FC = () => {
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // In a real app, we would send this data to the server
-    // For now, just navigate back to the task detail
-    navigate(`/tasks/${id}`);
+    if (!id) return;
+    const statusMap: Record<string, string> = {
+      not_started: 'submitted',
+      in_progress: 'in_progress',
+      pending_review: 'under_review',
+      completed: 'completed',
+    };
+    const priorityMap: Record<string, string> = {
+      low: 'low',
+      medium: 'medium',
+      high: 'high',
+      critical: 'critical',
+    };
+    updateTask(id, {
+      title: formData.title,
+      description: formData.description,
+      status: (statusMap[formData.status] as any) || 'submitted',
+      priority: (priorityMap[formData.priority] as any) || 'medium',
+      assignee: formData.assignedTo,
+      tags: formData.tags,
+      metadata: {
+        category: formData.category,
+        dueDate: formData.dueDate,
+        estimatedHours: formData.estimatedHours,
+      },
+    })
+      .then(() => navigate(`/tasks/${id}`))
+      .catch((error) => console.error('Failed to update task:', error));
   };
 
   return (

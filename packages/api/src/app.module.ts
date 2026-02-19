@@ -9,11 +9,14 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { JwtModule } from '@nestjs/jwt';
 import { LlmModule } from '@the-new-fuse/core';
 import { DrizzleModule } from '@the-new-fuse/database';
+import { AuthController } from './controllers/auth.controller';
 import { HealthController } from './controllers/health.controller';
 import { RequestLoggerMiddleware } from './middleware/request-logger.middleware';
 import { AdminModule } from './modules/admin.module';
 import { AgentModule } from './modules/agent.module';
+import { AuthModule } from './modules/auth/auth.module';
 import { ExportModule } from './modules/export.module';
+import { UnifiedLedgerModule } from './modules/unified-ledger/unified-ledger.module';
 import { WorkflowModule } from './modules/workflow.module';
 import { AppConfigService } from './services/app-config.service';
 import { DatabaseService } from './services/database.service';
@@ -65,9 +68,11 @@ import { HealthService } from './services/health.service';
     WorkflowModule,
     AdminModule,
     ExportModule,
+    UnifiedLedgerModule,
     LlmModule,
+    AuthModule,
   ],
-  controllers: [HealthController],
+  controllers: [HealthController, AuthController],
   providers: [DatabaseService, AppConfigService, EventService, HealthService],
   exports: [DatabaseService, AppConfigService, EventService, HealthService],
 })
