@@ -6,19 +6,11 @@ import { ConfigModule } from '@nestjs/config';
 import { MonitoringDashboardService } from './dashboard.service';
 import { MonitoringDashboardController } from './dashboard.controller';
 
-// Import other service modules (these would need to be created as proper modules)
-// import { CacheModule } from '../../cache/src/cache.module';
-// import { QueueModule } from '../../job-queue/src/queue.module';
-// import { WebSocketModule } from '../../websocket/src/websocket.module';
-// import { A2AModule } from '../../a2a-enhanced/src/a2a.module';
+// TODO: Add CacheModule, QueueModule, WebSocketModule, A2AModule when ready
 
 @Module({
   imports: [
     ConfigModule,
-    // CacheModule,
-    // QueueModule,
-    // WebSocketModule,
-    // A2AModule,
   ],
   controllers: [MonitoringDashboardController],
   providers: [MonitoringDashboardService],

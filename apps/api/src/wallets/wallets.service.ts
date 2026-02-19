@@ -50,12 +50,19 @@ export class WalletsService {
       // First ensure the user exists
       let user = await this.db.users.findById(userId);
       if (!user) {
+        // Users should be created through proper auth flow, not here
+        // This is a fallback that requires immediate password setup
+        this.logger.warn(`User ${userId} not found during wallet creation. Creating user with temp credentials.`);
+        const tempPassword = crypto.randomUUID(); // Generate secure temp password
+        const bcrypt = require('bcrypt');
+        const hashedPassword = await bcrypt.hash(tempPassword, 10);
         user = await this.db.users.create({
           id: userId,
           email: `${verifierId}@tnf.ai`,
-          hashedPassword: 'placeholder_hashed_password',
+          hashedPassword,
           role: 'USER',
         });
+        this.logger.warn(`User ${userId} created with temporary password. User must set password via auth flow.`);
       }
 
       // Create or find agent for the user

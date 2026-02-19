@@ -6,8 +6,6 @@
 import { Controller, Get, Post, Param, Request, Logger, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AgentService } from '../services/agent.service';
-// import { LocalAIDetectionService, LocalAIProvider } from '../types/core'; // Commented out due to build errors
-import { AgentCapability } from '@the-new-fuse/types';
 import { SecureAuthGuard, JwtAuth, SetRateLimitTier, RateLimitTier } from '../guards/secure-auth.guard';
 
 interface AuthenticatedRequest {
@@ -24,7 +22,6 @@ export class LocalAIController {
 
   constructor(
     private agentService: AgentService,
-    // private localAIDetection: LocalAIDetectionService // Commented out due to build errors
   ) {}
 
   @Get('detect')

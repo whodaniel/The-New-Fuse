@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { z } from 'zod';
+import { useState } from 'react';
 const resetPasswordSchema = z
   .object({
     password: z.string().min(8, 'Password must be at least 8 characters'),
@@ -18,6 +19,8 @@ const ResetPassword = () => {
   const { token } = useParams();
   const navigate = useNavigate();
   const { resetPassword } = useAuth();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  
   const {
     register,
     handleSubmit,
@@ -25,7 +28,9 @@ const ResetPassword = () => {
   } = useForm({
     resolver: zodResolver(resetPasswordSchema),
   });
+  
   const onSubmit = async (data) => {
+    setErrorMessage(null);
     try {
       if (!token) {
         throw new Error('Reset token is missing');
@@ -37,14 +42,22 @@ const ResetPassword = () => {
       });
     } catch (error) {
       console.error('Password reset failed:', error);
+      setErrorMessage(error instanceof Error ? error.message : 'Password reset failed. Please try again.');
     }
   };
+  
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center">
         <h3 className="text-lg font-medium">Reset your password</h3>
         <p className="text-sm text-muted-foreground">Enter your new password below.</p>
       </div>
+      
+      {errorMessage && (
+        <div className="p-3 text-sm text-red-500 bg-red-50 border border-red-200 rounded-md">
+          {errorMessage}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <PremiumInput label="New Password" type="password" {...register('password')} />

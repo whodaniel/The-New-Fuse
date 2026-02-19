@@ -5,6 +5,15 @@ import { EthereumPrivateKeyProvider } from '@web3auth/ethereum-provider';
 import { createWalletClient, http, getAddress } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { mainnet } from 'viem/chains';
+import type { Account } from 'viem';
+import type { WalletClient, Transport, Chain } from 'viem';
+import {
+  Web3AuthOptions,
+  Web3AuthInstance,
+  Web3AuthProvider,
+  ProviderResult,
+  PrivateKeyProvider,
+} from './web3auth.types';
 
 @Injectable()
 export class Web3authService implements OnModuleInit {
@@ -36,15 +45,15 @@ export class Web3authService implements OnModuleInit {
         config: { chainConfig: this.chainConfig }
       });
 
-      // Initialize Web3Auth
-      // Note: Using type assertion as SDK types may not be up to date
-      this.web3auth = new Web3Auth({
+      // Initialize Web3Auth with properly typed options
+      const web3AuthOptions: Web3AuthOptions = {
         clientId,
-        web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_MAINNET,
-      } as any);
+        web3AuthNetwork: 'sapphire_mainnet',
+      };
+      this.web3auth = new Web3Auth(web3AuthOptions as ConstructorParameters<typeof Web3Auth>[0]);
 
       // Initialize - the privateKeyProvider is passed here for some SDK versions
-      await (this.web3auth as any).init({ provider: this.privateKeyProvider });
+      await (this.web3auth as unknown as Web3AuthInstance).init({ provider: this.privateKeyProvider });
       this.logger.log('Web3Auth initialized successfully');
     } catch (error) {
       this.logger.error('Failed to initialize Web3Auth:', error);
@@ -52,7 +61,7 @@ export class Web3authService implements OnModuleInit {
     }
   }
 
-  async getProvider(verifierId: string): Promise<{ provider: any; account: any; walletClient: any }> {
+  async getProvider(verifierId: string): Promise<ProviderResult> {
     try {
       if (!this.web3auth) {
         throw new Error('Web3Auth is not initialized. Check WEB3AUTH_CLIENT_ID environment variable.');
@@ -63,12 +72,14 @@ export class Web3authService implements OnModuleInit {
       // This is a simplified example - in production, you'd implement proper JWT validation
       const idToken = await this.generateServerSideToken(verifierId);
 
-      // Use the new connect API
-      const web3authProvider = await this.web3auth.connect({
+      // Use the new connect API with typed options
+      const connectOptions = {
         verifier: 'tnf-server-verifier', // Configure this in Web3Auth dashboard
         verifierId,
         idToken
-      } as any); // Type assertion needed as the API types may be out of sync
+      };
+      
+      const web3authProvider = await (this.web3auth as unknown as Web3AuthInstance).connect(connectOptions);
 
       if (!web3authProvider) {
         throw new Error('Failed to get Web3Auth provider');
@@ -76,13 +87,15 @@ export class Web3authService implements OnModuleInit {
 
       // Get private key from the provider - use the privateKeyProvider instead
       let privateKey: string;
-      if (this.privateKeyProvider && typeof (this.privateKeyProvider as any).request === 'function') {
-        privateKey = await (this.privateKeyProvider as any).request({
+      const pkProvider = this.privateKeyProvider as unknown as PrivateKeyProvider;
+      if (this.privateKeyProvider && typeof pkProvider.request === 'function') {
+        privateKey = await pkProvider.request({
           method: 'eth_private_key'
         }) as string;
       } else {
         // Fallback - try to get from web3auth provider directly
-        privateKey = await (web3authProvider as any).request?.({
+        const provider = web3authProvider as Web3AuthProvider;
+        privateKey = await provider.request?.({
           method: 'eth_private_key'
         }) as string;
       }
@@ -91,7 +104,7 @@ export class Web3authService implements OnModuleInit {
         throw new Error('Failed to retrieve private key from Web3Auth');
       }
 
-      // Create viem account and wallet client
+      // Create viem account and wallet client with proper types
       const account = privateKeyToAccount(`0x${privateKey}`);
       const walletClient = createWalletClient({
         account,
@@ -142,6 +155,9 @@ export class Web3authService implements OnModuleInit {
     };
 
     const secret = process.env.WEB3AUTH_JWT_SECRET;
+    if (!secret) {
+      throw new Error('WEB3AUTH_JWT_SECRET environment variable is required');
+    }
     return jwt.sign(payload, secret, { algorithm: 'HS256' });
   }
 

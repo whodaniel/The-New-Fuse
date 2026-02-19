@@ -94,7 +94,13 @@ export default registerAs('security', (): SecurityConfig => {
   return {
     // Authentication Configuration
     jwt: {
-      secret: process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production',
+      secret: (() => {
+        const secret = process.env.JWT_SECRET;
+        if (!secret) {
+          throw new Error('JWT_SECRET environment variable is required. Application cannot start without it.');
+        }
+        return secret;
+      })(),
       expiresIn: process.env.JWT_EXPIRES_IN || '15m',
       refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
       issuer: process.env.JWT_ISSUER || 'the-new-fuse-api',

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, Logger } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaService } from '@the-new-fuse/database';
 import { SelfImprovementController } from '../controllers/self-improvement.controller';
@@ -9,6 +9,8 @@ import { ArchitectAgentService } from './architect.service';
 import { CoordinatorAgentService } from './coordinator.service';
 import { ImplementerAgentService } from './implementer.service';
 import { ReviewerAgentService } from './reviewer.service';
+
+const logger = new Logger('UnifiedMonitoringService');
 
 /**
  * Self-Improvement Agents Module
@@ -30,15 +32,15 @@ import { ReviewerAgentService } from './reviewer.service';
     PrismaService,
     AgentsService,
     AgentFactory,
-    // Mock UnifiedMonitoringService since it's typed as 'any'
+    // Mock UnifiedMonitoringService - TODO: Replace with actual implementation
     {
       provide: 'UnifiedMonitoringService',
       useValue: {
         recordMetric: (metric: string, value: any, tags: any) => {
-          console.log(`[UnifiedMonitoringService] Record Metric: ${metric}`, value, tags);
+          logger.log(`Record Metric: ${metric}`, { value, tags });
         },
         captureError: (error: any, context: any) => {
-          console.error(`[UnifiedMonitoringService] Capture Error:`, error, context);
+          logger.error(`Capture Error: ${error instanceof Error ? error.message : String(error)}`, context);
         },
       },
     },

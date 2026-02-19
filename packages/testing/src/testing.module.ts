@@ -8,19 +8,11 @@ import { TestRunnerController } from './test-runner.controller';
 import { LoadTestingService } from './load-testing/load-testing.service';
 import { ArtifactGenerationService } from './artifacts/artifact-generation.service';
 
-// Import dependency modules (commented out as they need to be created as proper modules)
-// import { CacheModule } from '../../cache/src/cache.module';
-// import { QueueModule } from '../../job-queue/src/queue.module';
-// import { WebSocketModule } from '../../websocket/src/websocket.module';
-// import { A2AModule } from '../../a2a-enhanced/src/a2a.module';
+// TODO: Add CacheModule, QueueModule, WebSocketModule, A2AModule when ready
 
 @Module({
   imports: [
     ConfigModule,
-    // CacheModule,
-    // QueueModule,
-    // WebSocketModule,
-    // A2AModule,
   ],
   controllers: [TestRunnerController],
   providers: [

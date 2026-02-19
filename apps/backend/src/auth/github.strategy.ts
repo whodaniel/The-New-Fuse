@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-github2';
 import { VerifyCallback } from 'passport-oauth2';
-// import { PrismaService } from '../prisma/prisma.service';
 import { BaseOAuthStrategy } from './base-oauth.strategy';
 
 @Injectable()

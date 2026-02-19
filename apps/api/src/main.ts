@@ -1,11 +1,12 @@
-// Enhanced DI chain logging for Redis configuration debugging
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
 import * as path from 'path';
 import { AppModule } from './app.module';
+
+const logger = new Logger('Bootstrap');
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, {
@@ -69,7 +70,7 @@ async function bootstrap(): Promise<void> {
       if (fs.existsSync(openapiPath)) {
         const fileContents = fs.readFileSync(openapiPath, 'utf8');
         document = yaml.load(fileContents) as any;
-        console.log('📚 Loaded OpenAPI specification from openapi.yaml');
+        logger.log('Loaded OpenAPI specification from openapi.yaml');
       } else {
         // Fallback to generating from decorators
         const config = new DocumentBuilder()
@@ -100,7 +101,7 @@ async function bootstrap(): Promise<void> {
           .build();
 
         document = SwaggerModule.createDocument(app, config);
-        console.log('📚 Generated OpenAPI specification from code decorators');
+        logger.log('Generated OpenAPI specification from code decorators');
       }
 
       // Setup Swagger UI
@@ -118,9 +119,9 @@ async function bootstrap(): Promise<void> {
         customCss: '.swagger-ui .topbar { display: none }',
       });
 
-      console.log('📖 API Documentation available at: http://localhost:3001/api-docs');
+      logger.log(`API Documentation available at: http://localhost:3001/api-docs`);
     } catch (error) {
-      console.error('⚠️  Failed to setup API documentation:', error);
+      logger.error('Failed to setup API documentation', error);
     }
   }
 
@@ -156,11 +157,10 @@ async function bootstrap(): Promise<void> {
 
   const port = process.env.PORT || 3001;
   await app.listen(port);
-  console.log('🔄 Triggering redeploy for DB migration update');
-  console.log(`🚀 API Server running on port ${port} with enhanced security`);
+  logger.log(`API Server running on port ${port} with enhanced security`);
 }
 
 bootstrap().catch((error) => {
-  console.error('❌ Failed to start API application:', error);
+  logger.error('Failed to start API application', error);
   process.exit(1);
 });

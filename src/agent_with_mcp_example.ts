@@ -1,6 +1,5 @@
 import { AgentMCPIntegration } from './agent_mcp_integration.tsx';
-// Replace this import with your actual MyAgent class
-// import { MyAgent } from './my_agent_class.js'; 
+// TODO: Replace with your actual agent class import
 
 /**
  * Example of integrating MCP tools with your agent
