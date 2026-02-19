@@ -3,9 +3,6 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagg
 import { JwtAuthGuard } from '../modules/guards/jwt-auth.guard';
 import { AgentService } from '../services/agent.service';
 import { WorkflowService } from '../services/workflow.service';
-// Assuming TaskService and UserService exist in ../services/
-// import { TaskService } from '../services/task.service';
-// import { UserService } from '../services/user.service';
 import { CurrentUser } from '../modules/decorators/current-user.decorator';
 // Local type definition to avoid cross-package import issues
 interface UserModel {

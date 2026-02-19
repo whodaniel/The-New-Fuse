@@ -1,6 +1,7 @@
 import { AgentCapability, AgentMessage, AgentResponse, PriorityQueue } from '@the-new-fuse/types';
 import { EventEmitter } from 'events';
-// import { FeatureTracker } from '@the-new-fuse/feature-tracker'; // TODO: Package doesn't exist
+// TODO: FeatureTracker package needs to be created for tracking agent feature progress
+// import { FeatureTracker } from '@the-new-fuse/feature-tracker';
 
 export class AgentCoordinator extends EventEmitter {
   private readonly messageQueue: PriorityQueue<AgentMessage>;
@@ -9,7 +10,8 @@ export class AgentCoordinator extends EventEmitter {
 
   constructor(
     private readonly name: string
-    // private readonly featureTracker: FeatureTracker // TODO: Package doesn't exist
+    // TODO: Add featureTracker when FeatureTracker package is created
+    // private readonly featureTracker: FeatureTracker
   ) {
     super();
     this.messageQueue = new PriorityQueue<AgentMessage>();

@@ -35,8 +35,6 @@ import type { WebSocket } from 'ws';
 import { WebSocketServer } from 'ws';
 
 import type { Browser, Page } from 'playwright';
-// type Browser = any;
-// type Page = any;
 
 const execAsync = promisify(exec);
 

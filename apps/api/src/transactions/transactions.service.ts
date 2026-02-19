@@ -12,9 +12,20 @@ import {
   parseAbi,
   parseEther,
 } from 'viem';
+import type { Address, Hex, Hash } from 'viem';
 import { mainnet } from 'viem/chains';
 import { SmartAccountService } from '../smart-accounts/smart-account.service';
 import { Web3authService } from '../web3auth/web3auth.service';
+import type { Wallet } from '@the-new-fuse/database';
+import {
+  UserOperation,
+  SignedUserOperation,
+  WalletWithAgent,
+  TransactionCallData,
+  ComplianceCheckResult,
+  RecentTransactionSummary,
+  BundlerResponse,
+} from './user-operation.types';
 
 interface ComplianceCheckResult {
   isHighRisk: boolean;
@@ -32,7 +43,7 @@ export class TransactionsService {
     private readonly smartAccountService: SmartAccountService
   ) {}
 
-  private getSmartAccountCapability(wallet: any) {
+  private getSmartAccountCapability(wallet: Wallet | WalletWithAgent): boolean {
     return wallet.type === 'SMART_ACCOUNT';
   }
 
@@ -111,12 +122,8 @@ export class TransactionsService {
 
   private async buildUserOperation(
     agentVerifierId: string,
-    callData: {
-      target: string;
-      value: bigint;
-      data: string;
-    }
-  ) {
+    callData: TransactionCallData
+  ): Promise<UserOperation> {
     // Build ERC-4337 UserOperation
     const smartAccountAddress = await this.getSmartAccountAddress(agentVerifierId);
 
@@ -126,25 +133,25 @@ export class TransactionsService {
     // Get nonce from EntryPoint
     const nonce = await this.getNonce(smartAccountAddress);
 
-    // Build UserOperation structure
-    const userOp = {
-      sender: smartAccountAddress,
+    // Build UserOperation structure with proper typing
+    const userOp: UserOperation = {
+      sender: smartAccountAddress as Address,
       nonce: nonce.toString(),
-      callData: executeCallData,
+      callData: executeCallData as Hex,
       callGasLimit: '200000',
       verificationGasLimit: '200000',
       preVerificationGas: '21000',
       maxFeePerGas: '20000000000',
       maxPriorityFeePerGas: '1000000000',
-      paymaster: process.env.TNF_PAYMASTER_ADDRESS || '',
-      paymasterData: '0x',
-      signature: '0x',
+      paymaster: (process.env.TNF_PAYMASTER_ADDRESS || '') as Address,
+      paymasterData: '0x' as Hex,
+      signature: '0x' as Hex,
     };
 
     return userOp;
   }
 
-  private async signUserOperation(agentVerifierId: string, userOp: any) {
+  private async signUserOperation(agentVerifierId: string, userOp: UserOperation): Promise<SignedUserOperation> {
     // Get Web3Auth provider for signing
     const provider = await this.web3authService.getProvider(agentVerifierId);
 
@@ -156,17 +163,23 @@ export class TransactionsService {
       message: userOpHash,
     });
 
-    // Add signature to UserOperation
-    userOp.signature = signature;
-
-    return userOp;
+    // Return signed UserOperation with signature
+    return {
+      ...userOp,
+      signature: signature as Hex,
+    };
   }
 
-  private async submitUserOperation(userOp: any): Promise<string> {
+  private async submitUserOperation(userOp: SignedUserOperation): Promise<string> {
     // Submit UserOperation to Bundler service
     const bundlerUrl = process.env.BUNDLER_URL;
     if (!bundlerUrl) {
       throw new Error('BUNDLER_URL environment variable is required');
+    }
+
+    const entryPointAddress = process.env.ENTRY_POINT_ADDRESS;
+    if (!entryPointAddress) {
+      throw new Error('ENTRY_POINT_ADDRESS environment variable is required');
     }
 
     try {
@@ -179,14 +192,18 @@ export class TransactionsService {
           jsonrpc: '2.0',
           id: 1,
           method: 'eth_sendUserOperation',
-          params: [userOp, process.env.ENTRY_POINT_ADDRESS],
+          params: [userOp, entryPointAddress],
         }),
       });
 
-      const result = await response.json();
+      const result: BundlerResponse = await response.json();
 
       if (result.error) {
         throw new Error(`Bundler error: ${result.error.message}`);
+      }
+
+      if (!result.result) {
+        throw new Error('Bundler returned no result');
       }
 
       return result.result;
@@ -243,7 +260,7 @@ export class TransactionsService {
     }
   }
 
-  private getUserOperationHash(userOp: any): string {
+  private getUserOperationHash(userOp: UserOperation): string {
     try {
       const userOpData = JSON.stringify({
         sender: userOp.sender,
@@ -260,8 +277,8 @@ export class TransactionsService {
         signature: userOp.signature || '0x',
       });
 
-      const { keccak256 } = require('viem');
-      return keccak256(userOpData as `0x${string}`);
+      const { keccak256, toHex } = require('viem');
+      return keccak256(toHex(userOpData));
     } catch (error) {
       this.logger.error('Failed to calculate UserOperation hash:', error);
       throw new Error('Failed to calculate operation hash');
@@ -520,8 +537,10 @@ export class TransactionsService {
     return /^0x[a-fA-F0-9]{40}$/.test(address);
   }
 
-  private async getRecentTransactions(address: string): Promise<any[]> {
+  private async getRecentTransactions(address: string): Promise<RecentTransactionSummary[]> {
     try {
+      // TODO: Implement actual transaction history lookup
+      // This would typically query an indexer or blockchain data provider
       return [];
     } catch (error) {
       this.logger.error('Failed to get recent transactions:', error);
