@@ -23,6 +23,7 @@ export interface OAGISession {
   id: string;
   mode: OAGIMode;
   instruction: string;
+  maxSteps: number;
   status: 'pending' | 'running' | 'completed' | 'failed';
   steps: OAGIStep[];
   createdAt: string;
@@ -113,6 +114,7 @@ class OAGIService {
       id: `oagi_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       mode,
       instruction,
+      maxSteps,
       status: 'pending',
       steps: [],
       createdAt: new Date().toISOString(),

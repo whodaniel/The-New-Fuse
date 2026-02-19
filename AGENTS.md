@@ -17,6 +17,9 @@ pnpm run tnf:onboard
 ## Where Resources Live
 
 - TNF specialized agents: `.agent/agents/*.md`
+  - `orchestrator`: Multi-agent coordination
+  - `project-planner`: Discovery and planning
+  - `tnf-cli-agent`: CLI-optimized Antigravity agent
 - Claude specialized agents: `.claude/agents/*.md`
 - TNF skills: `.agent/skills/**/SKILL.md`
 - Claude skills: `.claude/skills/*.md`

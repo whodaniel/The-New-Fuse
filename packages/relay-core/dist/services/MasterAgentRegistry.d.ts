@@ -275,6 +275,7 @@ export declare class MasterAgentRegistry extends EventEmitter {
      */
     getAgentProfile(agentId: string): MasterAgentProfile | undefined;
     getAllAgentProfiles(): MasterAgentProfile[];
+    getAllAgents(): MasterAgentProfile[];
     getSystemMetrics(): SystemWideMetrics;
     getMerkleTreeRoot(): string | undefined;
     getSpreadsheetIntegration(): SpreadsheetIntegration;

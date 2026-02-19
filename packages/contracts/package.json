@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "compile": "hardhat compile",
-    "test": "hardhat test",
+    "test": "node scripts/test-wrapper.cjs",
     "deploy": "hardhat run scripts/deploy.js",
     "deploy:merkaba": "hardhat run scripts/deploy_merkaba.js --network localhost",
     "verify": "hardhat verify",

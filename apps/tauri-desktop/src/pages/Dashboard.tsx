@@ -3,23 +3,13 @@ import { NetworkGraph } from '../components/NetworkGraph';
 import { QuickActionsDashboard } from '../components/QuickActionsDashboard';
 import { Terminal } from '../components/Terminal';
 import { apiService } from '../services/api';
-import { useAgentStore } from '../stores/agentStore';
-import type { DashboardStats } from '../types';
 
 /**
  * Dashboard Page - System Console Edition
  * Focused on "Under the Hood" visibility for the AI Engineer
  */
 const Dashboard: React.FC = () => {
-  const { agents } = useAgentStore();
   const [activeTab, setActiveTab] = useState<'monitor' | 'controls'>('monitor');
-  const [stats, setStats] = useState<DashboardStats>({
-    activeAgents: 0,
-    totalWorkflows: 0,
-    tasksToday: 0,
-    successRate: 0,
-    recentActivity: [],
-  });
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {

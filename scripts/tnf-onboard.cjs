@@ -72,6 +72,67 @@ function isLocalDatabaseUrl(url) {
   );
 }
 
+function printUsage() {
+  console.log("Usage: node scripts/tnf-onboard.cjs [options]");
+  console.log("");
+  console.log("Options:");
+  console.log("  -h, --help                Show this help");
+  console.log("      --allow-local-db      Set TNF_ALLOW_LOCAL_DB=1 for this run");
+  console.log("      --require-cloud-db    Set TNF_REQUIRE_CLOUD_DB=1 for this run");
+  console.log("      --no-require-cloud-db Set TNF_REQUIRE_CLOUD_DB=0 for this run");
+  console.log("      --database-url <url>  Override DATABASE_URL for this run");
+}
+
+function parseArgs(argv) {
+  const envOverrides = {};
+
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i];
+
+    if (arg === "--") {
+      continue;
+    }
+
+    if (arg === "-h" || arg === "--help") {
+      return { help: true, envOverrides };
+    }
+
+    if (arg === "--allow-local-db") {
+      envOverrides.TNF_ALLOW_LOCAL_DB = "1";
+      continue;
+    }
+
+    if (arg === "--require-cloud-db") {
+      envOverrides.TNF_REQUIRE_CLOUD_DB = "1";
+      continue;
+    }
+
+    if (arg === "--no-require-cloud-db") {
+      envOverrides.TNF_REQUIRE_CLOUD_DB = "0";
+      continue;
+    }
+
+    if (arg === "--database-url") {
+      const next = argv[i + 1];
+      if (!next) {
+        throw new Error("Missing value for --database-url");
+      }
+      envOverrides.DATABASE_URL = next;
+      i += 1;
+      continue;
+    }
+
+    if (arg.startsWith("--database-url=")) {
+      envOverrides.DATABASE_URL = arg.slice("--database-url=".length);
+      continue;
+    }
+
+    throw new Error(`Unknown option: ${arg}`);
+  }
+
+  return { help: false, envOverrides };
+}
+
 function resolveDatabaseConfig() {
   const databaseUrl = process.env.DATABASE_URL || "";
   const allowLocal = process.env.TNF_ALLOW_LOCAL_DB === "1";
@@ -181,6 +242,22 @@ async function writeRuntimeStateSnapshot() {
 }
 
 async function main() {
+  let parsed;
+  try {
+    parsed = parseArgs(process.argv.slice(2));
+  } catch (error) {
+    console.error(`FAIL: ${error.message}`);
+    printUsage();
+    process.exit(2);
+  }
+
+  if (parsed.help) {
+    printUsage();
+    process.exit(0);
+  }
+
+  Object.assign(process.env, parsed.envOverrides);
+
   if (!exists(".agent")) {
     console.error("This command must run from TNF repo root (missing .agent/).");
     process.exit(1);

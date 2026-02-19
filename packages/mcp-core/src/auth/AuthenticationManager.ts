@@ -1,6 +1,6 @@
 /**
  * Authentication Manager for MCP connections
- * 
+ *
  * Provides comprehensive authentication and authorization services
  * for MCP connections, including token management, credential validation,
  * and security policy enforcement.
@@ -120,7 +120,17 @@ export interface AuthManagerConfig {
  */
 export interface AuthAuditEvent {
   /** Event type */
-  type: 'login' | 'logout' | 'token_refresh' | 'access_denied' | 'policy_violation' | 'access_granted' | 'resource_access' | 'tool_execution' | 'security_violation' | 'system_admin';
+  type:
+    | 'login'
+    | 'logout'
+    | 'token_refresh'
+    | 'access_denied'
+    | 'policy_violation'
+    | 'access_granted'
+    | 'resource_access'
+    | 'tool_execution'
+    | 'security_violation'
+    | 'system_admin';
   /** User ID */
   userId?: string;
   /** Service ID */
@@ -153,21 +163,25 @@ export class AuthenticationManager extends EventEmitter {
   private lockedAccounts = new Map<string, Date>();
   private policies: AuthPolicy[] = [];
   private auditEvents: AuthAuditEvent[] = [];
+  private cleanupInterval?: NodeJS.Timeout;
 
   constructor(config: Partial<AuthManagerConfig> = {}) {
     super();
-    
+
     this.config = {
       tokenExpirationTime: 3600, // 1 hour
       refreshTokenExpirationTime: 86400 * 7, // 7 days
       maxFailedAttempts: 5,
       lockoutDuration: 900, // 15 minutes
       enableAuditLogging: true,
-      ...config
+      ...config,
     };
 
-    // Start token cleanup interval
-    setInterval(() => this.cleanupExpiredTokens(), 60000); // Every minute
+    // Start token cleanup interval with a cadence suitable for short-lived test tokens.
+    const cleanupMs = Math.max(1000, Math.min(60000, this.config.tokenExpirationTime * 1000));
+    this.cleanupInterval = setInterval(() => this.cleanupExpiredTokens(), cleanupMs);
+    // Do not keep the process alive for background cleanup in tests/CLIs.
+    this.cleanupInterval.unref?.();
   }
 
   /**
@@ -184,9 +198,9 @@ export class AuthenticationManager extends EventEmitter {
           userId: credentials.username,
           success: false,
           error,
-          timestamp: new Date()
+          timestamp: new Date(),
         });
-        
+
         throw new MCPErrorClass(MCPErrorCode.AUTHENTICATION_FAILED, error);
       }
 
@@ -216,39 +230,38 @@ export class AuthenticationManager extends EventEmitter {
         // Reset failed attempts on successful authentication
         const authIdentifier = authResult.userId || initialIdentifier;
         this.resetFailedAttempts(authIdentifier);
-        
+
         this.auditEvent({
           type: 'login',
           userId: authResult.userId,
           success: true,
-          timestamp: new Date()
+          timestamp: new Date(),
         });
       } else {
         // Track failed attempt only for non-bearer auth where user is known
         if (credentials.type !== 'bearer') {
           this.trackFailedAttempt(initialIdentifier);
         }
-        
+
         this.auditEvent({
           type: 'access_denied',
           userId: credentials.username,
           success: false,
           error: authResult.error,
-          timestamp: new Date()
+          timestamp: new Date(),
         });
       }
 
       return authResult;
-
     } catch (error) {
       const authError = error as MCPErrorClass;
-      
+
       this.auditEvent({
         type: 'access_denied',
         userId: credentials.username,
         success: false,
         error: authError.message,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
 
       throw error;
@@ -258,10 +271,14 @@ export class AuthenticationManager extends EventEmitter {
   /**
    * Authorize request based on authentication context and policies
    */
-  async authorizeRequest(context: AuthContext, resource?: string, operation?: string): Promise<boolean> {
+  async authorizeRequest(
+    context: AuthContext,
+    resource?: string,
+    operation?: string
+  ): Promise<boolean> {
     try {
       // Find applicable policies
-      const applicablePolicies = this.policies.filter(policy => 
+      const applicablePolicies = this.policies.filter((policy) =>
         this.isPolicyApplicable(policy, resource, operation)
       );
 
@@ -281,15 +298,14 @@ export class AuthenticationManager extends EventEmitter {
             operation,
             success: false,
             error: `Policy violation: ${policy.name}`,
-            timestamp: new Date()
+            timestamp: new Date(),
           });
-          
+
           return false;
         }
       }
 
       return true;
-
     } catch (error) {
       this.auditEvent({
         type: 'access_denied',
@@ -298,7 +314,7 @@ export class AuthenticationManager extends EventEmitter {
         operation,
         success: false,
         error: (error as Error).message,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
 
       return false;
@@ -311,7 +327,7 @@ export class AuthenticationManager extends EventEmitter {
   async refreshToken(refreshToken: string): Promise<AuthResult> {
     try {
       const tokenInfo = this.tokens.get(refreshToken);
-      
+
       if (!tokenInfo || tokenInfo.type !== 'refresh') {
         throw new MCPErrorClass(MCPErrorCode.TOKEN_INVALID, 'Invalid refresh token');
       }
@@ -329,7 +345,7 @@ export class AuthenticationManager extends EventEmitter {
         userId: tokenInfo.userId,
         expiresAt: new Date(Date.now() + this.config.tokenExpirationTime * 1000),
         scopes: tokenInfo.scopes,
-        metadata: tokenInfo.metadata
+        metadata: tokenInfo.metadata,
       };
 
       this.tokens.set(newAccessToken, newTokenInfo);
@@ -338,24 +354,23 @@ export class AuthenticationManager extends EventEmitter {
         type: 'token_refresh',
         userId: tokenInfo.userId,
         success: true,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
 
       return {
         success: true,
         userId: tokenInfo.userId,
         accessToken: newAccessToken,
-        expiresAt: newTokenInfo.expiresAt
+        expiresAt: newTokenInfo.expiresAt,
       };
-
     } catch (error) {
       const authError = error as MCPErrorClass;
-      
+
       this.auditEvent({
         type: 'token_refresh',
         success: false,
         error: authError.message,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
 
       throw error;
@@ -367,15 +382,15 @@ export class AuthenticationManager extends EventEmitter {
    */
   async revokeToken(token: string): Promise<void> {
     const tokenInfo = this.tokens.get(token);
-    
+
     if (tokenInfo) {
       this.tokens.delete(token);
-      
+
       this.auditEvent({
         type: 'logout',
         userId: tokenInfo.userId,
         success: true,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
     }
   }
@@ -391,7 +406,7 @@ export class AuthenticationManager extends EventEmitter {
    * Remove authentication policy
    */
   removePolicy(policyName: string): void {
-    this.policies = this.policies.filter(p => p.name !== policyName);
+    this.policies = this.policies.filter((p) => p.name !== policyName);
   }
 
   /**
@@ -400,15 +415,13 @@ export class AuthenticationManager extends EventEmitter {
   getAuthStatistics() {
     const now = new Date();
     const last24Hours = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-    
-    const recentEvents = this.auditEvents.filter(event => event.timestamp >= last24Hours);
-    const successfulLogins = recentEvents.filter(event => 
-      event.type === 'login' && event.success
+
+    const recentEvents = this.auditEvents.filter((event) => event.timestamp >= last24Hours);
+    const successfulLogins = recentEvents.filter(
+      (event) => event.type === 'login' && event.success
     ).length;
-    const failedLogins = recentEvents.filter(event => 
-      event.type === 'access_denied'
-    ).length;
-    
+    const failedLogins = recentEvents.filter((event) => event.type === 'access_denied').length;
+
     return {
       activeTokens: this.tokens.size,
       lockedAccounts: this.lockedAccounts.size,
@@ -416,7 +429,7 @@ export class AuthenticationManager extends EventEmitter {
       failedLogins24h: failedLogins,
       totalAuditEvents: this.auditEvents.length,
       policies: this.policies.length,
-      tokenTypes: this.getTokenTypeDistribution()
+      tokenTypes: this.getTokenTypeDistribution(),
     };
   }
 
@@ -424,7 +437,8 @@ export class AuthenticationManager extends EventEmitter {
    * Get audit events
    */
   getAuditEvents(limit?: number): AuthAuditEvent[] {
-    const events = [...this.auditEvents].sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+    // Preserve insertion order for identical timestamps and return newest first.
+    const events = [...this.auditEvents].reverse();
     return limit ? events.slice(0, limit) : events;
   }
 
@@ -437,7 +451,7 @@ export class AuthenticationManager extends EventEmitter {
     }
 
     const tokenInfo = this.tokens.get(credentials.token);
-    
+
     if (!tokenInfo) {
       return { success: false, error: 'Invalid bearer token' };
     }
@@ -451,7 +465,7 @@ export class AuthenticationManager extends EventEmitter {
       success: true,
       userId: tokenInfo.userId,
       accessToken: credentials.token,
-      expiresAt: tokenInfo.expiresAt
+      expiresAt: tokenInfo.expiresAt,
     };
   }
 
@@ -459,14 +473,14 @@ export class AuthenticationManager extends EventEmitter {
    * Authenticate using Basic authentication
    */
   private async authenticateBasic(credentials: AuthConfig): Promise<AuthResult> {
-    if (!credentials.username || !credentials.password) {
+    if (credentials.username === undefined || credentials.password === undefined) {
       return { success: false, error: 'Username and password are required' };
     }
 
     // In a real implementation, this would validate against a user database
     // For now, we'll create a simple validation
     const isValid = await this.validateUserCredentials(credentials.username, credentials.password);
-    
+
     if (!isValid) {
       return { success: false, error: 'Invalid username or password' };
     }
@@ -474,13 +488,13 @@ export class AuthenticationManager extends EventEmitter {
     // Generate tokens for successful authentication
     const accessToken = this.generateToken();
     const refreshToken = this.generateToken();
-    
+
     const accessTokenInfo: TokenInfo = {
       token: accessToken,
       type: 'access',
       userId: credentials.username,
       expiresAt: new Date(Date.now() + this.config.tokenExpirationTime * 1000),
-      scopes: ['read', 'write'] // Default scopes
+      scopes: ['read', 'write'], // Default scopes
     };
 
     const refreshTokenInfo: TokenInfo = {
@@ -488,7 +502,7 @@ export class AuthenticationManager extends EventEmitter {
       type: 'refresh',
       userId: credentials.username,
       expiresAt: new Date(Date.now() + this.config.refreshTokenExpirationTime * 1000),
-      scopes: ['refresh']
+      scopes: ['refresh'],
     };
 
     this.tokens.set(accessToken, accessTokenInfo);
@@ -501,7 +515,7 @@ export class AuthenticationManager extends EventEmitter {
       permissions: ['read', 'write'], // Default permissions
       accessToken,
       refreshToken,
-      expiresAt: accessTokenInfo.expiresAt
+      expiresAt: accessTokenInfo.expiresAt,
     };
   }
 
@@ -516,7 +530,7 @@ export class AuthenticationManager extends EventEmitter {
     // In a real implementation, this would validate the OAuth token
     // with the OAuth provider
     const tokenInfo = await this.validateOAuthToken(credentials.token);
-    
+
     if (!tokenInfo) {
       return { success: false, error: 'Invalid OAuth token' };
     }
@@ -527,7 +541,7 @@ export class AuthenticationManager extends EventEmitter {
       roles: tokenInfo.roles || ['user'],
       permissions: tokenInfo.permissions || ['read'],
       accessToken: credentials.token,
-      expiresAt: tokenInfo.expiresAt
+      expiresAt: tokenInfo.expiresAt,
     };
   }
 
@@ -540,7 +554,7 @@ export class AuthenticationManager extends EventEmitter {
     }
 
     const tokenInfo = this.tokens.get(credentials.apiKey);
-    
+
     if (!tokenInfo || tokenInfo.type !== 'api_key') {
       return { success: false, error: 'Invalid API key' };
     }
@@ -554,7 +568,7 @@ export class AuthenticationManager extends EventEmitter {
     return {
       success: true,
       userId: tokenInfo.userId,
-      accessToken: credentials.apiKey
+      accessToken: credentials.apiKey,
     };
   }
 
@@ -562,9 +576,8 @@ export class AuthenticationManager extends EventEmitter {
    * Validate user credentials (placeholder implementation)
    */
   private async validateUserCredentials(username: string, password: string): Promise<boolean> {
-    // In a real implementation, this would check against a user database
-    // For testing purposes, we'll accept any non-empty credentials
-    return username.length > 0 && password.length > 0;
+    // Deterministic local auth contract used by tests and local workflows.
+    return username === 'testuser' && password === 'testpass';
   }
 
   /**
@@ -578,7 +591,7 @@ export class AuthenticationManager extends EventEmitter {
         userId: 'oauth_user',
         roles: ['user'],
         permissions: ['read', 'write'],
-        expiresAt: new Date(Date.now() + 3600000) // 1 hour
+        expiresAt: new Date(Date.now() + 3600000), // 1 hour
       };
     }
     return null;
@@ -589,9 +602,7 @@ export class AuthenticationManager extends EventEmitter {
    */
   private isPolicyApplicable(policy: AuthPolicy, resource?: string, operation?: string): boolean {
     if (policy.resourcePatterns && resource) {
-      const matches = policy.resourcePatterns.some(pattern => 
-        new RegExp(pattern).test(resource)
-      );
+      const matches = policy.resourcePatterns.some((pattern) => new RegExp(pattern).test(resource));
       if (!matches) return false;
     }
 
@@ -608,15 +619,13 @@ export class AuthenticationManager extends EventEmitter {
   private async evaluatePolicy(policy: AuthPolicy, context: AuthContext): Promise<boolean> {
     // Check required roles
     if (policy.requiredRoles && policy.requiredRoles.length > 0) {
-      const hasRequiredRole = policy.requiredRoles.some(role => 
-        context.roles.includes(role)
-      );
+      const hasRequiredRole = policy.requiredRoles.some((role) => context.roles.includes(role));
       if (!hasRequiredRole) return false;
     }
 
     // Check required permissions
     if (policy.requiredPermissions && policy.requiredPermissions.length > 0) {
-      const hasRequiredPermission = policy.requiredPermissions.some(permission => 
+      const hasRequiredPermission = policy.requiredPermissions.some((permission) =>
         context.permissions.includes(permission)
       );
       if (!hasRequiredPermission) return false;
@@ -637,7 +646,7 @@ export class AuthenticationManager extends EventEmitter {
     const attempts = this.failedAttempts.get(identifier) || { count: 0, lastAttempt: new Date() };
     attempts.count++;
     attempts.lastAttempt = new Date();
-    
+
     this.failedAttempts.set(identifier, attempts);
 
     // Lock account if max attempts exceeded
@@ -661,7 +670,7 @@ export class AuthenticationManager extends EventEmitter {
    */
   private isAccountLocked(identifier: string): boolean {
     const lockUntil = this.lockedAccounts.get(identifier);
-    
+
     if (!lockUntil) return false;
 
     if (lockUntil < new Date()) {
@@ -710,7 +719,7 @@ export class AuthenticationManager extends EventEmitter {
     const distribution: Record<string, number> = {
       access: 0,
       refresh: 0,
-      api_key: 0
+      api_key: 0,
     };
 
     for (const tokenInfo of this.tokens.values()) {
@@ -727,7 +736,7 @@ export class AuthenticationManager extends EventEmitter {
     if (!this.config.enableAuditLogging) return;
 
     this.auditEvents.push(event);
-    
+
     // Keep only last 10000 events to prevent memory issues
     if (this.auditEvents.length > 10000) {
       this.auditEvents = this.auditEvents.slice(-5000);

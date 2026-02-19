@@ -114,7 +114,7 @@ const mockAgents: Agent[] = [
 
 export const useAgentStore = create<AgentState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       agents: mockAgents, // Start with mock data
       loading: false,
       error: null,

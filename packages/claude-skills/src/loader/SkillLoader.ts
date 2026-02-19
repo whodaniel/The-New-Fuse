@@ -4,12 +4,12 @@
  * Loads skills from Anthropic's skills repository
  */
 
+import { exec } from 'child_process';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { exec } from 'child_process';
 import { promisify } from 'util';
 import { SkillParser } from '../parser';
-import { ClaudeSkill, SkillLoaderConfig, SkillImportResult, SkillCategory } from '../types';
+import type { ClaudeSkill, SkillCategory, SkillImportResult, SkillLoaderConfig } from '../types';
 
 const execAsync = promisify(exec);
 
@@ -62,7 +62,9 @@ export class SkillLoader {
 
       console.log('Skill loader initialized successfully');
     } catch (error) {
-      throw new Error(`Failed to initialize skill loader: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to initialize skill loader: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 
@@ -97,7 +99,7 @@ export class SkillLoader {
         result.failed += documentSkills.failed;
         result.skipped += documentSkills.skipped;
         result.errors.push(...documentSkills.errors);
-      } catch (error) {
+      } catch (_error) {
         // document-skills directory might not exist
       }
 
@@ -106,10 +108,14 @@ export class SkillLoader {
         result.skills = this.filterSkills(result.skills);
       }
 
-      console.log(`Loaded ${result.imported} skills (${result.failed} failed, ${result.skipped} skipped)`);
+      console.log(
+        `Loaded ${result.imported} skills (${result.failed} failed, ${result.skipped} skipped)`
+      );
       return result;
     } catch (error) {
-      throw new Error(`Failed to load skills: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to load skills: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 
@@ -134,7 +140,7 @@ export class SkillLoader {
         } else {
           result.skipped++;
         }
-      } catch (error) {
+      } catch (_error) {
         result.failed++;
         result.errors.push({
           skillName,
@@ -157,18 +163,20 @@ export class SkillLoader {
       try {
         await fs.access(skillPath);
         return await this.parser.parseSkillFile(skillPath);
-      } catch (error) {
+      } catch (_error) {
         // Try document-skills directory
         skillPath = path.join(this.config.localCachePath, 'document-skills', skillName, 'SKILL.md');
         try {
           await fs.access(skillPath);
           return await this.parser.parseSkillFile(skillPath);
-        } catch (error2) {
+        } catch (_error2) {
           return null;
         }
       }
     } catch (error) {
-      throw new Error(`Failed to load skill ${skillName}: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to load skill ${skillName}: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 
@@ -187,7 +195,7 @@ export class SkillLoader {
           try {
             await fs.access(skillFilePath);
             skills.push(entry.name);
-          } catch (error) {
+          } catch (_error) {
             // No SKILL.md in this directory
           }
         }
@@ -203,18 +211,20 @@ export class SkillLoader {
             try {
               await fs.access(skillFilePath);
               skills.push(`document-skills/${entry.name}`);
-            } catch (error) {
+            } catch (_error) {
               // No SKILL.md in this directory
             }
           }
         }
-      } catch (error) {
+      } catch (_error) {
         // document-skills directory might not exist
       }
 
       return skills.sort();
     } catch (error) {
-      throw new Error(`Failed to list available skills: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to list available skills: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 
@@ -234,13 +244,13 @@ export class SkillLoader {
     try {
       await fs.access(path.join(this.config.localCachePath, '.git'));
       return true;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
 
   private async cloneRepository(): Promise<void> {
-    const { stdout, stderr } = await execAsync(
+    const { stderr } = await execAsync(
       `git clone --depth 1 "${this.config.sourceRepositoryUrl}" "${this.config.localCachePath}"`
     );
     if (stderr && !stderr.includes('Cloning into')) {
@@ -250,7 +260,7 @@ export class SkillLoader {
 
   private async updateRepository(): Promise<void> {
     try {
-      const { stdout, stderr } = await execAsync(
+      const { stderr } = await execAsync(
         `cd "${this.config.localCachePath}" && git pull origin main`
       );
       if (stderr && !stderr.includes('Already up to date')) {
@@ -306,14 +316,16 @@ export class SkillLoader {
         }
       }
     } catch (error) {
-      throw new Error(`Failed to load skills from ${directoryPath}: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to load skills from ${directoryPath}: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
 
     return result;
   }
 
   private filterSkills(skills: ClaudeSkill[]): ClaudeSkill[] {
-    return skills.filter(skill => {
+    return skills.filter((skill) => {
       // Filter by category
       if (this.config.categoriesFilter && this.config.categoriesFilter.length > 0) {
         if (!this.config.categoriesFilter.includes(skill.category as SkillCategory)) {
@@ -323,9 +335,7 @@ export class SkillLoader {
 
       // Filter by tags
       if (this.config.tagsFilter && this.config.tagsFilter.length > 0) {
-        const hasMatchingTag = skill.tags.some(tag =>
-          this.config.tagsFilter!.includes(tag)
-        );
+        const hasMatchingTag = skill.tags.some((tag) => this.config.tagsFilter!.includes(tag));
         if (!hasMatchingTag) {
           return false;
         }
@@ -336,13 +346,11 @@ export class SkillLoader {
   }
 
   private setupAutoUpdate(): void {
-    this.updateTimer = setInterval(async () => {
+    this.updateTimer = setInterval(() => {
       console.log('Auto-updating Anthropic skills repository...');
-      try {
-        await this.updateRepository();
-      } catch (error) {
+      void this.updateRepository().catch((error) => {
         console.error('Failed to auto-update repository:', error);
-      }
+      });
     }, this.config.updateInterval);
   }
 }

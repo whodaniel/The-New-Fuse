@@ -3,6 +3,7 @@
   "globalDependencies": ["**/.env.*local"],
   "globalEnv": [
     "NODE_ENV",
+    "ESLINT_USE_FLAT_CONFIG",
     "DATABASE_URL",
     "REDIS_URL",
     "JWT_SECRET",

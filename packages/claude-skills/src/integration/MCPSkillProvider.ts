@@ -4,9 +4,9 @@
  * Integrates Claude skills with The New Fuse MCP server
  */
 
-import { ClaudeSkill, SkillMCPTool } from '../types';
-import { SkillRegistry } from '../registry';
-import { SkillExecutor } from '../executor';
+import type { SkillExecutor } from '../executor';
+import type { SkillRegistry } from '../registry';
+import type { ClaudeSkill, SkillMCPTool } from '../types';
 
 /**
  * MCP Skill Provider
@@ -24,15 +24,17 @@ export class MCPSkillProvider {
   /**
    * Get all skills as MCP resources
    */
-  async getSkillResources(): Promise<Array<{
-    uri: string;
-    name: string;
-    description: string;
-    mimeType: string;
-  }>> {
+  async getSkillResources(): Promise<
+    Array<{
+      uri: string;
+      name: string;
+      description: string;
+      mimeType: string;
+    }>
+  > {
     const skills = await this.registry.list();
 
-    return skills.map(skill => ({
+    return skills.map((skill) => ({
       uri: `skill://${skill.id}`,
       name: skill.name,
       description: skill.description,
@@ -62,22 +64,19 @@ export class MCPSkillProvider {
   async getSkillTools(): Promise<SkillMCPTool[]> {
     const skills = await this.registry.list();
 
-    return skills.map(skill => this.skillToMCPTool(skill));
+    return skills.map((skill) => this.skillToMCPTool(skill));
   }
 
   /**
    * Execute a skill as an MCP tool
    */
-  async executeSkillTool(
-    toolName: string,
-    parameters: Record<string, any>
-  ): Promise<any> {
+  async executeSkillTool(toolName: string, parameters: Record<string, any>): Promise<any> {
     // Extract skill ID from tool name (format: skill_skillName)
     const skillName = toolName.replace('skill_', '').replace(/_/g, '-');
 
     // Find skill by name
     const skills = await this.registry.list();
-    const skill = skills.find(s => s.name === skillName);
+    const skill = skills.find((s) => s.name === skillName);
 
     if (!skill) {
       throw new Error(`Skill ${skillName} not found`);
@@ -99,15 +98,17 @@ export class MCPSkillProvider {
   /**
    * Search skills and return as resources
    */
-  async searchSkills(query: string): Promise<Array<{
-    uri: string;
-    name: string;
-    description: string;
-    relevance: number;
-  }>> {
+  async searchSkills(query: string): Promise<
+    Array<{
+      uri: string;
+      name: string;
+      description: string;
+      relevance: number;
+    }>
+  > {
     const skills = await this.registry.search(query);
 
-    return skills.map(skill => ({
+    return skills.map((skill) => ({
       uri: `skill://${skill.id}`,
       name: skill.name,
       description: skill.description,
@@ -118,14 +119,16 @@ export class MCPSkillProvider {
   /**
    * Get skills by category as a resource collection
    */
-  async getSkillsByCategory(category: string): Promise<Array<{
-    uri: string;
-    name: string;
-    description: string;
-  }>> {
+  async getSkillsByCategory(category: string): Promise<
+    Array<{
+      uri: string;
+      name: string;
+      description: string;
+    }>
+  > {
     const skills = await this.registry.getByCategory(category);
 
-    return skills.map(skill => ({
+    return skills.map((skill) => ({
       uri: `skill://${skill.id}`,
       name: skill.name,
       description: skill.description,
@@ -209,7 +212,7 @@ export class MCPSkillProvider {
 
     if (skill.metadata.allowedTools && skill.metadata.allowedTools.length > 0) {
       sections.push('## Allowed Tools');
-      sections.push(skill.metadata.allowedTools.map(tool => `- ${tool}`).join('\n'));
+      sections.push(skill.metadata.allowedTools.map((tool) => `- ${tool}`).join('\n'));
       sections.push('');
     }
 
@@ -242,9 +245,7 @@ export class MCPSkillProvider {
     }
 
     // Match in tags
-    const matchingTags = skill.tags.filter(tag =>
-      tag.toLowerCase().includes(queryLower)
-    );
+    const matchingTags = skill.tags.filter((tag) => tag.toLowerCase().includes(queryLower));
     score += matchingTags.length * 20;
 
     // Match in category

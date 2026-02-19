@@ -5,7 +5,7 @@
 
 import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
-import { AgentHealth, SystemHealth } from './services/heartbeat';
+import { AgentHealth, heartbeatClient, SystemHealth } from './services/heartbeat';
 import './styles.css';
 
 // ============================================================================

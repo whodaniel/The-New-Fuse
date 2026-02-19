@@ -11,6 +11,7 @@ import { EventEmitter } from 'events';
 import { WorkflowEngine } from './WorkflowEngine';
 import {
   StepType,
+  WorkflowDefinition,
   WorkflowInstance,
   WorkflowStep,
   WorkflowStepStatus,
@@ -54,13 +55,32 @@ export class WorkflowExecutor extends EventEmitter {
     this.logger.info(`Executing workflow: ${workflow.name} (Instance: ${instanceId})`);
     this.emit('workflow_started', instance);
 
-    const startStep = workflow.steps.find((s) => s.type === StepType.START)!;
-    this.scheduleNextSteps(instance, startStep);
+    const startStep = workflow.steps.find((s) => s.type === StepType.START);
+    if (startStep) {
+      this.scheduleNextSteps(instance, startStep);
+    } else {
+      this.scheduleEntrySteps(instance, workflow);
+    }
 
     return instanceId;
   }
 
+  private scheduleEntrySteps(instance: WorkflowInstance, workflow: WorkflowDefinition) {
+    const targetIds = new Set(workflow.edges.map((e) => e.targetStepId));
+    const entrySteps = workflow.steps.filter((s: WorkflowStep) => !targetIds.has(s.id));
+    const stepsToRun = entrySteps.length > 0 ? entrySteps : workflow.steps;
+
+    for (const step of stepsToRun) {
+      if (step.type !== StepType.START) {
+        this.executeStep(instance, step);
+      }
+    }
+  }
+
   private async scheduleNextSteps(instance: WorkflowInstance, completedStep: WorkflowStep) {
+    if (!completedStep?.id) {
+      return;
+    }
     const workflow = await this.workflowEngine.getWorkflow(instance.workflowDefinitionId);
     if (!workflow) return;
 

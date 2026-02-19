@@ -69,20 +69,6 @@ export const GoogleDriveWizard: React.FC<GoogleDriveWizardProps> = ({ onClose, o
     handleNext();
   };
 
-  const simulateAuthFlow = async () => {
-    setLoading(true);
-    addLog('Starting server for authentication...');
-    await new Promise((r) => setTimeout(r, 1000));
-
-    const mockAuthUrl =
-      'https://accounts.google.com/o/oauth2/v2/auth?access_type=offline&scope=...';
-    // In a real app, this would come from the backend process
-
-    addLog(`Please visit: ${mockAuthUrl}`);
-    addLog('Waiting for auth code input...');
-    setLoading(false);
-  };
-
   const openAuthUrl = () => {
     const url =
       'https://accounts.google.com/o/oauth2/v2/auth?access_type=offline&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdocuments%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive&response_type=code&client_id=YOUR_CLIENT_ID&redirect_uri=http%3A%2F%2Flocalhost';

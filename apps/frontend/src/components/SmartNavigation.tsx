@@ -1,4 +1,5 @@
 import {
+  Activity,
   BarChart3,
   Bot,
   Boxes,
@@ -9,6 +10,7 @@ import {
   Database,
   Globe,
   Layout,
+  Lightbulb,
   LogOut,
   Menu,
   MessageSquare,
@@ -241,6 +243,13 @@ function SmartNavigation() {
                       <ClipboardList className="w-4 h-4 text-emerald-400" />
                       <span className="text-sm">Task Management</span>
                     </Link>
+                    <Link
+                      to="/timeline"
+                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
+                    >
+                      <Activity className="w-4 h-4 text-orange-400" />
+                      <span className="text-sm">Unified Timeline</span>
+                    </Link>
                   </div>
                 )}
               </div>
@@ -338,6 +347,19 @@ function SmartNavigation() {
                     >
                       <Network className="w-4 h-4 text-emerald-400" />
                       <span className="text-sm">System Observatory</span>
+                    </Link>
+                    <div className="my-2 border-t border-white/5" />
+                    <Link
+                      to="/suggestions"
+                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
+                    >
+                      <Lightbulb className="w-4 h-4 text-yellow-400" />
+                      <div>
+                        <div className="text-sm font-medium text-slate-200">Ideation Layer</div>
+                        <div className="text-[10px] text-slate-500">
+                          AI-driven feature suggestions
+                        </div>
+                      </div>
                     </Link>
                   </div>
                 )}

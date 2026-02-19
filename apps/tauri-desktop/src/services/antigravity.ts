@@ -91,7 +91,6 @@ export type AntigravityEvent =
 
 class AntigravityServiceClass extends EventEmitter<AntigravityEvent> {
   private connected: boolean = false;
-  private credentials: AntigravityCredentials | null = null;
   private status: AntigravityStatus | null = null;
   private reconnectTimer: NodeJS.Timeout | null = null;
   private pages: PageInfo[] = [];
@@ -106,7 +105,6 @@ class AntigravityServiceClass extends EventEmitter<AntigravityEvent> {
   async initialize(credentials: AntigravityCredentials): Promise<boolean> {
     try {
       console.log('🔮 Initializing Antigravity service...');
-      this.credentials = credentials;
 
       // Store credentials in Tauri backend
       await invoke('antigravity_set_credentials', {

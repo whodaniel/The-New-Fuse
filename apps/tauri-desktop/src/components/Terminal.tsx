@@ -10,7 +10,6 @@ import { listen } from '@tauri-apps/api/event';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Terminal as XTerm } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
-import { WebLinksAddon } from 'xterm-addon-web-links';
 import 'xterm/css/xterm.css';
 
 // ============================================================================
@@ -102,7 +101,7 @@ export const Terminal: React.FC<TerminalProps> = ({
         foreground: '#c0caf5',
         cursor: '#c0caf5',
         cursorAccent: '#1a1b26',
-        selection: 'rgba(125, 174, 255, 0.3)',
+        selectionBackground: 'rgba(125, 174, 255, 0.3)',
         black: '#15161e',
         red: '#f7768e',
         green: '#9ece6a',
@@ -129,10 +128,8 @@ export const Terminal: React.FC<TerminalProps> = ({
 
     // Add addons
     const fitAddon = new FitAddon();
-    const webLinksAddon = new WebLinksAddon();
 
     terminal.loadAddon(fitAddon);
-    terminal.loadAddon(webLinksAddon);
 
     // Open terminal
     terminal.open(terminalRef.current);

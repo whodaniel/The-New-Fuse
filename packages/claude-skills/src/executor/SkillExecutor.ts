@@ -5,13 +5,13 @@
  */
 
 import { z } from 'zod';
-import {
+import type {
   ClaudeSkill,
+  ISkillExecutor,
   SkillExecutionContext,
   SkillExecutionResult,
-  ISkillExecutor,
+  SkillParameter,
   ValidationResult,
-  SkillParameter
 } from '../types';
 
 /**
@@ -182,7 +182,7 @@ export class SkillExecutor implements ISkillExecutor {
         try {
           const schema = z.object(param.schema as z.ZodRawShape);
           schema.parse(value);
-        } catch (error) {
+        } catch (_error) {
           errors.push({
             parameter: param.name,
             message: `Parameter ${param.name} does not match the required schema`,

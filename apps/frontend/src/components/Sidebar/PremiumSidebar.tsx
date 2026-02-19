@@ -27,11 +27,10 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
     return hasRole(item.requiredRoles);
   });
   const sections: Array<{ key: SidebarNavItem['section']; label: string }> = [
-    { key: 'core', label: 'Core' },
-    { key: 'control', label: 'Control' },
-    { key: 'agent', label: 'Agent' },
-    { key: 'settings', label: 'Settings' },
-    { key: 'resources', label: 'Resources' },
+    { key: 'grid', label: 'Grid' },
+    { key: 'forge', label: 'Forge' },
+    { key: 'nexus', label: 'Nexus' },
+    { key: 'apex', label: 'Apex' },
   ];
   const advancedItems = navigation.filter((item) => item.section === 'advanced');
   const hasAdvancedItems = advancedItems.length > 0;

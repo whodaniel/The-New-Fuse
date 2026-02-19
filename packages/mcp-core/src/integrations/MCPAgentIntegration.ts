@@ -686,11 +686,14 @@ export class MCPAgentIntegration implements IMCPAgentIntegration {
       if (timeSinceHeartbeat > this.config.heartbeatInterval * 3) {
         // Mark as inactive if no heartbeat for 3 intervals
         endpoint.status = AgentStatus.INACTIVE;
-        console.warn(
-          `[MCPAgentIntegration] Agent ${agentId} marked as inactive due to missing heartbeat`
-        );
+        this.emit('agentHeartbeatMissed', {
+          agentId,
+          lastHeartbeat: endpoint.lastHeartbeat,
+          status: endpoint.status,
+        });
       }
     }, this.config.heartbeatInterval);
+    timer.unref?.();
 
     this.heartbeatTimers.set(agentId, timer);
   }

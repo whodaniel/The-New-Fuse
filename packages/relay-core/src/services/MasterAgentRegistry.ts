@@ -1360,6 +1360,11 @@ export class MasterAgentRegistry extends EventEmitter {
     return Array.from(this.agentProfiles.values());
   }
 
+  // Compatibility alias used by workflow-engine and other legacy integrations.
+  getAllAgents(): MasterAgentProfile[] {
+    return this.getAllAgentProfiles();
+  }
+
   getSystemMetrics(): SystemWideMetrics {
     return { ...this.systemMetrics };
   }
@@ -1466,9 +1471,9 @@ export class MasterAgentRegistry extends EventEmitter {
                 // We need to be careful with nested jsonb updates in Prisma
                 // Usually we'd fetch and merge if using raw prisma,
                 // but for this implementation we assume the metadata/config structure is handled
-                metrics: agent.metrics
-              }
-            }
+                metrics: agent.metrics,
+              },
+            },
           },
           updatedAt: new Date(),
         },

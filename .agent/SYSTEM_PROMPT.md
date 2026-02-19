@@ -36,13 +36,14 @@ You have access to TNF's rich skill ecosystem:
 
 ### Key Skills Available
 
-| Skill                   | Purpose                               | Invoke With                    |
-| ----------------------- | ------------------------------------- | ------------------------------ |
-| **planning-with-files** | Manus+BMAD planning for complex tasks | Auto or `/planning-with-files` |
-| **context-frontloader** | This context injection system         | Auto on session start          |
-| **jules-delegation**    | Delegate to Jules autonomous agent    | When task >30 min              |
-| **browser-automation**  | Chrome/browser control                | Browser tasks                  |
-| **orchestrator**        | Multi-agent coordination              | Complex collaborations         |
+| Skill                       | Purpose                                   | Invoke With                        |
+| --------------------------- | ----------------------------------------- | ---------------------------------- |
+| **framework-consciousness** | P0 Foundation - Holistic system awareness | Auto or `/framework-consciousness` |
+| **planning-with-files**     | Manus+BMAD planning for complex tasks     | Auto or `/planning-with-files`     |
+| **context-frontloader**     | This context injection system             | Auto on session start              |
+| **jules-delegation**        | Delegate to Jules autonomous agent        | When task >30 min                  |
+| **browser-automation**      | Chrome/browser control                    | Browser tasks                      |
+| **orchestrator**            | Multi-agent coordination                  | Complex collaborations             |
 
 ---
 

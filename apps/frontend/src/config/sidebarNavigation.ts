@@ -2,21 +2,22 @@ import {
   Activity,
   BarChart3,
   Bot,
-  Briefcase,
+  Boxes,
   Bug,
+  ClipboardList,
   Cpu,
+  Database,
   Eye,
   Globe,
+  LayoutDashboard,
   Library,
-  ListTree,
-  Lock,
+  Lightbulb,
   MessageSquare,
-  Network,
-  Radio,
+  Package,
   ScrollText,
   Settings,
+  Shield,
   Workflow,
-  Wrench,
   Zap,
 } from 'lucide-react';
 import type { ComponentType } from 'react';
@@ -25,85 +26,103 @@ export interface SidebarNavItem {
   name: string;
   href: string;
   icon: ComponentType<{ className?: string }>;
-  section: 'core' | 'control' | 'agent' | 'settings' | 'resources' | 'advanced';
+  section: 'grid' | 'forge' | 'nexus' | 'apex' | 'advanced';
   access?: 'public' | 'authenticated';
   requiredRoles?: string[];
 }
 
 // Canonical sidebar source of truth for PremiumLayout surfaces.
-// V2 IA: OpenClaw-style operational menu + TNF advanced capabilities.
+// Consolidated IA: Grid (Ops), Forge (AI/Creation), Nexus (Ecosystem), Apex (Control).
 export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
-  { name: 'Chat', href: '/chat', icon: MessageSquare, section: 'core', access: 'authenticated' },
-
+  // GRID: Operational Day-to-Day
   {
-    name: 'Overview',
-    href: '/overview',
+    name: 'Dashboard',
+    href: '/dashboard',
+    icon: LayoutDashboard,
+    section: 'grid',
+    access: 'authenticated',
+  },
+  { name: 'Chat', href: '/chat', icon: MessageSquare, section: 'grid', access: 'authenticated' },
+  { name: 'Tasks', href: '/tasks', icon: ClipboardList, section: 'grid', access: 'authenticated' },
+  { name: 'Timeline', href: '/timeline', icon: Activity, section: 'grid', access: 'authenticated' },
+  {
+    name: 'Analytics',
+    href: '/analytics',
     icon: BarChart3,
-    section: 'control',
-    access: 'authenticated',
-  },
-  { name: 'Channels', href: '/channels', icon: Radio, section: 'control', access: 'authenticated' },
-  { name: 'Instances', href: '/instances', icon: Cpu, section: 'control', access: 'authenticated' },
-  {
-    name: 'Sessions',
-    href: '/sessions',
-    icon: Activity,
-    section: 'control',
-    access: 'authenticated',
-  },
-  { name: 'Usage', href: '/usage', icon: BarChart3, section: 'control', access: 'authenticated' },
-  {
-    name: 'Cron Jobs',
-    href: '/cron-jobs',
-    icon: ListTree,
-    section: 'control',
+    section: 'grid',
     access: 'authenticated',
   },
 
-  { name: 'Agents', href: '/agents', icon: Bot, section: 'agent', access: 'authenticated' },
-  { name: 'Skills', href: '/skills', icon: Zap, section: 'agent', access: 'authenticated' },
-  { name: 'Nodes', href: '/nodes', icon: Network, section: 'agent', access: 'authenticated' },
-
-  { name: 'Config', href: '/config', icon: Settings, section: 'settings', access: 'authenticated' },
-  { name: 'Debug', href: '/debug', icon: Bug, section: 'settings', access: 'authenticated' },
-  { name: 'Logs', href: '/logs', icon: ScrollText, section: 'settings', access: 'authenticated' },
-
-  { name: 'Docs', href: '/docs', icon: Library, section: 'resources', access: 'public' },
-
+  // FORGE: Intelligence & Building
   {
     name: 'Command Center',
-    href: '/command-center',
-    icon: Wrench,
-    section: 'advanced',
+    href: '/ai-command-center',
+    icon: Zap,
+    section: 'forge',
     access: 'authenticated',
   },
+  {
+    name: 'AI Portal',
+    href: '/ai-portal',
+    icon: Cpu,
+    section: 'forge',
+    access: 'authenticated',
+  },
+  { name: 'Agent Fleet', href: '/agents', icon: Bot, section: 'forge', access: 'authenticated' },
   {
     name: 'Workflows',
     href: '/workflows',
     icon: Workflow,
-    section: 'advanced',
+    section: 'forge',
     access: 'authenticated',
   },
   {
-    name: 'Resources',
-    href: '/resources',
-    icon: Globe,
-    section: 'advanced',
+    name: 'Suggestions',
+    href: '/suggestions',
+    icon: Lightbulb,
+    section: 'forge',
     access: 'authenticated',
   },
-  { name: 'Tasks', href: '/tasks', icon: Briefcase, section: 'advanced', access: 'authenticated' },
+
+  // NEXUS: Ecosystem & Knowledge
+  { name: 'TNF Hub', href: '/hub', icon: Globe, section: 'nexus', access: 'authenticated' },
+  {
+    name: 'Marketplace',
+    href: '/resources',
+    icon: Package,
+    section: 'nexus',
+    access: 'authenticated',
+  },
+  {
+    name: 'Knowledge Hub',
+    href: '/knowledge-hub',
+    icon: Database,
+    section: 'nexus',
+    access: 'authenticated',
+  },
+  { name: 'MCP Hub', href: '/mcp-hub', icon: Boxes, section: 'nexus', access: 'authenticated' },
+  { name: 'Docs', href: '/docs', icon: Library, section: 'nexus', access: 'public' },
+
+  // APEX: Governance & Control
   {
     name: 'Observatory',
     href: '/observatory',
     icon: Eye,
-    section: 'advanced',
+    section: 'apex',
+    access: 'authenticated',
+  },
+  {
+    name: 'Audit Logs',
+    href: '/admin/audit-logs',
+    icon: ScrollText,
+    section: 'apex',
     access: 'authenticated',
   },
   {
     name: 'Admin',
     href: '/admin',
-    icon: Lock,
-    section: 'advanced',
+    icon: Shield,
+    section: 'apex',
     access: 'authenticated',
     requiredRoles: ['SUPER_ADMIN', 'ADMIN', 'AGENCY_OWNER', 'AGENCY_ADMIN'],
   },
@@ -111,7 +130,8 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
     name: 'Settings',
     href: '/settings',
     icon: Settings,
-    section: 'advanced',
+    section: 'apex',
     access: 'authenticated',
   },
+  { name: 'Debug', href: '/debug', icon: Bug, section: 'apex', access: 'authenticated' },
 ];

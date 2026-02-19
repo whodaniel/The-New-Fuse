@@ -25,7 +25,13 @@ async function runCommand(
       stdio: 'inherit',
     });
 
-    child.on('error', reject);
+    child.on('error', (error: NodeJS.ErrnoException) => {
+      if (error?.code === 'ENOENT') {
+        reject(new Error(`'${cmd}' is not installed or not on PATH`));
+        return;
+      }
+      reject(error);
+    });
     child.on('close', (code) => {
       if (code === 0) return resolve();
       reject(new Error(`${cmd} exited with code ${code}`));
@@ -59,7 +65,9 @@ function requireSuperAdmin(
 program
   .name('tnf')
   .description('TNF CLI - Unified Command Surface for TNF Operations')
-  .version('1.0.0');
+  .version('1.0.0')
+  .showSuggestionAfterError()
+  .showHelpAfterError();
 
 const logMessage = (message: AgentMessage) => {
   const fromName = message.from?.agentName || 'Unknown';
@@ -96,6 +104,21 @@ const logMessage = (message: AgentMessage) => {
     console.log(`   ${chalk.yellow('⏳ Expects response')}`);
   }
 };
+
+function isRedisUnavailable(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error ?? '');
+  return (
+    message.includes('Could not connect to Redis') ||
+    message.includes('max retries per request') ||
+    message.includes('ECONNREFUSED')
+  );
+}
+
+function logRedisUnavailable(commandHint: string): never {
+  console.error(chalk.yellow('Redis is unavailable at localhost:6379.'));
+  console.error(chalk.yellow(`Start Redis, then re-run \`${commandHint}\`.`));
+  process.exit(1);
+}
 
 program
   .command('register')
@@ -159,6 +182,9 @@ program
         process.exit(0);
       });
     } catch (err: any) {
+      if (isRedisUnavailable(err)) {
+        logRedisUnavailable(`./tnf register ${name} ${role} ${platform}`);
+      }
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);
     }
@@ -167,21 +193,68 @@ program
 program
   .command('onboard')
   .description('Run TNF frontload onboarding')
-  .action(async () => {
-    try {
-      await runCommand('node', ['scripts/tnf-onboard.cjs']);
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
+  .option('--allow-local-db', 'Allow local DATABASE_URL for this run')
+  .option('--require-cloud-db', 'Require cloud DATABASE_URL for this run')
+  .option('--no-require-cloud-db', 'Allow non-cloud DATABASE_URL for this run')
+  .option('--database-url <url>', 'Override DATABASE_URL for this run')
+  .action(
+    async (options: { allowLocalDb?: boolean; requireCloudDb?: boolean; databaseUrl?: string }) => {
+      try {
+        const args = ['scripts/tnf-onboard.cjs'];
+        if (options.allowLocalDb) args.push('--allow-local-db');
+        if (typeof options.requireCloudDb === 'boolean') {
+          args.push(options.requireCloudDb ? '--require-cloud-db' : '--no-require-cloud-db');
+        }
+        if (options.databaseUrl) args.push('--database-url', options.databaseUrl);
+        await runCommand('node', args);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
     }
-  });
+  );
 
 program
   .command('doctor')
   .description('Run TNF diagnostics')
-  .action(async () => {
+  .option('--mode <mode>', 'Execution mode: cloud (default) or local')
+  .option('--allow-local-db', 'Allow local DATABASE_URL for this run')
+  .option('--require-cloud-db', 'Require cloud DATABASE_URL for this run')
+  .option('--no-require-cloud-db', 'Allow non-cloud DATABASE_URL for this run')
+  .option('--database-url <url>', 'Override DATABASE_URL for this run')
+  .action(
+    async (options: {
+      mode?: string;
+      allowLocalDb?: boolean;
+      requireCloudDb?: boolean;
+      databaseUrl?: string;
+    }) => {
+      try {
+        const args = ['scripts/tnf-doctor.cjs'];
+        if (options.mode) args.push('--mode', options.mode);
+        if (options.allowLocalDb) args.push('--allow-local-db');
+        if (typeof options.requireCloudDb === 'boolean') {
+          args.push(options.requireCloudDb ? '--require-cloud-db' : '--no-require-cloud-db');
+        }
+        if (options.databaseUrl) args.push('--database-url', options.databaseUrl);
+        await runCommand('node', args);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
+const metaskills = program.command('metaskills').description('Meta-skills audit utilities');
+metaskills
+  .command('audit')
+  .description('Audit meta-skills and scaffolding readiness')
+  .option('--json', 'Print JSON output')
+  .action(async (options: { json?: boolean }) => {
     try {
-      await runCommand('node', ['scripts/tnf-doctor.cjs']);
+      const args = ['scripts/tnf-metaskills-audit.cjs'];
+      if (options.json) args.push('--json');
+      await runCommand('node', args);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);
@@ -493,10 +566,14 @@ program
           console.log('');
         });
       }
-      await client.cleanup();
     } catch (err: any) {
+      if (isRedisUnavailable(err)) {
+        logRedisUnavailable('./tnf list');
+      }
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);
+    } finally {
+      await client.cleanup();
     }
   });
 
@@ -517,10 +594,14 @@ program
 
       // Wait a bit for responses
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      await client.cleanup();
     } catch (err: any) {
+      if (isRedisUnavailable(err)) {
+        logRedisUnavailable('./tnf send <message>');
+      }
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);
+    } finally {
+      await client.cleanup();
     }
   });
 
@@ -539,10 +620,14 @@ program
 
       // Wait for any immediate feedback
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      await client.cleanup();
     } catch (err: any) {
+      if (isRedisUnavailable(err)) {
+        logRedisUnavailable('./tnf orchestrate <workflow>');
+      }
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);
+    } finally {
+      await client.cleanup();
     }
   });
 
@@ -591,6 +676,9 @@ program
         process.exit(0);
       });
     } catch (err: any) {
+      if (isRedisUnavailable(err)) {
+        logRedisUnavailable(`./tnf convo ${action}${param ? ` ${param}` : ''}`);
+      }
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);
     }

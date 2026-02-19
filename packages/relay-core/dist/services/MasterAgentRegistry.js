@@ -1001,6 +1001,10 @@ class MasterAgentRegistry extends events_1.EventEmitter {
     getAllAgentProfiles() {
         return Array.from(this.agentProfiles.values());
     }
+    // Compatibility alias used by workflow-engine and other legacy integrations.
+    getAllAgents() {
+        return this.getAllAgentProfiles();
+    }
     getSystemMetrics() {
         return { ...this.systemMetrics };
     }

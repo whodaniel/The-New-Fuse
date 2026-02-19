@@ -3,6 +3,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const net = require("node:net");
+const dotenv = require("dotenv");
 
 const ROOT = process.cwd();
 
@@ -53,11 +54,122 @@ function isLocalDatabaseUrl(url) {
   );
 }
 
+function printUsage() {
+  console.log("Usage: node scripts/tnf-doctor.cjs [options]");
+  console.log("");
+  console.log("Options:");
+  console.log("  -h, --help                Show this help");
+  console.log("      --mode <mode>         Execution mode: cloud (default) or local");
+  console.log("      --allow-local-db      Set TNF_ALLOW_LOCAL_DB=1 for this run");
+  console.log("      --require-cloud-db    Set TNF_REQUIRE_CLOUD_DB=1 for this run");
+  console.log("      --no-require-cloud-db Set TNF_REQUIRE_CLOUD_DB=0 for this run");
+  console.log("      --database-url <url>  Override DATABASE_URL for this run");
+}
+
+function parseArgs(argv) {
+  const envOverrides = {};
+
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i];
+
+    if (arg === "--") {
+      continue;
+    }
+
+    if (arg === "-h" || arg === "--help") {
+      return { help: true, envOverrides };
+    }
+
+    if (arg === "--allow-local-db") {
+      envOverrides.TNF_ALLOW_LOCAL_DB = "1";
+      continue;
+    }
+
+    if (arg === "--mode") {
+      const next = argv[i + 1];
+      if (!next) {
+        throw new Error("Missing value for --mode");
+      }
+      if (next === "local") {
+        envOverrides.TNF_ALLOW_LOCAL_DB = "1";
+        envOverrides.TNF_REQUIRE_CLOUD_DB = "0";
+      } else if (next === "cloud") {
+        envOverrides.TNF_REQUIRE_CLOUD_DB = "1";
+      } else {
+        throw new Error(`Invalid --mode value: ${next}. Expected 'cloud' or 'local'`);
+      }
+      i += 1;
+      continue;
+    }
+
+    if (arg.startsWith("--mode=")) {
+      const mode = arg.slice("--mode=".length);
+      if (mode === "local") {
+        envOverrides.TNF_ALLOW_LOCAL_DB = "1";
+        envOverrides.TNF_REQUIRE_CLOUD_DB = "0";
+      } else if (mode === "cloud") {
+        envOverrides.TNF_REQUIRE_CLOUD_DB = "1";
+      } else {
+        throw new Error(`Invalid --mode value: ${mode}. Expected 'cloud' or 'local'`);
+      }
+      continue;
+    }
+
+    if (arg === "--require-cloud-db") {
+      envOverrides.TNF_REQUIRE_CLOUD_DB = "1";
+      continue;
+    }
+
+    if (arg === "--no-require-cloud-db") {
+      envOverrides.TNF_REQUIRE_CLOUD_DB = "0";
+      continue;
+    }
+
+    if (arg === "--database-url") {
+      const next = argv[i + 1];
+      if (!next) {
+        throw new Error("Missing value for --database-url");
+      }
+      envOverrides.DATABASE_URL = next;
+      i += 1;
+      continue;
+    }
+
+    if (arg.startsWith("--database-url=")) {
+      envOverrides.DATABASE_URL = arg.slice("--database-url=".length);
+      continue;
+    }
+
+    throw new Error(`Unknown option: ${arg}`);
+  }
+
+  return { help: false, envOverrides };
+}
+
 async function main() {
+  let parsed;
+  try {
+    parsed = parseArgs(process.argv.slice(2));
+  } catch (error) {
+    console.error(`FAIL: ${error.message}`);
+    printUsage();
+    process.exit(2);
+  }
+
+  if (parsed.help) {
+    printUsage();
+    process.exit(0);
+  }
+
+  Object.assign(process.env, parsed.envOverrides);
+
   if (!exists(".agent")) {
     console.error("FAIL: run this from TNF repo root (missing .agent/).");
     process.exit(1);
   }
+
+  dotenv.config({ path: abs(".env.local") });
+  dotenv.config({ path: abs(".env") });
 
   let hardFail = false;
 
@@ -133,8 +245,12 @@ async function main() {
   const allowLocal = process.env.TNF_ALLOW_LOCAL_DB === "1";
   const cloudRequired = process.env.TNF_REQUIRE_CLOUD_DB !== "0";
   if (!dbUrl) {
-    hardFail = true;
-    console.log("- FAIL DATABASE_URL is not set");
+    if (cloudRequired) {
+      hardFail = true;
+      console.log("- FAIL DATABASE_URL is not set");
+    } else {
+      console.log("- WARN DATABASE_URL is not set (allowed in local mode)");
+    }
   } else if (cloudRequired && !allowLocal && isLocalDatabaseUrl(dbUrl)) {
     hardFail = true;
     console.log("- FAIL DATABASE_URL is local while TNF requires cloud-rooted execution");

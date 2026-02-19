@@ -209,7 +209,6 @@ const MCPMarketplace: React.FC = () => {
   });
 
   const installedPlugins = plugins.filter((s) => s.installed);
-  const availablePlugins = plugins.filter((s) => !s.installed);
 
   const handleInstall = async (server: MCPServer) => {
     if (server.id === 'google-drive') {

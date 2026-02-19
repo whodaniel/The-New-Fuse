@@ -1,31 +1,23 @@
 /**
  * Tool Execution Engine with timeout and resource limits
- * 
+ *
  * This module provides a comprehensive tool execution engine that enforces
  * resource limits, timeouts, and provides monitoring capabilities.
  */
 
 import { EventEmitter } from 'events';
-import { 
-  ToolHandler, 
-  ToolResult, 
-  ValidationResult, 
-  JSONSchema, 
-  ResourceLimits, 
-  ToolConfig,
-  ToolExecutionMetadata,
-  ToolPermissions,
+import {
   AccessControlEntry,
-  RateLimitConfig
+  JSONSchema,
+  RateLimitConfig,
+  ResourceLimits,
+  ToolHandler,
+  ToolPermissions,
+  ToolResult,
+  ValidationResult,
 } from '../interfaces/IMCPTool';
-import { 
-  ToolExecutionContext, 
-  ToolExecutionStatus, 
-  ToolExecutionLog,
-  ToolSandboxConfig,
-  NetworkAccessConfig
-} from '../types/tool';
-import { MCPErrorClass, MCPErrorCode, ErrorCategory, ErrorSeverity } from '../types/error';
+import { ErrorCategory, ErrorSeverity, MCPErrorClass, MCPErrorCode } from '../types/error';
+import { ToolExecutionContext, ToolExecutionLog, ToolSandboxConfig } from '../types/tool';
 
 /**
  * Tool execution options interface
@@ -96,7 +88,12 @@ export interface ToolExecutionMonitor {
  */
 export interface SecurityViolation {
   /** Violation type */
-  type: 'sandbox_escape' | 'permission_denied' | 'resource_abuse' | 'network_violation' | 'file_access_violation';
+  type:
+    | 'sandbox_escape'
+    | 'permission_denied'
+    | 'resource_abuse'
+    | 'network_violation'
+    | 'file_access_violation';
   /** Violation description */
   description: string;
   /** Violation severity */
@@ -168,7 +165,7 @@ export interface RateLimiter {
 
 /**
  * Tool Execution Engine class
- * 
+ *
  * Provides comprehensive tool execution with resource management,
  * timeout handling, security controls, and monitoring capabilities.
  */
@@ -188,7 +185,7 @@ export class ToolExecutionEngine extends EventEmitter {
       cpuTime: 30000,
       memory: 128 * 1024 * 1024, // 128MB
       fileOperations: 1000,
-      networkOperations: 100
+      networkOperations: 100,
     },
     rateLimiter?: RateLimiter
   ) {
@@ -214,7 +211,7 @@ export class ToolExecutionEngine extends EventEmitter {
     const executionId = this.generateExecutionId();
     const timeout = options.timeout || this.defaultTimeout;
     const resourceLimits = { ...this.defaultResourceLimits, ...options.resourceLimits };
-    
+
     const context: ToolExecutionContext = {
       executionId,
       toolName: (handler as any).name || 'unknown',
@@ -222,26 +219,33 @@ export class ToolExecutionEngine extends EventEmitter {
       parameters: params,
       startTime: new Date(),
       timeout,
-      metadata: { 
+      metadata: {
         ...options.context,
         securityContext,
-        permissions
-      }
+        permissions,
+      },
     };
 
     this.activeExecutions.set(executionId, context);
     const logs: ToolExecutionLog[] = [];
-    
+
     try {
-      this.addLog(logs, executionId, 'info', 'Secure tool execution started', { 
+      this.addLog(logs, executionId, 'info', 'Secure tool execution started', {
         toolName: context.toolName,
         principal: securityContext.principal,
         timeout,
-        resourceLimits 
+        resourceLimits,
       });
 
       // Security checks
-      await this.performSecurityChecks(handler, params, permissions, securityContext, logs, executionId);
+      await this.performSecurityChecks(
+        handler,
+        params,
+        permissions,
+        securityContext,
+        logs,
+        executionId
+      );
 
       // Rate limiting check
       if (permissions.rateLimit) {
@@ -255,12 +259,12 @@ export class ToolExecutionEngine extends EventEmitter {
               category: ErrorCategory.TOOL,
               severity: ErrorSeverity.MEDIUM,
               retryable: true,
-              details: { 
-                executionId, 
+              details: {
+                executionId,
                 principal: securityContext.principal,
                 toolName: context.toolName,
-                rateLimit: permissions.rateLimit
-              }
+                rateLimit: permissions.rateLimit,
+              },
             }
           );
         }
@@ -268,10 +272,10 @@ export class ToolExecutionEngine extends EventEmitter {
 
       // Start resource monitoring
       const resourceUsage = this.resourceMonitor.startMonitoring(executionId, resourceLimits);
-      
+
       // Start performance monitoring
       this.performanceMonitor.startExecution(context.toolName, executionId);
-      
+
       // Execute with constraints and sandbox
       const result = await this.executeWithSecurityConstraints(
         handler,
@@ -285,11 +289,16 @@ export class ToolExecutionEngine extends EventEmitter {
 
       // Stop monitoring
       const finalResourceUsage = this.resourceMonitor.stopMonitoring(executionId);
-      this.performanceMonitor.recordExecution(context.toolName, executionId, true, finalResourceUsage);
-      
+      this.performanceMonitor.recordExecution(
+        context.toolName,
+        executionId,
+        true,
+        finalResourceUsage
+      );
+
       // Validate result
       const validatedResult = await this.validateToolResult(result, handler, logs, executionId);
-      
+
       const enhancedResult: EnhancedToolResult = {
         ...validatedResult,
         executionContext: context,
@@ -298,32 +307,35 @@ export class ToolExecutionEngine extends EventEmitter {
         metadata: {
           ...validatedResult.metadata,
           executionId,
+          securityEnforced: true,
+          sandboxed: options.sandbox?.enabled || false,
           context: {
             ...validatedResult.metadata?.context,
             resourceLimitsEnforced: true,
             timeoutEnforced: true,
             securityEnforced: true,
-            sandboxed: options.sandbox?.enabled || false
-          }
-        }
+            sandboxed: options.sandbox?.enabled || false,
+          },
+        },
       };
 
       this.executionHistory.set(executionId, enhancedResult);
       this.addLog(logs, executionId, 'info', 'Secure tool execution completed successfully');
-      
+
       this.emit('executionComplete', context, enhancedResult);
       return enhancedResult;
-
     } catch (error) {
-      this.addLog(logs, executionId, 'error', 'Secure tool execution failed', { 
-        error: error instanceof Error ? error.message : 'Unknown error' 
+      this.addLog(logs, executionId, 'error', 'Secure tool execution failed', {
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
 
       // Record failed execution in performance monitor
       this.performanceMonitor.recordExecution(context.toolName, executionId, false);
 
-      const sanitizedError = error instanceof Error ? 
-        this.securityManager.sanitizeErrorMessage(error.message) : 'Tool execution failed';
+      const sanitizedError =
+        error instanceof Error
+          ? this.securityManager.sanitizeErrorMessage(error.message)
+          : 'Tool execution failed';
 
       const failedResult: EnhancedToolResult = {
         success: false,
@@ -334,20 +346,21 @@ export class ToolExecutionEngine extends EventEmitter {
         metadata: {
           executionId,
           executionTime: Date.now() - context.startTime.getTime(),
+          securityEnforced: true,
+          sandboxed: options.sandbox?.enabled || false,
           context: {
             resourceLimitsEnforced: true,
             timeoutEnforced: true,
             securityEnforced: true,
             sandboxed: options.sandbox?.enabled || false,
-            error: error instanceof Error ? error.stack : 'Unknown error'
-          }
-        }
+            error: error instanceof Error ? error.stack : 'Unknown error',
+          },
+        },
       };
 
       this.executionHistory.set(executionId, failedResult);
       this.emit('executionError', context, error);
       return failedResult;
-
     } finally {
       this.activeExecutions.delete(executionId);
       this.resourceMonitor.cleanup(executionId);
@@ -365,7 +378,7 @@ export class ToolExecutionEngine extends EventEmitter {
     const executionId = this.generateExecutionId();
     const timeout = options.timeout || this.defaultTimeout;
     const resourceLimits = { ...this.defaultResourceLimits, ...options.resourceLimits };
-    
+
     const context: ToolExecutionContext = {
       executionId,
       toolName: (handler as any).name || 'unknown',
@@ -373,25 +386,25 @@ export class ToolExecutionEngine extends EventEmitter {
       parameters: params,
       startTime: new Date(),
       timeout,
-      metadata: options.context || {}
+      metadata: options.context || {},
     };
 
     this.activeExecutions.set(executionId, context);
     const logs: ToolExecutionLog[] = [];
-    
+
     try {
-      this.addLog(logs, executionId, 'info', 'Tool execution started', { 
+      this.addLog(logs, executionId, 'info', 'Tool execution started', {
         toolName: context.toolName,
         timeout,
-        resourceLimits 
+        resourceLimits,
       });
 
       // Start resource monitoring
       const resourceUsage = this.resourceMonitor.startMonitoring(executionId, resourceLimits);
-      
+
       // Start performance monitoring
       this.performanceMonitor.startExecution(context.toolName, executionId);
-      
+
       // Execute with timeout and resource limits
       const result = await this.executeWithConstraints(
         handler,
@@ -404,11 +417,16 @@ export class ToolExecutionEngine extends EventEmitter {
 
       // Stop resource monitoring
       const finalResourceUsage = this.resourceMonitor.stopMonitoring(executionId);
-      this.performanceMonitor.recordExecution(context.toolName, executionId, true, finalResourceUsage);
-      
+      this.performanceMonitor.recordExecution(
+        context.toolName,
+        executionId,
+        true,
+        finalResourceUsage
+      );
+
       // Validate result
       const validatedResult = await this.validateToolResult(result, handler, logs, executionId);
-      
+
       const enhancedResult: EnhancedToolResult = {
         ...validatedResult,
         executionContext: context,
@@ -420,27 +438,28 @@ export class ToolExecutionEngine extends EventEmitter {
           context: {
             ...validatedResult.metadata?.context,
             resourceLimitsEnforced: true,
-            timeoutEnforced: true
-          }
-        }
+            timeoutEnforced: true,
+          },
+        },
       };
 
       this.executionHistory.set(executionId, enhancedResult);
       this.addLog(logs, executionId, 'info', 'Tool execution completed successfully');
-      
+
       this.emit('executionComplete', context, enhancedResult);
       return enhancedResult;
-
     } catch (error) {
-      this.addLog(logs, executionId, 'error', 'Tool execution failed', { 
-        error: error instanceof Error ? error.message : 'Unknown error' 
+      this.addLog(logs, executionId, 'error', 'Tool execution failed', {
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
 
       // Record failed execution in performance monitor
       this.performanceMonitor.recordExecution(context.toolName, executionId, false);
 
-      const sanitizedError = error instanceof Error ? 
-        this.securityManager.sanitizeErrorMessage(error.message) : 'Tool execution failed';
+      const sanitizedError =
+        error instanceof Error
+          ? this.securityManager.sanitizeErrorMessage(error.message)
+          : 'Tool execution failed';
 
       const failedResult: EnhancedToolResult = {
         success: false,
@@ -454,15 +473,14 @@ export class ToolExecutionEngine extends EventEmitter {
           context: {
             resourceLimitsEnforced: true,
             timeoutEnforced: true,
-            error: error instanceof Error ? error.stack : 'Unknown error'
-          }
-        }
+            error: error instanceof Error ? error.stack : 'Unknown error',
+          },
+        },
       };
 
       this.executionHistory.set(executionId, failedResult);
       this.emit('executionError', context, error);
       return failedResult;
-
     } finally {
       this.activeExecutions.delete(executionId);
       this.resourceMonitor.cleanup(executionId);
@@ -483,53 +501,49 @@ export class ToolExecutionEngine extends EventEmitter {
     // Check execute permission
     if (!permissions.execute) {
       this.addLog(logs, executionId, 'error', 'Tool execution not permitted');
-      
+
       // Record security violation
       this.securityManager.recordViolation({
         type: 'permission_denied',
         description: 'Tool execution not permitted',
         severity: 'medium',
         timestamp: new Date(),
-        data: { executionId, principal: securityContext.principal }
+        data: { executionId, principal: securityContext.principal },
       });
-      
-      throw new MCPErrorClass(
-        MCPErrorCode.TOOL_PERMISSION_DENIED,
-        'Tool execution not permitted',
-        {
-          category: ErrorCategory.AUTH,
-          severity: ErrorSeverity.MEDIUM,
-          retryable: false,
-          details: { executionId, principal: securityContext.principal }
-        }
-      );
+
+      throw new MCPErrorClass(MCPErrorCode.TOOL_PERMISSION_DENIED, 'Tool execution not permitted', {
+        category: ErrorCategory.AUTH,
+        severity: ErrorSeverity.MEDIUM,
+        retryable: false,
+        details: { executionId, principal: securityContext.principal },
+      });
     }
 
     // Check required roles
     if (permissions.requiredRoles && permissions.requiredRoles.length > 0) {
-      const hasRequiredRole = permissions.requiredRoles.some(role => 
+      const hasRequiredRole = permissions.requiredRoles.some((role) =>
         securityContext.roles.includes(role)
       );
       if (!hasRequiredRole) {
         this.addLog(logs, executionId, 'error', 'Insufficient roles for tool execution', {
           requiredRoles: permissions.requiredRoles,
-          userRoles: securityContext.roles
+          userRoles: securityContext.roles,
         });
-        
+
         // Record security violation
         this.securityManager.recordViolation({
           type: 'permission_denied',
           description: `Insufficient roles. Required: ${permissions.requiredRoles.join(', ')}`,
           severity: 'medium',
           timestamp: new Date(),
-          data: { 
-            executionId, 
+          data: {
+            executionId,
             principal: securityContext.principal,
             requiredRoles: permissions.requiredRoles,
-            userRoles: securityContext.roles
-          }
+            userRoles: securityContext.roles,
+          },
         });
-        
+
         throw new MCPErrorClass(
           MCPErrorCode.INSUFFICIENT_PERMISSIONS,
           `Insufficient roles. Required: ${permissions.requiredRoles.join(', ')}`,
@@ -537,12 +551,12 @@ export class ToolExecutionEngine extends EventEmitter {
             category: ErrorCategory.AUTH,
             severity: ErrorSeverity.MEDIUM,
             retryable: false,
-            details: { 
-              executionId, 
+            details: {
+              executionId,
               principal: securityContext.principal,
               requiredRoles: permissions.requiredRoles,
-              userRoles: securityContext.roles
-            }
+              userRoles: securityContext.roles,
+            },
           }
         );
       }
@@ -558,16 +572,16 @@ export class ToolExecutionEngine extends EventEmitter {
       );
       if (!allowed) {
         this.addLog(logs, executionId, 'error', 'ACL permission denied for tool execution');
-        
+
         // Record security violation
         this.securityManager.recordViolation({
           type: 'permission_denied',
           description: 'ACL permission denied for tool execution',
           severity: 'medium',
           timestamp: new Date(),
-          data: { executionId, principal: securityContext.principal }
+          data: { executionId, principal: securityContext.principal },
         });
-        
+
         throw new MCPErrorClass(
           MCPErrorCode.AUTHORIZATION_FAILED,
           'ACL permission denied for tool execution',
@@ -575,7 +589,7 @@ export class ToolExecutionEngine extends EventEmitter {
             category: ErrorCategory.AUTH,
             severity: ErrorSeverity.MEDIUM,
             retryable: false,
-            details: { executionId, principal: securityContext.principal }
+            details: { executionId, principal: securityContext.principal },
           }
         );
       }
@@ -597,7 +611,15 @@ export class ToolExecutionEngine extends EventEmitter {
     logs: ToolExecutionLog[]
   ): Promise<ToolResult> {
     if (sandboxConfig?.enabled) {
-      return this.executeInSandbox(handler, params, timeout, resourceLimits, sandboxConfig, context, logs);
+      return this.executeInSandbox(
+        handler,
+        params,
+        timeout,
+        resourceLimits,
+        sandboxConfig,
+        context,
+        logs
+      );
     } else {
       return this.executeWithConstraints(handler, params, timeout, resourceLimits, context, logs);
     }
@@ -617,12 +639,12 @@ export class ToolExecutionEngine extends EventEmitter {
   ): Promise<ToolResult> {
     this.addLog(logs, context.executionId, 'info', 'Executing tool in sandbox', {
       sandboxType: sandboxConfig.type,
-      resourceLimits: sandboxConfig.resourceLimits
+      resourceLimits: sandboxConfig.resourceLimits,
     });
 
     // Create sandbox environment
     const sandbox = await this.securityManager.createSandbox(sandboxConfig, context.executionId);
-    
+
     try {
       // Monitor sandbox violations
       const violationMonitor = this.securityManager.monitorSandboxViolations(
@@ -641,10 +663,9 @@ export class ToolExecutionEngine extends EventEmitter {
       violationMonitor.stop();
       this.addLog(logs, context.executionId, 'info', 'Sandbox execution completed successfully');
       return result;
-
     } catch (error) {
       this.addLog(logs, context.executionId, 'error', 'Sandbox execution failed', {
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
       throw error;
     } finally {
@@ -679,16 +700,18 @@ export class ToolExecutionEngine extends EventEmitter {
         if (!completed) {
           cleanup();
           this.addLog(logs, context.executionId, 'error', 'Tool execution timed out', { timeout });
-          reject(new MCPErrorClass(
-            MCPErrorCode.TOOL_TIMEOUT,
-            `Tool execution timed out after ${timeout}ms`,
-            {
-              category: ErrorCategory.TOOL,
-              severity: ErrorSeverity.MEDIUM,
-              retryable: true,
-              details: { executionId: context.executionId, timeout }
-            }
-          ));
+          reject(
+            new MCPErrorClass(
+              MCPErrorCode.TOOL_TIMEOUT,
+              `Tool execution timed out after ${timeout}ms`,
+              {
+                category: ErrorCategory.TOOL,
+                severity: ErrorSeverity.MEDIUM,
+                retryable: true,
+                details: { executionId: context.executionId, timeout },
+              }
+            )
+          );
         }
       }, timeout);
 
@@ -700,39 +723,43 @@ export class ToolExecutionEngine extends EventEmitter {
             // Check resource limits
             if (resourceLimits.memory && usage.peakMemory > resourceLimits.memory) {
               cleanup();
-              this.addLog(logs, context.executionId, 'error', 'Memory limit exceeded', { 
-                limit: resourceLimits.memory, 
-                usage: usage.peakMemory 
+              this.addLog(logs, context.executionId, 'error', 'Memory limit exceeded', {
+                limit: resourceLimits.memory,
+                usage: usage.peakMemory,
               });
-              reject(new MCPErrorClass(
-                MCPErrorCode.TOOL_RESOURCE_EXHAUSTED,
-                `Memory limit exceeded: ${usage.peakMemory} > ${resourceLimits.memory}`,
-                {
-                  category: ErrorCategory.TOOL,
-                  severity: ErrorSeverity.HIGH,
-                  retryable: false,
-                  details: { executionId: context.executionId, resourceLimits, usage }
-                }
-              ));
+              reject(
+                new MCPErrorClass(
+                  MCPErrorCode.TOOL_RESOURCE_EXHAUSTED,
+                  `Memory limit exceeded: ${usage.peakMemory} > ${resourceLimits.memory}`,
+                  {
+                    category: ErrorCategory.TOOL,
+                    severity: ErrorSeverity.HIGH,
+                    retryable: false,
+                    details: { executionId: context.executionId, resourceLimits, usage },
+                  }
+                )
+              );
               return;
             }
 
             if (resourceLimits.cpuTime && usage.cpuTime > resourceLimits.cpuTime) {
               cleanup();
-              this.addLog(logs, context.executionId, 'error', 'CPU time limit exceeded', { 
-                limit: resourceLimits.cpuTime, 
-                usage: usage.cpuTime 
+              this.addLog(logs, context.executionId, 'error', 'CPU time limit exceeded', {
+                limit: resourceLimits.cpuTime,
+                usage: usage.cpuTime,
               });
-              reject(new MCPErrorClass(
-                MCPErrorCode.TOOL_RESOURCE_EXHAUSTED,
-                `CPU time limit exceeded: ${usage.cpuTime} > ${resourceLimits.cpuTime}`,
-                {
-                  category: ErrorCategory.TOOL,
-                  severity: ErrorSeverity.HIGH,
-                  retryable: false,
-                  details: { executionId: context.executionId, resourceLimits, usage }
-                }
-              ));
+              reject(
+                new MCPErrorClass(
+                  MCPErrorCode.TOOL_RESOURCE_EXHAUSTED,
+                  `CPU time limit exceeded: ${usage.cpuTime} > ${resourceLimits.cpuTime}`,
+                  {
+                    category: ErrorCategory.TOOL,
+                    severity: ErrorSeverity.HIGH,
+                    retryable: false,
+                    details: { executionId: context.executionId, resourceLimits, usage },
+                  }
+                )
+              );
               return;
             }
 
@@ -745,19 +772,19 @@ export class ToolExecutionEngine extends EventEmitter {
         // Execute the tool
         this.addLog(logs, context.executionId, 'info', 'Starting tool execution');
         const result = await handler.execute(params);
-        
+
         if (!completed) {
           cleanup();
-          this.addLog(logs, context.executionId, 'info', 'Tool execution completed', { 
-            success: result.success 
+          this.addLog(logs, context.executionId, 'info', 'Tool execution completed', {
+            success: result.success,
           });
           resolve(result);
         }
       } catch (error) {
         if (!completed) {
           cleanup();
-          this.addLog(logs, context.executionId, 'error', 'Tool execution threw error', { 
-            error: error instanceof Error ? error.message : 'Unknown error' 
+          this.addLog(logs, context.executionId, 'error', 'Tool execution threw error', {
+            error: error instanceof Error ? error.message : 'Unknown error',
           });
           reject(error);
         }
@@ -786,14 +813,19 @@ export class ToolExecutionEngine extends EventEmitter {
           category: ErrorCategory.TOOL,
           severity: ErrorSeverity.MEDIUM,
           retryable: false,
-          details: { executionId, resultType: typeof result }
+          details: { executionId, resultType: typeof result },
         }
       );
     }
 
     // Check required properties
     if (typeof result.success !== 'boolean') {
-      this.addLog(logs, executionId, 'error', 'Invalid result format: success property must be boolean');
+      this.addLog(
+        logs,
+        executionId,
+        'error',
+        'Invalid result format: success property must be boolean'
+      );
       throw new MCPErrorClass(
         MCPErrorCode.TOOL_EXECUTION_FAILED,
         'Invalid result format: success property must be boolean',
@@ -801,7 +833,7 @@ export class ToolExecutionEngine extends EventEmitter {
           category: ErrorCategory.TOOL,
           severity: ErrorSeverity.MEDIUM,
           retryable: false,
-          details: { executionId, successType: typeof result.success }
+          details: { executionId, successType: typeof result.success },
         }
       );
     }
@@ -860,7 +892,7 @@ export class ToolExecutionEngine extends EventEmitter {
     } catch (error) {
       return {
         valid: false,
-        errors: [error instanceof Error ? error.message : 'Validation failed']
+        errors: [error instanceof Error ? error.message : 'Validation failed'],
       };
     }
   }
@@ -892,7 +924,7 @@ export class ToolExecutionEngine extends EventEmitter {
     this.emit('executionCancelled', context);
     this.activeExecutions.delete(executionId);
     this.resourceMonitor.cleanup(executionId);
-    
+
     return true;
   }
 
@@ -907,16 +939,16 @@ export class ToolExecutionEngine extends EventEmitter {
     averageExecutionTime: number;
   } {
     const history = Array.from(this.executionHistory.values());
-    const successful = history.filter(r => r.success).length;
-    const failed = history.filter(r => !r.success).length;
+    const successful = history.filter((r) => r.success).length;
+    const failed = history.filter((r) => !r.success).length;
     const totalTime = history.reduce((sum, r) => sum + (r.metadata?.executionTime || 0), 0);
-    
+
     return {
       totalExecutions: history.length,
       activeExecutions: this.activeExecutions.size,
       successfulExecutions: successful,
       failedExecutions: failed,
-      averageExecutionTime: history.length > 0 ? totalTime / history.length : 0
+      averageExecutionTime: history.length > 0 ? totalTime / history.length : 0,
     };
   }
 
@@ -943,7 +975,7 @@ export class ToolExecutionEngine extends EventEmitter {
       level,
       message,
       timestamp: new Date(),
-      data
+      data,
     });
   }
 }
@@ -952,12 +984,15 @@ export class ToolExecutionEngine extends EventEmitter {
  * Resource Monitor class for tracking resource usage
  */
 class ResourceMonitor {
-  private readonly monitoredExecutions = new Map<string, {
-    startTime: Date;
-    resourceLimits: ResourceLimits;
-    usage: ResourceUsageStats;
-    interval?: NodeJS.Timeout;
-  }>();
+  private readonly monitoredExecutions = new Map<
+    string,
+    {
+      startTime: Date;
+      resourceLimits: ResourceLimits;
+      usage: ResourceUsageStats;
+      interval?: NodeJS.Timeout;
+    }
+  >();
 
   /**
    * Start monitoring resource usage for an execution
@@ -970,13 +1005,13 @@ class ResourceMonitor {
       fileOperations: 0,
       networkOperations: 0,
       startTime,
-      endTime: startTime
+      endTime: startTime,
     };
 
     this.monitoredExecutions.set(executionId, {
       startTime,
       resourceLimits,
-      usage
+      usage,
     });
 
     return usage;
@@ -991,7 +1026,7 @@ class ResourceMonitor {
 
     // Update CPU time
     monitoring.usage.cpuTime = Date.now() - monitoring.startTime.getTime();
-    
+
     // In a real implementation, you would gather actual resource usage
     // For now, we'll simulate some basic monitoring
     if (process.memoryUsage) {
@@ -1012,7 +1047,7 @@ class ResourceMonitor {
 
     const finalUsage = this.getCurrentUsage(executionId);
     this.monitoredExecutions.delete(executionId);
-    
+
     return finalUsage || undefined;
   }
 
@@ -1089,31 +1124,30 @@ class EnhancedJSONSchemaValidator {
       return {
         valid: errors.length === 0,
         errors: errors.length > 0 ? errors : undefined,
-        normalizedParams
+        normalizedParams,
       };
-
     } catch (error) {
       return {
         valid: false,
-        errors: [error instanceof Error ? error.message : 'Validation error']
+        errors: [error instanceof Error ? error.message : 'Validation error'],
       };
     }
   }
 
   private validateType(value: any, schema: JSONSchema, errors: string[]): boolean {
     const actualType = Array.isArray(value) ? 'array' : typeof value;
-    
+
     if (schema.type && actualType !== schema.type) {
       errors.push(`Expected type ${schema.type}, got ${actualType}`);
       return false;
     }
-    
+
     return true;
   }
 
   private async validateObjectProperties(
-    obj: any, 
-    schema: JSONSchema, 
+    obj: any,
+    schema: JSONSchema,
     errors: string[]
   ): Promise<any> {
     const normalized = { ...obj };
@@ -1133,7 +1167,7 @@ class EnhancedJSONSchemaValidator {
         if (propName in obj) {
           const propResult = await this.validate(obj[propName], propSchema as JSONSchema);
           if (!propResult.valid) {
-            errors.push(...(propResult.errors || []).map(err => `Property ${propName}: ${err}`));
+            errors.push(...(propResult.errors || []).map((err) => `Property ${propName}: ${err}`));
           } else if (propResult.normalizedParams !== undefined) {
             normalized[propName] = propResult.normalizedParams;
           }
@@ -1155,8 +1189,8 @@ class EnhancedJSONSchemaValidator {
   }
 
   private async validateArrayItems(
-    arr: any[], 
-    schema: JSONSchema, 
+    arr: any[],
+    schema: JSONSchema,
     errors: string[]
   ): Promise<any[]> {
     const normalized = [...arr];
@@ -1165,7 +1199,7 @@ class EnhancedJSONSchemaValidator {
       for (let i = 0; i < arr.length; i++) {
         const itemResult = await this.validate(arr[i], schema.items as JSONSchema);
         if (!itemResult.valid) {
-          errors.push(...(itemResult.errors || []).map(err => `Item ${i}: ${err}`));
+          errors.push(...(itemResult.errors || []).map((err) => `Item ${i}: ${err}`));
         } else if (itemResult.normalizedParams !== undefined) {
           normalized[i] = itemResult.normalizedParams;
         }
@@ -1205,7 +1239,9 @@ class EnhancedJSONSchemaValidator {
         }
         break;
       case 'uuid':
-        if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value)) {
+        if (
+          !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value)
+        ) {
           errors.push('Invalid UUID format');
         }
         break;
@@ -1314,7 +1350,7 @@ class ToolSecurityManager {
    */
   recordViolation(violation: SecurityViolation): void {
     this.violations.push(violation);
-    
+
     // Keep only last 1000 violations
     if (this.violations.length > 1000) {
       this.violations.splice(0, this.violations.length - 1000);
@@ -1326,7 +1362,7 @@ class ToolSecurityManager {
    */
   getViolations(since?: Date): SecurityViolation[] {
     if (since) {
-      return this.violations.filter(v => v.timestamp >= since);
+      return this.violations.filter((v) => v.timestamp >= since);
     }
     return [...this.violations];
   }
@@ -1360,19 +1396,17 @@ class ToolSecurityManager {
   sanitizeErrorMessage(error: string): string {
     // Remove file paths
     error = error.replace(/\/[^\s]+/g, '[PATH]');
-    
+
     // Remove IP addresses
     error = error.replace(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g, '[IP]');
-    
+
     // Remove potential credentials
     error = error.replace(/password[=:]\s*\S+/gi, 'password=[REDACTED]');
     error = error.replace(/token[=:]\s*\S+/gi, 'token=[REDACTED]');
     error = error.replace(/key[=:]\s*\S+/gi, 'key=[REDACTED]');
-    
+
     return error;
   }
-
-
 }
 
 /**
@@ -1384,7 +1418,11 @@ class ToolSandbox {
   private readonly securityManager: ToolSecurityManager;
   private violationMonitors: Array<(violation: SecurityViolation) => void> = [];
 
-  constructor(config: ToolSandboxConfig, executionId: string, securityManager: ToolSecurityManager) {
+  constructor(
+    config: ToolSandboxConfig,
+    executionId: string,
+    securityManager: ToolSecurityManager
+  ) {
     this.config = config;
     this.executionId = executionId;
     this.securityManager = securityManager;
@@ -1396,7 +1434,7 @@ class ToolSandbox {
   async execute<T>(fn: () => Promise<T>): Promise<T> {
     // Set up sandbox environment
     this.setupSandboxEnvironment();
-    
+
     try {
       // Execute the function with monitoring
       return await this.executeWithMonitoring(fn);
@@ -1411,14 +1449,14 @@ class ToolSandbox {
    */
   monitorViolations(onViolation: (violation: SecurityViolation) => void): { stop: () => void } {
     this.violationMonitors.push(onViolation);
-    
+
     return {
       stop: () => {
         const index = this.violationMonitors.indexOf(onViolation);
         if (index > -1) {
           this.violationMonitors.splice(index, 1);
         }
-      }
+      },
     };
   }
 
@@ -1458,16 +1496,19 @@ class ToolSandbox {
    */
   private async executeWithMonitoring<T>(fn: () => Promise<T>): Promise<T> {
     const startTime = Date.now();
-    
+
     try {
       const result = await fn();
-      
+
       // Check execution time against limits
       const executionTime = Date.now() - startTime;
-      if (this.config.resourceLimits.cpuTime && executionTime > this.config.resourceLimits.cpuTime) {
+      if (
+        this.config.resourceLimits.cpuTime &&
+        executionTime > this.config.resourceLimits.cpuTime
+      ) {
         this.reportViolation('resource_abuse', `CPU time limit exceeded: ${executionTime}ms`);
       }
-      
+
       return result;
     } catch (error) {
       // Check if error indicates a security violation
@@ -1516,12 +1557,10 @@ class ToolSandbox {
       'unauthorized',
       'forbidden',
       'security violation',
-      'sandbox escape'
+      'sandbox escape',
     ];
-    
-    return securityKeywords.some(keyword => 
-      error.message.toLowerCase().includes(keyword)
-    );
+
+    return securityKeywords.some((keyword) => error.message.toLowerCase().includes(keyword));
   }
 
   /**
@@ -1535,12 +1574,12 @@ class ToolSandbox {
       timestamp: new Date(),
       data: {
         executionId: this.executionId,
-        sandboxConfig: this.config
-      }
+        sandboxConfig: this.config,
+      },
     };
 
     this.securityManager.recordViolation(violation);
-    
+
     // Notify all monitors
     for (const monitor of this.violationMonitors) {
       monitor(violation);
@@ -1573,7 +1612,10 @@ class ToolSandbox {
 class ToolPerformanceMonitor {
   private readonly metrics = new Map<string, ToolPerformanceMetrics>();
   private readonly executionTimes = new Map<string, Map<string, number>>(); // toolName -> executionId -> startTime
-  private readonly executionHistory = new Map<string, Array<{ success: boolean; executionTime: number; memoryUsage: number; timestamp: Date }>>(); // toolName -> history
+  private readonly executionHistory = new Map<
+    string,
+    Array<{ success: boolean; executionTime: number; memoryUsage: number; timestamp: Date }>
+  >(); // toolName -> history
 
   /**
    * Start monitoring an execution
@@ -1589,9 +1631,9 @@ class ToolPerformanceMonitor {
    * Record completed execution
    */
   recordExecution(
-    toolName: string, 
-    executionId: string, 
-    success: boolean, 
+    toolName: string,
+    executionId: string,
+    success: boolean,
     resourceUsage?: ResourceUsageStats
   ): void {
     const startTime = this.executionTimes.get(toolName)?.get(executionId);
@@ -1607,13 +1649,13 @@ class ToolPerformanceMonitor {
     if (!this.executionHistory.has(toolName)) {
       this.executionHistory.set(toolName, []);
     }
-    
+
     const history = this.executionHistory.get(toolName)!;
     history.push({
       success,
       executionTime,
       memoryUsage,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     // Keep only last 1000 executions per tool
@@ -1648,22 +1690,23 @@ class ToolPerformanceMonitor {
 
     const now = new Date();
     const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
-    
+
     // Filter to last hour for current metrics
-    const recentHistory = history.filter(h => h.timestamp >= oneHourAgo);
-    
+    const recentHistory = history.filter((h) => h.timestamp >= oneHourAgo);
+
     if (recentHistory.length === 0) return;
 
-    const successfulExecutions = recentHistory.filter(h => h.success);
-    const failedExecutions = recentHistory.filter(h => !h.success);
-    
-    const executionTimes = recentHistory.map(h => h.executionTime).sort((a, b) => a - b);
-    const memoryUsages = recentHistory.map(h => h.memoryUsage);
+    const successfulExecutions = recentHistory.filter((h) => h.success);
+    const failedExecutions = recentHistory.filter((h) => !h.success);
+
+    const executionTimes = recentHistory.map((h) => h.executionTime).sort((a, b) => a - b);
+    const memoryUsages = recentHistory.map((h) => h.memoryUsage);
 
     const metrics: ToolPerformanceMetrics = {
       executionCount: recentHistory.length,
       successRate: successfulExecutions.length / recentHistory.length,
-      averageExecutionTime: executionTimes.reduce((sum, time) => sum + time, 0) / executionTimes.length,
+      averageExecutionTime:
+        executionTimes.reduce((sum, time) => sum + time, 0) / executionTimes.length,
       p95ExecutionTime: executionTimes[Math.floor(executionTimes.length * 0.95)] || 0,
       p99ExecutionTime: executionTimes[Math.floor(executionTimes.length * 0.99)] || 0,
       averageMemoryUsage: memoryUsages.reduce((sum, mem) => sum + mem, 0) / memoryUsages.length,
@@ -1673,8 +1716,8 @@ class ToolPerformanceMonitor {
       lastExecution: recentHistory[recentHistory.length - 1]?.timestamp,
       collectionPeriod: {
         start: oneHourAgo,
-        end: now
-      }
+        end: now,
+      },
     };
 
     this.metrics.set(toolName, metrics);
@@ -1698,7 +1741,7 @@ class InMemoryRateLimiter implements RateLimiter {
       // Create new bucket or reset expired bucket
       this.buckets.set(key, {
         count: 1,
-        resetTime: new Date(now.getTime() + config.windowSeconds * 1000)
+        resetTime: new Date(now.getTime() + config.windowSeconds * 1000),
       });
       return true;
     }

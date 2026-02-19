@@ -42,14 +42,37 @@ capabilities.
 - **Purpose**: Port checking, service status, health monitoring
 - **Use When**: Troubleshooting, startup verification, debugging
 
-### 4. **skill-builder** (Meta-Skill) ⭐
+### 4. **env-manager** ⭐
+
+- **Location**: `.agent/skills/env-manager/SKILL.md`
+- **Purpose**: Programmatic environment variable management, backups, and
+  verification.
+- **Use When**: Setting up keys, fixing DATABASE_URL issues, configuring
+  services.
+- **Key Features**: Auto-backup, programmatic set/get, pre-flight checks.
+- **Scripts**:
+  - `manage_env.py` - Core CLI for env manipulation.
+
+### 5. **skill-builder** (Meta-Skill) ⭐
 
 - **Location**: `.agent/skills/skill-builder/SKILL.md`
 - **Purpose**: Creates new skills based on patterns
 - **Use When**: User requests new capabilities, extending TNF
 - **Special**: This is a meta-skill - it builds other skills
 
-### 5. **planning-with-files** (Context Engineering) ⭐⭐
+### 6. **framework-consciousness** (Meta-Skill) ⭐⭐⭐
+
+- **Location**: `.claude/skills/framework-consciousness.md`
+- **Purpose**: P0 Foundation - Achieve holistic, multi-dimensional understanding
+  of TNF as a living system.
+- **Use When**: Session start, major architectural changes, complex
+  orchestrations.
+- **Key Features**: Foundation Discovery, Pattern Recognition, Integration
+  Intelligence, Capability Synthesis, Evolution & Emergence.
+- **Directives**: Survival, Thriving, Learning, Growing, Adapting, Providing
+  Compounding Value.
+
+### 7. **planning-with-files** (Context Engineering) ⭐⭐
 
 - **Location**: `.agent/skills/planning-with-files/SKILL.md`
 - **Purpose**: Manus-style + BMAD-inspired file-based planning
@@ -72,32 +95,7 @@ capabilities.
   - `scripts/session-catchup.py` - Recover prior context
 - **Version**: 3.0.0-tnf (Unified Manus + BMAD)
 
-### 6. **jules-delegation**
-
-- **Location**: `.agent/skills/jules-delegation/SKILL.md`
-- **Purpose**: Delegate complex tasks to Jules autonomous agent
-- **Use When**: Tasks >30 min, parallel execution needed, async work
-- **Commands**:
-  - `jules new "description"` - Create task
-  - `jules new --parallel 4` - Parallel execution
-  - `jules remote list --session` - Monitor progress
-
----
-
-## 📄 Available Context Resources
-
-### 1. **browser-workflow**
-
-- **Location**: `.agent/context/browser-workflow.md`
-- **Content**: Complete browser operation workflow
-- **Sections**:
-  - Phase-by-phase checklist
-  - Common failure points
-  - Keyboard shortcuts
-  - Extension verification
-- **Referenced By**: `browser-automation` skill
-
-### 7. **context-frontloader** (Context Engineering) ⭐⭐⭐
+### 8. **context-frontloader** (Context Engineering) ⭐⭐⭐
 
 - **Location**: `.agent/skills/context-frontloader/SKILL.md`
 - **Purpose**: Ensures every AI session starts with full ecosystem awareness.
@@ -107,10 +105,30 @@ capabilities.
   - Integration with Ralph Wiggum "Fresh Context" technique
   - Cross-platform frontloading guides
   - Automated context verification
-- **Resources**:
-  - `.agent/SYSTEM_PROMPT.md` — Global TNF identity
-  - `.agent/memories.md` — Persistent cross-session wisdom
 - **Version**: 1.0.0
+
+### 9. **claude-skills-integration**
+
+- **Location**: `docs/CLAUDE_SKILLS.md`
+- **Purpose**: Integration layer for Anthropic's official Claude Skills.
+- **Use When**: Needing document processing (PDF, XLSX, PPTX), web testing,
+  artistic generation.
+
+### 11. **trait-antigravity** (Meta-Skill) ⭐⭐⭐
+
+- **Location**: `.agent/skills/antigravity/trait-antigravity/SKILL.md`
+- **Purpose**: Core Antigravity persona trait - rigor, aesthetics, autonomy.
+- **Use When**: Needing high-performance mode, premium UI design, or rigorous
+  planning.
+- **Key Features**: Ralph Wiggum technique, 3-Strike protocol, Premium
+  Aesthetics, Janus planning.
+
+### 12. **tnf-cli-agent** (Specialized Agent) ⭐⭐⭐
+
+- **Location**: `.agent/agents/tnf-cli.md`
+- **Purpose**: The canonical CLI-optimized Antigravity agent for TNF.
+- **Use When**: Orchestrating workflows via CLI, managing system state.
+- **Key Features**: CLI-native, trait-aligned, autonomous orchestration.
 
 ---
 
@@ -264,15 +282,17 @@ Done (New skill now available)
 
 ### When to Load What
 
-| Task Type               | Primary Skill        | Referenced Resources                  |
-| ----------------------- | -------------------- | ------------------------------------- |
-| Browser operation       | browser-automation   | browser-workflow.md                   |
-| Send relay message      | relay-communication  | relay-protocol.md, browser-automation |
-| Check system status     | system-diagnostics   | -                                     |
-| Create new skill        | skill-builder (meta) | All existing skills, pattern library  |
-| Complex task (>5 steps) | planning-with-files  | BMAD workflow, handoff notes          |
-| Long-running task       | jules-delegation     | Jules CLI, async execution            |
-| Troubleshoot            | Multiple skills      | Diagnostic context, logs              |
+| Task Type               | Primary Skill        | Referenced Resources                   |
+| ----------------------- | -------------------- | -------------------------------------- |
+| Browser operation       | browser-automation   | browser-workflow.md                    |
+| Send relay message      | relay-communication  | relay-protocol.md, browser-automation  |
+| Check system status     | system-diagnostics   | -                                      |
+| Create new skill        | skill-builder (meta) | All existing skills, pattern library   |
+| Complex task (>5 steps) | planning-with-files  | BMAD workflow, handoff notes           |
+| Long-running task       | jules-delegation     | Jules CLI, async execution             |
+| High-performance work   | trait-antigravity    | Ralph Wiggum, 3-Strike, High-Aesthetic |
+| CLI Orchestration       | tnf-cli-agent        | CLI ops, trait-alignment               |
+| Troubleshoot            | Multiple skills      | Diagnostic context, logs               |
 
 ### Keyword → Skill Mapping
 
@@ -285,6 +305,8 @@ Done (New skill now available)
 | "plan", "complex", "multi-step", "phases"        | planning-with-files  |
 | "findings", "progress", "handoff", "session"     | planning-with-files  |
 | "delegate", "jules", "async", "parallel"         | jules-delegation     |
+| "antigravity", "trait", "high-performance"       | trait-antigravity    |
+| "tnf cli", "cli agent", "orchestrate cli"        | tnf-cli-agent        |
 
 ---
 

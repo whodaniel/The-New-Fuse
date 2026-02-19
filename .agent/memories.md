@@ -41,6 +41,8 @@
 | Multi-agent federation via Relay      | Enables inter-LLM communication                 | 2025-12 |
 | Agent Inbox system                    | Per-agent task queues with Redis                | 2025-12 |
 | Context frontloading                  | Ensures every session starts aware              | 2026-01 |
+| Framework Consciousness Meta-Skill    | P0 Holistic system awareness & evolution        | 2026-01 |
+| Claude Skills Integration             | Bridging official Anthropic skills into TNF     | 2026-01 |
 
 ---
 
@@ -130,6 +132,13 @@
 ---
 
 ## 📝 Session Notes Archive
+
+### 2026-02-19
+
+- Discovered and integrated high-level Metaskills awareness.
+- Added Framework Consciousness (P0) to Meta-Skills Guide.
+- Integrated Claude Skills architecture into Resource Map.
+- Updated Global System Prompt to reflect meta-orchestration capabilities.
 
 ### 2026-01-22
 

@@ -61,6 +61,7 @@ export class RedisAgentClient {
     new Map();
   private heartbeatTimer: NodeJS.Timeout | null = null;
   public currentConversation: string | null = null;
+  private redisErrorLogged = false;
 
   constructor() {}
 
@@ -80,13 +81,9 @@ export class RedisAgentClient {
       this.handleIncomingMessage(channel, message);
     });
 
-    this.subscriber.on('error', (error: Error) => {
-      console.error('Redis subscriber error:', error.message);
-    });
+    this.subscriber.on('error', (error: Error) => this.logRedisClientError('subscriber', error));
 
-    this.publisher.on('error', (error: Error) => {
-      console.error('Redis publisher error:', error.message);
-    });
+    this.publisher.on('error', (error: Error) => this.logRedisClientError('publisher', error));
 
     // Use ping to check connection
     try {
@@ -95,6 +92,13 @@ export class RedisAgentClient {
       console.warn(`⚠️ Could not connect to Redis at ${CONFIG.redis.host}:${CONFIG.redis.port}`);
       throw err;
     }
+  }
+
+  private logRedisClientError(kind: 'publisher' | 'subscriber', error: Error) {
+    if (this.redisErrorLogged) return;
+    this.redisErrorLogged = true;
+    const details = error?.message || error?.name || 'unknown';
+    console.error(`Redis ${kind} error:`, details);
   }
 
   async register(name: string, role: any, platform: string, capabilities: string[] = []) {

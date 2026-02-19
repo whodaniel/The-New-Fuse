@@ -23,8 +23,10 @@ perform specific tasks, meta-skills:
 │         META-SKILLS (Top Level)          │
 │  Manage the entire skill ecosystem       │
 │                                          │
+│  • framework-consciousness (P0)          │
 │  • library-of-living-knowledge           │
 │  • skill-builder                         │
+│  • context-frontloader                   │
 └──────────────┬───────────────────────────┘
                │
                ├── Loads & orchestrates
@@ -43,9 +45,31 @@ perform specific tasks, meta-skills:
 
 ---
 
-## 📚 The Two Primary Meta-Skills in TNF
+## 📚 The Primary Meta-Skills in TNF
 
-### 1. Library of Living Knowledge
+### 1. Framework Consciousness (P0 Meta-Orchestrator) ⭐⭐⭐⭐⭐
+
+**Location**: `.claude/skills/framework-consciousness.md`
+
+**Purpose**: High-level system awareness and evolutionary orchestration.
+
+#### Core Directives
+
+The framework must **Survive, Thrive, Learn, Grow, Adapt, Emerge, Evolve, Reach
+Out, and Provide Value**.
+
+#### Phase Sequence
+
+1.  **Foundation Discovery**: Build foundational understanding of what exists.
+2.  **Deep Pattern Recognition**: Understand HOW the framework operates.
+3.  **Integration Intelligence**: Understand connections and dependencies.
+4.  **Capability Synthesis**: Understand WHAT the framework can do.
+5.  **Emergence & Evolution**: Enable framework self-improvement.
+6.  **Reach & Value**: Maximize framework impact.
+
+---
+
+### 2. Library of Living Knowledge
 
 **Location**: `.agent/skills/library-of-living-knowledge/SKILL.md`
 
@@ -169,7 +193,22 @@ Agent has 100% ecosystem awareness
 
 ---
 
-### 4. Skill Builder (Previously #2)
+### 4. Claude Skills Integration (Meta-Orchestrator) ⭐⭐⭐
+
+**Location**: `docs/CLAUDE_SKILLS.md`
+
+**Purpose**: Bridges official Anthropic skills into the TNF ecosystem.
+
+#### Capabilities
+
+- **Doc Processing**: PDF, XLSX, PPTX extraction and generation.
+- **Enterprise**: Brand guidelines, internal comms.
+- **Development**: MCP-builder, Webapp-testing.
+- **Creative**: Theme factory, Slack GIF creator.
+
+---
+
+### 5. Skill Builder
 
 #### What It Does
 
