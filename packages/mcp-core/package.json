@@ -83,36 +83,38 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.26.0",
+    "@the-new-fuse/core-error-handling": "workspace:*",
+    "@the-new-fuse/core-monitoring": "workspace:*",
     "ajv": "^8.17.1",
-    "ws": "^8.18.3",
-    "uuid": "^13.0.0",
-    "winston": "^3.18.3",
     "eventemitter3": "^5.0.1",
     "p-retry": "^7.1.0",
     "p-timeout": "^7.0.1",
-    "@the-new-fuse/core-monitoring": "workspace:*",
-    "@the-new-fuse/core-error-handling": "workspace:*"
+    "uuid": "^13.0.0",
+    "winston": "^3.18.3",
+    "ws": "^8.18.3"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.8.1",
     "@types/uuid": "^11.0.0",
     "@types/ws": "^8.18.1",
-    "@typescript-eslint/eslint-plugin": "^8.49.0",
-    "@typescript-eslint/parser": "^8.49.0",
+    "@typescript-eslint/eslint-plugin": "^8.55.0",
+    "@typescript-eslint/parser": "^8.55.0",
     "eslint": "^9.38.0",
+    "globals": "^17.3.0",
     "jest": "^30.2.0",
     "rimraf": "^6.0.1",
     "ts-jest": "^29.4.6",
-    "typescript": "^5.7.3",
-    "typedoc": "^0.28.14"
+    "typedoc": "^0.28.14",
+    "typescript": "^5.7.3"
   },
   "peerDependencies": {
     "@modelcontextprotocol/sdk": "^1.26.0"
   },
   "optionalDependencies": {
-    "@the-new-fuse/types": "workspace:*",
-    "@the-new-fuse/relay-core": "workspace:*"
+    "@the-new-fuse/relay-core": "workspace:*",
+    "@the-new-fuse/types": "workspace:*"
   },
   "files": [
     "dist",

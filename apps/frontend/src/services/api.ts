@@ -39,23 +39,26 @@ const sanitizeErrorMessage = (input: unknown): string => {
 // Add a request interceptor to add the auth token to every request
 api.interceptors.request.use(
   async (config) => {
-    // Only attempt to get auth token if Firebase is initialized
-    if (auth) {
-      const user = auth.currentUser;
-      if (user) {
-        try {
-          const token = await user.getIdToken();
-          config.headers.Authorization = `Bearer ${token}`;
-        } catch (error) {
-          console.error('Error getting auth token:', error);
-        }
+    // Prefer Firebase token when available, but always fall back to stored JWT.
+    let bearerToken: string | null = null;
+
+    if (auth?.currentUser) {
+      try {
+        bearerToken = await auth.currentUser.getIdToken();
+      } catch (error) {
+        console.error('Error getting Firebase auth token:', error);
       }
-    } else {
-      // If Firebase is not available, check for token in localStorage (fallback)
-      const token = localStorage.getItem('auth_token') || localStorage.getItem('authToken');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
+    }
+
+    if (!bearerToken) {
+      bearerToken =
+        localStorage.getItem('auth_token') ||
+        localStorage.getItem('authToken') ||
+        localStorage.getItem('token');
+    }
+
+    if (bearerToken) {
+      config.headers.Authorization = `Bearer ${bearerToken}`;
     }
     return config;
   },

@@ -1,9 +1,9 @@
 import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui/premium';
+import { useUnstoppableDomains } from '@/hooks/useUnstoppableDomains';
 import { useAuth } from '@/providers/AuthProvider';
 import { Key, Lock, Mail } from 'lucide-react';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useUnstoppableDomains } from '@/hooks/useUnstoppableDomains';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -45,7 +45,7 @@ const Login: React.FC = () => {
       const result = await login(email, password);
 
       // Check for 2FA claim
-      if (result && result.user) {
+      if (result.method === 'firebase' && result.user) {
         const idTokenResult = await result.user.getIdTokenResult();
         if (idTokenResult.claims['2faEnabled']) {
           setUserId(result.user.uid);
@@ -162,7 +162,9 @@ const Login: React.FC = () => {
                 type="text"
                 required
                 value={twoFactorCode}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTwoFactorCode(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setTwoFactorCode(e.target.value)
+                }
                 className="text-center tracking-widest text-lg"
                 placeholder="000000"
                 icon={Lock}
@@ -196,7 +198,9 @@ const Login: React.FC = () => {
                     type="password"
                     required
                     value={password}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setPassword(e.target.value)
+                    }
                     placeholder="••••••••"
                     icon={Key}
                     className="mt-0"
@@ -253,7 +257,7 @@ const Login: React.FC = () => {
                   <GoogleIcon />
                   Google
                 </PremiumButton>
-                
+
                 <PremiumButton
                   onClick={handleUnstoppableDomainsLogin}
                   disabled={isLoading}
@@ -261,8 +265,8 @@ const Login: React.FC = () => {
                   fullWidth
                 >
                   <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 18c-3.87-.96-7-5.54-7-10V8.3l7-3.5 7 3.5V10c0 4.46-3.13 9.04-7 10z"/>
-                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 18c-3.87-.96-7-5.54-7-10V8.3l7-3.5 7 3.5V10c0 4.46-3.13 9.04-7 10z" />
+                    <circle cx="12" cy="12" r="3" />
                   </svg>
                   Unstoppable Domains
                 </PremiumButton>

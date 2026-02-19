@@ -28,7 +28,10 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<UserCredential>;
+  login: (
+    email: string,
+    password: string
+  ) => Promise<{ method: 'firebase' | 'backend'; user?: FirebaseUser }>;
   register: (name: string, email: string, password: string) => Promise<UserCredential>;
   signInWithGoogle: () => Promise<UserCredential>;
   loginWithUnstoppableDomains?: (udUser: any) => Promise<void>;
@@ -41,7 +44,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   isAuthenticated: false,
   isLoading: true,
-  login: async () => ({}) as UserCredential,
+  login: async () => ({ method: 'backend' }),
   register: async () => ({}) as UserCredential,
   signInWithGoogle: async () => ({}) as UserCredential,
   logout: async () => {},
@@ -59,17 +62,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const apiBaseUrl = (import.meta.env.VITE_API_URL || '/api').replace(/\/$/, '');
 
   const AUTH_TOKEN_KEY = 'auth_token'; // Single source of truth for token storage
+  const LEGACY_AUTH_TOKEN_KEYS = ['token', 'authToken'];
+  const isFirebaseConfigured =
+    !!import.meta.env.VITE_FIREBASE_API_KEY &&
+    import.meta.env.VITE_FIREBASE_API_KEY !== '${VITE_FIREBASE_API_KEY}';
 
   const setAuthToken = (token: string) => {
     localStorage.setItem(AUTH_TOKEN_KEY, token);
+    for (const key of LEGACY_AUTH_TOKEN_KEYS) {
+      localStorage.setItem(key, token);
+    }
   };
 
   const clearAuthToken = () => {
     localStorage.removeItem(AUTH_TOKEN_KEY);
+    for (const key of LEGACY_AUTH_TOKEN_KEYS) {
+      localStorage.removeItem(key);
+    }
   };
 
   const getAuthToken = () => {
-    return localStorage.getItem(AUTH_TOKEN_KEY);
+    return (
+      localStorage.getItem(AUTH_TOKEN_KEY) ||
+      LEGACY_AUTH_TOKEN_KEYS.map((key) => localStorage.getItem(key)).find(Boolean) ||
+      null
+    );
   };
 
   // Map Firebase user to our User type
@@ -83,9 +100,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   };
 
-  // Fetch user details from backend to get actual role
+  // Fetch authenticated user from backend
   const fetchUserDetails = useCallback(
-    async (token: string): Promise<Partial<User> | null> => {
+    async (token: string): Promise<User | null> => {
       const endpoints = [`${apiBaseUrl}/auth/me`, '/api/auth/me', '/auth/me'];
 
       try {
@@ -106,11 +123,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
 
           const userData = await response.json();
+          const payload =
+            userData && typeof userData === 'object' && 'user' in userData
+              ? (userData as any).user
+              : userData;
+
+          if (!payload || typeof payload !== 'object') {
+            continue;
+          }
+
           return {
-            role: userData.role || 'user',
-            roles: userData.roles || (userData.role ? [userData.role] : ['user']),
-            agencyId: userData.agencyId,
-            tenantId: userData.tenantId,
+            id: String((payload as any).id || (payload as any).sub || ''),
+            email: String((payload as any).email || ''),
+            name: String((payload as any).name || (payload as any).email || 'User'),
+            role: String((payload as any).role || 'user'),
+            roles: Array.isArray((payload as any).roles)
+              ? (payload as any).roles
+              : [(payload as any).role || 'user'],
+            agencyId: (payload as any).agencyId,
+            tenantId: (payload as any).tenantId,
+            photoURL: (payload as any).photoURL,
           };
         }
 
@@ -126,27 +158,68 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Check auth on mount
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        const mappedUser = mapUser(firebaseUser);
-        const token = await firebaseUser.getIdToken();
-        setAuthToken(token);
+    let isMounted = true;
+    let unsubscribe: (() => void) | undefined;
 
-        // Fetch user details from backend to get actual role
-        const userDetails = await fetchUserDetails(token);
-        if (userDetails) {
-          setUser({ ...mappedUser, ...userDetails });
-        } else {
-          setUser(mappedUser);
-        }
-      } else {
-        setUser(null);
-        clearAuthToken();
+    const hydrateFromStoredToken = async () => {
+      const token = getAuthToken();
+      if (!token) return false;
+
+      const userDetails = await fetchUserDetails(token);
+      if (!isMounted) return true;
+
+      if (userDetails?.id) {
+        setUser(userDetails);
+        return true;
       }
-      setIsLoading(false);
-    });
+      return false;
+    };
 
-    return () => unsubscribe();
+    const bootstrapAuth = async () => {
+      const hydrated = await hydrateFromStoredToken();
+
+      if (!isFirebaseConfigured) {
+        if (!hydrated) {
+          clearAuthToken();
+          setUser(null);
+        }
+        if (isMounted) setIsLoading(false);
+        return;
+      }
+
+      unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+        if (!isMounted) return;
+
+        if (firebaseUser) {
+          const mappedUser = mapUser(firebaseUser);
+          const token = await firebaseUser.getIdToken();
+          setAuthToken(token);
+
+          const userDetails = await fetchUserDetails(token);
+          if (userDetails) {
+            setUser({ ...mappedUser, ...userDetails });
+          } else {
+            setUser(mappedUser);
+          }
+          setIsLoading(false);
+          return;
+        }
+
+        const tokenHydrated = await hydrateFromStoredToken();
+        if (!tokenHydrated) {
+          setUser(null);
+          clearAuthToken();
+        }
+        setIsLoading(false);
+      });
+    };
+
+    bootstrapAuth();
+
+    return () => {
+      isMounted = false;
+      if (unsubscribe) unsubscribe();
+    };
   }, [fetchUserDetails]);
 
   // Login user
@@ -154,30 +227,80 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async (email: string, password: string) => {
       setError(null);
       setIsLoading(true);
-      try {
-        const result = await signInWithEmailAndPassword(auth, email, password);
-        // Manually update user state to prevent race conditions
-        if (result.user) {
-          const mappedUser = mapUser(result.user);
-          const token = await result.user.getIdToken();
+      let firebaseError: any;
 
-          // Fetch user details from backend to get actual role
-          const userDetails = await fetchUserDetails(token);
-          if (userDetails) {
-            setUser({ ...mappedUser, ...userDetails });
-          } else {
-            setUser(mappedUser);
+      try {
+        if (isFirebaseConfigured) {
+          const result = await signInWithEmailAndPassword(auth, email, password);
+          if (result.user) {
+            const mappedUser = mapUser(result.user);
+            const token = await result.user.getIdToken();
+            setAuthToken(token);
+
+            const userDetails = await fetchUserDetails(token);
+            if (userDetails) {
+              setUser({ ...mappedUser, ...userDetails });
+            } else {
+              setUser(mappedUser);
+            }
           }
+          return { method: 'firebase' as const, user: result.user };
         }
-        return result;
       } catch (error: any) {
-        setError(error.message || 'Failed to login');
-        throw error;
+        firebaseError = error;
+      }
+
+      try {
+        const endpoints = [`${apiBaseUrl}/auth/login`, '/api/auth/login', '/auth/login'];
+
+        for (const endpoint of endpoints) {
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+          });
+
+          if (!response.ok) continue;
+
+          const payload = await response.json();
+          const token = payload?.access_token || payload?.token;
+
+          if (!token) continue;
+
+          setAuthToken(token);
+
+          if (payload?.user) {
+            const backendUser = payload.user;
+            setUser({
+              id: String(backendUser.id || ''),
+              email: String(backendUser.email || email),
+              name: String(backendUser.name || backendUser.email || email),
+              role: String(backendUser.role || 'user'),
+              roles: Array.isArray(backendUser.roles)
+                ? backendUser.roles
+                : [backendUser.role || 'user'],
+              agencyId: backendUser.agencyId,
+              tenantId: backendUser.tenantId,
+              photoURL: backendUser.photoURL,
+            });
+          } else {
+            const userDetails = await fetchUserDetails(token);
+            if (userDetails) setUser(userDetails);
+          }
+
+          return { method: 'backend' as const };
+        }
+
+        throw firebaseError || new Error('Failed to login');
+      } catch (backendError: any) {
+        const message = backendError?.message || firebaseError?.message || 'Failed to login';
+        setError(message);
+        throw backendError || firebaseError;
       } finally {
         setIsLoading(false);
       }
     },
-    [fetchUserDetails]
+    [apiBaseUrl, fetchUserDetails, isFirebaseConfigured]
   );
 
   // Register user
@@ -191,6 +314,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           await updateProfile(result.user, { displayName: name });
           const mappedUser = mapUser({ ...result.user, displayName: name });
           const token = await result.user.getIdToken();
+          setAuthToken(token);
 
           // Fetch user details from backend to get actual role
           const userDetails = await fetchUserDetails(token);
@@ -220,6 +344,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (result.user) {
         const mappedUser = mapUser(result.user);
         const token = await result.user.getIdToken();
+        setAuthToken(token);
 
         // Fetch user details from backend to get actual role
         const userDetails = await fetchUserDetails(token);
