@@ -35,3 +35,18 @@ At session start, the agent should:
 3. Recover prior state from `.agent/handoff_notes.txt` and planning files.
 4. Use MCP and specialized agents from the inventory printed by
    `pnpm run tnf:onboard`.
+
+## Agent Bank Access
+
+AI agents can access the full scope of agent definitions and skills via the MCP
+server tools:
+
+- `get_agent_bank_resources(action: 'list' | 'read', resourceType: 'agents' | 'skills', bank: 'tnf' | 'claude')`
+
+This allows agents to dynamically discover personas and capabilities that they
+can adopt or delegate to.
+
+The platform API also exposes these via REST endpoints:
+
+- `/api/agents/bank/templates`: List all templates
+- `/api/agents/bank/template/:bank/:filename`: Get template content

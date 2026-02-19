@@ -11,6 +11,8 @@
  */
 
 import * as dotenv from 'dotenv';
+import * as fs from 'fs';
+import * as path from 'path';
 import postgres from 'postgres';
 
 dotenv.config({ path: '.env.local' });
@@ -811,6 +813,42 @@ async function main() {
       access_level: 'user',
     },
   ];
+
+  // Dynamically scan for any missing agents in the banks
+  const rootDir = process.cwd();
+  const tnfBankDir = path.join(rootDir, '.agent', 'agents');
+  const claudeBankDir = path.join(rootDir, '.claude', 'agents');
+
+  const scanAndAddAgents = (
+    scanDir: string,
+    agentBankType: 'usr' | 'claude',
+    currentList: AgentDefRecord[]
+  ) => {
+    if (!fs.existsSync(scanDir)) return;
+    const agentFiles = fs.readdirSync(scanDir).filter((f) => f.endsWith('.md'));
+    for (const file of agentFiles) {
+      const agentTnfId = `TNF:AGENT:${agentBankType}:${file.replace('.md', '')}`;
+      if (!currentList.some((a) => a.tnf_id === agentTnfId)) {
+        const agentName = file
+          .replace('.md', '')
+          .split(/[-_]/)
+          .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+          .join(' ');
+        currentList.push({
+          tnf_id: agentTnfId,
+          name: agentName,
+          description: `${agentName} ${agentBankType === 'claude' ? 'Claude' : 'TNF'} Specialist`,
+          definition_source: path.join(scanDir.replace(rootDir, ''), file),
+          agent_type: 'OTHER',
+          is_system: false,
+          access_level: 'user',
+        });
+      }
+    }
+  };
+
+  scanAndAddAgents(tnfBankDir, 'usr', userAgents);
+  scanAndAddAgents(claudeBankDir, 'claude', userAgents);
 
   for (const agent of userAgents) {
     await registerAgentDef(agent);

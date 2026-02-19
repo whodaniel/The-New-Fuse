@@ -155,4 +155,24 @@ export class PayPalService {
       .set({ status, updatedAt: new Date() })
       .where(eq(payPalSubscriptions.payPalSubscriptionId, subscriptionId));
   }
+
+  /**
+   * Get the current tier for a user
+   */
+  async getUserTier(userId: string): Promise<'STARTER' | 'PRO' | 'ENTERPRISE'> {
+    try {
+      const sub = await this.db.client.query.payPalSubscriptions.findFirst({
+        where: eq(payPalSubscriptions.userId, userId),
+      });
+
+      if (!sub || sub.status !== 'ACTIVE') {
+        return 'STARTER';
+      }
+
+      return sub.tier as 'STARTER' | 'PRO' | 'ENTERPRISE';
+    } catch (error) {
+      this.logger.error(`Error fetching tier for user ${userId}: ${error}`);
+      return 'STARTER';
+    }
+  }
 }

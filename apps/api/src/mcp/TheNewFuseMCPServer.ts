@@ -15,6 +15,8 @@ import {
   Tool,
 } from '@modelcontextprotocol/sdk/types.js';
 import express from 'express';
+import * as fs from 'fs';
+import * as path from 'path';
 
 // Mock services interface (will be replaced with actual services in production)
 interface ServiceInterface {
@@ -279,6 +281,39 @@ export class TheNewFuseMCPServer {
             required: ['provider', 'grantToken', 'payload'],
           },
         },
+
+        // Agent Knowledge Banks (Definitions & Skills)
+        {
+          name: 'get_agent_bank_resources',
+          description:
+            'Access the core bank of agent definitions (.agent/agents, .claude/agents) and skills (.agent/skills). This allows discovery of persona templates and capabilities.',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              action: {
+                type: 'string',
+                enum: ['list', 'read'],
+                description: 'Action to perform: list or read',
+              },
+              resourceType: {
+                type: 'string',
+                enum: ['agents', 'skills'],
+                description: 'Type of resource to access',
+              },
+              bank: {
+                type: 'string',
+                enum: ['tnf', 'claude', 'all'],
+                default: 'all',
+                description: 'Primary source bank to query',
+              },
+              filePath: {
+                type: 'string',
+                description: 'Relative path of the file to read (within the bank directory)',
+              },
+            },
+            required: ['action', 'resourceType'],
+          },
+        },
       ] as Tool[],
     }));
 
@@ -333,6 +368,10 @@ export class TheNewFuseMCPServer {
           // Agent Delegate
           case 'delegate_llm_request':
             return await this.handleDelegateLlmRequest(args);
+
+          // Agent Knowledge Bank
+          case 'get_agent_bank_resources':
+            return await this.handleGetAgentBankResources(args);
 
           default:
             throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${name}`);
@@ -846,6 +885,100 @@ export class TheNewFuseMCPServer {
     }
 
     throw new McpError(ErrorCode.InternalError, 'Agent Grants Service not initialized');
+  }
+
+  // Agent Knowledge Bank Handlers
+  private async handleGetAgentBankResources(args: any) {
+    const { action, resourceType, bank = 'all', filePath } = args;
+    const root = this.getWorkspaceRoot();
+
+    const paths: string[] = [];
+    if (resourceType === 'agents') {
+      if (bank === 'tnf' || bank === 'all') paths.push(path.join(root, '.agent', 'agents'));
+      if (bank === 'claude' || bank === 'all') paths.push(path.join(root, '.claude', 'agents'));
+    } else if (resourceType === 'skills') {
+      if (bank === 'tnf' || bank === 'all') paths.push(path.join(root, '.agent', 'skills'));
+      // Claude bank skills often reside in the same .agent folder but with different naming or separate subfolders
+      if (bank === 'claude') paths.push(path.join(root, '.agent', 'skills'));
+    }
+
+    if (action === 'list') {
+      const results: any[] = [];
+      for (const p of paths) {
+        if (fs.existsSync(p)) {
+          const files = fs.readdirSync(p);
+          results.push({
+            bankPath: p.replace(root, ''),
+            files: files.map((f) => {
+              const stat = fs.statSync(path.join(p, f));
+              return {
+                name: f,
+                isDir: stat.isDirectory(),
+                size: stat.size,
+              };
+            }),
+          });
+        }
+      }
+
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify({ resourceType, action, banks: results }, null, 2),
+          },
+        ],
+      };
+    } else if (action === 'read') {
+      if (!filePath) {
+        throw new McpError(ErrorCode.InvalidParams, 'filePath is required for read action');
+      }
+
+      // Try to find the file in any of the valid bank paths
+      for (const p of paths) {
+        const fullPath = path.join(p, filePath);
+        // Simple security check to prevent directory traversal
+        if (!fullPath.startsWith(p)) continue;
+
+        if (fs.existsSync(fullPath) && fs.statSync(fullPath).isFile()) {
+          const content = fs.readFileSync(fullPath, 'utf-8');
+          return {
+            content: [
+              {
+                type: 'text',
+                text: content,
+              },
+            ],
+          };
+        }
+      }
+
+      throw new McpError(ErrorCode.InvalidParams, `File not found: ${filePath}`);
+    }
+
+    throw new McpError(ErrorCode.MethodNotFound, `Action ${action} not supported`);
+  }
+
+  /**
+   * Resolve the workspace root directory
+   */
+  private getWorkspaceRoot(): string {
+    if (process.env.TNF_WORKSPACE) return process.env.TNF_WORKSPACE;
+
+    // Default to current directory and look for .agent
+    let current = process.cwd();
+    // Safety limit of 10 levels
+    for (let i = 0; i < 10; i++) {
+      if (fs.existsSync(path.join(current, '.agent'))) {
+        return current;
+      }
+      const parent = path.dirname(current);
+      if (parent === current) break;
+      current = parent;
+    }
+
+    // Fallback to searching for package.json in root if .agent is missing
+    return process.cwd();
   }
 
   /**
