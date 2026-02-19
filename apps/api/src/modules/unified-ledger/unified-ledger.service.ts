@@ -314,7 +314,9 @@ export class UnifiedLedgerService implements OnModuleInit {
   }): Promise<TimelineEvent> {
     await this.ensureLoaded();
     this.validateTimelineRefs(input);
-    const timestamp = input.timestamp ? this.normalizeTimestamp(input.timestamp) : new Date().toISOString();
+    const timestamp = input.timestamp
+      ? this.normalizeTimestamp(input.timestamp)
+      : new Date().toISOString();
     const eventType = this.validateEventType(input.eventType);
     const deduped = this.findDuplicateTimelineEvent({
       recordId: input.recordId,
@@ -649,6 +651,7 @@ export class UnifiedLedgerService implements OnModuleInit {
   }
 
   private async persist(): Promise<void> {
+    await fs.mkdir(path.dirname(this.storePath), { recursive: true });
     await fs.writeFile(this.storePath, JSON.stringify(this.store, null, 2), 'utf8');
   }
 
