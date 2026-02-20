@@ -23,6 +23,17 @@ interface ActivityEvent {
   metadata?: any;
 }
 
+const mapRawActivityEvent = (e: any): ActivityEvent => ({
+  id: e.id || e.streamId || `evt-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+  type: e.type || e.eventType || 'message',
+  source: e.source || 'system',
+  content: e.content || '',
+  timestamp: new Date(e.relayTimestamp || e.originalTimestamp || Date.now()),
+  status: e.content?.toLowerCase().includes('error') ? 'error' : 'success',
+  channelId: e.channel,
+  metadata: e.metadata,
+});
+
 const DASHBOARD_THEME = {
   primary: 'cyan',
   secondary: 'indigo',
@@ -83,6 +94,68 @@ export default function SuperAdminControlPanel() {
   const wsRef = useRef<WebSocket | null>(null);
   const [connected, setConnected] = useState(false);
 
+  const orchestrationSignals = useMemo(() => {
+    return activities
+      .filter((activity) => {
+        const eventType = String(
+          activity?.metadata?.eventType || activity.type || ''
+        ).toLowerCase();
+        return eventType === 'task_poll_ranked' || eventType === 'task_queued_from_votes';
+      })
+      .slice(0, 12)
+      .map((activity) => {
+        const metadata = activity.metadata || {};
+        const eventType = String(metadata.eventType || activity.type || '');
+        const top = Array.isArray(metadata.top) ? metadata.top : [];
+        const lead = top[0] || null;
+        const score = metadata.score ?? lead?.score ?? null;
+        const votes = metadata.votes || lead?.votes || null;
+        const taskId = metadata.taskId || lead?.id || null;
+        const title = metadata.title || lead?.title || null;
+        return {
+          id: activity.id,
+          timestamp: activity.timestamp,
+          eventType,
+          content: activity.content,
+          score: typeof score === 'number' ? score : null,
+          votes:
+            votes && typeof votes === 'object'
+              ? {
+                  up: Number((votes as any).up || 0),
+                  down: Number((votes as any).down || 0),
+                }
+              : null,
+          taskId: taskId ? String(taskId) : null,
+          title: title ? String(title) : null,
+        };
+      });
+  }, [activities]);
+
+  const syncRecentActivity = useCallback(async () => {
+    try {
+      const res = await fetch(`${relayHttpBase}/activity/recent?count=80`);
+      if (!res.ok) return;
+      const payload = await res.json();
+      const rows: ActivityEvent[] = (payload?.events || []).map(mapRawActivityEvent);
+      if (!rows.length) return;
+
+      setActivities((prev) => {
+        const merged = [...rows, ...prev];
+        const seen = new Set<string>();
+        const deduped: ActivityEvent[] = [];
+        for (const item of merged) {
+          if (seen.has(item.id)) continue;
+          seen.add(item.id);
+          deduped.push(item);
+          if (deduped.length >= 120) break;
+        }
+        return deduped;
+      });
+    } catch {
+      // silent: realtime visualizer sync should not hard-fail UI
+    }
+  }, [relayHttpBase]);
+
   // Load Initial Data
   const loadInitialData = useCallback(async () => {
     setLoading(true);
@@ -128,18 +201,7 @@ export default function SuperAdminControlPanel() {
       }
 
       if (activityRes.events) {
-        setActivities(
-          activityRes.events.map((e: any) => ({
-            id: e.id || e.streamId,
-            type: e.type || e.eventType || 'message',
-            source: e.source || 'system',
-            content: e.content || '',
-            timestamp: new Date(e.relayTimestamp || e.originalTimestamp || Date.now()),
-            status: e.content?.toLowerCase().includes('error') ? 'error' : 'success',
-            channelId: e.channel,
-            metadata: e.metadata,
-          }))
-        );
+        setActivities(activityRes.events.map(mapRawActivityEvent));
       }
 
       setAgents(agentsRes);
@@ -215,11 +277,13 @@ export default function SuperAdminControlPanel() {
     connectSocket();
 
     const interval = setInterval(loadInitialData, 30000);
+    const activityInterval = setInterval(syncRecentActivity, 4000);
     return () => {
       clearInterval(interval);
+      clearInterval(activityInterval);
       wsRef.current?.close();
     };
-  }, [loadInitialData, connectSocket]);
+  }, [loadInitialData, connectSocket, syncRecentActivity]);
 
   // Actions
   const handleHaltAgents = async () => {
@@ -444,6 +508,53 @@ export default function SuperAdminControlPanel() {
 
         {/* Sidebar Status Panels */}
         <motion.div variants={itemVariants} className="space-y-8">
+          <GlassCard className="p-6 transition-transform hover:scale-[1.02]">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                <Activity className="w-5 h-5 text-indigo-400" />
+                Orchestration Signals
+              </h3>
+              <span className="bg-indigo-500/20 text-indigo-300 text-[10px] px-2 py-0.5 rounded-full font-bold">
+                {orchestrationSignals.length} EVENTS
+              </span>
+            </div>
+            {orchestrationSignals.length === 0 ? (
+              <div className="text-slate-500 text-xs">No vote-driven task events yet.</div>
+            ) : (
+              <div className="space-y-2">
+                {orchestrationSignals.slice(0, 6).map((signal) => (
+                  <div
+                    key={signal.id}
+                    className="rounded-lg border border-white/10 bg-white/5 p-3 text-xs"
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-semibold text-indigo-300 uppercase tracking-wide">
+                        {signal.eventType}
+                      </span>
+                      <span className="text-slate-500">
+                        {signal.timestamp.toLocaleTimeString()}
+                      </span>
+                    </div>
+                    {signal.taskId && (
+                      <div className="text-slate-300 font-mono mb-1">
+                        Task: {signal.taskId.slice(0, 18)}
+                      </div>
+                    )}
+                    {signal.title && (
+                      <div className="text-slate-300 mb-1 truncate">{signal.title}</div>
+                    )}
+                    <div className="flex items-center gap-3 text-slate-400">
+                      <span>Score: {signal.score ?? '-'}</span>
+                      <span>
+                        Votes: +{signal.votes?.up ?? 0} / -{signal.votes?.down ?? 0}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </GlassCard>
+
           {/* Online Agents List */}
           <GlassCard className="p-6 transition-transform hover:scale-[1.02]">
             <div className="flex items-center justify-between mb-6">
