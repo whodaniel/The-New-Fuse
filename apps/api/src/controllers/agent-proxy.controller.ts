@@ -3,7 +3,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AgentApiGrantsService } from '../services/agent-api-grants.service';
 
 @ApiTags('agent-proxy')
-@Controller('api/agent-proxy')
+@Controller(['agent-proxy', 'api/agent-proxy'])
 export class AgentProxyController {
   constructor(private readonly grantsService: AgentApiGrantsService) {}
 
