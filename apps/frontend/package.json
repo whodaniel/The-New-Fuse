@@ -62,8 +62,6 @@
     "@types/dagre": "^0.7.53",
     "@types/file-saver": "^2.0.7",
     "@types/three": "^0.181.0",
-    "@uauth/js": "^3.0.1",
-    "@uauth/web3-react": "^3.0.1",
     "axios": "^1.13.5",
     "change-case": "5.4.4",
     "class-variance-authority": "^0.7.1",

@@ -162,12 +162,6 @@ export default defineConfig(({ mode }) => {
         '@nestjs/common': path.resolve(__dirname, 'src/stubs/nestjs-common.ts'),
         '@nestjs/swagger': path.resolve(__dirname, 'src/stubs/nestjs-swagger.ts'),
         'class-validator': path.resolve(__dirname, 'src/stubs/class-validator.ts'),
-        // Keep UD stub unless explicitly enabled for real Unstoppable Domains auth.
-        ...(env.VITE_ENABLE_UNSTOPPABLE_DOMAINS === 'true'
-          ? {}
-          : {
-              '@uauth/js': path.resolve(__dirname, 'src/stubs/uauth-js.ts'),
-            }),
         // Stub zlib to fix "Cannot read properties of undefined (reading 'Z_SYNC_FLUSH')"
         zlib: path.resolve(__dirname, 'src/stubs/zlib.ts'),
         'node:zlib': path.resolve(__dirname, 'src/stubs/zlib.ts'),

@@ -365,11 +365,6 @@ export const ALL_PAGES_CATALOG: PageInfo[] = [
     path: '/ai-agents',
     description: 'AI agent portal alias route',
   },
-  {
-    name: 'Unstoppable Auth Callback',
-    path: '/auth/unstoppable-callback',
-    description: 'Unstoppable domains auth callback',
-  },
   { name: 'Blog', path: '/blog', description: 'Marketing blog page' },
   { name: 'Brand', path: '/brand', description: 'Brand identity page' },
   { name: 'Command Center', path: '/command-center', description: 'TNF command center' },

@@ -11,21 +11,6 @@ import './styles/globals.css'; // Re-add global CSS import
 // The index.html guard locks the registry, so attempting to redefine define() here
 // would throw a TypeError.
 
-// Validate Unstoppable Domains env presence (service initialization happens in auth hook)
-try {
-  const udClientId = import.meta.env.VITE_UNSTOPPABLE_DOMAINS_CLIENT_ID;
-  const isUdEnabled = import.meta.env.VITE_ENABLE_UNSTOPPABLE_DOMAINS !== 'false';
-
-  if (!udClientId && isUdEnabled && import.meta.env.DEV) {
-    console.warn(
-      '[The New Fuse] Unstoppable Domains Client ID not found. Service skipped. ' +
-        'Set VITE_UNSTOPPABLE_DOMAINS_CLIENT_ID in .env to enable.'
-    );
-  }
-} catch (error) {
-  console.error('[The New Fuse] Critical error during Unstoppable Domains setup:', error);
-}
-
 console.log('Main.tsx starting...');
 
 const container = document.getElementById('root');

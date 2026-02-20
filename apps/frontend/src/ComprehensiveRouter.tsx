@@ -110,9 +110,6 @@ const ResetPasswordPage = lazy(() => import('./pages/auth/ResetPassword'));
 const SSOPage = lazy(() => import('./pages/auth/SSO'));
 const GoogleCallbackPage = lazy(() => import('./pages/auth/GoogleCallback'));
 const OAuthCallbackPage = lazy(() => import('./pages/auth/OAuthCallback'));
-const UnstoppableDomainsCallbackPage = lazy(
-  () => import('./pages/auth/UnstoppableDomainsCallback')
-);
 
 // Landing components
 const LandingRevolutionPage = lazy(() => import('./pages/LandingRevolution'));
@@ -616,10 +613,6 @@ export default function ComprehensiveRouter() {
               <Route path="/auth/google-callback" element={<GoogleCallbackPage />} />
               <Route path="/auth/google/callback" element={<GoogleCallbackPage />} />
               <Route path="/auth/oauth-callback" element={<OAuthCallbackPage />} />
-              <Route
-                path="/auth/unstoppable-callback"
-                element={<UnstoppableDomainsCallbackPage />}
-              />
 
               {/* Enhanced Landing Routes */}
               <Route path="/landing" element={<LandingRevolutionPage />} />

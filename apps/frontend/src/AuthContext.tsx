@@ -20,7 +20,6 @@ export interface AuthContextType {
   login: (email: string, password: string) => Promise<any>;
   register: (name: string, email: string, password: string) => Promise<any>;
   signInWithGoogle: () => Promise<any>;
-  loginWithUnstoppableDomains: (udUser: any) => Promise<void>;
   logout: () => Promise<void>;
   error: string | null;
 }
