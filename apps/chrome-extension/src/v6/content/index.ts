@@ -505,6 +505,7 @@ class FuseConnectContentScript {
           case 'AGENTS_UPDATE':
           case 'CHANNELS_UPDATE':
           case 'JOINED_CHANNELS_UPDATE':
+          case 'CHANNEL_SELECTED':
           case 'NOTIFICATION':
           case 'TASK_ASSIGN':
             if (this.panel) {

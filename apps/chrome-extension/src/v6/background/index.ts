@@ -25,6 +25,7 @@ const STORAGE_KEYS = {
   agentId: 'fuse_agent_id',
   channels: 'fuse_channels',
   joinedChannels: 'fuse_joined_channels',
+  tabActiveChannels: 'fuse_tab_active_channels',
   knownNodes: 'fuse_known_nodes',
   autoConnect: 'fuse_auto_connect',
   autoMonitor: 'fuse_auto_monitor',
@@ -67,6 +68,7 @@ class BackgroundService {
   private agents: Map<string, Agent> = new Map();
   private channels: Map<string, FederationChannel> = new Map();
   private joinedChannels: Set<string> = new Set();
+  private tabActiveChannels: Map<number, string> = new Map();
   private messageQueue: ProtocolMessage[] = [];
   private pendingPageAgents: Agent[] = []; // Queue for page agents waiting for connection
   private autoConnect: boolean = true; // Default to TRUE for agent operation
@@ -101,6 +103,7 @@ class BackgroundService {
     // This prevents "Receiving end does not exist" errors in the popup
     this.setupMessageHandlers();
     this.setupCommands();
+    this.setupTabLifecycleHandlers();
 
     // Get or create agent ID
     this.agentId = await this.getOrCreateAgentId();
@@ -208,6 +211,7 @@ class BackgroundService {
     const result = await chrome.storage.local.get([
       STORAGE_KEYS.channels,
       STORAGE_KEYS.joinedChannels,
+      STORAGE_KEYS.tabActiveChannels,
       STORAGE_KEYS.knownNodes,
       STORAGE_KEYS.autoConnect,
       STORAGE_KEYS.autoMonitor,
@@ -224,6 +228,15 @@ class BackgroundService {
 
     if (result[STORAGE_KEYS.joinedChannels]) {
       this.joinedChannels = new Set(result[STORAGE_KEYS.joinedChannels]);
+    }
+    if (result[STORAGE_KEYS.tabActiveChannels]) {
+      const tabChannels = result[STORAGE_KEYS.tabActiveChannels] as Record<string, string>;
+      for (const [tabId, channelId] of Object.entries(tabChannels)) {
+        const parsedTabId = Number(tabId);
+        if (Number.isFinite(parsedTabId) && channelId) {
+          this.tabActiveChannels.set(parsedTabId, channelId);
+        }
+      }
     }
 
     // Auto-join Red channel
@@ -1177,6 +1190,49 @@ class BackgroundService {
   }
 
   /**
+   * Save per-tab active channel selections
+   */
+  private async saveTabActiveChannels(): Promise<void> {
+    const serialized: Record<string, string> = {};
+    for (const [tabId, channelId] of this.tabActiveChannels.entries()) {
+      if (channelId) {
+        serialized[String(tabId)] = channelId;
+      }
+    }
+    await chrome.storage.local.set({
+      [STORAGE_KEYS.tabActiveChannels]: serialized,
+    });
+  }
+
+  /**
+   * Track active channel selection per tab
+   */
+  private setTabActiveChannel(tabId: number, channelId: string | null): void {
+    if (channelId) {
+      this.tabActiveChannels.set(tabId, channelId);
+    } else {
+      this.tabActiveChannels.delete(tabId);
+    }
+    void this.saveTabActiveChannels();
+  }
+
+  private getTabActiveChannel(tabId?: number): string | null {
+    if (!tabId) return null;
+    return this.tabActiveChannels.get(tabId) || null;
+  }
+
+  /**
+   * Clear tab-scoped state when tabs are closed
+   */
+  private setupTabLifecycleHandlers(): void {
+    chrome.tabs.onRemoved.addListener((tabId) => {
+      if (this.tabActiveChannels.delete(tabId)) {
+        void this.saveTabActiveChannels();
+      }
+    });
+  }
+
+  /**
    * Send native message to control services
    */
   private async sendNativeMessage(message: Record<string, unknown>): Promise<any> {
@@ -1351,6 +1407,8 @@ class BackgroundService {
             agents: Array.from(this.agents.values()),
             channels: Array.from(this.channels.values()),
             joinedChannels: Array.from(this.joinedChannels),
+            selectedChannel: this.getTabActiveChannel(sender.tab?.id),
+            tabId: sender.tab?.id ?? null,
             nodes: Object.fromEntries(this.nodeStatus),
             agentId: tabPageAgentId || this.agentId, // Use page-specific ID if available
             browserAgentId: this.agentId,
@@ -1605,6 +1663,13 @@ Format as JSON array:
 
         case 'CHANNEL_JOIN':
           this.joinedChannels.add(message.channelId);
+          if (sender.tab?.id) {
+            this.setTabActiveChannel(sender.tab.id, message.channelId);
+            chrome.tabs.sendMessage(sender.tab.id, {
+              type: 'CHANNEL_SELECTED',
+              channelId: message.channelId,
+            });
+          }
           this.send({
             type: 'CHANNEL_JOIN',
             channelId: message.channelId,
@@ -1621,6 +1686,13 @@ Format as JSON array:
 
         case 'CHANNEL_LEAVE':
           this.joinedChannels.delete(message.channelId);
+          if (sender.tab?.id) {
+            this.setTabActiveChannel(sender.tab.id, null);
+            chrome.tabs.sendMessage(sender.tab.id, {
+              type: 'CHANNEL_SELECTED',
+              channelId: null,
+            });
+          }
           this.send({
             type: 'CHANNEL_LEAVE',
             channelId: message.channelId,
@@ -1683,8 +1755,10 @@ Format as JSON array:
               joinedChannels: Array.from(this.joinedChannels),
             });
 
-            // Send currently selected channel per-tab if we track it,
-            // but the UI currently pulls 'fuse_current_channel' from storage itself.
+            chrome.tabs.sendMessage(sender.tab.id, {
+              type: 'CHANNEL_SELECTED',
+              channelId: this.getTabActiveChannel(sender.tab.id),
+            });
           }
           sendResponse({ success: true });
           break;
