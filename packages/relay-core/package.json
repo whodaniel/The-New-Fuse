@@ -18,6 +18,7 @@
     "master-clock:dev": "ts-node src/master-clock.ts",
     "super-cycle:event": "ts-node src/super-cycle-client.ts",
     "super-cycle:status": "ts-node src/super-cycle-client.ts --action status",
+    "super-cycle:self-prompts": "ts-node src/super-cycle-client.ts --action self-prompts",
     "orchestrate": "node dist/master-clock.js & node dist/standalone-relay.js",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
