@@ -24,6 +24,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const apiBaseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
   const gatewayPrefix = import.meta.env.PROD ? '/v1' : '/api';
 
+  const isFirebaseConfigured =
+    !!import.meta.env.VITE_FIREBASE_API_KEY &&
+    import.meta.env.VITE_FIREBASE_API_KEY !== '${VITE_FIREBASE_API_KEY}';
+
   // Fetch authenticated user from backend with retry logic and multi-endpoint support
   const fetchUserDetails = useCallback(
     async (token: string, retries = 3, delay = 1000): Promise<User | null> => {
@@ -87,7 +91,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
         if (i < retries - 1) {
-          await new Promise((r) => setTimeout(resolve, delay * Math.pow(2, i)));
+          await new Promise((resolve) => setTimeout(resolve, delay * Math.pow(2, i)));
         }
       }
 

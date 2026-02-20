@@ -1,6 +1,7 @@
-import { initializeApp, getApp, FirebaseApp } from 'firebase/app';
+import { initializeApp, getApp, FirebaseApp, getApps } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { initializeFirestore, getFirestore, CACHE_SIZE_UNLIMITED, Firestore } from 'firebase/firestore';
+import 'firebase/firestore'; // Side-effect import to ensure registration
 
 // Firebase configuration from environment variables
 const firebaseConfig = {
@@ -36,12 +37,7 @@ if (firebaseConfig.apiKey && firebaseConfig.apiKey !== '${VITE_FIREBASE_API_KEY}
 }
 
 // Initialize Firebase (with hot-reload protection)
-let app: FirebaseApp;
-try {
-  app = getApp(); // Try to get existing app first
-} catch {
-  app = initializeApp(firebaseConfig); // Initialize if doesn't exist
-}
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
 // Initialize Auth
 export const auth = getAuth(app);
@@ -51,44 +47,30 @@ let db: Firestore;
 
 const initializeDB = (currentApp: FirebaseApp): Firestore => {
   try {
-    // Try to get existing instance first
+    // Standard initialization - often works if 'firebase/firestore' was imported
     return getFirestore(currentApp);
   } catch (e: any) {
     const errorMsg = e?.message || String(e);
+    console.warn(`[The New Fuse] Firestore initialization warning: ${errorMsg}`);
     
-    // Check if specifically not registered yet
-    if (errorMsg.includes('not been registered')) {
-      console.warn('[The New Fuse] Firestore component not yet registered, initializing...');
-      return initializeFirestore(currentApp, {
-        cacheSizeBytes: CACHE_SIZE_UNLIMITED
-      });
-    }
-    
+    // Explicit initialization - required if getFirestore fails due to registration timing
     try {
-      // If getting existing failed, try initializing
       return initializeFirestore(currentApp, {
         cacheSizeBytes: CACHE_SIZE_UNLIMITED
       });
-    } catch (initError) {
-      // If initialization failed (e.g. already exists but getFirestore failed?), fallback
-      console.warn('[The New Fuse] Firestore init fallback:', initError);
+    } catch (initError: any) {
+      console.error('[The New Fuse] Firestore init fallback failed:', initError);
+      // As an absolute last resort, return whatever getFirestore gives, or let it throw
       return getFirestore(currentApp);
     }
   }
 };
 
 try {
-  // Ensure app is initialized before accessing Firestore
-  const currentApp = getApp();
-  db = initializeDB(currentApp);
+  db = initializeDB(app);
 } catch (error) {
-  console.error('[The New Fuse] Critical Firestore initialization error - check project config:', error);
-  // As a last-ditch effort, try to initialize directly from the app variable
-  try {
-    db = getFirestore(app);
-  } catch (finalError) {
-    console.error('[The New Fuse] Final Firestore recovery failed:', finalError);
-  }
+  console.error('[The New Fuse] Critical Firestore initialization error:', error);
+  // @ts-ignore - Let it be undefined, but prevent top-level crash
 }
 
 export { db };

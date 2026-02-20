@@ -3,47 +3,12 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { App } from './App';
 import { ToastProvider } from './components/ui/toast';
-import './lib/firebase'; // Ensure Firebase is initialized early
-import { AuthProvider } from './providers/AuthProvider';
-import { unstoppableDomainsService } from './services/unstoppableDomains.service';
+// Initialize Firebase is already handled by import './lib/firebase'
 import './styles/globals.css'; // Re-add global CSS import
 
-// Custom Element Guard
-// Prevents collisions with already defined custom elements (like mce-autosize-textarea)
-try {
-  if (typeof customElements !== 'undefined' && !customElements.get('mce-autosize-textarea')) {
-    // Basic check for existence first
-    const originalDefine = customElements.define;
-
-    // Override define with a highly resilient wrapper
-    customElements.define = function (
-      name: string,
-      constructor: CustomElementConstructor,
-      options?: ElementDefinitionOptions
-    ) {
-      try {
-        if (customElements.get(name)) {
-          // Permissive behavior: just return early instead of throwing
-          console.warn(
-            `[The New Fuse] Custom element '${name}' has already been defined. Skipping registration.`
-          );
-          return;
-        }
-        originalDefine.call(customElements, name, constructor, options);
-      } catch (e) {
-        const errorMsg = e instanceof Error ? e.message : String(e);
-        if (errorMsg.includes('already been defined')) {
-          console.warn(`[The New Fuse] Suppressed collision for '${name}'`);
-          return;
-        }
-        console.error(`[The New Fuse] Error defining custom element '${name}':`, e);
-      }
-    };
-    console.log('[The New Fuse] Custom Element Guard initialized (Resilient)');
-  }
-} catch (error) {
-  console.warn('[The New Fuse] Custom Element Guard initialization error:', error);
-}
+// Custom Element Guard: Moved to index.html for maximum interception coverage.
+// The index.html guard locks the registry, so attempting to redefine define() here
+// would throw a TypeError.
 
 // Initialize Unstoppable Domains Service
 try {

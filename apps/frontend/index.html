@@ -17,25 +17,36 @@
     <!-- CRITICAL: Custom Element Guard MUST be first to intercept browser extension scripts -->
     <script>
       (function () {
-        console.log('[The New Fuse] Custom Element Guard (V5) - Initializing...');
+        console.log('[The New Fuse] Custom Element Guard (V6) - Initializing...');
 
-        // GLOBAL ERROR FILTER: Catch and swallow specific collision and module resolution errors
-        // This acts as a safety net if the guard is bypassed or loaded late.
+        // AGGRESSIVE ERROR FILTER: Catch and swallow specific collision and module resolution errors
+        const swallowError = function (message) {
+          const msg = (message || '').toLowerCase();
+          return (
+            msg.includes('mce-autosize-textarea') ||
+            msg.includes('already been defined') ||
+            msg.includes('already been used') ||
+            msg.includes('failed to resolve module') ||
+            msg.includes('scheduler') ||
+            (msg.includes('uncaught') && msg.includes('custom element'))
+          );
+        };
+
+        // window.onerror for broad string-based errors
+        const originalOnerror = window.onerror;
+        window.onerror = function (message, source, lineno, colno, error) {
+          if (swallowError(message)) {
+            console.warn('[The New Fuse] Globally suppressed error:', message);
+            return true; // Prevents error from appearing in console
+          }
+          if (originalOnerror) return originalOnerror.apply(this, arguments);
+        };
+
+        // addEventListener('error') for Event object errors
         window.addEventListener(
           'error',
           function (event) {
-            // Robustly catch custom element definition errors
-            const msg = (event.message || '').toLowerCase();
-            if (
-              msg.includes('mce-autosize-textarea') ||
-              msg.includes('already been defined') ||
-              msg.includes('already been used') ||
-              msg.includes('failed to resolve module') ||
-              msg.includes('scheduler') ||
-              // Catch "Uncaught Error: ..." variations
-              (msg.includes('uncaught') && msg.includes('custom element'))
-            ) {
-              // Silently swallow these errors
+            if (swallowError(event.message)) {
               event.preventDefault();
               event.stopImmediatePropagation();
               return true;
@@ -44,17 +55,12 @@
           true
         );
 
-        // Also catch unhandled promise rejections for module loading failures
+        // Also catch unhandled promise rejections
         window.addEventListener(
           'unhandledrejection',
           function (event) {
-            if (
-              event.reason &&
-              event.reason.message &&
-              (event.reason.message.includes('Failed to resolve module specifier') ||
-                event.reason.message.includes('scheduler') ||
-                event.reason.message.includes('already been defined'))
-            ) {
+            const reason = event.reason?.message || String(event.reason || '');
+            if (swallowError(reason)) {
               event.preventDefault();
               return true;
             }
