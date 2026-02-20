@@ -404,10 +404,9 @@
           (this.connectionStatus = e.connectionStatus || 'disconnected'),
           (this.agents = e.agents || []),
           (this.channels = e.channels || []),
-          chrome.storage.local.get(['fuse_current_channel', 'fuse_paused_channels'], (e) => {
-            (e.fuse_current_channel && (this.currentChannel = e.fuse_current_channel),
-              Array.isArray(e.fuse_paused_channels) &&
-                (this.pausedChannels = new Set(e.fuse_paused_channels)),
+          chrome.storage.local.get(['fuse_paused_channels'], (e) => {
+            (Array.isArray(e.fuse_paused_channels) &&
+              (this.pausedChannels = new Set(e.fuse_paused_channels)),
               this.update());
           }));
       });
@@ -682,13 +681,6 @@
         chrome.runtime.onMessage.addListener(this.chromeMessageListener),
         (this.channelStorageListener = (e, t) => {
           if ('local' !== t) return;
-          if (e.fuse_current_channel) {
-            const n = e.fuse_current_channel.newValue || null;
-            n !== this.currentChannel &&
-              ((this.currentChannel = n),
-              console.log('[FuseConnect] Synced active channel from storage:', n),
-              this.update());
-          }
           if (e.fuse_paused_channels) {
             const n = Array.isArray(e.fuse_paused_channels.newValue)
               ? e.fuse_paused_channels.newValue
@@ -926,7 +918,6 @@
     }
     joinChannel(e) {
       ((this.currentChannel = e),
-        chrome.storage.local.set({ fuse_current_channel: e }),
         chrome.runtime.sendMessage({ type: 'CHANNEL_JOIN', channelId: e }),
         this.logActivity('channel_join', { channelId: e }),
         this.update());
@@ -935,7 +926,6 @@
       const t = this.currentChannel;
       ((this.currentChannel = e),
         console.log(`[FuseConnect] Panel ${this.panelId} switching channel: ${t} → ${e}`),
-        chrome.storage.local.set({ fuse_current_channel: e }),
         e
           ? chrome.runtime.sendMessage({
               type: 'CHANNEL_JOIN',
@@ -966,7 +956,6 @@
             (console.log('[FuseConnect] Channel created successfully:', t),
               t &&
                 ((this.currentChannel = t),
-                chrome.storage.local.set({ fuse_current_channel: t }),
                 chrome.runtime.sendMessage({ type: 'CHANNEL_JOIN', channelId: t }),
                 this.update()));
           }
@@ -990,7 +979,6 @@
         (this.channels = this.channels.filter((t) => t.id !== e)),
         this.currentChannel === e && (this.currentChannel = null),
         chrome.storage.local.set({
-          fuse_current_channel: this.currentChannel,
           fuse_paused_channels: Array.from(this.pausedChannels),
         }),
         chrome.runtime.sendMessage({ type: 'CHANNEL_DELETE', channelId: e }),

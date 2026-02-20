@@ -717,25 +717,25 @@
               this.recentMessageHashes.has(s)
                 ? console.log('[FuseConnect v6] Skipping duplicate AI response broadcast')
                 : (this.recentMessageHashes.set(s, n),
-                  chrome.storage.local.get(['fuse_current_channel'], (e) => {
-                    const s = e.fuse_current_channel || null;
-                    s &&
+                  (() => {
+                    const e = t.channel || t.metadata?.channel || null;
+                    e &&
                       (this.send({
                         type: 'MESSAGE_SEND',
                         messageId: t.messageId || crypto.randomUUID(),
                         to: 'broadcast',
-                        channel: s,
+                        channel: e,
                         content: `[AI → User] ${t.content}`,
                         messageType: 'ai-response',
                         metadata: { ...(t.metadata || {}), senderId: a, senderTabId: o },
                       }),
                       console.log('[FuseConnect v6] AI response forwarded to relay', {
-                        channel: s,
+                        channel: e,
                         length: t.content.length,
                         senderId: a,
                         senderTabId: o,
                       }));
-                  }));
+                  })());
             }
             n({ success: !0 });
           }
