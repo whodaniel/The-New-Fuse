@@ -1,6 +1,8 @@
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { drizzleUserRepository } from '@the-new-fuse/database';
+import * as admin from 'firebase-admin';
 import { Address, Hex, verifyMessage } from 'viem';
 import { EventBus } from '../events/event-bus.service';
 import { IdentityService } from '../services/identity.service';
@@ -14,8 +16,26 @@ export class AuthService {
     private jwtService: JwtService,
     private logger: LoggingService,
     private eventBus: EventBus,
-    private identityService: IdentityService
-  ) {}
+    private identityService: IdentityService,
+    private configService: ConfigService
+  ) {
+    if (admin.apps.length === 0) {
+      const projectId = this.configService.get<string>('FIREBASE_PROJECT_ID');
+      if (projectId) {
+        try {
+          admin.initializeApp({
+            credential: admin.credential.applicationDefault(),
+            projectId,
+          });
+          this.logger.log(`Firebase Admin initialized for project: ${projectId}`);
+        } catch (error) {
+          this.logger.error('Failed to initialize Firebase Admin', error);
+        }
+      } else {
+        this.logger.warn('FIREBASE_PROJECT_ID not set, skipping Firebase Admin initialization');
+      }
+    }
+  }
 
   async validateUser(email: string, password: string) {
     const user = await drizzleUserRepository.findByEmail(email);
@@ -73,10 +93,47 @@ export class AuthService {
     };
   }
 
+  async validateFirebaseToken(token: string) {
+    try {
+      const decodedToken = await admin.auth().verifyIdToken(token);
+      const { email, uid, name, picture, email_verified } = decodedToken;
+
+      if (!email) {
+        throw new UnauthorizedException('Firebase token missing email');
+      }
+
+      // Find or create user
+      let user = await drizzleUserRepository.findByEmail(email);
+      if (!user) {
+        user = await drizzleUserRepository.create({
+          email,
+          name: name || email.split('@')[0],
+          hashedPassword: '', // No password for Firebase users
+          isActive: true,
+          emailVerified: email_verified || false,
+        } as Parameters<typeof drizzleUserRepository.create>[0]);
+        this.logger.log(`Created new user from Firebase: ${email}`);
+      }
+
+      await this.eventBus.publish(new UserLoginEvent(user));
+
+      return {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        roles: Array.isArray(user.roles) ? user.roles : [user.role],
+        isActive: user.isActive,
+        uid,
+      };
+    } catch (error) {
+      this.logger.error('Error validating Firebase token', error);
+      throw new UnauthorizedException('Invalid Firebase token');
+    }
+  }
+
   async authenticate(firebaseToken: string) {
-    // Firebase authentication logic - simplified for now
-    // In production, verify the Firebase token
-    return { message: 'Firebase authentication not implemented yet' };
+    return this.validateFirebaseToken(firebaseToken);
   }
 
   async logout(token: string) {

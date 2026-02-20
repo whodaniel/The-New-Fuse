@@ -5,6 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { LoggingService } from '../services/logging.service';
 import { EventBus } from '../events/event-bus.service';
 import { IdentityService } from '../services/identity.service';
+import { ConfigService } from '@nestjs/config';
 import { UnauthorizedException } from '@nestjs/common';
 import { verifyMessage } from 'viem';
 import { drizzleUserRepository } from '@the-new-fuse/database';
@@ -13,6 +14,7 @@ import { drizzleUserRepository } from '@the-new-fuse/database';
 jest.mock('@the-new-fuse/database', () => ({
   drizzleUserRepository: {
     findByWalletAddress: jest.fn(),
+    findByEmail: jest.fn(),
     create: jest.fn(),
     update: jest.fn(),
   },
@@ -25,17 +27,32 @@ jest.mock('viem', () => ({
   // However, types are erased at runtime so it should be fine.
 }));
 
+// Mock firebase-admin
+const mockVerifyIdToken = jest.fn();
+jest.mock('firebase-admin', () => ({
+  apps: [],
+  initializeApp: jest.fn(),
+  credential: {
+    applicationDefault: jest.fn(),
+  },
+  auth: () => ({
+    verifyIdToken: mockVerifyIdToken,
+  }),
+}));
+
 describe('AuthService Security', () => {
   let service: AuthService;
   let mockVerifyMessage: jest.Mock;
 
   beforeEach(async () => {
+    mockVerifyIdToken.mockReset();
     // Reset verifyMessage mock
     mockVerifyMessage = verifyMessage as unknown as jest.Mock;
     mockVerifyMessage.mockClear();
 
     // Reset drizzle mock
     (drizzleUserRepository.findByWalletAddress as jest.Mock).mockReset();
+    (drizzleUserRepository.findByEmail as jest.Mock).mockReset();
     (drizzleUserRepository.create as jest.Mock).mockReset();
     (drizzleUserRepository.update as jest.Mock).mockReset();
 
@@ -57,6 +74,10 @@ describe('AuthService Security', () => {
         {
           provide: IdentityService,
           useValue: { mintMachineID: jest.fn() },
+        },
+        {
+          provide: ConfigService,
+          useValue: { get: jest.fn() },
         },
       ],
     }).compile();
@@ -125,6 +146,64 @@ describe('AuthService Security', () => {
       address: '0x123',
       message: 'message',
       signature: 'good_signature',
+    });
+  });
+
+  describe('validateFirebaseToken', () => {
+    it('should throw UnauthorizedException if token is invalid', async () => {
+      mockVerifyIdToken.mockRejectedValue(new Error('Invalid token'));
+
+      await expect(service.validateFirebaseToken('bad_token')).rejects.toThrow(
+        UnauthorizedException
+      );
+    });
+
+    it('should create new user if not exists', async () => {
+      mockVerifyIdToken.mockResolvedValue({
+        uid: 'firebase_uid',
+        email: 'new@example.com',
+        email_verified: true,
+      });
+
+      (drizzleUserRepository.findByEmail as jest.Mock).mockResolvedValue(null);
+      (drizzleUserRepository.create as jest.Mock).mockResolvedValue({
+        id: 'new_user_id',
+        email: 'new@example.com',
+        role: 'USER',
+        roles: ['USER'],
+        isActive: true,
+      });
+
+      const result = await service.validateFirebaseToken('good_token');
+
+      expect(result.id).toBe('new_user_id');
+      expect(drizzleUserRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          email: 'new@example.com',
+          emailVerified: true,
+        })
+      );
+    });
+
+    it('should return existing user', async () => {
+      mockVerifyIdToken.mockResolvedValue({
+        uid: 'firebase_uid',
+        email: 'existing@example.com',
+      });
+
+      (drizzleUserRepository.findByEmail as jest.Mock).mockResolvedValue({
+        id: 'existing_user_id',
+        email: 'existing@example.com',
+        role: 'ADMIN',
+        roles: ['ADMIN'],
+        isActive: true,
+      });
+
+      const result = await service.validateFirebaseToken('good_token');
+
+      expect(result.id).toBe('existing_user_id');
+      expect(result.role).toBe('ADMIN');
+      expect(drizzleUserRepository.create).not.toHaveBeenCalled();
     });
   });
 });
