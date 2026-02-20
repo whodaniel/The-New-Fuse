@@ -2571,6 +2571,8 @@
             (this.pageAgentId = null),
             (this.lastInjectedSignature = ''),
             (this.lastInjectedAt = 0),
+            (this.pendingInboundByChannel = new Map()),
+            (this.pendingInboundFlushTimer = null),
             (this.panelVisibilityKey = null),
             (this.processedMessageIds = new Set()),
             (this.chatReady = !1),
@@ -2655,6 +2657,7 @@
             this.setupDebugUtils(),
             this.setupMessageHandlers(),
             this.setupKeyboardShortcuts(),
+            this.startPendingInboundFlushLoop(),
             chrome.runtime.sendMessage(
               {
                 type: 'CONTENT_SCRIPT_READY',
@@ -2990,17 +2993,27 @@
                   }),
                     !i &&
                       e.content &&
-                      (console.log(
-                        '[FuseConnect v6] Auto-injecting external message from:',
-                        e.from
-                      ),
-                      this.injectMessage(
-                        o ? e.content.replace(/^\[AI\s*→\s*User\]\s*/g, '').trim() : e.content
-                      ).then((e) => {
-                        e
-                          ? console.log('[FuseConnect v6] External message injected successfully')
-                          : console.warn('[FuseConnect v6] Failed to inject external message');
-                      })));
+                      (() => {
+                        const t = o
+                          ? e.content.replace(/^\[AI\s*→\s*User\]\s*/g, '').trim()
+                          : e.content;
+                        if (this.isLikelyStreaming())
+                          return void this.queuePendingInbound(c || l || 'unscoped', t, {
+                            reason: 'streaming',
+                            source: e.from || 'unknown',
+                          });
+                        (console.log(
+                          '[FuseConnect v6] Auto-injecting external message from:',
+                          e.from
+                        ),
+                          this.injectMessage(t).then((e) => {
+                            e
+                              ? console.log(
+                                  '[FuseConnect v6] External message injected successfully'
+                                )
+                              : console.warn('[FuseConnect v6] Failed to inject external message');
+                          }));
+                      })());
                 }
                 return (s({ success: !0 }), !0);
               case 'RESPONSE_COMPLETE': {
@@ -3048,11 +3061,17 @@
                   .trim();
                 return (
                   i &&
-                    this.injectMessage(i).then((e) => {
-                      e
-                        ? console.log('[FuseConnect v6] RESPONSE_COMPLETE injected into page chat')
-                        : console.warn('[FuseConnect v6] RESPONSE_COMPLETE injection failed');
-                    }),
+                    (this.isLikelyStreaming()
+                      ? this.queuePendingInbound(c || l || 'unscoped', i, {
+                          reason: 'streaming-response-complete',
+                        })
+                      : this.injectMessage(i).then((e) => {
+                          e
+                            ? console.log(
+                                '[FuseConnect v6] RESPONSE_COMPLETE injected into page chat'
+                              )
+                            : console.warn('[FuseConnect v6] RESPONSE_COMPLETE injection failed');
+                        })),
                   s({ success: !0 }),
                   !0
                 );
@@ -3104,6 +3123,54 @@
               : console.error('[FuseConnect v6] Message send failed'),
             a
           );
+        }
+        queuePendingInbound(e, t, n = {}) {
+          if (!t) return;
+          const s = e || 'unscoped';
+          this.pendingInboundByChannel.set(s, {
+            content: t,
+            channel: s,
+            ts: Date.now(),
+            meta: n,
+          });
+          this.pendingInboundByChannel.size > 8 &&
+            this.pendingInboundByChannel.delete(this.pendingInboundByChannel.keys().next().value);
+          console.log('[FuseConnect v6] Queued inbound message due backpressure', {
+            channel: s,
+            queueSize: this.pendingInboundByChannel.size,
+          });
+        }
+        startPendingInboundFlushLoop() {
+          this.pendingInboundFlushTimer ||
+            (this.pendingInboundFlushTimer = setInterval(() => {
+              if (!this.pendingInboundByChannel.size || this.isLikelyStreaming()) return;
+              const t = this.pendingInboundByChannel.entries().next().value;
+              if (!t) return;
+              const [n, s] = t;
+              (this.pendingInboundByChannel.delete(n),
+                this.injectMessage(s.content).then((e) => {
+                  e
+                    ? console.log('[FuseConnect v6] Flushed queued inbound message', {
+                        channel: n,
+                      })
+                    : console.warn('[FuseConnect v6] Failed queued inbound flush', { channel: n });
+                }));
+            }, 2000));
+        }
+        isLikelyStreaming() {
+          if (this.panel?.streamingState?.isStreaming) return !0;
+          const e = [
+            '[data-is-streaming="true"]',
+            '.generating',
+            '.result-streaming',
+            'button[aria-label*="Stop generating" i]',
+            'button[aria-label*="Stop response" i]',
+            'button[aria-label*="Stop" i]',
+          ];
+          return e.some((e) => {
+            const t = document.querySelector(e);
+            return !!t && t instanceof HTMLElement && null !== t.offsetParent;
+          });
         }
         checkForCaptcha() {
           const e = c.detectCaptcha();
