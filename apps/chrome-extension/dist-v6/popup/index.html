@@ -212,6 +212,42 @@
             </div>
           </div>
 
+          <div class="service-card" data-service="monitor">
+            <div class="service-icon">📡</div>
+            <div class="service-info">
+              <div class="service-name">Relay Monitor</div>
+              <div class="service-port">Channel heartbeat + wake ACK</div>
+            </div>
+            <div class="service-status" id="service-monitor-status">
+              <span class="status-dot disconnected"></span>
+            </div>
+            <div class="service-actions">
+              <button class="btn-small" data-action="start" data-service="monitor">Start</button>
+              <button class="btn-small danger" data-action="stop" data-service="monitor">
+                Stop
+              </button>
+            </div>
+          </div>
+
+          <div class="service-card" data-service="masterClock">
+            <div class="service-icon">⏱️</div>
+            <div class="service-info">
+              <div class="service-name">Master Clock</div>
+              <div class="service-port">Global scheduler + orchestration ticks</div>
+            </div>
+            <div class="service-status" id="service-masterClock-status">
+              <span class="status-dot disconnected"></span>
+            </div>
+            <div class="service-actions">
+              <button class="btn-small" data-action="start" data-service="masterClock">
+                Start
+              </button>
+              <button class="btn-small danger" data-action="stop" data-service="masterClock">
+                Stop
+              </button>
+            </div>
+          </div>
+
           <div class="service-card" data-service="ai-studio">
             <div class="service-icon">🎬</div>
             <div class="service-info">
@@ -281,6 +317,36 @@
               <span id="native-host-indicator" style="font-size: 11px">⚪ Unknown</span>
             </div>
           </div>
+
+          <div
+            class="native-host-status"
+            style="
+              margin-top: 10px;
+              padding: 10px;
+              background: rgba(255, 255, 255, 0.03);
+              border-radius: 8px;
+            "
+          >
+            <div style="display: flex; justify-content: space-between; align-items: center">
+              <span style="font-size: 11px; color: rgba(255, 255, 255, 0.5)">Autonomy Status</span>
+              <span id="autonomy-overall-indicator" style="font-size: 11px">⚪ Unknown</span>
+            </div>
+            <div
+              style="
+                margin-top: 8px;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                font-size: 11px;
+                opacity: 0.85;
+              "
+            >
+              <div>Monitor: <strong id="autonomy-monitor-status">Unknown</strong></div>
+              <div>Master Clock: <strong id="autonomy-master-clock-status">Unknown</strong></div>
+              <div>Wake Ping: <strong id="autonomy-wake-ping-status">Unknown</strong></div>
+              <div>Last Wake Ping: <strong id="autonomy-last-wake-ping">N/A</strong></div>
+            </div>
+          </div>
         </section>
 
         <!-- Settings Tab -->
@@ -303,6 +369,28 @@
                 <span class="toggle-slider"></span>
               </label>
             </div>
+            <div class="setting-item">
+              <label>Auto Monitor</label>
+              <label class="toggle">
+                <input type="checkbox" id="auto-monitor" checked />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="setting-item">
+              <label>Auto Master Clock</label>
+              <label class="toggle">
+                <input type="checkbox" id="auto-master-clock" checked />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="setting-item">
+              <label>Auto Wake Ping</label>
+              <label class="toggle">
+                <input type="checkbox" id="auto-wake-ping" checked />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <button class="btn-secondary" id="start-autonomy-now">🧠 Start Autonomy Now</button>
           </div>
 
           <div class="settings-section">

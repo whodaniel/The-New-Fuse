@@ -18,11 +18,23 @@
           relay: { running: false, port: 3000 },
           backend: { running: false, port: 3000 },
           frontend: { running: false, port: 3002 },
+          monitor: { running: false, port: null },
+          masterClock: { running: false, port: null },
         },
         nativeHostAvailable: false,
+        autonomy: {
+          monitorRunning: false,
+          masterClockRunning: false,
+          autoWakePing: true,
+          lastWakePingAt: null,
+          source: 'unknown',
+        },
         settings: {
           relayUrl: 'ws://localhost:3000/ws',
           autoReconnect: true,
+          autoMonitor: true,
+          autoMasterClock: true,
+          autoWakePing: true,
           showPanel: true,
           debugMode: false,
           allowedSites: [],
@@ -53,6 +65,7 @@
 
       // Check relay health and show helper if needed
       await this.checkRelayAndUpdateHelper();
+      await this.refreshAutonomyStatus();
 
       // Update UI
       this.updateUI();
@@ -172,6 +185,33 @@
         this.state.settings.debugMode = e.target.checked;
       });
 
+      document.getElementById('auto-monitor')?.addEventListener('change', (e) => {
+        this.state.settings.autoMonitor = e.target.checked;
+      });
+
+      document.getElementById('auto-master-clock')?.addEventListener('change', (e) => {
+        this.state.settings.autoMasterClock = e.target.checked;
+      });
+
+      document.getElementById('auto-wake-ping')?.addEventListener('change', (e) => {
+        this.state.settings.autoWakePing = e.target.checked;
+      });
+
+      document.getElementById('start-autonomy-now')?.addEventListener('click', () => {
+        chrome.runtime.sendMessage({ type: 'START_AUTONOMY' }, async (response) => {
+          if (response?.success) {
+            this.showToast('Autonomy started');
+            setTimeout(() => this.refreshServiceStatus(), 1000);
+            return;
+          }
+
+          // Fallback path for older background bundles: start services directly
+          await this.controlService('start', 'monitor');
+          await this.controlService('start', 'masterClock');
+          this.showToast('Autonomy start fallback executed');
+        });
+      });
+
       // Managed Sites
       document.getElementById('add-site-btn')?.addEventListener('click', () => {
         this.addManagedSite();
@@ -191,6 +231,13 @@
       // Export logs
       document.getElementById('export-logs')?.addEventListener('click', () => {
         this.exportLogs();
+      });
+
+      // Docs hub
+      document.getElementById('open-docs')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        const docsUrl = chrome.runtime.getURL('popup/docs-index.html');
+        chrome.tabs.create({ url: docsUrl });
       });
 
       // Quick start relay button
@@ -492,8 +539,96 @@
           this.state.services = response.services;
           this.updateServiceUI();
         }
+        await this.refreshAutonomyStatus();
       } catch (e) {
         console.error('Failed to get service status:', e);
+      }
+    }
+
+    async refreshAutonomyStatus() {
+      // Preferred path: background exposes full autonomy status
+      try {
+        const response = await new Promise((resolve) => {
+          chrome.runtime.sendMessage({ type: 'GET_AUTONOMY_STATUS' }, (r) => resolve(r || null));
+        });
+        if (response?.success) {
+          this.state.autonomy.monitorRunning = !!response.monitor?.running;
+          this.state.autonomy.masterClockRunning = !!response.masterClock?.running;
+          this.state.autonomy.autoWakePing = !!response.settings?.autoWakePing;
+          this.state.autonomy.source = 'background';
+          await this.refreshLastWakePingTime();
+          this.updateAutonomyStatusUI();
+          return;
+        }
+      } catch (e) {
+        // Fallback below
+      }
+
+      // Fallback: native host status only
+      if (this.state.nativeHostAvailable) {
+        try {
+          const response = await this.sendNativeMessage({ action: 'status' });
+          const monitor = response?.services?.monitor;
+          const masterClock = response?.services?.masterClock;
+          this.state.autonomy.monitorRunning = !!monitor?.running;
+          this.state.autonomy.masterClockRunning = !!masterClock?.running;
+          this.state.autonomy.autoWakePing = !!this.state.settings.autoWakePing;
+          this.state.autonomy.source = 'native-host-fallback';
+          await this.refreshLastWakePingTime();
+        } catch (e) {
+          // Keep existing values
+        }
+      }
+      this.updateAutonomyStatusUI();
+    }
+
+    async refreshLastWakePingTime() {
+      try {
+        const response = await fetch('http://localhost:3000/activity/recent?count=100', {
+          method: 'GET',
+          signal: AbortSignal.timeout(2000),
+        });
+        const data = await response.json();
+        const activities = Array.isArray(data?.events)
+          ? data.events
+          : Array.isArray(data)
+            ? data
+            : [];
+        const lastWake = activities.find(
+          (ev) =>
+            ev?.eventType === 'wake_ping_sent' ||
+            ev?.metadata?.eventType === 'wake_ping_sent' ||
+            ev?.metadata?.eventType === 'wake_ping'
+        );
+        this.state.autonomy.lastWakePingAt = lastWake?.timestamp || lastWake?.ts || null;
+      } catch (e) {
+        // Best effort
+      }
+    }
+
+    updateAutonomyStatusUI() {
+      const overall = document.getElementById('autonomy-overall-indicator');
+      const monitor = document.getElementById('autonomy-monitor-status');
+      const masterClock = document.getElementById('autonomy-master-clock-status');
+      const wakePing = document.getElementById('autonomy-wake-ping-status');
+      const lastWake = document.getElementById('autonomy-last-wake-ping');
+
+      if (monitor) monitor.textContent = this.state.autonomy.monitorRunning ? 'Running' : 'Stopped';
+      if (masterClock)
+        masterClock.textContent = this.state.autonomy.masterClockRunning ? 'Running' : 'Stopped';
+      if (wakePing)
+        wakePing.textContent = this.state.autonomy.autoWakePing ? 'Enabled' : 'Disabled';
+      if (lastWake) {
+        lastWake.textContent = this.state.autonomy.lastWakePingAt
+          ? this.formatTime(this.state.autonomy.lastWakePingAt)
+          : 'N/A';
+      }
+
+      if (overall) {
+        const healthy =
+          this.state.autonomy.monitorRunning && this.state.autonomy.masterClockRunning;
+        overall.textContent = healthy ? '🟢 Healthy' : '🟡 Partial';
+        overall.style.color = healthy ? '#00ff88' : '#ffb800';
       }
     }
 
@@ -704,6 +839,12 @@
           if (response) {
             this.state.connectionStatus = response.connectionStatus || 'disconnected';
             this.state.agents = response.agents || [];
+            if (typeof response.autoMonitor === 'boolean')
+              this.state.settings.autoMonitor = response.autoMonitor;
+            if (typeof response.autoMasterClock === 'boolean')
+              this.state.settings.autoMasterClock = response.autoMasterClock;
+            if (typeof response.autoWakePing === 'boolean')
+              this.state.settings.autoWakePing = response.autoWakePing;
           }
           resolve();
         });
@@ -729,6 +870,15 @@
             const debugMode = document.getElementById('debug-mode');
             if (debugMode) debugMode.checked = this.state.settings.debugMode;
 
+            const autoMonitor = document.getElementById('auto-monitor');
+            if (autoMonitor) autoMonitor.checked = !!this.state.settings.autoMonitor;
+
+            const autoMasterClock = document.getElementById('auto-master-clock');
+            if (autoMasterClock) autoMasterClock.checked = !!this.state.settings.autoMasterClock;
+
+            const autoWakePing = document.getElementById('auto-wake-ping');
+            if (autoWakePing) autoWakePing.checked = !!this.state.settings.autoWakePing;
+
             this.updateManagedSitesList();
           }
           resolve();
@@ -738,6 +888,17 @@
 
     async saveSettings() {
       await chrome.storage.local.set({ fuse_settings: this.state.settings });
+      chrome.runtime.sendMessage(
+        {
+          type: 'SET_AUTONOMY_SETTINGS',
+          autoMonitor: !!this.state.settings.autoMonitor,
+          autoMasterClock: !!this.state.settings.autoMasterClock,
+          autoWakePing: !!this.state.settings.autoWakePing,
+        },
+        () => {
+          // Best-effort; older background bundles may not support this message yet.
+        }
+      );
       this.showToast('Settings saved!');
     }
 
@@ -784,6 +945,7 @@
       this.updateStats();
       this.updateServiceUI();
       this.updateNativeHostIndicator();
+      this.updateAutonomyStatusUI();
       this.updateQuickStartHelper();
     }
 

@@ -1372,6 +1372,9 @@
         this.connectionStatus = response.connectionStatus || 'disconnected';
         this.agents = response.agents || [];
         this.channels = response.channels || [];
+        if (response.selectedChannel !== undefined) {
+          this.currentChannel = response.selectedChannel || null;
+        }
         // Save Browser Agent ID for loop prevention
         if (response.browserAgentId) {
           this.browserAgentId = response.browserAgentId;
@@ -2930,9 +2933,6 @@
      */
     joinChannel(channelId) {
       this.currentChannel = channelId;
-      // Persist channel selection for background script access (tab-specific)
-      const channelKey = `fuse_channel_${this.panelId}`;
-      chrome.storage.local.set({ [channelKey]: channelId });
       this.safeSendMessage({
         type: 'CHANNEL_JOIN',
         channelId,
@@ -2948,10 +2948,6 @@
       console.log(
         `[FuseConnect] Panel ${this.panelId} switching channel: ${previousChannel} → ${channelId}`
       );
-      // Persist channel selection for background script access (tab-specific)
-      // Each tab maintains its own channel selection independently
-      const channelKey = `fuse_channel_${this.panelId}`;
-      chrome.storage.local.set({ [channelKey]: channelId });
       if (channelId) {
         this.safeSendMessage({
           type: 'CHANNEL_JOIN',
@@ -3424,6 +3420,10 @@
           // Update any local state tracking joined channels if necessary
           // For now, we mainly rely on currentChannel, but this ensures we have the data
           console.log('[FuseConnect] Joined channels updated:', message.joinedChannels);
+          this.update();
+          break;
+        case 'CHANNEL_SELECTED':
+          this.currentChannel = message.channelId || null;
           this.update();
           break;
         case 'NOTIFICATION':
@@ -5643,6 +5643,7 @@
             case 'AGENTS_UPDATE':
             case 'CHANNELS_UPDATE':
             case 'JOINED_CHANNELS_UPDATE':
+            case 'CHANNEL_SELECTED':
             case 'NOTIFICATION':
             case 'TASK_ASSIGN':
               if (this.panel) {

@@ -75,6 +75,20 @@ const SERVICES = {
     cwd: 'apps/frontend',
     port: 3002,
   },
+  monitor: {
+    name: 'Relay Monitor',
+    command: 'pnpm',
+    args: ['run', 'relay:monitor'],
+    cwd: '.',
+    stopCommand: 'pkill -f "relay-channel-monitor.cjs" 2>/dev/null || true',
+  },
+  masterClock: {
+    name: 'Master Clock',
+    command: 'pnpm',
+    args: ['run', 'master-clock'],
+    cwd: '.',
+    stopCommand: 'pkill -f "master-clock" 2>/dev/null || true',
+  },
 };
 
 // Track running processes
@@ -160,13 +174,13 @@ async function getServiceStatus(serviceName) {
     return { running: false, error: 'Unknown service' };
   }
 
-  const portInUse = await isPortInUse(service.port);
+  const portInUse = service.port ? await isPortInUse(service.port) : false;
   const processRunning = runningProcesses.has(serviceName);
 
   return {
     name: service.name,
     running: portInUse || processRunning,
-    port: service.port,
+    port: service.port || null,
     pid: runningProcesses.get(serviceName)?.pid || null,
   };
 }
@@ -261,8 +275,21 @@ async function stopService(serviceName) {
 
   log(`Stopping ${service.name}...`);
 
+  if (service.port) {
+    return new Promise((resolve) => {
+      exec(`lsof -ti :${service.port} | xargs kill -9 2>/dev/null`, () => {
+        runningProcesses.delete(serviceName);
+        resolve({
+          success: true,
+          message: `${service.name} stopped`,
+        });
+      });
+    });
+  }
+
   return new Promise((resolve) => {
-    exec(`lsof -ti :${service.port} | xargs kill -9 2>/dev/null`, () => {
+    const cmd = service.stopCommand || `pkill -f "${service.command} ${service.args.join(' ')}"`;
+    exec(cmd, () => {
       runningProcesses.delete(serviceName);
       resolve({
         success: true,

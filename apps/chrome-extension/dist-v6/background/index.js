@@ -32,8 +32,12 @@
     agentId: 'fuse_agent_id',
     channels: 'fuse_channels',
     joinedChannels: 'fuse_joined_channels',
+    tabActiveChannels: 'fuse_tab_active_channels',
     knownNodes: 'fuse_known_nodes',
     autoConnect: 'fuse_auto_connect',
+    autoMonitor: 'fuse_auto_monitor',
+    autoMasterClock: 'fuse_auto_master_clock',
+    autoWakePing: 'fuse_auto_wake_ping',
   };
   // Default node configuration
   const DEFAULT_NODES = {
@@ -57,9 +61,16 @@
       this.agents = new Map();
       this.channels = new Map();
       this.joinedChannels = new Set();
+      this.tabActiveChannels = new Map();
       this.messageQueue = [];
       this.pendingPageAgents = []; // Queue for page agents waiting for connection
       this.autoConnect = true; // Default to TRUE for agent operation
+      this.autoMonitor = true;
+      this.autoMasterClock = true;
+      this.autoWakePing = true;
+      this.lastAutonomyStartAt = 0;
+      this.lastWakePingAt = new Map();
+      this.channelLastActivityAt = new Map();
       this.connectionAttempts = 0;
       this.maxInitialAttempts = 1; // Only try once on startup
       // Message deduplication - track recently sent/received message hashes
@@ -70,6 +81,7 @@
       this.heartbeatTimer = null;
       this.healthCheckTimer = null;
       this.cleanupTimer = null; // Periodic cleanup to prevent memory leaks
+      this.stallWatchdogTimer = null;
       this.init();
     }
     async init() {
@@ -78,6 +90,7 @@
       // This prevents "Receiving end does not exist" errors in the popup
       this.setupMessageHandlers();
       this.setupCommands();
+      this.setupTabLifecycleHandlers();
       // Get or create agent ID
       this.agentId = await this.getOrCreateAgentId();
       // Load saved state
@@ -124,8 +137,15 @@
       if (isAvailable) {
         this.connectToNode('relay', DEFAULT_NODES.relay);
       } else {
-        console.log('[FuseConnect v6] Relay not available - use Services tab to start it');
+        console.log('[FuseConnect v6] Relay not available - attempting autonomous startup');
         this.updateNodeStatus('relay', DEFAULT_NODES.relay, 'disconnected');
+        this.sendNativeMessage({ action: 'start', service: 'relay' }).then(() => {
+          setTimeout(() => {
+            this.connectionAttempts = 0;
+            this.connectToNode('relay', DEFAULT_NODES.relay);
+            this.ensureAutonomousServices('relay_auto_bootstrap');
+          }, 3000);
+        });
       }
     }
     /**
@@ -162,8 +182,12 @@
       const result = await chrome.storage.local.get([
         STORAGE_KEYS.channels,
         STORAGE_KEYS.joinedChannels,
+        STORAGE_KEYS.tabActiveChannels,
         STORAGE_KEYS.knownNodes,
         STORAGE_KEYS.autoConnect,
+        STORAGE_KEYS.autoMonitor,
+        STORAGE_KEYS.autoMasterClock,
+        STORAGE_KEYS.autoWakePing,
         STORAGE_KEYS.settings,
       ]);
       if (result[STORAGE_KEYS.channels]) {
@@ -174,13 +198,34 @@
       if (result[STORAGE_KEYS.joinedChannels]) {
         this.joinedChannels = new Set(result[STORAGE_KEYS.joinedChannels]);
       }
+      if (result[STORAGE_KEYS.tabActiveChannels]) {
+        const tabChannels = result[STORAGE_KEYS.tabActiveChannels];
+        for (const [tabId, channelId] of Object.entries(tabChannels)) {
+          const parsedTabId = Number(tabId);
+          if (Number.isFinite(parsedTabId) && channelId) {
+            this.tabActiveChannels.set(parsedTabId, channelId);
+          }
+        }
+      }
       // Auto-join Red channel
       this.joinedChannels.add('red');
       // Load auto-connect preference (default true)
       this.autoConnect = result[STORAGE_KEYS.autoConnect] ?? true;
+      this.autoMonitor = result[STORAGE_KEYS.autoMonitor] ?? true;
+      this.autoMasterClock = result[STORAGE_KEYS.autoMasterClock] ?? true;
+      this.autoWakePing = result[STORAGE_KEYS.autoWakePing] ?? true;
       // Also check settings object
       if (result[STORAGE_KEYS.settings]?.autoReconnect !== undefined) {
         this.autoConnect = result[STORAGE_KEYS.settings].autoReconnect;
+      }
+      if (result[STORAGE_KEYS.settings]?.autoMonitor !== undefined) {
+        this.autoMonitor = !!result[STORAGE_KEYS.settings].autoMonitor;
+      }
+      if (result[STORAGE_KEYS.settings]?.autoMasterClock !== undefined) {
+        this.autoMasterClock = !!result[STORAGE_KEYS.settings].autoMasterClock;
+      }
+      if (result[STORAGE_KEYS.settings]?.autoWakePing !== undefined) {
+        this.autoWakePing = !!result[STORAGE_KEYS.settings].autoWakePing;
       }
     }
     /**
@@ -214,6 +259,7 @@
           this.registerAgent(ws);
           // Start heartbeat
           this.startHeartbeat();
+          this.ensureAutonomousServices('relay_connected');
           // Flush queued messages
           this.flushMessageQueue();
           // Flush pending page agents
@@ -248,6 +294,9 @@
           // Only auto-reconnect if enabled and we've connected before
           if (this.autoConnect && this.connectionAttempts === 0) {
             this.scheduleReconnect(nodeType, url);
+          }
+          if (nodeType === 'relay') {
+            this.stopStallWatchdog();
           }
         };
         ws.onerror = () => {
@@ -417,6 +466,13 @@
       this.broadcastToTabs({
         type: 'AGENTS_UPDATE',
         agents: Array.from(this.agents.values()),
+      });
+      this.frontloadPageAgentContext(agent);
+      this.sendActivityEvent('page_agent_registered', {
+        pageAgentId: id,
+        tabId: tabId || null,
+        platform,
+        channels: agent.channels,
       });
     }
     /**
@@ -689,6 +745,9 @@
         case 'CHANNEL_MESSAGE':
         case 'MESSAGE_RECEIVE':
           const agentMessage = message.payload;
+          if (agentMessage?.channel) {
+            this.channelLastActivityAt.set(agentMessage.channel, Date.now());
+          }
           // best-effort transcript persistence at the edge
           this.appendTranscriptFromRelay(agentMessage);
           this.handleAgentMessage(agentMessage);
@@ -1000,6 +1059,45 @@
       });
     }
     /**
+     * Save per-tab active channel selections
+     */
+    async saveTabActiveChannels() {
+      const serialized = {};
+      for (const [tabId, channelId] of this.tabActiveChannels.entries()) {
+        if (channelId) {
+          serialized[String(tabId)] = channelId;
+        }
+      }
+      await chrome.storage.local.set({
+        [STORAGE_KEYS.tabActiveChannels]: serialized,
+      });
+    }
+    /**
+     * Track active channel selection per tab
+     */
+    setTabActiveChannel(tabId, channelId) {
+      if (channelId) {
+        this.tabActiveChannels.set(tabId, channelId);
+      } else {
+        this.tabActiveChannels.delete(tabId);
+      }
+      void this.saveTabActiveChannels();
+    }
+    getTabActiveChannel(tabId) {
+      if (!tabId) return null;
+      return this.tabActiveChannels.get(tabId) || null;
+    }
+    /**
+     * Clear tab-scoped state when tabs are closed
+     */
+    setupTabLifecycleHandlers() {
+      chrome.tabs.onRemoved.addListener((tabId) => {
+        if (this.tabActiveChannels.delete(tabId)) {
+          void this.saveTabActiveChannels();
+        }
+      });
+    }
+    /**
      * Send native message to control services
      */
     async sendNativeMessage(message) {
@@ -1015,6 +1113,114 @@
         } catch (e) {
           resolve({ error: 'Native messaging not available' });
         }
+      });
+    }
+    async sendActivityEvent(eventType, metadata = {}, channel = 'fuse-activity-log') {
+      this.send({
+        type: 'MESSAGE_SEND',
+        to: 'broadcast',
+        channel,
+        content: `[ACTIVITY] ${eventType}`,
+        messageType: 'event',
+        metadata: {
+          senderId: this.agentId,
+          eventType,
+          ts: Date.now(),
+          ...metadata,
+        },
+      });
+    }
+    async ensureAutonomousServices(reason) {
+      const sinceLastStart = Date.now() - this.lastAutonomyStartAt;
+      if (sinceLastStart < 15000) {
+        return;
+      }
+      this.lastAutonomyStartAt = Date.now();
+      if (this.autoMonitor) {
+        await this.sendNativeMessage({ action: 'start', service: 'monitor' });
+      }
+      if (this.autoMasterClock) {
+        await this.sendNativeMessage({ action: 'start', service: 'masterClock' });
+      }
+      this.startStallWatchdog();
+      this.sendActivityEvent('autonomy_services_ensured', {
+        reason,
+        autoMonitor: this.autoMonitor,
+        autoMasterClock: this.autoMasterClock,
+        autoWakePing: this.autoWakePing,
+      });
+    }
+    startStallWatchdog() {
+      if (this.stallWatchdogTimer || !this.autoWakePing) {
+        return;
+      }
+      this.stallWatchdogTimer = setInterval(() => {
+        if (!this.primaryConnection || this.primaryConnection.readyState !== WebSocket.OPEN) {
+          return;
+        }
+        const now = Date.now();
+        for (const [channelId] of this.channels) {
+          if (!this.joinedChannels.has(channelId)) {
+            continue;
+          }
+          const lastActivity = this.channelLastActivityAt.get(channelId) || 0;
+          if (lastActivity && now - lastActivity < 90000) {
+            continue;
+          }
+          const last = this.lastWakePingAt.get(channelId) || 0;
+          if (now - last < 120000) {
+            continue;
+          }
+          const pingId = `wake-${channelId}-${now}`;
+          this.lastWakePingAt.set(channelId, now);
+          this.send({
+            type: 'MESSAGE_SEND',
+            to: 'broadcast',
+            channel: channelId,
+            content: `[WAKE_PING ${pingId}] Stall check from browser orchestrator`,
+            messageType: 'event',
+            metadata: {
+              senderId: this.agentId,
+              eventType: 'wake_ping',
+              pingId,
+              reason: 'stall-watchdog',
+            },
+          });
+          this.sendActivityEvent('wake_ping_sent', { pingId, channelId, reason: 'stall-watchdog' });
+        }
+      }, 30000);
+    }
+    stopStallWatchdog() {
+      if (this.stallWatchdogTimer) {
+        clearInterval(this.stallWatchdogTimer);
+        this.stallWatchdogTimer = null;
+      }
+    }
+    frontloadPageAgentContext(agent) {
+      if (!agent.metadata?.tabId) {
+        return;
+      }
+      const joinedChannels = Array.from(this.joinedChannels);
+      chrome.tabs.sendMessage(agent.metadata.tabId, {
+        type: 'FUSE_ONBOARDING_CONTEXT',
+        payload: {
+          browserAgentId: this.agentId,
+          pageAgentId: agent.id,
+          channels: joinedChannels,
+          knownAgents: Array.from(this.agents.values()).map((a) => ({
+            id: a.id,
+            name: a.name,
+            platform: a.platform,
+            status: a.status,
+          })),
+          capabilities: agent.capabilities || [],
+          relayUrl: DEFAULT_NODES.relay,
+          policy: {
+            heartbeat: true,
+            wakePing: this.autoWakePing,
+            autonomous: true,
+          },
+        },
       });
     }
     /**
@@ -1051,10 +1257,15 @@
               agents: Array.from(this.agents.values()),
               channels: Array.from(this.channels.values()),
               joinedChannels: Array.from(this.joinedChannels),
+              selectedChannel: this.getTabActiveChannel(sender.tab?.id),
+              tabId: sender.tab?.id ?? null,
               nodes: Object.fromEntries(this.nodeStatus),
               agentId: tabPageAgentId || this.agentId, // Use page-specific ID if available
               browserAgentId: this.agentId,
               autoConnect: this.autoConnect,
+              autoMonitor: this.autoMonitor,
+              autoMasterClock: this.autoMasterClock,
+              autoWakePing: this.autoWakePing,
             });
             break;
           case 'SET_AUTO_CONNECT':
@@ -1062,6 +1273,55 @@
             chrome.storage.local.set({ [STORAGE_KEYS.autoConnect]: message.enabled });
             sendResponse({ success: true });
             break;
+          case 'SET_AUTONOMY_SETTINGS':
+            if (message.autoMonitor !== undefined) {
+              this.autoMonitor = !!message.autoMonitor;
+            }
+            if (message.autoMasterClock !== undefined) {
+              this.autoMasterClock = !!message.autoMasterClock;
+            }
+            if (message.autoWakePing !== undefined) {
+              this.autoWakePing = !!message.autoWakePing;
+            }
+            chrome.storage.local.set({
+              [STORAGE_KEYS.autoMonitor]: this.autoMonitor,
+              [STORAGE_KEYS.autoMasterClock]: this.autoMasterClock,
+              [STORAGE_KEYS.autoWakePing]: this.autoWakePing,
+            });
+            if (this.autoWakePing) {
+              this.startStallWatchdog();
+            } else {
+              this.stopStallWatchdog();
+            }
+            sendResponse({ success: true });
+            break;
+          case 'START_AUTONOMY':
+            this.ensureAutonomousServices('manual_start').then(() =>
+              sendResponse({ success: true })
+            );
+            return true;
+          case 'STOP_AUTONOMY':
+            this.stopStallWatchdog();
+            Promise.all([
+              this.sendNativeMessage({ action: 'stop', service: 'monitor' }),
+              this.sendNativeMessage({ action: 'stop', service: 'masterClock' }),
+            ]).then(() => sendResponse({ success: true }));
+            return true;
+          case 'GET_AUTONOMY_STATUS':
+            this.sendNativeMessage({ action: 'status' }).then((status) => {
+              sendResponse({
+                success: true,
+                settings: {
+                  autoMonitor: this.autoMonitor,
+                  autoMasterClock: this.autoMasterClock,
+                  autoWakePing: this.autoWakePing,
+                },
+                monitor: status?.services?.monitor || null,
+                masterClock: status?.services?.masterClock || null,
+                relay: status?.services?.relay || null,
+              });
+            });
+            return true;
           case 'START_RELAY':
             // Start relay via native messaging
             this.sendNativeMessage({ action: 'start', service: 'relay' }).then((response) => {
@@ -1071,6 +1331,7 @@
                 setTimeout(() => {
                   this.connectionAttempts = 0;
                   this.connectToNode('relay', DEFAULT_NODES.relay);
+                  this.ensureAutonomousServices('relay_started');
                 }, 3000);
               }
             });
@@ -1184,6 +1445,11 @@ Format as JSON array:
               messageType: 'text',
               metadata: message.metadata, // <-- PRESERVE SENDER INFO
             });
+            this.sendActivityEvent('broadcast_message', {
+              channel: message.channel || null,
+              senderId: message.senderId || message.metadata?.senderId || null,
+              contentPreview: String(message.content || '').substring(0, 120),
+            });
             sendResponse({ success: true });
             break;
           case 'SEND_TO_AGENT':
@@ -1220,10 +1486,21 @@ Format as JSON array:
               description: message.description,
               isPrivate: message.isPrivate || false,
             });
+            this.sendActivityEvent('channel_create', {
+              channelId: newChannel.id,
+              name: message.name,
+            });
             sendResponse({ success: true, channel: newChannel });
             break;
           case 'CHANNEL_JOIN':
             this.joinedChannels.add(message.channelId);
+            if (sender.tab?.id) {
+              this.setTabActiveChannel(sender.tab.id, message.channelId);
+              chrome.tabs.sendMessage(sender.tab.id, {
+                type: 'CHANNEL_SELECTED',
+                channelId: message.channelId,
+              });
+            }
             this.send({
               type: 'CHANNEL_JOIN',
               channelId: message.channelId,
@@ -1234,10 +1511,18 @@ Format as JSON array:
               type: 'JOINED_CHANNELS_UPDATE',
               joinedChannels: Array.from(this.joinedChannels),
             });
+            this.sendActivityEvent('channel_join', { channelId: message.channelId });
             sendResponse({ success: true });
             break;
           case 'CHANNEL_LEAVE':
             this.joinedChannels.delete(message.channelId);
+            if (sender.tab?.id) {
+              this.setTabActiveChannel(sender.tab.id, null);
+              chrome.tabs.sendMessage(sender.tab.id, {
+                type: 'CHANNEL_SELECTED',
+                channelId: null,
+              });
+            }
             this.send({
               type: 'CHANNEL_LEAVE',
               channelId: message.channelId,
@@ -1248,6 +1533,7 @@ Format as JSON array:
               type: 'JOINED_CHANNELS_UPDATE',
               joinedChannels: Array.from(this.joinedChannels),
             });
+            this.sendActivityEvent('channel_leave', { channelId: message.channelId });
             sendResponse({ success: true });
             break;
           case 'CHANNEL_DELETE':
@@ -1267,6 +1553,7 @@ Format as JSON array:
               type: 'CHANNEL_DELETE',
               channelId: channelIdToDelete,
             });
+            this.sendActivityEvent('channel_delete', { channelId: channelIdToDelete });
             sendResponse({ success: true });
             break;
           case 'CONTENT_SCRIPT_READY':
@@ -1293,8 +1580,10 @@ Format as JSON array:
                 type: 'JOINED_CHANNELS_UPDATE',
                 joinedChannels: Array.from(this.joinedChannels),
               });
-              // Send currently selected channel per-tab if we track it,
-              // but the UI currently pulls 'fuse_current_channel' from storage itself.
+              chrome.tabs.sendMessage(sender.tab.id, {
+                type: 'CHANNEL_SELECTED',
+                channelId: this.getTabActiveChannel(sender.tab.id),
+              });
             }
             sendResponse({ success: true });
             break;
@@ -1344,6 +1633,21 @@ Format as JSON array:
             if (this.primaryConnection) {
               this.requestSync(this.primaryConnection);
             }
+            sendResponse({ success: true });
+            break;
+          case 'DISCOVER_AGENTS':
+            if (this.primaryConnection) {
+              this.send({ type: 'AGENT_LIST' });
+              this.send({ type: 'CHANNEL_LIST' });
+            }
+            sendResponse({ success: true });
+            break;
+          case 'ACTIVITY_EVENT':
+            this.sendActivityEvent(message.eventType || 'unknown', {
+              channel: message.channel || null,
+              senderId: message.senderId || null,
+              ...(message.metadata || {}),
+            });
             sendResponse({ success: true });
             break;
           case 'INJECT_MESSAGE':
@@ -1520,6 +1824,7 @@ Format as JSON array:
         clearInterval(this.heartbeatTimer);
         this.heartbeatTimer = null;
       }
+      this.stopStallWatchdog();
       // Update status
       this.updateNodeStatus('relay', DEFAULT_NODES.relay, 'disconnected');
     }
