@@ -1,13 +1,22 @@
 import {
+  BadGatewayException,
   ForbiddenException,
   HttpException,
+  HttpStatus,
   Injectable,
-  TooManyRequestsException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { DatabaseService } from '@the-new-fuse/database';
+import {
+  agentApiGrants,
+  and,
+  DatabaseService,
+  desc,
+  drizzleConfigurationRepository,
+  eq,
+  gte,
+} from '@the-new-fuse/database';
 import { CreateAgentGrantDto } from '../dto/agent-grants.dto';
 
 type GrantTokenPayload = {
@@ -17,6 +26,11 @@ type GrantTokenPayload = {
   aid: string; // agent id
   prv: string; // provider
   tv: number; // token version
+};
+
+type RoutingSelection = {
+  provider: string;
+  model: string;
 };
 
 @Injectable()
@@ -75,34 +89,109 @@ export class AgentApiGrantsService {
   async proxy(provider: string, bearerToken: string | undefined, body: any) {
     const started = Date.now();
     const normalizedProvider = provider.trim().toLowerCase();
-    const payload = await this.verifyGrantToken(bearerToken);
-
-    const grant = await this.db.agentApiGrants.isGrantActive(payload.gid, payload.tv);
-    if (!grant || grant.userId !== payload.sub || grant.provider !== payload.prv) {
-      throw new UnauthorizedException('Grant token is invalid or revoked');
-    }
+    const { payload, grant } = await this.validateGrantFromToken(bearerToken);
     if (grant.provider !== normalizedProvider) {
       throw new ForbiddenException('Grant is not authorized for this provider');
     }
 
+    return this.executeProxyForGrant(grant, body, started);
+  }
+
+  async adaptiveProxy(target: string, bearerToken: string | undefined, body: any) {
+    const started = Date.now();
+    const decodedTarget = decodeURIComponent((target || '').trim());
+    if (!decodedTarget) {
+      throw new ForbiddenException('Target is required for adaptive routing');
+    }
+
+    const { payload, grant: baseGrant } = await this.validateGrantFromToken(bearerToken);
+    const resolved = await this.resolveAdaptiveRouting(decodedTarget);
+    const candidates = [resolved.primary, resolved.fallback].filter(
+      (selection) => selection.provider && selection.model
+    );
+
+    if (candidates.length === 0) {
+      throw new ForbiddenException(`No adaptive routing configured for target "${decodedTarget}"`);
+    }
+
+    const attempts: string[] = [];
+    let lastError: unknown = null;
+
+    for (const selection of candidates) {
+      const normalizedProvider = selection.provider.trim().toLowerCase();
+      const grant = await this.findActiveGrantForAgentProvider(
+        payload.sub,
+        payload.aid,
+        normalizedProvider
+      );
+
+      if (!grant) {
+        attempts.push(`${normalizedProvider}:${selection.model} (no active grant)`);
+        continue;
+      }
+
+      const candidateBody = {
+        ...(body && typeof body === 'object' ? body : {}),
+        model: selection.model,
+      };
+
+      try {
+        const response = await this.executeProxyForGrant(grant, candidateBody, started);
+        const payload =
+          response && typeof response === 'object'
+            ? response
+            : {
+                data: response,
+              };
+        return {
+          ...payload,
+          _adaptiveRouting: {
+            target: decodedTarget,
+            provider: normalizedProvider,
+            model: selection.model,
+            sourceGrantId: grant.id,
+            baseGrantId: baseGrant.id,
+          },
+        };
+      } catch (error) {
+        lastError = error;
+        attempts.push(`${normalizedProvider}:${selection.model} (failed)`);
+      }
+    }
+
+    if (lastError instanceof HttpException) {
+      throw lastError;
+    }
+
+    throw new BadGatewayException(
+      `Adaptive routing failed for "${decodedTarget}". Attempts: ${attempts.join(', ')}`
+    );
+  }
+
+  private async executeProxyForGrant(grant: any, body: any, started: number) {
+    const provider = grant.provider;
+
     const usage = await this.db.agentApiGrants.getUsageSummary(grant.id);
     if (usage.requestsLastMinute >= grant.maxRequestsPerMinute) {
-      throw new TooManyRequestsException('Grant requests-per-minute limit reached');
+      throw new HttpException(
+        'Grant requests-per-minute limit reached',
+        HttpStatus.TOO_MANY_REQUESTS
+      );
     }
     if (usage.dailyTokens >= grant.dailyTokenBudget) {
-      throw new TooManyRequestsException('Grant daily token budget reached');
+      throw new HttpException('Grant daily token budget reached', HttpStatus.TOO_MANY_REQUESTS);
     }
     if (usage.monthlyCostCents >= grant.monthlyUsdCap) {
-      throw new TooManyRequestsException('Grant monthly cost cap reached');
+      throw new HttpException('Grant monthly cost cap reached', HttpStatus.TOO_MANY_REQUESTS);
     }
 
     const providerKey = await this.db.providerApiKeys.findDecryptedByUserAndProvider(
       grant.userId,
-      grant.provider
+      provider
     );
     if (!providerKey?.apiKey) {
       throw new ForbiddenException(
-        `No API key configured for provider "${grant.provider}" on this user account`
+        `No API key configured for provider "${provider}" on this user account`
       );
     }
 
@@ -111,9 +200,9 @@ export class AgentApiGrantsService {
       throw new ForbiddenException('Model not allowed by this grant');
     }
 
-    const endpoint = this.getProviderEndpoint(grant.provider, body?.endpoint);
+    const endpoint = this.getProviderEndpoint(provider, body?.endpoint);
     const outboundBody = this.buildOutboundPayload(body);
-    const headers = this.buildProviderHeaders(grant.provider, providerKey.apiKey, body);
+    const headers = this.buildProviderHeaders(provider, providerKey.apiKey, body);
 
     let statusCode = 500;
     let responseBody: any = null;
@@ -137,7 +226,7 @@ export class AgentApiGrantsService {
         grantId: grant.id,
         userId: grant.userId,
         agentId: grant.agentId,
-        provider: grant.provider,
+        provider,
         model,
         promptTokens: usageParsed.promptTokens,
         completionTokens: usageParsed.completionTokens,
@@ -151,7 +240,7 @@ export class AgentApiGrantsService {
 
       await this.db.apiLogs.logRequest({
         method: 'POST',
-        path: `/api/agent-proxy/${grant.provider}`,
+        path: `/api/agent-proxy/${provider}`,
         statusCode,
         duration: Date.now() - started,
         userId: grant.userId,
@@ -174,7 +263,7 @@ export class AgentApiGrantsService {
           grantId: grant.id,
           userId: grant.userId,
           agentId: grant.agentId,
-          provider: grant.provider,
+          provider,
           model,
           promptTokens: 0,
           completionTokens: 0,
@@ -188,6 +277,87 @@ export class AgentApiGrantsService {
       }
       throw error;
     }
+  }
+
+  private async validateGrantFromToken(bearerToken: string | undefined): Promise<{
+    payload: GrantTokenPayload;
+    grant: any;
+  }> {
+    const payload = await this.verifyGrantToken(bearerToken);
+    const grant = await this.db.agentApiGrants.isGrantActive(payload.gid, payload.tv);
+    if (!grant || grant.userId !== payload.sub || grant.provider !== payload.prv) {
+      throw new UnauthorizedException('Grant token is invalid or revoked');
+    }
+    return { payload, grant };
+  }
+
+  private async findActiveGrantForAgentProvider(
+    userId: string,
+    agentId: string,
+    provider: string
+  ): Promise<any | null> {
+    const now = new Date();
+    const [grant] = await this.db.client
+      .select()
+      .from(agentApiGrants)
+      .where(
+        and(
+          eq(agentApiGrants.userId, userId),
+          eq(agentApiGrants.agentId, agentId),
+          eq(agentApiGrants.provider, provider),
+          eq(agentApiGrants.revoked, false),
+          gte(agentApiGrants.expiresAt, now)
+        )
+      )
+      .orderBy(desc(agentApiGrants.updatedAt))
+      .limit(1);
+
+    return grant ?? null;
+  }
+
+  private async resolveAdaptiveRouting(target: string): Promise<{
+    primary: RoutingSelection;
+    fallback: RoutingSelection;
+  }> {
+    const stored = await drizzleConfigurationRepository.findConfigByKey('TNF_LLM_ROUTING_V1');
+    if (!stored?.value) {
+      return {
+        primary: { provider: '', model: '' },
+        fallback: { provider: '', model: '' },
+      };
+    }
+
+    let parsed: any = null;
+    try {
+      parsed = JSON.parse(stored.value);
+    } catch {
+      parsed = null;
+    }
+
+    const globalPrimary = this.normalizeSelection(parsed?.global?.primary);
+    const globalFallback = this.normalizeSelection(parsed?.global?.fallback);
+    const agentCfg = parsed?.agents?.[target];
+
+    if (agentCfg?.enabled) {
+      const primary = this.normalizeSelection(agentCfg.primary);
+      const fallback = this.normalizeSelection(agentCfg.fallback);
+      return {
+        primary: primary.provider && primary.model ? primary : globalPrimary,
+        fallback: fallback.provider && fallback.model ? fallback : globalFallback,
+      };
+    }
+
+    return {
+      primary: globalPrimary,
+      fallback: globalFallback,
+    };
+  }
+
+  private normalizeSelection(selection: any): RoutingSelection {
+    return {
+      provider: typeof selection?.provider === 'string' ? selection.provider.trim() : '',
+      model: typeof selection?.model === 'string' ? selection.model.trim() : '',
+    };
   }
 
   private async mintGrantToken(grant: {

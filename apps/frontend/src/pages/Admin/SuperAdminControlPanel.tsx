@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { GlassCard, StatsCard } from '../../components/ui/premium/GlassCard';
 import { PremiumButton } from '../../components/ui/premium/PremiumButton';
 import { useAuthorization } from '../../hooks/useAuthorization';
+import { LlmRoutingControl } from './components/LlmRoutingControl';
 
 interface RelayChannel {
   id: string;
@@ -345,6 +346,10 @@ export default function SuperAdminControlPanel() {
           change="System telemetry"
           changeType="neutral"
         />
+      </motion.div>
+
+      <motion.div variants={itemVariants}>
+        <LlmRoutingControl />
       </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

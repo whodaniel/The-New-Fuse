@@ -267,18 +267,27 @@ export class TheNewFuseMCPServer {
         {
           name: 'delegate_llm_request',
           description:
-            'Securely proxy an LLM request using a delegated grant token. Enforces rate limits, token budgets, and cost caps.',
+            'Securely proxy an LLM request using a delegated grant token. Supports fixed provider mode or adaptive routing by target (centralized active/fallback policy).',
           inputSchema: {
             type: 'object',
             properties: {
-              provider: { type: 'string', description: 'LLM Provider (e.g. openai, anthropic)' },
+              provider: {
+                type: 'string',
+                description:
+                  'LLM Provider for fixed mode (e.g. openai, anthropic). Optional if target is provided.',
+              },
+              target: {
+                type: 'string',
+                description:
+                  'Adaptive routing target (e.g. zeroclaw-sandbox). If set, centralized routing policy is used.',
+              },
               grantToken: { type: 'string', description: 'The delegated agent grant token' },
               payload: {
                 type: 'object',
                 description: 'The standard completion/chat payload for the target provider',
               },
             },
-            required: ['provider', 'grantToken', 'payload'],
+            required: ['grantToken', 'payload'],
           },
         },
 
@@ -865,9 +874,21 @@ export class TheNewFuseMCPServer {
   // Agent Delegate Handlers
   private async handleDelegateLlmRequest(args: any) {
     if (this.services.agentGrants) {
-      const { provider, grantToken, payload } = args;
+      const { provider, target, grantToken, payload } = args;
       try {
-        const result = await this.services.agentGrants.proxy(provider, grantToken, payload);
+        let result: any;
+        if (typeof target === 'string' && target.trim()) {
+          result = await this.services.agentGrants.adaptiveProxy(
+            target.trim(),
+            grantToken,
+            payload
+          );
+        } else if (typeof provider === 'string' && provider.trim()) {
+          result = await this.services.agentGrants.proxy(provider.trim(), grantToken, payload);
+        } else {
+          throw new Error('Either provider or target is required');
+        }
+
         return {
           content: [
             {

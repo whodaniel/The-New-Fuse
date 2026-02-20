@@ -20,4 +20,18 @@ export class AgentProxyController {
   ) {
     return this.grantsService.proxy(provider, authorization, body);
   }
+
+  @Post('adaptive/:target')
+  @ApiOperation({
+    summary:
+      'Adaptive middleware proxy: resolve provider/model from centralized routing (global + target override) with automatic fallback',
+  })
+  @ApiResponse({ status: 200, description: 'Provider response (proxied via adaptive routing)' })
+  async adaptiveProxy(
+    @Param('target') target: string,
+    @Headers('authorization') authorization: string | undefined,
+    @Body() body: any
+  ) {
+    return this.grantsService.adaptiveProxy(target, authorization, body);
+  }
 }

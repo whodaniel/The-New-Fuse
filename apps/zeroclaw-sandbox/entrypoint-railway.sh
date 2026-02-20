@@ -15,7 +15,7 @@ GATEWAY_PORT="${PORT:-3000}"
 
 # ── Provider Normalization ───────────────────────────────────
 # Convert "kilocode" to custom provider format for Kilo API
-ZEROCLAW_MODEL="${ZEROCLAW_MODEL:-claude-3-opus-20240229}"
+ZEROCLAW_MODEL="${ZEROCLAW_MODEL:-${DEFAULT_MODEL:-}}"
 if [ "${PROVIDER}" = "kilocode" ]; then
   PROVIDER="custom:https://api.kilo.ai/api/gateway"
   echo "Normalized kilocode provider to custom:https://api.kilo.ai/api/gateway"
@@ -23,6 +23,10 @@ if [ "${PROVIDER}" = "kilocode" ]; then
   ZEROCLAW_MODEL=$(echo "${ZEROCLAW_MODEL}" | sed 's/^kilocode\///')
   # Use KILO_API_KEY for the API key if not already set
   API_KEY="${API_KEY:-${KILO_API_KEY:-}}"
+fi
+
+if [ -z "${ZEROCLAW_MODEL}" ]; then
+  echo "WARN: ZEROCLAW_MODEL is not set. Configure model centrally or via Railway env vars." >&2
 fi
 
 # ── Write config.toml from env vars ─────────────────────────
@@ -187,7 +191,7 @@ echo "=== ZeroClaw Railway Sandbox ==="
 echo "Config written to ${CONFIG_FILE}"
 echo "Gateway port:    ${GATEWAY_PORT}"
 echo "Provider:        ${PROVIDER:-anthropic}"
-echo "Model:           ${ZEROCLAW_MODEL:-claude-3-opus-20240229}"
+echo "Model:           ${ZEROCLAW_MODEL:-<unset>}"
 echo "TNF Agent ID:    ${TNF_AGENT_ID:-zeroclaw-railway-01}"
 
 # ── TNF Agent Heartbeat ──────────────────────────────────────
@@ -200,7 +204,7 @@ echo "Starting TNF heartbeat for agent ${AGENT_ID}"
   while true; do
     curl -s -X POST "${TNF_WORKER_URL}/agent/heartbeat" \
       -H "Content-Type: application/json" \
-      -d "{\"agentId\":\"${AGENT_ID}\",\"status\":\"healthy\",\"currentTask\":\"standing-by\",\"lastActivity\":$(date +%s)000,\"metadata\":{\"role\":\"${AGENT_ROLE}\",\"platform\":\"zeroclaw-railway\",\"provider\":\"${PROVIDER:-anthropic}\",\"model\":\"${ZEROCLAW_MODEL:-claude-3-opus-20240229}\"}}" \
+      -d "{\"agentId\":\"${AGENT_ID}\",\"status\":\"healthy\",\"currentTask\":\"standing-by\",\"lastActivity\":$(date +%s)000,\"metadata\":{\"role\":\"${AGENT_ROLE}\",\"platform\":\"zeroclaw-railway\",\"provider\":\"${PROVIDER:-anthropic}\",\"model\":\"${ZEROCLAW_MODEL:-}\"}}" \
       > /dev/null 2>&1 || true
     sleep 300
   done
