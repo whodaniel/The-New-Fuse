@@ -161,15 +161,15 @@
           if (proto && proto.define && !proto.define.__isSafeGuarded) {
             Object.defineProperty(proto, 'define', {
               value: boundSafeDefine,
-              configurable: true,
-              writable: true,
+              configurable: false,
+              writable: false,
             });
           }
           if (!registry.define.__isSafeGuarded) {
             Object.defineProperty(registry, 'define', {
               value: boundSafeDefine,
-              configurable: true,
-              writable: true,
+              configurable: false,
+              writable: false,
             });
           }
 
