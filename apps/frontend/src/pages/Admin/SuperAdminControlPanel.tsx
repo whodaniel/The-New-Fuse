@@ -131,6 +131,35 @@ export default function SuperAdminControlPanel() {
       });
   }, [activities]);
 
+  const realtimeTrends = useMemo(() => {
+    const now = Date.now();
+    const windowMs = 5 * 60 * 1000;
+    const recentSignals = orchestrationSignals.filter(
+      (signal) => now - signal.timestamp.getTime() <= windowMs
+    );
+    const recentActivities = activities.filter(
+      (activity) => now - activity.timestamp.getTime() <= windowMs
+    );
+    const queueEvents = recentSignals.filter(
+      (signal) => signal.eventType.toLowerCase() === 'task_queued_from_votes'
+    );
+    const scored = recentSignals.filter((signal) => typeof signal.score === 'number');
+    const avgScore = scored.length
+      ? Math.round(scored.reduce((sum, signal) => sum + (signal.score || 0), 0) / scored.length)
+      : 0;
+    const votePressure = recentSignals.reduce(
+      (sum, signal) => sum + ((signal.votes?.up || 0) - (signal.votes?.down || 0)),
+      0
+    );
+    return {
+      eventsPerMin: Number((recentActivities.length / 5).toFixed(1)),
+      queuePerMin: Number((queueEvents.length / 5).toFixed(1)),
+      avgScore,
+      votePressure,
+      sampleSize: recentActivities.length,
+    };
+  }, [activities, orchestrationSignals]);
+
   const syncRecentActivity = useCallback(async () => {
     try {
       const res = await fetch(`${relayHttpBase}/activity/recent?count=80`);
@@ -414,6 +443,43 @@ export default function SuperAdminControlPanel() {
 
       <motion.div variants={itemVariants}>
         <LlmRoutingControl />
+      </motion.div>
+
+      <motion.div variants={itemVariants}>
+        <GlassCard className="p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm uppercase tracking-widest font-bold text-slate-300">
+              Realtime Orchestration Trends
+            </h3>
+            <span className="text-[10px] text-slate-500">Window: last 5 minutes</span>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+            <div className="rounded-lg border border-white/10 bg-white/5 p-3">
+              <div className="text-slate-500 uppercase tracking-wide mb-1">Events / Min</div>
+              <div className="text-xl font-bold text-cyan-300">{realtimeTrends.eventsPerMin}</div>
+            </div>
+            <div className="rounded-lg border border-white/10 bg-white/5 p-3">
+              <div className="text-slate-500 uppercase tracking-wide mb-1">Queued / Min</div>
+              <div className="text-xl font-bold text-indigo-300">{realtimeTrends.queuePerMin}</div>
+            </div>
+            <div className="rounded-lg border border-white/10 bg-white/5 p-3">
+              <div className="text-slate-500 uppercase tracking-wide mb-1">Avg Score</div>
+              <div className="text-xl font-bold text-emerald-300">{realtimeTrends.avgScore}</div>
+            </div>
+            <div className="rounded-lg border border-white/10 bg-white/5 p-3">
+              <div className="text-slate-500 uppercase tracking-wide mb-1">Vote Pressure</div>
+              <div
+                className={`text-xl font-bold ${realtimeTrends.votePressure >= 0 ? 'text-amber-300' : 'text-rose-300'}`}
+              >
+                {realtimeTrends.votePressure >= 0 ? '+' : ''}
+                {realtimeTrends.votePressure}
+              </div>
+            </div>
+          </div>
+          <div className="mt-3 text-[10px] text-slate-500">
+            Sampled events: {realtimeTrends.sampleSize}
+          </div>
+        </GlassCard>
       </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
