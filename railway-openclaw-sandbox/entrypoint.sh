@@ -122,6 +122,17 @@ node -e "
         console.error('Configured Discord channel');
       }
 
+      // Telegram Channel
+      if (process.env.OPENCLAW_CHANNELS_TELEGRAM_TOKEN || process.env.OPENCLAW_CHANNELS_TELEGRAM_BOT_TOKEN) {
+        if (!cfg.channels) cfg.channels = {};
+        if (!cfg.channels.telegram) cfg.channels.telegram = {};
+        cfg.channels.telegram.enabled = true;
+        cfg.channels.telegram.token = process.env.OPENCLAW_CHANNELS_TELEGRAM_TOKEN || process.env.OPENCLAW_CHANNELS_TELEGRAM_BOT_TOKEN;
+        cfg.channels.telegram.groupPolicy = process.env.OPENCLAW_CHANNELS_TELEGRAM_POLICY || 'allowlist';
+        if (!cfg.channels.telegram.dm) cfg.channels.telegram.dm = { policy: 'pairing' };
+        console.error('Configured Telegram channel');
+      }
+
       fs.writeFileSync(configPath, JSON.stringify(cfg, null, 2));
       console.error('Updated config:', configPath);
     } catch (e) {
