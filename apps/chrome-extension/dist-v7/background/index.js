@@ -515,6 +515,12 @@
               !0
             );
           case 'BROADCAST_MESSAGE':
+            if (!t.channel)
+              return (
+                console.warn('[FuseConnect v6] BROADCAST_MESSAGE missing channel - dropped'),
+                n({ success: !1, error: 'No active channel selected' }),
+                !0
+              );
             (this.send({
               type: 'MESSAGE_SEND',
               messageId: t.messageId || crypto.randomUUID(),

@@ -36,6 +36,24 @@
       );
     }
     async sendMessage(e) {
+      const host = window.location.hostname || '';
+      const supportedHost =
+        'gemini.google.com' === host ||
+        'aistudio.google.com' === host ||
+        'chatgpt.com' === host ||
+        'chat.openai.com' === host ||
+        'claude.ai' === host ||
+        'perplexity.ai' === host ||
+        host.endsWith('.perplexity.ai') ||
+        'poe.com' === host ||
+        host.includes('openclaw') ||
+        host.includes('kilosessions.ai');
+      if (!supportedHost)
+        return (
+          console.warn('[SimpleChatBridge] Host not supported for chat injection:', host),
+          this.callbacks.onError?.(`Unsupported chat host: ${host}`),
+          !1
+        );
       const { input: t, sendButton: n, isReady: s } = this.findElements();
       if (!s || !t)
         return (
@@ -2904,6 +2922,33 @@
                   const e = t.message;
                   if (!e.content) return (s({ success: !0 }), !0);
                   const c = e.channel || e.channelId || null;
+                  const l = this.panel?.currentChannel || null;
+                  const d = e.to || e.target || null;
+                  if (c && l && c !== l)
+                    return (
+                      console.log('[FuseConnect v6] Channel mismatch; skipping NEW_MESSAGE', {
+                        messageChannel: c,
+                        activeChannel: l,
+                      }),
+                      s({ success: !0 }),
+                      !0
+                    );
+                  if ('broadcast' === d && !c)
+                    return (
+                      console.log(
+                        '[FuseConnect v6] Unscoped broadcast message (no channel); skipping injection'
+                      ),
+                      s({ success: !0 }),
+                      !0
+                    );
+                  if ('broadcast' === d && !l)
+                    return (
+                      console.log(
+                        '[FuseConnect v6] No active channel selected in this tab; skipping broadcast injection'
+                      ),
+                      s({ success: !0 }),
+                      !0
+                    );
                   if (c && this.panel?.pausedChannels?.has(c))
                     return (
                       console.log(
@@ -2962,6 +3007,24 @@
                 if ((this.panel && this.panel.handleMessage(t), !t.content))
                   return (s({ success: !0 }), !0);
                 const c = t.channel || t.channelId || null;
+                const l = this.panel?.currentChannel || null;
+                if (c && l && c !== l)
+                  return (
+                    console.log('[FuseConnect v6] Channel mismatch; skipping RESPONSE_COMPLETE', {
+                      messageChannel: c,
+                      activeChannel: l,
+                    }),
+                    s({ success: !0 }),
+                    !0
+                  );
+                if (!c)
+                  return (
+                    console.log(
+                      '[FuseConnect v6] RESPONSE_COMPLETE missing channel; skipping injection'
+                    ),
+                    s({ success: !0 }),
+                    !0
+                  );
                 if (c && this.panel?.pausedChannels?.has(c))
                   return (
                     console.log(
