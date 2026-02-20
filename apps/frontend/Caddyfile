@@ -19,6 +19,18 @@ handle /ws/* {
 	}
 }
 
+# Force-clear stale cache/storage on auth entry routes to avoid old bundle lock-in.
+@authEntry path /login /auth/login
+handle @authEntry {
+	root * /srv
+	encode gzip
+	try_files {path} /index.html
+	file_server
+	header Cache-Control "no-cache, no-store, must-revalidate"
+	header Clear-Site-Data "\"cache\", \"storage\""
+	header Cross-Origin-Opener-Policy "same-origin-allow-popups"
+}
+
 # Serve static frontend files with SPA fallback
 handle {
 	root * /srv
