@@ -11,6 +11,7 @@ const redis_1 = require("redis");
 const DEFAULTS = {
     redisUrl: process.env.REDIS_URL || 'redis://localhost:6379',
     ingress: process.env.TNF_INGRESS_CHANNEL || 'tnf:bus:ingress',
+    selfPromptKey: process.env.TNF_SELF_PROMPT_KEY || 'tnf:master:self-prompts',
     processId: process.env.SUPER_CYCLE_PROCESS_ID || '',
     processName: process.env.SUPER_CYCLE_PROCESS_NAME || '',
     owner: process.env.SUPER_CYCLE_OWNER || process.env.USER || 'unknown',
@@ -41,7 +42,7 @@ function parseArgs(argv) {
             throw new Error(`Invalid --metadata JSON: ${error.message}`);
         }
     }
-    if (action !== 'status' && !processId) {
+    if (action !== 'status' && action !== 'self-prompts' && !processId) {
         throw new Error('Missing process identifier. Use --process-id or SUPER_CYCLE_PROCESS_ID.');
     }
     return {
@@ -90,6 +91,16 @@ async function main() {
             console.log(raw);
             return;
         }
+        if (args.action === 'self-prompts') {
+            const limit = Math.max(parseInt(process.env.SELF_PROMPT_STATUS_LIMIT || '20', 10), 1);
+            const rows = await redis.lRange(DEFAULTS.selfPromptKey, 0, limit - 1);
+            if (!rows.length) {
+                console.log(`[super-cycle] no self-prompts found in ${DEFAULTS.selfPromptKey}`);
+                return;
+            }
+            console.log(JSON.stringify(rows.map((row) => JSON.parse(row)), null, 2));
+            return;
+        }
         const now = Date.now();
         const event = {
             type: mapActionToType(args.action),
@@ -114,7 +125,12 @@ async function main() {
     }
 }
 main().catch((error) => {
-    console.error(`[super-cycle] failed: ${error?.message || String(error)}`);
+    const message = error?.message || String(error);
+    console.error(`[super-cycle] failed: ${message}`);
+    if (message.toLowerCase().includes('aggregateerror') ||
+        message.toLowerCase().includes('connect')) {
+        console.error(`[super-cycle] hint: ensure Redis is reachable (REDIS_URL=${DEFAULTS.redisUrl}) and retry.`);
+    }
     process.exit(1);
 });
 //# sourceMappingURL=super-cycle-client.js.map

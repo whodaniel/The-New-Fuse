@@ -45,6 +45,7 @@ export declare class TNFRelayServer extends EventEmitter {
     private heartbeatInterval;
     private port;
     private bridge;
+    private bridgeSubscribedAgents;
     private authService;
     private stallDetector;
     private logger;
@@ -74,6 +75,11 @@ export declare class TNFRelayServer extends EventEmitter {
     private persistTaskDispatch;
     private broadcastToChannel;
     private broadcast;
+    private toChannelDisplayName;
+    private ensureChannelExists;
+    private syncAgentChannelMembership;
+    private syncBridgeSubscriptions;
+    private ensureBridgeSubscription;
     /**
      * Send a recovery message to wake up stalled conversations
      */

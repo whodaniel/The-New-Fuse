@@ -66,6 +66,7 @@ const fs_1 = require("fs");
 const path_1 = __importDefault(require("path"));
 const redis_1 = require("redis");
 const ws_1 = __importDefault(require("ws"));
+const tnf_envelope_1 = require("./protocol/tnf-envelope");
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
@@ -77,6 +78,8 @@ const CONFIG = {
     ONBOARDING_TIMEOUT: parseInt(process.env.ONBOARDING_TIMEOUT || '') || 30000, // 30 seconds
     MAX_RECOVERY_ATTEMPTS: 5,
     SUPER_CYCLE_STALE_THRESHOLD: parseInt(process.env.SUPER_CYCLE_STALE_THRESHOLD || '') || 90000, // 90 seconds
+    SELF_PROMPT_ENABLED: (process.env.SELF_PROMPT_ENABLED || 'true') === 'true',
+    SELF_PROMPT_COOLDOWN_MS: parseInt(process.env.SELF_PROMPT_COOLDOWN_MS || '') || 30000, // 30 seconds
     // Connections
     RELAY_URL: process.env.RELAY_URL || 'ws://localhost:3000/ws',
     REDIS_URL: process.env.REDIS_URL,
@@ -93,6 +96,7 @@ const CONFIG = {
         SUPER_CYCLE: 'tnf:master:super-cycle',
         INGRESS: 'tnf:bus:ingress',
         EGRESS_PREFIX: 'tnf:bus:egress',
+        SELF_PROMPTS: 'tnf:master:self-prompts',
     },
     // Logging
     LOG_LEVEL: process.env.LOG_LEVEL || 'info',
@@ -249,6 +253,7 @@ class MasterClock {
     recoveryAttempts;
     metrics;
     reconnectTimer = null;
+    selfPromptCooldowns;
     constructor() {
         this.sessionId = `ORCHESTRATOR-${Date.now()}`;
         this.registry = new AgentRegistry();
@@ -268,6 +273,7 @@ class MasterClock {
             messagesProcessed: 0,
             agentsOnboarded: 0,
         };
+        this.selfPromptCooldowns = new Map();
     }
     // --------------------------------------------------------------------------
     // INITIALIZATION
@@ -522,6 +528,19 @@ class MasterClock {
                 this.broadcastToChannel(channel, `[RECOVERY] Attempting to reach ${agentId}...`);
             }
         }
+        void this.emitSelfPrompt({
+            kind: 'agent-stall',
+            channel: agent.channel || 'General',
+            prompt: recoveryMessage,
+            reason: 'agent_stalled',
+            targetAgentId: agent.agentId,
+            targetSourceId: agent.sourceId,
+            metadata: {
+                attemptNumber,
+                maxAttempts: CONFIG.MAX_RECOVERY_ATTEMPTS,
+                idleSeconds: Math.round((Date.now() - agent.lastHeartbeat) / 1000),
+            },
+        });
     }
     // --------------------------------------------------------------------------
     // MESSAGE HANDLING
@@ -576,12 +595,12 @@ class MasterClock {
     normalizeIncomingMessage(msg) {
         if (!msg)
             return null;
-        if (msg.type)
-            return msg;
         // TNF envelope compatibility over Redis ingress.
         if (msg.payload?.originalMessage?.type) {
             return msg.payload.originalMessage;
         }
+        if (msg.type)
+            return msg;
         return null;
     }
     handleChannelMessage(msg) {
@@ -872,8 +891,100 @@ Acknowledge by sending: [${agentId}] Ready for duty!
                     processId,
                     ageMs: now - process.lastHeartbeat,
                 });
+                const processChannel = process.metadata?.channel || 'General';
+                const prompt = `⏱️ [SELF-PROMPT] Scheduled process ${processId} is stale. Resume heartbeat and continue next actionable step immediately.`;
+                this.broadcastToChannel(processChannel, prompt);
+                void this.emitSelfPrompt({
+                    kind: 'process-stall',
+                    channel: processChannel,
+                    prompt,
+                    reason: 'scheduled_process_stalled',
+                    targetProcessId: processId,
+                    metadata: {
+                        ageMs: now - process.lastHeartbeat,
+                        staleThresholdMs: CONFIG.SUPER_CYCLE_STALE_THRESHOLD,
+                        processStatus: process.status,
+                    },
+                });
             }
         }
+    }
+    async emitSelfPrompt(params) {
+        if (!CONFIG.SELF_PROMPT_ENABLED || !this.redis) {
+            return;
+        }
+        const cooldownKey = `${params.kind}:${params.targetAgentId || params.targetProcessId || params.channel}`;
+        const now = Date.now();
+        const lastSentAt = this.selfPromptCooldowns.get(cooldownKey) || 0;
+        if (now - lastSentAt < CONFIG.SELF_PROMPT_COOLDOWN_MS) {
+            return;
+        }
+        this.selfPromptCooldowns.set(cooldownKey, now);
+        const originalMessage = {
+            type: 'CHANNEL_MESSAGE',
+            channel: params.channel,
+            payload: {
+                from: this.sessionId,
+                to: 'broadcast',
+                content: params.prompt,
+                metadata: {
+                    isSystemMessage: true,
+                    isSelfPrompt: true,
+                    reason: params.reason,
+                    ...(params.metadata || {}),
+                },
+            },
+        };
+        const broadcastEnvelope = (0, tnf_envelope_1.createTNFEnvelope)('event', { agentId: this.sessionId, role: 'orchestrator', platform: 'master-clock' }, { broadcast: true }, {
+            eventType: 'SELF_PROMPT',
+            data: {
+                ...params,
+                issuedAt: now,
+            },
+            originalMessage,
+        }, {
+            channelId: params.channel,
+            sessionId: this.sessionId,
+        });
+        try {
+            await this.redis.publish(CONFIG.REDIS_KEYS.INGRESS, JSON.stringify(broadcastEnvelope));
+            await this.redis.lPush(CONFIG.REDIS_KEYS.SELF_PROMPTS, JSON.stringify({
+                sessionId: this.sessionId,
+                ...params,
+                issuedAt: now,
+            }));
+            await this.redis.lTrim(CONFIG.REDIS_KEYS.SELF_PROMPTS, 0, 499);
+        }
+        catch (error) {
+            log('warn', 'SELF-PROMPT', `Failed to publish self-prompt: ${error.message}`);
+        }
+        if (params.targetSourceId) {
+            const directEnvelope = (0, tnf_envelope_1.createTNFEnvelope)('task', { agentId: this.sessionId, role: 'orchestrator', platform: 'master-clock' }, { agentId: params.targetSourceId, role: 'worker' }, {
+                action: 'self_prompt_continue',
+                parameters: {
+                    prompt: params.prompt,
+                    reason: params.reason,
+                    channel: params.channel,
+                    ...(params.metadata || {}),
+                },
+                priority: 'high',
+            }, {
+                channelId: params.channel,
+                sessionId: this.sessionId,
+            });
+            try {
+                await this.redis.publish(`${CONFIG.REDIS_KEYS.EGRESS_PREFIX}:${params.targetSourceId}`, JSON.stringify(directEnvelope));
+            }
+            catch (error) {
+                log('warn', 'SELF-PROMPT', `Failed targeted self-prompt publish for ${params.targetSourceId}: ${error.message}`);
+            }
+        }
+        log('info', 'SELF-PROMPT', `Self-prompt issued (${params.kind})`, {
+            channel: params.channel,
+            targetAgentId: params.targetAgentId,
+            targetProcessId: params.targetProcessId,
+            reason: params.reason,
+        });
     }
     getSuperCycleStats() {
         const processes = Array.from(this.scheduledProcesses.values());
