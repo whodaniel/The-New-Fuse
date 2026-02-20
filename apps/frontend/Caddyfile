@@ -25,4 +25,5 @@ handle {
 	encode gzip
 	try_files {path} /index.html
 	file_server
+	header Cross-Origin-Opener-Policy "same-origin-allow-popups"
 }

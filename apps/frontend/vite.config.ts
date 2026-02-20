@@ -398,6 +398,7 @@ export default defineConfig(({ mode }) => {
             'Access-Control-Allow-Headers',
             'Content-Type, Authorization, X-Requested-With'
           );
+          res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
           if (req.method === 'OPTIONS') {
             res.writeHead(204);
             res.end();
