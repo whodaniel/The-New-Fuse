@@ -31,6 +31,14 @@ export class RolesGuard implements CanActivate {
       return false;
     }
 
+    // SUPER_ADMIN Bypass
+    if (
+      dbUser.role === 'SUPER_ADMIN' ||
+      (dbUser.roles && Array.isArray(dbUser.roles) && dbUser.roles.includes('SUPER_ADMIN'))
+    ) {
+      return true;
+    }
+
     // Check primary role
     if (roles.includes(dbUser.role)) {
       return true;
