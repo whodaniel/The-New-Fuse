@@ -45,6 +45,8 @@
     "jules:framework:once": "node scripts/jules-zero-token-framework.cjs once",
     "jules:framework:watch": "node scripts/jules-zero-token-framework.cjs watch",
     "jules:framework:add": "node scripts/jules-zero-token-framework.cjs add",
+    "jules:framework:review": "node scripts/jules-zero-token-framework.cjs review",
+    "jules:framework:approve": "node scripts/jules-zero-token-framework.cjs approve",
     "dev:low-memory": "BUILD_MEMORY_LIMIT=1024 BUILD_CONCURRENCY=1 node scripts/memory-optimized-dev.cjs",
     "prebuild": "node scripts/pre-build-check.cjs",
     "build": "turbo run build --filter=!@the-new-fuse/web-scraping --filter=!@the-new-fuse/n8n-workflows --filter=!@the-new-fuse/sync-core --filter=!@the-new-fuse/integration-tests --filter=!@the-new-fuse/resource-registry --filter=!@the-new-fuse/tauri-desktop --filter=!the-new-fuse-chrome-extension --filter=!@the-new-fuse/workflow-engine",

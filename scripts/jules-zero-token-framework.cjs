@@ -85,6 +85,7 @@ function defaultConfig() {
     createdAt: nowIso(),
     pollIntervalMs: 15000,
     autoApply: true,
+    requireReviewBeforeApply: true,
     includeDescriptionRegex: 'Task bucket|TS|TypeScript|frontend',
     sessions: [],
   };
@@ -97,7 +98,13 @@ function loadConfig() {
     fs.writeFileSync(CONFIG_PATH, JSON.stringify(cfg, null, 2), 'utf8');
     return cfg;
   }
-  return JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
+  const cfg = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
+  if (cfg.requireReviewBeforeApply !== true) {
+    cfg.requireReviewBeforeApply = true;
+    saveConfig(cfg);
+    logEvent('config_migrated', { field: 'requireReviewBeforeApply', value: true });
+  }
+  return cfg;
 }
 
 function saveConfig(cfg) {
@@ -130,6 +137,11 @@ function applySession(sessionId) {
   return run(`jules remote pull --session ${sessionId} --apply`);
 }
 
+function isMergeConflictError(err) {
+  const msg = String(err || '');
+  return /merge conflict|conflict|could not apply|failed to apply|not mergeable/i.test(msg);
+}
+
 function runCycle() {
   const config = loadConfig();
   const state = loadState();
@@ -159,7 +171,14 @@ function runCycle() {
       observedAt: nowIso(),
     };
 
-    if (config.autoApply && session.status === 'COMPLETED' && !row.appliedAt && !row.applyFailedAt) {
+    const approvedForApply = !config.requireReviewBeforeApply || !!row.reviewApprovedAt;
+    if (
+      config.autoApply &&
+      approvedForApply &&
+      session.status === 'COMPLETED' &&
+      !row.appliedAt &&
+      !row.applyFailedAt
+    ) {
       const applied = applySession(session.id);
       if (applied.ok) {
         row.appliedAt = nowIso();
@@ -167,6 +186,11 @@ function runCycle() {
       } else {
         row.applyFailedAt = nowIso();
         row.applyError = applied.error;
+        if (isMergeConflictError(applied.error)) {
+          row.needsMergeResolution = true;
+          row.reviewApprovedAt = null;
+          row.reviewApprovedBy = null;
+        }
         logEvent('session_apply_failed', { id: session.id, error: applied.error });
       }
     }
@@ -187,6 +211,18 @@ function runCycle() {
     totalListed: sessions.length,
     completed: targets.filter((s) => s.status === 'COMPLETED').length,
     inProgress: targets.filter((s) => s.status === 'IN_PROGRESS' || s.status === 'PLANNING').length,
+    awaitingReviewApproval: Object.values(state.sessions).filter(
+      (s) =>
+        s &&
+        s.status === 'COMPLETED' &&
+        !s.appliedAt &&
+        !s.applyFailedAt &&
+        config.requireReviewBeforeApply &&
+        !s.reviewApprovedAt
+    ).length,
+    blockedByMergeConflicts: Object.values(state.sessions).filter(
+      (s) => s && s.status === 'COMPLETED' && !!s.needsMergeResolution
+    ).length,
   };
 }
 
@@ -215,17 +251,74 @@ function cmdAdd(ids) {
 }
 
 function cmdStatus() {
+  const config = loadConfig();
   const state = loadState();
   const rows = Object.values(state.sessions || {});
   const summary = {
+    requireReviewBeforeApply: !!config.requireReviewBeforeApply,
     tracked: rows.length,
     completed: rows.filter((r) => r.status === 'COMPLETED').length,
     inProgress: rows.filter((r) => r.status === 'IN_PROGRESS' || r.status === 'PLANNING').length,
+    awaitingReviewApproval: rows.filter(
+      (r) => r.status === 'COMPLETED' && !r.appliedAt && !r.applyFailedAt && !r.reviewApprovedAt
+    ).length,
+    blockedByMergeConflicts: rows.filter((r) => r.status === 'COMPLETED' && !!r.needsMergeResolution)
+      .length,
     applied: rows.filter((r) => !!r.appliedAt).length,
     applyFailed: rows.filter((r) => !!r.applyFailedAt).length,
     lastUpdatedAt: state.lastUpdatedAt || null,
   };
   console.log(JSON.stringify(summary, null, 2));
+}
+
+function cmdReview() {
+  const state = loadState();
+  const rows = Object.values(state.sessions || {});
+  const pending = rows.filter(
+    (r) => r.status === 'COMPLETED' && !r.appliedAt && !r.applyFailedAt && !r.reviewApprovedAt
+  );
+  if (pending.length === 0) {
+    console.log('no_pending_review_sessions');
+    return;
+  }
+  for (const row of pending) {
+    console.log(
+      `${row.id}\t${row.status}\tapproved=${row.reviewApprovedAt ? 'yes' : 'no'}\t${row.description || ''}`
+    );
+  }
+
+  const conflicts = rows.filter((r) => r.status === 'COMPLETED' && !!r.needsMergeResolution);
+  if (conflicts.length > 0) {
+    console.log('---');
+    console.log('merge_conflicts_require_manual_resolution');
+    for (const row of conflicts) {
+      console.log(`${row.id}\tapply_failed=${row.applyFailedAt || 'unknown'}\t${row.applyError || ''}`);
+    }
+  }
+}
+
+function cmdApprove(ids) {
+  if (ids.length === 0) {
+    console.error('usage: approve <SESSION_ID...>');
+    process.exit(1);
+  }
+  const state = loadState();
+  let updated = 0;
+  for (const rawId of ids) {
+    const id = String(rawId || '').trim();
+    if (!id || id === '--') continue;
+    const row = state.sessions[id];
+    if (!row) continue;
+    row.reviewApprovedAt = nowIso();
+    row.reviewApprovedBy = process.env.USER || 'operator';
+    row.applyFailedAt = null;
+    row.applyError = null;
+    row.needsMergeResolution = false;
+    updated += 1;
+    logEvent('review_approved', { id });
+  }
+  saveState(state);
+  console.log(`approved=${updated}`);
 }
 
 function cmdOnce() {
@@ -242,7 +335,7 @@ function cmdWatch() {
     try {
       const summary = runCycle();
       console.log(
-        `[jules-framework] cycle: selected=${summary.selected} completed=${summary.completed} in_progress=${summary.inProgress}`
+        `[jules-framework] cycle: selected=${summary.selected} completed=${summary.completed} in_progress=${summary.inProgress} awaiting_review=${summary.awaitingReviewApproval} conflicts=${summary.blockedByMergeConflicts}`
       );
     } catch (err) {
       logEvent('cycle_error', { error: String(err?.message || err) });
@@ -269,7 +362,9 @@ function main() {
   if (cmd === 'once') return cmdOnce();
   if (cmd === 'watch') return cmdWatch();
   if (cmd === 'status') return cmdStatus();
-  console.log('usage: jules-zero-token-framework.cjs <init|add|once|watch|status>');
+  if (cmd === 'review') return cmdReview();
+  if (cmd === 'approve') return cmdApprove(args.slice(1));
+  console.log('usage: jules-zero-token-framework.cjs <init|add|once|watch|status|review|approve>');
 }
 
 if (require.main === module) {
