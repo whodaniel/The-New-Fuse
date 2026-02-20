@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import { IsEmail, IsString } from 'class-validator';
@@ -33,7 +43,7 @@ export class AuthController {
     const { email, password } = loginDto;
     const user = await this.authService.validateUser(email, password);
     if (!user) {
-      throw new Error('Invalid credentials');
+      throw new UnauthorizedException('Invalid credentials');
     }
     return this.authService.login(user);
   }
@@ -118,12 +128,12 @@ export class AuthController {
 
     // Validate input
     if (!domain || !walletAddress) {
-      throw new Error('Domain and wallet address are required');
+      throw new BadRequestException('Domain and wallet address are required');
     }
 
     // Validate signature presence
     if (!message || !signature) {
-      throw new Error('Message and signature are required for authentication');
+      throw new BadRequestException('Message and signature are required for authentication');
     }
 
     // Find or create user with Unstoppable Domain
@@ -149,7 +159,6 @@ export class AuthController {
         email: user.email || domain,
         name: user.name || domain,
         role: user.role || 'user',
-        photoURL: user.photoURL,
       },
     };
   }

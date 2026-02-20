@@ -1,5 +1,3 @@
-import UAuth from '@uauth/js';
-
 /**
  * Unstoppable Domains Authentication Service
  * Handles login, registration, and user profile retrieval via Unstoppable Domains
@@ -20,7 +18,8 @@ export interface UnstoppableDomainsConfig {
 }
 
 class UnstoppableDomainsService {
-  private uauth: UAuth | null = null;
+  private uauth: any | null = null;
+  private UAuthCtor: any | null = null;
   private config: UnstoppableDomainsConfig | null = null;
 
   /**
@@ -31,24 +30,28 @@ class UnstoppableDomainsService {
       scope: 'openid wallet',
       ...config,
     };
-
-    this.uauth = new UAuth({
-      clientID: this.config.clientID,
-      redirectUri: this.config.redirectUri,
-      scope: this.config.scope,
-    });
-
-    console.log('Unstoppable Domains service initialized');
   }
 
   /**
    * Check if the service is initialized
    */
-  private ensureInitialized(): void {
+  private async ensureInitialized(): Promise<void> {
+    if (!this.config) {
+      throw new Error('UnstoppableDomainsService not initialized. Call initialize() first.');
+    }
+
+    if (!this.UAuthCtor) {
+      const module = await import('@uauth/js');
+      this.UAuthCtor = module.default;
+    }
+
     if (!this.uauth) {
-      throw new Error(
-        'UnstoppableDomainsService not initialized. Call initialize() first.'
-      );
+      this.uauth = new this.UAuthCtor({
+        clientID: this.config.clientID,
+        redirectUri: this.config.redirectUri,
+        scope: this.config.scope,
+      });
+      console.log('Unstoppable Domains service initialized');
     }
   }
 
@@ -56,7 +59,7 @@ class UnstoppableDomainsService {
    * Initiate login flow - redirects user to Unstoppable Domains
    */
   async login(): Promise<void> {
-    this.ensureInitialized();
+    await this.ensureInitialized();
     try {
       await this.uauth!.loginWithPopup();
     } catch (error) {
@@ -69,7 +72,7 @@ class UnstoppableDomainsService {
    * Handle the callback after redirect from Unstoppable Domains
    */
   async loginCallback(): Promise<UnstoppableDomainsUser> {
-    this.ensureInitialized();
+    await this.ensureInitialized();
     try {
       const authorization = await this.uauth!.loginCallback();
       const user = await this.getUser();
@@ -84,7 +87,7 @@ class UnstoppableDomainsService {
    * Get the current authenticated user
    */
   async getUser(): Promise<UnstoppableDomainsUser> {
-    this.ensureInitialized();
+    await this.ensureInitialized();
     try {
       const user = await this.uauth!.user();
       return user as UnstoppableDomainsUser;
@@ -98,7 +101,7 @@ class UnstoppableDomainsService {
    * Check if user is currently authenticated
    */
   async isAuthenticated(): Promise<boolean> {
-    this.ensureInitialized();
+    await this.ensureInitialized();
     try {
       const user = await this.uauth!.user();
       return !!user;
@@ -111,7 +114,7 @@ class UnstoppableDomainsService {
    * Logout the current user
    */
   async logout(): Promise<void> {
-    this.ensureInitialized();
+    await this.ensureInitialized();
     try {
       await this.uauth!.logout();
       console.log('Logged out from Unstoppable Domains');

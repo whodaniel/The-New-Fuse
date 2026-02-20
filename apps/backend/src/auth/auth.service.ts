@@ -133,7 +133,8 @@ export class AuthService {
   }
 
   async authenticate(firebaseToken: string) {
-    return this.validateFirebaseToken(firebaseToken);
+    const user = await this.validateFirebaseToken(firebaseToken);
+    return this.login(user);
   }
 
   async logout(token: string) {
@@ -238,35 +239,65 @@ export class AuthService {
       throw new UnauthorizedException('Signature verification failed');
     }
 
-    // Try to find user by wallet address first
-    let user = await drizzleUserRepository.findByWalletAddress(walletAddress);
+    const normalizedWallet = walletAddress.trim().toLowerCase();
+    const normalizedDomain = domain.trim().toLowerCase();
+    const derivedEmail = `${normalizedDomain}@unstoppabledomains.com`;
+
+    // Try wallet-linked account first
+    let user = await drizzleUserRepository.findByWalletAddress(normalizedWallet);
 
     if (!user) {
-      // 1. Mint Machine ID (e.g. usr_xyz.thenewfuse.com)
-      const machineId = await this.identityService.mintMachineID(walletAddress);
+      // Try deterministic UD email to avoid duplicate records by provider.
+      user = await drizzleUserRepository.findByEmail(derivedEmail);
 
-      // 2. Create new user with Unstoppable Domain + Machine ID
-      user = await drizzleUserRepository.create({
-        email: `${domain}@unstoppabledomains.com`, // Use domain as email
-        name: domain,
-        hashedPassword: '', // No password for UD users
-        walletAddress,
-        // walletType, // TODO: Add to schema if needed
-        // authProvider: 'unstoppable-domains', // TODO: Add to schema if needed
-        // machineId: machineId // TODO: Add to schema
-      } as Parameters<typeof drizzleUserRepository.create>[0]);
+      if (user) {
+        // Existing account found for the UD identity; link wallet if not already linked.
+        if (user.walletAddress && user.walletAddress.toLowerCase() !== normalizedWallet) {
+          throw new ConflictException(
+            'This Unstoppable Domain is already linked to a different wallet address'
+          );
+        }
 
-      this.logger.log(
-        `Created new user for Unstoppable Domain: ${domain} with Machine ID: ${machineId}`
-      );
-    } else {
-      // Update existing user's domain if changed
-      if (user.name !== domain) {
         user = await drizzleUserRepository.update(user.id, {
-          name: domain,
+          walletAddress: normalizedWallet,
+          name: normalizedDomain,
+          emailVerified: true,
+        } as Parameters<typeof drizzleUserRepository.update>[1]);
+
+        if (!user) {
+          throw new UnauthorizedException('Failed to update linked Unstoppable Domains account');
+        }
+
+        this.logger.log(`Linked existing UD account ${derivedEmail} to wallet ${normalizedWallet}`);
+      } else {
+        // 1. Mint Machine ID (e.g. usr_xyz.thenewfuse.com)
+        const machineId = await this.identityService.mintMachineID(normalizedWallet);
+
+        // 2. Create new user with Unstoppable Domain + Machine ID
+        user = await drizzleUserRepository.create({
+          email: derivedEmail,
+          name: normalizedDomain,
+          hashedPassword: '', // No password for UD users
+          walletAddress: normalizedWallet,
+          emailVerified: true,
+          isActive: true,
+          // walletType, // TODO: Add to schema if needed
+          // authProvider: 'unstoppable-domains', // TODO: Add to schema if needed
+          // machineId: machineId // TODO: Add to schema
+        } as Parameters<typeof drizzleUserRepository.create>[0]);
+
+        this.logger.log(
+          `Created new user for Unstoppable Domain: ${normalizedDomain} with Machine ID: ${machineId}`
+        );
+      }
+    } else {
+      // Wallet-linked account exists; keep name in sync with latest domain.
+      if (user.name !== normalizedDomain) {
+        user = await drizzleUserRepository.update(user.id, {
+          name: normalizedDomain,
         } as Parameters<typeof drizzleUserRepository.update>[1]);
       }
-      this.logger.log(`Found existing user for wallet: ${walletAddress}`);
+      this.logger.log(`Found existing user for wallet: ${normalizedWallet}`);
     }
 
     // Publish login event

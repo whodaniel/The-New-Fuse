@@ -24,6 +24,8 @@ export const useUnstoppableDomains = (): UseUnstoppableDomainsReturn => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const isUdEnabled = import.meta.env.VITE_ENABLE_UNSTOPPABLE_DOMAINS !== 'false';
+
   // Initialize the service
   useEffect(() => {
     const clientID = import.meta.env.VITE_UNSTOPPABLE_DOMAINS_CLIENT_ID;
@@ -31,21 +33,21 @@ export const useUnstoppableDomains = (): UseUnstoppableDomainsReturn => {
       import.meta.env.VITE_UNSTOPPABLE_DOMAINS_REDIRECT_URI ||
       `${window.location.origin}/auth/unstoppable-callback`;
 
-    if (clientID) {
+    if (isUdEnabled && clientID) {
       unstoppableDomainsService.initialize({
         clientID,
         redirectUri,
       });
-    } else {
+    } else if (isUdEnabled && import.meta.env.DEV) {
       console.warn('Unstoppable Domains Client ID not configured');
     }
-  }, []);
+  }, [isUdEnabled]);
 
   // Check authentication status on mount
   useEffect(() => {
     const checkAuth = async () => {
       const clientID = import.meta.env.VITE_UNSTOPPABLE_DOMAINS_CLIENT_ID;
-      if (!clientID) {
+      if (!isUdEnabled || !clientID) {
         setIsLoading(false);
         return;
       }
@@ -67,12 +69,15 @@ export const useUnstoppableDomains = (): UseUnstoppableDomainsReturn => {
     };
 
     checkAuth();
-  }, []);
+  }, [isUdEnabled]);
 
   const login = useCallback(async () => {
     const clientID = import.meta.env.VITE_UNSTOPPABLE_DOMAINS_CLIENT_ID;
+    if (!isUdEnabled) {
+      throw new Error('Unstoppable Domains login is disabled');
+    }
     if (!clientID) {
-      throw new Error('Unstoppable Domains Client ID not configured');
+      throw new Error('Unstoppable Domains client ID not configured');
     }
     try {
       setIsLoading(true);
@@ -90,7 +95,7 @@ export const useUnstoppableDomains = (): UseUnstoppableDomainsReturn => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [isUdEnabled]);
 
   const logout = useCallback(async () => {
     try {

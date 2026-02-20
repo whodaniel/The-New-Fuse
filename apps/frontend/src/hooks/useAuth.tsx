@@ -16,6 +16,17 @@ const getAuthToken = () => localStorage.getItem('auth_token');
 const setAuthToken = (token: string) => localStorage.setItem('auth_token', token);
 const clearAuthToken = () => localStorage.removeItem('auth_token');
 
+const toFrontendUser = (backendUser: any, fallbackEmail = ''): User => ({
+  id: String(backendUser?.id || ''),
+  email: String(backendUser?.email || fallbackEmail),
+  name: String(backendUser?.name || backendUser?.email || fallbackEmail || 'User'),
+  role: String(backendUser?.role || 'user'),
+  roles: Array.isArray(backendUser?.roles) ? backendUser.roles : [backendUser?.role || 'user'],
+  agencyId: backendUser?.agencyId,
+  tenantId: backendUser?.tenantId,
+  photoURL: backendUser?.photoURL,
+});
+
 // Map Firebase user to our User interface
 const mapUser = (firebaseUser: any): User => ({
   id: firebaseUser.uid || firebaseUser.id || '',
@@ -114,6 +125,59 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [apiBaseUrl, gatewayPrefix]
   );
 
+  const authenticateFirebaseWithBackend = useCallback(
+    async (firebaseIdToken: string, fallbackUser?: User) => {
+      const endpoints = [
+        `${apiBaseUrl}/auth/login/firebase`,
+        `${apiBaseUrl}${gatewayPrefix}/auth/login/firebase`,
+        '/api/auth/login/firebase',
+        '/v1/auth/login/firebase',
+      ];
+
+      for (const endpoint of endpoints) {
+        try {
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${firebaseIdToken}`,
+            },
+          });
+
+          if (!response.ok) continue;
+
+          const payload = await response.json();
+          const token = payload?.access_token || payload?.token || firebaseIdToken;
+          setAuthToken(token);
+
+          if (payload?.user) {
+            const normalized = toFrontendUser(payload.user, fallbackUser?.email || '');
+            setUser(fallbackUser ? { ...fallbackUser, ...normalized } : normalized);
+            return { token, user: normalized };
+          }
+
+          const details = await fetchUserDetails(token);
+          if (details) {
+            setUser(fallbackUser ? { ...fallbackUser, ...details } : details);
+            return { token, user: details };
+          }
+
+          if (fallbackUser) {
+            setUser(fallbackUser);
+            return { token, user: fallbackUser };
+          }
+        } catch {
+          // Try next endpoint
+        }
+      }
+
+      // Graceful fallback: keep Firebase token/session if backend endpoint unavailable.
+      setAuthToken(firebaseIdToken);
+      if (fallbackUser) setUser(fallbackUser);
+      return { token: firebaseIdToken, user: fallbackUser || null };
+    },
+    [apiBaseUrl, fetchUserDetails, gatewayPrefix]
+  );
+
   // Check auth on mount
   useEffect(() => {
     let isMounted = true;
@@ -150,15 +214,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (firebaseUser) {
           const mappedUser = mapUser(firebaseUser);
-          const token = await firebaseUser.getIdToken();
-          setAuthToken(token);
-
-          const userDetails = await fetchUserDetails(token);
-          if (userDetails) {
-            setUser({ ...mappedUser, ...userDetails });
-          } else {
-            setUser(mappedUser);
-          }
+          const firebaseToken = await firebaseUser.getIdToken();
+          await authenticateFirebaseWithBackend(firebaseToken, mappedUser);
           setIsLoading(false);
           return;
         }
@@ -178,7 +235,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isMounted = false;
       if (unsubscribe) unsubscribe();
     };
-  }, [fetchUserDetails]);
+  }, [authenticateFirebaseWithBackend, fetchUserDetails, isFirebaseConfigured]);
 
   // Login user
   const login = useCallback(
@@ -192,15 +249,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const result = await signInWithEmailAndPassword(auth, email, password);
           if (result.user) {
             const mappedUser = mapUser(result.user);
-            const token = await result.user.getIdToken();
-            setAuthToken(token);
-
-            const userDetails = await fetchUserDetails(token);
-            if (userDetails) {
-              setUser({ ...mappedUser, ...userDetails });
-            } else {
-              setUser(mappedUser);
-            }
+            const firebaseToken = await result.user.getIdToken();
+            await authenticateFirebaseWithBackend(firebaseToken, mappedUser);
           }
           return { method: 'firebase' as const, user: result.user };
         }
@@ -258,7 +308,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(false);
       }
     },
-    [apiBaseUrl, fetchUserDetails, isFirebaseConfigured]
+    [apiBaseUrl, authenticateFirebaseWithBackend, fetchUserDetails, isFirebaseConfigured]
   );
 
   // Register user
@@ -267,22 +317,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setError(null);
       setIsLoading(true);
       try {
-        const result = await createUserWithEmailAndPassword(auth, email, password);
-        if (result.user) {
-          await updateProfile(result.user, { displayName: name });
-          const mappedUser = mapUser({ ...result.user, displayName: name });
-          const token = await result.user.getIdToken();
-          setAuthToken(token);
-
-          // Fetch user details from backend to get actual role
-          const userDetails = await fetchUserDetails(token);
-          if (userDetails) {
-            setUser({ ...mappedUser, ...userDetails });
-          } else {
-            setUser(mappedUser);
+        if (isFirebaseConfigured) {
+          const result = await createUserWithEmailAndPassword(auth, email, password);
+          if (result.user) {
+            await updateProfile(result.user, { displayName: name });
+            const mappedUser = mapUser({ ...result.user, displayName: name });
+            const firebaseToken = await result.user.getIdToken();
+            await authenticateFirebaseWithBackend(firebaseToken, mappedUser);
           }
+          return result;
         }
-        return result;
+
+        // Backend-only registration fallback when Firebase is disabled/unconfigured.
+        const endpoints = [`${apiBaseUrl}/auth/register`, '/api/auth/register', '/auth/register'];
+        for (const endpoint of endpoints) {
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, password }),
+          });
+
+          if (!response.ok) continue;
+
+          const payload = await response.json();
+          const token = payload?.access_token || payload?.token;
+          if (!token) continue;
+
+          setAuthToken(token);
+          if (payload?.user) {
+            setUser(toFrontendUser(payload.user, email));
+          } else {
+            const details = await fetchUserDetails(token);
+            if (details) setUser(details);
+          }
+          return payload;
+        }
+
+        throw new Error('Failed to register');
       } catch (error: any) {
         setError(error.message || 'Failed to register');
         throw error;
@@ -290,27 +361,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(false);
       }
     },
-    [fetchUserDetails]
+    [apiBaseUrl, authenticateFirebaseWithBackend, fetchUserDetails, isFirebaseConfigured]
   );
 
   const signInWithGoogle = useCallback(async () => {
     setError(null);
     setIsLoading(true);
     try {
+      if (!isFirebaseConfigured) {
+        const oauthBase = apiBaseUrl || '';
+        window.location.href = `${oauthBase}/auth/google`;
+        return { method: 'oauth-redirect' as const };
+      }
+
       const result = await signInWithPopup(auth, googleProvider);
       // Manually update user state to prevent race conditions
       if (result.user) {
         const mappedUser = mapUser(result.user);
-        const token = await result.user.getIdToken();
-        setAuthToken(token);
-
-        // Fetch user details from backend to get actual role
-        const userDetails = await fetchUserDetails(token);
-        if (userDetails) {
-          setUser({ ...mappedUser, ...userDetails });
-        } else {
-          setUser(mappedUser);
-        }
+        const firebaseToken = await result.user.getIdToken();
+        await authenticateFirebaseWithBackend(firebaseToken, mappedUser);
       }
       return result;
     } catch (error: any) {
@@ -319,50 +388,57 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  }, [fetchUserDetails]);
+  }, [apiBaseUrl, authenticateFirebaseWithBackend, isFirebaseConfigured]);
 
   // Login with Unstoppable Domains
-  const loginWithUnstoppableDomains = useCallback(async (udUser: any) => {
-    setError(null);
-    setIsLoading(true);
-    try {
-      // Send UD user data to backend to create/authenticate user
-      const response = await fetch('/api/auth/unstoppable-domains', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          domain: udUser.sub,
-          walletAddress: udUser.wallet_address,
-          walletType: udUser.wallet_type_hint,
-          message: udUser.eip4361_message,
-          signature: udUser.eip4361_signature,
-        }),
-      });
+  const loginWithUnstoppableDomains = useCallback(
+    async (udUser: any) => {
+      setError(null);
+      setIsLoading(true);
+      try {
+        // Send UD user data to backend to create/authenticate user
+        const endpoints = [
+          `${apiBaseUrl}/auth/unstoppable-domains`,
+          `${apiBaseUrl}${gatewayPrefix}/auth/unstoppable-domains`,
+          '/api/auth/unstoppable-domains',
+          '/v1/auth/unstoppable-domains',
+        ];
+        let authenticated = false;
 
-      if (!response.ok) {
-        throw new Error('Failed to authenticate with Unstoppable Domains');
+        for (const endpoint of endpoints) {
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              domain: udUser.sub,
+              walletAddress: udUser.wallet_address,
+              walletType: udUser.wallet_type_hint,
+              message: udUser.eip4361_message,
+              signature: udUser.eip4361_signature,
+            }),
+          });
+
+          if (!response.ok) continue;
+
+          const { token, user: backendUser } = await response.json();
+          setAuthToken(token);
+          setUser(toFrontendUser(backendUser, udUser.sub));
+          authenticated = true;
+          break;
+        }
+
+        if (!authenticated) {
+          throw new Error('Failed to authenticate with Unstoppable Domains');
+        }
+      } catch (error: any) {
+        setError(error.message || 'Failed to sign in with Unstoppable Domains');
+        throw error;
+      } finally {
+        setIsLoading(false);
       }
-
-      const { token, user: backendUser } = await response.json();
-
-      // Store token
-      setAuthToken(token);
-
-      // Set user state
-      setUser({
-        id: backendUser.id,
-        email: backendUser.email || udUser.sub,
-        name: backendUser.name || udUser.sub,
-        role: backendUser.role || 'user',
-        photoURL: backendUser.photoURL,
-      });
-    } catch (error: any) {
-      setError(error.message || 'Failed to sign in with Unstoppable Domains');
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+    },
+    [apiBaseUrl, gatewayPrefix]
+  );
 
   // Logout user
   const logout = useCallback(async () => {
