@@ -13,11 +13,23 @@ mkdir -p "${CONFIG_DIR}" /zeroclaw-data/workspace
 # ── Port ─────────────────────────────────────────────────────
 GATEWAY_PORT="${PORT:-3000}"
 
+# ── Provider Normalization ───────────────────────────────────
+# Convert "kilocode" to custom provider format for Kilo API
+ZEROCLAW_MODEL="${ZEROCLAW_MODEL:-claude-3-opus-20240229}"
+if [ "${PROVIDER}" = "kilocode" ]; then
+  PROVIDER="custom:https://api.kilo.ai/api/gateway"
+  echo "Normalized kilocode provider to custom:https://api.kilo.ai/api/gateway"
+  # Strip "kilocode/" prefix from model name if present
+  ZEROCLAW_MODEL=$(echo "${ZEROCLAW_MODEL}" | sed 's/^kilocode\///')
+  # Use KILO_API_KEY for the API key if not already set
+  API_KEY="${API_KEY:-${KILO_API_KEY:-}}"
+fi
+
 # ── Write config.toml from env vars ─────────────────────────
 cat > "${CONFIG_FILE}" <<EOF
 api_key             = "${API_KEY:-${ZEROCLAW_API_KEY:-}}"
 default_provider    = "${PROVIDER:-anthropic}"
-default_model       = "${ZEROCLAW_MODEL:-claude-3-opus-20240229}"
+default_model       = "${ZEROCLAW_MODEL}"
 default_temperature = ${ZEROCLAW_TEMPERATURE:-0.7}
 
 [observability]
