@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { App } from './App';
 import { ToastProvider } from './components/ui/toast';
+import { AuthProvider } from './providers/AuthProvider';
+import { unstoppableDomainsService } from './services/unstoppableDomains.service';
 // Initialize Firebase is already handled by import './lib/firebase'
 import './styles/globals.css'; // Re-add global CSS import
 

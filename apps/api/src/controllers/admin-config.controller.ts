@@ -14,7 +14,7 @@ import {
   drizzleAgentRepository,
   drizzleConfigurationRepository,
   drizzleLLMConfigRepository,
-} from '@the-new-fuse/database';
+} from '@the-new-fuse/database/drizzle/repositories';
 import { AdminGuard } from '../guards/admin.guard';
 import { SecureAuthGuard } from '../guards/secure-auth.guard';
 import { AuditService } from '../services/audit.service';

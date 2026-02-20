@@ -8,15 +8,9 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import {
-  agentApiGrants,
-  and,
-  DatabaseService,
-  desc,
-  drizzleConfigurationRepository,
-  eq,
-  gte,
-} from '@the-new-fuse/database';
+import { and, DatabaseService, desc, eq, gte } from '@the-new-fuse/database';
+import { drizzleConfigurationRepository } from '@the-new-fuse/database/drizzle/repositories';
+import { agentApiGrants } from '@the-new-fuse/database/drizzle/schema';
 import { CreateAgentGrantDto } from '../dto/agent-grants.dto';
 
 type GrantTokenPayload = {
@@ -259,6 +253,7 @@ export class AgentApiGrantsService {
         errorText = error?.message || 'Proxy request failed';
       }
       if (!(error instanceof HttpException)) {
+        const safeErrorText = (errorText ?? 'Proxy request failed').slice(0, 2000);
         await this.db.agentApiGrants.logUsage({
           grantId: grant.id,
           userId: grant.userId,
@@ -271,7 +266,7 @@ export class AgentApiGrantsService {
           estimatedCostCents: 0,
           statusCode,
           durationMs: Date.now() - started,
-          error: errorText.slice(0, 2000),
+          error: safeErrorText,
           createdAt: new Date(),
         });
       }

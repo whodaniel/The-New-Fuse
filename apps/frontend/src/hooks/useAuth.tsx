@@ -7,10 +7,23 @@ import {
   updateProfile,
 } from 'firebase/auth';
 import { useCallback, useContext, useEffect, useState } from 'react';
+import AuthContext, { User } from '../AuthContext';
 import { API_ENDPOINTS } from '../config/api';
 import { auth, googleProvider } from '../lib/firebase';
 
-// ... (existing interfaces) ...
+// Helper functions for token management
+const getAuthToken = () => localStorage.getItem('auth_token');
+const setAuthToken = (token: string) => localStorage.setItem('auth_token', token);
+const clearAuthToken = () => localStorage.removeItem('auth_token');
+
+// Map Firebase user to our User interface
+const mapUser = (firebaseUser: any): User => ({
+  id: firebaseUser.uid || firebaseUser.id || '',
+  email: firebaseUser.email || '',
+  name: firebaseUser.displayName || firebaseUser.name || firebaseUser.email || 'User',
+  photoURL: firebaseUser.photoURL || undefined,
+  role: 'user', // Default role, will be updated by fetchUserDetails
+});
 
 /**
  * Auth provider component

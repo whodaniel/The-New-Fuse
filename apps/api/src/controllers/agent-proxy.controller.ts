@@ -18,6 +18,15 @@ export class AgentProxyController {
     @Headers('authorization') authorization: string | undefined,
     @Body() body: any
   ) {
+    const target = typeof body?.target === 'string' ? body.target.trim() : '';
+    if (target) {
+      const payload =
+        body && typeof body === 'object'
+          ? Object.fromEntries(Object.entries(body).filter(([k]) => k !== 'target'))
+          : body;
+      return this.grantsService.adaptiveProxy(target, authorization, payload);
+    }
+
     return this.grantsService.proxy(provider, authorization, body);
   }
 

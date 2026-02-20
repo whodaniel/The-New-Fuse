@@ -14,16 +14,22 @@ mkdir -p "${CONFIG_DIR}" /zeroclaw-data/workspace
 GATEWAY_PORT="${PORT:-3000}"
 
 # ── Provider Normalization ───────────────────────────────────
-# Convert "kilocode" to custom provider format for Kilo API
+# Convert "kilocode"/"kilo" to OpenAI-compatible custom provider format.
+RAW_PROVIDER="${PROVIDER:-anthropic}"
+RAW_PROVIDER_LC="$(printf '%s' "${RAW_PROVIDER}" | tr '[:upper:]' '[:lower:]')"
+RESOLVED_PROVIDER="${RAW_PROVIDER}"
 ZEROCLAW_MODEL="${ZEROCLAW_MODEL:-${DEFAULT_MODEL:-}}"
-if [ "${PROVIDER}" = "kilocode" ]; then
-  PROVIDER="custom:https://api.kilo.ai/api/gateway"
-  echo "Normalized kilocode provider to custom:https://api.kilo.ai/api/gateway"
-  # Strip "kilocode/" prefix from model name if present
-  ZEROCLAW_MODEL=$(echo "${ZEROCLAW_MODEL}" | sed 's/^kilocode\///')
-  # Use KILO_API_KEY for the API key if not already set
-  API_KEY="${API_KEY:-${KILO_API_KEY:-}}"
-fi
+
+case "${RAW_PROVIDER_LC}" in
+  kilocode|kilo)
+    RESOLVED_PROVIDER="custom:https://api.kilo.ai/api/gateway"
+    echo "Normalized provider '${RAW_PROVIDER}' to '${RESOLVED_PROVIDER}'"
+    # Strip provider prefix from model if present.
+    ZEROCLAW_MODEL="$(printf '%s' "${ZEROCLAW_MODEL}" | sed -E 's/^(kilocode|kilo)\///')"
+    # Use KILO_API_KEY for the API key if not already set.
+    API_KEY="${API_KEY:-${KILO_API_KEY:-}}"
+    ;;
+esac
 
 if [ -z "${ZEROCLAW_MODEL}" ]; then
   echo "WARN: ZEROCLAW_MODEL is not set. Configure model centrally or via Railway env vars." >&2
@@ -32,7 +38,7 @@ fi
 # ── Write config.toml from env vars ─────────────────────────
 cat > "${CONFIG_FILE}" <<EOF
 api_key             = "${API_KEY:-${ZEROCLAW_API_KEY:-}}"
-default_provider    = "${PROVIDER:-anthropic}"
+default_provider    = "${RESOLVED_PROVIDER}"
 default_model       = "${ZEROCLAW_MODEL}"
 default_temperature = ${ZEROCLAW_TEMPERATURE:-0.7}
 
@@ -190,7 +196,7 @@ chmod 600 "${AUTH_FILE}"
 echo "=== ZeroClaw Railway Sandbox ==="
 echo "Config written to ${CONFIG_FILE}"
 echo "Gateway port:    ${GATEWAY_PORT}"
-echo "Provider:        ${PROVIDER:-anthropic}"
+echo "Provider:        ${RESOLVED_PROVIDER}"
 echo "Model:           ${ZEROCLAW_MODEL:-<unset>}"
 echo "TNF Agent ID:    ${TNF_AGENT_ID:-zeroclaw-railway-01}"
 
@@ -204,7 +210,7 @@ echo "Starting TNF heartbeat for agent ${AGENT_ID}"
   while true; do
     curl -s -X POST "${TNF_WORKER_URL}/agent/heartbeat" \
       -H "Content-Type: application/json" \
-      -d "{\"agentId\":\"${AGENT_ID}\",\"status\":\"healthy\",\"currentTask\":\"standing-by\",\"lastActivity\":$(date +%s)000,\"metadata\":{\"role\":\"${AGENT_ROLE}\",\"platform\":\"zeroclaw-railway\",\"provider\":\"${PROVIDER:-anthropic}\",\"model\":\"${ZEROCLAW_MODEL:-}\"}}" \
+      -d "{\"agentId\":\"${AGENT_ID}\",\"status\":\"healthy\",\"currentTask\":\"standing-by\",\"lastActivity\":$(date +%s)000,\"metadata\":{\"role\":\"${AGENT_ROLE}\",\"platform\":\"zeroclaw-railway\",\"provider\":\"${RESOLVED_PROVIDER}\",\"model\":\"${ZEROCLAW_MODEL:-}\"}}" \
       > /dev/null 2>&1 || true
     sleep 300
   done
