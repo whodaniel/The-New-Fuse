@@ -40,7 +40,17 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 
 // Initialize Cloud Firestore and get a reference to the service
-export const db = getFirestore(app);
+// Initialize Firestore with robust registration check
+export const db = (() => {
+  try {
+    return getFirestore(app);
+  } catch (e: any) {
+    if (e?.message?.includes('not been registered')) {
+      return initializeFirestore(app, {});
+    }
+    throw e;
+  }
+})();
 
 // Google Auth Provider
 export const googleProvider = new GoogleAuthProvider();

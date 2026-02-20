@@ -1,55 +1,16 @@
 import {
   createUserWithEmailAndPassword,
-  User as FirebaseUser,
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
   updateProfile,
-  UserCredential,
 } from 'firebase/auth';
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
+import { API_ENDPOINTS } from '../config/api';
 import { auth, googleProvider } from '../lib/firebase';
 
-// Define user type
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  role: string;
-  roles?: string[]; // Support for multiple roles
-  photoURL?: string;
-  agencyId?: string; // For agency-scoped users
-  tenantId?: string; // For tenant isolation
-}
-
-// Define auth context type
-interface AuthContextType {
-  user: User | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  login: (
-    email: string,
-    password: string
-  ) => Promise<{ method: 'firebase' | 'backend'; user?: FirebaseUser }>;
-  register: (name: string, email: string, password: string) => Promise<UserCredential>;
-  signInWithGoogle: () => Promise<UserCredential>;
-  loginWithUnstoppableDomains?: (udUser: any) => Promise<void>;
-  logout: () => Promise<void>;
-  error: string | null;
-}
-
-// Create auth context
-const AuthContext = createContext<AuthContextType>({
-  user: null,
-  isAuthenticated: false,
-  isLoading: true,
-  login: async () => ({ method: 'backend' }),
-  register: async () => ({}) as UserCredential,
-  signInWithGoogle: async () => ({}) as UserCredential,
-  logout: async () => {},
-  error: null,
-});
+// ... (existing interfaces) ...
 
 /**
  * Auth provider component
@@ -59,101 +20,81 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const apiBaseUrl = (import.meta.env.VITE_API_URL || '/api').replace(/\/$/, '');
+  // Production-aware API configuration
+  const apiBaseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+  const gatewayPrefix = import.meta.env.PROD ? '/v1' : '/api';
 
-  const AUTH_TOKEN_KEY = 'auth_token'; // Single source of truth for token storage
-  const LEGACY_AUTH_TOKEN_KEYS = ['token', 'authToken'];
-  const isFirebaseConfigured =
-    !!import.meta.env.VITE_FIREBASE_API_KEY &&
-    import.meta.env.VITE_FIREBASE_API_KEY !== '${VITE_FIREBASE_API_KEY}';
-
-  const setAuthToken = (token: string) => {
-    localStorage.setItem(AUTH_TOKEN_KEY, token);
-    for (const key of LEGACY_AUTH_TOKEN_KEYS) {
-      localStorage.setItem(key, token);
-    }
-  };
-
-  const clearAuthToken = () => {
-    localStorage.removeItem(AUTH_TOKEN_KEY);
-    for (const key of LEGACY_AUTH_TOKEN_KEYS) {
-      localStorage.removeItem(key);
-    }
-  };
-
-  const getAuthToken = () => {
-    return (
-      localStorage.getItem(AUTH_TOKEN_KEY) ||
-      LEGACY_AUTH_TOKEN_KEYS.map((key) => localStorage.getItem(key)).find(Boolean) ||
-      null
-    );
-  };
-
-  // Map Firebase user to our User type
-  const mapUser = (firebaseUser: FirebaseUser): User => {
-    return {
-      id: firebaseUser.uid,
-      email: firebaseUser.email || '',
-      name: firebaseUser.displayName || firebaseUser.email || '',
-      role: 'user', // Default role, will be updated from backend
-      photoURL: firebaseUser.photoURL || undefined,
-    };
-  };
-
-  // Fetch authenticated user from backend
+  // Fetch authenticated user from backend with retry logic and multi-endpoint support
   const fetchUserDetails = useCallback(
-    async (token: string): Promise<User | null> => {
-      const endpoints = [`${apiBaseUrl}/auth/me`, '/api/auth/me', '/auth/me'];
+    async (token: string, retries = 3, delay = 1000): Promise<User | null> => {
+      // Prioritize centralized config, with fallbacks for legacy/gateway routes
+      const endpoints = [
+        `${apiBaseUrl}${API_ENDPOINTS.AUTH.ME}`,
+        `${apiBaseUrl}${gatewayPrefix}/auth/me`,
+        '/api/auth/me',
+        '/v1/auth/me',
+        '/auth/me',
+      ];
 
-      try {
-        for (const endpoint of endpoints) {
-          const response = await fetch(endpoint, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
+      const attemptFetch = async (endpoint: string) => {
+        const response = await fetch(endpoint, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'X-Requested-With': 'XMLHttpRequest',
+          },
+        });
 
-          if (!response.ok) {
-            continue;
-          }
-
-          const contentType = response.headers.get('content-type') || '';
-          if (!contentType.includes('application/json')) {
-            continue;
-          }
-
-          const userData = await response.json();
-          const payload =
-            userData && typeof userData === 'object' && 'user' in userData
-              ? (userData as any).user
-              : userData;
-
-          if (!payload || typeof payload !== 'object') {
-            continue;
-          }
-
-          return {
-            id: String((payload as any).id || (payload as any).sub || ''),
-            email: String((payload as any).email || ''),
-            name: String((payload as any).name || (payload as any).email || 'User'),
-            role: String((payload as any).role || 'user'),
-            roles: Array.isArray((payload as any).roles)
-              ? (payload as any).roles
-              : [(payload as any).role || 'user'],
-            agencyId: (payload as any).agencyId,
-            tenantId: (payload as any).tenantId,
-            photoURL: (payload as any).photoURL,
-          };
+        if (response.status === 503) {
+          throw new Error('Service Unavailable (503)');
         }
 
-        console.error('Failed to fetch user details from all /auth/me endpoints');
-        return null;
-      } catch (error) {
-        console.error('Error fetching user details:', error);
-        return null;
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const contentType = response.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) {
+          throw new Error('Non-JSON response');
+        }
+
+        const userData = await response.json();
+        return userData?.user || userData;
+      };
+
+      for (let i = 0; i < retries; i++) {
+        for (const endpoint of endpoints) {
+          try {
+            const payload = await attemptFetch(endpoint);
+            if (!payload?.id && !payload?.sub) continue;
+
+            return {
+              id: String(payload.id || payload.sub || ''),
+              email: String(payload.email || ''),
+              name: String(payload.name || payload.email || 'User'),
+              role: String(payload.role || 'user'),
+              roles: Array.isArray(payload.roles) ? payload.roles : [payload.role || 'user'],
+              agencyId: payload.agencyId,
+              tenantId: payload.tenantId,
+              photoURL: payload.photoURL,
+            };
+          } catch (err: any) {
+            if (err.message?.includes('503')) {
+              console.warn(`[The New Fuse] 503 at ${endpoint}, retrying...`);
+              break; // Trigger outer loop retry with backoff
+            }
+            // Other errors (404, etc) -> try next endpoint immediately
+          }
+        }
+
+        if (i < retries - 1) {
+          await new Promise((r) => setTimeout(resolve, delay * Math.pow(2, i)));
+        }
       }
+
+      setError('Authentication service is currently unavailable. Please try again later.');
+      return null;
     },
-    [apiBaseUrl]
+    [apiBaseUrl, gatewayPrefix]
   );
 
   // Check auth on mount

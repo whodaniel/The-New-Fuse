@@ -46,32 +46,49 @@ try {
 // Initialize Auth
 export const auth = getAuth(app);
 
-// Initialize Firestore with proper error handling
+// Initialize Firestore with proper error handling and lazy registration protection
 let db: Firestore;
 
-try {
-  // Ensure app is initialized before accessing Firestore
-  const currentApp = getApp();
-
+const initializeDB = (currentApp: FirebaseApp): Firestore => {
   try {
-    // Try to get existing instance
-    db = getFirestore(currentApp);
-  } catch (e) {
-    // If getting existing failed, try initializing
+    // Try to get existing instance first
+    return getFirestore(currentApp);
+  } catch (e: any) {
+    const errorMsg = e?.message || String(e);
+    
+    // Check if specifically not registered yet
+    if (errorMsg.includes('not been registered')) {
+      console.warn('[The New Fuse] Firestore component not yet registered, initializing...');
+      return initializeFirestore(currentApp, {
+        cacheSizeBytes: CACHE_SIZE_UNLIMITED
+      });
+    }
+    
     try {
-      db = initializeFirestore(currentApp, {
+      // If getting existing failed, try initializing
+      return initializeFirestore(currentApp, {
         cacheSizeBytes: CACHE_SIZE_UNLIMITED
       });
     } catch (initError) {
       // If initialization failed (e.g. already exists but getFirestore failed?), fallback
       console.warn('[The New Fuse] Firestore init fallback:', initError);
-      db = getFirestore(currentApp);
+      return getFirestore(currentApp);
     }
   }
+};
+
+try {
+  // Ensure app is initialized before accessing Firestore
+  const currentApp = getApp();
+  db = initializeDB(currentApp);
 } catch (error) {
   console.error('[The New Fuse] Critical Firestore initialization error - check project config:', error);
-  // Prevent crash by creating a dummy object if needed, or letting it throw later
-  // For now, allow it to be undefined and let explicit usage fail if critical
+  // As a last-ditch effort, try to initialize directly from the app variable
+  try {
+    db = getFirestore(app);
+  } catch (finalError) {
+    console.error('[The New Fuse] Final Firestore recovery failed:', finalError);
+  }
 }
 
 export { db };

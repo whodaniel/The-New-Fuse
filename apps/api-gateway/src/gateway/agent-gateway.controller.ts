@@ -4,20 +4,20 @@
  */
 
 import {
+  Body,
   Controller,
+  Delete,
   Get,
+  Headers,
+  HttpStatus,
+  Param,
   Post,
   Put,
-  Delete,
-  Param,
-  Body,
   Query,
-  Headers,
   Res,
-  HttpStatus,
   Version,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery, ApiBody } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { ProxyService } from '../proxy/proxy.service';
 
@@ -36,19 +36,19 @@ export class AgentGatewayController {
   async getAgents(
     @Query() query: Record<string, string>,
     @Headers() headers: Record<string, string>,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     try {
-      // Route to agents service (port 3001) or backend service (port 3004)
+      // Route to agents service (port 3001) - Needs /api prefix as defined in its main.ts
       const response = await this.proxyService.proxyRequest(
         'agents',
-        '/agents',
+        '/api/agents',
         'GET',
         headers,
         undefined,
         query
       );
-      
+
       return res.status(response.status).json(response.data);
     } catch {
       // Fallback to backend service if agents service is unavailable
@@ -56,14 +56,15 @@ export class AgentGatewayController {
         const response = await this.proxyService.proxyRequest(
           'backend',
           '/api/agents',
-          'GET', 
+          'GET',
           headers,
           undefined,
           query
         );
         return res.status(response.status).json(response.data);
       } catch (fallbackError) {
-        const fallbackErrorMessage = fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
+        const fallbackErrorMessage =
+          fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
         return res.status(HttpStatus.BAD_GATEWAY).json({
           message: 'Agent services unavailable',
           error: fallbackErrorMessage,
@@ -80,17 +81,17 @@ export class AgentGatewayController {
   async createAgent(
     @Body() body: any,
     @Headers() headers: Record<string, string>,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     try {
       const response = await this.proxyService.proxyRequest(
         'agents',
-        '/agents',
+        '/api/agents',
         'POST',
         headers,
         body
       );
-      
+
       return res.status(response.status).json(response.data);
     } catch {
       // Fallback to backend service
@@ -104,7 +105,8 @@ export class AgentGatewayController {
         );
         return res.status(response.status).json(response.data);
       } catch (fallbackError) {
-        const fallbackErrorMessage = fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
+        const fallbackErrorMessage =
+          fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
         return res.status(HttpStatus.BAD_GATEWAY).json({
           message: 'Agent services unavailable',
           error: fallbackErrorMessage,
@@ -117,18 +119,15 @@ export class AgentGatewayController {
   @Version('1')
   @ApiOperation({ summary: 'Get active agents' })
   @ApiResponse({ status: 200, description: 'Active agents retrieved successfully' })
-  async getActiveAgents(
-    @Headers() headers: Record<string, string>,
-    @Res() res: Response,
-  ) {
+  async getActiveAgents(@Headers() headers: Record<string, string>, @Res() res: Response) {
     try {
       const response = await this.proxyService.proxyRequest(
         'agents',
-        '/agents/active',
+        '/api/agents/active',
         'GET',
         headers
       );
-      
+
       return res.status(response.status).json(response.data);
     } catch {
       try {
@@ -140,7 +139,8 @@ export class AgentGatewayController {
         );
         return res.status(response.status).json(response.data);
       } catch (fallbackError) {
-        const fallbackErrorMessage = fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
+        const fallbackErrorMessage =
+          fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
         return res.status(HttpStatus.BAD_GATEWAY).json({
           message: 'Agent services unavailable',
           error: fallbackErrorMessage,
@@ -158,16 +158,16 @@ export class AgentGatewayController {
   async getAgentById(
     @Param('id') id: string,
     @Headers() headers: Record<string, string>,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     try {
       const response = await this.proxyService.proxyRequest(
         'agents',
-        `/agents/${id}`,
+        `/api/agents/${id}`,
         'GET',
         headers
       );
-      
+
       return res.status(response.status).json(response.data);
     } catch {
       try {
@@ -179,7 +179,8 @@ export class AgentGatewayController {
         );
         return res.status(response.status).json(response.data);
       } catch (fallbackError) {
-        const fallbackErrorMessage = fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
+        const fallbackErrorMessage =
+          fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
         return res.status(HttpStatus.BAD_GATEWAY).json({
           message: 'Agent services unavailable',
           error: fallbackErrorMessage,
@@ -199,17 +200,17 @@ export class AgentGatewayController {
     @Param('id') id: string,
     @Body() body: any,
     @Headers() headers: Record<string, string>,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     try {
       const response = await this.proxyService.proxyRequest(
         'agents',
-        `/agents/${id}`,
+        `/api/agents/${id}`,
         'PUT',
         headers,
         body
       );
-      
+
       return res.status(response.status).json(response.data);
     } catch {
       try {
@@ -222,7 +223,8 @@ export class AgentGatewayController {
         );
         return res.status(response.status).json(response.data);
       } catch (fallbackError) {
-        const fallbackErrorMessage = fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
+        const fallbackErrorMessage =
+          fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
         return res.status(HttpStatus.BAD_GATEWAY).json({
           message: 'Agent services unavailable',
           error: fallbackErrorMessage,
@@ -241,17 +243,17 @@ export class AgentGatewayController {
     @Param('id') id: string,
     @Body() body: any,
     @Headers() headers: Record<string, string>,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     try {
       const response = await this.proxyService.proxyRequest(
         'agents',
-        `/agents/${id}/status`,
+        `/api/agents/${id}/status`,
         'PUT',
         headers,
         body
       );
-      
+
       return res.status(response.status).json(response.data);
     } catch {
       try {
@@ -264,7 +266,8 @@ export class AgentGatewayController {
         );
         return res.status(response.status).json(response.data);
       } catch (fallbackError) {
-        const fallbackErrorMessage = fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
+        const fallbackErrorMessage =
+          fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
         return res.status(HttpStatus.BAD_GATEWAY).json({
           message: 'Agent services unavailable',
           error: fallbackErrorMessage,
@@ -282,16 +285,16 @@ export class AgentGatewayController {
   async deleteAgent(
     @Param('id') id: string,
     @Headers() headers: Record<string, string>,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     try {
       const response = await this.proxyService.proxyRequest(
         'agents',
-        `/agents/${id}`,
+        `/api/agents/${id}`,
         'DELETE',
         headers
       );
-      
+
       return res.status(response.status).json(response.data);
     } catch {
       try {
@@ -303,7 +306,8 @@ export class AgentGatewayController {
         );
         return res.status(response.status).json(response.data);
       } catch (fallbackError) {
-        const fallbackErrorMessage = fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
+        const fallbackErrorMessage =
+          fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
         return res.status(HttpStatus.BAD_GATEWAY).json({
           message: 'Agent services unavailable',
           error: fallbackErrorMessage,
