@@ -29,12 +29,24 @@ failed=0
 
 for target in "${targets[@]}"; do
   encoded_target="$(printf '%s' "${target}" | sed 's/ /%20/g')"
-  url="${BASE_URL%/}/api/agent-proxy/adaptive/config/${encoded_target}"
+  urls=(
+    "${BASE_URL%/}/api/agent-proxy/adaptive/config/${encoded_target}"
+    "${BASE_URL%/}/api/api/agent-proxy/adaptive/config/${encoded_target}"
+  )
 
   echo "== ${target} =="
-  response="$(curl -fsS --max-time 12 "${url}" 2>/dev/null || true)"
+  response=""
+  used_url=""
+  for url in "${urls[@]}"; do
+    candidate="$(curl -fsS --max-time 12 "${url}" 2>/dev/null || true)"
+    if [ -n "${candidate}" ]; then
+      response="${candidate}"
+      used_url="${url}"
+      break
+    fi
+  done
   if [ -z "${response}" ]; then
-    echo "FAIL: no response"
+    echo "FAIL: no response (${urls[0]} | ${urls[1]})"
     failed=$((failed + 1))
     echo
     continue
@@ -54,6 +66,7 @@ for target in "${targets[@]}"; do
   fi
 
   echo "OK: primary=${primary_provider}/${primary_model} fallback=${fallback_provider}/${fallback_model}"
+  echo "Resolved via: ${used_url}"
   echo
 done
 
