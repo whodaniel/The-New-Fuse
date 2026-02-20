@@ -162,6 +162,23 @@ export class AgentApiGrantsService {
     );
   }
 
+  async getAdaptiveConfig(target: string): Promise<{
+    target: string;
+    primary: RoutingSelection;
+    fallback: RoutingSelection;
+  }> {
+    const decodedTarget = decodeURIComponent((target || '').trim());
+    if (!decodedTarget) {
+      throw new ForbiddenException('Target is required for adaptive routing');
+    }
+    const resolved = await this.resolveAdaptiveRouting(decodedTarget);
+    return {
+      target: decodedTarget,
+      primary: resolved.primary,
+      fallback: resolved.fallback,
+    };
+  }
+
   private async executeProxyForGrant(grant: any, body: any, started: number) {
     const provider = grant.provider;
 

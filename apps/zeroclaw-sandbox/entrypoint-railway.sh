@@ -20,6 +20,52 @@ RAW_PROVIDER_LC="$(printf '%s' "${RAW_PROVIDER}" | tr '[:upper:]' '[:lower:]')"
 RESOLVED_PROVIDER="${RAW_PROVIDER}"
 ZEROCLAW_MODEL="${ZEROCLAW_MODEL:-${DEFAULT_MODEL:-}}"
 
+# Optional centralized LLM routing (adaptive middleware control plane)
+ROUTING_API_BASE="${TNF_LLM_ROUTING_API_BASE:-}"
+ROUTING_TOKEN="${TNF_LLM_ROUTING_TOKEN:-}"
+ROUTING_TARGET="${TNF_LLM_TARGET:-${TNF_AGENT_ROLE:-zeroclaw-sandbox}}"
+
+if [ -n "${ROUTING_API_BASE}" ]; then
+  ENCODED_TARGET="$(printf '%s' "${ROUTING_TARGET}" | sed 's/ /%20/g')"
+  ROUTING_URL_PUBLIC="${ROUTING_API_BASE%/}/api/agent-proxy/adaptive/config/${ENCODED_TARGET}"
+  ROUTING_URL_ADMIN="${ROUTING_API_BASE%/}/admin/config/llm-routing/effective/${ENCODED_TARGET}"
+  ROUTING_JSON="$(curl -fsS "${ROUTING_URL_PUBLIC}" 2>/dev/null || true)"
+  if [ -z "${ROUTING_JSON}" ]; then
+    if [ -n "${ROUTING_TOKEN}" ]; then
+      ROUTING_JSON="$(curl -fsS -H "Authorization: Bearer ${ROUTING_TOKEN}" "${ROUTING_URL_ADMIN}" 2>/dev/null || true)"
+    else
+      ROUTING_JSON="$(curl -fsS "${ROUTING_URL_ADMIN}" 2>/dev/null || true)"
+    fi
+  fi
+
+  if [ -n "${ROUTING_JSON}" ]; then
+    SELECTED_LINE="$(printf '%s' "${ROUTING_JSON}" | python3 -c "import sys, json
+try:
+    d = json.load(sys.stdin)
+except Exception:
+    print('\\t')
+    raise SystemExit(0)
+p = (d.get('primary') or {})
+f = (d.get('fallback') or {})
+provider = (p.get('provider') or '').strip()
+model = (p.get('model') or '').strip()
+if not provider or not model:
+    provider = (f.get('provider') or '').strip()
+    model = (f.get('model') or '').strip()
+print(f'{provider}\\t{model}')")"
+    ROUTE_PROVIDER="$(printf '%s' "${SELECTED_LINE}" | cut -f1)"
+    ROUTE_MODEL="$(printf '%s' "${SELECTED_LINE}" | cut -f2)"
+    if [ -n "${ROUTE_PROVIDER}" ] && [ -n "${ROUTE_MODEL}" ]; then
+      RAW_PROVIDER="${ROUTE_PROVIDER}"
+      RAW_PROVIDER_LC="$(printf '%s' "${RAW_PROVIDER}" | tr '[:upper:]' '[:lower:]')"
+      ZEROCLAW_MODEL="${ROUTE_MODEL}"
+      echo "Applied centralized routing target '${ROUTING_TARGET}' => ${RAW_PROVIDER}/${ZEROCLAW_MODEL}"
+    else
+      echo "Centralized routing returned no usable primary/fallback for target '${ROUTING_TARGET}'"
+    fi
+  fi
+fi
+
 case "${RAW_PROVIDER_LC}" in
   kilocode|kilo)
     RESOLVED_PROVIDER="custom:https://api.kilo.ai/api/gateway"
@@ -210,7 +256,7 @@ echo "Starting TNF heartbeat for agent ${AGENT_ID}"
   while true; do
     curl -s -X POST "${TNF_WORKER_URL}/agent/heartbeat" \
       -H "Content-Type: application/json" \
-      -d "{\"agentId\":\"${AGENT_ID}\",\"status\":\"healthy\",\"currentTask\":\"standing-by\",\"lastActivity\":$(date +%s)000,\"metadata\":{\"role\":\"${AGENT_ROLE}\",\"platform\":\"zeroclaw-railway\",\"provider\":\"${RESOLVED_PROVIDER}\",\"model\":\"${ZEROCLAW_MODEL:-}\"}}" \
+      -d "{\"agentId\":\"${AGENT_ID}\",\"status\":\"healthy\",\"currentTask\":\"standing-by\",\"lastActivity\":$(date +%s)000,\"metadata\":{\"role\":\"${AGENT_ROLE}\",\"platform\":\"zeroclaw-railway\",\"routingTarget\":\"${ROUTING_TARGET}\",\"provider\":\"${RESOLVED_PROVIDER}\",\"model\":\"${ZEROCLAW_MODEL:-}\"}}" \
       > /dev/null 2>&1 || true
     sleep 300
   done

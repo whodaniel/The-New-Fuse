@@ -1,4 +1,4 @@
-import { Body, Controller, Headers, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Headers, Param, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AgentApiGrantsService } from '../services/agent-api-grants.service';
 
@@ -42,5 +42,15 @@ export class AgentProxyController {
     @Body() body: any
   ) {
     return this.grantsService.adaptiveProxy(target, authorization, body);
+  }
+
+  @Get('adaptive/config/:target')
+  @ApiOperation({
+    summary:
+      'Read-only effective adaptive routing config for a target (no token required): returns primary/fallback provider+model',
+  })
+  @ApiResponse({ status: 200, description: 'Resolved adaptive routing config' })
+  async adaptiveConfig(@Param('target') target: string) {
+    return this.grantsService.getAdaptiveConfig(target);
   }
 }

@@ -3,20 +3,25 @@
 # ============================================================
 FROM golang:1.26.0-alpine AS builder
 
-# APP_PATH defaults to repo-root-relative path (railway up / git deploys).
-# Override with APP_PATH=. if build context is apps/picoclaw-overseer directly.
-ARG APP_PATH=apps/picoclaw-overseer
-
 RUN apk add --no-cache git make
 
 WORKDIR /src
 
-# Cache dependencies
-COPY ${APP_PATH}/go.mod ${APP_PATH}/go.sum ./
-RUN go mod download
+# Copy context and normalize source location.
+# Supports both:
+# 1) repo root context (expects apps/picoclaw-overseer/*)
+# 2) app root context (expects ./go.mod)
+COPY . /tmp/context
+RUN if [ -f /tmp/context/go.mod ]; then \
+      cp -R /tmp/context/. /src/; \
+    elif [ -f /tmp/context/apps/picoclaw-overseer/go.mod ]; then \
+      cp -R /tmp/context/apps/picoclaw-overseer/. /src/; \
+    else \
+      echo "picoclaw source not found in build context" >&2; \
+      exit 1; \
+    fi
 
-# Copy source and build
-COPY ${APP_PATH}/ .
+RUN go mod download
 RUN make build
 
 # ============================================================
@@ -24,15 +29,13 @@ RUN make build
 # ============================================================
 FROM alpine:3.23
 
-ARG APP_PATH=apps/picoclaw-overseer
-
-RUN apk add --no-cache ca-certificates tzdata curl busybox-extras
+RUN apk add --no-cache ca-certificates tzdata curl busybox-extras jq
 
 # Copy binary
 COPY --from=builder /src/build/picoclaw /usr/local/bin/picoclaw
 
 # Copy railway entrypoint
-COPY ${APP_PATH}/entrypoint-railway.sh /usr/local/bin/entrypoint-railway.sh
+COPY --from=builder /src/entrypoint-railway.sh /usr/local/bin/entrypoint-railway.sh
 RUN chmod +x /usr/local/bin/entrypoint-railway.sh
 
 # Create picoclaw home directory
