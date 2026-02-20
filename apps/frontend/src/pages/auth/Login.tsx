@@ -161,6 +161,7 @@ const Login: React.FC = () => {
                 id="code"
                 type="text"
                 required
+                autoComplete="one-time-code"
                 value={twoFactorCode}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setTwoFactorCode(e.target.value)
@@ -176,6 +177,7 @@ const Login: React.FC = () => {
                   id="email"
                   type="email"
                   required
+                  autoComplete="username"
                   value={email}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                   placeholder="john@example.com"
@@ -197,6 +199,7 @@ const Login: React.FC = () => {
                     id="password"
                     type="password"
                     required
+                    autoComplete="current-password"
                     value={password}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       setPassword(e.target.value)

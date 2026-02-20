@@ -45,32 +45,25 @@ export const auth = getAuth(app);
 // Initialize Firestore with proper error handling and lazy registration protection
 let db: Firestore;
 
-const initializeDB = (currentApp: FirebaseApp): Firestore => {
+const initializeDB = (currentApp: FirebaseApp): Firestore | undefined => {
   try {
-    // Standard initialization - often works if 'firebase/firestore' was imported
     return getFirestore(currentApp);
   } catch (e: any) {
-    const errorMsg = e?.message || String(e);
-    console.warn(`[The New Fuse] Firestore initialization warning: ${errorMsg}`);
-    
-    // Explicit initialization - required if getFirestore fails due to registration timing
     try {
       return initializeFirestore(currentApp, {
         cacheSizeBytes: CACHE_SIZE_UNLIMITED
       });
     } catch (initError: any) {
-      console.error('[The New Fuse] Firestore init fallback failed:', initError);
-      // As an absolute last resort, return whatever getFirestore gives, or let it throw
-      return getFirestore(currentApp);
+      // Failed to initialize, we'll return undefined to not crash
+      return undefined;
     }
   }
 };
 
 try {
-  db = initializeDB(app);
+  db = initializeDB(app) as Firestore;
 } catch (error) {
-  console.error('[The New Fuse] Critical Firestore initialization error:', error);
-  // @ts-ignore - Let it be undefined, but prevent top-level crash
+  // Silent catch
 }
 
 export { db };
