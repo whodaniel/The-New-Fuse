@@ -78,10 +78,18 @@ const CONFIG = {
   SUPER_CYCLE_STALE_THRESHOLD: parseInt(process.env.SUPER_CYCLE_STALE_THRESHOLD || '') || 90000, // 90 seconds
   SELF_PROMPT_ENABLED: (process.env.SELF_PROMPT_ENABLED || 'true') === 'true',
   SELF_PROMPT_COOLDOWN_MS: parseInt(process.env.SELF_PROMPT_COOLDOWN_MS || '') || 30000, // 30 seconds
+  TASK_POLL_INTERVAL_MS: parseInt(process.env.TASK_POLL_INTERVAL_MS || '') || 15000, // 15 seconds
+  TASK_QUEUE_COOLDOWN_MS: parseInt(process.env.TASK_QUEUE_COOLDOWN_MS || '') || 120000, // 2 minutes
+  TASK_QUEUE_BATCH_SIZE: parseInt(process.env.TASK_QUEUE_BATCH_SIZE || '') || 5,
 
   // Connections
   RELAY_URL: process.env.RELAY_URL || 'ws://localhost:3000/ws',
   REDIS_URL: process.env.REDIS_URL,
+  LEDGER_API_BASE:
+    process.env.LEDGER_API_BASE ||
+    process.env.API_BASE_URL ||
+    process.env.TNF_API_BASE ||
+    'http://localhost:3001',
 
   // Channels to monitor
   CHANNELS: ['Green', 'Blue', 'Red', 'Yellow', 'Purple', 'General'],
@@ -307,6 +315,8 @@ interface Metrics {
   recoveryAttempts: number;
   messagesProcessed: number;
   agentsOnboarded: number;
+  taskPolls: number;
+  tasksQueued: number;
 }
 
 interface ChannelData {
@@ -344,6 +354,8 @@ class MasterClock {
   recoveryAttempts: Map<string, number>;
   metrics: Metrics;
   reconnectTimer: NodeJS.Timeout | null = null;
+  taskPollingInterval: NodeJS.Timeout | null = null;
+  recentQueuedTasks: Map<string, number>;
   selfPromptCooldowns: Map<string, number>;
 
   constructor() {
@@ -364,7 +376,10 @@ class MasterClock {
       recoveryAttempts: 0,
       messagesProcessed: 0,
       agentsOnboarded: 0,
+      taskPolls: 0,
+      tasksQueued: 0,
     };
+    this.recentQueuedTasks = new Map();
     this.selfPromptCooldowns = new Map();
   }
 
@@ -395,6 +410,7 @@ class MasterClock {
 
       // Start stall detection
       this.startStallDetection();
+      this.startTaskPolling();
 
       this.isRunning = true;
       log('info', 'MASTER', '✅ MASTER CLOCK IS NOW THE BATON HOLDER');
@@ -619,6 +635,159 @@ class MasterClock {
     this.stallCheckInterval = setInterval(() => {
       this.checkForStalls();
     }, checkInterval);
+  }
+
+  startTaskPolling() {
+    if (!this.redis || this.taskPollingInterval) return;
+
+    log(
+      'info',
+      'TASK-POLL',
+      `Starting vote-aware task polling (every ${CONFIG.TASK_POLL_INTERVAL_MS}ms)`
+    );
+
+    const run = () => {
+      void this.pollAndQueueTasks().catch((error: any) => {
+        log('warn', 'TASK-POLL', `Task polling failed: ${error.message || String(error)}`);
+      });
+    };
+
+    this.taskPollingInterval = setInterval(run, CONFIG.TASK_POLL_INTERVAL_MS);
+    run();
+  }
+
+  private taskPriorityWeight(priority: string): number {
+    const normalized = String(priority || 'medium').toLowerCase();
+    if (normalized === 'urgent') return 500;
+    if (normalized === 'critical') return 400;
+    if (normalized === 'high') return 300;
+    if (normalized === 'low') return 100;
+    return 200;
+  }
+
+  private taskDispatchScore(task: any): number {
+    const up = Number(task?.votes?.up || 0);
+    const down = Number(task?.votes?.down || 0);
+    const netVotes = up - down;
+    const priority = this.taskPriorityWeight(task?.priority || 'medium');
+    const createdAt = Date.parse(String(task?.createdAt || task?.updatedAt || Date.now()));
+    const ageMinutes = Math.max(0, Math.floor((Date.now() - createdAt) / 60000));
+    const freshnessBonus = Math.max(0, 120 - ageMinutes); // fades over ~2 hours
+    return priority + netVotes * 25 + up * 5 + freshnessBonus;
+  }
+
+  private async pollAndQueueTasks(): Promise<void> {
+    if (!this.redis) return;
+
+    const url = `${CONFIG.LEDGER_API_BASE.replace(/\/$/, '')}/unified-ledger/records?kind=task`;
+    const response = await fetch(url, { method: 'GET' });
+    if (!response.ok) {
+      throw new Error(`Ledger poll failed with HTTP ${response.status}`);
+    }
+    const rows = (await response.json()) as any[];
+    const actionable = (Array.isArray(rows) ? rows : []).filter((task) => {
+      const status = String(task?.status || '').toLowerCase();
+      return ['submitted', 'queued', 'under_review', 'in_progress'].includes(status);
+    });
+
+    const ranked = actionable
+      .map((task) => ({ task, score: this.taskDispatchScore(task) }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, CONFIG.TASK_QUEUE_BATCH_SIZE);
+
+    this.metrics.taskPolls += 1;
+    await this.emitActivityEvent('task_poll_ranked', `Ranked ${ranked.length} tasks for dispatch`, {
+      pollCount: this.metrics.taskPolls,
+      candidateCount: actionable.length,
+      top: ranked.map((r) => ({
+        id: r.task?.id,
+        title: r.task?.title,
+        score: r.score,
+        votes: r.task?.votes || { up: 0, down: 0 },
+        priority: r.task?.priority || 'medium',
+      })),
+    });
+
+    const now = Date.now();
+    for (const rankedTask of ranked) {
+      const task = rankedTask.task || {};
+      const taskId = String(task.id || '');
+      if (!taskId) continue;
+
+      const lastQueuedAt = this.recentQueuedTasks.get(taskId) || 0;
+      if (now - lastQueuedAt < CONFIG.TASK_QUEUE_COOLDOWN_MS) {
+        continue;
+      }
+
+      const queueItem = {
+        id: taskId,
+        title: String(task.title || `Task ${taskId}`),
+        description: String(task.description || ''),
+        priority: String(task.priority || 'medium'),
+        status: String(task.status || 'queued'),
+        votes: task.votes || { up: 0, down: 0 },
+        score: rankedTask.score,
+        source: 'unified-ledger-poll',
+        createdAt: task.createdAt || new Date().toISOString(),
+      };
+
+      await this.redis.lPush(CONFIG.REDIS_KEYS.TASKS, JSON.stringify(queueItem));
+      this.recentQueuedTasks.set(taskId, now);
+      this.metrics.tasksQueued += 1;
+
+      await this.emitActivityEvent(
+        'task_queued_from_votes',
+        `Queued task ${taskId} (${queueItem.title}) with score ${rankedTask.score}`,
+        {
+          taskId,
+          score: rankedTask.score,
+          votes: queueItem.votes,
+          priority: queueItem.priority,
+          tasksQueued: this.metrics.tasksQueued,
+        }
+      );
+    }
+  }
+
+  private async emitActivityEvent(
+    eventType: string,
+    content: string,
+    metadata: Record<string, unknown>
+  ): Promise<void> {
+    this.send({
+      type: 'MESSAGE_SEND',
+      channel: 'fuse-activity-log',
+      payload: {
+        to: 'broadcast',
+        content,
+        messageType: 'event',
+        metadata: {
+          isSystemMessage: true,
+          source: 'ORCHESTRATOR',
+          eventType,
+          activityChannel: 'General',
+          sessionId: this.sessionId,
+          ...metadata,
+        },
+      },
+    });
+
+    if (!this.redis) return;
+    try {
+      await this.redis.lPush(
+        CONFIG.REDIS_KEYS.LOGS,
+        JSON.stringify({
+          timestamp: new Date().toISOString(),
+          sessionId: this.sessionId,
+          eventType,
+          content,
+          metadata,
+        })
+      );
+      await this.redis.lTrim(CONFIG.REDIS_KEYS.LOGS, 0, 999);
+    } catch {
+      // non-fatal
+    }
   }
 
   checkForStalls() {
@@ -1281,6 +1450,9 @@ Acknowledge by sending: [${agentId}] Ready for duty!
 
     if (this.stallCheckInterval) {
       clearInterval(this.stallCheckInterval);
+    }
+    if (this.taskPollingInterval) {
+      clearInterval(this.taskPollingInterval);
     }
 
     // Broadcast shutdown
