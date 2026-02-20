@@ -21,6 +21,8 @@
         (this.pageAgents = new Map()),
         (this.channels = new Map()),
         (this.joinedChannels = new Set()),
+        (this.tabChannelBindings = new Map()),
+        (this.pageAgentChannelBindings = new Map()),
         (this.messageQueue = []),
         (this.autoConnect = !0),
         (this.connectionAttempts = 0),
@@ -370,6 +372,17 @@
           t.to === this.agentId && 'command' === t.type && this.executeCommand(t));
       }
     }
+    resolveChannelFromContext(t) {
+      const s = t.channel || t.channelId || t.metadata?.channel || null;
+      if (s) return s;
+      const n = t.senderTabId ?? t.metadata?.senderTabId ?? null;
+      if (null !== n && this.tabChannelBindings.has(n))
+        return this.tabChannelBindings.get(n) || null;
+      const a = t.senderId || t.metadata?.senderId || null;
+      return a && this.pageAgentChannelBindings.has(a)
+        ? this.pageAgentChannelBindings.get(a) || null
+        : null;
+    }
     async executeCommand(e) {
       const t = e.content;
       if (t.startsWith('/inject ')) {
@@ -521,6 +534,12 @@
                 n({ success: !1, error: 'No active channel selected' }),
                 !0
               );
+            {
+              const e = s.tab?.id ?? t.metadata?.senderTabId ?? null,
+                a = t.senderId || t.metadata?.senderId || null;
+              (null !== e && this.tabChannelBindings.set(e, t.channel),
+                a && this.pageAgentChannelBindings.set(a, t.channel));
+            }
             (this.send({
               type: 'MESSAGE_SEND',
               messageId: t.messageId || crypto.randomUUID(),
@@ -556,12 +575,16 @@
             break;
           case 'CHANNEL_JOIN':
             (this.joinedChannels.add(t.channelId),
+              s.tab?.id && t.channelId && this.tabChannelBindings.set(s.tab.id, t.channelId),
               this.send({ type: 'CHANNEL_JOIN', channelId: t.channelId }),
               this.saveChannels(),
               n({ success: !0 }));
             break;
           case 'CHANNEL_LEAVE':
             (this.joinedChannels.delete(t.channelId),
+              s.tab?.id &&
+                this.tabChannelBindings.get(s.tab.id) === t.channelId &&
+                this.tabChannelBindings.delete(s.tab.id),
               this.send({ type: 'CHANNEL_LEAVE', channelId: t.channelId }),
               this.saveChannels(),
               n({ success: !0 }));
@@ -617,6 +640,9 @@
                 },
               };
             (this.pageAgents.set(e, a),
+              null !== a.tabId &&
+                this.tabChannelBindings.has(a.tabId) &&
+                this.pageAgentChannelBindings.set(e, this.tabChannelBindings.get(a.tabId)),
               this.broadcastToTabs({
                 type: 'AGENTS_UPDATE',
                 agents: Array.from(this.agents.values()).concat(
@@ -706,11 +732,18 @@
           case 'RESPONSE_COMPLETE': {
             const a = t.senderId || t.metadata?.senderId || null,
               o = s.tab?.id || t.metadata?.senderTabId || null,
-              i = {
+              r = this.resolveChannelFromContext({
                 ...t,
                 senderId: a,
                 senderTabId: o,
                 metadata: { ...(t.metadata || {}), senderId: a, senderTabId: o },
+              }),
+              i = {
+                ...t,
+                channel: r,
+                senderId: a,
+                senderTabId: o,
+                metadata: { ...(t.metadata || {}), senderId: a, senderTabId: o, channel: r },
               };
             if (
               (this.broadcastToTabs(i),
@@ -718,13 +751,13 @@
             ) {
               const s = t.messageId
                   ? `msg:${t.messageId}`
-                  : e(`ai:${t.channel || ''}:${t.content.substring(0, 500)}:${a || ''}`),
+                  : e(`ai:${r || ''}:${t.content.substring(0, 500)}:${a || ''}`),
                 n = Date.now();
               this.recentMessageHashes.has(s)
                 ? console.log('[FuseConnect v6] Skipping duplicate AI response broadcast')
                 : (this.recentMessageHashes.set(s, n),
                   (() => {
-                    const e = t.channel || t.metadata?.channel || null;
+                    const e = r;
                     e &&
                       (this.send({
                         type: 'MESSAGE_SEND',
