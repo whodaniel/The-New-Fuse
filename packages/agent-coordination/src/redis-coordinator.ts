@@ -10,6 +10,8 @@ import { SharedStateManager } from './coordination/shared-state-manager';
 import { PresenceTracker } from './presence/presence-tracker';
 import { TaskQueueManager } from './queues/task-queue-manager';
 import { MessageSerializer } from './serializers/message-serializer';
+import { PersistentMetricsCollector, SystemMetrics } from './monitoring/PersistentMetricsCollector';
+import { RecoveryManager } from './coordination/RecoveryManager';
 import {
   AgentTask,
   CoordinationChannel,
@@ -34,6 +36,7 @@ import {
  * - Agent presence tracking with heartbeat system
  * - Shared state management with optimistic locking
  * - Broadcast messaging for multi-agent coordination
+ * - Persistent metrics and failure recovery
  */
 @Injectable()
 export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
@@ -44,8 +47,11 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
   private taskQueueManager!: TaskQueueManager;
   private readonly broadcastManager: BroadcastManager;
   private readonly sharedStateManager: SharedStateManager;
+  private metricsCollector!: PersistentMetricsCollector;
+  private recoveryManager!: RecoveryManager;
   private readonly eventListeners: Map<string, Set<EventListener>> = new Map();
 
+  // Legacy in-memory metrics for backward compatibility
   private metrics: CoordinationMetrics = {
     messagesPublished: 0,
     messagesReceived: 0,
@@ -92,14 +98,33 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
       db: parseInt(process.env.REDIS_DB || '0'),
     });
 
+    // Initialize metrics collector
+    this.metricsCollector = new PersistentMetricsCollector(
+      this.redisConnection,
+      this.keyPrefix + 'metrics:'
+    );
+
+    // Initialize task queue manager
     const taskQueueManager = new TaskQueueManager(
       this.redisConnection,
       this.serializer,
-      this.config.queueConfig
+      this.config.queueConfig,
+      this.metricsCollector
     );
     (this as any).taskQueueManager = taskQueueManager;
 
+    // Initialize recovery manager
+    this.recoveryManager = new RecoveryManager(
+      this.redisConnection,
+      this.presenceTracker,
+      this.sharedStateManager,
+      this.taskQueueManager,
+      this.serializer,
+      this.keyPrefix
+    );
+
     this.presenceTracker.startMonitoring();
+    this.recoveryManager.startMonitoring();
     await this.setupEventChannels();
 
     this.logger.log('Redis Coordinator initialized successfully');
@@ -109,6 +134,7 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
     this.logger.log('Shutting down Redis Coordinator...');
 
     this.presenceTracker.stopMonitoring();
+    this.recoveryManager.stopMonitoring();
     await this.broadcastManager.clearAll();
     await this.taskQueueManager.close();
     await this.redisConnection.quit();
@@ -145,6 +171,9 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
       data: {},
       timestamp: Date.now(),
     });
+
+    // Trigger immediate recovery for this agent
+    await this.recoveryManager.recoverAgent(agentId);
   }
 
   /**
@@ -245,6 +274,10 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
     const createdTask = await this.taskQueueManager.addTask(queueName, task);
 
     this.metrics.tasksCreated++;
+    // Record to persistent metrics
+    if (this.metricsCollector) {
+      await this.metricsCollector.recordTaskCreated(createdTask);
+    }
 
     await this.publishEvent({
       type: 'task:created',
@@ -356,10 +389,31 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
   }
 
   /**
-   * Get coordination metrics
+   * Get coordination metrics (legacy)
    */
   getMetrics(): CoordinationMetrics {
     return { ...this.metrics };
+  }
+
+  /**
+   * Get detailed persistent metrics
+   */
+  async getDetailedMetrics(): Promise<SystemMetrics> {
+    if (this.metricsCollector) {
+      const metrics = await this.metricsCollector.getSystemMetrics();
+      // Supplement with active agents from PresenceTracker
+      const activeAgents = await this.getActiveAgents();
+      metrics.activeAgents = activeAgents.length;
+      return metrics;
+    }
+    return {
+      totalTasksCreated: 0,
+      totalTasksCompleted: 0,
+      totalTasksFailed: 0,
+      activeAgents: 0,
+      averageExecutionTime: 0,
+      tasksPerMinute: 0
+    };
   }
 
   /**
@@ -391,5 +445,12 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
         }
       }
     });
+  }
+
+  /**
+   * Access to metrics collector for internal use
+   */
+  getMetricsCollector(): PersistentMetricsCollector {
+    return this.metricsCollector;
   }
 }

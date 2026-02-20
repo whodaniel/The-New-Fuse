@@ -3,6 +3,7 @@ import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { SharedState, StateLock } from '../types/coordination.types';
 import { MessageSerializer } from '../serializers/message-serializer';
 import { v4 as uuidv4 } from 'uuid';
+import { Redis } from 'ioredis';
 
 /**
  * Shared state manager for collaborative agent tasks
@@ -270,5 +271,62 @@ export class SharedStateManager {
         this.setState(key, value, ownerId, { ttl })
       )
     );
+  }
+
+  /**
+   * Safely release locks held by specific agents
+   * Scans all locks and deletes them if they belong to any of the provided agents.
+   * Uses Lua script to ensure atomicity.
+   */
+  async releaseLocksForAgents(redis: Redis, agentIds: string[]): Promise<number> {
+    if (agentIds.length === 0) return 0;
+
+    const agentsSet = new Set(agentIds);
+    const lockPattern = `${this.keyPrefix}lock:*`;
+    let cursor = '0';
+    let releasedCount = 0;
+
+    do {
+      const [nextCursor, keys] = await redis.scan(cursor, 'MATCH', lockPattern, 'COUNT', 100);
+      cursor = nextCursor;
+
+      if (keys.length === 0) continue;
+
+      // Get values for these keys
+      const values = await redis.mget(...keys);
+
+      for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
+        const value = values[i];
+
+        if (!value) continue;
+
+        try {
+          const lock = this.serializer.deserialize<StateLock>(value);
+          if (lock && agentsSet.has(lock.agentId)) {
+            // Found a lock belonging to an offline agent.
+            // Safely delete it using Lua script to ensure it hasn't changed.
+
+            const script = `
+              if redis.call("get", KEYS[1]) == ARGV[1] then
+                return redis.call("del", KEYS[1])
+              else
+                return 0
+              end
+            `;
+
+            const result = await redis.eval(script, 1, key, value);
+            if (result === 1) {
+              releasedCount++;
+              this.logger.debug(`Released lock ${key} held by offline agent ${lock.agentId}`);
+            }
+          }
+        } catch (error) {
+          // Ignore deserialization errors
+        }
+      }
+    } while (cursor !== '0');
+
+    return releasedCount;
   }
 }

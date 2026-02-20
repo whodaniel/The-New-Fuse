@@ -3,6 +3,7 @@ import { Queue, QueueEvents, Worker } from 'bullmq';
 import { v4 as uuidv4 } from 'uuid';
 
 import { TaskStatus } from '../types/coordination.types';
+import { PersistentMetricsCollector } from '../monitoring/PersistentMetricsCollector';
 
 import type { Job } from 'bullmq';
 import type Redis from 'ioredis';
@@ -24,7 +25,8 @@ export class TaskQueueManager {
   constructor(
     redisConnection: Redis,
     serializer: MessageSerializer,
-    private readonly defaultConfig: Partial<QueueConfig> = {}
+    private readonly defaultConfig: Partial<QueueConfig> = {},
+    private readonly metricsCollector?: PersistentMetricsCollector
   ) {
     this.redisConnection = redisConnection;
     this.serializer = serializer;
@@ -83,6 +85,7 @@ export class TaskQueueManager {
       queueName,
       async (job: Job) => {
         const task = job.data as AgentTask;
+        const startTime = Date.now();
 
         try {
           this.logger.debug(`Processing task ${task.id} of type ${task.type}`);
@@ -97,11 +100,20 @@ export class TaskQueueManager {
           task.result = result;
           task.updatedAt = Date.now();
 
+          const duration = Date.now() - startTime;
+          if (this.metricsCollector) {
+            await this.metricsCollector.recordTaskCompleted(task, duration);
+          }
+
           return result;
         } catch (error) {
           task.status = TaskStatus.FAILED;
           task.error = error instanceof Error ? error.message : String(error);
           task.updatedAt = Date.now();
+
+          if (this.metricsCollector) {
+            await this.metricsCollector.recordTaskFailed(task, task.error);
+          }
 
           throw error;
         }
