@@ -11,7 +11,8 @@
         (this.watchToken = 0));
     }
     init(e) {
-      ((this.callbacks = e), console.log('[SimpleChatBridge] Initialized'));
+      ((this.callbacks = e),
+        window.__FUSE_DEBUG_SELECTORS && console.log('[SimpleChatBridge] Initialized'));
     }
     findElements() {
       const e = Array.from(
@@ -24,9 +25,23 @@
             'button[aria-label*="Send" i], button[aria-label*="send" i], button[aria-label*="Send message" i], button[aria-label="Submit"], button[data-testid*="send" i], button[data-testid="send-button"], button.send-button, button[type="submit"]'
           )
         ).find((e) => e && !e.closest('#fuse-connect-panel-v6')),
-        n = !!e;
+        n = !!e,
+        s = window.location.hostname || '',
+        a =
+          'gemini.google.com' === s ||
+          'aistudio.google.com' === s ||
+          'chatgpt.com' === s ||
+          'chat.openai.com' === s ||
+          'claude.ai' === s ||
+          'perplexity.ai' === s ||
+          s.endsWith('.perplexity.ai') ||
+          'poe.com' === s ||
+          s.includes('openclaw') ||
+          s.includes('kilosessions.ai');
       return (
-        n ||
+        window.__FUSE_DEBUG_SELECTORS &&
+          a &&
+          !n &&
           console.log('[SimpleChatBridge] Elements found:', {
             hasInput: !!e,
             hasSendButton: !!t,

@@ -17,7 +17,14 @@
     <!-- CRITICAL: Custom Element Guard MUST be first to intercept browser extension scripts -->
     <script>
       (function () {
-        console.log('[The New Fuse] Custom Element Guard (V6) - Initializing...');
+        let GUARD_DEBUG = false;
+        try {
+          GUARD_DEBUG =
+            (window && window.__TNF_DEBUG_CUSTOM_ELEMENTS__) ||
+            (window && window.localStorage && window.localStorage.getItem('TNF_DEBUG_CE') === '1');
+        } catch (_e) {
+          GUARD_DEBUG = false;
+        }
 
         // AGGRESSIVE ERROR FILTER: Catch and swallow specific collision and module resolution errors
         const swallowError = function (message) {
@@ -74,8 +81,9 @@
           const definingElements = new Set();
 
           // Store original methods
-          const originalDefine = customElements.define.bind(customElements);
-          const originalGet = customElements.get.bind(customElements);
+          const registry = customElements;
+          const originalDefine = registry.define.bind(registry);
+          const originalGet = registry.get.bind(registry);
 
           // Create a safer define function
           const safeDefine = function (name, constructor, options) {
@@ -144,16 +152,26 @@
           safeDefine.__isSafeGuarded = true;
 
           // Bind the function to customElements to maintain context
-          const boundSafeDefine = safeDefine.bind(customElements);
+          const boundSafeDefine = safeDefine.bind(registry);
           // Also mark the bound function
           boundSafeDefine.__isSafeGuarded = true;
 
-          // Override with bound function
-          Object.defineProperty(customElements, 'define', {
-            value: boundSafeDefine,
-            configurable: false,
-            writable: false,
-          });
+          // Patch prototype AND instance so polyfills or wrappers calling either path are protected.
+          const proto = window.CustomElementRegistry && window.CustomElementRegistry.prototype;
+          if (proto && proto.define && !proto.define.__isSafeGuarded) {
+            Object.defineProperty(proto, 'define', {
+              value: boundSafeDefine,
+              configurable: true,
+              writable: true,
+            });
+          }
+          if (!registry.define.__isSafeGuarded) {
+            Object.defineProperty(registry, 'define', {
+              value: boundSafeDefine,
+              configurable: true,
+              writable: true,
+            });
+          }
 
           // Lock the customElements object itself to prevent polyfills from replacing it
           try {
@@ -175,7 +193,9 @@
             // Ignore if already non-configurable
           }
 
-          console.log('[The New Fuse] Custom Element Guard activated (V5) - Registry Locked');
+          if (GUARD_DEBUG) {
+            console.log('[The New Fuse] Custom Element Guard active');
+          }
         } catch (e) {
           console.error('[The New Fuse] Custom Element Guard failed to initialize', e);
         }
@@ -202,7 +222,14 @@
 
           window.require = function (moduleName) {
             // Suppress warnings for expected browser-incompatible modules
-            const ignoredModules = ['fs', 'path', 'os', 'crypto', 'buffer'];
+            const ignoredModules = [
+              'fs',
+              'path',
+              'os',
+              'crypto',
+              'buffer',
+              '@emotion/is-prop-valid',
+            ];
             if (!ignoredModules.includes(moduleName) && !moduleName.startsWith('node:')) {
               console.warn('[The New Fuse] CommonJS require() called for:', moduleName);
             }
@@ -426,7 +453,7 @@
             return emptyModule;
           };
           window.require.main = null;
-          console.log('[The New Fuse] CommonJS require() shim installed');
+          // Intentional no-op log to avoid console noise in production.
         }
       })();
     </script>

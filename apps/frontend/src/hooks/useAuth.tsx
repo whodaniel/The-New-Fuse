@@ -368,14 +368,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setError(null);
     setIsLoading(true);
     try {
-      if (!isFirebaseConfigured) {
-        const oauthBase = apiBaseUrl || '';
-        window.location.href = `${oauthBase}/auth/google`;
+      // Redirect-first flow avoids popup COOP/window.closed warnings in modern browsers.
+      // Set VITE_GOOGLE_POPUP_MODE=true only when popup mode is explicitly required.
+      const popupModeEnabled = import.meta.env.VITE_GOOGLE_POPUP_MODE === 'true';
+      if (!popupModeEnabled || !isFirebaseConfigured) {
+        const oauthBase = (apiBaseUrl || '/api').replace(/\/$/, '');
+        window.location.assign(`${oauthBase}/auth/google`);
         return { method: 'oauth-redirect' as const };
       }
 
       const result = await signInWithPopup(auth, googleProvider);
-      // Manually update user state to prevent race conditions
       if (result.user) {
         const mappedUser = mapUser(result.user);
         const firebaseToken = await result.user.getIdToken();

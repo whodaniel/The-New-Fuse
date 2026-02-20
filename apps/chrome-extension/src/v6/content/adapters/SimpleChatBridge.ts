@@ -201,6 +201,14 @@ class SimpleChatBridge {
     // Enable debug mode via console: window.__FUSE_DEBUG_SELECTORS = true
     const DEBUG = (window as any).__FUSE_DEBUG_SELECTORS || false;
 
+    // Avoid noisy probing on non-chat pages (e.g., thenewfuse.com auth pages).
+    if (!this.isSupportedPlatform() && !DEBUG) {
+      const unsupportedResult = { input: null, sendButton: null, isReady: false };
+      this.cachedElements = unsupportedResult;
+      this.cacheValidUntil = now + 30000;
+      return unsupportedResult;
+    }
+
     // Platform-specific selectors (most reliable first)
     const inputSelectors = [
       // The New Fuse (Custom App) - High Priority
@@ -342,7 +350,12 @@ class SimpleChatBridge {
           const el = document.querySelector(selector) as HTMLElement | null;
           if (el) {
             input = el;
-            console.log('[SimpleChatBridge] Using fallback input (no visibility check):', selector);
+            if (DEBUG) {
+              console.log(
+                '[SimpleChatBridge] Using fallback input (no visibility check):',
+                selector
+              );
+            }
             break;
           }
         } catch (e) {
@@ -373,10 +386,12 @@ class SimpleChatBridge {
           const el = document.querySelector(selector) as HTMLElement | null;
           if (el) {
             sendButton = el;
-            console.log(
-              '[SimpleChatBridge] Using fallback button (no visibility check):',
-              selector
-            );
+            if (DEBUG) {
+              console.log(
+                '[SimpleChatBridge] Using fallback button (no visibility check):',
+                selector
+              );
+            }
             break;
           }
         } catch (e) {
