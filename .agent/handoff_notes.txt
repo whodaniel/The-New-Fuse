@@ -1,0 +1,155 @@
+TNF handoff - Feb 20, 2026
+
+Scope completed:
+- Centralized LLM routing configuration implemented (global + per-target, primary + fallback).
+- Adaptive middleware proxy path implemented for runtime routing/failover.
+- Super Admin UI control component added for routing assignment.
+- zeroclaw-sandbox Railway crash fixed (invalid provider `kilocode` normalized to custom endpoint).
+
+Critical files changed:
+- apps/api/src/controllers/admin-config.controller.ts
+- apps/api/src/controllers/agent-proxy.controller.ts
+- apps/api/src/services/agent-api-grants.service.ts
+- apps/frontend/src/pages/Admin/components/LlmRoutingControl.tsx
+- apps/frontend/src/pages/Admin/SuperAdminControlPanel.tsx
+- apps/zeroclaw-sandbox/entrypoint-railway.sh
+- apps/zeroclaw-sandbox/.env.example
+- docs/deployment/TNF_LLM_ROUTING_ADAPTIVE_MIDDLEWARE_2026-02-20.md
+
+Live Railway status snapshot:
+- zeroclaw-sandbox: SUCCESS
+  deployment=890a02bd-6e78-4fe5-8226-bc32365099b6
+  createdAt=2026-02-20T11:48:56.443Z
+- api: BUILDING
+  deployment=638f921f-24fd-4287-9707-8f22d961de00
+  createdAt=2026-02-20T11:55:28.829Z
+
+Important follow-up:
+1) Monitor API deployment 638f921f-24fd-4287-9707-8f22d961de00 to SUCCESS.
+2) After success, verify:
+   - GET /admin/config/llm-routing/options
+   - GET /admin/config/llm-routing
+   - POST /api/agent-proxy/adaptive/:target
+3) If API deployment fails, inspect build logs for repo-wide TS errors not introduced by routing changes.
+
+Update - Feb 20, 2026 (orchestrator follow-through):
+- Added API unit test coverage for adaptive routing surface:
+  - apps/api/src/controllers/__tests__/agent-proxy.controller.spec.ts
+  - apps/api/src/services/agent-api-grants.service.spec.ts
+- Added Railway bulk env sync automation:
+  - scripts/railway/sync-claw-routing-vars.sh
+  - Retries all claw `railway variable set` operations with configurable retry/sleep.
+- Added deployment runbook:
+  - docs/deployment/TNF_CLAW_ROUTING_SYNC_RUNBOOK_2026-02-20.md
+  - Includes one-command sync, exit codes, DNS diagnostics, and verification.
+
+Update - Feb 20, 2026 (autonomy/stall-defense hardening):
+- Enhanced Chronological orchestrator (`packages/relay-core/src/master-clock.ts`) with Redis-backed self-prompting:
+  - Emits self-prompts on agent stall recovery attempts and stale scheduled processes.
+  - Publishes TNF envelope events to Redis ingress (`tnf:bus:ingress`).
+  - Publishes targeted wake-up task envelopes to Redis egress (`tnf:bus:egress:{sourceId}`).
+  - Persists recent self-prompts in `tnf:master:self-prompts` (trimmed to latest 500).
+  - Added env controls: `SELF_PROMPT_ENABLED`, `SELF_PROMPT_COOLDOWN_MS`.
+- Extended super-cycle CLI to inspect prompt history:
+  - `packages/relay-core/src/super-cycle-client.ts` supports `--action self-prompts`.
+  - `packages/relay-core/package.json` adds `super-cycle:self-prompts`.
+- Added runbook:
+  - `docs/deployment/TNF_ORCHESTRATOR_STALL_DEFENSE_2026-02-20.md`.
+
+Update - Feb 20, 2026 (factory turn-key + blue-lane swarm launch):
+- Added persistent local factory automation scripts:
+  - `scripts/orchestrator/factory-boot.sh` (Redis/Relay/Master Clock boot with health snapshots)
+  - `scripts/orchestrator/supercycle-heartbeat-loop.sh` (continuous super-cycle heartbeat)
+  - `scripts/orchestrator/seed-blue-swarm.js` (mission seeding messages to Blue channel)
+- Added root scripts:
+  - `pnpm run factory:boot`
+  - `pnpm run factory:supercycle`
+  - `pnpm run factory:blue:seed`
+- Added runbook:
+  - `docs/deployment/TNF_FACTORY_BOOT_RUNBOOK_2026-02-20.md`
+- Live validation done:
+  - Relay healthy on localhost:3000
+  - Master clock connected and heartbeating
+  - Self-prompt events persisted in `tnf:master:self-prompts`
+  - Super-cycle process registration and heartbeat functioning
+- Observed UX bug (extension/federated injectable):
+  - channel switch appears globally replicated across tabs; likely extension-global channel state instead of per-tab scoping.
+
+Update - Feb 20, 2026 (orchestrator hardening + deploy wiring + handoff final):
+
+Executed and pushed today (latest high-impact commits):
+- 6cca946d3 feat(jules): enforce review gate and surface merge conflicts
+- 70b2947b4 Add zero-token Jules watchdog framework and CLI scripts
+- ee7bd4e58 Add realtime trend strip for orchestration activity visualizers
+- a9098475e Add realtime orchestration signal visualizer and high-frequency activity sync
+- f6828888c Add vote-aware task polling and structured orchestration activity logging
+- 199e1775e Fix missing-channel response routing for tab-scoped injectables
+- 215ba1170 Fix channel isolation leak and auto-sync relay bridge channels
+- 09d15ff99 chrome-extension(dist-v7): stop global active-channel sync across tabs
+- 6870c00fa chrome-extension: scope active channel per tab in background state
+
+What was completed in this run:
+- Enforced PR review gate in Jules zero-token automation:
+  - `scripts/jules-zero-token-framework.cjs`
+  - `package.json`
+  - New workflow commands:
+    - `pnpm run jules:framework:review`
+    - `pnpm run jules:framework:approve -- <SESSION_ID>`
+  - Behavior:
+    - Completed Jules sessions are NOT auto-applied without explicit review approval.
+    - Merge/apply conflicts are surfaced and marked (`needsMergeResolution`), requiring manual resolution + re-approval.
+    - Existing config is auto-migrated to `requireReviewBeforeApply=true`.
+
+- Railway claw routing env sync now succeeds:
+  - `pnpm run railway:claw:routing:sync`
+  - Applied for:
+    - `zeroclaw-sandbox`
+    - `picoclaw-perplexity`
+    - `picoclaw-subject`
+    - `picoclaw-tester`
+    - `picoclaw-tester-v2`
+
+Known blockers at handoff:
+- Railway GraphQL DNS intermittency still present (`backboard.railway.com` lookup failures), causing flaky status polling.
+- Public adaptive endpoint currently returns 404 on live host:
+  - `GET /api/agent-proxy/adaptive/config/:target` -> 404
+- Admin effective route is present behind auth:
+  - `GET /api/admin/config/llm-routing/effective/:target` -> 401 unauthenticated
+- API redeploy triggered:
+  - deployment id `95357929-7d2f-4086-9d3d-a17bc59c6af0`
+  - status needs re-check once Railway DNS stabilizes.
+
+Immediate next actions:
+1) Confirm API deployment status:
+   - `railway status --json | jq -r '.environments.edges[].node.serviceInstances.edges[].node | select(.serviceName=="api") | [.latestDeployment.id,.latestDeployment.status,.latestDeployment.createdAt] | @tsv'`
+2) Verify public adaptive endpoint is live:
+   - `curl -sS -D - https://api-production-48f1.up.railway.app/api/agent-proxy/adaptive/config/picoclaw-tester`
+3) Re-run:
+   - `pnpm run railway:claw:routing:verify`
+4) If public endpoint still 404:
+   - Inspect deployed API route surface/OpenAPI on the live host and reconcile controller prefix/path mismatch.
+
+Essential handoff prompt (copy/paste for next agent):
+---
+You are taking over TNF orchestration from prior shift.
+Start with `pnpm run tnf:onboard`, then continue from `.agent/handoff_notes.txt`.
+
+Hard requirements:
+- Enforce review-before-apply for all Jules session pulls.
+- Resolve API/public adaptive-routing endpoint mismatch on Railway.
+- Keep claw services on centralized routing and verify end-to-end.
+- Prioritize low-token, high-leverage execution (commands first, minimal narration).
+
+Current known state:
+- Routing env vars synced for all claw services.
+- API redeploy triggered (`95357929-7d2f-4086-9d3d-a17bc59c6af0`), status pending due Railway DNS flakiness.
+- Public endpoint expected: `/api/agent-proxy/adaptive/config/:target` (currently 404 on live host).
+- Admin endpoint `/api/admin/config/llm-routing/effective/:target` responds 401 (exists with auth).
+
+Runbook now:
+1. Check API deploy status.
+2. Probe public endpoint until 200.
+3. Run `pnpm run railway:claw:routing:verify`.
+4. If failed, fix route exposure/deploy mismatch and redeploy API.
+5. Confirm all five claw services report adaptive routing resolution at startup logs.
+---
