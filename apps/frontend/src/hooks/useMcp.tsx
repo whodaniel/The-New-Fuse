@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { api } from '../services/api';
 
 export interface McpServer {
@@ -49,8 +49,38 @@ export interface ServerCapabilities {
   capabilities: Array<McpTool | McpResource | McpPrompt>;
 }
 
+export interface UseMcpServersReturn {
+  servers: McpServer[];
+  serverStatus: Record<string, string>;
+  loading: boolean;
+  fetchServers: () => Promise<void>;
+  startServer: (serverId: string) => Promise<void>;
+  stopServer: (serverId: string) => Promise<void>;
+  createServer: (serverConfig: Omit<McpServer, 'id'>) => Promise<void>;
+  deleteServer: (serverId: string) => Promise<void>;
+  registerTool: (serverId: string, tool: Omit<McpTool, 'handler'>) => Promise<boolean>;
+  registerResource: (serverId: string, resource: Omit<McpResource, 'handler'>) => Promise<boolean>;
+  registerPrompt: (serverId: string, prompt: Omit<McpPrompt, 'handler'>) => Promise<boolean>;
+}
+
+export interface UseMcpClientsReturn {
+  clients: McpClient[];
+  clientStatus: Record<string, string>;
+  clientCapabilities: Record<string, ServerCapabilities>;
+  loading: boolean;
+  fetchClients: () => Promise<void>;
+  createClient: (clientConfig: Omit<McpClient, 'id'>) => Promise<void>;
+  deleteClient: (clientId: string) => Promise<void>;
+  connectClient: (clientId: string) => Promise<void>;
+  disconnectClient: (clientId: string) => Promise<void>;
+  discoverCapabilities: (clientId: string) => Promise<ServerCapabilities | null>;
+  callTool: (clientId: string, toolName: string, params: any) => Promise<any>;
+  getResource: (clientId: string, resourceUri: string) => Promise<any>;
+  getPrompt: (clientId: string, promptName: string, params: any) => Promise<any>;
+}
+
 // Hook for managing MCP servers
-export function useMcpServers(): any {
+export function useMcpServers(): UseMcpServersReturn {
   const [servers, setServers] = useState<McpServer[]>([]);
   const [serverStatus, setServerStatus] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
@@ -70,7 +100,7 @@ export function useMcpServers(): any {
 
   useEffect(() => {
     fetchServers();
-    
+
     // Set up polling for server status updates
     const interval = setInterval(async () => {
       try {
@@ -84,41 +114,53 @@ export function useMcpServers(): any {
     return () => clearInterval(interval);
   }, [fetchServers]);
 
-  const startServer = useCallback(async (serverId: string) => {
-    try {
-      await api.post(`/admin/mcp/servers/${serverId}/start`);
-      fetchServers();
-    } catch (error) {
-      console.error('Error starting server:', error);
-    }
-  }, [fetchServers]);
+  const startServer = useCallback(
+    async (serverId: string) => {
+      try {
+        await api.post(`/admin/mcp/servers/${serverId}/start`);
+        fetchServers();
+      } catch (error) {
+        console.error('Error starting server:', error);
+      }
+    },
+    [fetchServers]
+  );
 
-  const stopServer = useCallback(async (serverId: string) => {
-    try {
-      await api.post(`/admin/mcp/servers/${serverId}/stop`);
-      fetchServers();
-    } catch (error) {
-      console.error('Error stopping server:', error);
-    }
-  }, [fetchServers]);
+  const stopServer = useCallback(
+    async (serverId: string) => {
+      try {
+        await api.post(`/admin/mcp/servers/${serverId}/stop`);
+        fetchServers();
+      } catch (error) {
+        console.error('Error stopping server:', error);
+      }
+    },
+    [fetchServers]
+  );
 
-  const createServer = useCallback(async (serverConfig: Omit<McpServer, 'id'>) => {
-    try {
-      await api.post('/admin/mcp/servers', serverConfig);
-      fetchServers();
-    } catch (error) {
-      console.error('Error creating server:', error);
-    }
-  }, [fetchServers]);
+  const createServer = useCallback(
+    async (serverConfig: Omit<McpServer, 'id'>) => {
+      try {
+        await api.post('/admin/mcp/servers', serverConfig);
+        fetchServers();
+      } catch (error) {
+        console.error('Error creating server:', error);
+      }
+    },
+    [fetchServers]
+  );
 
-  const deleteServer = useCallback(async (serverId: string) => {
-    try {
-      await api.delete(`/admin/mcp/servers/${serverId}`);
-      fetchServers();
-    } catch (error) {
-      console.error('Error deleting server:', error);
-    }
-  }, [fetchServers]);
+  const deleteServer = useCallback(
+    async (serverId: string) => {
+      try {
+        await api.delete(`/admin/mcp/servers/${serverId}`);
+        fetchServers();
+      } catch (error) {
+        console.error('Error deleting server:', error);
+      }
+    },
+    [fetchServers]
+  );
 
   const registerTool = useCallback(async (serverId: string, tool: Omit<McpTool, 'handler'>) => {
     try {
@@ -130,25 +172,31 @@ export function useMcpServers(): any {
     }
   }, []);
 
-  const registerResource = useCallback(async (serverId: string, resource: Omit<McpResource, 'handler'>) => {
-    try {
-      await api.post(`/admin/mcp/servers/${serverId}/resources`, resource);
-      return true;
-    } catch (error) {
-      console.error('Error registering resource:', error);
-      return false;
-    }
-  }, []);
+  const registerResource = useCallback(
+    async (serverId: string, resource: Omit<McpResource, 'handler'>) => {
+      try {
+        await api.post(`/admin/mcp/servers/${serverId}/resources`, resource);
+        return true;
+      } catch (error) {
+        console.error('Error registering resource:', error);
+        return false;
+      }
+    },
+    []
+  );
 
-  const registerPrompt = useCallback(async (serverId: string, prompt: Omit<McpPrompt, 'handler'>) => {
-    try {
-      await api.post(`/admin/mcp/servers/${serverId}/prompts`, prompt);
-      return true;
-    } catch (error) {
-      console.error('Error registering prompt:', error);
-      return false;
-    }
-  }, []);
+  const registerPrompt = useCallback(
+    async (serverId: string, prompt: Omit<McpPrompt, 'handler'>) => {
+      try {
+        await api.post(`/admin/mcp/servers/${serverId}/prompts`, prompt);
+        return true;
+      } catch (error) {
+        console.error('Error registering prompt:', error);
+        return false;
+      }
+    },
+    []
+  );
 
   return {
     servers,
@@ -161,15 +209,17 @@ export function useMcpServers(): any {
     deleteServer,
     registerTool,
     registerResource,
-    registerPrompt
+    registerPrompt,
   };
 }
 
 // Hook for managing MCP clients
-export function useMcpClients(): any {
+export function useMcpClients(): UseMcpClientsReturn {
   const [clients, setClients] = useState<McpClient[]>([]);
   const [clientStatus, setClientStatus] = useState<Record<string, string>>({});
-  const [clientCapabilities, setClientCapabilities] = useState<Record<string, ServerCapabilities>>({});
+  const [clientCapabilities, setClientCapabilities] = useState<Record<string, ServerCapabilities>>(
+    {}
+  );
   const [loading, setLoading] = useState(true);
 
   const fetchClients = useCallback(async () => {
@@ -187,7 +237,7 @@ export function useMcpClients(): any {
 
   useEffect(() => {
     fetchClients();
-    
+
     // Set up polling for client status updates
     const interval = setInterval(async () => {
       try {
@@ -201,50 +251,68 @@ export function useMcpClients(): any {
     return () => clearInterval(interval);
   }, [fetchClients]);
 
-  const createClient = useCallback(async (clientConfig: Omit<McpClient, 'id'>) => {
-    try {
-      await api.post('/admin/mcp/clients', clientConfig);
-      fetchClients();
-    } catch (error) {
-      console.error('Error creating client:', error);
-    }
-  }, [fetchClients]);
+  const createClient = useCallback(
+    async (clientConfig: Omit<McpClient, 'id'>) => {
+      try {
+        await api.post('/admin/mcp/clients', clientConfig);
+        fetchClients();
+      } catch (error) {
+        console.error('Error creating client:', error);
+      }
+    },
+    [fetchClients]
+  );
 
-  const deleteClient = useCallback(async (clientId: string) => {
-    try {
-      await api.delete(`/admin/mcp/clients/${clientId}`);
-      fetchClients();
-    } catch (error) {
-      console.error('Error deleting client:', error);
-    }
-  }, [fetchClients]);
+  const deleteClient = useCallback(
+    async (clientId: string) => {
+      try {
+        await api.delete(`/admin/mcp/clients/${clientId}`);
+        fetchClients();
+      } catch (error) {
+        console.error('Error deleting client:', error);
+      }
+    },
+    [fetchClients]
+  );
 
-  const connectClient = useCallback(async (clientId: string) => {
-    try {
-      await api.post(`/admin/mcp/clients/${clientId}/connect`);
-      // Update status immediately for better UX
-      setClientStatus((prev: any) => ({ ...prev, [clientId]: 'connecting' }));
-      fetchClients();
-    } catch (error) {
-      console.error('Error connecting client:', error);
-    }
-  }, [fetchClients]);
+  const connectClient = useCallback(
+    async (clientId: string) => {
+      try {
+        await api.post(`/admin/mcp/clients/${clientId}/connect`);
+        // Update status immediately for better UX
+        setClientStatus((prev: any) => ({ ...prev, [clientId]: 'connecting' }));
+        fetchClients();
+      } catch (error) {
+        console.error('Error connecting client:', error);
+      }
+    },
+    [fetchClients]
+  );
 
-  const disconnectClient = useCallback(async (clientId: string) => {
-    try {
-      await api.post(`/admin/mcp/clients/${clientId}/disconnect`);
-      // Update status immediately for better UX
-      setClientStatus((prev: any) => ({ ...prev, [clientId]: 'disconnecting' }));
-      fetchClients();
-    } catch (error) {
-      console.error('Error disconnecting client:', error);
-    }
-  }, [fetchClients]);
+  const disconnectClient = useCallback(
+    async (clientId: string) => {
+      try {
+        await api.post(`/admin/mcp/clients/${clientId}/disconnect`);
+        // Update status immediately for better UX
+        setClientStatus((prev: any) => ({
+          ...prev,
+          [clientId]: 'disconnecting',
+        }));
+        fetchClients();
+      } catch (error) {
+        console.error('Error disconnecting client:', error);
+      }
+    },
+    [fetchClients]
+  );
 
   const discoverCapabilities = useCallback(async (clientId: string) => {
     try {
       const response = await api.get(`/admin/mcp/clients/${clientId}/capabilities`);
-      setClientCapabilities((prev: any) => ({ ...prev, [clientId]: response.data }));
+      setClientCapabilities((prev: any) => ({
+        ...prev,
+        [clientId]: response.data,
+      }));
       return response.data;
     } catch (error) {
       console.error('Error discovering capabilities:', error);
@@ -274,7 +342,10 @@ export function useMcpClients(): any {
 
   const getPrompt = useCallback(async (clientId: string, promptName: string, params: any) => {
     try {
-      const response = await api.post(`/admin/mcp/clients/${clientId}/prompts/${promptName}`, params);
+      const response = await api.post(
+        `/admin/mcp/clients/${clientId}/prompts/${promptName}`,
+        params
+      );
       return response.data;
     } catch (error) {
       console.error('Error getting prompt:', error);
@@ -295,6 +366,6 @@ export function useMcpClients(): any {
     discoverCapabilities,
     callTool,
     getResource,
-    getPrompt
+    getPrompt,
   };
 }

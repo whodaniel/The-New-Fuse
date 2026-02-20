@@ -1,27 +1,31 @@
-import { useState, useCallback } from 'react';
-
-export interface Agent {
-  id: string;
-  name: string;
-  type: string;
-  status: string;
-}
+import { A2AMessageType, AgentRegistration } from '@the-new-fuse/a2a-core';
+import { useCallback } from 'react';
+import { useA2AContext } from '../A2AProvider';
 
 export function useA2AAgents() {
-  const [agents, setAgents] = useState<Agent[]>([]);
+  const { agents: rawAgents, sendMessage } = useA2AContext();
+
+  const agents = (rawAgents || []) as AgentRegistration[];
 
   const refreshAgents = useCallback(async () => {
-    // Mock implementation - in real scenario this would fetch from A2A service
-    setAgents([]);
-  }, []);
+    if (sendMessage) {
+      await sendMessage({
+        type: A2AMessageType.REQUEST,
+        payload: { action: 'list_agents' },
+      });
+    }
+  }, [sendMessage]);
 
-  const findAgentsByType = useCallback((type: string) => {
-    return agents.filter(agent => agent.type === type);
-  }, [agents]);
+  const findAgentsByType = useCallback(
+    (type: string) => {
+      return agents.filter((agent) => agent.type === type);
+    },
+    [agents]
+  );
 
   return {
     agents,
     refreshAgents,
-    findAgentsByType
+    findAgentsByType,
   };
 }

@@ -1,4 +1,17 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, Variants } from 'framer-motion';
+import {
+  Activity,
+  ArrowRight,
+  Bot,
+  MessageSquare,
+  Network,
+  RefreshCw,
+  Search,
+  Server,
+  Shield,
+  StopCircle,
+  Zap,
+} from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { GlassCard, StatsCard } from '../../components/ui/premium/GlassCard';
@@ -20,10 +33,22 @@ interface ActivityEvent {
   timestamp: Date;
   status: 'success' | 'warning' | 'error' | 'info';
   channelId?: string;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
 }
 
-const mapRawActivityEvent = (e: any): ActivityEvent => ({
+interface MeshInstance {
+  name: string;
+  status: string;
+  load: string;
+}
+
+interface Agent {
+  id: string;
+  name: string;
+  status?: string;
+}
+
+const mapRawActivityEvent = (e: Record<string, any>): ActivityEvent => ({
   id: e.id || e.streamId || `evt-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
   type: e.type || e.eventType || 'message',
   source: e.source || 'system',
@@ -40,7 +65,7 @@ const DASHBOARD_THEME = {
   background: 'slate-950',
 };
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -50,7 +75,7 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { y: 20, opacity: 0 },
   visible: {
     y: 0,
@@ -78,9 +103,9 @@ export default function SuperAdminControlPanel() {
   // State
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [meshInstances, setMeshInstances] = useState<any[]>([]);
+  const [meshInstances, setMeshInstances] = useState<MeshInstance[]>([]);
   const [activities, setActivities] = useState<ActivityEvent[]>([]);
-  const [agents, setAgents] = useState<any[]>([]);
+  const [agents, setAgents] = useState<Agent[]>([]);
   const [channels, setChannels] = useState<RelayChannel[]>([]);
   const [stats, setStats] = useState({
     onlineAgents: 0,
@@ -104,7 +129,7 @@ export default function SuperAdminControlPanel() {
       })
       .slice(0, 12)
       .map((activity) => {
-        const metadata = activity.metadata || {};
+        const metadata: any = activity.metadata || {};
         const eventType = String(metadata.eventType || activity.type || '');
         const top = Array.isArray(metadata.top) ? metadata.top : [];
         const lead = top[0] || null;
@@ -555,7 +580,7 @@ export default function SuperAdminControlPanel() {
                         <div className="mt-3 pt-3 border-t border-white/5 text-[10px] text-slate-500 grid grid-cols-2 gap-x-4 gap-y-1">
                           {Object.entries(activity.metadata)
                             .slice(0, 4)
-                            .map(([k, v]: [string, any]) => (
+                            .map(([k, v]: [string, unknown]) => (
                               <div key={k} className="truncate bg-white/2 px-2 py-1 rounded">
                                 <span className="text-slate-600 uppercase mr-1">{k}:</span>{' '}
                                 {String(v)}
@@ -741,26 +766,5 @@ export default function SuperAdminControlPanel() {
         </motion.div>
       </div>
     </motion.div>
-  );
-}
-
-// Simple StopCircle component if not imported
-function StopCircle({ className }: { className?: string }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <circle cx="12" cy="12" r="10" />
-      <rect width="6" height="6" x="9" y="9" />
-    </svg>
   );
 }

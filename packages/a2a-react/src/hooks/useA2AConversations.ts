@@ -1,27 +1,42 @@
-import { useState, useCallback } from 'react';
+import { A2AMessageType, Conversation } from '@the-new-fuse/a2a-core';
+import { useCallback, useState } from 'react';
+import { useA2AContext } from '../A2AProvider';
 
-export interface Conversation {
-  id: string;
+export interface ConversationWithCount extends Conversation {
   participantCount: number;
-  topic?: string;
 }
 
 export function useA2AConversations() {
-  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const { sendMessage } = useA2AContext();
+  const [conversations, setConversations] = useState<ConversationWithCount[]>([]);
 
-  const joinConversation = useCallback(async (conversationId: string) => {
-    // Mock implementation - in real scenario this would join via A2A service
-    console.log('Joining conversation:', conversationId);
-  }, []);
+  const joinConversation = useCallback(
+    async (conversationId: string) => {
+      if (sendMessage) {
+        await sendMessage({
+          type: A2AMessageType.REQUEST,
+          payload: { action: 'join_conversation', conversationId },
+        });
+      }
+    },
+    [sendMessage]
+  );
 
-  const leaveConversation = useCallback(async (conversationId: string) => {
-    // Mock implementation - in real scenario this would leave via A2A service
-    console.log('Leaving conversation:', conversationId);
-  }, []);
+  const leaveConversation = useCallback(
+    async (conversationId: string) => {
+      if (sendMessage) {
+        await sendMessage({
+          type: A2AMessageType.REQUEST,
+          payload: { action: 'leave_conversation', conversationId },
+        });
+      }
+    },
+    [sendMessage]
+  );
 
   return {
     conversations,
     joinConversation,
-    leaveConversation
+    leaveConversation,
   };
 }

@@ -6,7 +6,7 @@ const nodeDataSchema = z.object({
   label: z.string().optional(),
   type: z.string(),
   status: z.enum(['idle', 'running', 'completed', 'failed']).optional(),
-  config: z.record(z.any()).optional(),
+  config: z.record(z.string(), z.any()).optional(),
   onUpdate: z.function().optional(),
 });
 
@@ -41,8 +41,8 @@ const edgeSchema = z.object({
   type: z.string().optional(),
   animated: z.boolean().optional(),
   label: z.string().optional(),
-  style: z.record(z.any()).optional(),
-  data: z.record(z.any()).optional(),
+  style: z.record(z.string(), z.any()).optional(),
+  data: z.record(z.string(), z.any()).optional(),
 });
 
 // Workflow schema
@@ -68,12 +68,12 @@ const workflowExecutionSchema = z.object({
   status: z.enum(['pending', 'running', 'completed', 'failed', 'aborted']),
   startTime: z.number(),
   endTime: z.number().optional(),
-  nodeResults: z.record(z.any()),
+  nodeResults: z.record(z.string(), z.any()),
   error: z.string().optional(),
   metrics: z
     .object({
       totalExecutionTime: z.number().optional(),
-      nodeExecutionTimes: z.record(z.number()).optional(),
+      nodeExecutionTimes: z.record(z.string(), z.number()).optional(),
       successRate: z.number().optional(),
     })
     .optional(),
@@ -84,7 +84,7 @@ const workflowExecutionSchema = z.object({
  * @param workflow The workflow to validate
  * @returns The validated workflow or throws an error
  */
-export function validateWorkflow(workflow: any) {
+export function validateWorkflow(workflow: unknown) {
   return workflowSchema.parse(workflow);
 }
 
@@ -104,12 +104,13 @@ export function validateWorkflowWithErrors(workflow: any): ValidationResult {
     if (error instanceof z.ZodError) {
       const nodeErrors: Record<string, string> = {};
 
-      error.errors.forEach((err) => {
+      error.issues.forEach((err) => {
         // Check if the error is related to a node
         // Path example: ['nodes', 0, 'data', 'label']
         if (err.path[0] === 'nodes' && typeof err.path[1] === 'number') {
           const nodeIndex = err.path[1];
-          const node = workflow.nodes[nodeIndex];
+          // Use optional chaining for safety if workflow structure is invalid
+          const node = workflow?.nodes?.[nodeIndex];
           if (node && node.id) {
             // Create a user-friendly message
             const fieldPath = err.path.slice(2).join('.');
@@ -131,7 +132,7 @@ export function validateWorkflowWithErrors(workflow: any): ValidationResult {
  * @param execution The workflow execution to validate
  * @returns The validated workflow execution or throws an error
  */
-export function validateWorkflowExecution(execution: any) {
+export function validateWorkflowExecution(execution: unknown) {
   return workflowExecutionSchema.parse(execution);
 }
 
@@ -140,7 +141,7 @@ export function validateWorkflowExecution(execution: any) {
  * @param workflow The workflow to check
  * @returns True if the workflow is valid, false otherwise
  */
-export function isWorkflowValid(workflow: any): boolean {
+export function isWorkflowValid(workflow: unknown): boolean {
   try {
     validateWorkflow(workflow);
     return true;
@@ -155,7 +156,7 @@ export function isWorkflowValid(workflow: any): boolean {
  * @param workflow The workflow to validate
  * @returns An array of validation errors or null if the workflow is valid
  */
-export function getWorkflowValidationErrors(workflow: any): z.ZodError | null {
+export function getWorkflowValidationErrors(workflow: unknown): z.ZodError | null {
   try {
     validateWorkflow(workflow);
     return null;

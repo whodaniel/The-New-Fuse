@@ -1,40 +1,51 @@
-import zod_1 from 'zod';
-const positionSchema = zod_1.z.object({
-  x: zod_1.z.number(),
-  y: zod_1.z.number(),
+import { z } from 'zod';
+
+const positionSchema = z.object({
+  x: z.number(),
+  y: z.number(),
 });
-const conditionSchema = zod_1.z.object({
-  id: zod_1.z.string(),
-  type: zod_1.z.enum(['equals', 'contains', 'greater', 'less', 'regex']),
-  field: zod_1.z.string(),
-  value: zod_1.z.union([zod_1.z.string(), zod_1.z.number()]),
+
+const conditionSchema = z.object({
+  id: z.string(),
+  type: z.enum(['equals', 'contains', 'greater', 'less', 'regex']),
+  field: z.string(),
+  value: z.union([z.string(), z.number()]),
 });
-const nodeDataSchema = zod_1.z.object({
-  label: zod_1.z.string(),
-  type: zod_1.z.string(),
-  inputs: zod_1.z.array(zod_1.z.string()).optional(),
-  outputs: zod_1.z.array(zod_1.z.string()).optional(),
-  conditions: zod_1.z.array(conditionSchema).optional(),
-  config: zod_1.z.record(zod_1.z.any()).optional(),
+
+const nodeDataSchema = z.object({
+  label: z.string(),
+  type: z.string(),
+  inputs: z.array(z.string()).optional(),
+  outputs: z.array(z.string()).optional(),
+  conditions: z.array(conditionSchema).optional(),
+  config: z.record(z.string(), z.any()).optional(),
 });
-const nodeSchema = zod_1.z.object({
-  id: zod_1.z.string(),
-  type: zod_1.z.enum(['input', 'output', 'default', 'agent', 'tool', 'condition']),
+
+const nodeSchema = z.object({
+  id: z.string(),
+  type: z.enum(['input', 'output', 'default', 'agent', 'tool', 'condition']),
   position: positionSchema,
   data: nodeDataSchema,
 });
-const edgeSchema = zod_1.z.object({
-  id: zod_1.z.string(),
-  source: zod_1.z.string(),
-  target: zod_1.z.string(),
-  type: zod_1.z.enum(['default', 'conditional']),
-  data: zod_1.z
+
+const edgeSchema = z.object({
+  id: z.string(),
+  source: z.string(),
+  target: z.string(),
+  type: z.enum(['default', 'conditional']),
+  data: z
     .object({
       condition: conditionSchema.optional(),
     })
     .optional(),
 });
-export const isValidPosition = (position): any => {
+
+export type Node = z.infer<typeof nodeSchema>;
+export type Edge = z.infer<typeof edgeSchema>;
+export type Position = z.infer<typeof positionSchema>;
+export type Condition = z.infer<typeof conditionSchema>;
+
+export const isValidPosition = (position: unknown): boolean => {
   try {
     positionSchema.parse(position);
     return true;
@@ -42,7 +53,8 @@ export const isValidPosition = (position): any => {
     return false;
   }
 };
-export const isValidCondition = (condition): any => {
+
+export const isValidCondition = (condition: unknown): boolean => {
   try {
     conditionSchema.parse(condition);
     return true;
@@ -50,7 +62,8 @@ export const isValidCondition = (condition): any => {
     return false;
   }
 };
-export const isValidNode = (node): any => {
+
+export const isValidNode = (node: unknown): boolean => {
   try {
     nodeSchema.parse(node);
     return true;
@@ -58,7 +71,8 @@ export const isValidNode = (node): any => {
     return false;
   }
 };
-export const isValidEdge = (edge): any => {
+
+export const isValidEdge = (edge: unknown): boolean => {
   try {
     edgeSchema.parse(edge);
     return true;
@@ -66,8 +80,9 @@ export const isValidEdge = (edge): any => {
     return false;
   }
 };
-export const validateNodeConfiguration = (node): any => {
-  const errors = [];
+
+export const validateNodeConfiguration = (node: Node): string[] => {
+  const errors: string[] = [];
   switch (node.type) {
     case 'agent':
       if (!node.data.config?.agentType) {
@@ -78,15 +93,15 @@ export const validateNodeConfiguration = (node): any => {
       }
       break;
     case 'tool':
-      if (!((_c = node.data.config) === null || _c === void 0 ? void 0 : _c.toolId)) {
+      if (!node.data.config?.toolId) {
         errors.push('Tool ID is required');
       }
-      if (!((_d = node.data.config) === null || _d === void 0 ? void 0 : _d.parameters)) {
+      if (!node.data.config?.parameters) {
         errors.push('Tool parameters configuration is required');
       }
       break;
     case 'condition':
-      if (!((_e = node.data.conditions) === null || _e === void 0 ? void 0 : _e.length)) {
+      if (!node.data.conditions?.length) {
         errors.push('At least one condition is required');
       } else {
         node.data.conditions.forEach((condition, index) => {
@@ -102,27 +117,33 @@ export const validateNodeConfiguration = (node): any => {
   }
   return errors;
 };
-export const validateWorkflowConnections = (nodes, edges): any => {
-  const errors = [];
-  const connectedNodes = new Set();
+
+export const validateWorkflowConnections = (nodes: Node[], edges: Edge[]): string[] => {
+  const errors: string[] = [];
+  const connectedNodes = new Set<string>();
+
   edges.forEach((edge) => {
     connectedNodes.add(edge.source);
     connectedNodes.add(edge.target);
   });
+
   nodes.forEach((node) => {
     if (!connectedNodes.has(node.id)) {
       errors.push(`Node "${node.data.label}" is disconnected`);
     }
   });
+
   edges.forEach((edge) => {
     const sourceNode = nodes.find((n) => n.id === edge.source);
     const targetNode = nodes.find((n) => n.id === edge.target);
+
     if (!sourceNode) {
       errors.push(`Edge ${edge.id}: Source node not found`);
     }
     if (!targetNode) {
       errors.push(`Edge ${edge.id}: Target node not found`);
     }
+
     if (sourceNode && targetNode) {
       if (sourceNode.type === 'output') {
         errors.push(`Edge ${edge.id}: Output nodes cannot have outgoing connections`);
@@ -130,53 +151,65 @@ export const validateWorkflowConnections = (nodes, edges): any => {
       if (targetNode.type === 'input') {
         errors.push(`Edge ${edge.id}: Input nodes cannot have incoming connections`);
       }
-      if (
-        edge.type === 'conditional' &&
-        !((_a = edge.data) === null || _a === void 0 ? void 0 : _a.condition)
-      ) {
+      if (edge.type === 'conditional' && !edge.data?.condition) {
         errors.push(`Edge ${edge.id}: Conditional edge missing condition configuration`);
       }
     }
   });
+
   return errors;
 };
-export const validateWorkflowExecution = (nodes): any => {
-  const errors = [];
+
+export const validateWorkflowExecution = (nodes: Node[]): string[] => {
+  const errors: string[] = [];
+
   nodes.forEach((node) => {
-    const configErrors = (0, exports.validateNodeConfiguration)(node);
+    const configErrors = validateNodeConfiguration(node);
     if (configErrors.length > 0) {
       errors.push(`Node "${node.data.label}": ${configErrors.join(', ')}`);
     }
   });
+
   const hasStartNode = nodes.some((node) => node.type === 'input');
   const hasEndNode = nodes.some((node) => node.type === 'output');
+
   if (!hasStartNode) {
     errors.push('Workflow must have at least one input node');
   }
   if (!hasEndNode) {
     errors.push('Workflow must have at least one output node');
   }
+
   return errors;
 };
-export const validateWorkflow = (nodes, edges): any => {
-  const errors = [];
+
+export const validateWorkflow = (
+  nodes: Node[],
+  edges: Edge[]
+): { isValid: boolean; errors: string[] } => {
+  const errors: string[] = [];
+
   nodes.forEach((node) => {
-    if (!(0, exports.isValidNode)(node)) {
+    if (!isValidNode(node)) {
       errors.push(`Invalid node configuration: ${node.id}`);
     }
   });
+
   edges.forEach((edge) => {
-    if (!(0, exports.isValidEdge)(edge)) {
+    if (!isValidEdge(edge)) {
       errors.push(`Invalid edge configuration: ${edge.id}`);
     }
   });
-  errors.push(...(0, exports.validateWorkflowConnections)(nodes, edges));
-  errors.push(...(0, exports.validateWorkflowExecution)(nodes));
+
+  errors.push(...validateWorkflowConnections(nodes, edges));
+  errors.push(...validateWorkflowExecution(nodes));
+
   return {
     isValid: errors.length === 0,
     errors,
   };
 };
+
 /**
  * Detects if adding a connection creates a cycle in the workflow graph.
  * uses Depth-First Search (DFS) algorithm.
@@ -241,9 +274,7 @@ export const validateWorkflowDryRun = (nodes: any[], edges: any[]): DryRunValida
   const errors: string[] = [];
   const invalidNodeIds: string[] = [];
 
-  // 1. Identify Orphaned Nodes (No inputs AND No outputs, i.e., disconnected)
-  // Or simpler: Nodes with no connections at all are definitely islands.
-  // But also nodes that are part of a disconnected component that doesn't reach an end node.
+  // 1. Identify Orphaned Nodes
 
   const inDegree = new Map<string, number>();
   const outDegree = new Map<string, number>();
@@ -260,9 +291,6 @@ export const validateWorkflowDryRun = (nodes: any[], edges: any[]): DryRunValida
     inDegree.set(target, (inDegree.get(target) || 0) + 1);
   });
 
-  // Check for disconnected nodes (islands)
-  // Exception: Maybe single node workflows are allowed? Assuming not for a "Dry Run" of a complex flow.
-  // Let's mark nodes with 0 in-degree AND 0 out-degree as orphans.
   nodes.forEach((node) => {
     if (inDegree.get(node.id) === 0 && outDegree.get(node.id) === 0) {
       errors.push(`Node "${node.data.label}" is isolated (orphaned).`);
@@ -270,34 +298,13 @@ export const validateWorkflowDryRun = (nodes: any[], edges: any[]): DryRunValida
     }
   });
 
-  // 2. Check for nodes with no inputs (except valid start nodes)
-  // Assuming 'input' type nodes are valid start points.
-  // If a node is NOT an 'input' node and has in-degree 0, it might be an issue (unless it's an island caught above).
-  // But let's stick to the prompt: "orphaned nodes (nodes with no inputs or outputs)"
-  // The prompt says "nodes with no inputs or outputs". This is slightly ambiguous.
-  // Usually "no inputs" is bad unless it's a start node. "No outputs" is bad unless it's a terminal node.
-
-  nodes.forEach((node) => {
-    // Check missing inputs (if not a start node)
-    // We don't have a strict 'start' type in all templates, but typically 'input' or 'trigger'.
-    // Let's assume nodes with 0 in-degree that are NOT explicitly 'input' or 'trigger' might be suspicious,
-    // but the prompt specifically asks to ensure "every path eventually leads to a terminal 'Output' or 'Response' node".
-    // Let's focus on the path reachability first, as that covers "dead ends".
-  });
-
-  // 3. Reachability Check: Every path must lead to a terminal node.
-  // Terminal nodes are those with type 'output' or 'response'.
-  // Or simply nodes that have 0 out-degree should be of type 'output' or 'response'.
-
-  const terminalTypes = ['output', 'response', 'end']; // Add more if needed
+  // 2. Reachability Check: Every path must lead to a terminal node.
+  const terminalTypes = ['output', 'response', 'end'];
 
   // Find all nodes that have 0 out-degree.
   const endNodes = nodes.filter((n) => outDegree.get(n.id) === 0);
 
   endNodes.forEach((node) => {
-    // If it's not a terminal type, it's a dead end.
-    // However, some valid flows might end at an action that doesn't produce output?
-    // The prompt says "eventually leads to a terminal 'Output' or 'Response' node".
     if (
       !terminalTypes.includes(node.type) &&
       !node.data.label.toLowerCase().includes('output') &&

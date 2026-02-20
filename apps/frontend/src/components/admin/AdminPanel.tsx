@@ -7,12 +7,12 @@ export default function AdminPanel() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const handleStatusUpdate = (data: any) => {
+    const handleStatusUpdate = (_data: unknown) => {
       // ...
     };
-    const handleError = (error: any) => {
-      setError(error.message);
-      console.error('WebSocket error:', error.message);
+    const handleError = (err: any) => {
+      setError(err?.message || 'Unknown error');
+      console.error('WebSocket error:', err?.message || err);
     };
     try {
       webSocketService.send('getSystemStatus', {});

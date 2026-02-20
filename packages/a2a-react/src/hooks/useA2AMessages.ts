@@ -1,42 +1,46 @@
-import { useState, useCallback } from 'react';
-
-export interface A2AMessage {
-  id: string;
-  type: string;
-  fromAgent?: string;
-  toAgent?: string;
-  payload: any;
-  timestamp: string;
-}
+import { A2AMessage, A2AMessageType, A2APriority } from '@the-new-fuse/a2a-core';
+import { useCallback } from 'react';
+import { useA2AContext } from '../A2AProvider';
 
 export function useA2AMessages() {
-  const [messages, setMessages] = useState<A2AMessage[]>([]);
+  const { messages, sendMessage: contextSendMessage } = useA2AContext();
 
-  const sendMessage = useCallback(async (message: Partial<A2AMessage>) => {
-    // Mock implementation - in real scenario this would send via A2A service
-    const newMessage: A2AMessage = {
-      id: Date.now().toString(),
-      type: message.type || 'message',
-      fromAgent: message.fromAgent,
-      toAgent: message.toAgent,
-      payload: message.payload,
-      timestamp: new Date().toISOString()
-    };
-    setMessages(prev => [...prev, newMessage]);
-  }, []);
+  const sendMessage = useCallback(
+    async (message: Partial<A2AMessage>) => {
+      return contextSendMessage(message);
+    },
+    [contextSendMessage]
+  );
 
-  const sendRequest = useCallback(async (request: any) => {
-    return sendMessage({ type: 'request', payload: request });
-  }, [sendMessage]);
+  const sendRequest = useCallback(
+    async (request: any) => {
+      return contextSendMessage({
+        type: A2AMessageType.REQUEST,
+        payload: request,
+        timestamp: Date.now(),
+        priority: A2APriority.MEDIUM,
+      });
+    },
+    [contextSendMessage]
+  );
 
-  const broadcast = useCallback(async (payload: any, _options?: any) => {
-    return sendMessage({ type: 'broadcast', payload });
-  }, [sendMessage]);
+  const broadcast = useCallback(
+    async (payload: any, options?: any) => {
+      return contextSendMessage({
+        type: A2AMessageType.NOTIFICATION,
+        payload,
+        priority: A2APriority.MEDIUM,
+        timestamp: Date.now(),
+        ...options,
+      });
+    },
+    [contextSendMessage]
+  );
 
   return {
     messages,
     sendMessage,
     sendRequest,
-    broadcast
+    broadcast,
   };
 }

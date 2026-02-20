@@ -1,7 +1,6 @@
+import { A2AMessageType, A2APriority, AgentType } from '@the-new-fuse/a2a-core';
 import {
   A2AMessage,
-  A2AMessageType,
-  A2APriority,
   A2AProvider,
   useA2AAgents,
   useA2AContext,
@@ -31,23 +30,10 @@ export default function MultiAgentChat() {
       autoRegister={true}
       agentRegistration={{
         name: 'Web Interface Agent',
-        type: 'COMMUNICATOR',
+        type: AgentType.COMMUNICATOR,
         version: '1.0.0',
         description: 'Web interface for multi-agent communication',
-        capabilities: [
-          {
-            id: 'ui-interaction',
-            name: 'UI Interaction',
-            description: 'Handle user interface interactions',
-            version: '1.0.0',
-          },
-          {
-            id: 'message-display',
-            name: 'Message Display',
-            description: 'Display messages and conversations',
-            version: '1.0.0',
-          },
-        ],
+        capabilities: ['ui-interaction', 'message-display'],
       }}
     >
       <EnhancedMultiAgentChatUI />
@@ -140,32 +126,18 @@ function EnhancedMultiAgentChatUI() {
         {
           agentId: uuidv4(),
           name: 'Alice Assistant',
-          type: 'ASSISTANT',
+          type: AgentType.ASSISTANT,
           version: '1.0.0',
           description: 'Helpful assistant agent',
-          capabilities: [
-            {
-              id: 'general-assistance',
-              name: 'General Assistance',
-              description: 'Provide general help and support',
-              version: '1.0.0',
-            },
-          ],
+          capabilities: ['general-assistance'],
         },
         {
           agentId: uuidv4(),
           name: 'Bob Analyzer',
-          type: 'ANALYZER',
+          type: AgentType.ANALYZER,
           version: '1.0.0',
           description: 'Data analysis agent',
-          capabilities: [
-            {
-              id: 'data-analysis',
-              name: 'Data Analysis',
-              description: 'Analyze data and generate insights',
-              version: '1.0.0',
-            },
-          ],
+          capabilities: ['data-analysis'],
         },
       ];
 

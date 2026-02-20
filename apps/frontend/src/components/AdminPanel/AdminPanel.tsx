@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
-import { ScriptRunner } from './ScriptRunner';
-import { UserManagement } from './UserManagement';
-import { SystemMetrics } from './SystemMetrics';
+import { McpMonitor } from '../admin/McpMonitor'; // Import the new component
+import { ApiMonitor } from './ApiMonitor';
+import { AuditLogs } from './AuditLogs';
+import { DatabaseAdmin } from './DatabaseAdmin';
+import { FeatureFlags } from './FeatureFlags';
 import { RoleManager } from './RoleManager';
+import { ScriptRunner } from './ScriptRunner';
 import { ServiceMonitor } from './ServiceMonitor';
 import { SystemConfig } from './SystemConfig';
-import { AuditLogs } from './AuditLogs';
-import { FeatureFlags } from './FeatureFlags';
-import { ApiMonitor } from './ApiMonitor';
-import { DatabaseAdmin } from './DatabaseAdmin';
-import { McpMonitor } from './McpMonitor'; // Import the new component
+import { SystemMetrics } from './SystemMetrics';
+import { UserManagement } from './UserManagement';
 
 /**
  * Admin Panel component that provides centralized access to all administrative functions.
  * Includes system monitoring, user management, service configuration, and more.
- * 
+ *
  * @component
  * @example
  * ```tsx
@@ -26,14 +26,30 @@ export const AdminPanel: React.FC = () => {
 
   const tabs = [
     { label: 'Dashboard', component: <SystemMetrics /> },
-    { label: 'Users & Roles', component: <><UserManagement /><RoleManager /></> },
+    {
+      label: 'Users & Roles',
+      component: (
+        <>
+          <UserManagement />
+          <RoleManager />
+        </>
+      ),
+    },
     { label: 'Services', component: <ServiceMonitor /> },
-    { label: 'Monitoring', component: <><ApiMonitor /><FeatureFlags /></> },
+    {
+      label: 'Monitoring',
+      component: (
+        <>
+          <ApiMonitor />
+          <FeatureFlags />
+        </>
+      ),
+    },
     { label: 'Configuration', component: <SystemConfig /> },
     { label: 'Scripts', component: <ScriptRunner /> },
     { label: 'Database', component: <DatabaseAdmin /> },
     { label: 'Audit', component: <AuditLogs /> },
-    { label: 'MCP', component: <McpMonitor /> }
+    { label: 'MCP', component: <McpMonitor /> },
   ];
 
   return (
@@ -55,9 +71,7 @@ export const AdminPanel: React.FC = () => {
           ))}
         </nav>
       </div>
-      <div className="mt-4">
-        {tabs[activeTab].component}
-      </div>
+      <div className="mt-4">{tabs[activeTab].component}</div>
     </div>
   );
 };

@@ -336,6 +336,8 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
       [A2AMessageType.ERROR_NOTIFICATION]: 'error_handling',
       [A2AMessageType.HEARTBEAT]: 'monitoring',
       [A2AMessageType.CAPABILITY_ANNOUNCEMENT]: 'discovery',
+      [A2AMessageType.REQUEST]: 'general',
+      [A2AMessageType.NOTIFICATION]: 'general',
     };
 
     return capabilityMap[messageType] || 'general';

@@ -13,9 +13,7 @@ export interface ValidationOptions {
 }
 
 export function validateRequired(value: any): boolean | string {
-  return value !== undefined && value !== null && value !== '' 
-    ? true 
-    : 'This field is required';
+  return value !== undefined && value !== null && value !== '' ? true : 'This field is required';
 }
 
 export function validateEmail(email: string): boolean | string {
@@ -55,7 +53,7 @@ export function validateMax(value: number, max: number): boolean | string {
 export function validate(value: any, options: ValidationOptions): string[] {
   const errors: string[] = [];
 
-  if (options.required && !validateRequired(value)) {
+  if (options.required && validateRequired(value) !== true) {
     errors.push('This field is required');
   }
 
@@ -104,7 +102,10 @@ export function validate(value: any, options: ValidationOptions): string[] {
   return errors;
 }
 
-export function validateForm(values: Record<string, any>, rules: Record<string, ValidationOptions>): Record<string, string[]> {
+export function validateForm(
+  values: Record<string, any>,
+  rules: Record<string, ValidationOptions>
+): Record<string, string[]> {
   const errors: Record<string, string[]> = {};
 
   Object.entries(rules).forEach(([field, options]) => {
@@ -125,7 +126,8 @@ export function getFirstError(fieldErrors: string[]): string {
   return fieldErrors[0] || '';
 }
 
-export interface ValidationRule<T> {
+// Renamed to avoid conflict with type alias ValidationRule
+export interface Rule<T> {
   validate: (value: T) => boolean;
   message: string;
 }
@@ -135,50 +137,47 @@ export interface ValidationResult {
   errors: string[];
 }
 
-export function validate<T>(
-  value: T,
-  rules: ValidationRule<T>[]
-): ValidationResult {
+export function validateWithRules<T>(value: T, rules: Rule<T>[]): ValidationResult {
   const errors = rules
-    .filter((rule: ValidationRule<T>) => !rule.validate(value))
-    .map((rule: ValidationRule<T>) => rule.message);
+    .filter((rule: Rule<T>) => !rule.validate(value))
+    .map((rule: Rule<T>) => rule.message);
 
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
 // Common validation rules
-export const required = (message = 'This field is required'): ValidationRule<any> => ({
+export const required = (message = 'This field is required'): Rule<any> => ({
   validate: (value: any) => {
     if (value === null || value === undefined) return false;
     if (typeof value === 'string') return value.trim().length > 0;
     if (Array.isArray(value)) return value.length > 0;
     return true;
   },
-  message
+  message,
 });
 
-export const minLength = (min: number, message?: string): ValidationRule<string> => ({
+export const minLength = (min: number, message?: string): Rule<string> => ({
   validate: (value: string) => value.length >= min,
-  message: message || `Must be at least ${min} characters`
+  message: message || `Must be at least ${min} characters`,
 });
 
-export const maxLength = (max: number, message?: string): ValidationRule<string> => ({
+export const maxLength = (max: number, message?: string): Rule<string> => ({
   validate: (value: string) => value.length <= max,
-  message: message || `Must be no more than ${max} characters`
+  message: message || `Must be no more than ${max} characters`,
 });
 
-export const email = (message = 'Must be a valid email address'): ValidationRule<string> => ({
+export const email = (message = 'Must be a valid email address'): Rule<string> => ({
   validate: (value: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(value);
   },
-  message
+  message,
 });
 
-export const url = (message = 'Must be a valid URL'): ValidationRule<string> => ({
+export const url = (message = 'Must be a valid URL'): Rule<string> => ({
   validate: (value: string) => {
     try {
       new URL(value);
@@ -187,46 +186,46 @@ export const url = (message = 'Must be a valid URL'): ValidationRule<string> => 
       return false;
     }
   },
-  message
+  message,
 });
 
-export const numeric = (message = 'Must be a number'): ValidationRule<string> => ({
+export const numeric = (message = 'Must be a number'): Rule<string> => ({
   validate: (value: string) => !isNaN(Number(value)),
-  message
+  message,
 });
 
-export const integer = (message = 'Must be an integer'): ValidationRule<string | number> => ({
+export const integer = (message = 'Must be an integer'): Rule<string | number> => ({
   validate: (value: string | number) => {
     const num = typeof value === 'string' ? Number(value) : value;
     return Number.isInteger(num);
   },
-  message
+  message,
 });
 
-export const min = (min: number, message?: string): ValidationRule<number> => ({
+export const min = (min: number, message?: string): Rule<number> => ({
   validate: (value: number) => value >= min,
-  message: message || `Must be at least ${min}`
+  message: message || `Must be at least ${min}`,
 });
 
-export const max = (max: number, message?: string): ValidationRule<number> => ({
+export const max = (max: number, message?: string): Rule<number> => ({
   validate: (value: number) => value <= max,
-  message: message || `Must be no more than ${max}`
+  message: message || `Must be no more than ${max}`,
 });
 
-export const pattern = (regex: RegExp, message: string): ValidationRule<string> => ({
+export const pattern = (regex: RegExp, message: string): Rule<string> => ({
   validate: (value: string) => regex.test(value),
-  message
+  message,
 });
 
-export const matchValue = (matchTo: any, message?: string): ValidationRule<any> => ({
+export const matchValue = (matchTo: any, message?: string): Rule<any> => ({
   validate: (value: any) => value === matchTo,
-  message: message || 'Values must match'
+  message: message || 'Values must match',
 });
 
 // Form validation
 export interface FormValidationRule<T> {
   field: keyof T;
-  rules: ValidationRule<any>[];
+  rules: Rule<any>[];
 }
 
 export interface FormValidationResult<T> {
@@ -234,7 +233,7 @@ export interface FormValidationResult<T> {
   errors: Partial<Record<keyof T, string[]>>;
 }
 
-export function validateForm<T extends Record<string, any>>(
+export function validateFormWithRules<T extends Record<string, any>>(
   values: T,
   validationRules: FormValidationRule<T>[]
 ): FormValidationResult<T> {
@@ -242,7 +241,7 @@ export function validateForm<T extends Record<string, any>>(
   let isValid = true;
 
   validationRules.forEach(({ field, rules }) => {
-    const result = validate(values[field], rules);
+    const result = validateWithRules(values[field], rules);
     if (!result.isValid) {
       errors[field] = result.errors;
       isValid = false;
@@ -265,16 +264,14 @@ export async function validateAsync<T>(
   const results = await Promise.all(
     rules.map(async (rule: any) => ({
       isValid: await rule.validate(value),
-      message: rule.message
+      message: rule.message,
     }))
   );
 
-  const errors = results
-    .filter(result => !result.isValid)
-    .map(result => result.message);
+  const errors = results.filter((result) => !result.isValid).map((result) => result.message);
 
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   };
 }

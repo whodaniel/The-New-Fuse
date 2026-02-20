@@ -21,9 +21,9 @@ export const A2A_PROTOCOL_VERSION = '0.3.0';
  * Supported A2A transport protocols.
  */
 export enum TransportProtocol {
-  JSONRPC = 'JSONRPC',      // JSON-RPC 2.0 over HTTP
-  GRPC = 'GRPC',            // gRPC over HTTP/2
-  HTTP_JSON = 'HTTP+JSON',  // REST-style HTTP with JSON
+  JSONRPC = 'JSONRPC', // JSON-RPC 2.0 over HTTP
+  GRPC = 'GRPC', // gRPC over HTTP/2
+  HTTP_JSON = 'HTTP+JSON', // REST-style HTTP with JSON
 }
 
 // ============================================================================
@@ -540,7 +540,9 @@ export interface SendStreamingMessageSuccessResponse extends JSONRPCSuccessRespo
   result: Message | Task | TaskStatusUpdateEvent | TaskArtifactUpdateEvent;
 }
 
-export type SendStreamingMessageResponse = SendStreamingMessageSuccessResponse | JSONRPCErrorResponse;
+export type SendStreamingMessageResponse =
+  | SendStreamingMessageSuccessResponse
+  | JSONRPCErrorResponse;
 
 // tasks/get
 export interface GetTaskRequest extends JSONRPCRequest {
@@ -586,7 +588,9 @@ export interface SetTaskPushNotificationConfigSuccessResponse extends JSONRPCSuc
   result: TaskPushNotificationConfig;
 }
 
-export type SetTaskPushNotificationConfigResponse = SetTaskPushNotificationConfigSuccessResponse | JSONRPCErrorResponse;
+export type SetTaskPushNotificationConfigResponse =
+  | SetTaskPushNotificationConfigSuccessResponse
+  | JSONRPCErrorResponse;
 
 // tasks/pushNotificationConfig/get
 export interface GetTaskPushNotificationConfigRequest extends JSONRPCRequest {
@@ -599,7 +603,9 @@ export interface GetTaskPushNotificationConfigSuccessResponse extends JSONRPCSuc
   result: TaskPushNotificationConfig;
 }
 
-export type GetTaskPushNotificationConfigResponse = GetTaskPushNotificationConfigSuccessResponse | JSONRPCErrorResponse;
+export type GetTaskPushNotificationConfigResponse =
+  | GetTaskPushNotificationConfigSuccessResponse
+  | JSONRPCErrorResponse;
 
 // tasks/pushNotificationConfig/list
 export interface ListTaskPushNotificationConfigRequest extends JSONRPCRequest {
@@ -612,7 +618,9 @@ export interface ListTaskPushNotificationConfigSuccessResponse extends JSONRPCSu
   result: TaskPushNotificationConfig[];
 }
 
-export type ListTaskPushNotificationConfigResponse = ListTaskPushNotificationConfigSuccessResponse | JSONRPCErrorResponse;
+export type ListTaskPushNotificationConfigResponse =
+  | ListTaskPushNotificationConfigSuccessResponse
+  | JSONRPCErrorResponse;
 
 // tasks/pushNotificationConfig/delete
 export interface DeleteTaskPushNotificationConfigRequest extends JSONRPCRequest {
@@ -625,7 +633,9 @@ export interface DeleteTaskPushNotificationConfigSuccessResponse extends JSONRPC
   result: { success: boolean };
 }
 
-export type DeleteTaskPushNotificationConfigResponse = DeleteTaskPushNotificationConfigSuccessResponse | JSONRPCErrorResponse;
+export type DeleteTaskPushNotificationConfigResponse =
+  | DeleteTaskPushNotificationConfigSuccessResponse
+  | JSONRPCErrorResponse;
 
 // agent/getAuthenticatedExtendedCard
 export interface GetAuthenticatedExtendedCardRequest extends JSONRPCRequest {
@@ -703,7 +713,10 @@ export class ProtoA2AError extends Error implements JSONRPCError {
 }
 
 export class ProtoA2AValidationError extends ProtoA2AError {
-  constructor(message: string, public validationErrors: any) {
+  constructor(
+    message: string,
+    public validationErrors: any
+  ) {
     super(message, A2AErrorCode.INVALID_PARAMS, validationErrors);
     this.name = 'ProtoA2AValidationError';
   }
@@ -817,66 +830,88 @@ export const AgentCardSchema = z.object({
   description: z.string(),
   url: z.string().url(),
   preferredTransport: z.string().optional(),
-  additionalInterfaces: z.array(z.object({
-    url: z.string().url(),
-    transport: z.string(),
-  })).optional(),
+  additionalInterfaces: z
+    .array(
+      z.object({
+        url: z.string().url(),
+        transport: z.string(),
+      })
+    )
+    .optional(),
   iconUrl: z.string().url().optional(),
-  provider: z.object({
-    organization: z.string(),
-    url: z.string().url(),
-  }).optional(),
+  provider: z
+    .object({
+      organization: z.string(),
+      url: z.string().url(),
+    })
+    .optional(),
   version: z.string(),
   documentationUrl: z.string().url().optional(),
   capabilities: z.object({
     streaming: z.boolean().optional(),
     pushNotifications: z.boolean().optional(),
     stateTransitionHistory: z.boolean().optional(),
-    extensions: z.array(z.object({
-      uri: z.string(),
-      description: z.string().optional(),
-      required: z.boolean().optional(),
-      params: z.record(z.string(), z.any()).optional(),
-    })).optional(),
+    extensions: z
+      .array(
+        z.object({
+          uri: z.string(),
+          description: z.string().optional(),
+          required: z.boolean().optional(),
+          params: z.record(z.string(), z.any()).optional(),
+        })
+      )
+      .optional(),
   }),
   securitySchemes: z.record(z.string(), z.any()).optional(),
   security: z.array(z.record(z.string(), z.array(z.string()))).optional(),
   defaultInputModes: z.array(z.string()),
   defaultOutputModes: z.array(z.string()),
-  skills: z.array(z.object({
-    id: z.string(),
-    name: z.string(),
-    description: z.string(),
-    tags: z.array(z.string()),
-    examples: z.array(z.string()).optional(),
-    inputModes: z.array(z.string()).optional(),
-    outputModes: z.array(z.string()).optional(),
-    security: z.array(z.record(z.string(), z.array(z.string()))).optional(),
-  })),
+  skills: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      description: z.string(),
+      tags: z.array(z.string()),
+      examples: z.array(z.string()).optional(),
+      inputModes: z.array(z.string()).optional(),
+      outputModes: z.array(z.string()).optional(),
+      security: z.array(z.record(z.string(), z.array(z.string()))).optional(),
+    })
+  ),
   supportsAuthenticatedExtendedCard: z.boolean().optional(),
-  signatures: z.array(z.object({
-    protected: z.string(),
-    signature: z.string(),
-    header: z.record(z.string(), z.any()).optional(),
-  })).optional(),
+  signatures: z
+    .array(
+      z.object({
+        protected: z.string(),
+        signature: z.string(),
+        header: z.record(z.string(), z.any()).optional(),
+      })
+    )
+    .optional(),
 });
 
 export const MessageSendParamsSchema = z.object({
   message: MessageSchema,
-  configuration: z.object({
-    acceptedOutputModes: z.array(z.string()).optional(),
-    historyLength: z.number().optional(),
-    pushNotificationConfig: z.object({
-      id: z.string().optional(),
-      url: z.string().url(),
-      token: z.string().optional(),
-      authentication: z.object({
-        schemes: z.array(z.string()),
-        credentials: z.string().optional(),
-      }).optional(),
-    }).optional(),
-    blocking: z.boolean().optional(),
-  }).optional(),
+  configuration: z
+    .object({
+      acceptedOutputModes: z.array(z.string()).optional(),
+      historyLength: z.number().optional(),
+      pushNotificationConfig: z
+        .object({
+          id: z.string().optional(),
+          url: z.string().url(),
+          token: z.string().optional(),
+          authentication: z
+            .object({
+              schemes: z.array(z.string()),
+              credentials: z.string().optional(),
+            })
+            .optional(),
+        })
+        .optional(),
+      blocking: z.boolean().optional(),
+    })
+    .optional(),
   metadata: z.record(z.string(), z.any()).optional(),
 });
 
@@ -909,6 +944,8 @@ export enum A2AMessageType {
   ERROR_NOTIFICATION = 'error_notification',
   HEARTBEAT = 'heartbeat',
   CAPABILITY_ANNOUNCEMENT = 'capability_announcement',
+  REQUEST = 'request',
+  NOTIFICATION = 'notification',
 }
 
 /**
@@ -960,6 +997,9 @@ export enum AgentType {
   SPECIALIST = 'specialist',
   MONITOR = 'monitor',
   GATEWAY = 'gateway',
+  COMMUNICATOR = 'communicator',
+  ASSISTANT = 'assistant',
+  ANALYZER = 'analyzer',
 }
 
 // Load balancing strategies
@@ -1121,7 +1161,11 @@ export interface IA2ACommunicator {
   startConversation(initiator: string, participants: string[], topic?: string): Promise<string>;
   joinConversation(conversationId: string, agentId: string): Promise<void>;
   leaveConversation(conversationId: string, agentId: string): Promise<void>;
-  discoverAgents(criteria?: { type?: string; capabilities?: string[]; status?: AgentStatus }): Promise<AgentRegistration[]>;
+  discoverAgents(criteria?: {
+    type?: string;
+    capabilities?: string[];
+    status?: AgentStatus;
+  }): Promise<AgentRegistration[]>;
   sendHeartbeat(heartbeat: AgentHeartbeat): Promise<void>;
   getAgentHealth(agentId: string): Promise<AgentHeartbeat | null>;
 }
@@ -1140,7 +1184,10 @@ export class A2AError extends Error {
 }
 
 export class A2AValidationError extends A2AError {
-  constructor(message: string, public validationErrors: any) {
+  constructor(
+    message: string,
+    public validationErrors: any
+  ) {
     super(message, 'VALIDATION_ERROR');
     this.name = 'A2AValidationError';
   }
