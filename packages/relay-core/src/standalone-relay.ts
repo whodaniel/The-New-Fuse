@@ -112,6 +112,7 @@ export class TNFRelayServer extends EventEmitter {
   private heartbeatInterval: NodeJS.Timeout | null = null;
   private port: number;
   private bridge: RedisRelayBridge | null = null;
+  private bridgeSubscribedAgents: Set<string> = new Set();
   private authService: JWTAuthService;
   private stallDetector: StallDetector;
   private logger: Logger;
@@ -138,7 +139,10 @@ export class TNFRelayServer extends EventEmitter {
     this.activityMaxLen = parseInt(process.env.ACTIVITY_STREAM_MAXLEN || '100000', 10);
 
     // Create logger
-    this.logger = new Logger((process.env.LOG_LEVEL as any) || 'info', process.env.WORKSPACE_DIR || process.cwd());
+    this.logger = new Logger(
+      (process.env.LOG_LEVEL as any) || 'info',
+      process.env.WORKSPACE_DIR || process.cwd()
+    );
 
     // Create HTTP server
     this.server = http.createServer(this.handleHttpRequest.bind(this));
@@ -190,7 +194,10 @@ export class TNFRelayServer extends EventEmitter {
     if (process.env.ENABLE_REDIS_BRIDGE === 'true') {
       this.bridge = createRedisRelayBridge();
 
-      this.bridge.on('connected', () => console.log('[Relay] Bridge connected to Redis'));
+      this.bridge.on('connected', () => {
+        console.log('[Relay] Bridge connected to Redis');
+        this.syncBridgeSubscriptions();
+      });
 
       this.bridge.on('egress', (envelope: TNFEnvelope) => {
         // Handle message from Redis -> WebSocket
@@ -474,6 +481,10 @@ export class TNFRelayServer extends EventEmitter {
         this.agents.set(id, agent);
         this.sockets.set(id, ws);
         this.agentChannels.set(id, new Set(agent.channels));
+        this.ensureBridgeSubscription(id);
+        for (const channelId of agent.channels) {
+          this.syncAgentChannelMembership(id, channelId);
+        }
 
         // Register capabilities
         for (const cap of agent.capabilities) {
@@ -611,14 +622,8 @@ export class TNFRelayServer extends EventEmitter {
 
       case 'CHANNEL_JOIN': {
         const channelId = (payload as Record<string, unknown>)?.channelId as string;
-        const ch = this.channels.get(channelId);
-        if (ch && agentId) {
-          if (!ch.members.includes(agentId)) {
-            ch.members.push(agentId);
-          }
-          const myChannels = this.agentChannels.get(agentId) || new Set();
-          myChannels.add(channelId);
-          this.agentChannels.set(agentId, myChannels);
+        if (agentId && channelId) {
+          this.syncAgentChannelMembership(agentId, channelId);
         }
         break;
       }
@@ -704,6 +709,9 @@ export class TNFRelayServer extends EventEmitter {
 
         this.emit('message', msg);
         void this.persistActivityMessage(message, msg);
+        if (channel && agentId) {
+          this.syncAgentChannelMembership(agentId, channel);
+        }
 
         // Track activity for stall detection (skip system messages)
         // Update conversation state if this is not a system message
@@ -745,7 +753,10 @@ export class TNFRelayServer extends EventEmitter {
         if (to === 'broadcast') {
           if (channel) {
             // Broadcast to channel members
-            const ch = this.channels.get(channel);
+            const ch = this.ensureChannelExists(channel, {
+              createdBy: agentId || 'unknown',
+              description: 'Auto-created from relay message traffic',
+            });
             if (ch) {
               ch.members.forEach((memberId) => {
                 const memberWs = this.sockets.get(memberId);
@@ -976,6 +987,17 @@ export class TNFRelayServer extends EventEmitter {
     }
     this.agentChannels.delete(agentId);
     this.subscriptionRegistry.clearAgent(agentId);
+    if (this.bridge && this.bridgeSubscribedAgents.has(agentId)) {
+      this.bridgeSubscribedAgents.delete(agentId);
+      void this.bridge
+        .unsubscribeFromAgent(agentId)
+        .catch((err) =>
+          console.warn(
+            `[Relay] Failed to unsubscribe bridge channel for ${agentId}:`,
+            err instanceof Error ? err.message : String(err)
+          )
+        );
+    }
 
     // Notify others
     this.broadcast({
@@ -1001,12 +1023,34 @@ export class TNFRelayServer extends EventEmitter {
   }
 
   private handleBridgeEgress(envelope: TNFEnvelope): void {
+    const payload = envelope.payload as Record<string, unknown>;
+    const payloadChannel =
+      typeof payload.channel === 'string'
+        ? payload.channel
+        : typeof payload.activityChannel === 'string'
+          ? payload.activityChannel
+          : undefined;
+    const channelId = envelope.context?.channelId || payloadChannel;
+    if (channelId) {
+      this.ensureChannelExists(channelId, {
+        createdBy: 'redis-bridge',
+        description: 'Auto-created from Redis bridge traffic',
+      });
+      const fromAgentId = envelope.from?.agentId;
+      if (fromAgentId) {
+        this.syncAgentChannelMembership(fromAgentId, channelId);
+      }
+      if ('agentId' in envelope.to && envelope.to.agentId) {
+        this.syncAgentChannelMembership(envelope.to.agentId, channelId);
+      }
+    }
+
     // Convert TNF Envelope back to Protocol Message format for WebSocket clients
     const protocolMsg: ProtocolMessage = {
       id: envelope.id,
       type: envelope.type === 'event' ? 'CHANNEL_MESSAGE' : 'MESSAGE_RECEIVE', // Map to existing types
       source: envelope.from.agentId,
-      channel: envelope.context?.channelId,
+      channel: channelId,
       payload: envelope.payload,
       timestamp: new Date(envelope.timestamp).getTime(),
     };
@@ -1014,8 +1058,8 @@ export class TNFRelayServer extends EventEmitter {
     // Determine routing
     if ('broadcast' in envelope.to && envelope.to.broadcast) {
       // Broadcast to channel if specified, otherwise global
-      if (envelope.context?.channelId) {
-        this.broadcastToChannel(envelope.context.channelId, protocolMsg);
+      if (channelId) {
+        this.broadcastToChannel(channelId, protocolMsg);
       } else {
         this.broadcast(protocolMsg);
       }
@@ -1145,6 +1189,112 @@ export class TNFRelayServer extends EventEmitter {
         ws.send(data);
       }
     });
+  }
+
+  private toChannelDisplayName(channelId: string): string {
+    const compact = channelId.trim();
+    if (!compact) {
+      return 'Auto Channel';
+    }
+    return compact
+      .replace(/^channel-/, '')
+      .replace(/[-_]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .replace(/\b\w/g, (m) => m.toUpperCase());
+  }
+
+  private ensureChannelExists(
+    channelId: string,
+    options?: {
+      name?: string;
+      description?: string;
+      createdBy?: string;
+      isPrivate?: boolean;
+    }
+  ): Channel | null {
+    const normalized = (channelId || '').trim();
+    if (!normalized) {
+      return null;
+    }
+    let channel = this.channels.get(normalized);
+    if (!channel) {
+      channel = {
+        id: normalized,
+        name: options?.name || this.toChannelDisplayName(normalized),
+        description: options?.description || 'Auto-synced channel',
+        createdBy: options?.createdBy || 'system',
+        createdAt: Date.now(),
+        isPrivate: options?.isPrivate || false,
+        members: [],
+      };
+      this.channels.set(normalized, channel);
+      console.log(`[Relay] Auto-created channel: ${normalized} (${channel.name})`);
+      this.broadcast({
+        type: 'CHANNEL_LIST',
+        payload: { channels: Array.from(this.channels.values()) },
+      });
+    }
+    return channel;
+  }
+
+  private syncAgentChannelMembership(agentId: string, channelId: string): void {
+    const channel = this.ensureChannelExists(channelId);
+    if (!channel) {
+      return;
+    }
+
+    if (!channel.members.includes(agentId)) {
+      channel.members.push(agentId);
+    }
+
+    const myChannels = this.agentChannels.get(agentId) || new Set<string>();
+    if (!myChannels.has(channel.id)) {
+      myChannels.add(channel.id);
+      this.agentChannels.set(agentId, myChannels);
+    }
+
+    const agent = this.agents.get(agentId);
+    if (agent && !agent.channels.includes(channel.id)) {
+      agent.channels.push(channel.id);
+    }
+  }
+
+  private syncBridgeSubscriptions(): void {
+    for (const agentId of this.agents.keys()) {
+      this.ensureBridgeSubscription(agentId);
+    }
+  }
+
+  private ensureBridgeSubscription(agentId: string, attempt = 0): void {
+    if (!this.bridge || this.bridgeSubscribedAgents.has(agentId)) {
+      return;
+    }
+
+    if (!this.bridge.isConnected()) {
+      if (attempt < 10) {
+        setTimeout(() => this.ensureBridgeSubscription(agentId, attempt + 1), 500);
+      }
+      return;
+    }
+
+    void this.bridge
+      .subscribeToAgent(agentId, () => {
+        // No-op callback; bridge emits global 'egress' events that we handle centrally.
+      })
+      .then(() => {
+        this.bridgeSubscribedAgents.add(agentId);
+      })
+      .catch((err) => {
+        if (attempt < 10) {
+          setTimeout(() => this.ensureBridgeSubscription(agentId, attempt + 1), 500);
+          return;
+        }
+        console.error(
+          `[Relay] Failed to subscribe bridge egress for ${agentId}:`,
+          err instanceof Error ? err.message : String(err)
+        );
+      });
   }
 
   /**

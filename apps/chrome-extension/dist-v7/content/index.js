@@ -1177,7 +1177,21 @@
         case 'NEW_MESSAGE':
           if (e.message) {
             const t = e.message,
-              c = t.channel || t.channelId || null;
+              c = t.channel || t.channelId || null,
+              h = this.currentChannel || null;
+            if (!h) {
+              console.log(
+                '[FuseConnect] No active channel selected in this tab; skipping NEW_MESSAGE handling'
+              );
+              break;
+            }
+            if (!c || c !== h) {
+              console.log('[FuseConnect] Channel mismatch; skipping NEW_MESSAGE handling', {
+                messageChannel: c,
+                activeChannel: h,
+              });
+              break;
+            }
             if (c && this.pausedChannels.has(c)) {
               console.log('[FuseConnect] Channel paused; skipping NEW_MESSAGE handling', c);
               break;
@@ -1287,6 +1301,25 @@
             }),
             e.content)
           ) {
+            const c = e.channel || e.channelId || null,
+              h = this.currentChannel || null;
+            if (!h) {
+              console.log(
+                '[FuseConnect] No active channel selected in this tab; skipping RESPONSE_COMPLETE'
+              );
+              break;
+            }
+            if (!c || c !== h) {
+              console.log('[FuseConnect] Channel mismatch; skipping RESPONSE_COMPLETE', {
+                messageChannel: c,
+                activeChannel: h,
+              });
+              break;
+            }
+            if (this.pausedChannels.has(c)) {
+              console.log('[FuseConnect] Channel paused; skipping RESPONSE_COMPLETE', c);
+              break;
+            }
             let t =
               'string' == typeof e.content
                 ? e.content
