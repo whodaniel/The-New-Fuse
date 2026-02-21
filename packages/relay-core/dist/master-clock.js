@@ -87,6 +87,8 @@ const CONFIG = {
     RELAY_URL: process.env.RELAY_URL || 'ws://localhost:3000/ws',
     REDIS_URL: process.env.REDIS_URL,
     LEDGER_API_BASE: process.env.LEDGER_API_BASE ||
+        process.env.RAILWAY_API_URL ||
+        process.env.LIVE_API_BASE_URL ||
         process.env.API_BASE_URL ||
         process.env.TNF_API_BASE ||
         'http://localhost:3001',
@@ -98,6 +100,11 @@ const CONFIG = {
         HEARTBEATS: 'tnf:master:heartbeats',
         CHANNELS: 'tnf:master:channels',
         TASKS: 'tnf:master:tasks:pending',
+        TASKS_REALTIME: 'tnf:master:tasks:realtime',
+        TASKS_PLANNING: 'tnf:master:tasks:planning',
+        SUGGESTIONS: 'tnf:master:suggestions:votes',
+        CHANGELOG: 'tnf:master:changelog:suggestions',
+        KANBAN: 'tnf:master:kanban:delivery',
         LOGS: 'tnf:master:logs',
         STATE: 'tnf:master:state',
         SUPER_CYCLE: 'tnf:master:super-cycle',
@@ -263,6 +270,7 @@ class MasterClock {
     taskPollingInterval = null;
     recentQueuedTasks;
     selfPromptCooldowns;
+    taskPollFailureCount;
     constructor() {
         this.sessionId = `ORCHESTRATOR-${Date.now()}`;
         this.registry = new AgentRegistry();
@@ -286,6 +294,7 @@ class MasterClock {
         };
         this.recentQueuedTasks = new Map();
         this.selfPromptCooldowns = new Map();
+        this.taskPollFailureCount = 0;
     }
     // --------------------------------------------------------------------------
     // INITIALIZATION
@@ -497,7 +506,10 @@ class MasterClock {
         log('info', 'TASK-POLL', `Starting vote-aware task polling (every ${CONFIG.TASK_POLL_INTERVAL_MS}ms)`);
         const run = () => {
             void this.pollAndQueueTasks().catch((error) => {
-                log('warn', 'TASK-POLL', `Task polling failed: ${error.message || String(error)}`);
+                this.taskPollFailureCount += 1;
+                if (this.taskPollFailureCount <= 3 || this.taskPollFailureCount % 10 === 0) {
+                    log('warn', 'TASK-POLL', `Task polling failed (${this.taskPollFailureCount}): ${error.message || String(error)}`);
+                }
             });
         };
         this.taskPollingInterval = setInterval(run, CONFIG.TASK_POLL_INTERVAL_MS);
@@ -505,38 +517,115 @@ class MasterClock {
     }
     taskPriorityWeight(priority) {
         const normalized = String(priority || 'medium').toLowerCase();
-        if (normalized === 'urgent')
+        // Preserve historical TNF aliases (P0-P3, normal) across legacy producers.
+        if (normalized === 'p0' || normalized === 'urgent')
             return 500;
         if (normalized === 'critical')
             return 400;
-        if (normalized === 'high')
+        if (normalized === 'p1' || normalized === 'high')
             return 300;
-        if (normalized === 'low')
+        if (normalized === 'p3' || normalized === 'low')
             return 100;
+        if (normalized === 'normal' || normalized === 'p2')
+            return 200;
         return 200;
+    }
+    itineraryLaneWeight(lane) {
+        const normalized = String(lane || '').toLowerCase();
+        if (normalized === 'realtime_broker_routing')
+            return 350;
+        if (normalized === 'relay_federation' ||
+            normalized === 'redis_sync' ||
+            normalized === 'tauri_sync')
+            return 300;
+        if (normalized === 'directive')
+            return 250;
+        if (normalized === 'kanban_delivery')
+            return 150;
+        if (normalized === 'changelog_suggestion')
+            return 120;
+        if (normalized === 'suggestion_vote')
+            return 80;
+        return 100;
+    }
+    horizonWeight(horizon) {
+        const normalized = String(horizon || '').toLowerCase();
+        if (normalized === 'realtime')
+            return 200;
+        if (normalized === 'short_term')
+            return 120;
+        if (normalized === 'medium_term')
+            return 60;
+        if (normalized === 'long_term')
+            return 20;
+        return 40;
+    }
+    isRealtimeDispatchCandidate(task) {
+        const lane = String(task?.itinerary?.lane || '').toLowerCase();
+        return [
+            'realtime_broker_routing',
+            'relay_federation',
+            'redis_sync',
+            'tauri_sync',
+            'directive',
+        ].includes(lane);
+    }
+    targetQueueForTask(task) {
+        const lane = String(task?.itinerary?.lane || '').toLowerCase();
+        if (lane === 'suggestion_vote')
+            return CONFIG.REDIS_KEYS.SUGGESTIONS;
+        if (lane === 'changelog_suggestion')
+            return CONFIG.REDIS_KEYS.CHANGELOG;
+        if (lane === 'kanban_delivery')
+            return CONFIG.REDIS_KEYS.KANBAN;
+        if (this.isRealtimeDispatchCandidate(task))
+            return CONFIG.REDIS_KEYS.TASKS_REALTIME;
+        return CONFIG.REDIS_KEYS.TASKS_PLANNING;
     }
     taskDispatchScore(task) {
         const up = Number(task?.votes?.up || 0);
         const down = Number(task?.votes?.down || 0);
         const netVotes = up - down;
         const priority = this.taskPriorityWeight(task?.priority || 'medium');
+        const laneWeight = this.itineraryLaneWeight(task?.itinerary?.lane || '');
+        const horizonWeight = this.horizonWeight(task?.itinerary?.horizon || '');
         const createdAt = Date.parse(String(task?.createdAt || task?.updatedAt || Date.now()));
         const ageMinutes = Math.max(0, Math.floor((Date.now() - createdAt) / 60000));
         const freshnessBonus = Math.max(0, 120 - ageMinutes); // fades over ~2 hours
-        return priority + netVotes * 25 + up * 5 + freshnessBonus;
+        return priority + laneWeight + horizonWeight + netVotes * 25 + up * 5 + freshnessBonus;
+    }
+    async fetchLedgerTasks() {
+        const base = CONFIG.LEDGER_API_BASE.replace(/\/$/, '');
+        const urls = [
+            `${base}/api/unified-ledger/records?kind=task`,
+            `${base}/unified-ledger/records?kind=task`,
+        ];
+        let lastError = null;
+        for (const url of urls) {
+            try {
+                const response = await fetch(url, { method: 'GET' });
+                if (!response.ok) {
+                    lastError = `HTTP ${response.status} (${url})`;
+                    continue;
+                }
+                const rows = (await response.json());
+                return Array.isArray(rows) ? rows : [];
+            }
+            catch (error) {
+                lastError = `${error.message || String(error)} (${url})`;
+            }
+        }
+        throw new Error(`Ledger poll failed: ${lastError || 'unknown error'}`);
     }
     async pollAndQueueTasks() {
         if (!this.redis)
             return;
-        const url = `${CONFIG.LEDGER_API_BASE.replace(/\/$/, '')}/unified-ledger/records?kind=task`;
-        const response = await fetch(url, { method: 'GET' });
-        if (!response.ok) {
-            throw new Error(`Ledger poll failed with HTTP ${response.status}`);
-        }
-        const rows = (await response.json());
+        const rows = await this.fetchLedgerTasks();
+        this.taskPollFailureCount = 0;
         const actionable = (Array.isArray(rows) ? rows : []).filter((task) => {
             const status = String(task?.status || '').toLowerCase();
-            return ['submitted', 'queued', 'under_review', 'in_progress'].includes(status);
+            return (['submitted', 'queued', 'under_review', 'in_progress'].includes(status) &&
+                this.isRealtimeDispatchCandidate(task));
         });
         const ranked = actionable
             .map((task) => ({ task, score: this.taskDispatchScore(task) }))
@@ -552,6 +641,7 @@ class MasterClock {
                 score: r.score,
                 votes: r.task?.votes || { up: 0, down: 0 },
                 priority: r.task?.priority || 'medium',
+                itinerary: r.task?.itinerary || {},
             })),
         });
         const now = Date.now();
@@ -573,8 +663,19 @@ class MasterClock {
                 votes: task.votes || { up: 0, down: 0 },
                 score: rankedTask.score,
                 source: 'unified-ledger-poll',
+                itinerary: task.itinerary || {
+                    lane: 'realtime_broker_routing',
+                    horizon: 'realtime',
+                    coordinationMode: 'brokered',
+                    signalSources: ['redis'],
+                    sequencingKey: taskId,
+                    clockSource: 'master-clock',
+                },
                 createdAt: task.createdAt || new Date().toISOString(),
             };
+            const targetQueue = this.targetQueueForTask(task);
+            await this.redis.lPush(targetQueue, JSON.stringify(queueItem));
+            // Backward compatibility for existing consumers.
             await this.redis.lPush(CONFIG.REDIS_KEYS.TASKS, JSON.stringify(queueItem));
             this.recentQueuedTasks.set(taskId, now);
             this.metrics.tasksQueued += 1;
@@ -583,6 +684,8 @@ class MasterClock {
                 score: rankedTask.score,
                 votes: queueItem.votes,
                 priority: queueItem.priority,
+                targetQueue,
+                lane: queueItem.itinerary?.lane,
                 tasksQueued: this.metrics.tasksQueued,
             });
         }

@@ -9,7 +9,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const redis_1 = require("redis");
 const DEFAULTS = {
-    redisUrl: process.env.REDIS_URL || 'redis://localhost:6379',
+    redisUrl: process.env.REDIS_URL ||
+        process.env.RAILWAY_REDIS_URL ||
+        process.env.LIVE_REDIS_URL ||
+        process.env.REDIS_PRIVATE_URL ||
+        process.env.REDIS_TLS_URL ||
+        'redis://localhost:6379',
     ingress: process.env.TNF_INGRESS_CHANNEL || 'tnf:bus:ingress',
     selfPromptKey: process.env.TNF_SELF_PROMPT_KEY || 'tnf:master:self-prompts',
     processId: process.env.SUPER_CYCLE_PROCESS_ID || '',

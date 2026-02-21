@@ -52,6 +52,34 @@ pnpm run tnf:start -- gemini
 4. Launches selected AI CLI with `TNF_MCP_CONFIG_PATH` and `MCP_CONFIG_PATH`
    exported
 
+## Orchestration Runtime (Web/Cloud-First)
+
+Use these when running TNF orchestration services directly:
+
+```bash
+pnpm run factory:boot
+pnpm run factory:supervisor
+pnpm run tnf:orchestration:audit
+```
+
+Notes:
+
+- `factory:boot` now resolves Redis and API targets in cloud-first order.
+  Localhost is the final fallback only.
+- `factory:boot` also starts `factory-supervisor` by default
+  (`FACTORY_SUPERVISOR_ENABLED=true`).
+- `factory-supervisor` continuously monitors relay/master-clock/broker/director/
+  workflow-router and triggers `factory:boot` recovery with bounded backoff.
+- `tnf:orchestration:audit` validates script and process-command alignment
+  (launch commands, `pgrep` patterns, and Redis target consistency).
+
+Environment precedence:
+
+- Redis:
+  `REDIS_URL -> RAILWAY_REDIS_URL -> LIVE_REDIS_URL -> REDIS_PRIVATE_URL -> REDIS_TLS_URL -> localhost`
+- Ledger/API:
+  `LEDGER_API_BASE -> RAILWAY_API_URL -> LIVE_API_BASE_URL -> API_BASE_URL -> TNF_API_BASE -> localhost`
+
 ## Recommended Default Workflow
 
 1. `cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse`

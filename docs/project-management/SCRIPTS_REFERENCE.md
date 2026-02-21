@@ -138,6 +138,25 @@ Run these from the monorepo root (`/home/user/fuse`):
 | `pnpm audit:security` | Security audit               | Security checks  |
 | `pnpm audit:circular` | Find circular dependencies   | Code quality     |
 
+### TNF Orchestration
+
+| Script                         | Description                                                               | Usage                      |
+| ------------------------------ | ------------------------------------------------------------------------- | -------------------------- |
+| `pnpm factory:boot`            | Start/validate relay + master-clock + broker + director + workflow-router | Runtime bootstrap          |
+| `pnpm factory:supervisor`      | Continuous self-healing monitor with backoff                              | Long-running ops process   |
+| `pnpm factory:supervisor:once` | Single supervisor cycle (check + optional recovery)                       | CI/diagnostic dry run      |
+| `pnpm tnf:doctor`              | TNF environment + policy + runtime script readiness                       | Session and env validation |
+| `pnpm tnf:orchestration:audit` | Command/pattern alignment audit for orchestration scripts                 | Drift prevention           |
+
+Runtime behavior notes:
+
+- `factory:boot` is cloud/web-first for Redis and API endpoints and only falls
+  back to localhost when no cloud/live env values are available.
+- `factory:boot` auto-starts `factory-supervisor` unless
+  `FACTORY_SUPERVISOR_ENABLED=false`.
+- Redis inspection commands in `factory:boot` explicitly target
+  `redis-cli -u "${REDIS_URL}"` for consistency with the active runtime target.
+
 ## Standard Package Scripts
 
 All packages should implement these standard scripts:
