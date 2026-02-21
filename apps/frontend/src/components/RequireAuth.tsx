@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 interface RequireAuthProps {
@@ -17,13 +17,15 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
 }) => {
   const { isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       console.log('[RequireAuth] User not authenticated, redirecting to', redirectTo);
-      navigate(redirectTo, { replace: true });
+      // Pass the current location to the redirect so we can return after login
+      navigate(redirectTo, { replace: true, state: { from: location } });
     }
-  }, [isAuthenticated, isLoading, navigate, redirectTo]);
+  }, [isAuthenticated, isLoading, navigate, redirectTo, location]);
 
   if (isLoading) {
     return (
