@@ -42,7 +42,12 @@ const Register: React.FC = () => {
     try {
       setIsLoading(true);
       setError(null);
-      await signInWithGoogle();
+      const result = await signInWithGoogle();
+
+      if (result.method === 'oauth-redirect') {
+        return;
+      }
+
       navigate('/dashboard');
     } catch (err: unknown) {
       console.error(err);

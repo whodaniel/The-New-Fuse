@@ -68,6 +68,11 @@ const Login: React.FC = () => {
       setIsLoading(true);
 
       const result = await signInWithGoogle();
+
+      if (result.method === 'oauth-redirect' || !result.user) {
+        return;
+      }
+
       const user = result.user;
 
       // Check if 2FA is enabled for this user

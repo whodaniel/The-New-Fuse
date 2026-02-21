@@ -11,7 +11,7 @@ const RegisterSimple: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { register, signInWithGoogle } = useAuth();
+  const { register } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

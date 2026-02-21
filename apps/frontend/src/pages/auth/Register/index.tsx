@@ -1,5 +1,6 @@
 import { useAuth } from '@/hooks/useAuth';
 import { Loader } from 'lucide-react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const RegisterPage = () => {
@@ -11,7 +12,8 @@ const RegisterPage = () => {
     try {
       setError(null);
       setIsLoading(true);
-      await signInWithGoogle();
+      const result = await signInWithGoogle();
+      if (result.method === 'oauth-redirect') return;
       navigate('/workspace');
     } catch (err) {
       console.error('Registration error:', err);
