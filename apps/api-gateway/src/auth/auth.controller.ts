@@ -4,6 +4,8 @@
  */
 
 import {
+  All,
+  BadGatewayException,
   Body,
   Controller,
   Get,
@@ -11,11 +13,12 @@ import {
   HttpStatus,
   Logger,
   Post,
+  Req,
   Res,
   Version,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { ProxyService } from '../proxy/proxy.service';
 
 @Controller('auth')
@@ -42,7 +45,7 @@ export class AuthController {
         body
       );
       return res.status(response.status).json(response.data);
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Login proxy failed: ${error.message}`);
       return res.status(HttpStatus.BAD_GATEWAY).json({
         message: 'Authentication service unavailable',
@@ -71,7 +74,7 @@ export class AuthController {
         body
       );
       return res.status(response.status).json(response.data);
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Register proxy failed: ${error.message}`);
       return res.status(HttpStatus.BAD_GATEWAY).json({
         message: 'Authentication service unavailable',
@@ -100,7 +103,7 @@ export class AuthController {
         body
       );
       return res.status(response.status).json(response.data);
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Refresh proxy failed: ${error.message}`);
       return res.status(HttpStatus.BAD_GATEWAY).json({
         message: 'Authentication service unavailable',
@@ -122,7 +125,7 @@ export class AuthController {
         headers
       );
       return res.status(response.status).json(response.data);
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Logout proxy failed: ${error.message}`);
       return res.status(HttpStatus.BAD_GATEWAY).json({
         message: 'Authentication service unavailable',
@@ -142,7 +145,7 @@ export class AuthController {
       // Try backend first
       const response = await this.proxyService.proxyRequest('backend', '/auth/me', 'GET', headers);
       return res.status(response.status).json(response.data);
-    } catch (error) {
+    } catch (error: any) {
       this.logger.warn(
         `'me' endpoint proxy to backend failed, trying 'agents' service: ${error.message}`
       );
@@ -156,13 +159,50 @@ export class AuthController {
           headers
         );
         return res.status(response.status).json(response.data);
-      } catch (fallbackError) {
+      } catch (fallbackError: any) {
         this.logger.error(`'me' endpoint proxy failed for all services`);
         return res.status(HttpStatus.BAD_GATEWAY).json({
           message: 'Authentication service unavailable',
           error: fallbackError.message,
         });
       }
+    }
+  }
+
+  @All('*')
+  @Version('1')
+  @ApiOperation({ summary: 'Proxy all other auth endpoints (e.g., OAuth)' })
+  async proxyAll(@Req() req: Request, @Res() res: Response) {
+    try {
+      // req.path might be /v1/auth/google, we want /auth/google
+      const path = req.path.replace(/^\/v1\/auth/, '/auth').replace(/^\/auth/, '/auth');
+
+      const response = await this.proxyService.proxyRequest(
+        'backend',
+        path,
+        req.method,
+        req.headers as unknown as Record<string, string>,
+        req.body,
+        req.query as Record<string, string>
+      );
+
+      // Forward headers
+      for (const [key, value] of Object.entries(response.headers)) {
+        if (key.toLowerCase() !== 'transfer-encoding') {
+          res.setHeader(key, value as string | string[]);
+        }
+      }
+
+      return res.status(response.status).send(response.data);
+    } catch (error: any) {
+      if (error instanceof BadGatewayException || error.status === HttpStatus.BAD_GATEWAY) {
+        throw error;
+      }
+      this.logger.error(`Catch-all auth proxy failed: ${error.message}`);
+      return res.status(HttpStatus.BAD_GATEWAY).json({
+        message: 'Authentication service unavailable',
+        error: error.message,
+      });
     }
   }
 }

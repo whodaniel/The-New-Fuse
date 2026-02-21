@@ -3,10 +3,10 @@
  * Handles routing and load balancing to backend services
  */
 
-import { Injectable, Logger, BadGatewayException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { BadGatewayException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { AxiosResponse, AxiosRequestConfig } from 'axios';
+import { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { firstValueFrom } from 'rxjs';
 
 export interface ServiceConfig {
@@ -24,7 +24,7 @@ export class ProxyService {
 
   constructor(
     private readonly httpService: HttpService,
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService
   ) {
     this.initializeServices();
   }
@@ -33,8 +33,11 @@ export class ProxyService {
     // Register backend services
     // Updated port assignments to avoid conflicts
     this.registerService({
-      name: 'backend', 
-      baseUrl: this.configService.get('BACKEND_SERVICE_URL', 'http://localhost:3001'),
+      name: 'backend',
+      baseUrl: this.configService.get(
+        'BACKEND_SERVICE_URL',
+        this.configService.get('BACKEND_URL', 'http://localhost:3004')
+      ),
       healthPath: '/health',
       timeout: 30000,
       retries: 3,
@@ -50,7 +53,10 @@ export class ProxyService {
 
     this.registerService({
       name: 'agents',
-      baseUrl: this.configService.get('AGENTS_SERVICE_URL', 'http://localhost:3001'),
+      baseUrl: this.configService.get(
+        'AGENTS_SERVICE_URL',
+        this.configService.get('API_URL', 'http://localhost:3001')
+      ),
       healthPath: '/health',
       timeout: 30000,
       retries: 3,
@@ -97,6 +103,8 @@ export class ProxyService {
       },
       timeout: service.timeout || 30000,
       params: query,
+      maxRedirects: 0,
+      validateStatus: (status) => status >= 200 && status < 400,
     };
 
     if (body && ['POST', 'PUT', 'PATCH'].includes(method.toUpperCase())) {
@@ -110,8 +118,14 @@ export class ProxyService {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(`Proxy request failed for ${serviceName}:`, errorMessage);
-      
-      if (error instanceof Error && 'response' in error && typeof error.response === 'object' && 'status' in error.response && 'data' in error.response) {
+
+      if (
+        error instanceof Error &&
+        'response' in error &&
+        typeof error.response === 'object' &&
+        'status' in error.response &&
+        'data' in error.response
+      ) {
         // Forward the error response from the backend service
         throw new BadGatewayException({
           message: 'Backend service error',
@@ -120,7 +134,7 @@ export class ProxyService {
           error: (error.response as { data: any }).data,
         });
       }
-      
+
       throw new BadGatewayException({
         message: 'Service unavailable',
         service: serviceName,

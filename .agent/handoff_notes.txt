@@ -153,3 +153,21 @@ Runbook now:
 4. If failed, fix route exposure/deploy mismatch and redeploy API.
 5. Confirm all five claw services report adaptive routing resolution at startup logs.
 ---
+
+Update - Feb 20, 2026 (API adaptive route compatibility + deploy trigger):
+- Fixed `AgentProxyController` base-path ambiguity by supporting both controller prefixes:
+  - `apps/api/src/controllers/agent-proxy.controller.ts`
+  - changed to `@Controller(['agent-proxy', 'api/agent-proxy'])`
+- Commit pushed to `main`:
+  - `5cf3ddea8 fix(api): support both agent-proxy route prefixes`
+- API deploy triggered via Railway:
+  - deployment id `5c581f38-f39f-4645-ab68-96bb879333e2`
+- Current external blocker:
+  - DNS resolution from this shell is intermittently failing for both:
+    - `backboard.railway.com` (Railway GraphQL/CLI)
+    - `api-production-48f1.up.railway.app` (public endpoint probe)
+  - This blocks final live verification and env-var writes despite valid Railway auth.
+- Resume commands when DNS recovers:
+  1) `railway status --json | jq -r '.environments.edges[].node.serviceInstances.edges[].node | select(.serviceName=="api") | [.latestDeployment.id,.latestDeployment.status,.latestDeployment.createdAt] | @tsv'`
+  2) `curl -sS -D - https://api-production-48f1.up.railway.app/api/agent-proxy/adaptive/config/picoclaw-tester`
+  3) `curl -sS -D - https://api-production-48f1.up.railway.app/api/api/agent-proxy/adaptive/config/picoclaw-tester`
