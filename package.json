@@ -37,6 +37,8 @@
     "factory:blue:seed": "node scripts/orchestrator/seed-blue-swarm.cjs",
     "factory:website:seed": "scripts/orchestrator/seed-website-swarm-tasks.sh",
     "tnf:doctor": "node scripts/tnf-doctor.cjs",
+    "improver:scan": "node scripts/improver/scan.cjs",
+    "joy": "node scripts/improver/joy.js",
     "tnf:orchestration:audit": "node scripts/tnf-orchestration-audit.cjs",
     "tnf:audit:synergy": "node scripts/tnf-audit-synergy.cjs",
     "tnf:metaskills:audit": "node scripts/tnf-metaskills-audit.cjs",

@@ -436,7 +436,7 @@ patterns YOU discover.
 - Resource Map: `.agent/context/resource-map.md`
 - Browser Skill: `.agent/skills/browser-automation/SKILL.md`
 - Relay Skill: `.agent/skills/relay-communication/SKILL.md`
-- Your Inbox: `.agents/{agentId}/inbox/`
+- Your Inbox: `.agent/agents/{agentId}/`
 
 ### Key Commands:
 

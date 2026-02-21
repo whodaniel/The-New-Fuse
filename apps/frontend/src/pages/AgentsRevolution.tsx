@@ -5,15 +5,18 @@ import { agentService, type Agent } from '@/services/AgentService';
 import {
   ArrowRight,
   Bot,
+  Box,
   CheckCircle2,
   Clock,
   Code2,
   Command,
+  Cpu,
   Database,
   FileCode,
   Layers,
   Loader2,
   LucideIcon,
+  Microscope,
   Plus,
   Search,
   Sparkles,
@@ -32,6 +35,9 @@ const typeIcons: Record<string, LucideIcon> = {
   chat: Bot,
   assistant: Sparkles,
   workflow: Zap,
+  analyzer: Microscope,
+  executor: Cpu,
+  environment: Box,
   default: Bot,
 };
 
@@ -44,6 +50,9 @@ const typeGradients: Record<string, string> = {
   chat: 'from-indigo-500 to-purple-500',
   assistant: 'from-pink-500 to-rose-500',
   workflow: 'from-yellow-500 to-orange-500',
+  analyzer: 'from-cyan-400 to-blue-600',
+  executor: 'from-red-500 to-orange-500',
+  environment: 'from-slate-700 to-gray-900',
   default: 'from-gray-500 to-slate-500',
 };
 
@@ -62,6 +71,7 @@ interface UIAgent {
   };
   icon: LucideIcon;
   gradient: string;
+  pfpUrl?: string;
 }
 
 // Transform API agent to UI agent
@@ -83,6 +93,7 @@ const transformAgent = (agent: Agent): UIAgent => {
     },
     icon: typeIcons[type] || typeIcons.default,
     gradient: typeGradients[type] || typeGradients.default,
+    pfpUrl: agent.metadata?.pfpUrl, // Assume metadata might carry pfpUrl
   };
 };
 
@@ -105,9 +116,20 @@ const AgentCard = memo(({ agent }: { agent: UIAgent }) => {
         {/* Header */}
         <div className="flex justify-between items-start">
           <div
-            className={`w-20 h-20 rounded-2xl bg-linear-to-br ${agent.gradient} flex items-center justify-center shadow-2xl group-hover:scale-110 transform transition-transform`}
+            className={`w-20 h-20 rounded-2xl bg-linear-to-br ${agent.gradient} flex items-center justify-center shadow-2xl group-hover:scale-110 transform transition-transform overflow-hidden`}
           >
-            <Icon className="w-10 h-10 text-white" />
+            {agent.pfpUrl ? (
+              <img
+                src={agent.pfpUrl}
+                alt={agent.name}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
+            ) : (
+              <Icon className="w-10 h-10 text-white" />
+            )}
           </div>
           <div className="flex items-center gap-3">
             {agent.status === 'Active' ? (
