@@ -16,6 +16,7 @@ import {
   Layers,
   Loader2,
   LucideIcon,
+  MessageSquare,
   Microscope,
   Plus,
   Search,
@@ -29,6 +30,7 @@ import { useNavigate } from 'react-router-dom';
 // Icon mapping for agent types
 const typeIcons: Record<string, LucideIcon> = {
   development: Code2,
+  coder: Code2,
   analytics: Database,
   content: FileCode,
   security: Layers,
@@ -39,12 +41,15 @@ const typeIcons: Record<string, LucideIcon> = {
   executor: Cpu,
   environment: Box,
   scout: Search,
+  coordinator: Command,
+  communicator: MessageSquare,
   default: Bot,
 };
 
 // Gradient mapping for agent types
 const typeGradients: Record<string, string> = {
   development: 'from-blue-500 to-cyan-500',
+  coder: 'from-blue-600 to-cyan-400',
   analytics: 'from-purple-500 to-pink-500',
   content: 'from-orange-500 to-red-500',
   security: 'from-green-500 to-emerald-500',
@@ -55,6 +60,8 @@ const typeGradients: Record<string, string> = {
   executor: 'from-red-500 to-orange-500',
   environment: 'from-slate-700 to-gray-900',
   scout: 'from-purple-600 to-indigo-800',
+  coordinator: 'from-amber-500 to-orange-600',
+  communicator: 'from-teal-400 to-emerald-500',
   default: 'from-gray-500 to-slate-500',
 };
 
@@ -65,7 +72,7 @@ interface UIAgent {
   tagline: string;
   description: string;
   category: string;
-  status: 'Active' | 'Paused' | 'Error';
+  status: 'Active' | 'Paused' | 'Error' | 'Standby';
   metrics: {
     tasksCompleted: number;
     successRate: number;
@@ -79,6 +86,13 @@ interface UIAgent {
 // Transform API agent to UI agent
 const transformAgent = (agent: Agent): UIAgent => {
   const type = agent.type?.toLowerCase() || 'default';
+
+  // Map internal status to UI status
+  let uiStatus: UIAgent['status'] = 'Paused';
+  if (agent.status === 'active') uiStatus = 'Active';
+  else if (agent.status === 'error') uiStatus = 'Error';
+  else if (agent.status === 'standby' || !agent.status) uiStatus = 'Standby';
+
   return {
     id: agent.id,
     name: agent.name,
@@ -87,7 +101,7 @@ const transformAgent = (agent: Agent): UIAgent => {
       : agent.description?.split('.')[0] || 'AI-powered agent',
     description: agent.description || 'No description available',
     category: agent.type || 'General',
-    status: agent.status === 'active' ? 'Active' : agent.status === 'error' ? 'Error' : 'Paused',
+    status: uiStatus,
     metrics: {
       tasksCompleted: agent.metadata?.tasksCompleted || 0,
       successRate: agent.metadata?.successRate || 0,
@@ -95,7 +109,7 @@ const transformAgent = (agent: Agent): UIAgent => {
     },
     icon: typeIcons[type] || typeIcons.default,
     gradient: typeGradients[type] || typeGradients.default,
-    pfpUrl: agent.metadata?.pfpUrl, // Assume metadata might carry pfpUrl
+    pfpUrl: agent.metadata?.pfpUrl,
   };
 };
 
@@ -103,6 +117,39 @@ const transformAgent = (agent: Agent): UIAgent => {
 const AgentCard = memo(({ agent }: { agent: UIAgent }) => {
   const navigate = useNavigate();
   const Icon = agent.icon;
+
+  const getStatusBadge = (status: UIAgent['status']) => {
+    switch (status) {
+      case 'Active':
+        return (
+          <Badge className="px-4 py-2 bg-green-500/20 text-green-400 border-green-500/30 font-semibold">
+            <CheckCircle2 className="w-4 h-4 mr-2 animate-pulse" />
+            Active
+          </Badge>
+        );
+      case 'Standby':
+        return (
+          <Badge className="px-4 py-2 bg-blue-500/20 text-blue-400 border-blue-500/30 font-semibold">
+            <Clock className="w-4 h-4 mr-2" />
+            Standby
+          </Badge>
+        );
+      case 'Error':
+        return (
+          <Badge className="px-4 py-2 bg-red-500/20 text-red-400 border-red-500/30 font-semibold">
+            <Zap className="w-4 h-4 mr-2 animate-bounce" />
+            Alert
+          </Badge>
+        );
+      default:
+        return (
+          <Badge className="px-4 py-2 bg-yellow-500/20 text-yellow-400 border-yellow-500/30 font-semibold">
+            <Clock className="w-4 h-4 mr-2" />
+            Paused
+          </Badge>
+        );
+    }
+  };
 
   return (
     <GlassCard
@@ -133,19 +180,7 @@ const AgentCard = memo(({ agent }: { agent: UIAgent }) => {
               <Icon className="w-10 h-10 text-white" />
             )}
           </div>
-          <div className="flex items-center gap-3">
-            {agent.status === 'Active' ? (
-              <Badge className="px-4 py-2 bg-green-500/20 text-green-400 border-green-500/30 font-semibold">
-                <CheckCircle2 className="w-4 h-4 mr-2" />
-                Active
-              </Badge>
-            ) : (
-              <Badge className="px-4 py-2 bg-yellow-500/20 text-yellow-400 border-yellow-500/30 font-semibold">
-                <Clock className="w-4 h-4 mr-2" />
-                Paused
-              </Badge>
-            )}
-          </div>
+          <div className="flex items-center gap-3">{getStatusBadge(agent.status)}</div>
         </div>
 
         {/* Content */}

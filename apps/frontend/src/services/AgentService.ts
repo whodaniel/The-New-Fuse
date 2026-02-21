@@ -1,5 +1,6 @@
 /**
  * Agent Service - Production ready service for agent management
+ * Dynamically fetches both active agent instances and system-defined agent templates.
  */
 
 export interface Agent {
@@ -8,7 +9,7 @@ export interface Agent {
   type: string;
   description?: string;
   capabilities: string[];
-  status: 'active' | 'inactive' | 'error';
+  status: 'active' | 'inactive' | 'error' | 'standby';
   version: string;
   model?: string;
   provider?: string;
@@ -16,6 +17,17 @@ export interface Agent {
   metadata: Record<string, any>;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface AgentTemplate {
+  id: string;
+  name: string;
+  bank: 'tnf' | 'claude';
+  filename: string;
+  size: number;
+  lastModified: Date;
+  description?: string;
+  category?: string;
 }
 
 export interface AgentExecution {
@@ -38,212 +50,6 @@ export interface AgentCapability {
   parameters: Record<string, any>;
   category: string;
 }
-
-// Mock Data
-const MOCK_AGENTS: Agent[] = [
-  {
-    id: 'agent-1',
-    name: 'DevMaster 3000',
-    type: 'development',
-    description: 'Advanced autonomous coding agent specialized in full-stack development.',
-    capabilities: ['coding', 'debugging', 'testing', 'deployment'],
-    status: 'active',
-    version: '2.1.0',
-    model: 'Claude 3.5 Sonnet',
-    configuration: {},
-    metadata: {
-      tasksCompleted: 1243,
-      successRate: 98.5,
-      avgResponseTime: '1.2s',
-    },
-    createdAt: new Date('2024-01-15'),
-    updatedAt: new Date('2024-03-20'),
-  },
-  {
-    id: 'tnf-agent-picoclaw-perplexity',
-    name: 'PicoClaw Perplexity',
-    type: 'analyzer',
-    description:
-      'Deep research and analysis agent leveraging Perplexity API for real-time information retrieval.',
-    capabilities: ['research', 'fact-checking', 'web-search', 'synthesis'],
-    status: 'active',
-    version: '1.0.0',
-    model: 'Perplexity Sonar',
-    configuration: {},
-    metadata: {
-      tasksCompleted: 42,
-      successRate: 99.5,
-      avgResponseTime: '3.1s',
-    },
-    createdAt: new Date('2024-02-18'),
-    updatedAt: new Date('2024-02-18'),
-  },
-  {
-    id: 'tnf-agent-picoclaw-subject',
-    name: 'PicoClaw Subject',
-    type: 'analyzer',
-    description: 'Specialized subject matter expert analyzer for domain-specific deep dives.',
-    capabilities: ['domain-analysis', 'expert-review', 'context-mapping'],
-    status: 'active',
-    version: '1.0.0',
-    model: 'Claude 3 Opus',
-    configuration: {},
-    metadata: {
-      tasksCompleted: 15,
-      successRate: 100.0,
-      avgResponseTime: '5.2s',
-    },
-    createdAt: new Date('2024-02-18'),
-    updatedAt: new Date('2024-02-18'),
-  },
-  {
-    id: 'tnf-agent-picoclaw-tester',
-    name: 'PicoClaw Tester',
-    type: 'analyzer',
-    description: 'Automated testing and quality assurance analyzer for validation workflows.',
-    capabilities: ['test-generation', 'qa-validation', 'scenario-simulation'],
-    status: 'active',
-    version: '1.0.0',
-    model: 'GPT-4o',
-    configuration: {},
-    metadata: {
-      tasksCompleted: 128,
-      successRate: 97.2,
-      avgResponseTime: '1.5s',
-    },
-    createdAt: new Date('2024-02-18'),
-    updatedAt: new Date('2024-02-18'),
-  },
-  {
-    id: 'tnf-agent-openclaw-fleet',
-    name: 'OpenClaw Fleet Cluster',
-    type: 'executor',
-    description:
-      'Distributed execution fleet for high-concurrency task processing across the TNF cloud.',
-    capabilities: ['distributed-compute', 'batch-processing', 'scaling'],
-    status: 'active',
-    version: '2.0.0',
-    model: 'OpenClaw Runtime',
-    configuration: {},
-    metadata: {
-      tasksCompleted: 54321,
-      successRate: 99.9,
-      avgResponseTime: '0.1s',
-    },
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-02-20'),
-  },
-  {
-    id: 'tnf-agent-zeroclaw-sandbox',
-    name: 'ZeroClaw Sandbox',
-    type: 'environment',
-    description:
-      'Secure, isolated sandbox environment for untrusted code execution and experimental workflows.',
-    capabilities: ['sandboxing', 'isolation', 'secure-execution'],
-    status: 'inactive', // Marked inactive as per runtime-state 'offline' hint (or active if we want to show potential)
-    version: '0.9.beta',
-    model: 'ZeroClaw VM',
-    configuration: {},
-    metadata: {
-      tasksCompleted: 0,
-      successRate: 0,
-      avgResponseTime: '0s',
-    },
-    createdAt: new Date('2024-02-10'),
-    updatedAt: new Date('2024-02-10'),
-  },
-  {
-    id: 'tnf-agent-news-scout',
-    name: 'News Scout',
-    type: 'scout',
-    description:
-      'Autonomously tracks the AI landscape, research breakthroughs, and competitor moves to inform swarm strategy.',
-    capabilities: ['web-search', 'market-analysis', 'reporting', 'task-generation'],
-    status: 'active',
-    version: '1.0.0',
-    model: 'GPT-4o',
-    configuration: {},
-    metadata: {
-      tasksCompleted: 89,
-      successRate: 94.2,
-      avgResponseTime: '2.8s',
-    },
-    createdAt: new Date('2024-02-21'),
-    updatedAt: new Date('2024-02-21'),
-  },
-  {
-    id: 'agent-2',
-    name: 'DataInsight Pro',
-    type: 'analytics',
-    description: 'Data analysis and visualization expert capable of processing large datasets.',
-    capabilities: ['analysis', 'visualization', 'reporting'],
-    status: 'active',
-    version: '1.5.0',
-    model: 'GPT-4o',
-    configuration: {},
-    metadata: {
-      tasksCompleted: 856,
-      successRate: 99.1,
-      avgResponseTime: '2.5s',
-    },
-    createdAt: new Date('2024-02-01'),
-    updatedAt: new Date('2024-03-18'),
-  },
-  {
-    id: 'agent-3',
-    name: 'SecurityGuardian',
-    type: 'security',
-    description: 'Real-time security monitoring and vulnerability assessment agent.',
-    capabilities: ['security-audit', 'penetration-testing', 'monitoring'],
-    status: 'active',
-    version: '3.0.1',
-    model: 'Claude 3 Opus',
-    configuration: {},
-    metadata: {
-      tasksCompleted: 5432,
-      successRate: 99.9,
-      avgResponseTime: '0.5s',
-    },
-    createdAt: new Date('2023-11-10'),
-    updatedAt: new Date('2024-03-21'),
-  },
-  {
-    id: 'agent-4',
-    name: 'ContentCreative',
-    type: 'content',
-    description: 'Creative content generation and marketing copy specialist.',
-    capabilities: ['writing', 'seo', 'marketing'],
-    status: 'inactive',
-    version: '1.2.0',
-    model: 'Claude 3 Haiku',
-    configuration: {},
-    metadata: {
-      tasksCompleted: 321,
-      successRate: 96.5,
-      avgResponseTime: '0.8s',
-    },
-    createdAt: new Date('2024-02-15'),
-    updatedAt: new Date('2024-03-10'),
-  },
-  {
-    id: 'agent-5',
-    name: 'SupportHero',
-    type: 'chat',
-    description: '24/7 Customer support agent with multi-language capabilities.',
-    capabilities: ['support', 'translation', 'faq'],
-    status: 'error',
-    version: '1.0.0',
-    model: 'GPT-3.5 Turbo',
-    configuration: {},
-    metadata: {
-      tasksCompleted: 15420,
-      successRate: 85.2,
-      avgResponseTime: '0.3s',
-    },
-    createdAt: new Date('2023-12-01'),
-    updatedAt: new Date('2024-03-22'),
-  },
-];
 
 class AgentService {
   private baseUrl: string;
@@ -283,112 +89,103 @@ class AgentService {
 
       return await response.json();
     } catch (error) {
-      console.warn(`API request to ${url} failed, falling back to mock data. Error:`, error);
-      throw error; // Let specific methods handle fallback
+      console.warn(`API request to ${url} failed. Error:`, error);
+      throw error;
     }
   }
 
-  // Agent CRUD operations
+  /**
+   * Get all agents (merges instances and system templates)
+   */
   async getAgents(): Promise<Agent[]> {
     try {
-      const agents = await this.request<any[]>('/agents');
-      return agents.map(this.transformAgent);
+      // Fetch active instances and templates in parallel
+      const [instancesResponse, templatesResponse] = await Promise.allSettled([
+        this.request<any[]>('/agents'),
+        this.request<AgentTemplate[]>('/agents/bank/templates'),
+      ]);
+
+      const instances = instancesResponse.status === 'fulfilled' ? instancesResponse.value : [];
+      const templates = templatesResponse.status === 'fulfilled' ? templatesResponse.value : [];
+
+      // Transform instances
+      const activeAgents = instances.map((a) => this.transformAgent(a));
+
+      // Transform templates into "Standby" agents
+      const systemAgents = templates.map((t) => this.transformTemplateToAgent(t));
+
+      // Merge and remove duplicates by name (prefer instances if they exist)
+      const merged = [...activeAgents];
+      for (const sa of systemAgents) {
+        if (!merged.find((ma) => ma.name === sa.name)) {
+          merged.push(sa);
+        }
+      }
+
+      return merged;
     } catch (error) {
-      console.log('Using mock agents data');
-      return MOCK_AGENTS;
+      console.error('Failed to get agents', error);
+      return [];
+    }
+  }
+
+  async getAgentTemplates(): Promise<AgentTemplate[]> {
+    try {
+      return await this.request<AgentTemplate[]>('/agents/bank/templates');
+    } catch (error) {
+      return [];
     }
   }
 
   async getAgent(id: string): Promise<Agent> {
     try {
+      // If it looks like a template ID (contains a colon), handle differently or let backend handle
       const agent = await this.request<any>(`/agents/${id}`);
       return this.transformAgent(agent);
     } catch (error) {
-      const mock = MOCK_AGENTS.find((a) => a.id === id);
-      if (mock) return mock;
-      // Return first mock if not found, or throw
-      return MOCK_AGENTS[0];
+      // Fallback: try to find in templates if not in instances
+      const templates = await this.getAgentTemplates();
+      const template = templates.find((t) => t.id === id);
+      if (template) return this.transformTemplateToAgent(template);
+      throw error;
     }
   }
 
   async createAgent(agent: Omit<Agent, 'id' | 'createdAt' | 'updatedAt'>): Promise<Agent> {
-    try {
-      const created = await this.request<any>('/agents', {
-        method: 'POST',
-        body: JSON.stringify(agent),
-      });
-      return this.transformAgent(created);
-    } catch (error) {
-      console.log('Mock creating agent');
-      return {
-        ...agent,
-        id: `agent-${Date.now()}`,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        metadata: { tasksCompleted: 0, successRate: 100, avgResponseTime: '0s' },
-        configuration: agent.configuration || {},
-        status: 'active',
-      } as Agent;
-    }
+    const created = await this.request<any>('/agents', {
+      method: 'POST',
+      body: JSON.stringify(agent),
+    });
+    return this.transformAgent(created);
   }
 
   async updateAgent(id: string, updates: Partial<Agent>): Promise<Agent> {
-    try {
-      const updated = await this.request<any>(`/agents/${id}`, {
-        method: 'PATCH',
-        body: JSON.stringify(updates),
-      });
-      return this.transformAgent(updated);
-    } catch (error) {
-      console.log('Mock updating agent');
-      const mock = MOCK_AGENTS.find((a) => a.id === id) || MOCK_AGENTS[0];
-      return { ...mock, ...updates, updatedAt: new Date() };
-    }
+    const updated = await this.request<any>(`/agents/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(updates),
+    });
+    return this.transformAgent(updated);
   }
 
   async deleteAgent(id: string): Promise<void> {
-    try {
-      await this.request(`/agents/${id}`, {
-        method: 'DELETE',
-      });
-    } catch (error) {
-      console.log('Mock deleting agent');
-    }
+    await this.request(`/agents/${id}`, {
+      method: 'DELETE',
+    });
   }
 
   // Agent Lifecycle
   async startAgent(id: string): Promise<Agent> {
-    try {
-      const agent = await this.request<any>(`/agents/${id}/start`, {
-        method: 'POST',
-      });
-      return this.transformAgent(agent);
-    } catch (error) {
-      console.log('Mock starting agent');
-      const mock = MOCK_AGENTS.find((a) => a.id === id);
-      if (mock) {
-        mock.status = 'active';
-        return mock;
-      }
-      throw error;
-    }
+    const agent = await this.request<any>(`/agents/${id}/start`, {
+      method: 'POST',
+    });
+    return this.transformAgent(agent);
   }
 
   async stopAgent(id: string): Promise<Agent> {
-    try {
-      const agent = await this.request<any>(`/agents/${id}/stop`, {
-        method: 'POST',
-      });
-      return this.transformAgent(agent);
-    } catch (error) {
-      console.log('Mock stopping agent');
-      const mock = MOCK_AGENTS.find((a) => a.id === id);
-      if (mock) {
-        mock.status = 'inactive';
-        return mock;
-      }
-      throw error;
-    }
+    const agent = await this.request<any>(`/agents/${id}/stop`, {
+      method: 'POST',
+    });
+    return this.transformAgent(agent);
   }
 
   // Agent execution
@@ -397,106 +194,40 @@ class AgentService {
     task: string,
     parameters?: Record<string, any>
   ): Promise<AgentExecution> {
-    try {
-      const execution = await this.request<any>('/agents/execute', {
-        method: 'POST',
-        body: JSON.stringify({
-          agentId,
-          task,
-          parameters,
-        }),
-      });
-      return this.transformExecution(execution);
-    } catch (error) {
-      console.log('Mock executing agent');
-      return {
-        id: `exec-${Date.now()}`,
+    const execution = await this.request<any>('/agents/execute', {
+      method: 'POST',
+      body: JSON.stringify({
         agentId,
-        taskId: `task-${Date.now()}`,
-        status: 'running',
-        startTime: new Date(),
-        input: { task, parameters },
-        logs: ['Agent started', 'Analyzing task...', 'Executing step 1...'],
-      };
-    }
+        task,
+        parameters,
+      }),
+    });
+    return this.transformExecution(execution);
   }
 
   async getExecution(executionId: string): Promise<AgentExecution> {
-    try {
-      const execution = await this.request<any>(`/agents/executions/${executionId}`);
-      return this.transformExecution(execution);
-    } catch (error) {
-      return {
-        id: executionId,
-        agentId: 'agent-1',
-        taskId: 'task-1',
-        status: 'completed',
-        startTime: new Date(Date.now() - 10000),
-        endTime: new Date(),
-        input: {},
-        output: { result: 'Success' },
-        logs: ['Completed'],
-      };
-    }
+    const execution = await this.request<any>(`/agents/executions/${executionId}`);
+    return this.transformExecution(execution);
   }
 
   async getExecutions(agentId?: string): Promise<AgentExecution[]> {
-    try {
-      const endpoint = agentId ? `/agents/${agentId}/executions` : '/agents/executions';
-      const executions = await this.request<any[]>(endpoint);
-      return executions.map(this.transformExecution);
-    } catch (error) {
-      return [];
-    }
+    const endpoint = agentId ? `/agents/${agentId}/executions` : '/agents/executions';
+    const executions = await this.request<any[]>(endpoint);
+    return executions.map(this.transformExecution);
   }
 
   // Agent capabilities
   async getCapabilities(): Promise<AgentCapability[]> {
-    try {
-      return await this.request<AgentCapability[]>('/agents/capabilities');
-    } catch (error) {
-      return [
-        {
-          id: 'cap-1',
-          name: 'Web Search',
-          description: 'Search the web',
-          category: 'tools',
-          parameters: {},
-        },
-        {
-          id: 'cap-2',
-          name: 'Code Analysis',
-          description: 'Analyze code',
-          category: 'dev',
-          parameters: {},
-        },
-      ];
-    }
+    return await this.request<AgentCapability[]>('/agents/capabilities');
   }
 
   async getAgentCapabilities(agentId: string): Promise<AgentCapability[]> {
-    try {
-      return await this.request<AgentCapability[]>(`/agents/${agentId}/capabilities`);
-    } catch (error) {
-      return [
-        {
-          id: 'cap-1',
-          name: 'Web Search',
-          description: 'Search the web',
-          category: 'tools',
-          parameters: {},
-        },
-      ];
-    }
+    return await this.request<AgentCapability[]>(`/agents/${agentId}/capabilities`);
   }
 
   // Agent health and status
   async getAgentStatus(agentId: string): Promise<{ status: string; health: any }> {
-    try {
-      return await this.request<{ status: string; health: any }>(`/agents/${agentId}/status`);
-    } catch (error) {
-      return { status: 'active', health: { cpu: 20, memory: 45 } };
-    }
+    return await this.request<{ status: string; health: any }>(`/agents/${agentId}/status`);
   }
 
   async pingAgent(agentId: string): Promise<boolean> {
@@ -504,35 +235,23 @@ class AgentService {
       await this.request(`/agents/${agentId}/ping`);
       return true;
     } catch (error) {
-      return true; // Mock success
+      return false;
     }
   }
 
   // Agent configuration
   async getAgentConfig(agentId: string): Promise<Record<string, any>> {
-    try {
-      return await this.request<Record<string, any>>(`/agents/${agentId}/config`);
-    } catch (error) {
-      return {
-        temperature: 0.7,
-        maxTokens: 2048,
-        systemPrompt: 'You are a helpful assistant.',
-      };
-    }
+    return await this.request<Record<string, any>>(`/agents/${agentId}/config`);
   }
 
   async updateAgentConfig(
     agentId: string,
     config: Record<string, any>
   ): Promise<Record<string, any>> {
-    try {
-      return await this.request<Record<string, any>>(`/agents/${agentId}/config`, {
-        method: 'PATCH',
-        body: JSON.stringify(config),
-      });
-    } catch (error) {
-      return config;
-    }
+    return await this.request<Record<string, any>>(`/agents/${agentId}/config`, {
+      method: 'PATCH',
+      body: JSON.stringify(config),
+    });
   }
 
   // Transform API responses to frontend types
@@ -541,6 +260,22 @@ class AgentService {
       ...apiAgent,
       createdAt: new Date(apiAgent.createdAt),
       updatedAt: new Date(apiAgent.updatedAt),
+    };
+  }
+
+  private transformTemplateToAgent(template: AgentTemplate): Agent {
+    return {
+      id: template.id,
+      name: template.name,
+      type: template.category || 'System',
+      description: template.description || 'System-defined agent persona.',
+      capabilities: [], // We could parse these from markdown in the future
+      status: 'standby',
+      version: '1.0.0',
+      configuration: {},
+      metadata: {},
+      createdAt: template.lastModified,
+      updatedAt: template.lastModified,
     };
   }
 
