@@ -269,6 +269,20 @@ export enum AgentFramework {
   CLI = 'cli'
 }
 
+/**
+ * Trust levels for agents
+ * - EPHEMERAL: Default for new agents, limited access
+ * - VERIFIED: Email/Web3Auth verified, moderate access
+ * - PREMIUM: Active subscription, full feature access
+ * - ADMIN: Super admin only, full system access
+ */
+export enum AgentTrustLevel {
+  EPHEMERAL = 'EPHEMERAL',
+  VERIFIED = 'VERIFIED',
+  PREMIUM = 'PREMIUM',
+  ADMIN = 'ADMIN',
+}
+
 // Notification related enums
 export enum NotificationType {
   INFO = 'info',

@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { BaseEntity } from './core/base-types';
-import { AgentCapability, AgentRole, AgentStatus } from './core/enums';
+import { AgentCapability, AgentRole, AgentStatus, AgentTrustLevel } from './core/enums';
 
 // Re-export the enums for external use
-export { AgentCapability, AgentRole, AgentStatus };
+export { AgentCapability, AgentRole, AgentStatus, AgentTrustLevel };
 
 export enum AgentType {
   BASIC = 'BASIC',
@@ -27,6 +27,7 @@ export class Agent implements BaseEntity {
   name: string;
   type: AgentType;
   status: AgentStatus;
+  trustLevel: AgentTrustLevel;
   description?: string;
   systemPrompt?: string;
   capabilities?: AgentCapability[];
@@ -39,6 +40,7 @@ export class Agent implements BaseEntity {
     this.name = data.name || '';
     this.type = data.type || AgentType.ASSISTANT;
     this.status = data.status || AgentStatus.INACTIVE;
+    this.trustLevel = data.trustLevel || AgentTrustLevel.EPHEMERAL;
     this.description = data.description;
     this.systemPrompt = data.systemPrompt;
     this.capabilities = data.capabilities;
@@ -106,6 +108,16 @@ export class CreateAgentDto {
   @IsOptional()
   provider?: string;
 
+  @ApiProperty({ 
+    required: false, 
+    enum: AgentTrustLevel, 
+    description: 'The trust level of the agent (default: EPHEMERAL)',
+    default: AgentTrustLevel.EPHEMERAL 
+  })
+  @IsEnum(AgentTrustLevel)
+  @IsOptional()
+  trustLevel?: AgentTrustLevel;
+
   constructor(data: Partial<CreateAgentDto>) {
     this.name = data.name || '';
     this.type = data.type || AgentType.ASSISTANT;
@@ -116,6 +128,7 @@ export class CreateAgentDto {
     this.metadata = data.metadata;
     this.role = data.role;
     this.provider = data.provider || 'default';
+    this.trustLevel = data.trustLevel || AgentTrustLevel.EPHEMERAL;
   }
 }
 
@@ -179,6 +192,11 @@ export class UpdateAgentDto {
   @IsOptional()
   role?: AgentRole;
 
+  @ApiProperty({ required: false, enum: AgentTrustLevel, description: 'The trust level of the agent' })
+  @IsEnum(AgentTrustLevel)
+  @IsOptional()
+  trustLevel?: AgentTrustLevel;
+
   constructor(data: Partial<UpdateAgentDto> = {}) {
     this.name = data.name;
     this.description = data.description;
@@ -189,6 +207,7 @@ export class UpdateAgentDto {
     this.metadata = data.metadata;
     this.type = data.type;
     this.role = data.role;
+    this.trustLevel = data.trustLevel;
   }
 }
 
@@ -198,6 +217,7 @@ export class AgentResponseDto {
   type: AgentType;
   description?: string;
   status: AgentStatus;
+  trustLevel: AgentTrustLevel;
   capabilities?: AgentCapability[];
   provider?: string;
   lastActive?: Date;
@@ -211,6 +231,7 @@ export class AgentResponseDto {
     this.type = data.type || AgentType.ASSISTANT;
     this.description = data.description;
     this.status = data.status || AgentStatus.INACTIVE;
+    this.trustLevel = data.trustLevel || AgentTrustLevel.EPHEMERAL;
     this.capabilities = data.capabilities;
     this.provider = data.provider;
     this.lastActive = data.lastActive;
