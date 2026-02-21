@@ -131,7 +131,8 @@ export class RedisAgentClient {
       CONFIG.channels.agents,
       CONFIG.channels.conversations,
       CONFIG.channels.orchestrator,
-      CONFIG.channels.broker
+      CONFIG.channels.broker,
+      'tnf:bus:ingress' // Listen to global ingress for auctions
     );
     await this.subscriber.psubscribe(`${CONFIG.channels.directPrefix}:*:${this.agentInfo.id}`);
 
@@ -146,6 +147,40 @@ export class RedisAgentClient {
     this.startHeartbeat();
 
     return this.agentInfo;
+  }
+
+  /**
+   * Listen for task auctions
+   */
+  onAuction(callback: (auction: any) => void) {
+    this.onMessage('auction', (envelope: any) => {
+      callback(envelope.payload);
+    });
+  }
+
+  /**
+   * Submit a bid for an auction
+   */
+  async submitBid(taskId: string, suitability: number, metadata: any = {}) {
+    if (!this.agentInfo || !this.publisher) throw new Error('Client not initialized');
+
+    const bid = {
+      type: 'bid',
+      source: this.agentInfo.id,
+      payload: {
+        taskId,
+        suitability,
+        agentId: this.agentInfo.id,
+        agentName: this.agentInfo.name,
+        capabilities: this.agentInfo.capabilities,
+        ...metadata,
+      },
+      timestamp: Date.now(),
+    };
+
+    // Publish bid to broker channel
+    await this.publisher.publish(CONFIG.channels.broker, JSON.stringify(bid));
+    console.log(`[Agent] Submitted bid for task ${taskId} (Suitability: ${suitability})`);
   }
 
   private getDefaultCapabilities(platform: string): string[] {

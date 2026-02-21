@@ -39,6 +39,8 @@
     "tnf:doctor": "node scripts/tnf-doctor.cjs",
     "improver:scan": "node scripts/improver/scan.cjs",
     "scout:scan": "node scripts/swarm/news-scout.cjs",
+    "swarm:roll-call": "node scripts/swarm/roll-call.cjs",
+    "swarm:sim-bidder": "node scripts/swarm/sim-bidder.cjs",
     "joy": "node scripts/improver/joy.js",
     "tnf:orchestration:audit": "node scripts/tnf-orchestration-audit.cjs",
     "tnf:audit:synergy": "node scripts/tnf-audit-synergy.cjs",

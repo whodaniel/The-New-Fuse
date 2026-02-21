@@ -1,7 +1,7 @@
 /**
  * TNF Unified Message Protocol
  * Based on Gemini's architectural recommendations
- * 
+ *
  * This protocol works across:
  * - WebSocket Relay
  * - Redis Pub/Sub
@@ -19,13 +19,16 @@ import { ResourceStrategy } from './resource-protocol';
  * Message Types
  */
 export const MessageType = z.enum([
-  'command',      // Direct action request
-  'event',        // Fire-and-forget notification
-  'task',         // Requires ACK/result
-  'state-sync',   // State synchronization
-  'query',        // Information request
-  'response',     // Response to query/task
+  'command', // Direct action request
+  'event', // Fire-and-forget notification
+  'task', // Requires ACK/result
+  'state-sync', // State synchronization
+  'query', // Information request
+  'response', // Response to query/task
   'resource-negotiate', // Resource/Quota management
+  'auction', // Broadcast for task bidding
+  'bid', // Agent bid for a task
+  'award', // Selection of an agent for a task
 ]);
 
 export type MessageType = z.infer<typeof MessageType>;
@@ -65,23 +68,25 @@ export const TNFEnvelope = z.object({
   version: z.string().default('1.0').describe('Protocol version'),
   traceId: z.string().uuid().describe('Correlation ID for debugging/tracing'),
   timestamp: z.string().datetime().describe('ISO-8601 timestamp'),
-  
+
   // Message classification
   type: MessageType,
-  
+
   // Routing
   from: AgentIdentity,
   to: AgentIdentity.or(z.object({ broadcast: z.boolean() })),
-  
+
   // Content
   payload: z.record(z.string(), z.unknown()).describe('Message-specific data'),
-  
+
   // Context
   context: MessageContext.optional(),
-  
+
   // Resource Control (NEW PRIMITIVE)
-  resource: ResourceStrategy.optional().describe('Strategic resource/account handling instructions'),
-  
+  resource: ResourceStrategy.optional().describe(
+    'Strategic resource/account handling instructions'
+  ),
+
   // Metadata
   metadata: z.record(z.string(), z.unknown()).optional().describe('Additional metadata'),
 });
@@ -125,14 +130,39 @@ export type StateSyncPayload = z.infer<typeof StateSyncPayload>;
 export const ResponsePayload = z.object({
   success: z.boolean(),
   result: z.unknown().optional(),
-  error: z.object({
-    code: z.string(),
-    message: z.string(),
-    details: z.unknown().optional(),
-  }).optional(),
+  error: z
+    .object({
+      code: z.string(),
+      message: z.string(),
+      details: z.unknown().optional(),
+    })
+    .optional(),
 });
 
 export type ResponsePayload = z.infer<typeof ResponsePayload>;
+
+// Auction payload
+export const AuctionPayload = z.object({
+  taskId: z.string().describe('ID of the task up for auction'),
+  taskType: z.string().describe('Type of task (e.g. "code-generation")'),
+  requirements: z.array(z.string()).describe('Required capabilities'),
+  priority: z.enum(['low', 'normal', 'high', 'critical']).default('normal'),
+  expiresAt: z.number().describe('Timestamp when the auction ends'),
+  metadata: z.record(z.string(), z.unknown()).optional(),
+});
+
+export type AuctionPayload = z.infer<typeof AuctionPayload>;
+
+// Bid payload
+export const BidPayload = z.object({
+  taskId: z.string().describe('ID of the task being bid on'),
+  suitability: z.number().min(0).max(1).describe('Score from 0-1 on how well the agent fits'),
+  estimatedDuration: z.number().optional().describe('Estimated time to complete in ms'),
+  status: z.string().optional().describe('Current agent status/load info'),
+  metadata: z.record(z.string(), z.unknown()).optional(),
+});
+
+export type BidPayload = z.infer<typeof BidPayload>;
 
 /**
  * Helper Functions
