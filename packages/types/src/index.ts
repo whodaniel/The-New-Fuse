@@ -27,6 +27,7 @@ export {
   AgentResponseDto,
   AgentRole,
   AgentStatus,
+  AgentTrustLevel,
   AgentType,
   CreateAgentDto,
   UpdateAgentDto,

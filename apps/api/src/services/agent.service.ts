@@ -306,6 +306,46 @@ export class AgentService {
     }
   }
 
+  /**
+   * Update agent profile (self-identification)
+   * Allows agents to update their own profile information
+   */
+  async updateAgentProfile(
+    id: string,
+    profileDto: any,
+    userId: string
+  ): Promise<AgentResponseDto> {
+    try {
+      const existingAgent = await this.agentRepository.findById(id, userId);
+      if (!existingAgent) {
+        throw new NotFoundException(`Agent with ID ${id} not found`);
+      }
+
+      // Merge existing profile with new profile data
+      const currentProfile = (existingAgent as any).profile || {};
+      const newProfile = {
+        ...currentProfile,
+        ...profileDto,
+        lastUpdated: new Date().toISOString(),
+      };
+
+      const agent = await this.agentRepository.update(id, userId, {
+        profile: newProfile,
+      });
+
+      if (!agent) {
+        throw new NotFoundException(`Agent with ID ${id} not found`);
+      }
+      return this.mapAgentToResponse(agent);
+    } catch (error: unknown) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new BadRequestException(`Failed to update agent profile: ${errorMessage}`);
+    }
+  }
+
   private mapAgentToResponse(agent: any): AgentResponseDto {
     return {
       ...agent,
