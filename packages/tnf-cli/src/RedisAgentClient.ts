@@ -49,6 +49,7 @@ export const CONFIG = {
     orchestrator: 'tnf:orchestrator',
     broker: 'tnf:broker',
     heartbeat: 'tnf:heartbeat',
+    directPrefix: 'tnf:direct',
   },
   heartbeatInterval: 30000, // 30 seconds
 };
@@ -78,6 +79,9 @@ export class RedisAgentClient {
     this.subscriber = new Redis(redisConfig);
 
     this.subscriber.on('message', (channel: string, message: string) => {
+      this.handleIncomingMessage(channel, message);
+    });
+    this.subscriber.on('pmessage', (_pattern: string, channel: string, message: string) => {
       this.handleIncomingMessage(channel, message);
     });
 
@@ -127,9 +131,9 @@ export class RedisAgentClient {
       CONFIG.channels.agents,
       CONFIG.channels.conversations,
       CONFIG.channels.orchestrator,
-      CONFIG.channels.broker,
-      `tnf:direct:*:${this.agentInfo.id}`
+      CONFIG.channels.broker
     );
+    await this.subscriber.psubscribe(`${CONFIG.channels.directPrefix}:*:${this.agentInfo.id}`);
 
     // Announce registration
     await this.broadcast({
@@ -179,7 +183,10 @@ export class RedisAgentClient {
       metadata: options.metadata,
     };
 
-    const channel = options.channel || CONFIG.channels.conversations;
+    const directAgentId = options.to?.agentId;
+    const channel = directAgentId
+      ? `${CONFIG.channels.directPrefix}:${this.agentInfo.id}:${directAgentId}`
+      : options.channel || CONFIG.channels.conversations;
     await this.publisher.publish(channel, JSON.stringify(message));
 
     return message;

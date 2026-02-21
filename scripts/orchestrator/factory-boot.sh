@@ -45,10 +45,47 @@ else
   sleep 3
 fi
 
+if pgrep -f "ts-node src/broker-agent.ts" >/dev/null 2>&1; then
+  echo "[factory-boot] broker-agent already running"
+else
+  echo "[factory-boot] starting broker-agent:dev"
+  nohup bash -lc "cd '${ROOT_DIR}' && REDIS_URL='${REDIS_URL}' LEDGER_API_BASE='http://localhost:3001' pnpm --filter @the-new-fuse/relay-core run broker-agent:dev" \
+    > "${LOG_DIR}/broker-agent-dev.log" 2>&1 &
+  sleep 2
+fi
+
+if pgrep -f "ts-node src/director-agent.ts" >/dev/null 2>&1; then
+  echo "[factory-boot] director-agent already running"
+else
+  echo "[factory-boot] starting director-agent:dev"
+  nohup bash -lc "cd '${ROOT_DIR}' && REDIS_URL='${REDIS_URL}' LEDGER_API_BASE='http://localhost:3001' DIRECTOR_AUTO_POLICY='risk-aware' pnpm --filter @the-new-fuse/relay-core run director-agent:dev" \
+    > "${LOG_DIR}/director-agent-dev.log" 2>&1 &
+  sleep 2
+fi
+
+if pgrep -f "ts-node src/orchestrator/start.ts" >/dev/null 2>&1; then
+  echo "[factory-boot] workflow router already running"
+else
+  echo "[factory-boot] starting workflow router"
+  nohup bash -lc "cd '${ROOT_DIR}' && REDIS_URL='${REDIS_URL}' pnpm --filter @the-new-fuse/workflow-engine exec ts-node src/orchestrator/start.ts" \
+    > "${LOG_DIR}/workflow-router.log" 2>&1 &
+  sleep 2
+fi
+
 echo "[factory-boot] relay health:"
 curl -sS --max-time 2 http://localhost:3000/health || true
 echo
 echo "[factory-boot] orchestrator state:"
 redis-cli HGET tnf:master:state orchestrator || true
+echo
+echo "[factory-boot] task queues:"
+redis-cli LLEN tnf:master:tasks:realtime || true
+redis-cli LLEN tnf:master:tasks:planning || true
+echo "[factory-boot] broker decisions:"
+redis-cli PUBSUB NUMSUB tnf:broker:decisions || true
+echo "[factory-boot] director review queue:"
+redis-cli LLEN tnf:director:review:pending || true
+echo "[factory-boot] director decisions:"
+redis-cli PUBSUB NUMSUB tnf:director:decisions || true
 echo
 echo "[factory-boot] complete"

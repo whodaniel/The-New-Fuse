@@ -7,11 +7,16 @@ import {
   GoalRecord,
   ProjectPlanRecord,
   TimelineEvent,
+  UnifiedCoordinationMode,
   UnifiedLedgerStore,
   UnifiedRecordKind,
   UnifiedRecordPriority,
   UnifiedRecordStatus,
+  UnifiedSignalSource,
   UnifiedTaskRecord,
+  UnifiedWorkHorizon,
+  UnifiedWorkItinerary,
+  UnifiedWorkLane,
 } from './unified-ledger.types';
 
 type CreateRecordInput = Partial<UnifiedTaskRecord> &
@@ -32,6 +37,8 @@ export class UnifiedLedgerService implements OnModuleInit {
   async listRecords(filters?: {
     kind?: UnifiedRecordKind;
     status?: UnifiedRecordStatus;
+    lane?: UnifiedWorkLane;
+    horizon?: UnifiedWorkHorizon;
     q?: string;
   }): Promise<UnifiedTaskRecord[]> {
     await this.ensureLoaded();
@@ -42,6 +49,12 @@ export class UnifiedLedgerService implements OnModuleInit {
     }
     if (filters?.status) {
       rows = rows.filter((r) => r.status === filters.status);
+    }
+    if (filters?.lane) {
+      rows = rows.filter((r) => r.itinerary?.lane === filters.lane);
+    }
+    if (filters?.horizon) {
+      rows = rows.filter((r) => r.itinerary?.horizon === filters.horizon);
     }
     if (filters?.q) {
       const q = filters.q.toLowerCase();
@@ -102,6 +115,7 @@ export class UnifiedLedgerService implements OnModuleInit {
         feedbackIterations: [],
         ...(input.rag || {}),
       },
+      itinerary: this.normalizeItinerary(input),
       metadata: input.metadata || {},
       source: input.source || 'manual',
       createdAt: now,
@@ -138,6 +152,9 @@ export class UnifiedLedgerService implements OnModuleInit {
         ...(patch.rag || {}),
         feedbackIterations: patch.rag?.feedbackIterations || current.rag.feedbackIterations,
       },
+      itinerary: patch.itinerary
+        ? this.mergeItinerary(current.itinerary, patch.itinerary as Partial<UnifiedWorkItinerary>)
+        : current.itinerary,
       metadata: { ...current.metadata, ...(patch.metadata || {}) },
       updatedAt: new Date().toISOString(),
     };
@@ -239,6 +256,14 @@ export class UnifiedLedgerService implements OnModuleInit {
       owner: String(task.owner || 'orchestrator'),
       assignee: Array.isArray(task.targetAgents) ? String(task.targetAgents[0] || '') : undefined,
       tags: ['orchestrated', action],
+      itinerary: {
+        lane: 'realtime_broker_routing',
+        horizon: 'realtime',
+        coordinationMode: 'brokered',
+        signalSources: ['ws_relay', 'redis', 'api'],
+        sequencingKey: String(task.correlationId || task.id || action || 'orchestrated'),
+        clockSource: 'master-clock',
+      },
       metadata: { rawEvent: payload, dispatchAction: action },
       source: 'orchestrator',
     });
@@ -637,7 +662,9 @@ export class UnifiedLedgerService implements OnModuleInit {
       const content = await fs.readFile(this.storePath, 'utf8');
       const parsed = JSON.parse(content) as Partial<UnifiedLedgerStore>;
       this.store = {
-        records: parsed.records || [],
+        records: (parsed.records || []).map((record) =>
+          this.migrateRecord(record as UnifiedTaskRecord)
+        ),
         timelineEvents: parsed.timelineEvents || [],
         goals: parsed.goals || [],
         plans: parsed.plans || [],
@@ -711,11 +738,169 @@ export class UnifiedLedgerService implements OnModuleInit {
 
   private normalizePriority(value: string): UnifiedRecordPriority {
     const v = value.toLowerCase();
+    if (v === 'p0') return 'urgent';
+    if (v === 'p1') return 'high';
+    if (v === 'p2') return 'medium';
+    if (v === 'p3') return 'low';
+    if (v === 'normal') return 'medium';
     if (v === 'urgent') return 'urgent';
     if (v === 'critical') return 'critical';
     if (v === 'high') return 'high';
     if (v === 'low') return 'low';
     return 'medium';
+  }
+
+  private migrateRecord(record: UnifiedTaskRecord): UnifiedTaskRecord {
+    return {
+      ...record,
+      itinerary: this.normalizeItinerary(record),
+    };
+  }
+
+  private normalizeItinerary(input: Partial<UnifiedTaskRecord>): UnifiedWorkItinerary {
+    const existing = input.itinerary || ({} as Partial<UnifiedWorkItinerary>);
+    const lane = this.normalizeLane(
+      existing.lane,
+      input.kind || 'task',
+      input.source || 'manual',
+      input.metadata || {}
+    );
+    const horizon = this.normalizeHorizon(existing.horizon, lane);
+    const coordinationMode = this.normalizeCoordinationMode(existing.coordinationMode, lane);
+    const signalSources = this.normalizeSignalSources(
+      existing.signalSources,
+      input.source || 'manual',
+      lane
+    );
+    const sequencingKey = String(
+      existing.sequencingKey ||
+        input.id ||
+        `${lane}:${input.kind || 'task'}:${input.title || 'untitled'}`
+    );
+    const clockSource =
+      existing.clockSource || (lane === 'realtime_broker_routing' ? 'master-clock' : 'local-time');
+
+    return {
+      lane,
+      horizon,
+      coordinationMode,
+      signalSources,
+      sequencingKey,
+      clockSource,
+    };
+  }
+
+  private mergeItinerary(
+    current: UnifiedWorkItinerary,
+    patch: Partial<UnifiedWorkItinerary>
+  ): UnifiedWorkItinerary {
+    return this.normalizeItinerary({
+      itinerary: {
+        ...current,
+        ...patch,
+      } as UnifiedWorkItinerary,
+      kind: 'task',
+      source: 'api',
+    });
+  }
+
+  private normalizeLane(
+    value: string | undefined,
+    kind: UnifiedRecordKind,
+    source: UnifiedTaskRecord['source'],
+    metadata: Record<string, unknown>
+  ): UnifiedWorkLane {
+    const v = String(value || '').toLowerCase();
+    const suggestionCategory = String(
+      metadata.suggestionKind || metadata.suggestionType || metadata.category || ''
+    ).toLowerCase();
+
+    const known: Record<string, UnifiedWorkLane> = {
+      directive: 'directive',
+      goal: 'goal',
+      milestone: 'milestone',
+      realtime_broker_routing: 'realtime_broker_routing',
+      relay_federation: 'relay_federation',
+      tauri_sync: 'tauri_sync',
+      redis_sync: 'redis_sync',
+      suggestion_vote: 'suggestion_vote',
+      changelog_suggestion: 'changelog_suggestion',
+      kanban_delivery: 'kanban_delivery',
+    };
+    if (known[v]) return known[v];
+
+    if (kind === 'suggestion') {
+      if (suggestionCategory.includes('changelog')) return 'changelog_suggestion';
+      if (suggestionCategory.includes('kanban')) return 'kanban_delivery';
+      return 'suggestion_vote';
+    }
+
+    if (source === 'orchestrator') return 'realtime_broker_routing';
+    if (source === 'relay') return 'relay_federation';
+    if (source === 'system') return 'directive';
+    return kind === 'review' ? 'milestone' : 'directive';
+  }
+
+  private normalizeHorizon(value: string | undefined, lane: UnifiedWorkLane): UnifiedWorkHorizon {
+    const v = String(value || '').toLowerCase();
+    if (v === 'realtime' || v === 'short_term' || v === 'medium_term' || v === 'long_term') {
+      return v as UnifiedWorkHorizon;
+    }
+
+    if (
+      lane === 'realtime_broker_routing' ||
+      lane === 'relay_federation' ||
+      lane === 'redis_sync' ||
+      lane === 'tauri_sync'
+    ) {
+      return 'realtime';
+    }
+    if (lane === 'kanban_delivery' || lane === 'milestone') return 'short_term';
+    if (lane === 'changelog_suggestion') return 'medium_term';
+    return 'long_term';
+  }
+
+  private normalizeCoordinationMode(
+    value: string | undefined,
+    lane: UnifiedWorkLane
+  ): UnifiedCoordinationMode {
+    const v = String(value || '').toLowerCase();
+    if (v === 'brokered' || v === 'direct' || v === 'hybrid') return v as UnifiedCoordinationMode;
+    if (lane === 'realtime_broker_routing') return 'brokered';
+    if (lane === 'directive' || lane === 'goal') return 'hybrid';
+    return 'direct';
+  }
+
+  private normalizeSignalSources(
+    value: string[] | undefined,
+    source: UnifiedTaskRecord['source'],
+    lane: UnifiedWorkLane
+  ): UnifiedSignalSource[] {
+    const allowed = new Set<UnifiedSignalSource>([
+      'ws_relay',
+      'redis',
+      'tauri',
+      'api',
+      'manual',
+      'system',
+    ]);
+
+    const normalized = (Array.isArray(value) ? value : [])
+      .map((v) => String(v).toLowerCase())
+      .filter((v): v is UnifiedSignalSource => allowed.has(v as UnifiedSignalSource));
+
+    if (normalized.length > 0) return Array.from(new Set(normalized));
+
+    const baseMap: Record<string, UnifiedSignalSource> = {
+      orchestrator: 'redis',
+      relay: 'ws_relay',
+      api: 'api',
+      manual: 'manual',
+      system: 'system',
+    };
+    const initial = baseMap[source] || 'manual';
+    if (lane === 'realtime_broker_routing' && initial !== 'redis') return [initial, 'redis'];
+    return [initial];
   }
 
   private normalizeTimestamp(value: string): string {

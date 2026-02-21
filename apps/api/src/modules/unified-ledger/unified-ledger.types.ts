@@ -11,6 +11,29 @@ export type UnifiedRecordStatus =
   | 'archived';
 
 export type UnifiedRecordPriority = 'low' | 'medium' | 'high' | 'critical' | 'urgent';
+export type UnifiedWorkHorizon = 'realtime' | 'short_term' | 'medium_term' | 'long_term';
+export type UnifiedWorkLane =
+  | 'directive'
+  | 'goal'
+  | 'milestone'
+  | 'realtime_broker_routing'
+  | 'relay_federation'
+  | 'tauri_sync'
+  | 'redis_sync'
+  | 'suggestion_vote'
+  | 'changelog_suggestion'
+  | 'kanban_delivery';
+export type UnifiedCoordinationMode = 'brokered' | 'direct' | 'hybrid';
+export type UnifiedSignalSource = 'ws_relay' | 'redis' | 'tauri' | 'api' | 'manual' | 'system';
+
+export interface UnifiedWorkItinerary {
+  lane: UnifiedWorkLane;
+  horizon: UnifiedWorkHorizon;
+  coordinationMode: UnifiedCoordinationMode;
+  signalSources: UnifiedSignalSource[];
+  sequencingKey: string;
+  clockSource: 'master-clock' | 'redis-time' | 'local-time';
+}
 
 export interface TraitSlots {
   cognitiveDepth: number;
@@ -85,6 +108,7 @@ export interface UnifiedTaskRecord {
   fractal: FractalGrid;
   links: FunctionalLink[];
   rag: RagFeedbackLoop;
+  itinerary: UnifiedWorkItinerary;
   metadata: Record<string, unknown>;
   source: 'manual' | 'orchestrator' | 'relay' | 'api' | 'system';
   createdAt: string;

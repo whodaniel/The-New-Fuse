@@ -1,6 +1,11 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { UnifiedLedgerService } from './unified-ledger.service';
-import { UnifiedRecordKind, UnifiedRecordStatus } from './unified-ledger.types';
+import {
+  UnifiedRecordKind,
+  UnifiedRecordStatus,
+  UnifiedWorkHorizon,
+  UnifiedWorkLane,
+} from './unified-ledger.types';
 
 @Controller()
 export class UnifiedLedgerController {
@@ -10,9 +15,11 @@ export class UnifiedLedgerController {
   async list(
     @Query('kind') kind?: UnifiedRecordKind,
     @Query('status') status?: UnifiedRecordStatus,
+    @Query('lane') lane?: UnifiedWorkLane,
+    @Query('horizon') horizon?: UnifiedWorkHorizon,
     @Query('q') q?: string
   ) {
-    return this.ledger.listRecords({ kind, status, q });
+    return this.ledger.listRecords({ kind, status, lane, horizon, q });
   }
 
   @Get('unified-ledger/records/:id')
@@ -70,7 +77,15 @@ export class UnifiedLedgerController {
     @Query('dateFrom') dateFrom?: string,
     @Query('dateTo') dateTo?: string
   ) {
-    return this.ledger.listTimelineEvents({ recordId, goalId, planId, eventType, actor, dateFrom, dateTo });
+    return this.ledger.listTimelineEvents({
+      recordId,
+      goalId,
+      planId,
+      eventType,
+      actor,
+      dateFrom,
+      dateTo,
+    });
   }
 
   @Get('timeline/events/:id')
@@ -155,8 +170,13 @@ export class UnifiedLedgerController {
 
   // Compatibility routes for existing frontend pages.
   @Get('tasks')
-  async listTasks(@Query('status') status?: UnifiedRecordStatus, @Query('q') q?: string) {
-    return this.ledger.listRecords({ kind: 'task', status, q });
+  async listTasks(
+    @Query('status') status?: UnifiedRecordStatus,
+    @Query('lane') lane?: UnifiedWorkLane,
+    @Query('horizon') horizon?: UnifiedWorkHorizon,
+    @Query('q') q?: string
+  ) {
+    return this.ledger.listRecords({ kind: 'task', status, lane, horizon, q });
   }
 
   @Get('tasks/:id')
@@ -179,8 +199,13 @@ export class UnifiedLedgerController {
   }
 
   @Get('suggestions')
-  async listSuggestions(@Query('status') status?: UnifiedRecordStatus, @Query('q') q?: string) {
-    return this.ledger.listRecords({ kind: 'suggestion', status, q });
+  async listSuggestions(
+    @Query('status') status?: UnifiedRecordStatus,
+    @Query('lane') lane?: UnifiedWorkLane,
+    @Query('horizon') horizon?: UnifiedWorkHorizon,
+    @Query('q') q?: string
+  ) {
+    return this.ledger.listRecords({ kind: 'suggestion', status, lane, horizon, q });
   }
 
   @Get('suggestions/:id')

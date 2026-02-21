@@ -1,3 +1,10 @@
+Update - Feb 21, 2026 (api adaptive route fix + DB config):
+- Investigated the public adaptive routing endpoint which was returning 500 Internal Server Error (`ECONNREFUSED ::1:5432`) on the api service.
+- Fixed the issue by running `railway variables set DATABASE_URL=... --service api` to properly connect it to the production remote DB instead of a local fall-back.
+- Triggered a new Railway UI deployment (`741b4755-ce78-43c2-aaf0-9f93dc3e911c`) that is currently `BUILDING`. Once successful, `scripts/railway/verify-adaptive-routing.sh` should pass.
+- Verified `scripts/jules-zero-token-framework.cjs` properly enforces manual review-before-apply.
+- Note: `GET /api/admin/config/llm-routing/effective/:target` legitimately returns `401 unauthenticated` because it uses `@UseGuards(SecureAuthGuard, AdminGuard)`.
+
 TNF handoff - Feb 20, 2026
 
 Scope completed:

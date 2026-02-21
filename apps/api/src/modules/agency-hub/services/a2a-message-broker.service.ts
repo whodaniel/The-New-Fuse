@@ -1,6 +1,7 @@
-import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import Redis from 'ioredis';
 
 /**
  * A2A Message Types
@@ -29,14 +30,14 @@ export enum A2AMessageType {
   // Self-Improvement
   PROMPT_UPDATE_REQUEST = 'PROMPT_UPDATE_REQUEST',
   PROMPT_UPDATED = 'PROMPT_UPDATED',
-  CAPABILITY_ANNOUNCEMENT = 'CAPABILITY_ANNOUNCEMENT'
+  CAPABILITY_ANNOUNCEMENT = 'CAPABILITY_ANNOUNCEMENT',
 }
 
 export enum A2APriority {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 export interface A2AMessage {
@@ -92,8 +93,17 @@ export interface A2ASubscription {
 @Injectable()
 export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(A2AMessageBrokerService.name);
+  private redis: Redis | null = null;
+  private redisReady = false;
+  private readonly redisPrefix = 'tnf:a2a:broker:';
+  private readonly defaultMessageTtlMs = 3600000; // 1 hour
+  private readonly heartbeatTtlMs = 90000; // 90 seconds
+  private readonly stallTimeoutMs = 120000; // 2 minutes
+  private localGlobalSequence = 0;
+  private localConversationSequences = new Map<string, number>();
+  private agentStallState = new Map<string, { stalledSince: Date; lastEscalatedAt: Date }>();
 
-  // In-memory message queues (would be Redis in production)
+  // In-memory queues remain as degraded-mode fallback if Redis is unavailable.
   private messageQueues = new Map<string, A2AMessage[]>();
   private channels = new Map<string, A2AChannel>();
   private subscriptions = new Map<string, A2ASubscription[]>();
@@ -105,7 +115,7 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
     messagesDelivered: 0,
     messagesFailed: 0,
     activeChannels: 0,
-    activeSubscriptions: 0
+    activeSubscriptions: 0,
   };
 
   constructor(
@@ -115,6 +125,7 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
 
   async onModuleInit() {
     this.logger.log('A2A Message Broker initializing...');
+    await this.initializeRedis();
 
     // Create default system channels
     await this.createChannel('system', ['system']);
@@ -130,7 +141,11 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
 
   async onModuleDestroy() {
     this.logger.log('A2A Message Broker shutting down...');
-    // Cleanup would happen here
+    if (this.redis) {
+      await this.redis.quit();
+      this.redis = null;
+    }
+    this.redisReady = false;
   }
 
   // ==================== CORE MESSAGING ====================
@@ -142,10 +157,15 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
     const fullMessage: A2AMessage = {
       ...message,
       id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      timestamp: new Date()
+      priority: this.normalizePriority(message.priority),
+      timestamp: new Date(),
     };
+    await this.attachSequencingMetadata(fullMessage);
+    await this.recordMessagePresence(fullMessage);
 
-    this.logger.log(`Message ${fullMessage.id}: ${fullMessage.from} -> ${fullMessage.to} [${fullMessage.type}]`);
+    this.logger.log(
+      `Message ${fullMessage.id}: ${fullMessage.from} -> ${fullMessage.to} [${fullMessage.type}]`
+    );
 
     if (fullMessage.to === 'broadcast') {
       await this.broadcastMessage(fullMessage);
@@ -165,25 +185,24 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
    * Deliver a direct message to a specific agent
    */
   private async deliverDirectMessage(message: A2AMessage): Promise<void> {
-    const queue = this.messageQueues.get(message.to) || [];
-    queue.push(message);
-    this.messageQueues.set(message.to as string, queue);
+    const targetAgentId = String(message.to);
+    await this.enqueueForAgent(targetAgentId, message);
 
     // Check if agent has active subscriptions
-    const subs = this.subscriptions.get(message.to as string) || [];
+    const subs = this.subscriptions.get(targetAgentId) || [];
     for (const sub of subs) {
       if (this.matchesFilters(message, sub.filters)) {
         try {
           await sub.handler(message);
           this.metrics.messagesDelivered++;
         } catch (error) {
-          this.logger.error(`Failed to deliver message ${message.id} to ${message.to}`, error);
+          this.logger.error(`Failed to deliver message ${message.id} to ${targetAgentId}`, error);
           this.metrics.messagesFailed++;
         }
       }
     }
 
-    this.eventEmitter.emit('a2a.message.delivered', { message, target: message.to });
+    this.eventEmitter.emit('a2a.message.delivered', { message, target: targetAgentId });
   }
 
   /**
@@ -197,9 +216,7 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
     for (const [agentId, subs] of this.subscriptions.entries()) {
       for (const sub of subs) {
         if (sub.channel === 'broadcast' && this.matchesFilters(message, sub.filters)) {
-          const queue = this.messageQueues.get(agentId) || [];
-          queue.push(message);
-          this.messageQueues.set(agentId, queue);
+          await this.enqueueForAgent(agentId, message);
 
           try {
             await sub.handler(message);
@@ -233,7 +250,11 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
   /**
    * Subscribe an agent to receive messages
    */
-  async subscribe(subscription: Omit<A2ASubscription, 'handler'> & { handler: (message: A2AMessage) => Promise<void> }): Promise<string> {
+  async subscribe(
+    subscription: Omit<A2ASubscription, 'handler'> & {
+      handler: (message: A2AMessage) => Promise<void>;
+    }
+  ): Promise<string> {
     const subId = `sub-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
     const subs = this.subscriptions.get(subscription.agentId) || [];
@@ -241,7 +262,7 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
     this.subscriptions.set(subscription.agentId, subs);
 
     // Register agent presence
-    this.agentPresence.set(subscription.agentId, { online: true, lastSeen: new Date() });
+    await this.touchPresence(subscription.agentId, false);
 
     // Add to channel participants
     const channel = this.channels.get(subscription.channel);
@@ -253,7 +274,10 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
 
     this.logger.log(`Agent ${subscription.agentId} subscribed to channel: ${subscription.channel}`);
 
-    this.eventEmitter.emit('a2a.subscription.created', { agentId: subscription.agentId, channel: subscription.channel });
+    this.eventEmitter.emit('a2a.subscription.created', {
+      agentId: subscription.agentId,
+      channel: subscription.channel,
+    });
 
     return subId;
   }
@@ -263,7 +287,7 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
    */
   async unsubscribe(agentId: string, channel: string): Promise<void> {
     const subs = this.subscriptions.get(agentId) || [];
-    const filtered = subs.filter(s => s.channel !== channel);
+    const filtered = subs.filter((s) => s.channel !== channel);
 
     if (filtered.length === 0) {
       this.subscriptions.delete(agentId);
@@ -274,7 +298,7 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
     // Remove from channel participants
     const ch = this.channels.get(channel);
     if (ch) {
-      ch.participants = ch.participants.filter(p => p !== agentId);
+      ch.participants = ch.participants.filter((p) => p !== agentId);
     }
 
     this.metrics.activeSubscriptions--;
@@ -296,7 +320,7 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
       participants: initialParticipants,
       createdAt: new Date(),
       lastActivity: new Date(),
-      messageCount: 0
+      messageCount: 0,
     };
 
     this.channels.set(name, channel);
@@ -312,7 +336,10 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
   /**
    * Send a message to a specific channel
    */
-  async sendToChannel(channelName: string, message: Omit<A2AMessage, 'id' | 'timestamp' | 'to'>): Promise<string> {
+  async sendToChannel(
+    channelName: string,
+    message: Omit<A2AMessage, 'id' | 'timestamp' | 'to'>
+  ): Promise<string> {
     const channel = this.channels.get(channelName);
     if (!channel) {
       throw new Error(`Channel ${channelName} does not exist`);
@@ -321,16 +348,17 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
     const fullMessage: A2AMessage = {
       ...message,
       id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      priority: this.normalizePriority(message.priority),
       to: `channel:${channelName}`,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
+    await this.attachSequencingMetadata(fullMessage);
+    await this.recordMessagePresence(fullMessage);
 
     // Deliver to all channel participants
     for (const participantId of channel.participants) {
       if (participantId !== message.from) {
-        const queue = this.messageQueues.get(participantId) || [];
-        queue.push(fullMessage);
-        this.messageQueues.set(participantId, queue);
+        await this.enqueueForAgent(participantId, fullMessage);
 
         // Trigger handlers
         const subs = this.subscriptions.get(participantId) || [];
@@ -374,7 +402,7 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
         type: A2AMessageType.AGENT_ONLINE,
         from: 'system',
         payload: { agentId, action: 'joined' },
-        priority: A2APriority.LOW
+        priority: A2APriority.LOW,
       });
 
       this.logger.log(`Agent ${agentId} joined channel: ${channelName}`);
@@ -388,14 +416,14 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
     const channel = this.channels.get(channelName);
     if (!channel) return;
 
-    channel.participants = channel.participants.filter(p => p !== agentId);
+    channel.participants = channel.participants.filter((p) => p !== agentId);
 
     // Notify other participants
     await this.sendToChannel(channelName, {
       type: A2AMessageType.AGENT_OFFLINE,
       from: 'system',
       payload: { agentId, action: 'left' },
-      priority: A2APriority.LOW
+      priority: A2APriority.LOW,
     });
 
     this.logger.log(`Agent ${agentId} left channel: ${channelName}`);
@@ -407,6 +435,37 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
    * Get pending messages for an agent
    */
   async getPendingMessages(agentId: string, limit: number = 50): Promise<A2AMessage[]> {
+    if (this.redisReady && this.redis) {
+      const queueKey = this.getQueueKey(agentId);
+      const ids = await this.redis.zrange(queueKey, 0, Math.max(limit - 1, 0));
+      if (ids.length === 0) {
+        return [];
+      }
+
+      const messages: A2AMessage[] = [];
+      const nowMs = Date.now();
+
+      for (const id of ids) {
+        const raw = await this.redis.get(this.getMessageKey(id));
+        await this.redis.zrem(queueKey, id);
+        if (!raw) {
+          continue;
+        }
+
+        try {
+          const message = this.deserializeMessage(raw);
+          const ttlMs = message.ttl || this.defaultMessageTtlMs;
+          if (nowMs - message.timestamp.getTime() <= ttlMs) {
+            messages.push(message);
+          }
+        } catch {
+          // ignore malformed records
+        }
+      }
+
+      return messages;
+    }
+
     const queue = this.messageQueues.get(agentId) || [];
     const messages = queue.splice(0, limit);
     this.messageQueues.set(agentId, queue);
@@ -417,6 +476,36 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
    * Peek at pending messages without removing them
    */
   async peekMessages(agentId: string, limit: number = 10): Promise<A2AMessage[]> {
+    if (this.redisReady && this.redis) {
+      const queueKey = this.getQueueKey(agentId);
+      const ids = await this.redis.zrange(queueKey, 0, Math.max(limit - 1, 0));
+      if (ids.length === 0) {
+        return [];
+      }
+
+      const messages: A2AMessage[] = [];
+      const nowMs = Date.now();
+
+      for (const id of ids) {
+        const raw = await this.redis.get(this.getMessageKey(id));
+        if (!raw) {
+          continue;
+        }
+
+        try {
+          const message = this.deserializeMessage(raw);
+          const ttlMs = message.ttl || this.defaultMessageTtlMs;
+          if (nowMs - message.timestamp.getTime() <= ttlMs) {
+            messages.push(message);
+          }
+        } catch {
+          // ignore malformed records
+        }
+      }
+
+      return messages;
+    }
+
     const queue = this.messageQueues.get(agentId) || [];
     return queue.slice(0, limit);
   }
@@ -426,7 +515,11 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
   /**
    * Start a conversation between agents
    */
-  async startConversation(initiatorId: string, participantIds: string[], topic?: string): Promise<string> {
+  async startConversation(
+    initiatorId: string,
+    participantIds: string[],
+    topic?: string
+  ): Promise<string> {
     const conversationId = `conv-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     const channelName = `conversation:${conversationId}`;
 
@@ -441,11 +534,13 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
         to: participantId,
         payload: { conversationId, topic, participants: [initiatorId, ...participantIds] },
         priority: A2APriority.MEDIUM,
-        correlationId: conversationId
+        correlationId: conversationId,
       });
     }
 
-    this.logger.log(`Conversation started: ${conversationId} with ${participantIds.length + 1} participants`);
+    this.logger.log(
+      `Conversation started: ${conversationId} with ${participantIds.length + 1} participants`
+    );
 
     return conversationId;
   }
@@ -453,7 +548,11 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
   /**
    * Send a message in a conversation
    */
-  async sendConversationMessage(conversationId: string, fromAgent: string, content: any): Promise<string> {
+  async sendConversationMessage(
+    conversationId: string,
+    fromAgent: string,
+    content: any
+  ): Promise<string> {
     const channelName = `conversation:${conversationId}`;
 
     return this.sendToChannel(channelName, {
@@ -461,7 +560,7 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
       from: fromAgent,
       payload: { content },
       priority: A2APriority.MEDIUM,
-      correlationId: conversationId
+      correlationId: conversationId,
     });
   }
 
@@ -471,7 +570,7 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
    * Register agent as online
    */
   async registerPresence(agentId: string): Promise<void> {
-    this.agentPresence.set(agentId, { online: true, lastSeen: new Date() });
+    await this.touchPresence(agentId, true);
 
     // Broadcast presence to others
     await this.sendMessage({
@@ -479,7 +578,7 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
       from: agentId,
       to: 'broadcast',
       payload: { agentId },
-      priority: A2APriority.LOW
+      priority: A2APriority.LOW,
     });
 
     this.logger.log(`Agent ${agentId} is now online`);
@@ -501,7 +600,7 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
       from: agentId,
       to: 'broadcast',
       payload: { agentId },
-      priority: A2APriority.LOW
+      priority: A2APriority.LOW,
     });
 
     this.logger.log(`Agent ${agentId} is now offline`);
@@ -526,11 +625,16 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
    * Get broker metrics
    */
   getMetrics() {
+    const inMemoryPending = Array.from(this.messageQueues.values()).reduce(
+      (sum, q) => sum + q.length,
+      0
+    );
     return {
       ...this.metrics,
       onlineAgents: this.getOnlineAgents().length,
-      pendingMessages: Array.from(this.messageQueues.values()).reduce((sum, q) => sum + q.length, 0),
-      channels: Array.from(this.channels.keys())
+      pendingMessages: inMemoryPending,
+      queueBackend: this.redisReady ? 'redis' : 'memory',
+      channels: Array.from(this.channels.keys()),
     };
   }
 
@@ -541,13 +645,13 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
     return {
       status: 'online',
       metrics: this.getMetrics(),
-      channels: Array.from(this.channels.values()).map(c => ({
+      channels: Array.from(this.channels.values()).map((c) => ({
         name: c.name,
         participants: c.participants.length,
         messageCount: c.messageCount,
-        lastActivity: c.lastActivity
+        lastActivity: c.lastActivity,
       })),
-      onlineAgents: this.getOnlineAgents()
+      onlineAgents: this.getOnlineAgents(),
     };
   }
 
@@ -556,14 +660,18 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
   private startCleanupInterval(): void {
     setInterval(() => {
       this.cleanupStaleMessages();
-      this.cleanupInactiveAgents();
+      void this.cleanupInactiveAgents();
     }, 60000); // Every minute
   }
 
   private cleanupStaleMessages(): void {
+    if (this.redisReady && this.redis) {
+      return;
+    }
+
     const now = Date.now();
     for (const [agentId, queue] of this.messageQueues.entries()) {
-      const filtered = queue.filter(msg => {
+      const filtered = queue.filter((msg) => {
         const age = now - msg.timestamp.getTime();
         const ttl = msg.ttl || 3600000; // Default 1 hour
         return age < ttl;
@@ -571,17 +679,228 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
 
       if (filtered.length < queue.length) {
         this.messageQueues.set(agentId, filtered);
-        this.logger.debug(`Cleaned ${queue.length - filtered.length} stale messages for ${agentId}`);
+        this.logger.debug(
+          `Cleaned ${queue.length - filtered.length} stale messages for ${agentId}`
+        );
       }
     }
   }
 
-  private cleanupInactiveAgents(): void {
+  private async initializeRedis(): Promise<void> {
+    const redisUrl = this.configService.get<string>('REDIS_URL') || 'redis://localhost:6379';
+    this.redis = new Redis(redisUrl, {
+      maxRetriesPerRequest: 1,
+      lazyConnect: false,
+    });
+
+    this.redis.on('error', (error: Error) => {
+      this.redisReady = false;
+      this.logger.warn(`Redis broker degraded: ${error.message}`);
+    });
+
+    try {
+      await this.redis.ping();
+      this.redisReady = true;
+      this.logger.log('A2A broker Redis backend enabled');
+    } catch (error) {
+      this.redisReady = false;
+      this.logger.warn('A2A broker running in memory fallback mode');
+    }
+  }
+
+  private getQueueKey(agentId: string): string {
+    return `${this.redisPrefix}queue:${agentId}`;
+  }
+
+  private getMessageKey(messageId: string): string {
+    return `${this.redisPrefix}msg:${messageId}`;
+  }
+
+  private getHeartbeatKey(agentId: string): string {
+    return `${this.redisPrefix}heartbeat:${agentId}`;
+  }
+
+  private normalizePriority(priority: unknown): A2APriority {
+    const value = String(priority ?? A2APriority.MEDIUM)
+      .trim()
+      .toLowerCase();
+    switch (value) {
+      // Legacy aliases observed across TNF packages
+      case 'urgent':
+      case 'p0':
+      case 'critical':
+        return A2APriority.CRITICAL;
+      case 'high':
+      case 'p1':
+        return A2APriority.HIGH;
+      case 'normal':
+      case 'medium':
+      case 'p2':
+        return A2APriority.MEDIUM;
+      case 'low':
+      case 'p3':
+      default:
+        return A2APriority.LOW;
+    }
+  }
+
+  private async recordMessagePresence(message: A2AMessage): Promise<void> {
+    // Any message updates the sender's liveliness; explicit heartbeat also refreshes strongly.
+    await this.touchPresence(message.from, message.type === A2AMessageType.HEARTBEAT);
+  }
+
+  private async touchPresence(agentId: string, isHeartbeat: boolean = false): Promise<void> {
+    const now = new Date();
+    this.agentPresence.set(agentId, { online: true, lastSeen: now });
+
+    const previous = this.agentStallState.get(agentId);
+    if (previous) {
+      this.agentStallState.delete(agentId);
+      this.eventEmitter.emit('a2a.agent.recovered', {
+        agentId,
+        stalledSince: previous.stalledSince,
+        recoveredAt: now,
+      });
+    }
+
+    if (this.redisReady && this.redis) {
+      try {
+        const ttl = isHeartbeat ? this.heartbeatTtlMs : Math.floor(this.heartbeatTtlMs * 0.75);
+        await this.redis.set(this.getHeartbeatKey(agentId), String(now.getTime()), 'PX', ttl);
+      } catch (error) {
+        this.logger.debug(
+          `Failed to persist heartbeat for ${agentId}: ${(error as Error).message}`
+        );
+      }
+    }
+  }
+
+  private mapPriority(priority: A2APriority): number {
+    switch (priority) {
+      case A2APriority.CRITICAL:
+        return 1;
+      case A2APriority.HIGH:
+        return 2;
+      case A2APriority.MEDIUM:
+        return 3;
+      case A2APriority.LOW:
+      default:
+        return 4;
+    }
+  }
+
+  private toScore(priority: A2APriority, sequence: number): number {
+    // Lower score is higher dispatch priority. Sequence preserves FIFO within each priority tier.
+    return this.mapPriority(priority) * 1_000_000_000_000 + sequence;
+  }
+
+  private deserializeMessage(raw: string): A2AMessage {
+    const parsed = JSON.parse(raw) as A2AMessage;
+    parsed.timestamp = new Date(parsed.timestamp);
+    return parsed;
+  }
+
+  private async attachSequencingMetadata(message: A2AMessage): Promise<void> {
+    if (!this.redisReady || !this.redis) {
+      const correlationId = message.correlationId || 'none';
+      this.localGlobalSequence += 1;
+      const conversationSequence = (this.localConversationSequences.get(correlationId) || 0) + 1;
+      this.localConversationSequences.set(correlationId, conversationSequence);
+      const metadata = message.metadata || {};
+      message.metadata = {
+        ...metadata,
+        broker: {
+          globalSequence: this.localGlobalSequence,
+          conversationSequence,
+          queuedAt: Date.now(),
+          clockSource: 'local',
+        },
+      };
+      return;
+    }
+
+    const globalSeq = await this.redis.incr(`${this.redisPrefix}seq:global`);
+    const correlationId = message.correlationId || 'none';
+    const convSeq = await this.redis.incr(`${this.redisPrefix}seq:conversation:${correlationId}`);
+    let clockMs = Date.now();
+    try {
+      const redisTime = await this.redis.time();
+      if (Array.isArray(redisTime) && redisTime.length >= 2) {
+        clockMs = Number(redisTime[0]) * 1000 + Math.floor(Number(redisTime[1]) / 1000);
+      }
+    } catch {
+      // fall back to local clock when Redis TIME cannot be read
+    }
+    const metadata = message.metadata || {};
+    message.metadata = {
+      ...metadata,
+      broker: {
+        globalSequence: globalSeq,
+        conversationSequence: convSeq,
+        queuedAt: clockMs,
+        clockSource: 'redis',
+      },
+    };
+  }
+
+  private async enqueueForAgent(agentId: string, message: A2AMessage): Promise<void> {
+    if (this.redisReady && this.redis) {
+      const queueKey = this.getQueueKey(agentId);
+      const messageKey = this.getMessageKey(message.id);
+      const sequence = Number(message.metadata?.broker?.globalSequence || Date.now());
+      const score = this.toScore(message.priority, sequence);
+      const ttlMs = message.ttl || this.defaultMessageTtlMs;
+
+      const pipeline = this.redis.pipeline();
+      pipeline.set(messageKey, JSON.stringify(message), 'PX', ttlMs);
+      pipeline.zadd(queueKey, score, message.id);
+      pipeline.pexpire(queueKey, ttlMs);
+      await pipeline.exec();
+      return;
+    }
+
+    const queue = this.messageQueues.get(agentId) || [];
+    queue.push(message);
+    this.messageQueues.set(agentId, queue);
+  }
+
+  private async cleanupInactiveAgents(): Promise<void> {
     const now = Date.now();
-    const timeout = 300000; // 5 minutes
+    const timeout = 300000; // 5 minutes hard-offline threshold
 
     for (const [agentId, presence] of this.agentPresence.entries()) {
-      if (presence.online && (now - presence.lastSeen.getTime()) > timeout) {
+      const elapsed = now - presence.lastSeen.getTime();
+      let redisRecentlySeen = false;
+
+      if (this.redisReady && this.redis) {
+        try {
+          const exists = await this.redis.exists(this.getHeartbeatKey(agentId));
+          redisRecentlySeen = exists === 1;
+        } catch {
+          redisRecentlySeen = false;
+        }
+      }
+
+      if (presence.online && !redisRecentlySeen && elapsed > this.stallTimeoutMs) {
+        const state = this.agentStallState.get(agentId);
+        const firstSeen = state?.stalledSince || new Date(now - elapsed);
+        const shouldEscalate = !state || now - state.lastEscalatedAt.getTime() >= 60000;
+        if (shouldEscalate) {
+          this.agentStallState.set(agentId, {
+            stalledSince: firstSeen,
+            lastEscalatedAt: new Date(now),
+          });
+          this.eventEmitter.emit('a2a.agent.stalled', {
+            agentId,
+            stalledForMs: elapsed,
+            stalledSince: firstSeen,
+            priority: elapsed > timeout ? A2APriority.CRITICAL : A2APriority.HIGH,
+            orchestrationHint: 'director_broker_escalation',
+          });
+        }
+      }
+
+      if (presence.online && !redisRecentlySeen && elapsed > timeout) {
         presence.online = false;
         this.eventEmitter.emit('a2a.agent.timeout', { agentId });
         this.logger.warn(`Agent ${agentId} marked as offline due to inactivity`);
