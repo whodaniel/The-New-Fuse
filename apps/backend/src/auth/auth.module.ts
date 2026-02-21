@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { DrizzleModule } from '@the-new-fuse/database';
@@ -14,15 +14,20 @@ import { FirebaseAuthGuard } from './firebase-auth.guard';
 import { GitHubStrategy } from './github.strategy';
 import { GoogleStrategy } from './google.strategy';
 import { RolesGuard } from './guards/roles.guard';
+import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports: [
     DrizzleModule.forRootAsync(),
     ConfigModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule.register({
-      secret: process.env.JWT_SECRET || 'your-secret-key',
-      signOptions: { expiresIn: '7d' },
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET') || 'your-secret-key',
+        signOptions: { expiresIn: '7d' },
+      }),
     }),
   ],
   providers: [
@@ -36,6 +41,7 @@ import { RolesGuard } from './guards/roles.guard';
     GoogleStrategy,
     GitHubStrategy,
     IdentityService,
+    JwtStrategy,
   ],
   controllers: [AuthController],
   exports: [AuthService, RolesGuard, FirebaseAuthGuard, AgentJwtStrategy],

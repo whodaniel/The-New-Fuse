@@ -19,20 +19,50 @@ export class AuthService {
     private identityService: IdentityService,
     private configService: ConfigService
   ) {
+    this.initializeFirebase();
+  }
+
+  private initializeFirebase() {
     if (admin.apps.length === 0) {
       const projectId = this.configService.get<string>('FIREBASE_PROJECT_ID');
-      if (projectId) {
+      const clientEmail = this.configService.get<string>('FIREBASE_CLIENT_EMAIL');
+      const privateKey = this.configService.get<string>('FIREBASE_PRIVATE_KEY')?.replace(/\\n/g, '\n');
+
+      if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+        try {
+          admin.initializeApp();
+          this.logger.log('Firebase Admin SDK initialized with GOOGLE_APPLICATION_CREDENTIALS');
+          return;
+        } catch (error) {
+          this.logger.error('Failed to initialize Firebase Admin with env credentials', error);
+        }
+      }
+
+      if (projectId && clientEmail && privateKey) {
+        try {
+          admin.initializeApp({
+            credential: admin.credential.cert({
+              projectId,
+              clientEmail,
+              privateKey,
+            }),
+          });
+          this.logger.log('Firebase Admin SDK initialized successfully with explicit credentials');
+        } catch (error) {
+          this.logger.error('Failed to initialize Firebase Admin with explicit credentials', error);
+        }
+      } else if (projectId) {
         try {
           admin.initializeApp({
             credential: admin.credential.applicationDefault(),
             projectId,
           });
-          this.logger.log(`Firebase Admin initialized for project: ${projectId}`);
+          this.logger.log(`Firebase Admin initialized for project (best effort): ${projectId}`);
         } catch (error) {
-          this.logger.error('Failed to initialize Firebase Admin', error);
+          this.logger.error('Failed to initialize Firebase Admin (best effort)', error);
         }
       } else {
-        this.logger.warn('FIREBASE_PROJECT_ID not set, skipping Firebase Admin initialization');
+        this.logger.warn('Firebase Admin SDK not initialized: Missing credentials');
       }
     }
   }
@@ -95,6 +125,9 @@ export class AuthService {
 
   async validateFirebaseToken(token: string) {
     try {
+      if (admin.apps.length === 0) {
+        throw new UnauthorizedException('Firebase Admin SDK not initialized');
+      }
       const decodedToken = await admin.auth().verifyIdToken(token);
       const { email, uid, name, picture, email_verified } = decodedToken;
 
