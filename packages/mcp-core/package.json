@@ -85,7 +85,7 @@
     "@modelcontextprotocol/sdk": "^1.26.0",
     "@the-new-fuse/core-error-handling": "workspace:*",
     "@the-new-fuse/core-monitoring": "workspace:*",
-    "ajv": "^8.17.1",
+    "ajv": "^8.18.0",
     "eventemitter3": "^5.0.1",
     "p-retry": "^7.1.0",
     "p-timeout": "^7.0.1",
