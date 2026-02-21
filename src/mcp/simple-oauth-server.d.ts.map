@@ -1,1 +1,0 @@
-{"version":3,"file":"simple-oauth-server.d.ts","sourceRoot":"","sources":["simple-oauth-server.ts"],"names":[],"mappings":";AAEA;;;GAGG;AAMH,cAAM,oBAAoB;IACxB,OAAO,CAAC,GAAG,CAAsB;IACjC,OAAO,CAAC,WAAW,CAAiB;IACpC,OAAO,CAAC,MAAM,CAAS;;IASvB,OAAO,CAAC,WAAW;IA4Db,KAAK,CAAC,IAAI,GAAE,MAAa;CAYhC;AAQD,eAAe,oBAAoB,CAAC"}

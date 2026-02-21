@@ -21,6 +21,13 @@ export class TaskService {
   }
 
   /**
+   * Find all active tasks across all users (for system services)
+   */
+  async findActiveTasks(): Promise<Task[]> {
+    return this.db.tasks.findTasksByStatusUnscoped('IN_PROGRESS');
+  }
+
+  /**
    * Update a task
    */
   async updateTask(taskId: string, updates: Partial<NewTask>): Promise<Task | null> {

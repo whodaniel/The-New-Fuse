@@ -38,6 +38,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { BillingModule } from './modules/billing/billing.module';
 import { ChatModule } from './modules/chat/chat.module';
 import { ClaudeDevAutomationModule } from './modules/ClaudeDevAutomationModule';
+import { DirectorModule } from './modules/director/director.module';
 import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.module';
 import { ExportModule } from './modules/export/export.module';
 import { PromptTemplatesModule } from './modules/prompt-templates.module';
@@ -106,6 +107,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     TaskModule, // Task management - Migrated to Drizzle ORM
     EntityDiscoveryModule,
     ClaudeDevAutomationModule,
+    DirectorModule,
     AdminModule, // Admin operations and role management
     ExportModule, // Data export functionality
     SecurityModule, // Security testing and validation

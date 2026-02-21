@@ -72,6 +72,17 @@ export class DrizzleTaskRepository {
   }
 
   /**
+   * Find tasks by status (unscoped - for system services)
+   */
+  async findTasksByStatusUnscoped(status: string): Promise<Task[]> {
+    return db
+      .select()
+      .from(tasks)
+      .where(and(eq(tasks.status, status as any), isNull(tasks.deletedAt)))
+      .orderBy(desc(tasks.createdAt));
+  }
+
+  /**
    * Find tasks by status
    */
   async findTasksByStatus(status: string, userId: string): Promise<Task[]> {
