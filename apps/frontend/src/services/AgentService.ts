@@ -254,6 +254,32 @@ class AgentService {
     });
   }
 
+  /**
+   * Get human-in-the-loop connection options
+   */
+  getHumanConnectionOptions() {
+    return [
+      {
+        name: 'Telegram Bot',
+        url: 'https://t.me/thenewfuse_bot',
+        icon: 'Send',
+        description: 'Direct status updates and approvals via Telegram.',
+      },
+      {
+        name: 'Discord (W3MARKETING)',
+        url: 'https://discord.gg/4GUHgFYr6',
+        icon: 'MessageSquare',
+        description: 'Collaborate with the swarm in the community DAO.',
+      },
+      {
+        name: 'Discord (BizSynth)',
+        url: 'https://discord.gg/hWt48aBE2',
+        icon: 'MessageSquare',
+        description: 'Business and specialized agent coordination.',
+      },
+    ];
+  }
+
   // Transform API responses to frontend types
   private transformAgent(apiAgent: any): Agent {
     return {

@@ -53,7 +53,21 @@ capabilities.
 - **Scripts**:
   - `manage_env.py` - Core CLI for env manipulation.
 
-### 5. **skill-builder** (Meta-Skill) ⭐
+### 5. **continuous-improvement** ⭐
+
+- **Location**: `.agent/skills/continuous-improvement/SKILL.md`
+- **Purpose**: Autonomously diagnose system health and tech debt.
+- **Use When**: Routine audits, system optimization.
+- **Key Features**: Integrated `tnf doctor` scans, TODO grep analysis.
+
+### 6. **news-scouting** ⭐
+
+- **Location**: `.agent/skills/news-scouting/SKILL.md`
+- **Purpose**: Autonomous tracking of AI news and competitor trends.
+- **Use When**: Strategy updates, market analysis.
+- **Key Features**: Competitive reporting, threat detection.
+
+### 7. **skill-builder** (Meta-Skill) ⭐
 
 - **Location**: `.agent/skills/skill-builder/SKILL.md`
 - **Purpose**: Creates new skills based on patterns
@@ -159,12 +173,25 @@ capabilities.
 - **Purpose**: Historical awareness and learning preservation.
 - **Use**: Read to understand architectural decisions and proven patterns.
 
-### 4. **relay-protocol** (Planned)
+### 4. **relay-protocol**
 
+- **Location**: `.agent/context/relay-protocol.md`
 - **Purpose**: TNF Relay message structure, channels
-- **Format**: Message schemas, channel conventions
+- **Format**: Message schemas, envelope conventions
 
-### 5. **keyboard-shortcuts** (Planned)
+### 5. **heartbeat-protocol**
+
+- **Location**: `.agent/context/heartbeat-protocol.md`
+- **Purpose**: Standard for agent health reporting
+- **Format**: Redis heartbeat pulse schema
+
+### 6. **human-handoff**
+
+- **Location**: `.agent/context/human-handoff.md`
+- **Purpose**: Direct channels to reach human operator (Telegram/Discord)
+- **Use When**: Critical escalations, budget approval, stuck state.
+
+### 7. **keyboard-shortcuts** (Planned)
 
 - **Purpose**: All TNF keyboard shortcuts
 - **Contents**:
@@ -301,6 +328,8 @@ Done (New skill now available)
 | "browser", "chrome", "gemini", "webpage"         | browser-automation   |
 | "relay", "message", "channel", "broadcast"       | relay-communication  |
 | "port", "service", "status", "running"           | system-diagnostics   |
+| "news", "trend", "scout", "competitor"          | news-scouting        |
+| "audit", "tech debt", "improver"                | continuous-improvement|
 | "create skill", "new capability", "add function" | skill-builder (meta) |
 | "plan", "complex", "multi-step", "phases"        | planning-with-files  |
 | "findings", "progress", "handoff", "session"     | planning-with-files  |
