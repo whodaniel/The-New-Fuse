@@ -142,23 +142,6 @@ export class AuthService {
     return { message: 'Logged out successfully' };
   }
 
-  private decodeJwtPayloadWithoutVerification(token: string): Record<string, any> | null {
-    try {
-      const parts = token.split('.');
-      if (parts.length < 2) return null;
-      const payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-      const normalized = payload.padEnd(payload.length + ((4 - (payload.length % 4)) % 4), '=');
-      const decoded = Buffer.from(normalized, 'base64').toString('utf8');
-      const parsed = JSON.parse(decoded);
-      if (parsed && typeof parsed === 'object') {
-        return parsed as Record<string, any>;
-      }
-      return null;
-    } catch {
-      return null;
-    }
-  }
-
   async resolveCurrentUserFromAuthHeader(authHeader?: string) {
     if (!authHeader?.startsWith('Bearer ')) {
       throw new UnauthorizedException('No token provided');
@@ -169,48 +152,51 @@ export class AuthService {
       throw new UnauthorizedException('No token provided');
     }
 
-    let decoded: Record<string, any> | null = null;
     try {
-      decoded = this.jwtService.verify(token) as Record<string, any>;
-    } catch {
-      // Fallback for non-local tokens (e.g. Firebase). We still require a matching DB user.
-      decoded = this.decodeJwtPayloadWithoutVerification(token);
+      // 1. Try to verify as local JWT
+      const decoded = this.jwtService.verify(token) as Record<string, any>;
+
+      const tokenEmail =
+        typeof decoded.email === 'string' ? decoded.email.toLowerCase() : undefined;
+      const tokenUserId =
+        typeof decoded.sub === 'string'
+          ? decoded.sub
+          : typeof decoded.user_id === 'string'
+            ? decoded.user_id
+            : typeof decoded.uid === 'string'
+              ? decoded.uid
+              : undefined;
+
+      let user =
+        tokenEmail && tokenEmail.length > 0
+          ? await drizzleUserRepository.findByEmail(tokenEmail)
+          : null;
+      if (!user && tokenUserId) {
+        user = await drizzleUserRepository.findById(tokenUserId);
+      }
+
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+
+      return {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        roles: Array.isArray(user.roles) ? user.roles : [user.role],
+        isActive: user.isActive,
+      };
+    } catch (localJwtError) {
+      // 2. Fallback: Try Firebase Token Verification
+      // This will verify the signature AND find/create the user in DB
+      try {
+        return await this.validateFirebaseToken(token);
+      } catch (firebaseError) {
+        // 3. Both failed. Throw Unauthorized.
+        throw new UnauthorizedException('Invalid token');
+      }
     }
-
-    if (!decoded) {
-      throw new UnauthorizedException('Invalid token');
-    }
-
-    const tokenEmail = typeof decoded.email === 'string' ? decoded.email.toLowerCase() : undefined;
-    const tokenUserId =
-      typeof decoded.sub === 'string'
-        ? decoded.sub
-        : typeof decoded.user_id === 'string'
-          ? decoded.user_id
-          : typeof decoded.uid === 'string'
-            ? decoded.uid
-            : undefined;
-
-    let user =
-      tokenEmail && tokenEmail.length > 0
-        ? await drizzleUserRepository.findByEmail(tokenEmail)
-        : null;
-    if (!user && tokenUserId) {
-      user = await drizzleUserRepository.findById(tokenUserId);
-    }
-
-    if (!user) {
-      throw new UnauthorizedException('User not found');
-    }
-
-    return {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      role: user.role,
-      roles: Array.isArray(user.roles) ? user.roles : [user.role],
-      isActive: user.isActive,
-    };
   }
 
   async findOrCreateUnstoppableDomainsUser(
