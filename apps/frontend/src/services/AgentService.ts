@@ -153,6 +153,25 @@ const MOCK_AGENTS: Agent[] = [
     updatedAt: new Date('2024-02-10'),
   },
   {
+    id: 'tnf-agent-news-scout',
+    name: 'News Scout',
+    type: 'scout',
+    description:
+      'Autonomously tracks the AI landscape, research breakthroughs, and competitor moves to inform swarm strategy.',
+    capabilities: ['web-search', 'market-analysis', 'reporting', 'task-generation'],
+    status: 'active',
+    version: '1.0.0',
+    model: 'GPT-4o',
+    configuration: {},
+    metadata: {
+      tasksCompleted: 89,
+      successRate: 94.2,
+      avgResponseTime: '2.8s',
+    },
+    createdAt: new Date('2024-02-21'),
+    updatedAt: new Date('2024-02-21'),
+  },
+  {
     id: 'agent-2',
     name: 'DataInsight Pro',
     type: 'analytics',

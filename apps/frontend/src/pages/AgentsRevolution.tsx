@@ -38,6 +38,7 @@ const typeIcons: Record<string, LucideIcon> = {
   analyzer: Microscope,
   executor: Cpu,
   environment: Box,
+  scout: Search,
   default: Bot,
 };
 
@@ -53,6 +54,7 @@ const typeGradients: Record<string, string> = {
   analyzer: 'from-cyan-400 to-blue-600',
   executor: 'from-red-500 to-orange-500',
   environment: 'from-slate-700 to-gray-900',
+  scout: 'from-purple-600 to-indigo-800',
   default: 'from-gray-500 to-slate-500',
 };
 
