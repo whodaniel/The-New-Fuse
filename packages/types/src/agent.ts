@@ -222,6 +222,7 @@ export class AgentResponseDto {
   provider?: string;
   lastActive?: Date;
   metadata?: unknown;
+  profile?: AgentProfileDto;
   createdAt: Date;
   updatedAt: Date;
 
@@ -236,7 +237,60 @@ export class AgentResponseDto {
     this.provider = data.provider;
     this.lastActive = data.lastActive;
     this.metadata = data.metadata;
+    this.profile = data.profile;
     this.createdAt = data.createdAt || new Date();
     this.updatedAt = data.updatedAt || new Date();
+  }
+}
+
+/**
+ * Agent Profile DTO
+ * Used for agent self-identification and discovery
+ */
+export class AgentProfileDto {
+  @ApiProperty({ required: false, description: "About me - agent's self-description" })
+  @IsString()
+  @IsOptional()
+  about?: string;
+
+  @ApiProperty({ required: false, description: "Agent's personality traits" })
+  @IsString()
+  @IsOptional()
+  personality?: string;
+
+  @ApiProperty({ required: false, description: "Avatar URL or image path" })
+  @IsString()
+  @IsOptional()
+  avatar?: string;
+
+  @ApiProperty({ required: false, description: "Signature emoji" })
+  @IsString()
+  @IsOptional()
+  emoji?: string;
+
+  @ApiProperty({ required: false, description: "Tags for discovery" })
+  @IsArray()
+  @IsOptional()
+  @IsString({ each: true })
+  tags?: string[];
+
+  @ApiProperty({ required: false, description: "Creator or owner name" })
+  @IsString()
+  @IsOptional()
+  creator?: string;
+
+  @ApiProperty({ required: false, description: "Agent version" })
+  @IsString()
+  @IsOptional()
+  version?: string;
+
+  constructor(data: Partial<AgentProfileDto> = {}) {
+    this.about = data.about;
+    this.personality = data.personality;
+    this.avatar = data.avatar;
+    this.emoji = data.emoji;
+    this.tags = data.tags;
+    this.creator = data.creator;
+    this.version = data.version;
   }
 }

@@ -19,6 +19,7 @@ import {
   AgentType,
   CreateAgentDto,
   UpdateAgentDto,
+  AgentProfileDto,
 } from '@the-new-fuse/types';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import {
@@ -780,6 +781,63 @@ export class AgentController {
       }
       throw new HttpException(
         (error as Error).message || 'Failed to mark agent as error',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+
+  /**
+   * Update agent profile (self-identification)
+   *
+   * Allows an agent to update its own profile information, including
+   * about me, personality, avatar, and other self-describing fields.
+   * This is used for agent self-identification and discovery.
+   *
+   * @param id - Unique agent identifier
+   * @param profileDto - Profile update data
+   * @param profileDto.about - About me description
+   * @param profileDto.personality - Agent personality traits
+   * @param profileDto.avatar - Avatar URL or emoji
+   * @param profileDto.emoji - Signature emoji
+   * @param profileDto.tags - Tags for discovery
+   *
+   * @returns Promise containing updated agent details
+   * @returns.id - Agent identifier
+   * @returns.profile - Updated profile object
+   * @returns.updatedAt - Update timestamp
+   *
+   * @throws NotFoundException - When agent is not found
+   * @throws ForbiddenException - When user doesn't have permission to update this agent
+   * @throws BadRequestException - When profile data is invalid
+   *
+   * @api
+   * PUT /agents/:id/profile
+   * @requiresAuth - Bearer token in Authorization header
+   *
+   * @example
+   * const updatedAgent = await agentController.updateAgentProfile('agent123', {
+   *   about: "I am AGENT-09, a helpful AI assistant for The New Fuse project.",
+   *   personality: "Friendly, resourceful, proactive",
+   *   emoji: "🤖",
+   *   tags: ["assistant", "fuse", "development"]
+   * });
+   */
+  @Put(':id/profile')
+  @ApiOperation({ summary: 'Update agent profile (self-identification)' })
+  @ApiResponse({ status: HttpStatus.OK, type: AgentResponseDto })
+  async updateAgentProfile(
+    @Param('id') id: string,
+    @Body() profileDto: AgentProfileDto,
+    @CurrentUser() user: User
+  ): Promise<AgentResponseDto> {
+    try {
+      return await this.agentService.updateAgentProfile(id, profileDto, user.id);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        (error as Error).message || 'Failed to update agent profile',
         HttpStatus.BAD_REQUEST
       );
     }

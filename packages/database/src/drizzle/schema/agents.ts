@@ -33,6 +33,17 @@ export const agents = pgTable('agents', {
   userId: uuid('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
+  // Agent self-describing profile (about me, personality, capabilities description)
+  profile: jsonb('profile').$type<{
+    about?: string;
+    personality?: string;
+    avatar?: string;
+    emoji?: string;
+    tags?: string[];
+    creator?: string;
+    version?: string;
+    lastUpdated?: string;
+  }>().default({}),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
   deletedAt: timestamp('deleted_at'),
