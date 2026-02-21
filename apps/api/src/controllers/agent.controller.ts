@@ -231,11 +231,11 @@ export class AgentController {
       const limitNum = limit ? parseInt(limit) : 50;
 
       if (type) {
-        const result = await this.agentService.findAgentsByType(type, pageNum, limitNum);
+        const result = await this.agentService.findAgentsByType(type, user.id, pageNum, limitNum);
         return result.data;
       }
       if (status) {
-        return await this.agentService.findAgentsByStatus(status);
+        return await this.agentService.findAgentsByStatus(status, user.id);
       }
       if (search) {
         const result = await this.agentService.searchAgents(user.id, search, pageNum, limitNum);

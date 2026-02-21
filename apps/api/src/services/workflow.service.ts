@@ -51,17 +51,20 @@ export class WorkflowService {
     }
   }
 
-  async getWorkflows(options?: {
-    page?: number;
-    limit?: number;
-    status?: string;
-    search?: string;
-  }): Promise<{ workflows: Workflow[]; total: number }> {
+  async getWorkflows(
+    creatorId: string,
+    options?: {
+      page?: number;
+      limit?: number;
+      status?: string;
+      search?: string;
+    }
+  ): Promise<{ workflows: Workflow[]; total: number }> {
     try {
       const { page = 1, limit = 20 } = options || {};
 
       // Get workflows using Drizzle repository
-      const workflows = await this.db.workflows.findActiveWorkflows();
+      const workflows = await this.db.workflows.findActiveWorkflows(creatorId);
 
       // Apply pagination manually
       const start = (page - 1) * limit;

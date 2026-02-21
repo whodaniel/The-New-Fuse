@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { DatabaseModule } from '@the-new-fuse/database';
-import { WebSocketGateway } from '../gateways/websocket.gateway';
 import {
   WORKFLOW_ENGINE_PROVIDER,
   WORKFLOW_EXECUTOR_PROVIDER,
@@ -12,6 +11,7 @@ import { AgentService } from '../services/agent.service';
 import { ChatService } from '../services/chat.service';
 import { ClaudeDevAutomationService } from '../services/ClaudeDevAutomationService';
 import { WorkflowService } from '../services/workflow.service';
+import { WebsocketGateway } from '../websocket/websocket.gateway';
 import { TNFMCPController } from './TNFMCPController';
 import { TNFMCPService } from './TNFMCPService';
 
@@ -25,7 +25,7 @@ import { TNFMCPService } from './TNFMCPService';
     WorkflowService,
     ClaudeDevAutomationService,
     AgentApiGrantsService,
-    WebSocketGateway,
+    WebsocketGateway,
     // Stub providers for WorkflowService dependencies (until real implementations are available)
     WORKFLOW_ENGINE_PROVIDER,
     WORKFLOW_EXECUTOR_PROVIDER,

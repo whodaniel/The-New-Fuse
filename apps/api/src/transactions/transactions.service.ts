@@ -3,7 +3,9 @@
  * Handles blockchain transactions with ERC-4337 Smart Account support
  */
 import { Injectable, Logger } from '@nestjs/common';
+import type { Wallet } from '@the-new-fuse/database';
 import { DatabaseService } from '@the-new-fuse/database';
+import type { Address, Hex } from 'viem';
 import {
   createPublicClient,
   createWalletClient,
@@ -12,26 +14,20 @@ import {
   parseAbi,
   parseEther,
 } from 'viem';
-import type { Address, Hex, Hash } from 'viem';
 import { mainnet } from 'viem/chains';
 import { SmartAccountService } from '../smart-accounts/smart-account.service';
 import { Web3authService } from '../web3auth/web3auth.service';
-import type { Wallet } from '@the-new-fuse/database';
 import {
-  UserOperation,
-  SignedUserOperation,
-  WalletWithAgent,
-  TransactionCallData,
-  ComplianceCheckResult,
-  RecentTransactionSummary,
   BundlerResponse,
+  ComplianceCheckResult as ImportedComplianceCheckResult,
+  RecentTransactionSummary,
+  SignedUserOperation,
+  TransactionCallData,
+  UserOperation,
+  WalletWithAgent,
 } from './user-operation.types';
 
-interface ComplianceCheckResult {
-  isHighRisk: boolean;
-  riskScore: number;
-  reason?: string;
-}
+type ComplianceCheckResult = ImportedComplianceCheckResult;
 
 @Injectable()
 export class TransactionsService {
@@ -73,9 +69,9 @@ export class TransactionsService {
 
       // Build UserOperation
       const userOp = await this.buildUserOperation(agentVerifierId, {
-        target: to,
+        target: to as Address,
         value: parseEther(value),
-        data,
+        data: data as Hex,
       });
 
       // Sign UserOperation with Web3Auth
@@ -151,7 +147,10 @@ export class TransactionsService {
     return userOp;
   }
 
-  private async signUserOperation(agentVerifierId: string, userOp: UserOperation): Promise<SignedUserOperation> {
+  private async signUserOperation(
+    agentVerifierId: string,
+    userOp: UserOperation
+  ): Promise<SignedUserOperation> {
     // Get Web3Auth provider for signing
     const provider = await this.web3authService.getProvider(agentVerifierId);
 
@@ -159,6 +158,10 @@ export class TransactionsService {
     const userOpHash = this.getUserOperationHash(userOp);
 
     // Sign with Web3Auth
+    if (!provider.account?.signMessage) {
+      throw new Error('Web3Auth account or signMessage method not available');
+    }
+
     const signature = await provider.account.signMessage({
       message: userOpHash,
     });

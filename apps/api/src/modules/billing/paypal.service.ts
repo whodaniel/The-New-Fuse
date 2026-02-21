@@ -150,10 +150,11 @@ export class PayPalService {
   }
 
   private async updateSubscriptionStatus(subscriptionId: string, status: any): Promise<void> {
-    await this.db.client
+    const client = this.db.client as any;
+    await client
       .update(payPalSubscriptions)
       .set({ status, updatedAt: new Date() })
-      .where(eq(payPalSubscriptions.payPalSubscriptionId, subscriptionId));
+      .where(eq(payPalSubscriptions.payPalSubscriptionId as any, subscriptionId));
   }
 
   /**
@@ -161,8 +162,9 @@ export class PayPalService {
    */
   async getUserTier(userId: string): Promise<'STARTER' | 'PRO' | 'ENTERPRISE'> {
     try {
-      const sub = await this.db.client.query.payPalSubscriptions.findFirst({
-        where: eq(payPalSubscriptions.userId, userId),
+      const client = this.db.client as any;
+      const sub = await client.query.payPalSubscriptions.findFirst({
+        where: eq(payPalSubscriptions.userId as any, userId),
       });
 
       if (!sub || sub.status !== 'ACTIVE') {

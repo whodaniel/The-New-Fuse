@@ -209,7 +209,7 @@ export class AgentService {
         throw new NotFoundException(`Agent with ID ${id} not found`);
       }
 
-      const agent = await this.agentRepository.updateStatus(id, userId, status as any);
+      const agent = await this.agentRepository.updateStatus(id, status as any);
       if (!agent) {
         throw new NotFoundException(`Agent with ID ${id} not found`);
       }
@@ -254,9 +254,9 @@ export class AgentService {
     }
   }
 
-  async getAgentTypeCounts(userId: string): Promise<Record<string, number>> {
+  async getAgentTypeCounts(_userId: string): Promise<Record<string, number>> {
     try {
-      const statusCounts = await this.agentRepository.countByStatus(userId);
+      const statusCounts = await this.agentRepository.countByStatus();
       return statusCounts.reduce((acc: Record<string, number>, item: any) => {
         acc[item.status] = item.count;
         return acc;

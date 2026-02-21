@@ -1,13 +1,11 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { DrizzleModule } from '@the-new-fuse/database';
-import { Message } from '../entities/message.entity';
+import { DatabaseModule } from '@the-new-fuse/database';
 import { RedisService } from '../services/redis.service';
 import { ChatController } from './chat.controller';
 import { ChatService } from './chat.service';
 
 @Module({
-  imports: [DrizzleModule.forRootAsync(), TypeOrmModule.forFeature([Message])],
+  imports: [DatabaseModule],
   controllers: [ChatController],
   providers: [ChatService, RedisService],
   exports: [ChatService],

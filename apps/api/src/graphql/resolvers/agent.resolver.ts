@@ -30,19 +30,27 @@ export class AgentResolver {
 
   @Query(() => AgentType, { nullable: true })
   @UseGuards(GqlAuthGuard)
-  async agent(@Args('id', { type: () => ID }) id: string): Promise<Agent | null> {
-    return this.db.agents.findById(id);
+  async agent(
+    @Args('id', { type: () => ID }) id: string,
+    @Context() context: any
+  ): Promise<Agent | null> {
+    const userId = context.req.user?.id;
+    return this.db.agents.findById(id, userId);
   }
 
   @Query(() => [AgentType])
   @UseGuards(GqlAuthGuard)
   async agents(
-    @Args('userId', { type: () => ID, nullable: true }) userId?: string
+    @Args('userId', { type: () => ID, nullable: true }) userIdArg?: string,
+    @Context() context?: any
   ): Promise<Agent[]> {
+    const userId = userIdArg || context?.req?.user?.id;
     if (userId) {
       return this.db.agents.findByUserId(userId);
     }
-    return this.db.agents.findAll(100);
+    // If no userId provided and no user in context, we still need a userId for findAll
+    // but this case should be guarded by GqlAuthGuard
+    return this.db.agents.findAll(userId, 100);
   }
 
   @Mutation(() => AgentType)
@@ -72,8 +80,12 @@ export class AgentResolver {
 
   @Mutation(() => AgentType)
   @UseGuards(GqlAuthGuard)
-  async updateAgent(@Args('input') input: UpdateAgentInput): Promise<Agent> {
-    const agent = await this.db.agents.findById(input.id);
+  async updateAgent(
+    @Args('input') input: UpdateAgentInput,
+    @Context() context: any
+  ): Promise<Agent> {
+    const userId = context.req.user?.id;
+    const agent = await this.db.agents.findById(input.id, userId);
 
     if (!agent) {
       throw new Error('Agent not found');
@@ -84,7 +96,7 @@ export class AgentResolver {
     if (input.description !== undefined) updates.description = input.description;
     if (input.capabilities !== undefined) updates.capabilities = input.capabilities;
 
-    const updated = await this.db.agents.update(input.id, updates);
+    const updated = await this.db.agents.update(input.id, userId, updates);
     if (!updated) {
       throw new Error('Failed to update agent');
     }

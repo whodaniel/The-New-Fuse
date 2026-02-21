@@ -5,6 +5,7 @@
  * Integrates with the local AgencyService.
  */
 
+import { CurrentUser } from '@/auth/decorators/current-user.decorator';
 import {
   BadRequestException,
   Body,
@@ -582,6 +583,7 @@ export class AgencyController {
   @ApiQuery({ name: 'timeframe', required: false, description: 'Timeframe (e.g., 7d, 30d, 90d)' })
   async getAnalytics(
     @Param('agencyId') agencyId: string,
+    @CurrentUser() user: any,
     @Query('timeframe') timeframe: string = '30d'
   ): Promise<{
     agencyId: string;
@@ -599,10 +601,10 @@ export class AgencyController {
       const startDate = this.getDateFromTimeframe(timeframe, now);
 
       // Fetch analytics data using Drizzle
-      const agents = await this.db.agents.findAll(100);
+      const agents = await this.db.agents.findAll(user.id, 100);
 
       // Tasks filtering
-      const tasks = await this.db.tasks.findTasksCreatedAfter(startDate);
+      const tasks = await this.db.tasks.findTasksCreatedAfter(startDate, user.id);
 
       const completedTasks = tasks.filter((t: any) => t.status === 'COMPLETED');
       const failedTasks = tasks.filter((t: any) => t.status === 'FAILED');

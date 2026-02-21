@@ -31,9 +31,12 @@ export class ChatService {
    */
   async getRooms(
     page: number = 1,
-    limit: number = 50
+    limit: number = 50,
+    userId?: string
   ): Promise<{ rooms: any[]; total: number; page: number; limit: number }> {
-    const rooms = await this.db.chats.findActiveRooms();
+    const rooms = userId
+      ? await this.db.chats.findJoinedRooms(userId)
+      : await this.db.chats.findPublicActiveRooms();
 
     // Apply pagination manually
     const start = (page - 1) * limit;
@@ -134,7 +137,7 @@ export class ChatService {
     timestamp: Date;
   }> {
     // Get active rooms to count
-    const activeRooms = await this.db.chats.findActiveRooms();
+    const activeRooms = await this.db.chats.findPublicActiveRooms();
 
     return {
       totalRooms: activeRooms.length,

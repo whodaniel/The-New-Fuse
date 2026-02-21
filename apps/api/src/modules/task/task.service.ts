@@ -13,10 +13,10 @@ export class TaskService {
   /**
    * Find tasks that are stuck (running for more than 30 minutes)
    */
-  async findStuckTasks(): Promise<Task[]> {
+  async findStuckTasks(userId: string): Promise<Task[]> {
     const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
     // Use the task repository to find tasks that started before 30 minutes ago and are still running
-    const allTasks = await this.db.tasks.findTasksByStatus('IN_PROGRESS');
+    const allTasks = await this.db.tasks.findTasksByStatus('IN_PROGRESS', userId);
     return allTasks.filter((task) => task.startTime && new Date(task.startTime) < thirtyMinutesAgo);
   }
 
@@ -44,8 +44,8 @@ export class TaskService {
   /**
    * Get pending tasks ordered by priority
    */
-  async getPendingTasks(): Promise<Task[]> {
-    const tasks = await this.db.tasks.findTasksByStatus('PENDING');
+  async getPendingTasks(userId: string): Promise<Task[]> {
+    const tasks = await this.db.tasks.findTasksByStatus('PENDING', userId);
     // Sort by priority (assuming priority is a string like 'HIGH', 'MEDIUM', 'LOW')
     const priorityOrder = { URGENT: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
     return tasks.sort((a, b) => {

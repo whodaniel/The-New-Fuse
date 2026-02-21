@@ -1,11 +1,10 @@
+import { compare, hash } from 'bcrypt'; // Changed 'generate' to 'hash'
 import express, { Request, Response } from 'express';
 import session from 'express-session';
-import { WebSocket, WebSocketServer } from 'ws';
-import { v4 as uuidv4 } from 'uuid';
-import { hash, compare } from 'bcrypt'; // Changed 'generate' to 'hash'
-import { Pool } from 'pg';
-import { performance } from 'perf_hooks';
 import IORedis from 'ioredis'; // Default import for ioredis
+import { performance } from 'perf_hooks';
+import { Pool } from 'pg';
+import { WebSocket, WebSocketServer } from 'ws';
 
 // Configuration - Environment variables are required
 const SECRET_KEY = process.env.SECRET_KEY;
@@ -20,7 +19,7 @@ const SESSION_LIFETIME = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 // Initialize database connection
 const pool = new Pool({
-  connectionString: DATABASE_URL
+  connectionString: DATABASE_URL,
 });
 
 // Initialize Redis client
@@ -31,35 +30,44 @@ const redisClient = new IORedis(); // Create ioredis client instance
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(session({
-  secret: SECRET_KEY,
-  resave: false,
-  saveUninitialized: true,
-  cookie: { maxAge: SESSION_LIFETIME }
-}));
+app.use(
+  session({
+    secret: SECRET_KEY,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: SESSION_LIFETIME },
+  })
+);
 
 // Authentication routes
 // Fix the register route handler with proper typing
-app.post('/register', async (req: Request, res: Response): Promise<void> => {
+app.post('/register', (async (req: Request, res: Response): Promise<void> => {
   const { username, email, password } = req.body;
 
   try {
-    const userCheck = await pool.query('SELECT * FROM users WHERE username = $1 OR email = $2', [username, email]);
+    const userCheck = await pool.query('SELECT * FROM users WHERE username = $1 OR email = $2', [
+      username,
+      email,
+    ]);
     if (userCheck.rows.length > 0) {
       res.status(400).send('Username or email already exists');
       return;
     }
 
     const passwordHash = await hash(password, 10);
-    await pool.query('INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3)', [username, email, passwordHash]);
+    await pool.query('INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3)', [
+      username,
+      email,
+      passwordHash,
+    ]);
     res.status(201).send('Registration successful');
   } catch (error) {
     console.error(error instanceof Error ? error.message : 'Unknown error');
     res.status(500).send('Internal server error');
   }
-});
+}) as any);
 
-app.post('/login', async (req: Request, res: Response): Promise<void> => {
+app.post('/login', (async (req: Request, res: Response): Promise<void> => {
   const { username, password, remember } = req.body;
 
   try {
@@ -85,57 +93,66 @@ app.post('/login', async (req: Request, res: Response): Promise<void> => {
     console.error(error instanceof Error ? error.message : 'Unknown error');
     res.status(500).send('Internal server error');
   }
-});
+}) as any);
 
-app.get('/logout', (req: Request, res: Response) => {
-  req.session.destroy(err => {
+app.get('/logout', ((req: Request, res: Response) => {
+  req.session.destroy((err) => {
     if (err) {
       console.error(err);
       return res.status(500).send('Internal server error');
     }
     res.status(200).send('Logout successful');
   });
-});
+}) as any);
 
 // Main routes
-app.get('/', (req: Request, res: Response) => {
+app.get('/', ((req: Request, res: Response) => {
   res.sendFile(__dirname + '/../../HTML/index.html');
-});
+}) as any);
 
-app.get('/dashboard', (req: Request, res: Response) => {
+app.get('/dashboard', ((req: Request, res: Response) => {
   if (!req.session.user_id) {
     return res.redirect('/login');
   }
   res.sendFile(__dirname + '/../../HTML/new_dashboard.html');
-});
+}) as any);
 
-app.get('/customize', (req: Request, res: Response) => {
+app.get('/customize', ((req: Request, res: Response) => {
   if (!req.session.user_id) {
     return res.redirect('/login');
   }
   res.sendFile(__dirname + '/../../HTML/new_customize.html');
-});
+}) as any);
 
-app.post('/agents/new', async (req: Request, res: Response) => {
+app.post('/agents/new', (async (req: Request, res: Response) => {
   if (!req.session.user_id) {
     return res.redirect('/login');
   }
 
-  const { name, description, agent_type, language_model, custom_prompt, custom_parameters } = req.body;
+  const { name, description, agent_type, language_model, custom_prompt, custom_parameters } =
+    req.body;
 
   try {
     await pool.query(
       'INSERT INTO agents (name, description, agent_type, language_model, custom_prompt, custom_parameters, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-      [name, description, agent_type, language_model, custom_prompt, custom_parameters, req.session.user_id]
+      [
+        name,
+        description,
+        agent_type,
+        language_model,
+        custom_prompt,
+        custom_parameters,
+        req.session.user_id,
+      ]
     );
     res.status(201).send('Agent created successfully');
   } catch (error) {
     console.error(error instanceof Error ? error.message : 'Unknown error');
     res.status(500).send('Internal server error');
   }
-});
+}) as any);
 
-app.post('/pipelines/new', async (req: Request, res: Response) => {
+app.post('/pipelines/new', (async (req: Request, res: Response) => {
   if (!req.session.user_id) {
     return res.redirect('/login');
   }
@@ -152,7 +169,7 @@ app.post('/pipelines/new', async (req: Request, res: Response) => {
     console.error(error instanceof Error ? error.message : 'Unknown error');
     res.status(500).send('Internal server error');
   }
-});
+}) as any);
 
 // WebSocket server for metrics
 const wss = new WebSocketServer({ noServer: true });
@@ -168,19 +185,18 @@ wss.on('connection', (ws: WebSocket) => {
     }
   });
 
-  ws.on('close', () => {
-    
-  });
+  ws.on('close', () => {});
 });
 
 // Metrics handler
-async function getMetrics(): Promise<any> { // Removed extra ': any'
+async function getMetrics(): Promise<any> {
+  // Removed extra ': any'
   const start = performance.now();
   // Simulate some performance metrics
   const metrics = {
     latency: performance.now() - start,
     requests: Math.floor(Math.random() * 100),
-    errors: Math.floor(Math.random() * 5)
+    errors: Math.floor(Math.random() * 5),
   };
   return metrics;
 }
@@ -188,7 +204,7 @@ async function getMetrics(): Promise<any> { // Removed extra ': any'
 // Middleware to handle WebSocket upgrade
 app.use((req, res, next) => {
   if (req.url === '/ws/metrics' && req.headers.upgrade === 'websocket') {
-    wss.handleUpgrade(req, req.socket, Buffer.alloc(0), ws => {
+    wss.handleUpgrade(req, req.socket, Buffer.alloc(0), (ws) => {
       wss.emit('connection', ws, req);
     });
   } else {
@@ -198,6 +214,4 @@ app.use((req, res, next) => {
 
 // Start the server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  
-});
+app.listen(PORT, () => {});

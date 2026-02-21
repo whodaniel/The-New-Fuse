@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
@@ -10,9 +11,8 @@ import {
   Post,
   Put,
   UseGuards,
-  ForbiddenException,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DatabaseService } from '@the-new-fuse/database';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../decorators/current-user.decorator';
@@ -21,7 +21,7 @@ import { CurrentUser } from '../decorators/current-user.decorator';
  * DTO for creating a new workspace
  */
 export class CreateWorkspaceDto {
-  name: string;
+  name!: string;
   description?: string;
 }
 
@@ -37,7 +37,7 @@ export class UpdateWorkspaceDto {
  * DTO for adding a workspace member
  */
 export class AddWorkspaceMemberDto {
-  userId: string;
+  userId!: string;
   role?: 'admin' | 'member' | 'viewer';
 }
 
@@ -70,7 +70,7 @@ export class WorkspaceController {
   @ApiResponse({ status: 403, description: 'Access denied' })
   async getWorkspaceById(@Param('id') id: string, @CurrentUser() user: { id: string }) {
     const workspace = await this.db.workspaces.findByIdWithOwner(id);
-    
+
     if (!workspace) {
       throw new NotFoundException('Workspace not found');
     }
@@ -93,7 +93,7 @@ export class WorkspaceController {
   @HttpCode(HttpStatus.CREATED)
   async createWorkspace(
     @Body() workspaceData: CreateWorkspaceDto,
-    @CurrentUser() user: { id: string },
+    @CurrentUser() user: { id: string }
   ) {
     const workspace = await this.db.workspaces.create({
       name: workspaceData.name,
@@ -116,11 +116,11 @@ export class WorkspaceController {
   async updateWorkspace(
     @Param('id') id: string,
     @Body() workspaceData: UpdateWorkspaceDto,
-    @CurrentUser() user: { id: string },
+    @CurrentUser() user: { id: string }
   ) {
     // Verify ownership
     const existingWorkspace = await this.db.workspaces.findById(id);
-    
+
     if (!existingWorkspace) {
       throw new NotFoundException('Workspace not found');
     }
@@ -149,7 +149,7 @@ export class WorkspaceController {
   async deleteWorkspace(@Param('id') id: string, @CurrentUser() user: { id: string }) {
     // Verify ownership
     const existingWorkspace = await this.db.workspaces.findById(id);
-    
+
     if (!existingWorkspace) {
       throw new NotFoundException('Workspace not found');
     }
@@ -159,7 +159,7 @@ export class WorkspaceController {
     }
 
     const deleted = await this.db.workspaces.delete(id);
-    
+
     if (!deleted) {
       throw new NotFoundException('Workspace not found');
     }
@@ -171,7 +171,7 @@ export class WorkspaceController {
    * Get workspace members
    * NOTE: This requires a workspace_members table which does not exist yet.
    * Currently returns the owner as the only member.
-   * 
+   *
    * TODO: Implement proper workspace membership system:
    * 1. Create workspace_members table in schema:
    *    - id: uuid (PK)
@@ -191,7 +191,7 @@ export class WorkspaceController {
   async getWorkspaceMembers(@Param('id') id: string, @CurrentUser() user: { id: string }) {
     // Verify workspace exists and user has access
     const workspace = await this.db.workspaces.findByIdWithOwner(id);
-    
+
     if (!workspace) {
       throw new NotFoundException('Workspace not found');
     }
@@ -214,7 +214,7 @@ export class WorkspaceController {
   /**
    * Add member to workspace
    * NOTE: This requires a workspace_members table which does not exist yet.
-   * 
+   *
    * TODO: Implement after creating workspace_members table (see getWorkspaceMembers TODO)
    */
   @Post(':id/members')
@@ -226,11 +226,11 @@ export class WorkspaceController {
   async addWorkspaceMember(
     @Param('id') id: string,
     @Body() memberData: AddWorkspaceMemberDto,
-    @CurrentUser() user: { id: string },
+    @CurrentUser() user: { id: string }
   ) {
     // Verify workspace exists and user is owner
     const workspace = await this.db.workspaces.findById(id);
-    
+
     if (!workspace) {
       throw new NotFoundException('Workspace not found');
     }
@@ -252,7 +252,7 @@ export class WorkspaceController {
   /**
    * Remove member from workspace
    * NOTE: This requires a workspace_members table which does not exist yet.
-   * 
+   *
    * TODO: Implement after creating workspace_members table (see getWorkspaceMembers TODO)
    */
   @Delete(':id/members/:userId')
@@ -263,11 +263,11 @@ export class WorkspaceController {
   async removeWorkspaceMember(
     @Param('id') id: string,
     @Param('userId') memberUserId: string,
-    @CurrentUser('id') userId: string,
+    @CurrentUser('id') userId: string
   ) {
     // Verify workspace exists and user is owner
     const workspace = await this.db.workspaces.findById(id);
-    
+
     if (!workspace) {
       throw new NotFoundException('Workspace not found');
     }
@@ -300,7 +300,7 @@ export class WorkspaceController {
   async getWorkspaceProjects(@Param('id') id: string, @CurrentUser('id') userId: string) {
     // Verify workspace exists and user has access
     const workspace = await this.db.workspaces.findById(id);
-    
+
     if (!workspace) {
       throw new NotFoundException('Workspace not found');
     }
@@ -310,7 +310,7 @@ export class WorkspaceController {
     }
 
     const workspaceWithProjects = await this.db.workspaces.findByIdWithProjects(id);
-    
+
     return workspaceWithProjects?.projects || [];
   }
 }

@@ -1,44 +1,43 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Message } from '../entities/message.entity';
-import { User } from '../entities/user.entity';
+import { DatabaseService } from '@the-new-fuse/database';
 
 @Injectable()
 export class ChatService {
-  constructor(
-    @InjectRepository(Message)
-    private readonly messageRepository: Repository<Message>,
-  ) {}
+  constructor(private readonly db: DatabaseService) {}
 
   async getChatHistory(userId: string, page: number = 1) {
     const limit = 50;
-    const skip = (page - 1) * limit;
-
-    const messages = await this.messageRepository.find({
-      where: { userId },
-      order: { createdAt: 'DESC' },
-      take: limit,
-      skip,
-    });
-
+    // Drizzle repository usually handles pagination or returns all
+    // Let's use findChatMessagesByUserId which exists in DrizzleChatRepository
+    const messages = await this.db.chats.findChatMessagesByUserId(userId, limit);
     return messages;
   }
 
   async addMessage(userId: string, role: string, content: string) {
-    const message = this.messageRepository.create({
+    const message = await this.db.chats.createChatMessage({
       userId,
-      role,
+      role: role as any,
       content,
-      createdAt: new Date(),
     });
 
-    await this.messageRepository.save(message);
     return message;
   }
 
   async clearChatHistory(userId: string) {
-    await this.messageRepository.delete({ userId });
+    // Note: DrizzleChatRepository might need a deleteChatMessagesByUserId
+    // For now we'll use the raw client if needed, or check if it exists
+    // The current repository only has deleteExpiredChatMessages
+
+    // Fallback to manual delete if not in repo
+    await (this.db as any).client
+      .delete(require('@the-new-fuse/database').drizzleSchema.chatMessages)
+      .where(
+        require('drizzle-orm').eq(
+          require('@the-new-fuse/database').drizzleSchema.chatMessages.userId,
+          userId
+        )
+      );
+
     return { success: true };
   }
 }

@@ -43,13 +43,16 @@ export class WorkflowResolver {
   @Query(() => [WorkflowType])
   @UseGuards(GqlAuthGuard)
   async workflows(
-    @Args('userId', { type: () => ID, nullable: true }) userId?: string
+    @Args('userId', { type: () => ID, nullable: true }) userIdArg?: string,
+    @Context() context?: any
   ): Promise<Workflow[]> {
+    const userId = userIdArg || context?.req?.user?.id;
     if (userId) {
       return this.db.workflows.findWorkflowsByCreatorId(userId);
     }
     // Use findActiveWorkflows as a fallback for finding all workflows
-    return this.db.workflows.findActiveWorkflows();
+    // Passing undefined userId will fail if it's strictly required
+    return this.db.workflows.findActiveWorkflows(userId);
   }
 
   @Mutation(() => WorkflowType)

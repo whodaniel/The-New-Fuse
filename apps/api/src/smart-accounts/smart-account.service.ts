@@ -139,7 +139,7 @@ export class SmartAccountService {
       });
 
       // Wait for transaction confirmation
-      const receipt = await provider.walletClient.waitForTransactionReceipt({
+      const receipt = await (provider.walletClient as any).waitForTransactionReceipt({
         hash: deployTx,
       });
 

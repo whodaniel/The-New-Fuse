@@ -1,1 +1,0 @@
-{"version":3,"file":"connection.d.ts","sourceRoot":"","sources":["connection.tsx"],"names":[],"mappings":"AAGA,MAAM,WAAW,WAAW;IAC1B,IAAI,EAAE,MAAM,CAAC;IACb,IAAI,EAAE,MAAM,CAAC;IACb,QAAQ,EAAE,MAAM,CAAC;CAClB;AAED,qBAAa,eAAe;IAC1B,OAAO,CAAC,MAAM,CAAQ;gBAEV,MAAM,EAAE,WAAW;IAQzB,UAAU,IAAI,OAAO,CAAC,IAAI,CAAC;CAGlC"}

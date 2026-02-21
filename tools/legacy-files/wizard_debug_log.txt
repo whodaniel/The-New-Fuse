@@ -1,1 +1,0 @@
-./scripts/universal-mcp-wizard-fixed.applescript:41431:41433: script error: Expected expression, “)”, etc. but found “if”. (-2741)

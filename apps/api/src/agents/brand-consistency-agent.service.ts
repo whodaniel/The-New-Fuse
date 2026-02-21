@@ -232,6 +232,14 @@ RULES:
       });
 
       if (!existing) {
+        // Find any user to associate with (required by schema)
+        // In a real system, this would be a system user or admin
+        const anyUser = await this.db.client.query.users.findFirst();
+        if (!anyUser) {
+          this.logger.warn('No users found in database, skipping prompt template creation');
+          return;
+        }
+
         // Create initial prompt template
         const [template] = await this.db.client
           .insert(promptTemplates)
@@ -242,13 +250,14 @@ RULES:
             isPublic: false,
             tags: ['agent', 'brand', 'self-improving'],
             analytics: {},
+            userId: anyUser.id,
           })
           .returning();
 
         if (template) {
           await this.db.client.insert(promptVersions).values({
             templateId: template.id,
-            version: 1,
+            versionNumber: 1,
             content: this.corePrompt,
             label: 'Genesis',
             variables: {},
@@ -262,12 +271,12 @@ RULES:
         // Load the latest version
         const latestVersion = await this.db.client.query.promptVersions.findFirst({
           where: eq(promptVersions.templateId, existing.id),
-          orderBy: [desc(promptVersions.version)],
+          orderBy: [desc(promptVersions.versionNumber)],
         });
 
         if (latestVersion) {
           this.corePrompt = latestVersion.content;
-          this.learningState.currentPromptVersion = latestVersion.version;
+          this.learningState.currentPromptVersion = latestVersion.versionNumber;
         }
         this.logger.log(`Loaded prompt template v${this.learningState.currentPromptVersion}`);
       }
@@ -637,7 +646,7 @@ PERFORMANCE INSIGHTS:
 
         await this.db.client.insert(promptVersions).values({
           templateId: template.id,
-          version: newVersion,
+          versionNumber: newVersion,
           content: evolvedPrompt,
           label: `Evolution-${newVersion}`,
           variables: {},
