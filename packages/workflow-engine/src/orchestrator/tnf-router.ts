@@ -2,7 +2,8 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { RedisAgentRegistry } from '@the-new-fuse/agent';
 import { AgentInbox } from '@the-new-fuse/core';
 import { createTNFEnvelope, TNFEnvelope, validateTNFEnvelope } from '@the-new-fuse/relay-core';
-import { createClient, RedisClientType } from 'redis';
+import Redis from 'ioredis';
+import { createClient, type RedisClientType } from 'redis';
 import { SystemQueueName, SystemQueueService } from './services/system-queue.service';
 
 export interface RouterConfig {
@@ -19,11 +20,18 @@ export class TNFRouter {
   private systemQueue: SystemQueueService;
   private config: RouterConfig;
   private eventEmitter: EventEmitter2; // NEW: For inbox events
-  private redis: any; // NEW: ioredis client for Inbox
+  private redis: Redis; // NEW: ioredis client for Inbox
 
   constructor(config: Partial<RouterConfig> = {}, eventEmitter?: EventEmitter2) {
     this.config = {
-      redisUrl: config.redisUrl || process.env.REDIS_URL || 'redis://localhost:6379',
+      redisUrl:
+        config.redisUrl ||
+        process.env.REDIS_URL ||
+        process.env.RAILWAY_REDIS_URL ||
+        process.env.LIVE_REDIS_URL ||
+        process.env.REDIS_PRIVATE_URL ||
+        process.env.REDIS_TLS_URL ||
+        'redis://localhost:6379',
       ingressChannel: config.ingressChannel || 'tnf:bus:ingress',
       egressChannelPrefix: config.egressChannelPrefix || 'tnf:bus:egress',
       enableInboxRouting: config.enableInboxRouting ?? true, // Default: enabled
@@ -38,7 +46,6 @@ export class TNFRouter {
     this.eventEmitter = eventEmitter || new EventEmitter2();
 
     // NEW: Create ioredis client for Inbox (AgentInbox requires ioredis, not redis)
-    const Redis = require('ioredis');
     this.redis = new Redis(this.config.redisUrl);
 
     this.setupErrorHandlers();
@@ -128,25 +135,19 @@ export class TNFRouter {
     }
 
     // 2. NEW: Load balancing - select agent with fewest pending tasks
-    let targetAgent = candidates[0];
+    let targetAgentId = candidates[0].id;
 
     if (this.config.enableInboxRouting && candidates.length > 1) {
-      targetAgent = await this.selectBestAgent(candidates.map((c) => c.id));
+      targetAgentId = await this.selectBestAgent(candidates.map((c) => c.id));
     }
 
-    console.log(`[Router] Routing task to agent: ${targetAgent.id || targetAgent}`);
+    console.log(`[Router] Routing task to agent: ${targetAgentId}`);
 
     // 3. NEW: Route to agent's inbox (if enabled) or direct channel
     if (this.config.enableInboxRouting) {
-      await this.routeToInbox(
-        typeof targetAgent === 'string' ? targetAgent : targetAgent.id,
-        envelope
-      );
+      await this.routeToInbox(targetAgentId, envelope);
     } else {
-      await this.forwardToAgent(
-        typeof targetAgent === 'string' ? targetAgent : targetAgent.id,
-        envelope
-      );
+      await this.forwardToAgent(targetAgentId, envelope);
     }
   }
 
@@ -286,7 +287,6 @@ export class TNFRouter {
       },
       {
         parentMessageId: originalEnvelope.id,
-        traceId: originalEnvelope.traceId,
       }
     );
 

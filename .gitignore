@@ -81,6 +81,7 @@ docs/project-management/*analysis*.md
 .agent/handoff_notes.txt
 .agent/memories.md
 .agent/runtime-state.json
+.agent/runtime-state/
 .agent/jules-logs/
 .agent/session-logs/
 

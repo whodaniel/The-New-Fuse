@@ -1,4 +1,3 @@
-
 import Queue from 'bull';
 
 // Enum from backend (mirrored)
@@ -14,8 +13,15 @@ export class SystemQueueService {
   private queues: Map<string, Queue.Queue> = new Map();
   private redisUrl: string;
 
-  constructor(redisUrl: string = 'redis://localhost:6379') {
-    this.redisUrl = redisUrl;
+  constructor(redisUrl?: string) {
+    this.redisUrl =
+      redisUrl ||
+      process.env.REDIS_URL ||
+      process.env.RAILWAY_REDIS_URL ||
+      process.env.LIVE_REDIS_URL ||
+      process.env.REDIS_PRIVATE_URL ||
+      process.env.REDIS_TLS_URL ||
+      'redis://localhost:6379';
     this.initializeQueues();
   }
 
@@ -59,11 +65,11 @@ export class SystemQueueService {
   }
 
   async close() {
-    await Promise.all(parse(this.queues.values()).map(q => q.close()));
+    await Promise.all(parse(this.queues.values()).map((q) => q.close()));
   }
 }
 
-// Helper to iterate values if target is ES5... but we are in modern node. 
+// Helper to iterate values if target is ES5... but we are in modern node.
 function parse(iterator: IterableIterator<Queue.Queue>) {
-    return Array.from(iterator);
+  return Array.from(iterator);
 }

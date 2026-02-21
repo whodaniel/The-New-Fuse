@@ -87,6 +87,8 @@ const CONFIG = {
   REDIS_URL: process.env.REDIS_URL,
   LEDGER_API_BASE:
     process.env.LEDGER_API_BASE ||
+    process.env.RAILWAY_API_URL ||
+    process.env.LIVE_API_BASE_URL ||
     process.env.API_BASE_URL ||
     process.env.TNF_API_BASE ||
     'http://localhost:3001',
@@ -362,6 +364,7 @@ class MasterClock {
   taskPollingInterval: NodeJS.Timeout | null = null;
   recentQueuedTasks: Map<string, number>;
   selfPromptCooldowns: Map<string, number>;
+  taskPollFailureCount: number;
 
   constructor() {
     this.sessionId = `ORCHESTRATOR-${Date.now()}`;
@@ -386,6 +389,7 @@ class MasterClock {
     };
     this.recentQueuedTasks = new Map();
     this.selfPromptCooldowns = new Map();
+    this.taskPollFailureCount = 0;
   }
 
   // --------------------------------------------------------------------------
@@ -653,7 +657,14 @@ class MasterClock {
 
     const run = () => {
       void this.pollAndQueueTasks().catch((error: any) => {
-        log('warn', 'TASK-POLL', `Task polling failed: ${error.message || String(error)}`);
+        this.taskPollFailureCount += 1;
+        if (this.taskPollFailureCount <= 3 || this.taskPollFailureCount % 10 === 0) {
+          log(
+            'warn',
+            'TASK-POLL',
+            `Task polling failed (${this.taskPollFailureCount}): ${error.message || String(error)}`
+          );
+        }
       });
     };
 
@@ -730,15 +741,36 @@ class MasterClock {
     return priority + laneWeight + horizonWeight + netVotes * 25 + up * 5 + freshnessBonus;
   }
 
+  private async fetchLedgerTasks(): Promise<any[]> {
+    const base = CONFIG.LEDGER_API_BASE.replace(/\/$/, '');
+    const urls = [
+      `${base}/api/unified-ledger/records?kind=task`,
+      `${base}/unified-ledger/records?kind=task`,
+    ];
+
+    let lastError: string | null = null;
+    for (const url of urls) {
+      try {
+        const response = await fetch(url, { method: 'GET' });
+        if (!response.ok) {
+          lastError = `HTTP ${response.status} (${url})`;
+          continue;
+        }
+        const rows = (await response.json()) as any[];
+        return Array.isArray(rows) ? rows : [];
+      } catch (error) {
+        lastError = `${(error as Error).message || String(error)} (${url})`;
+      }
+    }
+
+    throw new Error(`Ledger poll failed: ${lastError || 'unknown error'}`);
+  }
+
   private async pollAndQueueTasks(): Promise<void> {
     if (!this.redis) return;
 
-    const url = `${CONFIG.LEDGER_API_BASE.replace(/\/$/, '')}/unified-ledger/records?kind=task`;
-    const response = await fetch(url, { method: 'GET' });
-    if (!response.ok) {
-      throw new Error(`Ledger poll failed with HTTP ${response.status}`);
-    }
-    const rows = (await response.json()) as any[];
+    const rows = await this.fetchLedgerTasks();
+    this.taskPollFailureCount = 0;
     const actionable = (Array.isArray(rows) ? rows : []).filter((task) => {
       const status = String(task?.status || '').toLowerCase();
       return (
