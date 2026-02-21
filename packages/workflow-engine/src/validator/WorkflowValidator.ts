@@ -23,6 +23,7 @@ import {
   ConditionNodeConfig,
   LLMPromptNodeConfig
 } from '../types/WorkflowTypes.js';
+import { UnifiedWorkflowSchema } from '../schemas/WorkflowSchemas.js';
 import { getErrorMessage } from '../utils/errorUtils.js';
 
 export interface ValidatorConfig {
@@ -58,6 +59,20 @@ export class WorkflowValidator {
     const warnings: ValidationWarning[] = [];
 
     try {
+      // Zod Schema Validation
+      const zodResult = UnifiedWorkflowSchema.safeParse(workflow);
+      if (!zodResult.success) {
+        for (const issue of zodResult.error.issues) {
+          errors.push({
+            code: 'SCHEMA_VALIDATION_ERROR',
+            message: `Schema validation error at ${issue.path.join('.')}: ${issue.message}`,
+            severity: 'error'
+          });
+        }
+        // If schema validation fails significantly, we might want to stop early,
+        // but often we want to collect as many errors as possible.
+      }
+
       // Run all validation rules
       for (const [ruleName, rule] of this.validationRules.entries()) {
         try {

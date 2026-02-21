@@ -33,7 +33,7 @@
       "@the-new-fuse/relay-core": ["../relay-core/src"],
       "@the-new-fuse/relay-core/*": ["../relay-core/src/*"]
     },
-    "types": ["node"]
+    "types": ["node", "jest"]
   },
   "include": ["src"],
   "references": [

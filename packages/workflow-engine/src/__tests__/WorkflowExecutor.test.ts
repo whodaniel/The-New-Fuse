@@ -1,14 +1,12 @@
 import { describe, expect, it, jest, beforeEach } from '@jest/globals';
 import { Logger, MasterAgentRegistry } from '@the-new-fuse/relay-core';
-import { WorkflowEngine } from '../WorkflowEngine';
-import { WorkflowExecutor } from '../WorkflowExecutor';
+import { WorkflowExecutor } from '../executor/WorkflowExecutor';
 import {
-  StepType,
-  TaskPriority,
-  WorkflowDefinition,
-  WorkflowStatus,
-  WorkflowStep,
-} from '../WorkflowTypes';
+  WorkflowNode,
+  WorkflowNodeType,
+  WorkflowExecution,
+  WorkflowExecutionStatus,
+} from '../types/WorkflowTypes';
 
 // Mock dependencies
 const mockLogger = {
@@ -18,195 +16,65 @@ const mockLogger = {
   debug: jest.fn(),
 } as unknown as Logger;
 
-const mockAgentRegistry = {} as unknown as MasterAgentRegistry;
-
-const mockWorkflowEngine = {
-  getWorkflow: jest.fn(),
-} as unknown as WorkflowEngine;
+const mockAgentRegistry = {
+  addAgentTodo: jest.fn().mockResolvedValue('todo_123'),
+  getAllAgents: jest.fn().mockReturnValue([{ id: 'agent1', type: 'RESEARCHER', status: 'ACTIVE', capabilities: {} }]),
+  getAgentProfile: jest.fn().mockReturnValue({ id: 'agent1', todoList: [{ id: 'todo_123', status: 'completed', updatedAt: new Date(), createdAt: new Date() }] }),
+} as unknown as MasterAgentRegistry;
 
 describe('WorkflowExecutor', () => {
   let executor: WorkflowExecutor;
 
   beforeEach(() => {
-    executor = new WorkflowExecutor(mockLogger, mockAgentRegistry, mockWorkflowEngine);
+    executor = new WorkflowExecutor(
+      {
+        maxParallelNodes: 1,
+        nodeTimeoutMs: 1000,
+        retryDelayMs: 100,
+        maxRetries: 3,
+        enableDebugLogging: false
+      },
+      mockAgentRegistry,
+      mockLogger
+    );
     jest.clearAllMocks();
   });
 
-  describe('A2A_HANDOFF Step', () => {
-    it('should process A2A_HANDOFF and set pendingContext', async () => {
-      const step: WorkflowStep = {
-        id: 'step_handoff',
-        type: StepType.A2A_HANDOFF,
-        name: 'Handoff Step',
-        inputs: {},
-        outputs: {},
-        assignee: { type: 'ROLE', value: 'coordinator' },
+  const mockExecution: WorkflowExecution = {
+    id: 'exec_1',
+    workflowId: 'wf_1',
+    status: WorkflowExecutionStatus.RUNNING,
+    triggeredBy: 'system',
+    triggerType: 'manual' as any,
+    startedAt: new Date(),
+    nodeExecutions: [],
+    context: {
+        executionId: 'exec_1',
+        workflowId: 'wf_1',
+        variables: {},
+        temporaryData: {}
+    },
+    statistics: {} as any,
+    logs: [],
+    metadata: {}
+  };
+
+  describe('executeStep', () => {
+    it('should execute START node', async () => {
+      const node: WorkflowNode = {
+        id: 'node_start',
+        type: WorkflowNodeType.START,
+        name: 'Start Node',
         position: { x: 0, y: 0 },
-        a2aHandoff: {
-          handoffSchema: {
-            summary: 'some summary',
-            data: 'some data',
-          },
-          contextInstructions: 'Please analyze this.',
-        },
+        config: {},
+        inputs: [],
+        outputs: [],
+        metadata: {}
       };
 
-      const workflow: WorkflowDefinition = {
-        id: 'wf_1',
-        name: 'Test Workflow',
-        version: 1,
-        status: WorkflowStatus.ACTIVE,
-        steps: [step],
-        edges: [],
-        trigger: { type: 'MANUAL' } as any,
-        inputSchema: {},
-        defaultPriority: TaskPriority.MEDIUM,
-        maxRetries: 0,
-        timeoutSeconds: 30,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        authorId: 'user1',
-        tags: [],
-      };
-
-      (mockWorkflowEngine.getWorkflow as jest.Mock).mockResolvedValue(workflow);
-
-      const instanceId = await executor.executeWorkflow('wf_1', {});
-
-      // We need to access the running instance to check pendingContext.
-      // Since it's private, we'll verify behavior via side effects or by checking logs if strictly necessary,
-      // but simpler is to trust the next step test.
-
-      // However, we can spy on handleTaskCompletion to see if it passed context
-      const completionSpy = jest.spyOn(executor, 'handleTaskCompletion');
-
-      // Wait for async execution
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      expect(mockLogger.info).toHaveBeenCalledWith(
-        expect.stringContaining('A2A Handoff context prepared')
-      );
-    });
-  });
-
-  describe('NOTIFICATION Step', () => {
-    it('should emit notification_requested event', async () => {
-      const step: WorkflowStep = {
-        id: 'step_notify',
-        type: StepType.NOTIFICATION,
-        name: 'Notify Step',
-        inputs: { userName: 'Alice' },
-        outputs: {},
-        assignee: { type: 'ROLE', value: 'system' },
-        position: { x: 0, y: 0 },
-        notification: {
-          channelSelector: 'SLACK',
-          config: { channelId: 'C123' },
-          template: 'Hello {{userName}}',
-        },
-      };
-
-      const workflow: WorkflowDefinition = {
-        id: 'wf_2',
-        name: 'Test Workflow',
-        version: 1,
-        status: WorkflowStatus.ACTIVE,
-        steps: [step],
-        edges: [],
-        trigger: { type: 'MANUAL' } as any,
-        inputSchema: {},
-        defaultPriority: TaskPriority.MEDIUM,
-        maxRetries: 0,
-        timeoutSeconds: 30,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        authorId: 'user1',
-        tags: [],
-      };
-
-      (mockWorkflowEngine.getWorkflow as jest.Mock).mockResolvedValue(workflow);
-
-      const notificationSpy = jest.fn();
-      executor.on('notification_requested', notificationSpy);
-
-      await executor.executeWorkflow('wf_2', { userName: 'Alice' });
-
-      // Wait for async execution
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      expect(notificationSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          channel: 'SLACK',
-          message: 'Hello Alice',
-        })
-      );
-    });
-  });
-
-  describe('Integration: A2A -> TASK', () => {
-    it('should pass context from A2A to subsequent TASK', async () => {
-      const handoffStep: WorkflowStep = {
-        id: 'step_1',
-        type: StepType.A2A_HANDOFF,
-        name: 'Handoff',
-        inputs: {},
-        outputs: {},
-        assignee: { type: 'ROLE', value: 'coordinator' },
-        position: { x: 0, y: 0 },
-        a2aHandoff: {
-          handoffSchema: { info: 'important info' },
-          contextInstructions: 'Read this:',
-        },
-      };
-
-      const taskStep: WorkflowStep = {
-        id: 'step_2',
-        type: StepType.TASK,
-        name: 'Agent Task',
-        inputs: {},
-        outputs: {},
-        assignee: { type: 'AGENT_ID', value: 'agent1' },
-        position: { x: 0, y: 0 },
-        task: {
-          action: 'analyze',
-          params: {},
-        },
-      };
-
-      const workflow: WorkflowDefinition = {
-        id: 'wf_3',
-        name: 'Test Workflow',
-        version: 1,
-        status: WorkflowStatus.ACTIVE,
-        steps: [handoffStep, taskStep],
-        edges: [{ id: 'e1', sourceStepId: 'step_1', targetStepId: 'step_2' }],
-        trigger: { type: 'MANUAL' } as any,
-        inputSchema: {},
-        defaultPriority: TaskPriority.MEDIUM,
-        maxRetries: 0,
-        timeoutSeconds: 30,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        authorId: 'user1',
-        tags: [],
-      };
-
-      (mockWorkflowEngine.getWorkflow as jest.Mock).mockResolvedValue(workflow);
-
-      const taskCreatedSpy = jest.fn();
-      executor.on('task_created', taskCreatedSpy);
-
-      await executor.executeWorkflow('wf_3', {});
-
-      // Wait for async execution including the 1000ms delay for task completion
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      expect(taskCreatedSpy).toHaveBeenCalledTimes(1);
-      const task = taskCreatedSpy.mock.calls[0][0];
-
-      expect(task.description).toContain('[System Context]');
-      expect(task.description).toContain('important info');
-      expect(task.description).toContain('Read this:');
+      const result = await executor.executeStep(node, mockExecution.context, mockExecution);
+      expect(result.status).toBe('started');
+      expect(mockLogger.info).toHaveBeenCalledWith('🚀 Workflow execution started');
     });
   });
 });

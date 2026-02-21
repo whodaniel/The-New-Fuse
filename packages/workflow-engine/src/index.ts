@@ -9,6 +9,8 @@
 export { UnifiedWorkflowEngine, type WorkflowEngineConfig } from './engine/WorkflowEngine';
 export { WorkflowExecutor, type ExecutorConfig } from './executor/WorkflowExecutor';
 export { WorkflowBuilder, type BuilderConfig, type BuilderState, type BuilderAction } from './builder/WorkflowBuilder';
+export { WorkflowQueue, type StartWorkflowJobData, type ExecuteNodeJobData } from './queue/WorkflowQueue';
+export { WorkflowWorker } from './queue/WorkflowWorker';
 
 // Repository and validation
 export { WorkflowRepository, type RepositoryConfig } from './repository/WorkflowRepository';
@@ -43,10 +45,13 @@ import { WorkflowRepository } from './repository/WorkflowRepository';
 import { WorkflowValidator } from './validator/WorkflowValidator';
 import { WorkflowBuilder } from './builder/WorkflowBuilder';
 import { WorkflowExecutor } from './executor/WorkflowExecutor';
+import { WorkflowQueue } from './queue/WorkflowQueue';
+import { WorkflowWorker } from './queue/WorkflowWorker';
 
 export interface WorkflowEngineFactoryConfig {
   // Database configuration
   prisma: any; // PrismaClient;
+  redisConnection?: any; // Redis connection options
   
   // Core services
   agentRegistry: MasterAgentRegistry;
@@ -133,21 +138,42 @@ export class WorkflowEngineFactory {
       config.logger
     );
     
+    // Create workflow queue if redis connection is provided
+    let workflowQueue: WorkflowQueue | undefined;
+    if (config.redisConnection) {
+        workflowQueue = new WorkflowQueue(config.logger, config.redisConnection);
+    }
+
     // Create main engine
     const engine = new UnifiedWorkflowEngine(
       config.engine,
       config.prisma,
       config.agentRegistry,
       config.heartbeatService,
-      config.logger
+      config.logger,
+      workflowQueue
     );
+
+    // Create workflow worker if queue is available
+    let workflowWorker: WorkflowWorker | undefined;
+    if (workflowQueue && config.redisConnection) {
+        workflowWorker = new WorkflowWorker(
+            config.logger,
+            config.redisConnection,
+            engine,
+            workflowQueue
+        );
+        // Note: Caller is responsible for gracefully closing the worker
+    }
     
     return {
       engine,
       executor,
       builder,
       repository,
-      validator
+      validator,
+      workflowQueue,
+      workflowWorker
     };
   }
   
@@ -155,13 +181,15 @@ export class WorkflowEngineFactory {
     prisma: any, // PrismaClient,
     agentRegistry: MasterAgentRegistry,
     heartbeatService: HeartbeatMonitoringService,
-    logger: Logger
+    logger: Logger,
+    redisConnection?: any
   ) {
     const config: WorkflowEngineFactoryConfig = {
       prisma,
       agentRegistry,
       heartbeatService,
       logger,
+      redisConnection,
       engine: {
         maxConcurrentExecutions: 10,
         defaultTimeoutMs: 300000, // 5 minutes
