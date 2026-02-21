@@ -320,8 +320,22 @@ export default function ComprehensiveRouter() {
               />
 
               {/* All routes using LazyPage for now to avoid import issues */}
-              <Route path="/multi-agent-chat" element={<MultiAgentChat />} />
-              <Route path="/ai-portal" element={<AIAgentDashboard />} />
+              <Route
+                path="/multi-agent-chat"
+                element={
+                  <RequireAuth>
+                    <MultiAgentChat />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/ai-portal"
+                element={
+                  <RequireAuth>
+                    <AIAgentDashboard />
+                  </RequireAuth>
+                }
+              />
               <Route
                 path="/chat"
                 element={
@@ -330,9 +344,30 @@ export default function ComprehensiveRouter() {
                   </RequireAuth>
                 }
               />
-              <Route path="/ai-agents" element={<AIAgentRegistration />} />
-              <Route path="/agent-builder" element={<UnifiedAgentCreator />} />
-              <Route path="/agent-management" element={<AgentsPage />} />
+              <Route
+                path="/ai-agents"
+                element={
+                  <RequireAuth>
+                    <AIAgentRegistration />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/agent-builder"
+                element={
+                  <RequireAuth>
+                    <UnifiedAgentCreator />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/agent-management"
+                element={
+                  <RequireAuth>
+                    <AgentsPage />
+                  </RequireAuth>
+                }
+              />
               <Route
                 path="/agents"
                 element={
@@ -344,13 +379,29 @@ export default function ComprehensiveRouter() {
               <Route
                 path="/agents/new"
                 element={
-                  <Suspense fallback={<LoadingFallback name="Agent Creator" />}>
-                    <UnifiedAgentCreator />
-                  </Suspense>
+                  <RequireAuth>
+                    <Suspense fallback={<LoadingFallback name="Agent Creator" />}>
+                      <UnifiedAgentCreator />
+                    </Suspense>
+                  </RequireAuth>
                 }
               />
-              <Route path="/agents/:id" element={<AgentDetail />} />
-              <Route path="/agents/:id/identity" element={<AgentIdentity />} />
+              <Route
+                path="/agents/:id"
+                element={
+                  <RequireAuth>
+                    <AgentDetail />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/agents/:id/identity"
+                element={
+                  <RequireAuth>
+                    <AgentIdentity />
+                  </RequireAuth>
+                }
+              />
               <Route
                 path="/observatory"
                 element={
@@ -375,12 +426,54 @@ export default function ComprehensiveRouter() {
                   </Suspense>
                 }
               />
-              <Route path="/agents/nft-marketplace" element={<NFTMarketplacePage />} />
-              <Route path="/agents/revenue-dashboard" element={<RevenueDashboardPage />} />
-              <Route path="/workspace/overview" element={<WorkspaceOverview />} />
-              <Route path="/workspace/analytics" element={<WorkspaceAnalytics />} />
-              <Route path="/workspace/members" element={<WorkspaceMembers />} />
-              <Route path="/workspace/settings" element={<WorkspaceSettings />} />
+              <Route
+                path="/agents/nft-marketplace"
+                element={
+                  <RequireAuth>
+                    <NFTMarketplacePage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/agents/revenue-dashboard"
+                element={
+                  <RequireAuth>
+                    <RevenueDashboardPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/workspace/overview"
+                element={
+                  <RequireAuth>
+                    <WorkspaceOverview />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/workspace/analytics"
+                element={
+                  <RequireAuth>
+                    <WorkspaceAnalytics />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/workspace/members"
+                element={
+                  <RequireAuth>
+                    <WorkspaceMembers />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/workspace/settings"
+                element={
+                  <RequireAuth>
+                    <WorkspaceSettings />
+                  </RequireAuth>
+                }
+              />
               <Route
                 path="/tasks"
                 element={
@@ -398,16 +491,86 @@ export default function ComprehensiveRouter() {
                   </RequireAuth>
                 }
               />
-              <Route path="/workflows/builder" element={<WorkflowBuilder />} />
-              <Route path="/workflows/executions" element={<WorkflowExecutionPage />} />
-              <Route path="/workflows/:id" element={<WorkflowDetailPage />} />
-              <Route path="/workflows/:id/execution" element={<WorkflowExecutionPage />} />
-              <Route path="/workflows/console" element={<ExecutionConsole />} />
-              <Route path="/workflows/advanced-builder" element={<WorkflowEditorWrapper />} />
-              <Route path="/workflows/templates" element={<WorkflowTemplatesPage />} />
-              <Route path="/workflows-enhanced" element={<WorkflowsEnhancedPage />} />
-              <Route path="/workflows/detail" element={<WorkflowDetailPage />} />
-              <Route path="/workflows/execution" element={<WorkflowExecutionPage />} />
+              <Route
+                path="/workflows/builder"
+                element={
+                  <RequireAuth>
+                    <WorkflowBuilder />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/workflows/executions"
+                element={
+                  <RequireAuth>
+                    <WorkflowExecutionPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/workflows/:id"
+                element={
+                  <RequireAuth>
+                    <WorkflowDetailPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/workflows/:id/execution"
+                element={
+                  <RequireAuth>
+                    <WorkflowExecutionPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/workflows/console"
+                element={
+                  <RequireAuth>
+                    <ExecutionConsole />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/workflows/advanced-builder"
+                element={
+                  <RequireAuth>
+                    <WorkflowEditorWrapper />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/workflows/templates"
+                element={
+                  <RequireAuth>
+                    <WorkflowTemplatesPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/workflows-enhanced"
+                element={
+                  <RequireAuth>
+                    <WorkflowsEnhancedPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/workflows/detail"
+                element={
+                  <RequireAuth>
+                    <WorkflowDetailPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/workflows/execution"
+                element={
+                  <RequireAuth>
+                    <WorkflowExecutionPage />
+                  </RequireAuth>
+                }
+              />
               {/* Master Admin Routes - Requires SUPER_ADMIN role */}
               <Route
                 path="/admin"
@@ -557,12 +720,40 @@ export default function ComprehensiveRouter() {
                   </RequirePermission>
                 }
               />
-              <Route path="/agency/onboard" element={<AgencyOnboarding />} />
+              <Route
+                path="/agency/onboard"
+                element={
+                  <RequireAuth>
+                    <AgencyOnboarding />
+                  </RequireAuth>
+                }
+              />
 
               {/* Other routes */}
-              <Route path="/mcp-hub" element={<MCPHub />} />
-              <Route path="/knowledge-hub" element={<KnowledgeHub />} />
-              <Route path="/a2a-control" element={<A2AControl />} />
+              <Route
+                path="/mcp-hub"
+                element={
+                  <RequireAuth>
+                    <MCPHub />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/knowledge-hub"
+                element={
+                  <RequireAuth>
+                    <KnowledgeHub />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/a2a-control"
+                element={
+                  <RequireAuth>
+                    <A2AControl />
+                  </RequireAuth>
+                }
+              />
               <Route
                 path="/settings"
                 element={
@@ -571,13 +762,48 @@ export default function ComprehensiveRouter() {
                   </RequireAuth>
                 }
               />
-              <Route path="/settings/general" element={<GeneralSettings />} />
+              <Route
+                path="/settings/general"
+                element={
+                  <RequireAuth>
+                    <GeneralSettings />
+                  </RequireAuth>
+                }
+              />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
-              <Route path="/components" element={<ComponentsShowcase />} />
-              <Route path="/timeline-demo" element={<TimelineDemo />} />
-              <Route path="/graph-demo" element={<GraphDemo />} />
-              <Route path="/frontend-showcase" element={<FrontendShowcasePage />} />
+              <Route
+                path="/components"
+                element={
+                  <RequireAuth>
+                    <ComponentsShowcase />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/timeline-demo"
+                element={
+                  <RequireAuth>
+                    <TimelineDemo />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/graph-demo"
+                element={
+                  <RequireAuth>
+                    <GraphDemo />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/frontend-showcase"
+                element={
+                  <RequireAuth>
+                    <FrontendShowcasePage />
+                  </RequireAuth>
+                }
+              />
               <Route
                 path="/debug"
                 element={
@@ -586,20 +812,104 @@ export default function ComprehensiveRouter() {
                   </RequireAuth>
                 }
               />
-              <Route path="/build-info" element={<BuildInfoPage />} />
-              <Route path="/debug-routing" element={<DebugRoutingComponent />} />
-              <Route path="/all-pages" element={<AllPages />} />
-              <Route path="/analytics" element={<Analytics />} />
+              <Route
+                path="/build-info"
+                element={
+                  <RequireAuth>
+                    <BuildInfoPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/debug-routing"
+                element={
+                  <RequireAuth>
+                    <DebugRoutingComponent />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/all-pages"
+                element={
+                  <RequireAuth>
+                    <AllPages />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/analytics"
+                element={
+                  <RequireAuth>
+                    <Analytics />
+                  </RequireAuth>
+                }
+              />
 
               {/* Suggestions Routes */}
-              <Route path="/suggestions" element={<SuggestionsPage />} />
-              <Route path="/suggestions/new" element={<NewSuggestionPage />} />
-              <Route path="/suggestions/:id" element={<SuggestionDetailPage />} />
-              <Route path="/goals" element={<GoalsPage />} />
-              <Route path="/goals/:id" element={<GoalDetailPage />} />
-              <Route path="/plans" element={<PlansPage />} />
-              <Route path="/plans/:id" element={<PlanDetailPage />} />
-              <Route path="/timeline" element={<TimelinePage />} />
+              <Route
+                path="/suggestions"
+                element={
+                  <RequireAuth>
+                    <SuggestionsPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/suggestions/new"
+                element={
+                  <RequireAuth>
+                    <NewSuggestionPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/suggestions/:id"
+                element={
+                  <RequireAuth>
+                    <SuggestionDetailPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/goals"
+                element={
+                  <RequireAuth>
+                    <GoalsPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/goals/:id"
+                element={
+                  <RequireAuth>
+                    <GoalDetailPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/plans"
+                element={
+                  <RequireAuth>
+                    <PlansPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/plans/:id"
+                element={
+                  <RequireAuth>
+                    <PlanDetailPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/timeline"
+                element={
+                  <RequireAuth>
+                    <TimelinePage />
+                  </RequireAuth>
+                }
+              />
 
               {/* Admin routes have been consolidated above with permission guards */}
 
@@ -641,43 +951,187 @@ export default function ComprehensiveRouter() {
               />
 
               {/* Enhanced Workspace Routes - Fixed duplications */}
-              <Route path="/workspace-chat" element={<WorkspaceChatPage />} />
+              <Route
+                path="/workspace-chat"
+                element={
+                  <RequireAuth>
+                    <WorkspaceChatPage />
+                  </RequireAuth>
+                }
+              />
 
               {/* Enhanced Task Routes */}
-              <Route path="/tasks/new" element={<NewTaskPage />} />
-              <Route path="/tasks/:id" element={<TaskDetailPage />} />
-              <Route path="/tasks/:id/edit" element={<TaskEditPage />} />
+              <Route
+                path="/tasks/new"
+                element={
+                  <RequireAuth>
+                    <NewTaskPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/tasks/:id"
+                element={
+                  <RequireAuth>
+                    <TaskDetailPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/tasks/:id/edit"
+                element={
+                  <RequireAuth>
+                    <TaskEditPage />
+                  </RequireAuth>
+                }
+              />
 
               {/* Enhanced Dashboard Routes */}
-              <Route path="/dashboard/agents" element={<AgentDashboard />} />
-              <Route path="/dashboard/agents/new" element={<UnifiedAgentCreator />} />
-              <Route path="/dashboard/agents/:id" element={<AgentDetail />} />
+              <Route
+                path="/dashboard/agents"
+                element={
+                  <RequireAuth>
+                    <AgentDashboard />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/dashboard/agents/new"
+                element={
+                  <RequireAuth>
+                    <UnifiedAgentCreator />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/dashboard/agents/:id"
+                element={
+                  <RequireAuth>
+                    <AgentDetail />
+                  </RequireAuth>
+                }
+              />
 
               {/* Enhanced Settings Routes */}
-              <Route path="/settings/appearance" element={<SettingsAppearance />} />
-              <Route path="/settings/notifications" element={<SettingsNotifications />} />
-              <Route path="/settings/security" element={<SettingsSecurity />} />
-              <Route path="/settings/api" element={<SettingsAPI />} />
-              <Route path="/general-settings" element={<GeneralSettings />} />
+              <Route
+                path="/settings/appearance"
+                element={
+                  <RequireAuth>
+                    <SettingsAppearance />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/settings/notifications"
+                element={
+                  <RequireAuth>
+                    <SettingsNotifications />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/settings/security"
+                element={
+                  <RequireAuth>
+                    <SettingsSecurity />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/settings/api"
+                element={
+                  <RequireAuth>
+                    <SettingsAPI />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/general-settings"
+                element={
+                  <RequireAuth>
+                    <GeneralSettings />
+                  </RequireAuth>
+                }
+              />
               <Route
                 path="/general-settings/embedding"
-                element={<GeneralSettingsEmbeddingPage />}
+                element={
+                  <RequireAuth>
+                    <GeneralSettingsEmbeddingPage />
+                  </RequireAuth>
+                }
               />
 
               {/* Enhanced Component Routes */}
-              <Route path="/frontend-showcase" element={<FrontendShowcasePage />} />
-              <Route path="/layout-example" element={<LayoutExamples />} />
-              <Route path="/simple-test" element={<SimpleTestPage />} />
+              <Route
+                path="/frontend-showcase"
+                element={
+                  <RequireAuth>
+                    <FrontendShowcasePage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/layout-example"
+                element={
+                  <RequireAuth>
+                    <LayoutExamples />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/simple-test"
+                element={
+                  <RequireAuth>
+                    <SimpleTestPage />
+                  </RequireAuth>
+                }
+              />
 
               {/* Additional Routes */}
-              <Route path="/test" element={<TestPage />} />
+              <Route
+                path="/test"
+                element={
+                  <RequireAuth>
+                    <TestPage />
+                  </RequireAuth>
+                }
+              />
               <Route path="/unauthorized" element={<UnauthorizedPage />} />
-              <Route path="/ai-agent-portal" element={<AIAgentRegistration />} />
+              <Route
+                path="/ai-agent-portal"
+                element={
+                  <RequireAuth>
+                    <AIAgentRegistration />
+                  </RequireAuth>
+                }
+              />
 
               {/* Critical Missing Routes */}
-              <Route path="/dashboard/analytics" element={<Analytics />} />
-              <Route path="/dashboard/settings" element={<DashboardSettings />} />
-              <Route path="/components-showcase" element={<ComponentsShowcase />} />
+              <Route
+                path="/dashboard/analytics"
+                element={
+                  <RequireAuth>
+                    <Analytics />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/dashboard/settings"
+                element={
+                  <RequireAuth>
+                    <DashboardSettings />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/components-showcase"
+                element={
+                  <RequireAuth>
+                    <ComponentsShowcase />
+                  </RequireAuth>
+                }
+              />
               <Route path="/not-found" element={<NotFound />} />
 
               {/* Preview Routes */}
@@ -704,13 +1158,22 @@ export default function ComprehensiveRouter() {
               />
 
               {/* Admin Tools Routes */}
-              <Route path="/admin/agents/skills" element={<AdminAgentSkillsPage />} />
+              <Route
+                path="/admin/agents/skills"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <AdminAgentSkillsPage />
+                  </RequirePermission>
+                }
+              />
               <Route
                 path="/admin/agents/web-search"
                 element={
-                  <Suspense fallback={<LoadingFallback name="Web Search Selection" />}>
-                    <WebSearchSelection />
-                  </Suspense>
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <Suspense fallback={<LoadingFallback name="Web Search Selection" />}>
+                      <WebSearchSelection />
+                    </Suspense>
+                  </RequirePermission>
                 }
               />
 
