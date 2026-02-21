@@ -5,7 +5,7 @@
  * Integrates with the local AgencyService.
  */
 
-import { CurrentUser } from '@/auth/decorators/current-user.decorator';
+import { CurrentUser } from '../../../auth/decorators/current-user.decorator';
 import {
   BadRequestException,
   Body,
