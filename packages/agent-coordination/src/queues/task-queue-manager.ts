@@ -1,3 +1,4 @@
+import { EventEmitter } from 'events';
 import { Logger } from '@nestjs/common';
 import { Queue, QueueEvents, Worker } from 'bullmq';
 import { v4 as uuidv4 } from 'uuid';
@@ -13,7 +14,7 @@ import type { AgentTask, QueueConfig, TaskProcessor } from '../types/coordinatio
 /**
  * Task queue manager using BullMQ
  */
-export class TaskQueueManager {
+export class TaskQueueManager extends EventEmitter {
   private readonly logger = new Logger(TaskQueueManager.name);
   private readonly queues: Map<string, Queue> = new Map();
   private readonly workers: Map<string, Worker> = new Map();
@@ -28,6 +29,7 @@ export class TaskQueueManager {
     private readonly defaultConfig: Partial<QueueConfig> = {},
     private readonly metricsCollector?: PersistentMetricsCollector
   ) {
+    super();
     this.redisConnection = redisConnection;
     this.serializer = serializer;
   }
@@ -368,6 +370,52 @@ export class TaskQueueManager {
 
     events.on('stalled', ({ jobId }) => {
       this.logger.warn(`Job stalled in queue ${queueName}: ${jobId}`);
+      this.emit('task:stalled', jobId, queueName);
     });
+  }
+
+  /**
+   * Listen for stalled tasks
+   */
+  onTaskStalled(callback: (jobId: string, queueName: string) => void): void {
+    this.on('task:stalled', callback);
+  }
+
+  /**
+   * Fail active and waiting tasks for a specific agent
+   */
+  async failTasksForAgent(queueName: string, agentId: string, reason: string): Promise<number> {
+    const queue = this.queues.get(queueName);
+    if (!queue) return 0;
+
+    let count = 0;
+
+    // Check waiting, delayed and active jobs
+    // Note: getJobs can be expensive on large queues. Ideally, we should use a secondary index.
+    const jobs = await queue.getJobs(['waiting', 'delayed', 'active']);
+
+    for (const job of jobs) {
+      const task = job.data as AgentTask;
+
+      if (task.assignedTo === agentId) {
+        try {
+          // Force fail the job
+          // For active jobs, if locked by another worker (the dead agent), this might fail with "Missing lock".
+          // In that case, we rely on BullMQ's stall detection to eventually release/fail it.
+          await job.moveToFailed(new Error(reason), job.token || '0', true);
+          count++;
+          this.logger.log(`Failed task ${task.id} for offline agent ${agentId}`);
+        } catch (error) {
+          const msg = error instanceof Error ? error.message : String(error);
+          if (msg.includes('Missing lock')) {
+            this.logger.debug(`Could not fail active task ${task.id} immediately (lock held). Waiting for stall detection.`);
+          } else {
+            this.logger.warn(`Failed to fail task ${task.id}: ${msg}`);
+          }
+        }
+      }
+    }
+
+    return count;
   }
 }

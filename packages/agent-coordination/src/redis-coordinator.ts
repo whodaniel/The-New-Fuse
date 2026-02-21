@@ -113,6 +113,12 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
     );
     (this as any).taskQueueManager = taskQueueManager;
 
+    // Listen for stalled tasks
+    taskQueueManager.onTaskStalled((jobId, queueName) => {
+      this.logger.warn(`Task ${jobId} stalled in ${queueName}`);
+      // Additional stall handling logic can be added here
+    });
+
     // Initialize recovery manager
     this.recoveryManager = new RecoveryManager(
       this.redisConnection,
@@ -126,6 +132,7 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
     this.presenceTracker.startMonitoring();
     this.recoveryManager.startMonitoring();
     await this.setupEventChannels();
+    await this.setupPresenceChannels();
 
     this.logger.log('Redis Coordinator initialized successfully');
   }
@@ -445,6 +452,39 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
         }
       }
     });
+  }
+
+  /**
+   * Setup presence channels
+   */
+  private async setupPresenceChannels(): Promise<void> {
+    const channel = CoordinationChannel.PRESENCE;
+
+    await this.broadcastManager.subscribe(channel, async (message: any) => {
+      const event = message as CoordinationEvent;
+
+      if (event.type === 'presence:changed' && (event as any).status === AgentStatus.OFFLINE) {
+        await this.handleAgentOffline(event.agentId);
+      }
+    });
+  }
+
+  /**
+   * Handle agent offline event
+   */
+  private async handleAgentOffline(agentId: string): Promise<void> {
+    this.logger.warn(`Agent ${agentId} is offline. Initiating recovery...`);
+
+    try {
+      // Fail tasks assigned to this agent
+      const failedCount = await this.taskQueueManager.failTasksForAgent('agent-tasks', agentId, 'Agent went offline');
+
+      if (failedCount > 0) {
+        this.logger.log(`Failed ${failedCount} tasks for offline agent ${agentId}`);
+      }
+    } catch (error) {
+      this.logger.error(`Error during offline recovery for agent ${agentId}:`, error);
+    }
   }
 
   /**
