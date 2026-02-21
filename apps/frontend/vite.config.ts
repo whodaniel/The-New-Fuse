@@ -264,9 +264,7 @@ export default defineConfig(({ mode }) => {
           chunkFileNames: 'assets/js/[name].[hash].js',
           entryFileNames: 'assets/js/[name].[hash].js',
           // Advanced chunk splitting strategy
-          // Simplify chunk splitting to avoid circular dependency issues
-          manualChunks: undefined,
-          /*
+          // Implement chunk splitting to improve load performance
           manualChunks: (id) => {
             // Core React runtime and routing - loaded on every page
             if (
@@ -306,6 +304,16 @@ export default defineConfig(({ mode }) => {
               return 'recharts';
             }
 
+            // Three.js / 3D
+            if (
+              id.includes('node_modules/three') ||
+              id.includes('node_modules/@react-three/') ||
+              id.includes('node_modules/@react-three/drei') ||
+              id.includes('node_modules/@react-three/fiber')
+            ) {
+              return 'three-vendor';
+            }
+
             // Framer Motion - animation library (isolate completely to prevent circular deps)
             // Bundle it as a single chunk with all its dependencies
             if (id.includes('node_modules/framer-motion')) {
@@ -326,9 +334,6 @@ export default defineConfig(({ mode }) => {
             }
 
             // State management - split into separate chunks to avoid conflicts
-            // if (id.includes('node_modules/@reduxjs/') || id.includes('node_modules/react-redux')) {
-            //   return 'redux-vendor';
-            // }
             if (id.includes('node_modules/zustand')) {
               return 'zustand-vendor';
             }
@@ -347,12 +352,9 @@ export default defineConfig(({ mode }) => {
               return 'utils';
             }
 
-            // All other node_modules
-            if (id.includes('node_modules/')) {
-              return 'vendor';
-            }
+            // Note: We don't use a catch-all 'vendor' chunk here because it can become too large.
+            // Vite's default splitting will handle the rest.
           },
-          */
           // Optimize chunk loading with smart imports
           inlineDynamicImports: false,
           // Better mangling for production
