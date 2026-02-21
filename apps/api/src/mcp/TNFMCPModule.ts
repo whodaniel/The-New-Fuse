@@ -14,11 +14,13 @@ import { WorkflowService } from '../services/workflow.service';
 import { WebsocketGateway } from '../websocket/websocket.gateway';
 import { TNFMCPController } from './TNFMCPController';
 import { TNFMCPService } from './TNFMCPService';
+import { CacheService } from '../cache/cache.service';
 
 @Module({
   // DatabaseModule provides PrismaService (Drizzle-backed) for all services
   imports: [DatabaseModule, ConfigModule, JwtModule],
   providers: [
+    CacheService,
     TNFMCPService,
     AgentService,
     ChatService,
