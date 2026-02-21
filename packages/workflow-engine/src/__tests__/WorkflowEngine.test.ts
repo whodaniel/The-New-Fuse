@@ -1,0 +1,224 @@
+
+import { describe, expect, it, jest, beforeEach, afterEach } from '@jest/globals';
+import { UnifiedWorkflowEngine, WorkflowEngineConfig } from '../engine/WorkflowEngine';
+import { Logger, MasterAgentRegistry } from '@the-new-fuse/relay-core';
+import {
+  WorkflowExecutionStatus,
+  WorkflowNodeType,
+  UnifiedWorkflow,
+  NodeExecutionStatus
+} from '../types/WorkflowTypes';
+
+// Mock dependencies
+const mockLogger = {
+  info: jest.fn(),
+  error: jest.fn(),
+  warn: jest.fn(),
+  debug: jest.fn(),
+} as unknown as Logger;
+
+const mockAgentRegistry = {
+  getAllAgents: jest.fn(),
+  addAgentTodo: jest.fn(),
+  getAgentProfile: jest.fn(),
+} as unknown as MasterAgentRegistry;
+
+const mockHeartbeatService = {
+  registerAgent: jest.fn(),
+  recordActivity: jest.fn(),
+};
+
+const mockPrisma = {
+  workflow: {
+    findUnique: jest.fn<any>(),
+  },
+  workflowExecution: {
+    create: jest.fn<any>(),
+    update: jest.fn<any>(),
+    findUnique: jest.fn<any>(),
+    findMany: jest.fn<any>(),
+  },
+};
+
+const defaultConfig: WorkflowEngineConfig = {
+  maxConcurrentExecutions: 10,
+  defaultTimeoutMs: 1000,
+  enableHeartbeatMonitoring: false,
+  enableAgentCoordination: false,
+  enableStatePreservation: true,
+  relayIntegration: false,
+  debug: false,
+};
+
+describe('UnifiedWorkflowEngine', () => {
+  let engine: UnifiedWorkflowEngine;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    if (engine) {
+      engine.stop();
+    }
+  });
+
+  describe('Execution Persistence', () => {
+    it('should persist state after each node execution', async () => {
+      // Setup workflow
+      const workflow: UnifiedWorkflow = {
+        id: 'wf-1',
+        name: 'Test Workflow',
+        definition: {
+          nodes: [
+            { id: 'start', type: WorkflowNodeType.START, name: 'Start', position: { x: 0, y: 0 }, config: {}, inputs: [], outputs: [], metadata: {} },
+            { id: 'end', type: WorkflowNodeType.END, name: 'End', position: { x: 0, y: 0 }, config: {}, inputs: [], outputs: [], metadata: {} }
+          ],
+          connections: [
+            { id: 'c1', sourceNodeId: 'start', sourceOutputId: 'o1', targetNodeId: 'end', targetInputId: 'i1', metadata: {} }
+          ],
+          variables: [],
+          triggers: [],
+          settings: {} as any,
+          version: '1'
+        },
+        status: 'PUBLISHED' as any,
+        version: '1',
+        tags: [],
+        isTemplate: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        executionCount: 0,
+        statistics: {} as any,
+        metadata: {} as any
+      };
+
+      mockPrisma.workflow.findUnique.mockResolvedValue(workflow);
+      mockPrisma.workflowExecution.create.mockResolvedValue({ id: 'exec-1' });
+      mockPrisma.workflowExecution.update.mockResolvedValue({ id: 'exec-1' });
+
+      engine = new UnifiedWorkflowEngine(defaultConfig, mockPrisma, mockAgentRegistry, mockHeartbeatService, mockLogger);
+
+      // Execute
+      const executionId = await engine.executeWorkflow('wf-1');
+
+      // Wait for execution to complete
+      let attempts = 0;
+      while (attempts < 20) {
+        const status = await engine.getExecutionStatus(executionId);
+        if (status?.status === WorkflowExecutionStatus.COMPLETED || status?.status === WorkflowExecutionStatus.FAILED) {
+          break;
+        }
+        await new Promise(resolve => setTimeout(resolve, 200));
+        attempts++;
+      }
+
+      // Verify create called
+      expect(mockPrisma.workflowExecution.create).toHaveBeenCalled();
+
+      // Verify update called (at least once for finalize, and once for each node completion)
+      // Nodes: start, end. So 2 node completions + 1 finalize = 3 updates.
+      expect(mockPrisma.workflowExecution.update).toHaveBeenCalledTimes(3);
+
+      // Check the payload of one of the updates to see if nodeExecutions are present
+      const calls = mockPrisma.workflowExecution.update.mock.calls as any[];
+      const lastCall = calls[calls.length - 1]; // finalize
+      expect(lastCall[0].data.status).toBe(WorkflowExecutionStatus.COMPLETED);
+
+      const nodeUpdateCall = calls.find((args: any) => args[0].data.nodeExecutions?.length > 0);
+      expect(nodeUpdateCall).toBeDefined();
+      expect(nodeUpdateCall![0].data.nodeExecutions[0].nodeId).toBe('start');
+    });
+  });
+
+  describe('Crash Recovery', () => {
+    it('should recover interrupted executions on startup', async () => {
+      // Setup interrupted execution in DB
+      const interruptedExecution = {
+        id: 'exec-interrupted',
+        workflowId: 'wf-1',
+        status: WorkflowExecutionStatus.RUNNING,
+        startedAt: new Date(),
+        nodeExecutions: [
+          {
+            id: 'ne-1',
+            nodeId: 'start',
+            status: NodeExecutionStatus.COMPLETED,
+            startedAt: new Date(),
+            completedAt: new Date()
+          }
+        ],
+        context: {
+          workflowId: 'wf-1',
+          executionId: 'exec-interrupted',
+          variables: { foo: 'bar' }
+        },
+        statistics: {},
+        logs: [],
+        metadata: {}
+      };
+
+      const workflow: UnifiedWorkflow = {
+        id: 'wf-1',
+        name: 'Test Workflow',
+        definition: {
+          nodes: [
+            { id: 'start', type: WorkflowNodeType.START, name: 'Start', position: { x: 0, y: 0 }, config: {}, inputs: [], outputs: [], metadata: {} },
+            { id: 'step2', type: WorkflowNodeType.END, name: 'Step 2', position: { x: 0, y: 0 }, config: {}, inputs: [], outputs: [], metadata: {} } // Next step
+          ],
+          connections: [
+            { id: 'c1', sourceNodeId: 'start', sourceOutputId: 'o1', targetNodeId: 'step2', targetInputId: 'i1', metadata: {} }
+          ],
+          variables: [],
+          triggers: [],
+          settings: {} as any,
+          version: '1'
+        },
+        status: 'PUBLISHED' as any,
+        version: '1',
+        tags: [],
+        isTemplate: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        executionCount: 0,
+        statistics: {} as any,
+        metadata: {} as any
+      };
+
+      mockPrisma.workflowExecution.findMany.mockResolvedValue([{ id: 'exec-interrupted', status: WorkflowExecutionStatus.RUNNING }]);
+      mockPrisma.workflowExecution.findUnique.mockResolvedValue(interruptedExecution);
+      mockPrisma.workflow.findUnique.mockResolvedValue(workflow);
+      mockPrisma.workflowExecution.update.mockResolvedValue({ id: 'exec-interrupted' });
+
+      // Initialize engine
+      engine = new UnifiedWorkflowEngine(defaultConfig, mockPrisma, mockAgentRegistry, mockHeartbeatService, mockLogger);
+
+      // Give time for async recovery
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Check if execution was added to active executions
+      const activeExecutions = engine.getActiveExecutions();
+      expect(activeExecutions.length).toBe(1);
+      expect(activeExecutions[0].id).toBe('exec-interrupted');
+      expect(activeExecutions[0].context.variables).toEqual({ foo: 'bar' });
+
+      // Wait for completion
+      let attempts = 0;
+      while (attempts < 20) {
+        const status = await engine.getExecutionStatus('exec-interrupted');
+        if (status?.status === WorkflowExecutionStatus.COMPLETED || status?.status === WorkflowExecutionStatus.FAILED) {
+          break;
+        }
+        await new Promise(resolve => setTimeout(resolve, 200));
+        attempts++;
+      }
+
+      // Verify that it completed 'step2' and updated DB
+      const updateCalls = mockPrisma.workflowExecution.update.mock.calls as any[];
+      const completedCall = updateCalls.find((args: any) => args[0].data.status === WorkflowExecutionStatus.COMPLETED);
+
+      expect(completedCall).toBeDefined();
+      expect(completedCall![0].where.id).toBe('exec-interrupted');
+    });
+  });
+});

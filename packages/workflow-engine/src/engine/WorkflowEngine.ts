@@ -25,7 +25,7 @@ import {
   AgentTaskNodeConfig,
   AgentHandoffNodeConfig
 } from '../types/WorkflowTypes';
-import { getErrorMessage } from '../utils/errorUtils.js';
+import { getErrorMessage } from '../utils/errorUtils';
 
 // Import actual types from relay-core
 import { MasterAgentRegistry } from '@the-new-fuse/relay-core';
@@ -57,6 +57,7 @@ export class UnifiedWorkflowEngine extends EventEmitter {
   private activeExecutions: Map<string, WorkflowExecution> = new Map();
   private executionQueue: string[] = [];
   private nodeExecutors: Map<WorkflowNodeType, (node: WorkflowNode, context: ExecutionContext) => Promise<any>> = new Map();
+  private isRunning: boolean = true;
   
   // Performance metrics
   private metrics = {
@@ -84,6 +85,76 @@ export class UnifiedWorkflowEngine extends EventEmitter {
 
     this.initializeNodeExecutors();
     this.startExecutionProcessor();
+    this.recoverInterruptedExecutions();
+  }
+
+  /**
+   * Serialize execution context for storage
+   */
+  private serializeContext(context: ExecutionContext): any {
+    return {
+      workflowId: context.workflowId,
+      executionId: context.executionId,
+      variables: context.variables,
+      temporaryData: context.temporaryData,
+      userContext: context.userContext
+      // agentRegistry and relayConnection are not serializable
+    };
+  }
+
+  /**
+   * Deserialize execution context from storage
+   */
+  private deserializeContext(data: any): ExecutionContext {
+    return {
+      workflowId: data.workflowId,
+      executionId: data.executionId,
+      variables: data.variables || {},
+      temporaryData: data.temporaryData || {},
+      userContext: data.userContext,
+      agentRegistry: this.agentRegistry, // Re-inject dependencies
+      relayConnection: null // Will be set if relay integration enabled
+    };
+  }
+
+  /**
+   * Recover interrupted executions on startup
+   */
+  private async recoverInterruptedExecutions(): Promise<void> {
+    try {
+      this.logger.info('🔄 Checking for interrupted workflow executions...');
+
+      const interruptedExecutions = await this.prisma.workflowExecution.findMany({
+        where: {
+          status: WorkflowExecutionStatus.RUNNING
+        }
+      });
+
+      if (interruptedExecutions.length === 0) {
+        this.logger.info('✅ No interrupted executions found.');
+        return;
+      }
+
+      this.logger.info(`⚠️ Found ${interruptedExecutions.length} interrupted executions. Attempting recovery...`);
+
+      for (const dbExecution of interruptedExecutions) {
+        try {
+            // Load full execution state
+            const execution = await this.loadExecution(dbExecution.id);
+            if (execution) {
+                // Add to active executions and queue
+                this.activeExecutions.set(execution.id, execution);
+                this.executionQueue.push(execution.id);
+                this.logger.info(`🔄 Resumed interrupted execution: ${execution.id}`);
+            }
+        } catch (err) {
+            this.logger.error(`❌ Failed to recover execution ${dbExecution.id}: ${getErrorMessage(err)}`);
+            // Optionally mark as failed
+        }
+      }
+    } catch (error) {
+      this.logger.error(`❌ Failed to recover interrupted executions: ${getErrorMessage(error)}`);
+    }
   }
 
   /**
@@ -238,7 +309,12 @@ export class UnifiedWorkflowEngine extends EventEmitter {
         workflowId: workflow.id,
         status: WorkflowExecutionStatus.PENDING,
         input: input,
-        startedAt: execution.startedAt
+        startedAt: execution.startedAt,
+        nodeExecutions: [],
+        context: this.serializeContext(execution.context),
+        statistics: execution.statistics,
+        logs: [],
+        metadata: execution.metadata
       }
     });
 
@@ -273,8 +349,7 @@ export class UnifiedWorkflowEngine extends EventEmitter {
    */
   private startExecutionProcessor(): void {
     const workLoop = async () => {
-      // eslint-disable-next-line no-constant-condition
-      while (true) {
+      while (this.isRunning) {
         const executionId = this.executionQueue.shift();
         if (executionId) {
           try {
@@ -289,6 +364,13 @@ export class UnifiedWorkflowEngine extends EventEmitter {
       }
     };
     workLoop().catch(err => this.logger.error(`Workflow execution processor has crashed: ${getErrorMessage(err)}`));
+  }
+
+  /**
+   * Stop the engine
+   */
+  public stop(): void {
+    this.isRunning = false;
   }
 
   /**
@@ -400,6 +482,16 @@ export class UnifiedWorkflowEngine extends EventEmitter {
       nodeExecution.output = result;
 
       execution.statistics.completedNodes++;
+
+      // Persist state after node completion
+      await this.prisma.workflowExecution.update({
+        where: { id: execution.id },
+        data: {
+          nodeExecutions: execution.nodeExecutions,
+          context: this.serializeContext(execution.context),
+          statistics: execution.statistics
+        }
+      });
 
       // Record heartbeat if monitoring enabled
       if (this.config.enableHeartbeatMonitoring) {
@@ -738,7 +830,12 @@ export class UnifiedWorkflowEngine extends EventEmitter {
         status: execution.status,
         output: execution.output,
         error: execution.error as any,
-        completedAt: execution.completedAt
+        completedAt: execution.completedAt,
+        nodeExecutions: execution.nodeExecutions,
+        context: this.serializeContext(execution.context),
+        statistics: execution.statistics,
+        logs: execution.logs,
+        metadata: execution.metadata
       }
     });
 
@@ -877,24 +974,27 @@ export class UnifiedWorkflowEngine extends EventEmitter {
       if (!dbExecution) return null;
 
       // Convert database format to execution format
+      const nodeExecutions = (dbExecution.nodeExecutions as NodeExecution[]) || [];
+      const contextData = dbExecution.context || {};
+      const context = this.deserializeContext(contextData);
+
+      // Ensure IDs match
+      context.workflowId = dbExecution.workflowId;
+      context.executionId = dbExecution.id;
+
       return {
         id: dbExecution.id,
         workflowId: dbExecution.workflowId,
         status: dbExecution.status,
-        triggeredBy: 'system', // Would need to be stored in DB
+        triggeredBy: dbExecution.triggeredBy || 'system',
         triggerType: 'manual' as any,
         input: dbExecution.input as Record<string, any>,
         output: dbExecution.output as Record<string, any>,
         startedAt: dbExecution.startedAt,
         completedAt: dbExecution.completedAt,
-        nodeExecutions: [],
-        context: {
-          workflowId: dbExecution.workflowId,
-          executionId: dbExecution.id,
-          variables: {},
-          temporaryData: {}
-        },
-        statistics: {
+        nodeExecutions: nodeExecutions,
+        context: context,
+        statistics: (dbExecution.statistics as any) || {
           totalNodes: 0,
           completedNodes: 0,
           failedNodes: 0,
@@ -902,8 +1002,8 @@ export class UnifiedWorkflowEngine extends EventEmitter {
           totalDuration: 0,
           averageNodeDuration: 0
         },
-        logs: [],
-        metadata: {}
+        logs: (dbExecution.logs as any) || [],
+        metadata: (dbExecution.metadata as any) || {}
       };
     } catch (error) {
       this.logger.error(`Failed to load execution ${executionId}: ${getErrorMessage(error)}`);

@@ -79,6 +79,11 @@ export const workflowExecutions = pgTable('workflow_executions', {
   startedAt: timestamp('started_at').defaultNow().notNull(),
   completedAt: timestamp('completed_at'),
   projectId: uuid('project_id'),
+  nodeExecutions: jsonb('node_executions').default([]),
+  context: jsonb('context'),
+  logs: jsonb('logs').default([]),
+  statistics: jsonb('statistics'),
+  metadata: jsonb('metadata'),
 });
 
 // =============================================================================
