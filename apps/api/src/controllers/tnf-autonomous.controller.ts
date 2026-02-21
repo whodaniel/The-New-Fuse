@@ -19,11 +19,9 @@ import {
   Param,
   Post,
 } from '@nestjs/common';
-import {
-  AgentSwarmProvider,
-  BMADServiceProvider,
-  DirectorServiceProvider,
-} from '../modules/tnf-autonomous.module';
+import { AgentSwarmService } from '../modules/director/agent-swarm.service';
+import { BMADService } from '../modules/director/bmad.service';
+import { DirectorService } from '../modules/director/director.service';
 
 // DTOs
 interface RegisterAgentDto {
@@ -44,9 +42,9 @@ export class TNFAutonomousController {
   private readonly logger = new Logger(TNFAutonomousController.name);
 
   constructor(
-    private readonly director: DirectorServiceProvider,
-    private readonly bmad: BMADServiceProvider,
-    private readonly swarm: AgentSwarmProvider
+    private readonly director: DirectorService,
+    private readonly bmad: BMADService,
+    private readonly swarm: AgentSwarmService
   ) {}
 
   // ============================================================
