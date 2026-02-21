@@ -1,6 +1,6 @@
 import { format, formatDistanceToNow } from 'date-fns';
 import { ChevronDown, ChevronUp, RefreshCw } from 'lucide-react';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useWebSocket } from '../hooks/useWebSocket';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
@@ -20,74 +20,77 @@ interface Activity {
   read?: boolean;
 }
 
-const ActivityItem: React.FC<Activity & { onToggleExpand?: () => void; expanded?: boolean }> = ({
-  type,
-  message,
-  timestamp,
-  metadata,
-  category,
-  source,
-  read,
-  onToggleExpand,
-  expanded,
-}) => {
-  const variants = {
-    info: 'bg-blue-100 text-blue-800',
-    warning: 'bg-yellow-100 text-yellow-800',
-    error: 'bg-red-100 text-red-800',
-    success: 'bg-green-100 text-green-800',
-  };
+const ActivityItem = React.memo(
+  ({
+    id,
+    type,
+    message,
+    timestamp,
+    metadata,
+    category,
+    source,
+    read,
+    onToggleExpand,
+    expanded,
+  }: Activity & { onToggleExpand?: (id: string) => void; expanded?: boolean }) => {
+    const variants = {
+      info: 'bg-blue-100 text-blue-800',
+      warning: 'bg-yellow-100 text-yellow-800',
+      error: 'bg-red-100 text-red-800',
+      success: 'bg-green-100 text-green-800',
+    };
 
-  return (
-    <div
-      className={`flex flex-col p-3 hover:bg-gray-50 rounded-md transition-colors ${!read ? 'border-l-2 border-blue-500' : ''}`}
-    >
-      <div className="flex items-start space-x-4 w-full">
-        <Badge className={variants[type]}>{type.charAt(0).toUpperCase() + type.slice(1)}</Badge>
+    return (
+      <div
+        className={`flex flex-col p-3 hover:bg-gray-50 rounded-md transition-colors ${!read ? 'border-l-2 border-blue-500' : ''}`}
+      >
+        <div className="flex items-start space-x-4 w-full">
+          <Badge className={variants[type]}>{type.charAt(0).toUpperCase() + type.slice(1)}</Badge>
 
-        <div className="flex-1 min-w-0">
-          <div className="flex justify-between items-start">
-            <p className="text-sm font-medium text-gray-900">{message}</p>
-            {onToggleExpand && (
-              <button
-                onClick={onToggleExpand}
-                className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100"
-              >
-                {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-              </button>
-            )}
-          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex justify-between items-start">
+              <p className="text-sm font-medium text-gray-900">{message}</p>
+              {onToggleExpand && (
+                <button
+                  onClick={() => onToggleExpand(id)}
+                  className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100"
+                >
+                  {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                </button>
+              )}
+            </div>
 
-          <div className="flex items-center space-x-2 mt-1">
-            {category && (
-              <span className="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-600">
-                {category}
-              </span>
-            )}
-            {source && (
-              <span className="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-600">
-                {source}
-              </span>
-            )}
-            <p className="text-xs text-gray-500">
-              {formatDistanceToNow(new Date(timestamp), { addSuffix: true })}
-            </p>
+            <div className="flex items-center space-x-2 mt-1">
+              {category && (
+                <span className="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-600">
+                  {category}
+                </span>
+              )}
+              {source && (
+                <span className="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-600">
+                  {source}
+                </span>
+              )}
+              <p className="text-xs text-gray-500">
+                {formatDistanceToNow(new Date(timestamp), { addSuffix: true })}
+              </p>
+            </div>
           </div>
         </div>
+
+        {expanded && metadata && (
+          <div className="mt-2 ml-10 p-3 bg-gray-50 rounded-md border border-gray-100">
+            <p className="text-xs text-gray-500 mb-1">Details:</p>
+            <pre className="text-xs text-gray-700 overflow-x-auto">
+              {JSON.stringify(metadata, null, 2)}
+            </pre>
+            <p className="text-xs text-gray-500 mt-2">{format(new Date(timestamp), 'PPpp')}</p>
+          </div>
+        )}
       </div>
-
-      {expanded && metadata && (
-        <div className="mt-2 ml-10 p-3 bg-gray-50 rounded-md border border-gray-100">
-          <p className="text-xs text-gray-500 mb-1">Details:</p>
-          <pre className="text-xs text-gray-700 overflow-x-auto">
-            {JSON.stringify(metadata, null, 2)}
-          </pre>
-          <p className="text-xs text-gray-500 mt-2">{format(new Date(timestamp), 'PPpp')}</p>
-        </div>
-      )}
-    </div>
-  );
-};
+    );
+  }
+);
 
 export function ActivityFeed() {
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -185,7 +188,7 @@ export function ActivityFeed() {
     return groups;
   }, [filteredActivities]);
 
-  const toggleExpand = (id: string) => {
+  const toggleExpand = useCallback((id: string) => {
     setExpandedIds((prev: any) => {
       const newSet = new Set(prev);
       if (newSet.has(id)) {
@@ -197,7 +200,7 @@ export function ActivityFeed() {
       }
       return newSet;
     });
-  };
+  }, []);
 
   const markAllAsRead = () => {
     setReadIds(new Set(activities.map((a) => a.id)));
@@ -282,7 +285,7 @@ export function ActivityFeed() {
                       key={activity.id}
                       {...activity}
                       expanded={expandedIds.has(activity.id)}
-                      onToggleExpand={() => toggleExpand(activity.id)}
+                      onToggleExpand={toggleExpand}
                       read={readIds.has(activity.id)}
                     />
                   ))}
@@ -307,7 +310,7 @@ export function ActivityFeed() {
                           key={activity.id}
                           {...activity}
                           expanded={expandedIds.has(activity.id)}
-                          onToggleExpand={() => toggleExpand(activity.id)}
+                          onToggleExpand={toggleExpand}
                           read={readIds.has(activity.id)}
                         />
                       ))}
