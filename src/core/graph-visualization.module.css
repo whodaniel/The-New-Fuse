@@ -1,0 +1,21 @@
+.graphContainer {
+  height: var(--graph-height, 600px);
+  width: var(--graph-width, 100%);
+}
+
+.node {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 2px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--node-bg, #ffffff);
+  border-color: var(--node-border, #000000);
+  color: var(--node-text, #000000);
+}
+
+.nodeLabel {
+  font-weight: 500;
+}
