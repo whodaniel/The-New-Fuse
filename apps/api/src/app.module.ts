@@ -27,6 +27,7 @@ import { UserManagementController } from './controllers/user-management.controll
 import { WebSocketController } from './controllers/websocket.controller';
 import { WorkflowController } from './controllers/workflow.controller';
 import { WorkspaceController } from './controllers/workspace.controller';
+import { GraphqlModule } from './graphql/graphql.module';
 import { LLMProviderController } from './llm/llm-provider.controller';
 import { LLMProviderService, LLM_REGISTRY, MockLLMRegistry } from './llm/llm-provider.service';
 import { TNFMCPModule } from './mcp/TNFMCPModule';
@@ -122,7 +123,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     UnifiedLedgerModule,
     BrandConsistencyAgentModule, // Self-Improving Brand Consistency Agent
     BrowserHubSwarmModule, // Browser Hub Improvement Agent Swarm
-    // GraphqlModule, // TEMPORARILY DISABLED: GraphQL has HttpAdapterHost DI issue - REST API still works
+    GraphqlModule, // GraphQL API
     TNFAutonomousModule, // 🔮 Autonomous System (Director, BMAD, Swarm)
     BillingModule,
   ],
