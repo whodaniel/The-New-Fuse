@@ -65,24 +65,18 @@ export class AgentService {
           limit,
         };
       } else {
-        agents = await this.agentRepository.findAll(limit);
+        // Fallback for system-level or if userId is not provided (should ideally be avoided)
+        throw new BadRequestException('userId is required to fetch agents');
       }
-
-      return {
-        data: agents.map((agent: any) => this.mapAgentToResponse(agent)),
-        total: agents.length,
-        page,
-        limit,
-      };
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       throw new BadRequestException(`Failed to fetch agents: ${errorMessage}`);
     }
   }
 
-  async findAgentById(id: string): Promise<AgentResponseDto> {
+  async findAgentById(id: string, userId: string): Promise<AgentResponseDto> {
     try {
-      const agent = await this.agentRepository.findById(id);
+      const agent = await this.agentRepository.findById(id, userId);
       if (!agent) {
         throw new NotFoundException(`Agent with ID ${id} not found`);
       }
@@ -97,9 +91,13 @@ export class AgentService {
     }
   }
 
-  async updateAgent(id: string, updateAgentDto: UpdateAgentDto): Promise<AgentResponseDto> {
+  async updateAgent(
+    id: string,
+    updateAgentDto: UpdateAgentDto,
+    userId: string
+  ): Promise<AgentResponseDto> {
     try {
-      const existingAgent = await this.agentRepository.findById(id);
+      const existingAgent = await this.agentRepository.findById(id, userId);
       if (!existingAgent) {
         throw new NotFoundException(`Agent with ID ${id} not found`);
       }
@@ -117,7 +115,7 @@ export class AgentService {
       if (updateAgentDto.capabilities !== undefined)
         updateData.capabilities = updateAgentDto.capabilities;
 
-      const agent = await this.agentRepository.update(id, updateData);
+      const agent = await this.agentRepository.update(id, userId, updateData);
       if (!agent) {
         throw new NotFoundException(`Agent with ID ${id} not found`);
       }
@@ -131,14 +129,14 @@ export class AgentService {
     }
   }
 
-  async deleteAgent(id: string): Promise<void> {
+  async deleteAgent(id: string, userId: string): Promise<void> {
     try {
-      const existingAgent = await this.agentRepository.findById(id);
+      const existingAgent = await this.agentRepository.findById(id, userId);
       if (!existingAgent) {
         throw new NotFoundException(`Agent with ID ${id} not found`);
       }
 
-      await this.agentRepository.softDelete(id);
+      await this.agentRepository.softDelete(id, userId);
     } catch (error: unknown) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -150,12 +148,13 @@ export class AgentService {
 
   async findAgentsByType(
     type: AgentType,
+    userId: string,
     _page: number = 1,
     _limit: number = 50
   ): Promise<{ data: AgentResponseDto[]; total: number }> {
     try {
       // Use search to filter by type since there's no direct findByType
-      const agents = await this.agentRepository.findAll(100);
+      const agents = await this.agentRepository.findAll(userId, 100);
       const filteredAgents = agents.filter((a: any) => a.type === type);
 
       return {
@@ -168,10 +167,10 @@ export class AgentService {
     }
   }
 
-  async findAgentsByStatus(status: AgentStatus): Promise<AgentResponseDto[]> {
+  async findAgentsByStatus(status: AgentStatus, userId: string): Promise<AgentResponseDto[]> {
     try {
       // Filter by status from all agents
-      const agents = await this.agentRepository.findAll(100);
+      const agents = await this.agentRepository.findAll(userId, 100);
       const filteredAgents = agents.filter((a: any) => a.status === status);
 
       return filteredAgents.map((agent: any) => this.mapAgentToResponse(agent));
@@ -199,14 +198,18 @@ export class AgentService {
     }
   }
 
-  async updateAgentStatus(id: string, status: AgentStatus): Promise<AgentResponseDto> {
+  async updateAgentStatus(
+    id: string,
+    status: AgentStatus,
+    userId: string
+  ): Promise<AgentResponseDto> {
     try {
-      const existingAgent = await this.agentRepository.findById(id);
+      const existingAgent = await this.agentRepository.findById(id, userId);
       if (!existingAgent) {
         throw new NotFoundException(`Agent with ID ${id} not found`);
       }
 
-      const agent = await this.agentRepository.updateStatus(id, status as any);
+      const agent = await this.agentRepository.updateStatus(id, userId, status as any);
       if (!agent) {
         throw new NotFoundException(`Agent with ID ${id} not found`);
       }
@@ -220,14 +223,14 @@ export class AgentService {
     }
   }
 
-  async getActiveAgents(): Promise<AgentResponseDto[]> {
-    const agents = await this.agentRepository.findActive();
+  async getActiveAgents(userId: string): Promise<AgentResponseDto[]> {
+    const agents = await this.agentRepository.findActive(userId);
     return agents.map((agent: any) => this.mapAgentToResponse(agent));
   }
 
-  async getAgentStats(id: string): Promise<any> {
+  async getAgentStats(id: string, userId: string): Promise<any> {
     try {
-      const agent = await this.agentRepository.findById(id);
+      const agent = await this.agentRepository.findById(id, userId);
       if (!agent) {
         throw new NotFoundException(`Agent with ID ${id} not found`);
       }
@@ -251,9 +254,9 @@ export class AgentService {
     }
   }
 
-  async getAgentTypeCounts(): Promise<Record<string, number>> {
+  async getAgentTypeCounts(userId: string): Promise<Record<string, number>> {
     try {
-      const statusCounts = await this.agentRepository.countByStatus();
+      const statusCounts = await this.agentRepository.countByStatus(userId);
       return statusCounts.reduce((acc: Record<string, number>, item: any) => {
         acc[item.status] = item.count;
         return acc;
@@ -264,24 +267,24 @@ export class AgentService {
     }
   }
 
-  async activateAgent(id: string): Promise<AgentResponseDto> {
-    return this.updateAgentStatus(id, AgentStatus.ACTIVE);
+  async activateAgent(id: string, userId: string): Promise<AgentResponseDto> {
+    return this.updateAgentStatus(id, AgentStatus.ACTIVE, userId);
   }
 
-  async deactivateAgent(id: string): Promise<AgentResponseDto> {
-    return this.updateAgentStatus(id, AgentStatus.INACTIVE);
+  async deactivateAgent(id: string, userId: string): Promise<AgentResponseDto> {
+    return this.updateAgentStatus(id, AgentStatus.INACTIVE, userId);
   }
 
-  async pauseAgent(id: string): Promise<AgentResponseDto> {
-    return this.updateAgentStatus(id, AgentStatus.IDLE);
+  async pauseAgent(id: string, userId: string): Promise<AgentResponseDto> {
+    return this.updateAgentStatus(id, AgentStatus.IDLE, userId);
   }
 
-  async markAgentBusy(id: string): Promise<AgentResponseDto> {
-    return this.updateAgentStatus(id, AgentStatus.BUSY);
+  async markAgentBusy(id: string, userId: string): Promise<AgentResponseDto> {
+    return this.updateAgentStatus(id, AgentStatus.BUSY, userId);
   }
 
-  async markAgentError(id: string): Promise<AgentResponseDto> {
-    return this.updateAgentStatus(id, AgentStatus.ERROR);
+  async markAgentError(id: string, userId: string): Promise<AgentResponseDto> {
+    return this.updateAgentStatus(id, AgentStatus.ERROR, userId);
   }
 
   async searchAgents(

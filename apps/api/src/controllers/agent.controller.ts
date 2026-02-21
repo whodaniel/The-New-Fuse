@@ -293,9 +293,9 @@ export class AgentController {
   @Get('active')
   @ApiOperation({ summary: 'Get active agents' })
   @ApiResponse({ status: HttpStatus.OK, type: [AgentResponseDto] })
-  async getActiveAgents(): Promise<AgentResponseDto[]> {
+  async getActiveAgents(@CurrentUser() user: User): Promise<AgentResponseDto[]> {
     try {
-      return this.agentService.getActiveAgents();
+      return this.agentService.getActiveAgents(user.id);
     } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to fetch active agents',
@@ -337,9 +337,9 @@ export class AgentController {
   @Get('stats/types')
   @ApiOperation({ summary: 'Get agent count by type' })
   @ApiResponse({ status: HttpStatus.OK })
-  async getAgentTypeCounts(): Promise<Record<string, number>> {
+  async getAgentTypeCounts(@CurrentUser() user: User): Promise<Record<string, number>> {
     try {
-      return this.agentService.getAgentTypeCounts();
+      return this.agentService.getAgentTypeCounts(user.id);
     } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to fetch agent type counts',
@@ -405,9 +405,12 @@ export class AgentController {
   @Get(':id')
   @ApiOperation({ summary: 'Get agent by ID' })
   @ApiResponse({ status: HttpStatus.OK, type: AgentResponseDto })
-  async getAgentById(@Param('id') id: string): Promise<AgentResponseDto> {
+  async getAgentById(
+    @Param('id') id: string,
+    @CurrentUser() user: User
+  ): Promise<AgentResponseDto> {
     try {
-      return await this.agentService.findAgentById(id);
+      return await this.agentService.findAgentById(id, user.id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -471,9 +474,9 @@ export class AgentController {
   @Get(':id/stats')
   @ApiOperation({ summary: 'Get agent statistics' })
   @ApiResponse({ status: HttpStatus.OK })
-  async getAgentStats(@Param('id') id: string): Promise<any> {
+  async getAgentStats(@Param('id') id: string, @CurrentUser() user: User): Promise<any> {
     try {
-      return await this.agentService.getAgentStats(id);
+      return await this.agentService.getAgentStats(id, user.id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -529,10 +532,11 @@ export class AgentController {
   @ApiResponse({ status: HttpStatus.OK, type: AgentResponseDto })
   async updateAgent(
     @Param('id') id: string,
-    @Body() updateAgentDto: UpdateAgentDto
+    @Body() updateAgentDto: UpdateAgentDto,
+    @CurrentUser() user: User
   ): Promise<AgentResponseDto> {
     try {
-      return await this.agentService.updateAgent(id, updateAgentDto);
+      return await this.agentService.updateAgent(id, updateAgentDto, user.id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -582,9 +586,12 @@ export class AgentController {
   @Put(':id/activate')
   @ApiOperation({ summary: 'Activate agent' })
   @ApiResponse({ status: HttpStatus.OK, type: AgentResponseDto })
-  async activateAgent(@Param('id') id: string): Promise<AgentResponseDto> {
+  async activateAgent(
+    @Param('id') id: string,
+    @CurrentUser() user: User
+  ): Promise<AgentResponseDto> {
     try {
-      return await this.agentService.activateAgent(id);
+      return await this.agentService.activateAgent(id, user.id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -625,9 +632,12 @@ export class AgentController {
   @Put(':id/deactivate')
   @ApiOperation({ summary: 'Deactivate agent' })
   @ApiResponse({ status: HttpStatus.OK, type: AgentResponseDto })
-  async deactivateAgent(@Param('id') id: string): Promise<AgentResponseDto> {
+  async deactivateAgent(
+    @Param('id') id: string,
+    @CurrentUser() user: User
+  ): Promise<AgentResponseDto> {
     try {
-      return await this.agentService.deactivateAgent(id);
+      return await this.agentService.deactivateAgent(id, user.id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -668,9 +678,9 @@ export class AgentController {
   @Put(':id/pause')
   @ApiOperation({ summary: 'Pause agent' })
   @ApiResponse({ status: HttpStatus.OK, type: AgentResponseDto })
-  async pauseAgent(@Param('id') id: string): Promise<AgentResponseDto> {
+  async pauseAgent(@Param('id') id: string, @CurrentUser() user: User): Promise<AgentResponseDto> {
     try {
-      return await this.agentService.pauseAgent(id);
+      return await this.agentService.pauseAgent(id, user.id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -711,9 +721,12 @@ export class AgentController {
   @Put(':id/busy')
   @ApiOperation({ summary: 'Mark agent as busy' })
   @ApiResponse({ status: HttpStatus.OK, type: AgentResponseDto })
-  async markAgentBusy(@Param('id') id: string): Promise<AgentResponseDto> {
+  async markAgentBusy(
+    @Param('id') id: string,
+    @CurrentUser() user: User
+  ): Promise<AgentResponseDto> {
     try {
-      return await this.agentService.markAgentBusy(id);
+      return await this.agentService.markAgentBusy(id, user.id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -755,9 +768,12 @@ export class AgentController {
   @Put(':id/error')
   @ApiOperation({ summary: 'Mark agent as error' })
   @ApiResponse({ status: HttpStatus.OK, type: AgentResponseDto })
-  async markAgentError(@Param('id') id: string): Promise<AgentResponseDto> {
+  async markAgentError(
+    @Param('id') id: string,
+    @CurrentUser() user: User
+  ): Promise<AgentResponseDto> {
     try {
-      return await this.agentService.markAgentError(id);
+      return await this.agentService.markAgentError(id, user.id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -799,9 +815,9 @@ export class AgentController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete agent' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
-  async deleteAgent(@Param('id') id: string): Promise<void> {
+  async deleteAgent(@Param('id') id: string, @CurrentUser() user: User): Promise<void> {
     try {
-      await this.agentService.deleteAgent(id);
+      await this.agentService.deleteAgent(id, user.id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

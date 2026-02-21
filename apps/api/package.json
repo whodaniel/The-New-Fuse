@@ -82,7 +82,7 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main.js",
     "test": "echo \"Tests temporarily disabled for this package\"",
-    "test:unit": "jest --testPathPattern=unit",
+    "test:unit": "jest --testPathPatterns=unit",
     "test:integration": "jest --config jest-integration.config.js",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",

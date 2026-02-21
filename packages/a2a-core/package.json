@@ -9,7 +9,7 @@
     "build:watch": "tsc --watch",
     "dev": "tsc --watch",
     "test": "echo \"Tests temporarily disabled for this package\"",
-    "test:unit": "jest --testPathPattern=unit --passWithNoTests",
+    "test:unit": "jest --testPathPatterns=unit --passWithNoTests",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage --passWithNoTests",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",

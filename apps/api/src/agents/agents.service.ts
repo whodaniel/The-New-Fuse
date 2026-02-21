@@ -64,12 +64,12 @@ export class AgentsService {
 
   async update(id: string, userId: string, dto: UpdateAgentDto) {
     // Verify ownership
-    const agent = await this.db.agents.findById(id);
-    if (!agent || agent.userId !== userId) {
+    const agent = await this.db.agents.findById(id, userId);
+    if (!agent) {
       throw new NotFoundException('Agent not found');
     }
 
-    return this.db.agents.update(id, {
+    return this.db.agents.update(id, userId, {
       name: dto.name,
       description: dto.description,
       capabilities: dto.capabilities as any,
