@@ -7,3 +7,8 @@
 **Vulnerability:** Discovered `apps/backend/src/utils/auth.ts` which contained an `authenticateUser` function that bypassed password verification with a comment "we'll assume password comparison works". This file was unused but posed a significant risk if accidentally imported.
 **Learning:** Placeholder or "mocked" logic committed to the codebase (especially in utility files) can persist for a long time and become a trap for future developers.
 **Prevention:** Strictly enforce that no "mocked" security logic is ever committed to the main branch, even if "unused". Use `@deprecated` tags aggressively but prefer deletion of dangerous dead code.
+
+## 2025-01-22 - [In-Memory Rate Limiting Memory Leak]
+**Vulnerability:** The `RateLimitingService` in `packages/security` implemented a `Map`-based store for request counts but lacked an active cleanup mechanism, leading to indefinite memory growth (DoS risk).
+**Learning:** Custom in-memory caching or rate-limiting implementations are prone to memory leaks if expiration logic is passive (only on access) or missing. Using established libraries like `lru-cache` or `redis` is safer than rolling your own.
+**Prevention:** Always ensure that any in-memory store has a bounded size (LRU) or an active cleanup mechanism (TTL). Verify cleanup logic with tests that simulate time passage.

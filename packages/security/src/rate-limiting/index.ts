@@ -24,6 +24,13 @@ export class RateLimitingService {
     };
     this.store = new Map();
     // this.logger = new Logger('RateLimitingService');
+
+    // Start cleanup interval
+    // Use unref() to ensure the timer doesn't prevent the process from exiting
+    const interval = setInterval(() => this.cleanup(), this.config.windowMs);
+    if (interval.unref) {
+      interval.unref();
+    }
   }
 
   async checkRateLimit(req: Request): Promise<RateLimitResult> {
