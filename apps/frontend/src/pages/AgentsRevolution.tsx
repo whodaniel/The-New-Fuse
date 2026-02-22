@@ -3,6 +3,7 @@ import { GlassCard, PremiumButton, PremiumInput, PremiumSelect } from '@/compone
 import { useDebounce } from '@/hooks/useDebounce';
 import { agentService, type Agent } from '@/services/AgentService';
 import {
+  ArrowLeftRight,
   ArrowRight,
   Bot,
   Box,
@@ -14,6 +15,7 @@ import {
   Database,
   FileCode,
   Gavel,
+  Gift,
   Layers,
   Loader2,
   LucideIcon,
@@ -22,6 +24,7 @@ import {
   Plus,
   Search,
   Send,
+  ShieldCheck,
   Sparkles,
   TrendingUp,
   Trophy,
@@ -56,6 +59,9 @@ const typeIcons: Record<string, LucideIcon> = {
   scout: Search,
   coordinator: Command,
   communicator: MessageSquare,
+  'viability-tester': ShieldCheck,
+  benchmarker: ArrowLeftRight,
+  'opportunity-scout': Gift,
   default: Bot,
 };
 
@@ -75,6 +81,9 @@ const typeGradients: Record<string, string> = {
   scout: 'from-purple-600 to-indigo-800',
   coordinator: 'from-amber-500 to-orange-600',
   communicator: 'from-teal-400 to-emerald-500',
+  'viability-tester': 'from-emerald-400 to-teal-600',
+  benchmarker: 'from-fuchsia-500 to-purple-600',
+  'opportunity-scout': 'from-orange-400 to-pink-500',
   default: 'from-gray-500 to-slate-500',
 };
 

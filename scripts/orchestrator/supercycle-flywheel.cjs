@@ -12,6 +12,7 @@ const path = require('path');
 
 const SCOUT_SCRIPT = path.join(__dirname, '../swarm/news-scout.cjs');
 const IMPROVER_SCRIPT = path.join(__dirname, '../improver/scan.cjs');
+const LLM_TEST_SCRIPT = path.join(__dirname, '../swarm/llm-test-flywheel.cjs');
 
 async function runFlywheel() {
   console.log('\n🌀 [Flywheel] Starting Autonomous Super-Cycle...');
@@ -25,6 +26,10 @@ async function runFlywheel() {
     // 2. Run Continuous Improver
     console.log('\n🛠️ Phase 2: System Health (Improver)');
     execSync(`node ${IMPROVER_SCRIPT}`, { stdio: 'inherit' });
+
+    // 3. Run LLM Test Flywheel
+    console.log('\n🧪 Phase 3: LLM Viability & Benchmarking (PicoClaw)');
+    execSync(`node ${LLM_TEST_SCRIPT}`, { stdio: 'inherit' });
 
     const duration = ((Date.now() - start) / 1000).toFixed(1);
     console.log(`\n✅ [Flywheel] Super-Cycle complete in ${duration}s. Swarm tasks updated.\n`);

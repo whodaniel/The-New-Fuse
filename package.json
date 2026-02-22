@@ -43,6 +43,7 @@
     "swarm:roll-call": "node scripts/swarm/roll-call.cjs",
     "swarm:sim-bidder": "node scripts/swarm/sim-bidder.cjs",
     "swarm:planner": "node scripts/swarm/project-planner.cjs",
+    "swarm:llm-test": "node scripts/swarm/llm-test-flywheel.cjs",
     "joy": "node scripts/improver/joy.js",
     "tnf:orchestration:audit": "node scripts/tnf-orchestration-audit.cjs",
     "tnf:audit:synergy": "node scripts/tnf-audit-synergy.cjs",
