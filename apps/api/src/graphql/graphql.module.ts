@@ -32,36 +32,46 @@ import { SecurityLoggingService } from '../security/security-logging.service';
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        autoSchemaFile:
-          configService.get('NODE_ENV') === 'production'
-            ? true
-            : join(process.cwd(), 'apps/api/src/graphql/schema.gql'),
-        sortSchema: true,
-        playground: configService.get('NODE_ENV') !== 'production',
-        introspection: configService.get('NODE_ENV') !== 'production',
-        context: ({ req, res }: { req: Request; res: Response }) => ({ req, res }),
-        formatError: (error) => {
-          // Log GraphQL errors
-          console.error('GraphQL Error:', error);
+      useFactory: (configService: ConfigService) => {
+        const isProduction =
+          configService.get('NODE_ENV') === 'production' ||
+          process.env.NODE_ENV === 'production' ||
+          !!process.env.RAILWAY_ENVIRONMENT ||
+          !!process.env.RAILWAY_PROJECT_ID;
 
-          // In production, don't expose internal errors
-          if (process.env.NODE_ENV === 'production') {
-            return {
-              message: error.message,
-              extensions: {
-                code: error.extensions?.code,
-              },
-            };
-          }
+        const baseDir = process.cwd();
+        const schemaPath = baseDir.endsWith('apps/api')
+          ? join(baseDir, 'src/graphql/schema.gql')
+          : join(baseDir, 'apps/api/src/graphql/schema.gql');
 
-          return error;
-        },
-        cors: {
-          origin: configService.get('CORS_ORIGIN') || 'http://localhost:3000',
-          credentials: true,
-        },
-      }),
+        return {
+          autoSchemaFile: isProduction ? true : schemaPath,
+          sortSchema: true,
+          playground: !isProduction,
+          introspection: !isProduction,
+          context: ({ req, res }: { req: Request; res: Response }) => ({ req, res }),
+          formatError: (error) => {
+            // Log GraphQL errors
+            console.error('GraphQL Error:', error);
+
+            // In production, don't expose internal errors
+            if (process.env.NODE_ENV === 'production') {
+              return {
+                message: error.message,
+                extensions: {
+                  code: error.extensions?.code,
+                },
+              };
+            }
+
+            return error;
+          },
+          cors: {
+            origin: configService.get('CORS_ORIGIN') || 'http://localhost:3000',
+            credentials: true,
+          },
+        };
+      },
       inject: [ConfigService],
     }),
     // Drizzle database module - already global from AppModule
