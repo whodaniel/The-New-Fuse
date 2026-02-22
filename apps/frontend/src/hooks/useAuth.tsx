@@ -357,7 +357,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           throw new Error(lastErrorMessage);
         }
         if (sawCloudflareChallenge) {
-          throw new Error('Cloudflare challenge blocked login. Please retry in a cleared browser tab.');
+          throw new Error(
+            'Cloudflare challenge blocked login. Please retry in a cleared browser tab.'
+          );
         }
         throw new Error('Failed to login');
       } catch (backendError: any) {
@@ -480,10 +482,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setError(null);
     setIsLoading(true);
     try {
-      const popupModeEnabled = import.meta.env.VITE_GOOGLE_POPUP_MODE === 'true';
-      if (!popupModeEnabled || !isFirebaseConfigured) {
-        const oauthBase = (apiBaseUrl || '/api').replace(/\/$/, '');
-        window.location.assign(`${oauthBase}/auth/google`);
+      // Default to Firebase popup when Firebase is configured.
+      // Redirect mode is opt-in via VITE_GOOGLE_POPUP_MODE='false'.
+      const popupModeDisabled = import.meta.env.VITE_GOOGLE_POPUP_MODE === 'false';
+      const shouldUsePopup = isFirebaseConfigured && !popupModeDisabled;
+
+      if (!shouldUsePopup) {
+        const oauthBase = apiBaseUrl.replace(/\/$/, '');
+        const oauthPath = `${oauthBase}/auth/google`;
+        window.location.assign(oauthPath);
         return { method: 'oauth-redirect' as const };
       }
 
