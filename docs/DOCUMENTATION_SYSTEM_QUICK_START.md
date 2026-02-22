@@ -204,6 +204,15 @@ Next Stage: 2 (Classification)
 
 ---
 
+### Operational runbooks
+
+- `docs/JULES_AUTONOMOUS_LOOP.md` – outlines the Jules supervisor workflow,
+  alert variables, and manual frontend guard.
+- `docs/SKILL_BANK_OPERATIONS.md` – describes cross-LLM skill-bank
+  sync/ingest/retry steps, artifacts, and supervisor lifecycle.
+- `packages/tnf-cli/README.md` – catalogs the expanded `tnf` command surface
+  (`tnf jules`, `tnf skills bank`, `tnf scripts`).
+
 ## Understanding the Output
 
 ### Manifest Structure

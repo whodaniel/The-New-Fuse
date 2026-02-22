@@ -408,12 +408,13 @@ class FuseConnectContentScript {
             });
             return true;
 
-          case 'GET_LAST_RESPONSE':
+          case 'GET_LAST_RESPONSE': {
             const response = simpleChatBridge.getLastResponse();
             safeSendResponse({ response });
             return true;
+          }
 
-          case 'GET_CHAT_STATUS':
+          case 'GET_CHAT_STATUS': {
             const elements = simpleChatBridge.findElements();
             safeSendResponse({
               detected: elements.isReady,
@@ -421,9 +422,10 @@ class FuseConnectContentScript {
               isStreaming: false,
             });
             return true;
+          }
 
           // Accessibility tree commands
-          case 'GET_ACCESSIBILITY_TREE':
+          case 'GET_ACCESSIBILITY_TREE': {
             const treeResult = accessibilityTree.generateTree({
               filter: message.filter,
               maxDepth: message.maxDepth,
@@ -431,6 +433,7 @@ class FuseConnectContentScript {
             });
             safeSendResponse(treeResult);
             return true;
+          }
 
           case 'CLICK_ELEMENT':
             accessibilityTree.clickElement(message.refId).then((success) => {
@@ -448,7 +451,7 @@ class FuseConnectContentScript {
               });
             return true;
 
-          case 'GET_ELEMENT_BY_REF':
+          case 'GET_ELEMENT_BY_REF': {
             const el = accessibilityTree.getElementByRefId(message.refId);
             safeSendResponse({
               found: !!el,
@@ -456,9 +459,10 @@ class FuseConnectContentScript {
               textContent: el?.textContent?.substring(0, 200),
             });
             return true;
+          }
 
           // Human simulation commands
-          case 'HUMAN_TYPE':
+          case 'HUMAN_TYPE': {
             const typeElements = simpleChatBridge.findElements();
             const typeTarget = message.refId
               ? accessibilityTree.getElementByRefId(message.refId)
@@ -475,8 +479,9 @@ class FuseConnectContentScript {
               safeSendResponse({ success: false, error: 'No target element' });
             }
             return true;
+          }
 
-          case 'HUMAN_CLICK':
+          case 'HUMAN_CLICK': {
             const clickTarget = message.refId
               ? accessibilityTree.getElementByRefId(message.refId)
               : null;
@@ -488,6 +493,7 @@ class FuseConnectContentScript {
               safeSendResponse({ success: false, error: 'No target element' });
             }
             return true;
+          }
 
           case 'HUMAN_SCROLL':
             humanSimulator.humanScroll(message.target || message.y || 500).then(() => {
@@ -496,10 +502,11 @@ class FuseConnectContentScript {
             return true;
 
           // CAPTCHA handling commands
-          case 'DETECT_CAPTCHA':
+          case 'DETECT_CAPTCHA': {
             const detection = captchaHandler.detectCaptcha();
             safeSendResponse(detection);
             return true;
+          }
 
           case 'BYPASS_CAPTCHA':
             captchaHandler.attemptBypass().then((result) => {
@@ -527,7 +534,7 @@ class FuseConnectContentScript {
             safeSendResponse({ success: true });
             return true;
 
-          case 'NEW_MESSAGE':
+          case 'NEW_MESSAGE': {
             if (message.message) {
               const msg = message.message;
 
@@ -675,6 +682,7 @@ class FuseConnectContentScript {
 
             safeSendResponse({ success: true });
             return true;
+          }
         }
       } catch (e: any) {
         console.error('[FuseConnect] Content script message handler error:', e);

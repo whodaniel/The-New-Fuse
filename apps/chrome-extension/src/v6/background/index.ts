@@ -775,14 +775,15 @@ class BackgroundService {
         console.log('[FuseConnect v7] Welcome received');
         break;
 
-      case 'AGENT_LIST':
+      case 'AGENT_LIST': {
         const agents = (message.payload as any).agents || [];
         this.agents.clear();
         agents.forEach((a: Agent) => this.agents.set(a.id, a));
         this.broadcastToTabs({ type: 'AGENTS_UPDATE', agents });
         break;
+      }
 
-      case 'AGENT_STATUS':
+      case 'AGENT_STATUS': {
         const agent = (message.payload as any).agent;
         if (agent) {
           // If agent is offline or unregistered, remove it
@@ -814,8 +815,9 @@ class BackgroundService {
           }
         }
         break;
+      }
 
-      case 'AGENT_UNREGISTER':
+      case 'AGENT_UNREGISTER': {
         const unregId = (message.payload as any).agentId;
         if (unregId) {
           console.log(`[FuseConnect v7] UNREGISTER received for ${unregId}`);
@@ -826,8 +828,9 @@ class BackgroundService {
           });
         }
         break;
+      }
 
-      case 'CHANNEL_LIST':
+      case 'CHANNEL_LIST': {
         const channels = (message.payload as any).channels || [];
         // Only update with new channels, do not clear locally saved ones if relay sends empty list
         if (channels.length > 0) {
@@ -839,6 +842,7 @@ class BackgroundService {
           this.saveChannels();
         }
         break;
+      }
 
       case 'CHANNEL_MESSAGE':
       case 'MESSAGE_RECEIVE':
@@ -1241,16 +1245,19 @@ class BackgroundService {
    * Send native message to control services
    */
   private async sendNativeMessage(message: Record<string, unknown>): Promise<any> {
+    console.log('[NativeMessaging] Sending:', message.action, message.service || '');
     return new Promise((resolve) => {
       try {
         chrome.runtime.sendNativeMessage(NATIVE_HOST_NAME, message, (response) => {
           if (chrome.runtime.lastError) {
+            console.error('[NativeMessaging] Error:', chrome.runtime.lastError.message);
             resolve({ error: chrome.runtime.lastError.message });
           } else {
             resolve(response || {});
           }
         });
       } catch (e) {
+        console.error('[NativeMessaging] Exception:', e);
         resolve({ error: 'Native messaging not available' });
       }
     });
@@ -1383,6 +1390,20 @@ class BackgroundService {
   private setupMessageHandlers(): void {
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       switch (message.type) {
+        case 'TEST_PING':
+          console.log('[FuseConnect v7] Received TEST_PING');
+          sendResponse({
+            success: true,
+            status: 'online',
+            version: '7.0.0',
+            timestamp: Date.now(),
+          });
+          break;
+
+        case 'PING':
+          sendResponse({ success: true, pong: true });
+          break;
+
         case 'CONNECT':
           this.connectionAttempts = 0;
           this.connectToNode('relay', message.url || DEFAULT_NODES.relay);
@@ -1394,7 +1415,7 @@ class BackgroundService {
           sendResponse({ success: true });
           break;
 
-        case 'GET_STATE':
+        case 'GET_STATE': {
           // Find the page agent for this tab if it exists
           let tabPageAgentId = null;
           if (sender.tab?.id) {
@@ -1423,6 +1444,7 @@ class BackgroundService {
             autoWakePing: this.autoWakePing,
           });
           break;
+        }
 
         case 'SET_AUTO_CONNECT':
           this.autoConnect = message.enabled;
@@ -1632,7 +1654,7 @@ Format as JSON array:
           sendResponse({ success: true });
           break;
 
-        case 'CHANNEL_CREATE':
+        case 'CHANNEL_CREATE': {
           // Optimistically create channel locally
           const newChannel: FederationChannel = {
             id: `local-${Date.now()}`,
@@ -1665,6 +1687,7 @@ Format as JSON array:
           });
           sendResponse({ success: true, channel: newChannel });
           break;
+        }
 
         case 'CHANNEL_JOIN':
           this.joinedChannels.add(message.channelId);
@@ -1712,7 +1735,7 @@ Format as JSON array:
           sendResponse({ success: true });
           break;
 
-        case 'CHANNEL_DELETE':
+        case 'CHANNEL_DELETE': {
           const channelIdToDelete = message.channelId;
           if (channelIdToDelete === 'general') {
             sendResponse({ success: false, error: 'Cannot delete general channel' });
@@ -1732,6 +1755,7 @@ Format as JSON array:
           this.sendActivityEvent('channel_delete', { channelId: channelIdToDelete });
           sendResponse({ success: true });
           break;
+        }
 
         case 'CONTENT_SCRIPT_READY':
           // Send current state to new tab
@@ -1773,7 +1797,7 @@ Format as JSON array:
           sendResponse({ success: true });
           break;
 
-        case 'ACTIVATE_ON_TAB':
+        case 'ACTIVATE_ON_TAB': {
           // Programmatically inject content script on unknown sites
           // This allows the extension to work on any AI chat site, not just preset ones
           chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
@@ -1814,6 +1838,7 @@ Format as JSON array:
             }
           });
           return true; // Async response
+        }
 
         case 'REQUEST_SYNC':
           if (this.primaryConnection) {
@@ -1859,7 +1884,7 @@ Format as JSON array:
           });
           return true; // Async response
 
-        case 'CHAT_DETECTED':
+        case 'CHAT_DETECTED': {
           // 1. Register this tab as a distinct Agent
           if (sender.tab?.id) {
             // REUSE existing agent ID for this tab if it exists
@@ -1903,10 +1928,12 @@ Format as JSON array:
             sendResponse({ success: true });
           }
           break;
+        }
 
         case 'STREAMING_UPDATE':
+          break;
 
-        case 'RESPONSE_COMPLETE':
+        case 'RESPONSE_COMPLETE': {
           // MULTI-AGENT COLLABORATION:
           // AI responses MUST be broadcast to the channel so OTHER agents can see and respond.
           // This enables the "chatroom" model where all participants coordinate.
@@ -2013,6 +2040,7 @@ Format as JSON array:
           }
           sendResponse({ success: true });
           break;
+        }
       }
 
       // Explicit cases that need async response already return true themselves.

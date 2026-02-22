@@ -19,8 +19,8 @@ function findProjectRoot() {
 
   // Also check common locations
   const possibleRoots = [
-    path.resolve(currentDir, '../../../..'), // From dist-v5/native-host
-    path.resolve(currentDir, '../../..'), // From src/v5/native-host
+    path.resolve(currentDir, '../../../..'), // From dist-v7/native-host
+    path.resolve(currentDir, '../../..'), // From src/v6/native-host
     path.resolve(os.homedir(), 'Desktop/A1-Inter-LLM-Com/The-New-Fuse'),
     path.resolve(os.homedir(), 'projects/The-New-Fuse'),
     path.resolve(os.homedir(), 'The-New-Fuse'),

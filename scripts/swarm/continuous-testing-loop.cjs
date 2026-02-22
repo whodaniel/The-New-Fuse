@@ -48,7 +48,9 @@ const CONFIG = {
   loopIntervalMs: parseInt(process.env.TEST_LOOP_INTERVAL || '300000', 10), // 5 min default
   maxIterations: parseInt(process.env.TEST_MAX_ITERATIONS || '0', 10), // 0 = infinite
   targetScore: parseInt(process.env.TEST_TARGET_SCORE || '95', 10),
+  continueAfterTarget: process.env.TEST_CONTINUE_AFTER_TARGET === '1',
   agentTimeoutMs: parseInt(process.env.TEST_AGENT_TIMEOUT_MS || '900000', 10),
+  enableImprover: process.env.TEST_ENABLE_IMPROVER !== '0',
   reportDir: path.join(ROOT_DIR, '.agent/test-reports'),
   statusFile: path.join(ROOT_DIR, '.agent/testing-status.json'),
 };
@@ -191,9 +193,11 @@ async function main() {
   console.log('\n🔄 TNF CONTINUOUS TESTING LOOP');
   console.log(`   Started: ${new Date().toISOString()}`);
   console.log(`   Target Score: ${CONFIG.targetScore}%`);
+  console.log(`   Continue After Target: ${CONFIG.continueAfterTarget ? 'yes' : 'no'}`);
   console.log(`   Loop Interval: ${CONFIG.loopIntervalMs / 1000}s`);
   console.log(`   Max Iterations: ${CONFIG.maxIterations || 'infinite'}`);
   console.log(`   Agent Timeout: ${CONFIG.agentTimeoutMs / 1000}s`);
+  console.log(`   Improver Agent: ${CONFIG.enableImprover ? 'enabled' : 'disabled'}`);
 
   loadState();
 
@@ -207,6 +211,7 @@ async function main() {
   while (shouldContinue) {
     state.iteration++;
     state.lastRun = new Date().toISOString();
+    state.status = 'running';
 
     console.log(`\n${'='.repeat(60)}`);
     console.log(`  ITERATION ${state.iteration}`);
@@ -219,7 +224,11 @@ async function main() {
     results.website = runAgent('Website Testing', AGENTS.website);
 
     // 2. Improver Agent
-    results.improver = runAgent('Continuous Improver', AGENTS.improver);
+    if (CONFIG.enableImprover && fs.existsSync(AGENTS.improver)) {
+      results.improver = runAgent('Continuous Improver', AGENTS.improver);
+    } else {
+      console.log('\n⏭️ Skipping Continuous Improver agent');
+    }
 
     // 3. Integration Agent (if exists)
     if (fs.existsSync(AGENTS.integration)) {
@@ -245,9 +254,14 @@ async function main() {
 
     // Check if target reached
     if (generateIterationReport()) {
+      if (CONFIG.continueAfterTarget) {
+        state.status = 'running';
+        saveState();
+      } else {
       state.status = 'production-ready';
       saveState();
       process.exit(0);
+      }
     }
 
     // Check max iterations

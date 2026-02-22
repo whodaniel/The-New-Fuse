@@ -1,238 +1,113 @@
-# Fuse Connect - Build Instructions
+# Fuse Connect v7 - Build & Installation Instructions
 
-## ✅ What's Ready
+## 🚀 Overview
 
-All source files have been created with the new neon cyberpunk design:
+Fuse Connect v7 is the latest version of the Chrome extension, featuring
+multi-node connectivity, federation channels, and enhanced AI platform
+detection.
 
-### Created Files:
-1. ✅ `manifest.json` - Updated to v4.0.0
-2. ✅ `src/styles/theme.css` - Complete neon design system
-3. ✅ `src/popup/popup-neon.html` - New popup HTML (vanilla JS version)
-4. ✅ `src/popup/popup-neon.js` - Popup functionality
-5. ✅ `src/popup/popup-neon.css` - Neon-themed styles
+## 🛠️ Build & Verification
 
-### Documentation:
-- ✅ `REDESIGN_SPEC.md` - Full design specification
-- ✅ `IMPLEMENTATION_SUMMARY.md` - Complete implementation details
-- ✅ `BUILD_INSTRUCTIONS.md` - This file
+### 1. Install Dependencies
 
----
+Ensure you are in the extension directory:
 
-## 🚀 How to Build
+```bash
+cd apps/chrome-extension
+npm install
+```
 
-### Option 1: Use Existing Build System (Recommended)
+### 2. Linting
 
-The project already has webpack configured. You need to:
+Run linting to ensure code quality:
 
-1. **Update the HTML entry point:**
-   ```bash
-   cd apps/chrome-extension
-   cp src/popup/popup-neon.html src/popup/popup.html
-   ```
+```bash
+npm run lint
+```
 
-2. **Install dependencies** (if not already done):
-   ```bash
-   pnpm install
-   # or
-   npm install
-   ```
+_Note: Critical syntax errors have been fixed. Only minor warnings should
+remain._
 
-3. **Build the extension:**
-   ```bash
-   pnpm run build
-   # or
-   npm run build
-   ```
+### 3. Build Extension
 
-4. **Load in Chrome:**
-   - Open `chrome://extensions/`
-   - Enable "Developer mode"
-   - Click "Load unpacked"
-   - Select the `dist/` folder
+Build the production artifact for version 7:
 
-### Option 2: Manual Setup (No Build Required)
+```bash
+npm run build:v7
+```
 
-For quick testing without webpack:
-
-1. **Create a simple dist folder:**
-   ```bash
-   cd apps/chrome-extension
-   mkdir -p dist-manual/icons
-   ```
-
-2. **Copy files:**
-   ```bash
-   # Manifest
-   cp manifest.json dist-manual/
-
-   # HTML
-   cp src/popup/popup-neon.html dist-manual/popup.html
-
-   # JavaScript
-   cp src/popup/popup-neon.js dist-manual/popup.js
-
-   # CSS
-   cp src/styles/theme.css dist-manual/theme.css
-   cp src/popup/popup-neon.css dist-manual/popup-neon.css
-
-   # Background (use existing)
-   cp dist/background.js dist-manual/
-
-   # Content script (use existing)
-   cp dist/content.js dist-manual/
-
-   # Icons (use existing)
-   cp -r dist/icons/* dist-manual/icons/
-   ```
-
-3. **Update popup.html paths:**
-   Edit `dist-manual/popup.html` and change:
-   ```html
-   <link rel="stylesheet" href="../styles/theme.css">
-   <link rel="stylesheet" href="popup-neon.css">
-   <script src="popup-neon.js"></script>
-   ```
-
-   To:
-   ```html
-   <link rel="stylesheet" href="theme.css">
-   <link rel="stylesheet" href="popup-neon.css">
-   <script src="popup.js"></script>
-   ```
-
-4. **Load in Chrome:**
-   - Open `chrome://extensions/`
-   - Enable "Developer mode"
-   - Click "Load unpacked"
-   - Select the `dist-manual/` folder
+This generates the `dist-v7` directory.
 
 ---
 
-## 🎨 What You Get
+## 🔧 Installation
 
-Once built and loaded, you'll see:
+### 1. Automatic Installer (Recommended)
 
-### Popup Interface:
-- **Neon gradient header** with TNF logo and pulsing status dot
-- **4 tabs**: Connect, Agents, Network, Settings
-- **Connection status** with real-time indicators
-- **AI platform detection** with icon cards
-- **Quick action buttons** for common tasks
-- **Agent network viewer** showing active agents
-- **Settings panel** for configuration
+The automatic installer builds the extension and sets up the Native Messaging
+Host (required for controlling services from the extension).
 
-### Visual Features:
-- Cyan (#00D9FF) → Purple (#9D4EDD) gradients
-- Glowing neon effects on hover
-- Pulsing status indicators
-- Smooth animations
-- Deep space dark theme (#0a0a0f)
-- Circuit board patterns
+```bash
+cd apps/chrome-extension
+bash install-v7.sh
+```
+
+### 2. Manual Chrome Loading
+
+1. Open Google Chrome.
+2. Navigate to `chrome://extensions/`.
+3. Enable **"Developer mode"** (toggle in the top right).
+4. Click **"Load unpacked"**.
+5. Select the `dist-v7` directory:
+   `/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/dist-v7`
 
 ---
 
-## 🔧 Webpack Configuration Update (Optional)
+## 📡 Native Messaging Host
 
-If you want to use webpack to build the new neon popup, update `webpack.config.cjs`:
+The native host allows the extension to communicate with local TNF services
+(Relay, Monitor, etc.).
+
+- **Manifest Location:**
+  `~/Library/Application Support/Google/Chrome/NativeMessagingHosts/com.thenewfuse.native_host.json`
+- **Script Location:** `dist-v7/native-host/tnf-native-host.js`
+
+---
+
+## 🧪 Testing
+
+### Verification Handler
+
+A `TEST_PING` handler has been added to the background script. You can verify
+communication between the popup/content and background script by sending a
+message:
 
 ```javascript
-entry: {
-  popup: './src/popup/popup-neon.js',  // Changed from popup-fallback.js
-  background: './src/background.ts',
-  content: './src/content/index.ts',
-  // ... rest of entries
-},
+chrome.runtime.sendMessage({ type: 'TEST_PING' }, (response) =>
+  console.log(response)
+);
 ```
 
-And in the CopyPlugin patterns:
-```javascript
-{ from: './src/popup/popup-neon.html', to: 'popup.html' },
-{ from: './src/popup/popup-neon.css', to: 'popup-neon.css' },
-{ from: './src/styles/theme.css', to: 'theme.css' },
-```
+### Manual Test Plan
+
+1. **Popup:** Verify all tabs (Connect, Agents, Services, Settings) load
+   correctly.
+2. **Connectivity:** Test connection to the local relay (default:
+   `ws://localhost:3000/ws`).
+3. **Detection:** Visit Gemini, ChatGPT, or Claude and verify the floating panel
+   can be toggled (Ctrl+Shift+F).
+4. **Native Host:** Go to the "Services" tab and verify the "Native Host"
+   indicator is green.
 
 ---
 
-## 🐛 Troubleshooting
+## 📁 Project Structure (v7)
 
-### Icons Missing
-If you see broken icon images:
-- Check that `dist/icons/` folder exists
-- Icons should be copied from the existing build
-- Or generate new ones from the TNF monogram
-
-### Styles Not Loading
-- Make sure `theme.css` is loaded before `popup-neon.css`
-- Check browser console for 404 errors
-- Verify file paths in HTML match actual file locations
-
-### Background Connection Fails
-- The extension uses existing background service (`dist/background.js`)
-- Make sure TNF Relay server is running on `ws://localhost:3001/ws`
-- Check Settings tab to configure relay URL
-
-### No Platform Detected
-- Navigate to an AI chat site (ChatGPT, Claude, Gemini)
-- Platform detection happens in content script
-- May need to refresh the page after loading extension
+- `src/v6/`: Source of truth for version 7.
+- `dist-v7/`: Build output for Chrome.
+- `manifest.json`: Extension configuration (v3).
+- `webpack.v7.config.cjs`: Webpack configuration for v7.
 
 ---
 
-## 📁 File Structure
-
-```
-dist/ (or dist-manual/)
-├── manifest.json           # Extension manifest
-├── popup.html             # Main popup (from popup-neon.html)
-├── popup.js               # Popup logic (from popup-neon.js)
-├── popup-neon.css         # Neon styles
-├── theme.css              # Design system
-├── background.js          # Background service worker
-├── content.js             # Content script
-└── icons/                 # Extension icons
-    ├── icon16.png
-    ├── icon48.png
-    └── icon128.png
-```
-
----
-
-## ✨ Next Steps After Building
-
-1. **Test the Extension:**
-   - Click the extension icon
-   - Navigate through all 4 tabs
-   - Try connecting to TNF Relay
-   - Visit an AI chat site to see platform detection
-
-2. **Customize:**
-   - Update relay URL in Settings tab
-   - Enable/disable auto-reconnect
-   - Toggle debug mode for console logs
-
-3. **Integrate:**
-   - Connect to actual TNF Relay server
-   - Test Redis bridge functionality
-   - Verify agent network communication
-
-4. **Deploy:**
-   - Package for Chrome Web Store (if desired)
-   - Distribute to team members
-   - Document usage for end users
-
----
-
-## 🎯 Success Criteria
-
-You'll know it's working when:
-- ✅ Popup opens with neon cyberpunk design
-- ✅ Status indicators show connection states
-- ✅ Tabs switch smoothly with animations
-- ✅ Connect button triggers relay connection
-- ✅ AI platform is detected on chat sites
-- ✅ Agent count updates when connected
-- ✅ Settings can be saved and persisted
-
----
-
-**The New Fuse** - Your browser's bridge to the AI agent network 🚀
+**The New Fuse** - The ultimate AI agent bridge for browser automation.

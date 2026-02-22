@@ -36,6 +36,27 @@ At session start, the agent should:
 4. Use MCP and specialized agents from the inventory printed by
    `pnpm run tnf:onboard`.
 
+## Operations Index
+
+Use these docs for day-2 operations and ongoing automation:
+
+- `docs/JULES_AUTONOMOUS_LOOP.md`
+  - Jules supervisor lifecycle (`jules:supervisor:start|status|stop`)
+  - Cron migration (`jules:supervisor:migrate-from-cron`)
+  - Alerting/env variables and log paths
+- `docs/SKILL_BANK_OPERATIONS.md`
+  - Cross-LLM skill-bank sync/query/ingest/retry
+  - Skill-bank supervisor lifecycle
+  - Artifact paths under `.agent/skill-bank`
+- `docs/TNF_SESSION_ONBOARDING.md`
+  - Session bootstrap + operator runtime commands
+  - Cloud-first defaults and recommended startup sequence
+- `packages/tnf-cli/README.md`
+  - Full `tnf` command surface including:
+    - `tnf jules ...`
+    - `tnf skills bank ...`
+    - `tnf scripts list|run ...`
+
 ## Agent Bank Access
 
 AI agents can access the full scope of agent definitions and skills via the MCP

@@ -63,6 +63,22 @@ pnpm run flywheel:production:loop
 TARGET_SCORE=90 LOOP_INTERVAL=120000 pnpm run flywheel:production:loop
 ```
 
+### Run As Background Service (macOS launchd)
+
+```bash
+# Install + start persistent service (survives terminal close/reboot)
+TEST_ENABLE_IMPROVER=0 TEST_CONTINUE_AFTER_TARGET=1 pnpm run qa:swarm:service:install
+
+# Check runtime status + logs
+pnpm run qa:swarm:service:status
+
+# Lifecycle commands
+pnpm run qa:swarm:service:restart
+pnpm run qa:swarm:service:stop
+pnpm run qa:swarm:service:start
+pnpm run qa:swarm:service:uninstall
+```
+
 ## Agent Specialties
 
 ### 1. Website Testing Agent (`website-testing-agent.cjs`)
@@ -132,14 +148,18 @@ consistency.
 
 ### Environment Variables
 
-| Variable              | Default  | Description                                      |
-| --------------------- | -------- | ------------------------------------------------ |
-| `TARGET_SCORE`        | `95`     | Target quality score to achieve (0-100)          |
-| `MAX_ITERATIONS`      | `0`      | Maximum iterations (0 = infinite)                |
-| `LOOP_INTERVAL`       | `300000` | Milliseconds between iterations (default: 5 min) |
-| `TEST_LOOP_INTERVAL`  | `300000` | Interval for continuous testing loop             |
-| `TEST_MAX_ITERATIONS` | `0`      | Max iterations for testing loop                  |
-| `TEST_TARGET_SCORE`   | `95`     | Target score for testing loop                    |
+| Variable                      | Default  | Description                                                      |
+| ----------------------------- | -------- | ---------------------------------------------------------------- |
+| `TARGET_SCORE`                | `95`     | Target quality score to achieve (0-100)                          |
+| `MAX_ITERATIONS`              | `0`      | Maximum iterations (0 = infinite)                                |
+| `LOOP_INTERVAL`               | `300000` | Milliseconds between iterations (default: 5 min)                 |
+| `TEST_LOOP_INTERVAL`          | `300000` | Interval for continuous testing loop                             |
+| `TEST_MAX_ITERATIONS`         | `0`      | Max iterations for testing loop                                  |
+| `TEST_TARGET_SCORE`           | `95`     | Target score for testing loop                                    |
+| `TEST_CONTINUE_AFTER_TARGET`  | `0`      | Keep looping even after target is reached (`1` for service mode) |
+| `TEST_ENABLE_IMPROVER`        | `1`      | Set to `0` to skip Redis-dependent improver agent                |
+| `TEST_AGENT_TIMEOUT_MS`       | `900000` | Per-agent timeout in milliseconds                                |
+| `TEST_HEARTBEAT_INTERVAL_SEC` | `15`     | Service heartbeat write interval in seconds                      |
 
 ### Example Configuration
 
@@ -212,14 +232,20 @@ The flywheel state is saved to: `.agent/flywheel-status.json`
 
 ## NPM Scripts Reference
 
-| Script                     | Description                        |
-| -------------------------- | ---------------------------------- |
-| `test:website`             | Run website testing agent once     |
-| `test:integration:agent`   | Run integration testing agent once |
-| `test:uiux`                | Run UI/UX testing agent once       |
-| `test:continuous`          | Run continuous testing loop        |
-| `flywheel:production`      | Run full flywheel once             |
-| `flywheel:production:loop` | Run flywheel in continuous loop    |
+| Script                       | Description                         |
+| ---------------------------- | ----------------------------------- |
+| `test:website`               | Run website testing agent once      |
+| `test:integration:agent`     | Run integration testing agent once  |
+| `test:uiux`                  | Run UI/UX testing agent once        |
+| `test:continuous`            | Run continuous testing loop         |
+| `qa:swarm:service:install`   | Install/start macOS launchd service |
+| `qa:swarm:service:status`    | Show launchd + runtime status       |
+| `qa:swarm:service:stop`      | Stop launchd service                |
+| `qa:swarm:service:start`     | Start launchd service               |
+| `qa:swarm:service:restart`   | Restart launchd service             |
+| `qa:swarm:service:uninstall` | Remove launchd service              |
+| `flywheel:production`        | Run full flywheel once              |
+| `flywheel:production:loop`   | Run flywheel in continuous loop     |
 
 ## Integration with CI/CD
 

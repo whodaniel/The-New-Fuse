@@ -31,23 +31,16 @@ echo "╚═══════════════════════�
 echo -e "${NC}"
 
 # Step 1: Build the extension
-echo -e "${YELLOW}📦 Step 1: Building Chrome Extension v7...${NC}"
+echo -e "${YELLOW}📦 Step 1: Building Chrome Extension...${NC}"
 cd "$EXTENSION_DIR"
 
-if command -v pnpm &> /dev/null; then
-  pnpm run build:v7
-elif command -v npm &> /dev/null; then
-  npm run build:v7
-else
-  echo -e "${RED}Error: pnpm or npm is required${NC}"
-  exit 1
-fi
+npm run build:v7
 
-echo -e "${GREEN}✅ Extension v7 built successfully!${NC}"
+echo -e "${GREEN}✅ Extension built successfully!${NC}"
 echo ""
 
 # Step 2: Install native messaging host
-echo -e "${YELLOW}🔧 Step 2: Installing Native Messaging Host for v7...${NC}"
+echo -e "${YELLOW}🔧 Step 2: Installing Native Messaging Host...${NC}"
 
 # Create directory
 mkdir -p "$NATIVE_MESSAGING_HOSTS_DIR"

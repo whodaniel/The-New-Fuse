@@ -24,6 +24,22 @@ pnpm run docker:start    # PostgreSQL (5433) + Redis (6380)
 pnpm run dev              # All services
 ```
 
+### Operator Commands (TNF CLI)
+
+```bash
+./tnf onboard
+./tnf doctor
+./tnf jules supervisor-status
+./tnf skills bank sync
+./tnf scripts list
+```
+
+Additional operations docs:
+
+- `docs/JULES_AUTONOMOUS_LOOP.md`
+- `docs/SKILL_BANK_OPERATIONS.md`
+- `packages/tnf-cli/README.md`
+
 ### Access Points
 
 | Service        | URL                   |

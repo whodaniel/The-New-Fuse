@@ -365,6 +365,8 @@ class AuthenticationService {
       reason: 'Free transcript analysis',
       cost: 0,
     };
+  }
+
   // Fix multi-account switching issue
   async detectAccountChange() {
     try {
@@ -388,8 +390,8 @@ class AuthenticationService {
   // Clear all tokens (useful for troubleshooting)
   async resetAllTokens() {
     const data = await chrome.storage.local.get();
-    const keysToRemove = Object.keys(data).filter((k) =>
-      k.includes('Token') || k.includes('Auth') || k.includes('ApiKey')
+    const keysToRemove = Object.keys(data).filter(
+      (k) => k.includes('Token') || k.includes('Auth') || k.includes('ApiKey')
     );
     await chrome.storage.local.remove(keysToRemove);
     this.authStatus = {

@@ -28,6 +28,14 @@ pnpm run tnf -- <command>
 
 ### Commands
 
+#### TNF Lifecycle
+
+```bash
+pnpm run tnf -- onboard
+pnpm run tnf -- doctor
+pnpm run tnf -- mcp generate
+```
+
 #### Register an Agent
 
 Connects to the network and enters interactive mode.
@@ -72,6 +80,37 @@ pnpm run tnf -- convo start code-review
 pnpm run tnf -- convo join <convo-id>
 ```
 
+#### Jules Operations
+
+```bash
+pnpm run tnf -- jules loop --super-admin-token "<expected-secret>"
+pnpm run tnf -- jules supervisor-start --super-admin-token "<expected-secret>"
+pnpm run tnf -- jules supervisor-status
+pnpm run tnf -- jules supervisor-stop --super-admin-token "<expected-secret>"
+pnpm run tnf -- jules supervisor-migrate-from-cron --super-admin-token "<expected-secret>"
+pnpm run tnf -- jules merge-open --super-admin-token "<expected-secret>"
+```
+
+#### Skill Bank Operations
+
+```bash
+pnpm run tnf -- skills bank sync
+pnpm run tnf -- skills bank query jules
+pnpm run tnf -- skills bank ingest --dry-run
+pnpm run tnf -- skills bank retry-pending
+pnpm run tnf -- skills bank supervisor-start --super-admin-token "<expected-secret>"
+pnpm run tnf -- skills bank supervisor-status
+```
+
+#### Discover and Run Repo Commands/Scripts
+
+```bash
+pnpm run tnf -- scripts list
+pnpm run tnf -- scripts run skills:bank:status
+pnpm run tnf -- scripts run scripts/skills/skill-bank-query.cjs jules
+pnpm run tnf -- scripts run tools/port-manager/cli.js -- --help
+```
+
 ## Super Admin Protected Commands
 
 High-impact system commands require Super Admin authentication.
@@ -93,7 +132,8 @@ Protected command families:
 
 - `tnf master-clock *`
 - `tnf super-cycle *`
-- `tnf jules loop|merge-open|cron-install`
+- `tnf jules loop|supervisor|supervisor-start|supervisor-stop|supervisor-migrate-from-cron|merge-open|cron-install`
+- `tnf skills bank supervisor|supervisor-start|supervisor-stop`
 - `tnf relay start`
 - `tnf run <script>`
 

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mock AI Chat</title>
+  <style>
+    body { font-family: sans-serif; background: #121212; color: white; padding: 20px; }
+    #chat-container { max-width: 600px; margin: 0 auto; border: 1px solid #333; border-radius: 8px; padding: 20px; }
+    #prompt-textarea { width: 100%; height: 100px; background: #1e1e1e; color: white; border: 1px solid #444; border-radius: 4px; padding: 10px; margin-bottom: 10px; }
+    #send-button { background: #9D4EDD; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; }
+    #send-button:disabled { background: #444; cursor: not-allowed; }
+    .message-list { margin-top: 20px; }
+    .message { margin-bottom: 10px; padding: 10px; border-radius: 4px; }
+    .user { background: #2a2a2a; }
+    .assistant { background: #3a3a3a; border-left: 4px solid #00D9FF; }
+  </style>
+</head>
+<body>
+  <div id="chat-container">
+    <h2>TNF Test Chat</h2>
+    <div id="message-list" class="message-list">
+      <!-- Responses will appear here -->
+    </div>
+    <textarea id="prompt-textarea" placeholder="Message ChatGPT..."></textarea>
+    <button id="send-button" aria-label="Send message" data-testid="send-button">Send</button>
+  </div>
+  <script>
+    const input = document.getElementById('prompt-textarea');
+    const btn = document.getElementById('send-button');
+    const list = document.getElementById('message-list');
+
+    btn.addEventListener('click', () => {
+      const text = input.value;
+      if (!text) return;
+      
+      console.log('Button clicked, message:', text);
+      
+      // Add user message
+      const userMsg = document.createElement('div');
+      userMsg.className = 'message user';
+      userMsg.textContent = 'You: ' + text;
+      list.appendChild(userMsg);
+      
+      input.value = '';
+      
+      // Mock assistant response
+      setTimeout(() => {
+        const assistantMsg = document.createElement('div');
+        assistantMsg.className = 'message assistant';
+        assistantMsg.setAttribute('data-message-author-role', 'assistant');
+        assistantMsg.innerHTML = '<div class="markdown">This is a mock response to: ' + text + '</div>';
+        list.appendChild(assistantMsg);
+        console.log('Mock response added');
+      }, 1000);
+    });
+  </script>
+</body>
+</html>

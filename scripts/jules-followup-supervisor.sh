@@ -17,19 +17,29 @@ FOLLOWUP_TMP="$LOG_DIR/jules-followup-sessions-$STAMP.txt"
 PUBLISH_TMP="$LOG_DIR/jules-followup-publish-$STAMP.txt"
 STALL_TMP="$LOG_DIR/jules-followup-stalled-$STAMP.txt"
 
-INTERVAL_SEC="${JULES_SUPERVISOR_INTERVAL_SEC:-180}"
-ADVANCE_EVERY="${JULES_SUPERVISOR_ADVANCE_EVERY:-3}"
-MAX_CONSECUTIVE_ERRORS="${JULES_SUPERVISOR_MAX_ERRORS:-10}"
-ADVANCE_PROMPT="${JULES_SUPERVISOR_ADVANCE_PROMPT:-Required follow-up: publish your branch and open a GitHub PR against whodaniel/fuse main. Use automated checks only; do not request manual frontend/browser viewing. Reply with BRANCH and PR_URL.}"
-ALERT_WEBHOOK_URL="${JULES_ALERT_WEBHOOK_URL:-}"
-ALERT_COOLDOWN_SEC="${JULES_ALERT_COOLDOWN_SEC:-1800}"
-ALERT_STALLED_CYCLES="${JULES_ALERT_STALLED_CYCLES:-3}"
+INTERVAL_SEC=""
+ADVANCE_EVERY=""
+MAX_CONSECUTIVE_ERRORS=""
+ADVANCE_PROMPT=""
+ALERT_WEBHOOK_URL=""
+ALERT_COOLDOWN_SEC=""
+ALERT_STALLED_CYCLES=""
 
 consecutive_errors=0
 cycle=0
 
 log() {
   echo "[$(date +%H:%M:%S)] [Jules-Supervisor] $*" | tee -a "$LOG_FILE"
+}
+
+load_runtime_config() {
+  INTERVAL_SEC="${JULES_SUPERVISOR_INTERVAL_SEC:-180}"
+  ADVANCE_EVERY="${JULES_SUPERVISOR_ADVANCE_EVERY:-3}"
+  MAX_CONSECUTIVE_ERRORS="${JULES_SUPERVISOR_MAX_ERRORS:-10}"
+  ADVANCE_PROMPT="${JULES_SUPERVISOR_ADVANCE_PROMPT:-Required follow-up: publish your branch and open a GitHub PR against whodaniel/fuse main. Use automated checks only; do not request manual frontend/browser viewing. Reply with BRANCH and PR_URL.}"
+  ALERT_WEBHOOK_URL="${JULES_ALERT_WEBHOOK_URL:-}"
+  ALERT_COOLDOWN_SEC="${JULES_ALERT_COOLDOWN_SEC:-1800}"
+  ALERT_STALLED_CYCLES="${JULES_ALERT_STALLED_CYCLES:-3}"
 }
 
 require_cmd() {
@@ -202,6 +212,8 @@ if [[ -f ".env.local" ]]; then
   # shellcheck disable=SC1091
   set -a && source ".env.local" && set +a
 fi
+
+load_runtime_config
 
 if ! [[ "$INTERVAL_SEC" =~ ^[0-9]+$ ]] || [[ "$INTERVAL_SEC" -lt 30 ]]; then
   echo "JULES_SUPERVISOR_INTERVAL_SEC must be an integer >= 30" >&2

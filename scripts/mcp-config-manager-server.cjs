@@ -18,8 +18,9 @@ const http = require('http');
 
 // Configure stdin/stdout for the MCP protocol
 process.stdin.setEncoding('utf8');
-const rl = readline.createInterface({ input: process.stdin });
+const rl = readline.createInterface({ input: process.stdin, terminal: false });
 
+/*
 // Create HTTP server
 const server = http.createServer((req, res) => {
   if (req.method !== 'POST') {
@@ -54,9 +55,18 @@ const server = http.createServer((req, res) => {
 });
 
 // Start HTTP server
-server.listen(3772, () => {
-  console.error('MCP Config Manager Server listening on port 3772');
+server.on('error', (error) => {
+  console.error(`Warning: HTTP server error: ${error.message}`);
 });
+
+try {
+  server.listen(3772, () => {
+    console.error('MCP Config Manager Server listening on port 3772');
+  });
+} catch (error) {
+  console.error(`Warning: Could not start HTTP server on port 3772: ${error.message}`);
+}
+*/
 
 // Default paths for common MCP configuration files
 const DEFAULT_CONFIG_PATHS = {
@@ -70,7 +80,9 @@ rl.on('line', (line) => {
   try {
     const request = JSON.parse(line);
     handleRequest(request, (response) => {
-      console.log(JSON.stringify(response));
+      if (response) {
+        console.log(JSON.stringify(response));
+      }
     });
   } catch (error) {
     console.error('Error processing request:', error);
@@ -103,13 +115,10 @@ function handleRequest(request, respond) {
     case 'initialize':
       handleInitialize(request.id, request.params, respond);
       break;
+    case 'notifications/initialized':
     case 'initialized':
-      // Acknowledgment that initialization is complete
-      respond({
-        jsonrpc: '2.0',
-        id: request.id,
-        result: {}
-      });
+      // Acknowledgment that initialization is complete - no response for notifications
+      respond(null);
       break;
     case 'tools/list':
     case 'rpc.discover':
@@ -146,7 +155,7 @@ function handleInitialize(id, params, respond) {
         logging: {}
       },
       serverInfo: {
-        name: 'mcp-config-manager',
+        name: 'tnf-mcp-config-manager',
         version: '1.0.0'
       }
     }
@@ -237,9 +246,10 @@ function handleToolsList(id, respond) {
  * Handle tool calls
  */
 function handleCallTool(id, params, respond) {
-  const { tool_name, tool_args } = params;
+  const name = params.name;
+  const tool_args = params.arguments || {};
   
-  switch (tool_name) {
+  switch (name) {
     case 'list_mcp_servers':
       listMCPServers(id, tool_args, respond);
       break;
@@ -255,7 +265,7 @@ function handleCallTool(id, params, respond) {
         id: id,
         error: {
           code: -32601,
-          message: `Tool not found: ${tool_name}`
+          message: `Tool not found: ${name}`
         }
       });
   }
@@ -505,4 +515,3 @@ function expandPath(filePath) {
 // MCP server initialization messages
 console.error('MCP Config Manager Server initialized');
 console.error('Listening on stdin for JSON-RPC requests');
-console.error('HTTP server listening on port 3772');

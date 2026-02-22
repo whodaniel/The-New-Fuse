@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import { spawn } from 'child_process';
 import { Command } from 'commander';
+import fs from 'fs';
 import path from 'path';
 import readline from 'readline';
 import { fileURLToPath } from 'url';
@@ -12,6 +13,17 @@ const program = new Command();
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
 const SUPER_ADMIN_ENV_KEY = 'TNF_SUPER_ADMIN_TOKEN';
 const SUPER_ADMIN_INPUT_ENV_KEY = 'TNF_SUPER_ADMIN_INPUT_TOKEN';
+const RUNNABLE_SCRIPT_EXTENSIONS = new Set([
+  '.sh',
+  '.bash',
+  '.zsh',
+  '.js',
+  '.cjs',
+  '.mjs',
+  '.ts',
+  '.tsx',
+  '.py',
+]);
 
 async function runCommand(
   cmd: string,
@@ -60,6 +72,110 @@ function requireSuperAdmin(
       `Super Admin authentication required for '${commandLabel}'. Provide --super-admin-token or ${SUPER_ADMIN_INPUT_ENV_KEY}.`
     );
   }
+}
+
+type RootScriptEntry = { name: string; command: string };
+type FileScriptEntry = { key: string; relPath: string; absPath: string };
+
+function loadRootScripts(): RootScriptEntry[] {
+  const packageJsonPath = path.join(repoRoot, 'package.json');
+  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8')) as {
+    scripts?: Record<string, string>;
+  };
+  return Object.entries(packageJson.scripts || {})
+    .map(([name, command]) => ({ name, command }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+function isRunnableScriptFile(fileName: string): boolean {
+  const ext = path.extname(fileName).toLowerCase();
+  if (RUNNABLE_SCRIPT_EXTENSIONS.has(ext)) return true;
+  const lower = fileName.toLowerCase();
+  return lower === 'makefile' || lower === 'justfile';
+}
+
+function discoverFileScripts(): FileScriptEntry[] {
+  const out: FileScriptEntry[] = [];
+  const roots = [path.join(repoRoot, 'scripts'), path.join(repoRoot, 'tools')].filter((p) =>
+    fs.existsSync(p)
+  );
+
+  const walk = (dir: string) => {
+    let entries: fs.Dirent[] = [];
+    try {
+      entries = fs.readdirSync(dir, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const entry of entries) {
+      if (entry.name === 'node_modules' || entry.name === '.git') continue;
+      const absPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        walk(absPath);
+        continue;
+      }
+      if (!entry.isFile() || !isRunnableScriptFile(entry.name)) continue;
+      const relPath = path.relative(repoRoot, absPath).replace(/\\/g, '/');
+      out.push({ key: relPath, relPath, absPath });
+    }
+  };
+
+  for (const root of roots) walk(root);
+
+  // Include runnable files directly in repo root.
+  for (const fileName of fs.readdirSync(repoRoot)) {
+    const absPath = path.join(repoRoot, fileName);
+    if (!fs.existsSync(absPath) || !fs.statSync(absPath).isFile()) continue;
+    if (!isRunnableScriptFile(fileName)) continue;
+    const relPath = path.relative(repoRoot, absPath).replace(/\\/g, '/');
+    out.push({ key: relPath, relPath, absPath });
+  }
+
+  return out.sort((a, b) => a.key.localeCompare(b.key));
+}
+
+function resolveFileScript(input: string): FileScriptEntry | null {
+  const normalized = input.replace(/\\/g, '/').replace(/^\.?\//, '');
+  const candidates = discoverFileScripts();
+  const direct = candidates.find((item) => item.relPath === normalized);
+  if (direct) return direct;
+  const withScriptsPrefix = candidates.find((item) => item.relPath === `scripts/${normalized}`);
+  if (withScriptsPrefix) return withScriptsPrefix;
+  const withToolsPrefix = candidates.find((item) => item.relPath === `tools/${normalized}`);
+  if (withToolsPrefix) return withToolsPrefix;
+
+  const absCandidate = path.resolve(repoRoot, normalized);
+  if (
+    absCandidate.startsWith(repoRoot) &&
+    fs.existsSync(absCandidate) &&
+    fs.statSync(absCandidate).isFile() &&
+    isRunnableScriptFile(path.basename(absCandidate))
+  ) {
+    const relPath = path.relative(repoRoot, absCandidate).replace(/\\/g, '/');
+    return { key: relPath, relPath, absPath: absCandidate };
+  }
+  return null;
+}
+
+async function runFileScript(file: FileScriptEntry, args: string[]): Promise<void> {
+  const ext = path.extname(file.absPath).toLowerCase();
+  if (ext === '.sh' || ext === '.bash' || ext === '.zsh') {
+    await runCommand('bash', [file.relPath, ...args]);
+    return;
+  }
+  if (ext === '.py') {
+    await runCommand('python3', [file.relPath, ...args]);
+    return;
+  }
+  if (ext === '.ts' || ext === '.tsx') {
+    await runCommand('node', ['--import', 'tsx', file.relPath, ...args]);
+    return;
+  }
+  if (ext === '.js' || ext === '.cjs' || ext === '.mjs') {
+    await runCommand('node', [file.relPath, ...args]);
+    return;
+  }
+  throw new Error(`Unsupported script type for ${file.relPath}`);
 }
 
 program
@@ -331,6 +447,69 @@ jules
     }
   });
 jules
+  .command('supervisor')
+  .description('Run continuous Jules follow-up supervisor')
+  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .action(async (options: { superAdminToken?: string }) => {
+    try {
+      requireSuperAdmin(options, 'jules supervisor');
+      await runCommand('bash', ['scripts/jules-followup-supervisor.sh']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+jules
+  .command('supervisor-start')
+  .description('Start Jules follow-up supervisor in background')
+  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .action(async (options: { superAdminToken?: string }) => {
+    try {
+      requireSuperAdmin(options, 'jules supervisor-start');
+      await runCommand('bash', ['scripts/jules-followup-start.sh']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+jules
+  .command('supervisor-stop')
+  .description('Stop Jules follow-up supervisor')
+  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .action(async (options: { superAdminToken?: string }) => {
+    try {
+      requireSuperAdmin(options, 'jules supervisor-stop');
+      await runCommand('bash', ['scripts/jules-followup-stop.sh']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+jules
+  .command('supervisor-status')
+  .description('Show Jules follow-up supervisor status')
+  .action(async () => {
+    try {
+      await runCommand('bash', ['scripts/jules-followup-status.sh']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+jules
+  .command('supervisor-migrate-from-cron')
+  .description('Disable cron follow-up and switch to supervisor mode')
+  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .action(async (options: { superAdminToken?: string }) => {
+    try {
+      requireSuperAdmin(options, 'jules supervisor-migrate-from-cron');
+      await runCommand('bash', ['scripts/jules-followup-migrate-from-cron.sh']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+jules
   .command('merge-open')
   .description('Merge all open Jules PRs')
   .option('--super-admin-token <token>', 'Super Admin authentication token')
@@ -483,6 +662,112 @@ superCycle
     }
   );
 
+const skills = program.command('skills').description('Skill bank operations');
+const skillsBank = skills.command('bank').description('Cross-LLM skill bank operations');
+skillsBank
+  .command('sync')
+  .description('Build/refresh cross-LLM skill bank index and snapshots')
+  .action(async () => {
+    try {
+      await runCommand('node', ['scripts/skills/skill-bank-sync.cjs']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+skillsBank
+  .command('query')
+  .description('Search skill bank index')
+  .argument('<query>', 'Search query')
+  .action(async (query: string) => {
+    try {
+      await runCommand('node', ['scripts/skills/skill-bank-query.cjs', query]);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+skillsBank
+  .command('ingest')
+  .description('Ingest skill-bank export rows into resource registry API')
+  .option('--strict', 'Exit non-zero if any records fail')
+  .option('--dry-run', 'Validate ingest payload without posting')
+  .action(async (options: { strict?: boolean; dryRun?: boolean }) => {
+    try {
+      const args = ['scripts/skills/skill-bank-ingest.cjs'];
+      if (options.strict) args.push('--strict');
+      if (options.dryRun) args.push('--dry-run');
+      await runCommand('node', args);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+skillsBank
+  .command('retry-pending')
+  .description('Retry pending failed skill-bank ingests')
+  .option('--strict', 'Exit non-zero if any records still fail')
+  .action(async (options: { strict?: boolean }) => {
+    try {
+      const args = ['scripts/skills/skill-bank-retry-pending.cjs'];
+      if (options.strict) args.push('--strict');
+      await runCommand('node', args);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+skillsBank
+  .command('supervisor')
+  .description('Run continuous skill-bank sync/ingest/retry supervisor')
+  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .action(async (options: { superAdminToken?: string }) => {
+    try {
+      requireSuperAdmin(options, 'skills bank supervisor');
+      await runCommand('bash', ['scripts/skills/skill-bank-supervisor.sh']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+skillsBank
+  .command('supervisor-start')
+  .description('Start skill-bank supervisor in background')
+  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .action(async (options: { superAdminToken?: string }) => {
+    try {
+      requireSuperAdmin(options, 'skills bank supervisor-start');
+      await runCommand('bash', ['scripts/skills/skill-bank-supervisor-start.sh']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+skillsBank
+  .command('supervisor-stop')
+  .description('Stop skill-bank supervisor')
+  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .action(async (options: { superAdminToken?: string }) => {
+    try {
+      requireSuperAdmin(options, 'skills bank supervisor-stop');
+      await runCommand('bash', ['scripts/skills/skill-bank-supervisor-stop.sh']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+skillsBank
+  .command('supervisor-status')
+  .description('Show skill-bank supervisor status')
+  .action(async () => {
+    try {
+      await runCommand('bash', ['scripts/skills/skill-bank-supervisor-status.sh']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
 superCycle
   .command('status')
   .description('Read super-cycle state snapshot')
@@ -529,6 +814,81 @@ program
       const cmdArgs = ['run', script];
       if (args.length > 0) cmdArgs.push('--', ...args);
       await runCommand('pnpm', cmdArgs);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+const scriptsCommand = program
+  .command('scripts')
+  .description('Discover and run repo scripts and root package scripts');
+
+scriptsCommand
+  .command('list')
+  .description('List runnable scripts from package.json, scripts/**, tools/**, and repo root')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    try {
+      const rootScripts = loadRootScripts();
+      const fileScripts = discoverFileScripts();
+      if (options.json) {
+        console.log(
+          JSON.stringify(
+            {
+              rootScripts,
+              fileScripts: fileScripts.map((s) => s.relPath),
+            },
+            null,
+            2
+          )
+        );
+        return;
+      }
+
+      console.log(chalk.bold('\nRoot package scripts:\n'));
+      for (const script of rootScripts) {
+        console.log(`- ${chalk.cyan(script.name)}: ${chalk.dim(script.command)}`);
+      }
+
+      console.log(chalk.bold('\nRunnable files (scripts/**, tools/**, repo root):\n'));
+      for (const script of fileScripts) {
+        console.log(`- ${chalk.green(script.relPath)}`);
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+scriptsCommand
+  .command('run')
+  .description('Run either a root package script or a runnable file path')
+  .argument(
+    '<target>',
+    'Root script name OR runnable file path (scripts/**, tools/**, or repo root)'
+  )
+  .argument('[args...]', 'Arguments to forward')
+  .action(async (target: string, args: string[]) => {
+    try {
+      const rootScripts = loadRootScripts();
+      const rootMatch = rootScripts.find((s) => s.name === target);
+      if (rootMatch) {
+        const cmdArgs = ['run', target];
+        if (args.length > 0) cmdArgs.push('--', ...args);
+        await runCommand('pnpm', cmdArgs);
+        return;
+      }
+
+      const fileScript = resolveFileScript(target);
+      if (fileScript) {
+        await runFileScript(fileScript, args);
+        return;
+      }
+
+      throw new Error(
+        `Unknown target '${target}'. Use 'tnf scripts list' to see available scripts.`
+      );
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);

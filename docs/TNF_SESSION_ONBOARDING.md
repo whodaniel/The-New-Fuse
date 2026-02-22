@@ -73,6 +73,39 @@ Notes:
 - `tnf:orchestration:audit` validates script and process-command alignment
   (launch commands, `pgrep` patterns, and Redis target consistency).
 
+## Jules + Skill Bank Operators (recommended)
+
+After onboarding, keep follow-up and cross-LLM skill sharing running:
+
+```bash
+pnpm run jules:supervisor:start
+pnpm run jules:supervisor:status
+
+pnpm run skills:bank:sync
+pnpm run skills:bank:ingest
+pnpm run skills:bank:supervisor:start
+pnpm run skills:bank:supervisor:status
+```
+
+Equivalent TNF CLI commands:
+
+```bash
+./tnf jules supervisor-start --super-admin-token "<expected-secret>"
+./tnf jules supervisor-status
+./tnf skills bank sync
+./tnf skills bank ingest
+./tnf skills bank supervisor-start --super-admin-token "<expected-secret>"
+./tnf skills bank supervisor-status
+./tnf scripts list
+./tnf scripts run <script-or-file-target>
+```
+
+Reference docs:
+
+- `docs/JULES_AUTONOMOUS_LOOP.md`
+- `docs/SKILL_BANK_OPERATIONS.md`
+- `packages/tnf-cli/README.md`
+
 Environment precedence:
 
 - Redis:

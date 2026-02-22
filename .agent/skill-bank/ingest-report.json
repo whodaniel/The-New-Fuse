@@ -1,0 +1,11 @@
+{
+  "at": "2026-02-22T19:56:41.642Z",
+  "sourceFile": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skill-bank/resource-registry-import.json",
+  "endpoint": "http://localhost:3001/api/resources",
+  "total": 300,
+  "dryRun": true,
+  "posted": 300,
+  "failed": 0,
+  "staged": 0,
+  "errors": []
+}
