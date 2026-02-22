@@ -39,9 +39,10 @@ export interface AgentMessage {
 
 export const CONFIG = {
   redis: {
-    host: process.env.REDIS_HOST || 'localhost',
+    host: process.env.REDIS_HOST || '127.0.0.1',
     port: parseInt(process.env.REDIS_PORT || '6379'),
     password: process.env.REDIS_PASSWORD,
+    url: process.env.REDIS_URL,
     keyPrefix: 'tnf:',
   },
   channels: {
@@ -75,9 +76,14 @@ export class RedisAgentClient {
       retryStrategy: (times: number) => Math.min(times * 50, 2000),
       maxRetriesPerRequest: 3,
     };
+    const connectionLabel = CONFIG.redis.url || `${CONFIG.redis.host}:${CONFIG.redis.port}`;
 
-    this.publisher = new Redis(redisConfig);
-    this.subscriber = new Redis(redisConfig);
+    this.publisher = CONFIG.redis.url
+      ? new Redis(CONFIG.redis.url, redisConfig)
+      : new Redis(redisConfig);
+    this.subscriber = CONFIG.redis.url
+      ? new Redis(CONFIG.redis.url, redisConfig)
+      : new Redis(redisConfig);
 
     this.subscriber.on('message', (channel: string, message: string) => {
       this.handleIncomingMessage(channel, message);
@@ -94,7 +100,7 @@ export class RedisAgentClient {
     try {
       await this.publisher.ping();
     } catch (err) {
-      console.warn(`⚠️ Could not connect to Redis at ${CONFIG.redis.host}:${CONFIG.redis.port}`);
+      console.warn(`⚠️ Could not connect to Redis at ${connectionLabel}`);
       throw err;
     }
   }

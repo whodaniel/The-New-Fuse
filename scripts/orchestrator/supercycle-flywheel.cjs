@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const fs = require('fs');
 const { execSync } = require('child_process');
 const path = require('path');
 
@@ -13,6 +14,35 @@ const path = require('path');
 const SCOUT_SCRIPT = path.join(__dirname, '../swarm/news-scout.cjs');
 const IMPROVER_SCRIPT = path.join(__dirname, '../improver/scan.cjs');
 const LLM_TEST_SCRIPT = path.join(__dirname, '../swarm/llm-test-flywheel.cjs');
+
+function loadEnvFile(filePath) {
+  if (!fs.existsSync(filePath)) return;
+
+  const lines = fs.readFileSync(filePath, 'utf8').split('\n');
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith('#') || !line.includes('=')) continue;
+
+    const separatorIndex = line.indexOf('=');
+    const key = line.slice(0, separatorIndex).trim();
+    let value = line.slice(separatorIndex + 1).trim();
+
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+
+    if (process.env[key] === undefined) {
+      process.env[key] = value;
+    }
+  }
+}
+
+const ROOT_DIR = path.resolve(__dirname, '../..');
+loadEnvFile(path.join(ROOT_DIR, '.env.local'));
+loadEnvFile(path.join(ROOT_DIR, '.env'));
 
 async function runFlywheel() {
   console.log('\n🌀 [Flywheel] Starting Autonomous Super-Cycle...');

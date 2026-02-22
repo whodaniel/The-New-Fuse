@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   # PostgreSQL Database for development
@@ -40,10 +40,27 @@ services:
     networks:
       - tnf-dev
 
+  # SearXNG meta-search engine for live LLM opportunity scouting
+  searxng-dev:
+    image: searxng/searxng:latest
+    container_name: tnf-searxng-dev
+    ports:
+      - "8080:8080"
+    environment:
+      - BASE_URL=http://localhost:8080/
+      - INSTANCE_NAME=TNF Scout Search
+    volumes:
+      - searxng_dev_config:/etc/searxng
+    restart: unless-stopped
+    networks:
+      - tnf-dev
+
 volumes:
   postgres_dev_data:
     driver: local
   redis_dev_data:
+    driver: local
+  searxng_dev_config:
     driver: local
 
 networks:

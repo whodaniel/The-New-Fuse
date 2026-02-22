@@ -288,13 +288,13 @@ class AgentService {
       const response = await this.request<any>('/autonomous/swarm/logs');
       if (!response.success || !Array.isArray(response.data)) return [];
 
-      return response.data.map((log: any) => ({
-        id: log.timestamp + Math.random(),
+      return response.data.map((log: any, index: number) => ({
+        id: `${log.timestamp || 'no-ts'}:${log.eventType || 'event'}:${index}`,
         type: this.mapLogTypeToActivity(log.eventType),
         title: log.content || 'System Event',
         agent: log.metadata?.source || log.metadata?.actor || 'System',
         timestamp: new Date(log.timestamp),
-        status: log.eventType.includes('completed') ? 'completed' : 'active',
+        status: String(log.eventType || '').includes('completed') ? 'completed' : 'active',
       }));
     } catch (error) {
       console.error('Failed to fetch real swarm activity:', error);
@@ -303,7 +303,7 @@ class AgentService {
   }
 
   private mapLogTypeToActivity(eventType: string): 'auction' | 'scan' | 'award' {
-    const type = eventType.toLowerCase();
+    const type = String(eventType || '').toLowerCase();
     if (type.includes('auction') || type.includes('bidding')) return 'auction';
     if (type.includes('award') || type.includes('contract')) return 'award';
     return 'scan';
