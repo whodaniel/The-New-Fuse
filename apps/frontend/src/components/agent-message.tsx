@@ -24,7 +24,11 @@ interface AgentMessageProps {
   isCurrentUser: boolean;
 }
 
-const AgentMessage: React.FC<AgentMessageProps> = ({ agent, message, isCurrentUser }) => {
+/**
+ * AgentMessage component displays a single message in the chat.
+ * optimized with React.memo to prevent unnecessary re-renders in long chat lists.
+ */
+const AgentMessage = React.memo<AgentMessageProps>(({ agent, message, isCurrentUser }) => {
   const messageClasses = cn(
     'flex w-full max-w-md gap-2 p-4',
     isCurrentUser ? 'ml-auto flex-row-reverse' : 'mr-auto'
@@ -65,6 +69,8 @@ const AgentMessage: React.FC<AgentMessageProps> = ({ agent, message, isCurrentUs
       </div>
     </Card>
   );
-};
+});
+
+AgentMessage.displayName = 'AgentMessage';
 
 export default AgentMessage;
