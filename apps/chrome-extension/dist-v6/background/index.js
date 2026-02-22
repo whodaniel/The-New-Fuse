@@ -20,7 +20,7 @@ function simpleHash(str) {
 
 ;// ./src/v6/background/index.ts
 /**
- * Fuse Connect v6 - Background Service Worker
+ * Fuse Connect v7 - Background Service Worker
  * Multi-node connection, federation channels, notifications
  *
  * This version handles connection failures gracefully and allows
@@ -86,7 +86,7 @@ class BackgroundService {
         this.init();
     }
     async init() {
-        console.log('[FuseConnect v6] Background service initializing...');
+        console.log('[FuseConnect v7] Background service initializing...');
         // CRITICAL: Setup handlers SYNCHRONOUSLY before any awaits
         // This prevents "Receiving end does not exist" errors in the popup
         this.setupMessageHandlers();
@@ -108,7 +108,7 @@ class BackgroundService {
             // Set initial status to disconnected without error
             this.updateNodeStatus('relay', DEFAULT_NODES.relay, 'disconnected');
         }
-        console.log('[FuseConnect v6] Background service ready');
+        console.log('[FuseConnect v7] Background service ready');
     }
     /**
      * Start periodic cleanup timer to prevent memory leaks
@@ -126,7 +126,7 @@ class BackgroundService {
                 }
             }
             if (cleaned > 0) {
-                console.log(`[FuseConnect v6] Cleaned up ${cleaned} stale message hashes`);
+                console.log(`[FuseConnect v7] Cleaned up ${cleaned} stale message hashes`);
             }
         }, 30000);
     }
@@ -140,7 +140,7 @@ class BackgroundService {
             this.connectToNode('relay', DEFAULT_NODES.relay);
         }
         else {
-            console.log('[FuseConnect v6] Relay not available - attempting autonomous startup');
+            console.log('[FuseConnect v7] Relay not available - attempting autonomous startup');
             this.updateNodeStatus('relay', DEFAULT_NODES.relay, 'disconnected');
             this.sendNativeMessage({ action: 'start', service: 'relay' }).then(() => {
                 setTimeout(() => {
@@ -239,19 +239,19 @@ class BackgroundService {
         if (this.connections.has(nodeType)) {
             const existing = this.connections.get(nodeType);
             if (existing?.readyState === WebSocket.OPEN) {
-                console.log(`[FuseConnect v6] Already connected to ${nodeType}`);
+                console.log(`[FuseConnect v7] Already connected to ${nodeType}`);
                 return;
             }
             // Close stale connection
             existing?.close();
             this.connections.delete(nodeType);
         }
-        console.log(`[FuseConnect v6] Connecting to ${nodeType} at ${url}...`);
+        console.log(`[FuseConnect v7] Connecting to ${nodeType} at ${url}...`);
         this.updateNodeStatus(nodeType, url, 'connecting');
         try {
             const ws = new WebSocket(url);
             ws.onopen = () => {
-                console.log(`[FuseConnect v6] Connected to ${nodeType}`);
+                console.log(`[FuseConnect v7] Connected to ${nodeType}`);
                 this.connections.set(nodeType, ws);
                 this.updateNodeStatus(nodeType, url, 'connected');
                 this.connectionAttempts = 0; // Reset on success
@@ -279,11 +279,11 @@ class BackgroundService {
                     this.handleRelayMessage(message, nodeType);
                 }
                 catch (e) {
-                    console.error('[FuseConnect v6] Failed to parse message:', e);
+                    console.error('[FuseConnect v7] Failed to parse message:', e);
                 }
             };
             ws.onclose = () => {
-                console.log(`[FuseConnect v6] Disconnected from ${nodeType}`);
+                console.log(`[FuseConnect v7] Disconnected from ${nodeType}`);
                 this.connections.delete(nodeType);
                 this.updateNodeStatus(nodeType, url, 'disconnected');
                 if (this.primaryConnection === ws) {
@@ -315,7 +315,7 @@ class BackgroundService {
             };
         }
         catch (error) {
-            console.log(`[FuseConnect v6] Unable to connect to ${nodeType} - relay may not be running`);
+            console.log(`[FuseConnect v7] Unable to connect to ${nodeType} - relay may not be running`);
             this.updateNodeStatus(nodeType, url, 'disconnected');
         }
     }
@@ -364,7 +364,7 @@ class BackgroundService {
         }
         // Exponential backoff
         const delay = Math.min(5000 * Math.pow(2, this.connectionAttempts), 30000);
-        console.log(`[FuseConnect v6] Will retry ${nodeType} in ${delay}ms...`);
+        console.log(`[FuseConnect v7] Will retry ${nodeType} in ${delay}ms...`);
         const timer = setTimeout(() => {
             this.connectToNode(nodeType, url);
         }, delay);
@@ -442,7 +442,7 @@ class BackgroundService {
                 },
             };
             this.primaryConnection.send(JSON.stringify(regMessage));
-            console.log(`[FuseConnect v6] Registered Page Agent: ${name} (${id})`);
+            console.log(`[FuseConnect v7] Registered Page Agent: ${name} (${id})`);
             // AUTO-JOIN: Join any channels the main browser agent is in
             // This ensures the new tab immediately is part of the conversation
             for (const channelId of this.joinedChannels) {
@@ -456,14 +456,14 @@ class BackgroundService {
                     },
                 };
                 this.primaryConnection.send(JSON.stringify(joinMessage));
-                console.log(`[FuseConnect v6] Auto-joined Page Agent ${id} to channel ${channelId}`);
+                console.log(`[FuseConnect v7] Auto-joined Page Agent ${id} to channel ${channelId}`);
                 // Update local agent object
                 agent.channels.push(channelId);
             }
         }
         else {
             // NOT CONNECTED: Queue for registration when connection is established
-            console.log(`[FuseConnect v6] Queued Page Agent for later registration: ${name} (${id})`);
+            console.log(`[FuseConnect v7] Queued Page Agent for later registration: ${name} (${id})`);
             this.pendingPageAgents.push(agent);
         }
         // 4. Notify all tabs about the new agent list
@@ -522,11 +522,11 @@ class BackgroundService {
         }
         if (connection?.readyState === WebSocket.OPEN) {
             connection.send(JSON.stringify(message));
-            console.log('[FuseConnect v6] Sent to relay:', message.type, message.channel);
+            console.log('[FuseConnect v7] Sent to relay:', message.type, message.channel);
         }
         else {
             this.messageQueue.push(message);
-            console.log('[FuseConnect v6] Queued message (not connected):', message.type);
+            console.log('[FuseConnect v7] Queued message (not connected):', message.type);
         }
     }
     /**
@@ -547,7 +547,7 @@ class BackgroundService {
     flushPendingPageAgents() {
         if (this.primaryConnection?.readyState !== WebSocket.OPEN)
             return;
-        console.log(`[FuseConnect v6] Flushing ${this.pendingPageAgents.length} pending page agent registrations`);
+        console.log(`[FuseConnect v7] Flushing ${this.pendingPageAgents.length} pending page agent registrations`);
         while (this.pendingPageAgents.length > 0) {
             const agent = this.pendingPageAgents.shift();
             if (agent) {
@@ -560,7 +560,7 @@ class BackgroundService {
                     payload: { agent },
                 };
                 this.primaryConnection.send(JSON.stringify(regMessage));
-                console.log(`[FuseConnect v6] Registered queued Page Agent: ${agent.name} (${agent.id})`);
+                console.log(`[FuseConnect v7] Registered queued Page Agent: ${agent.name} (${agent.id})`);
                 // Auto-join channels
                 for (const channelId of this.joinedChannels) {
                     const joinMessage = {
@@ -582,7 +582,7 @@ class BackgroundService {
     reRegisterAllAgents(ws) {
         if (ws.readyState !== WebSocket.OPEN)
             return;
-        console.log(`[FuseConnect v6] Re-registering ${this.agents.size} existing agents on new connection`);
+        console.log(`[FuseConnect v7] Re-registering ${this.agents.size} existing agents on new connection`);
         for (const [agentId, agent] of this.agents) {
             // Don't re-register the main browser agent (it's already done in registerAgent)
             if (agentId === this.agentId)
@@ -596,7 +596,7 @@ class BackgroundService {
                 payload: { agent },
             };
             ws.send(JSON.stringify(regMessage));
-            console.log(`[FuseConnect v6] Re-announced Page Agent: ${agent.name} (${agentId})`);
+            console.log(`[FuseConnect v7] Re-announced Page Agent: ${agent.name} (${agentId})`);
             // Re-join channels for this agent
             // Note: agent.channels should already contain the channels it was in
             if (agent.channels && agent.channels.length > 0) {
@@ -632,7 +632,7 @@ class BackgroundService {
                         // VERIFY TAB STILL EXISTS
                         chrome.tabs.get(tabId, (tab) => {
                             if (chrome.runtime.lastError || !tab) {
-                                console.log(`[FuseConnect v6] Tab ${tabId} for agent ${agentId} is gone. Removing.`);
+                                console.log(`[FuseConnect v7] Tab ${tabId} for agent ${agentId} is gone. Removing.`);
                                 this.agents.delete(agentId);
                                 // Inform relay it's gone
                                 this.send({
@@ -681,10 +681,10 @@ class BackgroundService {
      * Handle messages from relay
      */
     handleRelayMessage(message, nodeType) {
-        console.log(`[FuseConnect v6] Received from ${nodeType}:`, message.type);
+        console.log(`[FuseConnect v7] Received from ${nodeType}:`, message.type);
         switch (message.type) {
             case 'WELCOME':
-                console.log('[FuseConnect v6] Welcome received');
+                console.log('[FuseConnect v7] Welcome received');
                 break;
             case 'AGENT_LIST':
                 const agents = message.payload.agents || [];
@@ -699,7 +699,7 @@ class BackgroundService {
                     if (agent.status === 'offline' ||
                         agent.status === 'disconnected' ||
                         agent.status === 'unregistered') {
-                        console.log(`[FuseConnect v6] Agent ${agent.id} went offline/removed`);
+                        console.log(`[FuseConnect v7] Agent ${agent.id} went offline/removed`);
                         this.agents.delete(agent.id);
                     }
                     else {
@@ -720,7 +720,7 @@ class BackgroundService {
             case 'AGENT_UNREGISTER':
                 const unregId = message.payload.agentId;
                 if (unregId) {
-                    console.log(`[FuseConnect v6] UNREGISTER received for ${unregId}`);
+                    console.log(`[FuseConnect v7] UNREGISTER received for ${unregId}`);
                     this.agents.delete(unregId);
                     this.broadcastToTabs({
                         type: 'AGENTS_UPDATE',
@@ -730,10 +730,15 @@ class BackgroundService {
                 break;
             case 'CHANNEL_LIST':
                 const channels = message.payload.channels || [];
-                this.channels.clear();
-                channels.forEach((ch) => this.channels.set(ch.id, ch));
-                this.broadcastToTabs({ type: 'CHANNELS_UPDATE', channels });
-                this.saveChannels();
+                // Only update with new channels, do not clear locally saved ones if relay sends empty list
+                if (channels.length > 0) {
+                    channels.forEach((ch) => this.channels.set(ch.id, ch));
+                    this.broadcastToTabs({
+                        type: 'CHANNELS_UPDATE',
+                        channels: Array.from(this.channels.values()),
+                    });
+                    this.saveChannels();
+                }
                 break;
             case 'CHANNEL_MESSAGE':
             case 'MESSAGE_RECEIVE':
@@ -765,7 +770,7 @@ class BackgroundService {
                 });
                 break;
             case 'ERROR':
-                console.error('[FuseConnect v6] Relay error:', message.payload);
+                console.error('[FuseConnect v7] Relay error:', message.payload);
                 this.createNotification('error', 'Error', message.payload.message || 'Unknown error');
                 break;
             case 'TASK_ASSIGN':
@@ -858,7 +863,7 @@ class BackgroundService {
             guard.counts.set(key, rec);
             if (rec.n > 5) {
                 guard.mutedUntil.set(from, now + 60000);
-                console.warn('[FuseConnect v6] Loop guard muted source for 60s:', from);
+                console.warn('[FuseConnect v7] Loop guard muted source for 60s:', from);
                 return;
             }
         }
@@ -873,13 +878,13 @@ class BackgroundService {
         // or if we rely strictly on content deduplication.
         if (message.from === this.agentId || message.from === 'Browser Agent') {
             if (!message.channel) {
-                console.log('[FuseConnect v6] Skipping direct self-message echo');
+                console.log('[FuseConnect v7] Skipping direct self-message echo');
                 return;
             }
             // Check for duplication even for self-messages to prevent echo loops
             const msgHash = simpleHash(`${message.from}:${message.content}:${Math.floor(message.timestamp / 1000)}`);
             if (this.recentMessageHashes.has(msgHash)) {
-                console.log('[FuseConnect v6] Skipping duplicate self-message on channel');
+                console.log('[FuseConnect v7] Skipping duplicate self-message on channel');
                 return;
             }
             // If it IS a channel message and NOT a duplicate, we process it
@@ -889,7 +894,7 @@ class BackgroundService {
         const msgHash = simpleHash(`${message.from}:${message.content}:${Math.floor(message.timestamp / 1000)}`);
         const now = Date.now();
         if (this.recentMessageHashes.has(msgHash)) {
-            console.log('[FuseConnect v6] Skipping duplicate message');
+            console.log('[FuseConnect v7] Skipping duplicate message');
             return;
         }
         // Store hash with timestamp
@@ -1017,7 +1022,7 @@ class BackgroundService {
                         if (err &&
                             !err.message?.includes('Receiving end does not exist') &&
                             !err.message?.includes('Could not establish connection')) {
-                            console.warn(`[FuseConnect v6] Failed to broadcast to tab ${tab.id}:`, err);
+                            console.warn(`[FuseConnect v7] Failed to broadcast to tab ${tab.id}:`, err);
                         }
                     });
                 }
@@ -1585,7 +1590,7 @@ Format as JSON array:
                                         target: { tabId: tabs[0].id },
                                         files: ['content/index.js'],
                                     });
-                                    console.log(`[FuseConnect v6] Content script injected into tab ${tabs[0].id}`);
+                                    console.log(`[FuseConnect v7] Content script injected into tab ${tabs[0].id}`);
                                     // Wait a moment for initialization, then show panel
                                     setTimeout(() => {
                                         if (tabs[0]?.id) {
@@ -1596,7 +1601,7 @@ Format as JSON array:
                                 }
                             }
                             catch (error) {
-                                console.error('[FuseConnect v6] Failed to activate on tab:', error);
+                                console.error('[FuseConnect v7] Failed to activate on tab:', error);
                                 sendResponse({ success: false, error: error.message });
                             }
                         }
@@ -1634,7 +1639,7 @@ Format as JSON array:
                         sendResponse({ success: true });
                     })
                         .catch((error) => {
-                        console.error('[FuseConnect v6] Error injecting message:', error);
+                        console.error('[FuseConnect v7] Error injecting message:', error);
                         sendResponse({ success: false, error: error.message });
                     });
                     return true; // Async response
@@ -1706,23 +1711,23 @@ Format as JSON array:
                             // Fallback: construct from tab ID if not provided
                             if (!senderId && sender.tab?.id) {
                                 senderId = `page-agent-${sender.tab.id}`;
-                                console.log('[FuseConnect v6] Using tab-based senderId:', senderId);
+                                console.log('[FuseConnect v7] Using tab-based senderId:', senderId);
                             }
                             // FIXED: Don't drop messages without senderId - use a safe fallback instead
                             // This ensures CLI agents and other sources still work
                             // The content script's isSelfMessage check will prevent loops
                             if (!senderId) {
                                 senderId = `ai-response-${Date.now()}`;
-                                console.log('[FuseConnect v6] Using generated senderId for anonymous response:', senderId);
+                                console.log('[FuseConnect v7] Using generated senderId for anonymous response:', senderId);
                             }
-                            console.log('[FuseConnect v6] AI Response from agent:', senderId);
+                            console.log('[FuseConnect v7] AI Response from agent:', senderId);
                             // Get channel from message metadata (set by the content script when the user selected it)
                             // This supports per-tab channel selection where each tab maintains its own channel
                             let channel = message.channel || message.metadata?.channel;
                             if (!channel && this.joinedChannels.size > 0) {
                                 // Fallback to first joined channel if no specific channel provided
                                 channel = Array.from(this.joinedChannels)[0];
-                                console.log('[FuseConnect v6] Using fallback channel:', channel);
+                                console.log('[FuseConnect v7] Using fallback channel:', channel);
                             }
                             if (channel) {
                                 // Get platform name for context (inline detection)
@@ -1751,7 +1756,7 @@ Format as JSON array:
                                     responseMetadata.correlationId = message.metadata.correlationId;
                                     responseMetadata.taskId = message.metadata.taskId;
                                     responseMetadata.inResponseTo = message.metadata.inResponseTo;
-                                    console.log('[FuseConnect v6] 🔗 Including correlation in broadcast:', message.metadata.correlationId);
+                                    console.log('[FuseConnect v7] 🔗 Including correlation in broadcast:', message.metadata.correlationId);
                                 }
                                 this.send({
                                     type: 'MESSAGE_SEND',
@@ -1761,7 +1766,7 @@ Format as JSON array:
                                     messageType: 'ai-response',
                                     metadata: responseMetadata,
                                 });
-                                console.log('[FuseConnect v6] AI response broadcast to channel:', {
+                                console.log('[FuseConnect v7] AI response broadcast to channel:', {
                                     channel,
                                     senderId,
                                     platform: platformName,
@@ -1771,13 +1776,13 @@ Format as JSON array:
                             }
                         }
                         else {
-                            console.log('[FuseConnect v6] Skipping duplicate AI response broadcast');
+                            console.log('[FuseConnect v7] Skipping duplicate AI response broadcast');
                         }
                     }
                     sendResponse({ success: true });
                     break;
             }
-            return true;
+            // Explicit cases that need async response already return true themselves.
         });
     }
     /**

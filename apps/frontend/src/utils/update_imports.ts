@@ -1,7 +1,7 @@
 export {}
 import fs from 'fs';
 import path from 'path';
-function updateImports(filename): any {
+function updateImports(filename: any): any {
     const content = fs.readFileSync(filename, 'utf8');
     const replacements = [
         ['from services.core.subscription_service', 'from services.core.subscription_service'],
@@ -17,7 +17,7 @@ function updateImports(filename): any {
     }
     fs.writeFileSync(filename, updatedContent);
 }
-function processDirectory(directory): any {
+function processDirectory(directory: any): any {
     const files = fs.readdirSync(directory, { withFileTypes: true });
     for (const file of files) {
         const fullPath = path.join(directory, file.name);
@@ -32,6 +32,6 @@ function processDirectory(directory): any {
 if (require.main === module) {
     const baseDir = __dirname;
     processDirectory(baseDir);
-    
+
 }
 export {};

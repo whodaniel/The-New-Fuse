@@ -1,7 +1,7 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 /**
- * Fuse Connect v6 - Popup Logic
+ * Fuse Connect v7 - Popup Logic
  */
 
 const NATIVE_HOST_NAME = 'com.thenewfuse.native_host';

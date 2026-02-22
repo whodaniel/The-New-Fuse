@@ -1,0 +1,40 @@
+{
+  "timestamp": "2026-02-22T18:53:17.857Z",
+  "frontend": {
+    "passed": 3,
+    "failed": 2,
+    "errors": [
+      {
+        "test": "type-check",
+        "error": "Timed out: spawnSync /bin/sh ETIMEDOUT"
+      },
+      {
+        "test": "build",
+        "error": "spawnSync /bin/sh ETIMEDOUT"
+      }
+    ]
+  },
+  "backend": {
+    "passed": 3,
+    "failed": 2,
+    "errors": [
+      {
+        "test": "type-check",
+        "error": "Timed out: spawnSync /bin/sh ETIMEDOUT"
+      },
+      {
+        "test": "build",
+        "error": "spawnSync /bin/sh ETIMEDOUT"
+      }
+    ]
+  },
+  "integration": {
+    "passed": 5,
+    "failed": 0,
+    "errors": []
+  },
+  "overall": {
+    "status": "needs-attention",
+    "score": 73
+  }
+}

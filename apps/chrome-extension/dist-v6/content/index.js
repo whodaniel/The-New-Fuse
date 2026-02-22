@@ -3,14 +3,14 @@
 
 ;// ./src/v6/shared/constants.ts
 /**
- * Fuse Connect v6 - Constants and Configuration
+ * Fuse Connect v7 - Constants and Configuration
  */
 // ============================================
 // EXTENSION METADATA
 // ============================================
 const EXTENSION_NAME = 'Fuse Connect';
-const EXTENSION_VERSION = '6.0.0';
-const EXTENSION_ID = 'fuse-connect-v6';
+const EXTENSION_VERSION = '7.0.0';
+const EXTENSION_ID = 'fuse-connect-v7';
 // ============================================
 // NODE ENDPOINTS
 // ============================================
@@ -247,9 +247,9 @@ class TnfTranscriptClient {
 
 ;// ./src/v6/content/adapters/SimpleChatBridge.ts
 /**
- * Fuse Connect v6 - Simple Chat Bridge
+ * Fuse Connect v7 - Simple Chat Bridge
  *
- * NOTE: This file still contains legacy v5 comments, but it is used by v6.
+ * NOTE: This file still contains legacy v5 comments, but it is used by the current extension build.
  *
  * Cloudflare upgrade (2026-02): when a target UI is unreliable (e.g. OpenClaw cloud
  * transcript rendering issues), we can use the TNF Agent Orchestration worker as a
@@ -1260,7 +1260,7 @@ if (typeof globalThis.customElements !== 'undefined' && globalThis.customElement
 
 ;// ./src/v6/content/injectable/FloatingPanel.ts
 /**
- * Fuse Connect v6 - Enhanced Floating Panel
+ * Fuse Connect v7 - Enhanced Floating Panel
  * Fully draggable, resizable, with federation channels and notifications
  */
 const PANEL_MIN_WIDTH = 300;
@@ -1408,10 +1408,10 @@ class EnhancedFloatingPanel {
      */
     inject() {
         // Remove existing
-        document.getElementById('fuse-connect-panel-v6')?.remove();
+        document.getElementById('fuse-connect-panel-v7')?.remove();
         // Create container
         this.container = document.createElement('div');
-        this.container.id = 'fuse-connect-panel-v6';
+        this.container.id = 'fuse-connect-panel-v7';
         this.container.innerHTML = this.render();
         // Inject styles
         this.injectStyles();
@@ -1424,10 +1424,10 @@ class EnhancedFloatingPanel {
      * Inject CSS
      */
     injectStyles() {
-        if (document.getElementById('fuse-connect-styles-v6'))
+        if (document.getElementById('fuse-connect-styles-v7'))
             return;
         const style = document.createElement('style');
-        style.id = 'fuse-connect-styles-v6';
+        style.id = 'fuse-connect-styles-v7';
         style.textContent = this.getStyles();
         document.head.appendChild(style);
     }
@@ -1436,9 +1436,9 @@ class EnhancedFloatingPanel {
      */
     getStyles() {
         return `
-      /* Fuse Connect v6 - Enhanced Panel Styles */
+      /* Fuse Connect v7 - Enhanced Panel Styles */
 
-      #fuse-connect-panel-v6 {
+      #fuse-connect-panel-v7 {
         position: fixed !important;
         z-index: 2147483647 !important;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
@@ -1449,7 +1449,7 @@ class EnhancedFloatingPanel {
         user-select: none !important;
       }
 
-      #fuse-connect-panel-v6 * {
+      #fuse-connect-panel-v7 * {
         box-sizing: border-box !important;
       }
 
@@ -3645,7 +3645,7 @@ class EnhancedFloatingPanel {
             this.healthPollInterval = null;
         }
         this.container?.remove();
-        document.getElementById('fuse-connect-styles-v6')?.remove();
+        document.getElementById('fuse-connect-styles-v7')?.remove();
     }
     /**
     /**
@@ -3804,7 +3804,7 @@ function createEnhancedFloatingPanel(options) {
 
 ;// ./src/v6/content/utils/AccessibilityTree.ts
 /**
- * Fuse Connect v6 - Accessibility Tree Generator
+ * Fuse Connect v7 - Accessibility Tree Generator
  * Generates a structured tree of interactive elements on any page
  * Inspired by Claude extension's accessibility-tree.js
  */
@@ -4286,7 +4286,7 @@ const accessibilityTree = new AccessibilityTreeGenerator();
 
 ;// ./src/v6/content/utils/HumanBehaviorSimulator.ts
 /**
- * Fuse Connect v6 - Human Behavior Simulator
+ * Fuse Connect v7 - Human Behavior Simulator
  *
  * Implements techniques to make browser automation appear more human-like:
  * - Randomized timing and delays
@@ -4720,7 +4720,7 @@ const humanSimulator = new HumanBehaviorSimulator();
 
 ;// ./src/v6/content/utils/CaptchaHandler.ts
 /**
- * Fuse Connect v6 - CAPTCHA Handler
+ * Fuse Connect v7 - CAPTCHA Handler
  *
  * Detects and attempts to handle common CAPTCHA challenges:
  * - reCAPTCHA v2/v3
@@ -5176,7 +5176,7 @@ const captchaHandler = new CaptchaHandler();
 
 ;// ./src/v6/content/index.ts
 /**
- * Fuse Connect v6 - Content Script Entry Point
+ * Fuse Connect v7 - Content Script Entry Point
  *
  * SIMPLIFIED VERSION - Uses SimpleChatBridge for direct Gemini interaction.
  *
@@ -5235,17 +5235,17 @@ class FuseConnectContentScript {
         if (this.isInitialized)
             return;
         this.isInitialized = true;
-        console.debug('[FuseConnect v6] Content script initialized (panel AUTO-OPEN disabled)');
+        console.debug('[FuseConnect v7] Content script initialized (panel AUTO-OPEN disabled)');
         // Auto-open panel disabled by default per user request
         // try {
         //   this.showPanel();
         // } catch (e) {
-        //   console.error('[FuseConnect v6] Failed to auto-open panel:', e);
+        //   console.error('[FuseConnect v7] Failed to auto-open panel:', e);
         // }
         // Initialize the simple chat bridge with callbacks
         simpleChatBridge.init({
             onResponse: (content) => {
-                console.log('[FuseConnect v6] AI Response received, length:', content.length);
+                console.log('[FuseConnect v7] AI Response received, length:', content.length);
                 // Forward to panel
                 if (this.panel) {
                     this.panel.handleMessage({
@@ -5256,7 +5256,7 @@ class FuseConnectContentScript {
                 // FEDERATION IMPROVEMENT: Check for pending request to correlate response
                 const pendingRequest = this.getOldestPendingRequest();
                 if (!this.pageAgentId) {
-                    console.warn('[FuseConnect v6] ⚠️ Page Agent ID missing during response! This may cause message drop.');
+                    console.warn('[FuseConnect v7] ⚠️ Page Agent ID missing during response! This may cause message drop.');
                 }
                 // Get current channel from panel for proper routing
                 const currentChannel = this.panel?.getCurrentChannel() || null;
@@ -5271,7 +5271,7 @@ class FuseConnectContentScript {
                     responseMetadata.correlationId = pendingRequest.correlationId;
                     responseMetadata.taskId = pendingRequest.taskId;
                     responseMetadata.inResponseTo = pendingRequest.from;
-                    console.log('[FuseConnect v6] 🔗 Correlating response to request:', pendingRequest.correlationId);
+                    console.log('[FuseConnect v7] 🔗 Correlating response to request:', pendingRequest.correlationId);
                     this.pendingRequests.delete(pendingRequest.correlationId);
                 }
                 // Forward to background for relay with correlation info
@@ -5297,7 +5297,7 @@ class FuseConnectContentScript {
                 }
             },
             onError: (error) => {
-                console.error('[FuseConnect v6] Chat bridge error:', error);
+                console.error('[FuseConnect v7] Chat bridge error:', error);
             },
         });
         // Check for chat elements periodically
@@ -5327,7 +5327,7 @@ class FuseConnectContentScript {
             const elements = simpleChatBridge.findElements();
             if (elements.isReady && !this.chatReady) {
                 this.chatReady = true;
-                console.log('[FuseConnect v6] Chat is ready!');
+                console.log('[FuseConnect v7] Chat is ready!');
                 // Notify background
                 this.safeSendMessage({
                     type: 'CHAT_DETECTED',
@@ -5340,7 +5340,7 @@ class FuseConnectContentScript {
                 }, (response) => {
                     if (response?.agentId) {
                         this.pageAgentId = response.agentId;
-                        console.log('[FuseConnect v6] Assigned Page Agent ID:', this.pageAgentId);
+                        console.log('[FuseConnect v7] Assigned Page Agent ID:', this.pageAgentId);
                     }
                 });
                 // Update panel if exists
@@ -5396,7 +5396,7 @@ class FuseConnectContentScript {
                 return elements;
             },
         };
-        console.debug('[FuseConnect v6] Debug utils available at window.__FUSE_DEBUG');
+        console.debug('[FuseConnect v7] Debug utils available at window.__FUSE_DEBUG');
     }
     /**
      * Show or create the floating panel
@@ -5428,7 +5428,7 @@ class FuseConnectContentScript {
         }
         this.panel.show();
         this.panelVisible = true;
-        console.log('[FuseConnect v6] Panel shown');
+        console.log('[FuseConnect v7] Panel shown');
     }
     /**
      * Hide the floating panel
@@ -5437,7 +5437,7 @@ class FuseConnectContentScript {
         if (this.panel) {
             this.panel.hide();
             this.panelVisible = false;
-            console.log('[FuseConnect v6] Panel hidden');
+            console.log('[FuseConnect v7] Panel hidden');
         }
     }
     /**
@@ -5628,7 +5628,7 @@ class FuseConnectContentScript {
                             const isBroadcast = msg.to === 'broadcast';
                             const isForMyChannel = !isBroadcast || !messageChannel || !myChannel || messageChannel === myChannel;
                             if (!isForMyChannel) {
-                                console.log('[FuseConnect v6] ⏭️ Skipping message for different channel:', {
+                                console.log('[FuseConnect v7] ⏭️ Skipping message for different channel:', {
                                     messageChannel,
                                     myChannel,
                                     contentPreview: msg.content?.substring(0, 30),
@@ -5643,12 +5643,12 @@ class FuseConnectContentScript {
                             // Handle message injection (works even if panel isn't open)
                             // TARGETED INJECTION: If addressed specifically to this page agent
                             if (this.pageAgentId && msg.to === this.pageAgentId && msg.content) {
-                                console.log('[FuseConnect v6] Injecting targeted message:', msg.content);
+                                console.log('[FuseConnect v7] Injecting targeted message:', msg.content);
                                 this.injectMessage(msg.content).then((success) => {
                                     if (success)
-                                        console.log('[FuseConnect v6] Injection successful');
+                                        console.log('[FuseConnect v7] Injection successful');
                                     else
-                                        console.warn('[FuseConnect v6] Injection failed');
+                                        console.warn('[FuseConnect v7] Injection failed');
                                 });
                             }
                             // CHANNEL BROADCAST INJECTION: If from external agent on same channel
@@ -5657,7 +5657,7 @@ class FuseConnectContentScript {
                                 // The senderId in metadata is more reliable as it's set when the message originates
                                 const senderFromMetadata = msg.metadata?.senderId;
                                 const isStreaming = simpleChatBridge.isStreaming();
-                                console.log('[FuseConnect v6] 🔍 Msg Check:', {
+                                console.log('[FuseConnect v7] 🔍 Msg Check:', {
                                     from: msg.from,
                                     metaSender: senderFromMetadata,
                                     myId: this.pageAgentId,
@@ -5671,11 +5671,12 @@ class FuseConnectContentScript {
                                 const isFromSelf = msg.from === this.pageAgentId ||
                                     senderFromMetadata === this.pageAgentId ||
                                     msg.from === 'You';
+                                const isFromYou = msg.from === 'You';
                                 // Also check browser agent ID if we can get it from storage or background
                                 // This is a safety margin against late pageAgentId assignment
                                 const isExternalAgent = !isFromSelf;
                                 // Debug logging to trace agent identification
-                                console.log('[FuseConnect v6] 📨 Message received:', {
+                                console.log('[FuseConnect v7] 📨 Message received:', {
                                     from: msg.from,
                                     senderId: senderFromMetadata,
                                     myAgentId: this.pageAgentId,
@@ -5689,7 +5690,7 @@ class FuseConnectContentScript {
                                 // - AI responses from OTHER agents SHOULD be injected so our AI can see/respond to them
                                 // - This enables true multi-AI conversation
                                 if (!isExternalAgent) {
-                                    console.log('[FuseConnect v6] ⏭️ Skipping message:', {
+                                    console.log('[FuseConnect v7] ⏭️ Skipping message:', {
                                         from: msg.from,
                                         senderId: senderFromMetadata,
                                         myAgentId: this.pageAgentId,
@@ -5700,13 +5701,13 @@ class FuseConnectContentScript {
                                     // SAFETY CHECK: If AI is actively streaming, DO NOT INJECT IMMEDIATELY.
                                     // Instead, add to queue.
                                     if (isStreaming) {
-                                        console.log('[FuseConnect v6] ⏳ AI is streaming, QUEUING message for later injection:', msg.content.substring(0, 50));
+                                        console.log('[FuseConnect v7] ⏳ AI is streaming, QUEUING message for later injection:', msg.content.substring(0, 50));
                                         this.queueMessage(msg.content, msg.metadata);
                                         return;
                                     }
                                     // This is from an external agent - inject it!
                                     // (Even if it's an AI response - we WANT to inject other AIs' responses)
-                                    console.log('[FuseConnect v6] ✅ Injecting message from external agent:', {
+                                    console.log('[FuseConnect v7] ✅ Injecting message from external agent:', {
                                         from: msg.from,
                                         isAIResponse: msg.messageType === 'ai-response' || msg.metadata?.isAIResponse,
                                         contentPreview: msg.content.substring(0, 50),
@@ -5717,7 +5718,7 @@ class FuseConnectContentScript {
                                         msg.metadata?.taskId ||
                                         msg.metadata?.requiresResponse;
                                     if (isOrchestratorTask) {
-                                        console.log('[FuseConnect v6] 🎯 Orchestrator task detected:', msg.metadata?.taskId);
+                                        console.log('[FuseConnect v7] 🎯 Orchestrator task detected:', msg.metadata?.taskId);
                                         // Register this as a pending request so we can correlate the AI response
                                         this.trackPendingRequest({
                                             correlationId: msg.metadata?.correlationId || msg.id || `req-${Date.now()}`,
@@ -5727,9 +5728,9 @@ class FuseConnectContentScript {
                                     }
                                     this.injectMessage(msg.content).then((success) => {
                                         if (success)
-                                            console.log('[FuseConnect v6] ✅ Injection successful');
+                                            console.log('[FuseConnect v7] ✅ Injection successful');
                                         else
-                                            console.warn('[FuseConnect v6] ⚠️ Injection failed');
+                                            console.warn('[FuseConnect v7] ⚠️ Injection failed');
                                     });
                                 }
                             }
@@ -5788,13 +5789,13 @@ class FuseConnectContentScript {
         });
     }
     async injectMessage(content, metadata) {
-        console.log('[FuseConnect v6] Injecting message:', content.substring(0, 50));
+        console.log('[FuseConnect v7] Injecting message:', content.substring(0, 50));
         const success = await simpleChatBridge.sendMessage(content);
         if (success) {
-            console.log('[FuseConnect v6] Message sent successfully');
+            console.log('[FuseConnect v7] Message sent successfully');
         }
         else {
-            console.error('[FuseConnect v6] Message send failed');
+            console.error('[FuseConnect v7] Message send failed');
         }
         return success;
     }
@@ -5806,7 +5807,7 @@ class FuseConnectContentScript {
             ...request,
             timestamp: Date.now(),
         });
-        console.log('[FuseConnect v6] 📝 Tracking pending request:', request.correlationId);
+        console.log('[FuseConnect v7] 📝 Tracking pending request:', request.correlationId);
         // Clean up old requests (older than 5 minutes)
         const now = Date.now();
         for (const [id, req] of this.pendingRequests) {
@@ -5833,7 +5834,7 @@ class FuseConnectContentScript {
     checkForCaptcha() {
         const detection = captchaHandler.detectCaptcha();
         if (detection.detected) {
-            console.log(`[FuseConnect v6] CAPTCHA detected: ${detection.type} (confidence: ${detection.confidence})`);
+            console.log(`[FuseConnect v7] CAPTCHA detected: ${detection.type} (confidence: ${detection.confidence})`);
             this.safeSendMessage({
                 type: 'CAPTCHA_DETECTED',
                 captcha: {
@@ -5871,14 +5872,14 @@ class FuseConnectContentScript {
             }
             if (simpleChatBridge.isStreaming()) {
                 // Still streaming, wait and retry
-                console.debug('[FuseConnect v6] Queue paused (AI streaming)...');
+                console.debug('[FuseConnect v7] Queue paused (AI streaming)...');
                 setTimeout(process, 1000);
                 return;
             }
             // Ready to inject
             const item = this.injectionQueue.shift();
             if (item) {
-                console.log('[FuseConnect v6] 🚀 Processing queued message:', item.content.substring(0, 30));
+                console.log('[FuseConnect v7] 🚀 Processing queued message:', item.content.substring(0, 30));
                 // If it's an orchestrator task, track it again (timestamp refresh)
                 const isOrchestratorTask = item.metadata?.source === 'orchestrator' ||
                     item.metadata?.taskId ||
@@ -5904,14 +5905,14 @@ class FuseConnectContentScript {
 }
 // Initialize with guard to prevent multiple instances
 if (shouldSkipForPage()) {
-    console.log('[FuseConnect v6] Skipping content script on auth/challenge/IDE page');
+    console.log('[FuseConnect v7] Skipping content script on auth/challenge/IDE page');
 }
 else if (!window.__FUSE_CONNECT_INITIALIZED__) {
     window.__FUSE_CONNECT_INITIALIZED__ = true;
     new FuseConnectContentScript();
 }
 else {
-    console.log('[FuseConnect v6] Content script already initialized, skipping duplicate');
+    console.log('[FuseConnect v7] Content script already initialized, skipping duplicate');
 }
 
 /******/ })()

@@ -1,0 +1,32 @@
+{
+  "timestamp": "2026-02-22T19:08:14.418Z",
+  "frontend": {
+    "passed": 4,
+    "failed": 1,
+    "errors": [
+      {
+        "test": "type-check",
+        "error": "Command failed: pnpm exec tsc --noEmit"
+      }
+    ]
+  },
+  "backend": {
+    "passed": 4,
+    "failed": 1,
+    "errors": [
+      {
+        "test": "type-check",
+        "error": "Command failed: pnpm exec tsc --noEmit"
+      }
+    ]
+  },
+  "integration": {
+    "passed": 5,
+    "failed": 0,
+    "errors": []
+  },
+  "overall": {
+    "status": "healthy",
+    "score": 87
+  }
+}

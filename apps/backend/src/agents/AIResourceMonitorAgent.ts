@@ -96,6 +96,10 @@ export class AIResourceMonitorAgent {
     }
   }
 
+  private async processAnnouncement(update: { text: string; [key: string]: unknown }): Promise<void> {
+    this.logger.log(`📣 AI announcement detected: ${update.text.slice(0, 180)}`);
+  }
+
   /**
    * Check official blogs - Every hour
    */

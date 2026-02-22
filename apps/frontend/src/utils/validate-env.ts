@@ -324,4 +324,5 @@ export function validateEnvironmentOrThrow(): void {
 }
 
 // Export for testing
-export { ENV_VARS, EnvVarConfig };
+export type { EnvVarConfig };
+export { ENV_VARS };

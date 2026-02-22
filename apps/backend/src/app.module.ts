@@ -2,6 +2,7 @@ import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/c
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { JwtModule } from '@nestjs/jwt';
+import type { StringValue } from 'ms';
 import { AGUIModule } from '@the-new-fuse/ag-ui-core';
 import { DrizzleModule } from '@the-new-fuse/database';
 import { ApiModule } from './api/api.module';
@@ -58,7 +59,7 @@ import { UsersModule } from './users/users.module';
         secret:
           configService.get<string>('JWT_SECRET') || 'development-jwt-secret-change-in-production',
         signOptions: {
-          expiresIn: configService.get<string>('JWT_EXPIRES_IN') || '7d',
+          expiresIn: (configService.get<string>('JWT_EXPIRES_IN') || '7d') as StringValue,
           issuer: configService.get<string>('JWT_ISSUER') || 'the-new-fuse',
         },
       }),

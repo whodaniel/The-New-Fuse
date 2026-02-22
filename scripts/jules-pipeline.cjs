@@ -69,6 +69,19 @@ function shSafe(cmd, opts = {}) {
   };
 }
 
+function isManualFrontendViewingTask(task) {
+  const normalized = String(task || '').toLowerCase();
+  const manualIntent =
+    /(manual|manually|visual|visually|look at|view|see|browser|screenshot|screen recording|human qa|click through|ui review|ux review)/;
+  const frontendSurface = /(frontend|ui|ux|page|screen|route|component|website|web app|browser)/;
+  const explicitPhrases =
+    /(manual\s+(frontend|ui|ux|browser|website|testing)|visual\s+(qa|review|check|inspection))/;
+  return (
+    explicitPhrases.test(normalized) ||
+    (manualIntent.test(normalized) && frontendSurface.test(normalized))
+  );
+}
+
 function log(msg) {
   process.stdout.write(msg + '\n');
 }
@@ -459,6 +472,10 @@ async function cmdStart(taskFile) {
   const state = loadState();
 
   for (const task of tasks) {
+    if (isManualFrontendViewingTask(task)) {
+      log(`Skipping blocked task (manual frontend/browser viewing): ${task.slice(0, 80)}...`);
+      continue;
+    }
     log(`Starting: ${task.slice(0, 60)}...`);
     // jules remote new --repo <owner/repo> --session "<description>"
     const result = shSafe(

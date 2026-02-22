@@ -1,0 +1,44 @@
+{
+  "timestamp": "2026-02-22T18:03:01.421Z",
+  "frontend": {
+    "passed": 2,
+    "failed": 3,
+    "errors": [
+      {
+        "test": "type-check",
+        "error": "node:internal/modules/cjs/loader:1424\n  throw err;\n  ^\n\nError: Cannot find module '../lib/cli.js'\nRequire stack:\n- /usr/local/bin/npx\n    at Module._resolveFilename (node:internal/modules/cjs/loader:1421:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)\n    at Module._load (node:internal/modules/cjs/loader:1227:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad"
+      },
+      {
+        "test": "build",
+        "error": "node:internal/modules/cjs/loader:1424\n  throw err;\n  ^\n\nError: Cannot find module '../lib/cli.js'\nRequire stack:\n- /usr/local/bin/npm\n    at Module._resolveFilename (node:internal/modules/cjs/loader:1421:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)\n    at Module._load (node:internal/modules/cjs/loader:1227:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad"
+      },
+      {
+        "test": "critical-files",
+        "error": "Some critical files missing"
+      }
+    ]
+  },
+  "backend": {
+    "passed": 3,
+    "failed": 2,
+    "errors": [
+      {
+        "test": "type-check",
+        "error": "node:internal/modules/cjs/loader:1424\n  throw err;\n  ^\n\nError: Cannot find module '../lib/cli.js'\nRequire stack:\n- /usr/local/bin/npx\n    at Module._resolveFilename (node:internal/modules/cjs/loader:1421:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)\n    at Module._load (node:internal/modules/cjs/loader:1227:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad"
+      },
+      {
+        "test": "build",
+        "error": "node:internal/modules/cjs/loader:1424\n  throw err;\n  ^\n\nError: Cannot find module '../lib/cli.js'\nRequire stack:\n- /usr/local/bin/npm\n    at Module._resolveFilename (node:internal/modules/cjs/loader:1421:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)\n    at Module._load (node:internal/modules/cjs/loader:1227:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad"
+      }
+    ]
+  },
+  "integration": {
+    "passed": 5,
+    "failed": 0,
+    "errors": []
+  },
+  "overall": {
+    "status": "needs-attention",
+    "score": 67
+  }
+}

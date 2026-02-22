@@ -12,6 +12,9 @@
 set -e
 
 # Configuration
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+JULES_GUARD_SCRIPT="$ROOT_DIR/scripts/jules-task-guard.sh"
 TASKS_DIR=".jules/tasks"
 MAX_PARALLEL=${MAX_PARALLEL:-4}
 DRY_RUN=false
@@ -83,6 +86,11 @@ if [ ! -d "$TASKS_DIR" ]; then
   exit 1
 fi
 
+if [ ! -f "$JULES_GUARD_SCRIPT" ]; then
+  echo -e "${RED}Error: Jules guard script missing: $JULES_GUARD_SCRIPT${NC}"
+  exit 1
+fi
+
 # Build list of task files
 TASK_FILES=()
 if [ ${#SPECIFIC_TASKS[@]} -gt 0 ]; then
@@ -140,6 +148,11 @@ submit_task() {
     cmd="$cmd --repo $REPO"
   fi
 
+  if ! bash "$JULES_GUARD_SCRIPT" --text "$task_content" --file "$task_file"; then
+    echo -e "${YELLOW}[SKIPPED POLICY]${NC} $task_name blocked: manual frontend/browser viewing is not routed to Jules"
+    return 0
+  fi
+
   # Submit to Jules
   if $cmd "$task_content" 2>&1; then
     echo -e "${GREEN}[SUCCESS]${NC} $task_name submitted"
@@ -152,7 +165,7 @@ submit_task() {
 
 # Submit tasks with parallelism control
 export -f submit_task
-export DRY_RUN REPO RED GREEN YELLOW BLUE NC
+export DRY_RUN REPO RED GREEN YELLOW BLUE NC JULES_GUARD_SCRIPT
 
 # Using xargs for parallel execution with limit
 printf '%s\n' "${TASK_FILES[@]}" | xargs -P "$MAX_PARALLEL" -I {} bash -c 'submit_task "$@"' _ {}

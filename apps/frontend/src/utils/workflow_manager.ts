@@ -1,17 +1,45 @@
-const logger = new Logger('WorkflowManager');
+const logger = { error: console.error, info: console.log };
+
+export interface WorkflowTemplate {
+    name: string;
+    steps: Array<{
+        name: string;
+        retryPolicy?: { maxAttempts: number; initialDelay: number; backoffMultiplier: number; };
+    }>;
+}
+
+export interface WorkflowStatus {
+    id: string;
+    templateName: string;
+    status: string;
+    progress: number;
+    startTime: string;
+    endTime?: string;
+    error?: string;
+    currentStep?: string;
+    metadata: {
+        parameters: any;
+        template: string;
+    };
+}
+
 export class WorkflowManager {
-    constructor(commBus) {
+    workflows: Map<string, WorkflowStatus>;
+    templates: Map<string, WorkflowTemplate>;
+    commBus: any;
+
+    constructor(commBus: any) {
         this.workflows = new Map();
         this.templates = new Map();
         this.commBus = commBus;
     }
-    async createWorkflow(templateName, parameters) {
+    async createWorkflow(templateName: string, parameters: any) {
         const template = this.templates.get(templateName);
         if (!template) {
             throw new Error(`Template not found: ${templateName}`);
         }
         const workflowId = this.generateWorkflowId();
-        const status = {
+        const status: WorkflowStatus = {
             id: workflowId,
             templateName,
             status: 'pending',
@@ -27,7 +55,7 @@ export class WorkflowManager {
             await this.startWorkflow(workflowId, template, parameters);
             return workflowId;
         }
-        catch (error) {
+        catch (error: any) {
             const errorMessage = error instanceof Error ? error.message : String(error);
             logger.error(`Failed to start workflow ${workflowId}: ${errorMessage}`);
             status.status = 'failed';
@@ -36,7 +64,7 @@ export class WorkflowManager {
             throw error;
         }
     }
-    async cancelWorkflow(workflowId) {
+    async cancelWorkflow(workflowId: string) {
         const workflow = this.workflows.get(workflowId);
         if (!workflow) {
             throw new Error(`Workflow not found: ${workflowId}`);
@@ -53,20 +81,20 @@ export class WorkflowManager {
         await this.commBus.publish('workflow.cancelled', event);
         return true;
     }
-    getWorkflowStatus(workflowId) {
+    getWorkflowStatus(workflowId: string) {
         const workflow = this.workflows.get(workflowId);
         if (!workflow) {
             throw new Error(`Workflow not found: ${workflowId}`);
         }
         return Object.assign({}, workflow);
     }
-    registerTemplate(template) {
+    registerTemplate(template: WorkflowTemplate) {
         this.templates.set(template.name, template);
     }
     generateWorkflowId() {
         return `wf_${Math.random().toString(36).slice(2)}_${Date.now()}`;
     }
-    async startWorkflow(workflowId, template, parameters) {
+    async startWorkflow(workflowId: string, template: WorkflowTemplate, parameters: any) {
         const workflow = this.workflows.get(workflowId);
         if (!workflow) {
             throw new Error(`Workflow not found: ${workflowId}`);
@@ -86,7 +114,7 @@ export class WorkflowManager {
             };
             await this.commBus.publish('workflow.completed', completedEvent);
         }
-        catch (error) {
+        catch (error: any) {
             const errorMessage = error instanceof Error ? error.message : String(error);
             workflow.status = 'failed';
             workflow.error = errorMessage;
@@ -100,8 +128,8 @@ export class WorkflowManager {
             throw error;
         }
     }
-    async executeStep(step, parameters) {
-        const execute = async (attempt) => {
+    async executeStep(step: any, parameters: any) {
+        const execute = async (attempt: number): Promise<void> => {
             try {
                 const startEvent = {
                     step: step.name,
@@ -116,7 +144,7 @@ export class WorkflowManager {
                 };
                 await this.commBus.publish('workflow.step.completed', completeEvent);
             }
-            catch (error) {
+            catch (error: any) {
                 const errorMessage = error instanceof Error ? error.message : String(error);
                 const failEvent = {
                     step: step.name,
@@ -136,3 +164,4 @@ export class WorkflowManager {
         await execute(1);
     }
 }
+

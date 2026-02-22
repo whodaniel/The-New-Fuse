@@ -241,7 +241,7 @@ export class AgentController {
       throw new HttpException('Agent not found', HttpStatus.NOT_FOUND);
     }
 
-    return drizzleAgentRepository.update(id, { status: status as any });
+    return drizzleAgentRepository.update(id, { status: status as any } as any);
   }
 
   @Delete(':id')

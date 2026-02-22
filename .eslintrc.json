@@ -114,11 +114,29 @@
   },
   "overrides": [
     {
-      "files": ["*.js", "*.cjs"],
+      "files": ["*.js"],
       "parser": "espree",
       "parserOptions": {
         "ecmaVersion": 2021,
         "sourceType": "module"
+      },
+      "env": {
+        "node": true
+      },
+      "rules": {
+        "@typescript-eslint/no-var-requires": "off",
+        "@typescript-eslint/no-floating-promises": "off",
+        "@typescript-eslint/await-thenable": "off",
+        "@typescript-eslint/no-misused-promises": "off",
+        "@typescript-eslint/consistent-type-imports": "off"
+      }
+    },
+    {
+      "files": ["*.cjs"],
+      "parser": "espree",
+      "parserOptions": {
+        "ecmaVersion": 2021,
+        "sourceType": "script"
       },
       "env": {
         "node": true

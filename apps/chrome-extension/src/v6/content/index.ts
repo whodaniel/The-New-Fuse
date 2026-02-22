@@ -597,6 +597,8 @@ class FuseConnectContentScript {
                   senderFromMetadata === this.pageAgentId ||
                   msg.from === 'You';
 
+                const isFromYou = msg.from === 'You';
+
                 // Also check browser agent ID if we can get it from storage or background
                 // This is a safety margin against late pageAgentId assignment
                 const isExternalAgent = !isFromSelf;

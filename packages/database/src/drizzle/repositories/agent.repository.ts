@@ -47,11 +47,11 @@ export class DrizzleAgentRepository {
   /**
    * Find agent by ID (Safe: Requires userId)
    */
-  async findById(id: string, userId: string): Promise<Agent | null> {
+  async findById(id: string, userId?: string): Promise<Agent | null> {
     const [agent] = await db
       .select()
       .from(agents)
-      .where(and(eq(agents.id, id), eq(agents.userId, userId), isNull(agents.deletedAt)));
+      .where(and(eq(agents.id, id), userId ? eq(agents.userId, userId) : undefined, isNull(agents.deletedAt)));
 
     return agent ?? null;
   }
@@ -157,11 +157,15 @@ export class DrizzleAgentRepository {
   /**
    * Update an agent
    */
-  async update(id: string, userId: string, data: Partial<NewAgent>): Promise<Agent | null> {
+  async update(id: string, userIdOrData: string | Partial<NewAgent>, dataArg?: Partial<NewAgent>): Promise<Agent | null> {
+    const hasScopedUser = typeof userIdOrData === 'string';
+    const userId = hasScopedUser ? userIdOrData : undefined;
+    const data = (hasScopedUser ? dataArg : userIdOrData) as Partial<NewAgent>;
+
     const [agent] = await db
       .update(agents)
       .set({ ...data, updatedAt: new Date() })
-      .where(and(eq(agents.id, id), eq(agents.userId, userId)))
+      .where(and(eq(agents.id, id), userId ? eq(agents.userId, userId) : undefined))
       .returning();
 
     return agent ?? null;
@@ -170,11 +174,11 @@ export class DrizzleAgentRepository {
   /**
    * Soft delete an agent
    */
-  async softDelete(id: string, userId: string): Promise<boolean> {
+  async softDelete(id: string, userId?: string): Promise<boolean> {
     const result = await db
       .update(agents)
       .set({ deletedAt: new Date(), updatedAt: new Date() })
-      .where(and(eq(agents.id, id), eq(agents.userId, userId)))
+      .where(and(eq(agents.id, id), userId ? eq(agents.userId, userId) : undefined))
       .returning();
 
     return result.length > 0;
@@ -183,10 +187,10 @@ export class DrizzleAgentRepository {
   /**
    * Hard delete an agent (use with caution)
    */
-  async hardDelete(id: string, userId: string): Promise<boolean> {
+  async hardDelete(id: string, userId?: string): Promise<boolean> {
     const result = await db
       .delete(agents)
-      .where(and(eq(agents.id, id), eq(agents.userId, userId)))
+      .where(and(eq(agents.id, id), userId ? eq(agents.userId, userId) : undefined))
       .returning();
     return result.length > 0;
   }
@@ -454,6 +458,90 @@ export class DrizzleAgentRepository {
 
     const existingNames = new Set(results.map((r) => r.name));
     return capabilityNames.filter((name) => !existingNames.has(name));
+  }
+
+  // Compatibility methods for legacy callers (migrated code paths)
+  async findByStatus(status: string, userId?: string): Promise<Agent[]> {
+    return db
+      .select()
+      .from(agents)
+      .where(
+        and(eq(agents.status, status as any), userId ? eq(agents.userId, userId) : undefined, isNull(agents.deletedAt))
+      )
+      .orderBy(desc(agents.createdAt));
+  }
+
+  async findByNameAndUserId(name: string, userId: string): Promise<Agent | null> {
+    const [agent] = await db
+      .select()
+      .from(agents)
+      .where(and(eq(agents.name, name), eq(agents.userId, userId), isNull(agents.deletedAt)))
+      .limit(1);
+    return agent ?? null;
+  }
+
+  async findWithPagination(
+    userId: string,
+    page = 1,
+    limit = 20
+  ): Promise<{ data: Agent[]; total: number }> {
+    const offset = (page - 1) * limit;
+    const [data, countResult] = await Promise.all([
+      db
+        .select()
+        .from(agents)
+        .where(and(eq(agents.userId, userId), isNull(agents.deletedAt)))
+        .orderBy(desc(agents.createdAt))
+        .offset(offset)
+        .limit(limit),
+      db
+        .select({ count: sql<number>`cast(count(*) as integer)` })
+        .from(agents)
+        .where(and(eq(agents.userId, userId), isNull(agents.deletedAt))),
+    ]);
+
+    return { data, total: countResult[0]?.count ?? 0 };
+  }
+
+  async findByCapability(capability: string, userId: string): Promise<Agent[]> {
+    const searchPattern = `%${capability}%`;
+    return db
+      .select()
+      .from(agents)
+      .where(
+        and(eq(agents.userId, userId), like(agents.capabilities as any, searchPattern), isNull(agents.deletedAt))
+      )
+      .orderBy(desc(agents.createdAt));
+  }
+
+  async findByStatusAndUserId(status: string, userId: string): Promise<Agent[]> {
+    return this.findByStatus(status, userId);
+  }
+
+  async updateStatus(id: string, status: string, userId?: string): Promise<Agent | null> {
+    return this.update(id, userId ?? { status: status as any }, userId ? { status: status as any } : undefined);
+  }
+
+  async searchAgents(
+    userId: string,
+    filters: { name?: string; type?: string; status?: string; capability?: string } = {}
+  ): Promise<Agent[]> {
+    let whereClause = and(eq(agents.userId, userId), isNull(agents.deletedAt));
+
+    if (filters.name) {
+      whereClause = and(whereClause, like(agents.name, `%${filters.name}%`));
+    }
+    if (filters.type) {
+      whereClause = and(whereClause, eq(agents.type, filters.type as any));
+    }
+    if (filters.status) {
+      whereClause = and(whereClause, eq(agents.status, filters.status as any));
+    }
+    if (filters.capability) {
+      whereClause = and(whereClause, like(agents.capabilities as any, `%${filters.capability}%`));
+    }
+
+    return db.select().from(agents).where(whereClause).orderBy(desc(agents.createdAt));
   }
 }
 

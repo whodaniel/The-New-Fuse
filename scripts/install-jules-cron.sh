@@ -4,6 +4,9 @@ set -euo pipefail
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
 
+echo "Note: cron can fail on macOS with 'Operation not permitted' for Desktop-protected paths."
+echo "Recommended: pnpm run jules:supervisor:start (or migrate with jules:supervisor:migrate-from-cron)."
+
 INTERVAL_MINUTES="${INTERVAL_MINUTES:-15}"
 TASK_FILE="${TASK_FILE:-}"
 
@@ -27,4 +30,3 @@ rm -f "$TMP_CRON"
 
 echo "Installed cron entry:"
 echo "$CRON_LINE"
-

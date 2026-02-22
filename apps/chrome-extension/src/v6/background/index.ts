@@ -829,10 +829,15 @@ class BackgroundService {
 
       case 'CHANNEL_LIST':
         const channels = (message.payload as any).channels || [];
-        this.channels.clear();
-        channels.forEach((ch: FederationChannel) => this.channels.set(ch.id, ch));
-        this.broadcastToTabs({ type: 'CHANNELS_UPDATE', channels });
-        this.saveChannels();
+        // Only update with new channels, do not clear locally saved ones if relay sends empty list
+        if (channels.length > 0) {
+          channels.forEach((ch: FederationChannel) => this.channels.set(ch.id, ch));
+          this.broadcastToTabs({
+            type: 'CHANNELS_UPDATE',
+            channels: Array.from(this.channels.values()),
+          });
+          this.saveChannels();
+        }
         break;
 
       case 'CHANNEL_MESSAGE':
@@ -2010,7 +2015,7 @@ Format as JSON array:
           break;
       }
 
-      return true;
+      // Explicit cases that need async response already return true themselves.
     });
   }
 
