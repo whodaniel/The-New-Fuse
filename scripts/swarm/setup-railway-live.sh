@@ -7,6 +7,10 @@ SEARXNG_SERVICE="${RAILWAY_SEARXNG_SERVICE:-searxng}"
 SEARXNG_IMAGE="${RAILWAY_SEARXNG_IMAGE:-searxng/searxng:latest}"
 TAVILY_API_KEY="${TAVILY_API_KEY:-}"
 EXA_API_KEY="${EXA_API_KEY:-}"
+CRAWL4AI_ENABLED="${CRAWL4AI_ENABLED:-}"
+CRAWL4AI_MAX_URLS="${CRAWL4AI_MAX_URLS:-}"
+CRAWL4AI_MAX_CHARS="${CRAWL4AI_MAX_CHARS:-}"
+CRAWL4AI_TIMEOUT_MS="${CRAWL4AI_TIMEOUT_MS:-}"
 
 echo "🚄 [TNF Railway Setup] Configuring live swarm stack in Railway..."
 echo "   Environment: $ENVIRONMENT"
@@ -106,6 +110,30 @@ if [ -n "$EXA_API_KEY" ]; then
       "EXA_API_KEY=$EXA_API_KEY" \
       "SCOUT_PROVIDER=auto" \
       >/dev/null 2>&1; then
+      echo "   ✅ Updated $svc"
+    else
+      echo "   ⚠️ Skipped $svc (not found or no access)"
+    fi
+  done
+fi
+
+if [ -n "$CRAWL4AI_ENABLED" ] || [ -n "$CRAWL4AI_MAX_URLS" ] || [ -n "$CRAWL4AI_MAX_CHARS" ] || [ -n "$CRAWL4AI_TIMEOUT_MS" ]; then
+  echo "🔧 Setting Crawl4AI vars on runner services..."
+  for svc in "${RUNNER_SERVICES[@]}"; do
+    set_cmd=(railway variable set -s "$svc" -e "$ENVIRONMENT")
+    if [ -n "$CRAWL4AI_ENABLED" ]; then
+      set_cmd+=("CRAWL4AI_ENABLED=$CRAWL4AI_ENABLED")
+    fi
+    if [ -n "$CRAWL4AI_MAX_URLS" ]; then
+      set_cmd+=("CRAWL4AI_MAX_URLS=$CRAWL4AI_MAX_URLS")
+    fi
+    if [ -n "$CRAWL4AI_MAX_CHARS" ]; then
+      set_cmd+=("CRAWL4AI_MAX_CHARS=$CRAWL4AI_MAX_CHARS")
+    fi
+    if [ -n "$CRAWL4AI_TIMEOUT_MS" ]; then
+      set_cmd+=("CRAWL4AI_TIMEOUT_MS=$CRAWL4AI_TIMEOUT_MS")
+    fi
+    if "${set_cmd[@]}" >/dev/null 2>&1; then
       echo "   ✅ Updated $svc"
     else
       echo "   ⚠️ Skipped $svc (not found or no access)"

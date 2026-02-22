@@ -28,8 +28,8 @@ export * from './repositories';
 export * from './compatibility';
 
 // Export DatabaseService (unified database access layer)
-// DrizzleService is an alias for backwards compatibility
-export { DatabaseService, DrizzleService } from './database.service';
+// DrizzleService is exported from drizzle.module above for backwards compatibility
+export { DatabaseService } from './database.service';
 
 // Re-export useful Drizzle utilities
 export {

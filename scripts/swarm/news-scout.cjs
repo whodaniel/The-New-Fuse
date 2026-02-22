@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { spawnSync } = require('child_process');
 const cheerio = require('cheerio');
 
 function loadEnvFile(filePath) {
@@ -49,6 +50,10 @@ const SEARXNG_NEWS_ENGINES = process.env.SEARXNG_NEWS_ENGINES || '';
 const TAVILY_API_KEY = process.env.TAVILY_API_KEY;
 const TAVILY_SEARCH_DEPTH = process.env.TAVILY_SEARCH_DEPTH || 'basic';
 const EXA_API_KEY = process.env.EXA_API_KEY;
+const CRAWL4AI_ENABLED = String(process.env.CRAWL4AI_ENABLED || '').toLowerCase() === 'true';
+const CRAWL4AI_MAX_URLS = Number.parseInt(process.env.CRAWL4AI_MAX_URLS || '5', 10);
+const CRAWL4AI_PYTHON_BIN = process.env.CRAWL4AI_PYTHON_BIN || 'python3';
+const CRAWL4AI_SCRIPT_PATH = path.resolve(__dirname, './crawl4ai_enrich.py');
 const SEARCH_QUERIES = [
   'new free LLM API release',
   'open source LLM model release',
@@ -145,6 +150,47 @@ async function fetchLiveFindings() {
   }
 
   return fetchSearxngFindings();
+}
+
+function enrichFindingsWithCrawl4AI(findings) {
+  if (!CRAWL4AI_ENABLED) return findings;
+  if (!Array.isArray(findings) || findings.length === 0) return findings;
+
+  const payload = findings.slice(0, Math.max(1, CRAWL4AI_MAX_URLS));
+  const result = spawnSync(CRAWL4AI_PYTHON_BIN, [CRAWL4AI_SCRIPT_PATH], {
+    input: JSON.stringify(payload),
+    encoding: 'utf8',
+    env: process.env,
+    maxBuffer: 4 * 1024 * 1024,
+  });
+
+  if (result.error) {
+    console.warn(`⚠️ Crawl4AI enrich skipped: ${result.error.message}`);
+    return findings;
+  }
+  if (result.status !== 0) {
+    const errorMessage = (result.stderr || '').trim() || `exit code ${result.status}`;
+    console.warn(`⚠️ Crawl4AI enrich failed: ${errorMessage}`);
+    return findings;
+  }
+
+  try {
+    const enrichedSubset = JSON.parse(result.stdout || '[]');
+    if (!Array.isArray(enrichedSubset) || enrichedSubset.length === 0) return findings;
+
+    const byLink = new Map(enrichedSubset.filter((x) => x?.link).map((x) => [x.link, x]));
+    return findings.map((item) => {
+      const enriched = byLink.get(item.link);
+      if (!enriched) return item;
+      return {
+        ...item,
+        details: enriched.details || item.details,
+      };
+    });
+  } catch (error) {
+    console.warn(`⚠️ Crawl4AI enrich parse failed: ${error.message}`);
+    return findings;
+  }
 }
 
 async function fetchExaFindings() {
@@ -327,7 +373,8 @@ async function runScout() {
     process.exit(1);
   }
 
-  const news = await fetchLiveFindings();
+  const liveFindings = await fetchLiveFindings();
+  const news = enrichFindingsWithCrawl4AI(liveFindings);
   if (news.length === 0) {
     console.warn('⚠️ No live findings returned by SearXNG.');
     await client.cleanup();

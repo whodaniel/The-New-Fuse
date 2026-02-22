@@ -74,6 +74,32 @@ Provider behavior:
 - `SCOUT_PROVIDER=searxng`: SearXNG only
 - `SCOUT_PROVIDER=auto`: Exa -> Tavily -> SearXNG fallback
 
+### Crawl4AI Enrichment (Optional)
+
+Scout can enrich result details by crawling the returned URLs with Crawl4AI.
+This does not replace provider search; it post-processes fetched links.
+
+1. Install dependency in the runtime where `news-scout.cjs` executes:
+
+```bash
+python3 -m pip install crawl4ai
+```
+
+2. Enable env vars:
+
+```bash
+export CRAWL4AI_ENABLED=true
+export CRAWL4AI_MAX_URLS=5
+export CRAWL4AI_MAX_CHARS=2000
+export CRAWL4AI_TIMEOUT_MS=25000
+```
+
+3. For Railway setup propagation, export the same vars before:
+
+```bash
+pnpm run swarm:setup
+```
+
 Preflight provider test:
 
 ```bash
