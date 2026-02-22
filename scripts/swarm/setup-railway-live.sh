@@ -6,6 +6,8 @@ RUNNER_SERVICES_CSV="${RAILWAY_RUNNER_SERVICES:-api3,api,backend}"
 SEARXNG_SERVICE="${RAILWAY_SEARXNG_SERVICE:-searxng}"
 SEARXNG_IMAGE="${RAILWAY_SEARXNG_IMAGE:-searxng/searxng:latest}"
 TAVILY_API_KEY="${TAVILY_API_KEY:-}"
+EXA_API_KEY="${EXA_API_KEY:-}"
+PERPLEXITY_API_KEY="${PERPLEXITY_API_KEY:-}"
 
 echo "🚄 [TNF Railway Setup] Configuring live swarm stack in Railway..."
 echo "   Environment: $ENVIRONMENT"
@@ -98,6 +100,34 @@ if [ -n "$TAVILY_API_KEY" ]; then
   done
 fi
 
+if [ -n "$EXA_API_KEY" ]; then
+  echo "🔧 Setting EXA_API_KEY on runner services..."
+  for svc in "${RUNNER_SERVICES[@]}"; do
+    if railway variable set -s "$svc" -e "$ENVIRONMENT" \
+      "EXA_API_KEY=$EXA_API_KEY" \
+      "SCOUT_PROVIDER=auto" \
+      >/dev/null 2>&1; then
+      echo "   ✅ Updated $svc"
+    else
+      echo "   ⚠️ Skipped $svc (not found or no access)"
+    fi
+  done
+fi
+
+if [ -n "$PERPLEXITY_API_KEY" ]; then
+  echo "🔧 Setting PERPLEXITY_API_KEY on runner services..."
+  for svc in "${RUNNER_SERVICES[@]}"; do
+    if railway variable set -s "$svc" -e "$ENVIRONMENT" \
+      "PERPLEXITY_API_KEY=$PERPLEXITY_API_KEY" \
+      "SCOUT_PROVIDER=auto" \
+      >/dev/null 2>&1; then
+      echo "   ✅ Updated $svc"
+    else
+      echo "   ⚠️ Skipped $svc (not found or no access)"
+    fi
+  done
+fi
+
 if ! railway variable list -s Redis -e "$ENVIRONMENT" -k 2>/dev/null | grep -q '^REDIS_PUBLIC_URL='; then
   echo "❌ REDIS_PUBLIC_URL missing on Railway Redis service."
   echo "   Ensure the Redis plugin/service is running."
@@ -110,4 +140,4 @@ echo "   SearXNG service: $SEARXNG_SERVICE"
 echo "   SearXNG URL: $SEARXNG_BASE_URL"
 echo ""
 echo "Next:"
-echo "  pnpm run swarm:supercycle:railway"
+echo "  pnpm run swarm:supercycle:live"

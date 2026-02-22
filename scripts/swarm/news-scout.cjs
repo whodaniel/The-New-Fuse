@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const cheerio = require('cheerio');
 
 function loadEnvFile(filePath) {
   if (!fs.existsSync(filePath)) return;
@@ -35,7 +36,7 @@ const { RedisAgentClient } = require('../../packages/tnf-cli/dist/index');
 
 /**
  * AI News Scout Script (v3.0 - ZERO MOCKS)
- * 
+ *
  * Objectives:
  * 1. Pull real market intelligence from SearXNG Search API.
  * 2. Generate a markdown report.
@@ -49,6 +50,7 @@ const PERPLEXITY_API_KEY = process.env.PERPLEXITY_API_KEY;
 const PERPLEXITY_MODEL = process.env.PERPLEXITY_MODEL || 'sonar';
 const TAVILY_API_KEY = process.env.TAVILY_API_KEY;
 const TAVILY_SEARCH_DEPTH = process.env.TAVILY_SEARCH_DEPTH || 'basic';
+const EXA_API_KEY = process.env.EXA_API_KEY;
 const SEARCH_QUERIES = [
   'new free LLM API release',
   'open source LLM model release',
@@ -85,10 +87,12 @@ function buildSearxngSearchUrl(query) {
   }
 
   const base = new URL(SEARXNG_BASE_URL);
-  const searchPath = base.pathname.endsWith('/search') ? base.pathname : `${base.pathname.replace(/\/$/, '')}/search`;
+  const searchPath = base.pathname.endsWith('/search')
+    ? base.pathname
+    : `${base.pathname.replace(/\/$/, '')}/search`;
   base.pathname = searchPath;
   base.searchParams.set('q', query);
-  base.searchParams.set('format', 'json');
+  base.searchParams.set('format', 'html');
   base.searchParams.set('time_range', 'day');
   base.searchParams.set('categories', 'general,news');
   base.searchParams.set('language', 'en-US');
@@ -101,6 +105,13 @@ function buildSearxngSearchUrl(query) {
 }
 
 async function fetchLiveFindings() {
+  if (SCOUT_PROVIDER === 'exa') {
+    if (!EXA_API_KEY) {
+      throw new Error('EXA_API_KEY is required when SCOUT_PROVIDER=exa');
+    }
+    return fetchExaFindings();
+  }
+
   if (SCOUT_PROVIDER === 'perplexity') {
     if (!PERPLEXITY_API_KEY) {
       throw new Error('PERPLEXITY_API_KEY is required when SCOUT_PROVIDER=perplexity');
@@ -119,7 +130,15 @@ async function fetchLiveFindings() {
     return fetchTavilyFindings();
   }
 
-  // auto
+  // auto: highest priority is Exa, then Perplexity, then Tavily, then SearXNG
+  if (EXA_API_KEY) {
+    try {
+      return await fetchExaFindings();
+    } catch (error) {
+      console.warn('⚠️ Exa scout failed:', error.message);
+    }
+  }
+
   if (PERPLEXITY_API_KEY) {
     try {
       return await fetchPerplexityFindings();
@@ -137,6 +156,66 @@ async function fetchLiveFindings() {
   }
 
   return fetchSearxngFindings();
+}
+
+async function fetchExaFindings() {
+  if (!EXA_API_KEY) {
+    throw new Error('EXA_API_KEY is not set');
+  }
+
+  const aggregated = [];
+  for (const q of SEARCH_QUERIES) {
+    const response = await fetch('https://api.exa.ai/search', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'x-api-key': EXA_API_KEY,
+      },
+      body: JSON.stringify({
+        query: q,
+        category: 'news',
+        type: 'auto',
+        num_results: 6,
+        contents: {
+          text: {
+            max_characters: 2000,
+          },
+        },
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Exa API failed for "${q}" (${response.status})`);
+    }
+
+    const json = await response.json();
+    const results = Array.isArray(json?.results) ? json.results : [];
+    for (const item of results) {
+      if (!item?.url || !item?.title) continue;
+      aggregated.push({
+        title: String(item.title).trim(),
+        source: normalizeSource(item.url),
+        threat: classifyImpact(item.title || '', item.text || ''),
+        link: String(item.url).trim(),
+        details:
+          String(item.text || 'No summary provided by source.')
+            .substring(0, 300)
+            .trim() + '...',
+      });
+    }
+  }
+
+  const deduped = [];
+  const seen = new Set();
+  for (const item of aggregated) {
+    const key = `${item.title}::${item.link}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    deduped.push(item);
+  }
+
+  return deduped.slice(0, 20);
 }
 
 async function fetchSearxngFindings() {
@@ -157,8 +236,19 @@ async function fetchSearxngFindings() {
       throw new Error(`SearXNG API failed for query "${q}" (${response.status})`);
     }
 
-    const json = await response.json();
-    const results = json?.results || [];
+    const html = await response.text();
+    const $ = cheerio.load(html);
+    const results = [];
+
+    $('.result:not(.result-images)').each((i, el) => {
+      const title = $(el).find('h3 a').text();
+      const url = $(el).find('h3 a').attr('href');
+      const content = $(el).find('.content').text();
+      if (title && url) {
+        results.push({ title, url, content });
+      }
+    });
+
     for (const result of results) {
       if (!result?.title || !result?.url) continue;
       allItems.push({
@@ -340,7 +430,7 @@ async function runScout() {
   markdown += `*Generated at: ${timestamp}*\n\n`;
   markdown += `## 🚀 Latest Verified Trends\n\n`;
 
-  news.forEach(item => {
+  news.forEach((item) => {
     markdown += `### ${item.title}\n`;
     markdown += `- **Source**: ${item.source}\n`;
     markdown += `- **Impact**: ${item.threat}\n`;
@@ -350,12 +440,12 @@ async function runScout() {
   });
 
   markdown += `\n## 🎯 Swarm Action Items\n\n`;
-  
+
   for (const item of news) {
     if (item.threat === 'High' || item.threat === 'Medium') {
       const taskTitle = `Assimilation: ${item.title}`;
       markdown += `- [ ] **PRIORITY**: ${taskTitle}\n`;
-      
+
       if (client.publisher) {
         console.log(`📢 Signaling Swarm: Dispatching task "${taskTitle}"`);
         const taskPayload = {
@@ -367,10 +457,10 @@ async function runScout() {
           source: 'news-scout',
           itinerary: {
             lane: 'realtime_broker_routing',
-            horizon: 'realtime'
-          }
+            horizon: 'realtime',
+          },
         };
-        
+
         await client.publisher.lpush('tnf:master:tasks:planning', JSON.stringify(taskPayload));
         await client.publisher.lpush(
           'tnf:master:logs',
@@ -392,11 +482,11 @@ async function runScout() {
 
   fs.writeFileSync(REPORT_PATH, markdown);
   console.log(`✅ News Scout: Real report written to ${REPORT_PATH}`);
-  
+
   if (client) await client.cleanup();
 }
 
-runScout().catch(err => {
+runScout().catch((err) => {
   console.error('❌ News Scout failed:', err);
   process.exit(1);
 });

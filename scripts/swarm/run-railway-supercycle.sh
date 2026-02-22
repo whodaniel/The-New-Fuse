@@ -62,13 +62,12 @@ for svc in "${CANDIDATES[@]}"; do
     curl -fsS "https://$RUNNER_PUBLIC_DOMAIN/" >/dev/null 2>&1 || true
   fi
 
-  for attempt in 1 2 3; do
+  for attempt in 1; do
     if railway ssh -s "$svc" -e "$ENVIRONMENT" "$REMOTE_CMD"; then
       echo "✅ Supercycle executed successfully on $svc"
       exit 0
     fi
-    echo "⏳ SSH attempt $attempt on $svc failed; retrying in 5s..."
-    sleep 5
+    echo "⏳ SSH attempt $attempt on $svc failed..."
   done
 done
 
