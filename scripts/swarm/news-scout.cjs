@@ -1,22 +1,21 @@
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
 const { RedisAgentClient } = require('../../packages/tnf-cli/dist/index');
 
 /**
- * AI News Scout Script (v2.0 - Flywheel Integrated)
+ * AI News Scout Script (v3.0 - ZERO MOCKS)
  * 
  * Objectives:
- * 1. Search for latest AI news and competitor trends.
+ * 1. Read real market intelligence from 'scout_findings.json'.
  * 2. Generate a markdown report.
- * 3. Dispatch real tasks to Continuous Improver via Redis.
+ * 3. Dispatch real tasks to the swarm.
  */
 
+const FINDINGS_PATH = path.resolve(__dirname, '../../.agent/landscape/scout_findings.json');
 const REPORT_PATH = path.resolve(__dirname, '../../.agent/landscape/DAILY_NEWS.md');
-const API_KEY = process.env.BRAVE_API_KEY;
 
 async function runScout() {
-  console.log('🕵️ News Scout: Scanning the AI horizon...');
+  console.log('🕵️ News Scout: Syncing latest market intelligence...');
 
   const client = new RedisAgentClient();
   try {
@@ -26,39 +25,29 @@ async function runScout() {
     console.warn('⚠️ Redis not available. Running in offline reporting mode.');
   }
 
-  let news = [];
-
-  if (API_KEY) {
-    console.log('Using Brave Search API for real-time monitoring...');
-    // Real search logic would go here
-    news = [
-      { title: "WarpOS announces native sandboxing for agent swarms", source: "Warp News", threat: "High", link: "https://warpos.ai/blog/sandboxing" },
-      { title: "DeepSeek-V4 releases with 1M context window", source: "HuggingFace", threat: "Medium", link: "https://huggingface.co/deepseek-ai" }
-    ];
-  } else {
-    console.log('⚠️ BRAVE_API_KEY not set. Using historical/mock trend data.');
-    news = [
-      { title: "Competitor Analysis: WarpOS gaining traction in agentic UI", source: "Market Intel", threat: "High" },
-      { title: "New Agent Framework 'Claw' standardizes inter-LLM comms", source: "GitHub Trends", threat: "Medium" },
-      { title: "Autonomous DevOps: The rise of self-healing CI/CD", source: "DevOps Weekly", threat: "Low" }
-    ];
+  if (!fs.existsSync(FINDINGS_PATH)) {
+    console.error(`❌ Findings file not found at ${FINDINGS_PATH}.`);
+    process.exit(1);
   }
+
+  const news = JSON.parse(fs.readFileSync(FINDINGS_PATH, 'utf-8'));
 
   // Generate Report
   const timestamp = new Date().toISOString();
   let markdown = `# AI Landscape Report - ${new Date().toLocaleDateString()}\n\n`;
   markdown += `*Generated at: ${timestamp}*\n\n`;
-  markdown += `## 🚀 Latest Trends\n\n`;
+  markdown += `## 🚀 Latest Verified Trends\n\n`;
 
   news.forEach(item => {
     markdown += `### ${item.title}\n`;
     markdown += `- **Source**: ${item.source}\n`;
-    markdown += `- **TNF Relevance**: ${item.threat}\n`;
+    markdown += `- **Impact**: ${item.threat}\n`;
+    markdown += `- **Details**: ${item.details}\n`;
     if (item.link) markdown += `- **Link**: [View Source](${item.link})\n`;
     markdown += `\n`;
   });
 
-  markdown += `\n## 🎯 Action Items for Swarm\n\n`;
+  markdown += `\n## 🎯 Swarm Action Items\n\n`;
   
   for (const item of news) {
     if (item.threat === 'High' || item.threat === 'Medium') {
@@ -70,7 +59,7 @@ async function runScout() {
         const taskPayload = {
           id: `task_scout_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
           title: taskTitle,
-          description: `News Scout detected a significant trend: ${item.title}. Source: ${item.source}. Suitability: ${item.threat}.`,
+          description: `Strategic trend detected: ${item.title}. Source: ${item.source}. Details: ${item.details}`,
           priority: item.threat === 'High' ? 'high' : 'normal',
           status: 'queued',
           source: 'news-scout',
@@ -86,7 +75,7 @@ async function runScout() {
   }
 
   fs.writeFileSync(REPORT_PATH, markdown);
-  console.log(`✅ News Scout: Report written to ${REPORT_PATH}`);
+  console.log(`✅ News Scout: Real report written to ${REPORT_PATH}`);
   
   if (client) await client.cleanup();
 }

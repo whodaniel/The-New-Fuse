@@ -201,6 +201,18 @@ export class TNFAutonomousController {
   }
 
   /**
+   * Get real-time swarm activity logs
+   */
+  @Get('swarm/logs')
+  async getSwarmLogs() {
+    const logs = await this.director.getSwarmLogs();
+    return {
+      success: true,
+      data: logs,
+    };
+  }
+
+  /**
    * Register a new agent
    */
   @Post('swarm/agents')

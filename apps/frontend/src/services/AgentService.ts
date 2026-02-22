@@ -281,37 +281,32 @@ class AgentService {
   }
 
   /**
-   * Get real-time swarm activity
+   * Get real-time swarm activity from the autonomous system
    */
   async getSwarmActivity() {
-    // In production, this would fetch from /api/swarm/activity
-    // For now, we simulate the live flywheel output
-    return [
-      {
-        id: 'act-1',
-        type: 'auction',
-        title: 'Task Auction: Analyze WarpOS Sandboxing',
-        agent: 'Project-Planner',
-        timestamp: new Date(),
-        status: 'active',
-      },
-      {
-        id: 'act-2',
-        type: 'scan',
-        title: 'Flywheel Pulse: Tech Debt Detected (756 TODOs)',
-        agent: 'Continuous-Improver',
-        timestamp: new Date(Date.now() - 300000),
-        status: 'completed',
-      },
-      {
-        id: 'act-3',
-        type: 'award',
-        title: 'Contract Awarded: Market Research',
-        agent: 'News-Scout',
-        timestamp: new Date(Date.now() - 600000),
-        status: 'completed',
-      },
-    ];
+    try {
+      const response = await this.request<any>('/autonomous/swarm/logs');
+      if (!response.success || !Array.isArray(response.data)) return [];
+
+      return response.data.map((log: any) => ({
+        id: log.timestamp + Math.random(),
+        type: this.mapLogTypeToActivity(log.eventType),
+        title: log.content || 'System Event',
+        agent: log.metadata?.source || log.metadata?.actor || 'System',
+        timestamp: new Date(log.timestamp),
+        status: log.eventType.includes('completed') ? 'completed' : 'active',
+      }));
+    } catch (error) {
+      console.error('Failed to fetch real swarm activity:', error);
+      return [];
+    }
+  }
+
+  private mapLogTypeToActivity(eventType: string): 'auction' | 'scan' | 'award' {
+    const type = eventType.toLowerCase();
+    if (type.includes('auction') || type.includes('bidding')) return 'auction';
+    if (type.includes('award') || type.includes('contract')) return 'award';
+    return 'scan';
   }
 
   // Transform API responses to frontend types

@@ -1,15 +1,19 @@
 #!/usr/bin/env node
+const fs = require('fs');
+const path = require('path');
 const { RedisAgentClient } = require('../../packages/tnf-cli/dist/index');
 const crypto = require('crypto');
 
 /**
- * LLM Viability & Opportunity Flywheel
+ * LLM Viability & Opportunity Flywheel (v2.0 - NO MOCKS)
  * 
  * Orchestrates the full-time testing loop:
- * 1. Scout for new free model drops.
- * 2. Auction viability tests for PicoClaw Tester A.
- * 3. Auction benchmarking tests for PicoClaw Tester B.
+ * 1. Reads the latest landscape report from News Scout.
+ * 2. Extracts mentioned models/providers.
+ * 3. Auctions viability and benchmarking tasks for the PicoClaw fleet.
  */
+
+const REPORT_PATH = path.resolve(__dirname, '../../.agent/landscape/DAILY_NEWS.md');
 
 async function runLLMTestCycle() {
   console.log('🧪 [LLM-Flywheel] Initiating Testing Super-Cycle...');
@@ -19,65 +23,83 @@ async function runLLMTestCycle() {
     await client.initialize();
     await client.register('LLM-Orchestrator', 'coordinator', 'antigravity', ['llm-testing', 'benchmarking']);
   } catch (e) {
-    console.warn('⚠️ Redis not available. Running in offline test mode.');
+    console.error('❌ Redis unavailable. Cannot proceed with real-time auctions.');
+    process.exit(1);
   }
 
-  // 1. Simulate finding a new opportunity (Scout Role)
-  const opportunities = [
-    { model: "DeepSeek-V3", provider: "Groq", type: "Free Tier", reason: "Newly released low-latency endpoint" },
-    { model: "Llama-3.1-70B", provider: "Together.ai", type: "Promo", reason: "Free usage for February" }
-  ];
+  // 1. READ REAL DATA from News Scout output
+  if (!fs.existsSync(REPORT_PATH)) {
+    console.warn(`⚠️ No landscape report found at ${REPORT_PATH}. Run scout:scan first.`);
+    await client.cleanup();
+    return;
+  }
+
+  const report = fs.readFileSync(REPORT_PATH, 'utf-8');
+  const lines = report.split('\n');
+  const opportunities = [];
+
+  // Simple parser to find model names in headers (### Model Name)
+  lines.forEach(line => {
+    if (line.startsWith('### ')) {
+      const modelName = line.replace('### ', '').trim();
+      opportunities.push({ model: modelName, source: 'News-Scout-Report' });
+    }
+  });
+
+  if (opportunities.length === 0) {
+    console.log('ℹ️ No new LLM opportunities found in the latest report.');
+    await client.cleanup();
+    return;
+  }
 
   for (const opp of opportunities) {
-    console.log(`\n🔔 [Scout] Found Opportunity: ${opp.model} via ${opp.provider}`);
+    console.log(`\n🔔 [Scout-Verified] Found Opportunity: ${opp.model}`);
     
     const taskId = `llm_test_${Date.now()}_${opp.model.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
 
     // 2. Dispatch Viability Auction (PicoClaw A)
-    if (client.publisher) {
-      const viabilityAuction = {
-        id: crypto.randomUUID(),
-        type: 'auction',
-        from: { agentId: 'LLM-Orchestrator', role: 'coordinator' },
-        to: { broadcast: true },
-        payload: {
-          taskId: `${taskId}_viability`,
-          taskType: 'viability-tester',
-          requirements: ['endpoint-probing', 'latency-analysis'],
-          priority: 'high',
-          expiresAt: Date.now() + 10000,
-          description: `Test viability of ${opp.model} on ${opp.provider} (${opp.reason})`
-        },
-        timestamp: new Date().toISOString()
-      };
+    const viabilityAuction = {
+      id: crypto.randomUUID(),
+      type: 'auction',
+      from: { agentId: 'LLM-Orchestrator', role: 'coordinator' },
+      to: { broadcast: true },
+      payload: {
+        taskId: `${taskId}_viability`,
+        taskType: 'viability-tester',
+        requirements: ['endpoint-probing', 'latency-analysis'],
+        priority: 'high',
+        expiresAt: Date.now() + 10000,
+        description: `Test viability of ${opp.model} (Extracted from Market Intel)`
+      },
+      timestamp: new Date().toISOString()
+    };
 
-      console.log(`   📢 Auctioning Viability Test for ${opp.model}...`);
-      await client.publisher.publish('tnf:bus:ingress', JSON.stringify(viabilityAuction));
+    console.log(`   📢 Auctioning Viability Test for ${opp.model}...`);
+    await client.publisher.publish('tnf:bus:ingress', JSON.stringify(viabilityAuction));
 
-      // 3. Dispatch Benchmarking Auction (PicoClaw B)
-      const benchmarkAuction = {
-        id: crypto.randomUUID(),
-        type: 'auction',
-        from: { agentId: 'LLM-Orchestrator', role: 'coordinator' },
-        to: { broadcast: true },
-        payload: {
-          taskId: `${taskId}_benchmark`,
-          taskType: 'benchmarker',
-          requirements: ['cross-evaluation', 'fidelity-testing'],
-          priority: 'normal',
-          expiresAt: Date.now() + 15000,
-          description: `Benchmark ${opp.model} against Claude 3.5 Sonnet baseline.`
-        },
-        timestamp: new Date().toISOString()
-      };
+    // 3. Dispatch Benchmarking Auction (PicoClaw B)
+    const benchmarkAuction = {
+      id: crypto.randomUUID(),
+      type: 'auction',
+      from: { agentId: 'LLM-Orchestrator', role: 'coordinator' },
+      to: { broadcast: true },
+      payload: {
+        taskId: `${taskId}_benchmark`,
+        taskType: 'benchmarker',
+        requirements: ['cross-evaluation', 'fidelity-testing'],
+        priority: 'normal',
+        expiresAt: Date.now() + 15000,
+        description: `Benchmark ${opp.model} against current TNF production baselines.`
+      },
+      timestamp: new Date().toISOString()
+    };
 
-      console.log(`   📢 Auctioning Benchmarking Task for ${opp.model}...`);
-      await client.publisher.publish('tnf:bus:ingress', JSON.stringify(benchmarkAuction));
-    }
+    console.log(`   📢 Auctioning Benchmarking Task for ${opp.model}...`);
+    await client.publisher.publish('tnf:bus:ingress', JSON.stringify(benchmarkAuction));
   }
 
-  console.log('\n✅ [LLM-Flywheel] Cycle complete.');
-  if (client) await client.cleanup();
+  console.log('\n✅ [LLM-Flywheel] Cycle complete. All tasks auctioned to real specialized agents.');
+  await client.cleanup();
 }
 
 runLLMTestCycle().catch(err => {

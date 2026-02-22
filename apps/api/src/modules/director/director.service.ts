@@ -183,4 +183,19 @@ export class DirectorService implements OnModuleInit, OnModuleDestroy {
       uptime: process.uptime(),
     };
   }
+
+  /**
+   * Get swarm activity logs from Redis
+   */
+  async getSwarmLogs(limit: number = 50): Promise<any[]> {
+    if (!this.redis) return [];
+
+    try {
+      const logs = await this.redis.lrange('tnf:master:logs', 0, limit - 1);
+      return logs.map((log) => JSON.parse(log));
+    } catch (error) {
+      this.logger.error('Failed to fetch swarm logs from Redis', error);
+      return [];
+    }
+  }
 }

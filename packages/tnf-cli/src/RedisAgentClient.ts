@@ -337,10 +337,6 @@ export class RedisAgentClient {
   async createChannel(channelName: string) {
     if (!this.publisher) throw new Error('Client not initialized');
 
-    // We send a message to the orchestrator channel requesting creation
-    // But since MasterClock listens to ingress (or checks types), we can publish a structured message
-    // Actually, MasterClock listens to redis ingress 'tnf:bus:ingress'
-
     await this.publisher.publish(
       'tnf:bus:ingress',
       JSON.stringify({
@@ -353,6 +349,27 @@ export class RedisAgentClient {
     );
 
     return channelName;
+  }
+
+  /**
+   * Log real-time activity to the swarm log
+   */
+  async logActivity(eventType: string, content: string, metadata: any = {}) {
+    if (!this.publisher) return;
+
+    const logEntry = {
+      timestamp: new Date().toISOString(),
+      eventType,
+      content,
+      metadata: {
+        source: this.agentInfo?.name || 'System',
+        agentId: this.agentInfo?.id,
+        ...metadata,
+      },
+    };
+
+    await this.publisher.lpush('tnf:master:logs', JSON.stringify(logEntry));
+    await this.publisher.ltrim('tnf:master:logs', 0, 99); // Keep last 100
   }
 
   async getChannels(): Promise<string[]> {
