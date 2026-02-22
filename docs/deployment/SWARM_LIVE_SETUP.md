@@ -119,3 +119,16 @@ pnpm run docker:stop
 ```bash
 redis-cli -p 6380 LRANGE tnf:master:logs 0 20
 ```
+
+## Validation Snapshot (2026-02-22)
+
+- `pnpm run swarm:provider:test` passed with `effective_provider=exa`.
+- `pnpm run swarm:setup` completed and updated Railway runner service variables.
+- `pnpm run swarm:supercycle:live` completed successfully:
+  - SSH to serverless runners was unavailable/sleeping, then automatic local
+    fallback was used.
+  - Runtime used Railway public Redis endpoint and live SearXNG endpoint.
+  - Full 3-phase flywheel completed with auctions emitted from Scout and LLM
+    test phases.
+- Perplexity paid API usage is disabled in swarm provider routing;
+  browser-extension integration remains available.
