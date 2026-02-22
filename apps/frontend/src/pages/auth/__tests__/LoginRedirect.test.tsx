@@ -16,9 +16,12 @@ vi.mock('@/providers/AuthProvider', () => ({
   AuthProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
+import '@testing-library/jest-dom';
+
 // Import the mocked functions to set return values.
-// Note: We use the same import path as the component to ensure we get the mocked module.
-import { useAuth } from '@/providers/AuthProvider';
+// We use a relative path here so the IDE doesn't complain, Vitest will still resolve
+// this to the mocked module defined above since they point to the same physical file.
+import { useAuth } from '../../../providers/AuthProvider';
 
 const mockUseAuth = useAuth as MockedFunction<typeof useAuth>;
 
@@ -31,11 +34,9 @@ describe('Login Redirect', () => {
   });
 
   it('redirects to dashboard by default on successful login', async () => {
-    const loginMock = vi
-      .fn()
-      .mockResolvedValue({
-        user: { uid: '123', getIdTokenResult: () => Promise.resolve({ claims: {} }) },
-      });
+    const loginMock = vi.fn().mockResolvedValue({
+      user: { uid: '123', getIdTokenResult: () => Promise.resolve({ claims: {} }) },
+    });
     mockUseAuth.mockReturnValue({
       login: loginMock,
       signInWithGoogle: vi.fn(),
@@ -62,11 +63,9 @@ describe('Login Redirect', () => {
   });
 
   it('redirects to original location on successful login', async () => {
-    const loginMock = vi
-      .fn()
-      .mockResolvedValue({
-        user: { uid: '123', getIdTokenResult: () => Promise.resolve({ claims: {} }) },
-      });
+    const loginMock = vi.fn().mockResolvedValue({
+      user: { uid: '123', getIdTokenResult: () => Promise.resolve({ claims: {} }) },
+    });
     mockUseAuth.mockReturnValue({
       login: loginMock,
       signInWithGoogle: vi.fn(),
@@ -104,11 +103,9 @@ describe('Login Redirect', () => {
   });
 
   it('preserves query parameters and hash on redirect', async () => {
-    const loginMock = vi
-      .fn()
-      .mockResolvedValue({
-        user: { uid: '123', getIdTokenResult: () => Promise.resolve({ claims: {} }) },
-      });
+    const loginMock = vi.fn().mockResolvedValue({
+      user: { uid: '123', getIdTokenResult: () => Promise.resolve({ claims: {} }) },
+    });
     mockUseAuth.mockReturnValue({
       login: loginMock,
       signInWithGoogle: vi.fn(),
