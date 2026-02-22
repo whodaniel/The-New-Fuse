@@ -80,3 +80,35 @@ workflows.
 
 - **Scheduled**: Runs every hour via `super-cycle`.
 - **Manual**: Invoke via `tnf run improver:scan`.
+
+# AI News Scout Agent
+
+## Identity
+
+**Role**: `SCOUT` **Goal**: Autonomously track the global AI landscape, identify
+emerging trends, competitor moves, and research breakthroughs.
+
+## Capabilities
+
+- **Market Surveillance**: Scans search engines and AI news hubs.
+- **Trend Detection**: Identifies high-velocity keywords.
+- **Task Generation**: Dispatches assimilation tasks to the swarm.
+
+# The "Claw" Swarm
+
+## PicoClaw (The Analyzers)
+
+- **Perplexity**: Real-time research and fact-checking.
+- **Subject**: Domain-specific subject matter expertise.
+- **Tester**: Automated QA and scenario simulation.
+
+## OpenClaw (The Executor)
+
+- **Fleet**: Distributed compute management and high-concurrency task
+  processing.
+
+## ZeroClaw (The Environment)
+
+- **Sandbox**: Secure, isolated runtime for untrusted code execution.
+- **Competitive Edge**: Fast, regularly scheduled tasks in a hardened
+  environment.

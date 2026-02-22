@@ -1,20 +1,20 @@
 /**
  * Workflow Executor - Runtime Execution Engine
- * 
+ *
  * Handles the actual runtime execution of workflow steps and manages execution state
  * Integrates with agents, relay system, and orchestration services
  */
 
-import { EventEmitter } from 'events';
 import { Logger, MasterAgentRegistry } from '@the-new-fuse/relay-core';
+import { EventEmitter } from 'events';
 import {
-  WorkflowExecution,
-  NodeExecution,
   ExecutionContext,
+  ExecutionError,
+  NodeExecution,
+  NodeExecutionStatus,
+  WorkflowExecution,
   WorkflowNode,
   WorkflowNodeType,
-  NodeExecutionStatus,
-  ExecutionError,
 } from '../types/WorkflowTypes';
 import { getErrorMessage } from '../utils/errorUtils';
 
@@ -30,7 +30,7 @@ export class WorkflowExecutor extends EventEmitter {
   private logger: Logger;
   private config: ExecutorConfig;
   private agentRegistry: MasterAgentRegistry;
-  
+
   // Execution state
   private runningNodes: Map<string, NodeExecution> = new Map();
   private completedNodes: Set<string> = new Set();
@@ -52,44 +52,44 @@ export class WorkflowExecutor extends EventEmitter {
     execution: WorkflowExecution
   ): Promise<any> {
     const nodeExecution = this.createNodeExecution(node, execution.id);
-    
+
     try {
       this.runningNodes.set(node.id, nodeExecution);
       nodeExecution.status = NodeExecutionStatus.RUNNING;
-      
+
       this.logger.debug(`🔧 Executing node: ${node.name} (${node.type})`);
-      
+
       // Execute based on node type
       const result = await this.executeNodeByType(node, context, nodeExecution);
-      
+
       // Mark as completed
       nodeExecution.status = NodeExecutionStatus.COMPLETED;
       nodeExecution.completedAt = new Date();
-      nodeExecution.duration = nodeExecution.completedAt.getTime() - nodeExecution.startedAt.getTime();
+      nodeExecution.duration =
+        nodeExecution.completedAt.getTime() - nodeExecution.startedAt.getTime();
       nodeExecution.output = result;
-      
+
       this.completedNodes.add(node.id);
       this.runningNodes.delete(node.id);
-      
+
       this.emit('nodeCompleted', { node, result, execution: nodeExecution });
-      
+
       return result;
-      
     } catch (error) {
       nodeExecution.status = NodeExecutionStatus.FAILED;
       nodeExecution.completedAt = new Date();
       nodeExecution.error = this.createExecutionError(error, node.id);
-      
+
       this.failedNodes.add(node.id);
       this.runningNodes.delete(node.id);
-      
+
       this.emit('nodeFailed', { node, error, execution: nodeExecution });
-      
+
       // Handle retry logic
       if (nodeExecution.retryCount < this.config.maxRetries) {
         return this.retryNodeExecution(node, context, execution, nodeExecution);
       }
-      
+
       throw error;
     }
   }
@@ -105,61 +105,64 @@ export class WorkflowExecutor extends EventEmitter {
     switch (node.type) {
       case WorkflowNodeType.START:
         return this.executeStartNode(node, context);
-        
+
       case WorkflowNodeType.END:
         return this.executeEndNode(node, context);
-        
+
       case WorkflowNodeType.AGENT_TASK:
         return this.executeAgentTaskNode(node, context, nodeExecution);
-        
+
       case WorkflowNodeType.AGENT_HANDOFF:
         return this.executeAgentHandoffNode(node, context);
-        
+
       case WorkflowNodeType.AGENT_COORDINATION:
         return this.executeAgentCoordinationNode(node, context);
-        
+
       case WorkflowNodeType.CONDITION:
         return this.executeConditionNode(node, context);
-        
+
       case WorkflowNodeType.LOOP:
         return this.executeLoopNode(node, context);
-        
+
       case WorkflowNodeType.PARALLEL:
         return this.executeParallelNode(node, context);
-        
+
       case WorkflowNodeType.MERGE:
         return this.executeMergeNode(node, context);
-        
+
       case WorkflowNodeType.API_CALL:
         return this.executeAPICallNode(node, context);
-        
+
       case WorkflowNodeType.DATABASE_QUERY:
         return this.executeDatabaseQueryNode(node, context);
-        
+
       case WorkflowNodeType.FILE_OPERATION:
         return this.executeFileOperationNode(node, context);
-        
+
       case WorkflowNodeType.RELAY_MESSAGE:
         return this.executeRelayMessageNode(node, context);
-        
+
       case WorkflowNodeType.WEBHOOK:
         return this.executeWebhookNode(node, context);
-        
+
       case WorkflowNodeType.EMAIL:
         return this.executeEmailNode(node, context);
-        
+
       case WorkflowNodeType.LLM_PROMPT:
         return this.executeLLMPromptNode(node, context);
-        
+
       case WorkflowNodeType.CODE_GENERATION:
         return this.executeCodeGenerationNode(node, context);
-        
+
       case WorkflowNodeType.ANALYSIS:
         return this.executeAnalysisNode(node, context);
-        
+
+      case WorkflowNodeType.SANDBOX_EXECUTION:
+        return this.executeSandboxExecutionNode(node, context);
+
       case WorkflowNodeType.CUSTOM:
         return this.executeCustomNode(node, context);
-        
+
       default:
         throw new Error(`Unsupported node type: ${node.type}`);
     }
@@ -174,7 +177,7 @@ export class WorkflowExecutor extends EventEmitter {
       status: 'started',
       timestamp: new Date(),
       workflowId: context.workflowId,
-      executionId: context.executionId
+      executionId: context.executionId,
     };
   }
 
@@ -187,8 +190,8 @@ export class WorkflowExecutor extends EventEmitter {
       executionSummary: {
         completedNodes: this.completedNodes.size,
         failedNodes: this.failedNodes.size,
-        totalNodes: this.completedNodes.size + this.failedNodes.size
-      }
+        totalNodes: this.completedNodes.size + this.failedNodes.size,
+      },
     };
   }
 
@@ -198,17 +201,18 @@ export class WorkflowExecutor extends EventEmitter {
     nodeExecution: NodeExecution
   ): Promise<any> {
     const config = node.config as any;
-    
+
     // Find suitable agent
     let agentId = config.agentId;
     if (!agentId) {
       const agents = this.agentRegistry.getAllAgents();
-      const suitableAgent = agents.find((a: any) => 
-        a.type === config.agentType && 
-        a.status === 'ACTIVE' &&
-        this.checkAgentCapabilities(a, config.requiredCapabilities || [])
+      const suitableAgent = agents.find(
+        (a: any) =>
+          a.type === config.agentType &&
+          a.status === 'ACTIVE' &&
+          this.checkAgentCapabilities(a, config.requiredCapabilities || [])
       );
-      
+
       if (!suitableAgent) {
         throw new Error(`No suitable agent found for task: ${node.name}`);
       }
@@ -228,23 +232,26 @@ export class WorkflowExecutor extends EventEmitter {
         nodeId: node.id,
         instructions: config.instructions,
         workflowContext: config.context,
-        inputs: this.extractNodeInputs(node, context)
-      }
+        inputs: this.extractNodeInputs(node, context),
+      },
     };
 
     const todoId = await this.agentRegistry.addAgentTodo(agentId, taskData);
-    
+
     this.logger.info(`🤖 Agent task assigned: ${agentId} - ${config.task}`);
 
     // Monitor task completion
     return this.monitorAgentTask(agentId, todoId, config.expectedDuration || 30);
   }
 
-  private async executeAgentHandoffNode(node: WorkflowNode, context: ExecutionContext): Promise<any> {
+  private async executeAgentHandoffNode(
+    node: WorkflowNode,
+    context: ExecutionContext
+  ): Promise<any> {
     const config = node.config as any;
-    
+
     this.logger.info(`🔄 Agent handoff: ${config.fromAgentId} → ${config.toAgentId}`);
-    
+
     // Prepare handoff context
     const handoffContext = {
       fromAgentId: config.fromAgentId,
@@ -253,22 +260,25 @@ export class WorkflowExecutor extends EventEmitter {
       executionId: context.executionId,
       nodeId: node.id,
       timestamp: new Date(),
-      stagnationThreshold: config.stagnationThresholdMs || 900000 // 15 minutes
+      stagnationThreshold: config.stagnationThresholdMs || 900000, // 15 minutes
     };
 
     // Execute handoff
     return {
       handoffId: `handoff_${Date.now()}`,
       ...handoffContext,
-      status: 'initiated'
+      status: 'initiated',
     };
   }
 
-  private async executeAgentCoordinationNode(node: WorkflowNode, _context: ExecutionContext): Promise<any> {
+  private async executeAgentCoordinationNode(
+    node: WorkflowNode,
+    _context: ExecutionContext
+  ): Promise<any> {
     const config = node.config as any;
-    
+
     this.logger.info(`🎭 Agent coordination: ${config.coordinationType}`);
-    
+
     const agents = config.agentIds || [];
     const coordinationTasks: Array<{ agentId: any; taskId: string }> = [];
 
@@ -280,8 +290,8 @@ export class WorkflowExecutor extends EventEmitter {
         context: {
           coordinationId: `coord_${Date.now()}`,
           participantAgents: agents,
-          coordinationType: config.coordinationType
-        }
+          coordinationType: config.coordinationType,
+        },
       });
       coordinationTasks.push({ agentId, taskId: task });
     }
@@ -290,23 +300,23 @@ export class WorkflowExecutor extends EventEmitter {
       coordinationId: `coord_${Date.now()}`,
       participantAgents: agents,
       tasks: coordinationTasks,
-      status: 'initiated'
+      status: 'initiated',
     };
   }
 
   private async executeConditionNode(node: WorkflowNode, context: ExecutionContext): Promise<any> {
     const config = node.config as any;
-    
+
     try {
       const result = this.evaluateExpression(config.expression, context.variables);
-      
+
       this.logger.debug(`🔍 Condition evaluated: ${config.expression} = ${result}`);
-      
+
       return {
         condition: config.expression,
         result: Boolean(result),
         selectedOutput: Boolean(result) ? config.truthyOutput : config.falsyOutput,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     } catch (error) {
       throw new Error(`Condition evaluation failed: ${getErrorMessage(error)}`);
@@ -315,7 +325,7 @@ export class WorkflowExecutor extends EventEmitter {
 
   private async executeLoopNode(node: WorkflowNode, context: ExecutionContext): Promise<any> {
     const config = node.config as any;
-    
+
     const iterable = context.variables[config.iterableVariable];
     if (!Array.isArray(iterable)) {
       throw new Error(`Loop variable ${config.iterableVariable} is not iterable`);
@@ -323,10 +333,10 @@ export class WorkflowExecutor extends EventEmitter {
 
     const results: Array<{ iteration: number; item: any; result: string }> = [];
     const maxIterations = config.maxIterations || iterable.length;
-    
+
     for (let i = 0; i < Math.min(iterable.length, maxIterations); i++) {
       const item = iterable[i];
-      
+
       // Set loop context
       const loopContext = {
         ...context,
@@ -334,8 +344,8 @@ export class WorkflowExecutor extends EventEmitter {
           ...context.variables,
           [config.itemVariable]: item,
           _loopIndex: i,
-          _loopCount: iterable.length
-        }
+          _loopCount: iterable.length,
+        },
       };
 
       // Check break condition
@@ -351,22 +361,22 @@ export class WorkflowExecutor extends EventEmitter {
       results.push({
         iteration: i,
         item,
-        result: `Processed item ${i}` // Placeholder
+        result: `Processed item ${i}`, // Placeholder
       });
     }
 
     return {
       iterationCount: results.length,
       results,
-      completed: true
+      completed: true,
     };
   }
 
   private async executeParallelNode(node: WorkflowNode, _context: ExecutionContext): Promise<any> {
     const config = node.config as any;
-    
+
     this.logger.info(`⚡ Parallel execution: ${config.parallelBranches?.length || 0} branches`);
-    
+
     // Execute parallel branches (placeholder implementation)
     const branches = config.parallelBranches || [];
     const results = await Promise.allSettled(
@@ -375,27 +385,27 @@ export class WorkflowExecutor extends EventEmitter {
         return {
           branchId: branch.id || `branch_${index}`,
           result: `Branch ${index} completed`,
-          timestamp: new Date()
+          timestamp: new Date(),
         };
       })
     );
 
     return {
       parallelResults: results,
-      successCount: results.filter(r => r.status === 'fulfilled').length,
-      failureCount: results.filter(r => r.status === 'rejected').length,
-      completed: true
+      successCount: results.filter((r) => r.status === 'fulfilled').length,
+      failureCount: results.filter((r) => r.status === 'rejected').length,
+      completed: true,
     };
   }
 
   private async executeMergeNode(node: WorkflowNode, _context: ExecutionContext): Promise<any> {
     const config = node.config as any;
-    
+
     this.logger.debug(`🔀 Merge node: ${config.mergeStrategy}`);
-    
+
     // Collect results from all incoming connections
     const incomingResults = config.incomingResults || [];
-    
+
     let mergedResult;
     switch (config.mergeStrategy) {
       case 'first':
@@ -408,7 +418,10 @@ export class WorkflowExecutor extends EventEmitter {
         mergedResult = incomingResults;
         break;
       case 'combine':
-        mergedResult = incomingResults.reduce((acc: any, result: any) => ({ ...acc, ...result }), {});
+        mergedResult = incomingResults.reduce(
+          (acc: any, result: any) => ({ ...acc, ...result }),
+          {}
+        );
         break;
       default:
         mergedResult = incomingResults;
@@ -418,15 +431,15 @@ export class WorkflowExecutor extends EventEmitter {
       mergeStrategy: config.mergeStrategy,
       inputCount: incomingResults.length,
       mergedResult,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 
   private async executeAPICallNode(node: WorkflowNode, context: ExecutionContext): Promise<any> {
     const config = node.config as any;
-    
+
     this.logger.info(`🌐 API Call: ${config.method} ${config.url}`);
-    
+
     // Prepare request
     const url = this.interpolateString(config.url, context.variables);
     const headers = { ...config.headers };
@@ -443,27 +456,29 @@ export class WorkflowExecutor extends EventEmitter {
           method: config.method,
           headers,
           body: body ? JSON.stringify(body) : undefined,
-          signal: controller.signal
+          signal: controller.signal,
         });
-        
+
         clearTimeout(timeoutId);
 
         const result = await response.json();
-        
+
         return {
           url,
           method: config.method,
           status: response.status,
           statusText: response.statusText,
-          headers: response.headers ? (() => {
-            const headerObj: Record<string, string> = {};
-            response.headers.forEach((value, key) => {
-              headerObj[key] = value;
-            });
-            return headerObj;
-          })() : {},
+          headers: response.headers
+            ? (() => {
+                const headerObj: Record<string, string> = {};
+                response.headers.forEach((value, key) => {
+                  headerObj[key] = value;
+                });
+                return headerObj;
+              })()
+            : {},
           data: result,
-          timestamp: new Date()
+          timestamp: new Date(),
         };
       } catch (fetchError) {
         clearTimeout(timeoutId);
@@ -474,135 +489,194 @@ export class WorkflowExecutor extends EventEmitter {
     }
   }
 
-  private async executeDatabaseQueryNode(node: WorkflowNode, _context: ExecutionContext): Promise<any> {
+  private async executeDatabaseQueryNode(
+    node: WorkflowNode,
+    _context: ExecutionContext
+  ): Promise<any> {
     const config = node.config as any;
-    
+
     this.logger.info(`🗄️ Database query: ${config.operation}`);
-    
+
     // Database operation would be implemented here
     return {
       operation: config.operation,
       query: config.query,
       result: `Database ${config.operation} completed`,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 
-  private async executeFileOperationNode(node: WorkflowNode, _context: ExecutionContext): Promise<any> {
+  private async executeFileOperationNode(
+    node: WorkflowNode,
+    _context: ExecutionContext
+  ): Promise<any> {
     const config = node.config as any;
-    
+
     this.logger.info(`📁 File operation: ${config.operation}`);
-    
+
     // File operation would be implemented here
     return {
       operation: config.operation,
       path: config.path,
       result: `File ${config.operation} completed`,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 
-  private async executeRelayMessageNode(node: WorkflowNode, _context: ExecutionContext): Promise<any> {
+  private async executeRelayMessageNode(
+    node: WorkflowNode,
+    _context: ExecutionContext
+  ): Promise<any> {
     const config = node.config as any;
-    
+
     this.logger.info(`📡 Relay message: ${config.messageType}`);
-    
+
     // Relay message would be sent through the relay system
     return {
       messageId: `msg_${Date.now()}`,
       messageType: config.messageType,
       targetAgent: config.targetAgent,
       content: config.content,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 
   private async executeWebhookNode(node: WorkflowNode, _context: ExecutionContext): Promise<any> {
     const config = node.config as any;
-    
+
     this.logger.info(`🪝 Webhook: ${config.url}`);
-    
+
     // Webhook would be called here
     return {
       webhookId: `webhook_${Date.now()}`,
       url: config.url,
       method: config.method || 'POST',
       result: 'Webhook called successfully',
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 
   private async executeEmailNode(node: WorkflowNode, _context: ExecutionContext): Promise<any> {
     const config = node.config as any;
-    
+
     this.logger.info(`📧 Email: ${config.subject}`);
-    
+
     // Email would be sent here
     return {
       emailId: `email_${Date.now()}`,
       to: config.to,
       subject: config.subject,
       result: 'Email sent successfully',
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 
   private async executeLLMPromptNode(node: WorkflowNode, context: ExecutionContext): Promise<any> {
     const config = node.config as any;
-    
+
     this.logger.info(`🧠 LLM Prompt: ${config.provider}/${config.model}`);
-    
+
     // LLM call would be implemented here
     const interpolatedPrompt = this.interpolateString(config.prompt, context.variables);
-    
+
     return {
       promptId: `prompt_${Date.now()}`,
       provider: config.provider,
       model: config.model,
       prompt: interpolatedPrompt,
       response: 'LLM response would be here',
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 
-  private async executeCodeGenerationNode(node: WorkflowNode, _context: ExecutionContext): Promise<any> {
+  private async executeCodeGenerationNode(
+    node: WorkflowNode,
+    _context: ExecutionContext
+  ): Promise<any> {
     const config = node.config as any;
-    
+
     this.logger.info(`💻 Code generation: ${config.language}`);
-    
+
     return {
       codeId: `code_${Date.now()}`,
       language: config.language,
       specification: config.specification,
       generatedCode: '// Generated code would be here',
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 
   private async executeAnalysisNode(node: WorkflowNode, _context: ExecutionContext): Promise<any> {
     const config = node.config as any;
-    
+
     this.logger.info(`📊 Analysis: ${config.analysisType}`);
-    
+
     return {
       analysisId: `analysis_${Date.now()}`,
       analysisType: config.analysisType,
       inputData: config.inputData,
       result: 'Analysis results would be here',
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 
+  private async executeSandboxExecutionNode(
+    node: WorkflowNode,
+    context: ExecutionContext
+  ): Promise<any> {
+    const config = node.config as any;
+    this.logger.info(`🛡️ Sandbox Execution: ${config.language}`);
+
+    // Interpolate code with context variables
+    const interpolatedCode = this.interpolateString(config.code, context.variables);
+
+    // Use Auction protocol to find a sandbox
+    // For now, we manually target ZeroClaw or broadcast for 'sandboxed-execution'
+    const requirements = ['sandboxed-execution', config.language];
+
+    this.logger.debug(`📢 Auctioning sandbox task: ${node.id}`);
+
+    // In a real implementation, this would trigger the Auction logic in the Broker
+    // Here we simulate finding the ZeroClaw agent
+    const agents = this.agentRegistry.getAllAgents();
+    const sandboxAgent = agents.find(
+      (a: any) => a.status === 'ACTIVE' && this.checkAgentCapabilities(a, requirements)
+    );
+
+    if (!sandboxAgent) {
+      // If no active sandbox, we could attempt to boot one via Railway API
+      throw new Error(`No active sandbox agent found for requirements: ${requirements.join(', ')}`);
+    }
+
+    const taskData = {
+      content: `[SANDBOX] Execute ${config.language} code`,
+      priority: 'high',
+      category: 'task',
+      context: {
+        code: interpolatedCode,
+        language: config.language,
+        env: config.environmentVariables,
+        limits: config.resourceLimits,
+        workflowExecutionId: context.executionId,
+        nodeId: node.id,
+      },
+    };
+
+    const todoId = await this.agentRegistry.addAgentTodo(sandboxAgent.id, taskData);
+    this.logger.info(`🛰️ Sandbox task delegated to ${sandboxAgent.id}`);
+
+    return this.monitorAgentTask(sandboxAgent.id, todoId, (config.timeoutMs || 300000) / 60000);
+  }
+
   private async executeCustomNode(node: WorkflowNode, _context: ExecutionContext): Promise<any> {
-    
     this.logger.info(`🔧 Custom node: ${node.name}`);
-    
+
     // Custom node execution would be implemented based on config
     return {
       customNodeId: `custom_${Date.now()}`,
       nodeType: node.type,
       result: 'Custom node executed',
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 
@@ -620,8 +694,8 @@ export class WorkflowExecutor extends EventEmitter {
       metadata: {
         nodeType: node.type,
         nodeName: node.name,
-        executionId
-      }
+        executionId,
+      },
     };
   }
 
@@ -635,7 +709,9 @@ export class WorkflowExecutor extends EventEmitter {
       // Fallback for older environments with crypto.getRandomValues
       const array = new Uint8Array(9);
       crypto.getRandomValues(array);
-      return Array.from(array, byte => byte.toString(36)).join('').substring(0, 9);
+      return Array.from(array, (byte) => byte.toString(36))
+        .join('')
+        .substring(0, 9);
     } else {
       // Node.js fallback using crypto module
       const { randomBytes } = require('crypto');
@@ -651,7 +727,7 @@ export class WorkflowExecutor extends EventEmitter {
       nodeId,
       timestamp: new Date(),
       recoverable: false,
-      metadata: {}
+      metadata: {},
     };
   }
 
@@ -663,17 +739,23 @@ export class WorkflowExecutor extends EventEmitter {
   ): Promise<any> {
     nodeExecution.retryCount++;
     nodeExecution.status = NodeExecutionStatus.RETRYING;
-    
-    this.logger.warn(`🔄 Retrying node execution: ${node.name} (attempt ${nodeExecution.retryCount})`);
-    
+
+    this.logger.warn(
+      `🔄 Retrying node execution: ${node.name} (attempt ${nodeExecution.retryCount})`
+    );
+
     // Wait before retry
     await this.delay(this.config.retryDelayMs * nodeExecution.retryCount);
-    
+
     // Retry execution
     return this.executeStep(node, context, execution);
   }
 
-  private async monitorAgentTask(agentId: string, todoId: string, timeoutMinutes: number): Promise<any> {
+  private async monitorAgentTask(
+    agentId: string,
+    todoId: string,
+    timeoutMinutes: number
+  ): Promise<any> {
     return new Promise((resolve, reject) => {
       const checkInterval = setInterval(async () => {
         try {
@@ -698,7 +780,7 @@ export class WorkflowExecutor extends EventEmitter {
               todoId,
               result: todo.context?.result || 'Task completed',
               completedAt: todo.updatedAt,
-              duration: todo.updatedAt.getTime() - todo.createdAt.getTime()
+              duration: todo.updatedAt.getTime() - todo.createdAt.getTime(),
             });
           } else if (todo.status === 'failed') {
             clearInterval(checkInterval);
@@ -711,26 +793,29 @@ export class WorkflowExecutor extends EventEmitter {
       }, 5000); // Check every 5 seconds
 
       // Timeout
-      setTimeout(() => {
-        clearInterval(checkInterval);
-        reject(new Error(`Agent task timeout after ${timeoutMinutes} minutes`));
-      }, timeoutMinutes * 60 * 1000);
+      setTimeout(
+        () => {
+          clearInterval(checkInterval);
+          reject(new Error(`Agent task timeout after ${timeoutMinutes} minutes`));
+        },
+        timeoutMinutes * 60 * 1000
+      );
     });
   }
 
   private checkAgentCapabilities(agent: any, requiredCapabilities: string[]): boolean {
     if (!requiredCapabilities.length) return true;
-    
+
     const agentCapabilities = Object.entries(agent.capabilities)
       .filter(([_, enabled]) => enabled)
       .map(([capability, _]) => capability);
 
-    return requiredCapabilities.every(required => agentCapabilities.includes(required));
+    return requiredCapabilities.every((required) => agentCapabilities.includes(required));
   }
 
   private extractNodeInputs(node: WorkflowNode, context: ExecutionContext): Record<string, any> {
     const inputs: Record<string, any> = {};
-    
+
     for (const input of node.inputs) {
       if (context.variables[input.name] !== undefined) {
         inputs[input.name] = context.variables[input.name];
@@ -738,14 +823,14 @@ export class WorkflowExecutor extends EventEmitter {
         inputs[input.name] = input.defaultValue;
       }
     }
-    
+
     return inputs;
   }
 
   private evaluateExpression(expression: string, variables: Record<string, any>): any {
     // Safe expression evaluation
     const context = { ...variables, Math, Date, String, Number, Boolean, Array, Object };
-    
+
     try {
       const func = new Function(...Object.keys(context), `return (${expression});`);
       return func(...Object.values(context));
@@ -765,7 +850,7 @@ export class WorkflowExecutor extends EventEmitter {
     if (typeof obj === 'string') {
       return this.interpolateString(obj, variables);
     } else if (Array.isArray(obj)) {
-      return obj.map(item => this.interpolateObject(item, variables));
+      return obj.map((item) => this.interpolateObject(item, variables));
     } else if (obj && typeof obj === 'object') {
       const result: any = {};
       for (const [key, value] of Object.entries(obj)) {
@@ -777,7 +862,7 @@ export class WorkflowExecutor extends EventEmitter {
   }
 
   private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**
@@ -800,7 +885,7 @@ export class WorkflowExecutor extends EventEmitter {
       running: this.runningNodes.size,
       completed: this.completedNodes.size,
       failed: this.failedNodes.size,
-      total: this.runningNodes.size + this.completedNodes.size + this.failedNodes.size
+      total: this.runningNodes.size + this.completedNodes.size + this.failedNodes.size,
     };
   }
 }

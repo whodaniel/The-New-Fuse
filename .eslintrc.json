@@ -32,7 +32,6 @@
     },
     "project": [
       "./tsconfig.json",
-      "./src/mcp/tsconfig.json",
       "./apps/*/tsconfig.json",
       "./packages/*/tsconfig.json",
       "./packages/*/tsconfig.test.json"
@@ -47,7 +46,6 @@
         "alwaysTryTypes": true,
         "project": [
           "./tsconfig.json",
-          "./src/mcp/tsconfig.json",
           "./apps/*/tsconfig.json",
           "./packages/*/tsconfig.json",
           "./packages/*/tsconfig.test.json"

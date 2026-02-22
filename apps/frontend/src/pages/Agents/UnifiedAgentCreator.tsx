@@ -45,6 +45,9 @@ export const UnifiedAgentCreator: React.FC = () => {
   const handleForge = async () => {
     setIsForging(true);
     try {
+      // Auto-PFP Generation (DiceBear Bottts)
+      const pfpUrl = `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(formData.name)}&backgroundColor=b6e3f4,c0aede,d1d4f9`;
+
       await agentService.createAgent({
         name: formData.name,
         type: formData.type,
@@ -52,7 +55,11 @@ export const UnifiedAgentCreator: React.FC = () => {
         model: formData.model,
         capabilities: formData.capabilities,
         configuration: { sandbox: formData.sandbox },
-        metadata: { forgedAt: new Date().toISOString(), status: 'standby' },
+        metadata: {
+          forgedAt: new Date().toISOString(),
+          status: 'standby',
+          pfpUrl: pfpUrl, // Inject visual soul
+        },
         status: 'standby',
         version: '1.0.0',
       });

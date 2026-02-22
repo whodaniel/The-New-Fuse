@@ -1,6 +1,6 @@
 /**
  * Unified Workflow Types for The New Fuse Framework
- * 
+ *
  * Consolidates all workflow-related types from scattered locations into a single source of truth.
  * Integrates with existing Prisma schema and provides enhanced type safety.
  */
@@ -10,7 +10,7 @@ export enum WorkflowStatus {
   DRAFT = 'DRAFT',
   PUBLISHED = 'PUBLISHED',
   ARCHIVED = 'ARCHIVED',
-  PAUSED = 'PAUSED'
+  PAUSED = 'PAUSED',
 }
 
 export enum WorkflowExecutionStatus {
@@ -19,7 +19,7 @@ export enum WorkflowExecutionStatus {
   COMPLETED = 'COMPLETED',
   FAILED = 'FAILED',
   CANCELLED = 'CANCELLED',
-  PAUSED = 'PAUSED'
+  PAUSED = 'PAUSED',
 }
 
 export enum AgentType {
@@ -27,7 +27,7 @@ export enum AgentType {
   RESEARCHER = 'RESEARCHER',
   ANALYST = 'ANALYST',
   COORDINATOR = 'COORDINATOR',
-  CUSTOM = 'CUSTOM'
+  CUSTOM = 'CUSTOM',
 }
 
 // Core workflow interfaces
@@ -78,35 +78,38 @@ export enum WorkflowNodeType {
   // Basic nodes
   START = 'start',
   END = 'end',
-  
+
   // Agent nodes
   AGENT_TASK = 'agent_task',
   AGENT_HANDOFF = 'agent_handoff',
   AGENT_COORDINATION = 'agent_coordination',
-  
+
   // Logic nodes
   CONDITION = 'condition',
   LOOP = 'loop',
   PARALLEL = 'parallel',
   MERGE = 'merge',
-  
+
   // Integration nodes
   API_CALL = 'api_call',
   DATABASE_QUERY = 'database_query',
   FILE_OPERATION = 'file_operation',
-  
+
   // Communication nodes
   RELAY_MESSAGE = 'relay_message',
   WEBHOOK = 'webhook',
   EMAIL = 'email',
-  
+
   // AI/LLM nodes
   LLM_PROMPT = 'llm_prompt',
   CODE_GENERATION = 'code_generation',
   ANALYSIS = 'analysis',
-  
+
+  // Sandbox nodes
+  SANDBOX_EXECUTION = 'sandbox_execution',
+
   // Custom nodes
-  CUSTOM = 'custom'
+  CUSTOM = 'custom',
 }
 
 export interface WorkflowConnection {
@@ -138,14 +141,14 @@ export enum VariableType {
   ARRAY = 'array',
   DATE = 'date',
   FILE = 'file',
-  SECRET = 'secret'
+  SECRET = 'secret',
 }
 
 export enum VariableScope {
   GLOBAL = 'global',
   WORKFLOW = 'workflow',
   NODE = 'node',
-  EXECUTION = 'execution'
+  EXECUTION = 'execution',
 }
 
 export interface VariableValidation {
@@ -176,7 +179,7 @@ export enum TriggerType {
   AGENT_EVENT = 'agent_event',
   RELAY_MESSAGE = 'relay_message',
   DATABASE_CHANGE = 'database_change',
-  API_ENDPOINT = 'api_endpoint'
+  API_ENDPOINT = 'api_endpoint',
 }
 
 export interface TriggerConfiguration {
@@ -298,6 +301,17 @@ export interface LLMPromptNodeConfig extends NodeConfiguration {
   responseFormat?: 'text' | 'json' | 'structured';
 }
 
+export interface SandboxExecutionNodeConfig extends NodeConfiguration {
+  language: 'javascript' | 'python' | 'bash' | 'typescript';
+  code: string;
+  environmentVariables?: Record<string, string>;
+  timeoutMs?: number;
+  resourceLimits?: {
+    cpu?: number;
+    memory?: number;
+  };
+}
+
 // Input/Output interfaces
 export interface NodeInput {
   id: string;
@@ -365,7 +379,7 @@ export enum NodeExecutionStatus {
   FAILED = 'failed',
   SKIPPED = 'skipped',
   CANCELLED = 'cancelled',
-  RETRYING = 'retrying'
+  RETRYING = 'retrying',
 }
 
 export interface ExecutionError {
@@ -530,7 +544,7 @@ export enum WorkflowEventType {
   AGENT_ASSIGNED = 'agent_assigned',
   AGENT_HANDOFF = 'agent_handoff',
   VARIABLE_UPDATED = 'variable_updated',
-  ERROR_OCCURRED = 'error_occurred'
+  ERROR_OCCURRED = 'error_occurred',
 }
 
 export interface WorkflowHook {
@@ -572,7 +586,7 @@ export enum WorkflowSortField {
   UPDATED_AT = 'updatedAt',
   LAST_EXECUTED_AT = 'lastExecutedAt',
   EXECUTION_COUNT = 'executionCount',
-  SUCCESS_RATE = 'successRate'
+  SUCCESS_RATE = 'successRate',
 }
 
 export interface ExecutionQuery {
@@ -596,7 +610,7 @@ export enum ExecutionSortField {
   STARTED_AT = 'startedAt',
   COMPLETED_AT = 'completedAt',
   DURATION = 'duration',
-  STATUS = 'status'
+  STATUS = 'status',
 }
 
 // Integration with The New Fuse systems
@@ -640,18 +654,26 @@ export type NodeConfigForType<T extends WorkflowNodeType> = T extends keyof Work
   : NodeConfiguration;
 
 // Export utility functions for type checking
-export function isAgentTaskNode(node: WorkflowNode): node is WorkflowNode & { config: AgentTaskNodeConfig } {
+export function isAgentTaskNode(
+  node: WorkflowNode
+): node is WorkflowNode & { config: AgentTaskNodeConfig } {
   return node.type === WorkflowNodeType.AGENT_TASK;
 }
 
-export function isAgentHandoffNode(node: WorkflowNode): node is WorkflowNode & { config: AgentHandoffNodeConfig } {
+export function isAgentHandoffNode(
+  node: WorkflowNode
+): node is WorkflowNode & { config: AgentHandoffNodeConfig } {
   return node.type === WorkflowNodeType.AGENT_HANDOFF;
 }
 
-export function isConditionNode(node: WorkflowNode): node is WorkflowNode & { config: ConditionNodeConfig } {
+export function isConditionNode(
+  node: WorkflowNode
+): node is WorkflowNode & { config: ConditionNodeConfig } {
   return node.type === WorkflowNodeType.CONDITION;
 }
 
-export function isLLMPromptNode(node: WorkflowNode): node is WorkflowNode & { config: LLMPromptNodeConfig } {
+export function isLLMPromptNode(
+  node: WorkflowNode
+): node is WorkflowNode & { config: LLMPromptNodeConfig } {
   return node.type === WorkflowNodeType.LLM_PROMPT;
 }

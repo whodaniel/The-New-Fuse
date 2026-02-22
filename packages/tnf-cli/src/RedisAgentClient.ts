@@ -28,8 +28,9 @@ export interface AgentMessage {
     role?: string;
     broadcast?: boolean;
   };
-  type: 'message' | 'command' | 'response' | 'heartbeat' | 'status';
+  type: 'message' | 'command' | 'response' | 'heartbeat' | 'status' | 'auction' | 'bid' | 'award';
   content: string;
+  payload?: any;
   conversationId?: string;
   replyTo?: string;
   expectsResponse?: boolean;
@@ -164,9 +165,17 @@ export class RedisAgentClient {
   async submitBid(taskId: string, suitability: number, metadata: any = {}) {
     if (!this.agentInfo || !this.publisher) throw new Error('Client not initialized');
 
-    const bid = {
+    const bid: AgentMessage = {
+      id: uuidv4(),
+      timestamp: new Date().toISOString(),
       type: 'bid',
-      source: this.agentInfo.id,
+      from: {
+        agentId: this.agentInfo.id,
+        agentName: this.agentInfo.name,
+        role: this.agentInfo.role,
+        platform: this.agentInfo.platform,
+      },
+      content: `Bid for task ${taskId}`,
       payload: {
         taskId,
         suitability,
@@ -175,7 +184,6 @@ export class RedisAgentClient {
         capabilities: this.agentInfo.capabilities,
         ...metadata,
       },
-      timestamp: Date.now(),
     };
 
     // Publish bid to broker channel
@@ -259,7 +267,7 @@ export class RedisAgentClient {
     try {
       const message: AgentMessage = JSON.parse(messageStr);
 
-      if (message.from?.agentId === this.agentInfo?.id) {
+      if (message.from && message.from.agentId === this.agentInfo?.id) {
         return;
       }
 

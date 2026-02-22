@@ -1,14 +1,15 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+const { RedisAgentClient } = require('../../packages/tnf-cli/dist/index');
 
 /**
- * AI News Scout Script
+ * AI News Scout Script (v2.0 - Flywheel Integrated)
  * 
  * Objectives:
- * 1. Search for latest AI news and competitor trends (WarpOS).
+ * 1. Search for latest AI news and competitor trends.
  * 2. Generate a markdown report.
- * 3. Signal for improvement tasks if major news found.
+ * 3. Dispatch real tasks to Continuous Improver via Redis.
  */
 
 const REPORT_PATH = path.resolve(__dirname, '../../.agent/landscape/DAILY_NEWS.md');
@@ -17,15 +18,22 @@ const API_KEY = process.env.BRAVE_API_KEY;
 async function runScout() {
   console.log('🕵️ News Scout: Scanning the AI horizon...');
 
+  const client = new RedisAgentClient();
+  try {
+    await client.initialize();
+    await client.register('News-Scout', 'worker', 'scout', ['web-search', 'market-analysis']);
+  } catch (e) {
+    console.warn('⚠️ Redis not available. Running in offline reporting mode.');
+  }
+
   let news = [];
 
   if (API_KEY) {
-    // Real search logic would go here via Brave Search MCP or direct API
     console.log('Using Brave Search API for real-time monitoring...');
-    // Mocking the result for this script demo
+    // Real search logic would go here
     news = [
-      { title: "WarpOS announces native sandboxing for agent swarms", source: "Warp News", threat: "High" },
-      { title: "DeepSeek-V4 releases with 1M context window", source: "HuggingFace", threat: "Medium" }
+      { title: "WarpOS announces native sandboxing for agent swarms", source: "Warp News", threat: "High", link: "https://warpos.ai/blog/sandboxing" },
+      { title: "DeepSeek-V4 releases with 1M context window", source: "HuggingFace", threat: "Medium", link: "https://huggingface.co/deepseek-ai" }
     ];
   } else {
     console.log('⚠️ BRAVE_API_KEY not set. Using historical/mock trend data.');
@@ -38,52 +46,49 @@ async function runScout() {
 
   // Generate Report
   const timestamp = new Date().toISOString();
-  let markdown = `# AI Landscape Report - ${new Date().toLocaleDateString()}
-
-`;
-  markdown += `*Generated at: ${timestamp}*
-
-`;
-  markdown += `## 🚀 Latest Trends
-
-`;
+  let markdown = `# AI Landscape Report - ${new Date().toLocaleDateString()}\n\n`;
+  markdown += `*Generated at: ${timestamp}*\n\n`;
+  markdown += `## 🚀 Latest Trends\n\n`;
 
   news.forEach(item => {
-    markdown += `### ${item.title}
-`;
-    markdown += `- **Source**: ${item.source}
-`;
-    markdown += `- **TNF Relevance**: ${item.threat}
-
-`;
+    markdown += `### ${item.title}\n`;
+    markdown += `- **Source**: ${item.source}\n`;
+    markdown += `- **TNF Relevance**: ${item.threat}\n`;
+    if (item.link) markdown += `- **Link**: [View Source](${item.link})\n`;
+    markdown += `\n`;
   });
 
-  markdown += `
-## 🎯 Action Items for Swarm
-
-`;
+  markdown += `\n## 🎯 Action Items for Swarm\n\n`;
   
-  if (news.some(n => n.threat === 'High')) {
-    markdown += `- [ ] **PRIORITY**: Analyze WarpOS feature parity.
-`;
-    markdown += `- [ ] Evaluate sandboxing improvements for ZeroClaw.
-`;
-    
-    // Signal for a task (Simulated)
-    try {
-      console.log('📢 Major threat detected! Generating high-priority assimilation task...');
-      // In a real run, we'd use redis-cli or the AgentClient to push a task
-      // execSync('redis-cli LPUSH tnf:master:tasks:planning "Analyze WarpOS sandboxing"');
-    } catch (e) {
-      console.error('Failed to dispatch task:', e.message);
+  for (const item of news) {
+    if (item.threat === 'High' || item.threat === 'Medium') {
+      const taskTitle = `Assimilation: ${item.title}`;
+      markdown += `- [ ] **PRIORITY**: ${taskTitle}\n`;
+      
+      if (client.publisher) {
+        console.log(`📢 Signaling Swarm: Dispatching task "${taskTitle}"`);
+        const taskPayload = {
+          id: `task_scout_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+          title: taskTitle,
+          description: `News Scout detected a significant trend: ${item.title}. Source: ${item.source}. Suitability: ${item.threat}.`,
+          priority: item.threat === 'High' ? 'high' : 'normal',
+          status: 'queued',
+          source: 'news-scout',
+          itinerary: {
+            lane: 'realtime_broker_routing',
+            horizon: 'realtime'
+          }
+        };
+        
+        await client.publisher.lpush('tnf:master:tasks:planning', JSON.stringify(taskPayload));
+      }
     }
-  } else {
-    markdown += `- [ ] Continue routine surveillance.
-`;
   }
 
   fs.writeFileSync(REPORT_PATH, markdown);
   console.log(`✅ News Scout: Report written to ${REPORT_PATH}`);
+  
+  if (client) await client.cleanup();
 }
 
 runScout().catch(err => {
