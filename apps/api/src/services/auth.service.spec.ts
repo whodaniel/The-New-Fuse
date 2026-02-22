@@ -95,4 +95,34 @@ describe('AuthService', () => {
     expect(payload.permissions).not.toContain('admin:access');
     expect(payload.permissions).not.toContain('system:access');
   });
+
+  it('rejects registration when invite-only is enabled and invite code is missing', async () => {
+    const db = {
+      users: {
+        findByEmail: jest.fn(),
+        findByUsername: jest.fn(),
+        create: jest.fn(),
+      },
+    } as any;
+    const jwtService = {
+      signAsync: jest.fn().mockResolvedValue('signed-token'),
+    } as any;
+    const configService = {
+      get: jest.fn((key: string) => {
+        if (key === 'AUTH_INVITE_ONLY') return 'true';
+        if (key === 'AUTH_INVITE_CODES') return 'launch-1,launch-2';
+        if (key === 'JWT_REFRESH_SECRET') return 'refresh-secret';
+        return 'access-secret';
+      }),
+    } as any;
+    const service = new AuthService(db, jwtService, configService);
+
+    await expect(
+      service.register({
+        email: 'new@tnf.ai',
+        password: 'StrongPass123!',
+      } as any)
+    ).rejects.toThrow('Valid invitation code is required');
+    expect(db.users.findByEmail).not.toHaveBeenCalled();
+  });
 });

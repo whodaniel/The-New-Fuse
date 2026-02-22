@@ -9,6 +9,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
+import { hasAuthorizationLevel } from '../auth/auth-policy';
 import { SecurityLoggingService } from '../security/security-logging.service';
 
 // Authentication levels
@@ -198,26 +199,7 @@ export class SecureAuthGuard implements CanActivate {
    * Check if user has required authorization level
    */
   private checkAuthorizationLevel(user: any, requiredLevel: AuthLevel): boolean {
-    switch (requiredLevel) {
-      case AuthLevel.SYSTEM:
-        return user.roles?.includes('system') || user.permissions?.includes('system:access');
-
-      case AuthLevel.ADMIN:
-        return (
-          user.roles?.includes('admin') ||
-          user.permissions?.includes('admin:access') ||
-          user.roles?.includes('system')
-        );
-
-      case AuthLevel.USER:
-        return true; // Any authenticated user
-
-      case AuthLevel.PUBLIC:
-        return true;
-
-      default:
-        return false;
-    }
+    return hasAuthorizationLevel(user, requiredLevel);
   }
 
   /**

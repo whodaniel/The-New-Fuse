@@ -13,6 +13,7 @@ import {
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import type { Request } from 'express';
 
+import { hasPermission, isPrivilegedUser } from '../auth/auth-policy';
 import { AuthLevel, RequireAuthLevel } from '../guards/secure-auth.guard';
 import { AgentHandoffService } from '../services/agent-handoff.service';
 
@@ -152,25 +153,20 @@ export class AgentHandoffController {
   }
 
   private isPrivileged(req: AuthenticatedRequest): boolean {
-    const roles = req.user?.roles || [];
-    const permissions = req.user?.permissions || [];
-    return (
-      roles.includes('admin') ||
-      roles.includes('system') ||
-      permissions.includes('admin:access') ||
-      permissions.includes('system:access')
-    );
+    return isPrivilegedUser(req.user || {});
   }
 
   private hasPermission(req: AuthenticatedRequest, permission: string): boolean {
-    return (req.user?.permissions || []).includes(permission);
+    return hasPermission(req.user || {}, permission);
   }
 
   private assertCanPublish(req: AuthenticatedRequest): void {
     if (this.isPrivileged(req) || this.hasPermission(req, 'handoff:publish')) {
       return;
     }
-    throw new ForbiddenException('Publishing handoffs requires admin/system role or handoff:publish');
+    throw new ForbiddenException(
+      'Publishing handoffs requires admin/system role or handoff:publish'
+    );
   }
 
   private assertCanReadAgentInbox(req: AuthenticatedRequest, agentId: string): void {

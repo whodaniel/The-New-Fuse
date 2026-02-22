@@ -3,6 +3,12 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { DatabaseService, User } from '@the-new-fuse/database';
 import { compare, hash } from 'bcrypt';
+import {
+  isInviteCodeAccepted,
+  resolveInvitePolicy,
+  resolvePermissionClaims,
+  resolveRoleClaims,
+} from '../auth/auth-policy';
 import { LoginDto, RegisterDto, TokenDto } from '../dtos/auth.dto';
 
 type AuthResponse = TokenDto & {
@@ -62,6 +68,11 @@ export class AuthService {
   }
 
   async register(registerDto: RegisterDto): Promise<AuthResponse> {
+    const invitePolicy = resolveInvitePolicy(this.configService as any);
+    if (!isInviteCodeAccepted(registerDto.inviteCode, invitePolicy)) {
+      throw new UnauthorizedException('Valid invitation code is required for registration');
+    }
+
     const existingEmail = await this.db.users.findByEmail(registerDto.email);
     if (existingEmail) {
       throw new UnauthorizedException('User already exists');
@@ -110,8 +121,8 @@ export class AuthService {
   }
 
   private async generateTokens(user: User): Promise<AuthResponse> {
-    const roles = this.resolveRoleClaims(user);
-    const permissions = this.resolvePermissionClaims(user, roles);
+    const roles = resolveRoleClaims(user as any);
+    const permissions = resolvePermissionClaims(user as any, roles);
     const payload: JwtPayload = {
       sub: user.id,
       username: user.username,
@@ -198,93 +209,11 @@ export class AuthService {
     throw new UnauthorizedException('Unable to allocate username');
   }
 
-  private resolveRoleClaims(user: User): string[] {
-    const rawRoles = new Set<string>();
-    const expandedRoles = new Set<string>();
-    const candidateRoles = Array.isArray(user.roles) && user.roles.length > 0 ? user.roles : [user.role];
-
-    for (const roleValue of candidateRoles) {
-      if (typeof roleValue !== 'string') {
-        continue;
-      }
-
-      const trimmed = roleValue.trim();
-      if (!trimmed) {
-        continue;
-      }
-
-      rawRoles.add(trimmed);
-
-      const normalized = this.normalizeRole(trimmed);
-      if (!normalized) {
-        continue;
-      }
-
-      expandedRoles.add(normalized);
-      if (normalized === 'super_admin') {
-        expandedRoles.add('admin');
-        expandedRoles.add('system');
-      }
-    }
-
-    if (rawRoles.size === 0 && expandedRoles.size === 0) {
-      expandedRoles.add('user');
-    }
-
-    return [...rawRoles, ...expandedRoles];
-  }
-
-  private resolvePermissionClaims(user: User, roles: string[]): string[] {
-    const permissions = new Set<string>();
-    const rawPermissions = (user as any).permissions;
-
-    if (Array.isArray(rawPermissions)) {
-      for (const permission of rawPermissions) {
-        if (typeof permission === 'string' && permission.trim().length > 0) {
-          permissions.add(permission.trim());
-        }
-      }
-    }
-
-    const hasSystem = roles.includes('system');
-    const hasAdmin = roles.includes('admin') || hasSystem;
-
-    if (hasSystem) {
-      permissions.add('system:access');
-    }
-
-    if (hasAdmin) {
-      permissions.add('admin:access');
-      permissions.add('handoff:publish');
-      permissions.add('handoff:read:any');
-      permissions.add('handoff:ack:any');
-    }
-
-    return [...permissions];
-  }
-
   private resolveTenantIdClaim(user: User): string | undefined {
     const tenantId = (user as any).tenantId;
     if (typeof tenantId === 'string' && tenantId.trim().length > 0) {
       return tenantId.trim();
     }
     return undefined;
-  }
-
-  private normalizeRole(value: string): string {
-    const normalized = value
-      .trim()
-      .toLowerCase()
-      .replace(/[\s-]+/g, '_');
-
-    if (!normalized) {
-      return '';
-    }
-
-    if (normalized === 'superadmin') {
-      return 'super_admin';
-    }
-
-    return normalized;
   }
 }

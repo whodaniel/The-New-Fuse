@@ -12,6 +12,14 @@ export class LoginDto {
 }
 
 export class RegisterDto {
+  @ApiProperty({
+    required: false,
+    description: 'Required when invite-only registration is enabled',
+  })
+  @IsString()
+  @IsOptional()
+  inviteCode?: string;
+
   @ApiProperty({ required: false })
   @IsString()
   @IsOptional()
