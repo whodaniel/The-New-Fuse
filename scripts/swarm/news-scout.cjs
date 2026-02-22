@@ -42,8 +42,13 @@ const { RedisAgentClient } = require('../../packages/tnf-cli/dist/index');
  * 3. Dispatch real tasks to the swarm.
  */
 const REPORT_PATH = path.resolve(__dirname, '../../.agent/landscape/DAILY_NEWS.md');
+const SCOUT_PROVIDER = (process.env.SCOUT_PROVIDER || 'auto').toLowerCase();
 const SEARXNG_BASE_URL = process.env.SEARXNG_BASE_URL;
 const SEARXNG_NEWS_ENGINES = process.env.SEARXNG_NEWS_ENGINES || '';
+const PERPLEXITY_API_KEY = process.env.PERPLEXITY_API_KEY;
+const PERPLEXITY_MODEL = process.env.PERPLEXITY_MODEL || 'sonar';
+const TAVILY_API_KEY = process.env.TAVILY_API_KEY;
+const TAVILY_SEARCH_DEPTH = process.env.TAVILY_SEARCH_DEPTH || 'basic';
 const SEARCH_QUERIES = [
   'new free LLM API release',
   'open source LLM model release',
@@ -96,12 +101,55 @@ function buildSearxngSearchUrl(query) {
 }
 
 async function fetchLiveFindings() {
+  if (SCOUT_PROVIDER === 'perplexity') {
+    if (!PERPLEXITY_API_KEY) {
+      throw new Error('PERPLEXITY_API_KEY is required when SCOUT_PROVIDER=perplexity');
+    }
+    return fetchPerplexityFindings();
+  }
+
+  if (SCOUT_PROVIDER === 'searxng') {
+    return fetchSearxngFindings();
+  }
+
+  if (SCOUT_PROVIDER === 'tavily') {
+    if (!TAVILY_API_KEY) {
+      throw new Error('TAVILY_API_KEY is required when SCOUT_PROVIDER=tavily');
+    }
+    return fetchTavilyFindings();
+  }
+
+  // auto
+  if (PERPLEXITY_API_KEY) {
+    try {
+      return await fetchPerplexityFindings();
+    } catch (error) {
+      console.warn('⚠️ Perplexity scout failed:', error.message);
+    }
+  }
+
+  if (TAVILY_API_KEY) {
+    try {
+      return await fetchTavilyFindings();
+    } catch (error) {
+      console.warn('⚠️ Tavily scout failed:', error.message);
+    }
+  }
+
+  return fetchSearxngFindings();
+}
+
+async function fetchSearxngFindings() {
   const allItems = [];
   for (const q of SEARCH_QUERIES) {
     const response = await fetch(buildSearxngSearchUrl(q), {
       method: 'GET',
       headers: {
         Accept: 'application/json',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'User-Agent':
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+        Referer: 'https://thenewfuse.com/',
       },
     });
 
@@ -126,6 +174,138 @@ async function fetchLiveFindings() {
   const deduped = [];
   const seen = new Set();
   for (const item of allItems) {
+    const key = `${item.title}::${item.link}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    deduped.push(item);
+  }
+
+  return deduped.slice(0, 20);
+}
+
+function parseJsonArray(text) {
+  const trimmed = String(text || '').trim();
+  if (!trimmed) return [];
+
+  const fencedMatch = trimmed.match(/```json\s*([\s\S]*?)```/i);
+  const raw = fencedMatch ? fencedMatch[1] : trimmed;
+
+  const start = raw.indexOf('[');
+  const end = raw.lastIndexOf(']');
+  if (start === -1 || end === -1 || end <= start) return [];
+
+  try {
+    const parsed = JSON.parse(raw.slice(start, end + 1));
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+async function fetchPerplexityFindings() {
+  const prompt = `
+Return ONLY JSON array. No prose.
+Find the latest real LLM opportunities about free API/model access.
+Use these search intents: ${SEARCH_QUERIES.join(' | ')}.
+Each item schema:
+[
+  {
+    "title": "string",
+    "source": "domain string",
+    "threat": "High|Medium|Low",
+    "link": "https url",
+    "details": "short factual summary"
+  }
+]
+Requirements:
+- Include only verifiable items with a source URL.
+- Max 20 items.
+`.trim();
+
+  const response = await fetch('https://api.perplexity.ai/chat/completions', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: PERPLEXITY_MODEL,
+      messages: [
+        { role: 'system', content: 'You are a strict JSON generator.' },
+        { role: 'user', content: prompt },
+      ],
+      temperature: 0.1,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Perplexity API failed (${response.status})`);
+  }
+
+  const json = await response.json();
+  const content = json?.choices?.[0]?.message?.content || '';
+  const parsed = parseJsonArray(content);
+  if (!parsed.length) {
+    throw new Error('Perplexity response did not contain a valid JSON findings array');
+  }
+
+  return parsed
+    .filter((item) => item?.title && item?.link)
+    .map((item) => ({
+      title: String(item.title).trim(),
+      source: String(item.source || normalizeSource(item.link)).trim(),
+      threat: ['High', 'Medium', 'Low'].includes(item.threat) ? item.threat : 'Medium',
+      link: String(item.link).trim(),
+      details: String(item.details || 'No summary provided by source.').trim(),
+    }))
+    .slice(0, 20);
+}
+
+async function fetchTavilyFindings() {
+  if (!TAVILY_API_KEY) {
+    throw new Error('TAVILY_API_KEY is not set');
+  }
+
+  const aggregated = [];
+  for (const q of SEARCH_QUERIES) {
+    const response = await fetch('https://api.tavily.com/search', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${TAVILY_API_KEY}`,
+      },
+      body: JSON.stringify({
+        query: q,
+        topic: 'news',
+        search_depth: TAVILY_SEARCH_DEPTH,
+        max_results: 6,
+        include_answer: false,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Tavily API failed for "${q}" (${response.status})`);
+    }
+
+    const json = await response.json();
+    const results = Array.isArray(json?.results) ? json.results : [];
+    for (const item of results) {
+      if (!item?.url || !item?.title) continue;
+      aggregated.push({
+        title: String(item.title).trim(),
+        source: normalizeSource(item.url),
+        threat: classifyImpact(item.title || '', item.content || ''),
+        link: String(item.url).trim(),
+        details: String(item.content || 'No summary provided by source.').trim(),
+      });
+    }
+  }
+
+  const deduped = [];
+  const seen = new Set();
+  for (const item of aggregated) {
     const key = `${item.title}::${item.link}`;
     if (seen.has(key)) continue;
     seen.add(key);

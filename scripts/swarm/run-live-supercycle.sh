@@ -35,6 +35,22 @@ export REDIS_HOST="${REDIS_HOST:-127.0.0.1}"
 export REDIS_PORT="${REDIS_PORT:-6380}"
 export SEARXNG_BASE_URL="${SEARXNG_BASE_URL:-http://127.0.0.1:8080}"
 
+# If local Redis is configured but unreachable, try Railway public Redis automatically.
+if command -v redis-cli >/dev/null 2>&1; then
+  if ! redis-cli -u "$REDIS_URL" --no-auth-warning ping >/dev/null 2>&1; then
+    if command -v railway >/dev/null 2>&1; then
+      RAILWAY_REDIS_PUBLIC_URL="$(
+        railway variable list -s Redis -e "${RAILWAY_ENVIRONMENT_NAME:-production}" -k 2>/dev/null \
+          | sed -n 's/^REDIS_PUBLIC_URL=//p' \
+          | head -n 1
+      )"
+      if [ -n "$RAILWAY_REDIS_PUBLIC_URL" ]; then
+        export REDIS_URL="$RAILWAY_REDIS_PUBLIC_URL"
+      fi
+    fi
+  fi
+fi
+
 echo "🌀 Running live TNF supercycle with:"
 echo "   REDIS_URL=$REDIS_URL"
 echo "   SEARXNG_BASE_URL=$SEARXNG_BASE_URL"

@@ -5,6 +5,7 @@ ENVIRONMENT="${RAILWAY_ENVIRONMENT_NAME:-production}"
 RUNNER_SERVICES_CSV="${RAILWAY_RUNNER_SERVICES:-api3,api,backend}"
 SEARXNG_SERVICE="${RAILWAY_SEARXNG_SERVICE:-searxng}"
 SEARXNG_IMAGE="${RAILWAY_SEARXNG_IMAGE:-searxng/searxng:latest}"
+TAVILY_API_KEY="${TAVILY_API_KEY:-}"
 
 echo "🚄 [TNF Railway Setup] Configuring live swarm stack in Railway..."
 echo "   Environment: $ENVIRONMENT"
@@ -72,7 +73,6 @@ SEARXNG_BASE_URL="$(echo "$SEARXNG_BASE_URL" | sed 's#^https://https://#https://
 echo "🌐 SearXNG URL: $SEARXNG_BASE_URL"
 
 echo "🔧 Setting SEARXNG_BASE_URL on runner services..."
-HAS_REDIS_URL=false
 for svc in "${RUNNER_SERVICES[@]}"; do
   if railway variable set -s "$svc" -e "$ENVIRONMENT" \
     "SEARXNG_BASE_URL=$SEARXNG_BASE_URL" \
@@ -82,15 +82,25 @@ for svc in "${RUNNER_SERVICES[@]}"; do
   else
     echo "   ⚠️ Skipped $svc (not found or no access)"
   fi
-
-  if railway variable list -s "$svc" -e "$ENVIRONMENT" -k 2>/dev/null | grep -q '^REDIS_URL='; then
-    HAS_REDIS_URL=true
-  fi
 done
 
-if [ "$HAS_REDIS_URL" != "true" ]; then
-  echo "❌ REDIS_URL missing on all runner services: $RUNNER_SERVICES_CSV"
-  echo "   Link Railway Redis plugin to at least one runner service."
+if [ -n "$TAVILY_API_KEY" ]; then
+  echo "🔧 Setting TAVILY_API_KEY on runner services..."
+  for svc in "${RUNNER_SERVICES[@]}"; do
+    if railway variable set -s "$svc" -e "$ENVIRONMENT" \
+      "TAVILY_API_KEY=$TAVILY_API_KEY" \
+      "SCOUT_PROVIDER=auto" \
+      >/dev/null 2>&1; then
+      echo "   ✅ Updated $svc"
+    else
+      echo "   ⚠️ Skipped $svc (not found or no access)"
+    fi
+  done
+fi
+
+if ! railway variable list -s Redis -e "$ENVIRONMENT" -k 2>/dev/null | grep -q '^REDIS_PUBLIC_URL='; then
+  echo "❌ REDIS_PUBLIC_URL missing on Railway Redis service."
+  echo "   Ensure the Redis plugin/service is running."
   exit 1
 fi
 

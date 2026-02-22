@@ -43,6 +43,8 @@
     "swarm:sim-bidder": "node scripts/swarm/sim-bidder.cjs",
     "swarm:planner": "node scripts/swarm/project-planner.cjs",
     "swarm:llm-test": "node scripts/swarm/llm-test-flywheel.cjs",
+    "swarm:provider:test": "node scripts/swarm/provider-test.cjs",
+    "swarm:keys:setup": "bash scripts/swarm/setup-keys-guided.sh",
     "swarm:setup": "bash scripts/swarm/setup-live-stack.sh",
     "swarm:setup:nodocker": "bash scripts/swarm/setup-live-stack-nodocker.sh",
     "swarm:supercycle:live": "bash scripts/swarm/run-live-supercycle.sh",

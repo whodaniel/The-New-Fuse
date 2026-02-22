@@ -40,6 +40,46 @@ pnpm run swarm:setup:nodocker
 pnpm run swarm:supercycle:live
 ```
 
+## Guided API Key Setup (Recommended)
+
+This opens Tavily + Perplexity key pages, prompts for keys, writes `.env.local`,
+and attempts to sync vars to Railway runner services.
+
+```bash
+pnpm run swarm:keys:setup
+```
+
+If you have Perplexity API access, use:
+
+```bash
+export SCOUT_PROVIDER=perplexity
+export PERPLEXITY_API_KEY=<your_key>
+pnpm run swarm:setup:nodocker
+pnpm run swarm:supercycle:live
+```
+
+If you want Tavily instead:
+
+```bash
+export SCOUT_PROVIDER=tavily
+export TAVILY_API_KEY=<your_tavily_api_key>
+pnpm run swarm:setup:nodocker
+pnpm run swarm:supercycle:live
+```
+
+Provider behavior:
+
+- `SCOUT_PROVIDER=perplexity`: Perplexity only
+- `SCOUT_PROVIDER=tavily`: Tavily only
+- `SCOUT_PROVIDER=searxng`: SearXNG only
+- `SCOUT_PROVIDER=auto`: Perplexity -> Tavily -> SearXNG fallback
+
+Preflight provider test:
+
+```bash
+pnpm run swarm:provider:test
+```
+
 ## Railway-Native Setup
 
 Use this to run everything online from Railway (recommended for Railway Redis).
