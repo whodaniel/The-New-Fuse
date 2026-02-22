@@ -5,7 +5,7 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import { PrismaService } from '../../src/prisma/prisma.service';
+import { DrizzleService } from '../../src/drizzle/drizzle.service';
 import { OptimizedSelfAssessmentService } from '../../src/services/optimized-self-assessment.service';
 import { OptimizedPerformanceAnalyticsService } from '../../src/services/optimized-performance-analytics.service';
 import { OptimizedPrimeDirectiveService } from '../../src/services/optimized-prime-directive.service';
@@ -70,7 +70,7 @@ const queryCounter = new QueryCounter();
 
 describe('N+1 Query Pattern Tests', () => {
   let app: INestApplication;
-  let prisma: PrismaService;
+  let drizzle: DrizzleService;
   let optimizedSelfAssessmentService: OptimizedSelfAssessmentService;
   let optimizedPerformanceAnalyticsService: OptimizedPerformanceAnalyticsService;
   let optimizedPrimeDirectiveService: OptimizedPrimeDirectiveService;
@@ -79,7 +79,7 @@ describe('N+1 Query Pattern Tests', () => {
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
-        PrismaService,
+        DrizzleService,
         OptimizedSelfAssessmentService,
         OptimizedPerformanceAnalyticsService,
         OptimizedPrimeDirectiveService,
@@ -90,7 +90,7 @@ describe('N+1 Query Pattern Tests', () => {
     app = moduleRef.createNestApplication();
     await app.init();
 
-    prisma = moduleRef.get<PrismaService>(PrismaService);
+    drizzle = moduleRef.get<DrizzleService>(DrizzleService);
     optimizedSelfAssessmentService = moduleRef.get<OptimizedSelfAssessmentService>(OptimizedSelfAssessmentService);
     optimizedPerformanceAnalyticsService = moduleRef.get<OptimizedPerformanceAnalyticsService>(OptimizedPerformanceAnalyticsService);
     optimizedPrimeDirectiveService = moduleRef.get<OptimizedPrimeDirectiveService>(OptimizedPrimeDirectiveService);
@@ -114,7 +114,7 @@ describe('N+1 Query Pattern Tests', () => {
       queryCounter.reset();
       
       // Create test data
-      testUser = await prisma.user.create({
+      testUser = await drizzle.user.create({
         data: {
           email: 'nplus1.test@example.com',
           password: 'TestPassword123!',
@@ -122,7 +122,7 @@ describe('N+1 Query Pattern Tests', () => {
         },
       });
 
-      testExecution = await prisma.promptExecution.create({
+      testExecution = await drizzle.promptExecution.create({
         data: {
           userId: testUser.id,
           category: 'CHAT',
@@ -134,7 +134,7 @@ describe('N+1 Query Pattern Tests', () => {
 
       testMetrics = await Promise.all(
         Array(6).fill().map((_, i) => 
-          prisma.metric.create({
+          drizzle.metric.create({
             data: {
               name: `metric_${i}`,
               type: 'QUALITY',
@@ -537,22 +537,22 @@ describe('N+1 Query Pattern Tests', () => {
 
   async function cleanupTestDatabase() {
     // Clean up all test data
-    await prisma.collectiveContribution.deleteMany({});
-    await prisma.primeDirectivePriority.deleteMany({});
-    await prisma.selfAssessment.deleteMany({});
-    await prisma.promptExecution.deleteMany({});
-    await prisma.user.deleteMany({});
-    await prisma.metric.deleteMany({});
+    await drizzle.collectiveContribution.deleteMany({});
+    await drizzle.primeDirectivePriority.deleteMany({});
+    await drizzle.selfAssessment.deleteMany({});
+    await drizzle.promptExecution.deleteMany({});
+    await drizzle.user.deleteMany({});
+    await drizzle.metric.deleteMany({});
   }
 
   async function cleanupTestExecutionData() {
-    await prisma.selfAssessment.deleteMany({});
-    await prisma.promptExecution.deleteMany({ where: { userId: testUser.id } });
-    await prisma.user.deleteMany({ where: { id: testUser.id } });
+    await drizzle.selfAssessment.deleteMany({});
+    await drizzle.promptExecution.deleteMany({ where: { userId: testUser.id } });
+    await drizzle.user.deleteMany({ where: { id: testUser.id } });
   }
 
   async function createTestAssessment() {
-    return await prisma.selfAssessment.create({
+    return await drizzle.selfAssessment.create({
       data: {
         executionId: testExecution.id,
         overallScore: 8.5,
@@ -568,9 +568,9 @@ describe('N+1 Query Pattern Tests', () => {
   async function createTestAnalyticsData() {
     // Create test assessments for analytics
     for (let i = 0; i < 20; i++) {
-      await prisma.selfAssessment.create({
+      await drizzle.selfAssessment.create({
         data: {
-          executionId: (await prisma.promptExecution.create({
+          executionId: (await drizzle.promptExecution.create({
             data: {
               userId: testUser.id,
               category: i % 2 === 0 ? 'CHAT' : 'WORKFLOW',
@@ -593,7 +593,7 @@ describe('N+1 Query Pattern Tests', () => {
   async function createTestPrimeDirectiveData() {
     // Create test prime directives
     for (let i = 0; i < 5; i++) {
-      await prisma.primeDirectivePriority.create({
+      await drizzle.primeDirectivePriority.create({
         data: {
           directive: `Test directive ${i}`,
           priority: i + 1,
@@ -607,7 +607,7 @@ describe('N+1 Query Pattern Tests', () => {
   async function createTestContributionData() {
     // Create test contributions
     for (let i = 0; i < 15; i++) {
-      await prisma.collectiveContribution.create({
+      await drizzle.collectiveContribution.create({
         data: {
           userId: testUser.id,
           description: `Contribution ${i}`,
@@ -621,9 +621,9 @@ describe('N+1 Query Pattern Tests', () => {
   async function createTestDatasetOfSize(size: number) {
     // Create dataset of specific size for performance testing
     for (let i = 0; i < size; i++) {
-      await prisma.selfAssessment.create({
+      await drizzle.selfAssessment.create({
         data: {
-          executionId: (await prisma.promptExecution.create({
+          executionId: (await drizzle.promptExecution.create({
             data: {
               userId: testUser.id,
               category: 'CHAT',

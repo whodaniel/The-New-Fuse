@@ -126,7 +126,7 @@ For complete documentation, see:
 
 - `.gemini/BUILD_PROCESS_HARDENING.md` - Complete guide
 - `.gemini/BUILD_PROCESS_HARDENING_SUMMARY.md` - Executive summary
-- `.gemini/PRISMA_NAMESPACE_EXPORT_FIX.md` - Original issue details
+- `.gemini/DRIZZLE_NAMESPACE_EXPORT_FIX.md` - Original issue details
 
 ## Maintenance
 

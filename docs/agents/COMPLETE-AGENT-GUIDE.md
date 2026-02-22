@@ -1172,7 +1172,7 @@ class APIIntegrationAgent extends BaseAgent {
 
 ```typescript
 class DatabaseAgent extends BaseAgent {
-    private prisma: PrismaClient;
+    private drizzle: DrizzleClient;
     
     constructor() {
         super({
@@ -1181,7 +1181,7 @@ class DatabaseAgent extends BaseAgent {
             description: 'Performs database operations with security constraints'
         });
         
-        this.prisma = new PrismaClient();
+        this.drizzle = new DrizzleClient();
     }
     
     defineCapabilities(): Capability[] {
@@ -1236,8 +1236,8 @@ class DatabaseAgent extends BaseAgent {
                 take: Math.min(limit, 1000) // Enforce maximum limit
             };
             
-            // Execute query using Prisma
-            const results = await (this.prisma as any)[table].findMany(query);
+            // Execute query using Drizzle
+            const results = await (this.drizzle as any)[table].findMany(query);
             
             return {
                 status: 'success',

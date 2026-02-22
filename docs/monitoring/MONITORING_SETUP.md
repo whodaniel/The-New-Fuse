@@ -224,7 +224,7 @@ export class HealthController {
     // Database health check
     // this.healthCheckService.register(
     //   'database',
-    //   CommonHealthChecks.database(prismaClient)
+    //   CommonHealthChecks.database(drizzleClient)
     // );
 
     // Redis health check

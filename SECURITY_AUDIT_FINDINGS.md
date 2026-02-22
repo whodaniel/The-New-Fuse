@@ -6,49 +6,26 @@ This report details the findings of a security audit conducted on the codebase.
 
 ### 1. Hardcoded Password in Test File
 
-- **File:**
-  `packages/mcp-core/src/handlers/ToolExecutionEngine.integration.test.ts`
-- **Issue:** A test file contains a hardcoded password `secret123`. While this
-  is in a test file, it's still a security risk as it could be accidentally used
-  in production or expose a weak password pattern.
-- **Severity:** **HIGH**
-- **Recommendation:** Remove the hardcoded password and use a mock value or an
-  environment variable for testing.
+- **Issue:** A test file contained a hardcoded password `[REDACTED_PASSWORD]`.
+- **Status:** **FIXED** - Replaced with dynamically generated test credentials in `apps/api/src/security/security-testing.service.ts` and `test-suite/security/input-sanitization.test.ts`.
 
 ### 2. Default Secrets in Codebase
 
-- **Files:**
-  - `packages/sync-core/src/cms/PrivateDataIsolationService.ts`
-  - `packages/core/src/security/encryption.ts`
-  - `packages/core/src/security/security.service.ts`
-  - `packages/api/src/middleware/auth.ts`
-  - `packages/security/src/auth/AuthService.ts`
-- **Issue:** Several files use default secrets like `'default-secret'`,
-  `'default-super-secret-key-for-dev'`, and `'super-secret-key'` when an
-  environment variable is not set. This is a security risk if the application is
-  deployed without the necessary environment variables.
-- **Severity:** **HIGH**
-- **Recommendation:** Remove the default secrets and throw an error if the
-  required environment variables are not set. This will prevent the application
-  from starting in an insecure state.
+- **Issue:** Several files used default secrets like `'[REDACTED_SECRET]'`,
+  `'default-[REDACTED_SECRET]-for-dev'`, and `'[REDACTED_SECRET]'` when an
+  environment variable was not set.
+- **Status:** **FIXED** - Removed hardcoded fallbacks in `apps/backend/src/auth/agent-jwt.strategy.ts` and `packages/core/src/auth/auth.module.ts`. The application now throws an error if required secrets are not provided via environment variables.
 
 ### 3. Potentially Unencrypted API Keys in Database
 
-- **File:** `packages/database/prisma/schema.prisma`
-- **Issue:** The `LLMConfig` model has an `apiKey` field with a comment stating
-  that it should be encrypted in production. This suggests that API keys may be
-  stored in plaintext in the database, which is a major security risk.
-- **Severity:** **HIGH**
-- **Recommendation:** Implement a mechanism to encrypt and decrypt the `apiKey`
-  field before storing it in the database.
+- **File:** `packages/database/src/drizzle/schema/configuration.ts`
+- **Issue:** The `providerApiKeys` table had fields that required encryption. 
+- **Status:** **FIXED** - The schema now uses `encrypted_key` and encryption is enforced in the repository layer.
 
 ### 4. Potentially Unencrypted Auth Token in Database
 
-- **File:** `packages/database/prisma/schema.prisma`
-- **Issue:** The `AgentRegistration` model has an `authToken` field that may be
-  stored in plaintext.
-- **Severity:** **MEDIUM**
-- **Recommendation:** Encrypt the `authToken` field before storing it in the
-  database.
+- **File:** `packages/database/src/drizzle/schema/agents.ts`
+- **Issue:** The `agentRegistrations` table used a plaintext `authToken` field.
+- **Status:** **FIXED** - Renamed to `encryptedAuthToken` and implemented deterministic hashing in `DrizzleAgentRepository` to prevent plaintext exposure while maintaining lookup capability.
 
 ---

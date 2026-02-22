@@ -33,17 +33,17 @@ pnpm install @the-new-fuse/workflow-engine
 
 ```typescript
 import { WorkflowEngineFactory } from '@the-new-fuse/workflow-engine';
-import { PrismaClient } from '@prisma/client';
+import { DrizzleClient } from '@drizzle/client';
 import { Logger } from '@the-new-fuse/relay-core';
 
 // Create workflow engine with default configuration
-const prisma = new PrismaClient();
+const drizzle = new DrizzleClient();
 const logger = new Logger();
 const agentRegistry = new MasterAgentRegistry(/* config */);
 const heartbeatService = new HeartbeatMonitoringService(/* config */);
 
 const { engine, builder, validator, repository } = WorkflowEngineFactory.createDefault(
-  prisma,
+  drizzle,
   agentRegistry,
   heartbeatService,
   logger
@@ -82,7 +82,7 @@ if (validation.valid) {
 import { WorkflowEngineFactory, type WorkflowEngineFactoryConfig } from '@the-new-fuse/workflow-engine';
 
 const config: WorkflowEngineFactoryConfig = {
-  prisma,
+  drizzle,
   agentRegistry,
   heartbeatService,
   logger,

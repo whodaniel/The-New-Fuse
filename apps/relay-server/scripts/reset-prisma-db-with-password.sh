@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# Reset PostgreSQL database and Prisma setup for The New Fuse
+# Reset PostgreSQL database and Drizzle setup for The New Fuse
 # This script uses PGPASSWORD environment variable to avoid password prompts
 
 # Set PostgreSQL password
 export PGPASSWORD=postgres
 
-echo "Starting Prisma database reset process..."
+echo "Starting Drizzle database reset process..."
 
 # Check if PostgreSQL is running
 echo "Checking PostgreSQL connection..."
@@ -43,27 +43,27 @@ pnpm install || {
   exit 1
 }
 
-# Generate Prisma client
-echo "Generating Prisma client..."
-npx prisma generate || {
-  echo "Error: Failed to generate Prisma client."
+# Generate Drizzle client
+echo "Generating Drizzle client..."
+npx drizzle generate || {
+  echo "Error: Failed to generate Drizzle client."
   exit 1
 }
 
 # Run initial migration
-echo "Running initial Prisma migration..."
-npx prisma migrate dev --name init || {
+echo "Running initial Drizzle migration..."
+npx drizzle migrate dev --name init || {
   echo "Error: Failed to run initial migration."
   exit 1
 }
 
 # Seed the database
 echo "Seeding the database..."
-npx prisma db seed || {
+npx drizzle db seed || {
   echo "Warning: Database seeding failed. You may need to seed manually."
 }
 
-echo "Prisma database reset completed successfully!"
+echo "Drizzle database reset completed successfully!"
 echo "The 'fuse' database has been recreated with the latest schema."
 echo "You can now start your application."
 

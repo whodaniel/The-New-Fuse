@@ -199,17 +199,17 @@ railway variables set \
 railway run --service api bash
 
 # Inside the container
-npx prisma migrate deploy
+npx drizzle migrate deploy
 
 # Optional: Seed initial data
-npx prisma db seed
+npx drizzle db seed
 ```
 
 #### Verify Database
 
 ```bash
 # Check tables
-railway run --service api npx prisma studio
+railway run --service api npx drizzle studio
 
 # Or connect directly
 railway connect postgres
@@ -532,13 +532,13 @@ railway run --service api pnpm run d:check
 
 ```bash
 # Reset database (CAUTION: deletes all data)
-railway run --service api npx prisma migrate reset
+railway run --service api npx drizzle migrate reset
 
 # Apply pending migrations
-railway run --service api npx prisma migrate deploy
+railway run --service api npx drizzle migrate deploy
 
 # Verify schema
-railway run --service api npx prisma db pull
+railway run --service api npx drizzle db pull
 ```
 
 ---
@@ -548,7 +548,7 @@ railway run --service api npx prisma db pull
 ### Documentation
 - Railway: https://docs.railway.app/
 - Docker Buildx: https://docs.docker.com/buildx/
-- Prisma: https://www.prisma.io/docs/
+- Drizzle: https://www.drizzle.io/docs/
 
 ### Community
 - Railway Discord: https://discord.gg/railway

@@ -94,7 +94,7 @@ export const agentRegistrations = pgTable('agent_registrations', {
   agentId: uuid('agent_id')
     .notNull()
     .references(() => agents.id, { onDelete: 'cascade' }),
-  authToken: varchar('auth_token', { length: 512 }).unique().notNull(),
+  encryptedAuthToken: varchar('encrypted_auth_token', { length: 1024 }).unique().notNull(),
   registrationData: jsonb('registration_data').notNull(),
   verificationStatus: varchar('verification_status', { length: 50 }).default('PENDING').notNull(),
   onboardingStatus: varchar('onboarding_status', { length: 50 }).default('INITIALIZED').notNull(),

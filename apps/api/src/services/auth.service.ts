@@ -21,6 +21,15 @@ type AuthResponse = TokenDto & {
   };
 };
 
+type JwtPayload = {
+  sub: string;
+  username: string | null;
+  email: string;
+  roles: string[];
+  permissions: string[];
+  tenantId?: string;
+};
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -101,7 +110,19 @@ export class AuthService {
   }
 
   private async generateTokens(user: User): Promise<AuthResponse> {
-    const payload = { sub: user.id, username: user.username };
+    const roles = this.resolveRoleClaims(user);
+    const permissions = this.resolvePermissionClaims(user, roles);
+    const payload: JwtPayload = {
+      sub: user.id,
+      username: user.username,
+      email: user.email,
+      roles,
+      permissions,
+    };
+    const tenantId = this.resolveTenantIdClaim(user);
+    if (tenantId) {
+      payload.tenantId = tenantId;
+    }
 
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
@@ -175,5 +196,95 @@ export class AuthService {
     }
 
     throw new UnauthorizedException('Unable to allocate username');
+  }
+
+  private resolveRoleClaims(user: User): string[] {
+    const rawRoles = new Set<string>();
+    const expandedRoles = new Set<string>();
+    const candidateRoles = Array.isArray(user.roles) && user.roles.length > 0 ? user.roles : [user.role];
+
+    for (const roleValue of candidateRoles) {
+      if (typeof roleValue !== 'string') {
+        continue;
+      }
+
+      const trimmed = roleValue.trim();
+      if (!trimmed) {
+        continue;
+      }
+
+      rawRoles.add(trimmed);
+
+      const normalized = this.normalizeRole(trimmed);
+      if (!normalized) {
+        continue;
+      }
+
+      expandedRoles.add(normalized);
+      if (normalized === 'super_admin') {
+        expandedRoles.add('admin');
+        expandedRoles.add('system');
+      }
+    }
+
+    if (rawRoles.size === 0 && expandedRoles.size === 0) {
+      expandedRoles.add('user');
+    }
+
+    return [...rawRoles, ...expandedRoles];
+  }
+
+  private resolvePermissionClaims(user: User, roles: string[]): string[] {
+    const permissions = new Set<string>();
+    const rawPermissions = (user as any).permissions;
+
+    if (Array.isArray(rawPermissions)) {
+      for (const permission of rawPermissions) {
+        if (typeof permission === 'string' && permission.trim().length > 0) {
+          permissions.add(permission.trim());
+        }
+      }
+    }
+
+    const hasSystem = roles.includes('system');
+    const hasAdmin = roles.includes('admin') || hasSystem;
+
+    if (hasSystem) {
+      permissions.add('system:access');
+    }
+
+    if (hasAdmin) {
+      permissions.add('admin:access');
+      permissions.add('handoff:publish');
+      permissions.add('handoff:read:any');
+      permissions.add('handoff:ack:any');
+    }
+
+    return [...permissions];
+  }
+
+  private resolveTenantIdClaim(user: User): string | undefined {
+    const tenantId = (user as any).tenantId;
+    if (typeof tenantId === 'string' && tenantId.trim().length > 0) {
+      return tenantId.trim();
+    }
+    return undefined;
+  }
+
+  private normalizeRole(value: string): string {
+    const normalized = value
+      .trim()
+      .toLowerCase()
+      .replace(/[\s-]+/g, '_');
+
+    if (!normalized) {
+      return '';
+    }
+
+    if (normalized === 'superadmin') {
+      return 'super_admin';
+    }
+
+    return normalized;
   }
 }

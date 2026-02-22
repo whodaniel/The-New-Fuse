@@ -1,13 +1,13 @@
 /**
- * Compatibility Layer for Prisma to Drizzle Migration
+ * Compatibility Layer for Drizzle to Drizzle Migration
  *
  * This file provides aliases to maintain backwards compatibility
  * during the migration period. Services can gradually migrate from
- * Prisma repositories to Drizzle repositories without breaking changes.
+ * Drizzle repositories to Drizzle repositories without breaking changes.
  *
  * Usage:
  * ```typescript
- * // Old way (Prisma)
+ * // Old way (Drizzle)
  * import { UserRepository } from '@the-new-fuse/database';
  *
  * // New way (Drizzle - same import path)
@@ -28,7 +28,7 @@ import {
  * Repository Aliases for Backwards Compatibility
  *
  * These aliases allow existing code to continue working while
- * gradually migrating from Prisma to Drizzle.
+ * gradually migrating from Drizzle to Drizzle.
  */
 
 // User Repository Alias

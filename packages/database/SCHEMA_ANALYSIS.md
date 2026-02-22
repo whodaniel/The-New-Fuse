@@ -255,7 +255,7 @@ Many relations lack proper cascade delete behavior:
 3. **Enum Mismatches**
    - MessageRole in schema but ChatMessage uses it without proper typing
 
-## 4. DEPRECATED PRISMA FEATURES
+## 4. DEPRECATED DRIZZLE FEATURES
 
 ### Preview Features Status
 Current preview features in schema:
@@ -327,12 +327,12 @@ Models needing timestamp indexes:
 
 4. **Connection Retry Logic**
    - No retry configuration visible
-   - **Recommendation**: Implement in PrismaService
+   - **Recommendation**: Implement in DrizzleService
 
-### Current PrismaService Issues
+### Current DrizzleService Issues
 
 1. **No Connection Pooling Config**
-   - Using default Prisma pooling
+   - Using default Drizzle pooling
    - May need PgBouncer for high traffic
 
 2. **No Retry Logic**
@@ -376,7 +376,7 @@ Models needing timestamp indexes:
 2. ✅ Configure cascade deletes for all relations
 3. ✅ Encrypt LLMConfig.apiKey
 4. ✅ Add connection pooling and SSL to DATABASE_URL
-5. ✅ Implement retry logic in PrismaService
+5. ✅ Implement retry logic in DrizzleService
 6. ✅ Add Message validation (chatId XOR roomId)
 
 ### High Priority (First Month)
@@ -399,7 +399,7 @@ Models needing timestamp indexes:
 
 ### Long Term
 
-1. ✅ Consider enhanced.schema.prisma adoption
+1. ✅ Consider enhanced.schema.drizzle adoption
 2. ✅ Implement multi-tenancy (Organizations)
 3. ✅ Add Verifiable Credentials system
 4. ✅ Set up query monitoring and analytics

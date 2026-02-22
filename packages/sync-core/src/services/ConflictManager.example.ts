@@ -7,16 +7,16 @@
 
 import { ConflictManager } from './ConflictManager';
 import { SyncDatabaseService } from '../database/SyncDatabaseService';
-import { PrismaClient } from '@the-new-fuse/database/generated/prisma';
+import { DrizzleClient } from '@the-new-fuse/database/generated/drizzle';
 import { TenantSyncContext } from '../types';
 
 // Example setup
 async function setupConflictManager() {
-  const prisma = new PrismaClient();
-  const syncDb = new SyncDatabaseService(prisma);
-  const conflictManager = new ConflictManager(prisma, syncDb);
+  const drizzle = new DrizzleClient();
+  const syncDb = new SyncDatabaseService(drizzle);
+  const conflictManager = new ConflictManager(drizzle, syncDb);
 
-  return { conflictManager, prisma, syncDb };
+  return { conflictManager, drizzle, syncDb };
 }
 
 /**

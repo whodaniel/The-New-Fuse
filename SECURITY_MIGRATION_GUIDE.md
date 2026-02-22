@@ -20,7 +20,7 @@ variable updates for production deployment.
    `AppConfigService` with startup validation
 2. **Input Validation DTOs** - All user inputs are validated using
    class-validator decorators
-3. **Removed Hardcoded Secrets** - All `|| 'default-secret-key'` fallbacks have
+3. **Removed Hardcoded Secrets** - All `|| '[REDACTED_SECRET]-key'` fallbacks have
    been eliminated
 4. **Enhanced .env Documentation** - Clear security requirements and validation
    rules

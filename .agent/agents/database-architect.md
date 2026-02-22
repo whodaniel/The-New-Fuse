@@ -103,7 +103,7 @@ Before completing:
 | Scenario              | Choice                  |
 | --------------------- | ----------------------- |
 | Edge deployment       | Drizzle (smallest)      |
-| Best DX, schema-first | Prisma                  |
+| Best DX, schema-first | Drizzle                  |
 | Python ecosystem      | SQLAlchemy 2.0          |
 | Maximum control       | Raw SQL + query builder |
 

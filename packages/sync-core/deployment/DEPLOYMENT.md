@@ -75,7 +75,7 @@ docker run -d -p 6379:6379 redis:7-alpine
 
 3. **Run migrations**:
 ```bash
-pnpm prisma migrate deploy
+pnpm drizzle migrate deploy
 ```
 
 4. **Start development server**:

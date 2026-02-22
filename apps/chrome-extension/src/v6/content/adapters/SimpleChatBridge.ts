@@ -1,7 +1,7 @@
 /**
- * Fuse Connect v6 - Simple Chat Bridge
+ * Fuse Connect v7 - Simple Chat Bridge
  *
- * NOTE: This file still contains legacy v5 comments, but it is used by v6.
+ * NOTE: This file still contains legacy v5 comments, but it is used by the current extension build.
  *
  * Cloudflare upgrade (2026-02): when a target UI is unreliable (e.g. OpenClaw cloud
  * transcript rendering issues), we can use the TNF Agent Orchestration worker as a

@@ -1,14 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AgentRegistrationService } from '../services/agent-registration.service';
-import { PrismaService } from '../../../prisma/prisma.service';
+import { DrizzleService } from '../../../drizzle/drizzle.service';
 import { RegisterAgentDto } from '../dto';
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 
 describe('AgentRegistrationService', () => {
   let service: AgentRegistrationService;
-  let prisma: PrismaService;
+  let drizzle: DrizzleService;
 
-  const mockPrismaService = {
+  const mockDrizzleService = {
     $transaction: jest.fn(),
     agent: {
       findFirst: jest.fn(),
@@ -36,14 +36,14 @@ describe('AgentRegistrationService', () => {
       providers: [
         AgentRegistrationService,
         {
-          provide: PrismaService,
-          useValue: mockPrismaService,
+          provide: DrizzleService,
+          useValue: mockDrizzleService,
         },
       ],
     }).compile();
 
     service = module.get<AgentRegistrationService>(AgentRegistrationService);
-    prisma = module.get<PrismaService>(PrismaService);
+    drizzle = module.get<DrizzleService>(DrizzleService);
   });
 
   afterEach(() => {
@@ -96,7 +96,7 @@ describe('AgentRegistrationService', () => {
         createdAt: new Date(),
       };
 
-      mockPrismaService.$transaction.mockImplementation(async (callback) => {
+      mockDrizzleService.$transaction.mockImplementation(async (callback) => {
         const mockTx = {
           agent: {
             findFirst: jest.fn().mockResolvedValue(null),
@@ -137,7 +137,7 @@ describe('AgentRegistrationService', () => {
 
       const userId = 'user-123';
 
-      mockPrismaService.$transaction.mockImplementation(async (callback) => {
+      mockDrizzleService.$transaction.mockImplementation(async (callback) => {
         const mockTx = {
           agent: {
             findFirst: jest.fn().mockResolvedValue({ id: 'existing-123' }),
@@ -155,7 +155,7 @@ describe('AgentRegistrationService', () => {
   describe('verifyAuthToken', () => {
     it('should verify a valid token', async () => {
       const token = 'tnf_agent_validtoken';
-      mockPrismaService.agentRegistration.findUnique.mockResolvedValue({
+      mockDrizzleService.agentRegistration.findUnique.mockResolvedValue({
         id: 'reg-123',
         agentId: 'agent-123',
       });
@@ -170,7 +170,7 @@ describe('AgentRegistrationService', () => {
 
     it('should throw UnauthorizedException for invalid token', async () => {
       const token = 'invalid_token';
-      mockPrismaService.agentRegistration.findUnique.mockResolvedValue(null);
+      mockDrizzleService.agentRegistration.findUnique.mockResolvedValue(null);
 
       await expect(service.verifyAuthToken(token)).rejects.toThrow(
         UnauthorizedException,
@@ -181,11 +181,11 @@ describe('AgentRegistrationService', () => {
   describe('updateHeartbeat', () => {
     it('should update agent heartbeat', async () => {
       const registrationId = 'reg-123';
-      mockPrismaService.agentRegistration.update.mockResolvedValue({});
+      mockDrizzleService.agentRegistration.update.mockResolvedValue({});
 
       await service.updateHeartbeat(registrationId);
 
-      expect(mockPrismaService.agentRegistration.update).toHaveBeenCalledWith({
+      expect(mockDrizzleService.agentRegistration.update).toHaveBeenCalledWith({
         where: { id: registrationId },
         data: {
           lastHeartbeat: expect.any(Date),

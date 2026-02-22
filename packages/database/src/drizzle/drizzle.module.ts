@@ -36,7 +36,7 @@ export interface DrizzleModuleOptions {
  * Then inject the client:
  * ```typescript
  * constructor(@Inject(DRIZZLE_CLIENT) private db: DrizzleClient) {}
- * // OR use DatabaseService (also available as PrismaService alias):
+ * // OR use DatabaseService (also available as DrizzleService alias):
  * constructor(private db: DatabaseService) {}
  * ```
  */

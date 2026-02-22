@@ -62,7 +62,7 @@ Sentry.init({
         }),
         Sentry.consoleIntegration(),
         Sentry.contextLinesIntegration(),
-        Sentry.prismaIntegration(),
+        Sentry.drizzleIntegration(),
     ],
 
     beforeSend(event, hint) {
@@ -108,7 +108,7 @@ Sentry.setContext('runtime', {
 - PII protection built-in (beforeSend)
 - Filter non-critical errors
 - Comprehensive integrations
-- Prisma instrumentation
+- Drizzle instrumentation
 - Service-specific tagging
 
 ---
@@ -185,7 +185,7 @@ const result = await DatabasePerformanceMonitor.withPerformanceTracking(
     'findMany',
     'UserProfile',
     async () => {
-        return await PrismaService.main.userProfile.findMany({ take: 5 });
+        return await DrizzleService.main.userProfile.findMany({ take: 5 });
     }
 );
 ```

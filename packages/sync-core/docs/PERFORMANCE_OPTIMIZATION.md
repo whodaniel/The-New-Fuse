@@ -212,7 +212,7 @@ class MultiLevelCache {
 class CacheWarmer {
   constructor(
     private cache: MultiLevelCache,
-    private database: PrismaClient
+    private database: DrizzleClient
   ) {}
 
   async warmCache() {
@@ -270,9 +270,9 @@ class CacheWarmer {
 
 ```typescript
 // In database configuration
-import { PrismaClient } from '@prisma/client';
+import { DrizzleClient } from '@drizzle/client';
 
-const prisma = new PrismaClient({
+const drizzle = new DrizzleClient({
   datasources: {
     db: {
       url: process.env.DATABASE_URL,
@@ -292,16 +292,16 @@ const prisma = new PrismaClient({
 
 ```typescript
 class OptimizedSyncRepository {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private drizzle: DrizzleClient) {}
 
   // Bad: N+1 query problem
   async getSyncStatesOld(tenantId: string) {
-    const states = await this.prisma.syncState.findMany({
+    const states = await this.drizzle.syncState.findMany({
       where: { tenantId },
     });
 
     for (const state of states) {
-      state.resource = await this.prisma.resource.findUnique({
+      state.resource = await this.drizzle.resource.findUnique({
         where: { id: state.resourceId },
       });
     }
@@ -311,7 +311,7 @@ class OptimizedSyncRepository {
 
   // Good: Single query with includes
   async getSyncStatesOptimized(tenantId: string) {
-    return await this.prisma.syncState.findMany({
+    return await this.drizzle.syncState.findMany({
       where: { tenantId },
       include: {
         resource: true,
@@ -321,7 +321,7 @@ class OptimizedSyncRepository {
 
   // Better: Use raw SQL for complex queries
   async getSyncStatesSuperOptimized(tenantId: string) {
-    return await this.prisma.$queryRaw`
+    return await this.drizzle.$queryRaw`
       SELECT
         ss.*,
         r.name as resource_name,

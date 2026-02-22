@@ -78,7 +78,7 @@ export class CleanupProcessor {
     cutoffDate.setDate(cutoffDate.getDate() - olderThanDays);
 
     // TODO: Implement actual database cleanup
-    // Example: await this.prisma.session.deleteMany({
+    // Example: await this.drizzle.session.deleteMany({
     //   where: { updatedAt: { lt: cutoffDate } }
     // });
 

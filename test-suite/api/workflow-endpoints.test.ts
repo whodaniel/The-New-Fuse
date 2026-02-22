@@ -4,20 +4,20 @@ import { INestApplication } from '@nestjs/common';
 import { getAuthToken, setupTestApp, cleanupTestData } from '../test-utils/test-helpers';
 import { WorkflowController } from '../../../apps/api/src/controllers/workflow.controller';
 import { WorkflowService } from '../../../apps/api/src/services/workflow.service';
-import { PrismaService } from '../../../apps/api/src/services/prisma.service';
+import { DrizzleService } from '../../../apps/api/src/services/drizzle.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 describe('Workflow Endpoints', () => {
   let app: INestApplication;
   let workflowController: WorkflowController;
-  let prismaService: PrismaService;
+  let drizzleService: DrizzleService;
   let authToken: string;
   let userId: string;
 
   beforeAll(async () => {
     app = await setupTestApp();
     workflowController = app.get(WorkflowController);
-    prismaService = app.get(PrismaService);
+    drizzleService = app.get(DrizzleService);
     authToken = await getAuthToken(app, 'testuser@example.com', 'password123');
     userId = 'test-user-123';
   });
@@ -612,7 +612,7 @@ describe('Workflow Endpoints', () => {
 
     it('should prevent deletion of workflows with active executions', async () => {
       // First, create an execution for the workflow
-      await prismaService.workflowExecution.create({
+      await drizzleService.workflowExecution.create({
         data: {
           workflowId: workflowId,
           status: 'running',
@@ -940,7 +940,7 @@ describe('Workflow Endpoints', () => {
   describe('Error Handling and Edge Cases', () => {
     it('should handle database connection errors gracefully', async () => {
       // Mock database error
-      jest.spyOn(prismaService.workflow, 'create').mockRejectedValue(
+      jest.spyOn(drizzleService.workflow, 'create').mockRejectedValue(
         new Error('Database connection failed')
       );
 

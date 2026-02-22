@@ -1,5 +1,5 @@
 /**
- * Fuse Connect v6 - Constants and Configuration
+ * Fuse Connect v7 - Constants and Configuration
  */
 
 import type { ChatDetectionConfig, ExtensionSettings, NotificationSettings } from './types';
@@ -9,8 +9,8 @@ import type { ChatDetectionConfig, ExtensionSettings, NotificationSettings } fro
 // ============================================
 
 export const EXTENSION_NAME = 'Fuse Connect';
-export const EXTENSION_VERSION = '6.0.0';
-export const EXTENSION_ID = 'fuse-connect-v6';
+export const EXTENSION_VERSION = '7.0.0';
+export const EXTENSION_ID = 'fuse-connect-v7';
 
 // ============================================
 // NODE ENDPOINTS

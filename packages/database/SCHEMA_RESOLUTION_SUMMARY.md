@@ -27,7 +27,7 @@ Includes detailed solutions for:
 - ✅ Backwards compatibility strategies
 
 ### 3. Enhanced Production Schema
-**File**: `packages/database/prisma/schema.enhanced.prisma`
+**File**: `packages/database/drizzle/schema.enhanced.drizzle`
 
 A fully-featured, production-ready schema with:
 - ✅ 35+ models (including new Organization, VerifiableCredential, WorkflowStepEdge)
@@ -47,8 +47,8 @@ A fully-featured, production-ready schema with:
 - ✅ Context-based bypass for admin operations
 - ✅ Utility functions (withDeleted, hardDelete, restore)
 
-#### Enhanced Prisma Service
-**File**: `packages/database/src/prisma.service.enhanced.ts`
+#### Enhanced Drizzle Service
+**File**: `packages/database/src/drizzle.service.enhanced.ts`
 
 - ✅ Integrated soft delete middleware
 - ✅ Query logging and performance monitoring
@@ -184,7 +184,7 @@ A fully-featured, production-ready schema with:
 
 ### Performance (RESOLVED ✅)
 15. **Missing Indexes** → 40+ strategic indexes added
-16. **No Query Monitoring** → Prisma middleware with logging + metrics
+16. **No Query Monitoring** → Drizzle middleware with logging + metrics
 
 ---
 
@@ -271,11 +271,11 @@ A fully-featured, production-ready schema with:
 3. `SCHEMA_RESOLUTION_SUMMARY.md` - This summary
 
 ### Schema
-4. `prisma/schema.enhanced.prisma` - Production-ready enhanced schema
+4. `drizzle/schema.enhanced.drizzle` - Production-ready enhanced schema
 
 ### Implementation Code
 5. `src/middleware/soft-delete.middleware.ts` - Soft delete automation
-6. `src/prisma.service.enhanced.ts` - Enhanced Prisma service
+6. `src/drizzle.service.enhanced.ts` - Enhanced Drizzle service
 7. `migrations/utils/encryption.util.ts` - Encryption utilities
 8. `migrations/utils/validation.util.ts` - Validation utilities
 

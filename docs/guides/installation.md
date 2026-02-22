@@ -39,7 +39,7 @@ cp apps/frontend/.env.example apps/frontend/.env
 # Install all dependencies
 pnpm install
 
-# Generate Prisma client
+# Generate Drizzle client
 pnpm run --filter @the-new-fuse/database generate
 ```
 

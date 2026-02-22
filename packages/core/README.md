@@ -860,10 +860,10 @@ await featureFlags.setFlag({
 
 ```typescript
 import { DatabaseService } from '@the-new-fuse/core';
-import { PrismaService } from '@the-new-fuse/database';
+import { DrizzleService } from '@the-new-fuse/database';
 
 // Core provides database abstraction
-// Database package provides Prisma implementation
+// Database package provides Drizzle implementation
 const db = new DatabaseService();
 await db.connect(process.env.DATABASE_URL);
 ```
@@ -1232,7 +1232,7 @@ For issues and questions:
 
 ## Related Packages
 
-- `@the-new-fuse/database` - Database integration (Prisma)
+- `@the-new-fuse/database` - Database integration (Drizzle)
 - `@the-new-fuse/core-auth` - Authentication and authorization
 - `@the-new-fuse/core-error-handling` - Error handling utilities
 - `@the-new-fuse/resource-registry` - Resource management

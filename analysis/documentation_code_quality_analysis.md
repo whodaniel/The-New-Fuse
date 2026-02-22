@@ -271,7 +271,7 @@ async login(user: any): Promise<{access_token: string, user: UserInfo}> {
 
 ### 10.2 Development Tools
 - **Docker Support**: Good containerization documentation
-- **Database Tools**: Prisma integration and database management
+- **Database Tools**: Drizzle integration and database management
 - **CI/CD**: GitHub Actions pipeline documentation
 
 ### 10.3 Missing Tooling Docs

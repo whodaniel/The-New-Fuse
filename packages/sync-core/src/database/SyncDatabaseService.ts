@@ -1,16 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Prisma, PrismaClient, SyncState, SyncConflict } from '@the-new-fuse/database/generated/prisma';
+import { Drizzle, DrizzleClient, SyncState, SyncConflict } from '@the-new-fuse/database/generated/drizzle';
 import { SyncStateData, SyncConflictData, SyncResourceType } from '../types';
 
 /**
  * Database service for sync operations
- * Integrates with existing Prisma database infrastructure
+ * Integrates with existing Drizzle database infrastructure
  */
 @Injectable()
 export class SyncDatabaseService {
   private readonly logger = new Logger(SyncDatabaseService.name);
 
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(private readonly drizzle: DrizzleClient) {}
 
   /**
    * Create or update sync state for a resource
@@ -18,7 +18,7 @@ export class SyncDatabaseService {
   async upsertSyncState(data: Omit<SyncStateData, 'id'>): Promise<SyncState> {
     try {
       // First try to find existing record
-      const existing = await this.prisma.syncState.findFirst({
+      const existing = await this.drizzle.syncState.findFirst({
         where: {
           resourceType: data.resourceType,
           resourceId: data.resourceId,
@@ -28,19 +28,19 @@ export class SyncDatabaseService {
 
       if (existing) {
         // Update existing record
-        return await this.prisma.syncState.update({
+        return await this.drizzle.syncState.update({
           where: { id: existing.id },
           data: {
             version: data.version,
             checksum: data.checksum,
             lastSync: data.lastSync,
             syncedBy: data.syncedBy,
-            metadata: (data.metadata ?? Prisma.DbNull) as any,
+            metadata: (data.metadata ?? Drizzle.DbNull) as any,
           },
         });
       } else {
         // Create new record
-        return await this.prisma.syncState.create({
+        return await this.drizzle.syncState.create({
           data: {
             resourceType: data.resourceType,
             resourceId: data.resourceId,
@@ -49,7 +49,7 @@ export class SyncDatabaseService {
             checksum: data.checksum,
             lastSync: data.lastSync,
             syncedBy: data.syncedBy,
-            metadata: (data.metadata ?? Prisma.DbNull) as any,
+            metadata: (data.metadata ?? Drizzle.DbNull) as any,
           },
         });
       }
@@ -68,7 +68,7 @@ export class SyncDatabaseService {
     tenantId?: string
   ): Promise<SyncState | null> {
     try {
-      return await this.prisma.syncState.findFirst({
+      return await this.drizzle.syncState.findFirst({
         where: {
           resourceType,
           resourceId,
@@ -86,7 +86,7 @@ export class SyncDatabaseService {
    */
   async getTenantSyncStates(tenantId: string): Promise<SyncState[]> {
     try {
-      return await this.prisma.syncState.findMany({
+      return await this.drizzle.syncState.findMany({
         where: { tenantId },
         orderBy: { lastSync: 'desc' },
       });
@@ -104,7 +104,7 @@ export class SyncDatabaseService {
     tenantId?: string
   ): Promise<SyncState[]> {
     try {
-      return await this.prisma.syncState.findMany({
+      return await this.drizzle.syncState.findMany({
         where: {
           resourceType,
           ...(tenantId && { tenantId }),
@@ -126,7 +126,7 @@ export class SyncDatabaseService {
     tenantId?: string
   ): Promise<void> {
     try {
-      const existing = await this.prisma.syncState.findFirst({
+      const existing = await this.drizzle.syncState.findFirst({
         where: {
           resourceType,
           resourceId,
@@ -135,7 +135,7 @@ export class SyncDatabaseService {
       });
 
       if (existing) {
-        await this.prisma.syncState.delete({
+        await this.drizzle.syncState.delete({
           where: { id: existing.id },
         });
       }
@@ -150,7 +150,7 @@ export class SyncDatabaseService {
    */
   async createSyncConflict(data: Omit<SyncConflictData, 'id' | 'createdAt'>): Promise<SyncConflict> {
     try {
-      return await this.prisma.syncConflict.create({
+      return await this.drizzle.syncConflict.create({
         data: {
           resourceType: data.resourceType,
           resourceId: data.resourceId,
@@ -178,7 +178,7 @@ export class SyncDatabaseService {
     resolution: any
   ): Promise<SyncConflict> {
     try {
-      return await this.prisma.syncConflict.update({
+      return await this.drizzle.syncConflict.update({
         where: { id: conflictId },
         data: {
           resolvedAt: new Date(),
@@ -197,7 +197,7 @@ export class SyncDatabaseService {
    */
   async getPendingConflicts(tenantId?: string): Promise<SyncConflict[]> {
     try {
-      return await this.prisma.syncConflict.findMany({
+      return await this.drizzle.syncConflict.findMany({
         where: {
           resolvedAt: null,
           ...(tenantId && { tenantId }),
@@ -219,7 +219,7 @@ export class SyncDatabaseService {
     tenantId?: string
   ): Promise<SyncConflict[]> {
     try {
-      return await this.prisma.syncConflict.findMany({
+      return await this.drizzle.syncConflict.findMany({
         where: {
           resourceType,
           resourceId,
@@ -241,7 +241,7 @@ export class SyncDatabaseService {
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - olderThanDays);
 
-      const result = await this.prisma.syncConflict.deleteMany({
+      const result = await this.drizzle.syncConflict.deleteMany({
         where: {
           resolvedAt: {
             not: null,
@@ -269,22 +269,22 @@ export class SyncDatabaseService {
         resolvedConflicts,
         recentSyncs,
       ] = await Promise.all([
-        this.prisma.syncState.count({
+        this.drizzle.syncState.count({
           where: tenantId ? { tenantId } : {},
         }),
-        this.prisma.syncConflict.count({
+        this.drizzle.syncConflict.count({
           where: {
             resolvedAt: null,
             ...(tenantId && { tenantId }),
           },
         }),
-        this.prisma.syncConflict.count({
+        this.drizzle.syncConflict.count({
           where: {
             resolvedAt: { not: null },
             ...(tenantId && { tenantId }),
           },
         }),
-        this.prisma.syncState.count({
+        this.drizzle.syncState.count({
           where: {
             lastSync: {
               gte: new Date(Date.now() - 24 * 60 * 60 * 1000), // Last 24 hours
@@ -313,7 +313,7 @@ export class SyncDatabaseService {
   async healthCheck(): Promise<{ status: 'healthy' | 'unhealthy'; latency: number }> {
     const startTime = Date.now();
     try {
-      await this.prisma.$queryRaw`SELECT 1`;
+      await this.drizzle.$queryRaw`SELECT 1`;
       const latency = Date.now() - startTime;
       return { status: 'healthy', latency };
     } catch (error) {

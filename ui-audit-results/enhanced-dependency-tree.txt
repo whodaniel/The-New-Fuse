@@ -143,12 +143,12 @@ Raw imports:
 
 File: apps/api/test/agents.service.spec.tsx
 Type: Module/Utility
-Internal imports: ['../src/agents/agents.service', '../src/prisma/prisma.service', '@the-new-fuse/core', '../src/agents/agent.factory', '../src/agents/dto', '@the-new-fuse/database']
+Internal imports: ['../src/agents/agents.service', '../src/drizzle/drizzle.service', '@the-new-fuse/core', '../src/agents/agent.factory', '../src/agents/dto', '@the-new-fuse/database']
 External imports: ['@nestjs/testing', '@nestjs/config', '@jest/globals']
 Raw imports:
   apps/api/test/agents.service.spec.tsx: import ... from '@nestjs/testing'
   apps/api/test/agents.service.spec.tsx: import ... from '../src/agents/agents.service'
-  apps/api/test/agents.service.spec.tsx: import ... from '../src/prisma/prisma.service'
+  apps/api/test/agents.service.spec.tsx: import ... from '../src/drizzle/drizzle.service'
   apps/api/test/agents.service.spec.tsx: import ... from '@nestjs/config'
   apps/api/test/agents.service.spec.tsx: import ... from '@the-new-fuse/core'
   apps/api/test/agents.service.spec.tsx: import ... from '../src/agents/agent.factory'
@@ -9143,11 +9143,11 @@ Raw imports:
 File: packages/core/backup/src_original/analysis/dependency/dependency.mapper.tsx
 Type: Module/Utility
 Exports: class
-Internal imports: ['../../database/prisma.service', '@the-new-fuse/types;']
+Internal imports: ['../../database/drizzle.service', '@the-new-fuse/types;']
 External imports: ['@nestjs/common']
 Raw imports:
   packages/core/backup/src_original/analysis/dependency/dependency.mapper.tsx: import ... from '@nestjs/common'
-  packages/core/backup/src_original/analysis/dependency/dependency.mapper.tsx: import ... from '../../database/prisma.service'
+  packages/core/backup/src_original/analysis/dependency/dependency.mapper.tsx: import ... from '../../database/drizzle.service'
   packages/core/backup/src_original/analysis/dependency/dependency.mapper.tsx: import ... from '@the-new-fuse/types;'
 ---
 
@@ -9166,22 +9166,22 @@ Raw imports:
 File: packages/core/backup/src_original/analysis/quality/code.quality.analyzer.tsx
 Type: Module/Utility
 Exports: class
-Internal imports: ['../../database/prisma.service', '@the-new-fuse/types']
+Internal imports: ['../../database/drizzle.service', '@the-new-fuse/types']
 External imports: ['@nestjs/common']
 Raw imports:
   packages/core/backup/src_original/analysis/quality/code.quality.analyzer.tsx: import ... from '@nestjs/common'
-  packages/core/backup/src_original/analysis/quality/code.quality.analyzer.tsx: import ... from '../../database/prisma.service'
+  packages/core/backup/src_original/analysis/quality/code.quality.analyzer.tsx: import ... from '../../database/drizzle.service'
   packages/core/backup/src_original/analysis/quality/code.quality.analyzer.tsx: import ... from '@the-new-fuse/types'
 ---
 
 File: packages/core/backup/src_original/analysis/security/security.scanner.tsx
 Type: Module/Utility
 Exports: class
-Internal imports: ['../../database/prisma.service', '@the-new-fuse/types', '@the-new-fuse/database']
+Internal imports: ['../../database/drizzle.service', '@the-new-fuse/types', '@the-new-fuse/database']
 External imports: ['@nestjs/common']
 Raw imports:
   packages/core/backup/src_original/analysis/security/security.scanner.tsx: import ... from '@nestjs/common'
-  packages/core/backup/src_original/analysis/security/security.scanner.tsx: import ... from '../../database/prisma.service'
+  packages/core/backup/src_original/analysis/security/security.scanner.tsx: import ... from '../../database/drizzle.service'
   packages/core/backup/src_original/analysis/security/security.scanner.tsx: import ... from '@the-new-fuse/types'
   packages/core/backup/src_original/analysis/security/security.scanner.tsx: import ... from '@the-new-fuse/database'
 ---
@@ -9287,7 +9287,7 @@ Raw imports:
 File: packages/core/backup/src_original/application_factory.tsx
 Type: Module/Utility
 Exports: class
-Internal imports: ['@the-new-fuse/utils', './config/config.service', './security/security.service', './state/state.service', './metrics/metrics.service', './task/task.service', './redis/redis.service', './prisma/prisma.service']
+Internal imports: ['@the-new-fuse/utils', './config/config.service', './security/security.service', './state/state.service', './metrics/metrics.service', './task/task.service', './redis/redis.service', './drizzle/drizzle.service']
 External imports: ['@nestjs/common', 'ioredis']
 Raw imports:
   packages/core/backup/src_original/application_factory.tsx: import ... from '@nestjs/common'
@@ -9298,7 +9298,7 @@ Raw imports:
   packages/core/backup/src_original/application_factory.tsx: import ... from './metrics/metrics.service'
   packages/core/backup/src_original/application_factory.tsx: import ... from './task/task.service'
   packages/core/backup/src_original/application_factory.tsx: import ... from './redis/redis.service'
-  packages/core/backup/src_original/application_factory.tsx: import ... from './prisma/prisma.service'
+  packages/core/backup/src_original/application_factory.tsx: import ... from './drizzle/drizzle.service'
   packages/core/backup/src_original/application_factory.tsx: import ... from 'ioredis'
 ---
 
@@ -9317,13 +9317,13 @@ Raw imports:
 File: packages/core/backup/src_original/auth/auth-service.tsx
 Type: Module/Utility
 Exports: class
-Internal imports: ['../prisma/prisma.service', '@the-new-fuse/database']
+Internal imports: ['../drizzle/drizzle.service', '@the-new-fuse/database']
 External imports: ['@nestjs/common', '@nestjs/jwt', '@nestjs/config', 'bcrypt']
 Raw imports:
   packages/core/backup/src_original/auth/auth-service.tsx: import ... from '@nestjs/common'
   packages/core/backup/src_original/auth/auth-service.tsx: import ... from '@nestjs/jwt'
   packages/core/backup/src_original/auth/auth-service.tsx: import ... from '@nestjs/config'
-  packages/core/backup/src_original/auth/auth-service.tsx: import ... from '../prisma/prisma.service'
+  packages/core/backup/src_original/auth/auth-service.tsx: import ... from '../drizzle/drizzle.service'
   packages/core/backup/src_original/auth/auth-service.tsx: import ... from 'bcrypt'
   packages/core/backup/src_original/auth/auth-service.tsx: import ... from '@the-new-fuse/database'
 ---
@@ -9331,11 +9331,11 @@ Raw imports:
 File: packages/core/backup/src_original/auth/auth.service.tsx
 Type: Module/Utility
 Exports: class
-Internal imports: ['../prisma/prisma.service', '@the-new-fuse/utils;']
+Internal imports: ['../drizzle/drizzle.service', '@the-new-fuse/utils;']
 External imports: ['@nestjs/common', 'bcrypt', '@nestjs/jwt']
 Raw imports:
   packages/core/backup/src_original/auth/auth.service.tsx: import ... from '@nestjs/common'
-  packages/core/backup/src_original/auth/auth.service.tsx: import ... from '../prisma/prisma.service'
+  packages/core/backup/src_original/auth/auth.service.tsx: import ... from '../drizzle/drizzle.service'
   packages/core/backup/src_original/auth/auth.service.tsx: import ... from 'bcrypt'
   packages/core/backup/src_original/auth/auth.service.tsx: import ... from '@nestjs/jwt'
   packages/core/backup/src_original/auth/auth.service.tsx: import ... from '@the-new-fuse/utils;'
@@ -9992,28 +9992,28 @@ Raw imports:
 File: packages/core/backup/src_original/database/database-health.service.tsx
 Type: Module/Utility
 Exports: interface, interface, class
-Internal imports: ['../logging/centralized-logging.service', '../prisma/prisma.service', './ConnectionPoolManager']
+Internal imports: ['../logging/centralized-logging.service', '../drizzle/drizzle.service', './ConnectionPoolManager']
 External imports: ['@nestjs/common', '@nestjs/config', '@nestjs/event-emitter']
 Raw imports:
   packages/core/backup/src_original/database/database-health.service.tsx: import ... from '@nestjs/common'
   packages/core/backup/src_original/database/database-health.service.tsx: import ... from '@nestjs/config'
   packages/core/backup/src_original/database/database-health.service.tsx: import ... from '@nestjs/event-emitter'
   packages/core/backup/src_original/database/database-health.service.tsx: import ... from '../logging/centralized-logging.service'
-  packages/core/backup/src_original/database/database-health.service.tsx: import ... from '../prisma/prisma.service'
+  packages/core/backup/src_original/database/database-health.service.tsx: import ... from '../drizzle/drizzle.service'
   packages/core/backup/src_original/database/database-health.service.tsx: import ... from './ConnectionPoolManager'
 ---
 
 File: packages/core/backup/src_original/database/database-optimizer.service.tsx
 Type: Module/Utility
 Exports: interface, interface, interface, class
-Internal imports: ['../logging/centralized-logging.service', '../prisma/prisma.service', '../monitoring/performance-monitoring.service']
+Internal imports: ['../logging/centralized-logging.service', '../drizzle/drizzle.service', '../monitoring/performance-monitoring.service']
 External imports: ['@nestjs/common', '@nestjs/config', '@nestjs/event-emitter']
 Raw imports:
   packages/core/backup/src_original/database/database-optimizer.service.tsx: import ... from '@nestjs/common'
   packages/core/backup/src_original/database/database-optimizer.service.tsx: import ... from '@nestjs/config'
   packages/core/backup/src_original/database/database-optimizer.service.tsx: import ... from '@nestjs/event-emitter'
   packages/core/backup/src_original/database/database-optimizer.service.tsx: import ... from '../logging/centralized-logging.service'
-  packages/core/backup/src_original/database/database-optimizer.service.tsx: import ... from '../prisma/prisma.service'
+  packages/core/backup/src_original/database/database-optimizer.service.tsx: import ... from '../drizzle/drizzle.service'
   packages/core/backup/src_original/database/database-optimizer.service.tsx: import ... from '../monitoring/performance-monitoring.service'
 ---
 
@@ -10145,27 +10145,27 @@ Raw imports:
   packages/core/backup/src_original/database/migrations/migration-runner.tsx: import ... from 'fs/promises'
 ---
 
-File: packages/core/backup/src_original/database/prisma.service.tsx
+File: packages/core/backup/src_original/database/drizzle.service.tsx
 Type: Module/Utility
 Exports: class
 Internal imports: ['@the-new-fuse/database']
 External imports: ['@nestjs/common']
 Raw imports:
-  packages/core/backup/src_original/database/prisma.service.tsx: import ... from '@nestjs/common'
-  packages/core/backup/src_original/database/prisma.service.tsx: import ... from '@the-new-fuse/database'
+  packages/core/backup/src_original/database/drizzle.service.tsx: import ... from '@nestjs/common'
+  packages/core/backup/src_original/database/drizzle.service.tsx: import ... from '@the-new-fuse/database'
 ---
 
 File: packages/core/backup/src_original/database/query-performance-monitor.service.tsx
 Type: Module/Utility
 Exports: interface, interface, class
-Internal imports: ['../logging/centralized-logging.service', '../prisma/prisma.service', '../monitoring/performance-monitoring.service', '../utils/correlation-id']
+Internal imports: ['../logging/centralized-logging.service', '../drizzle/drizzle.service', '../monitoring/performance-monitoring.service', '../utils/correlation-id']
 External imports: ['@nestjs/common', '@nestjs/config', '@nestjs/event-emitter']
 Raw imports:
   packages/core/backup/src_original/database/query-performance-monitor.service.tsx: import ... from '@nestjs/common'
   packages/core/backup/src_original/database/query-performance-monitor.service.tsx: import ... from '@nestjs/config'
   packages/core/backup/src_original/database/query-performance-monitor.service.tsx: import ... from '@nestjs/event-emitter'
   packages/core/backup/src_original/database/query-performance-monitor.service.tsx: import ... from '../logging/centralized-logging.service'
-  packages/core/backup/src_original/database/query-performance-monitor.service.tsx: import ... from '../prisma/prisma.service'
+  packages/core/backup/src_original/database/query-performance-monitor.service.tsx: import ... from '../drizzle/drizzle.service'
   packages/core/backup/src_original/database/query-performance-monitor.service.tsx: import ... from '../monitoring/performance-monitoring.service'
   packages/core/backup/src_original/database/query-performance-monitor.service.tsx: import ... from '../utils/correlation-id'
 ---
@@ -11456,11 +11456,11 @@ Raw imports:
 File: packages/core/backup/src_original/metrics/MetricService.tsx
 Type: Module/Utility
 Exports: interface, interface, class
-Internal imports: ['../prisma/prisma.service', '@the-new-fuse/types;']
+Internal imports: ['../drizzle/drizzle.service', '@the-new-fuse/types;']
 External imports: ['@nestjs/common']
 Raw imports:
   packages/core/backup/src_original/metrics/MetricService.tsx: import ... from '@nestjs/common'
-  packages/core/backup/src_original/metrics/MetricService.tsx: import ... from '../prisma/prisma.service'
+  packages/core/backup/src_original/metrics/MetricService.tsx: import ... from '../drizzle/drizzle.service'
   packages/core/backup/src_original/metrics/MetricService.tsx: import ... from '@the-new-fuse/types;'
 ---
 
@@ -11489,14 +11489,14 @@ Raw imports:
 File: packages/core/backup/src_original/metrics/metrics.service.tsx
 Type: Module/Utility
 Exports: interface, interface, class
-Internal imports: ['@the-new-fuse/types', '@the-new-fuse/utils', '../monitoring/metrics-collector.service', '../prisma/prisma.service', '../monitoring/ErrorTrackingService']
+Internal imports: ['@the-new-fuse/types', '@the-new-fuse/utils', '../monitoring/metrics-collector.service', '../drizzle/drizzle.service', '../monitoring/ErrorTrackingService']
 External imports: ['@nestjs/common']
 Raw imports:
   packages/core/backup/src_original/metrics/metrics.service.tsx: import ... from '@nestjs/common'
   packages/core/backup/src_original/metrics/metrics.service.tsx: import ... from '@the-new-fuse/types'
   packages/core/backup/src_original/metrics/metrics.service.tsx: import ... from '@the-new-fuse/utils'
   packages/core/backup/src_original/metrics/metrics.service.tsx: import ... from '../monitoring/metrics-collector.service'
-  packages/core/backup/src_original/metrics/metrics.service.tsx: import ... from '../prisma/prisma.service'
+  packages/core/backup/src_original/metrics/metrics.service.tsx: import ... from '../drizzle/drizzle.service'
   packages/core/backup/src_original/metrics/metrics.service.tsx: import ... from '../monitoring/ErrorTrackingService'
 ---
 
@@ -11705,7 +11705,7 @@ Raw imports:
 File: packages/core/backup/src_original/monitoring/business-metrics.service.tsx
 Type: Module/Utility
 Exports: interface, interface, class
-Internal imports: ['@the-new-fuse/utils', './performance-monitoring.service', '../prisma/prisma.service']
+Internal imports: ['@the-new-fuse/utils', './performance-monitoring.service', '../drizzle/drizzle.service']
 External imports: ['@nestjs/common', '@nestjs/config', '@nestjs/event-emitter']
 Raw imports:
   packages/core/backup/src_original/monitoring/business-metrics.service.tsx: import ... from '@nestjs/common'
@@ -11713,13 +11713,13 @@ Raw imports:
   packages/core/backup/src_original/monitoring/business-metrics.service.tsx: import ... from '@nestjs/event-emitter'
   packages/core/backup/src_original/monitoring/business-metrics.service.tsx: import ... from '@the-new-fuse/utils'
   packages/core/backup/src_original/monitoring/business-metrics.service.tsx: import ... from './performance-monitoring.service'
-  packages/core/backup/src_original/monitoring/business-metrics.service.tsx: import ... from '../prisma/prisma.service'
+  packages/core/backup/src_original/monitoring/business-metrics.service.tsx: import ... from '../drizzle/drizzle.service'
 ---
 
 File: packages/core/backup/src_original/monitoring/error-alert.service.tsx
 Type: Module/Utility
 Exports: class
-Internal imports: ['@the-new-fuse/utils', './ErrorTrackingService', '../prisma/prisma.service']
+Internal imports: ['@the-new-fuse/utils', './ErrorTrackingService', '../drizzle/drizzle.service']
 External imports: ['@nestjs/common', '@nestjs/event-emitter', '@nestjs/config']
 Raw imports:
   packages/core/backup/src_original/monitoring/error-alert.service.tsx: import ... from '@nestjs/common'
@@ -11727,7 +11727,7 @@ Raw imports:
   packages/core/backup/src_original/monitoring/error-alert.service.tsx: import ... from '@the-new-fuse/utils'
   packages/core/backup/src_original/monitoring/error-alert.service.tsx: import ... from './ErrorTrackingService'
   packages/core/backup/src_original/monitoring/error-alert.service.tsx: import ... from '@nestjs/config'
-  packages/core/backup/src_original/monitoring/error-alert.service.tsx: import ... from '../prisma/prisma.service'
+  packages/core/backup/src_original/monitoring/error-alert.service.tsx: import ... from '../drizzle/drizzle.service'
 ---
 
 File: packages/core/backup/src_original/monitoring/error-dashboard.service.tsx
@@ -11864,14 +11864,14 @@ Raw imports:
 File: packages/core/backup/src_original/monitoring/performance-monitoring.service.tsx
 Type: Module/Utility
 Exports: interface, interface, interface, interface, class
-Internal imports: ['@the-new-fuse/utils', '../prisma/prisma.service', '../utils/correlation-id']
+Internal imports: ['@the-new-fuse/utils', '../drizzle/drizzle.service', '../utils/correlation-id']
 External imports: ['@nestjs/common', '@nestjs/config', '@nestjs/event-emitter', 'process', 'os']
 Raw imports:
   packages/core/backup/src_original/monitoring/performance-monitoring.service.tsx: import ... from '@nestjs/common'
   packages/core/backup/src_original/monitoring/performance-monitoring.service.tsx: import ... from '@nestjs/config'
   packages/core/backup/src_original/monitoring/performance-monitoring.service.tsx: import ... from '@nestjs/event-emitter'
   packages/core/backup/src_original/monitoring/performance-monitoring.service.tsx: import ... from '@the-new-fuse/utils'
-  packages/core/backup/src_original/monitoring/performance-monitoring.service.tsx: import ... from '../prisma/prisma.service'
+  packages/core/backup/src_original/monitoring/performance-monitoring.service.tsx: import ... from '../drizzle/drizzle.service'
   packages/core/backup/src_original/monitoring/performance-monitoring.service.tsx: import ... from 'process'
   packages/core/backup/src_original/monitoring/performance-monitoring.service.tsx: import ... from 'os'
   packages/core/backup/src_original/monitoring/performance-monitoring.service.tsx: import ... from '../utils/correlation-id'
@@ -12086,11 +12086,11 @@ Raw imports:
 File: packages/core/backup/src_original/notifications/notification.handler.tsx
 Type: Module/Utility
 Exports: class
-Internal imports: ['../prisma/prisma.service']
+Internal imports: ['../drizzle/drizzle.service']
 External imports: ['@nestjs/common']
 Raw imports:
   packages/core/backup/src_original/notifications/notification.handler.tsx: import ... from '@nestjs/common'
-  packages/core/backup/src_original/notifications/notification.handler.tsx: import ... from '../prisma/prisma.service'
+  packages/core/backup/src_original/notifications/notification.handler.tsx: import ... from '../drizzle/drizzle.service'
 ---
 
 File: packages/core/backup/src_original/optimization/CacheManager.tsx
@@ -12145,14 +12145,14 @@ Raw imports:
   packages/core/backup/src_original/pipeline/PipelineManager.tsx: import ... from '../agents/AgentManager'
 ---
 
-File: packages/core/backup/src_original/prisma/prisma.service.tsx
+File: packages/core/backup/src_original/drizzle/drizzle.service.tsx
 Type: Module/Utility
 Exports: class
 Internal imports: ['@the-new-fuse/database']
 External imports: ['@nestjs/common']
 Raw imports:
-  packages/core/backup/src_original/prisma/prisma.service.tsx: import ... from '@nestjs/common'
-  packages/core/backup/src_original/prisma/prisma.service.tsx: import ... from '@the-new-fuse/database'
+  packages/core/backup/src_original/drizzle/drizzle.service.tsx: import ... from '@nestjs/common'
+  packages/core/backup/src_original/drizzle/drizzle.service.tsx: import ... from '@the-new-fuse/database'
 ---
 
 File: packages/core/backup/src_original/processing/featureProcessor.tsx
@@ -12463,14 +12463,14 @@ Raw imports:
 File: packages/core/backup/src_original/security/audit-logging.service.tsx
 Type: Module/Utility
 Exports: interface, interface, class
-Internal imports: ['@the-new-fuse/utils', '../prisma/prisma.service', '../utils/correlation-id']
+Internal imports: ['@the-new-fuse/utils', '../drizzle/drizzle.service', '../utils/correlation-id']
 External imports: ['@nestjs/common', '@nestjs/config', '@nestjs/event-emitter', 'express']
 Raw imports:
   packages/core/backup/src_original/security/audit-logging.service.tsx: import ... from '@nestjs/common'
   packages/core/backup/src_original/security/audit-logging.service.tsx: import ... from '@nestjs/config'
   packages/core/backup/src_original/security/audit-logging.service.tsx: import ... from '@nestjs/event-emitter'
   packages/core/backup/src_original/security/audit-logging.service.tsx: import ... from '@the-new-fuse/utils'
-  packages/core/backup/src_original/security/audit-logging.service.tsx: import ... from '../prisma/prisma.service'
+  packages/core/backup/src_original/security/audit-logging.service.tsx: import ... from '../drizzle/drizzle.service'
   packages/core/backup/src_original/security/audit-logging.service.tsx: import ... from '../utils/correlation-id'
   packages/core/backup/src_original/security/audit-logging.service.tsx: import ... from 'express'
 ---
@@ -12536,14 +12536,14 @@ Raw imports:
 File: packages/core/backup/src_original/security/ip-blocking.service.tsx
 Type: Module/Utility
 Exports: interface, interface, interface, class
-Internal imports: ['@the-new-fuse/utils', '../prisma/prisma.service', '../monitoring/ErrorTrackingService']
+Internal imports: ['@the-new-fuse/utils', '../drizzle/drizzle.service', '../monitoring/ErrorTrackingService']
 External imports: ['@nestjs/common', '@nestjs/config', '@nestjs/event-emitter']
 Raw imports:
   packages/core/backup/src_original/security/ip-blocking.service.tsx: import ... from '@nestjs/common'
   packages/core/backup/src_original/security/ip-blocking.service.tsx: import ... from '@nestjs/config'
   packages/core/backup/src_original/security/ip-blocking.service.tsx: import ... from '@nestjs/event-emitter'
   packages/core/backup/src_original/security/ip-blocking.service.tsx: import ... from '@the-new-fuse/utils'
-  packages/core/backup/src_original/security/ip-blocking.service.tsx: import ... from '../prisma/prisma.service'
+  packages/core/backup/src_original/security/ip-blocking.service.tsx: import ... from '../drizzle/drizzle.service'
   packages/core/backup/src_original/security/ip-blocking.service.tsx: import ... from '../monitoring/ErrorTrackingService'
 ---
 
@@ -13151,11 +13151,11 @@ Raw imports:
 File: packages/core/backup/src_original/task/task.repository.tsx
 Type: Module/Utility
 Exports: class
-Internal imports: ['../database/prisma.service', './types']
+Internal imports: ['../database/drizzle.service', './types']
 External imports: ['@nestjs/common']
 Raw imports:
   packages/core/backup/src_original/task/task.repository.tsx: import ... from '@nestjs/common'
-  packages/core/backup/src_original/task/task.repository.tsx: import ... from '../database/prisma.service'
+  packages/core/backup/src_original/task/task.repository.tsx: import ... from '../database/drizzle.service'
   packages/core/backup/src_original/task/task.repository.tsx: import ... from './types'
 ---
 
@@ -16793,12 +16793,12 @@ Raw imports:
 File: packages/monitoring/src/error-tracking.service.tsx
 Type: Module/Utility
 Exports: interface, interface, class
-Internal imports: ['../../../src/core/database/(prisma as any).service']
+Internal imports: ['../../../src/core/database/(drizzle as any).service']
 External imports: ['@nestjs/common', '@nestjs/config']
 Raw imports:
   packages/monitoring/src/error-tracking.service.tsx: import ... from '@nestjs/common'
   packages/monitoring/src/error-tracking.service.tsx: import ... from '@nestjs/config'
-  packages/monitoring/src/error-tracking.service.tsx: import ... from '../../../src/core/database/(prisma as any).service'
+  packages/monitoring/src/error-tracking.service.tsx: import ... from '../../../src/core/database/(drizzle as any).service'
 ---
 
 File: packages/monitoring/src/monitoring.service.tsx
@@ -16817,12 +16817,12 @@ Raw imports:
 File: packages/monitoring/src/performance-monitoring.service.tsx
 Type: Module/Utility
 Exports: interface, interface, class
-Internal imports: ['../../../src/core/database/(prisma as any).service']
+Internal imports: ['../../../src/core/database/(drizzle as any).service']
 External imports: ['@nestjs/common', '@nestjs/config']
 Raw imports:
   packages/monitoring/src/performance-monitoring.service.tsx: import ... from '@nestjs/common'
   packages/monitoring/src/performance-monitoring.service.tsx: import ... from '@nestjs/config'
-  packages/monitoring/src/performance-monitoring.service.tsx: import ... from '../../../src/core/database/(prisma as any).service'
+  packages/monitoring/src/performance-monitoring.service.tsx: import ... from '../../../src/core/database/(drizzle as any).service'
 ---
 
 File: packages/monitoring/src/performance/PerformanceMonitoringService.tsx

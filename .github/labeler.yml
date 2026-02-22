@@ -38,7 +38,7 @@ documentation:
 
 # Database changes
 database:
-  - prisma/**/*
+  - drizzle/**/*
   - packages/database/**/*
   - '**/migrations/**/*'
 

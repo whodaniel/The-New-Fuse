@@ -1,7 +1,7 @@
 /**
  * Health check service
  * Monitors the health of application dependencies
- * Updated to use Drizzle ORM instead of Prisma
+ * Updated to use Drizzle ORM instead of Drizzle
  */
 
 import { Injectable, Logger } from '@nestjs/common';

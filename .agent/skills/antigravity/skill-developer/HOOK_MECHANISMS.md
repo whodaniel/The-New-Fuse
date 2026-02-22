@@ -157,7 +157,7 @@ IF ALLOWED:
 3. Check database structure with DESCRIBE commands
 4. Then retry this edit
 
-Reason: Prevent column name errors in Prisma queries
+Reason: Prevent column name errors in Drizzle queries
 File: form/src/services/user.ts
 
 💡 TIP: Add '// @skip-validation' comment to skip future checks
@@ -191,7 +191,7 @@ This is THE critical mechanism for enforcement:
 ### Example Conversation Flow
 
 ```
-User: "Add a new user service with Prisma"
+User: "Add a new user service with Drizzle"
 
 Claude: "I'll create the user service..."
     [Attempts to Edit form/src/services/user.ts]
@@ -232,7 +232,7 @@ Prevent repeated nagging in the same session - once Claude uses a skill, don't b
 
 ### How It Works
 
-1. **First edit** of file with Prisma:
+1. **First edit** of file with Drizzle:
    - Hook blocks with exit code 2
    - Updates session state: adds "database-verification" to skills_used
    - Claude sees message, uses skill

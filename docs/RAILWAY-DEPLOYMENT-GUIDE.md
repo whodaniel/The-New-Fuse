@@ -72,7 +72,7 @@ ARG SERVICE_PATH
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=build /app/apps/${SERVICE_PATH}/dist ./apps/${SERVICE_PATH}/dist
 COPY --from=build /app/packages/*/dist ./packages/
-COPY --from=build /app/prisma ./prisma
+COPY --from=build /app/drizzle ./drizzle
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \

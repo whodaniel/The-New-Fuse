@@ -7,7 +7,7 @@
  * existing user and tenant systems.
  */
 
-import { PrismaClient, User, UserRole } from '@the-new-fuse/database/generated/prisma';
+import { DrizzleClient, User, UserRole } from '@the-new-fuse/database/generated/drizzle';
 import { RedisService } from '../config/SyncRedisConfig';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
 import { EnhancedFileSystemWatcher } from '../watchers/EnhancedFileSystemWatcher';
@@ -27,7 +27,7 @@ import {
 } from './types';
 
 export class CMSIntegrationService {
-  private prisma: PrismaClient;
+  private drizzle: DrizzleClient;
   private redis: RedisService;
   private syncOrchestrator: SyncOrchestrator;
   private fileWatcher: EnhancedFileSystemWatcher;
@@ -41,13 +41,13 @@ export class CMSIntegrationService {
   private initialized: boolean = false;
 
   constructor(
-    prisma: PrismaClient,
+    drizzle: DrizzleClient,
     redis: RedisService,
     syncOrchestrator: SyncOrchestrator,
     fileWatcher: EnhancedFileSystemWatcher,
     config?: Partial<CMSConfig>
   ) {
-    this.prisma = prisma;
+    this.drizzle = drizzle;
     this.redis = redis;
     this.syncOrchestrator = syncOrchestrator;
     this.fileWatcher = fileWatcher;
@@ -335,26 +335,26 @@ export class CMSIntegrationService {
 
   private initializeServices(): void {
     this.personalContentManager = new PersonalContentManager(
-      this.prisma,
+      this.drizzle,
       this.redis,
       this.syncOrchestrator
     );
 
     this.projectConfigSync = new ProjectConfigurationSync(
-      this.prisma,
+      this.drizzle,
       this.redis,
       this.syncOrchestrator,
       this.fileWatcher
     );
 
     this.collaborativeContentService = new CollaborativeContentService(
-      this.prisma,
+      this.drizzle,
       this.redis,
       this.syncOrchestrator
     );
 
     this.privateDataIsolationService = new PrivateDataIsolationService(
-      this.prisma,
+      this.drizzle,
       this.redis,
       this.syncOrchestrator
     );
@@ -362,7 +362,7 @@ export class CMSIntegrationService {
 
   private async createDatabaseTables(): Promise<void> {
     // Create CMS-specific tables if they don't exist
-    await this.prisma.$executeRaw`
+    await this.drizzle.$executeRaw`
       CREATE TABLE IF NOT EXISTS personal_content (
         id VARCHAR(255) PRIMARY KEY,
         type VARCHAR(50) NOT NULL,
@@ -385,7 +385,7 @@ export class CMSIntegrationService {
       )
     `;
 
-    await this.prisma.$executeRaw`
+    await this.drizzle.$executeRaw`
       CREATE TABLE IF NOT EXISTS project_configurations (
         id VARCHAR(255) PRIMARY KEY,
         name VARCHAR(500) NOT NULL,
@@ -406,7 +406,7 @@ export class CMSIntegrationService {
       )
     `;
 
-    await this.prisma.$executeRaw`
+    await this.drizzle.$executeRaw`
       CREATE TABLE IF NOT EXISTS content_sharing_permissions (
         id VARCHAR(255) PRIMARY KEY DEFAULT (UUID()),
         content_id VARCHAR(255) NOT NULL,
@@ -422,7 +422,7 @@ export class CMSIntegrationService {
       )
     `;
 
-    await this.prisma.$executeRaw`
+    await this.drizzle.$executeRaw`
       CREATE TABLE IF NOT EXISTS privacy_boundaries (
         id VARCHAR(255) PRIMARY KEY DEFAULT (UUID()),
         tenant_id VARCHAR(255) NOT NULL UNIQUE,
@@ -501,7 +501,7 @@ export class CMSIntegrationService {
     }
 
     // Validate user permissions
-    const user = await this.prisma.user.findUnique({
+    const user = await this.drizzle.user.findUnique({
       where: { id: userId },
       select: { role: true, roles: true, isActive: true }
     });
@@ -516,7 +516,7 @@ export class CMSIntegrationService {
     config: Omit<ProjectConfiguration, 'id' | 'ownerId' | 'createdAt' | 'updatedAt' | 'version'>
   ): Promise<void> {
     // Validate user permissions for project creation
-    const user = await this.prisma.user.findUnique({
+    const user = await this.drizzle.user.findUnique({
       where: { id: userId },
       select: { role: true, roles: true, isActive: true }
     });
@@ -545,7 +545,7 @@ export class CMSIntegrationService {
     }
 
     // Validate target user exists
-    const targetUser = await this.prisma.user.findUnique({
+    const targetUser = await this.drizzle.user.findUnique({
       where: { id: targetUserId },
       select: { id: true, isActive: true }
     });
@@ -573,7 +573,7 @@ export class CMSIntegrationService {
     }
 
     // Validate collaborator user exists
-    const collaborator = await this.prisma.user.findUnique({
+    const collaborator = await this.drizzle.user.findUnique({
       where: { id: collaboratorUserId },
       select: { id: true, role: true, isActive: true }
     });
@@ -595,7 +595,7 @@ export class CMSIntegrationService {
 
   private async auditPersonalContentCompliance(tenantId: string): Promise<any> {
     // Audit personal content for compliance
-    const result = await this.prisma.$queryRaw`
+    const result = await this.drizzle.$queryRaw`
       SELECT 
         COUNT(*) as total_content,
         COUNT(CASE WHEN privacy = 'private' THEN 1 END) as private_content,
@@ -610,7 +610,7 @@ export class CMSIntegrationService {
 
   private async auditProjectConfigurationCompliance(tenantId: string): Promise<any> {
     // Audit project configurations for compliance
-    const result = await this.prisma.$queryRaw`
+    const result = await this.drizzle.$queryRaw`
       SELECT 
         COUNT(*) as total_projects,
         COUNT(CASE WHEN privacy = 'private' THEN 1 END) as private_projects,
@@ -624,7 +624,7 @@ export class CMSIntegrationService {
 
   private async auditCollaborativeContentCompliance(tenantId: string): Promise<any> {
     // Audit collaborative content for compliance
-    const result = await this.prisma.$queryRaw`
+    const result = await this.drizzle.$queryRaw`
       SELECT 
         COUNT(*) as total_permissions,
         COUNT(CASE WHEN expires_at IS NOT NULL AND expires_at < NOW() THEN 1 END) as expired_permissions
@@ -677,7 +677,7 @@ export class CMSIntegrationService {
   private async emitCMSEvent(event: CMSEvent): Promise<void> {
     await this.redis.publish('cms_events', JSON.stringify(event));
     
-    await this.prisma.authEvent.create({
+    await this.drizzle.authEvent.create({
       data: {
         userId: event.userId,
         type: event.type,

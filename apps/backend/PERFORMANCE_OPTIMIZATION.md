@@ -17,11 +17,11 @@ This document outlines all performance optimizations implemented in the Fuse bac
 
 ### 1. Connection Pooling
 
-The Prisma client is configured with optimized connection pooling:
+The Drizzle client is configured with optimized connection pooling:
 
 ```typescript
-// apps/backend/src/prisma/prisma.service.ts
-// Connection pool is automatically managed by Prisma
+// apps/backend/src/drizzle/drizzle.service.ts
+// Connection pool is automatically managed by Drizzle
 // Default: (num_physical_cpus * 2) + effective_spindle_count
 ```
 
@@ -34,7 +34,7 @@ The Prisma client is configured with optimized connection pooling:
 
 Comprehensive indexes have been added for optimal query performance:
 
-**Location:** `/packages/database/prisma/migrations/add_performance_indexes.sql`
+**Location:** `/packages/database/drizzle/migrations/add_performance_indexes.sql`
 
 **Key Indexes:**
 - User table: email, username, role, isActive, createdAt
@@ -46,7 +46,7 @@ Comprehensive indexes have been added for optimal query performance:
 **To apply indexes:**
 ```bash
 cd packages/database
-psql $DATABASE_URL -f prisma/migrations/add_performance_indexes.sql
+psql $DATABASE_URL -f drizzle/migrations/add_performance_indexes.sql
 ```
 
 ### 3. Query Optimization with select()
@@ -55,10 +55,10 @@ All database queries now use field selection to fetch only required data:
 
 ```typescript
 // Before
-const users = await prisma.user.findMany();
+const users = await drizzle.user.findMany();
 
 // After (optimized)
-const users = await prisma.user.findMany({
+const users = await drizzle.user.findMany({
   select: {
     id: true,
     email: true,
@@ -97,11 +97,11 @@ All list endpoints now support pagination to reduce memory usage and improve res
 
 ### 5. Eager vs Lazy Loading
 
-Strategic use of Prisma's include/select for optimal data loading:
+Strategic use of Drizzle's include/select for optimal data loading:
 
 ```typescript
 // Eager loading for related data when needed
-const agent = await prisma.agent.findUnique({
+const agent = await drizzle.agent.findUnique({
   where: { id },
   include: {
     metadata: true,
@@ -110,7 +110,7 @@ const agent = await prisma.agent.findUnique({
 });
 
 // Lazy loading - fetch only when required
-const agent = await prisma.agent.findUnique({
+const agent = await drizzle.agent.findUnique({
   where: { id },
   select: { id: true, name: true }
 });
@@ -216,9 +216,9 @@ async exportData(@Res() res: Response) {
 
 ## Connection Pooling
 
-### 1. Database Connection Pool (Prisma)
+### 1. Database Connection Pool (Drizzle)
 
-**Location:** `/apps/backend/src/prisma/prisma.service.ts`
+**Location:** `/apps/backend/src/drizzle/drizzle.service.ts`
 
 **Configuration:**
 - Automatic connection limit calculation
@@ -229,7 +229,7 @@ async exportData(@Res() res: Response) {
 **Monitoring:**
 ```typescript
 // Log slow queries
-prisma.$on('query', (e) => {
+drizzle.$on('query', (e) => {
   if (e.duration > 1000) {
     logger.warn(`Slow query: ${e.query} (${e.duration}ms)`);
   }
@@ -457,31 +457,31 @@ logger.log('User created', {
 ✅ **DO:**
 ```typescript
 // Use select() to fetch only needed fields
-const users = await prisma.user.findMany({
+const users = await drizzle.user.findMany({
   select: { id: true, email: true, name: true }
 });
 
 // Use pagination
-const users = await prisma.user.findMany({
+const users = await drizzle.user.findMany({
   skip: (page - 1) * limit,
   take: limit
 });
 
 // Use indexes
-// See: /packages/database/prisma/migrations/add_performance_indexes.sql
+// See: /packages/database/drizzle/migrations/add_performance_indexes.sql
 ```
 
 ❌ **DON'T:**
 ```typescript
 // Don't fetch all fields
-const users = await prisma.user.findMany();
+const users = await drizzle.user.findMany();
 
 // Don't fetch all records
-const users = await prisma.user.findMany(); // Could return millions
+const users = await drizzle.user.findMany(); // Could return millions
 
 // Don't query in loops (N+1 problem)
 for (const user of users) {
-  const agents = await prisma.agent.findMany({ where: { userId: user.id } });
+  const agents = await drizzle.agent.findMany({ where: { userId: user.id } });
 }
 ```
 
@@ -516,7 +516,7 @@ await redis.set(key, value, 300); // 5 minutes
 // Properly close connections
 async onModuleDestroy() {
   await this.redis.disconnect();
-  await this.prisma.$disconnect();
+  await this.drizzle.$disconnect();
 }
 
 // Handle connection errors
@@ -661,7 +661,7 @@ METRICS_PORT=9090
 
 ## References
 
-- [Prisma Performance Best Practices](https://www.prisma.io/docs/guides/performance-and-optimization)
+- [Drizzle Performance Best Practices](https://www.drizzle.io/docs/guides/performance-and-optimization)
 - [NestJS Performance](https://docs.nestjs.com/techniques/performance)
 - [Redis Best Practices](https://redis.io/topics/optimization)
 - [k6 Documentation](https://k6.io/docs/)

@@ -1,6 +1,6 @@
 ---
 name: nextjs-fullstack
-description: Next.js full-stack template principles. App Router, Prisma, Tailwind.
+description: Next.js full-stack template principles. App Router, Drizzle, Tailwind.
 ---
 
 # Next.js Full-Stack Template
@@ -11,7 +11,7 @@ description: Next.js full-stack template principles. App Router, Prisma, Tailwin
 |-----------|------------|
 | Framework | Next.js 14 (App Router) |
 | Language | TypeScript |
-| Database | PostgreSQL + Prisma |
+| Database | PostgreSQL + Drizzle |
 | Styling | Tailwind CSS |
 | Auth | Clerk (optional) |
 | Validation | Zod |
@@ -22,8 +22,8 @@ description: Next.js full-stack template principles. App Router, Prisma, Tailwin
 
 ```
 project-name/
-├── prisma/
-│   └── schema.prisma
+├── drizzle/
+│   └── schema.drizzle
 ├── src/
 │   ├── app/
 │   │   ├── layout.tsx
@@ -33,7 +33,7 @@ project-name/
 │   ├── components/
 │   │   └── ui/
 │   ├── lib/
-│   │   ├── db.ts        # Prisma client
+│   │   ├── db.ts        # Drizzle client
 │   │   └── utils.ts
 │   └── types/
 ├── .env.example
@@ -49,7 +49,7 @@ project-name/
 | Server Components | Default, fetch data |
 | Server Actions | Form mutations |
 | Route Handlers | API endpoints |
-| Prisma | Type-safe ORM |
+| Drizzle | Type-safe ORM |
 
 ---
 
@@ -57,7 +57,7 @@ project-name/
 
 | Variable | Purpose |
 |----------|---------|
-| DATABASE_URL | Prisma connection |
+| DATABASE_URL | Drizzle connection |
 | NEXT_PUBLIC_APP_URL | Public URL |
 
 ---
@@ -65,8 +65,8 @@ project-name/
 ## Setup Steps
 
 1. `npx create-next-app {{name}} --typescript --tailwind --app`
-2. `npm install prisma @prisma/client zod`
-3. `npx prisma init`
+2. `npm install drizzle @drizzle/client zod`
+3. `npx drizzle init`
 4. Configure schema
 5. `npm run db:push`
 6. `npm run dev`
@@ -77,6 +77,6 @@ project-name/
 
 - Server Components by default
 - Server Actions for mutations
-- Prisma for type-safe DB
+- Drizzle for type-safe DB
 - Zod for validation
 - Edge runtime where possible

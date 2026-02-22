@@ -68,7 +68,7 @@ The New Fuse is an advanced AI communication system designed to enable seamless 
 ├── examples/               # Example code and usage
 ├── functions/              # Serverless functions
 ├── packages/               # Shared packages
-├── prisma/                 # Prisma ORM configuration
+├── drizzle/                 # Drizzle ORM configuration
 ├── production/             # Production-specific files
 ├── scripts/                # Utility scripts
 ├── src/                    # Source code

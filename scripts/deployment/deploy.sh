@@ -10,7 +10,7 @@ yarn workspace @the-new-fuse/utils build
 yarn workspace @the-new-fuse/core build
 yarn workspace @the-new-fuse/database build
 
-# Generate Prisma client
+# Generate Drizzle client
 echo "🗄️ Generating database client..."
 yarn workspace @the-new-fuse/database generate
 

@@ -31,7 +31,7 @@ Ready for deployment to Docker Hub and Railway.
 ### Manual Package Audit
 
 - [ ] **packages/database**
-  - [ ] Prisma schema valid
+  - [ ] Drizzle schema valid
   - [ ] Migrations up to date
   - [ ] Generated client exists
 
@@ -113,7 +113,7 @@ Ready for deployment to Docker Hub and Railway.
 **This fixes:**
 - Reinstalls all dependencies
 - Resolves peer dependency conflicts
-- Generates Prisma clients
+- Generates Drizzle clients
 - Runs ESLint auto-fix
 - Rebuilds all packages
 
@@ -240,7 +240,7 @@ docker-compose -f docker-compose.minimal.yml down
 - [ ] CORS configured properly
 - [ ] Rate limiting enabled
 - [ ] Input validation on all endpoints
-- [ ] SQL injection protected (Prisma ORM)
+- [ ] SQL injection protected (Drizzle ORM)
 - [ ] XSS protection enabled
 
 ### Dependencies
@@ -284,7 +284,7 @@ ls -lh dist/
 ```bash
 # Check query performance
 cd packages/database
-pnpm exec prisma studio
+pnpm exec drizzle studio
 
 # Run EXPLAIN on slow queries
 ```
@@ -310,10 +310,10 @@ pnpm exec prisma studio
 ```bash
 # Ensure migrations are idempotent
 cd packages/database
-pnpm exec prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma
+pnpm exec drizzle migrate diff --from-empty --to-schema-datamodel drizzle/schema.drizzle
 
 # Check migration status
-pnpm exec prisma migrate status
+pnpm exec drizzle migrate status
 ```
 
 - [ ] All migrations in `migrations/` folder

@@ -2,7 +2,7 @@
  * Workflow Repository - Drizzle ORM Implementation
  * 
  * This repository provides data access for Workflow entities using Drizzle ORM.
- * It replaces the legacy Prisma-based repository.
+ * It replaces the legacy Drizzle-based repository.
  */
 
 import { Inject, Injectable } from '@nestjs/common';

@@ -557,7 +557,7 @@ ls -lh backups/database/
 psql $DATABASE_URL < backups/database/backup-<deployment-id>.sql
 
 # 3. Verify
-pnpm prisma migrate status
+pnpm drizzle migrate status
 ```
 
 ## Best Practices
@@ -648,7 +648,7 @@ railway variables
 
 ```bash
 # Check migration status
-pnpm prisma migrate status
+pnpm drizzle migrate status
 
 # Review migration logs
 cat logs/deployment/migration-*.log

@@ -71,12 +71,48 @@ const usernameFromName = (name: string, email: string): string => {
 const getTokenFromPayload = (payload: AuthPayload): string | null =>
   payload?.accessToken || payload?.access_token || payload?.token || null;
 
+const extractErrorMessage = (payload: any): string | null => {
+  if (!payload || typeof payload !== 'object') return null;
+  if (typeof payload.message === 'string' && payload.message.trim()) return payload.message;
+  if (Array.isArray(payload.message) && payload.message.length > 0) {
+    const joined = payload.message.filter(Boolean).join(', ');
+    return joined || null;
+  }
+  if (typeof payload.error === 'string' && payload.error.trim()) return payload.error;
+  return null;
+};
+
+const isLikelyHtmlResponse = (response: Response, bodyText: string): boolean => {
+  const contentType = response.headers.get('content-type') || '';
+  const normalized = contentType.toLowerCase();
+  if (normalized.includes('text/html')) return true;
+  const sample = bodyText.slice(0, 256).toLowerCase();
+  return sample.includes('<!doctype html') || sample.includes('<html');
+};
+
+const isCloudflareChallenge = (bodyText: string): boolean => {
+  const sample = bodyText.slice(0, 2000).toLowerCase();
+  return (
+    sample.includes('cf-chl') ||
+    sample.includes('cloudflare') ||
+    sample.includes('attention required')
+  );
+};
+
+const sanitizeApiBaseUrl = (rawUrl: string) => {
+  const trimmed = rawUrl.replace(/\/$/, '');
+  if (!trimmed) return '';
+  const prefix = trimmed.toLowerCase();
+  if (prefix === '/api' || prefix === '/v1') return '';
+  return trimmed;
+};
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const apiBaseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+  const apiBaseUrl = sanitizeApiBaseUrl(import.meta.env.VITE_API_URL || '');
   const gatewayPrefix = import.meta.env.PROD ? '/v1' : '/api';
 
   const isFirebaseConfigured =
@@ -261,31 +297,68 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       try {
+        let lastErrorMessage: string | null = null;
+        let sawCloudflareChallenge = false;
+
         for (const endpoint of authEndpoints.login) {
-          const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password }),
-          });
+          try {
+            const response = await fetch(endpoint, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email, password }),
+            });
 
-          if (!response.ok) continue;
+            const bodyText = await response.text();
+            const payload = (() => {
+              try {
+                return bodyText ? (JSON.parse(bodyText) as AuthPayload) : null;
+              } catch {
+                return null;
+              }
+            })();
 
-          const payload = (await response.json()) as AuthPayload;
-          const token = getTokenFromPayload(payload);
-          if (!token) continue;
+            if (!response.ok) {
+              const message = extractErrorMessage(payload);
+              if (message) lastErrorMessage = message;
+              if (isLikelyHtmlResponse(response, bodyText) && isCloudflareChallenge(bodyText)) {
+                sawCloudflareChallenge = true;
+              }
+              continue;
+            }
 
-          setAuthToken(token);
+            if (isLikelyHtmlResponse(response, bodyText)) {
+              if (isCloudflareChallenge(bodyText)) {
+                sawCloudflareChallenge = true;
+              }
+              continue;
+            }
 
-          if (payload.user) {
-            setUser(toFrontendUser(payload.user, email));
-          } else {
-            const details = await fetchUserDetails(token);
-            if (details) setUser(details);
+            if (!payload) continue;
+
+            const token = getTokenFromPayload(payload);
+            if (!token) continue;
+
+            setAuthToken(token);
+
+            if (payload.user) {
+              setUser(toFrontendUser(payload.user, email));
+            } else {
+              const details = await fetchUserDetails(token);
+              if (details) setUser(details);
+            }
+
+            return { method: 'backend' as const };
+          } catch {
+            // Try next endpoint.
           }
-
-          return { method: 'backend' as const };
         }
 
+        if (lastErrorMessage) {
+          throw new Error(lastErrorMessage);
+        }
+        if (sawCloudflareChallenge) {
+          throw new Error('Cloudflare challenge blocked login. Please retry in a cleared browser tab.');
+        }
         throw new Error('Failed to login');
       } catch (backendError: any) {
         const message = backendError?.message || 'Failed to login';
@@ -304,6 +377,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(true);
 
       try {
+        let lastErrorMessage: string | null = null;
+        let sawCloudflareChallenge = false;
+
         if (isFirebaseConfigured) {
           const result = await createUserWithEmailAndPassword(auth, email, password);
           if (result.user) {
@@ -319,35 +395,71 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const username = usernameFromName(name, email);
 
         for (const endpoint of authEndpoints.register) {
-          const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              name,
-              email,
-              username,
-              password,
-              firstName: parsedName.firstName,
-              lastName: parsedName.lastName,
-            }),
-          });
+          try {
+            const response = await fetch(endpoint, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                name,
+                email,
+                username,
+                password,
+                firstName: parsedName.firstName,
+                lastName: parsedName.lastName,
+              }),
+            });
 
-          if (!response.ok) continue;
+            const bodyText = await response.text();
+            const payload = (() => {
+              try {
+                return bodyText ? (JSON.parse(bodyText) as AuthPayload) : null;
+              } catch {
+                return null;
+              }
+            })();
 
-          const payload = (await response.json()) as AuthPayload;
-          const token = getTokenFromPayload(payload);
-          if (!token) continue;
+            if (!response.ok) {
+              const message = extractErrorMessage(payload);
+              if (message) lastErrorMessage = message;
+              if (isLikelyHtmlResponse(response, bodyText) && isCloudflareChallenge(bodyText)) {
+                sawCloudflareChallenge = true;
+              }
+              continue;
+            }
 
-          setAuthToken(token);
-          if (payload.user) {
-            setUser(toFrontendUser(payload.user, email));
-          } else {
-            const details = await fetchUserDetails(token);
-            if (details) setUser(details);
+            if (isLikelyHtmlResponse(response, bodyText)) {
+              if (isCloudflareChallenge(bodyText)) {
+                sawCloudflareChallenge = true;
+              }
+              continue;
+            }
+
+            if (!payload) continue;
+
+            const token = getTokenFromPayload(payload);
+            if (!token) continue;
+
+            setAuthToken(token);
+            if (payload.user) {
+              setUser(toFrontendUser(payload.user, email));
+            } else {
+              const details = await fetchUserDetails(token);
+              if (details) setUser(details);
+            }
+            return payload;
+          } catch {
+            // Try next endpoint.
           }
-          return payload;
         }
 
+        if (lastErrorMessage) {
+          throw new Error(lastErrorMessage);
+        }
+        if (sawCloudflareChallenge) {
+          throw new Error(
+            'Cloudflare challenge blocked registration. Please retry in a cleared browser tab.'
+          );
+        }
         throw new Error('Failed to register');
       } catch (err: any) {
         setError(err.message || 'Failed to register');

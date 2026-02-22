@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter } from 'events';
-import { PrismaClient, SyncConflict, AuthEvent } from '@the-new-fuse/database/generated/prisma';
+import { DrizzleClient, SyncConflict, AuthEvent } from '@the-new-fuse/database/generated/drizzle';
 import { BaseErrorHandler, ErrorSeverity, ErrorCategory } from '@the-new-fuse/core-error-handling';
 import { SyncDatabaseService } from '../database/SyncDatabaseService';
 import { 
@@ -45,7 +45,7 @@ interface ConflictResolutionContext {
 
 /**
  * ConflictManager handles synchronization conflicts using existing database transaction patterns
- * Integrates with existing Prisma database infrastructure and audit logging
+ * Integrates with existing Drizzle database infrastructure and audit logging
  */
 @Injectable()
 export class ConflictManager extends EventEmitter {
@@ -53,7 +53,7 @@ export class ConflictManager extends EventEmitter {
   private errorHandler: BaseErrorHandler<ConflictError, ConflictResolutionContext>;
 
   constructor(
-    private readonly prisma: PrismaClient,
+    private readonly drizzle: DrizzleClient,
     private readonly syncDb: SyncDatabaseService
   ) {
     super();
@@ -104,7 +104,7 @@ export class ConflictManager extends EventEmitter {
       }
 
       // Create conflict record using database transaction
-      return await this.prisma.$transaction(async (tx) => {
+      return await this.drizzle.$transaction(async (tx) => {
         const conflict = await tx.syncConflict.create({
           data: {
             resourceType,
@@ -180,7 +180,7 @@ export class ConflictManager extends EventEmitter {
     context?: TenantSyncContext
   ): Promise<ConflictResolution> {
     try {
-      return await this.prisma.$transaction(async (tx) => {
+      return await this.drizzle.$transaction(async (tx) => {
         // Get the conflict
         const conflict = await tx.syncConflict.findUnique({
           where: { id: conflictId },

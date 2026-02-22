@@ -10,7 +10,7 @@ The New Fuse is an enterprise-grade, multi-tenant AI agent orchestration platfor
 - **Language:** TypeScript, Solidity, Python
 - **Service Code:** ~13,265 lines in services layer alone
 - **Build System:** Turbo with memory optimization
-- **Database:** PostgreSQL (Prisma ORM)
+- **Database:** PostgreSQL (Drizzle ORM)
 - **Caching:** Redis
 - **Blockchain:** EVM (Ethereum, Polygon, Base)
 
@@ -25,7 +25,7 @@ The-New-Fuse/
 ├── contracts/         # Smart contracts (Solidity)
 ├── src/               # Root-level monolithic services
 ├── config/            # Global configuration files
-├── prisma/            # Database schema and migrations
+├── drizzle/            # Database schema and migrations
 ├── docs/              # Documentation (79+ directories)
 ├── deployment/        # Docker, K8s, deployment scripts
 ├── scripts/           # Build, setup, maintenance scripts
@@ -64,7 +64,7 @@ The-New-Fuse/
 - Protocol handler abstraction
 - Function calling support
 
-#### 2.2 Agent Types (from Prisma schema)
+#### 2.2 Agent Types (from Drizzle schema)
 ```typescript
 enum AgentType {
   BASIC              // Basic conversational agent
@@ -164,10 +164,10 @@ enum AgentCapability {
 
 **Build System:** Hardhat with ethers.js v6.15.0
 
-### 3.2 Database Models (from Prisma schema)
+### 3.2 Database Models (from Drizzle schema)
 **Blockchain-Related Models:**
 
-```prisma
+```drizzle
 // NFT & Marketplace
 model AgentNFT {
   id                  String
@@ -281,7 +281,7 @@ npm run build:memory-optimized  # Special optimization
 1. **Security:** JWT_SECRET, WEB3AUTH, Wallet keys
 2. **Database:** PostgreSQL, MongoDB, Redis URLs
 3. **API Keys:** OpenAI, Anthropic, Gemini, Brave, AWS
-4. **Services:** Supabase, Firebase, Prisma Accelerate
+4. **Services:** Supabase, Firebase, Drizzle Accelerate
 5. **Blockchain:** Ethereum/Polygon RPC, contract addresses
 6. **Application:** Port, URLs, feature flags
 
@@ -318,8 +318,8 @@ npm run build:memory-optimized  # Special optimization
 ### 5.2 Database Service Layer
 **Location:** `packages/database/`
 
-**Prisma Integration:**
-- Generated client at `prisma/generated/prisma`
+**Drizzle Integration:**
+- Generated client at `drizzle/generated/drizzle`
 - 775+ lines of schema definitions
 - Full migration system
 - Type-safe database access
@@ -339,7 +339,7 @@ npm run build:memory-optimized  # Special optimization
 - **NestJS** 11.1.6 (main framework)
 - **Express** 5.1.0 (HTTP server)
 - **GraphQL** 16.11.0 with Apollo
-- **Prisma** 6.11.0 (ORM)
+- **Drizzle** 6.11.0 (ORM)
 - **TypeORM** 0.3.27 (alternative ORM)
 
 ### Infrastructure
@@ -374,7 +374,7 @@ npm run build:memory-optimized  # Special optimization
 
 ## 7. Database & Storage Implementation
 
-### 7.1 Prisma Schema (775+ lines)
+### 7.1 Drizzle Schema (775+ lines)
 **Major Models:**
 
 1. **User Management**
@@ -415,7 +415,7 @@ npm run build:memory-optimized  # Special optimization
    - SyncConflict (conflict resolution)
 
 ### 7.2 Migrations
-**Location:** `prisma/migrations/`
+**Location:** `drizzle/migrations/`
 - Generated migrations for schema changes
 - Full migration history
 - Rollback support
@@ -662,7 +662,7 @@ The platform supports a 5-level scaling pattern (from checklist):
 - Redis caching
 - Connection pooling
 - Database query optimization
-- Prisma acceleration
+- Drizzle acceleration
 
 ### 17.3 Monitoring
 - Request metrics
@@ -679,7 +679,7 @@ The platform supports a 5-level scaling pattern (from checklist):
 | **Total Packages** | 72 workspaces |
 | **Primary Language** | TypeScript (100%+) |
 | **Main Framework** | NestJS 11.1.6 |
-| **Database** | PostgreSQL + Prisma |
+| **Database** | PostgreSQL + Drizzle |
 | **Caching** | Redis 6+ |
 | **Smart Contracts** | 6 EVM contracts |
 | **Agent Types** | 8+ types supported |
@@ -715,7 +715,7 @@ The platform supports a 5-level scaling pattern (from checklist):
 1. **Use existing Service patterns** in `src/services/`
 2. **Extend Agent model** with new capabilities
 3. **Leverage MCP** for inter-agent communication
-4. **Use Prisma models** for data persistence
+4. **Use Drizzle models** for data persistence
 5. **Extend protocols** with new transports as needed
 6. **Deploy via Docker/K8s** existing infrastructure
 

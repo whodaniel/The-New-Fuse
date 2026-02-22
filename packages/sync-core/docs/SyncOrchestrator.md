@@ -1,6 +1,6 @@
 # SyncOrchestrator Service
 
-The `SyncOrchestrator` is the central coordination service for multi-tenant synchronization in The New Fuse platform. It integrates with existing services including Redis, WebSocket, Prisma database, and prompt templating to provide seamless real-time synchronization across all system components.
+The `SyncOrchestrator` is the central coordination service for multi-tenant synchronization in The New Fuse platform. It integrates with existing services including Redis, WebSocket, Drizzle database, and prompt templating to provide seamless real-time synchronization across all system components.
 
 ## Overview
 
@@ -24,7 +24,7 @@ The SyncOrchestrator integrates with existing platform services:
                                 │
                                 ▼
                        ┌─────────────────┐
-                       │ Prisma Database │
+                       │ Drizzle Database │
                        └─────────────────┘
                                 │
                                 ▼
@@ -121,7 +121,7 @@ interface SyncOrchestratorConfig {
 
 ## Database Schema
 
-The service extends the existing Prisma schema with sync tracking tables:
+The service extends the existing Drizzle schema with sync tracking tables:
 
 ```sql
 -- Sync state tracking
@@ -210,7 +210,7 @@ The service implements comprehensive error handling:
 
 ### Tenant Isolation
 
-- **Database Level**: Uses existing Prisma tenant isolation patterns
+- **Database Level**: Uses existing Drizzle tenant isolation patterns
 - **Redis Keyspace**: Tenant-specific Redis key prefixes
 - **WebSocket**: Tenant-aware message routing
 - **Access Control**: Integration with existing RBAC system

@@ -20,6 +20,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TNFRelayServer = void 0;
 __exportStar(require("./server/RelayServer"), exports);
 __exportStar(require("./services/HeartbeatMonitoringService"), exports);
+__exportStar(require("./services/HandoffStoreService"), exports);
 __exportStar(require("./services/MasterAgentRegistry"), exports);
 __exportStar(require("./transports/FileTransport"), exports);
 __exportStar(require("./transports/HTTPTransport"), exports);
@@ -38,6 +39,7 @@ __exportStar(require("./services/stall-detector"), exports);
 __exportStar(require("./protocol/resource-protocol"), exports);
 __exportStar(require("./protocol/task-protocol"), exports);
 __exportStar(require("./protocol/tnf-envelope"), exports);
+__exportStar(require("./protocol/handoff-protocol"), exports);
 // Bridges
 __exportStar(require("./redis-relay-bridge"), exports);
 //# sourceMappingURL=index.js.map

@@ -78,7 +78,7 @@ return password === process.env.VSCODE_EXTENSION_ADMIN_PASSWORD;
 
 2. **Authentication Service:**
    - `/workspace/fuse/src/core/auth/auth-service.js` - Contains `'your-secret-key'`
-   - `/workspace/src/vscode-extension/src/config/enhancedConfig.ts` - Contains `'default-secret'` and `'default-secret-key-change-in-production'`
+   - `/workspace/src/vscode-extension/src/config/enhancedConfig.ts` - Contains `'[REDACTED_SECRET]'` and `'[REDACTED_SECRET]-key-change-in-production'`
 
 3. **Test Credentials:**
    - Multiple files contain test credentials like `password === 'password'` for development

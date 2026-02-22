@@ -2,10 +2,10 @@
 
 # This script builds the project while skipping the problematic database package
 
-# First, generate the Prisma client
-echo "✅ Generating Prisma client..."
+# First, generate the Drizzle client
+echo "✅ Generating Drizzle client..."
 cd packages/database
-npx prisma generate
+npx drizzle generate
 cd ../..
 
 # Then create a temporary package.json for turbo

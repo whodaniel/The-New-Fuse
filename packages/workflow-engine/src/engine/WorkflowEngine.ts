@@ -7,7 +7,7 @@
 
 import { EventEmitter } from 'events';
 import { Logger } from '@the-new-fuse/relay-core';
-// import { PrismaClient } from '@prisma/client';
+// import { DrizzleClient } from '@drizzle/client';
 import { WorkflowQueue } from '../queue/WorkflowQueue';
 import { telemetry } from '../telemetry/TelemetryService';
 import { WorkflowExecutor } from '../executor/WorkflowExecutor';
@@ -46,7 +46,7 @@ export interface WorkflowEngineConfig {
 export class UnifiedWorkflowEngine extends EventEmitter {
   private logger: Logger;
   private config: WorkflowEngineConfig;
-  private prisma: any; // PrismaClient;
+  private drizzle: any; // DrizzleClient;
   private agentRegistry: MasterAgentRegistry;
   private heartbeatService: HeartbeatMonitoringService;
   private workflowQueue?: WorkflowQueue;
@@ -67,7 +67,7 @@ export class UnifiedWorkflowEngine extends EventEmitter {
 
   constructor(
     config: WorkflowEngineConfig,
-    prisma: any /* PrismaClient */,
+    drizzle: any /* DrizzleClient */,
     agentRegistry: MasterAgentRegistry,
     heartbeatService: HeartbeatMonitoringService,
     logger: Logger,
@@ -75,7 +75,7 @@ export class UnifiedWorkflowEngine extends EventEmitter {
   ) {
     super();
     this.config = config;
-    this.prisma = prisma;
+    this.drizzle = drizzle;
     this.agentRegistry = agentRegistry;
     this.heartbeatService = heartbeatService;
     this.workflowQueue = workflowQueue;
@@ -131,7 +131,7 @@ export class UnifiedWorkflowEngine extends EventEmitter {
     try {
       this.logger.info('🔄 Checking for interrupted workflow executions...');
 
-      const interruptedExecutions = await this.prisma.workflowExecution.findMany({
+      const interruptedExecutions = await this.drizzle.workflowExecution.findMany({
         where: {
           status: WorkflowExecutionStatus.RUNNING
         }
@@ -238,7 +238,7 @@ export class UnifiedWorkflowEngine extends EventEmitter {
 
   public async loadWorkflow(workflowId: string): Promise<UnifiedWorkflow | null> {
     try {
-      const dbWorkflow = await this.prisma.workflow.findUnique({
+      const dbWorkflow = await this.drizzle.workflow.findUnique({
         where: { id: workflowId },
         include: {
           steps: { orderBy: { order: 'asc' } },
@@ -294,7 +294,7 @@ export class UnifiedWorkflowEngine extends EventEmitter {
       }
     };
 
-    await this.prisma.workflowExecution.create({
+    await this.drizzle.workflowExecution.create({
       data: {
         id: executionId,
         workflowId: workflow.id,
@@ -413,7 +413,7 @@ export class UnifiedWorkflowEngine extends EventEmitter {
   }
 
   public async finalizeExecution(execution: WorkflowExecution): Promise<void> {
-    await this.prisma.workflowExecution.update({
+    await this.drizzle.workflowExecution.update({
       where: { id: execution.id },
       data: {
         status: execution.status,
@@ -534,7 +534,7 @@ export class UnifiedWorkflowEngine extends EventEmitter {
 
   private async loadExecution(executionId: string): Promise<WorkflowExecution | null> {
     try {
-      const dbExecution = await this.prisma.workflowExecution.findUnique({
+      const dbExecution = await this.drizzle.workflowExecution.findUnique({
         where: { id: executionId }
       });
 

@@ -6,7 +6,7 @@
  * configuration sync, collaborative content sharing, and private data isolation.
  */
 
-import { PrismaClient, UserRole } from '@the-new-fuse/database/generated/prisma';
+import { DrizzleClient, UserRole } from '@the-new-fuse/database/generated/drizzle';
 import { RedisService } from '../config/SyncRedisConfig';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
 import { EnhancedFileSystemWatcher } from '../watchers/EnhancedFileSystemWatcher';
@@ -21,13 +21,13 @@ import {
 
 async function demonstrateCMSIntegration() {
   // Initialize dependencies (these would be injected in real application)
-  const prisma = new PrismaClient();
+  const drizzle = new DrizzleClient();
   const redis = new RedisService({
     host: 'localhost',
     port: 6379,
     keyPrefix: 'cms:'
   });
-  const syncOrchestrator = new SyncOrchestrator(prisma, redis, {} as any);
+  const syncOrchestrator = new SyncOrchestrator(drizzle, redis, {} as any);
   const fileWatcher = new EnhancedFileSystemWatcher({
     watchPaths: ['./config', './content'],
     ignorePatterns: ['node_modules', '.git']
@@ -35,7 +35,7 @@ async function demonstrateCMSIntegration() {
 
   // Initialize CMS Integration Service
   const cmsService = new CMSIntegrationService(
-    prisma,
+    drizzle,
     redis,
     syncOrchestrator,
     fileWatcher,
@@ -350,7 +350,7 @@ Please follow our contribution guidelines...
   console.log('✅ Multi-user collaboration workflows');
 
   // Cleanup
-  await prisma.$disconnect();
+  await drizzle.$disconnect();
 }
 
 // Error handling wrapper

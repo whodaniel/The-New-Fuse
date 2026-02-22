@@ -2,7 +2,7 @@
  * DatabaseService - Unified Database Access Layer
  *
  * This service provides a centralized interface for all database operations,
- * wrapping Drizzle ORM repositories. It replaces the legacy PrismaService.
+ * wrapping Drizzle ORM repositories. It replaces the legacy DrizzleService.
  *
  * Usage:
  * ```typescript
@@ -239,10 +239,3 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
     return db.transaction(fn as any);
   }
 }
-
-/**
- * PrismaService alias for backwards compatibility
- * @deprecated Use DatabaseService instead
- */
-export const PrismaService = DatabaseService;
-export type PrismaService = DatabaseService;

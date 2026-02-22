@@ -17,7 +17,7 @@ import { TNFMCPService } from './TNFMCPService';
 import { CacheService } from '../cache/cache.service';
 
 @Module({
-  // DatabaseModule provides PrismaService (Drizzle-backed) for all services
+  // DatabaseModule provides DrizzleService (Drizzle-backed) for all services
   imports: [DatabaseModule, ConfigModule, JwtModule],
   providers: [
     CacheService,

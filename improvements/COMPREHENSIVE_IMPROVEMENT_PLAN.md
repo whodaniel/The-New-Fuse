@@ -5,7 +5,7 @@
 This document outlines a comprehensive improvement plan for The New Fuse AI
 agent coordination platform.
 
-> **⚠️ IMPORTANT:** Prisma ORM has been migrated to **Drizzle ORM**. All
+> **⚠️ IMPORTANT:** Drizzle ORM has been migrated to **Drizzle ORM**. All
 > database operations should use Drizzle repositories and the
 > `@the-new-fuse/database` package.
 
@@ -15,22 +15,22 @@ agent coordination platform.
 
 ### 1.1 Migration Status
 
-**Current State:** The project has migrated from Prisma to Drizzle ORM. Key
+**Current State:** The project has migrated from Drizzle to Drizzle ORM. Key
 packages updated:
 
 - `packages/database/src/drizzle/` - Complete Drizzle schema and repositories
 - `packages/api/src/services/database.service.ts` - Drizzle-based service
 - `packages/api/src/repositories/` - All Drizzle-based repositories
 
-**Still Using Prisma (needs migration):**
+**Still Using Drizzle (needs migration):**
 
-- Multiple services in `src/services/` still import PrismaService
-- Test files using Prisma mock
-- Some scripts using PrismaClient directly
+- Multiple services in `src/services/` still import DrizzleService
+- Test files using Drizzle mock
+- Some scripts using DrizzleClient directly
 
 ### 1.2 Remaining Migration Tasks
 
-#### Files Still Using Prisma (Priority Migration):
+#### Files Still Using Drizzle (Priority Migration):
 
 **Services to Migrate:**
 
@@ -46,7 +46,7 @@ packages updated:
 
 **Test Files to Update:**
 
-- `test-suite/**/*.test.ts` - Replace Prisma mocks with Drizzle mocks
+- `test-suite/**/*.test.ts` - Replace Drizzle mocks with Drizzle mocks
 - `apps/backend/src/modules/agent-registry/__tests__/` - Update test mocks
 
 **Scripts to Update:**
@@ -57,14 +57,14 @@ packages updated:
 
 ### 1.3 Migration Pattern
 
-**Before (Prisma):**
+**Before (Drizzle):**
 
 ```typescript
-import { PrismaService } from '../prisma/prisma.service.js';
+import { DrizzleService } from '../drizzle/drizzle.service.js';
 
-constructor(private readonly prisma: PrismaService) {}
+constructor(private readonly drizzle: DrizzleService) {}
 
-const agent = await this.prisma.agent.findFirst({ where: { id } });
+const agent = await this.drizzle.agent.findFirst({ where: { id } });
 ```
 
 **After (Drizzle):**
@@ -257,7 +257,7 @@ import { drizzleAgentRepository } from '@the-new-fuse/database';
 
 **Files requiring updates:**
 
-- `README.md` - Project overview and setup (mention Drizzle, not Prisma)
+- `README.md` - Project overview and setup (mention Drizzle, not Drizzle)
 - `QUICK_START_GUIDE.md` - Fast setup for development
 - `CONTRIBUTING.md` - Development workflow
 
@@ -270,7 +270,7 @@ import { drizzleAgentRepository } from '@the-new-fuse/database';
 **Actions:**
 
 - [ ] Audit and update outdated dependencies
-- [ ] Remove unused Prisma dependencies
+- [ ] Remove unused Drizzle dependencies
 - [ ] Implement dependency version constraints
 - [ ] Add automated dependency update workflow
 
@@ -288,7 +288,7 @@ import { drizzleAgentRepository } from '@the-new-fuse/database';
 **Database Package:**
 
 ```bash
-# Drizzle migrations (not Prisma)
+# Drizzle migrations (not Drizzle)
 cd packages/database
 npx drizzle-kit generate
 npx drizzle-kit push  # or migrate
@@ -414,10 +414,10 @@ Based on FTUE Report (May 2025):
 
 ### Phase 1: Complete Drizzle Migration (Week 1-2)
 
-- [ ] Migrate all services from Prisma to Drizzle
+- [ ] Migrate all services from Drizzle to Drizzle
 - [ ] Update all test files with Drizzle mocks
 - [ ] Update all scripts to use Drizzle repositories
-- [ ] Remove unused Prisma dependencies
+- [ ] Remove unused Drizzle dependencies
 - [ ] Create comprehensive seed data using Drizzle
 
 ### Phase 2: Security (Week 3-4)

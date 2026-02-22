@@ -100,7 +100,7 @@ This roadmap outlines a phased approach to systematically address the identified
     2.  **Backend & Database Remediation**:
         *   Apply schema fixes: add foreign keys, indexes, and constraints.
         *   Refactor services to eliminate N+1 query patterns using eager loading.
-        *   Standardize on a single ORM (Prisma is recommended).
+        *   Standardize on a single ORM (Drizzle is recommended).
     3.  **Core Logic Rewrite**:
         *   Redesign the `SelfPromptingService` to be stateless, transactional, and free of race conditions.
 *   **Success Metrics**:

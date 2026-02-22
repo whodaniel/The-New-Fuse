@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SyncOrchestrator, AgentState, IWebSocketService } from './SyncOrchestrator';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { PrismaService } from '@the-new-fuse/database';
+import { DrizzleService } from '@the-new-fuse/database';
 import { PromptTemplateServiceImpl } from '@the-new-fuse/prompt-templating';
 import { SyncConflictData, SyncResourceType } from '../types';
 
@@ -9,7 +9,7 @@ describe('SyncOrchestrator', () => {
   let service: SyncOrchestrator;
   let redisService: jest.Mocked<UnifiedRedisService>;
   let wsService: jest.Mocked<IWebSocketService>;
-  let dbService: jest.Mocked<PrismaService>;
+  let dbService: jest.Mocked<DrizzleService>;
   let promptTemplateService: jest.Mocked<PromptTemplateServiceImpl>;
 
   const mockUser = {
@@ -81,7 +81,7 @@ describe('SyncOrchestrator', () => {
           useValue: mockWsService
         },
         {
-          provide: PrismaService,
+          provide: DrizzleService,
           useValue: mockDbService
         },
         {
@@ -94,7 +94,7 @@ describe('SyncOrchestrator', () => {
     service = module.get<SyncOrchestrator>(SyncOrchestrator);
     redisService = module.get(UnifiedRedisService);
     wsService = module.get('IWebSocketService');
-    dbService = module.get(PrismaService);
+    dbService = module.get(DrizzleService);
     promptTemplateService = module.get(PromptTemplateServiceImpl);
 
     // Setup default mocks

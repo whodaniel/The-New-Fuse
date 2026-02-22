@@ -10,7 +10,7 @@ import { execSync } from 'child_process';
  * - API Gateway: 3005
  * - Theia IDE: 3006, 3007, 3008
  * - Backend App: 3004
- * - Database UI: 5555 (Prisma Studio)
+ * - Database UI: 5555 (Drizzle Studio)
  */
 
 // Don't clear port 3008 as it's used by Theia IDE WebSocket server

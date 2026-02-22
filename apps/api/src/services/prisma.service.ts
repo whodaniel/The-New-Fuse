@@ -1,8 +1,8 @@
 /**
- * PrismaService - Legacy compatibility layer
+ * DrizzleService - Legacy compatibility layer
  *
  * This service now wraps the DatabaseService from @the-new-fuse/database
- * which uses Drizzle ORM instead of Prisma.
+ * which uses Drizzle ORM instead of Drizzle.
  *
  * @deprecated Use DatabaseService directly from @the-new-fuse/database
  */
@@ -10,10 +10,10 @@ import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/commo
 import { DatabaseService } from '@the-new-fuse/database';
 
 @Injectable()
-export class PrismaService extends DatabaseService implements OnModuleInit, OnModuleDestroy {
-  private readonly prismaLogger = new Logger(PrismaService.name);
+export class DrizzleService extends DatabaseService implements OnModuleInit, OnModuleDestroy {
+  private readonly drizzleLogger = new Logger(DrizzleService.name);
 
-  // Aliases for backward compatibility with Prisma-style property access
+  // Aliases for backward compatibility with Drizzle-style property access
   get user() { return this.users; }
   get agent() { return this.agents; }
   get chat() { return this.chats; }
@@ -35,7 +35,7 @@ export class PrismaService extends DatabaseService implements OnModuleInit, OnMo
         // Return a function that throws
         return (...args: any[]) => {
           const msg = `Model '${modelName}' is not yet migrated to Drizzle. Operation '${String(prop)}' failed.`;
-          this.prismaLogger.error(msg);
+          this.drizzleLogger.error(msg);
           throw new Error(msg);
         };
       }

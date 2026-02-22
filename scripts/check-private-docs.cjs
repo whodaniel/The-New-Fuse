@@ -38,4 +38,7 @@ console.error(
   "\n[doc-gate] If this push is intentional, rerun with TNF_ALLOW_PRIVATE_DOC_PUSH=1."
 );
 console.error("[doc-gate] Example: TNF_ALLOW_PRIVATE_DOC_PUSH=1 git push\n");
+console.error(
+  "[doc-gate] Cloud-first handoff guidance: docs/protocols/AGENT_TARGETED_HANDOFF_V1.md\n"
+);
 process.exit(1);

@@ -6,8 +6,8 @@ Based on analysis of your codebase, "The New Fuse" implements a comprehensive AI
 
 ## Core Agent Data Structure
 
-### Database Schema (Prisma)
-```prisma
+### Database Schema (Drizzle)
+```drizzle
 model Agent {
   id            String      @id @default(cuid())
   name          String      @unique
@@ -486,7 +486,7 @@ The system includes comprehensive validation:
 
 ✅ **Standardized JSON Structure** - Consistent format across all agents  
 ✅ **Comprehensive Type System** - Full TypeScript definitions  
-✅ **Database Integration** - Prisma ORM with PostgreSQL  
+✅ **Database Integration** - Drizzle ORM with PostgreSQL  
 ✅ **Performance Tracking** - Built-in metrics and analytics  
 ✅ **Accessibility Support** - ARIA labels, keyboard navigation  
 ✅ **Multi-Framework Support** - VSCode, WebIDE, CLI deployment  

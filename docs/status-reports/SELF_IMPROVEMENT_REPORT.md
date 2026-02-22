@@ -197,7 +197,7 @@ run on.
 - Detects queries > 10 per request
 - Logs slow queries (> 1000ms)
 - Suggests DataLoader pattern
-- Recommends Prisma includes
+- Recommends Drizzle includes
 
 **Monitoring:**
 
@@ -443,7 +443,7 @@ safely
 
 - NestJS for service architecture
 - TypeScript for type safety
-- Prisma for database operations
+- Drizzle for database operations
 - Event-driven messaging
 - RESTful APIs
 

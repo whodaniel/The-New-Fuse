@@ -6,7 +6,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { PrismaService } from '../../src/prisma/prisma.service';
+import { DrizzleService } from '../../src/drizzle/drizzle.service';
 import { AppModule } from '../../src/app.module';
 
 // API Endpoint categories for comprehensive testing
@@ -97,7 +97,7 @@ const SECURITY_TEST_PAYLOADS = {
 
 describe('API Endpoint Security Tests', () => {
   let app: INestApplication;
-  let prisma: PrismaService;
+  let drizzle: DrizzleService;
   let authToken: string;
   let adminToken: string;
   let testUser: any;
@@ -112,10 +112,10 @@ describe('API Endpoint Security Tests', () => {
     app = moduleRef.createNestApplication();
     await app.init();
 
-    prisma = moduleRef.get<PrismaService>(PrismaService);
+    drizzle = moduleRef.get<DrizzleService>(DrizzleService);
 
     // Setup test users
-    testUser = await prisma.user.create({
+    testUser = await drizzle.user.create({
       data: {
         email: 'api.test.user@example.com',
         password: 'UserPassword123!',
@@ -124,7 +124,7 @@ describe('API Endpoint Security Tests', () => {
       },
     });
 
-    testAdmin = await prisma.user.create({
+    testAdmin = await drizzle.user.create({
       data: {
         email: 'api.test.admin@example.com',
         password: 'AdminPassword123!',
@@ -153,7 +153,7 @@ describe('API Endpoint Security Tests', () => {
     adminToken = adminLogin.body.access_token;
 
     // Setup test agent
-    testAgent = await prisma.agent.create({
+    testAgent = await drizzle.agent.create({
       data: {
         name: 'API Test Agent',
         description: 'Test agent for API security testing',
@@ -164,7 +164,7 @@ describe('API Endpoint Security Tests', () => {
   });
 
   afterAll(async () => {
-    await prisma.agent.deleteMany({
+    await drizzle.agent.deleteMany({
       where: { 
         OR: [
           { userId: testUser.id },
@@ -172,7 +172,7 @@ describe('API Endpoint Security Tests', () => {
         ],
       },
     });
-    await prisma.user.deleteMany({
+    await drizzle.user.deleteMany({
       where: {
         OR: [
           { id: testUser.id },
@@ -389,7 +389,7 @@ describe('API Endpoint Security Tests', () => {
 
     it('should validate agent ownership', async () => {
       // Create agent as testUser
-      const userAgent = await prisma.agent.create({
+      const userAgent = await drizzle.agent.create({
         data: {
           name: 'User Agent',
           description: 'Test user agent',
@@ -399,7 +399,7 @@ describe('API Endpoint Security Tests', () => {
       });
 
       // Try to access as different user
-      const otherUser = await prisma.user.create({
+      const otherUser = await drizzle.user.create({
         data: {
           email: 'other.user@example.com',
           password: 'OtherPassword123!',
@@ -425,8 +425,8 @@ describe('API Endpoint Security Tests', () => {
       expect(response.status).toBe(403);
 
       // Clean up
-      await prisma.agent.delete({ where: { id: userAgent.id } });
-      await prisma.user.delete({ where: { id: otherUser.id } });
+      await drizzle.agent.delete({ where: { id: userAgent.id } });
+      await drizzle.user.delete({ where: { id: otherUser.id } });
     });
 
     it('should prevent XSS in agent data', async () => {

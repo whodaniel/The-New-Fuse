@@ -764,12 +764,12 @@ const appLogger = CoreLogger.getInstance();
 ### With Database Package
 
 ```typescript
-import { PrismaService } from '@the-new-fuse/database';
+import { DrizzleService } from '@the-new-fuse/database';
 import { DatabaseError } from '@the-new-fuse/core-error-handling';
 
 async function queryDatabase() {
   try {
-    return await prisma.user.findMany();
+    return await drizzle.user.findMany();
   } catch (error) {
     throw new DatabaseError(
       'Failed to query users',

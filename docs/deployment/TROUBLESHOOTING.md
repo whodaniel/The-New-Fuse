@@ -38,8 +38,8 @@ pnpm --version  # Should be >= 8.x
 # Clear TypeScript cache
 rm -rf **/*.tsbuildinfo
 
-# Regenerate Prisma client
-pnpm prisma generate
+# Regenerate Drizzle client
+pnpm drizzle generate
 
 # Type check
 pnpm run type-check
@@ -131,23 +131,23 @@ BUILD_FRONTEND=false pnpm run build:railway
 ### Issue: Migration fails
 
 **Symptoms:**
-- `prisma migrate deploy` errors
+- `drizzle migrate deploy` errors
 - Schema mismatch
 - Connection timeouts
 
 **Solutions:**
 ```bash
 # Check database connection
-pnpm prisma db execute --stdin <<< "SELECT 1;"
+pnpm drizzle db execute --stdin <<< "SELECT 1;"
 
 # View migration status
-pnpm prisma migrate status
+pnpm drizzle migrate status
 
 # Force migration (CAUTION)
-pnpm prisma migrate resolve --applied <migration-name>
+pnpm drizzle migrate resolve --applied <migration-name>
 
 # Reset database (DEVELOPMENT ONLY)
-pnpm prisma migrate reset
+pnpm drizzle migrate reset
 ```
 
 ### Issue: Database connection errors

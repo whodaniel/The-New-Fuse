@@ -9,7 +9,7 @@ cache issues across the entire monorepo.
 
 ### Documentation (4 files)
 
-1. `.gemini/PRISMA_NAMESPACE_EXPORT_FIX.md` - Original issue documentation
+1. `.gemini/DRIZZLE_NAMESPACE_EXPORT_FIX.md` - Original issue documentation
 2. `.gemini/BUILD_PROCESS_HARDENING.md` - Complete hardening guide (70+ lines)
 3. `.gemini/BUILD_PROCESS_HARDENING_SUMMARY.md` - Executive summary
 4. `scripts/BUILD_HARDENING_README.md` - Scripts documentation
@@ -165,7 +165,7 @@ Or for packages with additional artifacts:
 
 | Time  | Action                                      |
 | ----- | ------------------------------------------- |
-| 05:46 | Original Prisma namespace issue discovered  |
+| 05:46 | Original Drizzle namespace issue discovered  |
 | 05:49 | Root cause identified (missing .d.ts files) |
 | 05:52 | Fixed database package build cache          |
 | 06:01 | Started comprehensive hardening             |
@@ -194,7 +194,7 @@ All 61 packages now properly clean tsconfig.tsbuildinfo files.
 
 Related files:
 - .gemini/BUILD_PROCESS_HARDENING.md
-- .gemini/PRISMA_NAMESPACE_EXPORT_FIX.md
+- .gemini/DRIZZLE_NAMESPACE_EXPORT_FIX.md
 - scripts/audit-clean-scripts.cjs
 - scripts/validate-build.cjs
 ```

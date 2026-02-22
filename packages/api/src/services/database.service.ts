@@ -1,7 +1,7 @@
 /**
  * Database Service
  * Handles database connections using Drizzle ORM
- * This replaces the legacy PrismaService
+ * This replaces the legacy DrizzleService
  */
 
 import { Injectable, OnModuleInit, OnModuleDestroy, Logger, Inject } from '@nestjs/common';

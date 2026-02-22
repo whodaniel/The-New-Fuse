@@ -1,6 +1,6 @@
 ---
 name: backend-dev-guidelines
-description: Comprehensive backend development guide for Node.js/Express/TypeScript microservices. Use when creating routes, controllers, services, repositories, middleware, or working with Express APIs, Prisma database access, Sentry error tracking, Zod validation, unifiedConfig, dependency injection, or async patterns. Covers layered architecture (routes → controllers → services → repositories), BaseController pattern, error handling, performance monitoring, testing strategies, and migration from legacy patterns.
+description: Comprehensive backend development guide for Node.js/Express/TypeScript microservices. Use when creating routes, controllers, services, repositories, middleware, or working with Express APIs, Drizzle database access, Sentry error tracking, Zod validation, unifiedConfig, dependency injection, or async patterns. Covers layered architecture (routes → controllers → services → repositories), BaseController pattern, error handling, performance monitoring, testing strategies, and migration from legacy patterns.
 ---
 
 # Backend Development Guidelines
@@ -15,7 +15,7 @@ Automatically activates when working on:
 - Creating or modifying routes, endpoints, APIs
 - Building controllers, services, repositories
 - Implementing middleware (auth, validation, error handling)
-- Database operations with Prisma
+- Database operations with Drizzle
 - Error tracking with Sentry
 - Input validation with Zod
 - Configuration management
@@ -63,7 +63,7 @@ Services (business logic)
     ↓
 Repositories (data access)
     ↓
-Database (Prisma)
+Database (Drizzle)
 ```
 
 **Key Principle:** Each layer has ONE responsibility.
@@ -186,8 +186,8 @@ import express, { Request, Response, NextFunction, Router } from 'express';
 import { z } from 'zod';
 
 // Database
-import { PrismaClient } from '@prisma/client';
-import type { Prisma } from '@prisma/client';
+import { DrizzleClient } from '@drizzle/client';
+import type { Drizzle } from '@drizzle/client';
 
 // Sentry
 import * as Sentry from '@sentry/node';
@@ -229,7 +229,7 @@ import { asyncErrorWrapper } from './middleware/errorBoundary';
 ❌ Direct process.env usage
 ❌ Missing error handling
 ❌ No input validation
-❌ Direct Prisma everywhere
+❌ Direct Drizzle everywhere
 ❌ console.log instead of Sentry
 
 ---
@@ -273,7 +273,7 @@ Sentry init, error capture, performance monitoring
 Auth, audit, error boundaries, AsyncLocalStorage
 
 ### [database-patterns.md](database-patterns.md)
-PrismaService, repositories, transactions, optimization
+DrizzleService, repositories, transactions, optimization
 
 ### [configuration.md](configuration.md)
 UnifiedConfig, environment configs, secrets

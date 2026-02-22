@@ -1,6 +1,6 @@
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy, Inject } from '@nestjs/common';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { PrismaService } from '@the-new-fuse/database';
+import { DrizzleService } from '@the-new-fuse/database';
 import { TaskNotification } from './TaskSynchronizationService';
 
 export interface TaskNotificationRule {
@@ -69,7 +69,7 @@ export class TaskNotificationService implements OnModuleInit, OnModuleDestroy {
   constructor(
     private readonly redisService: UnifiedRedisService,
     @Inject('IWebSocketService') private readonly wsService: IWebSocketService,
-    private readonly dbService: PrismaService
+    private readonly dbService: DrizzleService
   ) {}
 
   async onModuleInit(): Promise<void> {

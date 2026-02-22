@@ -1,6 +1,6 @@
 /**
  * Drizzle ORM Enum Definitions
- * Direct mapping from Prisma schema enums
+ * Direct mapping from Drizzle schema enums
  */
 import { pgEnum } from 'drizzle-orm/pg-core';
 

@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
 Schema Validator - Database schema validation
-Validates Prisma schemas and checks for common issues.
+Validates Drizzle schemas and checks for common issues.
 
 Usage:
     python schema_validator.py <project_path>
 
 Checks:
-    - Prisma schema syntax
+    - Drizzle schema syntax
     - Missing relations
     - Index recommendations
     - Naming conventions
@@ -30,9 +30,9 @@ def find_schema_files(project_path: Path) -> list:
     """Find database schema files."""
     schemas = []
     
-    # Prisma schema
-    prisma_files = list(project_path.glob('**/prisma/schema.prisma'))
-    schemas.extend([('prisma', f) for f in prisma_files])
+    # Drizzle schema
+    drizzle_files = list(project_path.glob('**/drizzle/schema.drizzle'))
+    schemas.extend([('drizzle', f) for f in drizzle_files])
     
     # Drizzle schema files
     drizzle_files = list(project_path.glob('**/drizzle/*.ts'))
@@ -44,8 +44,8 @@ def find_schema_files(project_path: Path) -> list:
     return schemas[:10]  # Limit
 
 
-def validate_prisma_schema(file_path: Path) -> list:
-    """Validate Prisma schema file."""
+def validate_drizzle_schema(file_path: Path) -> list:
+    """Validate Drizzle schema file."""
     issues = []
     
     try:
@@ -123,8 +123,8 @@ def main():
     for schema_type, file_path in schemas:
         print(f"\nValidating: {file_path.name} ({schema_type})")
         
-        if schema_type == 'prisma':
-            issues = validate_prisma_schema(file_path)
+        if schema_type == 'drizzle':
+            issues = validate_drizzle_schema(file_path)
         else:
             issues = []  # Drizzle validation could be added
         

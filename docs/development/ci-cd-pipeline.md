@@ -36,7 +36,7 @@ The pipeline is defined in `.github/workflows/consolidated-ci-cd.yml` and is tri
 
 The build stage follows a specific order to ensure dependencies are built correctly:
 
-1. Generate database client (Prisma)
+1. Generate database client (Drizzle)
 2. Build types package first
 3. Build utils package
 4. Build core package

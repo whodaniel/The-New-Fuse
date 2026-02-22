@@ -36,7 +36,7 @@ Repository executes: "Here's the data you requested"
 
 **Services should NOT:**
 - ❌ Know about HTTP (Request/Response)
-- ❌ Direct Prisma access (use repositories)
+- ❌ Direct Drizzle access (use repositories)
 - ❌ Handle route-specific logic
 - ❌ Format HTTP responses
 
@@ -59,14 +59,14 @@ Repository executes: "Here's the data you requested"
 ```typescript
 // Define dependencies interface for clarity
 export interface NotificationServiceDependencies {
-    prisma: PrismaClient;
+    drizzle: DrizzleClient;
     batchingService: BatchingService;
     emailComposer: EmailComposer;
 }
 
 // Service with dependency injection
 export class NotificationService {
-    private prisma: PrismaClient;
+    private drizzle: DrizzleClient;
     private batchingService: BatchingService;
     private emailComposer: EmailComposer;
     private preferencesCache: Map<string, { preferences: UserPreference; timestamp: number }> = new Map();
@@ -74,7 +74,7 @@ export class NotificationService {
 
     // Dependencies injected via constructor
     constructor(dependencies: NotificationServiceDependencies) {
-        this.prisma = dependencies.prisma;
+        this.drizzle = dependencies.drizzle;
         this.batchingService = dependencies.batchingService;
         this.emailComposer = dependencies.emailComposer;
     }
@@ -182,7 +182,7 @@ export class NotificationService {
             return cached.preferences;
         }
 
-        const preference = await this.prisma.userPreference.findUnique({
+        const preference = await this.drizzle.userPreference.findUnique({
             where: { userID: userId },
         });
 
@@ -204,8 +204,8 @@ export class NotificationService {
 ```typescript
 // Instantiate with dependencies
 const notificationService = new NotificationService({
-    prisma: PrismaService.main,
-    batchingService: new BatchingService(PrismaService.main),
+    drizzle: DrizzleService.main,
+    batchingService: new BatchingService(DrizzleService.main),
     emailComposer: new EmailComposer(),
 });
 
@@ -242,17 +242,17 @@ const notification = await notificationService.createNotification({
 **File:** `/blog-api/src/services/permissionService.ts`
 
 ```typescript
-import { PrismaClient } from '@prisma/client';
+import { DrizzleClient } from '@drizzle/client';
 
 class PermissionService {
     private static instance: PermissionService;
-    private prisma: PrismaClient;
+    private drizzle: DrizzleClient;
     private permissionCache: Map<string, { canAccess: boolean; timestamp: number }> = new Map();
     private CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
     // Private constructor prevents direct instantiation
     private constructor() {
-        this.prisma = PrismaService.main;
+        this.drizzle = DrizzleService.main;
     }
 
     // Get singleton instance
@@ -276,7 +276,7 @@ class PermissionService {
         }
 
         try {
-            const post = await this.prisma.post.findUnique({
+            const post = await this.drizzle.post.findUnique({
                 where: { id: postId },
                 include: {
                     author: true,
@@ -355,11 +355,11 @@ if (!canComplete) {
 
 ```
 Service: "Get me all active users sorted by name"
-Repository: "Here's the Prisma query that does that"
+Repository: "Here's the Drizzle query that does that"
 ```
 
 **Repositories are responsible for:**
-- ✅ All Prisma operations
+- ✅ All Drizzle operations
 - ✅ Query construction
 - ✅ Query optimization (select, include)
 - ✅ Database error handling
@@ -374,8 +374,8 @@ Repository: "Here's the Prisma query that does that"
 
 ```typescript
 // repositories/UserRepository.ts
-import { PrismaService } from '@project-lifecycle-portal/database';
-import type { User, Prisma } from '@project-lifecycle-portal/database';
+import { DrizzleService } from '@project-lifecycle-portal/database';
+import type { User, Drizzle } from '@project-lifecycle-portal/database';
 
 export class UserRepository {
     /**
@@ -383,7 +383,7 @@ export class UserRepository {
      */
     async findById(userId: string): Promise<User | null> {
         try {
-            return await PrismaService.main.user.findUnique({
+            return await DrizzleService.main.user.findUnique({
                 where: { userID: userId },
                 select: {
                     userID: true,
@@ -404,9 +404,9 @@ export class UserRepository {
     /**
      * Find all active users
      */
-    async findActive(options?: { orderBy?: Prisma.UserOrderByWithRelationInput }): Promise<User[]> {
+    async findActive(options?: { orderBy?: Drizzle.UserOrderByWithRelationInput }): Promise<User[]> {
         try {
-            return await PrismaService.main.user.findMany({
+            return await DrizzleService.main.user.findMany({
                 where: { isActive: true },
                 orderBy: options?.orderBy || { name: 'asc' },
                 select: {
@@ -427,7 +427,7 @@ export class UserRepository {
      */
     async findByEmail(email: string): Promise<User | null> {
         try {
-            return await PrismaService.main.user.findUnique({
+            return await DrizzleService.main.user.findUnique({
                 where: { email },
             });
         } catch (error) {
@@ -439,9 +439,9 @@ export class UserRepository {
     /**
      * Create new user
      */
-    async create(data: Prisma.UserCreateInput): Promise<User> {
+    async create(data: Drizzle.UserCreateInput): Promise<User> {
         try {
-            return await PrismaService.main.user.create({ data });
+            return await DrizzleService.main.user.create({ data });
         } catch (error) {
             console.error('[UserRepository] Error creating user:', error);
             throw new Error('Failed to create user');
@@ -451,9 +451,9 @@ export class UserRepository {
     /**
      * Update user
      */
-    async update(userId: string, data: Prisma.UserUpdateInput): Promise<User> {
+    async update(userId: string, data: Drizzle.UserUpdateInput): Promise<User> {
         try {
-            return await PrismaService.main.user.update({
+            return await DrizzleService.main.user.update({
                 where: { userID: userId },
                 data,
             });
@@ -468,7 +468,7 @@ export class UserRepository {
      */
     async delete(userId: string): Promise<User> {
         try {
-            return await PrismaService.main.user.update({
+            return await DrizzleService.main.user.update({
                 where: { userID: userId },
                 data: { isActive: false },
             });
@@ -483,7 +483,7 @@ export class UserRepository {
      */
     async emailExists(email: string): Promise<boolean> {
         try {
-            const count = await PrismaService.main.user.count({
+            const count = await DrizzleService.main.user.count({
                 where: { email },
             });
             return count > 0;
@@ -785,5 +785,5 @@ describe('UserService', () => {
 **Related Files:**
 - [SKILL.md](SKILL.md) - Main guide
 - [routing-and-controllers.md](routing-and-controllers.md) - Controllers that use services
-- [database-patterns.md](database-patterns.md) - Prisma and repository patterns
+- [database-patterns.md](database-patterns.md) - Drizzle and repository patterns
 - [complete-examples.md](complete-examples.md) - Full service/repository examples

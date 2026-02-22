@@ -56,7 +56,7 @@ This roadmap outlines the security improvements needed based on our comprehensiv
 **Implementation:**
 ```typescript
 // Before (INSECURE):
-const jwtSecret = process.env.JWT_SECRET || 'default-secret';
+const jwtSecret = process.env.JWT_SECRET || '[REDACTED_SECRET]';
 
 // After (SECURE):
 const jwtSecret = process.env.JWT_SECRET;
@@ -252,13 +252,13 @@ class JWTService {
 - [ ] Encrypt sensitive fields in application layer
 - [ ] Document encryption strategy
 
-**Prisma Field-Level Encryption:**
+**Drizzle Field-Level Encryption:**
 ```typescript
-// Install prisma-field-encryption
-// pnpm add prisma-field-encryption
+// Install drizzle-field-encryption
+// pnpm add drizzle-field-encryption
 
-// In Prisma middleware
-prisma.$use(async (params, next) => {
+// In Drizzle middleware
+drizzle.$use(async (params, next) => {
   if (params.model === 'User') {
     if (params.action === 'create' || params.action === 'update') {
       if (params.args.data.email) {
@@ -483,7 +483,7 @@ async exportUserData(@CurrentUser() user: User) {
 @UseGuards(JwtAuthGuard)
 async deleteAccount(@CurrentUser() user: User) {
   // Soft delete user
-  await prisma.user.update({
+  await drizzle.user.update({
     where: { id: user.id },
     data: {
       deletedAt: new Date(),

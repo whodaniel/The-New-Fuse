@@ -282,7 +282,7 @@ The native module system is integrated with:
 - **Turbo**: Monorepo build orchestration
 - **TypeScript**: Type checking and compilation
 - **Webpack**: SkIDEancer IDE bundling
-- **Prisma**: Database client generation
+- **Drizzle**: Database client generation
 
 All these systems respect native module dependencies and will trigger setup when needed.
 

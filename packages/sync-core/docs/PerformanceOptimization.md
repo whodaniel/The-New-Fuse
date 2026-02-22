@@ -302,7 +302,7 @@ Integrates with existing monitoring systems:
 
 Works with existing database patterns:
 
-- Uses existing Prisma connection pooling
+- Uses existing Drizzle connection pooling
 - Follows existing tenant isolation patterns
 - Maintains existing transaction and error handling
 - Integrates with existing audit logging

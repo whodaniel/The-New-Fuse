@@ -47,7 +47,7 @@ Install the recommended extensions:
 - ESLint (`dbaeumer.vscode-eslint`)
 - Prettier (`esbenp.prettier-vscode`)
 - EditorConfig (`editorconfig.editorconfig`)
-- Prisma (`prisma.prisma`)
+- Drizzle (`drizzle.drizzle`)
 - Jest (`orta.vscode-jest`)
 - TypeScript (`ms-vscode.vscode-typescript-next`)
 

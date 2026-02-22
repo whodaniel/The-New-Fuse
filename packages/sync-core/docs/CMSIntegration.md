@@ -50,7 +50,7 @@ graph TB
         User[User Models]
         Tenant[Tenant Patterns]
         Redis[Redis Pub/Sub]
-        DB[(Prisma Database)]
+        DB[(Drizzle Database)]
         WS[WebSocket Services]
         FSW[FileSystemWatcher]
     end
@@ -87,7 +87,7 @@ Main orchestration service that coordinates all CMS functionality.
 import { CMSIntegrationService } from '@sync-core/cms';
 
 const cmsService = new CMSIntegrationService(
-  prisma,
+  drizzle,
   redis,
   syncOrchestrator,
   fileWatcher,
@@ -341,7 +341,7 @@ CREATE TABLE privacy_boundaries (
 - Maintains compatibility with existing file watching infrastructure
 
 ### Database Integration
-- Uses existing Prisma client and connection patterns
+- Uses existing Drizzle client and connection patterns
 - Leverages established database transaction patterns
 - Integrates with existing database versioning and conflict resolution
 - Uses existing database-level tenant isolation

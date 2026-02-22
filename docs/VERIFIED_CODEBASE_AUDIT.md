@@ -438,7 +438,7 @@ Unified agent communication layer:
 | DirectorService   | MonitoringService              | Health checks  |
 | AgentSwarmService | CascadeService (399 lines)     | Step pipelines |
 | AgentSwarmService | CapabilityDiscoveryService     | Agent matching |
-| AgentSwarmService | PrismaService                  | Persistence    |
+| AgentSwarmService | DrizzleService                  | Persistence    |
 | UniversalBridge   | BaseBridge                     | Inheritance    |
 | All               | EventEmitter2                  | Pub/sub        |
 

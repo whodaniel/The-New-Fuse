@@ -139,7 +139,7 @@ Domain/area-specific activation based on file location in the project.
 - `*` = Any characters within a directory name
 - Examples:
   - `frontend/src/**/*.tsx` = All .tsx files in frontend/src and subdirs
-  - `**/schema.prisma` = schema.prisma anywhere in project
+  - `**/schema.drizzle` = schema.drizzle anywhere in project
   - `form/src/**/*.ts` = All .ts files in form/src subdirs
 
 ### Example
@@ -170,7 +170,7 @@ email/src/**/*.ts           # Email service
 users/src/**/*.ts           # Users service
 
 # Database
-**/schema.prisma            # Prisma schema (anywhere)
+**/schema.drizzle            # Drizzle schema (anywhere)
 **/migrations/**/*.sql      # Migration files
 database/src/**/*.ts        # Database scripts
 
@@ -194,7 +194,7 @@ Regex pattern matching against the file's actual content (what's inside the file
 
 ### Use For
 
-Technology-specific activation based on what the code imports or uses (Prisma, controllers, specific libraries).
+Technology-specific activation based on what the code imports or uses (Drizzle, controllers, specific libraries).
 
 ### Configuration
 
@@ -202,7 +202,7 @@ Technology-specific activation based on what the code imports or uses (Prisma, c
 "fileTriggers": {
   "contentPatterns": [
     "import.*[Pp]risma",
-    "PrismaService",
+    "DrizzleService",
     "\\.findMany\\(",
     "\\.create\\("
   ]
@@ -211,8 +211,8 @@ Technology-specific activation based on what the code imports or uses (Prisma, c
 
 ### Examples
 
-**Prisma Detection:**
-- File contains: `import { PrismaService } from '@project/database'`
+**Drizzle Detection:**
+- File contains: `import { DrizzleService } from '@project/database'`
 - Matches: `import.*[Pp]risma`
 - Activates: `database-verification`
 
@@ -232,11 +232,11 @@ Technology-specific activation based on what the code imports or uses (Prisma, c
 ### Common Content Patterns
 
 ```regex
-# Prisma/Database
-import.*[Pp]risma                # Prisma imports
-PrismaService                    # PrismaService usage
-prisma\.                         # prisma.something
-\.findMany\(                     # Prisma query methods
+# Drizzle/Database
+import.*[Pp]risma                # Drizzle imports
+DrizzleService                    # DrizzleService usage
+drizzle\.                         # drizzle.something
+\.findMany\(                     # Drizzle query methods
 \.create\(
 \.update\(
 \.delete\(

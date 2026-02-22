@@ -241,16 +241,16 @@ validate_database_connection() {
 
   log_info "Checking database connectivity..."
 
-  # Try to connect using Prisma
-  if command -v prisma &>/dev/null; then
-    if pnpm prisma db execute --stdin <<< "SELECT 1;" &>/dev/null; then
+  # Try to connect using Drizzle
+  if command -v drizzle &>/dev/null; then
+    if pnpm drizzle db execute --stdin <<< "SELECT 1;" &>/dev/null; then
       log_success "Database is accessible"
     else
       log_error "Cannot connect to database"
       log_info "Check DATABASE_URL: ${DATABASE_URL}"
     fi
   else
-    log_warning "Prisma CLI not found, skipping database connectivity check"
+    log_warning "Drizzle CLI not found, skipping database connectivity check"
   fi
 }
 
@@ -417,12 +417,12 @@ validate_railway_cli() {
   fi
 }
 
-validate_prisma_schema() {
-  print_section "Prisma Schema Validation"
+validate_drizzle_schema() {
+  print_section "Drizzle Schema Validation"
 
   local schema_files=(
-    "$PROJECT_ROOT/prisma/schema.prisma"
-    "$PROJECT_ROOT/packages/database/prisma/schema.prisma"
+    "$PROJECT_ROOT/drizzle/schema.drizzle"
+    "$PROJECT_ROOT/packages/database/drizzle/schema.drizzle"
   )
 
   local schema_found=false
@@ -430,13 +430,13 @@ validate_prisma_schema() {
   for schema_file in "${schema_files[@]}"; do
     if [ -f "$schema_file" ]; then
       schema_found=true
-      log_success "Found Prisma schema: $schema_file"
+      log_success "Found Drizzle schema: $schema_file"
 
       # Validate schema
-      if pnpm prisma validate --schema="$schema_file" &>/dev/null; then
-        log_success "Prisma schema is valid"
+      if pnpm drizzle validate --schema="$schema_file" &>/dev/null; then
+        log_success "Drizzle schema is valid"
       else
-        log_error "Prisma schema has errors"
+        log_error "Drizzle schema has errors"
       fi
 
       break
@@ -444,7 +444,7 @@ validate_prisma_schema() {
   done
 
   if [ "$schema_found" = false ]; then
-    log_warning "No Prisma schema found"
+    log_warning "No Drizzle schema found"
   fi
 }
 
@@ -535,7 +535,7 @@ main() {
 
   # Build validations
   validate_build_artifacts
-  validate_prisma_schema
+  validate_drizzle_schema
 
   # Deployment tool validations
   validate_docker_available

@@ -1,6 +1,6 @@
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy, Inject } from '@nestjs/common';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { PrismaService } from '@the-new-fuse/database';
+import { DrizzleService } from '@the-new-fuse/database';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
 import {
   SyncOperation,
@@ -87,7 +87,7 @@ export class TaskSynchronizationService implements OnModuleInit, OnModuleDestroy
   constructor(
     private readonly redisService: UnifiedRedisService,
     @Inject('IWebSocketService') private readonly wsService: IWebSocketService,
-    private readonly dbService: PrismaService,
+    private readonly dbService: DrizzleService,
     private readonly syncOrchestrator: SyncOrchestrator
   ) {}
 
@@ -620,7 +620,7 @@ if (allDependenciesCompleted && dependentTask.status === 'PENDING') {
    */
   private async updateTaskWithVersioning(taskData: TaskSyncData): Promise<any> {
     try {
-      // Use Prisma's optimistic locking pattern
+      // Use Drizzle's optimistic locking pattern
       const result = await this.dbService.$executeRaw`
         UPDATE tasks 
         SET 

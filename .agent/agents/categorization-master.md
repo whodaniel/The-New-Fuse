@@ -36,7 +36,7 @@ categorized, and registered in the `MasterAgentRegistry`.
 - **Query Registry**: Execute SQL queries via Postgres tool to inspect the state
   of the registry.
 - **Register Entities**: Update the registry via the registration scripts and
-  Prisma services.
+  Drizzle services.
 - **Validation**: Check new agent definitions in `.agent/agents/` for format
   compliance.
 - **Identity Management**: Manage on-chain agent IDs and Merkle tree

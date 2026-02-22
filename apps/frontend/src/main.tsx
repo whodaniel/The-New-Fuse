@@ -7,6 +7,29 @@ import { AuthProvider } from './providers/AuthProvider';
 // Initialize Firebase is already handled by import './lib/firebase'
 import './styles/globals.css'; // Re-add global CSS import
 
+const installMceGuard = () => {
+  if (!window?.customElements) return;
+  if ((window as any).__TNF_MCE_GUARD__) return;
+  const registry = window.customElements;
+  const originalDefine = registry.define.bind(registry);
+  const originalGet = registry.get.bind(registry);
+
+  Object.defineProperty(registry, 'define', {
+    value(name, constructor, options) {
+      if (name === 'mce-autosize-textarea' && originalGet(name)) {
+        return;
+      }
+      return originalDefine(name, constructor, options);
+    },
+    configurable: false,
+    writable: false,
+  });
+
+  (window as any).__TNF_MCE_GUARD__ = true;
+};
+
+installMceGuard();
+
 // Custom Element Guard: Moved to index.html for maximum interception coverage.
 // The index.html guard locks the registry, so attempting to redefine define() here
 // would throw a TypeError.

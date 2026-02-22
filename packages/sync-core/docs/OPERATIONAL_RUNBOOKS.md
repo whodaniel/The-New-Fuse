@@ -82,7 +82,7 @@ kubectl describe node $(kubectl get pods -n tnf-production -l app=sync-service -
 redis-cli -h $REDIS_HOST ping
 
 # Check database connectivity using existing database monitoring
-npx prisma db pull --preview-feature
+npx drizzle db pull --preview-feature
 
 # Verify WebSocket service health using existing monitoring
 curl http://websocket-service:8080/health

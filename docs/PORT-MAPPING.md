@@ -9,7 +9,7 @@
 | **3001** | Backend API | `http://localhost:3001` | Core business logic | ✅ Active |
 | **3002** | Webhooks Service | `http://localhost:3002` | Event ingestion | 📍 **Moved** |
 | **5173** | Vite Preview | `http://localhost:5173` | Production preview | 🔒 Reserved |
-| **5555** | Database UI | `http://localhost:5555` | Prisma Studio | 🔒 Reserved |
+| **5555** | Database UI | `http://localhost:5555` | Drizzle Studio | 🔒 Reserved |
 | **6379** | Redis | `redis://localhost:6379` | Cache/Sessions | 🔒 Reserved |
 | **5432** | PostgreSQL | `postgresql://localhost:5432` | Database | 🔒 Reserved |
 

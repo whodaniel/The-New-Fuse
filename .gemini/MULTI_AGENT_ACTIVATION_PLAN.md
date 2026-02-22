@@ -206,20 +206,21 @@ const UNIVERSAL_ONBOARDING = {
 
 ## 🎯 Phase 3: Expand Agent Type Schema
 
-### Current AgentType Enum (Prisma)
+### Current AgentType Enum (Drizzle)
 
-```prisma
-enum AgentType {
-  BASIC
-  CONVERSATIONAL
-  TASK
-  WORKFLOW
-  ANALYSIS
-  ASSISTANT
-  IDE_EXTENSION
-  API
-  CHAT
-}
+```typescript
+// packages/database/src/drizzle/schema/enums.ts
+export const agentTypeEnum = pgEnum('agent_type', [
+  'BASIC',
+  'CONVERSATIONAL',
+  'TASK',
+  'WORKFLOW',
+  'ANALYSIS',
+  'ASSISTANT',
+  'IDE_EXTENSION',
+  'API',
+  'CHAT',
+]);
 ```
 
 ### Proposed Expansion (100+ Agent Types)

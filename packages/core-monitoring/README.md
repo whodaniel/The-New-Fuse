@@ -120,7 +120,7 @@ const healthCheckService = new HealthCheckService({
 // Register database health check
 healthCheckService.register(
   'database',
-  CommonHealthChecks.database(prismaClient)
+  CommonHealthChecks.database(drizzleClient)
 );
 
 // Register Redis health check

@@ -1,1 +1,1 @@
-export { PrismaService as DatabaseService } from '../prisma/prisma.service';
+export { DrizzleService as DatabaseService } from '../drizzle/drizzle.service';

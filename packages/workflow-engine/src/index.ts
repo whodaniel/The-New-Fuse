@@ -35,7 +35,7 @@ export {
  * 
  * Provides a convenient way to create and configure the workflow engine
  */
-// import { PrismaClient } from '@prisma/client';
+// import { DrizzleClient } from '@drizzle/client';
 import { Logger } from '@the-new-fuse/relay-core';
 
 // Import actual types from relay-core
@@ -50,7 +50,7 @@ import { WorkflowWorker } from './queue/WorkflowWorker';
 
 export interface WorkflowEngineFactoryConfig {
   // Database configuration
-  prisma: any; // PrismaClient;
+  drizzle: any; // DrizzleClient;
   redisConnection?: any; // Redis connection options
   
   // Core services
@@ -114,7 +114,7 @@ export class WorkflowEngineFactory {
   static create(config: WorkflowEngineFactoryConfig) {
     // Create repository
     const repository = new WorkflowRepository(
-      config.prisma,
+      config.drizzle,
       config.repository,
       config.logger
     );
@@ -147,7 +147,7 @@ export class WorkflowEngineFactory {
     // Create main engine
     const engine = new UnifiedWorkflowEngine(
       config.engine,
-      config.prisma,
+      config.drizzle,
       config.agentRegistry,
       config.heartbeatService,
       config.logger,
@@ -178,14 +178,14 @@ export class WorkflowEngineFactory {
   }
   
   static createDefault(
-    prisma: any, // PrismaClient,
+    drizzle: any, // DrizzleClient,
     agentRegistry: MasterAgentRegistry,
     heartbeatService: HeartbeatMonitoringService,
     logger: Logger,
     redisConnection?: any
   ) {
     const config: WorkflowEngineFactoryConfig = {
-      prisma,
+      drizzle,
       agentRegistry,
       heartbeatService,
       logger,

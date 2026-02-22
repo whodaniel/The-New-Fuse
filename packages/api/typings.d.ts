@@ -64,7 +64,7 @@ declare module '@nestjs/terminus' {
     check(indicators: Array<() => Promise<any>>): Promise<any>;
   }
 
-  export class PrismaHealthIndicator {
+  export class DrizzleHealthIndicator {
     pingCheck(name: string, options: any): Promise<any>;
   }
 

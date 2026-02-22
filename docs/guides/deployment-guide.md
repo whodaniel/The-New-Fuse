@@ -9,7 +9,7 @@ This guide implements a three-phase deployment strategy for The New Fuse Platfor
 **Tech Stack:**
 - **Frontend**: React 18.2 + Vite + TypeScript
 - **Backend**: NestJS 11.0+ with Bun runtime
-- **Database**: PostgreSQL with Prisma ORM
+- **Database**: PostgreSQL with Drizzle ORM
 - **Cache**: Redis
 - **AI Integration**: MCP (Model Context Protocol) + Multiple AI providers
 - **Build System**: Turborepo with memory-optimized builds
@@ -295,7 +295,7 @@ pnpm install --frozen-lockfile
 
 #### Database Connection Issues
 ```bash
-# Generate Prisma client
+# Generate Drizzle client
 pnpm run db:generate
 
 # Run migrations

@@ -38,7 +38,7 @@ Total: **16 task files**
 2. `JULES_TASK_02_drizzle_workflow_repository.md` - Drizzle Workflow Repository
 3. `JULES_TASK_03_drizzle_task_repository.md` - Drizzle Task Repository
 4. `JULES_TASK_04_drizzle_chat_repository.md` - Drizzle Chat Repository
-5. `JULES_TASK_05_core_prisma_migration.md` - Core Prisma Migration
+5. `JULES_TASK_05_core_drizzle_migration.md` - Core Drizzle Migration
 6. `JULES_TASK_06_core_messaging_service.md` - Core Messaging Service
 7. `JULES_TASK_07_typescript_strict_audit.md` - TypeScript Strict Audit
 8. `JULES_TASK_08_frontend_agent_dashboard.md` - Frontend Agent Dashboard

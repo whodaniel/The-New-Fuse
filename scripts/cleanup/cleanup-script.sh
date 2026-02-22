@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🧹 Starting codebase cleanup after Prisma schema sync..."
+echo "🧹 Starting codebase cleanup after Drizzle schema sync..."
 
 # Safety check
 read -p "⚠️  This will delete files. Are you sure? (y/N): " -n 1 -r
@@ -35,7 +35,7 @@ find packages/ -name "*.js.map" -delete
 
 echo "🔄 Regenerating files..."
 
-# Regenerate Prisma client
+# Regenerate Drizzle client
 pnpm run db:generate
 
 # Clean build everything

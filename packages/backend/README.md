@@ -254,14 +254,14 @@ The backend package serves as:
 ```typescript
 // Can be extended with additional endpoints
 import { server } from '@the-new-fuse/backend';
-import { PrismaService } from '@the-new-fuse/database';
+import { DrizzleService } from '@the-new-fuse/database';
 import { logger } from '@the-new-fuse/core';
 
 // Add database health check
 server.on('request', async (req, res) => {
   if (req.url === '/health/db') {
     try {
-      await prisma.$queryRaw`SELECT 1`;
+      await drizzle.$queryRaw`SELECT 1`;
       res.end(JSON.stringify({ db: 'connected' }));
     } catch (error) {
       logger.error('Database health check failed', error);

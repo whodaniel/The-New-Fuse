@@ -1,5 +1,5 @@
 /**
- * Fuse Connect v6 - Agent Visual Indicator
+ * Fuse Connect v7 - Agent Visual Indicator
  * Shows glowing border and stop button when an agent is active on the page
  * Inspired by Claude extension's agent-visual-indicator.js
  */

@@ -160,13 +160,13 @@ export interface TrustedIssuer {
  * VCIssuanceService - Handles Verifiable Credential lifecycle
  */
 export declare class VCIssuanceService extends EventEmitter {
-    private prisma;
+    private drizzle;
     private logger;
     private blockchainService;
     private trustedIssuers;
     private revokedCredentials;
     private readonly config;
-    constructor(prisma: any, logger: Logger, privateKey?: string);
+    constructor(drizzle: any, logger: Logger, privateKey?: string);
     /**
      * Issue a Verifiable Credential for an agent
      */

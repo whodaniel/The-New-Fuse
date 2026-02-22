@@ -207,7 +207,7 @@ else
 fi
 
 # Update database integration if available
-DB_INTEGRATION_PATH="${WORKSPACE_ROOT}/apps/backend/prisma"
+DB_INTEGRATION_PATH="${WORKSPACE_ROOT}/apps/backend/drizzle"
 if [[ -d "${DB_INTEGRATION_PATH}" ]]; then
     log_info "Found database schema, updating MCP service registry..."
     
@@ -221,21 +221,21 @@ if [[ -d "${DB_INTEGRATION_PATH}" ]]; then
  */
 
 // Optional database integration
-let prisma: any = null;
+let drizzle: any = null;
 
 try {
-  const { PrismaClient } = require('@prisma/client');
-  prisma = new PrismaClient();
+  const { DrizzleClient } = require('@drizzle/client');
+  drizzle = new DrizzleClient();
 } catch (error) {
-  console.log('Prisma client not available, using in-memory storage');
+  console.log('Drizzle client not available, using in-memory storage');
 }
 
 export const DatabaseIntegration = {
-  isAvailable: !!prisma,
+  isAvailable: !!drizzle,
   
   async saveServiceInfo(serviceInfo: any) {
-    if (prisma && prisma.mcpService) {
-      return prisma.mcpService.upsert({
+    if (drizzle && drizzle.mcpService) {
+      return drizzle.mcpService.upsert({
         where: { id: serviceInfo.id },
         create: serviceInfo,
         update: serviceInfo
@@ -245,8 +245,8 @@ export const DatabaseIntegration = {
   },
   
   async getServiceInfo(serviceId: string) {
-    if (prisma && prisma.mcpService) {
-      return prisma.mcpService.findUnique({
+    if (drizzle && drizzle.mcpService) {
+      return drizzle.mcpService.findUnique({
         where: { id: serviceId }
       });
     }

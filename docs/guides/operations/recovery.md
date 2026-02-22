@@ -44,16 +44,16 @@
    psql -h localhost -U postgres -d fuse < backup.sql
    ```
 
-3. Run Prisma migrations:
+3. Run Drizzle migrations:
    ```bash
    cd packages/database
-   yarn prisma migrate deploy
+   yarn drizzle migrate deploy
    ```
 
 4. Verify data integrity:
    ```bash
-   yarn prisma db pull
-   yarn prisma validate
+   yarn drizzle db pull
+   yarn drizzle validate
    ```
 
 ### Common Recovery Scenarios
@@ -61,20 +61,20 @@
 1. Failed Migration:
    ```bash
    # Reset database (development only)
-   yarn prisma migrate reset
+   yarn drizzle migrate reset
 
    # Or rollback to last known good state
    psql -h localhost -U postgres -d fuse < backup.sql
-   yarn prisma migrate deploy
+   yarn drizzle migrate deploy
    ```
 
 2. Corrupted Schema:
    ```bash
-   # Regenerate Prisma client
-   yarn prisma generate
+   # Regenerate Drizzle client
+   yarn drizzle generate
 
    # Validate schema
-   yarn prisma validate
+   yarn drizzle validate
    ```
 
 3. Connection Issues:
@@ -90,7 +90,7 @@
 
 1. Check table structure:
    ```bash
-   yarn prisma db pull
+   yarn drizzle db pull
    ```
 
 2. Verify data:

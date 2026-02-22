@@ -238,7 +238,7 @@ check_database_health() {
   log STEP "Checking database connectivity..."
 
   # Basic connectivity
-  if pnpm prisma db execute --stdin <<< "SELECT 1;" &>/dev/null; then
+  if pnpm drizzle db execute --stdin <<< "SELECT 1;" &>/dev/null; then
     check_result success "Database is accessible"
   else
     check_result error "Cannot connect to database"
@@ -249,15 +249,15 @@ check_database_health() {
     log INFO "Performing deep database health check..."
 
     # Check connection pool
-    local connections=$(pnpm prisma db execute --stdin <<< "SELECT count(*) FROM pg_stat_activity;" 2>/dev/null || echo "0")
+    local connections=$(pnpm drizzle db execute --stdin <<< "SELECT count(*) FROM pg_stat_activity;" 2>/dev/null || echo "0")
     log INFO "Active database connections: $connections"
 
     # Check database size
-    local db_size=$(pnpm prisma db execute --stdin <<< "SELECT pg_size_pretty(pg_database_size(current_database()));" 2>/dev/null || echo "unknown")
+    local db_size=$(pnpm drizzle db execute --stdin <<< "SELECT pg_size_pretty(pg_database_size(current_database()));" 2>/dev/null || echo "unknown")
     log INFO "Database size: $db_size"
 
     # Check for table locks
-    local locks=$(pnpm prisma db execute --stdin <<< "SELECT count(*) FROM pg_locks WHERE granted = false;" 2>/dev/null || echo "0")
+    local locks=$(pnpm drizzle db execute --stdin <<< "SELECT count(*) FROM pg_locks WHERE granted = false;" 2>/dev/null || echo "0")
     if [[ "$locks" -gt 0 ]]; then
       check_result warning "$locks table lock(s) detected"
     else

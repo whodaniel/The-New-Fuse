@@ -4,6 +4,7 @@
 
 export * from './server/RelayServer';
 export * from './services/HeartbeatMonitoringService';
+export * from './services/HandoffStoreService';
 export * from './services/MasterAgentRegistry';
 export * from './transports/FileTransport';
 export * from './transports/HTTPTransport';
@@ -24,6 +25,7 @@ export * from './services/stall-detector';
 export * from './protocol/resource-protocol';
 export * from './protocol/task-protocol';
 export * from './protocol/tnf-envelope';
+export * from './protocol/handoff-protocol';
 
 // Bridges
 export * from './redis-relay-bridge';

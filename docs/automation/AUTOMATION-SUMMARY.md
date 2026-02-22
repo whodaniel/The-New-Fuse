@@ -13,7 +13,7 @@ This document summarizes the automation work that has been done to improve The N
 2. **Database Issues**
    - Fixed database migration issues
    - Added composite: true to database tsconfig.json
-   - Fixed Prisma schema issues
+   - Fixed Drizzle schema issues
 
 3. **Frontend Issues**
    - Fixed module resolution issues

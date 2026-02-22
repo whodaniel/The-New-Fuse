@@ -2,7 +2,7 @@
  * Master Agent Registry - Single Source of Truth
  *
  * This is THE central nervous system for all agents in The New Fuse framework.
- * Integrates with existing Prisma database, AgentRegistry, and TaskService.
+ * Integrates with existing Drizzle database, AgentRegistry, and TaskService.
  * Every agent must register here and maintain state through this system.
  */
 
@@ -72,7 +72,7 @@ export interface OnChainAgentData {
 
 // Enhanced agent profile that integrates with existing schema
 export interface MasterAgentProfile {
-  // Core Identity (from Prisma Agent model)
+  // Core Identity (from Drizzle Agent model)
   id: string;
   name: string;
   type: string;
@@ -182,7 +182,7 @@ export interface MasterAgentTodo {
   dependencies: string[];
   estimatedDuration?: number; // minutes
   context?: Record<string, any>;
-  integrationId?: string; // Links to Prisma Task if applicable
+  integrationId?: string; // Links to Drizzle Task if applicable
 }
 
 export interface UniversalOnboardingProtocol {
@@ -241,7 +241,7 @@ export interface SpreadsheetIntegration {
 
 export class MasterAgentRegistry extends EventEmitter {
   private logger: Logger;
-  private prisma: any;
+  private drizzle: any;
   private legacyRegistry: AgentRegistry;
   private metadataManager: AgentMetadataManager;
 
@@ -270,14 +270,14 @@ export class MasterAgentRegistry extends EventEmitter {
   private wallet: Wallet | null = null;
 
   constructor(
-    prisma: any,
+    drizzle: any,
     logger: Logger,
     blockchainConfig?: BlockchainConfig,
     vcPrivateKey?: string
   ) {
     super();
     this.logger = logger;
-    this.prisma = prisma;
+    this.drizzle = drizzle;
     this.legacyRegistry = new AgentRegistry();
     this.metadataManager = new AgentMetadataManager();
     this.onboardingProtocol = {} as UniversalOnboardingProtocol; // Stub
@@ -306,7 +306,7 @@ export class MasterAgentRegistry extends EventEmitter {
 
     // Initialize VCIssuanceService if private key provided
     if (vcPrivateKey) {
-      this.vcIssuanceService = new VCIssuanceService(prisma, logger, vcPrivateKey);
+      this.vcIssuanceService = new VCIssuanceService(drizzle, logger, vcPrivateKey);
     }
 
     this.initializeUniversalOnboardingProtocol();
@@ -411,8 +411,8 @@ export class MasterAgentRegistry extends EventEmitter {
         },
       };
 
-      // 1. Store in Prisma database (single source of truth)
-      const dbAgent = await this.prisma.agent.create({
+      // 1. Store in Drizzle database (single source of truth)
+      const dbAgent = await this.drizzle.agent.create({
         data: {
           id: agentId,
           name: completeProfile.name,
@@ -494,7 +494,7 @@ export class MasterAgentRegistry extends EventEmitter {
             this.agentProfiles.set(agentId, completeProfile);
 
             // Update database with on-chain data
-            await this.prisma.agent.update({
+            await this.drizzle.agent.update({
               where: { id: agentId },
               data: {
                 metadata: {
@@ -758,7 +758,7 @@ export class MasterAgentRegistry extends EventEmitter {
     // Store in agent's todo list
     agent.todoList.push(todo);
 
-    const prismaTask = await this.prisma.task.create({
+    const drizzleTask = await this.drizzle.task.create({
       data: {
         type: todo.content,
         data: {
@@ -790,7 +790,7 @@ export class MasterAgentRegistry extends EventEmitter {
         userId: agent.userId,
       },
     });
-    todo.integrationId = prismaTask.id;
+    todo.integrationId = drizzleTask.id;
 
     this.updateSystemMetrics();
 
@@ -1061,7 +1061,7 @@ export class MasterAgentRegistry extends EventEmitter {
    */
   private async loadExistingAgents(): Promise<void> {
     try {
-      const existingAgents = await this.prisma.agent.findMany({
+      const existingAgents = await this.drizzle.agent.findMany({
         include: { metadata: true },
       });
 
@@ -1389,7 +1389,7 @@ export class MasterAgentRegistry extends EventEmitter {
 
     // Update in database
     try {
-      await this.prisma.agent.update({
+      await this.drizzle.agent.update({
         where: { id: agentId },
         data: { status, updatedAt: new Date() },
       });
@@ -1420,7 +1420,7 @@ export class MasterAgentRegistry extends EventEmitter {
 
     // Update in database
     try {
-      await this.prisma.agent.update({
+      await this.drizzle.agent.update({
         where: { id: agentId },
         data: {
           config: {
@@ -1462,14 +1462,14 @@ export class MasterAgentRegistry extends EventEmitter {
 
     // Update in database
     try {
-      await this.prisma.agent.update({
+      await this.drizzle.agent.update({
         where: { id: agentId },
         data: {
           metadata: {
             update: {
               config: {
-                // We need to be careful with nested jsonb updates in Prisma
-                // Usually we'd fetch and merge if using raw prisma,
+                // We need to be careful with nested jsonb updates in Drizzle
+                // Usually we'd fetch and merge if using raw drizzle,
                 // but for this implementation we assume the metadata/config structure is handled
                 metrics: agent.metrics,
               },

@@ -422,7 +422,7 @@ Configure alerts in:
 
 ### Database Monitoring Issues
 
-1. Check Prisma middleware
+1. Check Drizzle middleware
 2. Verify monitoring is enabled
 3. Review error logs
 4. Test with manual tracking

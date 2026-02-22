@@ -23,7 +23,7 @@ export async function setupIntegrationTests() {
   try {
     // Ensure test database exists and is migrated
     console.log('📊 Setting up test database...');
-    execSync('npx prisma db push --force-reset', {
+    execSync('npx drizzle db push --force-reset', {
       env: { ...process.env, DATABASE_URL: process.env.TEST_DATABASE_URL },
       stdio: 'pipe',
     });

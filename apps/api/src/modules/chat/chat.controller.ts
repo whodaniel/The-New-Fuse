@@ -120,7 +120,7 @@ export class ChatController {
   // TODO: Future Endpoints - Requires Schema Updates
   // ============================================================================
   //
-  // The following endpoints are planned but require Prisma schema updates:
+  // The following endpoints are planned but require Drizzle schema updates:
   //
   // POST /chat/:id/automate - Start automated conversation between agents
   // POST /chat/rules - Create conversation routing rules

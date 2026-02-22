@@ -12,7 +12,7 @@ description: Next.js SaaS template principles. Auth, payments, email.
 | Framework | Next.js 14 (App Router) |
 | Auth | NextAuth.js v5 |
 | Payments | Stripe |
-| Database | PostgreSQL + Prisma |
+| Database | PostgreSQL + Drizzle |
 | Email | Resend |
 | UI | Tailwind (ASK USER: shadcn/Headless UI/Custom?) |
 
@@ -22,7 +22,7 @@ description: Next.js SaaS template principles. Auth, payments, email.
 
 ```
 project-name/
-├── prisma/
+├── drizzle/
 ├── src/
 │   ├── app/
 │   │   ├── (auth)/      # Login, register
@@ -72,7 +72,7 @@ project-name/
 
 | Variable | Purpose |
 |----------|---------|
-| DATABASE_URL | Prisma |
+| DATABASE_URL | Drizzle |
 | NEXTAUTH_SECRET | Auth |
 | STRIPE_SECRET_KEY | Payments |
 | STRIPE_WEBHOOK_SECRET | Webhooks |
@@ -83,7 +83,7 @@ project-name/
 ## Setup Steps
 
 1. `npx create-next-app {{name}} --typescript --tailwind --app`
-2. Install: `npm install next-auth @auth/prisma-adapter stripe resend`
+2. Install: `npm install next-auth @auth/drizzle-adapter stripe resend`
 3. Setup Stripe products/prices
 4. Configure environment
 5. `npm run db:push`
@@ -96,5 +96,5 @@ project-name/
 
 - Route groups for layout separation
 - Stripe webhooks for subscription sync
-- NextAuth with Prisma adapter
+- NextAuth with Drizzle adapter
 - Email templates with React Email

@@ -8,7 +8,7 @@ This document provides a comprehensive summary of the Agent Registry, Onboarding
 
 ### 1. Database Schema Extensions
 
-**Location**: `/home/user/fuse/prisma/schema.prisma`
+**Location**: `/home/user/fuse/drizzle/schema.drizzle`
 
 Added the following models to support the agent registry system:
 
@@ -230,7 +230,7 @@ npm start
 **Coverage**:
 - Service method testing
 - Controller endpoint testing
-- Mock implementations for Prisma
+- Mock implementations for Drizzle
 - Error handling validation
 - Authentication verification
 
@@ -432,7 +432,7 @@ The agent registry system integrates with:
 1. **Agent Module** (`/modules/agent/`): Extended with registration relationship
 2. **Event System**: Emits events during onboarding
 3. **WebSocket Gateway**: For real-time agent communication
-4. **Prisma ORM**: For database operations
+4. **Drizzle ORM**: For database operations
 5. **Swagger/OpenAPI**: For API documentation
 
 ## Next Steps
@@ -440,10 +440,10 @@ The agent registry system integrates with:
 To complete the integration:
 
 1. **Update App Module**: Import and register `AgentRegistryModule`
-2. **Run Migrations**: Generate and apply Prisma migrations
+2. **Run Migrations**: Generate and apply Drizzle migrations
    ```bash
    pnpm db:generate
-   pnpm prisma migrate dev --name add-agent-registry
+   pnpm drizzle migrate dev --name add-agent-registry
    ```
 3. **Start Backend**: Run the backend server
    ```bash
@@ -469,7 +469,7 @@ To complete the integration:
 - **Token Security**: Cryptographically secure token generation (32 bytes)
 - **Token Validation**: Middleware for all protected endpoints
 - **Input Validation**: DTO validation with class-validator
-- **SQL Injection Protection**: Prisma ORM parameterized queries
+- **SQL Injection Protection**: Drizzle ORM parameterized queries
 - **Rate Limiting**: Ready for rate limiter integration
 - **Audit Trail**: Complete event logging for onboarding
 

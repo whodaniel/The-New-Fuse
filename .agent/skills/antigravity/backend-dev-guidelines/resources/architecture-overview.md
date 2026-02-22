@@ -50,7 +50,7 @@ Complete guide to the layered architecture pattern used in backend microservices
 ┌─────────────────────────────────────┐
 │  Layer 4: REPOSITORIES              │
 │  - Data access abstraction          │
-│  - Prisma operations                │
+│  - Drizzle operations                │
 │  - Query optimization               │
 │  - Caching                          │
 └───────────────┬─────────────────────┘
@@ -111,7 +111,7 @@ Complete guide to the layered architecture pattern used in backend microservices
    - Return result
    ↓
 7. Repository performs database operation:
-   - PrismaService.main.user.create({ data })
+   - DrizzleService.main.user.create({ data })
    - Handle database errors
    - Return created user
    ↓
@@ -254,11 +254,11 @@ form/src/
 **Naming:** PascalCase + Repository
 
 **Responsibilities:**
-- Prisma query operations
+- Drizzle query operations
 - Query optimization
 - Database error handling
 - Caching layer
-- Hide Prisma implementation details
+- Hide Drizzle implementation details
 
 **Current Gap:** Only 1 repository exists (WorkflowRepository)
 
@@ -384,10 +384,10 @@ src/
 - ✅ Orchestration (multiple repos)
 - ✅ Transaction management
 - ❌ HTTP concerns (Request/Response)
-- ❌ Direct Prisma calls (use repositories)
+- ❌ Direct Drizzle calls (use repositories)
 
 **Repositories Layer:**
-- ✅ Prisma operations
+- ✅ Drizzle operations
 - ✅ Query construction
 - ✅ Database error handling
 - ✅ Caching
@@ -433,11 +433,11 @@ async create(data: CreateUserDTO): Promise<User> {
 **Repository:**
 ```typescript
 async create(data: CreateUserDTO): Promise<User> {
-    return PrismaService.main.user.create({ data });
+    return DrizzleService.main.user.create({ data });
 }
 
 async findByEmail(email: string): Promise<User | null> {
-    return PrismaService.main.user.findUnique({ where: { email } });
+    return DrizzleService.main.user.findUnique({ where: { email } });
 }
 ```
 

@@ -5,7 +5,7 @@
     *   Use Model Context Protocol (MCP) as the primary data exchange mechanism: Standardizes communication between agents and components.
     *   Employ NestJS for the backend: Provides a structured framework for Node.js applications.
     *   Utilize React for the frontend: Enables building interactive user interfaces.
-    *   Use PostgreSQL with Prisma ORM: Provides relational database storage and type-safe database access.
+    *   Use PostgreSQL with Drizzle ORM: Provides relational database storage and type-safe database access.
     *   Support multiple communication methods: WebSockets (key for VS Code to Chrome extension communication, noted as a strength in FTUE Report May 2025), REST APIs, gRPC, Redis Pub/Sub ensure flexibility.
 *   **Design Patterns:**
     *   Modularity: Components are designed for independent deployment and maintenance.

@@ -396,8 +396,8 @@ console.log('Top 10 slow queries:', slowQueries);
 ### 3. Connection Pool Management
 
 ```typescript
-// Prisma connection pool configuration
-const prisma = new PrismaClient({
+// Drizzle connection pool configuration
+const drizzle = new DrizzleClient({
   datasources: {
     db: {
       url: process.env.DATABASE_URL,

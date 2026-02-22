@@ -4,7 +4,7 @@
 
 # Run the database:db:generate step directly
 echo "✅ Running database:db:generate..."
-cd packages/database && npx prisma generate
+cd packages/database && npx drizzle generate
 
 # Run the main build with --filter to exclude database
 echo "✅ Running build on all packages except database..."

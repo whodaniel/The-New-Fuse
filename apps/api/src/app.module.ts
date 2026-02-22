@@ -16,6 +16,7 @@ import { CacheService } from './cache/cache.service';
 import llmProviderConfig from './config/llm-provider.config';
 import securityConfig from './config/security.config';
 import { AgentGrantsController } from './controllers/agent-grants.controller';
+import { AgentHandoffController } from './controllers/agent-handoff.controller';
 import { AgentProxyController } from './controllers/agent-proxy.controller';
 import { HealthController } from './controllers/health.controller';
 import { MCPController } from './controllers/mcp.controller';
@@ -51,6 +52,7 @@ import { WebhooksModule } from './modules/webhooks/webhooks.module'; // Migrated
 import { WorkflowTemplatesModule } from './modules/workflow-templates.module';
 import { MonitoringModule } from './monitoring/monitoring.module';
 import { AgentApiGrantsService } from './services/agent-api-grants.service';
+import { AgentHandoffService } from './services/agent-handoff.service';
 import { ProviderKeysService } from './services/provider-keys.service';
 import { SmartAccountModule } from './smart-accounts/smart-account.module';
 import { TransactionsModule } from './transactions/transactions.module';
@@ -136,6 +138,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     LLMProviderController,
     MCPController, // MCP server management (20+ endpoints)
     AgentGrantsController,
+    AgentHandoffController,
     AgentProxyController,
     ModelsController, // AI model provider selection
     SystemController,
@@ -158,6 +161,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     LLMProviderService,
     ProviderKeysService,
     AgentApiGrantsService,
+    AgentHandoffService,
     // Middleware
     SecurityValidationMiddleware,
     CsrfProtectionMiddleware,

@@ -22,6 +22,8 @@ export const MessageType = z.enum([
   'command', // Direct action request
   'event', // Fire-and-forget notification
   'task', // Requires ACK/result
+  'handoff', // Targeted prompt/state transfer between agents
+  'handoff-ack', // Acknowledgement for a handoff packet
   'state-sync', // State synchronization
   'query', // Information request
   'response', // Response to query/task

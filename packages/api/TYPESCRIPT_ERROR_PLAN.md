@@ -8,7 +8,7 @@ This document outlines a step-by-step plan for resolving TypeScript errors in th
 
 - We've successfully built the package using a custom script that bypasses TypeScript errors
 - The experimental decorators issue has been fixed by adding appropriate TypeScript configuration
-- The `RegisteredEntity` model has been added to the Prisma schema
+- The `RegisteredEntity` model has been added to the Drizzle schema
 - Some missing modules have been stubbed with declaration files
 
 ## Error Categories
@@ -23,7 +23,7 @@ This document outlines a step-by-step plan for resolving TypeScript errors in th
    - Missing `Workflow` and `WorkflowExecution` types
    - Incompatible interfaces (Agent, CreateAgentDto)
 
-3. **Prisma Model Issues**:
+3. **Drizzle Model Issues**:
    - Missing RegisteredEntity model (now fixed)
 
 ## Resolution Plan
@@ -42,7 +42,7 @@ This document outlines a step-by-step plan for resolving TypeScript errors in th
 
 ### Phase 3: Service Implementations
 
-1. Fix entity.service.ts to work with the RegisteredEntity Prisma model
+1. Fix entity.service.ts to work with the RegisteredEntity Drizzle model
 2. Implement proper error handling with typed errors
 3. Fix service method signatures and return types
 
@@ -61,7 +61,7 @@ This document outlines a step-by-step plan for resolving TypeScript errors in th
 ## Next Steps
 
 1. Prioritize fixing the RedisService import issue
-2. Fix the RegisteredEntity Prisma model
+2. Fix the RegisteredEntity Drizzle model
 3. Address critical controller issues
 
 ## Notes

@@ -13,7 +13,7 @@ The NFT Agent System transforms AI agents into tradable NFTs with fractional own
 - **`TNFSmartAccount.sol`** - ERC-4337 Smart Account for agents
 - **`TNFSmartAccountFactory.sol`** - Factory for deploying Smart Accounts
 
-### 2. Database Schema (`/packages/database/prisma/schema.prisma`)
+### 2. Database Schema (`/packages/database/drizzle/schema.drizzle`)
 - **`AgentNFT`** - NFT metadata and configuration
 - **`FractionalShare`** - Ownership records for fractional shares
 - **`RevenueStream`** - Revenue tracking and distribution settings
@@ -97,8 +97,8 @@ SMART_ACCOUNT_FACTORY_ADDRESS=0x...
 ### 3. Database Migration
 ```bash
 cd packages/database
-npx prisma migrate dev --name add-nft-models
-npx prisma generate
+npx drizzle migrate dev --name add-nft-models
+npx drizzle generate
 ```
 
 ### 4. Start Backend Services

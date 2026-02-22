@@ -6,7 +6,7 @@ The MasterAgentRegistry serves as the **single source of truth** for all agents 
 ## Key Features
 
 ### 🔗 **Hybrid On-Chain/Off-Chain Architecture**
-- **Off-chain**: Fast registration, metadata, and operational state in Prisma database
+- **Off-chain**: Fast registration, metadata, and operational state in Drizzle database
 - **On-chain**: Immutable identity, ownership, and economic primitives via AgentNFTFactory
 - **Seamless Integration**: Automatic NFT minting during agent registration
 
@@ -30,7 +30,7 @@ The MasterAgentRegistry serves as the **single source of truth** for all agents 
 
 ### 🔄 **Agent Todo System**
 - Individual rolling todo lists per agent
-- Integration with Prisma Task system
+- Integration with Drizzle Task system
 - Category-based organization (onboarding, maintenance, coordination)
 - Status tracking and completion metrics
 
@@ -48,7 +48,7 @@ const blockchainConfig: BlockchainConfig = {
   maxGasPrice: '50' // gwei
 };
 
-const registry = new MasterAgentRegistry(prisma, logger, blockchainConfig);
+const registry = new MasterAgentRegistry(drizzle, logger, blockchainConfig);
 ```
 
 ### On-Chain Agent Data
@@ -66,7 +66,7 @@ interface OnChainAgentData {
 
 ### Agent Registration Flow
 
-1. **Off-Chain Registration**: Store in Prisma database
+1. **Off-Chain Registration**: Store in Drizzle database
 2. **Legacy Integration**: Register with backward-compatible systems  
 3. **Verification Hash**: Generate cryptographic verification
 4. **Todo Initialization**: Create standardized task list
@@ -181,7 +181,7 @@ const report = registry.generateSystemStatusReport();
 ## Integration Points
 
 ### Database Integration
-- **Prisma Client**: Primary data persistence
+- **Drizzle Client**: Primary data persistence
 - **Agent Model**: Core agent information
 - **AgentMetadata Model**: Extended metadata and capabilities  
 - **Task Model**: Todo list integration
@@ -221,11 +221,11 @@ const report = registry.generateSystemStatusReport();
 
 ```typescript
 import { MasterAgentRegistry } from './MasterAgentRegistry';
-import { PrismaClient } from '@prisma/client';
+import { DrizzleClient } from '@drizzle/client';
 import { Logger } from '../utils/Logger';
 
 // Initialize with blockchain integration
-const prisma = new PrismaClient();
+const drizzle = new DrizzleClient();
 const logger = new Logger();
 const blockchainConfig = {
   enabled: true,
@@ -237,7 +237,7 @@ const blockchainConfig = {
   maxGasPrice: '50'
 };
 
-const registry = new MasterAgentRegistry(prisma, logger, blockchainConfig);
+const registry = new MasterAgentRegistry(drizzle, logger, blockchainConfig);
 
 // Register a new agent with automatic blockchain minting
 const result = await registry.registerAgent({

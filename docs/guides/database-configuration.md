@@ -242,7 +242,7 @@ ipcMain.handle('services:list', async () => {
 
 ### Schema Management
 
-Currently using direct SQL. Future integration with Prisma ORM:
+Currently using direct SQL. Future integration with Drizzle ORM:
 
 ```sql
 -- Example schema
@@ -274,7 +274,7 @@ EOF
 
 ### Migrations (Future)
 
-When Prisma is integrated:
+When Drizzle is integrated:
 
 ```bash
 # Generate migration
@@ -540,7 +540,7 @@ DATABASE_URL=postgresql://prod-user:prod-pass@prod-host:5432/prod-db
 
 ## Future Enhancements
 
-1. **Prisma Integration**: ORM for type-safe database operations
+1. **Drizzle Integration**: ORM for type-safe database operations
 2. **Database Migrations**: Automated schema management
 3. **Connection Pooling**: Optimize database connections
 4. **Read Replicas**: Scale read operations

@@ -25,7 +25,7 @@ import { SharedStateModule } from './modules/shared-state/shared-state.module';
 import { SystemMetricsModule } from './modules/system-metrics/system-metrics.module';
 import { WorkflowTemplatesModule } from './modules/workflow-templates/workflow-templates.module';
 import { PerformanceMetricsModule } from './monitoring/performance-metrics.module';
-// PrismaModule removed - migrated to DrizzleModule
+// DrizzleModule removed - migrated to DrizzleModule
 import { RequestLoggerMiddleware } from './middleware/request-logger.middleware';
 import { AdminModule } from './modules/admin/admin.module';
 import { LoggingService } from './services/logging.service';

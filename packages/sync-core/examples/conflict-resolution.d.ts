@@ -73,13 +73,13 @@ export declare class DocumentSyncService {
             createdAt: Date;
             tenantId: string | null;
             conflictType: string;
-            localVersion: import("@the-new-fuse/database/generated/prisma/runtime/library").JsonValue;
-            remoteVersion: import("@the-new-fuse/database/generated/prisma/runtime/library").JsonValue;
+            localVersion: import("@the-new-fuse/database/generated/drizzle/runtime/library").JsonValue;
+            remoteVersion: import("@the-new-fuse/database/generated/drizzle/runtime/library").JsonValue;
             resourceType: string;
             resourceId: string;
             resolvedAt: Date | null;
             resolvedBy: string | null;
-            resolution: import("@the-new-fuse/database/generated/prisma/runtime/library").JsonValue | null;
+            resolution: import("@the-new-fuse/database/generated/drizzle/runtime/library").JsonValue | null;
         }[];
     }>;
 }

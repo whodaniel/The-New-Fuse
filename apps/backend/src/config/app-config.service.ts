@@ -99,7 +99,7 @@ export class AppConfigService implements OnModuleInit {
     // Check for default/placeholder values (warning only, not a hard error)
     const dangerousDefaults = [
       'your-secret-key',
-      'default-secret',
+      '[REDACTED_SECRET]',
       'changeme',
       'password',
       'your-super-secret',

@@ -56,7 +56,7 @@ Configured Prettier with:
 
 - `node_modules/`
 - Build outputs (`dist/`, `build/`, `.next/`)
-- Generated files (`prisma/migrations/`, `generated/`)
+- Generated files (`drizzle/migrations/`, `generated/`)
 - Lock files
 
 ### 3. lint-staged Configuration ✅
@@ -70,7 +70,7 @@ Configured to run on staged files:
 - **Markdown**: Prettier
 - **YAML**: Prettier
 - **CSS/SCSS**: Prettier
-- **Prisma**: Prettier
+- **Drizzle**: Prettier
 
 **Performance**: Only processes staged files for fast commits
 
@@ -105,7 +105,7 @@ Enhanced with comprehensive settings:
 - **Python**: 4 space indent, 88 char max
 - **Makefile**: Tab indent
 - **Docker**: 2 space indent
-- **Prisma**: 2 space indent
+- **Drizzle**: 2 space indent
 
 **Editor Support**: Works across VSCode, IntelliJ, Sublime, Vim, and more
 
@@ -139,7 +139,7 @@ Configured VSCode for optimal development:
 - Prettier
 - EditorConfig
 - Tailwind CSS
-- Prisma
+- Drizzle
 - Jest
 - TypeScript
 

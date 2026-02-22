@@ -11,7 +11,7 @@ Quick guide to enable all performance optimizations for the Fuse backend API.
 cd /home/user/fuse/packages/database
 
 # Apply performance indexes
-psql $DATABASE_URL -f prisma/migrations/add_performance_indexes.sql
+psql $DATABASE_URL -f drizzle/migrations/add_performance_indexes.sql
 
 # Verify indexes were created
 psql $DATABASE_URL -c "\d users"
@@ -123,7 +123,7 @@ SELECT * FROM users WHERE email = 'test@example.com';
 
 ```typescript
 // In your service
-const metrics = await prisma.$metrics.json();
+const metrics = await drizzle.$metrics.json();
 console.log('Connection pool:', metrics);
 ```
 

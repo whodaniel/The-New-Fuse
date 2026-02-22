@@ -81,7 +81,7 @@ export class DrizzleWorkspaceRepository {
 
   /**
    * Find workspace with related projects
-   * Note: This mimics Prisma's `include: { projects: true }`
+   * Note: This mimics Drizzle's `include: { projects: true }`
    */
   async findByIdWithProjects(id: string): Promise<(Workspace & { projects: any[] }) | null> {
     const workspace = await this.findById(id);

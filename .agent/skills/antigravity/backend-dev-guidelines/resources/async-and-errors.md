@@ -220,7 +220,7 @@ router.get('/users', asyncErrorWrapper(async (req, res) => {
 // ✅ Propagate errors up the stack
 async function repositoryMethod() {
     try {
-        return await PrismaService.main.user.findMany();
+        return await DrizzleService.main.user.findMany();
     } catch (error) {
         Sentry.captureException(error, { tags: { layer: 'repository' } });
         throw error; // Propagate to service

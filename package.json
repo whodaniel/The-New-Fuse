@@ -145,6 +145,7 @@
     "verify": "./scripts/verify-features.sh",
     "verify:features": "./scripts/verify-features.sh",
     "audit:routes": "node scripts/route-audit.js",
+    "audit:doc-hygiene": "bash scripts/audit-doc-hygiene.sh",
     "audit:security": "pnpm audit",
     "audit:circular": "pnpm dlx madge --circular apps/api/src",
     "audit:clean-scripts": "node scripts/audit-clean-scripts.cjs",

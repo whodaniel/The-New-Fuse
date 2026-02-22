@@ -1,5 +1,5 @@
 -- Self-Learning Task Performance System Migration
--- Add to existing Prisma schema
+-- Add to existing Drizzle schema
 
 -- Task attempts tracking table
 CREATE TABLE task_attempts (

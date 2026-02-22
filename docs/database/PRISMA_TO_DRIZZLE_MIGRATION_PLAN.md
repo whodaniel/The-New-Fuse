@@ -1,8 +1,8 @@
-# Prisma to Drizzle Migration Plan
+# Drizzle to Drizzle Migration Plan
 
 ## Executive Summary
 
-This document outlines the complete migration strategy from Prisma ORM to Drizzle ORM. The migration is currently **40% complete** with all infrastructure in place but runtime code still using Prisma.
+This document outlines the complete migration strategy from Drizzle ORM to Drizzle ORM. The migration is currently **40% complete** with all infrastructure in place but runtime code still using Drizzle.
 
 ## Current State (December 2024)
 
@@ -15,11 +15,11 @@ This document outlines the complete migration strategy from Prisma ORM to Drizzl
 - Type safety with inferred types from schema
 
 ### ❌ Incomplete
-- Runtime code is 100% Prisma
-- apps/backend has 8+ files with direct PrismaClient instantiation
-- apps/api uses PrismaService via DatabaseModule
-- packages/core uses PrismaService for metrics/monitoring
-- Prisma dependencies still required
+- Runtime code is 100% Drizzle
+- apps/backend has 8+ files with direct DrizzleClient instantiation
+- apps/api uses DrizzleService via DatabaseModule
+- packages/core uses DrizzleService for metrics/monitoring
+- Drizzle dependencies still required
 
 ## Migration Strategy
 
@@ -46,15 +46,15 @@ All repositories are exported from `@the-new-fuse/database/drizzle`.
 
 Files requiring updates (in order):
 
-1. **src/prisma/prisma.service.ts** → Create DrizzleService wrapper
-   - Current: `PrismaService` extends `PrismaClient`
+1. **src/drizzle/drizzle.service.ts** → Create DrizzleService wrapper
+   - Current: `DrizzleService` extends `DrizzleClient`
    - Target: `DrizzleService` provides repository access
 
 2. **src/middleware/auth.ts** → Use DrizzleUserRepository
    ```typescript
    // Before
-   const prisma = new PrismaClient();
-   const user = await prisma.user.findUnique({ where: { id } });
+   const drizzle = new DrizzleClient();
+   const user = await drizzle.user.findUnique({ where: { id } });
 
    // After
    import { drizzleUserRepository } from '@the-new-fuse/database/drizzle';
@@ -62,43 +62,43 @@ Files requiring updates (in order):
    ```
 
 3. **src/config/passport.ts** → Use DrizzleUserRepository
-   - Replace PrismaClient instantiation
+   - Replace DrizzleClient instantiation
    - Update user lookup logic
 
 4. **src/utils/auth.ts** → Use DrizzleUserRepository
-   - Remove PrismaClient dependency
+   - Remove DrizzleClient dependency
    - Use repository for user operations
 
 5. **src/modules/agent/agent.service.ts** → Use DrizzleAgentRepository
-   - Replace Prisma agent queries
-   - Update status types (no longer import from @prisma/client)
+   - Replace Drizzle agent queries
+   - Update status types (no longer import from @drizzle/client)
 
 6. **src/modules/dashboard/dto/agent.dto.ts** → Use Drizzle types
    ```typescript
    // Before
-   import { Agent, AgentStatus } from '@prisma/client';
+   import { Agent, AgentStatus } from '@drizzle/client';
 
    // After
    import { Agent, AgentStatus } from '@the-new-fuse/database/drizzle';
    ```
 
 7. **src/services/chatService.ts** → Use DrizzleChatRepository
-   - Replace Prisma chat/message queries
+   - Replace Drizzle chat/message queries
    - Use repository methods
 
 #### apps/api Migration
 
 Files requiring updates:
 
-1. **src/modules/prisma/prisma.service.ts** → Deprecated, create drizzle.service.ts
-2. **src/services/prisma.service.ts** → Deprecated
+1. **src/modules/drizzle/drizzle.service.ts** → Deprecated, create drizzle.service.ts
+2. **src/services/drizzle.service.ts** → Deprecated
 3. **src/modules/repositories/*.repository.ts** → Use Drizzle repositories
 4. **src/modules/services/agent.service.ts** → Use DrizzleAgentRepository
 5. **src/modules/services/workflow.service.ts** → Use DrizzleWorkflowRepository
 
 #### packages/core Migration
 
-1. **src/prisma/prisma.service.ts** → Create DrizzleService
+1. **src/drizzle/drizzle.service.ts** → Create DrizzleService
 2. **src/database/DatabaseMonitor.ts** → Update for Drizzle
 3. **src/services/AgentMetadataManager.ts** → Use DrizzleAgentRepository
 
@@ -108,7 +108,7 @@ Files requiring updates:
 **Estimated Effort**: 2-3 days
 
 1. **Update DatabaseModule** (packages/database/src/database.module.ts)
-   - Current: Exports 6 Prisma repositories
+   - Current: Exports 6 Drizzle repositories
    - Target: Export 5 Drizzle repositories
    - Provide both during transition period
 
@@ -160,31 +160,31 @@ Files requiring updates:
 
 Only after Phase 4 is 100% complete:
 
-1. **Remove Prisma Dependencies**
+1. **Remove Drizzle Dependencies**
    ```json
    // packages/database/package.json
    {
      "dependencies": {
-       "@prisma/client": "^7.1.0",  // REMOVE
-       "@prisma/adapter-pg": "^7.1.0",  // REMOVE
-       "@prisma/migrate": "^7.1.0"  // REMOVE
+       "@drizzle/client": "^7.1.0",  // REMOVE
+       "@drizzle/adapter-pg": "^7.1.0",  // REMOVE
+       "@drizzle/migrate": "^7.1.0"  // REMOVE
      },
      "devDependencies": {
-       "prisma": "7.1.0"  // REMOVE
+       "drizzle": "7.1.0"  // REMOVE
      }
    }
    ```
 
-2. **Remove Prisma Files**
-   - `packages/database/prisma/` directory
-   - `packages/database/src/prisma.service*.ts`
-   - `packages/database/src/repositories/` (Prisma versions)
-   - All other packages: Remove `@prisma/client` dependency
+2. **Remove Drizzle Files**
+   - `packages/database/drizzle/` directory
+   - `packages/database/src/drizzle.service*.ts`
+   - `packages/database/src/repositories/` (Drizzle versions)
+   - All other packages: Remove `@drizzle/client` dependency
 
 3. **Update Dockerfile.railway**
-   - Remove lines 56-62 (service-specific Prisma generation)
+   - Remove lines 56-62 (service-specific Drizzle generation)
 
-4. **Remove Generated Prisma Types**
+4. **Remove Generated Drizzle Types**
    - `packages/database/generated/` directory
 
 ## Implementation Guidelines
@@ -218,7 +218,7 @@ Only after Phase 4 is 100% complete:
 
 ### DON'Ts ❌
 
-1. **Don't Mix Prisma & Drizzle**
+1. **Don't Mix Drizzle & Drizzle**
    - Complete one service at a time
    - No partial migrations within a file
 
@@ -226,15 +226,15 @@ Only after Phase 4 is 100% complete:
    - Write tests before migrating production code
    - Validate all edge cases
 
-3. **Don't Remove Prisma Too Early**
-   - Keep Prisma dependencies until 100% migrated
+3. **Don't Remove Drizzle Too Early**
+   - Keep Drizzle dependencies until 100% migrated
    - Maintain both systems during transition
 
 ## Migration Checklist
 
 ### Pre-Migration
 
-- [x] Drizzle schema matches Prisma schema
+- [x] Drizzle schema matches Drizzle schema
 - [x] All repositories implemented
 - [x] DrizzleModule configured
 - [ ] Integration tests written
@@ -250,8 +250,8 @@ Only after Phase 4 is 100% complete:
 
 ### Post-Migration
 
-- [ ] Prisma dependencies removed
-- [ ] Prisma files deleted
+- [ ] Drizzle dependencies removed
+- [ ] Drizzle files deleted
 - [ ] Dockerfile updated
 - [ ] Documentation updated
 - [ ] Team trained on Drizzle patterns
@@ -261,12 +261,12 @@ Only after Phase 4 is 100% complete:
 If issues arise during migration:
 
 1. **Service-Level Rollback**
-   - Revert specific service files to Prisma
+   - Revert specific service files to Drizzle
    - Keep both implementations temporarily
 
 2. **Full Rollback**
    - Revert all code changes
-   - Prisma infrastructure still intact
+   - Drizzle infrastructure still intact
    - No data loss (schema unchanged)
 
 ## Timeline Estimate
@@ -309,7 +309,7 @@ packages/database/src/drizzle/
 ### Files to Migrate
 
 **apps/backend:**
-- src/prisma/prisma.service.ts
+- src/drizzle/drizzle.service.ts
 - src/middleware/auth.ts
 - src/config/passport.ts
 - src/utils/auth.ts
@@ -321,8 +321,8 @@ packages/database/src/drizzle/
 - src/services/chatService.ts
 
 **apps/api:**
-- src/modules/prisma/prisma.service.ts
-- src/services/prisma.service.ts
+- src/modules/drizzle/drizzle.service.ts
+- src/services/drizzle.service.ts
 - src/modules/repositories/*.repository.ts
 - src/modules/services/agent.service.ts
 - src/modules/services/workflow.service.ts
@@ -331,10 +331,10 @@ packages/database/src/drizzle/
 
 Migration is complete when:
 
-1. ✅ No `@prisma/client` imports in runtime code
+1. ✅ No `@drizzle/client` imports in runtime code
 2. ✅ All tests passing
 3. ✅ Performance metrics maintained or improved
-4. ✅ No Prisma dependencies in package.json files
+4. ✅ No Drizzle dependencies in package.json files
 5. ✅ Documentation updated
 6. ✅ Railway builds successfully
 

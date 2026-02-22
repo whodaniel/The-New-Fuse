@@ -129,7 +129,7 @@ When transferring between AI agents or starting a new session, provide:
 
 1. **Separation of Concerns**: Maintain clear boundaries between packages
 2. **API Design**: Follow RESTful principles and OpenAPI specifications
-3. **Database**: Use proper ORM patterns with Prisma
+3. **Database**: Use proper ORM patterns with Drizzle
 4. **State Management**: Follow established patterns for frontend state
 
 ### Communication Protocols
@@ -203,7 +203,7 @@ When transferring between AI agents or starting a new session, provide:
 
 - **MCP Servers**: Model Context Protocol for AI coordination
 - **API Gateways**: RESTful service interfaces
-- **Database Layer**: Prisma ORM with PostgreSQL
+- **Database Layer**: Drizzle ORM with PostgreSQL
 - **Frontend State**: React with proper state management
 - **Build System**: Bun-based monorepo with TypeScript
 

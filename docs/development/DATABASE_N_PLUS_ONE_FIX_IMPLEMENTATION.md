@@ -89,7 +89,7 @@ const baselineData = await this.getBatchMetrics(tx, execution.category, metrics)
 
 ```typescript
 // BEFORE: Loading all data and processing in memory
-const assessments = await this.prisma.selfAssessment.findMany({
+const assessments = await this.drizzle.selfAssessment.findMany({
   // No specific selects, loads all data
 });
 
@@ -101,7 +101,7 @@ for (const category of Object.values(PromptCategory)) {
 }
 
 // AFTER: Single optimized query with targeted selects
-const assessments = await this.prisma.selfAssessment.findMany({
+const assessments = await this.drizzle.selfAssessment.findMany({
   select: {
     overallScore: true,
     taskCompletionQuality: true,
@@ -110,7 +110,7 @@ const assessments = await this.prisma.selfAssessment.findMany({
 });
 
 // Database-level aggregations
-const categoryStats = await this.prisma.selfAssessment.groupBy({
+const categoryStats = await this.drizzle.selfAssessment.groupBy({
   by: ['executionId'],
   _avg: { overallScore: true },
 });
@@ -152,11 +152,11 @@ const impacts = await this.calculateBatchDirectiveImpacts(tx);
 
 ```typescript
 // BEFORE: Loading all contributions into memory
-const allContributions = await this.prisma.collectiveContribution.findMany();
+const allContributions = await this.drizzle.collectiveContribution.findMany();
 // Loads thousands of records
 
 // AFTER: Targeted queries with pagination
-const recentContributions = await this.prisma.collectiveContribution.findMany({
+const recentContributions = await this.drizzle.collectiveContribution.findMany({
   select: { /* minimal fields */ },
   take: limit,
   skip: offset,
@@ -288,7 +288,7 @@ CHECK (overall_score BETWEEN 1.0 AND 10.0);
 
 ```bash
 # Apply the optimization migration
-psql -d your_database -f prisma/migrations/20241105_optimize_self_prompting_system.sql
+psql -d your_database -f drizzle/migrations/20241105_optimize_self_prompting_system.sql
 
 # Verify indexes were created
 psql -d your_database -c "SELECT indexname FROM pg_indexes WHERE indexname LIKE 'idx_%' ORDER BY indexname;"
@@ -308,7 +308,7 @@ import { OptimizedSelfAssessmentService } from './optimized-self-assessment.serv
 
 ### 3. Code Updates Required
 
-1. **Update service constructors** to remove direct PrismaClient instantiation
+1. **Update service constructors** to remove direct DrizzleClient instantiation
 2. **Configure dependency injection** for optimized services
 3. **Add proper error handling** for batch operations
 4. **Test pagination** in all list endpoints
@@ -320,7 +320,7 @@ import { OptimizedSelfAssessmentService } from './optimized-self-assessment.serv
 Added logging to track query optimization:
 
 ```typescript
-this.prisma = new PrismaClient({
+this.drizzle = new DrizzleClient({
   log: ['query', 'info', 'warn', 'error'], // Track slow queries
 });
 ```

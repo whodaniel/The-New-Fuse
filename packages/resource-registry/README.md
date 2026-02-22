@@ -173,7 +173,7 @@ Use `/resource-search` in Claude to search for resources:
 
 ## Database Schema
 
-The package includes Prisma schema for:
+The package includes Drizzle schema for:
 - `Resource` - Main resource table
 - `ResourceVersion` - Version history
 - `ResourceMetadata` - Extended metadata
@@ -183,7 +183,7 @@ Run migrations:
 
 ```bash
 cd packages/resource-registry
-npx prisma migrate dev
+npx drizzle migrate dev
 ```
 
 ## Access Control

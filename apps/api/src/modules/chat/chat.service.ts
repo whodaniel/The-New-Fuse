@@ -160,7 +160,7 @@ export class ChatService {
         where: (msg, { eq, and, lt }) => {
             const conditions = [eq(msg.chatId, chatId)];
             // If cursor provided, assuming cursor is an ID ?? Or timestamp based?
-            // Prisma cursor: { id: cursor }, skip: 1
+            // Drizzle cursor: { id: cursor }, skip: 1
             // Drizzle doesn't support 'cursor' + 'skip' directly in findMany options (it has offset).
             // Emulating cursor requires knowing the sort column value of the cursor.
             // For now, ignoring cursor logic for simplicity or falling back to simple limit.

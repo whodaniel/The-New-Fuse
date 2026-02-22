@@ -35,7 +35,7 @@ async function bootstrap() {
 
     logger.log('--- Step 3: Agent Creates Its Own Prompt ---');
     const initialPrompt = "You are a helpful assistant.";
-    // Note: The createTemplate signature in PromptTemplatesService expects data structure matching Prisma Input
+    // Note: The createTemplate signature in PromptTemplatesService expects data structure matching Drizzle Input
     // We need to match what we wrote in the service:
     /*
       name: data.name,

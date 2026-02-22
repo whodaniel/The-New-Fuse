@@ -146,9 +146,9 @@
 @the-new-fuse/api-gateway:dev: [7m34[0m         error.stack
 @the-new-fuse/api-gateway:dev: [7m  [0m [91m              ~~~~~[0m
 @the-new-fuse/api-gateway:dev:
-@the-new-fuse/api-gateway:dev: [96msrc/gateway/jules-webhook.module.ts[0m:[93m2[0m:[93m30[0m - [91merror[0m[90m TS2307: [0mCannot find module '@prisma/client' or its corresponding type declarations.
+@the-new-fuse/api-gateway:dev: [96msrc/gateway/jules-webhook.module.ts[0m:[93m2[0m:[93m30[0m - [91merror[0m[90m TS2307: [0mCannot find module '@drizzle/client' or its corresponding type declarations.
 @the-new-fuse/api-gateway:dev:
-@the-new-fuse/api-gateway:dev: [7m2[0m import { PrismaClient } from '@prisma/client';
+@the-new-fuse/api-gateway:dev: [7m2[0m import { DrizzleClient } from '@drizzle/client';
 @the-new-fuse/api-gateway:dev: [7m [0m [91m                             ~~~~~~~~~~~~~~~~[0m
 @the-new-fuse/api-gateway:dev:
 @the-new-fuse/api-gateway:dev: [96msrc/gateway/jules-webhook.module.ts[0m:[93m3[0m:[93m37[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/jules-integration' or its corresponding type declarations.

@@ -17,12 +17,12 @@ The codebase implements multiple backend services:
 ### 1.2 **CRITICAL**: Architectural Issues
 
 #### 🔴 HIGH - Mixed ORM Patterns
-**Issue**: The application uses both Prisma and TypeORM simultaneously, creating confusion and potential data inconsistencies.
+**Issue**: The application uses both Drizzle and TypeORM simultaneously, creating confusion and potential data inconsistencies.
 - `apps/api/src/app.module.ts` line 37: Uses `DatabaseModule as any` 
-- Some services use Prisma (`@prisma/client`) while others use TypeORM
+- Some services use Drizzle (`@drizzle/client`) while others use TypeORM
 - Creates maintenance burden and potential bugs
 
-**Recommendation**: Standardize on a single ORM (Prisma recommended for new features).
+**Recommendation**: Standardize on a single ORM (Drizzle recommended for new features).
 
 #### 🔴 HIGH - Inconsistent Service Boundaries
 **Issue**: Services lack clear boundaries and responsibilities.
@@ -86,7 +86,7 @@ const userId = client.handshake.auth.token; // No validation!
 ### 3.1 **HIGH**: Missing Database Indexes
 **PERFORMANCE ISSUE**
 
-**Analysis of Prisma Schema** (`apps/api/prisma/schema.prisma`):
+**Analysis of Drizzle Schema** (`apps/api/drizzle/schema.drizzle`):
 - `User` model lacks indexes on frequently queried fields
 - `Wallet` model missing composite indexes for user queries
 - `Transaction` model has no indexes on `createdAt` for time-based queries
@@ -98,8 +98,8 @@ const userId = client.handshake.auth.token; // No validation!
 **HIGH PRIORITY**
 
 **Issues**:
-```prisma
-// apps/backend/prisma/schema.prisma:18
+```drizzle
+// apps/backend/drizzle/schema.drizzle:18
 googleId      String?   @unique // Added for Google OAuth
 ```
 
@@ -210,7 +210,7 @@ async encrypt(text: string): Promise<string> {
 ```typescript
 // apps/api/src/wallets/wallets.service.ts:125-128
 async getWalletsByUserId(userId: string): Promise<any[]> {
-    return this.prisma.wallet.findMany({
+    return this.drizzle.wallet.findMany({
         where: { agent: { userId: userId } }
     });
 }

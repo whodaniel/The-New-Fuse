@@ -151,7 +151,7 @@ All updated pages now have:
 
 ## 7. Files Modified
 
-1. `packages/database/prisma/seed.ts` - Fixed AgentCapability enum values
+1. `packages/database/drizzle/seed.ts` - Fixed AgentCapability enum values
 2. `apps/frontend/src/pages/AgentsRevolution.tsx` - Real API integration
 3. `apps/frontend/src/pages/Agents/Detail.tsx` - Real API integration
 4. `apps/frontend/src/pages/Agents/index.tsx` - Complete rewrite for real data

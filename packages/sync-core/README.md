@@ -19,7 +19,7 @@ The sync-core is **fully implemented** with all core features operational. It's 
 
 - ✅ Redis Pub/Sub for event distribution
 - ✅ WebSocket Service for real-time client updates
-- ✅ Prisma Database for state persistence
+- ✅ Drizzle Database for state persistence
 - ✅ Prompt Template Service for template synchronization
 - ✅ Agent Management System
 - ✅ Task Execution System
@@ -240,7 +240,7 @@ export class AgentService {
 
   async updateAgent(agentId: string, updates: Partial<Agent>) {
     // Update in database
-    const updatedAgent = await this.prisma.agent.update({
+    const updatedAgent = await this.drizzle.agent.update({
       where: { id: agentId },
       data: updates
     });
@@ -271,7 +271,7 @@ export class TaskService {
   ) {}
 
   async executeTask(taskId: string, tenantId: string) {
-    const execution = await this.prisma.taskExecution.create({
+    const execution = await this.drizzle.taskExecution.create({
       data: { taskId, status: 'RUNNING' }
     });
 

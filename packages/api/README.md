@@ -31,7 +31,7 @@ These provide consistent patterns across the application:
 
 Common services used throughout the application:
 
-- **PrismaService**: Database connection management
+- **DrizzleService**: Database connection management
 - **AppConfigService**: Centralized configuration access
 - **EventService**: Application-wide event handling
 - **HealthService**: Application health monitoring

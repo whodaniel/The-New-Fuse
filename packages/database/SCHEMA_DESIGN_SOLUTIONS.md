@@ -13,7 +13,7 @@ This document provides complete solutions for all database schema design issues 
 **Problem**: `LLMConfig.apiKey` stores sensitive credentials in plaintext (line 780)
 
 **Solution**:
-```prisma
+```drizzle
 model LLMConfig {
   // ... other fields
 
@@ -45,7 +45,7 @@ model LLMConfig {
 **Problem**: `ownerId` is a string without FK constraint, risking orphaned records
 
 **Solution**:
-```prisma
+```drizzle
 model CodeExecutionSession {
   id              String    @id @default(uuid())
   name            String
@@ -84,15 +84,15 @@ model User {
 
 **Solution - Two-Part Approach**:
 
-#### Part A: Prisma Middleware (Global Filter)
+#### Part A: Drizzle Middleware (Global Filter)
 ```typescript
-// packages/database/src/prisma.service.ts
+// packages/database/src/drizzle.service.ts
 
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from '../generated/prisma';
+import { DrizzleClient } from '../generated/drizzle';
 
 @Injectable()
-export class PrismaService extends PrismaClient implements OnModuleInit {
+export class DrizzleService extends DrizzleClient implements OnModuleInit {
   async onModuleInit() {
     await this.$connect();
 
@@ -165,13 +165,13 @@ export abstract class BaseRepository<T, CreateInput, UpdateInput, WhereInput> {
   // ... existing methods
 
   async findManyIncludingDeleted(filters?: WhereInput): Promise<T[]> {
-    return this.prisma[this.modelName].findMany({
+    return this.drizzle[this.modelName].findMany({
       where: { ...filters, deletedAt: undefined } as any
     });
   }
 
   async restore(id: string): Promise<T> {
-    return this.prisma[this.modelName].update({
+    return this.drizzle[this.modelName].update({
       where: { id },
       data: { deletedAt: null, updatedAt: new Date() }
     });
@@ -188,7 +188,7 @@ export abstract class BaseRepository<T, CreateInput, UpdateInput, WhereInput> {
 **Problem**: Message can belong to Chat OR ChatRoom OR be standalone, no constraints
 
 **Solution**:
-```prisma
+```drizzle
 model Message {
   id              String      @id @default(uuid())
   content         String      @db.Text
@@ -271,7 +271,7 @@ validateMessageContext(data: CreateMessageDto): void {
 }
 ```
 
-**Business Decision**: XOR constraint enforced at application layer (Prisma doesn't support database-level XOR). ChatRoom is for multi-agent/multi-user conversations; Chat is for 1-on-1 agent interactions.
+**Business Decision**: XOR constraint enforced at application layer (Drizzle doesn't support database-level XOR). ChatRoom is for multi-agent/multi-user conversations; Chat is for 1-on-1 agent interactions.
 
 ---
 
@@ -280,7 +280,7 @@ validateMessageContext(data: CreateMessageDto): void {
 **Problem**: ChatMessage has no relationship to Chat or ChatRoom, only userId string
 
 **Solution - Consolidate ChatMessage into Message**:
-```prisma
+```drizzle
 // REMOVE ChatMessage model entirely
 
 // ENHANCE Message model:
@@ -307,11 +307,11 @@ model Message {
 
 @Injectable()
 export class CleanupEphemeralMessagesJob {
-  constructor(private prisma: PrismaService) {}
+  constructor(private drizzle: DrizzleService) {}
 
   @Cron('0 * * * *')  // Every hour
   async cleanupExpiredMessages() {
-    await this.prisma.message.deleteMany({
+    await this.drizzle.message.deleteMany({
       where: {
         isEphemeral: true,
         expiresAt: {
@@ -334,7 +334,7 @@ export class CleanupEphemeralMessagesJob {
 **Problem**: `nextSteps String[]` references step IDs but no FK enforcement, cycles possible
 
 **Solution - Hybrid Approach**:
-```prisma
+```drizzle
 model WorkflowStep {
   id              String          @id @default(uuid())
   name            String
@@ -400,7 +400,7 @@ model WorkflowStepEdge {
 export class WorkflowValidationService {
 
   async detectCycles(workflowId: string): Promise<boolean> {
-    const steps = await this.prisma.workflowStep.findMany({
+    const steps = await this.drizzle.workflowStep.findMany({
       where: { workflowId },
       include: { nextStepEdges: true }
     });
@@ -459,7 +459,7 @@ export class WorkflowValidationService {
 **Problem**: `Agent.userId` (single owner) vs `AgentNFT` with fractional shares (multiple owners)
 
 **Solution - Clear Ownership Hierarchy**:
-```prisma
+```drizzle
 model Agent {
   id                String               @id @default(uuid())
   name              String
@@ -556,11 +556,11 @@ model User {
 
 **Solution - Single Source of Truth with Schema Views**:
 
-```prisma
-// PRIMARY SCHEMA: packages/database/prisma/schema.prisma
+```drizzle
+// PRIMARY SCHEMA: packages/database/drizzle/schema.drizzle
 // Keep as-is, this is the source of truth
 
-// MCP SCHEMA: src/mcp/prisma/schema.prisma
+// MCP SCHEMA: src/mcp/drizzle/schema.drizzle
 // Convert to view/adapter pattern
 
 model MCPAgent {
@@ -600,20 +600,20 @@ model MCPAgent {
 @Injectable()
 export class MCPAgentSyncService {
   constructor(
-    private mainPrisma: PrismaService,  // Main schema
-    private mcpPrisma: MCPPrismaService  // MCP schema
+    private mainDrizzle: DrizzleService,  // Main schema
+    private mcpDrizzle: MCPDrizzleService  // MCP schema
   ) {}
 
   async registerAgentForMCP(agentId: string): Promise<MCPAgent> {
     // Get agent from main schema
-    const agent = await this.mainPrisma.agent.findUnique({
+    const agent = await this.mainDrizzle.agent.findUnique({
       where: { id: agentId }
     });
 
     if (!agent) throw new Error('Agent not found');
 
     // Create MCP agent record
-    const mcpAgent = await this.mcpPrisma.mCPAgent.create({
+    const mcpAgent = await this.mcpDrizzle.mCPAgent.create({
       data: {
         coreAgentId: agentId,
         apiKey: generateSecureApiKey(),
@@ -626,16 +626,16 @@ export class MCPAgentSyncService {
   }
 
   async syncAgentData(agentId: string): Promise<void> {
-    const agent = await this.mainPrisma.agent.findUnique({
+    const agent = await this.mainDrizzle.agent.findUnique({
       where: { id: agentId }
     });
 
-    const mcpAgent = await this.mcpPrisma.mCPAgent.findUnique({
+    const mcpAgent = await this.mcpDrizzle.mCPAgent.findUnique({
       where: { coreAgentId: agentId }
     });
 
     if (agent && mcpAgent) {
-      await this.mcpPrisma.mCPAgent.update({
+      await this.mcpDrizzle.mCPAgent.update({
         where: { id: mcpAgent.id },
         data: {
           mcpCapabilities: this.mapCapabilitiesToMCP(agent.capabilities)
@@ -670,7 +670,7 @@ export class MCPAgentSyncService {
 **Problem**: No VC model exists despite identity features
 
 **Solution - Complete VC Implementation**:
-```prisma
+```drizzle
 // Add to main schema
 
 enum CredentialType {
@@ -761,7 +761,7 @@ import { ethers } from 'ethers';
 
 @Injectable()
 export class VerifiableCredentialService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private drizzle: DrizzleService) {}
 
   async issueCredential(params: {
     subjectType: 'Agent' | 'User';
@@ -791,7 +791,7 @@ export class VerifiableCredentialService {
     const txHash = await this.storeOnChain(credential, proof);
 
     // Save to database
-    return this.prisma.verifiableCredential.create({
+    return this.drizzle.verifiableCredential.create({
       data: {
         subjectType: params.subjectType,
         subjectId: params.subjectId,
@@ -808,7 +808,7 @@ export class VerifiableCredentialService {
   }
 
   async verifyCredential(credentialId: string): Promise<boolean> {
-    const credential = await this.prisma.verifiableCredential.findUnique({
+    const credential = await this.drizzle.verifiableCredential.findUnique({
       where: { id: credentialId }
     });
 
@@ -824,7 +824,7 @@ export class VerifiableCredentialService {
   }
 
   async revokeCredential(credentialId: string, reason: string): Promise<void> {
-    await this.prisma.verifiableCredential.update({
+    await this.drizzle.verifiableCredential.update({
       where: { id: credentialId },
       data: {
         status: 'REVOKED',
@@ -913,7 +913,7 @@ export class VerifiableCredentialService {
 **Problem**: No explicit organization/team model for enterprise use
 
 **Solution - Complete Multi-Tenant Architecture**:
-```prisma
+```drizzle
 enum OrganizationType {
   INDIVIDUAL
   TEAM
@@ -1065,14 +1065,14 @@ model User {
 
 @Injectable()
 export class OrganizationAccessService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private drizzle: DrizzleService) {}
 
   async checkAccess(
     userId: string,
     organizationId: string,
     requiredRole: MemberRole
   ): Promise<boolean> {
-    const member = await this.prisma.organizationMember.findUnique({
+    const member = await this.drizzle.organizationMember.findUnique({
       where: {
         organizationId_userId: {
           organizationId,
@@ -1099,7 +1099,7 @@ export class OrganizationAccessService {
     resourceType: 'agent' | 'workflow' | 'llmConfig',
     resourceId: string
   ): Promise<boolean> {
-    const resource = await this.prisma[resourceType].findUnique({
+    const resource = await this.drizzle[resourceType].findUnique({
       where: { id: resourceId },
       select: { organizationId: true, userId: true }
     });
@@ -1265,7 +1265,7 @@ export class WorkflowService {
   @ValidateJson('WorkflowDefinition')
   async createWorkflow(data: CreateWorkflowDto) {
     // definition field is validated automatically
-    return this.prisma.workflow.create({
+    return this.drizzle.workflow.create({
       data: {
         ...data,
         definition: data.definition  // Already validated
@@ -1284,7 +1284,7 @@ export class WorkflowService {
 ### Issue 7.1: Missing Indexes
 
 **Solution - Comprehensive Index Strategy**:
-```prisma
+```drizzle
 // Add these indexes to existing models:
 
 model CodeExecutionUsage {
@@ -1389,16 +1389,16 @@ Example migration:
 ```typescript
 // Migration: 20250120_encrypt_llm_config_keys.ts
 
-import { PrismaClient } from '@prisma/client';
+import { DrizzleClient } from '@drizzle/client';
 import { encryptApiKey } from '../utils/encryption';
 
-export async function up(prisma: PrismaClient) {
-  const configs = await prisma.lLMConfig.findMany();
+export async function up(drizzle: DrizzleClient) {
+  const configs = await drizzle.lLMConfig.findMany();
 
   for (const config of configs) {
     const encrypted = await encryptApiKey(config.apiKey);
 
-    await prisma.lLMConfig.update({
+    await drizzle.lLMConfig.update({
       where: { id: config.id },
       data: {
         apiKeyEncrypted: encrypted.ciphertext,
@@ -1409,7 +1409,7 @@ export async function up(prisma: PrismaClient) {
   }
 
   // After verification, drop old apiKey column
-  await prisma.$executeRaw`ALTER TABLE llm_configs DROP COLUMN IF EXISTS api_key`;
+  await drizzle.$executeRaw`ALTER TABLE llm_configs DROP COLUMN IF EXISTS api_key`;
 }
 ```
 
@@ -1417,7 +1417,7 @@ export async function up(prisma: PrismaClient) {
 
 ## 10. MONITORING & OBSERVABILITY ENHANCEMENTS
 
-```prisma
+```drizzle
 model SystemEvent {
   id            String      @id @default(uuid())
   eventType     String      // "agent.created", "workflow.executed", etc.

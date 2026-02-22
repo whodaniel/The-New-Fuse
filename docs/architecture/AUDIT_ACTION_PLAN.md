@@ -177,7 +177,7 @@ export class BackupService {
 const mockConfigs = [
   { key: 'DATABASE_URL', value: 'postgresql://user:pass@localhost:5433/db' },
   { key: 'REDIS_URL', value: 'redis://localhost:6380' },
-  { key: 'JWT_SECRET', value: 'super-secret-key' }, // EXPOSED!
+  { key: 'JWT_SECRET', value: '[REDACTED_SECRET]' }, // EXPOSED!
 ];
 ```
 

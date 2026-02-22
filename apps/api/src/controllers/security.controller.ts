@@ -413,7 +413,7 @@ export class SecurityController {
    * const result = await securityController.testResponseSanitization({
    *   data: {
    *     "id": 123,
-   *     "password": "secret123",
+   *     "password": "[REDACTED_PASSWORD]",
    *     "email": "user@example.com",
    *     "apiKey": "sk-1234567890"
    *   }
@@ -424,7 +424,7 @@ export class SecurityController {
    * {
    *   "originalData": {
    *     "id": 123,
-   *     "password": "secret123",
+   *     "password": "[REDACTED_PASSWORD]",
    *     "email": "user@example.com",
    *     "apiKey": "sk-1234567890"
    *   },

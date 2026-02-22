@@ -27,7 +27,7 @@ and provides a roadmap for completing the transition to production readiness.
   - Status management (activate, deactivate, pause, busy, error)
   - Filtering and search capabilities
   - Statistics and analytics endpoints
-- ✅ AgentService with database integration via Prisma
+- ✅ AgentService with database integration via Drizzle
 - ✅ Type-safe DTOs and response models
 - ✅ Proper error handling and validation
 - **Files:**
@@ -43,7 +43,7 @@ and provides a roadmap for completing the transition to production readiness.
   INITIALIZING, READY, TERMINATED)
 - ✅ AgentCapability enum with 25 different capabilities
 - ✅ Relationships to User, Chat, Message, Workflow, and other entities
-- **File:** `packages/database/prisma/schema.prisma`
+- **File:** `packages/database/drizzle/schema.drizzle`
 
 ### 4. Seed Data Enhancement
 
@@ -52,7 +52,7 @@ and provides a roadmap for completing the transition to production readiness.
 - ✅ Realistic configurations and capabilities
 - ✅ Multiple agent statuses for testing
 - ✅ Admin and demo user setup
-- **File:** `packages/database/prisma/seed.ts`
+- **File:** `packages/database/drizzle/seed.ts`
 
 ### 5. Type System Alignment
 
@@ -97,7 +97,7 @@ async createAgent(agent) {
 
 #### 1. Fix Seed Data Enum Mismatches
 
-**File:** `packages/database/prisma/seed.ts`
+**File:** `packages/database/drizzle/seed.ts`
 
 The seed data uses capabilities that don't exist in the schema:
 
@@ -128,10 +128,10 @@ The seed data uses capabilities that don't exist in the schema:
 ```bash
 # Run pending migrations
 cd packages/database
-npx prisma migrate dev
+npx drizzle migrate dev
 
 # Seed the database
-npx prisma db seed
+npx drizzle db seed
 ```
 
 **Environment Requirements:**
@@ -317,18 +317,18 @@ For detailed setup instructions, see [QUICK_START_GUIDE.md](./QUICK_START_GUIDE.
 # Install dependencies
 pnpm install
 
-# Generate Prisma client
+# Generate Drizzle client
 cd packages/database
-npx prisma generate
+npx drizzle generate
 
 # Run migrations
-npx prisma migrate dev
+npx drizzle migrate dev
 
 # Seed database with test data
-CREATE_SYSTEM_AGENTS=true npx prisma db seed
+CREATE_SYSTEM_AGENTS=true npx drizzle db seed
 ```
 
-**See Also:** [Database README](./packages/database/README.md) | [Prisma Documentation](./db/README.md)
+**See Also:** [Database README](./packages/database/README.md) | [Drizzle Documentation](./db/README.md)
 
 ### 2. Start Backend API
 
@@ -438,7 +438,7 @@ pnpm dev
 - ✅ Password hashing with bcrypt
 - ✅ Rate limiting on API endpoints
 - ✅ CORS configuration
-- ✅ SQL injection protection (Prisma ORM)
+- ✅ SQL injection protection (Drizzle ORM)
 
 ### Needed
 
@@ -456,7 +456,7 @@ pnpm dev
 
 - Performance monitoring hooks in frontend
 - Metrics collection in services (UnifiedMonitoringService)
-- Database query logging (Prisma)
+- Database query logging (Drizzle)
 
 ### Needed for Production
 
@@ -501,7 +501,7 @@ pnpm dev
 For questions or contributions, please contact:
 
 - **Technical Lead:** System Administrator (admin@thenewfuse.com)
-- **Database Issues:** Check Prisma logs and migrations
+- **Database Issues:** Check Drizzle logs and migrations
 - **API Issues:** Review NestJS logs in console
 
 ---

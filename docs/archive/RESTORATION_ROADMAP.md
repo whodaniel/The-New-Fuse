@@ -24,7 +24,7 @@
 ### 1.2 Package Architecture Verification (**42 packages identified**)
 - [x] **Core package structure exists**:
   - `packages/core/` - Agent orchestration core ✓
-  - `packages/database/` - Prisma database layer ✓
+  - `packages/database/` - Drizzle database layer ✓
   - `packages/extension-system/` - Extension management ✓
   - `packages/workflow-engine/` - Workflow orchestration ✓
   - `packages/relay-core/` - Agent communication relay ✓
@@ -45,18 +45,18 @@
   - Check that `@the-new-fuse/*` imports resolve correctly
   - Validate circular dependency prevention
 
-## 2. DATABASE & PRISMA SYSTEM RESTORATION
+## 2. DATABASE & DRIZZLE SYSTEM RESTORATION
 
-### 2.1 Prisma Schema Verification
+### 2.1 Drizzle Schema Verification
 - [ ] **Schema consistency check**:
-  - `packages/database/prisma/schema.prisma` exists and is valid
+  - `packages/database/drizzle/schema.drizzle` exists and is valid
   - Generated client in `packages/database/generated/` is up-to-date
   - `AgentStatus` enum matches between schema and TypeScript types
   - `RegisteredEntity` type definitions are consistent across packages
 - [ ] **Database connectivity**:
   - Environment variables for database URL are configured
-  - `bun prisma generate` runs successfully
-  - `bun prisma db push` or `bun prisma migrate dev` works without errors
+  - `bun drizzle generate` runs successfully
+  - `bun drizzle db push` or `bun drizzle migrate dev` works without errors
 - [ ] **Repository pattern implementation**:
   - `packages/database/src/repositories/` contains proper repository classes
   - Type-safe database operations for all entities
@@ -186,7 +186,7 @@
   - Agent communication through API
   - WebSocket integration for real-time updates
 - [ ] **Database integration**:
-  - Proper Prisma client usage in services
+  - Proper Drizzle client usage in services
   - Repository pattern implementation
   - Transaction management
   - Connection pooling
@@ -573,5 +573,5 @@ Each item should be verified with specific commands and tests before moving to t
 1. Complete TypeScript configuration audit across all 42 packages
 2. Verify MCP server implementation status
 3. Test end-to-end build process (`pnpm run build`)
-4. Assess database connectivity and Prisma schema status
+4. Assess database connectivity and Drizzle schema status
 5. Validate agent orchestration core functionality

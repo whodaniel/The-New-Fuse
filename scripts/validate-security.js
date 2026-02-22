@@ -66,7 +66,7 @@ const requiredSecrets = {
 const weakSecrets = [
   'super-secret',
   'your-secret-key',
-  'default-secret',
+  '[REDACTED_SECRET]',
   'test-secret',
   'change-in-production',
   '1234567890',

@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConflictManager } from './ConflictManager';
 import { SyncDatabaseService } from '../database/SyncDatabaseService';
-import { PrismaClient, SyncConflict, SyncState } from '@the-new-fuse/database/generated/prisma';
+import { DrizzleClient, SyncConflict, SyncState } from '@the-new-fuse/database/generated/drizzle';
 import { ConflictResolutionStrategy } from '../types';
 
-// Mock PrismaClient
-const mockPrismaClient = {
+// Mock DrizzleClient
+const mockDrizzleClient = {
   $transaction: jest.fn(),
   syncConflict: {
     create: jest.fn(),
@@ -34,7 +34,7 @@ const mockSyncDatabaseService = {
 
 describe('ConflictManager', () => {
   let service: ConflictManager;
-  let prisma: jest.Mocked<PrismaClient>;
+  let drizzle: jest.Mocked<DrizzleClient>;
   let syncDb: jest.Mocked<SyncDatabaseService>;
 
   beforeEach(async () => {
@@ -42,8 +42,8 @@ describe('ConflictManager', () => {
       providers: [
         ConflictManager,
         {
-          provide: PrismaClient,
-          useValue: mockPrismaClient,
+          provide: DrizzleClient,
+          useValue: mockDrizzleClient,
         },
         {
           provide: SyncDatabaseService,
@@ -53,7 +53,7 @@ describe('ConflictManager', () => {
     }).compile();
 
     service = module.get<ConflictManager>(ConflictManager);
-    prisma = module.get(PrismaClient);
+    drizzle = module.get(DrizzleClient);
     syncDb = module.get(SyncDatabaseService);
 
     // Reset all mocks
@@ -142,7 +142,7 @@ describe('ConflictManager', () => {
       syncDb.getSyncState.mockResolvedValue(mockSyncState);
       
       // Mock transaction
-      prisma.$transaction.mockImplementation(async (callback) => {
+      drizzle.$transaction.mockImplementation(async (callback) => {
         const mockTx = {
           syncConflict: {
             create: jest.fn().mockResolvedValue(mockConflict),
@@ -165,7 +165,7 @@ describe('ConflictManager', () => {
       );
 
       expect(result).toEqual(mockConflict);
-      expect(prisma.$transaction).toHaveBeenCalled();
+      expect(drizzle.$transaction).toHaveBeenCalled();
     });
 
     it('should handle tenant-specific conflicts', async () => {
@@ -219,7 +219,7 @@ describe('ConflictManager', () => {
       };
 
       // Mock transaction
-      prisma.$transaction.mockImplementation(async (callback) => {
+      drizzle.$transaction.mockImplementation(async (callback) => {
         const mockTx = {
           syncConflict: {
             findUnique: jest.fn().mockResolvedValue(mockConflict),
@@ -274,7 +274,7 @@ describe('ConflictManager', () => {
       };
 
       // Mock transaction
-      prisma.$transaction.mockImplementation(async (callback) => {
+      drizzle.$transaction.mockImplementation(async (callback) => {
         const mockTx = {
           syncConflict: {
             findUnique: jest.fn().mockResolvedValue(mockConflict),
@@ -327,7 +327,7 @@ describe('ConflictManager', () => {
       };
 
       // Mock transaction
-      prisma.$transaction.mockImplementation(async (callback) => {
+      drizzle.$transaction.mockImplementation(async (callback) => {
         const mockTx = {
           syncConflict: {
             findUnique: jest.fn().mockResolvedValue(mockConflict),
@@ -358,7 +358,7 @@ describe('ConflictManager', () => {
       };
 
       // Mock transaction
-      prisma.$transaction.mockImplementation(async (callback) => {
+      drizzle.$transaction.mockImplementation(async (callback) => {
         const mockTx = {
           syncConflict: {
             findUnique: jest.fn().mockResolvedValue(mockConflict),
@@ -546,7 +546,7 @@ describe('ConflictManager', () => {
 
     it('should handle transaction errors in resolveConflict', async () => {
       const error = new Error('Transaction failed');
-      prisma.$transaction.mockRejectedValue(error);
+      drizzle.$transaction.mockRejectedValue(error);
 
       await expect(
         service.resolveConflict('conflict-id', 'latest_wins', 'test-resolver')

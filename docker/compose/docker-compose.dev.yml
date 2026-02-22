@@ -30,8 +30,8 @@ services:
       sh -c "
         echo 'Waiting for PostgreSQL to start...' &&
         sleep 5 &&
-        npx prisma migrate deploy &&
-        npx prisma generate &&
+        npx drizzle migrate deploy &&
+        npx drizzle generate &&
         npm run dev
       "
 

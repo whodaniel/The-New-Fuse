@@ -4,14 +4,14 @@ This document provides a comprehensive guide for managing database migrations in
 
 ## Overview
 
-The New Fuse uses Prisma ORM for database schema management and migrations. The project follows a structured approach to database migrations to ensure consistency and reliability across environments.
+The New Fuse uses Drizzle ORM for database schema management and migrations. The project follows a structured approach to database migrations to ensure consistency and reliability across environments.
 
 ## Migration Commands
 
 The following commands are available for managing database migrations:
 
 ```bash
-# Generate Prisma client based on the schema
+# Generate Drizzle client based on the schema
 yarn db:generate
 
 # Apply all pending migrations in production/staging environments
@@ -23,7 +23,7 @@ yarn db:migrate:dev
 # Reset the database (development only)
 yarn db:reset
 
-# Open Prisma Studio to view and edit data
+# Open Drizzle Studio to view and edit data
 yarn db:studio
 ```
 
@@ -31,11 +31,11 @@ yarn db:studio
 
 ### Development Workflow
 
-1. Make changes to the Prisma schema file (`prisma/schema.prisma`)
+1. Make changes to the Drizzle schema file (`drizzle/schema.drizzle`)
 2. Run `yarn db:migrate:dev` to create a new migration
 3. Provide a descriptive name for the migration when prompted
-4. Prisma will generate the migration files and apply them to your development database
-5. The Prisma client will be automatically regenerated
+4. Drizzle will generate the migration files and apply them to your development database
+5. The Drizzle client will be automatically regenerated
 
 ### Production Workflow
 
@@ -45,10 +45,10 @@ yarn db:studio
 
 ## Migration Files
 
-Migration files are stored in the `prisma/migrations` directory and follow this structure:
+Migration files are stored in the `drizzle/migrations` directory and follow this structure:
 
 ```
-prisma/migrations/
+drizzle/migrations/
   ├── 20240117000000_metadata_extensions/
   │   └── migration.sql
   ├── 20250120131619_add_user_auth_fields/
@@ -100,14 +100,14 @@ Resolution:
 2. Fix the issues in your schema
 3. Try again with `yarn db:migrate:dev --create-only` to create the migration without applying it
 4. Review the generated SQL and make any necessary adjustments
-5. Apply the migration manually: `yarn prisma migrate resolve --applied 20250120131619_add_user_auth_fields`
+5. Apply the migration manually: `yarn drizzle migrate resolve --applied 20250120131619_add_user_auth_fields`
 
-#### Prisma Client Generation Failed
+#### Drizzle Client Generation Failed
 
-If Prisma client generation fails:
+If Drizzle client generation fails:
 
 ```
-Error: Error: Unable to generate Prisma Client
+Error: Error: Unable to generate Drizzle Client
 ```
 
 Resolution:

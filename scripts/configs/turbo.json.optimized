@@ -81,7 +81,7 @@
     },
     "build:database": {
       "dependsOn": ["^build:database", "build:types", "db:generate"],
-      "inputs": ["src/**/*.{ts,tsx}", "package.json", "tsconfig.json", "prisma/**", "!**/*.test.*"],
+      "inputs": ["src/**/*.{ts,tsx}", "package.json", "tsconfig.json", "drizzle/**", "!**/*.test.*"],
       "outputs": ["dist/**", "lib/**"],
       "outputLogs": "errors-only"
     },
@@ -181,13 +181,13 @@
       "outputLogs": "errors-only"
     },
     "db:generate": {
-      "inputs": ["prisma/schema.prisma"],
-      "outputs": ["node_modules/.prisma/**", "prisma/generated/**"],
+      "inputs": ["drizzle/schema.drizzle"],
+      "outputs": ["node_modules/.drizzle/**", "drizzle/generated/**"],
       "cache": false,
       "outputLogs": "errors-only"
     },
     "db:migrate": {
-      "inputs": ["prisma/migrations/**", "prisma/schema.prisma"],
+      "inputs": ["drizzle/migrations/**", "drizzle/schema.drizzle"],
       "cache": false,
       "outputLogs": "new-only"
     },

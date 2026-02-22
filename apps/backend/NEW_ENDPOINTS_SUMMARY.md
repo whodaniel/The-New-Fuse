@@ -545,15 +545,15 @@ apps/backend/src/
 ### Integration with Database
 Current implementation uses mock data. To integrate with a real database:
 
-1. **Update Prisma Schema** - Add models for:
+1. **Update Drizzle Schema** - Add models for:
    - UserProfile (or extend User model)
    - AgentExecution
    - WorkflowTemplate
    - File
 
-2. **Implement Database Queries** - Replace mock data in services with Prisma queries
+2. **Implement Database Queries** - Replace mock data in services with Drizzle queries
 
-3. **Add Migrations** - Run `prisma migrate dev` to apply schema changes
+3. **Add Migrations** - Run `drizzle migrate dev` to apply schema changes
 
 ### File Storage Integration
 The file upload module is ready but needs integration with:

@@ -286,18 +286,18 @@ import { createDatabaseMonitorFromEnv, DatabaseMonitor } from '@tnf/core-monitor
 export class DatabaseMonitoringModule {}
 ```
 
-### 2. Prisma Middleware
+### 2. Drizzle Middleware
 
-Add Prisma middleware to track all queries:
+Add Drizzle middleware to track all queries:
 
 ```typescript
-// apps/api/src/database/prisma.service.ts
+// apps/api/src/database/drizzle.service.ts
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { DrizzleClient } from '@drizzle/client';
 import { DatabaseMonitor } from '@tnf/core-monitoring';
 
 @Injectable()
-export class PrismaService extends PrismaClient implements OnModuleInit {
+export class DrizzleService extends DrizzleClient implements OnModuleInit {
   constructor(private dbMonitor: DatabaseMonitor) {
     super();
   }
@@ -368,9 +368,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   }
 
   private async trackPoolMetrics() {
-    // Get pool stats from Prisma
+    // Get pool stats from Drizzle
     const poolMetrics = {
-      total: 10, // From your Prisma config
+      total: 10, // From your Drizzle config
       active: 0, // Would need custom tracking
       idle: 0,
       waiting: 0,
@@ -391,7 +391,7 @@ import { DatabaseMonitor } from '@tnf/core-monitoring';
 @Injectable()
 export class UsersService {
   constructor(
-    private db: PrismaService,
+    private db: DrizzleService,
     private dbMonitor: DatabaseMonitor
   ) {}
 
@@ -695,7 +695,7 @@ curl http://localhost:8080/metrics
 
 ### Database monitoring not working
 
-1. Verify Prisma middleware is registered
+1. Verify Drizzle middleware is registered
 2. Check `DB_MONITORING_ENABLED=true`
 3. Review logs for tracking errors
 4. Test with manual query tracking

@@ -50,7 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `ResourceAccessControlService` - Permissions and access control
 
 #### Database
-- Prisma schema with 4 models:
+- Drizzle schema with 4 models:
   - `Resource` - Main resource table
   - `ResourceVersion` - Version history
   - `ResourceMetadata` - Extended metadata

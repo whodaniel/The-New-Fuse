@@ -194,7 +194,7 @@ The test environment automatically configures:
 
 ### Database
 - In-memory SQLite for fast testing
-- Prisma ORM integration
+- Drizzle ORM integration
 - Automatic schema migration
 
 ### Master Agent Registry
@@ -358,7 +358,7 @@ DEBUG=extension-system pnpm test
 
 1. **Database Connection Errors**
    - Ensure test database is properly configured
-   - Check Prisma schema migrations
+   - Check Drizzle schema migrations
 
 2. **Extension Loading Failures**
    - Verify extension manifest format

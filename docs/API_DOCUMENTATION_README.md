@@ -94,7 +94,7 @@ Model Context Protocol for agent communication:
 
 The New Fuse API is built using:
 - **Framework**: NestJS
-- **Database**: PostgreSQL with Prisma ORM
+- **Database**: PostgreSQL with Drizzle ORM
 - **Authentication**: JWT with refresh tokens
 - **Real-time**: Socket.IO for WebSocket connections
 - **Documentation**: Swagger/OpenAPI 3.1

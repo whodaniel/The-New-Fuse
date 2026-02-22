@@ -977,3 +977,46 @@ body {
   box-shadow: 0 0 15px rgba(0, 217, 255, 0.3) !important;
   transform: scale(1.05) !important;
 }
+
+/* Managed Sites Styles */
+.site-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+}
+
+.site-url {
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--neon-cyan);
+}
+
+.delete-site-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all var(--transition-fast);
+}
+
+.delete-site-btn:hover {
+  background: rgba(255, 51, 102, 0.1);
+  color: var(--neon-red);
+}
+
+.empty-sites {
+  padding: 12px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--radius-sm);
+  font-style: italic;
+}

@@ -7,7 +7,7 @@
 
 import { SyncOrchestrator, AgentState } from './SyncOrchestrator';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { PrismaService } from '@the-new-fuse/database';
+import { DrizzleService } from '@the-new-fuse/database';
 import { PromptTemplateServiceImpl } from '@the-new-fuse/prompt-templating';
 
 // Example: Setting up SyncOrchestrator in a NestJS module

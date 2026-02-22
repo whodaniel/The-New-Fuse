@@ -8,7 +8,7 @@
 
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 const vi = jest;
-import { PrismaClient, UserRole } from '@the-new-fuse/database/generated/prisma';
+import { DrizzleClient, UserRole } from '@the-new-fuse/database/generated/drizzle';
 import { CMSIntegrationService } from './CMSIntegrationService';
 import { RedisService } from '../config/SyncRedisConfig';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
@@ -21,7 +21,7 @@ import {
 } from './types';
 
 // Mock dependencies
-const mockPrisma = {
+const mockDrizzle = {
   user: {
     findUnique: jest.fn(),
     create: jest.fn(),
@@ -32,7 +32,7 @@ const mockPrisma = {
   },
   $executeRaw: jest.fn(),
   $queryRaw: jest.fn()
-} as unknown as PrismaClient;
+} as unknown as DrizzleClient;
 
 const mockRedis = {
   get: jest.fn(),
@@ -73,7 +73,7 @@ describe('CMSIntegrationService', () => {
     };
 
     cmsService = new CMSIntegrationService(
-      mockPrisma,
+      mockDrizzle,
       mockRedis,
       mockSyncOrchestrator,
       mockFileWatcher,
@@ -88,7 +88,7 @@ describe('CMSIntegrationService', () => {
   describe('Initialization', () => {
     it('should initialize CMS integration service successfully', async () => {
       // Mock database table creation
-      mockPrisma.$executeRaw = jest.fn().mockResolvedValue(undefined);
+      mockDrizzle.$executeRaw = jest.fn().mockResolvedValue(undefined);
       
       // Mock Redis subscription
       mockRedis.subscribe = jest.fn().mockResolvedValue(undefined);
@@ -99,10 +99,10 @@ describe('CMSIntegrationService', () => {
       await cmsService.initialize();
 
       // Verify database tables were created
-      expect(mockPrisma.$executeRaw).toHaveBeenCalledWith(
+      expect(mockDrizzle.$executeRaw).toHaveBeenCalledWith(
         expect.stringContaining('CREATE TABLE IF NOT EXISTS personal_content')
       );
-      expect(mockPrisma.$executeRaw).toHaveBeenCalledWith(
+      expect(mockDrizzle.$executeRaw).toHaveBeenCalledWith(
         expect.stringContaining('CREATE TABLE IF NOT EXISTS project_configurations')
       );
 
@@ -115,7 +115,7 @@ describe('CMSIntegrationService', () => {
     });
 
     it('should handle initialization errors gracefully', async () => {
-      mockPrisma.$executeRaw = jest.fn().mockRejectedValue(new Error('Database error'));
+      mockDrizzle.$executeRaw = jest.fn().mockRejectedValue(new Error('Database error'));
 
       await expect(cmsService.initialize()).rejects.toThrow('Database error');
     });
@@ -124,7 +124,7 @@ describe('CMSIntegrationService', () => {
   describe('Personal Content Management', () => {
     beforeEach(async () => {
       // Mock successful initialization
-      mockPrisma.$executeRaw = jest.fn().mockResolvedValue(undefined);
+      mockDrizzle.$executeRaw = jest.fn().mockResolvedValue(undefined);
       mockRedis.subscribe = jest.fn().mockResolvedValue(undefined);
       mockFileWatcher.onFileChange = jest.fn();
       
@@ -148,7 +148,7 @@ describe('CMSIntegrationService', () => {
       };
 
       // Mock user validation
-      mockPrisma.user.findUnique = jest.fn().mockResolvedValue({
+      mockDrizzle.user.findUnique = jest.fn().mockResolvedValue({
         id: userId,
         role: UserRole.USER,
         roles: [UserRole.USER],
@@ -156,9 +156,9 @@ describe('CMSIntegrationService', () => {
       });
 
       // Mock content creation
-      mockPrisma.$executeRaw = jest.fn().mockResolvedValue(undefined);
+      mockDrizzle.$executeRaw = jest.fn().mockResolvedValue(undefined);
       mockSyncOrchestrator.syncTenantData = jest.fn().mockResolvedValue(undefined);
-      mockPrisma.authEvent.create = jest.fn().mockResolvedValue(undefined);
+      mockDrizzle.authEvent.create = jest.fn().mockResolvedValue(undefined);
       mockRedis.publish = jest.fn().mockResolvedValue(undefined);
 
       const result = await cmsService.createPersonalContent(userId, contentData);
@@ -179,7 +179,7 @@ describe('CMSIntegrationService', () => {
       );
 
       // Verify audit event was created
-      expect(mockPrisma.authEvent.create).toHaveBeenCalled();
+      expect(mockDrizzle.authEvent.create).toHaveBeenCalled();
     });
 
     it('should validate content size limits', async () => {
@@ -200,7 +200,7 @@ describe('CMSIntegrationService', () => {
         }
       };
 
-      mockPrisma.user.findUnique = jest.fn().mockResolvedValue({
+      mockDrizzle.user.findUnique = jest.fn().mockResolvedValue({
         id: userId,
         role: UserRole.USER,
         isActive: true
@@ -226,7 +226,7 @@ describe('CMSIntegrationService', () => {
         }
       };
 
-      mockPrisma.user.findUnique = jest.fn().mockResolvedValue({
+      mockDrizzle.user.findUnique = jest.fn().mockResolvedValue({
         id: userId,
         role: UserRole.USER,
         isActive: true
@@ -239,7 +239,7 @@ describe('CMSIntegrationService', () => {
 
   describe('Project Configuration Sync', () => {
     beforeEach(async () => {
-      mockPrisma.$executeRaw = jest.fn().mockResolvedValue(undefined);
+      mockDrizzle.$executeRaw = jest.fn().mockResolvedValue(undefined);
       mockRedis.subscribe = jest.fn().mockResolvedValue(undefined);
       mockFileWatcher.onFileChange = jest.fn();
       
@@ -263,16 +263,16 @@ describe('CMSIntegrationService', () => {
         }
       };
 
-      mockPrisma.user.findUnique = jest.fn().mockResolvedValue({
+      mockDrizzle.user.findUnique = jest.fn().mockResolvedValue({
         id: userId,
         role: UserRole.USER,
         roles: [UserRole.USER],
         isActive: true
       });
 
-      mockPrisma.$executeRaw = jest.fn().mockResolvedValue(undefined);
+      mockDrizzle.$executeRaw = jest.fn().mockResolvedValue(undefined);
       mockSyncOrchestrator.syncTenantData = jest.fn().mockResolvedValue(undefined);
-      mockPrisma.authEvent.create = jest.fn().mockResolvedValue(undefined);
+      mockDrizzle.authEvent.create = jest.fn().mockResolvedValue(undefined);
       mockRedis.publish = jest.fn().mockResolvedValue(undefined);
       mockFileWatcher.watchTenantFiles = jest.fn();
 
@@ -314,7 +314,7 @@ describe('CMSIntegrationService', () => {
         }
       };
 
-      mockPrisma.user.findUnique = jest.fn().mockResolvedValue({
+      mockDrizzle.user.findUnique = jest.fn().mockResolvedValue({
         id: userId,
         role: UserRole.USER,
         isActive: true
@@ -327,7 +327,7 @@ describe('CMSIntegrationService', () => {
 
   describe('Collaborative Content Sharing', () => {
     beforeEach(async () => {
-      mockPrisma.$executeRaw = jest.fn().mockResolvedValue(undefined);
+      mockDrizzle.$executeRaw = jest.fn().mockResolvedValue(undefined);
       mockRedis.subscribe = jest.fn().mockResolvedValue(undefined);
       mockFileWatcher.onFileChange = jest.fn();
       
@@ -341,7 +341,7 @@ describe('CMSIntegrationService', () => {
       const permissions = [Permission.READ, Permission.WRITE];
 
       // Mock content exists and is owned by user
-      mockPrisma.$queryRaw = jest.fn().mockResolvedValue([{
+      mockDrizzle.$queryRaw = jest.fn().mockResolvedValue([{
         id: contentId,
         owner_id: ownerId,
         privacy: 'shared',
@@ -354,7 +354,7 @@ describe('CMSIntegrationService', () => {
       mockRedis.setex = jest.fn().mockResolvedValue(undefined);
 
       // Mock target user exists
-      mockPrisma.user.findUnique = jest.fn()
+      mockDrizzle.user.findUnique = jest.fn()
         .mockResolvedValueOnce({ // For content validation
           id: ownerId,
           role: UserRole.USER,
@@ -367,15 +367,15 @@ describe('CMSIntegrationService', () => {
           isActive: true
         });
 
-      mockPrisma.$executeRaw = jest.fn().mockResolvedValue(undefined);
+      mockDrizzle.$executeRaw = jest.fn().mockResolvedValue(undefined);
       mockSyncOrchestrator.syncTenantData = jest.fn().mockResolvedValue(undefined);
       mockRedis.publish = jest.fn().mockResolvedValue(undefined);
-      mockPrisma.authEvent.create = jest.fn().mockResolvedValue(undefined);
+      mockDrizzle.authEvent.create = jest.fn().mockResolvedValue(undefined);
 
       await cmsService.shareContent(ownerId, contentId, targetUserId, permissions);
 
       // Verify sharing permission was stored
-      expect(mockPrisma.$executeRaw).toHaveBeenCalledWith(
+      expect(mockDrizzle.$executeRaw).toHaveBeenCalledWith(
         expect.stringContaining('INSERT INTO content_sharing_permissions')
       );
 
@@ -400,7 +400,7 @@ describe('CMSIntegrationService', () => {
       const permissions = [Permission.READ];
 
       // Mock private content
-      mockPrisma.$queryRaw = jest.fn().mockResolvedValue([{
+      mockDrizzle.$queryRaw = jest.fn().mockResolvedValue([{
         id: contentId,
         owner_id: ownerId,
         privacy: 'private',
@@ -411,7 +411,7 @@ describe('CMSIntegrationService', () => {
 
       mockRedis.get = jest.fn().mockResolvedValue(null);
 
-      mockPrisma.user.findUnique = jest.fn()
+      mockDrizzle.user.findUnique = jest.fn()
         .mockResolvedValueOnce({
           id: ownerId,
           role: UserRole.USER,
@@ -435,7 +435,7 @@ describe('CMSIntegrationService', () => {
       const permissions = [Permission.READ, Permission.WRITE];
 
       // Mock project exists and is owned by user
-      mockPrisma.$queryRaw = jest.fn().mockResolvedValue([{
+      mockDrizzle.$queryRaw = jest.fn().mockResolvedValue([{
         id: projectId,
         owner_id: ownerId,
         name: 'Test Project',
@@ -446,7 +446,7 @@ describe('CMSIntegrationService', () => {
 
       mockRedis.get = jest.fn().mockResolvedValue(null);
 
-      mockPrisma.user.findUnique = jest.fn()
+      mockDrizzle.user.findUnique = jest.fn()
         .mockResolvedValueOnce({ // For project validation
           id: ownerId,
           role: UserRole.ADMIN,
@@ -463,15 +463,15 @@ describe('CMSIntegrationService', () => {
           roles: [UserRole.ADMIN]
         });
 
-      mockPrisma.$executeRaw = jest.fn().mockResolvedValue(undefined);
+      mockDrizzle.$executeRaw = jest.fn().mockResolvedValue(undefined);
       mockSyncOrchestrator.syncTenantData = jest.fn().mockResolvedValue(undefined);
       mockRedis.publish = jest.fn().mockResolvedValue(undefined);
-      mockPrisma.authEvent.create = jest.fn().mockResolvedValue(undefined);
+      mockDrizzle.authEvent.create = jest.fn().mockResolvedValue(undefined);
 
       await cmsService.addProjectCollaborator(ownerId, projectId, collaboratorUserId, role, permissions);
 
       // Verify collaborator was added
-      expect(mockPrisma.$executeRaw).toHaveBeenCalledWith(
+      expect(mockDrizzle.$executeRaw).toHaveBeenCalledWith(
         expect.stringContaining('UPDATE project_configurations')
       );
 
@@ -492,7 +492,7 @@ describe('CMSIntegrationService', () => {
 
   describe('Privacy and Data Isolation', () => {
     beforeEach(async () => {
-      mockPrisma.$executeRaw = jest.fn().mockResolvedValue(undefined);
+      mockDrizzle.$executeRaw = jest.fn().mockResolvedValue(undefined);
       mockRedis.subscribe = jest.fn().mockResolvedValue(undefined);
       mockFileWatcher.onFileChange = jest.fn();
       
@@ -503,7 +503,7 @@ describe('CMSIntegrationService', () => {
       const tenantId = 'tenant-123';
 
       // Mock audit queries
-      mockPrisma.$queryRaw = jest.fn()
+      mockDrizzle.$queryRaw = jest.fn()
         .mockResolvedValueOnce([{ // Personal content audit
           total_content: 10,
           private_content: 8,
@@ -527,7 +527,7 @@ describe('CMSIntegrationService', () => {
 
       mockRedis.get = jest.fn().mockResolvedValue(null);
       mockRedis.setex = jest.fn().mockResolvedValue(undefined);
-      mockPrisma.authEvent.create = jest.fn().mockResolvedValue(undefined);
+      mockDrizzle.authEvent.create = jest.fn().mockResolvedValue(undefined);
 
       const auditResult = await cmsService.auditPrivacyCompliance(tenantId);
 
@@ -555,7 +555,7 @@ describe('CMSIntegrationService', () => {
       });
 
       // Verify audit was logged
-      expect(mockPrisma.authEvent.create).toHaveBeenCalledWith({
+      expect(mockDrizzle.authEvent.create).toHaveBeenCalledWith({
         data: {
           userId: 'system',
           type: 'PRIVACY_AUDIT',
@@ -567,7 +567,7 @@ describe('CMSIntegrationService', () => {
 
   describe('User Content Retrieval', () => {
     beforeEach(async () => {
-      mockPrisma.$executeRaw = jest.fn().mockResolvedValue(undefined);
+      mockDrizzle.$executeRaw = jest.fn().mockResolvedValue(undefined);
       mockRedis.subscribe = jest.fn().mockResolvedValue(undefined);
       mockFileWatcher.onFileChange = jest.fn();
       
@@ -578,7 +578,7 @@ describe('CMSIntegrationService', () => {
       const userId = 'user-123';
 
       // Mock personal content
-      mockPrisma.$queryRaw = jest.fn()
+      mockDrizzle.$queryRaw = jest.fn()
         .mockResolvedValueOnce([{ // Personal content
           id: 'content-1',
           type: 'document',
@@ -656,7 +656,7 @@ describe('CMSIntegrationService', () => {
 
   describe('CMS Data Synchronization', () => {
     beforeEach(async () => {
-      mockPrisma.$executeRaw = jest.fn().mockResolvedValue(undefined);
+      mockDrizzle.$executeRaw = jest.fn().mockResolvedValue(undefined);
       mockRedis.subscribe = jest.fn().mockResolvedValue(undefined);
       mockFileWatcher.onFileChange = jest.fn();
       
@@ -667,7 +667,7 @@ describe('CMSIntegrationService', () => {
       const userId = 'user-123';
 
       // Mock user's collaborative projects
-      mockPrisma.$queryRaw = jest.fn().mockResolvedValue([{
+      mockDrizzle.$queryRaw = jest.fn().mockResolvedValue([{
         id: 'project-1',
         name: 'Test Project',
         description: 'A test project',
@@ -684,7 +684,7 @@ describe('CMSIntegrationService', () => {
 
       mockSyncOrchestrator.syncTenantData = jest.fn().mockResolvedValue(undefined);
       mockRedis.publish = jest.fn().mockResolvedValue(undefined);
-      mockPrisma.authEvent.create = jest.fn().mockResolvedValue(undefined);
+      mockDrizzle.authEvent.create = jest.fn().mockResolvedValue(undefined);
 
       await cmsService.syncUserCMSData(userId);
 
@@ -701,7 +701,7 @@ describe('CMSIntegrationService', () => {
     it('should handle sync errors gracefully', async () => {
       const userId = 'user-123';
 
-      mockPrisma.$queryRaw = jest.fn().mockRejectedValue(new Error('Database error'));
+      mockDrizzle.$queryRaw = jest.fn().mockRejectedValue(new Error('Database error'));
 
       await expect(cmsService.syncUserCMSData(userId)).rejects.toThrow('Database error');
     });
@@ -710,7 +710,7 @@ describe('CMSIntegrationService', () => {
   describe('Error Handling', () => {
     it('should throw error when not initialized', async () => {
       const uninitializedService = new CMSIntegrationService(
-        mockPrisma,
+        mockDrizzle,
         mockRedis,
         mockSyncOrchestrator,
         mockFileWatcher
@@ -732,14 +732,14 @@ describe('CMSIntegrationService', () => {
     });
 
     it('should handle invalid user scenarios', async () => {
-      mockPrisma.$executeRaw = jest.fn().mockResolvedValue(undefined);
+      mockDrizzle.$executeRaw = jest.fn().mockResolvedValue(undefined);
       mockRedis.subscribe = jest.fn().mockResolvedValue(undefined);
       mockFileWatcher.onFileChange = jest.fn();
       
       await cmsService.initialize();
 
       // Mock user not found
-      mockPrisma.user.findUnique = jest.fn().mockResolvedValue(null);
+      mockDrizzle.user.findUnique = jest.fn().mockResolvedValue(null);
 
       await expect(cmsService.createPersonalContent('invalid-user', {
         type: ContentType.DOCUMENT,
@@ -757,14 +757,14 @@ describe('CMSIntegrationService', () => {
     });
 
     it('should handle inactive user scenarios', async () => {
-      mockPrisma.$executeRaw = jest.fn().mockResolvedValue(undefined);
+      mockDrizzle.$executeRaw = jest.fn().mockResolvedValue(undefined);
       mockRedis.subscribe = jest.fn().mockResolvedValue(undefined);
       mockFileWatcher.onFileChange = jest.fn();
       
       await cmsService.initialize();
 
       // Mock inactive user
-      mockPrisma.user.findUnique = jest.fn().mockResolvedValue({
+      mockDrizzle.user.findUnique = jest.fn().mockResolvedValue({
         id: 'user-123',
         role: UserRole.USER,
         isActive: false

@@ -63,7 +63,7 @@ RUN pnpm --filter=./${SERVICE_ROOT}/${SERVICE_PATH}... build
 RUN echo "Verifying n8n-workflows build..." && ls -la packages/n8n-workflows/dist/index.js || (echo "ERROR: n8n-workflows dist not found!" && exit 1)
 RUN echo "Verifying relay-core build..." && ls -la packages/relay-core/dist/index.js || (echo "ERROR: relay-core dist not found!" && exit 1)
 
-# NOTE: Prisma has been migrated to Drizzle ORM - no generation step needed
+# NOTE: Drizzle has been migrated to Drizzle ORM - no generation step needed
 
 
 #------------------------------------------------------------------------------

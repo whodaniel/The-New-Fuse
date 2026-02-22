@@ -100,8 +100,8 @@ cp jwt-security-fixes/gateway-jwt.service.ts apps/api-gateway/src/security/gatew
 # Run the refresh token migration
 psql -d your_database -f jwt-security-fixes/refresh-tokens-migration.sql
 
-# Or using Prisma migrations
-# Copy migration content to Prisma migration file
+# Or using Drizzle migrations
+# Copy migration content to Drizzle migration file
 ```
 
 ### Step 5: Authentication Guards Setup

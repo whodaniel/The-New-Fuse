@@ -1,4 +1,4 @@
-# Prisma to Drizzle Complete Migration Plan
+# Drizzle to Drizzle Complete Migration Plan
 
 **Created:** 2025-12-29T18:00:00-05:00 **Status:** IN PROGRESS **Priority:**
 CRITICAL (Blocking Railway Deployment)
@@ -7,11 +7,11 @@ CRITICAL (Blocking Railway Deployment)
 
 ## Overview
 
-This document outlines the complete migration strategy from Prisma ORM to
+This document outlines the complete migration strategy from Drizzle ORM to
 Drizzle ORM across The New Fuse monorepo. The migration is necessary because:
 
-1. Prisma 7's recursive types crash the TypeScript compiler in large monorepos
-2. Prisma adds ~2MB to bundle size vs Drizzle's ~50KB
+1. Drizzle 7's recursive types crash the TypeScript compiler in large monorepos
+2. Drizzle adds ~2MB to bundle size vs Drizzle's ~50KB
 3. Drizzle provides faster cold starts and query execution
 4. Native TypeScript type exports work better across monorepo packages
 
@@ -70,15 +70,15 @@ The following Drizzle repositories already exist in
 ### Phase 2: Fix Build-Blocking Issues (CURRENT)
 
 The immediate issue is `@the-new-fuse/security` failing to build because it
-imports `PrismaService` from database.
+imports `DrizzleService` from database.
 
-**Step 2.1:** Remove Prisma dependency from packages that don't need database
+**Step 2.1:** Remove Drizzle dependency from packages that don't need database
 access **Step 2.2:** Create additional Drizzle repositories for missing entities
 **Step 2.3:** Update all service imports to use Drizzle
 
 ### Phase 3: Migrate apps/api
 
-1. Replace all PrismaService imports with Drizzle repositories
+1. Replace all DrizzleService imports with Drizzle repositories
 2. Update modules to import DrizzleModule
 3. Refactor services to use repository pattern
 
@@ -97,31 +97,31 @@ access **Step 2.2:** Create additional Drizzle repositories for missing entities
 
 ### Phase 6: Cleanup
 
-- Remove all Prisma dependencies from package.json files
-- Delete prisma folders and schema files
-- Delete generated/prisma directories
+- Remove all Drizzle dependencies from package.json files
+- Delete drizzle folders and schema files
+- Delete generated/drizzle directories
 - Update tsconfig references
 
 ---
 
 ## Migration Patterns
 
-### Before (Prisma)
+### Before (Drizzle)
 
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@the-new-fuse/database';
+import { DrizzleService } from '@the-new-fuse/database';
 
 @Injectable()
 export class AgentService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private drizzle: DrizzleService) {}
 
   async findById(id: string) {
-    return this.prisma.agent.findUnique({ where: { id } });
+    return this.drizzle.agent.findUnique({ where: { id } });
   }
 
   async create(data: CreateAgentDto) {
-    return this.prisma.agent.create({ data });
+    return this.drizzle.agent.create({ data });
   }
 }
 ```
@@ -159,10 +159,10 @@ export class AgentService {
 
 ```typescript
 // Before
-import { PrismaModule } from '../prisma/prisma.module';
+import { DrizzleModule } from '../drizzle/drizzle.module';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [DrizzleModule],
   providers: [AgentService],
 })
 export class AgentModule {}
@@ -182,12 +182,12 @@ export class AgentModule {}
 ## Files to Delete After Migration
 
 ```
-packages/database/generated/prisma/**
-packages/database/prisma/**
-apps/api/src/services/prisma.service.ts
-apps/backend/src/prisma/**
-**/prisma.module.ts
-**/database.module.ts (if Prisma-based)
+packages/database/generated/drizzle/**
+packages/database/drizzle/**
+apps/api/src/services/drizzle.service.ts
+apps/backend/src/drizzle/**
+**/drizzle.module.ts
+**/database.module.ts (if Drizzle-based)
 ```
 
 ---
@@ -196,9 +196,9 @@ apps/backend/src/prisma/**
 
 Remove from all package.json files:
 
-- `@prisma/client`
-- `@prisma/adapter-pg`
-- `prisma` (dev dependency)
+- `@drizzle/client`
+- `@drizzle/adapter-pg`
+- `drizzle` (dev dependency)
 
 ---
 
@@ -216,7 +216,7 @@ Remove from all package.json files:
 ### Packages
 
 - [ ] `@the-new-fuse/database` - Export compatibility layer
-- [ ] `@the-new-fuse/security` - Remove Prisma dependency
+- [ ] `@the-new-fuse/security` - Remove Drizzle dependency
 - [ ] `@the-new-fuse/core` - Migrate to Drizzle
 - [ ] `@the-new-fuse/api` - Migrate to Drizzle
 - [ ] `@the-new-fuse/sync-core` - Migrate to Drizzle
@@ -234,5 +234,5 @@ Remove from all package.json files:
 ## Notes
 
 - Railway build caches may need to be cleared
-- Some tests use mock PrismaService - need to update mocks
+- Some tests use mock DrizzleService - need to update mocks
 - TypeORM is also used in some places - should be migrated too

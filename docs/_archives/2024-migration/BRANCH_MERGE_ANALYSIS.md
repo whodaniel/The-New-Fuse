@@ -190,8 +190,8 @@ Largest package difference - significant code may have been removed or refactore
 Including:
 - `migrations/utils/encryption.util.ts`
 - `migrations/utils/validation.util.ts`
-- `prisma/schema.enhanced.prisma`
-- `src/prisma.service.enhanced.ts`
+- `drizzle/schema.enhanced.drizzle`
+- `src/drizzle.service.enhanced.ts`
 
 ### packages/api (5 files)
 ### packages/a2a-react (4 files)
@@ -226,13 +226,13 @@ Including:
 
 ## 7. Database & Schema Files
 
-- `packages/database/prisma/schema.enhanced.prisma`
-- `packages/database/src/prisma.service.enhanced.ts`
+- `packages/database/drizzle/schema.enhanced.drizzle`
+- `packages/database/src/drizzle.service.enhanced.ts`
 - `packages/database/migrations/utils/encryption.util.ts`
 - `packages/database/migrations/utils/validation.util.ts`
 
 **Recommendation**:
-- ✅ **Must Review**: Enhanced Prisma schema and utilities may contain important database features
+- ✅ **Must Review**: Enhanced Drizzle schema and utilities may contain important database features
 - Check if project-reconstruction's schema includes all necessary tables/features
 
 ---
@@ -241,7 +241,7 @@ Including:
 
 ### 🔴 **CRITICAL - Must Review Immediately**
 1. **Frontend Pages** - AI Portal, Admin, Workspaces, IDE pages (potential major features)
-2. **Database Schema** - Enhanced Prisma schema and migration utilities
+2. **Database Schema** - Enhanced Drizzle schema and migration utilities
 3. **API Gateway** - IDE gateway controllers
 4. **Browser MCP Extension** - Complete extension in electron-desktop
 5. **Active Documentation** - 4 key documentation files
@@ -271,8 +271,8 @@ Including:
 # Compare package.json scripts between branches
 git diff main project-reconstruction -- package.json
 
-# Compare Prisma schemas
-git diff main project-reconstruction -- '**/schema.prisma'
+# Compare Drizzle schemas
+git diff main project-reconstruction -- '**/schema.drizzle'
 
 # List all apps in each branch
 ls -la main:apps/
@@ -317,7 +317,7 @@ git merge project-reconstruction --strategy-option theirs
    - Is the SkIDEancerIDE page needed?
 
 2. **Database**:
-   - Does project-reconstruction's Prisma schema include all tables from schema.enhanced.prisma?
+   - Does project-reconstruction's Drizzle schema include all tables from schema.enhanced.drizzle?
    - Are encryption and validation utilities needed?
 
 3. **CI/CD**:

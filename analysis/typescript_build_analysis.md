@@ -107,7 +107,7 @@ This analysis reveals **critical TypeScript configuration issues** and **signifi
 @modelcontextprotocol/sdk@^1.15.0 - UNMET  
 @nestjs/common@^11.1.6 - UNMET
 @nestjs/config@^3.1.1 - UNMET
-@prisma/client@6.11.0 - UNMET
+@drizzle/client@6.11.0 - UNMET
 @the-new-fuse/a2a-core - UNMET (local package)
 ```
 

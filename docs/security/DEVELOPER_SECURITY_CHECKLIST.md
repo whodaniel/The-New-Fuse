@@ -71,20 +71,20 @@ export class CreateUserDto {
 
 ### SQL Injection Prevention
 
-- [ ] **Prisma used** for database queries (parameterized by default)
+- [ ] **Drizzle ORM used** for database queries (parameterized by default)
 - [ ] **No raw SQL** with user input concatenation
-- [ ] **Raw queries** use parameterization ($queryRaw, not $queryRawUnsafe)
+- [ ] **Raw queries** use parameterization (sql.raw, not string templates)
 - [ ] **ORM methods** used instead of raw SQL when possible
 
 **Good:**
 ```typescript
-await prisma.user.findUnique({ where: { id: userId } });
-await prisma.$queryRaw`SELECT * FROM users WHERE id = ${userId}`;
+await db.select().from(users).where(eq(users.id, userId));
+await db.execute(sql`SELECT * FROM users WHERE id = ${userId}`);
 ```
 
 **Bad:**
 ```typescript
-await prisma.$executeRawUnsafe(`DELETE FROM users WHERE id = ${id}`);
+await db.execute(sql.raw(`DELETE FROM users WHERE id = ${id}`));
 ```
 
 ### XSS Prevention
@@ -144,10 +144,7 @@ async getData() {
 ```typescript
 // Encrypt before storing
 const encrypted = await this.encryption.encrypt(sensitiveData);
-await prisma.user.update({
-  where: { id },
-  data: { encryptedField: JSON.stringify(encrypted) }
-});
+await db.update(users).set({ encryptedField: JSON.stringify(encrypted) }).where(eq(users.id, id));
 ```
 
 ### Secrets Management
@@ -170,7 +167,7 @@ if (!jwtSecret) {
 
 **Bad:**
 ```typescript
-const jwtSecret = process.env.JWT_SECRET || 'default-secret';
+const jwtSecret = process.env.JWT_SECRET || '[REDACTED_SECRET]';
 ```
 
 ### Error Handling
@@ -400,7 +397,7 @@ pnpm add -D npm-audit-resolver
 - **SonarLint** - Security and quality
 - **GitLens** - Git insights
 - **Better Comments** - Highlight security comments
-- **Prisma** - Database ORM support
+- **Drizzle** - Database ORM support
 
 ### Git Hooks
 
@@ -491,7 +488,7 @@ app.enableCors({ origin: '*' });
 - [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/)
 - [NestJS Security](https://docs.nestjs.com/security/authentication)
 - [Node.js Security Best Practices](https://nodejs.org/en/docs/guides/security/)
-- [Prisma Security](https://www.prisma.io/docs/concepts/components/prisma-client/deployment#security)
+- [Drizzle Security](https://orm.drizzle.team/docs/security)
 
 ### Training
 

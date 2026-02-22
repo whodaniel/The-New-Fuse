@@ -6,7 +6,7 @@
  * proper tenant isolation and privacy boundaries.
  */
 
-import { PrismaClient, User, UserRole } from '@the-new-fuse/database/generated/prisma';
+import { DrizzleClient, User, UserRole } from '@the-new-fuse/database/generated/drizzle';
 import { RedisService } from '../config/SyncRedisConfig';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
 import { 
@@ -21,16 +21,16 @@ import {
 import { createHash } from 'crypto';
 
 export class PersonalContentManager {
-  private prisma: PrismaClient;
+  private drizzle: DrizzleClient;
   private redis: RedisService;
   private syncOrchestrator: SyncOrchestrator;
 
   constructor(
-    prisma: PrismaClient,
+    drizzle: DrizzleClient,
     redis: RedisService,
     syncOrchestrator: SyncOrchestrator
   ) {
-    this.prisma = prisma;
+    this.drizzle = drizzle;
     this.redis = redis;
     this.syncOrchestrator = syncOrchestrator;
   }
@@ -44,7 +44,7 @@ export class PersonalContentManager {
     content: Omit<ContentItem, 'id' | 'ownerId' | 'createdAt' | 'updatedAt' | 'version' | 'checksum'>
   ): Promise<ContentItem> {
     // Verify user exists and get tenant context
-    const user = await this.prisma.user.findUnique({
+    const user = await this.drizzle.user.findUnique({
       where: { id: userId },
       select: { id: true, role: true, roles: true }
     });
@@ -291,7 +291,7 @@ export class PersonalContentManager {
 
   private async storeContentInDatabase(content: ContentItem): Promise<void> {
     // Store using existing database patterns with proper tenant isolation
-    await this.prisma.$executeRaw`
+    await this.drizzle.$executeRaw`
       INSERT INTO personal_content (
         id, type, title, content, metadata, owner_id, tenant_id, 
         privacy, sharing_settings, created_at, updated_at, version, checksum
@@ -314,7 +314,7 @@ export class PersonalContentManager {
 
   private async retrieveContentFromDatabase(contentId: string, userId: string): Promise<ContentItem | null> {
     // Query with tenant isolation using existing patterns
-    const result = await this.prisma.$queryRaw<any[]>`
+    const result = await this.drizzle.$queryRaw<any[]>`
       SELECT * FROM personal_content 
       WHERE id = ${contentId} 
       AND (owner_id = ${userId} OR tenant_id = ${userId} OR privacy IN ('shared', 'public'))
@@ -366,7 +366,7 @@ export class PersonalContentManager {
       whereClause += ` AND privacy = '${filters.privacy}'`;
     }
 
-    const result = await this.prisma.$queryRaw<any[]>`
+    const result = await this.drizzle.$queryRaw<any[]>`
       SELECT * FROM personal_content 
       WHERE ${whereClause}
       ORDER BY updated_at DESC
@@ -391,7 +391,7 @@ export class PersonalContentManager {
   }
 
   private async softDeleteContent(contentId: string): Promise<void> {
-    await this.prisma.$executeRaw`
+    await this.drizzle.$executeRaw`
       UPDATE personal_content 
       SET deleted_at = NOW() 
       WHERE id = ${contentId}
@@ -400,7 +400,7 @@ export class PersonalContentManager {
 
   private async trackContentAccess(userId: string, contentId: string): Promise<void> {
     // Use existing AuthEvent logging for audit trails
-    await this.prisma.authEvent.create({
+    await this.drizzle.authEvent.create({
       data: {
         userId,
         type: 'CONTENT_ACCESS',
@@ -418,7 +418,7 @@ export class PersonalContentManager {
     await this.redis.publish('cms_events', JSON.stringify(event));
     
     // Store in database for audit trail using existing AuthEvent pattern
-    await this.prisma.authEvent.create({
+    await this.drizzle.authEvent.create({
       data: {
         userId: event.userId,
         type: event.type,

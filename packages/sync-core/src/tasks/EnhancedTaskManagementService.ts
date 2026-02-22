@@ -1,5 +1,5 @@
 import { Injectable, Logger, OnModuleInit, Inject } from '@nestjs/common';
-import { PrismaService } from '@the-new-fuse/database';
+import { DrizzleService } from '@the-new-fuse/database';
 import { TaskSynchronizationService, TaskSyncData, TaskExecutionSyncData } from './TaskSynchronizationService';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
 
@@ -68,7 +68,7 @@ export class EnhancedTaskManagementService implements OnModuleInit {
   private workflowIntegrations: Map<string, WorkflowTaskIntegration> = new Map();
 
   constructor(
-    private readonly dbService: PrismaService,
+    private readonly dbService: DrizzleService,
     private readonly taskSyncService: TaskSynchronizationService,
     private readonly syncOrchestrator: SyncOrchestrator
   ) {}

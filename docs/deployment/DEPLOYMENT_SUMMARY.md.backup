@@ -8,7 +8,7 @@ Your monorepo is now fully configured for Docker-based deployment to Railway. He
 
 **Dockerfiles Created:**
 - `apps/frontend/Dockerfile` - Optimized multi-stage build for React/Vite
-- `apps/api/Dockerfile` - NestJS API service with Prisma support
+- `apps/api/Dockerfile` - NestJS API service with Drizzle support
 - `apps/api-gateway/Dockerfile` - NestJS Gateway service
 - `apps/backend/Dockerfile` - NestJS Backend service
 

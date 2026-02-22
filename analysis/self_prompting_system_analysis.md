@@ -122,7 +122,7 @@ const job = new CronJob(cronExpression, async () => {
 - No request/response validation
 
 **Dependency Issues:**
-- Direct PrismaClient instantiation in constructors (violates dependency injection)
+- Direct DrizzleClient instantiation in constructors (violates dependency injection)
 - No connection pooling
 - No graceful shutdown handling
 - No configuration validation
@@ -184,10 +184,10 @@ CREATE TABLE self_assessment_metrics (
 - Inconsistent enum handling
 - Missing composite indexes
 
-### 2.2 Prisma Schema Issues
+### 2.2 Drizzle Schema Issues
 
 **Field Name Inconsistencies:**
-```prisma
+```drizzle
 // Schema defines:
 model PromptExecution {
     status           PromptExecutionStatus  @default(PENDING)
@@ -197,7 +197,7 @@ execution.status === PromptExecutionStatus.COMPLETED  // Enum mismatch
 ```
 
 **Missing Relations:**
-- No explicit foreign key relationships in Prisma schema
+- No explicit foreign key relationships in Drizzle schema
 - Missing cascade delete rules
 - No referential integrity constraints
 
@@ -283,7 +283,7 @@ const response = await fetch('https://api.openai.com/v1/chat/completions', {
 // ISSUE: No locking mechanism
 async executePrompt(scheduleId: string): Promise<void> {
     // Multiple instances could execute simultaneously
-    const execution = await this.prisma.promptExecution.create({...});
+    const execution = await this.drizzle.promptExecution.create({...});
     // Race condition: Two executions could be created
 }
 ```
@@ -313,7 +313,7 @@ async executePrompt(scheduleId: string): Promise<void> {
 **State Management Issues:**
 ```typescript
 // ISSUE: Inconsistent state updates
-await this.prisma.promptExecution.update({
+await this.drizzle.promptExecution.update({
     where: { id: execution.id },
     data: {
         status: PromptExecutionStatus.EXECUTING, // Status updated

@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '@the-new-fuse/database';
+import { DrizzleService } from '@the-new-fuse/database';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
@@ -48,7 +48,7 @@ export class ReviewerAgentService {
   private readonly logger = new Logger(ReviewerAgentService.name);
   private readonly codebaseRoot = '/home/user/fuse';
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly drizzle: DrizzleService) {}
 
   async reviewImplementation(implementation: {
     taskId: string;
@@ -134,14 +134,14 @@ export class ReviewerAgentService {
         // Check for common issues
 
         // 1. SQL Injection
-        if (line.includes('prisma.$executeRaw') && line.includes('${')) {
+        if (line.includes('drizzle.$executeRaw') && line.includes('${')) {
           security.push({
             file: filePath,
             line: lineNumber,
             type: 'SQL Injection',
             severity: 'critical',
             description: 'Raw SQL with string interpolation can lead to SQL injection',
-            recommendation: "Use parameterized queries or Prisma's type-safe query builder",
+            recommendation: "Use parameterized queries or Drizzle's type-safe query builder",
             cwe: 'CWE-89',
           });
         }

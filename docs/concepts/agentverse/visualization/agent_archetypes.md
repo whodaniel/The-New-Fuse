@@ -10,7 +10,7 @@
 ### 2. Platform Specialists
 - **The YouTube Virtuoso**: Being of light with play button core, streaming video elements forming a dynamic aura
 - **The Twitter Diplomat**: Bird-like entity formed from tweet streams and trending topics
-- **The Instagram Artisan**: Prismatic being that reflects and refracts visual content
+- **The Instagram Artisan**: Drizzletic being that reflects and refracts visual content
 - **The LinkedIn Strategist**: Professional entity in crystalline business attire made of connection networks
 
 ### 3. Technical Specialists

@@ -60,7 +60,7 @@ for critical observability features.
 ### Phase 2: Real Data Integration (Medium Priority)
 
 3.  **Implement Real System Metrics**:
-    - Connect `getDatabaseMetrics` to Prisma/Drizzle connection pool stats.
+    - Connect `getDatabaseMetrics` to Drizzle/Drizzle connection pool stats.
     - Connect `getServicesHealth` to actual Redis/DB ping checks.
 4.  **Enable Analytics**: Wire up `Analytics.tsx` to real aggregated data from
     the database.

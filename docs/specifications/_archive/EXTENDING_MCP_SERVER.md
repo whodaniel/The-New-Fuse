@@ -278,17 +278,17 @@ export const explainCodeSchema = z.object({
 For production use, the MCP server should persist conversation and state data to a database instead of in-memory:
 
 ```typescript
-import { PrismaClient } from '@prisma/client';
+import { DrizzleClient } from '@drizzle/client';
 
-// Initialize Prisma client
-const prisma = new PrismaClient();
+// Initialize Drizzle client
+const drizzle = new DrizzleClient();
 
 // Database-backed conversation storage
 export class DatabaseConversationManager {
   async createConversation(id?: string): Promise<{ conversationId: string }> {
     const conversationId = id || uuidv4();
     
-    await prisma.conversation.create({
+    await drizzle.conversation.create({
       data: {
         id: conversationId,
         createdAt: new Date(),
@@ -300,7 +300,7 @@ export class DatabaseConversationManager {
   }
   
   async addMessage(conversationId: string, role: string, content: string, toolCalls?: any[]): Promise<any> {
-    const message = await prisma.message.create({
+    const message = await drizzle.message.create({
       data: {
         id: uuidv4(),
         conversationId,
@@ -315,7 +315,7 @@ export class DatabaseConversationManager {
   }
   
   async getHistory(conversationId: string): Promise<any[]> {
-    const messages = await prisma.message.findMany({
+    const messages = await drizzle.message.findMany({
       where: { conversationId },
       orderBy: { timestamp: 'asc' }
     });

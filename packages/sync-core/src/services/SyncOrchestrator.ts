@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy, Inject } from '@nestjs/common';
 import { EventEmitter } from 'events';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { PrismaService } from '@the-new-fuse/database';
+import { DrizzleService } from '@the-new-fuse/database';
 import { PromptTemplateServiceImpl } from '@the-new-fuse/prompt-templating';
 import {
   SyncStateData,
@@ -86,7 +86,7 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
   constructor(
     private readonly redisService: UnifiedRedisService,
     @Inject('IWebSocketService') private readonly wsService: IWebSocketService,
-    private readonly dbService: PrismaService,
+    private readonly dbService: DrizzleService,
     private readonly promptTemplateService: PromptTemplateServiceImpl
   ) {
     super();

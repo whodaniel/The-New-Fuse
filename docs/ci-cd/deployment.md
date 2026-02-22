@@ -448,7 +448,7 @@ railway shell
 pnpm run db:generate
 
 # Review migration
-cat prisma/migrations/*/migration.sql
+cat drizzle/migrations/*/migration.sql
 
 # Apply to staging
 railway run --service=backend -- pnpm run db:migrate

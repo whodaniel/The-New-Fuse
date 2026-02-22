@@ -2,7 +2,6 @@
  * Database Package - Drizzle ORM
  *
  * This package provides database access using Drizzle ORM.
- * Prisma has been completely removed in favor of Drizzle.
  */
 
 // =============================================================================
@@ -24,8 +23,8 @@ export {
   type Transaction,
 } from './drizzle';
 
-// Export DatabaseService and PrismaService (backwards compatibility)
-export { DatabaseService, PrismaService } from './drizzle/database.service';
+// Export DatabaseService
+export { DatabaseService } from './drizzle/database.service';
 
 // Export Drizzle schema tables
 export * as drizzleSchema from './drizzle/schema';

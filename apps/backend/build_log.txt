@@ -229,7 +229,7 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m [0m [91m                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
 [96msrc/controllers/agentController.ts[0m:[93m10[0m:[93m54[0m - [91merror[0m[90m TS2554: [0mExpected 1 arguments, but got 2.
 
-[7m10[0m const agentService = new AgentService(prismaService, configService);
+[7m10[0m const agentService = new AgentService(drizzleService, configService);
 [7m  [0m [91m                                                     ~~~~~~~~~~~~~[0m
 [96msrc/controllers/agentController.ts[0m:[93m15[0m:[93m32[0m - [91merror[0m[90m TS2339: [0mProperty 'id' does not exist on type 'User'.
 
@@ -526,7 +526,7 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m76[0m           where: { agentId: entry.agentId },
 [7m  [0m [91m          ~~~~~[0m
 
-  [96m../../packages/database/generated/prisma/index.d.ts[0m:[93m41361[0m:[93m5[0m
+  [96m../../packages/database/generated/drizzle/index.d.ts[0m:[93m41361[0m:[93m5[0m
     [7m41361[0m     where: AgentRegistrationWhereUniqueInput
     [7m     [0m [96m    ~~~~~[0m
     The expected type comes from property 'where' which is declared here on type '{ select?: AgentRegistrationSelect<DefaultArgs> | null | undefined; omit?: AgentRegistrationOmit<DefaultArgs> | null | undefined; include?: AgentRegistrationInclude<...> | ... 1 more ... | undefined; where: AgentRegistrationWhereUniqueInput; }'
@@ -553,7 +553,7 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m137[0m         where: { agentId },
 [7m   [0m [91m        ~~~~~[0m
 
-  [96m../../packages/database/generated/prisma/index.d.ts[0m:[93m41361[0m:[93m5[0m
+  [96m../../packages/database/generated/drizzle/index.d.ts[0m:[93m41361[0m:[93m5[0m
     [7m41361[0m     where: AgentRegistrationWhereUniqueInput
     [7m     [0m [96m    ~~~~~[0m
     The expected type comes from property 'where' which is declared here on type '{ select?: AgentRegistrationSelect<DefaultArgs> | null | undefined; omit?: AgentRegistrationOmit<DefaultArgs> | null | undefined; include?: AgentRegistrationInclude<...> | ... 1 more ... | undefined; where: AgentRegistrationWhereUniqueInput; }'
@@ -588,7 +588,7 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m189[0m           where: { agentId: entry.agentId },
 [7m   [0m [91m          ~~~~~[0m
 
-  [96m../../packages/database/generated/prisma/index.d.ts[0m:[93m41361[0m:[93m5[0m
+  [96m../../packages/database/generated/drizzle/index.d.ts[0m:[93m41361[0m:[93m5[0m
     [7m41361[0m     where: AgentRegistrationWhereUniqueInput
     [7m     [0m [96m    ~~~~~[0m
     The expected type comes from property 'where' which is declared here on type '{ select?: AgentRegistrationSelect<DefaultArgs> | null | undefined; omit?: AgentRegistrationOmit<DefaultArgs> | null | undefined; include?: AgentRegistrationInclude<...> | ... 1 more ... | undefined; where: AgentRegistrationWhereUniqueInput; }'
@@ -613,24 +613,24 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m229[0m         lastActiveAt: new Date(),
 [7m   [0m [91m        ~~~~~~~~~~~~[0m
 
-  [96m../../packages/database/generated/prisma/index.d.ts[0m:[93m45042[0m:[93m5[0m
+  [96m../../packages/database/generated/drizzle/index.d.ts[0m:[93m45042[0m:[93m5[0m
     [7m45042[0m     data: XOR<AgentDirectoryEntryUpdateInput, AgentDirectoryEntryUncheckedUpdateInput>
     [7m     [0m [96m    ~~~~[0m
     The expected type comes from property 'data' which is declared here on type '{ select?: AgentDirectoryEntrySelect<DefaultArgs> | null | undefined; omit?: AgentDirectoryEntryOmit<DefaultArgs> | null | undefined; include?: AgentDirectoryEntryInclude<...> | ... 1 more ... | undefined; data: (Without<...> & AgentDirectoryEntryUncheckedUpdateInput) | (Without<...> & AgentDirectoryEntryUpdateInput...'
-[96msrc/modules/agent-registry/services/agent-directory.service.ts[0m:[93m238[0m:[93m23[0m - [91merror[0m[90m TS2339: [0mProperty 'agentMetrics' does not exist on type 'PrismaService'.
+[96msrc/modules/agent-registry/services/agent-directory.service.ts[0m:[93m238[0m:[93m23[0m - [91merror[0m[90m TS2339: [0mProperty 'agentMetrics' does not exist on type 'DrizzleService'.
 
-[7m238[0m     await this.prisma.agentMetrics.create({
+[7m238[0m     await this.drizzle.agentMetrics.create({
 [7m   [0m [91m                      ~~~~~~~~~~~~[0m
-[96msrc/modules/agent-registry/services/agent-directory.service.ts[0m:[93m270[0m:[93m39[0m - [91merror[0m[90m TS2339: [0mProperty 'agentMetrics' does not exist on type 'PrismaService'.
+[96msrc/modules/agent-registry/services/agent-directory.service.ts[0m:[93m270[0m:[93m39[0m - [91merror[0m[90m TS2339: [0mProperty 'agentMetrics' does not exist on type 'DrizzleService'.
 
-[7m270[0m     const metrics = await this.prisma.agentMetrics.findMany({
+[7m270[0m     const metrics = await this.drizzle.agentMetrics.findMany({
 [7m   [0m [91m                                      ~~~~~~~~~~~~[0m
 [96msrc/modules/agent-registry/services/agent-onboarding.service.ts[0m:[93m35[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'onboardingStep' does not exist in type '(Without<AgentRegistrationUpdateInput, AgentRegistrationUncheckedUpdateInput> & AgentRegistrationUncheckedUpdateInput) | (Without<...> & AgentRegistrationUpdateInput)'.
 
 [7m35[0m         onboardingStep: 'welcome',
 [7m  [0m [91m        ~~~~~~~~~~~~~~[0m
 
-  [96m../../packages/database/generated/prisma/index.d.ts[0m:[93m41612[0m:[93m5[0m
+  [96m../../packages/database/generated/drizzle/index.d.ts[0m:[93m41612[0m:[93m5[0m
     [7m41612[0m     data: XOR<AgentRegistrationUpdateInput, AgentRegistrationUncheckedUpdateInput>
     [7m     [0m [96m    ~~~~[0m
     The expected type comes from property 'data' which is declared here on type '{ select?: AgentRegistrationSelect<DefaultArgs> | null | undefined; omit?: AgentRegistrationOmit<DefaultArgs> | null | undefined; include?: AgentRegistrationInclude<...> | ... 1 more ... | undefined; data: (Without<...> & AgentRegistrationUncheckedUpdateInput) | (Without<...> & AgentRegistrationUpdateInput); where: ...'
@@ -639,7 +639,7 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m87[0m           verifiedAt: testResult.passed ? new Date() : null,
 [7m  [0m [91m          ~~~~~~~~~~[0m
 
-  [96m../../packages/database/generated/prisma/index.d.ts[0m:[93m42779[0m:[93m5[0m
+  [96m../../packages/database/generated/drizzle/index.d.ts[0m:[93m42779[0m:[93m5[0m
     [7m42779[0m     data: XOR<AgentCapabilityRegistryUpdateInput, AgentCapabilityRegistryUncheckedUpdateInput>
     [7m     [0m [96m    ~~~~[0m
     The expected type comes from property 'data' which is declared here on type '{ select?: AgentCapabilityRegistrySelect<DefaultArgs> | null | undefined; omit?: AgentCapabilityRegistryOmit<DefaultArgs> | null | undefined; include?: AgentCapabilityRegistryInclude<...> | ... 1 more ... | undefined; data: (Without<...> & AgentCapabilityRegistryUncheckedUpdateInput) | (Without<...> & AgentCapabilit...'
@@ -648,7 +648,7 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m107[0m         onboardingStep: 'capabilities_verified',
 [7m   [0m [91m        ~~~~~~~~~~~~~~[0m
 
-  [96m../../packages/database/generated/prisma/index.d.ts[0m:[93m41612[0m:[93m5[0m
+  [96m../../packages/database/generated/drizzle/index.d.ts[0m:[93m41612[0m:[93m5[0m
     [7m41612[0m     data: XOR<AgentRegistrationUpdateInput, AgentRegistrationUncheckedUpdateInput>
     [7m     [0m [96m    ~~~~[0m
     The expected type comes from property 'data' which is declared here on type '{ select?: AgentRegistrationSelect<DefaultArgs> | null | undefined; omit?: AgentRegistrationOmit<DefaultArgs> | null | undefined; include?: AgentRegistrationInclude<...> | ... 1 more ... | undefined; data: (Without<...> & AgentRegistrationUncheckedUpdateInput) | (Without<...> & AgentRegistrationUpdateInput); where: ...'
@@ -657,7 +657,7 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m163[0m         onboardingStep: stepId,
 [7m   [0m [91m        ~~~~~~~~~~~~~~[0m
 
-  [96m../../packages/database/generated/prisma/index.d.ts[0m:[93m41612[0m:[93m5[0m
+  [96m../../packages/database/generated/drizzle/index.d.ts[0m:[93m41612[0m:[93m5[0m
     [7m41612[0m     data: XOR<AgentRegistrationUpdateInput, AgentRegistrationUncheckedUpdateInput>
     [7m     [0m [96m    ~~~~[0m
     The expected type comes from property 'data' which is declared here on type '{ select?: AgentRegistrationSelect<DefaultArgs> | null | undefined; omit?: AgentRegistrationOmit<DefaultArgs> | null | undefined; include?: AgentRegistrationInclude<...> | ... 1 more ... | undefined; data: (Without<...> & AgentRegistrationUncheckedUpdateInput) | (Without<...> & AgentRegistrationUpdateInput); where: ...'
@@ -768,19 +768,19 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m45[0m             topic: createDto.topic,
 [7m  [0m [91m            ~~~~~[0m
 
-  [96m../../packages/database/generated/prisma/index.d.ts[0m:[93m15356[0m:[93m5[0m
+  [96m../../packages/database/generated/drizzle/index.d.ts[0m:[93m15356[0m:[93m5[0m
     [7m15356[0m     data: XOR<ChatRoomCreateInput, ChatRoomUncheckedCreateInput>
     [7m     [0m [96m    ~~~~[0m
     The expected type comes from property 'data' which is declared here on type '{ select?: ChatRoomSelect<DefaultArgs> | null | undefined; omit?: ChatRoomOmit<DefaultArgs> | null | undefined; include?: ChatRoomInclude<...> | ... 1 more ... | undefined; data: (Without<...> & ChatRoomUncheckedCreateInput) | (Without<...> & ChatRoomCreateInput); }'
-[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m61[0m:[93m18[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$on" | "$connect" | "$disconnect" | "$transaction" | "$extends">'.
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m61[0m:[93m18[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'Omit<DrizzleClient<DrizzleClientOptions, never, DefaultArgs>, "$on" | "$connect" | "$disconnect" | "$transaction" | "$extends">'.
 
 [7m61[0m         await tx.chatRoomParticipant.create({
 [7m  [0m [91m                 ~~~~~~~~~~~~~~~~~~~[0m
-[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m73[0m:[93m18[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$on" | "$connect" | "$disconnect" | "$transaction" | "$extends">'.
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m73[0m:[93m18[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'Omit<DrizzleClient<DrizzleClientOptions, never, DefaultArgs>, "$on" | "$connect" | "$disconnect" | "$transaction" | "$extends">'.
 
 [7m73[0m               tx.chatRoomParticipant
 [7m  [0m [91m                 ~~~~~~~~~~~~~~~~~~~[0m
-[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m92[0m:[93m18[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$on" | "$connect" | "$disconnect" | "$transaction" | "$extends">'.
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m92[0m:[93m18[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'Omit<DrizzleClient<DrizzleClientOptions, never, DefaultArgs>, "$on" | "$connect" | "$disconnect" | "$transaction" | "$extends">'.
 
 [7m92[0m               tx.chatRoomParticipant
 [7m  [0m [91m                 ~~~~~~~~~~~~~~~~~~~[0m
@@ -812,28 +812,28 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 
 [7m223[0m     if (room._count.participants >= room.maxParticipants) {
 [7m   [0m [91m                                         ~~~~~~~~~~~~~~~[0m
-[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m227[0m:[93m43[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'PrismaService'.
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m227[0m:[93m43[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'DrizzleService'.
 
-[7m227[0m     const participant = await this.prisma.chatRoomParticipant.create({
+[7m227[0m     const participant = await this.drizzle.chatRoomParticipant.create({
 [7m   [0m [91m                                          ~~~~~~~~~~~~~~~~~~~[0m
-[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m248[0m:[93m23[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'PrismaService'.
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m248[0m:[93m23[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'DrizzleService'.
 
-[7m248[0m     await this.prisma.chatRoomParticipant.update({
+[7m248[0m     await this.drizzle.chatRoomParticipant.update({
 [7m   [0m [91m                      ~~~~~~~~~~~~~~~~~~~[0m
-[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m259[0m:[93m44[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'PrismaService'.
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m259[0m:[93m44[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'DrizzleService'.
 
-[7m259[0m     const participants = await this.prisma.chatRoomParticipant.findMany({
+[7m259[0m     const participants = await this.drizzle.chatRoomParticipant.findMany({
 [7m   [0m [91m                                           ~~~~~~~~~~~~~~~~~~~[0m
-[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m280[0m:[93m43[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'PrismaService'.
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m280[0m:[93m43[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'DrizzleService'.
 
-[7m280[0m     const participant = await this.prisma.chatRoomParticipant.update({
+[7m280[0m     const participant = await this.drizzle.chatRoomParticipant.update({
 [7m   [0m [91m                                          ~~~~~~~~~~~~~~~~~~~[0m
 [96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m306[0m:[93m11[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'type' does not exist in type 'Without<MessageCreateInput, MessageUncheckedCreateInput> & MessageUncheckedCreateInput'.
 
 [7m306[0m           type: createDto.type,
 [7m   [0m [91m          ~~~~[0m
 
-  [96m../../packages/database/generated/prisma/index.d.ts[0m:[93m16633[0m:[93m5[0m
+  [96m../../packages/database/generated/drizzle/index.d.ts[0m:[93m16633[0m:[93m5[0m
     [7m16633[0m     data: XOR<MessageCreateInput, MessageUncheckedCreateInput>
     [7m     [0m [96m    ~~~~[0m
     The expected type comes from property 'data' which is declared here on type '{ select?: MessageSelect<DefaultArgs> | null | undefined; omit?: MessageOmit<DefaultArgs> | null | undefined; include?: MessageInclude<...> | ... 1 more ... | undefined; data: (Without<...> & MessageUncheckedCreateInput) | (Without<...> & MessageCreateInput); }'
@@ -846,28 +846,28 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m435[0m       data: { isPinned: true },
 [7m   [0m [91m              ~~~~~~~~[0m
 
-  [96m../../packages/database/generated/prisma/index.d.ts[0m:[93m16689[0m:[93m5[0m
+  [96m../../packages/database/generated/drizzle/index.d.ts[0m:[93m16689[0m:[93m5[0m
     [7m16689[0m     data: XOR<MessageUpdateInput, MessageUncheckedUpdateInput>
     [7m     [0m [96m    ~~~~[0m
     The expected type comes from property 'data' which is declared here on type '{ select?: MessageSelect<DefaultArgs> | null | undefined; omit?: MessageOmit<DefaultArgs> | null | undefined; include?: MessageInclude<...> | ... 1 more ... | undefined; data: (Without<...> & MessageUncheckedUpdateInput) | (Without<...> & MessageUpdateInput); where: MessageWhereUniqueInput; }'
-[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m447[0m:[93m23[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'PrismaService'.
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m447[0m:[93m23[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'DrizzleService'.
 
-[7m447[0m     await this.prisma.chatRoomParticipant.updateMany({
+[7m447[0m     await this.drizzle.chatRoomParticipant.updateMany({
 [7m   [0m [91m                      ~~~~~~~~~~~~~~~~~~~[0m
-[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m466[0m:[93m23[0m - [91merror[0m[90m TS2339: [0mProperty 'readReceipt' does not exist on type 'PrismaService'.
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m466[0m:[93m23[0m - [91merror[0m[90m TS2339: [0mProperty 'readReceipt' does not exist on type 'DrizzleService'.
 
-[7m466[0m     await this.prisma.readReceipt.upsert({
+[7m466[0m     await this.drizzle.readReceipt.upsert({
 [7m   [0m [91m                      ~~~~~~~~~~~[0m
-[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m483[0m:[93m23[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'PrismaService'.
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m483[0m:[93m23[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'DrizzleService'.
 
-[7m483[0m     await this.prisma.chatRoomParticipant.updateMany({
+[7m483[0m     await this.drizzle.chatRoomParticipant.updateMany({
 [7m   [0m [91m                      ~~~~~~~~~~~~~~~~~~~[0m
 [96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m567[0m:[93m9[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'participants' does not exist in type 'ChatRoomInclude<DefaultArgs>'.
 
 [7m567[0m         participants: true,
 [7m   [0m [91m        ~~~~~~~~~~~~[0m
 
-  [96m../../packages/database/generated/prisma/index.d.ts[0m:[93m15157[0m:[93m5[0m
+  [96m../../packages/database/generated/drizzle/index.d.ts[0m:[93m15157[0m:[93m5[0m
     [7m15157[0m     include?: ChatRoomInclude<ExtArgs> | null
     [7m     [0m [96m    ~~~~~~~[0m
     The expected type comes from property 'include' which is declared here on type '{ select?: ChatRoomSelect<DefaultArgs> | null | undefined; omit?: ChatRoomOmit<DefaultArgs> | null | undefined; include?: ChatRoomInclude<...> | ... 1 more ... | undefined; where: ChatRoomWhereUniqueInput; }'
@@ -883,17 +883,17 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 
 [7m606[0m         room.messages.forEach((msg) => {
 [7m   [0m [91m             ~~~~~~~~[0m
-[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m674[0m:[93m43[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'PrismaService'.
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m674[0m:[93m43[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'DrizzleService'.
 
-[7m674[0m     const participant = await this.prisma.chatRoomParticipant.findFirst({
+[7m674[0m     const participant = await this.drizzle.chatRoomParticipant.findFirst({
 [7m   [0m [91m                                          ~~~~~~~~~~~~~~~~~~~[0m
-[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m688[0m:[93m43[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'PrismaService'.
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m688[0m:[93m43[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'DrizzleService'.
 
-[7m688[0m     const participant = await this.prisma.chatRoomParticipant.findFirst({
+[7m688[0m     const participant = await this.drizzle.chatRoomParticipant.findFirst({
 [7m   [0m [91m                                          ~~~~~~~~~~~~~~~~~~~[0m
-[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m705[0m:[93m43[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'PrismaService'.
+[96msrc/modules/chat-rooms/chat-rooms.service.ts[0m:[93m705[0m:[93m43[0m - [91merror[0m[90m TS2339: [0mProperty 'chatRoomParticipant' does not exist on type 'DrizzleService'.
 
-[7m705[0m     const participant = await this.prisma.chatRoomParticipant.findFirst({
+[7m705[0m     const participant = await this.drizzle.chatRoomParticipant.findFirst({
 [7m   [0m [91m                                          ~~~~~~~~~~~~~~~~~~~[0m
 [96msrc/modules/chat-rooms/dto/chat-room.dto.ts[0m:[93m34[0m:[93m3[0m - [91merror[0m[90m TS2564: [0mProperty 'name' has no initializer and is not definitely assigned in the constructor.
 
@@ -1213,23 +1213,23 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 
 [7m21[0m     const hasDegraded = services.some(s => s.status === 'degraded');
 [7m  [0m [91m                                           ~~~~~~~~~~~~~~~~~~~~~~~[0m
-[96msrc/notifications/notification.service.ts[0m:[93m20[0m:[93m23[0m - [91merror[0m[90m TS2339: [0mProperty 'notification' does not exist on type 'PrismaService'.
+[96msrc/notifications/notification.service.ts[0m:[93m20[0m:[93m23[0m - [91merror[0m[90m TS2339: [0mProperty 'notification' does not exist on type 'DrizzleService'.
 
-[7m20[0m     await this.prisma.notification.create({
+[7m20[0m     await this.drizzle.notification.create({
 [7m  [0m [91m                      ~~~~~~~~~~~~[0m
-[96msrc/notifications/notification.service.ts[0m:[93m34[0m:[93m24[0m - [91merror[0m[90m TS2339: [0mProperty 'notification' does not exist on type 'PrismaService'.
+[96msrc/notifications/notification.service.ts[0m:[93m34[0m:[93m24[0m - [91merror[0m[90m TS2339: [0mProperty 'notification' does not exist on type 'DrizzleService'.
 
-[7m34[0m     return this.prisma.notification.findMany({
+[7m34[0m     return this.drizzle.notification.findMany({
 [7m  [0m [91m                       ~~~~~~~~~~~~[0m
-[96msrc/notifications/notification.service.ts[0m:[93m42[0m:[93m24[0m - [91merror[0m[90m TS2339: [0mProperty 'notification' does not exist on type 'PrismaService'.
+[96msrc/notifications/notification.service.ts[0m:[93m42[0m:[93m24[0m - [91merror[0m[90m TS2339: [0mProperty 'notification' does not exist on type 'DrizzleService'.
 
-[7m42[0m     return this.prisma.notification.update({
+[7m42[0m     return this.drizzle.notification.update({
 [7m  [0m [91m                       ~~~~~~~~~~~~[0m
-[96msrc/prisma/prisma.service.ts[0m:[93m28[0m:[93m14[0m - [91merror[0m[90m TS2345: [0mArgument of type 'any' is not assignable to parameter of type 'never'.
+[96msrc/drizzle/drizzle.service.ts[0m:[93m28[0m:[93m14[0m - [91merror[0m[90m TS2345: [0mArgument of type 'any' is not assignable to parameter of type 'never'.
 
 [7m28[0m     this.$on('query' as any, (e: any) => {
 [7m  [0m [91m             ~~~~~~~~~~~~~~[0m
-[96msrc/prisma/prisma.service.ts[0m:[93m42[0m:[93m16[0m - [91merror[0m[90m TS2345: [0mArgument of type 'any' is not assignable to parameter of type 'never'.
+[96msrc/drizzle/drizzle.service.ts[0m:[93m42[0m:[93m16[0m - [91merror[0m[90m TS2345: [0mArgument of type 'any' is not assignable to parameter of type 'never'.
 
 [7m42[0m       this.$on('query' as any, (e: any) => {
 [7m  [0m [91m               ~~~~~~~~~~~~~~[0m
@@ -1257,7 +1257,7 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
     An argument for 'filename' was not provided.
 [96msrc/routes/agent.ts[0m:[93m10[0m:[93m54[0m - [91merror[0m[90m TS2554: [0mExpected 1 arguments, but got 2.
 
-[7m10[0m const agentService = new AgentService(prismaService, configService);
+[7m10[0m const agentService = new AgentService(drizzleService, configService);
 [7m  [0m [91m                                                     ~~~~~~~~~~~~~[0m
 [96msrc/routes/workspaceRoutes.ts[0m:[93m81[0m:[93m29[0m - [91merror[0m[90m TS2339: [0mProperty 'id' does not exist on type 'User'.
 

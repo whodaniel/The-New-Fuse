@@ -4682,7 +4682,7 @@ Total files analyzed: 1721
 - `packages/core/backup/src_original/database/ObservabilityService.tsx`
   Exports: None detected
 
-- `packages/core/backup/src_original/database/prisma.service.tsx`
+- `packages/core/backup/src_original/database/drizzle.service.tsx`
   Exports: None detected
 
 - `packages/core/backup/src_original/database/query-performance-monitor.service.tsx`
@@ -5318,7 +5318,7 @@ Total files analyzed: 1721
 - `packages/core/backup/src_original/pipeline/PipelineManager.tsx`
   Exports: None detected
 
-- `packages/core/backup/src_original/prisma/prisma.service.tsx`
+- `packages/core/backup/src_original/drizzle/drizzle.service.tsx`
   Exports: None detected
 
 - `packages/core/backup/src_original/processing/featureProcessor.tsx`

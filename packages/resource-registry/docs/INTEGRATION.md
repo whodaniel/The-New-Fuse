@@ -275,14 +275,14 @@ async function provisionAgentSkills(agentId: string) {
 
 ## Database Setup
 
-### 1. Run Prisma Migrations
+### 1. Run Drizzle Migrations
 
 ```bash
-# Generate Prisma client
+# Generate Drizzle client
 pnpm db:generate
 
 # Run migrations
-npx prisma migrate dev --name add-resource-registry
+npx drizzle migrate dev --name add-resource-registry
 
 # Or use the package-specific commands
 cd packages/resource-registry
@@ -294,14 +294,14 @@ pnpm db:migrate
 Create a seed file:
 
 ```typescript
-// packages/resource-registry/prisma/seed.ts
-import { PrismaClient } from '@prisma/client';
+// packages/resource-registry/drizzle/seed.ts
+import { DrizzleClient } from '@drizzle/client';
 
-const prisma = new PrismaClient();
+const drizzle = new DrizzleClient();
 
 async function main() {
   // Seed example resources
-  await prisma.resource.createMany({
+  await drizzle.resource.createMany({
     data: [
       {
         name: 'Code Review Skill',
@@ -321,13 +321,13 @@ async function main() {
 
 main()
   .catch(console.error)
-  .finally(() => prisma.$disconnect());
+  .finally(() => drizzle.$disconnect());
 ```
 
 Run the seed:
 
 ```bash
-npx prisma db seed
+npx drizzle db seed
 ```
 
 ## Environment Configuration
@@ -420,18 +420,18 @@ describe('Resource Registry Integration', () => {
 Query access logs:
 
 ```typescript
-import { PrismaClient } from '@prisma/client';
+import { DrizzleClient } from '@drizzle/client';
 
-const prisma = new PrismaClient();
+const drizzle = new DrizzleClient();
 
 // Get most accessed resources
-const topResources = await prisma.resource.findMany({
+const topResources = await drizzle.resource.findMany({
   orderBy: { usageCount: 'desc' },
   take: 10,
 });
 
 // Get recent access logs
-const recentAccess = await prisma.resourceAccessLog.findMany({
+const recentAccess = await drizzle.resourceAccessLog.findMany({
   orderBy: { timestamp: 'desc' },
   take: 100,
   include: { resource: true },
@@ -442,15 +442,15 @@ const recentAccess = await prisma.resourceAccessLog.findMany({
 
 ```typescript
 async function getResourceAnalytics() {
-  const prisma = new PrismaClient();
+  const drizzle = new DrizzleClient();
 
   const [totalResources, byCategory, topDownloaded] = await Promise.all([
-    prisma.resource.count(),
-    prisma.resource.groupBy({
+    drizzle.resource.count(),
+    drizzle.resource.groupBy({
       by: ['category'],
       _count: true,
     }),
-    prisma.resource.findMany({
+    drizzle.resource.findMany({
       orderBy: { downloadCount: 'desc' },
       take: 10,
     }),

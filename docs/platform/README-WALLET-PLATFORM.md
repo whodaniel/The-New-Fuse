@@ -17,7 +17,7 @@ A secure, scalable, and compliant crypto wallet infrastructure for both humans a
 ### Technology Stack
 
 - **Backend**: NestJS with TypeScript
-- **Database**: PostgreSQL with Prisma ORM
+- **Database**: PostgreSQL with Drizzle ORM
 - **Blockchain**: Ethereum (viem for interaction)
 - **Smart Contracts**: Solidity with Foundry
 - **Authentication**: Web3Auth Node SDK
@@ -48,8 +48,8 @@ A secure, scalable, and compliant crypto wallet infrastructure for both humans a
 
 3. **Setup Database**
    ```bash
-   pnpm dlx prisma migrate dev
-   pnpm dlx prisma generate
+   pnpm dlx drizzle migrate dev
+   pnpm dlx drizzle generate
    ```
 
 4. **Deploy Smart Contracts** (Optional - for full setup)

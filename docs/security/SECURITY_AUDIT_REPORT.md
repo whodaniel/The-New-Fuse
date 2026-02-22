@@ -47,7 +47,7 @@ This comprehensive security audit evaluated the entire platform across authentic
 ```typescript
 // CRITICAL: Hardcoded fallback secrets found in multiple files
 // File: packages/security/src/auth/AuthService.ts:41
-this.jwtSecret = process.env.JWT_SECRET || 'super-secret-key';
+this.jwtSecret = process.env.JWT_SECRET || '[REDACTED_SECRET]';
 
 // File: apps/api/src/config/security.config.ts:97
 secret: process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production',
@@ -77,7 +77,7 @@ process.env.JWT_SECRET || 'your-secret-key',
 - Document password requirements and validation rules
 
 #### Permission System
-- **Status:** Implemented with user permissions in Prisma schema
+- **Status:** Implemented with user permissions in Drizzle schema
 - **Features:** Role-based access control (RBAC)
 - **Roles:** USER, ADMIN, SUPER_ADMIN, AGENCY_OWNER, AGENCY_ADMIN, AGENCY_MANAGER, AGENT_OPERATOR
 
@@ -160,7 +160,7 @@ allowedOrigins: process.env.ALLOWED_ORIGINS?.split(',') || ['https://yourdomain.
 **Features:**
 - HTML sanitization with DOMPurify
 - XSS prevention
-- SQL injection prevention (though Prisma provides this)
+- SQL injection prevention (though Drizzle provides this)
 - Path traversal detection
 - File name sanitization
 - URL validation
@@ -262,7 +262,7 @@ Strict-Transport-Security: max-age=31536000; includeSubDomains; preload (product
 **Issues:**
 ```typescript
 // CRITICAL: Weak fallback encryption key
-const secret = process.env.ENCRYPTION_KEY || 'default-super-secret-key-for-dev';
+const secret = process.env.ENCRYPTION_KEY || 'default-[REDACTED_SECRET]-for-dev';
 
 // WARNING: Improper key derivation
 this.key = crypto.createHash('sha256').update(String(secret)).digest('base64').substr(0, 32);
@@ -276,12 +276,12 @@ this.key = crypto.createHash('sha256').update(String(secret)).digest('base64').s
 - Add authenticated encryption (AES-GCM instead of AES-CBC)
 
 #### Database Encryption
-- **Status:** Prisma schema reviewed, no encryption at rest configuration visible
+- **Status:** Drizzle schema reviewed, no encryption at rest configuration visible
 
 **Recommendations:**
 - Enable PostgreSQL encryption at rest
 - Encrypt sensitive fields in application layer
-- Use Prisma field-level encryption for PII
+- Use Drizzle field-level encryption for PII
 - Document which fields require encryption
 
 #### HTTPS/TLS
@@ -340,13 +340,13 @@ process.env.JWT_SECRET || 'your-secret-key'
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-for-development-only';
 
 // packages/security/src/auth/AuthService.ts:41
-this.jwtSecret = process.env.JWT_SECRET || 'super-secret-key';
+this.jwtSecret = process.env.JWT_SECRET || '[REDACTED_SECRET]';
 
 // apps/api/src/config/security.config.ts:97
 secret: process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production'
 
 // packages/core/src/security/encryption.ts:11
-const secret = process.env.ENCRYPTION_KEY || 'default-super-secret-key-for-dev';
+const secret = process.env.ENCRYPTION_KEY || 'default-[REDACTED_SECRET]-for-dev';
 
 // config/config.ts:10
 SECRET_KEY: string = process.env.SECRET_KEY || 'your-secret-key-here';
@@ -394,11 +394,11 @@ static SECRET_KEY: string = 'test-secret-key';  // Fixed key for testing
 
 ### Database Security (PostgreSQL)
 - **Connection:** Via DATABASE_URL environment variable
-- **Status:** Prisma provides SQL injection protection ✓
+- **Status:** Drizzle provides SQL injection protection ✓
 
 **Recommendations:**
 1. Enable SSL for database connections
-2. Use connection pooling (Prisma Accelerate)
+2. Use connection pooling (Drizzle Accelerate)
 3. Implement least privilege database users
 4. Enable database audit logging
 5. Regular database backups
@@ -482,7 +482,7 @@ static SECRET_KEY: string = 'test-secret-key';  // Fixed key for testing
 |--------|--------|-------|
 | A01: Broken Access Control | ✓ GOOD | JWT + RBAC implemented |
 | A02: Cryptographic Failures | ⚠️ NEEDS IMPROVEMENT | Weak encryption key management |
-| A03: Injection | ✓ EXCELLENT | Prisma + Input sanitization |
+| A03: Injection | ✓ EXCELLENT | Drizzle + Input sanitization |
 | A04: Insecure Design | ✓ GOOD | Security-first architecture |
 | A05: Security Misconfiguration | ⚠️ NEEDS IMPROVEMENT | Hardcoded secrets, dependency vulnerabilities |
 | A06: Vulnerable Components | ⚠️ NEEDS ATTENTION | NPM audit issues |

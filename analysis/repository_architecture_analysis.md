@@ -161,7 +161,7 @@ The root `package.json` includes:
 
 **API Server Dependencies:**
 - NestJS ecosystem
-- Database drivers (`@prisma/client`, `mongoose`, `pg`)
+- Database drivers (`@drizzle/client`, `mongoose`, `pg`)
 - Authentication (`@nestjs/jwt`, `passport`)
 - Web3 integration (`@web3auth/*`, `viem`)
 

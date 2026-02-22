@@ -574,7 +574,7 @@ Add to Railway environment variables:
 
 ```env
 # JWT Configuration
-JWT_SECRET=your-super-secret-key-change-in-production
+JWT_SECRET=your-[REDACTED_SECRET]-change-in-production
 JWT_EXPIRES_IN=1h
 
 # Database (if not already configured)

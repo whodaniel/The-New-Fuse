@@ -1,6 +1,6 @@
 /**
  * User Repository - Drizzle ORM Implementation
- * Migrated from Prisma to Drizzle using the Repository Pattern
+ * Migrated from Drizzle to Drizzle using the Repository Pattern
  */
 import { and, desc, eq, inArray, isNull, or } from 'drizzle-orm';
 import { db } from '../client';

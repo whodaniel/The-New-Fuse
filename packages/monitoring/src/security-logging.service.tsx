@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PrismaService } from '@the-new-fuse/database';
+import { DrizzleService } from '@the-new-fuse/database';
 
 export interface SecurityEvent {
   eventType: string;
@@ -26,7 +26,7 @@ export class SecurityLoggingService {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly prisma: PrismaService,
+    private readonly drizzle: DrizzleService,
   ) {
     const securityConfig = this.configService.get<Record<string, unknown>>('security.logging') || {};
     this.enabled = securityConfig.enabled !== false;
@@ -46,7 +46,7 @@ export class SecurityLoggingService {
     try {
       const normalizedEvent = this.normalizeEvent(event);
 
-      await this.prisma.securityEvent.create({
+      await this.drizzle.securityEvent.create({
         data: {
           eventType: normalizedEvent.eventType,
           userId: normalizedEvent.userId,
@@ -232,13 +232,13 @@ export class SecurityLoggingService {
       }
 
       const [events, total] = await Promise.all([
-        this.prisma.securityEvent.findMany({
+        this.drizzle.securityEvent.findMany({
           where,
           orderBy: { timestamp: 'desc' },
           skip: (page - 1) * limit,
           take: limit,
         }),
-        this.prisma.securityEvent.count({ where }),
+        this.drizzle.securityEvent.count({ where }),
       ]);
 
       const parsedEvents = events.map(event => ({

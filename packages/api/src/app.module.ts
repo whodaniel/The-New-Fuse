@@ -22,7 +22,7 @@ import { AppConfigService } from './services/app-config.service';
 import { DatabaseService } from './services/database.service';
 import { EventService } from './services/event.service';
 import { HealthService } from './services/health.service';
-// import { PrismaService } from './services/prisma.service';
+// import { DrizzleService } from './services/drizzle.service';
 
 @Module({
   imports: [

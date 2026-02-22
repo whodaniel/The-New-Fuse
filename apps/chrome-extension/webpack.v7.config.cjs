@@ -1,5 +1,8 @@
 /**
- * Fuse Connect v6 - Webpack Configuration
+ * Fuse Connect v7 - Webpack Configuration
+ *
+ * Note: source-of-truth code currently lives under `src/v6`.
+ * This config builds the v7 artifact (`dist-v7`) from that source.
  */
 const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
@@ -13,20 +16,21 @@ module.exports = (env, argv) => {
     devtool: isProduction ? 'source-map' : 'cheap-module-source-map',
 
     entry: {
-      'background/index': './src/v7/background/index.ts',
-      'content/index': './src/v7/content/index.ts',
-      'popup/popup': './src/v7/popup/popup.js',
+      'background/index': './src/v6/background/index.ts',
+      'content/index': './src/v6/content/index.ts',
+      'popup/popup': './src/v6/popup/popup.js',
       // AI Studio integrations
-      'content/ai-studio-automation': './src/v7/content/ai-studio/ai-studio.js',
-      'content/youtube-integration': './src/v7/content/ai-studio/youtube.js',
-      'content/notebooklm-integration': './src/v7/content/ai-studio/notebooklm.js',
-      'content/iframe-bridge': './src/v7/content/ai-studio/iframe-bridge.js',
+      'content/ai-studio-automation': './src/v6/content/ai-studio/ai-studio.js',
+      'content/youtube-integration': './src/v6/content/ai-studio/youtube.js',
+      'content/notebooklm-integration': './src/v6/content/ai-studio/notebooklm.js',
+      'content/iframe-bridge': './src/v6/content/ai-studio/iframe-bridge.js',
     },
 
     output: {
       path: path.resolve(__dirname, 'dist-v7'),
       filename: '[name].js',
       clean: true,
+      pathinfo: false,
     },
 
     resolve: {
@@ -65,11 +69,11 @@ module.exports = (env, argv) => {
       }),
       new CopyPlugin({
         patterns: [
-          { from: './src/v7/manifest.json', to: 'manifest.json' },
-          { from: './src/v7/popup/index.html', to: 'popup/index.html' },
-          { from: './src/v7/popup/popup.css', to: 'popup/popup.css' },
+          { from: './src/v6/manifest.json', to: 'manifest.json' },
+          { from: './src/v6/popup/index.html', to: 'popup/index.html' },
+          { from: './src/v6/popup/popup.css', to: 'popup/popup.css' },
           { from: './assets/icons', to: 'icons', noErrorOnMissing: true },
-          { from: './src/v7/native-host', to: 'native-host', noErrorOnMissing: true },
+          { from: './src/v6/native-host', to: 'native-host', noErrorOnMissing: true },
         ],
       }),
       // Polyfill Buffer and process
@@ -80,7 +84,7 @@ module.exports = (env, argv) => {
     ],
 
     optimization: {
-      minimize: false,
+      minimize: true,
     },
   };
 };

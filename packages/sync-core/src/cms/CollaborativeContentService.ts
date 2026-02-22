@@ -6,7 +6,7 @@
  * security and audit trails through existing authentication systems.
  */
 
-import { PrismaClient, User, UserRole } from '@the-new-fuse/database/generated/prisma';
+import { DrizzleClient, User, UserRole } from '@the-new-fuse/database/generated/drizzle';
 import { RedisService } from '../config/SyncRedisConfig';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
 import { 
@@ -22,16 +22,16 @@ import {
 } from './types';
 
 export class CollaborativeContentService {
-  private prisma: PrismaClient;
+  private drizzle: DrizzleClient;
   private redis: RedisService;
   private syncOrchestrator: SyncOrchestrator;
 
   constructor(
-    prisma: PrismaClient,
+    drizzle: DrizzleClient,
     redis: RedisService,
     syncOrchestrator: SyncOrchestrator
   ) {
-    this.prisma = prisma;
+    this.drizzle = drizzle;
     this.redis = redis;
     this.syncOrchestrator = syncOrchestrator;
   }
@@ -51,7 +51,7 @@ export class CollaborativeContentService {
     await this.verifyOwnership(ownerId, contentId);
 
     // Verify target user exists and get their role
-    const targetUser = await this.prisma.user.findUnique({
+    const targetUser = await this.drizzle.user.findUnique({
       where: { id: targetUserId },
       select: { id: true, role: true, roles: true }
     });
@@ -128,7 +128,7 @@ export class CollaborativeContentService {
     await this.verifyProjectOwnership(ownerId, projectId);
 
     // Verify collaborator user exists
-    const collaboratorUser = await this.prisma.user.findUnique({
+    const collaboratorUser = await this.drizzle.user.findUnique({
       where: { id: collaboratorUserId },
       select: { id: true, role: true, roles: true }
     });
@@ -208,7 +208,7 @@ export class CollaborativeContentService {
     }
 
     // Get user's role for permission validation
-    const user = await this.prisma.user.findUnique({
+    const user = await this.drizzle.user.findUnique({
       where: { id: userId },
       select: { role: true, roles: true }
     });
@@ -402,7 +402,7 @@ export class CollaborativeContentService {
   // Private helper methods
 
   private async verifyOwnership(userId: string, contentId: string): Promise<void> {
-    const content = await this.prisma.$queryRaw<any[]>`
+    const content = await this.drizzle.$queryRaw<any[]>`
       SELECT owner_id FROM personal_content WHERE id = ${contentId}
     `;
 
@@ -412,7 +412,7 @@ export class CollaborativeContentService {
   }
 
   private async verifyProjectOwnership(userId: string, projectId: string): Promise<void> {
-    const project = await this.prisma.$queryRaw<any[]>`
+    const project = await this.drizzle.$queryRaw<any[]>`
       SELECT owner_id FROM project_configurations WHERE id = ${projectId}
     `;
 
@@ -456,7 +456,7 @@ export class CollaborativeContentService {
     collaboratorCurrentRole: UserRole
   ): Promise<void> {
     // Get owner's role
-    const owner = await this.prisma.user.findUnique({
+    const owner = await this.drizzle.user.findUnique({
       where: { id: ownerId },
       select: { role: true, roles: true }
     });
@@ -495,7 +495,7 @@ export class CollaborativeContentService {
   }
 
   private async storeSharingPermission(contentId: string, permission: SharingPermission): Promise<void> {
-    await this.prisma.$executeRaw`
+    await this.drizzle.$executeRaw`
       INSERT INTO content_sharing_permissions (
         content_id, user_id, role, permissions, granted_by, granted_at, expires_at
       ) VALUES (
@@ -512,7 +512,7 @@ export class CollaborativeContentService {
 
   private async updateContentSharingSettings(contentId: string, permission: SharingPermission): Promise<void> {
     // Update the content's sharing settings to include the new permission
-    await this.prisma.$executeRaw`
+    await this.drizzle.$executeRaw`
       UPDATE personal_content 
       SET sharing_settings = JSON_SET(
         COALESCE(sharing_settings, '{"isPublic": false, "allowedUsers": [], "allowedRoles": [], "permissions": []}'),
@@ -528,7 +528,7 @@ export class CollaborativeContentService {
   }
 
   private async addCollaboratorToProject(projectId: string, collaborator: Collaborator): Promise<void> {
-    await this.prisma.$executeRaw`
+    await this.drizzle.$executeRaw`
       UPDATE project_configurations 
       SET collaborators = JSON_ARRAY_APPEND(
         COALESCE(collaborators, '[]'),
@@ -565,7 +565,7 @@ export class CollaborativeContentService {
       whereClause += ` AND owner_id = '${filters.sharedBy}'`;
     }
 
-    const result = await this.prisma.$queryRaw<any[]>`
+    const result = await this.drizzle.$queryRaw<any[]>`
       SELECT pc.*, csp.permissions as shared_permissions
       FROM personal_content pc
       JOIN content_sharing_permissions csp ON pc.id = csp.content_id
@@ -593,7 +593,7 @@ export class CollaborativeContentService {
   }
 
   private async queryCollaborativeProjects(userId: string): Promise<ProjectConfiguration[]> {
-    const result = await this.prisma.$queryRaw<any[]>`
+    const result = await this.drizzle.$queryRaw<any[]>`
       SELECT * FROM project_configurations 
       WHERE JSON_EXTRACT(collaborators, '$[*].userId') LIKE '%${userId}%'
       AND deleted_at IS NULL
@@ -640,7 +640,7 @@ export class CollaborativeContentService {
   }
 
   private async getProjectForOwner(ownerId: string, projectId: string): Promise<ProjectConfiguration> {
-    const result = await this.prisma.$queryRaw<any[]>`
+    const result = await this.drizzle.$queryRaw<any[]>`
       SELECT * FROM project_configurations 
       WHERE id = ${projectId} AND owner_id = ${ownerId}
     `;
@@ -667,14 +667,14 @@ export class CollaborativeContentService {
   }
 
   private async removeSharingPermission(contentId: string, userId: string): Promise<void> {
-    await this.prisma.$executeRaw`
+    await this.drizzle.$executeRaw`
       DELETE FROM content_sharing_permissions 
       WHERE content_id = ${contentId} AND user_id = ${userId}
     `;
   }
 
   private async removeFromContentSharingSettings(contentId: string, userId: string): Promise<void> {
-    await this.prisma.$executeRaw`
+    await this.drizzle.$executeRaw`
       UPDATE personal_content 
       SET sharing_settings = JSON_REMOVE(
         sharing_settings,
@@ -685,7 +685,7 @@ export class CollaborativeContentService {
   }
 
   private async removeCollaboratorFromProject(projectId: string, userId: string): Promise<void> {
-    await this.prisma.$executeRaw`
+    await this.drizzle.$executeRaw`
       UPDATE project_configurations 
       SET collaborators = JSON_REMOVE(
         collaborators,
@@ -700,7 +700,7 @@ export class CollaborativeContentService {
     userId: string,
     permissions: Permission[]
   ): Promise<void> {
-    await this.prisma.$executeRaw`
+    await this.drizzle.$executeRaw`
       UPDATE project_configurations 
       SET collaborators = JSON_SET(
         collaborators,
@@ -800,7 +800,7 @@ export class CollaborativeContentService {
   private async emitCMSEvent(event: CMSEvent): Promise<void> {
     await this.redis.publish('cms_events', JSON.stringify(event));
     
-    await this.prisma.authEvent.create({
+    await this.drizzle.authEvent.create({
       data: {
         userId: event.userId,
         type: event.type,

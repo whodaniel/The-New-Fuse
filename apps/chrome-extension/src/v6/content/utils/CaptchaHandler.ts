@@ -1,5 +1,5 @@
 /**
- * Fuse Connect v6 - CAPTCHA Handler
+ * Fuse Connect v7 - CAPTCHA Handler
  *
  * Detects and attempts to handle common CAPTCHA challenges:
  * - reCAPTCHA v2/v3

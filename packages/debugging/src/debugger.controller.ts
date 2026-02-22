@@ -27,7 +27,7 @@ import { Observable, interval, map } from 'rxjs';
 import { JwtAuthGuard } from '../modules/auth/guards/jwt-auth.guard';
 import { PerformanceInterceptor } from '../interceptors/performance.interceptor';
 import { CurrentUser } from '../modules/decorators/current-user.decorator';
-import { User } from '@prisma/client';
+import { User } from '@drizzle/client';
 import {
   A2ADebuggerService,
   DebugSession,

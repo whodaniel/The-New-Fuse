@@ -12,7 +12,7 @@ import { FileChangeEvent } from '../types';
 export async function setupEnhancedFileWatcher() {
   // Initialize dependencies (these would come from your DI container)
   const redisConfig = new SyncRedisConfig(/* ConfigService instance */);
-  const dbService = new SyncDatabaseService(/* PrismaClient instance */);
+  const dbService = new SyncDatabaseService(/* DrizzleClient instance */);
   
   // Create the watcher instance
   const watcher = new EnhancedFileSystemWatcher(redisConfig, dbService);

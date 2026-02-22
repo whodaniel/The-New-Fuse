@@ -100,7 +100,7 @@ Agents: security-auditor → penetration-tester → synthesis
 | `frontend-specialist` | Frontend | "React", "UI", "components", "Next.js" |
 | `test-engineer` | Testing | "tests", "coverage", "TDD" |
 | `devops-engineer` | DevOps | "deploy", "CI/CD", "infrastructure" |
-| `database-architect` | Database | "schema", "Prisma", "migrations" |
+| `database-architect` | Database | "schema", "Drizzle", "migrations" |
 | `mobile-developer` | Mobile | "React Native", "Flutter", "mobile" |
 | `api-designer` | API Design | "REST", "GraphQL", "OpenAPI" |
 | `debugger` | Debugging | "bug", "error", "not working" |

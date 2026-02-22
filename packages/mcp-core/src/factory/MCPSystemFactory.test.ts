@@ -245,7 +245,7 @@ describe('MCPSystemFactory', () => {
     });
 
     it('should include database component when configured', () => {
-      // This would be tested with actual Prisma client
+      // This would be tested with actual Drizzle client
       const components = system.getComponents();
 
       // For now, database is not configured in test system

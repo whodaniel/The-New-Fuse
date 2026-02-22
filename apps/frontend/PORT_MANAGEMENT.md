@@ -11,7 +11,7 @@ The New Fuse uses standardized ports across all services to ensure consistent de
 | Frontend | 3000 | React development server (Vite) |
 | Backend API | 3001 | Express.js API server |
 | WebSocket | 3002 | Real-time communication |
-| Prisma Studio | 5555 | Database management UI |
+| Drizzle Studio | 5555 | Database management UI |
 | Preview | 4173 | Production preview build |
 
 ## Development Scripts

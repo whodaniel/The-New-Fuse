@@ -5,7 +5,7 @@
  * with existing user and tenant systems.
  */
 
-import { UserRole } from '@the-new-fuse/database/generated/prisma';
+import { UserRole } from '@the-new-fuse/database/generated/drizzle';
 
 export interface ContentItem {
   id: string;

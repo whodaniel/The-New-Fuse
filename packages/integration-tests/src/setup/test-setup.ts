@@ -11,7 +11,7 @@ import * as fs from 'fs-extra';
 
 export interface TestEnvironment {
   logger: Logger;
-  prisma: any;
+  drizzle: any;
   agentRegistry: MasterAgentRegistry;
   heartbeatService: HeartbeatMonitoringService;
   workflowEngine: any;
@@ -70,8 +70,8 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
   // Setup Logger
   const logger = new Logger('info', testDataDir);
 
-  // Setup Mock Prisma Client
-  const prisma = {
+  // Setup Mock Drizzle Client
+  const drizzle = {
     $connect: () => Promise.resolve(),
     $disconnect: () => Promise.resolve(),
     
@@ -205,9 +205,9 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
   };
 
   // Setup MasterAgentRegistry with enhanced mock methods
-  const masterRegistry = new MasterAgentRegistry(prisma, logger);
+  const masterRegistry = new MasterAgentRegistry(drizzle, logger);
 
-  // Override registerAgent to mock it completely since the real implementation has issues with mock prisma
+  // Override registerAgent to mock it completely since the real implementation has issues with mock drizzle
   masterRegistry.registerAgent = async (agentData: any) => {
     const agentId = `test_${agentData.name.toLowerCase().replace(/\s+/g, '_')}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const profile = {
@@ -952,13 +952,13 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
   const cleanup = async () => {
     await extensionManager.shutdown();
     heartbeatService.stop();
-    await prisma.$disconnect();
+    await drizzle.$disconnect();
     await fs.remove(testDataDir);
   };
 
   globalTestEnv = {
     logger,
-    prisma,
+    drizzle,
     agentRegistry: masterRegistry,
     heartbeatService,
     workflowEngine: workflowSystem,

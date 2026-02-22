@@ -49,7 +49,7 @@ graph TB
     subgraph "Existing Infrastructure"
         Redis[Redis Pub/Sub]
         WS[WebSocket Service]
-        DB[(Prisma Database)]
+        DB[(Drizzle Database)]
         SO[SyncOrchestrator]
     end
     
@@ -354,9 +354,9 @@ interface TaskNotificationRule {
 
 ### Database Integration
 
-The system extends the existing Prisma schema with sync tracking:
+The system extends the existing Drizzle schema with sync tracking:
 
-```prisma
+```drizzle
 model SyncState {
   id          String   @id @default(uuid())
   resourceType String
@@ -482,7 +482,7 @@ const retryPolicy = {
 
 - Failed sync operations are queued for retry
 - WebSocket disconnections trigger automatic reconnection
-- Database failures use existing Prisma retry patterns
+- Database failures use existing Drizzle retry patterns
 - Redis unavailability queues operations for later processing
 
 ## Performance Considerations
@@ -503,7 +503,7 @@ const retryPolicy = {
 
 - Horizontal scaling via Redis clustering
 - WebSocket connections distributed across instances
-- Database sharding support via existing Prisma patterns
+- Database sharding support via existing Drizzle patterns
 
 ## Security
 
@@ -563,7 +563,7 @@ const stats = await notificationService.getNotificationStats('user-123');
 
 1. **Database Migration**
    ```bash
-   npx prisma migrate dev --name add-sync-tables
+   npx drizzle migrate dev --name add-sync-tables
    ```
 
 2. **Service Integration**

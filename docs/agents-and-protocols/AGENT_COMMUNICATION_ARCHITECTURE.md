@@ -809,8 +809,8 @@ cp .env.example .env.local
 
 **3. Initialize Database**:
 ```bash
-pnpm prisma migrate deploy
-pnpm prisma generate
+pnpm drizzle migrate deploy
+pnpm drizzle generate
 ```
 
 **4. Start Redis**:

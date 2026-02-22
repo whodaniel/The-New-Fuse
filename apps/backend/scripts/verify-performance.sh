@@ -97,7 +97,7 @@ echo ""
 echo "2. Checking Database Migrations..."
 echo "-----------------------------------"
 
-if [ -f "../../packages/database/prisma/migrations/add_performance_indexes.sql" ]; then
+if [ -f "../../packages/database/drizzle/migrations/add_performance_indexes.sql" ]; then
     success "Database index migration exists"
 else
     error "Database index migration missing"
@@ -175,11 +175,11 @@ else
     warning "Users service may not use select() optimization"
 fi
 
-# Check Prisma service
-if grep -q "connection" src/prisma/prisma.service.ts 2>/dev/null; then
-    success "Prisma service has connection configuration"
+# Check Drizzle service
+if grep -q "connection" src/drizzle/drizzle.service.ts 2>/dev/null; then
+    success "Drizzle service has connection configuration"
 else
-    warning "Prisma service may need connection optimization"
+    warning "Drizzle service may need connection optimization"
 fi
 
 # Check Redis service
@@ -258,7 +258,7 @@ else
     echo -e "${GREEN}All checks passed! Performance optimizations are properly configured.${NC}"
     echo ""
     echo "Next steps:"
-    echo "1. Apply database indexes: psql \$DATABASE_URL -f ../../packages/database/prisma/migrations/add_performance_indexes.sql"
+    echo "1. Apply database indexes: psql \$DATABASE_URL -f ../../packages/database/drizzle/migrations/add_performance_indexes.sql"
     echo "2. Configure environment: cp .env.performance .env.local && edit .env.local"
     echo "3. Start the backend: npm run start:dev"
     echo "4. Run load tests: k6 run tests/load/k6-load-test.js"

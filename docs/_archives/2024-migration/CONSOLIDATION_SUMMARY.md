@@ -337,8 +337,8 @@ docs/
 scripts/
 ├── reset-database.sh
 ├── reset-db-simple.sh
-├── reset-prisma-db.sh
-└── reset-prisma-db-with-password.sh
+├── reset-drizzle-db.sh
+└── reset-drizzle-db-with-password.sh
 ```
 
 **After:**

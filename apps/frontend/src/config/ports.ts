@@ -17,7 +17,7 @@ export const STANDARD_PORTS = {
   // WebSocket server
   WEBSOCKET: 3002,
 
-  // Prisma Studio (database UI)
+  // Drizzle Studio (database UI)
   DATABASE_UI: 5555,
 
   // Additional services (reserved)

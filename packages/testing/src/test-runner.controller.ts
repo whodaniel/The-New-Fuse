@@ -25,7 +25,7 @@ import {
 // Mock guard and decorators since api-core services are not available
 class JwtAuthGuard {}
 
-// Mock Prisma User type
+// Mock Drizzle User type
 interface User {
   id: string;
   email?: string;

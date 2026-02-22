@@ -83,7 +83,7 @@
         ▼                     ▼                     ▼
 ┌───────────────┐    ┌────────────────┐    ┌──────────────┐
 │ Redis Pub/Sub │    │   WebSocket    │    │   Database   │
-│ - Channels    │    │   - Real-time  │    │   - Prisma   │
+│ - Channels    │    │   - Real-time  │    │   - Drizzle   │
 │ - Clustering  │    │   - Events     │    │   - Sync log │
 │ - TTL keys    │    │   - Broadcast  │    │   - Conflicts│
 └───────────────┘    └────────────────┘    └──────────────┘
@@ -257,7 +257,7 @@ TaskSyncService
 
 ### Sync State Tracking
 
-```prisma
+```drizzle
 model SyncState {
   id           String   @id @default(uuid())
   resourceType String

@@ -2,13 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EnhancedTaskManagementService, EnhancedTaskData } from './EnhancedTaskManagementService';
 import { TaskSynchronizationService } from './TaskSynchronizationService';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
-import { PrismaService } from '@the-new-fuse/database';
+import { DrizzleService } from '@the-new-fuse/database';
 
 describe('EnhancedTaskManagementService Integration', () => {
   let service: EnhancedTaskManagementService;
   let taskSyncService: jest.Mocked<TaskSynchronizationService>;
   let syncOrchestrator: jest.Mocked<SyncOrchestrator>;
-  let dbService: jest.Mocked<PrismaService>;
+  let dbService: jest.Mocked<DrizzleService>;
 
   beforeEach(async () => {
     // Create mocks
@@ -64,7 +64,7 @@ describe('EnhancedTaskManagementService Integration', () => {
           useValue: syncOrchestrator
         },
         {
-          provide: PrismaService,
+          provide: DrizzleService,
           useValue: dbService
         }
       ]

@@ -28,7 +28,7 @@ const mockHeartbeatService = {
   recordActivity: jest.fn(),
 };
 
-const mockPrisma = {
+const mockDrizzle = {
   workflow: {
     findUnique: jest.fn<any>(),
   },
@@ -93,11 +93,11 @@ describe('UnifiedWorkflowEngine', () => {
         metadata: {} as any
       };
 
-      mockPrisma.workflow.findUnique.mockResolvedValue(workflow);
-      mockPrisma.workflowExecution.create.mockResolvedValue({ id: 'exec-1' });
-      mockPrisma.workflowExecution.update.mockResolvedValue({ id: 'exec-1' });
+      mockDrizzle.workflow.findUnique.mockResolvedValue(workflow);
+      mockDrizzle.workflowExecution.create.mockResolvedValue({ id: 'exec-1' });
+      mockDrizzle.workflowExecution.update.mockResolvedValue({ id: 'exec-1' });
 
-      engine = new UnifiedWorkflowEngine(defaultConfig, mockPrisma, mockAgentRegistry, mockHeartbeatService, mockLogger);
+      engine = new UnifiedWorkflowEngine(defaultConfig, mockDrizzle, mockAgentRegistry, mockHeartbeatService, mockLogger);
 
       // Execute
       const executionId = await engine.executeWorkflow('wf-1');
@@ -114,14 +114,14 @@ describe('UnifiedWorkflowEngine', () => {
       }
 
       // Verify create called
-      expect(mockPrisma.workflowExecution.create).toHaveBeenCalled();
+      expect(mockDrizzle.workflowExecution.create).toHaveBeenCalled();
 
       // Verify update called (at least once for finalize, and once for each node completion)
       // Nodes: start, end. So 2 node completions + 1 finalize = 3 updates.
-      expect(mockPrisma.workflowExecution.update).toHaveBeenCalledTimes(3);
+      expect(mockDrizzle.workflowExecution.update).toHaveBeenCalledTimes(3);
 
       // Check the payload of one of the updates to see if nodeExecutions are present
-      const calls = mockPrisma.workflowExecution.update.mock.calls as any[];
+      const calls = mockDrizzle.workflowExecution.update.mock.calls as any[];
       const lastCall = calls[calls.length - 1]; // finalize
       expect(lastCall[0].data.status).toBe(WorkflowExecutionStatus.COMPLETED);
 
@@ -185,13 +185,13 @@ describe('UnifiedWorkflowEngine', () => {
         metadata: {} as any
       };
 
-      mockPrisma.workflowExecution.findMany.mockResolvedValue([{ id: 'exec-interrupted', status: WorkflowExecutionStatus.RUNNING }]);
-      mockPrisma.workflowExecution.findUnique.mockResolvedValue(interruptedExecution);
-      mockPrisma.workflow.findUnique.mockResolvedValue(workflow);
-      mockPrisma.workflowExecution.update.mockResolvedValue({ id: 'exec-interrupted' });
+      mockDrizzle.workflowExecution.findMany.mockResolvedValue([{ id: 'exec-interrupted', status: WorkflowExecutionStatus.RUNNING }]);
+      mockDrizzle.workflowExecution.findUnique.mockResolvedValue(interruptedExecution);
+      mockDrizzle.workflow.findUnique.mockResolvedValue(workflow);
+      mockDrizzle.workflowExecution.update.mockResolvedValue({ id: 'exec-interrupted' });
 
       // Initialize engine
-      engine = new UnifiedWorkflowEngine(defaultConfig, mockPrisma, mockAgentRegistry, mockHeartbeatService, mockLogger);
+      engine = new UnifiedWorkflowEngine(defaultConfig, mockDrizzle, mockAgentRegistry, mockHeartbeatService, mockLogger);
 
       // Give time for async recovery
       await new Promise(resolve => setTimeout(resolve, 100));
@@ -214,7 +214,7 @@ describe('UnifiedWorkflowEngine', () => {
       }
 
       // Verify that it completed 'step2' and updated DB
-      const updateCalls = mockPrisma.workflowExecution.update.mock.calls as any[];
+      const updateCalls = mockDrizzle.workflowExecution.update.mock.calls as any[];
       const completedCall = updateCalls.find((args: any) => args[0].data.status === WorkflowExecutionStatus.COMPLETED);
 
       expect(completedCall).toBeDefined();

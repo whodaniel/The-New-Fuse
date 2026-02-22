@@ -296,7 +296,7 @@ RentalMarketplace (Service Monetization)
 - **MasterAgentRegistry**: Triggers on-chain minting
 - **VCIssuanceService**: Verifiable credential issuance
 - **IPFS**: Metadata and legal contract storage
-- **Prisma Database**: Off-chain state management
+- **Drizzle Database**: Off-chain state management
 
 ## Deployment Guide
 

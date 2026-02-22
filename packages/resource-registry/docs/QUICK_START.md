@@ -292,13 +292,13 @@ psql $DATABASE_URL
 Reset and re-run migrations:
 
 ```bash
-npx prisma migrate reset
-npx prisma migrate dev
+npx drizzle migrate reset
+npx drizzle migrate dev
 ```
 
 ### TypeScript Errors
 
-Regenerate Prisma client:
+Regenerate Drizzle client:
 
 ```bash
 pnpm db:generate

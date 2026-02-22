@@ -63,7 +63,7 @@ efficiency, and resource loading strategies.
 
 **API Performance:**
 
-- **Multiple Database Adapters**: Both TypeORM and Prisma in use
+- **Multiple Database Adapters**: Both TypeORM and Drizzle in use
 - **No Query Result Caching**: Each request queries fresh data
 - **Synchronous Operations**: Blocking operations in service layer
 
@@ -244,10 +244,10 @@ build: {
 
 ### 6.1 Query Performance Issues
 
-**Current Prisma Schema Problems:**
+**Current Drizzle Schema Problems:**
 
-```prisma
-// apps/api/prisma/schema.prisma
+```drizzle
+// apps/api/drizzle/schema.drizzle
 model Transaction {
   id           String   @id @default(uuid())
   wallet       Wallet   @relation(fields: [walletId], references: [id])

@@ -1,6 +1,6 @@
 ---
 name: neon-postgres
-description: "Expert patterns for Neon serverless Postgres, branching, connection pooling, and Prisma/Drizzle integration Use when: neon database, serverless postgres, database branching, neon postgres, postgres serverless."
+description: "Expert patterns for Neon serverless Postgres, branching, connection pooling, and Drizzle/Drizzle integration Use when: neon database, serverless postgres, database branching, neon postgres, postgres serverless."
 source: vibeship-spawner-skills (Apache 2.0)
 ---
 
@@ -8,13 +8,13 @@ source: vibeship-spawner-skills (Apache 2.0)
 
 ## Patterns
 
-### Prisma with Neon Connection
+### Drizzle with Neon Connection
 
-Configure Prisma for Neon with connection pooling.
+Configure Drizzle for Neon with connection pooling.
 
 Use two connection strings:
-- DATABASE_URL: Pooled connection for Prisma Client
-- DIRECT_URL: Direct connection for Prisma Migrate
+- DATABASE_URL: Pooled connection for Drizzle Client
+- DIRECT_URL: Direct connection for Drizzle Migrate
 
 The pooled connection uses PgBouncer for up to 10K connections.
 Direct connection required for migrations (DDL operations).

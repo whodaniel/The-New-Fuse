@@ -15,7 +15,7 @@ This document provides a final summary of the automation work that has been done
 2. **Fixed Database Issues**
    - Fixed database migration issues
    - Added composite: true to database tsconfig.json
-   - Fixed Prisma schema issues
+   - Fixed Drizzle schema issues
 
 3. **Fixed Frontend Issues**
    - Fixed module resolution issues

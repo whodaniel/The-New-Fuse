@@ -73,7 +73,7 @@ Defines:
 - Session-aware (don't repeat nag in same session)
 
 **Examples:**
-- `database-verification` - Verify table/column names before Prisma queries
+- `database-verification` - Verify table/column names before Drizzle queries
 - `frontend-dev-guidelines` - Enforce React/TypeScript patterns
 
 **When to Use:**
@@ -243,7 +243,7 @@ Based on testing:
 **Usage:**
 ```typescript
 // @skip-validation
-import { PrismaService } from './prisma';
+import { DrizzleService } from './drizzle';
 // This file has been manually verified
 ```
 

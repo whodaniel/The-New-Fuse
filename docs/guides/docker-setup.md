@@ -388,7 +388,7 @@ const connection = {
 
 ## Next Steps
 
-1. **Database Migrations**: Set up Prisma migrations for schema management
+1. **Database Migrations**: Set up Drizzle migrations for schema management
 2. **Redis Configuration**: Configure Redis for specific use cases (caching, sessions, queues)
 3. **Monitoring**: Add Grafana/Prometheus for production monitoring
 4. **Backup Strategy**: Implement automated backup workflows

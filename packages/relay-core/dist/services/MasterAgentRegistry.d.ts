@@ -2,7 +2,7 @@
  * Master Agent Registry - Single Source of Truth
  *
  * This is THE central nervous system for all agents in The New Fuse framework.
- * Integrates with existing Prisma database, AgentRegistry, and TaskService.
+ * Integrates with existing Drizzle database, AgentRegistry, and TaskService.
  * Every agent must register here and maintain state through this system.
  */
 import { EventEmitter } from 'events';
@@ -153,7 +153,7 @@ export interface SpreadsheetIntegration {
 }
 export declare class MasterAgentRegistry extends EventEmitter {
     private logger;
-    private prisma;
+    private drizzle;
     private legacyRegistry;
     private metadataManager;
     private agentProfiles;
@@ -168,7 +168,7 @@ export declare class MasterAgentRegistry extends EventEmitter {
     private agentNFTContract;
     private web3Provider;
     private wallet;
-    constructor(prisma: any, logger: Logger, blockchainConfig?: BlockchainConfig, vcPrivateKey?: string);
+    constructor(drizzle: any, logger: Logger, blockchainConfig?: BlockchainConfig, vcPrivateKey?: string);
     /**
      * MASTER AGENT REGISTRATION - THE SINGLE ENTRY POINT
      * ALL AGENTS MUST GO THROUGH THIS PROCESS

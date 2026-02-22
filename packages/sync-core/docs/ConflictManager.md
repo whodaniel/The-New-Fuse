@@ -1,6 +1,6 @@
 # ConflictManager
 
-The ConflictManager is a core service in the multi-tenant chokidar synchronization system that handles synchronization conflicts using existing database transaction patterns. It integrates seamlessly with the existing Prisma database infrastructure and audit logging system.
+The ConflictManager is a core service in the multi-tenant chokidar synchronization system that handles synchronization conflicts using existing database transaction patterns. It integrates seamlessly with the existing Drizzle database infrastructure and audit logging system.
 
 ## Overview
 
@@ -14,12 +14,12 @@ The ConflictManager extends the BaseErrorHandler from the core-error-handling pa
 - **Tenant Isolation**: Maintains strict tenant boundaries during conflict resolution
 - **Audit Logging**: Integrates with existing AuthEvent table for comprehensive audit trails
 - **Error Handling**: Built-in error handling with retry mechanisms and recovery strategies
-- **Database Transactions**: Uses existing Prisma transaction patterns for data consistency
+- **Database Transactions**: Uses existing Drizzle transaction patterns for data consistency
 
 ## Architecture Integration
 
 ### Database Integration
-- Uses existing `PrismaClient` for database operations
+- Uses existing `DrizzleClient` for database operations
 - Integrates with `SyncDatabaseService` for sync-specific operations
 - Leverages existing `SyncState` and `SyncConflict` models
 - Uses database transactions to ensure consistency
@@ -42,14 +42,14 @@ The ConflictManager extends the BaseErrorHandler from the core-error-handling pa
 ```typescript
 import { ConflictManager } from '@the-new-fuse/sync-core';
 import { SyncDatabaseService } from '@the-new-fuse/sync-core';
-import { PrismaClient } from '@the-new-fuse/database';
+import { DrizzleClient } from '@the-new-fuse/database';
 
 // Initialize dependencies
-const prisma = new PrismaClient();
-const syncDb = new SyncDatabaseService(prisma);
+const drizzle = new DrizzleClient();
+const syncDb = new SyncDatabaseService(drizzle);
 
 // Create ConflictManager instance
-const conflictManager = new ConflictManager(prisma, syncDb);
+const conflictManager = new ConflictManager(drizzle, syncDb);
 ```
 
 ### Conflict Detection
@@ -302,7 +302,7 @@ pnpm test ConflictManager.test.ts
 
 ### Service Configuration
 ```typescript
-const conflictManager = new ConflictManager(prisma, syncDb, {
+const conflictManager = new ConflictManager(drizzle, syncDb, {
   enableAutoRecovery: true,
   maxRecoveryAttempts: 3,
   statisticsInterval: 60000,
@@ -333,7 +333,7 @@ const conflictManager = new ConflictManager(prisma, syncDb, {
 ### Debug Logging
 Enable debug logging to troubleshoot issues:
 ```typescript
-const conflictManager = new ConflictManager(prisma, syncDb, {
+const conflictManager = new ConflictManager(drizzle, syncDb, {
   enableLogging: true,
   logLevel: 'debug'
 });

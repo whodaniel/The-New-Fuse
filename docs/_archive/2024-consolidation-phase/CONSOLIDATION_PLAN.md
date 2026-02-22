@@ -235,7 +235,7 @@ docs/
 - **Build scripts:** 14+ different build variations
 - **MCP scripts:** 5+ MCP setup/config scripts
 - **Cleanup scripts:** 6+ cleanup variations
-- **Database scripts:** 11+ database/Prisma scripts
+- **Database scripts:** 11+ database/Drizzle scripts
 
 ### Critical Issue: Script Location Chaos
 
@@ -391,7 +391,7 @@ Current: 12 launch variations
 
 **4. Database Scripts:**
 - **Keep (Consolidate to 4 scripts):**
-  - `database/reset.sh` (merge reset-database.sh, reset-db-simple.sh, reset-prisma-db.sh, reset-prisma-db-with-password.sh)
+  - `database/reset.sh` (merge reset-database.sh, reset-db-simple.sh, reset-drizzle-db.sh, reset-drizzle-db-with-password.sh)
   - `database/migrate.sh`
   - `database/seed.sh`
   - `database/init.sql/` (directory)
@@ -572,7 +572,7 @@ Scripts are moved here when:
 
 #### Database Scripts
 - `reset-database.sh` → Use `scripts/database/reset.sh`
-- `reset-prisma-db*.sh` → Use `scripts/database/reset.sh`
+- `reset-drizzle-db*.sh` → Use `scripts/database/reset.sh`
 
 #### Fix Scripts
 - `fix-*.sh` → These were one-time fixes. See individual script for context.
@@ -868,8 +868,8 @@ If you need functionality from a deprecated script:
 |--------|-------------|-------|
 | `scripts/reset-database.sh` | Base for consolidated | Merge |
 | `scripts/reset-db-simple.sh` | Merge to reset.sh | Merge |
-| `scripts/reset-prisma-db.sh` | Merge to reset.sh | Merge |
-| `scripts/reset-prisma-db-with-password.sh` | Merge to reset.sh | Merge |
+| `scripts/reset-drizzle-db.sh` | Merge to reset.sh | Merge |
+| `scripts/reset-drizzle-db-with-password.sh` | Merge to reset.sh | Merge |
 | Consolidated output | `scripts/database/reset.sh` | Create |
 | Existing | `scripts/database/` (other files) | Keep |
 

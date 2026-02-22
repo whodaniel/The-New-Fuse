@@ -89,7 +89,7 @@ export class TemplateManager {
     }
 
     try {
-      await (this as any).(databaseService as any).prisma.$transaction(async (tx)  = this.getTemplate(): Promise<void> {id);
+      await (this as any).(databaseService as any).drizzle.$transaction(async (tx)  = this.getTemplate(): Promise<void> {id);
     if (!original> {
         await this.updateTemplate(id, updates);
         await (tx as any).(template as any).update({
@@ -114,7 +114,7 @@ export class TemplateManager {
       await this.saveTemplates();
       
       // Also delete from database
-      await this.databaseService.(prisma as any).(template as any).delete({
+      await this.databaseService.(drizzle as any).(template as any).delete({
         where: { id },
       });
     } catch (error: unknown){

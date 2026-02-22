@@ -154,8 +154,8 @@ PORT=3003
 DATABASE_URL=${{Postgres.DATABASE_URL}}
 REDIS_URL=${{Redis.REDIS_URL}}
 
-# Prisma
-PRISMA_HIDE_UPDATE_MESSAGE=true
+# Drizzle
+DRIZZLE_HIDE_UPDATE_MESSAGE=true
 
 # API Gateway
 API_GATEWAY_URL=https://api-gateway-production-XXXX.up.railway.app

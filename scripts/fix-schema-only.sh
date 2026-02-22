@@ -4,14 +4,14 @@ set -e
 echo "🔧 Fixing database schema issues (without backup)"
 
 # 1. Determine which schema to use
-if [ -f "packages/database/prisma/schema.prisma" ]; then
-  echo "Using consolidated schema at packages/database/prisma/schema.prisma"
-  SCHEMA_PATH="packages/database/prisma/schema.prisma"
-  PRISMA_CMD="yarn workspace @the-new-fuse/database prisma"
+if [ -f "packages/database/drizzle/schema.drizzle" ]; then
+  echo "Using consolidated schema at packages/database/drizzle/schema.drizzle"
+  SCHEMA_PATH="packages/database/drizzle/schema.drizzle"
+  DRIZZLE_CMD="yarn workspace @the-new-fuse/database drizzle"
 else
-  echo "Using root schema at prisma/schema.prisma"
-  SCHEMA_PATH="prisma/schema.prisma"
-  PRISMA_CMD="yarn prisma"
+  echo "Using root schema at drizzle/schema.drizzle"
+  SCHEMA_PATH="drizzle/schema.drizzle"
+  DRIZZLE_CMD="yarn drizzle"
 fi
 
 # 2. Check for .env file and create if it doesn't exist
@@ -49,8 +49,8 @@ export PGPASSWORD="$DB_PASSWORD"
 if [ ! -f "./scripts/migration-recovery.sql" ]; then
   echo "Creating migration recovery SQL..."
   cat > ./scripts/migration-recovery.sql << EOF
--- Drop the _prisma_migrations table to start fresh
-DROP TABLE IF EXISTS _prisma_migrations;
+-- Drop the _drizzle_migrations table to start fresh
+DROP TABLE IF EXISTS _drizzle_migrations;
 
 -- Drop the enum type that might be causing issues
 DROP TYPE IF EXISTS "Role_new";
@@ -93,35 +93,35 @@ enum Role {\
   echo "✅ Updated Role enum in $SCHEMA_PATH"
 fi
 
-# 9. Generate Prisma client
-echo "📦 Generating Prisma client..."
-$PRISMA_CMD generate
+# 9. Generate Drizzle client
+echo "📦 Generating Drizzle client..."
+$DRIZZLE_CMD generate
 
-# 10. Test database connection using Prisma
-echo "🔌 Testing database connection with Prisma..."
-$PRISMA_CMD db pull
+# 10. Test database connection using Drizzle
+echo "🔌 Testing database connection with Drizzle..."
+$DRIZZLE_CMD db pull
 
 # 11. Verify model accessibility
 echo "🧪 Testing model accessibility..."
 TEST_FILE="test-models.ts"
 
 cat << EOF > $TEST_FILE
-import { PrismaClient } from '@the-new-fuse/database/client'
-const prisma = new PrismaClient()
+import { DrizzleClient } from '@the-new-fuse/database/client'
+const drizzle = new DrizzleClient()
 
 async function testModels() {
     try {
-        await prisma.\$connect()
+        await drizzle.\$connect()
         // Test a few key models
-        await prisma.user.findMany({ take: 1 })
-        await prisma.agent.findMany({ take: 1 })
-        await prisma.feature.findMany({ take: 1 })
+        await drizzle.user.findMany({ take: 1 })
+        await drizzle.agent.findMany({ take: 1 })
+        await drizzle.feature.findMany({ take: 1 })
         console.log('✅ All models accessible')
     } catch (error) {
         console.error('❌ Model access failed:', error)
         process.exit(1)
     } finally {
-        await prisma.\$disconnect()
+        await drizzle.\$disconnect()
     }
 }
 

@@ -169,7 +169,7 @@ export RUN_TESTS="true"
 ./scripts/deployment/db-migrate.sh
 
 # 3. Verify
-pnpm prisma migrate status
+pnpm drizzle migrate status
 ```
 
 ### Health Check Only
@@ -251,10 +251,10 @@ cat .deployment-state/api-gateway-state.json | jq .
 
 ```bash
 # Check connection
-pnpm prisma db execute --stdin <<< "SELECT 1;"
+pnpm drizzle db execute --stdin <<< "SELECT 1;"
 
 # Migration status
-pnpm prisma migrate status
+pnpm drizzle migrate status
 
 # List backups
 ls -lh backups/database/

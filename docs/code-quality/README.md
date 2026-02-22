@@ -163,7 +163,7 @@ When you save a file:
 ### Optional Extensions
 
 - Tailwind CSS
-- Prisma
+- Drizzle
 - Jest
 - TypeScript
 

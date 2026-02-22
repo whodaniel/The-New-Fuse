@@ -43,7 +43,7 @@ var VerificationMethod;
  * VCIssuanceService - Handles Verifiable Credential lifecycle
  */
 class VCIssuanceService extends events_1.EventEmitter {
-    prisma;
+    drizzle;
     logger;
     blockchainService = null;
     trustedIssuers = new Map();
@@ -61,9 +61,9 @@ class VCIssuanceService extends events_1.EventEmitter {
         requireMultipleVerifiers: true,
         minTrustLevel: 7
     };
-    constructor(prisma, logger, privateKey) {
+    constructor(drizzle, logger, privateKey) {
         super();
-        this.prisma = prisma;
+        this.drizzle = drizzle;
         this.logger = logger;
         // Initialize blockchain service for cryptographic operations
         if (privateKey) {
@@ -88,7 +88,7 @@ class VCIssuanceService extends events_1.EventEmitter {
         try {
             this.logger.info(`Issuing credential for agent: ${request.agentId}`);
             // Verify the agent exists
-            const agent = await this.prisma.agent.findUnique({
+            const agent = await this.drizzle.agent.findUnique({
                 where: { id: request.agentId },
                 include: { metadata: true }
             });
@@ -280,7 +280,7 @@ class VCIssuanceService extends events_1.EventEmitter {
      */
     async assessCapabilityPerformance(agentId, capability) {
         // Query task history for capability-related tasks
-        const tasks = await this.prisma.task.findMany({
+        const tasks = await this.drizzle.task.findMany({
             where: {
                 agentId: agentId,
                 status: 'COMPLETED',
@@ -361,7 +361,7 @@ class VCIssuanceService extends events_1.EventEmitter {
      * Generate comprehensive performance metrics for an agent
      */
     async generatePerformanceMetrics(agentId) {
-        const tasks = await this.prisma.task.findMany({
+        const tasks = await this.drizzle.task.findMany({
             where: { agentId: agentId },
             orderBy: { createdAt: 'desc' },
             take: 1000 // Last 1000 tasks for comprehensive analysis
@@ -414,7 +414,7 @@ class VCIssuanceService extends events_1.EventEmitter {
         // In a real implementation, this would query an achievements database
         // For now, we'll generate sample achievements based on task history
         const achievements = [];
-        const taskCount = await this.prisma.task.count({
+        const taskCount = await this.drizzle.task.count({
             where: { agentId: agentId, status: 'COMPLETED' }
         });
         if (taskCount >= 100) {
@@ -447,7 +447,7 @@ class VCIssuanceService extends events_1.EventEmitter {
     async getVerifiedSkills(agentId) {
         // This would typically integrate with skill assessment systems
         // For now, return basic skills based on agent metadata
-        const agent = await this.prisma.agent.findUnique({
+        const agent = await this.drizzle.agent.findUnique({
             where: { id: agentId },
             select: { capabilities: true, metadata: true }
         });

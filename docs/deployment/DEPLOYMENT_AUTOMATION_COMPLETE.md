@@ -25,7 +25,7 @@ Comprehensive pre-deployment checks including:
 - Railway CLI authentication
 - Security configuration
 - TypeScript configuration
-- Prisma schema validation
+- Drizzle schema validation
 
 **Usage**:
 

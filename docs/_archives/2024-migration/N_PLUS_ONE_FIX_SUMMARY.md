@@ -65,7 +65,7 @@ const assessments = await findAll();
 const byCategory = assessments.filter(a => a.category === category);
 
 // AFTER: SQL aggregations
-const categoryStats = await prisma.selfAssessment.groupBy({
+const categoryStats = await drizzle.selfAssessment.groupBy({
   by: ['category'],
   _avg: { overallScore: true },
 });
@@ -102,8 +102,8 @@ node scripts/verify-n-plus-one-fixes.js
 ### 📋 Manual Setup
 ```bash
 # 1. Apply database migrations
-psql -d your_database -f prisma/migrations/20241105_create_migration_log.sql
-psql -d your_database -f prisma/migrations/20241105_optimize_self_prompting_system.sql
+psql -d your_database -f drizzle/migrations/20241105_create_migration_log.sql
+psql -d your_database -f drizzle/migrations/20241105_optimize_self_prompting_system.sql
 
 # 2. Update service imports
 # Replace:

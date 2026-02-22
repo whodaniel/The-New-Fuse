@@ -7,19 +7,19 @@ This document provides a comprehensive guide for resolving the critical issues i
 ### Issues Identified
 
 - Syntax errors in database configuration files
-- Inconsistent database configuration approaches (Prisma and TypeORM)
+- Inconsistent database configuration approaches (Drizzle and TypeORM)
 - Missing or incorrect database connection parameters
 
 ### Resolution Steps
 
 1. **Fixed Syntax Errors**:
    - Corrected syntax in `src/core/database/database.config.ts`
-   - Fixed the `getPrismaConfig` method to properly structure the configuration object
+   - Fixed the `getDrizzleConfig` method to properly structure the configuration object
    - Corrected the TypeORM configuration in `src/database/database.module.ts`
 
 2. **Standardized Database Configuration**:
    - Created a comprehensive `DatabaseConfigService` in `packages/database/src/config/database.config.ts`
-   - Implemented methods for both Prisma and TypeORM configurations
+   - Implemented methods for both Drizzle and TypeORM configurations
    - Added proper error handling and logging
 
 3. **Improved Connection Management**:

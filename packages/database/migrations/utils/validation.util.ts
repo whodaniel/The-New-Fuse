@@ -234,10 +234,10 @@ export function validateEthereumAddress(address: string): boolean {
  * Validate workflow graph for cycles
  */
 export async function detectWorkflowCycles(
-  prisma: any,
+  drizzle: any,
   workflowId: string
 ): Promise<{ hasCycle: boolean; cyclePath?: string[] }> {
-  const steps = await prisma.workflowStep.findMany({
+  const steps = await drizzle.workflowStep.findMany({
     where: { workflowId },
     include: { nextStepEdges: true },
   });
@@ -283,7 +283,7 @@ export async function detectWorkflowCycles(
  * Validate data integrity for migration
  */
 export async function validateMigration(
-  prisma: any,
+  drizzle: any,
   checks: {
     name: string;
     query: () => Promise<any>;

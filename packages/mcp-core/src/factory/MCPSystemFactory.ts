@@ -8,7 +8,7 @@
 import { MCPServer } from '../server/MCPServer';
 import { MCPServerConfig } from '../types/server';
 import { LogLevel } from '../types/common';
-// import { PrismaClient } from '@prisma/client';
+// import { DrizzleClient } from '@drizzle/client';
 
 // Import types from relay-core for integration
 type Logger = {
@@ -30,7 +30,7 @@ export interface MCPSystemConfig {
   
   /** Database configuration */
   database?: {
-    prisma?: any; // PrismaClient;
+    drizzle?: any; // DrizzleClient;
     connectionString?: string;
   };
   
@@ -148,7 +148,7 @@ export interface SystemMetrics {
  */
 export interface SystemComponents {
   server: MCPServer;
-  database?: any; // PrismaClient;
+  database?: any; // DrizzleClient;
   relay?: {
     agentRegistry?: MasterAgentRegistry;
     heartbeatService?: HeartbeatMonitoringService;
@@ -182,8 +182,8 @@ class MCPSystemImpl implements MCPSystem {
    */
   private initializeComponents(): void {
     // Initialize database if configured
-    if (this.config.database?.prisma) {
-      this.components.database = this.config.database.prisma;
+    if (this.config.database?.drizzle) {
+      this.components.database = this.config.database.drizzle;
     }
     
     // Initialize relay components if configured

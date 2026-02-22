@@ -1067,17 +1067,17 @@ class WeatherAgent implements Agent {
 ### Database Integration
 
 ```typescript
-import { PrismaClient } from '@prisma/client';
+import { DrizzleClient } from '@drizzle/client';
 
 class DatabaseAgent implements Agent {
   id: string = 'database-agent';
   name: string = 'Database Agent';
   description: string = 'Provides database access capabilities';
   
-  private prisma: PrismaClient;
+  private drizzle: DrizzleClient;
   
   constructor() {
-    this.prisma = new PrismaClient();
+    this.drizzle = new DrizzleClient();
   }
   
   // Handle database query request
@@ -1089,7 +1089,7 @@ class DatabaseAgent implements Agent {
       this.validateTableAccess(table);
       
       // Execute query
-      const results = await this.prisma[table].findMany({
+      const results = await this.drizzle[table].findMany({
         where: filter,
         select: this.buildSelectObject(fields),
         take: limit || 100

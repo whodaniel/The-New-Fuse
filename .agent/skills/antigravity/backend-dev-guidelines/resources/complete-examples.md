@@ -262,41 +262,41 @@ export default router;
 
 ```typescript
 // repositories/UserRepository.ts
-import { PrismaService } from '@project-lifecycle-portal/database';
-import type { User, Prisma } from '@prisma/client';
+import { DrizzleService } from '@project-lifecycle-portal/database';
+import type { User, Drizzle } from '@drizzle/client';
 
 export class UserRepository {
     async findById(id: string): Promise<User | null> {
-        return PrismaService.main.user.findUnique({
+        return DrizzleService.main.user.findUnique({
             where: { id },
             include: { profile: true },
         });
     }
 
     async findByEmail(email: string): Promise<User | null> {
-        return PrismaService.main.user.findUnique({
+        return DrizzleService.main.user.findUnique({
             where: { email },
             include: { profile: true },
         });
     }
 
     async findActive(): Promise<User[]> {
-        return PrismaService.main.user.findMany({
+        return DrizzleService.main.user.findMany({
             where: { isActive: true },
             include: { profile: true },
             orderBy: { createdAt: 'desc' },
         });
     }
 
-    async create(data: Prisma.UserCreateInput): Promise<User> {
-        return PrismaService.main.user.create({
+    async create(data: Drizzle.UserCreateInput): Promise<User> {
+        return DrizzleService.main.user.create({
             data,
             include: { profile: true },
         });
     }
 
-    async update(id: string, data: Prisma.UserUpdateInput): Promise<User> {
-        return PrismaService.main.user.update({
+    async update(id: string, data: Drizzle.UserUpdateInput): Promise<User> {
+        return DrizzleService.main.user.update({
             where: { id },
             data,
             include: { profile: true },
@@ -305,7 +305,7 @@ export class UserRepository {
 
     async delete(id: string): Promise<User> {
         // Soft delete
-        return PrismaService.main.user.update({
+        return DrizzleService.main.user.update({
             where: { id },
             data: {
                 isActive: false,
@@ -512,14 +512,14 @@ export const updateUserSchema = z.object({
 // repositories/UserRepository.ts
 export class UserRepository {
     async findById(id: string): Promise<User | null> {
-        return PrismaService.main.user.findUnique({
+        return DrizzleService.main.user.findUnique({
             where: { id },
             include: { profile: true },
         });
     }
 
-    async create(data: Prisma.UserCreateInput): Promise<User> {
-        return PrismaService.main.user.create({
+    async create(data: Drizzle.UserCreateInput): Promise<User> {
+        return DrizzleService.main.user.create({
             data,
             include: { profile: true },
         });
@@ -620,7 +620,7 @@ Checks business rules
   ↓
 userRepository.create called
   ↓
-Prisma creates user
+Drizzle creates user
   ↓
 Returns up the chain
   ↓

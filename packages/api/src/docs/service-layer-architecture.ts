@@ -18,7 +18,7 @@
  * 
  * ## Core Services
  * 
- * - `PrismaService`: Manages database connections and provides the Prisma client
+ * - `DrizzleService`: Manages database connections and provides the Drizzle client
  * - `AppConfigService`: Centralizes access to application configuration
  * - `EventService`: Provides application-wide event handling
  * - `HealthService`: Monitors application health and dependencies

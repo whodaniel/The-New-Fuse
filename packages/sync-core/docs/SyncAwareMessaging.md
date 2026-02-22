@@ -50,7 +50,7 @@ graph TB
     subgraph "Existing Infrastructure"
         AWS[AgentWebSocketService]
         Redis[Redis Pub/Sub]
-        DB[(Prisma Database)]
+        DB[(Drizzle Database)]
     end
     
     A --> SMS
@@ -530,7 +530,7 @@ const conflictKey = keyPatterns.globalSync.conflicts;
 
 ### Database Integration
 
-Integrates with existing Prisma database models:
+Integrates with existing Drizzle database models:
 
 ```typescript
 // Uses existing Agent, Task, Workflow models

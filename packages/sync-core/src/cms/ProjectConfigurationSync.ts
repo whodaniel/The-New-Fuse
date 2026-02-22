@@ -6,7 +6,7 @@
  * data isolation and security using existing tenant patterns.
  */
 
-import { PrismaClient, User, UserRole } from '@the-new-fuse/database/generated/prisma';
+import { DrizzleClient, User, UserRole } from '@the-new-fuse/database/generated/drizzle';
 import { RedisService } from '../config/SyncRedisConfig';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
 import { EnhancedFileSystemWatcher } from '../watchers/EnhancedFileSystemWatcher';
@@ -23,18 +23,18 @@ import { createHash } from 'crypto';
 import * as path from 'path';
 
 export class ProjectConfigurationSync {
-  private prisma: PrismaClient;
+  private drizzle: DrizzleClient;
   private redis: RedisService;
   private syncOrchestrator: SyncOrchestrator;
   private fileWatcher: EnhancedFileSystemWatcher;
 
   constructor(
-    prisma: PrismaClient,
+    drizzle: DrizzleClient,
     redis: RedisService,
     syncOrchestrator: SyncOrchestrator,
     fileWatcher: EnhancedFileSystemWatcher
   ) {
-    this.prisma = prisma;
+    this.drizzle = drizzle;
     this.redis = redis;
     this.syncOrchestrator = syncOrchestrator;
     this.fileWatcher = fileWatcher;
@@ -51,7 +51,7 @@ export class ProjectConfigurationSync {
     config: Omit<ProjectConfiguration, 'id' | 'ownerId' | 'createdAt' | 'updatedAt' | 'version'>
   ): Promise<ProjectConfiguration> {
     // Verify user exists and has appropriate permissions
-    const user = await this.prisma.user.findUnique({
+    const user = await this.drizzle.user.findUnique({
       where: { id: userId },
       select: { id: true, role: true, roles: true }
     });
@@ -335,7 +335,7 @@ export class ProjectConfigurationSync {
     }
 
     // Validate user has permission to create configurations at this privacy level
-    const user = await this.prisma.user.findUnique({
+    const user = await this.drizzle.user.findUnique({
       where: { id: userId },
       select: { role: true, roles: true }
     });
@@ -390,7 +390,7 @@ export class ProjectConfigurationSync {
   }
 
   private async storeProjectConfiguration(config: ProjectConfiguration): Promise<void> {
-    await this.prisma.$executeRaw`
+    await this.drizzle.$executeRaw`
       INSERT INTO project_configurations (
         id, name, description, config, owner_id, tenant_id, privacy,
         collaborators, sync_settings, created_at, updated_at, version
@@ -412,7 +412,7 @@ export class ProjectConfigurationSync {
   }
 
   private async retrieveProjectConfiguration(projectId: string, userId: string): Promise<ProjectConfiguration | null> {
-    const result = await this.prisma.$queryRaw<any[]>`
+    const result = await this.drizzle.$queryRaw<any[]>`
       SELECT * FROM project_configurations 
       WHERE id = ${projectId} 
       AND (
@@ -477,7 +477,7 @@ export class ProjectConfigurationSync {
       whereClause += ` AND privacy = '${filters.privacy}'`;
     }
 
-    const result = await this.prisma.$queryRaw<any[]>`
+    const result = await this.drizzle.$queryRaw<any[]>`
       SELECT * FROM project_configurations 
       WHERE ${whereClause}
       ORDER BY updated_at DESC
@@ -560,7 +560,7 @@ export class ProjectConfigurationSync {
     updates: Partial<ProjectConfiguration>,
     userId: string
   ): Promise<void> {
-    await this.prisma.syncConflict.create({
+    await this.drizzle.syncConflict.create({
       data: {
         resourceType: 'project_configuration',
         resourceId: existing.id,
@@ -690,7 +690,7 @@ export class ProjectConfigurationSync {
   }
 
   private async trackConfigurationAccess(userId: string, projectId: string): Promise<void> {
-    await this.prisma.authEvent.create({
+    await this.drizzle.authEvent.create({
       data: {
         userId,
         type: 'PROJECT_CONFIG_ACCESS',
@@ -706,7 +706,7 @@ export class ProjectConfigurationSync {
   private async emitCMSEvent(event: CMSEvent): Promise<void> {
     await this.redis.publish('cms_events', JSON.stringify(event));
     
-    await this.prisma.authEvent.create({
+    await this.drizzle.authEvent.create({
       data: {
         userId: event.userId,
         type: event.type,

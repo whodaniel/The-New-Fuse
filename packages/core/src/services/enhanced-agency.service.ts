@@ -71,7 +71,7 @@ export class EnhancedAgencyService {
   private providers = new Map<string, ProviderRegistration[]>();
 
   constructor(
-    // private readonly prisma: PrismaService, // removed
+    // private readonly drizzle: DrizzleService, // removed
     private readonly eventEmitter: EventEmitter2,
     private readonly agencyService: AgencyService,
     @Inject(forwardRef(() => AgentSwarmOrchestrationService))

@@ -4,14 +4,14 @@ set -e
 echo "🔧 Fixing missing relations in database schema"
 
 # 1. Determine which schema to use
-if [ -f "packages/database/prisma/schema.prisma" ]; then
-  echo "Using consolidated schema at packages/database/prisma/schema.prisma"
-  SCHEMA_PATH="packages/database/prisma/schema.prisma"
-  PRISMA_CMD="bun --filter @the-new-fuse/database run prisma"
+if [ -f "packages/database/drizzle/schema.drizzle" ]; then
+  echo "Using consolidated schema at packages/database/drizzle/schema.drizzle"
+  SCHEMA_PATH="packages/database/drizzle/schema.drizzle"
+  DRIZZLE_CMD="bun --filter @the-new-fuse/database run drizzle"
 else
-  echo "Using root schema at prisma/schema.prisma"
-  SCHEMA_PATH="prisma/schema.prisma"
-  PRISMA_CMD="pnpm run prisma"
+  echo "Using root schema at drizzle/schema.drizzle"
+  SCHEMA_PATH="drizzle/schema.drizzle"
+  DRIZZLE_CMD="pnpm run drizzle"
 fi
 
 # 2. First fix the Role enum issue if it exists
@@ -60,8 +60,8 @@ else
   else
     echo "Creating migration recovery SQL..."
     cat > ./scripts/migration-recovery.sql << EOF
--- Drop the _prisma_migrations table to start fresh
-DROP TABLE IF EXISTS _prisma_migrations;
+-- Drop the _drizzle_migrations table to start fresh
+DROP TABLE IF EXISTS _drizzle_migrations;
 
 -- Drop the enum type that might be causing issues
 DROP TYPE IF EXISTS "Role_new";
@@ -82,10 +82,10 @@ fi
 
 # 3. Create a new migration for missing relations
 echo "🆕 Creating a new migration for missing relations..."
-$PRISMA_CMD migrate dev --name add_missing_relations --create-only
+$DRIZZLE_CMD migrate dev --name add_missing_relations --create-only
 
 # 4. Edit the migration file to ensure it's compatible
-MIGRATION_DIR=$($PRISMA_CMD migrate info | grep add_missing_relations | awk '{print $2}')
+MIGRATION_DIR=$($DRIZZLE_CMD migrate info | grep add_missing_relations | awk '{print $2}')
 if [ -z "$MIGRATION_DIR" ]; then
   echo "❌ Could not find the migration directory"
   # Try to find it manually
@@ -110,37 +110,37 @@ sed -i.bak 's/DROP TYPE "Role_old"/-- DROP TYPE "Role_old"/g' "$MIGRATION_FILE"
 
 # 5. Apply the modified migration
 echo "🔄 Applying the modified migration..."
-$PRISMA_CMD migrate deploy
+$DRIZZLE_CMD migrate deploy
 
-# 6. Generate Prisma client
-echo "📦 Generating Prisma client..."
-$PRISMA_CMD generate
+# 6. Generate Drizzle client
+echo "📦 Generating Drizzle client..."
+$DRIZZLE_CMD generate
 
 # 7. Test database connection
 echo "🔌 Testing database connection..."
-$PRISMA_CMD db pull
+$DRIZZLE_CMD db pull
 
 # 8. Verify model accessibility
 echo "🧪 Testing model accessibility..."
 TEST_FILE="test-models.ts"
 
 cat << EOF > $TEST_FILE
-import { PrismaClient } from '@the-new-fuse/database/client'
-const prisma = new PrismaClient()
+import { DrizzleClient } from '@the-new-fuse/database/client'
+const drizzle = new DrizzleClient()
 
 async function testModels() {
     try {
-        await prisma.$connect()
+        await drizzle.$connect()
         // Test a few key models
-        await prisma.user.findMany({ take: 1 })
-        await prisma.agent.findMany({ take: 1 })
-        await prisma.feature.findMany({ take: 1 })
+        await drizzle.user.findMany({ take: 1 })
+        await drizzle.agent.findMany({ take: 1 })
+        await drizzle.feature.findMany({ take: 1 })
         console.log('✅ All models accessible')
     } catch (error) {
         console.error('❌ Model access failed:', error)
         process.exit(1)
     } finally {
-        await prisma.$disconnect()
+        await drizzle.$disconnect()
     }
 }
 

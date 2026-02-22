@@ -38,16 +38,16 @@ This document outlines the backup procedures for The New Fuse, covering database
    psql -h localhost -U postgres -d fuse < backup.sql
    ```
 
-### Prisma Schema Backup
+### Drizzle Schema Backup
 
-1. Keep Prisma migration files in version control:
+1. Keep Drizzle migration files in version control:
    ```bash
-   git add packages/database/prisma/migrations/*
+   git add packages/database/drizzle/migrations/*
    ```
 
 2. Backup schema file:
    ```bash
-   cp packages/database/prisma/schema.prisma schema.backup.prisma
+   cp packages/database/drizzle/schema.drizzle schema.backup.drizzle
    ```
 
 ### Recovery Testing

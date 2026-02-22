@@ -15,7 +15,7 @@ SECURITY_MIGRATION_GUIDE.md	13782	md	.	1767040145	8749074aca7e9d4bb6761e5139fbf4
 .gemini/MULTI_AGENT_ACTIVATION_PLAN.md	12758	md	.gemini	1766182778	602bf8bbd6d36dd121b3c25041b5aa7138d8c8a93c2bd1dd71db7f63fe0d189f	465
 .gemini/settings.json	42	json	.gemini	1766182778	fc1be3d45126c92ff37b06955adc1ac9daabfb1e1a4fc9f5ab8c68691e9aee7c	0
 .gemini/BUILD_PROCESS_HARDENING_CHANGELOG.md	7026	md	.gemini	1766182778	ff58c36051d2a2bd1531d5151bfbf38afe3d78af8cd6d93c29d5f41808117dfd	250
-.gemini/PRISMA_NAMESPACE_EXPORT_FIX.md	3288	md	.gemini	1766182778	dd1afc75895d76796e105e9302f518d346412ac10fb047afb582a7c6aa5d275f	113
+.gemini/DRIZZLE_NAMESPACE_EXPORT_FIX.md	3288	md	.gemini	1766182778	dd1afc75895d76796e105e9302f518d346412ac10fb047afb582a7c6aa5d275f	113
 .gemini/workflow-input-improvements.md	7022	md	.gemini	1766182778	48303696cdbcf41d25ad1a585496593db8ee8fdc43379c72e991e2c4cd5cbcd0	230
 .gemini/test-fixes-deployment-core.md	7092	md	.gemini	1766182778	b778a26cf6d8e57747e83fedde00bca607bfca9bbe2072becac06f75ecfecbff	257
 .gemini/production-readiness-audit.md	6091	md	.gemini	1766182778	51ad74e94c0f29558baaf8ed472f616405da335f3399b1e1e0a71ea885c1bebf	175
@@ -350,7 +350,7 @@ docs/AGENT_REDIS_COMMUNICATION.md	13559	md	docs	1766539093	279b9497eaa53f83bcf8a
 docs/PHASE1_UX_COMPLETE.md	5269	md	docs	1766182780	bab07b91234318558d9d7bf4820d69c257903ef96a8c310896f683ee0ff703fd	202
 docs/database/PHASE_4_TEST_PLAN.md	13268	md	docs/database	1767009601	47231298910c13962ccc62172d0980368364601f5a9598f40310e3ecbb346c1d	485
 docs/database/MIGRATION_COMPLETE_SUMMARY.md	10712	md	docs/database	1767009162	a893b94efa15a0f54262d7046bb399f3d38d3445866bd315dd1328f82caa3fec	303
-docs/database/PRISMA_TO_DRIZZLE_MIGRATION_PLAN.md	10072	md	docs/database	1767006814	57062d4fbdfad6232298fd73902f33611f00e4495407e85c84b395adb3dd41b6	351
+docs/database/DRIZZLE_TO_DRIZZLE_MIGRATION_PLAN.md	10072	md	docs/database	1767006814	57062d4fbdfad6232298fd73902f33611f00e4495407e85c84b395adb3dd41b6	351
 docs/database/development-guide.md	2185	md	docs/database	1766182781	d6ac8eb834bf601dcea81addb21585be4bc7ce386521030f68e89ebf92032d2c	71
 docs/database/database-migrations.md	4306	md	docs/database	1766182781	4b97502c52f4564f8418fa87ebe20619ce5a2f5ea148254c046236656fc62e82	139
 docs/database/MIGRATION_PROGRESS_REPORT.md	12789	md	docs/database	1767009080	07b29b346e5ef1f3115cdb2a8ba72c0d503810d707b7ff7d52d6fd9c4a165667	382
@@ -1367,7 +1367,7 @@ logs/.76e5aaeb28e010d4c3e49a6218291a322552cba3-audit.json	385	json	logs	17681089
 .jules/tasks/JULES_TASK_09_redis_agent_registry.md	1789	md	.jules/tasks	1766975169	4f59d4fc04766daf0a87d2644035e5a8f2aa10c737d7742f0dbbe82288e7ab20	43
 .jules/tasks/JULES_TASK_08_frontend_agent_dashboard.md	1724	md	.jules/tasks	1766975169	bc7cb75fe1a9d2400d4bc165f40191ea6061405bc80b51fcf952c88211b8bc4f	39
 .jules/tasks/JULES_TASK_14_code_quality_lint.md	1332	md	.jules/tasks	1766975169	4b716063ee9b8854f279d3a09d7a05b0815c919485e905950374935a5ccaa965	35
-.jules/tasks/JULES_TASK_05_core_prisma_migration.md	1857	md	.jules/tasks	1766975169	cfd8d41a38c35777130525d4cea7aef8bf8339ee8c9bd0a0902569bdf8af180c	42
+.jules/tasks/JULES_TASK_05_core_drizzle_migration.md	1857	md	.jules/tasks	1766975169	cfd8d41a38c35777130525d4cea7aef8bf8339ee8c9bd0a0902569bdf8af180c	42
 .jules/tasks/JULES_TASK_12_test_coverage_database.md	1545	md	.jules/tasks	1766975169	e849e84caf266d5d6f825436ddbfcb7f1c4077097607ca2da93360350f02230c	37
 .jules/tasks/README.md	4564	md	.jules/tasks	1766975169	afe52aebe6e571a32a5eeec6b825d00f8ca400fea3c115efd95e478d79262579	85
 .jules/tasks/JULES_TASK_02_drizzle_workflow_repository.md	2021	md	.jules/tasks	1766975169	94ebbfdfc086af80b0576a6125208ba4bc5a274fc65ff999a0f1f28c778deeec	43
@@ -2090,10 +2090,10 @@ templates/package-template/tsconfig.json	230	json	templates/package-template	176
 JULES_APPLICATION_SUMMARY.md	5326	md	.	1766975169	26cda597f7a70ab4632c29d1027e5dad9f2c3f0d22e1cc821e23c6e982594df7	217
 tsconfig.json	498	json	.	1767764017	dfc3cf859e710f076ecb029b71cae24ec62a93be2eca30fd0921f88b1d87722c	0
 .agent/mcp-server-integrator.md	8726	md	.agent	1766541453	ce71745dbe070e25c3db2a95e96dd8c9a908ce7c397bcf904e401bae94ddc23c	398
-.agent/artifacts/PRISMA_TO_DRIZZLE_MIGRATION_PLAN.md	6110	md	.agent/artifacts	1767049316	f1905b043042bc3b4490fd2fc4a69d28268eb41737cb3af7a468a552b844fb94	238
+.agent/artifacts/DRIZZLE_TO_DRIZZLE_MIGRATION_PLAN.md	6110	md	.agent/artifacts	1767049316	f1905b043042bc3b4490fd2fc4a69d28268eb41737cb3af7a468a552b844fb94	238
 .agent/artifacts/workflow-ux-audit-report.md	11327	md	.agent/artifacts	1766182778	79d93b55258e9df41b3999682705f825783d709cdcbed21a197f57ac094e8b91	334
 .agent/ENHANCED_CODEBASE_INDEXER.md	22062	md	.agent	1766932971	74e48abce53e281e575bc406b530442f42199e10ece3e3f0174c625b6acae260	769
-.agent/tasks/prisma-to-drizzle-cleanup.md	4338	md	.agent/tasks	1767023125	e8683f21a1bc1a669b688d4610a2dac0ffb28342029f2a5e171abbc072934a03	138
+.agent/tasks/drizzle-to-drizzle-cleanup.md	4338	md	.agent/tasks	1767023125	e8683f21a1bc1a669b688d4610a2dac0ffb28342029f2a5e171abbc072934a03	138
 .agent/tasks/architecture-summary.md	13187	md	.agent/tasks	1767040144	9ed0e07918273acc006cfb01ed4dfbfc160fc082423b154ad644cfbec1ab039b	465
 .agent/tasks/architectural-solutions.md	87264	md	.agent/tasks	1767040143	0b162860242cedf4b643a1a5bde94d0580c2b4c922a3953c8b29e6d15ae4957a	2931
 .agent/IMPLEMENTATION_STATUS.md	3260	md	.agent	1766932971	028a1472fa14887c6947f6d82e667bcab4516fec9b74a8e38f12bea4ea6a2e01	128

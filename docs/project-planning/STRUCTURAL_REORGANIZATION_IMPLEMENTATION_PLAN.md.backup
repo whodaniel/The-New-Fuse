@@ -103,7 +103,7 @@ cat > CURRENT_FEATURES_INVENTORY.md << 'EOF'
 - [ ] MCP Server Integration
 - [ ] Business Event Processing
 - [ ] User Authentication & Authorization
-- [ ] Database Operations (PostgreSQL + Prisma)
+- [ ] Database Operations (PostgreSQL + Drizzle)
 - [ ] Redis Caching & Pub/Sub
 - [ ] REST API Endpoints
 - [ ] WebSocket Communication

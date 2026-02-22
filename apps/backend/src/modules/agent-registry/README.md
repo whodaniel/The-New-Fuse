@@ -338,7 +338,7 @@ npm test apps/backend/src/modules/agent-registry
                      └────────┬────────┘
                               │
                      ┌────────▼────────┐
-                     │  Prisma/DB      │
+                     │  Drizzle/DB      │
                      └─────────────────┘
 ```
 

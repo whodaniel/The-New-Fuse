@@ -298,7 +298,7 @@ export class CommonHealthChecks {
         if (queryFn) {
           await queryFn();
         } else if (client.$queryRaw) {
-          // Prisma
+          // Drizzle
           await client.$queryRaw`SELECT 1`;
         } else if (client.query) {
           // pg, mysql2

@@ -1,5 +1,5 @@
 /**
- * Fuse Connect v6 - Human Behavior Simulator
+ * Fuse Connect v7 - Human Behavior Simulator
  *
  * Implements techniques to make browser automation appear more human-like:
  * - Randomized timing and delays

@@ -282,8 +282,8 @@ def database_migrate():
             'dev': 'pnpm run db:migrate:dev',
             'deploy': 'pnpm run db:migrate:deploy',
             'reset': 'pnpm run db:reset',
-            'generate': 'npx prisma generate',
-            'seed': 'npx prisma db seed'
+            'generate': 'npx drizzle generate',
+            'seed': 'npx drizzle db seed'
         }
 
         command = commands.get(migration_type)
@@ -380,7 +380,7 @@ def complete_setup():
         if data.get('runMigrations', True):
             try:
                 result = subprocess.run(
-                    f"cd {PROJECT_ROOT} && npx prisma migrate dev --name init",
+                    f"cd {PROJECT_ROOT} && npx drizzle migrate dev --name init",
                     shell=True,
                     capture_output=True,
                     text=True,

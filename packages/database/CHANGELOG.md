@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--   **Drizzle ORM Migration**: Began the migration from Prisma to Drizzle ORM.
+-   **Drizzle ORM Migration**: Began the migration from Drizzle to Drizzle ORM.
     -   Added forward-looking documentation to the package `README.md` to guide the transition.
     -   This includes usage examples for a future `DrizzleModule` and `DrizzleClient`.
-    -   The existing Prisma implementation is now documented as "Legacy Prisma Usage."
+    -   The existing Drizzle implementation is now documented as "Legacy Drizzle Usage."

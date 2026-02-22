@@ -9,7 +9,7 @@
  * - Revenue configurations (via FuseAgencyRegistry on-chain)
  *
  * NOTE: This uses Workspace as the organizational container until the
- * Organization model is migrated from schema.enhanced.prisma.backup
+ * Organization model is migrated from schema.enhanced.drizzle.backup
  */
 
 import { Injectable, Logger, NotFoundException, BadRequestException } from '@nestjs/common';

@@ -14,7 +14,7 @@ import { db, drizzleAgentRepository, drizzleUserRepository } from '@the-new-fuse
 import { IsArray, IsEnum, IsObject, IsOptional, IsString } from 'class-validator';
 import { TnfRegistryService } from './tnf-registry.service';
 
-// Define local enums to avoid Prisma dependency
+// Define local enums to avoid Drizzle dependency
 export enum AgentType {
   CONVERSATIONAL = 'CONVERSATIONAL',
   TASK_BASED = 'TASK_BASED',

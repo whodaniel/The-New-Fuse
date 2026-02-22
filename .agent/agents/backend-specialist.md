@@ -153,7 +153,7 @@ Before completing:
 
 - **Frameworks**: Hono (edge), Fastify (performance), Express (stable)
 - **Runtime**: Native TypeScript (--experimental-strip-types), Bun, Deno
-- **ORM**: Drizzle (edge-ready), Prisma (full-featured)
+- **ORM**: Drizzle (edge-ready), Drizzle (full-featured)
 - **Validation**: Zod, Valibot, ArkType
 - **Auth**: JWT, Lucia, Better-Auth
 
@@ -171,7 +171,7 @@ Before completing:
 - **Edge SQLite**: Turso, LibSQL
 - **Vector**: pgvector, Pinecone, Qdrant
 - **Cache**: Redis, Upstash
-- **ORM**: Drizzle, Prisma, SQLAlchemy
+- **ORM**: Drizzle, Drizzle, SQLAlchemy
 
 ### Security
 

@@ -77,7 +77,7 @@ ensure vulnerable transitive dependencies are forced to secure versions:
 | **socket.io**      | 4.8.1           | ✅ Secure | Real-time communication library                    |
 | **mongoose**       | 8.20.0          | ✅ Secure | MongoDB ODM with query injection fixes             |
 | **typeorm**        | 0.3.27          | ✅ Secure | Latest stable version                              |
-| **@prisma/client** | 6.11.0 / 6.17.1 | ✅ Secure | Database client with SQL injection protections     |
+| **@drizzle/client** | 6.11.0 / 6.17.1 | ✅ Secure | Database client with SQL injection protections     |
 | **node-fetch**     | 3.3.2           | ✅ Secure | HTTP client with redirect vulnerability fixes      |
 
 #### Transitive Dependency Overrides - Verified Versions
@@ -147,7 +147,7 @@ dependencies to version 11.1.0 or higher
 
 | Package        | Version         | Security Features                               |
 | -------------- | --------------- | ----------------------------------------------- |
-| @prisma/client | 6.11.0 - 6.17.1 | Parameterized queries, SQL injection protection |
+| @drizzle/client | 6.11.0 - 6.17.1 | Parameterized queries, SQL injection protection |
 | mongoose       | 8.20.0          | Query injection protection                      |
 | typeorm        | 0.3.27          | SQL injection protection                        |
 | ioredis        | 5.8.1           | Redis client with connection security           |
@@ -312,7 +312,7 @@ updates did not introduce any new build errors.
   "@nestjs/common": "^11.1.6",
   "@nestjs/jwt": "^11.0.0",
   "@nestjs/passport": "^11.0.5",
-  "@prisma/client": "6.11.0",
+  "@drizzle/client": "6.11.0",
   "dompurify": "^3.3.0"
 }
 ```

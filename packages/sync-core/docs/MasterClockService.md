@@ -316,7 +316,7 @@ This implementation fulfills the following requirements from the specification:
 ✅ Backup clock services maintain temporal consistency with automatic failover
 
 ### Requirement 1.5: Database Integration
-✅ Chronological events are timestamped with master clock precision and stored in existing Prisma database
+✅ Chronological events are timestamped with master clock precision and stored in existing Drizzle database
 
 ## Testing
 

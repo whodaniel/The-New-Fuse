@@ -130,7 +130,7 @@ Copy `.env.example` to `.env` and configure the following:
 #### External Services
 - `OPENAI_API_KEY` - OpenAI API key
 - `ANTHROPIC_API_KEY` - Anthropic API key
-- `PRISMA_ACCELERATE_API_KEY` - Prisma Accelerate API key
+- `DRIZZLE_ACCELERATE_API_KEY` - Drizzle Accelerate API key
 
 ### Setting Environment Variables in Railway
 

@@ -16,7 +16,7 @@ import {
   ConflictResolutionStrategy
 } from './types';
 
-// Mock UserRole enum since Prisma client is not available in tests
+// Mock UserRole enum since Drizzle client is not available in tests
 enum UserRole {
   USER = 'USER',
   ADMIN = 'ADMIN',

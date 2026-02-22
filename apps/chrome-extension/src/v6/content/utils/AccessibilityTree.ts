@@ -1,5 +1,5 @@
 /**
- * Fuse Connect v6 - Accessibility Tree Generator
+ * Fuse Connect v7 - Accessibility Tree Generator
  * Generates a structured tree of interactive elements on any page
  * Inspired by Claude extension's accessibility-tree.js
  */

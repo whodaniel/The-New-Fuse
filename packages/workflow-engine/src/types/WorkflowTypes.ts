@@ -2,10 +2,10 @@
  * Unified Workflow Types for The New Fuse Framework
  *
  * Consolidates all workflow-related types from scattered locations into a single source of truth.
- * Integrates with existing Prisma schema and provides enhanced type safety.
+ * Integrates with existing Drizzle schema and provides enhanced type safety.
  */
 
-// Define enums locally since they may not exist in @prisma/client
+// Define enums locally since they may not exist in @drizzle/client
 export enum WorkflowStatus {
   DRAFT = 'DRAFT',
   PUBLISHED = 'PUBLISHED',

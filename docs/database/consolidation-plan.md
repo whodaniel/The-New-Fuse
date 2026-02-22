@@ -8,7 +8,7 @@
 
 ### Services to Consolidate
 - DatabaseService
-- PrismaService
+- DrizzleService
 - RedisService
 
 ## Consolidation Strategy
@@ -25,7 +25,7 @@
 - Implement adapter pattern for different database backends
 - Handle connection management and pooling
 
-#### PrismaService
+#### DrizzleService
 - Integrate as a database provider within DatabaseService
 - Maintain type safety and schema validation
 - Handle migrations and schema updates
@@ -49,7 +49,7 @@
 
 2. **Service Integration**
    - Implement unified DatabaseService
-   - Migrate PrismaService functionality
+   - Migrate DrizzleService functionality
    - Integrate RedisService caching
 
 3. **Testing**

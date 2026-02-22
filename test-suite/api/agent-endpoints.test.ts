@@ -138,12 +138,12 @@ describe('Agent Endpoint Security Tests', () => {
   });
 
   afterAll(async () => {
-    await prisma.agent.deleteMany({
+    await drizzle.agent.deleteMany({
       where: {
         OR: [{ userId: user1.id }, { userId: user2.id }, { userId: admin.id }],
       },
     });
-    await prisma.user.deleteMany({
+    await drizzle.user.deleteMany({
       where: {
         OR: [{ id: user1.id }, { id: user2.id }, { id: admin.id }],
       },
@@ -370,7 +370,7 @@ describe('Agent Endpoint Security Tests', () => {
       });
 
       it('should allow users to delete their own agents', async () => {
-        const newAgent = await prisma.agent.create({
+        const newAgent = await drizzle.agent.create({
           data: {
             name: 'Agent to Delete',
             description: 'This agent will be deleted',
@@ -394,7 +394,7 @@ describe('Agent Endpoint Security Tests', () => {
       });
 
       it('should allow admin to delete any agent', async () => {
-        const newAgent = await prisma.agent.create({
+        const newAgent = await drizzle.agent.create({
           data: {
             name: 'Agent for Admin Deletion',
             description: 'This agent will be deleted by admin',
@@ -439,7 +439,7 @@ describe('Agent Endpoint Security Tests', () => {
 
     it('should prevent XSS in search results', async () => {
       // First create an agent with XSS in description
-      const maliciousAgent = await prisma.agent.create({
+      const maliciousAgent = await drizzle.agent.create({
         data: {
           name: 'XSS Agent',
           description: '<script>alert("XSS")</script>',
@@ -465,7 +465,7 @@ describe('Agent Endpoint Security Tests', () => {
       }
 
       // Clean up
-      await prisma.agent.delete({ where: { id: maliciousAgent.id } });
+      await drizzle.agent.delete({ where: { id: maliciousAgent.id } });
     });
 
     it('should implement search result authorization', async () => {

@@ -39,7 +39,7 @@ Critical procedures for handling deployment emergencies.
 
 2. **Test Connection**
    ```bash
-   pnpm prisma db execute --stdin <<< "SELECT 1;"
+   pnpm drizzle db execute --stdin <<< "SELECT 1;"
    ```
 
 3. **Restart Database** (Railway dashboard)
@@ -62,7 +62,7 @@ Critical procedures for handling deployment emergencies.
 
 3. **Verify Data Integrity**
    ```bash
-   pnpm prisma db execute --stdin <<< "SELECT COUNT(*) FROM users;"
+   pnpm drizzle db execute --stdin <<< "SELECT COUNT(*) FROM users;"
    ```
 
 4. **Restart Services**

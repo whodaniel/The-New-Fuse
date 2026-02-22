@@ -3,12 +3,12 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { setupApp } from '../../src/setup';
-import { PrismaService } from '../../src/prisma/prisma.service';
+import { DrizzleService } from '../../src/drizzle/drizzle.service';
 import { createTestUser, createTestAgent } from '../utils/test-helpers';
 
 describe('Agent Workflow (e2e)', () => {
   let app: INestApplication;
-  let prisma: PrismaService;
+  let drizzle: DrizzleService;
   let authToken: string;
   let testAgent: any;
 
@@ -21,10 +21,10 @@ describe('Agent Workflow (e2e)', () => {
     setupApp(app);
     await app.init();
 
-    prisma = app.get(PrismaService);
+    drizzle = app.get(DrizzleService);
     
     // Setup test data
-    const user = await createTestUser(prisma);
+    const user = await createTestUser(drizzle);
     const loginResponse = await request(app.getHttpServer())
       .post('/auth/login')
       .send({
@@ -33,11 +33,11 @@ describe('Agent Workflow (e2e)', () => {
       });
     
     authToken = loginResponse.body.access_token;
-    testAgent = await createTestAgent(prisma, user.id);
+    testAgent = await createTestAgent(drizzle, user.id);
   });
 
   afterAll(async () => {
-    await prisma.cleanDatabase();
+    await drizzle.cleanDatabase();
     await app.close();
   });
 

@@ -1,10 +1,10 @@
 # Conversation Summary - Backend Setup and Configuration
 
 ## Initial Setup and Schema Changes
-1. Started by checking the Prisma schema to ensure it matches the `Agent` type
-2. Created the `Agent` model in the Prisma schema with properties like `id`, `name`, `description`, `systemPrompt`, etc.
-3. Updated the `agentService.ts` file to align with the Prisma schema
-4. Added `AgentStatus` enum to the Prisma schema and modified the `Agent` model accordingly
+1. Started by checking the Drizzle schema to ensure it matches the `Agent` type
+2. Created the `Agent` model in the Drizzle schema with properties like `id`, `name`, `description`, `systemPrompt`, etc.
+3. Updated the `agentService.ts` file to align with the Drizzle schema
+4. Added `AgentStatus` enum to the Drizzle schema and modified the `Agent` model accordingly
 
 ## Service Implementation
 1. Updated the `agentService.ts` file to use proper types

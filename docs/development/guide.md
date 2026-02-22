@@ -31,7 +31,7 @@ fuse/
 │   ├── ui-components/    # UI component library
 │   ├── utils/            # Utility functions
 │   └── vscode-extension/ # VS Code extension integration
-├── prisma/               # Prisma schema and migrations
+├── drizzle/               # Drizzle schema and migrations
 ├── scripts/              # Utility scripts
 └── src/                  # Main source code
     ├── agent/            # Agent implementation

@@ -1,5 +1,5 @@
 /**
- * Fuse Connect v6 - Enhanced Floating Panel
+ * Fuse Connect v7 - Enhanced Floating Panel
  * Fully draggable, resizable, with federation channels and notifications
  */
 
@@ -203,11 +203,11 @@ export class EnhancedFloatingPanel {
    */
   private inject(): void {
     // Remove existing
-    document.getElementById('fuse-connect-panel-v6')?.remove();
+    document.getElementById('fuse-connect-panel-v7')?.remove();
 
     // Create container
     this.container = document.createElement('div');
-    this.container.id = 'fuse-connect-panel-v6';
+    this.container.id = 'fuse-connect-panel-v7';
     this.container.innerHTML = this.render();
 
     // Inject styles
@@ -224,10 +224,10 @@ export class EnhancedFloatingPanel {
    * Inject CSS
    */
   private injectStyles(): void {
-    if (document.getElementById('fuse-connect-styles-v6')) return;
+    if (document.getElementById('fuse-connect-styles-v7')) return;
 
     const style = document.createElement('style');
-    style.id = 'fuse-connect-styles-v6';
+    style.id = 'fuse-connect-styles-v7';
     style.textContent = this.getStyles();
     document.head.appendChild(style);
   }
@@ -237,9 +237,9 @@ export class EnhancedFloatingPanel {
    */
   private getStyles(): string {
     return `
-      /* Fuse Connect v6 - Enhanced Panel Styles */
+      /* Fuse Connect v7 - Enhanced Panel Styles */
 
-      #fuse-connect-panel-v6 {
+      #fuse-connect-panel-v7 {
         position: fixed !important;
         z-index: 2147483647 !important;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
@@ -250,7 +250,7 @@ export class EnhancedFloatingPanel {
         user-select: none !important;
       }
 
-      #fuse-connect-panel-v6 * {
+      #fuse-connect-panel-v7 * {
         box-sizing: border-box !important;
       }
 
@@ -2697,7 +2697,7 @@ export class EnhancedFloatingPanel {
     }
 
     this.container?.remove();
-    document.getElementById('fuse-connect-styles-v6')?.remove();
+    document.getElementById('fuse-connect-styles-v7')?.remove();
   }
 
   /**

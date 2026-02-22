@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Prisma to Drizzle Migration Script
-# This script systematically replaces all Prisma imports with Drizzle equivalents
+# Drizzle to Drizzle Migration Script
+# This script systematically replaces all Drizzle imports with Drizzle equivalents
 
 set -e
 
-echo "🔄 Starting Prisma → Drizzle Migration..."
+echo "🔄 Starting Drizzle → Drizzle Migration..."
 
 # Colors
 GREEN='\033[0;32m'
@@ -32,45 +32,45 @@ migrate_file() {
     # Create backup
     cp "$file" "$file.bak"
 
-    # Replace PrismaService with DRIZZLE_CLIENT injection pattern
-    if grep -q "PrismaService" "$file"; then
+    # Replace DrizzleService with DRIZZLE_CLIENT injection pattern
+    if grep -q "DrizzleService" "$file"; then
         # Replace import
-        sed -i '' "s/import { PrismaService } from '@the-new-fuse\/database';/import { DRIZZLE_CLIENT, type DrizzleClient } from '@the-new-fuse\/database';\nimport { Inject } from '@nestjs\/common';/g" "$file"
+        sed -i '' "s/import { DrizzleService } from '@the-new-fuse\/database';/import { DRIZZLE_CLIENT, type DrizzleClient } from '@the-new-fuse\/database';\nimport { Inject } from '@nestjs\/common';/g" "$file"
 
         # Replace constructor injection
-        sed -i '' "s/private readonly prisma: PrismaService/@Inject(DRIZZLE_CLIENT) private readonly db: DrizzleClient/g" "$file"
-        sed -i '' "s/private prisma: PrismaService/@Inject(DRIZZLE_CLIENT) private db: DrizzleClient/g" "$file"
+        sed -i '' "s/private readonly drizzle: DrizzleService/@Inject(DRIZZLE_CLIENT) private readonly db: DrizzleClient/g" "$file"
+        sed -i '' "s/private drizzle: DrizzleService/@Inject(DRIZZLE_CLIENT) private db: DrizzleClient/g" "$file"
 
         modified=true
     fi
 
-    # Replace PrismaClient with DrizzleClient
-    if grep -q "PrismaClient" "$file"; then
-        sed -i '' "s/import { PrismaClient } from '@the-new-fuse\/database';/import { type DrizzleClient, db } from '@the-new-fuse\/database';/g" "$file"
-        sed -i '' "s/import { PrismaClient } from '@prisma\/client';/import { type DrizzleClient, db } from '@the-new-fuse\/database';/g" "$file"
-        sed -i '' "s/new PrismaClient()/db/g" "$file"
-        sed -i '' "s/: PrismaClient/: DrizzleClient/g" "$file"
+    # Replace DrizzleClient with DrizzleClient
+    if grep -q "DrizzleClient" "$file"; then
+        sed -i '' "s/import { DrizzleClient } from '@the-new-fuse\/database';/import { type DrizzleClient, db } from '@the-new-fuse\/database';/g" "$file"
+        sed -i '' "s/import { DrizzleClient } from '@drizzle\/client';/import { type DrizzleClient, db } from '@the-new-fuse\/database';/g" "$file"
+        sed -i '' "s/new DrizzleClient()/db/g" "$file"
+        sed -i '' "s/: DrizzleClient/: DrizzleClient/g" "$file"
         modified=true
     fi
 
-    # Replace Prisma namespace with drizzle-orm imports
-    if grep -q "import.*Prisma.*from '@prisma/client'" "$file"; then
-        sed -i '' "s/import.*Prisma.*from '@prisma\/client';/import { eq, and, or, sql } from 'drizzle-orm';/g" "$file"
+    # Replace Drizzle namespace with drizzle-orm imports
+    if grep -q "import.*Drizzle.*from '@drizzle/client'" "$file"; then
+        sed -i '' "s/import.*Drizzle.*from '@drizzle\/client';/import { eq, and, or, sql } from 'drizzle-orm';/g" "$file"
         modified=true
     fi
 
-    # Replace common Prisma method patterns with Drizzle (note: these are simplifications)
+    # Replace common Drizzle method patterns with Drizzle (note: these are simplifications)
     # This will need manual review but gives a starting point
-    if grep -q "this\.prisma\." "$file"; then
+    if grep -q "this\.drizzle\." "$file"; then
         # For now, just replace the reference - actual queries will need manual migration
-        sed -i '' "s/this\.prisma\./this.db./g" "$file"
+        sed -i '' "s/this\.drizzle\./this.db./g" "$file"
         modified=true
     fi
 
-    # Replace PrismaModule with DrizzleModule
-    if grep -q "PrismaModule" "$file"; then
-        sed -i '' "s/import.*PrismaModule.*from.*;/import { DrizzleModule } from '@the-new-fuse\/database';/g" "$file"
-        sed -i '' "s/PrismaModule/DrizzleModule.forRoot()/g" "$file"
+    # Replace DrizzleModule with DrizzleModule
+    if grep -q "DrizzleModule" "$file"; then
+        sed -i '' "s/import.*DrizzleModule.*from.*;/import { DrizzleModule } from '@the-new-fuse\/database';/g" "$file"
+        sed -i '' "s/DrizzleModule/DrizzleModule.forRoot()/g" "$file"
         modified=true
     fi
 
@@ -100,10 +100,10 @@ done
 echo -e "\n${GREEN}✓ Migration complete!${NC}"
 echo -e "${YELLOW}Files modified: $FILES_MODIFIED${NC}"
 echo -e "\n${YELLOW}⚠️  IMPORTANT:${NC}"
-echo -e "1. Review changes - Prisma queries need manual migration to Drizzle syntax"
+echo -e "1. Review changes - Drizzle queries need manual migration to Drizzle syntax"
 echo -e "2. Backup files saved with .bak extension"
 echo -e "3. Test thoroughly before committing"
 echo -e "\nNext steps:"
-echo -e "  - Remove Prisma dependencies from package.json files"
-echo -e "  - Delete Prisma schema and generated files"
+echo -e "  - Remove Drizzle dependencies from package.json files"
+echo -e "  - Delete Drizzle schema and generated files"
 echo -e "  - Update repository method calls"

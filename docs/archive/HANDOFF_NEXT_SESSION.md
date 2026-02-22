@@ -34,7 +34,7 @@
 - ✅ Registered `HealthController` (critical for K8s probes)
 - ✅ Imported `AgencyHubModule` (4 controllers unlocked)
 - ✅ Imported `WebhooksModule` (webhooks + SSE unlocked)
-- ✅ Migrated `HealthController` from TypeORM to Prisma (migration template)
+- ✅ Migrated `HealthController` from TypeORM to Drizzle (migration template)
 - ✅ Comprehensive audit completed (152 orphaned components, 12 orphaned
   packages)
 - ✅ Created 5+ documentation files with testing checklists
@@ -81,7 +81,7 @@ Based on audit, these controllers exist but are NOT registered in
 
 ```
 apps/api/src/app.module.ts                               # Main module - add controllers here
-apps/api/src/controllers/health.controller.ts            # Migrated to Prisma (template)
+apps/api/src/controllers/health.controller.ts            # Migrated to Drizzle (template)
 apps/api/src/controllers/admin.controller.ts             # Needs services created
 apps/api/src/controllers/security.controller.ts          # Ready to register
 packages/core-monitoring/tsconfig.json                   # Fixed: CommonJS override
@@ -109,7 +109,7 @@ HANDOFF_NEXT_SESSION.md         # This file
 cd /project/workspace/fuse
 git status  # Should be on fix/register-orphaned-controllers-and-modules
 git pull origin fix/register-orphaned-controllers-and-modules
-node -v  # Check if 20.19+ (required for Prisma 6.11.0)
+node -v  # Check if 20.19+ (required for Drizzle 6.11.0)
 ```
 
 ### Step 2: Start with SecurityController (Easy Win)
@@ -148,19 +148,19 @@ touch apps/api/src/services/metrics.service.ts
 
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@the-new-fuse/database';
+import { DrizzleService } from '@the-new-fuse/database';
 
 @Injectable()
 export class RoleService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly drizzle: DrizzleService) {}
 
   async getAllRoles() {
-    // TODO: Implement using Prisma
+    // TODO: Implement using Drizzle
     return [];
   }
 
   async updateRolePermissions(roleId: string, permissions: any[]) {
-    // TODO: Implement using Prisma
+    // TODO: Implement using Drizzle
     return { roleId, permissions };
   }
 }
@@ -234,7 +234,7 @@ git push origin fix/register-orphaned-controllers-and-modules
 ### Known Issues
 
 1. **Node.js Version**: v20.12.1 < v20.19+ required
-   - **Impact**: Cannot run Prisma migrations locally
+   - **Impact**: Cannot run Drizzle migrations locally
    - **Workaround**: Code changes work, but full local testing limited
    - **Solution**: User needs to upgrade Node.js OR test in Railway environment
 
@@ -246,14 +246,14 @@ git push origin fix/register-orphaned-controllers-and-modules
 3. **Missing Services for AdminController**
    - `RoleService`, `AuditService`, `MetricsService` don't exist yet
    - Must create these before registering AdminController
-   - Use Prisma (not TypeORM) for consistency
+   - Use Drizzle (not TypeORM) for consistency
 
 ### What NOT to Do
 
 ❌ Don't edit lockfiles manually  
 ❌ Don't merge to `main` until testing complete  
 ❌ Don't skip quality checks (TypeScript, build validation)  
-❌ Don't use TypeORM for new code (migrate to Prisma)  
+❌ Don't use TypeORM for new code (migrate to Drizzle)  
 ❌ Don't commit credentials or API keys
 
 ---
@@ -274,7 +274,7 @@ git push origin fix/register-orphaned-controllers-and-modules
   - Register remaining orphaned controllers
   - Create missing services
 - **MEDIUM Priority** (~10 items, 5 days):
-  - Complete TypeORM → Prisma migration (11 entity files)
+  - Complete TypeORM → Drizzle migration (11 entity files)
   - Clean up orphaned frontend components (152 files)
 - **LOW Priority** (~3 items, 3 days):
   - Remove orphaned packages (12 packages)
@@ -327,7 +327,7 @@ cd apps/api && pnpm test
 - Identified all orphaned controllers, components, and packages
 - Fixed critical production deployment blockers (TypeScript build errors)
 - Registered 3 critical controllers (Health, Agency Hub modules, Webhooks)
-- Established Prisma migration pattern
+- Established Drizzle migration pattern
 - Created comprehensive documentation
 
 **Current Phase**: Sprint 1 - Register remaining orphaned controllers

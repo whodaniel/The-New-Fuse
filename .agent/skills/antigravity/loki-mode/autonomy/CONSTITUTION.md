@@ -246,7 +246,7 @@ auto_review:
   "decisions_made": [
     {
       "timestamp": "2026-01-04T05:31:15Z",
-      "question": "Should we use Prisma or raw SQL?",
+      "question": "Should we use Drizzle or raw SQL?",
       "answer": "Raw SQL with better-sqlite3 for simplicity",
       "rationale": "PRD requires minimal dependencies, synchronous ops preferred"
     }

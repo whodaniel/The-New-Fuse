@@ -13,13 +13,18 @@ import { z } from 'zod';
  * Message Types
  */
 export declare const MessageType: z.ZodEnum<{
-    task: "task";
     command: "command";
-    event: "event";
-    "state-sync": "state-sync";
     query: "query";
+    event: "event";
+    task: "task";
+    handoff: "handoff";
+    "handoff-ack": "handoff-ack";
+    "state-sync": "state-sync";
     response: "response";
     "resource-negotiate": "resource-negotiate";
+    auction: "auction";
+    bid: "bid";
+    award: "award";
 }>;
 export type MessageType = z.infer<typeof MessageType>;
 /**
@@ -58,13 +63,18 @@ export declare const TNFEnvelope: z.ZodObject<{
     traceId: z.ZodString;
     timestamp: z.ZodString;
     type: z.ZodEnum<{
-        task: "task";
         command: "command";
-        event: "event";
-        "state-sync": "state-sync";
         query: "query";
+        event: "event";
+        task: "task";
+        handoff: "handoff";
+        "handoff-ack": "handoff-ack";
+        "state-sync": "state-sync";
         response: "response";
         "resource-negotiate": "resource-negotiate";
+        auction: "auction";
+        bid: "bid";
+        award: "award";
     }>;
     from: z.ZodObject<{
         agentId: z.ZodString;
@@ -116,9 +126,9 @@ export declare const TNFEnvelope: z.ZodObject<{
             "priority-pro": "priority-pro";
         }>>;
         onQuotaExhausted: z.ZodDefault<z.ZodEnum<{
+            wait: "wait";
             "switch-account": "switch-account";
             "switch-tier": "switch-tier";
-            wait: "wait";
             fail: "fail";
             negotiate: "negotiate";
         }>>;
@@ -139,8 +149,8 @@ export declare const TaskPayload: z.ZodObject<{
     priority: z.ZodDefault<z.ZodEnum<{
         low: "low";
         high: "high";
-        normal: "normal";
         critical: "critical";
+        normal: "normal";
     }>>;
 }, z.core.$strip>;
 export type TaskPayload = z.infer<typeof TaskPayload>;
@@ -155,10 +165,10 @@ export declare const StateSyncPayload: z.ZodObject<{
     stateValue: z.ZodUnknown;
     version: z.ZodNumber;
     operation: z.ZodEnum<{
-        set: "set";
-        update: "update";
-        delete: "delete";
         get: "get";
+        set: "set";
+        delete: "delete";
+        update: "update";
     }>;
 }, z.core.$strip>;
 export type StateSyncPayload = z.infer<typeof StateSyncPayload>;
@@ -172,6 +182,28 @@ export declare const ResponsePayload: z.ZodObject<{
     }, z.core.$strip>>;
 }, z.core.$strip>;
 export type ResponsePayload = z.infer<typeof ResponsePayload>;
+export declare const AuctionPayload: z.ZodObject<{
+    taskId: z.ZodString;
+    taskType: z.ZodString;
+    requirements: z.ZodArray<z.ZodString>;
+    priority: z.ZodDefault<z.ZodEnum<{
+        low: "low";
+        high: "high";
+        critical: "critical";
+        normal: "normal";
+    }>>;
+    expiresAt: z.ZodNumber;
+    metadata: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
+}, z.core.$strip>;
+export type AuctionPayload = z.infer<typeof AuctionPayload>;
+export declare const BidPayload: z.ZodObject<{
+    taskId: z.ZodString;
+    suitability: z.ZodNumber;
+    estimatedDuration: z.ZodOptional<z.ZodNumber>;
+    status: z.ZodOptional<z.ZodString>;
+    metadata: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
+}, z.core.$strip>;
+export type BidPayload = z.infer<typeof BidPayload>;
 /**
  * Helper Functions
  */

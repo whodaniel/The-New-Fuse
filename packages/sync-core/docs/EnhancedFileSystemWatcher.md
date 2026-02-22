@@ -21,7 +21,7 @@ graph TB
     subgraph "Existing Infrastructure"
         Redis[Redis Pub/Sub]
         WS[AgentWebSocketService]
-        DB[(Prisma Database)]
+        DB[(Drizzle Database)]
         BrowserHub[Browser Hub Sync]
     end
     
@@ -91,7 +91,7 @@ watcher.on('fileChange', (event) => {
 
 ### 4. Database Integration
 
-All file changes are tracked in the database using the existing Prisma schema:
+All file changes are tracked in the database using the existing Drizzle schema:
 
 ```sql
 -- Sync state tracking

@@ -4,7 +4,7 @@ import { getAuthToken, setupTestApp, cleanupTestData } from '../test-utils/test-
 import { AuthService } from '../../../apps/api/src/services/auth.service';
 import { AgentService } from '../../../apps/api/src/services/agent.service';
 import { WorkflowService } from '../../../apps/api/src/services/workflow.service';
-import { PrismaService } from '../../../apps/api/src/services/prisma.service';
+import { DrizzleService } from '../../../apps/api/src/services/drizzle.service';
 import { ExecutionService } from '../../../apps/api/src/services/execution.service';
 import request from 'supertest';
 
@@ -13,7 +13,7 @@ describe('Agent Workflow Integration Tests', () => {
   let authService: AuthService;
   let agentService: AgentService;
   let workflowService: WorkflowService;
-  let prismaService: PrismaService;
+  let drizzleService: DrizzleService;
   let executionService: ExecutionService;
 
   beforeAll(async () => {
@@ -21,7 +21,7 @@ describe('Agent Workflow Integration Tests', () => {
     authService = app.get(AuthService);
     agentService = app.get(AgentService);
     workflowService = app.get(WorkflowService);
-    prismaService = app.get(PrismaService);
+    drizzleService = app.get(DrizzleService);
     executionService = app.get(ExecutionService);
   });
 

@@ -23,7 +23,7 @@ This document provides a comprehensive overview of the database schema, includin
 - **Indexes**: 60+ (including unique constraints)
 - **Soft Delete Support**: 11 models
 - **Database**: PostgreSQL 13+
-- **ORM**: Prisma 6.19.0
+- **ORM**: Drizzle 6.19.0
 
 ---
 
@@ -433,7 +433,7 @@ See `migrations/add_production_indexes_and_constraints.sql` for complete list:
 - ⚠️ Many relations lack onDelete specification
 
 **Recommended Configuration**:
-```prisma
+```drizzle
 // Audit data - keep on parent delete
 onDelete: Restrict
 
@@ -506,7 +506,7 @@ onDelete: SetNull
 ### Active Agents by User
 
 ```typescript
-const agents = await prisma.agent.findMany({
+const agents = await drizzle.agent.findMany({
   where: {
     userId: currentUserId,
     status: AgentStatus.ACTIVE,
@@ -522,7 +522,7 @@ const agents = await prisma.agent.findMany({
 ### Recent Messages in Chat
 
 ```typescript
-const messages = await prisma.message.findMany({
+const messages = await drizzle.message.findMany({
   where: {
     chatId: chatId,
     isDeleted: false,
@@ -541,7 +541,7 @@ const messages = await prisma.message.findMany({
 ### Pending Tasks for Agent
 
 ```typescript
-const tasks = await prisma.task.findMany({
+const tasks = await drizzle.task.findMany({
   where: {
     assignedToId: agentId,
     status: {
@@ -559,7 +559,7 @@ const tasks = await prisma.task.findMany({
 ### Active Marketplace Listings
 
 ```typescript
-const listings = await prisma.marketplaceListing.findMany({
+const listings = await drizzle.marketplaceListing.findMany({
   where: {
     status: MarketplaceStatus.ACTIVE,
     OR: [
@@ -663,4 +663,4 @@ For more detailed information:
 
 **Last Updated**: 2025-11-18
 **Schema Version**: 1.0.0
-**Prisma Version**: 6.19.0
+**Drizzle Version**: 6.19.0

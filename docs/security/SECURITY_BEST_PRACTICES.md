@@ -166,13 +166,13 @@ eval(userInput); // NEVER DO THIS
 
 **DO:**
 ```typescript
-// ✓ Use Prisma's parameterized queries
-const user = await prisma.user.findUnique({
+// ✓ Use Drizzle's parameterized queries
+const user = await drizzle.user.findUnique({
   where: { id: userId }
 });
 
 // ✓ Use parameterized queries for raw SQL
-const users = await prisma.$queryRaw`
+const users = await drizzle.$queryRaw`
   SELECT * FROM users WHERE email = ${email}
 `;
 ```
@@ -183,7 +183,7 @@ const users = await prisma.$queryRaw`
 const query = `SELECT * FROM users WHERE email = '${email}'`;
 
 // ✗ Don't use raw SQL without parameters
-await prisma.$executeRawUnsafe(`DELETE FROM users WHERE id = ${id}`);
+await drizzle.$executeRawUnsafe(`DELETE FROM users WHERE id = ${id}`);
 ```
 
 ### XSS Prevention
@@ -328,7 +328,7 @@ class EncryptionService {
 
 // ✓ Encrypt sensitive data before storage
 const encrypted = await this.encryption.encrypt(sensitiveData);
-await prisma.user.update({
+await drizzle.user.update({
   where: { id },
   data: { encryptedData: JSON.stringify(encrypted) }
 });
@@ -360,7 +360,7 @@ async cleanupOldData() {
   const cutoffDate = new Date();
   cutoffDate.setMonth(cutoffDate.getMonth() - 6);
 
-  await prisma.user.deleteMany({
+  await drizzle.user.deleteMany({
     where: {
       deletedAt: { lt: cutoffDate }
     }
@@ -405,7 +405,7 @@ DATABASE_URL=postgresql://user:pass@localhost:5432/db
 ```typescript
 // ✗ Don't commit .env files
 // ✗ Don't use default values for secrets
-const secret = process.env.JWT_SECRET || 'default-secret';
+const secret = process.env.JWT_SECRET || '[REDACTED_SECRET]';
 
 // ✗ Don't expose secrets in error messages
 throw new Error(`Database connection failed: ${DATABASE_URL}`);
@@ -651,7 +651,7 @@ logger.debug(`Token: ${jwt}`);
 - [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/)
 - [NestJS Security](https://docs.nestjs.com/security/authentication)
 - [Node.js Security Best Practices](https://nodejs.org/en/docs/guides/security/)
-- [Prisma Security](https://www.prisma.io/docs/concepts/components/prisma-client/deployment#security)
+- [Drizzle Security](https://www.drizzle.io/docs/concepts/components/drizzle-client/deployment#security)
 
 ---
 

@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '@the-new-fuse/database';
+import { DrizzleService } from '@the-new-fuse/database';
 
 export interface ArchitectureDecision {
   id: string;
@@ -45,7 +45,7 @@ export class ArchitectAgentService {
   private readonly logger = new Logger(ArchitectAgentService.name);
   private readonly codebaseRoot = '/home/user/fuse';
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly drizzle: DrizzleService) {}
 
   async reviewArchitecture(): Promise<ArchitectureReview> {
     this.logger.log('Starting architecture review...');

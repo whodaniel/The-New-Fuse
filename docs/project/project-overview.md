@@ -85,9 +85,9 @@ The project includes several VS Code tasks to streamline development:
 
 ## Database Management
 
-The project uses both Prisma and TypeORM for database access:
+The project uses both Drizzle and TypeORM for database access:
 
-- **Prisma**: Used for schema management and migrations
+- **Drizzle**: Used for schema management and migrations
 - **TypeORM**: Used for entity management and queries
 
 ### Database Schema
@@ -102,7 +102,7 @@ The database includes the following core entities:
 
 ### Migrations
 
-Database migrations are managed through Prisma and can be run with:
+Database migrations are managed through Drizzle and can be run with:
 
 ```bash
 yarn db:migrate

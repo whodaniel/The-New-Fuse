@@ -1,5 +1,5 @@
 /**
- * Fuse Connect v6 - Ultimate Chrome Extension
+ * Fuse Connect v7 - Ultimate Chrome Extension
  * Comprehensive Type Definitions
  */
 

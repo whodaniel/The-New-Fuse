@@ -118,6 +118,8 @@ lerna-debug.log*
 # Temporary files
 *.tmp
 *.temp
+*.backup
+*.bak
 .env.bak
 .env.bak2
 .mcp.json
@@ -129,6 +131,19 @@ api_vars_check.json
 temp_mcp_config.json
 packages/gemini-browser-skill/data/library_import/library_dump.html
 packages/gemini-browser-skill/ai_studio_dump.html
+packages/gemini-browser-skill/data/library_import/
+packages/gemini-browser-skill/data/processing_state.json
+packages/gemini-browser-skill/data/gap_analysis.txt
+packages/gemini-browser-skill/data/ProcessingStatusReport.md
+.documentation-system/analysis/
+.documentation-system/raw_manifest.txt
+.documentation-system/classified-manifest.json
+.documentation-system/manifest.json
+.tmp-agent-home/
+.!*
+home_verification.png
+**/login_debug.png
+apps/backend/build_log*.txt
 
 # Generated files
 packages/database/generated/

@@ -1,10 +1,10 @@
-import { PrismaClient } from '@the-new-fuse/database';
+import { DrizzleClient } from '@the-new-fuse/database';
 import { FeatureTrackingService } from '../packages/database/src/services/FeatureTrackingService.js';
 import { FeatureStage } from '@the-new-fuse/feature-tracker';
 
 async function populateFeatureTracker(): any {
-  const prisma = new PrismaClient();
-  const featureService = new FeatureTrackingService(prisma);
+  const drizzle = new DrizzleClient();
+  const featureService = new FeatureTrackingService(drizzle);
 
   try {
     // Core Features
@@ -170,7 +170,7 @@ async function populateFeatureTracker(): any {
   } catch (error) {
     console.error('Error populating feature tracker:', error);
   } finally {
-    await prisma.$disconnect();
+    await drizzle.$disconnect();
   }
 }
 

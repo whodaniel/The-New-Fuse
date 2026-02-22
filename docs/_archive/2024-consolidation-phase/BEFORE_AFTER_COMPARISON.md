@@ -290,8 +290,8 @@ scripts/
 │
 ├── reset-database.sh ⚠️
 ├── reset-db-simple.sh ⚠️
-├── reset-prisma-db-with-password.sh ⚠️
-├── reset-prisma-db.sh ⚠️ 4 reset scripts!
+├── reset-drizzle-db-with-password.sh ⚠️
+├── reset-drizzle-db.sh ⚠️ 4 reset scripts!
 │
 ├── cleanup-deprecated.sh ⚠️
 ├── cleanup-dev-artifacts.sh ⚠️
@@ -735,8 +735,8 @@ Developer: Problem solved! ✅
 scripts/
 ├── reset-database.sh ⚠️
 ├── reset-db-simple.sh ⚠️
-├── reset-prisma-db.sh ⚠️
-└── reset-prisma-db-with-password.sh ⚠️
+├── reset-drizzle-db.sh ⚠️
+└── reset-drizzle-db-with-password.sh ⚠️
 
 Developer: "Which reset script do I use?"
 Developer: *Tries each one until one works* 😵

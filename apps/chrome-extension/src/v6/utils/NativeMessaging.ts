@@ -1,5 +1,5 @@
 /**
- * Fuse Connect v6 - Native Messaging Client
+ * Fuse Connect v7 - Native Messaging Client
  * Controls TNF services from the Chrome extension
  */
 

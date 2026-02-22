@@ -141,10 +141,10 @@ export function verifyApiKeyHash(apiKey: string, hash: string): boolean {
  *
  * Usage in migration:
  * ```typescript
- * const configs = await prisma.lLMConfig.findMany();
+ * const configs = await drizzle.lLMConfig.findMany();
  * for (const config of configs) {
  *   const encrypted = encryptApiKey(config.apiKey);
- *   await prisma.lLMConfig.update({
+ *   await drizzle.lLMConfig.update({
  *     where: { id: config.id },
  *     data: {
  *       apiKeyEncrypted: JSON.stringify(encrypted),
@@ -156,13 +156,13 @@ export function verifyApiKeyHash(apiKey: string, hash: string): boolean {
  * ```
  */
 export async function migratePlaintextToEncrypted(
-  prisma: any,
+  drizzle: any,
   tableName: string,
   plaintextField: string,
   encryptedField: string,
   hashField?: string
 ): Promise<number> {
-  const records = await prisma[tableName].findMany({
+  const records = await drizzle[tableName].findMany({
     where: {
       [plaintextField]: { not: null },
       [encryptedField]: null,
@@ -186,7 +186,7 @@ export async function migratePlaintextToEncrypted(
       updateData[hashField] = hashApiKey(plaintext);
     }
 
-    await prisma[tableName].update({
+    await drizzle[tableName].update({
       where: { id: record.id },
       data: updateData,
     });
@@ -203,13 +203,13 @@ export async function migratePlaintextToEncrypted(
  * Re-encrypts all data with new encryption key
  */
 export async function rotateEncryptionKeys(
-  prisma: any,
+  drizzle: any,
   tableName: string,
   encryptedField: string,
   oldKeyId: string,
   newKeyId: string
 ): Promise<number> {
-  const records = await prisma[tableName].findMany({
+  const records = await drizzle[tableName].findMany({
     where: {
       encryptionKeyId: oldKeyId,
     },
@@ -226,7 +226,7 @@ export async function rotateEncryptionKeys(
     // Re-encrypt with new key
     const reencrypted = encryptApiKey(plaintext, newKeyId);
 
-    await prisma[tableName].update({
+    await drizzle[tableName].update({
       where: { id: record.id },
       data: {
         [encryptedField]: JSON.stringify(reencrypted),

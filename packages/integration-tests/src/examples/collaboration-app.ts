@@ -9,7 +9,7 @@ import { Logger, MasterAgentRegistry, HeartbeatMonitoringService } from '@the-ne
 // import { WorkflowEngineFactory } from '@the-new-fuse/workflow-engine'; // Removed workflow-engine dependency
 import { ExtensionSystemFactory } from '@the-new-fuse/extension-system';
 // import { WorkflowNodeType } from '@the-new-fuse/workflow-engine/types'; // Removed workflow-engine dependency
-import { PrismaClient } from '@prisma/client';
+import { DrizzleClient } from '@drizzle/client';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 
@@ -25,7 +25,7 @@ import * as fs from 'fs-extra';
  */
 export class CollaborationApp {
   private logger: Logger;
-  private prisma: PrismaClient;
+  private drizzle: DrizzleClient;
   private agentRegistry: MasterAgentRegistry;
   private heartbeatService: HeartbeatMonitoringService;
   private workflowEngine: any;
@@ -48,7 +48,7 @@ export class CollaborationApp {
     this.logger.info('Initializing Multi-Agent Collaboration Application...');
 
     // Setup database
-    this.prisma = new PrismaClient({
+    this.drizzle = new DrizzleClient({
       datasources: {
         db: {
           url: 'file:./collaboration.db'
@@ -70,7 +70,7 @@ export class CollaborationApp {
       collaborationMode: true
     };
 
-    this.agentRegistry = new MasterAgentRegistry(agentConfig, this.prisma, this.logger);
+    this.agentRegistry = new MasterAgentRegistry(agentConfig, this.drizzle, this.logger);
 
     // Setup Heartbeat Monitoring for team coordination
     const heartbeatConfig = {
@@ -84,7 +84,7 @@ export class CollaborationApp {
 
     // Setup Workflow Engine
     this.workflowEngine = WorkflowEngineFactory.createDefault(
-      this.prisma,
+      this.drizzle,
       this.agentRegistry,
       this.heartbeatService,
       this.logger
@@ -659,8 +659,8 @@ export class CollaborationApp {
       await this.agentRegistry.shutdown();
     }
 
-    if (this.prisma) {
-      await this.prisma.$disconnect();
+    if (this.drizzle) {
+      await this.drizzle.$disconnect();
     }
 
     this.logger.info('Collaboration Application shut down successfully');

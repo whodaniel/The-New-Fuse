@@ -292,7 +292,7 @@ pnpm build
 
 ### Documentation
 
-- `.gemini/PRISMA_NAMESPACE_EXPORT_FIX.md` - Original issue documentation
+- `.gemini/DRIZZLE_NAMESPACE_EXPORT_FIX.md` - Original issue documentation
 - `.gemini/BUILD_PROCESS_HARDENING.md` - This file
 
 ## Success Metrics
@@ -334,7 +334,7 @@ pnpm build
 
 - [TypeScript Project References](https://www.typescriptlang.org/docs/handbook/project-references.html)
 - [TypeScript Incremental Compilation](https://www.typescriptlang.org/tsconfig#incremental)
-- Original Issue Fix: `.gemini/PRISMA_NAMESPACE_EXPORT_FIX.md`
+- Original Issue Fix: `.gemini/DRIZZLE_NAMESPACE_EXPORT_FIX.md`
 
 ## Support
 
@@ -342,7 +342,7 @@ If you encounter issues:
 
 1. Run `pnpm health-check:full`
 2. Check the output of `pnpm audit:clean-scripts`
-3. Review `.gemini/PRISMA_NAMESPACE_EXPORT_FIX.md` for context
+3. Review `.gemini/DRIZZLE_NAMESPACE_EXPORT_FIX.md` for context
 4. Run `pnpm clean && pnpm build` as a last resort
 
 ---

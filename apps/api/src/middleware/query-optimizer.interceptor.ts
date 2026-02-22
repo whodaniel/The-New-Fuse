@@ -126,7 +126,7 @@ export class QueryOptimizerInterceptor implements NestInterceptor {
   private suggestOptimization(patterns: [string, number][]): void {
     const mostFrequent = patterns[0];
     if (mostFrequent && mostFrequent[1] > 5) {
-      this.logger.warn(`   💡 Suggestion: Consider using Prisma's include/select to fetch related data in a single query`);
+      this.logger.warn(`   💡 Suggestion: Consider using Drizzle's include/select to fetch related data in a single query`);
       this.logger.warn(`   💡 Or implement DataLoader pattern for batching`);
     }
   }

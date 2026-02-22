@@ -130,14 +130,14 @@ DATABASE_URL="postgresql://user:pass@host:5432/db?sslmode=require&sslrootcert=/p
 
 ```bash
 cd packages/database
-npx prisma migrate status
+npx drizzle migrate status
 ```
 
 #### 2. Apply Pending Migrations
 
 ```bash
 # Production migration (applies all pending)
-npx prisma migrate deploy
+npx drizzle migrate deploy
 
 # This runs migrations without prompting
 # Safe for CI/CD pipelines
@@ -153,11 +153,11 @@ psql $DATABASE_URL -f migrations/add_production_indexes_and_constraints.sql
 #### 4. Verify Schema
 
 ```bash
-# Generate Prisma Client
-npx prisma generate
+# Generate Drizzle Client
+npx drizzle generate
 
 # Validate schema
-npx prisma validate
+npx drizzle validate
 ```
 
 ### Migration Best Practices
@@ -179,10 +179,10 @@ If a migration fails:
 psql $DATABASE_URL
 
 # 3. Check migration history
-SELECT * FROM _prisma_migrations ORDER BY finished_at DESC;
+SELECT * FROM _drizzle_migrations ORDER BY finished_at DESC;
 
 # 4. Mark migration as rolled back
-UPDATE _prisma_migrations
+UPDATE _drizzle_migrations
 SET rolled_back_at = NOW()
 WHERE migration_name = 'problematic_migration_name';
 ```
@@ -200,12 +200,12 @@ cd packages/database
 npm install bcrypt
 
 # Run seed script
-npx prisma db seed
+npx drizzle db seed
 ```
 
 ### Seed Script Configuration
 
-The seed script (`prisma/seed.ts`) creates:
+The seed script (`drizzle/seed.ts`) creates:
 
 1. **Admin User**: System administrator account
 2. **Demo Users**: (development only) Test accounts
@@ -215,11 +215,11 @@ The seed script (`prisma/seed.ts`) creates:
 
 ### Custom Seeding
 
-Edit `prisma/seed.ts` to customize:
+Edit `drizzle/seed.ts` to customize:
 
 ```typescript
 // Add your own seed data
-const customUser = await prisma.user.create({
+const customUser = await drizzle.user.create({
   data: {
     email: 'custom@example.com',
     // ... other fields
@@ -233,7 +233,7 @@ The seed script is **idempotent** - it uses `upsert` to avoid duplicates:
 
 ```bash
 # Safe to run multiple times
-npx prisma db seed
+npx drizzle db seed
 ```
 
 ---
@@ -425,21 +425,21 @@ effective_io_concurrency = 200  # Higher for SSD
 
 ### Health Checks
 
-The PrismaService provides health check endpoints:
+The DrizzleService provides health check endpoints:
 
 ```typescript
-import { PrismaService } from '@the-new-fuse/database';
+import { DrizzleService } from '@the-new-fuse/database';
 
 // Check if database is healthy
-const isHealthy = await prismaService.isHealthy();
+const isHealthy = await drizzleService.isHealthy();
 
 // Get detailed health status
-const healthStatus = await prismaService.getHealthStatus();
+const healthStatus = await drizzleService.getHealthStatus();
 console.log(healthStatus);
 // { connected: true, responseTime: 15 }
 
 // Get database statistics
-const stats = await prismaService.getDatabaseStats();
+const stats = await drizzleService.getDatabaseStats();
 console.log(stats);
 // { users: 150, agents: 45, tasks: 320, ... }
 ```
@@ -452,21 +452,21 @@ Run daily via cron:
 
 ```typescript
 // Cleanup expired sessions, messages, etc.
-await prismaService.cleanupExpiredRecords();
+await drizzleService.cleanupExpiredRecords();
 ```
 
 Cron job:
 
 ```bash
 # Add to crontab
-0 2 * * * cd /app && node -e "require('./packages/database/dist').PrismaService.cleanupExpiredRecords()"
+0 2 * * * cd /app && node -e "require('./packages/database/dist').DrizzleService.cleanupExpiredRecords()"
 ```
 
 #### 2. Cleanup Old Logs
 
 ```typescript
 // Delete logs older than 30 days
-await prismaService.cleanupOldLogs(30);
+await drizzleService.cleanupOldLogs(30);
 ```
 
 #### 3. Vacuum and Analyze
@@ -537,7 +537,7 @@ The `LLMConfig.apiKey` field should be encrypted:
 import { encrypt, decrypt } from './utils/encryption';
 
 const encrypted = encrypt(apiKey);
-await prisma.lLMConfig.create({
+await drizzle.lLMConfig.create({
   data: {
     apiKey: encrypted,
     // ...
@@ -633,13 +633,13 @@ SELECT pg_terminate_backend(pid);
 **Solutions**:
 ```bash
 # Check migration status
-npx prisma migrate status
+npx drizzle migrate status
 
 # Resolve manually in database
 psql $DATABASE_URL
 
 # Mark as applied (if manually fixed)
-INSERT INTO _prisma_migrations (id, checksum, finished_at, migration_name, logs, rolled_back_at, started_at, applied_steps_count)
+INSERT INTO _drizzle_migrations (id, checksum, finished_at, migration_name, logs, rolled_back_at, started_at, applied_steps_count)
 VALUES ('unique-id', 'checksum', NOW(), '20250101000000_migration_name', NULL, NULL, NOW(), 1);
 ```
 
@@ -682,27 +682,27 @@ DATABASE_URL="...?sslmode=require&sslrootcert=/path/to/ca-cert.crt"
 psql $DATABASE_URL -c "SELECT version();"
 
 # Check migration status
-npx prisma migrate status
+npx drizzle migrate status
 
 # Validate schema
-npx prisma validate
+npx drizzle validate
 
 # Generate client
-npx prisma generate
+npx drizzle generate
 
 # View database URL (masked)
 echo $DATABASE_URL | sed 's/:.*@/:***@/'
 
 # Test connection with retry
-node -e "const { PrismaClient } = require('./generated/prisma'); new PrismaClient().\$connect().then(() => console.log('Connected!')).catch(console.error);"
+node -e "const { DrizzleClient } = require('./generated/drizzle'); new DrizzleClient().\$connect().then(() => console.log('Connected!')).catch(console.error);"
 ```
 
 ### Getting Help
 
 1. **Check logs**: Application logs and PostgreSQL logs
-2. **Prisma documentation**: https://www.prisma.io/docs
+2. **Drizzle documentation**: https://www.drizzle.io/docs
 3. **PostgreSQL documentation**: https://www.postgresql.org/docs
-4. **Community**: Prisma Discord, Stack Overflow
+4. **Community**: Drizzle Discord, Stack Overflow
 
 ---
 
@@ -712,22 +712,22 @@ node -e "const { PrismaClient } = require('./generated/prisma'); new PrismaClien
 
 ```bash
 # Migration commands
-npx prisma migrate deploy          # Apply migrations (production)
-npx prisma migrate status          # Check migration status
-npx prisma migrate resolve         # Resolve migration issues
+npx drizzle migrate deploy          # Apply migrations (production)
+npx drizzle migrate status          # Check migration status
+npx drizzle migrate resolve         # Resolve migration issues
 
 # Database commands
-npx prisma db push                 # Sync schema without migration (dev only)
-npx prisma db pull                 # Pull schema from database
-npx prisma db seed                 # Seed database
+npx drizzle db push                 # Sync schema without migration (dev only)
+npx drizzle db pull                 # Pull schema from database
+npx drizzle db seed                 # Seed database
 
 # Client commands
-npx prisma generate                # Generate Prisma Client
-npx prisma studio                  # Open Prisma Studio (GUI)
-npx prisma validate                # Validate schema
+npx drizzle generate                # Generate Drizzle Client
+npx drizzle studio                  # Open Drizzle Studio (GUI)
+npx drizzle validate                # Validate schema
 
 # Maintenance
-npx prisma format                  # Format schema file
+npx drizzle format                  # Format schema file
 ```
 
 ### Connection String Templates
@@ -773,11 +773,11 @@ Before deploying to production:
 For issues or questions:
 
 1. Check this documentation
-2. Review Prisma documentation
+2. Review Drizzle documentation
 3. Check application logs
 4. Contact database administrator
 5. Create issue in project repository
 
 **Last Updated**: 2025-11-18
 **Schema Version**: 1.0.0
-**Prisma Version**: 6.19.0
+**Drizzle Version**: 6.19.0

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This script fixes the failed Prisma migration by directly updating the _prisma_migrations table
+# This script fixes the failed Drizzle migration by directly updating the _drizzle_migrations table
 # It marks the failed migration as applied so that the build process can continue
 
 echo "🔧 Fixing failed database migration..."
@@ -24,7 +24,7 @@ DB_USER=$(echo $DATABASE_URL | sed -n 's/.*:\/\/\(.*\):.*/\1/p')
 DB_PASSWORD=$(echo $DATABASE_URL | sed -n 's/.*:\/\/.*:\(.*\)@.*/\1/p')
 
 # SQL command to mark the migration as applied
-SQL_COMMAND="UPDATE \"_prisma_migrations\" SET \"applied\" = 1, \"rolled_back\" = 0, \"rolled_back_at\" = NULL WHERE \"migration_name\" = '20250120101622_add_google_auth_fields';"
+SQL_COMMAND="UPDATE \"_drizzle_migrations\" SET \"applied\" = 1, \"rolled_back\" = 0, \"rolled_back_at\" = NULL WHERE \"migration_name\" = '20250120101622_add_google_auth_fields';"
 
 echo "Connecting to database $DB_NAME on $DB_HOST:$DB_PORT..."
 echo "Marking migration '20250120101622_add_google_auth_fields' as applied..."

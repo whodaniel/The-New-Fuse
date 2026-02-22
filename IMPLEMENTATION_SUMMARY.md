@@ -34,7 +34,7 @@ fully tested, and includes comprehensive documentation.
 
 **Security Impact:**
 
-- **BEFORE:** 6 files with hardcoded fallbacks `|| 'default-secret-key'`
+- **BEFORE:** 6 files with hardcoded fallbacks `|| '[REDACTED_SECRET]-key'`
 - **AFTER:** Zero hardcoded secrets, application fails to start if misconfigured
 
 ---
@@ -83,7 +83,7 @@ fully tested, and includes comprehensive documentation.
 
 **Changes Made:**
 
-- ✅ Removed all `|| 'default-secret-key'` patterns
+- ✅ Removed all `|| '[REDACTED_SECRET]-key'` patterns
 - ✅ Replaced with AppConfigService dependency injection
 - ✅ Added proper error handling for missing secrets
 - ✅ Maintained backward compatibility with legacy exports
@@ -189,7 +189,7 @@ fully tested, and includes comprehensive documentation.
 **Before:**
 
 ```typescript
-const secret = process.env.JWT_SECRET || 'default-secret-key';
+const secret = process.env.JWT_SECRET || '[REDACTED_SECRET]-key';
 jwt.sign(payload, secret);
 ```
 

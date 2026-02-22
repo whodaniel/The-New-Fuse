@@ -459,7 +459,7 @@ export class AgentController {
 ### Service Structure
 ```typescript
 import { Injectable, Logger, NotFoundException, ConflictException } from '@nestjs/common';
-import { PrismaService } from './prisma.service';
+import { DrizzleService } from './drizzle.service';
 import { AgentRepository } from '../repositories/agent.repository';
 import { CreateAgentDto, UpdateAgentDto, AgentQueryDto } from '../dtos/agent.dto';
 import { User } from '../entities/user.entity';
@@ -483,7 +483,7 @@ export class AgentService {
   private readonly logger = new Logger(AgentService.name);
 
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly drizzle: DrizzleService,
     private readonly agentRepository: AgentRepository,
     private readonly agentValidator: AgentValidator,
     private readonly agentFactory: AgentFactory,
@@ -1089,7 +1089,7 @@ const PureListItem = memo<ListItemProps>(({ item, onClick }) => {
 export class AgentService {
   async findAgentsWithOptimizedQuery(query: AgentQueryDto) {
     // Use selective field loading
-    const agents = await this.prisma.agent.findMany({
+    const agents = await this.drizzle.agent.findMany({
       where: this.buildWhereClause(query),
       select: {
         id: true,
@@ -1104,7 +1104,7 @@ export class AgentService {
     });
 
     // Use COUNT(*) for pagination
-    const total = await this.prisma.agent.count({
+    const total = await this.drizzle.agent.count({
       where: this.buildWhereClause(query),
     });
 
@@ -1117,7 +1117,7 @@ export class AgentService {
   @UseInterceptors(CacheInterceptor)
   @CacheTTL(300) // 5 minutes
   async getAgentConfiguration(agentId: string) {
-    return this.prisma.agent.findUnique({
+    return this.drizzle.agent.findUnique({
       where: { id: agentId },
       select: {
         config: true,

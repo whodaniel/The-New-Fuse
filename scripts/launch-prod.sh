@@ -13,13 +13,13 @@ fi
 echo "📦 Building all packages..."
 yarn build
 
-# Generate Prisma client
+# Generate Drizzle client
 echo "🗄️ Generating database client..."
-yarn prisma:generate
+yarn drizzle:generate
 
 # Run database migrations
 echo "📊 Running database migrations..."
-yarn prisma:migrate
+yarn drizzle:migrate
 
 # Start production services
 echo "🚀 Starting production services..."

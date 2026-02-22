@@ -79,14 +79,14 @@ describe('UserService', () => {
 ### Test with Real Database
 
 ```typescript
-import { PrismaService } from '@project-lifecycle-portal/database';
+import { DrizzleService } from '@project-lifecycle-portal/database';
 
 describe('UserService Integration', () => {
     let testUser: any;
 
     beforeAll(async () => {
         // Create test data
-        testUser = await PrismaService.main.user.create({
+        testUser = await DrizzleService.main.user.create({
             data: {
                 email: 'test@test.com',
                 profile: { create: { firstName: 'Test', lastName: 'User' } },
@@ -96,7 +96,7 @@ describe('UserService Integration', () => {
 
     afterAll(async () => {
         // Cleanup
-        await PrismaService.main.user.delete({ where: { id: testUser.id } });
+        await DrizzleService.main.user.delete({ where: { id: testUser.id } });
     });
 
     it('should find user by email', async () => {
@@ -111,11 +111,11 @@ describe('UserService Integration', () => {
 
 ## Mocking Strategies
 
-### Mock PrismaService
+### Mock DrizzleService
 
 ```typescript
 jest.mock('@project-lifecycle-portal/database', () => ({
-    PrismaService: {
+    DrizzleService: {
         main: {
             user: {
                 findMany: jest.fn(),
@@ -151,7 +151,7 @@ describe('PermissionService', () => {
 
     beforeAll(async () => {
         // Create test post
-        const post = await PrismaService.main.post.create({
+        const post = await DrizzleService.main.post.create({
             data: { title: 'Test Post', content: 'Test', authorId: 'test-user' },
         });
         instanceId = post.id;
@@ -159,7 +159,7 @@ describe('PermissionService', () => {
 
     afterAll(async () => {
         // Cleanup
-        await PrismaService.main.post.delete({
+        await DrizzleService.main.post.delete({
             where: { id: instanceId },
         });
     });

@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TNFMessageBuilder = exports.ResponsePayload = exports.StateSyncPayload = exports.EventPayload = exports.TaskPayload = exports.TNFEnvelope = exports.MessageContext = exports.AgentIdentity = exports.MessageType = void 0;
+exports.TNFMessageBuilder = exports.BidPayload = exports.AuctionPayload = exports.ResponsePayload = exports.StateSyncPayload = exports.EventPayload = exports.TaskPayload = exports.TNFEnvelope = exports.MessageContext = exports.AgentIdentity = exports.MessageType = void 0;
 exports.createTNFEnvelope = createTNFEnvelope;
 exports.validateTNFEnvelope = validateTNFEnvelope;
 exports.isTaskMessage = isTaskMessage;
@@ -29,10 +29,15 @@ exports.MessageType = zod_1.z.enum([
     'command', // Direct action request
     'event', // Fire-and-forget notification
     'task', // Requires ACK/result
+    'handoff', // Targeted prompt/state transfer between agents
+    'handoff-ack', // Acknowledgement for a handoff packet
     'state-sync', // State synchronization
     'query', // Information request
     'response', // Response to query/task
     'resource-negotiate', // Resource/Quota management
+    'auction', // Broadcast for task bidding
+    'bid', // Agent bid for a task
+    'award', // Selection of an agent for a task
 ]);
 /**
  * Agent Identity
@@ -104,11 +109,30 @@ exports.StateSyncPayload = zod_1.z.object({
 exports.ResponsePayload = zod_1.z.object({
     success: zod_1.z.boolean(),
     result: zod_1.z.unknown().optional(),
-    error: zod_1.z.object({
+    error: zod_1.z
+        .object({
         code: zod_1.z.string(),
         message: zod_1.z.string(),
         details: zod_1.z.unknown().optional(),
-    }).optional(),
+    })
+        .optional(),
+});
+// Auction payload
+exports.AuctionPayload = zod_1.z.object({
+    taskId: zod_1.z.string().describe('ID of the task up for auction'),
+    taskType: zod_1.z.string().describe('Type of task (e.g. "code-generation")'),
+    requirements: zod_1.z.array(zod_1.z.string()).describe('Required capabilities'),
+    priority: zod_1.z.enum(['low', 'normal', 'high', 'critical']).default('normal'),
+    expiresAt: zod_1.z.number().describe('Timestamp when the auction ends'),
+    metadata: zod_1.z.record(zod_1.z.string(), zod_1.z.unknown()).optional(),
+});
+// Bid payload
+exports.BidPayload = zod_1.z.object({
+    taskId: zod_1.z.string().describe('ID of the task being bid on'),
+    suitability: zod_1.z.number().min(0).max(1).describe('Score from 0-1 on how well the agent fits'),
+    estimatedDuration: zod_1.z.number().optional().describe('Estimated time to complete in ms'),
+    status: zod_1.z.string().optional().describe('Current agent status/load info'),
+    metadata: zod_1.z.record(zod_1.z.string(), zod_1.z.unknown()).optional(),
 });
 /**
  * Helper Functions

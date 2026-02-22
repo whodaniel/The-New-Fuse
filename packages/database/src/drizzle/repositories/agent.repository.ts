@@ -1,6 +1,6 @@
 /**
  * Agent Repository - Drizzle ORM Implementation
- * Example of migrating from Prisma to Drizzle using the Repository Pattern
+ * Example of migrating from Drizzle to Drizzle using the Repository Pattern
  */
 import * as crypto from 'crypto';
 import { and, desc, eq, inArray, isNull, like, or, sql } from 'drizzle-orm';
@@ -33,7 +33,7 @@ function hashToken(token: string): string {
  * Agent Repository - provides data access for Agent entities
  *
  * This repository abstracts the database access layer, allowing for
- * easy migration from Prisma to Drizzle without changing service code.
+ * easy migration from Drizzle to Drizzle without changing service code.
  */
 export class DrizzleAgentRepository {
   /**
@@ -263,184 +263,6 @@ export class DrizzleAgentRepository {
   }
 
   /**
-   * Update agent heartbeat (for registry)
-   */
-  async updateHeartbeat(agentId: string): Promise<void> {
-    await db
-      .update(agentRegistrations)
-      .set({
-        lastHeartbeat: new Date(),
-        isOnline: true,
-        updatedAt: new Date(),
-      })
-      .where(eq(agentRegistrations.agentId, agentId));
-  }
-
-  /**
-   * Mark agents as offline if no heartbeat received
-   */
-  async markStaleAgentsOffline(staleThresholdMs: number): Promise<number> {
-    const staleTime = new Date(Date.now() - staleThresholdMs);
-
-    const result = await db
-      .update(agentRegistrations)
-      .set({ isOnline: false, updatedAt: new Date() })
-      .where(
-        and(
-          eq(agentRegistrations.isOnline, true),
-          sql`${agentRegistrations.lastHeartbeat} < ${staleTime}`
-        )
-      )
-      .returning();
-
-    return result.length;
-  }
-
-  /**
-   * Get agents with directory entries (for discovery)
-   */
-  async findPublicAgents(
-    category?: string,
-    limit = 20
-  ): Promise<Array<Agent & { directoryEntry: typeof agentDirectoryEntries.$inferSelect }>> {
-    // Build the base query conditions
-    const baseCondition = and(eq(agentDirectoryEntries.isPublic, true), isNull(agents.deletedAt));
-
-    // Add category filter if provided
-    const whereCondition = category
-      ? and(baseCondition, eq(agentDirectoryEntries.category, category))
-      : baseCondition;
-
-    const results = await db
-      .select()
-      .from(agents)
-      .innerJoin(agentDirectoryEntries, eq(agents.id, agentDirectoryEntries.agentId))
-      .where(whereCondition)
-      .orderBy(desc(agentDirectoryEntries.rating))
-      .limit(limit);
-
-    return results.map((r) => ({
-      ...r.agents,
-      directoryEntry: r.agent_directory_entries,
-    }));
-  }
-
-  /**
-   * Find agent by name and user ID (for duplicate checking)
-   */
-  async findByNameAndUserId(name: string, userId: string): Promise<Agent | null> {
-    const [agent] = await db
-      .select()
-      .from(agents)
-      .where(and(eq(agents.name, name), eq(agents.userId, userId), isNull(agents.deletedAt)));
-
-    return agent ?? null;
-  }
-
-  /**
-   * Find agents with pagination
-   */
-  async findWithPagination(
-    userId: string,
-    page = 1,
-    limit = 50
-  ): Promise<{ data: Agent[]; total: number }> {
-    const skip = (page - 1) * limit;
-
-    const [data, countResult] = await Promise.all([
-      db
-        .select()
-        .from(agents)
-        .where(and(eq(agents.userId, userId), isNull(agents.deletedAt)))
-        .orderBy(desc(agents.createdAt))
-        .offset(skip)
-        .limit(limit),
-      db
-        .select({ count: sql<number>`cast(count(*) as integer)` })
-        .from(agents)
-        .where(and(eq(agents.userId, userId), isNull(agents.deletedAt))),
-    ]);
-
-    return {
-      data,
-      total: countResult[0]?.count ?? 0,
-    };
-  }
-
-  /**
-   * Find agents by status and user ID
-   */
-  async findByStatusAndUserId(status: string, userId: string): Promise<Agent[]> {
-    return db
-      .select()
-      .from(agents)
-      .where(
-        and(eq(agents.status, status as any), eq(agents.userId, userId), isNull(agents.deletedAt))
-      )
-      .orderBy(desc(agents.updatedAt));
-  }
-
-  /**
-   * Search agents by query (name, type, capability)
-   */
-  async searchAgents(
-    userId: string,
-    query: { name?: string; type?: string; capability?: string }
-  ): Promise<Agent[]> {
-    const conditions = [eq(agents.userId, userId), isNull(agents.deletedAt)];
-
-    if (query.name) {
-      conditions.push(like(agents.name, `%${query.name}%`));
-    }
-
-    if (query.type) {
-      conditions.push(eq(agents.type, query.type as any));
-    }
-
-    if (query.capability) {
-      conditions.push(
-        sql`${agents.capabilities}::jsonb @> ${JSON.stringify([query.capability])}::jsonb`
-      );
-    }
-
-    return db
-      .select()
-      .from(agents)
-      .where(and(...conditions))
-      .orderBy(desc(agents.createdAt));
-  }
-
-  /**
-   * Find agents by capability
-   */
-  async findByCapability(capability: string, userId: string): Promise<Agent[]> {
-    return db
-      .select()
-      .from(agents)
-      .where(
-        and(
-          eq(agents.userId, userId),
-          isNull(agents.deletedAt),
-          sql`${agents.capabilities}::jsonb @> ${JSON.stringify([capability])}::jsonb`
-        )
-      )
-      .orderBy(desc(agents.createdAt));
-  }
-
-  /**
-   * Update agent status
-   */
-  async updateStatus(id: string, status: string): Promise<Agent | null> {
-    const [agent] = await db
-      .update(agents)
-      .set({ status: status as any, updatedAt: new Date() })
-      .where(eq(agents.id, id))
-      .returning();
-
-    return agent ?? null;
-  }
-
-  /**
    * Create agent registration
    */
   async createRegistration(data: {
@@ -454,12 +276,22 @@ export class DrizzleAgentRepository {
     isOnline: boolean;
     metadata: any;
   }) {
-    // Hash auth token before storage
-    const hashedData = {
-      ...data,
-      authToken: hashToken(data.authToken),
+    // Hash auth token before storage (deterministic for lookup)
+    const hashedToken = hashToken(data.authToken);
+    
+    const insertData = {
+      agentId: data.agentId,
+      encryptedAuthToken: hashedToken, // Using hash for lookup consistency
+      registrationData: data.registrationData,
+      verificationStatus: data.verificationStatus,
+      onboardingStatus: data.onboardingStatus,
+      onboardingProgress: data.onboardingProgress,
+      heartbeatInterval: data.heartbeatInterval,
+      isOnline: data.isOnline,
+      metadata: data.metadata,
     };
-    const [registration] = await db.insert(agentRegistrations).values(hashedData).returning();
+
+    const [registration] = await db.insert(agentRegistrations).values(insertData as any).returning();
 
     // Return the original plain token so the caller can see it once
     return {
@@ -472,33 +304,14 @@ export class DrizzleAgentRepository {
    * Find registration by auth token
    */
   async findRegistrationByToken(token: string) {
-    // We need to check both plain token (legacy) and hashed token
     const hashedToken = hashToken(token);
 
-    // Try hashed match first
-    const [hashedMatch] = await db
+    const [match] = await db
       .select()
       .from(agentRegistrations)
-      .where(eq(agentRegistrations.authToken, hashedToken));
+      .where(eq(agentRegistrations.encryptedAuthToken, hashedToken));
 
-    if (hashedMatch) {
-      return hashedMatch; // Return with hashed token
-    }
-
-    // Fallback to direct match (legacy/unencrypted)
-    // Note: If hashToken returns token (no key), this duplicates the check, which is fine.
-    const [directMatch] = await db
-      .select()
-      .from(agentRegistrations)
-      .where(eq(agentRegistrations.authToken, token));
-
-    // Prevent Pass-the-Hash: If we matched via plaintext but the stored value is a hash,
-    // it means the input token was the hash itself. Reject it.
-    if (directMatch && !directMatch.authToken.startsWith('hmac_')) {
-      return directMatch; // Return as is (legacy plain token)
-    }
-
-    return null;
+    return match ?? null;
   }
 
   /**

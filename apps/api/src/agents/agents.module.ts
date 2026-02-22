@@ -1,6 +1,6 @@
 import { Module, Logger } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { PrismaService } from '@the-new-fuse/database';
+import { DrizzleService } from '@the-new-fuse/database';
 import { SelfImprovementController } from '../controllers/self-improvement.controller';
 import { AgentFactory } from './agent.factory';
 import { AgentsService } from './agents.service';
@@ -29,7 +29,7 @@ const logger = new Logger('UnifiedMonitoringService');
   imports: [ConfigModule],
   controllers: [SelfImprovementController],
   providers: [
-    PrismaService,
+    DrizzleService,
     AgentsService,
     AgentFactory,
     // Mock UnifiedMonitoringService - TODO: Replace with actual implementation
@@ -51,7 +51,7 @@ const logger = new Logger('UnifiedMonitoringService');
     CoordinatorAgentService,
   ],
   exports: [
-    PrismaService,
+    DrizzleService,
     AgentsService,
     AgentFactory,
     AnalyzerAgentService,

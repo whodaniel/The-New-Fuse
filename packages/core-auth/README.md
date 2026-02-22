@@ -4,7 +4,7 @@ Comprehensive authentication and authorization system for The New Fuse. Provides
 
 ## Overview
 
-The core-auth package is a production-ready authentication module built with NestJS, providing complete authentication flows including registration, login, password reset, email verification, and OAuth integration. It integrates seamlessly with The New Fuse ecosystem and Prisma database.
+The core-auth package is a production-ready authentication module built with NestJS, providing complete authentication flows including registration, login, password reset, email verification, and OAuth integration. It integrates seamlessly with The New Fuse ecosystem and Drizzle database.
 
 ## Features
 
@@ -18,7 +18,7 @@ The core-auth package is a production-ready authentication module built with Nes
 - **Guards**: Pre-built authentication guards for NestJS
 - **Strategies**: Passport.js strategies for JWT and OAuth
 - **Type Safety**: Full TypeScript support with comprehensive types
-- **Prisma Integration**: Works seamlessly with @the-new-fuse/database
+- **Drizzle Integration**: Works seamlessly with @the-new-fuse/database
 
 ## Installation
 
@@ -460,10 +460,10 @@ export class ProfileController {
 ### Database Integration
 
 ```typescript
-// Uses @the-new-fuse/database PrismaService
-import { PrismaService } from '@the-new-fuse/database';
+// Uses @the-new-fuse/database DrizzleService
+import { DrizzleService } from '@the-new-fuse/database';
 
-// AuthService automatically integrates with Prisma
+// AuthService automatically integrates with Drizzle
 // No additional configuration needed
 ```
 
@@ -603,7 +603,7 @@ describe('AuthService', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      providers: [AuthService, PrismaService, JwtService],
+      providers: [AuthService, DrizzleService, JwtService],
     }).compile();
 
     authService = module.get<AuthService>(AuthService);
@@ -709,7 +709,7 @@ This package depends on:
 - `passport-google-oauth20` - Google OAuth
 - `passport-github2` - GitHub OAuth
 - `bcrypt` - Password hashing
-- `@the-new-fuse/database` - Prisma integration
+- `@the-new-fuse/database` - Drizzle integration
 
 ## License
 
@@ -728,7 +728,7 @@ For issues and questions:
 
 ## Related Packages
 
-- `@the-new-fuse/database` - Prisma database client
+- `@the-new-fuse/database` - Drizzle database client
 - `@the-new-fuse/core-error-handling` - Error handling utilities
 - `@the-new-fuse/core` - Core functionality
 - `@the-new-fuse/api` - REST API implementation

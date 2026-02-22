@@ -6,13 +6,13 @@
  */
 
 // Optional database integration
-let prisma: any = null;
+let drizzle: any = null;
 let databaseModule: any = null;
 
 try {
   databaseModule = require('@the-new-fuse/database');
   if (databaseModule && databaseModule.db) {
-    prisma = databaseModule.db; // Use Drizzle client
+    drizzle = databaseModule.db; // Use Drizzle client
   }
 } catch (error) {
   console.log('Database integration not available, using in-memory storage');
@@ -74,19 +74,19 @@ export interface MCPAuditLog {
  * Provides persistent storage capabilities for MCP services
  */
 export const DatabaseIntegration = {
-  isAvailable: !!prisma,
+  isAvailable: !!drizzle,
   
   /**
    * Initialize database connection and schema
    */
   async initialize(config?: Partial<DatabaseIntegrationConfig>): Promise<boolean> {
-    if (!prisma) {
+    if (!drizzle) {
       return false;
     }
     
     try {
       // Test connection
-      await prisma.$connect();
+      await drizzle.$connect();
       
       if (config?.autoMigrate) {
         // Run migrations if available
@@ -107,7 +107,7 @@ export const DatabaseIntegration = {
    * Save MCP service information to database
    */
   async saveServiceInfo(serviceInfo: any): Promise<MCPServiceRecord | null> {
-    if (!prisma) {
+    if (!drizzle) {
       return serviceInfo; // Return as-is if no database
     }
     
@@ -131,7 +131,7 @@ export const DatabaseIntegration = {
       
       // Use upsert to handle both create and update
       const result = await this.executeWithRetry(() => 
-        prisma.mcpService?.upsert({
+        drizzle.mcpService?.upsert({
           where: { id: serviceInfo.id },
           create: record,
           update: {
@@ -152,13 +152,13 @@ export const DatabaseIntegration = {
    * Get MCP service information from database
    */
   async getServiceInfo(serviceId: string): Promise<MCPServiceRecord | null> {
-    if (!prisma) {
+    if (!drizzle) {
       return null;
     }
     
     try {
       const result = await this.executeWithRetry(() =>
-        prisma.mcpService?.findUnique({
+        drizzle.mcpService?.findUnique({
           where: { id: serviceId },
           include: {
             metrics: {
@@ -186,7 +186,7 @@ export const DatabaseIntegration = {
     limit?: number;
     offset?: number;
   }): Promise<MCPServiceRecord[]> {
-    if (!prisma) {
+    if (!drizzle) {
       return [];
     }
     
@@ -210,7 +210,7 @@ export const DatabaseIntegration = {
       }
       
       const result = await this.executeWithRetry(() =>
-        prisma.mcpService?.findMany({
+        drizzle.mcpService?.findMany({
           where,
           take: filters?.limit,
           skip: filters?.offset,
@@ -235,13 +235,13 @@ export const DatabaseIntegration = {
    * Delete MCP service from database
    */
   async deleteService(serviceId: string): Promise<boolean> {
-    if (!prisma) {
+    if (!drizzle) {
       return true; // No-op if no database
     }
     
     try {
       await this.executeWithRetry(() =>
-        prisma.mcpService?.delete({
+        drizzle.mcpService?.delete({
           where: { id: serviceId }
         }) || Promise.resolve()
       );
@@ -257,13 +257,13 @@ export const DatabaseIntegration = {
    * Save service metrics to database
    */
   async saveMetrics(metrics: Omit<MCPServiceMetrics, 'timestamp'>): Promise<boolean> {
-    if (!prisma) {
+    if (!drizzle) {
       return false;
     }
     
     try {
       await this.executeWithRetry(() =>
-        prisma.mcpServiceMetrics?.create({
+        drizzle.mcpServiceMetrics?.create({
           data: {
             ...metrics,
             timestamp: new Date()
@@ -287,7 +287,7 @@ export const DatabaseIntegration = {
     limit?: number;
     aggregation?: 'raw' | 'hourly' | 'daily';
   }): Promise<MCPServiceMetrics[]> {
-    if (!prisma) {
+    if (!drizzle) {
       return [];
     }
     
@@ -301,7 +301,7 @@ export const DatabaseIntegration = {
       }
       
       const result = await this.executeWithRetry(() =>
-        prisma.mcpServiceMetrics?.findMany({
+        drizzle.mcpServiceMetrics?.findMany({
           where,
           orderBy: { timestamp: 'desc' },
           take: options?.limit || 100
@@ -319,13 +319,13 @@ export const DatabaseIntegration = {
    * Log audit event
    */
   async logAudit(auditLog: Omit<MCPAuditLog, 'id' | 'timestamp'>): Promise<boolean> {
-    if (!prisma) {
+    if (!drizzle) {
       return false;
     }
     
     try {
       await this.executeWithRetry(() =>
-        prisma.mcpAuditLog?.create({
+        drizzle.mcpAuditLog?.create({
           data: {
             id: `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
             ...auditLog,
@@ -351,7 +351,7 @@ export const DatabaseIntegration = {
     limit?: number;
     offset?: number;
   }): Promise<MCPAuditLog[]> {
-    if (!prisma) {
+    if (!drizzle) {
       return [];
     }
     
@@ -373,7 +373,7 @@ export const DatabaseIntegration = {
       }
       
       const result = await this.executeWithRetry(() =>
-        prisma.mcpAuditLog?.findMany({
+        drizzle.mcpAuditLog?.findMany({
           where,
           orderBy: { timestamp: 'desc' },
           take: options?.limit || 100,
@@ -400,7 +400,7 @@ export const DatabaseIntegration = {
     deletedAudits: number;
     deletedServices: number;
   }> {
-    if (!prisma) {
+    if (!drizzle) {
       return { deletedMetrics: 0, deletedAudits: 0, deletedServices: 0 };
     }
     
@@ -413,7 +413,7 @@ export const DatabaseIntegration = {
       if (options?.metricsRetentionDays) {
         const metricsThreshold = new Date(now.getTime() - options.metricsRetentionDays * 24 * 60 * 60 * 1000);
         const deletedMetrics = await this.executeWithRetry(() =>
-          prisma.mcpServiceMetrics?.deleteMany({
+          drizzle.mcpServiceMetrics?.deleteMany({
             where: {
               timestamp: { lt: metricsThreshold }
             }
@@ -426,7 +426,7 @@ export const DatabaseIntegration = {
       if (options?.auditRetentionDays) {
         const auditThreshold = new Date(now.getTime() - options.auditRetentionDays * 24 * 60 * 60 * 1000);
         const deletedAudits = await this.executeWithRetry(() =>
-          prisma.mcpAuditLog?.deleteMany({
+          drizzle.mcpAuditLog?.deleteMany({
             where: {
               timestamp: { lt: auditThreshold }
             }
@@ -439,7 +439,7 @@ export const DatabaseIntegration = {
       if (options?.inactiveServiceDays) {
         const serviceThreshold = new Date(now.getTime() - options.inactiveServiceDays * 24 * 60 * 60 * 1000);
         const deletedServices = await this.executeWithRetry(() =>
-          prisma.mcpService?.deleteMany({
+          drizzle.mcpService?.deleteMany({
             where: {
               lastActivity: { lt: serviceThreshold },
               status: 'OFFLINE'
@@ -491,7 +491,7 @@ export const DatabaseIntegration = {
     audits: number;
     lastActivity: Date | null;
   }> {
-    if (!prisma) {
+    if (!drizzle) {
       return {
         connected: false,
         services: 0,
@@ -503,10 +503,10 @@ export const DatabaseIntegration = {
     
     try {
       const [servicesCount, metricsCount, auditsCount, lastService] = await Promise.all([
-        prisma.mcpService?.count() || Promise.resolve(0),
-        prisma.mcpServiceMetrics?.count() || Promise.resolve(0),
-        prisma.mcpAuditLog?.count() || Promise.resolve(0),
-        prisma.mcpService?.findFirst({
+        drizzle.mcpService?.count() || Promise.resolve(0),
+        drizzle.mcpServiceMetrics?.count() || Promise.resolve(0),
+        drizzle.mcpAuditLog?.count() || Promise.resolve(0),
+        drizzle.mcpService?.findFirst({
           orderBy: { lastActivity: 'desc' },
           select: { lastActivity: true }
         }) || Promise.resolve(null)
@@ -535,8 +535,8 @@ export const DatabaseIntegration = {
    * Disconnect from database
    */
   async disconnect(): Promise<void> {
-    if (prisma && prisma.$disconnect) {
-      await prisma.$disconnect();
+    if (drizzle && drizzle.$disconnect) {
+      await drizzle.$disconnect();
     }
   }
 };

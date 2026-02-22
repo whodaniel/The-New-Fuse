@@ -2,13 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TaskSynchronizationService, TaskSyncData, TaskExecutionSyncData } from './TaskSynchronizationService';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { PrismaService } from '@the-new-fuse/database';
+import { DrizzleService } from '@the-new-fuse/database';
 
 describe('TaskSynchronizationService', () => {
   let service: TaskSynchronizationService;
   let mockRedisService: jest.Mocked<UnifiedRedisService>;
   let mockWebSocketService: jest.Mocked<any>;
-  let mockDbService: jest.Mocked<PrismaService>;
+  let mockDbService: jest.Mocked<DrizzleService>;
   let mockSyncOrchestrator: jest.Mocked<SyncOrchestrator>;
 
   beforeEach(async () => {
@@ -67,7 +67,7 @@ describe('TaskSynchronizationService', () => {
           useValue: mockWebSocketService
         },
         {
-          provide: PrismaService,
+          provide: DrizzleService,
           useValue: mockDbService
         },
         {

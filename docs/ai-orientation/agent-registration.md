@@ -68,7 +68,7 @@ const agents = await agentDiscoveryService.discoverAgents();
 
 Agents are stored in the database with the following schema:
 
-```prisma
+```drizzle
 model Agent {
   id          String       @id @default(uuid())
   name        String

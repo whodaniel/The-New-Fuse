@@ -56,8 +56,8 @@ Multiple instances of hardcoded secrets found across the codebase:
 
 1. **API Server:** `WEB3AUTH_JWT_SECRET="your-jwt-secret"`
 2. **Configuration:** `JWT_SECRET="your-super-secret-jwt-key-here"`
-3. **OAuth:** `clientSecret: 'default-secret'`
-4. **VSCode Extension:** `secretKey === 'default-secret-key-change-in-production'`
+3. **OAuth:** `clientSecret: '[REDACTED_SECRET]'`
+4. **VSCode Extension:** `secretKey === '[REDACTED_SECRET]-key-change-in-production'`
 
 **Action Items:**
 - Remove all hardcoded secrets immediately

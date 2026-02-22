@@ -63,25 +63,25 @@ export class HealthIndicator {
 }
 
 /**
- * Prisma health indicator
+ * Drizzle health indicator
  */
-export class PrismaHealthIndicator extends HealthIndicator {
+export class DrizzleHealthIndicator extends HealthIndicator {
   constructor() {
     super();
   }
 
-  async pingCheck(key: string, prismaService: any): Promise<Record<string, any>> {
+  async pingCheck(key: string, drizzleService: any): Promise<Record<string, any>> {
     try {
-      if (typeof prismaService.healthCheck === 'function') {
-        const isHealthy = await prismaService.healthCheck();
+      if (typeof drizzleService.healthCheck === 'function') {
+        const isHealthy = await drizzleService.healthCheck();
         if (isHealthy) {
           return this.getStatus(key, true);
         }
         throw new Error('Database health check failed');
       }
       
-      if (typeof prismaService.$queryRaw === 'function') {
-        await prismaService.$queryRaw`SELECT 1`;
+      if (typeof drizzleService.$queryRaw === 'function') {
+        await drizzleService.$queryRaw`SELECT 1`;
         return this.getStatus(key, true);
       }
       

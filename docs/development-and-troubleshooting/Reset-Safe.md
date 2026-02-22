@@ -152,12 +152,12 @@ echo "6. Or go to DevTools > Application > Storage > Clear storage"
 
 ### 4. Database Reset (If Applicable)
 
-#### Prisma Database Reset
+#### Drizzle Database Reset
 ```bash
-# Reset Prisma database (if you have one)
+# Reset Drizzle database (if you have one)
 yarn db:reset
 
-# Regenerate Prisma client
+# Regenerate Drizzle client
 yarn db:generate
 
 # Run migrations

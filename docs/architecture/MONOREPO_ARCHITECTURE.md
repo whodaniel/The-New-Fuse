@@ -55,7 +55,7 @@ deployed applications:
 // In apps/backend/src/some-file.ts
 import { SomeUtility } from '@the-new-fuse/utils';
 import { Agent } from '@the-new-fuse/types';
-import { PrismaService } from '@the-new-fuse/database';
+import { DrizzleService } from '@the-new-fuse/database';
 ```
 
 ## Package Categories
@@ -66,7 +66,7 @@ import { PrismaService } from '@the-new-fuse/database';
 @the-new-fuse/core              - Core utilities and base classes
 @the-new-fuse/types             - TypeScript type definitions
 @the-new-fuse/utils             - Shared utilities
-@the-new-fuse/database          - Prisma client and schema
+@the-new-fuse/database          - Drizzle client and schema
 @the-new-fuse/shared            - Shared constants and configs
 @the-new-fuse/security          - Security utilities
 @the-new-fuse/api-types         - API DTOs and interfaces

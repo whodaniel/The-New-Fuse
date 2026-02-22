@@ -61,8 +61,8 @@ The New Fuse codebase.
 │   │   └── <name>.service.spec.ts
 │   └── integration/
 │       └── <name>.controller.spec.ts
-├── prisma/                        # If package has its own DB
-│   └── schema.prisma
+├── drizzle/                        # If package has its own DB
+│   └── schema.drizzle
 ├── docs/                          # Additional documentation
 │   └── api.md
 ├── package.json
@@ -308,7 +308,7 @@ export class <Name>Controller {
 
 ```typescript
 import { Injectable, NotFoundException, Logger } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { DrizzleClient } from '@drizzle/client';
 import { Create<Name>Dto, Update<Name>Dto, Search<Name>Dto } from '../dto';
 import { <Name>, SearchResult } from '../types';
 
@@ -321,10 +321,10 @@ import { <Name>, SearchResult } from '../types';
 @Injectable()
 export class <Name>Service {
   private readonly logger = new Logger(<Name>Service.name);
-  private readonly prisma: PrismaClient;
+  private readonly drizzle: DrizzleClient;
 
   constructor() {
-    this.prisma = new PrismaClient();
+    this.drizzle = new DrizzleClient();
   }
 
   /**
@@ -334,7 +334,7 @@ export class <Name>Service {
     this.logger.debug(`Creating <resource> with data: ${JSON.stringify(createDto)}`);
 
     try {
-      const <name> = await this.prisma.<name>.create({
+      const <name> = await this.drizzle.<name>.create({
         data: {
           ...createDto,
           createdBy: userId,
@@ -367,13 +367,13 @@ export class <Name>Service {
     };
 
     const [data, total] = await Promise.all([
-      this.prisma.<name>.findMany({
+      this.drizzle.<name>.findMany({
         where,
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' },
       }),
-      this.prisma.<name>.count({ where }),
+      this.drizzle.<name>.count({ where }),
     ]);
 
     return {
@@ -390,7 +390,7 @@ export class <Name>Service {
   async findById(id: string): Promise<<Name>> {
     this.logger.debug(`Finding <resource> by ID: ${id}`);
 
-    const <name> = await this.prisma.<name>.findUnique({
+    const <name> = await this.drizzle.<name>.findUnique({
       where: { id },
     });
 
@@ -409,7 +409,7 @@ export class <Name>Service {
 
     await this.findById(id); // Verify exists
 
-    const updated = await this.prisma.<name>.update({
+    const updated = await this.drizzle.<name>.update({
       where: { id },
       data: updateDto,
     });
@@ -425,7 +425,7 @@ export class <Name>Service {
 
     await this.findById(id); // Verify exists
 
-    await this.prisma.<name>.update({
+    await this.drizzle.<name>.update({
       where: { id },
       data: { deletedAt: new Date() },
     });
@@ -715,9 +715,9 @@ GET /api/resources?page=1&limit=20
 
 ## 4. Database Model Standards
 
-### 4.1 Prisma Schema Template
+### 4.1 Drizzle Schema Template
 
-````prisma
+````drizzle
 // ============================================================================
 // <Model Name>
 // ============================================================================
@@ -726,7 +726,7 @@ GET /api/resources?page=1&limit=20
 ///
 /// @example
 /// ```typescript
-/// const <model> = await prisma.<model>.create({
+/// const <model> = await drizzle.<model>.create({
 ///   data: { name: 'Example' }
 /// });
 /// ```
@@ -775,7 +775,7 @@ model <Model> {
 
 **Models:** PascalCase, singular
 
-```prisma
+```drizzle
 model User {}        ✅
 model Users {}       ❌
 model user {}        ❌
@@ -783,7 +783,7 @@ model user {}        ❌
 
 **Fields:** camelCase
 
-```prisma
+```drizzle
 createdAt            ✅
 created_at           ❌
 CreatedAt            ❌
@@ -791,7 +791,7 @@ CreatedAt            ❌
 
 **Relations:** camelCase, descriptive
 
-```prisma
+```drizzle
 user          User   @relation(...)  ✅
 User          User   @relation(...)  ❌
 owner         User   @relation(...)  ✅
@@ -801,7 +801,7 @@ owner         User   @relation(...)  ✅
 
 **One-to-Many:**
 
-```prisma
+```drizzle
 model User {
   id     String  @id @default(uuid())
   posts  Post[]
@@ -818,7 +818,7 @@ model Post {
 
 **Many-to-Many:**
 
-```prisma
+```drizzle
 model User {
   id     String  @id @default(uuid())
   roles  UserRole[]
