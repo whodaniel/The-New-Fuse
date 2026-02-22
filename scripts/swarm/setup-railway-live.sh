@@ -7,7 +7,6 @@ SEARXNG_SERVICE="${RAILWAY_SEARXNG_SERVICE:-searxng}"
 SEARXNG_IMAGE="${RAILWAY_SEARXNG_IMAGE:-searxng/searxng:latest}"
 TAVILY_API_KEY="${TAVILY_API_KEY:-}"
 EXA_API_KEY="${EXA_API_KEY:-}"
-PERPLEXITY_API_KEY="${PERPLEXITY_API_KEY:-}"
 
 echo "🚄 [TNF Railway Setup] Configuring live swarm stack in Railway..."
 echo "   Environment: $ENVIRONMENT"
@@ -105,20 +104,6 @@ if [ -n "$EXA_API_KEY" ]; then
   for svc in "${RUNNER_SERVICES[@]}"; do
     if railway variable set -s "$svc" -e "$ENVIRONMENT" \
       "EXA_API_KEY=$EXA_API_KEY" \
-      "SCOUT_PROVIDER=auto" \
-      >/dev/null 2>&1; then
-      echo "   ✅ Updated $svc"
-    else
-      echo "   ⚠️ Skipped $svc (not found or no access)"
-    fi
-  done
-fi
-
-if [ -n "$PERPLEXITY_API_KEY" ]; then
-  echo "🔧 Setting PERPLEXITY_API_KEY on runner services..."
-  for svc in "${RUNNER_SERVICES[@]}"; do
-    if railway variable set -s "$svc" -e "$ENVIRONMENT" \
-      "PERPLEXITY_API_KEY=$PERPLEXITY_API_KEY" \
       "SCOUT_PROVIDER=auto" \
       >/dev/null 2>&1; then
       echo "   ✅ Updated $svc"

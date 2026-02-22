@@ -31,7 +31,7 @@ fi
 
 if command -v open >/dev/null 2>&1; then
   open "https://app.tavily.com/playground" || true
-  open "https://www.perplexity.ai/settings/api" || true
+  open "https://dashboard.exa.ai" || true
 fi
 
 echo ""
@@ -40,24 +40,23 @@ echo "Leave blank to skip any provider."
 echo ""
 
 read -r -p "Tavily API Key: " TAVILY_API_KEY
-read -r -p "Perplexity API Key: " PERPLEXITY_API_KEY
+read -r -p "Exa API Key: " EXA_API_KEY
 
 DEFAULT_PROVIDER="auto"
-if [ -n "$TAVILY_API_KEY" ] && [ -z "$PERPLEXITY_API_KEY" ]; then
+if [ -n "$TAVILY_API_KEY" ] && [ -z "$EXA_API_KEY" ]; then
   DEFAULT_PROVIDER="tavily"
-elif [ -n "$PERPLEXITY_API_KEY" ] && [ -z "$TAVILY_API_KEY" ]; then
-  DEFAULT_PROVIDER="perplexity"
+elif [ -n "$EXA_API_KEY" ] && [ -z "$TAVILY_API_KEY" ]; then
+  DEFAULT_PROVIDER="exa"
 fi
 
 upsert_env "$ENV_LOCAL" "SCOUT_PROVIDER" "$DEFAULT_PROVIDER"
-upsert_env "$ENV_LOCAL" "PERPLEXITY_MODEL" "sonar"
 
 if [ -n "$TAVILY_API_KEY" ]; then
   upsert_env "$ENV_LOCAL" "TAVILY_API_KEY" "$TAVILY_API_KEY"
 fi
 
-if [ -n "$PERPLEXITY_API_KEY" ]; then
-  upsert_env "$ENV_LOCAL" "PERPLEXITY_API_KEY" "$PERPLEXITY_API_KEY"
+if [ -n "$EXA_API_KEY" ]; then
+  upsert_env "$ENV_LOCAL" "EXA_API_KEY" "$EXA_API_KEY"
 fi
 
 echo "✅ Local .env.local updated"
@@ -70,8 +69,8 @@ if command -v railway >/dev/null 2>&1 && railway whoami >/dev/null 2>&1; then
     if [ -n "$TAVILY_API_KEY" ]; then
       set_cmd+=("TAVILY_API_KEY=$TAVILY_API_KEY")
     fi
-    if [ -n "$PERPLEXITY_API_KEY" ]; then
-      set_cmd+=("PERPLEXITY_API_KEY=$PERPLEXITY_API_KEY" "PERPLEXITY_MODEL=sonar")
+    if [ -n "$EXA_API_KEY" ]; then
+      set_cmd+=("EXA_API_KEY=$EXA_API_KEY")
     fi
     if "${set_cmd[@]}" >/dev/null 2>&1; then
       echo "   ✅ $svc"

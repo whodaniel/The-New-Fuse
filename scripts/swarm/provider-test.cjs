@@ -21,20 +21,21 @@ function loadEnvFile(filePath) {
   }
 }
 
-async function checkPerplexity() {
-  const key = process.env.PERPLEXITY_API_KEY;
-  if (!key) return { ok: false, reason: 'missing PERPLEXITY_API_KEY' };
+async function checkExa() {
+  const key = process.env.EXA_API_KEY;
+  if (!key) return { ok: false, reason: 'missing EXA_API_KEY' };
   try {
-    const res = await fetch('https://api.perplexity.ai/chat/completions', {
+    const res = await fetch('https://api.exa.ai/search', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${key}`,
+        'x-api-key': key,
       },
       body: JSON.stringify({
-        model: process.env.PERPLEXITY_MODEL || 'sonar',
-        messages: [{ role: 'user', content: 'Reply with exactly ok.' }],
-        max_tokens: 8,
+        query: 'latest ai model release',
+        type: 'auto',
+        category: 'news',
+        num_results: 1,
       }),
     });
     if (!res.ok) return { ok: false, reason: `http ${res.status}` };
@@ -92,9 +93,13 @@ async function main() {
 
   const mode = (process.env.SCOUT_PROVIDER || 'auto').toLowerCase();
   console.log(`SCOUT_PROVIDER=${mode}`);
+  if (!['auto', 'exa', 'tavily', 'searxng'].includes(mode)) {
+    console.log('❌ Unsupported SCOUT_PROVIDER. Supported: auto, exa, tavily, searxng');
+    process.exit(1);
+  }
 
   const results = {
-    perplexity: await checkPerplexity(),
+    exa: await checkExa(),
     tavily: await checkTavily(),
     searxng: await checkSearxng(),
   };
@@ -108,10 +113,10 @@ async function main() {
   }
 
   let effective = null;
-  if (mode === 'perplexity' || mode === 'tavily' || mode === 'searxng') {
+  if (mode === 'exa' || mode === 'tavily' || mode === 'searxng') {
     effective = results[mode].ok ? mode : null;
   } else {
-    if (results.perplexity.ok) effective = 'perplexity';
+    if (results.exa.ok) effective = 'exa';
     else if (results.tavily.ok) effective = 'tavily';
     else if (results.searxng.ok) effective = 'searxng';
   }

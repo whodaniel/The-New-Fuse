@@ -46,8 +46,6 @@ const REPORT_PATH = path.resolve(__dirname, '../../.agent/landscape/DAILY_NEWS.m
 const SCOUT_PROVIDER = (process.env.SCOUT_PROVIDER || 'auto').toLowerCase();
 const SEARXNG_BASE_URL = process.env.SEARXNG_BASE_URL;
 const SEARXNG_NEWS_ENGINES = process.env.SEARXNG_NEWS_ENGINES || '';
-const PERPLEXITY_API_KEY = process.env.PERPLEXITY_API_KEY;
-const PERPLEXITY_MODEL = process.env.PERPLEXITY_MODEL || 'sonar';
 const TAVILY_API_KEY = process.env.TAVILY_API_KEY;
 const TAVILY_SEARCH_DEPTH = process.env.TAVILY_SEARCH_DEPTH || 'basic';
 const EXA_API_KEY = process.env.EXA_API_KEY;
@@ -105,18 +103,17 @@ function buildSearxngSearchUrl(query) {
 }
 
 async function fetchLiveFindings() {
+  if (!['auto', 'exa', 'tavily', 'searxng'].includes(SCOUT_PROVIDER)) {
+    throw new Error(
+      `Unsupported SCOUT_PROVIDER="${SCOUT_PROVIDER}". Supported values: auto, exa, tavily, searxng`
+    );
+  }
+
   if (SCOUT_PROVIDER === 'exa') {
     if (!EXA_API_KEY) {
       throw new Error('EXA_API_KEY is required when SCOUT_PROVIDER=exa');
     }
     return fetchExaFindings();
-  }
-
-  if (SCOUT_PROVIDER === 'perplexity') {
-    if (!PERPLEXITY_API_KEY) {
-      throw new Error('PERPLEXITY_API_KEY is required when SCOUT_PROVIDER=perplexity');
-    }
-    return fetchPerplexityFindings();
   }
 
   if (SCOUT_PROVIDER === 'searxng') {
@@ -130,20 +127,12 @@ async function fetchLiveFindings() {
     return fetchTavilyFindings();
   }
 
-  // auto: highest priority is Exa, then Perplexity, then Tavily, then SearXNG
+  // auto: highest priority is Exa, then Tavily, then SearXNG
   if (EXA_API_KEY) {
     try {
       return await fetchExaFindings();
     } catch (error) {
       console.warn('⚠️ Exa scout failed:', error.message);
-    }
-  }
-
-  if (PERPLEXITY_API_KEY) {
-    try {
-      return await fetchPerplexityFindings();
-    } catch (error) {
-      console.warn('⚠️ Perplexity scout failed:', error.message);
     }
   }
 
@@ -271,85 +260,6 @@ async function fetchSearxngFindings() {
   }
 
   return deduped.slice(0, 20);
-}
-
-function parseJsonArray(text) {
-  const trimmed = String(text || '').trim();
-  if (!trimmed) return [];
-
-  const fencedMatch = trimmed.match(/```json\s*([\s\S]*?)```/i);
-  const raw = fencedMatch ? fencedMatch[1] : trimmed;
-
-  const start = raw.indexOf('[');
-  const end = raw.lastIndexOf(']');
-  if (start === -1 || end === -1 || end <= start) return [];
-
-  try {
-    const parsed = JSON.parse(raw.slice(start, end + 1));
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
-async function fetchPerplexityFindings() {
-  const prompt = `
-Return ONLY JSON array. No prose.
-Find the latest real LLM opportunities about free API/model access.
-Use these search intents: ${SEARCH_QUERIES.join(' | ')}.
-Each item schema:
-[
-  {
-    "title": "string",
-    "source": "domain string",
-    "threat": "High|Medium|Low",
-    "link": "https url",
-    "details": "short factual summary"
-  }
-]
-Requirements:
-- Include only verifiable items with a source URL.
-- Max 20 items.
-`.trim();
-
-  const response = await fetch('https://api.perplexity.ai/chat/completions', {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
-    },
-    body: JSON.stringify({
-      model: PERPLEXITY_MODEL,
-      messages: [
-        { role: 'system', content: 'You are a strict JSON generator.' },
-        { role: 'user', content: prompt },
-      ],
-      temperature: 0.1,
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Perplexity API failed (${response.status})`);
-  }
-
-  const json = await response.json();
-  const content = json?.choices?.[0]?.message?.content || '';
-  const parsed = parseJsonArray(content);
-  if (!parsed.length) {
-    throw new Error('Perplexity response did not contain a valid JSON findings array');
-  }
-
-  return parsed
-    .filter((item) => item?.title && item?.link)
-    .map((item) => ({
-      title: String(item.title).trim(),
-      source: String(item.source || normalizeSource(item.link)).trim(),
-      threat: ['High', 'Medium', 'Low'].includes(item.threat) ? item.threat : 'Medium',
-      link: String(item.link).trim(),
-      details: String(item.details || 'No summary provided by source.').trim(),
-    }))
-    .slice(0, 20);
 }
 
 async function fetchTavilyFindings() {

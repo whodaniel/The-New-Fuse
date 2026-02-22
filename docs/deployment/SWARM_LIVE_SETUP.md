@@ -42,18 +42,18 @@ pnpm run swarm:supercycle:live
 
 ## Guided API Key Setup (Recommended)
 
-This opens Tavily + Perplexity key pages, prompts for keys, writes `.env.local`,
-and attempts to sync vars to Railway runner services.
+This opens Tavily + Exa key pages, prompts for keys, writes `.env.local`, and
+attempts to sync vars to Railway runner services.
 
 ```bash
 pnpm run swarm:keys:setup
 ```
 
-If you have Perplexity API access, use:
+If you want Exa as the primary scout provider, use:
 
 ```bash
-export SCOUT_PROVIDER=perplexity
-export PERPLEXITY_API_KEY=<your_key>
+export SCOUT_PROVIDER=exa
+export EXA_API_KEY=<your_exa_key>
 pnpm run swarm:setup:nodocker
 pnpm run swarm:supercycle:live
 ```
@@ -69,10 +69,10 @@ pnpm run swarm:supercycle:live
 
 Provider behavior:
 
-- `SCOUT_PROVIDER=perplexity`: Perplexity only
+- `SCOUT_PROVIDER=exa`: Exa only
 - `SCOUT_PROVIDER=tavily`: Tavily only
 - `SCOUT_PROVIDER=searxng`: SearXNG only
-- `SCOUT_PROVIDER=auto`: Perplexity -> Tavily -> SearXNG fallback
+- `SCOUT_PROVIDER=auto`: Exa -> Tavily -> SearXNG fallback
 
 Preflight provider test:
 
