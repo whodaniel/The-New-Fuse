@@ -13,6 +13,7 @@ import {
   Cpu,
   Database,
   FileCode,
+  Gavel,
   Layers,
   Loader2,
   LucideIcon,
@@ -20,12 +21,24 @@ import {
   Microscope,
   Plus,
   Search,
+  Send,
   Sparkles,
   TrendingUp,
+  Trophy,
   Zap,
 } from 'lucide-react';
 import { memo, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+// Swarm Activity interface
+interface SwarmActivity {
+  id: string;
+  type: 'auction' | 'scan' | 'award';
+  title: string;
+  agent: string;
+  timestamp: Date;
+  status: 'active' | 'completed';
+}
 
 // Icon mapping for agent types
 const typeIcons: Record<string, LucideIcon> = {
@@ -245,18 +258,25 @@ export const AgentsRevolution = () => {
   const [filterCategory, setFilterCategory] = useState('All');
   const [filterStatus, setFilterStatus] = useState('All');
   const [agents, setAgents] = useState<UIAgent[]>([]);
+  const [activities, setActivity] = useState<SwarmActivity[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchAgents = async () => {
+  const humanOptions = agentService.getHumanConnectionOptions();
+
+  const fetchData = async () => {
     try {
       setLoading(true);
       setError(null);
-      const fetchedAgents = await agentService.getAgents();
+      const [fetchedAgents, fetchedActivity] = await Promise.all([
+        agentService.getAgents(),
+        agentService.getSwarmActivity(),
+      ]);
       setAgents(fetchedAgents.map(transformAgent));
+      setActivity(fetchedActivity);
     } catch (err) {
-      console.error('Error fetching agents:', err);
-      setError('An unexpected error occurred while fetching your agents. Please try again.');
+      console.error('Error fetching data:', err);
+      setError('An unexpected error occurred while fetching your swarm data. Please try again.');
       setAgents([]);
     } finally {
       setLoading(false);
@@ -264,7 +284,7 @@ export const AgentsRevolution = () => {
   };
 
   useEffect(() => {
-    fetchAgents();
+    fetchData();
   }, []);
 
   // Filter logic using debounced search query
@@ -387,6 +407,98 @@ export const AgentsRevolution = () => {
             </div>
           </div>
         </GlassCard>
+
+        {/* SWARM INTELLIGENCE & HUMAN HANDOFF */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Live Activity Feed */}
+          <GlassCard className="lg:col-span-2 p-8 rounded-3xl space-y-6">
+            <div className="flex justify-between items-center">
+              <h3 className="text-2xl font-bold text-white flex items-center gap-3">
+                <TrendingUp className="text-blue-400" />
+                Swarm Intelligence
+              </h3>
+              <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20">LIVE FEED</Badge>
+            </div>
+            <div className="space-y-4">
+              {activities.map((act) => (
+                <div
+                  key={act.id}
+                  className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors"
+                >
+                  <div
+                    className={`p-3 rounded-xl bg-linear-to-br ${
+                      act.type === 'auction'
+                        ? 'from-amber-500 to-orange-600'
+                        : act.type === 'award'
+                          ? 'from-green-500 to-emerald-600'
+                          : 'from-blue-500 to-cyan-600'
+                    }`}
+                  >
+                    {act.type === 'auction' ? (
+                      <Gavel className="w-5 h-5 text-white" />
+                    ) : act.type === 'award' ? (
+                      <Trophy className="w-5 h-5 text-white" />
+                    ) : (
+                      <Zap className="w-5 h-5 text-white" />
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-bold text-white">{act.title}</p>
+                    <p className="text-sm text-gray-500">
+                      Initiated by <span className="text-blue-400 font-medium">{act.agent}</span> •{' '}
+                      {new Date(act.timestamp).toLocaleTimeString()}
+                    </p>
+                  </div>
+                  {act.status === 'active' && (
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-blue-500 animate-ping" />
+                      <span className="text-xs font-bold text-blue-400">BIDDING</span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </GlassCard>
+
+          {/* Human Connection Points */}
+          <GlassCard className="p-8 rounded-3xl space-y-6">
+            <h3 className="text-2xl font-bold text-white flex items-center gap-3">
+              <Users className="text-purple-400" />
+              Human Relay
+            </h3>
+            <p className="text-gray-400 text-sm">
+              Agents will use these channels to escalate critical decisions to you.
+            </p>
+            <div className="space-y-3">
+              {humanOptions.map((opt) => (
+                <a
+                  key={opt.name}
+                  href={opt.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-white/20 transition-all group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-white/5">
+                      {opt.icon === 'Send' ? (
+                        <Send className="w-5 h-5 text-blue-400" />
+                      ) : (
+                        <MessageSquare className="w-5 h-5 text-purple-400" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-bold text-white group-hover:text-blue-400 transition-colors">
+                        {opt.name}
+                      </p>
+                      <p className="text-xs text-gray-500">{opt.description}</p>
+                    </div>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-gray-600 group-hover:translate-x-1 transition-transform" />
+                </a>
+              ))}
+            </div>
+          </GlassCard>
+        </div>
 
         {/* AGENTS GRID - BOLD CARDS */}
         <div className="grid md:grid-cols-2 gap-8">

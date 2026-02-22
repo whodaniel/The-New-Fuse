@@ -280,6 +280,40 @@ class AgentService {
     ];
   }
 
+  /**
+   * Get real-time swarm activity
+   */
+  async getSwarmActivity() {
+    // In production, this would fetch from /api/swarm/activity
+    // For now, we simulate the live flywheel output
+    return [
+      {
+        id: 'act-1',
+        type: 'auction',
+        title: 'Task Auction: Analyze WarpOS Sandboxing',
+        agent: 'Project-Planner',
+        timestamp: new Date(),
+        status: 'active',
+      },
+      {
+        id: 'act-2',
+        type: 'scan',
+        title: 'Flywheel Pulse: Tech Debt Detected (756 TODOs)',
+        agent: 'Continuous-Improver',
+        timestamp: new Date(Date.now() - 300000),
+        status: 'completed',
+      },
+      {
+        id: 'act-3',
+        type: 'award',
+        title: 'Contract Awarded: Market Research',
+        agent: 'News-Scout',
+        timestamp: new Date(Date.now() - 600000),
+        status: 'completed',
+      },
+    ];
+  }
+
   // Transform API responses to frontend types
   private transformAgent(apiAgent: any): Agent {
     return {
