@@ -8,23 +8,23 @@
  * with special claims and validation requirements.
  */
 
-import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
+import { ExtractJwt, Strategy } from 'passport-jwt';
 import { AuthService } from './auth.service';
 
 export interface AgentJwtPayload {
-  sub: string;           // Agent ID
-  agentId: string;       // Agent identifier
-  agentType: string;     // Agent type (e.g., 'conversational', 'task-automation')
+  sub: string; // Agent ID
+  agentId: string; // Agent identifier
+  agentType: string; // Agent type (e.g., 'conversational', 'task-automation')
   capabilities: string[]; // Agent capabilities
   permissions: string[]; // Agent permissions
-  iat: number;          // Issued at
-  exp: number;          // Expires at
-  issuer: string;       // Token issuer (typically 'the-new-fuse')
-  audience: string;     // Token audience
+  iat: number; // Issued at
+  exp: number; // Expires at
+  issuer: string; // Token issuer (typically 'the-new-fuse')
+  audience: string; // Token audience
 }
 
 /**
@@ -48,10 +48,16 @@ export class AgentJwtStrategy extends PassportStrategy(Strategy, 'agent-jwt') {
     protected readonly configService: ConfigService,
     protected readonly authService: AuthService
   ) {
+    const secret =
+      configService.get<string>('JWT_AGENT_SECRET') || configService.get<string>('JWT_SECRET');
+    if (!secret) {
+      throw new Error('JWT_AGENT_SECRET or JWT_SECRET must be defined in environment variables');
+    }
+
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.get<string>('JWT_AGENT_SECRET') || configService.get<string>('JWT_SECRET') || 'default-secret-change-in-production',
+      secretOrKey: secret,
       audience: configService.get<string>('JWT_AUDIENCE') || 'the-new-fuse',
       issuer: configService.get<string>('JWT_ISSUER') || 'the-new-fuse',
     });
@@ -79,12 +85,18 @@ export class AgentJwtStrategy extends PassportStrategy(Strategy, 'agent-jwt') {
       }
 
       // Validate issuer and audience
-      if (payload.issuer && payload.issuer !== this.configService.get<string>('JWT_ISSUER', 'the-new-fuse')) {
+      if (
+        payload.issuer &&
+        payload.issuer !== this.configService.get<string>('JWT_ISSUER', 'the-new-fuse')
+      ) {
         this.logger.warn(`Invalid token issuer: ${payload.issuer}`);
         throw new UnauthorizedException('Invalid agent token: wrong issuer');
       }
 
-      if (payload.audience && payload.audience !== this.configService.get<string>('JWT_AUDIENCE', 'the-new-fuse')) {
+      if (
+        payload.audience &&
+        payload.audience !== this.configService.get<string>('JWT_AUDIENCE', 'the-new-fuse')
+      ) {
         this.logger.warn(`Invalid token audience: ${payload.audience}`);
         throw new UnauthorizedException('Invalid agent token: wrong audience');
       }
@@ -111,13 +123,15 @@ export class AgentJwtStrategy extends PassportStrategy(Strategy, 'agent-jwt') {
 
       this.logger.debug(`Agent authenticated successfully: ${payload.agentId}`);
       return agentInfo;
-
     } catch (error) {
       if (error instanceof UnauthorizedException) {
         throw error;
       }
 
-      this.logger.error(`Agent JWT validation error: ${(error as Error).message}`, (error as Error).stack);
+      this.logger.error(
+        `Agent JWT validation error: ${(error as Error).message}`,
+        (error as Error).stack
+      );
       throw new UnauthorizedException('Agent authentication failed');
     }
   }

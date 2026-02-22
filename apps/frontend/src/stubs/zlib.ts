@@ -1,5 +1,5 @@
 // Minimal Zlib constants and stub
-export default {
+const constants = {
   Z_NO_FLUSH: 0,
   Z_PARTIAL_FLUSH: 1,
   Z_SYNC_FLUSH: 2,
@@ -16,24 +16,11 @@ export default {
   Z_MEM_ERROR: -4,
   Z_BUF_ERROR: -5,
   Z_VERSION_ERROR: -6,
-  constants: {
-    Z_NO_FLUSH: 0,
-    Z_PARTIAL_FLUSH: 1,
-    Z_SYNC_FLUSH: 2,
-    Z_FULL_FLUSH: 3,
-    Z_FINISH: 4,
-    Z_BLOCK: 5,
-    Z_TREES: 6,
-    Z_OK: 0,
-    Z_STREAM_END: 1,
-    Z_NEED_DICT: 2,
-    Z_ERRNO: -1,
-    Z_STREAM_ERROR: -2,
-    Z_DATA_ERROR: -3,
-    Z_MEM_ERROR: -4,
-    Z_BUF_ERROR: -5,
-    Z_VERSION_ERROR: -6,
-  },
+};
+
+const zlibModule = {
+  ...constants,
+  constants,
   // Mock functions just in case
   createDeflate: () => {},
   createInflate: () => {},
@@ -52,38 +39,39 @@ export default {
   unzipSync: () => {},
 };
 
-export const Z_NO_FLUSH = 0;
-export const Z_PARTIAL_FLUSH = 1;
-export const Z_SYNC_FLUSH = 2;
-export const Z_FULL_FLUSH = 3;
-export const Z_FINISH = 4;
-export const Z_BLOCK = 5;
-export const Z_TREES = 6;
-export const Z_OK = 0;
-export const Z_STREAM_END = 1;
-export const Z_NEED_DICT = 2;
-export const Z_ERRNO = -1;
-export const Z_STREAM_ERROR = -2;
-export const Z_DATA_ERROR = -3;
-export const Z_MEM_ERROR = -4;
-export const Z_BUF_ERROR = -5;
-export const Z_VERSION_ERROR = -6;
+export default zlibModule;
+export const {
+  Z_NO_FLUSH,
+  Z_PARTIAL_FLUSH,
+  Z_SYNC_FLUSH,
+  Z_FULL_FLUSH,
+  Z_FINISH,
+  Z_BLOCK,
+  Z_TREES,
+  Z_OK,
+  Z_STREAM_END,
+  Z_NEED_DICT,
+  Z_ERRNO,
+  Z_STREAM_ERROR,
+  Z_DATA_ERROR,
+  Z_MEM_ERROR,
+  Z_BUF_ERROR,
+  Z_VERSION_ERROR,
+  createDeflate,
+  createInflate,
+  createGzip,
+  createGunzip,
+  createUnzip,
+  deflate,
+  deflateSync,
+  gzip,
+  gzipSync,
+  inflate,
+  inflateSync,
+  gunzip,
+  gunzipSync,
+  unzip,
+  unzipSync,
+} = zlibModule;
 
-export const constants = {
-  Z_NO_FLUSH: 0,
-  Z_PARTIAL_FLUSH: 1,
-  Z_SYNC_FLUSH: 2,
-  Z_FULL_FLUSH: 3,
-  Z_FINISH: 4,
-  Z_BLOCK: 5,
-  Z_TREES: 6,
-  Z_OK: 0,
-  Z_STREAM_END: 1,
-  Z_NEED_DICT: 2,
-  Z_ERRNO: -1,
-  Z_STREAM_ERROR: -2,
-  Z_DATA_ERROR: -3,
-  Z_MEM_ERROR: -4,
-  Z_BUF_ERROR: -5,
-  Z_VERSION_ERROR: -6,
-};
+export { constants };

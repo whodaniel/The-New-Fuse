@@ -3,10 +3,10 @@
  * Tests for XSS prevention, data sanitization, and input validation
  */
 
+import { beforeEach, describe, expect, it } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
 import { InputSanitizationService } from '../../src/security/input-sanitization.service';
 import { ResponseSanitizationService } from '../../src/security/response-sanitization.service';
-import { describe, it, expect, beforeEach } from '@jest/globals';
 
 describe('Input Sanitization Security Tests', () => {
   let inputSanitization: InputSanitizationService;
@@ -14,10 +14,7 @@ describe('Input Sanitization Security Tests', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        InputSanitizationService,
-        ResponseSanitizationService,
-      ],
+      providers: [InputSanitizationService, ResponseSanitizationService],
     }).compile();
 
     inputSanitization = module.get<InputSanitizationService>(InputSanitizationService);
@@ -79,7 +76,7 @@ describe('Input Sanitization Security Tests', () => {
         'ftp://malicious.com',
       ];
 
-      dangerousProtocols.forEach(protocol => {
+      dangerousProtocols.forEach((protocol) => {
         const result = inputSanitization.sanitizeInput(protocol);
         expect(result).not.toMatch(/^javascript:|^vbscript:|^data:|^file:|^ftp:/i);
       });
@@ -88,7 +85,7 @@ describe('Input Sanitization Security Tests', () => {
     it('should sanitize nested HTML tags', () => {
       const input = '<div><p>Hello <script>alert("xss")</script> world</p></div>';
       const result = inputSanitization.sanitizeInput(input);
-      
+
       expect(result).toContain('&lt;div&gt;');
       expect(result).toContain('&lt;script&gt;');
       expect(result).not.toContain('<script>');
@@ -98,7 +95,7 @@ describe('Input Sanitization Security Tests', () => {
     it('should preserve safe HTML tags', () => {
       const input = '<p>Hello <strong>world</strong>!</p>';
       const result = inputSanitization.sanitizeInput(input);
-      
+
       // Safe tags should be preserved
       expect(result).toContain('<p>');
       expect(result).toContain('<strong>');
@@ -144,9 +141,9 @@ describe('Input Sanitization Security Tests', () => {
     });
 
     it('should escape special SQL characters', () => {
-      const specialChars = "'\"\\;%_";
+      const specialChars = '\'"\\;%_';
       const result = inputSanitization.escapeSqlString(specialChars);
-      
+
       // Single quotes should be doubled
       expect(result).toContain("''");
       // Backslashes should be escaped
@@ -157,11 +154,11 @@ describe('Input Sanitization Security Tests', () => {
       const validNumbers = ['123', '0', '-456', '3.14'];
       const invalidNumbers = ['abc', '12.34.56', '--123', '12; DROP TABLE users;'];
 
-      validNumbers.forEach(num => {
+      validNumbers.forEach((num) => {
         expect(inputSanitization.validateNumericInput(num)).toBe(true);
       });
 
-      invalidNumbers.forEach(num => {
+      invalidNumbers.forEach((num) => {
         expect(inputSanitization.validateNumericInput(num)).toBe(false);
       });
     });
@@ -177,7 +174,7 @@ describe('Input Sanitization Security Tests', () => {
       '..././..././.../etc/passwd',
     ];
 
-    pathTraversalPayloads.forEach(payload => {
+    pathTraversalPayloads.forEach((payload) => {
       it(`should block path traversal: ${payload}`, () => {
         const result = inputSanitization.sanitizeFilePath(payload);
         expect(result).not.toMatch(/\.\.[\/\\]/);
@@ -193,7 +190,7 @@ describe('Input Sanitization Security Tests', () => {
         'config/settings.json',
       ];
 
-      safePaths.forEach(path => {
+      safePaths.forEach((path) => {
         const result = inputSanitization.sanitizeFilePath(path);
         expect(result).toBe(path);
       });
@@ -212,7 +209,7 @@ describe('Input Sanitization Security Tests', () => {
       '`curl http://malicious.com`',
     ];
 
-    commandInjectionPayloads.forEach(payload => {
+    commandInjectionPayloads.forEach((payload) => {
       it(`should block command injection: ${payload}`, () => {
         const result = inputSanitization.sanitizeCommandInput(payload);
         expect(result).not.toMatch(/[;&|`$]/);
@@ -237,13 +234,13 @@ describe('Input Sanitization Security Tests', () => {
       'user@@domain.com',
     ];
 
-    validEmails.forEach(email => {
+    validEmails.forEach((email) => {
       it(`should accept valid email: ${email}`, () => {
         expect(inputSanitization.validateEmail(email)).toBe(true);
       });
     });
 
-    invalidEmails.forEach(email => {
+    invalidEmails.forEach((email) => {
       it(`should reject invalid email: ${email}`, () => {
         expect(inputSanitization.validateEmail(email)).toBe(false);
       });
@@ -264,13 +261,13 @@ describe('Input Sanitization Security Tests', () => {
       'not-a-url',
     ];
 
-    validUrls.forEach(url => {
+    validUrls.forEach((url) => {
       it(`should accept valid URL: ${url}`, () => {
         expect(inputSanitization.validateUrl(url)).toBe(true);
       });
     });
 
-    invalidUrls.forEach(url => {
+    invalidUrls.forEach((url) => {
       it(`should reject invalid/dangerous URL: ${url}`, () => {
         expect(inputSanitization.validateUrl(url)).toBe(false);
       });
@@ -278,27 +275,17 @@ describe('Input Sanitization Security Tests', () => {
   });
 
   describe('Phone Number Validation Tests', () => {
-    const validPhoneNumbers = [
-      '+1234567890',
-      '+1-234-567-8900',
-      '(123) 456-7890',
-      '123-456-7890',
-    ];
+    const validPhoneNumbers = ['+1234567890', '+1-234-567-8900', '(123) 456-7890', '123-456-7890'];
 
-    const invalidPhoneNumbers = [
-      'abc123',
-      '+123',
-      '1234567890123456',
-      '123-456-7890-extra',
-    ];
+    const invalidPhoneNumbers = ['abc123', '+123', '1234567890123456', '123-456-7890-extra'];
 
-    validPhoneNumbers.forEach(phone => {
+    validPhoneNumbers.forEach((phone) => {
       it(`should accept valid phone number: ${phone}`, () => {
         expect(inputSanitization.validatePhoneNumber(phone)).toBe(true);
       });
     });
 
-    invalidPhoneNumbers.forEach(phone => {
+    invalidPhoneNumbers.forEach((phone) => {
       it(`should reject invalid phone number: ${phone}`, () => {
         expect(inputSanitization.validatePhoneNumber(phone)).toBe(false);
       });
@@ -309,7 +296,7 @@ describe('Input Sanitization Security Tests', () => {
     it('should enforce maximum length limits', () => {
       const maxLength = 255;
       const longString = 'a'.repeat(maxLength + 1);
-      
+
       const result = inputSanitization.truncateToLength(longString, maxLength);
       expect(result.length).toBe(maxLength);
       expect(result).toBe('a'.repeat(maxLength));
@@ -318,7 +305,7 @@ describe('Input Sanitization Security Tests', () => {
     it('should preserve short strings', () => {
       const shortString = 'Hello, World!';
       const result = inputSanitization.truncateToLength(shortString, 100);
-      
+
       expect(result).toBe(shortString);
       expect(result.length).toBe(shortString.length);
     });
@@ -335,7 +322,7 @@ describe('Input Sanitization Security Tests', () => {
       `;
 
       const result = inputSanitization.sanitizeHtml(dangerousHtml);
-      
+
       expect(result).not.toContain('<script>');
       expect(result).not.toContain('<iframe>');
       expect(result).not.toContain('<object>');
@@ -355,7 +342,7 @@ describe('Input Sanitization Security Tests', () => {
       `;
 
       const result = inputSanitization.sanitizeHtml(safeHtml);
-      
+
       expect(result).toContain('<p>');
       expect(result).toContain('<strong>');
       expect(result).toContain('<em>');
@@ -370,7 +357,7 @@ describe('Input Sanitization Security Tests', () => {
       `;
 
       const result = inputSanitization.sanitizeHtml(htmlWithBadAttributes);
-      
+
       expect(result).not.toContain('onclick=');
       expect(result).not.toContain('onerror=');
       expect(result).not.toContain('expression(');
@@ -385,7 +372,7 @@ describe('Input Sanitization Security Tests', () => {
       };
 
       const result = inputSanitization.sanitizeJsonObject(dangerousJson);
-      
+
       expect(result.name).not.toContain('<script>');
       expect(result.description).toBeDefined();
     });
@@ -403,18 +390,24 @@ describe('Input Sanitization Security Tests', () => {
 
   describe('Response Sanitization Tests', () => {
     it('should remove sensitive data from API responses', () => {
+      const testPassword = `test-pass-${Math.random().toString(36).substring(7)}`;
       const sensitiveResponse = {
         id: 1,
         name: 'Test User',
         email: 'test@example.com',
-        password: 'secret123',
+        password: testPassword,
         secretKey: 'sk-1234567890',
         token: 'jwt-token-here',
         internal_data: 'sensitive',
       };
 
-      const result = responseSanitization.sanitizeResponse(sensitiveResponse, ['password', 'secretKey', 'token', 'internal_data']);
-      
+      const result = responseSanitization.sanitizeResponse(sensitiveResponse, [
+        'password',
+        'secretKey',
+        'token',
+        'internal_data',
+      ]);
+
       expect(result).not.toHaveProperty('password');
       expect(result).not.toHaveProperty('secretKey');
       expect(result).not.toHaveProperty('token');
@@ -424,14 +417,15 @@ describe('Input Sanitization Security Tests', () => {
     });
 
     it('should mask sensitive fields in logs', () => {
+      const testPassword = `test-pass-${Math.random().toString(36).substring(7)}`;
       const sensitiveData = {
         email: 'user@example.com',
-        password: 'secret123',
+        password: testPassword,
         apiKey: 'ak-1234567890',
       };
 
       const masked = responseSanitization.maskSensitiveData(sensitiveData);
-      
+
       expect(masked.email).toBe('u***@e******.com');
       expect(masked.password).toBe('*******');
       expect(masked.apiKey).toBe('ak-********90');
@@ -442,23 +436,25 @@ describe('Input Sanitization Security Tests', () => {
     it('should handle large inputs efficiently', () => {
       const largeInput = 'a'.repeat(100000);
       const startTime = Date.now();
-      
+
       const result = inputSanitization.sanitizeInput(largeInput);
       const endTime = Date.now();
-      
+
       expect(result.length).toBe(largeInput.length);
       expect(endTime - startTime).toBeLessThan(1000); // Should complete within 1 second
     });
 
     it('should handle batch sanitization efficiently', () => {
-      const inputs = Array(1000).fill().map((_, i) => `<script>alert(${i})</script>`);
+      const inputs = Array(1000)
+        .fill()
+        .map((_, i) => `<script>alert(${i})</script>`);
       const startTime = Date.now();
-      
-      const results = inputs.map(input => inputSanitization.sanitizeInput(input));
+
+      const results = inputs.map((input) => inputSanitization.sanitizeInput(input));
       const endTime = Date.now();
-      
+
       expect(results).toHaveLength(1000);
-      expect(results.every(r => !r.includes('<script>'))).toBe(true);
+      expect(results.every((r) => !r.includes('<script>'))).toBe(true);
       expect(endTime - startTime).toBeLessThan(2000); // Should complete within 2 seconds
     });
   });

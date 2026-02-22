@@ -69,7 +69,6 @@ export default defineConfig(({ mode }) => {
           'stream',
           'util',
           'crypto',
-          'zlib',
           'http',
           'https',
           'url',
