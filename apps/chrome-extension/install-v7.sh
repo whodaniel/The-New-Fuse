@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Fuse Connect v7 - Complete Installer
-# Fully automatic - builds extension and installs native messaging host
+# Fully automatic - builds extension and installs native messaging host wrapper
 
 set -e
 
@@ -45,18 +45,42 @@ echo -e "${YELLOW}🔧 Step 2: Installing Native Messaging Host...${NC}"
 # Create directory
 mkdir -p "$NATIVE_MESSAGING_HOSTS_DIR"
 
+# Get the path to the node binary
+NODE_PATH=$(which node)
+if [ -z "$NODE_PATH" ]; then
+  # Fallback for common NVM path if 'which' fails in this context
+  NODE_PATH="$HOME/.nvm/versions/node/v24.12.0/bin/node"
+fi
+
+echo "   📍 Using Node: $NODE_PATH"
+
 # Get the path to the native host script
-NATIVE_HOST_PATH="$DIST_DIR/native-host/tnf-native-host.js"
+NATIVE_HOST_JS_PATH="$DIST_DIR/native-host/tnf-native-host.cjs"
+NATIVE_HOST_SH_PATH="$DIST_DIR/native-host/tnf-native-host.sh"
 
-# Make executable
-chmod +x "$NATIVE_HOST_PATH"
+# Create a shell wrapper that ensures Node is found with absolute path
+cat > "$NATIVE_HOST_SH_PATH" << EOF
+#!/bin/bash
+# TNF Native Messaging Host Launcher
+# Ensures the correct Node environment is used
 
-# Create the native messaging host manifest with correct path
+# Set path to include common Node locations just in case
+export PATH="\$PATH:/usr/local/bin:/usr/bin:/bin"
+
+# Run the host script using the absolute Node path detected during installation
+"$NODE_PATH" "$NATIVE_HOST_JS_PATH" "\$@"
+EOF
+
+# Make both executable
+chmod +x "$NATIVE_HOST_JS_PATH"
+chmod +x "$NATIVE_HOST_SH_PATH"
+
+# Create the native messaging host manifest pointing to the SHELL WRAPPER
 cat > "$NATIVE_MESSAGING_HOSTS_DIR/$HOST_NAME.json" << EOF
 {
   "name": "$HOST_NAME",
   "description": "Fuse Connect v7 - Controls TNF services from Chrome Extension",
-  "path": "$NATIVE_HOST_PATH",
+  "path": "$NATIVE_HOST_SH_PATH",
   "type": "stdio",
   "allowed_origins": [
     "chrome-extension://$EXTENSION_ID/"
@@ -64,7 +88,7 @@ cat > "$NATIVE_MESSAGING_HOSTS_DIR/$HOST_NAME.json" << EOF
 }
 EOF
 
-echo -e "${GREEN}✅ Native messaging host installed!${NC}"
+echo -e "${GREEN}✅ Native messaging host installed via launcher script!${NC}"
 echo ""
 
 # Step 3: Summary
@@ -80,16 +104,16 @@ echo ""
 echo -e "${GREEN}📍 Extension ID (fixed):${NC}"
 echo "   $EXTENSION_ID"
 echo ""
-echo -e "${GREEN}📍 Native Host:${NC}"
+echo -e "${GREEN}📍 Native Host Manifest:${NC}"
 echo "   $NATIVE_MESSAGING_HOSTS_DIR/$HOST_NAME.json"
 echo ""
-echo -e "${YELLOW}🚀 To Load in Chrome:${NC}"
+echo -e "${GREEN}📍 Native Host Launcher:${NC}"
+echo "   $NATIVE_HOST_SH_PATH"
+echo ""
+echo -e "${YELLOW}🚀 IMPORTANT: RELOAD EXTENSION IN CHROME${NC}"
 echo "   1. Open Chrome → chrome://extensions/"
-echo "   2. Enable 'Developer mode' (top right)"
-echo "   3. Click 'Load unpacked'"
-echo "   4. Select: $DIST_DIR"
+echo "   2. Find 'Fuse Connect'"
+echo "   3. Click the reload icon (↻)"
 echo ""
 echo -e "${CYAN}⌨️  Keyboard Shortcut: Ctrl+Shift+F (toggle floating panel)${NC}"
-echo ""
-echo -e "${GREEN}The extension ID is fixed - native messaging will work automatically!${NC}"
 echo ""

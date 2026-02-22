@@ -1,6 +1,8 @@
 import { createClient } from 'redis';
 
-const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
+const REDIS_URL =
+  process.env.REDIS_URL ||
+  'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
 
 class RedisClient {
   private static instance: RedisClient;

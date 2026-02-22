@@ -43,7 +43,10 @@ export class RedisAgentRegistry {
 
   constructor(config: Partial<AgentRegistryConfig> = {}) {
     this.config = {
-      redisUrl: config.redisUrl || process.env.REDIS_URL || 'redis://localhost:6379',
+      redisUrl:
+        config.redisUrl ||
+        process.env.REDIS_URL ||
+        'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
       prefix: config.prefix || 'tnf:registry:agents',
       ttl: config.ttl || 60,
     };
@@ -71,9 +74,7 @@ export class RedisAgentRegistry {
 
     // Fetch old capabilities for diffing to update sets
     const oldAgent = await this.getAgent(agentId);
-    const oldCapabilities = new Set(
-      oldAgent?.capabilities?.map((c) => c.name) || []
-    );
+    const oldCapabilities = new Set(oldAgent?.capabilities?.map((c) => c.name) || []);
 
     const fullMetadata: AgentMetadata = {
       ...metadata,
@@ -85,9 +86,7 @@ export class RedisAgentRegistry {
       lastSeen: Date.now(),
     };
 
-    const newCapabilities = new Set(
-      fullMetadata.capabilities?.map((c) => c.name) || []
-    );
+    const newCapabilities = new Set(fullMetadata.capabilities?.map((c) => c.name) || []);
 
     const multi = this.redis.multi();
 
@@ -102,12 +101,8 @@ export class RedisAgentRegistry {
     multi.expire(key, this.config.ttl);
 
     // Determine which capabilities to add and remove from sets
-    const capabilitiesToAdd = [...newCapabilities].filter(
-      (c) => !oldCapabilities.has(c)
-    );
-    const capabilitiesToRemove = [...oldCapabilities].filter(
-      (c) => !newCapabilities.has(c)
-    );
+    const capabilitiesToAdd = [...newCapabilities].filter((c) => !oldCapabilities.has(c));
+    const capabilitiesToRemove = [...oldCapabilities].filter((c) => !newCapabilities.has(c));
 
     // Update capability sets
     for (const cap of capabilitiesToAdd) {
@@ -176,7 +171,7 @@ export class RedisAgentRegistry {
     const data = await this.redis.hGetAll(key);
     return this.parseAgentData(data);
   }
-  
+
   private parseAgentData(data: Record<string, string>): AgentMetadata | null {
     if (!data || Object.keys(data).length === 0) {
       return null;
@@ -187,16 +182,11 @@ export class RedisAgentRegistry {
         capabilities: JSON.parse(data.capabilities || '[]'),
         metadata: JSON.parse(data.metadata || '{}'),
         lastSeen: parseInt(data.lastSeen || '0', 10),
-        healthScore: data.healthScore
-          ? parseFloat(data.healthScore)
-          : undefined,
+        healthScore: data.healthScore ? parseFloat(data.healthScore) : undefined,
       };
       return AgentMetadata.parse(agentData);
     } catch (error) {
-      console.error(
-        `[AgentRegistry] Failed to parse metadata for agent ${data.id}`,
-        error
-      );
+      console.error(`[AgentRegistry] Failed to parse metadata for agent ${data.id}`, error);
       return null;
     }
   }
@@ -247,10 +237,7 @@ export class RedisAgentRegistry {
           multi.hGetAll(key);
         });
 
-        const results = (await multi.exec()) as unknown as Record<
-          string,
-          string
-        >[];
+        const results = (await multi.exec()) as unknown as Record<string, string>[];
         for (const data of results) {
           if (data && Object.keys(data).length > 0) {
             const agent = this.parseAgentData(data);

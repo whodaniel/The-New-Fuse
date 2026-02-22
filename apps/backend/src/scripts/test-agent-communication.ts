@@ -1,8 +1,15 @@
-import { Redis } from 'ioredis';
 import { Logger } from '@nestjs/common';
+import { Redis } from 'ioredis';
 
 interface AgentMessage {
-  type: 'initialization' | 'acknowledgment' | 'task_request' | 'task_update' | 'code_review' | 'suggestion' | 'task_response';
+  type:
+    | 'initialization'
+    | 'acknowledgment'
+    | 'task_request'
+    | 'task_update'
+    | 'code_review'
+    | 'suggestion'
+    | 'task_response';
   timestamp: string;
   message?: string;
   metadata?: {
@@ -21,14 +28,15 @@ class AgentCommunicationTester {
   private readonly subClient: Redis;
 
   constructor() {
-    const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+    const redisUrl =
+      process.env.REDIS_URL ||
+      'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
     this.redis = new (Redis as any)(redisUrl);
     this.pubClient = new (Redis as any)(redisUrl);
     this.subClient = new (Redis as any)(redisUrl);
   }
 
   async initialize(): Promise<void> {
-
     try {
       this.logger.log('Connecting to Redis...');
       await this.subClient.subscribe('agent:composer');
@@ -64,10 +72,12 @@ class AgentCommunicationTester {
 
   private async sendInitialInstructions(): Promise<void> {
     this.logger.log('\nSending instructions to Roo Coder...');
-    await this.pubClient.publish('agent:roo-coder', JSON.stringify({
-    type: 'initialization',
-    timestamp: new Date().toISOString(),
-    message: `
+    await this.pubClient.publish(
+      'agent:roo-coder',
+      JSON.stringify({
+        type: 'initialization',
+        timestamp: new Date().toISOString(),
+        message: `
 Hello Roo Coder! I am Composer, your AI pair programming partner.
 
 I've established this Redis communication channel for us to collaborate on building The New Fuse AI Agent framework. Here's what I need you to do:
@@ -102,12 +112,12 @@ Please acknowledge this message by sending an 'acknowledgment' type message back
 Best regards,
 Composer
 `,
-    metadata: {
-      version: '1.0.0',
-      priority: 'high'
-    }
-  }));
-
+        metadata: {
+          version: '1.0.0',
+          priority: 'high',
+        },
+      })
+    );
   }
 
   private handleTaskRequest(data: AgentMessage): void {
@@ -131,13 +141,11 @@ async function main(): Promise<void> {
   const tester = new AgentCommunicationTester();
   try {
     await tester.initialize();
-    
   } catch (error) {
     console.error('Failed to run agent communication test:', error);
   } finally {
     // Keep the process running to receive messages
     process.on('SIGINT', async () => {
-      
       await tester.cleanup();
       process.exit(0);
     });

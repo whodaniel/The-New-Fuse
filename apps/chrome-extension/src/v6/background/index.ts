@@ -1957,6 +1957,10 @@ Format as JSON array:
               // PRIMARY SELF-DETECTION: Use metadata.senderId (most reliable)
               let senderId = message.metadata?.senderId || message.senderId;
 
+              // NORMALIZE IDs for comparison and reliable routing
+              const normalizeId = (id: string) =>
+                id ? id.replace(/^(page-agent-|browser-|agent-)/, '') : '';
+
               // Fallback: construct from tab ID if not provided
               if (!senderId && sender.tab?.id) {
                 senderId = `page-agent-${sender.tab.id}`;
@@ -1964,17 +1968,18 @@ Format as JSON array:
               }
 
               // FIXED: Don't drop messages without senderId - use a safe fallback instead
-              // This ensures CLI agents and other sources still work
-              // The content script's isSelfMessage check will prevent loops
               if (!senderId) {
                 senderId = `ai-response-${Date.now()}`;
-                console.log(
-                  '[FuseConnect v7] Using generated senderId for anonymous response:',
-                  senderId
-                );
               }
 
-              console.log('[FuseConnect v7] AI Response from agent:', senderId);
+              const normalizedSenderId = normalizeId(senderId);
+              const normalizedMyId = normalizeId(this.agentId);
+
+              console.log('[FuseConnect v7] AI Response from agent:', {
+                senderId,
+                normalizedSenderId,
+                normalizedMyId,
+              });
 
               // Get channel from message metadata (set by the content script when the user selected it)
               // This supports per-tab channel selection where each tab maintains its own channel

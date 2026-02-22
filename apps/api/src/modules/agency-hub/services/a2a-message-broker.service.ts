@@ -687,7 +687,9 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
   }
 
   private async initializeRedis(): Promise<void> {
-    const redisUrl = this.configService.get<string>('REDIS_URL') || 'redis://localhost:6379';
+    const redisUrl =
+      this.configService.get<string>('REDIS_URL') ||
+      'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
     this.redis = new Redis(redisUrl, {
       maxRetriesPerRequest: 1,
       lazyConnect: false,

@@ -34,7 +34,10 @@ function createMessage(id, fromAgent, toAgent, content, broadcastGroup = null) {
 }
 
 class TestRedisTransportAdapter {
-  constructor(name, redisUrl = 'redis://localhost:6379') {
+  constructor(
+    name,
+    redisUrl = 'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570'
+  ) {
     this.name = name;
     this.redisUrl = redisUrl;
     this.publisher = null;

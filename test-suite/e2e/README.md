@@ -1,17 +1,24 @@
 # The New Fuse - End-to-End Test Suite
 
-Comprehensive end-to-end testing suite for The New Fuse framework, validating production readiness through extensive testing of agent lifecycle, multi-agent collaboration, load handling, integration, chaos resilience, and real-world scenarios.
+Comprehensive end-to-end testing suite for The New Fuse framework, validating
+production readiness through extensive testing of agent lifecycle, multi-agent
+collaboration, load handling, integration, chaos resilience, and real-world
+scenarios.
 
 ## 📋 Overview
 
 This test suite provides comprehensive coverage of The New Fuse framework:
 
-- **Agent Lifecycle Testing**: Complete agent journey from registration to shutdown
-- **Multi-Agent Collaboration**: 5+ agents working together using Redis, A2A, MCP
+- **Agent Lifecycle Testing**: Complete agent journey from registration to
+  shutdown
+- **Multi-Agent Collaboration**: 5+ agents working together using Redis, A2A,
+  MCP
 - **Load Testing**: 10+ agents, 100+ messages/second, complex workflows
-- **Integration Testing**: Full-stack validation (Frontend → Backend → DB → Redis)
+- **Integration Testing**: Full-stack validation (Frontend → Backend → DB →
+  Redis)
 - **Chaos Testing**: Failure scenarios, recovery, graceful degradation
-- **Real-World Scenarios**: Production-like workflows (Code Review, Self-Improvement, Documentation)
+- **Real-World Scenarios**: Production-like workflows (Code Review,
+  Self-Improvement, Documentation)
 
 ## 🚀 Quick Start
 
@@ -83,6 +90,7 @@ test-suite/e2e/
 ### 1. Agent Lifecycle (01-agent-lifecycle.spec.ts)
 
 Tests complete agent lifecycle:
+
 - ✅ Agent registration
 - ✅ Onboarding process
 - ✅ Agent discovery
@@ -96,6 +104,7 @@ Tests complete agent lifecycle:
 ### 2. Multi-Agent Collaboration (02-multi-agent-collaboration.spec.ts)
 
 Tests 5 agents collaborating:
+
 - ✅ Redis coordination
 - ✅ A2A protocol communication
 - ✅ MCP tools usage
@@ -108,6 +117,7 @@ Tests 5 agents collaborating:
 ### 3. Load Testing (03-load-testing.spec.ts)
 
 Stress tests system limits:
+
 - ✅ 15 concurrent agents
 - ✅ 100+ messages per second
 - ✅ Complex workflows (25+ nodes)
@@ -119,6 +129,7 @@ Stress tests system limits:
 ### 4. Integration Testing (04-integration-testing.spec.ts)
 
 Full-stack integration:
+
 - ✅ Frontend → Backend → Database → Redis flow
 - ✅ REST + GraphQL integration
 - ✅ Authentication & authorization
@@ -131,6 +142,7 @@ Full-stack integration:
 ### 5. Chaos Testing (05-chaos-testing.spec.ts)
 
 Resilience testing:
+
 - ✅ Agent failures and recovery
 - ✅ Redis disconnection handling
 - ✅ Database connection loss
@@ -143,6 +155,7 @@ Resilience testing:
 ### 6. Real-World Scenarios (06-real-world-scenarios.spec.ts)
 
 Production workflows:
+
 - ✅ Code Review Workflow (3 agents + 1 human)
 - ✅ Self-Improvement Sprint (5 agents)
 - ✅ Documentation Generation
@@ -178,7 +191,7 @@ WS_URL=ws://localhost:3004
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/thenewfuse_test
 
 # Redis
-REDIS_URL=redis://localhost:6379
+REDIS_URL=redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570
 
 # GraphQL
 GRAPHQL_URL=http://localhost:3001/graphql
@@ -305,7 +318,7 @@ test.describe('My Test Suite', () => {
   test('My Test Case', async () => {
     // Test code
     const response = await axios.get(`${API_BASE_URL}/endpoint`, {
-      headers: { 'Authorization': `Bearer ${authToken}` }
+      headers: { Authorization: `Bearer ${authToken}` },
     });
 
     expect(response.status).toBe(200);
@@ -337,18 +350,14 @@ jobs:
         env:
           POSTGRES_PASSWORD: postgres
         options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s
           --health-retries 5
 
       redis:
         image: redis:7
         options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-cmd "redis-cli ping" --health-interval 10s --health-timeout
+          5s --health-retries 5
 
     steps:
       - uses: actions/checkout@v3
@@ -395,7 +404,8 @@ When adding new tests:
 ## 📞 Support
 
 - Issues: [GitHub Issues](https://github.com/whodaniel/fuse/issues)
-- Discussions: [GitHub Discussions](https://github.com/whodaniel/fuse/discussions)
+- Discussions:
+  [GitHub Discussions](https://github.com/whodaniel/fuse/discussions)
 - Documentation: Check the `docs/` directory
 
 ---

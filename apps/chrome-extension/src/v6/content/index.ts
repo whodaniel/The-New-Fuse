@@ -587,21 +587,23 @@ class FuseConnectContentScript {
                 const senderFromMetadata = msg.metadata?.senderId;
                 const isStreaming = simpleChatBridge.isStreaming();
 
-                console.log('[FuseConnect v7] 🔍 Msg Check:', {
-                  from: msg.from,
-                  metaSender: senderFromMetadata,
-                  myId: this.pageAgentId,
-                  channel: messageChannel,
-                  myChannel: myChannel,
-                  streaming: isStreaming,
-                });
+                // NORMALIZE IDs for comparison (strip common prefixes)
+                const normalizeId = (id: string) =>
+                  id ? id.replace(/^(page-agent-|browser-|agent-)/, '') : '';
 
-                // FIXED: Only exact matches count as self-messages
-                // Check BOTH msg.from AND senderId metadata
-                // The senderId in metadata is the ORIGINAL sender (the tab/agent that initiated the message)
+                const myNormalizedId = normalizeId(this.pageAgentId || '');
+                const fromNormalizedId = normalizeId(msg.from || '');
+                const metaSenderNormalizedId = normalizeId(senderFromMetadata || '');
+
                 const isFromSelf =
-                  msg.from === this.pageAgentId ||
-                  senderFromMetadata === this.pageAgentId ||
+                  (myNormalizedId &&
+                    fromNormalizedId &&
+                    myNormalizedId.startsWith(fromNormalizedId) &&
+                    fromNormalizedId.length > 5) ||
+                  (myNormalizedId &&
+                    metaSenderNormalizedId &&
+                    myNormalizedId.startsWith(metaSenderNormalizedId) &&
+                    metaSenderNormalizedId.length > 5) ||
                   msg.from === 'You';
 
                 const isFromYou = msg.from === 'You';

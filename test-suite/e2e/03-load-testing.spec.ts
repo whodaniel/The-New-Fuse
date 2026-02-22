@@ -9,15 +9,17 @@
  * - Database performance under load
  */
 
-import { test, expect } from '@playwright/test';
-import { io, Socket } from 'socket.io-client';
+import { expect, test } from '@playwright/test';
 import axios from 'axios';
 import Redis from 'ioredis';
+import { io, Socket } from 'socket.io-client';
 
 const API_BASE_URL = process.env.API_URL || 'http://localhost:3001';
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3004';
 const WS_URL = process.env.WS_URL || 'ws://localhost:3004';
-const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
+const REDIS_URL =
+  process.env.REDIS_URL ||
+  'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
 
 const NUM_AGENTS = 15;
 const MESSAGES_PER_SECOND = 120;
@@ -56,7 +58,7 @@ test.describe('Load Testing - High Concurrency', () => {
 
   test.beforeAll(async () => {
     const authResponse = await axios.post(`${API_BASE_URL}/auth/test-token`, {
-      test: true
+      test: true,
     });
     authToken = authResponse.data.token;
     apiKey = authResponse.data.apiKey || 'test_api_key_' + Date.now();
@@ -71,7 +73,7 @@ test.describe('Load Testing - High Concurrency', () => {
       maxResponseTime: 0,
       minResponseTime: Infinity,
       throughput: 0,
-      errorRate: 0
+      errorRate: 0,
     };
 
     console.log('🚀 Starting load test setup...');
@@ -102,47 +104,42 @@ test.describe('Load Testing - High Concurrency', () => {
       const agentData = {
         name: `Load Test Agent ${i + 1}`,
         type: i % 3 === 0 ? 'developer' : i % 3 === 1 ? 'tester' : 'designer',
-        capabilities: [
-          'load-testing',
-          'high-concurrency',
-          `specialty-${i % 5}`
-        ],
+        capabilities: ['load-testing', 'high-concurrency', `specialty-${i % 5}`],
         metadata: {
           loadTestAgent: true,
           index: i,
-          batchId: 'load-test-' + Date.now()
-        }
+          batchId: 'load-test-' + Date.now(),
+        },
       };
 
-      const promise = axios.post(
-        `${API_BASE_URL}/agents/register`,
-        agentData,
-        {
+      const promise = axios
+        .post(`${API_BASE_URL}/agents/register`, agentData, {
           headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'X-API-Key': apiKey
-          }
-        }
-      ).then(response => {
-        agents.push({
-          id: response.data.id,
-          name: agentData.name,
-          messagesSent: 0,
-          messagesReceived: 0,
-          errors: 0
+            Authorization: `Bearer ${authToken}`,
+            'X-API-Key': apiKey,
+          },
+        })
+        .then((response) => {
+          agents.push({
+            id: response.data.id,
+            name: agentData.name,
+            messagesSent: 0,
+            messagesReceived: 0,
+            errors: 0,
+          });
+          return response;
+        })
+        .catch((error) => {
+          console.error(`Failed to register agent ${i}:`, error.message);
+          throw error;
         });
-        return response;
-      }).catch(error => {
-        console.error(`Failed to register agent ${i}:`, error.message);
-        throw error;
-      });
 
       registrationPromises.push(promise);
     }
 
     const results = await Promise.allSettled(registrationPromises);
-    const successful = results.filter(r => r.status === 'fulfilled').length;
-    const failed = results.filter(r => r.status === 'rejected').length;
+    const successful = results.filter((r) => r.status === 'fulfilled').length;
+    const failed = results.filter((r) => r.status === 'rejected').length;
 
     const duration = Date.now() - startTime;
 
@@ -154,21 +151,23 @@ test.describe('Load Testing - High Concurrency', () => {
   });
 
   test('Load Test 2: 100+ Messages Per Second', async () => {
-    console.log(`💬 Starting message load test: ${MESSAGES_PER_SECOND} msg/s for ${TEST_DURATION_SECONDS}s...`);
+    console.log(
+      `💬 Starting message load test: ${MESSAGES_PER_SECOND} msg/s for ${TEST_DURATION_SECONDS}s...`
+    );
 
     // Create a shared chat room
     const roomResponse = await axios.post(
       `${BACKEND_URL}/chat/rooms`,
       {
         name: 'Load Test Chat Room',
-        participants: agents.map(a => a.id),
-        type: 'load-test'
+        participants: agents.map((a) => a.id),
+        type: 'load-test',
       },
       {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'X-API-Key': apiKey
-        }
+          Authorization: `Bearer ${authToken}`,
+          'X-API-Key': apiKey,
+        },
       }
     );
 
@@ -181,11 +180,11 @@ test.describe('Load Testing - High Concurrency', () => {
         const socket = io(WS_URL, {
           auth: {
             token: authToken,
-            agentId: agent.id
+            agentId: agent.id,
           },
           reconnection: true,
           reconnectionDelay: 1000,
-          reconnectionAttempts: 3
+          reconnectionAttempts: 3,
         });
 
         socket.on('connect', () => {
@@ -213,7 +212,7 @@ test.describe('Load Testing - High Concurrency', () => {
     });
 
     await Promise.allSettled(connectionPromises);
-    const connectedAgents = agents.filter(a => a.socket?.connected);
+    const connectedAgents = agents.filter((a) => a.socket?.connected);
     console.log(`✅ Connected ${connectedAgents.length}/${agents.length} agents`);
 
     // Send messages at target rate
@@ -241,7 +240,7 @@ test.describe('Load Testing - High Concurrency', () => {
                 roomId,
                 message: `Load test message ${messagesSent}`,
                 agentId: agent.id,
-                timestamp: Date.now()
+                timestamp: Date.now(),
               },
               (ack: any) => {
                 const responseTime = Date.now() - msgStartTime;
@@ -270,10 +269,10 @@ test.describe('Load Testing - High Concurrency', () => {
 
       await Promise.race([
         Promise.allSettled(sendPromises),
-        new Promise(resolve => setTimeout(resolve, messageInterval * 10))
+        new Promise((resolve) => setTimeout(resolve, messageInterval * 10)),
       ]);
 
-      await new Promise(resolve => setTimeout(resolve, messageInterval));
+      await new Promise((resolve) => setTimeout(resolve, messageInterval));
     }
 
     const actualDuration = Date.now() - startTime;
@@ -321,7 +320,7 @@ test.describe('Load Testing - High Concurrency', () => {
     nodes.push({
       id: 'start',
       type: 'start',
-      data: { label: 'Start Complex Workflow' }
+      data: { label: 'Start Complex Workflow' },
     });
 
     // Create sequential and parallel nodes
@@ -341,8 +340,8 @@ test.describe('Load Testing - High Concurrency', () => {
                 data: {
                   agentId: agents[i % agents.length]?.id,
                   action: 'process',
-                  input: `\${nodes.${i > 0 ? `node-${i - 1}` : 'start'}.output}`
-                }
+                  input: `\${nodes.${i > 0 ? `node-${i - 1}` : 'start'}.output}`,
+                },
               },
               {
                 id: `${nodeId}-branch-2`,
@@ -350,11 +349,11 @@ test.describe('Load Testing - High Concurrency', () => {
                 data: {
                   agentId: agents[(i + 1) % agents.length]?.id,
                   action: 'validate',
-                  input: `\${nodes.${i > 0 ? `node-${i - 1}` : 'start'}.output}`
-                }
-              }
-            ]
-          }
+                  input: `\${nodes.${i > 0 ? `node-${i - 1}` : 'start'}.output}`,
+                },
+              },
+            ],
+          },
         });
       } else {
         nodes.push({
@@ -363,15 +362,15 @@ test.describe('Load Testing - High Concurrency', () => {
           data: {
             agentId: agents[i % agents.length]?.id,
             action: 'process',
-            input: `\${nodes.${i > 0 ? `node-${i - 1}` : 'start'}.output}`
-          }
+            input: `\${nodes.${i > 0 ? `node-${i - 1}` : 'start'}.output}`,
+          },
         });
       }
 
       // Create edge from previous node
       edges.push({
         source: i === 0 ? 'start' : `node-${i - 1}`,
-        target: nodeId
+        target: nodeId,
       });
     }
 
@@ -380,32 +379,28 @@ test.describe('Load Testing - High Concurrency', () => {
       id: 'end',
       type: 'end',
       data: {
-        output: `\${nodes.node-${WORKFLOW_NODES - 3}.output}`
-      }
+        output: `\${nodes.node-${WORKFLOW_NODES - 3}.output}`,
+      },
     });
 
     edges.push({
       source: `node-${WORKFLOW_NODES - 3}`,
-      target: 'end'
+      target: 'end',
     });
 
     const workflowData = {
       name: 'Load Test Complex Workflow',
       description: `Workflow with ${WORKFLOW_NODES} nodes for load testing`,
       nodes,
-      edges
+      edges,
     };
 
-    const workflowResponse = await axios.post(
-      `${BACKEND_URL}/workflows/create`,
-      workflowData,
-      {
-        headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'X-API-Key': apiKey
-        }
-      }
-    );
+    const workflowResponse = await axios.post(`${BACKEND_URL}/workflows/create`, workflowData, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        'X-API-Key': apiKey,
+      },
+    });
 
     expect(workflowResponse.status).toBe(201);
     const workflowId = workflowResponse.data.id;
@@ -417,14 +412,14 @@ test.describe('Load Testing - High Concurrency', () => {
       `${BACKEND_URL}/workflows/${workflowId}/execute`,
       {
         input: {
-          data: 'Load test input data'
-        }
+          data: 'Load test input data',
+        },
       },
       {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'X-API-Key': apiKey
-        }
+          Authorization: `Bearer ${authToken}`,
+          'X-API-Key': apiKey,
+        },
       }
     );
 
@@ -436,23 +431,22 @@ test.describe('Load Testing - High Concurrency', () => {
     const maxAttempts = 180; // 3 minutes
 
     while (!completed && attempts < maxAttempts) {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const statusResponse = await axios.get(
-        `${BACKEND_URL}/workflows/executions/${executionId}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'X-API-Key': apiKey
-          }
-        }
-      );
+      const statusResponse = await axios.get(`${BACKEND_URL}/workflows/executions/${executionId}`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'X-API-Key': apiKey,
+        },
+      });
 
       if (statusResponse.data.status === 'completed' || statusResponse.data.status === 'failed') {
         completed = true;
         console.log(`📊 Workflow completed with status: ${statusResponse.data.status}`);
         console.log(`   Duration: ${statusResponse.data.duration}ms`);
-        console.log(`   Nodes executed: ${Object.keys(statusResponse.data.nodeExecutions || {}).length}`);
+        console.log(
+          `   Nodes executed: ${Object.keys(statusResponse.data.nodeExecutions || {}).length}`
+        );
       }
 
       attempts++;
@@ -476,7 +470,7 @@ test.describe('Load Testing - High Concurrency', () => {
             {
               id: 'start',
               type: 'start',
-              data: { label: 'Start' }
+              data: { label: 'Start' },
             },
             {
               id: 'agent-1',
@@ -484,8 +478,8 @@ test.describe('Load Testing - High Concurrency', () => {
               data: {
                 agentId: agents[i % agents.length]?.id,
                 action: 'process',
-                input: '${workflow.input}'
-              }
+                input: '${workflow.input}',
+              },
             },
             {
               id: 'agent-2',
@@ -493,34 +487,30 @@ test.describe('Load Testing - High Concurrency', () => {
               data: {
                 agentId: agents[(i + 1) % agents.length]?.id,
                 action: 'validate',
-                input: '${nodes.agent-1.output}'
-              }
+                input: '${nodes.agent-1.output}',
+              },
             },
             {
               id: 'end',
               type: 'end',
               data: {
-                output: '${nodes.agent-2.output}'
-              }
-            }
+                output: '${nodes.agent-2.output}',
+              },
+            },
           ],
           edges: [
             { source: 'start', target: 'agent-1' },
             { source: 'agent-1', target: 'agent-2' },
-            { source: 'agent-2', target: 'end' }
-          ]
+            { source: 'agent-2', target: 'end' },
+          ],
         };
 
-        const workflowResponse = await axios.post(
-          `${BACKEND_URL}/workflows/create`,
-          workflowData,
-          {
-            headers: {
-              'Authorization': `Bearer ${authToken}`,
-              'X-API-Key': apiKey
-            }
-          }
-        );
+        const workflowResponse = await axios.post(`${BACKEND_URL}/workflows/create`, workflowData, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            'X-API-Key': apiKey,
+          },
+        });
 
         // Execute workflow
         const executionResponse = await axios.post(
@@ -528,14 +518,14 @@ test.describe('Load Testing - High Concurrency', () => {
           {
             input: {
               workflowIndex: i,
-              data: `Concurrent test data ${i}`
-            }
+              data: `Concurrent test data ${i}`,
+            },
           },
           {
             headers: {
-              'Authorization': `Bearer ${authToken}`,
-              'X-API-Key': apiKey
-            }
+              Authorization: `Bearer ${authToken}`,
+              'X-API-Key': apiKey,
+            },
           }
         );
 
@@ -554,28 +544,25 @@ test.describe('Load Testing - High Concurrency', () => {
     const maxAttempts = 120;
 
     while (!allCompleted && attempts < maxAttempts) {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const statusPromises = executionIds.map(id =>
-        axios.get(
-          `${BACKEND_URL}/workflows/executions/${id}`,
-          {
-            headers: {
-              'Authorization': `Bearer ${authToken}`,
-              'X-API-Key': apiKey
-            }
-          }
-        )
+      const statusPromises = executionIds.map((id) =>
+        axios.get(`${BACKEND_URL}/workflows/executions/${id}`, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            'X-API-Key': apiKey,
+          },
+        })
       );
 
       const statuses = await Promise.all(statusPromises);
       const completed = statuses.filter(
-        s => s.data.status === 'completed' || s.data.status === 'failed'
+        (s) => s.data.status === 'completed' || s.data.status === 'failed'
       ).length;
 
       if (completed === executionIds.length) {
         allCompleted = true;
-        const successful = statuses.filter(s => s.data.status === 'completed').length;
+        const successful = statuses.filter((s) => s.data.status === 'completed').length;
         console.log(`📊 All workflows completed: ${successful}/${executionIds.length} successful`);
       }
 
@@ -606,28 +593,25 @@ test.describe('Load Testing - High Concurrency', () => {
                 {
                   name: `DB Load Test Agent ${i}`,
                   type: 'load-tester',
-                  capabilities: ['db-test']
+                  capabilities: ['db-test'],
                 },
                 {
                   headers: {
-                    'Authorization': `Bearer ${authToken}`,
-                    'X-API-Key': apiKey
-                  }
+                    Authorization: `Bearer ${authToken}`,
+                    'X-API-Key': apiKey,
+                  },
                 }
               );
               break;
 
             case 1: // Read
               if (agents.length > 0) {
-                await axios.get(
-                  `${API_BASE_URL}/agents/${agents[i % agents.length].id}`,
-                  {
-                    headers: {
-                      'Authorization': `Bearer ${authToken}`,
-                      'X-API-Key': apiKey
-                    }
-                  }
-                );
+                await axios.get(`${API_BASE_URL}/agents/${agents[i % agents.length].id}`, {
+                  headers: {
+                    Authorization: `Bearer ${authToken}`,
+                    'X-API-Key': apiKey,
+                  },
+                });
               }
               break;
 
@@ -636,39 +620,36 @@ test.describe('Load Testing - High Concurrency', () => {
                 await axios.patch(
                   `${API_BASE_URL}/agents/${agents[i % agents.length].id}`,
                   {
-                    metadata: { lastUpdated: Date.now() }
+                    metadata: { lastUpdated: Date.now() },
                   },
                   {
                     headers: {
-                      'Authorization': `Bearer ${authToken}`,
-                      'X-API-Key': apiKey
-                    }
+                      Authorization: `Bearer ${authToken}`,
+                      'X-API-Key': apiKey,
+                    },
                   }
                 );
               }
               break;
 
             case 3: // List
-              await axios.get(
-                `${API_BASE_URL}/agents/discover`,
-                {
-                  headers: {
-                    'Authorization': `Bearer ${authToken}`,
-                    'X-API-Key': apiKey
-                  }
-                }
-              );
+              await axios.get(`${API_BASE_URL}/agents/discover`, {
+                headers: {
+                  Authorization: `Bearer ${authToken}`,
+                  'X-API-Key': apiKey,
+                },
+              });
               break;
           }
 
           return {
             success: true,
-            duration: Date.now() - startTime
+            duration: Date.now() - startTime,
           };
         } catch (error) {
           return {
             success: false,
-            duration: Date.now() - startTime
+            duration: Date.now() - startTime,
           };
         }
       })();
@@ -677,13 +658,11 @@ test.describe('Load Testing - High Concurrency', () => {
     }
 
     const results = await Promise.allSettled(operations);
-    const successful = results.filter(
-      r => r.status === 'fulfilled' && r.value.success
-    ).length;
+    const successful = results.filter((r) => r.status === 'fulfilled' && r.value.success).length;
 
     const durations = results
-      .filter(r => r.status === 'fulfilled')
-      .map(r => (r as any).value.duration);
+      .filter((r) => r.status === 'fulfilled')
+      .map((r) => (r as any).value.duration);
 
     const avgDuration = durations.reduce((a, b) => a + b, 0) / durations.length;
     const maxDuration = Math.max(...durations);

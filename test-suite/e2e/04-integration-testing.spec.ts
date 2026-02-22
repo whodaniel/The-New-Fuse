@@ -9,16 +9,18 @@
  * - File uploads and downloads
  */
 
-import { test, expect } from '@playwright/test';
-import { io, Socket } from 'socket.io-client';
+import { expect, test } from '@playwright/test';
 import axios from 'axios';
 import Redis from 'ioredis';
+import { io, Socket } from 'socket.io-client';
 
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 const API_BASE_URL = process.env.API_URL || 'http://localhost:3001';
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3004';
 const WS_URL = process.env.WS_URL || 'ws://localhost:3004';
-const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
+const REDIS_URL =
+  process.env.REDIS_URL ||
+  'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
 const GRAPHQL_URL = process.env.GRAPHQL_URL || 'http://localhost:3001/graphql';
 
 test.describe('Full Stack Integration Tests', () => {
@@ -64,7 +66,7 @@ test.describe('Full Stack Integration Tests', () => {
 
     // Step 2: Backend - Verify user in database
     const userResponse = await axios.get(`${API_BASE_URL}/auth/me`, {
-      headers: { 'Authorization': `Bearer ${authToken}` }
+      headers: { Authorization: `Bearer ${authToken}` },
     });
 
     expect(userResponse.status).toBe(200);
@@ -74,7 +76,7 @@ test.describe('Full Stack Integration Tests', () => {
 
     // Step 3: Database - Verify user exists
     const dbCheckResponse = await axios.get(`${API_BASE_URL}/users/${userId}`, {
-      headers: { 'Authorization': `Bearer ${authToken}` }
+      headers: { Authorization: `Bearer ${authToken}` },
     });
 
     expect(dbCheckResponse.status).toBe(200);
@@ -93,15 +95,12 @@ test.describe('Full Stack Integration Tests', () => {
 
   test('Integration 2: REST API + GraphQL Working Together', async () => {
     // Create user via REST
-    const restResponse = await axios.post(
-      `${API_BASE_URL}/auth/register`,
-      {
-        email: `gql-rest-${Date.now()}@example.com`,
-        password: 'GqlRest123!',
-        firstName: 'GraphQL',
-        lastName: 'REST'
-      }
-    );
+    const restResponse = await axios.post(`${API_BASE_URL}/auth/register`, {
+      email: `gql-rest-${Date.now()}@example.com`,
+      password: 'GqlRest123!',
+      firstName: 'GraphQL',
+      lastName: 'REST',
+    });
 
     authToken = restResponse.data.token;
     userId = restResponse.data.user.id;
@@ -127,15 +126,15 @@ test.describe('Full Stack Integration Tests', () => {
           input: {
             name: 'GraphQL Test Agent',
             type: 'developer',
-            capabilities: ['graphql', 'rest', 'integration']
-          }
-        }
+            capabilities: ['graphql', 'rest', 'integration'],
+          },
+        },
       },
       {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
       }
     );
 
@@ -143,12 +142,9 @@ test.describe('Full Stack Integration Tests', () => {
     const agentId = gqlResponse.data.data.createAgent.id;
 
     // Retrieve agent via REST
-    const restAgentResponse = await axios.get(
-      `${API_BASE_URL}/agents/${agentId}`,
-      {
-        headers: { 'Authorization': `Bearer ${authToken}` }
-      }
-    );
+    const restAgentResponse = await axios.get(`${API_BASE_URL}/agents/${agentId}`, {
+      headers: { Authorization: `Bearer ${authToken}` },
+    });
 
     expect(restAgentResponse.status).toBe(200);
     expect(restAgentResponse.data.id).toBe(agentId);
@@ -169,13 +165,13 @@ test.describe('Full Stack Integration Tests', () => {
     const gqlQueryResponse = await axios.post(
       GRAPHQL_URL,
       {
-        query: getAgentsQuery
+        query: getAgentsQuery,
       },
       {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
       }
     );
 
@@ -193,38 +189,29 @@ test.describe('Full Stack Integration Tests', () => {
 
     for (const role of roles) {
       // Create user with specific role
-      const registerResponse = await axios.post(
-        `${API_BASE_URL}/auth/register`,
-        {
-          email: `${role}-${Date.now()}@example.com`,
-          password: 'TestPassword123!',
-          firstName: role.charAt(0).toUpperCase() + role.slice(1),
-          lastName: 'User',
-          role: role
-        }
-      );
+      const registerResponse = await axios.post(`${API_BASE_URL}/auth/register`, {
+        email: `${role}-${Date.now()}@example.com`,
+        password: 'TestPassword123!',
+        firstName: role.charAt(0).toUpperCase() + role.slice(1),
+        lastName: 'User',
+        role: role,
+      });
 
       const token = registerResponse.data.token;
 
       // Test authorized endpoint
-      const authorizedResponse = await axios.get(
-        `${API_BASE_URL}/${role}/dashboard`,
-        {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }
-      );
+      const authorizedResponse = await axios.get(`${API_BASE_URL}/${role}/dashboard`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       expect(authorizedResponse.status).toBe(200);
 
       // Test unauthorized endpoint (if not admin)
       if (role !== 'admin') {
         try {
-          await axios.get(
-            `${API_BASE_URL}/admin/users`,
-            {
-              headers: { 'Authorization': `Bearer ${token}` }
-            }
-          );
+          await axios.get(`${API_BASE_URL}/admin/users`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
           expect(true).toBe(false); // Should not reach here
         } catch (error: any) {
           expect(error.response.status).toBe(403); // Forbidden
@@ -232,9 +219,7 @@ test.describe('Full Stack Integration Tests', () => {
       }
 
       // Verify JWT expiration
-      const decoded = JSON.parse(
-        Buffer.from(token.split('.')[1], 'base64').toString()
-      );
+      const decoded = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
       expect(decoded).toHaveProperty('exp');
       expect(decoded).toHaveProperty('userId');
     }
@@ -245,7 +230,7 @@ test.describe('Full Stack Integration Tests', () => {
   test('Integration 4: File Upload and Download', async () => {
     // Create auth token
     const authResponse = await axios.post(`${API_BASE_URL}/auth/test-token`, {
-      test: true
+      test: true,
     });
     authToken = authResponse.data.token;
 
@@ -257,16 +242,12 @@ test.describe('Full Stack Integration Tests', () => {
     formData.append('description', 'Integration test file');
 
     // Upload file
-    const uploadResponse = await axios.post(
-      `${BACKEND_URL}/files/upload`,
-      formData,
-      {
-        headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'multipart/form-data'
-        }
-      }
-    );
+    const uploadResponse = await axios.post(`${BACKEND_URL}/files/upload`, formData, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
 
     expect(uploadResponse.status).toBe(201);
     expect(uploadResponse.data).toHaveProperty('fileId');
@@ -275,24 +256,18 @@ test.describe('Full Stack Integration Tests', () => {
     const fileId = uploadResponse.data.fileId;
 
     // Verify file metadata in database
-    const metadataResponse = await axios.get(
-      `${BACKEND_URL}/files/${fileId}/metadata`,
-      {
-        headers: { 'Authorization': `Bearer ${authToken}` }
-      }
-    );
+    const metadataResponse = await axios.get(`${BACKEND_URL}/files/${fileId}/metadata`, {
+      headers: { Authorization: `Bearer ${authToken}` },
+    });
 
     expect(metadataResponse.data.filename).toBe('test-file.txt');
     expect(metadataResponse.data.mimeType).toBe('text/plain');
 
     // Download file
-    const downloadResponse = await axios.get(
-      `${BACKEND_URL}/files/${fileId}/download`,
-      {
-        headers: { 'Authorization': `Bearer ${authToken}` },
-        responseType: 'blob'
-      }
-    );
+    const downloadResponse = await axios.get(`${BACKEND_URL}/files/${fileId}/download`, {
+      headers: { Authorization: `Bearer ${authToken}` },
+      responseType: 'blob',
+    });
 
     expect(downloadResponse.status).toBe(200);
     const downloadedContent = await downloadResponse.data.text();
@@ -311,7 +286,7 @@ test.describe('WebSocket Integration - High Concurrency', () => {
 
   test.beforeAll(async () => {
     const authResponse = await axios.post(`${API_BASE_URL}/auth/test-token`, {
-      test: true
+      test: true,
     });
     authToken = authResponse.data.token;
   });
@@ -336,9 +311,9 @@ test.describe('WebSocket Integration - High Concurrency', () => {
         const socket = io(WS_URL, {
           auth: {
             token: authToken,
-            clientId: `ws-test-${i}`
+            clientId: `ws-test-${i}`,
           },
-          reconnection: false
+          reconnection: false,
         });
 
         const timeout = setTimeout(() => {
@@ -364,7 +339,7 @@ test.describe('WebSocket Integration - High Concurrency', () => {
 
       // Batch connections to avoid overwhelming the server
       if (i % 100 === 99) {
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
       }
     }
 
@@ -383,7 +358,7 @@ test.describe('WebSocket Integration - High Concurrency', () => {
     let receivedCount = 0;
 
     // Setup listeners
-    const receivePromises = sockets.map(socket => {
+    const receivePromises = sockets.map((socket) => {
       return new Promise<void>((resolve) => {
         socket.once('broadcast', (data) => {
           expect(data.message).toBe(testMessage);
@@ -400,10 +375,10 @@ test.describe('WebSocket Integration - High Concurrency', () => {
       `${BACKEND_URL}/websocket/broadcast`,
       {
         event: 'broadcast',
-        data: { message: testMessage }
+        data: { message: testMessage },
       },
       {
-        headers: { 'Authorization': `Bearer ${authToken}` }
+        headers: { Authorization: `Bearer ${authToken}` },
       }
     );
 
@@ -422,10 +397,10 @@ test.describe('WebSocket Integration - High Concurrency', () => {
       `${BACKEND_URL}/chat/rooms`,
       {
         name: roomName,
-        type: 'test-room'
+        type: 'test-room',
       },
       {
-        headers: { 'Authorization': `Bearer ${authToken}` }
+        headers: { Authorization: `Bearer ${authToken}` },
       }
     );
 
@@ -436,11 +411,11 @@ test.describe('WebSocket Integration - High Concurrency', () => {
       socket.emit('room:join', { roomName });
     }
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // Send room message
     let receivedCount = 0;
-    const receivePromises = roomSockets.map(socket => {
+    const receivePromises = roomSockets.map((socket) => {
       return new Promise<void>((resolve) => {
         socket.once('room:message', (data) => {
           receivedCount++;
@@ -452,7 +427,7 @@ test.describe('WebSocket Integration - High Concurrency', () => {
 
     roomSockets[0].emit('room:send', {
       roomName,
-      message: 'Room message test'
+      message: 'Room message test',
     });
 
     await Promise.all(receivePromises);
@@ -468,7 +443,7 @@ test.describe('Database Integration - Complex Queries', () => {
 
   test.beforeAll(async () => {
     const authResponse = await axios.post(`${API_BASE_URL}/auth/test-token`, {
-      test: true
+      test: true,
     });
     authToken = authResponse.data.token;
   });
@@ -479,13 +454,10 @@ test.describe('Database Integration - Complex Queries', () => {
       email: `db-test-${Date.now()}@example.com`,
       password: 'DbTest123!',
       firstName: 'Database',
-      lastName: 'Test'
+      lastName: 'Test',
     };
 
-    const userResponse = await axios.post(
-      `${API_BASE_URL}/auth/register`,
-      userData
-    );
+    const userResponse = await axios.post(`${API_BASE_URL}/auth/register`, userData);
 
     const userId = userResponse.data.user.id;
     const userToken = userResponse.data.token;
@@ -498,10 +470,10 @@ test.describe('Database Integration - Complex Queries', () => {
         {
           name: `DB Test Agent ${i}`,
           type: 'developer',
-          capabilities: ['testing']
+          capabilities: ['testing'],
         },
         {
-          headers: { 'Authorization': `Bearer ${userToken}` }
+          headers: { Authorization: `Bearer ${userToken}` },
         }
       );
       agentIds.push(agentResponse.data.id);
@@ -518,31 +490,28 @@ test.describe('Database Integration - Complex Queries', () => {
             {
               id: 'agent',
               type: 'agent',
-              data: { agentId }
+              data: { agentId },
             },
-            { id: 'end', type: 'end' }
+            { id: 'end', type: 'end' },
           ],
           edges: [
             { source: 'start', target: 'agent' },
-            { source: 'agent', target: 'end' }
-          ]
+            { source: 'agent', target: 'end' },
+          ],
         },
         {
-          headers: { 'Authorization': `Bearer ${userToken}` }
+          headers: { Authorization: `Bearer ${userToken}` },
         }
       );
     }
 
     // Query with complex joins
-    const complexQuery = await axios.get(
-      `${API_BASE_URL}/users/${userId}/dashboard`,
-      {
-        headers: { 'Authorization': `Bearer ${userToken}` },
-        params: {
-          include: 'agents,workflows,metrics'
-        }
-      }
-    );
+    const complexQuery = await axios.get(`${API_BASE_URL}/users/${userId}/dashboard`, {
+      headers: { Authorization: `Bearer ${userToken}` },
+      params: {
+        include: 'agents,workflows,metrics',
+      },
+    });
 
     expect(complexQuery.data).toHaveProperty('user');
     expect(complexQuery.data).toHaveProperty('agents');
@@ -559,26 +528,26 @@ test.describe('Database Integration - Complex Queries', () => {
         {
           type: 'create',
           entity: 'agent',
-          data: { name: 'Transaction Agent 1', type: 'developer' }
+          data: { name: 'Transaction Agent 1', type: 'developer' },
         },
         {
           type: 'create',
           entity: 'agent',
-          data: { name: 'Transaction Agent 2', type: 'tester' }
+          data: { name: 'Transaction Agent 2', type: 'tester' },
         },
         {
           type: 'create',
           entity: 'workflow',
-          data: { name: 'Transaction Workflow' }
-        }
-      ]
+          data: { name: 'Transaction Workflow' },
+        },
+      ],
     };
 
     const transactionResponse = await axios.post(
       `${API_BASE_URL}/transactions/execute`,
       transactionData,
       {
-        headers: { 'Authorization': `Bearer ${authToken}` }
+        headers: { Authorization: `Bearer ${authToken}` },
       }
     );
 

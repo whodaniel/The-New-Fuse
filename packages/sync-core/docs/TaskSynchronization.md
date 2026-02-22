@@ -1,36 +1,44 @@
 # Task Synchronization System
 
-The Task Synchronization System provides real-time synchronization capabilities for task management across multi-tenant environments. It extends the existing Task and TaskExecution models with comprehensive sync capabilities, workflow integration, and real-time notifications.
+The Task Synchronization System provides real-time synchronization capabilities
+for task management across multi-tenant environments. It extends the existing
+Task and TaskExecution models with comprehensive sync capabilities, workflow
+integration, and real-time notifications.
 
 ## Overview
 
 The system consists of three main components:
 
 1. **TaskSynchronizationService** - Core synchronization engine
-2. **EnhancedTaskManagementService** - Enhanced task management with real-time features
+2. **EnhancedTaskManagementService** - Enhanced task management with real-time
+   features
 3. **TaskNotificationService** - Real-time notification system
 
 ## Features
 
 ### Real-time Synchronization
+
 - Automatic sync of task state changes across all instances
 - Conflict resolution for simultaneous updates
 - Multi-tenant isolation with controlled cross-tenant sharing
 - Integration with existing Redis pub/sub and WebSocket infrastructure
 
 ### Enhanced Task Management
+
 - Extended task models with sync tracking
 - Progress tracking with real-time updates
 - Dependency management with automatic workflow progression
 - Integration with existing workflow systems
 
 ### Real-time Notifications
+
 - Configurable notification rules per user
 - Multiple delivery channels (WebSocket, email, push, webhook)
 - Notification history and acknowledgment tracking
 - Priority-based notification handling
 
 ### Conflict Resolution
+
 - Automatic conflict detection and resolution
 - Multiple resolution strategies (latest wins, merge, manual)
 - Audit trail for all conflict resolutions
@@ -45,31 +53,31 @@ graph TB
         ETMS[EnhancedTaskManagementService]
         TNS[TaskNotificationService]
     end
-    
+
     subgraph "Existing Infrastructure"
         Redis[Redis Pub/Sub]
         WS[WebSocket Service]
         DB[(Drizzle Database)]
         SO[SyncOrchestrator]
     end
-    
+
     subgraph "Application Layer"
         Tasks[Task Management]
         Workflows[Workflow System]
         UI[User Interfaces]
     end
-    
+
     TSS --> Redis
     TSS --> WS
     TSS --> DB
     TSS --> SO
-    
+
     ETMS --> TSS
     ETMS --> DB
-    
+
     TNS --> WS
     TNS --> Redis
-    
+
     Tasks --> ETMS
     Workflows --> ETMS
     UI --> TNS
@@ -83,16 +91,19 @@ graph TB
 import { EnhancedTaskManagementService } from '@the-new-fuse/sync-core';
 
 // Create a new task with real-time sync
-const task = await taskManagementService.createTask({
-  type: 'data_processing',
-  status: 'PENDING',
-  priority: 'HIGH',
-  pipelineId: 'pipeline-123',
-  userId: 'user-456',
-  dependencies: ['task-001'],
-  estimatedDuration: 300000,
-  tags: ['urgent', 'processing']
-}, 'tenant-789');
+const task = await taskManagementService.createTask(
+  {
+    type: 'data_processing',
+    status: 'PENDING',
+    priority: 'HIGH',
+    pipelineId: 'pipeline-123',
+    userId: 'user-456',
+    dependencies: ['task-001'],
+    estimatedDuration: 300000,
+    tags: ['urgent', 'processing'],
+  },
+  'tenant-789'
+);
 
 // Execute the task
 const executionId = await taskManagementService.executeTask(
@@ -102,8 +113,8 @@ const executionId = await taskManagementService.executeTask(
     retryPolicy: {
       maxRetries: 3,
       backoffStrategy: 'exponential',
-      baseDelay: 2000
-    }
+      baseDelay: 2000,
+    },
   },
   'tenant-789'
 );
@@ -137,16 +148,16 @@ const rule = await notificationService.createNotificationRule({
   eventTypes: ['task_created', 'task_failed'],
   conditions: {
     priorities: ['URGENT'],
-    taskTypes: ['critical_processing']
+    taskTypes: ['critical_processing'],
   },
   channels: [
     {
       type: 'websocket',
       config: { realTime: true, persistent: true },
-      priority: 'urgent'
-    }
+      priority: 'urgent',
+    },
   ],
-  isActive: true
+  isActive: true,
 });
 ```
 
@@ -163,7 +174,8 @@ await taskSyncService.updateTaskDependencies(
 );
 
 // Get task relationships
-const relationships = await taskManagementService.getTaskRelationships('task-123');
+const relationships =
+  await taskManagementService.getTaskRelationships('task-123');
 console.log('Dependencies:', relationships.dependencies);
 console.log('Dependents:', relationships.dependents);
 ```
@@ -174,7 +186,7 @@ console.log('Dependents:', relationships.dependents);
 
 ```bash
 # Redis Configuration
-REDIS_URL=redis://localhost:6379
+REDIS_URL=redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570
 REDIS_CLUSTER_ENABLED=false
 
 # WebSocket Configuration
@@ -203,7 +215,7 @@ const taskSyncConfig = {
   notificationChannelPrefix: 'task_notification:',
   conflictResolutionTimeout: 30000,
   batchSize: 50,
-  maxRetries: 3
+  maxRetries: 3,
 };
 
 // Notification Service Configuration
@@ -213,7 +225,7 @@ const notificationConfig = {
   batchSize: 100,
   retryAttempts: 3,
   retryDelay: 5000,
-  maxPendingNotifications: 1000
+  maxPendingNotifications: 1000,
 };
 ```
 
@@ -224,34 +236,43 @@ const notificationConfig = {
 #### Methods
 
 ##### `syncTaskData(taskData: TaskSyncData, tenantId?: string): Promise<void>`
+
 Synchronizes task data across all instances with real-time updates.
 
 **Parameters:**
+
 - `taskData`: Task data to synchronize
 - `tenantId`: Optional tenant ID for multi-tenant isolation
 
 **Example:**
+
 ```typescript
-await taskSyncService.syncTaskData({
-  id: 'task-123',
-  type: 'processing',
-  status: 'IN_PROGRESS',
-  priority: 'HIGH',
-  pipelineId: 'pipeline-456',
-  userId: 'user-789',
-  version: 1,
-  lastModified: new Date(),
-  modifiedBy: 'user-789'
-}, 'tenant-123');
+await taskSyncService.syncTaskData(
+  {
+    id: 'task-123',
+    type: 'processing',
+    status: 'IN_PROGRESS',
+    priority: 'HIGH',
+    pipelineId: 'pipeline-456',
+    userId: 'user-789',
+    version: 1,
+    lastModified: new Date(),
+    modifiedBy: 'user-789',
+  },
+  'tenant-123'
+);
 ```
 
 ##### `syncTaskExecution(executionData: TaskExecutionSyncData, tenantId?: string): Promise<void>`
+
 Synchronizes task execution data with real-time progress tracking.
 
 ##### `updateTaskDependencies(taskId: string, dependencies: string[], tenantId?: string): Promise<void>`
+
 Updates task dependencies and synchronizes changes across all instances.
 
 ##### `resolveTaskConflict(taskId: string, localVersion: TaskSyncData, remoteVersion: TaskSyncData, tenantId?: string): Promise<ConflictResolution>`
+
 Resolves conflicts between simultaneous task updates.
 
 ### EnhancedTaskManagementService
@@ -259,18 +280,23 @@ Resolves conflicts between simultaneous task updates.
 #### Methods
 
 ##### `createTask(taskData: Omit<EnhancedTaskData, 'id' | 'version' | 'lastModified' | 'modifiedBy'>, tenantId?: string): Promise<EnhancedTaskData>`
+
 Creates a new task with real-time synchronization capabilities.
 
 ##### `updateTask(taskId: string, updates: Partial<EnhancedTaskData>, userId: string, tenantId?: string): Promise<EnhancedTaskData>`
+
 Updates an existing task with real-time sync and conflict resolution.
 
 ##### `executeTask(taskId: string, executionContext?: Partial<TaskExecutionContext>, tenantId?: string): Promise<string>`
+
 Executes a task with real-time progress tracking and monitoring.
 
 ##### `completeTaskExecution(executionId: string, result?: any, error?: string, tenantId?: string): Promise<void>`
+
 Completes a task execution with results and real-time notifications.
 
 ##### `updateTaskProgress(taskId: string, progress: number, metadata?: Record<string, any>, tenantId?: string): Promise<void>`
+
 Updates task progress with real-time synchronization.
 
 ### TaskNotificationService
@@ -278,15 +304,19 @@ Updates task progress with real-time synchronization.
 #### Methods
 
 ##### `createNotificationRule(rule: Omit<TaskNotificationRule, 'id' | 'createdAt' | 'updatedAt'>): Promise<TaskNotificationRule>`
+
 Creates a new notification rule for task events.
 
 ##### `processTaskNotification(notification: TaskNotification): Promise<void>`
+
 Processes and delivers task notifications to relevant users.
 
 ##### `getNotificationHistory(userId: string, filters?: object): Promise<TaskNotificationHistory[]>`
+
 Retrieves notification history for a user with optional filtering.
 
 ##### `acknowledgeNotification(notificationId: string, userId: string): Promise<void>`
+
 Acknowledges a notification as read by the user.
 
 ## Data Models
@@ -367,7 +397,7 @@ model SyncState {
   lastSync     DateTime @default(now())
   syncedBy     String
   metadata     Json?
-  
+
   @@unique([resourceType, resourceId, tenantId])
   @@map("sync_states")
 }
@@ -384,7 +414,7 @@ model SyncConflict {
   resolvedBy   String?
   resolution   Json?
   createdAt    DateTime @default(now())
-  
+
   @@map("sync_conflicts")
 }
 ```
@@ -474,7 +504,7 @@ The system implements exponential backoff for failed operations:
 const retryPolicy = {
   maxRetries: 3,
   backoffStrategy: 'exponential',
-  baseDelay: 1000
+  baseDelay: 1000,
 };
 ```
 
@@ -562,24 +592,27 @@ const stats = await notificationService.getNotificationStats('user-123');
 ### From Existing Task System
 
 1. **Database Migration**
+
    ```bash
    npx drizzle migrate dev --name add-sync-tables
    ```
 
 2. **Service Integration**
+
    ```typescript
    // Replace existing task service
    import { EnhancedTaskManagementService } from '@the-new-fuse/sync-core';
-   
+
    // Update task creation calls
    const task = await enhancedTaskService.createTask(taskData, tenantId);
    ```
 
 3. **Notification Setup**
+
    ```typescript
    // Add notification service
    import { TaskNotificationService } from '@the-new-fuse/sync-core';
-   
+
    // Create default notification rules
    await notificationService.createNotificationRule(defaultRule);
    ```

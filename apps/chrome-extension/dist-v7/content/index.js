@@ -3113,34 +3113,30 @@
                           }));
                       else if ('broadcast' === t.to && t.content && t.from) {
                         const e = t.metadata?.senderId,
-                          a = n.isStreaming();
-                        console.log('[FuseConnect v7] 🔍 Msg Check:', {
-                          from: t.from,
-                          metaSender: e,
-                          myId: this.pageAgentId,
-                          channel: i,
-                          myChannel: s,
-                          streaming: a,
-                        });
-                        const o =
-                            t.from === this.pageAgentId ||
-                            e === this.pageAgentId ||
+                          s = n.isStreaming(),
+                          a = (e) => (e ? e.replace(/^(page-agent-|browser-|agent-)/, '') : ''),
+                          o = a(this.pageAgentId || ''),
+                          r = a(t.from || ''),
+                          c = a(e || ''),
+                          l =
+                            (o && r && o.startsWith(r) && r.length > 5) ||
+                            (o && c && o.startsWith(c) && c.length > 5) ||
                             'You' === t.from,
-                          r = 'You' === t.from,
-                          c = !o;
+                          d = 'You' === t.from,
+                          p = !l;
                         if (
                           (console.log('[FuseConnect v7] 📨 Message received:', {
                             from: t.from,
                             senderId: e,
                             myAgentId: this.pageAgentId,
-                            isFromSelf: o,
-                            isExternalAgent: c,
+                            isFromSelf: l,
+                            isExternalAgent: p,
                             messageType: t.messageType,
                             channel: i,
                           }),
-                          c)
+                          p)
                         ) {
-                          if (a)
+                          if (s)
                             return (
                               console.log(
                                 '[FuseConnect v7] ⏳ AI is streaming, QUEUING message for later injection:',
@@ -3181,7 +3177,7 @@
                             from: t.from,
                             senderId: e,
                             myAgentId: this.pageAgentId,
-                            reason: r ? 'from-you' : o ? 'same-agent' : 'unknown',
+                            reason: d ? 'from-you' : l ? 'same-agent' : 'unknown',
                           });
                       }
                     }

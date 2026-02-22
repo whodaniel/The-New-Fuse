@@ -46,7 +46,9 @@ async function runIntegrationTest() {
 
       // Test basic Redis connectivity
       console.log('📋 Testing Redis connectivity directly...');
-      const testClient = new Redis('redis://localhost:6379');
+      const testClient = new Redis(
+        'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570'
+      );
       await new Promise((resolve, reject) => {
         testClient.on('ready', resolve);
         testClient.on('error', reject);
@@ -78,12 +80,12 @@ async function runIntegrationTest() {
     console.log('─'.repeat(50));
 
     adapter1 = new RedisTransportAdapter({
-      redisUrl: 'redis://localhost:6379',
+      redisUrl: 'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
       serialization: 'json',
     });
 
     adapter2 = new RedisTransportAdapter({
-      redisUrl: 'redis://localhost:6379',
+      redisUrl: 'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
       serialization: 'json',
     });
 

@@ -372,7 +372,7 @@ lsof -ti:3001 | xargs kill -9
 JWT_SECRET="your-secret-key-change-in-production"
 
 # Redis (for distributed federation)
-REDIS_URL="redis://localhost:6379"
+REDIS_URL="redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570"
 
 # Relay Server
 RELAY_PORT=3001

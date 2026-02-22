@@ -34,7 +34,9 @@ const CONFIG = {
   cloudApi: process.env.CLOUD_API_URL || 'https://thenewfuse.com/api',
   cloudSandbox: process.env.CLOUD_SANDBOX_URL || 'https://sandbox.thenewfuse.com',
   cloudIde: process.env.CLOUD_IDE_URL || 'https://ide.thenewfuse.com',
-  redisUrl: process.env.REDIS_URL || 'redis://localhost:6379',
+  redisUrl:
+    process.env.REDIS_URL ||
+    'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
 };
 
 // ============================================================

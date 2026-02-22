@@ -1,6 +1,7 @@
 # Complete Integration & Setup Guide
 
-This comprehensive guide consolidates all setup, installation, integration, and configuration documentation for The New Fuse ecosystem.
+This comprehensive guide consolidates all setup, installation, integration, and
+configuration documentation for The New Fuse ecosystem.
 
 ## Table of Contents
 
@@ -30,22 +31,26 @@ Before starting with The New Fuse, ensure you have:
 ### Quick Start
 
 1. **Clone the repository:**
+
    ```bash
    git clone https://github.com/your-org/the-new-fuse.git
    cd the-new-fuse
    ```
 
 2. **Install dependencies:**
+
    ```bash
    pnpm install
    ```
 
 3. **Initialize MCP integration:**
+
    ```bash
    bash scripts/initialize-mcp.sh
    ```
 
 4. **Start the development environment:**
+
    ```bash
    bun dev
    ```
@@ -61,7 +66,7 @@ Before starting with The New Fuse, ensure you have:
 the-new-fuse/
 ├── src/
 │   ├── vscode-extension/     # VS Code extension source
-│   ├── chrome-extension/     # Chrome extension source  
+│   ├── chrome-extension/     # Chrome extension source
 │   ├── agents/              # AI agent implementations
 │   └── shared/              # Shared libraries and utilities
 ├── scripts/                 # Setup and utility scripts
@@ -75,6 +80,7 @@ the-new-fuse/
 ### VS Code Extension Installation
 
 #### Method 1: Development Installation
+
 ```bash
 cd src/vscode-extension
 pnpm install
@@ -83,6 +89,7 @@ code --install-extension .
 ```
 
 #### Method 2: VSIX Package Installation
+
 ```bash
 # Build the extension package
 cd src/vscode-extension
@@ -93,6 +100,7 @@ code --install-extension the-new-fuse-*.vsix
 ```
 
 #### Method 3: Marketplace Installation
+
 1. Open VS Code
 2. Go to Extensions (Ctrl+Shift+X)
 3. Search for "The New Fuse"
@@ -101,6 +109,7 @@ code --install-extension the-new-fuse-*.vsix
 ### Chrome Extension Installation
 
 #### Development Installation
+
 1. Open Chrome and navigate to `chrome://extensions/`
 2. Enable "Developer mode" in the top right
 3. Click "Load unpacked"
@@ -108,6 +117,7 @@ code --install-extension the-new-fuse-*.vsix
 5. The extension will be loaded and ready to use
 
 #### Production Installation
+
 1. Download the extension from the Chrome Web Store
 2. Click "Add to Chrome"
 3. Grant necessary permissions
@@ -117,12 +127,14 @@ code --install-extension the-new-fuse-*.vsix
 #### Redis Installation
 
 **macOS (using Homebrew):**
+
 ```bash
 brew install redis
 brew services start redis
 ```
 
 **Ubuntu/Debian:**
+
 ```bash
 sudo apt update
 sudo apt install redis-server
@@ -131,6 +143,7 @@ sudo systemctl enable redis-server
 ```
 
 **Windows:**
+
 ```bash
 # Using WSL or Docker
 docker run -d -p 6379:6379 redis:alpine
@@ -139,6 +152,7 @@ docker run -d -p 6379:6379 redis:alpine
 #### Node.js and npm
 
 **Using Node Version Manager (recommended):**
+
 ```bash
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
 nvm install 18
@@ -146,6 +160,7 @@ nvm use 18
 ```
 
 **Direct installation:**
+
 - Download from [nodejs.org](https://nodejs.org/)
 - Follow platform-specific installation instructions
 
@@ -154,15 +169,17 @@ nvm use 18
 ### Environment Configuration
 
 1. **Copy environment template:**
+
    ```bash
    cp .env.example .env
    ```
 
 2. **Configure environment variables:**
+
    ```bash
    # .env file
    NODE_ENV=development
-   REDIS_URL=redis://localhost:6379
+   REDIS_URL=redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570
    WEBSOCKET_PORT=3711
    API_PORT=3000
    LOG_LEVEL=debug
@@ -182,15 +199,18 @@ nvm use 18
 ### Development Workflow
 
 1. **Start the development environment:**
+
    ```bash
    pnpm run dev:all
    ```
+
    This starts:
    - WebSocket server on port 3711
    - API server on port 3000
    - File watchers for automatic rebuilding
 
 2. **Launch VS Code with extension:**
+
    ```bash
    bash src/vscode-extension/launch-integrated-extension.sh
    ```
@@ -217,6 +237,7 @@ pnpm run build:agents
 ### Using Docker Compose
 
 1. **Basic setup with compose:**
+
    ```bash
    docker-compose up -d
    ```
@@ -229,28 +250,30 @@ pnpm run build:agents
      the-new-fuse:
        build: .
        ports:
-         - "3000:3000"
-         - "3711:3711"
+         - '3000:3000'
+         - '3711:3711'
        environment:
          - NODE_ENV=production
          - REDIS_URL=redis://redis:6379
        depends_on:
          - redis
-     
+
      redis:
        image: redis:alpine
        ports:
-         - "6379:6379"
+         - '6379:6379'
    ```
 
 ### Individual Container Setup
 
 1. **Build the application image:**
+
    ```bash
    docker build -t the-new-fuse .
    ```
 
 2. **Run Redis container:**
+
    ```bash
    docker run -d --name redis -p 6379:6379 redis:alpine
    ```
@@ -282,11 +305,13 @@ docker-compose logs -f the-new-fuse
 ### MCP Server Setup
 
 1. **Initialize MCP configuration:**
+
    ```bash
    bash scripts/initialize-mcp.sh
    ```
 
 2. **Configure MCP tools:**
+
    ```typescript
    // mcp-config.json
    {
@@ -295,7 +320,7 @@ docker-compose logs -f the-new-fuse
          "command": "node",
          "args": ["dist/mcp-server.js"],
          "env": {
-           "REDIS_URL": "redis://localhost:6379"
+           "REDIS_URL": "redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570"
          }
        }
      }
@@ -310,6 +335,7 @@ docker-compose logs -f the-new-fuse
 ### Claude Desktop Integration
 
 1. **Update Claude config:**
+
    ```json
    {
      "mcpServers": {
@@ -340,18 +366,18 @@ export const customTool = {
     properties: {
       code: { type: 'string' },
       language: { type: 'string' },
-      options: { type: 'object' }
+      options: { type: 'object' },
     },
-    required: ['code', 'language']
+    required: ['code', 'language'],
   },
   handler: async (params: any) => {
     // Implementation
     return {
       issues: [],
       suggestions: [],
-      metrics: {}
+      metrics: {},
     };
-  }
+  },
 };
 ```
 
@@ -360,6 +386,7 @@ export const customTool = {
 ### Server Setup
 
 1. **Start WebSocket server:**
+
    ```bash
    # Using npm script
    ppnpm run start:wesocket
@@ -380,15 +407,16 @@ export const customTool = {
      pingTimeout: 60000,
      pingInterval: 25000,
      cors: {
-       origin: "*",
-       methods: ["GET", "POST"]
-     }
+       origin: '*',
+       methods: ['GET', 'POST'],
+     },
    };
    ```
 
 ### Client Connection
 
 #### Chrome Extension Connection
+
 ```javascript
 // Chrome extension WebSocket client
 class WebSocketClient {
@@ -401,7 +429,7 @@ class WebSocketClient {
   connect() {
     try {
       this.ws = new WebSocket('ws://localhost:3711');
-      
+
       this.ws.onopen = () => {
         console.log('Connected to WebSocket server');
         this.reconnectAttempts = 0;
@@ -428,16 +456,20 @@ class WebSocketClient {
   handleDisconnection() {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
-      setTimeout(() => {
-        console.log(`Reconnection attempt ${this.reconnectAttempts}`);
-        this.connect();
-      }, 1000 * Math.pow(2, this.reconnectAttempts));
+      setTimeout(
+        () => {
+          console.log(`Reconnection attempt ${this.reconnectAttempts}`);
+          this.connect();
+        },
+        1000 * Math.pow(2, this.reconnectAttempts)
+      );
     }
   }
 }
 ```
 
 #### VS Code Extension Connection
+
 ```typescript
 // VS Code extension WebSocket integration
 import * as vscode from 'vscode';
@@ -449,14 +481,15 @@ export class VSCodeWebSocketClient {
 
   constructor() {
     this.statusBarItem = vscode.window.createStatusBarItem(
-      vscode.StatusBarAlignment.Right, 100
+      vscode.StatusBarAlignment.Right,
+      100
     );
     this.statusBarItem.show();
   }
 
   connect() {
     this.ws = new WebSocket('ws://localhost:3711');
-    
+
     this.ws.on('open', () => {
       this.statusBarItem.text = '$(plug) TNF Connected';
       this.statusBarItem.color = '#00ff00';
@@ -494,11 +527,13 @@ curl -X POST http://localhost:3711/test \
 #### macOS Installation
 
 1. **Automatic installation:**
+
    ```bash
    bash scripts/install-tnf-relay.sh
    ```
 
 2. **Manual installation:**
+
    ```bash
    # Copy the AppleScript application
    cp -r TNF-Agent-Relay.app /Applications/
@@ -526,6 +561,7 @@ property relayConfig : {
 ### Redis Agent Communication
 
 1. **Configure Redis connection:**
+
    ```typescript
    // redis-config.ts
    export const redisConfig = {
@@ -533,7 +569,7 @@ property relayConfig : {
      port: 6379,
      retryDelayOnFailover: 100,
      enableReadyCheck: true,
-     maxRetriesPerRequest: 3
+     maxRetriesPerRequest: 3,
    };
    ```
 
@@ -545,6 +581,7 @@ property relayConfig : {
 ### Inter-Extension Communication
 
 #### File-Based Protocol
+
 ```typescript
 // File communication protocol
 class FileProtocol {
@@ -552,19 +589,16 @@ class FileProtocol {
 
   async sendMessage(message: any) {
     const messageFile = path.join(
-      this.messagePath, 
+      this.messagePath,
       `${Date.now()}-${Math.random().toString(36)}.json`
     );
-    
-    await fs.promises.writeFile(
-      messageFile, 
-      JSON.stringify(message, null, 2)
-    );
+
+    await fs.promises.writeFile(messageFile, JSON.stringify(message, null, 2));
   }
 
   watchMessages(callback: (message: any) => void) {
     const watcher = chokidar.watch(this.messagePath, {
-      ignoreInitial: true
+      ignoreInitial: true,
     });
 
     watcher.on('add', async (filePath) => {
@@ -572,7 +606,7 @@ class FileProtocol {
         const content = await fs.promises.readFile(filePath, 'utf8');
         const message = JSON.parse(content);
         callback(message);
-        
+
         // Clean up message file
         await fs.promises.unlink(filePath);
       } catch (error) {
@@ -588,20 +622,24 @@ class FileProtocol {
 ### From Legacy Systems
 
 1. **Backup existing configuration:**
+
    ```bash
    cp -r ~/.vscode/extensions/old-extension ~/.vscode/extensions/old-extension.backup
    ```
 
 2. **Migrate extension settings:**
+
    ```typescript
    // migration-script.ts
    const migrateSettings = async () => {
      const oldConfig = vscode.workspace.getConfiguration('oldExtension');
      const newConfig = vscode.workspace.getConfiguration('theNewFuse');
-     
+
      // Transfer relevant settings
-     await newConfig.update('agentCommunication.enabled', 
-       oldConfig.get('communication.enabled'));
+     await newConfig.update(
+       'agentCommunication.enabled',
+       oldConfig.get('communication.enabled')
+     );
    };
    ```
 
@@ -613,24 +651,28 @@ class FileProtocol {
 ### Version Upgrades
 
 #### From v1.x to v2.x
+
 1. **Update dependencies:**
+
    ```bash
    pnpm update @the-new-fuse/core
    pnpm update @the-new-fuse/agents
    ```
 
 2. **Run migration script:**
+
    ```bash
    node scripts/migrate-v1-to-v2.js
    ```
 
 3. **Update configuration format:**
+
    ```json
    // Old format (v1.x)
    {
      "agents": ["agent1", "agent2"]
    }
-   
+
    // New format (v2.x)
    {
      "agentConfig": {
@@ -648,6 +690,7 @@ class FileProtocol {
 ### Common Issues
 
 #### WebSocket Connection Failures
+
 ```bash
 # Check if port 3711 is in use
 lsof -i :3711
@@ -660,13 +703,16 @@ ppnpm run start:wesocket
 ```
 
 #### Extension Not Loading
+
 1. **Check VS Code logs:**
+
    ```bash
    # Open VS Code Developer Console
    # Help → Toggle Developer Tools → Console
    ```
 
 2. **Verify extension installation:**
+
    ```bash
    code --list-extensions | grep the-new-fuse
    ```
@@ -678,12 +724,15 @@ ppnpm run start:wesocket
    ```
 
 #### Agent Communication Issues
+
 1. **Verify Redis connection:**
+
    ```bash
    redis-cli ping
    ```
 
 2. **Check agent registry:**
+
    ```bash
    node scripts/check-agent-status.js
    ```
@@ -694,7 +743,9 @@ ppnpm run start:wesocket
    ```
 
 #### Performance Issues
+
 1. **Monitor resource usage:**
+
    ```bash
    # Check memory usage
    ps aux | grep node
@@ -709,13 +760,14 @@ ppnpm run start:wesocket
    const optimizedConfig = {
      messageProcessingInterval: 1000,
      maxConcurrentConnections: 10,
-     enableMessageBatching: true
+     enableMessageBatching: true,
    };
    ```
 
 ### Debug Mode
 
 1. **Enable debug logging:**
+
    ```bash
    export DEBUG=the-new-fuse:*
    pnpm run dev
@@ -737,9 +789,13 @@ ppnpm run start:wesocket
 
 ### Support and Community
 
-- **GitHub Issues**: [Report bugs and feature requests](https://github.com/your-org/the-new-fuse/issues)
+- **GitHub Issues**:
+  [Report bugs and feature requests](https://github.com/your-org/the-new-fuse/issues)
 - **Discord**: Join our community for real-time support
 - **Documentation**: [Comprehensive docs](https://docs.the-new-fuse.com)
 - **Stack Overflow**: Tag questions with `the-new-fuse`
 
-This complete integration and setup guide consolidates all installation, configuration, and troubleshooting information for The New Fuse ecosystem. All technical procedures and setup steps have been preserved and enhanced with additional context and examples.
+This complete integration and setup guide consolidates all installation,
+configuration, and troubleshooting information for The New Fuse ecosystem. All
+technical procedures and setup steps have been preserved and enhanced with
+additional context and examples.

@@ -110,7 +110,9 @@ capabilities.
 
 **Redis Pub/Sub** ✅
 
-- **URL**: `redis://localhost:6379` (configurable)
+- **URL**:
+  `redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570`
+  (configurable)
 - **Channels**:
   - `agent:{agentId}` - Direct messaging
   - `agent-chat:{agentId}` - Inter-agent chat
@@ -431,7 +433,7 @@ API_URL=http://localhost:3000/api
 MCP_REGISTRY_API_KEY=your-api-key-here
 
 # Redis Configuration
-REDIS_URL=redis://localhost:6379
+REDIS_URL=redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570
 
 # Agent Configuration
 AGENT_ID=your-agent-id

@@ -6,14 +6,20 @@
       "env": {
         "NODE_ENV": "development",
         "DATABASE_URL": "postgresql://postgres:postgres@localhost:5432/fuse",
-        "REDIS_URL": "redis://localhost:6379",
+        "REDIS_URL": "redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570",
         "LOG_LEVEL": "info"
       },
       "description": "Main The New Fuse MCP Server - Full platform capabilities"
     },
     "the-new-fuse-remote": {
       "command": "node",
-      "args": ["--loader", "tsx/esm", "./src/mcp/server.ts", "--remote", "--port=3001"],
+      "args": [
+        "--loader",
+        "tsx/esm",
+        "./src/mcp/server.ts",
+        "--remote",
+        "--port=3001"
+      ],
       "env": {
         "NODE_ENV": "development"
       },
@@ -24,7 +30,8 @@
       "args": [
         "-y",
         "@modelcontextprotocol/server-filesystem",
-        "--allow-dir", "."
+        "--allow-dir",
+        "."
       ],
       "description": "File system operations for TNF project"
     },
@@ -34,7 +41,8 @@
         "run",
         "--rm",
         "-i",
-        "-e", "POSTGRES_CONNECTION_STRING=postgresql://postgres:postgres@localhost:5432/fuse",
+        "-e",
+        "POSTGRES_CONNECTION_STRING=postgresql://postgres:postgres@localhost:5432/fuse",
         "modelcontextprotocol/postgres"
       ],
       "env": {

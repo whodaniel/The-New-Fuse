@@ -1,6 +1,8 @@
 # Environment Configuration Guide
 
-This guide covers setting up environment variables and configuration for The New Fuse webhooks, SSE, and serverless architecture across different deployment environments.
+This guide covers setting up environment variables and configuration for The New
+Fuse webhooks, SSE, and serverless architecture across different deployment
+environments.
 
 ## 📋 Environment Variables Overview
 
@@ -17,7 +19,7 @@ POSTGRES_USER=tnf_user
 POSTGRES_PASSWORD=secure_password
 
 # Redis Configuration
-REDIS_URL=redis://localhost:6379
+REDIS_URL=redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570
 REDIS_PASSWORD=redis_secure_password
 
 # JWT Authentication
@@ -104,7 +106,7 @@ MIXPANEL_TOKEN=your_mixpanel_token
 NODE_ENV=development
 API_PORT=3000
 DATABASE_URL=postgresql://dev_user:dev_password@localhost:5432/tnf_dev
-REDIS_URL=redis://localhost:6379
+REDIS_URL=redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570
 LOGGING_LEVEL=debug
 METRICS_ENABLED=false
 SSL_ENABLED=false
@@ -304,10 +306,10 @@ const requiredVars = [
   'NODE_ENV',
   'DATABASE_URL',
   'JWT_SECRET',
-  'WEBHOOK_SECRET_KEY'
+  'WEBHOOK_SECRET_KEY',
 ];
 
-requiredVars.forEach(varName => {
+requiredVars.forEach((varName) => {
   if (!process.env[varName]) {
     console.error(`Missing required environment variable: ${varName}`);
     process.exit(1);
@@ -363,4 +365,5 @@ pnpm run test:sse
 
 ---
 
-*For more detailed configuration options, see the individual service documentation.*
+_For more detailed configuration options, see the individual service
+documentation._

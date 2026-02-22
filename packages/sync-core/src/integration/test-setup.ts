@@ -1,8 +1,8 @@
-import { beforeAll, afterAll, jest } from '@jest/globals';
-const vi = jest;
+import { afterAll, beforeAll, jest } from '@jest/globals';
 import { execSync } from 'child_process';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+const vi = jest;
 
 // Global test setup for integration tests
 export async function setupIntegrationTests() {
@@ -10,11 +10,13 @@ export async function setupIntegrationTests() {
 
   // Ensure test environment variables are set
   if (!process.env.TEST_DATABASE_URL) {
-    process.env.TEST_DATABASE_URL = 'postgresql://postgres:postgres@localhost:5432/sync_integration_test';
+    process.env.TEST_DATABASE_URL =
+      'postgresql://postgres:postgres@localhost:5432/sync_integration_test';
   }
 
   if (!process.env.TEST_REDIS_URL) {
-    process.env.TEST_REDIS_URL = 'redis://localhost:6379/15';
+    process.env.TEST_REDIS_URL =
+      'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570/15';
   }
 
   // Set test environment
@@ -42,9 +44,9 @@ export async function setupIntegrationTests() {
 
 export async function teardownIntegrationTests() {
   console.log('🧹 Cleaning up integration test environment...');
-  
+
   // Additional cleanup can be added here if needed
-  
+
   console.log('✅ Integration test cleanup complete');
 }
 

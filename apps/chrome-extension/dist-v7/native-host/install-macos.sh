@@ -4,7 +4,7 @@
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 HOST_NAME="com.thenewfuse.native_host"
-HOST_PATH="$SCRIPT_DIR/tnf-native-host.js"
+HOST_PATH="$SCRIPT_DIR/tnf-native-host.cjs"
 NATIVE_MESSAGING_HOSTS_DIR="$HOME/Library/Application Support/Google/Chrome/NativeMessagingHosts"
 
 echo "🔧 Installing TNF Native Messaging Host..."

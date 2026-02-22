@@ -25,7 +25,7 @@ import type { AgentInfo } from '../core/types';
 export async function example1_MapReduceDataProcessing() {
   console.log('=== Example 1: Map-Reduce Data Processing ===\n');
 
-  const redisUrl = 'redis://localhost:6379';
+  const redisUrl = 'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
 
   // Initialize components
   const agentPool = new AgentPool({
@@ -77,14 +77,8 @@ export async function example1_MapReduceDataProcessing() {
   // Map function: Calculate revenue per partition
   const mapFn = async (input: unknown, partition: number) => {
     const records = input as any[];
-    const totalPurchases = records.reduce(
-      (sum: number, user: any) => sum + user.purchases,
-      0
-    );
-    const totalRevenue = records.reduce(
-      (sum: number, user: any) => sum + user.revenue,
-      0
-    );
+    const totalPurchases = records.reduce((sum: number, user: any) => sum + user.purchases, 0);
+    const totalRevenue = records.reduce((sum: number, user: any) => sum + user.revenue, 0);
 
     // Simulate processing time
     await new Promise((resolve) => setTimeout(resolve, 100 + Math.random() * 200));
@@ -110,7 +104,7 @@ export async function example1_MapReduceDataProcessing() {
   };
 
   // Execute Map-Reduce
-  const result = await mapReduce.execute(dataset, mapFn, reduceFn, { mapConcurrency: 5 }) as any;
+  const result = (await mapReduce.execute(dataset, mapFn, reduceFn, { mapConcurrency: 5 })) as any;
 
   console.log('\n✅ Map-Reduce Complete!');
   console.log(`   Total Users: ${result.totalUsers}`);
@@ -132,7 +126,7 @@ export async function example1_MapReduceDataProcessing() {
 export async function example2_PipelineDataTransformation() {
   console.log('\n=== Example 2: Pipeline Data Transformation ===\n');
 
-  const redisUrl = 'redis://localhost:6379';
+  const redisUrl = 'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
 
   const agentPool = new AgentPool({
     minAgents: 5,
@@ -274,7 +268,7 @@ export async function example2_PipelineDataTransformation() {
   ];
 
   // Execute pipeline
-  const result = await pipeline.execute(rawData, stages) as any;
+  const result = (await pipeline.execute(rawData, stages)) as any;
 
   console.log('\n✅ Pipeline Complete!');
   console.log(`   Records processed: ${result.records.length}`);
@@ -297,7 +291,7 @@ export async function example2_PipelineDataTransformation() {
 export async function example3_ConsensusDecisionMaking() {
   console.log('\n=== Example 3: Consensus Decision Making ===\n');
 
-  const redisUrl = 'redis://localhost:6379';
+  const redisUrl = 'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
 
   const agentPool = new AgentPool({
     minAgents: 5,
@@ -388,7 +382,7 @@ export async function example3_ConsensusDecisionMaking() {
 export async function example4_SwarmOptimization() {
   console.log('\n=== Example 4: Swarm Intelligence Optimization ===\n');
 
-  const redisUrl = 'redis://localhost:6379';
+  const redisUrl = 'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
 
   const agentPool = new AgentPool({
     minAgents: 5,
@@ -466,7 +460,7 @@ export async function example4_SwarmOptimization() {
 export async function example5_ComplexWorkflow() {
   console.log('\n=== Example 5: Complex Multi-Pattern Workflow ===\n');
 
-  const redisUrl = 'redis://localhost:6379';
+  const redisUrl = 'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
 
   const agentPool = new AgentPool({
     minAgents: 5,

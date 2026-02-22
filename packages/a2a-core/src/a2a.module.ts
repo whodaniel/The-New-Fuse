@@ -15,18 +15,16 @@ export class A2ACoreModule {
   static forRoot(config?: Partial<A2AConfig>): DynamicModule {
     return {
       module: A2ACoreModule,
-      imports: [
-        ConfigModule,
-        RedisModule.forRoot({ isGlobal: true }),
-        Ap2ProtocolModule,
-      ],
+      imports: [ConfigModule, RedisModule.forRoot({ isGlobal: true }), Ap2ProtocolModule],
       providers: [
         {
           provide: 'A2A_CONFIG',
           useFactory: (configService: ConfigService): A2AConfig => {
             const defaultConfig: A2AConfig = {
               redis: {
-                url: configService.get<string>('REDIS_URL') || 'redis://localhost:6379',
+                url:
+                  configService.get<string>('REDIS_URL') ||
+                  'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
                 keyPrefix: 'a2a:',
                 ttl: 3600,
               },
@@ -84,11 +82,7 @@ export class A2ACoreModule {
   }): DynamicModule {
     return {
       module: A2ACoreModule,
-      imports: [
-        ConfigModule,
-        RedisModule.forRoot({ isGlobal: true }),
-        ...(options.imports || []),
-      ],
+      imports: [ConfigModule, RedisModule.forRoot({ isGlobal: true }), ...(options.imports || [])],
       providers: [
         {
           provide: 'A2A_CONFIG',

@@ -61,7 +61,9 @@ describe('RailwayConfigService', () => {
       });
 
       const url = railwayConfigService.getRedisUrl();
-      expect(url).toBe('redis://localhost:6379');
+      expect(url).toBe(
+        'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570'
+      );
     });
 
     it('should validate REDIS_URL format', () => {

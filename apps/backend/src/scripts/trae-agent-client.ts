@@ -1,6 +1,6 @@
+import { Logger } from '@nestjs/common';
 import { Redis } from 'ioredis';
 import { TraeMonitor } from '../services/agent/trae-monitor';
-import { Logger } from '@nestjs/common';
 
 interface AgentMessage {
   type: string;
@@ -23,11 +23,13 @@ class TraeAgentClient {
     primary: 'agent:trae',
     broadcast: 'agent:broadcast',
     augment: 'agent:augment',
-    heartbeat: 'agent:heartbeat'
+    heartbeat: 'agent:heartbeat',
   };
 
   constructor() {
-    const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+    const redisUrl =
+      process.env.REDIS_URL ||
+      'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
     this.redis = new (Redis as any)(redisUrl);
     this.subscriber = new (Redis as any)(redisUrl);
     this.monitor = new TraeMonitor();
@@ -46,32 +48,32 @@ class TraeAgentClient {
     try {
       // Initialize monitoring
       await this.monitor.initialize();
-      
+
       // Subscribe to channels
       await this.subscriber.subscribe(
-        this.channels.primary, 
-        this.channels.broadcast, 
+        this.channels.primary,
+        this.channels.broadcast,
         this.channels.augment,
         this.channels.heartbeat
       );
-      
+
       this.isConnected = true;
       this.logger.log('Trae Agent initialized and connected to Redis channels');
-      
+
       // Start heartbeat
       await this.monitor.startHeartbeat('trae');
-      
+
       // Enable metrics collection
       this.monitor.enableMetrics({
-        collectInterval: 30000,  // Collect metrics every 30 seconds
-        reportInterval: 300000   // Report metrics every 5 minutes
+        collectInterval: 30000, // Collect metrics every 30 seconds
+        reportInterval: 300000, // Report metrics every 5 minutes
       });
-      
+
       // Setup alert handlers
       this.monitor.onAlert((alert) => {
         this.logger.warn(`Received alert: ${JSON.stringify(alert)}`);
       });
-      
+
       // Send initial handshake
       await this.sendInitialHandshake();
     } catch (error) {
@@ -87,17 +89,22 @@ class TraeAgentClient {
       metadata: {
         version: '1.1.0',
         priority: 'high',
-        source: 'trae'
+        source: 'trae',
       },
       details: {
         action: 'acknowledge',
-        capabilities: ['code_analysis', 'task_coordination', 'system_integration', 'pair_programming'],
+        capabilities: [
+          'code_analysis',
+          'task_coordination',
+          'system_integration',
+          'pair_programming',
+        ],
         monitoring: {
           status: 'active',
           heartbeat: true,
-          metrics: true
-        }
-      }
+          metrics: true,
+        },
+      },
     };
 
     await this.publishMessage(this.channels.augment, initMessage);
@@ -109,7 +116,7 @@ class TraeAgentClient {
       const startTime = Date.now();
       let success = true;
       let errorDetails = '';
-      
+
       const parsedMessage = JSON.parse(message) as AgentMessage;
       this.logger.debug(`Received message on channel ${channel}:`, parsedMessage);
 
@@ -128,25 +135,24 @@ class TraeAgentClient {
           success = false;
           errorDetails = `Unhandled message type: ${parsedMessage.type}`;
       }
-      
+
       // Record metrics
       const processingTime = Date.now() - startTime;
       this.monitor.recordMetric({
         messageType: parsedMessage.type,
         processingTime,
         success,
-        errorDetails: success ? undefined : errorDetails
+        errorDetails: success ? undefined : errorDetails,
       });
-      
     } catch (error) {
       this.logger.error('Error handling message:', error);
-      
+
       // Record error metric
       this.monitor.recordMetric({
         messageType: 'unknown',
         processingTime: 0,
         success: false,
-        errorDetails: error instanceof Error ? error.message : String(error)
+        errorDetails: error instanceof Error ? error.message : String(error),
       });
     }
   }
@@ -174,7 +180,7 @@ class TraeAgentClient {
       metadata: {
         version: '1.1.0',
         priority: 'high',
-        source: 'trae'
+        source: 'trae',
       },
       details: {
         action: 'acknowledge',
@@ -182,9 +188,9 @@ class TraeAgentClient {
         status: {
           monitoring: 'active',
           heartbeat: 'enabled',
-          metrics: 'collecting'
-        }
-      }
+          metrics: 'collecting',
+        },
+      },
     };
 
     await this.publishMessage(this.channels.augment, ackMessage);
@@ -222,16 +228,14 @@ class TraeAgentClient {
 // Start the Trae Agent client
 async function main(): Promise<void> {
   const client = new TraeAgentClient();
-  
+
   // Handle process termination
   process.on('SIGINT', async () => {
-    
     await client.cleanup();
     process.exit(0);
   });
-  
+
   process.on('SIGTERM', async () => {
-    
     await client.cleanup();
     process.exit(0);
   });

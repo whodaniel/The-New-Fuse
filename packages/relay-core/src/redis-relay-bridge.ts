@@ -1,9 +1,9 @@
 /**
  * Redis-Relay Bridge
- * 
+ *
  * Bridges the WebSocket Relay to Redis for orchestration
  * Implements the "Data Plane → Control Plane" pattern
- * 
+ *
  * Flow:
  * 1. Relay receives WS message
  * 2. Emits 'message' event
@@ -15,7 +15,7 @@
 
 import { EventEmitter } from 'events';
 import { createClient, RedisClientType } from 'redis';
-import { TNFEnvelope, validateTNFEnvelope, createTNFEnvelope } from './protocol/tnf-envelope';
+import { createTNFEnvelope, TNFEnvelope, validateTNFEnvelope } from './protocol/tnf-envelope';
 
 export interface RedisRelayBridgeConfig {
   redisUrl: string;
@@ -32,9 +32,12 @@ export class RedisRelayBridge extends EventEmitter {
 
   constructor(config: Partial<RedisRelayBridgeConfig> = {}) {
     super();
-    
+
     this.config = {
-      redisUrl: config.redisUrl || process.env.REDIS_URL || 'redis://localhost:6379',
+      redisUrl:
+        config.redisUrl ||
+        process.env.REDIS_URL ||
+        'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
       ingressChannel: config.ingressChannel || 'tnf:bus:ingress',
       egressChannelPrefix: config.egressChannelPrefix || 'tnf:bus:egress',
       enableLegacyShim: config.enableLegacyShim ?? true,
@@ -115,10 +118,7 @@ export class RedisRelayBridge extends EventEmitter {
 
     // Publish to ingress
     try {
-      await this.redisClient.publish(
-        this.config.ingressChannel,
-        JSON.stringify(envelope)
-      );
+      await this.redisClient.publish(this.config.ingressChannel, JSON.stringify(envelope));
       console.log(`[Redis-Bridge] Published to ${this.config.ingressChannel}:`, envelope.id);
       this.emit('ingress', envelope);
     } catch (error) {
@@ -130,9 +130,12 @@ export class RedisRelayBridge extends EventEmitter {
   /**
    * Subscribe to egress channel for a specific agent
    */
-  async subscribeToAgent(agentId: string, callback: (envelope: TNFEnvelope) => void): Promise<void> {
+  async subscribeToAgent(
+    agentId: string,
+    callback: (envelope: TNFEnvelope) => void
+  ): Promise<void> {
     const channel = `${this.config.egressChannelPrefix}:${agentId}`;
-    
+
     await this.redisSubscriber.subscribe(channel, (message: string) => {
       try {
         const envelope = validateTNFEnvelope(JSON.parse(message));
@@ -182,10 +185,7 @@ export class RedisRelayBridge extends EventEmitter {
       throw new Error('Not connected to Redis');
     }
 
-    await this.redisClient.publish(
-      this.config.ingressChannel,
-      JSON.stringify(envelope)
-    );
+    await this.redisClient.publish(this.config.ingressChannel, JSON.stringify(envelope));
     console.log(`[Redis-Bridge] Published to ingress:`, envelope.id);
   }
 

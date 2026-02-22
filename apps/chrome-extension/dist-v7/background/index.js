@@ -1271,24 +1271,26 @@
               else {
                 this.recentMessageHashes.set(n, a);
                 let e = t.metadata?.senderId || t.senderId;
+                const o = (e) => (e ? e.replace(/^(page-agent-|browser-|agent-)/, '') : '');
                 (!e &&
                   s.tab?.id &&
                   ((e = `page-agent-${s.tab.id}`),
                   console.log('[FuseConnect v7] Using tab-based senderId:', e)),
-                  e ||
-                    ((e = `ai-response-${Date.now()}`),
-                    console.log(
-                      '[FuseConnect v7] Using generated senderId for anonymous response:',
-                      e
-                    )),
-                  console.log('[FuseConnect v7] AI Response from agent:', e));
-                let o = t.channel || t.metadata?.channel;
+                  e || (e = `ai-response-${Date.now()}`));
+                const i = o(e),
+                  c = o(this.agentId);
+                console.log('[FuseConnect v7] AI Response from agent:', {
+                  senderId: e,
+                  normalizedSenderId: i,
+                  normalizedMyId: c,
+                });
+                let r = t.channel || t.metadata?.channel;
                 if (
-                  (!o &&
+                  (!r &&
                     this.joinedChannels.size > 0 &&
-                    ((o = Array.from(this.joinedChannels)[0]),
-                    console.log('[FuseConnect v7] Using fallback channel:', o)),
-                  o)
+                    ((r = Array.from(this.joinedChannels)[0]),
+                    console.log('[FuseConnect v7] Using fallback channel:', r)),
+                  r)
                 ) {
                   const n = s.tab?.url || '';
                   let a = t.platform || 'unknown';
@@ -1300,7 +1302,7 @@
                         : n.includes('claude.ai')
                           ? (a = 'Claude')
                           : n.includes('copilot') && (a = 'Copilot'));
-                  const i = {
+                  const o = {
                     senderId: e,
                     senderType: 'ai-agent',
                     platform: a,
@@ -1308,9 +1310,9 @@
                     timestamp: Date.now(),
                   };
                   (t.metadata?.correlationId &&
-                    ((i.correlationId = t.metadata.correlationId),
-                    (i.taskId = t.metadata.taskId),
-                    (i.inResponseTo = t.metadata.inResponseTo),
+                    ((o.correlationId = t.metadata.correlationId),
+                    (o.taskId = t.metadata.taskId),
+                    (o.inResponseTo = t.metadata.inResponseTo),
                     console.log(
                       '[FuseConnect v7] 🔗 Including correlation in broadcast:',
                       t.metadata.correlationId
@@ -1318,13 +1320,13 @@
                     this.send({
                       type: 'MESSAGE_SEND',
                       to: t.metadata?.inResponseTo || 'broadcast',
-                      channel: o,
+                      channel: r,
                       content: t.content,
                       messageType: 'ai-response',
-                      metadata: i,
+                      metadata: o,
                     }),
                     console.log('[FuseConnect v7] AI response broadcast to channel:', {
-                      channel: o,
+                      channel: r,
                       senderId: e,
                       platform: a,
                       contentLength: t.content.length,

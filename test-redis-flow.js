@@ -9,7 +9,9 @@ async function test() {
   console.log('🧪 Starting End-to-End Test...');
 
   // 1. Setup Redis listener
-  const redisSubscriber = createClient({ url: 'redis://localhost:6379' });
+  const redisSubscriber = createClient({
+    url: 'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
+  });
   await redisSubscriber.connect();
 
   let messageReceived = false;
@@ -31,15 +33,27 @@ async function test() {
     console.log('🔌 Connected to Relay');
 
     // Register
-    ws.send(JSON.stringify({
-      type: 'AGENT_REGISTER',
-      source: agentId,
-      payload: { agent: { id: agentId, name: 'Tester', platform: 'test', capabilities: [], channels: ['general'] } }
-    }));
+    ws.send(
+      JSON.stringify({
+        type: 'AGENT_REGISTER',
+        source: agentId,
+        payload: {
+          agent: {
+            id: agentId,
+            name: 'Tester',
+            platform: 'test',
+            capabilities: [],
+            channels: ['general'],
+          },
+        },
+      })
+    );
 
     // Join channel
     setTimeout(() => {
-      ws.send(JSON.stringify({ type: 'CHANNEL_JOIN', source: agentId, payload: { channelId: 'general' } }));
+      ws.send(
+        JSON.stringify({ type: 'CHANNEL_JOIN', source: agentId, payload: { channelId: 'general' } })
+      );
 
       // Send test message
       setTimeout(() => {
@@ -47,7 +61,7 @@ async function test() {
           type: 'MESSAGE_SEND',
           source: agentId,
           channel: 'general',
-          payload: { to: 'broadcast', content: 'Testing Redis Bridge', messageType: 'text' }
+          payload: { to: 'broadcast', content: 'Testing Redis Bridge', messageType: 'text' },
         });
         ws.send(msg);
         console.log('📤 Sent test message');

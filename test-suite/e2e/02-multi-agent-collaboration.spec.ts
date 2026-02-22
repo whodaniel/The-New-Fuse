@@ -9,15 +9,17 @@
  * - Chat room collaboration
  */
 
-import { test, expect } from '@playwright/test';
-import { io, Socket } from 'socket.io-client';
+import { expect, test } from '@playwright/test';
 import axios from 'axios';
 import Redis from 'ioredis';
+import { io, Socket } from 'socket.io-client';
 
 const API_BASE_URL = process.env.API_URL || 'http://localhost:3001';
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3004';
 const WS_URL = process.env.WS_URL || 'ws://localhost:3004';
-const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
+const REDIS_URL =
+  process.env.REDIS_URL ||
+  'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
 
 interface CollaborativeAgent {
   id: string;
@@ -40,38 +42,38 @@ test.describe('Multi-Agent Collaboration - 5 Agents on Code Review Task', () => 
       name: 'Product Manager Agent',
       type: 'manager',
       role: 'product-manager',
-      capabilities: ['requirement-analysis', 'prioritization', 'user-story-creation']
+      capabilities: ['requirement-analysis', 'prioritization', 'user-story-creation'],
     },
     {
       name: 'Lead Developer Agent',
       type: 'developer',
       role: 'tech-lead',
-      capabilities: ['architecture-design', 'code-review', 'mentoring']
+      capabilities: ['architecture-design', 'code-review', 'mentoring'],
     },
     {
       name: 'Backend Developer Agent',
       type: 'developer',
       role: 'backend-dev',
-      capabilities: ['api-development', 'database-design', 'backend-testing']
+      capabilities: ['api-development', 'database-design', 'backend-testing'],
     },
     {
       name: 'Frontend Developer Agent',
       type: 'developer',
       role: 'frontend-dev',
-      capabilities: ['ui-development', 'frontend-testing', 'ux-implementation']
+      capabilities: ['ui-development', 'frontend-testing', 'ux-implementation'],
     },
     {
       name: 'QA Engineer Agent',
       type: 'tester',
       role: 'qa-engineer',
-      capabilities: ['test-automation', 'bug-reporting', 'quality-assurance']
-    }
+      capabilities: ['test-automation', 'bug-reporting', 'quality-assurance'],
+    },
   ];
 
   test.beforeAll(async () => {
     // Setup authentication
     const authResponse = await axios.post(`${API_BASE_URL}/auth/test-token`, {
-      test: true
+      test: true,
     });
     authToken = authResponse.data.token;
     apiKey = authResponse.data.apiKey || 'test_api_key_' + Date.now();
@@ -107,14 +109,14 @@ test.describe('Multi-Agent Collaboration - 5 Agents on Code Review Task', () => 
           metadata: {
             collaborationEnabled: true,
             protocols: ['a2a', 'mcp', 'websocket', 'redis'],
-            version: '1.0.0'
-          }
+            version: '1.0.0',
+          },
         },
         {
           headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'X-API-Key': apiKey
-          }
+            Authorization: `Bearer ${authToken}`,
+            'X-API-Key': apiKey,
+          },
         }
       );
 
@@ -124,12 +126,15 @@ test.describe('Multi-Agent Collaboration - 5 Agents on Code Review Task', () => 
         id: response.data.id,
         name: spec.name,
         type: spec.type,
-        role: spec.role
+        role: spec.role,
       });
     }
 
     expect(agents.length).toBe(5);
-    console.log('✅ Registered 5 agents:', agents.map(a => a.name));
+    console.log(
+      '✅ Registered 5 agents:',
+      agents.map((a) => a.name)
+    );
   });
 
   test('Step 2: Agents Use Redis for Coordination', async () => {
@@ -137,7 +142,7 @@ test.describe('Multi-Agent Collaboration - 5 Agents on Code Review Task', () => 
     const coordinationChannel = 'agent:coordination:test';
 
     // Each agent subscribes to the channel
-    const subscribers = agents.map(agent => {
+    const subscribers = agents.map((agent) => {
       const sub = new Redis(REDIS_URL);
       return sub.subscribe(coordinationChannel).then(() => sub);
     });
@@ -151,17 +156,14 @@ test.describe('Multi-Agent Collaboration - 5 Agents on Code Review Task', () => 
       assignments: agents.map((agent, index) => ({
         agentId: agent.id,
         role: agent.role,
-        priority: index + 1
-      }))
+        priority: index + 1,
+      })),
     };
 
-    await redisClient.publish(
-      coordinationChannel,
-      JSON.stringify(coordinationMessage)
-    );
+    await redisClient.publish(coordinationChannel, JSON.stringify(coordinationMessage));
 
     // Verify all agents received the message
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     // Store coordination state in Redis
     for (const agent of agents) {
@@ -198,32 +200,28 @@ test.describe('Multi-Agent Collaboration - 5 Agents on Code Review Task', () => 
       version: '1.0',
       from: {
         agentId: senderAgent.id,
-        role: senderAgent.role
+        role: senderAgent.role,
       },
       to: {
         agentId: receiverAgent.id,
-        role: receiverAgent.role
+        role: receiverAgent.role,
       },
       message: {
         type: 'task-delegation',
         content: 'Please review the architecture for the new feature',
         metadata: {
           priority: 'high',
-          deadline: new Date(Date.now() + 86400000).toISOString()
-        }
-      }
+          deadline: new Date(Date.now() + 86400000).toISOString(),
+        },
+      },
     };
 
-    const response = await axios.post(
-      `${BACKEND_URL}/agents/a2a/send`,
-      a2aMessage,
-      {
-        headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'X-API-Key': apiKey
-        }
-      }
-    );
+    const response = await axios.post(`${BACKEND_URL}/agents/a2a/send`, a2aMessage, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        'X-API-Key': apiKey,
+      },
+    });
 
     expect(response.status).toBe(200);
     expect(response.data).toHaveProperty('messageId');
@@ -233,9 +231,9 @@ test.describe('Multi-Agent Collaboration - 5 Agents on Code Review Task', () => 
       `${BACKEND_URL}/agents/a2a/messages/${response.data.messageId}`,
       {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'X-API-Key': apiKey
-        }
+          Authorization: `Bearer ${authToken}`,
+          'X-API-Key': apiKey,
+        },
       }
     );
 
@@ -248,10 +246,18 @@ test.describe('Multi-Agent Collaboration - 5 Agents on Code Review Task', () => 
     // Each agent uses different MCP tools
     const mcpTools = [
       { agentId: agents[0].id, tool: 'findAgents', params: { capability: 'code-review' } },
-      { agentId: agents[1].id, tool: 'registerEntity', params: { name: 'Code Review Task', type: 'task' } },
+      {
+        agentId: agents[1].id,
+        tool: 'registerEntity',
+        params: { name: 'Code Review Task', type: 'task' },
+      },
       { agentId: agents[2].id, tool: 'getAgentProfile', params: { agentId: agents[3].id } },
-      { agentId: agents[3].id, tool: 'updateAgentStatus', params: { agentId: agents[3].id, status: 'busy' } },
-      { agentId: agents[4].id, tool: 'findEntities', params: { type: 'task' } }
+      {
+        agentId: agents[3].id,
+        tool: 'updateAgentStatus',
+        params: { agentId: agents[3].id, status: 'busy' },
+      },
+      { agentId: agents[4].id, tool: 'findEntities', params: { type: 'task' } },
     ];
 
     for (const toolCall of mcpTools) {
@@ -260,13 +266,13 @@ test.describe('Multi-Agent Collaboration - 5 Agents on Code Review Task', () => 
         {
           agentId: toolCall.agentId,
           tool: toolCall.tool,
-          params: toolCall.params
+          params: toolCall.params,
         },
         {
           headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'X-API-Key': apiKey
-          }
+            Authorization: `Bearer ${authToken}`,
+            'X-API-Key': apiKey,
+          },
         }
       );
 
@@ -286,7 +292,7 @@ test.describe('Multi-Agent Collaboration - 5 Agents on Code Review Task', () => 
         {
           id: 'start',
           type: 'start',
-          data: { label: 'New Feature Request' }
+          data: { label: 'New Feature Request' },
         },
         {
           id: 'pm-analysis',
@@ -294,8 +300,8 @@ test.describe('Multi-Agent Collaboration - 5 Agents on Code Review Task', () => 
           data: {
             agentId: agents[0].id, // Product Manager
             action: 'requirement-analysis',
-            input: '${workflow.input.featureRequest}'
-          }
+            input: '${workflow.input.featureRequest}',
+          },
         },
         {
           id: 'tech-lead-review',
@@ -303,8 +309,8 @@ test.describe('Multi-Agent Collaboration - 5 Agents on Code Review Task', () => 
           data: {
             agentId: agents[1].id, // Tech Lead
             action: 'architecture-design',
-            input: '${nodes.pm-analysis.output}'
-          }
+            input: '${nodes.pm-analysis.output}',
+          },
         },
         {
           id: 'parallel-dev',
@@ -317,8 +323,8 @@ test.describe('Multi-Agent Collaboration - 5 Agents on Code Review Task', () => 
                 data: {
                   agentId: agents[2].id, // Backend Dev
                   action: 'api-development',
-                  input: '${nodes.tech-lead-review.output.backendSpec}'
-                }
+                  input: '${nodes.tech-lead-review.output.backendSpec}',
+                },
               },
               {
                 id: 'frontend-dev',
@@ -326,11 +332,11 @@ test.describe('Multi-Agent Collaboration - 5 Agents on Code Review Task', () => 
                 data: {
                   agentId: agents[3].id, // Frontend Dev
                   action: 'ui-development',
-                  input: '${nodes.tech-lead-review.output.frontendSpec}'
-                }
-              }
-            ]
-          }
+                  input: '${nodes.tech-lead-review.output.frontendSpec}',
+                },
+              },
+            ],
+          },
         },
         {
           id: 'qa-testing',
@@ -340,37 +346,33 @@ test.describe('Multi-Agent Collaboration - 5 Agents on Code Review Task', () => 
             action: 'quality-assurance',
             input: {
               backend: '${nodes.parallel-dev.branches.backend-dev.output}',
-              frontend: '${nodes.parallel-dev.branches.frontend-dev.output}'
-            }
-          }
+              frontend: '${nodes.parallel-dev.branches.frontend-dev.output}',
+            },
+          },
         },
         {
           id: 'end',
           type: 'end',
           data: {
-            output: '${nodes.qa-testing.output}'
-          }
-        }
+            output: '${nodes.qa-testing.output}',
+          },
+        },
       ],
       edges: [
         { source: 'start', target: 'pm-analysis' },
         { source: 'pm-analysis', target: 'tech-lead-review' },
         { source: 'tech-lead-review', target: 'parallel-dev' },
         { source: 'parallel-dev', target: 'qa-testing' },
-        { source: 'qa-testing', target: 'end' }
-      ]
+        { source: 'qa-testing', target: 'end' },
+      ],
     };
 
-    const workflowResponse = await axios.post(
-      `${BACKEND_URL}/workflows/create`,
-      workflowData,
-      {
-        headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'X-API-Key': apiKey
-        }
-      }
-    );
+    const workflowResponse = await axios.post(`${BACKEND_URL}/workflows/create`, workflowData, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        'X-API-Key': apiKey,
+      },
+    });
 
     expect(workflowResponse.status).toBe(201);
     workflowId = workflowResponse.data.id;
@@ -380,14 +382,14 @@ test.describe('Multi-Agent Collaboration - 5 Agents on Code Review Task', () => 
       `${BACKEND_URL}/workflows/${workflowId}/execute`,
       {
         input: {
-          featureRequest: 'Build a user authentication system with OAuth2 support'
-        }
+          featureRequest: 'Build a user authentication system with OAuth2 support',
+        },
       },
       {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'X-API-Key': apiKey
-        }
+          Authorization: `Bearer ${authToken}`,
+          'X-API-Key': apiKey,
+        },
       }
     );
 
@@ -398,18 +400,16 @@ test.describe('Multi-Agent Collaboration - 5 Agents on Code Review Task', () => 
     let attempts = 0;
     let executionResult;
 
-    while (!completed && attempts < 120) { // 2 minutes max
-      await new Promise(resolve => setTimeout(resolve, 1000));
+    while (!completed && attempts < 120) {
+      // 2 minutes max
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const statusResponse = await axios.get(
-        `${BACKEND_URL}/workflows/executions/${executionId}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'X-API-Key': apiKey
-          }
-        }
-      );
+      const statusResponse = await axios.get(`${BACKEND_URL}/workflows/executions/${executionId}`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'X-API-Key': apiKey,
+        },
+      });
 
       if (statusResponse.data.status === 'completed') {
         completed = true;
@@ -435,7 +435,7 @@ test.describe('Multi-Agent Collaboration - 5 Agents on Code Review Task', () => 
     console.log('📊 Workflow Stats:', {
       duration: executionResult.duration,
       nodesExecuted: Object.keys(participationStats).length,
-      status: executionResult.status
+      status: executionResult.status,
     });
   });
 
@@ -445,14 +445,14 @@ test.describe('Multi-Agent Collaboration - 5 Agents on Code Review Task', () => 
       `${BACKEND_URL}/chat/rooms`,
       {
         name: 'Feature Development Team Chat',
-        participants: agents.map(a => a.id),
-        type: 'multi-agent-collaboration'
+        participants: agents.map((a) => a.id),
+        type: 'multi-agent-collaboration',
       },
       {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'X-API-Key': apiKey
-        }
+          Authorization: `Bearer ${authToken}`,
+          'X-API-Key': apiKey,
+        },
       }
     );
 
@@ -464,8 +464,8 @@ test.describe('Multi-Agent Collaboration - 5 Agents on Code Review Task', () => 
         const socket = io(WS_URL, {
           auth: {
             token: authToken,
-            agentId: agent.id
-          }
+            agentId: agent.id,
+          },
         });
 
         socket.on('connect', () => {
@@ -481,23 +481,23 @@ test.describe('Multi-Agent Collaboration - 5 Agents on Code Review Task', () => 
     });
 
     await Promise.all(connectionPromises);
-    expect(agents.every(a => a.socket?.connected)).toBe(true);
+    expect(agents.every((a) => a.socket?.connected)).toBe(true);
 
     // Simulate conversation
     const messages = [
-      { agent: agents[0], text: 'Let\'s discuss the authentication feature requirements' },
+      { agent: agents[0], text: "Let's discuss the authentication feature requirements" },
       { agent: agents[1], text: 'I suggest using OAuth2 with JWT tokens' },
       { agent: agents[2], text: 'I can implement the backend API endpoints' },
-      { agent: agents[3], text: 'I\'ll create the login/signup UI components' },
-      { agent: agents[4], text: 'I\'ll prepare test cases for the authentication flow' }
+      { agent: agents[3], text: "I'll create the login/signup UI components" },
+      { agent: agents[4], text: "I'll prepare test cases for the authentication flow" },
     ];
 
     const messageReceivedPromises = messages.map((msg, index) => {
       return new Promise<void>((resolve) => {
-        const otherAgents = agents.filter(a => a.id !== msg.agent.id);
+        const otherAgents = agents.filter((a) => a.id !== msg.agent.id);
         let receivedCount = 0;
 
-        otherAgents.forEach(otherAgent => {
+        otherAgents.forEach((otherAgent) => {
           otherAgent.socket!.once('message:received', (data) => {
             receivedCount++;
             if (receivedCount === otherAgents.length) {
@@ -511,7 +511,7 @@ test.describe('Multi-Agent Collaboration - 5 Agents on Code Review Task', () => 
           msg.agent.socket!.emit('message:send', {
             roomId: chatRoomId,
             message: msg.text,
-            agentId: msg.agent.id
+            agentId: msg.agent.id,
           });
         }, index * 500);
       });
@@ -520,15 +520,12 @@ test.describe('Multi-Agent Collaboration - 5 Agents on Code Review Task', () => 
     await Promise.all(messageReceivedPromises);
 
     // Verify message history
-    const historyResponse = await axios.get(
-      `${BACKEND_URL}/chat/rooms/${chatRoomId}/messages`,
-      {
-        headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'X-API-Key': apiKey
-        }
-      }
-    );
+    const historyResponse = await axios.get(`${BACKEND_URL}/chat/rooms/${chatRoomId}/messages`, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        'X-API-Key': apiKey,
+      },
+    });
 
     expect(historyResponse.data.messages.length).toBeGreaterThanOrEqual(5);
 
@@ -538,16 +535,13 @@ test.describe('Multi-Agent Collaboration - 5 Agents on Code Review Task', () => 
 
   test('Step 7: Performance Metrics - Collaboration Efficiency', async () => {
     // Gather metrics from all agents
-    const metricsPromises = agents.map(agent =>
-      axios.get(
-        `${API_BASE_URL}/agents/${agent.id}/metrics`,
-        {
-          headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'X-API-Key': apiKey
-          }
-        }
-      )
+    const metricsPromises = agents.map((agent) =>
+      axios.get(`${API_BASE_URL}/agents/${agent.id}/metrics`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'X-API-Key': apiKey,
+        },
+      })
     );
 
     const metricsResponses = await Promise.all(metricsPromises);
@@ -556,10 +550,10 @@ test.describe('Multi-Agent Collaboration - 5 Agents on Code Review Task', () => 
       totalMessages: 0,
       totalTasksCompleted: 0,
       averageResponseTime: 0,
-      collaborationScore: 0
+      collaborationScore: 0,
     };
 
-    metricsResponses.forEach(response => {
+    metricsResponses.forEach((response) => {
       aggregatedMetrics.totalMessages += response.data.messagesSent || 0;
       aggregatedMetrics.totalTasksCompleted += response.data.tasksCompleted || 0;
       aggregatedMetrics.averageResponseTime += response.data.avgResponseTime || 0;
@@ -567,7 +561,8 @@ test.describe('Multi-Agent Collaboration - 5 Agents on Code Review Task', () => 
 
     aggregatedMetrics.averageResponseTime /= agents.length;
     aggregatedMetrics.collaborationScore =
-      (aggregatedMetrics.totalMessages * 10 + aggregatedMetrics.totalTasksCompleted * 50) / agents.length;
+      (aggregatedMetrics.totalMessages * 10 + aggregatedMetrics.totalTasksCompleted * 50) /
+      agents.length;
 
     console.log('📊 Multi-Agent Collaboration Metrics:', aggregatedMetrics);
 
