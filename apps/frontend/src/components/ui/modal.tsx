@@ -115,6 +115,7 @@ export const ModalCloseButton = forwardRef<HTMLButtonElement, ButtonHTMLAttribut
     <button
       ref={ref}
       type="button"
+      aria-label="Close"
       className={cn(
         'absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors',
         className
