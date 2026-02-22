@@ -2,7 +2,7 @@
 
 # Add standard paths (for node, pnpm, etc.)
 # This handles GUI applications like VS Code that have minimal PATH
-export PATH="/usr/local/bin:/opt/homebrew/bin:$HOME/.nvm/versions/node/v22.16.0/bin:$HOME/.nvm/versions/node/v20.19.5/bin:$HOME/.nvm/versions/node/v18.20.8/bin:$HOME/.local/share/pnpm:./node_modules/.bin:$PATH"
+export PATH="/usr/local/bin:/opt/homebrew/bin:$(ls -d $HOME/.nvm/versions/node/*/bin 2>/dev/null | tr '\n' ':')$HOME/.local/share/pnpm:./node_modules/.bin:$PATH"
 
 # Increase Node memory for linters/typecheck to avoid OOM
 export NODE_OPTIONS="${NODE_OPTIONS:---max-old-space-size=8192}"

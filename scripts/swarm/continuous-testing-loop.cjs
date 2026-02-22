@@ -48,7 +48,7 @@ const CONFIG = {
   loopIntervalMs: parseInt(process.env.TEST_LOOP_INTERVAL || '300000', 10), // 5 min default
   maxIterations: parseInt(process.env.TEST_MAX_ITERATIONS || '0', 10), // 0 = infinite
   targetScore: parseInt(process.env.TEST_TARGET_SCORE || '95', 10),
-  agentTimeoutMs: parseInt(process.env.TEST_AGENT_TIMEOUT_MS || '300000', 10),
+  agentTimeoutMs: parseInt(process.env.TEST_AGENT_TIMEOUT_MS || '900000', 10),
   reportDir: path.join(ROOT_DIR, '.agent/test-reports'),
   statusFile: path.join(ROOT_DIR, '.agent/testing-status.json'),
 };

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Add standard paths (for node, pnpm, etc.)
-export PATH="/usr/local/bin:/opt/homebrew/bin:$HOME/.nvm/versions/node/v22.16.0/bin:$HOME/.nvm/versions/node/v20.19.5/bin:$HOME/.nvm/versions/node/v18.20.8/bin:$HOME/.local/share/pnpm:./node_modules/.bin:$PATH"
+export PATH="/usr/local/bin:/opt/homebrew/bin:$(ls -d $HOME/.nvm/versions/node/*/bin 2>/dev/null | tr '\n' ':')$HOME/.local/share/pnpm:./node_modules/.bin:$PATH"
 
 set -e
 
