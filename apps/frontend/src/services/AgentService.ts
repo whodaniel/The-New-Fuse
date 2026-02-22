@@ -89,7 +89,7 @@ class AgentService {
 
       return await response.json();
     } catch (error) {
-      console.warn(`API request to ${url} failed. Error:`, error);
+      console.warn('API request to %s failed. Error:', url, error);
       throw error;
     }
   }

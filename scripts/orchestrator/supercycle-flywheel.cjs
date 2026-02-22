@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 const fs = require('fs');
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 const path = require('path');
 
 /**
  * TNF SUPER-CYCLE FLYWHEEL
- * 
+ *
  * This is the master orchestration script that connects:
  * 1. News Scout (Market Intelligence)
  * 2. Continuous Improver (System Health)
@@ -51,19 +51,18 @@ async function runFlywheel() {
   try {
     // 1. Run News Scout
     console.log('📡 Phase 1: Market Intelligence (Scout)');
-    execSync(`node ${SCOUT_SCRIPT}`, { stdio: 'inherit' });
+    execFileSync('node', [SCOUT_SCRIPT], { stdio: 'inherit' });
 
     // 2. Run Continuous Improver
     console.log('\n🛠️ Phase 2: System Health (Improver)');
-    execSync(`node ${IMPROVER_SCRIPT}`, { stdio: 'inherit' });
+    execFileSync('node', [IMPROVER_SCRIPT], { stdio: 'inherit' });
 
     // 3. Run LLM Test Flywheel
     console.log('\n🧪 Phase 3: LLM Viability & Benchmarking (PicoClaw)');
-    execSync(`node ${LLM_TEST_SCRIPT}`, { stdio: 'inherit' });
+    execFileSync('node', [LLM_TEST_SCRIPT], { stdio: 'inherit' });
 
     const duration = ((Date.now() - start) / 1000).toFixed(1);
     console.log(`\n✅ [Flywheel] Super-Cycle complete in ${duration}s. Swarm tasks updated.\n`);
-
   } catch (error) {
     console.error(`❌ [Flywheel] Super-Cycle failed: ${error.message}`);
     process.exit(1);

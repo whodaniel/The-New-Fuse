@@ -1,6 +1,6 @@
 # AI Landscape Report - 2/22/2026
 
-_Generated at: 2026-02-22T07:57:37.991Z_
+_Generated at: 2026-02-22T10:37:07.021Z_
 
 ## 🚀 Latest Verified Trends
 
@@ -24,19 +24,24 @@ or disappearing free model.
 
 - **Link**: [View Source](https://www.jacobchak.com/blog/free-llm-router)
 
-### Every Free AI API in 2026: The Complete Guide to Zero-Cost Inference | Awesome Agents
+### Introducing Jamba2: The open source model family for enterprise reliability and efficiency
 
-- **Source**: awesomeagents.ai
+- **Source**: ai21.com
 - **Impact**: High
-- **Details**: Every Free AI API in 2026: The Complete Guide to Zero-Cost
-  Inference | Awesome Agents
+- **Details**: Jamba2: Open Source LLMs for Enterprise Reliability
 
-You do not need to spend a dollar to run frontier AI models. That is not a pitch
-or a caveat-laden promise. In 2026, multiple providers offer genuinely free API
-access to models that would have cost hundreds of do...
+- Skip to Footer
+- Skip to Main Content
+- Skip to Main Menu
 
-- **Link**:
-  [View Source](https://awesomeagents.ai/tools/free-ai-inference-providers-2026/)
+[Back to Blog]
+
+Today, we are introducing Jamba2, an open source family of language models built
+for maximum reliability and steerability in the enterprise.
+
+[Built on our novel SSM-Tra...
+
+- **Link**: [View Source](https://www.ai21.com/blog/introducing-jamba2/)
 
 ### Free LLM API Resources: GitHub Project for AI Inference | AIToolly
 
@@ -57,70 +62,49 @@ published, offering...
 - **Link**:
   [View Source](https://aitoolly.com/ai-news/article/2026-02-15-github-trending-project-unveils-comprehensive-list-of-free-llm-api-inference-resources)
 
-### 15 Free LLM APIs You Can Use in 2026 - Analytics Vidhya
+### Every Free AI API in 2026: The Complete Guide to Zero-Cost Inference | Awesome Agents
 
-- **Source**: analyticsvidhya.com
+- **Source**: awesomeagents.ai
 - **Impact**: High
-- **Details**: -- 15 Free LLM APIs You Can Use in 2026
+- **Details**: Every Free AI API in 2026: The Complete Guide to Zero-Cost
+  Inference | Awesome Agents
 
-[Master Generative AI with 10+ Real-world Projects in 2025! -- d : h : m : s
-Download Projects --]
-
-[Interview Prep]
-
-[Career]
-
-[GenAI]
-
-[Prompt Engg]
-
-[ChatGPT]
-
-[LLM]
-
-[Langchain]
-
-[RAG]
-
-[AI Agents]
-
-[Machine Learning]
-
-[Deep Learning]
-
-[GenAI...
+You do not need to spend a dollar to run frontier AI models. That is not a pitch
+or a caveat-laden promise. In 2026, multiple providers offer genuinely free API
+access to models that would have cost hundreds of do...
 
 - **Link**:
-  [View Source](https://www.analyticsvidhya.com/blog/2026/01/top-free-llm-apis/)
+  [View Source](https://awesomeagents.ai/tools/free-ai-inference-providers-2026/)
 
-### Free LLM API - Puter.js
+### Run OpenAI, Claude, Mistral, llamafile, and more from one interface, now in Go!
 
-- **Source**: developer.puter.com
+- **Source**: blog.mozilla.ai
 - **Impact**: High
-- **Details**: Free LLM API
+- **Details**: any-llm-go: One Interface for LLMs in Go
 
-On this page
+### Go where the models are
 
-Getting StartedExample 1: Using GPT-5 NanoExample 2: Using Claude Sonnet
-4.5Example 3: Using DeepSeek R1 for Complex ReasoningExample 4: Streaming
-Responses for Better UXExample 5: Using LLMs for Image AnalysisExample 6:
-Function Calling with LLMsAvailable ModelsAdvanced...
+When we released [any-llm v1.0] last year, the goal was simple: one interface to
+use any model, cloud or local, without rewriting your code every time a new
+provider ships. That goal resonated. Thousands of Python developers adop...
 
-- **Link**: [View Source](https://developer.puter.com/tutorials/free-llm-api/)
+- **Link**:
+  [View Source](https://blog.mozilla.ai/run-openai-claude-mistral-llamafile-and-more-from-one-interface-now-in-go/)
 
-### Free LLM API Directory | 45+ Free AI Providers (2026)
+### Announcing the Slack MCP server and Real-time Search API | Slack Developer Docs
 
-- **Source**: free-llm.com
-- **Impact**: High
-- **Details**: Free LLM API Directory | 45+ Free AI Providers (2026) \*\*
+- **Source**: docs.slack.dev
+- **Impact**: Medium
+- **Details**: Announcing the Slack MCP server and Real-time Search API | Slack
+  Developer Docs changelog [Skip to main content]
 
-### Cookie Consent
+# Announcing the Slack MCP server and Real-time Search API
 
-We use cookies to enhance your experience and display personalized ads via
-Google AdSense. By continuing to use our site, you accept our use of cookies.
-[Learn more] Accept Decline 45+ Providers • Updated Daily by Community...
+February 17, 2026 We're excited to announce the release of not one, but _two_,
+major components designed to significantly enhan...
 
-- **Link**: [View Source](https://free-llm.com/)
+- **Link**:
+  [View Source](https://docs.slack.dev/changelog/2026/02/17/slack-mcp/)
 
 ### The Best Open-Source LLMs in 2026
 
@@ -137,40 +121,32 @@ models (LLMs), each boasting ad...
 - **Link**:
   [View Source](https://www.bentoml.com/blog/navigating-the-world-of-open-source-large-language-models)
 
-### Introducing Jamba2: The open source model family for enterprise reliability and efficiency
+### Introducing Mistral 3
 
-- **Source**: ai21.com
+- **Source**: mistral.ai
 - **Impact**: High
-- **Details**: Jamba2: Open Source LLMs for Enterprise Reliability
+- **Details**: Introducing Mistral 3 | Mistral AI
 
-- Skip to Footer
-- Skip to Main Content
-- Skip to Main Menu
+# Introducing Mistral 3
 
-[Back to Blog]
+The next generation of open multimodal and multilingual AI
 
-Today, we are introducing Jamba2, an open source family of language models built
-for maximum reliability and steerability in the enterprise.
+Today, we announce Mistral 3, the next generation of Mistral models. Mistral 3
+includes three state-of-the-art small, dense models (14B, 8B, and 3B) and
+Mistral Large 3 – our most...
 
-[Built on our novel SSM-Tra...
+- **Link**: [View Source](https://mistral.ai/news/mistral-3)
 
-- **Link**: [View Source](https://www.ai21.com/blog/introducing-jamba2/)
+### The 11 best open-source LLMs for 2025
 
-### Apertus: a fully open, transparent, multilingual language model
-
-- **Source**: c4dt.epfl.ch
+- **Source**: blog.n8n.io
 - **Impact**: High
-- **Details**: Apertus: a fully open, transparent, multilingual language model -
-  EPFL
-
-# Apertus: a fully open, transparent, multilingual language model
-
-EPFL, ETH Zurich and the Swiss National Supercomputing Centre (CSCS) released
-Apertus today, Switzerland’s first large-scale, open, multilingual language
-model —...
-
-- **Link**:
-  [View Source](https://c4dt.epfl.ch/apertus-a-fully-open-transparent-multilingual-language-model)
+- **Details**: Comparing the best: Top 5 open-source LLMs –n8n Blog We use
+  analytics We use cookies and other tracking technologies to improve your
+  browsing experience, to analyze our website traffic, assist our marketing
+  efforts and to understand where our visitors are coming from. [Privacy Policy]
+  DeclineAgree...
+- **Link**: [View Source](https://blog.n8n.io/open-source-llm/)
 
 ### 10 Best Open-Source LLM Models (2025 Updated): Llama ...
 
@@ -196,37 +172,21 @@ The world o...
 - **Link**:
   [View Source](https://huggingface.co/blog/daya-shankar/open-source-llms)
 
-### Introducing Mistral 3
+### Apertus: a fully open, transparent, multilingual language model
 
-- **Source**: mistral.ai
+- **Source**: c4dt.epfl.ch
 - **Impact**: High
-- **Details**: Introducing Mistral 3 | Mistral AI
+- **Details**: Apertus: a fully open, transparent, multilingual language model -
+  EPFL
 
-# Introducing Mistral 3
+# Apertus: a fully open, transparent, multilingual language model
 
-The next generation of open multimodal and multilingual AI
+EPFL, ETH Zurich and the Swiss National Supercomputing Centre (CSCS) released
+Apertus today, Switzerland’s first large-scale, open, multilingual language
+model —...
 
-Today, we announce Mistral 3, the next generation of Mistral models. Mistral 3
-includes three state-of-the-art small, dense models (14B, 8B, and 3B) and
-Mistral Large 3 – our most...
-
-- **Link**: [View Source](https://mistral.ai/it/news/mistral-3)
-
-### Open LLM Leaderboard 2025
-
-- **Source**: vellum.ai
-- **Impact**: High
-- **Details**: Open LLM Leaderboard 2025 x
-
-# Evaluate your Prompts and AI Workflows with Vellum
-
-[ See it in action ] ![] Thank you! Your submission has been received! Oops!
-Something went wrong while submitting the form. [![Vellum AI logo]] [Main
-Leaderboard] [Compare models] updated 15 April 2025
-
-# Open LLM L...
-
-- **Link**: [View Source](https://www.vellum.ai/open-llm-leaderboard)
+- **Link**:
+  [View Source](https://c4dt.epfl.ch/apertus-a-fully-open-transparent-multilingual-language-model)
 
 ### Every Free AI API in 2026: The Complete Guide to Zero-Cost Inference
 
@@ -241,6 +201,42 @@ access to models that would have cost hundreds of do...
 
 - **Link**:
   [View Source](https://awesomeagents.ai/tools/free-ai-inference-providers-2026/)
+
+### Free Hugging Face Inference api now clearly lists limits + models
+
+- **Source**: reddit.com
+- **Impact**: High
+- **Details**: TLDR: better docs for hugging face inference api
+
+Limits are like this:
+
+- unregistered: 1 req per hour
+- registered: 300 req her hour
+- pro: 1000 req per hour + access to fancy models
+
+—-
+
+Hello I work for Hugging Face although not on this specific feature. A little
+while ago I mentioned that the H...
+
+- **Link**:
+  [View Source](https://www.reddit.com/r/LocalLLaMA/comments/1fi90kw/free_hugging_face_inference_api_now_clearly_lists/)
+
+### Free AI Models on OpenRouter
+
+- **Source**: openrouter.ai
+- **Impact**: High
+- **Details**: Free AI Models on OpenRouter | OpenRouter
+
+# Free AI Models on OpenRouter
+
+Model rankings updated February 2026 based on real usage data.
+
+At OpenRouter, we believe that free models play a crucial role in democratizing
+access to AI. These models allow hundreds of thousands of users worldwide to
+expe...
+
+- **Link**: [View Source](https://openrouter.ai/collections/free-models)
 
 ### Inference free trial--ModelArk-Byteplus
 
@@ -290,56 +286,55 @@ costs—with minimal changes to your sta...
 
 - **Link**: [View Source](https://promotion.friendli.ai/switch)
 
-### Free and Budget Models - Kilo Code
+### Pricing and Rate limits
 
-- **Source**: kilo.ai
+- **Source**: huggingface.co
 - **Impact**: High
-- **Details**: Free and Budget Models
+- **Details**: Pricing and Billing [![Hugging Face's logo] Hugging Face]
+  Inference Providers documentation Pricing and Billing
 
-# Free and Budget Models
+# Inference Providers
 
-Why this matters: AI model costs can add up quickly during development. This
-guide shows you how to use Kilo Code effectively while minimizing or eliminating
-costs through free models, budget-friendly alternatives, and smart usage
-strategies.
+🏡View all docsAWS Trainium &amp;
+InferentiaAccelerateArgillaAutoTrainBitsandbytesChat UIDataset
+viewerDatasetsDeploying on AWSDiffusersDistilabelEvaluateGoogle Clou...
 
-## Com...
+- **Link**: [View Source](https://huggingface.co/docs/api-inference/en/pricing)
+
+### PrimeIntellect/INTELLECT-3.1 · Hugging Face : r/LocalLLaMA - Reddit
+
+- **Source**: reddit.com
+- **Impact**: High
+- **Details**: PrimeIntellect/INTELLECT-3.1 · Hugging Face : r/LocalLLaMA Skip
+  to main content PrimeIntellect/INTELLECT-3.1 · Hugging Face : r/LocalLLaMA
+
+[Go to LocalLLaMA]
+
+[r/LocalLLaMA] 23h ago
+
+[jacek2023]
+
+# PrimeIntellect/INTELLECT-3.1 · Hugging Face
+
+[huggingface.co Open]
+
+INTELLECT-3.1 is a 106B (A12B)...
 
 - **Link**:
-  [View Source](https://kilo.ai/docs/code-with-ai/agents/free-and-budget-models)
+  [View Source](https://www.reddit.com/r/LocalLLaMA/comments/1r7plp1/primeintellectintellect31_hugging_face/)
 
-### Free AI Models on OpenRouter
+### moonshotai/Kimi-K2.5 - Hugging Face
 
-- **Source**: openrouter.ai
-- **Impact**: High
-- **Details**: Free AI Models on OpenRouter | OpenRouter
+- **Source**: huggingface.co
+- **Impact**: Medium
+- **Details**: moonshotai/Kimi-K2.5 · Hugging Face
 
-# Free AI Models on OpenRouter
+image\n {% elif content['type'] == 'video' or content['type']== 'video_url'-%}\n
+\n {% else -%}\n {{ content['text'] }}\n {%- endif -%}\n {%- endfor -%}\n
+{%- endif -%}\n{%- endmacro -%}\n\n{% macro set_roles(message) -%}\n {%- set
+role_name = message.get('name')...
 
-Model rankings updated February 2026 based on real usage data.
-
-At OpenRouter, we believe that free models play a crucial role in democratizing
-access to AI. These models allow hundreds of thousands of users worldwide to
-expe...
-
-- **Link**: [View Source](https://openrouter.ai/collections/free-models)
-
-### cheahjs/free-llm-api-resources - GitHub
-
-- **Source**: github.com
-- **Impact**: High
-- **Details**: GitHub - cheahjs/free-llm-api-resources: A list of free LLM
-  inference resources accessible via API. [Skip to content]
-
-## Navigation Menu
-
-Toggle navigation [] [Sign in] Appearance settings Search or jump to...
-
-# Search code, repositories, users, issues, pull requests...
-
-Search Clear [Search synt...
-
-- **Link**: [View Source](https://github.com/cheahjs/free-llm-api-resources)
+- **Link**: [View Source](https://huggingface.co/moonshotai/Kimi-K2.5)
 
 ### MiniMax AI Confirms Open-Sourcing of M2.5 Model Weights on Hugging Face | AI News
 
@@ -355,49 +350,38 @@ Face, a move that signals a strategic pivot toward commu...
 - **Link**:
   [View Source](https://aihaberleri.org/en/news/minimax-ai-confirms-open-sourcing-of-m25-model-weights-on-hugging-face)
 
-### moonshotai/Kimi-K2.5 - Hugging Face
-
-- **Source**: huggingface.co
-- **Impact**: Medium
-- **Details**: moonshotai/Kimi-K2.5 · Hugging Face
-
-image\n {% elif content['type'] == 'video' or content['type']== 'video_url'-%}\n
-\n {% else -%}\n {{ content['text'] }}\n {%- endif -%}\n {%- endfor -%}\n
-{%- endif -%}\n{%- endmacro -%}\n\n{% macro set_roles(message) -%}\n {%- set
-role_name = message.get('name')...
-
-- **Link**: [View Source](https://huggingface.co/moonshotai/Kimi-K2.5)
-
 ## 🎯 Swarm Action Items
 
 - [ ] **PRIORITY**: Assimilation: Free LLM Router: Live Routing for OpenRouter's
       Free Models | Jacob Chak
-- [ ] **PRIORITY**: Assimilation: Every Free AI API in 2026: The Complete Guide
-      to Zero-Cost Inference | Awesome Agents
-- [ ] **PRIORITY**: Assimilation: Free LLM API Resources: GitHub Project for AI
-      Inference | AIToolly
-- [ ] **PRIORITY**: Assimilation: 15 Free LLM APIs You Can Use in 2026 -
-      Analytics Vidhya
-- [ ] **PRIORITY**: Assimilation: Free LLM API - Puter.js
-- [ ] **PRIORITY**: Assimilation: Free LLM API Directory | 45+ Free AI Providers
-      (2026)
-- [ ] **PRIORITY**: Assimilation: The Best Open-Source LLMs in 2026
 - [ ] **PRIORITY**: Assimilation: Introducing Jamba2: The open source model
       family for enterprise reliability and efficiency
-- [ ] **PRIORITY**: Assimilation: Apertus: a fully open, transparent,
-      multilingual language model
+- [ ] **PRIORITY**: Assimilation: Free LLM API Resources: GitHub Project for AI
+      Inference | AIToolly
+- [ ] **PRIORITY**: Assimilation: Every Free AI API in 2026: The Complete Guide
+      to Zero-Cost Inference | Awesome Agents
+- [ ] **PRIORITY**: Assimilation: Run OpenAI, Claude, Mistral, llamafile, and
+      more from one interface, now in Go!
+- [ ] **PRIORITY**: Assimilation: Announcing the Slack MCP server and Real-time
+      Search API | Slack Developer Docs
+- [ ] **PRIORITY**: Assimilation: The Best Open-Source LLMs in 2026
+- [ ] **PRIORITY**: Assimilation: Introducing Mistral 3
+- [ ] **PRIORITY**: Assimilation: The 11 best open-source LLMs for 2025
 - [ ] **PRIORITY**: Assimilation: 10 Best Open-Source LLM Models (2025 Updated):
       Llama ...
-- [ ] **PRIORITY**: Assimilation: Introducing Mistral 3
-- [ ] **PRIORITY**: Assimilation: Open LLM Leaderboard 2025
+- [ ] **PRIORITY**: Assimilation: Apertus: a fully open, transparent,
+      multilingual language model
 - [ ] **PRIORITY**: Assimilation: Every Free AI API in 2026: The Complete Guide
       to Zero-Cost Inference
+- [ ] **PRIORITY**: Assimilation: Free Hugging Face Inference api now clearly
+      lists limits + models
+- [ ] **PRIORITY**: Assimilation: Free AI Models on OpenRouter
 - [ ] **PRIORITY**: Assimilation: Inference free trial--ModelArk-Byteplus
 - [ ] **PRIORITY**: Assimilation: Switch to FriendliAI and get up to 50k
       inference credit. - Friendli Agent
-- [ ] **PRIORITY**: Assimilation: Free and Budget Models - Kilo Code
-- [ ] **PRIORITY**: Assimilation: Free AI Models on OpenRouter
-- [ ] **PRIORITY**: Assimilation: cheahjs/free-llm-api-resources - GitHub
+- [ ] **PRIORITY**: Assimilation: Pricing and Rate limits
+- [ ] **PRIORITY**: Assimilation: PrimeIntellect/INTELLECT-3.1 · Hugging Face :
+      r/LocalLLaMA - Reddit
+- [ ] **PRIORITY**: Assimilation: moonshotai/Kimi-K2.5 - Hugging Face
 - [ ] **PRIORITY**: Assimilation: MiniMax AI Confirms Open-Sourcing of M2.5
       Model Weights on Hugging Face | AI News
-- [ ] **PRIORITY**: Assimilation: moonshotai/Kimi-K2.5 - Hugging Face
