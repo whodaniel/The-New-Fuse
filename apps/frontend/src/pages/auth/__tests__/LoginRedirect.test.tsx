@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { vi, describe, it, expect, beforeEach, MockedFunction } from 'vitest';
+import { beforeEach, describe, expect, it, MockedFunction, vi } from 'vitest';
 import Login from '../Login';
 
 // Mock firebase to prevent crash
@@ -16,18 +16,11 @@ vi.mock('@/providers/AuthProvider', () => ({
   AuthProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-// Mock UnstoppableDomains
-vi.mock('@/hooks/useUnstoppableDomains', () => ({
-  useUnstoppableDomains: vi.fn(),
-}));
-
 // Import the mocked functions to set return values.
 // Note: We use the same import path as the component to ensure we get the mocked module.
 import { useAuth } from '@/providers/AuthProvider';
-import { useUnstoppableDomains } from '@/hooks/useUnstoppableDomains';
 
 const mockUseAuth = useAuth as MockedFunction<typeof useAuth>;
-const mockUseUnstoppableDomains = useUnstoppableDomains as MockedFunction<typeof useUnstoppableDomains>;
 
 const Dashboard = () => <div>Dashboard</div>;
 const ProtectedPage = () => <div>Protected Page</div>;
@@ -35,14 +28,14 @@ const ProtectedPage = () => <div>Protected Page</div>;
 describe('Login Redirect', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockUseUnstoppableDomains.mockReturnValue({
-      login: vi.fn(),
-      isLoading: false,
-    } as any);
   });
 
   it('redirects to dashboard by default on successful login', async () => {
-    const loginMock = vi.fn().mockResolvedValue({ user: { uid: '123', getIdTokenResult: () => Promise.resolve({ claims: {} }) } });
+    const loginMock = vi
+      .fn()
+      .mockResolvedValue({
+        user: { uid: '123', getIdTokenResult: () => Promise.resolve({ claims: {} }) },
+      });
     mockUseAuth.mockReturnValue({
       login: loginMock,
       signInWithGoogle: vi.fn(),
@@ -57,7 +50,9 @@ describe('Login Redirect', () => {
       </MemoryRouter>
     );
 
-    fireEvent.change(screen.getByLabelText(/email address/i), { target: { value: 'test@example.com' } });
+    fireEvent.change(screen.getByLabelText(/email address/i), {
+      target: { value: 'test@example.com' },
+    });
     fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'password' } });
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
@@ -67,16 +62,28 @@ describe('Login Redirect', () => {
   });
 
   it('redirects to original location on successful login', async () => {
-    const loginMock = vi.fn().mockResolvedValue({ user: { uid: '123', getIdTokenResult: () => Promise.resolve({ claims: {} }) } });
+    const loginMock = vi
+      .fn()
+      .mockResolvedValue({
+        user: { uid: '123', getIdTokenResult: () => Promise.resolve({ claims: {} }) },
+      });
     mockUseAuth.mockReturnValue({
       login: loginMock,
       signInWithGoogle: vi.fn(),
     } as any);
 
-    const initialLocation = { pathname: '/protected', search: '', hash: '', state: null, key: 'default' };
+    const initialLocation = {
+      pathname: '/protected',
+      search: '',
+      hash: '',
+      state: null,
+      key: 'default',
+    };
 
     render(
-      <MemoryRouter initialEntries={[{ pathname: '/auth/login', state: { from: initialLocation } }]}>
+      <MemoryRouter
+        initialEntries={[{ pathname: '/auth/login', state: { from: initialLocation } }]}
+      >
         <Routes>
           <Route path="/auth/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
@@ -85,7 +92,9 @@ describe('Login Redirect', () => {
       </MemoryRouter>
     );
 
-    fireEvent.change(screen.getByLabelText(/email address/i), { target: { value: 'test@example.com' } });
+    fireEvent.change(screen.getByLabelText(/email address/i), {
+      target: { value: 'test@example.com' },
+    });
     fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'password' } });
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
@@ -95,22 +104,32 @@ describe('Login Redirect', () => {
   });
 
   it('preserves query parameters and hash on redirect', async () => {
-    const loginMock = vi.fn().mockResolvedValue({ user: { uid: '123', getIdTokenResult: () => Promise.resolve({ claims: {} }) } });
+    const loginMock = vi
+      .fn()
+      .mockResolvedValue({
+        user: { uid: '123', getIdTokenResult: () => Promise.resolve({ claims: {} }) },
+      });
     mockUseAuth.mockReturnValue({
       login: loginMock,
       signInWithGoogle: vi.fn(),
     } as any);
 
-    const initialLocation = { pathname: '/protected', search: '?q=test', hash: '#section', state: null, key: 'default' };
+    const initialLocation = {
+      pathname: '/protected',
+      search: '?q=test',
+      hash: '#section',
+      state: null,
+      key: 'default',
+    };
     const ProtectedPageWithParams = () => {
-        // We need to import useLocation inside the component or use the one from react-router-dom
-        // But since we are inside a test file which imports it, it's fine to use the hook if we use <Routes>
-        // However, useLocation must be used inside Router context.
-        // We can just inspect the text rendered.
-        // Wait, I need useLocation to render the text I want to check.
-        // I cannot import useLocation here because it's top level import.
-        // I can define the component outside or inside.
-        return <div>Protected: /protected?q=test#section</div>;
+      // We need to import useLocation inside the component or use the one from react-router-dom
+      // But since we are inside a test file which imports it, it's fine to use the hook if we use <Routes>
+      // However, useLocation must be used inside Router context.
+      // We can just inspect the text rendered.
+      // Wait, I need useLocation to render the text I want to check.
+      // I cannot import useLocation here because it's top level import.
+      // I can define the component outside or inside.
+      return <div>Protected: /protected?q=test#section</div>;
     };
 
     // Actually, to properly verify, I should use useLocation inside the component
@@ -122,12 +141,19 @@ describe('Login Redirect', () => {
 
     // Let's redefine the component for this test:
     const TestParams = () => {
-        const loc = require('react-router-dom').useLocation();
-        return <div>Params: {loc.search}{loc.hash}</div>;
+      const loc = require('react-router-dom').useLocation();
+      return (
+        <div>
+          Params: {loc.search}
+          {loc.hash}
+        </div>
+      );
     };
 
     render(
-      <MemoryRouter initialEntries={[{ pathname: '/auth/login', state: { from: initialLocation } }]}>
+      <MemoryRouter
+        initialEntries={[{ pathname: '/auth/login', state: { from: initialLocation } }]}
+      >
         <Routes>
           <Route path="/auth/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
@@ -136,7 +162,9 @@ describe('Login Redirect', () => {
       </MemoryRouter>
     );
 
-    fireEvent.change(screen.getByLabelText(/email address/i), { target: { value: 'test@example.com' } });
+    fireEvent.change(screen.getByLabelText(/email address/i), {
+      target: { value: 'test@example.com' },
+    });
     fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'password' } });
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
