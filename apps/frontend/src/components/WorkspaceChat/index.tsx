@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Workspace from "@/models/workspace";
 import LoadingChat from './LoadingChat';
 import ChatContainer from './ChatContainer';
 import paths from "@/utils/paths";
 import { ModalWrapper } from '../ModalWrapper';
 import { useParams } from "react-router-dom";
-// import { DnDFileUploaderProvider } from './ChatContainer/DnDWrapper';
+// import { DnDFileUploaderProvider } from './ChatContainer/DnnDWrapper';
 import { WorkspaceData } from "@/types/workspace";
 
 interface ChatMessage {
@@ -19,6 +19,60 @@ interface ChatMessage {
 interface WorkspaceChatProps {
   loading: boolean;
   workspace: WorkspaceData | null;
+}
+
+// Enables us to safely markdown and sanitize all responses without risk of injection
+// but still be able to attach a handler to copy code snippets on all elements
+// that are code snippets.
+function copyCodeSnippet(uuid: string): boolean {
+  const target = document.querySelector(`[data-code="${uuid}"]`);
+  if (!target) return false;
+  const markdown =
+    target.parentElement?.parentElement?.querySelector(
+      "pre:first-of-type"
+    )?.innerText;
+  if (!markdown) return false;
+
+  window.navigator.clipboard.writeText(markdown);
+  target.classList.add("text-green-500");
+  const originalText = target.innerHTML;
+  target.innerText = "Copied!";
+  target.setAttribute("disabled", "true");
+
+  setTimeout(() => {
+    target.classList.remove("text-green-500");
+    target.innerHTML = originalText;
+    target.removeAttribute("disabled");
+  }, 2500);
+  
+  return true;
+}
+
+// Event handler for code snippet clicks (singleton pattern)
+let codeSnippetHandler: ((e: MouseEvent) => void) | null = null;
+
+// Sets up event delegation for code snippet copying
+function setupEventDelegatorForCodeSnippets(): () => void {
+  if (codeSnippetHandler) {
+    return () => {}; // Already set up
+  }
+  
+  codeSnippetHandler = function(e: MouseEvent) {
+    const target = (e.target as Element).closest("[data-code-snippet]");
+    const uuidCode = target?.getAttribute("data-code");
+    if (!uuidCode) return;
+    copyCodeSnippet(uuidCode);
+  };
+  
+  document.addEventListener("click", codeSnippetHandler);
+  
+  // Return cleanup function
+  return () => {
+    if (codeSnippetHandler) {
+      document.removeEventListener("click", codeSnippetHandler);
+      codeSnippetHandler = null;
+    }
+  };
 }
 
 export default function WorkspaceChat({ loading, workspace }: WorkspaceChatProps): JSX.Element {
@@ -43,6 +97,12 @@ export default function WorkspaceChat({ loading, workspace }: WorkspaceChatProps
     }
     getHistory();
   }, [workspace, loading, threadSlug]);
+
+  // FIX: Move event listener setup to useEffect with cleanup
+  useEffect(() => {
+    const cleanup = setupEventDelegatorForCodeSnippets();
+    return cleanup;
+  }, []);
 
   if (loadingHistory) return <LoadingChat />;
   if (!loading && !loadingHistory && !workspace) {
@@ -76,45 +136,7 @@ export default function WorkspaceChat({ loading, workspace }: WorkspaceChatProps
     );
   }
 
-  setEventDelegatorForCodeSnippets();
   return (
     <ChatContainer workspace={workspace} knownHistory={history} />
   );
-}
-
-// Enables us to safely markdown and sanitize all responses without risk of injection
-// but still be able to attach a handler to copy code snippets on all elements
-// that are code snippets.
-function copyCodeSnippet(uuid: string): boolean {
-  const target = document.querySelector(`[data-code="${uuid}"]`);
-  if (!target) return false;
-  const markdown =
-    target.parentElement?.parentElement?.querySelector(
-      "pre:first-of-type"
-    )?.innerText;
-  if (!markdown) return false;
-
-  window.navigator.clipboard.writeText(markdown);
-  target.classList.add("text-green-500");
-  const originalText = target.innerHTML;
-  target.innerText = "Copied!";
-  target.setAttribute("disabled", "true");
-
-  setTimeout(() => {
-    target.classList.remove("text-green-500");
-    target.innerHTML = originalText;
-    target.removeAttribute("disabled");
-  }, 2500);
-  
-  return true;
-}
-
-// Listens and hunts for all data-code-snippet clicks.
-export function setEventDelegatorForCodeSnippets(): void {
-  document?.addEventListener("click", function (e: MouseEvent) {
-    const target = (e.target as Element).closest("[data-code-snippet]");
-    const uuidCode = target?.getAttribute("data-code");
-    if (!uuidCode) return;
-    copyCodeSnippet(uuidCode);
-  });
 }
