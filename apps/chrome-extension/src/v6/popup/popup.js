@@ -16,11 +16,20 @@ class FuseConnectPopup {
       selectedChannel: null,
       agentId: null,
       services: {
-        relay: { running: false, port: 3000 },
-        backend: { running: false, port: 3000 },
-        frontend: { running: false, port: 3002 },
-        monitor: { running: false, port: null },
-        masterClock: { running: false, port: null },
+        'ai-studio': { running: false, port: null },
+      },
+      aiVideo: {
+        queue: [],
+        queueCount: 0,
+        reverseOrder: false,
+        segmentDuration: 45,
+        processingLevel: 'ai_studio',
+        processingState: {
+          isProcessing: false,
+          isPaused: false,
+          currentIndex: 0,
+          totalCount: 0,
+        },
       },
       nativeHostAvailable: false,
       autonomy: {
@@ -187,14 +196,92 @@ class FuseConnectPopup {
       });
     });
 
-    // Start all services
-    document.getElementById('start-all-services')?.addEventListener('click', () => {
-      this.controlService('start', 'all');
+    document.getElementById('ai-video-save-queue')?.addEventListener('click', () => {
+      this.saveAIVideoQueue();
     });
 
-    // Stop all services
-    document.getElementById('stop-all-services')?.addEventListener('click', () => {
-      this.controlService('stop', 'all');
+    document.getElementById('ai-video-refresh-playlists')?.addEventListener('click', () => {
+      this.refreshAIVideoPlaylists();
+    });
+
+    document.getElementById('ai-video-load-playlist')?.addEventListener('click', () => {
+      this.loadSelectedPlaylistIntoQueue();
+    });
+
+    document.getElementById('ai-video-single-url')?.addEventListener('input', () => {
+      this.updateSingleVideoPreview();
+    });
+
+    document.getElementById('ai-video-single-add')?.addEventListener('click', () => {
+      this.addSingleVideoToQueue();
+    });
+
+    document.getElementById('ai-video-clear-queue')?.addEventListener('click', () => {
+      this.clearAIVideoQueue();
+    });
+
+    document.getElementById('ai-video-dedupe-queue')?.addEventListener('click', () => {
+      this.dedupeQueueText();
+    });
+
+    document.getElementById('ai-video-clean-queue')?.addEventListener('click', () => {
+      this.cleanQueueText();
+    });
+
+    document.getElementById('ai-video-save-preferences')?.addEventListener('click', () => {
+      this.saveAIVideoPreferences();
+    });
+
+    document.getElementById('ai-video-open-ai-studio')?.addEventListener('click', () => {
+      this.openAIVideoPage('ai-studio');
+    });
+
+    document.getElementById('ai-video-open-notebooklm')?.addEventListener('click', () => {
+      this.openAIVideoPage('notebooklm');
+    });
+
+    document.getElementById('ai-video-process-panel')?.addEventListener('click', () => {
+      this.handleAIStudioProcess();
+    });
+
+    document.getElementById('ai-video-start')?.addEventListener('click', () => {
+      this.controlAIVideoProcessing('start');
+    });
+
+    document.getElementById('ai-video-pause')?.addEventListener('click', () => {
+      this.controlAIVideoProcessing('pause');
+    });
+
+    document.getElementById('ai-video-resume')?.addEventListener('click', () => {
+      this.controlAIVideoProcessing('resume');
+    });
+
+    document.getElementById('ai-video-stop')?.addEventListener('click', () => {
+      this.controlAIVideoProcessing('stop');
+    });
+
+    document.getElementById('ai-video-generate-history')?.addEventListener('click', () => {
+      this.handleAIStudioHistory();
+    });
+
+    document.getElementById('ai-video-export-urls')?.addEventListener('click', () => {
+      this.handleAIStudioExport('urls');
+    });
+
+    document.getElementById('ai-video-export-json')?.addEventListener('click', () => {
+      this.handleAIStudioExport('json');
+    });
+
+    document.getElementById('ai-video-refresh-history')?.addEventListener('click', () => {
+      this.refreshAIVideoHistory();
+    });
+
+    document.getElementById('ai-video-export-reports')?.addEventListener('click', () => {
+      this.handleAIStudioExport('reports-md');
+    });
+
+    document.getElementById('ai-video-clear-history')?.addEventListener('click', () => {
+      this.clearAIVideoHistory();
     });
 
     // Save settings
@@ -556,24 +643,23 @@ class FuseConnectPopup {
   }
 
   async refreshServiceStatus() {
-    if (!this.state.nativeHostAvailable) {
-      // Try to check again
-      await this.checkNativeHost();
-      if (!this.state.nativeHostAvailable) {
-        return;
+    await this.checkNativeHost();
+    if (this.state.nativeHostAvailable) {
+      try {
+        const response = await this.sendNativeMessage({ action: 'status' });
+        if (response.services) {
+          this.state.services = response.services;
+        }
+      } catch (e) {
+        console.error('Failed to get native service status:', e);
       }
     }
 
-    try {
-      const response = await this.sendNativeMessage({ action: 'status' });
-      if (response.services) {
-        this.state.services = response.services;
-        this.updateServiceUI();
-      }
-      await this.refreshAutonomyStatus();
-    } catch (e) {
-      console.error('Failed to get service status:', e);
-    }
+    await this.refreshAIVideoStats();
+    await this.refreshAIVideoQueueAndPreferences();
+    await this.refreshAIVideoPlaylists();
+    await this.refreshAIVideoHistory();
+    this.updateServiceUI();
   }
 
   async refreshAutonomyStatus() {
@@ -674,7 +760,7 @@ class FuseConnectPopup {
         this.handleAIStudioHistory();
         return;
       } else if (action === 'export') {
-        this.handleAIStudioExport();
+        this.handleAIStudioExport('urls');
         return;
       }
     }
@@ -754,10 +840,7 @@ class FuseConnectPopup {
           textArea.select();
           document.execCommand('copy');
           document.body.removeChild(textArea);
-          this.showToast('Prompt copied to clipboard! Paste it into Gemini.');
-
-          // Open Gemini
-          window.open('https://gemini.google.com/', '_blank');
+          this.showToast('Prompt copied to clipboard');
         } else {
           this.showToast('Failed to generate prompt');
         }
@@ -767,16 +850,23 @@ class FuseConnectPopup {
     }
   }
 
-  async handleAIStudioExport() {
+  async handleAIStudioExport(format = 'urls') {
     this.showToast('Preparing export...');
     try {
-      chrome.runtime.sendMessage({ type: 'AI_VIDEO_EXPORT', format: 'urls' }, (response) => {
+      chrome.runtime.sendMessage({ type: 'AI_VIDEO_EXPORT', format }, (response) => {
         if (response?.content) {
-          const blob = new Blob([response.content], { type: 'text/plain' });
+          const blob = new Blob([response.content], {
+            type: format === 'json' ? 'application/json' : 'text/plain',
+          });
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = `notebooklm-urls-${Date.now()}.txt`;
+          a.download =
+            format === 'json'
+              ? `ai-video-export-${Date.now()}.json`
+              : format === 'reports-md'
+                ? `ai-video-reports-${Date.now()}.md`
+                : `notebooklm-urls-${Date.now()}.txt`;
           a.click();
           URL.revokeObjectURL(url);
           this.showToast('Export complete!');
@@ -787,6 +877,226 @@ class FuseConnectPopup {
     } catch (e) {
       this.showToast(`Error: ${e.message}`);
     }
+  }
+
+  async openAIVideoPage(page) {
+    chrome.runtime.sendMessage({ type: 'AI_VIDEO_OPEN_PAGE', page }, (response) => {
+      if (!response?.success) {
+        this.showToast('Failed to open page');
+      }
+    });
+  }
+
+  async saveAIVideoQueue() {
+    const queueInput = document.getElementById('ai-video-queue-input');
+    const text = queueInput?.value || '';
+    chrome.runtime.sendMessage({ type: 'AI_VIDEO_SET_QUEUE', text }, (response) => {
+      if (response?.success) {
+        this.showToast(`Queue saved (${response.queueCount || 0})`);
+        this.refreshServiceStatus();
+      } else {
+        this.showToast('Failed to save queue');
+      }
+    });
+  }
+
+  async clearAIVideoQueue() {
+    chrome.runtime.sendMessage({ type: 'AI_VIDEO_CLEAR_QUEUE' }, (response) => {
+      if (response?.success) {
+        this.showToast('Queue cleared');
+        const queueInput = document.getElementById('ai-video-queue-input');
+        if (queueInput) queueInput.value = '';
+        this.refreshServiceStatus();
+      } else {
+        this.showToast('Failed to clear queue');
+      }
+    });
+  }
+
+  async saveAIVideoPreferences() {
+    const reverseOrder = !!document.getElementById('ai-video-reverse-order')?.checked;
+    const segmentDuration = Number(
+      document.getElementById('ai-video-segment-duration')?.value || 45
+    );
+    const processingLevel =
+      document.getElementById('ai-video-processing-level')?.value || 'ai_studio';
+    chrome.runtime.sendMessage(
+      {
+        type: 'AI_VIDEO_SET_PREFERENCES',
+        reverseOrder,
+        segmentDuration,
+        processingLevel,
+      },
+      (response) => {
+        if (response?.success) {
+          this.showToast('Preferences saved');
+          this.refreshServiceStatus();
+        } else {
+          this.showToast('Failed to save preferences');
+        }
+      }
+    );
+  }
+
+  async refreshAIVideoPlaylists() {
+    return new Promise((resolve) => {
+      chrome.runtime.sendMessage({ type: 'AI_STUDIO_GET_PLAYLISTS' }, (response) => {
+        const selectEl = document.getElementById('ai-video-playlist-select');
+        if (!selectEl) {
+          resolve();
+          return;
+        }
+        const playlists =
+          response?.success && Array.isArray(response.playlists) ? response.playlists : [];
+        const currentValue = selectEl.value;
+        selectEl.innerHTML = '<option value="">Select playlist...</option>';
+        playlists.forEach((playlist) => {
+          const option = document.createElement('option');
+          option.value = playlist.id;
+          option.textContent = `${playlist.title} (${playlist.videoCount || 0})`;
+          selectEl.appendChild(option);
+        });
+        if (currentValue) selectEl.value = currentValue;
+        if (!response?.success && response?.error) {
+          this.showToast(response.error);
+        }
+        resolve();
+      });
+    });
+  }
+
+  async loadSelectedPlaylistIntoQueue() {
+    const playlistId = document.getElementById('ai-video-playlist-select')?.value || '';
+    if (!playlistId) {
+      this.showToast('Select a playlist first');
+      return;
+    }
+    chrome.runtime.sendMessage(
+      { type: 'AI_STUDIO_GET_PLAYLIST_VIDEOS', playlistId },
+      (response) => {
+        if (!response?.success || !Array.isArray(response.videos)) {
+          this.showToast(response?.error || 'Failed to load playlist videos');
+          return;
+        }
+        const urls = response.videos.map((v) => v.url).filter(Boolean);
+        chrome.runtime.sendMessage({ type: 'AI_VIDEO_SET_QUEUE', urls }, (setQueueResponse) => {
+          if (setQueueResponse?.success) {
+            this.showToast(`Loaded ${setQueueResponse.queueCount || 0} videos`);
+            this.refreshServiceStatus();
+          } else {
+            this.showToast('Failed to save playlist queue');
+          }
+        });
+      }
+    );
+  }
+
+  async controlAIVideoProcessing(action) {
+    chrome.runtime.sendMessage({ type: 'AI_VIDEO_PROCESS_CONTROL', action }, (response) => {
+      if (response?.success) {
+        this.showToast(`Processing ${action}`);
+        this.refreshServiceStatus();
+      } else {
+        this.showToast(response?.error || `Failed to ${action}`);
+      }
+    });
+  }
+
+  updateSingleVideoPreview() {
+    const input = document.getElementById('ai-video-single-url');
+    const preview = document.getElementById('ai-video-single-preview');
+    if (!input || !preview) return;
+    const url = String(input.value || '').trim();
+    const match = url.match(/(?:v=|youtu\.be\/)([\w-]{11})/i);
+    if (!url) {
+      preview.textContent = 'No preview yet';
+      return;
+    }
+    if (!match) {
+      preview.textContent = 'Invalid YouTube URL format';
+      return;
+    }
+    preview.textContent = `Video ID detected: ${match[1]}`;
+  }
+
+  addSingleVideoToQueue() {
+    const input = document.getElementById('ai-video-single-url');
+    const queueInput = document.getElementById('ai-video-queue-input');
+    if (!input || !queueInput) return;
+    const url = String(input.value || '').trim();
+    if (!url) return;
+    const lines = String(queueInput.value || '')
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean);
+    if (!lines.includes(url)) lines.unshift(url);
+    queueInput.value = lines.join('\n');
+    input.value = '';
+    this.updateSingleVideoPreview();
+    this.showToast('Added single video to queue editor');
+  }
+
+  dedupeQueueText() {
+    const queueInput = document.getElementById('ai-video-queue-input');
+    if (!queueInput) return;
+    const lines = String(queueInput.value || '')
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean);
+    queueInput.value = Array.from(new Set(lines)).join('\n');
+    this.showToast('Queue deduped');
+  }
+
+  cleanQueueText() {
+    const queueInput = document.getElementById('ai-video-queue-input');
+    if (!queueInput) return;
+    const lines = String(queueInput.value || '')
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean);
+    const cleaned = lines.filter((line) =>
+      /^https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=[\w-]{11}[\w=&-]*|youtu\.be\/[\w-]{11}[\w?=&-]*)/i.test(
+        line
+      )
+    );
+    queueInput.value = cleaned.join('\n');
+    this.showToast('Removed invalid URLs');
+  }
+
+  async refreshAIVideoHistory() {
+    chrome.runtime.sendMessage({ type: 'AI_VIDEO_GET_HISTORY' }, (response) => {
+      const listEl = document.getElementById('ai-video-history-list');
+      if (!listEl) return;
+      if (!response?.success || !Array.isArray(response.reports) || response.reports.length === 0) {
+        listEl.textContent = 'No processed videos yet';
+        return;
+      }
+      listEl.innerHTML = response.reports
+        .slice(0, 30)
+        .map((report) => {
+          const title = this.escapeHtml(String(report.title || 'Untitled'));
+          const url = this.escapeHtml(String(report.url || ''));
+          const level = this.escapeHtml(String(report.processingLevel || 'ai_studio'));
+          const ts = Number(report.processedAt || Date.now());
+          return `<div style="padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.08);">
+            <div style="font-weight:600;">${title}</div>
+            <div style="opacity:0.7; font-size:10px;">${level} • ${new Date(ts).toLocaleString()}</div>
+            <div style="opacity:0.78; font-size:10px; word-break:break-all;">${url}</div>
+          </div>`;
+        })
+        .join('');
+    });
+  }
+
+  async clearAIVideoHistory() {
+    chrome.runtime.sendMessage({ type: 'AI_VIDEO_CLEAR_HISTORY' }, (response) => {
+      if (response?.success) {
+        this.showToast('History cleared');
+        this.refreshAIVideoHistory();
+      } else {
+        this.showToast('Failed to clear history');
+      }
+    });
   }
 
   updateAIStudioStatus(status) {
@@ -813,51 +1123,95 @@ class FuseConnectPopup {
   }
 
   updateServiceUI() {
-    for (const [serviceName, status] of Object.entries(this.state.services)) {
-      const card = document.querySelector(`[data-service="${serviceName}"]`);
-      if (card) {
-        const statusDot = card.querySelector('.status-dot');
-        if (statusDot) {
-          statusDot.className = `status-dot ${status.running ? 'connected' : 'disconnected'}`;
-        }
-
-        // Update card class
-        if (status.running) {
-          card.classList.add('running');
-        } else {
-          card.classList.remove('running');
-        }
-
-        // Update buttons
-        const startBtn = card.querySelector('[data-action="start"]');
-        const stopBtn = card.querySelector('[data-action="stop"]');
-        if (startBtn) startBtn.disabled = status.running;
-        if (stopBtn) stopBtn.disabled = !status.running;
-      }
+    const statusEl = document.getElementById('service-ai-studio-status');
+    const statusDot = statusEl?.querySelector('.status-dot');
+    if (statusDot) {
+      const connected = this.state.aiVideo.account === 'Authenticated';
+      statusDot.className = `status-dot ${connected ? 'connected' : 'disconnected'}`;
     }
 
-    // Refresh AI Video Stats if visible
-    this.refreshAIVideoStats();
+    const pState = this.state.aiVideo.processingState || {};
+    const processingStatusEl = document.getElementById('ai-video-processing-status');
+    const processingProgressEl = document.getElementById('ai-video-processing-progress');
+    if (processingStatusEl) {
+      processingStatusEl.textContent = pState.isProcessing
+        ? pState.isPaused
+          ? 'Paused'
+          : 'Running'
+        : 'Idle';
+    }
+    if (processingProgressEl) {
+      processingProgressEl.textContent = `${pState.currentIndex || 0}/${pState.totalCount || 0}`;
+    }
+
+    const startBtn = document.getElementById('ai-video-start');
+    const pauseBtn = document.getElementById('ai-video-pause');
+    const resumeBtn = document.getElementById('ai-video-resume');
+    const stopBtn = document.getElementById('ai-video-stop');
+    if (startBtn) startBtn.disabled = !!pState.isProcessing && !pState.isPaused;
+    if (pauseBtn) pauseBtn.disabled = !pState.isProcessing || !!pState.isPaused;
+    if (resumeBtn) resumeBtn.disabled = !pState.isProcessing || !pState.isPaused;
+    if (stopBtn) stopBtn.disabled = !pState.isProcessing;
   }
 
   async refreshAIVideoStats() {
-    try {
-      chrome.runtime.sendMessage({ type: 'AI_VIDEO_GET_STATS' }, (stats) => {
-        if (stats) {
-          const processedEl = document.getElementById('ai-video-processed');
-          const totalEl = document.getElementById('ai-video-total');
-          const costEl = document.getElementById('ai-video-cost');
-          const accountEl = document.getElementById('ai-video-account');
-
-          if (processedEl) processedEl.textContent = stats.processed || '0';
-          if (totalEl) totalEl.textContent = stats.total || '0';
-          if (costEl) costEl.textContent = `$${(stats.cost || 0).toFixed(2)}`;
-          if (accountEl) accountEl.textContent = stats.account || 'None';
-        }
+    const stats = await new Promise((resolve) => {
+      chrome.runtime.sendMessage({ type: 'AI_VIDEO_GET_STATS' }, (response) => {
+        resolve(response || null);
       });
-    } catch (e) {
-      console.warn('Failed to refresh AI Video stats:', e);
+    });
+    if (!stats) return;
+
+    this.state.aiVideo.account = stats.account || 'None';
+
+    const processedEl = document.getElementById('ai-video-processed');
+    const totalEl = document.getElementById('ai-video-total');
+    const costEl = document.getElementById('ai-video-cost');
+    const accountEl = document.getElementById('ai-video-account');
+
+    if (processedEl) processedEl.textContent = String(stats.processed || 0);
+    if (totalEl) totalEl.textContent = String(stats.total || 0);
+    if (costEl) costEl.textContent = `$${Number(stats.cost || 0).toFixed(2)}`;
+    if (accountEl) accountEl.textContent = String(stats.account || 'None');
+  }
+
+  async refreshAIVideoQueueAndPreferences() {
+    const queueResponse = await new Promise((resolve) => {
+      chrome.runtime.sendMessage({ type: 'AI_VIDEO_GET_QUEUE' }, (response) => {
+        resolve(response || null);
+      });
+    });
+
+    if (!queueResponse?.success) return;
+
+    const queueItems = Array.isArray(queueResponse.queue) ? queueResponse.queue : [];
+    const queue = queueItems.map((item) => item?.url).filter(Boolean);
+    this.state.aiVideo.queue = queue;
+    this.state.aiVideo.queueCount = Number(queueResponse.queueCount || queue.length);
+    this.state.aiVideo.reverseOrder = !!queueResponse.reverseOrder;
+    this.state.aiVideo.segmentDuration = Number(queueResponse.segmentDuration || 45);
+    this.state.aiVideo.processingState = queueResponse.processingState || {
+      isProcessing: false,
+      isPaused: false,
+      currentIndex: 0,
+      totalCount: 0,
+    };
+
+    const queueInput = document.getElementById('ai-video-queue-input');
+    if (queueInput && !queueInput.matches(':focus')) {
+      queueInput.value = queue.join('\n');
     }
+    const reverseOrderInput = document.getElementById('ai-video-reverse-order');
+    if (reverseOrderInput) reverseOrderInput.checked = this.state.aiVideo.reverseOrder;
+    const segmentDurationInput = document.getElementById('ai-video-segment-duration');
+    if (segmentDurationInput)
+      segmentDurationInput.value = String(this.state.aiVideo.segmentDuration);
+
+    chrome.storage.local.get(['processingLevel'], (result) => {
+      this.state.aiVideo.processingLevel = result.processingLevel || 'ai_studio';
+      const processingLevelInput = document.getElementById('ai-video-processing-level');
+      if (processingLevelInput) processingLevelInput.value = this.state.aiVideo.processingLevel;
+    });
   }
 
   async loadState() {
@@ -980,6 +1334,12 @@ class FuseConnectPopup {
             this.state.selectedChannel = message.channelId;
             this.updateCentralControlPanel();
           }
+          break;
+
+        case 'AI_VIDEO_PROCESSING_UPDATE':
+          this.state.aiVideo.processingState = message.state || this.state.aiVideo.processingState;
+          this.updateServiceUI();
+          this.refreshAIVideoStats();
           break;
       }
     });

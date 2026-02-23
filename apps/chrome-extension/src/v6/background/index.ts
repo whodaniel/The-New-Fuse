@@ -48,6 +48,7 @@ const DEFAULT_NODES = {
 
 // Native messaging host name
 const NATIVE_HOST_NAME = 'com.thenewfuse.native_host';
+const AI_VIDEO_PROCESS_ALARM = 'ai_video_process_tick';
 
 type TranscriptRole = 'system' | 'user' | 'assistant' | 'tool';
 
@@ -57,6 +58,22 @@ type TranscriptEntry = {
   role: TranscriptRole;
   content: string;
   meta?: Record<string, unknown>;
+};
+
+type AIVideoQueueItem = {
+  id: string;
+  title: string;
+  url: string;
+  addedAt: number;
+};
+
+type AIVideoProcessingState = {
+  isProcessing: boolean;
+  isPaused: boolean;
+  currentIndex: number;
+  totalCount: number;
+  currentVideo: AIVideoQueueItem | null;
+  lastUpdated: number;
 };
 
 type ExtensionLogLevel = 'debug' | 'info' | 'warn' | 'error';
@@ -124,6 +141,7 @@ class BackgroundService {
     this.setupMessageHandlers();
     this.setupCommands();
     this.setupTabLifecycleHandlers();
+    this.setupAlarmHandlers();
 
     // Get or create agent ID
     this.agentId = await this.getOrCreateAgentId();
@@ -1394,6 +1412,200 @@ class BackgroundService {
       .toLowerCase();
   }
 
+  private extractYouTubeUrls(text: string): string[] {
+    const value = String(text || '');
+    const matches =
+      value.match(
+        /https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=[\w-]{11}[\w=&-]*|youtu\.be\/[\w-]{11}[\w?=&-]*)/gi
+      ) || [];
+    const unique = Array.from(new Set(matches.map((m) => m.trim())));
+    return unique;
+  }
+
+  private toQueueItems(urls: string[]): AIVideoQueueItem[] {
+    return urls.map((url, idx) => {
+      const idMatch = url.match(/(?:v=|youtu\.be\/)([\w-]{11})/i);
+      const id = idMatch?.[1] || `vid-${Date.now()}-${idx}`;
+      return {
+        id,
+        title: `YouTube Video ${id}`,
+        url,
+        addedAt: Date.now(),
+      };
+    });
+  }
+
+  private getDefaultProcessingState(): AIVideoProcessingState {
+    return {
+      isProcessing: false,
+      isPaused: false,
+      currentIndex: 0,
+      totalCount: 0,
+      currentVideo: null,
+      lastUpdated: Date.now(),
+    };
+  }
+
+  private setupAlarmHandlers(): void {
+    chrome.alarms.onAlarm.addListener((alarm) => {
+      if (alarm.name === AI_VIDEO_PROCESS_ALARM) {
+        void this.processAIVideoTick();
+      }
+    });
+  }
+
+  private async getYouTubeAuthToken(): Promise<string | null> {
+    const stored = await chrome.storage.local.get(['ai_studio_token']);
+    if (stored.ai_studio_token) return String(stored.ai_studio_token);
+
+    return new Promise((resolve) => {
+      chrome.identity.getAuthToken({ interactive: false }, (token) => {
+        if (chrome.runtime.lastError || !token) {
+          resolve(null);
+          return;
+        }
+        chrome.storage.local.set({ ai_studio_token: token });
+        resolve(token);
+      });
+    });
+  }
+
+  private async youtubeApiGet(path: string, token: string): Promise<any> {
+    const response = await fetch(`https://www.googleapis.com/youtube/v3/${path}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`YouTube API ${response.status}`);
+    }
+    return response.json();
+  }
+
+  private async fetchYouTubePlaylists(): Promise<Array<Record<string, unknown>>> {
+    const token = await this.getYouTubeAuthToken();
+    if (!token) throw new Error('Not authenticated');
+
+    const data = await this.youtubeApiGet(
+      'playlists?part=snippet,contentDetails&mine=true&maxResults=50',
+      token
+    );
+    const items = Array.isArray(data?.items) ? data.items : [];
+    return items.map((item: any) => ({
+      id: String(item?.id || ''),
+      title: String(item?.snippet?.title || 'Untitled Playlist'),
+      description: String(item?.snippet?.description || ''),
+      videoCount: Number(item?.contentDetails?.itemCount || 0),
+      thumbnail: String(item?.snippet?.thumbnails?.medium?.url || ''),
+    }));
+  }
+
+  private async fetchPlaylistVideos(playlistId: string): Promise<Array<Record<string, unknown>>> {
+    const token = await this.getYouTubeAuthToken();
+    if (!token) throw new Error('Not authenticated');
+    if (!playlistId) throw new Error('Missing playlist id');
+
+    const data = await this.youtubeApiGet(
+      `playlistItems?part=snippet,contentDetails&playlistId=${encodeURIComponent(playlistId)}&maxResults=50`,
+      token
+    );
+    const items = Array.isArray(data?.items) ? data.items : [];
+    return items
+      .map((item: any) => {
+        const videoId = String(item?.contentDetails?.videoId || '').trim();
+        if (!videoId) return null;
+        return {
+          id: videoId,
+          title: String(item?.snippet?.title || `YouTube Video ${videoId}`),
+          url: `https://www.youtube.com/watch?v=${videoId}`,
+          channelTitle: String(item?.snippet?.videoOwnerChannelTitle || ''),
+          thumbnail: String(item?.snippet?.thumbnails?.medium?.url || ''),
+          addedAt: Date.now(),
+        };
+      })
+      .filter(Boolean) as Array<Record<string, unknown>>;
+  }
+
+  private async processAIVideoTick(): Promise<void> {
+    const result = await chrome.storage.local.get([
+      'videoQueue',
+      'processingState',
+      'ai_video_processed_count',
+      'ai_video_estimated_cost',
+      'processingLevel',
+    ]);
+
+    const queue = Array.isArray(result.videoQueue) ? result.videoQueue : [];
+    const processingState: AIVideoProcessingState =
+      result.processingState || this.getDefaultProcessingState();
+
+    if (!processingState.isProcessing || processingState.isPaused) return;
+
+    if (processingState.currentIndex >= queue.length) {
+      chrome.alarms.clear(AI_VIDEO_PROCESS_ALARM);
+      const completedState: AIVideoProcessingState = {
+        ...processingState,
+        isProcessing: false,
+        currentVideo: null,
+        totalCount: queue.length,
+        lastUpdated: Date.now(),
+      };
+      await chrome.storage.local.set({
+        processingState: completedState,
+      });
+      this.broadcastToTabs({
+        type: 'AI_VIDEO_PROCESSING_UPDATE',
+        state: completedState,
+      });
+      this.logEvent('ai-video', 'processing_completed', { totalCount: queue.length });
+      return;
+    }
+
+    const currentVideo = queue[processingState.currentIndex] || null;
+    const nextIndex = processingState.currentIndex + 1;
+    const level = String(result.processingLevel || 'ai_studio');
+    const costByLevel: Record<string, number> = {
+      metadata: 0,
+      transcript: 0,
+      flash: 0.001,
+      pro: 0.01,
+      vision: 0.03,
+      ai_studio: 0,
+    };
+    const nextCost = Number(result.ai_video_estimated_cost || 0) + Number(costByLevel[level] || 0);
+    const nextProcessed = Number(result.ai_video_processed_count || 0) + 1;
+    const nextState: AIVideoProcessingState = {
+      ...processingState,
+      currentIndex: nextIndex,
+      totalCount: queue.length,
+      currentVideo: currentVideo as AIVideoQueueItem | null,
+      lastUpdated: Date.now(),
+    };
+
+    await chrome.storage.local.set({
+      processingState: nextState,
+      ai_video_processed_count: nextProcessed,
+      ai_video_total_count: queue.length,
+      ai_video_estimated_cost: nextCost,
+      ai_video_reports: [
+        {
+          id: `report-${Date.now()}-${currentVideo?.id || 'unknown'}`,
+          videoId: String(currentVideo?.id || ''),
+          title: String(currentVideo?.title || 'Processed Video'),
+          url: String(currentVideo?.url || ''),
+          processedAt: Date.now(),
+          processingLevel: level,
+          summary: `Processed via ${level}`,
+        },
+        ...((await chrome.storage.local.get(['ai_video_reports'])).ai_video_reports || []),
+      ].slice(0, 500),
+    });
+    this.broadcastToTabs({
+      type: 'AI_VIDEO_PROCESSING_UPDATE',
+      state: nextState,
+    });
+  }
+
   private findChannelByName(name: string): FederationChannel | null {
     const target = this.normalizeChannelName(name);
     if (!target) return null;
@@ -1883,26 +2095,43 @@ class BackgroundService {
           return true; // Async response
 
         case 'AI_STUDIO_GET_PLAYLISTS':
-          // Fetch YouTube playlists using stored token
-          chrome.storage.local.get(['ai_studio_token'], (result) => {
-            if (!result.ai_studio_token) {
-              sendResponse({ success: false, error: 'Not authenticated' });
-              return;
-            }
-            // TODO: Implement YouTube API call
-            sendResponse({ success: true, playlists: [] });
-          });
+          this.fetchYouTubePlaylists()
+            .then((playlists) => {
+              sendResponse({ success: true, playlists });
+            })
+            .catch((error) => {
+              sendResponse({ success: false, error: String(error?.message || error) });
+            });
           return true;
 
         case 'AI_STUDIO_PROCESS_VIDEO':
           // Queue video for processing
-          chrome.storage.local.get(['ai_studio_queue'], (result) => {
-            const queue = result.ai_studio_queue || [];
-            queue.push(message.video);
-            chrome.storage.local.set({ ai_studio_queue: queue });
+          chrome.storage.local.get(['videoQueue'], (result) => {
+            const queue = Array.isArray(result.videoQueue) ? result.videoQueue : [];
+            if (message.video?.url) {
+              queue.push({
+                id: message.video?.id || `vid-${Date.now()}`,
+                title: message.video?.title || 'YouTube Video',
+                url: message.video.url,
+                addedAt: Date.now(),
+              });
+            }
+            chrome.storage.local.set({ videoQueue: queue, syncTimestamp: Date.now() });
             sendResponse({ success: true, queueLength: queue.length });
           });
           return true;
+
+        case 'AI_STUDIO_GET_PLAYLIST_VIDEOS': {
+          const playlistId = String(message.playlistId || '');
+          this.fetchPlaylistVideos(playlistId)
+            .then((videos) => {
+              sendResponse({ success: true, videos });
+            })
+            .catch((error) => {
+              sendResponse({ success: false, error: String(error?.message || error) });
+            });
+          return true;
+        }
 
         case 'AI_VIDEO_GET_STATS':
           chrome.storage.local.get(
@@ -1924,6 +2153,210 @@ class BackgroundService {
           );
           return true;
 
+        case 'AI_VIDEO_GET_QUEUE':
+          chrome.storage.local.get(
+            ['videoQueue', 'reverseOrder', 'segmentDuration', 'processingState', 'syncTimestamp'],
+            (result) => {
+              const queue = Array.isArray(result.videoQueue) ? result.videoQueue : [];
+              const processingState = result.processingState || null;
+              sendResponse({
+                success: true,
+                queueCount: queue.length,
+                queue,
+                reverseOrder: !!result.reverseOrder,
+                segmentDuration: Number(result.segmentDuration || 45),
+                processingState,
+                syncTimestamp: result.syncTimestamp || null,
+              });
+            }
+          );
+          return true;
+
+        case 'AI_VIDEO_SET_QUEUE': {
+          const rawText = String(message.text || '');
+          const urls =
+            Array.isArray(message.urls) && message.urls.length > 0
+              ? message.urls.map((u: unknown) => String(u))
+              : this.extractYouTubeUrls(rawText);
+          const queue = this.toQueueItems(urls);
+          chrome.storage.local.set(
+            {
+              videoQueue: queue,
+              syncTimestamp: Date.now(),
+            },
+            () => {
+              this.logEvent('ai-video', 'queue_set', {
+                count: queue.length,
+              });
+              sendResponse({
+                success: true,
+                queueCount: queue.length,
+              });
+            }
+          );
+          return true;
+        }
+
+        case 'AI_VIDEO_CLEAR_QUEUE':
+          chrome.storage.local.set(
+            {
+              videoQueue: [],
+              processingState: {
+                isProcessing: false,
+                isPaused: false,
+                currentIndex: 0,
+                totalCount: 0,
+                currentVideo: null,
+                lastUpdated: Date.now(),
+              },
+              syncTimestamp: Date.now(),
+            },
+            () => {
+              this.logEvent('ai-video', 'queue_cleared');
+              sendResponse({ success: true });
+            }
+          );
+          return true;
+
+        case 'AI_VIDEO_SET_PREFERENCES': {
+          const reverseOrder = !!message.reverseOrder;
+          const segmentDuration = Math.max(5, Math.min(300, Number(message.segmentDuration || 45)));
+          const processingLevel = String(message.processingLevel || 'ai_studio');
+          chrome.storage.local.set(
+            {
+              reverseOrder,
+              segmentDuration,
+              processingLevel,
+            },
+            () => {
+              this.logEvent('ai-video', 'preferences_set', {
+                reverseOrder,
+                segmentDuration,
+                processingLevel,
+              });
+              sendResponse({ success: true });
+            }
+          );
+          return true;
+        }
+
+        case 'AI_VIDEO_PROCESS_CONTROL': {
+          const action = String(message.action || '').toLowerCase();
+          chrome.storage.local.get(['videoQueue', 'processingState'], (result) => {
+            const queue = Array.isArray(result.videoQueue) ? result.videoQueue : [];
+            const currentState: AIVideoProcessingState =
+              result.processingState || this.getDefaultProcessingState();
+
+            if (action === 'start') {
+              if (queue.length === 0) {
+                sendResponse({ success: false, error: 'Queue is empty' });
+                return;
+              }
+              const nextState: AIVideoProcessingState = {
+                isProcessing: true,
+                isPaused: false,
+                currentIndex: 0,
+                totalCount: queue.length,
+                currentVideo: null,
+                lastUpdated: Date.now(),
+              };
+              chrome.storage.local.set(
+                {
+                  processingState: nextState,
+                  ai_video_total_count: queue.length,
+                },
+                () => {
+                  chrome.alarms.create(AI_VIDEO_PROCESS_ALARM, {
+                    periodInMinutes: 0.1,
+                  });
+                  this.logEvent('ai-video', 'processing_started', { totalCount: queue.length });
+                  this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: nextState });
+                  sendResponse({ success: true, state: nextState });
+                }
+              );
+              return;
+            }
+
+            if (action === 'pause') {
+              const nextState: AIVideoProcessingState = {
+                ...currentState,
+                isProcessing: currentState.isProcessing,
+                isPaused: true,
+                lastUpdated: Date.now(),
+              };
+              chrome.storage.local.set({ processingState: nextState }, () => {
+                chrome.alarms.clear(AI_VIDEO_PROCESS_ALARM);
+                this.logEvent('ai-video', 'processing_paused', {
+                  currentIndex: nextState.currentIndex,
+                });
+                this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: nextState });
+                sendResponse({ success: true, state: nextState });
+              });
+              return;
+            }
+
+            if (action === 'resume') {
+              if (!currentState.isProcessing) {
+                sendResponse({ success: false, error: 'Processing is not running' });
+                return;
+              }
+              const nextState: AIVideoProcessingState = {
+                ...currentState,
+                isPaused: false,
+                lastUpdated: Date.now(),
+              };
+              chrome.storage.local.set({ processingState: nextState }, () => {
+                chrome.alarms.create(AI_VIDEO_PROCESS_ALARM, {
+                  periodInMinutes: 0.1,
+                });
+                this.logEvent('ai-video', 'processing_resumed', {
+                  currentIndex: nextState.currentIndex,
+                });
+                this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: nextState });
+                sendResponse({ success: true, state: nextState });
+              });
+              return;
+            }
+
+            if (action === 'stop') {
+              const nextState: AIVideoProcessingState = {
+                ...currentState,
+                isProcessing: false,
+                isPaused: false,
+                currentVideo: null,
+                lastUpdated: Date.now(),
+              };
+              chrome.storage.local.set({ processingState: nextState }, () => {
+                chrome.alarms.clear(AI_VIDEO_PROCESS_ALARM);
+                this.logEvent('ai-video', 'processing_stopped', {
+                  currentIndex: nextState.currentIndex,
+                });
+                this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: nextState });
+                sendResponse({ success: true, state: nextState });
+              });
+              return;
+            }
+
+            sendResponse({ success: false, error: `Unknown processing action: ${action}` });
+          });
+          return true;
+        }
+
+        case 'AI_VIDEO_OPEN_PAGE': {
+          const page = String(message.page || 'ai-studio');
+          const pageUrl =
+            page === 'notebooklm'
+              ? 'https://notebooklm.google.com/'
+              : page === 'dashboard'
+                ? 'https://aivideointel.thenewfuse.com/'
+                : 'https://aistudio.google.com/';
+          chrome.tabs.create({ url: pageUrl }, () => {
+            this.logEvent('ai-video', 'open_page', { page, pageUrl });
+            sendResponse({ success: true, pageUrl });
+          });
+          return true;
+        }
+
         case 'AI_VIDEO_GENERATE_HISTORY_PROMPT':
           const historyPrompt = `Using your Personal Intelligence access to my YouTube watch history,
 provide my last 50 watched videos.
@@ -1943,12 +2376,42 @@ Format as JSON array:
           break;
 
         case 'AI_VIDEO_EXPORT':
-          chrome.storage.local.get(['videoQueue', 'ai_studio_queue'], (result) => {
-            const queue =
-              message.format === 'urls'
-                ? (result.videoQueue || []).map((v: any) => v.url).join('\n')
-                : JSON.stringify(result.videoQueue || [], null, 2);
-            sendResponse({ content: queue });
+          chrome.storage.local.get(
+            ['videoQueue', 'ai_studio_queue', 'ai_video_reports'],
+            (result) => {
+              let content = '';
+              const format = String(message.format || 'urls');
+              if (format === 'reports-md') {
+                const reports = Array.isArray(result.ai_video_reports)
+                  ? result.ai_video_reports
+                  : [];
+                content = reports
+                  .map(
+                    (r: any) =>
+                      `## ${String(r.title || 'Untitled')}\n\n- URL: ${String(r.url || '')}\n- Processed: ${new Date(Number(r.processedAt || Date.now())).toISOString()}\n- Level: ${String(r.processingLevel || 'ai_studio')}\n\n${String(r.summary || '')}\n`
+                  )
+                  .join('\n');
+              } else if (format === 'urls') {
+                content = (result.videoQueue || []).map((v: any) => v.url).join('\n');
+              } else {
+                content = JSON.stringify(result.videoQueue || [], null, 2);
+              }
+              sendResponse({ content });
+            }
+          );
+          return true;
+
+        case 'AI_VIDEO_GET_HISTORY':
+          chrome.storage.local.get(['ai_video_reports'], (result) => {
+            const reports = Array.isArray(result.ai_video_reports) ? result.ai_video_reports : [];
+            sendResponse({ success: true, reports });
+          });
+          return true;
+
+        case 'AI_VIDEO_CLEAR_HISTORY':
+          chrome.storage.local.set({ ai_video_reports: [] }, () => {
+            this.logEvent('ai-video', 'history_cleared');
+            sendResponse({ success: true });
           });
           return true;
 

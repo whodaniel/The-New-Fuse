@@ -199,100 +199,15 @@
         <!-- Services Tab -->
         <section class="tab-content" id="tab-services">
           <div class="services-header">
-            <h3 class="section-title">TNF Services</h3>
+            <h3 class="section-title">AI Video Intelligence</h3>
             <button class="btn-icon-only" id="refresh-services" title="Refresh">🔄</button>
-          </div>
-
-          <div class="service-card" data-service="relay">
-            <div class="service-icon">🔌</div>
-            <div class="service-info">
-              <div class="service-name">TNF Relay</div>
-              <div class="service-port">Port 3000</div>
-            </div>
-            <div class="service-status" id="service-relay-status">
-              <span class="status-dot disconnected"></span>
-            </div>
-            <div class="service-actions">
-              <button class="btn-small" data-action="start" data-service="relay">Start</button>
-              <button class="btn-small danger" data-action="stop" data-service="relay">Stop</button>
-            </div>
-          </div>
-
-          <div class="service-card" data-service="backend">
-            <div class="service-icon">⚙️</div>
-            <div class="service-info">
-              <div class="service-name">TNF Backend</div>
-              <div class="service-port">Port 3000</div>
-            </div>
-            <div class="service-status" id="service-backend-status">
-              <span class="status-dot disconnected"></span>
-            </div>
-            <div class="service-actions">
-              <button class="btn-small" data-action="start" data-service="backend">Start</button>
-              <button class="btn-small danger" data-action="stop" data-service="backend">
-                Stop
-              </button>
-            </div>
-          </div>
-
-          <div class="service-card" data-service="frontend">
-            <div class="service-icon">🌐</div>
-            <div class="service-info">
-              <div class="service-name">TNF Frontend</div>
-              <div class="service-port">Port 3002</div>
-            </div>
-            <div class="service-status" id="service-frontend-status">
-              <span class="status-dot disconnected"></span>
-            </div>
-            <div class="service-actions">
-              <button class="btn-small" data-action="start" data-service="frontend">Start</button>
-              <button class="btn-small danger" data-action="stop" data-service="frontend">
-                Stop
-              </button>
-            </div>
-          </div>
-
-          <div class="service-card" data-service="monitor">
-            <div class="service-icon">📡</div>
-            <div class="service-info">
-              <div class="service-name">Relay Monitor</div>
-              <div class="service-port">Channel heartbeat + wake ACK</div>
-            </div>
-            <div class="service-status" id="service-monitor-status">
-              <span class="status-dot disconnected"></span>
-            </div>
-            <div class="service-actions">
-              <button class="btn-small" data-action="start" data-service="monitor">Start</button>
-              <button class="btn-small danger" data-action="stop" data-service="monitor">
-                Stop
-              </button>
-            </div>
-          </div>
-
-          <div class="service-card" data-service="masterClock">
-            <div class="service-icon">⏱️</div>
-            <div class="service-info">
-              <div class="service-name">Master Clock</div>
-              <div class="service-port">Global scheduler + orchestration ticks</div>
-            </div>
-            <div class="service-status" id="service-masterClock-status">
-              <span class="status-dot disconnected"></span>
-            </div>
-            <div class="service-actions">
-              <button class="btn-small" data-action="start" data-service="masterClock">
-                Start
-              </button>
-              <button class="btn-small danger" data-action="stop" data-service="masterClock">
-                Stop
-              </button>
-            </div>
           </div>
 
           <div class="service-card" data-service="ai-studio">
             <div class="service-icon">🎬</div>
             <div class="service-info">
               <div class="service-name">AI Video Intelligence</div>
-              <div class="service-port">YouTube + AI Studio + NotebookLM</div>
+              <div class="service-port">Queue + processing + NotebookLM handoff</div>
             </div>
             <div class="service-status" id="service-ai-studio-status">
               <span class="status-dot disconnected"></span>
@@ -309,7 +224,6 @@
                 Export
               </button>
             </div>
-            <!-- Stats and Account Info -->
             <div
               class="service-stats"
               style="
@@ -328,17 +242,169 @@
             </div>
           </div>
 
-          <div class="services-actions" style="margin-top: 16px">
-            <button class="btn-primary" id="start-all-services" style="width: 100%">
-              🚀 Start All Services
+          <div
+            class="native-host-status"
+            style="
+              margin-top: 12px;
+              padding: 10px;
+              background: rgba(255, 255, 255, 0.03);
+              border-radius: 8px;
+            "
+          >
+            <div style="font-size: 11px; color: rgba(255, 255, 255, 0.6); margin-bottom: 6px">
+              YouTube Playlists
+            </div>
+            <div style="display: flex; gap: 8px; margin-bottom: 8px">
+              <select id="ai-video-playlist-select" style="flex: 1">
+                <option value="">Select playlist...</option>
+              </select>
+              <button class="btn-secondary" id="ai-video-refresh-playlists">Refresh</button>
+              <button class="btn-secondary" id="ai-video-load-playlist">Load</button>
+            </div>
+
+            <div style="font-size: 11px; color: rgba(255, 255, 255, 0.6); margin-bottom: 6px">
+              Single Video Quick Add
+            </div>
+            <div style="display: flex; gap: 8px; margin-bottom: 6px">
+              <input
+                id="ai-video-single-url"
+                type="text"
+                placeholder="https://www.youtube.com/watch?v=..."
+                style="flex: 1"
+              />
+              <button class="btn-secondary" id="ai-video-single-add">Add</button>
+            </div>
+            <div id="ai-video-single-preview" style="font-size: 11px; color: rgba(255, 255, 255, 0.62)">
+              No preview yet
+            </div>
+
+            <div style="font-size: 11px; color: rgba(255, 255, 255, 0.6); margin-bottom: 6px">
+              Queue URLs (one per line)
+            </div>
+            <textarea
+              id="ai-video-queue-input"
+              rows="6"
+              style="
+                width: 100%;
+                background: rgba(0, 0, 0, 0.35);
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                border-radius: 6px;
+                color: #fff;
+                font-size: 11px;
+                padding: 8px;
+                resize: vertical;
+              "
+              placeholder="https://www.youtube.com/watch?v=..."
+            ></textarea>
+            <div style="display: flex; gap: 8px; margin-top: 8px">
+              <button class="btn-primary" id="ai-video-save-queue" style="flex: 1">Save Queue</button>
+              <button class="btn-secondary" id="ai-video-clear-queue" style="flex: 1">
+                Clear Queue
+              </button>
+            </div>
+            <div style="display: flex; gap: 8px; margin-top: 8px">
+              <button class="btn-secondary" id="ai-video-dedupe-queue" style="flex: 1">
+                Dedupe
+              </button>
+              <button class="btn-secondary" id="ai-video-clean-queue" style="flex: 1">
+                Remove Invalid
+              </button>
+            </div>
+          </div>
+
+          <div
+            class="native-host-status"
+            style="
+              margin-top: 10px;
+              padding: 10px;
+              background: rgba(255, 255, 255, 0.03);
+              border-radius: 8px;
+            "
+          >
+            <div style="font-size: 11px; color: rgba(255, 255, 255, 0.6); margin-bottom: 6px">
+              Processing Preferences
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center">
+              <select id="ai-video-processing-level" style="flex: 1">
+                <option value="ai_studio">AI Studio</option>
+                <option value="metadata">Metadata</option>
+                <option value="transcript">Transcript</option>
+                <option value="flash">Gemini Flash</option>
+                <option value="pro">Gemini Pro</option>
+                <option value="vision">Gemini Vision</option>
+              </select>
+              <input
+                id="ai-video-segment-duration"
+                type="number"
+                min="5"
+                max="300"
+                value="45"
+                style="width: 88px"
+                title="Segment duration (seconds)"
+              />
+              <label style="font-size: 11px; display: flex; align-items: center; gap: 4px">
+                <input id="ai-video-reverse-order" type="checkbox" />
+                Reverse
+              </label>
+            </div>
+            <div style="display: flex; gap: 8px; margin-top: 8px">
+              <button class="btn-secondary" id="ai-video-save-preferences" style="flex: 1">
+                Save Preferences
+              </button>
+              <button class="btn-secondary" id="ai-video-open-ai-studio" style="flex: 1">
+                Open AI Studio
+              </button>
+              <button class="btn-secondary" id="ai-video-open-notebooklm" style="flex: 1">
+                Open NotebookLM
+              </button>
+            </div>
+          </div>
+
+          <div class="services-actions" style="margin-top: 10px">
+            <button class="btn-primary" id="ai-video-process-panel" style="width: 100%">
+              🎛️ Open In-Page AIVI Panel
             </button>
-            <button
-              class="btn-secondary"
-              id="stop-all-services"
-              style="width: 100%; margin-top: 8px"
-            >
-              ⏹️ Stop All Services
+            <div style="display:flex; gap:8px; margin-top:8px;">
+              <button class="btn-primary" id="ai-video-start" style="flex:1">▶ Start</button>
+              <button class="btn-secondary" id="ai-video-pause" style="flex:1">⏸ Pause</button>
+              <button class="btn-secondary" id="ai-video-resume" style="flex:1">⏵ Resume</button>
+              <button class="btn-secondary" id="ai-video-stop" style="flex:1">⏹ Stop</button>
+            </div>
+            <div style="margin-top:8px; font-size:11px; color:rgba(255,255,255,0.72);">
+              Processing: <strong id="ai-video-processing-status">Idle</strong>
+              <span style="margin-left:8px;">Progress: <strong id="ai-video-processing-progress">0/0</strong></span>
+            </div>
+            <button class="btn-secondary" id="ai-video-generate-history" style="width: 100%; margin-top: 8px">
+              🧠 Generate History Prompt
             </button>
+            <button class="btn-secondary" id="ai-video-export-urls" style="width: 100%; margin-top: 8px">
+              📄 Export URLs
+            </button>
+            <button class="btn-secondary" id="ai-video-export-json" style="width: 100%; margin-top: 8px">
+              📦 Export JSON
+            </button>
+          </div>
+
+          <div
+            class="native-host-status"
+            style="
+              margin-top: 12px;
+              padding: 10px;
+              background: rgba(255, 255, 255, 0.03);
+              border-radius: 8px;
+            "
+          >
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span style="font-size: 11px; color: rgba(255, 255, 255, 0.6)">History / Reports</span>
+              <div style="display:flex; gap:6px;">
+                <button class="btn-secondary" id="ai-video-refresh-history">Refresh</button>
+                <button class="btn-secondary" id="ai-video-export-reports">Export MD</button>
+                <button class="btn-secondary" id="ai-video-clear-history">Clear</button>
+              </div>
+            </div>
+            <div id="ai-video-history-list" style="max-height:180px; overflow:auto; font-size:11px; color:rgba(255,255,255,0.76);">
+              No processed videos yet
+            </div>
           </div>
 
           <div
@@ -355,36 +421,6 @@
                 >Native Host Status</span
               >
               <span id="native-host-indicator" style="font-size: 11px">⚪ Unknown</span>
-            </div>
-          </div>
-
-          <div
-            class="native-host-status"
-            style="
-              margin-top: 10px;
-              padding: 10px;
-              background: rgba(255, 255, 255, 0.03);
-              border-radius: 8px;
-            "
-          >
-            <div style="display: flex; justify-content: space-between; align-items: center">
-              <span style="font-size: 11px; color: rgba(255, 255, 255, 0.5)">Autonomy Status</span>
-              <span id="autonomy-overall-indicator" style="font-size: 11px">⚪ Unknown</span>
-            </div>
-            <div
-              style="
-                margin-top: 8px;
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 8px;
-                font-size: 11px;
-                opacity: 0.85;
-              "
-            >
-              <div>Monitor: <strong id="autonomy-monitor-status">Unknown</strong></div>
-              <div>Master Clock: <strong id="autonomy-master-clock-status">Unknown</strong></div>
-              <div>Wake Ping: <strong id="autonomy-wake-ping-status">Unknown</strong></div>
-              <div>Last Wake Ping: <strong id="autonomy-last-wake-ping">N/A</strong></div>
             </div>
           </div>
         </section>

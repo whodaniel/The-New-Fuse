@@ -29,6 +29,25 @@ interface FloatingPanelOptions {
   mode?: PanelMode;
 }
 
+interface AIVideoPanelState {
+  account: string;
+  processed: number;
+  total: number;
+  cost: number;
+  queue: string[];
+  queueCount: number;
+  reverseOrder: boolean;
+  segmentDuration: number;
+  processingLevel: string;
+  isProcessing: boolean;
+  isPaused: boolean;
+  currentIndex: number;
+  totalCount: number;
+  playlists: Array<{ id: string; title: string; videoCount: number }>;
+  selectedPlaylistId: string;
+  history: Array<{ title: string; url: string; processedAt: number; processingLevel: string }>;
+}
+
 export class EnhancedFloatingPanel {
   private container: HTMLDivElement | null = null;
   private state: PanelState;
@@ -91,6 +110,24 @@ export class EnhancedFloatingPanel {
   private cleanupInterval: ReturnType<typeof setInterval> | null = null;
   private readonly CLEANUP_INTERVAL_MS = 30000; // 30 seconds
   private readonly BROADCAST_DEDUP_WINDOW_MS = 10000; // 10 seconds
+  private aiVideoState: AIVideoPanelState = {
+    account: 'None',
+    processed: 0,
+    total: 0,
+    cost: 0,
+    queue: [],
+    queueCount: 0,
+    reverseOrder: false,
+    segmentDuration: 45,
+    processingLevel: 'ai_studio',
+    isProcessing: false,
+    isPaused: false,
+    currentIndex: 0,
+    totalCount: 0,
+    playlists: [],
+    selectedPlaylistId: '',
+    history: [],
+  };
 
   constructor(options: FloatingPanelOptions = {}) {
     // Generate unique panel ID based on hostname and random suffix
@@ -1336,188 +1373,144 @@ export class EnhancedFloatingPanel {
    * Render services tab
    */
   private renderServicesTab(): string {
-    const services = [
-      { id: 'relay', name: 'Relay Server', icon: '📡' },
-      { id: 'vector-db', name: 'Vector DB', icon: '🧠' },
-      { id: 'fs-server', name: 'File System', icon: '📂' },
-    ];
-
-    // Get AI Studio state from storage or defaults
-    const aiStudioAuth = false; // TODO: Load from storage
-    const videoQueueCount = 0; // TODO: Load from storage
-    const processingStatus = 'idle'; // TODO: Load from storage
+    const queuePreview = this.aiVideoState.queue.slice(0, 5);
+    const queueText = this.aiVideoState.queue.join('\n');
+    const accountLabel =
+      this.aiVideoState.account === 'Authenticated' ? 'Authenticated' : 'Not linked';
+    const processingLabel = this.aiVideoState.isProcessing
+      ? this.aiVideoState.isPaused
+        ? 'Paused'
+        : 'Running'
+      : 'Idle';
+    const progressLabel =
+      this.aiVideoState.totalCount > 0
+        ? `${Math.max(0, this.aiVideoState.currentIndex)}/${this.aiVideoState.totalCount}`
+        : '0/0';
 
     return `
-      <div class="fcp6-section-title">Core Services</div>
-      <div class="fcp6-list">
-        ${services
-          .map((svc) => {
-            const status = this.serviceStatuses.get(svc.id) || 'unknown';
-            return `
-          <div class="fcp6-agent">
-            <div class="fcp6-agent-avatar" style="background: rgba(255,255,255,0.1);">${svc.icon}</div>
-            <div class="fcp6-channel-info">
-              <div class="fcp6-agent-name">${svc.name}</div>
-              <div class="fcp6-agent-platform">
-                <span class="fcp6-status-dot ${status === 'online' ? 'connected' : 'disconnected'}"></span>
-                ${status.toUpperCase()}
-              </div>
-            </div>
-            <div style="display:flex; gap:4px;">
-               <button class="fcp6-btn" data-action="restart-${svc.id}-service" title="Restart">↺</button>
-            </div>
+      <div class="fcp6-section-title">🎬 AI Video Intelligence</div>
+      <div style="padding:12px; background:rgba(0,217,255,0.08); border:1px solid rgba(0,217,255,0.25); border-radius:10px; margin-top:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+          <div style="font-size:12px; color:rgba(255,255,255,0.82);">
+            Queue-first workflow for AI Studio + NotebookLM
           </div>
-        `;
-          })
-          .join('')}
-      </div>
-      <div style="margin-top:12px; display:flex; gap:8px;">
-        <button class="fcp6-btn" data-action="check-health" style="flex:1; width:auto;">Check Health</button>
-        <button class="fcp6-btn" data-action="start-all-services" style="flex:1; width:auto;">Start All</button>
-      </div>
-       <div style="margin-top:12px;">
-        <button class="fcp6-btn" data-action="open-terminal" style="width:100%;">Open Terminal</button>
+          <span style="font-size:10px; color:${this.aiVideoState.account === 'Authenticated' ? '#00ff88' : '#ffbb00'};">
+            ${accountLabel}
+          </span>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; font-size:11px;">
+          <div>Processed: <strong id="fcp6-aivi-processed">${this.aiVideoState.processed}</strong></div>
+          <div>Library: <strong id="fcp6-aivi-total">${this.aiVideoState.total}</strong></div>
+          <div>Queue: <strong id="fcp6-aivi-queue-count">${this.aiVideoState.queueCount}</strong></div>
+          <div>Cost: <strong id="fcp6-aivi-cost">$${this.aiVideoState.cost.toFixed(2)}</strong></div>
+          <div>Status: <strong>${processingLabel}</strong></div>
+          <div>Progress: <strong>${progressLabel}</strong></div>
+        </div>
+        <div style="display:flex; gap:6px; margin-top:10px;">
+          <button class="fcp6-btn" data-action="aivi-auth" style="flex:1;">🔐 Auth</button>
+          <button class="fcp6-btn" data-action="aivi-open-ai-studio" style="flex:1;">🧪 AI Studio</button>
+          <button class="fcp6-btn" data-action="aivi-open-notebooklm" style="flex:1;">📓 NotebookLM</button>
+          <button class="fcp6-btn" data-action="aivi-refresh" style="flex:1;">↻ Refresh</button>
+        </div>
       </div>
 
-      <!-- AI Video Intelligence Section -->
-      <div style="margin-top:20px; padding-top:16px; border-top: 1px solid rgba(255,255,255,0.1);">
-        <div class="fcp6-section-title">🎬 AI Video Intelligence</div>
+      <div style="margin-top:10px; padding:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:8px;">
+        <div style="font-size:11px; color:rgba(255,255,255,0.7); margin-bottom:6px;">Playlist Source</div>
+        <div style="display:flex; gap:6px; margin-bottom:8px;">
+          <select id="fcp6-aivi-playlist-select" class="fcp6-input" style="flex:1; padding:6px; font-size:11px;">
+            <option value="">Select playlist...</option>
+            ${this.aiVideoState.playlists
+              .map(
+                (playlist) =>
+                  `<option value="${this.escapeHtml(playlist.id)}" ${
+                    this.aiVideoState.selectedPlaylistId === playlist.id ? 'selected' : ''
+                  }>${this.escapeHtml(playlist.title)} (${playlist.videoCount})</option>`
+              )
+              .join('')}
+          </select>
+          <button class="fcp6-btn" data-action="aivi-refresh-playlists" style="padding:6px 10px;">↻</button>
+          <button class="fcp6-btn" data-action="aivi-load-playlist" style="padding:6px 10px;">Load</button>
+        </div>
 
+        <div style="font-size:11px; color:rgba(255,255,255,0.7); margin-bottom:6px;">Video Queue (one URL per line)</div>
+        <div style="display:flex; gap:6px; margin-bottom:8px;">
+          <input id="fcp6-aivi-single-url" class="fcp6-input" type="text" placeholder="https://www.youtube.com/watch?v=..." style="flex:1; padding:6px; font-size:11px;" />
+          <button class="fcp6-btn" data-action="aivi-single-add" style="padding:6px 10px;">Add</button>
+        </div>
+        <textarea id="fcp6-aivi-queue-input" class="fcp6-input" style="width:100%; min-height:94px; font-size:11px;">${this.escapeHtml(queueText)}</textarea>
+        <div style="display:flex; gap:6px; margin-top:8px;">
+          <button class="fcp6-btn" data-action="aivi-set-queue" style="flex:1;">Save Queue</button>
+          <button class="fcp6-btn" data-action="aivi-clear-queue" style="flex:1; background:rgba(255,51,102,0.14); color:#ff7799;">Clear Queue</button>
+        </div>
+        <div style="display:flex; gap:6px; margin-top:8px;">
+          <button class="fcp6-btn" data-action="aivi-queue-dedupe" style="flex:1;">Dedupe</button>
+          <button class="fcp6-btn" data-action="aivi-queue-clean" style="flex:1;">Remove Invalid</button>
+        </div>
         ${
-          !aiStudioAuth
-            ? `
-          <div style="padding:12px; background:rgba(0,217,255,0.05); border-radius:8px; margin-top:8px;">
-            <div style="font-size:12px; color:rgba(255,255,255,0.7); margin-bottom:8px;">
-              Process YouTube videos through AI Studio
-            </div>
-            <button class="fcp6-btn" data-action="ai-studio-auth" style="width:100%;">
-              🔐 Sign in with Google
-            </button>
-          </div>
-        `
-            : `
-          <!-- Authenticated View -->
-          <div style="margin-top:8px;">
-            <!-- Playlist Selector -->
-            <div style="margin-bottom:8px;">
-              <label style="font-size:11px; color:rgba(255,255,255,0.6); display:block; margin-bottom:4px;">
-                📺 Playlist
-              </label>
-              <select class="fcp6-input" data-action="ai-studio-select-playlist" style="width:100%; padding:6px;">
-                <option value="">Select playlist...</option>
-              </select>
-            </div>
-
-            <!-- Video Queue -->
-            <div style="margin-bottom:8px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                <label style="font-size:11px; color:rgba(255,255,255,0.6);">
-                  📋 Queue (${videoQueueCount})
-                </label>
-                <button class="fcp6-btn" data-action="ai-studio-load-videos" style="padding:4px 8px; font-size:11px;">
-                  Load
-                </button>
-              </div>
-              <div style="max-height:120px; overflow-y:auto; background:rgba(0,0,0,0.3); border-radius:6px; padding:6px;">
-                ${
-                  videoQueueCount === 0
-                    ? `
-                  <div style="font-size:11px; color:rgba(255,255,255,0.4); text-align:center; padding:12px;">
-                    No videos in queue
-                  </div>
-                `
-                    : `
-                  <!-- Video items will be rendered here -->
-                  <div class="fcp6-video-item">Video 1</div>
-                `
-                }
-              </div>
-            </div>
-
-            <!-- Processing Tier -->
-            <div style="margin-bottom:8px;">
-              <label style="font-size:11px; color:rgba(255,255,255,0.6); display:block; margin-bottom:4px;">
-                🎯 Processing
-              </label>
-              <select class="fcp6-input" data-action="ai-studio-select-tier" style="width:100%; padding:6px; font-size:11px;">
-                <option value="metadata">Metadata (FREE)</option>
-                <option value="transcript">Transcript (FREE)</option>
-                <option value="flash" selected>Gemini Flash ($0.01)</option>
-                <option value="pro">Gemini Pro ($0.15)</option>
-                <option value="vision">Gemini Vision ($0.30)</option>
-                <option value="ai-studio">AI Studio (FREE*)</option>
-              </select>
-            </div>
-
-            <!-- Controls -->
-            <div style="display:flex; gap:6px; margin-bottom:8px;">
-              ${
-                processingStatus === 'idle'
-                  ? `
-                <button class="fcp6-btn" data-action="ai-studio-start" style="flex:1; background:rgba(0,255,136,0.2); border:1px solid rgba(0,255,136,0.4);">
-                  ▶ Start
-                </button>
-              `
-                  : `
-                <button class="fcp6-btn" data-action="ai-studio-pause" style="flex:1; background:rgba(255,187,0,0.2);">
-                  ⏸ Pause
-                </button>
-                <button class="fcp6-btn" data-action="ai-studio-stop" style="flex:1; background:rgba(255,51,102,0.2);">
-                  ⏹ Stop
-                </button>
-              `
-              }
-            </div>
-
-            <!-- Progress -->
-            ${
-              processingStatus !== 'idle'
-                ? `
-              <div style="margin-bottom:8px;">
-                <div style="height:4px; background:rgba(255,255,255,0.1); border-radius:2px; overflow:hidden;">
-                  <div style="height:100%; width:75%; background:linear-gradient(90deg,#00D9FF,#9D4EDD); transition:width 0.3s;"></div>
-                </div>
-                <div style="font-size:10px; color:rgba(255,255,255,0.5); margin-top:4px; text-align:center;">
-                  Processing: "How to Build Apps..." (8/10)
-                </div>
-              </div>
-            `
-                : ''
-            }
-
-            <!-- Knowledge Base -->
-            <div style="padding:10px; background:rgba(157,78,221,0.1); border-radius:6px; margin-bottom:8px;">
-              <div style="font-size:11px; color:rgba(255,255,255,0.6); margin-bottom:6px;">
-                🧠 Knowledge Base
-              </div>
-              <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:6px;">
-                <span style="color:rgba(255,255,255,0.7);">Concepts: <strong>0</strong></span>
-                <span style="color:rgba(255,255,255,0.7);">Videos: <strong>0</strong></span>
-              </div>
-              <div style="display:flex; gap:4px;">
-                <button class="fcp6-btn" data-action="ai-studio-export-kb" style="flex:1; font-size:10px; padding:4px;">
-                  📄 Export
-                </button>
-                <button class="fcp6-btn" data-action="ai-studio-sync-notebook" style="flex:1; font-size:10px; padding:4px;">
-                  🎙️ Podcast
-                </button>
-              </div>
-            </div>
-
-            <!-- Cost Tracking -->
-            <div style="padding:8px; background:rgba(0,0,0,0.3); border-radius:6px; font-size:10px;">
-              <div style="display:flex; justify-content:space-between; color:rgba(255,255,255,0.6);">
-                <span>Session:</span>
-                <span style="color:#00ff88;">$0.00</span>
-              </div>
-              <div style="display:flex; justify-content:space-between; color:rgba(255,255,255,0.6); margin-top:2px;">
-                <span>Total:</span>
-                <span style="color:#00D9FF;">$0.00</span>
-              </div>
-            </div>
-          </div>
-        `
+          queuePreview.length > 0
+            ? `<div style="margin-top:8px; font-size:10px; color:rgba(255,255,255,0.55);">Preview: ${this.escapeHtml(queuePreview.join(' | '))}</div>`
+            : ''
         }
+      </div>
+
+      <div style="margin-top:10px; padding:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:8px;">
+        <div style="font-size:11px; color:rgba(255,255,255,0.7); margin-bottom:6px;">Processing Preferences</div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <select id="fcp6-aivi-processing-level" class="fcp6-input" style="flex:1; padding:6px; font-size:11px;">
+            <option value="metadata" ${this.aiVideoState.processingLevel === 'metadata' ? 'selected' : ''}>Metadata</option>
+            <option value="transcript" ${this.aiVideoState.processingLevel === 'transcript' ? 'selected' : ''}>Transcript</option>
+            <option value="flash" ${this.aiVideoState.processingLevel === 'flash' ? 'selected' : ''}>Gemini Flash</option>
+            <option value="pro" ${this.aiVideoState.processingLevel === 'pro' ? 'selected' : ''}>Gemini Pro</option>
+            <option value="vision" ${this.aiVideoState.processingLevel === 'vision' ? 'selected' : ''}>Gemini Vision</option>
+            <option value="ai_studio" ${this.aiVideoState.processingLevel === 'ai_studio' ? 'selected' : ''}>AI Studio</option>
+          </select>
+          <input id="fcp6-aivi-segment-duration" class="fcp6-input" type="number" min="5" max="300" value="${this.aiVideoState.segmentDuration}" style="width:90px; padding:6px; font-size:11px;" />
+          <label style="display:flex; align-items:center; gap:4px; font-size:11px; color:rgba(255,255,255,0.7);">
+            <input id="fcp6-aivi-reverse-order" type="checkbox" ${this.aiVideoState.reverseOrder ? 'checked' : ''} />
+            Reverse
+          </label>
+        </div>
+        <div style="display:flex; gap:6px; margin-top:8px;">
+          <button class="fcp6-btn" data-action="aivi-save-preferences" style="flex:1;">Save Preferences</button>
+          <button class="fcp6-btn" data-action="aivi-generate-history" style="flex:1;">Prompt from History</button>
+        </div>
+        <div style="display:flex; gap:6px; margin-top:8px;">
+          <button class="fcp6-btn" data-action="aivi-process-start" style="flex:1;">▶ Start</button>
+          <button class="fcp6-btn" data-action="aivi-process-pause" style="flex:1;">⏸ Pause</button>
+          <button class="fcp6-btn" data-action="aivi-process-resume" style="flex:1;">⏵ Resume</button>
+          <button class="fcp6-btn" data-action="aivi-process-stop" style="flex:1;">⏹ Stop</button>
+        </div>
+        <div style="display:flex; gap:6px; margin-top:8px;">
+          <button class="fcp6-btn" data-action="aivi-export-urls" style="flex:1;">Export URLs</button>
+          <button class="fcp6-btn" data-action="aivi-export-json" style="flex:1;">Export JSON</button>
+          <button class="fcp6-btn" data-action="aivi-export-reports-md" style="flex:1;">Export Reports</button>
+        </div>
+      </div>
+
+      <div style="margin-top:10px; padding:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <div style="font-size:11px; color:rgba(255,255,255,0.7);">History / Reports</div>
+          <div style="display:flex; gap:6px;">
+            <button class="fcp6-btn" data-action="aivi-refresh-history" style="padding:4px 8px; font-size:10px;">Refresh</button>
+            <button class="fcp6-btn" data-action="aivi-clear-history" style="padding:4px 8px; font-size:10px;">Clear</button>
+          </div>
+        </div>
+        <div style="max-height:110px; overflow-y:auto; font-size:10px; color:rgba(255,255,255,0.72);">
+          ${
+            this.aiVideoState.history.length > 0
+              ? this.aiVideoState.history
+                  .slice(0, 12)
+                  .map(
+                    (entry) =>
+                      `<div style="padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.08);">
+                        <div style="font-weight:600;">${this.escapeHtml(entry.title || 'Untitled')}</div>
+                        <div style="opacity:0.72;">${this.escapeHtml(entry.processingLevel || 'ai_studio')} • ${new Date(entry.processedAt || Date.now()).toLocaleString()}</div>
+                      </div>`
+                  )
+                  .join('')
+              : 'No processed videos yet'
+          }
+        </div>
       </div>
     `;
   }
@@ -2463,6 +2456,17 @@ export class EnhancedFloatingPanel {
         this.streamingState = message.state;
         this.update();
         break;
+      case 'AI_VIDEO_PROCESSING_UPDATE':
+        this.aiVideoState.isProcessing = !!message.state?.isProcessing;
+        this.aiVideoState.isPaused = !!message.state?.isPaused;
+        this.aiVideoState.currentIndex = Number(message.state?.currentIndex || 0);
+        this.aiVideoState.totalCount = Number(message.state?.totalCount || 0);
+        this.aiVideoState.queueCount = Math.max(
+          this.aiVideoState.queueCount,
+          this.aiVideoState.totalCount
+        );
+        this.update();
+        break;
       case 'RESPONSE_COMPLETE':
         // RESTORED FROM BACKUP: Only add to local UI, do NOT broadcast
         console.log('[FuseConnect] RESPONSE_COMPLETE received:', {
@@ -2845,6 +2849,11 @@ export class EnhancedFloatingPanel {
         }
         break;
       default:
+        if (action.startsWith('aivi-')) {
+          this.handleAIVideoAction(action);
+          break;
+        }
+
         // Check if it's a service action
         if (action.endsWith('-service')) {
           this.handleServiceAction(action);
@@ -2875,7 +2884,293 @@ export class EnhancedFloatingPanel {
     this.state.activeTab = tab;
     // Persist active tab
     this.saveState();
+    if (tab === 'services') {
+      this.refreshAIVideoState();
+    }
     this.update();
+  }
+
+  private refreshAIVideoState(): void {
+    this.safeSendMessage({ type: 'AI_VIDEO_GET_STATS' }, (statsResponse) => {
+      if (statsResponse) {
+        this.aiVideoState.processed = Number(statsResponse.processed || 0);
+        this.aiVideoState.total = Number(statsResponse.total || 0);
+        this.aiVideoState.cost = Number(statsResponse.cost || 0);
+        this.aiVideoState.account = String(statsResponse.account || 'None');
+      }
+      this.update();
+    });
+
+    this.safeSendMessage({ type: 'AI_VIDEO_GET_QUEUE' }, (queueResponse) => {
+      if (!queueResponse?.success) return;
+      const queueItems = Array.isArray(queueResponse.queue) ? queueResponse.queue : [];
+      this.aiVideoState.queue = queueItems
+        .map((item: any) => String(item?.url || '').trim())
+        .filter((url: string) => url.length > 0);
+      this.aiVideoState.queueCount = Number(
+        queueResponse.queueCount || this.aiVideoState.queue.length
+      );
+      this.aiVideoState.reverseOrder = !!queueResponse.reverseOrder;
+      this.aiVideoState.segmentDuration = Number(queueResponse.segmentDuration || 45);
+      this.aiVideoState.isProcessing = !!queueResponse.processingState?.isProcessing;
+      this.aiVideoState.isPaused = !!queueResponse.processingState?.isPaused;
+      this.aiVideoState.currentIndex = Number(queueResponse.processingState?.currentIndex || 0);
+      this.aiVideoState.totalCount = Number(queueResponse.processingState?.totalCount || 0);
+      this.update();
+    });
+
+    chrome.storage.local.get(['processingLevel'], (result) => {
+      this.aiVideoState.processingLevel = String(result.processingLevel || 'ai_studio');
+      this.update();
+    });
+
+    this.safeSendMessage({ type: 'AI_STUDIO_GET_PLAYLISTS' }, (playlistResponse) => {
+      if (!playlistResponse?.success || !Array.isArray(playlistResponse.playlists)) return;
+      this.aiVideoState.playlists = playlistResponse.playlists.map((p: any) => ({
+        id: String(p.id || ''),
+        title: String(p.title || 'Untitled Playlist'),
+        videoCount: Number(p.videoCount || 0),
+      }));
+      this.update();
+    });
+
+    this.safeSendMessage({ type: 'AI_VIDEO_GET_HISTORY' }, (historyResponse) => {
+      if (!historyResponse?.success || !Array.isArray(historyResponse.reports)) return;
+      this.aiVideoState.history = historyResponse.reports.map((r: any) => ({
+        title: String(r.title || 'Untitled'),
+        url: String(r.url || ''),
+        processedAt: Number(r.processedAt || Date.now()),
+        processingLevel: String(r.processingLevel || 'ai_studio'),
+      }));
+      this.update();
+    });
+  }
+
+  private handleAIVideoAction(action: string): void {
+    if (action === 'aivi-auth') {
+      this.safeSendMessage({ type: 'AI_STUDIO_AUTH' }, (response) => {
+        if (!response?.success) {
+          console.warn('[FuseConnect] AIVI auth failed:', response?.error);
+        }
+        this.refreshAIVideoState();
+      });
+      return;
+    }
+
+    if (action === 'aivi-open-ai-studio') {
+      this.safeSendMessage({ type: 'AI_VIDEO_OPEN_PAGE', page: 'ai-studio' });
+      return;
+    }
+
+    if (action === 'aivi-open-notebooklm') {
+      this.safeSendMessage({ type: 'AI_VIDEO_OPEN_PAGE', page: 'notebooklm' });
+      return;
+    }
+
+    if (action === 'aivi-refresh') {
+      this.refreshAIVideoState();
+      return;
+    }
+
+    if (action === 'aivi-refresh-playlists') {
+      this.safeSendMessage({ type: 'AI_STUDIO_GET_PLAYLISTS' }, (playlistResponse) => {
+        if (!playlistResponse?.success || !Array.isArray(playlistResponse.playlists)) return;
+        this.aiVideoState.playlists = playlistResponse.playlists.map((p: any) => ({
+          id: String(p.id || ''),
+          title: String(p.title || 'Untitled Playlist'),
+          videoCount: Number(p.videoCount || 0),
+        }));
+        this.update();
+      });
+      return;
+    }
+
+    if (action === 'aivi-load-playlist') {
+      const playlistInput = this.container?.querySelector(
+        '#fcp6-aivi-playlist-select'
+      ) as HTMLSelectElement | null;
+      const playlistId = String(playlistInput?.value || '');
+      this.aiVideoState.selectedPlaylistId = playlistId;
+      if (!playlistId) return;
+
+      this.safeSendMessage({ type: 'AI_STUDIO_GET_PLAYLIST_VIDEOS', playlistId }, (response) => {
+        if (!response?.success || !Array.isArray(response.videos)) return;
+        const urls = response.videos.map((video: any) => String(video?.url || '')).filter(Boolean);
+        this.safeSendMessage({ type: 'AI_VIDEO_SET_QUEUE', urls }, () =>
+          this.refreshAIVideoState()
+        );
+      });
+      return;
+    }
+
+    if (action === 'aivi-set-queue') {
+      const queueInput = this.container?.querySelector(
+        '#fcp6-aivi-queue-input'
+      ) as HTMLTextAreaElement | null;
+      const queueText = queueInput?.value || '';
+      this.safeSendMessage({ type: 'AI_VIDEO_SET_QUEUE', text: queueText }, (response) => {
+        if (!response?.success) {
+          console.warn('[FuseConnect] Failed to set AIVI queue');
+        }
+        this.refreshAIVideoState();
+      });
+      return;
+    }
+
+    if (action === 'aivi-single-add') {
+      const queueInput = this.container?.querySelector(
+        '#fcp6-aivi-queue-input'
+      ) as HTMLTextAreaElement | null;
+      const singleInput = this.container?.querySelector(
+        '#fcp6-aivi-single-url'
+      ) as HTMLInputElement | null;
+      const url = String(singleInput?.value || '').trim();
+      if (!queueInput || !url) return;
+      const lines = String(queueInput.value || '')
+        .split('\n')
+        .map((line) => line.trim())
+        .filter(Boolean);
+      if (!lines.includes(url)) lines.unshift(url);
+      queueInput.value = lines.join('\n');
+      if (singleInput) singleInput.value = '';
+      return;
+    }
+
+    if (action === 'aivi-queue-dedupe') {
+      const queueInput = this.container?.querySelector(
+        '#fcp6-aivi-queue-input'
+      ) as HTMLTextAreaElement | null;
+      if (!queueInput) return;
+      const lines = String(queueInput.value || '')
+        .split('\n')
+        .map((line) => line.trim())
+        .filter(Boolean);
+      queueInput.value = Array.from(new Set(lines)).join('\n');
+      return;
+    }
+
+    if (action === 'aivi-queue-clean') {
+      const queueInput = this.container?.querySelector(
+        '#fcp6-aivi-queue-input'
+      ) as HTMLTextAreaElement | null;
+      if (!queueInput) return;
+      const lines = String(queueInput.value || '')
+        .split('\n')
+        .map((line) => line.trim())
+        .filter(Boolean);
+      queueInput.value = lines
+        .filter((line) =>
+          /^https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=[\w-]{11}[\w=&-]*|youtu\.be\/[\w-]{11}[\w?=&-]*)/i.test(
+            line
+          )
+        )
+        .join('\n');
+      return;
+    }
+
+    if (
+      action === 'aivi-process-start' ||
+      action === 'aivi-process-pause' ||
+      action === 'aivi-process-resume' ||
+      action === 'aivi-process-stop'
+    ) {
+      const actionMap: Record<string, string> = {
+        'aivi-process-start': 'start',
+        'aivi-process-pause': 'pause',
+        'aivi-process-resume': 'resume',
+        'aivi-process-stop': 'stop',
+      };
+      this.safeSendMessage(
+        {
+          type: 'AI_VIDEO_PROCESS_CONTROL',
+          action: actionMap[action],
+        },
+        () => this.refreshAIVideoState()
+      );
+      return;
+    }
+
+    if (action === 'aivi-clear-queue') {
+      this.safeSendMessage({ type: 'AI_VIDEO_CLEAR_QUEUE' }, () => this.refreshAIVideoState());
+      return;
+    }
+
+    if (action === 'aivi-save-preferences') {
+      const reverseOrderInput = this.container?.querySelector(
+        '#fcp6-aivi-reverse-order'
+      ) as HTMLInputElement | null;
+      const segmentDurationInput = this.container?.querySelector(
+        '#fcp6-aivi-segment-duration'
+      ) as HTMLInputElement | null;
+      const processingLevelInput = this.container?.querySelector(
+        '#fcp6-aivi-processing-level'
+      ) as HTMLSelectElement | null;
+      const reverseOrder = !!reverseOrderInput?.checked;
+      const segmentDuration = Math.max(5, Math.min(300, Number(segmentDurationInput?.value || 45)));
+      const processingLevel = String(processingLevelInput?.value || 'ai_studio');
+      this.safeSendMessage(
+        {
+          type: 'AI_VIDEO_SET_PREFERENCES',
+          reverseOrder,
+          segmentDuration,
+          processingLevel,
+        },
+        () => this.refreshAIVideoState()
+      );
+      return;
+    }
+
+    if (action === 'aivi-generate-history') {
+      this.safeSendMessage({ type: 'AI_VIDEO_GENERATE_HISTORY_PROMPT' }, async (response) => {
+        if (!response?.prompt) return;
+        try {
+          await navigator.clipboard.writeText(String(response.prompt));
+        } catch (error) {
+          console.warn('[FuseConnect] Failed to copy history prompt:', error);
+        }
+      });
+      return;
+    }
+
+    if (action === 'aivi-refresh-history') {
+      this.safeSendMessage({ type: 'AI_VIDEO_GET_HISTORY' }, (historyResponse) => {
+        if (!historyResponse?.success || !Array.isArray(historyResponse.reports)) return;
+        this.aiVideoState.history = historyResponse.reports.map((r: any) => ({
+          title: String(r.title || 'Untitled'),
+          url: String(r.url || ''),
+          processedAt: Number(r.processedAt || Date.now()),
+          processingLevel: String(r.processingLevel || 'ai_studio'),
+        }));
+        this.update();
+      });
+      return;
+    }
+
+    if (action === 'aivi-clear-history') {
+      this.safeSendMessage({ type: 'AI_VIDEO_CLEAR_HISTORY' }, () => this.refreshAIVideoState());
+      return;
+    }
+
+    if (
+      action === 'aivi-export-urls' ||
+      action === 'aivi-export-json' ||
+      action === 'aivi-export-reports-md'
+    ) {
+      const format =
+        action === 'aivi-export-json'
+          ? 'json'
+          : action === 'aivi-export-reports-md'
+            ? 'reports-md'
+            : 'urls';
+      this.safeSendMessage({ type: 'AI_VIDEO_EXPORT', format }, async (response) => {
+        if (!response?.content) return;
+        try {
+          await navigator.clipboard.writeText(String(response.content));
+        } catch (error) {
+          console.warn('[FuseConnect] Failed to copy export:', error);
+        }
+      });
+    }
   }
 
   private toggleCurrentChannelPause(): void {
