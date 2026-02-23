@@ -9,21 +9,6 @@ import { ApiError } from './errorHandler';
 export function authenticate(req: Request, res: Response, next: NextFunction): void {
   const token = req.headers.authorization?.split(' ')[1];
 
-  // In development, allow test-token to bypass auth
-  if (
-    (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') &&
-    token === 'test-token'
-  ) {
-    // Add mock user for test-token
-    (req as any).user = {
-      id: 'test-user-id',
-      email: 'test@example.com',
-      roles: ['user'],
-    };
-    next();
-    return;
-  }
-
   if (!token) {
     next(new ApiError(401, 'Unauthorized: No token provided'));
     return;

@@ -127,7 +127,7 @@ const NewAgent: React.FC = () => {
     setSaving(true);
 
     try {
-      const response = await fetch('/api/dashboard/agents', {
+      const response = await fetch('/api/agents', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),

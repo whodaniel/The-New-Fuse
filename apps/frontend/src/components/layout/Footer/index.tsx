@@ -9,10 +9,10 @@ export function Footer() {
                     © {new Date().getFullYear()} The New Fuse. All rights reserved.
                 </p>
                 <nav className="flex space-x-4">
-                    <Link to="/legal/privacy-policy" className="text-sm text-muted-foreground hover:text-foreground">
+                    <Link to="/legal/privacy" className="text-sm text-muted-foreground hover:text-foreground">
                         Privacy Policy
                     </Link>
-                    <Link to="/legal/terms-of-service" className="text-sm text-muted-foreground hover:text-foreground">
+                    <Link to="/legal/terms" className="text-sm text-muted-foreground hover:text-foreground">
                         Terms of Service
                     </Link>
                 </nav>

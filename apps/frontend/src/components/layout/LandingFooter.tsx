@@ -69,18 +69,13 @@ export const LandingFooter = () => {
             <nav aria-label="Legal links">
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link to="/legal/privacy-policy" className="hover:text-foreground transition-colors focus:outline-none focus:underline">
+                  <Link to="/legal/privacy" className="hover:text-foreground transition-colors focus:outline-none focus:underline">
                     Privacy Policy
                   </Link>
                 </li>
                 <li>
-                  <Link to="/legal/terms-of-service" className="hover:text-foreground transition-colors focus:outline-none focus:underline">
+                  <Link to="/legal/terms" className="hover:text-foreground transition-colors focus:outline-none focus:underline">
                     Terms of Service
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/legal/cookies" className="hover:text-foreground transition-colors focus:outline-none focus:underline">
-                    Cookie Policy
                   </Link>
                 </li>
               </ul>

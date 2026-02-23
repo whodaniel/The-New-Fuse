@@ -1,4 +1,4 @@
-import { Activity, AlertTriangle, CheckCircle2, Cpu, RefreshCw, Users, Zap } from 'lucide-react';
+import { Activity, AlertTriangle, Briefcase, CheckCircle2, Cpu, RefreshCw, Users, Zap } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import dashboardService from '../services/dashboard.service';
@@ -132,7 +132,6 @@ export function Dashboard() {
               icon={Activity}
               gradient="orange"
             />
-            import {Briefcase} from 'lucide-react'; // ... other imports
             <StatsCard
               label="Workspaces"
               value={metrics.workspaceCount.value.toString()}

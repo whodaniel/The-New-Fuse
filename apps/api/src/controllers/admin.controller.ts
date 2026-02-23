@@ -123,9 +123,46 @@ export class AdminController {
    */
   @Post('run-script')
   async runScript(@Body('script') script: string) {
+    // SECURITY: Whitelist of allowed scripts to prevent command injection
+    const ALLOWED_SCRIPTS = [
+      'cleanup:temp-files',
+      'db:migrate',
+      'db:migrate:status',
+      'cache:clear',
+      'cache:warmup',
+      'maintenance:enable',
+      'maintenance:disable',
+      'logs:rotate',
+      'backup:create',
+    ] as const;
+
+    if (!script || typeof script !== 'string') {
+      return { success: false, error: 'Invalid script parameter' };
+    }
+
+    // Strict whitelist check - must match exactly
+    if (!ALLOWED_SCRIPTS.includes(script as any)) {
+      return { 
+        success: false, 
+        error: `Script '${script}' is not whitelisted. Allowed scripts: ${ALLOWED_SCRIPTS.join(', ')}` 
+      };
+    }
+
     try {
-      const output = execSync(`pnpm fuse ${script}`, { encoding: 'utf-8' });
-      return { success: true, output };
+      const startTime = Date.now();
+      const output = execSync(`pnpm fuse ${script}`, { 
+        encoding: 'utf-8',
+        timeout: 60000, // 60 second timeout
+        cwd: process.cwd()
+      });
+      const executionTime = Date.now() - startTime;
+      
+      return { 
+        success: true, 
+        output,
+        executedAt: new Date().toISOString(),
+        executionTime
+      };
     } catch (error) {
       return { success: false, error: (error as Error).message };
     }

@@ -113,6 +113,7 @@ const OAuthCallbackPage = lazy(() => import('./pages/auth/OAuthCallback'));
 
 // Landing components
 const LandingRevolutionPage = lazy(() => import('./pages/LandingRevolution'));
+const FeaturesPage = lazy(() => import('./pages/Features'));
 const OnboardingFlowPage = lazy(() => import('./pages/OnboardingFlow'));
 const PricingPage = lazy(() => import('./pages/Pricing'));
 const CommunityHubPage = lazy(() => import('./pages/Community/CommunityHub'));
@@ -926,6 +927,7 @@ export default function ComprehensiveRouter() {
 
               {/* Enhanced Landing Routes */}
               <Route path="/landing" element={<LandingRevolutionPage />} />
+              <Route path="/features" element={<FeaturesPage />} />
               <Route path="/pricing" element={<PricingPage />} />
               <Route path="/community" element={<CommunityHubPage />} />
               <Route path="/support" element={<SupportPage />} />
