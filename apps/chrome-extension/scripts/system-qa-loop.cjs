@@ -33,6 +33,16 @@ function getExtensionServiceWorker(context) {
   );
 }
 
+async function waitForExtensionServiceWorker(context, timeoutMs = 30000) {
+  const startedAt = Date.now();
+  while (Date.now() - startedAt < timeoutMs) {
+    const sw = getExtensionServiceWorker(context);
+    if (sw) return sw;
+    await delay(250);
+  }
+  return null;
+}
+
 async function main() {
   fs.mkdirSync(RUN_DIR, { recursive: true });
   const failures = [];
@@ -692,64 +702,7 @@ async function main() {
       events.tabIds.qwen = qwenTabAfterReload.id;
     }
 
-    // 11) Extension reload while tabs open
-    const beforeReloadState = await runtimeMessage({ type: 'GET_STATE' });
-    await popupPage.evaluate(() => chrome.runtime.reload());
-    await delay(4000);
-    let extensionIdAfterReload = activeExtensionId;
-    let sw2 = getExtensionServiceWorker(context) || null;
-    if (!sw2) {
-      sw2 = await context
-        .waitForEvent('serviceworker', {
-          timeout: 25000,
-          predicate: (sw) => String(sw.url() || '').startsWith('chrome-extension://'),
-        })
-        .catch(() => null);
-    }
-    if (sw2) {
-      extensionIdAfterReload = sw2.url().split('/')[2];
-    }
-    activeExtensionId = extensionIdAfterReload;
-    events.extensionIdAfterReload = extensionIdAfterReload;
-
-    let extensionReloaded = false;
-    let pingAfterReload = null;
-    try {
-      await openPopup(extensionIdAfterReload);
-      pingAfterReload = await runtimeMessage({ type: 'PING' }, 8000);
-      extensionReloaded = !!(pingAfterReload?.pong || pingAfterReload?.success);
-      events.steps.push('popup_reloaded_after_runtime_reload');
-    } catch (e) {
-      events.steps.push(`popup_reload_failed:${safeString(e)}`);
-    }
-    events.pingAfterReload = pingAfterReload;
-    let postReloadNoPhantom = true;
-    if (extensionReloaded) {
-      const tokenAfterReload = `TNF_AFTER_RELOAD_${Date.now()}`;
-      const qwenId = events.tabIds.qwen;
-      await tabMessage(qwenId, {
-        type: 'NEW_MESSAGE',
-        message: {
-          id: `msg-${Date.now()}-8`,
-          from: 'qa-orchestrator',
-          to: 'broadcast',
-          content: tokenAfterReload,
-          channel: red.id,
-          messageType: 'text',
-          metadata: { senderId: 'qa-orchestrator', channel: red.id },
-        },
-      });
-      await delay(2500);
-      const appearsOnGeminiUnexpected = await textExistsOnPage(geminiPage, tokenAfterReload);
-      postReloadNoPhantom = !appearsOnGeminiUnexpected;
-    }
-    assertResult(checks, 'extension_reload_recovery_no_phantom_injection', extensionReloaded && postReloadNoPhantom, {
-      beforeReloadConnection: beforeReloadState?.connectionStatus || null,
-      extensionReloaded,
-      postReloadNoPhantom,
-    });
-
-    // 12) Event log retrieval + clear
+    // 11) Event log retrieval + clear (pre-reload, deterministic transport)
     const logsBeforeClear = await getEventLogs(3000);
     const clearResp = await runtimeMessage({ type: 'CLEAR_EVENT_LOGS' });
     const logsAfterClear = await getEventLogs(3000);
@@ -762,7 +715,7 @@ async function main() {
       hasUsefulCategories,
     });
 
-    // 13) Wake ping policy
+    // 12) Wake ping policy
     const state = await runtimeMessage({ type: 'GET_STATE' });
     const logsFinal = await getEventLogs(4000);
     const wakePingEvents = logsFinal.filter(
@@ -776,7 +729,7 @@ async function main() {
       wakePingEvents: wakePingEvents.length,
     });
 
-    // Required disconnected/connected coverage
+    // Required disconnected/connected coverage (pre-reload)
     const disconnectResp = await runtimeMessage({ type: 'DISCONNECT' });
     const stateAfterDisconnect = await runtimeMessage({ type: 'GET_STATE' });
     const connectResp = await runtimeMessage({ type: 'CONNECT' });
@@ -797,6 +750,77 @@ async function main() {
       disconnectResp,
       stateAfterDisconnect: stateAfterDisconnect?.connectionStatus,
     });
+
+    // 13) Extension reload while tabs open (service-worker transport only)
+    const beforeReloadState = await runtimeMessage({ type: 'GET_STATE' });
+    await popupPage.evaluate(() => chrome.runtime.reload());
+    await delay(4000);
+    const sw2 = await waitForExtensionServiceWorker(context, 30000);
+    let extensionIdAfterReload = activeExtensionId;
+    if (sw2) {
+      extensionIdAfterReload = sw2.url().split('/')[2];
+    }
+    activeExtensionId = extensionIdAfterReload;
+    events.extensionIdAfterReload = extensionIdAfterReload;
+
+    let extensionReloaded = false;
+    let pingAfterReload = null;
+    if (sw2) {
+      pingAfterReload = await sw2
+        .evaluate(
+          ({ timeoutMs }) =>
+            new Promise((resolve) => {
+              const timer = setTimeout(() => resolve({ timeout: true }), timeoutMs);
+              chrome.runtime.sendMessage({ type: 'PING' }, (response) => {
+                clearTimeout(timer);
+                const err = chrome.runtime.lastError;
+                if (err) {
+                  resolve({ error: err.message });
+                  return;
+                }
+                resolve(response || null);
+              });
+            }),
+          { timeoutMs: 8000 }
+        )
+        .catch((e) => ({ error: safeString(e) }));
+      extensionReloaded = !!(pingAfterReload?.pong || pingAfterReload?.success);
+    } else {
+      events.steps.push('extension_sw_unavailable_after_reload');
+    }
+    events.pingAfterReload = pingAfterReload;
+
+    let postReloadNoPhantom = true;
+    if (extensionReloaded) {
+      const tokenAfterReload = `TNF_AFTER_RELOAD_${Date.now()}`;
+      const qwenId = events.tabIds.qwen;
+      const postReloadMsg = await tabMessageViaServiceWorker(qwenId, {
+        type: 'NEW_MESSAGE',
+        message: {
+          id: `msg-${Date.now()}-8`,
+          from: 'qa-orchestrator',
+          to: 'broadcast',
+          content: tokenAfterReload,
+          channel: red.id,
+          messageType: 'text',
+          metadata: { senderId: 'qa-orchestrator', channel: red.id },
+        },
+      });
+      events.postReloadMessageDispatch = postReloadMsg;
+      await delay(2500);
+      const appearsOnGeminiUnexpected = await textExistsOnPage(geminiPage, tokenAfterReload);
+      postReloadNoPhantom = !appearsOnGeminiUnexpected;
+    }
+    assertResult(
+      checks,
+      'extension_reload_recovery_no_phantom_injection',
+      extensionReloaded && postReloadNoPhantom,
+      {
+        beforeReloadConnection: beforeReloadState?.connectionStatus || null,
+        extensionReloaded,
+        postReloadNoPhantom,
+      }
+    );
 
     events.logs.popupConsoleErrors = popupConsole.filter((x) => x.type === 'error');
     events.logs.eventLogSample = await getEventLogs(3000);
