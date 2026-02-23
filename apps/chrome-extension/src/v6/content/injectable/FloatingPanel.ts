@@ -54,6 +54,7 @@ export class EnhancedFloatingPanel {
   private agents: Agent[] = [];
   private channels: FederationChannel[] = [];
   private currentChannel: string | null = null;
+  private pausedChannels: Set<string> = new Set();
   private messages: AgentMessage[] = [];
   private notifications: Notification[] = [];
   private tasks: OrchestrationTask[] = [];
@@ -159,6 +160,9 @@ export class EnhancedFloatingPanel {
       this.channels = response.channels || [];
       if (response.selectedChannel !== undefined) {
         this.currentChannel = response.selectedChannel || null;
+      }
+      if (Array.isArray(response.pausedChannels)) {
+        this.pausedChannels = new Set(response.pausedChannels.map((id: unknown) => String(id)));
       }
 
       // Save Browser Agent ID for loop prevention
@@ -1053,8 +1057,7 @@ export class EnhancedFloatingPanel {
    * Render channel selector bar
    */
   private renderChannelSelector(): string {
-    const currentChannelName =
-      this.channels.find((c) => c.id === this.currentChannel)?.name || 'No channel';
+    const isPaused = !!(this.currentChannel && this.pausedChannels.has(this.currentChannel));
 
     return `
       <div class="fcp6-channel-selector" style="
@@ -1091,6 +1094,15 @@ export class EnhancedFloatingPanel {
         <span style="color: ${this.currentChannel ? '#0f8' : 'rgba(255,255,255,0.3)'}; font-size: 10px;">
           ${this.currentChannel ? '● Syncing' : '○ Local'}
         </span>
+        ${
+          this.currentChannel
+            ? `
+          <button class="fcp6-btn" data-action="toggle-channel-pause" title="${isPaused ? 'Resume channel' : 'Pause channel'}" style="width:auto; padding:4px 8px; font-size:11px; ${isPaused ? 'background:rgba(255,184,0,0.2); color:#FFB800;' : 'background:rgba(255,255,255,0.08);'}">
+            ${isPaused ? '▶ Resume' : '⏸ Pause'}
+          </button>
+        `
+            : ''
+        }
       </div>
     `;
   }
@@ -1629,6 +1641,17 @@ export class EnhancedFloatingPanel {
           <label style="display:block; font-size:11px; margin-bottom:4px; opacity:0.7;">Relay Server URL</label>
           <input type="text" data-setting="relayUrl" value="ws://localhost:3000/ws" class="fcp6-input" style="width:100%; margin-bottom:8px;">
        </div>
+
+      <div class="fcp6-section-title" style="margin-top:16px;">Event Logs</div>
+      <div style="padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+        <div style="display:flex; gap:8px; margin-bottom:8px;">
+          <button class="fcp6-btn" data-action="copy-event-logs" style="flex:1; width:auto;">Copy JSON</button>
+          <button class="fcp6-btn" data-action="clear-event-logs" style="flex:1; width:auto;">Clear</button>
+        </div>
+        <div style="font-size:10px; color:rgba(255,255,255,0.55);">
+          Captures extension message flow and browser tab lifecycle events.
+        </div>
+      </div>
     `;
   }
   private sendMessage(): void {
@@ -1886,7 +1909,18 @@ export class EnhancedFloatingPanel {
       return;
     }
 
-    const name = input.value.trim();
+    const normalizedName = input.value.trim().replace(/\s+/g, ' ');
+    const existing = this.channels.find(
+      (ch) => ch.name.trim().replace(/\s+/g, ' ').toLowerCase() === normalizedName.toLowerCase()
+    );
+    if (existing) {
+      console.warn('[FuseConnect] Duplicate channel name blocked:', normalizedName);
+      input.value = '';
+      this.selectChannel(existing.id);
+      return;
+    }
+
+    const name = normalizedName;
     input.value = ''; // Clear input
 
     console.log('[FuseConnect] Creating channel:', name);
@@ -1901,21 +1935,11 @@ export class EnhancedFloatingPanel {
         if (response?.success || response?.channelId) {
           console.log('[FuseConnect] Channel created successfully:', response.channelId);
           // The channels will be updated via CHANNELS_UPDATE message
+        } else if (response?.alreadyExists && response?.channel?.id) {
+          this.selectChannel(response.channel.id);
         }
       }
     );
-
-    // Optimistically add the channel to local state for immediate feedback
-    const newChannel = {
-      id: `local-${Date.now()}`,
-      name,
-      members: [],
-      isPrivate: false,
-      createdAt: Date.now(),
-    };
-    this.channels.push(newChannel);
-    this.currentChannel = newChannel.id;
-    this.update();
   }
 
   /**
@@ -2299,17 +2323,36 @@ export class EnhancedFloatingPanel {
             console.log('[FuseConnect] Identified self-message');
           }
 
-          // DEDUPE LOCK: Prevent doubled Human input.
-          // Check if we already have a message with this content from ourselves in a short window.
-          // This stops the "Optimistic UI" local push from colliding with the "Relay Roundtrip" back-broadcast.
+          // DEDUPE LOCK: Prevent optimistic local entries + relay roundtrip echoes from rendering twice.
+          const normalizeContent = (value: any) =>
+            String(value || '')
+              .replace(/\s+/g, ' ')
+              .trim();
+          const incomingContent = normalizeContent(msg.content);
+          const incomingTs = typeof msg.timestamp === 'number' ? msg.timestamp : Date.now();
+          const incomingSender =
+            (msg.metadata?.senderId || msg.from || '').toString().trim().toLowerCase() || 'unknown';
+
           const isDuplicate = this.messages.some((m) => {
-            // Match by ID if both have one
             if (msg.id && m.id === msg.id) return true;
-            // Match by content + sender + time window (fallback for optimistic local IDs)
-            const sameContent = m.content === msg.content;
-            const sameSender = m.from === msg.from || (isOwnMessage && m.from === 'You');
-            const withinWindow = Math.abs((m.timestamp || 0) - (msg.timestamp || 0)) < 10000;
-            return sameContent && sameSender && withinWindow;
+
+            const storedContent = normalizeContent(m.content);
+            if (!storedContent || storedContent !== incomingContent) return false;
+
+            const storedSender =
+              (m.metadata?.senderId || m.from || '').toString().trim().toLowerCase() || 'unknown';
+            const sameSender =
+              storedSender === incomingSender ||
+              (isOwnMessage &&
+                (m.from === 'You' ||
+                  m.from === 'You (Fuse)' ||
+                  m.from === this.myAgentId ||
+                  storedSender === (this.myAgentId || '').toLowerCase()));
+            if (!sameSender) return false;
+
+            const storedTs = typeof m.timestamp === 'number' ? m.timestamp : 0;
+            // Some relay messages may omit timestamp; compare against "now" in that case.
+            return Math.abs(storedTs - incomingTs) < 15000 || Date.now() - storedTs < 15000;
           });
 
           if (isDuplicate) {
@@ -2375,6 +2418,16 @@ export class EnhancedFloatingPanel {
         this.currentChannel = message.channelId || null;
         this.update();
         break;
+      case 'CHANNEL_PAUSE_UPDATE':
+        if (Array.isArray(message.pausedChannels)) {
+          this.pausedChannels = new Set(message.pausedChannels.map((id: unknown) => String(id)));
+        } else if (message.channelId) {
+          const channelId = String(message.channelId);
+          if (message.paused) this.pausedChannels.add(channelId);
+          else this.pausedChannels.delete(channelId);
+        }
+        this.update();
+        break;
       case 'NOTIFICATION':
         this.addNotification(message.notification);
         break;
@@ -2417,6 +2470,13 @@ export class EnhancedFloatingPanel {
           connectionStatus: this.connectionStatus,
           currentChannel: this.currentChannel,
         });
+
+        // When relay is connected, this response will come back via NEW_MESSAGE.
+        // Skip local append here to avoid duplicate AI messages.
+        if (this.connectionStatus === 'connected' && this.currentChannel) {
+          console.log('[FuseConnect] Skipping local RESPONSE_COMPLETE append (relay-connected)');
+          break;
+        }
 
         if (message.content) {
           let responseContent =
@@ -2737,6 +2797,9 @@ export class EnhancedFloatingPanel {
       case 'inject-to-chat':
         this.injectToPageChat();
         break;
+      case 'toggle-channel-pause':
+        this.toggleCurrentChannelPause();
+        break;
       case 'accept-task':
         if (element && element.dataset.taskId) {
           const taskId = element.dataset.taskId;
@@ -2795,6 +2858,10 @@ export class EnhancedFloatingPanel {
           this.saveSettings();
         } else if (action === 'reset-settings') {
           this.resetSettings();
+        } else if (action === 'copy-event-logs') {
+          this.copyEventLogs();
+        } else if (action === 'clear-event-logs') {
+          this.clearEventLogs();
         } else if (action === 'submit-create-channel') {
           this.submitCreateChannel();
         }
@@ -2809,6 +2876,65 @@ export class EnhancedFloatingPanel {
     // Persist active tab
     this.saveState();
     this.update();
+  }
+
+  private toggleCurrentChannelPause(): void {
+    if (!this.currentChannel) return;
+    const channelId = this.currentChannel;
+    const isPaused = this.pausedChannels.has(channelId);
+    this.safeSendMessage(
+      {
+        type: isPaused ? 'CHANNEL_RESUME' : 'CHANNEL_PAUSE',
+        channelId,
+      },
+      (response) => {
+        if (!response?.success) {
+          console.warn('[FuseConnect] Failed to toggle channel pause:', response?.error);
+        }
+      }
+    );
+  }
+
+  private copyEventLogs(): void {
+    this.safeSendMessage({ type: 'GET_EVENT_LOGS', limit: 1000 }, async (response) => {
+      if (!response?.success) {
+        console.warn('[FuseConnect] Failed to fetch event logs');
+        return;
+      }
+      const payload = JSON.stringify(response.logs || [], null, 2);
+      try {
+        await navigator.clipboard.writeText(payload);
+        this.addNotification({
+          id: Date.now().toString(),
+          type: 'success',
+          title: 'Event Logs Copied',
+          message: `Copied ${(response.logs || []).length} log entries`,
+          priority: 'normal',
+          timestamp: Date.now(),
+          read: false,
+        });
+      } catch (e) {
+        console.error('[FuseConnect] Failed to copy event logs:', e);
+      }
+    });
+  }
+
+  private clearEventLogs(): void {
+    this.safeSendMessage({ type: 'CLEAR_EVENT_LOGS' }, (response) => {
+      if (response?.success) {
+        this.addNotification({
+          id: Date.now().toString(),
+          type: 'info',
+          title: 'Event Logs Cleared',
+          message: 'Background event log storage has been reset',
+          priority: 'normal',
+          timestamp: Date.now(),
+          read: false,
+        });
+      } else {
+        console.warn('[FuseConnect] Failed to clear event logs:', response?.error);
+      }
+    });
   }
 
   /**

@@ -11,6 +11,10 @@ class FuseConnectPopup {
       agents: [],
       platform: null,
       messages: [],
+      channels: [],
+      joinedChannels: [],
+      selectedChannel: null,
+      agentId: null,
       services: {
         relay: { running: false, port: 3000 },
         backend: { running: false, port: 3000 },
@@ -35,6 +39,8 @@ class FuseConnectPopup {
         showPanel: true,
         debugMode: false,
         allowedSites: [],
+        popupSelectedChannel: null,
+        popupSelectedChannelName: null,
       },
     };
 
@@ -132,6 +138,37 @@ class FuseConnectPopup {
     // Open Panel on current page
     document.getElementById('open-panel-btn')?.addEventListener('click', () => {
       this.openPanelOnPage();
+    });
+
+    // Central chat controls
+    document.getElementById('central-refresh-channels')?.addEventListener('click', () => {
+      chrome.runtime.sendMessage({ type: 'REQUEST_SYNC' });
+      this.showToast('Channel sync requested');
+    });
+
+    document.getElementById('central-channel-select')?.addEventListener('change', (e) => {
+      const channelId = e.target.value || null;
+      this.setSelectedChannel(channelId);
+    });
+
+    document.getElementById('central-create-channel')?.addEventListener('click', () => {
+      this.createChannelFromPopup();
+    });
+
+    document.getElementById('central-new-channel')?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        this.createChannelFromPopup();
+      }
+    });
+
+    document.getElementById('central-send-message')?.addEventListener('click', () => {
+      this.sendCentralMessage();
+    });
+
+    document.getElementById('central-chat-input')?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        this.sendCentralMessage();
+      }
     });
 
     // Refresh services
@@ -829,6 +866,14 @@ class FuseConnectPopup {
         if (response) {
           this.state.connectionStatus = response.connectionStatus || 'disconnected';
           this.state.agents = response.agents || [];
+          this.state.channels = response.channels || [];
+          this.state.joinedChannels = response.joinedChannels || [];
+          this.state.agentId = response.agentId || null;
+
+          const responseSelected = response.selectedChannel || null;
+          const settingsSelected = this.state.settings.popupSelectedChannel || null;
+          this.state.selectedChannel = responseSelected || settingsSelected || null;
+
           if (typeof response.autoMonitor === 'boolean')
             this.state.settings.autoMonitor = response.autoMonitor;
           if (typeof response.autoMasterClock === 'boolean')
@@ -869,6 +914,10 @@ class FuseConnectPopup {
           const autoWakePing = document.getElementById('auto-wake-ping');
           if (autoWakePing) autoWakePing.checked = !!this.state.settings.autoWakePing;
 
+          if (!this.state.selectedChannel && this.state.settings.popupSelectedChannel) {
+            this.state.selectedChannel = this.state.settings.popupSelectedChannel;
+          }
+
           this.updateManagedSitesList();
         }
         resolve();
@@ -908,10 +957,29 @@ class FuseConnectPopup {
 
         case 'NEW_MESSAGE':
           this.state.messages.unshift(message.message);
-          if (this.state.messages.length > 20) {
-            this.state.messages = this.state.messages.slice(0, 20);
+          if (this.state.messages.length > 120) {
+            this.state.messages = this.state.messages.slice(0, 120);
           }
           this.updateMessageList();
+          this.updateCentralControlPanel();
+          break;
+
+        case 'CHANNELS_UPDATE':
+          this.state.channels = message.channels || [];
+          this.reconcileSelectedChannel();
+          this.updateCentralControlPanel();
+          break;
+
+        case 'JOINED_CHANNELS_UPDATE':
+          this.state.joinedChannels = message.joinedChannels || [];
+          this.updateCentralControlPanel();
+          break;
+
+        case 'CHANNEL_SELECTED':
+          if (!this.state.selectedChannel && message.channelId) {
+            this.state.selectedChannel = message.channelId;
+            this.updateCentralControlPanel();
+          }
           break;
       }
     });
@@ -937,6 +1005,7 @@ class FuseConnectPopup {
     this.updateNativeHostIndicator();
     this.updateAutonomyStatusUI();
     this.updateQuickStartHelper();
+    this.updateCentralControlPanel();
   }
 
   updateQuickStartHelper() {
@@ -1155,6 +1224,212 @@ class FuseConnectPopup {
     `
       )
       .join('');
+  }
+
+  setSelectedChannel(channelId) {
+    this.state.selectedChannel = channelId;
+    this.state.settings.popupSelectedChannel = channelId;
+    const selected = this.state.channels.find((ch) => ch.id === channelId);
+    if (selected?.name) {
+      this.state.settings.popupSelectedChannelName = selected.name;
+    }
+    this.saveSettings();
+
+    if (channelId) {
+      chrome.runtime.sendMessage({
+        type: 'CHANNEL_JOIN',
+        channelId,
+      });
+    }
+
+    this.updateCentralControlPanel();
+  }
+
+  createChannelFromPopup() {
+    const input = document.getElementById('central-new-channel');
+    if (!input) return;
+
+    const normalizedName = input.value.trim().replace(/\s+/g, ' ');
+    if (!normalizedName) return;
+
+    const duplicate = this.state.channels.find(
+      (ch) => ch.name?.trim().replace(/\s+/g, ' ').toLowerCase() === normalizedName.toLowerCase()
+    );
+    if (duplicate) {
+      this.showToast(`Channel "${duplicate.name}" already exists`);
+      this.setSelectedChannel(duplicate.id);
+      input.value = '';
+      return;
+    }
+
+    this.state.settings.popupSelectedChannelName = normalizedName;
+    this.saveSettings();
+
+    chrome.runtime.sendMessage(
+      {
+        type: 'CHANNEL_CREATE',
+        name: normalizedName,
+      },
+      (response) => {
+        if (response?.success && response.channel?.id) {
+          this.showToast(`Channel "${normalizedName}" created`);
+          this.setSelectedChannel(response.channel.id);
+        } else if (response?.alreadyExists && response.channel?.id) {
+          this.showToast(`Channel "${response.channel.name}" already exists`);
+          this.setSelectedChannel(response.channel.id);
+        } else {
+          this.showToast(response?.error || 'Failed to create channel');
+        }
+      }
+    );
+
+    input.value = '';
+  }
+
+  normalizeChannelName(name) {
+    return String(name || '')
+      .trim()
+      .replace(/\s+/g, ' ')
+      .toLowerCase();
+  }
+
+  reconcileSelectedChannel() {
+    const selectedId = this.state.selectedChannel;
+    if (selectedId && this.state.channels.some((ch) => ch.id === selectedId)) {
+      return;
+    }
+
+    const preferredName = this.state.settings.popupSelectedChannelName;
+    if (!preferredName) return;
+
+    const normalized = this.normalizeChannelName(preferredName);
+    const byName = this.state.channels.find(
+      (ch) => this.normalizeChannelName(ch.name) === normalized
+    );
+
+    if (byName?.id) {
+      this.state.selectedChannel = byName.id;
+      this.state.settings.popupSelectedChannel = byName.id;
+      this.saveSettings();
+    }
+  }
+
+  sendCentralMessage() {
+    const input = document.getElementById('central-chat-input');
+    const messageText = (input?.value || '').trim();
+    const channelId = this.state.selectedChannel;
+
+    if (!channelId) {
+      this.showToast('Select a channel first');
+      return;
+    }
+    if (!messageText) return;
+
+    chrome.runtime.sendMessage(
+      {
+        type: 'BROADCAST_MESSAGE',
+        channel: channelId,
+        content: messageText,
+        senderId: this.state.agentId || undefined,
+        metadata: {
+          senderId: this.state.agentId || undefined,
+          origin: 'popup-central-control',
+        },
+      },
+      (response) => {
+        if (response?.success) {
+          this.showToast('Message sent');
+        } else {
+          this.showToast(response?.error || 'Failed to send message');
+        }
+      }
+    );
+
+    input.value = '';
+  }
+
+  getChannelName(channelId) {
+    const found = this.state.channels.find((ch) => ch.id === channelId);
+    return found?.name || channelId || 'No channel';
+  }
+
+  updateCentralControlPanel() {
+    const channelSelect = document.getElementById('central-channel-select');
+    const subtitle = document.getElementById('central-chat-subtitle');
+    const stream = document.getElementById('central-chat-stream');
+
+    const channels = Array.isArray(this.state.channels) ? this.state.channels : [];
+    if (channelSelect) {
+      const options = ['<option value="">Select channel...</option>']
+        .concat(
+          channels.map(
+            (ch) =>
+              `<option value="${ch.id}" ${ch.id === this.state.selectedChannel ? 'selected' : ''}>${ch.name}</option>`
+          )
+        )
+        .join('');
+      channelSelect.innerHTML = options;
+      if (this.state.selectedChannel) {
+        channelSelect.value = this.state.selectedChannel;
+      }
+    }
+
+    if (subtitle) {
+      subtitle.textContent = this.state.selectedChannel
+        ? `Channel: ${this.getChannelName(this.state.selectedChannel)}`
+        : 'No channel selected';
+    }
+
+    if (!stream) return;
+
+    const selectedChannel = this.state.selectedChannel;
+    if (!selectedChannel) {
+      stream.innerHTML = `
+        <div class="empty-state small">
+          <p>Select a channel to view stream</p>
+        </div>
+      `;
+      return;
+    }
+
+    const filtered = this.state.messages
+      .filter((msg) => msg?.channel === selectedChannel)
+      .slice(0, 25)
+      .reverse();
+
+    if (filtered.length === 0) {
+      stream.innerHTML = `
+        <div class="empty-state small">
+          <p>No messages in ${this.getChannelName(selectedChannel)}</p>
+        </div>
+      `;
+      return;
+    }
+
+    stream.innerHTML = filtered
+      .map(
+        (msg) => `
+        <div class="central-chat-message">
+          <div class="central-chat-message-header">
+            <span class="central-chat-from">${msg.from || 'Unknown'}</span>
+            <span class="central-chat-meta">${this.formatTime(msg.timestamp)}</span>
+          </div>
+          <div class="central-chat-content">${this.escapeHtml(this.truncate(msg.content || '', 500))}</div>
+        </div>
+      `
+      )
+      .join('');
+
+    stream.scrollTop = stream.scrollHeight;
+  }
+
+  escapeHtml(text) {
+    return String(text || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 
   showDirectMessagePrompt(agentId) {

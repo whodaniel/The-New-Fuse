@@ -210,3 +210,8 @@ telemetry-id
 # Configuration files with secrets
 config.json
 **/config.json
+
+# Chrome extension testing and outputs
+apps/chrome-extension/test_runs/
+apps/chrome-extension/output/
+apps/chrome-extension/dist*

@@ -113,6 +113,46 @@
               <span class="stat-label">Uptime</span>
             </div>
           </div>
+
+          <div class="central-chat-card">
+            <div class="central-chat-header">
+              <h3 class="section-title">Central Channel Control</h3>
+              <span class="central-chat-subtitle" id="central-chat-subtitle">No channel selected</span>
+            </div>
+
+            <div class="central-chat-toolbar">
+              <select id="central-channel-select" class="central-select">
+                <option value="">Select channel...</option>
+              </select>
+              <button class="btn-secondary central-btn" id="central-refresh-channels">Refresh</button>
+            </div>
+
+            <div class="central-chat-create-row">
+              <input
+                id="central-new-channel"
+                class="central-input"
+                type="text"
+                placeholder="Create channel..."
+              />
+              <button class="btn-secondary central-btn" id="central-create-channel">Create</button>
+            </div>
+
+            <div class="central-chat-stream" id="central-chat-stream">
+              <div class="empty-state small">
+                <p>No channel messages yet</p>
+              </div>
+            </div>
+
+            <div class="central-chat-compose">
+              <input
+                id="central-chat-input"
+                class="central-input"
+                type="text"
+                placeholder="Send to selected channel..."
+              />
+              <button class="btn-primary central-send-btn" id="central-send-message">Send</button>
+            </div>
+          </div>
         </section>
 
         <!-- Network Tab (merged with Agents) -->

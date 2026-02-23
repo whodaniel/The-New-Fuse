@@ -43,6 +43,7 @@ class SimpleChatBridge {
   private cachedElements: ChatElements | null = null;
   private cacheValidUntil: number = 0;
   private readonly CACHE_DURATION = 10000; // 10 seconds
+  private lastSentText = '';
 
   // Supported AI chat platforms for element detection logging
   // NOTE: Only include actual AI chat interfaces - thenewfuse.com is NOT a chat interface
@@ -62,6 +63,25 @@ class SimpleChatBridge {
   ];
 
   private customSites: string[] = [];
+
+  /**
+   * Guard against matching Fuse extension UI elements while scanning the page.
+   * We only want host-page chat inputs/buttons, not our own floating panel controls.
+   */
+  private isExtensionUiElement(el: Element | null): boolean {
+    if (!el) return false;
+    return !!el.closest(
+      [
+        '#fuse-connect-panel-v7',
+        '#fuse-connect-panel',
+        '#fuse-panel-minimized',
+        '[data-testid="fuse-connect-panel"]',
+        '[data-testid="fuse-panel-content"]',
+        '.fcp6-panel',
+        '.fcp6-input-row',
+      ].join(', ')
+    );
+  }
 
   /**
    * Check if current page is a supported chat platform
@@ -201,16 +221,35 @@ class SimpleChatBridge {
     // Enable debug mode via console: window.__FUSE_DEBUG_SELECTORS = true
     const DEBUG = (window as any).__FUSE_DEBUG_SELECTORS || false;
 
-    // Avoid noisy probing on non-chat pages (e.g., thenewfuse.com auth pages).
-    if (!this.isSupportedPlatform() && !DEBUG) {
-      const unsupportedResult = { input: null, sendButton: null, isReady: false };
-      this.cachedElements = unsupportedResult;
-      this.cacheValidUntil = now + 30000;
-      return unsupportedResult;
-    }
+    // IMPORTANT: Always attempt generic detection, including unknown sites.
+    // We only use support status to tune logging verbosity, not to disable detection.
+    const isSupportedSite = this.isSupportedPlatform();
+
+    const hostname = window.location.hostname.toLowerCase();
+    const isQwenHost = hostname === 'chat.qwen.ai' || hostname.endsWith('.qwen.ai');
 
     // Platform-specific selectors (most reliable first)
     const inputSelectors = [
+      // Qwen-specific (activate when on qwen host)
+      ...(isQwenHost
+        ? [
+            'textarea[data-testid*="chat" i]',
+            'textarea[data-testid*="input" i]',
+            'textarea[data-testid*="compose" i]',
+            'textarea[data-testid*="prompt" i]',
+            'textarea[placeholder*="Send" i]',
+            'textarea[placeholder*="message" i]',
+            'textarea[aria-label*="chat" i]',
+            'textarea[aria-label*="message" i]',
+            'form textarea',
+            'main textarea',
+            'textarea',
+            'div[contenteditable="true"][role="textbox"]',
+            'div[contenteditable="true"][data-testid*="input" i]',
+            'div[role="textbox"][contenteditable="true"]',
+          ]
+        : []),
+
       // The New Fuse (Custom App) - High Priority
       'input[placeholder="Type a message..."]',
       'input[placeholder="Type a message..."][type="text"]',
@@ -257,12 +296,25 @@ class SimpleChatBridge {
       'div[contenteditable="true"][data-placeholder]',
       'div[contenteditable="true"]:not([role="button"])',
       'textarea[placeholder*="Ask" i]',
+      'form textarea',
+      'main textarea',
+      'textarea',
       // Ultra-broad fallback (use with caution)
       'textarea[contenteditable="true"]',
       'div.textarea[contenteditable="true"]',
     ];
 
     const sendButtonSelectors = [
+      // Qwen-specific (activate when on qwen host)
+      ...(isQwenHost
+        ? [
+            'button[data-testid*="send" i]',
+            'button[aria-label*="Send" i]',
+            'button[title*="Send" i]',
+            'form button[type="submit"]',
+          ]
+        : []),
+
       // The New Fuse (Custom App) - High Priority
       'button:has(svg path[d="M5 12h14M12 5l7 7-7 7"])', // Exact path match
       'button:has(svg[stroke="currentColor"])', // Generic SVG button match for our app
@@ -333,11 +385,15 @@ class SimpleChatBridge {
     // First try: visible elements only
     for (const selector of inputSelectors) {
       try {
-        const el = document.querySelector(selector) as HTMLElement | null;
-        if (el && this.isVisible(el)) {
-          input = el;
-          break;
+        const candidates = this.queryAllIncludingShadow(selector);
+        for (const el of candidates) {
+          if (this.isExtensionUiElement(el)) continue;
+          if (this.isVisible(el)) {
+            input = el;
+            break;
+          }
         }
+        if (input) break;
       } catch (e) {
         // Invalid selector, skip
       }
@@ -347,8 +403,9 @@ class SimpleChatBridge {
     if (!input) {
       for (const selector of inputSelectors) {
         try {
-          const el = document.querySelector(selector) as HTMLElement | null;
-          if (el) {
+          const candidates = this.queryAllIncludingShadow(selector);
+          for (const el of candidates) {
+            if (this.isExtensionUiElement(el)) continue;
             input = el;
             if (DEBUG) {
               console.log(
@@ -358,6 +415,7 @@ class SimpleChatBridge {
             }
             break;
           }
+          if (input) break;
         } catch (e) {
           // Invalid selector, skip
         }
@@ -369,11 +427,15 @@ class SimpleChatBridge {
 
     for (const selector of sendButtonSelectors) {
       try {
-        const el = document.querySelector(selector) as HTMLElement | null;
-        if (el && this.isVisible(el)) {
-          sendButton = el;
-          break;
+        const candidates = this.queryAllIncludingShadow(selector);
+        for (const el of candidates) {
+          if (this.isExtensionUiElement(el)) continue;
+          if (this.isVisible(el)) {
+            sendButton = el;
+            break;
+          }
         }
+        if (sendButton) break;
       } catch (e) {
         // Invalid selector, skip
       }
@@ -383,8 +445,9 @@ class SimpleChatBridge {
     if (!sendButton) {
       for (const selector of sendButtonSelectors) {
         try {
-          const el = document.querySelector(selector) as HTMLElement | null;
-          if (el) {
+          const candidates = this.queryAllIncludingShadow(selector);
+          for (const el of candidates) {
+            if (this.isExtensionUiElement(el)) continue;
             sendButton = el;
             if (DEBUG) {
               console.log(
@@ -394,8 +457,21 @@ class SimpleChatBridge {
             }
             break;
           }
+          if (sendButton) break;
         } catch (e) {
           // Invalid selector, skip
+        }
+      }
+    }
+
+    // Non-debug fallback: accept any visible textarea outside extension UI.
+    if (!input) {
+      const allTextareas = this.queryAllIncludingShadow('textarea');
+      for (const el of allTextareas) {
+        if (this.isExtensionUiElement(el)) continue;
+        if (this.isVisible(el) && !(el as HTMLTextAreaElement).disabled) {
+          input = el;
+          break;
         }
       }
     }
@@ -406,6 +482,7 @@ class SimpleChatBridge {
       console.warn('[SimpleChatBridge] Ultra fallback: Looking for ANY contenteditable element...');
       const allEditable = Array.from(document.querySelectorAll('[contenteditable="true"]'));
       for (const el of allEditable) {
+        if (this.isExtensionUiElement(el)) continue;
         if (this.isVisible(el as HTMLElement)) {
           input = el as HTMLElement;
           console.warn('[SimpleChatBridge] Ultra fallback input found:', {
@@ -416,12 +493,26 @@ class SimpleChatBridge {
           break;
         }
       }
+
+      if (!input) {
+        console.warn('[SimpleChatBridge] Ultra fallback: Looking for ANY visible textarea...');
+        const allTextareas = Array.from(document.querySelectorAll('textarea'));
+        for (const el of allTextareas) {
+          if (this.isExtensionUiElement(el)) continue;
+          if (this.isVisible(el as HTMLElement) && !(el as HTMLTextAreaElement).disabled) {
+            input = el as HTMLElement;
+            console.warn('[SimpleChatBridge] Ultra fallback textarea found');
+            break;
+          }
+        }
+      }
     }
 
     if (!sendButton && DEBUG) {
       console.warn('[SimpleChatBridge] Ultra fallback: Looking for ANY button...');
       const allButtons = Array.from(document.querySelectorAll('button'));
       for (const btn of allButtons) {
+        if (this.isExtensionUiElement(btn)) continue;
         const ariaLabel = btn.getAttribute('aria-label')?.toLowerCase() || '';
         const title = btn.getAttribute('title')?.toLowerCase() || '';
         if ((ariaLabel.includes('send') || title.includes('send')) && this.isVisible(btn)) {
@@ -482,8 +573,6 @@ class SimpleChatBridge {
       if (!isReady) {
         // Only log on supported AI chat platforms AND when DEBUG is enabled
         // This prevents confusing users on non-chat sites
-        const isSupportedSite = this.isSupportedPlatform();
-
         if (stateChanged && isSupportedSite && DEBUG) {
           // Add platform info to help debugging
           logData.isKnownPlatform = isSupportedSite;
@@ -519,6 +608,36 @@ class SimpleChatBridge {
     }
 
     return result;
+  }
+
+  private queryAllIncludingShadow(selector: string): HTMLElement[] {
+    const results: HTMLElement[] = [];
+    const seen = new Set<Element>();
+
+    const collect = (root: ParentNode): void => {
+      const matches = root.querySelectorAll(selector);
+      for (const node of matches) {
+        if (seen.has(node)) continue;
+        seen.add(node);
+        if (node instanceof HTMLElement) {
+          results.push(node);
+        }
+      }
+
+      const allInRoot = root.querySelectorAll('*');
+      for (const node of allInRoot) {
+        if (node instanceof HTMLElement && node.shadowRoot) {
+          collect(node.shadowRoot);
+        }
+      }
+    };
+
+    try {
+      collect(document);
+    } catch {
+      // Ignore invalid selector/root traversal issues and return partial results.
+    }
+    return results;
   }
 
   /**
@@ -565,6 +684,16 @@ class SimpleChatBridge {
    * Count model responses (for detecting new responses)
    */
   countModelResponses(): number {
+    // Qwen-specific assistant message count
+    if (this.isQwenHost()) {
+      const strictNodes = this.getQwenResponseNodes(false);
+      if (strictNodes.length > 0) return strictNodes.length;
+
+      // If strict assistant-role matching fails on current Qwen DOM, use relaxed candidates.
+      const relaxedNodes = this.getQwenResponseNodes(true);
+      if (relaxedNodes.length > 0) return relaxedNodes.length;
+    }
+
     // Primary path for Gemini-style UIs
     const modelResponses = document.querySelectorAll('model-response').length;
     if (modelResponses > 0) return modelResponses;
@@ -596,26 +725,23 @@ class SimpleChatBridge {
    * Get latest response text
    */
   getLatestResponse(): string | null {
-    const cleanText = (node: Element | null): string | null => {
-      if (!node) return null;
-      const clone = node.cloneNode(true) as HTMLElement;
-      clone
-        .querySelectorAll('button, [role="button"], .chip, [class*="action"], .chat-compose')
-        .forEach((el) => el.remove());
-      const text = (clone.textContent || '').replace(/\s+/g, ' ').trim();
-      if (!text) return null;
-      // Avoid false positives like lone branding emoji or tiny fragments
-      if (text.length < 8) return null;
-      return text;
-    };
-
     // Primary path for Gemini-style UIs
     const responses = document.querySelectorAll('model-response');
     if (responses.length > 0) {
       const lastResponse = responses[responses.length - 1];
       const markdown = lastResponse.querySelector('.markdown');
-      const txt = cleanText(markdown || lastResponse);
+      const txt = this.extractCleanText(markdown || lastResponse);
       if (txt) return txt;
+    }
+
+    // Qwen fallback: assistant-tagged message nodes.
+    if (this.isQwenHost()) {
+      const strict = this.getLatestQwenResponse(false);
+      if (strict) return strict;
+
+      // Relaxed fallback for guest/new Qwen layouts where assistant role attrs are absent.
+      const relaxed = this.getLatestQwenResponse(true);
+      if (relaxed) return relaxed;
     }
 
     // OpenClaw chat UI fallback: only inspect chat-thread scoped entries
@@ -623,7 +749,7 @@ class SimpleChatBridge {
     if (openClawThread) {
       const candidates = Array.from(openClawThread.querySelectorAll(':scope > *'));
       for (let i = candidates.length - 1; i >= 0; i--) {
-        const text = cleanText(candidates[i]);
+        const text = this.extractCleanText(candidates[i]);
         if (!text) continue;
         // Skip obvious non-reply/system status text
         const low = text.toLowerCase();
@@ -648,7 +774,7 @@ class SimpleChatBridge {
     if (perplexityResponses.length > 0) {
       // Get the last one
       const last = perplexityResponses[perplexityResponses.length - 1];
-      const text = cleanText(last);
+      const text = this.extractCleanText(last);
       // Perplexity often has "Sources" or "Related" sections at the bottom, we might need to be careful
       // But usually 'prose' contains the main answer.
       if (text) return text;
@@ -657,7 +783,7 @@ class SimpleChatBridge {
     // Narrow generic fallback to assistant-role only
     const generic = document.querySelectorAll('[data-message-author-role="assistant"]');
     if (generic.length > 0) {
-      return cleanText(generic[generic.length - 1]);
+      return this.extractCleanText(generic[generic.length - 1]);
     }
 
     return null;
@@ -669,14 +795,39 @@ class SimpleChatBridge {
   isStreaming(): boolean {
     if (this._sendingGuard) return true; // Force streaming state if we recently sent a message
 
+    // Qwen can keep generic "loading/thinking" classes mounted even after completion.
+    // Use stricter indicators there to avoid permanent streaming=true.
+    if (this.isQwenHost()) {
+      const qwenStreamingIndicators = [
+        '[data-testid*="stop" i]',
+        'button[aria-label*="Stop generating" i]',
+        'button[aria-label*="Stop response" i]',
+        'button[aria-label*="Stop" i]',
+        'button[title*="Stop" i]',
+      ];
+
+      for (const selector of qwenStreamingIndicators) {
+        const matches = this.queryAllIncludingShadow(selector);
+        for (const el of matches) {
+          if (this.isExtensionUiElement(el)) continue;
+          if (this.isVisible(el)) return true;
+        }
+      }
+      return false;
+    }
+
     const streamingIndicators = [
       'span[class*="cursor"][class*="blink"]',
       '[class*="thinking"]',
       '[class*="loading-spinner"]',
       '[class*="generating"]',
+      '[data-testid*="generat" i]',
+      '[data-testid*="typing" i]',
       'button[aria-label*="Stop response"]',
       'button[aria-label*="Stop generating"]',
       '[data-testid*="stop-button"]',
+      'button[aria-label*="Stop" i]',
+      'button[title*="Stop" i]',
     ];
 
     for (const selector of streamingIndicators) {
@@ -690,9 +841,20 @@ class SimpleChatBridge {
    * Send a message to the AI - Enhanced with button re-fetch and robust clicking
    */
   async sendMessage(text: string): Promise<boolean> {
-    const initialElements = this.findElements();
+    this.lastSentText = text.trim();
+    let initialElements = this.findElements();
 
-    if (!initialElements.isReady || !initialElements.input) {
+    if (!initialElements.input) {
+      const maxWaitMs = 4000;
+      const intervalMs = 250;
+      const start = Date.now();
+      while (!initialElements.input && Date.now() - start < maxWaitMs) {
+        await this.delay(intervalMs);
+        initialElements = this.findElements();
+      }
+    }
+
+    if (!initialElements.input) {
       console.error('[SimpleChatBridge] Chat elements not ready');
       this.callbacks.onError?.('Chat elements not found');
       return false;
@@ -768,8 +930,8 @@ class SimpleChatBridge {
         }
       } else {
         // Textarea/Input handling
-        // Reverting to stable v5 logic: direct value + input event
-        (input as HTMLTextAreaElement).value = text;
+        // Use native setter for React-controlled inputs (ChatGPT, Perplexity, etc.)
+        setNativeValue(input, text);
         input.dispatchEvent(
           new InputEvent('input', {
             bubbles: true,
@@ -796,25 +958,17 @@ class SimpleChatBridge {
         sendButton = this.findElements().sendButton;
       }
 
-      if (!sendButton) {
-        console.error('[SimpleChatBridge] Send button still not found');
-        this.callbacks.onError?.('Send button not found');
-        return false;
-      }
-
-      // Wait for button to be enabled (check disabled attribute)
-      let attempts = 0;
-      while (sendButton.hasAttribute('disabled') && attempts < 10) {
-        await this.delay(100);
-        sendButton = this.findElements().sendButton;
-        if (!sendButton) break;
-        attempts++;
-      }
-
-      if (!sendButton || sendButton.hasAttribute('disabled')) {
-        console.error('[SimpleChatBridge] Send button is disabled');
-        this.callbacks.onError?.('Send button is disabled');
-        return false;
+      if (sendButton) {
+        // Wait for button to be enabled (check disabled attribute)
+        let attempts = 0;
+        while (sendButton.hasAttribute('disabled') && attempts < 10) {
+          await this.delay(100);
+          sendButton = this.findElements().sendButton;
+          if (!sendButton) break;
+          attempts++;
+        }
+      } else {
+        console.warn('[SimpleChatBridge] Send button not found; attempting Enter-only submission');
       }
 
       // Count responses before sending
@@ -837,18 +991,27 @@ class SimpleChatBridge {
       };
 
       // Method 1: Simulate Enter key press on the input (most reliable for Gemini)
-      const enterEvent = new KeyboardEvent('keydown', {
+      const enterKeyInit = {
         key: 'Enter',
         code: 'Enter',
         keyCode: 13,
         which: 13,
         bubbles: true,
         cancelable: true,
-      });
-      input.dispatchEvent(enterEvent);
-      console.log('[SimpleChatBridge] Dispatched Enter keydown on input');
+      };
+      input.dispatchEvent(new KeyboardEvent('keydown', enterKeyInit));
+      input.dispatchEvent(new KeyboardEvent('keypress', enterKeyInit));
+      input.dispatchEvent(new KeyboardEvent('keyup', enterKeyInit));
+      console.log('[SimpleChatBridge] Dispatched Enter key sequence on input');
 
-      console.log('[SimpleChatBridge] Dispatched Enter keydown on input');
+      // Some textarea-based UIs submit only on form submit handlers.
+      if (!isContentEditable) {
+        const form = input.closest('form');
+        if (form) {
+          form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+          console.log('[SimpleChatBridge] Dispatched form submit fallback');
+        }
+      }
 
       // Wait and check if it worked - INCREASED DELAY to prevent double-sending
       await this.delay(500);
@@ -926,11 +1089,15 @@ class SimpleChatBridge {
     this.isWaitingForResponse = true;
     let stableCount = 0;
     let lastContent = '';
+    let lastChangeAt = Date.now();
     const initialContent = this.getLatestResponse() || '';
 
     this.responseCheckInterval = window.setInterval(() => {
       const currentResponseCount = this.countModelResponses();
-      const content = this.getLatestResponse();
+      let content = this.getLatestResponse();
+      if (!content && this.isQwenHost()) {
+        content = this.getLatestQwenResponse(true);
+      }
 
       // Check if a new response appeared OR existing latest response content changed
       const hasNewResponse = currentResponseCount > responsesBefore;
@@ -953,15 +1120,18 @@ class SimpleChatBridge {
         if (content || hasMedia) {
           const currentContentSignature = `${content || ''}-${hasMedia}`;
 
-          if (currentContentSignature !== lastContent || streaming) {
-            // Still streaming or content changed
+          if (currentContentSignature !== lastContent) {
+            // Content changed
             stableCount = 0;
             lastContent = currentContentSignature;
+            lastChangeAt = Date.now();
           } else {
             // Content is stable
             stableCount++;
-            if (stableCount >= 3) {
-              // Increased from 2 to 3 for more stability
+            const streamStalled = streaming && Date.now() - lastChangeAt > 12000;
+            if (stableCount >= 3 && (!streaming || streamStalled)) {
+              // If streaming appears stuck but content has been stable for long enough,
+              // finalize anyway (Qwen occasionally leaves stop indicators mounted).
               this.stopWatching();
 
               // For media responses, create a placeholder message
@@ -988,7 +1158,7 @@ class SimpleChatBridge {
         this.stopWatching();
 
         // Even on timeout, try to get whatever response is there
-        const finalContent = this.getLatestResponse();
+        const finalContent = this.getLatestResponse() || this.getLatestQwenResponse(true);
         if (finalContent && finalContent !== this.lastResponseText) {
           console.log(
             '[SimpleChatBridge] Captured response on timeout:',
@@ -1061,6 +1231,135 @@ class SimpleChatBridge {
    */
   private delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  private extractCleanText(node: Element | null): string | null {
+    if (!node) return null;
+    const clone = node.cloneNode(true) as HTMLElement;
+    clone
+      .querySelectorAll(
+        'button, [role="button"], .chip, [class*="action"], .chat-compose, textarea, input'
+      )
+      .forEach((el) => el.remove());
+    const text = (clone.textContent || '').replace(/\s+/g, ' ').trim();
+    if (!text) return null;
+    if (text.length < 8) return null;
+    return text;
+  }
+
+  private getQwenResponseNodes(relaxed: boolean): HTMLElement[] {
+    const strictSelectors = [
+      '[data-message-author-role="assistant"]',
+      '[data-role="assistant"]',
+      '[data-author-role="assistant"]',
+      '[data-testid*="assistant" i]',
+      '[class*="assistant-message" i]',
+      '[class*="assistant" i]',
+      '[class*="bot" i]',
+    ];
+
+    const relaxedSelectors = [
+      '[data-testid*="message" i]',
+      '[data-testid*="chat-message" i]',
+      '[class*="message-content" i]',
+      '[class*="markdown" i]',
+      '[class*="chat-message" i]',
+      '[role="article"]',
+      'article',
+      'main p',
+    ];
+
+    const selectors = relaxed ? [...strictSelectors, ...relaxedSelectors] : strictSelectors;
+    const candidates: HTMLElement[] = [];
+    const seen = new Set<HTMLElement>();
+    for (const selector of selectors) {
+      for (const node of this.queryAllIncludingShadow(selector)) {
+        if (seen.has(node)) continue;
+        seen.add(node);
+        candidates.push(node);
+      }
+    }
+
+    const filtered: HTMLElement[] = [];
+    for (const node of candidates) {
+      if (this.isExtensionUiElement(node)) continue;
+      if (!this.isVisible(node)) continue;
+      if (this.isLikelyUserMessageNode(node)) continue;
+      if (this.isLikelyNonConversationNode(node)) continue;
+
+      const text = this.extractCleanText(node);
+      if (!text) continue;
+      filtered.push(node);
+    }
+
+    // Deduplicate identical text blocks, keeping the last DOM occurrence.
+    const bySignature = new Map<string, HTMLElement>();
+    for (const node of filtered) {
+      const text = this.extractCleanText(node) || '';
+      const signature = `${text.slice(0, 240)}|${text.length}`;
+      bySignature.set(signature, node);
+    }
+
+    return Array.from(bySignature.values());
+  }
+
+  private getLatestQwenResponse(relaxed: boolean): string | null {
+    const nodes = this.getQwenResponseNodes(relaxed);
+    for (let i = nodes.length - 1; i >= 0; i--) {
+      const text = this.extractCleanText(nodes[i]);
+      if (!text) continue;
+      if (this.lastSentText && text.trim() === this.lastSentText.trim()) continue;
+      return text;
+    }
+    return null;
+  }
+
+  private isQwenHost(): boolean {
+    const host = window.location.hostname.toLowerCase();
+    return host === 'chat.qwen.ai' || host.endsWith('.qwen.ai');
+  }
+
+  private isLikelyUserMessageNode(node: HTMLElement): boolean {
+    const role =
+      node.getAttribute('data-message-author-role') ||
+      node.getAttribute('data-role') ||
+      node.getAttribute('data-author-role') ||
+      '';
+    if (role.toLowerCase() === 'user') return true;
+
+    const cls = `${node.className || ''}`.toLowerCase();
+    if (cls.includes('user') || cls.includes('human') || cls.includes('me-message')) return true;
+
+    if (node.matches('textarea, input, [contenteditable="true"]')) return true;
+    if (node.closest('form')) return true;
+
+    return false;
+  }
+
+  private isLikelyNonConversationNode(node: HTMLElement): boolean {
+    if (node.closest('header, nav, aside, footer, [role="navigation"], [role="complementary"]')) {
+      return true;
+    }
+
+    if (node.matches('button, [role="button"], a, label')) {
+      return true;
+    }
+
+    if (node.querySelector('textarea, input, [contenteditable="true"]')) {
+      return true;
+    }
+
+    const aria = `${node.getAttribute('aria-label') || ''}`.toLowerCase();
+    if (
+      aria.includes('send') ||
+      aria.includes('new chat') ||
+      aria.includes('search') ||
+      aria.includes('history')
+    ) {
+      return true;
+    }
+
+    return false;
   }
 }
 

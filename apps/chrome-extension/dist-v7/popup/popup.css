@@ -504,6 +504,113 @@ body {
   text-transform: uppercase;
 }
 
+.central-chat-card {
+  margin-top: var(--space-lg);
+  padding: var(--space-md);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.central-chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-sm);
+}
+
+.central-chat-subtitle {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.central-chat-toolbar,
+.central-chat-create-row,
+.central-chat-compose {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.central-select,
+.central-input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font-size: 12px;
+}
+
+.central-select:focus,
+.central-input:focus {
+  outline: none;
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 0 2px rgba(0, 217, 255, 0.15);
+}
+
+.central-btn {
+  padding: 0 10px;
+  min-width: 72px;
+}
+
+.central-send-btn {
+  padding: 0 14px;
+  min-width: 82px;
+  box-shadow: none;
+}
+
+.central-chat-stream {
+  max-height: 170px;
+  min-height: 110px;
+  overflow-y: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.02);
+  padding: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.central-chat-message {
+  padding: var(--space-sm);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.03);
+  margin-bottom: var(--space-xs);
+}
+
+.central-chat-message:last-child {
+  margin-bottom: 0;
+}
+
+.central-chat-message-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-bottom: 2px;
+}
+
+.central-chat-from {
+  color: var(--neon-cyan);
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.central-chat-meta {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.central-chat-content {
+  font-size: 11px;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 /* ============================================
    Agents Tab
    ============================================ */
