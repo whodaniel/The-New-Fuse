@@ -1,24 +1,18 @@
-import React, { useState, useRef, useEffect } from "react";
-import SlashCommandsButton, {
-  SlashCommands,
-  useSlashCommands,
-} from './SlashCommands';
-import debounce from "lodash.debounce";
-import { PaperPlaneRight } from "@phosphor-icons/react";
-import StopGenerationButton from './StopGenerationButton';
-import AvailableAgentsButton, {
-  AvailableAgents,
-  useAvailableAgents,
-} from './AgentMenu';
-import TextSizeButton from './TextSizeMenu';
-import SpeechToText from './SpeechToText';
-import { Tooltip } from "react-tooltip";
-import AttachmentManager from './Attachments';
-import AttachItem from './AttachItem';
+import useTextSize from '@/hooks/useTextSize';
+import { PaperPlaneRight } from '@phosphor-icons/react';
+import debounce from 'lodash.debounce';
+import React, { useEffect, useRef, useState } from 'react';
+import { Tooltip } from 'react-tooltip';
 import { PASTE_ATTACHMENT_EVENT } from '../DnDWrapper';
-import useTextSize from "@/hooks/useTextSize";
+import AvailableAgentsButton, { AvailableAgents, useAvailableAgents } from './AgentMenu';
+import AttachItem from './AttachItem';
+import AttachmentManager from './Attachments';
+import SlashCommandsButton, { SlashCommands, useSlashCommands } from './SlashCommands';
+import SpeechToText from './SpeechToText';
+import StopGenerationButton from './StopGenerationButton';
+import TextSizeButton from './TextSizeMenu';
 
-export const PROMPT_INPUT_EVENT = "set_prompt_input";
+export const PROMPT_INPUT_EVENT = 'set_prompt_input';
 const MAX_EDIT_STACK_SIZE = 100;
 
 interface EditState {
@@ -44,7 +38,7 @@ export default function PromptInput({
   sendCommand,
   attachments = [],
 }: PromptInputProps): React.ReactElement {
-  const [promptInput, setPromptInput] = useState<string>("");
+  const [promptInput, setPromptInput] = useState<string>('');
   const { showAgents, setShowAgents } = useAvailableAgents();
   const { showSlashCommand, setShowSlashCommand } = useSlashCommands();
   const formRef = useRef<HTMLFormElement>(null);
@@ -55,13 +49,23 @@ export default function PromptInput({
   const redoStack = useRef<EditState[]>([]);
   const { textSizeClass } = useTextSize();
 
+  // Track if component is mounted to prevent state updates after unmount
+  const isMountedRef = useRef<boolean>(true);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
   function handlePromptUpdate(e: CustomEvent<string>) {
-    setPromptInput(e?.detail ?? "");
+    setPromptInput(e?.detail ?? '');
   }
 
   function resetTextAreaHeight() {
     if (!textareaRef.current) return;
-    textareaRef.current.style.height = "auto";
+    textareaRef.current.style.height = 'auto';
   }
 
   useEffect(() => {
@@ -83,15 +87,14 @@ export default function PromptInput({
         handleSubmit();
       }
     };
-    
+
     input.current?.addEventListener('keypress', handleKeypress);
     return () => input.current?.removeEventListener('keypress', handleKeypress);
   }, [handleSubmit]);
 
   function saveCurrentState(adjustment = 0) {
     if (!textareaRef.current) return;
-    if (undoStack.current.length >= MAX_EDIT_STACK_SIZE)
-      undoStack.current.shift();
+    if (undoStack.current.length >= MAX_EDIT_STACK_SIZE) undoStack.current.shift();
     undoStack.current.push({
       value: promptInput,
       cursorPositionStart: textareaRef.current.selectionStart + adjustment,
@@ -107,14 +110,14 @@ export default function PromptInput({
 
   function checkForSlash(e: React.ChangeEvent<HTMLTextAreaElement>) {
     const input = e.target.value;
-    if (input === "/") setShowSlashCommand(true);
+    if (input === '/') setShowSlashCommand(true);
     if (showSlashCommand) setShowSlashCommand(false);
   }
   const watchForSlash = debounce(checkForSlash, 300);
 
   function checkForAt(e: React.ChangeEvent<HTMLTextAreaElement>) {
     const input = e.target.value;
-    if (input === "@") setShowAgents(true);
+    if (input === '@') setShowAgents(true);
     if (showAgents) setShowAgents(false);
   }
   const watchForAt = debounce(checkForAt, 300);
@@ -125,11 +128,7 @@ export default function PromptInput({
       return submit(event);
     }
 
-    if (
-      (event.ctrlKey || event.metaKey) &&
-      event.key === "z" &&
-      event.shiftKey
-    ) {
+    if ((event.ctrlKey || event.metaKey) && event.key === 'z' && event.shiftKey) {
       event.preventDefault();
       if (redoStack.current.length === 0 || !textareaRef.current) return;
 
@@ -143,7 +142,7 @@ export default function PromptInput({
       });
       setPromptInput(nextState.value);
       setTimeout(() => {
-        if (!textareaRef.current) return;
+        if (!isMountedRef.current || !textareaRef.current) return;
         textareaRef.current.setSelectionRange(
           nextState.cursorPositionStart,
           nextState.cursorPositionEnd
@@ -151,11 +150,7 @@ export default function PromptInput({
       }, 0);
     }
 
-    if (
-      (event.ctrlKey || event.metaKey) &&
-      event.key === "z" &&
-      !event.shiftKey
-    ) {
+    if ((event.ctrlKey || event.metaKey) && event.key === 'z' && !event.shiftKey) {
       if (undoStack.current.length === 0 || !textareaRef.current) return;
       const lastState = undoStack.current.pop();
       if (!lastState) return;
@@ -167,7 +162,7 @@ export default function PromptInput({
       });
       setPromptInput(lastState.value);
       setTimeout(() => {
-        if (!textareaRef.current) return;
+        if (!isMountedRef.current || !textareaRef.current) return;
         textareaRef.current.setSelectionRange(
           lastState.cursorPositionStart,
           lastState.cursorPositionEnd
@@ -178,7 +173,7 @@ export default function PromptInput({
 
   function adjustTextArea(event: React.ChangeEvent<HTMLTextAreaElement>) {
     const element = event.target;
-    element.style.height = "auto";
+    element.style.height = 'auto';
     element.style.height = `${element.scrollHeight}px`;
   }
 
@@ -187,7 +182,7 @@ export default function PromptInput({
     if (e.clipboardData.items.length === 0) return false;
 
     for (const item of e.clipboardData.items) {
-      if (item.type.startsWith("image/")) {
+      if (item.type.startsWith('image/')) {
         const file = item.getAsFile();
         if (file) {
           window.dispatchEvent(
@@ -199,7 +194,7 @@ export default function PromptInput({
         continue;
       }
 
-      if (item.kind === "file") {
+      if (item.kind === 'file') {
         const file = item.getAsFile();
         if (file) {
           window.dispatchEvent(
@@ -212,20 +207,18 @@ export default function PromptInput({
       }
     }
 
-    const pasteText = e.clipboardData.getData("text/plain");
+    const pasteText = e.clipboardData.getData('text/plain');
     if (pasteText && textareaRef.current) {
       const textarea = textareaRef.current;
       const start = textarea.selectionStart;
       const end = textarea.selectionEnd;
       const newPromptInput =
-        promptInput.substring(0, start) +
-        pasteText +
-        promptInput.substring(end);
+        promptInput.substring(0, start) + pasteText + promptInput.substring(end);
       setPromptInput(newPromptInput);
       onChange({ target: { value: newPromptInput } } as React.ChangeEvent<HTMLTextAreaElement>);
 
       setTimeout(() => {
-        if (!textareaRef.current) return;
+        if (!isMountedRef.current || !textareaRef.current) return;
         textareaRef.current.selectionStart = textareaRef.current.selectionEnd =
           start + pasteText.length;
       }, 0);
@@ -279,7 +272,7 @@ export default function PromptInput({
                 }}
                 value={promptInput}
                 className={`border-none cursor-text max-h-[50vh] md:max-h-[350px] md:min-h-[40px] mx-2 md:mx-0 pt-[12px] w-full leading-5 md:text-md text-white bg-transparent placeholder:text-white/60 light:placeholder:text-theme-text-primary resize-none active:outline-none focus:outline-none flex-grow ${textSizeClass}`}
-                placeholder={"Send a message"}
+                placeholder={'Send a message'}
               />
               {buttonDisabled ? (
                 <StopGenerationButton />
@@ -316,10 +309,7 @@ export default function PromptInput({
                   showing={showSlashCommand}
                   setShowSlashCommand={setShowSlashCommand}
                 />
-                <AvailableAgentsButton
-                  showing={showAgents}
-                  setShowAgents={setShowAgents}
-                />
+                <AvailableAgentsButton showing={showAgents} setShowAgents={setShowAgents} />
                 <TextSizeButton />
               </div>
               <div className="flex gap-x-2">
