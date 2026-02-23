@@ -3,6 +3,7 @@ import { MCPServerService } from './mcp-server.service';
 import { MCPToolRegistry } from './mcp-tool-registry.service';
 import { MCPA2ABridge } from './mcp-a2a-bridge.service';
 import { MCPController } from './mcp.controller';
+import { AdminMCPController } from './admin-mcp.controller';
 import { WorkflowTemplatesModule } from '../workflow-templates/workflow-templates.module';
 import { AgentModule } from '../agent/agent.module';
 
@@ -17,7 +18,7 @@ import { AgentModule } from '../agent/agent.module';
     WorkflowTemplatesModule,
     AgentModule,
   ],
-  controllers: [MCPController],
+  controllers: [MCPController, AdminMCPController],
   providers: [
     MCPServerService,
     MCPToolRegistry,

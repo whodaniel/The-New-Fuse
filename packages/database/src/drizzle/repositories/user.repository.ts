@@ -1,7 +1,3 @@
-/**
- * User Repository - Drizzle ORM Implementation
- * Migrated from Drizzle to Drizzle using the Repository Pattern
- */
 import { and, desc, eq, inArray, isNull, or } from 'drizzle-orm';
 import { db } from '../client';
 import { authSessions, users } from '../schema';
@@ -51,6 +47,18 @@ export class DrizzleUserRepository {
       .select()
       .from(users)
       .where(and(eq(users.walletAddress, walletAddress), isNull(users.deletedAt)));
+
+    return user ?? null;
+  }
+
+  /**
+   * Find user by verification token
+   */
+  async findByVerificationToken(token: string): Promise<User | null> {
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(and(eq(users.verificationToken, token), isNull(users.deletedAt)));
 
     return user ?? null;
   }

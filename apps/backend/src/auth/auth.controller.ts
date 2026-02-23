@@ -38,6 +38,22 @@ export class AuthController {
     return this.authService.register(email, password, name);
   }
 
+  @Post('verify-email')
+  async verifyEmail(@Body('token') token: string) {
+    if (!token) {
+      throw new BadRequestException('Verification token is required');
+    }
+    return this.authService.verifyEmail(token);
+  }
+
+  @Post('resend-verification')
+  async resendVerification(@Body('email') email: string) {
+    if (!email) {
+      throw new BadRequestException('Email is required');
+    }
+    return this.authService.resendVerification(email);
+  }
+
   @Post('login')
   async loginWithEmail(@Body() loginDto: LoginDto) {
     const { email, password } = loginDto;

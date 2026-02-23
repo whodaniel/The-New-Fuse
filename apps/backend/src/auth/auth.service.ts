@@ -100,27 +100,111 @@ export class AuthService {
     // Hash password
     const hashedPassword = await hashPassword(password);
 
-    // Create user
+    // Generate verification token
+    const verificationToken = this.generateVerificationToken();
+    const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+    // Create user (unverified)
     const user = await drizzleUserRepository.create({
       email,
       hashedPassword,
       name,
+      emailVerified: false,
+      verificationToken,
+      verificationExpires,
     } as Parameters<typeof drizzleUserRepository.create>[0]);
 
-    // Generate JWT token
-    const payload = { email: user.email, sub: user.id, role: user.role, roles: user.roles };
+    // TODO: Send verification email via EmailService
+    // await this.emailService.sendVerificationEmail(email, verificationToken);
+
+    this.logger.log(`User registered: ${email}, verification pending`);
+
+    return {
+      message: 'Registration successful. Please check your email to verify your account.',
+      email,
+      requiresVerification: true,
+    };
+  }
+
+  private generateVerificationToken(): string {
+    return require('crypto').randomBytes(32).toString('hex');
+  }
+
+  async verifyEmail(token: string) {
+    // Find user by verification token
+    const user = await drizzleUserRepository.findByVerificationToken(token);
+    
+    if (!user) {
+      throw new UnauthorizedException('Invalid verification token');
+    }
+
+    if (user.verificationExpires && user.verificationExpires < new Date()) {
+      throw new UnauthorizedException('Verification token has expired');
+    }
+
+    // Update user as verified
+    const updatedUser = await drizzleUserRepository.update(user.id, {
+      emailVerified: true,
+      verificationToken: null,
+      verificationExpires: null,
+      isActive: true,
+    } as Parameters<typeof drizzleUserRepository.update>[1]);
+
+    if (!updatedUser) {
+      throw new UnauthorizedException('Failed to verify email');
+    }
+
+    this.logger.log(`Email verified for user: ${user.email}`);
+
+    // Generate JWT token for auto-login
+    const payload = { 
+      email: updatedUser.email, 
+      sub: updatedUser.id, 
+      role: updatedUser.role, 
+      roles: updatedUser.roles 
+    };
     const access_token = this.jwtService.sign(payload);
 
     return {
+      message: 'Email verified successfully',
       access_token,
       user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        role: user.role,
-        roles: user.roles,
+        id: updatedUser.id,
+        email: updatedUser.email,
+        name: updatedUser.name,
+        role: updatedUser.role,
+        roles: updatedUser.roles,
       },
     };
+  }
+
+  async resendVerification(email: string) {
+    const user = await drizzleUserRepository.findByEmail(email);
+    
+    if (!user) {
+      // Don't reveal whether user exists
+      return { message: 'If an account exists, a verification email has been sent.' };
+    }
+
+    if (user.emailVerified) {
+      return { message: 'Email is already verified.' };
+    }
+
+    // Generate new verification token
+    const verificationToken = this.generateVerificationToken();
+    const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+    await drizzleUserRepository.update(user.id, {
+      verificationToken,
+      verificationExpires,
+    } as Parameters<typeof drizzleUserRepository.update>[1]);
+
+    // TODO: Send verification email via EmailService
+    // await this.emailService.sendVerificationEmail(email, verificationToken);
+
+    this.logger.log(`Resent verification email to: ${email}`);
+
+    return { message: 'If an account exists, a verification email has been sent.' };
   }
 
   async validateFirebaseToken(token: string) {
