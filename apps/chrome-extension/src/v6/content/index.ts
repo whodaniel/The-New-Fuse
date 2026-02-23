@@ -54,6 +54,8 @@ class FuseConnectContentScript {
   private panelVisible = false;
   private chatReady = false;
   private pageAgentId: string | null = null;
+  private currentChannel: string | null = null;
+  private pausedChannels: Set<string> = new Set();
 
   // DEDUPE GUARD: Track message IDs we have already processed (injected or shown)
   // to prevent infinite loops from the relay-Cloudflare-Extension circle.
@@ -525,9 +527,19 @@ class FuseConnectContentScript {
           case 'AGENTS_UPDATE':
           case 'CHANNELS_UPDATE':
           case 'JOINED_CHANNELS_UPDATE':
+          case 'CHANNEL_PAUSE_UPDATE':
           case 'CHANNEL_SELECTED':
           case 'NOTIFICATION':
           case 'TASK_ASSIGN':
+            if (message.type === 'CHANNEL_SELECTED') {
+              this.currentChannel = message.channelId || null;
+            }
+            if (message.type === 'CHANNEL_PAUSE_UPDATE') {
+              const paused = Array.isArray(message.pausedChannels)
+                ? message.pausedChannels.map((id: unknown) => String(id))
+                : [];
+              this.pausedChannels = new Set(paused);
+            }
             if (this.panel) {
               this.panel.handleMessage(message);
             }
@@ -547,19 +559,40 @@ class FuseConnectContentScript {
               if (msg.id) this.processedMessageIds.add(msg.id);
 
               const myChannel = this.panel?.getCurrentChannel();
+              const effectiveChannel = myChannel || this.currentChannel;
               const messageChannel = msg.channel || msg.metadata?.channel;
+              const messageChannelId = messageChannel ? String(messageChannel) : '';
+
+              // Hard mute for paused channels on this tab:
+              // do not render into panel and do not auto-inject while paused.
+              if (
+                msg.to === 'broadcast' &&
+                messageChannelId &&
+                this.isChannelPaused(messageChannelId) &&
+                msg.metadata?.forceInject !== true
+              ) {
+                console.log('[FuseConnect v7] ⏸️ Skipping paused-channel message', {
+                  messageChannel: messageChannelId,
+                  pausedChannels: Array.from(this.pausedChannels),
+                });
+                safeSendResponse({ success: true, reason: 'paused_channel' });
+                return true;
+              }
 
               // CHANNEL FILTERING:
               // Only process messages for OUR channel (or if no channel filtering needed)
               // Direct messages (to specific agentId) always bypass channel filtering.
               const isBroadcast = msg.to === 'broadcast';
               const isForMyChannel =
-                !isBroadcast || !messageChannel || !myChannel || messageChannel === myChannel;
+                !isBroadcast ||
+                !messageChannel ||
+                !effectiveChannel ||
+                messageChannel === effectiveChannel;
 
               if (!isForMyChannel) {
                 console.log('[FuseConnect v7] ⏭️ Skipping message for different channel:', {
                   messageChannel,
-                  myChannel,
+                  myChannel: effectiveChannel,
                   contentPreview: msg.content?.substring(0, 30),
                 });
                 safeSendResponse({ success: true });
@@ -574,6 +607,21 @@ class FuseConnectContentScript {
               // Handle message injection (works even if panel isn't open)
               // TARGETED INJECTION: If addressed specifically to this page agent
               if (this.pageAgentId && msg.to === this.pageAgentId && msg.content) {
+                if (!this.canAutoInjectRelayMessage(msg)) {
+                  console.log(
+                    '[FuseConnect v7] ⏭️ Skipping targeted auto-injection (panel hidden on this tab)'
+                  );
+                  safeSendResponse({ success: true, reason: 'panel_hidden' });
+                  return true;
+                }
+                if (!this.shouldInjectRelayMessage(msg)) {
+                  console.log(
+                    '[FuseConnect v7] ⏭️ Skipping non-conversational targeted message',
+                    msg.metadata?.eventType || msg.messageType || 'unknown'
+                  );
+                  safeSendResponse({ success: true, reason: 'filtered_system_message' });
+                  return true;
+                }
                 console.log('[FuseConnect v7] Injecting targeted message:', msg.content);
                 this.injectMessage(msg.content).then((success) => {
                   if (success) console.log('[FuseConnect v7] Injection successful');
@@ -582,6 +630,21 @@ class FuseConnectContentScript {
               }
               // CHANNEL BROADCAST INJECTION: If from external agent on same channel
               else if (msg.to === 'broadcast' && msg.content && msg.from) {
+                if (!this.canAutoInjectRelayMessage(msg)) {
+                  console.log(
+                    '[FuseConnect v7] ⏭️ Skipping broadcast auto-injection (panel hidden on this tab)'
+                  );
+                  safeSendResponse({ success: true, reason: 'panel_hidden' });
+                  return true;
+                }
+                if (!this.shouldInjectRelayMessage(msg)) {
+                  console.log(
+                    '[FuseConnect v7] ⏭️ Skipping non-conversational broadcast message',
+                    msg.metadata?.eventType || msg.messageType || 'unknown'
+                  );
+                  safeSendResponse({ success: true, reason: 'filtered_system_message' });
+                  return true;
+                }
                 // CRITICAL FIX: Check both msg.from AND metadata.senderId for self-identification
                 // The senderId in metadata is more reliable as it's set when the message originates
                 const senderFromMetadata = msg.metadata?.senderId;
@@ -735,6 +798,42 @@ class FuseConnectContentScript {
     });
   }
 
+  /**
+   * Only conversational payloads should be auto-injected into page chat.
+   * Control-plane events (activity/wake/heartbeat) must stay out of model input.
+   */
+  private shouldInjectRelayMessage(msg: any): boolean {
+    const content = String(msg?.content || '').trim();
+    if (!content) return false;
+
+    const messageType = String(msg?.messageType || '').toLowerCase();
+    const eventType = String(msg?.metadata?.eventType || '').toLowerCase();
+    const lower = content.toLowerCase();
+
+    if (messageType === 'event') return false;
+
+    const blockedEventTypes = new Set([
+      'activity',
+      'wake_ping',
+      'wake_ack',
+      'monitor_idle',
+      'page_agent_registered',
+      'agent_registered',
+      'heartbeat',
+    ]);
+    if (blockedEventTypes.has(eventType)) return false;
+
+    if (
+      lower.startsWith('[activity]') ||
+      lower.startsWith('[wake_ping') ||
+      lower.startsWith('[wake_ack')
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
   private async injectMessage(content: string, metadata?: any): Promise<boolean> {
     console.log('[FuseConnect v7] Injecting message:', content.substring(0, 50));
 
@@ -837,6 +936,13 @@ class FuseConnectContentScript {
     this.isProcessingQueue = true;
 
     const process = async () => {
+      if (!this.panelVisible) {
+        // Per-tab safety: never auto-inject relay queue while panel is hidden.
+        this.injectionQueue = [];
+        this.isProcessingQueue = false;
+        return;
+      }
+
       if (this.injectionQueue.length === 0) {
         this.isProcessingQueue = false;
         return;
@@ -882,6 +988,28 @@ class FuseConnectContentScript {
     };
 
     process();
+  }
+
+  /**
+   * Auto relay injection is opt-in per tab: only when that tab's panel is open.
+   * Allows explicit override for system workflows by setting metadata.forceInject=true.
+   */
+  private canAutoInjectRelayMessage(msg: any): boolean {
+    if (msg?.metadata?.forceInject === true) return true;
+    const channelId = msg?.channel || msg?.metadata?.channel || this.currentChannel;
+    if (channelId && this.isChannelPaused(String(channelId))) return false;
+    return this.panelVisible;
+  }
+
+  private isChannelPaused(channelId: string): boolean {
+    if (!channelId) return false;
+    if (this.pausedChannels.has(channelId)) return true;
+    const normalized = channelId.trim().toLowerCase();
+    if (!normalized) return false;
+    for (const pausedId of this.pausedChannels) {
+      if (String(pausedId).trim().toLowerCase() === normalized) return true;
+    }
+    return false;
   }
 }
 

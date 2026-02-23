@@ -26,11 +26,13 @@ const STORAGE_KEYS = {
   channels: 'fuse_channels',
   joinedChannels: 'fuse_joined_channels',
   tabActiveChannels: 'fuse_tab_active_channels',
+  tabPausedChannels: 'fuse_tab_paused_channels',
   knownNodes: 'fuse_known_nodes',
   autoConnect: 'fuse_auto_connect',
   autoMonitor: 'fuse_auto_monitor',
   autoMasterClock: 'fuse_auto_master_clock',
   autoWakePing: 'fuse_auto_wake_ping',
+  eventLog: 'fuse_event_log',
 };
 
 // Default node configuration
@@ -57,6 +59,17 @@ type TranscriptEntry = {
   meta?: Record<string, unknown>;
 };
 
+type ExtensionLogLevel = 'debug' | 'info' | 'warn' | 'error';
+
+type ExtensionLogEntry = {
+  id: string;
+  ts: number;
+  level: ExtensionLogLevel;
+  category: string;
+  event: string;
+  details?: Record<string, unknown>;
+};
+
 class BackgroundService {
   // Connections
   private connections: Map<string, WebSocket> = new Map();
@@ -69,12 +82,13 @@ class BackgroundService {
   private channels: Map<string, FederationChannel> = new Map();
   private joinedChannels: Set<string> = new Set();
   private tabActiveChannels: Map<number, string> = new Map();
+  private tabPausedChannels: Map<number, Set<string>> = new Map();
   private messageQueue: ProtocolMessage[] = [];
   private pendingPageAgents: Agent[] = []; // Queue for page agents waiting for connection
   private autoConnect: boolean = true; // Default to TRUE for agent operation
   private autoMonitor: boolean = true;
   private autoMasterClock: boolean = true;
-  private autoWakePing: boolean = true;
+  private autoWakePing: boolean = false;
   private lastAutonomyStartAt: number = 0;
   private lastWakePingAt: Map<string, number> = new Map();
   private channelLastActivityAt: Map<string, number> = new Map();
@@ -91,6 +105,12 @@ class BackgroundService {
   private healthCheckTimer: number | null = null;
   private cleanupTimer: number | null = null; // Periodic cleanup to prevent memory leaks
   private stallWatchdogTimer: number | null = null;
+  private nativeHostUnavailable: boolean = false;
+  private nativeHostMissingLogged: boolean = false;
+  private extensionEventLog: ExtensionLogEntry[] = [];
+  private readonly EVENT_LOG_LIMIT = 4000;
+  private eventLogFlushTimer: number | null = null;
+  private eventLoggingEnabled = true;
 
   constructor() {
     this.init();
@@ -110,6 +130,11 @@ class BackgroundService {
 
     // Load saved state
     await this.loadSavedState();
+    this.logEvent('extension', 'background_loaded_state', {
+      channels: this.channels.size,
+      joinedChannels: this.joinedChannels.size,
+      tabChannelBindings: this.tabActiveChannels.size,
+    });
 
     // Start health checks (but don't auto-connect immediately)
     this.startHealthChecks();
@@ -126,6 +151,12 @@ class BackgroundService {
     }
 
     console.log('[FuseConnect v7] Background service ready');
+    this.logEvent('extension', 'background_ready', {
+      autoConnect: this.autoConnect,
+      autoMonitor: this.autoMonitor,
+      autoMasterClock: this.autoMasterClock,
+      autoWakePing: this.autoWakePing,
+    });
   }
 
   /**
@@ -163,7 +194,10 @@ class BackgroundService {
     } else {
       console.log('[FuseConnect v7] Relay not available - attempting autonomous startup');
       this.updateNodeStatus('relay', DEFAULT_NODES.relay, 'disconnected');
-      this.sendNativeMessage({ action: 'start', service: 'relay' }).then(() => {
+      this.sendNativeMessage({ action: 'start', service: 'relay' }).then((nativeResp) => {
+        if (nativeResp?.error) {
+          return;
+        }
         setTimeout(() => {
           this.connectionAttempts = 0;
           this.connectToNode('relay', DEFAULT_NODES.relay);
@@ -217,6 +251,8 @@ class BackgroundService {
       STORAGE_KEYS.autoMonitor,
       STORAGE_KEYS.autoMasterClock,
       STORAGE_KEYS.autoWakePing,
+      STORAGE_KEYS.tabPausedChannels,
+      STORAGE_KEYS.eventLog,
       STORAGE_KEYS.settings,
     ]);
 
@@ -238,6 +274,23 @@ class BackgroundService {
         }
       }
     }
+    if (result[STORAGE_KEYS.tabPausedChannels]) {
+      const paused = result[STORAGE_KEYS.tabPausedChannels] as Record<string, string[]>;
+      for (const [tabIdRaw, channelIds] of Object.entries(paused)) {
+        const tabId = Number(tabIdRaw);
+        if (!Number.isFinite(tabId) || !Array.isArray(channelIds)) continue;
+        const set = new Set(
+          channelIds.map((c) => String(c || '').trim()).filter((c) => c.length > 0)
+        );
+        if (set.size > 0) {
+          this.tabPausedChannels.set(tabId, set);
+        }
+      }
+    }
+    if (Array.isArray(result[STORAGE_KEYS.eventLog])) {
+      const existing = result[STORAGE_KEYS.eventLog] as ExtensionLogEntry[];
+      this.extensionEventLog = existing.slice(-this.EVENT_LOG_LIMIT);
+    }
 
     // Auto-join Red channel
     this.joinedChannels.add('red');
@@ -246,7 +299,7 @@ class BackgroundService {
     this.autoConnect = result[STORAGE_KEYS.autoConnect] ?? true;
     this.autoMonitor = result[STORAGE_KEYS.autoMonitor] ?? true;
     this.autoMasterClock = result[STORAGE_KEYS.autoMasterClock] ?? true;
-    this.autoWakePing = result[STORAGE_KEYS.autoWakePing] ?? true;
+    this.autoWakePing = result[STORAGE_KEYS.autoWakePing] ?? false;
 
     // Also check settings object
     if (result[STORAGE_KEYS.settings]?.autoReconnect !== undefined) {
@@ -382,6 +435,11 @@ class BackgroundService {
 
     this.nodeStatus.set(nodeType, node);
     this.broadcastToTabs({
+      type: 'CONNECTION_STATUS',
+      status,
+      node,
+    });
+    this.notifyPopup({
       type: 'CONNECTION_STATUS',
       status,
       node,
@@ -769,6 +827,12 @@ class BackgroundService {
    */
   private handleRelayMessage(message: ProtocolMessage, nodeType: string): void {
     console.log(`[FuseConnect v7] Received from ${nodeType}:`, message.type);
+    this.logEvent('relay', 'message_in', {
+      nodeType,
+      type: message.type,
+      source: (message as any).source || null,
+      channel: (message as any).channel || null,
+    });
 
     switch (message.type) {
       case 'WELCOME':
@@ -780,6 +844,7 @@ class BackgroundService {
         this.agents.clear();
         agents.forEach((a: Agent) => this.agents.set(a.id, a));
         this.broadcastToTabs({ type: 'AGENTS_UPDATE', agents });
+        this.notifyPopup({ type: 'AGENTS_UPDATE', agents });
         break;
       }
 
@@ -804,6 +869,7 @@ class BackgroundService {
           }
 
           this.broadcastToTabs({ type: 'AGENTS_UPDATE', agents: Array.from(this.agents.values()) });
+          this.notifyPopup({ type: 'AGENTS_UPDATE', agents: Array.from(this.agents.values()) });
 
           // Notification for new agents
           if (agent.status === 'active') {
@@ -826,6 +892,10 @@ class BackgroundService {
             type: 'AGENTS_UPDATE',
             agents: Array.from(this.agents.values()),
           });
+          this.notifyPopup({
+            type: 'AGENTS_UPDATE',
+            agents: Array.from(this.agents.values()),
+          });
         }
         break;
       }
@@ -834,8 +904,24 @@ class BackgroundService {
         const channels = (message.payload as any).channels || [];
         // Only update with new channels, do not clear locally saved ones if relay sends empty list
         if (channels.length > 0) {
-          channels.forEach((ch: FederationChannel) => this.channels.set(ch.id, ch));
+          channels.forEach((ch: FederationChannel) => {
+            const existingByName = this.findChannelByName(ch.name);
+            if (existingByName && existingByName.id !== ch.id) {
+              if (this.shouldPreferIncomingChannel(existingByName, ch)) {
+                this.channels.delete(existingByName.id);
+                this.remapChannelReferences(existingByName.id, ch.id);
+              } else {
+                return;
+              }
+            }
+
+            this.channels.set(ch.id, ch);
+          });
           this.broadcastToTabs({
+            type: 'CHANNELS_UPDATE',
+            channels: Array.from(this.channels.values()),
+          });
+          this.notifyPopup({
             type: 'CHANNELS_UPDATE',
             channels: Array.from(this.channels.values()),
           });
@@ -1051,6 +1137,10 @@ class BackgroundService {
       type: 'NEW_MESSAGE',
       message,
     });
+    this.notifyPopup({
+      type: 'NEW_MESSAGE',
+      message,
+    });
 
     // Create notification
     if (message.to === this.agentId || message.to === 'broadcast') {
@@ -1121,11 +1211,29 @@ class BackgroundService {
   private async injectMessageToActiveTab(text: string): Promise<void> {
     const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
     if (tabs[0]?.id) {
+      this.logEvent('chat', 'inject_active_tab', {
+        tabId: tabs[0].id,
+        preview: String(text || '').slice(0, 120),
+      });
       chrome.tabs.sendMessage(tabs[0].id, {
         type: 'INJECT_MESSAGE',
         content: text,
       });
     }
+  }
+
+  /**
+   * Inject message to a specific tab
+   */
+  private async injectMessageToTab(tabId: number, text: string): Promise<void> {
+    this.logEvent('chat', 'inject_specific_tab', {
+      tabId,
+      preview: String(text || '').slice(0, 120),
+    });
+    chrome.tabs.sendMessage(tabId, {
+      type: 'INJECT_MESSAGE',
+      content: text,
+    });
   }
 
   /**
@@ -1188,6 +1296,16 @@ class BackgroundService {
     }
   }
 
+  private notifyPopup(message: Record<string, unknown>): void {
+    try {
+      chrome.runtime.sendMessage(message, () => {
+        void chrome.runtime.lastError;
+      });
+    } catch {
+      // ignore when popup is closed
+    }
+  }
+
   /**
    * Save channels to storage
    */
@@ -1213,6 +1331,45 @@ class BackgroundService {
     });
   }
 
+  private async saveTabPausedChannels(): Promise<void> {
+    const serialized: Record<string, string[]> = {};
+    for (const [tabId, channels] of this.tabPausedChannels.entries()) {
+      if (channels.size > 0) {
+        serialized[String(tabId)] = Array.from(channels);
+      }
+    }
+    await chrome.storage.local.set({
+      [STORAGE_KEYS.tabPausedChannels]: serialized,
+    });
+  }
+
+  private setChannelPaused(tabId: number, channelId: string, paused: boolean): void {
+    if (!channelId) return;
+    let set = this.tabPausedChannels.get(tabId);
+    if (!set) {
+      set = new Set<string>();
+      this.tabPausedChannels.set(tabId, set);
+    }
+    if (paused) set.add(channelId);
+    else set.delete(channelId);
+
+    if (set.size === 0) {
+      this.tabPausedChannels.delete(tabId);
+    }
+
+    void this.saveTabPausedChannels();
+  }
+
+  private getTabPausedChannels(tabId?: number): string[] {
+    if (!tabId) return [];
+    return Array.from(this.tabPausedChannels.get(tabId) || []);
+  }
+
+  private isChannelPausedOnTab(tabId: number, channelId?: string | null): boolean {
+    if (!channelId) return false;
+    return this.tabPausedChannels.get(tabId)?.has(channelId) || false;
+  }
+
   /**
    * Track active channel selection per tab
    */
@@ -1230,28 +1387,164 @@ class BackgroundService {
     return this.tabActiveChannels.get(tabId) || null;
   }
 
+  private normalizeChannelName(name: string | undefined | null): string {
+    return String(name || '')
+      .trim()
+      .replace(/\s+/g, ' ')
+      .toLowerCase();
+  }
+
+  private findChannelByName(name: string): FederationChannel | null {
+    const target = this.normalizeChannelName(name);
+    if (!target) return null;
+
+    for (const channel of this.channels.values()) {
+      if (this.normalizeChannelName(channel.name) === target) {
+        return channel;
+      }
+    }
+    return null;
+  }
+
+  private remapChannelReferences(oldId: string, newId: string): void {
+    if (!oldId || !newId || oldId === newId) return;
+
+    if (this.joinedChannels.delete(oldId)) {
+      this.joinedChannels.add(newId);
+    }
+
+    for (const [tabId, channelId] of this.tabActiveChannels.entries()) {
+      if (channelId === oldId) {
+        this.tabActiveChannels.set(tabId, newId);
+        chrome.tabs.sendMessage(tabId, { type: 'CHANNEL_SELECTED', channelId: newId });
+      }
+    }
+
+    void this.saveTabActiveChannels();
+  }
+
+  private shouldPreferIncomingChannel(
+    existingChannel: FederationChannel,
+    incomingChannel: FederationChannel
+  ): boolean {
+    const existingIsLocal = existingChannel.id.startsWith('local-');
+    const incomingIsLocal = incomingChannel.id.startsWith('local-');
+
+    if (existingIsLocal !== incomingIsLocal) {
+      return !incomingIsLocal;
+    }
+
+    const existingCreated = Number(existingChannel.createdAt || 0);
+    const incomingCreated = Number(incomingChannel.createdAt || 0);
+    return incomingCreated >= existingCreated;
+  }
+
   /**
    * Clear tab-scoped state when tabs are closed
    */
   private setupTabLifecycleHandlers(): void {
+    chrome.tabs.onCreated.addListener((tab) => {
+      this.logEvent('browser.tabs', 'created', {
+        tabId: tab.id || null,
+        url: tab.url || null,
+        active: !!tab.active,
+      });
+    });
+
+    chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+      if (!changeInfo.status && !changeInfo.url) return;
+      this.logEvent('browser.tabs', 'updated', {
+        tabId,
+        status: changeInfo.status || null,
+        url: changeInfo.url || tab.url || null,
+      });
+    });
+
+    chrome.tabs.onActivated.addListener((activeInfo) => {
+      this.logEvent('browser.tabs', 'activated', {
+        tabId: activeInfo.tabId,
+        windowId: activeInfo.windowId,
+      });
+    });
+
     chrome.tabs.onRemoved.addListener((tabId) => {
       if (this.tabActiveChannels.delete(tabId)) {
         void this.saveTabActiveChannels();
       }
+      if (this.tabPausedChannels.delete(tabId)) {
+        void this.saveTabPausedChannels();
+      }
+      this.logEvent('browser.tabs', 'removed', { tabId });
     });
+  }
+
+  private logEvent(
+    category: string,
+    event: string,
+    details: Record<string, unknown> = {},
+    level: ExtensionLogLevel = 'info'
+  ): void {
+    if (!this.eventLoggingEnabled) return;
+
+    const entry: ExtensionLogEntry = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      ts: Date.now(),
+      level,
+      category,
+      event,
+      details,
+    };
+
+    this.extensionEventLog.push(entry);
+    if (this.extensionEventLog.length > this.EVENT_LOG_LIMIT) {
+      this.extensionEventLog = this.extensionEventLog.slice(
+        this.extensionEventLog.length - this.EVENT_LOG_LIMIT
+      );
+    }
+
+    if (this.eventLogFlushTimer) {
+      clearTimeout(this.eventLogFlushTimer);
+    }
+    this.eventLogFlushTimer = setTimeout(() => {
+      chrome.storage.local.set({ [STORAGE_KEYS.eventLog]: this.extensionEventLog });
+      this.eventLogFlushTimer = null;
+    }, 750) as unknown as number;
   }
 
   /**
    * Send native message to control services
    */
   private async sendNativeMessage(message: Record<string, unknown>): Promise<any> {
+    if (this.nativeHostUnavailable) {
+      return {
+        error: 'Specified native messaging host not found',
+        unavailable: true,
+      };
+    }
+
     console.log('[NativeMessaging] Sending:', message.action, message.service || '');
     return new Promise((resolve) => {
       try {
         chrome.runtime.sendNativeMessage(NATIVE_HOST_NAME, message, (response) => {
           if (chrome.runtime.lastError) {
-            console.error('[NativeMessaging] Error:', chrome.runtime.lastError.message);
-            resolve({ error: chrome.runtime.lastError.message });
+            const errMsg = chrome.runtime.lastError.message || 'Native messaging error';
+            const hostMissing =
+              errMsg.includes('Specified native messaging host not found') ||
+              errMsg.includes('No such native application');
+
+            if (hostMissing) {
+              this.nativeHostUnavailable = true;
+              if (!this.nativeHostMissingLogged) {
+                this.nativeHostMissingLogged = true;
+                console.warn(
+                  '[NativeMessaging] Native host not installed; native service controls disabled'
+                );
+              }
+            } else {
+              console.error('[NativeMessaging] Error:', errMsg);
+            }
+
+            resolve({ error: errMsg, unavailable: hostMissing });
           } else {
             resolve(response || {});
           }
@@ -1321,6 +1614,10 @@ class BackgroundService {
           continue;
         }
         const lastActivity = this.channelLastActivityAt.get(channelId) || 0;
+        // Never originate a wake ping in a channel that has not had actual conversation activity yet.
+        if (!lastActivity) {
+          continue;
+        }
         if (lastActivity && now - lastActivity < 90000) {
           continue;
         }
@@ -1389,6 +1686,15 @@ class BackgroundService {
    */
   private setupMessageHandlers(): void {
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+      const messageType = String(message?.type || 'unknown');
+      if (!['GET_EVENT_LOGS', 'GET_STATE', 'PING'].includes(messageType)) {
+        this.logEvent('extension.message', 'runtime_inbound', {
+          type: messageType,
+          tabId: sender.tab?.id ?? null,
+          tabUrl: sender.tab?.url ?? null,
+        });
+      }
+
       switch (message.type) {
         case 'TEST_PING':
           console.log('[FuseConnect v7] Received TEST_PING');
@@ -1442,9 +1748,41 @@ class BackgroundService {
             autoMonitor: this.autoMonitor,
             autoMasterClock: this.autoMasterClock,
             autoWakePing: this.autoWakePing,
+            pausedChannels: this.getTabPausedChannels(sender.tab?.id),
           });
           break;
         }
+
+        case 'GET_EVENT_LOGS': {
+          const limit = Math.max(1, Math.min(5000, Number(message.limit || 500)));
+          const category = message.category ? String(message.category) : null;
+          const level = message.level ? String(message.level) : null;
+          const items = this.extensionEventLog.filter((item) => {
+            if (category && item.category !== category) return false;
+            if (level && item.level !== level) return false;
+            return true;
+          });
+          sendResponse({
+            success: true,
+            total: items.length,
+            logs: items.slice(-limit),
+          });
+          break;
+        }
+
+        case 'CLEAR_EVENT_LOGS':
+          this.extensionEventLog = [];
+          chrome.storage.local.set({ [STORAGE_KEYS.eventLog]: [] });
+          sendResponse({ success: true });
+          break;
+
+        case 'SET_EVENT_LOGGING':
+          this.eventLoggingEnabled = !!message.enabled;
+          this.logEvent('extension', 'event_logging_toggle', {
+            enabled: this.eventLoggingEnabled,
+          });
+          sendResponse({ success: true, enabled: this.eventLoggingEnabled });
+          break;
 
         case 'SET_AUTO_CONNECT':
           this.autoConnect = message.enabled;
@@ -1655,10 +1993,29 @@ Format as JSON array:
           break;
 
         case 'CHANNEL_CREATE': {
+          const trimmedName = String(message.name || '')
+            .trim()
+            .replace(/\s+/g, ' ');
+          if (!trimmedName) {
+            sendResponse({ success: false, error: 'Channel name is required' });
+            break;
+          }
+
+          const existingChannel = this.findChannelByName(trimmedName);
+          if (existingChannel) {
+            sendResponse({
+              success: false,
+              alreadyExists: true,
+              error: `Channel "${existingChannel.name}" already exists`,
+              channel: existingChannel,
+            });
+            break;
+          }
+
           // Optimistically create channel locally
           const newChannel: FederationChannel = {
             id: `local-${Date.now()}`,
-            name: message.name,
+            name: trimmedName,
             description: message.description || '',
             isPrivate: message.isPrivate || false,
             createdAt: Date.now(),
@@ -1672,18 +2029,22 @@ Format as JSON array:
             type: 'CHANNELS_UPDATE',
             channels: Array.from(this.channels.values()),
           });
+          this.notifyPopup({
+            type: 'CHANNELS_UPDATE',
+            channels: Array.from(this.channels.values()),
+          });
           this.saveChannels();
 
           // Forward to Relay
           this.send({
             type: 'CHANNEL_CREATE',
-            name: message.name,
+            name: trimmedName,
             description: message.description,
             isPrivate: message.isPrivate || false,
           });
           this.sendActivityEvent('channel_create', {
             channelId: newChannel.id,
-            name: message.name,
+            name: trimmedName,
           });
           sendResponse({ success: true, channel: newChannel });
           break;
@@ -1708,7 +2069,15 @@ Format as JSON array:
             type: 'JOINED_CHANNELS_UPDATE',
             joinedChannels: Array.from(this.joinedChannels),
           });
+          this.notifyPopup({
+            type: 'JOINED_CHANNELS_UPDATE',
+            joinedChannels: Array.from(this.joinedChannels),
+          });
           this.sendActivityEvent('channel_join', { channelId: message.channelId });
+          this.logEvent('channel', 'join', {
+            tabId: sender.tab?.id ?? null,
+            channelId: message.channelId,
+          });
           sendResponse({ success: true });
           break;
 
@@ -1731,9 +2100,79 @@ Format as JSON array:
             type: 'JOINED_CHANNELS_UPDATE',
             joinedChannels: Array.from(this.joinedChannels),
           });
+          this.notifyPopup({
+            type: 'JOINED_CHANNELS_UPDATE',
+            joinedChannels: Array.from(this.joinedChannels),
+          });
           this.sendActivityEvent('channel_leave', { channelId: message.channelId });
+          this.logEvent('channel', 'leave', {
+            tabId: sender.tab?.id ?? null,
+            channelId: message.channelId,
+          });
           sendResponse({ success: true });
           break;
+
+        case 'CHANNEL_PAUSE': {
+          if (!sender.tab?.id) {
+            sendResponse({ success: false, error: 'Missing sender tab' });
+            break;
+          }
+          const channelId = String(message.channelId || '');
+          this.setChannelPaused(sender.tab.id, channelId, true);
+          this.logEvent('channel', 'pause', { tabId: sender.tab.id, channelId });
+          chrome.tabs.sendMessage(
+            sender.tab.id,
+            {
+              type: 'CHANNEL_PAUSE_UPDATE',
+              channelId,
+              paused: true,
+              pausedChannels: this.getTabPausedChannels(sender.tab.id),
+            },
+            () => {
+              const err = chrome.runtime.lastError;
+              if (err) {
+                this.logEvent('channel', 'pause_update_delivery_error', {
+                  tabId: sender.tab?.id ?? null,
+                  channelId,
+                  error: err.message,
+                });
+              }
+              sendResponse({ success: true, delivered: !err });
+            }
+          );
+          return true;
+        }
+
+        case 'CHANNEL_RESUME': {
+          if (!sender.tab?.id) {
+            sendResponse({ success: false, error: 'Missing sender tab' });
+            break;
+          }
+          const channelId = String(message.channelId || '');
+          this.setChannelPaused(sender.tab.id, channelId, false);
+          this.logEvent('channel', 'resume', { tabId: sender.tab.id, channelId });
+          chrome.tabs.sendMessage(
+            sender.tab.id,
+            {
+              type: 'CHANNEL_PAUSE_UPDATE',
+              channelId,
+              paused: false,
+              pausedChannels: this.getTabPausedChannels(sender.tab.id),
+            },
+            () => {
+              const err = chrome.runtime.lastError;
+              if (err) {
+                this.logEvent('channel', 'resume_update_delivery_error', {
+                  tabId: sender.tab?.id ?? null,
+                  channelId,
+                  error: err.message,
+                });
+              }
+              sendResponse({ success: true, delivered: !err });
+            }
+          );
+          return true;
+        }
 
         case 'CHANNEL_DELETE': {
           const channelIdToDelete = message.channelId;
@@ -1744,6 +2183,10 @@ Format as JSON array:
           this.channels.delete(channelIdToDelete);
           this.joinedChannels.delete(channelIdToDelete);
           this.broadcastToTabs({
+            type: 'CHANNELS_UPDATE',
+            channels: Array.from(this.channels.values()),
+          });
+          this.notifyPopup({
             type: 'CHANNELS_UPDATE',
             channels: Array.from(this.channels.values()),
           });
@@ -1788,7 +2231,15 @@ Format as JSON array:
               type: 'CHANNEL_SELECTED',
               channelId: this.getTabActiveChannel(sender.tab.id),
             });
+            chrome.tabs.sendMessage(sender.tab.id, {
+              type: 'CHANNEL_PAUSE_UPDATE',
+              pausedChannels: this.getTabPausedChannels(sender.tab.id),
+            });
           }
+          this.logEvent('extension', 'content_script_ready', {
+            tabId: sender.tab?.id ?? null,
+            url: sender.tab?.url ?? null,
+          });
           sendResponse({ success: true });
           break;
 
@@ -1865,10 +2316,18 @@ Format as JSON array:
           break;
 
         case 'INJECT_MESSAGE':
-          // Forward message injection request to active tab's content script
-          // This handles messages from the FloatingPanel that need to be injected into the page's chat
-          this.injectMessageToActiveTab(message.content)
+          // Prefer sender tab (content-script originated requests) so we inject
+          // into the exact page where the modal input was typed.
+          // Fallback to active tab for popup-originated requests.
+          (sender.tab?.id
+            ? this.injectMessageToTab(sender.tab.id, message.content)
+            : this.injectMessageToActiveTab(message.content)
+          )
             .then(() => {
+              this.logEvent('chat', 'inject_message', {
+                tabId: sender.tab?.id ?? null,
+                preview: String(message.content || '').slice(0, 120),
+              });
               sendResponse({ success: true });
             })
             .catch((error) => {
