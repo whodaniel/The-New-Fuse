@@ -9,6 +9,7 @@ import { IdentityService } from '../services/identity.service';
 import { LoggingService } from '../services/logging.service';
 import { comparePasswords, hashPassword } from '../utils/auth.utils';
 import { UserLoginEvent } from './events/auth.events';
+import { TokenBlacklistService } from './token-blacklist.service';
 
 @Injectable()
 export class AuthService {
@@ -17,7 +18,8 @@ export class AuthService {
     private logger: LoggingService,
     private eventBus: EventBus,
     private identityService: IdentityService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private tokenBlacklist: TokenBlacklistService
   ) {
     this.initializeFirebase();
   }
@@ -26,7 +28,9 @@ export class AuthService {
     if (admin.apps.length === 0) {
       const projectId = this.configService.get<string>('FIREBASE_PROJECT_ID');
       const clientEmail = this.configService.get<string>('FIREBASE_CLIENT_EMAIL');
-      const privateKey = this.configService.get<string>('FIREBASE_PRIVATE_KEY')?.replace(/\\n/g, '\n');
+      const privateKey = this.configService
+        .get<string>('FIREBASE_PRIVATE_KEY')
+        ?.replace(/\\n/g, '\n');
 
       if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
         try {
@@ -133,7 +137,7 @@ export class AuthService {
   async verifyEmail(token: string) {
     // Find user by verification token
     const user = await drizzleUserRepository.findByVerificationToken(token);
-    
+
     if (!user) {
       throw new UnauthorizedException('Invalid verification token');
     }
@@ -157,11 +161,11 @@ export class AuthService {
     this.logger.log(`Email verified for user: ${user.email}`);
 
     // Generate JWT token for auto-login
-    const payload = { 
-      email: updatedUser.email, 
-      sub: updatedUser.id, 
-      role: updatedUser.role, 
-      roles: updatedUser.roles 
+    const payload = {
+      email: updatedUser.email,
+      sub: updatedUser.id,
+      role: updatedUser.role,
+      roles: updatedUser.roles,
     };
     const access_token = this.jwtService.sign(payload);
 
@@ -180,7 +184,7 @@ export class AuthService {
 
   async resendVerification(email: string) {
     const user = await drizzleUserRepository.findByEmail(email);
-    
+
     if (!user) {
       // Don't reveal whether user exists
       return { message: 'If an account exists, a verification email has been sent.' };
@@ -255,7 +259,14 @@ export class AuthService {
   }
 
   async logout(token: string) {
-    // Token invalidation logic
+    // Blacklist the token
+    if (token) {
+      const decoded = this.jwtService.decode(token) as any;
+      if (decoded?.sub) {
+        await this.tokenBlacklist.blacklistToken(token, decoded.sub, 'logout');
+      }
+    }
+
     return { message: 'Logged out successfully' };
   }
 

@@ -1,10 +1,12 @@
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { JwtModule } from '@nestjs/jwt';
-import type { StringValue } from 'ms';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AGUIModule } from '@the-new-fuse/ag-ui-core';
 import { DrizzleModule } from '@the-new-fuse/database';
+import type { StringValue } from 'ms';
 import { ApiModule } from './api/api.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -40,6 +42,25 @@ import { UsersModule } from './users/users.module';
     // SECURITY: AppConfigModule provides validated configuration with fail-fast validation
     // This ensures no hardcoded secrets or weak configurations exist
     AppConfigModule,
+
+    // Rate Limiting - Protect against brute force and DDoS
+    ThrottlerModule.forRoot([
+      {
+        name: 'short',
+        ttl: 1000, // 1 second
+        limit: 3, // 3 requests per second
+      },
+      {
+        name: 'medium',
+        ttl: 10000, // 10 seconds
+        limit: 20, // 20 requests per 10 seconds
+      },
+      {
+        name: 'long',
+        ttl: 60000, // 1 minute
+        limit: 100, // 100 requests per minute
+      },
+    ]),
 
     // Event Emitter for inter-service communication
     EventEmitterModule.forRoot({
@@ -87,7 +108,16 @@ import { UsersModule } from './users/users.module';
     AGUIModule, // AG-UI Protocol - Real-time agent visualization pipeline
   ],
   controllers: [AppController, CacheController],
-  providers: [AppService, EventBus, LoggingService],
+  providers: [
+    AppService,
+    EventBus,
+    LoggingService,
+    // Global rate limiting guard
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

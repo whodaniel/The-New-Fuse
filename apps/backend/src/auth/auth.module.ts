@@ -15,6 +15,7 @@ import { GitHubStrategy } from './github.strategy';
 import { GoogleStrategy } from './google.strategy';
 import { RolesGuard } from './guards/roles.guard';
 import { JwtStrategy } from './jwt.strategy';
+import { TokenBlacklistService } from './token-blacklist.service';
 
 @Module({
   imports: [
@@ -42,8 +43,9 @@ import { JwtStrategy } from './jwt.strategy';
     GitHubStrategy,
     IdentityService,
     JwtStrategy,
+    TokenBlacklistService,
   ],
   controllers: [AuthController],
-  exports: [AuthService, RolesGuard, FirebaseAuthGuard, AgentJwtStrategy],
+  exports: [AuthService, RolesGuard, FirebaseAuthGuard, AgentJwtStrategy, TokenBlacklistService],
 })
 export class AuthModule {}

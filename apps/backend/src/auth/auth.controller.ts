@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
+import { SkipThrottle, Throttle } from '@nestjs/throttler';
 import { IsEmail, IsString } from 'class-validator';
 import { Request, Response } from 'express';
 import { RegisterDto } from '../dto/register.dto';
@@ -26,6 +27,7 @@ class LoginDto {
 }
 
 @Controller('auth')
+@SkipThrottle() // Skip global rate limiting for auth controller, apply specific limits
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
@@ -33,12 +35,14 @@ export class AuthController {
   ) {}
 
   @Post('register')
+  @Throttle({ default: { limit: 5, ttl: 60000 } }) // 5 registrations per minute
   async register(@Body() registerDto: RegisterDto) {
     const { email, password, name } = registerDto;
     return this.authService.register(email, password, name);
   }
 
   @Post('verify-email')
+  @Throttle({ default: { limit: 10, ttl: 60000 } }) // 10 verifications per minute
   async verifyEmail(@Body('token') token: string) {
     if (!token) {
       throw new BadRequestException('Verification token is required');
@@ -47,6 +51,7 @@ export class AuthController {
   }
 
   @Post('resend-verification')
+  @Throttle({ default: { limit: 3, ttl: 60000 } }) // 3 resend attempts per minute
   async resendVerification(@Body('email') email: string) {
     if (!email) {
       throw new BadRequestException('Email is required');
@@ -55,6 +60,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @Throttle({ default: { limit: 10, ttl: 60000 } }) // 10 login attempts per minute
   async loginWithEmail(@Body() loginDto: LoginDto) {
     const { email, password } = loginDto;
     const user = await this.authService.validateUser(email, password);
