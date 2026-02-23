@@ -178,7 +178,7 @@ export class WorkflowExecutionService implements OnModuleInit {
       executionId,
       workflowId,
       input,
-      variables: { ...workflow.variables, ...options.variables } || {},
+      variables: { ...(workflow.variables || {}), ...(options.variables || {}) },
       stepResults: new Map(),
       logs: [],
       startTime: new Date(),
