@@ -116,7 +116,7 @@ const Login: React.FC = () => {
             {isLoading ? 'Signing in...' : 'Sign in'}
           </button>
 
-          {turnstileSiteKey && (
+          {requireTurnstile && turnstileSiteKey && (
             <div className="pt-2">
               <TurnstileWidget
                 siteKey={turnstileSiteKey}

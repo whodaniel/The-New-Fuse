@@ -159,7 +159,7 @@ const Register: React.FC = () => {
             {isLoading ? 'Creating account...' : 'Create account'}
           </button>
 
-          {turnstileSiteKey && (
+          {requireTurnstile && turnstileSiteKey && (
             <div className="pt-2">
               <TurnstileWidget
                 siteKey={turnstileSiteKey}
