@@ -8,9 +8,9 @@ export function useAuth(): any {
   }
   return {
     isAuthenticated: context.isAuthenticated,
-    isLoading: !context.isInitialized,
-    authToken: context.token,
+    isLoading: context.isLoading,
+    authToken: localStorage.getItem('auth_token'),
     user: context.user,
-    unsetUser: () => context.setToken(null)
+    unsetUser: () => context.logout(),
   };
 }

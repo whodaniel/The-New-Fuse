@@ -1,0 +1,260 @@
+import { Injectable, OnModuleDestroy, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { compare, hash } from 'bcrypt';
+import { randomUUID } from 'crypto';
+import postgres from 'postgres';
+
+type DbUser = {
+  id: string;
+  email: string;
+  name: string | null;
+  passwordHash: string | null;
+  role: string;
+  roles: string[] | null;
+};
+
+type AuthUser = {
+  id: string;
+  email: string;
+  username: string | null;
+  name: string | null;
+  role: string;
+  roles: string[];
+  emailVerified: boolean;
+  isActive: boolean;
+};
+
+type AuthResponse = {
+  accessToken: string;
+  refreshToken: string;
+  access_token: string;
+  refresh_token: string;
+  token: string;
+  user: AuthUser;
+};
+
+type JwtPayload = {
+  sub: string;
+  username: string | null;
+  email: string;
+  roles: string[];
+  permissions: string[];
+};
+
+type TurnstileVerificationResponse = {
+  success: boolean;
+};
+
+const isTruthy = (value: unknown): boolean => {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'number') return value > 0;
+  if (typeof value !== 'string') return false;
+  return ['1', 'true', 'yes', 'on', 'enabled'].includes(value.trim().toLowerCase());
+};
+
+@Injectable()
+export class GatewayAuthService implements OnModuleDestroy {
+  private readonly sql = postgres(
+    process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/thenewfuse'
+  );
+
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService
+  ) {}
+
+  async onModuleDestroy() {
+    await this.sql.end({ timeout: 5 });
+  }
+
+  async login(
+    email: string,
+    password: string,
+    cfTurnstileToken?: string,
+    ipAddress?: string
+  ): Promise<AuthResponse> {
+    await this.verifyTurnstileIfEnabled(cfTurnstileToken, ipAddress);
+
+    const user = await this.findUserByEmail(email);
+    if (!user || !user.passwordHash || !(await compare(password, user.passwordHash))) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    return this.generateTokens(user);
+  }
+
+  async register(
+    name: string | undefined,
+    email: string,
+    password: string,
+    cfTurnstileToken?: string,
+    ipAddress?: string
+  ): Promise<AuthResponse> {
+    await this.verifyTurnstileIfEnabled(cfTurnstileToken, ipAddress);
+
+    const existing = await this.findUserByEmail(email);
+    if (existing) {
+      throw new UnauthorizedException('User already exists');
+    }
+
+    const passwordHash = await hash(password, 10);
+    const now = new Date();
+    const id = `usr_${randomUUID().replace(/-/g, '').slice(0, 24)}`;
+
+    const inserted = await this.sql<DbUser[]>`
+      insert into users (id, email, name, "passwordHash", role, roles, "createdAt", "updatedAt")
+      values (${id}, ${email}, ${name?.trim() || null}, ${passwordHash}, ${'USER'}, ${JSON.stringify(['USER'])}::jsonb, ${now}, ${now})
+      returning id, email, name, "passwordHash", role, roles
+    `;
+
+    const user = inserted[0];
+    if (!user) {
+      throw new UnauthorizedException('Unable to create user');
+    }
+
+    return this.generateTokens(user);
+  }
+
+  async refresh(refreshToken: string): Promise<AuthResponse> {
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token is required');
+    }
+
+    const refreshSecret = this.getRefreshSecret();
+
+    try {
+      const payload = await this.jwtService.verifyAsync(refreshToken, { secret: refreshSecret });
+      const user = await this.findUserById(payload.sub);
+      if (!user) throw new Error('User not found');
+      return this.generateTokens(user);
+    } catch {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+  }
+
+  async me(userId: string): Promise<AuthUser | null> {
+    const user = await this.findUserById(userId);
+    if (!user) return null;
+    return this.toAuthUser(user);
+  }
+
+  private async findUserByEmail(email: string): Promise<DbUser | null> {
+    const result = await this.sql<DbUser[]>`
+      select id, email, name, "passwordHash", role, roles
+      from users
+      where lower(email) = lower(${email})
+      limit 1
+    `;
+    return result[0] || null;
+  }
+
+  private async findUserById(id: string): Promise<DbUser | null> {
+    const result = await this.sql<DbUser[]>`
+      select id, email, name, "passwordHash", role, roles
+      from users
+      where id = ${id}
+      limit 1
+    `;
+    return result[0] || null;
+  }
+
+  private async verifyTurnstileIfEnabled(token: string | undefined, ipAddress?: string) {
+    const requireTurnstile = isTruthy(this.configService.get('AUTH_REQUIRE_TURNSTILE'));
+    if (!requireTurnstile) return;
+
+    if (!token) {
+      throw new UnauthorizedException('Cloudflare Turnstile token is required');
+    }
+
+    const secret =
+      this.configService.get<string>('CLOUDFLARE_TURNSTILE_SECRET_KEY') ||
+      this.configService.get<string>('TURNSTILE_SECRET_KEY');
+    if (!secret) {
+      throw new UnauthorizedException(
+        'Cloudflare Turnstile is enabled but no secret key is configured'
+      );
+    }
+
+    const body = new URLSearchParams();
+    body.append('secret', secret);
+    body.append('response', token);
+    if (ipAddress) body.append('remoteip', ipAddress);
+
+    const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: body.toString(),
+    });
+    if (!response.ok) {
+      throw new UnauthorizedException('Unable to validate Cloudflare Turnstile token');
+    }
+
+    const result = (await response.json()) as TurnstileVerificationResponse;
+    if (!result.success) {
+      throw new UnauthorizedException('Cloudflare Turnstile validation failed');
+    }
+  }
+
+  private async generateTokens(user: DbUser): Promise<AuthResponse> {
+    const roles = Array.isArray(user.roles) && user.roles.length > 0 ? user.roles : [user.role];
+    const payload: JwtPayload = {
+      sub: user.id,
+      username: null,
+      email: user.email,
+      roles,
+      permissions:
+        roles.includes('SUPER_ADMIN') || roles.includes('ADMIN') ? ['*'] : ['profile:read'],
+    };
+
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(payload, {
+        secret: this.getAccessSecret(),
+        expiresIn: '15m',
+      }),
+      this.jwtService.signAsync(payload, {
+        secret: this.getRefreshSecret(),
+        expiresIn: '7d',
+      }),
+    ]);
+
+    const authUser = this.toAuthUser(user);
+
+    return {
+      accessToken,
+      refreshToken,
+      access_token: accessToken,
+      refresh_token: refreshToken,
+      token: accessToken,
+      user: authUser,
+    };
+  }
+
+  private toAuthUser(user: DbUser): AuthUser {
+    const roles = Array.isArray(user.roles) && user.roles.length > 0 ? user.roles : [user.role];
+    return {
+      id: user.id,
+      email: user.email,
+      username: null,
+      name: user.name,
+      role: user.role,
+      roles,
+      emailVerified: true,
+      isActive: true,
+    };
+  }
+
+  private getAccessSecret(): string {
+    return (
+      this.configService.get<string>('JWT_SECRET') || process.env.JWT_SECRET || 'dev-secret-key-123'
+    );
+  }
+
+  private getRefreshSecret(): string {
+    return (
+      this.configService.get<string>('JWT_REFRESH_SECRET') ||
+      process.env.JWT_REFRESH_SECRET ||
+      this.getAccessSecret()
+    );
+  }
+}

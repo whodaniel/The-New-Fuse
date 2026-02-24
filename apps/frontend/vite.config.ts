@@ -377,6 +377,11 @@ export default defineConfig(({ mode }) => {
               changeOrigin: true,
               secure: false,
             },
+            '/v1': {
+              target: env.VITE_API_GATEWAY_URL || 'http://localhost:8080',
+              changeOrigin: true,
+              secure: false,
+            },
             '/ws': {
               target: env.VITE_WS_URL || 'ws://localhost:3001',
               ws: true,

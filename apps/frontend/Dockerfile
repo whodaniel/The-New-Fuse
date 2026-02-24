@@ -17,6 +17,9 @@ ARG VITE_FIREBASE_PROJECT_ID
 ARG VITE_FIREBASE_STORAGE_BUCKET
 ARG VITE_FIREBASE_MESSAGING_SENDER_ID
 ARG VITE_FIREBASE_APP_ID
+ARG VITE_TURNSTILE_SITE_KEY
+ARG VITE_AUTH_REQUIRE_TURNSTILE
+ARG VITE_API_GATEWAY_URL
 
 # Check if we're in the frontend directory or monorepo root
 # by looking for the presence of app-specific files
@@ -45,6 +48,9 @@ ENV NODE_ENV=production
 # Previously these were hardcoded to api.thenewfuse.com which doesn't exist in DNS
 ENV VITE_API_URL=/api
 ENV VITE_BACKEND_URL=/api
+ENV VITE_TURNSTILE_SITE_KEY=$VITE_TURNSTILE_SITE_KEY
+ENV VITE_AUTH_REQUIRE_TURNSTILE=$VITE_AUTH_REQUIRE_TURNSTILE
+ENV VITE_API_GATEWAY_URL=$VITE_API_GATEWAY_URL
 ENV NODE_OPTIONS=--max-old-space-size=4096
 
 # Firebase configuration is loaded from .env.production which is committed to the repo

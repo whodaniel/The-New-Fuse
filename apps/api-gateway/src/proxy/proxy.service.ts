@@ -104,7 +104,9 @@ export class ProxyService {
       timeout: service.timeout || 30000,
       params: query,
       maxRedirects: 0,
-      validateStatus: (status) => status >= 200 && status < 400,
+      // Preserve backend HTTP semantics (4xx/5xx) so gateway controllers
+      // can return exact status/data instead of collapsing to 502.
+      validateStatus: () => true,
     };
 
     if (body && ['POST', 'PUT', 'PATCH'].includes(method.toUpperCase())) {

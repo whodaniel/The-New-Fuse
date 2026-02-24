@@ -9,7 +9,6 @@ import { AuthModule } from './auth/auth.module';
 import { AgentGatewayModule } from './gateway/agent-gateway.module';
 import { ChatGatewayModule } from './gateway/chat-gateway.module';
 import { IdeGatewayModule } from './gateway/ide-gateway.module';
-import { JulesWebhookModule } from './gateway/jules-webhook.module';
 import { McpGatewayModule } from './gateway/mcp-gateway.module';
 import { WebhookGatewayModule } from './gateway/webhook-gateway.module';
 import { ProxyModule } from './proxy/proxy.module';
@@ -33,7 +32,6 @@ import { ProxyModule } from './proxy/proxy.module';
     ChatGatewayModule,
     McpGatewayModule,
     IdeGatewayModule,
-    JulesWebhookModule,
   ],
 })
 export class AppModule {}
