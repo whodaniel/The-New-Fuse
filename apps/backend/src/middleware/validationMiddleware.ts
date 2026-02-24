@@ -1,7 +1,7 @@
-import { Injectable, NestMiddleware, BadRequestException } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
-import { ValidationService } from '../services/validationService';
-import { LoggingService } from '../services/loggingService';
+import { BadRequestException, Injectable, NestMiddleware } from '@nestjs/common';
+import { NextFunction, Request, Response } from 'express';
+import { LoggingService } from '../services/logging.service';
+import { ValidationService } from '../services/validation.service';
 
 export interface ValidationOptions {
   dto?: new () => any;
@@ -31,7 +31,7 @@ export class ValidationMiddleware implements NestMiddleware {
             if (!result.success) {
               throw new BadRequestException({
                 message: 'Validation failed',
-                errors: result.errors
+                errors: result.errors,
               });
             }
           }
@@ -84,7 +84,7 @@ export class ValidationMiddleware implements NestMiddleware {
 
         // Wait for all validation promises to resolve
         const results = await Promise.all(validationPromises);
-        if (results.some(result => !result)) {
+        if (results.some((result) => !result)) {
           throw new BadRequestException('Validation rules failed');
         }
 
@@ -93,7 +93,7 @@ export class ValidationMiddleware implements NestMiddleware {
         this.logger.error('Request validation failed', {
           path: req.path,
           method: req.method,
-          error: error as Error
+          error: error as Error,
         });
 
         if (error instanceof BadRequestException) {
@@ -104,4 +104,4 @@ export class ValidationMiddleware implements NestMiddleware {
       }
     };
   }
-} 
+}

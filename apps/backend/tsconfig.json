@@ -22,7 +22,17 @@
     "declarationMap": true,
     "sourceMap": true,
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@the-new-fuse/database": ["../../packages/database/dist"],
+      "@the-new-fuse/database/drizzle/schema": [
+        "../../packages/database/dist/drizzle/schema"
+      ],
+      "@the-new-fuse/database/drizzle": [
+        "../../packages/database/dist/drizzle"
+      ],
+      "@the-new-fuse/types": ["../../packages/types/dist"],
+      "@the-new-fuse/a2a-core": ["../../packages/a2a-core/dist"],
+      "@the-new-fuse/a2a-react": ["../../packages/a2a-react/dist"]
     }
   },
   "include": ["src/**/*"],

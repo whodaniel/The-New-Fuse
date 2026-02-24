@@ -16,7 +16,7 @@ import {
   workflows,
   workflowSteps,
 } from '@the-new-fuse/database/drizzle/schema';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import {
   MassBlockConfig,
   MassBlocksService,
@@ -785,7 +785,7 @@ export class WorkflowExecutionService implements OnModuleInit {
       .update(workflows)
       .set({
         lastExecutedAt: completedAt,
-        executionCount: db.raw('execution_count + 1'),
+        executionCount: sql`${workflows.executionCount} + 1`,
       })
       .where(eq(workflows.id, context.workflowId));
 
