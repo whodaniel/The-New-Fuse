@@ -204,8 +204,25 @@ class FuseConnectPopup {
       this.refreshAIVideoPlaylists();
     });
 
+    document.getElementById('ai-video-refresh-channels')?.addEventListener('click', () => {
+      this.refreshAIVideoChannels();
+    });
+
+    document.getElementById('ai-video-channel-select')?.addEventListener('change', (e) => {
+      const channelId = e.target.value || '';
+      chrome.runtime.sendMessage({ type: 'AI_STUDIO_SET_CHANNEL', channelId }, (response) => {
+        if (response?.success) {
+          this.refreshAIVideoPlaylists();
+        }
+      });
+    });
+
     document.getElementById('ai-video-load-playlist')?.addEventListener('click', () => {
       this.loadSelectedPlaylistIntoQueue();
+    });
+
+    document.getElementById('ai-video-create-playlist')?.addEventListener('click', () => {
+      this.createAIVideoPlaylist();
     });
 
     document.getElementById('ai-video-single-url')?.addEventListener('input', () => {
@@ -657,6 +674,7 @@ class FuseConnectPopup {
 
     await this.refreshAIVideoStats();
     await this.refreshAIVideoQueueAndPreferences();
+    await this.refreshAIVideoChannels();
     await this.refreshAIVideoPlaylists();
     await this.refreshAIVideoHistory();
     this.updateServiceUI();
@@ -753,6 +771,9 @@ class FuseConnectPopup {
       if (action === 'auth') {
         this.handleAIStudioAuth();
         return;
+      } else if (action === 'signout') {
+        this.handleAIStudioSignOut();
+        return;
       } else if (action === 'process') {
         this.handleAIStudioProcess();
         return;
@@ -791,17 +812,32 @@ class FuseConnectPopup {
   async handleAIStudioAuth() {
     this.showToast('Opening Google OAuth...');
     try {
-      chrome.runtime.sendMessage({ type: 'AI_STUDIO_AUTH' }, (response) => {
+      chrome.runtime.sendMessage({ type: 'YOUTUBE_AUTHENTICATE' }, async (response) => {
         if (response?.success) {
           this.showToast('Authenticated successfully!');
           this.updateAIStudioStatus('connected');
+          await this.refreshAIVideoChannels();
+          await this.refreshAIVideoPlaylists();
+          this.refreshServiceStatus();
         } else {
-          this.showToast('Authentication failed');
+          this.showToast(response?.error || 'Authentication failed');
         }
       });
     } catch (e) {
       this.showToast(`Auth error: ${e.message}`);
     }
+  }
+
+  async handleAIStudioSignOut() {
+    this.showToast('Signing out YouTube account...');
+    chrome.runtime.sendMessage({ type: 'YOUTUBE_SIGN_OUT' }, (response) => {
+      if (response?.success) {
+        this.showToast('Signed out. Re-authenticate to choose another account.');
+        this.refreshServiceStatus();
+      } else {
+        this.showToast(response?.error || 'Sign out failed');
+      }
+    });
   }
 
   async handleAIStudioProcess() {
@@ -948,6 +984,8 @@ class FuseConnectPopup {
         }
         const playlists =
           response?.success && Array.isArray(response.playlists) ? response.playlists : [];
+        const channels =
+          response?.success && Array.isArray(response.channels) ? response.channels : [];
         const currentValue = selectEl.value;
         selectEl.innerHTML = '<option value="">Select playlist...</option>';
         playlists.forEach((playlist) => {
@@ -957,9 +995,54 @@ class FuseConnectPopup {
           selectEl.appendChild(option);
         });
         if (currentValue) selectEl.value = currentValue;
+
+        const channelSelectEl = document.getElementById('ai-video-channel-select');
+        if (channelSelectEl) {
+          const existingValue = channelSelectEl.value;
+          channelSelectEl.innerHTML = '<option value="">Default channel...</option>';
+          channels.forEach((channel) => {
+            const option = document.createElement('option');
+            option.value = channel.id;
+            option.textContent = channel.title;
+            channelSelectEl.appendChild(option);
+          });
+          chrome.storage.local.get(['ai_studio_channel_id'], (stored) => {
+            const preferred = String(stored.ai_studio_channel_id || existingValue || '');
+            if (preferred) channelSelectEl.value = preferred;
+          });
+        }
+
         if (!response?.success && response?.error) {
           this.showToast(response.error);
         }
+        resolve();
+      });
+    });
+  }
+
+  async refreshAIVideoChannels() {
+    return new Promise((resolve) => {
+      chrome.runtime.sendMessage({ type: 'AI_STUDIO_GET_CHANNELS' }, (response) => {
+        const channelSelectEl = document.getElementById('ai-video-channel-select');
+        if (!channelSelectEl) {
+          resolve();
+          return;
+        }
+        const channels =
+          response?.success && Array.isArray(response.channels) ? response.channels : [];
+        const existingValue = channelSelectEl.value;
+        channelSelectEl.innerHTML = '<option value="">Default channel...</option>';
+        channels.forEach((channel) => {
+          const option = document.createElement('option');
+          option.value = channel.id;
+          option.textContent = channel.title;
+          channelSelectEl.appendChild(option);
+        });
+        chrome.storage.local.get(['ai_studio_channel_id'], (stored) => {
+          const preferred = String(stored.ai_studio_channel_id || existingValue || '');
+          if (preferred) channelSelectEl.value = preferred;
+        });
+        if (!response?.success && response?.error) this.showToast(response.error);
         resolve();
       });
     });
@@ -987,6 +1070,32 @@ class FuseConnectPopup {
             this.showToast('Failed to save playlist queue');
           }
         });
+      }
+    );
+  }
+
+  async createAIVideoPlaylist() {
+    const input = document.getElementById('ai-video-new-playlist-title');
+    const title = String(input?.value || '').trim();
+    if (!title) {
+      this.showToast('Enter a playlist title first');
+      return;
+    }
+
+    chrome.runtime.sendMessage(
+      {
+        type: 'YOUTUBE_CREATE_PLAYLIST',
+        title,
+        description: 'Created by Fuse Connect AIVI',
+      },
+      (response) => {
+        if (response?.success) {
+          input.value = '';
+          this.showToast('Playlist created');
+          this.refreshAIVideoPlaylists();
+        } else {
+          this.showToast(response?.error || 'Failed to create playlist');
+        }
       }
     );
   }

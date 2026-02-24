@@ -7,7 +7,7 @@
     "setup:native-modules": "node scripts/setup-native-modules.cjs",
     "prepare": "husky",
     "start": "pnpm run dev",
-    "dev": "turbo run dev --filter=@the-new-fuse/api-gateway --filter=@the-new-fuse/frontend-app --concurrency=5",
+    "dev": "turbo run dev --filter=@the-new-fuse/api-server --filter=@the-new-fuse/api-gateway --filter=@the-new-fuse/frontend-app --concurrency=6",
     "dev:all": "turbo run dev --concurrency=50",
     "dev:api": "turbo run dev --filter=@the-new-fuse/api-server",
     "dev:gateway": "turbo run dev --filter=@the-new-fuse/api-gateway",

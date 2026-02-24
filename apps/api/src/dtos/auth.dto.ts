@@ -9,6 +9,14 @@ export class LoginDto {
   @ApiProperty()
   @IsString()
   password: string = '';
+
+  @ApiProperty({
+    required: false,
+    description: 'Optional Cloudflare Turnstile token (required when server enables Turnstile)',
+  })
+  @IsString()
+  @IsOptional()
+  cfTurnstileToken?: string;
 }
 
 export class RegisterDto {
@@ -48,6 +56,14 @@ export class RegisterDto {
   @IsString()
   @IsOptional()
   lastName?: string;
+
+  @ApiProperty({
+    required: false,
+    description: 'Optional Cloudflare Turnstile token (required when server enables Turnstile)',
+  })
+  @IsString()
+  @IsOptional()
+  cfTurnstileToken?: string;
 }
 
 export class TokenDto {

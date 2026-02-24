@@ -214,6 +214,9 @@
             </div>
             <div class="service-actions">
               <button class="btn-small" data-action="auth" data-service="ai-studio">Auth</button>
+              <button class="btn-small" data-action="signout" data-service="ai-studio">
+                Sign Out
+              </button>
               <button class="btn-small" data-action="process" data-service="ai-studio">
                 Process
               </button>
@@ -252,6 +255,16 @@
             "
           >
             <div style="font-size: 11px; color: rgba(255, 255, 255, 0.6); margin-bottom: 6px">
+              YouTube Channel
+            </div>
+            <div style="display: flex; gap: 8px; margin-bottom: 8px">
+              <select id="ai-video-channel-select" style="flex: 1">
+                <option value="">Default channel...</option>
+              </select>
+              <button class="btn-secondary" id="ai-video-refresh-channels">Refresh</button>
+            </div>
+
+            <div style="font-size: 11px; color: rgba(255, 255, 255, 0.6); margin-bottom: 6px">
               YouTube Playlists
             </div>
             <div style="display: flex; gap: 8px; margin-bottom: 8px">
@@ -260,6 +273,15 @@
               </select>
               <button class="btn-secondary" id="ai-video-refresh-playlists">Refresh</button>
               <button class="btn-secondary" id="ai-video-load-playlist">Load</button>
+            </div>
+            <div style="display: flex; gap: 8px; margin-bottom: 8px">
+              <input
+                id="ai-video-new-playlist-title"
+                type="text"
+                placeholder="New private playlist title..."
+                style="flex: 1"
+              />
+              <button class="btn-secondary" id="ai-video-create-playlist">Create</button>
             </div>
 
             <div style="font-size: 11px; color: rgba(255, 255, 255, 0.6); margin-bottom: 6px">

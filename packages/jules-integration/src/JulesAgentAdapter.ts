@@ -3,8 +3,8 @@ import { DrizzleAgentRepository, DrizzleTaskRepository } from '@the-new-fuse/dat
 import { AgentStatus, AgentType, TaskStatus } from '@the-new-fuse/types';
 import { Redis } from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
-import { JulesApiClient } from './JulesApiClient';
-import { toBase64Url } from './utils';
+import { JulesApiClient } from './JulesApiClient.js';
+import { toBase64Url } from './utils.js';
 
 const TNF_WEBHOOK_BASE_URL =
   process.env.TNF_WEBHOOK_BASE_URL || 'https://app.thenewfuse.com/api/webhooks/incoming/jules';

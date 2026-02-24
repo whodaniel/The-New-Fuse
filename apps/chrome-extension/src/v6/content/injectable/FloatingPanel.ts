@@ -45,6 +45,8 @@ interface AIVideoPanelState {
   totalCount: number;
   playlists: Array<{ id: string; title: string; videoCount: number }>;
   selectedPlaylistId: string;
+  channels: Array<{ id: string; title: string }>;
+  selectedChannelId: string;
   history: Array<{ title: string; url: string; processedAt: number; processingLevel: string }>;
 }
 
@@ -102,6 +104,8 @@ export class EnhancedFloatingPanel {
   private storageListener:
     | ((changes: { [key: string]: chrome.storage.StorageChange }, areaName: string) => void)
     | null = null;
+  private containerClickListener: ((e: Event) => void) | null = null;
+  private containerKeydownListener: ((e: Event) => void) | null = null;
 
   // Flag to track if extension context is valid
   private isContextValid = true;
@@ -126,6 +130,8 @@ export class EnhancedFloatingPanel {
     totalCount: 0,
     playlists: [],
     selectedPlaylistId: '',
+    channels: [],
+    selectedChannelId: '',
     history: [],
   };
 
@@ -782,6 +788,20 @@ export class EnhancedFloatingPanel {
   private setupListeners(): void {
     if (!this.container) return;
 
+    // Prevent duplicate handler accumulation across update() re-renders.
+    if (this.containerClickListener) {
+      this.container.removeEventListener('click', this.containerClickListener);
+      this.containerClickListener = null;
+    }
+    if (this.containerKeydownListener) {
+      this.container.removeEventListener('keydown', this.containerKeydownListener);
+      this.containerKeydownListener = null;
+    }
+    if (this.storageListener) {
+      chrome.storage.onChanged.removeListener(this.storageListener);
+      this.storageListener = null;
+    }
+
     // Drag handling
     const header = this.container.querySelector('[data-drag-handle]');
     if (header) {
@@ -800,7 +820,7 @@ export class EnhancedFloatingPanel {
     });
 
     // Content clicks (delegation)
-    this.container.addEventListener('click', (e) => {
+    this.containerClickListener = (e: Event) => {
       const target = e.target as HTMLElement;
 
       // Handle action buttons
@@ -827,24 +847,27 @@ export class EnhancedFloatingPanel {
           this.selectChannel(channelId);
         }
       }
-    });
+    };
+    this.container.addEventListener('click', this.containerClickListener);
 
     // Input handling
-    this.container.addEventListener('keydown', (e) => {
+    this.containerKeydownListener = (e: Event) => {
+      const keyEvent = e as KeyboardEvent;
       const target = e.target as HTMLElement;
 
       // Send message on Enter (without Shift)
-      if (target.dataset.input === 'message' && e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
+      if (target.dataset.input === 'message' && keyEvent.key === 'Enter' && !keyEvent.shiftKey) {
+        keyEvent.preventDefault();
         this.sendMessage();
       }
 
       // Create channel on Enter
-      if (target.id === 'fuse-new-channel-name' && e.key === 'Enter') {
-        e.preventDefault();
+      if (target.id === 'fuse-new-channel-name' && keyEvent.key === 'Enter') {
+        keyEvent.preventDefault();
         this.submitCreateChannel();
       }
-    });
+    };
+    this.container.addEventListener('keydown', this.containerKeydownListener);
 
     // Channel selector change
     const channelSelect = this.container.querySelector('#fuse-channel-select');
@@ -1373,144 +1396,10 @@ export class EnhancedFloatingPanel {
    * Render services tab
    */
   private renderServicesTab(): string {
-    const queuePreview = this.aiVideoState.queue.slice(0, 5);
-    const queueText = this.aiVideoState.queue.join('\n');
-    const accountLabel =
-      this.aiVideoState.account === 'Authenticated' ? 'Authenticated' : 'Not linked';
-    const processingLabel = this.aiVideoState.isProcessing
-      ? this.aiVideoState.isPaused
-        ? 'Paused'
-        : 'Running'
-      : 'Idle';
-    const progressLabel =
-      this.aiVideoState.totalCount > 0
-        ? `${Math.max(0, this.aiVideoState.currentIndex)}/${this.aiVideoState.totalCount}`
-        : '0/0';
-
     return `
-      <div class="fcp6-section-title">🎬 AI Video Intelligence</div>
-      <div style="padding:12px; background:rgba(0,217,255,0.08); border:1px solid rgba(0,217,255,0.25); border-radius:10px; margin-top:8px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
-          <div style="font-size:12px; color:rgba(255,255,255,0.82);">
-            Queue-first workflow for AI Studio + NotebookLM
-          </div>
-          <span style="font-size:10px; color:${this.aiVideoState.account === 'Authenticated' ? '#00ff88' : '#ffbb00'};">
-            ${accountLabel}
-          </span>
-        </div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; font-size:11px;">
-          <div>Processed: <strong id="fcp6-aivi-processed">${this.aiVideoState.processed}</strong></div>
-          <div>Library: <strong id="fcp6-aivi-total">${this.aiVideoState.total}</strong></div>
-          <div>Queue: <strong id="fcp6-aivi-queue-count">${this.aiVideoState.queueCount}</strong></div>
-          <div>Cost: <strong id="fcp6-aivi-cost">$${this.aiVideoState.cost.toFixed(2)}</strong></div>
-          <div>Status: <strong>${processingLabel}</strong></div>
-          <div>Progress: <strong>${progressLabel}</strong></div>
-        </div>
-        <div style="display:flex; gap:6px; margin-top:10px;">
-          <button class="fcp6-btn" data-action="aivi-auth" style="flex:1;">🔐 Auth</button>
-          <button class="fcp6-btn" data-action="aivi-open-ai-studio" style="flex:1;">🧪 AI Studio</button>
-          <button class="fcp6-btn" data-action="aivi-open-notebooklm" style="flex:1;">📓 NotebookLM</button>
-          <button class="fcp6-btn" data-action="aivi-refresh" style="flex:1;">↻ Refresh</button>
-        </div>
-      </div>
-
-      <div style="margin-top:10px; padding:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:8px;">
-        <div style="font-size:11px; color:rgba(255,255,255,0.7); margin-bottom:6px;">Playlist Source</div>
-        <div style="display:flex; gap:6px; margin-bottom:8px;">
-          <select id="fcp6-aivi-playlist-select" class="fcp6-input" style="flex:1; padding:6px; font-size:11px;">
-            <option value="">Select playlist...</option>
-            ${this.aiVideoState.playlists
-              .map(
-                (playlist) =>
-                  `<option value="${this.escapeHtml(playlist.id)}" ${
-                    this.aiVideoState.selectedPlaylistId === playlist.id ? 'selected' : ''
-                  }>${this.escapeHtml(playlist.title)} (${playlist.videoCount})</option>`
-              )
-              .join('')}
-          </select>
-          <button class="fcp6-btn" data-action="aivi-refresh-playlists" style="padding:6px 10px;">↻</button>
-          <button class="fcp6-btn" data-action="aivi-load-playlist" style="padding:6px 10px;">Load</button>
-        </div>
-
-        <div style="font-size:11px; color:rgba(255,255,255,0.7); margin-bottom:6px;">Video Queue (one URL per line)</div>
-        <div style="display:flex; gap:6px; margin-bottom:8px;">
-          <input id="fcp6-aivi-single-url" class="fcp6-input" type="text" placeholder="https://www.youtube.com/watch?v=..." style="flex:1; padding:6px; font-size:11px;" />
-          <button class="fcp6-btn" data-action="aivi-single-add" style="padding:6px 10px;">Add</button>
-        </div>
-        <textarea id="fcp6-aivi-queue-input" class="fcp6-input" style="width:100%; min-height:94px; font-size:11px;">${this.escapeHtml(queueText)}</textarea>
-        <div style="display:flex; gap:6px; margin-top:8px;">
-          <button class="fcp6-btn" data-action="aivi-set-queue" style="flex:1;">Save Queue</button>
-          <button class="fcp6-btn" data-action="aivi-clear-queue" style="flex:1; background:rgba(255,51,102,0.14); color:#ff7799;">Clear Queue</button>
-        </div>
-        <div style="display:flex; gap:6px; margin-top:8px;">
-          <button class="fcp6-btn" data-action="aivi-queue-dedupe" style="flex:1;">Dedupe</button>
-          <button class="fcp6-btn" data-action="aivi-queue-clean" style="flex:1;">Remove Invalid</button>
-        </div>
-        ${
-          queuePreview.length > 0
-            ? `<div style="margin-top:8px; font-size:10px; color:rgba(255,255,255,0.55);">Preview: ${this.escapeHtml(queuePreview.join(' | '))}</div>`
-            : ''
-        }
-      </div>
-
-      <div style="margin-top:10px; padding:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:8px;">
-        <div style="font-size:11px; color:rgba(255,255,255,0.7); margin-bottom:6px;">Processing Preferences</div>
-        <div style="display:flex; gap:8px; align-items:center;">
-          <select id="fcp6-aivi-processing-level" class="fcp6-input" style="flex:1; padding:6px; font-size:11px;">
-            <option value="metadata" ${this.aiVideoState.processingLevel === 'metadata' ? 'selected' : ''}>Metadata</option>
-            <option value="transcript" ${this.aiVideoState.processingLevel === 'transcript' ? 'selected' : ''}>Transcript</option>
-            <option value="flash" ${this.aiVideoState.processingLevel === 'flash' ? 'selected' : ''}>Gemini Flash</option>
-            <option value="pro" ${this.aiVideoState.processingLevel === 'pro' ? 'selected' : ''}>Gemini Pro</option>
-            <option value="vision" ${this.aiVideoState.processingLevel === 'vision' ? 'selected' : ''}>Gemini Vision</option>
-            <option value="ai_studio" ${this.aiVideoState.processingLevel === 'ai_studio' ? 'selected' : ''}>AI Studio</option>
-          </select>
-          <input id="fcp6-aivi-segment-duration" class="fcp6-input" type="number" min="5" max="300" value="${this.aiVideoState.segmentDuration}" style="width:90px; padding:6px; font-size:11px;" />
-          <label style="display:flex; align-items:center; gap:4px; font-size:11px; color:rgba(255,255,255,0.7);">
-            <input id="fcp6-aivi-reverse-order" type="checkbox" ${this.aiVideoState.reverseOrder ? 'checked' : ''} />
-            Reverse
-          </label>
-        </div>
-        <div style="display:flex; gap:6px; margin-top:8px;">
-          <button class="fcp6-btn" data-action="aivi-save-preferences" style="flex:1;">Save Preferences</button>
-          <button class="fcp6-btn" data-action="aivi-generate-history" style="flex:1;">Prompt from History</button>
-        </div>
-        <div style="display:flex; gap:6px; margin-top:8px;">
-          <button class="fcp6-btn" data-action="aivi-process-start" style="flex:1;">▶ Start</button>
-          <button class="fcp6-btn" data-action="aivi-process-pause" style="flex:1;">⏸ Pause</button>
-          <button class="fcp6-btn" data-action="aivi-process-resume" style="flex:1;">⏵ Resume</button>
-          <button class="fcp6-btn" data-action="aivi-process-stop" style="flex:1;">⏹ Stop</button>
-        </div>
-        <div style="display:flex; gap:6px; margin-top:8px;">
-          <button class="fcp6-btn" data-action="aivi-export-urls" style="flex:1;">Export URLs</button>
-          <button class="fcp6-btn" data-action="aivi-export-json" style="flex:1;">Export JSON</button>
-          <button class="fcp6-btn" data-action="aivi-export-reports-md" style="flex:1;">Export Reports</button>
-        </div>
-      </div>
-
-      <div style="margin-top:10px; padding:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:8px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-          <div style="font-size:11px; color:rgba(255,255,255,0.7);">History / Reports</div>
-          <div style="display:flex; gap:6px;">
-            <button class="fcp6-btn" data-action="aivi-refresh-history" style="padding:4px 8px; font-size:10px;">Refresh</button>
-            <button class="fcp6-btn" data-action="aivi-clear-history" style="padding:4px 8px; font-size:10px;">Clear</button>
-          </div>
-        </div>
-        <div style="max-height:110px; overflow-y:auto; font-size:10px; color:rgba(255,255,255,0.72);">
-          ${
-            this.aiVideoState.history.length > 0
-              ? this.aiVideoState.history
-                  .slice(0, 12)
-                  .map(
-                    (entry) =>
-                      `<div style="padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.08);">
-                        <div style="font-weight:600;">${this.escapeHtml(entry.title || 'Untitled')}</div>
-                        <div style="opacity:0.72;">${this.escapeHtml(entry.processingLevel || 'ai_studio')} • ${new Date(entry.processedAt || Date.now()).toLocaleString()}</div>
-                      </div>`
-                  )
-                  .join('')
-              : 'No processed videos yet'
-          }
-        </div>
+      <div class="fcp6-section-title">✨ Services</div>
+      <div style="padding:16px; text-align:center; color:rgba(255,255,255,0.7); font-size:12px; margin-top:20px;">
+        <div>Please open the main <strong>Fuse Connect Extension popup</strong> from your browser toolbar to access AI Video Intelligence and other connected services.</div>
       </div>
     `;
   }
@@ -2753,6 +2642,14 @@ export class EnhancedFloatingPanel {
       chrome.storage.onChanged.removeListener(this.storageListener);
       this.storageListener = null;
     }
+    if (this.container && this.containerClickListener) {
+      this.container.removeEventListener('click', this.containerClickListener);
+      this.containerClickListener = null;
+    }
+    if (this.container && this.containerKeydownListener) {
+      this.container.removeEventListener('keydown', this.containerKeydownListener);
+      this.containerKeydownListener = null;
+    }
 
     // Clear health poll interval
     if (this.healthPollInterval) {
@@ -2849,11 +2746,6 @@ export class EnhancedFloatingPanel {
         }
         break;
       default:
-        if (action.startsWith('aivi-')) {
-          this.handleAIVideoAction(action);
-          break;
-        }
-
         // Check if it's a service action
         if (action.endsWith('-service')) {
           this.handleServiceAction(action);
@@ -2877,300 +2769,11 @@ export class EnhancedFloatingPanel {
     }
   }
 
-  /**
-   * Switch tab
-   */
   private switchTab(tab: PanelTab): void {
     this.state.activeTab = tab;
     // Persist active tab
     this.saveState();
-    if (tab === 'services') {
-      this.refreshAIVideoState();
-    }
     this.update();
-  }
-
-  private refreshAIVideoState(): void {
-    this.safeSendMessage({ type: 'AI_VIDEO_GET_STATS' }, (statsResponse) => {
-      if (statsResponse) {
-        this.aiVideoState.processed = Number(statsResponse.processed || 0);
-        this.aiVideoState.total = Number(statsResponse.total || 0);
-        this.aiVideoState.cost = Number(statsResponse.cost || 0);
-        this.aiVideoState.account = String(statsResponse.account || 'None');
-      }
-      this.update();
-    });
-
-    this.safeSendMessage({ type: 'AI_VIDEO_GET_QUEUE' }, (queueResponse) => {
-      if (!queueResponse?.success) return;
-      const queueItems = Array.isArray(queueResponse.queue) ? queueResponse.queue : [];
-      this.aiVideoState.queue = queueItems
-        .map((item: any) => String(item?.url || '').trim())
-        .filter((url: string) => url.length > 0);
-      this.aiVideoState.queueCount = Number(
-        queueResponse.queueCount || this.aiVideoState.queue.length
-      );
-      this.aiVideoState.reverseOrder = !!queueResponse.reverseOrder;
-      this.aiVideoState.segmentDuration = Number(queueResponse.segmentDuration || 45);
-      this.aiVideoState.isProcessing = !!queueResponse.processingState?.isProcessing;
-      this.aiVideoState.isPaused = !!queueResponse.processingState?.isPaused;
-      this.aiVideoState.currentIndex = Number(queueResponse.processingState?.currentIndex || 0);
-      this.aiVideoState.totalCount = Number(queueResponse.processingState?.totalCount || 0);
-      this.update();
-    });
-
-    chrome.storage.local.get(['processingLevel'], (result) => {
-      this.aiVideoState.processingLevel = String(result.processingLevel || 'ai_studio');
-      this.update();
-    });
-
-    this.safeSendMessage({ type: 'AI_STUDIO_GET_PLAYLISTS' }, (playlistResponse) => {
-      if (!playlistResponse?.success || !Array.isArray(playlistResponse.playlists)) return;
-      this.aiVideoState.playlists = playlistResponse.playlists.map((p: any) => ({
-        id: String(p.id || ''),
-        title: String(p.title || 'Untitled Playlist'),
-        videoCount: Number(p.videoCount || 0),
-      }));
-      this.update();
-    });
-
-    this.safeSendMessage({ type: 'AI_VIDEO_GET_HISTORY' }, (historyResponse) => {
-      if (!historyResponse?.success || !Array.isArray(historyResponse.reports)) return;
-      this.aiVideoState.history = historyResponse.reports.map((r: any) => ({
-        title: String(r.title || 'Untitled'),
-        url: String(r.url || ''),
-        processedAt: Number(r.processedAt || Date.now()),
-        processingLevel: String(r.processingLevel || 'ai_studio'),
-      }));
-      this.update();
-    });
-  }
-
-  private handleAIVideoAction(action: string): void {
-    if (action === 'aivi-auth') {
-      this.safeSendMessage({ type: 'AI_STUDIO_AUTH' }, (response) => {
-        if (!response?.success) {
-          console.warn('[FuseConnect] AIVI auth failed:', response?.error);
-        }
-        this.refreshAIVideoState();
-      });
-      return;
-    }
-
-    if (action === 'aivi-open-ai-studio') {
-      this.safeSendMessage({ type: 'AI_VIDEO_OPEN_PAGE', page: 'ai-studio' });
-      return;
-    }
-
-    if (action === 'aivi-open-notebooklm') {
-      this.safeSendMessage({ type: 'AI_VIDEO_OPEN_PAGE', page: 'notebooklm' });
-      return;
-    }
-
-    if (action === 'aivi-refresh') {
-      this.refreshAIVideoState();
-      return;
-    }
-
-    if (action === 'aivi-refresh-playlists') {
-      this.safeSendMessage({ type: 'AI_STUDIO_GET_PLAYLISTS' }, (playlistResponse) => {
-        if (!playlistResponse?.success || !Array.isArray(playlistResponse.playlists)) return;
-        this.aiVideoState.playlists = playlistResponse.playlists.map((p: any) => ({
-          id: String(p.id || ''),
-          title: String(p.title || 'Untitled Playlist'),
-          videoCount: Number(p.videoCount || 0),
-        }));
-        this.update();
-      });
-      return;
-    }
-
-    if (action === 'aivi-load-playlist') {
-      const playlistInput = this.container?.querySelector(
-        '#fcp6-aivi-playlist-select'
-      ) as HTMLSelectElement | null;
-      const playlistId = String(playlistInput?.value || '');
-      this.aiVideoState.selectedPlaylistId = playlistId;
-      if (!playlistId) return;
-
-      this.safeSendMessage({ type: 'AI_STUDIO_GET_PLAYLIST_VIDEOS', playlistId }, (response) => {
-        if (!response?.success || !Array.isArray(response.videos)) return;
-        const urls = response.videos.map((video: any) => String(video?.url || '')).filter(Boolean);
-        this.safeSendMessage({ type: 'AI_VIDEO_SET_QUEUE', urls }, () =>
-          this.refreshAIVideoState()
-        );
-      });
-      return;
-    }
-
-    if (action === 'aivi-set-queue') {
-      const queueInput = this.container?.querySelector(
-        '#fcp6-aivi-queue-input'
-      ) as HTMLTextAreaElement | null;
-      const queueText = queueInput?.value || '';
-      this.safeSendMessage({ type: 'AI_VIDEO_SET_QUEUE', text: queueText }, (response) => {
-        if (!response?.success) {
-          console.warn('[FuseConnect] Failed to set AIVI queue');
-        }
-        this.refreshAIVideoState();
-      });
-      return;
-    }
-
-    if (action === 'aivi-single-add') {
-      const queueInput = this.container?.querySelector(
-        '#fcp6-aivi-queue-input'
-      ) as HTMLTextAreaElement | null;
-      const singleInput = this.container?.querySelector(
-        '#fcp6-aivi-single-url'
-      ) as HTMLInputElement | null;
-      const url = String(singleInput?.value || '').trim();
-      if (!queueInput || !url) return;
-      const lines = String(queueInput.value || '')
-        .split('\n')
-        .map((line) => line.trim())
-        .filter(Boolean);
-      if (!lines.includes(url)) lines.unshift(url);
-      queueInput.value = lines.join('\n');
-      if (singleInput) singleInput.value = '';
-      return;
-    }
-
-    if (action === 'aivi-queue-dedupe') {
-      const queueInput = this.container?.querySelector(
-        '#fcp6-aivi-queue-input'
-      ) as HTMLTextAreaElement | null;
-      if (!queueInput) return;
-      const lines = String(queueInput.value || '')
-        .split('\n')
-        .map((line) => line.trim())
-        .filter(Boolean);
-      queueInput.value = Array.from(new Set(lines)).join('\n');
-      return;
-    }
-
-    if (action === 'aivi-queue-clean') {
-      const queueInput = this.container?.querySelector(
-        '#fcp6-aivi-queue-input'
-      ) as HTMLTextAreaElement | null;
-      if (!queueInput) return;
-      const lines = String(queueInput.value || '')
-        .split('\n')
-        .map((line) => line.trim())
-        .filter(Boolean);
-      queueInput.value = lines
-        .filter((line) =>
-          /^https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=[\w-]{11}[\w=&-]*|youtu\.be\/[\w-]{11}[\w?=&-]*)/i.test(
-            line
-          )
-        )
-        .join('\n');
-      return;
-    }
-
-    if (
-      action === 'aivi-process-start' ||
-      action === 'aivi-process-pause' ||
-      action === 'aivi-process-resume' ||
-      action === 'aivi-process-stop'
-    ) {
-      const actionMap: Record<string, string> = {
-        'aivi-process-start': 'start',
-        'aivi-process-pause': 'pause',
-        'aivi-process-resume': 'resume',
-        'aivi-process-stop': 'stop',
-      };
-      this.safeSendMessage(
-        {
-          type: 'AI_VIDEO_PROCESS_CONTROL',
-          action: actionMap[action],
-        },
-        () => this.refreshAIVideoState()
-      );
-      return;
-    }
-
-    if (action === 'aivi-clear-queue') {
-      this.safeSendMessage({ type: 'AI_VIDEO_CLEAR_QUEUE' }, () => this.refreshAIVideoState());
-      return;
-    }
-
-    if (action === 'aivi-save-preferences') {
-      const reverseOrderInput = this.container?.querySelector(
-        '#fcp6-aivi-reverse-order'
-      ) as HTMLInputElement | null;
-      const segmentDurationInput = this.container?.querySelector(
-        '#fcp6-aivi-segment-duration'
-      ) as HTMLInputElement | null;
-      const processingLevelInput = this.container?.querySelector(
-        '#fcp6-aivi-processing-level'
-      ) as HTMLSelectElement | null;
-      const reverseOrder = !!reverseOrderInput?.checked;
-      const segmentDuration = Math.max(5, Math.min(300, Number(segmentDurationInput?.value || 45)));
-      const processingLevel = String(processingLevelInput?.value || 'ai_studio');
-      this.safeSendMessage(
-        {
-          type: 'AI_VIDEO_SET_PREFERENCES',
-          reverseOrder,
-          segmentDuration,
-          processingLevel,
-        },
-        () => this.refreshAIVideoState()
-      );
-      return;
-    }
-
-    if (action === 'aivi-generate-history') {
-      this.safeSendMessage({ type: 'AI_VIDEO_GENERATE_HISTORY_PROMPT' }, async (response) => {
-        if (!response?.prompt) return;
-        try {
-          await navigator.clipboard.writeText(String(response.prompt));
-        } catch (error) {
-          console.warn('[FuseConnect] Failed to copy history prompt:', error);
-        }
-      });
-      return;
-    }
-
-    if (action === 'aivi-refresh-history') {
-      this.safeSendMessage({ type: 'AI_VIDEO_GET_HISTORY' }, (historyResponse) => {
-        if (!historyResponse?.success || !Array.isArray(historyResponse.reports)) return;
-        this.aiVideoState.history = historyResponse.reports.map((r: any) => ({
-          title: String(r.title || 'Untitled'),
-          url: String(r.url || ''),
-          processedAt: Number(r.processedAt || Date.now()),
-          processingLevel: String(r.processingLevel || 'ai_studio'),
-        }));
-        this.update();
-      });
-      return;
-    }
-
-    if (action === 'aivi-clear-history') {
-      this.safeSendMessage({ type: 'AI_VIDEO_CLEAR_HISTORY' }, () => this.refreshAIVideoState());
-      return;
-    }
-
-    if (
-      action === 'aivi-export-urls' ||
-      action === 'aivi-export-json' ||
-      action === 'aivi-export-reports-md'
-    ) {
-      const format =
-        action === 'aivi-export-json'
-          ? 'json'
-          : action === 'aivi-export-reports-md'
-            ? 'reports-md'
-            : 'urls';
-      this.safeSendMessage({ type: 'AI_VIDEO_EXPORT', format }, async (response) => {
-        if (!response?.content) return;
-        try {
-          await navigator.clipboard.writeText(String(response.content));
-        } catch (error) {
-          console.warn('[FuseConnect] Failed to copy export:', error);
-        }
-      });
-    }
   }
 
   private toggleCurrentChannelPause(): void {

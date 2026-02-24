@@ -3,12 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { DatabaseService, User } from '@the-new-fuse/database';
 import { compare, hash } from 'bcrypt';
-import {
-  isInviteCodeAccepted,
-  resolveInvitePolicy,
-  resolvePermissionClaims,
-  resolveRoleClaims,
-} from '../auth/auth-policy';
 import { LoginDto, RegisterDto, TokenDto } from '../dtos/auth.dto';
 
 type AuthResponse = TokenDto & {
@@ -36,6 +30,24 @@ type JwtPayload = {
   tenantId?: string;
 };
 
+type AuthRequestMeta = {
+  ipAddress?: string;
+};
+
+type TurnstileVerificationResponse = {
+  success: boolean;
+  'error-codes'?: string[];
+};
+
+const isTruthy = (value: unknown): boolean => {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'number') return value > 0;
+  if (typeof value !== 'string') return false;
+
+  const normalized = value.trim().toLowerCase();
+  return ['1', 'true', 'yes', 'on', 'enabled'].includes(normalized);
+};
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -52,26 +64,29 @@ export class AuthService {
         throw new UnauthorizedException('User not found');
       }
       return user;
-    } catch (error) {
+    } catch {
       throw new UnauthorizedException('Invalid token');
     }
   }
 
-  async login(loginDto: LoginDto): Promise<AuthResponse> {
+  async login(loginDto: LoginDto, meta: AuthRequestMeta = {}): Promise<AuthResponse> {
+    await this.verifyTurnstileIfEnabled(loginDto.cfTurnstileToken, meta.ipAddress);
+
     const user = await this.db.users.findByEmail(loginDto.email);
 
     if (!user || !user.hashedPassword || !(await compare(loginDto.password, user.hashedPassword))) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    if (!user.isActive) {
+      throw new UnauthorizedException('Account is inactive');
+    }
+
     return this.generateTokens(user);
   }
 
-  async register(registerDto: RegisterDto): Promise<AuthResponse> {
-    const invitePolicy = resolveInvitePolicy(this.configService as any);
-    if (!isInviteCodeAccepted(registerDto.inviteCode, invitePolicy)) {
-      throw new UnauthorizedException('Valid invitation code is required for registration');
-    }
+  async register(registerDto: RegisterDto, meta: AuthRequestMeta = {}): Promise<AuthResponse> {
+    await this.verifyTurnstileIfEnabled(registerDto.cfTurnstileToken, meta.ipAddress);
 
     const existingEmail = await this.db.users.findByEmail(registerDto.email);
     if (existingEmail) {
@@ -97,32 +112,85 @@ export class AuthService {
   }
 
   async refresh(refreshToken: string): Promise<AuthResponse> {
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token is required');
+    }
+
+    const refreshSecret =
+      this.configService.get<string>('JWT_REFRESH_SECRET') ||
+      this.configService.get<string>('JWT_SECRET');
+
     try {
       const payload = await this.jwtService.verifyAsync(refreshToken, {
-        secret: this.configService.get('JWT_REFRESH_SECRET'),
+        secret: refreshSecret,
       });
 
       const user = await this.db.users.findById(payload.sub);
       if (!user) throw new Error('User not found');
 
       return this.generateTokens(user);
-    } catch (error) {
+    } catch {
       throw new UnauthorizedException('Invalid refresh token');
     }
   }
 
   async logout(): Promise<void> {
-    // Implement token blacklisting if needed
-    // For now, logout is handled client-side by removing the token
+    // Stateless JWT logout handled client-side for now.
   }
 
   async getCurrentUser(userId: string): Promise<User | null> {
     return this.db.users.findById(userId);
   }
 
+  private async verifyTurnstileIfEnabled(token: string | undefined, ipAddress?: string) {
+    const requireTurnstile = isTruthy(this.configService.get('AUTH_REQUIRE_TURNSTILE'));
+    if (!requireTurnstile) {
+      return;
+    }
+
+    if (!token) {
+      throw new UnauthorizedException('Cloudflare Turnstile token is required');
+    }
+
+    const secret =
+      this.configService.get<string>('CLOUDFLARE_TURNSTILE_SECRET_KEY') ||
+      this.configService.get<string>('TURNSTILE_SECRET_KEY');
+
+    if (!secret) {
+      throw new UnauthorizedException(
+        'Cloudflare Turnstile is enabled but no secret key is configured'
+      );
+    }
+
+    const body = new URLSearchParams();
+    body.append('secret', secret);
+    body.append('response', token);
+    if (ipAddress) {
+      body.append('remoteip', ipAddress);
+    }
+
+    const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: body.toString(),
+    });
+
+    if (!response.ok) {
+      throw new UnauthorizedException('Unable to validate Cloudflare Turnstile token');
+    }
+
+    const result = (await response.json()) as TurnstileVerificationResponse;
+    if (!result.success) {
+      throw new UnauthorizedException('Cloudflare Turnstile validation failed');
+    }
+  }
+
   private async generateTokens(user: User): Promise<AuthResponse> {
-    const roles = resolveRoleClaims(user as any);
-    const permissions = resolvePermissionClaims(user as any, roles);
+    const roles = Array.isArray(user.roles) && user.roles.length > 0 ? user.roles : [user.role];
+    const permissions = this.resolvePermissions(roles);
+
     const payload: JwtPayload = {
       sub: user.id,
       username: user.username,
@@ -130,6 +198,7 @@ export class AuthService {
       roles,
       permissions,
     };
+
     const tenantId = this.resolveTenantIdClaim(user);
     if (tenantId) {
       payload.tenantId = tenantId;
@@ -141,7 +210,9 @@ export class AuthService {
         expiresIn: '15m',
       }),
       this.jwtService.signAsync(payload, {
-        secret: this.configService.get('JWT_REFRESH_SECRET'),
+        secret:
+          this.configService.get<string>('JWT_REFRESH_SECRET') ||
+          this.configService.get<string>('JWT_SECRET'),
         expiresIn: '7d',
       }),
     ]);
@@ -158,11 +229,26 @@ export class AuthService {
         username: user.username,
         name: user.name,
         role: user.role,
-        roles: user.roles ?? [user.role],
+        roles,
         emailVerified: user.emailVerified,
         isActive: user.isActive,
       },
     };
+  }
+
+  private resolvePermissions(roles: string[]): string[] {
+    if (roles.includes('SUPER_ADMIN') || roles.includes('ADMIN')) {
+      return ['*'];
+    }
+
+    return [
+      'profile:read',
+      'profile:update',
+      'workspace:read',
+      'agents:read',
+      'chat:read',
+      'chat:write',
+    ];
   }
 
   private buildDisplayName(registerDto: RegisterDto): string | null {
