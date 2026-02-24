@@ -25,7 +25,7 @@ COPY tsconfig.base.json ./
 COPY scripts ./scripts
 
 # Install all dependencies
-RUN pnpm install --frozen-lockfile || (echo "Lockfile compatibility issue detected, recreating lockfile..." && pnpm install --force)
+RUN pnpm install --frozen-lockfile --ignore-scripts || (echo "Lockfile compatibility issue detected, recreating lockfile..." && pnpm install --force --ignore-scripts)
 
 # Build foundational types first to satisfy downstream package builds
 RUN pnpm --filter @the-new-fuse/types build
