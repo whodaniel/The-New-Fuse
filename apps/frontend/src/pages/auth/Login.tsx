@@ -8,6 +8,46 @@ const isTruthy = (value: string | undefined): boolean => {
   return ['1', 'true', 'yes', 'on', 'enabled'].includes(value.trim().toLowerCase());
 };
 
+const normalizeRole = (role: string | undefined | null): string => {
+  if (!role) return '';
+  return role
+    .trim()
+    .replace(/^role[:_\s-]*/i, '')
+    .replace(/[\s-]+/g, '_')
+    .toUpperCase();
+};
+
+const getRolesFromAuthResult = (authResult: any): string[] => {
+  const user = authResult?.user || {};
+  const rawRoles = Array.isArray(user.roles) && user.roles.length > 0 ? user.roles : [user.role];
+  return rawRoles.map((role: string) => normalizeRole(role)).filter(Boolean);
+};
+
+const canAccessPath = (path: string, roles: string[]): boolean => {
+  if (path.startsWith('/admin')) {
+    return roles.includes('SUPER_ADMIN') || roles.includes('ADMIN');
+  }
+
+  if (path.startsWith('/agency')) {
+    return ['AGENCY_OWNER', 'AGENCY_ADMIN', 'AGENCY_MANAGER'].some((role) => roles.includes(role));
+  }
+
+  return true;
+};
+
+const getSafeRedirectTarget = (candidate: string, roles: string[]): string => {
+  if (!candidate || candidate === '/unauthorized') {
+    return '/dashboard';
+  }
+
+  const path = candidate.startsWith('http') ? new URL(candidate).pathname : candidate;
+  if (!canAccessPath(path, roles)) {
+    return '/dashboard';
+  }
+
+  return candidate;
+};
+
 const Login: React.FC = () => {
   const { login, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
@@ -37,8 +77,11 @@ const Login: React.FC = () => {
         throw new Error('Please complete Turnstile verification');
       }
 
-      await login(email, password, { cfTurnstileToken: cfTurnstileToken || undefined });
-      navigate(from, { replace: true });
+      const result = await login(email, password, {
+        cfTurnstileToken: cfTurnstileToken || undefined,
+      });
+      const safeTarget = getSafeRedirectTarget(from, getRolesFromAuthResult(result));
+      navigate(safeTarget, { replace: true });
     } catch (err: any) {
       setError(err?.message || 'Invalid email or password');
     } finally {
@@ -50,8 +93,9 @@ const Login: React.FC = () => {
     setError('');
     setIsLoading(true);
     try {
-      await signInWithGoogle();
-      navigate(from, { replace: true });
+      const result = await signInWithGoogle();
+      const safeTarget = getSafeRedirectTarget(from, getRolesFromAuthResult(result));
+      navigate(safeTarget, { replace: true });
     } catch (err: any) {
       setError(err?.message || 'Google sign-in failed');
     } finally {
