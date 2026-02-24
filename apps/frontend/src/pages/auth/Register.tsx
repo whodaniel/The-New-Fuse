@@ -1,6 +1,6 @@
 import TurnstileWidget from '@/components/auth/TurnstileWidget';
 import { useAuth } from '@/providers/AuthProvider';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const isTruthy = (value: string | undefined): boolean => {
@@ -9,7 +9,7 @@ const isTruthy = (value: string | undefined): boolean => {
 };
 
 const Register: React.FC = () => {
-  const { register, signInWithGoogle } = useAuth();
+  const { isAuthenticated, isLoading: isAuthLoading, register, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
 
   const [name, setName] = useState('');
@@ -22,6 +22,12 @@ const Register: React.FC = () => {
 
   const turnstileSiteKey = (import.meta.env.VITE_TURNSTILE_SITE_KEY || '').trim();
   const requireTurnstile = isTruthy(import.meta.env.VITE_AUTH_REQUIRE_TURNSTILE);
+
+  useEffect(() => {
+    if (!isAuthLoading && isAuthenticated) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, isAuthLoading, navigate]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -51,8 +57,10 @@ const Register: React.FC = () => {
     setError(null);
     setIsLoading(true);
     try {
-      await signInWithGoogle();
-      navigate('/dashboard');
+      const result = await signInWithGoogle();
+      if (result?.method !== 'google_redirect') {
+        navigate('/dashboard', { replace: true });
+      }
     } catch (err: any) {
       setError(err?.message || 'Google sign-up failed');
     } finally {

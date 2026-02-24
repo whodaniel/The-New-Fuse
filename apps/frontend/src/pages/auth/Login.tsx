@@ -1,57 +1,16 @@
 import TurnstileWidget from '@/components/auth/TurnstileWidget';
 import { useAuth } from '@/providers/AuthProvider';
-import React, { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const isTruthy = (value: string | undefined): boolean => {
   if (!value) return false;
   return ['1', 'true', 'yes', 'on', 'enabled'].includes(value.trim().toLowerCase());
 };
 
-const normalizeRole = (role: string | undefined | null): string => {
-  if (!role) return '';
-  return role
-    .trim()
-    .replace(/^role[:_\s-]*/i, '')
-    .replace(/[\s-]+/g, '_')
-    .toUpperCase();
-};
-
-const getRolesFromAuthResult = (authResult: any): string[] => {
-  const user = authResult?.user || {};
-  const rawRoles = Array.isArray(user.roles) && user.roles.length > 0 ? user.roles : [user.role];
-  return rawRoles.map((role: string) => normalizeRole(role)).filter(Boolean);
-};
-
-const canAccessPath = (path: string, roles: string[]): boolean => {
-  if (path.startsWith('/admin')) {
-    return roles.includes('SUPER_ADMIN') || roles.includes('ADMIN');
-  }
-
-  if (path.startsWith('/agency')) {
-    return ['AGENCY_OWNER', 'AGENCY_ADMIN', 'AGENCY_MANAGER'].some((role) => roles.includes(role));
-  }
-
-  return true;
-};
-
-const getSafeRedirectTarget = (candidate: string, roles: string[]): string => {
-  if (!candidate || candidate === '/unauthorized') {
-    return '/dashboard';
-  }
-
-  const path = candidate.startsWith('http') ? new URL(candidate).pathname : candidate;
-  if (!canAccessPath(path, roles)) {
-    return '/dashboard';
-  }
-
-  return candidate;
-};
-
 const Login: React.FC = () => {
-  const { login, signInWithGoogle } = useAuth();
+  const { isAuthenticated, isLoading: isAuthLoading, login, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -62,10 +21,11 @@ const Login: React.FC = () => {
   const turnstileSiteKey = (import.meta.env.VITE_TURNSTILE_SITE_KEY || '').trim();
   const requireTurnstile = isTruthy(import.meta.env.VITE_AUTH_REQUIRE_TURNSTILE);
 
-  const fromLocation = location.state?.from;
-  const from = fromLocation
-    ? `${fromLocation.pathname}${fromLocation.search}${fromLocation.hash}`
-    : '/dashboard';
+  useEffect(() => {
+    if (!isAuthLoading && isAuthenticated) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, isAuthLoading, navigate]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -80,8 +40,7 @@ const Login: React.FC = () => {
       const result = await login(email, password, {
         cfTurnstileToken: cfTurnstileToken || undefined,
       });
-      const safeTarget = getSafeRedirectTarget(from, getRolesFromAuthResult(result));
-      navigate(safeTarget, { replace: true });
+      if (result) navigate('/dashboard', { replace: true });
     } catch (err: any) {
       setError(err?.message || 'Invalid email or password');
     } finally {
@@ -94,8 +53,9 @@ const Login: React.FC = () => {
     setIsLoading(true);
     try {
       const result = await signInWithGoogle();
-      const safeTarget = getSafeRedirectTarget(from, getRolesFromAuthResult(result));
-      navigate(safeTarget, { replace: true });
+      if (result?.method !== 'google_redirect') {
+        navigate('/dashboard', { replace: true });
+      }
     } catch (err: any) {
       setError(err?.message || 'Google sign-in failed');
     } finally {

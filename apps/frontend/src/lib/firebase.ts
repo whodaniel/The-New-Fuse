@@ -1,5 +1,5 @@
 import { initializeApp, getApp, FirebaseApp, getApps } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, getRedirectResult, signInWithRedirect } from 'firebase/auth';
 import { initializeFirestore, getFirestore, CACHE_SIZE_UNLIMITED, Firestore } from 'firebase/firestore';
 import 'firebase/firestore'; // Side-effect import to ensure registration
 
@@ -68,6 +68,6 @@ try {
 
 export { db };
 export const googleProvider = new GoogleAuthProvider();
-export { signInWithPopup };
+export { signInWithRedirect, getRedirectResult };
 
 export default app;

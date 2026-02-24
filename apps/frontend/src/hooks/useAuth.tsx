@@ -2,13 +2,17 @@ import { GoogleAuthProvider } from 'firebase/auth';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import AuthContext, { User } from '../AuthContext';
 import { API_ENDPOINTS } from '../config/api';
-import { auth, googleProvider, signInWithPopup } from '../lib/firebase';
+import { auth, getRedirectResult, googleProvider, signInWithRedirect } from '../lib/firebase';
 
 const AUTH_TOKEN_KEY = 'auth_token';
+const GOOGLE_REDIRECT_PENDING_KEY = 'google_auth_redirect_pending';
 
 const getAuthToken = () => localStorage.getItem(AUTH_TOKEN_KEY);
 const setAuthToken = (token: string) => localStorage.setItem(AUTH_TOKEN_KEY, token);
 const clearAuthToken = () => localStorage.removeItem(AUTH_TOKEN_KEY);
+const setGoogleRedirectPending = () => sessionStorage.setItem(GOOGLE_REDIRECT_PENDING_KEY, '1');
+const clearGoogleRedirectPending = () => sessionStorage.removeItem(GOOGLE_REDIRECT_PENDING_KEY);
+const isGoogleRedirectPending = () => sessionStorage.getItem(GOOGLE_REDIRECT_PENDING_KEY) === '1';
 
 type AuthPayload = {
   accessToken?: string;
@@ -170,39 +174,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [fetchUserDetails]
   );
 
-  useEffect(() => {
-    let isMounted = true;
-
-    const bootstrapAuth = async () => {
-      const token = getAuthToken();
-      if (!token) {
-        if (isMounted) {
-          setUser(null);
-          setIsLoading(false);
-        }
-        return;
-      }
-
-      const details = await fetchUserDetails(token);
-      if (!isMounted) return;
-
-      if (details?.id) {
-        setUser(details);
-      } else {
-        clearAuthToken();
-        setUser(null);
-      }
-
-      setIsLoading(false);
-    };
-
-    bootstrapAuth();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [fetchUserDetails]);
-
   const login = useCallback(
     async (emailOrToken: string, password?: string, options?: AuthSubmitOptions) => {
       setError(null);
@@ -328,18 +299,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [authEndpoints.register, fetchUserDetails]
   );
 
-  const signInWithGoogle = useCallback(async () => {
-    setError(null);
-    setIsLoading(true);
-    try {
-      const popupResult = await signInWithPopup(auth, googleProvider);
-      const googleCredential = GoogleAuthProvider.credentialFromResult(popupResult);
-      const idToken = googleCredential?.idToken;
-
-      if (!idToken) {
-        throw new Error('Google sign-in did not return an ID token');
-      }
-
+  const completeGoogleAuth = useCallback(
+    async (idToken: string, fallbackEmail: string) => {
       let lastErrorMessage: string | null = null;
 
       for (const endpoint of authEndpoints.google) {
@@ -365,8 +326,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setAuthToken(token);
 
           if (payload.user) {
-            setUser(toFrontendUser(payload.user, popupResult.user.email || ''));
-            return { method: 'google' as const, user: payload.user };
+            const normalized = toFrontendUser(payload.user, fallbackEmail);
+            setUser(normalized);
+            return { method: 'google' as const, user: normalized };
           }
 
           const details = await fetchUserDetails(token);
@@ -380,14 +342,93 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       throw new Error(lastErrorMessage || 'Google sign-in failed');
-    } catch (err: any) {
-      setError(err?.message || 'Google sign-in failed');
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [authEndpoints.google, fetchUserDetails]);
+    },
+    [authEndpoints.google, fetchUserDetails]
+  );
 
+  const processGoogleRedirectResult = useCallback(async () => {
+    const redirectResult = await getRedirectResult(auth);
+    if (!redirectResult) {
+      if (isGoogleRedirectPending()) {
+        clearGoogleRedirectPending();
+      }
+      return null;
+    }
+
+    clearGoogleRedirectPending();
+    const googleCredential = GoogleAuthProvider.credentialFromResult(redirectResult);
+    const idToken = googleCredential?.idToken;
+
+    if (!idToken) {
+      throw new Error('Google sign-in did not return an ID token');
+    }
+
+    return completeGoogleAuth(idToken, redirectResult.user.email || '');
+  }, [completeGoogleAuth]);
+
+  const signInWithGoogle = useCallback(async () => {
+    setError(null);
+    setIsLoading(true);
+    try {
+      setGoogleRedirectPending();
+      await signInWithRedirect(auth, googleProvider);
+      return { method: 'google_redirect' as const };
+    } catch (err: any) {
+      clearGoogleRedirectPending();
+      setError(err?.message || 'Google sign-in failed');
+      setIsLoading(false);
+      throw err;
+    }
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const bootstrapAuth = async () => {
+      setIsLoading(true);
+
+      try {
+        const googleRedirectAuth = await processGoogleRedirectResult();
+        if (googleRedirectAuth) {
+          if (isMounted) setIsLoading(false);
+          return;
+        }
+      } catch (err: any) {
+        clearAuthToken();
+        if (isMounted) {
+          setUser(null);
+          setError(err?.message || 'Google sign-in failed');
+        }
+      }
+
+      const token = getAuthToken();
+      if (!token) {
+        if (isMounted) {
+          setUser(null);
+          setIsLoading(false);
+        }
+        return;
+      }
+
+      const details = await fetchUserDetails(token);
+      if (!isMounted) return;
+
+      if (details?.id) {
+        setUser(details);
+      } else {
+        clearAuthToken();
+        setUser(null);
+      }
+
+      setIsLoading(false);
+    };
+
+    bootstrapAuth();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [fetchUserDetails, processGoogleRedirectResult]);
   const forgotPassword = useCallback(async (_email: string) => {
     throw new Error('Forgot password is not configured yet in the new auth flow');
   }, []);
@@ -406,6 +447,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = useCallback(async () => {
     setIsLoading(true);
     clearAuthToken();
+    clearGoogleRedirectPending();
     setUser(null);
     setIsLoading(false);
   }, []);
