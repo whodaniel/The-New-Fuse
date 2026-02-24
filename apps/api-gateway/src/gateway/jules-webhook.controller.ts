@@ -2,18 +2,24 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Inject,
   InternalServerErrorException,
   Param,
   Post,
 } from '@nestjs/common';
-import { JulesWebhookHandler } from '@the-new-fuse/jules-integration';
 
 // This is a placeholder for the actual payload validation pipe
 import { JulesWebhookPayload } from './jules-webhook.payload';
 
+type JulesWebhookHandlerLike = {
+  handleWebhook: (payload: JulesWebhookPayload, encodedContext: string) => Promise<void>;
+};
+
 @Controller('api/webhooks/incoming/jules')
 export class JulesWebhookController {
-  constructor(private readonly webhookHandler: JulesWebhookHandler) {}
+  constructor(
+    @Inject('JULES_WEBHOOK_HANDLER') private readonly webhookHandler: JulesWebhookHandlerLike
+  ) {}
 
   @Post(':encodedContext')
   async handleJulesWebhook(

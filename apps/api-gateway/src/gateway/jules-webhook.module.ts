@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { DatabaseService } from '@the-new-fuse/database';
-import { JulesWebhookHandler } from '@the-new-fuse/jules-integration';
 import { Redis } from 'ioredis';
 import { JulesWebhookController } from './jules-webhook.controller';
 
@@ -14,17 +13,19 @@ class JulesUsageTracker {
   }
 }
 
+class NoopJulesWebhookHandler {
+  async handleWebhook(): Promise<void> {
+    // Intentionally no-op in gateway builds where jules integration package is unavailable.
+    return;
+  }
+}
+
 @Module({
   controllers: [JulesWebhookController],
   providers: [
     {
-      provide: JulesWebhookHandler,
-      useFactory: (db: DatabaseService, redis: Redis, usageTracker: JulesUsageTracker) => {
-        // We cast redis to any because the handler expects RedisClientType from 'redis'
-        // but often we use 'ioredis'. We should ensure compatibility.
-        return new JulesWebhookHandler(db as any, redis as any, usageTracker);
-      },
-      inject: [DatabaseService, 'REDIS_CLIENT', JulesUsageTracker],
+      provide: 'JULES_WEBHOOK_HANDLER',
+      useClass: NoopJulesWebhookHandler,
     },
     {
       provide: DatabaseService,
