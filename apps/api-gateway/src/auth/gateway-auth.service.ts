@@ -420,13 +420,25 @@ export class GatewayAuthService implements OnModuleDestroy {
     }
 
     const supabaseUrl = rawSupabaseUrl.replace(/\/$/, '');
-    const response = await fetch(`${supabaseUrl}/auth/v1/user`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        apikey: supabaseAnonKey,
-      },
-    });
+    let userInfoEndpoint: string;
+    try {
+      userInfoEndpoint = new URL('/auth/v1/user', supabaseUrl).toString();
+    } catch {
+      throw new UnauthorizedException('Supabase auth is not configured with a valid SUPABASE_URL');
+    }
+
+    let response: Response;
+    try {
+      response = await fetch(userInfoEndpoint, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          apikey: supabaseAnonKey,
+        },
+      });
+    } catch {
+      throw new UnauthorizedException('Unable to reach Supabase auth endpoint');
+    }
 
     if (!response.ok) {
       throw new UnauthorizedException('Invalid Supabase access token');
