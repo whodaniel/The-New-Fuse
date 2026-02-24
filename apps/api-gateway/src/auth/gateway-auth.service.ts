@@ -10,7 +10,7 @@ type DbUser = {
   email: string;
   name: string | null;
   passwordHash: string | null;
-  role: string;
+  role: string | null;
   roles: string[] | null;
 };
 
@@ -73,6 +73,12 @@ const isTruthy = (value: unknown): boolean => {
   return ['1', 'true', 'yes', 'on', 'enabled'].includes(value.trim().toLowerCase());
 };
 
+const toUsername = (email: string): string => {
+  const base = email.split('@')[0]?.trim().toLowerCase() || 'user';
+  const sanitized = base.replace(/[^a-z0-9_]/g, '_').slice(0, 24) || 'user';
+  return `${sanitized}_${randomUUID().replace(/-/g, '').slice(0, 8)}`;
+};
+
 @Injectable()
 export class GatewayAuthService implements OnModuleDestroy {
   private readonly sql = postgres(
@@ -120,12 +126,19 @@ export class GatewayAuthService implements OnModuleDestroy {
 
     const passwordHash = await hash(password, 10);
     const now = new Date();
-    const id = `usr_${randomUUID().replace(/-/g, '').slice(0, 24)}`;
+    const username = toUsername(email);
+    const status = 'active';
 
     const inserted = await this.sql<DbUser[]>`
-      insert into users (id, email, name, "passwordHash", role, roles, "createdAt", "updatedAt")
-      values (${id}, ${email}, ${name?.trim() || null}, ${passwordHash}, ${'USER'}, ${JSON.stringify(['USER'])}::jsonb, ${now}, ${now})
-      returning id, email, name, "passwordHash", role, roles
+      insert into users (email, username, password_hash, status, created_at, updated_at)
+      values (${email}, ${name?.trim() || username}, ${passwordHash}, ${status}, ${now}, ${now})
+      returning
+        id::text as id,
+        email,
+        username as name,
+        password_hash as "passwordHash",
+        'USER'::text as role,
+        ARRAY['USER']::text[] as roles
     `;
 
     const user = inserted[0];
@@ -174,30 +187,28 @@ export class GatewayAuthService implements OnModuleDestroy {
     let user = await this.findUserByEmail(email);
     if (!user) {
       const now = new Date();
-      const id = `usr_${randomUUID().replace(/-/g, '').slice(0, 24)}`;
+      const username = tokenInfo.name?.trim() || toUsername(email);
+      const syntheticPasswordHash = await hash(randomUUID(), 10);
+      const status = 'active';
       const inserted = await this.sql<DbUser[]>`
-        insert into users (id, email, name, "passwordHash", role, roles, "createdAt", "updatedAt")
+        insert into users (email, username, password_hash, status, created_at, updated_at)
         values (
-          ${id},
           ${email},
-          ${tokenInfo.name?.trim() || null},
-          ${null},
-          ${'USER'},
-          ${JSON.stringify(['USER'])}::jsonb,
+          ${username},
+          ${syntheticPasswordHash},
+          ${status},
           ${now},
           ${now}
         )
-        returning id, email, name, "passwordHash", role, roles
+        returning
+          id::text as id,
+          email,
+          username as name,
+          password_hash as "passwordHash",
+          'USER'::text as role,
+          ARRAY['USER']::text[] as roles
       `;
       user = inserted[0] || null;
-    } else if (!user.name && tokenInfo.name?.trim()) {
-      const updated = await this.sql<DbUser[]>`
-        update users
-        set name = ${tokenInfo.name.trim()}, "updatedAt" = ${new Date()}
-        where id = ${user.id}
-        returning id, email, name, "passwordHash", role, roles
-      `;
-      user = updated[0] || user;
     }
 
     if (!user) {
@@ -222,30 +233,28 @@ export class GatewayAuthService implements OnModuleDestroy {
 
     if (!user) {
       const now = new Date();
-      const id = `usr_${randomUUID().replace(/-/g, '').slice(0, 24)}`;
+      const username = derivedName || toUsername(email);
+      const syntheticPasswordHash = await hash(randomUUID(), 10);
+      const status = 'active';
       const inserted = await this.sql<DbUser[]>`
-        insert into users (id, email, name, "passwordHash", role, roles, "createdAt", "updatedAt")
+        insert into users (email, username, password_hash, status, created_at, updated_at)
         values (
-          ${id},
           ${email},
-          ${derivedName},
-          ${null},
-          ${'USER'},
-          ${JSON.stringify(['USER'])}::jsonb,
+          ${username},
+          ${syntheticPasswordHash},
+          ${status},
           ${now},
           ${now}
         )
-        returning id, email, name, "passwordHash", role, roles
+        returning
+          id::text as id,
+          email,
+          username as name,
+          password_hash as "passwordHash",
+          'USER'::text as role,
+          ARRAY['USER']::text[] as roles
       `;
       user = inserted[0] || null;
-    } else if (!user.name && derivedName) {
-      const updated = await this.sql<DbUser[]>`
-        update users
-        set name = ${derivedName}, "updatedAt" = ${new Date()}
-        where id = ${user.id}
-        returning id, email, name, "passwordHash", role, roles
-      `;
-      user = updated[0] || user;
     }
 
     if (!user) {
@@ -257,7 +266,13 @@ export class GatewayAuthService implements OnModuleDestroy {
 
   private async findUserByEmail(email: string): Promise<DbUser | null> {
     const result = await this.sql<DbUser[]>`
-      select id, email, name, "passwordHash", role, roles
+      select
+        id::text as id,
+        email,
+        username as name,
+        password_hash as "passwordHash",
+        'USER'::text as role,
+        ARRAY['USER']::text[] as roles
       from users
       where lower(email) = lower(${email})
       limit 1
@@ -267,9 +282,15 @@ export class GatewayAuthService implements OnModuleDestroy {
 
   private async findUserById(id: string): Promise<DbUser | null> {
     const result = await this.sql<DbUser[]>`
-      select id, email, name, "passwordHash", role, roles
+      select
+        id::text as id,
+        email,
+        username as name,
+        password_hash as "passwordHash",
+        'USER'::text as role,
+        ARRAY['USER']::text[] as roles
       from users
-      where id = ${id}
+      where id::text = ${id}
       limit 1
     `;
     return result[0] || null;
@@ -382,7 +403,8 @@ export class GatewayAuthService implements OnModuleDestroy {
   }
 
   private async generateTokens(user: DbUser): Promise<AuthResponse> {
-    const roles = Array.isArray(user.roles) && user.roles.length > 0 ? user.roles : [user.role];
+    const role = user.role || 'USER';
+    const roles = Array.isArray(user.roles) && user.roles.length > 0 ? user.roles : [role];
     const payload: JwtPayload = {
       sub: user.id,
       username: null,
@@ -416,13 +438,14 @@ export class GatewayAuthService implements OnModuleDestroy {
   }
 
   private toAuthUser(user: DbUser): AuthUser {
-    const roles = Array.isArray(user.roles) && user.roles.length > 0 ? user.roles : [user.role];
+    const role = user.role || 'USER';
+    const roles = Array.isArray(user.roles) && user.roles.length > 0 ? user.roles : [role];
     return {
       id: user.id,
       email: user.email,
       username: null,
       name: user.name,
-      role: user.role,
+      role,
       roles,
       emailVerified: true,
       isActive: true,
