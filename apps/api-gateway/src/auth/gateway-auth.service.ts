@@ -263,9 +263,26 @@ export class GatewayAuthService implements OnModuleDestroy {
     }
 
     const tokenInfo = (await response.json()) as GoogleTokenInfo;
-    const firebaseProjectId = this.configService.get<string>('FIREBASE_PROJECT_ID');
-    if (firebaseProjectId && tokenInfo.aud && tokenInfo.aud !== firebaseProjectId) {
+    const rawAllowedAudiences = [
+      this.configService.get<string>('GOOGLE_AUTH_ALLOWED_AUDIENCES'),
+      this.configService.get<string>('GOOGLE_OAUTH_CLIENT_ID'),
+      this.configService.get<string>('GOOGLE_CLIENT_ID'),
+      this.configService.get<string>('GOOGLE_WEB_CLIENT_ID'),
+    ]
+      .filter(Boolean)
+      .join(',');
+    const allowedAudiences = rawAllowedAudiences
+      .split(',')
+      .map((value) => value.trim())
+      .filter(Boolean);
+
+    if (allowedAudiences.length > 0 && tokenInfo.aud && !allowedAudiences.includes(tokenInfo.aud)) {
       throw new UnauthorizedException('Google token audience mismatch');
+    }
+
+    const issuer = `${tokenInfo.iss || ''}`.trim();
+    if (issuer && issuer !== 'accounts.google.com' && issuer !== 'https://accounts.google.com') {
+      throw new UnauthorizedException('Invalid Google token issuer');
     }
 
     if (!tokenInfo.sub) {
