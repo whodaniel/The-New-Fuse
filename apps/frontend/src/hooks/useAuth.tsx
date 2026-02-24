@@ -1,6 +1,8 @@
+import { signInWithPopup } from 'firebase/auth';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import AuthContext, { User } from '../AuthContext';
 import { API_ENDPOINTS } from '../config/api';
+import { auth as firebaseAuth, googleProvider } from '../lib/firebase';
 import { hasSupabaseConfig, supabase } from '../lib/supabase';
 
 const AUTH_TOKEN_KEY = 'auth_token';
@@ -103,6 +105,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         '/v1/auth/supabase',
         '/auth/supabase',
       ]),
+      login: uniqueUrls([
+        `${apiBaseUrl}${gatewayPrefix}/auth/login`,
+        `${apiBaseUrl}/api/auth/login`,
+        `${apiBaseUrl}/auth/login`,
+        `${gatewayBaseUrl}/v1/auth/login`,
+        '/api/auth/login',
+        '/v1/auth/login',
+        '/auth/login',
+      ]),
+      register: uniqueUrls([
+        `${apiBaseUrl}${gatewayPrefix}/auth/register`,
+        `${apiBaseUrl}/api/auth/register`,
+        `${apiBaseUrl}/auth/register`,
+        `${gatewayBaseUrl}/v1/auth/register`,
+        '/api/auth/register',
+        '/v1/auth/register',
+        '/auth/register',
+      ]),
+      google: uniqueUrls([
+        `${apiBaseUrl}${gatewayPrefix}/auth/google`,
+        `${apiBaseUrl}/api/auth/google`,
+        `${apiBaseUrl}/auth/google`,
+        `${gatewayBaseUrl}/v1/auth/google`,
+        '/api/auth/google',
+        '/v1/auth/google',
+        '/auth/google',
+      ]),
     }),
     [apiBaseUrl, gatewayBaseUrl, gatewayPrefix]
   );
@@ -197,6 +226,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [authEndpoints.supabaseExchange, fetchUserDetails]
   );
 
+  const exchangeApiAuth = useCallback(
+    async (endpoints: string[], body: Record<string, unknown>, method: string) => {
+      let lastErrorMessage: string | null = null;
+
+      for (const endpoint of endpoints) {
+        try {
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+          });
+
+          const rawPayload = await response.json();
+          const payload = unwrapPayload(rawPayload);
+
+          if (!response.ok) {
+            lastErrorMessage =
+              extractErrorMessage(rawPayload) || extractErrorMessage(payload) || lastErrorMessage;
+            continue;
+          }
+
+          const appToken = getTokenFromPayload(payload);
+          if (!appToken) continue;
+
+          setAuthToken(appToken);
+
+          if (payload.user) {
+            const normalized = toFrontendUser(payload.user);
+            setUser(normalized);
+            return { method, user: normalized };
+          }
+
+          const details = await fetchUserDetails(appToken);
+          if (details) {
+            setUser(details);
+            return { method, user: details };
+          }
+        } catch {
+          // Try next endpoint.
+        }
+      }
+
+      throw new Error(lastErrorMessage || 'Authentication exchange failed');
+    },
+    [fetchUserDetails]
+  );
+
   const login = useCallback(
     async (emailOrToken: string, password?: string, _options?: AuthSubmitOptions) => {
       setError(null);
@@ -208,7 +284,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
         if (!hasSupabaseConfig || !supabase) {
-          throw new Error('Supabase is not configured');
+          return await exchangeApiAuth(
+            authEndpoints.login,
+            {
+              email: emailOrToken,
+              password,
+              cfTurnstileToken: _options?.cfTurnstileToken,
+            },
+            'password'
+          );
         }
 
         const { data, error: signInError } = await supabase.auth.signInWithPassword({
@@ -233,7 +317,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(false);
       }
     },
-    [authenticateWithToken, exchangeSupabaseToken]
+    [authenticateWithToken, authEndpoints.login, exchangeApiAuth, exchangeSupabaseToken]
   );
 
   const register = useCallback(
@@ -243,7 +327,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       try {
         if (!hasSupabaseConfig || !supabase) {
-          throw new Error('Supabase is not configured');
+          return await exchangeApiAuth(
+            authEndpoints.register,
+            {
+              name,
+              email,
+              password,
+              cfTurnstileToken: _options?.cfTurnstileToken,
+            },
+            'register'
+          );
         }
 
         const { data, error: signUpError } = await supabase.auth.signUp({
@@ -277,7 +370,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(false);
       }
     },
-    [exchangeSupabaseToken]
+    [authEndpoints.register, exchangeApiAuth, exchangeSupabaseToken]
   );
 
   const signInWithGoogle = useCallback(async () => {
@@ -286,7 +379,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     try {
       if (!hasSupabaseConfig || !supabase) {
-        throw new Error('Supabase is not configured');
+        const googleResult = await signInWithPopup(firebaseAuth, googleProvider);
+        const idToken = await googleResult.user.getIdToken();
+        return await exchangeApiAuth(authEndpoints.google, { idToken }, 'google');
       }
 
       const { error: oauthError } = await supabase.auth.signInWithOAuth({
@@ -306,7 +401,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(false);
       throw err;
     }
-  }, []);
+  }, [authEndpoints.google, exchangeApiAuth]);
 
   useEffect(() => {
     let isMounted = true;
