@@ -12,8 +12,8 @@ ls -la
 
 if [ "$SERVICE_PATH" = "frontend" ]; then
   echo "Starting frontend service..."
-  # Use http-server for production serving of static files (avoids Vite preview permission issues)
-  exec npx --yes http-server dist -p ${PORT:-3000} -a 0.0.0.0 --cors
+  # Serve as SPA so deep links (/login, /auth/register, etc.) resolve to index.html.
+  exec npx --yes serve ./dist -l ${PORT:-3000} -s -n
 else
   echo "Starting backend service: $SERVICE_PATH..."
 
