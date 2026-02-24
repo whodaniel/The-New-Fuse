@@ -1,3 +1,4 @@
+import { GoogleAuthProvider } from 'firebase/auth';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import AuthContext, { User } from '../AuthContext';
 import { API_ENDPOINTS } from '../config/api';
@@ -331,8 +332,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setError(null);
     setIsLoading(true);
     try {
-      const credential = await signInWithPopup(auth, googleProvider);
-      const idToken = await credential.user.getIdToken();
+      const popupResult = await signInWithPopup(auth, googleProvider);
+      const googleCredential = GoogleAuthProvider.credentialFromResult(popupResult);
+      const idToken = googleCredential?.idToken;
+
+      if (!idToken) {
+        throw new Error('Google sign-in did not return an ID token');
+      }
 
       let lastErrorMessage: string | null = null;
 
@@ -359,7 +365,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setAuthToken(token);
 
           if (payload.user) {
-            setUser(toFrontendUser(payload.user, credential.user.email || ''));
+            setUser(toFrontendUser(payload.user, popupResult.user.email || ''));
             return { method: 'google' as const, user: payload.user };
           }
 
