@@ -1,18 +1,13 @@
-import { GoogleAuthProvider } from 'firebase/auth';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import AuthContext, { User } from '../AuthContext';
 import { API_ENDPOINTS } from '../config/api';
-import { auth, getRedirectResult, googleProvider, signInWithRedirect } from '../lib/firebase';
+import { hasSupabaseConfig, supabase } from '../lib/supabase';
 
 const AUTH_TOKEN_KEY = 'auth_token';
-const GOOGLE_REDIRECT_PENDING_KEY = 'google_auth_redirect_pending';
 
 const getAuthToken = () => localStorage.getItem(AUTH_TOKEN_KEY);
 const setAuthToken = (token: string) => localStorage.setItem(AUTH_TOKEN_KEY, token);
 const clearAuthToken = () => localStorage.removeItem(AUTH_TOKEN_KEY);
-const setGoogleRedirectPending = () => sessionStorage.setItem(GOOGLE_REDIRECT_PENDING_KEY, '1');
-const clearGoogleRedirectPending = () => sessionStorage.removeItem(GOOGLE_REDIRECT_PENDING_KEY);
-const isGoogleRedirectPending = () => sessionStorage.getItem(GOOGLE_REDIRECT_PENDING_KEY) === '1';
 
 type AuthPayload = {
   accessToken?: string;
@@ -23,6 +18,7 @@ type AuthPayload = {
   user?: unknown;
   message?: string | string[];
   error?: string;
+  requiresEmailVerification?: boolean;
 };
 
 type AuthSubmitOptions = {
@@ -98,34 +94,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         '/v1/auth/me',
         '/auth/me',
       ]),
-      login: uniqueUrls([
-        `${apiBaseUrl}${API_ENDPOINTS.AUTH.LOGIN}`,
-        `${apiBaseUrl}${gatewayPrefix}/auth/login`,
-        `${apiBaseUrl}/api/auth/login`,
-        `${apiBaseUrl}/auth/login`,
-        `${gatewayBaseUrl}/v1/auth/login`,
-        '/api/auth/login',
-        '/v1/auth/login',
-        '/auth/login',
-      ]),
-      register: uniqueUrls([
-        `${apiBaseUrl}${API_ENDPOINTS.AUTH.REGISTER}`,
-        `${apiBaseUrl}${gatewayPrefix}/auth/register`,
-        `${apiBaseUrl}/api/auth/register`,
-        `${apiBaseUrl}/auth/register`,
-        `${gatewayBaseUrl}/v1/auth/register`,
-        '/api/auth/register',
-        '/v1/auth/register',
-        '/auth/register',
-      ]),
-      google: uniqueUrls([
-        `${apiBaseUrl}${gatewayPrefix}/auth/google`,
-        `${apiBaseUrl}/api/auth/google`,
-        `${apiBaseUrl}/auth/google`,
-        `${gatewayBaseUrl}/v1/auth/google`,
-        '/api/auth/google',
-        '/v1/auth/google',
-        '/auth/google',
+      supabaseExchange: uniqueUrls([
+        `${apiBaseUrl}${gatewayPrefix}/auth/supabase`,
+        `${apiBaseUrl}/api/auth/supabase`,
+        `${apiBaseUrl}/auth/supabase`,
+        `${gatewayBaseUrl}/v1/auth/supabase`,
+        '/api/auth/supabase',
+        '/v1/auth/supabase',
+        '/auth/supabase',
       ]),
     }),
     [apiBaseUrl, gatewayBaseUrl, gatewayPrefix]
@@ -174,141 +150,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [fetchUserDetails]
   );
 
-  const login = useCallback(
-    async (emailOrToken: string, password?: string, options?: AuthSubmitOptions) => {
-      setError(null);
-      setIsLoading(true);
-
-      try {
-        if (!password) {
-          return await authenticateWithToken(emailOrToken);
-        }
-
-        let lastErrorMessage: string | null = null;
-
-        for (const endpoint of authEndpoints.login) {
-          try {
-            const response = await fetch(endpoint, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                email: emailOrToken,
-                password,
-                cfTurnstileToken: options?.cfTurnstileToken,
-              }),
-            });
-
-            const rawPayload = await response.json();
-            const payload = unwrapPayload(rawPayload);
-
-            if (!response.ok) {
-              lastErrorMessage =
-                extractErrorMessage(rawPayload) || extractErrorMessage(payload) || lastErrorMessage;
-              continue;
-            }
-
-            const token = getTokenFromPayload(payload);
-            if (!token) continue;
-
-            setAuthToken(token);
-
-            if (payload.user) {
-              setUser(toFrontendUser(payload.user, emailOrToken));
-              return { method: 'backend' as const, user: payload.user };
-            }
-
-            const details = await fetchUserDetails(token);
-            if (details) {
-              setUser(details);
-              return { method: 'backend' as const, user: details };
-            }
-          } catch {
-            // Try next endpoint.
-          }
-        }
-
-        throw new Error(lastErrorMessage || 'Failed to login');
-      } catch (err: any) {
-        setError(err?.message || 'Failed to login');
-        throw err;
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [authenticateWithToken, authEndpoints.login, fetchUserDetails]
-  );
-
-  const register = useCallback(
-    async (name: string, email: string, password: string, options?: AuthSubmitOptions) => {
-      setError(null);
-      setIsLoading(true);
-
-      try {
-        let lastErrorMessage: string | null = null;
-
-        for (const endpoint of authEndpoints.register) {
-          try {
-            const response = await fetch(endpoint, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                name,
-                email,
-                password,
-                cfTurnstileToken: options?.cfTurnstileToken,
-              }),
-            });
-
-            const rawPayload = await response.json();
-            const payload = unwrapPayload(rawPayload);
-
-            if (!response.ok) {
-              lastErrorMessage =
-                extractErrorMessage(rawPayload) || extractErrorMessage(payload) || lastErrorMessage;
-              continue;
-            }
-
-            const token = getTokenFromPayload(payload);
-            if (!token) continue;
-
-            setAuthToken(token);
-
-            if (payload.user) {
-              setUser(toFrontendUser(payload.user, email));
-              return payload;
-            }
-
-            const details = await fetchUserDetails(token);
-            if (details) {
-              setUser(details);
-              return payload;
-            }
-          } catch {
-            // Try next endpoint.
-          }
-        }
-
-        throw new Error(lastErrorMessage || 'Failed to register');
-      } catch (err: any) {
-        setError(err?.message || 'Failed to register');
-        throw err;
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [authEndpoints.register, fetchUserDetails]
-  );
-
-  const completeGoogleAuth = useCallback(
-    async (idToken: string, fallbackEmail: string) => {
+  const exchangeSupabaseToken = useCallback(
+    async (accessToken: string) => {
       let lastErrorMessage: string | null = null;
 
-      for (const endpoint of authEndpoints.google) {
+      for (const endpoint of authEndpoints.supabaseExchange) {
         try {
           const response = await fetch(endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ idToken }),
+            body: JSON.stringify({ accessToken }),
           });
 
           const rawPayload = await response.json();
@@ -320,61 +171,137 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             continue;
           }
 
-          const token = getTokenFromPayload(payload);
-          if (!token) continue;
+          const appToken = getTokenFromPayload(payload);
+          if (!appToken) continue;
 
-          setAuthToken(token);
+          setAuthToken(appToken);
 
           if (payload.user) {
-            const normalized = toFrontendUser(payload.user, fallbackEmail);
+            const normalized = toFrontendUser(payload.user);
             setUser(normalized);
-            return { method: 'google' as const, user: normalized };
+            return { method: 'supabase' as const, user: normalized };
           }
 
-          const details = await fetchUserDetails(token);
+          const details = await fetchUserDetails(appToken);
           if (details) {
             setUser(details);
-            return { method: 'google' as const, user: details };
+            return { method: 'supabase' as const, user: details };
           }
         } catch {
           // Try next endpoint.
         }
       }
 
-      throw new Error(lastErrorMessage || 'Google sign-in failed');
+      throw new Error(lastErrorMessage || 'Supabase auth exchange failed');
     },
-    [authEndpoints.google, fetchUserDetails]
+    [authEndpoints.supabaseExchange, fetchUserDetails]
   );
 
-  const processGoogleRedirectResult = useCallback(async () => {
-    const redirectResult = await getRedirectResult(auth);
-    if (!redirectResult) {
-      if (isGoogleRedirectPending()) {
-        clearGoogleRedirectPending();
+  const login = useCallback(
+    async (emailOrToken: string, password?: string, _options?: AuthSubmitOptions) => {
+      setError(null);
+      setIsLoading(true);
+
+      try {
+        if (!password) {
+          return await authenticateWithToken(emailOrToken);
+        }
+
+        if (!hasSupabaseConfig || !supabase) {
+          throw new Error('Supabase is not configured');
+        }
+
+        const { data, error: signInError } = await supabase.auth.signInWithPassword({
+          email: emailOrToken,
+          password,
+        });
+
+        if (signInError) {
+          throw new Error(signInError.message || 'Failed to login');
+        }
+
+        const accessToken = data?.session?.access_token;
+        if (!accessToken) {
+          throw new Error('Supabase login did not return an access token');
+        }
+
+        return await exchangeSupabaseToken(accessToken);
+      } catch (err: any) {
+        setError(err?.message || 'Failed to login');
+        throw err;
+      } finally {
+        setIsLoading(false);
       }
-      return null;
-    }
+    },
+    [authenticateWithToken, exchangeSupabaseToken]
+  );
 
-    clearGoogleRedirectPending();
-    const googleCredential = GoogleAuthProvider.credentialFromResult(redirectResult);
-    const idToken = googleCredential?.idToken;
+  const register = useCallback(
+    async (name: string, email: string, password: string, _options?: AuthSubmitOptions) => {
+      setError(null);
+      setIsLoading(true);
 
-    if (!idToken) {
-      throw new Error('Google sign-in did not return an ID token');
-    }
+      try {
+        if (!hasSupabaseConfig || !supabase) {
+          throw new Error('Supabase is not configured');
+        }
 
-    return completeGoogleAuth(idToken, redirectResult.user.email || '');
-  }, [completeGoogleAuth]);
+        const { data, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              name,
+            },
+          },
+        });
+
+        if (signUpError) {
+          throw new Error(signUpError.message || 'Failed to register');
+        }
+
+        const accessToken = data?.session?.access_token;
+        if (!accessToken) {
+          return {
+            method: 'supabase_signup_pending' as const,
+            requiresEmailVerification: true,
+            message: 'Check your email to verify your account, then sign in.',
+          };
+        }
+
+        return await exchangeSupabaseToken(accessToken);
+      } catch (err: any) {
+        setError(err?.message || 'Failed to register');
+        throw err;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [exchangeSupabaseToken]
+  );
 
   const signInWithGoogle = useCallback(async () => {
     setError(null);
     setIsLoading(true);
+
     try {
-      setGoogleRedirectPending();
-      await signInWithRedirect(auth, googleProvider);
+      if (!hasSupabaseConfig || !supabase) {
+        throw new Error('Supabase is not configured');
+      }
+
+      const { error: oauthError } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/login`,
+        },
+      });
+
+      if (oauthError) {
+        throw new Error(oauthError.message || 'Google sign-in failed');
+      }
+
       return { method: 'google_redirect' as const };
     } catch (err: any) {
-      clearGoogleRedirectPending();
       setError(err?.message || 'Google sign-in failed');
       setIsLoading(false);
       throw err;
@@ -387,40 +314,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const bootstrapAuth = async () => {
       setIsLoading(true);
 
-      try {
-        const googleRedirectAuth = await processGoogleRedirectResult();
-        if (googleRedirectAuth) {
-          if (isMounted) setIsLoading(false);
+      const appToken = getAuthToken();
+      if (appToken) {
+        const details = await fetchUserDetails(appToken);
+        if (!isMounted) return;
+
+        if (details?.id) {
+          setUser(details);
+          setIsLoading(false);
           return;
         }
-      } catch (err: any) {
-        clearAuthToken();
-        if (isMounted) {
-          setUser(null);
-          setError(err?.message || 'Google sign-in failed');
-        }
-      }
 
-      const token = getAuthToken();
-      if (!token) {
-        if (isMounted) {
-          setUser(null);
-          setIsLoading(false);
-        }
-        return;
-      }
-
-      const details = await fetchUserDetails(token);
-      if (!isMounted) return;
-
-      if (details?.id) {
-        setUser(details);
-      } else {
         clearAuthToken();
         setUser(null);
       }
 
-      setIsLoading(false);
+      if (hasSupabaseConfig && supabase) {
+        try {
+          const { data, error: sessionError } = await supabase.auth.getSession();
+          if (!sessionError && data?.session?.access_token) {
+            await exchangeSupabaseToken(data.session.access_token);
+          }
+        } catch (err: any) {
+          if (isMounted) {
+            setError(err?.message || 'Failed to initialize Supabase session');
+            setUser(null);
+          }
+        }
+      }
+
+      if (isMounted) {
+        setIsLoading(false);
+      }
     };
 
     bootstrapAuth();
@@ -428,18 +353,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => {
       isMounted = false;
     };
-  }, [fetchUserDetails, processGoogleRedirectResult]);
-  const forgotPassword = useCallback(async (_email: string) => {
-    throw new Error('Forgot password is not configured yet in the new auth flow');
+  }, [exchangeSupabaseToken, fetchUserDetails]);
+
+  const forgotPassword = useCallback(async (email: string) => {
+    if (!hasSupabaseConfig || !supabase) {
+      throw new Error('Supabase is not configured');
+    }
+
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset-password`,
+    });
+
+    if (resetError) {
+      throw new Error(resetError.message || 'Failed to send reset email');
+    }
+
+    return { success: true };
   }, []);
 
-  const resetPassword = useCallback(async (_token: string, _password: string) => {
-    throw new Error('Reset password is not configured yet in the new auth flow');
+  const resetPassword = useCallback(async (_token: string, password: string) => {
+    if (!hasSupabaseConfig || !supabase) {
+      throw new Error('Supabase is not configured');
+    }
+
+    const { error: updateError } = await supabase.auth.updateUser({ password });
+    if (updateError) {
+      throw new Error(updateError.message || 'Failed to reset password');
+    }
+
+    return { success: true };
   }, []);
 
   const handleSSOCallback = useCallback(
     async (_provider: string, _code: string, _state?: string | null) => {
-      throw new Error('SSO is not configured yet in the new auth flow');
+      throw new Error('SSO callback is handled by Supabase redirect flow');
     },
     []
   );
@@ -447,8 +394,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = useCallback(async () => {
     setIsLoading(true);
     clearAuthToken();
-    clearGoogleRedirectPending();
     setUser(null);
+    if (supabase) {
+      await supabase.auth.signOut();
+    }
     setIsLoading(false);
   }, []);
 

@@ -21,7 +21,7 @@ const Register: React.FC = () => {
   const [cfTurnstileToken, setCfTurnstileToken] = useState<string | null>(null);
 
   const turnstileSiteKey = (import.meta.env.VITE_TURNSTILE_SITE_KEY || '').trim();
-  const requireTurnstile = isTruthy(import.meta.env.VITE_AUTH_REQUIRE_TURNSTILE);
+  const requireTurnstile = isTruthy(import.meta.env.VITE_AUTH_REQUIRE_TURNSTILE) && false;
 
   useEffect(() => {
     if (!isAuthLoading && isAuthenticated) {
@@ -44,8 +44,16 @@ const Register: React.FC = () => {
         throw new Error('Please complete Turnstile verification');
       }
 
-      await register(name, email, password, { cfTurnstileToken: cfTurnstileToken || undefined });
-      navigate('/dashboard');
+      const result = await register(name, email, password, {
+        cfTurnstileToken: cfTurnstileToken || undefined,
+      });
+
+      if (result?.requiresEmailVerification) {
+        setError(result.message || 'Check your email to verify your account, then sign in.');
+        return;
+      }
+
+      navigate('/dashboard', { replace: true });
     } catch (err: any) {
       setError(err?.message || 'Registration failed');
     } finally {

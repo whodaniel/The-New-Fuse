@@ -58,6 +58,11 @@ class GoogleAuthDto {
   idToken: string = '';
 }
 
+class SupabaseAuthDto {
+  @IsString()
+  accessToken: string = '';
+}
+
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {
@@ -137,5 +142,15 @@ export class AuthController {
       throw new BadRequestException('Google idToken is required');
     }
     return this.authService.googleAuth(body.idToken);
+  }
+
+  @Post('supabase')
+  @Version('1')
+  @ApiOperation({ summary: 'Exchange Supabase access token for TNF JWT' })
+  async supabaseAuth(@Body() body: SupabaseAuthDto) {
+    if (!body.accessToken) {
+      throw new BadRequestException('Supabase accessToken is required');
+    }
+    return this.authService.supabaseAuth(body.accessToken);
   }
 }

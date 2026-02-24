@@ -56,6 +56,16 @@ type GoogleTokenInfo = {
   iss?: string;
 };
 
+type SupabaseUserInfo = {
+  id: string;
+  email?: string;
+  email_confirmed_at?: string | null;
+  user_metadata?: {
+    name?: string;
+    full_name?: string;
+  } | null;
+};
+
 const isTruthy = (value: unknown): boolean => {
   if (typeof value === 'boolean') return value;
   if (typeof value === 'number') return value > 0;
@@ -197,6 +207,54 @@ export class GatewayAuthService implements OnModuleDestroy {
     return this.generateTokens(user);
   }
 
+  async supabaseAuth(accessToken: string): Promise<AuthResponse> {
+    const supabaseUser = await this.verifySupabaseAccessToken(accessToken);
+    const email = (supabaseUser.email || '').trim().toLowerCase();
+    if (!email) {
+      throw new UnauthorizedException('Supabase token did not contain an email');
+    }
+
+    let user = await this.findUserByEmail(email);
+    const derivedName =
+      supabaseUser.user_metadata?.name?.trim() ||
+      supabaseUser.user_metadata?.full_name?.trim() ||
+      null;
+
+    if (!user) {
+      const now = new Date();
+      const id = `usr_${randomUUID().replace(/-/g, '').slice(0, 24)}`;
+      const inserted = await this.sql<DbUser[]>`
+        insert into users (id, email, name, "passwordHash", role, roles, "createdAt", "updatedAt")
+        values (
+          ${id},
+          ${email},
+          ${derivedName},
+          ${null},
+          ${'USER'},
+          ${JSON.stringify(['USER'])}::jsonb,
+          ${now},
+          ${now}
+        )
+        returning id, email, name, "passwordHash", role, roles
+      `;
+      user = inserted[0] || null;
+    } else if (!user.name && derivedName) {
+      const updated = await this.sql<DbUser[]>`
+        update users
+        set name = ${derivedName}, "updatedAt" = ${new Date()}
+        where id = ${user.id}
+        returning id, email, name, "passwordHash", role, roles
+      `;
+      user = updated[0] || user;
+    }
+
+    if (!user) {
+      throw new UnauthorizedException('Unable to authenticate Supabase user');
+    }
+
+    return this.generateTokens(user);
+  }
+
   private async findUserByEmail(email: string): Promise<DbUser | null> {
     const result = await this.sql<DbUser[]>`
       select id, email, name, "passwordHash", role, roles
@@ -290,6 +348,37 @@ export class GatewayAuthService implements OnModuleDestroy {
     }
 
     return tokenInfo;
+  }
+
+  private async verifySupabaseAccessToken(accessToken: string): Promise<SupabaseUserInfo> {
+    const rawSupabaseUrl =
+      this.configService.get<string>('SUPABASE_URL') ||
+      this.configService.get<string>('VITE_SUPABASE_URL');
+    const supabaseAnonKey =
+      this.configService.get<string>('SUPABASE_ANON_KEY') ||
+      this.configService.get<string>('SUPABASE_KEY') ||
+      this.configService.get<string>('VITE_SUPABASE_ANON_KEY');
+
+    if (!rawSupabaseUrl || !supabaseAnonKey) {
+      throw new UnauthorizedException(
+        'Supabase auth is not configured (missing SUPABASE_URL or SUPABASE_ANON_KEY)'
+      );
+    }
+
+    const supabaseUrl = rawSupabaseUrl.replace(/\/$/, '');
+    const response = await fetch(`${supabaseUrl}/auth/v1/user`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        apikey: supabaseAnonKey,
+      },
+    });
+
+    if (!response.ok) {
+      throw new UnauthorizedException('Invalid Supabase access token');
+    }
+
+    return (await response.json()) as SupabaseUserInfo;
   }
 
   private async generateTokens(user: DbUser): Promise<AuthResponse> {
