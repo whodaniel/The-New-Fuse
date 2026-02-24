@@ -9,7 +9,7 @@ const isTruthy = (value: string | undefined): boolean => {
 };
 
 const Register: React.FC = () => {
-  const { register } = useAuth();
+  const { register, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
 
   const [name, setName] = useState('');
@@ -42,6 +42,19 @@ const Register: React.FC = () => {
       navigate('/dashboard');
     } catch (err: any) {
       setError(err?.message || 'Registration failed');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignUp = async () => {
+    setError(null);
+    setIsLoading(true);
+    try {
+      await signInWithGoogle();
+      navigate('/dashboard');
+    } catch (err: any) {
+      setError(err?.message || 'Google sign-up failed');
     } finally {
       setIsLoading(false);
     }
@@ -140,6 +153,17 @@ const Register: React.FC = () => {
             </div>
           )}
         </form>
+
+        <div className="mt-4">
+          <button
+            type="button"
+            onClick={handleGoogleSignUp}
+            disabled={isLoading}
+            className="w-full rounded-md border border-slate-700 bg-white px-4 py-2 font-medium text-slate-900 hover:bg-slate-100 disabled:opacity-50"
+          >
+            Continue with Google
+          </button>
+        </div>
 
         <p className="mt-6 text-sm text-slate-400">
           Already have an account?{' '}

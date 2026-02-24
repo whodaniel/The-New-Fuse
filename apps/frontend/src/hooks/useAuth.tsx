@@ -1,6 +1,7 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import AuthContext, { User } from '../AuthContext';
 import { API_ENDPOINTS } from '../config/api';
+import { auth, googleProvider, signInWithPopup } from '../lib/firebase';
 
 const AUTH_TOKEN_KEY = 'auth_token';
 
@@ -111,6 +112,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         '/api/auth/register',
         '/v1/auth/register',
         '/auth/register',
+      ]),
+      google: uniqueUrls([
+        `${apiBaseUrl}${gatewayPrefix}/auth/google`,
+        `${apiBaseUrl}/api/auth/google`,
+        `${apiBaseUrl}/auth/google`,
+        `${gatewayBaseUrl}/v1/auth/google`,
+        '/api/auth/google',
+        '/v1/auth/google',
+        '/auth/google',
       ]),
     }),
     [apiBaseUrl, gatewayBaseUrl, gatewayPrefix]
@@ -318,8 +328,59 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   const signInWithGoogle = useCallback(async () => {
-    throw new Error('Google OAuth is disabled in the new Cloudflare auth flow');
-  }, []);
+    setError(null);
+    setIsLoading(true);
+    try {
+      const credential = await signInWithPopup(auth, googleProvider);
+      const idToken = await credential.user.getIdToken();
+
+      let lastErrorMessage: string | null = null;
+
+      for (const endpoint of authEndpoints.google) {
+        try {
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idToken }),
+          });
+
+          const rawPayload = await response.json();
+          const payload = unwrapPayload(rawPayload);
+
+          if (!response.ok) {
+            lastErrorMessage =
+              extractErrorMessage(rawPayload) || extractErrorMessage(payload) || lastErrorMessage;
+            continue;
+          }
+
+          const token = getTokenFromPayload(payload);
+          if (!token) continue;
+
+          setAuthToken(token);
+
+          if (payload.user) {
+            setUser(toFrontendUser(payload.user, credential.user.email || ''));
+            return { method: 'google' as const, user: payload.user };
+          }
+
+          const details = await fetchUserDetails(token);
+          if (details) {
+            setUser(details);
+            return { method: 'google' as const, user: details };
+          }
+        } catch {
+          // Try next endpoint.
+        }
+      }
+
+      throw new Error(lastErrorMessage || 'Google sign-in failed');
+    } catch (err: any) {
+      setError(err?.message || 'Google sign-in failed');
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [authEndpoints.google, fetchUserDetails]);
 
   const forgotPassword = useCallback(async (_email: string) => {
     throw new Error('Forgot password is not configured yet in the new auth flow');

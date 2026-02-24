@@ -46,6 +46,16 @@ type TurnstileVerificationResponse = {
   success: boolean;
 };
 
+type GoogleTokenInfo = {
+  aud?: string;
+  sub?: string;
+  email?: string;
+  email_verified?: string | boolean;
+  name?: string;
+  picture?: string;
+  iss?: string;
+};
+
 const isTruthy = (value: unknown): boolean => {
   if (typeof value === 'boolean') return value;
   if (typeof value === 'number') return value > 0;
@@ -139,6 +149,54 @@ export class GatewayAuthService implements OnModuleDestroy {
     return this.toAuthUser(user);
   }
 
+  async googleAuth(idToken: string): Promise<AuthResponse> {
+    const tokenInfo = await this.verifyGoogleIdToken(idToken);
+    const email = (tokenInfo.email || '').trim().toLowerCase();
+    if (!email) {
+      throw new UnauthorizedException('Google token did not contain an email');
+    }
+
+    const emailVerified = `${tokenInfo.email_verified}`.toLowerCase() === 'true';
+    if (!emailVerified) {
+      throw new UnauthorizedException('Google account email is not verified');
+    }
+
+    let user = await this.findUserByEmail(email);
+    if (!user) {
+      const now = new Date();
+      const id = `usr_${randomUUID().replace(/-/g, '').slice(0, 24)}`;
+      const inserted = await this.sql<DbUser[]>`
+        insert into users (id, email, name, "passwordHash", role, roles, "createdAt", "updatedAt")
+        values (
+          ${id},
+          ${email},
+          ${tokenInfo.name?.trim() || null},
+          ${null},
+          ${'USER'},
+          ${JSON.stringify(['USER'])}::jsonb,
+          ${now},
+          ${now}
+        )
+        returning id, email, name, "passwordHash", role, roles
+      `;
+      user = inserted[0] || null;
+    } else if (!user.name && tokenInfo.name?.trim()) {
+      const updated = await this.sql<DbUser[]>`
+        update users
+        set name = ${tokenInfo.name.trim()}, "updatedAt" = ${new Date()}
+        where id = ${user.id}
+        returning id, email, name, "passwordHash", role, roles
+      `;
+      user = updated[0] || user;
+    }
+
+    if (!user) {
+      throw new UnauthorizedException('Unable to authenticate Google user');
+    }
+
+    return this.generateTokens(user);
+  }
+
   private async findUserByEmail(email: string): Promise<DbUser | null> {
     const result = await this.sql<DbUser[]>`
       select id, email, name, "passwordHash", role, roles
@@ -194,6 +252,27 @@ export class GatewayAuthService implements OnModuleDestroy {
     if (!result.success) {
       throw new UnauthorizedException('Cloudflare Turnstile validation failed');
     }
+  }
+
+  private async verifyGoogleIdToken(idToken: string): Promise<GoogleTokenInfo> {
+    const response = await fetch(
+      `https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(idToken)}`
+    );
+    if (!response.ok) {
+      throw new UnauthorizedException('Invalid Google token');
+    }
+
+    const tokenInfo = (await response.json()) as GoogleTokenInfo;
+    const firebaseProjectId = this.configService.get<string>('FIREBASE_PROJECT_ID');
+    if (firebaseProjectId && tokenInfo.aud && tokenInfo.aud !== firebaseProjectId) {
+      throw new UnauthorizedException('Google token audience mismatch');
+    }
+
+    if (!tokenInfo.sub) {
+      throw new UnauthorizedException('Invalid Google token payload');
+    }
+
+    return tokenInfo;
   }
 
   private async generateTokens(user: DbUser): Promise<AuthResponse> {

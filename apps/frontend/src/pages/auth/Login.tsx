@@ -9,7 +9,7 @@ const isTruthy = (value: string | undefined): boolean => {
 };
 
 const Login: React.FC = () => {
-  const { login } = useAuth();
+  const { login, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -41,6 +41,19 @@ const Login: React.FC = () => {
       navigate(from, { replace: true });
     } catch (err: any) {
       setError(err?.message || 'Invalid email or password');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setError('');
+    setIsLoading(true);
+    try {
+      await signInWithGoogle();
+      navigate(from, { replace: true });
+    } catch (err: any) {
+      setError(err?.message || 'Google sign-in failed');
     } finally {
       setIsLoading(false);
     }
@@ -109,6 +122,17 @@ const Login: React.FC = () => {
             </div>
           )}
         </form>
+
+        <div className="mt-4">
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            disabled={isLoading}
+            className="w-full rounded-md border border-slate-700 bg-white px-4 py-2 font-medium text-slate-900 hover:bg-slate-100 disabled:opacity-50"
+          >
+            Continue with Google
+          </button>
+        </div>
 
         <p className="mt-6 text-sm text-slate-400">
           Need an account?{' '}

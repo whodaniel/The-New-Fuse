@@ -3,7 +3,6 @@ import {
   Body,
   Controller,
   Get,
-  NotImplementedException,
   Post,
   Req,
   UseGuards,
@@ -52,6 +51,11 @@ class RefreshDto {
   @IsString()
   @IsOptional()
   refresh_token?: string;
+}
+
+class GoogleAuthDto {
+  @IsString()
+  idToken: string = '';
 }
 
 @Controller('auth')
@@ -127,8 +131,11 @@ export class AuthController {
 
   @Post('google')
   @Version('1')
-  @ApiOperation({ summary: 'Google OAuth (disabled)' })
-  googleDisabled() {
-    throw new NotImplementedException('Google OAuth is disabled in the new auth flow');
+  @ApiOperation({ summary: 'Google sign-in with Firebase ID token' })
+  async googleAuth(@Body() body: GoogleAuthDto) {
+    if (!body.idToken) {
+      throw new BadRequestException('Google idToken is required');
+    }
+    return this.authService.googleAuth(body.idToken);
   }
 }
