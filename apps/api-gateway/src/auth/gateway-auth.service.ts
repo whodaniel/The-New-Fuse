@@ -8,10 +8,13 @@ import postgres from 'postgres';
 type DbUser = {
   id: string;
   email: string;
+  username: string | null;
   name: string | null;
   passwordHash: string | null;
   role: string | null;
   roles: string[] | null;
+  emailVerified: boolean;
+  isActive: boolean;
 };
 
 type AuthUser = {
@@ -77,12 +80,6 @@ const toUsername = (email: string): string => {
   const base = email.split('@')[0]?.trim().toLowerCase() || 'user';
   const sanitized = base.replace(/[^a-z0-9_]/g, '_').slice(0, 24) || 'user';
   return `${sanitized}_${randomUUID().replace(/-/g, '').slice(0, 8)}`;
-};
-
-const isMissingColumnError = (error: unknown): boolean => {
-  if (!error || typeof error !== 'object') return false;
-  const maybeCode = (error as { code?: string }).code;
-  return maybeCode === '42703';
 };
 
 @Injectable()
@@ -213,71 +210,49 @@ export class GatewayAuthService implements OnModuleDestroy {
   }
 
   private async findUserByEmail(email: string): Promise<DbUser | null> {
-    try {
-      const result = await this.sql<DbUser[]>`
-        select
-          id::text as id,
-          email,
-          username as name,
-          password_hash as "passwordHash",
-          'USER'::text as role,
-          ARRAY['USER']::text[] as roles
-        from users
-        where lower(email) = lower(${email})
-        limit 1
-      `;
-      return result[0] || null;
-    } catch (error) {
-      if (!isMissingColumnError(error)) throw error;
-
-      const legacy = await this.sql<DbUser[]>`
-        select
-          id::text as id,
-          email,
-          name,
-          "passwordHash" as "passwordHash",
-          coalesce(role, 'USER')::text as role,
-          ARRAY[coalesce(role, 'USER')::text] as roles
-        from users
-        where lower(email) = lower(${email})
-        limit 1
-      `;
-      return legacy[0] || null;
-    }
+    const result = await this.sql<DbUser[]>`
+      select
+        id::text as id,
+        email,
+        username,
+        name,
+        hashed_password as "passwordHash",
+        coalesce(role::text, 'USER') as role,
+        case
+          when roles is not null and jsonb_typeof(roles) = 'array' and jsonb_array_length(roles) > 0
+            then ARRAY(select jsonb_array_elements_text(roles))
+          else ARRAY[coalesce(role::text, 'USER')]
+        end as roles,
+        email_verified as "emailVerified",
+        is_active as "isActive"
+      from users
+      where lower(email) = lower(${email})
+      limit 1
+    `;
+    return result[0] || null;
   }
 
   private async findUserById(id: string): Promise<DbUser | null> {
-    try {
-      const result = await this.sql<DbUser[]>`
-        select
-          id::text as id,
-          email,
-          username as name,
-          password_hash as "passwordHash",
-          'USER'::text as role,
-          ARRAY['USER']::text[] as roles
-        from users
-        where id::text = ${id}
-        limit 1
-      `;
-      return result[0] || null;
-    } catch (error) {
-      if (!isMissingColumnError(error)) throw error;
-
-      const legacy = await this.sql<DbUser[]>`
-        select
-          id::text as id,
-          email,
-          name,
-          "passwordHash" as "passwordHash",
-          coalesce(role, 'USER')::text as role,
-          ARRAY[coalesce(role, 'USER')::text] as roles
-        from users
-        where id::text = ${id}
-        limit 1
-      `;
-      return legacy[0] || null;
-    }
+    const result = await this.sql<DbUser[]>`
+      select
+        id::text as id,
+        email,
+        username,
+        name,
+        hashed_password as "passwordHash",
+        coalesce(role::text, 'USER') as role,
+        case
+          when roles is not null and jsonb_typeof(roles) = 'array' and jsonb_array_length(roles) > 0
+            then ARRAY(select jsonb_array_elements_text(roles))
+          else ARRAY[coalesce(role::text, 'USER')]
+        end as roles,
+        email_verified as "emailVerified",
+        is_active as "isActive"
+      from users
+      where id::text = ${id}
+      limit 1
+    `;
+    return result[0] || null;
   }
 
   private async createUser(
@@ -286,47 +261,48 @@ export class GatewayAuthService implements OnModuleDestroy {
     preferredName: string | null
   ): Promise<DbUser | null> {
     const now = new Date();
-    const username = preferredName || toUsername(email);
-
-    try {
-      const inserted = await this.sql<DbUser[]>`
-        insert into users (email, username, password_hash, status, created_at, updated_at)
-        values (${email}, ${username}, ${passwordHash}, ${'active'}, ${now}, ${now})
-        returning
-          id::text as id,
-          email,
-          username as name,
-          password_hash as "passwordHash",
-          'USER'::text as role,
-          ARRAY['USER']::text[] as roles
-      `;
-      return inserted[0] || null;
-    } catch (error) {
-      if (!isMissingColumnError(error)) throw error;
-
-      const legacyUserId = `usr_${randomUUID().replace(/-/g, '').slice(0, 24)}`;
-      const insertedLegacy = await this.sql<DbUser[]>`
-        insert into users (id, email, name, "passwordHash", role, roles, "createdAt", "updatedAt")
-        values (
-          ${legacyUserId},
-          ${email},
-          ${preferredName},
-          ${passwordHash},
-          ${'USER'},
-          ${JSON.stringify(['USER'])}::jsonb,
-          ${now},
-          ${now}
-        )
-        returning
-          id::text as id,
-          email,
-          name,
-          "passwordHash" as "passwordHash",
-          coalesce(role, 'USER')::text as role,
-          ARRAY[coalesce(role, 'USER')::text] as roles
-      `;
-      return insertedLegacy[0] || null;
-    }
+    const username = toUsername(email);
+    const inserted = await this.sql<DbUser[]>`
+      insert into users (
+        email,
+        username,
+        name,
+        hashed_password,
+        role,
+        roles,
+        created_at,
+        updated_at,
+        is_active,
+        email_verified
+      )
+      values (
+        ${email},
+        ${username},
+        ${preferredName},
+        ${passwordHash},
+        ${'USER'}::"UserRole",
+        ${JSON.stringify(['USER'])}::jsonb,
+        ${now},
+        ${now},
+        ${true},
+        ${true}
+      )
+      returning
+        id::text as id,
+        email,
+        username,
+        name,
+        hashed_password as "passwordHash",
+        coalesce(role::text, 'USER') as role,
+        case
+          when roles is not null and jsonb_typeof(roles) = 'array' and jsonb_array_length(roles) > 0
+            then ARRAY(select jsonb_array_elements_text(roles))
+          else ARRAY[coalesce(role::text, 'USER')]
+        end as roles,
+        email_verified as "emailVerified",
+        is_active as "isActive"
+    `;
+    return inserted[0] || null;
   }
 
   private async verifyTurnstileIfEnabled(token: string | undefined, ipAddress?: string) {
@@ -452,7 +428,7 @@ export class GatewayAuthService implements OnModuleDestroy {
     const roles = Array.isArray(user.roles) && user.roles.length > 0 ? user.roles : [role];
     const payload: JwtPayload = {
       sub: user.id,
-      username: null,
+      username: user.username,
       email: user.email,
       roles,
       permissions:
@@ -488,12 +464,12 @@ export class GatewayAuthService implements OnModuleDestroy {
     return {
       id: user.id,
       email: user.email,
-      username: null,
+      username: user.username,
       name: user.name,
       role,
       roles,
-      emailVerified: true,
-      isActive: true,
+      emailVerified: user.emailVerified,
+      isActive: user.isActive,
     };
   }
 
