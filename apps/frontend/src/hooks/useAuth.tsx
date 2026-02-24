@@ -75,6 +75,17 @@ const sanitizeApiBaseUrl = (rawUrl: string) => {
 
 const uniqueUrls = (urls: string[]): string[] => Array.from(new Set(urls.filter(Boolean)));
 
+const shouldFallbackToApiAuth = (message: string | null | undefined): boolean => {
+  if (!message) return false;
+  const normalized = message.toLowerCase();
+  return (
+    normalized.includes('invalid api key') ||
+    normalized.includes('apikey') ||
+    normalized.includes('network request failed') ||
+    normalized.includes('failed to fetch')
+  );
+};
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -301,6 +312,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
 
         if (signInError) {
+          if (shouldFallbackToApiAuth(signInError.message)) {
+            return await exchangeApiAuth(
+              authEndpoints.login,
+              {
+                email: emailOrToken,
+                password,
+                cfTurnstileToken: _options?.cfTurnstileToken,
+              },
+              'password_fallback'
+            );
+          }
           throw new Error(signInError.message || 'Failed to login');
         }
 
@@ -350,6 +372,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
 
         if (signUpError) {
+          if (shouldFallbackToApiAuth(signUpError.message)) {
+            return await exchangeApiAuth(
+              authEndpoints.register,
+              {
+                name,
+                email,
+                password,
+                cfTurnstileToken: _options?.cfTurnstileToken,
+              },
+              'register_fallback'
+            );
+          }
           throw new Error(signUpError.message || 'Failed to register');
         }
 
