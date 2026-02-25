@@ -7,6 +7,33 @@ import { AuthProvider } from './providers/AuthProvider';
 // Initialize Firebase is already handled by import './lib/firebase'
 import './styles/globals.css'; // Re-add global CSS import
 
+const CHUNK_RELOAD_KEY = '__tnf_chunk_reload_once__';
+
+const installChunkLoadRecovery = () => {
+  window.addEventListener('unhandledrejection', (event) => {
+    const reason =
+      (event.reason && (event.reason.message || event.reason.toString?.())) ||
+      String(event.reason || '');
+    const message = String(reason || '');
+    const isChunkLoadFailure =
+      message.includes('Failed to fetch dynamically imported module') ||
+      message.includes('Importing a module script failed');
+
+    if (!isChunkLoadFailure) return;
+
+    const alreadyRetried = sessionStorage.getItem(CHUNK_RELOAD_KEY) === '1';
+    if (alreadyRetried) return;
+
+    sessionStorage.setItem(CHUNK_RELOAD_KEY, '1');
+    const url = new URL(window.location.href);
+    url.searchParams.set('_tnf_refresh', String(Date.now()));
+    window.location.replace(url.toString());
+  });
+
+  // Clear retry marker after a successful boot so future real deploys can recover once.
+  sessionStorage.removeItem(CHUNK_RELOAD_KEY);
+};
+
 const installMceGuard = () => {
   if (!window?.customElements) return;
   if ((window as any).__TNF_MCE_GUARD__) return;
@@ -29,6 +56,7 @@ const installMceGuard = () => {
 };
 
 installMceGuard();
+installChunkLoadRecovery();
 
 // Custom Element Guard: Moved to index.html for maximum interception coverage.
 // The index.html guard locks the registry, so attempting to redefine define() here
