@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
 import ComprehensiveRouter from '../ComprehensiveRouter';
+import ConnectExtensionPage from '../pages/ConnectExtension';
 
 // Mock function to determine if we are on an agency subdomain
 const getSubdomain = () => {
@@ -43,8 +43,9 @@ const SubdomainRouter: React.FC = () => {
   // So `agency.thenewfuse.hub` should look like a branded version of TNF.
 
   if (subdomain) {
+    // Keep connect subdomain at root URL and render a focused extension landing page.
     if (subdomain === 'connect' && window.location.pathname === '/') {
-      return <Navigate to="/connect" replace />;
+      return <ConnectExtensionPage />;
     }
 
     // WHITE LABEL MODE
