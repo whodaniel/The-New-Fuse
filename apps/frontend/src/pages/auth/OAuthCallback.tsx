@@ -1,11 +1,10 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { supabase } from '../../lib/supabase';
 const OAuthCallback = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login } = useAuth();
+  const { login, handleSSOCallback } = useAuth();
   useEffect(() => {
     const run = async () => {
       const params = new URLSearchParams(location.search);
@@ -23,18 +22,11 @@ const OAuthCallback = () => {
         return;
       }
       // Supabase OAuth callback flow
-      if (supabase) {
-        const { data, error: sessionError } = await supabase.auth.getSession();
-        if (!sessionError && data?.session?.access_token) {
-          await login(data.session.access_token);
-          navigate('/dashboard', { replace: true });
-          return;
-        }
-      }
-      navigate('/auth/login', { replace: true });
+      await handleSSOCallback('supabase', '');
+      navigate('/dashboard', { replace: true });
     };
     run().catch(() => navigate('/auth/login?error=auth_failed', { replace: true }));
-  }, [location, navigate, login]);
+  }, [location, navigate, login, handleSSOCallback]);
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="text-center">

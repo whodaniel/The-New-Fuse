@@ -511,9 +511,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const handleSSOCallback = useCallback(
     async (_provider: string, _code: string, _state?: string | null) => {
-      throw new Error('SSO callback is handled by Supabase redirect flow');
+      if (!hasSupabaseConfig || !supabase) {
+        throw new Error('Supabase is not configured');
+      }
+
+      // Supabase may need a brief moment to parse URL hash and persist session.
+      const maxAttempts = 10;
+      for (let attempt = 0; attempt < maxAttempts; attempt++) {
+        const { data, error: sessionError } = await supabase.auth.getSession();
+        if (!sessionError && data?.session?.access_token) {
+          return await exchangeSupabaseToken(data.session.access_token);
+        }
+        await new Promise((resolve) => setTimeout(resolve, 250));
+      }
+      throw new Error('No Supabase session after OAuth callback');
     },
-    []
+    [exchangeSupabaseToken]
   );
 
   const logout = useCallback(async () => {

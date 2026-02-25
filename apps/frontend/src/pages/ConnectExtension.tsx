@@ -33,36 +33,6 @@ const accentCyan = 'from-cyan-400 to-blue-500';
 const accentPurple = 'from-purple-400 to-indigo-500';
 const accentMixed = 'from-cyan-400 via-purple-400 to-pink-500';
 
-/* ────────────────────────────────────────── ANIMATED COUNTER ── */
-const AnimatedNumber = ({ target, suffix = '' }: { target: number; suffix?: string }) => {
-  const [count, setCount] = useState(0);
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
-
-  useEffect(() => {
-    if (!isInView) return;
-    let start = 0;
-    const step = Math.ceil(target / 40);
-    const timer = setInterval(() => {
-      start += step;
-      if (start >= target) {
-        setCount(target);
-        clearInterval(timer);
-      } else {
-        setCount(start);
-      }
-    }, 30);
-    return () => clearInterval(timer);
-  }, [isInView, target]);
-
-  return (
-    <span ref={ref} className="tabular-nums">
-      {count.toLocaleString()}
-      {suffix}
-    </span>
-  );
-};
-
 /* ────────────────────────────────────────── FEATURE CARD ── */
 const FeatureCard = ({
   icon: Icon,
@@ -536,31 +506,6 @@ export default function ConnectExtensionPage() {
                 <badge.icon className="h-3.5 w-3.5" />
                 {badge.label}
               </span>
-            ))}
-          </motion.div>
-
-          {/* Stats bar */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.85 }}
-            className="mx-auto mt-16 grid max-w-3xl grid-cols-2 gap-4 sm:grid-cols-4"
-          >
-            {[
-              { value: 8, suffix: '+', label: 'AI Platforms' },
-              { value: 4, suffix: '', label: 'Tab Interface' },
-              { value: 70, suffix: '+', label: 'CSS Tokens' },
-              { value: 126, suffix: 'KB', label: 'Bundle Size' },
-            ].map((stat, i) => (
-              <div
-                key={i}
-                className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 text-center"
-              >
-                <div className="text-2xl font-extrabold text-white">
-                  <AnimatedNumber target={stat.value} suffix={stat.suffix} />
-                </div>
-                <div className="mt-1 text-xs text-slate-500">{stat.label}</div>
-              </div>
             ))}
           </motion.div>
         </section>

@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
  * TNF Relay Listener - Connects to relay and displays all messages
- * 
+ *
  * Usage:
  *   node relay-listener.js [channel]
- * 
+ *
  * Examples:
  *   node relay-listener.js                    # Listen on all channels
  *   node relay-listener.js "Test Channel 1"  # Listen on specific channel
@@ -33,7 +33,9 @@ const colors = {
 
 function log(color, prefix, message) {
   const timestamp = new Date().toLocaleTimeString();
-  console.log(`${colors.dim}[${timestamp}]${colors.reset} ${color}${prefix}${colors.reset} ${message}`);
+  console.log(
+    `${colors.dim}[${timestamp}]${colors.reset} ${color}${prefix}${colors.reset} ${message}`
+  );
 }
 
 function logMessage(msg) {
@@ -60,7 +62,7 @@ class RelayListener {
 
   connect() {
     log(colors.cyan, '🔌', `Connecting to relay at ${RELAY_URL}...`);
-    
+
     this.ws = new WebSocket(RELAY_URL);
 
     this.ws.on('open', () => {
@@ -124,7 +126,7 @@ class RelayListener {
       case 'AGENT_LIST':
         const agents = payload?.agents || [];
         log(colors.blue, '🤖', `${agents.length} agent(s) connected:`);
-        agents.forEach(a => {
+        agents.forEach((a) => {
           console.log(`     • ${a.name} (${a.platform}) - ${a.status}`);
         });
         break;
@@ -132,14 +134,14 @@ class RelayListener {
       case 'CHANNEL_LIST':
         this.channels = payload?.channels || [];
         log(colors.blue, '📢', `${this.channels.length} channel(s) available:`);
-        this.channels.forEach(ch => {
+        this.channels.forEach((ch) => {
           console.log(`     • ${ch.name} (${ch.id}) - ${ch.members?.length || 0} members`);
         });
 
         // Join target channel if specified
         if (TARGET_CHANNEL) {
           const channel = this.channels.find(
-            c => c.name.toLowerCase() === TARGET_CHANNEL.toLowerCase() || c.id === TARGET_CHANNEL
+            (c) => c.name.toLowerCase() === TARGET_CHANNEL.toLowerCase() || c.id === TARGET_CHANNEL
           );
           if (channel) {
             this.joinChannel(channel.id);
@@ -148,14 +150,15 @@ class RelayListener {
           }
         } else {
           // Join all channels
-          this.channels.forEach(ch => this.joinChannel(ch.id));
+          this.channels.forEach((ch) => this.joinChannel(ch.id));
         }
         break;
 
       case 'AGENT_STATUS':
         const agent = payload?.agent;
         if (agent) {
-          const status = agent.status === 'active' ? colors.green + '● online' : colors.red + '○ offline';
+          const status =
+            agent.status === 'active' ? colors.green + '● online' : colors.red + '○ offline';
           log(colors.blue, '🤖', `Agent ${agent.name}: ${status}${colors.reset}`);
         }
         break;
@@ -165,10 +168,14 @@ class RelayListener {
         // This is what we're looking for!
         const msg = payload || message;
         logMessage(msg);
-        
+
         // If this is an AI response, we could respond here
         if (msg.type === 'ai-response' || msg.content?.includes('[AI Response]')) {
-          log(colors.magenta, '🤖', 'AI Response detected! This could trigger further processing...');
+          log(
+            colors.magenta,
+            '🤖',
+            'AI Response detected! This could trigger further processing...'
+          );
         }
         break;
 
@@ -215,7 +222,11 @@ class RelayListener {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
       const delay = Math.min(5000 * Math.pow(1.5, this.reconnectAttempts), 30000);
-      log(colors.yellow, '🔄', `Reconnecting in ${Math.round(delay / 1000)}s (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})...`);
+      log(
+        colors.yellow,
+        '🔄',
+        `Reconnecting in ${Math.round(delay / 1000)}s (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})...`
+      );
       setTimeout(() => this.connect(), delay);
     } else {
       log(colors.red, '❌', 'Max reconnection attempts reached. Exiting.');
@@ -232,12 +243,46 @@ class RelayListener {
 
 // Main
 console.log('\n' + colors.bright + colors.cyan);
-console.log('╔═══════════════════════════════════════════════════════════╗');
-console.log('║           🔊 TNF RELAY LISTENER                           ║');
-console.log('║                                                           ║');
-console.log('║   Listening for messages from the Fuse Connect extension ║');
-console.log('║   AI responses will be displayed here                    ║');
-console.log('╚═══════════════════════════════════════════════════════════╝');
+console.log('  ╔════════════════════════════════════════════════════════════════╗');
+console.log('  ║                                                                ║');
+console.log('  ║   🔊  T N F   R E L A Y   L I S T E N E R                     ║');
+console.log(
+  '  ║   ' +
+    colors.reset +
+    colors.dim +
+    'Real-time message monitor for Fuse Connect' +
+    colors.bright +
+    colors.cyan +
+    '             ║'
+);
+console.log('  ║                                                                ║');
+console.log('  ╠════════════════════════════════════════════════════════════════╣');
+console.log('  ║                                                                ║');
+console.log(
+  '  ║   ' +
+    colors.reset +
+    'Relay   ' +
+    colors.cyan +
+    RELAY_URL +
+    colors.bright +
+    colors.cyan +
+    '                             ║'
+);
+console.log(
+  '  ║   ' +
+    colors.reset +
+    'Agent   ' +
+    colors.dim +
+    AGENT_NAME +
+    ' (' +
+    AGENT_ID.slice(0, 16) +
+    '...)' +
+    colors.bright +
+    colors.cyan +
+    '          ║'
+);
+console.log('  ║                                                                ║');
+console.log('  ╚════════════════════════════════════════════════════════════════╝');
 console.log(colors.reset + '\n');
 
 if (TARGET_CHANNEL) {
@@ -269,11 +314,13 @@ const rl = readline.createInterface({
 
 rl.on('line', (input) => {
   if (input.trim()) {
-    const targetChannelId = TARGET_CHANNEL 
-      ? listener.channels.find(c => c.name.toLowerCase() === TARGET_CHANNEL.toLowerCase())?.id 
+    const targetChannelId = TARGET_CHANNEL
+      ? listener.channels.find((c) => c.name.toLowerCase() === TARGET_CHANNEL.toLowerCase())?.id
       : null;
     listener.sendMessage(input.trim(), targetChannelId);
   }
 });
 
-console.log(colors.dim + 'Tip: Type a message and press Enter to broadcast it to the relay.\n' + colors.reset);
+console.log(
+  colors.dim + 'Tip: Type a message and press Enter to broadcast it to the relay.\n' + colors.reset
+);

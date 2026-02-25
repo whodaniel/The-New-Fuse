@@ -31,6 +31,7 @@ import { SubscriptionRegistry } from './orchestrator/subscription-registry';
 import { createRedisRelayBridge } from './redis-relay-bridge';
 import { createStallDetector } from './services/stall-detector';
 import { Logger } from './utils/Logger';
+import { relay as fmt } from './utils/TerminalFormatter';
 
 import type { JWTAuthService } from './auth/JWTAuthService';
 import type { OrchestrationTask } from './protocol/task-protocol';
@@ -173,17 +174,17 @@ export class TNFRelayServer extends EventEmitter {
     );
 
     this.stallDetector.on('conversation:stalled', (event: { channelId: string }) => {
-      console.log(`[Relay] Conversation stalled on channel ${event.channelId}`);
+      fmt.conversationStalled(event.channelId);
       this.emit('conversation:stalled', event);
     });
 
     this.stallDetector.on('conversation:terminated', (event: { channelId: string }) => {
-      console.log(`[Relay] Conversation terminated on channel ${event.channelId}`);
+      fmt.conversationTerminated(event.channelId);
       this.emit('conversation:terminated', event);
     });
 
     this.stallDetector.on('conversation:recovered', (event: { channelId: string }) => {
-      console.log(`[Relay] Conversation recovered on channel ${event.channelId}`);
+      fmt.conversationRecovered(event.channelId);
       const manager = this.conversationManagers.get(event.channelId);
       if (manager && manager.getPhase() === ConversationPhase.STALLED) {
         void manager.transition(ConversationPhase.EXECUTION);
@@ -195,7 +196,7 @@ export class TNFRelayServer extends EventEmitter {
       this.bridge = createRedisRelayBridge();
 
       this.bridge.on('connected', () => {
-        console.log('[Relay] Bridge connected to Redis');
+        fmt.redisBridgeConnected();
         this.syncBridgeSubscriptions();
       });
 
@@ -220,7 +221,7 @@ export class TNFRelayServer extends EventEmitter {
       this.activityRedisConnectPromise = this.activityRedis
         .connect()
         .then(() => {
-          console.log(`[Relay] Activity persistence enabled -> stream ${this.activityStreamKey}`);
+          fmt.activityPersistenceEnabled(this.activityStreamKey);
         })
         .catch((err: Error) => {
           console.error('[Relay] Failed to connect activity Redis:', err.message);
@@ -353,9 +354,7 @@ export class TNFRelayServer extends EventEmitter {
 
       // Hook up state machine events
       manager.on('phase:changed', (event) => {
-        console.log(
-          `[Relay] Phase changed in ${event.conversationId}: ${event.from} -> ${event.to}`
-        );
+        fmt.phaseChanged(event.conversationId, event.from, event.to);
 
         // Broadcast phase change to channel
         this.broadcastToChannel(event.conversationId, {
@@ -385,7 +384,7 @@ export class TNFRelayServer extends EventEmitter {
     this.wss.on('connection', (ws: WebSocket, req: http.IncomingMessage) => {
       let agentId: string | null = null;
 
-      console.log(`[Relay] New connection from ${req.socket.remoteAddress}`);
+      fmt.newConnection(req.socket.remoteAddress);
 
       // Send welcome message
       this.send(ws, {
@@ -433,7 +432,7 @@ export class TNFRelayServer extends EventEmitter {
     const { type, payload, source, channel } = message;
     const agentId = source || currentAgentId;
 
-    console.log(`[Relay] ${type} from ${agentId || 'unknown'}`);
+    fmt.protocolMessage(type, agentId || null);
 
     switch (type) {
       case 'AGENT_REGISTER': {
@@ -494,7 +493,7 @@ export class TNFRelayServer extends EventEmitter {
           this.subscriptionRegistry.register(id, `capability:${cap}`);
         }
 
-        console.log(`[Relay] Agent registered: ${agent.name} (${id})`);
+        fmt.agentRegistered(agent.name, id, agent.platform, !!verifiedToken);
         this.emit('agent:registered', agent);
 
         // Send current state to new agent
@@ -662,7 +661,7 @@ export class TNFRelayServer extends EventEmitter {
           // Remove from all agent channel sets
           this.agentChannels.forEach((channels) => channels.delete(channelId));
 
-          console.log(`[Relay] Channel deleted: ${channelId}`);
+          fmt.channelDeleted(channelId);
 
           this.broadcast({
             type: 'CHANNEL_LIST',
@@ -677,7 +676,7 @@ export class TNFRelayServer extends EventEmitter {
         if (channelId) {
           const manager = this.getOrCreateConversationManager(channelId);
           void manager.pause(); // async but we don't await
-          console.log(`[Relay] Channel paused: ${channelId}`);
+          fmt.channelPaused(channelId);
         }
         break;
       }
@@ -687,7 +686,7 @@ export class TNFRelayServer extends EventEmitter {
         if (channelId) {
           const manager = this.getOrCreateConversationManager(channelId);
           void manager.resume(); // async but we don't await
-          console.log(`[Relay] Channel resumed: ${channelId}`);
+          fmt.channelResumed(channelId);
         }
         break;
       }
@@ -972,7 +971,7 @@ export class TNFRelayServer extends EventEmitter {
   }
 
   private handleAgentDisconnect(agentId: string): void {
-    console.log(`[Relay] Agent disconnected: ${agentId}`);
+    fmt.agentDisconnected(agentId);
 
     const agent = this.agents.get(agentId);
     this.agents.delete(agentId);
@@ -1076,7 +1075,7 @@ export class TNFRelayServer extends EventEmitter {
   }
 
   public dispatchTask(task: OrchestrationTask, channelId: string): void {
-    console.log(`[Relay] Dispatching task ${task.id} to channel ${channelId}`);
+    fmt.taskDispatched(task.id, channelId);
     void this.persistTaskDispatch(task, channelId);
 
     // If specific targets are defined, prioritize them
@@ -1360,7 +1359,7 @@ export class TNFRelayServer extends EventEmitter {
       const now = Date.now();
       this.agents.forEach((agent, agentId) => {
         if (now - agent.lastSeen > AGENT_TIMEOUT) {
-          console.log(`[Relay] Agent timeout: ${agentId}`);
+          fmt.agentTimeout(agentId);
           const ws = this.sockets.get(agentId);
           if (ws) {
             ws.close();
@@ -1376,22 +1375,16 @@ export class TNFRelayServer extends EventEmitter {
       void this.ensureActivityPersistenceReady()
         .then(() => {
           this.server.listen(this.port, () => {
-            console.log(`
-╔═════════════════════════════════════════════════════════════╗
-║           ⚡ TNF RELAY SERVER ⚡                             ║
-║                                                              ║
-║   WebSocket: ws://localhost:${this.port}/ws                        ║
-║   Health:    http://localhost:${this.port}/health                   ║
-║   Agents:    http://localhost:${this.port}/agents                   ║
-║   Channels:  http://localhost:${this.port}/channels                 ║
-║                                                              ║
-║   Features:  Stall Detection ✓  Auto-Recovery ✓             ║
-║   Part of @the-new-fuse/relay-core                           ║
-╚═════════════════════════════════════════════════════════════╝
-`);
+            fmt.banner({
+              port: this.port,
+              redisBridge: !!this.bridge,
+              activityPersistence: this.activityPersistenceEnabled,
+              stallDetection: true,
+              jwtAuth: true,
+            });
             this.startHeartbeatMonitor();
             this.stallDetector.start(); // Start stall detection
-            console.log('[Relay] Stall detector started');
+            fmt.stallDetectorStarted();
             this.emit('started', { port: this.port });
             resolve();
           });
@@ -1430,7 +1423,7 @@ export class TNFRelayServer extends EventEmitter {
                 this.activityRedis = null;
               }
             }
-            console.log('[Relay] Server stopped');
+            fmt.serverStopped();
             this.emit('stopped');
             resolve();
           };
@@ -1471,7 +1464,7 @@ if (require.main === module) {
   // Graceful shutdown
   process.on('SIGINT', () => {
     void (async () => {
-      console.log('\n[Relay] Shutting down...');
+      fmt.shutdownRequested();
       await relay.stop();
       process.exit(0);
     })();
