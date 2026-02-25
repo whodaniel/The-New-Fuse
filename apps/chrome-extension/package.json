@@ -27,7 +27,17 @@
     "clean:v5": "rimraf dist-v5",
     "clean:v6": "rimraf dist-v6",
     "typecheck": "tsc --noEmit",
-    "build:package": "pnpm run build && pnpm run package"
+    "build:package": "pnpm run build && pnpm run package",
+    "aivi:inventory": "find aivi -maxdepth 3 -type d | sort",
+    "aivi:backend:install": "pnpm --dir aivi/backend install",
+    "aivi:backend:start": "pnpm --dir aivi/backend start",
+    "aivi:backend:dev": "pnpm --dir aivi/backend dev",
+    "aivi:cli:status": "node aivi/cli/status.js",
+    "aivi:cli:batch": "node aivi/cli/batch-processor.js",
+    "aivi:cli:fetch-data": "node aivi/cli/fetch-my-data.js",
+    "aivi:docs:index": "node -e \"const fs=require('fs');const p='aivi';const f=fs.readdirSync(p).filter(x=>x.endsWith('.md')).sort();console.log(f.join('\\n'));\"",
+    "store:pack:verify": "test -f store-submission/chrome-web-store-description.txt && test -f store-submission/store-listing.md && test -f store-submission/assets/store_icon.png && echo store_pack_ok",
+    "store:pack:list-assets": "find store-submission/assets -maxdepth 1 -type f | sort"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.5.1",

@@ -1011,6 +1011,37 @@ body {
   background: linear-gradient(135deg, rgba(0, 255, 136, 0.2) 0%, rgba(0, 217, 255, 0.2) 100%);
 }
 
+.aivi-service-card {
+  display: block;
+  align-items: initial;
+  gap: 0;
+}
+
+.aivi-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.aivi-toolbar-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.aivi-toolbar-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.aivi-tab-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
 /* Quick Start Helper */
 .quick-start-helper {
   margin-top: var(--space-md);

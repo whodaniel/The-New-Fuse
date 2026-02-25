@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Navigate } from 'react-router-dom';
 import ComprehensiveRouter from '../ComprehensiveRouter';
 
 // Mock function to determine if we are on an agency subdomain
@@ -42,6 +43,10 @@ const SubdomainRouter: React.FC = () => {
   // So `agency.thenewfuse.hub` should look like a branded version of TNF.
 
   if (subdomain) {
+    if (subdomain === 'connect' && window.location.pathname === '/') {
+      return <Navigate to="/connect" replace />;
+    }
+
     // WHITE LABEL MODE
     // In a full implementation, we would fetch the Agency's 'Theme' here
     // and pass it to a <ThemeProvider>.

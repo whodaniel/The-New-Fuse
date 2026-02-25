@@ -6,6 +6,7 @@
  * starting the relay from the extension's Services tab.
  */
 
+import youtubeService from '../services/ai-studio/youtube-service';
 import type {
   Agent,
   AgentMessage,
@@ -1473,27 +1474,7 @@ class BackgroundService {
 
     if (storedYoutubeToken && expiry > now) return storedYoutubeToken;
     if (storedAiStudioToken && (!expiry || expiry > now)) return storedAiStudioToken;
-
-    return new Promise((resolve) => {
-      chrome.identity.getAuthToken({ interactive: false }, async (token) => {
-        if (chrome.runtime.lastError || !token) {
-          resolve(null);
-          return;
-        }
-        const valid = await this.validateYouTubeToken(token);
-        if (!valid) {
-          resolve(null);
-          return;
-        }
-        const tokenExpiry = Date.now() + 50 * 60 * 1000;
-        chrome.storage.local.set({
-          ai_studio_token: token,
-          youtubeToken: token,
-          youtubeTokenExpiry: tokenExpiry,
-        });
-        resolve(token);
-      });
-    });
+    return null;
   }
 
   private async validateYouTubeToken(token: string): Promise<boolean> {
@@ -1558,86 +1539,34 @@ class BackgroundService {
   private async fetchYouTubePlaylists(): Promise<Array<Record<string, unknown>>> {
     const token = await this.getYouTubeAuthToken();
     if (!token) throw new Error('Not authenticated');
+    const playlists = await youtubeService.getPlaylists();
+    return playlists.map((playlist: any) => ({
+      id: String(playlist?.id || ''),
+      title: String(playlist?.title || 'Untitled Playlist'),
+      description: String(playlist?.description || ''),
+      videoCount: Number(playlist?.videoCount || 0),
+      thumbnail: String(playlist?.thumbnail || ''),
+    }));
+  }
 
+  private async readSelectedYouTubeChannelId(): Promise<string> {
     const stored = await chrome.storage.local.get(['ai_studio_channel_id']);
-    const selectedChannelId = String(stored.ai_studio_channel_id || '').trim();
-    let playlists: Array<Record<string, unknown>> = [];
-    if (selectedChannelId) {
-      playlists = await this.fetchYouTubePlaylistsForChannel(token, selectedChannelId);
-    } else {
-      // Primary strategy: "mine=true" catch-all.
-      const data = await this.youtubeApiGet(
-        'playlists?part=snippet,contentDetails&mine=true&maxResults=50',
-        token
-      );
-      const items = Array.isArray(data?.items) ? data.items : [];
-      playlists = items.map((item: any) => ({
-        id: String(item?.id || ''),
-        title: String(item?.snippet?.title || 'Untitled Playlist'),
-        description: String(item?.snippet?.description || ''),
-        videoCount: Number(item?.contentDetails?.itemCount || 0),
-        thumbnail: String(item?.snippet?.thumbnails?.medium?.url || ''),
-      }));
-    }
+    return String(stored.ai_studio_channel_id || '').trim();
+  }
 
-    // Add virtual playlists for common user needs
-    playlists.unshift({
-      id: 'WATCH_HISTORY',
-      title: '📺 Recently Watched (History)',
-      description: 'Your recent YouTube watch history (liked videos)',
-      videoCount: 50,
-      thumbnail: '',
-    });
-
-    try {
-      const watchLaterId = await this.fetchWatchLaterId(token);
-      if (watchLaterId) {
-        playlists.unshift({
-          id: watchLaterId,
-          title: '🕒 Watch Later',
-          description: 'Videos in your Watch Later list',
-          videoCount: 0,
-          thumbnail: '',
-        });
-      }
-    } catch (e) {
-      // Ignore watch later errors
-    }
-
-    if (playlists.length > 0) return playlists;
-
-    // Fallback strategy for brand accounts: enumerate channels and fetch playlists per channel.
-    const channels = await this.fetchYouTubeChannels();
-    const byId = new Map<string, Record<string, unknown>>();
-    for (const channel of channels as Array<any>) {
-      const channelId = String(channel?.id || '').trim();
-      if (!channelId) continue;
-      try {
-        const channelPlaylists = await this.fetchYouTubePlaylistsForChannel(token, channelId);
-        for (const playlist of channelPlaylists) {
-          const playlistId = String(playlist.id || '');
-          if (!playlistId || byId.has(playlistId)) continue;
-          byId.set(playlistId, {
-            ...playlist,
-            title: `${String(channel.title || 'Channel')} • ${String(playlist.title || 'Untitled Playlist')}`,
-          });
-        }
-      } catch {
-        // continue with remaining channels
-      }
-    }
-    if (byId.size > 0) return Array.from(byId.values());
-
-    // Last fallback: surface channel uploads playlist if standard list is empty.
-    return channels
-      .filter((channel: any) => String(channel.uploadsPlaylistId || '').length > 0)
-      .map((channel: any) => ({
-        id: String(channel.uploadsPlaylistId || ''),
-        title: `${String(channel.title || 'Channel')} Uploads`,
-        description: `Uploads feed for ${String(channel.title || 'channel')}`,
-        videoCount: 0,
-        thumbnail: String(channel.thumbnail || ''),
-      }));
+  private async fetchYouTubePlaylistsBundle(): Promise<{
+    playlists: Array<Record<string, unknown>>;
+    channels: Array<Record<string, unknown>>;
+    selectedChannelId: string;
+    requiresChannelSelection: boolean;
+  }> {
+    const playlists = await this.fetchYouTubePlaylists();
+    return {
+      playlists,
+      channels: [],
+      selectedChannelId: '',
+      requiresChannelSelection: false,
+    };
   }
 
   private getOAuthDiagnostics(): {
@@ -1659,20 +1588,38 @@ class BackgroundService {
   }
 
   private async getAuthTokenInteractive(scopes: string[]): Promise<string> {
+    const diagnostics = this.getOAuthDiagnostics();
+    const scopeParam = encodeURIComponent(scopes.join(' '));
+    const authUrl =
+      `https://accounts.google.com/o/oauth2/auth?` +
+      `client_id=${encodeURIComponent(diagnostics.clientId)}` +
+      `&response_type=token` +
+      `&redirect_uri=${encodeURIComponent(diagnostics.redirectUri)}` +
+      `&scope=${scopeParam}` +
+      `&prompt=select_account` +
+      `&include_granted_scopes=true`;
+
     return new Promise((resolve, reject) => {
-      chrome.identity.getAuthToken(
-        {
-          interactive: true,
-          scopes,
-        },
-        (token) => {
-          if (chrome.runtime.lastError || !token) {
-            reject(chrome.runtime.lastError || new Error('Auth failed'));
+      chrome.identity.launchWebAuthFlow({ url: authUrl, interactive: true }, (redirectUrl) => {
+        if (chrome.runtime.lastError || !redirectUrl) {
+          reject(chrome.runtime.lastError || new Error('OAuth account chooser failed'));
+          return;
+        }
+        try {
+          const parsed = new URL(redirectUrl);
+          const hash = parsed.hash.startsWith('#') ? parsed.hash.slice(1) : parsed.hash;
+          const params = new URLSearchParams(hash);
+          const token = String(params.get('access_token') || '').trim();
+          if (!token) {
+            const error = String(params.get('error') || 'oauth_error').trim();
+            reject(new Error(`OAuth failed: ${error}`));
             return;
           }
           resolve(token);
+        } catch (err: any) {
+          reject(new Error(err?.message || 'OAuth redirect parse failed'));
         }
-      );
+      });
     });
   }
 
@@ -1700,6 +1647,7 @@ class BackgroundService {
   private async authenticateYouTube(): Promise<{
     token: string;
     primaryProfile: { email: string; name: string; picture: string };
+    accountSwitched: boolean;
   }> {
     const { scopes: youtubeScopes } = this.getOAuthDiagnostics();
 
@@ -1713,7 +1661,22 @@ class BackgroundService {
     }
 
     const primaryProfile = await this.fetchGoogleUserProfile(youtubeToken);
-    return { token: youtubeToken, primaryProfile };
+    const stored = await chrome.storage.local.get(['lastAuthAccount']);
+    const priorAccount = String(stored.lastAuthAccount || '')
+      .trim()
+      .toLowerCase();
+    const nextAccount = String(primaryProfile.email || '')
+      .trim()
+      .toLowerCase();
+    const accountSwitched = !!priorAccount && !!nextAccount && priorAccount !== nextAccount;
+    if (accountSwitched) {
+      await chrome.storage.local.remove([
+        'ai_studio_channel_id',
+        'cachedPlaylists',
+        'cachedVideos',
+      ]);
+    }
+    return { token: youtubeToken, primaryProfile, accountSwitched };
   }
 
   private normalizeOAuthError(err: any): Error {
@@ -1734,6 +1697,7 @@ class BackgroundService {
   private async authenticateYouTubeSafe(): Promise<{
     token: string;
     primaryProfile: { email: string; name: string; picture: string };
+    accountSwitched: boolean;
   }> {
     try {
       const stored = await chrome.storage.local.get(['youtubeToken', 'ai_studio_token']);
@@ -1769,6 +1733,7 @@ class BackgroundService {
           'youtubeTokenExpiry',
           'ai_studio_channel_id',
           'userProfile',
+          'lastAuthAccount',
           'isAuthenticated',
         ],
         () => resolve()
@@ -1790,59 +1755,24 @@ class BackgroundService {
     const token = await this.getYouTubeAuthToken();
     if (!token) throw new Error('Not authenticated');
     if (!playlistId) throw new Error('Missing playlist id');
-
-    // Handle special "WATCH_HISTORY" virtual playlist
-    if (playlistId === 'WATCH_HISTORY') {
-      return this.fetchLikedVideos(token);
-    }
-
-    const data = await this.youtubeApiGet(
-      `playlistItems?part=snippet,contentDetails&playlistId=${encodeURIComponent(playlistId)}&maxResults=50`,
-      token
-    );
-    const items = Array.isArray(data?.items) ? data.items : [];
-    return items
-      .map((item: any) => {
-        const videoId = String(item?.contentDetails?.videoId || '').trim();
+    const videos = await youtubeService.getPlaylistVideos(playlistId);
+    return videos
+      .map((video: any) => {
+        const videoId = String(video?.id || '').trim();
         if (!videoId) return null;
         return {
           id: videoId,
-          title: String(item?.snippet?.title || `YouTube Video ${videoId}`),
+          title: String(video?.title || `YouTube Video ${videoId}`),
           url: `https://www.youtube.com/watch?v=${videoId}`,
-          channelTitle: String(item?.snippet?.videoOwnerChannelTitle || ''),
-          thumbnail: String(item?.snippet?.thumbnails?.medium?.url || ''),
+          channelTitle: String(video?.channelTitle || ''),
+          thumbnail: String(
+            video?.thumbnail ||
+              `https://i.ytimg.com/vi/${encodeURIComponent(videoId)}/mqdefault.jpg`
+          ),
           addedAt: Date.now(),
         };
       })
       .filter(Boolean) as Array<Record<string, unknown>>;
-  }
-
-  private async fetchLikedVideos(token: string): Promise<Array<Record<string, unknown>>> {
-    const data = await this.youtubeApiGet(
-      'videos?part=snippet,contentDetails&myRating=like&maxResults=50',
-      token
-    );
-    const items = Array.isArray(data?.items) ? data.items : [];
-    return items.map((item: any) => ({
-      id: String(item?.id || ''),
-      title: String(item?.snippet?.title || 'Untitled'),
-      url: `https://www.youtube.com/watch?v=${String(item?.id || '')}`,
-      channelTitle: String(item?.snippet?.channelTitle || ''),
-      thumbnail: String(item?.snippet?.thumbnails?.medium?.url || ''),
-      addedAt: Date.now(),
-    }));
-  }
-
-  private async fetchWatchLaterId(token: string): Promise<string | null> {
-    try {
-      const data = await this.youtubeApiGet('channels?part=contentDetails&mine=true', token);
-      if (data?.items?.[0]?.contentDetails?.relatedPlaylists?.watchLater) {
-        return String(data.items[0].contentDetails.relatedPlaylists.watchLater);
-      }
-      return null;
-    } catch (e) {
-      return null;
-    }
   }
 
   private async fetchVideoDetails(videoIds: string[]): Promise<Array<Record<string, unknown>>> {
@@ -1850,63 +1780,31 @@ class BackgroundService {
     if (!token) throw new Error('Not authenticated');
     const ids = videoIds.map((id) => String(id || '').trim()).filter(Boolean);
     if (ids.length === 0) return [];
-
-    const chunks: string[][] = [];
-    for (let i = 0; i < ids.length; i += 50) {
-      chunks.push(ids.slice(i, i + 50));
-    }
-
-    const all: Array<Record<string, unknown>> = [];
-    for (const chunk of chunks) {
-      const data = await this.youtubeApiGet(
-        `videos?part=snippet,contentDetails,statistics&id=${encodeURIComponent(chunk.join(','))}`,
-        token
-      );
-      const items = Array.isArray(data?.items) ? data.items : [];
-      for (const item of items) {
-        all.push({
-          id: String(item?.id || ''),
-          title: String(item?.snippet?.title || ''),
-          channelTitle: String(item?.snippet?.channelTitle || ''),
-          durationISO: String(item?.contentDetails?.duration || ''),
-          viewCount: Number(item?.statistics?.viewCount || 0),
-          likeCount: Number(item?.statistics?.likeCount || 0),
-        });
-      }
-    }
-    return all;
+    const details = await youtubeService.getVideoDetails(ids);
+    return details.map((item: any) => ({
+      id: String(item?.id || ''),
+      title: String(item?.title || ''),
+      channelTitle: String(item?.channelTitle || ''),
+      durationISO: String(item?.durationISO || ''),
+      viewCount: Number(item?.viewCount || 0),
+      likeCount: Number(item?.likeCount || 0),
+    }));
   }
 
   private async createYouTubePlaylist(
     title: string,
     description: string
   ): Promise<Record<string, unknown>> {
-    const token = await this.getYouTubeAuthToken();
-    if (!token) throw new Error('Not authenticated');
-
-    const response = await fetch(
-      'https://www.googleapis.com/youtube/v3/playlists?part=snippet,status',
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          snippet: { title, description: description || 'Created by Fuse Connect AIVI' },
-          status: { privacyStatus: 'private' },
-        }),
-      }
+    await youtubeService.ensureAuthenticated();
+    const data = await youtubeService.createPlaylist(
+      title,
+      description || 'Created by Fuse Connect AIVI',
+      'private'
     );
-
-    if (!response.ok) {
-      throw new Error(`Create playlist failed: ${response.status}`);
-    }
-    const data = await response.json();
     return {
       id: String(data?.id || ''),
       title: String(data?.snippet?.title || title),
-      description: String(data?.snippet?.description || ''),
+      description: String(data?.snippet?.description || data?.description || ''),
     };
   }
 
@@ -1982,7 +1880,8 @@ class BackgroundService {
   private async startAutomationOrchestrator(
     queue: any[],
     nextState: any,
-    segmentDuration = 45
+    segmentDuration = 45,
+    processingLevel = 'ai_studio'
   ): Promise<void> {
     this.automationRunning = true;
     this.automationPaused = false;
@@ -2007,6 +1906,34 @@ class BackgroundService {
       this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: currentState });
 
       try {
+        if (processingLevel !== 'ai_studio') {
+          const reportContent = await this.buildLightweightReport(video, processingLevel);
+          const report = {
+            id: `report-${Date.now()}-${videoId}`,
+            videoId,
+            title: videoTitle,
+            url: videoUrl,
+            processedAt: Date.now(),
+            processingLevel,
+            summary: String(reportContent).slice(0, 1200),
+            content: reportContent,
+            segmentIndex: 0,
+          };
+          const result = await chrome.storage.local.get('ai_video_reports');
+          const reports = Array.isArray(result.ai_video_reports) ? result.ai_video_reports : [];
+          await chrome.storage.local.set({
+            ai_video_reports: [report, ...reports].slice(0, 500),
+          });
+
+          const pCountResult = await chrome.storage.local.get('ai_video_processed_count');
+          await chrome.storage.local.set({
+            ai_video_processed_count: (pCountResult.ai_video_processed_count || 0) + 1,
+          });
+
+          await new Promise((r) => setTimeout(r, 400));
+          continue;
+        }
+
         let duration = video.duration || 0;
         if (!duration && video.url) {
           const durationTab = await this.createNewAIStudioTab();
@@ -2064,6 +1991,8 @@ class BackgroundService {
                 title: videoTitle,
                 url: videoUrl,
                 processedAt: Date.now(),
+                processingLevel,
+                summary: String(processResult.reportContent || '').slice(0, 1200),
                 content: processResult.reportContent,
                 segmentIndex: segment.index,
               };
@@ -2099,6 +2028,83 @@ class BackgroundService {
     await chrome.storage.local.set({ processingState: finalState });
     this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: finalState });
     this.logEvent('ai-video', 'processing_completed', { totalCount: queue.length });
+  }
+
+  private extractYouTubeVideoId(urlOrId: string): string {
+    const raw = String(urlOrId || '').trim();
+    if (/^[\w-]{11}$/.test(raw)) return raw;
+    const match = raw.match(/(?:v=|youtu\.be\/)([\w-]{11})/i);
+    return String(match?.[1] || '').trim();
+  }
+
+  private parseTranscriptXml(xml: string): string {
+    const segments = Array.from(String(xml || '').matchAll(/<text[^>]*>([\s\S]*?)<\/text>/g)).map(
+      (m) => m[1] || ''
+    );
+    const decode = (s: string) =>
+      s
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&#39;/g, "'")
+        .replace(/&quot;/g, '"');
+    return segments
+      .map((s) =>
+        decode(
+          String(s)
+            .replace(/<[^>]+>/g, '')
+            .trim()
+        )
+      )
+      .filter(Boolean)
+      .join(' ')
+      .trim();
+  }
+
+  private async fetchVideoTranscript(videoId: string): Promise<string> {
+    if (!videoId) return '';
+    try {
+      const response = await fetch(
+        `https://www.youtube.com/api/timedtext?lang=en&v=${encodeURIComponent(videoId)}`
+      );
+      if (!response.ok) return '';
+      const xml = await response.text();
+      return this.parseTranscriptXml(xml);
+    } catch {
+      return '';
+    }
+  }
+
+  private buildSentenceSummary(text: string, maxSentences: number): string {
+    const sentences = String(text || '')
+      .split(/(?<=[.!?])\s+/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+    return sentences.slice(0, maxSentences).join(' ');
+  }
+
+  private async buildLightweightReport(video: any, processingLevel: string): Promise<string> {
+    const videoId = this.extractYouTubeVideoId(String(video?.id || video?.url || ''));
+    const details = videoId ? await this.fetchVideoDetails([videoId]).catch(() => []) : [];
+    const metadata = Array.isArray(details) && details.length > 0 ? details[0] : null;
+    const transcript = await this.fetchVideoTranscript(videoId);
+    const base = [
+      `# ${String(video?.title || metadata?.title || 'Untitled Video')}`,
+      '',
+      `- URL: ${String(video?.url || (videoId ? `https://www.youtube.com/watch?v=${videoId}` : ''))}`,
+      `- Channel: ${String(video?.channelTitle || metadata?.channelTitle || 'Unknown')}`,
+      `- Processing Level: ${processingLevel}`,
+      '',
+    ];
+    if (processingLevel === 'transcript') {
+      return `${base.join('\n')}## Transcript\n\n${transcript || 'Transcript unavailable.'}\n`;
+    }
+    if (processingLevel === 'flash') {
+      const summary = this.buildSentenceSummary(transcript, 6);
+      return `${base.join('\n')}## Quick Summary\n\n${summary || 'Transcript unavailable for summary.'}\n\n## Transcript Excerpt\n\n${String(transcript || '').slice(0, 4000)}\n`;
+    }
+    const summary = this.buildSentenceSummary(transcript, 14);
+    return `${base.join('\n')}## Extended Summary\n\n${summary || 'Transcript unavailable for summary.'}\n\n## Key Details\n\n- Duration ISO: ${String(metadata?.durationISO || 'Unknown')}\n- Views: ${Number(metadata?.viewCount || 0).toLocaleString()}\n\n## Transcript Excerpt\n\n${String(transcript || '').slice(0, 8000)}\n`;
   }
   // --- AI STUDIO ORCHESTRATOR END ---
 
@@ -2582,7 +2588,7 @@ class BackgroundService {
           // Handle AI Studio OAuth2 authentication.
           console.log('[FuseConnect v7] Starting YouTube auth flow', this.getOAuthDiagnostics());
           this.authenticateYouTubeSafe()
-            .then(({ token, primaryProfile }) => {
+            .then(({ token, primaryProfile, accountSwitched }) => {
               const tokenExpiry = Date.now() + 50 * 60 * 1000;
               chrome.storage.local.set(
                 {
@@ -2590,14 +2596,25 @@ class BackgroundService {
                   youtubeToken: token,
                   youtubeTokenExpiry: tokenExpiry,
                   userProfile: primaryProfile,
+                  lastAuthAccount: primaryProfile?.email || '',
+                  ai_studio_channel_id: '',
                   isAuthenticated: true,
                 },
                 () => {
+                  chrome.storage.local.get(['firstAuthAt'], (existing) => {
+                    if (!existing.firstAuthAt) {
+                      chrome.storage.local.set({ firstAuthAt: Date.now() });
+                    }
+                  });
                   sendResponse({
                     success: true,
                     token,
                     data: { authenticated: true, primaryProfile },
                     oauth: this.getOAuthDiagnostics(),
+                    channels: [],
+                    selectedChannelId: '',
+                    requiresChannelSelection: false,
+                    accountSwitched,
                   });
                 }
               );
@@ -2638,40 +2655,35 @@ class BackgroundService {
           return true;
 
         case 'AI_STUDIO_GET_CHANNELS':
-          this.fetchYouTubeChannels()
-            .then((channels) => {
-              sendResponse({ success: true, channels });
-            })
-            .catch((error) => {
-              sendResponse({ success: false, error: String(error?.message || error) });
-            });
+          sendResponse({ success: true, channels: [], selectedChannelId: '' });
           return true;
 
         case 'AI_STUDIO_SET_CHANNEL': {
-          const channelId = String(message.channelId || '').trim();
-          chrome.storage.local.set({ ai_studio_channel_id: channelId }, () => {
-            sendResponse({ success: true, channelId });
-          });
+          sendResponse({ success: true, channelId: '' });
           return true;
         }
 
         case 'AI_STUDIO_GET_PLAYLISTS':
-          Promise.all([this.fetchYouTubePlaylists(), this.fetchYouTubeChannels()])
-            .then(([playlists, channels]) => {
-              sendResponse({ success: true, playlists, channels });
+          this.fetchYouTubePlaylistsBundle()
+            .then((bundle) => {
+              sendResponse({ success: true, ...bundle });
             })
             .catch((error) => {
-              sendResponse({ success: false, error: String(error?.message || error) });
+              const err = String(error?.message || error || '');
+              const normalized = err.includes('Quota Protection') ? 'Not authenticated' : err;
+              sendResponse({ success: false, error: normalized });
             });
           return true;
 
         case 'YOUTUBE_GET_PLAYLISTS':
-          Promise.all([this.fetchYouTubePlaylists(), this.fetchYouTubeChannels()])
-            .then(([playlists, channels]) => {
-              sendResponse({ success: true, data: playlists, channels });
+          this.fetchYouTubePlaylistsBundle()
+            .then((bundle) => {
+              sendResponse({ success: true, data: bundle.playlists, ...bundle });
             })
             .catch((error) => {
-              sendResponse({ success: false, error: String(error?.message || error) });
+              const err = String(error?.message || error || '');
+              const normalized = err.includes('Quota Protection') ? 'Not authenticated' : err;
+              sendResponse({ success: false, error: normalized });
             });
           return true;
 
@@ -2959,7 +2971,9 @@ class BackgroundService {
               sendResponse({ success: true, videos });
             })
             .catch((error) => {
-              sendResponse({ success: false, error: String(error?.message || error) });
+              const err = String(error?.message || error || '');
+              const normalized = err.includes('Quota Protection') ? 'Not authenticated' : err;
+              sendResponse({ success: false, error: normalized });
             });
           return true;
         }
@@ -2972,7 +2986,9 @@ class BackgroundService {
               sendResponse({ success: true, data: videos });
             })
             .catch((error) => {
-              sendResponse({ success: false, error: String(error?.message || error) });
+              const err = String(error?.message || error || '');
+              const normalized = err.includes('Quota Protection') ? 'Not authenticated' : err;
+              sendResponse({ success: false, error: normalized });
             });
           return true;
         }
@@ -2988,7 +3004,9 @@ class BackgroundService {
               sendResponse({ success: true, data: videos });
             })
             .catch((error) => {
-              sendResponse({ success: false, error: String(error?.message || error) });
+              const err = String(error?.message || error || '');
+              const normalized = err.includes('Quota Protection') ? 'Not authenticated' : err;
+              sendResponse({ success: false, error: normalized });
             });
           return true;
         }
@@ -3146,8 +3164,13 @@ class BackgroundService {
                 },
                 () => {
                   this.logEvent('ai-video', 'processing_started', { totalCount: queue.length });
-                  chrome.storage.local.get(['segmentDuration'], (opts) => {
-                    this.startAutomationOrchestrator(queue, nextState, opts.segmentDuration || 45);
+                  chrome.storage.local.get(['segmentDuration', 'processingLevel'], (opts) => {
+                    this.startAutomationOrchestrator(
+                      queue,
+                      nextState,
+                      opts.segmentDuration || 45,
+                      String(opts.processingLevel || 'ai_studio')
+                    );
                   });
                   this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: nextState });
                   sendResponse({ success: true, state: nextState });
@@ -3225,7 +3248,7 @@ class BackgroundService {
             page === 'notebooklm'
               ? 'https://notebooklm.google.com/'
               : page === 'dashboard'
-                ? 'https://aivideointel.thenewfuse.com/'
+                ? 'https://connect.thenewfuse.com/'
                 : 'https://aistudio.google.com/';
           chrome.tabs.create({ url: pageUrl }, () => {
             this.logEvent('ai-video', 'open_page', { page, pageUrl });

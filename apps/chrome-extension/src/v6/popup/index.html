@@ -203,252 +203,264 @@
             <button class="btn-icon-only" id="refresh-services" title="Refresh">🔄</button>
           </div>
 
-          <div class="service-card" data-service="ai-studio">
-            <div class="service-icon">🎬</div>
-            <div class="service-info">
-              <div class="service-name">AI Video Intelligence</div>
-              <div class="service-port">Queue + processing + NotebookLM handoff</div>
+          <div class="service-card aivi-service-card" data-service="ai-studio">
+            <div class="aivi-tab-row">
+              <button class="btn-secondary" id="ai-video-subtab-queue" style="flex: 1">Queue</button>
+              <button class="btn-secondary" id="ai-video-subtab-history" style="flex: 1">History</button>
+              <button class="btn-secondary" id="ai-video-dashboard-link" style="flex: 1">Dashboard ↗</button>
             </div>
-            <div class="service-status" id="service-ai-studio-status">
-              <span class="status-dot disconnected"></span>
-            </div>
-            <div class="service-actions">
-              <button class="btn-small" data-action="auth" data-service="ai-studio">Auth</button>
-              <button class="btn-small" data-action="signout" data-service="ai-studio">
-                Sign Out
-              </button>
-              <button class="btn-small" data-action="process" data-service="ai-studio">
-                Process
-              </button>
-              <button class="btn-small" data-action="history" data-service="ai-studio">
-                History
-              </button>
-              <button class="btn-small" data-action="export" data-service="ai-studio">
-                Export
-              </button>
-            </div>
-            <div
-              class="service-stats"
-              style="
-                margin-top: 10px;
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 8px;
-                font-size: 11px;
-                opacity: 0.8;
-              "
-            >
-              <div class="stat-line">Processed: <strong id="ai-video-processed">0</strong></div>
-              <div class="stat-line">Library: <strong id="ai-video-total">0</strong></div>
-              <div class="stat-line">Cost: <strong id="ai-video-cost">$0.00</strong></div>
-              <div class="stat-line">Account: <strong id="ai-video-account">None</strong></div>
-            </div>
-          </div>
-
-          <div
-            class="native-host-status"
-            style="
-              margin-top: 12px;
-              padding: 10px;
-              background: rgba(255, 255, 255, 0.03);
-              border-radius: 8px;
-            "
-          >
-            <div style="font-size: 11px; color: rgba(255, 255, 255, 0.6); margin-bottom: 6px">
-              YouTube Channel
-            </div>
-            <div style="display: flex; gap: 8px; margin-bottom: 8px">
-              <select id="ai-video-channel-select" style="flex: 1">
-                <option value="">Default channel...</option>
-              </select>
-              <button class="btn-secondary" id="ai-video-refresh-channels">Refresh</button>
+            <div class="aivi-tab-row" style="margin-top: 8px">
+              <button class="btn-secondary" id="ai-video-auth-btn" style="flex: 1">Auth</button>
+              <button class="btn-secondary" id="ai-video-signout-btn" style="flex: 1">Sign Out</button>
+              <div
+                id="ai-video-auth-state"
+                style="
+                  flex: 1;
+                  font-size: 11px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  color: rgba(255, 255, 255, 0.72);
+                "
+              >
+                Not authenticated
+              </div>
             </div>
 
-            <div style="font-size: 11px; color: rgba(255, 255, 255, 0.6); margin-bottom: 6px">
-              YouTube Playlists
-            </div>
-            <div style="display: flex; gap: 8px; margin-bottom: 8px">
-              <select id="ai-video-playlist-select" style="flex: 1">
-                <option value="">Select playlist...</option>
-              </select>
-              <button class="btn-secondary" id="ai-video-refresh-playlists">Refresh</button>
-              <button class="btn-secondary" id="ai-video-load-playlist">Load</button>
-            </div>
-            <div style="display: flex; gap: 8px; margin-bottom: 8px">
+            <div id="ai-video-queue-view">
+              <div style="font-size: 14px; font-weight: 700">🎥 Quick Add Video</div>
+              <div style="font-size: 11px; color: rgba(255, 255, 255, 0.68); margin-bottom: 6px">
+                Process a single video
+              </div>
+              <div style="display: flex; gap: 8px">
+                <input
+                  id="ai-video-single-url"
+                  type="text"
+                  placeholder="Paste YouTube video URL..."
+                  style="flex: 1"
+                />
+                <button class="btn-primary" id="ai-video-single-add">Add</button>
+              </div>
+              <div id="ai-video-single-preview" style="font-size: 11px; color: rgba(255, 255, 255, 0.62); margin-top: 6px;">
+                No preview yet
+              </div>
+
+              <div style="text-align: center; margin: 12px 0; font-size: 11px; color: rgba(255, 255, 255, 0.6)">
+                — OR select from playlist —
+              </div>
+
+              <div style="font-size: 13px; font-weight: 700; margin-bottom: 4px">📺 Source Playlist</div>
+              <div style="display: flex; gap: 8px; margin-bottom: 8px">
+                <button class="btn-secondary" id="ai-video-refresh-playlists">🔄</button>
+                <select id="ai-video-playlist-select" style="flex: 1">
+                  <option value="">Select a playlist...</option>
+                </select>
+              </div>
+
+              <div style="font-size: 13px; font-weight: 700; margin-bottom: 4px">🎯 Destination Playlist</div>
+              <div style="display: flex; gap: 8px; margin-bottom: 8px">
+                <button class="btn-secondary" id="ai-video-create-playlist">➕ New</button>
+                <select id="ai-video-destination-playlist-select" style="flex: 1">
+                  <option value="">Select destination...</option>
+                </select>
+              </div>
               <input
                 id="ai-video-new-playlist-title"
                 type="text"
                 placeholder="New private playlist title..."
-                style="flex: 1"
+                style="width: 100%; margin-bottom: 10px"
               />
-              <button class="btn-secondary" id="ai-video-create-playlist">Create</button>
-            </div>
 
-            <div style="font-size: 11px; color: rgba(255, 255, 255, 0.6); margin-bottom: 6px">
-              Single Video Quick Add
-            </div>
-            <div style="display: flex; gap: 8px; margin-bottom: 6px">
-              <input
-                id="ai-video-single-url"
-                type="text"
-                placeholder="https://www.youtube.com/watch?v=..."
-                style="flex: 1"
-              />
-              <button class="btn-secondary" id="ai-video-single-add">Add</button>
-            </div>
-            <div id="ai-video-single-preview" style="font-size: 11px; color: rgba(255, 255, 255, 0.62)">
-              No preview yet
-            </div>
-
-            <div style="font-size: 11px; color: rgba(255, 255, 255, 0.6); margin-bottom: 6px">
-              Queue URLs (one per line)
-            </div>
-            <textarea
-              id="ai-video-queue-input"
-              rows="6"
-              style="
-                width: 100%;
-                background: rgba(0, 0, 0, 0.35);
-                border: 1px solid rgba(255, 255, 255, 0.12);
-                border-radius: 6px;
-                color: #fff;
-                font-size: 11px;
-                padding: 8px;
-                resize: vertical;
-              "
-              placeholder="https://www.youtube.com/watch?v=..."
-            ></textarea>
-            <div style="display: flex; gap: 8px; margin-top: 8px">
-              <button class="btn-primary" id="ai-video-save-queue" style="flex: 1">Save Queue</button>
-              <button class="btn-secondary" id="ai-video-clear-queue" style="flex: 1">
-                Clear Queue
-              </button>
-            </div>
-            <div style="display: flex; gap: 8px; margin-top: 8px">
-              <button class="btn-secondary" id="ai-video-dedupe-queue" style="flex: 1">
-                Dedupe
-              </button>
-              <button class="btn-secondary" id="ai-video-clean-queue" style="flex: 1">
-                Remove Invalid
-              </button>
-            </div>
-          </div>
-
-          <div
-            class="native-host-status"
-            style="
-              margin-top: 10px;
-              padding: 10px;
-              background: rgba(255, 255, 255, 0.03);
-              border-radius: 8px;
-            "
-          >
-            <div style="font-size: 11px; color: rgba(255, 255, 255, 0.6); margin-bottom: 6px">
-              Processing Preferences
-            </div>
-            <div style="display: flex; gap: 8px; align-items: center">
-              <select id="ai-video-processing-level" style="flex: 1">
-                <option value="ai_studio">AI Studio</option>
-                <option value="metadata">Metadata</option>
-                <option value="transcript">Transcript</option>
-                <option value="flash">Gemini Flash</option>
-                <option value="pro">Gemini Pro</option>
-                <option value="vision">Gemini Vision</option>
+              <div style="font-size: 13px; font-weight: 700; margin-bottom: 4px">⚙️ Processing Level</div>
+              <div style="font-size: 11px; color: rgba(255, 255, 255, 0.68); margin-bottom: 6px">
+                Choose processing depth & cost
+              </div>
+              <select id="ai-video-processing-level" style="width: 100%; margin-bottom: 6px">
+                <option value="transcript">📝 Transcript + Metadata (No AI model)</option>
+                <option value="flash">⚡ Quick Local Summary (No external AI API)</option>
+                <option value="pro">🧠 Extended Local Summary (No external AI API)</option>
+                <option value="ai_studio" selected>🎬 AI Studio (Uses Your Gemini Account)</option>
               </select>
+              <div
+                id="ai-video-processing-description"
+                style="font-size: 11px; color: rgba(255, 255, 255, 0.68); margin-bottom: 10px"
+              >
+                Full video analysis using your Google AI Studio account. Best quality, uses segments for long videos.
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px">
+                <div style="font-size: 13px; font-weight: 700">🔍 Filter Videos</div>
+                <button class="btn-secondary" id="ai-video-clear-filter">Clear</button>
+              </div>
               <input
-                id="ai-video-segment-duration"
-                type="number"
-                min="5"
-                max="300"
-                value="45"
-                style="width: 88px"
-                title="Segment duration (seconds)"
+                id="ai-video-search-filter"
+                type="text"
+                placeholder="Search by title, channel, or keywords..."
+                style="width: 100%; margin-bottom: 8px"
               />
-              <label style="font-size: 11px; display: flex; align-items: center; gap: 4px">
-                <input id="ai-video-reverse-order" type="checkbox" />
-                Reverse
-              </label>
-            </div>
-            <div style="display: flex; gap: 8px; margin-top: 8px">
-              <button class="btn-secondary" id="ai-video-save-preferences" style="flex: 1">
-                Save Preferences
-              </button>
-              <button class="btn-secondary" id="ai-video-open-ai-studio" style="flex: 1">
-                Open AI Studio
-              </button>
-              <button class="btn-secondary" id="ai-video-open-notebooklm" style="flex: 1">
-                Open NotebookLM
-              </button>
-            </div>
-          </div>
+              <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; font-size: 11px">
+                <label style="display:flex; gap:5px; align-items:center;">
+                  <input id="ai-video-filter-watched" type="checkbox" />
+                  Hide watched
+                </label>
+                <label style="display:flex; gap:5px; align-items:center;">
+                  <input id="ai-video-filter-duplicates" type="checkbox" />
+                  Hide duplicates
+                </label>
+                <label style="display:flex; gap:5px; align-items:center;">
+                  <input id="ai-video-filter-short" type="checkbox" />
+                  Only videos &gt; 10min
+                </label>
+              </div>
 
-          <div class="services-actions" style="margin-top: 10px">
-            <button class="btn-primary" id="ai-video-process-panel" style="width: 100%">
-              🎛️ Open In-Page AIVI Panel
-            </button>
-            <div style="display:flex; gap:8px; margin-top:8px;">
-              <button class="btn-primary" id="ai-video-start" style="flex:1">▶ Start</button>
-              <button class="btn-secondary" id="ai-video-pause" style="flex:1">⏸ Pause</button>
-              <button class="btn-secondary" id="ai-video-resume" style="flex:1">⏵ Resume</button>
-              <button class="btn-secondary" id="ai-video-stop" style="flex:1">⏹ Stop</button>
-            </div>
-            <div style="margin-top:8px; font-size:11px; color:rgba(255,255,255,0.72);">
-              Processing: <strong id="ai-video-processing-status">Idle</strong>
-              <span style="margin-left:8px;">Progress: <strong id="ai-video-processing-progress">0/0</strong></span>
-            </div>
-            <button class="btn-secondary" id="ai-video-generate-history" style="width: 100%; margin-top: 8px">
-              🧠 Generate History Prompt
-            </button>
-            <button class="btn-secondary" id="ai-video-export-urls" style="width: 100%; margin-top: 8px">
-              📄 Export URLs
-            </button>
-            <button class="btn-secondary" id="ai-video-export-json" style="width: 100%; margin-top: 8px">
-              📦 Export JSON
-            </button>
-          </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <div style="font-size:13px; font-weight:700;">📹 Videos (<span id="videoCount">0</span>)</div>
+                <div style="display:flex; gap:6px;">
+                  <button class="btn-secondary" id="ai-video-select-all">Select All</button>
+                  <button class="btn-secondary" id="ai-video-deselect-all">Deselect All</button>
+                </div>
+              </div>
+              <div
+                id="ai-video-browser-list"
+                style="
+                  max-height: 240px;
+                  overflow: auto;
+                  border: 1px solid rgba(255,255,255,0.12);
+                  border-radius: 6px;
+                  padding: 4px;
+                  margin-bottom: 8px;
+                  background: rgba(0, 0, 0, 0.25);
+                "
+              >
+                <div id="ai-video-browser-empty" style="font-size:11px; color:rgba(255,255,255,0.66); padding:8px;">
+                  Loading videos...
+                </div>
+              </div>
 
-          <div
-            class="native-host-status"
-            style="
-              margin-top: 12px;
-              padding: 10px;
-              background: rgba(255, 255, 255, 0.03);
-              border-radius: 8px;
-            "
-          >
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-              <span style="font-size: 11px; color: rgba(255, 255, 255, 0.6)">History / Reports</span>
-              <div style="display:flex; gap:6px;">
-                <button class="btn-secondary" id="ai-video-refresh-history">Refresh</button>
-                <button class="btn-secondary" id="ai-video-export-reports">Export MD</button>
-                <button class="btn-secondary" id="ai-video-clear-history">Clear</button>
+              <button class="btn-primary" id="ai-video-process-selected" style="width: 100%; margin-bottom: 8px">
+                🚀 Process Selected (<span id="selectedCount">0</span> videos)
+              </button>
+              <div style="margin-bottom: 8px; font-size: 11px; color: rgba(255,255,255,0.72);">
+                Processing: <strong id="ai-video-processing-status">Idle</strong>
+                <span style="margin-left:8px;">Progress: <strong id="ai-video-processing-progress">0/0</strong></span>
+              </div>
+              <div style="display: flex; gap: 8px">
+                <button class="btn-secondary" id="ai-video-bulk-import-btn" style="flex: 1">
+                  📥 Bulk Import to NotebookLM
+                </button>
+                <button class="btn-secondary" id="ai-video-export-queue-btn" style="flex: 1">
+                  💾 Export Queue
+                </button>
+              </div>
+              <div style="display: flex; gap: 8px; margin-top: 8px">
+                <button class="btn-secondary" id="ai-video-send-urls-channel" style="flex: 1">
+                  📡 Send URLs to Channel
+                </button>
+                <button class="btn-secondary" id="ai-video-send-analysis-channel" style="flex: 1">
+                  🧠 Send Analysis to Channel
+                </button>
+              </div>
+              <div
+                id="ai-video-channel-target"
+                style="
+                  margin-top: 8px;
+                  font-size: 11px;
+                  color: rgba(255, 255, 255, 0.7);
+                  padding: 6px 8px;
+                  border: 1px solid rgba(255, 255, 255, 0.16);
+                  border-radius: 6px;
+                  background: rgba(0, 0, 0, 0.18);
+                "
+              >
+                Channel target: none selected (set in Central tab)
               </div>
             </div>
-            <div id="ai-video-history-list" style="max-height:180px; overflow:auto; font-size:11px; color:rgba(255,255,255,0.76);">
-              No processed videos yet
-            </div>
-          </div>
 
-          <div
-            class="native-host-status"
-            style="
-              margin-top: 16px;
-              padding: 10px;
-              background: rgba(255, 255, 255, 0.03);
-              border-radius: 8px;
-            "
-          >
-            <div style="display: flex; justify-content: space-between; align-items: center">
-              <span style="font-size: 11px; color: rgba(255, 255, 255, 0.5)"
-                >Native Host Status</span
-              >
+            <div id="ai-video-history-view" style="display: none">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-size: 13px; font-weight: 700">History</span>
+                <div style="display:flex; gap:6px;">
+                  <button class="btn-secondary" id="ai-video-refresh-history">Refresh</button>
+                  <button class="btn-secondary" id="ai-video-export-reports">Export MD</button>
+                  <button class="btn-secondary" id="ai-video-clear-history">Clear</button>
+                </div>
+              </div>
+              <div id="ai-video-history-list" style="max-height:260px; overflow:auto; font-size:11px; color:rgba(255,255,255,0.76);">
+                No processed videos yet
+              </div>
+            </div>
+
+            <div style="display:none;">
+              <div class="service-status" id="service-ai-studio-status">
+                <span class="status-dot disconnected"></span>
+              </div>
               <span id="native-host-indicator" style="font-size: 11px">⚪ Unknown</span>
+              <span id="ai-video-account">None</span>
+              <strong id="ai-video-processed">0</strong>
+              <strong id="ai-video-total">0</strong>
+              <strong id="ai-video-cost">$0.00</strong>
             </div>
           </div>
         </section>
 
         <!-- Settings Tab -->
         <section class="tab-content" id="tab-settings">
+          <div class="settings-section">
+            <h3 class="section-title">AI Video Automation</h3>
+            <div class="setting-item">
+              <label for="aivi-segment-duration-settings">Segment Duration (minutes)</label>
+              <input
+                type="number"
+                id="aivi-segment-duration-settings"
+                min="1"
+                max="120"
+                value="45"
+              />
+            </div>
+            <div class="setting-item">
+              <label for="aivi-concurrent-processes">Concurrent Processes (currently fixed at 1)</label>
+              <input
+                type="number"
+                id="aivi-concurrent-processes"
+                min="1"
+                max="1"
+                value="1"
+                disabled
+              />
+            </div>
+            <div class="setting-item">
+              <label>Auto-open notebook after import</label>
+              <label class="toggle">
+                <input type="checkbox" id="aivi-auto-open-notebook" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="setting-item">
+              <label>Auto-generate audio overview</label>
+              <label class="toggle">
+                <input type="checkbox" id="aivi-auto-audio-overview" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3 class="section-title">AI Video Account</h3>
+            <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.7">
+              <div><strong>Email:</strong> <span id="settingsEmail">-</span></div>
+              <div><strong>Tier:</strong> <span id="settingsTier">FREE</span></div>
+              <div><strong>Member Since:</strong> <span id="settingsMemberSince">-</span></div>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3 class="section-title">AI Video Data</h3>
+            <div style="display: flex; gap: 8px">
+              <button class="btn-secondary" id="clearCacheBtn" style="flex: 1">Clear Cache</button>
+              <button class="btn-secondary" id="exportDataBtn" style="flex: 1">Export Data</button>
+            </div>
+          </div>
+
           <div class="settings-section">
             <h3 class="section-title">Connection</h3>
             <div class="setting-item">

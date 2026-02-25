@@ -21,6 +21,9 @@ class FuseConnectPopup {
       aiVideo: {
         queue: [],
         queueCount: 0,
+        playlistVideos: [],
+        filteredPlaylistVideos: [],
+        selectedPlaylistVideoIds: new Set(),
         reverseOrder: false,
         segmentDuration: 45,
         processingLevel: 'ai_studio',
@@ -50,6 +53,10 @@ class FuseConnectPopup {
         allowedSites: [],
         popupSelectedChannel: null,
         popupSelectedChannelName: null,
+        aiviSegmentDuration: 45,
+        aiviConcurrentProcesses: 1,
+        aiviAutoOpenNotebook: false,
+        aiviAutoAudioOverview: false,
       },
     };
 
@@ -201,28 +208,100 @@ class FuseConnectPopup {
     });
 
     document.getElementById('ai-video-refresh-playlists')?.addEventListener('click', () => {
-      this.refreshAIVideoPlaylists();
+      this.refreshAIVideoPlaylists({ interactiveAuth: true });
     });
-
-    document.getElementById('ai-video-refresh-channels')?.addEventListener('click', () => {
-      this.refreshAIVideoChannels();
+    document.getElementById('ai-video-auth-btn')?.addEventListener('click', () => {
+      this.handleAIStudioAuth();
     });
-
-    document.getElementById('ai-video-channel-select')?.addEventListener('change', (e) => {
-      const channelId = e.target.value || '';
-      chrome.runtime.sendMessage({ type: 'AI_STUDIO_SET_CHANNEL', channelId }, (response) => {
-        if (response?.success) {
-          this.refreshAIVideoPlaylists();
-        }
-      });
+    document.getElementById('ai-video-signout-btn')?.addEventListener('click', () => {
+      this.handleAIStudioSignOut();
     });
 
     document.getElementById('ai-video-load-playlist')?.addEventListener('click', () => {
       this.loadSelectedPlaylistIntoQueue();
     });
+    document.getElementById('ai-video-playlist-select')?.addEventListener('change', () => {
+      this.loadSelectedPlaylistIntoQueue();
+    });
+    document.getElementById('ai-video-search-filter')?.addEventListener('input', () => {
+      this.applyAIVideoPlaylistFilters();
+      this.renderAIVideoPlaylistBrowser();
+    });
+    document.getElementById('ai-video-filter-short')?.addEventListener('change', () => {
+      this.applyAIVideoPlaylistFilters();
+      this.renderAIVideoPlaylistBrowser();
+    });
+    document.getElementById('ai-video-select-all')?.addEventListener('click', () => {
+      this.state.aiVideo.filteredPlaylistVideos.forEach((video) =>
+        this.state.aiVideo.selectedPlaylistVideoIds.add(String(video.id || ''))
+      );
+      this.renderAIVideoPlaylistBrowser();
+    });
+    document.getElementById('ai-video-deselect-all')?.addEventListener('click', () => {
+      this.state.aiVideo.selectedPlaylistVideoIds.clear();
+      this.renderAIVideoPlaylistBrowser();
+    });
+    document.getElementById('ai-video-add-selected')?.addEventListener('click', () => {
+      this.addSelectedPlaylistVideosToQueue();
+    });
+    document.getElementById('ai-video-process-selected')?.addEventListener('click', () => {
+      this.processSelectedPlaylistVideos();
+    });
+    document.getElementById('ai-video-clear-filter')?.addEventListener('click', () => {
+      const searchEl = document.getElementById('ai-video-search-filter');
+      const shortEl = document.getElementById('ai-video-filter-short');
+      const watchedEl = document.getElementById('ai-video-filter-watched');
+      const duplicatesEl = document.getElementById('ai-video-filter-duplicates');
+      if (searchEl) searchEl.value = '';
+      if (shortEl) shortEl.checked = false;
+      if (watchedEl) watchedEl.checked = false;
+      if (duplicatesEl) duplicatesEl.checked = false;
+      this.applyAIVideoPlaylistFilters();
+      this.renderAIVideoPlaylistBrowser();
+    });
+    document.getElementById('ai-video-filter-watched')?.addEventListener('change', () => {
+      this.applyAIVideoPlaylistFilters();
+      this.renderAIVideoPlaylistBrowser();
+    });
+    document.getElementById('ai-video-filter-duplicates')?.addEventListener('change', () => {
+      this.applyAIVideoPlaylistFilters();
+      this.renderAIVideoPlaylistBrowser();
+    });
+    document.getElementById('ai-video-subtab-queue')?.addEventListener('click', () => {
+      const queueView = document.getElementById('ai-video-queue-view');
+      const historyView = document.getElementById('ai-video-history-view');
+      if (queueView) queueView.style.display = 'block';
+      if (historyView) historyView.style.display = 'none';
+    });
+    document.getElementById('ai-video-subtab-history')?.addEventListener('click', () => {
+      const queueView = document.getElementById('ai-video-queue-view');
+      const historyView = document.getElementById('ai-video-history-view');
+      if (queueView) queueView.style.display = 'none';
+      if (historyView) historyView.style.display = 'block';
+      this.refreshAIVideoHistory();
+    });
+    document.getElementById('ai-video-dashboard-link')?.addEventListener('click', () => {
+      chrome.tabs.create({ url: 'https://connect.thenewfuse.com/', active: true });
+    });
+    document.getElementById('ai-video-bulk-import-btn')?.addEventListener('click', () => {
+      this.openAIVideoPage('notebooklm');
+    });
+    document.getElementById('ai-video-export-queue-btn')?.addEventListener('click', () => {
+      this.handleAIStudioExport('urls');
+    });
+    document.getElementById('ai-video-send-urls-channel')?.addEventListener('click', () => {
+      this.sendSelectedUrlsToChannel();
+    });
+    document.getElementById('ai-video-send-analysis-channel')?.addEventListener('click', () => {
+      this.sendRecentAnalysesToChannel();
+    });
 
     document.getElementById('ai-video-create-playlist')?.addEventListener('click', () => {
       this.createAIVideoPlaylist();
+    });
+    document.getElementById('ai-video-processing-level')?.addEventListener('change', () => {
+      this.updateProcessingLevelDescription();
+      this.saveAIVideoPreferences();
     });
 
     document.getElementById('ai-video-single-url')?.addEventListener('input', () => {
@@ -304,6 +383,22 @@ class FuseConnectPopup {
     // Save settings
     document.getElementById('save-settings')?.addEventListener('click', () => {
       this.saveSettings();
+    });
+    document.getElementById('clearCacheBtn')?.addEventListener('click', async () => {
+      await chrome.storage.local.remove(['videoQueue', 'processingState']);
+      this.showToast('AI Video cache cleared');
+      await this.refreshAIVideoQueueAndPreferences();
+      this.updateServiceUI();
+    });
+    document.getElementById('exportDataBtn')?.addEventListener('click', async () => {
+      const allData = await chrome.storage.local.get(null);
+      const blob = new Blob([JSON.stringify(allData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `tnf-aivi-data-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
     });
 
     // Settings inputs
@@ -674,9 +769,9 @@ class FuseConnectPopup {
 
     await this.refreshAIVideoStats();
     await this.refreshAIVideoQueueAndPreferences();
-    await this.refreshAIVideoChannels();
     await this.refreshAIVideoPlaylists();
     await this.refreshAIVideoHistory();
+    await this.refreshAIVideoAccountSettings();
     this.updateServiceUI();
   }
 
@@ -812,15 +907,14 @@ class FuseConnectPopup {
   async handleAIStudioAuth() {
     const authBtn = document.querySelector('[data-action="auth"][data-service="ai-studio"]');
     if (authBtn) authBtn.disabled = true;
-    this.showToast('Step 1/2: Sign in with your Google account...');
+    this.showToast('Signing in with your Google account...');
     try {
       chrome.runtime.sendMessage({ type: 'YOUTUBE_AUTHENTICATE' }, async (response) => {
         if (authBtn) authBtn.disabled = false;
         if (response?.success) {
-          this.showToast('Step 2/2 complete: YouTube access granted.');
+          this.showToast('YouTube access granted.');
           this.updateAIStudioStatus('connected');
           await this.refreshAIVideoStats();
-          await this.refreshAIVideoChannels();
           await this.refreshAIVideoPlaylists();
           this.refreshServiceStatus();
         } else {
@@ -851,6 +945,7 @@ class FuseConnectPopup {
     chrome.runtime.sendMessage({ type: 'YOUTUBE_SIGN_OUT' }, (response) => {
       if (response?.success) {
         this.showToast('Signed out. Re-authenticate to choose another account.');
+        this.state.aiVideo.account = 'None';
         this.refreshServiceStatus();
       } else {
         this.showToast(response?.error || 'Sign out failed');
@@ -992,75 +1087,79 @@ class FuseConnectPopup {
     );
   }
 
-  async refreshAIVideoPlaylists() {
+  updateProcessingLevelDescription() {
+    const level = String(
+      document.getElementById('ai-video-processing-level')?.value || 'ai_studio'
+    );
+    const description = document.getElementById('ai-video-processing-description');
+    if (!description) return;
+    if (level === 'transcript') {
+      description.textContent =
+        'Extracts metadata and transcript only. Fastest mode, no external AI model calls.';
+      return;
+    }
+    if (level === 'flash') {
+      description.textContent =
+        'Builds a quick local summary from transcript/metadata. Does not call external AI APIs.';
+      return;
+    }
+    if (level === 'pro') {
+      description.textContent =
+        'Builds a more detailed local summary from transcript/metadata. Does not call external AI APIs.';
+      return;
+    }
+    description.textContent =
+      'Full video analysis using your Google AI Studio account. Best quality, uses segments for long videos.';
+  }
+
+  async refreshAIVideoPlaylists(options = {}) {
+    const interactiveAuth = !!options.interactiveAuth;
     return new Promise((resolve) => {
       chrome.runtime.sendMessage({ type: 'AI_STUDIO_GET_PLAYLISTS' }, (response) => {
         const selectEl = document.getElementById('ai-video-playlist-select');
+        const destinationSelectEl = document.getElementById('ai-video-destination-playlist-select');
         if (!selectEl) {
           resolve();
           return;
         }
         const playlists =
           response?.success && Array.isArray(response.playlists) ? response.playlists : [];
-        const channels =
-          response?.success && Array.isArray(response.channels) ? response.channels : [];
         const currentValue = selectEl.value;
+        const destinationValue = destinationSelectEl?.value || '';
         selectEl.innerHTML = '<option value="">Select playlist...</option>';
+        if (destinationSelectEl) {
+          destinationSelectEl.innerHTML = '<option value="">Select destination...</option>';
+        }
+
         playlists.forEach((playlist) => {
           const option = document.createElement('option');
           option.value = playlist.id;
           option.textContent = `${playlist.title} (${playlist.videoCount || 0})`;
           selectEl.appendChild(option);
+          if (destinationSelectEl) {
+            const destinationOption = document.createElement('option');
+            destinationOption.value = playlist.id;
+            destinationOption.textContent = `${playlist.title} (${playlist.videoCount || 0})`;
+            destinationSelectEl.appendChild(destinationOption);
+          }
         });
         if (currentValue) selectEl.value = currentValue;
-
-        const channelSelectEl = document.getElementById('ai-video-channel-select');
-        if (channelSelectEl) {
-          const existingValue = channelSelectEl.value;
-          channelSelectEl.innerHTML = '<option value="">Default channel...</option>';
-          channels.forEach((channel) => {
-            const option = document.createElement('option');
-            option.value = channel.id;
-            option.textContent = channel.title;
-            channelSelectEl.appendChild(option);
-          });
-          chrome.storage.local.get(['ai_studio_channel_id'], (stored) => {
-            const preferred = String(stored.ai_studio_channel_id || existingValue || '');
-            if (preferred) channelSelectEl.value = preferred;
-          });
-        }
+        if (destinationSelectEl && destinationValue) destinationSelectEl.value = destinationValue;
 
         if (!response?.success && response?.error) {
-          this.showToast(response.error);
+          const authError =
+            String(response.error).includes('Not authenticated') ||
+            String(response.error).includes('Quota Protection');
+          if (authError) {
+            if (interactiveAuth) {
+              this.handleAIStudioAuth();
+            } else {
+              this.showToast('Not authenticated. Click refresh to sign in.');
+            }
+          } else {
+            this.showToast(response.error);
+          }
         }
-        resolve();
-      });
-    });
-  }
-
-  async refreshAIVideoChannels() {
-    return new Promise((resolve) => {
-      chrome.runtime.sendMessage({ type: 'AI_STUDIO_GET_CHANNELS' }, (response) => {
-        const channelSelectEl = document.getElementById('ai-video-channel-select');
-        if (!channelSelectEl) {
-          resolve();
-          return;
-        }
-        const channels =
-          response?.success && Array.isArray(response.channels) ? response.channels : [];
-        const existingValue = channelSelectEl.value;
-        channelSelectEl.innerHTML = '<option value="">Default channel...</option>';
-        channels.forEach((channel) => {
-          const option = document.createElement('option');
-          option.value = channel.id;
-          option.textContent = channel.title;
-          channelSelectEl.appendChild(option);
-        });
-        chrome.storage.local.get(['ai_studio_channel_id'], (stored) => {
-          const preferred = String(stored.ai_studio_channel_id || existingValue || '');
-          if (preferred) channelSelectEl.value = preferred;
-        });
-        if (!response?.success && response?.error) this.showToast(response.error);
         resolve();
       });
     });
@@ -1076,20 +1175,301 @@ class FuseConnectPopup {
       { type: 'AI_STUDIO_GET_PLAYLIST_VIDEOS', playlistId },
       (response) => {
         if (!response?.success || !Array.isArray(response.videos)) {
-          this.showToast(response?.error || 'Failed to load playlist videos');
+          const error = String(response?.error || 'Failed to load playlist videos');
+          if (error.includes('Not authenticated') || error.includes('Quota Protection')) {
+            this.handleAIStudioAuth();
+          } else {
+            this.showToast(error);
+          }
           return;
         }
-        const urls = response.videos.map((v) => v.url).filter(Boolean);
-        chrome.runtime.sendMessage({ type: 'AI_VIDEO_SET_QUEUE', urls }, (setQueueResponse) => {
-          if (setQueueResponse?.success) {
-            this.showToast(`Loaded ${setQueueResponse.queueCount || 0} videos`);
-            this.refreshServiceStatus();
-          } else {
-            this.showToast('Failed to save playlist queue');
+        const baseVideos = response.videos.map((v) => ({
+          id: String(v.id || ''),
+          title: String(v.title || 'Untitled'),
+          channelTitle: String(v.channelTitle || ''),
+          thumbnail: String(v.thumbnail || ''),
+          url: String(v.url || ''),
+          durationSeconds: 0,
+          viewCount: 0,
+        }));
+        this.state.aiVideo.playlistVideos = baseVideos;
+        this.state.aiVideo.selectedPlaylistVideoIds.clear();
+
+        const ids = baseVideos.map((v) => v.id).filter(Boolean);
+        if (ids.length === 0) {
+          this.applyAIVideoPlaylistFilters();
+          this.renderAIVideoPlaylistBrowser();
+          this.showToast('No videos found in playlist');
+          return;
+        }
+
+        chrome.runtime.sendMessage(
+          { type: 'YOUTUBE_GET_VIDEO_DETAILS', videoIds: ids },
+          (detailsResp) => {
+            if (detailsResp?.success && Array.isArray(detailsResp.data)) {
+              const byId = new Map(detailsResp.data.map((d) => [String(d.id || ''), d]));
+              this.state.aiVideo.playlistVideos = baseVideos.map((video) => {
+                const detail = byId.get(video.id);
+                return {
+                  ...video,
+                  durationSeconds: this.parseIsoDurationToSeconds(
+                    String(detail?.durationISO || '')
+                  ),
+                  viewCount: Number(detail?.viewCount || 0),
+                };
+              });
+            }
+            this.applyAIVideoPlaylistFilters();
+            this.renderAIVideoPlaylistBrowser();
+            this.showToast(
+              `Loaded ${this.state.aiVideo.playlistVideos.length} videos for selection`
+            );
           }
-        });
+        );
       }
     );
+  }
+
+  parseIsoDurationToSeconds(isoDuration) {
+    const match = String(isoDuration || '').match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+    if (!match) return 0;
+    const hours = Number(match[1] || 0);
+    const minutes = Number(match[2] || 0);
+    const seconds = Number(match[3] || 0);
+    return hours * 3600 + minutes * 60 + seconds;
+  }
+
+  formatSeconds(seconds) {
+    const total = Number(seconds || 0);
+    const h = Math.floor(total / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const s = total % 60;
+    if (h > 0) return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    return `${m}:${String(s).padStart(2, '0')}`;
+  }
+
+  applyAIVideoPlaylistFilters() {
+    const term = String(document.getElementById('ai-video-search-filter')?.value || '')
+      .trim()
+      .toLowerCase();
+    const onlyLong = !!document.getElementById('ai-video-filter-short')?.checked;
+    const hideDuplicates = !!document.getElementById('ai-video-filter-duplicates')?.checked;
+    const hideWatched = !!document.getElementById('ai-video-filter-watched')?.checked;
+
+    let filtered = [...(this.state.aiVideo.playlistVideos || [])];
+    if (term) {
+      filtered = filtered.filter(
+        (video) =>
+          String(video.title || '')
+            .toLowerCase()
+            .includes(term) ||
+          String(video.channelTitle || '')
+            .toLowerCase()
+            .includes(term)
+      );
+    }
+    if (onlyLong) {
+      filtered = filtered.filter((video) => Number(video.durationSeconds || 0) >= 600);
+    }
+    if (hideDuplicates) {
+      const seen = new Set();
+      filtered = filtered.filter((video) => {
+        const id = String(video.id || '');
+        if (!id || seen.has(id)) return false;
+        seen.add(id);
+        return true;
+      });
+    }
+    if (hideWatched) {
+      filtered = filtered.filter((video) => !video.watched);
+    }
+    this.state.aiVideo.filteredPlaylistVideos = filtered;
+  }
+
+  renderAIVideoPlaylistBrowser() {
+    const listEl = document.getElementById('ai-video-browser-list');
+    const emptyEl = document.getElementById('ai-video-browser-empty');
+    const countEl =
+      document.getElementById('videoCount') || document.getElementById('ai-video-browser-count');
+    const selectedEl =
+      document.getElementById('selectedCount') ||
+      document.getElementById('ai-video-browser-selected');
+    const addBtn = document.getElementById('ai-video-add-selected');
+    const processBtn = document.getElementById('ai-video-process-selected');
+    if (!listEl) return;
+
+    const filtered = this.state.aiVideo.filteredPlaylistVideos || [];
+    const selectedIds = this.state.aiVideo.selectedPlaylistVideoIds || new Set();
+    if (countEl) countEl.textContent = String(filtered.length);
+    if (selectedEl) selectedEl.textContent = String(selectedIds.size);
+    if (addBtn) addBtn.disabled = selectedIds.size === 0;
+    if (processBtn) {
+      processBtn.disabled = selectedIds.size === 0;
+      const selectedCountEl = document.getElementById('selectedCount');
+      if (selectedCountEl) {
+        selectedCountEl.textContent = String(selectedIds.size);
+      } else {
+        processBtn.textContent = `Process Selected Videos (${selectedIds.size})`;
+      }
+    }
+
+    if (filtered.length === 0) {
+      if (emptyEl) {
+        emptyEl.style.display = 'block';
+        emptyEl.textContent = this.state.aiVideo.playlistVideos.length
+          ? 'No videos match current filters.'
+          : 'Load a playlist to preview videos.';
+      }
+      listEl.querySelectorAll('.ai-video-browser-item').forEach((n) => n.remove());
+      return;
+    }
+    if (emptyEl) emptyEl.style.display = 'none';
+
+    listEl.innerHTML = filtered
+      .map((video) => {
+        const id = String(video.id || '');
+        const checked = selectedIds.has(id) ? 'checked' : '';
+        const thumb = this.escapeHtml(
+          String(video.thumbnail || `https://i.ytimg.com/vi/${id}/mqdefault.jpg`)
+        );
+        const title = this.escapeHtml(String(video.title || 'Untitled'));
+        const channel = this.escapeHtml(String(video.channelTitle || 'Unknown'));
+        const duration = this.formatSeconds(Number(video.durationSeconds || 0));
+        return `
+        <label class="ai-video-browser-item" data-video-id="${id}"
+          style="display:flex; gap:8px; align-items:flex-start; padding:6px; border-bottom:1px solid rgba(255,255,255,0.08); cursor:pointer;">
+          <input type="checkbox" data-video-id="${id}" ${checked} style="margin-top:2px;" />
+          <img src="${thumb}" alt="${title}" style="width:72px; height:40px; object-fit:cover; border-radius:4px; background:#000;" />
+          <div style="min-width:0; flex:1;">
+            <div style="font-size:11px; font-weight:600; line-height:1.3;">${title}</div>
+            <div style="font-size:10px; opacity:0.74; margin-top:2px;">${channel} • ${duration}</div>
+          </div>
+        </label>`;
+      })
+      .join('');
+
+    listEl.querySelectorAll('input[type="checkbox"][data-video-id]').forEach((checkbox) => {
+      checkbox.addEventListener('change', (e) => {
+        const videoId = String(e.target?.dataset?.videoId || '');
+        if (!videoId) return;
+        if (e.target.checked) selectedIds.add(videoId);
+        else selectedIds.delete(videoId);
+        if (selectedEl) selectedEl.textContent = String(selectedIds.size);
+        if (addBtn) addBtn.disabled = selectedIds.size === 0;
+        if (processBtn) {
+          processBtn.disabled = selectedIds.size === 0;
+          const selectedCountEl = document.getElementById('selectedCount');
+          if (selectedCountEl) {
+            selectedCountEl.textContent = String(selectedIds.size);
+          } else {
+            processBtn.textContent = `Process Selected Videos (${selectedIds.size})`;
+          }
+        }
+      });
+    });
+  }
+
+  processSelectedPlaylistVideos() {
+    this.addSelectedPlaylistVideosToQueue({ autoStart: true });
+  }
+
+  addSelectedPlaylistVideosToQueue(options = {}) {
+    const autoStart = !!options.autoStart;
+    const selectedIds = this.state.aiVideo.selectedPlaylistVideoIds || new Set();
+    if (!selectedIds.size) {
+      this.showToast('Select videos first');
+      return;
+    }
+    const selectedUrls = (this.state.aiVideo.playlistVideos || [])
+      .filter((v) => selectedIds.has(String(v.id || '')))
+      .map((v) => String(v.url || '').trim())
+      .filter(Boolean);
+    if (!selectedUrls.length) {
+      this.showToast('No valid video URLs selected');
+      return;
+    }
+    chrome.runtime.sendMessage({ type: 'AI_VIDEO_SET_QUEUE', urls: selectedUrls }, (response) => {
+      if (response?.success) {
+        this.showToast(`Added ${selectedUrls.length} videos to queue`);
+        this.refreshServiceStatus();
+        if (autoStart) {
+          this.controlAIVideoProcessing('start');
+        }
+      } else {
+        this.showToast(response?.error || 'Failed to save selected videos');
+      }
+    });
+  }
+
+  sendChannelMessage(content, origin = 'aivi-services') {
+    const channelId = this.state.selectedChannel;
+    if (!channelId) {
+      this.showToast('Select a channel first in Central tab');
+      return false;
+    }
+    chrome.runtime.sendMessage(
+      {
+        type: 'BROADCAST_MESSAGE',
+        channel: channelId,
+        content,
+        senderId: this.state.agentId || undefined,
+        metadata: {
+          senderId: this.state.agentId || undefined,
+          origin,
+        },
+      },
+      (response) => {
+        if (response?.success) {
+          this.showToast('Sent to channel');
+        } else {
+          this.showToast(response?.error || 'Failed to send to channel');
+        }
+      }
+    );
+    return true;
+  }
+
+  sendSelectedUrlsToChannel() {
+    const selectedIds = this.state.aiVideo.selectedPlaylistVideoIds || new Set();
+    let urls = [];
+    if (selectedIds.size > 0) {
+      urls = (this.state.aiVideo.playlistVideos || [])
+        .filter((v) => selectedIds.has(String(v.id || '')))
+        .map((v) => String(v.url || '').trim())
+        .filter(Boolean);
+    }
+    if (urls.length === 0) {
+      urls = (this.state.aiVideo.queue || []).map((u) => String(u || '').trim()).filter(Boolean);
+    }
+    if (urls.length === 0) {
+      this.showToast('No selected or queued URLs to send');
+      return;
+    }
+    const content = `TNF AIVI: YouTube URLs\n\n${urls.join('\n')}`;
+    this.sendChannelMessage(content, 'aivi-services-urls');
+  }
+
+  sendRecentAnalysesToChannel() {
+    chrome.runtime.sendMessage({ type: 'AI_VIDEO_GET_HISTORY' }, (response) => {
+      const reports = response?.success && Array.isArray(response.reports) ? response.reports : [];
+      if (!reports.length) {
+        this.showToast('No analyses in history yet');
+        return;
+      }
+      const top = reports.slice(0, 5);
+      const sections = top.map((r, i) => {
+        const title = String(r?.title || 'Untitled');
+        const url = String(r?.url || '');
+        const level = String(r?.processingLevel || 'ai_studio');
+        const summary = String(r?.summary || r?.content || '')
+          .replace(/\s+/g, ' ')
+          .trim()
+          .slice(0, 800);
+        return `${i + 1}. ${title}\nLevel: ${level}\nURL: ${url}\nSummary: ${summary || 'No summary available.'}`;
+      });
+      const content = `TNF AIVI: Recent Analyses (latest ${top.length})\n\n${sections.join('\n\n')}`;
+      this.sendChannelMessage(content, 'aivi-services-analysis');
+    });
   }
 
   async createAIVideoPlaylist() {
@@ -1112,7 +1492,12 @@ class FuseConnectPopup {
           this.showToast('Playlist created');
           this.refreshAIVideoPlaylists();
         } else {
-          this.showToast(response?.error || 'Failed to create playlist');
+          const error = String(response?.error || 'Failed to create playlist');
+          if (error.includes('Not authenticated') || error.includes('Quota Protection')) {
+            this.handleAIStudioAuth();
+          } else {
+            this.showToast(error);
+          }
         }
       }
     );
@@ -1148,19 +1533,21 @@ class FuseConnectPopup {
 
   addSingleVideoToQueue() {
     const input = document.getElementById('ai-video-single-url');
-    const queueInput = document.getElementById('ai-video-queue-input');
-    if (!input || !queueInput) return;
+    if (!input) return;
     const url = String(input.value || '').trim();
     if (!url) return;
-    const lines = String(queueInput.value || '')
-      .split('\n')
-      .map((line) => line.trim())
-      .filter(Boolean);
-    if (!lines.includes(url)) lines.unshift(url);
-    queueInput.value = lines.join('\n');
-    input.value = '';
-    this.updateSingleVideoPreview();
-    this.showToast('Added single video to queue editor');
+    const existing = Array.isArray(this.state.aiVideo.queue) ? [...this.state.aiVideo.queue] : [];
+    if (!existing.includes(url)) existing.unshift(url);
+    chrome.runtime.sendMessage({ type: 'AI_VIDEO_SET_QUEUE', urls: existing }, (response) => {
+      if (response?.success) {
+        input.value = '';
+        this.updateSingleVideoPreview();
+        this.showToast('Added single video');
+        this.refreshServiceStatus();
+      } else {
+        this.showToast(response?.error || 'Failed to add single video');
+      }
+    });
   }
 
   dedupeQueueText() {
@@ -1253,9 +1640,16 @@ class FuseConnectPopup {
     const statusEl = document.getElementById('service-ai-studio-status');
     const statusDot = statusEl?.querySelector('.status-dot');
     if (statusDot) {
-      const connected = this.state.aiVideo.account === 'Authenticated';
+      const account = String(this.state.aiVideo.account || 'None').trim();
+      const connected = account !== '' && account !== 'None';
       statusDot.className = `status-dot ${connected ? 'connected' : 'disconnected'}`;
     }
+    const authState = document.getElementById('ai-video-auth-state');
+    if (authState) {
+      const account = String(this.state.aiVideo.account || 'None').trim();
+      authState.textContent = account !== 'None' && account ? account : 'Not authenticated';
+    }
+    this.updateAIVideoChannelTarget();
 
     const pState = this.state.aiVideo.processingState || {};
     const processingStatusEl = document.getElementById('ai-video-processing-status');
@@ -1279,6 +1673,17 @@ class FuseConnectPopup {
     if (pauseBtn) pauseBtn.disabled = !pState.isProcessing || !!pState.isPaused;
     if (resumeBtn) resumeBtn.disabled = !pState.isProcessing || !pState.isPaused;
     if (stopBtn) stopBtn.disabled = !pState.isProcessing;
+  }
+
+  updateAIVideoChannelTarget() {
+    const targetEl = document.getElementById('ai-video-channel-target');
+    if (!targetEl) return;
+    const selected = String(this.state.selectedChannel || '').trim();
+    if (!selected) {
+      targetEl.textContent = 'Channel target: none selected (set in Central tab)';
+      return;
+    }
+    targetEl.textContent = `Channel target: ${this.getChannelName(selected)}`;
   }
 
   async refreshAIVideoStats() {
@@ -1337,7 +1742,10 @@ class FuseConnectPopup {
     chrome.storage.local.get(['processingLevel'], (result) => {
       this.state.aiVideo.processingLevel = result.processingLevel || 'ai_studio';
       const processingLevelInput = document.getElementById('ai-video-processing-level');
-      if (processingLevelInput) processingLevelInput.value = this.state.aiVideo.processingLevel;
+      if (processingLevelInput) {
+        processingLevelInput.value = this.state.aiVideo.processingLevel;
+        this.updateProcessingLevelDescription();
+      }
     });
   }
 
@@ -1399,6 +1807,17 @@ class FuseConnectPopup {
             this.state.selectedChannel = this.state.settings.popupSelectedChannel;
           }
 
+          const aiviSegmentDuration = document.getElementById('aivi-segment-duration-settings');
+          if (aiviSegmentDuration)
+            aiviSegmentDuration.value = String(this.state.settings.aiviSegmentDuration || 45);
+          const aiviConcurrent = document.getElementById('aivi-concurrent-processes');
+          if (aiviConcurrent)
+            aiviConcurrent.value = String(this.state.settings.aiviConcurrentProcesses || 1);
+          const aiviAutoOpen = document.getElementById('aivi-auto-open-notebook');
+          if (aiviAutoOpen) aiviAutoOpen.checked = !!this.state.settings.aiviAutoOpenNotebook;
+          const aiviAutoAudio = document.getElementById('aivi-auto-audio-overview');
+          if (aiviAutoAudio) aiviAutoAudio.checked = !!this.state.settings.aiviAutoAudioOverview;
+
           this.updateManagedSitesList();
         }
         resolve();
@@ -1407,7 +1826,28 @@ class FuseConnectPopup {
   }
 
   async saveSettings() {
+    this.state.settings.aiviSegmentDuration = Math.max(
+      1,
+      Math.min(120, Number(document.getElementById('aivi-segment-duration-settings')?.value || 45))
+    );
+    this.state.settings.aiviConcurrentProcesses = 1;
+    this.state.settings.aiviAutoOpenNotebook =
+      !!document.getElementById('aivi-auto-open-notebook')?.checked;
+    this.state.settings.aiviAutoAudioOverview = !!document.getElementById(
+      'aivi-auto-audio-overview'
+    )?.checked;
+
     await chrome.storage.local.set({ fuse_settings: this.state.settings });
+    await chrome.storage.local.set({
+      segmentDuration: this.state.settings.aiviSegmentDuration,
+      concurrentProcesses: this.state.settings.aiviConcurrentProcesses,
+      preferences: {
+        segmentDuration: this.state.settings.aiviSegmentDuration,
+        concurrentProcesses: this.state.settings.aiviConcurrentProcesses,
+        autoOpenNotebook: this.state.settings.aiviAutoOpenNotebook,
+        autoAudioOverview: this.state.settings.aiviAutoAudioOverview,
+      },
+    });
     chrome.runtime.sendMessage(
       {
         type: 'SET_AUTONOMY_SETTINGS',
@@ -1420,6 +1860,24 @@ class FuseConnectPopup {
       }
     );
     this.showToast('Settings saved!');
+  }
+
+  async refreshAIVideoAccountSettings() {
+    const settings = await chrome.storage.local.get(['userProfile', 'firstAuthAt']);
+    const profile = settings.userProfile || {};
+    const email = String(profile.email || this.state.aiVideo.account || '').trim();
+    const emailEl = document.getElementById('settingsEmail');
+    if (emailEl) emailEl.textContent = email || '-';
+    const tierEl = document.getElementById('settingsTier');
+    if (tierEl) tierEl.textContent = 'FREE';
+    const memberSinceRaw = Number(profile.createdAt || settings.firstAuthAt || 0);
+    const memberSinceEl = document.getElementById('settingsMemberSince');
+    if (memberSinceEl) {
+      memberSinceEl.textContent =
+        Number.isFinite(memberSinceRaw) && memberSinceRaw > 0
+          ? new Date(memberSinceRaw).toLocaleDateString()
+          : '-';
+    }
   }
 
   setupMessageListener() {
@@ -1866,6 +2324,7 @@ class FuseConnectPopup {
         ? `Channel: ${this.getChannelName(this.state.selectedChannel)}`
         : 'No channel selected';
     }
+    this.updateAIVideoChannelTarget();
 
     if (!stream) return;
 

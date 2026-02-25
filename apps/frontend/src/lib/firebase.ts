@@ -13,34 +13,60 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
+const isPlaceholder = (value?: string): boolean => {
+  if (!value) return true;
+  return /\$\{[^}]+\}/.test(value);
+};
+
+const isLikelyFirebaseApiKey = (value?: string): boolean => {
+  if (!value) return false;
+  const key = value.trim();
+  // Most Firebase Web API keys begin with AIza and are ~39 chars.
+  return /^AIza[0-9A-Za-z_-]{20,}$/.test(key);
+};
+
+const hasUsableFirebaseConfig =
+  !isPlaceholder(firebaseConfig.apiKey) &&
+  !isPlaceholder(firebaseConfig.authDomain) &&
+  !isPlaceholder(firebaseConfig.projectId) &&
+  isLikelyFirebaseApiKey(firebaseConfig.apiKey);
+
 // Sanity check for Firebase API Key
-if (firebaseConfig.apiKey && firebaseConfig.apiKey !== '${VITE_FIREBASE_API_KEY}') {
+if (hasUsableFirebaseConfig) {
   const key = firebaseConfig.apiKey;
-  if (key.length < 30) {
-    console.error(
-      `[The New Fuse] Firebase API Key seems too short (${key.length} chars). Check Railway variables.`
+  // Only log this once in production to reduce noise
+  if (import.meta.env.DEV) {
+    console.log(
+      `[The New Fuse] Firebase config detected (Key starts with: ${key.substring(0, 8)}...)`
     );
-  } else {
-    // Only log this once in production to reduce noise
-    if (import.meta.env.DEV) {
-      console.log(
-        `[The New Fuse] Firebase config detected (Key starts with: ${key.substring(0, 8)}...)`
-      );
-    }
   }
 } else {
-  const isEnvPlaceholder = firebaseConfig.apiKey === '${VITE_FIREBASE_API_KEY}';
   console.error(
-    `[The New Fuse] Firebase API Key is ${isEnvPlaceholder ? 'unresolved placeholder' : 'missing'}! Auth will fail. ` +
-    'Action Required: Set VITE_FIREBASE_API_KEY in Railway environment variables and redeploy.'
+    '[The New Fuse] Firebase config missing/invalid. Skipping Firebase initialization on this build. ' +
+      'Set valid VITE_FIREBASE_* values in deployment env to enable Firebase auth.'
   );
 }
 
-// Initialize Firebase (with hot-reload protection)
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+// On connect subdomain we intentionally avoid hard Firebase boot requirements.
+const isConnectHost =
+  typeof window !== 'undefined' &&
+  /^connect\.thenewfuse\.com$/i.test(String(window.location.hostname || ''));
 
-// Initialize Auth
-export const auth = getAuth(app);
+let app: FirebaseApp | null = null;
+try {
+  if (!isConnectHost && hasUsableFirebaseConfig) {
+    app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+  } else if (import.meta.env.DEV && isConnectHost) {
+    console.warn('[The New Fuse] Skipping Firebase initialization on connect subdomain.');
+  }
+} catch (error) {
+  console.error('[The New Fuse] Firebase initializeApp failed:', error);
+}
+
+// Initialize Auth (safe fallback keeps app usable even when Firebase is misconfigured)
+export const auth = app
+  ? getAuth(app)
+  : (null as unknown as ReturnType<typeof getAuth>);
 
 // Initialize Firestore with proper error handling and lazy registration protection
 let db: Firestore;
@@ -61,9 +87,11 @@ const initializeDB = (currentApp: FirebaseApp): Firestore | undefined => {
 };
 
 try {
-  db = initializeDB(app) as Firestore;
-} catch (error) {
-  // Silent catch
+  if (app) {
+    db = initializeDB(app) as Firestore;
+  }
+} catch (_error) {
+  // Keep optional
 }
 
 export { db };

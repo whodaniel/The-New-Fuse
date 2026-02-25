@@ -64,6 +64,23 @@ src/
 
 ## 🚀 Setup & Installation
 
+## AIVI In TNF
+
+The full original `ai-studio-automator` codebase is integrated in this app at:
+
+`apps/chrome-extension/aivi`
+
+Use it through TNF-wired scripts:
+
+```bash
+# from repo root
+pnpm run tnf:aivi:inventory
+pnpm run tnf:aivi:docs:index
+pnpm run tnf:aivi:backend:install
+pnpm run tnf:aivi:backend:start
+pnpm run tnf:aivi:cli:status
+```
+
 ### Prerequisites
 
 - Node.js 18+
