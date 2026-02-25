@@ -10,13 +10,6 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 
 WORKDIR /app
 
-# Accept Firebase environment variables as build args
-ARG VITE_FIREBASE_API_KEY
-ARG VITE_FIREBASE_AUTH_DOMAIN
-ARG VITE_FIREBASE_PROJECT_ID
-ARG VITE_FIREBASE_STORAGE_BUCKET
-ARG VITE_FIREBASE_MESSAGING_SENDER_ID
-ARG VITE_FIREBASE_APP_ID
 ARG VITE_TURNSTILE_SITE_KEY
 ARG VITE_AUTH_REQUIRE_TURNSTILE
 ARG VITE_API_GATEWAY_URL
@@ -56,9 +49,6 @@ ENV VITE_API_GATEWAY_URL=$VITE_API_GATEWAY_URL
 ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL
 ENV VITE_SUPABASE_ANON_KEY=$VITE_SUPABASE_ANON_KEY
 ENV NODE_OPTIONS=--max-old-space-size=4096
-
-# Firebase configuration is loaded from .env.production which is committed to the repo
-# Do NOT set empty ENV vars here as they override .env.production values
 
 # Build foundational packages first to ensure they're available
 # This avoids Turbo cache issues in fresh Docker builds

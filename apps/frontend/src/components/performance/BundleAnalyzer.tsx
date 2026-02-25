@@ -71,12 +71,12 @@ const BundleAnalyzer: React.FC = () => {
         lastLoaded: Date.now() - 3000,
       },
       {
-        name: 'firebase-chunk.js',
-        size: 320 * 1024,
-        gzipSize: 98 * 1024,
-        loadingTime: 200,
+        name: 'supabase-chunk.js',
+        size: 180 * 1024,
+        gzipSize: 54 * 1024,
+        loadingTime: 130,
         chunkType: 'vendor',
-        dependencies: ['firebase', '@firebase/app', '@firebase/auth'],
+        dependencies: ['@supabase/supabase-js'],
         lastLoaded: Date.now() - 4000,
       },
       {

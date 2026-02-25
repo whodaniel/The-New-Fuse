@@ -1,4 +1,4 @@
-import { auth } from '@/lib/firebase';
+import { hasSupabaseConfig, supabase } from '@/lib/supabase';
 import axios, { type AxiosRequestConfig } from 'axios';
 import { toast } from 'sonner';
 
@@ -39,14 +39,17 @@ const sanitizeErrorMessage = (input: unknown): string => {
 // Add a request interceptor to add the auth token to every request
 api.interceptors.request.use(
   async (config) => {
-    // Prefer Firebase token when available, but always fall back to stored JWT.
+    // Prefer Supabase token when available, then fall back to stored JWT.
     let bearerToken: string | null = null;
 
-    if (auth?.currentUser) {
+    if (hasSupabaseConfig && supabase) {
       try {
-        bearerToken = await auth.currentUser.getIdToken();
+        const { data, error } = await supabase.auth.getSession();
+        if (!error) {
+          bearerToken = data?.session?.access_token || null;
+        }
       } catch (error) {
-        console.error('Error getting Firebase auth token:', error);
+        console.error('Error getting Supabase auth token:', error);
       }
     }
 

@@ -1,8 +1,6 @@
-import { signInWithPopup } from 'firebase/auth';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import AuthContext, { User } from '../AuthContext';
 import { API_ENDPOINTS } from '../config/api';
-import { auth as firebaseAuth, googleProvider } from '../lib/firebase';
 import { hasSupabaseConfig, supabase } from '../lib/supabase';
 
 const AUTH_TOKEN_KEY = 'auth_token';
@@ -413,15 +411,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     try {
       if (!hasSupabaseConfig || !supabase) {
-        const googleResult = await signInWithPopup(firebaseAuth, googleProvider);
-        const idToken = await googleResult.user.getIdToken();
-        return await exchangeApiAuth(authEndpoints.google, { idToken }, 'google');
+        throw new Error('Supabase OAuth is not configured');
       }
 
       const { error: oauthError } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/login`,
+          redirectTo: `${window.location.origin}/auth/callback`,
         },
       });
 
@@ -435,7 +431,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(false);
       throw err;
     }
-  }, [authEndpoints.google, exchangeApiAuth]);
+  }, []);
 
   useEffect(() => {
     let isMounted = true;

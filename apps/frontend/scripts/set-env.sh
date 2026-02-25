@@ -7,13 +7,9 @@ BACKEND_URL=$(gcloud run services describe api --platform managed --region us-ce
 # IMPORTANT: Set these values from your secure environment variables or secrets manager
 cat > .env.production << EOL
 VITE_API_URL=$BACKEND_URL
-VITE_FIREBASE_API_KEY=${VITE_FIREBASE_API_KEY}
-VITE_FIREBASE_AUTH_DOMAIN=${VITE_FIREBASE_AUTH_DOMAIN}
-VITE_FIREBASE_PROJECT_ID=${VITE_FIREBASE_PROJECT_ID}
-VITE_FIREBASE_STORAGE_BUCKET=${VITE_FIREBASE_STORAGE_BUCKET}
-VITE_FIREBASE_MESSAGING_SENDER_ID=${VITE_FIREBASE_MESSAGING_SENDER_ID}
-VITE_FIREBASE_APP_ID=${VITE_FIREBASE_APP_ID}
+VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
 EOL
 
 echo "✅ Environment file created at .env.production"
-echo "⚠️  Make sure Firebase environment variables are set before running this script"
+echo "⚠️  Make sure Supabase environment variables are set before running this script"

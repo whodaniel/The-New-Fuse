@@ -39,7 +39,8 @@ const ENV_VARS: EnvVarConfig[] = [
     name: 'VITE_API_URL',
     required: false,
     defaultValue: 'http://localhost:3001',
-    validator: (val) => val.startsWith('http://') || val.startsWith('https://') || val.startsWith('/'),
+    validator: (val) =>
+      val.startsWith('http://') || val.startsWith('https://') || val.startsWith('/'),
     description: 'API server URL',
   },
   {
@@ -93,38 +94,6 @@ const ENV_VARS: EnvVarConfig[] = [
     name: 'VITE_ALLOWED_ORIGINS',
     required: false,
     description: 'Comma-separated list of allowed origins',
-  },
-
-  // Firebase Configuration (Optional)
-  {
-    name: 'VITE_FIREBASE_API_KEY',
-    required: false,
-    description: 'Firebase API key',
-  },
-  {
-    name: 'VITE_FIREBASE_AUTH_DOMAIN',
-    required: false,
-    description: 'Firebase auth domain',
-  },
-  {
-    name: 'VITE_FIREBASE_PROJECT_ID',
-    required: false,
-    description: 'Firebase project ID',
-  },
-  {
-    name: 'VITE_FIREBASE_STORAGE_BUCKET',
-    required: false,
-    description: 'Firebase storage bucket',
-  },
-  {
-    name: 'VITE_FIREBASE_MESSAGING_SENDER_ID',
-    required: false,
-    description: 'Firebase messaging sender ID',
-  },
-  {
-    name: 'VITE_FIREBASE_APP_ID',
-    required: false,
-    description: 'Firebase app ID',
   },
 
   // Supabase Configuration (Optional)
@@ -185,11 +154,16 @@ const ENV_VARS: EnvVarConfig[] = [
 /**
  * Validates a single environment variable
  */
-function validateEnvVar(config: EnvVarConfig): { valid: boolean; error?: string; warning?: string } {
+function validateEnvVar(config: EnvVarConfig): {
+  valid: boolean;
+  error?: string;
+  warning?: string;
+} {
   // For frontend, check import.meta.env
-  const value = typeof import.meta !== 'undefined' && import.meta.env
-    ? import.meta.env[config.name] as string | undefined
-    : undefined;
+  const value =
+    typeof import.meta !== 'undefined' && import.meta.env
+      ? (import.meta.env[config.name] as string | undefined)
+      : undefined;
 
   // Check if required variable is missing
   if (config.required && !value) {
@@ -239,32 +213,11 @@ export function validateEnvironment(): EnvValidationResult {
     }
   }
 
-  // Check for complete Firebase configuration
-  const firebaseVars = [
-    'VITE_FIREBASE_API_KEY',
-    'VITE_FIREBASE_AUTH_DOMAIN',
-    'VITE_FIREBASE_PROJECT_ID',
-    'VITE_FIREBASE_STORAGE_BUCKET',
-    'VITE_FIREBASE_MESSAGING_SENDER_ID',
-    'VITE_FIREBASE_APP_ID',
-  ];
-
-  const hasAnyFirebase = firebaseVars.some(varName =>
-    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env[varName]
-  );
-  const hasAllFirebase = firebaseVars.every(varName =>
-    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env[varName]
-  );
-
-  if (hasAnyFirebase && !hasAllFirebase) {
-    warnings.push(
-      '⚠️  Incomplete Firebase configuration. All Firebase variables must be set together.'
-    );
-  }
-
   // Check for complete Supabase configuration
-  const hasSupabaseUrl = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_SUPABASE_URL;
-  const hasSupabaseKey = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_SUPABASE_ANON_KEY;
+  const hasSupabaseUrl =
+    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_SUPABASE_URL;
+  const hasSupabaseKey =
+    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_SUPABASE_ANON_KEY;
 
   if ((hasSupabaseUrl || hasSupabaseKey) && !(hasSupabaseUrl && hasSupabaseKey)) {
     warnings.push(
@@ -273,22 +226,25 @@ export function validateEnvironment(): EnvValidationResult {
   }
 
   // Production-specific checks
-  const isProduction = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.MODE === 'production';
+  const isProduction =
+    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.MODE === 'production';
 
   if (isProduction) {
-    const apiUrl = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL as string | undefined;
-    const wsUrl = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_WS_URL as string | undefined;
+    const apiUrl =
+      typeof import.meta !== 'undefined' &&
+      import.meta.env &&
+      (import.meta.env.VITE_API_URL as string | undefined);
+    const wsUrl =
+      typeof import.meta !== 'undefined' &&
+      import.meta.env &&
+      (import.meta.env.VITE_WS_URL as string | undefined);
 
     if (apiUrl && !apiUrl.startsWith('https://') && !apiUrl.startsWith('/')) {
-      warnings.push(
-        '⚠️  VITE_API_URL should use HTTPS in production for security.'
-      );
+      warnings.push('⚠️  VITE_API_URL should use HTTPS in production for security.');
     }
 
     if (wsUrl && !wsUrl.startsWith('wss://')) {
-      warnings.push(
-        '⚠️  VITE_WS_URL should use WSS (secure WebSocket) in production.'
-      );
+      warnings.push('⚠️  VITE_WS_URL should use WSS (secure WebSocket) in production.');
     }
   }
 
@@ -308,14 +264,14 @@ export function validateEnvironmentOrThrow(): void {
   // Print warnings
   if (result.warnings.length > 0) {
     console.log('⚠️  Warnings:\n');
-    result.warnings.forEach(warning => console.log(warning));
+    result.warnings.forEach((warning) => console.log(warning));
     console.log('');
   }
 
   // Throw error if validation failed
   if (!result.isValid) {
     console.error('❌ Environment validation failed!\n');
-    result.errors.forEach(error => console.error(error));
+    result.errors.forEach((error) => console.error(error));
     console.error('\n💡 Tip: Copy .env.example to .env.local and fill in the required values.\n');
     throw new Error('Environment validation failed');
   }
@@ -324,5 +280,5 @@ export function validateEnvironmentOrThrow(): void {
 }
 
 // Export for testing
-export type { EnvVarConfig };
 export { ENV_VARS };
+export type { EnvVarConfig };

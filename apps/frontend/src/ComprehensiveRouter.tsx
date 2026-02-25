@@ -924,6 +924,7 @@ export default function ComprehensiveRouter() {
               <Route path="/auth/sso" element={<SSOPage />} />
               <Route path="/auth/google-callback" element={<GoogleCallbackPage />} />
               <Route path="/auth/google/callback" element={<GoogleCallbackPage />} />
+              <Route path="/auth/callback" element={<OAuthCallbackPage />} />
               <Route path="/auth/oauth-callback" element={<OAuthCallbackPage />} />
 
               {/* Enhanced Landing Routes */}

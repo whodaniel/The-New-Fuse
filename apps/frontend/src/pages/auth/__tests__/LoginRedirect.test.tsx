@@ -4,12 +4,6 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, MockedFunction, vi } from 'vitest';
 import Login from '../Login';
 
-// Mock firebase to prevent crash
-vi.mock('../../../lib/firebase', () => ({
-  auth: {},
-  googleProvider: {},
-}));
-
 // Mock AuthProvider directly as that's what Login imports
 vi.mock('@/providers/AuthProvider', () => ({
   useAuth: vi.fn(),

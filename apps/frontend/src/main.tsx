@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { App } from './App';
 import { ToastProvider } from './components/ui/toast';
 import { AuthProvider } from './providers/AuthProvider';
-// Initialize Firebase is already handled by import './lib/firebase'
+// Auth runtime is initialized via Supabase in hooks/providers.
 import './styles/globals.css'; // Re-add global CSS import
 
 const CHUNK_RELOAD_KEY = '__tnf_chunk_reload_once__';

@@ -122,14 +122,7 @@ export default defineConfig(({ mode }) => {
         'scheduler',
         '@types/react',
         '@types/react-dom',
-        'firebase',
-        '@firebase/app',
-        '@firebase/firestore',
-        '@firebase/auth',
-        '@firebase/util',
-        '@firebase/component',
       ],
-      // Ensure proper module resolution for Firebase packages
       mainFields: ['module', 'main'],
       conditions: ['import', 'module', 'browser', 'default'],
       alias: {
@@ -187,12 +180,6 @@ export default defineConfig(({ mode }) => {
     publicDir: 'public',
     optimizeDeps: {
       include: [
-        'firebase/app',
-        'firebase/auth',
-        'firebase/firestore',
-        '@firebase/app',
-        '@firebase/auth',
-        '@firebase/firestore',
         'framer-motion', // Pre-bundle framer-motion to avoid circular dependency issues
         'react',
         'react-dom',
@@ -273,11 +260,6 @@ export default defineConfig(({ mode }) => {
               id.includes('node_modules/scheduler/')
             ) {
               return 'react-vendor';
-            }
-
-            // Firebase - large auth library, separate chunk
-            if (id.includes('node_modules/firebase/') || id.includes('node_modules/@firebase/')) {
-              return 'firebase';
             }
 
             // Monaco Editor - very large code editor, lazy loaded
@@ -431,9 +413,6 @@ export default defineConfig(({ mode }) => {
       port: parseInt(env.VITE_PREVIEW_PORT || '4173'),
       strictPort: false,
     },
-    // Force Vite to bundle Firebase internal packages instead of treating them as external
-    ssr: {
-      noExternal: ['firebase', /^@firebase\//],
-    },
+    ssr: {},
   };
 });

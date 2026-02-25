@@ -24,13 +24,7 @@ class DynamicImportManager {
     moduleId: string,
     options: ImportOptions = {}
   ): Promise<T> {
-    const { 
-      timeout = 10000, 
-      retries = 3, 
-      retryDelay = 1000, 
-      onError,
-      preload = false 
-    } = options;
+    const { timeout = 10000, retries = 3, retryDelay = 1000, onError, preload = false } = options;
 
     // Return cached promise if available
     if (this.importCache.has(moduleId)) {
@@ -68,18 +62,18 @@ class DynamicImportManager {
 
         const importPromise = importFn();
         const result = await Promise.race([importPromise, timeoutPromise]);
-        
+
         return result;
       } catch (error) {
         lastError = error as Error;
         console.warn(`Import attempt ${attempt + 1} failed:`, error);
-        
+
         if (onError) {
           onError(lastError);
         }
 
         if (attempt < retries) {
-          await new Promise(resolve => setTimeout(resolve, retryDelay * (attempt + 1)));
+          await new Promise((resolve) => setTimeout(resolve, retryDelay * (attempt + 1)));
         }
       }
     }
@@ -91,7 +85,7 @@ class DynamicImportManager {
   preloadModule(importFn: () => Promise<ComponentModule>, moduleId: string): void {
     // Add to preloading queue
     this.preloadQueue.push(() => this.dynamicImport(importFn, `preload_${moduleId}`));
-    
+
     // Execute preloading with lower priority
     setTimeout(() => {
       this.dynamicImport(importFn, `preload_${moduleId}`).catch(console.warn);
@@ -99,11 +93,11 @@ class DynamicImportManager {
   }
 
   // Preload multiple modules
-  async preloadModules(imports: Array<{ fn: () => Promise<ComponentModule>; id: string }>): Promise<void> {
-    const preloadPromises = imports.map(({ fn, id }) => 
-      this.preloadModule(fn, id)
-    );
-    
+  async preloadModules(
+    imports: Array<{ fn: () => Promise<ComponentModule>; id: string }>
+  ): Promise<void> {
+    const preloadPromises = imports.map(({ fn, id }) => this.preloadModule(fn, id));
+
     // Execute preloading concurrently but with lower priority
     await Promise.allSettled(preloadPromises);
   }
@@ -163,7 +157,7 @@ const ComponentImports = {
     ReactFlow: () => import('reactflow'),
     Recharts: () => import('recharts'),
     D3: () => import('d3'),
-    Firebase: () => import('firebase'),
+    Supabase: () => import('@supabase/supabase-js'),
   },
 };
 
@@ -172,33 +166,36 @@ export const useDynamicImport = () => {
   const [loadingStates, setLoadingStates] = React.useState<Record<string, boolean>>({});
   const [errorStates, setErrorStates] = React.useState<Record<string, Error | null>>({});
 
-  const importComponent = React.useCallback(async <T extends ComponentModule>(
-    importFn: () => Promise<T>,
-    componentId: string,
-    options: ImportOptions = {}
-  ): Promise<T | null> => {
-    setLoadingStates(prev => ({ ...prev, [componentId]: true }));
-    setErrorStates(prev => ({ ...prev, [componentId]: null }));
+  const importComponent = React.useCallback(
+    async <T extends ComponentModule>(
+      importFn: () => Promise<T>,
+      componentId: string,
+      options: ImportOptions = {}
+    ): Promise<T | null> => {
+      setLoadingStates((prev) => ({ ...prev, [componentId]: true }));
+      setErrorStates((prev) => ({ ...prev, [componentId]: null }));
 
-    try {
-      const component = await dynamicImportManager.dynamicImport(importFn, componentId, options);
-      return component;
-    } catch (error) {
-      const errorObj = error as Error;
-      setErrorStates(prev => ({ ...prev, [componentId]: errorObj }));
-      console.error(`Failed to import component ${componentId}:`, errorObj);
-      return null;
-    } finally {
-      setLoadingStates(prev => ({ ...prev, [componentId]: false }));
-    }
-  }, []);
+      try {
+        const component = await dynamicImportManager.dynamicImport(importFn, componentId, options);
+        return component;
+      } catch (error) {
+        const errorObj = error as Error;
+        setErrorStates((prev) => ({ ...prev, [componentId]: errorObj }));
+        console.error(`Failed to import component ${componentId}:`, errorObj);
+        return null;
+      } finally {
+        setLoadingStates((prev) => ({ ...prev, [componentId]: false }));
+      }
+    },
+    []
+  );
 
-  const preloadComponent = React.useCallback((
-    importFn: () => Promise<ComponentModule>,
-    componentId: string
-  ) => {
-    dynamicImportManager.preloadModule(importFn, componentId);
-  }, []);
+  const preloadComponent = React.useCallback(
+    (importFn: () => Promise<ComponentModule>, componentId: string) => {
+      dynamicImportManager.preloadModule(importFn, componentId);
+    },
+    []
+  );
 
   return {
     importComponent,
@@ -224,10 +221,15 @@ export const withDynamicImport = <P extends object>(
     } catch (error) {
       console.error(`Failed to load component ${componentId}:`, error);
       // Return a fallback component
-      return { 
-        default: () => React.createElement('div', { 
-          className: 'p-4 text-center text-red-600' 
-        }, `Failed to load ${componentId}`) 
+      return {
+        default: () =>
+          React.createElement(
+            'div',
+            {
+              className: 'p-4 text-center text-red-600',
+            },
+            `Failed to load ${componentId}`
+          ),
       };
     }
   });
@@ -249,8 +251,8 @@ export const ConditionalImport = <P extends object>({
   options?: ImportOptions;
   [key: string]: any;
 }) => {
-  const LazyComponent = React.useMemo(() => 
-    withDynamicImport(importFn, componentId, options), 
+  const LazyComponent = React.useMemo(
+    () => withDynamicImport(importFn, componentId, options),
     [importFn, componentId, options]
   );
 
@@ -260,10 +262,14 @@ export const ConditionalImport = <P extends object>({
 
   return React.createElement(
     React.Suspense,
-    { 
-      fallback: React.createElement('div', { 
-        className: 'p-4 text-center' 
-      }, `Loading ${componentId}...`) 
+    {
+      fallback: React.createElement(
+        'div',
+        {
+          className: 'p-4 text-center',
+        },
+        `Loading ${componentId}...`
+      ),
     },
     React.createElement(LazyComponent, props)
   );
@@ -297,7 +303,7 @@ export const analyzeImportImpact = async (importFn: () => Promise<ComponentModul
       Component: ${module.default?.name || 'Unknown'}
       Load Time: ${loadTime.toFixed(2)}ms
       Memory Impact: ${(memoryImpact / 1024 / 1024).toFixed(2)}MB
-      Bundle Size: ${(module.default?.bundleSize || 'Unknown')}
+      Bundle Size: ${module.default?.bundleSize || 'Unknown'}
     `);
 
     return { loadTime, memoryImpact, module };
