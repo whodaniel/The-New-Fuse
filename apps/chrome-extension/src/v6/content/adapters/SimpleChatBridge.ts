@@ -32,6 +32,7 @@ class SimpleChatBridge {
   private callbacks: ChatBridgeCallbacks = {};
   private isWaitingForResponse = false;
   private responseCheckInterval: number | null = null;
+  private responseTimeoutTimer: number | null = null;
   private _sendingGuard = false; // Safety guard for UI lag between click and streaming state
 
   // TNF Transcript polling (Cloudflare DO)
@@ -695,7 +696,7 @@ class SimpleChatBridge {
     }
 
     // Primary path for Gemini-style UIs
-    const modelResponses = document.querySelectorAll('model-response').length;
+    const modelResponses = this.queryAllIncludingShadow('model-response').length;
     if (modelResponses > 0) return modelResponses;
 
     // OpenClaw chat UI fallback
@@ -715,9 +716,7 @@ class SimpleChatBridge {
     if (perplexity > 0) return perplexity;
 
     // Generic assistant-like message fallback
-    const generic = document.querySelectorAll(
-      '[data-message-author-role="assistant"], [class*="assistant-message"], [class*="model-response"]'
-    ).length;
+    const generic = this.getGenericAssistantResponseNodes(true).length;
     return generic;
   }
 
@@ -726,7 +725,7 @@ class SimpleChatBridge {
    */
   getLatestResponse(): string | null {
     // Primary path for Gemini-style UIs
-    const responses = document.querySelectorAll('model-response');
+    const responses = this.queryAllIncludingShadow('model-response');
     if (responses.length > 0) {
       const lastResponse = responses[responses.length - 1];
       const markdown = lastResponse.querySelector('.markdown');
@@ -780,10 +779,13 @@ class SimpleChatBridge {
       if (text) return text;
     }
 
-    // Narrow generic fallback to assistant-role only
-    const generic = document.querySelectorAll('[data-message-author-role="assistant"]');
-    if (generic.length > 0) {
-      return this.extractCleanText(generic[generic.length - 1]);
+    // Generic assistant fallback across regular + shadow DOM.
+    const generic = this.getGenericAssistantResponseNodes(true);
+    for (let i = generic.length - 1; i >= 0; i--) {
+      const text = this.extractCleanText(generic[i]);
+      if (!text) continue;
+      if (this.lastSentText && text.trim() === this.lastSentText.trim()) continue;
+      return text;
     }
 
     return null;
@@ -1086,11 +1088,15 @@ class SimpleChatBridge {
    * ENHANCED: Longer timeout for image/video generation, better content detection
    */
   startWatchingForResponse(responsesBefore: number): void {
+    this.stopWatching();
     this.isWaitingForResponse = true;
     let stableCount = 0;
     let lastContent = '';
     let lastChangeAt = Date.now();
+    const startAt = Date.now();
     const initialContent = this.getLatestResponse() || '';
+    const INACTIVITY_TIMEOUT_MS = 180000;
+    const HARD_TIMEOUT_MS = 600000;
 
     this.responseCheckInterval = window.setInterval(() => {
       const currentResponseCount = this.countModelResponses();
@@ -1151,10 +1157,20 @@ class SimpleChatBridge {
       }
     }, 1000);
 
-    // Timeout after 180 seconds (3 minutes) - enough for image/video generation
-    setTimeout(() => {
+    this.responseTimeoutTimer = window.setInterval(() => {
       if (this.isWaitingForResponse) {
-        console.warn('[SimpleChatBridge] Response timeout (after 180s)');
+        const elapsedMs = Date.now() - startAt;
+        const inactiveMs = Date.now() - lastChangeAt;
+
+        if (elapsedMs < HARD_TIMEOUT_MS && inactiveMs < INACTIVITY_TIMEOUT_MS) {
+          return;
+        }
+
+        const timeoutReason =
+          elapsedMs >= HARD_TIMEOUT_MS
+            ? `hard timeout after ${Math.round(elapsedMs / 1000)}s`
+            : `inactivity timeout after ${Math.round(inactiveMs / 1000)}s`;
+        console.warn(`[SimpleChatBridge] Response timeout (${timeoutReason})`);
         this.stopWatching();
 
         // Even on timeout, try to get whatever response is there
@@ -1170,17 +1186,26 @@ class SimpleChatBridge {
           this.callbacks.onError?.('Response timeout');
         }
       }
-    }, 180000); // 3 minutes
+    }, 1000);
   }
 
   /**
    * Check if the latest response contains media (images, videos)
    */
   private checkForMediaContent(): boolean {
-    const responses = document.querySelectorAll('model-response');
-    if (responses.length === 0) return false;
+    const modelResponses = this.queryAllIncludingShadow('model-response');
+    let lastResponse: Element | null = modelResponses.length
+      ? modelResponses[modelResponses.length - 1]
+      : null;
 
-    const lastResponse = responses[responses.length - 1];
+    if (!lastResponse) {
+      const assistantNodes = this.getGenericAssistantResponseNodes(true);
+      if (assistantNodes.length > 0) {
+        lastResponse = assistantNodes[assistantNodes.length - 1];
+      }
+    }
+
+    if (!lastResponse) return false;
 
     // Check for various media elements
     const hasImage = lastResponse.querySelector('img') !== null;
@@ -1205,6 +1230,10 @@ class SimpleChatBridge {
     if (this.responseCheckInterval) {
       clearInterval(this.responseCheckInterval);
       this.responseCheckInterval = null;
+    }
+    if (this.responseTimeoutTimer) {
+      clearInterval(this.responseTimeoutTimer);
+      this.responseTimeoutTimer = null;
     }
   }
 
@@ -1297,6 +1326,63 @@ class SimpleChatBridge {
     for (const node of filtered) {
       const text = this.extractCleanText(node) || '';
       const signature = `${text.slice(0, 240)}|${text.length}`;
+      bySignature.set(signature, node);
+    }
+
+    return Array.from(bySignature.values());
+  }
+
+  private getGenericAssistantResponseNodes(relaxed: boolean): HTMLElement[] {
+    const strictSelectors = [
+      '[data-message-author-role="assistant"]',
+      '[data-role="assistant"]',
+      '[data-author-role="assistant"]',
+      '[data-testid*="assistant" i]',
+      '[class*="assistant-message" i]',
+      '[class*="assistant-response" i]',
+      '[class*="assistant" i]',
+      '[class*="bot-message" i]',
+      '[class*="bot-response" i]',
+    ];
+
+    const relaxedSelectors = [
+      '[data-testid*="message" i]',
+      '[data-testid*="chat-message" i]',
+      '[class*="message-content" i]',
+      '[class*="message-body" i]',
+      '[class*="markdown" i]',
+      '[role="article"]',
+      'article',
+      'main p',
+    ];
+
+    const selectors = relaxed ? [...strictSelectors, ...relaxedSelectors] : strictSelectors;
+    const candidates: HTMLElement[] = [];
+    const seen = new Set<HTMLElement>();
+
+    for (const selector of selectors) {
+      for (const node of this.queryAllIncludingShadow(selector)) {
+        if (seen.has(node)) continue;
+        seen.add(node);
+        candidates.push(node);
+      }
+    }
+
+    const filtered: HTMLElement[] = [];
+    const bySignature = new Map<string, HTMLElement>();
+    for (const node of candidates) {
+      if (this.isExtensionUiElement(node)) continue;
+      if (!this.isVisible(node)) continue;
+      if (this.isLikelyUserMessageNode(node)) continue;
+      if (this.isLikelyNonConversationNode(node)) continue;
+      const text = this.extractCleanText(node);
+      const hasMedia =
+        node.querySelector(
+          'img, video, canvas, iframe, [data-generated-image], .generated-image'
+        ) !== null;
+      if (!text && !hasMedia) continue;
+      filtered.push(node);
+      const signature = text ? `${text.slice(0, 240)}|${text.length}` : `media:${filtered.length}`;
       bySignature.set(signature, node);
     }
 

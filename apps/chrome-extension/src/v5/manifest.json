@@ -91,7 +91,7 @@
   ],
 
   "oauth2": {
-    "client_id": "637776200146-52ih7qr2o6961mbs5cb3mg6m0ceheu61.apps.googleusercontent.com",
+    "client_id": "637776200146-cv7i98kpfak41kdrm1m1u1alb7rmss8d.apps.googleusercontent.com",
     "scopes": [
       "https://www.googleapis.com/auth/youtube.readonly",
       "https://www.googleapis.com/auth/drive.appdata",

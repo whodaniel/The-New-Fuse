@@ -19,8 +19,8 @@ import type {
 
 const PANEL_MIN_WIDTH = 300;
 const PANEL_MIN_HEIGHT = 200;
-const PANEL_MAX_WIDTH = 600;
-const PANEL_MAX_HEIGHT = 800;
+const PANEL_MAX_WIDTH = 1200;
+const PANEL_MAX_HEIGHT = 1000;
 const COLLAPSED_HEIGHT = 48;
 
 interface FloatingPanelOptions {
@@ -60,6 +60,8 @@ export class EnhancedFloatingPanel {
     startY: 0,
     startWidth: 0,
     startHeight: 0,
+    startPosX: 0,
+    startPosY: 0,
     edge: '',
   };
 
@@ -332,7 +334,8 @@ export class EnhancedFloatingPanel {
         display: flex !important;
         align-items: center !important;
         justify-content: space-between !important;
-        padding: 10px 14px !important;
+        gap: 8px !important;
+        padding: 10px 12px !important;
         background: linear-gradient(90deg, rgba(0,217,255,0.15) 0%, rgba(157,78,221,0.15) 100%) !important;
         border-bottom: 1px solid rgba(0,217,255,0.2) !important;
         cursor: move !important;
@@ -343,6 +346,8 @@ export class EnhancedFloatingPanel {
         display: flex !important;
         align-items: center !important;
         gap: 8px !important;
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
       }
 
       .fcp6-icon {
@@ -364,6 +369,9 @@ export class EnhancedFloatingPanel {
         -webkit-background-clip: text !important;
         -webkit-text-fill-color: transparent !important;
         background-clip: text !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
       }
 
       .fcp6-status-dot {
@@ -385,6 +393,8 @@ export class EnhancedFloatingPanel {
       .fcp6-controls {
         display: flex !important;
         gap: 4px !important;
+        align-items: center !important;
+        flex-shrink: 0 !important;
       }
 
       .fcp6-btn {
@@ -482,72 +492,136 @@ export class EnhancedFloatingPanel {
 
       /* Input area */
       .fcp6-input-area {
-        padding: 10px !important;
-        border-top: 1px solid rgba(255,255,255,0.05) !important;
-        background: rgba(0,0,0,0.2) !important;
+        padding: 10px 12px 12px !important;
+        border-top: 1px solid rgba(0,217,255,0.22) !important;
+        background: linear-gradient(180deg, rgba(13,20,30,0.94) 0%, rgba(9,14,22,0.98) 100%) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.04) !important;
       }
 
       .fcp6-input-row {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) auto !important;
+        gap: 10px !important;
+        align-items: stretch !important;
+      }
+
+      .fcp6-input-shell {
+        flex: 1 !important;
         display: flex !important;
-        gap: 8px !important;
+        align-items: flex-end !important;
+        padding: 6px !important;
+        border: 1px solid rgba(0,217,255,0.28) !important;
+        border-radius: 12px !important;
+        background: linear-gradient(145deg, rgba(3,8,16,0.9), rgba(5,11,20,0.98)) !important;
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.05),
+          0 8px 18px rgba(0,0,0,0.26) !important;
       }
 
       .fcp6-input {
-        flex: 1 !important;
-        padding: 10px 12px !important;
-        border: 1px solid rgba(0,217,255,0.2) !important;
+        width: 100% !important;
+        min-height: 42px !important;
+        max-height: 120px !important;
+        padding: 8px 10px !important;
+        border: none !important;
         border-radius: 8px !important;
-        background: rgba(0,0,0,0.3) !important;
-        color: #fff !important;
+        background: transparent !important;
+        color: rgba(255,255,255,0.96) !important;
         font-size: 13px !important;
         outline: none !important;
+        line-height: 1.35 !important;
         resize: none !important;
       }
 
+      .fcp6-input-shell:focus-within {
+        border-color: rgba(0,217,255,0.65) !important;
+        box-shadow:
+          0 0 0 2px rgba(0,217,255,0.2),
+          0 0 24px rgba(0,217,255,0.14),
+          inset 0 1px 0 rgba(255,255,255,0.07) !important;
+      }
+
       .fcp6-input:focus {
-        border-color: #00D9FF !important;
-        box-shadow: 0 0 0 2px rgba(0,217,255,0.2) !important;
+        box-shadow: none !important;
+      }
+
+      .fcp6-input::placeholder {
+        color: rgba(196,210,230,0.62) !important;
       }
 
       .fcp6-send-btn {
-        padding: 10px 16px !important;
+        min-width: 46px !important;
+        min-height: 46px !important;
+        padding: 0 !important;
         border: none !important;
-        border-radius: 8px !important;
-        background: linear-gradient(135deg, #00D9FF 0%, #9D4EDD 100%) !important;
+        border-radius: 12px !important;
+        background: linear-gradient(140deg, #00D9FF 0%, #00A3FF 45%, #7A5CFF 100%) !important;
         color: #fff !important;
-        font-weight: 600 !important;
+        font-weight: 700 !important;
+        font-size: 16px !important;
+        line-height: 1 !important;
         cursor: pointer !important;
         transition: all 0.2s ease !important;
       }
 
       .fcp6-send-btn:hover {
-        box-shadow: 0 0 20px rgba(0,217,255,0.5) !important;
+        box-shadow: 0 0 24px rgba(0,217,255,0.45) !important;
         transform: translateY(-1px) !important;
       }
 
-      .fcp6-inject-btn {
-        padding: 10px !important;
-        border: none !important;
-        border-radius: 8px !important;
-        background: linear-gradient(135deg, #00FF88 0%, #00D9FF 100%) !important;
-        color: #fff !important;
-        font-size: 16px !important;
-        cursor: pointer !important;
-        transition: all 0.2s ease !important;
-      }
-
-      .fcp6-inject-btn:hover {
-        box-shadow: 0 0 20px rgba(0,255,136,0.5) !important;
-        transform: translateY(-1px) !important;
+      .fcp6-send-btn:active {
+        transform: translateY(0) !important;
       }
 
       .fcp6-input-hint {
-        margin-top: 6px !important;
+        margin-top: 8px !important;
         font-size: 10px !important;
-        color: rgba(255,255,255,0.5) !important;
+        color: rgba(196,210,230,0.62) !important;
         display: flex !important;
         align-items: center !important;
-        gap: 4px !important;
+        justify-content: space-between !important;
+        gap: 8px !important;
+        flex-wrap: wrap !important;
+      }
+
+      .fcp6-input-action {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        padding: 4px 8px !important;
+        border: 1px solid rgba(0,255,136,0.32) !important;
+        border-radius: 8px !important;
+        background: rgba(0,255,136,0.12) !important;
+        color: #86ffd0 !important;
+        font-size: 10px !important;
+        line-height: 1 !important;
+      }
+
+      .fcp6-input-action:hover {
+        background: rgba(0,255,136,0.2) !important;
+        border-color: rgba(0,255,136,0.44) !important;
+      }
+
+      .fcp6-shortcut-hint {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        margin-left: auto !important;
+      }
+
+      .fcp6-shortcut-key {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-width: 18px !important;
+        height: 16px !important;
+        padding: 0 5px !important;
+        border-radius: 5px !important;
+        border: 1px solid rgba(255,255,255,0.22) !important;
+        background: rgba(255,255,255,0.08) !important;
+        color: rgba(255,255,255,0.88) !important;
+        font-size: 9px !important;
+        line-height: 1 !important;
       }
 
       /* Chat card */
@@ -613,6 +687,29 @@ export class EnhancedFloatingPanel {
       .fcp6-channel-members {
         font-size: 11px !important;
         color: rgba(255,255,255,0.4) !important;
+      }
+
+      .fcp6-channel-actions {
+        display: flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+        flex-shrink: 0 !important;
+      }
+
+      .fcp6-channel-delete {
+        width: 24px !important;
+        height: 24px !important;
+        border-radius: 999px !important;
+        border: 1px solid rgba(255,51,102,0.42) !important;
+        background: rgba(255,51,102,0.18) !important;
+        color: #ff5f86 !important;
+        font-weight: 700 !important;
+        line-height: 1 !important;
+      }
+
+      .fcp6-channel-delete:hover {
+        background: rgba(255,51,102,0.28) !important;
+        color: #ffd9e4 !important;
       }
 
       /* Agent card */
@@ -708,30 +805,78 @@ export class EnhancedFloatingPanel {
       .fcp6-resize-handle {
         position: absolute !important;
         background: transparent !important;
+        z-index: 5 !important;
       }
 
-      .fcp6-resize-handle.left {
-        left: 0 !important;
+      .fcp6-resize-handle.left, .fcp6-resize-handle.right {
         top: 10% !important;
-        width: 6px !important;
+        width: 8px !important;
         height: 80% !important;
         cursor: ew-resize !important;
       }
 
-      .fcp6-resize-handle.bottom {
-        bottom: 0 !important;
+      .fcp6-resize-handle.left {
+        left: 0 !important;
+      }
+
+      .fcp6-resize-handle.right {
+        right: 0 !important;
+      }
+
+      .fcp6-resize-handle.top, .fcp6-resize-handle.bottom {
         left: 10% !important;
         width: 80% !important;
-        height: 6px !important;
+        height: 8px !important;
         cursor: ns-resize !important;
       }
 
-      .fcp6-resize-handle.corner {
+      .fcp6-resize-handle.top {
+        top: 0 !important;
+      }
+
+      .fcp6-resize-handle.bottom {
+        bottom: 0 !important;
+      }
+
+      .fcp6-resize-handle.corner-nw,
+      .fcp6-resize-handle.corner-ne,
+      .fcp6-resize-handle.corner-sw,
+      .fcp6-resize-handle.corner-se {
+        width: 14px !important;
+        height: 14px !important;
+      }
+
+      .fcp6-resize-handle.corner-nw {
+        left: 0 !important;
+        top: 0 !important;
+        cursor: nwse-resize !important;
+      }
+
+      .fcp6-resize-handle.corner-ne {
+        right: 0 !important;
+        top: 0 !important;
+        cursor: nesw-resize !important;
+      }
+
+      .fcp6-resize-handle.corner-sw {
         left: 0 !important;
         bottom: 0 !important;
-        width: 16px !important;
-        height: 16px !important;
         cursor: nwse-resize !important;
+      }
+
+      .fcp6-resize-handle.corner-se {
+        right: 0 !important;
+        bottom: 0 !important;
+        cursor: nesw-resize !important;
+      }
+
+      @media (max-width: 540px) {
+        .fcp6-header {
+          padding: 8px 10px !important;
+        }
+        .fcp6-title {
+          max-width: 128px !important;
+        }
       }
     `;
   }
@@ -742,7 +887,15 @@ export class EnhancedFloatingPanel {
   private applyPositionAndSize(): void {
     if (!this.container) return;
 
-    const { position, size, mode } = this.state;
+    const { position, mode } = this.state;
+    const size = {
+      width: Math.min(this.getMaxPanelWidth(), Math.max(PANEL_MIN_WIDTH, this.state.size.width)),
+      height: Math.min(
+        this.getMaxPanelHeight(),
+        Math.max(PANEL_MIN_HEIGHT, this.state.size.height)
+      ),
+    };
+    this.state.size = size;
     const isCollapsed = mode === 'collapsed';
     const isMinimized = mode === 'minimized';
 
@@ -976,8 +1129,13 @@ export class EnhancedFloatingPanel {
   private renderResizeHandles(): string {
     return `
       <div class="fcp6-resize-handle left" data-resize="left"></div>
+      <div class="fcp6-resize-handle right" data-resize="right"></div>
+      <div class="fcp6-resize-handle top" data-resize="top"></div>
       <div class="fcp6-resize-handle bottom" data-resize="bottom"></div>
-      <div class="fcp6-resize-handle corner" data-resize="corner"></div>
+      <div class="fcp6-resize-handle corner-nw" data-resize="corner-nw"></div>
+      <div class="fcp6-resize-handle corner-ne" data-resize="corner-ne"></div>
+      <div class="fcp6-resize-handle corner-sw" data-resize="corner-sw"></div>
+      <div class="fcp6-resize-handle corner-se" data-resize="corner-se"></div>
     `;
   }
 
@@ -993,6 +1151,8 @@ export class EnhancedFloatingPanel {
       startY: e.clientY,
       startWidth: this.state.size.width,
       startHeight: this.state.size.height,
+      startPosX: this.state.position.x,
+      startPosY: this.state.position.y,
       edge,
     };
 
@@ -1006,26 +1166,48 @@ export class EnhancedFloatingPanel {
       if (rafId) return;
 
       rafId = requestAnimationFrame(() => {
-        const deltaX = this.resizeState.startX - clientX;
-        const deltaY = clientY - this.resizeState.startY;
+        const dx = clientX - this.resizeState.startX;
+        const dy = clientY - this.resizeState.startY;
+        const maxWidth = this.getMaxPanelWidth();
+        const maxHeight = this.getMaxPanelHeight();
 
-        if (edge.includes('left') || edge === 'corner') {
-          const newWidth = Math.min(
-            PANEL_MAX_WIDTH,
-            Math.max(PANEL_MIN_WIDTH, this.resizeState.startWidth + deltaX)
-          );
-          this.state.size.width = newWidth;
-          this.container!.style.width = `${newWidth}px`;
+        let newWidth = this.resizeState.startWidth;
+        let newHeight = this.resizeState.startHeight;
+        let newX = this.resizeState.startPosX;
+        let newY = this.resizeState.startPosY;
+
+        const resizingLeft = edge.includes('left') || edge.includes('nw') || edge.includes('sw');
+        const resizingRight = edge.includes('right') || edge.includes('ne') || edge.includes('se');
+        const resizingTop = edge.includes('top') || edge.includes('nw') || edge.includes('ne');
+        const resizingBottom =
+          edge.includes('bottom') || edge.includes('sw') || edge.includes('se');
+
+        if (resizingLeft) {
+          const proposedWidth = this.resizeState.startWidth - dx;
+          newWidth = Math.min(maxWidth, Math.max(PANEL_MIN_WIDTH, proposedWidth));
+          newX = this.resizeState.startPosX + (this.resizeState.startWidth - newWidth);
+        } else if (resizingRight) {
+          const proposedWidth = this.resizeState.startWidth + dx;
+          newWidth = Math.min(maxWidth, Math.max(PANEL_MIN_WIDTH, proposedWidth));
         }
 
-        if (edge.includes('bottom') || edge === 'corner') {
-          const newHeight = Math.min(
-            PANEL_MAX_HEIGHT,
-            Math.max(PANEL_MIN_HEIGHT, this.resizeState.startHeight + deltaY)
-          );
-          this.state.size.height = newHeight;
-          this.container!.style.height = `${newHeight}px`;
+        if (resizingTop) {
+          const proposedHeight = this.resizeState.startHeight - dy;
+          newHeight = Math.min(maxHeight, Math.max(PANEL_MIN_HEIGHT, proposedHeight));
+          newY = this.resizeState.startPosY + (this.resizeState.startHeight - newHeight);
+        } else if (resizingBottom) {
+          const proposedHeight = this.resizeState.startHeight + dy;
+          newHeight = Math.min(maxHeight, Math.max(PANEL_MIN_HEIGHT, proposedHeight));
         }
+
+        newX = Math.max(0, Math.min(window.innerWidth - newWidth, newX));
+        newY = Math.max(0, Math.min(window.innerHeight - newHeight, newY));
+
+        this.state.position.x = newX;
+        this.state.position.y = newY;
+        this.state.size.width = newWidth;
+        this.state.size.height = newHeight;
+        this.applyPositionAndSize();
         rafId = null;
       });
     };
@@ -1044,6 +1226,14 @@ export class EnhancedFloatingPanel {
     document.addEventListener('mousemove', onMove);
     document.addEventListener('mouseup', onUp);
   }
+
+  private getMaxPanelWidth(): number {
+    return Math.max(PANEL_MIN_WIDTH, Math.min(PANEL_MAX_WIDTH, window.innerWidth - 16));
+  }
+
+  private getMaxPanelHeight(): number {
+    return Math.max(PANEL_MIN_HEIGHT, Math.min(PANEL_MAX_HEIGHT, window.innerHeight - 16));
+  }
   /**
    * Render input area
    */
@@ -1051,23 +1241,26 @@ export class EnhancedFloatingPanel {
     return `
       <div class="fcp6-input-area">
         <div class="fcp6-input-row">
-          <textarea
-            class="fcp6-input"
-            data-input="message"
-            placeholder="Type a message..."
-            rows="1"
-            style="min-height: 42px;"
-          ></textarea>
+          <div class="fcp6-input-shell">
+            <textarea
+              class="fcp6-input"
+              data-input="message"
+              placeholder="Message the channel..."
+              rows="1"
+            ></textarea>
+          </div>
           <button class="fcp6-send-btn" data-action="send" title="Send">
             ➤
           </button>
         </div>
         <div class="fcp6-input-hint">
-          <button class="fcp6-btn" data-action="inject-to-chat" style="padding: 2px 6px; height: auto; font-size: 10px;">
+          <button class="fcp6-btn fcp6-input-action" data-action="inject-to-chat" title="Inject only to the page chat">
             Inject to Page
           </button>
-          <span style="flex: 1;"></span>
-          <span>Press Enter to send</span>
+          <span class="fcp6-shortcut-hint">
+            <span class="fcp6-shortcut-key">Enter</span>
+            <span>to send</span>
+          </span>
         </div>
       </div>
     `;
@@ -1341,9 +1534,9 @@ export class EnhancedFloatingPanel {
               <div class="fcp6-channel-name">${this.escapeHtml(ch.name)}</div>
               <div class="fcp6-channel-members">${ch.members.length} active agents</div>
             </div>
-            <div style="display:flex; gap:4px; align-items:center;">
+            <div class="fcp6-channel-actions">
               ${this.currentChannel === ch.id ? '<div class="fcp6-badge" style="position:static; margin:0;">✓</div>' : ''}
-              ${ch.id !== 'general' ? `<button class="fcp6-btn" data-action="delete-channel" data-channel-id="${ch.id}" title="Delete Channel" style="background:rgba(255,51,102,0.1); color:#ff3366; width:22px; height:22px;">×</button>` : ''}
+              ${ch.id !== 'general' ? `<button class="fcp6-btn fcp6-channel-delete" data-action="delete-channel" data-channel-id="${ch.id}" title="Delete Channel">×</button>` : ''}
             </div>
           </div>
         `

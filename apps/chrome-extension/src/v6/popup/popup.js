@@ -810,20 +810,38 @@ class FuseConnectPopup {
   }
 
   async handleAIStudioAuth() {
-    this.showToast('Opening Google OAuth...');
+    const authBtn = document.querySelector('[data-action="auth"][data-service="ai-studio"]');
+    if (authBtn) authBtn.disabled = true;
+    this.showToast('Step 1/2: Sign in with your Google account...');
     try {
       chrome.runtime.sendMessage({ type: 'YOUTUBE_AUTHENTICATE' }, async (response) => {
+        if (authBtn) authBtn.disabled = false;
         if (response?.success) {
-          this.showToast('Authenticated successfully!');
+          this.showToast('Step 2/2 complete: YouTube access granted.');
           this.updateAIStudioStatus('connected');
+          await this.refreshAIVideoStats();
           await this.refreshAIVideoChannels();
           await this.refreshAIVideoPlaylists();
           this.refreshServiceStatus();
         } else {
-          this.showToast(response?.error || 'Authentication failed');
+          const rawError = String(response?.error || 'Authentication failed');
+          if (rawError.includes('redirect_uri_mismatch')) {
+            const oauth = response?.oauth || {};
+            const redirect = oauth.redirectUri || 'Unknown redirect URI';
+            const clientId = oauth.clientId || 'Unknown client_id';
+            console.error('[AIVI OAuth] redirect_uri_mismatch', {
+              redirectUri: redirect,
+              clientId,
+              extensionId: oauth.extensionId,
+            });
+            this.showToast('OAuth redirect mismatch. Check console for exact redirect URI.');
+          } else {
+            this.showToast(rawError);
+          }
         }
       });
     } catch (e) {
+      if (authBtn) authBtn.disabled = false;
       this.showToast(`Auth error: ${e.message}`);
     }
   }

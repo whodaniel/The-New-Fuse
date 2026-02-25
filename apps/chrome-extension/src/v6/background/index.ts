@@ -1460,16 +1460,37 @@ class BackgroundService {
   }
 
   private async getYouTubeAuthToken(): Promise<string | null> {
-    const stored = await chrome.storage.local.get(['ai_studio_token']);
-    if (stored.ai_studio_token) return String(stored.ai_studio_token);
+    const now = Date.now();
+    const stored = await chrome.storage.local.get([
+      'ai_studio_token',
+      'youtubeToken',
+      'youtubeTokenExpiry',
+    ]);
+
+    const storedYoutubeToken = String(stored.youtubeToken || '').trim();
+    const storedAiStudioToken = String(stored.ai_studio_token || '').trim();
+    const expiry = Number(stored.youtubeTokenExpiry || 0);
+
+    if (storedYoutubeToken && expiry > now) return storedYoutubeToken;
+    if (storedAiStudioToken && (!expiry || expiry > now)) return storedAiStudioToken;
 
     return new Promise((resolve) => {
-      chrome.identity.getAuthToken({ interactive: false }, (token) => {
+      chrome.identity.getAuthToken({ interactive: false }, async (token) => {
         if (chrome.runtime.lastError || !token) {
           resolve(null);
           return;
         }
-        chrome.storage.local.set({ ai_studio_token: token });
+        const valid = await this.validateYouTubeToken(token);
+        if (!valid) {
+          resolve(null);
+          return;
+        }
+        const tokenExpiry = Date.now() + 50 * 60 * 1000;
+        chrome.storage.local.set({
+          ai_studio_token: token,
+          youtubeToken: token,
+          youtubeTokenExpiry: tokenExpiry,
+        });
         resolve(token);
       });
     });
@@ -1619,46 +1640,119 @@ class BackgroundService {
       }));
   }
 
-  private async authenticateWithWebFlow(): Promise<string> {
+  private getOAuthDiagnostics(): {
+    extensionId: string;
+    clientId: string;
+    redirectUri: string;
+    scopes: string[];
+  } {
+    const manifest = chrome.runtime.getManifest();
+    const clientId = String(manifest.oauth2?.client_id || '').trim();
+    const scopes = Array.isArray(manifest.oauth2?.scopes) ? manifest.oauth2.scopes : [];
+    const redirectUri = chrome.identity.getRedirectURL();
+    return {
+      extensionId: chrome.runtime.id,
+      clientId,
+      redirectUri,
+      scopes,
+    };
+  }
+
+  private async getAuthTokenInteractive(scopes: string[]): Promise<string> {
     return new Promise((resolve, reject) => {
-      chrome.identity.clearAllCachedAuthTokens(async () => {
-        try {
-          const manifest = chrome.runtime.getManifest();
-          const clientId = manifest.oauth2?.client_id;
-          const redirectUri = chrome.identity.getRedirectURL();
-
-          if (!clientId || !manifest.oauth2?.scopes) {
-            throw new Error('Missing oauth2 config in manifest');
+      chrome.identity.getAuthToken(
+        {
+          interactive: true,
+          scopes,
+        },
+        (token) => {
+          if (chrome.runtime.lastError || !token) {
+            reject(chrome.runtime.lastError || new Error('Auth failed'));
+            return;
           }
-
-          const scopes = encodeURIComponent(manifest.oauth2.scopes.join(' '));
-          // Using fallbackAuthUrl (implicit flow) to force interactive prompt to handle Brand Accounts
-          const fallbackAuthUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${clientId}&response_type=token&redirect_uri=${redirectUri}&scope=${scopes}&prompt=select_account`;
-
-          chrome.identity.launchWebAuthFlow(
-            {
-              url: fallbackAuthUrl,
-              interactive: true,
-            },
-            (fallbackRedirectUrl) => {
-              if (chrome.runtime.lastError || !fallbackRedirectUrl) {
-                return reject(chrome.runtime.lastError || new Error('Auth failed'));
-              }
-              const urlObj = new URL(fallbackRedirectUrl);
-              const params = new URLSearchParams(urlObj.hash.substring(1));
-              const token = params.get('access_token');
-              if (token) {
-                resolve(token);
-              } else {
-                reject(new Error('No access_token returned in auth flow'));
-              }
-            }
-          );
-        } catch (e) {
-          reject(e);
+          resolve(token);
         }
-      });
+      );
     });
+  }
+
+  private async fetchGoogleUserProfile(token: string): Promise<{
+    email: string;
+    name: string;
+    picture: string;
+  }> {
+    const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to fetch Google profile (${response.status})`);
+    }
+    const data = await response.json();
+    return {
+      email: String(data?.email || ''),
+      name: String(data?.name || ''),
+      picture: String(data?.picture || ''),
+    };
+  }
+
+  private async authenticateYouTube(): Promise<{
+    token: string;
+    primaryProfile: { email: string; name: string; picture: string };
+  }> {
+    const { scopes: youtubeScopes } = this.getOAuthDiagnostics();
+
+    // Use Chrome extension native OAuth flow for extension client IDs.
+    // launchWebAuthFlow can trigger redirect_uri_mismatch for extension-only OAuth clients.
+    const youtubeToken = await this.getAuthTokenInteractive(youtubeScopes);
+
+    const valid = await this.validateYouTubeToken(youtubeToken);
+    if (!valid) {
+      throw new Error('YouTube token validation failed after OAuth');
+    }
+
+    const primaryProfile = await this.fetchGoogleUserProfile(youtubeToken);
+    return { token: youtubeToken, primaryProfile };
+  }
+
+  private normalizeOAuthError(err: any): Error {
+    const msg = String(err?.message || err || 'Authentication failed');
+    if (
+      msg.includes('redirect_uri_mismatch') ||
+      msg.includes('invalid_request') ||
+      msg.includes('OAuth2 not granted or revoked')
+    ) {
+      const diagnostics = this.getOAuthDiagnostics();
+      return new Error(
+        `OAuth setup mismatch for extension identity. Ensure OAuth client is Chrome Extension type bound to extension ID ${diagnostics.extensionId} and client_id ${diagnostics.clientId}. Redirect URI should be ${diagnostics.redirectUri}`
+      );
+    }
+    return new Error(msg);
+  }
+
+  private async authenticateYouTubeSafe(): Promise<{
+    token: string;
+    primaryProfile: { email: string; name: string; picture: string };
+  }> {
+    try {
+      const stored = await chrome.storage.local.get(['youtubeToken', 'ai_studio_token']);
+      const tokens = [stored.youtubeToken, stored.ai_studio_token]
+        .map((t) => String(t || '').trim())
+        .filter(Boolean);
+      for (const token of tokens) {
+        await new Promise<void>((resolve) => {
+          chrome.identity.removeCachedAuthToken({ token }, () => resolve());
+        });
+      }
+      await new Promise<void>((resolve) =>
+        chrome.identity.clearAllCachedAuthTokens(() => resolve())
+      );
+      await chrome.storage.local.remove(['ai_studio_token', 'youtubeToken', 'youtubeTokenExpiry']);
+      return await this.authenticateYouTube();
+    } catch (err: any) {
+      throw this.normalizeOAuthError(err);
+    }
   }
 
   private async signOutYouTube(): Promise<void> {
@@ -2486,17 +2580,33 @@ class BackgroundService {
         case 'AI_STUDIO_AUTH':
         case 'YOUTUBE_AUTHENTICATE':
           // Handle AI Studio OAuth2 authentication.
-          // Using authenticateWithWebFlow forces interactive prompt which allows Brand Account selection
-          this.authenticateWithWebFlow()
-            .then((token) => {
-              chrome.storage.local.set({ ai_studio_token: token, youtubeToken: token }, () => {
-                sendResponse({ success: true, token, data: { authenticated: true } });
-              });
+          console.log('[FuseConnect v7] Starting YouTube auth flow', this.getOAuthDiagnostics());
+          this.authenticateYouTubeSafe()
+            .then(({ token, primaryProfile }) => {
+              const tokenExpiry = Date.now() + 50 * 60 * 1000;
+              chrome.storage.local.set(
+                {
+                  ai_studio_token: token,
+                  youtubeToken: token,
+                  youtubeTokenExpiry: tokenExpiry,
+                  userProfile: primaryProfile,
+                  isAuthenticated: true,
+                },
+                () => {
+                  sendResponse({
+                    success: true,
+                    token,
+                    data: { authenticated: true, primaryProfile },
+                    oauth: this.getOAuthDiagnostics(),
+                  });
+                }
+              );
             })
             .catch((err) => {
               sendResponse({
                 success: false,
                 error: err.message || 'Authentication failed',
+                oauth: this.getOAuthDiagnostics(),
               });
             });
           return true; // Async response
@@ -2907,14 +3017,16 @@ class BackgroundService {
               'ai_video_total_count',
               'ai_video_estimated_cost',
               'ai_studio_token',
+              'userProfile',
               'videoQueue',
             ],
             (result) => {
+              const profileEmail = String(result.userProfile?.email || '').trim();
               sendResponse({
                 processed: result.ai_video_processed_count || 0,
                 total: result.ai_video_total_count || result.videoQueue?.length || 0,
                 cost: result.ai_video_estimated_cost || 0,
-                account: result.ai_studio_token ? 'Authenticated' : 'None',
+                account: result.ai_studio_token ? profileEmail || 'Authenticated' : 'None',
               });
             }
           );
