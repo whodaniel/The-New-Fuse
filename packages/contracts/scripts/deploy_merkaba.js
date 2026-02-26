@@ -5,16 +5,37 @@ const hre = require('hardhat');
  */
 async function deployAndConfirm(factory, args, label, signer, nonce) {
   console.log(`  [nonce ${nonce}] Deploying ${label}...`);
+  let attempt = 0;
+  let contract;
+  while (true) {
+    attempt += 1;
+    const feeData = await hre.ethers.provider.getFeeData();
+    const baseMaxFee = feeData.maxFeePerGas || hre.ethers.parseUnits('1', 'gwei');
+    const basePriority = feeData.maxPriorityFeePerGas || hre.ethers.parseUnits('1', 'gwei');
+    const bump = BigInt(3 + attempt); // 4x, 5x, 6x...
+    const overrides = {
+      nonce,
+      maxFeePerGas: baseMaxFee * bump,
+      maxPriorityFeePerGas: basePriority * bump,
+    };
 
-  // Get current fee data and bump it 2x to replace any stuck txs
-  const feeData = await hre.ethers.provider.getFeeData();
-  const overrides = {
-    nonce,
-    maxFeePerGas: feeData.maxFeePerGas * 3n,
-    maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 3n,
-  };
+    try {
+      contract = await factory.deploy(...args, overrides);
+      break;
+    } catch (error) {
+      const msg = String(error && error.message ? error.message : error).toLowerCase();
+      if (
+        (msg.includes('replacement transaction underpriced') || msg.includes('nonce too low')) &&
+        attempt < 5
+      ) {
+        console.log(`  Retry ${attempt} for ${label} due to mempool nonce/fee conflict...`);
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        continue;
+      }
+      throw error;
+    }
+  }
 
-  const contract = await factory.deploy(...args, overrides);
   const tx = contract.deploymentTransaction();
   if (tx) {
     console.log(`  Waiting for confirmation (${tx.hash})...`);
@@ -49,8 +70,8 @@ async function main() {
     throw new Error('Balance is 0. Get testnet ETH first.');
   }
 
-  // Get the CONFIRMED nonce (ignoring any pending mempool txs)
-  let nonce = await hre.ethers.provider.getTransactionCount(deployer.address, 'latest');
+  // Use pending nonce so old mempool txs don't cause replacement conflicts.
+  let nonce = await hre.ethers.provider.getTransactionCount(deployer.address, 'pending');
   console.log('Starting nonce:', nonce);
   console.log('');
 

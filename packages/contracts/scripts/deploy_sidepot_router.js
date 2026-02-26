@@ -4,18 +4,63 @@ const path = require('path');
 
 async function main() {
   console.log('--- 🚀 DEPLOY SIDEPOT + PRIZE HOOK ROUTER ---');
-  const [deployer, treasury] = await hre.ethers.getSigners();
+  const signers = await hre.ethers.getSigners();
+  if (!signers.length) {
+    throw new Error(
+      'No deployer signer available. Set DEPLOYER_PRIVATE_KEY and BASE_SEPOLIA_RPC_URL (or ARCADE_RPC_HTTP_URL).'
+    );
+  }
+  const [deployer, treasurySigner] = signers;
+  const treasury = treasurySigner || deployer;
   const network = hre.network.name;
   console.log('Deployer:', deployer.address);
   console.log('Treasury:', treasury.address);
   console.log('Network:', network);
 
+  let nonce = await hre.ethers.provider.getTransactionCount(deployer.address, 'pending');
+  const deployWithRetry = async (factory, args, label) => {
+    let attempt = 0;
+    while (true) {
+      attempt += 1;
+      const feeData = await hre.ethers.provider.getFeeData();
+      const baseMaxFee = feeData.maxFeePerGas || hre.ethers.parseUnits('1', 'gwei');
+      const basePriority = feeData.maxPriorityFeePerGas || hre.ethers.parseUnits('1', 'gwei');
+      const bump = BigInt(3 + attempt);
+      try {
+        const contract = await factory.deploy(...args, {
+          nonce: nonce++,
+          maxFeePerGas: baseMaxFee * bump,
+          maxPriorityFeePerGas: basePriority * bump,
+        });
+        const tx = contract.deploymentTransaction();
+        if (tx) await tx.wait(2);
+        await contract.waitForDeployment();
+        return contract;
+      } catch (error) {
+        const msg = String(error && error.message ? error.message : error).toLowerCase();
+        if (
+          (msg.includes('replacement transaction underpriced') || msg.includes('nonce too low')) &&
+          attempt < 5
+        ) {
+          console.log(`Retry ${attempt} for ${label} due to nonce/fee conflict...`);
+          await new Promise((resolve) => setTimeout(resolve, 1500));
+          continue;
+        }
+        throw error;
+      }
+    }
+  };
+
   const Token = await hre.ethers.getContractFactory('MockERC20');
-  const token = await Token.deploy('Mock Prize', 'MPRZ');
+  const token = await deployWithRetry(Token, ['Mock Prize', 'MPRZ'], 'Mock Prize Token');
   await token.waitForDeployment();
 
   const SidepotManager = await hre.ethers.getContractFactory('SidepotManager');
-  const sidepot = await SidepotManager.deploy(await token.getAddress());
+  const sidepot = await deployWithRetry(
+    SidepotManager,
+    [await token.getAddress()],
+    'SidepotManager'
+  );
   await sidepot.waitForDeployment();
 
   const createTx = await sidepot.createPot('hourly-sidepot', 0);
