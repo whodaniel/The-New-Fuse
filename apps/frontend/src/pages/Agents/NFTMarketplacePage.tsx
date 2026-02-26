@@ -1,26 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { AgentNFTMarketplace } from '../../components/nft/AgentNFTMarketplace';
-import { useToast } from '../../hooks/useToast';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
-import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
-import { Badge } from '../../components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
-import { 
-  Search, 
-  Filter, 
-  SortAsc, 
-  TrendingUp, 
-  Users, 
-  Coins,
-  RefreshCw,
-  Plus,
-  DollarSign,
-  Activity,
-  Award,
-  Wallet
-} from 'lucide-react';
+import { AgentNFTMarketplace } from '@/components/nft/AgentNFTMarketplace';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { useToast } from '@/hooks/useToast';
+import { Activity, Coins, DollarSign, Plus, TrendingUp, Wallet } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface NFTMarketplacePageProps {
   // Optional props for context
@@ -55,8 +39,8 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
     weeklyGrowth: {
       nfts: 12,
       fractionalized: 8,
-      volume: 24
-    }
+      volume: 24,
+    },
   });
 
   useEffect(() => {
@@ -66,8 +50,8 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
       try {
         // Mock wallet connection - in real app this would be from Web3Auth or similar
         if ((window as any).ethereum) {
-          const accounts = await (window as any).ethereum.request({ 
-            method: 'eth_accounts' 
+          const accounts = await (window as any).ethereum.request({
+            method: 'eth_accounts',
           });
           if (accounts.length > 0) {
             setUserAddress(accounts[0]);
@@ -88,13 +72,13 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
       // const response = await fetch('/api/marketplace/stats');
       // const data = await response.json();
       // setStats(data);
-      
+
       // For now, simulate real-time updates
       const interval = setInterval(() => {
-        setStats(prev => ({
+        setStats((prev) => ({
           ...prev,
           totalVolume: (parseFloat(prev.totalVolume) + Math.random() * 0.1).toFixed(1),
-          pendingRevenue: (parseFloat(prev.pendingRevenue) + Math.random() * 0.01).toFixed(3)
+          pendingRevenue: (parseFloat(prev.pendingRevenue) + Math.random() * 0.01).toFixed(3),
         }));
       }, 5000);
 
@@ -115,18 +99,18 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
         },
         body: JSON.stringify({
           ownerAddress: userAddress,
-          metadataUri: `https://metadata.thenewfuse.com/agents/${agentId}`
+          metadataUri: `https://metadata.thenewfuse.com/agents/${agentId}`,
         }),
       });
 
       if (response.ok) {
         const result = await response.json();
         toast({
-          title: "NFT Minted Successfully!",
+          title: 'NFT Minted Successfully!',
           description: `Agent NFT #${result.tokenId} has been created.`,
-          variant: "success"
+          variant: 'success',
         });
-        
+
         // Refresh the page or update state
         window.location.reload();
       } else {
@@ -135,9 +119,9 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
     } catch (error) {
       console.error('Mint NFT error:', error);
       toast({
-        title: "Minting Failed",
-        description: "There was an error minting your agent NFT. Please try again.",
-        variant: "destructive"
+        title: 'Minting Failed',
+        description: 'There was an error minting your agent NFT. Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -154,15 +138,15 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
         },
         body: JSON.stringify({
           totalShares: 10000,
-          initialOwner: userAddress
+          initialOwner: userAddress,
         }),
       });
 
       if (response.ok) {
         toast({
-          title: "Agent Fractionalized!",
-          description: "Your agent NFT has been split into tradable shares.",
-          variant: "success"
+          title: 'Agent Fractionalized!',
+          description: 'Your agent NFT has been split into tradable shares.',
+          variant: 'success',
         });
         window.location.reload();
       } else {
@@ -171,9 +155,9 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
     } catch (error) {
       console.error('Fractionalize error:', error);
       toast({
-        title: "Fractionalization Failed",
-        description: "There was an error fractionalizing your NFT. Please try again.",
-        variant: "destructive"
+        title: 'Fractionalization Failed',
+        description: 'There was an error fractionalizing your NFT. Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -183,9 +167,9 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
   const handleBuyShares = async (listingId: string) => {
     if (!userAddress) {
       toast({
-        title: "Wallet Not Connected",
-        description: "Please connect your wallet to buy shares.",
-        variant: "destructive"
+        title: 'Wallet Not Connected',
+        description: 'Please connect your wallet to buy shares.',
+        variant: 'destructive',
       });
       return;
     }
@@ -198,15 +182,15 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          buyerAddress: userAddress
+          buyerAddress: userAddress,
         }),
       });
 
       if (response.ok) {
         toast({
-          title: "Shares Purchased!",
-          description: "You have successfully purchased agent shares.",
-          variant: "success"
+          title: 'Shares Purchased!',
+          description: 'You have successfully purchased agent shares.',
+          variant: 'success',
         });
         window.location.reload();
       } else {
@@ -215,9 +199,9 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
     } catch (error) {
       console.error('Buy shares error:', error);
       toast({
-        title: "Purchase Failed",
-        description: "There was an error purchasing shares. Please try again.",
-        variant: "destructive"
+        title: 'Purchase Failed',
+        description: 'There was an error purchasing shares. Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -227,9 +211,9 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
   const handleMakeOffer = async (listingId: string, amount: string, shareAmount: number) => {
     if (!userAddress) {
       toast({
-        title: "Wallet Not Connected",
-        description: "Please connect your wallet to make offers.",
-        variant: "destructive"
+        title: 'Wallet Not Connected',
+        description: 'Please connect your wallet to make offers.',
+        variant: 'destructive',
       });
       return;
     }
@@ -244,15 +228,15 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
         body: JSON.stringify({
           buyerAddress: userAddress,
           offerPrice: amount,
-          shareAmount
+          shareAmount,
         }),
       });
 
       if (response.ok) {
         toast({
-          title: "Offer Submitted!",
-          description: "Your offer has been submitted to the seller.",
-          variant: "success"
+          title: 'Offer Submitted!',
+          description: 'Your offer has been submitted to the seller.',
+          variant: 'success',
         });
       } else {
         throw new Error('Failed to make offer');
@@ -260,21 +244,25 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
     } catch (error) {
       console.error('Make offer error:', error);
       toast({
-        title: "Offer Failed",
-        description: "There was an error submitting your offer. Please try again.",
-        variant: "destructive"
+        title: 'Offer Failed',
+        description: 'There was an error submitting your offer. Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleListShares = async (agentNftId: string, shareAmount: number, pricePerShare: string) => {
+  const handleListShares = async (
+    agentNftId: string,
+    shareAmount: number,
+    pricePerShare: string
+  ) => {
     if (!userAddress) {
       toast({
-        title: "Wallet Not Connected",
-        description: "Please connect your wallet to list shares.",
-        variant: "destructive"
+        title: 'Wallet Not Connected',
+        description: 'Please connect your wallet to list shares.',
+        variant: 'destructive',
       });
       return;
     }
@@ -291,15 +279,15 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
           sellerAddress: userAddress,
           shareAmount,
           pricePerShare,
-          duration: 86400 // 24 hours
+          duration: 86400, // 24 hours
         }),
       });
 
       if (response.ok) {
         toast({
-          title: "Shares Listed!",
-          description: "Your shares have been listed on the marketplace.",
-          variant: "success"
+          title: 'Shares Listed!',
+          description: 'Your shares have been listed on the marketplace.',
+          variant: 'success',
         });
         window.location.reload();
       } else {
@@ -308,9 +296,9 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
     } catch (error) {
       console.error('List shares error:', error);
       toast({
-        title: "Listing Failed",
-        description: "There was an error listing your shares. Please try again.",
-        variant: "destructive"
+        title: 'Listing Failed',
+        description: 'There was an error listing your shares. Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -321,7 +309,13 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       {/* Background Pattern */}
       <div className="fixed inset-0 opacity-5">
-        <div className="absolute inset-0" style={{backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '20px 20px'}}></div>
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)',
+            backgroundSize: '20px 20px',
+          }}
+        ></div>
       </div>
 
       {isLoading && (
@@ -343,9 +337,11 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
               </div>
               Agent NFT Marketplace
             </h1>
-            <p className="text-slate-400 text-lg">Discover, trade, and invest in the future of AI Agent NFTs</p>
+            <p className="text-slate-400 text-lg">
+              Discover, trade, and invest in the future of AI Agent NFTs
+            </p>
           </div>
-          <Button 
+          <Button
             onClick={() => navigate('/agents/create')}
             className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-3 px-6 rounded-xl flex items-center gap-3 transition-all mt-6 sm:mt-0 shadow-lg hover:shadow-xl hover:scale-105"
           >
@@ -378,8 +374,12 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
               </div>
               <div>
                 <p className="text-sm text-slate-400 font-medium">Fractionalized</p>
-                <p className="text-3xl font-bold text-white">{stats.fractionalized.toLocaleString()}</p>
-                <p className="text-xs text-green-400">↗ +{stats.weeklyGrowth.fractionalized}% this week</p>
+                <p className="text-3xl font-bold text-white">
+                  {stats.fractionalized.toLocaleString()}
+                </p>
+                <p className="text-xs text-green-400">
+                  ↗ +{stats.weeklyGrowth.fractionalized}% this week
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -407,7 +407,9 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
               <div>
                 <p className="text-sm text-slate-400 font-medium">Your Holdings</p>
                 <p className="text-3xl font-bold text-white">{stats.userHoldings} Agents</p>
-                <p className="text-xs text-green-400 animate-pulse">💰 {stats.pendingRevenue} ETH pending</p>
+                <p className="text-xs text-green-400 animate-pulse">
+                  💰 {stats.pendingRevenue} ETH pending
+                </p>
               </div>
             </CardContent>
           </Card>

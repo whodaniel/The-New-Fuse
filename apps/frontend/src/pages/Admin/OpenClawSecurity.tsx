@@ -1,7 +1,7 @@
+import { GlassCard } from '@/components/ui/premium/GlassCard';
+import { PremiumButton } from '@/components/ui/premium/PremiumButton';
 import { AlertTriangle, Copy, RefreshCcw, Shield } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { GlassCard } from '../../components/ui/premium/GlassCard';
-import { PremiumButton } from '../../components/ui/premium/PremiumButton';
 
 export default function OpenClawSecurity() {
   const [provider, setProvider] = useState('openrouter');

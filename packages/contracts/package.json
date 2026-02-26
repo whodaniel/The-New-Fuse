@@ -8,6 +8,7 @@
     "test": "node scripts/test-wrapper.cjs",
     "deploy": "hardhat run scripts/deploy.js",
     "deploy:merkaba": "hardhat run scripts/deploy_merkaba.js --network localhost",
+    "deploy:sidepot-router": "hardhat run scripts/deploy_sidepot_router.js --network localhost",
     "verify": "hardhat verify",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",

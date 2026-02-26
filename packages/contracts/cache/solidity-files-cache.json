@@ -723,6 +723,74 @@
       "imports": ["@openzeppelin/contracts/token/ERC20/ERC20.sol"],
       "versionPragmas": ["^0.8.19"],
       "artifacts": ["MockERC20"]
+    },
+    "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/contracts/src/SidepotManager.sol": {
+      "lastModificationDate": 1772070922310,
+      "contentHash": "248140cb8ae53fb48f81b7734239c4fc",
+      "sourceName": "src/SidepotManager.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": ["ast"]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/utils/ReentrancyGuard.sol"
+      ],
+      "versionPragmas": ["^0.8.20"],
+      "artifacts": ["SidepotManager"]
+    },
+    "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/contracts/src/PTPrizeHookRouter.sol": {
+      "lastModificationDate": 1772070946982,
+      "contentHash": "ff9e26dcd14db107f0ef9d073371d721",
+      "sourceName": "src/PTPrizeHookRouter.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": ["ast"]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/utils/ReentrancyGuard.sol"
+      ],
+      "versionPragmas": ["^0.8.20"],
+      "artifacts": ["IPrizeHooks", "ISidepotManager", "PTPrizeHookRouter"]
     }
   }
 }

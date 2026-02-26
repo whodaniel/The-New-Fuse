@@ -125,6 +125,7 @@
       },
       "rules": {
         "@typescript-eslint/no-var-requires": "off",
+        "import/no-commonjs": "off",
         "@typescript-eslint/no-floating-promises": "off",
         "@typescript-eslint/await-thenable": "off",
         "@typescript-eslint/no-misused-promises": "off",
@@ -160,7 +161,12 @@
       }
     },
     {
-      "files": ["scripts/**/*.js", "scripts/**/*.cjs"],
+      "files": [
+        "scripts/**/*.js",
+        "scripts/**/*.cjs",
+        "**/scripts/**/*.js",
+        "**/scripts/**/*.cjs"
+      ],
       "rules": {
         "no-console": "off"
       }

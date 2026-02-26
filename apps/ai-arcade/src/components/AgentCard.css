@@ -20,6 +20,19 @@
   box-shadow: 0 20px 40px -12px rgba(0, 242, 255, 0.2);
 }
 
+/* Music card variant */
+.agent-card-music {
+  border-color: rgba(0, 255, 136, 0.12);
+  background: linear-gradient(160deg, rgba(0, 40, 20, 0.45), rgba(22, 22, 29, 0.7));
+}
+
+.agent-card-music:hover {
+  border-color: #00ff88;
+  box-shadow:
+    0 20px 40px -12px rgba(0, 255, 136, 0.22),
+    0 0 0 1px rgba(0, 255, 136, 0.1) inset;
+}
+
 .agent-type-tag {
   position: absolute;
   top: 12px;
@@ -28,6 +41,19 @@
   font-weight: 800;
   background: rgba(0, 242, 255, 0.1);
   color: var(--accent-neon);
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+.agent-mode-tag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  font-size: 0.6rem;
+  font-weight: 800;
+  background: rgba(0, 255, 136, 0.15);
+  color: #00ff88;
   padding: 2px 8px;
   border-radius: 4px;
   letter-spacing: 0.05em;
@@ -53,6 +79,10 @@
   border-radius: 50%;
 }
 
+.agent-card-music .agent-avatar-glow {
+  background: #00ff88;
+}
+
 .agent-avatar-placeholder {
   width: 64px;
   height: 64px;
@@ -68,19 +98,119 @@
   z-index: 1;
 }
 
+.agent-avatar-img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 242, 255, 0.3);
+  z-index: 1;
+}
+
+.agent-card-music .agent-avatar-img {
+  border-color: rgba(0, 255, 136, 0.45);
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.18);
+}
+
 .agent-name {
   font-size: 1.25rem;
   font-weight: 700;
-  margin: 0 0 0.75rem 0;
+  margin: 0 0 0.4rem 0;
   color: #fff;
+}
+
+/* Star ratings */
+.star-rating {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 0.6rem;
+}
+
+.star {
+  font-size: 0.82rem;
+  line-height: 1;
+}
+
+.star-full {
+  color: #fbbf24;
+}
+
+.star-half {
+  color: #fbbf24;
+  opacity: 0.55;
+}
+
+.star-empty {
+  color: rgba(255, 255, 255, 0.12);
 }
 
 .agent-description {
   font-size: 0.9rem;
   color: var(--text-dim);
-  margin: 0 0 1.5rem 0;
+  margin: 0 0 1rem 0;
   line-height: 1.5;
   flex-grow: 1;
+}
+
+/* Animated music bars */
+.agent-music-bars {
+  display: flex;
+  gap: 3px;
+  align-items: flex-end;
+  height: 20px;
+  margin-bottom: 0.8rem;
+}
+
+.agent-music-bars span {
+  display: block;
+  width: 4px;
+  border-radius: 2px;
+  background: #00ff88;
+  animation: music-bar 600ms ease-in-out infinite alternate;
+}
+
+.agent-music-bars span:nth-child(1) {
+  height: 40%;
+  animation-delay: 0ms;
+}
+.agent-music-bars span:nth-child(2) {
+  height: 80%;
+  animation-delay: 120ms;
+}
+.agent-music-bars span:nth-child(3) {
+  height: 55%;
+  animation-delay: 240ms;
+}
+.agent-music-bars span:nth-child(4) {
+  height: 90%;
+  animation-delay: 360ms;
+}
+.agent-music-bars span:nth-child(5) {
+  height: 35%;
+  animation-delay: 480ms;
+}
+
+@keyframes music-bar {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0.35);
+  }
+}
+
+/* Stats row */
+.agent-stats-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.agent-stat {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.38);
+  font-weight: 500;
+  letter-spacing: 0.02em;
 }
 
 .agent-footer {
@@ -108,9 +238,29 @@
   border-radius: 8px;
   margin-top: 0;
   box-shadow: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .agent-arcade-card:hover .play-button {
   background: var(--accent-neon);
   color: #000;
+}
+
+/* Music-specific play button */
+.play-button-music {
+  border-color: #00ff88;
+  color: #00ff88;
+}
+
+.agent-card-music:hover .play-button-music {
+  background: #00ff88;
+  color: #000;
+}
+
+.play-icon {
+  font-size: 0.85rem;
 }

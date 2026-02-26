@@ -1,3 +1,4 @@
+import { FeatureFlagConditionsEditor } from '@/components/AdminPanel/FeatureFlagConditions';
 import {
   PremiumButton as Button,
   GlassCard as Card,
@@ -8,7 +9,6 @@ import { Tabs } from '@/components/ui/tabs';
 import { toast } from '@/components/ui/toast';
 import { FeatureFlag, FeatureFlagConditions } from '@the-new-fuse/types/featureFlags';
 import { useEffect, useState } from 'react';
-import { FeatureFlagConditionsEditor } from '../../../components/AdminPanel/FeatureFlagConditions';
 
 export default function FeatureFlagsAdmin() {
   const [features, setFeatures] = useState<FeatureFlag[]>([]);

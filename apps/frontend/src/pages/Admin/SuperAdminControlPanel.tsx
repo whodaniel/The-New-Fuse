@@ -1,3 +1,6 @@
+import { GlassCard, StatsCard } from '@/components/ui/premium/GlassCard';
+import { PremiumButton } from '@/components/ui/premium/PremiumButton';
+import { useAuthorization } from '@/hooks/useAuthorization';
 import { AnimatePresence, motion, Variants } from 'framer-motion';
 import {
   Activity,
@@ -14,9 +17,6 @@ import {
 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { GlassCard, StatsCard } from '../../components/ui/premium/GlassCard';
-import { PremiumButton } from '../../components/ui/premium/PremiumButton';
-import { useAuthorization } from '../../hooks/useAuthorization';
 import { LlmRoutingControl } from './components/LlmRoutingControl';
 
 interface RelayChannel {

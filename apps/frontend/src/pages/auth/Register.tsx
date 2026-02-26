@@ -54,7 +54,7 @@ const Register: React.FC = () => {
       }
 
       navigate('/dashboard', { replace: true });
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err?.message || 'Registration failed');
     } finally {
       setIsLoading(false);
@@ -69,7 +69,7 @@ const Register: React.FC = () => {
       if (result?.method !== 'google_redirect') {
         navigate('/dashboard', { replace: true });
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err?.message || 'Google sign-up failed');
     } finally {
       setIsLoading(false);

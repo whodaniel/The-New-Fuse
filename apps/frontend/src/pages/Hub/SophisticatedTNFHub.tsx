@@ -3,39 +3,30 @@
  * Enhanced React component with comprehensive analytics, real-time monitoring, and enterprise features
  */
 
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
-import { Button } from '../../components/ui/button';
-import { Badge } from '../../components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
-import { 
-  Activity, 
-  BarChart3, 
-  Bot, 
-  Brain, 
-  ChevronRight, 
-  Cloud, 
-  Code, 
-  Cpu, 
-  Database, 
-  Globe, 
-  Layers, 
-  MessageSquare, 
-  Monitor, 
-  Play, 
-  Plus, 
-  RefreshCw, 
-  Search, 
-  Settings, 
-  Shield, 
-  Sparkles, 
-  Terminal, 
-  TrendingUp, 
-  Users, 
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Activity,
+  BarChart3,
+  Bot,
+  Brain,
+  ChevronRight,
+  Code,
+  Cpu,
+  Database,
+  Layers,
+  Play,
+  Plus,
+  RefreshCw,
+  Shield,
+  Sparkles,
+  TrendingUp,
   Workflow,
-  Zap
 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface ServiceStatus {
   name: string;
@@ -97,7 +88,7 @@ export const SophisticatedTNFHub: React.FC = () => {
       { name: 'IPFS Gateway', status: 'active', port: 8080 },
       { name: 'NFT Marketplace', status: 'active', uptime: '99.6%' },
       { name: 'Smart Contracts', status: 'active', uptime: '100%' },
-    ]
+    ],
   });
 
   const [metrics, setMetrics] = useState<SystemMetrics>({
@@ -108,25 +99,28 @@ export const SophisticatedTNFHub: React.FC = () => {
     cpuUsage: 45,
     memoryUsage: 62,
     activeAgents: 18,
-    totalRevenue: 125000
+    totalRevenue: 125000,
   });
 
   const [analytics, setAnalytics] = useState<AnalyticsData>({
     workflowExecutions: [120, 135, 148, 162, 175, 189, 201],
     agentPerformance: [85, 88, 92, 89, 94, 96, 91],
     systemLoad: [35, 42, 38, 45, 41, 39, 44],
-    revenueData: [12000, 15000, 18000, 22000, 25000, 28000, 31000]
+    revenueData: [12000, 15000, 18000, 22000, 25000, 28000, 31000],
   });
 
   useEffect(() => {
     // Simulate real-time updates
     const interval = setInterval(() => {
-      setMetrics(prev => ({
+      setMetrics((prev) => ({
         ...prev,
         activeWorkflows: prev.activeWorkflows + Math.floor(Math.random() * 3) - 1,
         completedTasks: prev.completedTasks + Math.floor(Math.random() * 5),
         cpuUsage: Math.max(20, Math.min(80, prev.cpuUsage + Math.floor(Math.random() * 10) - 5)),
-        memoryUsage: Math.max(30, Math.min(90, prev.memoryUsage + Math.floor(Math.random() * 8) - 4))
+        memoryUsage: Math.max(
+          30,
+          Math.min(90, prev.memoryUsage + Math.floor(Math.random() * 8) - 4)
+        ),
       }));
     }, 5000);
 
@@ -135,19 +129,27 @@ export const SophisticatedTNFHub: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'bg-green-500';
-      case 'warning': return 'bg-yellow-500';
-      case 'error': return 'bg-red-500';
-      default: return 'bg-gray-500';
+      case 'active':
+        return 'bg-green-500';
+      case 'warning':
+        return 'bg-yellow-500';
+      case 'error':
+        return 'bg-red-500';
+      default:
+        return 'bg-gray-500';
     }
   };
 
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
-      case 'active': return 'default';
-      case 'warning': return 'secondary';
-      case 'error': return 'destructive';
-      default: return 'outline';
+      case 'active':
+        return 'default';
+      case 'warning':
+        return 'secondary';
+      case 'error':
+        return 'destructive';
+      default:
+        return 'outline';
     }
   };
 
@@ -187,10 +189,12 @@ export const SophisticatedTNFHub: React.FC = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
-                <div className={`w-2 h-2 rounded-full ${getStatusColor('active')} animate-pulse`}></div>
+                <div
+                  className={`w-2 h-2 rounded-full ${getStatusColor('active')} animate-pulse`}
+                ></div>
                 <span className="text-sm text-gray-300">System Healthy</span>
               </div>
               <Badge variant="outline" className="text-green-400 border-green-400">
@@ -241,15 +245,15 @@ export const SophisticatedTNFHub: React.FC = () => {
                   Advanced AI-Powered Development & Automation Platform
                 </p>
                 <div className="flex justify-center space-x-4">
-                  <Button 
+                  <Button
                     className="bg-white text-purple-600 hover:bg-gray-100"
                     onClick={() => navigate('/workflows/new')}
                   >
                     <Plus className="w-4 h-4 mr-2" />
                     Create Workflow
                   </Button>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="border-white text-white hover:bg-white/10"
                     onClick={() => navigate('/agents/new')}
                   >
@@ -279,7 +283,9 @@ export const SophisticatedTNFHub: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-gray-400">Completed Tasks</p>
-                      <p className="text-2xl font-bold text-green-400">{metrics.completedTasks.toLocaleString()}</p>
+                      <p className="text-2xl font-bold text-green-400">
+                        {metrics.completedTasks.toLocaleString()}
+                      </p>
                     </div>
                     <Activity className="w-8 h-8 text-green-400" />
                   </div>
@@ -303,7 +309,9 @@ export const SophisticatedTNFHub: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-gray-400">Total Revenue</p>
-                      <p className="text-2xl font-bold text-yellow-400">${metrics.totalRevenue.toLocaleString()}</p>
+                      <p className="text-2xl font-bold text-yellow-400">
+                        ${metrics.totalRevenue.toLocaleString()}
+                      </p>
                     </div>
                     <TrendingUp className="w-8 h-8 text-yellow-400" />
                   </div>
@@ -327,7 +335,7 @@ export const SophisticatedTNFHub: React.FC = () => {
                       <span className="text-white">{metrics.cpuUsage}%</span>
                     </div>
                     <div className="w-full bg-gray-700 rounded-full h-2">
-                      <div 
+                      <div
                         className="bg-blue-500 h-2 rounded-full transition-all duration-300"
                         style={{ width: `${metrics.cpuUsage}%` }}
                       ></div>
@@ -339,7 +347,7 @@ export const SophisticatedTNFHub: React.FC = () => {
                       <span className="text-white">{metrics.memoryUsage}%</span>
                     </div>
                     <div className="w-full bg-gray-700 rounded-full h-2">
-                      <div 
+                      <div
                         className="bg-purple-500 h-2 rounded-full transition-all duration-300"
                         style={{ width: `${metrics.memoryUsage}%` }}
                       ></div>
@@ -365,17 +373,23 @@ export const SophisticatedTNFHub: React.FC = () => {
                   <div className="space-y-3">
                     <div className="flex items-center space-x-3">
                       <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                      <span className="text-sm text-gray-300">Workflow "Data Processing" completed</span>
+                      <span className="text-sm text-gray-300">
+                        Workflow "Data Processing" completed
+                      </span>
                       <span className="text-xs text-gray-500 ml-auto">2m ago</span>
                     </div>
                     <div className="flex items-center space-x-3">
                       <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                      <span className="text-sm text-gray-300">New agent "Content Creator" deployed</span>
+                      <span className="text-sm text-gray-300">
+                        New agent "Content Creator" deployed
+                      </span>
                       <span className="text-xs text-gray-500 ml-auto">5m ago</span>
                     </div>
                     <div className="flex items-center space-x-3">
                       <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                      <span className="text-sm text-gray-300">NFT marketplace transaction processed</span>
+                      <span className="text-sm text-gray-300">
+                        NFT marketplace transaction processed
+                      </span>
                       <span className="text-xs text-gray-500 ml-auto">8m ago</span>
                     </div>
                     <div className="flex items-center space-x-3">
@@ -397,22 +411,33 @@ export const SophisticatedTNFHub: React.FC = () => {
                   <CardHeader>
                     <CardTitle className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
-                        {category === 'ai-services' && <Brain className="w-5 h-5 text-purple-400" />}
-                        {category === 'core-services' && <Database className="w-5 h-5 text-blue-400" />}
-                        {category === 'workflow-services' && <Workflow className="w-5 h-5 text-green-400" />}
-                        {category === 'dev-services' && <Code className="w-5 h-5 text-yellow-400" />}
-                        {category === 'blockchain-services' && <Shield className="w-5 h-5 text-orange-400" />}
+                        {category === 'ai-services' && (
+                          <Brain className="w-5 h-5 text-purple-400" />
+                        )}
+                        {category === 'core-services' && (
+                          <Database className="w-5 h-5 text-blue-400" />
+                        )}
+                        {category === 'workflow-services' && (
+                          <Workflow className="w-5 h-5 text-green-400" />
+                        )}
+                        {category === 'dev-services' && (
+                          <Code className="w-5 h-5 text-yellow-400" />
+                        )}
+                        {category === 'blockchain-services' && (
+                          <Shield className="w-5 h-5 text-orange-400" />
+                        )}
                         <span className="capitalize">{category.replace('-', ' ')}</span>
                       </div>
                       <Badge variant="outline">
-                        {categoryServices.filter(s => s.status === 'active').length}/{categoryServices.length} Active
+                        {categoryServices.filter((s) => s.status === 'active').length}/
+                        {categoryServices.length} Active
                       </Badge>
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {categoryServices.map((service) => (
-                        <div 
+                        <div
                           key={service.name}
                           className="p-4 bg-gray-800/50 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors cursor-pointer"
                           onClick={() => navigateToService(service.name)}
@@ -496,7 +521,7 @@ export const SophisticatedTNFHub: React.FC = () => {
                 Create Agent
               </Button>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <Card className="bg-black/20 backdrop-blur-sm border-white/10 hover:border-purple-500/50 transition-colors cursor-pointer">
                 <CardContent className="p-6">
@@ -505,7 +530,9 @@ export const SophisticatedTNFHub: React.FC = () => {
                     <Badge className="bg-green-500/20 text-green-400">Active</Badge>
                   </div>
                   <h3 className="font-semibold mb-2">Content Creator</h3>
-                  <p className="text-sm text-gray-400 mb-4">AI-powered content generation and optimization</p>
+                  <p className="text-sm text-gray-400 mb-4">
+                    AI-powered content generation and optimization
+                  </p>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Tasks: 247</span>
                     <span className="text-green-400">98% Success</span>
@@ -520,7 +547,9 @@ export const SophisticatedTNFHub: React.FC = () => {
                     <Badge className="bg-green-500/20 text-green-400">Active</Badge>
                   </div>
                   <h3 className="font-semibold mb-2">Data Analyst</h3>
-                  <p className="text-sm text-gray-400 mb-4">Advanced data processing and insights generation</p>
+                  <p className="text-sm text-gray-400 mb-4">
+                    Advanced data processing and insights generation
+                  </p>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Tasks: 189</span>
                     <span className="text-green-400">95% Success</span>
@@ -535,7 +564,9 @@ export const SophisticatedTNFHub: React.FC = () => {
                     <Badge className="bg-yellow-500/20 text-yellow-400">Training</Badge>
                   </div>
                   <h3 className="font-semibold mb-2">Code Assistant</h3>
-                  <p className="text-sm text-gray-400 mb-4">Intelligent code generation and debugging</p>
+                  <p className="text-sm text-gray-400 mb-4">
+                    Intelligent code generation and debugging
+                  </p>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Tasks: 56</span>
                     <span className="text-yellow-400">Training</span>
@@ -595,7 +626,9 @@ export const SophisticatedTNFHub: React.FC = () => {
                       <span>AI Research Assistant</span>
                       <ChevronRight className="w-4 h-4 text-gray-400" />
                     </div>
-                    <p className="text-sm text-gray-400 mt-1">Automated research and report generation</p>
+                    <p className="text-sm text-gray-400 mt-1">
+                      Automated research and report generation
+                    </p>
                   </div>
                   <div className="p-3 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-colors cursor-pointer">
                     <div className="flex items-center justify-between">
@@ -609,7 +642,9 @@ export const SophisticatedTNFHub: React.FC = () => {
                       <span>E-commerce Optimizer</span>
                       <ChevronRight className="w-4 h-4 text-gray-400" />
                     </div>
-                    <p className="text-sm text-gray-400 mt-1">Product listing and price optimization</p>
+                    <p className="text-sm text-gray-400 mt-1">
+                      Product listing and price optimization
+                    </p>
                   </div>
                 </CardContent>
               </Card>

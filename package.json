@@ -38,6 +38,7 @@
     "tnf:onboard": "node scripts/tnf-onboard.cjs",
     "railway:claw:routing:sync": "scripts/railway/sync-claw-routing-vars.sh",
     "railway:claw:routing:verify": "scripts/railway/verify-adaptive-routing.sh",
+    "railway:arcade:chain:sync": "scripts/railway/sync-arcade-chain-vars.sh",
     "factory:boot": "scripts/orchestrator/factory-boot.sh",
     "factory:supervisor": "scripts/orchestrator/factory-supervisor.sh",
     "factory:supervisor:once": "SUPERVISOR_ONCE=true scripts/orchestrator/factory-supervisor.sh",

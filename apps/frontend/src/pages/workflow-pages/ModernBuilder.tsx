@@ -2,8 +2,8 @@
  * Modern Workflow Builder Page - Beautiful, intuitive workflow creation
  */
 
+import { ModernWorkflowBuilder } from '@/components/workflow/ModernWorkflowBuilder';
 import React from 'react';
-import { ModernWorkflowBuilder } from '../../components/workflow/ModernWorkflowBuilder';
 
 const ModernBuilderPage: React.FC = () => {
   return <ModernWorkflowBuilder />;

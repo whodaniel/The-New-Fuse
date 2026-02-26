@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import WorkspaceChatComponent from '../../components/WorkspaceChat';
+import WorkspaceChatComponent from '@/components/WorkspaceChat';
+import React from 'react';
 
 const WorkspaceChat: React.FC = () => {
   return <WorkspaceChatComponent />;

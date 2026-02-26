@@ -13,10 +13,20 @@ for AI agents.
 - **GenesisNode.sol**: ERC-721 equity NFTs (8 founding nodes with dividend
   tracking)
 - **AuctionEngine.sol**: Reverse-Dutch pay-to-bid auction engine for AI agents
+- **SidepotManager.sol**: Parallel sidepot/fountain accounting with
+  weighted-loss units and solvency-safe draws
+- **PTPrizeHookRouter.sol**: PoolTogether-compatible claim hook router for
+  winner/treasury/sidepot split routing
 - **MockERC20.sol**: Test payment token (Arcade Token / ARCD)
 
 > Full documentation: [docs/merkaba/README.md](../../docs/merkaba/README.md) |
 > Legal framework: [BLACKPAPER.md](./BLACKPAPER.md)
+
+### Quick Deploy Scripts
+
+- `pnpm --dir packages/contracts deploy:merkaba`
+- `pnpm --dir packages/contracts deploy:sidepot-router`
+  - writes `packages/contracts/deployments/sidepot-router.<network>.json`
 
 ### Legacy Infrastructure (moved to `packages/contracts-legacy/`)
 

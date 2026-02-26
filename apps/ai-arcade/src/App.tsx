@@ -1,18 +1,21 @@
-import { useEffect, useState } from 'react';
+import { Suspense, lazy, useEffect, useRef, useState } from 'react';
 
 import './App.css';
-import AdminDashboard from './components/AdminDashboard';
 import AgentCard from './components/AgentCard';
 import AgentDetailModal from './components/AgentDetailModal';
 import AgentSession from './components/AgentSession';
 import LoginModal from './components/LoginModal';
+import MerkabaLab from './components/MerkabaLab';
+import MerkabaMonitor from './components/MerkabaMonitor';
 import UserProfile from './components/UserProfile';
 import { config } from './config';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import GenesisAuction from './pages/GenesisAuction';
 import { ArcadeService } from './services/ArcadeService';
 
 import type { AgentListing } from './services/ArcadeService';
+
+const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
+const GenesisAuction = lazy(() => import('./pages/GenesisAuction'));
 
 function AppContent() {
   const [agents, setAgents] = useState<AgentListing[]>([]);
@@ -26,6 +29,56 @@ function AppContent() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedType, setSelectedType] = useState<string>('all');
+  const [launchNotice, setLaunchNotice] = useState('');
+  const experiencesRef = useRef<HTMLElement | null>(null);
+  const labRef = useRef<HTMLElement | null>(null);
+
+  // Merkaba treasury simulation state
+  const [sunBalance, setSunBalance] = useState(48750);
+  const [earthBalance, setEarthBalance] = useState(51200);
+  const [rebalanceActive, setRebalanceActive] = useState(false);
+
+  // Simulate Merkaba gyroscope pulse
+  useEffect(() => {
+    const pulseInterval = setInterval(() => {
+      setSunBalance((prev) => {
+        const delta = (Math.random() - 0.45) * 800;
+        return Math.max(1000, prev + delta);
+      });
+      setEarthBalance((prev) => {
+        const delta = (Math.random() - 0.55) * 600;
+        return Math.max(1000, prev + delta);
+      });
+    }, 3000);
+
+    // Rebalance check every 8 seconds
+    const rebalanceInterval = setInterval(() => {
+      setSunBalance((sun) => {
+        setEarthBalance((earth) => {
+          const total = sun + earth;
+          if (total === 0) {
+            return earth;
+          }
+          const ratio = sun / earth;
+          if (ratio > 1.15 || ratio < 0.85) {
+            setRebalanceActive(true);
+            setTimeout(() => setRebalanceActive(false), 2000);
+            const excess = sun - earth;
+            const move = excess * 0.05;
+            setEarthBalance(earth + move);
+            return earth + move;
+          }
+          return earth;
+        });
+        return sun;
+      });
+    }, 8000);
+
+    return () => {
+      clearInterval(pulseInterval);
+      clearInterval(rebalanceInterval);
+    };
+  }, []);
 
   const { user, isAuthenticated } = useAuth();
   const arcadeService = new ArcadeService(config.apiUrl);
@@ -81,8 +134,23 @@ function AppContent() {
   };
 
   const handlePlayAgent = (agent: AgentListing) => {
+    if ((agent.experienceKind === 'music' || agent.experienceKind === 'app') && agent.launchUrl) {
+      window.open(agent.launchUrl, '_blank', 'noopener,noreferrer');
+      setLaunchNotice(`Launching ${agent.name} in a new tab...`);
+      setTimeout(() => setLaunchNotice(''), 3000);
+      setSelectedAgent(null);
+      return;
+    }
     setActiveSession(agent);
     setSelectedAgent(null);
+  };
+
+  const handleCardAction = (agent: AgentListing) => {
+    if (agent.experienceKind === 'music' || agent.experienceKind === 'app') {
+      handlePlayAgent(agent);
+      return;
+    }
+    setSelectedAgent(agent);
   };
 
   const categories = [
@@ -91,6 +159,7 @@ function AppContent() {
     { id: 'code', label: 'Code' },
     { id: 'analytics', label: 'Analytics' },
     { id: 'content', label: 'Content' },
+    { id: 'music', label: 'Music' },
     { id: 'social', label: 'Social Toys' },
   ];
 
@@ -153,9 +222,27 @@ function AppContent() {
           </p>
 
           <div className="hero-actions">
-            <button className="cta-button cta-primary">Start Playing</button>
-            <button className="cta-button cta-secondary">Explore Arcade</button>
-            <button className="cta-button cta-token">Buy Tokens</button>
+            <button
+              className="cta-button cta-primary"
+              onClick={() => experiencesRef.current?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              Start Playing
+            </button>
+            <button
+              className="cta-button cta-secondary"
+              onClick={() => experiencesRef.current?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              Explore Arcade
+            </button>
+            <button className="cta-button cta-token" onClick={() => setShowLogin(true)}>
+              Buy Tokens
+            </button>
+            <button
+              className="cta-button cta-lab"
+              onClick={() => labRef.current?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              Open Merkaba Lab
+            </button>
           </div>
 
           <div className="category-chips">
@@ -184,7 +271,7 @@ function AppContent() {
           </div>
         </section>
 
-        <section className="agents-section">
+        <section className="agents-section" ref={experiencesRef}>
           <div className="section-header">
             <h2 className="section-title">FEATURED EXPERIENCES</h2>
             <div className="filters">
@@ -234,12 +321,32 @@ function AppContent() {
           ) : (
             <div className="agents-grid">
               {filteredAgents.map((agent) => (
-                <AgentCard key={agent.id} agent={agent} onSelect={handleSelectAgent} />
+                <AgentCard
+                  key={agent.id}
+                  agent={agent}
+                  onSelect={handleSelectAgent}
+                  onAction={handleCardAction}
+                />
               ))}
             </div>
           )}
         </section>
+
+        {/* Merkaba Treasury Monitor - persistent ticker */}
+        <section className="merkaba-monitor-section">
+          <MerkabaMonitor
+            sunBalance={Math.round(sunBalance)}
+            earthBalance={Math.round(earthBalance)}
+            rebalanceActive={rebalanceActive}
+          />
+        </section>
+
+        <section ref={labRef}>
+          <MerkabaLab />
+        </section>
       </main>
+
+      {launchNotice ? <div className="launch-notice">{launchNotice}</div> : null}
 
       {selectedAgent && (
         <AgentDetailModal
@@ -258,7 +365,11 @@ function AppContent() {
 
       {showProfile && <UserProfile onClose={() => setShowProfile(false)} />}
 
-      {showAdmin && <AdminDashboard onClose={() => setShowAdmin(false)} />}
+      {showAdmin && (
+        <Suspense fallback={<div className="launch-notice">Loading admin console...</div>}>
+          <AdminDashboard onClose={() => setShowAdmin(false)} />
+        </Suspense>
+      )}
 
       <footer className="arcade-footer">
         <p className="protocol-tag">AI ARCADE • PLAY | EXPLORE | CREATE</p>
@@ -274,10 +385,10 @@ function App() {
     <AuthProvider>
       {currentView === 'arcade' ? (
         <>
-          <div className="fixed top-4 right-4 z-50">
+          <div className="view-toggle-wrap">
             <button
+              className="view-toggle-btn view-toggle-genesis"
               onClick={() => setCurrentView('genesis')}
-              className="bg-black/80 text-cyan-500 border border-cyan-500/50 px-4 py-2 rounded font-mono text-xs hover:bg-cyan-900/50 transition-colors"
             >
               ENTER GENESIS PROTOCOL
             </button>
@@ -286,15 +397,17 @@ function App() {
         </>
       ) : (
         <>
-          <div className="fixed top-4 right-4 z-50">
+          <div className="view-toggle-wrap">
             <button
+              className="view-toggle-btn view-toggle-arcade"
               onClick={() => setCurrentView('arcade')}
-              className="bg-black/80 text-orange-500 border border-orange-500/50 px-4 py-2 rounded font-mono text-xs hover:bg-orange-900/50 transition-colors"
             >
               RETURN TO ARCADE
             </button>
           </div>
-          <GenesisAuction />
+          <Suspense fallback={<div className="launch-notice">Loading Genesis Protocol...</div>}>
+            <GenesisAuction />
+          </Suspense>
         </>
       )}
     </AuthProvider>

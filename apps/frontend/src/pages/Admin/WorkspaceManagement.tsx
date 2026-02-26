@@ -228,7 +228,7 @@ const WorkspaceManagement: React.FC = () => {
           </div>
           <Select
             value={statusFilter}
-            onChange={(e: any) => setStatusFilter(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setStatusFilter(e.target.value)}
             options={[
               { value: 'all', label: 'All Status' },
               { value: 'active', label: 'Active' },
@@ -238,7 +238,7 @@ const WorkspaceManagement: React.FC = () => {
           />
           <Select
             value={planFilter}
-            onChange={(e: any) => setPlanFilter(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPlanFilter(e.target.value)}
             options={[
               { value: 'all', label: 'All Plans' },
               { value: 'free', label: 'Free' },

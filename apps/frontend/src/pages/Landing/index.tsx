@@ -1,5 +1,4 @@
-import { useNavigate } from 'react-router-dom';
-import MobileNav from '../../components/MobileNav';
+import MobileNav from '@/components/MobileNav';
 import {
   defaultStats,
   defaultTestimonials,
@@ -9,7 +8,8 @@ import {
   HeroCTAWithTrust,
   SecondaryCTA,
   SocialProofSection,
-} from '../../components/landing';
+} from '@/components/landing';
+import { useNavigate } from 'react-router-dom';
 
 export default function LandingPage() {
   const navigate = useNavigate();

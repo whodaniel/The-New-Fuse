@@ -91,6 +91,8 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\"",
     "type-check": "tsc --noEmit",
+    "arcade:listener": "ts-node src/scripts/arcade-chain-listener.ts",
+    "arcade:sweep": "ts-node src/scripts/arcade-chain-sweeper.ts",
     "clean": "rimraf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo",
     "claude-dev": "ts-node src/scripts/claude-dev-cli.ts"
   },

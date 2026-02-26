@@ -7,10 +7,23 @@ import {
 } from '@/components/ui/premium';
 import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { getTask, updateTask } from '@/services/unifiedLedgerApi';
+import { getTask, updateTask, type LedgerStatus } from '@/services/unifiedLedgerApi';
 import { Calendar, ChevronLeft, Clock, Paperclip, Plus, Save, Tag, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+
+interface TaskFormData {
+  title: string;
+  description: string;
+  status: string;
+  priority: string;
+  category: string;
+  assignedTo: string;
+  dueDate: string;
+  estimatedHours: string;
+  tags: string[];
+  newTag: string;
+}
 
 // Mock data for agents
 const mockAgents = [
@@ -29,7 +42,7 @@ const EditTask: React.FC = () => {
   const navigate = useNavigate();
 
   // Form state
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<TaskFormData>({
     title: '',
     description: '',
     status: '',
@@ -38,7 +51,7 @@ const EditTask: React.FC = () => {
     assignedTo: '',
     dueDate: '',
     estimatedHours: '',
-    tags: [] as string[],
+    tags: [],
     newTag: '',
   });
 
@@ -61,10 +74,10 @@ const EditTask: React.FC = () => {
                   : 'not_started',
           priority:
             row.priority === 'urgent' || row.priority === 'critical' ? 'critical' : row.priority,
-          category: String((row.metadata as any)?.category || 'development'),
+          category: String((row.metadata as Record<string, unknown>)?.category || 'development'),
           assignedTo: row.assignee || '',
-          dueDate: String((row.metadata as any)?.dueDate || row.updatedAt),
-          estimatedHours: String((row.metadata as any)?.estimatedHours || ''),
+          dueDate: String((row.metadata as Record<string, unknown>)?.dueDate || row.updatedAt),
+          estimatedHours: String((row.metadata as Record<string, unknown>)?.estimatedHours || ''),
           tags: row.tags || [],
           newTag: '',
         });
@@ -77,7 +90,15 @@ const EditTask: React.FC = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev: any) => ({
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Handle custom Select component change (passes value string directly)
+  const handleSelectChange = (name: keyof TaskFormData) => (value: string) => {
+    setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -88,7 +109,7 @@ const EditTask: React.FC = () => {
     if (e.key === 'Enter' && formData.newTag.trim()) {
       e.preventDefault();
       if (!formData.tags.includes(formData.newTag.trim())) {
-        setFormData((prev: any) => ({
+        setFormData((prev) => ({
           ...prev,
           tags: [...prev.tags, prev.newTag.trim()],
           newTag: '',
@@ -99,7 +120,7 @@ const EditTask: React.FC = () => {
 
   // Remove tag
   const removeTag = (tagToRemove: string) => {
-    setFormData((prev: any) => ({
+    setFormData((prev) => ({
       ...prev,
       tags: prev.tags.filter((tag) => tag !== tagToRemove),
     }));
@@ -131,8 +152,13 @@ const EditTask: React.FC = () => {
     updateTask(id, {
       title: formData.title,
       description: formData.description,
-      status: (statusMap[formData.status] as any) || 'submitted',
-      priority: (priorityMap[formData.priority] as any) || 'medium',
+      status: (statusMap[formData.status] || 'submitted') as LedgerStatus,
+      priority: (priorityMap[formData.priority] || 'medium') as
+        | 'low'
+        | 'medium'
+        | 'high'
+        | 'critical'
+        | 'urgent',
       assignee: formData.assignedTo,
       tags: formData.tags,
       metadata: {
@@ -195,7 +221,7 @@ const EditTask: React.FC = () => {
                     id="status"
                     name="status"
                     value={formData.status}
-                    onChange={handleInputChange}
+                    onChange={handleSelectChange('status')}
                     required
                   >
                     <option value="not_started">Not Started</option>
@@ -211,7 +237,7 @@ const EditTask: React.FC = () => {
                     id="priority"
                     name="priority"
                     value={formData.priority}
-                    onChange={handleInputChange}
+                    onChange={handleSelectChange('priority')}
                     required
                   >
                     <option value="low">Low</option>
@@ -229,7 +255,7 @@ const EditTask: React.FC = () => {
                     id="category"
                     name="category"
                     value={formData.category}
-                    onChange={handleInputChange}
+                    onChange={handleSelectChange('category')}
                     required
                   >
                     <option value="development">Development</option>
@@ -249,7 +275,7 @@ const EditTask: React.FC = () => {
                     id="assignedTo"
                     name="assignedTo"
                     value={formData.assignedTo}
-                    onChange={handleInputChange}
+                    onChange={handleSelectChange('assignedTo')}
                     required
                   >
                     <option value="">Select an agent</option>
@@ -357,7 +383,7 @@ const EditTask: React.FC = () => {
                   Attachments
                 </Label>
                 <div className="mt-2 space-y-2">
-                  {mockTaskData.attachments.map((attachment, index) => (
+                  {([] as Array<{ name: string; size: string }>).map((attachment, index) => (
                     <div key={index} className="flex items-center p-2 border rounded-md">
                       <div className="flex-1">
                         <div className="font-medium">{attachment.name}</div>

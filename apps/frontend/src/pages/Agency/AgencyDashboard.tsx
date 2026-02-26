@@ -1,3 +1,6 @@
+import { GlassCard } from '@/components/ui/premium/GlassCard';
+import { PremiumButton } from '@/components/ui/premium/PremiumButton';
+import { useApi } from '@/hooks/useApi';
 import {
   Activity,
   ArrowUpRight,
@@ -14,9 +17,6 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { GlassCard } from '../../components/ui/premium/GlassCard';
-import { PremiumButton } from '../../components/ui/premium/PremiumButton';
-import { useApi } from '../../hooks/useApi';
 
 interface AgencyStats {
   totalAgents: number;
@@ -26,15 +26,17 @@ interface AgencyStats {
 }
 
 export const AgencyDashboard: React.FC = () => {
-  const { api, agentService, workflowService } = useApi();
+  const { agentService, workflowService } = useApi();
   const [stats, setStats] = useState<AgencyStats>({
     totalAgents: 0,
     activeWorkflows: 0,
     totalTasks: 0,
     revenue: '$0.00',
   });
-  const [recentAgencies, setRecentAgencies] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [recentAgencies, setRecentAgencies] = useState<
+    Array<{ id: string; name: string; domain: string; agents: number; split: string }>
+  >([]);
+  const [_loading, setLoading] = useState(true);
 
   const fetchDashboardData = async () => {
     setLoading(true);
@@ -242,7 +244,7 @@ const ActionSmall: React.FC<{ icon: React.ReactNode; label: string }> = ({ icon,
   </button>
 );
 
-const MOCK_TENANTS = [
+const _MOCK_TENANTS = [
   { id: 't1', name: 'Alpha Research Node', domain: 'alpha.agency.hub', agents: 8, split: '95/5' },
   { id: 't2', name: 'Beta Content Studio', domain: 'beta.agency.hub', agents: 12, split: '90/10' },
   { id: 't3', name: 'Zeta Financial Swarm', domain: 'zeta.agency.hub', agents: 5, split: '98/2' },

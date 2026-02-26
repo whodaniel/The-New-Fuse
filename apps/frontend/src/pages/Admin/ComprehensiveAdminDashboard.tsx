@@ -1,3 +1,4 @@
+import { useAuthorization } from '@/hooks/useAuthorization';
 import {
   Activity,
   AlertCircle,
@@ -27,7 +28,6 @@ import {
 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuthorization } from '../../hooks/useAuthorization';
 
 interface SystemMetrics {
   totalUsers: number;

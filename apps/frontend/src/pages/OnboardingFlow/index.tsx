@@ -1,7 +1,7 @@
+import { UserTypeDetection } from '@/components/onboarding/UserTypeDetection';
+import { OnboardingWizard } from '@/components/wizard/OnboardingWizard';
+import { WizardProvider } from '@/components/wizard/WizardProvider';
 import React, { useState } from 'react';
-import { UserTypeDetection } from '../../components/onboarding/UserTypeDetection';
-import { OnboardingWizard } from '../../components/wizard/OnboardingWizard';
-import { WizardProvider } from '../../components/wizard/WizardProvider';
 import { useNavigate } from 'react-router-dom';
 
 export const OnboardingFlow: React.FC = () => {
@@ -31,10 +31,7 @@ export const OnboardingFlow: React.FC = () => {
         </div>
       ) : (
         <WizardProvider>
-          <OnboardingWizard
-            userType={userType}
-            onComplete={handleOnboardingComplete}
-          />
+          <OnboardingWizard userType={userType} onComplete={handleOnboardingComplete} />
         </WizardProvider>
       )}
     </div>

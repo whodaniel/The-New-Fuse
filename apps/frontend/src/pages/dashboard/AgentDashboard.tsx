@@ -4,6 +4,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { GlassCard, StatsCard } from '@/components/ui/premium/GlassCard';
+import { PremiumButton } from '@/components/ui/premium/PremiumButton';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Activity,
@@ -28,8 +30,6 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { GlassCard, StatsCard } from '../../components/ui/premium/GlassCard';
-import { PremiumButton } from '../../components/ui/premium/PremiumButton';
 
 const containerVariants = {
   hidden: { opacity: 0 },

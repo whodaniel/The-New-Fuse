@@ -1,6 +1,6 @@
+import { useAuth } from '@/hooks/useAuth';
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
 const OAuthCallback = () => {
   const navigate = useNavigate();
   const location = useLocation();

@@ -1,3 +1,6 @@
+import { GlassCard } from '@/components/ui/premium/GlassCard';
+import { PremiumButton } from '@/components/ui/premium/PremiumButton';
+import { useApi } from '@/hooks/useApi';
 import {
   Fingerprint,
   Globe,
@@ -10,9 +13,6 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { GlassCard } from '../../components/ui/premium/GlassCard';
-import { PremiumButton } from '../../components/ui/premium/PremiumButton';
-import { useApi } from '../../hooks/useApi';
 
 interface AgentIdentity {
   id: string;

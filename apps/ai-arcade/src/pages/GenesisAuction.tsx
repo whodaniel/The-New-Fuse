@@ -1,34 +1,128 @@
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import ArcadeCabinet from '../components/ArcadeCabinet';
+import MerkabaMonitor from '../components/MerkabaMonitor';
 import { useMerkabaContract } from '../hooks/useMerkabaContract';
+
+interface CabinetState {
+  id: number;
+  agentName: string;
+  agentRole: 'CODER' | 'STRATEGIST' | 'GAME';
+  currentPrice: number;
+  nextDrop: number;
+  bidFee: number;
+  endTime: Date;
+}
 
 const GenesisAuction = () => {
   const { account, connect } = useMerkabaContract();
 
-  // Mock Data for Visualization
+  // Countdown
   const [timeLeft, setTimeLeft] = useState({ days: 2, hours: 14, minutes: 23, seconds: 45 });
-  const [currentBid, setCurrentBid] = useState(42000); // $42k
 
+  // Merkaba state (simulated until contracts are deployed)
+  const [sunBalance, setSunBalance] = useState(32400);
+  const [earthBalance, setEarthBalance] = useState(28900);
+  const [rebalanceActive, setRebalanceActive] = useState(false);
+
+  // Live Arcade Cabinets
+  const [cabinets, setCabinets] = useState<CabinetState[]>([
+    {
+      id: 1,
+      agentName: 'DeepSeek R1',
+      agentRole: 'STRATEGIST',
+      currentPrice: 45.2,
+      nextDrop: 0.2,
+      bidFee: 1.0,
+      endTime: new Date(Date.now() + 3600000 * 4),
+    },
+    {
+      id: 2,
+      agentName: 'Qwen3 Coder',
+      agentRole: 'CODER',
+      currentPrice: 28.5,
+      nextDrop: 0.15,
+      bidFee: 0.75,
+      endTime: new Date(Date.now() + 3600000 * 8),
+    },
+    {
+      id: 3,
+      agentName: 'Arcade Master',
+      agentRole: 'GAME',
+      currentPrice: 12.0,
+      nextDrop: 0.1,
+      bidFee: 0.5,
+      endTime: new Date(Date.now() + 3600000 * 2),
+    },
+  ]);
+
+  // Countdown timer
   useEffect(() => {
     const timer = setInterval(() => {
-      // Simple tick down logic
       setTimeLeft((prev) => {
-        if (prev.seconds > 0) {
-          return { ...prev, seconds: prev.seconds - 1 };
-        }
-        if (prev.minutes > 0) {
-          return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
-        }
-        if (prev.hours > 0) {
-          return { ...prev, hours: prev.hours - 1, minutes: 59, seconds: 59 };
-        }
+        if (prev.seconds > 0) return { ...prev, seconds: prev.seconds - 1 };
+        if (prev.minutes > 0) return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
+        if (prev.hours > 0) return { ...prev, hours: prev.hours - 1, minutes: 59, seconds: 59 };
+        if (prev.days > 0)
+          return { ...prev, days: prev.days - 1, hours: 23, minutes: 59, seconds: 59 };
         return prev;
       });
-      // Simulate price drop
-      setCurrentBid((prev) => Math.max(5000, prev - 0.5));
     }, 1000);
     return () => clearInterval(timer);
   }, []);
+
+  // Merkaba gyroscope simulation
+  useEffect(() => {
+    const pulse = setInterval(() => {
+      setSunBalance((prev) => Math.max(1000, prev + (Math.random() - 0.45) * 500));
+      setEarthBalance((prev) => Math.max(1000, prev + (Math.random() - 0.55) * 400));
+    }, 4000);
+
+    const rebalance = setInterval(() => {
+      setSunBalance((sun) => {
+        setEarthBalance((earth) => {
+          const ratio = sun / earth;
+          if (ratio > 1.12 || ratio < 0.88) {
+            setRebalanceActive(true);
+            setTimeout(() => setRebalanceActive(false), 2000);
+            const move = (sun - earth) * 0.05;
+            return earth + move;
+          }
+          return earth;
+        });
+        return sun;
+      });
+    }, 6000);
+
+    return () => {
+      clearInterval(pulse);
+      clearInterval(rebalance);
+    };
+  }, []);
+
+  // Handle bid on a cabinet
+  const handleBid = useCallback((cabinetId: number) => {
+    setCabinets((prev) =>
+      prev.map((cab) => {
+        if (cab.id !== cabinetId) return cab;
+        const newPrice = Math.max(0, cab.currentPrice - cab.nextDrop);
+        // Inject fee into Merkaba pools (simulation)
+        setSunBalance((s) => s + cab.bidFee * 0.4);
+        setEarthBalance((e) => e + cab.bidFee * 0.4);
+        return { ...cab, currentPrice: parseFloat(newPrice.toFixed(2)) };
+      })
+    );
+  }, []);
+
+  // Handle buy now
+  const handleBuy = useCallback(
+    (cabinetId: number) => {
+      const cab = cabinets.find((c) => c.id === cabinetId);
+      if (!cab) return;
+      alert(`🎉 You unlocked ${cab.agentName} for $${cab.currentPrice.toFixed(2)}!`);
+    },
+    [cabinets]
+  );
 
   const genesisNodes = [
     { id: 1, type: 'SUN', role: 'Volume miner', benefit: 'Earns 1% of all Bid Fees' },
@@ -106,20 +200,43 @@ const GenesisAuction = () => {
         </div>
       </div>
 
-      {/* THE AUCTION FLOOR */}
+      {/* MERKABA MONITOR - Live Treasury */}
+      <MerkabaMonitor
+        sunBalance={Math.round(sunBalance)}
+        earthBalance={Math.round(earthBalance)}
+        rebalanceActive={rebalanceActive}
+      />
+
+      {/* LIVE AUCTION CABINETS */}
+      <div className="genesis-cabinets-section">
+        <h2>LIVE AUCTION FLOOR</h2>
+        <p>DUTCH AUCTIONS IN PROGRESS • INSERT COIN TO DROP THE PRICE • FEES FLOW TO MERKABA</p>
+        <div className="cabinets-grid">
+          {cabinets.map((cab) => (
+            <ArcadeCabinet
+              key={cab.id}
+              id={cab.id}
+              agentName={cab.agentName}
+              agentRole={cab.agentRole}
+              currentPrice={cab.currentPrice}
+              nextDrop={cab.nextDrop}
+              bidFee={cab.bidFee}
+              endTime={cab.endTime}
+              onBid={() => handleBid(cab.id)}
+              onBuy={() => handleBuy(cab.id)}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* GENESIS NODES */}
       <div className="py-24 px-8 max-w-7xl mx-auto">
         <div className="flex justify-between items-end mb-12 border-b border-gray-800 pb-4">
           <div>
             <h2 className="text-4xl font-bold text-white mb-2">GENESIS NODES</h2>
             <p className="text-gray-500 font-mono">
-              DUTCH AUCTION IN PROGRESS • CURRENT PRICE DROPPING
+              THE 8 CORNERSTONES • OWN A PIECE OF THE ENGINE
             </p>
-          </div>
-          <div className="text-right">
-            <span className="block text-sm text-gray-500 font-mono mb-1">CURRENT FLOOR PRICE</span>
-            <span className="text-5xl font-mono font-bold text-cyan-400">
-              ${currentBid.toLocaleString()}
-            </span>
           </div>
         </div>
 
@@ -183,14 +300,29 @@ const GenesisAuction = () => {
                 <span className="w-2 h-2 bg-cyan-500 rounded-full" />
                 EARTH NODES earn from Yield
               </li>
+              <li className="flex items-center gap-4">
+                <span className="w-2 h-2 bg-purple-500 rounded-full" />
+                GYROSCOPE auto-rebalances at 15% deviation
+              </li>
             </ul>
           </div>
           <div className="aspect-square bg-black rounded-full border border-gray-800 flex items-center justify-center relative">
             <div className="absolute inset-0 border border-gray-800 rounded-full scale-75 opacity-50" />
             <div className="absolute inset-0 border border-gray-800 rounded-full scale-50 opacity-25" />
-            {/* Abstract Graphic */}
-            <div className="w-32 h-32 border-2 border-white rotate-45 transform" />
-            <div className="w-32 h-32 border-2 border-white -rotate-45 transform absolute" />
+            {/* Abstract Merkaba Graphic */}
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+            >
+              <div className="w-32 h-32 border-2 border-orange-500 rotate-45 transform" />
+            </motion.div>
+            <motion.div
+              animate={{ rotate: -360 }}
+              transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+              className="absolute"
+            >
+              <div className="w-32 h-32 border-2 border-cyan-500 -rotate-45 transform" />
+            </motion.div>
           </div>
         </div>
       </div>

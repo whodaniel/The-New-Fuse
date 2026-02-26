@@ -1,4 +1,11 @@
 import {
+  chatApiService,
+  type ChatAgent,
+  type ConversationRule,
+  type Message,
+  type SynthesisJob,
+} from '@/services/chatApi';
+import {
   Copy,
   Lightbulb,
   Paperclip,
@@ -11,16 +18,47 @@ import {
 } from 'lucide-react';
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  chatApiService,
-  type ChatAgent,
-  type ConversationRule,
-  type Message,
-  type SynthesisJob,
-} from '../../services/chatApi';
 
 // Context for shared state
-const ChatContext = createContext<any>(null);
+interface ChatContextType {
+  agents: ChatAgent[];
+  setAgents: React.Dispatch<React.SetStateAction<ChatAgent[]>>;
+  messages: Message[];
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+  rules: ConversationRule[];
+  setRules: React.Dispatch<React.SetStateAction<ConversationRule[]>>;
+  synthesisJobs: SynthesisJob[];
+  setSynthesisJobs: React.Dispatch<React.SetStateAction<SynthesisJob[]>>;
+  conversationGoal: string;
+  setConversationGoal: React.Dispatch<React.SetStateAction<string>>;
+  isGenerating: boolean;
+  setIsGenerating: React.Dispatch<React.SetStateAction<boolean>>;
+  isAutomating: boolean;
+  setIsAutomating: React.Dispatch<React.SetStateAction<boolean>>;
+  isSynthesizing: boolean;
+  setIsSynthesizing: React.Dispatch<React.SetStateAction<boolean>>;
+  mode: 'manual' | 'auto';
+  setMode: React.Dispatch<React.SetStateAction<'manual' | 'auto'>>;
+  isPaused: boolean;
+  setIsPaused: React.Dispatch<React.SetStateAction<boolean>>;
+  isTtsEnabled: boolean;
+  setIsTtsEnabled: React.Dispatch<React.SetStateAction<boolean>>;
+  voices: VoiceOption[];
+  speak: (text: string, voiceName?: string) => Promise<void>;
+  callTextApi: (prompt: string, systemPrompt?: string) => Promise<string>;
+  addMessage: (message: Omit<Message, 'id'>) => Promise<Message>;
+  getAgentById: (id: string) => ChatAgent | undefined;
+  currentChatId: string | null;
+  setCurrentChatId: React.Dispatch<React.SetStateAction<string | null>>;
+}
+
+interface VoiceOption {
+  name: string;
+  lang: string;
+  voice: SpeechSynthesisVoice;
+}
+
+const ChatContext = createContext<ChatContextType | null>(null);
 
 // Enhanced Chat Provider Component
 const EnhancedChatProvider = ({ children }: { children: React.ReactNode }) => {
@@ -35,7 +73,7 @@ const EnhancedChatProvider = ({ children }: { children: React.ReactNode }) => {
   const [mode, setMode] = useState<'manual' | 'auto'>('manual');
   const [isPaused, setIsPaused] = useState(true);
   const [isTtsEnabled, setIsTtsEnabled] = useState(false);
-  const [voices, setVoices] = useState<any[]>([]);
+  const [voices, setVoices] = useState<VoiceOption[]>([]);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
 
   // Load voices for TTS
@@ -185,24 +223,23 @@ function ChatPage() {
   const [loading, setLoading] = useState(true);
   const [senderId, setSenderId] = useState('You');
   const [recipientAgentId, setRecipientAgentId] = useState('');
-  const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
-  const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
-  const [isRuleModalOpen, setIsRuleModalOpen] = useState(false);
-  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [_isAgentModalOpen, setIsAgentModalOpen] = useState(false);
+  const [_isGoalModalOpen, setIsGoalModalOpen] = useState(false);
+  const [_isRuleModalOpen, setIsRuleModalOpen] = useState(false);
+  const [_isGalleryOpen, setIsGalleryOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const context = useContext(ChatContext);
+  if (!context) throw new Error('ChatPage must be wrapped in EnhancedChatProvider');
 
   const {
     agents,
     setAgents,
     messages,
-    setMessages,
     rules,
     conversationGoal,
-    setConversationGoal,
     isGenerating,
     setIsGenerating,
-    isAutomating,
-    setIsAutomating,
     isSynthesizing,
     mode,
     setMode,
@@ -215,9 +252,7 @@ function ChatPage() {
     callTextApi,
     addMessage,
     getAgentById,
-    currentChatId,
-    setCurrentChatId,
-  } = useContext(ChatContext) || {};
+  } = context;
 
   // Initialize default agents if none exist
   useEffect(() => {
@@ -307,7 +342,7 @@ function ChatPage() {
     }
 
     const lastMessage = messages[messages.length - 1];
-    if (lastMessage.sender === 'You' || lastMessage.sender === 'system' || !lastMessage.agentId) {
+    if (lastMessage.sender === 'user' || lastMessage.sender === 'system' || !lastMessage.agentId) {
       return;
     }
 
@@ -368,9 +403,9 @@ function ChatPage() {
     const respondingAgent = getAgentById(recipientAgentId);
     if (!respondingAgent) return;
 
-    const userMessage = {
+    const userMessage: Omit<Message, 'id'> = {
       content: newMessage,
-      sender: senderId === 'You' ? 'You' : getAgentById(senderId)?.name || 'You',
+      sender: 'user' as const,
       timestamp: new Date().toISOString(),
       type: 'text' as const,
     };

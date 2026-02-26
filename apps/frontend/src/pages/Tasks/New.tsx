@@ -5,12 +5,28 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { createTask } from '@/services/unifiedLedgerApi';
+import { createTask, type LedgerStatus } from '@/services/unifiedLedgerApi';
 import { Calendar, ChevronLeft, Clock, Paperclip, Plus, Save, Tag, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// Mock data removed in favor of real API call
+interface TaskFormData {
+  title: string;
+  description: string;
+  status: string;
+  priority: string;
+  category: string;
+  assignedTo: string;
+  dueDate: string;
+  estimatedHours: string;
+  tags: string[];
+  newTag: string;
+}
+
+interface AgentOption {
+  id: string | number;
+  name: string;
+}
 
 /**
  * New Task page component
@@ -19,7 +35,7 @@ const NewTask: React.FC = () => {
   const navigate = useNavigate();
 
   // Form state
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<TaskFormData>({
     title: '',
     description: '',
     status: 'not_started',
@@ -28,11 +44,11 @@ const NewTask: React.FC = () => {
     assignedTo: '',
     dueDate: '',
     estimatedHours: '',
-    tags: [] as string[],
+    tags: [],
     newTag: '',
   });
 
-  const [agents, setAgents] = useState<any[]>([]);
+  const [agents, setAgents] = useState<AgentOption[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -59,7 +75,15 @@ const NewTask: React.FC = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev: any) => ({
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Handle custom Select component change (passes value string directly)
+  const handleSelectChange = (name: keyof TaskFormData) => (value: string) => {
+    setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -70,7 +94,7 @@ const NewTask: React.FC = () => {
     if (e.key === 'Enter' && formData.newTag.trim()) {
       e.preventDefault();
       if (!formData.tags.includes(formData.newTag.trim())) {
-        setFormData((prev: any) => ({
+        setFormData((prev) => ({
           ...prev,
           tags: [...prev.tags, prev.newTag.trim()],
           newTag: '',
@@ -81,7 +105,7 @@ const NewTask: React.FC = () => {
 
   // Remove tag
   const removeTag = (tagToRemove: string) => {
-    setFormData((prev: any) => ({
+    setFormData((prev) => ({
       ...prev,
       tags: prev.tags.filter((tag) => tag !== tagToRemove),
     }));
@@ -106,8 +130,13 @@ const NewTask: React.FC = () => {
     createTask({
       title: formData.title,
       description: formData.description,
-      status: (statusMap[formData.status] as any) || 'submitted',
-      priority: (priorityMap[formData.priority] as any) || 'medium',
+      status: (statusMap[formData.status] || 'submitted') as LedgerStatus,
+      priority: (priorityMap[formData.priority] || 'medium') as
+        | 'low'
+        | 'medium'
+        | 'high'
+        | 'critical'
+        | 'urgent',
       owner: 'ui-user',
       assignee: formData.assignedTo || undefined,
       tags: formData.tags,
@@ -174,7 +203,7 @@ const NewTask: React.FC = () => {
                     id="status"
                     name="status"
                     value={formData.status}
-                    onChange={handleInputChange}
+                    onChange={handleSelectChange('status')}
                     required
                   >
                     <option value="not_started">Not Started</option>
@@ -190,7 +219,7 @@ const NewTask: React.FC = () => {
                     id="priority"
                     name="priority"
                     value={formData.priority}
-                    onChange={handleInputChange}
+                    onChange={handleSelectChange('priority')}
                     required
                   >
                     <option value="low">Low</option>
@@ -208,7 +237,7 @@ const NewTask: React.FC = () => {
                     id="category"
                     name="category"
                     value={formData.category}
-                    onChange={handleInputChange}
+                    onChange={handleSelectChange('category')}
                     required
                   >
                     <option value="development">Development</option>
@@ -228,7 +257,7 @@ const NewTask: React.FC = () => {
                     id="assignedTo"
                     name="assignedTo"
                     value={formData.assignedTo}
-                    onChange={handleInputChange}
+                    onChange={handleSelectChange('assignedTo')}
                     required
                   >
                     <option value="">Select an agent</option>
@@ -300,7 +329,7 @@ const NewTask: React.FC = () => {
                         formData.newTag.trim() &&
                         !formData.tags.includes(formData.newTag.trim())
                       ) {
-                        setFormData((prev: any) => ({
+                        setFormData((prev) => ({
                           ...prev,
                           tags: [...prev.tags, prev.newTag.trim()],
                           newTag: '',

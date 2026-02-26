@@ -18,6 +18,12 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
   onPlay,
 }) => {
   const { isAuthenticated } = useAuth();
+  const isExternalExperience = agent.experienceKind === 'music' || agent.experienceKind === 'app';
+  const actionText = isExternalExperience ? 'Launch Experience' : 'Play Now';
+  const priceText = isExternalExperience ? 'FREE / OPEN' : `$${agent.pricePerRun} / RUN`;
+  const priceDetail = isExternalExperience
+    ? 'Opens a dedicated app experience in a new tab.'
+    : 'Requires an active subscription to access via remote MCP.';
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -47,26 +53,26 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
           </div>
 
           <div className="pricing-box">
-            <div className="price-tag">${agent.pricePerRun} / RUN</div>
-            <p className="price-detail">
-              Requires an active subscription to access via remote MCP.
-            </p>
+            <div className="price-tag">{priceText}</div>
+            <p className="price-detail">{priceDetail}</p>
           </div>
         </div>
 
         <div className="modal-footer">
-          {isAuthenticated ? (
+          {isExternalExperience || isAuthenticated ? (
             <>
               <button className="play-now-button" onClick={onPlay}>
-                🎮 Play Now
+                🎮 {actionText}
               </button>
-              <div className="subscription-section">
-                <h4 className="unlock-title">UNLOCK INSTANCE</h4>
-                <PayPalButton
-                  planId={agent.payPalPlanId || 'P-3WD251534W148423SNFXJQVI'}
-                  onSuccess={onSuccess}
-                />
-              </div>
+              {!isExternalExperience ? (
+                <div className="subscription-section">
+                  <h4 className="unlock-title">UNLOCK INSTANCE</h4>
+                  <PayPalButton
+                    planId={agent.payPalPlanId || 'P-3WD251534W148423SNFXJQVI'}
+                    onSuccess={onSuccess}
+                  />
+                </div>
+              ) : null}
             </>
           ) : (
             <div className="login-prompt">

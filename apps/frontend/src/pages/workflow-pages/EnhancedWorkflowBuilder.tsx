@@ -9,6 +9,42 @@
  * - Workflow templates
  */
 
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  LoadingSpinner,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
+  ProgressBar,
+} from '@/components/ui/design-system';
+import { useDisclosure } from '@/components/ui/disclosure';
+import {
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerHeader,
+  DrawerOverlay,
+} from '@/components/ui/drawer';
+import { FormControl, FormLabel } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Select } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/components/ui/toast';
+import { Tooltip } from '@/components/ui/tooltip';
+import { enhancedNodeTypes } from '@/components/workflow/EnhancedNodeTypes';
+import { useUndoRedo } from '@/hooks/useUndoRedo';
+import { getLayoutedElements } from '@/utils/workflowLayout';
+import { detectWorkflowCycles, validateWorkflowDryRun } from '@/utils/workflowValidation';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   FiCheckCircle,
@@ -41,42 +77,6 @@ import ReactFlow, {
   useNodesState,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  LoadingSpinner,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  ProgressBar,
-} from '../../components/ui/design-system';
-import { useDisclosure } from '../../components/ui/disclosure';
-import {
-  Drawer,
-  DrawerBody,
-  DrawerCloseButton,
-  DrawerContent,
-  DrawerHeader,
-  DrawerOverlay,
-} from '../../components/ui/drawer';
-import { FormControl, FormLabel } from '../../components/ui/form';
-import { Input } from '../../components/ui/input';
-import { Select } from '../../components/ui/select';
-import { Textarea } from '../../components/ui/textarea';
-import { useToast } from '../../components/ui/toast';
-import { Tooltip } from '../../components/ui/tooltip';
-import { enhancedNodeTypes } from '../../components/workflow/EnhancedNodeTypes';
-import { useUndoRedo } from '../../hooks/useUndoRedo';
-import { getLayoutedElements } from '../../utils/workflowLayout';
-import { detectWorkflowCycles, validateWorkflowDryRun } from '../../utils/workflowValidation';
 
 // Node templates for the library
 interface NodeTemplate {
@@ -690,7 +690,7 @@ const EnhancedWorkflowBuilder: React.FC = () => {
       } else {
         throw new Error('Failed to save workflow');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.addToast({
         title: 'Save Error',
         description: 'Failed to save the workflow',

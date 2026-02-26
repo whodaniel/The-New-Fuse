@@ -1,3 +1,4 @@
+import { WorkspaceApiService } from '@/api/workspace';
 import {
   Activity,
   Calendar,
@@ -11,7 +12,6 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { WorkspaceApiService } from '../../api/workspace';
 // TODO: Import when packages are properly configured
 // import { GridView, KanbanView, TableView } from '@the-new-fuse/fairtable-components';
 // import { formulaEvaluator } from '@the-new-fuse/fairtable-core';

@@ -41,7 +41,7 @@ const Login: React.FC = () => {
         cfTurnstileToken: cfTurnstileToken || undefined,
       });
       if (result) navigate('/dashboard', { replace: true });
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err?.message || 'Invalid email or password');
     } finally {
       setIsLoading(false);
@@ -56,7 +56,7 @@ const Login: React.FC = () => {
       if (result?.method !== 'google_redirect') {
         navigate('/dashboard', { replace: true });
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err?.message || 'Google sign-in failed');
     } finally {
       setIsLoading(false);

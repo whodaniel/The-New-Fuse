@@ -1,5 +1,5 @@
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
 
 interface GenericSkillPanelProps {
   title: string;
@@ -7,11 +7,7 @@ interface GenericSkillPanelProps {
   children?: React.ReactNode;
 }
 
-const GenericSkillPanel: React.FC<GenericSkillPanelProps> = ({ 
-  title, 
-  description, 
-  children 
-}) => {
+const GenericSkillPanel: React.FC<GenericSkillPanelProps> = ({ title, description, children }) => {
   return (
     <Card>
       <CardHeader>

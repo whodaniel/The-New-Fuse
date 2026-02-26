@@ -109,7 +109,7 @@ const WorkflowExecution: React.FC = () => {
         console.warn('WebSocket subscription failed, falling back to polling', wsError);
         // Fallback polling could go here
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setExecutionLogs((prev) => [
         ...prev,
         `[${new Date().toISOString()}] Execution failed startup: ${err.message}`,

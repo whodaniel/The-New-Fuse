@@ -1,9 +1,9 @@
+import { OnboardingAdmin } from '@/components/admin/onboarding/OnboardingAdmin';
 import React from 'react';
-import { OnboardingAdmin } from '../../components/admin/onboarding/OnboardingAdmin';
 
 /**
  * Onboarding Admin Page
- * 
+ *
  * This page provides access to the onboarding configuration settings
  * for administrators to customize the onboarding experience.
  */

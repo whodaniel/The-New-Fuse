@@ -182,7 +182,7 @@ const AdminSettings: React.FC = () => {
     }
   };
 
-  const updateSystemSettings = (key: string, value: any) => {
+  const updateSystemSettings = (key: string, value: string | number | boolean) => {
     setSettings((prev) => ({
       ...prev,
       system: {
@@ -192,7 +192,7 @@ const AdminSettings: React.FC = () => {
     }));
   };
 
-  const updateSecuritySettings = (key: string, value: any) => {
+  const updateSecuritySettings = (key: string, value: string | number | boolean) => {
     setSettings((prev) => ({
       ...prev,
       security: {
@@ -202,7 +202,7 @@ const AdminSettings: React.FC = () => {
     }));
   };
 
-  const updatePasswordPolicy = (key: string, value: any) => {
+  const updatePasswordPolicy = (key: string, value: string | number | boolean) => {
     setSettings((prev) => ({
       ...prev,
       security: {
@@ -215,7 +215,7 @@ const AdminSettings: React.FC = () => {
     }));
   };
 
-  const updateDatabaseSettings = (key: string, value: any) => {
+  const updateDatabaseSettings = (key: string, value: string | number | boolean) => {
     setSettings((prev) => ({
       ...prev,
       database: {
@@ -225,7 +225,7 @@ const AdminSettings: React.FC = () => {
     }));
   };
 
-  const updateNotificationSettings = (key: string, value: any) => {
+  const updateNotificationSettings = (key: string, value: string | number | boolean) => {
     setSettings((prev) => ({
       ...prev,
       notifications: {
@@ -265,6 +265,8 @@ const AdminSettings: React.FC = () => {
     }));
   };
 
+  const [activeTab, setActiveTab] = useState('system');
+
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
@@ -296,7 +298,7 @@ const AdminSettings: React.FC = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="system" className="space-y-6">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="system" className="flex items-center gap-2">
             <Server className="w-4 h-4" />
@@ -362,7 +364,9 @@ const AdminSettings: React.FC = () => {
                   <Select
                     label="Log Level"
                     value={settings.system.logLevel}
-                    onChange={(e: any) => updateSystemSettings('logLevel', e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                      updateSystemSettings('logLevel', e.target.value)
+                    }
                     options={[
                       { value: 'error', label: 'Error' },
                       { value: 'warn', label: 'Warning' },
@@ -376,7 +380,9 @@ const AdminSettings: React.FC = () => {
                   <Select
                     label="Backup Frequency"
                     value={settings.system.backupFrequency}
-                    onChange={(e: any) => updateSystemSettings('backupFrequency', e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                      updateSystemSettings('backupFrequency', e.target.value)
+                    }
                     options={[
                       { value: 'hourly', label: 'Hourly' },
                       { value: 'daily', label: 'Daily' },

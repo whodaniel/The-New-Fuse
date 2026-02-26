@@ -91,6 +91,8 @@ The main marketplace showing featured AI agent experiences. Features:
 - Search by name/description
 - Token balance display
 - Admin dashboard (for admin users)
+- Includes **Open Audio Deck** (Audius/OAP music experience) that launches an
+  external app URL from the Arcade card
 
 ### Genesis Protocol View
 
@@ -108,21 +110,17 @@ The app connects to deployed Ethereum smart contracts via ethers.js v6.
 
 ### Configuration
 
-Contract addresses and ABIs are defined in `src/config/contracts.ts`:
+Contract addresses and ABIs are defined in `src/config/contracts.ts` and should
+be injected via Vite env vars in production.
 
 ```typescript
-export const contractConfig = {
-  network: 'localhost',
-  chainId: 31337,
-  rpcUrl: 'http://127.0.0.1:8545',
-  address: {
-    token: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
-    merkaba: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
-    genesis: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
-    engine: '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9',
-  },
-  // ... ABIs
-};
+VITE_CHAIN_NETWORK=base
+VITE_CHAIN_ID=8453
+VITE_CHAIN_RPC_URL=https://mainnet.base.org
+VITE_CONTRACT_TOKEN=0x...
+VITE_CONTRACT_ENGINE=0x...
+VITE_CONTRACT_SIDEPOT_MANAGER=0x...
+VITE_CONTRACT_PRIZE_HOOK_ROUTER=0x...
 ```
 
 ### Hook Usage
@@ -173,8 +171,14 @@ function MyComponent() {
 The app expects:
 
 - **MetaMask** or compatible wallet for blockchain features
-- **Local Hardhat node** at `http://127.0.0.1:8545` (or configured RPC URL)
+- **Configured chain RPC + contract env vars** (see
+  `apps/ai-arcade/.env.example`)
 - **Firebase project** configured for authentication (see `src/config.ts`)
+
+Optional:
+
+- `VITE_MUSIC_APP_URL` - URL launched by the Open Audio Deck card (recommended:
+  Railway production URL)
 
 ## Related Documentation
 

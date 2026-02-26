@@ -1,12 +1,17 @@
 export const contractConfig = {
-  network: 'localhost',
-  chainId: 31337,
-  rpcUrl: 'http://127.0.0.1:8545',
+  network: import.meta.env.VITE_CHAIN_NETWORK || 'base',
+  chainId: Number(import.meta.env.VITE_CHAIN_ID || '8453'),
+  rpcUrl: import.meta.env.VITE_CHAIN_RPC_URL || 'https://mainnet.base.org',
   address: {
-    token: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
-    merkaba: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
-    genesis: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
-    engine: '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9',
+    token: import.meta.env.VITE_CONTRACT_TOKEN || '0x0000000000000000000000000000000000000000',
+    merkaba: import.meta.env.VITE_CONTRACT_MERKABA || '0x0000000000000000000000000000000000000000',
+    genesis: import.meta.env.VITE_CONTRACT_GENESIS || '0x0000000000000000000000000000000000000000',
+    engine: import.meta.env.VITE_CONTRACT_ENGINE || '0x0000000000000000000000000000000000000000',
+    sidepotManager:
+      import.meta.env.VITE_CONTRACT_SIDEPOT_MANAGER || '0x0000000000000000000000000000000000000000',
+    prizeHookRouter:
+      import.meta.env.VITE_CONTRACT_PRIZE_HOOK_ROUTER ||
+      '0x0000000000000000000000000000000000000000',
   },
   abi: {
     ERC20: [
@@ -64,6 +69,28 @@ export const contractConfig = {
       'event CabinetCreated(uint256 indexed id, string agentId, uint256 startPrice)',
       'event CoinInserted(uint256 indexed id, address indexed player, uint256 newPrice, uint256 treasuryInjection)',
       'event JackpotUnlock(uint256 indexed id, address indexed winner, uint256 finalCost)',
+    ],
+    SidepotManager: [
+      'function router() external view returns (address)',
+      'function potCount() external view returns (uint256)',
+      'function pots(uint256) external view returns (string label, uint256 balance, uint256 minDrawAmount, uint256 totalFunded, bool active)',
+      'function weightedLossUnits(uint256, address) external view returns (uint256)',
+      'function fundPot(uint256 potId, uint256 amount) external',
+      'event PotCreated(uint256 indexed potId, string label, uint256 minDrawAmount)',
+      'event PotFunded(uint256 indexed potId, address indexed funder, uint256 amount)',
+      'event PotDrawn(uint256 indexed potId, address indexed winner, uint256 amount)',
+      'event PotSiphoned(uint256 indexed fromPotId, uint256 indexed toPotId, uint256 amount)',
+      'event LossReported(uint256 indexed potId, address indexed account, uint256 lossUnits)',
+    ],
+    PTPrizeHookRouter: [
+      'function prizeVault() external view returns (address)',
+      'function treasury() external view returns (address)',
+      'function sidepotId() external view returns (uint256)',
+      'function sidepotBps() external view returns (uint16)',
+      'function treasuryBps() external view returns (uint16)',
+      'function setSplitConfig(uint16 _sidepotBps, uint16 _treasuryBps) external',
+      'event PrizeRouted(address indexed winner, uint256 prizeAmount, uint256 winnerAmount, uint256 treasuryAmount, uint256 sidepotAmount)',
+      'event SplitConfigUpdated(uint16 sidepotBps, uint16 treasuryBps)',
     ],
   },
 };

@@ -1,3 +1,6 @@
+const DEFAULT_MUSIC_APP_URL =
+  import.meta.env.VITE_MUSIC_APP_URL || 'https://open-audio-deck-production.up.railway.app';
+
 export interface AgentListing {
   id: string;
   name: string;
@@ -13,6 +16,8 @@ export interface AgentListing {
   status: 'online' | 'busy' | 'offline';
   totalRuns: number;
   successRate: number;
+  experienceKind?: 'chat' | 'music' | 'app';
+  launchUrl?: string;
 }
 
 export class ArcadeService {
@@ -119,6 +124,7 @@ export class ArcadeService {
       status: server.status || 'online',
       totalRuns: server.total_runs || Math.floor(Math.random() * 10000),
       successRate: server.success_rate || 95 + Math.random() * 5,
+      experienceKind: 'chat',
     };
   }
 
@@ -136,6 +142,29 @@ export class ArcadeService {
   private getMockAgents(): AgentListing[] {
     return [
       {
+        id: 'open-audio-spotify',
+        name: 'Open Audio Deck',
+        description:
+          'Spotify-style Audius client for streaming trending tracks and searching the Open Audio catalog.',
+        type: 'CONTENT',
+        pricePerRun: 0,
+        avatarUrl: '/assets/agents/unique/Open-Audio-Deck.png',
+        rating: 4.9,
+        capabilities: [
+          'music_streaming',
+          'audius_search',
+          'open_audio_protocol',
+          'playlist_discovery',
+        ],
+        category: 'music',
+        tags: ['music', 'audius', 'streaming', 'open-audio-protocol'],
+        status: 'online',
+        totalRuns: 4200,
+        successRate: 99.2,
+        experienceKind: 'music',
+        launchUrl: DEFAULT_MUSIC_APP_URL,
+      },
+      {
         id: 'qwen-coder-next',
         name: 'Qwen3 Coder Next',
         description: 'Optimized for high-speed agentic coding and complex repository analysis.',
@@ -150,6 +179,7 @@ export class ArcadeService {
         status: 'online',
         totalRuns: 15420,
         successRate: 98.2,
+        experienceKind: 'chat',
       },
       {
         id: 'deepseek-r1',
@@ -166,6 +196,7 @@ export class ArcadeService {
         status: 'online',
         totalRuns: 8750,
         successRate: 97.5,
+        experienceKind: 'chat',
       },
       {
         id: 'tnf-director',
@@ -182,6 +213,7 @@ export class ArcadeService {
         status: 'online',
         totalRuns: 3200,
         successRate: 99.1,
+        experienceKind: 'chat',
       },
       {
         id: 'data-wizard',
@@ -197,6 +229,7 @@ export class ArcadeService {
         status: 'online',
         totalRuns: 12100,
         successRate: 96.8,
+        experienceKind: 'chat',
       },
       {
         id: 'content-creator',
@@ -212,6 +245,7 @@ export class ArcadeService {
         status: 'online',
         totalRuns: 28500,
         successRate: 95.2,
+        experienceKind: 'chat',
       },
       {
         id: 'game-master',
@@ -227,6 +261,7 @@ export class ArcadeService {
         status: 'online',
         totalRuns: 45000,
         successRate: 99.5,
+        experienceKind: 'chat',
       },
       {
         id: 'social-butterfly',
@@ -242,6 +277,7 @@ export class ArcadeService {
         status: 'online',
         totalRuns: 62000,
         successRate: 98.9,
+        experienceKind: 'chat',
       },
       {
         id: 'code-reviewer',
@@ -257,6 +293,7 @@ export class ArcadeService {
         status: 'online',
         totalRuns: 9800,
         successRate: 97.3,
+        experienceKind: 'chat',
       },
     ];
   }
