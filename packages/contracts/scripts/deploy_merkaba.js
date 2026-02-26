@@ -1,118 +1,118 @@
 const hre = require('hardhat');
 
 /**
- * Helper: deploy a contract and wait for the tx to be mined + 1 confirmation.
- * This prevents "nonce too low" and "replacement transaction underpriced" errors
- * on public RPCs that have slow block propagation.
+ * Deploy with explicit nonce + gas management to avoid mempool conflicts.
  */
-async function deployAndConfirm(factory, args, label) {
-  console.log(`  Deploying ${label}...`);
-  const contract = await factory.deploy(...args);
+async function deployAndConfirm(factory, args, label, signer, nonce) {
+  console.log(`  [nonce ${nonce}] Deploying ${label}...`);
+
+  // Get current fee data and bump it 2x to replace any stuck txs
+  const feeData = await hre.ethers.provider.getFeeData();
+  const overrides = {
+    nonce,
+    maxFeePerGas: feeData.maxFeePerGas * 3n,
+    maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 3n,
+  };
+
+  const contract = await factory.deploy(...args, overrides);
   const tx = contract.deploymentTransaction();
   if (tx) {
-    console.log(`  Waiting for ${label} tx confirmation (${tx.hash})...`);
-    await tx.wait(1); // Wait for 1 block confirmation
+    console.log(`  Waiting for confirmation (${tx.hash})...`);
+    await tx.wait(2); // Wait for 2 confirmations
   }
   await contract.waitForDeployment();
   const addr = await contract.getAddress();
-  console.log(`✅ ${label} Deployed: ${addr}`);
+  console.log(`✅ ${label}: ${addr}\n`);
   return contract;
 }
 
-/**
- * Helper: send a tx and wait for 1 confirmation.
- */
 async function sendAndConfirm(txPromise, label) {
   console.log(`  ${label}...`);
   const tx = await txPromise;
-  await tx.wait(1);
-  console.log(`  ✅ ${label} confirmed`);
+  await tx.wait(2);
+  console.log(`  ✅ ${label} confirmed\n`);
 }
 
 async function main() {
-  console.log('--- 🚀 INITIATING MERKABA DEPLOYMENT SEQUENCE ---');
-  console.log('(Each step waits for block confirmation to avoid nonce conflicts)\n');
+  console.log('--- 🚀 MERKABA DEPLOYMENT (NONCE-SAFE MODE) ---\n');
 
-  // 1. GET ACCOUNTS
   const signers = await hre.ethers.getSigners();
   if (!signers.length) {
-    throw new Error(
-      'No deployer signer available. Set DEPLOYER_PRIVATE_KEY and BASE_SEPOLIA_RPC_URL (or ARCADE_RPC_HTTP_URL) before running this script.'
-    );
+    throw new Error('No deployer signer. Set DEPLOYER_PRIVATE_KEY.');
   }
   const [deployer] = signers;
   console.log('Deployer:', deployer.address);
 
-  // Check balance
   const balance = await hre.ethers.provider.getBalance(deployer.address);
   console.log('Balance:', hre.ethers.formatEther(balance), 'ETH');
   if (balance === 0n) {
-    throw new Error(
-      'Deployer has 0 ETH. Get testnet ETH from https://www.alchemy.com/faucets/base-sepolia'
-    );
+    throw new Error('Balance is 0. Get testnet ETH first.');
   }
+
+  // Get the CONFIRMED nonce (ignoring any pending mempool txs)
+  let nonce = await hre.ethers.provider.getTransactionCount(deployer.address, 'latest');
+  console.log('Starting nonce:', nonce);
   console.log('');
 
-  // 2. DEPLOY PAYMENT TOKEN (MOCK USDC)
+  // 1. Token
   const Token = await hre.ethers.getContractFactory('MockERC20');
   const arcadeToken = await deployAndConfirm(
     Token,
     ['Arcade Token', 'ARCD'],
-    'Payment Token (ARCD)'
+    'Payment Token',
+    deployer,
+    nonce++
   );
 
-  // 3. DEPLOY MERKABA CORE (The Treasury/Battery)
+  // 2. MerkabaCore
   const MerkabaCore = await hre.ethers.getContractFactory('MerkabaCore');
   const merkaba = await deployAndConfirm(
     MerkabaCore,
     [await arcadeToken.getAddress()],
-    'MerkabaCore (Battery)'
+    'MerkabaCore',
+    deployer,
+    nonce++
   );
 
-  // 4. DEPLOY GENESIS NODES (The Equity/NFTs)
+  // 3. GenesisNode
   const GenesisNode = await hre.ethers.getContractFactory('GenesisNode');
   const genesis = await deployAndConfirm(
     GenesisNode,
     [await arcadeToken.getAddress()],
-    'GenesisNode (NFTs)'
+    'GenesisNode',
+    deployer,
+    nonce++
   );
 
-  // 5. DEPLOY AUCTION ENGINE (The Machine)
+  // 4. AuctionEngine
   const AuctionEngine = await hre.ethers.getContractFactory('AuctionEngine');
   const engine = await deployAndConfirm(
     AuctionEngine,
     [await arcadeToken.getAddress(), await merkaba.getAddress(), await genesis.getAddress()],
-    'AuctionEngine (Machine)'
+    'AuctionEngine',
+    deployer,
+    nonce++
   );
   const engineAddress = await engine.getAddress();
 
-  console.log('\n--- ⚡ WIRING PERMISSIONS ---');
+  console.log('--- ⚡ WIRING PERMISSIONS ---\n');
 
-  // 6. WIRE MERKABA -> ENGINE
-  await sendAndConfirm(
-    merkaba.transferOwnership(engineAddress),
-    'Transfer Merkaba ownership to Engine'
-  );
+  // 5. Transfer Merkaba ownership to Engine
+  await sendAndConfirm(merkaba.transferOwnership(engineAddress), 'Transfer Merkaba → Engine');
 
-  // 7. MINT GENESIS NODES
+  // 6. Mint Genesis Nodes
   await sendAndConfirm(genesis.mintGenesis(), 'Mint 8 Genesis Nodes');
 
-  console.log('\n--- 🧪 VERIFICATION & SETUP ---');
+  console.log('--- 🧪 SETUP ---\n');
 
-  // 8. MINT TEST TOKENS
+  // 7. Mint test tokens
   const mintAmount = hre.ethers.parseEther('1000000');
-  await sendAndConfirm(
-    arcadeToken.mint(deployer.address, mintAmount),
-    'Mint 1,000,000 ARCD to Admin'
-  );
+  await sendAndConfirm(arcadeToken.mint(deployer.address, mintAmount), 'Mint 1M ARCD');
 
-  // 9. APPROVE ENGINE
-  await sendAndConfirm(
-    arcadeToken.approve(engineAddress, mintAmount),
-    'Approve Engine to spend ARCD'
-  );
+  // 8. Approve Engine
+  await sendAndConfirm(arcadeToken.approve(engineAddress, mintAmount), 'Approve Engine');
 
-  // 10. CREATE FIRST CABINET
+  // 9. Create first cabinet
   await sendAndConfirm(
     engine.createCabinet(
       'DeepSeek-R1-Genesis',
@@ -121,9 +121,10 @@ async function main() {
       hre.ethers.parseEther('0.2'),
       hre.ethers.parseEther('1')
     ),
-    'Create first cabinet: DeepSeek-R1-Genesis'
+    'Create cabinet: DeepSeek-R1-Genesis'
   );
 
+  // --- OUTPUT ---
   console.log('\n--- 🏁 DEPLOYMENT COMPLETE ---');
   const deployment = {
     network: hre.network.name,
@@ -135,16 +136,14 @@ async function main() {
   };
   console.table(deployment);
 
-  // Save deployment artifact
   const fs = require('fs');
   const path = require('path');
   const outDir = path.join(__dirname, '..', 'deployments');
   fs.mkdirSync(outDir, { recursive: true });
   const outPath = path.join(outDir, `merkaba.${hre.network.name}.json`);
   fs.writeFileSync(outPath, JSON.stringify(deployment, null, 2));
-  console.log(`📄 Deployment artifact saved: ${outPath}`);
+  console.log(`📄 Saved: ${outPath}`);
 
-  // Print export-ready env vars
   console.log('\n--- 📋 COPY THESE FOR railway:arcade:chain:sync ---');
   console.log(`export VITE_CONTRACT_TOKEN="${deployment.token}"`);
   console.log(`export VITE_CONTRACT_MERKABA="${deployment.merkaba}"`);
