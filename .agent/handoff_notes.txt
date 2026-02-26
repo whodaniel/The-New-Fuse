@@ -1,3 +1,31 @@
+Update - Feb 26, 2026 (YouTube task dispatch + scout hardening):
+- Dispatched the 3 YouTube-derived planning tasks with explicit ownership/deadlines:
+  - owner: `project-planner`
+  - reviewer: `orchestrator`
+  - deadlines set (24h/48h/72h tiers)
+- Enqueued orchestrator follow-up tasks to:
+  - `tnf:master:tasks:realtime`
+  - `tnf:master:tasks:pending`
+- Ran `project-planner` worker and confirmed it processed the three YouTube-derived tasks:
+  - "Assimilation: Model YouTube voice-reply + AI-remix changes"
+  - "Policy Check: AI remix attribution + derivative-content handling"
+  - "Distribution Signal Tracking: Premium Lite downloads/background play"
+- Ran one `news-scout` cycle:
+  - Report write succeeded (`.agent/landscape/DAILY_NEWS.md`)
+  - Redis list deltas observed as net-zero due concurrent queue churn/consumption, but task dispatch logs printed successfully.
+- Hardened scout task ID generation:
+  - `scripts/swarm/news-scout.cjs` now uses `buildScoutTaskId(title, link)` with `Date.now() + crypto.randomUUID() + SHA1(title|link)` to avoid collisions and improve traceability.
+
+Update - Feb 26, 2026 (YouTube post intel intake for TNF):
+- Operator requested ingestion of: https://www.youtube.com/post/Ugkx3sCVtwVtMF7br_k6U-dSqUBEv2Ef1Kt8
+- Added targeted intelligence + action items to:
+  - `.agent/landscape/DAILY_NEWS.md`
+- Enqueued 3 related planning tasks into Redis queue:
+  - `tnf:master:tasks:planning` (before=35, after=38)
+- Important caveat:
+  - Direct post-body fetch from this shell was blocked by intermittent DNS resolution to `www.youtube.com`.
+  - Captured details are marked as inferred from corroborated coverage and linked in `DAILY_NEWS.md`.
+
 Update - Feb 21, 2026 (api adaptive route fix + DB config):
 - Investigated the public adaptive routing endpoint which was returning 500 Internal Server Error (`ECONNREFUSED ::1:5432`) on the api service.
 - Fixed the issue by running `railway variables set DATABASE_URL=... --service api` to properly connect it to the production remote DB instead of a local fall-back.

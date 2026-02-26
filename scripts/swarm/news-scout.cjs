@@ -84,6 +84,16 @@ function classifyImpact(title, description) {
   return 'Medium';
 }
 
+function buildScoutTaskId(title, link) {
+  const titleHash = crypto
+    .createHash('sha1')
+    .update(`${title || ''}|${link || ''}`)
+    .digest('hex')
+    .slice(0, 8);
+
+  return `task_scout_${Date.now()}_${crypto.randomUUID()}_${titleHash}`;
+}
+
 function buildSearxngSearchUrl(query) {
   if (!SEARXNG_BASE_URL) {
     throw new Error('SEARXNG_BASE_URL is not set. Refusing to run without live source.');
@@ -406,7 +416,7 @@ async function runScout() {
       if (client.publisher) {
         console.log(`📢 Signaling Swarm: Dispatching task "${taskTitle}"`);
         const taskPayload = {
-          id: `task_scout_${crypto.randomUUID()}`,
+          id: buildScoutTaskId(item.title, item.link),
           title: taskTitle,
           description: `Strategic trend detected: ${item.title}. Source: ${item.source}. Details: ${item.details}`,
           priority: item.threat === 'High' ? 'high' : 'normal',

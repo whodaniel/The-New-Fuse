@@ -1,95 +1,124 @@
-# AI Landscape Report - 2/22/2026
+# AI Landscape Report - 2/26/2026
 
-_Generated at: 2026-02-22T13:09:00.528Z_
+_Generated at: 2026-02-26T08:23:57.219Z_
 
 ## 🚀 Latest Verified Trends
 
-### Free LLM API Resources: GitHub Project for AI Inference | AIToolly
+### Free LLM Router: Live Routing for OpenRouter's Free Models | Jacob Chak
 
-- **Source**: aitoolly.com
+- **Source**: jacobchak.com
 - **Impact**: High
-- **Details**: Free LLM API Resources: GitHub Project for AI Inference |
-  AIToolly ![ImgEdify logo] Sponsored by ImgEdifyAI Image &amp; Video
-  Generator - Generate images and videos with ImgEdify AI. [Try Now]
-  [![AIToolly logo] AIToolly] 关闭菜单 [AI Tools] [ProductHunt Daily Top]
-  [Domain Search] [Pricing] [Submit] [F...
-- **Link**:
-  [View Source](https://aitoolly.com/ai-news/article/2026-02-15-github-trending-project-unveils-comprehensive-list-of-free-llm-api-inference-resources)
+- **Details**: Free LLM Router: Live Routing for OpenRouter's Free Models |
+  Jacob Chak
+
+jacobchak.com/ blog
+
+[All posts]
+
+# Free LLM Router: Live Routing for OpenRouter's Free Models
+
+A live, configurable fallback list so your MVP demo doesn't die on a 429, 404,
+or disappearing free model.
+
+[JJacob ChakFeb 17, 20...
+
+- **Link**: [View Source](https://www.jacobchak.com/blog/free-llm-router)
 
 ### Every Free AI API in 2026: The Complete Guide to Zero-Cost Inference | Awesome Agents
 
 - **Source**: awesomeagents.ai
 - **Impact**: High
 - **Details**: Every Free AI API in 2026: The Complete Guide to Zero-Cost
-  Inference | Awesome Agents [![Awesome Agents]] [Awesome Agents] [Tools] #
-  Every Free AI API in 2026: The Complete Guide to Zero-Cost Inference A
-  comprehensive comparison of 20+ free AI inference providers - from Google AI
-  Studio and Groq t...
+  Inference | Awesome Agents
+
+You do not need to spend a dollar to run frontier AI models. That is not a pitch
+or a caveat-laden promise. In 2026, multiple providers offer genuinely free API
+access to models that would have cost hundreds of do...
+
 - **Link**:
   [View Source](https://awesomeagents.ai/tools/free-ai-inference-providers-2026/)
+
+### Free LLM API Resources: GitHub Project for AI Inference | AIToolly
+
+- **Source**: aitoolly.com
+- **Impact**: High
+- **Details**: Free LLM API Resources: GitHub Project for AI Inference |
+  AIToolly
+
+[Back to List]
+
+TechnologyAIAPIOpen Source
+
+# GitHub Trending Project Unveils Comprehensive List of Free LLM API Inference Resources
+
+A new GitHub trending project, 'free-llm-api-resources' by cheahjs, has been
+published, offering...
+
+- **Link**:
+  [View Source](https://aitoolly.com/ai-news/article/2026-02-15-github-trending-project-unveils-comprehensive-list-of-free-llm-api-inference-resources)
 
 ### Free LLM API
 
 - **Source**: developer.puter.com
 - **Impact**: High
-- **Details**: Free LLM API On this page [Getting Started] [Example 1: Using
-  GPT-5 Nano] [Example 2: Using Claude Sonnet 4.5] [Example 3: Using DeepSeek R1
-  for Complex Reasoning] [Example 4: Streaming Responses for Better UX] [Example
-  5: Using LLMs for Image Analysis] [Example 6: Function Calling with LLMs]
-  [Avail...
+- **Details**: Free LLM API
+
+On this page
+
+Getting StartedExample 1: Using GPT-5 NanoExample 2: Using Claude Sonnet
+4.5Example 3: Using DeepSeek R1 for Complex ReasoningExample 4: Streaming
+Responses for Better UXExample 5: Using LLMs for Image AnalysisExample 6:
+Function Calling with LLMsAvailable ModelsAdvanced...
+
 - **Link**: [View Source](https://developer.puter.com/tutorials/free-llm-api/)
 
-### Free LLM API Directory | 45+ Free AI Providers (2026)
+### Qwen 3.5 Free API for everyone. How to use Qwen 3.5 for free? | by Mehul Gupta | Data Science in Your Pocket | Feb, 2026 | Medium
 
-- **Source**: free-llm.com
+- **Source**: medium.com
 - **Impact**: High
-- **Details**: Free LLM API Directory | 45+ Free AI Providers (2026) \*\*
+- **Details**: Qwen 3.5 Free API for everyone. How to use Qwen 3.5 for free? |
+  by Mehul Gupta | Data Science in Your Pocket | Feb, 2026 | Medium
 
-### Cookie Consent
+[Sitemap]
 
-We use cookies to enhance your experience and display personalized ads via
-Google AdSense. By continuing to use our site, you accept our use of cookies.
-[Learn more] Accept Decline 45+ Providers • Updated Daily by Community...
+[Open in app]
 
-- **Link**: [View Source](https://free-llm.com/)
+Sign up
+
+[Sign in]
+
+[Medium Logo]
+
+[Write]
+
+[Search]
+
+Sign up
+
+[Sign in]
+
+[Mastodon]
+
+## Data Science in Your Pocket
+
+YouTube : [https:...
+
+- **Link**:
+  [View Source](https://medium.com/data-science-in-your-pocket/qwen-3-5-free-api-for-everyone-afcf8ed3adb7)
 
 ### Free, Unlimited Moonshot AI API
 
 - **Source**: developer.puter.com
 - **Impact**: High
-- **Details**: Free, Unlimited Moonshot AI API
+- **Details**: Free, Unlimited Moonshot AI API On this page [Getting Started]
+  [Example 1: Chat with Kimi K2] [Example 2: Complex reasoning with Kimi K2
+  Thinking] [Example 3: Coding with Kimi K2.5] [Example 4: Streaming responses
+  for better user experience] [List of supported models] [Related] [Tutorials]
 
-On this page
-
-Getting StartedExample 1: Chat with Kimi K2Example 2: Complex reasoning with
-Kimi K2 ThinkingExample 3: Coding with Kimi K2.5Example 4: Streaming responses
-for better user experienceList of supported modelsRelated
-
-[Tutorials]
-
-# Free, Unlimited Moonsh...
+# Free,...
 
 - **Link**:
   [View Source](https://developer.puter.com/tutorials/free-unlimited-moonshot-ai-api/)
-
-### cheahjs/free-llm-api-resources
-
-- **Source**: github.com
-- **Impact**: High
-- **Details**: # Repository: cheahjs/free-llm-api-resources
-
-A list of free LLM inference resources accessible via API.
-
-- Stars: 11782
-- Forks: 1187
-- Watchers: 11782
-- Open issues: 28
-- Primary language: Python
-- Languages: Python
-- Topics: ai, claude, gemini, llama, llm, openai
-- Default branch: main
-- Created:...
-- **Link**: [View Source](https://github.com/cheahjs/free-llm-api-resources)
 
 ### The Best Open-Source LLMs in 2026
 
@@ -106,23 +135,7 @@ models (LLMs), each boasting ad...
 - **Link**:
   [View Source](https://www.bentoml.com/blog/navigating-the-world-of-open-source-large-language-models)
 
-### Introducing Mistral 3
-
-- **Source**: mistral.ai
-- **Impact**: High
-- **Details**: Introducing Mistral 3 | Mistral AI
-
-# Introducing Mistral 3
-
-The next generation of open multimodal and multilingual AI
-
-Today, we announce Mistral 3, the next generation of Mistral models. Mistral 3
-includes three state-of-the-art small, dense models (14B, 8B, and 3B) and
-Mistral Large 3 – our most...
-
-- **Link**: [View Source](https://mistral.ai/it/news/mistral-3)
-
-### Introducing Jamba2: The open source model family for enterprise reliability and efficiency
+### Jamba2: Open Source LLMs for Enterprise Reliability
 
 - **Source**: ai21.com
 - **Impact**: High
@@ -141,233 +154,281 @@ for maximum reliability and steerability in the enterprise.
 
 - **Link**: [View Source](https://www.ai21.com/blog/introducing-jamba2/)
 
-### Olmo 3: Fully Open-Source LLM from AI2 (Models, Data, & Code) | DigitalOcean
+### 10 Best Open-Source LLM Models (2025 Updated): Llama 4, Qwen 3 and DeepSeek R1
 
-- **Source**: digitalocean.com
+- **Source**: huggingface.co
 - **Impact**: High
-- **Details**: Olmo 3: Fully Open-Source LLM from AI2 (Models, Data, & Code) |
-  DigitalOcean
+- **Details**: 10 Best Open-Source LLM Models (2025 Updated): Llama 4, Qwen 3
+  and DeepSeek R1
 
-## Report this
+[Back to Articles]
 
-What is the reason for this report?
+# 10 Best Open-Source LLM Models (2025 Updated): Llama 4, Qwen 3 and DeepSeek R1
 
-This undefined is spam
+[Community Article] Published November 13, 2025
 
-This undefined is offensive
+[Upvote 10]
 
-This undefined is off-topic
+- +4
 
-This undefined is other
+[Daya Shankar daya-shankar Follow]
 
-Submit
-
-[Tutorial]
-
-# Olmo 3: Fully Open-Source LLM from AI2...
+The world o...
 
 - **Link**:
-  [View Source](https://www.digitalocean.com/community/tutorials/olmo-3-allen-ai-open-source-llm)
+  [View Source](https://huggingface.co/blog/daya-shankar/open-source-llms)
 
-### NVIDIA Unveils New Open Models, Data and Tools to ...
+### Top 10 open source LLMs for 2025
 
-- **Source**: blogs.nvidia.com
+- **Source**: instaclustr.com
 - **Impact**: High
-- **Details**: NVIDIA Unveils New Open Models, Data and Tools to Advance AI
-  Across Every Industry | NVIDIA Blog
+- **Details**: Top 10 open source LLMs for 2025 [] [Free trial] [Sign in]
 
-Share
-
-- Email0
-
-Expanding the open model universe, NVIDIA today released new open models, data
-and tools to advance AI across every industry.
-
-These models — spanning the [NVIDIA Nemotron] family for a...
+* [Platform+]
+* [Left Column]
+* [PlatformIntelligent, open source application data infrastructure]
+* [Explore our platform]
+* [Security and trustEnterprise-grade security]
+* [Learn more]
+* [HostingData infrastructure management in th...
 
 - **Link**:
-  [View Source](https://blogs.nvidia.com/blog/open-models-data-tools-accelerate-ai/)
+  [View Source](https://www.instaclustr.com/education/open-source-ai/top-10-open-source-llms-for-2025/)
 
-### The 11 best open-source LLMs for 2025
+### Introducing Mistral 3
 
-- **Source**: blog.n8n.io
+- **Source**: mistral.ai
 - **Impact**: High
-- **Details**: Comparing the best: Top 5 open-source LLMs –n8n Blog We use
-  analytics We use cookies and other tracking technologies to improve your
-  browsing experience, to analyze our website traffic, assist our marketing
-  efforts and to understand where our visitors are coming from. [Privacy Policy]
-  DeclineAgree...
-- **Link**: [View Source](https://blog.n8n.io/open-source-llm/)
+- **Details**: Introducing Mistral 3 | Mistral AI
 
-### Every Free AI API in 2026: The Complete Guide to Zero-Cost Inference
+# Introducing Mistral 3
 
-- **Source**: awesomeagents.ai
+The next generation of open multimodal and multilingual AI
+
+Today, we announce Mistral 3, the next generation of Mistral models. Mistral 3
+includes three state-of-the-art small, dense models (14B, 8B, and 3B) and
+Mistral Large 3 – our most...
+
+- **Link**: [View Source](https://mistral.ai/news/mistral-3)
+
+### Open LLM Leaderboard 2025
+
+- **Source**: vellum.ai
 - **Impact**: High
-- **Details**: Every Free AI API in 2026: The Complete Guide to Zero-Cost
-  Inference | Awesome Agents [![Awesome Agents]] [Awesome Agents] [Tools] #
-  Every Free AI API in 2026: The Complete Guide to Zero-Cost Inference A
-  comprehensive comparison of 20+ free AI inference providers - from Google AI
-  Studio and Groq t...
-- **Link**:
-  [View Source](https://awesomeagents.ai/tools/free-ai-inference-providers-2026/)
+- **Details**: Open LLM Leaderboard 2025 x
 
-### Free AI Models on OpenRouter
+# Evaluate your Prompts and AI Workflows with Vellum
 
-- **Source**: openrouter.ai
+[ See it in action ] ![] Thank you! Your submission has been received! Oops!
+Something went wrong while submitting the form. [![Vellum AI logo]] [Main
+Leaderboard] [Compare models] updated 15 April 2025
+
+# Open LLM L...
+
+- **Link**: [View Source](https://www.vellum.ai/open-llm-leaderboard)
+
+### Pricing
+
+- **Source**: inference.net
 - **Impact**: High
-- **Details**: Free AI Models on OpenRouter | OpenRouter
+- **Details**: Inference.net | Pricing [] [Models] [Pricing] [Docs] Use Cases
+  [Real Time Chat] [Data Extraction] [Batch Inference] Resources [Blog] [Grants]
+  [Changelog] [About] [Enterprise] ![PRICING Header Image]
 
-# Free AI Models on OpenRouter
+# PRICING
 
-Model rankings updated February 2026 based on real usage data. At OpenRouter, we
-believe that free models play a crucial role in democratizing access to AI.
-These models allow hundreds of thousands of users worldwide to experim...
+The best prices on the market. 90% lower cost than other providers. All models
+are bi...
 
-- **Link**: [View Source](https://openrouter.ai/collections/free-models)
+- **Link**: [View Source](https://inference.net/pricing)
 
-### Inference free trial--ModelArk-Byteplus
-
-- **Source**: docs.byteplus.com
-- **Impact**: High
-- **Details**: Inference free trial--ModelArk-Byteplus navigation
-
-###### ModelArk
-
-Search doc titleSearch doc title Get Started [Overview] [Quick start] [Model
-list] [Pricing] Popular Activities [ModelArk referral campaign] [Inference free
-trial] [ModelArk new user promotion] Product Announcements [Product u...
-
-- **Link**: [View Source](https://docs.byteplus.com/en/docs/ModelArk/1399514)
-
-### 10+ Free AI API Platforms (2025) for Devs — Why You'll ... - Medium
+### 10+ Free AI API Platforms (2025) for Devs — Why You'll Regret Paying for Models Again!
 
 - **Source**: medium.com
 - **Impact**: High
 - **Details**: 10+ Free AI API Platforms (2025) for Devs — Why You’ll Regret
-  Paying for Models Again! | by Jannis | Medium [Sitemap] [Open in app] Sign up
-  [Sign in] [Medium Logo] [ Write ] [ Search ] Sign up [Sign in] ![] [Mastodon]
-  Member-only story
+  Paying for Models Again! | by Jannis | Medium
 
-# \*\*10+ Free AI API Platforms (2025) for Devs — Why You...
+[Sitemap]
 
-- **Link**:
-  [View Source](https://medium.com/%40PowerUpSkills/10-free-ai-api-platforms-2025-for-devs-why-youll-regret-paying-for-models-again-b8c77a934378)
+[Open in app]
 
-### Free and Budget Models - Kilo
+Sign up
 
-- **Source**: kilo.ai
-- **Impact**: High
-- **Details**: Free and Budget Models
+[Sign in]
 
-# Free and Budget Models
+[Medium Logo]
 
-Why this matters: AI model costs can add up quickly during development. This
-guide shows you how to use Kilo Code effectively while minimizing or eliminating
-costs through free models, budget-friendly alternatives, and smart usage
-strategies.
+[Write]
 
-## Com...
+[Search]
 
-- **Link**:
-  [View Source](https://kilo.ai/docs/code-with-ai/agents/free-and-budget-models)
+Sign up
 
-### Cerebras
+[Sign in]
 
-- **Source**: cerebras.ai
-- **Impact**: High
-- **Details**: Cerebras
+[Mastodon]
 
-[Introducing OpenAI GPT-5.3-Codex-Spark Powered by Cerebras>]
+Member-only story
 
-# Pricing
-
-## Inference API access
-
-### Free
-
-The easiest way to get started with Cerebras
-
-- Community support via Discord
-- The world’s fastest inference – 20x faster than OpenAI and Anthropic
-- Access to all Cerebras powere...
-- **Link**: [View Source](https://www.cerebras.ai/pricing)
-
-### Releases · huggingface/transformers
-
-- **Source**: github.com
-- **Impact**: High
-- **Details**: Releases · huggingface/transformers · GitHub
-
-/ [transformers] Public
-
-[Star 157k]
-
-- [Fork 32.2k]
-- [Notifications]
-- [Pricing]
-
---
-
-16 Feb 18:55
-
-[LysandreJik]
-
-[v5.2.0]
-
-[7d9754a]
-
-This commit was signed with the committer’s verified signature.
-
-[Cyrilvallez] Cyril Vallez
-
-SSH Key Fingerpr...
-
-- **Link**: [View Source](https://github.com/huggingface/transformers/releases)
-
-### HuggingChat v2: 115 models in one interface, powered by Hugging Face Inference Providers | Julien Chaumond posted on the topic | LinkedIn
-
-- **Source**: linkedin.com
-- **Impact**: High
-- **Details**: HuggingChat v2: 115 models in one interface, powered by Hugging
-  Face Inference Providers | Julien Chaumond posted on the topic | LinkedIn
-
-## LinkedIn respects your privacy
-
-LinkedIn and 3rd parties use essential and non-essential cookies to provide,
-secure, analyze and improve our Services, and to sh...
+# 10+ Free AI API Platforms (2025) for Devs — Why Yo...
 
 - **Link**:
-  [View Source](https://www.linkedin.com/posts/julienchaumond_new-release-weve-just-re-launched-huggingchat-activity-7384606035531010048-H_vQ)
+  [View Source](https://medium.com/@PowerUpSkills/10-free-ai-api-platforms-2025-for-devs-why-youll-regret-paying-for-models-again-b8c77a934378)
+
+### Inference Providers
+
+- **Source**: huggingface.co
+- **Impact**: High
+- **Details**: Inference Providers [![Hugging Face's logo] Hugging Face]
+  Inference Providers documentation Inference Providers
+
+# Inference Providers
+
+🏡View all docsAWS Trainium &amp; InferentiaAccelerateAmazon
+SageMakerArgillaAutoTrainBitsandbytesChat UIDataset
+viewerDatasetsDiffusersDistilabelEvaluateGradioHubHu...
+
+- **Link**:
+  [View Source](https://huggingface.co/docs/inference-providers/en/index)
+
+### Hugging Face Promo Code for Startups | 6 Months of Pro Free
+
+- **Source**: xraise.ai
+- **Impact**: High
+- **Details**: Hugging Face Promo Code for Startups – 6 Months Pro Free
+
+[Startup Perks]
+
+- [Uber for Business]
+- [ClickUp]
+- [Notion]
+- [WooCommerce]
+- [Typeset]
+- [AWS (NVIDIA)]
+- [AWS Activate]
+- [DigitalOcean]
+- [Slack]
+- [Asana]
+- [Miro]
+- [Tally]
+- [Google Cloud]
+- [HubSpot]
+- [Microsoft Azure...
+- **Link**:
+  [View Source](https://xraise.ai/blog/promo-code-discount-hugging-face/)
+
+### Cohere's Open Multilingual Models Cross Into Production as Edge Deployment Goes Global | The Meridiem
+
+- **Source**: themeridiem.com
+- **Impact**: Medium
+- **Details**: Cohere&#x27;s Open Multilingual Models Cross Into Production as
+  Edge Deployment Goes Global | The Meridiem
+
+# TheMeridiem
+
+# TheMeridiem
+
+# TheMeridiem
+
+# TheMeridiem
+
+# TheMeridiem
+
+# TheMeridiem
+
+# TheMeridiem
+
+# TheMeridiem
+
+# TheMeridiem
+
+# TheMeridiem
+
+# TheMeridiem
+
+# TheMeridiem
+
+# TheMeridiem
+
+# TheMeridi...
+
+- **Link**:
+  [View Source](https://www.themeridiem.com/ai/2026/2/17/cohere-s-open-multilingual-models-cross-into-production-as-edge-deployment-goes-global)
+
+### Multiverse Computing Opens Full Access to HyperNova 60B 2602 on Hugging Face - 新浪香港
+
+- **Source**: portal.sina.com.hk
+- **Impact**: High
+- **Details**: Multiverse Computing Opens Full Access to HyperNova 60B 2602 on
+  Hugging Face &#x2d; 新浪香港 [Skip to content] [![新浪香港]]
+
+###
+
+[新浪香港] SINA HONG KONG LIMITED [GlobeNewswire]
+
+#
+
+Multiverse Computing Opens Full Access to HyperNova 60B 2602 on Hugging Face [**
+02月24日 14:00] \** [ GlobeNewswire ] *HyperNov...
+
+- **Link**:
+  [View Source](https://portal.sina.com.hk/finance/finance-globenewswire/globenewswire/2026/02/24/1555884/multiverse-computing-opens-full-access-to-hypernova-60b-2602-on-hugging-face/)
+
+### moonshotai/Kimi-K2.5
+
+- **Source**: huggingface.co
+- **Impact**: Medium
+- **Details**: moonshotai/Kimi-K2.5 · Hugging Face
+
+image<|media_content|<|media_pad|<|media_end|\n
+{% elif content['type'] == 'video' or content['type']== 'video_url'-%}\n
+<|kimi_k25_video_placeholder|\n {% else -%}\n {{ content['text'] }}\n
+{%- endif -%}\n {%- endfor -%}\n {%- endif -%}\n{%- endmacro -%}\n\n{% m...
+
+- **Link**: [View Source](https://huggingface.co/moonshotai/Kimi-K2.5)
+
+### Hugging Face Model Releases
+
+- **Source**: scouts.yutori.com
+- **Impact**: Medium
+- **Details**: Hugging Face Model Releases | Yutori
+
+Loading Scout...
+
+- **Link**:
+  [View Source](https://scouts.yutori.com/4e5d8cab-941a-45b4-958d-dc9eb5fd783b)
 
 ## 🎯 Swarm Action Items
 
-- [ ] **PRIORITY**: Assimilation: Free LLM API Resources: GitHub Project for AI
-      Inference | AIToolly
+- [ ] **PRIORITY**: Assimilation: Free LLM Router: Live Routing for OpenRouter's
+      Free Models | Jacob Chak
 - [ ] **PRIORITY**: Assimilation: Every Free AI API in 2026: The Complete Guide
       to Zero-Cost Inference | Awesome Agents
+- [ ] **PRIORITY**: Assimilation: Free LLM API Resources: GitHub Project for AI
+      Inference | AIToolly
 - [ ] **PRIORITY**: Assimilation: Free LLM API
-- [ ] **PRIORITY**: Assimilation: Free LLM API Directory | 45+ Free AI Providers
-      (2026)
+- [ ] **PRIORITY**: Assimilation: Qwen 3.5 Free API for everyone. How to use
+      Qwen 3.5 for free? | by Mehul Gupta | Data Science in Your Pocket | Feb,
+      2026 | Medium
 - [ ] **PRIORITY**: Assimilation: Free, Unlimited Moonshot AI API
-- [ ] **PRIORITY**: Assimilation: cheahjs/free-llm-api-resources
 - [ ] **PRIORITY**: Assimilation: The Best Open-Source LLMs in 2026
+- [ ] **PRIORITY**: Assimilation: Jamba2: Open Source LLMs for Enterprise
+      Reliability
+- [ ] **PRIORITY**: Assimilation: 10 Best Open-Source LLM Models (2025 Updated):
+      Llama 4, Qwen 3 and DeepSeek R1
+- [ ] **PRIORITY**: Assimilation: Top 10 open source LLMs for 2025
 - [ ] **PRIORITY**: Assimilation: Introducing Mistral 3
-- [ ] **PRIORITY**: Assimilation: Introducing Jamba2: The open source model
-      family for enterprise reliability and efficiency
-- [ ] **PRIORITY**: Assimilation: Olmo 3: Fully Open-Source LLM from AI2
-      (Models, Data, & Code) | DigitalOcean
-- [ ] **PRIORITY**: Assimilation: NVIDIA Unveils New Open Models, Data and Tools
-      to ...
-- [ ] **PRIORITY**: Assimilation: The 11 best open-source LLMs for 2025
-- [ ] **PRIORITY**: Assimilation: Every Free AI API in 2026: The Complete Guide
-      to Zero-Cost Inference
-- [ ] **PRIORITY**: Assimilation: Free AI Models on OpenRouter
-- [ ] **PRIORITY**: Assimilation: Inference free trial--ModelArk-Byteplus
+- [ ] **PRIORITY**: Assimilation: Open LLM Leaderboard 2025
+- [ ] **PRIORITY**: Assimilation: Pricing
 - [ ] **PRIORITY**: Assimilation: 10+ Free AI API Platforms (2025) for Devs —
-      Why You'll ... - Medium
-- [ ] **PRIORITY**: Assimilation: Free and Budget Models - Kilo
-- [ ] **PRIORITY**: Assimilation: Cerebras
-- [ ] **PRIORITY**: Assimilation: Releases · huggingface/transformers
-- [ ] **PRIORITY**: Assimilation: HuggingChat v2: 115 models in one interface,
-      powered by Hugging Face Inference Providers | Julien Chaumond posted on
-      the topic | LinkedIn
+      Why You'll Regret Paying for Models Again!
+- [ ] **PRIORITY**: Assimilation: Inference Providers
+- [ ] **PRIORITY**: Assimilation: Hugging Face Promo Code for Startups | 6
+      Months of Pro Free
+- [ ] **PRIORITY**: Assimilation: Cohere's Open Multilingual Models Cross Into
+      Production as Edge Deployment Goes Global | The Meridiem
+- [ ] **PRIORITY**: Assimilation: Multiverse Computing Opens Full Access to
+      HyperNova 60B 2602 on Hugging Face - 新浪香港
+- [ ] **PRIORITY**: Assimilation: moonshotai/Kimi-K2.5
+- [ ] **PRIORITY**: Assimilation: Hugging Face Model Releases
