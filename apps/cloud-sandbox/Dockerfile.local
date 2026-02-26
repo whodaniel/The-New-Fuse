@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.40.0-jammy
+FROM mcr.microsoft.com/playwright:v1.58.2-jammy
 
 # Install Node.js 22
 RUN apt-get update && apt-get install -y curl && \
@@ -15,25 +15,30 @@ COPY apps/cloud-sandbox/tsconfig.json ./
 COPY apps/cloud-sandbox/src ./src
 COPY apps/cloud-sandbox/public ./public
 
-# Install dependencies (using npm to avoid pnpm workspace complexity for this standalone app)
+# Strip workspace-only deps for standalone image builds
+RUN node -e "const fs=require('fs');const p='package.json';const j=JSON.parse(fs.readFileSync(p,'utf8'));if(j.dependencies){delete j.dependencies['@the-new-fuse/database'];delete j.dependencies['@the-new-fuse/types'];}fs.writeFileSync(p,JSON.stringify(j,null,2));"
+
+# Build only the runtime server entrypoint for lightweight standalone deploys
+RUN node -e "const fs=require('fs');const p='tsconfig.json';const j=JSON.parse(fs.readFileSync(p,'utf8'));j.include=['src/server.ts'];j.exclude=['src/auth/**','src/tools/**'];fs.writeFileSync(p,JSON.stringify(j,null,2));"
+
+# Install dependencies for standalone app image
 RUN npm install
 
-# Build
+# Build runtime bundle
 RUN npm run build
 
-# Verify LIVE VIEW code is present
-RUN grep "LIVE VIEW" dist/server.js || echo "Warning: LIVE VIEW not found in build"
+# Verify runtime bundle is present
+RUN test -f dist/server.js
 
 # Verify public folder is present
 RUN ls -la public/ || echo "Warning: public folder not found"
 
 # Create app-user
 RUN addgroup --system app-user && adduser --system --ingroup app-user app-user
-RUN mkdir -p /home/app-user/pw-browsers && chown -R app-user:app-user /home/app-user
-RUN mkdir -p /app/pw-browsers && chown -R app-user:app-user /app
+RUN chown -R app-user:app-user /home/app-user
+RUN chown -R app-user:app-user /app
 
 USER app-user
 ENV HOME=/home/app-user
-ENV PLAYWRIGHT_BROWSERS_PATH=/home/app-user/pw-browsers
 
 CMD ["node", "dist/server.js"]

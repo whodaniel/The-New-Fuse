@@ -6,10 +6,18 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 LOG_DIR="${ROOT_DIR}/.agent/runtime-logs"
 RUNTIME_STATE_DIR="${ROOT_DIR}/.agent/runtime-state"
 LIVE_API_CACHE_FILE="${RUNTIME_STATE_DIR}/live-api-url.txt"
+REDIS_RESOLVER="${ROOT_DIR}/scripts/runtime/resolve-cloud-redis.sh"
 mkdir -p "${LOG_DIR}"
 mkdir -p "${RUNTIME_STATE_DIR}"
 
-REDIS_URL="${REDIS_URL:-${RAILWAY_REDIS_URL:-${LIVE_REDIS_URL:-${REDIS_PRIVATE_URL:-${REDIS_TLS_URL:-redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570}}}}}"
+if [[ -z "${REDIS_URL:-}" ]]; then
+  if [[ -x "${REDIS_RESOLVER}" ]]; then
+    REDIS_URL="$("${REDIS_RESOLVER}")"
+  else
+    echo "[factory-boot] ERROR: redis resolver missing or not executable: ${REDIS_RESOLVER}"
+    exit 1
+  fi
+fi
 RELAY_URL="${RELAY_URL:-ws://localhost:3000/ws}"
 LEDGER_API_BASE="${LEDGER_API_BASE:-${RAILWAY_API_URL:-${LIVE_API_BASE_URL:-${API_BASE_URL:-${TNF_API_BASE:-http://localhost:3001}}}}}"
 AUTO_DETECT_RAILWAY_API="${AUTO_DETECT_RAILWAY_API:-true}"

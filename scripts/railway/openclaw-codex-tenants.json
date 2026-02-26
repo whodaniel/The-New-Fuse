@@ -1,0 +1,16 @@
+{
+  "modelPrimary": "openai-codex/gpt-5.3-codex",
+  "modelFallbacks": "openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini",
+  "tenants": [
+    {
+      "name": "openclaw-cloud-account",
+      "service": "openclaw-cloud",
+      "authFile": "~/.codex-tenants/openclaw-cloud-account/auth.json"
+    },
+    {
+      "name": "proof-tenant-a",
+      "service": "openclaw-primary",
+      "authFile": "~/.codex-tenants/proof-tenant-a/auth.json"
+    }
+  ]
+}

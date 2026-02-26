@@ -1,5 +1,4 @@
 [build]
 builder = "dockerfile"
-dockerfilePath = "./Dockerfile.local"
-watchPatterns = ["src/**", "package.json", "tsconfig.json", "public/**"]
-
+dockerfilePath = "./Dockerfile.railway"
+watchPatterns = ["src/**", "package.json", "tsconfig.json", "public/**", "../../packages/**"]

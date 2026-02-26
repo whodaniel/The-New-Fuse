@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+REDIS_RESOLVER="${ROOT_DIR}/scripts/runtime/resolve-cloud-redis.sh"
 ENVIRONMENT="${RAILWAY_ENVIRONMENT_NAME:-production}"
 RUNNER_SERVICE="${RAILWAY_RUNNER_SERVICE:-}"
 RUNNER_SERVICES_CSV="${RAILWAY_RUNNER_SERVICES:-api3,api,backend}"
@@ -74,11 +76,17 @@ done
 echo "⚠️ SSH execution unavailable on candidates: ${CANDIDATES[*]}"
 echo "   Falling back to local execution with Railway public endpoints..."
 
-REDIS_PUBLIC_URL="$(
-  railway variable list -s Redis -e "$ENVIRONMENT" -k 2>/dev/null \
-    | sed -n 's/^REDIS_PUBLIC_URL=//p' \
-    | head -n 1
-)"
+REDIS_PUBLIC_URL=""
+if [ -x "$REDIS_RESOLVER" ]; then
+  REDIS_PUBLIC_URL="$(RAILWAY_ENVIRONMENT_NAME="$ENVIRONMENT" "$REDIS_RESOLVER" 2>/dev/null || true)"
+fi
+if [ -z "$REDIS_PUBLIC_URL" ]; then
+  REDIS_PUBLIC_URL="$(
+    railway variable list -s Redis -e "$ENVIRONMENT" -k 2>/dev/null \
+      | sed -n 's/^REDIS_PUBLIC_URL=//p' \
+      | head -n 1
+  )"
+fi
 
 SEARXNG_BASE_URL="$(
   railway variable list -s "${CANDIDATES[0]}" -e "$ENVIRONMENT" -k 2>/dev/null \
@@ -98,7 +106,7 @@ if [ -z "$SEARXNG_BASE_URL" ]; then
 fi
 
 if [ -z "$REDIS_PUBLIC_URL" ]; then
-  echo "❌ REDIS_PUBLIC_URL not found on Railway Redis service."
+  echo "❌ No production Redis URL resolved for Railway fallback."
   exit 1
 fi
 

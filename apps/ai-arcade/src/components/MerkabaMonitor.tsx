@@ -6,9 +6,17 @@ interface MerkabaProps {
   sunBalance: number; // Active Prize Pool (e.g. 50000)
   earthBalance: number; // Treasury Yield (e.g. 50000)
   rebalanceActive: boolean; // Is the Gyroscope moving funds right now?
+  isLive?: boolean; // True when reading from on-chain
+  tokenSymbol?: string; // Token symbol (e.g. "MPRZ")
 }
 
-const MerkabaMonitor: React.FC<MerkabaProps> = ({ sunBalance, earthBalance, rebalanceActive }) => {
+const MerkabaMonitor: React.FC<MerkabaProps> = ({
+  sunBalance,
+  earthBalance,
+  rebalanceActive,
+  isLive = false,
+  tokenSymbol,
+}) => {
   // Calculate the Ratio (0 to 100 scale for the needle)
   // 50 is perfect balance (1:1).
   const total = sunBalance + earthBalance;
@@ -20,6 +28,8 @@ const MerkabaMonitor: React.FC<MerkabaProps> = ({ sunBalance, earthBalance, reba
     if (sunRatio < 40) return 'text-cyan-500 shadow-cyan-500/50'; // Too Cold
     return 'text-purple-500 shadow-purple-500/50'; // Balanced
   };
+
+  const displayUnit = tokenSymbol ? ` ${tokenSymbol}` : '';
 
   return (
     <div className="w-full bg-black border-y border-gray-800 relative overflow-hidden h-24 flex items-center justify-center">
@@ -35,6 +45,7 @@ const MerkabaMonitor: React.FC<MerkabaProps> = ({ sunBalance, earthBalance, reba
           <div className="flex items-baseline gap-2">
             <span className="text-3xl font-black text-cyan-400 drop-shadow-[0_0_10px_rgba(0,255,255,0.5)]">
               ${earthBalance.toLocaleString()}
+              {displayUnit}
             </span>
             <span className="text-xs text-gray-500 font-mono">APY: 5.2%</span>
           </div>
@@ -50,6 +61,17 @@ const MerkabaMonitor: React.FC<MerkabaProps> = ({ sunBalance, earthBalance, reba
 
         {/* --- THE MERKABA GYROSCOPE (Center) --- */}
         <div className="flex flex-col items-center mx-8">
+          {/* Live / Simulated Badge */}
+          <div
+            className={`text-[8px] font-mono tracking-widest uppercase mb-1 px-2 py-0.5 rounded-full border ${
+              isLive
+                ? 'text-green-400 border-green-500/50 bg-green-500/10'
+                : 'text-yellow-400 border-yellow-500/50 bg-yellow-500/10'
+            }`}
+          >
+            {isLive ? '● ON-CHAIN' : '◌ SIMULATED'}
+          </div>
+
           {/* The Geometry Spinner */}
           <div className="relative w-16 h-16 flex items-center justify-center">
             {/* Outer Ring */}
@@ -86,6 +108,7 @@ const MerkabaMonitor: React.FC<MerkabaProps> = ({ sunBalance, earthBalance, reba
             <span className="text-xs text-gray-500 font-mono">VELOCITY: 98%</span>
             <span className="text-3xl font-black text-orange-400 drop-shadow-[0_0_10px_rgba(255,165,0,0.5)]">
               ${sunBalance.toLocaleString()}
+              {displayUnit}
             </span>
           </div>
           {/* Sun Bar */}

@@ -1,5 +1,6 @@
 import { GlassCard, StatsCard } from '@/components/ui/premium/GlassCard';
 import { PremiumButton } from '@/components/ui/premium/PremiumButton';
+import GraphVisualizerWrapper from '@/components/wizard/graph/GraphVisualizer';
 import { useAuthorization } from '@/hooks/useAuthorization';
 import { AnimatePresence, motion, Variants } from 'framer-motion';
 import {
@@ -17,7 +18,9 @@ import {
 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import type { Edge, Node } from 'reactflow';
 import { LlmRoutingControl } from './components/LlmRoutingControl';
+import { OAuthInstanceRotationControl } from './components/OAuthInstanceRotationControl';
 
 interface RelayChannel {
   id: string;
@@ -46,6 +49,15 @@ interface Agent {
   id: string;
   name: string;
   status?: string;
+}
+
+interface GraphSelectionContext {
+  kind: 'root' | 'source' | 'event' | 'task';
+  source?: string;
+  eventType?: string;
+  taskId?: string;
+  lane?: string;
+  horizon?: string;
 }
 
 const mapRawActivityEvent = (e: Record<string, any>): ActivityEvent => ({
@@ -117,7 +129,22 @@ export default function SuperAdminControlPanel() {
   });
 
   const wsRef = useRef<WebSocket | null>(null);
+  const agentHubRef = useRef<HTMLDivElement | null>(null);
   const [connected, setConnected] = useState(false);
+  const [selectedGraphNode, setSelectedGraphNode] = useState<{
+    id: string;
+    label: string;
+    context: GraphSelectionContext;
+  } | null>(null);
+  const [streamFilter, setStreamFilter] = useState<{
+    source?: string;
+    eventType?: string;
+    taskId?: string;
+    lane?: string;
+    horizon?: string;
+  } | null>(null);
+  const [selectedTaskDetail, setSelectedTaskDetail] = useState<ActivityEvent | null>(null);
+  const [highlightedAgentId, setHighlightedAgentId] = useState<string | null>(null);
 
   const orchestrationSignals = useMemo(() => {
     return activities
@@ -184,6 +211,240 @@ export default function SuperAdminControlPanel() {
       sampleSize: recentActivities.length,
     };
   }, [activities, orchestrationSignals]);
+
+  const extractTaskRouting = useCallback((activity: ActivityEvent) => {
+    const metadata: any = activity.metadata || {};
+    const lane = String(metadata.lane || metadata.itinerary?.lane || '').trim();
+    const horizon = String(metadata.horizon || metadata.itinerary?.horizon || '').trim();
+    return { lane, horizon };
+  }, []);
+
+  const orchestrationHierarchyGraph = useMemo(() => {
+    const baseNodes: Node[] = [
+      {
+        id: 'tnf-master-clock',
+        type: 'default',
+        position: { x: 0, y: 0 },
+        data: { label: 'TNF Master Clock' },
+      },
+    ];
+    const baseEdges: Edge[] = [];
+    const nodesById = new Map<string, Node>(baseNodes.map((node) => [node.id, node]));
+    const edgeSet = new Set<string>();
+    const taskNodeBudget = 40;
+    let taskNodesUsed = 0;
+
+    for (const activity of activities.slice(0, 120)) {
+      const source = String(activity.source || 'unknown').slice(0, 40);
+      const sourceNodeId = `source:${source}`;
+
+      if (!nodesById.has(sourceNodeId)) {
+        nodesById.set(sourceNodeId, {
+          id: sourceNodeId,
+          type: 'default',
+          position: { x: 0, y: 0 },
+          data: { label: `Source: ${source}` },
+        });
+      }
+
+      const sourceEdgeId = `tnf-master-clock->${sourceNodeId}`;
+      if (!edgeSet.has(sourceEdgeId)) {
+        baseEdges.push({
+          id: sourceEdgeId,
+          source: 'tnf-master-clock',
+          target: sourceNodeId,
+          type: 'smoothstep',
+        });
+        edgeSet.add(sourceEdgeId);
+      }
+
+      const eventType = String(activity.metadata?.eventType || activity.type || 'event').slice(
+        0,
+        60
+      );
+      const eventNodeId = `event:${source}:${eventType}`;
+      if (!nodesById.has(eventNodeId)) {
+        nodesById.set(eventNodeId, {
+          id: eventNodeId,
+          type: 'default',
+          position: { x: 0, y: 0 },
+          data: { label: eventType },
+        });
+      }
+
+      const eventEdgeId = `${sourceNodeId}->${eventNodeId}`;
+      if (!edgeSet.has(eventEdgeId)) {
+        baseEdges.push({
+          id: eventEdgeId,
+          source: sourceNodeId,
+          target: eventNodeId,
+          type: 'smoothstep',
+        });
+        edgeSet.add(eventEdgeId);
+      }
+
+      const taskId = String((activity.metadata as any)?.taskId || '').trim();
+      if (!taskId || taskNodesUsed >= taskNodeBudget) continue;
+
+      const { lane, horizon } = extractTaskRouting(activity);
+      const laneLabel = lane || 'unclassified_lane';
+      const laneNodeId = `lane:${source}:${eventType}:${laneLabel}`;
+      if (!nodesById.has(laneNodeId)) {
+        nodesById.set(laneNodeId, {
+          id: laneNodeId,
+          type: 'default',
+          position: { x: 0, y: 0 },
+          data: { label: `Lane ${laneLabel}` },
+        });
+      }
+
+      const laneEdgeId = `${eventNodeId}->${laneNodeId}`;
+      if (!edgeSet.has(laneEdgeId)) {
+        baseEdges.push({
+          id: laneEdgeId,
+          source: eventNodeId,
+          target: laneNodeId,
+          type: 'smoothstep',
+        });
+        edgeSet.add(laneEdgeId);
+      }
+
+      const horizonLabel = horizon || 'unspecified_horizon';
+      const horizonNodeId = `horizon:${source}:${eventType}:${laneLabel}:${horizonLabel}`;
+      if (!nodesById.has(horizonNodeId)) {
+        nodesById.set(horizonNodeId, {
+          id: horizonNodeId,
+          type: 'default',
+          position: { x: 0, y: 0 },
+          data: { label: `Horizon ${horizonLabel}` },
+        });
+      }
+
+      const horizonEdgeId = `${laneNodeId}->${horizonNodeId}`;
+      if (!edgeSet.has(horizonEdgeId)) {
+        baseEdges.push({
+          id: horizonEdgeId,
+          source: laneNodeId,
+          target: horizonNodeId,
+          type: 'smoothstep',
+        });
+        edgeSet.add(horizonEdgeId);
+      }
+
+      const taskNodeId = `task:${taskId}`;
+      if (!nodesById.has(taskNodeId)) {
+        taskNodesUsed += 1;
+        nodesById.set(taskNodeId, {
+          id: taskNodeId,
+          type: 'default',
+          position: { x: 0, y: 0 },
+          data: {
+            label: `Task ${taskId.slice(0, 18)} · ${laneLabel} · ${horizonLabel}`,
+          },
+        });
+      }
+
+      const taskEdgeId = `${horizonNodeId}->${taskNodeId}`;
+      if (!edgeSet.has(taskEdgeId)) {
+        baseEdges.push({
+          id: taskEdgeId,
+          source: horizonNodeId,
+          target: taskNodeId,
+          type: 'smoothstep',
+        });
+        edgeSet.add(taskEdgeId);
+      }
+    }
+
+    return {
+      nodes: Array.from(nodesById.values()),
+      edges: baseEdges,
+    };
+  }, [activities, extractTaskRouting]);
+
+  const filteredActivities = useMemo(() => {
+    if (!streamFilter) return activities;
+    return activities.filter((activity) => {
+      const metadata: any = activity.metadata || {};
+      const sourceMatch = streamFilter.source ? activity.source === streamFilter.source : true;
+      const eventType = String(metadata.eventType || activity.type || '');
+      const eventMatch = streamFilter.eventType ? eventType === streamFilter.eventType : true;
+      const taskId = String(metadata.taskId || '').trim();
+      const taskMatch = streamFilter.taskId ? taskId === streamFilter.taskId : true;
+      const lane = String(metadata.lane || metadata.itinerary?.lane || '').trim();
+      const horizon = String(metadata.horizon || metadata.itinerary?.horizon || '').trim();
+      const laneMatch = streamFilter.lane ? lane === streamFilter.lane : true;
+      const horizonMatch = streamFilter.horizon ? horizon === streamFilter.horizon : true;
+      return sourceMatch && eventMatch && taskMatch && laneMatch && horizonMatch;
+    });
+  }, [activities, streamFilter]);
+
+  const jumpToAgent = useCallback(
+    (source?: string) => {
+      if (!source) return;
+      const matched = agents.find(
+        (agent) =>
+          agent.id.toLowerCase().includes(source.toLowerCase()) ||
+          agent.name.toLowerCase().includes(source.toLowerCase())
+      );
+      if (!matched) return;
+      setHighlightedAgentId(matched.id);
+      agentHubRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    },
+    [agents]
+  );
+
+  const handleGraphNodeClick = useCallback(
+    (_event: React.MouseEvent, node: Node) => {
+      const nodeId = String(node.id || '');
+      const label =
+        typeof node.data === 'object' && node.data && 'label' in node.data
+          ? String((node.data as any).label || nodeId)
+          : nodeId;
+
+      let context: GraphSelectionContext = { kind: 'root' };
+      if (nodeId === 'tnf-master-clock') {
+        context = { kind: 'root' };
+        setStreamFilter(null);
+        setSelectedTaskDetail(null);
+      } else if (nodeId.startsWith('source:')) {
+        const source = nodeId.slice('source:'.length);
+        context = { kind: 'source', source };
+        setStreamFilter({ source });
+        setSelectedTaskDetail(null);
+      } else if (nodeId.startsWith('event:')) {
+        const raw = nodeId.slice('event:'.length);
+        const splitAt = raw.indexOf(':');
+        const source = splitAt > -1 ? raw.slice(0, splitAt) : raw;
+        const eventType = splitAt > -1 ? raw.slice(splitAt + 1) : '';
+        context = { kind: 'event', source, eventType };
+        setStreamFilter({
+          source: source || undefined,
+          eventType: eventType || undefined,
+        });
+        setSelectedTaskDetail(null);
+      } else if (nodeId.startsWith('task:')) {
+        const taskId = nodeId.slice('task:'.length);
+        const taskEvent =
+          activities.find(
+            (activity) => String((activity.metadata as any)?.taskId || '') === taskId
+          ) || null;
+        const { lane, horizon } = taskEvent
+          ? extractTaskRouting(taskEvent)
+          : { lane: '', horizon: '' };
+        context = { kind: 'task', taskId, lane, horizon };
+        setStreamFilter({
+          taskId,
+          lane: lane || undefined,
+          horizon: horizon || undefined,
+        });
+        setSelectedTaskDetail(taskEvent);
+      }
+
+      setSelectedGraphNode({ id: nodeId, label, context });
+    },
+    [activities]
+  );
 
   const syncRecentActivity = useCallback(async () => {
     try {
@@ -471,6 +732,10 @@ export default function SuperAdminControlPanel() {
       </motion.div>
 
       <motion.div variants={itemVariants}>
+        <OAuthInstanceRotationControl />
+      </motion.div>
+
+      <motion.div variants={itemVariants}>
         <GlassCard className="p-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm uppercase tracking-widest font-bold text-slate-300">
@@ -507,6 +772,95 @@ export default function SuperAdminControlPanel() {
         </GlassCard>
       </motion.div>
 
+      <motion.div variants={itemVariants}>
+        <GlassCard className="p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm uppercase tracking-widest font-bold text-slate-300">
+              Nested Orchestration Map
+            </h3>
+            <span className="text-[10px] text-slate-500">
+              Master Clock → Source → Event Type → Lane → Horizon → Task
+            </span>
+          </div>
+          <div className="rounded-lg border border-white/10 bg-black/20 p-2">
+            <GraphVisualizerWrapper
+              nodes={orchestrationHierarchyGraph.nodes}
+              edges={orchestrationHierarchyGraph.edges}
+              config={{ layout: { type: 'dagre' } }}
+              onNodeClick={handleGraphNodeClick}
+            />
+          </div>
+          <div className="mt-3 rounded-lg border border-white/10 bg-white/5 p-3 text-xs">
+            <div className="flex items-center justify-between">
+              <div className="text-slate-300">
+                Selected node:{' '}
+                <span className="font-semibold">{selectedGraphNode?.label || 'none'}</span>
+              </div>
+              <div className="text-slate-500">
+                Stream matches: {filteredActivities.length}/{activities.length}
+              </div>
+            </div>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <button
+                className="rounded border border-cyan-500/30 px-2 py-1 text-cyan-300 hover:bg-cyan-500/10"
+                onClick={() => {
+                  if (!selectedGraphNode) return;
+                  const c = selectedGraphNode.context;
+                  setStreamFilter({
+                    source: c.source,
+                    eventType: c.eventType,
+                    taskId: c.taskId,
+                    lane: c.lane,
+                    horizon: c.horizon,
+                  });
+                }}
+              >
+                Filter Stream
+              </button>
+              <button
+                className="rounded border border-indigo-500/30 px-2 py-1 text-indigo-300 hover:bg-indigo-500/10"
+                onClick={() => jumpToAgent(selectedGraphNode?.context.source)}
+              >
+                Jump To Agent
+              </button>
+              <button
+                className="rounded border border-emerald-500/30 px-2 py-1 text-emerald-300 hover:bg-emerald-500/10"
+                onClick={() => {
+                  const taskId = selectedGraphNode?.context.taskId;
+                  if (!taskId) return;
+                  const event =
+                    activities.find(
+                      (activity) => String((activity.metadata as any)?.taskId || '') === taskId
+                    ) || null;
+                  setSelectedTaskDetail(event);
+                }}
+              >
+                Open Task Detail
+              </button>
+              <button
+                className="rounded border border-white/20 px-2 py-1 text-slate-300 hover:bg-white/10"
+                onClick={() => {
+                  setStreamFilter(null);
+                  setSelectedTaskDetail(null);
+                  setSelectedGraphNode(null);
+                }}
+              >
+                Clear
+              </button>
+            </div>
+            {selectedTaskDetail && (
+              <div className="mt-3 rounded border border-white/10 bg-black/20 p-2">
+                <div className="text-slate-400">Task Detail</div>
+                <div className="text-slate-200 font-semibold">
+                  {String((selectedTaskDetail.metadata as any)?.taskId || 'unknown')}
+                </div>
+                <div className="text-slate-300 truncate">{selectedTaskDetail.content}</div>
+              </div>
+            )}
+          </div>
+        </GlassCard>
+      </motion.div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Live Interaction Feed */}
         <motion.div variants={itemVariants} className="lg:col-span-2 space-y-6">
@@ -527,7 +881,7 @@ export default function SuperAdminControlPanel() {
 
             <div className="flex-1 overflow-y-auto p-4 space-y-3 font-mono text-sm scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
               <AnimatePresence mode="popLayout">
-                {activities.length === 0 ? (
+                {filteredActivities.length === 0 ? (
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -539,7 +893,7 @@ export default function SuperAdminControlPanel() {
                     </p>
                   </motion.div>
                 ) : (
-                  activities.map((activity) => (
+                  filteredActivities.map((activity) => (
                     <motion.div
                       key={activity.id}
                       initial={{ x: -20, opacity: 0 }}
@@ -647,60 +1001,66 @@ export default function SuperAdminControlPanel() {
           </GlassCard>
 
           {/* Online Agents List */}
-          <GlassCard className="p-6 transition-transform hover:scale-[1.02]">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold flex items-center gap-2">
-                <Bot className="w-5 h-5 text-cyan-400" />
-                Connectivity Hub
-              </h3>
-              <span className="bg-cyan-500/20 text-cyan-400 text-[10px] px-2 py-0.5 rounded-full font-bold">
-                {agents.length} LIVE
-              </span>
-            </div>
-            <div className="space-y-2">
-              {agents.length === 0 ? (
-                <div className="text-center py-8">
-                  <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <Bot className="w-6 h-6 text-slate-600" />
+          <div ref={agentHubRef}>
+            <GlassCard className="p-6 transition-transform hover:scale-[1.02]">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <Bot className="w-5 h-5 text-cyan-400" />
+                  Connectivity Hub
+                </h3>
+                <span className="bg-cyan-500/20 text-cyan-400 text-[10px] px-2 py-0.5 rounded-full font-bold">
+                  {agents.length} LIVE
+                </span>
+              </div>
+              <div className="space-y-2">
+                {agents.length === 0 ? (
+                  <div className="text-center py-8">
+                    <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <Bot className="w-6 h-6 text-slate-600" />
+                    </div>
+                    <p className="text-slate-500 text-xs">No active nodes detected</p>
                   </div>
-                  <p className="text-slate-500 text-xs">No active nodes detected</p>
-                </div>
-              ) : (
-                agents.slice(0, 6).map((agent) => (
-                  <div
-                    key={agent.id}
-                    className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/5 transition-all group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="relative">
-                        <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center border border-white/10 group-hover:border-cyan-500/50 transition-colors">
-                          <Bot className="w-5 h-5 text-slate-400 group-hover:text-cyan-400 transition-colors" />
+                ) : (
+                  agents.slice(0, 6).map((agent) => (
+                    <div
+                      key={agent.id}
+                      className={`flex items-center justify-between p-3 rounded-xl hover:bg-white/5 border transition-all group ${
+                        highlightedAgentId === agent.id
+                          ? 'border-cyan-400/60 bg-cyan-500/10'
+                          : 'border-transparent hover:border-white/5'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="relative">
+                          <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center border border-white/10 group-hover:border-cyan-500/50 transition-colors">
+                            <Bot className="w-5 h-5 text-slate-400 group-hover:text-cyan-400 transition-colors" />
+                          </div>
+                          <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-slate-950 shadow-[0_0_8px_#10b981]" />
                         </div>
-                        <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-slate-950 shadow-[0_0_8px_#10b981]" />
+                        <div>
+                          <div className="text-sm font-semibold">{agent.name}</div>
+                          <div className="text-[10px] text-slate-500 font-mono">
+                            {agent.id.slice(0, 8)}
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <div className="text-sm font-semibold">{agent.name}</div>
-                        <div className="text-[10px] text-slate-500 font-mono">
-                          {agent.id.slice(0, 8)}
-                        </div>
+                      <div className="text-[10px] font-bold text-cyan-500/50 group-hover:text-cyan-400 transition-colors px-2 py-1 bg-cyan-500/5 rounded uppercase">
+                        {agent.status || 'Active'}
                       </div>
                     </div>
-                    <div className="text-[10px] font-bold text-cyan-500/50 group-hover:text-cyan-400 transition-colors px-2 py-1 bg-cyan-500/5 rounded uppercase">
-                      {agent.status || 'Active'}
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
+                  ))
+                )}
+              </div>
 
-            <Link
-              to="/admin/agent-management"
-              className="group mt-6 flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white/5 border border-white/10 text-xs text-slate-400 hover:text-white transition-all font-bold tracking-widest uppercase"
-            >
-              Full Agent Fleet
-              <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </GlassCard>
+              <Link
+                to="/admin/agent-management"
+                className="group mt-6 flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white/5 border border-white/10 text-xs text-slate-400 hover:text-white transition-all font-bold tracking-widest uppercase"
+              >
+                Full Agent Fleet
+                <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </GlassCard>
+          </div>
 
           {/* Quick Orchestration */}
           <GlassCard className="p-6 relative overflow-hidden group">

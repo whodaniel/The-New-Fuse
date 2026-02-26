@@ -15,6 +15,7 @@ import { AppService } from './app.service';
 import { CacheService } from './cache/cache.service';
 import llmProviderConfig from './config/llm-provider.config';
 import securityConfig from './config/security.config';
+import { AdminOpenClawOAuthController } from './controllers/admin-openclaw-oauth.controller';
 import { AgentGrantsController } from './controllers/agent-grants.controller';
 import { AgentHandoffController } from './controllers/agent-handoff.controller';
 import { AgentProxyController } from './controllers/agent-proxy.controller';
@@ -53,6 +54,7 @@ import { WorkflowTemplatesModule } from './modules/workflow-templates.module';
 import { MonitoringModule } from './monitoring/monitoring.module';
 import { AgentApiGrantsService } from './services/agent-api-grants.service';
 import { AgentHandoffService } from './services/agent-handoff.service';
+import { OpenClawOAuthRotationService } from './services/openclaw-oauth-rotation.service';
 import { ProviderKeysService } from './services/provider-keys.service';
 import { SmartAccountModule } from './smart-accounts/smart-account.module';
 import { TransactionsModule } from './transactions/transactions.module';
@@ -147,6 +149,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     WorkflowController,
     WorkspaceController, // Multi-workspace support
     ProviderKeysController, // Per-user provider API key management
+    AdminOpenClawOAuthController,
     N8nWorkflowsController,
   ],
   providers: [
@@ -160,6 +163,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     },
     LLMProviderService,
     ProviderKeysService,
+    OpenClawOAuthRotationService,
     AgentApiGrantsService,
     AgentHandoffService,
     // Middleware

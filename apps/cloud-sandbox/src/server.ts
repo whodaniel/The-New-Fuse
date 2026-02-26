@@ -72,17 +72,72 @@ interface ToolHandler {
 let browser: Browser | null = null;
 let activePage: Page | null = null;
 
+const BROWSER_ENABLED = (process.env.CLOUD_SANDBOX_BROWSER_ENABLED || 'true') === 'true';
+const BROWSER_HEADLESS = (process.env.CLOUD_SANDBOX_BROWSER_HEADLESS || 'true') === 'true';
+const BROWSER_NAV_TIMEOUT_MS = Number(process.env.CLOUD_SANDBOX_BROWSER_NAV_TIMEOUT_MS || '30000');
+const BROWSER_ACTION_TIMEOUT_MS = Number(
+  process.env.CLOUD_SANDBOX_BROWSER_ACTION_TIMEOUT_MS || '15000'
+);
+const BROWSER_ALLOW_PRIVATE_NETWORK =
+  (process.env.CLOUD_SANDBOX_BROWSER_ALLOW_PRIVATE_NETWORK || 'false') === 'true';
+
+function assertBrowserEnabled(): void {
+  if (!BROWSER_ENABLED) {
+    throw new Error(
+      'Browser automation is disabled (set CLOUD_SANDBOX_BROWSER_ENABLED=true to enable)'
+    );
+  }
+}
+
+function assertSafeNavigationTarget(rawUrl: string): URL {
+  let parsed: URL;
+  try {
+    parsed = new URL(rawUrl);
+  } catch {
+    throw new Error(`Invalid URL: ${rawUrl}`);
+  }
+
+  if (!['http:', 'https:'].includes(parsed.protocol)) {
+    throw new Error(`Unsupported URL protocol: ${parsed.protocol}`);
+  }
+
+  if (BROWSER_ALLOW_PRIVATE_NETWORK) {
+    return parsed;
+  }
+
+  const host = parsed.hostname.toLowerCase();
+  const blocked =
+    host === 'localhost' ||
+    host === '::1' ||
+    host.startsWith('127.') ||
+    host.startsWith('10.') ||
+    host.startsWith('192.168.') ||
+    host.startsWith('169.254.') ||
+    /^172\.(1[6-9]|2\d|3[0-1])\./.test(host) ||
+    host.endsWith('.internal');
+
+  if (blocked) {
+    throw new Error(`Blocked private-network target: ${host}`);
+  }
+
+  return parsed;
+}
+
 async function getBrowser(): Promise<Browser> {
+  assertBrowserEnabled();
+
   if (!browser) {
     console.log('🌐 Launching headless Chromium...');
     // console.log('PLAYWRIGHT_BROWSERS_PATH:', process.env.PLAYWRIGHT_BROWSERS_PATH);
 
     browser = await chromium.launch({
-      headless: true,
+      headless: BROWSER_HEADLESS,
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--disable-background-networking',
         '--remote-debugging-port=9222', // Expose Chrome DevTools Protocol for Antigravity
       ],
       // executablePath: execPath, // Use bundled playwright
@@ -92,9 +147,13 @@ async function getBrowser(): Promise<Browser> {
 }
 
 async function getPage(): Promise<Page> {
+  assertBrowserEnabled();
+
   if (!activePage) {
     const b = await getBrowser();
     activePage = await b.newPage();
+    activePage.setDefaultTimeout(BROWSER_ACTION_TIMEOUT_MS);
+    activePage.setDefaultNavigationTimeout(BROWSER_NAV_TIMEOUT_MS);
 
     // Enable CDP Screencasting for Realtime View
     try {
@@ -213,11 +272,13 @@ const tools: ToolHandler[] = [
     handler: withBroadcast('navigate', async (params) => {
       try {
         const page = await getPage();
+        const url = String(params.url || '').trim();
+        const safeUrl = assertSafeNavigationTarget(url);
         const waitUntil =
           (params.waitUntil as 'load' | 'domcontentloaded' | 'networkidle') || 'domcontentloaded';
-        await page.goto(params.url as string, { waitUntil, timeout: 30000 });
+        await page.goto(safeUrl.toString(), { waitUntil, timeout: BROWSER_NAV_TIMEOUT_MS });
         const title = await page.title();
-        return { success: true, url: params.url, title };
+        return { success: true, url: safeUrl.toString(), title };
       } catch (error: unknown) {
         const err = error as { message: string };
         return { success: false, error: err.message };

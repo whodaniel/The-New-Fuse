@@ -1,0 +1,56 @@
+{
+  "instances": [
+    {
+      "name": "openclaw-cloud-codex",
+      "service": "openclaw-cloud",
+      "provider": "openai-codex",
+      "authFile": "~/.codex-tenants/openclaw-cloud-account/auth.json",
+      "primaryModel": "openai-codex/gpt-5.3-codex",
+      "fallbackModels": "openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini",
+      "paths": {
+        "access": ".tokens.access_token",
+        "refresh": ".tokens.refresh_token",
+        "account": ".tokens.account_id"
+      }
+    },
+    {
+      "name": "openclaw-primary-codex",
+      "service": "openclaw-primary",
+      "provider": "openai-codex",
+      "authFile": "~/.codex-tenants/proof-tenant-a/auth.json",
+      "primaryModel": "openai-codex/gpt-5.3-codex",
+      "fallbackModels": "openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini",
+      "paths": {
+        "access": ".tokens.access_token",
+        "refresh": ".tokens.refresh_token",
+        "account": ".tokens.account_id"
+      }
+    },
+    {
+      "name": "openclaw-anthropic",
+      "service": "openclaw-cloud",
+      "provider": "anthropic",
+      "authFile": "~/.tnf-auth/anthropic/auth.json",
+      "primaryModel": "anthropic/claude-sonnet-4.5",
+      "fallbackModels": "anthropic/claude-opus-4.1",
+      "paths": {
+        "access": ".tokens.access_token",
+        "refresh": ".tokens.refresh_token"
+      }
+    },
+    {
+      "name": "openclaw-google",
+      "service": "openclaw-cloud",
+      "provider": "google-antigravity",
+      "authFile": "~/.tnf-auth/google/auth.json",
+      "primaryModel": "google-antigravity/gemini-2.5-pro",
+      "fallbackModels": "google-antigravity/gemini-2.0-flash",
+      "paths": {
+        "access": ".tokens.access_token",
+        "refresh": ".tokens.refresh_token",
+        "googleEmail": ".profile.email",
+        "googleProject": ".profile.project_id"
+      }
+    }
+  ]
+}

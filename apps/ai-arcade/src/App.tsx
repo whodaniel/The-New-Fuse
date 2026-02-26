@@ -10,6 +10,7 @@ import MerkabaMonitor from './components/MerkabaMonitor';
 import UserProfile from './components/UserProfile';
 import { config } from './config';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { formatTokenAmount, useMerkabaContract } from './hooks/useMerkabaContract';
 import { ArcadeService } from './services/ArcadeService';
 
 import type { AgentListing } from './services/ArcadeService';
@@ -33,19 +34,36 @@ function AppContent() {
   const experiencesRef = useRef<HTMLElement | null>(null);
   const labRef = useRef<HTMLElement | null>(null);
 
-  // Merkaba treasury simulation state
-  const [sunBalance, setSunBalance] = useState(48750);
-  const [earthBalance, setEarthBalance] = useState(51200);
+  // On-chain contract state
+  const { chainState, isLive } = useMerkabaContract();
+
+  // Merkaba treasury simulation state (fallback)
+  const [simSunBalance, setSimSunBalance] = useState(48750);
+  const [simEarthBalance, setSimEarthBalance] = useState(51200);
   const [rebalanceActive, setRebalanceActive] = useState(false);
 
-  // Simulate Merkaba gyroscope pulse
+  // Derive display balances: on-chain wins when available
+  const sunBalance =
+    isLive && chainState
+      ? formatTokenAmount(chainState.sunBalance, chainState.tokenDecimals)
+      : simSunBalance;
+  const earthBalance =
+    isLive && chainState
+      ? formatTokenAmount(chainState.earthBalance, chainState.tokenDecimals)
+      : simEarthBalance;
+
+  // Simulate Merkaba gyroscope pulse (only when NOT live)
   useEffect(() => {
+    if (isLive) {
+      return;
+    } // Skip simulation when reading from chain
+
     const pulseInterval = setInterval(() => {
-      setSunBalance((prev) => {
+      setSimSunBalance((prev) => {
         const delta = (Math.random() - 0.45) * 800;
         return Math.max(1000, prev + delta);
       });
-      setEarthBalance((prev) => {
+      setSimEarthBalance((prev) => {
         const delta = (Math.random() - 0.55) * 600;
         return Math.max(1000, prev + delta);
       });
@@ -53,8 +71,8 @@ function AppContent() {
 
     // Rebalance check every 8 seconds
     const rebalanceInterval = setInterval(() => {
-      setSunBalance((sun) => {
-        setEarthBalance((earth) => {
+      setSimSunBalance((sun) => {
+        setSimEarthBalance((earth) => {
           const total = sun + earth;
           if (total === 0) {
             return earth;
@@ -65,7 +83,7 @@ function AppContent() {
             setTimeout(() => setRebalanceActive(false), 2000);
             const excess = sun - earth;
             const move = excess * 0.05;
-            setEarthBalance(earth + move);
+            setSimEarthBalance(earth + move);
             return earth + move;
           }
           return earth;
@@ -78,7 +96,7 @@ function AppContent() {
       clearInterval(pulseInterval);
       clearInterval(rebalanceInterval);
     };
-  }, []);
+  }, [isLive]);
 
   const { user, isAuthenticated } = useAuth();
   const arcadeService = new ArcadeService(config.apiUrl);
@@ -338,6 +356,8 @@ function AppContent() {
             sunBalance={Math.round(sunBalance)}
             earthBalance={Math.round(earthBalance)}
             rebalanceActive={rebalanceActive}
+            isLive={isLive}
+            tokenSymbol={isLive && chainState ? chainState.tokenSymbol : undefined}
           />
         </section>
 

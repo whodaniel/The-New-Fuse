@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { useCallback, useEffect, useState } from 'react';
 import ArcadeCabinet from '../components/ArcadeCabinet';
 import MerkabaMonitor from '../components/MerkabaMonitor';
-import { useMerkabaContract } from '../hooks/useMerkabaContract';
+import { formatTokenAmount, useMerkabaContract } from '../hooks/useMerkabaContract';
 
 interface CabinetState {
   id: number;
@@ -15,17 +15,27 @@ interface CabinetState {
 }
 
 const GenesisAuction = () => {
-  const { account, connect } = useMerkabaContract();
+  const { account, connect, chainState, isLive, contracts } = useMerkabaContract();
 
   // Countdown
   const [timeLeft, setTimeLeft] = useState({ days: 2, hours: 14, minutes: 23, seconds: 45 });
 
-  // Merkaba state (simulated until contracts are deployed)
-  const [sunBalance, setSunBalance] = useState(32400);
-  const [earthBalance, setEarthBalance] = useState(28900);
+  // Merkaba state — use on-chain when available, simulated fallback
+  const [simSunBalance, setSimSunBalance] = useState(32400);
+  const [simEarthBalance, setSimEarthBalance] = useState(28900);
   const [rebalanceActive, setRebalanceActive] = useState(false);
 
-  // Live Arcade Cabinets
+  // Derive display balances: on-chain wins when available
+  const sunBalance =
+    isLive && chainState
+      ? formatTokenAmount(chainState.sunBalance, chainState.tokenDecimals)
+      : simSunBalance;
+  const earthBalance =
+    isLive && chainState
+      ? formatTokenAmount(chainState.earthBalance, chainState.tokenDecimals)
+      : simEarthBalance;
+
+  // Live Arcade Cabinets (will be replaced by on-chain auction reads)
   const [cabinets, setCabinets] = useState<CabinetState[]>([
     {
       id: 1,
@@ -56,31 +66,79 @@ const GenesisAuction = () => {
     },
   ]);
 
+  // Load on-chain auctions when available
+  useEffect(() => {
+    if (!isLive || !chainState || !contracts.engine || chainState.auctionCount === 0) {
+      return;
+    }
+
+    const loadAuctions = async () => {
+      try {
+        const count = chainState.auctionCount;
+        const loaded: CabinetState[] = [];
+        for (let i = 0; i < Math.min(count, 6); i++) {
+          try {
+            const auction = await contracts.engine!.auctions(i);
+            loaded.push({
+              id: Number(auction.id),
+              agentName: auction.agentId || `Agent #${i}`,
+              agentRole: i % 3 === 0 ? 'STRATEGIST' : i % 3 === 1 ? 'CODER' : 'GAME',
+              currentPrice: formatTokenAmount(auction.currentPrice, chainState.tokenDecimals),
+              nextDrop: formatTokenAmount(auction.priceDrop, chainState.tokenDecimals),
+              bidFee: formatTokenAmount(auction.bidFee, chainState.tokenDecimals),
+              endTime: new Date(Number(auction.endTime) * 1000),
+            });
+          } catch {
+            // Individual auction read failure — skip
+          }
+        }
+        if (loaded.length > 0) {
+          setCabinets(loaded);
+        }
+      } catch (e) {
+        console.warn('[GenesisAuction] Failed to load on-chain auctions:', e);
+      }
+    };
+
+    loadAuctions();
+  }, [isLive, chainState, contracts.engine]);
+
   // Countdown timer
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
-        if (prev.seconds > 0) return { ...prev, seconds: prev.seconds - 1 };
-        if (prev.minutes > 0) return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
-        if (prev.hours > 0) return { ...prev, hours: prev.hours - 1, minutes: 59, seconds: 59 };
-        if (prev.days > 0)
+        if (prev.seconds > 0) {
+          return { ...prev, seconds: prev.seconds - 1 };
+        }
+        if (prev.minutes > 0) {
+          return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
+        }
+        if (prev.hours > 0) {
+          return { ...prev, hours: prev.hours - 1, minutes: 59, seconds: 59 };
+        }
+        if (prev.days > 0) {
           return { ...prev, days: prev.days - 1, hours: 23, minutes: 59, seconds: 59 };
+        }
         return prev;
       });
     }, 1000);
     return () => clearInterval(timer);
   }, []);
 
-  // Merkaba gyroscope simulation
+  // Merkaba gyroscope simulation (only when NOT live)
   useEffect(() => {
+    if (isLive) {
+      return;
+    } // Skip simulation when reading from chain
+
     const pulse = setInterval(() => {
-      setSunBalance((prev) => Math.max(1000, prev + (Math.random() - 0.45) * 500));
-      setEarthBalance((prev) => Math.max(1000, prev + (Math.random() - 0.55) * 400));
+      setSimSunBalance((prev) => Math.max(1000, prev + (Math.random() - 0.45) * 500));
+      setSimEarthBalance((prev) => Math.max(1000, prev + (Math.random() - 0.55) * 400));
     }, 4000);
 
     const rebalance = setInterval(() => {
-      setSunBalance((sun) => {
-        setEarthBalance((earth) => {
+      setSimSunBalance((sun) => {
+        setSimEarthBalance((earth) => {
           const ratio = sun / earth;
           if (ratio > 1.12 || ratio < 0.88) {
             setRebalanceActive(true);
@@ -98,30 +156,67 @@ const GenesisAuction = () => {
       clearInterval(pulse);
       clearInterval(rebalance);
     };
-  }, []);
+  }, [isLive]);
 
   // Handle bid on a cabinet
-  const handleBid = useCallback((cabinetId: number) => {
-    setCabinets((prev) =>
-      prev.map((cab) => {
-        if (cab.id !== cabinetId) return cab;
-        const newPrice = Math.max(0, cab.currentPrice - cab.nextDrop);
-        // Inject fee into Merkaba pools (simulation)
-        setSunBalance((s) => s + cab.bidFee * 0.4);
-        setEarthBalance((e) => e + cab.bidFee * 0.4);
-        return { ...cab, currentPrice: parseFloat(newPrice.toFixed(2)) };
-      })
-    );
-  }, []);
+  const handleBid = useCallback(
+    async (cabinetId: number) => {
+      if (isLive && contracts.engine && account) {
+        try {
+          const tx = await contracts.engine.insertCoin(cabinetId);
+          console.log('[GenesisAuction] Bid tx:', tx.hash);
+          await tx.wait();
+          // Refresh state after on-chain bid
+        } catch (err) {
+          console.error('[GenesisAuction] Bid failed:', err);
+          alert('Bid failed. Check console for details.');
+          return;
+        }
+      }
+
+      // Update local state (optimistic for simulated, confirmation for live)
+      setCabinets((prev) =>
+        prev.map((cab) => {
+          if (cab.id !== cabinetId) {
+            return cab;
+          }
+          const newPrice = Math.max(0, cab.currentPrice - cab.nextDrop);
+          if (!isLive) {
+            setSimSunBalance((s) => s + cab.bidFee * 0.4);
+            setSimEarthBalance((e) => e + cab.bidFee * 0.4);
+          }
+          return { ...cab, currentPrice: parseFloat(newPrice.toFixed(2)) };
+        })
+      );
+    },
+    [isLive, contracts.engine, account]
+  );
 
   // Handle buy now
   const handleBuy = useCallback(
-    (cabinetId: number) => {
+    async (cabinetId: number) => {
       const cab = cabinets.find((c) => c.id === cabinetId);
-      if (!cab) return;
+      if (!cab) {
+        return;
+      }
+
+      if (isLive && contracts.engine && account) {
+        try {
+          const tx = await contracts.engine.unlockAgent(cabinetId);
+          console.log('[GenesisAuction] Buy tx:', tx.hash);
+          await tx.wait();
+          alert(`🎉 You unlocked ${cab.agentName}! Transaction confirmed.`);
+          return;
+        } catch (err) {
+          console.error('[GenesisAuction] Buy failed:', err);
+          alert('Purchase failed. Check console for details.');
+          return;
+        }
+      }
+
       alert(`🎉 You unlocked ${cab.agentName} for $${cab.currentPrice.toFixed(2)}!`);
     },
-    [cabinets]
+    [cabinets, isLive, contracts.engine, account]
   );
 
   const genesisNodes = [
@@ -181,6 +276,27 @@ const GenesisAuction = () => {
             ))}
           </div>
 
+          {/* ON-CHAIN STATUS BADGE */}
+          {chainState && (
+            <div className="flex justify-center gap-4 text-xs font-mono">
+              <span
+                className={`px-3 py-1 rounded-full border ${isLive ? 'text-green-400 border-green-500/30 bg-green-500/10' : 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10'}`}
+              >
+                {isLive ? `● LIVE ON BASE SEPOLIA` : '◌ SIMULATED MODE'}
+              </span>
+              {chainState.auctionCount > 0 && (
+                <span className="px-3 py-1 rounded-full text-cyan-400 border border-cyan-500/30 bg-cyan-500/10">
+                  {chainState.auctionCount} AUCTIONS
+                </span>
+              )}
+              {chainState.potCount > 0 && (
+                <span className="px-3 py-1 rounded-full text-purple-400 border border-purple-500/30 bg-purple-500/10">
+                  {chainState.potCount} SIDEPOTS
+                </span>
+              )}
+            </div>
+          )}
+
           <div className="flex gap-4 justify-center pt-8">
             <button
               onClick={connect}
@@ -197,6 +313,20 @@ const GenesisAuction = () => {
               READ BLACKPAPER
             </button>
           </div>
+
+          {/* User Balance (when connected) */}
+          {account && chainState && chainState.userTokenBalance > 0n && (
+            <div className="text-sm font-mono text-gray-400">
+              Your Balance:{' '}
+              <span className="text-white font-bold">
+                {formatTokenAmount(
+                  chainState.userTokenBalance,
+                  chainState.tokenDecimals
+                ).toLocaleString()}{' '}
+                {chainState.tokenSymbol}
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -205,6 +335,8 @@ const GenesisAuction = () => {
         sunBalance={Math.round(sunBalance)}
         earthBalance={Math.round(earthBalance)}
         rebalanceActive={rebalanceActive}
+        isLive={isLive}
+        tokenSymbol={isLive && chainState ? chainState.tokenSymbol : undefined}
       />
 
       {/* LIVE AUCTION CABINETS */}
