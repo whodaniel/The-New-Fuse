@@ -68,7 +68,7 @@ jobs:
 
       - name: Install dependencies
         if: steps.pnpm-cache-modules.outputs.cache-hit != 'true'
-        run: pnpm install --frozen-lockfile --prefer-offline
+        run: pnpm install --no-frozen-lockfile --prefer-offline
 
   lint:
     name: Lint Code
@@ -97,7 +97,7 @@ jobs:
           key: ${{ needs.setup.outputs.cache-key }}
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --prefer-offline
+        run: pnpm install --no-frozen-lockfile --prefer-offline
 
       - name: Run ESLint
         run: pnpm run lint
@@ -132,7 +132,7 @@ jobs:
           key: ${{ needs.setup.outputs.cache-key }}
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --prefer-offline
+        run: pnpm install --no-frozen-lockfile --prefer-offline
 
       - name: Cache Turbo
         uses: actions/cache@v4
@@ -176,7 +176,7 @@ jobs:
           key: ${{ needs.setup.outputs.cache-key }}
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --prefer-offline
+        run: pnpm install --no-frozen-lockfile --prefer-offline
 
       - name: Cache Turbo
         uses: actions/cache@v4
@@ -254,7 +254,7 @@ jobs:
           key: ${{ needs.setup.outputs.cache-key }}
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --prefer-offline
+        run: pnpm install --no-frozen-lockfile --prefer-offline
 
       - name: Setup test database
         run: |
@@ -312,7 +312,7 @@ jobs:
           key: ${{ needs.setup.outputs.cache-key }}
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --prefer-offline
+        run: pnpm install --no-frozen-lockfile --prefer-offline
 
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps chromium

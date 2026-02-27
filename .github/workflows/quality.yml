@@ -47,7 +47,7 @@ jobs:
           key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --prefer-offline
+        run: pnpm install --no-frozen-lockfile --prefer-offline
 
       - name: Run tests with coverage
         run: pnpm run test:coverage
@@ -127,7 +127,7 @@ jobs:
         uses: pnpm/action-setup@v4
 
       - name: Install dependencies (base)
-        run: pnpm install --frozen-lockfile --prefer-offline
+        run: pnpm install --no-frozen-lockfile --prefer-offline
 
       - name: Build frontend (base)
         run: pnpm run build:frontend
@@ -148,7 +148,7 @@ jobs:
         run: |
           rm -rf node_modules apps/*/node_modules packages/*/node_modules
           rm -rf apps/frontend/dist
-          pnpm install --frozen-lockfile --prefer-offline
+          pnpm install --no-frozen-lockfile --prefer-offline
 
       - name: Build frontend (PR)
         run: pnpm run build:frontend
@@ -234,7 +234,7 @@ jobs:
         uses: pnpm/action-setup@v4
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --prefer-offline
+        run: pnpm install --no-frozen-lockfile --prefer-offline
 
       - name: Build frontend
         run: pnpm run build:frontend

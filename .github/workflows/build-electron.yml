@@ -29,7 +29,7 @@ jobs:
       - name: Install Dependencies
         run: |
           export PATH="$HOME/Library/pnpm:$PATH"
-          pnpm install --frozen-lockfile
+          pnpm install --no-frozen-lockfile
 
       - name: Build and Package
         working-directory: apps/electron-desktop

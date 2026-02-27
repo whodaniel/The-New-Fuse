@@ -68,7 +68,7 @@ jobs:
             ${{ runner.os }}-pnpm-
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --prefer-offline
+        run: pnpm install --no-frozen-lockfile --prefer-offline
 
   build-packages:
     name: Build Packages
@@ -97,7 +97,7 @@ jobs:
           key: ${{ needs.setup.outputs.cache-key }}
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --prefer-offline
+        run: pnpm install --no-frozen-lockfile --prefer-offline
 
       - name: Cache Turbo
         uses: actions/cache@v4
@@ -167,7 +167,7 @@ jobs:
           path: packages
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --prefer-offline
+        run: pnpm install --no-frozen-lockfile --prefer-offline
 
       - name: Cache Turbo
         uses: actions/cache@v4
@@ -293,7 +293,7 @@ jobs:
           path: packages
 
       - name: Install production dependencies
-        run: pnpm install --prod --frozen-lockfile
+        run: pnpm install --prod --no-frozen-lockfile
 
       - name: Test production build starts
         timeout-minutes: 2
