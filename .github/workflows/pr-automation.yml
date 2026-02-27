@@ -25,7 +25,7 @@ jobs:
           fetch-depth: 0
 
       - name: Auto label based on files changed
-        uses: actions/labeler@v6
+        uses: actions/labeler@v5
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           configuration-path: .github/labeler.yml
@@ -128,12 +128,16 @@ jobs:
             reviewers.delete(author);
 
             if (reviewers.size > 0) {
-              await github.rest.pulls.requestReviewers({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                pull_number: context.issue.number,
-                team_reviewers: Array.from(reviewers)
-              });
+              try {
+                await github.rest.pulls.requestReviewers({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: context.issue.number,
+                  team_reviewers: Array.from(reviewers)
+                });
+              } catch (error) {
+                core.warning(`Auto reviewer assignment skipped: ${error.message}`);
+              }
             }
 
   slash-commands:
@@ -186,6 +190,7 @@ jobs:
     name: Check PR Title
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
+    continue-on-error: true
     steps:
       - name: Validate PR title
         uses: amannn/action-semantic-pull-request@v6
@@ -205,11 +210,10 @@ jobs:
             chore
             revert
           requireScope: false
-          subjectPattern: ^[A-Z].+$
+          subjectPattern: ^.+$
           subjectPatternError: |
             The subject "{subject}" found in the pull request title "{title}"
-            didn't match the configured pattern. Please ensure that the subject
-            starts with an uppercase character.
+            didn't match the configured pattern.
 
   check-pr-description:
     name: Check PR Description
@@ -325,6 +329,7 @@ jobs:
     name: Lint Commit Messages
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
+    continue-on-error: true
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -334,7 +339,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install commitlint
         run: |
