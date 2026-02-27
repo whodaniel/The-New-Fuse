@@ -69,6 +69,18 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 25,
+  message: 'Too many auth requests from this IP, please try again later.',
+});
+
+const webhookLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 50,
+  message: 'Too many webhook requests from this IP, please try again later.',
+});
+
 // CORS configuration
 const corsOptions = {
   origin: function (origin, callback) {
@@ -104,6 +116,30 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// Hard fail malformed/missing auth headers for private API route groups before route handlers.
+const protectedApiPrefixes = ['/api/users', '/api/subscriptions', '/api/queue', '/api/reports'];
+app.use((req, res, next) => {
+  if (!protectedApiPrefixes.some((prefix) => req.path.startsWith(prefix))) {
+    return next();
+  }
+
+  const authHeader = req.headers.authorization;
+  const hasCookieToken = Boolean(req.cookies?.token);
+  if (!authHeader && !hasCookieToken) {
+    return res.status(401).json({
+      success: false,
+      error: { message: 'Authorization token required' },
+    });
+  }
+  if (authHeader && !/^Bearer\s+\S+$/i.test(authHeader)) {
+    return res.status(401).json({
+      success: false,
+      error: { message: 'Invalid authorization header format' },
+    });
+  }
+  return next();
+});
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({
@@ -128,11 +164,13 @@ app.get('/support', (req, res) => {
 console.log(`📂 Serving static files from: ${publicPath}`);
 
 // API routes
+app.use('/api/auth', authLimiter);
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/queue', queueRoutes);
 app.use('/api/reports', reportsRoutes);
+app.use('/api/webhooks', webhookLimiter);
 app.use('/api/webhooks', webhookRoutes);
 
 // API documentation endpoint

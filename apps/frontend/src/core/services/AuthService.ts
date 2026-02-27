@@ -4,6 +4,8 @@ import { LoggingService } from '../../services/logging';
 const API_BASE_URL = '/api';
 
 export class AuthService {
+  private refreshTokenCache: string | null = null;
+
   constructor() {
     this.eventBus = EventBus.getInstance();
     this.stateManager = StateManager.getInstance();
@@ -107,7 +109,7 @@ export class AuthService {
   }
   async refreshToken() {
     try {
-      const refreshToken = this.getRefreshToken();
+      const refreshToken = await this.getRefreshToken();
       if (!refreshToken) {
         throw new Error('No refresh token available');
       }
@@ -190,18 +192,25 @@ export class AuthService {
     return this.stateManager.getState(['auth', 'user']);
   }
   setTokens(tokens) {
-    localStorage.setItem('accessToken', tokens.accessToken);
-    localStorage.setItem('refreshToken', tokens.refreshToken);
+    // Avoid persisting sensitive tokens in app-managed localStorage.
+    this.refreshTokenCache = tokens?.refreshToken || null;
   }
   clearTokens() {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+    this.refreshTokenCache = null;
   }
   async getAccessToken() {
     return await authHelpers.getAccessToken();
   }
-  getRefreshToken() {
-    return localStorage.getItem('refreshToken');
+  async getRefreshToken() {
+    if (this.refreshTokenCache) {
+      return this.refreshTokenCache;
+    }
+    const session = await authHelpers.getCurrentSession();
+    const refreshToken = session?.refresh_token || null;
+    if (refreshToken) {
+      this.refreshTokenCache = refreshToken;
+    }
+    return refreshToken;
   }
   subscribeToAuthState(callback) {
     return this.stateManager.subscribe(['auth', 'user'], callback);
