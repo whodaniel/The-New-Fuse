@@ -10,18 +10,15 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 // Create require for ESM context
 const require = createRequire(import.meta.url);
 
-// Plugin to resolve ethers Node.js-only modules to browser versions
+// Plugin to resolve ethers Node.js-only modules to browser-safe local stubs.
 function ethersBrowserResolve(): Plugin {
   return {
     name: 'ethers-browser-resolve',
     enforce: 'pre',
     resolveId(source, importer) {
-      // Redirect ethers IPC socket provider to browser version
+      // Redirect ethers IPC socket provider to a local browser-safe shim.
       if (source === './provider-ipcsocket.js' && importer && importer.includes('ethers')) {
-        return path.resolve(
-          __dirname,
-          '../../node_modules/ethers/lib.esm/providers/provider-ipcsocket-browser.js'
-        );
+        return path.resolve(__dirname, 'src/stubs/ethers-provider-ipcsocket-browser.js');
       }
       return null;
     },
