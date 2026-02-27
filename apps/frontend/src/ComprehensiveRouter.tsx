@@ -57,6 +57,8 @@ const ModernHub = lazy(() => import('./pages/Hub/ModernHub'));
 
 // Resources pages
 const ResourcesDashboard = lazy(() => import('./pages/Resources/ResourcesDashboard'));
+const MarketplaceDashboard = lazy(() => import('./pages/Marketplace'));
+const MarketplacePublicPage = lazy(() => import('./pages/Marketplace/MarketplacePublicPage'));
 
 // Performance loading component
 const LoadingFallback = ({ name }: { name: string }) => (
@@ -235,6 +237,7 @@ export default function ComprehensiveRouter() {
       '/contact',
       '/brand',
       '/blog',
+      '/marketplace',
       '/design-system',
     ].includes(location.pathname) ||
     location.pathname.startsWith('/auth') ||
@@ -307,6 +310,21 @@ export default function ComprehensiveRouter() {
                     <Suspense fallback={<LoadingFallback name="Hub" />}>
                       <ModernHub />
                     </Suspense>
+                  </RequireAuth>
+                }
+              />
+
+              {/* Public Marketplace */}
+              <Route path="/marketplace" element={<MarketplacePublicPage />} />
+
+              {/* Admin Marketplace Console */}
+              <Route
+                path="/admin/marketplace"
+                element={
+                  <RequireAuth>
+                    <RequirePermission roles={['ADMIN', 'SUPER_ADMIN']}>
+                      <MarketplaceDashboard />
+                    </RequirePermission>
                   </RequireAuth>
                 }
               />

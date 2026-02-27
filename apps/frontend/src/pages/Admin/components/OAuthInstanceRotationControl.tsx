@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 type ProviderKey = 'openai-codex' | 'anthropic' | 'google-antigravity' | 'kilo';
 
@@ -14,7 +14,7 @@ const providerDefaults: Record<
 > = {
   'openai-codex': {
     primaryModel: 'openai-codex/gpt-5.3-codex',
-    fallbackModels: 'openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini',
+    fallbackModels: 'openai-codex/gpt-5.2-codex,openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini',
     accessPath: '.tokens.access_token',
     refreshPath: '.tokens.refresh_token',
     accountPath: '.tokens.account_id',
@@ -73,6 +73,37 @@ export function OAuthInstanceRotationControl() {
       updatedBy: string | null;
     }>
   >([]);
+  const [activityLoading, setActivityLoading] = useState(false);
+  const [activityEvents, setActivityEvents] = useState<
+    Array<{
+      id: string;
+      action: string;
+      status: string;
+      createdAt: string | null;
+      tenantId: string | null;
+      service: string | null;
+      provider: string | null;
+      details: Record<string, unknown>;
+    }>
+  >([]);
+  const [activityRollup, setActivityRollup] = useState<{
+    totals: { total: number; success: number; warning: number; error: number };
+    latestRunByService: Array<{
+      service: string;
+      provider: string;
+      status: string;
+      deployStatus: string | null;
+      overviewStatus: number | null;
+      at: string | null;
+    }>;
+    findings: Array<{
+      severity: 'P0' | 'P1';
+      service: string;
+      provider: string;
+      issue: string;
+      at: string | null;
+    }>;
+  } | null>(null);
 
   const oneShotCommand = useMemo(() => {
     return [
@@ -173,6 +204,28 @@ export function OAuthInstanceRotationControl() {
     }
   }
 
+  async function loadActivity() {
+    setActivityLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch('/api/admin/openclaw/oauth/activity?limit=180', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!res.ok) throw new Error(`Failed to load activity (${res.status})`);
+      const json = await res.json();
+      const events = Array.isArray(json?.events) ? json.events : [];
+      setActivityEvents(events);
+      setActivityRollup(json?.rollup || null);
+    } catch (err) {
+      setApiMessage((err as Error).message);
+    } finally {
+      setActivityLoading(false);
+    }
+  }
+
   async function saveBinding() {
     setSaving(true);
     setApiMessage(null);
@@ -241,14 +294,31 @@ export function OAuthInstanceRotationControl() {
     }
   }
 
+  useEffect(() => {
+    void loadBindings();
+    void loadActivity();
+
+    const activityTimer = window.setInterval(() => {
+      void loadActivity();
+    }, 10000);
+    const bindingTimer = window.setInterval(() => {
+      void loadBindings();
+    }, 60000);
+
+    return () => {
+      window.clearInterval(activityTimer);
+      window.clearInterval(bindingTimer);
+    };
+  }, []);
+
   return (
     <section className="rounded-2xl border border-emerald-500/20 bg-slate-900/60 p-6 space-y-5">
       <div className="flex items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-semibold text-emerald-300">OAuth Account Rotation</h2>
           <p className="text-sm text-slate-400">
-            Generate repeatable commands/config for swapping OAuth account bindings per OpenClaw
-            instance.
+            Generate explicit per-instance commands/config for OAuth bindings. Prefer locked service
+            mappings and rotate intentionally.
           </p>
         </div>
       </div>
@@ -429,6 +499,81 @@ export function OAuthInstanceRotationControl() {
           </div>
         </div>
       )}
+
+      <div className="rounded-lg border border-white/15 bg-black/30 p-3 space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-slate-200">Live Rotation Activity</h3>
+          <span className="text-[11px] text-slate-400">
+            auto-refresh 10s {activityLoading ? '• updating' : ''}
+          </span>
+        </div>
+
+        {activityRollup && (
+          <>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+              <div className="rounded border border-white/10 px-2 py-1 text-slate-300">
+                Total: {activityRollup.totals.total}
+              </div>
+              <div className="rounded border border-emerald-500/20 px-2 py-1 text-emerald-200">
+                Success: {activityRollup.totals.success}
+              </div>
+              <div className="rounded border border-amber-500/20 px-2 py-1 text-amber-200">
+                Warnings: {activityRollup.totals.warning}
+              </div>
+              <div className="rounded border border-rose-500/20 px-2 py-1 text-rose-200">
+                Errors: {activityRollup.totals.error}
+              </div>
+            </div>
+
+            {activityRollup.findings.length > 0 && (
+              <div className="space-y-1">
+                <h4 className="text-xs font-semibold text-amber-200">Findings Rollup</h4>
+                <div className="space-y-1 text-xs">
+                  {activityRollup.findings.slice(0, 8).map((finding, idx) => (
+                    <div
+                      key={`${finding.service}-${finding.provider}-${idx}`}
+                      className="rounded border border-amber-500/20 bg-amber-500/5 px-2 py-1 text-amber-100"
+                    >
+                      [{finding.severity}] {finding.service} / {finding.provider}: {finding.issue}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {activityRollup.latestRunByService.length > 0 && (
+              <div className="space-y-1">
+                <h4 className="text-xs font-semibold text-cyan-200">Run Status</h4>
+                <div className="space-y-1 text-xs text-slate-300">
+                  {activityRollup.latestRunByService.map((run) => (
+                    <div
+                      key={`${run.service}:${run.provider}`}
+                      className="rounded border border-white/10 px-2 py-1"
+                    >
+                      {run.service} | {run.provider} | {run.status} | deploy:{' '}
+                      {run.deployStatus || 'n/a'} | overview:{' '}
+                      {run.overviewStatus === null ? 'n/a' : run.overviewStatus}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
+        {activityEvents.length > 0 && (
+          <div className="space-y-1 text-xs text-slate-300 max-h-52 overflow-auto pr-1">
+            {activityEvents.slice(0, 24).map((event) => (
+              <div key={event.id} className="rounded border border-white/10 px-2 py-1">
+                <span className="text-slate-400">
+                  {event.createdAt ? new Date(event.createdAt).toLocaleString() : 'unknown'}
+                </span>{' '}
+                | {event.action} | {event.status} | {event.service || '-'} | {event.provider || '-'}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       <div className="rounded-lg border border-white/15 bg-black/30 p-3 space-y-2">
         <div className="flex items-center justify-between">

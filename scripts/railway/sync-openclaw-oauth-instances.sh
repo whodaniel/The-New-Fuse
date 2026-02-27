@@ -17,11 +17,13 @@ Config format:
   "instances": [
     {
       "name": "tenant-a",
+      "instanceId": "TNF-OC-001",
+      "instanceName": "OpenClaw Cloud",
       "service": "openclaw-cloud",
       "provider": "openai-codex",
       "authFile": "~/.codex-tenants/tenant-a/auth.json",
       "primaryModel": "openai-codex/gpt-5.3-codex",
-      "fallbackModels": "openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini",
+      "fallbackModels": "openai-codex/gpt-5.2-codex,openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini",
       "paths": {
         "access": ".tokens.access_token",
         "refresh": ".tokens.refresh_token",
@@ -85,6 +87,8 @@ echo "Syncing $COUNT OpenClaw instance(s) from config: $CONFIG_FILE"
 
 for idx in $(seq 0 $((COUNT - 1))); do
   NAME="$(jq -r ".instances[$idx].name // \"instance-$idx\"" "$CONFIG_FILE")"
+  INSTANCE_ID="$(jq -r ".instances[$idx].instanceId // empty" "$CONFIG_FILE")"
+  INSTANCE_NAME="$(jq -r ".instances[$idx].instanceName // empty" "$CONFIG_FILE")"
   SERVICE="$(jq -r ".instances[$idx].service // empty" "$CONFIG_FILE")"
   PROVIDER="$(jq -r ".instances[$idx].provider // \"openai-codex\"" "$CONFIG_FILE")"
   AUTH_FILE_RAW="$(jq -r ".instances[$idx].authFile // empty" "$CONFIG_FILE")"
@@ -96,8 +100,8 @@ for idx in $(seq 0 $((COUNT - 1))); do
   GOOGLE_EMAIL_PATH="$(jq -r ".instances[$idx].paths.googleEmail // \".tokens.email\"" "$CONFIG_FILE")"
   GOOGLE_PROJECT_PATH="$(jq -r ".instances[$idx].paths.googleProject // \".tokens.project_id\"" "$CONFIG_FILE")"
 
-  if [ -z "$SERVICE" ] || [ -z "$AUTH_FILE_RAW" ] || [ -z "$PRIMARY_MODEL" ] || [ -z "$FALLBACK_MODELS" ]; then
-    echo "ERROR: instance[$idx] missing one of: service, authFile, primaryModel, fallbackModels"
+  if [ -z "$INSTANCE_ID" ] || [ -z "$INSTANCE_NAME" ] || [ -z "$SERVICE" ] || [ -z "$AUTH_FILE_RAW" ] || [ -z "$PRIMARY_MODEL" ] || [ -z "$FALLBACK_MODELS" ]; then
+    echo "ERROR: instance[$idx] missing one of: instanceId, instanceName, service, authFile, primaryModel, fallbackModels"
     exit 1
   fi
 
@@ -105,6 +109,8 @@ for idx in $(seq 0 $((COUNT - 1))); do
 
   echo "-----"
   echo "Name: $NAME"
+  echo "Instance ID: $INSTANCE_ID"
+  echo "Instance Name: $INSTANCE_NAME"
   echo "Service: $SERVICE"
   echo "Provider: $PROVIDER"
   echo "Auth file: $AUTH_FILE"
@@ -113,6 +119,8 @@ for idx in $(seq 0 $((COUNT - 1))); do
     --service "$SERVICE" \
     --provider "$PROVIDER" \
     --auth-file "$AUTH_FILE" \
+    --instance-id "$INSTANCE_ID" \
+    --instance-name "$INSTANCE_NAME" \
     --primary-model "$PRIMARY_MODEL" \
     --fallbacks "$FALLBACK_MODELS" \
     --access-path "$ACCESS_PATH" \

@@ -382,7 +382,16 @@ export const ALL_PAGES_CATALOG: PageInfo[] = [
   },
   { name: 'Pricing', path: '/pricing', description: 'Pricing page' },
   { name: 'Profile Alias', path: '/profile', description: 'Profile alias route' },
-  { name: 'Resources', path: '/resources', description: 'Resources marketplace dashboard' },
+  {
+    name: 'Platform Overview',
+    path: '/marketplace',
+    description: 'Public orientation page for TNF surfaces',
+  },
+  {
+    name: 'Resources',
+    path: '/resources',
+    description: 'Resources marketplace dashboard (legacy)',
+  },
   { name: 'Support', path: '/support', description: 'Support page' },
   {
     name: 'Workflow Console',

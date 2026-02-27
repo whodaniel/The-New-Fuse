@@ -1,16 +1,48 @@
 {
   "modelPrimary": "openai-codex/gpt-5.3-codex",
-  "modelFallbacks": "openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini",
+  "modelFallbacks": "openai-codex/gpt-5.2-codex,openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini",
   "tenants": [
     {
-      "name": "openclaw-cloud-account",
+      "name": "proof-tenant-a",
+      "instanceId": "TNF-OC-001",
+      "instanceName": "OpenClaw Cloud",
       "service": "openclaw-cloud",
-      "authFile": "~/.codex-tenants/openclaw-cloud-account/auth.json"
+      "authFile": "~/.codex-tenants/proof-tenant-a/auth.json",
+      "targetAccountId": "c99c8f6e-e3b8-4985-a3a1-34a8d46a5f30",
+      "mode": "locked"
     },
     {
-      "name": "proof-tenant-a",
+      "name": "openclaw-cloud-account",
+      "instanceId": "TNF-OC-002",
+      "instanceName": "OpenClaw Primary",
       "service": "openclaw-primary",
-      "authFile": "~/.codex-tenants/proof-tenant-a/auth.json"
+      "authFile": "~/.codex-tenants/openclaw-cloud-account/auth.json",
+      "targetAccountId": "8d3de55e-98d9-442d-9e10-1cd6c782c4be",
+      "mode": "locked"
+    },
+    {
+      "name": "windsurfree19",
+      "instanceId": "TNF-OC-003",
+      "instanceName": "OpenClaw Sandbox Cloud",
+      "service": "openclaw-sandbox-cloud",
+      "authFile": "~/.codex-tenants/windsurfree19/auth.json",
+      "targetAccountId": "722969da-1fcd-4d0c-a58c-f7c4b14d44e3",
+      "mode": "locked"
+    },
+    {
+      "name": "windsurfree2",
+      "instanceId": "TNF-OC-004",
+      "instanceName": "OpenClaw Expansion 004",
+      "service": "openclaw-oc004",
+      "authFile": "~/.codex-tenants/windsurfree2/auth.json",
+      "targetAccountId": "13aa9174-f41c-40d4-a2ab-aaa731706006",
+      "mode": "locked"
+    },
+    {
+      "name": "windsurfree20",
+      "authFile": "~/.codex-tenants/windsurfree20/auth.json",
+      "targetAccountEmail": "windsurfree20@findproductsandservices.com",
+      "mode": "pending"
     }
   ]
 }

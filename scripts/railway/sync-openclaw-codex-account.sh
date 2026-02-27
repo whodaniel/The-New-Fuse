@@ -4,8 +4,10 @@ set -euo pipefail
 
 SERVICE="${OPENCLAW_RAILWAY_SERVICE:-openclaw-cloud}"
 PRIMARY_MODEL="${OPENCLAW_MODEL_PRIMARY_OVERRIDE:-openai-codex/gpt-5.3-codex}"
-FALLBACK_MODELS="${OPENCLAW_MODEL_FALLBACKS_OVERRIDE:-openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini}"
+FALLBACK_MODELS="${OPENCLAW_MODEL_FALLBACKS_OVERRIDE:-openai-codex/gpt-5.2-codex,openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini}"
 AUTH_FILE="${CODEX_AUTH_FILE:-$HOME/.codex/auth.json}"
+INSTANCE_ID="${OPENCLAW_INSTANCE_ID:-}"
+INSTANCE_NAME="${OPENCLAW_INSTANCE_NAME:-}"
 MAX_SET_RETRIES="${MAX_SET_RETRIES:-20}"
 MAX_STATUS_RETRIES="${MAX_STATUS_RETRIES:-90}"
 SLEEP_SECONDS="${SLEEP_SECONDS:-3}"
@@ -19,6 +21,8 @@ Options:
   --service NAME          Railway service name (default: openclaw-cloud)
   --auth-file PATH        Codex auth.json path (overrides CODEX_AUTH_FILE)
   --codex-home PATH       Directory containing auth.json (sets --auth-file to PATH/auth.json)
+  --instance-id ID        Required TNF instance ID (e.g. TNF-OC-004)
+  --instance-name NAME    Required human-readable instance name
   --primary-model MODEL   Primary model key (default: openai-codex/gpt-5.3-codex)
   --fallbacks CSV         Fallback model list (comma-separated)
   --no-wait               Skip deployment wait loop
@@ -49,6 +53,14 @@ while [ "$#" -gt 0 ]; do
       ;;
     --primary-model)
       PRIMARY_MODEL="${2:-}"
+      shift 2
+      ;;
+    --instance-id)
+      INSTANCE_ID="${2:-}"
+      shift 2
+      ;;
+    --instance-name)
+      INSTANCE_NAME="${2:-}"
       shift 2
       ;;
     --fallbacks)
@@ -88,6 +100,11 @@ if [ ! -f "$AUTH_FILE" ]; then
   exit 1
 fi
 
+if [ -z "$INSTANCE_ID" ] || [ -z "$INSTANCE_NAME" ]; then
+  echo "ERROR: --instance-id and --instance-name are required."
+  exit 1
+fi
+
 RAILWAY_WHOAMI="$(railway whoami 2>&1 || true)"
 if [ -z "$RAILWAY_WHOAMI" ]; then
   echo "ERROR: unable to determine Railway auth state."
@@ -114,6 +131,7 @@ fi
 
 echo "Syncing local Codex auth -> Railway service: $SERVICE"
 echo "Account: $ACCOUNT_ID"
+echo "Instance: $INSTANCE_ID ($INSTANCE_NAME)"
 echo "Primary model: $PRIMARY_MODEL"
 echo "Fallback models: $FALLBACK_MODELS"
 
@@ -124,6 +142,9 @@ for attempt in $(seq 1 "$MAX_SET_RETRIES"); do
       "OPENAI_CODEX_REFRESH_TOKEN=$REFRESH_TOKEN" \
       "OPENAI_CODEX_ACCOUNT_ID=$ACCOUNT_ID" \
       "OPENCLAW_USE_CODEX_OAUTH=true" \
+      "OPENCLAW_INSTANCE_ID=$INSTANCE_ID" \
+      "OPENCLAW_INSTANCE_NAME=$INSTANCE_NAME" \
+      "OPENCLAW_UI_ASSISTANT_NAME=$INSTANCE_NAME" \
       "OPENCLAW_MODEL_PRIMARY=$PRIMARY_MODEL" \
       "OPENCLAW_AGENTS__DEFAULTS__MODEL__PRIMARY=$PRIMARY_MODEL" \
       "OPENCLAW_MODEL_FALLBACKS=$FALLBACK_MODELS" \

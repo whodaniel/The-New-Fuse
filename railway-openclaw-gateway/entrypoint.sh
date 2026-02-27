@@ -87,8 +87,8 @@ node -e "
         if (!cfg.agents.defaults) cfg.agents.defaults = {};
         if (!cfg.agents.defaults.model) cfg.agents.defaults.model = {};
 
-        const primaryModel = process.env.OPENCLAW_MODEL_PRIMARY || 'copilot-proxy/gpt-5.2-codex';
-        const fallbackModels = (process.env.OPENCLAW_MODEL_FALLBACKS || 'copilot-proxy/gpt-5.1-codex,copilot-proxy/gpt-5-mini')
+        const primaryModel = process.env.OPENCLAW_MODEL_PRIMARY || 'openai-codex/gpt-5.2-codex';
+        const fallbackModels = (process.env.OPENCLAW_MODEL_FALLBACKS || 'openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini')
           .split(',')
           .map((m) => m.trim())
           .filter(Boolean);

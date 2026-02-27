@@ -174,22 +174,20 @@ function AppContent() {
   const categories = [
     { id: 'all', label: 'All' },
     { id: 'games', label: 'Games' },
-    { id: 'code', label: 'Code' },
-    { id: 'analytics', label: 'Analytics' },
     { id: 'content', label: 'Content' },
     { id: 'music', label: 'Music' },
-    { id: 'social', label: 'Social Toys' },
+    { id: 'social', label: 'Social' },
+    { id: 'social-toys', label: 'Social Toys' },
+    { id: 'pooltogether', label: 'Pool Variations' },
+    { id: 'community', label: 'Community' },
+    { id: 'lab', label: 'Lab' },
   ];
 
   const types = [
     { id: 'all', label: 'All Types' },
-    { id: 'CODER', label: 'Coder' },
-    { id: 'ANALYZER', label: 'Analyzer' },
-    { id: 'STRATEGIST', label: 'Strategist' },
     { id: 'GAME', label: 'Game' },
     { id: 'SOCIAL', label: 'Social' },
     { id: 'CONTENT', label: 'Content' },
-    { id: 'GENERIC', label: 'General' },
   ];
 
   // Check if user is admin (mock - in production this would check actual roles)
@@ -261,6 +259,14 @@ function AppContent() {
             >
               Open Merkaba Lab
             </button>
+            <button
+              className="cta-button cta-secondary"
+              onClick={() =>
+                window.open('https://thenewfuse.com/marketplace', '_blank', 'noopener,noreferrer')
+              }
+            >
+              Browse Primitives
+            </button>
           </div>
 
           <div className="category-chips">
@@ -296,7 +302,7 @@ function AppContent() {
               <div className="search-box">
                 <input
                   type="text"
-                  placeholder="Search agents..."
+                  placeholder="Search experiences..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -325,7 +331,7 @@ function AppContent() {
             </div>
           ) : filteredAgents.length === 0 ? (
             <div className="no-results">
-              <p>No agents found matching your criteria.</p>
+              <p>No experiences found matching your criteria.</p>
               <button
                 onClick={() => {
                   setSearchQuery('');

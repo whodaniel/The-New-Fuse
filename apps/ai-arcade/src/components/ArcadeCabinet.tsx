@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 // Types
 interface AuctionProps {
   id: number;
-  agentName: string; // e.g., "DeepSeek R1"
+  agentName: string; // e.g., "Neon Quest Architect"
   agentRole: 'CODER' | 'STRATEGIST' | 'GAME';
   currentPrice: number; // e.g., 45.20
   nextDrop: number; // e.g., 0.20

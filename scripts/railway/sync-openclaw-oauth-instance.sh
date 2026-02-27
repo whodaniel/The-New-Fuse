@@ -6,7 +6,9 @@ SERVICE="${OPENCLAW_RAILWAY_SERVICE:-openclaw-cloud}"
 PROVIDER="${OPENCLAW_OAUTH_PROVIDER:-openai-codex}"
 AUTH_FILE="${OPENCLAW_OAUTH_AUTH_FILE:-$HOME/.codex/auth.json}"
 PRIMARY_MODEL="${OPENCLAW_MODEL_PRIMARY_OVERRIDE:-openai-codex/gpt-5.3-codex}"
-FALLBACK_MODELS="${OPENCLAW_MODEL_FALLBACKS_OVERRIDE:-openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini}"
+FALLBACK_MODELS="${OPENCLAW_MODEL_FALLBACKS_OVERRIDE:-openai-codex/gpt-5.2-codex,openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini}"
+INSTANCE_ID="${OPENCLAW_INSTANCE_ID:-}"
+INSTANCE_NAME="${OPENCLAW_INSTANCE_NAME:-}"
 MAX_SET_RETRIES="${MAX_SET_RETRIES:-20}"
 MAX_STATUS_RETRIES="${MAX_STATUS_RETRIES:-90}"
 SLEEP_SECONDS="${SLEEP_SECONDS:-3}"
@@ -29,6 +31,8 @@ Options:
   --provider NAME         openai-codex | anthropic | google-antigravity | kilo
   --auth-file PATH        OAuth token json file
   --codex-home PATH       Shorthand for --auth-file PATH/auth.json
+  --instance-id ID        Required TNF instance ID (e.g. TNF-OC-004)
+  --instance-name NAME    Required human-readable instance name
   --primary-model MODEL   OPENCLAW_MODEL_PRIMARY value
   --fallbacks CSV         OPENCLAW_MODEL_FALLBACKS value
   --access-path JQ        JQ path in auth file for access token
@@ -61,6 +65,14 @@ while [ "$#" -gt 0 ]; do
       ;;
     --primary-model)
       PRIMARY_MODEL="${2:-}"
+      shift 2
+      ;;
+    --instance-id)
+      INSTANCE_ID="${2:-}"
+      shift 2
+      ;;
+    --instance-name)
+      INSTANCE_NAME="${2:-}"
       shift 2
       ;;
     --fallbacks)
@@ -120,6 +132,11 @@ if [ ! -f "$AUTH_FILE" ]; then
   exit 1
 fi
 
+if [ -z "$INSTANCE_ID" ] || [ -z "$INSTANCE_NAME" ]; then
+  echo "ERROR: --instance-id and --instance-name are required."
+  exit 1
+fi
+
 RAILWAY_WHOAMI="$(railway whoami 2>&1 || true)"
 if [ -z "$RAILWAY_WHOAMI" ]; then
   echo "ERROR: unable to determine Railway auth state."
@@ -150,6 +167,7 @@ fi
 
 echo "Syncing provider auth -> Railway service: $SERVICE"
 echo "Provider: $PROVIDER"
+echo "Instance: $INSTANCE_ID ($INSTANCE_NAME)"
 echo "Primary model: $PRIMARY_MODEL"
 echo "Fallback models: $FALLBACK_MODELS"
 if [ "$PROVIDER" = "openai-codex" ]; then
@@ -169,6 +187,9 @@ for attempt in $(seq 1 "$MAX_SET_RETRIES"); do
         "OPENAI_CODEX_REFRESH_TOKEN=$REFRESH_TOKEN" \
         "OPENAI_CODEX_ACCOUNT_ID=$ACCOUNT_ID" \
         "OPENCLAW_USE_CODEX_OAUTH=true" \
+        "OPENCLAW_INSTANCE_ID=$INSTANCE_ID" \
+        "OPENCLAW_INSTANCE_NAME=$INSTANCE_NAME" \
+        "OPENCLAW_UI_ASSISTANT_NAME=$INSTANCE_NAME" \
         "OPENCLAW_MODEL_PRIMARY=$PRIMARY_MODEL" \
         "OPENCLAW_AGENTS__DEFAULTS__MODEL__PRIMARY=$PRIMARY_MODEL" \
         "OPENCLAW_MODEL_FALLBACKS=$FALLBACK_MODELS" \
@@ -180,6 +201,9 @@ for attempt in $(seq 1 "$MAX_SET_RETRIES"); do
       if railway variables set \
         "ANTHROPIC_OAUTH_ACCESS_TOKEN=$ACCESS_TOKEN" \
         "ANTHROPIC_OAUTH_REFRESH_TOKEN=$REFRESH_TOKEN" \
+        "OPENCLAW_INSTANCE_ID=$INSTANCE_ID" \
+        "OPENCLAW_INSTANCE_NAME=$INSTANCE_NAME" \
+        "OPENCLAW_UI_ASSISTANT_NAME=$INSTANCE_NAME" \
         "OPENCLAW_MODEL_PRIMARY=$PRIMARY_MODEL" \
         "OPENCLAW_AGENTS__DEFAULTS__MODEL__PRIMARY=$PRIMARY_MODEL" \
         "OPENCLAW_MODEL_FALLBACKS=$FALLBACK_MODELS" \
@@ -193,6 +217,9 @@ for attempt in $(seq 1 "$MAX_SET_RETRIES"); do
         "GOOGLE_ANTIGRAVITY_REFRESH_TOKEN=$REFRESH_TOKEN" \
         "GOOGLE_ANTIGRAVITY_EMAIL=$GOOGLE_EMAIL" \
         "GOOGLE_ANTIGRAVITY_PROJECT_ID=$GOOGLE_PROJECT_ID" \
+        "OPENCLAW_INSTANCE_ID=$INSTANCE_ID" \
+        "OPENCLAW_INSTANCE_NAME=$INSTANCE_NAME" \
+        "OPENCLAW_UI_ASSISTANT_NAME=$INSTANCE_NAME" \
         "OPENCLAW_MODEL_PRIMARY=$PRIMARY_MODEL" \
         "OPENCLAW_AGENTS__DEFAULTS__MODEL__PRIMARY=$PRIMARY_MODEL" \
         "OPENCLAW_MODEL_FALLBACKS=$FALLBACK_MODELS" \
@@ -204,6 +231,9 @@ for attempt in $(seq 1 "$MAX_SET_RETRIES"); do
       if railway variables set \
         "KILO_ACCESS_TOKEN=$ACCESS_TOKEN" \
         "KILO_REFRESH_TOKEN=$REFRESH_TOKEN" \
+        "OPENCLAW_INSTANCE_ID=$INSTANCE_ID" \
+        "OPENCLAW_INSTANCE_NAME=$INSTANCE_NAME" \
+        "OPENCLAW_UI_ASSISTANT_NAME=$INSTANCE_NAME" \
         "OPENCLAW_MODEL_PRIMARY=$PRIMARY_MODEL" \
         "OPENCLAW_AGENTS__DEFAULTS__MODEL__PRIMARY=$PRIMARY_MODEL" \
         "OPENCLAW_MODEL_FALLBACKS=$FALLBACK_MODELS" \

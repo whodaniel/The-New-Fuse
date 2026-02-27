@@ -15,12 +15,16 @@ Usage:
 Config format:
 {
   "modelPrimary": "openai-codex/gpt-5.3-codex",
-  "modelFallbacks": "openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini",
+  "modelFallbacks": "openai-codex/gpt-5.2-codex,openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini",
   "tenants": [
     {
       "name": "tenant-a",
+      "instanceId": "TNF-OC-001",
+      "instanceName": "OpenClaw Cloud",
       "service": "openclaw-cloud",
-      "authFile": "~/.codex-tenants/tenant-a/auth.json"
+      "authFile": "~/.codex-tenants/tenant-a/auth.json",
+      "targetAccountId": "uuid-here",
+      "mode": "locked"
     }
   ]
 }
@@ -71,7 +75,7 @@ if [ ! -f "$CONFIG_FILE" ]; then
 fi
 
 MODEL_PRIMARY="$(jq -r '.modelPrimary // "openai-codex/gpt-5.3-codex"' "$CONFIG_FILE")"
-MODEL_FALLBACKS="$(jq -r '.modelFallbacks // "openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini"' "$CONFIG_FILE")"
+MODEL_FALLBACKS="$(jq -r '.modelFallbacks // "openai-codex/gpt-5.2-codex,openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini"' "$CONFIG_FILE")"
 TENANT_COUNT="$(jq -r '.tenants | length' "$CONFIG_FILE")"
 
 if [ "$TENANT_COUNT" -lt 1 ]; then
@@ -83,11 +87,28 @@ echo "Syncing $TENANT_COUNT tenant(s) with primary model: $MODEL_PRIMARY"
 
 for idx in $(seq 0 $((TENANT_COUNT - 1))); do
   NAME="$(jq -r ".tenants[$idx].name // \"tenant-$idx\"" "$CONFIG_FILE")"
+  INSTANCE_ID="$(jq -r ".tenants[$idx].instanceId // empty" "$CONFIG_FILE")"
+  INSTANCE_NAME="$(jq -r ".tenants[$idx].instanceName // empty" "$CONFIG_FILE")"
   SERVICE="$(jq -r ".tenants[$idx].service // empty" "$CONFIG_FILE")"
   AUTH_FILE_RAW="$(jq -r ".tenants[$idx].authFile // empty" "$CONFIG_FILE")"
+  TARGET_ACCOUNT_ID="$(jq -r ".tenants[$idx].targetAccountId // empty" "$CONFIG_FILE")"
+  MODE="$(jq -r ".tenants[$idx].mode // \"locked\"" "$CONFIG_FILE")"
 
-  if [ -z "$SERVICE" ] || [ -z "$AUTH_FILE_RAW" ]; then
-    echo "ERROR: tenant[$idx] missing service or authFile."
+  if [ "$MODE" != "locked" ] && [ "$MODE" != "rotate" ] && [ "$MODE" != "pending" ]; then
+    echo "ERROR: tenant[$idx] mode must be 'locked', 'rotate', or 'pending'."
+    exit 1
+  fi
+
+  if [ "$MODE" = "pending" ]; then
+    echo "-----"
+    echo "Tenant: $NAME"
+    echo "Mode: pending (skipped)"
+    echo "Reason: waiting for auth file/service assignment."
+    continue
+  fi
+
+  if [ -z "$INSTANCE_ID" ] || [ -z "$INSTANCE_NAME" ] || [ -z "$SERVICE" ] || [ -z "$AUTH_FILE_RAW" ]; then
+    echo "ERROR: tenant[$idx] missing instanceId, instanceName, service, or authFile."
     exit 1
   fi
 
@@ -95,12 +116,59 @@ for idx in $(seq 0 $((TENANT_COUNT - 1))); do
 
   echo "-----"
   echo "Tenant: $NAME"
+  echo "Instance ID: $INSTANCE_ID"
+  echo "Instance Name: $INSTANCE_NAME"
   echo "Service: $SERVICE"
   echo "Auth file: $AUTH_FILE"
+  echo "Mode: $MODE"
+
+  TARGET_FROM_FILE="$(jq -r '.tokens.account_id // empty' "$AUTH_FILE" 2>/dev/null || true)"
+  if [ -z "$TARGET_FROM_FILE" ]; then
+    echo "ERROR: auth file missing .tokens.account_id -> $AUTH_FILE"
+    exit 1
+  fi
+  if [ -n "$TARGET_ACCOUNT_ID" ] && [ "$TARGET_ACCOUNT_ID" != "$TARGET_FROM_FILE" ]; then
+    echo "ERROR: targetAccountId mismatch for $NAME"
+    echo "  config targetAccountId: $TARGET_ACCOUNT_ID"
+    echo "  auth file account_id:   $TARGET_FROM_FILE"
+    exit 1
+  fi
+
+  REMOTE_FETCH_OK=false
+  VAR_JSON=""
+  if VAR_JSON="$(railway variable list --service "$SERVICE" --json 2>/tmp/openclaw_tenants_var.err)"; then
+    if printf '%s' "$VAR_JSON" | jq -e 'type == "object"' >/dev/null 2>&1; then
+      REMOTE_FETCH_OK=true
+    fi
+  fi
+
+  REMOTE_ACCOUNT_ID="$(printf '%s' "$VAR_JSON" | jq -r '.OPENAI_CODEX_ACCOUNT_ID // empty' 2>/dev/null || true)"
+  REMOTE_PRIMARY_MODEL="$(printf '%s' "$VAR_JSON" | jq -r '.OPENCLAW_MODEL_PRIMARY // empty' 2>/dev/null || true)"
+  echo "Current remote account: ${REMOTE_ACCOUNT_ID:-<missing>}"
+  echo "Target account: $TARGET_FROM_FILE"
+  echo "Current remote model: ${REMOTE_PRIMARY_MODEL:-<missing>}"
+  echo "Target model: $MODEL_PRIMARY"
+
+  if [ "$MODE" = "rotate" ] && [ -z "$TARGET_ACCOUNT_ID" ]; then
+    echo "ERROR: rotate mode requires explicit targetAccountId for $SERVICE."
+    exit 1
+  fi
+  if [ "$MODE" = "locked" ] && [ "$REMOTE_FETCH_OK" != "true" ]; then
+    echo "ERROR: locked mode could not verify remote account for $SERVICE (fail-closed)."
+    sed -n '1,20p' /tmp/openclaw_tenants_var.err 2>/dev/null || true
+    exit 1
+  fi
+  if [ "$MODE" = "locked" ] && [ -n "$REMOTE_ACCOUNT_ID" ] && [ "$REMOTE_ACCOUNT_ID" != "$TARGET_FROM_FILE" ]; then
+    echo "ERROR: locked mode prevents account reassignment for $SERVICE."
+    echo "Set tenant mode to 'rotate' to intentionally switch account bindings."
+    exit 1
+  fi
 
   bash "$SYNC_ONE_SCRIPT" \
     --service "$SERVICE" \
     --auth-file "$AUTH_FILE" \
+    --instance-id "$INSTANCE_ID" \
+    --instance-name "$INSTANCE_NAME" \
     --primary-model "$MODEL_PRIMARY" \
     --fallbacks "$MODEL_FALLBACKS" \
     ${WAIT_FLAG}

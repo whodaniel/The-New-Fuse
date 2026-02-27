@@ -9,8 +9,14 @@ export interface AuthResponse {
   error?: string;
 }
 
-const supabaseUrl = (import.meta.env.VITE_SUPABASE_URL || '').trim();
-const supabaseAnonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || '').trim();
+// Public fallback values for production domains when Docker build args are missing.
+// Supabase anon keys are safe to expose in client apps by design.
+const FALLBACK_SUPABASE_URL = 'https://wslydgtgindrywldatbv.supabase.co';
+const FALLBACK_SUPABASE_ANON_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzbHlkZ3RnaW5kcnl3bGRhdGJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5NjY4NTIsImV4cCI6MjA4NzU0Mjg1Mn0.5Vg04tY3XdhSuXw3HQmek4wT0Zi317n5xgKq5m9E_GI';
+
+const supabaseUrl = (import.meta.env.VITE_SUPABASE_URL || FALLBACK_SUPABASE_URL).trim();
+const supabaseAnonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || FALLBACK_SUPABASE_ANON_KEY).trim();
 
 export const hasSupabaseConfig = Boolean(supabaseUrl && supabaseAnonKey);
 

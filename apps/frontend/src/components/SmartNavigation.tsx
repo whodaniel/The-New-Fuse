@@ -117,10 +117,10 @@ function SmartNavigation() {
                 Workflows
               </Link>
               <Link
-                to="/resources"
+                to="/marketplace"
                 className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
               >
-                Resources
+                Platform
               </Link>
               <Link
                 to="/pricing"
@@ -287,11 +287,11 @@ function SmartNavigation() {
                       <span className="text-sm">MCP Protocol Hub</span>
                     </Link>
                     <Link
-                      to="/resources"
+                      to="/marketplace"
                       className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
                     >
                       <Package className="w-4 h-4 text-pink-400" />
-                      <span className="text-sm">Marketplace</span>
+                      <span className="text-sm">Platform Overview</span>
                     </Link>
                     <Link
                       to="/knowledge-hub"

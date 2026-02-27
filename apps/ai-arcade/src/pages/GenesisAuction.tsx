@@ -39,7 +39,7 @@ const GenesisAuction = () => {
   const [cabinets, setCabinets] = useState<CabinetState[]>([
     {
       id: 1,
-      agentName: 'DeepSeek R1',
+      agentName: 'Neon Quest Architect',
       agentRole: 'STRATEGIST',
       currentPrice: 45.2,
       nextDrop: 0.2,
@@ -48,8 +48,8 @@ const GenesisAuction = () => {
     },
     {
       id: 2,
-      agentName: 'Qwen3 Coder',
-      agentRole: 'CODER',
+      agentName: 'Pixel Party Pilot',
+      agentRole: 'GAME',
       currentPrice: 28.5,
       nextDrop: 0.15,
       bidFee: 0.75,
@@ -82,7 +82,7 @@ const GenesisAuction = () => {
             loaded.push({
               id: Number(auction.id),
               agentName: auction.agentId || `Agent #${i}`,
-              agentRole: i % 3 === 0 ? 'STRATEGIST' : i % 3 === 1 ? 'CODER' : 'GAME',
+              agentRole: i % 3 === 0 ? 'STRATEGIST' : 'GAME',
               currentPrice: formatTokenAmount(auction.currentPrice, chainState.tokenDecimals),
               nextDrop: formatTokenAmount(auction.priceDrop, chainState.tokenDecimals),
               bidFee: formatTokenAmount(auction.bidFee, chainState.tokenDecimals),

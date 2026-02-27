@@ -43,9 +43,10 @@ function StarRating({ rating }: { rating: number }) {
 }
 
 const AgentCard: React.FC<AgentCardProps> = ({ agent, onSelect, onAction }) => {
-  const actionLabel = agent.experienceKind === 'music' ? 'LISTEN' : 'PLAY';
+  const isApp = agent.experienceKind === 'app';
+  const actionLabel = agent.experienceKind === 'music' ? 'LISTEN' : isApp ? 'LAUNCH' : 'PLAY';
   const priceLabel =
-    agent.experienceKind === 'music' || agent.pricePerRun === 0
+    agent.experienceKind === 'music' || isApp || agent.pricePerRun === 0
       ? 'FREE EXPERIENCE'
       : `$${agent.pricePerRun}/run`;
 

@@ -100,9 +100,15 @@ export const sitemap: SiteMapNode[] = [
     ],
   },
   {
+    path: '/marketplace',
+    title: 'Platform Overview',
+    description: 'Public orientation page for product surfaces and navigation',
+    requiresAuth: false,
+  },
+  {
     path: '/resources',
     title: 'Resources',
-    description: 'Resource marketplace and library',
+    description: 'Resource marketplace and library (legacy route)',
     requiresAuth: true,
   },
   {

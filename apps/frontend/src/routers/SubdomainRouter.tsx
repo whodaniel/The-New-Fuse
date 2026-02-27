@@ -30,6 +30,13 @@ const SubdomainRouter: React.FC = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (subdomain === 'marketplace' && window.location.pathname === '/') {
+      window.history.replaceState({}, '', '/marketplace');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
+  }, [subdomain]);
+
   // If we are on a subdomain (e.g., alpha.thenewfuse.hub), we might want to show
   // the Agency's Public Landing Page OR their Admin Dashboard if they are logged in as owner.
   // For the purpose of "Accessing their own super admin account",

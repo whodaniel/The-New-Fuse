@@ -43,6 +43,7 @@ import { ClaudeDevAutomationModule } from './modules/ClaudeDevAutomationModule';
 import { DirectorModule } from './modules/director/director.module';
 import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.module';
 import { ExportModule } from './modules/export/export.module';
+import { MarketplaceModule } from './modules/marketplace/marketplace.module';
 import { PromptTemplatesModule } from './modules/prompt-templates.module';
 import { ResourcesModule } from './modules/resources/resources.module';
 import { SecurityModule } from './modules/security/security.module';
@@ -125,6 +126,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     MonitoringModule, // Wallet Platform Monitoring
     WorkflowTemplatesModule,
     PromptTemplatesModule,
+    MarketplaceModule,
     ResourcesModule,
     UnifiedLedgerModule,
     BrandConsistencyAgentModule, // Self-Improving Brand Consistency Agent

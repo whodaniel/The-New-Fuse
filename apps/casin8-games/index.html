@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Casin8 Games</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="header">
+        <h1>Casin8</h1>
+        <p class="subtitle">Poker • Blackjack • Roulette • Slots</p>
+      </header>
+
+      <section class="toolbar">
+        <label for="game-select">Game</label>
+        <select id="game-select">
+          <option value="poker">Video Poker</option>
+          <option value="blackjack">Blackjack</option>
+          <option value="roulette">Roulette</option>
+          <option value="slots">Slots</option>
+        </select>
+        <label for="bet-amount">Bet</label>
+        <input id="bet-amount" type="number" min="1" step="1" value="10" />
+        <button id="reset-bankroll" type="button">Reset Bankroll</button>
+        <button id="play-button">Play Round</button>
+      </section>
+
+      <section class="panel">
+        <h3>Player Account</h3>
+        <div class="account-row">
+          <label for="player-name">Name</label>
+          <input id="player-name" type="text" placeholder="PlayerOne" />
+          <button id="save-player" type="button">Save Player</button>
+        </div>
+        <div class="account-row">
+          <label for="client-seed">Client Seed</label>
+          <input id="client-seed" type="text" />
+          <button id="roll-client-seed" type="button">Roll Seed</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h3>Blockchain Wallet</h3>
+        <div class="account-row">
+          <button id="connect-wallet" type="button">Connect Wallet</button>
+          <span id="wallet-status" class="controls-hint">Wallet not connected</span>
+        </div>
+        <div class="account-row">
+          <label for="onchain-settle">Settle Bets On-Chain</label>
+          <input id="onchain-settle" type="checkbox" />
+          <span id="chain-status" class="controls-hint">Chain config loading...</span>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h3>Multiplayer Table</h3>
+        <div class="account-row">
+          <label for="table-id">Table</label>
+          <input id="table-id" type="text" value="lobby-1" />
+          <button id="join-table" type="button">Join Table</button>
+        </div>
+        <div id="table-status" class="controls-hint">Not joined</div>
+        <ul id="table-feed" class="feed-list"></ul>
+      </section>
+
+      <section class="panel">
+        <h3>Game Controls</h3>
+        <div id="game-controls" class="controls"></div>
+      </section>
+
+      <section class="panel">
+        <h2 id="game-title">Video Poker</h2>
+        <pre id="result" class="result"></pre>
+      </section>
+
+      <section class="panel">
+        <h3>Session Stats</h3>
+        <div class="stats">
+          <span>Bankroll: <strong id="bankroll">1000</strong></span>
+          <span>Rounds: <strong id="rounds">0</strong></span>
+          <span>Wins: <strong id="wins">0</strong></span>
+          <span>Losses: <strong id="losses">0</strong></span>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h3>Recent Ledger</h3>
+        <ul id="ledger-list" class="feed-list"></ul>
+      </section>
+
+      <section class="panel">
+        <h3>Provably Fair Receipt</h3>
+        <pre id="fairness-receipt" class="result"></pre>
+      </section>
+    </main>
+    <script type="module" src="./script.js"></script>
+  </body>
+</html>

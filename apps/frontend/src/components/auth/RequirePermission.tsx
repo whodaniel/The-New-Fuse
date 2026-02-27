@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { PermissionCheck, useAuthorization } from '../../hooks/useAuthorization';
+import { useAuth } from '../../providers/AuthProvider';
 
 interface RequirePermissionProps {
   /**
@@ -71,7 +72,17 @@ export const RequirePermission: React.FC<RequirePermissionProps> = ({
   fallback = '/unauthorized',
   requireAll = false,
 }) => {
+  const { isLoading } = useAuth();
   const { hasRole, canAccess } = useAuthorization();
+
+  // Avoid false 401 redirects while auth state is still hydrating.
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[240px]">
+        <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   // Check role-based access
   if (roles) {

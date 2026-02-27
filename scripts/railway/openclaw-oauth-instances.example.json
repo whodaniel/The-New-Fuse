@@ -2,11 +2,13 @@
   "instances": [
     {
       "name": "openclaw-cloud-codex",
+      "instanceId": "TNF-OC-001",
+      "instanceName": "OpenClaw Cloud",
       "service": "openclaw-cloud",
       "provider": "openai-codex",
       "authFile": "~/.codex-tenants/openclaw-cloud-account/auth.json",
       "primaryModel": "openai-codex/gpt-5.3-codex",
-      "fallbackModels": "openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini",
+      "fallbackModels": "openai-codex/gpt-5.2-codex,openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini",
       "paths": {
         "access": ".tokens.access_token",
         "refresh": ".tokens.refresh_token",
@@ -15,11 +17,13 @@
     },
     {
       "name": "openclaw-primary-codex",
+      "instanceId": "TNF-OC-002",
+      "instanceName": "OpenClaw Primary",
       "service": "openclaw-primary",
       "provider": "openai-codex",
       "authFile": "~/.codex-tenants/proof-tenant-a/auth.json",
       "primaryModel": "openai-codex/gpt-5.3-codex",
-      "fallbackModels": "openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini",
+      "fallbackModels": "openai-codex/gpt-5.2-codex,openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini",
       "paths": {
         "access": ".tokens.access_token",
         "refresh": ".tokens.refresh_token",
@@ -28,6 +32,8 @@
     },
     {
       "name": "openclaw-anthropic",
+      "instanceId": "TNF-OC-003",
+      "instanceName": "OpenClaw Anthropic",
       "service": "openclaw-cloud",
       "provider": "anthropic",
       "authFile": "~/.tnf-auth/anthropic/auth.json",
@@ -40,6 +46,8 @@
     },
     {
       "name": "openclaw-google",
+      "instanceId": "TNF-OC-004",
+      "instanceName": "OpenClaw Google",
       "service": "openclaw-cloud",
       "provider": "google-antigravity",
       "authFile": "~/.tnf-auth/google/auth.json",
