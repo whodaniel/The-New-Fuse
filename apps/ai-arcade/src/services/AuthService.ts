@@ -7,6 +7,10 @@ const USER_KEY = 'ai_arcade_user';
 // Firebase types (lazy loaded)
 let firebaseApp: any = null;
 let firebaseAuth: any = null;
+let firebaseSignInWithEmailAndPassword: any = null;
+let firebaseCreateUserWithEmailAndPassword: any = null;
+let firebaseSignOut: any = null;
+let firebaseOnAuthStateChanged: any = null;
 
 export class AuthService {
   private apiUrl: string;
@@ -39,24 +43,36 @@ export class AuthService {
 
         firebaseApp = initializeApp(config.firebase);
         firebaseAuth = getAuth(firebaseApp);
+        firebaseSignInWithEmailAndPassword = signInWithEmailAndPassword;
+        firebaseCreateUserWithEmailAndPassword = createUserWithEmailAndPassword;
+        firebaseSignOut = signOut;
+        firebaseOnAuthStateChanged = onAuthStateChanged;
         return {
           auth: firebaseAuth,
-          signInWithEmailAndPassword,
-          createUserWithEmailAndPassword,
-          signOut,
-          onAuthStateChanged,
+          signInWithEmailAndPassword: firebaseSignInWithEmailAndPassword,
+          createUserWithEmailAndPassword: firebaseCreateUserWithEmailAndPassword,
+          signOut: firebaseSignOut,
+          onAuthStateChanged: firebaseOnAuthStateChanged,
         };
       } catch (error) {
         console.warn('Firebase not available, falling back to mock auth:', error);
         return null;
       }
     }
+    if (
+      !firebaseSignInWithEmailAndPassword ||
+      !firebaseCreateUserWithEmailAndPassword ||
+      !firebaseSignOut ||
+      !firebaseOnAuthStateChanged
+    ) {
+      return null;
+    }
     return {
       auth: firebaseAuth,
-      signInWithEmailAndPassword,
-      createUserWithEmailAndPassword,
-      signOut,
-      onAuthStateChanged,
+      signInWithEmailAndPassword: firebaseSignInWithEmailAndPassword,
+      createUserWithEmailAndPassword: firebaseCreateUserWithEmailAndPassword,
+      signOut: firebaseSignOut,
+      onAuthStateChanged: firebaseOnAuthStateChanged,
     };
   }
 

@@ -216,3 +216,6 @@ config.json
 apps/chrome-extension/test_runs/
 apps/chrome-extension/output/
 apps/chrome-extension/dist*
+
+# Casin8 runtime state and secrets
+apps/casin8-games/.data/

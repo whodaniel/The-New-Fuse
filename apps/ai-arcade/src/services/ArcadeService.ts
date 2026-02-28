@@ -9,12 +9,13 @@ const DEFAULT_POOL_VARIATIONS_URL =
 
 const DEFAULT_CASIN8_POKER_URL =
   import.meta.env.VITE_CASIN8_POKER_URL || 'https://poker.ai-arcade.xyz';
-const DEFAULT_CASIN8_BLACKJACK_URL =
-  import.meta.env.VITE_CASIN8_BLACKJACK_URL || 'https://blackjack.ai-arcade.xyz';
-const DEFAULT_CASIN8_ROULETTE_URL =
-  import.meta.env.VITE_CASIN8_ROULETTE_URL || 'https://roulette.ai-arcade.xyz';
-const DEFAULT_CASIN8_SLOTS_URL =
-  import.meta.env.VITE_CASIN8_SLOTS_URL || 'https://slots.ai-arcade.xyz';
+// Poker-only mode: non-poker Casin8 launch URLs intentionally disabled.
+// const DEFAULT_CASIN8_BLACKJACK_URL =
+//   import.meta.env.VITE_CASIN8_BLACKJACK_URL || 'https://blackjack.ai-arcade.xyz';
+// const DEFAULT_CASIN8_ROULETTE_URL =
+//   import.meta.env.VITE_CASIN8_ROULETTE_URL || 'https://roulette.ai-arcade.xyz';
+// const DEFAULT_CASIN8_SLOTS_URL =
+//   import.meta.env.VITE_CASIN8_SLOTS_URL || 'https://slots.ai-arcade.xyz';
 
 type CatalogKind =
   | 'experience'
@@ -128,6 +129,25 @@ export class ArcadeService {
   }
 
   async getAgentById(id: string): Promise<AgentListing | null> {
+    const pinned = this.getPinnedExperiences().find((item) => item.id === id);
+    if (pinned) {
+      return pinned;
+    }
+
+    const byIdEndpoints = [
+      `${this.apiUrl}/marketplace/catalog/${encodeURIComponent(id)}`,
+      `${this.apiUrl}/marketplace/experiences/${encodeURIComponent(id)}`,
+      `${this.apiUrl}/servers/${encodeURIComponent(id)}`,
+    ];
+
+    for (const endpoint of byIdEndpoints) {
+      const data = await this.fetchJson(endpoint);
+      const item = this.extractItem(data);
+      if (item && this.isPublishedExperience(item)) {
+        return this.transformServerToAgent(item);
+      }
+    }
+
     const featured = await this.getFeaturedAgents();
     return featured.find((item) => item.id === id) || null;
   }
@@ -222,6 +242,16 @@ export class ArcadeService {
     }
 
     return [];
+  }
+
+  private extractItem(data: any): any | null {
+    if (!data) return null;
+    if (Array.isArray(data)) return data[0] || null;
+    if (typeof data !== 'object') return null;
+    if (data.data && typeof data.data === 'object') return data.data;
+    if (data.item && typeof data.item === 'object') return data.item;
+    if (data.result && typeof data.result === 'object') return data.result;
+    return data;
   }
 
   private isPublishedExperience(item: any): boolean {
@@ -396,7 +426,7 @@ export class ArcadeService {
     return [
       {
         id: 'casin8-poker',
-        name: 'Casin8 Poker',
+        name: 'POKER ROOM',
         description: 'Direct launch into Casin8 poker tables.',
         type: 'GAME',
         pricePerRun: 0,
@@ -413,63 +443,64 @@ export class ArcadeService {
         kind: 'experience',
         publicationStatus: 'published',
       },
-      {
-        id: 'casin8-blackjack',
-        name: 'Casin8 Blackjack',
-        description: 'Direct launch into Casin8 blackjack action.',
-        type: 'GAME',
-        pricePerRun: 0,
-        avatarUrl: '/assets/agents/unique/Casin8.png',
-        rating: 4.8,
-        capabilities: ['blackjack', 'house-rules', 'streaks'],
-        category: 'games',
-        tags: ['casin8', 'blackjack', 'casino'],
-        status: 'online',
-        totalRuns: 0,
-        successRate: 98.0,
-        experienceKind: 'app',
-        launchUrl: DEFAULT_CASIN8_BLACKJACK_URL,
-        kind: 'experience',
-        publicationStatus: 'published',
-      },
-      {
-        id: 'casin8-roulette',
-        name: 'Casin8 Roulette',
-        description: 'Direct launch into Casin8 roulette wheel games.',
-        type: 'GAME',
-        pricePerRun: 0,
-        avatarUrl: '/assets/agents/unique/Casin8.png',
-        rating: 4.8,
-        capabilities: ['roulette', 'wheel-spin', 'number-bets'],
-        category: 'games',
-        tags: ['casin8', 'roulette', 'casino'],
-        status: 'online',
-        totalRuns: 0,
-        successRate: 98.0,
-        experienceKind: 'app',
-        launchUrl: DEFAULT_CASIN8_ROULETTE_URL,
-        kind: 'experience',
-        publicationStatus: 'published',
-      },
-      {
-        id: 'casin8-slots',
-        name: 'Casin8 Slots',
-        description: 'Direct launch into Casin8 slots machines.',
-        type: 'GAME',
-        pricePerRun: 0,
-        avatarUrl: '/assets/agents/unique/Casin8.png',
-        rating: 4.8,
-        capabilities: ['slots', 'reels', 'jackpots'],
-        category: 'games',
-        tags: ['casin8', 'slots', 'casino'],
-        status: 'online',
-        totalRuns: 0,
-        successRate: 98.0,
-        experienceKind: 'app',
-        launchUrl: DEFAULT_CASIN8_SLOTS_URL,
-        kind: 'experience',
-        publicationStatus: 'published',
-      },
+      // Poker-only mode: keep non-poker definitions commented for easy re-enable later.
+      // {
+      //   id: 'casin8-blackjack',
+      //   name: 'Casin8 Blackjack',
+      //   description: 'Direct launch into Casin8 blackjack action.',
+      //   type: 'GAME',
+      //   pricePerRun: 0,
+      //   avatarUrl: '/assets/agents/unique/Casin8.png',
+      //   rating: 4.8,
+      //   capabilities: ['blackjack', 'house-rules', 'streaks'],
+      //   category: 'games',
+      //   tags: ['casin8', 'blackjack', 'casino'],
+      //   status: 'online',
+      //   totalRuns: 0,
+      //   successRate: 98.0,
+      //   experienceKind: 'app',
+      //   launchUrl: DEFAULT_CASIN8_BLACKJACK_URL,
+      //   kind: 'experience',
+      //   publicationStatus: 'published',
+      // },
+      // {
+      //   id: 'casin8-roulette',
+      //   name: 'Casin8 Roulette',
+      //   description: 'Direct launch into Casin8 roulette wheel games.',
+      //   type: 'GAME',
+      //   pricePerRun: 0,
+      //   avatarUrl: '/assets/agents/unique/Casin8.png',
+      //   rating: 4.8,
+      //   capabilities: ['roulette', 'wheel-spin', 'number-bets'],
+      //   category: 'games',
+      //   tags: ['casin8', 'roulette', 'casino'],
+      //   status: 'online',
+      //   totalRuns: 0,
+      //   successRate: 98.0,
+      //   experienceKind: 'app',
+      //   launchUrl: DEFAULT_CASIN8_ROULETTE_URL,
+      //   kind: 'experience',
+      //   publicationStatus: 'published',
+      // },
+      // {
+      //   id: 'casin8-slots',
+      //   name: 'Casin8 Slots',
+      //   description: 'Direct launch into Casin8 slots machines.',
+      //   type: 'GAME',
+      //   pricePerRun: 0,
+      //   avatarUrl: '/assets/agents/unique/Casin8.png',
+      //   rating: 4.8,
+      //   capabilities: ['slots', 'reels', 'jackpots'],
+      //   category: 'games',
+      //   tags: ['casin8', 'slots', 'casino'],
+      //   status: 'online',
+      //   totalRuns: 0,
+      //   successRate: 98.0,
+      //   experienceKind: 'app',
+      //   launchUrl: DEFAULT_CASIN8_SLOTS_URL,
+      //   kind: 'experience',
+      //   publicationStatus: 'published',
+      // },
     ];
   }
 
@@ -486,7 +517,34 @@ export class ArcadeService {
       merged.push(item);
     }
 
-    return merged;
+    return merged.filter((item) => !this.isDisabledCasin8Game(item));
+  }
+
+  private isDisabledCasin8Game(item: AgentListing): boolean {
+    if (item.id === 'casin8-poker') return false;
+    const id = item.id.toLowerCase();
+    const tags = item.tags.map((t) => String(t).toLowerCase());
+    const capabilities = item.capabilities.map((c) => String(c).toLowerCase());
+    const launchUrl = String(item.launchUrl || '').toLowerCase();
+
+    if (!id.startsWith('casin8-') && !tags.includes('casin8')) {
+      return false;
+    }
+
+    return (
+      id.includes('blackjack') ||
+      id.includes('roulette') ||
+      id.includes('slots') ||
+      tags.includes('blackjack') ||
+      tags.includes('roulette') ||
+      tags.includes('slots') ||
+      capabilities.includes('blackjack') ||
+      capabilities.includes('roulette') ||
+      capabilities.includes('slots') ||
+      launchUrl.includes('blackjack.ai-arcade.xyz') ||
+      launchUrl.includes('roulette.ai-arcade.xyz') ||
+      launchUrl.includes('slots.ai-arcade.xyz')
+    );
   }
 
   private getMockAgents(): AgentListing[] {

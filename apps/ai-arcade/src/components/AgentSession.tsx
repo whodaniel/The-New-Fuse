@@ -189,6 +189,18 @@ function generateMockResponse(input: string, agent: AgentListing): string {
       `I understand you're asking about "${input}". Let me help you with that.\n\nHere's what I can do:\n- Analyze the request\n- Provide recommendations\n- Execute specific tasks\n\nWhat would you like to focus on?`,
       `Processing your request: "${input}"\n\n✅ Task acknowledged\n✅ Resources allocated\n✅ Execution started\n\nResults will be available shortly.`,
     ],
+    GAME: [
+      `Game mode engaged for "${input}". I can walk rules, odds, and best next moves in real time.`,
+      `Queued a game-session response for "${input}". Choose a mode and I will optimize the strategy path.`,
+    ],
+    SOCIAL: [
+      `Social companion response for "${input}". I can help draft replies, banter, and conversation flows.`,
+      `I interpreted "${input}" as a social prompt. Want concise, playful, or formal tone?`,
+    ],
+    CONTENT: [
+      `Content pass for "${input}": I can generate hooks, outlines, captions, or full drafts.`,
+      `Creator mode active. For "${input}", I recommend starting with a short hook and two variant angles.`,
+    ],
   };
 
   const agentResponses = responses[agent.type] || responses.GENERIC;

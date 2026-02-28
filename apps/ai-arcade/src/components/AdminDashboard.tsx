@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { config } from '../config';
 import { useAuth } from '../contexts/AuthContext';
 import { AgentListing, ArcadeService } from '../services/ArcadeService';
 import './AdminDashboard.css';
@@ -22,7 +23,7 @@ const AdminDashboard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [editingAgent, setEditingAgent] = useState<AgentListing | null>(null);
   const [isCreating, setIsCreating] = useState(false);
 
-  const arcadeService = new ArcadeService();
+  const arcadeService = new ArcadeService(config.apiUrl);
 
   useEffect(() => {
     loadAgents();
@@ -190,7 +191,7 @@ const AgentForm: React.FC<{
     description: agent?.description || '',
     type: agent?.type || 'GENERIC',
     pricePerRun: agent?.pricePerRun || 0.05,
-    category: agent?.category || 'general',
+    category: agent?.category || 'games',
     capabilities: agent?.capabilities || [],
     status: agent?.status || 'online',
   });
@@ -229,7 +230,7 @@ const AgentForm: React.FC<{
             <label>Type</label>
             <select
               value={form.type}
-              onChange={(e) => setForm({ ...form, type: form.type as any })}
+              onChange={(e) => setForm({ ...form, type: e.target.value as AgentListing['type'] })}
             >
               <option value="CODER">Coder</option>
               <option value="ANALYZER">Analyzer</option>
@@ -246,7 +247,9 @@ const AgentForm: React.FC<{
             <input
               type="text"
               value={form.category}
-              onChange={(e) => setForm({ ...form, category: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, category: e.target.value as AgentListing['category'] })
+              }
             />
           </div>
         </div>
