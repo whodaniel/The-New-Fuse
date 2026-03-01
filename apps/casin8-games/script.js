@@ -65,6 +65,20 @@ const v2ActionButton = document.getElementById('v2-action');
 const v2SettleButton = document.getElementById('v2-settle');
 const v2ReplayButton = document.getElementById('v2-replay');
 const v2StateButton = document.getElementById('v2-state');
+const handsLimitInput = document.getElementById('hands-limit');
+const handsSelectedIdInput = document.getElementById('hands-selected-id');
+const handsLoadButton = document.getElementById('hands-load');
+const handsViewButton = document.getElementById('hands-view');
+const handsReplayLoadButton = document.getElementById('hands-replay-load');
+const handsReplayBackButton = document.getElementById('hands-replay-back');
+const handsReplayNextButton = document.getElementById('hands-replay-next');
+const handsReplayPlayButton = document.getElementById('hands-replay-play');
+const handsReplaySpeedSelect = document.getElementById('hands-replay-speed');
+const hintToCallInput = document.getElementById('hint-to-call');
+const hintPotInput = document.getElementById('hint-pot');
+const hintStackInput = document.getElementById('hint-stack');
+const hintStrengthInput = document.getElementById('hint-strength');
+const tableHintsButton = document.getElementById('table-hints');
 const agentIdInput = document.getElementById('agent-id');
 const agentOwnerIdInput = document.getElementById('agent-owner-id');
 const agentTierSelect = document.getElementById('agent-tier');
@@ -196,6 +210,9 @@ const state = {
   nurtureCompareRows: [],
   nurtureComparePrevByAgent: {},
   nurtureCompareBaselineByAgent: {},
+  handHistory: [],
+  handReplay: null,
+  handReplayIndex: 0,
 };
 
 let tableStream = null;
@@ -206,6 +223,7 @@ let walletSigner = null;
 let playInFlight = false;
 let nurtureAutoRefreshTimer = null;
 let nurtureAutoTickInFlight = false;
+let handReplayTimer = null;
 
 function shortAddr(addr) {
   if (!addr || addr.length < 10) return addr || '';
@@ -1967,6 +1985,143 @@ async function v2State() {
   writePanel(tableStateOutput, out);
 }
 
+function handHistoryLimit() {
+  const raw = Number(handsLimitInput?.value || 20);
+  if (!Number.isFinite(raw)) return 20;
+  return Math.max(1, Math.min(200, Math.floor(raw)));
+}
+
+function selectedHandId() {
+  return (handsSelectedIdInput?.value || '').trim();
+}
+
+function replayStepFromIndex(index) {
+  const phases = Array.isArray(state.handReplay?.phases) ? state.handReplay.phases : [];
+  if (!phases.length) return null;
+  const clamped = Math.max(0, Math.min(phases.length - 1, index));
+  state.handReplayIndex = clamped;
+  return phases[clamped];
+}
+
+function renderReplayStep(index) {
+  const step = replayStepFromIndex(index);
+  if (!step) {
+    writePanel(tableStateOutput, { ok: false, error: 'No replay loaded' });
+    return;
+  }
+  writePanel(tableStateOutput, {
+    ok: true,
+    replay: {
+      handId: state.handReplay?.handId || '',
+      phaseIndex: state.handReplayIndex,
+      phaseCount: state.handReplay?.phases?.length || 0,
+      phase: step,
+    },
+  });
+  if (liveTableStatus) {
+    const phaseName = String(step.phase || '').toUpperCase();
+    liveTableStatus.textContent = `Replay ${state.handReplay?.handId || ''} | ${phaseName} (${state.handReplayIndex + 1}/${state.handReplay?.phases?.length || 0})`;
+  }
+}
+
+function stopHandReplay() {
+  if (!handReplayTimer) return;
+  clearInterval(handReplayTimer);
+  handReplayTimer = null;
+}
+
+async function loadHandsList() {
+  const out = await api(
+    `/api/hands?tableId=${encodeURIComponent(state.tableId)}&limit=${encodeURIComponent(handHistoryLimit())}`
+  );
+  state.handHistory = Array.isArray(out?.hands) ? out.hands : [];
+  if (!selectedHandId() && state.handHistory.length && handsSelectedIdInput) {
+    handsSelectedIdInput.value = String(state.handHistory[0].handId || '');
+  }
+  writePanel(tableStateOutput, out);
+}
+
+async function viewSelectedHand() {
+  const handId = selectedHandId();
+  if (!handId) {
+    writePanel(tableStateOutput, { ok: false, error: 'Select or enter a handId first.' });
+    return;
+  }
+  const out = await api(`/api/hands/${encodeURIComponent(handId)}`);
+  writePanel(tableStateOutput, out);
+}
+
+async function loadSelectedReplay() {
+  stopHandReplay();
+  const handId = selectedHandId();
+  if (!handId) {
+    writePanel(tableStateOutput, { ok: false, error: 'Select or enter a handId first.' });
+    return;
+  }
+  const out = await api(`/api/hands/${encodeURIComponent(handId)}/replay`);
+  const replay = out?.replay || null;
+  if (!replay || !Array.isArray(replay.phases)) {
+    writePanel(tableStateOutput, { ok: false, error: 'Replay payload unavailable.' });
+    return;
+  }
+  state.handReplay = replay;
+  state.handReplayIndex = 0;
+  renderReplayStep(0);
+}
+
+function replayBack() {
+  stopHandReplay();
+  renderReplayStep(state.handReplayIndex - 1);
+}
+
+function replayNext() {
+  stopHandReplay();
+  renderReplayStep(state.handReplayIndex + 1);
+}
+
+function replayPlayPause() {
+  if (
+    !state.handReplay ||
+    !Array.isArray(state.handReplay.phases) ||
+    !state.handReplay.phases.length
+  ) {
+    writePanel(tableStateOutput, { ok: false, error: 'Load a replay first.' });
+    return;
+  }
+  if (handReplayTimer) {
+    stopHandReplay();
+    return;
+  }
+  const intervalMs = Math.max(250, Number(handsReplaySpeedSelect?.value || 1400));
+  handReplayTimer = setInterval(() => {
+    const next = state.handReplayIndex + 1;
+    const total = state.handReplay?.phases?.length || 0;
+    if (next >= total) {
+      stopHandReplay();
+      return;
+    }
+    renderReplayStep(next);
+  }, intervalMs);
+}
+
+async function requestTableHints() {
+  const strengthRaw = Number(hintStrengthInput?.value || 0);
+  const includeStrength = Number.isFinite(strengthRaw) && strengthRaw >= 0 && strengthRaw <= 1;
+  const out = await api('/api/table/hints', {
+    method: 'POST',
+    body: {
+      tableId: state.tableId,
+      seat: liveHeroSeat(),
+      toCallUnits: Math.max(0, Number(hintToCallInput?.value || 0)),
+      potUnits: Math.max(0, Number(hintPotInput?.value || 0)),
+      stackUnits: Math.max(0, Number(hintStackInput?.value || 0)),
+      legalActions: ['fold', 'check', 'call', 'raise'],
+      ...(includeStrength ? { handStrength: strengthRaw } : {}),
+    },
+  });
+  writePanel(tableStateOutput, out);
+}
+
 function liveHeroSeat() {
   const raw = Number(liveHeroSeatInput?.value || 0);
   if (!Number.isFinite(raw)) return 0;
@@ -2841,6 +2996,13 @@ const tableBindings = [
   [v2SettleButton, v2SettleHand, 'V2 settle failed'],
   [v2ReplayButton, v2Replay, 'V2 replay failed'],
   [v2StateButton, v2State, 'V2 state failed'],
+  [handsLoadButton, loadHandsList, 'Load hands failed'],
+  [handsViewButton, viewSelectedHand, 'View hand failed'],
+  [handsReplayLoadButton, loadSelectedReplay, 'Replay load failed'],
+  [handsReplayBackButton, async () => replayBack(), 'Replay back failed'],
+  [handsReplayNextButton, async () => replayNext(), 'Replay next failed'],
+  [handsReplayPlayButton, async () => replayPlayPause(), 'Replay play/pause failed'],
+  [tableHintsButton, requestTableHints, 'Hints request failed'],
 ];
 for (const [button, action, label] of tableBindings) {
   bindClick(button, action, writePanelError(tableStateOutput, label));
@@ -2917,4 +3079,5 @@ bootstrap().catch((err) => {
 
 window.addEventListener('beforeunload', () => {
   stopNurtureAutoRefresh();
+  stopHandReplay();
 });

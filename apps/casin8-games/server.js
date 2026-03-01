@@ -12,6 +12,7 @@ const dataDir = process.env.CASIN8_DATA_DIR
   : path.join(root, '.data');
 const statePath = path.join(dataDir, 'state.json');
 const riskDbPath = path.join(dataDir, 'riskdb.json');
+const handHistoryPath = path.join(dataDir, 'hand_history.jsonl');
 const holdemResumeSecretPath = path.join(dataDir, 'holdem_resume_secret.txt');
 const treasuryPolicyPath = path.join(dataDir, 'treasury_policy.json');
 const reserveAttestationPath = path.join(dataDir, 'reserve_attestations.json');
@@ -155,6 +156,7 @@ const requireTraitSignature = String(process.env.CASIN8_REQUIRE_TRAIT_SIGNATURE 
 const authRoutePrefixes = [
   '/api/v2/',
   '/api/table/',
+  '/api/hands/',
   '/api/sng/',
   '/api/mtt/',
   '/api/cashier/',
@@ -821,6 +823,7 @@ function requiresPokerAuth(method, pathname) {
   const m = String(method || 'GET').toUpperCase();
   const p = String(pathname || '');
   if (p.startsWith('/api/payments/webhook/')) return false;
+  if (p === '/api/hands' || p.startsWith('/api/hands/')) return true;
   if (authRouteExact.has(p)) return true;
   if (m !== 'GET') {
     return authRoutePrefixes.some((prefix) => p.startsWith(prefix));
@@ -1075,6 +1078,33 @@ function jsonStringifySafe(payload) {
   return JSON.stringify(payload, (_, value) =>
     typeof value === 'bigint' ? value.toString() : value
   );
+}
+
+function readHandHistoryRows() {
+  try {
+    if (!fs.existsSync(handHistoryPath)) return [];
+    const raw = fs.readFileSync(handHistoryPath, 'utf8');
+    if (!raw.trim()) return [];
+    const out = [];
+    for (const line of raw.split('\n')) {
+      const trimmed = line.trim();
+      if (!trimmed) continue;
+      try {
+        const row = JSON.parse(trimmed);
+        if (row && typeof row === 'object') out.push(row);
+      } catch {
+        // ignore malformed historical lines
+      }
+    }
+    return out;
+  } catch {
+    return [];
+  }
+}
+
+function appendHandHistoryRow(row) {
+  const line = jsonStringifySafe(row);
+  fs.appendFileSync(handHistoryPath, `${line}\n`, 'utf8');
 }
 
 function writeJson(res, statusCode, payload) {
@@ -1789,6 +1819,83 @@ function settleSessionsFromSnapshot(snapshot) {
     persistState();
   }
   return rows;
+}
+
+function snapshotSeatRows(snapshot) {
+  const seats = Array.isArray(snapshot?.seats) ? snapshot.seats : [];
+  return seats.map((seat, idx) => {
+    const seatNo = Number.isInteger(seat?.seat) ? seat.seat : idx;
+    return {
+      seat: seatNo,
+      stack: Math.max(0, Number(seat?.stack || 0)),
+      invested: Math.max(0, Number(seat?.invested || 0)),
+      folded: Boolean(seat?.folded),
+      playerId: seat?.playerId ? String(seat.playerId) : null,
+      agentId: seat?.agentId ? String(seat.agentId) : null,
+    };
+  });
+}
+
+function buildReplayPhases(record) {
+  const community = Array.isArray(record?.communityCards) ? record.communityCards : [];
+  const timeline = Array.isArray(record?.actionTimeline) ? record.actionTimeline : [];
+  const byStreet = (street) =>
+    timeline.filter((row) => String(row?.street || 'preflop').toLowerCase() === street);
+  return [
+    { phase: 'preflop', communityCards: [], actions: byStreet('preflop') },
+    { phase: 'flop', communityCards: community.slice(0, 3), actions: byStreet('flop') },
+    { phase: 'turn', communityCards: community.slice(0, 4), actions: byStreet('turn') },
+    { phase: 'river', communityCards: community.slice(0, 5), actions: byStreet('river') },
+    {
+      phase: 'showdown',
+      communityCards: community.slice(0, 5),
+      actions: byStreet('showdown'),
+      result: {
+        winnerSeat: Number(record?.winnerSeat ?? -1),
+        payoutBySeat:
+          record?.payoutBySeat && typeof record.payoutBySeat === 'object'
+            ? record.payoutBySeat
+            : {},
+      },
+    },
+  ];
+}
+
+function persistHandHistoryIfSettled(snapshot, reason = 'settlement') {
+  if (!snapshot || snapshot.settled !== true) return null;
+  if (snapshot.handHistoryPersistedAt) return null;
+
+  const handId = String(snapshot.handId || '').trim();
+  if (!handId) return null;
+
+  const row = {
+    tableId: String(snapshot.tableId || ''),
+    handId,
+    timestamp: nowIso(),
+    reason: String(reason || 'settlement'),
+    street: String(snapshot.street || 'showdown'),
+    seats: snapshotSeatRows(snapshot),
+    holeCards:
+      snapshot.holeCards && typeof snapshot.holeCards === 'object' ? snapshot.holeCards : {},
+    communityCards: Array.isArray(snapshot.communityCards) ? snapshot.communityCards : [],
+    actionTimeline: Array.isArray(snapshot.actionTimeline) ? snapshot.actionTimeline : [],
+    sidePots: Array.isArray(snapshot.sidePots) ? snapshot.sidePots : [],
+    payoutBySeat:
+      snapshot.payoutBySeat && typeof snapshot.payoutBySeat === 'object'
+        ? snapshot.payoutBySeat
+        : {},
+    winnerSeat: Number(snapshot.winnerSeat ?? -1),
+    payoutUnits: Math.max(0, Number(snapshot.payoutUnits || 0)),
+    showdown: Array.isArray(snapshot.showdown) ? snapshot.showdown : [],
+    sessionSettlement: Array.isArray(snapshot.sessionSettlement) ? snapshot.sessionSettlement : [],
+    settlementCursor: snapshot.cursor || null,
+    settlementSeq: Number(snapshot.seq || 0),
+  };
+
+  appendHandHistoryRow(row);
+  snapshot.handHistoryPersistedAt = row.timestamp;
+  snapshot.handHistoryReplayPhases = buildReplayPhases(row);
+  return row;
 }
 
 function computePayoutBySeat(snapshot, scored) {
@@ -4756,7 +4863,9 @@ async function handleTableStateInit(req, res) {
   snapshot.showdown = null;
   snapshot.actedSeats = [];
   snapshot.streetBets = {};
+  snapshot.actionTimeline = [];
   snapshot.currentBet = 0;
+  snapshot.handHistoryPersistedAt = null;
   snapshot.sessionBySeat =
     body.sessionBySeat && typeof body.sessionBySeat === 'object' ? body.sessionBySeat : null;
 
@@ -4810,6 +4919,8 @@ async function handleTableStateInit(req, res) {
   snapshot.blinds = { smallBlind: sb, bigBlind: bb, sbSeat, bbSeat };
   snapshot.minRaise = bb;
   snapshot.lastRaiseSize = bb;
+  snapshot.lastAggressorSeat = bbSeat;
+  snapshot.bettingRoundId = 1;
   snapshot.actingSeat = nextActiveSeat(snapshot, bbSeat);
 
   swarmState.tableSnapshots.set(tableId, snapshot);
@@ -4848,9 +4959,19 @@ async function handleTableAction(req, res) {
 
   const bus = await getOrCreateRealtimeBus(tableId);
   const seat = Number(body.seat);
+  if (!Number.isInteger(seat) || seat < 0) {
+    return badRequest(res, 'seat must be a non-negative integer');
+  }
+  if (snapshot.terminal === true || snapshot.settled === true) {
+    return badRequest(res, 'Hand already settled');
+  }
+  if (seat !== Number(snapshot.actingSeat)) {
+    return badRequest(res, 'Not your turn');
+  }
   const actionIn = String(body.action || '')
     .trim()
     .toLowerCase();
+  const requestedAction = actionIn;
   const intentType = String(body.type || 'player.action').trim();
   const idempotencyKey = String(body.idempotencyKey || crypto.randomUUID()).trim();
   if (bus.hasProcessedIdempotencyKey(idempotencyKey)) {
@@ -4959,6 +5080,9 @@ async function handleTableAction(req, res) {
   const out = engineCore.applyAction(snapshot, intent);
   const nextSnapshot = out.snapshot;
   if (out.accepted) {
+    const streetBeforeAction = String(snapshot.street || 'preflop');
+    const currentBetBeforeAction = Number(currentBet || 0);
+    const bettingRoundBeforeAction = Number(nextSnapshot.bettingRoundId || 1);
     nextSnapshot.actionCountStreet = Number(nextSnapshot.actionCountStreet || 0) + 1;
 
     const seatRows = Array.isArray(nextSnapshot.seats) ? nextSnapshot.seats : [];
@@ -4979,16 +5103,20 @@ async function handleTableAction(req, res) {
       [String(seat)]: updatedStreetBet,
     };
     const actedSet = new Set(Array.isArray(nextSnapshot.actedSeats) ? nextSnapshot.actedSeats : []);
+    let currentBetAfterAction = Number(nextSnapshot.currentBet || 0);
 
     if (normalizedAction === 'bet' || normalizedAction === 'raise') {
       const prevBet = Number(nextSnapshot.currentBet || 0);
       nextSnapshot.currentBet = updatedStreetBet;
       nextSnapshot.lastRaiseSize = Math.max(1, updatedStreetBet - prevBet);
       nextSnapshot.minRaise = nextSnapshot.lastRaiseSize;
+      nextSnapshot.lastAggressorSeat = seat;
       actedSet.clear();
       actedSet.add(seat);
+      currentBetAfterAction = Number(nextSnapshot.currentBet || 0);
     } else {
       actedSet.add(seat);
+      currentBetAfterAction = Number(nextSnapshot.currentBet || 0);
     }
     nextSnapshot.actedSeats = [...actedSet.values()];
 
@@ -5004,7 +5132,12 @@ async function handleTableAction(req, res) {
       settleSessionsFromSnapshot(nextSnapshot);
     } else if (isStreetRoundComplete(nextSnapshot)) {
       nextSnapshot.actionCountStreet = 0;
+      const prevStreet = String(nextSnapshot.street || 'preflop');
       advanceStreet(nextSnapshot, engine);
+      if (String(nextSnapshot.street || '') !== prevStreet) {
+        nextSnapshot.bettingRoundId = Number(nextSnapshot.bettingRoundId || 1) + 1;
+        nextSnapshot.lastAggressorSeat = null;
+      }
       if (!nextSnapshot.terminal) {
         nextSnapshot.actingSeat = nextActiveSeat(
           nextSnapshot,
@@ -5017,6 +5150,23 @@ async function handleTableAction(req, res) {
     } else {
       nextSnapshot.actingSeat = nextActiveSeat(nextSnapshot, seat);
     }
+
+    const timeline = Array.isArray(nextSnapshot.actionTimeline) ? nextSnapshot.actionTimeline : [];
+    timeline.push({
+      seq: Number(nextSnapshot.seq || 0),
+      ts: nowIso(),
+      seat,
+      requestedAction,
+      action: normalizedAction,
+      amount: spend,
+      street: streetBeforeAction,
+      bettingRoundId: bettingRoundBeforeAction,
+      currentBetBefore: currentBetBeforeAction,
+      currentBetAfter: currentBetAfterAction,
+      potAfter: Math.max(0, Number(nextSnapshot.pot || 0)),
+    });
+    nextSnapshot.actionTimeline = timeline;
+    persistHandHistoryIfSettled(nextSnapshot, 'table_action');
   }
   swarmState.tableSnapshots.set(tableId, nextSnapshot);
   persistTableSnapshot(tableId, nextSnapshot);
@@ -5104,6 +5254,7 @@ async function handleTableSettle(req, res) {
     cursor: settleEvent.cursor,
   };
   settleSessionsFromSnapshot(nextSnapshot);
+  persistHandHistoryIfSettled(nextSnapshot, 'table_settle');
   swarmState.tableSnapshots.set(tableId, nextSnapshot);
   persistTableSnapshot(tableId, nextSnapshot);
   bus.writeSnapshot(nextSnapshot);
@@ -5258,6 +5409,7 @@ async function handleTableRoundAuto(req, res) {
       cursor: settleEvent.cursor,
     };
     settleSessionsFromSnapshot(snapshot);
+    persistHandHistoryIfSettled(snapshot, 'table_round_auto');
     swarmState.tableSnapshots.set(tableId, snapshot);
     persistTableSnapshot(tableId, snapshot);
     bus.writeSnapshot(snapshot);
@@ -5282,6 +5434,169 @@ async function handleTableRoundAuto(req, res) {
     settlement,
     snapshot,
   });
+}
+
+async function handleTableHints(req, res) {
+  const body = await readBodyJson(req);
+  const tableId = sanitizeTable(body.tableId || 'lobby-1');
+  const snapshot = swarmState.tableSnapshots.get(tableId) || null;
+  const seat = Number.isInteger(body.seat) ? body.seat : Number(snapshot?.actingSeat || 0);
+  const toCallUnits = Math.max(0, Number(body.toCallUnits || 0));
+  const potUnits = Math.max(0, Number(body.potUnits ?? snapshot?.pot ?? 0));
+  const stackUnits = Math.max(0, Number(body.stackUnits || 0));
+  const handStrengthInput = body.handStrength;
+  const handStrength =
+    Number.isFinite(Number(handStrengthInput)) && Number(handStrengthInput) >= 0
+      ? Math.min(1, Math.max(0, Number(handStrengthInput)))
+      : null;
+  const legalActionsInput = Array.isArray(body.legalActions)
+    ? body.legalActions
+    : ['fold', 'check', 'call', 'raise'];
+  const legalActions = legalActionsInput
+    .map((x) =>
+      String(x || '')
+        .trim()
+        .toLowerCase()
+    )
+    .filter((x) => ['fold', 'check', 'call', 'bet', 'raise'].includes(x));
+  const legalSet = new Set(legalActions);
+
+  const denominator = Math.max(1, potUnits + toCallUnits);
+  const potOddsPct = Number(((toCallUnits / denominator) * 100).toFixed(2));
+  const requiredEquityThresholdPct = Number(potOddsPct.toFixed(2));
+  const requiredEquity = requiredEquityThresholdPct / 100;
+  const inferredStrength =
+    handStrength != null
+      ? handStrength
+      : toCallUnits === 0
+        ? 0.55
+        : Math.max(0.2, Math.min(0.85, requiredEquity + 0.03));
+
+  let recommendedAction = 'check';
+  if (toCallUnits > 0 && inferredStrength < Math.max(0.08, requiredEquity - 0.08)) {
+    recommendedAction = 'fold';
+  } else if (toCallUnits > 0 && inferredStrength < requiredEquity + 0.07) {
+    recommendedAction = legalSet.has('call') ? 'call' : legalSet.has('check') ? 'check' : 'fold';
+  } else {
+    recommendedAction = legalSet.has('raise')
+      ? 'raise'
+      : legalSet.has('bet')
+        ? 'bet'
+        : toCallUnits > 0
+          ? 'call'
+          : 'check';
+  }
+  if (!legalSet.has(recommendedAction)) {
+    recommendedAction = legalSet.has('check')
+      ? 'check'
+      : legalSet.has('call')
+        ? 'call'
+        : legalSet.has('fold')
+          ? 'fold'
+          : 'check';
+  }
+
+  const minRaise = Math.max(
+    1,
+    Number(
+      snapshot?.minRaise || snapshot?.blinds?.bigBlind || Math.ceil(Math.max(1, potUnits * 0.33))
+    )
+  );
+  const minTarget = Math.max(toCallUnits + minRaise, Math.ceil(potUnits * 0.5));
+  const midTarget = Math.max(minTarget, Math.ceil(potUnits * 0.9));
+  const maxTarget = Math.max(
+    midTarget,
+    Math.min(stackUnits || midTarget, Math.ceil(potUnits * 1.6))
+  );
+  const raiseSizingBands = {
+    minUnits: minTarget,
+    preferredUnits: midTarget,
+    maxUnits: maxTarget,
+  };
+
+  const bb = Math.max(1, Number(snapshot?.blinds?.bigBlind || 20));
+  const shortStackThreshold = Math.max(6 * bb, toCallUnits * 3);
+  const riskFlags = {
+    short_stack: stackUnits > 0 && stackUnits <= shortStackThreshold,
+    icm_pressure:
+      Boolean(body.icmPressure) || String(snapshot?.variant || '').includes('tournament'),
+    all_in_risk: stackUnits > 0 && (toCallUnits >= stackUnits || maxTarget >= stackUnits),
+  };
+
+  writeJson(res, 200, {
+    ok: true,
+    tableId,
+    seat,
+    inputs: {
+      toCallUnits,
+      potUnits,
+      stackUnits,
+      legalActions,
+      handStrength,
+    },
+    hint: {
+      potOddsPct,
+      requiredEquityThresholdPct,
+      recommendedActionBucket: recommendedAction,
+      raiseSizingBands,
+      riskFlags,
+    },
+  });
+}
+
+async function handleHandsList(_req, res, urlObj) {
+  const tableId = String(urlObj.searchParams.get('tableId') || '').trim();
+  const limitRaw = Number(urlObj.searchParams.get('limit') || 20);
+  const limit = Math.max(1, Math.min(200, Number.isFinite(limitRaw) ? Math.floor(limitRaw) : 20));
+  const rows = readHandHistoryRows()
+    .filter((row) => !tableId || String(row?.tableId || '') === tableId)
+    .sort((a, b) => String(b?.timestamp || '').localeCompare(String(a?.timestamp || '')))
+    .slice(0, limit)
+    .map((row) => ({
+      tableId: String(row?.tableId || ''),
+      handId: String(row?.handId || ''),
+      timestamp: row?.timestamp || null,
+      street: row?.street || null,
+      winnerSeat: Number(row?.winnerSeat ?? -1),
+      payoutUnits: Math.max(0, Number(row?.payoutUnits || 0)),
+      actionCount: Array.isArray(row?.actionTimeline) ? row.actionTimeline.length : 0,
+    }));
+  writeJson(res, 200, { ok: true, hands: rows });
+}
+
+function findHandHistoryById(handId) {
+  const target = String(handId || '').trim();
+  if (!target) return null;
+  const rows = readHandHistoryRows();
+  for (let i = rows.length - 1; i >= 0; i -= 1) {
+    if (String(rows[i]?.handId || '') === target) return rows[i];
+  }
+  return null;
+}
+
+function handleHandGetById(res, handId) {
+  const row = findHandHistoryById(handId);
+  if (!row) return notFound(res);
+  writeJson(res, 200, { ok: true, hand: row });
+}
+
+function handleHandReplayById(res, handId) {
+  const row = findHandHistoryById(handId);
+  if (!row) return notFound(res);
+  const replay = {
+    tableId: String(row.tableId || ''),
+    handId: String(row.handId || ''),
+    timestamp: row.timestamp || null,
+    phases: buildReplayPhases(row),
+    result: {
+      winnerSeat: Number(row.winnerSeat ?? -1),
+      payoutBySeat:
+        row.payoutBySeat && typeof row.payoutBySeat === 'object' ? row.payoutBySeat : {},
+      sidePots: Array.isArray(row.sidePots) ? row.sidePots : [],
+      sessionSettlement: Array.isArray(row.sessionSettlement) ? row.sessionSettlement : [],
+    },
+  };
+  writeJson(res, 200, { ok: true, replay });
 }
 
 function handleSwarmStatus(req, res) {
@@ -5465,9 +5780,11 @@ const API_ROUTES = new Map([
   ['POST /api/table/state/init', endpoint(handleTableStateInit)],
   ['GET /api/table/state', endpointWithQuery(handleTableStateGet)],
   ['POST /api/table/action', endpoint(handleTableAction)],
+  ['POST /api/table/hints', endpoint(handleTableHints)],
   ['POST /api/table/settle', endpoint(handleTableSettle)],
   ['POST /api/table/round/auto', endpoint(handleTableRoundAuto)],
   ['GET /api/table/stream', endpointWithQuery(handleTableStream)],
+  ['GET /api/hands', endpointWithQuery(handleHandsList)],
 
   ['POST /api/agents/register', endpoint(handleAgentRegister)],
   ['POST /api/agents/configure-style', endpoint(handleAgentConfigureStyle)],
@@ -5587,6 +5904,21 @@ async function handleApi(req, res, urlObj) {
   metrics.apiRequestsTotal += 1;
   if (isRateLimited(req)) {
     return writeJson(res, 429, { ok: false, error: 'Rate limit exceeded' });
+  }
+
+  if (req.method === 'GET' && String(urlObj.pathname || '').startsWith('/api/hands/')) {
+    if (requiresPokerAuth(req.method, urlObj.pathname)) {
+      const auth = requireRoles(req, res, ['poker']);
+      if (!auth.ok) return;
+    }
+    const rest = String(urlObj.pathname || '').slice('/api/hands/'.length);
+    if (rest.endsWith('/replay')) {
+      const handIdRaw = rest.slice(0, rest.length - '/replay'.length);
+      const handId = decodeURIComponent(handIdRaw);
+      return handleHandReplayById(res, handId);
+    }
+    const handId = decodeURIComponent(rest);
+    return handleHandGetById(res, handId);
   }
 
   const key = `${req.method} ${urlObj.pathname}`;

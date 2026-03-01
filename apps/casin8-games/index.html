@@ -186,6 +186,37 @@
           <button id="v2-replay" type="button">V2 Replay</button>
           <button id="v2-state" type="button">V2 State</button>
         </div>
+        <div class="account-row">
+          <label for="hands-limit">History Limit</label>
+          <input id="hands-limit" type="number" min="1" max="200" value="20" />
+          <label for="hands-selected-id">Selected Hand</label>
+          <input id="hands-selected-id" type="text" value="" />
+        </div>
+        <div class="account-row">
+          <button id="hands-load" type="button">Load Hands</button>
+          <button id="hands-view" type="button">View Hand</button>
+          <button id="hands-replay-load" type="button">Load Replay</button>
+          <button id="hands-replay-back" type="button">Replay Back</button>
+          <button id="hands-replay-next" type="button">Replay Next</button>
+          <button id="hands-replay-play" type="button">Replay Play/Pause</button>
+          <label for="hands-replay-speed">Replay Speed</label>
+          <select id="hands-replay-speed">
+            <option value="1400">1x</option>
+            <option value="900">1.5x</option>
+            <option value="600">2x</option>
+          </select>
+        </div>
+        <div class="account-row">
+          <label for="hint-to-call">To Call</label>
+          <input id="hint-to-call" type="number" min="0" value="10" />
+          <label for="hint-pot">Pot</label>
+          <input id="hint-pot" type="number" min="0" value="30" />
+          <label for="hint-stack">Stack</label>
+          <input id="hint-stack" type="number" min="0" value="200" />
+          <label for="hint-strength">Strength (0-1)</label>
+          <input id="hint-strength" type="number" min="0" max="1" step="0.01" value="0.55" />
+          <button id="table-hints" type="button">Get Hints</button>
+        </div>
         <pre id="table-state-output" class="result"></pre>
       </section>
 
