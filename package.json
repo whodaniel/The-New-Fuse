@@ -39,6 +39,7 @@
     "openclaw:cloud:codex:sync": "bash scripts/railway/sync-openclaw-codex-account.sh",
     "openclaw:cloud:codex:sync:tenant": "bash scripts/railway/sync-openclaw-codex-account.sh --service openclaw-cloud --codex-home \"$HOME/.codex-tenants/proof-tenant-a\"",
     "openclaw:cloud:codex:sync:tenants": "bash scripts/railway/sync-openclaw-codex-tenants.sh --config scripts/railway/openclaw-codex-tenants.json",
+    "openclaw:ops:safe": "bash scripts/railway/run-openclaw-ops-safe.sh",
     "openclaw:oauth:sync:instance": "bash scripts/railway/sync-openclaw-oauth-instance.sh",
     "openclaw:oauth:sync:instances": "bash scripts/railway/sync-openclaw-oauth-instances.sh --config scripts/railway/openclaw-oauth-instances.json",
     "railway:claw:routing:sync": "scripts/railway/sync-claw-routing-vars.sh",

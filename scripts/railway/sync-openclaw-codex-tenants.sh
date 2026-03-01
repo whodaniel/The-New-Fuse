@@ -6,6 +6,8 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 SYNC_ONE_SCRIPT="$ROOT_DIR/scripts/railway/sync-openclaw-codex-account.sh"
 CONFIG_FILE="${OPENCLAW_CODEX_TENANTS_CONFIG:-$ROOT_DIR/scripts/railway/openclaw-codex-tenants.json}"
 WAIT_FLAG=""
+RAILWAY_VAR_LIST_MAX_RETRIES="${RAILWAY_VAR_LIST_MAX_RETRIES:-8}"
+RAILWAY_VAR_LIST_SLEEP_SECONDS="${RAILWAY_VAR_LIST_SLEEP_SECONDS:-3}"
 
 usage() {
   cat <<'EOF'
@@ -63,6 +65,7 @@ need_cmd() {
 need_cmd jq
 need_cmd railway
 need_cmd bash
+need_cmd mktemp
 
 if [ ! -x "$SYNC_ONE_SCRIPT" ]; then
   echo "ERROR: missing sync script: $SYNC_ONE_SCRIPT"
@@ -84,6 +87,38 @@ if [ "$TENANT_COUNT" -lt 1 ]; then
 fi
 
 echo "Syncing $TENANT_COUNT tenant(s) with primary model: $MODEL_PRIMARY"
+
+railway_var_list_json() {
+  local service="$1"
+  local __json_var="$2"
+  local __err_var="$3"
+  local attempt
+  local out
+  local err_file
+  err_file="$(mktemp)"
+  out=""
+
+  for attempt in $(seq 1 "$RAILWAY_VAR_LIST_MAX_RETRIES"); do
+    if out="$(railway variable list --service "$service" --json 2>"$err_file")"; then
+      if printf '%s' "$out" | jq -e 'type == "object"' >/dev/null 2>&1; then
+        printf -v "$__json_var" '%s' "$out"
+        printf -v "$__err_var" ''
+        rm -f "$err_file"
+        return 0
+      fi
+    fi
+
+    if [ "$attempt" -lt "$RAILWAY_VAR_LIST_MAX_RETRIES" ]; then
+      echo "WARN: railway variable list failed for $service (attempt $attempt/$RAILWAY_VAR_LIST_MAX_RETRIES); retrying..."
+      sleep "$RAILWAY_VAR_LIST_SLEEP_SECONDS"
+    fi
+  done
+
+  printf -v "$__json_var" '%s' "$out"
+  printf -v "$__err_var" '%s' "$(cat "$err_file" 2>/dev/null || true)"
+  rm -f "$err_file"
+  return 1
+}
 
 for idx in $(seq 0 $((TENANT_COUNT - 1))); do
   NAME="$(jq -r ".tenants[$idx].name // \"tenant-$idx\"" "$CONFIG_FILE")"
@@ -136,10 +171,9 @@ for idx in $(seq 0 $((TENANT_COUNT - 1))); do
 
   REMOTE_FETCH_OK=false
   VAR_JSON=""
-  if VAR_JSON="$(railway variable list --service "$SERVICE" --json 2>/tmp/openclaw_tenants_var.err)"; then
-    if printf '%s' "$VAR_JSON" | jq -e 'type == "object"' >/dev/null 2>&1; then
-      REMOTE_FETCH_OK=true
-    fi
+  VAR_ERR=""
+  if railway_var_list_json "$SERVICE" VAR_JSON VAR_ERR; then
+    REMOTE_FETCH_OK=true
   fi
 
   REMOTE_ACCOUNT_ID="$(printf '%s' "$VAR_JSON" | jq -r '.OPENAI_CODEX_ACCOUNT_ID // empty' 2>/dev/null || true)"
@@ -155,7 +189,9 @@ for idx in $(seq 0 $((TENANT_COUNT - 1))); do
   fi
   if [ "$MODE" = "locked" ] && [ "$REMOTE_FETCH_OK" != "true" ]; then
     echo "ERROR: locked mode could not verify remote account for $SERVICE (fail-closed)."
-    sed -n '1,20p' /tmp/openclaw_tenants_var.err 2>/dev/null || true
+    if [ -n "$VAR_ERR" ]; then
+      printf '%s\n' "$VAR_ERR" | sed -n '1,20p'
+    fi
     exit 1
   fi
   if [ "$MODE" = "locked" ] && [ -n "$REMOTE_ACCOUNT_ID" ] && [ "$REMOTE_ACCOUNT_ID" != "$TARGET_FROM_FILE" ]; then
