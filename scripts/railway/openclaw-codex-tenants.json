@@ -27,7 +27,8 @@
       "service": "openclaw-sandbox-cloud",
       "authFile": "~/.codex-tenants/windsurfree19/auth.json",
       "targetAccountId": "722969da-1fcd-4d0c-a58c-f7c4b14d44e3",
-      "mode": "locked"
+      "mode": "locked",
+      "targetAccountEmail": "windsurfree19@findproductsandservices.com"
     },
     {
       "name": "windsurfree2",
@@ -36,12 +37,121 @@
       "service": "openclaw-oc004",
       "authFile": "~/.codex-tenants/windsurfree2/auth.json",
       "targetAccountId": "13aa9174-f41c-40d4-a2ab-aaa731706006",
-      "mode": "locked"
+      "mode": "locked",
+      "targetAccountEmail": "windsurfree2@fineproductsandservices.com"
     },
     {
       "name": "windsurfree_b10",
       "authFile": "~/.codex/auth.json",
       "targetAccountEmail": "windsurfree_b10@findproductsandservices.com",
+      "mode": "pending"
+    },
+    {
+      "name": "windsurfree1",
+      "authFile": "~/.codex-tenants/windsurfree1/auth.json",
+      "targetAccountEmail": "windsurfree1@fineproductsandservices.com",
+      "mode": "pending"
+    },
+    {
+      "name": "windsurfree10",
+      "authFile": "~/.codex-tenants/windsurfree10/auth.json",
+      "targetAccountEmail": "windsurfree10@findproductsandservices.com",
+      "mode": "pending"
+    },
+    {
+      "name": "windsurfree11",
+      "authFile": "~/.codex-tenants/windsurfree11/auth.json",
+      "targetAccountEmail": "windsurfree11@findproductsandservices.com",
+      "mode": "pending"
+    },
+    {
+      "name": "windsurfree12",
+      "authFile": "~/.codex-tenants/windsurfree12/auth.json",
+      "targetAccountEmail": "windsurfree12@findproductsandservices.com",
+      "mode": "pending"
+    },
+    {
+      "name": "windsurfree13",
+      "authFile": "~/.codex-tenants/windsurfree13/auth.json",
+      "targetAccountEmail": "windsurfree13@findproductsandservices.com",
+      "mode": "pending"
+    },
+    {
+      "name": "windsurfree14",
+      "authFile": "~/.codex-tenants/windsurfree14/auth.json",
+      "targetAccountEmail": "windsurfree14@findproductsandservices.com",
+      "mode": "pending"
+    },
+    {
+      "name": "windsurfree15",
+      "authFile": "~/.codex-tenants/windsurfree15/auth.json",
+      "targetAccountEmail": "windsurfree15@findproductsandservices.com",
+      "mode": "pending"
+    },
+    {
+      "name": "windsurfree16",
+      "authFile": "~/.codex-tenants/windsurfree16/auth.json",
+      "targetAccountEmail": "windsurfree16@findproductsandservices.com",
+      "mode": "pending"
+    },
+    {
+      "name": "windsurfree17",
+      "authFile": "~/.codex-tenants/windsurfree17/auth.json",
+      "targetAccountEmail": "windsurfree17@findproductsandservices.com",
+      "mode": "pending"
+    },
+    {
+      "name": "windsurfree18",
+      "authFile": "~/.codex-tenants/windsurfree18/auth.json",
+      "targetAccountEmail": "windsurfree18@findproductsandservices.com",
+      "mode": "pending"
+    },
+    {
+      "name": "windsurfree20",
+      "authFile": "~/.codex-tenants/windsurfree20/auth.json",
+      "targetAccountEmail": "windsurfree20@findproductsandservices.com",
+      "mode": "pending"
+    },
+    {
+      "name": "windsurfree3",
+      "authFile": "~/.codex-tenants/windsurfree3/auth.json",
+      "targetAccountEmail": "windsurfree3@fineproductsandservices.com",
+      "mode": "pending"
+    },
+    {
+      "name": "windsurfree4",
+      "authFile": "~/.codex-tenants/windsurfree4/auth.json",
+      "targetAccountEmail": "windsurfree4@fineproductsandservices.com",
+      "mode": "pending"
+    },
+    {
+      "name": "windsurfree5",
+      "authFile": "~/.codex-tenants/windsurfree5/auth.json",
+      "targetAccountEmail": "windsurfree5@findproductsandservices.com",
+      "mode": "pending"
+    },
+    {
+      "name": "windsurfree6",
+      "authFile": "~/.codex-tenants/windsurfree6/auth.json",
+      "targetAccountEmail": "windsurfree6@findproductsandservices.com",
+      "mode": "pending"
+    },
+    {
+      "name": "windsurfree7",
+      "authFile": "~/.codex-tenants/windsurfree7/auth.json",
+      "targetAccountEmail": "windsurfree7@findproductsandservices.com",
+      "mode": "pending"
+    },
+    {
+      "name": "windsurfree8",
+      "authFile": "~/.codex-tenants/windsurfree8/auth.json",
+      "targetAccountEmail": "windsurfree8@findproductsandservices.com",
+      "mode": "pending"
+    },
+    {
+      "name": "windsurfree9",
+      "authFile": "~/.codex-tenants/windsurfree9/auth.json",
+      "targetAccountEmail": "windsurfree9@findproductsandservices.com",
       "mode": "pending"
     }
   ]
