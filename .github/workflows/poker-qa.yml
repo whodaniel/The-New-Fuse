@@ -38,3 +38,10 @@ jobs:
 
       - name: Run Poker QA + Simulation Suites
         run: node --test *.test.mjs swarm/*.test.mjs
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+        working-directory: .
+
+      - name: Run Trait UI Smoke (Playwright)
+        run: node scripts/trait-ui-smoke.mjs --spawn

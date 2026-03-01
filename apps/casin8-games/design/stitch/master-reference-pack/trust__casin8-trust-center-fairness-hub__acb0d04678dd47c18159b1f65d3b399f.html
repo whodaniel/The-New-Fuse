@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Casin8 Trust Center &amp; Fairness Hub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f4c025",
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#1a1c24", // Deep navy-ish charcoal
+                        "accent-cyan": "#22d3ee",
+                        "accent-emerald": "#10b981",
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Spline Sans', sans-serif;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(244, 192, 37, 0.1);
+        }
+        .glow-emerald {
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<!-- Header / Nav -->
+<header class="border-b border-primary/10 bg-background-dark/50 backdrop-blur-md sticky top-0 z-50">
+<div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+<div class="flex items-center gap-10">
+<div class="flex items-center gap-3">
+<div class="size-8 bg-primary rounded-lg flex items-center justify-center text-background-dark">
+<span class="material-symbols-outlined font-bold">casino</span>
+</div>
+<h1 class="text-2xl font-black tracking-tighter text-primary">CASIN8</h1>
+</div>
+<nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400">
+<a class="hover:text-primary transition-colors" href="#">Games</a>
+<a class="text-primary border-b-2 border-primary pb-1" href="#">Trust Center</a>
+<a class="hover:text-primary transition-colors" href="#">Provably Fair</a>
+<a class="hover:text-primary transition-colors" href="#">Audit Logs</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<!-- Service Health HUD -->
+<div class="hidden lg:flex items-center gap-4 px-4 py-2 bg-slate-900/50 rounded-full border border-white/5">
+<div class="flex items-center gap-2">
+<span class="size-2 rounded-full bg-accent-emerald animate-pulse glow-emerald"></span>
+<span class="text-[10px] uppercase tracking-widest font-bold text-slate-500">API: <span class="text-accent-emerald">12ms</span></span>
+</div>
+<div class="w-px h-3 bg-slate-700"></div>
+<div class="flex items-center gap-2">
+<span class="text-[10px] uppercase tracking-widest font-bold text-slate-500">TABLE: <span class="text-accent-emerald">LIVE</span></span>
+</div>
+<div class="w-px h-3 bg-slate-700"></div>
+<div class="flex items-center gap-2 text-accent-cyan">
+<span class="material-symbols-outlined text-xs">sync</span>
+<span class="text-[10px] uppercase tracking-widest font-bold">RPC: SYNCED</span>
+</div>
+</div>
+<button class="bg-primary text-background-dark px-5 py-2 rounded-lg font-bold text-sm hover:opacity-90 transition-opacity flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">account_balance_wallet</span>
+                    Connect Wallet
+                </button>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-6 py-12">
+<!-- Hero Title -->
+<div class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="max-w-2xl">
+<div class="flex items-center gap-2 text-primary mb-2">
+<span class="material-symbols-outlined text-sm">verified_user</span>
+<span class="text-xs font-bold uppercase tracking-[0.2em]">Institutional Transparency</span>
+</div>
+<h2 class="text-5xl font-black text-slate-100 leading-tight mb-4 tracking-tight">Trust Center &amp; <span class="text-primary">Fairness Hub</span></h2>
+<p class="text-slate-400 text-lg leading-relaxed">Cryptographically verifiable proof for every bet placed. Our open-source commitment ensures house edge integrity and player-side entropy generation.</p>
+</div>
+<div class="flex gap-3">
+<div class="glass-card px-4 py-3 rounded-xl flex items-center gap-3">
+<div class="bg-accent-emerald/20 p-2 rounded-lg">
+<span class="material-symbols-outlined text-accent-emerald">check_circle</span>
+</div>
+<div>
+<p class="text-[10px] uppercase text-slate-500 font-bold">Duplicate Prevention</p>
+<p class="text-sm font-bold text-slate-200">ACTIVE</p>
+</div>
+</div>
+<div class="glass-card px-4 py-3 rounded-xl flex items-center gap-3">
+<div class="bg-slate-700/50 p-2 rounded-lg text-slate-400">
+<span class="material-symbols-outlined">queue</span>
+</div>
+<div>
+<p class="text-[10px] uppercase text-slate-500 font-bold">Retry Queue</p>
+<p class="text-sm font-bold text-slate-200">0 PENDING</p>
+</div>
+</div>
+</div>
+</div>
+<!-- 1. Commit-Reveal Explainer -->
+<section class="mb-12">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<div class="relative group">
+<div class="glass-card p-6 rounded-2xl border-primary/20 hover:border-primary/50 transition-all">
+<div class="size-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-primary text-3xl">lock</span>
+</div>
+<h4 class="text-slate-100 font-bold mb-2">1. Server Commit</h4>
+<p class="text-slate-400 text-sm leading-relaxed">System generates a secret server seed and provides a hashed version before you bet.</p>
+</div>
+<div class="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 z-10">
+<span class="material-symbols-outlined text-primary/30 text-xl">chevron_right</span>
+</div>
+</div>
+<div class="relative group">
+<div class="glass-card p-6 rounded-2xl border-primary/20 hover:border-primary/50 transition-all">
+<div class="size-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-primary text-3xl">person</span>
+</div>
+<h4 class="text-slate-100 font-bold mb-2">2. Client Seed</h4>
+<p class="text-slate-400 text-sm leading-relaxed">You provide your own entropy. This ensures the casino cannot predict the outcome.</p>
+</div>
+<div class="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 z-10">
+<span class="material-symbols-outlined text-primary/30 text-xl">chevron_right</span>
+</div>
+</div>
+<div class="relative group">
+<div class="glass-card p-6 rounded-2xl border-primary/20 hover:border-primary/50 transition-all">
+<div class="size-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-primary text-3xl">fingerprint</span>
+</div>
+<h4 class="text-slate-100 font-bold mb-2">3. Hashing</h4>
+<p class="text-slate-400 text-sm leading-relaxed">The seeds are combined with a nonce and passed through a SHA-256 HMAC algorithm.</p>
+</div>
+<div class="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 z-10">
+<span class="material-symbols-outlined text-primary/30 text-xl">chevron_right</span>
+</div>
+</div>
+<div class="relative">
+<div class="glass-card p-6 rounded-2xl border-primary/20 hover:border-primary/50 transition-all">
+<div class="size-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-primary text-3xl">visibility</span>
+</div>
+<h4 class="text-slate-100 font-bold mb-2">4. Reveal</h4>
+<p class="text-slate-400 text-sm leading-relaxed">Once the bet is resolved, the server seed is revealed to verify the integrity.</p>
+</div>
+</div>
+</div>
+</section>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- 2. Verification Tool -->
+<section class="lg:col-span-1">
+<div class="glass-card rounded-3xl p-8 border-primary/20 sticky top-28">
+<div class="flex items-center gap-3 mb-8">
+<span class="material-symbols-outlined text-primary">analytics</span>
+<h3 class="text-xl font-bold text-slate-100">Live Verifier</h3>
+</div>
+<div class="space-y-6">
+<div>
+<label class="block text-[10px] uppercase font-bold text-slate-500 mb-2 tracking-widest">Server Seed Hash</label>
+<input class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-slate-300 text-sm focus:border-primary outline-none transition-all font-mono" placeholder="Paste hash here..." type="text" value="7e83d8a1...2f4a"/>
+</div>
+<div>
+<label class="block text-[10px] uppercase font-bold text-slate-500 mb-2 tracking-widest">Client Seed</label>
+<input class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-slate-300 text-sm focus:border-primary outline-none transition-all font-mono" placeholder="Your client seed..." type="text" value="random_player_entropy_99"/>
+</div>
+<div>
+<label class="block text-[10px] uppercase font-bold text-slate-500 mb-2 tracking-widest">Nonce</label>
+<input class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-slate-300 text-sm focus:border-primary outline-none transition-all font-mono" type="number" value="142"/>
+</div>
+<button class="w-full py-4 bg-primary text-background-dark font-black rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/10">
+                            VERIFY RESULT
+                        </button>
+<div class="pt-6 border-t border-white/5">
+<div class="flex items-center justify-between p-4 bg-accent-emerald/5 border border-accent-emerald/20 rounded-2xl">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-accent-emerald text-3xl">verified</span>
+<div>
+<p class="text-xs font-bold text-accent-emerald uppercase tracking-widest">Status</p>
+<p class="text-lg font-black text-slate-100">PASS</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-[10px] font-bold text-slate-500 uppercase">Receipt Digest</p>
+<p class="text-xs font-mono text-accent-cyan">sha256:d8a2...8b1e</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. Session Ledger -->
+<section class="lg:col-span-2">
+<div class="glass-card rounded-3xl overflow-hidden border-white/5">
+<div class="p-6 border-b border-white/5 flex items-center justify-between bg-white/5">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">history</span>
+<h3 class="text-xl font-bold text-slate-100">Session Ledger</h3>
+</div>
+<button class="text-xs font-bold text-primary flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-sm">download_for_offline</span>
+                            EXPORT COMPLETE LOG (CSV)
+                        </button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left text-sm border-collapse">
+<thead>
+<tr class="bg-slate-900/50">
+<th class="px-6 py-4 font-bold text-slate-500 uppercase text-[10px] tracking-widest">Bet ID</th>
+<th class="px-6 py-4 font-bold text-slate-500 uppercase text-[10px] tracking-widest">Time (UTC)</th>
+<th class="px-6 py-4 font-bold text-slate-500 uppercase text-[10px] tracking-widest">Game</th>
+<th class="px-6 py-4 font-bold text-slate-500 uppercase text-[10px] tracking-widest text-center">Integrity</th>
+<th class="px-6 py-4 font-bold text-slate-500 uppercase text-[10px] tracking-widest text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/5">
+<tr class="hover:bg-white/5 transition-colors">
+<td class="px-6 py-4 font-mono text-accent-cyan">#B829-1F3</td>
+<td class="px-6 py-4 text-slate-400">14:22:01</td>
+<td class="px-6 py-4 text-slate-200 font-medium">Blackjack VIP</td>
+<td class="px-6 py-4">
+<div class="flex justify-center">
+<span class="material-symbols-outlined text-accent-emerald text-xl" title="Verified Correct">gpp_good</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-slate-700 transition-colors">
+                                            JSON
+                                        </button>
+</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors">
+<td class="px-6 py-4 font-mono text-accent-cyan">#B829-1F2</td>
+<td class="px-6 py-4 text-slate-400">14:21:45</td>
+<td class="px-6 py-4 text-slate-200 font-medium">European Roulette</td>
+<td class="px-6 py-4">
+<div class="flex justify-center">
+<span class="material-symbols-outlined text-accent-emerald text-xl">gpp_good</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-slate-700 transition-colors">
+                                            JSON
+                                        </button>
+</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors">
+<td class="px-6 py-4 font-mono text-accent-cyan">#B829-1F1</td>
+<td class="px-6 py-4 text-slate-400">14:21:12</td>
+<td class="px-6 py-4 text-slate-200 font-medium">Plinko Elite</td>
+<td class="px-6 py-4">
+<div class="flex justify-center">
+<span class="material-symbols-outlined text-accent-emerald text-xl">gpp_good</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-slate-700 transition-colors">
+                                            JSON
+                                        </button>
+</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors">
+<td class="px-6 py-4 font-mono text-accent-cyan">#B829-1F0</td>
+<td class="px-6 py-4 text-slate-400">14:20:59</td>
+<td class="px-6 py-4 text-slate-200 font-medium">Crash High-Stakes</td>
+<td class="px-6 py-4">
+<div class="flex justify-center">
+<span class="material-symbols-outlined text-accent-emerald text-xl">gpp_good</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-slate-700 transition-colors">
+                                            JSON
+                                        </button>
+</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors">
+<td class="px-6 py-4 font-mono text-accent-cyan">#B829-1EF</td>
+<td class="px-6 py-4 text-slate-400">14:19:30</td>
+<td class="px-6 py-4 text-slate-200 font-medium">Blackjack VIP</td>
+<td class="px-6 py-4">
+<div class="flex justify-center">
+<span class="material-symbols-outlined text-accent-emerald text-xl">gpp_good</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-slate-700 transition-colors">
+                                            JSON
+                                        </button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-6 bg-slate-900/30 flex items-center justify-between">
+<p class="text-xs text-slate-500 font-medium">Showing 5 of 1,284 verified entries</p>
+<div class="flex gap-2">
+<button class="size-8 rounded flex items-center justify-center bg-slate-800 border border-white/5 text-slate-400">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+<button class="size-8 rounded flex items-center justify-center bg-primary text-background-dark font-bold text-xs">1</button>
+<button class="size-8 rounded flex items-center justify-center bg-slate-800 border border-white/5 text-slate-400 text-xs font-bold hover:text-white transition-colors">2</button>
+<button class="size-8 rounded flex items-center justify-center bg-slate-800 border border-white/5 text-slate-400 text-xs font-bold hover:text-white transition-colors">3</button>
+<button class="size-8 rounded flex items-center justify-center bg-slate-800 border border-white/5 text-slate-400">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Footer Info -->
+<div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="glass-card p-6 rounded-2xl flex gap-4">
+<span class="material-symbols-outlined text-primary text-3xl">policy</span>
+<div>
+<h5 class="font-bold text-slate-100 mb-1">Open Source Policy</h5>
+<p class="text-xs text-slate-400 leading-relaxed">Our random number generation algorithms are publicly available on GitHub. Anyone can clone and run our verifier locally to ensure server integrity.</p>
+</div>
+</div>
+<div class="glass-card p-6 rounded-2xl flex gap-4">
+<span class="material-symbols-outlined text-primary text-3xl">balance</span>
+<div>
+<h5 class="font-bold text-slate-100 mb-1">Third-Party Audit</h5>
+<p class="text-xs text-slate-400 leading-relaxed">Quarterly audits performed by Cryptic Lab Systems. Last audit completed on Oct 24, 2023 with 0 findings of integrity compromise.</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<footer class="mt-20 border-t border-white/5 bg-slate-900/50 py-12">
+<div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">casino</span>
+<span class="text-sm font-black text-slate-100">CASIN8</span>
+<span class="text-xs text-slate-500 ml-4">© 2024 Casin8 Global. All rights reserved.</span>
+</div>
+<div class="flex items-center gap-8 text-xs font-bold text-slate-400 uppercase tracking-widest">
+<a class="hover:text-primary transition-colors" href="#">Terms of Fair Play</a>
+<a class="hover:text-primary transition-colors" href="#">Privacy</a>
+<a class="hover:text-primary transition-colors" href="#">Bug Bounty</a>
+<a class="hover:text-primary transition-colors" href="#">Contact Hub</a>
+</div>
+</div>
+</footer>
+</body></html>

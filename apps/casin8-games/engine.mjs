@@ -1,3 +1,5 @@
+import { createHash, randomBytes } from "node:crypto";
+
 const ROULETTE_RED = new Set([
   1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36,
 ]);
@@ -26,8 +28,14 @@ export function mulberry32(a) {
 }
 
 export function createRng(seedText) {
-  const seedFn = xmur3(seedText);
-  return mulberry32(seedFn());
+  const seed = String(seedText);
+  let counter = 0;
+  return function rand() {
+    const hex = createHash("sha256").update(`${seed}:${counter}`).digest("hex");
+    counter += 1;
+    const int = Number.parseInt(hex.slice(0, 8), 16);
+    return int / 0x100000000;
+  };
 }
 
 export function randomInt(rng, min, max) {
@@ -271,17 +279,20 @@ export function playSlotsRound(rng, bet) {
 }
 
 export async function sha256Hex(input) {
-  const data = new TextEncoder().encode(input);
-  const digest = await globalThis.crypto.subtle.digest("SHA-256", data);
-  return Array.from(new Uint8Array(digest))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
+  return createHash("sha256").update(String(input)).digest("hex");
 }
 
 export async function fairReceipt({ serverSeed, clientSeed, nonce, game, bet, options = {} }) {
-  const digest = await sha256Hex(`${serverSeed}:${clientSeed}:${nonce}:${game}:${bet}:${JSON.stringify(options)}`);
+  const canonicalOptions = JSON.stringify(options || {});
+  const digestInput = `${serverSeed}:${clientSeed}:${nonce}:${game}:${bet}:${canonicalOptions}`;
+  const digest = await sha256Hex(digestInput);
   return {
     digest,
+    digestAlgorithm: "sha256",
+    receiptVersion: 2,
+    game,
+    bet,
+    options,
     serverSeedHash: await sha256Hex(serverSeed),
     clientSeed,
     nonce,
@@ -289,8 +300,5 @@ export async function fairReceipt({ serverSeed, clientSeed, nonce, game, bet, op
 }
 
 export function randomSeed() {
-  const alphabet = "abcdef0123456789";
-  let out = "";
-  for (let i = 0; i < 32; i += 1) out += pick(Math.random, alphabet.split(""));
-  return out;
+  return randomBytes(16).toString("hex");
 }

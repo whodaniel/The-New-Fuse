@@ -189,6 +189,17 @@
       "priority": 4,
       "tags": ["official", "time", "utility", "conversion"]
     },
+    "stitch": {
+      "command": "pnpm",
+      "args": ["dlx", "@_davideast/stitch-mcp", "proxy"],
+      "env": {
+        "STITCH_API_KEY": "AQ.Ab8RN6Jy4emO-PLLzW889iOMCtl3ftCjRbN6p5upHEei3AQ5uA",
+        "STITCH_USE_SYSTEM_GCLOUD": "1"
+      },
+      "description": "Google Stitch MCP proxy - generate and retrieve Stitch UI screens for design-to-code workflows",
+      "priority": 6,
+      "tags": ["stitch", "design", "ui", "mcp", "google"]
+    },
     "unified-config-server": {
       "command": "npx",
       "args": ["tsx", "./src/mcp/unified-config-server.ts", "--no-oauth"],
@@ -250,7 +261,8 @@
       "BRAVE_API_KEY": "Get free API key from https://brave.com/search/api/",
       "SLACK_BOT_TOKEN": "Get from https://api.slack.com/apps",
       "SLACK_TEAM_ID": "Your Slack workspace ID",
-      "GOOGLE_DRIVE_CREDENTIALS": "OAuth setup required - see @piotr-agier/google-drive-mcp docs"
+      "GOOGLE_DRIVE_CREDENTIALS": "OAuth setup required - see @piotr-agier/google-drive-mcp docs",
+      "STITCH_API_KEY": "From Stitch/Google Cloud setup (optional if using gcloud OAuth via stitch-mcp init)"
     },
     "official_servers": [
       "filesystem",
@@ -275,6 +287,7 @@
     "community_servers": [
       "google-drive",
       "browsermcp",
+      "stitch",
       "applescript_execute",
       "context7-server"
     ]

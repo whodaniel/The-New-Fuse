@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 4,
+  "migrations": [
+    {
+      "version": 1,
+      "name": "init-risk-tables",
+      "at": "2026-02-28T22:34:28.163Z"
+    },
+    {
+      "version": 2,
+      "name": "add-funding-attempts",
+      "at": "2026-02-28T22:34:28.164Z"
+    },
+    {
+      "version": 3,
+      "name": "normalize-provider-fraud-signals",
+      "at": "2026-02-28T22:34:28.164Z"
+    },
+    {
+      "version": 4,
+      "name": "add-trait-control-plane-tables",
+      "at": "2026-02-28T22:34:28.164Z"
+    }
+  ],
+  "createdAt": "2026-02-28T22:34:28.163Z",
+  "updatedAt": "2026-02-28T22:34:28.344Z",
+  "tables": {
+    "compliance_profiles": [
+      {
+        "playerId": "p-att-1772318067778",
+        "kycStatus": "approved",
+        "countryCode": "US",
+        "amlRiskLevel": "low",
+        "banned": false,
+        "notes": "",
+        "updatedAt": "2026-02-28T22:34:28.318Z"
+      }
+    ],
+    "payment_orders": [],
+    "webhook_events": [],
+    "velocity_events": [
+      {
+        "id": "p-att-1772318067778:1772318068323:f0fa3b39",
+        "playerId": "p-att-1772318067778",
+        "tsMs": 1772318068323,
+        "amountUnits": {
+          "__type": "bigint",
+          "value": "1000"
+        },
+        "action": "deposit"
+      },
+      {
+        "id": "p-att-1772318067778:1772318068330:8a70217f",
+        "playerId": "p-att-1772318067778",
+        "tsMs": 1772318068330,
+        "amountUnits": {
+          "__type": "bigint",
+          "value": "300"
+        },
+        "action": "reserve"
+      },
+      {
+        "id": "p-att-1772318067778:1772318068344:c017d09b",
+        "playerId": "p-att-1772318067778",
+        "tsMs": 1772318068344,
+        "amountUnits": {
+          "__type": "bigint",
+          "value": "200"
+        },
+        "action": "withdraw-request"
+      }
+    ],
+    "risk_alerts": [],
+    "sponsorship_positions": [],
+    "funding_attempts": [],
+    "trait_rollouts": [],
+    "trait_observations": [],
+    "trait_recommendations": [],
+    "trait_policy_events": []
+  }
+}

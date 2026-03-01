@@ -1,0 +1,171 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-02-27T21:24:30.464Z",
+  "sourceManifest": "docs/NANOBANANA_POKER_GRAPHICS_MANIFEST.json",
+  "scope": "poker-graphics-mobile-states",
+  "namingConvention": "pkr_<group>_<asset>_<variant>_v01.png",
+  "outputFormats": {
+    "primary": "png",
+    "optional": ["webp"]
+  },
+  "summary": {
+    "tasks": 9,
+    "lanes": ["mobile-states"],
+    "groups": [9, 10]
+  },
+  "tasks": [
+    {
+      "taskId": "gfx-g09-01",
+      "assetId": "g09-01",
+      "lane": "mobile-states",
+      "groupIndex": 9,
+      "groupName": "Trust, Error, and Resilience States",
+      "filename": "pkr_state_reconnecting_banner_v01.png",
+      "expectedDimensions": {
+        "width": 1600,
+        "height": 900
+      },
+      "requiredVariants": ["banner"],
+      "promptParts": {
+        "globalStyleBlock": "Create production-ready game UI art for a multiplayer crypto poker app called \"Casin8 Poker Room\".\nUniverse: ai-arcade adjacent sci-fantasy; premium, trustworthy, technical, cinematic.\nPrimary palette: deep navy, emerald, royal red, royal blue, royal purple, royal gold.\nMaterial language: glassmorphism, frosted holographic panels, brushed metal accents, carbon microtexture.\nLighting: soft volumetric glow, subtle neon edge lighting, no overblown bloom.\nMood: calm confidence + high-stakes precision; cyborg-and-bot compatible space-tech aesthetic.\nRules: no roulette, no slots, no blackjack, no video poker motifs; poker-only visual language.\nOutput: ultra-detailed, clean, layered, high legibility at desktop and mobile sizes.",
+        "assetPrompt": "Design reconnecting banner: calm amber warning, concise status slot, retry control placeholder."
+      }
+    },
+    {
+      "taskId": "gfx-g09-02",
+      "assetId": "g09-02",
+      "lane": "mobile-states",
+      "groupIndex": 9,
+      "groupName": "Trust, Error, and Resilience States",
+      "filename": "pkr_state_chain_mismatch_card_v01.png",
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "requiredVariants": ["card"],
+      "promptParts": {
+        "globalStyleBlock": "Create production-ready game UI art for a multiplayer crypto poker app called \"Casin8 Poker Room\".\nUniverse: ai-arcade adjacent sci-fantasy; premium, trustworthy, technical, cinematic.\nPrimary palette: deep navy, emerald, royal red, royal blue, royal purple, royal gold.\nMaterial language: glassmorphism, frosted holographic panels, brushed metal accents, carbon microtexture.\nLighting: soft volumetric glow, subtle neon edge lighting, no overblown bloom.\nMood: calm confidence + high-stakes precision; cyborg-and-bot compatible space-tech aesthetic.\nRules: no roulette, no slots, no blackjack, no video poker motifs; poker-only visual language.\nOutput: ultra-detailed, clean, layered, high legibility at desktop and mobile sizes.",
+        "assetPrompt": "Design chain mismatch modal card with clear corrective action area."
+      }
+    },
+    {
+      "taskId": "gfx-g09-03",
+      "assetId": "g09-03",
+      "lane": "mobile-states",
+      "groupIndex": 9,
+      "groupName": "Trust, Error, and Resilience States",
+      "filename": "pkr_state_insufficient_funds_card_v01.png",
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "requiredVariants": ["card"],
+      "promptParts": {
+        "globalStyleBlock": "Create production-ready game UI art for a multiplayer crypto poker app called \"Casin8 Poker Room\".\nUniverse: ai-arcade adjacent sci-fantasy; premium, trustworthy, technical, cinematic.\nPrimary palette: deep navy, emerald, royal red, royal blue, royal purple, royal gold.\nMaterial language: glassmorphism, frosted holographic panels, brushed metal accents, carbon microtexture.\nLighting: soft volumetric glow, subtle neon edge lighting, no overblown bloom.\nMood: calm confidence + high-stakes precision; cyborg-and-bot compatible space-tech aesthetic.\nRules: no roulette, no slots, no blackjack, no video poker motifs; poker-only visual language.\nOutput: ultra-detailed, clean, layered, high legibility at desktop and mobile sizes.",
+        "assetPrompt": "Design insufficient funds card with top-up callout and quick funding action area."
+      }
+    },
+    {
+      "taskId": "gfx-g09-04",
+      "assetId": "g09-04",
+      "lane": "mobile-states",
+      "groupIndex": 9,
+      "groupName": "Trust, Error, and Resilience States",
+      "filename": "pkr_state_duplicate_action_guard_v01.png",
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "requiredVariants": ["guard"],
+      "promptParts": {
+        "globalStyleBlock": "Create production-ready game UI art for a multiplayer crypto poker app called \"Casin8 Poker Room\".\nUniverse: ai-arcade adjacent sci-fantasy; premium, trustworthy, technical, cinematic.\nPrimary palette: deep navy, emerald, royal red, royal blue, royal purple, royal gold.\nMaterial language: glassmorphism, frosted holographic panels, brushed metal accents, carbon microtexture.\nLighting: soft volumetric glow, subtle neon edge lighting, no overblown bloom.\nMood: calm confidence + high-stakes precision; cyborg-and-bot compatible space-tech aesthetic.\nRules: no roulette, no slots, no blackjack, no video poker motifs; poker-only visual language.\nOutput: ultra-detailed, clean, layered, high legibility at desktop and mobile sizes.",
+        "assetPrompt": "Create compact duplicate-action prevented indicator badge for action bar/HUD."
+      }
+    },
+    {
+      "taskId": "gfx-g09-05",
+      "assetId": "g09-05",
+      "lane": "mobile-states",
+      "groupIndex": 9,
+      "groupName": "Trust, Error, and Resilience States",
+      "filename": "pkr_state_settlement_pending_overlay_v01.png",
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "requiredVariants": ["overlay"],
+      "promptParts": {
+        "globalStyleBlock": "Create production-ready game UI art for a multiplayer crypto poker app called \"Casin8 Poker Room\".\nUniverse: ai-arcade adjacent sci-fantasy; premium, trustworthy, technical, cinematic.\nPrimary palette: deep navy, emerald, royal red, royal blue, royal purple, royal gold.\nMaterial language: glassmorphism, frosted holographic panels, brushed metal accents, carbon microtexture.\nLighting: soft volumetric glow, subtle neon edge lighting, no overblown bloom.\nMood: calm confidence + high-stakes precision; cyborg-and-bot compatible space-tech aesthetic.\nRules: no roulette, no slots, no blackjack, no video poker motifs; poker-only visual language.\nOutput: ultra-detailed, clean, layered, high legibility at desktop and mobile sizes.",
+        "assetPrompt": "Create settlement pending overlay panel with trust-preserving tone and progress lane."
+      }
+    },
+    {
+      "taskId": "gfx-g10-01",
+      "assetId": "g10-01",
+      "lane": "mobile-states",
+      "groupIndex": 10,
+      "groupName": "Mobile-First Specific Assets",
+      "filename": "pkr_mobile_bottom_action_sheet_v01.png",
+      "expectedDimensions": {
+        "width": 1600,
+        "height": 900
+      },
+      "requiredVariants": ["sheet"],
+      "promptParts": {
+        "globalStyleBlock": "Create production-ready game UI art for a multiplayer crypto poker app called \"Casin8 Poker Room\".\nUniverse: ai-arcade adjacent sci-fantasy; premium, trustworthy, technical, cinematic.\nPrimary palette: deep navy, emerald, royal red, royal blue, royal purple, royal gold.\nMaterial language: glassmorphism, frosted holographic panels, brushed metal accents, carbon microtexture.\nLighting: soft volumetric glow, subtle neon edge lighting, no overblown bloom.\nMood: calm confidence + high-stakes precision; cyborg-and-bot compatible space-tech aesthetic.\nRules: no roulette, no slots, no blackjack, no video poker motifs; poker-only visual language.\nOutput: ultra-detailed, clean, layered, high legibility at desktop and mobile sizes.",
+        "assetPrompt": "Design mobile sticky action sheet background with zones for Fold/Check-Call/Raise + slider + quick chips."
+      }
+    },
+    {
+      "taskId": "gfx-g10-02",
+      "assetId": "g10-02",
+      "lane": "mobile-states",
+      "groupIndex": 10,
+      "groupName": "Mobile-First Specific Assets",
+      "filename": "pkr_mobile_tabbar_pokerroom_v01.png",
+      "expectedDimensions": {
+        "width": 1600,
+        "height": 900
+      },
+      "requiredVariants": ["pokerroom"],
+      "promptParts": {
+        "globalStyleBlock": "Create production-ready game UI art for a multiplayer crypto poker app called \"Casin8 Poker Room\".\nUniverse: ai-arcade adjacent sci-fantasy; premium, trustworthy, technical, cinematic.\nPrimary palette: deep navy, emerald, royal red, royal blue, royal purple, royal gold.\nMaterial language: glassmorphism, frosted holographic panels, brushed metal accents, carbon microtexture.\nLighting: soft volumetric glow, subtle neon edge lighting, no overblown bloom.\nMood: calm confidence + high-stakes precision; cyborg-and-bot compatible space-tech aesthetic.\nRules: no roulette, no slots, no blackjack, no video poker motifs; poker-only visual language.\nOutput: ultra-detailed, clean, layered, high legibility at desktop and mobile sizes.",
+        "assetPrompt": "Design bottom tab bar for poker app sections (Lobby, Tables, Tourneys, Sponsorship, Wallet), with active/inactive states."
+      }
+    },
+    {
+      "taskId": "gfx-g10-03",
+      "assetId": "g10-03",
+      "lane": "mobile-states",
+      "groupIndex": 10,
+      "groupName": "Mobile-First Specific Assets",
+      "filename": "pkr_mobile_hud_drawer_handle_v01.png",
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "requiredVariants": ["handle"],
+      "promptParts": {
+        "globalStyleBlock": "Create production-ready game UI art for a multiplayer crypto poker app called \"Casin8 Poker Room\".\nUniverse: ai-arcade adjacent sci-fantasy; premium, trustworthy, technical, cinematic.\nPrimary palette: deep navy, emerald, royal red, royal blue, royal purple, royal gold.\nMaterial language: glassmorphism, frosted holographic panels, brushed metal accents, carbon microtexture.\nLighting: soft volumetric glow, subtle neon edge lighting, no overblown bloom.\nMood: calm confidence + high-stakes precision; cyborg-and-bot compatible space-tech aesthetic.\nRules: no roulette, no slots, no blackjack, no video poker motifs; poker-only visual language.\nOutput: ultra-detailed, clean, layered, high legibility at desktop and mobile sizes.",
+        "assetPrompt": "Design HUD drawer handle and collapsed chip for fairness/health quick status."
+      }
+    },
+    {
+      "taskId": "gfx-g10-04",
+      "assetId": "g10-04",
+      "lane": "mobile-states",
+      "groupIndex": 10,
+      "groupName": "Mobile-First Specific Assets",
+      "filename": "pkr_mobile_table_header_compact_v01.png",
+      "expectedDimensions": {
+        "width": 1600,
+        "height": 900
+      },
+      "requiredVariants": ["compact"],
+      "promptParts": {
+        "globalStyleBlock": "Create production-ready game UI art for a multiplayer crypto poker app called \"Casin8 Poker Room\".\nUniverse: ai-arcade adjacent sci-fantasy; premium, trustworthy, technical, cinematic.\nPrimary palette: deep navy, emerald, royal red, royal blue, royal purple, royal gold.\nMaterial language: glassmorphism, frosted holographic panels, brushed metal accents, carbon microtexture.\nLighting: soft volumetric glow, subtle neon edge lighting, no overblown bloom.\nMood: calm confidence + high-stakes precision; cyborg-and-bot compatible space-tech aesthetic.\nRules: no roulette, no slots, no blackjack, no video poker motifs; poker-only visual language.\nOutput: ultra-detailed, clean, layered, high legibility at desktop and mobile sizes.",
+        "assetPrompt": "Design compact table header strip: blinds, pot, network ping, fair badge."
+      }
+    }
+  ]
+}
