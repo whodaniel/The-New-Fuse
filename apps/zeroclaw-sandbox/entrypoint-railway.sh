@@ -11,7 +11,10 @@ AUTH_FILE="${CONFIG_DIR}/auth-profiles.json"
 mkdir -p "${CONFIG_DIR}" /zeroclaw-data/workspace
 
 # ── Port ─────────────────────────────────────────────────────
+# Railway exposes only one public port. We bind ZeroClaw internally and place
+# a lightweight proxy on the public port so external calls are reliable.
 GATEWAY_PORT="${PORT:-3000}"
+INTERNAL_GATEWAY_PORT="${ZEROCLAW_INTERNAL_GATEWAY_PORT:-3001}"
 
 # ── Provider Normalization ───────────────────────────────────
 # Convert "kilocode"/"kilo" to OpenAI-compatible custom provider format.
@@ -66,6 +69,8 @@ print(f'{provider}\\t{model}')")"
   fi
 fi
 
+RAW_PROVIDER_LC="$(printf '%s' "${RAW_PROVIDER}" | tr '[:upper:]' '[:lower:]')"
+RESOLVED_PROVIDER="${RAW_PROVIDER}"
 case "${RAW_PROVIDER_LC}" in
   kilocode|kilo)
     RESOLVED_PROVIDER="custom:https://api.kilo.ai/api/gateway"
@@ -74,6 +79,11 @@ case "${RAW_PROVIDER_LC}" in
     ZEROCLAW_MODEL="$(printf '%s' "${ZEROCLAW_MODEL}" | sed -E 's/^(kilocode|kilo)\///')"
     # Use KILO_API_KEY for the API key if not already set.
     API_KEY="${API_KEY:-${KILO_API_KEY:-}}"
+    ;;
+  openrouter|openrouterai)
+    RESOLVED_PROVIDER="custom:https://openrouter.ai/api/v1"
+    echo "Normalized provider '${RAW_PROVIDER}' to '${RESOLVED_PROVIDER}'"
+    API_KEY="${API_KEY:-${OPENROUTER_API_KEY:-}}"
     ;;
 esac
 
@@ -110,8 +120,8 @@ vector_weight      = 0.7
 keyword_weight     = 0.3
 
 [gateway]
-port              = ${GATEWAY_PORT}
-host              = "0.0.0.0"
+port              = ${INTERNAL_GATEWAY_PORT}
+host              = "127.0.0.1"
 allow_public_bind = true
 require_pairing   = ${ZEROCLAW_REQUIRE_PAIRING:-false}
 
@@ -241,7 +251,8 @@ chmod 600 "${AUTH_FILE}"
 
 echo "=== ZeroClaw Railway Sandbox ==="
 echo "Config written to ${CONFIG_FILE}"
-echo "Gateway port:    ${GATEWAY_PORT}"
+echo "Gateway port:    ${GATEWAY_PORT} (public proxy)"
+echo "Internal port:   ${INTERNAL_GATEWAY_PORT} (zeroclaw gateway)"
 echo "Provider:        ${RESOLVED_PROVIDER}"
 echo "Model:           ${ZEROCLAW_MODEL:-<unset>}"
 echo "TNF Agent ID:    ${TNF_AGENT_ID:-zeroclaw-railway-01}"
@@ -265,6 +276,139 @@ echo "TNF heartbeat started (agent: ${AGENT_ID}, interval: 5min)"
 
 sleep 1
 
-# ── Launch ZeroClaw Gateway ──────────────────────────────────
-echo "Starting zeroclaw gateway on port ${GATEWAY_PORT}..."
-exec /usr/local/bin/zeroclaw gateway
+# ── Launch ZeroClaw Gateway (internal) + Public Proxy ────────
+echo "Starting zeroclaw gateway on 127.0.0.1:${INTERNAL_GATEWAY_PORT}..."
+export ZEROCLAW_GATEWAY_PORT="${INTERNAL_GATEWAY_PORT}"
+/usr/local/bin/zeroclaw gateway &
+ZEROCLAW_PID=$!
+
+echo "Waiting for internal gateway readiness..."
+i=0
+while [ "$i" -lt 80 ]; do
+  if curl -fsS "http://127.0.0.1:${INTERNAL_GATEWAY_PORT}/health" >/dev/null 2>&1; then
+    break
+  fi
+  i=$((i + 1))
+  sleep 0.25
+done
+
+cat >/tmp/zeroclaw_proxy.py <<'PYEOF'
+#!/usr/bin/env python3
+import http.server
+import os
+import socketserver
+import urllib.request
+import urllib.error
+
+PUBLIC_PORT = int(os.environ.get("PORT", os.environ.get("ZEROCLAW_GATEWAY_PORT", "3000")))
+INTERNAL_PORT = int(os.environ.get("ZEROCLAW_INTERNAL_GATEWAY_PORT", "3001"))
+INTERNAL_BASE = f"http://127.0.0.1:{INTERNAL_PORT}"
+PUBLIC_API_KEY = os.environ.get("ZEROCLAW_PUBLIC_API_KEY", "").strip()
+AUTH_REQUIRED = os.environ.get("ZEROCLAW_PUBLIC_PROXY_REQUIRE_AUTH", "false").lower() in ("1", "true", "yes", "on")
+
+
+class ProxyHandler(http.server.BaseHTTPRequestHandler):
+    protocol_version = "HTTP/1.1"
+
+    def _authorized(self):
+        if not AUTH_REQUIRED:
+            return True
+        if not PUBLIC_API_KEY:
+            return False
+        auth = self.headers.get("Authorization", "")
+        api_key = self.headers.get("X-API-Key", "")
+        if auth.startswith("Bearer ") and auth[7:].strip() == PUBLIC_API_KEY:
+            return True
+        if api_key.strip() == PUBLIC_API_KEY:
+            return True
+        return False
+
+    def _proxy(self):
+        if not self._authorized():
+            body = b'{"error":"Unauthorized"}'
+            self.send_response(401)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+
+        content_length = int(self.headers.get("Content-Length") or 0)
+        body = self.rfile.read(content_length) if content_length > 0 else None
+        target = INTERNAL_BASE + self.path
+        req = urllib.request.Request(target, data=body, method=self.command)
+
+        skip_headers = {"host", "content-length", "connection"}
+        for k, v in self.headers.items():
+            if k.lower() in skip_headers:
+                continue
+            req.add_header(k, v)
+
+        try:
+            with urllib.request.urlopen(req, timeout=120) as resp:
+                data = resp.read()
+                self.send_response(resp.getcode())
+                for k, v in resp.getheaders():
+                    kl = k.lower()
+                    if kl in ("transfer-encoding", "connection", "content-length"):
+                        continue
+                    self.send_header(k, v)
+                self.send_header("Content-Length", str(len(data)))
+                self.end_headers()
+                self.wfile.write(data)
+        except urllib.error.HTTPError as e:
+            data = e.read() if hasattr(e, "read") else b""
+            self.send_response(e.code)
+            self.send_header("Content-Type", e.headers.get("Content-Type", "application/json"))
+            self.send_header("Content-Length", str(len(data)))
+            self.end_headers()
+            if data:
+                self.wfile.write(data)
+        except Exception as exc:
+            msg = ('{"error":"proxy_error","detail":"%s"}' % str(exc).replace('"', "'")).encode("utf-8")
+            self.send_response(502)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(msg)))
+            self.end_headers()
+            self.wfile.write(msg)
+
+    def do_GET(self):
+        self._proxy()
+
+    def do_POST(self):
+        self._proxy()
+
+    def do_PUT(self):
+        self._proxy()
+
+    def do_PATCH(self):
+        self._proxy()
+
+    def do_DELETE(self):
+        self._proxy()
+
+    def log_message(self, fmt, *args):
+        return
+
+
+class ThreadingServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
+    daemon_threads = True
+    allow_reuse_address = True
+
+
+if __name__ == "__main__":
+    server = ThreadingServer(("0.0.0.0", PUBLIC_PORT), ProxyHandler)
+    print(f"ZeroClaw public proxy listening on http://0.0.0.0:{PUBLIC_PORT} -> {INTERNAL_BASE}")
+    server.serve_forever()
+PYEOF
+
+echo "Starting public proxy on :${GATEWAY_PORT}..."
+python3 /tmp/zeroclaw_proxy.py &
+PROXY_PID=$!
+
+cleanup() {
+  kill "${PROXY_PID}" "${ZEROCLAW_PID}" >/dev/null 2>&1 || true
+}
+trap cleanup INT TERM EXIT
+
+wait "${ZEROCLAW_PID}"
