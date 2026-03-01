@@ -15,6 +15,13 @@
       "when": 1767891830851,
       "tag": "0001_add_webhooks_analytics",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1772382500000,
+      "tag": "0004_add_system_configuration_tables",
+      "breakpoints": true
     }
   ]
 }
