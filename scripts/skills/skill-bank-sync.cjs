@@ -63,9 +63,13 @@ function detectOriginLabel(skillDir, repoRoot, home) {
   if (p.startsWith(`${hm}/.codex/`)) return { llm: 'codex', scope: 'global' };
   if (p.startsWith(`${hm}/.claude/`)) return { llm: 'claude', scope: 'global' };
   if (p.startsWith(`${hm}/.gemini/`)) return { llm: 'gemini', scope: 'global' };
+  if (p.startsWith(`${hm}/.kilo/`)) return { llm: 'kilo', scope: 'global' };
   if (p.startsWith(`${rr}/.agent/`)) return { llm: 'project-agent', scope: 'project' };
   if (p.startsWith(`${rr}/.claude/`)) return { llm: 'claude', scope: 'project' };
   if (p.startsWith(`${rr}/.gemini/`)) return { llm: 'gemini', scope: 'project' };
+  if (p.startsWith(`${rr}/.kilo/`)) return { llm: 'kilo', scope: 'project' };
+  if (p.startsWith(`${rr}/apps/openclaw/skills/`)) return { llm: 'openclaw', scope: 'project' };
+  if (p.startsWith(`${rr}/apps/picoclaw-overseer/`)) return { llm: 'picoclaw', scope: 'project' };
   return { llm: 'unknown', scope: 'other' };
 }
 
@@ -83,12 +87,27 @@ function walkForSkillFiles(root, acc) {
     if (entry.isDirectory()) {
       walkForSkillFiles(full, acc);
     } else if (entry.isFile() && entry.name === 'SKILL.md') {
-      acc.push(full);
+      acc.push({ file: full, format: 'folder' });
     }
   }
 }
 
-function copySkillSnapshot(destRoot, sourceSkillDir) {
+function collectFlatSkillFiles(root, acc) {
+  if (!fs.existsSync(root)) return;
+  let entries = [];
+  try {
+    entries = fs.readdirSync(root, { withFileTypes: true });
+  } catch {
+    return;
+  }
+  for (const entry of entries) {
+    if (!entry.isFile()) continue;
+    if (!entry.name.toLowerCase().endsWith('.md')) continue;
+    acc.push({ file: path.join(root, entry.name), format: 'flat' });
+  }
+}
+
+function copyFolderSkillSnapshot(destRoot, sourceSkillDir) {
   ensureDir(destRoot);
   const items = ['SKILL.md', 'agents', 'references', 'scripts', 'assets'];
   for (const item of items) {
@@ -105,6 +124,12 @@ function copySkillSnapshot(destRoot, sourceSkillDir) {
   }
 }
 
+function copyFlatSkillSnapshot(destRoot, sourceFile) {
+  ensureDir(destRoot);
+  const dst = path.join(destRoot, path.basename(sourceFile));
+  fs.copyFileSync(sourceFile, dst);
+}
+
 function main() {
   const args = parseArgs(process.argv);
   const repoRoot = process.cwd();
@@ -112,25 +137,34 @@ function main() {
   const outRoot = path.resolve(repoRoot, args.out);
   const snapshotsRoot = path.join(outRoot, 'snapshots');
 
-  const sourceRoots = [
+  const folderSkillRoots = [
     path.join(home, '.codex', 'skills'),
+    path.join(repoRoot, '.agent', 'skills'),
+    path.join(repoRoot, 'apps', 'openclaw', 'skills'),
+    path.join(repoRoot, 'apps', 'picoclaw-overseer', 'workspace', 'skills'),
+  ];
+  const flatSkillRoots = [
     path.join(home, '.claude', 'skills'),
     path.join(home, '.gemini', 'skills'),
-    path.join(repoRoot, '.agent', 'skills'),
+    path.join(home, '.kilo', 'skills'),
     path.join(repoRoot, '.claude', 'skills'),
     path.join(repoRoot, '.gemini', 'skills'),
+    path.join(repoRoot, '.kilo', 'skills'),
   ];
 
   const skillFiles = [];
-  for (const root of sourceRoots) walkForSkillFiles(root, skillFiles);
+  for (const root of folderSkillRoots) walkForSkillFiles(root, skillFiles);
+  for (const root of flatSkillRoots) collectFlatSkillFiles(root, skillFiles);
+  const sourceRoots = [...folderSkillRoots, ...flatSkillRoots];
 
   const records = [];
-  for (const skillFile of skillFiles) {
+  for (const entry of skillFiles) {
+    const skillFile = entry.file;
     const content = safeRead(skillFile);
     if (!content) continue;
-    const skillDir = path.dirname(skillFile);
+    const skillDir = entry.format === 'folder' ? path.dirname(skillFile) : skillFile;
     const meta = parseFrontmatter(content);
-    const name = meta.name || path.basename(skillDir);
+    const name = meta.name || path.basename(skillDir, path.extname(skillDir));
     const description = meta.description || '';
     const hash = sha256(content);
     const origin = detectOriginLabel(skillDir, repoRoot, home);
@@ -150,13 +184,15 @@ function main() {
       hasReferences: fs.existsSync(path.join(skillDir, 'references')),
       hasScripts: fs.existsSync(path.join(skillDir, 'scripts')),
       hasAssets: fs.existsSync(path.join(skillDir, 'assets')),
+      format: entry.format,
       updatedAt: fs.statSync(skillFile).mtime.toISOString(),
     };
     records.push(record);
 
     if (args.snapshots) {
       const snapDir = path.join(snapshotsRoot, origin.llm, `${id}-${hash.slice(0, 8)}`);
-      copySkillSnapshot(snapDir, skillDir);
+      if (entry.format === 'folder') copyFolderSkillSnapshot(snapDir, skillDir);
+      else copyFlatSkillSnapshot(snapDir, skillFile);
       record.snapshotPath = path.relative(repoRoot, snapDir);
     }
   }
