@@ -34,8 +34,9 @@ const providerDefaults: Record<
     accountPath: '.tokens.account_id',
   },
   kilo: {
-    primaryModel: 'kilo/z-ai/glm-5:free',
-    fallbackModels: 'kilo/minimax/minimax-m2.5:free',
+    primaryModel: 'kilo/auto-free',
+    fallbackModels:
+      'minimax/minimax-m2.5:free,moonshotai/kimi-k2.5:free,arcee-ai/trinity-large-preview:free,openrouter/free,stepfun/step-3.5-flash:free,corethink:free',
     accessPath: '.tokens.access_token',
     refreshPath: '.tokens.refresh_token',
     accountPath: '.tokens.account_id',

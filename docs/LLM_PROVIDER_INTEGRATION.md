@@ -218,7 +218,7 @@ opencode serve --cors http://localhost:5173
 ### PicoClaw & Kilo Integration
 
 PicoClaw has native support for Kilo, allowing you to run powerful agents
-completely for free using the `z-ai/glm-5:free` model.
+completely for free using `kilo/auto-free` with explicit fallback options.
 
 **PicoClaw Configuration (`~/.picoclaw/config.json`)**:
 
@@ -227,7 +227,7 @@ completely for free using the `z-ai/glm-5:free` model.
   "agents": {
     "defaults": {
       "provider": "kilo",
-      "model": "z-ai/glm-5:free"
+      "model": "kilo/auto-free"
     }
   },
   "providers": {
@@ -263,12 +263,25 @@ completely for free using the `z-ai/glm-5:free` model.
   "agents": {
     "defaults": {
       "model": {
-        "primary": "kilo/z-ai/glm-5:free"
+        "primary": "kilo/auto-free"
       }
     }
   }
 }
 ```
+
+**Recommended free fallback set (slug syntax):**
+
+- `minimax/minimax-m2.5:free`
+- `moonshotai/kimi-k2.5:free`
+- `arcee-ai/trinity-large-preview:free`
+- `openrouter/free`
+- `stepfun/step-3.5-flash:free`
+- `corethink:free`
+
+**CSV form for env/UI fields:**
+
+`minimax/minimax-m2.5:free,moonshotai/kimi-k2.5:free,arcee-ai/trinity-large-preview:free,openrouter/free,stepfun/step-3.5-flash:free,corethink:free`
 
 ---
 
