@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { Plus, CircleNotch, Trash } from "@phosphor-icons/react";
 import Workspace from "@/models/workspace";
@@ -70,19 +70,19 @@ export default function ThreadContainer({ workspace }) {
             window.removeEventListener("keyup", handleKeyUp);
         };
     }, []);
-    const toggleForDeletion = (id) => {
+    const toggleForDeletion = useCallback((id) => {
         setThreads((prev) => prev.map((t) => {
             if (t.id !== id)
                 return t;
             return Object.assign(Object.assign({}, t), { deleted: !t.deleted });
         }));
-    };
+    }, []);
     const handleDeleteAll = async () => {
         const slugs = threads.filter((t) => t.deleted === true).map((t) => t.slug);
         await Workspace.threads.deleteBulk(workspace.slug, slugs);
         setThreads((prev) => prev.filter((t) => !t.deleted));
     };
-    function removeThread(threadId) {
+    const removeThread = useCallback((threadId) => {
         setThreads((prev) => prev.map((_t) => {
             if (_t.id !== threadId)
                 return _t;
@@ -91,7 +91,7 @@ export default function ThreadContainer({ workspace }) {
         setTimeout(() => {
             setThreads((prev) => prev.filter((t) => !t.deleted));
         }, 500);
-    }
+    }, []);
     if (loading) {
         return (<div className={STYLES.loadingContainer}>
         <p className={STYLES.loadingText}>loading threads....</p>

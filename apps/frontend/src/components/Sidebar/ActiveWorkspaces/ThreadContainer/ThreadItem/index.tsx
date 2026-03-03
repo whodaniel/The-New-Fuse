@@ -25,7 +25,8 @@ const STYLES = {
     deleteButton: "hover:bg-red-500/20 text-slate-300 light:text-theme-text-primary hover:text-red-100",
 };
 const THREAD_CALLOUT_DETAIL_WIDTH = 26;
-export default function ThreadItem({ idx, activeIdx, isActive, workspace, thread, onRemove, toggleMarkForDeletion, hasNext, ctrlPressed = false, }) {
+// ⚡ Bolt: Wrapped in React.memo to prevent unnecessary re-renders when parent components update but thread data is unchanged.
+const ThreadItem = React.memo(({ idx, activeIdx, isActive, workspace, thread, onRemove, toggleMarkForDeletion, hasNext, ctrlPressed = false, }) => {
     const { slug } = useParams();
     const optionsContainer = useRef(null);
     const [showOptions, setShowOptions] = useState(false);
@@ -64,7 +65,10 @@ export default function ThreadItem({ idx, activeIdx, isActive, workspace, thread
           </div>)}
       </div>
     </div>);
-}
+});
+
+export default ThreadItem;
+
 function OptionsMenu({ containerRef, workspace, thread, onRemove, close }) {
     const menuRef = useRef(null);
     const outsideClick = (e) => {
