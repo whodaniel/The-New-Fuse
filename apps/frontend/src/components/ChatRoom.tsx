@@ -33,6 +33,38 @@ interface ChatRoomProps {
   title?: string;
 }
 
+// ⚡ Bolt: Wrapped MessageItem in React.memo to prevent O(n) re-renders
+// of the entire message list on every keystroke in the chat input.
+// This significantly improves typing performance in long chat rooms.
+const MessageItem = React.memo<{ message: Message; isSelf: boolean; sender?: Member }>(
+  ({ message, isSelf, sender }) => {
+    return (
+      <div className={`flex items-start gap-3 my-4 ${isSelf ? 'flex-row-reverse' : ''}`}>
+        <Avatar>
+          <AvatarImage src={sender?.avatar} alt={sender?.name} />
+          <AvatarFallback>{sender?.name?.charAt(0)}</AvatarFallback>
+        </Avatar>
+        <div className={`flex flex-col gap-1 ${isSelf ? 'items-end' : ''}`}>
+          <div
+            className={`rounded-lg p-3 ${isSelf ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}
+          >
+            <p className="font-semibold text-sm">{sender?.name}</p>
+            {message.type === MessageType.TEXT && <p className="text-sm">{message.content}</p>}
+            {message.type === MessageType.MARKDOWN && (
+              <MarkdownRenderer content={message.content} />
+            )}
+            {/* Add other message types here */}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            {formatDistanceToNow(new Date(message.timestamp), { addSuffix: true })}
+          </p>
+        </div>
+      </div>
+    );
+  }
+);
+MessageItem.displayName = 'MessageItem';
+
 export const ChatRoom: React.FC<ChatRoomProps> = ({ roomId, title }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
@@ -133,38 +165,6 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({ roomId, title }) => {
     }
   };
 
-  const renderMessage = (message: Message) => {
-    const isSelf = message.senderId === user?.id;
-    const sender = members.find((m) => m.id === message.senderId);
-
-    return (
-      <div
-        key={message.id}
-        className={`flex items-start gap-3 my-4 ${isSelf ? 'flex-row-reverse' : ''}`}
-      >
-        <Avatar>
-          <AvatarImage src={sender?.avatar} alt={sender?.name} />
-          <AvatarFallback>{sender?.name?.charAt(0)}</AvatarFallback>
-        </Avatar>
-        <div className={`flex flex-col gap-1 ${isSelf ? 'items-end' : ''}`}>
-          <div
-            className={`rounded-lg p-3 ${isSelf ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}
-          >
-            <p className="font-semibold text-sm">{sender?.name}</p>
-            {message.type === MessageType.TEXT && <p className="text-sm">{message.content}</p>}
-            {message.type === MessageType.MARKDOWN && (
-              <MarkdownRenderer content={message.content} />
-            )}
-            {/* Add other message types here */}
-          </div>
-          <p className="text-xs text-muted-foreground">
-            {formatDistanceToNow(new Date(message.timestamp), { addSuffix: true })}
-          </p>
-        </div>
-      </div>
-    );
-  };
-
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -192,7 +192,13 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({ roomId, title }) => {
       <CardContent className="flex-1 overflow-hidden">
         <ScrollArea className="h-full">
           <div className="p-4">
-            {messages.map(renderMessage)}
+            {messages.map((message) => {
+              const isSelf = message.senderId === user?.id;
+              const sender = members.find((m) => m.id === message.senderId);
+              return (
+                <MessageItem key={message.id} message={message} isSelf={isSelf} sender={sender} />
+              );
+            })}
             <div ref={messagesEndRef} />
           </div>
         </ScrollArea>
