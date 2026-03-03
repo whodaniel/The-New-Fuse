@@ -1163,30 +1163,20 @@ export default function ComprehensiveRouter() {
               {/* Remaining Specialized Settings Routes */}
               <Route
                 path="/workspace-settings/llm-selection"
-                element={
-                  <RequireAuth>
-                    <WorkspaceLLMSelectionPage />
-                  </RequireAuth>
-                }
+                element={<WorkspaceLLMSelectionPage />}
               />
               <Route
                 path="/workspace-settings/chat-model"
-                element={
-                  <RequireAuth>
-                    <WorkspaceLLMSelectionPage />
-                  </RequireAuth>
-                }
+                element={<WorkspaceLLMSelectionPage />}
               />
               <Route
                 path="/workspace-settings/agent-model"
                 element={
-                  <RequireAuth>
-                    <AgentModelSelectionPage
-                      provider="default"
-                      workspace={{ agentModel: 'default' }}
-                      setHasChanges={() => {}}
-                    />
-                  </RequireAuth>
+                  <AgentModelSelectionPage
+                    provider="default"
+                    workspace={{ agentModel: 'default' }}
+                    setHasChanges={() => {}}
+                  />
                 }
               />
 
@@ -1211,14 +1201,7 @@ export default function ComprehensiveRouter() {
               />
 
               {/* Main workspace page */}
-              <Route
-                path="/main"
-                element={
-                  <RequireAuth>
-                    <MainPage />
-                  </RequireAuth>
-                }
-              />
+              <Route path="/main" element={<MainPage />} />
 
               {/* Live View - Real-time AI browser activity */}
               <Route
@@ -1248,37 +1231,18 @@ export default function ComprehensiveRouter() {
                 path="/admin/layout"
                 element={<LazyPage name="Admin Layout" path="/admin/layout" />}
               />
-              <Route
-                path="/multi-agent-chat-demo"
-                element={
-                  <RequireAuth>
-                    <MultiAgentChat />
-                  </RequireAuth>
-                }
-              />
+              <Route path="/multi-agent-chat-demo" element={<MultiAgentChat />} />
               <Route
                 path="/api/admin/database"
-                element={
-                  <RequirePermission roles={['SUPER_ADMIN']}>
-                    <LazyPage name="Admin Database API" path="/api/admin/database" />
-                  </RequirePermission>
-                }
+                element={<LazyPage name="Admin Database API" path="/api/admin/database" />}
               />
               <Route
                 path="/api/admin/features"
-                element={
-                  <RequirePermission roles={['SUPER_ADMIN']}>
-                    <LazyPage name="Admin Features API" path="/api/admin/features" />
-                  </RequirePermission>
-                }
+                element={<LazyPage name="Admin Features API" path="/api/admin/features" />}
               />
               <Route
                 path="/package/dashboard"
-                element={
-                  <RequireAuth>
-                    <LazyPage name="Package Dashboard" path="/package/dashboard" />
-                  </RequireAuth>
-                }
+                element={<LazyPage name="Package Dashboard" path="/package/dashboard" />}
               />
               <Route
                 path="/package/login"
@@ -1286,38 +1250,26 @@ export default function ComprehensiveRouter() {
               />
               <Route
                 path="/package/agents"
-                element={
-                  <RequireAuth>
-                    <LazyPage name="Package Agents" path="/package/agents" />
-                  </RequireAuth>
-                }
+                element={<LazyPage name="Package Agents" path="/package/agents" />}
               />
               <Route
                 path="/package/workflows"
-                element={
-                  <RequireAuth>
-                    <LazyPage name="Package Workflows" path="/package/workflows" />
-                  </RequireAuth>
-                }
+                element={<LazyPage name="Package Workflows" path="/package/workflows" />}
               />
               <Route
                 path="/profile"
                 element={
-                  <RequireAuth>
-                    <Suspense fallback={<LoadingFallback name="User Profile" />}>
-                      <UserProfilePage />
-                    </Suspense>
-                  </RequireAuth>
+                  <Suspense fallback={<LoadingFallback name="User Profile" />}>
+                    <UserProfilePage />
+                  </Suspense>
                 }
               />
               <Route
                 path="/user/profile"
                 element={
-                  <RequireAuth>
-                    <Suspense fallback={<LoadingFallback name="User Profile" />}>
-                      <UserProfilePage />
-                    </Suspense>
-                  </RequireAuth>
+                  <Suspense fallback={<LoadingFallback name="User Profile" />}>
+                    <UserProfilePage />
+                  </Suspense>
                 }
               />
 

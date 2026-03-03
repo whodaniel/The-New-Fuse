@@ -1,56 +1,46 @@
-import { render, screen, waitFor } from '@testing-library/react';
-import React, { Suspense } from 'react';
-import { MemoryRouter } from 'react-router-dom';
-import { vi } from 'vitest';
-import ComprehensiveRouter from '../ComprehensiveRouter';
-import { AuthProvider } from '../providers/AuthProvider';
+import { AuthProvider } from '@/providers/AuthProvider';
+import { render, screen } from '@testing-library/react';
+import React from 'react';
+import { BrowserRouter, MemoryRouter } from 'react-router-dom';
+import { AppRoutes } from './index';
 
-// Mock Firebase
-vi.mock('../lib/firebase', () => ({
-  auth: {
-    currentUser: null,
-    onAuthStateChanged: vi.fn((cb) => {
-        // Simulate loading state or unauthenticated
-        cb(null);
-        return () => {};
-    }),
-  },
-  db: {},
-}));
+const MockProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <BrowserRouter>
+    <AuthProvider>{children}</AuthProvider>
+  </BrowserRouter>
+);
 
-// Mock AuthProvider if needed, but we want to test with it if possible.
-// However, AuthProvider likely uses firebase/auth directly.
-// Let's rely on the mock above.
-
-describe('ComprehensiveRouter', () => {
-  test('renders without crashing', async () => {
+describe('AppRoutes', () => {
+  test('renders landing page at root route', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <AuthProvider>
-           <Suspense fallback={<div>Loading...</div>}>
-            <ComprehensiveRouter />
-          </Suspense>
+          <AppRoutes />
         </AuthProvider>
       </MemoryRouter>
     );
-    
-    // It should render something. The layout might render "Loading..." due to Suspense.
-    // Or the "SmartNavigation".
-    // Let's just check if it doesn't throw.
-    expect(document.body).toBeInTheDocument();
+    expect(screen.getByText(/welcome to the new fuse/i)).toBeInTheDocument();
   });
-  
-  test('renders analytics route (protected) - should not crash', async () => {
-      // We are not authenticated in the mock, so it might redirect to login or show nothing.
-      render(
-      <MemoryRouter initialEntries={['/analytics']}>
+
+  test('redirects to login for protected routes when not authenticated', () => {
+    render(
+      <MemoryRouter initialEntries={['/dashboard']}>
         <AuthProvider>
-           <Suspense fallback={<div>Loading...</div>}>
-            <ComprehensiveRouter />
-          </Suspense>
+          <AppRoutes />
         </AuthProvider>
       </MemoryRouter>
     );
-     expect(document.body).toBeInTheDocument();
+    expect(screen.getByTestId('login-form')).toBeInTheDocument();
+  });
+
+  test('renders not found for invalid routes', () => {
+    render(
+      <MemoryRouter initialEntries={['/invalid-route']}>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </MemoryRouter>
+    );
+    expect(screen.getByText(/page not found/i)).toBeInTheDocument();
   });
 });

@@ -67,7 +67,6 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
     icon: Cpu,
     section: 'forge',
     access: 'authenticated',
-    requiredRoles: ['SUPER_ADMIN'],
   },
   { name: 'Agent Fleet', href: '/agents', icon: Bot, section: 'forge', access: 'authenticated' },
   {
@@ -118,7 +117,6 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
     icon: ScrollText,
     section: 'apex',
     access: 'authenticated',
-    requiredRoles: ['SUPER_ADMIN'],
   },
   {
     name: 'Admin',
