@@ -6,7 +6,15 @@ import { NextFunction, Request, Response } from 'express';
 @Injectable()
 export class RequestLoggerMiddleware implements NestMiddleware {
   private logger = new Logger('HTTP');
-  private jwtService = new JwtService({ secret: process.env.JWT_SECRET || 'dev-secret' });
+  private jwtService: JwtService;
+
+  constructor() {
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      throw new Error('JWT_SECRET must be defined in environment variables');
+    }
+    this.jwtService = new JwtService({ secret });
+  }
 
   async use(req: Request, res: Response, next: NextFunction) {
     const { method, originalUrl, ip } = req;

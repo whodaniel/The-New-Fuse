@@ -76,14 +76,19 @@ import { UsersModule } from './users/users.module';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        secret:
-          configService.get<string>('JWT_SECRET') || 'development-jwt-secret-change-in-production',
-        signOptions: {
-          expiresIn: (configService.get<string>('JWT_EXPIRES_IN') || '7d') as StringValue,
-          issuer: configService.get<string>('JWT_ISSUER') || 'the-new-fuse',
-        },
-      }),
+      useFactory: (configService: ConfigService) => {
+        const secret = configService.get<string>('JWT_SECRET');
+        if (!secret) {
+          throw new Error('JWT_SECRET must be defined in environment variables');
+        }
+        return {
+          secret,
+          signOptions: {
+            expiresIn: (configService.get<string>('JWT_EXPIRES_IN') || '7d') as StringValue,
+            issuer: configService.get<string>('JWT_ISSUER') || 'the-new-fuse',
+          },
+        };
+      },
     }),
     // Database module - Drizzle ORM
     DrizzleModule.forRootAsync(),
