@@ -1,12 +1,26 @@
-import { Body, Controller, Headers, Post, Req, UnauthorizedException, Logger } from '@nestjs/common';
-import { PayPalService } from './paypal.service';
+import {
+  Body,
+  Controller,
+  Headers,
+  Logger,
+  Post,
+  Req,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { UseGuards } from '@nestjs/common';
 import * as crypto from 'crypto';
+import { PayPalService } from './paypal.service';
 
 @Controller('billing/paypal')
 export class PayPalController {
   private readonly logger = new Logger(PayPalController.name);
+  private readonly trustedPayPalCertHosts = new Set([
+    'api.paypal.com',
+    'api-m.paypal.com',
+    'api.sandbox.paypal.com',
+    'api-m.sandbox.paypal.com',
+  ]);
 
   constructor(private readonly paypalService: PayPalService) {}
 
@@ -18,7 +32,7 @@ export class PayPalController {
       this.logger.warn('Invalid PayPal webhook signature - rejecting');
       throw new UnauthorizedException('Invalid webhook signature');
     }
-    
+
     await this.paypalService.handleWebhook(headers, body);
     return { received: true };
   }
@@ -49,10 +63,15 @@ export class PayPalController {
       const certUrl = headers['paypal-cert-url'];
       const authAlgo = headers['paypal-auth-algo'] || 'SHA256';
       const transmissionSig = headers['paypal-transmission-sig'];
-      
+
       // Required headers check
       if (!transmissionId || !transmissionTime || !certUrl || !transmissionSig) {
         this.logger.error('Missing required PayPal webhook headers');
+        return false;
+      }
+
+      if (!this.isTrustedPayPalCertUrl(certUrl)) {
+        this.logger.error(`Untrusted PayPal certificate URL: ${certUrl}`);
         return false;
       }
 
@@ -66,16 +85,16 @@ export class PayPalController {
 
       // Construct the expected signature string
       const expectedSig = `${transmissionId}|${transmissionTime}|${process.env.PAYPAL_WEBHOOK_ID}|${JSON.stringify(body)}`;
-      
+
       // Verify signature using the certificate's public key
       const verifier = crypto.createVerify('RSA-SHA256');
       verifier.update(expectedSig);
-      
+
       // Extract public key from certificate and verify
       // For production, you may want to cache certificates
       const publicKey = this.extractPublicKeyFromCert(cert);
       const isValid = verifier.verify(publicKey, transmissionSig, 'base64');
-      
+
       return isValid;
     } catch (error) {
       this.logger.error('Error verifying PayPal webhook signature:', error);
@@ -86,5 +105,17 @@ export class PayPalController {
   private extractPublicKeyFromCert(cert: string): string {
     // The certificate is in PEM format, we can use it directly for verification
     return cert;
+  }
+
+  private isTrustedPayPalCertUrl(rawUrl: string): boolean {
+    try {
+      const parsed = new URL(rawUrl);
+      if (parsed.protocol !== 'https:') return false;
+      return (
+        this.trustedPayPalCertHosts.has(parsed.hostname) || parsed.hostname.endsWith('.paypal.com')
+      );
+    } catch {
+      return false;
+    }
   }
 }

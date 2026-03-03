@@ -63,20 +63,21 @@ export class ProxyService {
   async proxyRequest(request: ProxyRequest): Promise<ProxyResponse> {
     const startTime = Date.now();
     const { url, method = 'GET', headers = {}, body, config = {} } = request;
+    let safeUrl = url;
 
     try {
       // Rate limiting check
       await this.checkRateLimit(this.getClientId(request));
 
       // Security validation
-      await this.validateProxyRequest(request);
+      safeUrl = await this.validateProxyRequest(request);
 
       this.monitoring.recordMetric('proxy_request', 1, { method, url });
 
       // Prepare request configuration
       const axiosConfig = {
         method: method.toLowerCase() as any,
-        url,
+        url: safeUrl,
         headers: {
           'User-Agent': config.userAgent || 'Mozilla/5.0 (compatible; TheNewFuse-Proxy/1.0)',
           ...this.sanitizeHeaders(headers),
@@ -107,7 +108,7 @@ export class ProxyService {
         body: response.data,
         contentType: contentType.split(';')[0].trim(),
         metadata: {
-          url,
+          url: safeUrl,
           method,
           executionTime: Date.now() - startTime,
           timestamp: new Date(),
@@ -141,7 +142,7 @@ export class ProxyService {
   /**
    * Validate proxy request for security
    */
-  private async validateProxyRequest(request: ProxyRequest): Promise<void> {
+  private async validateProxyRequest(request: ProxyRequest): Promise<string> {
     const { url, method, body } = request;
 
     // Validate URL
@@ -181,6 +182,8 @@ export class ProxyService {
     if (body && Buffer.byteLength(body, 'utf8') > (this.securityPolicy.maxFileSize || 0)) {
       throw new Error('Request body too large');
     }
+
+    return parsedUrl.toString();
   }
 
   /**
