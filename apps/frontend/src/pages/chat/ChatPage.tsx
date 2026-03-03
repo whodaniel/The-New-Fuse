@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import ChatMessageItem from './ChatMessageItem';
 
 // Context for shared state
 interface ChatContextType {
@@ -470,13 +471,6 @@ function ChatPage() {
     }
   };
 
-  const formatTimestamp = (timestamp: string) => {
-    return new Date(timestamp).toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
   if (loading) {
     return (
       <div className="p-8 max-w-7xl mx-auto min-h-screen bg-background text-foreground">
@@ -670,59 +664,7 @@ function ChatPage() {
             {/* Messages Area */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg shadow-sm ${
-                      message.sender === 'user'
-                        ? 'bg-primary text-primary-foreground'
-                        : message.sender === 'system'
-                          ? 'bg-muted text-muted-foreground'
-                          : 'bg-secondary text-secondary-foreground'
-                    }`}
-                  >
-                    {message.sender === 'agent' && (
-                      <div className="flex items-center space-x-2 mb-1">
-                        <span className="text-lg">{message.agentAvatar}</span>
-                        <span className="text-xs font-medium opacity-75">{message.agentName}</span>
-                      </div>
-                    )}
-                    {message.sender === 'system' && (
-                      <div className="text-xs font-medium opacity-75 mb-1">System Message</div>
-                    )}
-                    <div className="whitespace-pre-wrap text-sm leading-relaxed">
-                      {message.content.includes('```') ? (
-                        <div className="space-y-2">
-                          {message.content.split('```').map((part, index) =>
-                            index % 2 === 0 ? (
-                              <div key={index}>{part}</div>
-                            ) : (
-                              <div
-                                key={index}
-                                className="bg-black/80 text-green-400 p-2 rounded text-xs font-mono overflow-x-auto my-1"
-                              >
-                                {part}
-                              </div>
-                            )
-                          )}
-                        </div>
-                      ) : (
-                        message.content
-                      )}
-                    </div>
-                    <div
-                      className={`text-xs mt-1 text-right ${
-                        message.sender === 'user'
-                          ? 'text-primary-foreground/70'
-                          : 'text-muted-foreground'
-                      }`}
-                    >
-                      {formatTimestamp(message.timestamp)}
-                    </div>
-                  </div>
-                </div>
+                <ChatMessageItem key={message.id} message={message} />
               ))}
 
               {isGenerating && (

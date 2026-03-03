@@ -13,9 +13,10 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
+    // Include both .test.tsx and .spec.tsx patterns
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     coverage: {
-      provider: 'v8',  // Explicitly set the provider
+      provider: 'v8',
       enabled: true,
       reporter: ['text', 'json', 'html'],
       exclude: [
