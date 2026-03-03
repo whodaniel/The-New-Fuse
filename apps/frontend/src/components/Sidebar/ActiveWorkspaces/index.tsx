@@ -71,7 +71,7 @@ export default function ActiveWorkspaces() {
                         e.preventDefault();
                         setSelectedWs(workspace);
                         showModal();
-                    }} className={STYLES.actionButton}>
+                    }} className={STYLES.actionButton} aria-label="Manage workspace" title="Manage workspace">
                         <UploadSimple className="h-[20px] w-[20px]" weight="bold"/>
                       </button>
                       <Link to={isInWorkspaceSettings
