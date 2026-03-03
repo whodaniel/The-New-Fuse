@@ -7,8 +7,9 @@ import { EventBus } from '../events/event-bus.service';
 import { IdentityService } from '../services/identity.service';
 import { ConfigService } from '@nestjs/config';
 import { UnauthorizedException } from '@nestjs/common';
-import { verifyMessage } from 'viem';
 import { drizzleUserRepository } from '@the-new-fuse/database';
+import { SiweMessage } from 'siwe';
+import { TokenBlacklistService } from './token-blacklist.service';
 
 // We need to mock the module that exports drizzleUserRepository
 jest.mock('@the-new-fuse/database', () => ({
@@ -20,11 +21,8 @@ jest.mock('@the-new-fuse/database', () => ({
   },
 }));
 
-jest.mock('viem', () => ({
-  verifyMessage: jest.fn(),
-  // verifyMessage is named export, we mock it.
-  // Address and Hex are types so they don't need mocking but strict ESM might complain if not exported.
-  // However, types are erased at runtime so it should be fine.
+jest.mock('siwe', () => ({
+  SiweMessage: jest.fn(),
 }));
 
 // Mock firebase-admin
@@ -42,13 +40,9 @@ jest.mock('firebase-admin', () => ({
 
 describe('AuthService Security', () => {
   let service: AuthService;
-  let mockVerifyMessage: jest.Mock;
 
   beforeEach(async () => {
     mockVerifyIdToken.mockReset();
-    // Reset verifyMessage mock
-    mockVerifyMessage = verifyMessage as unknown as jest.Mock;
-    mockVerifyMessage.mockClear();
 
     // Reset drizzle mock
     (drizzleUserRepository.findByWalletAddress as jest.Mock).mockReset();
@@ -79,6 +73,10 @@ describe('AuthService Security', () => {
           provide: ConfigService,
           useValue: { get: jest.fn() },
         },
+        {
+          provide: TokenBlacklistService,
+          useValue: { blacklistToken: jest.fn(), isBlacklisted: jest.fn() },
+        },
       ],
     }).compile();
 
@@ -89,8 +87,11 @@ describe('AuthService Security', () => {
     jest.clearAllMocks();
   });
 
-  it('should throw UnauthorizedException if signature verification fails (returns false)', async () => {
-    mockVerifyMessage.mockResolvedValue(false);
+  it('should throw UnauthorizedException if signature verification fails (success is false)', async () => {
+    (SiweMessage as jest.Mock).mockImplementation(() => ({
+      verify: jest.fn().mockResolvedValue({ success: false }),
+      address: '0x123',
+    }));
 
     await expect(
       service.findOrCreateUnstoppableDomainsUser(
@@ -100,16 +101,13 @@ describe('AuthService Security', () => {
         'bad_signature'
       )
     ).rejects.toThrow(UnauthorizedException);
-
-    expect(mockVerifyMessage).toHaveBeenCalledWith({
-      address: '0x123',
-      message: 'message',
-      signature: 'bad_signature',
-    });
   });
 
   it('should throw UnauthorizedException if signature verification throws error', async () => {
-    mockVerifyMessage.mockRejectedValue(new Error('Some error'));
+    (SiweMessage as jest.Mock).mockImplementation(() => ({
+      verify: jest.fn().mockRejectedValue(new Error('Some error')),
+      address: '0x123',
+    }));
 
     await expect(
       service.findOrCreateUnstoppableDomainsUser(
@@ -121,8 +119,28 @@ describe('AuthService Security', () => {
     ).rejects.toThrow(UnauthorizedException);
   });
 
-  it('should proceed if signature is valid', async () => {
-    mockVerifyMessage.mockResolvedValue(true);
+  it('should throw UnauthorizedException if address mismatch', async () => {
+    (SiweMessage as jest.Mock).mockImplementation(() => ({
+      verify: jest.fn().mockResolvedValue({ success: true }),
+      address: '0x456', // DIFFERENT ADDRESS
+    }));
+
+    await expect(
+      service.findOrCreateUnstoppableDomainsUser(
+        'domain.crypto',
+        '0x123',
+        'message',
+        'good_signature'
+      )
+    ).rejects.toThrow(UnauthorizedException);
+  });
+
+  it('should proceed if signature is valid and addresses match', async () => {
+    const mockVerify = jest.fn().mockResolvedValue({ success: true });
+    (SiweMessage as jest.Mock).mockImplementation(() => ({
+      verify: mockVerify,
+      address: '0x123', // SAME ADDRESS
+    }));
 
     // Mock user repository to return a user so we don't hit create logic
     (drizzleUserRepository.findByWalletAddress as jest.Mock).mockResolvedValue({
@@ -142,14 +160,23 @@ describe('AuthService Security', () => {
 
     expect(result).toBeDefined();
     expect(result.id).toBe('user1');
-    expect(mockVerifyMessage).toHaveBeenCalledWith({
-      address: '0x123',
-      message: 'message',
+    expect(mockVerify).toHaveBeenCalledWith({
       signature: 'good_signature',
     });
   });
 
   describe('validateFirebaseToken', () => {
+    let mockAdminApp: any;
+    beforeEach(() => {
+        // Since we mocked firebase-admin with apps: [], we need to patch it for tests that require apps.length > 0
+        mockAdminApp = require('firebase-admin');
+        mockAdminApp.apps = [{}];
+    });
+
+    afterEach(() => {
+        mockAdminApp.apps = [];
+    });
+
     it('should throw UnauthorizedException if token is invalid', async () => {
       mockVerifyIdToken.mockRejectedValue(new Error('Invalid token'));
 

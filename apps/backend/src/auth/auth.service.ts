@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { drizzleUserRepository } from '@the-new-fuse/database';
 import * as admin from 'firebase-admin';
 import { Address, Hex, verifyMessage } from 'viem';
+import { SiweMessage } from 'siwe';
 import { EventBus } from '../events/event-bus.service';
 import { IdentityService } from '../services/identity.service';
 import { LoggingService } from '../services/logging.service';
@@ -338,15 +339,13 @@ export class AuthService {
 
     try {
       // Verify the signature matches the message and address
-      // TODO: Parse message (EIP-4361) to verify nonce and expiration for replay protection
-      const isValid = await verifyMessage({
-        address: walletAddress as Address,
-        message,
-        signature: signature as Hex,
+      const siweMessage = new SiweMessage(message);
+      const verificationResult = await siweMessage.verify({
+        signature,
       });
 
-      if (!isValid) {
-        throw new UnauthorizedException('Invalid signature');
+      if (!verificationResult.success || siweMessage.address.toLowerCase() !== walletAddress.toLowerCase()) {
+        throw new UnauthorizedException('Invalid signature or address mismatch');
       }
     } catch (error) {
       this.logger.error(`Signature verification failed for ${walletAddress}`, error);

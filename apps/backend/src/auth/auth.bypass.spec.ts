@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { UnauthorizedException } from '@nestjs/common';
 import { drizzleUserRepository } from '@the-new-fuse/database';
 import * as jwt from 'jsonwebtoken';
+import { TokenBlacklistService } from './token-blacklist.service';
 
 // Mock the database repository
 jest.mock('@the-new-fuse/database', () => ({
@@ -75,6 +76,10 @@ describe('AuthService Vulnerability Check', () => {
           provide: ConfigService,
           useValue: { get: jest.fn() },
         },
+        {
+          provide: TokenBlacklistService,
+          useValue: { blacklistToken: jest.fn(), isBlacklisted: jest.fn() },
+        }
       ],
     }).compile();
 

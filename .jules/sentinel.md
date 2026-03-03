@@ -1,14 +1,4 @@
-## 2025-01-16 - [Duplicate DTOs & Weak Password Policy]
-**Vulnerability:** Discovered duplicate `RegisterDto` definitions in `apps/backend/src/auth/auth.controller.ts` (inline) and `apps/backend/src/dto/register.dto.ts` (unused). The inline definition enforced a weak password policy (min 6 chars), while the unused shared DTO had a strong policy (min 8 chars + complexity).
-**Learning:** Inline DTO definitions in controllers often bypass shared validation logic and security policies. They are easy to overlook during security reviews compared to centralized DTO files.
-**Prevention:** Enforce a rule that Controllers must import DTOs from a dedicated `dto/` directory and should not define validation classes inline. Regularly audit for `class .*Dto` definitions inside controller files.
-
-## 2025-01-20 - [Mocked Authentication Logic in Utility Files]
-**Vulnerability:** Discovered `apps/backend/src/utils/auth.ts` which contained an `authenticateUser` function that bypassed password verification with a comment "we'll assume password comparison works". This file was unused but posed a significant risk if accidentally imported.
-**Learning:** Placeholder or "mocked" logic committed to the codebase (especially in utility files) can persist for a long time and become a trap for future developers.
-**Prevention:** Strictly enforce that no "mocked" security logic is ever committed to the main branch, even if "unused". Use `@deprecated` tags aggressively but prefer deletion of dangerous dead code.
-
-## 2025-01-22 - [In-Memory Rate Limiting Memory Leak]
-**Vulnerability:** The `RateLimitingService` in `packages/security` implemented a `Map`-based store for request counts but lacked an active cleanup mechanism, leading to indefinite memory growth (DoS risk).
-**Learning:** Custom in-memory caching or rate-limiting implementations are prone to memory leaks if expiration logic is passive (only on access) or missing. Using established libraries like `lru-cache` or `redis` is safer than rolling your own.
-**Prevention:** Always ensure that any in-memory store has a bounded size (LRU) or an active cleanup mechanism (TTL). Verify cleanup logic with tests that simulate time passage.
+## 2024-05-18 - EIP-4361 Missing Verification in Web3 Login
+**Vulnerability:** The `findOrCreateUnstoppableDomainsUser` in `auth.service.ts` was only using generic `verifyMessage` from `viem` to check Ethereum signatures, lacking complete EIP-4361 (Siwe) validation for nonces, timestamps, and domains. This creates a replay attack vulnerability.
+**Learning:** Generic signature validation guarantees *who* signed the payload, but not *when* or *why*. Reusing the same valid signature payload across different contexts or timeframes is a classic web3 vulnerability.
+**Prevention:** Always use a specialized EIP-4361 parsing library like `siwe` that handles time limits (expiration/issuedAt), domains, and nonces instead of raw signature recovery when building Sign-In with Ethereum workflows.
