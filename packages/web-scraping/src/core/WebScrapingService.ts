@@ -82,15 +82,16 @@ export class WebScrapingService {
   ): Promise<ScrapingResult> {
     const startTime = Date.now();
     const finalConfig = { ...this.defaultConfig, ...config };
+    let safeUrl = url;
 
     try {
       // Security validation
-      await this.validateUrl(url);
+      safeUrl = await this.validateUrl(url);
 
       this.monitoring.recordMetric('web_scraping_request', 1, { method: 'simple', url });
 
       // Make HTTP request
-      const response: AxiosResponse = await axios.get(url, {
+      const response: AxiosResponse = await axios.get(safeUrl, {
         timeout: finalConfig.timeout,
         maxRedirects: finalConfig.maxRedirects,
         headers: {
@@ -113,8 +114,8 @@ export class WebScrapingService {
 
       const result: ScrapingResult = {
         success: true,
-        url,
-        finalUrl: response.request?.responseURL || url,
+        url: safeUrl,
+        finalUrl: response.request?.responseURL || safeUrl,
         statusCode: response.status,
         headers: response.headers as Record<string, string>,
         html: response.data,
@@ -137,7 +138,7 @@ export class WebScrapingService {
 
       return {
         success: false,
-        url,
+        url: safeUrl,
         error: errorMessage,
         metadata: {
           executionTime: Date.now() - startTime,
@@ -159,12 +160,13 @@ export class WebScrapingService {
   ): Promise<ScrapingResult> {
     const startTime = Date.now();
     const finalConfig = { ...this.defaultConfig, ...config };
+    let safeUrl = url;
     let browser: Browser | null = null;
     let page: Page | null = null;
 
     try {
       // Security validation
-      await this.validateUrl(url);
+      safeUrl = await this.validateUrl(url);
 
       this.monitoring.recordMetric('web_scraping_request', 1, { method: 'puppeteer', url });
 
@@ -206,7 +208,7 @@ export class WebScrapingService {
       });
 
       // Navigate to page
-      const response = await page.goto(url, {
+      const response = await page.goto(safeUrl, {
         waitUntil: 'networkidle2',
         timeout: finalConfig.timeout,
       });
@@ -243,8 +245,8 @@ export class WebScrapingService {
 
       const result: ScrapingResult = {
         success: true,
-        url,
-        finalUrl: response?.url() || url,
+        url: safeUrl,
+        finalUrl: response?.url() || safeUrl,
         statusCode: response?.status(),
         html,
         title,
@@ -270,7 +272,7 @@ export class WebScrapingService {
 
       return {
         success: false,
-        url,
+        url: safeUrl,
         error: errorMessage,
         metadata: {
           executionTime: Date.now() - startTime,
@@ -424,13 +426,14 @@ export class WebScrapingService {
   /**
    * Validate URL for security
    */
-  private async validateUrl(url: string): Promise<void> {
+  private async validateUrl(url: string): Promise<string> {
     const validationResult = await isValidPublicUrl(url);
     if (!validationResult.valid) {
       throw new Error(validationResult.reason);
     }
 
     const parsed = urlParse(url);
+    const safeUrl = parsed.toString();
 
     // Check domain whitelist/blacklist
     if (this.securityPolicy.allowedDomains) {
@@ -450,6 +453,8 @@ export class WebScrapingService {
         throw new Error(`Domain is blocked: ${parsed.hostname}`);
       }
     }
+
+    return safeUrl;
   }
 
   /**

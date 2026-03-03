@@ -13,13 +13,13 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 
 const API_BASE = process.env.JULES_API_BASE_URL || 'https://jules.googleapis.com';
 const API_KEY = process.env.JULES_API_KEY || '';
 
-function sh(cmd, opts = {}) {
-  return execSync(cmd, {
+function run(bin, args, opts = {}) {
+  return execFileSync(bin, args, {
     stdio: ['ignore', 'pipe', 'pipe'],
     encoding: 'utf8',
     ...opts,
@@ -68,10 +68,6 @@ function readIds(file) {
     .filter(Boolean);
 }
 
-function escapeSq(s) {
-  return String(s).replace(/'/g, `'\\''`);
-}
-
 function buildPrBody(session, branch) {
   const lines = [];
   lines.push('## Source');
@@ -108,7 +104,7 @@ async function main() {
   requireAuth();
   const ids = readIds(args.sessionsFile).slice(0, args.limit);
 
-  const root = sh('git rev-parse --show-toplevel');
+  const root = run('git', ['rev-parse', '--show-toplevel']);
   const tmpBase = path.join(os.tmpdir(), 'jules-pr-publish');
   fs.mkdirSync(tmpBase, { recursive: true });
 
@@ -157,16 +153,25 @@ async function main() {
     const patchFile = path.join(wdir, 'session.patch');
     try {
       if (fs.existsSync(wdir)) {
-        sh(`git -C '${escapeSq(root)}' worktree remove '${escapeSq(wdir)}' --force`);
+        run('git', ['-C', root, 'worktree', 'remove', wdir, '--force']);
       }
-      sh(`git -C '${escapeSq(root)}' fetch origin '${escapeSq(args.base)}'`);
-      sh(`git -C '${escapeSq(root)}' worktree add -B '${escapeSq(item.branch)}' '${escapeSq(wdir)}' 'origin/${escapeSq(args.base)}'`);
+      run('git', ['-C', root, 'fetch', 'origin', args.base]);
+      run('git', [
+        '-C',
+        root,
+        'worktree',
+        'add',
+        '-B',
+        item.branch,
+        wdir,
+        `origin/${args.base}`,
+      ]);
 
       fs.writeFileSync(patchFile, out.patch);
-      sh(`git -C '${escapeSq(wdir)}' apply --3way --index '${escapeSq(patchFile)}'`);
+      run('git', ['-C', wdir, 'apply', '--3way', '--index', patchFile]);
 
       try {
-        sh(`git -C '${escapeSq(wdir)}' diff --cached --quiet`);
+        run('git', ['-C', wdir, 'diff', '--cached', '--quiet']);
         results.push({ id: item.id, ok: false, reason: 'empty_patch_after_apply' });
         continue;
       } catch {
@@ -174,16 +179,27 @@ async function main() {
       }
 
       const commitMsg = out.suggestedCommitMessage || `chore: apply Jules session ${item.id}`;
-      sh(`git -C '${escapeSq(wdir)}' commit -m '${escapeSq(commitMsg)}'`);
-      sh(`git -C '${escapeSq(wdir)}' push -u origin '${escapeSq(item.branch)}'`);
+      run('git', ['-C', wdir, 'commit', '-m', commitMsg]);
+      run('git', ['-C', wdir, 'push', '-u', 'origin', item.branch]);
 
       const body = buildPrBody(s, item.branch);
-      const title = item.title.replace(/'/g, '');
       const bodyFile = path.join(wdir, 'pr-body.md');
       fs.writeFileSync(bodyFile, body);
-      const prUrl = sh(
-        `gh pr create --repo '${escapeSq(args.repo)}' --base '${escapeSq(args.base)}' --head '${escapeSq(item.branch)}' --title '${escapeSq(title)}' --body-file '${escapeSq(bodyFile)}' --draft`
-      );
+      const prUrl = run('gh', [
+        'pr',
+        'create',
+        '--repo',
+        args.repo,
+        '--base',
+        args.base,
+        '--head',
+        item.branch,
+        '--title',
+        item.title,
+        '--body-file',
+        bodyFile,
+        '--draft',
+      ]);
 
       results.push({ id: item.id, ok: true, branch: item.branch, prUrl });
       console.log(`published ${item.id} -> ${prUrl}`);
@@ -193,7 +209,7 @@ async function main() {
     } finally {
       try {
         if (fs.existsSync(wdir)) {
-          sh(`git -C '${escapeSq(root)}' worktree remove '${escapeSq(wdir)}' --force`);
+          run('git', ['-C', root, 'worktree', 'remove', wdir, '--force']);
         }
       } catch {}
     }
@@ -209,4 +225,3 @@ main().catch((e) => {
   console.error(e.message || e);
   process.exit(1);
 });
-

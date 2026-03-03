@@ -107,7 +107,8 @@ export class PayPalService {
   ): Promise<void> {
     // Verify subscription details with PayPal first
     const token = await this.getAccessToken();
-    const response = await fetch(`${this.apiUrl}/v1/billing/subscriptions/${subscriptionID}`, {
+    const safeSubscriptionId = encodeURIComponent(subscriptionID);
+    const response = await fetch(`${this.apiUrl}/v1/billing/subscriptions/${safeSubscriptionId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
