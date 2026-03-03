@@ -36,9 +36,18 @@ const UserProfilePage: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3003';
+  const API_BASE_URL =
+    import.meta.env.VITE_API_URL ||
+    (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3003');
 
   useEffect(() => {
+    if (!user) {
+      setProfile(null);
+      setError('Please sign in to view your profile.');
+      setIsLoading(false);
+      return;
+    }
+
     const fetchProfile = async () => {
       setIsLoading(true);
       setError(null);
@@ -49,6 +58,12 @@ const UserProfilePage: React.FC = () => {
         });
 
         if (!response.ok) {
+          if (response.status === 401 || response.status === 403) {
+            setError('Please sign in to view your profile.');
+            setProfile(null);
+            return;
+          }
+
           // If API fails, use Firebase user data as fallback
           if (user) {
             const fallbackProfile: UserProfile = {

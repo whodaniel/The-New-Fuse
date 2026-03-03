@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { GlassCard as Card } from '@/components/ui/premium/GlassCard';
 import { PremiumButton as Button, IconButton } from '@/components/ui/premium/PremiumButton';
 import { PremiumInput as Input } from '@/components/ui/premium/PremiumInput';

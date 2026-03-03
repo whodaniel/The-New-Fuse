@@ -18,7 +18,9 @@ const nullSocket: SocketWithEvents = {
 export const useSocket = (): SocketWithEvents => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const { user } = useAuth();
-  const socketUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+  const socketUrl =
+    import.meta.env.VITE_API_URL ||
+    (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3001');
 
   useEffect(() => {
     if (user) {
