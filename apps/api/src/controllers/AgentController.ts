@@ -4,20 +4,24 @@ import { Request, Response } from 'express';
  * Agent controller for handling agent-related API endpoints
  */
 export class AgentController {
+  private sendDeprecated(res: Response): void {
+    res.status(410).json({
+      success: false,
+      message: 'Legacy AgentController is deprecated. Use /api/agents endpoints.',
+      replacement: '/api/agents',
+    });
+  }
+
   /**
    * List all available agents
    */
   async list(req: Request, res: Response): Promise<void> {
     try {
-      // This is a placeholder implementation
-      res.json({
-        success: true,
-        agents: []
-      });
+      this.sendDeprecated(res);
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: (error as Error).message
+        message: (error as Error).message,
       });
     }
   }
@@ -27,15 +31,11 @@ export class AgentController {
    */
   async create(req: Request, res: Response): Promise<void> {
     try {
-      // This is a placeholder implementation
-      res.status(201).json({
-        success: true,
-        agent: { id: 'new-agent-id', ...req.body }
-      });
+      this.sendDeprecated(res);
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: (error as Error).message
+        message: (error as Error).message,
       });
     }
   }
@@ -45,16 +45,11 @@ export class AgentController {
    */
   async get(req: Request, res: Response): Promise<void> {
     try {
-      const { id } = req.params;
-      // This is a placeholder implementation
-      res.json({
-        success: true,
-        agent: { id, name: 'Agent ' + id, type: 'default' }
-      });
+      this.sendDeprecated(res);
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: (error as Error).message
+        message: (error as Error).message,
       });
     }
   }
@@ -64,16 +59,11 @@ export class AgentController {
    */
   async update(req: Request, res: Response): Promise<void> {
     try {
-      const { id } = req.params;
-      // This is a placeholder implementation
-      res.json({
-        success: true,
-        agent: { id, ...req.body }
-      });
+      this.sendDeprecated(res);
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: (error as Error).message
+        message: (error as Error).message,
       });
     }
   }
@@ -83,16 +73,11 @@ export class AgentController {
    */
   async delete(req: Request, res: Response): Promise<void> {
     try {
-      const { id } = req.params;
-      // This is a placeholder implementation
-      res.json({
-        success: true,
-        message: `Agent ${id} deleted successfully`
-      });
+      this.sendDeprecated(res);
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: (error as Error).message
+        message: (error as Error).message,
       });
     }
   }
@@ -102,16 +87,11 @@ export class AgentController {
    */
   async start(req: Request, res: Response): Promise<void> {
     try {
-      const { id } = req.params;
-      // This is a placeholder implementation
-      res.json({
-        success: true,
-        message: `Agent ${id} started successfully`
-      });
+      this.sendDeprecated(res);
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: (error as Error).message
+        message: (error as Error).message,
       });
     }
   }
@@ -121,16 +101,11 @@ export class AgentController {
    */
   async stop(req: Request, res: Response): Promise<void> {
     try {
-      const { id } = req.params;
-      // This is a placeholder implementation
-      res.json({
-        success: true,
-        message: `Agent ${id} stopped successfully`
-      });
+      this.sendDeprecated(res);
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: (error as Error).message
+        message: (error as Error).message,
       });
     }
   }
@@ -140,17 +115,11 @@ export class AgentController {
    */
   async getStatus(req: Request, res: Response): Promise<void> {
     try {
-      const { id } = req.params;
-      // This is a placeholder implementation
-      res.json({
-        success: true,
-        status: 'running',
-        agentId: id
-      });
+      this.sendDeprecated(res);
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: (error as Error).message
+        message: (error as Error).message,
       });
     }
   }

@@ -1,16 +1,17 @@
 import {
+  Body,
   Controller,
   Get,
+  HttpException,
+  HttpStatus,
+  Param,
   Post,
   Put,
-  Body,
-  Param,
   Query,
   UseGuards,
-  HttpStatus,
-  HttpException,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthLevel, RequireAuthLevel, SecureAuthGuard } from '../../../guards/secure-auth.guard';
 // import { ServiceCategoryRouterService } from '../../../types/core/services/service-category-router.service';
 // import { EnhancedAgencyService } from '../../../types/core/services/enhanced-agency.service';
 // import { AuthGuard } from '../../../guards/auth.guard';
@@ -19,8 +20,9 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagg
 // import { CurrentUser } from '../../../decorators/current-user.decorator';
 
 @ApiTags('service-requests')
-@Controller('api/service-requests')
-// @UseGuards(AuthGuard)
+@Controller('service-requests')
+@UseGuards(SecureAuthGuard)
+@RequireAuthLevel(AuthLevel.USER)
 @ApiBearerAuth()
 export class ServiceRequestController {
   // constructor(
@@ -32,17 +34,10 @@ export class ServiceRequestController {
   @ApiOperation({ summary: 'Submit a new service request' })
   @ApiResponse({ status: 201, description: 'Service request created' })
   async createServiceRequest(
-    @Body() requestDto: any,
+    @Body() requestDto: any
     // @CurrentUser() user: any
   ) {
-    try {
-      return { message: 'Service not implemented' };
-    } catch (error) {
-      throw new HttpException(
-        (error as Error).message || 'Failed to create service request',
-        HttpStatus.BAD_REQUEST
-      );
-    }
+    this.notImplemented('Create service request');
   }
 
   @Get()
@@ -54,34 +49,17 @@ export class ServiceRequestController {
     @Query('categoryId') categoryId?: string,
     @Query('providerId') providerId?: string,
     @Query('limit') limit: number = 50,
-    @Query('offset') offset: number = 0,
+    @Query('offset') offset: number = 0
     // @CurrentUser() user: any
   ) {
-    try {
-      // Use agencyId from user context if not provided
-      const targetAgencyId = agencyId || 'default';
-      
-      return { message: 'Service not implemented' };
-    } catch (error) {
-      throw new HttpException(
-        (error as Error).message || 'Failed to get service requests',
-        HttpStatus.NOT_FOUND
-      );
-    }
+    this.notImplemented('List service requests');
   }
 
   @Get(':requestId')
   @ApiOperation({ summary: 'Get specific service request details' })
   @ApiResponse({ status: 200, description: 'Service request details retrieved' })
   async getServiceRequest(@Param('requestId') requestId: string) {
-    try {
-      return { message: 'Service not implemented' };
-    } catch (error) {
-      throw new HttpException(
-        (error as Error).message || 'Service request not found',
-        HttpStatus.NOT_FOUND
-      );
-    }
+    this.notImplemented('Get service request');
   }
 
   @Put(':requestId/status')
@@ -89,18 +67,8 @@ export class ServiceRequestController {
   // @Roles(UserRole.AGENCY_ADMIN, UserRole.AGENCY_MANAGER)
   @ApiOperation({ summary: 'Update service request status' })
   @ApiResponse({ status: 200, description: 'Status updated successfully' })
-  async updateRequestStatus(
-    @Param('requestId') requestId: string,
-    @Body() statusDto: any
-  ) {
-    try {
-      return { message: 'Service not implemented' };
-    } catch (error) {
-      throw new HttpException(
-        (error as Error).message || 'Failed to update status',
-        HttpStatus.BAD_REQUEST
-      );
-    }
+  async updateRequestStatus(@Param('requestId') requestId: string, @Body() statusDto: any) {
+    this.notImplemented('Update service request status');
   }
 
   @Post(':requestId/assign')
@@ -108,18 +76,8 @@ export class ServiceRequestController {
   // @Roles(UserRole.AGENCY_ADMIN, UserRole.AGENCY_MANAGER)
   @ApiOperation({ summary: 'Assign service request to provider' })
   @ApiResponse({ status: 200, description: 'Request assigned successfully' })
-  async assignRequest(
-    @Param('requestId') requestId: string,
-    @Body() assignmentDto: any
-  ) {
-    try {
-      return { message: 'Service not implemented' };
-    } catch (error) {
-      throw new HttpException(
-        (error as Error).message || 'Failed to assign request',
-        HttpStatus.BAD_REQUEST
-      );
-    }
+  async assignRequest(@Param('requestId') requestId: string, @Body() assignmentDto: any) {
+    this.notImplemented('Assign service request');
   }
 
   @Post(':requestId/auto-assign')
@@ -128,41 +86,14 @@ export class ServiceRequestController {
   @ApiOperation({ summary: 'Auto-assign service request to best provider' })
   @ApiResponse({ status: 200, description: 'Request auto-assigned successfully' })
   async autoAssignRequest(@Param('requestId') requestId: string) {
-    try {
-      const requestDetails = { message: 'Service not implemented' };
-      
-      const bestProvider = { id: 'default' };
-
-      if (!bestProvider) {
-        throw new HttpException(
-          'No suitable provider found',
-          HttpStatus.NOT_FOUND
-        );
-      }
-
-      return { message: 'Service not implemented' };
-    } catch (error) {
-      throw new HttpException(
-        (error as Error).message || 'Failed to auto-assign request',
-        HttpStatus.BAD_REQUEST
-      );
-    }
+    this.notImplemented('Auto-assign service request');
   }
 
   @Get(':requestId/recommendations')
   @ApiOperation({ summary: 'Get provider recommendations for request' })
   @ApiResponse({ status: 200, description: 'Provider recommendations retrieved' })
   async getProviderRecommendations(@Param('requestId') requestId: string) {
-    try {
-      const requestDetails = { message: 'Service not implemented' };
-      
-      return { message: 'Service not implemented' };
-    } catch (error) {
-      throw new HttpException(
-        (error as Error).message || 'Failed to get recommendations',
-        HttpStatus.NOT_FOUND
-      );
-    }
+    this.notImplemented('Provider recommendations');
   }
 
   @Post(':requestId/complete')
@@ -170,18 +101,8 @@ export class ServiceRequestController {
   // @Roles(UserRole.AGENT_OPERATOR)
   @ApiOperation({ summary: 'Mark service request as completed' })
   @ApiResponse({ status: 200, description: 'Request marked as completed' })
-  async completeRequest(
-    @Param('requestId') requestId: string,
-    @Body() completionDto: any
-  ) {
-    try {
-      return { message: 'Service not implemented' };
-    } catch (error) {
-      throw new HttpException(
-        (error as Error).message || 'Failed to complete request',
-        HttpStatus.BAD_REQUEST
-      );
-    }
+  async completeRequest(@Param('requestId') requestId: string, @Body() completionDto: any) {
+    this.notImplemented('Complete service request');
   }
 
   @Post(':requestId/review')
@@ -189,17 +110,10 @@ export class ServiceRequestController {
   @ApiResponse({ status: 201, description: 'Review submitted successfully' })
   async submitReview(
     @Param('requestId') requestId: string,
-    @Body() reviewDto: any,
+    @Body() reviewDto: any
     // @CurrentUser() user: any
   ) {
-    try {
-      return { message: 'Service not implemented' };
-    } catch (error) {
-      throw new HttpException(
-        (error as Error).message || 'Failed to submit review',
-        HttpStatus.BAD_REQUEST
-      );
-    }
+    this.notImplemented('Submit service request review');
   }
 
   @Get('categories/:categoryId/requests')
@@ -212,13 +126,13 @@ export class ServiceRequestController {
     @Query('limit') limit: number = 50,
     @Query('offset') offset: number = 0
   ) {
-    try {
-      return { message: 'Service not implemented' };
-    } catch (error) {
-      throw new HttpException(
-        (error as Error).message || 'Failed to get category requests',
-        HttpStatus.NOT_FOUND
-      );
-    }
+    this.notImplemented('Category service requests');
+  }
+
+  private notImplemented(feature: string): never {
+    throw new HttpException(
+      `${feature} is not implemented in this deployment.`,
+      HttpStatus.NOT_IMPLEMENTED
+    );
   }
 }

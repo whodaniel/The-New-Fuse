@@ -42,7 +42,7 @@ interface Message {
     type: 'user' | 'agent';
   };
   timestamp: Date;
-  status: 'sending' | 'sent' | 'delivered' | 'read';
+  status: 'sending' | 'sent' | 'delivered' | 'read' | 'failed';
   attachments?: Array<{
     id: string;
     name: string;
@@ -79,16 +79,62 @@ const WorkspaceChat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
+  const [roomId, setRoomId] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isTyping, setIsTyping] = useState(false);
+  const [isTyping] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem('token') || localStorage.getItem('auth_token') || '';
+    return {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+  };
+
+  const getCurrentUserId = () => {
+    try {
+      const raw = localStorage.getItem('user');
+      if (!raw) return 'current-user';
+      const parsed = JSON.parse(raw);
+      return String(parsed?.id || 'current-user');
+    } catch {
+      return 'current-user';
+    }
+  };
+
+  const mapMessage = (raw: any): Message => ({
+    id: String(raw?.id || Date.now()),
+    content: String(raw?.content || ''),
+    sender: {
+      id: String(raw?.sender?.id || raw?.senderId || 'unknown'),
+      name: String(raw?.sender?.name || raw?.senderName || 'Unknown'),
+      avatar: raw?.sender?.avatar,
+      type: String(raw?.sender?.type || raw?.senderType || 'user') === 'agent' ? 'agent' : 'user',
+    },
+    timestamp: new Date(raw?.createdAt || raw?.timestamp || Date.now()),
+    status: 'sent',
+    attachments: Array.isArray(raw?.attachments) ? raw.attachments : [],
+  });
+
   useEffect(() => {
-    fetchWorkspaceData();
-    fetchMessages();
+    const init = async () => {
+      setLoading(true);
+      setLoadError(null);
+      try {
+        await fetchWorkspaceData();
+        await fetchMessages();
+      } catch (error: any) {
+        setLoadError(error?.message || 'Workspace chat data unavailable');
+      } finally {
+        setLoading(false);
+      }
+    };
+    init();
   }, []);
 
   useEffect(() => {
@@ -96,94 +142,93 @@ const WorkspaceChat: React.FC = () => {
   }, [messages]);
 
   const fetchWorkspaceData = async () => {
-    try {
-      const response = await fetch('/api/workspaces/current', {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setWorkspace(data);
-      } else {
-        // Mock data for development
-        setWorkspace({
-          id: '1',
-          name: 'Product Development',
-          description: 'Collaborative workspace for product development team',
-          type: 'private',
-          members: [
-            { id: '1', name: 'John Doe', role: 'owner', status: 'online' },
-            { id: '2', name: 'Jane Smith', role: 'admin', status: 'online' },
-            { id: '3', name: 'Mike Johnson', role: 'member', status: 'away' },
-          ],
-          agents: [
-            { id: 'agent1', name: 'Code Assistant', type: 'Development', status: 'active' },
-            { id: 'agent2', name: 'Project Manager', type: 'Management', status: 'active' },
-          ],
-        });
-      }
-    } catch (error) {
-      console.error('Error fetching workspace data:', error);
+    const wsResponse = await fetch('/api/workspaces', {
+      headers: getAuthHeaders(),
+      credentials: 'include',
+    });
+    if (!wsResponse.ok) {
+      throw new Error(`Workspace list unavailable (${wsResponse.status})`);
     }
+    const workspaces = await wsResponse.json();
+    const current = Array.isArray(workspaces) && workspaces.length > 0 ? workspaces[0] : null;
+
+    if (!current) {
+      setWorkspace(null);
+      return;
+    }
+
+    const [membersRes, agentsRes] = await Promise.all([
+      fetch(`/api/workspaces/${current.id}/members`, {
+        headers: getAuthHeaders(),
+        credentials: 'include',
+      }),
+      fetch('/api/agents', { headers: getAuthHeaders(), credentials: 'include' }),
+    ]);
+
+    const membersRaw = membersRes.ok ? await membersRes.json() : [];
+    const agentsRaw = agentsRes.ok ? await agentsRes.json() : [];
+    const agentRows = Array.isArray(agentsRaw)
+      ? agentsRaw
+      : Array.isArray(agentsRaw?.data)
+        ? agentsRaw.data
+        : [];
+
+    setWorkspace({
+      id: String(current.id),
+      name: String(current.name || 'Workspace'),
+      description: String(current.description || 'No description'),
+      type: 'private',
+      members: (Array.isArray(membersRaw) ? membersRaw : []).map((member: any) => ({
+        id: String(member?.userId || member?.id || ''),
+        name: String(member?.email || member?.name || 'Member'),
+        role: String(member?.role || 'member') as Member['role'],
+        status: 'online',
+      })),
+      agents: agentRows.map((agent: any) => ({
+        id: String(agent?.id || ''),
+        name: String(agent?.name || 'Agent'),
+        type: String(agent?.type || 'general'),
+        status: String(agent?.status || '').toLowerCase() === 'active' ? 'active' : 'inactive',
+      })),
+    });
   };
 
   const fetchMessages = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch('/api/workspaces/1/messages', {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setMessages(data);
-      } else {
-        // Mock data
-        setMessages([
-          {
-            id: '1',
-            content:
-              "Welcome to the Product Development workspace! Let's collaborate on our latest project.",
-            sender: { id: '1', name: 'John Doe', type: 'user' },
-            timestamp: new Date(Date.now() - 3600000),
-            status: 'read',
-          },
-          {
-            id: '2',
-            content:
-              'I can help you with code reviews, documentation, and technical analysis. What would you like to work on?',
-            sender: { id: 'agent1', name: 'Code Assistant', type: 'agent' },
-            timestamp: new Date(Date.now() - 3000000),
-            status: 'read',
-          },
-          {
-            id: '3',
-            content: "Great! I've uploaded the latest design mockups for review.",
-            sender: { id: '2', name: 'Jane Smith', type: 'user' },
-            timestamp: new Date(Date.now() - 1800000),
-            status: 'read',
-            attachments: [
-              {
-                id: 'att1',
-                name: 'design-mockups.pdf',
-                type: 'application/pdf',
-                url: '/files/design-mockups.pdf',
-              },
-            ],
-          },
-        ]);
-      }
-    } catch (error) {
-      console.error('Error fetching messages:', error);
-    } finally {
-      setLoading(false);
+    const roomsResponse = await fetch('/api/chat/rooms', {
+      headers: getAuthHeaders(),
+      credentials: 'include',
+    });
+    if (!roomsResponse.ok) {
+      throw new Error(`Chat rooms unavailable (${roomsResponse.status})`);
     }
+
+    const rooms = await roomsResponse.json();
+    const room = Array.isArray(rooms) && rooms.length > 0 ? rooms[0] : null;
+    if (!room?.id) {
+      setRoomId(null);
+      setMessages([]);
+      return;
+    }
+
+    setRoomId(String(room.id));
+    const messagesResponse = await fetch(
+      `/api/chat/rooms/${encodeURIComponent(room.id)}/messages?limit=100&offset=0`,
+      {
+        headers: getAuthHeaders(),
+        credentials: 'include',
+      }
+    );
+    if (!messagesResponse.ok) {
+      throw new Error(`Chat messages unavailable (${messagesResponse.status})`);
+    }
+
+    const payload = await messagesResponse.json();
+    const rows = Array.isArray(payload)
+      ? payload
+      : Array.isArray(payload?.messages)
+        ? payload.messages
+        : [];
+    setMessages(rows.map(mapMessage));
   };
 
   const sendMessage = async () => {
@@ -192,7 +237,7 @@ const WorkspaceChat: React.FC = () => {
     const message: Message = {
       id: Date.now().toString(),
       content: newMessage,
-      sender: { id: 'current-user', name: 'You', type: 'user' },
+      sender: { id: getCurrentUserId(), name: 'You', type: 'user' },
       timestamp: new Date(),
       status: 'sending',
     };
@@ -201,46 +246,34 @@ const WorkspaceChat: React.FC = () => {
     setNewMessage('');
 
     try {
-      const response = await fetch('/api/workspaces/1/messages', {
+      if (!roomId) {
+        throw new Error('No chat room is available for this workspace.');
+      }
+
+      const response = await fetch(`/api/chat/rooms/${encodeURIComponent(roomId)}/messages`, {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ content: newMessage, agentId: selectedAgent }),
+        headers: getAuthHeaders(),
+        credentials: 'include',
+        body: JSON.stringify({
+          content: newMessage,
+          type: 'text',
+          metadata: selectedAgent ? { agentId: selectedAgent } : {},
+        }),
       });
 
       if (response.ok) {
         setMessages((prev) =>
-          prev.map((msg) => (msg.id === message.id ? { ...msg, status: 'sent' } : msg))
+          prev.map((msg) => (msg.id === message.id ? { ...msg, status: 'delivered' } : msg))
         );
-
-        if (selectedAgent) {
-          setTimeout(() => {
-            setIsTyping(true);
-            setTimeout(() => {
-              const agentResponse: Message = {
-                id: Date.now().toString() + '_agent',
-                content: `I understand your message: "${newMessage}". How can I assist you further?`,
-                sender: {
-                  id: selectedAgent,
-                  name: workspace?.agents.find((a) => a.id === selectedAgent)?.name || 'Agent',
-                  type: 'agent',
-                },
-                timestamp: new Date(),
-                status: 'sent',
-              };
-              setMessages((prev) => [...prev, agentResponse]);
-              setIsTyping(false);
-            }, 2000);
-          }, 500);
-        }
+      } else {
+        throw new Error(`Failed to send message (${response.status})`);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error sending message:', error);
       setMessages((prev) =>
-        prev.map((msg) => (msg.id === message.id ? { ...msg, status: 'sent' } : msg))
+        prev.map((msg) => (msg.id === message.id ? { ...msg, status: 'failed' } : msg))
       );
+      toast.error(error?.message || 'Failed to send message');
     }
   };
 
@@ -275,6 +308,8 @@ const WorkspaceChat: React.FC = () => {
             className={`w-3 h-3 ${status === 'read' ? 'text-blue-400' : 'text-gray-400'}`}
           />
         );
+      case 'failed':
+        return <X className="w-3 h-3 text-red-400" />;
       default:
         return null;
     }
@@ -305,6 +340,11 @@ const WorkspaceChat: React.FC = () => {
       <div className="relative z-10 w-80 border-r border-white/10 bg-black/20 backdrop-blur-md flex flex-col">
         {/* Workspace Header */}
         <div className="p-4 border-b border-white/10">
+          {loadError && (
+            <div className="mb-3 rounded-md border border-amber-300 bg-amber-100/80 px-3 py-2 text-xs text-amber-900">
+              {loadError}
+            </div>
+          )}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/30 to-blue-500/30 flex items-center justify-center border border-white/10">
@@ -437,7 +477,7 @@ const WorkspaceChat: React.FC = () => {
                   <MessageSquare className="w-4 h-4 text-gray-400" />
                 </h3>
                 <p className="text-sm text-gray-400">
-                  {workspace?.members.length} members
+                  {workspace?.members.length ?? 0} members
                   {selectedAgent &&
                     ` • Chatting with ${workspace?.agents.find((a) => a.id === selectedAgent)?.name}`}
                 </p>

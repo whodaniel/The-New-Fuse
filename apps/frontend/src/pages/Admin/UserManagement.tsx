@@ -89,37 +89,10 @@ const UserTable = ({
   </div>
 );
 
-// Mock Users Data
-const mockUsers: User[] = [
-  {
-    id: '1',
-    name: 'Admin User',
-    email: 'admin@thenewfuse.com',
-    role: 'admin',
-    status: 'active',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: '2',
-    name: 'John Doe',
-    email: 'john@example.com',
-    role: 'editor',
-    status: 'active',
-    createdAt: new Date(Date.now() - 86400000 * 5).toISOString(),
-  },
-  {
-    id: '3',
-    name: 'Jane Smith',
-    email: 'jane@example.com',
-    role: 'viewer',
-    status: 'inactive',
-    createdAt: new Date(Date.now() - 86400000 * 10).toISOString(),
-  },
-];
-
 const UserManagement = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadUsers();
@@ -128,17 +101,13 @@ const UserManagement = () => {
   const loadUsers = async () => {
     try {
       setLoading(true);
+      setError(null);
       const data = await UserService.getUsers();
-      if (data && data.length > 0) {
-        setUsers(data);
-      } else {
-        // Fallback to mock data if API returns empty
-        setUsers(mockUsers);
-      }
+      setUsers(data ?? []);
     } catch (error) {
       console.error('Failed to load users', error);
-      // Fallback to mock data on error
-      setUsers(mockUsers);
+      setUsers([]);
+      setError('Failed to load users from the API.');
     } finally {
       setLoading(false);
     }
@@ -178,7 +147,14 @@ const UserManagement = () => {
       </div>
 
       <Card className="overflow-hidden">
-        <UserTable users={users} onEdit={handleEdit} onDelete={handleDelete} />
+        {error && (
+          <div className="p-4 text-sm text-red-700 bg-red-50 border-b border-red-100">{error}</div>
+        )}
+        {users.length === 0 ? (
+          <div className="p-6 text-sm text-gray-500">No users returned by the API.</div>
+        ) : (
+          <UserTable users={users} onEdit={handleEdit} onDelete={handleDelete} />
+        )}
       </Card>
     </div>
   );

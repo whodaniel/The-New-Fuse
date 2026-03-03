@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface Agent {
   id: string;
@@ -9,17 +9,63 @@ interface Agent {
   type: string;
 }
 
-// Mock data - replace with actual store integration
-const mockAgents: Agent[] = [
-  { id: '1', name: 'Assistant Agent', status: 'active', type: 'assistant' },
-  { id: '2', name: 'Research Agent', status: 'idle', type: 'research' },
-  { id: '3', name: 'Code Agent', status: 'active', type: 'developer' },
-];
-
 export const AgentHub: React.FC = () => {
-  const [agents] = useState<Agent[]>(mockAgents);
+  const [agents, setAgents] = useState<Agent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   const [activeTab, setActiveTab] = useState<string>('details');
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadAgents = async () => {
+      setLoading(true);
+      setLoadError(null);
+
+      try {
+        const response = await fetch('/api/agents');
+        if (!response.ok) {
+          throw new Error(`Agent directory unavailable (${response.status})`);
+        }
+
+        const payload = await response.json();
+        const rows = Array.isArray(payload)
+          ? payload
+          : Array.isArray(payload?.data)
+            ? payload.data
+            : [];
+        const mapped: Agent[] = rows.map((row: any, index: number) => {
+          const rawStatus = String(row?.status || 'offline').toLowerCase();
+          const status: Agent['status'] =
+            rawStatus === 'active' || rawStatus === 'idle' || rawStatus === 'error'
+              ? rawStatus
+              : 'offline';
+
+          return {
+            id: String(row?.id || row?.name || `agent-${index}`),
+            name: String(row?.name || 'Unnamed Agent'),
+            status,
+            type: String(row?.type || row?.role || 'agent'),
+          };
+        });
+
+        if (!isMounted) return;
+        setAgents(mapped);
+      } catch (error: any) {
+        if (!isMounted) return;
+        setAgents([]);
+        setLoadError(error?.message || 'Agent directory unavailable');
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    loadAgents();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const getStatusColor = (status: Agent['status']): string => {
     switch (status) {
@@ -46,6 +92,15 @@ export const AgentHub: React.FC = () => {
               <CardTitle>Available Agents</CardTitle>
             </CardHeader>
             <CardContent>
+              {loadError && (
+                <div className="mb-3 rounded border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+                  {loadError}
+                </div>
+              )}
+              {loading && <div className="text-sm text-gray-500">Loading agents...</div>}
+              {!loading && !loadError && agents.length === 0 && (
+                <div className="text-sm text-gray-500">No agents are currently available.</div>
+              )}
               <div className="space-y-2">
                 {agents.map((agent) => (
                   <div

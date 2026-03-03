@@ -3,7 +3,7 @@
  * Integrated React component for The New Fuse Browser Hub
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ModernHub.css';
 
@@ -22,6 +22,7 @@ interface SystemMetrics {
 
 export const ModernHub: React.FC = () => {
   const navigate = useNavigate();
+  const apiBase = (import.meta.env.VITE_API_URL as string) || 'http://localhost:3001';
   const [services, setServices] = useState<Record<string, ServiceStatus[]>>({
     'ai-services': [
       { name: 'Claude AI', status: 'active' },
@@ -61,50 +62,89 @@ export const ModernHub: React.FC = () => {
   const [workflowStatus, setWorkflowStatus] = useState<'active' | 'warning' | 'error'>('active');
 
   useEffect(() => {
-    // Check service status
-    checkServiceStatus();
-    
-    // Update metrics periodically
-    const metricsInterval = setInterval(updateMetrics, 5000);
-    
-    return () => clearInterval(metricsInterval);
+    refreshHubData();
+    const refreshInterval = setInterval(refreshHubData, 30000);
+    return () => clearInterval(refreshInterval);
   }, []);
 
-  const checkServiceStatus = async () => {
+  const formatUptime = (uptimeSeconds?: number): string => {
+    if (!uptimeSeconds || !Number.isFinite(uptimeSeconds)) return 'N/A';
+    const hours = Math.floor(uptimeSeconds / 3600);
+    const minutes = Math.floor((uptimeSeconds % 3600) / 60);
+    return `${hours}h ${minutes}m`;
+  };
+
+  const getServiceState = (value?: string): 'active' | 'inactive' | 'warning' => {
+    if (value === 'online' || value === 'healthy') return 'active';
+    if (value === 'degraded' || value === 'partial') return 'warning';
+    return 'inactive';
+  };
+
+  const refreshHubData = async () => {
+    const requestStartedAt = performance.now();
+
+    let statusPayload: any = null;
     try {
-      // Check core services
-      const coreResponse = await fetch('/api/health');
-      setCoreStatus(coreResponse.ok ? 'active' : 'error');
+      const statusResponse = await fetch(`${apiBase}/api/system/status`);
+      if (statusResponse.ok) {
+        statusPayload = await statusResponse.json();
+        setCoreStatus(statusPayload.api === 'online' ? 'active' : 'error');
+        setAiStatus(statusPayload.agents === 'online' ? 'active' : 'warning');
+        setWorkflowStatus(statusPayload.workflows === 'online' ? 'active' : 'warning');
+      } else {
+        setCoreStatus('warning');
+      }
     } catch {
       setCoreStatus('error');
+      setAiStatus('error');
+      setWorkflowStatus('error');
     }
 
     try {
-      // Check frontend
-      const frontendResponse = await fetch(window.location.origin);
-      setWorkflowStatus(frontendResponse.ok ? 'active' : 'error');
+      const [metricsResponse, workflowsResponse, executionsResponse] = await Promise.all([
+        fetch(`${apiBase}/api/system/metrics`),
+        fetch(`${apiBase}/api/workflows`),
+        fetch(`${apiBase}/api/workflows/executions`),
+      ]);
+
+      const metricsPayload = metricsResponse.ok ? await metricsResponse.json() : null;
+      const workflowsPayload = workflowsResponse.ok ? await workflowsResponse.json() : [];
+      const executionsPayload = executionsResponse.ok ? await executionsResponse.json() : [];
+
+      const workflows = Array.isArray(workflowsPayload) ? workflowsPayload : [];
+      const executions = Array.isArray(executionsPayload) ? executionsPayload : [];
+      const completedExecutions = executions.filter((entry: any) => entry?.status === 'completed');
+
+      setMetrics({
+        activeWorkflows: workflows.filter((entry: any) =>
+          ['active', 'running'].includes(String(entry?.status || '').toLowerCase())
+        ).length,
+        completedTasks: completedExecutions.length,
+        systemUptime: formatUptime(Number(metricsPayload?.process?.uptime)),
+        responseTime: `${Math.round(performance.now() - requestStartedAt)}ms`,
+      });
+
+      if (statusPayload) {
+        setServices((prev) => ({
+          ...prev,
+          'workflow-services': prev['workflow-services'].map((service) => {
+            if (service.name === 'Execute' || service.name === 'Analytics') {
+              return { ...service, status: getServiceState(statusPayload.workflows) };
+            }
+            return service;
+          }),
+          'ai-services': prev['ai-services'].map((service) => ({
+            ...service,
+            status: getServiceState(statusPayload.agents),
+          })),
+        }));
+      }
     } catch {
-      setWorkflowStatus('error');
+      setMetrics((prev) => ({
+        ...prev,
+        responseTime: 'Unavailable',
+      }));
     }
-  };
-
-  const updateMetrics = () => {
-    setMetrics(prev => ({
-      ...prev,
-      activeWorkflows: prev.activeWorkflows + Math.floor(Math.random() * 3) - 1,
-      completedTasks: prev.completedTasks + Math.floor(Math.random() * 5),
-    }));
-  };
-
-  const toggleService = (category: string, serviceName: string) => {
-    setServices(prev => ({
-      ...prev,
-      [category]: prev[category].map(service =>
-        service.name === serviceName
-          ? { ...service, status: service.status === 'active' ? 'inactive' : 'active' }
-          : service
-      ),
-    }));
   };
 
   const createNewWorkflow = () => {
@@ -126,10 +166,10 @@ export const ModernHub: React.FC = () => {
   const openService = (serviceName: string, port?: number) => {
     const serviceUrls: Record<string, string> = {
       'Theia IDE': `http://localhost:${port || 3000}`,
-      'Terminal': `http://localhost:${port || 3000}/terminal`,
+      Terminal: `http://localhost:${port || 3000}/terminal`,
       'My Workflows': '/workflows',
-      'Builder': '/workflows/builder',
-      'Analytics': '/analytics',
+      Builder: '/workflows/builder',
+      Analytics: '/analytics',
     };
 
     const url = serviceUrls[serviceName];
@@ -144,9 +184,9 @@ export const ModernHub: React.FC = () => {
 
   const getServiceCategoryStatus = (category: string) => {
     const categoryServices = services[category];
-    const activeCount = categoryServices.filter(s => s.status === 'active').length;
+    const activeCount = categoryServices.filter((s) => s.status === 'active').length;
     const totalCount = categoryServices.length;
-    
+
     if (activeCount === totalCount) return 'active';
     if (activeCount > 0) return 'warning';
     return 'error';
@@ -226,15 +266,14 @@ export const ModernHub: React.FC = () => {
             <div key={category} className={`service-category ${category}`}>
               <div className="category-header">
                 <div className="category-title">
-                  <div className="category-icon">
-                    {getServiceCategoryIcon(category)}
-                  </div>
+                  <div className="category-icon">{getServiceCategoryIcon(category)}</div>
                   <span>{getServiceCategoryTitle(category)}</span>
                 </div>
                 <div className="category-status">
                   <div className={`status-dot ${getServiceCategoryStatus(category)}`}></div>
                   <span>
-                    {categoryServices.filter(s => s.status === 'active').length}/{categoryServices.length} Active
+                    {categoryServices.filter((s) => s.status === 'active').length}/
+                    {categoryServices.length} Active
                   </span>
                 </div>
               </div>
@@ -246,8 +285,6 @@ export const ModernHub: React.FC = () => {
                     onClick={() => {
                       if (service.status === 'active') {
                         openService(service.name, service.port);
-                      } else {
-                        toggleService(category, service.name);
                       }
                     }}
                   >
@@ -282,21 +319,24 @@ export const ModernHub: React.FC = () => {
               <div className="template-icon research">🔍</div>
               <h3 className="template-title">AI Research Assistant</h3>
               <p className="template-description">
-                Automated research workflow that gathers information, analyzes data, and generates comprehensive reports.
+                Automated research workflow that gathers information, analyzes data, and generates
+                comprehensive reports.
               </p>
             </div>
             <div className="template-card" onClick={() => useTemplate('content-creation')}>
               <div className="template-icon content">✍️</div>
               <h3 className="template-title">Content Creation Pipeline</h3>
               <p className="template-description">
-                End-to-end content creation from ideation to publication with AI-powered writing and editing.
+                End-to-end content creation from ideation to publication with AI-powered writing and
+                editing.
               </p>
             </div>
             <div className="template-card" onClick={() => useTemplate('data-processing')}>
               <div className="template-icon data">📊</div>
               <h3 className="template-title">Data Processing Workflow</h3>
               <p className="template-description">
-                Automated data ingestion, cleaning, analysis, and visualization with intelligent insights.
+                Automated data ingestion, cleaning, analysis, and visualization with intelligent
+                insights.
               </p>
             </div>
           </div>

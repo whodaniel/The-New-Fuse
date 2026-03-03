@@ -40,24 +40,59 @@ interface SystemMetrics {
 export default function AdminPanel() {
   const [metrics, setMetrics] = useState<SystemMetrics | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
-  // Mock data - replace with API call
-  useEffect(() => {
-    setTimeout(() => {
-      setMetrics({
-        totalUsers: 147,
-        activeUsers: 23,
-        totalWorkspaces: 12,
-        activeWorkspaces: 8,
-        totalAgents: 34,
-        runningAgents: 12,
-        systemUptime: '15 days, 4 hours',
-        serverHealth: 'healthy',
-        memoryUsage: 68,
-        cpuUsage: 34,
+  const fetchAdminMetrics = async () => {
+    setLoading(true);
+    setLoadError(null);
+    try {
+      const token = localStorage.getItem('token') || localStorage.getItem('auth_token') || '';
+      const response = await fetch('/api/admin/metrics/dashboard', {
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        credentials: 'include',
       });
+
+      if (!response.ok) {
+        throw new Error(`Admin metrics unavailable (${response.status})`);
+      }
+
+      const data = await response.json();
+      const healthRaw = String(data?.system?.health || 'warning').toLowerCase();
+      const serverHealth: SystemMetrics['serverHealth'] =
+        healthRaw === 'healthy' ? 'healthy' : healthRaw === 'critical' ? 'critical' : 'warning';
+
+      const formatUptime = (seconds: number) => {
+        if (!Number.isFinite(seconds) || seconds <= 0) return 'unknown';
+        const days = Math.floor(seconds / 86400);
+        const hours = Math.floor((seconds % 86400) / 3600);
+        return `${days}d ${hours}h`;
+      };
+
+      setMetrics({
+        totalUsers: Number(data?.users?.total || 0),
+        activeUsers: Number(data?.users?.active || 0),
+        totalWorkspaces: 0,
+        activeWorkspaces: 0,
+        totalAgents: Number(data?.agents?.total || 0),
+        runningAgents: Number(data?.agents?.active || 0),
+        systemUptime: formatUptime(Number(data?.system?.uptime || 0)),
+        serverHealth,
+        memoryUsage: Math.round(Number(data?.system?.memory?.percentage || 0)),
+        cpuUsage: Math.round(Number(data?.system?.cpu?.usage || 0)),
+      });
+    } catch (error: any) {
+      setMetrics(null);
+      setLoadError(error?.message || 'Failed to load admin metrics');
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
+  };
+
+  useEffect(() => {
+    fetchAdminMetrics();
   }, []);
 
   const getHealthBadge = (health: SystemMetrics['serverHealth']) => {
@@ -163,11 +198,17 @@ export default function AdminPanel() {
           <div className="text-sm text-gray-400 hidden md:block">
             Last updated: {new Date().toLocaleTimeString()}
           </div>
-          <PremiumButton onClick={() => window.location.reload()} variant="glass" size="sm">
+          <PremiumButton onClick={fetchAdminMetrics} variant="secondary" size="sm">
             <RefreshCw className="h-4 w-4 mr-2" /> Refresh
           </PremiumButton>
         </div>
       </div>
+
+      {loadError && (
+        <div className="rounded-lg border border-amber-300 bg-amber-100/80 px-4 py-3 text-sm text-amber-900">
+          {loadError}
+        </div>
+      )}
 
       {/* System Overview */}
       {metrics && (
@@ -306,7 +347,7 @@ export default function AdminPanel() {
             <div className="text-sm opacity-80 text-left font-normal">Check system alerts</div>
           </PremiumButton>
 
-          <PremiumButton variant="glass" className="h-auto p-4 flex flex-col items-start gap-2">
+          <PremiumButton variant="secondary" className="h-auto p-4 flex flex-col items-start gap-2">
             <div className="text-2xl mb-1 text-gray-400">
               <ClipboardList className="h-6 w-6" />
             </div>
@@ -322,7 +363,7 @@ export default function AdminPanel() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {adminSections.map((section, index) => (
             <Link key={index} to={section.link}>
-              <GlassCard hoverEffect className="h-full group cursor-pointer">
+              <GlassCard className="h-full group cursor-pointer transition-all hover:border-white/20">
                 <div className="flex items-center justify-between mb-4">
                   <div
                     className={`p-3 rounded-lg bg-${section.gradient}-500/10 text-${section.gradient}-400 group-hover:bg-${section.gradient}-500/20 transition-all`}

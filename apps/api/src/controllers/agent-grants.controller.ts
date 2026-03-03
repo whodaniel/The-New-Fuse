@@ -11,7 +11,7 @@ import {
 import { AgentApiGrantsService } from '../services/agent-api-grants.service';
 
 @ApiTags('agent-grants')
-@Controller('api/agent-grants')
+@Controller('agent-grants')
 @UseGuards(SecureAuthGuard)
 @JwtAuth()
 @SetRateLimitTier(RateLimitTier.API)

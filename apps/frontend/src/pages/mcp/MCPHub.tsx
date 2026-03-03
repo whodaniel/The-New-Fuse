@@ -32,20 +32,23 @@ export const MCPHub: React.FC = () => {
   const [servers, setServers] = useState<MCPServer[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   const fetchServers = async () => {
     setLoading(true);
+    setFetchError(null);
     try {
       const response = await api.get('/mcp/servers');
-      if (response.success) {
+      if (response?.success && Array.isArray(response.data)) {
         setServers(response.data);
       } else {
-        // Mock data if backend returns empty/error during demo
-        setServers(MOCK_SERVERS);
+        setServers([]);
+        setFetchError('MCP server inventory endpoint is unavailable');
       }
     } catch (error) {
       console.error('Failed to fetch MCP servers:', error);
-      setServers(MOCK_SERVERS);
+      setServers([]);
+      setFetchError('MCP server inventory endpoint is unavailable');
     } finally {
       setLoading(false);
     }
@@ -91,6 +94,11 @@ export const MCPHub: React.FC = () => {
           </PremiumButton>
         </div>
       </div>
+      {fetchError && (
+        <GlassCard className="p-4 border border-amber-500/40 bg-amber-500/10">
+          <p className="text-amber-200 text-sm">{fetchError}. Live data could not be loaded.</p>
+        </GlassCard>
+      )}
 
       {/* Metrics Bar */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -294,48 +302,5 @@ const FeatureLink: React.FC<{
     </PremiumButton>
   </GlassCard>
 );
-
-const MOCK_SERVERS: MCPServer[] = [
-  {
-    id: '1',
-    name: 'Google Search Connector',
-    status: 'running',
-    type: 'local',
-    tools: 4,
-    resources: 1,
-  },
-  {
-    id: '2',
-    name: 'Filesystem Access Bridge',
-    status: 'stopped',
-    type: 'local',
-    tools: 12,
-    resources: 45,
-  },
-  {
-    id: '3',
-    name: 'GitHub Desktop Service',
-    status: 'running',
-    type: 'remote',
-    tools: 18,
-    resources: 2,
-  },
-  {
-    id: '4',
-    name: 'Browser Automation Node',
-    status: 'error',
-    type: 'local',
-    tools: 8,
-    resources: 0,
-  },
-  {
-    id: '5',
-    name: 'Knowledge Graph Indexer',
-    status: 'running',
-    type: 'remote',
-    tools: 5,
-    resources: 120,
-  },
-];
 
 export default MCPHub;

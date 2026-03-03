@@ -6,6 +6,7 @@ import {
   PremiumSelect,
   StatsCard,
 } from '@/components/ui/premium';
+import { listTasks } from '@/services/unifiedLedgerApi';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   AlertTriangle,
@@ -21,11 +22,11 @@ import {
   Target,
   TrendingUp,
 } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface Task {
-  id: number;
+  id: string;
   title: string;
   description: string;
   status: 'Completed' | 'In Progress' | 'Pending Review' | 'Not Started';
@@ -35,76 +36,6 @@ interface Task {
   category: string;
   createdAt: string;
 }
-
-// Mock data for tasks
-const mockTasks: Task[] = [
-  {
-    id: 1,
-    title: 'Implement new API endpoint',
-    description: 'Create a new REST API endpoint for user authentication',
-    status: 'In Progress',
-    priority: 'High',
-    dueDate: '2024-01-15',
-    assignedTo: 'CodeAssistant',
-    category: 'Development',
-    createdAt: '2024-01-01',
-  },
-  {
-    id: 2,
-    title: 'Analyze user behavior data',
-    description: 'Generate insights from the latest user behavior data',
-    status: 'Completed',
-    priority: 'Medium',
-    dueDate: '2024-01-12',
-    assignedTo: 'DataAnalyzer',
-    category: 'Analytics',
-    createdAt: '2024-01-02',
-  },
-  {
-    id: 3,
-    title: 'Write documentation for new features',
-    description: 'Create comprehensive documentation for the latest features',
-    status: 'Pending Review',
-    priority: 'Normal',
-    dueDate: '2024-01-18',
-    assignedTo: 'ContentWriter',
-    category: 'Documentation',
-    createdAt: '2024-01-05',
-  },
-  {
-    id: 4,
-    title: 'Fix authentication bug',
-    description: 'Resolve the issue with user authentication in the mobile app',
-    status: 'In Progress',
-    priority: 'Critical',
-    dueDate: '2024-01-14',
-    assignedTo: 'BugHunter',
-    category: 'Bug Fixing',
-    createdAt: '2024-01-07',
-  },
-  {
-    id: 5,
-    title: 'Optimize database queries',
-    description: 'Improve performance of slow database queries',
-    status: 'Not Started',
-    priority: 'Medium',
-    dueDate: '2024-01-20',
-    assignedTo: 'CodeAssistant',
-    category: 'Performance',
-    createdAt: '2024-01-08',
-  },
-  {
-    id: 6,
-    title: 'Update privacy policy',
-    description: 'Update the privacy policy to comply with new regulations',
-    status: 'Completed',
-    priority: 'High',
-    dueDate: '2024-01-10',
-    assignedTo: 'ContentWriter',
-    category: 'Legal',
-    createdAt: '2024-01-03',
-  },
-];
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -128,13 +59,60 @@ const itemVariants = {
  */
 const Tasks: React.FC = () => {
   const navigate = useNavigate();
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState('All');
   const [filterPriority, setFilterPriority] = useState('All');
   const [filterAssignee, setFilterAssignee] = useState('All');
 
+  useEffect(() => {
+    const loadTasks = async () => {
+      setLoading(true);
+      setLoadError(null);
+      try {
+        const records = await listTasks();
+        const mapped: Task[] = records.map((record) => ({
+          id: record.id,
+          title: record.title,
+          description: record.description,
+          status:
+            record.status === 'completed'
+              ? 'Completed'
+              : record.status === 'in_progress'
+                ? 'In Progress'
+                : record.status === 'failed' || record.status === 'rejected'
+                  ? 'Pending Review'
+                  : 'Not Started',
+          priority:
+            record.priority === 'critical'
+              ? 'Critical'
+              : record.priority === 'high'
+                ? 'High'
+                : record.priority === 'medium'
+                  ? 'Medium'
+                  : 'Low',
+          dueDate: record.updatedAt,
+          assignedTo: record.assignee || record.owner || 'Unassigned',
+          category: record.kind || 'General',
+          createdAt: record.createdAt,
+        }));
+        setTasks(mapped);
+      } catch (error) {
+        console.error('Failed to load tasks:', error);
+        setTasks([]);
+        setLoadError('Task endpoints are unavailable');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadTasks();
+  }, []);
+
   // Filter tasks based on search query and filters
-  const filteredTasks = mockTasks.filter((task) => {
+  const filteredTasks = tasks.filter((task) => {
     const matchesSearch =
       task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       task.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -146,13 +124,16 @@ const Tasks: React.FC = () => {
   });
 
   // Get unique values for filters
-  const taskStatuses = ['All', ...new Set(mockTasks.map((task) => task.status))];
-  const taskPriorities = ['All', ...new Set(mockTasks.map((task) => task.priority))];
-  const taskAssignees = ['All', ...new Set(mockTasks.map((task) => task.assignedTo))];
+  const taskStatuses = ['All', ...new Set(tasks.map((task) => task.status))];
+  const taskPriorities = ['All', ...new Set(tasks.map((task) => task.priority))];
+  const taskAssignees = ['All', ...new Set(tasks.map((task) => task.assignedTo))];
 
   // Get status badge with Premium styling
   const getStatusBadge = (status: string) => {
-    const config: Record<string, { bg: string; text: string; icon: React.ElementType }> = {
+    const config: Record<
+      string,
+      { bg: string; text: string; icon: React.ComponentType<{ className?: string }> }
+    > = {
       Completed: { bg: 'bg-emerald-500/20', text: 'text-emerald-400', icon: CheckCircle },
       'In Progress': { bg: 'bg-blue-500/20', text: 'text-blue-400', icon: Clock },
       'Pending Review': { bg: 'bg-purple-500/20', text: 'text-purple-400', icon: Clock },
@@ -209,11 +190,19 @@ const Tasks: React.FC = () => {
 
   // Calculate stats
   const stats = {
-    total: mockTasks.length,
-    completed: mockTasks.filter((t) => t.status === 'Completed').length,
-    inProgress: mockTasks.filter((t) => t.status === 'In Progress').length,
-    critical: mockTasks.filter((t) => t.priority === 'Critical').length,
+    total: tasks.length,
+    completed: tasks.filter((t) => t.status === 'Completed').length,
+    inProgress: tasks.filter((t) => t.status === 'In Progress').length,
+    critical: tasks.filter((t) => t.priority === 'Critical').length,
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+        <div className="animate-pulse text-blue-400 font-mono">LOADING TASKS...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
@@ -224,6 +213,11 @@ const Tasks: React.FC = () => {
       </div>
 
       <div className="relative z-10 p-6 max-w-7xl mx-auto">
+        {loadError && (
+          <GlassCard className="p-4 mb-6 border border-amber-500/40 bg-amber-500/10">
+            <p className="text-sm text-amber-200">{loadError}. No synthetic tasks are shown.</p>
+          </GlassCard>
+        )}
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -238,12 +232,7 @@ const Tasks: React.FC = () => {
               </h1>
               <p className="text-gray-400">Manage and track agent tasks</p>
             </div>
-            <PremiumButton
-              variant="gradient"
-              glow
-              icon={Plus}
-              onClick={() => navigate('/tasks/new')}
-            >
+            <PremiumButton variant="gradient" icon={Plus} onClick={() => navigate('/tasks/new')}>
               Create Task
             </PremiumButton>
           </div>
@@ -268,7 +257,7 @@ const Tasks: React.FC = () => {
             <StatsCard
               label="Completed"
               value={stats.completed.toString()}
-              change={`${Math.round((stats.completed / stats.total) * 100)}% complete`}
+              change={`${stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0}% complete`}
               changeType="positive"
               icon={CheckCircle}
               gradient="green"
@@ -419,7 +408,7 @@ const Tasks: React.FC = () => {
                   </div>
                   <div className="px-6 py-4 border-t border-white/10 flex justify-end gap-2">
                     <PremiumButton
-                      variant="glass"
+                      variant="secondary"
                       size="sm"
                       onClick={() => navigate(`/tasks/${task.id}`)}
                     >
@@ -458,12 +447,7 @@ const Tasks: React.FC = () => {
                 ? 'Try adjusting your search or filters'
                 : 'Create your first task to get started'}
             </p>
-            <PremiumButton
-              variant="gradient"
-              glow
-              icon={Plus}
-              onClick={() => navigate('/tasks/new')}
-            >
+            <PremiumButton variant="gradient" icon={Plus} onClick={() => navigate('/tasks/new')}>
               Create Task
             </PremiumButton>
           </motion.div>

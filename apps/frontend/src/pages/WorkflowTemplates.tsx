@@ -23,24 +23,35 @@ interface WorkflowTemplate {
 export default function WorkflowTemplates() {
   const [templates, setTemplates] = useState<WorkflowTemplate[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     // Fetch workflow templates from backend
     const fetchTemplates = async () => {
+      setLoadError(null);
       try {
         const response = await fetch('/api/workflows/templates');
-        if (response.ok) {
+        if (
+          response.ok &&
+          (response.headers.get('content-type') || '').includes('application/json')
+        ) {
           const data = await response.json();
-          setTemplates(data);
+          const normalized = Array.isArray(data)
+            ? data
+            : Array.isArray(data?.data)
+              ? data.data
+              : [];
+          setTemplates(normalized);
         } else {
-          // Fallback to mock data if API not available
-          setTemplates(mockTemplates);
+          setTemplates([]);
+          setLoadError('Workflow templates endpoint is unavailable');
         }
       } catch (error) {
         console.error('Error fetching workflow templates:', error);
-        setTemplates(mockTemplates);
+        setTemplates([]);
+        setLoadError('Workflow templates endpoint is unavailable');
       } finally {
         setLoading(false);
       }
@@ -49,54 +60,10 @@ export default function WorkflowTemplates() {
     fetchTemplates();
   }, []);
 
-  const mockTemplates: WorkflowTemplate[] = [
-    {
-      id: '1',
-      name: 'Data Analysis Pipeline',
-      description: 'Automated data collection, cleaning, analysis, and reporting workflow',
-      category: 'Analytics',
-      tags: ['data', 'analysis', 'reporting'],
-      complexity: 'Intermediate',
-      estimatedTime: '2-4 hours',
-      agentCount: 3,
-      isPopular: true,
-    },
-    {
-      id: '2',
-      name: 'Customer Support Automation',
-      description: 'Multi-agent system for handling customer inquiries and support tickets',
-      category: 'Customer Service',
-      tags: ['support', 'automation', 'customer'],
-      complexity: 'Advanced',
-      estimatedTime: '1-2 hours',
-      agentCount: 4,
-      isPopular: true,
-    },
-    {
-      id: '3',
-      name: 'Content Creation Workflow',
-      description: 'Collaborative content creation, review, and publishing process',
-      category: 'Content',
-      tags: ['content', 'creation', 'publishing'],
-      complexity: 'Simple',
-      estimatedTime: '30 minutes',
-      agentCount: 2,
-      isPopular: false,
-    },
-    {
-      id: '4',
-      name: 'Code Review Assistant',
-      description: 'Automated code review, testing, and deployment workflow',
-      category: 'Development',
-      tags: ['code', 'review', 'testing'],
-      complexity: 'Advanced',
-      estimatedTime: '3-5 hours',
-      agentCount: 5,
-      isPopular: true,
-    },
+  const categories = [
+    'all',
+    ...Array.from(new Set(templates.map((template) => template.category))),
   ];
-
-  const categories = ['all', 'Analytics', 'Customer Service', 'Content', 'Development'];
 
   const filteredTemplates = templates.filter((template) => {
     const matchesCategory = selectedCategory === 'all' || template.category === selectedCategory;
@@ -179,6 +146,11 @@ export default function WorkflowTemplates() {
             </div>
           </div>
         </GlassCard>
+        {loadError && (
+          <GlassCard className="p-4 border border-amber-500/40 bg-amber-500/10">
+            <p className="text-sm text-amber-200">{loadError}. No synthetic templates are shown.</p>
+          </GlassCard>
+        )}
 
         {/* Popular Templates */}
         {selectedCategory === 'all' && (

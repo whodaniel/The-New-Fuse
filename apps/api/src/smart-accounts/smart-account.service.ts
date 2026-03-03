@@ -4,6 +4,7 @@
  */
 import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService } from '@the-new-fuse/database';
+import { createHash } from 'crypto';
 import { createPublicClient, http, parseAbi } from 'viem';
 import { mainnet } from 'viem/chains';
 import { Web3authService } from '../web3auth/web3auth.service';
@@ -124,6 +125,7 @@ export class SmartAccountService {
 
       // Deploy Smart Account via factory contract
       const salt = this.generateSalt(wallet.agent?.user?.id || '', wallet.address);
+      const smartAccountAddress = await this.getCounterfactualAddress(wallet.address, salt);
       const factoryAddress = process.env.SMART_ACCOUNT_FACTORY_ADDRESS;
 
       if (!factoryAddress) {
@@ -153,7 +155,7 @@ export class SmartAccountService {
       this.logger.log(`Smart Account deployed successfully: ${deployTx}`);
 
       return {
-        smartAccountAddress: metadata.address || wallet.address,
+        smartAccountAddress,
         transactionHash: deployTx,
         isCounterfactual: false,
       };
@@ -277,9 +279,8 @@ export class SmartAccountService {
   }
 
   private generateSalt(userId: string, eoaAddress: string): string {
-    const crypto = require('crypto');
-    const data = `${userId}-${eoaAddress}-${Date.now()}`;
-    return '0x' + crypto.createHash('sha256').update(data).digest('hex');
+    const data = `${userId}-${eoaAddress}`.toLowerCase();
+    return `0x${createHash('sha256').update(data).digest('hex')}`;
   }
 
   private async getCounterfactualAddress(owner: string, salt: string): Promise<string> {
@@ -306,11 +307,7 @@ export class SmartAccountService {
       return address as string;
     } catch (error) {
       this.logger.error('Failed to get counterfactual address:', error);
-      // Fallback to mock address generation for development
-      const crypto = require('crypto');
-      const data = owner + salt;
-      const hash = crypto.createHash('sha256').update(data).digest('hex');
-      return '0x' + hash.substring(0, 40);
+      throw new Error('Unable to resolve smart account counterfactual address from factory');
     }
   }
 

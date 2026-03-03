@@ -21,7 +21,7 @@ export class MarketplaceService implements OnModuleInit, OnModuleDestroy {
   private dbEnabled = true;
   private dbClient: Sql | null = null;
 
-  private readonly fallbackItems: MarketplaceCatalogItem[] = [
+  private readonly seedItems: MarketplaceCatalogItem[] = [
     {
       id: 'exp-open-audio-deck',
       slug: 'open-audio-deck',
@@ -335,6 +335,7 @@ export class MarketplaceService implements OnModuleInit, OnModuleDestroy {
     input: MarketplaceExperienceSubmissionInput
   ): Promise<MarketplaceCatalogItem> {
     const validated = this.validateSubmissionInput(input);
+    const tags = validated.tags ?? [];
     const now = new Date().toISOString();
     const existingItems = await this.getAllItems();
     const id = this.generateUniqueId('exp-community', existingItems);
@@ -347,7 +348,7 @@ export class MarketplaceService implements OnModuleInit, OnModuleDestroy {
       description: validated.description,
       kind: 'experience',
       category: validated.category,
-      tags: validated.tags.length > 0 ? validated.tags : ['community', 'ugc'],
+      tags: tags.length > 0 ? tags : ['community', 'ugc'],
       capabilities: ['ugc_submission'],
       rating: 0,
       totalRuns: 0,
@@ -369,6 +370,7 @@ export class MarketplaceService implements OnModuleInit, OnModuleDestroy {
     input: MarketplaceCatalogSubmissionInput
   ): Promise<MarketplaceCatalogItem> {
     const validated = this.validateSubmissionInput(input);
+    const tags = validated.tags ?? [];
     const normalizedKind = this.normalizeKind(input.kind);
     if (!normalizedKind) {
       throw new BadRequestException('kind is required and must be a valid catalog kind');
@@ -392,7 +394,7 @@ export class MarketplaceService implements OnModuleInit, OnModuleDestroy {
       description: validated.description,
       kind: normalizedKind,
       category: validated.category,
-      tags: validated.tags.length > 0 ? validated.tags : [normalizedKind, 'community'],
+      tags: tags.length > 0 ? tags : [normalizedKind, 'community'],
       capabilities: capabilities.length > 0 ? capabilities : ['community_submission'],
       rating: 0,
       totalRuns: 0,
@@ -488,14 +490,14 @@ export class MarketplaceService implements OnModuleInit, OnModuleDestroy {
       this.initialized = true;
       const hasRows = this.extractRows(existingRows).length > 0;
       if (!hasRows) {
-        for (const item of this.fallbackItems) {
+        for (const item of this.seedItems) {
           await this.persistItem(item, false);
         }
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       console.error(
-        `MarketplaceService: failed to initialize database-backed catalog, using memory fallback. (${message})`
+        `MarketplaceService: failed to initialize database-backed catalog. (${message})`
       );
       this.dbEnabled = false;
       this.initialized = true;
@@ -506,7 +508,7 @@ export class MarketplaceService implements OnModuleInit, OnModuleDestroy {
     await this.ensureInitialized();
 
     if (!this.dbEnabled || !this.dbClient) {
-      return [...this.fallbackItems];
+      return [];
     }
 
     const result = await this.dbClient`
@@ -540,15 +542,7 @@ export class MarketplaceService implements OnModuleInit, OnModuleDestroy {
   private async persistItem(item: MarketplaceCatalogItem, upsert: boolean): Promise<void> {
     await this.ensureInitialized();
     if (!this.dbEnabled || !this.dbClient) {
-      const existingIndex = this.fallbackItems.findIndex(
-        (existingItem) => existingItem.id === item.id || existingItem.slug === item.slug
-      );
-      if (existingIndex >= 0) {
-        this.fallbackItems[existingIndex] = item;
-      } else {
-        this.fallbackItems.unshift(item);
-      }
-      return;
+      throw new Error('Marketplace storage unavailable');
     }
 
     const tags = JSON.stringify(item.tags || []);

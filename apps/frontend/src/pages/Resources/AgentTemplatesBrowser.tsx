@@ -384,7 +384,10 @@ export default function AgentTemplatesBrowser() {
                   <PremiumButton
                     size="lg"
                     variant="secondary"
-                    onClick={() => toast.success('Customization coming soon!')}
+                    onClick={() => {
+                      navigate(`/agents/new?templateId=${encodeURIComponent(selectedTemplate.id)}`);
+                      setSelectedTemplate(null);
+                    }}
                   >
                     Customize
                   </PremiumButton>

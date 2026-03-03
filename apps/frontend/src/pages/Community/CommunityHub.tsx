@@ -1,3 +1,4 @@
+import { GlassCard } from '@/components/ui/premium';
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -23,7 +24,6 @@ import {
   HeartIcon as HeartSolidIcon,
   StarIcon as StarSolidIcon,
 } from '@heroicons/react/24/solid';
-import { GlassCard } from '@/components/ui/premium';
 import React, { useEffect, useState } from 'react';
 
 interface CommunityPost {
@@ -66,6 +66,7 @@ const CommunityHub: React.FC = () => {
   const [posts, setPosts] = useState<CommunityPost[]>([]);
   const [stats, setStats] = useState<CommunityStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('recent');
@@ -93,6 +94,7 @@ const CommunityHub: React.FC = () => {
 
   const fetchCommunityData = async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const [postsResponse, statsResponse] = await Promise.all([
         fetch(
@@ -109,17 +111,18 @@ const CommunityHub: React.FC = () => {
       if (postsResponse.ok && statsResponse.ok && isJson(postsResponse) && isJson(statsResponse)) {
         const postsData = await postsResponse.json();
         const statsData = await statsResponse.json();
-        setPosts(postsData);
-        setStats(statsData);
+        setPosts(Array.isArray(postsData) ? postsData : []);
+        setStats(statsData ?? null);
       } else {
-        // Mock data for development
-        setPosts(mockPosts);
-        setStats(mockStats);
+        setPosts([]);
+        setStats(null);
+        setLoadError('Community endpoints are unavailable');
       }
     } catch (error) {
       console.error('Failed to fetch community data:', error);
-      setPosts(mockPosts);
-      setStats(mockStats);
+      setPosts([]);
+      setStats(null);
+      setLoadError('Community endpoints are unavailable');
     } finally {
       setLoading(false);
     }
@@ -193,91 +196,6 @@ const CommunityHub: React.FC = () => {
     return date.toLocaleDateString();
   };
 
-  const mockStats: CommunityStats = {
-    totalMembers: 12543,
-    activeToday: 1247,
-    totalPosts: 8932,
-    totalComments: 23456,
-  };
-
-  const mockPosts: CommunityPost[] = [
-    {
-      id: '1',
-      title: 'Best practices for AI agent deployment in production',
-      content:
-        "I've been working on deploying AI agents to production and wanted to share some insights and get feedback from the community...",
-      author: {
-        id: 'user1',
-        name: 'Sarah Chen',
-        avatar: '/avatars/sarah.jpg',
-        reputation: 2847,
-        badges: ['Expert', 'Contributor'],
-      },
-      category: 'general',
-      tags: ['deployment', 'production', 'best-practices'],
-      createdAt: '2024-01-15T10:30:00Z',
-      updatedAt: '2024-01-15T10:30:00Z',
-      votes: { upvotes: 42, downvotes: 3, userVote: null },
-      comments: 18,
-      views: 234,
-      bookmarks: 15,
-      isBookmarked: false,
-      isLiked: false,
-      isPinned: true,
-      isFeatured: true,
-    },
-    {
-      id: '2',
-      title: 'Help: Agent not responding to custom prompts',
-      content:
-        "I'm having trouble getting my agent to respond properly to custom prompts. Has anyone encountered this issue?",
-      author: {
-        id: 'user2',
-        name: 'Mike Johnson',
-        avatar: '/avatars/mike.jpg',
-        reputation: 156,
-        badges: ['Newcomer'],
-      },
-      category: 'help',
-      tags: ['troubleshooting', 'prompts', 'help'],
-      createdAt: '2024-01-15T08:15:00Z',
-      updatedAt: '2024-01-15T08:15:00Z',
-      votes: { upvotes: 8, downvotes: 0, userVote: null },
-      comments: 12,
-      views: 89,
-      bookmarks: 3,
-      isBookmarked: false,
-      isLiked: false,
-      isPinned: false,
-      isFeatured: false,
-    },
-    {
-      id: '3',
-      title: 'Showcase: My AI-powered customer service bot',
-      content:
-        "Just finished building an AI customer service bot that handles 90% of inquiries automatically. Here's how I did it...",
-      author: {
-        id: 'user3',
-        name: 'Alex Rodriguez',
-        avatar: '/avatars/alex.jpg',
-        reputation: 1923,
-        badges: ['Innovator', 'Helper'],
-      },
-      category: 'showcase',
-      tags: ['showcase', 'customer-service', 'automation'],
-      createdAt: '2024-01-14T16:45:00Z',
-      updatedAt: '2024-01-14T16:45:00Z',
-      votes: { upvotes: 67, downvotes: 2, userVote: 'up' },
-      comments: 24,
-      views: 456,
-      bookmarks: 28,
-      isBookmarked: true,
-      isLiked: true,
-      isPinned: false,
-      isFeatured: true,
-    },
-  ];
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
@@ -303,6 +221,13 @@ const CommunityHub: React.FC = () => {
               <span>New Post</span>
             </button>
           </div>
+          {loadError && (
+            <GlassCard className="rounded-lg p-4 mb-6 border border-amber-500/40 bg-amber-500/10">
+              <p className="text-sm text-amber-200">
+                {loadError}. No synthetic community posts are shown.
+              </p>
+            </GlassCard>
+          )}
 
           {/* Community Stats */}
           {stats && (
@@ -404,6 +329,11 @@ const CommunityHub: React.FC = () => {
 
         {/* Posts List */}
         <div className="space-y-4">
+          {posts.length === 0 && (
+            <GlassCard className="rounded-lg p-6 border-white/10 bg-white/5 text-sm text-gray-300">
+              No live community posts available.
+            </GlassCard>
+          )}
           {posts.map((post) => (
             <div
               key={post.id}

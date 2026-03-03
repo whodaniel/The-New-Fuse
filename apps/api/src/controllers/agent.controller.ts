@@ -19,8 +19,8 @@ import {
   AgentType,
   CreateAgentDto,
   UpdateAgentDto,
-  AgentProfileDto,
 } from '@the-new-fuse/types';
+import { AgentProfileDto } from '../agents/dto/agent.dto';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import {
   JwtAuth,

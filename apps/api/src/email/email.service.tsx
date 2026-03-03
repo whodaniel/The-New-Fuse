@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as path from 'path';
 import { promises as fs } from 'fs';
+import * as path from 'path';
 
 // Mock nodemailer types and functionality
 interface MailOptions {
@@ -29,7 +29,7 @@ const handlebars = {
         return context[key] || match;
       });
     };
-  }
+  },
 };
 
 @Injectable()
@@ -37,19 +37,15 @@ export class EmailService {
   private transporter?: Transporter;
 
   constructor(private configService: ConfigService) {
-    // Mock transporter implementation
-    this.transporter = {
-      sendMail: async (options: MailOptions) => {
-        console.log('Mock email sent:', options);
-        return { messageId: 'mock-' + Date.now() };
-      }
-    };
+    // SMTP transport is intentionally unset in this deployment until real provider wiring is configured.
+    this.transporter = undefined;
   }
 
   async sendEmail(to: string, subject: string, html: string, text?: string): Promise<boolean> {
     try {
       if (!this.transporter) {
-        throw new Error('Email transporter not initialized');
+        console.error('Email transporter is not configured; email send skipped.');
+        return false;
       }
 
       await this.transporter.sendMail({
@@ -57,7 +53,7 @@ export class EmailService {
         to,
         subject,
         html,
-        text
+        text,
       });
 
       return true;

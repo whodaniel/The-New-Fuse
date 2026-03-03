@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { GlassCard, PremiumButton, PremiumInput, PremiumSelect } from '@/components/ui/premium';
 import { useDebounce } from '@/hooks/useDebounce';
-import { agentService, type Agent } from '@/services/AgentService';
+import { agentService, type Agent, type SwarmCapabilityStatus } from '@/services/AgentService';
 import {
   ArrowLeftRight,
   ArrowRight,
@@ -268,6 +268,9 @@ export const AgentsRevolution = () => {
   const [filterStatus, setFilterStatus] = useState('All');
   const [agents, setAgents] = useState<UIAgent[]>([]);
   const [activities, setActivity] = useState<SwarmActivity[]>([]);
+  const [swarmCapabilityStatus, setSwarmCapabilityStatus] = useState<SwarmCapabilityStatus | null>(
+    null
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -281,8 +284,10 @@ export const AgentsRevolution = () => {
         agentService.getAgents(),
         agentService.getSwarmActivity(),
       ]);
+      const capabilityStatus = await agentService.getSwarmCapabilityStatus();
       setAgents(fetchedAgents.map(transformAgent));
       setActivity(fetchedActivity);
+      setSwarmCapabilityStatus(capabilityStatus);
     } catch (err) {
       console.error('Error fetching data:', err);
       setError('An unexpected error occurred while fetching your swarm data. Please try again.');
@@ -337,7 +342,7 @@ export const AgentsRevolution = () => {
           </div>
           <h2 className="mt-6 text-3xl font-bold text-white">Oops! Something went wrong.</h2>
           <p className="mt-4 text-lg text-gray-400">{error}</p>
-          <PremiumButton onClick={fetchAgents} variant="gradient" className="mt-8">
+          <PremiumButton onClick={fetchData} variant="gradient" className="mt-8">
             <ArrowRight className="mr-2 h-5 w-5" />
             Try Again
           </PremiumButton>
@@ -426,8 +431,23 @@ export const AgentsRevolution = () => {
                 <TrendingUp className="text-blue-400" />
                 Swarm Intelligence
               </h3>
-              <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20">LIVE FEED</Badge>
+              <div className="flex items-center gap-2">
+                <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20">LIVE FEED</Badge>
+                {swarmCapabilityStatus &&
+                  Object.keys(swarmCapabilityStatus.unavailable || {}).length > 0 && (
+                    <Badge className="bg-amber-500/10 text-amber-300 border-amber-500/30">
+                      PARTIAL
+                    </Badge>
+                  )}
+              </div>
             </div>
+            {swarmCapabilityStatus &&
+              Object.keys(swarmCapabilityStatus.unavailable || {}).length > 0 && (
+                <div className="p-4 rounded-2xl border border-amber-500/30 bg-amber-500/10 text-sm text-amber-200">
+                  Some swarm execution/message APIs are not deployed yet. Live activity feed remains
+                  available.
+                </div>
+              )}
             <div className="space-y-4">
               {activities.map((act) => (
                 <div

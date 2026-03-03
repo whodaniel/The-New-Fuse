@@ -75,7 +75,7 @@ class MCPService {
 
       return await response.json();
     } catch (error) {
-      console.warn(`MCP API request to ${url} failed, falling back to mock data. Error:`, error);
+      console.warn(`MCP API request to ${url} failed. Error:`, error);
       throw error;
     }
   }

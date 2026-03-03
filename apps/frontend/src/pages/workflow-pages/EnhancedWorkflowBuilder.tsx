@@ -351,6 +351,7 @@ const EnhancedWorkflowBuilder: React.FC = () => {
     logs: [],
   });
   const [availableAgents, setAvailableAgents] = useState<any[]>([]);
+  const [agentLoadError, setAgentLoadError] = useState<string | null>(null);
 
   const {
     isOpen: isNodeLibraryOpen,
@@ -382,27 +383,30 @@ const EnhancedWorkflowBuilder: React.FC = () => {
 
   const loadAvailableAgents = async () => {
     try {
-      // In production, this would call the agent registry API
-      const response = await fetch('/api/agents/registry');
-      if (response.ok) {
-        const agents = await response.json();
-        setAvailableAgents(agents);
-      } else {
-        // Mock data for demonstration
-        setAvailableAgents([
-          { id: 'agent-1', name: 'Code Reviewer', type: 'code-reviewer', status: 'ACTIVE' },
-          { id: 'agent-2', name: 'Researcher', type: 'researcher', status: 'ACTIVE' },
-          { id: 'agent-3', name: 'Developer', type: 'developer', status: 'ACTIVE' },
-          { id: 'agent-4', name: 'Tester', type: 'tester', status: 'ACTIVE' },
-        ]);
+      setAgentLoadError(null);
+      const registryResponse = await fetch('/api/agents/registry');
+      if (registryResponse.ok) {
+        const agents = await registryResponse.json();
+        setAvailableAgents(Array.isArray(agents) ? agents : []);
+        return;
       }
+
+      const agentsResponse = await fetch('/api/agents');
+      if (!agentsResponse.ok) {
+        throw new Error(`HTTP ${agentsResponse.status}`);
+      }
+
+      const payload = await agentsResponse.json();
+      const agents = Array.isArray(payload)
+        ? payload
+        : Array.isArray(payload?.data)
+          ? payload.data
+          : [];
+      setAvailableAgents(agents);
     } catch (error) {
       console.error('Failed to load agents:', error);
-      // Use mock data on error
-      setAvailableAgents([
-        { id: 'agent-1', name: 'Code Reviewer', type: 'code-reviewer', status: 'ACTIVE' },
-        { id: 'agent-2', name: 'Researcher', type: 'researcher', status: 'ACTIVE' },
-      ]);
+      setAvailableAgents([]);
+      setAgentLoadError('Agent directory is unavailable');
     }
   };
 
@@ -1079,12 +1083,22 @@ const EnhancedWorkflowBuilder: React.FC = () => {
                         );
                       }}
                     >
+                      {availableAgents.length === 0 && (
+                        <option value="" disabled>
+                          No agents available
+                        </option>
+                      )}
                       {availableAgents.map((agent) => (
                         <option key={agent.id} value={agent.id}>
                           {agent.name} ({agent.type})
                         </option>
                       ))}
                     </Select>
+                    {agentLoadError && (
+                      <p className="text-xs text-amber-600 mt-2">
+                        {agentLoadError}. Agent task assignment is temporarily disabled.
+                      </p>
+                    )}
                   </FormControl>
                 )}
 

@@ -37,13 +37,16 @@ export const AgencyDashboard: React.FC = () => {
     Array<{ id: string; name: string; domain: string; agents: number; split: string }>
   >([]);
   const [_loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const fetchDashboardData = async () => {
     setLoading(true);
+    setLoadError(null);
     try {
-      // Real data fetching from services
-      const agentsRes = await agentService.getAgents();
-      const workflowsRes = await workflowService.getWorkflows();
+      const [agentsRes, workflowsRes] = await Promise.all([
+        agentService.getAgents(),
+        workflowService.getWorkflows(),
+      ]);
 
       setStats({
         totalAgents: Array.isArray(agentsRes) ? agentsRes.length : 0,
@@ -51,8 +54,40 @@ export const AgencyDashboard: React.FC = () => {
         totalTasks: 0,
         revenue: '$0.00',
       });
-    } catch (e) {
-      console.warn('Backend connection partial, using demo overlay');
+
+      let ownerId = '';
+      try {
+        const rawUser = localStorage.getItem('user');
+        if (rawUser) {
+          const parsed = JSON.parse(rawUser);
+          ownerId = String(parsed?.id || '');
+        }
+      } catch {
+        ownerId = '';
+      }
+
+      if (ownerId) {
+        const response = await fetch(`/api/agencies?ownerId=${encodeURIComponent(ownerId)}`);
+        if (!response.ok) {
+          throw new Error(`Agency list unavailable (${response.status})`);
+        }
+        const agencies = await response.json();
+        const rows = Array.isArray(agencies) ? agencies : [];
+        setRecentAgencies(
+          rows.map((agency: any) => ({
+            id: String(agency?.id || ''),
+            name: String(agency?.name || agency?.slug || 'Unnamed Agency'),
+            domain: String(agency?.slug || 'n/a'),
+            agents: Number(agency?.stats?.totalAgents || 0),
+            split: `${Number(agency?.revenueShare?.house || 0)} / ${Number(agency?.revenueShare?.investors || 0)} / ${Number(agency?.revenueShare?.affiliates || 0)}`,
+          }))
+        );
+      } else {
+        setRecentAgencies([]);
+      }
+    } catch (e: any) {
+      console.warn('Agency dashboard data unavailable:', e);
+      setLoadError(e?.message || 'Agency dashboard data is currently unavailable.');
     } finally {
       setLoading(false);
     }
@@ -88,6 +123,12 @@ export const AgencyDashboard: React.FC = () => {
           </Link>
         </div>
       </div>
+
+      {loadError && (
+        <div className="rounded-lg border border-amber-300 bg-amber-100/80 px-4 py-3 text-sm text-amber-900">
+          {loadError}
+        </div>
+      )}
 
       {/* High-Level Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -243,11 +284,5 @@ const ActionSmall: React.FC<{ icon: React.ReactNode; label: string }> = ({ icon,
     <span className="text-[10px] font-bold uppercase tracking-wider">{label}</span>
   </button>
 );
-
-const _MOCK_TENANTS = [
-  { id: 't1', name: 'Alpha Research Node', domain: 'alpha.agency.hub', agents: 8, split: '95/5' },
-  { id: 't2', name: 'Beta Content Studio', domain: 'beta.agency.hub', agents: 12, split: '90/10' },
-  { id: 't3', name: 'Zeta Financial Swarm', domain: 'zeta.agency.hub', agents: 5, split: '98/2' },
-];
 
 export default AgencyDashboard;

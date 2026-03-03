@@ -31,27 +31,44 @@ export const AgentIdentityPage: React.FC = () => {
   const { agentService } = useApi();
   const [identity, setIdentity] = useState<AgentIdentity | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchIdentity = async () => {
       setLoading(true);
+      setLoadError(null);
       try {
-        // Fetch real agent details
-        const agent = await agentService.getAgent(id || '');
+        if (!id) {
+          throw new Error('Agent id is missing');
+        }
+
+        const agent = await agentService.getAgent(id);
         setIdentity({
           id: agent.id,
           name: agent.name,
-          agencyId: agent.tenantId || 'agency-core-001',
-          agencyName: 'The New Fuse Core',
-          privileges: ['agent:execute', 'mcp:call', 'relay:send', 'knowledge:read'],
-          publicKey: `ed25519_${Math.random().toString(36).substring(7)}...`,
-          status: 'online',
-          lastHandshake: new Date().toISOString(),
-          assignedNodes: ['node-nyc-01', 'node-sfo-02'],
+          agencyId: agent.tenantId || 'unknown',
+          agencyName: agent.tenantId ? `Agency ${agent.tenantId}` : 'Unknown Agency',
+          privileges: Array.isArray((agent as any).permissions)
+            ? (agent as any).permissions
+            : ['agent:execute'],
+          publicKey: String((agent as any).publicKey || 'Unavailable'),
+          status:
+            (agent as any).status === 'active'
+              ? 'online'
+              : (agent as any).status === 'inactive'
+                ? 'offline'
+                : 'restricted',
+          lastHandshake: String(
+            (agent as any).updatedAt || (agent as any).lastSeen || new Date().toISOString()
+          ),
+          assignedNodes: Array.isArray((agent as any).assignedNodes)
+            ? (agent as any).assignedNodes
+            : [],
         });
-      } catch (e) {
-        // Mock fallback
-        setIdentity(MOCK_IDENTITY);
+      } catch (error) {
+        console.error('Failed to load agent identity:', error);
+        setIdentity(null);
+        setLoadError('Agent identity endpoint is unavailable');
       } finally {
         setLoading(false);
       }
@@ -62,7 +79,10 @@ export const AgentIdentityPage: React.FC = () => {
   if (loading || !identity) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-950">
-        <div className="animate-pulse text-blue-400 font-mono">RESOLVING IDENTITY...</div>
+        <div className="text-center">
+          <div className="animate-pulse text-blue-400 font-mono">RESOLVING IDENTITY...</div>
+          {!loading && loadError && <p className="mt-3 text-sm text-amber-300">{loadError}</p>}
+        </div>
       </div>
     );
   }
@@ -154,14 +174,18 @@ export const AgentIdentityPage: React.FC = () => {
                     Network Nodes
                   </span>
                   <div className="flex flex-wrap gap-2">
-                    {identity.assignedNodes.map((node) => (
-                      <span
-                        key={node}
-                        className="px-2 py-1 rounded bg-indigo-500/10 border border-indigo-500/30 text-[10px] text-indigo-300 font-mono"
-                      >
-                        {node}
-                      </span>
-                    ))}
+                    {identity.assignedNodes.length > 0 ? (
+                      identity.assignedNodes.map((node) => (
+                        <span
+                          key={node}
+                          className="px-2 py-1 rounded bg-indigo-500/10 border border-indigo-500/30 text-[10px] text-indigo-300 font-mono"
+                        >
+                          {node}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-xs text-gray-500">No nodes assigned</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -170,15 +194,19 @@ export const AgentIdentityPage: React.FC = () => {
                 <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest block">
                   Privilege Matrix
                 </span>
-                {identity.privileges.map((priv) => (
-                  <div
-                    key={priv}
-                    className="flex items-center justify-between p-3 rounded-lg bg-black/20 border border-white/5"
-                  >
-                    <span className="text-xs text-gray-300 font-mono">{priv}</span>
-                    <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                  </div>
-                ))}
+                {identity.privileges.length > 0 ? (
+                  identity.privileges.map((priv) => (
+                    <div
+                      key={priv}
+                      className="flex items-center justify-between p-3 rounded-lg bg-black/20 border border-white/5"
+                    >
+                      <span className="text-xs text-gray-300 font-mono">{priv}</span>
+                      <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-xs text-gray-500">No privileges reported.</div>
+                )}
                 <div className="mt-4 flex items-center gap-2 text-[10px] text-amber-400/80 bg-amber-400/5 p-2 rounded border border-amber-400/20">
                   <ShieldAlert className="w-3 h-3" />
                   <span>
@@ -230,17 +258,5 @@ const IdentityField: React.FC<{
     </span>
   </div>
 );
-
-const MOCK_IDENTITY: AgentIdentity = {
-  id: 'agent-7x-beta',
-  name: 'Beta-Orchestrator',
-  agencyId: 'agency-core-001',
-  agencyName: 'The New Fuse Core',
-  privileges: ['agent:execute', 'mcp:call', 'relay:send', 'knowledge:read'],
-  publicKey: 'ed25519_88xJ294L01nM...zP7e',
-  status: 'online',
-  lastHandshake: new Date().toISOString(),
-  assignedNodes: ['node-nyc-01', 'node-sfo-02'],
-};
 
 export default AgentIdentityPage;

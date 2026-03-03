@@ -51,6 +51,18 @@ export interface AgentCapability {
   category: string;
 }
 
+export interface SwarmCapabilityStatus {
+  available: Record<string, boolean>;
+  unavailable: Record<string, boolean>;
+  reason?: string;
+}
+
+export interface LocalAICapabilityStatus {
+  enabled: boolean;
+  reason?: string;
+  endpoints?: Record<string, boolean>;
+}
+
 class AgentService {
   private baseUrl: string;
   private apiKey?: string;
@@ -299,6 +311,24 @@ class AgentService {
     } catch (error) {
       console.error('Failed to fetch real swarm activity:', error);
       return [];
+    }
+  }
+
+  async getSwarmCapabilityStatus(): Promise<SwarmCapabilityStatus | null> {
+    try {
+      return await this.request<SwarmCapabilityStatus>('/swarm/status');
+    } catch (error) {
+      console.error('Failed to fetch swarm capability status:', error);
+      return null;
+    }
+  }
+
+  async getLocalAICapabilityStatus(): Promise<LocalAICapabilityStatus | null> {
+    try {
+      return await this.request<LocalAICapabilityStatus>('/local-ai/status');
+    } catch (error) {
+      console.error('Failed to fetch local AI capability status:', error);
+      return null;
     }
   }
 

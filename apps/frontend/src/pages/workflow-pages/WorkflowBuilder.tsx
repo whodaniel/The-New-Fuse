@@ -169,6 +169,7 @@ const WorkflowBuilderContent: React.FC = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [workflowName, setWorkflowName] = useState('Untitled Workflow');
   const [workflowDescription, setWorkflowDescription] = useState('');
+  const [workflowId, setWorkflowId] = useState<string | null>(null);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [isExecuting, setIsExecuting] = useState(false);
   const [isNodePanelOpen, setIsNodePanelOpen] = useState(true); // Open by default for drag and drop
@@ -186,13 +187,14 @@ const WorkflowBuilderContent: React.FC = () => {
   const loadWorkflow = async () => {
     // Load existing workflow if editing
     const urlParams = new URLSearchParams(window.location.search);
-    const workflowId = urlParams.get('id');
+    const queryWorkflowId = urlParams.get('id');
 
-    if (workflowId) {
+    if (queryWorkflowId) {
+      setWorkflowId(queryWorkflowId);
       try {
         // Use actual API service to load workflow
         const workflowService = new WorkflowApiService();
-        const response = await workflowService.getWorkflow(workflowId);
+        const response = await workflowService.getWorkflow(queryWorkflowId);
 
         if (response.success && response.data) {
           const workflow = response.data;
@@ -324,12 +326,21 @@ const WorkflowBuilderContent: React.FC = () => {
       });
       return;
     }
+    if (!workflowId) {
+      toast({
+        title: 'Save Required',
+        description: 'Save this workflow before execution so it has a valid workflow ID.',
+        variant: 'warning',
+        duration: 3000,
+      });
+      return;
+    }
 
     setIsExecuting(true);
     try {
       // Use actual API service for workflow execution
       const workflowService = new WorkflowApiService();
-      const response = await workflowService.executeWorkflow('current-workflow-id', {
+      const response = await workflowService.executeWorkflow(workflowId, {
         nodes: nodes,
         edges: edges,
       });
@@ -350,22 +361,7 @@ const WorkflowBuilderContent: React.FC = () => {
           duration: 3000,
         });
       } else {
-        // Mock execution for demo if API fails/is not connected
-        setTimeout(() => {
-          setNodes((nds) =>
-            nds.map((n) => ({
-              ...n,
-              data: { ...n.data, status: 'completed' },
-            }))
-          );
-          toast({
-            title: 'Workflow Executed (Demo)',
-            description: `Workflow sequence completed successfully.`,
-            variant: 'success',
-            duration: 3000,
-          });
-        }, 1500);
-        //   throw new Error(response.error || 'Failed to execute workflow');
+        throw new Error(response.error || response.message || 'Failed to execute workflow');
       }
     } catch (error) {
       toast({
@@ -383,6 +379,7 @@ const WorkflowBuilderContent: React.FC = () => {
   const saveWorkflow = async () => {
     try {
       const workflowData = {
+        id: workflowId || undefined,
         name: workflowName,
         description: workflowDescription,
         nodes: nodes,
@@ -394,21 +391,17 @@ const WorkflowBuilderContent: React.FC = () => {
       const response = await workflowService.saveWorkflow(workflowData);
 
       if (response.success && response.data) {
+        if (response.data.id) {
+          setWorkflowId(response.data.id);
+        }
         toast({
           title: 'Workflow Saved',
-          description: `"${workflowName}" has been saved successfully`,
+          description: `"${workflowName}" has been saved successfully${response.data.id ? ` (ID: ${response.data.id})` : ''}`,
           variant: 'success',
           duration: 3000,
         });
       } else {
-        // Mock save for demo if API fails
-        toast({
-          title: 'Workflow Saved (Local)',
-          description: `"${workflowName}" has been saved locally (API not connected)`,
-          variant: 'success',
-          duration: 3000,
-        });
-        //   throw new Error(response.error || 'Failed to save workflow');
+        throw new Error(response.error || response.message || 'Failed to save workflow');
       }
     } catch (error) {
       toast({
@@ -422,7 +415,7 @@ const WorkflowBuilderContent: React.FC = () => {
     }
   };
 
-  const onNodeClick = (event: React.MouseEvent, node: Node) => {
+  const onNodeClick = (_event: React.MouseEvent, node: Node) => {
     setSelectedNode(node);
     setIsSettingsOpen(true);
   };

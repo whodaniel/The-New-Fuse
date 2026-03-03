@@ -22,6 +22,37 @@ RAW_PROVIDER="${PROVIDER:-anthropic}"
 RAW_PROVIDER_LC="$(printf '%s' "${RAW_PROVIDER}" | tr '[:upper:]' '[:lower:]')"
 RESOLVED_PROVIDER="${RAW_PROVIDER}"
 ZEROCLAW_MODEL="${ZEROCLAW_MODEL:-${DEFAULT_MODEL:-}}"
+ENABLE_KILO_FALLBACK_RAW="${ZEROCLAW_ENABLE_KILO_FALLBACK:-true}"
+ENABLE_KILO_FALLBACK="false"
+case "$(printf '%s' "${ENABLE_KILO_FALLBACK_RAW}" | tr '[:upper:]' '[:lower:]')" in
+  1|true|yes|on) ENABLE_KILO_FALLBACK="true" ;;
+esac
+PRIMARY_FALLBACK_MODELS_RAW="${ZEROCLAW_PRIMARY_MODEL_FALLBACKS:-${OPENCLAW_MODEL_FALLBACKS:-openai-codex/gpt-5.2-codex,openai-codex/gpt-5.1,openai-codex/gpt-5-mini}}"
+KILO_FALLBACK_MODELS_RAW="${ZEROCLAW_KILO_FALLBACK_MODELS:-minimax/minimax-m2.5:free,moonshotai/kimi-k2.5:free,arcee-ai/trinity-large-preview:free,kilo/auto-free}"
+
+PRIMARY_FALLBACK_MODELS_TOML="$(PRIMARY_FALLBACK_MODELS_RAW="${PRIMARY_FALLBACK_MODELS_RAW}" python3 - <<'PY'
+import json
+import os
+import re
+raw = os.environ.get("PRIMARY_FALLBACK_MODELS_RAW", "").strip()
+parts = [p for p in re.split(r"[,\s]+", raw) if p]
+normalized = []
+for part in parts:
+    if "/" in part and part.split("/", 1)[0] in {"openai-codex", "codex"}:
+        part = part.split("/", 1)[1]
+    normalized.append(part)
+print(", ".join(json.dumps(p) for p in normalized))
+PY
+)"
+KILO_FALLBACK_MODELS_TOML="$(KILO_FALLBACK_MODELS_RAW="${KILO_FALLBACK_MODELS_RAW}" python3 - <<'PY'
+import json
+import os
+import re
+raw = os.environ.get("KILO_FALLBACK_MODELS_RAW", "").strip()
+parts = [p for p in re.split(r"[,\s]+", raw) if p]
+print(", ".join(json.dumps(p) for p in parts))
+PY
+)"
 
 # Optional centralized LLM routing (adaptive middleware control plane)
 ROUTING_API_BASE="${TNF_LLM_ROUTING_API_BASE:-}"
@@ -77,8 +108,8 @@ case "${RAW_PROVIDER_LC}" in
     echo "Normalized provider '${RAW_PROVIDER}' to '${RESOLVED_PROVIDER}'"
     # Strip provider prefix from model if present.
     ZEROCLAW_MODEL="$(printf '%s' "${ZEROCLAW_MODEL}" | sed -E 's/^(kilocode|kilo)\///')"
-    # Use KILO_API_KEY for the API key if not already set.
-    API_KEY="${API_KEY:-${KILO_API_KEY:-}}"
+    # Use KILO_API_KEY / KILOCODE_API_KEY for the API key if not already set.
+    API_KEY="${API_KEY:-${KILO_API_KEY:-${KILOCODE_API_KEY:-}}}"
     ;;
   openrouter|openrouterai)
     RESOLVED_PROVIDER="custom:https://openrouter.ai/api/v1"
@@ -87,9 +118,64 @@ case "${RAW_PROVIDER_LC}" in
     ;;
 esac
 
+# For custom-provider fallbacks (e.g. Kilo gateway), the custom provider resolves
+# credentials from generic ZEROCLAW_API_KEY/API_KEY. Reuse KILOCODE_API_KEY when set.
+if [ "${ENABLE_KILO_FALLBACK}" = "true" ]; then
+  API_KEY="${API_KEY:-${ZEROCLAW_API_KEY:-${KILOCODE_API_KEY:-${KILO_API_KEY:-}}}}"
+fi
+
 if [ -z "${ZEROCLAW_MODEL}" ]; then
   echo "WARN: ZEROCLAW_MODEL is not set. Configure model centrally or via Railway env vars." >&2
 fi
+
+# ── Optional Telegram Channel Boot Config ───────────────────
+# Supports both ZEROCLAW_* and legacy PICOCLAW_* variable names.
+TELEGRAM_ENABLED_RAW="${ZEROCLAW_CHANNELS_TELEGRAM_ENABLED:-${PICOCLAW_CHANNELS_TELEGRAM_ENABLED:-false}}"
+TELEGRAM_TOKEN="${ZEROCLAW_CHANNELS_TELEGRAM_TOKEN:-${PICOCLAW_CHANNELS_TELEGRAM_TOKEN:-}}"
+TELEGRAM_PROXY="${ZEROCLAW_CHANNELS_TELEGRAM_PROXY:-${PICOCLAW_CHANNELS_TELEGRAM_PROXY:-}}"
+TELEGRAM_ALLOW_FROM_RAW="${ZEROCLAW_CHANNELS_TELEGRAM_ALLOW_FROM:-${PICOCLAW_CHANNELS_TELEGRAM_ALLOW_FROM:-}}"
+
+TELEGRAM_ENABLED="false"
+case "$(printf '%s' "${TELEGRAM_ENABLED_RAW}" | tr '[:upper:]' '[:lower:]')" in
+  1|true|yes|on) TELEGRAM_ENABLED="true" ;;
+esac
+
+TELEGRAM_ALLOW_FROM_TOML="$(TELEGRAM_ALLOW_FROM_RAW="${TELEGRAM_ALLOW_FROM_RAW}" python3 - <<'PY'
+import json
+import os
+import re
+raw = os.environ.get("TELEGRAM_ALLOW_FROM_RAW", "").strip()
+if not raw:
+    print("")
+    raise SystemExit(0)
+parts = [p for p in re.split(r"[,\s]+", raw) if p]
+print(", ".join(json.dumps(p) for p in parts))
+PY
+)"
+
+# ── Optional Discord Channel Boot Config ────────────────────
+# Supports both ZEROCLAW_* and legacy PICOCLAW_* variable names.
+DISCORD_ENABLED_RAW="${ZEROCLAW_CHANNELS_DISCORD_ENABLED:-${PICOCLAW_CHANNELS_DISCORD_ENABLED:-false}}"
+DISCORD_TOKEN="${ZEROCLAW_CHANNELS_DISCORD_TOKEN:-${PICOCLAW_CHANNELS_DISCORD_TOKEN:-}}"
+DISCORD_ALLOW_FROM_RAW="${ZEROCLAW_CHANNELS_DISCORD_ALLOW_FROM:-${PICOCLAW_CHANNELS_DISCORD_ALLOW_FROM:-}}"
+
+DISCORD_ENABLED="false"
+case "$(printf '%s' "${DISCORD_ENABLED_RAW}" | tr '[:upper:]' '[:lower:]')" in
+  1|true|yes|on) DISCORD_ENABLED="true" ;;
+esac
+
+DISCORD_ALLOW_FROM_TOML="$(DISCORD_ALLOW_FROM_RAW="${DISCORD_ALLOW_FROM_RAW}" python3 - <<'PY'
+import json
+import os
+import re
+raw = os.environ.get("DISCORD_ALLOW_FROM_RAW", "").strip()
+if not raw:
+    print("")
+    raise SystemExit(0)
+parts = [p for p in re.split(r"[,\s]+", raw) if p]
+print(", ".join(json.dumps(p) for p in parts))
+PY
+)"
 
 # ── Write config.toml from env vars ─────────────────────────
 cat > "${CONFIG_FILE}" <<EOF
@@ -159,6 +245,80 @@ aieos_inline = '''
 }
 '''
 EOF
+
+if [ "${ENABLE_KILO_FALLBACK}" = "true" ]; then
+  {
+    echo ""
+    echo "[reliability]"
+    echo "provider_retries = 2"
+    echo "provider_backoff_ms = 500"
+    echo "fallback_providers = [\"custom:https://api.kilo.ai/api/gateway\"]"
+    echo ""
+    echo "[reliability.model_fallbacks]"
+    if [ -n "${PRIMARY_FALLBACK_MODELS_TOML}" ]; then
+      echo "\"openai-codex\" = [${PRIMARY_FALLBACK_MODELS_TOML}]"
+    fi
+    if [ -n "${KILO_FALLBACK_MODELS_TOML}" ]; then
+      echo "\"custom:https://api.kilo.ai/api/gateway\" = [${KILO_FALLBACK_MODELS_TOML}]"
+    fi
+  } >> "${CONFIG_FILE}"
+  echo "Kilo fallback provider/model chain appended to config.toml"
+fi
+
+CHANNELS_CONFIG_STARTED="false"
+start_channels_config() {
+  if [ "${CHANNELS_CONFIG_STARTED}" = "true" ]; then
+    return
+  fi
+  {
+    echo ""
+    echo "[channels_config]"
+    echo "cli = true"
+  } >> "${CONFIG_FILE}"
+  CHANNELS_CONFIG_STARTED="true"
+}
+
+if [ "${TELEGRAM_ENABLED}" = "true" ] || [ -n "${TELEGRAM_TOKEN}" ]; then
+  if [ -z "${TELEGRAM_TOKEN}" ]; then
+    echo "WARN: Telegram channel requested but no token provided. Skipping telegram channel config." >&2
+  else
+    start_channels_config
+    {
+      echo ""
+      # ZeroClaw expects channel config under [channels_config.<name>].
+      echo "[channels_config.telegram]"
+      echo "bot_token = \"${TELEGRAM_TOKEN}\""
+      if [ -n "${TELEGRAM_ALLOW_FROM_TOML}" ]; then
+        echo "allowed_users = [${TELEGRAM_ALLOW_FROM_TOML}]"
+      else
+        # Empty allowlist denies all Telegram users by design.
+        echo "allowed_users = []"
+      fi
+    } >> "${CONFIG_FILE}"
+    echo "Telegram channel config appended to config.toml"
+  fi
+fi
+
+if [ "${DISCORD_ENABLED}" = "true" ] || [ -n "${DISCORD_TOKEN}" ]; then
+  if [ -z "${DISCORD_TOKEN}" ]; then
+    echo "WARN: Discord channel requested but no token provided. Skipping discord channel config." >&2
+  else
+    start_channels_config
+    {
+      echo ""
+      echo "[channels_config.discord]"
+      # Keep both keys for compatibility across zeroclaw builds.
+      echo "token = \"${DISCORD_TOKEN}\""
+      echo "bot_token = \"${DISCORD_TOKEN}\""
+      if [ -n "${DISCORD_ALLOW_FROM_TOML}" ]; then
+        echo "allowed_users = [${DISCORD_ALLOW_FROM_TOML}]"
+      else
+        echo "allowed_users = []"
+      fi
+    } >> "${CONFIG_FILE}"
+    echo "Discord channel config appended to config.toml"
+  fi
+fi
 
 chmod 600 "${CONFIG_FILE}"
 
@@ -276,10 +436,10 @@ echo "TNF heartbeat started (agent: ${AGENT_ID}, interval: 5min)"
 
 sleep 1
 
-# ── Launch ZeroClaw Gateway (internal) + Public Proxy ────────
-echo "Starting zeroclaw gateway on 127.0.0.1:${INTERNAL_GATEWAY_PORT}..."
+# ── Launch ZeroClaw Daemon (gateway + channels) + Public Proxy ────────
+echo "Starting zeroclaw daemon on 127.0.0.1:${INTERNAL_GATEWAY_PORT}..."
 export ZEROCLAW_GATEWAY_PORT="${INTERNAL_GATEWAY_PORT}"
-/usr/local/bin/zeroclaw gateway &
+/usr/local/bin/zeroclaw daemon &
 ZEROCLAW_PID=$!
 
 echo "Waiting for internal gateway readiness..."

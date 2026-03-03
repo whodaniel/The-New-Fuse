@@ -328,13 +328,12 @@ class ResourcesService {
     try {
       const response = await axios.post(`${API_BASE}/skills/${skillId}/execute`);
       return response.data;
-    } catch {
-      return {
-        success: true,
-        mode: 'marketplace-fallback',
-        skillId,
-        message: 'Skill execution queued via marketplace fallback.',
-      };
+    } catch (error) {
+      throw new Error(
+        `Skill execution unavailable for ${skillId}: ${
+          error instanceof Error ? error.message : 'request failed'
+        }`
+      );
     }
   }
 
@@ -343,13 +342,12 @@ class ResourcesService {
     try {
       const response = await axios.post(`${API_BASE}/workflows/${workflowId}/import`);
       return response.data;
-    } catch {
-      return {
-        success: true,
-        mode: 'marketplace-fallback',
-        workflowId,
-        message: 'Workflow import queued via marketplace fallback.',
-      };
+    } catch (error) {
+      throw new Error(
+        `Workflow import unavailable for ${workflowId}: ${
+          error instanceof Error ? error.message : 'request failed'
+        }`
+      );
     }
   }
 
@@ -361,13 +359,12 @@ class ResourcesService {
         customConfig
       );
       return response.data;
-    } catch {
-      return {
-        success: true,
-        mode: 'marketplace-fallback',
-        templateId,
-        agentId: `agent-${templateId}-${Date.now()}`,
-      };
+    } catch (error) {
+      throw new Error(
+        `Agent creation from template unavailable for ${templateId}: ${
+          error instanceof Error ? error.message : 'request failed'
+        }`
+      );
     }
   }
 }

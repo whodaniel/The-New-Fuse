@@ -20,6 +20,10 @@ function ethersBrowserResolve(): Plugin {
       if (source === './provider-ipcsocket.js' && importer && importer.includes('ethers')) {
         return path.resolve(__dirname, 'src/stubs/ethers-provider-ipcsocket-browser.js');
       }
+      // Prevent axios Node adapter from pulling server-only modules into browser bundles.
+      if (source === 'axios/lib/adapters/http.js' || source.endsWith('/axios/lib/adapters/http.js')) {
+        return path.resolve(__dirname, 'src/stubs/axios-http-adapter.ts');
+      }
       return null;
     },
   };
@@ -29,6 +33,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   const isDev = mode === 'development';
   const isProduction = mode === 'production';
+  const enableBuildCompression = isProduction && env.VITE_BUILD_COMPRESS !== 'false';
 
   // Smart host detection for HMR
   const getHMRConfig = () => {
@@ -69,15 +74,8 @@ export default defineConfig(({ mode }) => {
           'http',
           'https',
           'url',
-          'net',
-          'tls',
-          'fs',
           'path',
           'os',
-          'dns',
-          'http2',
-          'child_process',
-          'vm',
         ],
         globals: {
           Buffer: true,
@@ -96,12 +94,12 @@ export default defineConfig(({ mode }) => {
           brotliSize: true,
         }),
       // Compression plugins for better performance
-      isProduction &&
+      enableBuildCompression &&
         compression({
           algorithm: 'gzip',
           ext: '.gz',
         }),
-      isProduction &&
+      enableBuildCompression &&
         compression({
           algorithm: 'brotliCompress',
           ext: '.br',
@@ -154,6 +152,10 @@ export default defineConfig(({ mode }) => {
         // Stub zlib to fix "Cannot read properties of undefined (reading 'Z_SYNC_FLUSH')"
         zlib: path.resolve(__dirname, 'src/stubs/zlib.ts'),
         'node:zlib': path.resolve(__dirname, 'src/stubs/zlib.ts'),
+        // Force browser-safe shims for Node-only transitive deps
+        'axios/lib/adapters/http.js': path.resolve(__dirname, 'src/stubs/axios-http-adapter.ts'),
+        'xmlhttprequest-ssl': path.resolve(__dirname, 'src/stubs/xmlhttprequest-ssl.ts'),
+        'form-data': path.resolve(__dirname, 'src/stubs/form-data.ts'),
       },
     },
     define: {
@@ -195,6 +197,8 @@ export default defineConfig(({ mode }) => {
         'path',
         'os',
         'util',
+        'xmlhttprequest-ssl',
+        'form-data',
       ],
       esbuildOptions: {
         target: 'es2020',
@@ -319,15 +323,62 @@ export default defineConfig(({ mode }) => {
               return 'react-query-vendor';
             }
 
-            // Utilities
+            // Web3 and wallet stacks are heavy and only needed on specific routes
             if (
-              id.includes('node_modules/lodash') ||
-              id.includes('node_modules/axios') ||
-              id.includes('node_modules/date-fns') ||
-              id.includes('node_modules/clsx') ||
-              id.includes('node_modules/class-variance-authority')
+              id.includes('node_modules/ethers') ||
+              id.includes('node_modules/viem') ||
+              id.includes('node_modules/@web3auth') ||
+              id.includes('node_modules/@walletconnect') ||
+              id.includes('node_modules/@metamask')
             ) {
-              return 'utils';
+              return 'web3-vendor';
+            }
+
+            // Markdown / rich-text rendering stack
+            if (
+              id.includes('node_modules/marked') ||
+              id.includes('node_modules/react-markdown') ||
+              id.includes('node_modules/remark-') ||
+              id.includes('node_modules/rehype-') ||
+              id.includes('node_modules/highlight.js') ||
+              id.includes('node_modules/katex')
+            ) {
+              return 'content-vendor';
+            }
+
+            // Node polyfills can bloat generic utility chunks; isolate them
+            if (
+              id.includes('node_modules/vm-browserify') ||
+              id.includes('node_modules/crypto-browserify') ||
+              id.includes('node_modules/stream-browserify') ||
+              id.includes('node_modules/process/') ||
+              id.includes('node_modules/buffer/') ||
+              id.includes('node_modules/util/') ||
+              id.includes('node_modules/path-browserify') ||
+              id.includes('node_modules/readable-stream') ||
+              id.includes('node_modules/browserify-cipher') ||
+              id.includes('node_modules/browserify-sign') ||
+              id.includes('node_modules/events/') ||
+              id.includes('node_modules/assert/') ||
+              id.includes('node_modules/inherits') ||
+              id.includes('node_modules/safe-buffer') ||
+              id.includes('node_modules/base64-js')
+            ) {
+              return 'node-polyfills';
+            }
+
+            // Split large utility ecosystems instead of one oversized "utils" chunk
+            if (id.includes('node_modules/lodash')) {
+              return 'lodash-vendor';
+            }
+            if (id.includes('node_modules/date-fns')) {
+              return 'date-fns-vendor';
+            }
+            if (id.includes('node_modules/rxjs')) {
+              return 'rxjs-vendor';
+            }
+            if (id.includes('node_modules/zod')) {
+              return 'zod-vendor';
             }
 
             // Note: We don't use a catch-all 'vendor' chunk here because it can become too large.

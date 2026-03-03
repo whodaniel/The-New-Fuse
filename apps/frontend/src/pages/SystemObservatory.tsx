@@ -1,3 +1,5 @@
+import { CapabilityBadge } from '@/components/ui/CapabilityBadge';
+import { useFeatureCapabilities } from '@/hooks/useFeatureCapabilities';
 import {
   Activity,
   AlertTriangle,
@@ -130,6 +132,7 @@ function categorizeAgent(name: string): string {
 }
 
 export const SystemObservatory: React.FC = () => {
+  const { capabilities } = useFeatureCapabilities();
   const [activeLayer, setActiveLayer] = useState<'topology' | 'semantic' | 'metrics'>('topology');
   const [agentIndex, setAgentIndex] = useState<AgentIndex | null>(null);
   const [agentIndexLoading, setAgentIndexLoading] = useState(true);
@@ -607,6 +610,18 @@ export const SystemObservatory: React.FC = () => {
               <SourceBadge label="Orchestrator" value={dataSources.orchestratorHealth} />
               <SourceBadge label="System Health" value={dataSources.systemHealth} />
               <SourceBadge label="System Metrics" value={dataSources.systemMetrics} />
+              <CapabilityBadge
+                label="Swarm API"
+                enabled={
+                  capabilities.swarm
+                    ? Object.keys(capabilities.swarm.unavailable || {}).length === 0
+                    : null
+                }
+              />
+              <CapabilityBadge
+                label="Local AI"
+                enabled={capabilities.localAI ? capabilities.localAI.enabled : null}
+              />
             </div>
           </div>
         </div>

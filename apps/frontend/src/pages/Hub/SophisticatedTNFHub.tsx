@@ -54,8 +54,39 @@ interface AnalyticsData {
   revenueData: number[];
 }
 
+interface HubAgent {
+  id: string;
+  name?: string;
+  status?: string;
+  capabilities?: string[];
+}
+
+interface HubWorkflow {
+  id: string;
+  name?: string;
+  status?: string;
+  updatedAt?: string;
+  createdAt?: string;
+}
+
+interface HubExecution {
+  id: string;
+  workflowId?: string;
+  workflowName?: string;
+  status?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+interface HubWorkflowTemplate {
+  id: string;
+  name?: string;
+  description?: string;
+}
+
 export const SophisticatedTNFHub: React.FC = () => {
   const navigate = useNavigate();
+  const apiBase = (import.meta.env.VITE_API_URL as string) || 'http://localhost:3001';
   const [activeTab, setActiveTab] = useState('dashboard');
   const [services, setServices] = useState<Record<string, ServiceStatus[]>>({
     'ai-services': [
@@ -102,30 +133,192 @@ export const SophisticatedTNFHub: React.FC = () => {
     totalRevenue: 125000,
   });
 
-  const [analytics, setAnalytics] = useState<AnalyticsData>({
-    workflowExecutions: [120, 135, 148, 162, 175, 189, 201],
-    agentPerformance: [85, 88, 92, 89, 94, 96, 91],
-    systemLoad: [35, 42, 38, 45, 41, 39, 44],
-    revenueData: [12000, 15000, 18000, 22000, 25000, 28000, 31000],
+  const [, setAnalytics] = useState<AnalyticsData>({
+    workflowExecutions: [],
+    agentPerformance: [],
+    systemLoad: [],
+    revenueData: [],
   });
+  const [agentsData, setAgentsData] = useState<HubAgent[]>([]);
+  const [workflowsData, setWorkflowsData] = useState<HubWorkflow[]>([]);
+  const [executionsData, setExecutionsData] = useState<HubExecution[]>([]);
+  const [workflowTemplatesData, setWorkflowTemplatesData] = useState<HubWorkflowTemplate[]>([]);
+  const [hubDataUnavailable, setHubDataUnavailable] = useState(false);
 
   useEffect(() => {
-    // Simulate real-time updates
-    const interval = setInterval(() => {
-      setMetrics((prev) => ({
-        ...prev,
-        activeWorkflows: prev.activeWorkflows + Math.floor(Math.random() * 3) - 1,
-        completedTasks: prev.completedTasks + Math.floor(Math.random() * 5),
-        cpuUsage: Math.max(20, Math.min(80, prev.cpuUsage + Math.floor(Math.random() * 10) - 5)),
-        memoryUsage: Math.max(
-          30,
-          Math.min(90, prev.memoryUsage + Math.floor(Math.random() * 8) - 4)
-        ),
-      }));
-    }, 5000);
-
+    refreshHubData();
+    const interval = setInterval(refreshHubData, 30000);
     return () => clearInterval(interval);
   }, []);
+
+  const formatUptime = (uptimeSeconds?: number): string => {
+    if (!uptimeSeconds || !Number.isFinite(uptimeSeconds)) return 'N/A';
+    const days = Math.floor(uptimeSeconds / 86400);
+    const hours = Math.floor((uptimeSeconds % 86400) / 3600);
+    return days > 0 ? `${days}d ${hours}h` : `${hours}h`;
+  };
+
+  const refreshHubData = async () => {
+    const requestStartedAt = performance.now();
+    try {
+      const [
+        systemStatusResponse,
+        systemMetricsResponse,
+        workflowsResponse,
+        executionsResponse,
+        agentsResponse,
+      ] = await Promise.all([
+        fetch(`${apiBase}/api/system/status`),
+        fetch(`${apiBase}/api/system/metrics`),
+        fetch(`${apiBase}/api/workflows`),
+        fetch(`${apiBase}/api/workflows/executions`),
+        fetch(`${apiBase}/api/agents`),
+      ]);
+      const templatesResponse = await fetch(`${apiBase}/api/workflows/templates`);
+
+      const systemStatus = systemStatusResponse.ok ? await systemStatusResponse.json() : null;
+      const systemMetrics = systemMetricsResponse.ok ? await systemMetricsResponse.json() : null;
+      const workflows = workflowsResponse.ok ? await workflowsResponse.json() : [];
+      const executions = executionsResponse.ok ? await executionsResponse.json() : [];
+      const agents = agentsResponse.ok ? await agentsResponse.json() : [];
+      const templates = templatesResponse.ok ? await templatesResponse.json() : [];
+
+      const workflowsList = Array.isArray(workflows) ? workflows : [];
+      const executionsList = Array.isArray(executions) ? executions : [];
+      const agentsList = Array.isArray(agents) ? agents : [];
+      const templatesList = Array.isArray(templates) ? templates : [];
+      setWorkflowsData(workflowsList);
+      setExecutionsData(executionsList);
+      setAgentsData(agentsList);
+      setWorkflowTemplatesData(templatesList);
+      setHubDataUnavailable(
+        !workflowsResponse.ok ||
+          !executionsResponse.ok ||
+          !agentsResponse.ok ||
+          !templatesResponse.ok
+      );
+
+      const completedExecutions = executionsList.filter(
+        (entry: any) => String(entry?.status || '').toLowerCase() === 'completed'
+      );
+
+      const previousCpuUsage = metrics.cpuUsage;
+
+      setMetrics((prev) => ({
+        ...prev,
+        activeWorkflows: workflowsList.filter((entry: any) =>
+          ['active', 'running'].includes(String(entry?.status || '').toLowerCase())
+        ).length,
+        completedTasks: completedExecutions.length,
+        systemUptime: formatUptime(Number(systemMetrics?.process?.uptime)),
+        responseTime: `${Math.round(performance.now() - requestStartedAt)}ms`,
+        cpuUsage: Number(systemMetrics?.cpu?.usage ?? prev.cpuUsage),
+        memoryUsage: Number(systemMetrics?.memory?.usage ?? prev.memoryUsage),
+        activeAgents: agentsList.filter(
+          (entry: any) => String(entry?.status || '').toLowerCase() === 'active'
+        ).length,
+      }));
+
+      setAnalytics((prev) => {
+        const previousSystemLoad =
+          prev.systemLoad.length > 0 ? prev.systemLoad[prev.systemLoad.length - 1] : 0;
+        const previousRevenuePoint =
+          prev.revenueData.length > 0
+            ? prev.revenueData[prev.revenueData.length - 1]
+            : metrics.totalRevenue;
+
+        return {
+          workflowExecutions: [...prev.workflowExecutions.slice(-6), completedExecutions.length],
+          agentPerformance: [
+            ...prev.agentPerformance.slice(-6),
+            agentsList.length > 0
+              ? Math.round(
+                  (agentsList.filter(
+                    (entry: any) => String(entry?.status || '').toLowerCase() === 'active'
+                  ).length /
+                    agentsList.length) *
+                    100
+                )
+              : 0,
+          ],
+          systemLoad: [
+            ...prev.systemLoad.slice(-6),
+            Number(systemMetrics?.memory?.usage ?? previousSystemLoad),
+          ],
+          revenueData: [...prev.revenueData.slice(-6), previousRevenuePoint],
+        };
+      });
+
+      if (systemStatus) {
+        setServices((prev) => ({
+          ...prev,
+          'workflow-services': prev['workflow-services'].map((service) => ({
+            ...service,
+            status:
+              systemStatus.workflows === 'online'
+                ? 'active'
+                : systemStatus.workflows === 'partial'
+                  ? 'warning'
+                  : 'error',
+          })),
+          'ai-services': prev['ai-services'].map((service) => ({
+            ...service,
+            status: systemStatus.agents === 'online' ? 'active' : 'warning',
+            responseTime: Math.max(20, Math.round(performance.now() - requestStartedAt)),
+          })),
+          'core-services': prev['core-services'].map((service) => {
+            if (service.name === 'Database') {
+              return {
+                ...service,
+                status: systemStatus.database === 'online' ? 'active' : 'error',
+              };
+            }
+            if (service.name === 'API Gateway') {
+              return {
+                ...service,
+                status: systemStatus.api === 'online' ? 'active' : 'error',
+              };
+            }
+            return service;
+          }),
+        }));
+      }
+
+      if (Number.isFinite(previousCpuUsage) && previousCpuUsage > 95) {
+        setMetrics((prev) => ({ ...prev, cpuUsage: 95 }));
+      }
+    } catch {
+      setMetrics((prev) => ({
+        ...prev,
+        responseTime: 'Unavailable',
+      }));
+      setHubDataUnavailable(true);
+    }
+  };
+
+  const normalizeStatus = (status?: string): 'active' | 'warning' | 'error' | 'inactive' => {
+    const normalized = String(status || '').toLowerCase();
+    if (['active', 'running', 'completed', 'online', 'healthy'].includes(normalized))
+      return 'active';
+    if (['warning', 'degraded', 'partial', 'queued', 'pending', 'scheduled'].includes(normalized))
+      return 'warning';
+    if (['error', 'failed', 'offline', 'unhealthy'].includes(normalized)) return 'error';
+    return 'inactive';
+  };
+
+  const formatRelativeTime = (timestamp?: string): string => {
+    if (!timestamp) return 'unknown';
+    const value = new Date(timestamp).getTime();
+    if (!Number.isFinite(value)) return 'unknown';
+    const elapsedSeconds = Math.max(0, Math.floor((Date.now() - value) / 1000));
+    if (elapsedSeconds < 60) return `${elapsedSeconds}s ago`;
+    const minutes = Math.floor(elapsedSeconds / 60);
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    return `${days}d ago`;
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -171,6 +364,17 @@ export const SophisticatedTNFHub: React.FC = () => {
         console.log(`Navigate to ${service}`);
     }
   };
+
+  const activeWorkflows = workflowsData.filter((workflow) =>
+    ['active', 'running'].includes(String(workflow.status || '').toLowerCase())
+  );
+  const recentExecutions = [...executionsData]
+    .sort(
+      (left, right) =>
+        new Date(right.updatedAt || right.createdAt || 0).getTime() -
+        new Date(left.updatedAt || left.createdAt || 0).getTime()
+    )
+    .slice(0, 4);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
@@ -370,34 +574,44 @@ export const SophisticatedTNFHub: React.FC = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                      <span className="text-sm text-gray-300">
-                        Workflow "Data Processing" completed
-                      </span>
-                      <span className="text-xs text-gray-500 ml-auto">2m ago</span>
+                  {hubDataUnavailable ? (
+                    <p className="text-sm text-amber-300">
+                      Recent activity unavailable while backend metrics endpoints are unreachable.
+                    </p>
+                  ) : recentExecutions.length > 0 ? (
+                    <div className="space-y-3">
+                      {recentExecutions.map((execution) => {
+                        const status = normalizeStatus(execution.status);
+                        const dotClass =
+                          status === 'active'
+                            ? 'bg-green-500'
+                            : status === 'warning'
+                              ? 'bg-yellow-500'
+                              : status === 'error'
+                                ? 'bg-red-500'
+                                : 'bg-gray-500';
+                        return (
+                          <div key={execution.id} className="flex items-center space-x-3">
+                            <div className={`w-2 h-2 rounded-full ${dotClass}`}></div>
+                            <span className="text-sm text-gray-300">
+                              Execution{' '}
+                              {execution.workflowName ||
+                                execution.workflowId ||
+                                execution.id.slice(0, 8)}{' '}
+                              {String(execution.status || 'unknown').toLowerCase()}
+                            </span>
+                            <span className="text-xs text-gray-500 ml-auto">
+                              {formatRelativeTime(execution.updatedAt || execution.createdAt)}
+                            </span>
+                          </div>
+                        );
+                      })}
                     </div>
-                    <div className="flex items-center space-x-3">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                      <span className="text-sm text-gray-300">
-                        New agent "Content Creator" deployed
-                      </span>
-                      <span className="text-xs text-gray-500 ml-auto">5m ago</span>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                      <span className="text-sm text-gray-300">
-                        NFT marketplace transaction processed
-                      </span>
-                      <span className="text-xs text-gray-500 ml-auto">8m ago</span>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                      <span className="text-sm text-gray-300">System backup completed</span>
-                      <span className="text-xs text-gray-500 ml-auto">15m ago</span>
-                    </div>
-                  </div>
+                  ) : (
+                    <p className="text-sm text-gray-400">
+                      No execution activity has been recorded yet.
+                    </p>
+                  )}
                 </CardContent>
               </Card>
             </div>
@@ -522,58 +736,58 @@ export const SophisticatedTNFHub: React.FC = () => {
               </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Card className="bg-black/20 backdrop-blur-sm border-white/10 hover:border-purple-500/50 transition-colors cursor-pointer">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <Bot className="w-8 h-8 text-purple-400" />
-                    <Badge className="bg-green-500/20 text-green-400">Active</Badge>
-                  </div>
-                  <h3 className="font-semibold mb-2">Content Creator</h3>
-                  <p className="text-sm text-gray-400 mb-4">
-                    AI-powered content generation and optimization
-                  </p>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Tasks: 247</span>
-                    <span className="text-green-400">98% Success</span>
-                  </div>
+            {hubDataUnavailable ? (
+              <Card className="bg-amber-500/10 border-amber-500/30">
+                <CardContent className="p-6 text-amber-200 text-sm">
+                  Agent registry is currently unavailable.
                 </CardContent>
               </Card>
-
-              <Card className="bg-black/20 backdrop-blur-sm border-white/10 hover:border-purple-500/50 transition-colors cursor-pointer">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <Bot className="w-8 h-8 text-blue-400" />
-                    <Badge className="bg-green-500/20 text-green-400">Active</Badge>
-                  </div>
-                  <h3 className="font-semibold mb-2">Data Analyst</h3>
-                  <p className="text-sm text-gray-400 mb-4">
-                    Advanced data processing and insights generation
-                  </p>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Tasks: 189</span>
-                    <span className="text-green-400">95% Success</span>
-                  </div>
+            ) : agentsData.length === 0 ? (
+              <Card className="bg-black/20 backdrop-blur-sm border-white/10">
+                <CardContent className="p-6 text-sm text-gray-400">
+                  No agents registered yet.
                 </CardContent>
               </Card>
-
-              <Card className="bg-black/20 backdrop-blur-sm border-white/10 hover:border-purple-500/50 transition-colors cursor-pointer">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <Bot className="w-8 h-8 text-yellow-400" />
-                    <Badge className="bg-yellow-500/20 text-yellow-400">Training</Badge>
-                  </div>
-                  <h3 className="font-semibold mb-2">Code Assistant</h3>
-                  <p className="text-sm text-gray-400 mb-4">
-                    Intelligent code generation and debugging
-                  </p>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Tasks: 56</span>
-                    <span className="text-yellow-400">Training</span>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {agentsData.slice(0, 6).map((agent, index) => {
+                  const normalized = normalizeStatus(agent.status);
+                  const badgeClass =
+                    normalized === 'active'
+                      ? 'bg-green-500/20 text-green-400'
+                      : normalized === 'warning'
+                        ? 'bg-yellow-500/20 text-yellow-400'
+                        : normalized === 'error'
+                          ? 'bg-red-500/20 text-red-400'
+                          : 'bg-gray-500/20 text-gray-300';
+                  return (
+                    <Card
+                      key={agent.id}
+                      className="bg-black/20 backdrop-blur-sm border-white/10 hover:border-purple-500/50 transition-colors cursor-pointer"
+                    >
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <Bot
+                            className={`w-8 h-8 ${index % 2 === 0 ? 'text-purple-400' : 'text-blue-400'}`}
+                          />
+                          <Badge className={badgeClass}>{String(agent.status || 'unknown')}</Badge>
+                        </div>
+                        <h3 className="font-semibold mb-2">{agent.name || agent.id}</h3>
+                        <p className="text-sm text-gray-400 mb-4">
+                          {agent.capabilities && agent.capabilities.length > 0
+                            ? `${agent.capabilities.length} capabilities configured`
+                            : 'Capabilities not published'}
+                        </p>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-400">Agent ID</span>
+                          <span className="text-gray-300">{agent.id.slice(0, 8)}</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
           </TabsContent>
 
           {/* Workflows Tab */}
@@ -592,27 +806,26 @@ export const SophisticatedTNFHub: React.FC = () => {
                   <CardTitle>Active Workflows</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <Play className="w-4 h-4 text-green-400" />
-                      <span>Content Pipeline</span>
-                    </div>
-                    <Badge className="bg-green-500/20 text-green-400">Running</Badge>
-                  </div>
-                  <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <Play className="w-4 h-4 text-green-400" />
-                      <span>Data Processing</span>
-                    </div>
-                    <Badge className="bg-green-500/20 text-green-400">Running</Badge>
-                  </div>
-                  <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <Play className="w-4 h-4 text-blue-400" />
-                      <span>NFT Minting</span>
-                    </div>
-                    <Badge className="bg-blue-500/20 text-blue-400">Scheduled</Badge>
-                  </div>
+                  {hubDataUnavailable ? (
+                    <p className="text-sm text-amber-300">Workflow registry unavailable.</p>
+                  ) : activeWorkflows.length > 0 ? (
+                    activeWorkflows.slice(0, 6).map((workflow) => (
+                      <div
+                        key={workflow.id}
+                        className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg"
+                      >
+                        <div className="flex items-center space-x-3">
+                          <Play className="w-4 h-4 text-green-400" />
+                          <span>{workflow.name || workflow.id}</span>
+                        </div>
+                        <Badge className="bg-green-500/20 text-green-400">
+                          {String(workflow.status || 'active')}
+                        </Badge>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-sm text-gray-400">No active workflows at the moment.</p>
+                  )}
                 </CardContent>
               </Card>
 
@@ -621,31 +834,27 @@ export const SophisticatedTNFHub: React.FC = () => {
                   <CardTitle>Workflow Templates</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="p-3 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-colors cursor-pointer">
-                    <div className="flex items-center justify-between">
-                      <span>AI Research Assistant</span>
-                      <ChevronRight className="w-4 h-4 text-gray-400" />
-                    </div>
-                    <p className="text-sm text-gray-400 mt-1">
-                      Automated research and report generation
-                    </p>
-                  </div>
-                  <div className="p-3 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-colors cursor-pointer">
-                    <div className="flex items-center justify-between">
-                      <span>Social Media Manager</span>
-                      <ChevronRight className="w-4 h-4 text-gray-400" />
-                    </div>
-                    <p className="text-sm text-gray-400 mt-1">Content creation and scheduling</p>
-                  </div>
-                  <div className="p-3 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-colors cursor-pointer">
-                    <div className="flex items-center justify-between">
-                      <span>E-commerce Optimizer</span>
-                      <ChevronRight className="w-4 h-4 text-gray-400" />
-                    </div>
-                    <p className="text-sm text-gray-400 mt-1">
-                      Product listing and price optimization
-                    </p>
-                  </div>
+                  {hubDataUnavailable ? (
+                    <p className="text-sm text-amber-300">Workflow templates unavailable.</p>
+                  ) : workflowTemplatesData.length > 0 ? (
+                    workflowTemplatesData.slice(0, 6).map((template) => (
+                      <div
+                        key={template.id}
+                        className="p-3 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-colors cursor-pointer"
+                        onClick={() => navigate(`/workflows/builder?template=${template.id}`)}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span>{template.name || template.id}</span>
+                          <ChevronRight className="w-4 h-4 text-gray-400" />
+                        </div>
+                        <p className="text-sm text-gray-400 mt-1">
+                          {template.description || 'Template description unavailable'}
+                        </p>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-sm text-gray-400">No workflow templates published.</p>
+                  )}
                 </CardContent>
               </Card>
             </div>

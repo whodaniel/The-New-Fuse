@@ -11,7 +11,7 @@ import {
 import { ProviderKeyListItem, ProviderKeysService } from '../services/provider-keys.service';
 
 @ApiTags('provider-keys')
-@Controller('api/provider-keys')
+@Controller('provider-keys')
 @UseGuards(SecureAuthGuard)
 @JwtAuth()
 @SetRateLimitTier(RateLimitTier.API)

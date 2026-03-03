@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-22T19:37:02.950Z",
+  "generatedAt": "2026-03-03T01:33:44.538Z",
   "rows": [
     {
       "name": "skill-creator",
@@ -44,6 +44,20 @@
       }
     },
     {
+      "name": "design-md",
+      "description": "Analyze Stitch projects and synthesize a semantic design system into DESIGN.md files",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["codex", "global", "skill-bank"],
+      "source": "/Users/<owner>/.codex/skills/design-md",
+      "metadata": {
+        "hash": "eb15f44646528f3a087ce023329ae699c1b6e803662af68338e1eb1c0406b59b",
+        "id": "design-md",
+        "snapshotPath": ".agent/skill-bank/snapshots/codex/design-md-eb15f446"
+      }
+    },
+    {
       "name": "doc",
       "description": "Use when the task involves reading, creating, or editing `.docx` documents, especially when formatting or layout fidelity matters; prefer `python-docx` plus the bundled `scripts/render_docx.py` for visual checks.",
       "category": "CLAUDE_SKILL",
@@ -55,6 +69,20 @@
         "hash": "0a635585817d1ac96e8e512114d08258b70f9e54ce0052078a258291ac13a8ed",
         "id": "doc",
         "snapshotPath": ".agent/skill-bank/snapshots/codex/doc-0a635585"
+      }
+    },
+    {
+      "name": "enhance-prompt",
+      "description": "Transforms vague UI ideas into polished, Stitch-optimized prompts. Enhances specificity, adds UI/UX keywords, injects design system context, and structures output for better generation results.",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["codex", "global", "skill-bank"],
+      "source": "/Users/<owner>/.codex/skills/enhance-prompt",
+      "metadata": {
+        "hash": "ccb200c798072438b642b1fa6a5c515563159e2fab3d56e813d76d8afa9a7ce6",
+        "id": "enhance-prompt",
+        "snapshotPath": ".agent/skill-bank/snapshots/codex/enhance-prompt-ccb200c7"
       }
     },
     {
@@ -156,6 +184,34 @@
       }
     },
     {
+      "name": "react:components",
+      "description": "Converts Stitch designs into modular Vite and React components using system-level networking and AST-based validation.",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["codex", "global", "skill-bank"],
+      "source": "/Users/<owner>/.codex/skills/react-components",
+      "metadata": {
+        "hash": "f0473659edcdda6edf9aa78fb705c01937196034fac1a76d24b8700b24481c03",
+        "id": "react-components",
+        "snapshotPath": ".agent/skill-bank/snapshots/codex/react-components-f0473659"
+      }
+    },
+    {
+      "name": "remotion",
+      "description": "Generate walkthrough videos from Stitch projects using Remotion with smooth transitions, zooming, and text overlays",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["codex", "global", "skill-bank"],
+      "source": "/Users/<owner>/.codex/skills/remotion",
+      "metadata": {
+        "hash": "34fde6f0d4ffe9d1f170f311da2ee91691e1c85018653bddf2eb55d50ccaf27f",
+        "id": "remotion",
+        "snapshotPath": ".agent/skill-bank/snapshots/codex/remotion-34fde6f0"
+      }
+    },
+    {
       "name": "screenshot",
       "description": "Use when the user explicitly asks for a desktop or system screenshot (full screen, specific app or window, or a pixel region), or when tool-specific capture capabilities are unavailable and an OS-level capture is needed.",
       "category": "CLAUDE_SKILL",
@@ -212,6 +268,20 @@
       }
     },
     {
+      "name": "shadcn-ui",
+      "description": "Expert guidance for integrating and building applications with shadcn/ui components, including component discovery, installation, customization, and best practices.",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["codex", "global", "skill-bank"],
+      "source": "/Users/<owner>/.codex/skills/shadcn-ui",
+      "metadata": {
+        "hash": "2ddfe599ac2ba631ca019f7b6e37ee5df9cd34f83fc016f6ea9d4ba5bbfa0304",
+        "id": "shadcn-ui",
+        "snapshotPath": ".agent/skill-bank/snapshots/codex/shadcn-ui-2ddfe599"
+      }
+    },
+    {
       "name": "skill-builder",
       "description": "Meta-skill for creating and evolving TNF skills from patterns and requirements.",
       "category": "CLAUDE_SKILL",
@@ -226,241 +296,17 @@
       }
     },
     {
-      "name": "algorithmic-art",
-      "description": "Creating algorithmic art using p5.js with seeded randomness and interactive parameter exploration. Use this when users request creating art using code, generative art, algorithmic art, flow fields, or particle systems. Create original algorithmic art rather than copying existing artists' work to avoid copyright violations.",
+      "name": "stitch-loop",
+      "description": "Teaches agents to iteratively build websites using Stitch with an autonomous baton-passing loop pattern",
       "category": "CLAUDE_SKILL",
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
-      "tags": ["claude", "global", "skill-bank"],
-      "source": "/Users/<owner>/.claude/skills/skills/algorithmic-art",
+      "tags": ["codex", "global", "skill-bank"],
+      "source": "/Users/<owner>/.codex/skills/stitch-loop",
       "metadata": {
-        "hash": "3bc4092c09804853186524c826bc0621b940bb6122c05b84496dff95388e6eef",
-        "id": "algorithmic-art",
-        "snapshotPath": ".agent/skill-bank/snapshots/claude/algorithmic-art-3bc4092c"
-      }
-    },
-    {
-      "name": "brand-guidelines",
-      "description": "Applies Anthropic's official brand colors and typography to any sort of artifact that may benefit from having Anthropic's look-and-feel. Use it when brand colors or style guidelines, visual formatting, or company design standards apply.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["claude", "global", "skill-bank"],
-      "source": "/Users/<owner>/.claude/skills/skills/brand-guidelines",
-      "metadata": {
-        "hash": "1120b3769e2985cefb3d25be981b1f914abeba57ae079b83c20c666c164fa9fe",
-        "id": "brand-guidelines",
-        "snapshotPath": ".agent/skill-bank/snapshots/claude/brand-guidelines-1120b376"
-      }
-    },
-    {
-      "name": "canvas-design",
-      "description": "Create beautiful visual art in .png and .pdf documents using design philosophy. You should use this skill when the user asks to create a poster, piece of art, design, or other static piece. Create original visual designs, never copying existing artists' work to avoid copyright violations.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["claude", "global", "skill-bank"],
-      "source": "/Users/<owner>/.claude/skills/skills/canvas-design",
-      "metadata": {
-        "hash": "a1f288079624402f30682753c1d43920b6664785698d21d3e7aa197450a6448b",
-        "id": "canvas-design",
-        "snapshotPath": ".agent/skill-bank/snapshots/claude/canvas-design-a1f28807"
-      }
-    },
-    {
-      "name": "doc-coauthoring",
-      "description": "Guide users through a structured workflow for co-authoring documentation. Use when user wants to write documentation, proposals, technical specs, decision docs, or similar structured content. This workflow helps users efficiently transfer context, refine content through iteration, and verify the doc works for readers. Trigger when user mentions writing docs, creating proposals, drafting specs, or similar documentation tasks.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["claude", "global", "skill-bank"],
-      "source": "/Users/<owner>/.claude/skills/skills/doc-coauthoring",
-      "metadata": {
-        "hash": "2e47d78846faeea4a56e9809c52700087a15a2155a3f293a3efbaded81398ef4",
-        "id": "doc-coauthoring",
-        "snapshotPath": ".agent/skill-bank/snapshots/claude/doc-coauthoring-2e47d788"
-      }
-    },
-    {
-      "name": "docx",
-      "description": "Comprehensive document creation, editing, and analysis with support for tracked changes, comments, formatting preservation, and text extraction. When Claude needs to work with professional documents (.docx files) for: (1) Creating new documents, (2) Modifying or editing content, (3) Working with tracked changes, (4) Adding comments, or any other document tasks",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["claude", "global", "skill-bank"],
-      "source": "/Users/<owner>/.claude/skills/skills/docx",
-      "metadata": {
-        "hash": "0bd90681fcab2e282025ee14acf508b60bbd6c41ac6c3bf83c0dc14d52c37933",
-        "id": "docx",
-        "snapshotPath": ".agent/skill-bank/snapshots/claude/docx-0bd90681"
-      }
-    },
-    {
-      "name": "frontend-design",
-      "description": "Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, artifacts, posters, or applications (examples include websites, landing pages, dashboards, React components, HTML/CSS layouts, or when styling/beautifying any web UI). Generates creative, polished code and UI design that avoids generic AI aesthetics.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["claude", "global", "skill-bank"],
-      "source": "/Users/<owner>/.claude/skills/skills/frontend-design",
-      "metadata": {
-        "hash": "b81e2ff87ed8fa4d6c377ccb127a7254c9e6a77e3ae94f21e6b514f7bb2945a0",
-        "id": "frontend-design",
-        "snapshotPath": ".agent/skill-bank/snapshots/claude/frontend-design-b81e2ff8"
-      }
-    },
-    {
-      "name": "internal-comms",
-      "description": "A set of resources to help me write all kinds of internal communications, using the formats that my company likes to use. Claude should use this skill whenever asked to write some sort of internal communications (status reports, leadership updates, 3P updates, company newsletters, FAQs, incident reports, project updates, etc.).",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["claude", "global", "skill-bank"],
-      "source": "/Users/<owner>/.claude/skills/skills/internal-comms",
-      "metadata": {
-        "hash": "067b7587a344a928fc6534ef66b1bcd591fc7c26d207ea7ca3334aeb678d6475",
-        "id": "internal-comms",
-        "snapshotPath": ".agent/skill-bank/snapshots/claude/internal-comms-067b7587"
-      }
-    },
-    {
-      "name": "mcp-builder",
-      "description": "Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when building MCP servers to integrate external APIs or services, whether in Python (FastMCP) or Node/TypeScript (MCP SDK).",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["claude", "global", "skill-bank"],
-      "source": "/Users/<owner>/.claude/skills/skills/mcp-builder",
-      "metadata": {
-        "hash": "0f4592dcb53cf2b5d6b7febee6b4152018b565551a1c29e3c612f57b218ab295",
-        "id": "mcp-builder",
-        "snapshotPath": ".agent/skill-bank/snapshots/claude/mcp-builder-0f4592dc"
-      }
-    },
-    {
-      "name": "pdf",
-      "description": "Comprehensive PDF manipulation toolkit for extracting text and tables, creating new PDFs, merging/splitting documents, and handling forms. When Claude needs to fill in a PDF form or programmatically process, generate, or analyze PDF documents at scale.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["claude", "global", "skill-bank"],
-      "source": "/Users/<owner>/.claude/skills/skills/pdf",
-      "metadata": {
-        "hash": "38d8559d4899602f82f3560052132aa0c40cfca80203037729756bdb4fb8e0cb",
-        "id": "pdf",
-        "snapshotPath": ".agent/skill-bank/snapshots/claude/pdf-38d8559d"
-      }
-    },
-    {
-      "name": "pptx",
-      "description": "Presentation creation, editing, and analysis. When Claude needs to work with presentations (.pptx files) for: (1) Creating new presentations, (2) Modifying or editing content, (3) Working with layouts, (4) Adding comments or speaker notes, or any other presentation tasks",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["claude", "global", "skill-bank"],
-      "source": "/Users/<owner>/.claude/skills/skills/pptx",
-      "metadata": {
-        "hash": "b6f25545bfb358739f1532f793458b5dbc87ee009933cb7c306b2d951ab6617f",
-        "id": "pptx",
-        "snapshotPath": ".agent/skill-bank/snapshots/claude/pptx-b6f25545"
-      }
-    },
-    {
-      "name": "skill-creator",
-      "description": "Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["claude", "global", "skill-bank"],
-      "source": "/Users/<owner>/.claude/skills/skills/skill-creator",
-      "metadata": {
-        "hash": "b2e3d83f60425c2d0b9d4162efb8f9aa322b45843497340f2289f42be422801c",
-        "id": "skill-creator",
-        "snapshotPath": ".agent/skill-bank/snapshots/claude/skill-creator-b2e3d83f"
-      }
-    },
-    {
-      "name": "slack-gif-creator",
-      "description": "Knowledge and utilities for creating animated GIFs optimized for Slack. Provides constraints, validation tools, and animation concepts. Use when users request animated GIFs for Slack like \"make me a GIF of X doing Y for Slack.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["claude", "global", "skill-bank"],
-      "source": "/Users/<owner>/.claude/skills/skills/slack-gif-creator",
-      "metadata": {
-        "hash": "2efca615ce55a3edd8fc05c779068a8085816617991987e446606403cd3abb22",
-        "id": "slack-gif-creator",
-        "snapshotPath": ".agent/skill-bank/snapshots/claude/slack-gif-creator-2efca615"
-      }
-    },
-    {
-      "name": "theme-factory",
-      "description": "Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages, etc. There are 10 pre-set themes with colors/fonts that you can apply to any artifact that has been creating, or can generate a new theme on-the-fly.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["claude", "global", "skill-bank"],
-      "source": "/Users/<owner>/.claude/skills/skills/theme-factory",
-      "metadata": {
-        "hash": "c35893e221e28895c52143cc11bf30e41a44817796b39d4b15727dadc9796552",
-        "id": "theme-factory",
-        "snapshotPath": ".agent/skill-bank/snapshots/claude/theme-factory-c35893e2"
-      }
-    },
-    {
-      "name": "web-artifacts-builder",
-      "description": "Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies (React, Tailwind CSS, shadcn/ui). Use for complex artifacts requiring state management, routing, or shadcn/ui components - not for simple single-file HTML/JSX artifacts.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["claude", "global", "skill-bank"],
-      "source": "/Users/<owner>/.claude/skills/skills/web-artifacts-builder",
-      "metadata": {
-        "hash": "81c5002c6643b0de7b8710b00e7a9038daa6fb9b68d59870ee6adb12da8d10f8",
-        "id": "web-artifacts-builder",
-        "snapshotPath": ".agent/skill-bank/snapshots/claude/web-artifacts-builder-81c5002c"
-      }
-    },
-    {
-      "name": "webapp-testing",
-      "description": "Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debugging UI behavior, capturing browser screenshots, and viewing browser logs.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["claude", "global", "skill-bank"],
-      "source": "/Users/<owner>/.claude/skills/skills/webapp-testing",
-      "metadata": {
-        "hash": "51b7349e77ec63b7744a6f63647e7566a0b4d2e301121cc10e8c2113af6556a2",
-        "id": "webapp-testing",
-        "snapshotPath": ".agent/skill-bank/snapshots/claude/webapp-testing-51b7349e"
-      }
-    },
-    {
-      "name": "xlsx",
-      "description": "Comprehensive spreadsheet creation, editing, and analysis with support for formulas, formatting, data analysis, and visualization. When Claude needs to work with spreadsheets (.xlsx, .xlsm, .csv, .tsv, etc) for: (1) Creating new spreadsheets with formulas and formatting, (2) Reading or analyzing data, (3) Modify existing spreadsheets while preserving formulas, (4) Data analysis and visualization in spreadsheets, or (5) Recalculating formulas",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["claude", "global", "skill-bank"],
-      "source": "/Users/<owner>/.claude/skills/skills/xlsx",
-      "metadata": {
-        "hash": "020ccdb5932257b66c638ec1157ea248d57fa52c8c01f1f68b559b5970c7df35",
-        "id": "xlsx",
-        "snapshotPath": ".agent/skill-bank/snapshots/claude/xlsx-020ccdb5"
-      }
-    },
-    {
-      "name": "template-skill",
-      "description": "Replace with description of the skill and when Claude should use it.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["claude", "global", "skill-bank"],
-      "source": "/Users/<owner>/.claude/skills/template",
-      "metadata": {
-        "hash": "eb685d91de039ed864fbd790cddf31684b017fd4a34ee1a55760d8d7cdbadefa",
-        "id": "template-skill",
-        "snapshotPath": ".agent/skill-bank/snapshots/claude/template-skill-eb685d91"
+        "hash": "22611f4c294fed0f390c1c1e25d5c1056eedfb4a9f707ba6aee797bcdb22e830",
+        "id": "stitch-loop",
+        "snapshotPath": ".agent/skill-bank/snapshots/codex/stitch-loop-22611f4c"
       }
     },
     {
@@ -4062,6 +3908,20 @@
       }
     },
     {
+      "name": "framework-consciousness",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["project-agent", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/framework-consciousness",
+      "metadata": {
+        "hash": "77af4dd6ec5b83449ea025e580b0135a443af513d75776858a80089c996a3de1",
+        "id": "framework-consciousness",
+        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/framework-consciousness-77af4dd6"
+      }
+    },
+    {
       "name": "jules-autonomous-loop",
       "description": "Run Jules delegation and PR lifecycle autonomously (status, plan approval, publish, PR creation, conflict resolution, merge) and schedule unattended runs with cron.",
       "category": "CLAUDE_SKILL",
@@ -4132,6 +3992,48 @@
       }
     },
     {
+      "name": "openclaw-oauth-rotation",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["project-agent", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/openclaw-oauth-rotation",
+      "metadata": {
+        "hash": "643129dfb60325e48506faa71a67a89878073d9b780c9b6e836cceb3bef66f76",
+        "id": "openclaw-oauth-rotation",
+        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/openclaw-oauth-rotation-643129df"
+      }
+    },
+    {
+      "name": "openclaw-provider-rollout",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["project-agent", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/openclaw-provider-rollout",
+      "metadata": {
+        "hash": "ff60b48f2be3925b247a4116817d25a5f640ed283cc3d3df94fb13cc3b19e974",
+        "id": "openclaw-provider-rollout",
+        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/openclaw-provider-rollout-ff60b48f"
+      }
+    },
+    {
+      "name": "openclaw-universal-knowledge",
+      "description": "Universal OpenClaw knowledge skill for TNF agents. Use when working on OpenClaw/PicoClaw architecture, gateway, providers/models, skills authoring, tools, channels, installation, operations, troubleshooting, or cross-agent skill portability (.agent/.claude/.gemini/.kilo/OpenClaw).",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["project-agent", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/openclaw-universal-knowledge",
+      "metadata": {
+        "hash": "619530e2be4302fcdb600b7099a437077c649f4ac5f7512486a5ec9f79455095",
+        "id": "openclaw-universal-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/openclaw-universal-knowledge-619530e2"
+      }
+    },
+    {
       "name": "orchestrator",
       "description": "",
       "category": "CLAUDE_SKILL",
@@ -4199,6 +4101,440 @@
         "hash": "15a10c5cdb0dfcb69a4a4d22656111e38ef261fce3b56edb4f6e357aa16a879d",
         "id": "stitch-loop",
         "snapshotPath": ".agent/skill-bank/snapshots/project-agent/stitch-loop-15a10c5c"
+      }
+    },
+    {
+      "name": "context-frontloader",
+      "description": "|",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["openclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/context-frontloader",
+      "metadata": {
+        "hash": "e9af66b3c10f6878fbef8f4ce7d58787d3040b3aca249af16f5f8d99618ddbd8",
+        "id": "context-frontloader",
+        "snapshotPath": ".agent/skill-bank/snapshots/openclaw/context-frontloader-e9af66b3"
+      }
+    },
+    {
+      "name": "continuous-improvement",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["openclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/continuous-improvement",
+      "metadata": {
+        "hash": "6d8a7bb020a89e658ac8bdb303c1d64364c65470099b7d6e6dc859794b8c4062",
+        "id": "continuous-improvement",
+        "snapshotPath": ".agent/skill-bank/snapshots/openclaw/continuous-improvement-6d8a7bb0"
+      }
+    },
+    {
+      "name": "framework-consciousness",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["openclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/framework-consciousness",
+      "metadata": {
+        "hash": "77af4dd6ec5b83449ea025e580b0135a443af513d75776858a80089c996a3de1",
+        "id": "framework-consciousness",
+        "snapshotPath": ".agent/skill-bank/snapshots/openclaw/framework-consciousness-77af4dd6"
+      }
+    },
+    {
+      "name": "library-of-living-knowledge",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["openclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/library-of-living-knowledge",
+      "metadata": {
+        "hash": "16ac518242689d5fc1708f661ddb0d19512ac39b8c4711f6dbba06402ba16bfd",
+        "id": "library-of-living-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/openclaw/library-of-living-knowledge-16ac5182"
+      }
+    },
+    {
+      "name": "openclaw-universal-knowledge",
+      "description": "Shared TNF OpenClaw docs-wide knowledge skill for gateway, providers, tools/skills policy, and cross-agent portability.",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["openclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/openclaw-universal-knowledge",
+      "metadata": {
+        "hash": "8f4ca0c3b530a66efcffc6683625cd0c098fd83e2deb391e73a6a71ef1d01975",
+        "id": "openclaw-universal-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/openclaw/openclaw-universal-knowledge-8f4ca0c3"
+      }
+    },
+    {
+      "name": "skill-builder",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["openclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/skill-builder",
+      "metadata": {
+        "hash": "7a715f0fac3f1ca0f7edde226a4be9209797c61a82c13221100d2b84e93f615f",
+        "id": "skill-builder",
+        "snapshotPath": ".agent/skill-bank/snapshots/openclaw/skill-builder-7a715f0f"
+      }
+    },
+    {
+      "name": "skill-creator",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["openclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/skill-creator",
+      "metadata": {
+        "hash": "e8047445aaabb76ba0e71455a708db041d0d20b96a88fc3891c9e0c0b85b4844",
+        "id": "skill-creator",
+        "snapshotPath": ".agent/skill-bank/snapshots/openclaw/skill-creator-e8047445"
+      }
+    },
+    {
+      "name": "context-frontloader",
+      "description": "|",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/context-frontloader",
+      "metadata": {
+        "hash": "e9af66b3c10f6878fbef8f4ce7d58787d3040b3aca249af16f5f8d99618ddbd8",
+        "id": "context-frontloader",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/context-frontloader-e9af66b3"
+      }
+    },
+    {
+      "name": "continuous-improvement",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/continuous-improvement",
+      "metadata": {
+        "hash": "6d8a7bb020a89e658ac8bdb303c1d64364c65470099b7d6e6dc859794b8c4062",
+        "id": "continuous-improvement",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/continuous-improvement-6d8a7bb0"
+      }
+    },
+    {
+      "name": "framework-consciousness",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/framework-consciousness",
+      "metadata": {
+        "hash": "77af4dd6ec5b83449ea025e580b0135a443af513d75776858a80089c996a3de1",
+        "id": "framework-consciousness",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/framework-consciousness-77af4dd6"
+      }
+    },
+    {
+      "name": "github",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/github",
+      "metadata": {
+        "hash": "10a44ac238bbb7b3e92a78a2712ac89436cdaac4593b8642e9a8cd1e0fe2e683",
+        "id": "github",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/github-10a44ac2"
+      }
+    },
+    {
+      "name": "hardware",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/hardware",
+      "metadata": {
+        "hash": "74f161217308f656f38ea7fd7d7a3765dac35101822dd2e66f1325dbddaf3499",
+        "id": "hardware",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/hardware-74f16121"
+      }
+    },
+    {
+      "name": "library-of-living-knowledge",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/library-of-living-knowledge",
+      "metadata": {
+        "hash": "16ac518242689d5fc1708f661ddb0d19512ac39b8c4711f6dbba06402ba16bfd",
+        "id": "library-of-living-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/library-of-living-knowledge-16ac5182"
+      }
+    },
+    {
+      "name": "openclaw-universal-knowledge",
+      "description": "Shared TNF OpenClaw knowledge skill for PicoClaw agents; covers tools/skills spec, docs-wide navigation, and operational consistency.",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/openclaw-universal-knowledge",
+      "metadata": {
+        "hash": "94afd0396652e43ce66a11815114b93e5217306e2da04da958af2db24e28d164",
+        "id": "openclaw-universal-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/openclaw-universal-knowledge-94afd039"
+      }
+    },
+    {
+      "name": "overwatch",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/overwatch",
+      "metadata": {
+        "hash": "3581432c11379017e539f8dd999d744716e1f40748d217a20cf4ea0b17f6f496",
+        "id": "overwatch",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/overwatch-3581432c"
+      }
+    },
+    {
+      "name": "skill-builder",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/skill-builder",
+      "metadata": {
+        "hash": "7a715f0fac3f1ca0f7edde226a4be9209797c61a82c13221100d2b84e93f615f",
+        "id": "skill-builder",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/skill-builder-7a715f0f"
+      }
+    },
+    {
+      "name": "skill-creator",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/skill-creator",
+      "metadata": {
+        "hash": "e8047445aaabb76ba0e71455a708db041d0d20b96a88fc3891c9e0c0b85b4844",
+        "id": "skill-creator",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/skill-creator-e8047445"
+      }
+    },
+    {
+      "name": "summarize",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/summarize",
+      "metadata": {
+        "hash": "680a539f5b5f8acaacf8d17e21bce4911451d032a2c19fb97c2898402b367022",
+        "id": "summarize",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/summarize-680a539f"
+      }
+    },
+    {
+      "name": "tmux",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/tmux",
+      "metadata": {
+        "hash": "417e5e425aa70e2ad57fbc3484a042443ead225e51095446d3c07cf4eb49dd2a",
+        "id": "tmux",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/tmux-417e5e42"
+      }
+    },
+    {
+      "name": "weather",
+      "description": "Get current weather and forecasts (no API key required).",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/weather",
+      "metadata": {
+        "hash": "98412aadcfd828ceb3cf10bb3914895b6a4ef6024786e3ba56c2fb2df492ba34",
+        "id": "weather",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/weather-98412aad"
+      }
+    },
+    {
+      "name": "README",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "global", "skill-bank"],
+      "source": "/Users/<owner>/.claude/skills/README.md",
+      "metadata": {
+        "hash": "d7c5c2f9b248c7c0b31f093cf22b9a7407f5b093c8ca9ebe75a5b6845b02b76e",
+        "id": "readme",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/readme-d7c5c2f9"
+      }
+    },
+    {
+      "name": "THIRD_PARTY_NOTICES",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "global", "skill-bank"],
+      "source": "/Users/<owner>/.claude/skills/THIRD_PARTY_NOTICES.md",
+      "metadata": {
+        "hash": "a8ff7a84dee9dfb42ab448de281784387ceafdf63881b7c070ee2de7f6ed865c",
+        "id": "third_party_notices",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/third_party_notices-a8ff7a84"
+      }
+    },
+    {
+      "name": "context-frontloader",
+      "description": "|",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/context-frontloader.md",
+      "metadata": {
+        "hash": "e9af66b3c10f6878fbef8f4ce7d58787d3040b3aca249af16f5f8d99618ddbd8",
+        "id": "context-frontloader",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/context-frontloader-e9af66b3"
+      }
+    },
+    {
+      "name": "continuous-improvement",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/continuous-improvement.md",
+      "metadata": {
+        "hash": "6d8a7bb020a89e658ac8bdb303c1d64364c65470099b7d6e6dc859794b8c4062",
+        "id": "continuous-improvement",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/continuous-improvement-6d8a7bb0"
+      }
+    },
+    {
+      "name": "framework-consciousness",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/framework-consciousness.md",
+      "metadata": {
+        "hash": "77af4dd6ec5b83449ea025e580b0135a443af513d75776858a80089c996a3de1",
+        "id": "framework-consciousness",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/framework-consciousness-77af4dd6"
+      }
+    },
+    {
+      "name": "library-of-living-knowledge",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/library-of-living-knowledge.md",
+      "metadata": {
+        "hash": "16ac518242689d5fc1708f661ddb0d19512ac39b8c4711f6dbba06402ba16bfd",
+        "id": "library-of-living-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/library-of-living-knowledge-16ac5182"
+      }
+    },
+    {
+      "name": "openclaw-universal-knowledge",
+      "description": "Shared TNF skill adapter for OpenClaw docs-wide operations, including tools/skills rules, gateway/provider setup, and cross-agent skill portability.",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/openclaw-universal-knowledge.md",
+      "metadata": {
+        "hash": "693943051c6ecd6fd7b2c79648189304386dd1f105db7dc1045e6268e1512b4c",
+        "id": "openclaw-universal-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/openclaw-universal-knowledge-69394305"
+      }
+    },
+    {
+      "name": "skill-builder",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/skill-builder.md",
+      "metadata": {
+        "hash": "7a715f0fac3f1ca0f7edde226a4be9209797c61a82c13221100d2b84e93f615f",
+        "id": "skill-builder",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/skill-builder-7a715f0f"
+      }
+    },
+    {
+      "name": "ui-automation-with-context",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/ui-automation-with-context.md",
+      "metadata": {
+        "hash": "e87b6bb4c9b5823a9c3fe468524281db999a113cb5012fcc568503b8c2e38874",
+        "id": "ui-automation-with-context",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/ui-automation-with-context-e87b6bb4"
+      }
+    },
+    {
+      "name": "openclaw-universal-knowledge",
+      "description": "Shared TNF skill adapter for OpenClaw full-docs operations, skills semantics, gateway/provider execution, and multi-agent portability.",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["gemini", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.gemini/skills/openclaw-universal-knowledge.md",
+      "metadata": {
+        "hash": "6abdd4de09a94c5c5bb10660a81a2cf72e10136c70fb5120c58ef88be118eaea",
+        "id": "openclaw-universal-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/gemini/openclaw-universal-knowledge-6abdd4de"
+      }
+    },
+    {
+      "name": "openclaw-universal-knowledge",
+      "description": "Shared TNF adapter for OpenClaw-wide docs knowledge, skill format policy, and cross-agent execution consistency.",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["kilo", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.kilo/skills/openclaw-universal-knowledge.md",
+      "metadata": {
+        "hash": "5485b322e6aff36d3add97f93fd0d6059ac0d75a2b8effe32bb66d7d98fe3b9a",
+        "id": "openclaw-universal-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/kilo/openclaw-universal-knowledge-5485b322"
       }
     }
   ]

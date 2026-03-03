@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 const FeatureFlags = () => {
   const [flags, setFlags] = useState<FeatureFlag[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     loadFlags();
@@ -14,10 +15,13 @@ const FeatureFlags = () => {
   const loadFlags = async () => {
     try {
       setLoading(true);
+      setLoadError(null);
       const data = await FeatureFlagService.getFlags();
       setFlags(data);
     } catch (e) {
       console.error(e);
+      setFlags([]);
+      setLoadError('Feature flags are currently unavailable');
     } finally {
       setLoading(false);
     }
@@ -54,6 +58,11 @@ const FeatureFlags = () => {
           <p className="text-gray-500">Manage feature rollouts and experiments</p>
         </div>
       </div>
+      {loadError && (
+        <Card className="p-4 border border-amber-200 bg-amber-50">
+          <p className="text-sm text-amber-800">{loadError}. Check API connectivity and retry.</p>
+        </Card>
+      )}
 
       <Card className="overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">

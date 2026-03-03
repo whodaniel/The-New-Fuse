@@ -322,7 +322,7 @@ export class N8nWorkflowConverter {
   }
 
   private convertNodesFromN8n(n8nNodes: N8nNode[]): EnhancedReactFlowNode[] {
-    return n8nNodes.map((node, index) => {
+    return n8nNodes.map((node) => {
       const nodeType = this.mapNodeTypeFromN8n(node.type);
       const outputConfig = MULTI_OUTPUT_NODES[node.type];
 
@@ -445,7 +445,7 @@ export class N8nWorkflowConverter {
               data: {
                 outputType,
                 branchIndex,
-                branchName: this.getBranchName(sourceNode.type, branchIndex, branches.length),
+                branchName: this.getBranchName(sourceNode.type, branchIndex),
               },
             };
 
@@ -506,11 +506,7 @@ export class N8nWorkflowConverter {
     return handle ? parseInt(handle, 10) : 0;
   }
 
-  private getBranchName(
-    nodeType: string,
-    branchIndex: number,
-    totalBranches: number
-  ): string | undefined {
+  private getBranchName(nodeType: string, branchIndex: number): string | undefined {
     const config = MULTI_OUTPUT_NODES[nodeType];
     if (!config || !config.branchNames) return undefined;
 

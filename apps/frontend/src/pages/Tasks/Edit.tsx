@@ -25,14 +25,10 @@ interface TaskFormData {
   newTag: string;
 }
 
-// Mock data for agents
-const mockAgents = [
-  { id: 1, name: 'CodeAssistant', avatar: 'CA' },
-  { id: 2, name: 'DataAnalyzer', avatar: 'DA' },
-  { id: 3, name: 'ContentWriter', avatar: 'CW' },
-  { id: 4, name: 'BugHunter', avatar: 'BH' },
-  { id: 5, name: 'APIIntegrator', avatar: 'AI' },
-];
+interface AgentOption {
+  id: string;
+  name: string;
+}
 
 /**
  * Edit Task page component
@@ -40,6 +36,8 @@ const mockAgents = [
 const EditTask: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [agents, setAgents] = useState<AgentOption[]>([]);
+  const [agentLoadError, setAgentLoadError] = useState<string | null>(null);
 
   // Form state
   const [formData, setFormData] = useState<TaskFormData>({
@@ -84,6 +82,32 @@ const EditTask: React.FC = () => {
       })
       .catch((error) => console.error('Failed to load task for edit:', error));
   }, [id]);
+
+  useEffect(() => {
+    const loadAgents = async () => {
+      setAgentLoadError(null);
+      try {
+        const response = await fetch('/api/agents');
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const payload = await response.json();
+        const items = Array.isArray(payload)
+          ? payload
+          : Array.isArray(payload?.data)
+            ? payload.data
+            : [];
+        const mapped = items
+          .map((agent: any) => ({ id: String(agent.id), name: String(agent.name || agent.id) }))
+          .filter((agent: AgentOption) => agent.id);
+        setAgents(mapped);
+      } catch (error) {
+        console.error('Failed to load agents:', error);
+        setAgents([]);
+        setAgentLoadError('Live agent directory unavailable');
+      }
+    };
+
+    loadAgents();
+  }, []);
 
   // Handle input change
   const handleInputChange = (
@@ -279,12 +303,15 @@ const EditTask: React.FC = () => {
                     required
                   >
                     <option value="">Select an agent</option>
-                    {mockAgents.map((agent) => (
-                      <option key={agent.id} value={agent.id.toString()}>
+                    {agents.map((agent) => (
+                      <option key={agent.id} value={agent.id}>
                         {agent.name}
                       </option>
                     ))}
                   </Select>
+                  {agentLoadError && (
+                    <p className="text-xs text-amber-600 mt-1">{agentLoadError}</p>
+                  )}
                 </div>
               </div>
 

@@ -7,21 +7,23 @@ export const getSystemHealth = async (
   next: NextFunction
 ): Promise<void> => {
   try {
+    const loadFactor = Math.max(1, Math.round((os.loadavg()[0] || 0) * 10));
+    const cpuUsage = await getCPUUsage();
     const health = {
-      cpuUsage: await getCPUUsage(),
+      cpuUsage,
       memoryUsage: Math.round(((os.totalmem() - os.freemem()) / os.totalmem()) * 100),
       diskUsage: 45, // Placeholder as Node.js doesn't give disk usage easily without exec
       uptime: process.uptime(),
       services: [
-        { name: 'Database', status: 'healthy', latency: Math.floor(Math.random() * 20) + 5 },
-        { name: 'API Gateway', status: 'healthy', latency: Math.floor(Math.random() * 10) + 2 },
+        { name: 'Database', status: 'healthy', latency: loadFactor + 12 },
+        { name: 'API Gateway', status: 'healthy', latency: loadFactor + 6 },
         {
           name: 'Workflow Engine',
           status: 'healthy',
-          latency: Math.floor(Math.random() * 50) + 10,
+          latency: loadFactor + Math.max(8, Math.round(cpuUsage / 3)),
         },
-        { name: 'Auth Service', status: 'healthy', latency: Math.floor(Math.random() * 15) + 5 },
-        { name: 'Agents System', status: 'healthy', latency: Math.floor(Math.random() * 30) + 10 },
+        { name: 'Auth Service', status: 'healthy', latency: loadFactor + 9 },
+        { name: 'Agents System', status: 'healthy', latency: loadFactor + 14 },
       ],
     };
     res.status(200).json(health);

@@ -23,9 +23,14 @@ body {
   font-family: 'Space Grotesk', sans-serif;
   color: var(--text);
   background:
+    linear-gradient(rgba(7, 5, 16, 0.72), rgba(7, 5, 16, 0.72)),
+    url('/assets/poker/pkr_shell_bg_main_desktop_idle_v01.png'),
     radial-gradient(circle at 12% 10%, rgba(138, 43, 226, 0.18), transparent 36%),
     radial-gradient(circle at 86% 0%, rgba(0, 223, 255, 0.2), transparent 30%),
     linear-gradient(160deg, #0b071a 0%, #100a26 100%);
+  background-size: cover, cover, auto, auto, auto;
+  background-position: center, center, center, center, center;
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
   display: grid;
   place-items: center;
   padding: 24px;
@@ -64,12 +69,24 @@ body {
   gap: 12px;
 }
 
+.logo::before {
+  content: '';
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  background: url('/assets/poker/pkr_brand_logo_mark_idle_v01.png') center/contain no-repeat;
+  filter: drop-shadow(0 0 8px rgba(0, 223, 255, 0.35));
+}
+
 .subtitle {
   color: var(--muted);
   margin: 0;
   font-size: 0.98rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
+  padding-right: 160px;
+  background: url('/assets/poker/pkr_brand_wordmark_light_v01.png') right center / 148px 46px
+    no-repeat;
 }
 
 .toolbar,
@@ -193,21 +210,39 @@ button.btn-action {
   flex: 1;
   padding: 12px;
   border-radius: 12px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-color: rgba(255, 255, 255, 0.22);
+  color: #f5fbff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
 }
 
 button.action-fold {
-  background: transparent;
-  border: 1px solid var(--muted);
-  color: var(--muted);
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0.34)),
+    url('/assets/poker/pkr_btn_fold_set_v01.png');
+  border: 1px solid rgba(255, 92, 92, 0.35);
+  color: #ffd0d0;
 }
 button.action-fold:hover {
-  border-color: var(--danger);
-  color: var(--danger);
+  border-color: rgba(255, 92, 92, 0.65);
+  color: #ffe6e6;
+}
+
+button.action-check,
+button.action-call {
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.32), rgba(0, 0, 0, 0.32)),
+    url('/assets/poker/pkr_btn_checkcall_set_v01.png');
 }
 
 button.action-raise {
-  background: linear-gradient(120deg, var(--accent), #00ffcc);
-  color: #0b071a;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.28)),
+    url('/assets/poker/pkr_btn_raise_primary_set_v01.png');
+  border: 1px solid rgba(0, 223, 255, 0.55);
+  color: #e9ffff;
 }
 
 .result {
@@ -221,6 +256,30 @@ button.action-raise {
   background: rgba(0, 0, 0, 0.55);
   font-family: monospace;
   font-size: 0.85rem;
+}
+
+#fairness-receipt {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.58), rgba(0, 0, 0, 0.58)),
+    url('/assets/poker/pkr_panel_fairness_idle_v01.png') center/cover no-repeat;
+}
+
+#ledger-list {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.56), rgba(0, 0, 0, 0.56)),
+    url('/assets/poker/pkr_panel_ledger_row_set_v01.png') center/cover no-repeat;
+}
+
+#chain-status {
+  padding-left: 34px;
+  background: url('/assets/poker/pkr_panel_network_health_set_v01.png') left center / 26px 26px
+    no-repeat;
+}
+
+.sponsor-panel pre.result {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.56), rgba(0, 0, 0, 0.56)),
+    url('/assets/poker/pkr_panel_sponsor_market_card_v01.png') center/cover no-repeat;
 }
 
 .stats {
@@ -268,13 +327,18 @@ button.action-raise {
 
 .feed-list {
   margin: 0;
-  padding-left: 18px;
+  padding-left: 30px;
   display: grid;
   gap: 6px;
   color: var(--muted);
   font-size: 0.85rem;
   max-height: 180px;
   overflow: auto;
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.52), rgba(0, 0, 0, 0.52)),
+    url('/assets/poker/pkr_panel_chat_feed_bg_v01.png') center/cover no-repeat;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 223, 255, 0.2);
 }
 
 .game-showcase {
@@ -296,6 +360,52 @@ button.action-raise {
   gap: 8px;
   align-items: center;
   flex-wrap: wrap;
+}
+
+.showcase-icons {
+  margin-top: 6px;
+}
+
+.showcase-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 223, 255, 0.25);
+  background: rgba(0, 0, 0, 0.35);
+  padding: 2px;
+}
+
+.showcase-skin {
+  position: relative;
+  min-height: 120px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.showcase-bg-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.28;
+}
+
+.showcase-badge-art {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.showcase-content {
+  position: relative;
+  z-index: 1;
 }
 
 .card-chip,
@@ -368,8 +478,46 @@ button.action-raise {
   border-radius: 12px;
   padding: 16px;
   margin: 12px 0;
+  --live-felt-image: url('/assets/poker/pkr_table_felt_6max_topdown_idle_v01.png');
   background:
-    radial-gradient(circle at 50% 40%, rgba(0, 223, 255, 0.08), transparent 45%), rgba(0, 0, 0, 0.5);
+    radial-gradient(circle at 50% 40%, rgba(0, 223, 255, 0.09), transparent 46%),
+    linear-gradient(rgba(0, 0, 0, 0.46), rgba(0, 0, 0, 0.46)), var(--live-felt-image),
+    rgba(0, 0, 0, 0.5);
+  background-size: auto, auto, cover, auto;
+  background-position: center, center, center, center;
+  background-repeat: no-repeat;
+}
+
+.live-seat-art {
+  position: relative;
+  width: 78px;
+  height: 78px;
+  margin: 0 auto 8px;
+}
+
+.live-seat-frame {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.live-seat-dealer {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 6px rgba(247, 190, 82, 0.45));
+}
+
+.live-seat.hero .live-seat-frame {
+  filter: drop-shadow(0 0 8px rgba(0, 223, 255, 0.35));
+}
+
+.live-seat.acting .live-seat-frame {
+  filter: drop-shadow(0 0 10px rgba(138, 43, 226, 0.38));
 }
 
 .live-header {
@@ -420,6 +568,26 @@ button.action-raise {
 .live-seat-meta {
   font-size: 0.8rem;
   color: var(--accent);
+}
+
+.live-state-banner {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.live-state-banner img {
+  max-width: 260px;
+  width: 100%;
+  max-height: 68px;
+  object-fit: contain;
+  opacity: 0.95;
+}
+
+.live-state-subtle img {
+  max-width: 120px;
+  max-height: 46px;
+  opacity: 0.75;
 }
 
 .nurture-card {
@@ -599,9 +767,43 @@ button.action-raise {
 @media (max-width: 720px) {
   body {
     padding: 12px;
+    background:
+      linear-gradient(rgba(7, 5, 16, 0.75), rgba(7, 5, 16, 0.75)),
+      url('/assets/poker/pkr_shell_bg_main_mobile_idle_v01.png') center/cover no-repeat,
+      linear-gradient(160deg, #0b071a 0%, #100a26 100%);
   }
   .app-shell {
     width: 100%;
     grid-template-columns: 1fr;
+  }
+  .action-bar {
+    background:
+      linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
+      url('/assets/poker/pkr_mobile_bottom_action_sheet_v01.png') center/cover no-repeat;
+    border-radius: 14px;
+    padding: 10px;
+  }
+  .header {
+    background: url('/assets/poker/pkr_mobile_table_header_compact_v01.png') center/cover no-repeat;
+    border-radius: 12px;
+    padding: 12px;
+  }
+  .toolbar::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 40px;
+    margin-top: 8px;
+    background: url('/assets/poker/pkr_mobile_tabbar_pokerroom_v01.png') center/contain no-repeat;
+    opacity: 0.9;
+  }
+  .panel:last-of-type::after {
+    content: '';
+    display: block;
+    width: 64px;
+    height: 20px;
+    margin: 8px auto 0;
+    background: url('/assets/poker/pkr_mobile_hud_drawer_handle_v01.png') center/contain no-repeat;
+    opacity: 0.9;
   }
 }

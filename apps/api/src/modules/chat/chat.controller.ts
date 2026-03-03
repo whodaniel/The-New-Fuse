@@ -7,37 +7,41 @@ import {
   Post,
   Query,
   Request,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { MessageRole } from '@the-new-fuse/database';
+import { AuthLevel, RequireAuthLevel, SecureAuthGuard } from '../../guards/secure-auth.guard';
 import { ChatService } from './chat.service';
-
-// Mock auth guard for compatibility - replace with actual auth guard
-class MockAuthGuard {
-  canActivate() {
-    return true;
-  }
-}
 
 @ApiTags('chat')
 @Controller('chat')
-@UseGuards(MockAuthGuard)
+@UseGuards(SecureAuthGuard)
+@RequireAuthLevel(AuthLevel.USER)
 @ApiBearerAuth()
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
+  private requireUserId(req: any): string {
+    const userId = req?.user?.id;
+    if (!userId) {
+      throw new UnauthorizedException('Authenticated user context is required');
+    }
+    return userId;
+  }
+
   @Get()
   @ApiOperation({ summary: 'Get all chats for user' })
   async getChats(@Request() req: any) {
-    const userId = req.user?.id || 'default-user';
+    const userId = this.requireUserId(req);
     return this.chatService.findAll(userId);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get chat by ID' })
   async getChat(@Param('id') id: string, @Request() req: any) {
-    const userId = req.user?.id || 'default-user';
+    const userId = this.requireUserId(req);
     return this.chatService.findOne(id, userId);
   }
 
@@ -47,14 +51,14 @@ export class ChatController {
     @Body() createChatDto: { agentId: string; title?: string },
     @Request() req: any
   ) {
-    const userId = req.user?.id || 'default-user';
+    const userId = this.requireUserId(req);
     return this.chatService.create(userId, createChatDto.agentId, createChatDto.title);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a chat' })
   async deleteChat(@Param('id') id: string, @Request() req: any) {
-    const userId = req.user?.id || 'default-user';
+    const userId = this.requireUserId(req);
     return this.chatService.delete(id, userId);
   }
 
@@ -86,7 +90,7 @@ export class ChatController {
     },
     @Request() req: any
   ) {
-    const userId = req.user?.id || 'default-user';
+    const userId = this.requireUserId(req);
     return this.chatService.addMessage(
       chatId,
       messageData.content,
@@ -106,7 +110,7 @@ export class ChatController {
     @Body() generateDto: { prompt: string; agentId: string },
     @Request() req: any
   ) {
-    const userId = req.user?.id || 'default-user';
+    const userId = this.requireUserId(req);
     const response = await this.chatService.generateAgentResponse(
       generateDto.prompt,
       generateDto.agentId,

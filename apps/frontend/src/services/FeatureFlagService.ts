@@ -13,23 +13,8 @@ export const FeatureFlagService = {
     try {
       return await apiService.get<FeatureFlag[]>('/api/features');
     } catch (error) {
-      console.warn('Failed to fetch feature flags, returning mock data', error);
-      return [
-        {
-          id: 'new-ui',
-          name: 'New UI Layout',
-          description: 'Enable the redesigned user interface',
-          enabled: true,
-          rolloutPercentage: 100,
-        },
-        {
-          id: 'beta-workflows',
-          name: 'Beta Workflow Engine',
-          description: 'Access to experimental workflow features',
-          enabled: false,
-          rolloutPercentage: 0,
-        },
-      ];
+      console.error('Failed to fetch feature flags', error);
+      throw new Error('Feature flags are currently unavailable');
     }
   },
 
@@ -37,14 +22,8 @@ export const FeatureFlagService = {
     try {
       return await apiService.put<FeatureFlag>(`/api/features/${id}`, { enabled });
     } catch (error) {
-      console.warn('Failed to toggle flag, simulating success');
-      return {
-        id,
-        name: 'Mock Flag',
-        description: 'Mock Description',
-        enabled,
-        rolloutPercentage: 0,
-      };
+      console.error(`Failed to toggle feature flag ${id}`, error);
+      throw new Error('Unable to update feature flag');
     }
   },
 };

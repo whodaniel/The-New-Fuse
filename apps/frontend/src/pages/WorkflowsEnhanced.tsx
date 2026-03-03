@@ -7,7 +7,6 @@ import {
   ToggleSwitch,
 } from '@/components/ui/premium';
 import { WorkflowCanvas } from '@/components/WorkflowBuilder/WorkflowCanvas';
-import { showNotification } from '@/utils/notifications';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   BarChart3,
@@ -24,7 +23,7 @@ import {
   X,
   Zap,
 } from 'lucide-react';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 // Temporary types until prompt-templating package is properly built
 interface PromptTemplate {
@@ -40,6 +39,12 @@ interface WorkflowSettings {
   enableVersionTracking: boolean;
   autoSaveTemplates: boolean;
   showUsageAnalytics: boolean;
+}
+
+interface WorkflowAnalyticsSummary {
+  totalExecutions: number;
+  successRate: number;
+  averageExecutionTimeMs: number;
 }
 
 const tabs = [
@@ -78,20 +83,92 @@ export const WorkflowsPage: React.FC = () => {
     autoSaveTemplates: true,
     showUsageAnalytics: true,
   });
+  const [analytics, setAnalytics] = useState<WorkflowAnalyticsSummary>({
+    totalExecutions: 0,
+    successRate: 0,
+    averageExecutionTimeMs: 0,
+  });
+  const [analyticsError, setAnalyticsError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      setAnalyticsError(null);
+      try {
+        const token = localStorage.getItem('token') || localStorage.getItem('auth_token') || '';
+        const response = await fetch('/api/workflows/executions?limit=200', {
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          credentials: 'include',
+        });
+
+        if (!response.ok) {
+          throw new Error(`Workflow analytics unavailable (${response.status})`);
+        }
+
+        const payload = await response.json();
+        const executions = Array.isArray(payload?.executions)
+          ? payload.executions
+          : Array.isArray(payload?.data?.executions)
+            ? payload.data.executions
+            : [];
+
+        const totalExecutions = executions.length;
+        const successfulExecutions = executions.filter((execution: any) => {
+          const status = String(execution?.status || '').toUpperCase();
+          return status === 'COMPLETED' || status === 'SUCCESS';
+        });
+        const successRate =
+          totalExecutions > 0
+            ? Math.round((successfulExecutions.length / totalExecutions) * 1000) / 10
+            : 0;
+
+        const durations = successfulExecutions
+          .map((execution: any) => {
+            const startedAt = execution?.startedAt ? new Date(execution.startedAt).getTime() : NaN;
+            const completedAt = execution?.completedAt
+              ? new Date(execution.completedAt).getTime()
+              : NaN;
+            if (
+              !Number.isFinite(startedAt) ||
+              !Number.isFinite(completedAt) ||
+              completedAt < startedAt
+            ) {
+              return null;
+            }
+            return completedAt - startedAt;
+          })
+          .filter((duration: number | null): duration is number => duration !== null);
+        const averageExecutionTimeMs =
+          durations.length > 0
+            ? Math.round(
+                durations.reduce((sum: number, duration: number) => sum + duration, 0) /
+                  durations.length
+              )
+            : 0;
+
+        setAnalytics({
+          totalExecutions,
+          successRate,
+          averageExecutionTimeMs,
+        });
+      } catch (error: any) {
+        setAnalyticsError(error?.message || 'Workflow analytics unavailable');
+        setAnalytics({
+          totalExecutions: 0,
+          successRate: 0,
+          averageExecutionTimeMs: 0,
+        });
+      }
+    };
+
+    fetchAnalytics();
+  }, []);
 
   // Handle opening prompt template editor
   const handleOpenTemplateEditor = useCallback(() => {
     setIsOpen(true);
-  }, []);
-
-  // Handle template selection
-  const handleTemplateSelect = useCallback((template: PromptTemplate) => {
-    setSelectedTemplate(template);
-    showNotification({
-      title: 'Template selected',
-      message: `"${template.name}" has been selected`,
-      type: 'success',
-    });
   }, []);
 
   // Handle closing modal
@@ -177,7 +254,7 @@ export const WorkflowsPage: React.FC = () => {
                     >
                       Create Prompt Template
                     </PremiumButton>
-                    <PremiumButton variant="glass" icon={Play}>
+                    <PremiumButton variant="secondary" icon={Play}>
                       Run Workflow
                     </PremiumButton>
                     {selectedTemplate && (
@@ -226,17 +303,11 @@ export const WorkflowsPage: React.FC = () => {
                       @the-new-fuse/prompt-templating package is available.
                     </p>
                     <PremiumButton
-                      variant="glass"
-                      onClick={() =>
-                        handleTemplateSelect({
-                          id: '1',
-                          name: 'Sample Template',
-                          description: 'A sample template',
-                        })
-                      }
+                      variant="secondary"
+                      onClick={handleOpenTemplateEditor}
                       icon={Sparkles}
                     >
-                      Test Template Selection
+                      Open Template Editor
                     </PremiumButton>
                   </motion.div>
                 </GlassCard>
@@ -259,6 +330,11 @@ export const WorkflowsPage: React.FC = () => {
                   subtitle="Overview of workflow performance"
                   gradient="blue"
                 >
+                  {analyticsError && (
+                    <div className="mx-4 mt-4 rounded-md border border-amber-300 bg-amber-100/70 px-3 py-2 text-sm text-amber-900">
+                      {analyticsError}
+                    </div>
+                  )}
                   <motion.div
                     variants={itemVariants}
                     className="p-4 grid grid-cols-1 md:grid-cols-3 gap-4"
@@ -269,7 +345,9 @@ export const WorkflowsPage: React.FC = () => {
                           <Zap className="w-5 h-5 text-blue-400" />
                         </div>
                         <div>
-                          <div className="text-2xl font-bold text-white">127</div>
+                          <div className="text-2xl font-bold text-white">
+                            {analytics.totalExecutions.toLocaleString()}
+                          </div>
                           <div className="text-sm text-blue-400">Total Executions</div>
                         </div>
                       </div>
@@ -280,7 +358,9 @@ export const WorkflowsPage: React.FC = () => {
                           <Check className="w-5 h-5 text-emerald-400" />
                         </div>
                         <div>
-                          <div className="text-2xl font-bold text-white">94.2%</div>
+                          <div className="text-2xl font-bold text-white">
+                            {analytics.successRate}%
+                          </div>
                           <div className="text-sm text-emerald-400">Success Rate</div>
                         </div>
                       </div>
@@ -291,7 +371,9 @@ export const WorkflowsPage: React.FC = () => {
                           <Clock className="w-5 h-5 text-purple-400" />
                         </div>
                         <div>
-                          <div className="text-2xl font-bold text-white">1,250ms</div>
+                          <div className="text-2xl font-bold text-white">
+                            {analytics.averageExecutionTimeMs.toLocaleString()}ms
+                          </div>
                           <div className="text-sm text-purple-400">Avg Response Time</div>
                         </div>
                       </div>
@@ -306,24 +388,9 @@ export const WorkflowsPage: React.FC = () => {
                   gradient="green"
                 >
                   <motion.div variants={itemVariants} className="p-4 space-y-4">
-                    {[
-                      { name: 'Prompt Template', percentage: 85, color: 'purple' },
-                      { name: 'LLM Completion', percentage: 72, color: 'blue' },
-                      { name: 'Data Transform', percentage: 58, color: 'amber' },
-                    ].map((item) => (
-                      <div key={item.name} className="flex justify-between items-center">
-                        <span className="text-gray-300">{item.name}</span>
-                        <div className="flex items-center gap-3">
-                          <div className="w-32 bg-white/10 rounded-full h-2">
-                            <div
-                              className={`bg-${item.color}-500 h-2 rounded-full transition-all duration-500`}
-                              style={{ width: `${item.percentage}%` }}
-                            />
-                          </div>
-                          <span className="text-sm text-gray-400 w-12">{item.percentage}%</span>
-                        </div>
-                      </div>
-                    ))}
+                    <p className="text-sm text-gray-400">
+                      Per-node usage analytics are not available from current backend endpoints.
+                    </p>
                   </motion.div>
                 </GlassCard>
               </motion.div>

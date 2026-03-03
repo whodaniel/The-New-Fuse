@@ -33,6 +33,14 @@ export const AIAgentOnboarding: React.FC<AIAgentOnboardingProps> = ({ agentId, o
     { name: 'api-integration', status: 'pending' },
   ]);
 
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem('token') || localStorage.getItem('auth_token') || '';
+    return {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+  };
+
   useEffect(() => {
     // Simulate automatic detection
     const timer = setTimeout(() => {
@@ -47,8 +55,19 @@ export const AIAgentOnboarding: React.FC<AIAgentOnboardingProps> = ({ agentId, o
     setError(null);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const response = await fetch(`/api/agents/${encodeURIComponent(agentData.id)}`, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          response.status === 404
+            ? 'Agent is not registered yet. Create the agent before onboarding.'
+            : `Agent registration verification failed (${response.status})`
+        );
+      }
 
       setAgentData((prev: any) => ({
         ...prev,
@@ -68,8 +87,19 @@ export const AIAgentOnboarding: React.FC<AIAgentOnboardingProps> = ({ agentId, o
     setError(null);
 
     try {
+      const checks = [
+        { name: 'file-management', endpoint: '/api/system/logs' },
+        { name: 'process-management', endpoint: '/api/system/status' },
+        { name: 'web-interaction', endpoint: '/api/mcp/servers' },
+        {
+          name: 'code-analysis',
+          endpoint: `/api/agents/${encodeURIComponent(agentData.id)}/stats`,
+        },
+        { name: 'api-integration', endpoint: '/api/ai/text-completion', method: 'POST' as const },
+      ];
+
       // Run tests sequentially
-      for (let i = 0; i < capabilityTests.length; i++) {
+      for (let i = 0; i < checks.length; i++) {
         // Update status to running
         setCapabilityTests((prev) => {
           const updated = [...prev];
@@ -77,17 +107,31 @@ export const AIAgentOnboarding: React.FC<AIAgentOnboardingProps> = ({ agentId, o
           return updated;
         });
 
-        // Simulate test execution
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        const test = checks[i];
+        const response = await fetch(test.endpoint, {
+          method: test.method || 'GET',
+          headers: getAuthHeaders(),
+          credentials: 'include',
+          ...(test.method === 'POST'
+            ? {
+                body: JSON.stringify({
+                  prompt: 'health probe',
+                  model: 'gpt-4o-mini',
+                  maxTokens: 4,
+                }),
+              }
+            : {}),
+        });
 
-        // Update with result (randomly success or failure for demo)
-        const success = Math.random() > 0.3;
+        const success = response.ok;
         setCapabilityTests((prev) => {
           const updated = [...prev];
           updated[i] = {
             ...updated[i],
             status: success ? 'success' : 'failed',
-            result: success ? { score: Math.floor(Math.random() * 100) } : { error: 'Test failed' },
+            result: success
+              ? { endpoint: test.endpoint, status: response.status }
+              : { endpoint: test.endpoint, error: `Probe failed (${response.status})` },
           };
           return updated;
         });
@@ -96,7 +140,7 @@ export const AIAgentOnboarding: React.FC<AIAgentOnboardingProps> = ({ agentId, o
         if (success) {
           setAgentData((prev: any) => ({
             ...prev,
-            capabilities: [...prev.capabilities, capabilityTests[i].name],
+            capabilities: [...prev.capabilities, test.name],
           }));
         }
       }
@@ -114,12 +158,29 @@ export const AIAgentOnboarding: React.FC<AIAgentOnboardingProps> = ({ agentId, o
     setError(null);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const probeTargets = [
+        { channel: 'http', endpoint: `/api/a2a/messages/${encodeURIComponent(agentData.id)}` },
+        { channel: 'event-stream', endpoint: '/api/a2a/status' },
+      ];
+
+      const channels: string[] = [];
+      for (const target of probeTargets) {
+        const response = await fetch(target.endpoint, {
+          method: 'GET',
+          headers: getAuthHeaders(),
+          credentials: 'include',
+        });
+        if (response.ok) {
+          channels.push(target.channel);
+        }
+      }
+      if (channels.length === 0) {
+        throw new Error('No communication channels are currently reachable for this agent.');
+      }
 
       setAgentData((prev: any) => ({
         ...prev,
-        communicationChannels: ['http', 'websocket', 'event-stream'],
+        communicationChannels: channels,
         communicationSetupComplete: true,
       }));
 

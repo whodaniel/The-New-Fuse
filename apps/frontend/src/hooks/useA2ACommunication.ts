@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import { a2aProtocolService, A2AMessage } from '@/services/A2AProtocolService';
+import { A2AMessage, a2aProtocolService } from '@/services/A2AProtocolService';
+import { useCallback, useEffect, useState } from 'react';
 
 export interface A2AAgent {
   id: string;
@@ -21,45 +21,35 @@ export const useA2ACommunication = () => {
     setError(null);
 
     try {
-      // In a real app, this would fetch agents from an API
-      // For now, we'll just simulate a delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '/api';
+      const response = await fetch(`${apiBaseUrl}/a2a/status`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-      // Mock data
-      const mockAgents: A2AAgent[] = [
-        {
-          id: 'agent-1',
-          name: 'Code Assistant',
-          capabilities: ['code-generation', 'code-review', 'bug-fixing'],
-          status: 'online',
-          lastSeen: Date.now()
-        },
-        {
-          id: 'agent-2',
-          name: 'Data Analyzer',
-          capabilities: ['data-analysis', 'visualization', 'reporting'],
-          status: 'online',
-          lastSeen: Date.now()
-        },
-        {
-          id: 'agent-3',
-          name: 'Content Writer',
-          capabilities: ['writing', 'editing', 'summarization'],
-          status: 'offline',
-          lastSeen: Date.now() - 3600000 // 1 hour ago
-        },
-        {
-          id: 'agent-4',
-          name: 'Bug Hunter',
-          capabilities: ['bug-detection', 'bug-fixing', 'testing'],
-          status: 'busy',
-          lastSeen: Date.now()
-        }
-      ];
+      if (!response.ok) {
+        throw new Error(`Failed to load A2A agents: ${response.status} ${response.statusText}`);
+      }
 
-      setAgents(mockAgents);
+      const payload = await response.json();
+      const onlineAgentIds: string[] = Array.isArray(payload?.onlineAgents)
+        ? payload.onlineAgents
+        : [];
+
+      const liveAgents: A2AAgent[] = onlineAgentIds.map((agentId) => ({
+        id: agentId,
+        name: agentId,
+        capabilities: [],
+        status: 'online',
+        lastSeen: Date.now(),
+      }));
+
+      setAgents(liveAgents);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to load agents'));
+      setAgents([]);
     } finally {
       setLoading(false);
     }
@@ -78,9 +68,11 @@ export const useA2ACommunication = () => {
         message.sender,
         'recipient' in message ? message.recipient : undefined,
         {
-          priority: 'metadata' in message && message.metadata ? message.metadata.priority : 'medium',
+          priority:
+            'metadata' in message && message.metadata ? message.metadata.priority : 'medium',
           timeout: 'metadata' in message && message.metadata ? message.metadata.timeout : undefined,
-          retryCount: 'metadata' in message && message.metadata ? message.metadata.retryCount : undefined
+          retryCount:
+            'metadata' in message && message.metadata ? message.metadata.retryCount : undefined,
         }
       );
 
@@ -88,7 +80,7 @@ export const useA2ACommunication = () => {
       await a2aProtocolService.sendMessage(fullMessage);
 
       // Add message to list
-      setMessages(prev => [...prev, fullMessage]);
+      setMessages((prev) => [...prev, fullMessage]);
 
       return fullMessage;
     } catch (err) {
@@ -100,75 +92,86 @@ export const useA2ACommunication = () => {
   }, []);
 
   // Broadcast message
-  const broadcastMessage = useCallback(async (message: Omit<A2AMessage, 'id' | 'timestamp' | 'recipient'>) => {
-    setLoading(true);
-    setError(null);
+  const broadcastMessage = useCallback(
+    async (message: Omit<A2AMessage, 'id' | 'timestamp' | 'recipient'>) => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      // Create message using A2A protocol service
-      const fullMessage = a2aProtocolService.createMessage(
-        message.type,
-        message.payload,
-        message.sender,
-        undefined, // No recipient for broadcast
-        {
-          priority: 'metadata' in message && message.metadata ? message.metadata.priority : 'medium',
-          timeout: 'metadata' in message && message.metadata ? message.metadata.timeout : undefined,
-          retryCount: 'metadata' in message && message.metadata ? message.metadata.retryCount : undefined
-        }
-      );
+      try {
+        // Create message using A2A protocol service
+        const fullMessage = a2aProtocolService.createMessage(
+          message.type,
+          message.payload,
+          message.sender,
+          undefined, // No recipient for broadcast
+          {
+            priority:
+              'metadata' in message && message.metadata ? message.metadata.priority : 'medium',
+            timeout:
+              'metadata' in message && message.metadata ? message.metadata.timeout : undefined,
+            retryCount:
+              'metadata' in message && message.metadata ? message.metadata.retryCount : undefined,
+          }
+        );
 
-      // Broadcast message
-      await a2aProtocolService.broadcastMessage(fullMessage);
+        // Broadcast message
+        await a2aProtocolService.broadcastMessage(fullMessage);
 
-      // Add message to list
-      setMessages(prev => [...prev, fullMessage]);
+        // Add message to list
+        setMessages((prev) => [...prev, fullMessage]);
 
-      return fullMessage;
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to broadcast message'));
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+        return fullMessage;
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to broadcast message'));
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
 
   // Request-response
-  const sendRequestAndWaitForResponse = useCallback(async (
-    message: Omit<A2AMessage, 'id' | 'timestamp'>,
-    timeout = 30000
-  ) => {
-    setLoading(true);
-    setError(null);
+  const sendRequestAndWaitForResponse = useCallback(
+    async (message: Omit<A2AMessage, 'id' | 'timestamp'>, timeout = 30000) => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      // Create message using A2A protocol service
-      const fullMessage = a2aProtocolService.createMessage(
-        message.type,
-        message.payload,
-        message.sender,
-        'recipient' in message ? message.recipient : undefined,
-        {
-          priority: 'metadata' in message && message.metadata ? message.metadata.priority : 'medium',
-          timeout,
-          retryCount: 'metadata' in message && message.metadata ? message.metadata.retryCount : undefined
-        }
-      );
+      try {
+        // Create message using A2A protocol service
+        const fullMessage = a2aProtocolService.createMessage(
+          message.type,
+          message.payload,
+          message.sender,
+          'recipient' in message ? message.recipient : undefined,
+          {
+            priority:
+              'metadata' in message && message.metadata ? message.metadata.priority : 'medium',
+            timeout,
+            retryCount:
+              'metadata' in message && message.metadata ? message.metadata.retryCount : undefined,
+          }
+        );
 
-      // Send request and wait for response
-      const response = await a2aProtocolService.sendRequestAndWaitForResponse(fullMessage, timeout);
+        // Send request and wait for response
+        const response = await a2aProtocolService.sendRequestAndWaitForResponse(
+          fullMessage,
+          timeout
+        );
 
-      // Add request and response to list
-      setMessages(prev => [...prev, fullMessage, response]);
+        // Add request and response to list
+        setMessages((prev) => [...prev, fullMessage, response]);
 
-      return response;
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to get response'));
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+        return response;
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to get response'));
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
 
   // Load agents on mount
   useEffect(() => {
@@ -183,7 +186,7 @@ export const useA2ACommunication = () => {
     loadAgents,
     sendMessage,
     broadcastMessage,
-    sendRequestAndWaitForResponse
+    sendRequestAndWaitForResponse,
   };
 };
 

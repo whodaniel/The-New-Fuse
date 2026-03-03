@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface SwitchProps {
   checked?: boolean;
   onCheckedChange?: (checked: boolean) => void;
@@ -8,12 +6,12 @@ interface SwitchProps {
   id?: string;
 }
 
-export function Switch({ 
-  checked = false, 
-  onCheckedChange, 
-  disabled = false, 
-  className = "",
-  id
+export function Switch({
+  checked = false,
+  onCheckedChange,
+  disabled = false,
+  className = '',
+  id,
 }: SwitchProps) {
   const handleClick = () => {
     if (!disabled) {

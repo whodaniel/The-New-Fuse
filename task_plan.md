@@ -1,223 +1,167 @@
-# Task Plan: [Brief Description]
-
-<!--
-  WHAT: This is your roadmap for the entire task. Think of it as your "working memory on disk."
-  WHY: After 50+ tool calls, your original goals can get forgotten. This file keeps them fresh.
-  WHEN: Create this FIRST, before starting any work. Update after each phase completes.
-
-  TNF INTEGRATION: This template follows BMAD-inspired phases and integrates with TNF's
-  meta-skills, agent inbox, and perpetual improvement cycle.
--->
+# Task Plan: TNF 11-Hour Production Sprint
 
 ## Goal
 
-<!--
-  WHAT: One clear sentence describing what you're trying to achieve.
-  WHY: This is your north star. Re-reading this keeps you focused on the end state.
-  EXAMPLE: "Create a Python CLI todo app with add, list, and delete functionality."
--->
-
-[One sentence describing the end state]
+Ship a production-trustworthy TNF web/app surface in 11 hours by eliminating
+user-visible mocks/stubs in priority workflows, wiring unsurfaced backend
+capabilities, and passing release gates.
 
 ## Current Phase
 
-<!--
-  WHAT: Which phase you're currently working on (e.g., "Phase 1", "Phase 3").
-  WHY: Quick reference for where you are in the task. Update this as you progress.
--->
-
-Phase 1
+Phase 4 (Implementation) - in progress
 
 ## Project Type (TNF-Specific)
 
-<!--
-  WHAT: Categorize the project type for proper agent assignment.
-  WHY: Ensures correct agents are used (see .agent/agents/project-planner.md)
--->
+| Type          | Value                                               |
+| ------------- | --------------------------------------------------- |
+| Category      | WEB + BACKEND + INTEGRATION                         |
+| Primary Agent | orchestrator + frontend-specialist + api-specialist |
+| Tech Stack    | React/Vite + NestJS + Drizzle + Redis/Railway       |
 
-| Type          | Value                                         |
-| ------------- | --------------------------------------------- |
-| Category      | WEB / MOBILE / BACKEND / FEATURE / BUG-FIX    |
-| Primary Agent | [e.g., frontend-specialist, mobile-developer] |
-| Tech Stack    | [e.g., React, Next.js, NestJS]                |
+## 11-Hour Command Window
+
+| Window  | Focus                            | Exit Criteria                                                        |
+| ------- | -------------------------------- | -------------------------------------------------------------------- |
+| H00-H01 | Baseline + queue setup           | Current failures reproduced, lanes assigned, branch strategy set     |
+| H01-H04 | Backend endpoint surfacing       | P0 missing/placeholder API surfaces implemented with tests           |
+| H04-H07 | Frontend de-mock wiring          | P0 screens no longer use fallback/mock data                          |
+| H07-H09 | Integration + E2E hardening      | Critical user journeys green in local smoke/E2E                      |
+| H09-H11 | Release gates + deploy checklist | Build, typecheck, lint, smoke pass; handoff + rollback notes written |
+
+## Swarm Lanes (Parallel)
+
+| Lane   | Owner Profile         | Scope                                                                    | Allowed Paths                                                                                     |
+| ------ | --------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| Lane A | API Surface Agent     | Missing admin/analytics/system endpoints, remove placeholder controllers | `apps/api/src/controllers`, `apps/api/src/modules/**`, `apps/api/src/services/**`                 |
+| Lane B | Data Integrity Agent  | Replace mock metric/service responses with real probes                   | `apps/api/src/controllers/system.controller.ts`, related services                                 |
+| Lane C | Workflow/A2A Agent    | Remove workflow/A2A frontend mock fallbacks and connect to live APIs     | `apps/frontend/src/services/WorkflowService.ts`, `apps/frontend/src/hooks/useA2ACommunication.ts` |
+| Lane D | Admin UI Wiring Agent | Remove mock fallback usage in admin pages/services                       | `apps/frontend/src/pages/Admin/**`, `apps/frontend/src/services/**`                               |
+| Lane E | QA/Verification Agent | Tests, regression scans, release gate evidence                           | `apps/*/src/**/*.test*`, `e2e/**`, CI scripts                                                     |
 
 ## Phases
 
-<!--
-  WHAT: Break your task into 3-7 logical phases. Each phase should be completable.
-  WHY: Breaking work into phases prevents overwhelm and makes progress visible.
-  WHEN: Update status after completing each phase: pending → in_progress → complete
-
-  BMAD ALIGNMENT:
-  - Phase 1: ANALYSIS (Research, brainstorm - NO CODE)
-  - Phase 2: PLANNING (Create plan - NO CODE)
-  - Phase 3: SOLUTIONING (Architecture, design - NO CODE)
-  - Phase 4: IMPLEMENTATION (Code per plan - YES CODE)
-  - Phase X: VERIFICATION (Test & validate)
--->
-
 ### Phase 1: Requirements & Discovery (ANALYSIS)
 
-<!--
-  WHAT: Understand what needs to be done and gather initial information.
-  WHY: Starting without understanding leads to wasted effort. This phase prevents that.
-  BMAD: This is the ANALYSIS phase - NO CODE WRITING.
--->
-
-- [ ] Understand user intent
-- [ ] Identify constraints and requirements
-- [ ] Check TNF context: `.agent/context/resource-map.md`
-- [ ] Document findings in findings.md
-- **Status:** in_progress
-- **Code Allowed:** ❌ NO
-<!--
-  STATUS VALUES:
-  - pending: Not started yet
-  - in_progress: Currently working on this
-  - complete: Finished this phase
--->
+- [x] Confirm objective: production-ready core surfaces in 11 hours
+- [x] Read TNF context and handoff (`resource-map`, `handoff_notes`)
+- [x] Inventory mock/stub hotspots in frontend/backend
+- [x] Capture findings in `findings.md`
+- **Status:** complete
+- **Code Allowed:** NO
 
 ### Phase 2: Planning & Structure (PLANNING)
 
-<!--
-  WHAT: Decide how you'll approach the problem and what structure you'll use.
-  WHY: Good planning prevents rework. Document decisions so you remember why you chose them.
-  BMAD: This is the PLANNING phase - NO CODE WRITING.
--->
-
-- [ ] Define technical approach
-- [ ] Create file structure plan (don't create actual files yet)
-- [ ] Document decisions with rationale
-- [ ] Create `docs/PLAN-{task-slug}.md` for major features
-- **Status:** pending
-- **Code Allowed:** ❌ NO
+- [x] Define swarm lanes and file ownership boundaries
+- [x] Define 11-hour timeline with hard checkpoints
+- [x] Define priority order based on user-visible impact
+- [x] Define merge/review gate policy
+- **Status:** in_progress
+- **Code Allowed:** NO
 
 ### Phase 3: Solutioning (DESIGN)
 
-<!--
-  WHAT: Architecture, design, and technical specification.
-  WHY: Clear design prevents implementation confusion.
-  BMAD: This is the SOLUTIONING phase - NO CODE WRITING.
--->
-
-- [ ] Design component/module architecture
-- [ ] Specify interfaces and data flows
-- [ ] Identify dependencies and integration points
-- [ ] Get user approval if needed
-- **Status:** pending
-- **Code Allowed:** ❌ NO
+- [x] Finalize API contracts for each frontend mock replacement
+- [x] Produce lane-specific acceptance checks
+- [x] Freeze P0 feature list (must-ship vs defer)
+- **Status:** complete
+- **Code Allowed:** NO
 
 ### Phase 4: Implementation
 
-<!--
-  WHAT: Actually build/create/write the solution.
-  WHY: This is where the work happens. Break into smaller sub-tasks if needed.
-  BMAD: This is the IMPLEMENTATION phase - CODE WRITING ALLOWED.
--->
-
-- [ ] Execute the plan step by step
-- [ ] Write code to files before executing
-- [ ] Test incrementally
-- [ ] Update progress.md after each sub-task
-- **Status:** pending
-- **Code Allowed:** ✅ YES
+- [ ] Lane A/B backend changes with tests
+- [ ] Lane C/D frontend changes with integration checks
+- [ ] Remove or isolate unused placeholder controllers
+- [ ] Keep commits small and lane-scoped
+- **Status:** in_progress
+- **Code Allowed:** YES
 
 ### Phase X: Verification
 
-<!--
-  WHAT: Verify everything works and meets requirements.
-  WHY: Catching issues early saves time. Document test results in progress.md.
-  BMAD: This is the VERIFICATION phase - ALWAYS FINAL.
--->
-
-- [ ] Run lint & type check: `npm run lint && npx tsc --noEmit`
-- [ ] Run security scan (if applicable)
-- [ ] Run build: `npm run build`
-- [ ] Verify all requirements met
-- [ ] Document test results in progress.md
-- [ ] Update `.agent/handoff_notes.txt`
+- [ ] Run lint/typecheck/build on changed packages
+- [ ] Execute smoke tests for P0 flows
+- [ ] Validate no user-facing mock fallbacks remain in P0 scope
+- [ ] Update `.agent/handoff_notes.txt` with exact deployment/runbook status
 - **Status:** pending
-- **Code Allowed:** ✅ Scripts only
+- **Code Allowed:** Scripts/tests only
+
+## P0 Targets (Must Ship)
+
+1. Workflow services/UI no longer return mock workflows on API failure path.
+2. A2A communication hook no longer seeds hardcoded agents.
+3. Admin/system observability endpoints return real health/metrics signals.
+4. Placeholder/legacy API controller paths are either wired to real service or
+   explicitly removed from runtime routing.
+5. Core admin and agent management UI paths use backend truth, not local demo
+   data.
+
+## Priority Backlog (File Anchors)
+
+| Priority | Item                                     | Files                                                                                         |
+| -------- | ---------------------------------------- | --------------------------------------------------------------------------------------------- |
+| P0       | Workflow mock fallback removal           | `apps/frontend/src/services/WorkflowService.ts`                                               |
+| P0       | A2A mock agent list removal              | `apps/frontend/src/hooks/useA2ACommunication.ts`                                              |
+| P0       | Placeholder API controller audit/removal | `apps/api/src/controllers/AgentController.ts`, `apps/api/src/controllers/agent.controller.ts` |
+| P0       | System mock response replacement         | `apps/api/src/controllers/system.controller.ts`                                               |
+| P1       | Admin/user fallback mock cleanup         | `apps/frontend/src/pages/Admin/UserManagement.tsx` and related admin pages                    |
+| P1       | Chat mock response path replacement      | `apps/api/src/modules/chat/chat.service.ts`                                                   |
+| P2       | Non-critical demo pages/features cleanup | community/NFT/task demo surfaces                                                              |
 
 ## Key Questions
 
-<!--
-  WHAT: Important questions you need to answer during the task.
-  WHY: These guide your research and decision-making. Answer them as you go.
-  EXAMPLE:
-    1. Should tasks persist between sessions? (Yes - need file storage)
-    2. What format for storing tasks? (JSON file)
--->
-
-1. [Question to answer]
-2. [Question to answer]
+1. Which exact UI routes are release-blocking in this 11-hour window (P0 only)?
+2. For unavailable external providers, should we hard-fail with clear UX
+   messaging or soft-degrade with explicit "unavailable" states?
 
 ## Decisions Made
 
-<!--
-  WHAT: Technical and design decisions you've made, with the reasoning behind them.
-  WHY: You'll forget why you made choices. This table helps you remember and justify decisions.
-  WHEN: Update whenever you make a significant choice (technology, approach, structure).
-  EXAMPLE:
-    | Use JSON for storage | Simple, human-readable, built-in Python support |
--->
-
-| Decision | Rationale |
-| -------- | --------- |
-|          |           |
+| Decision                                              | Rationale                                             |
+| ----------------------------------------------------- | ----------------------------------------------------- |
+| Optimize for P0 user-visible truth over broad cleanup | Maximizes production readiness impact per hour        |
+| Assign strict lane file boundaries                    | Prevents merge contention across many agents          |
+| Use hard checkpoints each 2-3 hours                   | Avoids late-stage integration collapse                |
+| Do not touch unrelated dirty files                    | Preserves active ongoing work not part of this sprint |
 
 ## Errors Encountered
 
-<!--
-  WHAT: Every error you encounter, what attempt number it was, and how you resolved it.
-  WHY: Logging errors prevents repeating the same mistakes. This is critical for learning.
-  WHEN: Add immediately when an error occurs, even if you fix it quickly.
-  EXAMPLE:
-    | FileNotFoundError | 1 | Check if file exists, create empty list if not |
-    | JSONDecodeError | 2 | Handle empty file case explicitly |
--->
-
-| Error | Attempt | Resolution |
-| ----- | ------- | ---------- |
-|       | 1       |            |
+| Error                                             | Attempt | Resolution                                                              |
+| ------------------------------------------------- | ------- | ----------------------------------------------------------------------- |
+| Missing expected `system-metrics.service.ts` path | 1       | Pivoted to direct `system.controller.ts` scan and targeted file anchors |
 
 ## TNF Integration Points
 
-<!--
-  TNF-SPECIFIC: Track integration with TNF's systems.
--->
-
 ### Skills Used
 
-| Skill               | Purpose    | Location                             |
-| ------------------- | ---------- | ------------------------------------ |
-| planning-with-files | This skill | `.agent/skills/planning-with-files/` |
-|                     |            |                                      |
+| Skill                   | Purpose                            | Location                                                               |
+| ----------------------- | ---------------------------------- | ---------------------------------------------------------------------- |
+| framework-consciousness | System-wide orchestration strategy | `/Users/<owner>/.codex/skills/framework-consciousness/SKILL.md` |
+| context-frontloader     | Session context bootstrapping      | `/Users/<owner>/.codex/skills/context-frontloader/SKILL.md`     |
 
 ### Agents Involved
 
-| Agent | Role | Status |
-| ----- | ---- | ------ |
-|       |      |        |
+| Agent               | Role                     | Status |
+| ------------------- | ------------------------ | ------ |
+| orchestrator        | Own timeline/checkpoints | active |
+| api-specialist      | Lane A/B                 | queued |
+| frontend-specialist | Lane C/D                 | queued |
+| qa-verifier         | Lane E                   | queued |
 
 ### Jules Tasks (if delegated)
 
-| Task ID | Description | Status                                     |
-| ------- | ----------- | ------------------------------------------ |
-|         |             | Monitor with `jules remote list --session` |
+| Task ID | Description                            | Status     |
+| ------- | -------------------------------------- | ---------- |
+| pending | Create per-lane implementation tickets | to enqueue |
 
 ## Dependencies
 
-<!--
-  WHAT: External dependencies, blockers, or waiting items.
-  WHY: Makes blockers visible and trackable.
--->
-
-| Dependency | Status           | Notes |
-| ---------- | ---------------- | ----- |
-|            | pending/resolved |       |
+| Dependency                     | Status  | Notes                                            |
+| ------------------------------ | ------- | ------------------------------------------------ |
+| Railway API reachability       | at-risk | Previous handoff notes mention DNS flakiness     |
+| Redis/relay local availability | at-risk | Required for live orchestration queue operations |
+| Auth tokens/env alignment      | pending | Needed for end-to-end admin route verification   |
 
 ## Files Created/Modified
+
+- `task_plan.md` (rewritten to executable 11-hour map)
 
 <!--
   WHAT: Track all files created or modified during this task.

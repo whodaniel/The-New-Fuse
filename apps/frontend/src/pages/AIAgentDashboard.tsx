@@ -36,6 +36,12 @@ interface Agent {
   conversations: number;
 }
 
+interface LocalAICapabilityStatus {
+  enabled: boolean;
+  reason?: string;
+  endpoints?: Record<string, boolean>;
+}
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -59,6 +65,7 @@ const AIAgentPortal: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [localAIStatus, setLocalAIStatus] = useState<LocalAICapabilityStatus | null>(null);
 
   useEffect(() => {
     fetchAgents();
@@ -67,22 +74,33 @@ const AIAgentPortal: React.FC = () => {
   const fetchAgents = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/agents', {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      const authHeaders = {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'application/json',
+      };
 
-      if (response.ok) {
-        const data = await response.json();
-        setAgents(data);
+      const [agentsResponse, localAiResponse] = await Promise.all([
+        fetch('/api/agents', { headers: authHeaders }),
+        fetch('/api/local-ai/status', { headers: authHeaders }),
+      ]);
+
+      if (agentsResponse.ok) {
+        const data = await agentsResponse.json();
+        setAgents(Array.isArray(data) ? data : []);
       } else {
         setAgents([]);
+      }
+
+      if (localAiResponse.ok) {
+        const localAiData = await localAiResponse.json();
+        setLocalAIStatus(localAiData);
+      } else {
+        setLocalAIStatus(null);
       }
     } catch (error) {
       console.error('Error fetching agents:', error);
       setAgents([]);
+      setLocalAIStatus(null);
     } finally {
       setLoading(false);
     }
@@ -234,6 +252,11 @@ const AIAgentPortal: React.FC = () => {
               </PremiumButton>
             </Link>
           </div>
+          {localAIStatus && localAIStatus.enabled === false && (
+            <div className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-amber-200 text-sm">
+              Local AI integration is not deployed in this environment.
+            </div>
+          )}
         </motion.div>
 
         {/* Stats */}
@@ -272,7 +295,7 @@ const AIAgentPortal: React.FC = () => {
           <motion.div variants={itemVariants}>
             <StatsCard
               label="Avg Performance"
-              value={`${Math.round(agents.reduce((sum, agent) => sum + agent.performance, 0) / agents.length)}%`}
+              value={`${agents.length > 0 ? Math.round(agents.reduce((sum, agent) => sum + agent.performance, 0) / agents.length) : 0}%`}
               icon={BarChart3}
               gradient="orange"
             />

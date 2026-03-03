@@ -171,6 +171,13 @@ const Analytics = () => {
 
       const failed = responses.find((response) => !response.ok);
       if (failed) {
+        if (failed.status === 501) {
+          setErrorMessage(
+            'Analytics features are not deployed on this backend yet. Enable agency analytics services to activate this dashboard.'
+          );
+          setData(null);
+          return;
+        }
         throw new Error(`Analytics endpoint request failed (${failed.status})`);
       }
 
@@ -297,6 +304,17 @@ const Analytics = () => {
       const response = await fetch(
         `/api/analytics/default/export?timeframe=${timeRange}&format=json`
       );
+      if (response.status === 501) {
+        toast({
+          title: 'Unavailable',
+          description: 'Analytics export is not deployed on this backend.',
+          variant: 'destructive',
+        });
+        return;
+      }
+      if (!response.ok) {
+        throw new Error(`Export failed (${response.status})`);
+      }
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');

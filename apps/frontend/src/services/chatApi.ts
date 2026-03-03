@@ -180,13 +180,13 @@ class ChatApiService {
     }
   }
 
-  // Mock AI API calls for development
+  // AI API calls
   async callTextApi(
     prompt: string,
     systemPrompt = 'You are a helpful assistant.'
   ): Promise<string> {
     try {
-      const response = await apiRequest<{ text: string }>(`${this.baseUrl}/text-completion`, {
+      const response = await apiRequest<{ text: string }>(`/api/ai/text-completion`, {
         method: 'POST',
         data: { prompt, systemPrompt },
       });
@@ -199,7 +199,7 @@ class ChatApiService {
 
   async callImageApi(prompt: string): Promise<string> {
     try {
-      const response = await apiRequest<{ imageUrl: string }>(`${this.baseUrl}/image-generation`, {
+      const response = await apiRequest<{ imageUrl: string }>(`/api/ai/image-generation`, {
         method: 'POST',
         data: { prompt },
       });

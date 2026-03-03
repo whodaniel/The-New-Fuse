@@ -27,7 +27,7 @@ type AuthenticatedRequest = Request & {
 };
 
 @ApiTags('agent-handoffs')
-@Controller('api/handoffs')
+@Controller('handoffs')
 @RequireAuthLevel(AuthLevel.USER)
 export class AgentHandoffController {
   constructor(private readonly handoffService: AgentHandoffService) {}

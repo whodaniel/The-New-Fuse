@@ -35,13 +35,25 @@
  * // Request system restart
  * POST /api/system/restart
  */
+import {
+  Body,
+  Controller,
+  Get,
+  InternalServerErrorException,
+  Logger,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { Request, Response } from 'express';
-import { Controller, Logger, Post, Body, Get } from '@nestjs/common';
-import * as os from 'os';
 import * as fs from 'fs';
+import * as os from 'os';
 import * as path from 'path';
+import {
+  A2AMessageBrokerService,
+  A2AMessageType,
+  A2APriority,
+} from '../modules/agency-hub/services/a2a-message-broker.service';
 import { AgentSwarmOrchestrationService } from '../modules/agency-hub/services/agent-swarm-orchestration.service';
-import { A2AMessageBrokerService, A2AMessageType, A2APriority } from '../modules/agency-hub/services/a2a-message-broker.service';
 import { PromptTemplatesService } from '../services/prompt-templates.service';
 
 @Controller('system')
@@ -87,37 +99,39 @@ export class SystemController {
         currentLoad: 0,
         maxLoad: 5,
         qualityScore: 1.0,
-        status: 'active'
+        status: 'active',
       });
       log(`Agent Registered: ${agentId}`);
 
       log('--- Step 3: Agent Creates Its Own Prompt ---');
-      const initialPrompt = "You are a helpful assistant.";
+      const initialPrompt = 'You are a helpful assistant.';
       const template = await this.promptService.createTemplate({
         name: `${agentName}-Core-Prompt-${Date.now()}`,
         description: 'The core system prompt for the Evolutionary Agent',
         category: 'System',
         isPublic: false,
         tags: ['agent-core', 'evolutionary'],
-        versions: [{
-          version: 1,
-          content: initialPrompt,
-          label: 'Genesis',
-          variables: {},
-          changelog: 'Initial birth',
-          isActive: true
-        }]
+        versions: [
+          {
+            version: 1,
+            content: initialPrompt,
+            label: 'Genesis',
+            variables: {},
+            changelog: 'Initial birth',
+            isActive: true,
+          },
+        ],
       });
       log(`Prompt Template Created: ${template.id}`);
 
       log('--- Step 4: Agent Improves Its Own Prompt ---');
-      const improvedPrompt = "You are a highly advanced AI assistant capable of self-correction.";
+      const improvedPrompt = 'You are a highly advanced AI assistant capable of self-correction.';
       const version = await this.promptService.createVersion(template.id, {
         content: improvedPrompt,
         label: 'Iteration 1',
         changelog: 'Self-optimization applied',
         variables: {},
-        isActive: true
+        isActive: true,
       });
       log(`Prompt Updated to Version: ${version.version}`);
       log(`New Content: ${version.content}`);
@@ -126,15 +140,14 @@ export class SystemController {
 
       return {
         success: true,
-        logs
+        logs,
       };
-
     } catch (error) {
       this.logger.error('Verification Failed', error);
       return {
         success: false,
         error: (error as Error).message,
-        logs
+        logs,
       };
     }
   }
@@ -174,7 +187,7 @@ export class SystemController {
         currentLoad: 0,
         maxLoad: 10,
         qualityScore: 0.95,
-        status: 'active'
+        status: 'active',
       });
       log(`✓ Agent registered: ${agent1Id} (TaskMaster)`);
 
@@ -184,8 +197,8 @@ export class SystemController {
         capabilities: ['code-analysis', 'optimization'],
         currentLoad: 0,
         maxLoad: 5,
-        qualityScore: 0.90,
-        status: 'active'
+        qualityScore: 0.9,
+        status: 'active',
       });
       log(`✓ Agent registered: ${agent2Id} (Worker-Alpha)`);
 
@@ -193,7 +206,9 @@ export class SystemController {
       const swarmStatus = await this.swarmService.getSwarmStatus(agencyId);
       log(`✓ Swarm Status: ${swarmStatus.healthMetrics.overallHealth}`);
       log(`  - Active Providers: ${swarmStatus.activeProviders}/${swarmStatus.totalProviders}`);
-      log(`  - Heartbeat Connectivity: ${(swarmStatus.healthMetrics.agentConnectivity * 100).toFixed(0)}%`);
+      log(
+        `  - Heartbeat Connectivity: ${(swarmStatus.healthMetrics.agentConnectivity * 100).toFixed(0)}%`
+      );
       log('');
 
       // ==================== PILLAR 2: HEARTBEAT ====================
@@ -212,7 +227,10 @@ export class SystemController {
       log('✓ Agents registered with message broker');
 
       // Create a conversation channel
-      const channel = await this.brokerService.createChannel('agent-coordination', [agent1Id, agent2Id]);
+      const channel = await this.brokerService.createChannel('agent-coordination', [
+        agent1Id,
+        agent2Id,
+      ]);
       log(`✓ Channel created: ${channel.name}`);
 
       // Send a direct message
@@ -221,7 +239,7 @@ export class SystemController {
         from: agent1Id,
         to: agent2Id,
         payload: { task: 'Analyze codebase for optimization opportunities' },
-        priority: A2APriority.HIGH
+        priority: A2APriority.HIGH,
       });
       log(`✓ Direct message sent: ${msg1Id}`);
 
@@ -231,7 +249,7 @@ export class SystemController {
         from: agent1Id,
         to: 'broadcast',
         payload: { capabilities: ['task-coordination', 'delegation'], version: '1.0' },
-        priority: A2APriority.LOW
+        priority: A2APriority.LOW,
       });
       log(`✓ Broadcast message sent: ${msg2Id}`);
 
@@ -247,7 +265,7 @@ export class SystemController {
       await this.brokerService.sendConversationMessage(
         conversationId,
         agent1Id,
-        'Let\'s discuss the optimization strategy for the workflow engine.'
+        "Let's discuss the optimization strategy for the workflow engine."
       );
       log('✓ Conversation message sent');
 
@@ -268,7 +286,7 @@ export class SystemController {
         priority: 'high',
         payload: { target: 'workflow-engine', scope: 'performance' },
         requirements: ['code-analysis', 'optimization'],
-        assignedAgents: [],  // Will be assigned by orchestrator
+        assignedAgents: [], // Will be assigned by orchestrator
       });
       log(`✓ Task submitted to orchestrator: ${taskId}`);
 
@@ -277,7 +295,7 @@ export class SystemController {
         type: A2AMessageType.TASK_ASSIGNED,
         from: 'orchestrator',
         payload: { taskId, assignedTo: agent2Id },
-        priority: A2APriority.HIGH
+        priority: A2APriority.HIGH,
       });
       log('✓ Task assignment broadcasted via message broker');
 
@@ -294,27 +312,26 @@ export class SystemController {
         pillars: {
           orchestrator: {
             status: 'operational',
-            swarmStatus: swarmStatus
+            swarmStatus: swarmStatus,
           },
           heartbeat: {
             status: 'operational',
             interval: '30s',
-            timeout: '60s'
+            timeout: '60s',
           },
           messageBroker: {
             status: 'operational',
-            metrics: brokerMetrics
-          }
+            metrics: brokerMetrics,
+          },
         },
-        logs
+        logs,
       };
-
     } catch (error) {
       this.logger.error('Three Pillars Verification Failed', error);
       return {
         success: false,
         error: (error as Error).message,
-        logs
+        logs,
       };
     }
   }
@@ -370,8 +387,8 @@ export class SystemController {
           api: 'online',
           database: await this.checkDatabaseHealth(),
           filesystem: await this.checkFilesystemHealth(),
-          memory: this.getMemoryStatus()
-        }
+          memory: this.getMemoryStatus(),
+        },
       };
 
       res.json(health);
@@ -379,7 +396,7 @@ export class SystemController {
       this.logger.error('Health check failed:', error);
       res.status(500).json({
         status: 'unhealthy',
-        error: 'Health check failed'
+        error: 'Health check failed',
       });
     }
   }
@@ -455,27 +472,27 @@ export class SystemController {
           arch: os.arch(),
           hostname: os.hostname(),
           uptime: os.uptime(),
-          loadavg: os.loadavg()
+          loadavg: os.loadavg(),
         },
         process: {
           pid: process.pid,
           uptime: process.uptime(),
           version: process.version,
           memoryUsage: process.memoryUsage(),
-          cpuUsage: process.cpuUsage()
+          cpuUsage: process.cpuUsage(),
         },
         memory: {
           total: os.totalmem(),
           free: os.freemem(),
           used: os.totalmem() - os.freemem(),
-          usage: Math.round(((os.totalmem() - os.freemem()) / os.totalmem()) * 100)
+          usage: Math.round(((os.totalmem() - os.freemem()) / os.totalmem()) * 100),
         },
         cpu: {
           count: os.cpus().length,
           model: os.cpus()[0]?.model || 'Unknown',
-          usage: await this.getCPUUsage()
+          usage: await this.getCPUUsage(),
         },
-        disk: await this.getDiskUsage()
+        disk: await this.getDiskUsage(),
       };
 
       res.json(metrics);
@@ -522,7 +539,7 @@ export class SystemController {
         workflows: await this.checkWorkflowEngineHealth(),
         agents: await this.checkAgentSystemHealth(),
         mcp: await this.checkMCPHealth(),
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       res.json(status);
@@ -564,7 +581,7 @@ export class SystemController {
 
       res.json({
         message: 'System restart initiated',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
 
       // Graceful shutdown and restart
@@ -580,10 +597,9 @@ export class SystemController {
   /**
    * Get system logs
    *
-   * Retrieves system log entries with filtering options. Currently returns
-   * mock data but would be extended to read from actual log files in a
-   * production environment. Supports filtering by log level and limiting
-   * the number of entries returned.
+   * Retrieves system log entries with filtering options by reading local log
+   * files from known runtime paths. Supports filtering by log level and
+   * limiting the number of entries returned.
    *
    * @param req - Express request object containing query parameters
    * @param req.query.lines - Maximum number of log entries to return (default: 100)
@@ -612,43 +628,115 @@ export class SystemController {
    *   ]
    * }
    */
-  async getLogs(req: Request, res: Response): Promise<void> {
+  @Get('logs')
+  async getLogs(
+    @Query('lines') linesParam?: string,
+    @Query('level') levelParam?: string
+  ): Promise<{
+    timestamp: string;
+    level: string;
+    lines: number;
+    entries: Array<{ timestamp: string; level: string; message: string; service: string }>;
+  }> {
     try {
-      const { lines = 100, level = 'all' } = req.query;
+      const requestedLines = Number(linesParam ?? 100);
+      const lines =
+        Number.isFinite(requestedLines) && requestedLines > 0
+          ? Math.min(Math.floor(requestedLines), 1000)
+          : 100;
+      const level = String(levelParam ?? 'all').toLowerCase();
+      const entries = this.readSystemLogEntries(lines, level);
 
-      // This would typically read from log files
-      // For now, return a mock response
-      const logs = {
+      return {
         timestamp: new Date().toISOString(),
-        level: level,
-        lines: Number(lines),
-        entries: [
-          {
-            timestamp: new Date().toISOString(),
-            level: 'info',
-            message: 'System health check completed',
-            service: 'system'
-          },
-          {
-            timestamp: new Date(Date.now() - 60000).toISOString(),
-            level: 'info',
-            message: 'Workflow engine started',
-            service: 'workflow'
-          },
-          {
-            timestamp: new Date(Date.now() - 120000).toISOString(),
-            level: 'info',
-            message: 'API server started',
-            service: 'api'
-          }
-        ]
+        level,
+        lines,
+        entries,
       };
-
-      res.json(logs);
     } catch (error) {
       this.logger.error('Failed to get system logs:', error);
-      res.status(500).json({ error: 'Failed to get system logs' });
+      throw new InternalServerErrorException('Failed to get system logs');
     }
+  }
+
+  private readSystemLogEntries(
+    limit: number,
+    levelFilter: string
+  ): Array<{ timestamp: string; level: string; message: string; service: string }> {
+    const files = this.getCandidateLogFiles();
+    const entries: Array<{ timestamp: string; level: string; message: string; service: string }> =
+      [];
+
+    for (const file of files) {
+      try {
+        const stats = fs.statSync(file);
+        if (stats.size > 5 * 1024 * 1024) {
+          continue;
+        }
+        const content = fs.readFileSync(file, 'utf8');
+        const service = path.basename(file).replace(path.extname(file), '');
+        const lines = content.split('\n').filter((line) => line.trim().length > 0);
+
+        for (const line of lines) {
+          const parsed = this.parseLogLine(line, service);
+          if (levelFilter !== 'all' && parsed.level !== levelFilter) {
+            continue;
+          }
+          entries.push(parsed);
+        }
+      } catch (error) {
+        this.logger.debug(`Skipping unreadable log file ${file}: ${(error as Error).message}`);
+      }
+    }
+
+    return entries.slice(-limit).reverse();
+  }
+
+  private getCandidateLogFiles(): string[] {
+    const candidateDirs = [
+      path.join(process.cwd(), 'logs'),
+      process.cwd(),
+      path.join(process.cwd(), 'apps', 'api', 'logs'),
+    ];
+
+    const files: string[] = [];
+    for (const dir of candidateDirs) {
+      if (!fs.existsSync(dir)) {
+        continue;
+      }
+
+      try {
+        const dirEntries = fs.readdirSync(dir, { withFileTypes: true });
+        for (const entry of dirEntries) {
+          if (!entry.isFile()) {
+            continue;
+          }
+          if (!/\.(log|txt)$/i.test(entry.name)) {
+            continue;
+          }
+          files.push(path.join(dir, entry.name));
+        }
+      } catch (error) {
+        this.logger.debug(`Skipping unreadable log directory ${dir}: ${(error as Error).message}`);
+      }
+    }
+
+    return Array.from(new Set(files));
+  }
+
+  private parseLogLine(
+    line: string,
+    service: string
+  ): { timestamp: string; level: string; message: string; service: string } {
+    const levelMatch = line.match(/\b(error|warn|info|debug)\b/i);
+    const isoMatch = line.match(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z/);
+
+    return {
+      timestamp: isoMatch?.[0] ?? new Date().toISOString(),
+      level: (levelMatch?.[1] ?? 'info').toLowerCase(),
+      message: line.trim(),
+      service,
+    };
   }
 
   /**
@@ -783,11 +871,11 @@ export class SystemController {
         path: process.cwd(),
         available: 'unknown', // Would need platform-specific implementation
         used: 'unknown',
-        total: 'unknown'
+        total: 'unknown',
       };
     } catch (error) {
       return {
-        error: 'Unable to get disk usage'
+        error: 'Unable to get disk usage',
       };
     }
   }

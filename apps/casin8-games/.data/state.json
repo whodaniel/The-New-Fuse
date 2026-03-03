@@ -1,8 +1,1 @@
-{
-  "sessions": {},
-  "tables": {},
-  "v2": {
-    "holdemTables": {},
-    "holdemTournaments": {}
-  }
-}
+{"sessions":{"2bc2425d-79e1-4c03-bba4-f4e9f4f35573":{"id":"2bc2425d-79e1-4c03-bba4-f4e9f4f35573","playerName":"Player","bankroll":1000,"rounds":0,"wins":0,"losses":0,"clientSeed":"7452886486fda1602d4e3210794ba4dd","serverSeed":"df8b65d7fde4d61bb92c19c3d648a01ed7d5d72143bc6eeb2f93fa39d9860f13","serverSeedHash":"7b8e796351a73ae4b61cf7eaa65de41faf38d367ce6c6cd0f2300bb64a8955f3","nonce":1,"tableId":"lobby-1","ledger":[],"createdAt":"2026-03-02T19:21:15.374Z","updatedAt":"2026-03-02T19:39:15.161Z"}},"tables":{"lobby-1":{"id":"lobby-1","events":[{"type":"join","tableId":"lobby-1","playerName":"Player","ts":"2026-03-02T19:21:15.374Z"}]}},"v2":{"holdemTables":{},"holdemTournaments":{}}}

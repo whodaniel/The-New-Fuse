@@ -3,7 +3,6 @@ import {
   AlertCircle,
   Bot,
   CheckCircle,
-  Eye,
   Pause,
   Play,
   Plus,
@@ -39,11 +38,39 @@ interface Agent {
   memoryUsage: number;
 }
 
+interface PerformancePoint {
+  time: string;
+  requests: number;
+  responseTime: number;
+  errors: number;
+}
+
+const normalizeAgentType = (value: unknown): Agent['type'] => {
+  const normalized = String(value || '').toLowerCase();
+  if (normalized === 'chatbot' || normalized === 'automation' || normalized === 'analytics') {
+    return normalized;
+  }
+  return 'assistant';
+};
+
+const normalizeAgentStatus = (value: unknown): Agent['status'] => {
+  const normalized = String(value || '').toLowerCase();
+  if (normalized === 'running' || normalized === 'error' || normalized === 'starting') {
+    return normalized;
+  }
+  return 'stopped';
+};
+
+const toFiniteNumber = (value: unknown): number => {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : 0;
+};
+
 export default function AgentManagementFull() {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
-  const [performanceData, setPerformanceData] = useState<any[]>([]);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [performanceData, setPerformanceData] = useState<PerformancePoint[]>([]);
 
   useEffect(() => {
     loadAgents();
@@ -55,9 +82,10 @@ export default function AgentManagementFull() {
 
   const loadAgents = async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const token = localStorage.getItem('token');
-      const headers = { Authorization: `Bearer ${token}` };
+      const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
 
       const [agentsRes, statsRes] = await Promise.all([
         fetch('/api/admin/agents?limit=100', { headers }),
@@ -67,40 +95,61 @@ export default function AgentManagementFull() {
       if (!agentsRes.ok || !statsRes.ok) throw new Error('Failed to fetch data');
 
       const agentsData = await agentsRes.json();
-      const statsData = await statsRes.json();
+      const statsPayload = await statsRes.json();
+      const statsData = statsPayload?.data ?? statsPayload;
 
       setStats({
-        total: statsData.total || 0,
-        running: statsData.running || 0,
-        error: statsData.error || 0,
+        total: toFiniteNumber(statsData?.total),
+        running: toFiniteNumber(statsData?.running),
+        error: toFiniteNumber(statsData?.error),
       });
 
-      const mappedAgents: Agent[] = agentsData.data.map((a: any) => ({
-        id: a.id,
-        name: a.name,
-        type: (a.type || 'assistant').toLowerCase(),
-        status: (a.status || 'stopped').toLowerCase(),
-        uptime: '0m', // Todo: Implement uptime tracking
-        requestsHandled: 0, // Todo: Implement metrics
-        avgResponseTime: 0,
-        errorRate: 0,
-        lastActive: new Date(a.updatedAt || Date.now()),
-        cpuUsage: 0,
-        memoryUsage: 0,
+      const rows = Array.isArray(agentsData?.data)
+        ? agentsData.data
+        : Array.isArray(agentsData)
+          ? agentsData
+          : [];
+
+      const mappedAgents: Agent[] = rows.map((a: any) => ({
+        id: String(a?.id || ''),
+        name: String(a?.name || 'Unnamed Agent'),
+        type: normalizeAgentType(a?.type),
+        status: normalizeAgentStatus(a?.status),
+        uptime: String(a?.uptime || '0m'),
+        requestsHandled: toFiniteNumber(a?.requestsHandled),
+        avgResponseTime: toFiniteNumber(a?.avgResponseTime),
+        errorRate: toFiniteNumber(a?.errorRate),
+        lastActive: new Date(a?.updatedAt || Date.now()),
+        cpuUsage: toFiniteNumber(a?.cpuUsage),
+        memoryUsage: toFiniteNumber(a?.memoryUsage),
       }));
 
       setAgents(mappedAgents);
 
-      // Generate placeholder performance data until backend metrics are ready
-      const perfData = Array.from({ length: 24 }, (_, i) => ({
-        time: `${i}:00`,
-        requests: Math.floor(Math.random() * 1000 + 500),
-        responseTime: Math.floor(Math.random() * 500 + 200),
-        errors: Math.floor(Math.random() * 20),
-      }));
-      setPerformanceData(perfData);
+      // Build timeline snapshots from live aggregate values instead of synthetic chart data.
+      const totals = mappedAgents.reduce(
+        (acc, agent) => {
+          acc.requests += agent.requestsHandled;
+          acc.responseTime += agent.avgResponseTime;
+          acc.errors += agent.errorRate;
+          return acc;
+        },
+        { requests: 0, responseTime: 0, errors: 0 }
+      );
+      const avgResponseTime =
+        mappedAgents.length > 0 ? totals.responseTime / mappedAgents.length : 0;
+      const avgErrorRate = mappedAgents.length > 0 ? totals.errors / mappedAgents.length : 0;
+      const point: PerformancePoint = {
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        requests: totals.requests,
+        responseTime: Math.round(avgResponseTime),
+        errors: Number(avgErrorRate.toFixed(2)),
+      };
+      setPerformanceData((prev) => [...prev.slice(-23), point]);
     } catch (error) {
       console.error('Error loading agents:', error);
+      setAgents([]);
+      setLoadError('Agent management endpoints are unavailable right now.');
     } finally {
       setLoading(false);
     }
@@ -131,19 +180,6 @@ export default function AgentManagementFull() {
     // Implement agent actions
   };
 
-  const formatTimestamp = (date: Date) => {
-    const now = new Date();
-    const diff = now.getTime() - date.getTime();
-    const minutes = Math.floor(diff / 60000);
-
-    if (minutes < 1) return 'Just now';
-    if (minutes < 60) return `${minutes}m ago`;
-    const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `${hours}h ago`;
-    const days = Math.floor(hours / 24);
-    return `${days}d ago`;
-  };
-
   return (
     <div className="p-8 max-w-[1600px] mx-auto bg-gray-50 min-h-screen">
       {/* Header */}
@@ -171,6 +207,12 @@ export default function AgentManagementFull() {
           </div>
         </div>
       </div>
+
+      {loadError && (
+        <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          {loadError}
+        </div>
+      )}
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
@@ -320,13 +362,6 @@ export default function AgentManagementFull() {
                         >
                           <RefreshCw className="h-4 w-4" />
                         </button>
-                        <button
-                          onClick={() => setSelectedAgent(agent)}
-                          className="text-purple-600 hover:text-purple-900"
-                          title="View Details"
-                        >
-                          <Eye className="h-4 w-4" />
-                        </button>
                         <button className="text-gray-600 hover:text-gray-900" title="Settings">
                           <Settings className="h-4 w-4" />
                         </button>
@@ -351,6 +386,11 @@ export default function AgentManagementFull() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-lg shadow-lg p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Request Volume</h3>
+          {performanceData.length === 0 && (
+            <div className="pb-4 text-sm text-gray-500">
+              No live metrics yet. Refresh after agents report activity.
+            </div>
+          )}
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={performanceData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -365,6 +405,11 @@ export default function AgentManagementFull() {
 
         <div className="bg-white rounded-lg shadow-lg p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Response Time & Errors</h3>
+          {performanceData.length === 0 && (
+            <div className="pb-4 text-sm text-gray-500">
+              No live metrics yet. Refresh after agents report activity.
+            </div>
+          )}
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={performanceData}>
               <CartesianGrid strokeDasharray="3 3" />

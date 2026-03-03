@@ -63,6 +63,7 @@ const subscription_registry_1 = require("./orchestrator/subscription-registry");
 const redis_relay_bridge_1 = require("./redis-relay-bridge");
 const stall_detector_1 = require("./services/stall-detector");
 const Logger_1 = require("./utils/Logger");
+const TerminalFormatter_1 = require("./utils/TerminalFormatter");
 // Configuration
 const PORT = parseInt(process.env.PORT || '3000', 10);
 const HEARTBEAT_INTERVAL = 30000;
@@ -124,15 +125,15 @@ class TNFRelayServer extends events_1.EventEmitter {
             this.sendRecoveryMessage(event.channelId, event.message, event.metadata);
         });
         this.stallDetector.on('conversation:stalled', (event) => {
-            console.log(`[Relay] Conversation stalled on channel ${event.channelId}`);
+            TerminalFormatter_1.relay.conversationStalled(event.channelId);
             this.emit('conversation:stalled', event);
         });
         this.stallDetector.on('conversation:terminated', (event) => {
-            console.log(`[Relay] Conversation terminated on channel ${event.channelId}`);
+            TerminalFormatter_1.relay.conversationTerminated(event.channelId);
             this.emit('conversation:terminated', event);
         });
         this.stallDetector.on('conversation:recovered', (event) => {
-            console.log(`[Relay] Conversation recovered on channel ${event.channelId}`);
+            TerminalFormatter_1.relay.conversationRecovered(event.channelId);
             const manager = this.conversationManagers.get(event.channelId);
             if (manager && manager.getPhase() === conversation_state_machine_1.ConversationPhase.STALLED) {
                 void manager.transition(conversation_state_machine_1.ConversationPhase.EXECUTION);
@@ -142,7 +143,7 @@ class TNFRelayServer extends events_1.EventEmitter {
         if (process.env.ENABLE_REDIS_BRIDGE === 'true') {
             this.bridge = (0, redis_relay_bridge_1.createRedisRelayBridge)();
             this.bridge.on('connected', () => {
-                console.log('[Relay] Bridge connected to Redis');
+                TerminalFormatter_1.relay.redisBridgeConnected();
                 this.syncBridgeSubscriptions();
             });
             this.bridge.on('egress', (envelope) => {
@@ -153,7 +154,9 @@ class TNFRelayServer extends events_1.EventEmitter {
         }
         if (this.activityPersistenceEnabled) {
             this.activityRedis = (0, redis_1.createClient)({
-                url: process.env.ACTIVITY_REDIS_URL || process.env.REDIS_URL || 'redis://localhost:6379',
+                url: process.env.ACTIVITY_REDIS_URL ||
+                    process.env.REDIS_URL ||
+                    'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
             });
             this.activityRedis.on('error', (err) => {
                 console.error('[Relay] Activity Redis client error:', err.message);
@@ -161,7 +164,7 @@ class TNFRelayServer extends events_1.EventEmitter {
             this.activityRedisConnectPromise = this.activityRedis
                 .connect()
                 .then(() => {
-                console.log(`[Relay] Activity persistence enabled -> stream ${this.activityStreamKey}`);
+                TerminalFormatter_1.relay.activityPersistenceEnabled(this.activityStreamKey);
             })
                 .catch((err) => {
                 console.error('[Relay] Failed to connect activity Redis:', err.message);
@@ -267,7 +270,7 @@ class TNFRelayServer extends events_1.EventEmitter {
             manager = new conversation_state_machine_1.ConversationStateMachine(channelId);
             // Hook up state machine events
             manager.on('phase:changed', (event) => {
-                console.log(`[Relay] Phase changed in ${event.conversationId}: ${event.from} -> ${event.to}`);
+                TerminalFormatter_1.relay.phaseChanged(event.conversationId, event.from, event.to);
                 // Broadcast phase change to channel
                 this.broadcastToChannel(event.conversationId, {
                     id: `sys-${Date.now()}`,
@@ -293,7 +296,7 @@ class TNFRelayServer extends events_1.EventEmitter {
     setupWebSocket() {
         this.wss.on('connection', (ws, req) => {
             let agentId = null;
-            console.log(`[Relay] New connection from ${req.socket.remoteAddress}`);
+            TerminalFormatter_1.relay.newConnection(req.socket.remoteAddress);
             // Send welcome message
             this.send(ws, {
                 type: 'WELCOME',
@@ -332,7 +335,7 @@ class TNFRelayServer extends events_1.EventEmitter {
         }
         const { type, payload, source, channel } = message;
         const agentId = source || currentAgentId;
-        console.log(`[Relay] ${type} from ${agentId || 'unknown'}`);
+        TerminalFormatter_1.relay.protocolMessage(type, agentId || null);
         switch (type) {
             case 'AGENT_REGISTER': {
                 // Authenticate if token provided
@@ -382,7 +385,7 @@ class TNFRelayServer extends events_1.EventEmitter {
                 for (const cap of agent.capabilities) {
                     this.subscriptionRegistry.register(id, `capability:${cap}`);
                 }
-                console.log(`[Relay] Agent registered: ${agent.name} (${id})`);
+                TerminalFormatter_1.relay.agentRegistered(agent.name, id, agent.platform, !!verifiedToken);
                 this.emit('agent:registered', agent);
                 // Send current state to new agent
                 this.send(ws, {
@@ -524,7 +527,7 @@ class TNFRelayServer extends events_1.EventEmitter {
                     this.channels.delete(channelId);
                     // Remove from all agent channel sets
                     this.agentChannels.forEach((channels) => channels.delete(channelId));
-                    console.log(`[Relay] Channel deleted: ${channelId}`);
+                    TerminalFormatter_1.relay.channelDeleted(channelId);
                     this.broadcast({
                         type: 'CHANNEL_LIST',
                         payload: { channels: Array.from(this.channels.values()) },
@@ -537,7 +540,7 @@ class TNFRelayServer extends events_1.EventEmitter {
                 if (channelId) {
                     const manager = this.getOrCreateConversationManager(channelId);
                     void manager.pause(); // async but we don't await
-                    console.log(`[Relay] Channel paused: ${channelId}`);
+                    TerminalFormatter_1.relay.channelPaused(channelId);
                 }
                 break;
             }
@@ -546,7 +549,7 @@ class TNFRelayServer extends events_1.EventEmitter {
                 if (channelId) {
                     const manager = this.getOrCreateConversationManager(channelId);
                     void manager.resume(); // async but we don't await
-                    console.log(`[Relay] Channel resumed: ${channelId}`);
+                    TerminalFormatter_1.relay.channelResumed(channelId);
                 }
                 break;
             }
@@ -786,7 +789,7 @@ class TNFRelayServer extends events_1.EventEmitter {
         }
     }
     handleAgentDisconnect(agentId) {
-        console.log(`[Relay] Agent disconnected: ${agentId}`);
+        TerminalFormatter_1.relay.agentDisconnected(agentId);
         const agent = this.agents.get(agentId);
         this.agents.delete(agentId);
         this.sockets.delete(agentId);
@@ -875,7 +878,7 @@ class TNFRelayServer extends events_1.EventEmitter {
         }
     }
     dispatchTask(task, channelId) {
-        console.log(`[Relay] Dispatching task ${task.id} to channel ${channelId}`);
+        TerminalFormatter_1.relay.taskDispatched(task.id, channelId);
         void this.persistTaskDispatch(task, channelId);
         // If specific targets are defined, prioritize them
         if (task.targetAgents && task.targetAgents.length > 0) {
@@ -1118,7 +1121,7 @@ class TNFRelayServer extends events_1.EventEmitter {
             const now = Date.now();
             this.agents.forEach((agent, agentId) => {
                 if (now - agent.lastSeen > AGENT_TIMEOUT) {
-                    console.log(`[Relay] Agent timeout: ${agentId}`);
+                    TerminalFormatter_1.relay.agentTimeout(agentId);
                     const ws = this.sockets.get(agentId);
                     if (ws) {
                         ws.close();
@@ -1133,22 +1136,16 @@ class TNFRelayServer extends events_1.EventEmitter {
             void this.ensureActivityPersistenceReady()
                 .then(() => {
                 this.server.listen(this.port, () => {
-                    console.log(`
-╔═════════════════════════════════════════════════════════════╗
-║           ⚡ TNF RELAY SERVER ⚡                             ║
-║                                                              ║
-║   WebSocket: ws://localhost:${this.port}/ws                        ║
-║   Health:    http://localhost:${this.port}/health                   ║
-║   Agents:    http://localhost:${this.port}/agents                   ║
-║   Channels:  http://localhost:${this.port}/channels                 ║
-║                                                              ║
-║   Features:  Stall Detection ✓  Auto-Recovery ✓             ║
-║   Part of @the-new-fuse/relay-core                           ║
-╚═════════════════════════════════════════════════════════════╝
-`);
+                    TerminalFormatter_1.relay.banner({
+                        port: this.port,
+                        redisBridge: !!this.bridge,
+                        activityPersistence: this.activityPersistenceEnabled,
+                        stallDetection: true,
+                        jwtAuth: true,
+                    });
                     this.startHeartbeatMonitor();
                     this.stallDetector.start(); // Start stall detection
-                    console.log('[Relay] Stall detector started');
+                    TerminalFormatter_1.relay.stallDetectorStarted();
                     this.emit('started', { port: this.port });
                     resolve();
                 });
@@ -1182,7 +1179,7 @@ class TNFRelayServer extends events_1.EventEmitter {
                                 this.activityRedis = null;
                             }
                         }
-                        console.log('[Relay] Server stopped');
+                        TerminalFormatter_1.relay.serverStopped();
                         this.emit('stopped');
                         resolve();
                     };
@@ -1217,7 +1214,7 @@ if (require.main === module) {
     // Graceful shutdown
     process.on('SIGINT', () => {
         void (async () => {
-            console.log('\n[Relay] Shutting down...');
+            TerminalFormatter_1.relay.shutdownRequested();
             await relay.stop();
             process.exit(0);
         })();

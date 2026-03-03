@@ -142,7 +142,7 @@ const EnhancedChatProvider = ({ children }: { children: React.ReactNode }) => {
         return await chatApiService.callTextApi(prompt, systemPrompt);
       } catch (error) {
         console.error('Text API error:', error);
-        return 'I apologize, but I encountered an error while processing your request.';
+        throw new Error('Text generation request failed. Check AI provider configuration.');
       }
     },
     []

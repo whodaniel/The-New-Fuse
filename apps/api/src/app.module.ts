@@ -19,6 +19,8 @@ import { AdminOpenClawOAuthController } from './controllers/admin-openclaw-oauth
 import { AgentGrantsController } from './controllers/agent-grants.controller';
 import { AgentHandoffController } from './controllers/agent-handoff.controller';
 import { AgentProxyController } from './controllers/agent-proxy.controller';
+import { AiController } from './controllers/ai.controller';
+import { CommunityController } from './controllers/community.controller';
 import { HealthController } from './controllers/health.controller';
 import { MCPController } from './controllers/mcp.controller';
 import { ModelsController } from './controllers/models.controller';
@@ -144,6 +146,8 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     AgentGrantsController,
     AgentHandoffController,
     AgentProxyController,
+    AiController,
+    CommunityController,
     ModelsController, // AI model provider selection
     SystemController,
     UserManagementController, // User CRUD operations
@@ -207,7 +211,7 @@ export class AppModule implements NestModule {
     // TODO: Re-enable after fixing middleware implementation
     consumer
       .apply(EnhancedSecurityMiddleware)
-      .exclude('api/agents/(.*)', 'api/a2a/(.*)', 'api/system/(.*)') // Exclude test routes
+      .exclude('agents/(.*)', 'a2a/(.*)', 'system/(.*)') // Global prefix adds /api
       .forRoutes('*');
   }
 }

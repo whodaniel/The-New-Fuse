@@ -29,6 +29,7 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
   const { toast } = useToast();
   const [userAddress, setUserAddress] = useState<string>();
   const [isLoading, setIsLoading] = useState(false);
+  const [statsError, setStatsError] = useState<string | null>(null);
   const [stats, setStats] = useState<MarketplaceStats>({
     totalNFTs: 4281,
     fractionalized: 1592,
@@ -66,25 +67,79 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
     loadMarketplaceStats();
   }, []);
 
+  useEffect(() => {
+    loadMarketplaceStats();
+  }, [userAddress]);
+
   const loadMarketplaceStats = async () => {
     try {
-      // In a real app, this would fetch from API
-      // const response = await fetch('/api/marketplace/stats');
-      // const data = await response.json();
-      // setStats(data);
+      setStatsError(null);
+      const listingsResponse = await fetch('/api/agents/nft/marketplace');
+      if (!listingsResponse.ok) {
+        throw new Error(`Marketplace stats unavailable (${listingsResponse.status})`);
+      }
 
-      // For now, simulate real-time updates
-      const interval = setInterval(() => {
-        setStats((prev) => ({
-          ...prev,
-          totalVolume: (parseFloat(prev.totalVolume) + Math.random() * 0.1).toFixed(1),
-          pendingRevenue: (parseFloat(prev.pendingRevenue) + Math.random() * 0.01).toFixed(3),
-        }));
-      }, 5000);
+      const listingsPayload = await listingsResponse.json();
+      const listings = Array.isArray(listingsPayload)
+        ? listingsPayload
+        : Array.isArray(listingsPayload?.data)
+          ? listingsPayload.data
+          : [];
 
-      return () => clearInterval(interval);
+      const totalVolume = listings.reduce((sum: number, listing: any) => {
+        const value = Number(listing?.price || listing?.priceEth || listing?.currentPrice || 0);
+        return sum + (Number.isFinite(value) ? value : 0);
+      }, 0);
+
+      const fractionalized = listings.filter((listing: any) => {
+        return (
+          Boolean(listing?.isFractionalized) ||
+          Number(listing?.totalShares || 0) > 0 ||
+          Number(listing?.availableShares || 0) > 0
+        );
+      }).length;
+
+      let userHoldings = 0;
+      let pendingRevenue = 0;
+
+      if (userAddress) {
+        const sharesResponse = await fetch(
+          `/api/agents/nft/shares?ownerAddress=${encodeURIComponent(userAddress)}`
+        );
+        if (sharesResponse.ok) {
+          const sharesPayload = await sharesResponse.json();
+          const shares = Array.isArray(sharesPayload)
+            ? sharesPayload
+            : Array.isArray(sharesPayload?.data)
+              ? sharesPayload.data
+              : [];
+          userHoldings = shares.length;
+          pendingRevenue = shares.reduce((sum: number, share: any) => {
+            const value = Number(share?.pendingRevenue || share?.unclaimedRevenue || 0);
+            return sum + (Number.isFinite(value) ? value : 0);
+          }, 0);
+        }
+      }
+
+      setStats((prev) => ({
+        ...prev,
+        totalNFTs: listings.length,
+        fractionalized,
+        activeListings: listings.length,
+        userHoldings,
+        totalVolume: totalVolume.toFixed(1),
+        pendingRevenue: pendingRevenue.toFixed(3),
+        weeklyGrowth: {
+          nfts: 0,
+          fractionalized: 0,
+          volume: 0,
+        },
+      }));
     } catch (error) {
       console.error('Failed to load marketplace stats:', error);
+      setStatsError(
+        error instanceof Error ? error.message : 'Marketplace stats unavailable right now.'
+      );
     }
   };
 
@@ -328,6 +383,12 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
       )}
 
       <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {statsError && (
+          <div className="mb-6 rounded border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            {statsError}
+          </div>
+        )}
+
         {/* Header */}
         <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-12 pb-6 border-b border-slate-700/50">
           <div>

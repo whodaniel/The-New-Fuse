@@ -18,10 +18,11 @@ const nullSocket: SocketWithEvents = {
 export const useSocket = (): SocketWithEvents => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const { user } = useAuth();
+  const socketUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
   useEffect(() => {
     if (user) {
-      const newSocket = io(process.env.VITE_API_URL || 'http://localhost:3000', {
+      const newSocket = io(socketUrl, {
         query: { userId: user.id },
       });
 
@@ -39,7 +40,7 @@ export const useSocket = (): SocketWithEvents => {
         newSocket.disconnect();
       };
     }
-  }, [user]);
+  }, [user, socketUrl]);
 
   return socket || nullSocket;
 };

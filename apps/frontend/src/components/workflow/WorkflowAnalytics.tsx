@@ -30,6 +30,7 @@ export const WorkflowAnalytics: React.FC<WorkflowAnalyticsProps> = ({ workflowId
   const [metrics, setMetrics] = useState<WorkflowMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState('execution-time');
 
   // Fetch metrics
   useEffect(() => {
@@ -38,68 +39,82 @@ export const WorkflowAnalytics: React.FC<WorkflowAnalyticsProps> = ({ workflowId
       setError(null);
 
       try {
-        // In a real app, this would fetch metrics from an API
-        // For now, we'll just simulate a delay and return mock data
-        await new Promise((resolve: any) => setTimeout(resolve, 1500));
+        const token = localStorage.getItem('token') || '';
+        const response = await fetch(
+          `/api/workflows/executions?workflowId=${encodeURIComponent(workflowId)}&limit=100`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: token ? `Bearer ${token}` : '',
+            },
+            credentials: 'include',
+          }
+        );
 
-        // Mock data
-        const mockMetrics: WorkflowMetrics = {
-          executionCount: 42,
-          averageExecutionTime: 1250, // ms
-          successRate: 0.95, // 95%
-          lastExecutionTime: Date.now() - 3600000, // 1 hour ago
-          nodeMetrics: [
-            {
-              nodeId: 'node-1',
-              nodeName: 'Input',
-              nodeType: 'input',
-              executionCount: 42,
-              averageExecutionTime: 50,
-              successRate: 1.0,
-              lastExecutionTime: Date.now() - 3600000,
-            },
-            {
-              nodeId: 'node-2',
-              nodeName: 'Agent',
-              nodeType: 'agent',
-              executionCount: 42,
-              averageExecutionTime: 850,
-              successRate: 0.95,
-              lastExecutionTime: Date.now() - 3600000,
-            },
-            {
-              nodeId: 'node-3',
-              nodeName: 'Transform',
-              nodeType: 'transform',
-              executionCount: 40,
-              averageExecutionTime: 120,
-              successRate: 0.98,
-              lastExecutionTime: Date.now() - 3600000,
-            },
-            {
-              nodeId: 'node-4',
-              nodeName: 'A2A',
-              nodeType: 'a2a',
-              executionCount: 38,
-              averageExecutionTime: 950,
-              successRate: 0.92,
-              lastExecutionTime: Date.now() - 3600000,
-            },
-            {
-              nodeId: 'node-5',
-              nodeName: 'Output',
-              nodeType: 'output',
-              executionCount: 35,
-              averageExecutionTime: 30,
-              successRate: 1.0,
-              lastExecutionTime: Date.now() - 3600000,
-            },
-          ],
+        if (!response.ok) {
+          throw new Error(`Workflow analytics endpoint unavailable (${response.status})`);
+        }
+
+        const payload = await response.json();
+        const executions = Array.isArray(payload?.executions)
+          ? payload.executions
+          : Array.isArray(payload?.data?.executions)
+            ? payload.data.executions
+            : [];
+
+        const executionCount = executions.length;
+        const successfulExecutions = executions.filter((execution: any) => {
+          const status = String(execution?.status || '').toUpperCase();
+          return status === 'COMPLETED' || status === 'SUCCESS';
+        });
+        const successRate = executionCount > 0 ? successfulExecutions.length / executionCount : 0;
+
+        const durations = successfulExecutions
+          .map((execution: any) => {
+            const startedAt = execution?.startedAt ? new Date(execution.startedAt).getTime() : NaN;
+            const completedAt = execution?.completedAt
+              ? new Date(execution.completedAt).getTime()
+              : NaN;
+            if (
+              !Number.isFinite(startedAt) ||
+              !Number.isFinite(completedAt) ||
+              completedAt < startedAt
+            ) {
+              return null;
+            }
+            return completedAt - startedAt;
+          })
+          .filter((duration: number | null): duration is number => duration !== null);
+
+        const averageExecutionTime =
+          durations.length > 0
+            ? Math.round(
+                durations.reduce((sum: number, duration: number) => sum + duration, 0) /
+                  durations.length
+              )
+            : 0;
+
+        const lastExecutionTime = executions
+          .map((execution: any) => {
+            const startedAt = execution?.startedAt ? new Date(execution.startedAt).getTime() : 0;
+            const completedAt = execution?.completedAt
+              ? new Date(execution.completedAt).getTime()
+              : 0;
+            return Math.max(startedAt, completedAt);
+          })
+          .reduce((max: number, timestamp: number) => (timestamp > max ? timestamp : max), 0);
+
+        const liveMetrics: WorkflowMetrics = {
+          executionCount,
+          averageExecutionTime,
+          successRate,
+          lastExecutionTime,
+          nodeMetrics: [],
         };
 
-        setMetrics(mockMetrics);
-      } catch (err) {
-        setError('Failed to fetch metrics');
+        setMetrics(liveMetrics);
+      } catch (err: any) {
+        setError(err?.message || 'Failed to fetch metrics');
         console.error('Failed to fetch metrics:', err);
       } finally {
         setLoading(false);
@@ -194,7 +209,14 @@ export const WorkflowAnalytics: React.FC<WorkflowAnalyticsProps> = ({ workflowId
         </Card>
       </div>
 
-      <Tabs defaultValue="execution-time">
+      {metrics.nodeMetrics.length === 0 && (
+        <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+          Per-node metrics are not currently available from the backend. Showing workflow-level
+          metrics only.
+        </div>
+      )}
+
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="execution-time">Execution Time</TabsTrigger>
           <TabsTrigger value="success-rate">Success Rate</TabsTrigger>

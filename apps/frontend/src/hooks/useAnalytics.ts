@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 
 /**
  * Analytics Event Interface
@@ -173,19 +173,19 @@ class MultiProvider implements AnalyticsProvider {
   }
 
   trackEvent(event: string, properties?: Record<string, any>): void {
-    this.providers.forEach(provider => provider.trackEvent(event, properties));
+    this.providers.forEach((provider) => provider.trackEvent(event, properties));
   }
 
   trackPageView(url: string, properties?: Record<string, any>): void {
-    this.providers.forEach(provider => provider.trackPageView(url, properties));
+    this.providers.forEach((provider) => provider.trackPageView(url, properties));
   }
 
   identifyUser(userId: string, traits?: Record<string, any>): void {
-    this.providers.forEach(provider => provider.identifyUser(userId, traits));
+    this.providers.forEach((provider) => provider.identifyUser(userId, traits));
   }
 
   reset(): void {
-    this.providers.forEach(provider => provider.reset());
+    this.providers.forEach((provider) => provider.reset());
   }
 }
 
@@ -196,7 +196,7 @@ class MultiProvider implements AnalyticsProvider {
  */
 function getAnalyticsProvider(): AnalyticsProvider {
   // In development, use console logging
-  if (process.env.NODE_ENV === 'development') {
+  if (import.meta.env.DEV) {
     return new ConsoleAnalyticsProvider();
   }
 
@@ -213,8 +213,10 @@ function getAnalyticsProvider(): AnalyticsProvider {
     providers.push(new SegmentProvider());
   }
 
-  // Custom API (always available)
-  providers.push(new CustomAPIProvider());
+  // Custom API (opt-in to avoid noisy calls to unimplemented endpoints)
+  if (import.meta.env.VITE_ENABLE_CUSTOM_ANALYTICS_API === 'true') {
+    providers.push(new CustomAPIProvider());
+  }
 
   // Return multi-provider if we have multiple, or single provider
   if (providers.length > 1) {

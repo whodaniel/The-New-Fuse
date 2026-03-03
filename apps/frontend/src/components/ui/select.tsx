@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '../../lib/utils';
 
 // Simple select component that matches the API used in the pages
-interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'onChange'> {
   value?: string;
   onChange?: (value: string) => void;
   onValueChange?: (value: string) => void;

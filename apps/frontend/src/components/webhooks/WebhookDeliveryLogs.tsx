@@ -1,23 +1,27 @@
-import React, { useState, useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@the-new-fuse/ui-consolidated';
-import { Button } from '@the-new-fuse/ui-consolidated';
-import { Badge } from '@the-new-fuse/ui-consolidated';
-import { Input } from '@the-new-fuse/ui-consolidated';
-import { Select } from '@the-new-fuse/ui-consolidated';
-import { 
-  Search, 
-  RefreshCw, 
-  Download, 
-  Eye,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-  Clock,
-  RotateCcw,
-  ExternalLink,
-  Filter,
-} from 'lucide-react';
 import { DeliveryStatus, IntegrationSource } from '@the-new-fuse/types';
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Input,
+  Select,
+} from '@the-new-fuse/ui-consolidated';
+import {
+  CheckCircle,
+  Clock,
+  Download,
+  ExternalLink,
+  Eye,
+  Filter,
+  RefreshCw,
+  RotateCcw,
+  Search,
+  XCircle,
+} from 'lucide-react';
+import React, { useMemo, useState } from 'react';
 import { useWebhookManagement } from './hooks/useWebhookManagement';
 
 export interface WebhookDeliveryLog {
@@ -50,36 +54,79 @@ const STATUS_COLORS: Record<DeliveryStatus, string> = {
   [DeliveryStatus.DELIVERED]: 'bg-green-100 text-green-800',
   [DeliveryStatus.FAILED]: 'bg-red-100 text-red-800',
   [DeliveryStatus.RETRYING]: 'bg-blue-100 text-blue-800',
-  [DeliveryStatus.ABANDONED]: 'bg-gray-100 text-gray-800',
 };
 
-const STATUS_ICONS: Record<DeliveryStatus, JSX.Element> = {
+const STATUS_ICONS: Record<DeliveryStatus, React.ReactElement> = {
   [DeliveryStatus.PENDING]: <Clock className="w-4 h-4" />,
   [DeliveryStatus.DELIVERED]: <CheckCircle className="w-4 h-4" />,
   [DeliveryStatus.FAILED]: <XCircle className="w-4 h-4" />,
   [DeliveryStatus.RETRYING]: <RotateCcw className="w-4 h-4" />,
-  [DeliveryStatus.ABANDONED]: <AlertTriangle className="w-4 h-4" />,
 };
 
-export function WebhookDeliveryLogs({
-  webhookConfigId,
-  className,
-}: WebhookDeliveryLogsProps) {
+const getStatusText = (status: DeliveryStatus): string => {
+  switch (status) {
+    case DeliveryStatus.PENDING:
+      return 'Pending';
+    case DeliveryStatus.DELIVERED:
+      return 'Delivered';
+    case DeliveryStatus.FAILED:
+      return 'Failed';
+    case DeliveryStatus.RETRYING:
+      return 'Retrying';
+    default:
+      return String(status);
+  }
+};
+
+export function WebhookDeliveryLogs({ webhookConfigId, className }: WebhookDeliveryLogsProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<DeliveryStatus | 'all'>('all');
   const [selectedSource, setSelectedSource] = useState<IntegrationSource | 'all'>('all');
   const [selectedLog, setSelectedLog] = useState<WebhookDeliveryLog | null>(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
-  const { getDeliveryLogs, retryDelivery, loading } = useWebhookManagement();
-  const [logs, setLogs] = useState<WebhookDeliveryLog[]>([]);
+  const { deliveryLogs, loadDeliveryLogs, retryFailedEvent, loading } = useWebhookManagement();
+
+  const logs: WebhookDeliveryLog[] = useMemo(
+    () =>
+      (Array.isArray(deliveryLogs) ? deliveryLogs : []).map((log: any) => ({
+        id: String(log?.id || ''),
+        webhook_config_id: String(log?.webhook_config_id || ''),
+        event_id: String(log?.event_id || ''),
+        delivery_url: String(log?.delivery_url || ''),
+        http_status: Number(log?.http_status || 0),
+        status: (log?.delivery_status || log?.status || DeliveryStatus.PENDING) as DeliveryStatus,
+        attempt_number: Number(log?.attempt_number || 1),
+        response_time_ms: Number(log?.response_time_ms || 0),
+        error_message: log?.error_message ? String(log.error_message) : undefined,
+        request_headers: (log?.request_headers || {}) as Record<string, string>,
+        request_body: (log?.request_body || {}) as Record<string, unknown>,
+        response_headers: (log?.response_headers || {}) as Record<string, string>,
+        response_body: (log?.response_body || {}) as Record<string, unknown>,
+        created_at: String(log?.created_at || new Date().toISOString()),
+        next_retry_at: log?.next_retry_at ? String(log.next_retry_at) : undefined,
+        source: (log?.source || Object.values(IntegrationSource)[0]) as IntegrationSource,
+        event_type: String(log?.event_type || 'unknown'),
+      })),
+    [deliveryLogs]
+  );
+
+  const fetchLogs = async () => {
+    try {
+      setLoadError(null);
+      await loadDeliveryLogs(webhookConfigId);
+    } catch (error) {
+      console.error('Failed to fetch delivery logs:', error);
+      setLoadError('Webhook delivery logs are currently unavailable.');
+    }
+  };
 
   const handleRetry = async (logId: string) => {
     try {
-      await retryDelivery(logId);
+      await retryFailedEvent(logId);
       // Refresh logs after retry
-      const fetchedLogs = await getDeliveryLogs(webhookConfigId);
-      setLogs(fetchedLogs);
+      await fetchLogs();
     } catch (error) {
       console.error('Failed to retry delivery:', error);
     }
@@ -87,62 +134,46 @@ export function WebhookDeliveryLogs({
 
   // Fetch logs when component mounts or webhookConfigId changes
   React.useEffect(() => {
-    const fetchLogs = async () => {
-      try {
-        const fetchedLogs = await getDeliveryLogs(webhookConfigId);
-        setLogs(fetchedLogs);
-      } catch (error) {
-        console.error('Failed to fetch delivery logs:', error);
-        // Fallback to empty array if fetch fails
-        setLogs([]);
-      }
-    };
-    
     fetchLogs();
-  }, [getDeliveryLogs, webhookConfigId]);
-  
-  // Fallback mock data if logs array is empty
-  React.useEffect(() => {
-    if (logs.length === 0) {
-      setLogs([
-        {
-          id: '1',
-          webhook_config_id: 'config-1',
-          event_id: 'event-1',
-          delivery_url: 'https://api.example.com/webhooks',
-          http_status: 200,
-          status: DeliveryStatus.DELIVERED,
-          attempt_number: 1,
-          response_time_ms: 245,
-          request_headers: { 'Content-Type': 'application/json' },
-          request_body: { event: 'payment.completed', amount: 1000 },
-          response_headers: { 'Status': '200 OK' },
-          response_body: { received: true },
-          created_at: new Date().toISOString(),
-          source: IntegrationSource.STRIPE,
-          event_type: 'payment.completed',
-        },
-        // Add more mock logs if needed
-      ]);
-    }
-  }, [logs.length]);
+  }, [webhookConfigId]);
 
   const filteredLogs = useMemo(() => {
     let filtered = logs;
 
     if (webhookConfigId) {
-      filtered = filtered.filter(log => log.webhook_config_id === webhookConfigId);
+      filtered = filtered.filter((log) => log.webhook_config_id === webhookConfigId);
     }
 
     if (selectedStatus !== 'all') {
-      filtered = filtered.filter(log => log.status === selectedStatus);
+      filtered = filtered.filter((log) => log.status === selectedStatus);
     }
 
     if (selectedSource !== 'all') {
-      filtered = filtered.filter(log => log.source === selectedSource);
+      filtered = filtered.filter((log) => log.source === selectedSource);
     }
 
-    return filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    const q = searchTerm.trim().toLowerCase();
+    if (q) {
+      filtered = filtered.filter((log) =>
+        [
+          log.id,
+          log.event_id,
+          log.event_type,
+          log.delivery_url,
+          String(log.http_status),
+          log.status,
+          log.source,
+          log.error_message || '',
+        ]
+          .join(' ')
+          .toLowerCase()
+          .includes(q)
+      );
+    }
+
+    return filtered.sort(
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
   }, [logs, webhookConfigId, searchTerm, selectedStatus, selectedSource]);
 
   // handleRetry is already defined inside the useMemo callback
@@ -180,11 +211,7 @@ export function WebhookDeliveryLogs({
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">Delivery Logs</h3>
         <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => window.location.reload()}
-          >
+          <Button variant="outline" size="sm" onClick={fetchLogs}>
             <RefreshCw className="w-4 h-4 mr-1" />
             Refresh
           </Button>
@@ -199,6 +226,12 @@ export function WebhookDeliveryLogs({
           </Button>
         </div>
       </div>
+
+      {loadError && (
+        <div className="rounded border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+          {loadError}
+        </div>
+      )}
 
       {/* Filters */}
       <Card>
@@ -215,10 +248,12 @@ export function WebhookDeliveryLogs({
             </div>
             <Select
               value={selectedStatus}
-              onValueChange={(value: DeliveryStatus | 'all') => setSelectedStatus(value)}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                setSelectedStatus(e.target.value as DeliveryStatus | 'all')
+              }
             >
               <option value="all">All Statuses</option>
-              {Object.values(DeliveryStatus).map(status => (
+              {Object.values(DeliveryStatus).map((status) => (
                 <option key={status} value={status}>
                   {getStatusText(status)}
                 </option>
@@ -226,10 +261,12 @@ export function WebhookDeliveryLogs({
             </Select>
             <Select
               value={selectedSource}
-              onValueChange={(value: IntegrationSource | 'all') => setSelectedSource(value)}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                setSelectedSource(e.target.value as IntegrationSource | 'all')
+              }
             >
               <option value="all">All Sources</option>
-              {Object.values(IntegrationSource).map(source => (
+              {Object.values(IntegrationSource).map((source) => (
                 <option key={source} value={source}>
                   {source}
                 </option>
@@ -285,12 +322,8 @@ export function WebhookDeliveryLogs({
                     <tr key={log.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div>
-                          <div className="text-sm font-medium text-gray-900">
-                            {log.event_type}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {log.source}
-                          </div>
+                          <div className="text-sm font-medium text-gray-900">{log.event_type}</div>
+                          <div className="text-sm text-gray-500">{log.source}</div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -301,7 +334,9 @@ export function WebhookDeliveryLogs({
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div>
-                          <div className={`text-sm font-medium ${getHttpStatusColor(log.http_status)}`}>
+                          <div
+                            className={`text-sm font-medium ${getHttpStatusColor(log.http_status)}`}
+                          >
                             {log.http_status}
                           </div>
                           {log.error_message && (
@@ -313,12 +348,8 @@ export function WebhookDeliveryLogs({
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div>
-                          <div className="text-sm text-gray-900">
-                            {log.response_time_ms}ms
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {formatDate(log.created_at)}
-                          </div>
+                          <div className="text-sm text-gray-900">{log.response_time_ms}ms</div>
+                          <div className="text-sm text-gray-500">{formatDate(log.created_at)}</div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -379,11 +410,7 @@ export function WebhookDeliveryLogs({
               <CardHeader className="border-b">
                 <div className="flex items-center justify-between">
                   <CardTitle>Delivery Log Details</CardTitle>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowDetails(false)}
-                  >
+                  <Button variant="ghost" size="sm" onClick={() => setShowDetails(false)}>
                     ✕
                   </Button>
                 </div>
@@ -394,18 +421,41 @@ export function WebhookDeliveryLogs({
                   <div>
                     <h4 className="font-medium mb-2">Event Information</h4>
                     <div className="space-y-1 text-sm">
-                      <div>Event Type: <span className="font-medium">{selectedLog.event_type}</span></div>
-                      <div>Source: <span className="font-medium">{selectedLog.source}</span></div>
-                      <div>Event ID: <span className="font-mono text-xs">{selectedLog.event_id}</span></div>
+                      <div>
+                        Event Type: <span className="font-medium">{selectedLog.event_type}</span>
+                      </div>
+                      <div>
+                        Source: <span className="font-medium">{selectedLog.source}</span>
+                      </div>
+                      <div>
+                        Event ID: <span className="font-mono text-xs">{selectedLog.event_id}</span>
+                      </div>
                     </div>
                   </div>
                   <div>
                     <h4 className="font-medium mb-2">Delivery Information</h4>
                     <div className="space-y-1 text-sm">
-                      <div>Status: <Badge className={STATUS_COLORS[selectedLog.status]}>{getStatusText(selectedLog.status)}</Badge></div>
-                      <div>HTTP Status: <span className={`font-medium ${getHttpStatusColor(selectedLog.http_status)}`}>{selectedLog.http_status}</span></div>
-                      <div>Response Time: <span className="font-medium">{selectedLog.response_time_ms}ms</span></div>
-                      <div>Attempt: <span className="font-medium">{selectedLog.attempt_number}</span></div>
+                      <div>
+                        Status:{' '}
+                        <Badge className={STATUS_COLORS[selectedLog.status]}>
+                          {getStatusText(selectedLog.status)}
+                        </Badge>
+                      </div>
+                      <div>
+                        HTTP Status:{' '}
+                        <span
+                          className={`font-medium ${getHttpStatusColor(selectedLog.http_status)}`}
+                        >
+                          {selectedLog.http_status}
+                        </span>
+                      </div>
+                      <div>
+                        Response Time:{' '}
+                        <span className="font-medium">{selectedLog.response_time_ms}ms</span>
+                      </div>
+                      <div>
+                        Attempt: <span className="font-medium">{selectedLog.attempt_number}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -416,7 +466,9 @@ export function WebhookDeliveryLogs({
                   <div className="space-y-2">
                     <div>
                       <div className="text-sm font-medium">URL:</div>
-                      <div className="text-sm font-mono bg-gray-100 p-2 rounded">{selectedLog.delivery_url}</div>
+                      <div className="text-sm font-mono bg-gray-100 p-2 rounded">
+                        {selectedLog.delivery_url}
+                      </div>
                     </div>
                     <div>
                       <div className="text-sm font-medium">Headers:</div>

@@ -42,46 +42,85 @@ export const SystemHealth: React.FC = () => {
   const [stats, setStats] = useState<SystemStats | null>(null);
   const [services, setServices] = useState<ServiceHealth[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [lastRefresh, setLastRefresh] = useState(new Date());
 
   const fetchSystemData = async () => {
     setLoading(true);
+    setFetchError(null);
     try {
       const statsRes = await api.get('/monitoring/metrics');
-      if (statsRes.success) {
-        setStats(statsRes.data);
+      if (statsRes?.success && statsRes?.data) {
+        const data = statsRes.data;
+        setStats({
+          cpu: Number(data?.cpu?.usage || 0),
+          memory: {
+            used: Number(data?.memory?.used || 0),
+            total: Number(data?.memory?.total || 0),
+            percentage: Number(data?.memory?.usage || 0),
+          },
+          disk: {
+            percentage: Number(data?.disk?.usedPercent || 0),
+          },
+          uptime: `${Math.floor(Number(data?.process?.uptime || 0) / 3600)}h`,
+          loadAverage: Array.isArray(data?.system?.loadavg) ? data.system.loadavg : [],
+        });
       } else {
-        setStats(MOCK_STATS);
+        setStats(null);
+        setFetchError('System metrics endpoint is unavailable');
       }
 
       const healthRes = await api.get('/system/status');
-      if (healthRes.success) {
-        // Transform backend status to ServiceHealth array
+      if (healthRes?.success && healthRes?.data) {
         const data = healthRes.data;
+        const mapStatus = (value: string): ServiceHealth['status'] => {
+          if (value === 'online' || value === 'healthy') return 'online';
+          if (value === 'partial' || value === 'degraded') return 'partial';
+          return 'offline';
+        };
+
         const serviceList: ServiceHealth[] = [
           {
-            name: 'Core Engine',
-            status: data.status === 'online' ? 'online' : 'offline',
-            latency: '12ms',
-            version: '1.4.2',
+            name: 'API',
+            status: mapStatus(String(data.api || 'offline')),
+            latency: '--',
+            version: 'live',
           },
           {
-            name: 'Workflow Exec',
-            status: data.workflows || 'online',
-            latency: '45ms',
-            version: '2.0.1',
+            name: 'Database',
+            status: mapStatus(String(data.database || 'offline')),
+            latency: '--',
+            version: 'live',
           },
-          { name: 'Vector DB', status: 'online', latency: '120ms', version: 'Qdrant v1' },
-          { name: 'A2A Broker', status: 'online', latency: '5ms', version: 'Relay v2' },
+          {
+            name: 'Workflow Engine',
+            status: mapStatus(String(data.workflows || 'offline')),
+            latency: '--',
+            version: 'live',
+          },
+          {
+            name: 'Agent System',
+            status: mapStatus(String(data.agents || 'offline')),
+            latency: '--',
+            version: 'live',
+          },
+          {
+            name: 'MCP',
+            status: mapStatus(String(data.mcp || 'offline')),
+            latency: '--',
+            version: 'live',
+          },
         ];
         setServices(serviceList);
       } else {
-        setServices(MOCK_SERVICES);
+        setServices([]);
+        setFetchError((prev) => prev || 'System status endpoint is unavailable');
       }
-    } catch (e) {
-      console.error('Failed to sync system health:', e);
-      setStats(MOCK_STATS);
-      setServices(MOCK_SERVICES);
+    } catch (error) {
+      console.error('Failed to sync system health:', error);
+      setStats(null);
+      setServices([]);
+      setFetchError('System health endpoints are unavailable');
     } finally {
       setLoading(false);
       setLastRefresh(new Date());
@@ -118,6 +157,11 @@ export const SystemHealth: React.FC = () => {
           </PremiumButton>
         </div>
       </div>
+      {fetchError && (
+        <GlassCard className="p-4 border border-amber-500/40 bg-amber-500/10">
+          <p className="text-sm text-amber-200">{fetchError}. No synthetic health data is shown.</p>
+        </GlassCard>
+      )}
 
       {/* Real-time Hardware Gauges */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -148,6 +192,11 @@ export const SystemHealth: React.FC = () => {
             <Layers className="w-5 h-5 text-indigo-400" />
             Operational Nodes
           </h2>
+          {services.length === 0 && (
+            <GlassCard className="p-5 text-sm text-gray-400">
+              No live service status available.
+            </GlassCard>
+          )}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {services.map((service) => (
               <GlassCard
@@ -187,8 +236,8 @@ export const SystemHealth: React.FC = () => {
               Performance Trajectory
             </h3>
             <div className="h-48 flex items-end gap-1 px-2">
-              {Array.from({ length: 40 }).map((_, i) => {
-                const h = Math.random() * 80 + 20;
+              {(stats?.loadAverage.length ? stats.loadAverage : [0, 0, 0]).map((value, i) => {
+                const h = Math.min(100, Math.max(10, Number(value || 0) * 20 + 20));
                 return (
                   <div
                     key={i}
@@ -320,20 +369,5 @@ const TrendingUp: React.FC<{ className?: string }> = ({ className }) => (
     />
   </svg>
 );
-
-const MOCK_STATS: SystemStats = {
-  cpu: 42,
-  memory: { used: 6.4, total: 16, percentage: 40 },
-  disk: { percentage: 28 },
-  uptime: '15d 4h 22m',
-  loadAverage: [1.2, 0.8, 0.9],
-};
-
-const MOCK_SERVICES: ServiceHealth[] = [
-  { name: 'Core Engine', status: 'online', latency: '12ms', version: '1.4.2' },
-  { name: 'Workflow Exec', status: 'online', latency: '45ms', version: '2.0.1' },
-  { name: 'Vector DB', status: 'online', latency: '120ms', version: 'Qdrant v1' },
-  { name: 'A2A Broker', status: 'online', latency: '5ms', version: 'Relay v2' },
-];
 
 export default SystemHealth;

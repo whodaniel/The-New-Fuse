@@ -11,6 +11,8 @@
  * - Quick Actions
  */
 
+import { CapabilityBadge } from '@/components/ui/CapabilityBadge';
+import { useFeatureCapabilities } from '@/hooks/useFeatureCapabilities';
 import {
   Activity,
   AlertTriangle,
@@ -27,7 +29,7 @@ import {
   WifiOff,
   Zap,
 } from 'lucide-react';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { GlassCard } from '../components/ui/premium/GlassCard';
 import { PremiumButton } from '../components/ui/premium/PremiumButton';
 
@@ -425,7 +427,8 @@ const LogsPanel: React.FC<{
 
 const QuickActionsPanel: React.FC<{
   onAction: (action: string) => void;
-}> = ({ onAction }) => {
+  actionAvailability: Record<string, { enabled: boolean; reason?: string }>;
+}> = ({ onAction, actionAvailability }) => {
   const actions = [
     { id: 'deploy', label: 'Deploy to Production', icon: Globe, color: 'text-green-400' },
     { id: 'restart-mesh', label: 'Restart Mesh', icon: RefreshCw, color: 'text-yellow-400' },
@@ -443,16 +446,28 @@ const QuickActionsPanel: React.FC<{
       </h3>
 
       <div className="grid grid-cols-2 gap-2">
-        {actions.map((action) => (
-          <button
-            key={action.id}
-            onClick={() => onAction(action.id)}
-            className="flex items-center gap-2 p-3 rounded-lg bg-black/20 hover:bg-black/40 border border-white/10 hover:border-white/20 transition-all text-left"
-          >
-            <action.icon className={`w-4 h-4 ${action.color}`} />
-            <span className="text-sm">{action.label}</span>
-          </button>
-        ))}
+        {actions.map((action) => {
+          const availability = actionAvailability[action.id] ?? { enabled: true };
+          return (
+            <button
+              key={action.id}
+              onClick={() => onAction(action.id)}
+              disabled={!availability.enabled}
+              title={availability.enabled ? action.label : availability.reason || 'Unavailable'}
+              className={`flex items-center gap-2 p-3 rounded-lg border transition-all text-left ${
+                availability.enabled
+                  ? 'bg-black/20 hover:bg-black/40 border-white/10 hover:border-white/20'
+                  : 'bg-black/10 border-white/5 opacity-50 cursor-not-allowed'
+              }`}
+            >
+              <action.icon className={`w-4 h-4 ${action.color}`} />
+              <span className="text-sm">{action.label}</span>
+              {!availability.enabled && (
+                <span className="ml-auto text-[10px] text-amber-300">OFF</span>
+              )}
+            </button>
+          );
+        })}
       </div>
     </GlassCard>
   );
@@ -480,6 +495,7 @@ const SourceBadge: React.FC<{ label: string; value: string }> = ({ label, value 
 // ============================================================================
 
 export const TNFCommandCenter: React.FC = () => {
+  const { capabilities } = useFeatureCapabilities();
   // State
   const [meshInstances, setMeshInstances] = useState<MeshInstance[]>(DEFAULT_MESH_INSTANCES);
   const meshInstancesRef = useRef<MeshInstance[]>(DEFAULT_MESH_INSTANCES);
@@ -506,6 +522,29 @@ export const TNFCommandCenter: React.FC = () => {
     taskStats: SOURCE_UNRESOLVED,
     taskQueues: SOURCE_UNRESOLVED,
   });
+
+  const actionAvailability = useMemo<Record<string, { enabled: boolean; reason?: string }>>(
+    () => ({
+      deploy: {
+        enabled: false,
+        reason: 'Deployment action is not wired in this environment.',
+      },
+      'restart-mesh': {
+        enabled: capabilities.swarm
+          ? Object.keys(capabilities.swarm.unavailable || {}).length === 0
+          : false,
+        reason: 'Swarm restart is unavailable because swarm control APIs are partially deployed.',
+      },
+      'clear-logs': { enabled: true },
+      'run-tests': {
+        enabled: false,
+        reason: 'Remote test trigger action is not wired in this environment.',
+      },
+      'new-agent': { enabled: true },
+      'view-docs': { enabled: true },
+    }),
+    [capabilities.swarm]
+  );
 
   useEffect(() => {
     meshInstancesRef.current = meshInstances;
@@ -840,6 +879,18 @@ export const TNFCommandCenter: React.FC = () => {
             <SourceBadge label="Agents" value={dataSources.agentActivity} />
             <SourceBadge label="Queue Stats" value={dataSources.taskStats} />
             <SourceBadge label="Queue Streams" value={dataSources.taskQueues} />
+            <CapabilityBadge
+              label="Swarm API"
+              enabled={
+                capabilities.swarm
+                  ? Object.keys(capabilities.swarm.unavailable || {}).length === 0
+                  : null
+              }
+            />
+            <CapabilityBadge
+              label="Local AI"
+              enabled={capabilities.localAI ? capabilities.localAI.enabled : null}
+            />
           </div>
         </div>
         <div className="flex items-center gap-4">
@@ -870,7 +921,7 @@ export const TNFCommandCenter: React.FC = () => {
             loading={loading}
           />
           <AgentActivityPanel activities={agentActivities} />
-          <QuickActionsPanel onAction={handleAction} />
+          <QuickActionsPanel onAction={handleAction} actionAvailability={actionAvailability} />
         </div>
 
         {/* Center Column */}

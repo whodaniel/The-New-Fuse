@@ -5,7 +5,6 @@
  * Integrates with the local AgencyService.
  */
 
-import { CurrentUser } from '../../../auth/decorators/current-user.decorator';
 import {
   BadRequestException,
   Body,
@@ -31,6 +30,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { DatabaseService } from '@the-new-fuse/database';
+import { CurrentUser } from '../../../auth/decorators/current-user.decorator';
 
 // Local services
 import { AgentSwarmOrchestrationService } from '../services/agent-swarm-orchestration.service';
@@ -314,7 +314,7 @@ class RegisterProvidersDto {
 // ============================================================================
 
 @ApiTags('agencies')
-@Controller('api/agencies')
+@Controller('agencies')
 @ApiBearerAuth()
 export class AgencyController {
   private readonly logger = new Logger(AgencyController.name);

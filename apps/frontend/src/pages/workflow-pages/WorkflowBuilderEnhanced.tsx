@@ -226,12 +226,12 @@ const WorkflowBuilderContent: React.FC = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [workflowName, setWorkflowName] = useState('Untitled Workflow');
   const [workflowDescription, setWorkflowDescription] = useState('');
+  const [workflowId, setWorkflowId] = useState<string | null>(null);
   const [selectedNode, setSelectedNode] = useState<EnhancedReactFlowNode | null>(null);
   const [isExecuting, setIsExecuting] = useState(false);
   const [isNodePanelOpen, setIsNodePanelOpen] = useState(true);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
-  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -251,12 +251,13 @@ const WorkflowBuilderContent: React.FC = () => {
 
   const loadWorkflow = async () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const workflowId = urlParams.get('id');
+    const queryWorkflowId = urlParams.get('id');
 
-    if (workflowId) {
+    if (queryWorkflowId) {
+      setWorkflowId(queryWorkflowId);
       try {
         const workflowService = new WorkflowApiService();
-        const response = await workflowService.getWorkflow(workflowId);
+        const response = await workflowService.getWorkflow(queryWorkflowId);
 
         if (response.success && response.data) {
           const workflow = response.data;
@@ -435,8 +436,6 @@ const WorkflowBuilderContent: React.FC = () => {
         variant: 'success',
         duration: 3000,
       });
-
-      setIsImportModalOpen(false);
     } catch (error) {
       console.error('Import error:', error);
       toast({
@@ -521,11 +520,20 @@ const WorkflowBuilderContent: React.FC = () => {
       });
       return;
     }
+    if (!workflowId) {
+      toast({
+        title: 'Save Required',
+        description: 'Save this workflow before execution so it has a valid workflow ID.',
+        variant: 'warning',
+        duration: 3000,
+      });
+      return;
+    }
 
     setIsExecuting(true);
     try {
       const workflowService = new WorkflowApiService();
-      const response = await workflowService.executeWorkflow('current-workflow-id', {
+      const response = await workflowService.executeWorkflow(workflowId, {
         nodes: nodes,
         edges: edges,
       });
@@ -545,20 +553,7 @@ const WorkflowBuilderContent: React.FC = () => {
           duration: 3000,
         });
       } else {
-        setTimeout(() => {
-          setNodes((nds) =>
-            nds.map((n) => ({
-              ...n,
-              data: { ...n.data, status: 'completed' },
-            }))
-          );
-          toast({
-            title: 'Workflow Executed (Demo)',
-            description: `Workflow sequence completed successfully.`,
-            variant: 'success',
-            duration: 3000,
-          });
-        }, 1500);
+        throw new Error(response.error || response.message || 'Failed to execute workflow');
       }
     } catch (error) {
       toast({
@@ -576,6 +571,7 @@ const WorkflowBuilderContent: React.FC = () => {
   const saveWorkflow = async () => {
     try {
       const workflowData = {
+        id: workflowId || undefined,
         name: workflowName,
         description: workflowDescription,
         nodes: nodes,
@@ -587,6 +583,9 @@ const WorkflowBuilderContent: React.FC = () => {
       const response = await workflowService.saveWorkflow(workflowData);
 
       if (response.success && response.data) {
+        if (response.data.id) {
+          setWorkflowId(response.data.id);
+        }
         toast({
           title: 'Workflow Saved',
           description: `"${workflowName}" has been saved successfully`,
@@ -594,12 +593,7 @@ const WorkflowBuilderContent: React.FC = () => {
           duration: 3000,
         });
       } else {
-        toast({
-          title: 'Workflow Saved (Local)',
-          description: `"${workflowName}" has been saved locally (API not connected)`,
-          variant: 'success',
-          duration: 3000,
-        });
+        throw new Error(response.error || response.message || 'Failed to save workflow');
       }
     } catch (error) {
       toast({
@@ -613,7 +607,7 @@ const WorkflowBuilderContent: React.FC = () => {
     }
   };
 
-  const onNodeClick = (event: React.MouseEvent, node: Node) => {
+  const onNodeClick = (_event: React.MouseEvent, node: Node) => {
     setSelectedNode(node as EnhancedReactFlowNode);
     setIsSettingsOpen(true);
   };
@@ -679,7 +673,7 @@ const WorkflowBuilderContent: React.FC = () => {
                     <Button
                       size="sm"
                       onClick={() => setIsNodePanelOpen(!isNodePanelOpen)}
-                      variant={isNodePanelOpen ? 'secondary' : 'primary'}
+                      variant={isNodePanelOpen ? 'secondary' : 'default'}
                     >
                       <FiPlus className="mr-2" />
                       {isNodePanelOpen ? 'Hide Nodes' : 'Add Nodes'}
@@ -698,14 +692,14 @@ const WorkflowBuilderContent: React.FC = () => {
                     <Button
                       size="sm"
                       onClick={executeWorkflow}
-                      variant="success"
+                      variant="default"
                       disabled={isExecuting}
                     >
                       <FiPlay className="mr-2" />
                       {isExecuting ? 'Executing' : 'Execute'}
                     </Button>
 
-                    <Button size="sm" onClick={() => setIsSaveModalOpen(true)} variant="primary">
+                    <Button size="sm" onClick={() => setIsSaveModalOpen(true)} variant="default">
                       <FiSave className="mr-2" />
                       Save
                     </Button>
@@ -942,7 +936,7 @@ const WorkflowBuilderContent: React.FC = () => {
                     <Button onClick={() => setIsSettingsOpen(false)} variant="outline">
                       Cancel
                     </Button>
-                    <Button variant="primary" onClick={updateNodeSettings}>
+                    <Button variant="default" onClick={updateNodeSettings}>
                       Update Node
                     </Button>
                   </div>
@@ -998,7 +992,7 @@ const WorkflowBuilderContent: React.FC = () => {
                     <Button onClick={() => setIsSaveModalOpen(false)} variant="outline">
                       Cancel
                     </Button>
-                    <Button variant="primary" onClick={saveWorkflow}>
+                    <Button variant="default" onClick={saveWorkflow}>
                       Save Workflow
                     </Button>
                   </div>

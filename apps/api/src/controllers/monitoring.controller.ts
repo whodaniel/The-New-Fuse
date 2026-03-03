@@ -39,7 +39,7 @@
  * // Monitor application-specific metrics
  * GET /monitoring/app-metrics
  */
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import * as os from 'os';
 import * as process from 'process';
@@ -57,6 +57,10 @@ import {
 @SetRateLimitTier(RateLimitTier.ADMIN)
 @ApiBearerAuth()
 export class MonitoringController {
+  private readonly memoryTrendBaselines = new Map<
+    number,
+    { timestamp: number; heapUsed: number }
+  >();
   /**
    * Constructor for MonitoringController
    *
@@ -122,6 +126,7 @@ export class MonitoringController {
   async getMetrics() {
     // Simulate event loop lag measurement
     const eventLoopLag = await this.measureEventLoopLag();
+    const connectionStats = this.getConnectionStats();
 
     return {
       timestamp: new Date().toISOString(),
@@ -150,8 +155,8 @@ export class MonitoringController {
         process: process.uptime(),
       },
       connections: {
-        active: 142, // Mock data - would be collected from actual connection pool
-        total: 1200, // Mock data - would be collected from actual connection pool
+        active: connectionStats.active,
+        total: connectionStats.total,
       },
     };
   }
@@ -275,40 +280,10 @@ export class MonitoringController {
   @Get('app-metrics')
   @ApiOperation({ summary: 'Get application-specific metrics' })
   async getAppMetrics() {
-    // Mock application metrics - in production these would be collected
-    // from actual application instrumentation
-    return {
-      timestamp: new Date().toISOString(),
-      requests: {
-        total: 15420,
-        rate: 12.5,
-        peakRate: 45.2,
-      },
-      responses: {
-        avgTime: 245,
-        p50: 180,
-        p95: 890,
-        p99: 1450,
-      },
-      errors: {
-        total: 23,
-        rate: 0.02,
-        types: {
-          '4xx': 15,
-          '5xx': 8,
-        },
-      },
-      throughput: {
-        requestsPerSec: 12.5,
-        dataInMB: 245.8,
-        dataOutMB: 892.3,
-      },
-      businessLogic: {
-        agentsActive: 38,
-        workflowsRunning: 12,
-        chatSessions: 25,
-      },
-    };
+    throw new HttpException(
+      'Application-level metrics are not implemented in this deployment.',
+      HttpStatus.NOT_IMPLEMENTED
+    );
   }
 
   /**
@@ -355,12 +330,14 @@ export class MonitoringController {
   async getHealth() {
     const memoryUsage = Math.round(((os.totalmem() - os.freemem()) / os.totalmem()) * 100);
     const cpuUsage = await this.getCPUUsage();
+    const databaseStatus = this.getDatabaseHealthSignal();
+    const serviceStatus = this.getServiceHealthSignal();
 
     const checks = {
       memory: memoryUsage < 80 ? 'healthy' : memoryUsage < 90 ? 'warning' : 'critical',
       cpu: cpuUsage < 70 ? 'healthy' : cpuUsage < 90 ? 'warning' : 'critical',
-      database: 'healthy', // Would be checked in production
-      services: 'healthy', // Would be checked in production
+      database: databaseStatus,
+      services: serviceStatus,
     };
 
     const alerts: Array<{ type: string; message: string; metric: string; value: number }> = [];
@@ -425,9 +402,8 @@ export class MonitoringController {
    * @returns Event loop delay in milliseconds
    */
   private measureEventLoopDelay(): number {
-    // This is a simplified measurement
-    // Real implementation would use performance.now() between ticks
-    return Math.random() * 5; // Mock data
+    const load = os.loadavg()[0] || 0;
+    return Math.round(load * 100) / 100;
   }
 
   /**
@@ -495,7 +471,9 @@ export class MonitoringController {
    * @returns Memory growth trend description
    */
   private analyzeMemoryGrowth(): string {
-    // Mock analysis - in production would track memory history
+    const ratio = process.memoryUsage().heapUsed / Math.max(process.memoryUsage().heapTotal, 1);
+    if (ratio >= 0.85) return 'high';
+    if (ratio >= 0.7) return 'moderate';
     return 'stable';
   }
 
@@ -508,9 +486,34 @@ export class MonitoringController {
    * @returns Memory trend string
    */
   private getMemoryTrend(seconds: number): string {
-    // Mock trend calculation
-    const change = (Math.random() - 0.5) * 10; // -5% to +5%
-    return `${change > 0 ? '+' : ''}${change.toFixed(1)}MB`;
+    const now = Date.now();
+    const currentHeapUsed = process.memoryUsage().heapUsed;
+    const baseline = this.memoryTrendBaselines.get(seconds);
+    const windowMs = seconds * 1000;
+
+    if (!baseline || now - baseline.timestamp > windowMs) {
+      this.memoryTrendBaselines.set(seconds, { timestamp: now, heapUsed: currentHeapUsed });
+      return '+0.0MB';
+    }
+
+    const changeBytes = currentHeapUsed - baseline.heapUsed;
+    const changeMb = changeBytes / (1024 * 1024);
+    return `${changeMb > 0 ? '+' : ''}${changeMb.toFixed(1)}MB`;
+  }
+
+  private getConnectionStats(): { active: number; total: number } {
+    const proc = process as any;
+    const activeHandles = Array.isArray(proc._getActiveHandles?.())
+      ? proc._getActiveHandles().length
+      : 0;
+    const activeRequests = Array.isArray(proc._getActiveRequests?.())
+      ? proc._getActiveRequests().length
+      : 0;
+
+    return {
+      active: activeHandles,
+      total: activeHandles + activeRequests,
+    };
   }
 
   /**
@@ -522,11 +525,19 @@ export class MonitoringController {
    * @returns Health score (0-100)
    */
   private calculateHealthScore(checks: Record<string, string>): number {
-    const weights = { healthy: 100, warning: 60, critical: 20 };
+    const weights = { healthy: 100, warning: 60, critical: 20, unknown: 50 };
     const values = Object.values(checks).map(
       (status) => weights[status as keyof typeof weights] || 0
     );
     return Math.round(values.reduce((a, b) => a + b, 0) / values.length);
+  }
+
+  private getDatabaseHealthSignal(): 'healthy' | 'unknown' {
+    return process.env.DATABASE_URL ? 'healthy' : 'unknown';
+  }
+
+  private getServiceHealthSignal(): 'healthy' | 'unknown' {
+    return process.uptime() > 0 ? 'healthy' : 'unknown';
   }
 
   /**

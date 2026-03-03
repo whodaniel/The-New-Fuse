@@ -1,13 +1,5 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Query,
-  UseGuards,
-  HttpStatus,
-  HttpException,
-} from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { Controller, Get, HttpException, HttpStatus, Param, Query } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 // import { EnhancedAgencyService } from '../../../types/core/services/enhanced-agency.service';
 // import { AgentSwarmOrchestrationService } from '../../../types/core/services/agent-swarm-orchestration.service';
 // import { ServiceCategoryRouterService } from '../../../types/core/services/service-category-router.service';
@@ -16,7 +8,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagg
 // import { Roles } from '../../../decorators/roles.decorator';
 
 @ApiTags('analytics')
-@Controller('api/analytics')
+@Controller('analytics')
 // @UseGuards(AuthGuard, RolesGuard)
 // @Roles(UserRole.AGENCY_OWNER, UserRole.AGENCY_ADMIN)
 @ApiBearerAuth()
@@ -34,31 +26,7 @@ export class AnalyticsController {
     @Param('agencyId') agencyId: string,
     @Query('timeframe') timeframe: string = '30d'
   ) {
-    try {
-      const agencyAnalytics = { message: 'Analytics service not implemented' };
-      const swarmMetrics = { message: 'Swarm metrics service not implemented' };
-      const serviceMetrics = { message: 'Service metrics service not implemented' };
-
-      return {
-        timeframe,
-        generatedAt: new Date().toISOString(),
-        agency: agencyAnalytics,
-        swarm: swarmMetrics,
-        services: serviceMetrics,
-        summary: {
-          totalExecutions: (swarmMetrics as any).totalExecutions || 0,
-          totalRequests: (serviceMetrics as any).totalRequests || 0,
-          averageQuality: (serviceMetrics as any).averageQuality || 0,
-          providerUtilization: (serviceMetrics as any).providerUtilization || 0,
-          clientSatisfaction: (serviceMetrics as any).clientSatisfaction || 0
-        }
-      };
-    } catch (error) {
-      throw new HttpException(
-        (error as Error).message || 'Failed to get analytics overview',
-        HttpStatus.NOT_FOUND
-      );
-    }
+    this.notImplemented('Agency analytics overview');
   }
 
   @Get(':agencyId/performance')
@@ -69,14 +37,7 @@ export class AnalyticsController {
     @Query('timeframe') timeframe: string = '7d',
     @Query('granularity') granularity: string = 'hour'
   ) {
-    try {
-      return { message: 'Service not implemented' };
-    } catch (error) {
-      throw new HttpException(
-        (error as Error).message || 'Failed to get performance metrics',
-        HttpStatus.NOT_FOUND
-      );
-    }
+    this.notImplemented('Agency performance metrics');
   }
 
   @Get(':agencyId/providers/performance')
@@ -87,14 +48,7 @@ export class AnalyticsController {
     @Query('timeframe') timeframe: string = '30d',
     @Query('categoryId') categoryId?: string
   ) {
-    try {
-      return { message: 'Service not implemented' };
-    } catch (error) {
-      throw new HttpException(
-        (error as Error).message || 'Failed to get provider performance',
-        HttpStatus.NOT_FOUND
-      );
-    }
+    this.notImplemented('Provider performance analytics');
   }
 
   @Get(':agencyId/quality-trends')
@@ -105,14 +59,7 @@ export class AnalyticsController {
     @Query('timeframe') timeframe: string = '90d',
     @Query('breakdown') breakdown: string = 'category'
   ) {
-    try {
-      return { message: 'Service not implemented' };
-    } catch (error) {
-      throw new HttpException(
-        (error as Error).message || 'Failed to get quality trends',
-        HttpStatus.NOT_FOUND
-      );
-    }
+    this.notImplemented('Quality trend analytics');
   }
 
   @Get(':agencyId/utilization')
@@ -122,14 +69,7 @@ export class AnalyticsController {
     @Param('agencyId') agencyId: string,
     @Query('timeframe') timeframe: string = '24h'
   ) {
-    try {
-      return { message: 'Service not implemented' };
-    } catch (error) {
-      throw new HttpException(
-        (error as Error).message || 'Failed to get utilization metrics',
-        HttpStatus.NOT_FOUND
-      );
-    }
+    this.notImplemented('Resource utilization analytics');
   }
 
   @Get(':agencyId/cost-analysis')
@@ -140,14 +80,7 @@ export class AnalyticsController {
     @Query('timeframe') timeframe: string = '30d',
     @Query('breakdown') breakdown: string = 'category'
   ) {
-    try {
-      return { message: 'Service not implemented' };
-    } catch (error) {
-      throw new HttpException(
-        (error as Error).message || 'Failed to get cost analysis',
-        HttpStatus.NOT_FOUND
-      );
-    }
+    this.notImplemented('Cost analysis');
   }
 
   @Get(':agencyId/bottlenecks')
@@ -157,14 +90,7 @@ export class AnalyticsController {
     @Param('agencyId') agencyId: string,
     @Query('timeframe') timeframe: string = '7d'
   ) {
-    try {
-      return { message: 'Service not implemented' };
-    } catch (error) {
-      throw new HttpException(
-        (error as Error).message || 'Failed to get bottleneck analysis',
-        HttpStatus.NOT_FOUND
-      );
-    }
+    this.notImplemented('Bottleneck analysis');
   }
 
   @Get(':agencyId/predictions')
@@ -174,14 +100,7 @@ export class AnalyticsController {
     @Param('agencyId') agencyId: string,
     @Query('horizon') horizon: string = '30d'
   ) {
-    try {
-      return { message: 'Service not implemented' };
-    } catch (error) {
-      throw new HttpException(
-        (error as Error).message || 'Failed to get predictive analytics',
-        HttpStatus.NOT_FOUND
-      );
-    }
+    this.notImplemented('Predictive analytics');
   }
 
   @Get(':agencyId/export')
@@ -193,21 +112,13 @@ export class AnalyticsController {
     @Query('format') format: string = 'json',
     @Query('include') include?: string // comma-separated list
   ) {
-    try {
-      const includeMetrics = include ? include.split(',') : [
-        'executions',
-        'requests',
-        'providers',
-        'quality',
-        'costs'
-      ];
+    this.notImplemented('Analytics export');
+  }
 
-      return { message: 'Service not implemented' };
-    } catch (error) {
-      throw new HttpException(
-        (error as Error).message || 'Failed to export analytics data',
-        HttpStatus.NOT_FOUND
-      );
-    }
+  private notImplemented(feature: string): never {
+    throw new HttpException(
+      `${feature} is not implemented in this deployment.`,
+      HttpStatus.NOT_IMPLEMENTED
+    );
   }
 }

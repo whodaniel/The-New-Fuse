@@ -9,10 +9,12 @@ import {
 } from '@/components/ui/premium';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/useToast';
+import { resourcesService } from '@/services/resources.service';
+import { AgentTemplate } from '@/types/resources';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowLeft, Bot, Check, Code, Loader2, Save, Shield, Sliders, X, Zap } from 'lucide-react';
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
 interface FormData {
   name: string;
@@ -59,9 +61,11 @@ const itemVariants = {
  */
 const NewAgent: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('basic');
   const [saving, setSaving] = useState(false);
+  const [templateLoading, setTemplateLoading] = useState(false);
 
   // Form state
   const [formData, setFormData] = useState<FormData>({
@@ -86,6 +90,46 @@ const NewAgent: React.FC = () => {
       databaseAccess: false,
     },
   });
+
+  useEffect(() => {
+    const templateId = searchParams.get('templateId');
+    if (!templateId) return;
+
+    const applyTemplate = async () => {
+      setTemplateLoading(true);
+      try {
+        const templates = await resourcesService.getTemplates();
+        const template = templates.find((entry) => entry.id === templateId);
+        if (!template) {
+          throw new Error('Template not found');
+        }
+
+        setFormData((prev) => ({
+          ...prev,
+          name: prev.name || template.name,
+          description: prev.description || template.description,
+          type: mapTemplateType(template.templateType),
+          model: template.model || prev.model,
+          capabilities: deriveCapabilities(template),
+        }));
+
+        toast({
+          title: 'Template Loaded',
+          description: `Prefilled form using "${template.name}".`,
+        });
+      } catch (error) {
+        toast({
+          title: 'Template Unavailable',
+          description: 'Failed to load template for customization.',
+          variant: 'destructive',
+        });
+      } finally {
+        setTemplateLoading(false);
+      }
+    };
+
+    applyTemplate();
+  }, [searchParams, toast]);
 
   // Handle input change
   const handleInputChange = (
@@ -535,8 +579,7 @@ const NewAgent: React.FC = () => {
             <PremiumButton
               type="submit"
               variant="gradient"
-              glow
-              disabled={saving || !formData.name || !formData.description}
+              disabled={saving || templateLoading || !formData.name || !formData.description}
               icon={saving ? Loader2 : Save}
               className={saving ? 'animate-pulse' : ''}
             >
@@ -547,6 +590,34 @@ const NewAgent: React.FC = () => {
       </div>
     </div>
   );
+};
+
+const mapTemplateType = (templateType: AgentTemplate['templateType']): FormData['type'] => {
+  switch (templateType) {
+    case 'analysis':
+      return 'analytics';
+    case 'automation':
+      return 'integration';
+    case 'task':
+      return 'development';
+    case 'chat':
+    default:
+      return 'custom';
+  }
+};
+
+const deriveCapabilities = (template: AgentTemplate): FormData['capabilities'] => {
+  const capabilityText = template.capabilities.join(' ').toLowerCase();
+  const hasKeyword = (keywords: string[]) =>
+    keywords.some((keyword) => capabilityText.includes(keyword));
+
+  return {
+    codeGeneration: hasKeyword(['code generation', 'generate code', 'coding', 'developer']),
+    codeReview: hasKeyword(['code review', 'review code']),
+    bugFixing: hasKeyword(['bug', 'fix', 'debug']),
+    documentation: hasKeyword(['documentation', 'docs', 'writing']),
+    refactoring: hasKeyword(['refactor', 'optimization', 'optimize']),
+  };
 };
 
 export default NewAgent;

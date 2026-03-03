@@ -49,6 +49,7 @@ export function MCPMarketplace() {
   const [selectedServer, setSelectedServer] = useState<MCPMarketplaceServer | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [installDialogOpen, setInstallDialogOpen] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const marketplaceService = new MCPMarketplaceService();
   const { createServer, servers: installedServers } = useMcpServers();
@@ -89,6 +90,7 @@ export function MCPMarketplace() {
    */
   const fetchServers = async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const data = await marketplaceService.getServers();
       setServers(data);
@@ -101,6 +103,10 @@ export function MCPMarketplace() {
       setLoading(false);
     } catch (error) {
       console.error('Error fetching MCP marketplace servers:', error);
+      setServers([]);
+      setFilteredServers([]);
+      setCategories([]);
+      setLoadError('MCP marketplace endpoint is unavailable');
       setLoading(false);
     }
   };
@@ -187,6 +193,11 @@ export function MCPMarketplace() {
             </SelectContent>
           </Select>
         </div>
+        {loadError && (
+          <div className="mb-4 rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3">
+            <p className="text-sm text-amber-200">{loadError}. Showing no fallback catalog.</p>
+          </div>
+        )}
 
         <TabsContent value="browse" className="mt-0">
           {loading ? (

@@ -33,14 +33,18 @@ interface Workspace {
   workflows: number;
 }
 
+type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'outline';
+
 const WorkspaceManagement: React.FC = () => {
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [planFilter, setPlanFilter] = useState<string>('all');
   const [selectedWorkspace, setSelectedWorkspace] = useState<Workspace | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [workspaceTab, setWorkspaceTab] = useState('overview');
 
   useEffect(() => {
     fetchWorkspaces();
@@ -49,80 +53,25 @@ const WorkspaceManagement: React.FC = () => {
   const fetchWorkspaces = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/admin/workspaces');
-      if (response.ok) {
-        const data = await response.json();
-        setWorkspaces(data);
-      } else {
-        // Mock data for development
-        setWorkspaces([
-          {
-            id: '1',
-            name: 'Acme Corporation',
-            description: 'Main workspace for Acme Corp operations',
-            owner: {
-              id: '1',
-              name: 'John Doe',
-              email: 'john@acme.com',
-            },
-            members: 25,
-            status: 'active',
-            plan: 'enterprise',
-            createdAt: '2024-01-15T10:00:00Z',
-            lastActivity: '2024-01-20T14:30:00Z',
-            storage: {
-              used: 2.5,
-              limit: 10,
-            },
-            agents: 12,
-            workflows: 8,
-          },
-          {
-            id: '2',
-            name: 'StartupXYZ',
-            description: 'Innovative startup workspace',
-            owner: {
-              id: '2',
-              name: 'Jane Smith',
-              email: 'jane@startupxyz.com',
-            },
-            members: 8,
-            status: 'active',
-            plan: 'pro',
-            createdAt: '2024-01-10T09:00:00Z',
-            lastActivity: '2024-01-20T16:45:00Z',
-            storage: {
-              used: 1.2,
-              limit: 5,
-            },
-            agents: 5,
-            workflows: 3,
-          },
-          {
-            id: '3',
-            name: 'Freelancer Hub',
-            description: 'Personal workspace for freelance projects',
-            owner: {
-              id: '3',
-              name: 'Mike Johnson',
-              email: 'mike@freelancer.com',
-            },
-            members: 1,
-            status: 'inactive',
-            plan: 'free',
-            createdAt: '2024-01-05T12:00:00Z',
-            lastActivity: '2024-01-18T10:15:00Z',
-            storage: {
-              used: 0.3,
-              limit: 1,
-            },
-            agents: 2,
-            workflows: 1,
-          },
-        ]);
-      }
-    } catch (error) {
+      setLoadError(null);
+      const token = localStorage.getItem('token') || localStorage.getItem('auth_token') || '';
+      const response = await fetch('/api/admin/workspaces', {
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        credentials: 'include',
+      });
+      if (!response.ok)
+        throw new Error(`Workspace admin endpoint unavailable (${response.status})`);
+
+      const data = await response.json();
+      const rows = Array.isArray(data) ? data : Array.isArray(data?.items) ? data.items : [];
+      setWorkspaces(rows);
+    } catch (error: any) {
       console.error('Failed to fetch workspaces:', error);
+      setWorkspaces([]);
+      setLoadError(error?.message || 'Failed to fetch workspaces');
     } finally {
       setLoading(false);
     }
@@ -140,7 +89,7 @@ const WorkspaceManagement: React.FC = () => {
   });
 
   const getStatusBadge = (status: string) => {
-    const variants = {
+    const variants: Record<string, BadgeVariant> = {
       active: 'default',
       inactive: 'secondary',
       suspended: 'destructive',
@@ -149,7 +98,7 @@ const WorkspaceManagement: React.FC = () => {
   };
 
   const getPlanBadge = (plan: string) => {
-    const variants = {
+    const variants: Record<string, BadgeVariant> = {
       free: 'outline',
       pro: 'default',
       enterprise: 'secondary',
@@ -211,6 +160,12 @@ const WorkspaceManagement: React.FC = () => {
           Create Workspace
         </Button>
       </div>
+
+      {loadError && (
+        <div className="rounded-lg border border-amber-300 bg-amber-100/80 px-4 py-3 text-sm text-amber-900">
+          {loadError}
+        </div>
+      )}
 
       {/* Filters */}
       <Card title="Filters" gradient="blue">
@@ -366,7 +321,7 @@ const WorkspaceManagement: React.FC = () => {
               </DialogTitle>
             </DialogHeader>
 
-            <Tabs defaultValue="overview" className="mt-4">
+            <Tabs value={workspaceTab} onValueChange={setWorkspaceTab} className="mt-4">
               <TabsList>
                 <TabsTrigger value="overview">Overview</TabsTrigger>
                 <TabsTrigger value="members">Members</TabsTrigger>

@@ -80,19 +80,40 @@ console.log('');
 console.log('  [1.3] Agent Ecosystem Discovery');
 console.log('        Checking TNF Relay...');
 
-try {
-  const relayHealth = execSync('curl -s http://localhost:3001/health', { encoding: 'utf-8' });
-  const health = JSON.parse(relayHealth);
-  console.log(`        ✅ Relay running: ${health.agents} agents, ${health.channels} channels`);
+let relayStatus = 'unreachable';
+let relayAgentCount = 0;
+let relayChannelCount = 0;
 
-  const agentsResp = execSync('curl -s http://localhost:3001/agents', { encoding: 'utf-8' });
-  const agents = JSON.parse(agentsResp);
-  console.log(`        ✅ Active agents:`);
-  agents.slice(0, 10).forEach(agent => {
-    console.log(`           - ${agent.name} (${agent.platform})`);
-  });
-  if (agents.length > 10) {
-    console.log(`           ... and ${agents.length - 10} more`);
+try {
+  const relayHealth = execSync('curl -fsS http://localhost:3001/health 2>/dev/null', { encoding: 'utf-8' });
+  const health = JSON.parse(relayHealth);
+  const hasNumericMetrics = typeof health.agents === 'number' && typeof health.channels === 'number';
+  if (hasNumericMetrics) {
+    relayStatus = 'running';
+    relayAgentCount = health.agents;
+    relayChannelCount = health.channels;
+    console.log(`        ✅ Relay running: ${health.agents} agents, ${health.channels} channels`);
+  } else {
+    relayStatus = 'reachable';
+    console.log('        ⚠️  Relay reachable but health payload is not in expected TNF format');
+  }
+
+  try {
+    const agentsResp = execSync('curl -fsS http://localhost:3001/agents 2>/dev/null', { encoding: 'utf-8' });
+    const agents = JSON.parse(agentsResp);
+    if (Array.isArray(agents)) {
+      relayStatus = 'running';
+      relayAgentCount = agents.length;
+      console.log(`        ✅ Active agents:`);
+      agents.slice(0, 10).forEach(agent => {
+        console.log(`           - ${agent.name || 'unknown'} (${agent.platform || 'unknown'})`);
+      });
+      if (agents.length > 10) {
+        console.log(`           ... and ${agents.length - 10} more`);
+      }
+    }
+  } catch (_agentErr) {
+    // Keep relay status based on health endpoint result.
   }
 } catch (e) {
   console.log('        ⚠️  Relay not accessible at localhost:3001');
@@ -112,7 +133,7 @@ const report = {
         ? JSON.parse(fs.readFileSync(docManifest)).metadata.totalFiles
         : 0,
       stage1: 'Complete',
-      stage2: 'Complete',
+    stage2: 'Complete',
       stage3: 'In Progress'
     },
     codebase: {
@@ -122,8 +143,9 @@ const report = {
       applicationsList: apps
     },
     agents: {
-      relayStatus: 'running',
-      agentCount: 0 // Will be updated if relay accessible
+      relayStatus,
+      agentCount: relayAgentCount,
+      channelCount: relayChannelCount
     }
   },
   nextPhase: 'Phase 2: Deep Pattern Recognition'
@@ -139,7 +161,13 @@ console.log('  📊 Framework Components Discovered:');
 console.log(`     - Documentation: ${report.discoveries.documentation.totalFiles} files`);
 console.log(`     - Packages: ${report.discoveries.codebase.packages}`);
 console.log(`     - Applications: ${report.discoveries.codebase.applications}`);
-console.log(`     - Agents: Active relay system detected\n`);
+if (report.discoveries.agents.relayStatus === 'running') {
+  console.log(
+    `     - Agents: Relay active (${report.discoveries.agents.agentCount} agents, ${report.discoveries.agents.channelCount} channels)\n`
+  );
+} else {
+  console.log('     - Agents: Relay not reachable at localhost:3001\n');
+}
 
 console.log('[4/5] Current Framework Understanding: ~15%\n');
 console.log('  Phase 1: ✅ COMPLETE (Foundation Discovery)');

@@ -1045,6 +1045,92 @@ const rankNameMap = {
   J: 'jack',
 };
 
+const pokerUiAssetMap = {
+  brandLogo: '/assets/poker/pkr_brand_logo_mark_idle_v01.png',
+  brandWordmark: '/assets/poker/pkr_brand_wordmark_light_v01.png',
+  shellBgDesktop: '/assets/poker/pkr_shell_bg_main_desktop_idle_v01.png',
+  shellBgMobile: '/assets/poker/pkr_shell_bg_main_mobile_idle_v01.png',
+  tableFelt6max: '/assets/poker/pkr_table_felt_6max_topdown_idle_v01.png',
+  tableFelt9max: '/assets/poker/pkr_table_felt_9max_topdown_idle_v01.png',
+  tableRailCloseup: '/assets/poker/pkr_table_rail_material_closeup_v01.png',
+  stageScene: '/assets/poker/pkr_stage_cinematic_table_scene_v01.png',
+  chip1: '/assets/poker/pkr_chip_denom_1_idle_v01.png',
+  chip5: '/assets/poker/pkr_chip_denom_5_idle_v01.png',
+  chip25: '/assets/poker/pkr_chip_denom_25_idle_v01.png',
+  chip100: '/assets/poker/pkr_chip_denom_100_idle_v01.png',
+  chip500: '/assets/poker/pkr_chip_denom_500_idle_v01.png',
+  chipStackSmall: '/assets/poker/pkr_chip_stack_small_idle_v01.png',
+  chipStackLarge: '/assets/poker/pkr_chip_stack_large_idle_v01.png',
+  avatarHuman: '/assets/poker/pkr_avatar_frame_human_idle_v01.png',
+  avatarAgent: '/assets/poker/pkr_avatar_frame_agent_idle_v01.png',
+  dealerMarker: '/assets/poker/pkr_marker_dealer_button_idle_v01.png',
+  markerSbBb: '/assets/poker/pkr_marker_sb_bb_set_idle_v01.png',
+  markerAllIn: '/assets/poker/pkr_marker_allin_badge_set_v01.png',
+  seatRingIdle: '/assets/poker/pkr_seat_ring_idle_v01.png',
+  seatRingActive: '/assets/poker/pkr_seat_ring_active_turn_v01.png',
+  badgeTierA: '/assets/poker/pkr_badge_agent_tier_a_v01.png',
+  badgeTierB: '/assets/poker/pkr_badge_agent_tier_b_v01.png',
+  badgeTierC: '/assets/poker/pkr_badge_agent_tier_c_v01.png',
+  badgeSponsored: '/assets/poker/pkr_badge_sponsored_player_v01.png',
+  foldButton: '/assets/poker/pkr_btn_fold_set_v01.png',
+  checkCallButton: '/assets/poker/pkr_btn_checkcall_set_v01.png',
+  raiseButton: '/assets/poker/pkr_btn_raise_primary_set_v01.png',
+  sliderRaiseTrack: '/assets/poker/pkr_slider_raise_track_set_v01.png',
+  quickbetRow: '/assets/poker/pkr_quickbet_chip_row_v01.png',
+  cardBack: '/assets/poker/pkr_card_back_primary_idle_v01.png',
+  cardBackAlt: '/assets/poker/pkr_card_back_alt_royal_idle_v01.png',
+  cardShadow: '/assets/poker/pkr_card_shadow_soft_idle_v01.png',
+  cardGlow: '/assets/poker/pkr_card_glow_win_fx_v01.png',
+  cardFlip01: '/assets/poker/pkr_card_flip_frame_01_v01.png',
+  cardFlip02: '/assets/poker/pkr_card_flip_frame_02_v01.png',
+  cardFlip03: '/assets/poker/pkr_card_flip_frame_03_v01.png',
+  panelFairness: '/assets/poker/pkr_panel_fairness_idle_v01.png',
+  panelTxLifecycle: '/assets/poker/pkr_panel_tx_lifecycle_idle_v01.png',
+  panelLedgerRow: '/assets/poker/pkr_panel_ledger_row_set_v01.png',
+  panelNetworkHealth: '/assets/poker/pkr_panel_network_health_set_v01.png',
+  panelSponsorMarketCard: '/assets/poker/pkr_panel_sponsor_market_card_v01.png',
+  panelChatFeedBg: '/assets/poker/pkr_panel_chat_feed_bg_v01.png',
+  tourneyLobbyHero: '/assets/poker/pkr_tourney_lobby_hero_bg_v01.png',
+  blindLevelTimeline: '/assets/poker/pkr_blind_level_timeline_v01.png',
+  payoutLadder: '/assets/poker/pkr_payout_ladder_panel_v01.png',
+  finalTableBanner: '/assets/poker/pkr_final_table_banner_v01.png',
+  eliminationFx: '/assets/poker/pkr_elimination_burst_fx_v01.png',
+  stateReconnecting: '/assets/poker/pkr_state_reconnecting_banner_v01.png',
+  stateChainMismatch: '/assets/poker/pkr_state_chain_mismatch_card_v01.png',
+  stateInsufficientFunds: '/assets/poker/pkr_state_insufficient_funds_card_v01.png',
+  stateSettlementPending: '/assets/poker/pkr_state_settlement_pending_overlay_v01.png',
+  stateDuplicateAction: '/assets/poker/pkr_state_duplicate_action_guard_v01.png',
+  mobileBottomActionSheet: '/assets/poker/pkr_mobile_bottom_action_sheet_v01.png',
+  mobileTabbar: '/assets/poker/pkr_mobile_tabbar_pokerroom_v01.png',
+  mobileHudDrawer: '/assets/poker/pkr_mobile_hud_drawer_handle_v01.png',
+  mobileTableHeader: '/assets/poker/pkr_mobile_table_header_compact_v01.png',
+};
+
+function pokerUiAsset(key) {
+  return pokerUiAssetMap[key] || '';
+}
+
+function showcaseWithSkin(contentHtml, bgAsset, badgeAsset = '') {
+  const bg = bgAsset
+    ? `<img class="showcase-bg-art" src="${bgAsset}" alt="" loading="lazy" onerror="this.style.display='none'" />`
+    : '';
+  const badge = badgeAsset
+    ? `<img class="showcase-badge-art" src="${badgeAsset}" alt="" loading="lazy" onerror="this.style.display='none'" />`
+    : '';
+  return `
+    <div class="showcase-skin">
+      ${bg}
+      ${badge}
+      <div class="showcase-content">${contentHtml}</div>
+    </div>
+  `;
+}
+
+function assetIcon(src, cls = 'showcase-icon', alt = '') {
+  if (!src) return '';
+  return `<img class="${cls}" src="${src}" alt="${alt}" loading="lazy" onerror="this.style.display='none'" />`;
+}
+
 function cardAssetUrl(code) {
   if (!code || code.length < 2) return '';
   const suit = code.slice(-1);
@@ -1086,10 +1172,11 @@ function renderShowcase(round) {
 
   if (round.game === 'poker') {
     const cards = (round.detail?.hand || []).map((c) => cardVisual(c)).join('');
-    gameShowcase.innerHTML = `
+    const content = `
       <div class="showcase-row">${cards}</div>
       <div class="showcase-meta">${round.detail?.rank || 'Poker Round'}</div>
     `;
+    gameShowcase.innerHTML = showcaseWithSkin(content, pokerUiAsset('cardBack'));
     return;
   }
   // Poker-only mode: non-poker showcase renderers intentionally disabled.
@@ -1117,7 +1204,7 @@ function renderTableShowcase(snapshot, timeline = []) {
   const community = Array.isArray(snapshot.communityCards) ? snapshot.communityCards : [];
   const board = community.map((code) => cardVisual(code, 'dealer')).join('');
 
-  gameShowcase.innerHTML = `
+  const content = `
     <div class="showcase-row">
       ${seatBadges}
     </div>
@@ -1126,8 +1213,21 @@ function renderTableShowcase(snapshot, timeline = []) {
       ${snapshot.terminal ? '| TERMINAL' : ''}
     </div>
     <div class="showcase-row">${board || '<span class="showcase-labeled">No board yet</span>'}</div>
+    <div class="showcase-row showcase-icons">
+      ${assetIcon(pokerUiAsset('chipStackSmall'), 'showcase-icon')}
+      ${assetIcon(pokerUiAsset('chipStackLarge'), 'showcase-icon')}
+      ${assetIcon(pokerUiAsset('markerSbBb'), 'showcase-icon')}
+      ${assetIcon(pokerUiAsset('markerAllIn'), 'showcase-icon')}
+      ${assetIcon(pokerUiAsset('cardShadow'), 'showcase-icon')}
+      ${assetIcon(pokerUiAsset('cardGlow'), 'showcase-icon')}
+    </div>
     <div class="showcase-meta">${recent || 'No actions yet'}</div>
   `;
+  gameShowcase.innerHTML = showcaseWithSkin(
+    content,
+    seats.length > 6 ? pokerUiAsset('tableFelt9max') : pokerUiAsset('tableFelt6max'),
+    snapshot.terminal ? pokerUiAsset('stateSettlementPending') : ''
+  );
 }
 
 function renderTournamentShowcase(payload) {
@@ -1142,22 +1242,42 @@ function renderTournamentShowcase(payload) {
       .slice(-4)
       .map((row) => `${row.playerId}#${row.finishPosition}`)
       .join(' | ');
-    gameShowcase.innerHTML = `
+    const content = `
       <div class="showcase-meta">SNG ${sng.tournamentId} | ${sng.status} | Level ${Number(sng.levelIndex || 0) + 1}</div>
       <div class="showcase-meta">Players ${Array.isArray(sng.seats) ? sng.seats.length : 0}/${sng.maxPlayers}</div>
+      <div class="showcase-row showcase-icons">
+        ${assetIcon(pokerUiAsset('eliminationFx'), 'showcase-icon')}
+        ${assetIcon(pokerUiAsset('cardFlip01'), 'showcase-icon')}
+        ${assetIcon(pokerUiAsset('cardFlip02'), 'showcase-icon')}
+        ${assetIcon(pokerUiAsset('cardFlip03'), 'showcase-icon')}
+      </div>
       <div class="showcase-meta">${recent || 'No eliminations yet'}</div>
     `;
+    gameShowcase.innerHTML = showcaseWithSkin(
+      content,
+      pokerUiAsset('tourneyLobbyHero'),
+      pokerUiAsset('blindLevelTimeline')
+    );
     return;
   }
 
   if (mtt) {
     const tables = Array.isArray(mtt.tables) ? mtt.tables : [];
     const tableSummary = tables.map((t) => `${t.tableId}:${(t.seats || []).length}`).join(' | ');
-    gameShowcase.innerHTML = `
+    const content = `
       <div class="showcase-meta">MTT ${mtt.tournamentId} | ${mtt.status}</div>
       <div class="showcase-meta">Active ${mtt.activePlayers}/${mtt.playerCount} | Tables ${mtt.tableCount}</div>
+      <div class="showcase-row showcase-icons">
+        ${assetIcon(pokerUiAsset('blindLevelTimeline'), 'showcase-icon')}
+        ${assetIcon(pokerUiAsset('payoutLadder'), 'showcase-icon')}
+      </div>
       <div class="showcase-meta">${tableSummary || 'No table allocation yet'}</div>
     `;
+    gameShowcase.innerHTML = showcaseWithSkin(
+      content,
+      pokerUiAsset('payoutLadder'),
+      pokerUiAsset('finalTableBanner')
+    );
   }
 }
 
@@ -1170,12 +1290,25 @@ function renderEconomyShowcase(history, entries) {
     .map((row) => `${row.type}:${row.amountUnits || row.payoutUnits || row.reservedUsedUnits || 0}`)
     .join(' | ');
 
-  gameShowcase.innerHTML = `
+  const content = `
     <div class="showcase-meta">Sponsorship ${history?.position?.positionId || '-'}</div>
     <div class="showcase-meta">Settlements ${settlements.length} | Sponsors ${history?.position?.sponsorCount ?? 0}</div>
+    <div class="showcase-row showcase-icons">
+      ${assetIcon(pokerUiAsset('badgeTierA'), 'showcase-icon')}
+      ${assetIcon(pokerUiAsset('badgeTierB'), 'showcase-icon')}
+      ${assetIcon(pokerUiAsset('badgeTierC'), 'showcase-icon')}
+      ${assetIcon(pokerUiAsset('badgeSponsored'), 'showcase-icon')}
+      ${assetIcon(pokerUiAsset('panelLedgerRow'), 'showcase-icon')}
+      ${assetIcon(pokerUiAsset('panelNetworkHealth'), 'showcase-icon')}
+    </div>
     <div class="showcase-meta">Latest net ${latestSettlement?.netResultUnits ?? '-'} | Backers ${latestSettlement?.backerNetUnits ?? '-'}</div>
     <div class="showcase-meta">${entryLine || 'No cashier entries yet'}</div>
   `;
+  gameShowcase.innerHTML = showcaseWithSkin(
+    content,
+    pokerUiAsset('panelSponsorMarketCard'),
+    pokerUiAsset('panelTxLifecycle')
+  );
 }
 
 async function refreshLedger() {
@@ -2132,12 +2265,22 @@ function renderLiveTable(snapshot) {
   if (!liveTable || !liveTableStatus) return;
   if (!snapshot) {
     liveTableStatus.textContent = 'No active hand. Start New Hand.';
-    liveTable.innerHTML = '<p class="showcase-empty">No active snapshot.</p>';
+    liveTable.innerHTML = `
+      <div class="live-state-banner">
+        <img src="${pokerUiAsset('stateReconnecting')}" alt="Reconnecting state" loading="lazy" onerror="this.style.display='none'" />
+      </div>
+      <p class="showcase-empty">No active snapshot.</p>
+    `;
     return;
   }
 
   const heroSeat = liveHeroSeat();
   const seats = Array.isArray(snapshot.seats) ? snapshot.seats : [];
+  const dealerSeat = Number.isInteger(snapshot.buttonSeat) ? snapshot.buttonSeat : 0;
+  liveTable.style.setProperty(
+    '--live-felt-image',
+    `url('${seats.length > 6 ? pokerUiAsset('tableFelt9max') : pokerUiAsset('tableFelt6max')}')`
+  );
   const seatsHtml = seats
     .map((seat, idx) => {
       const seatNo = Number.isInteger(seat?.seat) ? seat.seat : idx;
@@ -2145,8 +2288,14 @@ function renderLiveTable(snapshot) {
       if (seatNo === heroSeat) classes.push('hero');
       if (seatNo === snapshot.actingSeat) classes.push('acting');
       if (seat?.folded) classes.push('folded');
+      const avatarFrame =
+        seatNo === heroSeat ? pokerUiAsset('avatarHuman') : pokerUiAsset('avatarAgent');
       return `
         <div class="${classes.join(' ')}">
+          <div class="live-seat-art">
+            <img class="live-seat-frame" src="${avatarFrame}" alt="Seat ${seatNo} frame" loading="lazy" onerror="this.style.display='none'" />
+            ${seatNo === dealerSeat ? `<img class="live-seat-dealer" src="${pokerUiAsset('dealerMarker')}" alt="Dealer marker" loading="lazy" onerror="this.style.display='none'" />` : ''}
+          </div>
           <div class="live-seat-title">Seat ${seatNo}${seatNo === heroSeat ? ' (YOU)' : ''}</div>
           <div class="live-seat-meta">${seat?.folded ? 'Folded' : 'In Hand'}</div>
         </div>
@@ -2161,13 +2310,26 @@ function renderLiveTable(snapshot) {
     Array.isArray(snapshot.showdown) && snapshot.showdown.length
       ? ` | Winner Seat ${snapshot.winnerSeat}`
       : '';
+  const stateBadge = snapshot.terminal
+    ? `<div class="live-state-banner"><img src="${pokerUiAsset('stateSettlementPending')}" alt="Settlement pending" loading="lazy" onerror="this.style.display='none'" /></div>`
+    : snapshot.actingSeat === heroSeat
+      ? `<div class="live-state-banner live-state-subtle"><img src="${pokerUiAsset('stateDuplicateAction')}" alt="Action guard" loading="lazy" onerror="this.style.display='none'" /></div>`
+      : '';
 
   liveTableStatus.textContent = `Hand ${snapshot.handId} | Street ${(snapshot.street || 'preflop').toUpperCase()} | Pot ${snapshot.pot} | Acting Seat ${snapshot.actingSeat}${snapshot.terminal ? ' | TERMINAL' : ''}${showdown}`;
   liveTable.innerHTML = `
+    ${stateBadge}
     <div class="showcase-meta">Board</div>
     <div class="showcase-row">${boardHtml || '<span class="showcase-labeled">No board cards yet</span>'}</div>
     <div class="showcase-meta">Hero Hole Cards</div>
     <div class="showcase-row">${heroCardsHtml || '<span class="showcase-labeled">No hole cards</span>'}</div>
+    <div class="showcase-row showcase-icons">
+      ${assetIcon(pokerUiAsset('quickbetRow'), 'showcase-icon')}
+      ${assetIcon(pokerUiAsset('sliderRaiseTrack'), 'showcase-icon')}
+      ${assetIcon(pokerUiAsset('cardBackAlt'), 'showcase-icon')}
+      ${assetIcon(pokerUiAsset('seatRingIdle'), 'showcase-icon')}
+      ${assetIcon(pokerUiAsset('seatRingActive'), 'showcase-icon')}
+    </div>
     <div class="live-seats">${seatsHtml}</div>
   `;
 }
@@ -2894,8 +3056,25 @@ const writeResultError = (label) => (err) => {
 const writeAgentError = (label) => (err) => {
   writeAgentConsole(errText(label, err));
 };
+function errorStateBadge(label, err) {
+  const text =
+    `${label || ''} ${err instanceof Error ? err.message : String(err || '')}`.toLowerCase();
+  if (text.includes('insufficient')) return pokerUiAsset('stateInsufficientFunds');
+  if (text.includes('chain') || text.includes('network')) return pokerUiAsset('stateChainMismatch');
+  return '';
+}
 const writePanelError = (pre, label) => (err) => {
   writePanel(pre, errText(label, err));
+  if (gameShowcase) {
+    const badge = errorStateBadge(label, err);
+    if (badge) {
+      gameShowcase.innerHTML = showcaseWithSkin(
+        `<div class="showcase-meta">${errText(label, err)}</div>`,
+        pokerUiAsset('panelTxLifecycle'),
+        badge
+      );
+    }
+  }
 };
 
 const paymentBindings = [

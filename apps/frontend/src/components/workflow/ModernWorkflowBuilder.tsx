@@ -130,6 +130,7 @@ const initialNodes: Node[] = [
 const initialEdges: Edge[] = [];
 
 const WorkflowBuilderContent = () => {
+  const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [selectedTemplate, setSelectedTemplate] = useState('');
@@ -277,7 +278,7 @@ const WorkflowBuilderContent = () => {
     };
 
     try {
-      const response = await fetch('http://localhost:3000/api/workflows', {
+      const response = await fetch(`${apiBaseUrl}/api/workflows`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(workflow),
@@ -300,7 +301,7 @@ const WorkflowBuilderContent = () => {
 
     try {
       const workflow = { name: workflowName, nodes, edges };
-      const response = await fetch('http://localhost:3000/api/workflows/execute', {
+      const response = await fetch(`${apiBaseUrl}/api/workflows/execute`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(workflow),
