@@ -280,9 +280,31 @@ RULES:
         }
         this.logger.log(`Loaded prompt template v${this.learningState.currentPromptVersion}`);
       }
-    } catch (error) {
+    } catch (error: unknown) {
+      if (this.isMissingPromptTemplateSchema(error)) {
+        this.logger.log(
+          'Skipping prompt template bootstrap: prompt template schema is not fully available in this environment.'
+        );
+        return;
+      }
       this.logger.warn('Could not initialize prompt template in database: ' + error);
     }
+  }
+
+  private isMissingPromptTemplateSchema(error: unknown): boolean {
+    const err = error as { code?: string; message?: string };
+    const message = err?.message?.toLowerCase() ?? String(error).toLowerCase();
+    const hasSchemaSignal =
+      err?.code === '42703' ||
+      err?.code === '42P01' ||
+      (message.includes('column') && message.includes('does not exist')) ||
+      (message.includes('relation') && message.includes('does not exist'));
+    const isPromptTemplateContext =
+      message.includes('prompt_templates') ||
+      message.includes('prompt template') ||
+      message.includes('user_id');
+
+    return hasSchemaSignal && isPromptTemplateContext;
   }
 
   /**
