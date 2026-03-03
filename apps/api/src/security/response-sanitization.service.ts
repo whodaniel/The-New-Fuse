@@ -15,9 +15,12 @@ export class ResponseSanitizationService {
     /password/i,
     /passwd/i,
     /secret/i,
-    /key/i,
     /token/i,
-    /auth/i,
+    /authorization/i,
+    /api[_-]?key/i,
+    /private[_-]?key/i,
+    /access[_-]?key/i,
+    /client[_-]?secret/i,
     /credential/i,
     /private/i,
     /ssn/i,
@@ -38,7 +41,7 @@ export class ResponseSanitizationService {
   sanitizeResponse<T>(data: T, options: ResponseSanitizationOptions = {}): T {
     const sanitizedOptions = {
       excludeFields: [],
-      maskFields: ['password', 'secret', 'token', 'key'],
+      maskFields: ['password', 'secret', 'token', 'apiKey', 'privateKey', 'accessKey'],
       maskChar: '*',
       maxDepth: 10,
       sensitiveDataPatterns: this.defaultSensitivePatterns,
