@@ -2,7 +2,7 @@
   "$schema": "https://railway.com/railway.schema.json",
   "deploy": {
     "port": 8080,
-    "startCommand": "openclaw gateway start --port 8080 --bind 0.0.0.0 --allow-unconfigured",
+    "startCommand": "/entrypoint.sh",
     "healthcheckPath": "/health",
     "healthcheckTimeout": 30
   }
