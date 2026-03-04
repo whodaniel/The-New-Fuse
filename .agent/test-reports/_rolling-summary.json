@@ -1,0 +1,281 @@
+{
+  "generatedAt": "2026-03-04T21:23:53.498Z",
+  "schema": "tnf-rolling-summary-v1",
+  "config": {
+    "maxReportsPerType": 50,
+    "maxAgeMs": 604800000,
+    "summaryWindow": 10
+  },
+  "types": {
+    "test-report": {
+      "domain": "Observe",
+      "lifecycle": "production",
+      "owner": "website-testing-agent",
+      "totalOnDisk": 51,
+      "recentCount": 10,
+      "recentAvgScore": 97,
+      "recentMinScore": 87,
+      "recentMaxScore": 100,
+      "trend": "stable-or-improving",
+      "latestReport": {
+        "file": "test-report-1772659433203.json",
+        "timestamp": "2026-03-04T21:17:43.578Z",
+        "score": 93,
+        "status": "healthy",
+        "lifecycle": "production"
+      },
+      "entries": [
+        {
+          "file": "test-report-1772651551569.json",
+          "timestamp": "2026-03-04T18:56:14.010Z",
+          "score": 93,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "test-report-1772652075145.json",
+          "timestamp": "2026-03-04T19:16:10.650Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "test-report-1772653169380.json",
+          "timestamp": "2026-03-04T19:24:36.841Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "test-report-1772654010100.json",
+          "timestamp": "2026-03-04T19:43:09.892Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "test-report-1772654729232.json",
+          "timestamp": "2026-03-04T19:57:09.424Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "test-report-1772655255814.json",
+          "timestamp": "2026-03-04T20:08:51.568Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "test-report-1772655762993.json",
+          "timestamp": "2026-03-04T20:17:38.600Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "test-report-1772656356299.json",
+          "timestamp": "2026-03-04T20:26:07.083Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "test-report-1772658725822.json",
+          "timestamp": "2026-03-04T20:36:26.345Z",
+          "score": 87,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "test-report-1772659433203.json",
+          "timestamp": "2026-03-04T21:17:43.578Z",
+          "score": 93,
+          "status": "healthy",
+          "lifecycle": "production"
+        }
+      ]
+    },
+    "integration-report": {
+      "domain": "Observe",
+      "lifecycle": "production",
+      "owner": "integration-test-agent",
+      "totalOnDisk": 50,
+      "recentCount": 10,
+      "recentAvgScore": 100,
+      "recentMinScore": 100,
+      "recentMaxScore": 100,
+      "trend": "stable-or-improving",
+      "latestReport": {
+        "file": "integration-report-1772659433294.json",
+        "timestamp": "2026-03-04T21:23:53.279Z",
+        "score": 100,
+        "status": "healthy",
+        "lifecycle": "production"
+      },
+      "entries": [
+        {
+          "file": "integration-report-1772651551754.json",
+          "timestamp": "2026-03-04T19:12:31.736Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "integration-report-1772652075242.json",
+          "timestamp": "2026-03-04T19:21:15.225Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "integration-report-1772653169635.json",
+          "timestamp": "2026-03-04T19:39:29.600Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "integration-report-1772654010225.json",
+          "timestamp": "2026-03-04T19:53:30.203Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "integration-report-1772654729331.json",
+          "timestamp": "2026-03-04T20:05:29.316Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "integration-report-1772655255903.json",
+          "timestamp": "2026-03-04T20:14:15.889Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "integration-report-1772655763087.json",
+          "timestamp": "2026-03-04T20:22:43.074Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "integration-report-1772656356582.json",
+          "timestamp": "2026-03-04T20:32:36.513Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "integration-report-1772658759585.json",
+          "timestamp": "2026-03-04T21:12:38.794Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "integration-report-1772659433294.json",
+          "timestamp": "2026-03-04T21:23:53.279Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        }
+      ]
+    },
+    "uiux-report": {
+      "domain": "Observe",
+      "lifecycle": "production",
+      "owner": "uiux-testing-agent",
+      "totalOnDisk": 50,
+      "recentCount": 10,
+      "recentAvgScore": 100,
+      "recentMinScore": 100,
+      "recentMaxScore": 100,
+      "trend": "stable-or-improving",
+      "latestReport": {
+        "file": "uiux-report-1772659433497.json",
+        "timestamp": "2026-03-04T21:23:53.371Z",
+        "score": 100,
+        "status": "healthy",
+        "lifecycle": "production"
+      },
+      "entries": [
+        {
+          "file": "uiux-report-1772651552726.json",
+          "timestamp": "2026-03-04T19:12:31.945Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "uiux-report-1772652075466.json",
+          "timestamp": "2026-03-04T19:21:15.319Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "uiux-report-1772653171404.json",
+          "timestamp": "2026-03-04T19:39:30.101Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "uiux-report-1772654010740.json",
+          "timestamp": "2026-03-04T19:53:30.317Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "uiux-report-1772654729726.json",
+          "timestamp": "2026-03-04T20:05:29.405Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "uiux-report-1772655256250.json",
+          "timestamp": "2026-03-04T20:14:15.975Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "uiux-report-1772655763546.json",
+          "timestamp": "2026-03-04T20:22:43.163Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "uiux-report-1772656357116.json",
+          "timestamp": "2026-03-04T20:32:36.831Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "uiux-report-1772658796277.json",
+          "timestamp": "2026-03-04T21:12:54.870Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "uiux-report-1772659433497.json",
+          "timestamp": "2026-03-04T21:23:53.371Z",
+          "score": 100,
+          "status": "healthy",
+          "lifecycle": "production"
+        }
+      ]
+    }
+  }
+}

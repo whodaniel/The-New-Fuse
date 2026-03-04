@@ -219,7 +219,8 @@
     "railway:zeroclaw:discord:setup": "bash scripts/railway/setup-zeroclaw-discord.sh",
     "cloudflare:zeroclaw:relay:dev": "pnpm --dir cloudflare-zeroclaw-relay run dev",
     "cloudflare:zeroclaw:relay:deploy": "pnpm --dir cloudflare-zeroclaw-relay run deploy",
-    "factory:release:seed": "scripts/orchestrator/seed-public-release-swarm-tasks.sh"
+    "factory:release:seed": "scripts/orchestrator/seed-public-release-swarm-tasks.sh",
+    "reports:lifecycle": "node scripts/swarm/report-lifecycle.cjs"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",

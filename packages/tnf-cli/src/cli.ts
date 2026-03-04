@@ -1044,4 +1044,258 @@ program
     }
   });
 
+// ────────────────────────────────────────────────────────────────────────────
+// Reports lifecycle management
+// ────────────────────────────────────────────────────────────────────────────
+const reports = program
+  .command('reports')
+  .description('Report lifecycle management — rotation, metadata, trending');
+
+reports
+  .command('status')
+  .description('Show report inventory: counts per type, disk usage, and lifecycle metadata')
+  .option('--json', 'Output machine-readable JSON')
+  .action(async (options: { json?: boolean }) => {
+    try {
+      const reportDir = path.join(repoRoot, '.agent/test-reports');
+      if (!fs.existsSync(reportDir)) {
+        console.log(chalk.yellow('No reports directory found at .agent/test-reports'));
+        process.exit(0);
+      }
+      const files = fs
+        .readdirSync(reportDir)
+        .filter((f) => f.endsWith('.json') && !f.startsWith('_'));
+
+      const counts: Record<string, number> = {};
+      let totalBytes = 0;
+      for (const file of files) {
+        const prefix = file.replace(/-\d{13}\.json$/, '');
+        counts[prefix] = (counts[prefix] || 0) + 1;
+        try {
+          totalBytes += fs.statSync(path.join(reportDir, file)).size;
+        } catch {
+          /* skip */
+        }
+      }
+
+      // Check for rolling summary
+      const summaryPath = path.join(reportDir, '_rolling-summary.json');
+      let summary: any = null;
+      if (fs.existsSync(summaryPath)) {
+        try {
+          summary = JSON.parse(fs.readFileSync(summaryPath, 'utf8'));
+        } catch {
+          /* skip */
+        }
+      }
+
+      if (options.json) {
+        console.log(
+          JSON.stringify({ counts, totalBytes, totalFiles: files.length, summary }, null, 2)
+        );
+        return;
+      }
+
+      console.log(chalk.bold('\n📋 Report Inventory\n'));
+      console.log(`   Directory: ${chalk.dim('.agent/test-reports')}`);
+      console.log(`   Total files: ${chalk.cyan(String(files.length))}`);
+      console.log(`   Total size: ${chalk.cyan((totalBytes / 1024).toFixed(1) + ' KB')}\n`);
+
+      for (const [prefix, count] of Object.entries(counts).sort()) {
+        const meta = summary?.types?.[prefix];
+        const domain = meta?.domain || 'unknown';
+        const lifecycle = meta?.lifecycle || 'unknown';
+        const avgScore = meta?.recentAvgScore;
+        const trend = meta?.trend;
+
+        console.log(
+          `   ${chalk.green(prefix)}: ${chalk.bold(String(count))} files` +
+            `  ${chalk.dim(`[${domain}/${lifecycle}]`)}` +
+            (avgScore != null ? `  avg=${chalk.cyan(avgScore + '%')}` : '') +
+            (trend
+              ? `  trend=${trend === 'declining' ? chalk.red(trend) : chalk.green(trend)}`
+              : '')
+        );
+      }
+
+      if (summary?.generatedAt) {
+        console.log(`\n   Summary last updated: ${chalk.dim(summary.generatedAt)}`);
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+reports
+  .command('prune')
+  .description('Prune old reports and regenerate the rolling summary')
+  .option('--max-per-type <n>', 'Maximum reports to keep per type', '50')
+  .option('--max-age-days <n>', 'Maximum report age in days', '7')
+  .option('--dry-run', 'Show what would be pruned without deleting')
+  .action(async (options: { maxPerType: string; maxAgeDays: string; dryRun?: boolean }) => {
+    try {
+      const env: Record<string, string> = {};
+      if (options.maxPerType) env.REPORT_MAX_PER_TYPE = options.maxPerType;
+      if (options.maxAgeDays) {
+        env.REPORT_MAX_AGE_MS = String(parseInt(options.maxAgeDays, 10) * 86400000);
+      }
+      if (options.dryRun) {
+        // In dry-run mode, just show counts without actually pruning
+        const reportDir = path.join(repoRoot, '.agent/test-reports');
+        if (!fs.existsSync(reportDir)) {
+          console.log(chalk.yellow('No reports directory found.'));
+          process.exit(0);
+        }
+
+        const maxPerType = parseInt(options.maxPerType, 10);
+        const maxAgeMs = parseInt(options.maxAgeDays, 10) * 86400000;
+        const now = Date.now();
+        const prefixes = ['test-report', 'integration-report', 'uiux-report'];
+
+        console.log(chalk.bold('\n🔍 Dry Run — Reports that WOULD be pruned:\n'));
+        for (const prefix of prefixes) {
+          const files = fs
+            .readdirSync(reportDir)
+            .filter((f) => f.startsWith(prefix + '-') && f.endsWith('.json'))
+            .sort();
+
+          let wouldPrune = 0;
+          for (const file of files) {
+            const tsMatch = file.match(/(\d{13})\.json$/);
+            if (tsMatch && parseInt(tsMatch[1], 10) < now - maxAgeMs) {
+              wouldPrune++;
+            }
+          }
+          const remaining = files.length - wouldPrune;
+          if (remaining > maxPerType) {
+            wouldPrune += remaining - maxPerType;
+          }
+
+          console.log(
+            `   ${chalk.green(prefix)}: ${chalk.red(String(wouldPrune))} pruned, ${chalk.cyan(String(Math.max(0, files.length - wouldPrune)))} kept`
+          );
+        }
+        console.log('');
+        return;
+      }
+
+      await runCommand('node', ['scripts/swarm/report-lifecycle.cjs'], { env });
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+reports
+  .command('summary')
+  .description('Display the rolling summary dashboard')
+  .option('--json', 'Output raw rolling summary JSON')
+  .action(async (options: { json?: boolean }) => {
+    try {
+      const summaryPath = path.join(repoRoot, '.agent/test-reports/_rolling-summary.json');
+      if (!fs.existsSync(summaryPath)) {
+        console.log(
+          chalk.yellow('No rolling summary found. Run `tnf reports prune` to generate one.')
+        );
+        process.exit(0);
+      }
+
+      const summary = JSON.parse(fs.readFileSync(summaryPath, 'utf8'));
+
+      if (options.json) {
+        console.log(JSON.stringify(summary, null, 2));
+        return;
+      }
+
+      console.log(chalk.bold('\n📊 Rolling Summary Dashboard\n'));
+      console.log(`   Generated: ${chalk.dim(summary.generatedAt)}`);
+      console.log(`   Window: last ${summary.config?.summaryWindow || '?'} reports per type\n`);
+
+      for (const [type, data] of Object.entries(summary.types || {}) as [string, any][]) {
+        const trendColor = data.trend === 'declining' ? chalk.red : chalk.green;
+        const scoreColor =
+          (data.recentAvgScore ?? 0) >= 80
+            ? chalk.green
+            : (data.recentAvgScore ?? 0) >= 60
+              ? chalk.yellow
+              : chalk.red;
+
+        console.log(`   ${chalk.bold(type)} ${chalk.dim(`(${data.domain}/${data.lifecycle})`)}`);
+        console.log(`     Owner: ${chalk.dim(data.owner)}`);
+        console.log(`     On disk: ${chalk.cyan(String(data.totalOnDisk))}`);
+        console.log(
+          `     Avg score: ${scoreColor(data.recentAvgScore != null ? data.recentAvgScore + '%' : 'n/a')}`
+        );
+        console.log(
+          `     Min/Max: ${data.recentMinScore ?? 'n/a'}% / ${data.recentMaxScore ?? 'n/a'}%`
+        );
+        console.log(`     Trend: ${trendColor(data.trend)}`);
+        if (data.latestReport) {
+          console.log(
+            `     Latest: ${chalk.dim(data.latestReport.file)} (${data.latestReport.status})`
+          );
+        }
+        console.log('');
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+reports
+  .command('trends')
+  .description('Show score trends for a specific report type')
+  .argument('[type]', 'Report type (test-report, integration-report, uiux-report)', 'test-report')
+  .option('--limit <n>', 'Number of recent reports to show', '20')
+  .action(async (type: string, options: { limit: string }) => {
+    try {
+      const reportDir = path.join(repoRoot, '.agent/test-reports');
+      if (!fs.existsSync(reportDir)) {
+        console.log(chalk.yellow('No reports directory found.'));
+        process.exit(0);
+      }
+
+      const limit = parseInt(options.limit, 10);
+      const files = fs
+        .readdirSync(reportDir)
+        .filter((f) => f.startsWith(type + '-') && f.endsWith('.json'))
+        .sort()
+        .slice(-limit);
+
+      if (files.length === 0) {
+        console.log(chalk.yellow(`No reports found for type: ${type}`));
+        process.exit(0);
+      }
+
+      console.log(chalk.bold(`\n📈 Score Trends: ${type} (last ${files.length})\n`));
+
+      const maxBarWidth = 40;
+      for (const file of files) {
+        try {
+          const data = JSON.parse(fs.readFileSync(path.join(reportDir, file), 'utf8'));
+          const score = data.overall?.score ?? 0;
+          const status = data.overall?.status ?? '?';
+          const ts = data.timestamp ? new Date(data.timestamp).toLocaleString() : 'unknown';
+
+          const barFill = Math.round((score / 100) * maxBarWidth);
+          const bar = '█'.repeat(barFill) + '░'.repeat(maxBarWidth - barFill);
+          const scoreColor = score >= 80 ? chalk.green : score >= 60 ? chalk.yellow : chalk.red;
+
+          console.log(
+            `   ${chalk.dim(ts)}  ${scoreColor(bar)} ${scoreColor.bold(String(score) + '%')} ${chalk.dim(status)}`
+          );
+        } catch {
+          /* skip corrupt */
+        }
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
 program.parse();

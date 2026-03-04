@@ -105,7 +105,9 @@ function formatFailure(result, fallback = 'Command failed') {
 function checkCriticalFileGroups(baseDir, groups) {
   const missingGroups = [];
   for (const group of groups) {
-    const present = group.candidates.find((candidate) => fs.existsSync(path.join(baseDir, candidate)));
+    const present = group.candidates.find((candidate) =>
+      fs.existsSync(path.join(baseDir, candidate))
+    );
     if (present) {
       log.success(`${group.label}: ${present}`);
     } else {
@@ -429,15 +431,13 @@ function generateReport() {
   console.log('\n📈 Overall Score:');
   console.log(`   ${testResults.overall.score}% - ${testResults.overall.status.toUpperCase()}`);
 
-  // Save report to file
-  const reportPath = path.join(ROOT_DIR, '.agent/test-reports');
-  if (!fs.existsSync(reportPath)) {
-    fs.mkdirSync(reportPath, { recursive: true });
+  // Save report with lifecycle metadata & rotation
+  const { writeReportWithLifecycle } = require('./report-lifecycle.cjs');
+  const { filePath, pruneResult } = writeReportWithLifecycle('test-report', testResults);
+  log.info(`Report saved to: ${filePath}`);
+  if (pruneResult.pruned > 0) {
+    log.info(`Pruned ${pruneResult.pruned} old report(s), ${pruneResult.kept} remaining`);
   }
-
-  const reportFile = path.join(reportPath, `test-report-${Date.now()}.json`);
-  fs.writeFileSync(reportFile, JSON.stringify(testResults, null, 2));
-  log.info(`Report saved to: ${reportFile}`);
 
   return testResults;
 }
