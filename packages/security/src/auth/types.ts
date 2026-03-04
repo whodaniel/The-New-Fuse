@@ -9,6 +9,11 @@ export interface User {
   lastLogin?: Date;
   isLocked: boolean;
   loginAttempts: number;
+  passwordHash?: string;
+}
+
+export interface UserRepository {
+  findByUsername(username: string): Promise<User | null>;
 }
 
 export interface AuthenticatedRequest extends Request {

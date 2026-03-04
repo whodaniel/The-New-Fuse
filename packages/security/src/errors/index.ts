@@ -1,1 +1,1 @@
-export { EncryptionError } from "./EncryptionError";
+export { EncryptionError } from './EncryptionError';

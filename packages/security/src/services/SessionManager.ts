@@ -23,40 +23,40 @@ export class SessionManager {
     const now = new Date();
     const expiresAt = new Date(now);
     expiresAt.setMinutes(now.getMinutes() + ttlMinutes);
-    
+
     const session: Session = {
       id: uuidv4(),
       userId,
       createdAt: now,
       expiresAt,
-      data: {}
+      data: {},
     };
-    
+
     this.sessions.set(session.id, session);
     return session;
   }
-  
+
   getSession(sessionId: string): Session | undefined {
     const session = this.sessions.get(sessionId);
     if (!session) return undefined;
-    
+
     // Check if expired
     if (new Date() > session.expiresAt) {
       this.sessions.delete(sessionId);
       return undefined;
     }
-    
+
     return session;
   }
-  
+
   updateSession(sessionId: string, data: Partial<Session['data']>): boolean {
     const session = this.getSession(sessionId);
     if (!session) return false;
-    
+
     session.data = { ...session.data, ...data };
     return true;
   }
-  
+
   destroySession(sessionId: string): boolean {
     return this.sessions.delete(sessionId);
   }

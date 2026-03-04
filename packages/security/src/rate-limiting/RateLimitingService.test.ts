@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { RateLimitingService } from './index';
 import { Request } from 'express';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { RateLimitingService } from './index';
 
 describe('RateLimitingService', () => {
   let service: RateLimitingService;
@@ -56,7 +56,7 @@ describe('RateLimitingService', () => {
 
     // Add many entries
     for (let i = 0; i < 10; i++) {
-        await shortWindowService.isAllowed({ ip: `192.168.1.${i}` } as Request);
+      await shortWindowService.isAllowed({ ip: `192.168.1.${i}` } as Request);
     }
 
     // Access internal store to verify size

@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
-import { sessionManager, Session, AuthUser } from '../services/SessionManager';
+import { NextFunction, Request, Response } from 'express';
+import { AuthUser, sessionManager } from '../services/SessionManager';
 
 export interface RequestWithSession extends Request {
   user?: AuthUser;
@@ -7,7 +7,7 @@ export interface RequestWithSession extends Request {
 
 export const sessionMiddleware = (req: RequestWithSession, res: Response, next: NextFunction) => {
   const sessionId = req.cookies?.sessionId || req.headers['x-session-id'];
-  
+
   if (sessionId) {
     const session = sessionManager.getSession(sessionId);
     if (session) {
@@ -17,10 +17,10 @@ export const sessionMiddleware = (req: RequestWithSession, res: Response, next: 
       req.user = {
         id: session.userId,
         email: 'user@example.com',
-        roles: ['user']
+        roles: ['user'],
       };
     }
   }
-  
+
   next();
 };
