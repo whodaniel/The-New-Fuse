@@ -45,7 +45,7 @@ const ThreadItem = React.memo(({ idx, activeIdx, isActive, workspace, thread, on
             <div className="w-full pl-2 py-1">
               <p className={STYLES.deletedText}>deleted thread</p>
             </div>
-            {ctrlPressed && (<button type="button" className="border-none" onClick={() => toggleMarkForDeletion(thread.id)}>
+            {ctrlPressed && (<button type="button" className="border-none" onClick={() => toggleMarkForDeletion(thread.id)} aria-label="Restore thread" title="Restore thread">
                 <ArrowCounterClockwise className={STYLES.optionsButton} size={18}/>
               </button>)}
           </div>) : (<a href={window.location.pathname === linkTo || ctrlPressed ? "#" : linkTo} className="w-full pl-2 py-1" aria-current={isActive ? "page" : undefined}>
@@ -54,10 +54,10 @@ const ThreadItem = React.memo(({ idx, activeIdx, isActive, workspace, thread, on
             </p>
           </a>)}
         {!!thread.slug && !thread.deleted && (<div ref={optionsContainer} className="flex items-center">
-            {ctrlPressed ? (<button type="button" className="border-none" onClick={() => toggleMarkForDeletion(thread.id)}>
+            {ctrlPressed ? (<button type="button" className="border-none" onClick={() => toggleMarkForDeletion(thread.id)} aria-label="Mark thread for deletion" title="Mark thread for deletion">
                 <X className={STYLES.optionsButton} weight="bold" size={18}/>
               </button>) : (<div className="flex items-center w-fit group-hover:visible md:invisible gap-x-1">
-                <button type="button" className="border-none" onClick={() => setShowOptions(!showOptions)} aria-label="Thread options">
+                <button type="button" className="border-none" onClick={() => setShowOptions(!showOptions)} aria-label="Thread options" title="Thread options">
                   <DotsThree className={STYLES.optionsButton} size={25}/>
                 </button>
               </div>)}

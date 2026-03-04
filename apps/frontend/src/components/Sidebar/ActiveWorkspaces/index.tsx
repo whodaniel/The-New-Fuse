@@ -71,12 +71,12 @@ export default function ActiveWorkspaces() {
                         e.preventDefault();
                         setSelectedWs(workspace);
                         showModal();
-                    }} className={STYLES.actionButton}>
+                    }} className={STYLES.actionButton} aria-label="Manage workspace" title="Manage workspace">
                         <UploadSimple className="h-[20px] w-[20px]" weight="bold"/>
                       </button>
                       <Link to={isInWorkspaceSettings
                         ? paths.workspace.chat(workspace.slug)
-                        : paths.workspace.settings.generalAppearance(workspace.slug)} className={STYLES.settingsLink} aria-label="General appearance settings">
+                        : paths.workspace.settings.generalAppearance(workspace.slug)} className={STYLES.settingsLink} aria-label="General appearance settings" title="General appearance settings">
                         <GearSix color={isInWorkspaceSettings && workspace.slug === slug
                         ? "#46C8FF"
                         : undefined} weight="bold" className="h-[20px] w-[20px]"/>
