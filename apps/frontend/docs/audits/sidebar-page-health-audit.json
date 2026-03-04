@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-02-19T10:06:44.426Z",
+  "generatedAt": "2026-03-04T19:14:43.639Z",
   "counts": {
-    "total": 19,
-    "working": 12,
-    "partialMedium": 3,
-    "partialHigh": 2,
-    "broken": 2
+    "total": 21,
+    "working": 21,
+    "partialMedium": 0,
+    "partialHigh": 0,
+    "broken": 0
   },
   "results": [
     {
@@ -15,22 +15,9 @@
       "component": "ComprehensiveAdminDashboard",
       "file": "pages/Admin/ComprehensiveAdminDashboard.tsx",
       "surface": "admin",
-      "risk": 11,
-      "status": "partial-medium-risk",
-      "hits": [
-        {
-          "id": "randomized_behavior",
-          "count": 1
-        },
-        {
-          "id": "timeout_simulation",
-          "count": 4
-        },
-        {
-          "id": "raw_fetch",
-          "count": 5
-        }
-      ]
+      "risk": 0,
+      "status": "working",
+      "hits": []
     },
     {
       "name": "Audit Logs",
@@ -63,15 +50,26 @@
       "name": "Command Center",
       "route": "/ai-command-center",
       "targetRoute": "/ai-command-center",
-      "component": null,
-      "file": null,
+      "component": "AICommandCenter",
+      "file": "pages/AICommandCenter/index.tsx",
       "surface": "app",
-      "status": "broken-missing-route-or-file",
-      "risk": 999,
+      "risk": 0,
+      "status": "working",
+      "hits": []
+    },
+    {
+      "name": "AI Portal",
+      "route": "/ai-portal",
+      "targetRoute": "/ai-portal",
+      "component": "AIAgentDashboard",
+      "file": "pages/AIAgentDashboard.tsx",
+      "surface": "app",
+      "risk": 2,
+      "status": "working",
       "hits": [
         {
-          "id": "missing_route_or_file",
-          "count": 1
+          "id": "raw_fetch",
+          "count": 2
         }
       ]
     },
@@ -82,14 +80,9 @@
       "component": "Analytics",
       "file": "pages/dashboard/Analytics.tsx",
       "surface": "app",
-      "risk": 5,
-      "status": "partial-medium-risk",
-      "hits": [
-        {
-          "id": "raw_fetch",
-          "count": 5
-        }
-      ]
+      "risk": 0,
+      "status": "working",
+      "hits": []
     },
     {
       "name": "Chat",
@@ -98,14 +91,9 @@
       "component": "ChatPage",
       "file": "pages/chat/ChatPage.tsx",
       "surface": "app",
-      "risk": 4,
+      "risk": 0,
       "status": "working",
-      "hits": [
-        {
-          "id": "timeout_simulation",
-          "count": 4
-        }
-      ]
+      "hits": []
     },
     {
       "name": "Dashboard",
@@ -114,9 +102,14 @@
       "component": "Dashboard",
       "file": "components/Dashboard.tsx",
       "surface": "app",
-      "risk": 0,
+      "risk": 2,
       "status": "working",
-      "hits": []
+      "hits": [
+        {
+          "id": "fallback_demo",
+          "count": 1
+        }
+      ]
     },
     {
       "name": "Debug",
@@ -144,17 +137,12 @@
       "name": "TNF Hub",
       "route": "/hub",
       "targetRoute": "/hub",
-      "component": null,
-      "file": null,
+      "component": "ModernHub",
+      "file": "pages/Hub/ModernHub.tsx",
       "surface": "app",
-      "status": "broken-missing-route-or-file",
-      "risk": 999,
-      "hits": [
-        {
-          "id": "missing_route_or_file",
-          "count": 1
-        }
-      ]
+      "risk": 0,
+      "status": "working",
+      "hits": []
     },
     {
       "name": "Knowledge Hub",
@@ -163,18 +151,25 @@
       "component": "KnowledgeHub",
       "file": "pages/KnowledgeHub.tsx",
       "surface": "app",
-      "risk": 17,
-      "status": "partial-high-risk",
+      "risk": 2,
+      "status": "working",
       "hits": [
         {
-          "id": "mock_data",
-          "count": 5
-        },
-        {
-          "id": "fallback_demo",
-          "count": 1
+          "id": "raw_fetch",
+          "count": 2
         }
       ]
+    },
+    {
+      "name": "Platform",
+      "route": "/marketplace",
+      "targetRoute": "/marketplace",
+      "component": "MarketplacePublicPage",
+      "file": "pages/Marketplace/MarketplacePublicPage.tsx",
+      "surface": "app",
+      "risk": 0,
+      "status": "working",
+      "hits": []
     },
     {
       "name": "MCP Hub",
@@ -183,14 +178,9 @@
       "component": "MCPHub",
       "file": "pages/mcp/MCPHub.tsx",
       "surface": "app",
-      "risk": 9,
-      "status": "partial-medium-risk",
-      "hits": [
-        {
-          "id": "mock_data",
-          "count": 3
-        }
-      ]
+      "risk": 0,
+      "status": "working",
+      "hits": []
     },
     {
       "name": "Observatory",
@@ -198,26 +188,6 @@
       "targetRoute": "/observatory",
       "component": "SystemObservatory",
       "file": "pages/SystemObservatory.tsx",
-      "surface": "app",
-      "risk": 22,
-      "status": "partial-high-risk",
-      "hits": [
-        {
-          "id": "fallback_demo",
-          "count": 10
-        },
-        {
-          "id": "raw_fetch",
-          "count": 2
-        }
-      ]
-    },
-    {
-      "name": "Marketplace",
-      "route": "/resources",
-      "targetRoute": "/resources",
-      "component": "ResourcesDashboard",
-      "file": "pages/Resources/ResourcesDashboard.tsx",
       "surface": "app",
       "risk": 0,
       "status": "working",
@@ -282,6 +252,17 @@
           "count": 1
         }
       ]
+    },
+    {
+      "name": "Workspace",
+      "route": "/workspace/overview",
+      "targetRoute": "/workspace/overview",
+      "component": "WorkspaceOverview",
+      "file": "pages/workspace/Overview.tsx",
+      "surface": "app",
+      "risk": 0,
+      "status": "working",
+      "hits": []
     }
   ]
 }

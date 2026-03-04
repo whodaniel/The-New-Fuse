@@ -178,13 +178,13 @@ export class WebSocketMonitoring {
       if (metric.name === 'websocket_connections_total') {
         result.totalConnections = metric.values.reduce((sum, v) => sum + (v.value as number), 0);
       } else if (metric.name === 'websocket_connections_active') {
-        result.activeConnections = metric.values[0]?.value as number || 0;
+        result.activeConnections = (metric.values[0]?.value as number) || 0;
       } else if (metric.name === 'websocket_messages_total') {
         result.totalMessages = metric.values.reduce((sum, v) => sum + (v.value as number), 0);
       } else if (metric.name === 'websocket_errors_total') {
         result.errors = metric.values.reduce((sum, v) => sum + (v.value as number), 0);
       } else if (metric.name === 'websocket_reconnections_total') {
-        result.reconnections = metric.values[0]?.value as number || 0;
+        result.reconnections = (metric.values[0]?.value as number) || 0;
       }
     }
 
@@ -194,13 +194,11 @@ export class WebSocketMonitoring {
   /**
    * Get health status
    */
-  public async getHealthStatus(
-    additionalChecks?: {
-      redis?: boolean;
-      queueSize?: number;
-      errors?: string[];
-    }
-  ): Promise<HealthStatus> {
+  public async getHealthStatus(additionalChecks?: {
+    redis?: boolean;
+    queueSize?: number;
+    errors?: string[];
+  }): Promise<HealthStatus> {
     const metrics = await this.getMetricsJSON();
 
     const healthy =

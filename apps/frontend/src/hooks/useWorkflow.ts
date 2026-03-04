@@ -207,6 +207,30 @@ export const useWorkflow = () => {
     []
   );
 
+  const publishWorkflow = useCallback(
+    async (workflowId: string) => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const updatedWorkflow = await workflowService.publishWorkflow(workflowId);
+        setWorkflows((prev) =>
+          prev.map((workflow) => (workflow.id === workflowId ? updatedWorkflow : workflow))
+        );
+        if (currentWorkflow?.id === workflowId) {
+          setCurrentWorkflow(updatedWorkflow);
+        }
+        return updatedWorkflow;
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to publish workflow'));
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [currentWorkflow]
+  );
+
   return {
     workflows,
     currentWorkflow,
@@ -223,6 +247,7 @@ export const useWorkflow = () => {
     getWorkflow,
     getTemplates,
     createFromTemplate,
+    publishWorkflow,
   };
 };
 

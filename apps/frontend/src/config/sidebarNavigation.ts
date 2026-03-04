@@ -17,6 +17,7 @@ import {
   ScrollText,
   Settings,
   Shield,
+  Users,
   Workflow,
   Zap,
 } from 'lucide-react';
@@ -43,6 +44,13 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
     access: 'authenticated',
   },
   { name: 'Chat', href: '/chat', icon: MessageSquare, section: 'grid', access: 'authenticated' },
+  {
+    name: 'Workspace',
+    href: '/workspace/overview',
+    icon: Users,
+    section: 'grid',
+    access: 'authenticated',
+  },
   { name: 'Tasks', href: '/tasks', icon: ClipboardList, section: 'grid', access: 'authenticated' },
   { name: 'Timeline', href: '/timeline', icon: Activity, section: 'grid', access: 'authenticated' },
   {
@@ -91,7 +99,7 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
     href: '/marketplace',
     icon: Package,
     section: 'nexus',
-    access: 'authenticated',
+    access: 'public',
   },
   {
     name: 'Knowledge Hub',

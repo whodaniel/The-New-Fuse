@@ -30,6 +30,7 @@ export interface LedgerRecord {
 
 export interface TimelineEvent {
   id: string;
+  userId?: string;
   recordId?: string;
   goalId?: string;
   planId?: string;
@@ -106,7 +107,9 @@ export async function listRecords(params?: {
 }
 
 export async function getRecordConnections(recordId: string): Promise<RecordConnections> {
-  return parse<RecordConnections>(await fetch(`/api/unified-ledger/records/${recordId}/connections`));
+  return parse<RecordConnections>(
+    await fetch(`/api/unified-ledger/records/${recordId}/connections`)
+  );
 }
 
 export async function getTask(id: string): Promise<LedgerRecord | null> {
@@ -165,6 +168,7 @@ export async function voteSuggestion(
 }
 
 export async function listTimelineEvents(params?: {
+  userId?: string;
   recordId?: string;
   goalId?: string;
   planId?: string;
@@ -174,6 +178,7 @@ export async function listTimelineEvents(params?: {
   dateTo?: string;
 }): Promise<TimelineEvent[]> {
   const search = new URLSearchParams();
+  if (params?.userId) search.set('userId', params.userId);
   if (params?.recordId) search.set('recordId', params.recordId);
   if (params?.goalId) search.set('goalId', params.goalId);
   if (params?.planId) search.set('planId', params.planId);
@@ -190,6 +195,7 @@ export async function getTimelineEvent(id: string): Promise<TimelineEvent | null
 }
 
 export async function createTimelineEvent(input: {
+  userId?: string;
   recordId?: string;
   goalId?: string;
   planId?: string;
@@ -209,13 +215,22 @@ export async function createTimelineEvent(input: {
 
 export async function updateTimelineEvent(
   id: string,
-  input: { actor?: string; timestamp?: string; payload?: Record<string, unknown> }
+  input: { userId?: string; actor?: string; timestamp?: string; payload?: Record<string, unknown> }
 ): Promise<TimelineEvent | null> {
   return parse<TimelineEvent | null>(
     await fetch(`/api/timeline/events/${id}`, {
       method: 'PATCH',
       headers: JSON_HEADERS,
       body: JSON.stringify(input),
+    })
+  );
+}
+
+export async function deleteTimelineEvent(id: string, userId?: string): Promise<boolean> {
+  const suffix = userId ? `?userId=${encodeURIComponent(userId)}` : '';
+  return parse<boolean>(
+    await fetch(`/api/timeline/events/${id}${suffix}`, {
+      method: 'DELETE',
     })
   );
 }

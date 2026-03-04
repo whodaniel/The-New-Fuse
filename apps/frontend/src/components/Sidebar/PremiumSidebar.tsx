@@ -58,15 +58,15 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
       {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}
 
       {/* Sidebar container */}
       <div
-        className={`fixed top-0 left-0 bottom-0 bg-slate-950/30 backdrop-blur-2xl border-r border-white/10 z-50 transition-all duration-300 ease-in-out lg:translate-x-0 ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
+        className={`fixed top-0 left-0 bottom-0 bg-slate-950/30 backdrop-blur-2xl border-r border-white/10 z-50 transition-all duration-300 ease-in-out ${
+          isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         } ${isCollapsed ? 'w-20' : 'w-72'}`}
         role="navigation"
       >
@@ -86,7 +86,7 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
               )}
             </div>
             <button
-              className="ml-auto lg:hidden text-gray-400 hover:text-white"
+              className="ml-auto md:hidden text-gray-400 hover:text-white"
               onClick={() => setIsOpen(false)}
               aria-label="Close sidebar"
             >
@@ -194,7 +194,7 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
           </nav>
 
           {/* Collapse Toggle */}
-          <div className="hidden lg:flex p-4 border-t border-white/10 bg-black/20 justify-end">
+          <div className="hidden md:flex p-4 border-t border-white/10 bg-black/20 justify-end">
             <button
               onClick={() => setIsCollapsed(!isCollapsed)}
               className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors w-full flex justify-center"

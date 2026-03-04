@@ -1,6 +1,6 @@
 # Route Guard Audit
 
-Generated: 2026-02-18T11:33:52.954Z
+Generated: 2026-03-04T19:08:44.437Z
 
 ## Counts
 
@@ -13,42 +13,42 @@ Generated: 2026-02-18T11:33:52.954Z
 
 - `/admin` | access: `authenticated` | status: `ok` | guard: `RequirePermission`
   | redirect: `false`
+- `/admin/audit-logs` | access: `authenticated` | status: `ok` | guard:
+  `RequirePermission` | redirect: `false`
 - `/agents` | access: `authenticated` | status: `ok` | guard: `RequireAuth` |
   redirect: `false`
-- `/channels` | access: `authenticated` | status: `ok` | guard: `redirect` |
-  redirect: `true`
+- `/ai-command-center` | access: `authenticated` | status: `ok` | guard:
+  `RequirePermission` | redirect: `false`
+- `/ai-portal` | access: `authenticated` | status: `ok` | guard: `RequireAuth` |
+  redirect: `false`
+- `/analytics` | access: `authenticated` | status: `ok` | guard: `RequireAuth` |
+  redirect: `false`
 - `/chat` | access: `authenticated` | status: `ok` | guard: `RequireAuth` |
   redirect: `false`
-- `/command-center` | access: `authenticated` | status: `ok` | guard:
-  `RequirePermission` | redirect: `false`
-- `/config` | access: `authenticated` | status: `ok` | guard: `redirect` |
-  redirect: `true`
-- `/cron-jobs` | access: `authenticated` | status: `ok` | guard: `redirect` |
-  redirect: `true`
+- `/dashboard` | access: `authenticated` | status: `ok` | guard: `RequireAuth` |
+  redirect: `false`
 - `/debug` | access: `authenticated` | status: `ok` | guard: `RequireAuth` |
   redirect: `false`
 - `/docs` | access: `public` | status: `ok` | guard: `none` | redirect: `false`
-- `/instances` | access: `authenticated` | status: `ok` | guard: `redirect` |
-  redirect: `true`
-- `/logs` | access: `authenticated` | status: `ok` | guard: `redirect` |
-  redirect: `true`
-- `/nodes` | access: `authenticated` | status: `ok` | guard: `redirect` |
-  redirect: `true`
+- `/hub` | access: `authenticated` | status: `ok` | guard: `RequireAuth` |
+  redirect: `false`
+- `/knowledge-hub` | access: `authenticated` | status: `ok` | guard:
+  `RequireAuth` | redirect: `false`
+- `/marketplace` | access: `public` | status: `ok` | guard: `none` | redirect:
+  `false`
+- `/mcp-hub` | access: `authenticated` | status: `ok` | guard: `RequireAuth` |
+  redirect: `false`
 - `/observatory` | access: `authenticated` | status: `ok` | guard:
   `RequirePermission` | redirect: `false`
-- `/overview` | access: `authenticated` | status: `ok` | guard: `redirect` |
-  redirect: `true`
-- `/resources` | access: `authenticated` | status: `ok` | guard: `RequireAuth` |
-  redirect: `false`
-- `/sessions` | access: `authenticated` | status: `ok` | guard: `redirect` |
-  redirect: `true`
 - `/settings` | access: `authenticated` | status: `ok` | guard: `RequireAuth` |
   redirect: `false`
-- `/skills` | access: `authenticated` | status: `ok` | guard: `redirect` |
-  redirect: `true`
+- `/suggestions` | access: `authenticated` | status: `ok` | guard: `RequireAuth`
+  | redirect: `false`
 - `/tasks` | access: `authenticated` | status: `ok` | guard: `RequireAuth` |
   redirect: `false`
-- `/usage` | access: `authenticated` | status: `ok` | guard: `redirect` |
-  redirect: `true`
+- `/timeline` | access: `authenticated` | status: `ok` | guard: `RequireAuth` |
+  redirect: `false`
 - `/workflows` | access: `authenticated` | status: `ok` | guard: `RequireAuth` |
   redirect: `false`
+- `/workspace/overview` | access: `authenticated` | status: `ok` | guard:
+  `RequireAuth` | redirect: `false`

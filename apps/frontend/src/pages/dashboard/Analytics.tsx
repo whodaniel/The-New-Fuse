@@ -1,6 +1,7 @@
 import { GlassCard, PremiumButton, PremiumSelect, StatsCard } from '@/components/ui/premium';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/useToast';
+import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Activity,
@@ -162,32 +163,33 @@ const Analytics = () => {
       setLoading(true);
       setErrorMessage(null);
 
-      const responses = await Promise.all([
-        fetch(`/api/analytics/default/overview?timeframe=${timeRange}`),
-        fetch(`/api/analytics/default/performance?timeframe=${timeRange}`),
-        fetch(`/api/analytics/default/providers/performance?timeframe=${timeRange}`),
-        fetch(`/api/analytics/default/quality-trends?timeframe=${timeRange}`),
+      const responses = await Promise.allSettled([
+        axios.get(`/api/analytics/default/overview?timeframe=${timeRange}`),
+        axios.get(`/api/analytics/default/performance?timeframe=${timeRange}`),
+        axios.get(`/api/analytics/default/providers/performance?timeframe=${timeRange}`),
+        axios.get(`/api/analytics/default/quality-trends?timeframe=${timeRange}`),
       ]);
 
-      const failed = responses.find((response) => !response.ok);
+      const failed = responses.find((response) => response.status === 'rejected');
       if (failed) {
-        if (failed.status === 501) {
+        const statusCode =
+          failed.status === 'rejected' ? Number((failed.reason as any)?.response?.status ?? 0) : 0;
+        if (statusCode === 501) {
           setErrorMessage(
             'Analytics features are not deployed on this backend yet. Enable agency analytics services to activate this dashboard.'
           );
           setData(null);
           return;
         }
-        throw new Error(`Analytics endpoint request failed (${failed.status})`);
+        throw new Error(
+          `Analytics endpoint request failed${statusCode > 0 ? ` (${statusCode})` : ''}`
+        );
       }
 
-      const [overviewPayload, performancePayload, providersPayload, qualityPayload] =
-        await Promise.all(
-          responses.map(async (response) => {
-            const text = await response.text();
-            return text ? JSON.parse(text) : {};
-          })
-        );
+      const fulfilled = responses as Array<PromiseFulfilledResult<any>>;
+      const [overviewPayload, performancePayload, providersPayload, qualityPayload] = fulfilled.map(
+        (response) => response.value?.data ?? {}
+      );
 
       const overviewData = unwrapApiData(overviewPayload);
       const performanceDataRaw = unwrapApiData(performancePayload);
@@ -301,21 +303,13 @@ const Analytics = () => {
 
   const handleExport = async () => {
     try {
-      const response = await fetch(
-        `/api/analytics/default/export?timeframe=${timeRange}&format=json`
+      const response = await axios.get(
+        `/api/analytics/default/export?timeframe=${timeRange}&format=json`,
+        {
+          responseType: 'blob',
+        }
       );
-      if (response.status === 501) {
-        toast({
-          title: 'Unavailable',
-          description: 'Analytics export is not deployed on this backend.',
-          variant: 'destructive',
-        });
-        return;
-      }
-      if (!response.ok) {
-        throw new Error(`Export failed (${response.status})`);
-      }
-      const blob = await response.blob();
+      const blob = response.data as Blob;
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -327,7 +321,16 @@ const Analytics = () => {
         title: 'Success',
         description: 'Analytics data exported successfully',
       });
-    } catch {
+    } catch (error) {
+      const statusCode = Number((error as any)?.response?.status ?? 0);
+      if (statusCode === 501) {
+        toast({
+          title: 'Unavailable',
+          description: 'Analytics export is not deployed on this backend.',
+          variant: 'destructive',
+        });
+        return;
+      }
       toast({
         title: 'Error',
         description: 'Failed to export analytics data',

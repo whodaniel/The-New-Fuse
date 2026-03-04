@@ -6,14 +6,12 @@ import {
   ChevronDown,
   ClipboardList,
   Compass,
-  Cpu,
   Database,
   Globe,
   Layout,
   Lightbulb,
   LogOut,
   Menu,
-  MessageSquare,
   Network,
   Package,
   Plus,
@@ -26,9 +24,26 @@ import {
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { EXPERIENCE_SURFACES } from '../config/experienceArchitecture';
 
 import { useAuth } from '../hooks/useAuth';
 import { useAuthorization } from '../hooks/useAuthorization';
+
+interface DomainMenuItem {
+  to: string;
+  label: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
+interface DomainMenu {
+  key: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  activeClassName: string;
+  matchPrefixes: string[];
+  items: DomainMenuItem[];
+}
 
 // Smart Navigation Component that adapts based on authentication status and user role
 function SmartNavigation() {
@@ -54,6 +69,141 @@ function SmartNavigation() {
   const toggleDropdown = (dropdown: string) => {
     setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
   };
+
+  const lifecycleByPath = new Map<string, string>();
+  for (const surface of EXPERIENCE_SURFACES) {
+    lifecycleByPath.set(surface.path, surface.lifecycle);
+    surface.aliases?.forEach((alias) => lifecycleByPath.set(alias, surface.lifecycle));
+  }
+
+  const domainMenus: DomainMenu[] = [
+    {
+      key: 'operate',
+      label: 'Operate',
+      icon: SquareTerminal,
+      activeClassName: 'bg-blue-500/10 text-blue-400',
+      matchPrefixes: ['/dashboard', '/agents', '/tasks', '/timeline'],
+      items: [
+        {
+          to: '/dashboard',
+          label: 'Operations Dashboard',
+          description: 'Current system health and priorities',
+          icon: Activity,
+        },
+        {
+          to: '/agents',
+          label: 'Agent Fleet',
+          description: 'Manage autonomous swarms',
+          icon: Bot,
+        },
+        {
+          to: '/tasks',
+          label: 'Task Operations',
+          description: 'Track and execute work',
+          icon: ClipboardList,
+        },
+        {
+          to: '/timeline',
+          label: 'Unified Timeline',
+          description: 'Chronological execution events',
+          icon: Activity,
+        },
+      ],
+    },
+    {
+      key: 'automate',
+      label: 'Automate',
+      icon: Workflow,
+      activeClassName: 'bg-purple-500/10 text-purple-400',
+      matchPrefixes: ['/workflows'],
+      items: [
+        {
+          to: '/workflows',
+          label: 'Workflow Operations',
+          description: 'Orchestrate automation flows',
+          icon: Workflow,
+        },
+        {
+          to: '/workflows/builder',
+          label: 'Workflow Builder',
+          description: 'Design and edit orchestration graphs',
+          icon: Plus,
+        },
+        {
+          to: '/workflows/executions',
+          label: 'Execution Monitor',
+          description: 'Inspect active and historical runs',
+          icon: BarChart3,
+        },
+      ],
+    },
+    {
+      key: 'observe',
+      label: 'Observe',
+      icon: Compass,
+      activeClassName: 'bg-cyan-500/10 text-cyan-400',
+      matchPrefixes: ['/analytics', '/observatory', '/live-view', '/suggestions'],
+      items: [
+        {
+          to: '/analytics',
+          label: 'Analytics',
+          description: 'Operational KPIs and outcomes',
+          icon: BarChart3,
+        },
+        {
+          to: '/observatory',
+          label: 'System Observatory',
+          description: 'Platform telemetry and health',
+          icon: Network,
+        },
+        {
+          to: '/live-view',
+          label: 'Live Viewer',
+          description: 'Real-time cloud sandbox activity',
+          icon: Globe,
+        },
+        {
+          to: '/suggestions',
+          label: 'Ideation Layer',
+          description: 'AI-driven opportunity suggestions',
+          icon: Lightbulb,
+        },
+      ],
+    },
+    {
+      key: 'ecosystem',
+      label: 'Ecosystem',
+      icon: Layout,
+      activeClassName: 'bg-emerald-500/10 text-emerald-400',
+      matchPrefixes: ['/hub', '/sophisticated-hub', '/mcp-hub', '/marketplace', '/knowledge-hub'],
+      items: [
+        {
+          to: '/hub',
+          label: 'TNF Hub',
+          description: 'Primary ecosystem entry point',
+          icon: Layout,
+        },
+        {
+          to: '/mcp-hub',
+          label: 'MCP Protocol Hub',
+          description: 'Model context and integrations',
+          icon: Boxes,
+        },
+        {
+          to: '/marketplace',
+          label: 'Platform',
+          description: 'Marketplace and ecosystem surface',
+          icon: Package,
+        },
+        {
+          to: '/knowledge-hub',
+          label: 'Knowledge Hub',
+          description: 'Shared memory and references',
+          icon: Database,
+        },
+      ],
+    },
+  ];
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -187,183 +337,62 @@ function SmartNavigation() {
                 Dashboard
               </Link>
 
-              {/* Operations Menu */}
-              <div className="relative">
-                <button
-                  onClick={() => toggleDropdown('operations')}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${
-                    ['/agents', '/workflows', '/tasks'].some((p) => location.pathname.startsWith(p))
-                      ? 'bg-blue-500/10 text-blue-400'
-                      : 'text-slate-400 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  <SquareTerminal className="w-4 h-4" />
-                  Operations
-                  <ChevronDown
-                    className={`w-3 h-3 transition-transform ${activeDropdown === 'operations' ? 'rotate-180' : ''}`}
-                  />
-                </button>
-                {activeDropdown === 'operations' && (
-                  <div className="absolute top-full left-0 mt-2 w-64 bg-slate-900 border border-white/10 rounded-xl shadow-2xl p-2 z-50 overflow-hidden">
-                    <div className="px-3 py-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                      Core Fleet
-                    </div>
-                    <Link
-                      to="/agents"
-                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg group"
-                    >
-                      <Bot className="w-4 h-4 text-cyan-400" />
-                      <div>
-                        <div className="text-sm font-medium text-slate-200">Agent Fleet</div>
-                        <div className="text-[10px] text-slate-500">Manage autonomous swarms</div>
-                      </div>
-                    </Link>
-                    <Link
-                      to="/agents/new"
-                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
-                    >
-                      <Plus className="w-4 h-4 text-slate-400" />
-                      <span className="text-sm">Quick Create Agent</span>
-                    </Link>
-                    <div className="my-2 border-t border-white/5" />
-                    <div className="px-3 py-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                      Automation
-                    </div>
-                    <Link
-                      to="/workflows"
-                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
-                    >
-                      <Workflow className="w-4 h-4 text-purple-400" />
-                      <span className="text-sm">Workflows</span>
-                    </Link>
-                    <Link
-                      to="/tasks"
-                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
-                    >
-                      <ClipboardList className="w-4 h-4 text-emerald-400" />
-                      <span className="text-sm">Task Management</span>
-                    </Link>
-                    <Link
-                      to="/timeline"
-                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
-                    >
-                      <Activity className="w-4 h-4 text-orange-400" />
-                      <span className="text-sm">Unified Timeline</span>
-                    </Link>
-                  </div>
-                )}
-              </div>
+              {domainMenus.map((menu) => {
+                const Icon = menu.icon;
+                const isActive =
+                  activeDropdown === menu.key ||
+                  menu.matchPrefixes.some((prefix) => location.pathname.startsWith(prefix));
 
-              {/* Ecosystem Menu */}
-              <div className="relative">
-                <button
-                  onClick={() => toggleDropdown('ecosystem')}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${
-                    activeDropdown === 'ecosystem'
-                      ? 'bg-cyan-500/10 text-cyan-400'
-                      : 'text-slate-400 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  <Compass className="w-4 h-4" />
-                  Ecosystem
-                  <ChevronDown
-                    className={`w-3 h-3 transition-transform ${activeDropdown === 'ecosystem' ? 'rotate-180' : ''}`}
-                  />
-                </button>
-                {activeDropdown === 'ecosystem' && (
-                  <div className="absolute top-full left-0 mt-2 w-64 bg-slate-900 border border-white/10 rounded-xl shadow-2xl p-2 z-50">
-                    <Link
-                      to="/sophisticated-hub"
-                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
+                return (
+                  <div key={menu.key} className="relative">
+                    <button
+                      onClick={() => toggleDropdown(menu.key)}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${
+                        isActive
+                          ? menu.activeClassName
+                          : 'text-slate-400 hover:text-white hover:bg-white/5'
+                      }`}
                     >
-                      <Layout className="w-4 h-4 text-cyan-400" />
-                      <span className="text-sm">Sophisticated Hub</span>
-                    </Link>
-                    <Link
-                      to="/mcp-hub"
-                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
-                    >
-                      <Boxes className="w-4 h-4 text-orange-400" />
-                      <span className="text-sm">MCP Protocol Hub</span>
-                    </Link>
-                    <Link
-                      to="/marketplace"
-                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
-                    >
-                      <Package className="w-4 h-4 text-pink-400" />
-                      <span className="text-sm">Platform Overview</span>
-                    </Link>
-                    <Link
-                      to="/knowledge-hub"
-                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
-                    >
-                      <Database className="w-4 h-4 text-blue-400" />
-                      <span className="text-sm">Knowledge Base</span>
-                    </Link>
-                  </div>
-                )}
-              </div>
+                      <Icon className="w-4 h-4" />
+                      {menu.label}
+                      <ChevronDown
+                        className={`w-3 h-3 transition-transform ${activeDropdown === menu.key ? 'rotate-180' : ''}`}
+                      />
+                    </button>
+                    {activeDropdown === menu.key && (
+                      <div className="absolute top-full left-0 mt-2 w-72 bg-slate-900 border border-white/10 rounded-xl shadow-2xl p-2 z-50">
+                        {menu.items.map((item) => {
+                          const ItemIcon = item.icon;
+                          const lifecycle = lifecycleByPath.get(item.to);
 
-              {/* Intelligence Menu */}
-              <div className="relative">
-                <button
-                  onClick={() => toggleDropdown('intelligence')}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${
-                    activeDropdown === 'intelligence'
-                      ? 'bg-purple-500/10 text-purple-400'
-                      : 'text-slate-400 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  <Cpu className="w-4 h-4" />
-                  Intelligence
-                  <ChevronDown
-                    className={`w-3 h-3 transition-transform ${activeDropdown === 'intelligence' ? 'rotate-180' : ''}`}
-                  />
-                </button>
-                {activeDropdown === 'intelligence' && (
-                  <div className="absolute top-full left-0 mt-2 w-72 bg-slate-900 border border-white/10 rounded-xl shadow-2xl p-2 z-50">
-                    <Link
-                      to="/ai-command-center"
-                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
-                    >
-                      <MessageSquare className="w-4 h-4 text-blue-400" />
-                      <div>
-                        <div className="text-sm font-medium text-slate-200">Command Center</div>
-                        <div className="text-[10px] text-slate-500">
-                          Multi-agent chat environment
-                        </div>
+                          return (
+                            <Link
+                              key={item.to}
+                              to={item.to}
+                              className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg group"
+                            >
+                              <ItemIcon className="w-4 h-4 text-slate-300 group-hover:text-white" />
+                              <div className="min-w-0">
+                                <div className="text-sm font-medium text-slate-200 flex items-center gap-2">
+                                  <span>{item.label}</span>
+                                  {lifecycle && lifecycle !== 'production' && (
+                                    <span className="text-[9px] px-1.5 py-0.5 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-300 uppercase tracking-wide">
+                                      {lifecycle}
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="text-[10px] text-slate-500 truncate">
+                                  {item.description}
+                                </div>
+                              </div>
+                            </Link>
+                          );
+                        })}
                       </div>
-                    </Link>
-                    <Link
-                      to="/live-view"
-                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
-                    >
-                      <Globe className="w-4 h-4 text-purple-400" />
-                      <span className="text-sm">Live Viewer (Cloud Sandbox)</span>
-                    </Link>
-                    <Link
-                      to="/observatory"
-                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
-                    >
-                      <Network className="w-4 h-4 text-emerald-400" />
-                      <span className="text-sm">System Observatory</span>
-                    </Link>
-                    <div className="my-2 border-t border-white/5" />
-                    <Link
-                      to="/suggestions"
-                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
-                    >
-                      <Lightbulb className="w-4 h-4 text-yellow-400" />
-                      <div>
-                        <div className="text-sm font-medium text-slate-200">Ideation Layer</div>
-                        <div className="text-[10px] text-slate-500">
-                          AI-driven feature suggestions
-                        </div>
-                      </div>
-                    </Link>
+                    )}
                   </div>
-                )}
-              </div>
+                );
+              })}
             </div>
           </div>
 

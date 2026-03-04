@@ -287,6 +287,34 @@ export class AgentService {
     return this.updateAgentStatus(id, AgentStatus.ERROR, userId);
   }
 
+  async deployAgent(
+    id: string,
+    userId: string,
+    target: 'cloud' | 'local' | 'hybrid' = 'cloud'
+  ): Promise<{
+    agent: AgentResponseDto;
+    deployment: {
+      status: 'deployed';
+      target: 'cloud' | 'local' | 'hybrid';
+      orchestrator: 'kubernetes' | 'docker' | 'hybrid';
+      deployedAt: string;
+    };
+  }> {
+    const agent = await this.activateAgent(id, userId);
+    const orchestrator =
+      target === 'local' ? 'docker' : target === 'hybrid' ? 'hybrid' : 'kubernetes';
+
+    return {
+      agent,
+      deployment: {
+        status: 'deployed',
+        target,
+        orchestrator,
+        deployedAt: new Date().toISOString(),
+      },
+    };
+  }
+
   async searchAgents(
     userId: string,
     query: string,
@@ -310,11 +338,7 @@ export class AgentService {
    * Update agent profile (self-identification)
    * Allows agents to update their own profile information
    */
-  async updateAgentProfile(
-    id: string,
-    profileDto: any,
-    userId: string
-  ): Promise<AgentResponseDto> {
+  async updateAgentProfile(id: string, profileDto: any, userId: string): Promise<AgentResponseDto> {
     try {
       const existingAgent = await this.agentRepository.findById(id, userId);
       if (!existingAgent) {

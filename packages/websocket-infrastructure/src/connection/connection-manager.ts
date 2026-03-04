@@ -40,7 +40,9 @@ export class ConnectionManager {
     // Setup event handlers
     this.setupEventHandlers(socket);
 
-    this.logger.log(`Client connected: ${socket.id}${socket.userId ? ` (User: ${socket.userId})` : ''}`);
+    this.logger.log(
+      `Client connected: ${socket.id}${socket.userId ? ` (User: ${socket.userId})` : ''}`
+    );
   }
 
   /**
@@ -134,7 +136,7 @@ export class ConnectionManager {
    */
   public broadcast(event: string, data: any): void {
     const connections = this.connectionPool.getAllConnections();
-    connections.forEach(socket => {
+    connections.forEach((socket) => {
       socket.emit(event, data);
     });
     this.logger.debug(`Broadcast ${event} to ${connections.length} connections`);
@@ -145,7 +147,7 @@ export class ConnectionManager {
    */
   public sendToUser(userId: string, event: string, data: any): void {
     const connections = this.connectionPool.getUserConnections(userId);
-    connections.forEach(socket => {
+    connections.forEach((socket) => {
       socket.emit(event, data);
     });
     this.logger.debug(`Sent ${event} to user ${userId} (${connections.length} connections)`);
@@ -158,7 +160,7 @@ export class ConnectionManager {
     const connections = this.connectionPool.getAllConnections();
     let sentCount = 0;
 
-    connections.forEach(socket => {
+    connections.forEach((socket) => {
       if (socket.rooms.has(roomName)) {
         socket.emit(event, data);
         sentCount++;
@@ -187,7 +189,7 @@ export class ConnectionManager {
    */
   public disconnectUser(userId: string, reason?: string): void {
     const connections = this.connectionPool.getUserConnections(userId);
-    connections.forEach(socket => {
+    connections.forEach((socket) => {
       if (reason) {
         socket.emit('disconnect:reason', { reason });
       }

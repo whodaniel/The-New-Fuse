@@ -1,7 +1,16 @@
+import {
+  EXPERIENCE_SURFACES,
+  type ExperienceDomain,
+  type SurfaceLifecycle,
+} from './experienceArchitecture';
+
 export interface PageInfo {
   name: string;
   path: string;
   description?: string;
+  domain?: ExperienceDomain;
+  lifecycle?: SurfaceLifecycle;
+  canonical?: boolean;
 }
 
 export interface PageCategory {
@@ -11,7 +20,7 @@ export interface PageCategory {
 
 const BASE_CATALOG_COUNT = 123;
 
-export const ALL_PAGES_CATALOG: PageInfo[] = [
+const RAW_PAGES_CATALOG: PageInfo[] = [
   // Core Application Pages
   { name: 'Home', path: '/', description: 'Enhanced Home Page with Production Status' },
   { name: 'Dashboard', path: '/dashboard', description: 'Main Dashboard with Metrics' },
@@ -409,6 +418,40 @@ export const ALL_PAGES_CATALOG: PageInfo[] = [
     description: 'Workflow execution alias route',
   },
 ];
+
+const experienceByPath = new Map<
+  string,
+  { domain: ExperienceDomain; lifecycle: SurfaceLifecycle; canonical?: boolean }
+>();
+
+for (const surface of EXPERIENCE_SURFACES) {
+  experienceByPath.set(surface.path, {
+    domain: surface.domain,
+    lifecycle: surface.lifecycle,
+    canonical: surface.canonical,
+  });
+  surface.aliases?.forEach((alias) =>
+    experienceByPath.set(alias, {
+      domain: surface.domain,
+      lifecycle: surface.lifecycle,
+      canonical: false,
+    })
+  );
+}
+
+export const ALL_PAGES_CATALOG: PageInfo[] = RAW_PAGES_CATALOG.map((page) => {
+  const mapping = experienceByPath.get(page.path);
+  if (!mapping) {
+    return { ...page, lifecycle: 'internal' };
+  }
+
+  return {
+    ...page,
+    domain: mapping.domain,
+    lifecycle: mapping.lifecycle,
+    canonical: mapping.canonical,
+  };
+});
 
 export const ALL_PAGE_CATEGORIES: PageCategory[] = [
   { name: 'Core Application', pages: ALL_PAGES_CATALOG.slice(0, 3) },

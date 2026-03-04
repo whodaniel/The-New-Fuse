@@ -16,6 +16,8 @@ export const LEGACY_REDIRECTS: LegacyRedirect[] = [
   { from: '/nodes', to: '/observatory' },
   { from: '/config', to: '/settings' },
   { from: '/logs', to: '/admin/audit-logs' },
+  { from: '/audit-logs', to: '/admin/audit-logs' },
+  { from: '/tnf-hub', to: '/hub' },
 
   { from: '/admin/panel', to: '/admin' },
   { from: '/team', to: '/workspace/members' },

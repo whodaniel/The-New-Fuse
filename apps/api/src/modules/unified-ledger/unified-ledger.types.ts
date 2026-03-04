@@ -117,6 +117,7 @@ export interface UnifiedTaskRecord {
 
 export interface TimelineEvent {
   id: string;
+  userId?: string;
   recordId?: string;
   goalId?: string;
   planId?: string;

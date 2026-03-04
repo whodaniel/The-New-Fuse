@@ -1,3 +1,8 @@
+import {
+  EXPERIENCE_DOMAIN_LABELS,
+  EXPERIENCE_SURFACES,
+  type ExperienceSurface,
+} from '@/config/experienceArchitecture';
 import { ALL_PAGE_CATEGORIES, ALL_PAGES_CATALOG } from '@/config/routeCatalog';
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -23,6 +28,24 @@ const AllPages: React.FC = () => {
   );
 
   const totalPages = ALL_PAGES_CATALOG.length;
+  const architectureMap = useMemo(() => {
+    const map = new Map<string, ExperienceSurface>();
+
+    for (const surface of EXPERIENCE_SURFACES) {
+      map.set(surface.path, surface);
+      surface.aliases?.forEach((alias) => map.set(alias, surface));
+    }
+
+    return map;
+  }, []);
+
+  const domainCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const surface of EXPERIENCE_SURFACES) {
+      counts[surface.domain] = (counts[surface.domain] || 0) + 1;
+    }
+    return counts;
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-8">
@@ -79,6 +102,21 @@ const AllPages: React.FC = () => {
                   key={`${category.name}:${page.path}`}
                   className="p-6 border rounded-lg bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105"
                 >
+                  {(() => {
+                    const architecture = architectureMap.get(page.path);
+                    if (!architecture) return null;
+
+                    return (
+                      <div className="flex gap-2 mb-3">
+                        <span className="text-[10px] font-semibold px-2 py-1 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border border-indigo-300/50">
+                          {EXPERIENCE_DOMAIN_LABELS[architecture.domain]}
+                        </span>
+                        <span className="text-[10px] font-semibold px-2 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-300/50 uppercase">
+                          {architecture.lifecycle}
+                        </span>
+                      </div>
+                    );
+                  })()}
                   <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
                     {page.name}
                   </h3>
@@ -149,6 +187,21 @@ const AllPages: React.FC = () => {
               <br />
               Active ✅
             </div>
+            <div>
+              <strong className="text-blue-700 dark:text-blue-300">Domains:</strong>
+              <br />
+              {Object.keys(domainCounts).length} mapped
+            </div>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {Object.entries(domainCounts).map(([domain, count]) => (
+              <span
+                key={domain}
+                className="text-xs px-2 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 border border-blue-300/40 text-blue-700 dark:text-blue-300"
+              >
+                {EXPERIENCE_DOMAIN_LABELS[domain as keyof typeof EXPERIENCE_DOMAIN_LABELS]}: {count}
+              </span>
+            ))}
           </div>
         </div>
       </div>

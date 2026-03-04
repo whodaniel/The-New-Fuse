@@ -38,9 +38,7 @@ export class WebSocketTestClient {
     }
 
     if (config.compression?.enabled) {
-      this.compressionMiddleware = new CompressionMiddleware(
-        config.compression.threshold ?? 1024
-      );
+      this.compressionMiddleware = new CompressionMiddleware(config.compression.threshold ?? 1024);
     }
   }
 

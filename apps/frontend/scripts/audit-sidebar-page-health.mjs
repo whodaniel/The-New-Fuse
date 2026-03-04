@@ -62,7 +62,15 @@ function extractImportMap(src) {
 
 function extractRouteMap(src, importMap) {
   const out = new Map();
-  const wrappers = new Set(['Route', 'RequireAuth', 'RequirePermission', 'Navigate', 'LoadingFallback']);
+  const wrappers = new Set([
+    'Route',
+    'RequireAuth',
+    'RequirePermission',
+    'Navigate',
+    'LoadingFallback',
+    'Suspense',
+    'Fragment',
+  ]);
   const routeBlocks = [];
   const lines = src.split('\n');
   let collecting = false;

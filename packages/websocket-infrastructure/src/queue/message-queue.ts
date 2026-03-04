@@ -86,7 +86,9 @@ export class MessageQueue extends EventEmitter {
     this.queue.set(messageId, item);
     this.insertIntoPriorityQueue(item);
 
-    this.logger.debug(`Message enqueued: ${messageId} (Channel: ${channel}, Priority: ${priority})`);
+    this.logger.debug(
+      `Message enqueued: ${messageId} (Channel: ${channel}, Priority: ${priority})`
+    );
     this.emit('message:enqueued', item);
 
     return messageId;
@@ -128,7 +130,7 @@ export class MessageQueue extends EventEmitter {
     this.queue.delete(messageId);
 
     // Remove from priority queue
-    const index = this.priorityQueue.findIndex(i => i.id === messageId);
+    const index = this.priorityQueue.findIndex((i) => i.id === messageId);
     if (index !== -1) {
       this.priorityQueue.splice(index, 1);
     }
@@ -237,7 +239,7 @@ export class MessageQueue extends EventEmitter {
       this.queue.delete(id);
 
       // Remove from priority queue
-      const index = this.priorityQueue.findIndex(i => i.id === id);
+      const index = this.priorityQueue.findIndex((i) => i.id === id);
       if (index !== -1) {
         this.priorityQueue.splice(index, 1);
       }

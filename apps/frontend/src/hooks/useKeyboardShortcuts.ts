@@ -33,10 +33,9 @@ export const useKeyboardShortcuts = () => {
       action: () => document.dispatchEvent(new CustomEvent('cmd:palette')),
     },
     { key: 'Cmd+H', description: 'Go to Home', category: 'Navigation', path: '/' },
-    { key: 'Cmd+A', description: 'Go to Agents', category: 'Navigation', path: '/agents' },
     { key: 'Cmd+W', description: 'Go to Workflows', category: 'Navigation', path: '/workflows' },
     {
-      key: 'Cmd+C',
+      key: 'Cmd+Shift+C',
       description: 'Go to Command Center',
       category: 'Navigation',
       path: '/command-center',
@@ -79,6 +78,11 @@ export const useKeyboardShortcuts = () => {
       const isMod = event.metaKey || event.ctrlKey;
       const key = event.key;
       const isShift = event.shiftKey;
+
+      // Never hijack native clipboard/select-all shortcuts.
+      if (isMod && !isShift && ['c', 'x', 'v', 'a'].includes(key.toLowerCase())) {
+        return;
+      }
 
       const matchedShortcut = shortcuts.find((s) => {
         if (s.key === '?') return key === '?' || (key === '/' && isShift);

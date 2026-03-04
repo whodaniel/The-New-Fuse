@@ -1,40 +1,83 @@
 import { GlassCard, PremiumButton, StatsCard } from '@/components/ui/premium';
-import { Activity, Bot, Eye, PlayCircle, Sparkles, Target } from 'lucide-react';
+import { Activity, Bot, Eye, Loader2, PlayCircle, Sparkles, Target } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
-const agentData = [
-  {
-    id: 1,
-    name: 'Task Dominator',
-    type: 'Workflow Champion',
-    status: 'Active',
-    tasks: 12,
-    description: 'Elite task execution specialist conquering complex workflows with precision',
-  },
-  {
-    id: 2,
-    name: 'Data Synthesizer',
-    type: 'Intelligence Processor',
-    status: 'Idle',
-    tasks: 8,
-    description:
-      'Advanced data processing unit transforming raw information into strategic insights',
-  },
-  {
-    id: 3,
-    name: 'Communication Nexus',
-    type: 'Message Orchestrator',
-    status: 'Active',
-    tasks: 15,
-    description: 'Strategic communication hub coordinating cross-platform message flows',
-  },
-];
+interface Agent {
+  id: string;
+  name: string;
+  type: string;
+  status: string;
+  description?: string;
+}
 
 const Agents = () => {
   const navigate = useNavigate();
+  const [agents, setAgents] = useState<Agent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [deployingId, setDeployingId] = useState<string | null>(null);
+
+  const loadAgents = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/agents', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+        },
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch agents (${response.status})`);
+      }
+
+      const data = await response.json();
+      setAgents(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Failed to fetch agents:', error);
+      setAgents([]);
+      toast.error('Failed to load agents');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadAgents();
+  }, []);
+
+  const handleDeploy = async (agentId: string) => {
+    try {
+      setDeployingId(agentId);
+      const response = await fetch(`/api/agents/${agentId}/deploy`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+        },
+        credentials: 'include',
+        body: JSON.stringify({ target: 'cloud' }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Deployment failed (${response.status})`);
+      }
+
+      toast.success('Agent deployed successfully');
+      await loadAgents();
+    } catch (error) {
+      console.error('Deploy failed:', error);
+      toast.error(error instanceof Error ? error.message : 'Deploy failed');
+    } finally {
+      setDeployingId(null);
+    }
+  };
 
   const getStatusBadge = (status: string) => {
-    if (status === 'Active') {
+    const normalized = status.toLowerCase();
+    if (normalized === 'active') {
       return (
         <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30">
           <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
@@ -50,17 +93,26 @@ const Agents = () => {
     );
   };
 
-  const activeAgents = agentData.filter((a) => a.status === 'Active').length;
-  const totalTasks = agentData.reduce((sum, agent) => sum + agent.tasks, 0);
+  const activeAgents = useMemo(
+    () => agents.filter((agent) => agent.status?.toLowerCase() === 'active').length,
+    [agents]
+  );
+  const totalTasks = useMemo(() => activeAgents * 3, [activeAgents]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6 flex items-center justify-center">
+        <Loader2 className="w-7 h-7 animate-spin text-purple-400" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6 relative overflow-hidden">
-      {/* Animated background orbs */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
 
       <div className="relative z-10 space-y-8">
-        {/* Header */}
         <div className="flex items-center justify-between animate-fade-in">
           <div className="flex items-center gap-3">
             <Bot className="w-8 h-8 text-purple-400" />
@@ -77,14 +129,13 @@ const Agents = () => {
           </PremiumButton>
         </div>
 
-        {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-slide-up">
           <StatsCard
             label="Total Champions"
-            value={agentData.length}
+            value={agents.length}
             icon={Bot}
             gradient="purple"
-            change="+1 this week"
+            change="Live fleet size"
             changeType="positive"
           />
           <StatsCard
@@ -92,7 +143,7 @@ const Agents = () => {
             value={activeAgents}
             icon={Activity}
             gradient="green"
-            change="Conquering workflows"
+            change="Backed by deployment API"
             changeType="positive"
           />
           <StatsCard
@@ -100,14 +151,13 @@ const Agents = () => {
             value={totalTasks}
             icon={Target}
             gradient="blue"
-            change="+7 today"
+            change="Estimated active load"
             changeType="positive"
           />
         </div>
 
-        {/* Agents Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {agentData.map((agent, index) => (
+          {agents.map((agent, index) => (
             <div
               key={agent.id}
               className="animate-fade-in-up"
@@ -118,7 +168,6 @@ const Agents = () => {
                 className="h-full group cursor-pointer"
                 onClick={() => navigate(`/dashboard/agents/${agent.id}`)}
               >
-                {/* Agent Header */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-lg">
@@ -134,18 +183,10 @@ const Agents = () => {
                   {getStatusBadge(agent.status)}
                 </div>
 
-                {/* Description */}
-                <p className="text-gray-300 mb-4 leading-relaxed text-sm">{agent.description}</p>
+                <p className="text-gray-300 mb-4 leading-relaxed text-sm">
+                  {agent.description || 'No description provided.'}
+                </p>
 
-                {/* Task Count */}
-                <div className="mb-4 p-3 rounded-lg bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-400">Active Missions</span>
-                    <span className="text-2xl font-bold text-white">{agent.tasks}</span>
-                  </div>
-                </div>
-
-                {/* Actions */}
                 <div className="flex gap-2">
                   <PremiumButton
                     variant="outline"
@@ -159,17 +200,19 @@ const Agents = () => {
                   >
                     Inspect
                   </PremiumButton>
-                  {agent.status === 'Idle' && (
+                  {agent.status?.toLowerCase() !== 'active' && (
                     <PremiumButton
                       variant="primary"
                       size="sm"
-                      icon={PlayCircle}
+                      icon={deployingId === agent.id ? Loader2 : PlayCircle}
                       fullWidth
                       onClick={(e) => {
                         e.stopPropagation();
+                        void handleDeploy(agent.id);
                       }}
+                      disabled={deployingId === agent.id}
                     >
-                      Deploy
+                      {deployingId === agent.id ? 'Deploying...' : 'Deploy'}
                     </PremiumButton>
                   )}
                 </div>

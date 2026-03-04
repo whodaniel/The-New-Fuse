@@ -43,6 +43,7 @@
 }
 
 :root {
+  --app-font-scale: 1;
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
@@ -104,6 +105,7 @@ h6 {
 
 /* Mobile optimization: Smooth scrolling */
 html {
+  font-size: calc(16px * var(--app-font-scale));
   scroll-behavior: smooth;
 }
 

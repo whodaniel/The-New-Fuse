@@ -207,6 +207,33 @@ export class WorkflowController {
     }
   }
 
+  // POST /api/workflows/:id/publish
+  @Post(':id/publish')
+  async publishWorkflow(@Param('id') id: string, @Res() res: Response): Promise<void> {
+    try {
+      const workflow = await this.db.workflows.updateWorkflow(id, {
+        status: 'ACTIVE',
+      } as any);
+
+      if (!workflow) {
+        res.status(404).json({ error: 'Workflow not found' });
+        return;
+      }
+
+      this.logger.log(`Published workflow: ${workflow.name} (${workflow.id})`);
+      res.json({
+        ...workflow,
+        publication: {
+          status: 'published',
+          publishedAt: new Date().toISOString(),
+        },
+      });
+    } catch (error: unknown) {
+      this.logger.error(`Failed to publish workflow: ${error}`);
+      res.status(500).json({ error: 'Failed to publish workflow' });
+    }
+  }
+
   // DELETE /api/workflows/:id
   @Delete(':id')
   async deleteWorkflow(@Param('id') id: string, @Res() res: Response): Promise<void> {

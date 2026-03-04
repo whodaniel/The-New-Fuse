@@ -9,7 +9,10 @@ export class CompressionUtil {
   /**
    * Compress data using specified algorithm
    */
-  public static compress(data: any, algorithm: CompressionAlgorithm = CompressionAlgorithm.GZIP): Buffer {
+  public static compress(
+    data: any,
+    algorithm: CompressionAlgorithm = CompressionAlgorithm.GZIP
+  ): Buffer {
     const jsonString = typeof data === 'string' ? data : JSON.stringify(data);
     const buffer = Buffer.from(jsonString, 'utf-8');
 
@@ -31,7 +34,10 @@ export class CompressionUtil {
   /**
    * Decompress data using specified algorithm
    */
-  public static decompress(data: Buffer, algorithm: CompressionAlgorithm = CompressionAlgorithm.GZIP): any {
+  public static decompress(
+    data: Buffer,
+    algorithm: CompressionAlgorithm = CompressionAlgorithm.GZIP
+  ): any {
     try {
       let decompressed: Uint8Array;
 

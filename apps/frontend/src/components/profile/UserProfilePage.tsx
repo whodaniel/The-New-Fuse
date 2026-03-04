@@ -1,5 +1,6 @@
 import { Bell, Camera, Globe, Lock, Mail, Palette, Save, Shield, User, Zap } from 'lucide-react';
 import React, { FormEvent, useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { AuthService } from '../../core/services/AuthService';
 import { useAuthorization } from '../../hooks/useAuthorization';
 import { useAuth } from '../../providers/AuthProvider';
@@ -29,6 +30,12 @@ const UserProfilePage: React.FC = () => {
   const [bio, setBio] = useState<string>('');
   const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system');
   const [notifications, setNotifications] = useState<boolean>(false);
+  const [initialProfileState, setInitialProfileState] = useState<{
+    displayName: string;
+    bio: string;
+    theme: 'light' | 'dark' | 'system';
+    notifications: boolean;
+  } | null>(null);
 
   // Password Change State
   const [showPasswordForm, setShowPasswordForm] = useState(false);
@@ -81,6 +88,12 @@ const UserProfilePage: React.FC = () => {
             setBio(fallbackProfile.bio || '');
             setTheme(fallbackProfile.preferences?.theme || 'system');
             setNotifications(fallbackProfile.preferences?.notifications || false);
+            setInitialProfileState({
+              displayName: fallbackProfile.displayName || '',
+              bio: fallbackProfile.bio || '',
+              theme: fallbackProfile.preferences?.theme || 'system',
+              notifications: fallbackProfile.preferences?.notifications || false,
+            });
             setIsLoading(false);
             return;
           }
@@ -93,6 +106,12 @@ const UserProfilePage: React.FC = () => {
         setBio(data.bio || '');
         setTheme(data.preferences?.theme || 'system');
         setNotifications(data.preferences?.notifications || false);
+        setInitialProfileState({
+          displayName: data.displayName || '',
+          bio: data.bio || '',
+          theme: data.preferences?.theme || 'system',
+          notifications: data.preferences?.notifications || false,
+        });
       } catch (err) {
         // Use Firebase user as ultimate fallback
         if (user) {
@@ -111,6 +130,12 @@ const UserProfilePage: React.FC = () => {
           setBio(fallbackProfile.bio || '');
           setTheme(fallbackProfile.preferences?.theme || 'system');
           setNotifications(fallbackProfile.preferences?.notifications || false);
+          setInitialProfileState({
+            displayName: fallbackProfile.displayName || '',
+            bio: fallbackProfile.bio || '',
+            theme: fallbackProfile.preferences?.theme || 'system',
+            notifications: fallbackProfile.preferences?.notifications || false,
+          });
         } else {
           setError(err instanceof Error ? err.message : 'An unknown error occurred');
           console.error('Fetch profile error:', err);
@@ -144,15 +169,18 @@ const UserProfilePage: React.FC = () => {
 
       if (result.success) {
         setSuccessMessage('Password updated successfully');
+        toast.success('Password updated');
         setShowPasswordForm(false);
         setNewPassword('');
         setConfirmPassword('');
         setTimeout(() => setSuccessMessage(null), 3000);
       } else {
         setError(result.error?.message || 'Failed to update password');
+        toast.error(result.error?.message || 'Failed to update password');
       }
     } catch (err: any) {
       setError(err.message || 'An error occurred');
+      toast.error(err.message || 'An error occurred');
     } finally {
       setIsChangingPassword(false);
     }
@@ -199,6 +227,13 @@ const UserProfilePage: React.FC = () => {
           // Save to localStorage as fallback
           localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
           setSuccessMessage('Profile updated locally (API unavailable)');
+          setInitialProfileState({
+            displayName,
+            bio,
+            theme,
+            notifications,
+          });
+          toast.success('Profile saved locally');
           setTimeout(() => setSuccessMessage(null), 3000);
           setIsLoading(false);
           return;
@@ -209,6 +244,13 @@ const UserProfilePage: React.FC = () => {
       const updatedProfile: UserProfile = await response.json();
       setProfile(updatedProfile);
       setSuccessMessage('Profile updated successfully!');
+      setInitialProfileState({
+        displayName,
+        bio,
+        theme,
+        notifications,
+      });
+      toast.success('Profile updated successfully');
 
       // Auto-hide success message after 3 seconds
       setTimeout(() => setSuccessMessage(null), 3000);
@@ -227,10 +269,18 @@ const UserProfilePage: React.FC = () => {
         setProfile(updatedProfile);
         localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
         setSuccessMessage('Profile updated locally (API unavailable)');
+        setInitialProfileState({
+          displayName,
+          bio,
+          theme,
+          notifications,
+        });
+        toast.success('Profile saved locally');
         setTimeout(() => setSuccessMessage(null), 3000);
       } else {
         setError(err instanceof Error ? err.message : 'An unknown error occurred while updating');
         console.error('Update profile error:', err);
+        toast.error(err instanceof Error ? err.message : 'Failed to update profile');
       }
     } finally {
       setIsLoading(false);
@@ -634,10 +684,20 @@ const UserProfilePage: React.FC = () => {
             <button
               type="button"
               onClick={() => {
-                setDisplayName(profile?.displayName || '');
-                setBio(profile?.bio || '');
-                setTheme(profile?.preferences?.theme || 'system');
-                setNotifications(profile?.preferences?.notifications || false);
+                const resetState = initialProfileState ?? {
+                  displayName: profile?.displayName || '',
+                  bio: profile?.bio || '',
+                  theme: profile?.preferences?.theme || 'system',
+                  notifications: profile?.preferences?.notifications || false,
+                };
+                setDisplayName(resetState.displayName);
+                setBio(resetState.bio);
+                setTheme(resetState.theme);
+                setNotifications(resetState.notifications);
+                setError(null);
+                setSuccessMessage('Form reset to last saved profile state.');
+                toast.success('Profile form reset');
+                setTimeout(() => setSuccessMessage(null), 2500);
               }}
               disabled={isLoading}
               className="px-6 py-3 border border-white/10 rounded-lg shadow-sm bg-white/5 text-sm font-medium text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"

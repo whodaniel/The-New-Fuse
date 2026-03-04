@@ -27,6 +27,9 @@ RECOVERY_INTERVAL="${RECOVERY_INTERVAL:-30000}"
 SELF_PROMPT_ENABLED="${SELF_PROMPT_ENABLED:-true}"
 SELF_PROMPT_COOLDOWN_MS="${SELF_PROMPT_COOLDOWN_MS:-30000}"
 FACTORY_SUPERVISOR_ENABLED="${FACTORY_SUPERVISOR_ENABLED:-true}"
+RELAY_ACTIVITY_PERSISTENCE_ENABLED="${RELAY_ACTIVITY_PERSISTENCE_ENABLED:-false}"
+SUPERVISOR_STATE_DIR="${ROOT_DIR}/.agent/runtime-state/supervisor"
+SUPERVISOR_PID_FILE="${SUPERVISOR_STATE_DIR}/supervisor.pid"
 
 echo "[factory-boot] root=${ROOT_DIR}"
 echo "[factory-boot] log_dir=${LOG_DIR}"
@@ -71,35 +74,35 @@ fi
 if curl -fsS --max-time 2 http://localhost:3000/health >/dev/null 2>&1; then
   echo "[factory-boot] relay already healthy on :3000"
 else
-  echo "[factory-boot] starting relay-core relay:dev"
-  nohup bash -lc "cd '${ROOT_DIR}' && REDIS_URL='${REDIS_URL}' ENABLE_REDIS_BRIDGE=true ACTIVITY_PERSISTENCE_ENABLED=true pnpm --filter @the-new-fuse/relay-core run relay:dev" \
+  echo "[factory-boot] starting relay-core relay (compiled)"
+  nohup bash -lc "cd '${ROOT_DIR}/packages/relay-core' && REDIS_URL='${REDIS_URL}' ENABLE_REDIS_BRIDGE=true ENABLE_ACTIVITY_PERSISTENCE='${RELAY_ACTIVITY_PERSISTENCE_ENABLED}' ACTIVITY_PERSISTENCE_REQUIRED=false node dist/standalone-relay.js" \
     > "${LOG_DIR}/relay-dev.log" 2>&1 &
   sleep 3
 fi
 
-if pgrep -f "ts-node src/master-clock.ts" >/dev/null 2>&1; then
+if pgrep -f "dist/master-clock.js|ts-node src/master-clock.ts" >/dev/null 2>&1; then
   echo "[factory-boot] master-clock already running"
 else
-  echo "[factory-boot] starting master-clock:dev"
-  nohup bash -lc "cd '${ROOT_DIR}' && REDIS_URL='${REDIS_URL}' RELAY_URL='${RELAY_URL}' LEDGER_API_BASE='${LEDGER_API_BASE}' STALL_THRESHOLD='${STALL_THRESHOLD}' RECOVERY_INTERVAL='${RECOVERY_INTERVAL}' SELF_PROMPT_ENABLED='${SELF_PROMPT_ENABLED}' SELF_PROMPT_COOLDOWN_MS='${SELF_PROMPT_COOLDOWN_MS}' pnpm --filter @the-new-fuse/relay-core run master-clock:dev" \
+  echo "[factory-boot] starting master-clock (compiled)"
+  nohup bash -lc "cd '${ROOT_DIR}/packages/relay-core' && REDIS_URL='${REDIS_URL}' RELAY_URL='${RELAY_URL}' LEDGER_API_BASE='${LEDGER_API_BASE}' STALL_THRESHOLD='${STALL_THRESHOLD}' RECOVERY_INTERVAL='${RECOVERY_INTERVAL}' SELF_PROMPT_ENABLED='${SELF_PROMPT_ENABLED}' SELF_PROMPT_COOLDOWN_MS='${SELF_PROMPT_COOLDOWN_MS}' node dist/master-clock.js" \
     > "${LOG_DIR}/master-clock-dev.log" 2>&1 &
   sleep 3
 fi
 
-if pgrep -f "ts-node src/broker-agent.ts" >/dev/null 2>&1; then
+if pgrep -f "dist/broker-agent.js|ts-node src/broker-agent.ts" >/dev/null 2>&1; then
   echo "[factory-boot] broker-agent already running"
 else
-  echo "[factory-boot] starting broker-agent:dev"
-  nohup bash -lc "cd '${ROOT_DIR}' && REDIS_URL='${REDIS_URL}' LEDGER_API_BASE='${LEDGER_API_BASE}' pnpm --filter @the-new-fuse/relay-core run broker-agent:dev" \
+  echo "[factory-boot] starting broker-agent (compiled)"
+  nohup bash -lc "cd '${ROOT_DIR}/packages/relay-core' && REDIS_URL='${REDIS_URL}' LEDGER_API_BASE='${LEDGER_API_BASE}' node dist/broker-agent.js" \
     > "${LOG_DIR}/broker-agent-dev.log" 2>&1 &
   sleep 2
 fi
 
-if pgrep -f "ts-node src/director-agent.ts" >/dev/null 2>&1; then
+if pgrep -f "dist/director-agent.js|ts-node src/director-agent.ts" >/dev/null 2>&1; then
   echo "[factory-boot] director-agent already running"
 else
-  echo "[factory-boot] starting director-agent:dev"
-  nohup bash -lc "cd '${ROOT_DIR}' && REDIS_URL='${REDIS_URL}' LEDGER_API_BASE='${LEDGER_API_BASE}' DIRECTOR_AUTO_POLICY='risk-aware' pnpm --filter @the-new-fuse/relay-core run director-agent:dev" \
+  echo "[factory-boot] starting director-agent (compiled)"
+  nohup bash -lc "cd '${ROOT_DIR}/packages/relay-core' && REDIS_URL='${REDIS_URL}' LEDGER_API_BASE='${LEDGER_API_BASE}' DIRECTOR_AUTO_POLICY='risk-aware' node dist/director-agent.js" \
     > "${LOG_DIR}/director-agent-dev.log" 2>&1 &
   sleep 2
 fi
@@ -131,8 +134,20 @@ redis-cli -u "${REDIS_URL}" PUBSUB NUMSUB tnf:director:decisions || true
 echo
 
 if [[ "${FACTORY_SUPERVISOR_ENABLED}" == "true" ]]; then
-  if pgrep -f "scripts/orchestrator/factory-supervisor.sh" >/dev/null 2>&1; then
-    echo "[factory-boot] supervisor already running"
+  mkdir -p "${SUPERVISOR_STATE_DIR}"
+  running_pid=""
+  if [[ -f "${SUPERVISOR_PID_FILE}" ]]; then
+    file_pid="$(cat "${SUPERVISOR_PID_FILE}" 2>/dev/null || true)"
+    if [[ -n "${file_pid}" ]] && kill -0 "${file_pid}" >/dev/null 2>&1; then
+      cmdline="$(ps -p "${file_pid}" -o command= 2>/dev/null || true)"
+      if echo "${cmdline}" | grep -q "factory-supervisor.sh"; then
+        running_pid="${file_pid}"
+      fi
+    fi
+  fi
+
+  if [[ -n "${running_pid}" ]]; then
+    echo "[factory-boot] supervisor already running (pid=${running_pid})"
   else
     echo "[factory-boot] starting factory-supervisor"
     nohup bash -lc "cd '${ROOT_DIR}' && scripts/orchestrator/factory-supervisor.sh" \

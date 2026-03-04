@@ -7,8 +7,8 @@ import {
   PremiumSelect,
   ToggleSwitch,
 } from '@/components/ui/premium';
-import { useTheme } from '@/hooks/useTheme';
 import { useAuth } from '@/providers/AuthProvider';
+import { useTheme } from '@/providers/ThemeProvider';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Bell,
@@ -26,6 +26,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 
 type TabType = 'general' | 'account' | 'appearance' | 'notifications' | 'api';
 
@@ -84,6 +85,9 @@ export default function Settings() {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [language, setLanguage] = useState('english');
+  const [timezone, setTimezone] = useState('utc');
+  const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
 
   // Toggle states for notifications
   const [emailNotif, setEmailNotif] = useState(true);
@@ -91,6 +95,11 @@ export default function Settings() {
   const [agentNotif, setAgentNotif] = useState(true);
   const [apiAccess, setApiAccess] = useState(true);
   const [autoSave, setAutoSave] = useState(false);
+
+  const applyFontSize = (size: 'small' | 'medium' | 'large') => {
+    const scale = size === 'small' ? '0.9375' : size === 'large' ? '1.0625' : '1';
+    document.documentElement.style.setProperty('--app-font-scale', scale);
+  };
 
   useEffect(() => {
     const saved = localStorage.getItem('tnf_settings');
@@ -102,11 +111,28 @@ export default function Settings() {
         setAgentNotif(parsed.agentNotif ?? true);
         setApiAccess(parsed.apiAccess ?? true);
         setAutoSave(parsed.autoSave ?? false);
+        setLanguage(parsed.language ?? 'english');
+        setTimezone(parsed.timezone ?? 'utc');
+        setFontSize(parsed.fontSize ?? 'medium');
       } catch (e) {
         console.error('Failed to parse settings', e);
       }
     }
+
+    const savedFontSize = localStorage.getItem('tnf_font_size') as
+      | 'small'
+      | 'medium'
+      | 'large'
+      | null;
+    if (savedFontSize) {
+      setFontSize(savedFontSize);
+      applyFontSize(savedFontSize);
+    }
   }, []);
+
+  useEffect(() => {
+    applyFontSize(fontSize);
+  }, [fontSize]);
 
   const handleSave = async () => {
     setSaveError(null);
@@ -121,14 +147,18 @@ export default function Settings() {
           agentNotif,
           apiAccess,
           autoSave,
-          language: 'english',
-          timezone: 'utc',
+          language,
+          timezone,
+          fontSize,
         })
       );
+      localStorage.setItem('tnf_font_size', fontSize);
       setSaveSuccess(true);
+      toast.success('Settings saved');
     } catch (error) {
       console.error('Failed to save settings', error);
       setSaveError('Failed to persist settings. Please try again.');
+      toast.error('Failed to save settings');
     } finally {
       setSaving(false);
     }
@@ -226,7 +256,8 @@ export default function Settings() {
                           Language
                         </label>
                         <PremiumSelect
-                          defaultValue="english"
+                          value={language}
+                          onChange={(e) => setLanguage(e.target.value)}
                           options={[
                             { value: 'english', label: 'English' },
                             { value: 'spanish', label: 'Spanish' },
@@ -242,7 +273,8 @@ export default function Settings() {
                           Time Zone
                         </label>
                         <PremiumSelect
-                          defaultValue="utc"
+                          value={timezone}
+                          onChange={(e) => setTimezone(e.target.value)}
                           options={[
                             { value: 'utc', label: 'UTC (Coordinated Universal Time)' },
                             { value: 'est', label: 'EST (Eastern Standard Time)' },
@@ -393,9 +425,9 @@ export default function Settings() {
                           <motion.div
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            onClick={() => setTheme('default')}
+                            onClick={() => setTheme('dark')}
                             className={`p-6 rounded-xl cursor-pointer transition-all border-2 ${
-                              theme === 'default'
+                              theme === 'dark'
                                 ? 'border-purple-500 bg-white/10'
                                 : 'border-white/10 bg-black/20 hover:bg-white/5'
                             }`}
@@ -410,13 +442,21 @@ export default function Settings() {
 
                           <motion.div
                             whileHover={{ scale: 1.02 }}
-                            className="p-6 rounded-xl border-2 border-white/10 bg-black/20 opacity-50 cursor-not-allowed"
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => {
+                              const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
+                                .matches
+                                ? 'dark'
+                                : 'light';
+                              setTheme(systemTheme);
+                            }}
+                            className="p-6 rounded-xl border-2 border-white/10 bg-black/20 cursor-pointer hover:bg-white/5 transition-all"
                           >
                             <div className="flex flex-col items-center gap-3">
                               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center">
                                 <Settings2 className="w-6 h-6 text-white" />
                               </div>
-                              <span className="text-gray-400 font-medium">System</span>
+                              <span className="text-white font-medium">System</span>
                             </div>
                           </motion.div>
                         </div>
@@ -427,7 +467,10 @@ export default function Settings() {
                           Font Size
                         </label>
                         <PremiumSelect
-                          defaultValue="medium"
+                          value={fontSize}
+                          onChange={(e) =>
+                            setFontSize(e.target.value as 'small' | 'medium' | 'large')
+                          }
                           options={[
                             { value: 'small', label: 'Small' },
                             { value: 'medium', label: 'Medium' },

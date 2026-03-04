@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { createTask, type LedgerStatus } from '@/services/unifiedLedgerApi';
 import { Calendar, ChevronLeft, Clock, Paperclip, Plus, Save, Tag, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
 interface TaskFormData {
@@ -149,8 +150,14 @@ const NewTask: React.FC = () => {
         progressPercent: formData.status === 'completed' ? 100 : 0,
       },
     })
-      .then((created) => navigate(`/tasks/${created.id}`))
-      .catch((error) => console.error('Failed to create task:', error));
+      .then((created) => {
+        toast.success('Task created and added to the event ledger');
+        navigate(`/tasks/${created.id}`);
+      })
+      .catch((error) => {
+        console.error('Failed to create task:', error);
+        toast.error('Failed to create task');
+      });
   };
 
   return (
@@ -260,7 +267,6 @@ const NewTask: React.FC = () => {
                     onChange={handleSelectChange('assignedTo')}
                     required
                   >
-                    <option value="">Select an agent</option>
                     <option value="">Select an agent</option>
                     {loading && <option disabled>Loading...</option>}
                     {agents.map((agent) => (

@@ -13,6 +13,7 @@ BASE_BACKOFF_SEC="${BASE_BACKOFF_SEC:-5}"
 MAX_BACKOFF_SEC="${MAX_BACKOFF_SEC:-120}"
 LOG_FRESHNESS_SEC="${LOG_FRESHNESS_SEC:-180}"
 SUPERVISOR_ONCE="${SUPERVISOR_ONCE:-false}"
+REQUIRE_WORKFLOW_ROUTER="${REQUIRE_WORKFLOW_ROUTER:-false}"
 
 mkdir -p "${LOG_DIR}" "${STATE_DIR}"
 
@@ -126,7 +127,7 @@ service_healthy() {
       curl -fsS --max-time 2 http://localhost:3000/health >/dev/null 2>&1
       ;;
     master-clock)
-      process_running "ts-node src/master-clock.ts"
+      process_running "dist/master-clock.js|ts-node src/master-clock.ts"
       local status=$?
       if (( status == 2 )); then
         is_log_fresh "${LOG_DIR}/master-clock-dev.log"
@@ -135,7 +136,7 @@ service_healthy() {
       fi
       ;;
     broker-agent)
-      process_running "ts-node src/broker-agent.ts"
+      process_running "dist/broker-agent.js|ts-node src/broker-agent.ts"
       local status=$?
       if (( status == 2 )); then
         is_log_fresh "${LOG_DIR}/broker-agent-dev.log"
@@ -144,7 +145,7 @@ service_healthy() {
       fi
       ;;
     director-agent)
-      process_running "ts-node src/director-agent.ts"
+      process_running "dist/director-agent.js|ts-node src/director-agent.ts"
       local status=$?
       if (( status == 2 )); then
         is_log_fresh "${LOG_DIR}/director-agent-dev.log"
@@ -169,7 +170,10 @@ service_healthy() {
 
 collect_unhealthy() {
   local unhealthy=""
-  local services="relay master-clock broker-agent director-agent workflow-router"
+  local services="relay master-clock broker-agent director-agent"
+  if [[ "${REQUIRE_WORKFLOW_ROUTER}" == "true" ]]; then
+    services="${services} workflow-router"
+  fi
   local service
   for service in ${services}; do
     if ! service_healthy "${service}"; then
@@ -185,8 +189,13 @@ collect_unhealthy() {
 if [[ -f "${PID_FILE}" ]]; then
   existing_pid="$(cat "${PID_FILE}" 2>/dev/null || true)"
   if [[ -n "${existing_pid}" ]] && kill -0 "${existing_pid}" >/dev/null 2>&1; then
-    log "info" "supervisor already running with pid=${existing_pid}; exiting duplicate start"
-    exit 0
+    existing_cmd="$(ps -p "${existing_pid}" -o command= 2>/dev/null || true)"
+    if echo "${existing_cmd}" | grep -q "factory-supervisor.sh"; then
+      log "info" "supervisor already running with pid=${existing_pid}; exiting duplicate start"
+      exit 0
+    fi
+    log "warn" "stale supervisor pid file points to pid=${existing_pid} (${existing_cmd}); reclaiming"
+    rm -f "${PID_FILE}"
   fi
 fi
 

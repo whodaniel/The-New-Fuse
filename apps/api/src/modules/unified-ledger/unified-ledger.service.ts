@@ -302,6 +302,7 @@ export class UnifiedLedgerService implements OnModuleInit {
   }
 
   async listTimelineEvents(params?: {
+    userId?: string;
     recordId?: string;
     goalId?: string;
     planId?: string;
@@ -314,6 +315,7 @@ export class UnifiedLedgerService implements OnModuleInit {
     const from = params?.dateFrom ? this.normalizeTimestamp(params.dateFrom) : undefined;
     const to = params?.dateTo ? this.normalizeTimestamp(params.dateTo) : undefined;
     return this.store.timelineEvents
+      .filter((e) => (params?.userId ? e.userId === params.userId : true))
       .filter((e) => (params?.recordId ? e.recordId === params.recordId : true))
       .filter((e) => (params?.goalId ? e.goalId === params.goalId : true))
       .filter((e) => (params?.planId ? e.planId === params.planId : true))
@@ -330,6 +332,7 @@ export class UnifiedLedgerService implements OnModuleInit {
   }
 
   async createTimelineEvent(input: {
+    userId?: string;
     recordId?: string;
     goalId?: string;
     planId?: string;
@@ -345,6 +348,7 @@ export class UnifiedLedgerService implements OnModuleInit {
       : new Date().toISOString();
     const eventType = this.validateEventType(input.eventType);
     const deduped = this.findDuplicateTimelineEvent({
+      userId: input.userId,
       recordId: input.recordId,
       goalId: input.goalId,
       planId: input.planId,
@@ -358,6 +362,7 @@ export class UnifiedLedgerService implements OnModuleInit {
     }
     const event: TimelineEvent = {
       id: `evt_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`,
+      userId: input.userId,
       recordId: input.recordId,
       goalId: input.goalId,
       planId: input.planId,
@@ -374,6 +379,7 @@ export class UnifiedLedgerService implements OnModuleInit {
   async updateTimelineEvent(
     id: string,
     patch: {
+      userId?: string;
       actor?: string;
       timestamp?: string;
       payload?: Record<string, unknown>;
@@ -383,6 +389,9 @@ export class UnifiedLedgerService implements OnModuleInit {
     const idx = this.store.timelineEvents.findIndex((e) => e.id === id);
     if (idx < 0) return null;
     const current = this.store.timelineEvents[idx];
+    if (patch.userId && current.userId && patch.userId !== current.userId) {
+      return null;
+    }
     const updated: TimelineEvent = {
       ...current,
       actor: patch.actor || current.actor,
@@ -392,6 +401,19 @@ export class UnifiedLedgerService implements OnModuleInit {
     this.store.timelineEvents[idx] = updated;
     await this.persist();
     return updated;
+  }
+
+  async deleteTimelineEvent(id: string, userId?: string): Promise<boolean> {
+    await this.ensureLoaded();
+    const idx = this.store.timelineEvents.findIndex((e) => e.id === id);
+    if (idx < 0) return false;
+    const current = this.store.timelineEvents[idx];
+    if (userId && current.userId && current.userId !== userId) {
+      return false;
+    }
+    this.store.timelineEvents.splice(idx, 1);
+    await this.persist();
+    return true;
   }
 
   async createGoal(input: {
@@ -933,13 +955,14 @@ export class UnifiedLedgerService implements OnModuleInit {
   }
 
   private validateTimelineRefs(input: {
+    userId?: string;
     recordId?: string;
     goalId?: string;
     planId?: string;
     payload?: Record<string, unknown>;
   }): void {
-    if (!input.recordId && !input.goalId && !input.planId) {
-      throw new Error('Timeline event must reference at least one entity');
+    if (!input.recordId && !input.goalId && !input.planId && !input.userId) {
+      throw new Error('Timeline event must reference userId, recordId, goalId, or planId');
     }
     if (input.payload && typeof input.payload !== 'object') {
       throw new Error('Timeline payload must be an object');
@@ -956,6 +979,7 @@ export class UnifiedLedgerService implements OnModuleInit {
   }
 
   private findDuplicateTimelineEvent(candidate: {
+    userId?: string;
     recordId?: string;
     goalId?: string;
     planId?: string;
@@ -967,6 +991,7 @@ export class UnifiedLedgerService implements OnModuleInit {
     const candidateTs = new Date(candidate.timestamp).getTime();
     const payloadKey = JSON.stringify(candidate.payload || {});
     const existing = this.store.timelineEvents.find((e) => {
+      if ((e.userId || '') !== (candidate.userId || '')) return false;
       if (e.recordId !== candidate.recordId) return false;
       if (e.goalId !== candidate.goalId) return false;
       if (e.planId !== candidate.planId) return false;

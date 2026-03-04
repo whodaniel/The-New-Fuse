@@ -3,6 +3,7 @@
  * Integrated React component for The New Fuse Browser Hub
  */
 
+import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ModernHub.css';
@@ -85,9 +86,11 @@ export const ModernHub: React.FC = () => {
 
     let statusPayload: any = null;
     try {
-      const statusResponse = await fetch(`${apiBase}/api/system/status`);
-      if (statusResponse.ok) {
-        statusPayload = await statusResponse.json();
+      const statusResponse = await axios.get(`${apiBase}/api/system/status`, {
+        validateStatus: () => true,
+      });
+      if (statusResponse.status >= 200 && statusResponse.status < 300) {
+        statusPayload = statusResponse.data;
         setCoreStatus(statusPayload.api === 'online' ? 'active' : 'error');
         setAiStatus(statusPayload.agents === 'online' ? 'active' : 'warning');
         setWorkflowStatus(statusPayload.workflows === 'online' ? 'active' : 'warning');
@@ -102,14 +105,21 @@ export const ModernHub: React.FC = () => {
 
     try {
       const [metricsResponse, workflowsResponse, executionsResponse] = await Promise.all([
-        fetch(`${apiBase}/api/system/metrics`),
-        fetch(`${apiBase}/api/workflows`),
-        fetch(`${apiBase}/api/workflows/executions`),
+        axios.get(`${apiBase}/api/system/metrics`, { validateStatus: () => true }),
+        axios.get(`${apiBase}/api/workflows`, { validateStatus: () => true }),
+        axios.get(`${apiBase}/api/workflows/executions`, { validateStatus: () => true }),
       ]);
 
-      const metricsPayload = metricsResponse.ok ? await metricsResponse.json() : null;
-      const workflowsPayload = workflowsResponse.ok ? await workflowsResponse.json() : [];
-      const executionsPayload = executionsResponse.ok ? await executionsResponse.json() : [];
+      const metricsPayload =
+        metricsResponse.status >= 200 && metricsResponse.status < 300 ? metricsResponse.data : null;
+      const workflowsPayload =
+        workflowsResponse.status >= 200 && workflowsResponse.status < 300
+          ? workflowsResponse.data
+          : [];
+      const executionsPayload =
+        executionsResponse.status >= 200 && executionsResponse.status < 300
+          ? executionsResponse.data
+          : [];
 
       const workflows = Array.isArray(workflowsPayload) ? workflowsPayload : [];
       const executions = Array.isArray(executionsPayload) ? executionsPayload : [];

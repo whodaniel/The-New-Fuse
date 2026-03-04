@@ -172,6 +172,7 @@ const WorkflowBuilderContent: React.FC = () => {
   const [workflowId, setWorkflowId] = useState<string | null>(null);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [isExecuting, setIsExecuting] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
   const [isNodePanelOpen, setIsNodePanelOpen] = useState(true); // Open by default for drag and drop
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
@@ -415,6 +416,44 @@ const WorkflowBuilderContent: React.FC = () => {
     }
   };
 
+  const publishWorkflow = async () => {
+    if (!workflowId) {
+      toast({
+        title: 'Save Required',
+        description: 'Save this workflow before publishing.',
+        variant: 'warning',
+        duration: 3000,
+      });
+      return;
+    }
+
+    setIsPublishing(true);
+    try {
+      const workflowService = new WorkflowApiService();
+      const response = await workflowService.publishWorkflow(workflowId);
+
+      if (!response.success) {
+        throw new Error(response.error || response.message || 'Failed to publish workflow');
+      }
+
+      toast({
+        title: 'Workflow Published',
+        description: `"${workflowName}" is now active.`,
+        variant: 'success',
+        duration: 3000,
+      });
+    } catch (error) {
+      toast({
+        title: 'Publish Error',
+        description: error instanceof Error ? error.message : 'Failed to publish workflow',
+        variant: 'destructive',
+        duration: 3000,
+      });
+    } finally {
+      setIsPublishing(false);
+    }
+  };
+
   const onNodeClick = (_event: React.MouseEvent, node: Node) => {
     setSelectedNode(node);
     setIsSettingsOpen(true);
@@ -474,6 +513,15 @@ const WorkflowBuilderContent: React.FC = () => {
                     <Button size="sm" onClick={() => setIsSaveModalOpen(true)} variant="primary">
                       <FiSave className="mr-2" />
                       Save
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={publishWorkflow}
+                      variant="outline"
+                      disabled={isPublishing}
+                    >
+                      <FiCloud className="mr-2" />
+                      {isPublishing ? 'Publishing' : 'Publish'}
                     </Button>
                   </div>
                 </div>

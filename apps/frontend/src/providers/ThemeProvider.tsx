@@ -9,7 +9,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 interface ThemeProviderProps {
   children: ReactNode;
-  defaultTheme?: 'light' | 'dark';
+  defaultTheme?: 'light' | 'dark' | 'system';
   storageKey?: string;
 }
 
@@ -33,6 +33,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
     const root = window.document.documentElement;
     root.classList.remove('light', 'dark');
     root.classList.add(theme);
+    root.setAttribute('data-theme', theme);
     localStorage.setItem(storageKey, theme);
   }, [theme, storageKey]);
 

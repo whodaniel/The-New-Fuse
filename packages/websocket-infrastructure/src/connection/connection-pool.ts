@@ -81,7 +81,9 @@ export class ConnectionPool extends EventEmitter {
     this.connections.delete(socketId);
     this.metadata.delete(socketId);
 
-    this.logger.debug(`Connection removed from pool: ${socketId} (Total: ${this.connections.size})`);
+    this.logger.debug(
+      `Connection removed from pool: ${socketId} (Total: ${this.connections.size})`
+    );
     this.emit('connection:removed', { socketId, userId: socket.userId });
 
     return true;
@@ -140,7 +142,8 @@ export class ConnectionPool extends EventEmitter {
 
     for (const [socketId, metadata] of this.metadata.entries()) {
       const idleTime = now - metadata.lastActivity.getTime();
-      if (idleTime > 60000) { // Idle for more than 1 minute
+      if (idleTime > 60000) {
+        // Idle for more than 1 minute
         idle++;
       }
     }

@@ -305,6 +305,17 @@ export class DrizzleTaskRepository {
   }
 
   /**
+   * Delete all executions for a task.
+   */
+  async deleteExecutionsByTaskId(taskId: string): Promise<number> {
+    const deleted = await db
+      .delete(taskExecutions)
+      .where(eq(taskExecutions.taskId, taskId))
+      .returning();
+    return deleted.length;
+  }
+
+  /**
    * Update execution
    */
   async updateExecution(

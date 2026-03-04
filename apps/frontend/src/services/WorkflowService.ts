@@ -99,8 +99,13 @@ class WorkflowService {
 
   // Workflow CRUD operations
   async getWorkflows(): Promise<Workflow[]> {
-    const workflows = await this.request<any[]>('/workflows');
-    return workflows.map(this.transformWorkflow);
+    const payload = await this.request<any>('/workflows');
+    const workflows = Array.isArray(payload)
+      ? payload
+      : Array.isArray(payload?.workflows)
+        ? payload.workflows
+        : [];
+    return workflows.map((workflow: any) => this.transformWorkflow(workflow));
   }
 
   async getWorkflow(id: string): Promise<Workflow> {
@@ -185,12 +190,24 @@ class WorkflowService {
   async getExecutions(workflowId?: string): Promise<WorkflowExecution[]> {
     try {
       const endpoint = workflowId ? `/workflows/${workflowId}/executions` : '/workflows/executions';
-      const executions = await this.request<any[]>(endpoint);
-      return executions.map(this.transformExecution);
+      const payload = await this.request<any>(endpoint);
+      const executions = Array.isArray(payload)
+        ? payload
+        : Array.isArray(payload?.executions)
+          ? payload.executions
+          : [];
+      return executions.map((execution: any) => this.transformExecution(execution));
     } catch (error) {
       console.error('Failed to fetch executions:', error);
       throw error;
     }
+  }
+
+  async publishWorkflow(workflowId: string): Promise<Workflow> {
+    const published = await this.request<any>(`/workflows/${workflowId}/publish`, {
+      method: 'POST',
+    });
+    return this.transformWorkflow(published);
   }
 
   async cancelExecution(executionId: string): Promise<WorkflowExecution> {
@@ -340,18 +357,25 @@ class WorkflowService {
 
   // Transform API responses to frontend types
   private transformWorkflow(apiWorkflow: any): Workflow {
+    const definition = apiWorkflow.definition || {};
     return {
       ...apiWorkflow,
-      createdAt: new Date(apiWorkflow.createdAt),
-      updatedAt: new Date(apiWorkflow.updatedAt),
+      status: String(apiWorkflow.status || 'draft').toLowerCase(),
+      nodes: apiWorkflow.nodes || definition.nodes || [],
+      edges: apiWorkflow.edges || definition.edges || [],
+      version: apiWorkflow.version || definition.version || 1,
+      createdAt: new Date(apiWorkflow.createdAt || Date.now()),
+      updatedAt: new Date(apiWorkflow.updatedAt || Date.now()),
     };
   }
 
   private transformExecution(apiExecution: any): WorkflowExecution {
+    const startTime = apiExecution.startTime || apiExecution.startedAt || Date.now();
+    const endTime = apiExecution.endTime || apiExecution.completedAt;
     return {
       ...apiExecution,
-      startTime: new Date(apiExecution.startTime),
-      endTime: apiExecution.endTime ? new Date(apiExecution.endTime) : undefined,
+      startTime: new Date(startTime),
+      endTime: endTime ? new Date(endTime) : undefined,
       logs:
         apiExecution.logs?.map((log: any) => ({
           ...log,

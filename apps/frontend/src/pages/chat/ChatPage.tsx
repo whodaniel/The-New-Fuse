@@ -61,6 +61,40 @@ interface VoiceOption {
 
 const ChatContext = createContext<ChatContextType | null>(null);
 
+const waitWithAnimationFrame = (ms: number) =>
+  new Promise<void>((resolve) => {
+    const start = performance.now();
+    const step = (now: number) => {
+      if (now - start >= ms) {
+        resolve();
+        return;
+      }
+      window.requestAnimationFrame(step);
+    };
+    window.requestAnimationFrame(step);
+  });
+
+const scheduleWithAnimationFrame = (ms: number, fn: () => void | Promise<void>) => {
+  const start = performance.now();
+  let frameId = 0;
+  let canceled = false;
+
+  const step = (now: number) => {
+    if (canceled) return;
+    if (now - start >= ms) {
+      void fn();
+      return;
+    }
+    frameId = window.requestAnimationFrame(step);
+  };
+
+  frameId = window.requestAnimationFrame(step);
+  return () => {
+    canceled = true;
+    window.cancelAnimationFrame(frameId);
+  };
+};
+
 // Enhanced Chat Provider Component
 const EnhancedChatProvider = ({ children }: { children: React.ReactNode }) => {
   const [agents, setAgents] = useState<ChatAgent[]>([]);
@@ -92,7 +126,11 @@ const EnhancedChatProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (window.speechSynthesis) {
       window.speechSynthesis.onvoiceschanged = loadVoices;
-      setTimeout(loadVoices, 100);
+      const cancelScheduledLoad = scheduleWithAnimationFrame(100, loadVoices);
+      return () => {
+        window.speechSynthesis.onvoiceschanged = null;
+        cancelScheduledLoad();
+      };
     }
   }, []);
 
@@ -123,14 +161,14 @@ const EnhancedChatProvider = ({ children }: { children: React.ReactNode }) => {
         utterance.onend = () => resolve();
         utterance.onerror = () => resolve();
 
-        setTimeout(() => {
+        void waitWithAnimationFrame(100).then(() => {
           try {
             window.speechSynthesis.speak(utterance);
           } catch (error) {
             console.warn('TTS failed:', error);
             resolve();
           }
-        }, 100);
+        });
       });
     },
     [isTtsEnabled]
@@ -307,7 +345,7 @@ function ChatPage() {
   // Initialize with welcome messages if messages are empty
   useEffect(() => {
     if (messages && messages.length === 0) {
-      setTimeout(() => {
+      const cancelWelcomeMessages = scheduleWithAnimationFrame(1000, async () => {
         addMessage({
           content: "Hello! I'm your General Assistant. How can I help you today?",
           sender: 'agent',
@@ -325,7 +363,8 @@ function ChatPage() {
           type: 'text',
         });
         setLoading(false);
-      }, 1000);
+      });
+      return () => cancelWelcomeMessages();
     } else if (messages) {
       setLoading(false);
     }
@@ -353,7 +392,7 @@ function ChatPage() {
     const nextAgent = getAgentById(nextRule.targetId);
     if (!nextAgent) return;
 
-    const timeoutId = setTimeout(async () => {
+    const cancelScheduledResponse = scheduleWithAnimationFrame(1500, async () => {
       try {
         setIsGenerating(true);
         const history = messages
@@ -382,9 +421,9 @@ function ChatPage() {
       } finally {
         setIsGenerating(false);
       }
-    }, 1500);
+    });
 
-    return () => clearTimeout(timeoutId);
+    return () => cancelScheduledResponse();
   }, [
     mode,
     messages,

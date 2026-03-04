@@ -105,6 +105,53 @@ jobs:
       - name: Run Prettier check
         run: pnpm exec prettier --check .
 
+  architecture-audits:
+    name: Experience Architecture Audits
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Restore cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pnpm
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: ${{ needs.setup.outputs.cache-key }}
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile --prefer-offline
+
+      - name: Run experience architecture audit
+        run: pnpm --dir apps/frontend run audit:experience-architecture
+
+      - name: Run navigation audit
+        run: pnpm --dir apps/frontend run audit:navigation
+
+      - name: Upload architecture audit artifacts
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: frontend-architecture-audits
+          path: |
+            apps/frontend/docs/audits/experience-architecture-audit.md
+            apps/frontend/docs/audits/experience-architecture-audit.json
+            apps/frontend/docs/audits/navigation-route-audit.md
+            apps/frontend/docs/audits/navigation-route-audit.json
+          retention-days: 7
+
   type-check:
     name: Type Check
     needs: setup
@@ -406,13 +453,23 @@ jobs:
 
   test-summary:
     name: Test Summary
-    needs: [lint, type-check, unit-tests, integration-tests, e2e-tests, security-scan]
+    needs:
+      [
+        lint,
+        architecture-audits,
+        type-check,
+        unit-tests,
+        integration-tests,
+        e2e-tests,
+        security-scan,
+      ]
     runs-on: ubuntu-latest
     if: always()
     steps:
       - name: Check test results
         run: |
           echo "Lint: ${{ needs.lint.result }}"
+          echo "Architecture Audits: ${{ needs.architecture-audits.result }}"
           echo "Type Check: ${{ needs.type-check.result }}"
           echo "Unit Tests: ${{ needs.unit-tests.result }}"
           echo "Integration Tests: ${{ needs.integration-tests.result }}"
@@ -420,6 +477,7 @@ jobs:
           echo "Security Scan: ${{ needs.security-scan.result }}"
 
           if [[ "${{ needs.lint.result }}" != "success" ]] || \
+             [[ "${{ needs.architecture-audits.result }}" != "success" ]] || \
              [[ "${{ needs.type-check.result }}" != "success" ]] || \
              [[ "${{ needs.unit-tests.result }}" != "success" ]] || \
              [[ "${{ needs.integration-tests.result }}" != "success" ]] || \
@@ -435,6 +493,7 @@ jobs:
           echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
           echo "| Lint | ${{ needs.lint.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Architecture Audits | ${{ needs.architecture-audits.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Type Check | ${{ needs.type-check.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Unit Tests | ${{ needs.unit-tests.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Integration Tests | ${{ needs.integration-tests.result }} |" >> $GITHUB_STEP_SUMMARY

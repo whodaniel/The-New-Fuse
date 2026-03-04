@@ -1,4 +1,14 @@
-import { Bell, LogOut, Menu, Search, Settings, User } from 'lucide-react';
+import {
+  Bell,
+  Building2,
+  CreditCard,
+  LogOut,
+  Menu,
+  Search,
+  Settings,
+  User,
+  Users,
+} from 'lucide-react';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
@@ -123,6 +133,30 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ onMenuClick, title
                     >
                       <Settings className="w-4 h-4 mr-2" />
                       Settings
+                    </Link>
+                    <Link
+                      to="/pricing"
+                      className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-white/5 hover:text-white"
+                      onClick={() => setIsUserMenuOpen(false)}
+                    >
+                      <CreditCard className="w-4 h-4 mr-2" />
+                      Billing & Plans
+                    </Link>
+                    <Link
+                      to="/workspace"
+                      className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-white/5 hover:text-white"
+                      onClick={() => setIsUserMenuOpen(false)}
+                    >
+                      <Users className="w-4 h-4 mr-2" />
+                      Team Management
+                    </Link>
+                    <Link
+                      to="/workspace"
+                      className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-white/5 hover:text-white"
+                      onClick={() => setIsUserMenuOpen(false)}
+                    >
+                      <Building2 className="w-4 h-4 mr-2" />
+                      Subscription Seats
                     </Link>
                     <button
                       onClick={handleLogout}

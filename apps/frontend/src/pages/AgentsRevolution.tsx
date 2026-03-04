@@ -1,3 +1,4 @@
+import OpsPageHeader from '@/components/ops/OpsPageHeader';
 import { Badge } from '@/components/ui/badge';
 import { GlassCard, PremiumButton, PremiumInput, PremiumSelect } from '@/components/ui/premium';
 import { useDebounce } from '@/hooks/useDebounce';
@@ -28,6 +29,7 @@ import {
   Sparkles,
   TrendingUp,
   Trophy,
+  Users,
   Zap,
 } from 'lucide-react';
 import { memo, useEffect, useState } from 'react';
@@ -354,36 +356,35 @@ export const AgentsRevolution = () => {
   return (
     <div className="min-h-screen bg-transparent px-6 py-16">
       <div className="max-w-7xl mx-auto space-y-16">
-        {/* HERO HEADER - MASSIVE */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8">
-          <div>
-            <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-full bg-blue-500/10 border border-blue-500/30">
-              <Sparkles className="w-4 h-4 text-blue-400" />
-              <span className="text-sm font-semibold text-blue-300">Your AI Workforce</span>
+        <OpsPageHeader
+          eyebrow="Fleet"
+          title="Agent Operations"
+          subtitle="Operate your agent fleet, isolate failures, and scale what performs."
+          meta={
+            <div className="flex flex-wrap gap-2 text-xs">
+              <Badge className="bg-green-500/10 text-green-300 border-green-500/20">
+                {agents.filter((agent) => agent.status === 'Active').length} active
+              </Badge>
+              <Badge className="bg-red-500/10 text-red-300 border-red-500/20">
+                {agents.filter((agent) => agent.status === 'Error').length} errors
+              </Badge>
+              <Badge className="bg-slate-500/10 text-slate-300 border-slate-500/20">
+                {agents.length} total
+              </Badge>
             </div>
-            <h1 className="text-7xl lg:text-8xl font-black mb-6 leading-none">
-              <span className="text-white">AI Agents</span>
-              <br />
-              <span className="bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                That Actually Work
-              </span>
-            </h1>
-            <p className="text-2xl text-gray-400 max-w-2xl leading-relaxed">
-              Deploy autonomous agents that think, execute, and scale infinitely.{' '}
-              <span className="text-white font-semibold">No babysitting required.</span>
-            </p>
-          </div>
-          <PremiumButton
-            onClick={() => navigate('/agents/new')}
-            size="xl"
-            variant="gradient"
-            className="shadow-[0_0_40px_rgba(59,130,246,0.6)] hover:shadow-[0_0_60px_rgba(59,130,246,0.8)] transform hover:scale-105 transition-all duration-300 whitespace-nowrap"
-          >
-            <Plus className="mr-3 h-6 w-6" />
-            Deploy New Agent
-            <ArrowRight className="ml-3 h-6 w-6" />
-          </PremiumButton>
-        </div>
+          }
+          actions={
+            <>
+              <PremiumButton onClick={fetchData} variant="outline">
+                Refresh
+              </PremiumButton>
+              <PremiumButton onClick={() => navigate('/agents/new')} size="lg" variant="gradient">
+                <Plus className="mr-2 h-5 w-5" />
+                Deploy Agent
+              </PremiumButton>
+            </>
+          }
+        />
 
         {/* SEARCH & FILTERS - PREMIUM */}
         <GlassCard className="p-8 rounded-3xl backdrop-blur-2xl shadow-2xl">

@@ -85,6 +85,35 @@ export class AgentController {
    */
   constructor(private readonly agentService: AgentService) {}
 
+  @Post(':id/deploy')
+  @ApiOperation({ summary: 'Deploy agent to orchestrator target' })
+  @ApiResponse({ status: HttpStatus.OK })
+  async deployAgent(
+    @Param('id') id: string,
+    @Body() payload: { target?: 'cloud' | 'local' | 'hybrid' },
+    @CurrentUser() user: User
+  ): Promise<{
+    agent: AgentResponseDto;
+    deployment: {
+      status: 'deployed';
+      target: 'cloud' | 'local' | 'hybrid';
+      orchestrator: 'kubernetes' | 'docker' | 'hybrid';
+      deployedAt: string;
+    };
+  }> {
+    try {
+      return await this.agentService.deployAgent(id, user.id, payload?.target || 'cloud');
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        (error as Error).message || 'Failed to deploy agent',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+
   /**
    * Create a new agent
    *

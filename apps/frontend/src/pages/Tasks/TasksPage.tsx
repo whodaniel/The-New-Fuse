@@ -1,3 +1,4 @@
+import OpsPageHeader from '@/components/ops/OpsPageHeader';
 import { Badge } from '@/components/ui/badge';
 import {
   GlassCard,
@@ -148,6 +149,10 @@ export default function TasksPage() {
     }
   });
 
+  const completedCount = tasks.filter((task) => task.status === 'completed').length;
+  const inProgressCount = tasks.filter((task) => task.status === 'in-progress').length;
+  const urgentCount = tasks.filter((task) => task.priority === 'urgent').length;
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -158,17 +163,43 @@ export default function TasksPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Team Tasks</h1>
-          <p className="text-gray-400">Manage and track project assignments</p>
-        </div>
-        <div className="flex gap-3">
+      <OpsPageHeader
+        eyebrow="Execution"
+        title="Task Operations"
+        subtitle="Track delivery, unblock bottlenecks, and keep execution moving."
+        meta={
+          <div className="flex flex-wrap gap-2 text-xs">
+            <Badge className="bg-blue-500/10 text-blue-300 border-blue-500/20">
+              {tasks.length} total
+            </Badge>
+            <Badge className="bg-amber-500/10 text-amber-300 border-amber-500/20">
+              {urgentCount} urgent
+            </Badge>
+            <Badge className="bg-cyan-500/10 text-cyan-300 border-cyan-500/20">
+              {inProgressCount} in progress
+            </Badge>
+          </div>
+        }
+        actions={
           <PremiumButton variant="gradient" glow onClick={() => navigate('/tasks/new')}>
             Create Task
           </PremiumButton>
-        </div>
+        }
+      />
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <GlassCard className="p-4">
+          <p className="text-xs uppercase tracking-wide text-gray-400">Completed</p>
+          <p className="text-2xl font-bold text-white mt-1">{completedCount}</p>
+        </GlassCard>
+        <GlassCard className="p-4">
+          <p className="text-xs uppercase tracking-wide text-gray-400">Open Work</p>
+          <p className="text-2xl font-bold text-white mt-1">{tasks.length - completedCount}</p>
+        </GlassCard>
+        <GlassCard className="p-4">
+          <p className="text-xs uppercase tracking-wide text-gray-400">Visible Results</p>
+          <p className="text-2xl font-bold text-white mt-1">{sortedTasks.length}</p>
+        </GlassCard>
       </div>
 
       {/* Search and Filters */}

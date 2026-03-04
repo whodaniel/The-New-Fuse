@@ -9,6 +9,7 @@ const PublicLayout = lazy(() => import('./layouts/PublicLayout'));
 import LoginPage from './pages/auth/Login';
 import RegisterPage from './pages/auth/Register';
 
+import ErrorBoundary from './components/ErrorBoundary';
 import RequireAuth from './components/RequireAuth';
 import RequirePermission from './components/auth/RequirePermission';
 
@@ -40,7 +41,7 @@ const WorkflowEditorWrapper = lazy(() => import('./components/WorkflowEditor'));
 const Analytics = lazy(() => import('./pages/dashboard/Analytics'));
 const Dashboard = lazy(() =>
   import('./components/Dashboard').then((module) => ({ default: module.Dashboard }))
-); // Updated to point to updated component
+);
 const Settings = lazy(() => import('./pages/Settings'));
 const SettingsAppearance = lazy(() => import('./pages/settings/Appearance'));
 const SettingsNotifications = lazy(() => import('./pages/settings/Notifications'));
@@ -238,6 +239,8 @@ export default function ComprehensiveRouter() {
       '/brand',
       '/blog',
       '/marketplace',
+      '/product-map',
+      '/capabilities',
       '/design-system',
     ].includes(location.pathname) ||
     location.pathname.startsWith('/auth') ||
@@ -268,7 +271,8 @@ export default function ComprehensiveRouter() {
         {!location.pathname.startsWith('/auth') &&
           !location.pathname.startsWith('/onboarding') &&
           !['/404', '/login', '/register'].includes(location.pathname) &&
-          !hasOwnLayout && <SmartNavigation />}
+          !hasOwnLayout &&
+          isPublicRoute && <SmartNavigation />}
       </Suspense>
 
       <Suspense fallback={<LoadingFallback name="Layout" />}>
@@ -316,6 +320,9 @@ export default function ComprehensiveRouter() {
 
               {/* Public Marketplace */}
               <Route path="/marketplace" element={<MarketplacePublicPage />} />
+              <Route path="/product-map" element={<MarketplacePublicPage />} />
+              <Route path="/capabilities" element={<MarketplacePublicPage />} />
+              <Route path="/platform" element={<Navigate to="/product-map" replace />} />
 
               {/* Admin Marketplace Console */}
               <Route
@@ -384,7 +391,9 @@ export default function ComprehensiveRouter() {
                 path="/agent-management"
                 element={
                   <RequireAuth>
-                    <AgentsPage />
+                    <ErrorBoundary>
+                      <AgentsPage />
+                    </ErrorBoundary>
                   </RequireAuth>
                 }
               />
@@ -392,7 +401,9 @@ export default function ComprehensiveRouter() {
                 path="/agents"
                 element={
                   <RequireAuth>
-                    <AgentsPage />
+                    <ErrorBoundary>
+                      <AgentsPage />
+                    </ErrorBoundary>
                   </RequireAuth>
                 }
               />

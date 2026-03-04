@@ -1,4 +1,5 @@
 import { useAuthorization } from '@/hooks/useAuthorization';
+import axios from 'axios';
 import {
   Activity,
   AlertCircle,
@@ -159,6 +160,7 @@ export default function ComprehensiveAdminDashboard() {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const wsRef = useRef<WebSocket | null>(null);
+  const eventIdCounterRef = useRef(0);
 
   const formatTimestamp = (date: Date) => {
     const now = new Date();
@@ -216,8 +218,7 @@ export default function ComprehensiveAdminDashboard() {
           : 'success';
 
     return {
-      id:
-        event.id || event.streamId || `evt-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      id: event.id || event.streamId || `evt-${Date.now()}-${++eventIdCounterRef.current}`,
       type,
       user: source,
       action: messageText ? `${eventLabel}: ${messageText}` : eventLabel,
@@ -249,31 +250,29 @@ export default function ComprehensiveAdminDashboard() {
 
       const [healthResult, channelsResult, agentsResult, activityResult, adminMetricsResult] =
         await Promise.allSettled([
-          fetch(`${relayHttpBase}/health`, { method: 'GET' }),
-          fetch(`${relayHttpBase}/channels`, { method: 'GET' }),
-          fetch(`${relayHttpBase}/agents`, { method: 'GET' }),
-          fetch(activityUrl, { method: 'GET' }),
-          fetch('/api/admin/metrics/dashboard', { method: 'GET' }),
+          axios.get(`${relayHttpBase}/health`),
+          axios.get(`${relayHttpBase}/channels`),
+          axios.get(`${relayHttpBase}/agents`),
+          axios.get(activityUrl),
+          axios.get('/api/admin/metrics/dashboard'),
         ]);
 
       const relayHealth: RelayHealthResponse | null =
-        healthResult.status === 'fulfilled' && healthResult.value.ok
-          ? await healthResult.value.json()
+        healthResult.status === 'fulfilled'
+          ? (healthResult.value.data as RelayHealthResponse)
           : null;
 
       const channels: RelayChannel[] =
-        channelsResult.status === 'fulfilled' && channelsResult.value.ok
-          ? await channelsResult.value.json()
+        channelsResult.status === 'fulfilled'
+          ? ((channelsResult.value.data as RelayChannel[]) ?? [])
           : [];
 
       const agents: unknown[] =
-        agentsResult.status === 'fulfilled' && agentsResult.value.ok
-          ? await agentsResult.value.json()
-          : [];
+        agentsResult.status === 'fulfilled' ? ((agentsResult.value.data as unknown[]) ?? []) : [];
 
       let activityEvents: RelayActivityEvent[] = [];
-      if (activityResult.status === 'fulfilled' && activityResult.value.ok) {
-        const payload = (await activityResult.value.json()) as { events?: RelayActivityEvent[] };
+      if (activityResult.status === 'fulfilled') {
+        const payload = (activityResult.value.data ?? {}) as { events?: RelayActivityEvent[] };
         activityEvents = Array.isArray(payload.events) ? payload.events : [];
         setActivityPersistenceAvailable(true);
       } else {
@@ -281,8 +280,8 @@ export default function ComprehensiveAdminDashboard() {
       }
 
       let adminMetrics: any = null;
-      if (adminMetricsResult.status === 'fulfilled' && adminMetricsResult.value.ok) {
-        adminMetrics = await adminMetricsResult.value.json();
+      if (adminMetricsResult.status === 'fulfilled') {
+        adminMetrics = adminMetricsResult.value.data;
       }
 
       const uptimeSeconds = relayHealth?.uptime;
@@ -437,7 +436,6 @@ export default function ComprehensiveAdminDashboard() {
       try {
         if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
           connectRelaySocket();
-          await new Promise((resolve) => setTimeout(resolve, 250));
         }
 
         if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
@@ -455,7 +453,6 @@ export default function ComprehensiveAdminDashboard() {
           })
         );
 
-        await new Promise((resolve) => setTimeout(resolve, 200));
         await loadDashboardData();
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Control action failed');
@@ -478,7 +475,6 @@ export default function ComprehensiveAdminDashboard() {
     try {
       if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
         connectRelaySocket();
-        await new Promise((resolve) => setTimeout(resolve, 250));
       }
       if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
         throw new Error('Relay socket is not connected');
@@ -497,7 +493,6 @@ export default function ComprehensiveAdminDashboard() {
 
       setDeleteConfirmOpen(false);
       setDeleteConfirmText('');
-      await new Promise((resolve) => setTimeout(resolve, 200));
       await loadDashboardData();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Channel delete failed');

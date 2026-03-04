@@ -1,5 +1,6 @@
 import { CapabilityBadge } from '@/components/ui/CapabilityBadge';
 import { useFeatureCapabilities } from '@/hooks/useFeatureCapabilities';
+import axios from 'axios';
 import {
   Activity,
   AlertTriangle,
@@ -97,7 +98,7 @@ type ObservatoryMetrics = {
 type EndpointResolution<T = any> = {
   data: T;
   source: string;
-  usedFallback: boolean;
+  usedAlternate: boolean;
 };
 
 type ObservatoryDataSources = {
@@ -171,20 +172,21 @@ export const SystemObservatory: React.FC = () => {
   ): Promise<EndpointResolution | null> => {
     for (let idx = 0; idx < paths.length; idx++) {
       const path = paths[idx];
-      const usedFallback = idx > 0;
+      const usedAlternate = idx > 0;
       try {
-        const response = await fetch(path);
-        if (!response.ok) continue;
-        const text = await response.text();
-        if (usedFallback) {
+        const response = await axios.get(path, {
+          validateStatus: () => true,
+        });
+        if (response.status < 200 || response.status >= 300) continue;
+        if (usedAlternate) {
           console.warn(
-            `[System Observatory] ${contextLabel} using fallback endpoint: ${paths[0]} -> ${path}`
+            `[System Observatory] ${contextLabel} using alternate endpoint: ${paths[0]} -> ${path}`
           );
         }
         return {
-          data: text ? JSON.parse(text) : {},
+          data: response.data ?? {},
           source: path,
-          usedFallback,
+          usedAlternate,
         };
       } catch {
         // try next endpoint alias
@@ -221,7 +223,7 @@ export const SystemObservatory: React.FC = () => {
         ]);
 
       const formatSource = (result: EndpointResolution | null) =>
-        result ? `${result.source}${result.usedFallback ? ' (fallback)' : ''}` : 'unavailable';
+        result ? `${result.source}${result.usedAlternate ? ' (alt)' : ''}` : 'unavailable';
       setDataSources({
         orchestratorAgents: formatSource(agentsResult),
         orchestratorHealth: formatSource(orchestratorHealthResult),
@@ -326,11 +328,14 @@ export const SystemObservatory: React.FC = () => {
   useEffect(() => {
     setAgentIndexLoading(true);
     setAgentIndexError(null);
-    fetch('/observatory/agents.index.json')
-      .then((r) =>
-        r.ok ? r.json() : Promise.reject(new Error(`Failed to load agent index (${r.status})`))
-      )
-      .then((json) => setAgentIndex(json))
+    axios
+      .get('/observatory/agents.index.json', { validateStatus: () => true })
+      .then((response) => {
+        if (response.status < 200 || response.status >= 300) {
+          throw new Error(`Failed to load agent index (${response.status})`);
+        }
+        setAgentIndex(response.data);
+      })
       .catch((error) => {
         setAgentIndex(null);
         setAgentIndexError(error instanceof Error ? error.message : 'Failed to load agent index');
@@ -1153,10 +1158,10 @@ export const SystemObservatory: React.FC = () => {
 const SourceBadge: React.FC<{ label: string; value: string }> = ({ label, value }) => {
   const normalized = value.toLowerCase();
   const isUnavailable = normalized.includes('unavailable') || value === SOURCE_UNRESOLVED;
-  const isFallback = normalized.includes('fallback');
+  const isAlternate = normalized.includes('(alt)');
   const tone = isUnavailable
     ? 'border-red-500/40 bg-red-500/10 text-red-300'
-    : isFallback
+    : isAlternate
       ? 'border-amber-500/40 bg-amber-500/10 text-amber-300'
       : 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300';
 

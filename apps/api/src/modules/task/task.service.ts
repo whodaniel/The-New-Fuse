@@ -5,6 +5,7 @@
 import { Injectable } from '@nestjs/common';
 import type { NewTask, NewTaskExecution, Task, TaskExecution } from '@the-new-fuse/database';
 import { DatabaseService } from '@the-new-fuse/database';
+import type { TaskExecutionLogEntry, TaskExecutionLogPayload } from './task.types';
 
 @Injectable()
 export class TaskService {
@@ -15,8 +16,16 @@ export class TaskService {
    */
   async findStuckTasks(userId: string): Promise<Task[]> {
     const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
-    // Use the task repository to find tasks that started before 30 minutes ago and are still running
     const allTasks = await this.db.tasks.findTasksByStatus('IN_PROGRESS', userId);
+    return allTasks.filter((task) => task.startTime && new Date(task.startTime) < thirtyMinutesAgo);
+  }
+
+  /**
+   * Find tasks that are stuck across all users.
+   */
+  async findStuckTasksUnscoped(): Promise<Task[]> {
+    const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+    const allTasks = await this.db.tasks.findTasksByStatusUnscoped('IN_PROGRESS');
     return allTasks.filter((task) => task.startTime && new Date(task.startTime) < thirtyMinutesAgo);
   }
 
@@ -42,6 +51,15 @@ export class TaskService {
   }
 
   /**
+   * Get task by ID scoped to a specific user.
+   */
+  async getTaskByIdForUser(taskId: string, userId: string): Promise<Task | null> {
+    const task = await this.getTaskById(taskId);
+    if (!task) return null;
+    return task.userId === userId ? task : null;
+  }
+
+  /**
    * Create a new task
    */
   async createTask(data: NewTask): Promise<Task> {
@@ -49,11 +67,33 @@ export class TaskService {
   }
 
   /**
+   * List tasks for a user with optional status filter and pagination.
+   */
+  async listTasks(
+    userId: string,
+    options?: { status?: string; page?: number; limit?: number }
+  ): Promise<{ tasks: Task[]; total: number }> {
+    const { status, page = 1, limit = 20 } = options || {};
+    const allTasks = status
+      ? await this.db.tasks.findTasksByStatus(status, userId)
+      : await this.db.tasks.findTasksByUserId(userId);
+
+    const safePage = Math.max(page, 1);
+    const safeLimit = Math.max(limit, 1);
+    const offset = (safePage - 1) * safeLimit;
+    const paged = allTasks.slice(offset, offset + safeLimit);
+
+    return {
+      tasks: paged,
+      total: allTasks.length,
+    };
+  }
+
+  /**
    * Get pending tasks ordered by priority
    */
   async getPendingTasks(userId: string): Promise<Task[]> {
     const tasks = await this.db.tasks.findTasksByStatus('PENDING', userId);
-    // Sort by priority (assuming priority is a string like 'HIGH', 'MEDIUM', 'LOW')
     const priorityOrder = { URGENT: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
     return tasks.sort((a, b) => {
       const aPriority = priorityOrder[a.priority as keyof typeof priorityOrder] ?? 4;
@@ -70,6 +110,46 @@ export class TaskService {
   }
 
   /**
+   * Convert task execution records into normalized execution logs.
+   */
+  async getExecutionLogs(taskId: string): Promise<TaskExecutionLogEntry[]> {
+    const executions = await this.getTaskExecutions(taskId);
+    return executions
+      .map((execution) => this.mapExecutionToLog(execution))
+      .filter((entry): entry is TaskExecutionLogEntry => entry !== null);
+  }
+
+  /**
+   * Append an execution log entry by recording a task execution row.
+   */
+  async appendExecutionLog(
+    taskId: string,
+    payload: TaskExecutionLogPayload
+  ): Promise<TaskExecutionLogEntry> {
+    const now = new Date();
+    const logEntry: TaskExecutionLogEntry = {
+      id: `log_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`,
+      level: payload.level,
+      message: payload.message,
+      actor: payload.actor,
+      source: payload.source,
+      stage: payload.stage,
+      metadata: payload.metadata ?? {},
+      timestamp: now.toISOString(),
+    };
+
+    await this.db.tasks.createExecution({
+      taskId,
+      status: `LOG_${payload.level.toUpperCase()}`,
+      output: logEntry as any,
+      startedAt: now,
+      completedAt: now,
+    });
+
+    return logEntry;
+  }
+
+  /**
    * Delete tasks by pipeline ID
    */
   async deleteTasks(pipelineId: string): Promise<void> {
@@ -83,12 +163,7 @@ export class TaskService {
    * Delete task executions by task ID
    */
   async deleteTaskExecutions(taskId: string): Promise<void> {
-    // Note: This would need a corresponding method in the repository
-    // For now, we can't delete executions directly as the repository doesn't expose this
-    // TODO: Add deleteExecutionsByTaskId to DrizzleTaskRepository if needed
-    console.warn(
-      `deleteTaskExecutions for task ${taskId} - method needs implementation in repository`
-    );
+    await this.db.tasks.deleteExecutionsByTaskId(taskId);
   }
 
   /**
@@ -131,5 +206,40 @@ export class TaskService {
    */
   async countTasksByStatus(userId?: string): Promise<{ status: string; count: number }[]> {
     return this.db.tasks.countTasksByStatus(userId);
+  }
+
+  private mapExecutionToLog(execution: TaskExecution): TaskExecutionLogEntry | null {
+    const output = execution.output as Record<string, unknown> | null;
+    if (!output || typeof output !== 'object') return null;
+
+    const level = output.level;
+    const message = output.message;
+    const actor = output.actor;
+    const source = output.source;
+    const timestamp = output.timestamp;
+
+    if (
+      (level !== 'info' && level !== 'warn' && level !== 'error') ||
+      typeof message !== 'string' ||
+      typeof actor !== 'string' ||
+      typeof source !== 'string' ||
+      typeof timestamp !== 'string'
+    ) {
+      return null;
+    }
+
+    return {
+      id: typeof output.id === 'string' ? output.id : execution.id,
+      level,
+      message,
+      actor,
+      source,
+      stage: typeof output.stage === 'string' ? output.stage : undefined,
+      metadata:
+        output.metadata && typeof output.metadata === 'object'
+          ? (output.metadata as Record<string, unknown>)
+          : {},
+      timestamp,
+    };
   }
 }

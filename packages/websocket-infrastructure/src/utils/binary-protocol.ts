@@ -97,7 +97,10 @@ export class MessageSerializer {
   /**
    * Serialize message
    */
-  public static serialize(data: any, preferBinary: boolean = false): {
+  public static serialize(
+    data: any,
+    preferBinary: boolean = false
+  ): {
     data: Buffer | string;
     type: MessageType;
   } {
@@ -151,9 +154,7 @@ export class MessageSerializer {
     try {
       switch (type) {
         case MessageType.BINARY:
-          return BinaryProtocol.decode(
-            typeof data === 'string' ? Buffer.from(data) : data
-          );
+          return BinaryProtocol.decode(typeof data === 'string' ? Buffer.from(data) : data);
 
         case MessageType.JSON:
           return JSON.parse(typeof data === 'string' ? data : data.toString());
@@ -186,10 +187,7 @@ export class ProtocolNegotiator {
     const priorities = ['msgpack', 'binary', 'json'];
 
     for (const protocol of priorities) {
-      if (
-        clientProtocols.includes(protocol) &&
-        this.supportedProtocols.has(protocol)
-      ) {
+      if (clientProtocols.includes(protocol) && this.supportedProtocols.has(protocol)) {
         ProtocolNegotiator.logger.log(`Negotiated protocol: ${protocol}`);
         return protocol;
       }

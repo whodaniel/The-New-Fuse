@@ -1,15 +1,23 @@
+import OpsPageHeader from '@/components/ops/OpsPageHeader';
 import { ActionCard, GlassCard, PremiumButton } from '@/components/ui/premium';
 import useWorkflow from '@/hooks/useWorkflow';
 import { formatDistanceToNow } from 'date-fns';
-import { Activity, Clock, Edit, Loader2, Play, TrendingUp, Zap } from 'lucide-react';
+import { Activity, Clock, Edit, Loader2, Play, Rocket, TrendingUp, Zap } from 'lucide-react';
 import { useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function Workflows() {
   const navigate = useNavigate();
-  const { workflows, executions, loadWorkflows, loadExecutions, executeWorkflow, loading } =
-    useWorkflow();
+  const {
+    workflows,
+    executions,
+    loadWorkflows,
+    loadExecutions,
+    executeWorkflow,
+    publishWorkflow,
+    loading,
+  } = useWorkflow();
 
   useEffect(() => {
     loadWorkflows();
@@ -29,6 +37,19 @@ export default function Workflows() {
       });
       // Refresh executions after a short delay to show the new run
       setTimeout(() => loadExecutions(), 1000);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handlePublish = async (id: string, name: string) => {
+    try {
+      await toast.promise(publishWorkflow(id), {
+        loading: `Publishing workflow "${name}"...`,
+        success: `Workflow "${name}" published.`,
+        error: `Failed to publish workflow "${name}".`,
+      });
+      loadWorkflows();
     } catch (error) {
       console.error(error);
     }
@@ -70,6 +91,9 @@ export default function Workflows() {
     return 'Never';
   };
 
+  const runningExecutions = executions.filter((execution) => execution.status === 'running').length;
+  const failedExecutions = executions.filter((execution) => execution.status === 'failed').length;
+
   if (loading && workflows.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
@@ -80,25 +104,46 @@ export default function Workflows() {
 
   return (
     <div className="space-y-6 lg:space-y-8 animate-fade-in">
-      {/* Header Section */}
-      <div className="flex flex-col gap-4 animate-slide-in-down">
-        <div className="flex-1 min-w-0">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-linear-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-            Intelligence Orchestration
-          </h1>
-          <p className="text-slate-300 text-sm sm:text-base mt-2">
-            Coordinate and automate multi-agent workflows
-          </p>
-        </div>
-        <div className="shrink-0">
+      <OpsPageHeader
+        eyebrow="Automation"
+        title="Workflow Operations"
+        subtitle="Build, run, and monitor repeatable orchestration pipelines."
+        meta={
+          <div className="flex flex-wrap gap-2 text-xs">
+            <span className="px-2 py-1 rounded-full bg-blue-500/10 text-blue-300 border border-blue-500/20">
+              {workflows.length} workflows
+            </span>
+            <span className="px-2 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20">
+              {runningExecutions} running
+            </span>
+            <span className="px-2 py-1 rounded-full bg-red-500/10 text-red-300 border border-red-500/20">
+              {failedExecutions} failed
+            </span>
+          </div>
+        }
+        actions={
           <Link to="/workflows/builder">
             <PremiumButton size="lg" variant="gradient">
               <Zap className="w-4 h-4 mr-2" />
-              <span className="hidden sm:inline">Orchestrate New Intelligence</span>
-              <span className="sm:hidden">New Workflow</span>
+              New Workflow
             </PremiumButton>
           </Link>
-        </div>
+        }
+      />
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <GlassCard className="p-4">
+          <p className="text-xs uppercase tracking-wide text-gray-400">Total Runs</p>
+          <p className="text-2xl font-bold text-white mt-1">{executions.length}</p>
+        </GlassCard>
+        <GlassCard className="p-4">
+          <p className="text-xs uppercase tracking-wide text-gray-400">Running Now</p>
+          <p className="text-2xl font-bold text-white mt-1">{runningExecutions}</p>
+        </GlassCard>
+        <GlassCard className="p-4">
+          <p className="text-xs uppercase tracking-wide text-gray-400">Failure Count</p>
+          <p className="text-2xl font-bold text-white mt-1">{failedExecutions}</p>
+        </GlassCard>
       </div>
 
       {/* Active Workflows Grid */}
@@ -154,6 +199,17 @@ export default function Workflows() {
                     <Play className="w-3 h-3 mr-1" />
                     Run
                   </PremiumButton>
+                  {workflow.status?.toLowerCase() === 'draft' && (
+                    <PremiumButton
+                      size="sm"
+                      variant="outline"
+                      className="flex-1"
+                      onClick={() => handlePublish(workflow.id, workflow.name)}
+                    >
+                      <Rocket className="w-3 h-3 mr-1" />
+                      Publish
+                    </PremiumButton>
+                  )}
                 </div>
               </div>
             </ActionCard>

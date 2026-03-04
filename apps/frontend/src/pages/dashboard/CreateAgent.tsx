@@ -233,27 +233,66 @@ const CreateAgent: React.FC = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const response = await fetch('/api/dashboard/agents', {
+      const authHeaders = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+      };
+
+      const createResponse = await fetch('/api/agents', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(config),
+        headers: authHeaders,
+        credentials: 'include',
+        body: JSON.stringify({
+          name: config.name,
+          description: config.description,
+          type: config.type,
+          capabilities: config.capabilities,
+          systemPrompt: config.systemPrompt,
+          configuration: {
+            model: config.model,
+            temperature: config.temperature,
+            maxTokens: config.maxTokens,
+            topP: config.topP,
+            frequencyPenalty: config.frequencyPenalty,
+            presencePenalty: config.presencePenalty,
+            isPublic: config.isPublic,
+            enableLogging: config.enableLogging,
+            enableMetrics: config.enableMetrics,
+            rateLimitPerMinute: config.rateLimitPerMinute,
+            timeoutSeconds: config.timeoutSeconds,
+            tags: config.tags,
+          },
+        }),
       });
 
-      if (response.ok) {
-        const agent = await response.json();
+      if (createResponse.ok) {
+        const agent = await createResponse.json();
+        const deployResponse = await fetch(`/api/agents/${agent.id}/deploy`, {
+          method: 'POST',
+          headers: authHeaders,
+          credentials: 'include',
+          body: JSON.stringify({ target: config.deployment }),
+        });
+
+        if (!deployResponse.ok) {
+          throw new Error('Agent was created but deployment failed');
+        }
+
         toast({
-          title: 'Agent Created!',
-          description: `${config.name} has been successfully deployed.`,
+          title: 'Agent Deployed!',
+          description: `${config.name} is live via ${config.deployment} orchestration.`,
         });
         navigate(`/dashboard/agents/${agent.id}`);
       } else {
-        throw new Error('Failed to create agent');
+        const errorPayload = await createResponse.text();
+        throw new Error(errorPayload || 'Failed to create agent');
       }
     } catch (error) {
       console.error('Failed to create agent:', error);
       toast({
         title: 'Error',
-        description: 'Failed to create agent. Please try again.',
+        description:
+          error instanceof Error ? error.message : 'Failed to deploy agent. Please try again.',
         variant: 'destructive',
       });
     } finally {

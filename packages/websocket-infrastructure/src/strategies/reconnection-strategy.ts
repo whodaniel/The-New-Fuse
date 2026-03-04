@@ -82,7 +82,7 @@ export class LinearBackoffStrategy implements ReconnectionStrategy {
     }
 
     const delay = Math.min(
-      this.initialDelay + (attemptNumber * this.backoffMultiplier),
+      this.initialDelay + attemptNumber * this.backoffMultiplier,
       this.maxDelay
     );
 
@@ -108,11 +108,7 @@ export class FibonacciBackoffStrategy implements ReconnectionStrategy {
   public maxDelay: number;
   public backoffMultiplier: number = 1;
 
-  constructor(
-    maxAttempts: number = 10,
-    initialDelay: number = 1000,
-    maxDelay: number = 30000
-  ) {
+  constructor(maxAttempts: number = 10, initialDelay: number = 1000, maxDelay: number = 30000) {
     this.maxAttempts = maxAttempts;
     this.initialDelay = initialDelay;
     this.maxDelay = maxDelay;
@@ -123,7 +119,8 @@ export class FibonacciBackoffStrategy implements ReconnectionStrategy {
    */
   private fibonacci(n: number): number {
     if (n <= 1) return 1;
-    let a = 1, b = 1;
+    let a = 1,
+      b = 1;
     for (let i = 2; i <= n; i++) {
       [a, b] = [b, a + b];
     }
@@ -189,7 +186,9 @@ export class ReconnectionManager {
       return;
     }
 
-    this.logger.log(`Reconnection attempt ${this.attemptCount + 1}/${this.strategy.maxAttempts} in ${delay}ms`);
+    this.logger.log(
+      `Reconnection attempt ${this.attemptCount + 1}/${this.strategy.maxAttempts} in ${delay}ms`
+    );
 
     this.reconnectTimeout = setTimeout(async () => {
       try {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast'; // Added Toaster import
 import { Outlet } from 'react-router-dom';
 import { PremiumHeader } from '../components/Navigation/PremiumHeader';
@@ -12,6 +12,17 @@ interface PremiumLayoutProps {
 export const PremiumLayout: React.FC<PremiumLayoutProps> = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  useEffect(() => {
+    const handleSidebarToggle = () => {
+      setIsSidebarOpen((prev) => !prev);
+    };
+
+    document.addEventListener('sidebar:toggle', handleSidebarToggle);
+    return () => {
+      document.removeEventListener('sidebar:toggle', handleSidebarToggle);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen w-full text-gray-100 font-sans selection:bg-blue-500/30">

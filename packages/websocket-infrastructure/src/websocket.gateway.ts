@@ -27,9 +27,7 @@ import { MessageSerializer } from './utils/binary-protocol';
   },
   transports: ['websocket', 'polling'],
 })
-export class WebSocketGateway
-  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
-{
+export class WebSocketGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server!: Server;
 
   private readonly logger = new Logger(WebSocketGateway.name);
@@ -71,9 +69,7 @@ export class WebSocketGateway
     this.monitoring = new WebSocketMonitoring();
 
     // Initialize compression middleware
-    this.compressionMiddleware = new CompressionMiddleware(
-      config?.compression?.threshold ?? 1024
-    );
+    this.compressionMiddleware = new CompressionMiddleware(config?.compression?.threshold ?? 1024);
 
     // Setup event listeners
     this.setupEventListeners();

@@ -69,6 +69,7 @@ export class UnifiedLedgerController {
 
   @Get('timeline/events')
   async timeline(
+    @Query('userId') userId?: string,
     @Query('recordId') recordId?: string,
     @Query('goalId') goalId?: string,
     @Query('planId') planId?: string,
@@ -78,6 +79,7 @@ export class UnifiedLedgerController {
     @Query('dateTo') dateTo?: string
   ) {
     return this.ledger.listTimelineEvents({
+      userId,
       recordId,
       goalId,
       planId,
@@ -101,6 +103,11 @@ export class UnifiedLedgerController {
   @Patch('timeline/events/:id')
   async patchTimelineEvent(@Param('id') id: string, @Body() body: any) {
     return this.ledger.updateTimelineEvent(id, body);
+  }
+
+  @Delete('timeline/events/:id')
+  async deleteTimelineEvent(@Param('id') id: string, @Query('userId') userId?: string) {
+    return this.ledger.deleteTimelineEvent(id, userId);
   }
 
   @Post('goals')
