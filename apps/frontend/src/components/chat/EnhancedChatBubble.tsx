@@ -2,7 +2,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 import react_1 from 'react';
 import message_utils_1 from '../../utils/message-utils';
 import ui_1 from '../ui';
-export function EnhancedChatBubble({ message, agents, workspace }) {
+
+// ⚡ Bolt: Wrapped EnhancedChatBubble in React.memo to prevent O(n) re-renders
+// of the entire message list on every keystroke or update in the chat interface.
+// This significantly improves typing performance in long chat rooms by ensuring
+// only new or updated messages are re-rendered.
+export const EnhancedChatBubble = react_1.memo(function EnhancedChatBubble({ message, agents, _workspace }) {
     const isUser = message.sender.type === 'user';
     const agent = message.metadata.agentId
         ? agents.find(a => a.id === message.metadata.agentId)
@@ -31,5 +36,5 @@ export function EnhancedChatBubble({ message, agents, workspace }) {
         </div>
       </div>
     </div>);
-}
+});
 ;
