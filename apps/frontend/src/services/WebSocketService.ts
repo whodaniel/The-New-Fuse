@@ -33,6 +33,13 @@ import { EventEmitter } from 'events';
 import { io, Socket } from 'socket.io-client';
 import { logger } from '../utils/logger';
 
+function resolveDefaultSocketUrl(): string {
+  if (import.meta.env.VITE_WS_URL) return import.meta.env.VITE_WS_URL;
+  if (typeof window === 'undefined') return 'ws://localhost:3001';
+  const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  return `${wsProtocol}//${window.location.host}`;
+}
+
 // ============================================================================
 // Types and Interfaces
 // ============================================================================
@@ -181,7 +188,7 @@ export class WebSocketService {
   private constructor(config: Partial<WebSocketConfig> = {}) {
     // Default configuration
     this.config = {
-      url: import.meta.env.VITE_WS_URL || 'ws://localhost:3001',
+      url: resolveDefaultSocketUrl(),
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
       autoConnect: false,

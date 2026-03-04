@@ -111,7 +111,22 @@ const CommunityHub: React.FC = () => {
       if (postsResponse.ok && statsResponse.ok && isJson(postsResponse) && isJson(statsResponse)) {
         const postsData = await postsResponse.json();
         const statsData = await statsResponse.json();
-        setPosts(Array.isArray(postsData) ? postsData : []);
+        const normalizedPosts: CommunityPost[] = Array.isArray(postsData)
+          ? postsData.map((post: any) => ({
+              ...post,
+              tags: Array.isArray(post?.tags) ? post.tags : [],
+              votes: {
+                upvotes: Number(post?.votes?.upvotes || 0),
+                downvotes: Number(post?.votes?.downvotes || 0),
+                userVote: post?.votes?.userVote ?? null,
+              },
+              author: {
+                ...(post?.author || {}),
+                badges: Array.isArray(post?.author?.badges) ? post.author.badges : [],
+              },
+            }))
+          : [];
+        setPosts(normalizedPosts);
         setStats(statsData ?? null);
       } else {
         setPosts([]);
@@ -397,9 +412,9 @@ const CommunityHub: React.FC = () => {
                   </p>
 
                   {/* Tags */}
-                  {post.tags.length > 0 && (
+                  {(post.tags || []).length > 0 && (
                     <div className="flex flex-wrap gap-2 mb-3">
-                      {post.tags.map((tag) => (
+                      {(post.tags || []).map((tag) => (
                         <span
                           key={tag}
                           className="inline-flex items-center px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer"
@@ -428,7 +443,7 @@ const CommunityHub: React.FC = () => {
                             </span>
                           </div>
                           <div className="flex items-center space-x-1">
-                            {post.author.badges.map((badge) => (
+                            {(post.author?.badges || []).map((badge) => (
                               <span
                                 key={badge}
                                 className="text-xs text-blue-600 dark:text-blue-400"

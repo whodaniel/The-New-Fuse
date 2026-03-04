@@ -263,15 +263,13 @@ function generateReport() {
   console.log('\n📈 Overall Score:');
   console.log(`   ${results.overall.score}% - ${results.overall.status.toUpperCase()}`);
 
-  // Save report
-  const reportDir = path.join(ROOT_DIR, '.agent/test-reports');
-  if (!fs.existsSync(reportDir)) {
-    fs.mkdirSync(reportDir, { recursive: true });
+  // Save report with lifecycle metadata & rotation
+  const { writeReportWithLifecycle } = require('./report-lifecycle.cjs');
+  const { filePath, pruneResult } = writeReportWithLifecycle('integration-report', results);
+  log.info(`Report saved to: ${filePath}`);
+  if (pruneResult.pruned > 0) {
+    log.info(`Pruned ${pruneResult.pruned} old report(s), ${pruneResult.kept} remaining`);
   }
-
-  const reportFile = path.join(reportDir, `integration-report-${Date.now()}.json`);
-  fs.writeFileSync(reportFile, JSON.stringify(results, null, 2));
-  log.info(`Report saved to: ${reportFile}`);
 
   return results;
 }
