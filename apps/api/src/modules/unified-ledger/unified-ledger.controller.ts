@@ -1,4 +1,17 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { CurrentUser } from '../../decorators/current-user.decorator';
 import { UnifiedLedgerService } from './unified-ledger.service';
 import {
   UnifiedRecordKind,
@@ -8,11 +21,21 @@ import {
 } from './unified-ledger.types';
 
 @Controller()
+@UseGuards(JwtAuthGuard)
 export class UnifiedLedgerController {
   constructor(private readonly ledger: UnifiedLedgerService) {}
 
+  private requireUserId(user: { id?: string; sub?: string } | undefined): string {
+    const userId = user?.id || user?.sub;
+    if (!userId) {
+      throw new UnauthorizedException('Missing authenticated user');
+    }
+    return userId;
+  }
+
   @Get('unified-ledger/records')
   async list(
+    @CurrentUser() _user: { id?: string; sub?: string },
     @Query('kind') kind?: UnifiedRecordKind,
     @Query('status') status?: UnifiedRecordStatus,
     @Query('lane') lane?: UnifiedWorkLane,
@@ -23,53 +46,70 @@ export class UnifiedLedgerController {
   }
 
   @Get('unified-ledger/records/:id')
-  async get(@Param('id') id: string) {
+  async get(@CurrentUser() _user: { id?: string; sub?: string }, @Param('id') id: string) {
     return this.ledger.getRecord(id);
   }
 
   @Get('unified-ledger/records/:id/connections')
-  async connections(@Param('id') id: string) {
-    return this.ledger.getRecordConnections(id);
+  async connections(@CurrentUser() user: { id?: string; sub?: string }, @Param('id') id: string) {
+    const userId = this.requireUserId(user);
+    return this.ledger.getRecordConnections(id, userId);
   }
 
   @Post('unified-ledger/records')
-  async create(@Body() body: any) {
+  async create(@CurrentUser() _user: { id?: string; sub?: string }, @Body() body: any) {
     return this.ledger.createRecord(body);
   }
 
   @Patch('unified-ledger/records/:id')
-  async patch(@Param('id') id: string, @Body() body: any) {
+  async patch(
+    @CurrentUser() _user: { id?: string; sub?: string },
+    @Param('id') id: string,
+    @Body() body: any
+  ) {
     return this.ledger.updateRecord(id, body);
   }
 
   @Post('unified-ledger/records/:id/vote')
-  async vote(@Param('id') id: string, @Body() body: { direction: 'up' | 'down' }) {
+  async vote(
+    @CurrentUser() _user: { id?: string; sub?: string },
+    @Param('id') id: string,
+    @Body() body: { direction: 'up' | 'down' }
+  ) {
     return this.ledger.voteRecord(id, body.direction);
   }
 
   @Post('unified-ledger/records/:id/feedback')
-  async feedback(@Param('id') id: string, @Body() body: any) {
+  async feedback(
+    @CurrentUser() _user: { id?: string; sub?: string },
+    @Param('id') id: string,
+    @Body() body: any
+  ) {
     return this.ledger.addFeedbackIteration(id, body);
   }
 
   @Post('unified-ledger/records/:id/links')
-  async link(@Param('id') id: string, @Body() body: any) {
+  async link(
+    @CurrentUser() _user: { id?: string; sub?: string },
+    @Param('id') id: string,
+    @Body() body: any
+  ) {
     return this.ledger.addFunctionalLink(id, body);
   }
 
   @Post('unified-ledger/ingest/orchestration')
-  async ingest(@Body() body: any) {
+  async ingest(@CurrentUser() _user: { id?: string; sub?: string }, @Body() body: any) {
     return this.ledger.ingestOrchestrationEvent(body);
   }
 
   @Get('unified-ledger/grid')
-  async grid() {
+  async grid(@CurrentUser() _user: { id?: string; sub?: string }) {
     return this.ledger.getGrid();
   }
 
   @Get('timeline/events')
   async timeline(
-    @Query('userId') userId?: string,
+    @CurrentUser() user: { id?: string; sub?: string },
     @Query('recordId') recordId?: string,
     @Query('goalId') goalId?: string,
     @Query('planId') planId?: string,
@@ -78,6 +118,7 @@ export class UnifiedLedgerController {
     @Query('dateFrom') dateFrom?: string,
     @Query('dateTo') dateTo?: string
   ) {
+    const userId = this.requireUserId(user);
     return this.ledger.listTimelineEvents({
       userId,
       recordId,
@@ -91,93 +132,127 @@ export class UnifiedLedgerController {
   }
 
   @Get('timeline/events/:id')
-  async timelineEvent(@Param('id') id: string) {
-    return this.ledger.getTimelineEvent(id);
+  async timelineEvent(@CurrentUser() user: { id?: string; sub?: string }, @Param('id') id: string) {
+    const userId = this.requireUserId(user);
+    return this.ledger.getTimelineEvent(id, userId);
   }
 
   @Post('timeline/events')
-  async createTimelineEvent(@Body() body: any) {
-    return this.ledger.createTimelineEvent(body);
+  async createTimelineEvent(@CurrentUser() user: { id?: string; sub?: string }, @Body() body: any) {
+    const userId = this.requireUserId(user);
+    return this.ledger.createTimelineEvent({ ...body, userId });
   }
 
   @Patch('timeline/events/:id')
-  async patchTimelineEvent(@Param('id') id: string, @Body() body: any) {
-    return this.ledger.updateTimelineEvent(id, body);
+  async patchTimelineEvent(
+    @CurrentUser() user: { id?: string; sub?: string },
+    @Param('id') id: string,
+    @Body() body: any
+  ) {
+    const userId = this.requireUserId(user);
+    return this.ledger.updateTimelineEvent(id, { ...body, userId });
   }
 
   @Delete('timeline/events/:id')
-  async deleteTimelineEvent(@Param('id') id: string, @Query('userId') userId?: string) {
+  async deleteTimelineEvent(
+    @CurrentUser() user: { id?: string; sub?: string },
+    @Param('id') id: string
+  ) {
+    const userId = this.requireUserId(user);
     return this.ledger.deleteTimelineEvent(id, userId);
   }
 
   @Post('goals')
-  async createGoal(@Body() body: any) {
-    return this.ledger.createGoal(body);
+  async createGoal(@CurrentUser() user: { id?: string; sub?: string }, @Body() body: any) {
+    const userId = this.requireUserId(user);
+    return this.ledger.createGoal({ ...body, owner: userId });
   }
 
   @Get('goals')
-  async listGoals() {
-    return this.ledger.listGoals();
+  async listGoals(@CurrentUser() user: { id?: string; sub?: string }) {
+    const userId = this.requireUserId(user);
+    return this.ledger.listGoals({ owner: userId });
   }
 
   @Get('goals/:id')
-  async getGoal(@Param('id') id: string) {
-    return this.ledger.getGoal(id);
+  async getGoal(@CurrentUser() user: { id?: string; sub?: string }, @Param('id') id: string) {
+    const userId = this.requireUserId(user);
+    return this.ledger.getGoal(id, userId);
   }
 
   @Post('goals/:id/link-record')
   async linkGoalRecord(
+    @CurrentUser() user: { id?: string; sub?: string },
     @Param('id') id: string,
-    @Body() body: { recordId: string; actor?: string }
+    @Body() body: { recordId: string; actor?: string; owner?: string }
   ) {
-    return this.ledger.linkGoalToRecord(id, body.recordId, body.actor);
+    const userId = this.requireUserId(user);
+    return this.ledger.linkGoalToRecord(id, body.recordId, body.actor || userId, userId);
   }
 
   @Post('goals/:id/milestones')
-  async addMilestone(@Param('id') id: string, @Body() body: any) {
-    return this.ledger.addGoalMilestone(id, body);
+  async addMilestone(
+    @CurrentUser() user: { id?: string; sub?: string },
+    @Param('id') id: string,
+    @Body() body: any
+  ) {
+    const userId = this.requireUserId(user);
+    return this.ledger.addGoalMilestone(id, { ...body, owner: userId });
   }
 
   @Patch('goals/:id/milestones/:milestoneId')
   async updateMilestone(
+    @CurrentUser() user: { id?: string; sub?: string },
     @Param('id') id: string,
     @Param('milestoneId') milestoneId: string,
     @Body() body: any
   ) {
-    return this.ledger.updateGoalMilestone(id, milestoneId, body);
+    const userId = this.requireUserId(user);
+    return this.ledger.updateGoalMilestone(id, milestoneId, { ...body, owner: userId });
   }
 
   @Delete('goals/:id/milestones/:milestoneId')
-  async deleteMilestone(@Param('id') id: string, @Param('milestoneId') milestoneId: string) {
-    return this.ledger.removeGoalMilestone(id, milestoneId);
+  async deleteMilestone(
+    @CurrentUser() user: { id?: string; sub?: string },
+    @Param('id') id: string,
+    @Param('milestoneId') milestoneId: string
+  ) {
+    const userId = this.requireUserId(user);
+    return this.ledger.removeGoalMilestone(id, milestoneId, userId);
   }
 
   @Post('plans')
-  async createPlan(@Body() body: any) {
-    return this.ledger.createPlan(body);
+  async createPlan(@CurrentUser() user: { id?: string; sub?: string }, @Body() body: any) {
+    const userId = this.requireUserId(user);
+    return this.ledger.createPlan({ ...body, owner: userId });
   }
 
   @Get('plans')
-  async listPlans() {
-    return this.ledger.listPlans();
+  async listPlans(@CurrentUser() user: { id?: string; sub?: string }) {
+    const userId = this.requireUserId(user);
+    return this.ledger.listPlans({ owner: userId });
   }
 
   @Get('plans/:id')
-  async getPlan(@Param('id') id: string) {
-    return this.ledger.getPlan(id);
+  async getPlan(@CurrentUser() user: { id?: string; sub?: string }, @Param('id') id: string) {
+    const userId = this.requireUserId(user);
+    return this.ledger.getPlan(id, userId);
   }
 
   @Post('plans/:id/link')
   async linkPlan(
+    @CurrentUser() user: { id?: string; sub?: string },
     @Param('id') id: string,
-    @Body() body: { goalId?: string; recordId?: string; actor?: string }
+    @Body() body: { owner?: string; goalId?: string; recordId?: string; actor?: string }
   ) {
-    return this.ledger.linkPlan(id, body);
+    const userId = this.requireUserId(user);
+    return this.ledger.linkPlan(id, { ...body, owner: userId, actor: body.actor || userId });
   }
 
-  // Compatibility routes for existing frontend pages.
-  @Get('tasks')
+  // Compatibility routes for existing frontend pages under unified-ledger namespace.
+  @Get('unified-ledger/tasks')
   async listTasks(
+    @CurrentUser() _user: { id?: string; sub?: string },
     @Query('status') status?: UnifiedRecordStatus,
     @Query('lane') lane?: UnifiedWorkLane,
     @Query('horizon') horizon?: UnifiedWorkHorizon,
@@ -186,27 +261,34 @@ export class UnifiedLedgerController {
     return this.ledger.listRecords({ kind: 'task', status, lane, horizon, q });
   }
 
-  @Get('tasks/:id')
-  async getTask(@Param('id') id: string) {
+  @Get('unified-ledger/tasks/:id')
+  async getTask(@CurrentUser() _user: { id?: string; sub?: string }, @Param('id') id: string) {
     return this.ledger.getRecord(id);
   }
 
-  @Post('tasks')
-  async createTask(@Body() body: any) {
+  @Post('unified-ledger/tasks')
+  async createTask(@CurrentUser() user: { id?: string; sub?: string }, @Body() body: any) {
+    const userId = this.requireUserId(user);
     return this.ledger.createRecord({
       ...body,
       kind: 'task',
+      owner: userId,
       source: body.source || 'api',
     });
   }
 
-  @Patch('tasks/:id')
-  async patchTask(@Param('id') id: string, @Body() body: any) {
+  @Patch('unified-ledger/tasks/:id')
+  async patchTask(
+    @CurrentUser() _user: { id?: string; sub?: string },
+    @Param('id') id: string,
+    @Body() body: any
+  ) {
     return this.ledger.updateRecord(id, body);
   }
 
   @Get('suggestions')
   async listSuggestions(
+    @CurrentUser() _user: { id?: string; sub?: string },
     @Query('status') status?: UnifiedRecordStatus,
     @Query('lane') lane?: UnifiedWorkLane,
     @Query('horizon') horizon?: UnifiedWorkHorizon,
@@ -216,27 +298,40 @@ export class UnifiedLedgerController {
   }
 
   @Get('suggestions/:id')
-  async getSuggestion(@Param('id') id: string) {
+  async getSuggestion(
+    @CurrentUser() _user: { id?: string; sub?: string },
+    @Param('id') id: string
+  ) {
     return this.ledger.getRecord(id);
   }
 
   @Post('suggestions')
-  async createSuggestion(@Body() body: any) {
+  async createSuggestion(@CurrentUser() user: { id?: string; sub?: string }, @Body() body: any) {
+    const userId = this.requireUserId(user);
     return this.ledger.createRecord({
       ...body,
       kind: 'suggestion',
+      owner: userId,
       source: body.source || 'api',
       status: body.status || 'submitted',
     });
   }
 
   @Patch('suggestions/:id')
-  async patchSuggestion(@Param('id') id: string, @Body() body: any) {
+  async patchSuggestion(
+    @CurrentUser() _user: { id?: string; sub?: string },
+    @Param('id') id: string,
+    @Body() body: any
+  ) {
     return this.ledger.updateRecord(id, body);
   }
 
   @Post('suggestions/:id/vote')
-  async voteSuggestion(@Param('id') id: string, @Body() body: { direction: 'up' | 'down' }) {
+  async voteSuggestion(
+    @CurrentUser() _user: { id?: string; sub?: string },
+    @Param('id') id: string,
+    @Body() body: { direction: 'up' | 'down' }
+  ) {
     return this.ledger.voteRecord(id, body.direction);
   }
 }

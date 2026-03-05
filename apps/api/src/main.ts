@@ -155,6 +155,26 @@ async function bootstrap(): Promise<void> {
     next();
   });
 
+  // Route fallback: when users hit SPA paths on the API host, redirect to frontend app.
+  app.use((req: any, res: any, next: any) => {
+    const isGet = req.method === 'GET';
+    const path = req.path || '';
+    const isApi = path.startsWith('/api');
+    const isApiDocs = path.startsWith('/api-docs');
+    const acceptsHtml = String(req.headers.accept || '').includes('text/html');
+    if (!isGet || isApi || isApiDocs || !acceptsHtml) {
+      return next();
+    }
+
+    const frontendBase = process.env.FRONTEND_URL || 'https://thenewfuse.com';
+    try {
+      const target = new URL(req.originalUrl || '/', frontendBase).toString();
+      return res.redirect(302, target);
+    } catch {
+      return res.redirect(302, frontendBase);
+    }
+  });
+
   const port = process.env.PORT || 3001;
   await app.listen(port);
   logger.log(`API Server running on port ${port} with enhanced security`);

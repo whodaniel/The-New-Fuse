@@ -79,7 +79,45 @@ export interface RecordConnections {
   plans: ProjectPlanRecord[];
 }
 
+export interface TaskExecutionLogEntry {
+  id: string;
+  level: 'info' | 'warn' | 'error';
+  message: string;
+  actor: string;
+  source: string;
+  stage?: string;
+  metadata: Record<string, unknown>;
+  timestamp: string;
+}
+
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
+
+function getAuthHeaders(): Record<string, string> {
+  if (typeof window === 'undefined') {
+    return {};
+  }
+
+  const token =
+    localStorage.getItem('auth_token') ||
+    localStorage.getItem('accessToken') ||
+    localStorage.getItem('token');
+
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+async function apiFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+  const authHeaders = getAuthHeaders();
+  const mergedHeaders = {
+    ...authHeaders,
+    ...(init?.headers as Record<string, string> | undefined),
+  };
+
+  return fetch(input, {
+    ...init,
+    headers: mergedHeaders,
+    credentials: 'include',
+  });
+}
 
 async function parse<T>(res: Response): Promise<T> {
   if (!res.ok) {
@@ -90,7 +128,7 @@ async function parse<T>(res: Response): Promise<T> {
 }
 
 export async function listTasks(): Promise<LedgerRecord[]> {
-  return parse<LedgerRecord[]>(await fetch('/api/tasks'));
+  return parse<LedgerRecord[]>(await apiFetch('/api/unified-ledger/tasks'));
 }
 
 export async function listRecords(params?: {
@@ -103,22 +141,26 @@ export async function listRecords(params?: {
   if (params?.status) search.set('status', params.status);
   if (params?.q) search.set('q', params.q);
   const suffix = search.toString() ? `?${search.toString()}` : '';
-  return parse<LedgerRecord[]>(await fetch(`/api/unified-ledger/records${suffix}`));
+  return parse<LedgerRecord[]>(await apiFetch(`/api/unified-ledger/records${suffix}`));
 }
 
-export async function getRecordConnections(recordId: string): Promise<RecordConnections> {
+export async function getRecordConnections(
+  recordId: string,
+  owner?: string
+): Promise<RecordConnections> {
+  const suffix = owner ? `?owner=${encodeURIComponent(owner)}` : '';
   return parse<RecordConnections>(
-    await fetch(`/api/unified-ledger/records/${recordId}/connections`)
+    await apiFetch(`/api/unified-ledger/records/${recordId}/connections${suffix}`)
   );
 }
 
 export async function getTask(id: string): Promise<LedgerRecord | null> {
-  return parse<LedgerRecord | null>(await fetch(`/api/tasks/${id}`));
+  return parse<LedgerRecord | null>(await apiFetch(`/api/unified-ledger/tasks/${id}`));
 }
 
 export async function createTask(input: Partial<LedgerRecord>): Promise<LedgerRecord> {
   return parse<LedgerRecord>(
-    await fetch('/api/tasks', {
+    await apiFetch('/api/unified-ledger/tasks', {
       method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify(input),
@@ -128,7 +170,7 @@ export async function createTask(input: Partial<LedgerRecord>): Promise<LedgerRe
 
 export async function updateTask(id: string, patch: Partial<LedgerRecord>): Promise<LedgerRecord> {
   return parse<LedgerRecord>(
-    await fetch(`/api/tasks/${id}`, {
+    await apiFetch(`/api/unified-ledger/tasks/${id}`, {
       method: 'PATCH',
       headers: JSON_HEADERS,
       body: JSON.stringify(patch),
@@ -137,16 +179,16 @@ export async function updateTask(id: string, patch: Partial<LedgerRecord>): Prom
 }
 
 export async function listSuggestions(): Promise<LedgerRecord[]> {
-  return parse<LedgerRecord[]>(await fetch('/api/suggestions'));
+  return parse<LedgerRecord[]>(await apiFetch('/api/suggestions'));
 }
 
 export async function getSuggestion(id: string): Promise<LedgerRecord | null> {
-  return parse<LedgerRecord | null>(await fetch(`/api/suggestions/${id}`));
+  return parse<LedgerRecord | null>(await apiFetch(`/api/suggestions/${id}`));
 }
 
 export async function createSuggestion(input: Partial<LedgerRecord>): Promise<LedgerRecord> {
   return parse<LedgerRecord>(
-    await fetch('/api/suggestions', {
+    await apiFetch('/api/suggestions', {
       method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify(input),
@@ -159,7 +201,7 @@ export async function voteSuggestion(
   direction: 'up' | 'down'
 ): Promise<LedgerRecord | null> {
   return parse<LedgerRecord | null>(
-    await fetch(`/api/suggestions/${id}/vote`, {
+    await apiFetch(`/api/suggestions/${id}/vote`, {
       method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify({ direction }),
@@ -187,11 +229,12 @@ export async function listTimelineEvents(params?: {
   if (params?.dateFrom) search.set('dateFrom', params.dateFrom);
   if (params?.dateTo) search.set('dateTo', params.dateTo);
   const suffix = search.toString() ? `?${search.toString()}` : '';
-  return parse<TimelineEvent[]>(await fetch(`/api/timeline/events${suffix}`));
+  return parse<TimelineEvent[]>(await apiFetch(`/api/timeline/events${suffix}`));
 }
 
-export async function getTimelineEvent(id: string): Promise<TimelineEvent | null> {
-  return parse<TimelineEvent | null>(await fetch(`/api/timeline/events/${id}`));
+export async function getTimelineEvent(id: string, userId?: string): Promise<TimelineEvent | null> {
+  const suffix = userId ? `?userId=${encodeURIComponent(userId)}` : '';
+  return parse<TimelineEvent | null>(await apiFetch(`/api/timeline/events/${id}${suffix}`));
 }
 
 export async function createTimelineEvent(input: {
@@ -205,7 +248,7 @@ export async function createTimelineEvent(input: {
   payload?: Record<string, unknown>;
 }): Promise<TimelineEvent> {
   return parse<TimelineEvent>(
-    await fetch('/api/timeline/events', {
+    await apiFetch('/api/timeline/events', {
       method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify(input),
@@ -218,7 +261,7 @@ export async function updateTimelineEvent(
   input: { userId?: string; actor?: string; timestamp?: string; payload?: Record<string, unknown> }
 ): Promise<TimelineEvent | null> {
   return parse<TimelineEvent | null>(
-    await fetch(`/api/timeline/events/${id}`, {
+    await apiFetch(`/api/timeline/events/${id}`, {
       method: 'PATCH',
       headers: JSON_HEADERS,
       body: JSON.stringify(input),
@@ -229,7 +272,7 @@ export async function updateTimelineEvent(
 export async function deleteTimelineEvent(id: string, userId?: string): Promise<boolean> {
   const suffix = userId ? `?userId=${encodeURIComponent(userId)}` : '';
   return parse<boolean>(
-    await fetch(`/api/timeline/events/${id}${suffix}`, {
+    await apiFetch(`/api/timeline/events/${id}${suffix}`, {
       method: 'DELETE',
     })
   );
@@ -242,7 +285,7 @@ export async function createGoal(input: {
   linkedRecordIds?: string[];
 }): Promise<GoalRecord> {
   return parse<GoalRecord>(
-    await fetch('/api/goals', {
+    await apiFetch('/api/goals', {
       method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify(input),
@@ -250,24 +293,27 @@ export async function createGoal(input: {
   );
 }
 
-export async function listGoals(): Promise<GoalRecord[]> {
-  return parse<GoalRecord[]>(await fetch('/api/goals'));
+export async function listGoals(owner?: string): Promise<GoalRecord[]> {
+  const suffix = owner ? `?owner=${encodeURIComponent(owner)}` : '';
+  return parse<GoalRecord[]>(await apiFetch(`/api/goals${suffix}`));
 }
 
-export async function getGoal(id: string): Promise<GoalRecord | null> {
-  return parse<GoalRecord | null>(await fetch(`/api/goals/${id}`));
+export async function getGoal(id: string, owner?: string): Promise<GoalRecord | null> {
+  const suffix = owner ? `?owner=${encodeURIComponent(owner)}` : '';
+  return parse<GoalRecord | null>(await apiFetch(`/api/goals/${id}${suffix}`));
 }
 
 export async function linkGoalToRecord(
   goalId: string,
   recordId: string,
-  actor = 'ui-user'
+  actor = 'ui-user',
+  owner?: string
 ): Promise<GoalRecord | null> {
   return parse<GoalRecord | null>(
-    await fetch(`/api/goals/${goalId}/link-record`, {
+    await apiFetch(`/api/goals/${goalId}/link-record`, {
       method: 'POST',
       headers: JSON_HEADERS,
-      body: JSON.stringify({ recordId, actor }),
+      body: JSON.stringify({ recordId, actor, owner }),
     })
   );
 }
@@ -275,13 +321,14 @@ export async function linkGoalToRecord(
 export async function addGoalMilestone(
   goalId: string,
   input: {
+    owner?: string;
     title: string;
     dueAt?: string;
     status?: 'pending' | 'in_progress' | 'completed' | 'blocked';
   }
 ): Promise<GoalRecord | null> {
   return parse<GoalRecord | null>(
-    await fetch(`/api/goals/${goalId}/milestones`, {
+    await apiFetch(`/api/goals/${goalId}/milestones`, {
       method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify(input),
@@ -293,13 +340,14 @@ export async function updateGoalMilestone(
   goalId: string,
   milestoneId: string,
   input: {
+    owner?: string;
     title?: string;
     dueAt?: string;
     status?: 'pending' | 'in_progress' | 'completed' | 'blocked';
   }
 ): Promise<GoalRecord | null> {
   return parse<GoalRecord | null>(
-    await fetch(`/api/goals/${goalId}/milestones/${milestoneId}`, {
+    await apiFetch(`/api/goals/${goalId}/milestones/${milestoneId}`, {
       method: 'PATCH',
       headers: JSON_HEADERS,
       body: JSON.stringify(input),
@@ -309,10 +357,12 @@ export async function updateGoalMilestone(
 
 export async function deleteGoalMilestone(
   goalId: string,
-  milestoneId: string
+  milestoneId: string,
+  owner?: string
 ): Promise<GoalRecord | null> {
+  const suffix = owner ? `?owner=${encodeURIComponent(owner)}` : '';
   return parse<GoalRecord | null>(
-    await fetch(`/api/goals/${goalId}/milestones/${milestoneId}`, {
+    await apiFetch(`/api/goals/${goalId}/milestones/${milestoneId}${suffix}`, {
       method: 'DELETE',
     })
   );
@@ -327,7 +377,7 @@ export async function createPlan(input: {
   cadence?: { cycleDays?: number; reviewBpm?: number; progressPercent?: number };
 }): Promise<ProjectPlanRecord> {
   return parse<ProjectPlanRecord>(
-    await fetch('/api/plans', {
+    await apiFetch('/api/plans', {
       method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify(input),
@@ -335,20 +385,22 @@ export async function createPlan(input: {
   );
 }
 
-export async function listPlans(): Promise<ProjectPlanRecord[]> {
-  return parse<ProjectPlanRecord[]>(await fetch('/api/plans'));
+export async function listPlans(owner?: string): Promise<ProjectPlanRecord[]> {
+  const suffix = owner ? `?owner=${encodeURIComponent(owner)}` : '';
+  return parse<ProjectPlanRecord[]>(await apiFetch(`/api/plans${suffix}`));
 }
 
-export async function getPlan(id: string): Promise<ProjectPlanRecord | null> {
-  return parse<ProjectPlanRecord | null>(await fetch(`/api/plans/${id}`));
+export async function getPlan(id: string, owner?: string): Promise<ProjectPlanRecord | null> {
+  const suffix = owner ? `?owner=${encodeURIComponent(owner)}` : '';
+  return parse<ProjectPlanRecord | null>(await apiFetch(`/api/plans/${id}${suffix}`));
 }
 
 export async function linkPlan(
   planId: string,
-  input: { goalId?: string; recordId?: string; actor?: string }
+  input: { owner?: string; goalId?: string; recordId?: string; actor?: string }
 ): Promise<ProjectPlanRecord | null> {
   return parse<ProjectPlanRecord | null>(
-    await fetch(`/api/plans/${planId}/link`, {
+    await apiFetch(`/api/plans/${planId}/link`, {
       method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify(input),
@@ -367,7 +419,35 @@ export async function addFeedbackIteration(
   }
 ): Promise<LedgerRecord | null> {
   return parse<LedgerRecord | null>(
-    await fetch(`/api/unified-ledger/records/${recordId}/feedback`, {
+    await apiFetch(`/api/unified-ledger/records/${recordId}/feedback`, {
+      method: 'POST',
+      headers: JSON_HEADERS,
+      body: JSON.stringify(input),
+    })
+  );
+}
+
+export async function getTaskExecutionLogs(
+  taskId: string
+): Promise<{ taskId: string; logs: TaskExecutionLogEntry[]; count: number }> {
+  return parse<{ taskId: string; logs: TaskExecutionLogEntry[]; count: number }>(
+    await apiFetch(`/api/tasks/${taskId}/execution-logs`)
+  );
+}
+
+export async function appendTaskExecutionLog(
+  taskId: string,
+  input: {
+    level: 'info' | 'warn' | 'error';
+    message: string;
+    actor: string;
+    source: string;
+    stage?: string;
+    metadata?: Record<string, unknown>;
+  }
+): Promise<{ taskId: string; logs: TaskExecutionLogEntry[]; count: number }> {
+  return parse<{ taskId: string; logs: TaskExecutionLogEntry[]; count: number }>(
+    await apiFetch(`/api/tasks/${taskId}/execution-logs`, {
       method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify(input),

@@ -2,16 +2,31 @@
 
 const API_BASE = '/api';
 
+interface DashboardMetricsResponse {
+  [key: string]: unknown;
+}
+
 class DashboardService {
-  private async request(endpoint: string, options: RequestInit = {}) {
+  private async request(
+    endpoint: string,
+    options: RequestInit = {}
+  ): Promise<DashboardMetricsResponse> {
     const token = localStorage.getItem('token');
-    const headers = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...options.headers,
     };
+    if (options.headers instanceof Headers) {
+      options.headers.forEach((value, key) => {
+        headers[key] = value;
+      });
+    } else if (Array.isArray(options.headers)) {
+      for (const [key, value] of options.headers) headers[key] = value;
+    } else if (options.headers) {
+      Object.assign(headers, options.headers as Record<string, string>);
+    }
 
     if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+      headers.Authorization = `Bearer ${token}`;
     }
 
     const response = await fetch(`${API_BASE}${endpoint}`, { ...options, headers });
@@ -23,11 +38,11 @@ class DashboardService {
     return response.json();
   }
 
-  getDashboardMetrics() {
+  getDashboardMetrics(): Promise<DashboardMetricsResponse> {
     return this.request('/dashboard/metrics');
   }
 
-  getAdminDashboardMetrics() {
+  getAdminDashboardMetrics(): Promise<DashboardMetricsResponse> {
     return this.request('/admin/metrics/dashboard');
   }
 }

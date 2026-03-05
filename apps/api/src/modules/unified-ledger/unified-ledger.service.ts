@@ -326,9 +326,12 @@ export class UnifiedLedgerService implements OnModuleInit {
       .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
   }
 
-  async getTimelineEvent(id: string): Promise<TimelineEvent | null> {
+  async getTimelineEvent(id: string, userId?: string): Promise<TimelineEvent | null> {
     await this.ensureLoaded();
-    return this.store.timelineEvents.find((e) => e.id === id) || null;
+    const event = this.store.timelineEvents.find((e) => e.id === id) || null;
+    if (!event) return null;
+    if (userId && event.userId && event.userId !== userId) return null;
+    return event;
   }
 
   async createTimelineEvent(input: {
@@ -389,7 +392,7 @@ export class UnifiedLedgerService implements OnModuleInit {
     const idx = this.store.timelineEvents.findIndex((e) => e.id === id);
     if (idx < 0) return null;
     const current = this.store.timelineEvents[idx];
-    if (patch.userId && current.userId && patch.userId !== current.userId) {
+    if (patch.userId && current.userId !== patch.userId) {
       return null;
     }
     const updated: TimelineEvent = {
@@ -408,7 +411,7 @@ export class UnifiedLedgerService implements OnModuleInit {
     const idx = this.store.timelineEvents.findIndex((e) => e.id === id);
     if (idx < 0) return false;
     const current = this.store.timelineEvents[idx];
-    if (userId && current.userId && current.userId !== userId) {
+    if (userId && current.userId !== userId) {
       return false;
     }
     this.store.timelineEvents.splice(idx, 1);
@@ -446,25 +449,32 @@ export class UnifiedLedgerService implements OnModuleInit {
     return goal;
   }
 
-  async listGoals(): Promise<GoalRecord[]> {
+  async listGoals(filters?: { owner?: string }): Promise<GoalRecord[]> {
     await this.ensureLoaded();
-    return [...this.store.goals].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+    return [...this.store.goals]
+      .filter((g) => (filters?.owner ? g.owner === filters.owner : true))
+      .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
   }
 
-  async getGoal(goalId: string): Promise<GoalRecord | null> {
+  async getGoal(goalId: string, owner?: string): Promise<GoalRecord | null> {
     await this.ensureLoaded();
-    return this.store.goals.find((g) => g.id === goalId) || null;
+    const goal = this.store.goals.find((g) => g.id === goalId) || null;
+    if (!goal) return null;
+    if (owner && goal.owner !== owner) return null;
+    return goal;
   }
 
   async linkGoalToRecord(
     goalId: string,
     recordId: string,
-    actor = 'system'
+    actor = 'system',
+    owner?: string
   ): Promise<GoalRecord | null> {
     await this.ensureLoaded();
     const idx = this.store.goals.findIndex((g) => g.id === goalId);
     if (idx < 0) return null;
     const current = this.store.goals[idx];
+    if (owner && current.owner !== owner) return null;
     const linkedRecordIds = current.linkedRecordIds.includes(recordId)
       ? current.linkedRecordIds
       : [...current.linkedRecordIds, recordId];
@@ -488,6 +498,7 @@ export class UnifiedLedgerService implements OnModuleInit {
   async addGoalMilestone(
     goalId: string,
     input: {
+      owner?: string;
       title: string;
       dueAt?: string;
       status?: 'pending' | 'in_progress' | 'completed' | 'blocked';
@@ -497,6 +508,7 @@ export class UnifiedLedgerService implements OnModuleInit {
     const idx = this.store.goals.findIndex((g) => g.id === goalId);
     if (idx < 0) return null;
     const current = this.store.goals[idx];
+    if (input.owner && current.owner !== input.owner) return null;
     const milestone = {
       id: `ms_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`,
       title: input.title,
@@ -512,7 +524,7 @@ export class UnifiedLedgerService implements OnModuleInit {
     this.pushEvent({
       goalId,
       eventType: 'milestone_updated',
-      actor: 'system',
+      actor: input.owner || 'system',
       payload: { milestone },
     });
     await this.persist();
@@ -523,6 +535,7 @@ export class UnifiedLedgerService implements OnModuleInit {
     goalId: string,
     milestoneId: string,
     patch: {
+      owner?: string;
       title?: string;
       dueAt?: string;
       status?: 'pending' | 'in_progress' | 'completed' | 'blocked';
@@ -532,6 +545,7 @@ export class UnifiedLedgerService implements OnModuleInit {
     const idx = this.store.goals.findIndex((g) => g.id === goalId);
     if (idx < 0) return null;
     const current = this.store.goals[idx];
+    if (patch.owner && current.owner !== patch.owner) return null;
     const milestones = current.milestones.map((m) =>
       m.id === milestoneId
         ? {
@@ -552,18 +566,23 @@ export class UnifiedLedgerService implements OnModuleInit {
     this.pushEvent({
       goalId,
       eventType: 'milestone_updated',
-      actor: 'system',
+      actor: patch.owner || 'system',
       payload: { milestoneId, patch },
     });
     await this.persist();
     return updated;
   }
 
-  async removeGoalMilestone(goalId: string, milestoneId: string): Promise<GoalRecord | null> {
+  async removeGoalMilestone(
+    goalId: string,
+    milestoneId: string,
+    owner?: string
+  ): Promise<GoalRecord | null> {
     await this.ensureLoaded();
     const idx = this.store.goals.findIndex((g) => g.id === goalId);
     if (idx < 0) return null;
     const current = this.store.goals[idx];
+    if (owner && current.owner !== owner) return null;
     const milestones = current.milestones.filter((m) => m.id !== milestoneId);
     if (milestones.length === current.milestones.length) return null;
     const updated: GoalRecord = {
@@ -575,7 +594,7 @@ export class UnifiedLedgerService implements OnModuleInit {
     this.pushEvent({
       goalId,
       eventType: 'milestone_updated',
-      actor: 'system',
+      actor: owner || 'system',
       payload: { milestoneId, removed: true },
     });
     await this.persist();
@@ -619,34 +638,47 @@ export class UnifiedLedgerService implements OnModuleInit {
     return plan;
   }
 
-  async listPlans(): Promise<ProjectPlanRecord[]> {
+  async listPlans(filters?: { owner?: string }): Promise<ProjectPlanRecord[]> {
     await this.ensureLoaded();
-    return [...this.store.plans].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+    return [...this.store.plans]
+      .filter((p) => (filters?.owner ? p.owner === filters.owner : true))
+      .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
   }
 
-  async getPlan(planId: string): Promise<ProjectPlanRecord | null> {
+  async getPlan(planId: string, owner?: string): Promise<ProjectPlanRecord | null> {
     await this.ensureLoaded();
-    return this.store.plans.find((p) => p.id === planId) || null;
+    const plan = this.store.plans.find((p) => p.id === planId) || null;
+    if (!plan) return null;
+    if (owner && plan.owner !== owner) return null;
+    return plan;
   }
 
-  async getRecordConnections(recordId: string): Promise<{
+  async getRecordConnections(
+    recordId: string,
+    owner?: string
+  ): Promise<{
     goals: GoalRecord[];
     plans: ProjectPlanRecord[];
   }> {
     await this.ensureLoaded();
-    const goals = this.store.goals.filter((g) => g.linkedRecordIds.includes(recordId));
-    const plans = this.store.plans.filter((p) => p.linkedRecordIds.includes(recordId));
+    const goals = this.store.goals.filter(
+      (g) => g.linkedRecordIds.includes(recordId) && (!owner || g.owner === owner)
+    );
+    const plans = this.store.plans.filter(
+      (p) => p.linkedRecordIds.includes(recordId) && (!owner || p.owner === owner)
+    );
     return { goals, plans };
   }
 
   async linkPlan(
     planId: string,
-    input: { goalId?: string; recordId?: string; actor?: string }
+    input: { owner?: string; goalId?: string; recordId?: string; actor?: string }
   ): Promise<ProjectPlanRecord | null> {
     await this.ensureLoaded();
     const idx = this.store.plans.findIndex((p) => p.id === planId);
     if (idx < 0) return null;
     const current = this.store.plans[idx];
+    if (input.owner && current.owner !== input.owner) return null;
     const linkedGoalIds = input.goalId
       ? current.linkedGoalIds.includes(input.goalId)
         ? current.linkedGoalIds

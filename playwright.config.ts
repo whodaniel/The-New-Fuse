@@ -15,6 +15,12 @@ import { defineConfig, devices } from '@playwright/test';
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
+const FRONTEND_BASE_URL =
+  process.env.BASE_URL || process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3002';
+const FRONTEND_SERVER_COMMAND =
+  process.env.PLAYWRIGHT_WEB_SERVER_COMMAND || 'pnpm --filter @the-new-fuse/frontend-app dev';
+const INCLUDE_FULL_BROWSER_MATRIX = process.env.PLAYWRIGHT_FULL_MATRIX === '1';
+
 export default defineConfig({
   testDir: './e2e',
 
@@ -41,7 +47,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: process.env.BASE_URL || 'http://localhost:3000',
+    baseURL: FRONTEND_BASE_URL,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
@@ -60,50 +66,45 @@ export default defineConfig({
   },
 
   /* Configure projects for major browsers */
-  projects: [
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
-
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
-
-    /* Test against mobile viewports. */
-    {
-      name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] },
-    },
-    {
-      name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] },
-    },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
-  ],
+  projects: INCLUDE_FULL_BROWSER_MATRIX
+    ? [
+        {
+          name: 'chromium',
+          use: { ...devices['Desktop Chrome'] },
+        },
+        {
+          name: 'firefox',
+          use: { ...devices['Desktop Firefox'] },
+        },
+        {
+          name: 'webkit',
+          use: { ...devices['Desktop Safari'] },
+        },
+        {
+          name: 'Mobile Chrome',
+          use: { ...devices['Pixel 5'] },
+        },
+        {
+          name: 'Mobile Safari',
+          use: { ...devices['iPhone 12'] },
+        },
+      ]
+    : [
+        {
+          name: 'chromium',
+          use: { ...devices['Desktop Chrome'] },
+        },
+      ],
 
   /* Run your local dev server before starting the tests */
-  webServer: process.env.CI ? undefined : {
-    command: 'pnpm run dev:working',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120000,
-  },
+  webServer: process.env.CI
+    ? undefined
+    : {
+        command: FRONTEND_SERVER_COMMAND,
+        url: FRONTEND_BASE_URL,
+        reuseExistingServer: !process.env.CI,
+        timeout: 120000,
+      },
 
   /* Global timeout for each test */
   timeout: 60000,

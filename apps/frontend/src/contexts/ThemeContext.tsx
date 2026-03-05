@@ -24,7 +24,7 @@ const defaultTheme: Theme = {
 };
 
 // Theme Provider component with proper TypeScript typing
-export function ThemeProvider({ children }: { children: ReactNode }): JSX.Element {
+export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>(defaultTheme);
 
   const toggleMode = (): void => {

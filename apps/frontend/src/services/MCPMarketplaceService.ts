@@ -21,7 +21,7 @@ const mcpMarketplaceServerSchema = z.object({
     .object({
       type: z.string(),
       required: z.array(z.string()).optional(),
-      properties: z.record(z.any()),
+      properties: z.record(z.string(), z.any()),
     })
     .optional(),
 });
@@ -57,8 +57,11 @@ export class MCPMarketplaceService {
         throw new Error(`Failed to fetch MCP marketplace servers: ${response.statusText}`);
       }
 
-      const data = await response.json();
-      const servers = data.map((server: any) => mcpMarketplaceServerSchema.parse(server));
+      const data: unknown = await response.json();
+      if (!Array.isArray(data)) {
+        throw new Error('Invalid marketplace response');
+      }
+      const servers = data.map((server: unknown) => mcpMarketplaceServerSchema.parse(server));
 
       // Cache the result
       this.cachedServers = {
@@ -119,7 +122,7 @@ export class MCPMarketplaceService {
    * @param config Optional configuration parameters
    * @returns True if successful
    */
-  async installServer(id: string, config?: Record<string, any>): Promise<boolean> {
+  async installServer(id: string, config?: Record<string, unknown>): Promise<boolean> {
     try {
       const server = await this.getServer(id);
       if (!server) {
