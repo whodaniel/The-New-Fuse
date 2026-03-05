@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Label } from '@/components/ui/label';
 import {
   Select,

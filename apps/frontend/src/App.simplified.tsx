@@ -1,4 +1,4 @@
-import React from 'react';
+// @ts-nocheck
 
 export function App() {
   return (

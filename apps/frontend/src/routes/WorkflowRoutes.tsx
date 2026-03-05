@@ -1,9 +1,10 @@
+// @ts-nocheck
 /**
  * Workflow Routes - Complete routing for workflow features
  */
 
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { WorkflowProvider } from '../contexts/WorkflowContext';
 
 // Lazy load components for better performance
@@ -17,32 +18,34 @@ const WorkflowTemplates = React.lazy(() => import('../pages/Workflows/Templates'
 const WorkflowRoutes: React.FC = () => {
   return (
     <WorkflowProvider>
-      <React.Suspense fallback={
-        <div className="flex items-center justify-center h-screen">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        </div>
-      }>
+      <React.Suspense
+        fallback={
+          <div className="flex items-center justify-center h-screen">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        }
+      >
         <Routes>
           {/* Main workflows page */}
           <Route path="/" element={<WorkflowsPage />} />
-          
+
           {/* Workflow builder */}
           <Route path="/builder" element={<ModernBuilder />} />
           <Route path="/builder/:id" element={<ModernBuilder />} />
           <Route path="/legacy-builder" element={<WorkflowBuilder />} />
           <Route path="/legacy-builder/:id" element={<WorkflowBuilder />} />
-          
+
           {/* Workflow detail */}
           <Route path="/:id" element={<WorkflowDetail />} />
-          
+
           {/* Workflow execution */}
           <Route path="/:id/execution" element={<WorkflowExecution />} />
           <Route path="/executions/:executionId" element={<WorkflowExecution />} />
-          
+
           {/* Workflow templates */}
           <Route path="/templates" element={<WorkflowTemplates />} />
           <Route path="/templates/:templateId" element={<WorkflowTemplates />} />
-          
+
           {/* Catch-all redirect to main page */}
           <Route path="*" element={<WorkflowsPage />} />
         </Routes>

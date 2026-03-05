@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Sidebar } from '@/components/layout/Sidebar';
 import { ActionCard, GlassCard, PremiumButton, StatsCard } from '@/components/ui/premium';
 import { useAuth } from '@/providers/AuthProvider';

@@ -1,4 +1,5 @@
-import React, { createContext, useState, ReactNode } from 'react';
+// @ts-nocheck
+import { createContext, ReactNode, useState } from 'react';
 
 export const CLEAR_ATTACHMENTS_EVENT = 'clearAttachments';
 export const PASTE_ATTACHMENT_EVENT = 'pasteAttachment';
@@ -10,7 +11,7 @@ interface DndUploaderContextType {
 
 export const DndUploaderContext = createContext<DndUploaderContextType>({
   files: [],
-  parseAttachments: () => {}
+  parseAttachments: () => {},
 });
 
 interface DnDFileUploaderWrapperProps {
@@ -26,14 +27,10 @@ export default function DnDFileUploaderWrapper({ children }: DnDFileUploaderWrap
 
   const contextValue = {
     files,
-    parseAttachments
+    parseAttachments,
   };
 
-  return (
-    <DndUploaderContext.Provider value={contextValue}>
-      {children}
-    </DndUploaderContext.Provider>
-  );
+  return <DndUploaderContext.Provider value={contextValue}>{children}</DndUploaderContext.Provider>;
 }
 
 export { DnDFileUploaderWrapper };

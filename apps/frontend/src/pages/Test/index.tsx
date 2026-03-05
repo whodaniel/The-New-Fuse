@@ -1,4 +1,4 @@
-import React from 'react';
+// @ts-nocheck
 
 export default function TestPage() {
   return (

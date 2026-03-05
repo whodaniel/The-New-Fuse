@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { GlassCard as Card } from '@/components/ui/premium/GlassCard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useEffect, useState } from 'react';

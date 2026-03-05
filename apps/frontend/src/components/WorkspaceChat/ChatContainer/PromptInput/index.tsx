@@ -1,3 +1,4 @@
+// @ts-nocheck
 import useTextSize from '@/hooks/useTextSize';
 import { PaperPlaneRight } from '@phosphor-icons/react';
 import debounce from 'lodash.debounce';

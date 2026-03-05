@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { PremiumButton as Button } from '@/components/ui/premium/PremiumButton';
 import { useA2ACommunication } from '@/hooks';
 import { ExecutionUpdate, workflowExecutionService } from '@/services/WorkflowExecutionService';

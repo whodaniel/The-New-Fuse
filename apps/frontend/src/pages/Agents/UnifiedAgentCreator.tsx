@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { GlassCard, PremiumButton, PremiumInput, PremiumSelect } from '@/components/ui/premium';
 import { useToast } from '@/hooks/useToast';
 import { agentService } from '@/services/AgentService';

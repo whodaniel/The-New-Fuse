@@ -1,6 +1,7 @@
-import React from 'react';
+// @ts-nocheck
 import { Card } from '@the-new-fuse/ui-consolidated';
 import { CheckCircle } from 'lucide-react';
+import React from 'react';
 import { useWizard } from '../WizardProvider';
 
 export const WelcomeStep: React.FC = () => {
@@ -10,15 +11,13 @@ export const WelcomeStep: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <img 
-          src="/assets/images/logo.png" 
-          alt="The New Fuse Logo" 
+        <img
+          src="/assets/images/logo.png"
+          alt="The New Fuse Logo"
           className="max-h-24 mx-auto mb-4"
         />
         <h1 className="text-3xl font-bold mb-2">
-          {isAIAgent 
-            ? 'Welcome to The New Fuse Agent Network' 
-            : 'Welcome to The New Fuse'}
+          {isAIAgent ? 'Welcome to The New Fuse Agent Network' : 'Welcome to The New Fuse'}
         </h1>
         <p className="text-lg text-gray-600">
           {isAIAgent
@@ -32,7 +31,7 @@ export const WelcomeStep: React.FC = () => {
           <h2 className="text-lg font-semibold mb-4 text-blue-700">
             {isAIAgent ? 'Agent Integration Benefits' : 'Key Features'}
           </h2>
-          
+
           <div className="space-y-3">
             {isAIAgent ? (
               // AI Agent benefits

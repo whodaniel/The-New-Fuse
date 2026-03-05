@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { ChevronLeft, MessageSquare, ThumbsDown, ThumbsUp } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { useAuth } from '@/providers/AuthProvider';
 import {
   addFeedbackIteration,
   createGoal,
@@ -24,9 +21,14 @@ import {
   type ProjectPlanRecord,
   type TimelineEvent,
 } from '@/services/unifiedLedgerApi';
+import { ChevronLeft, MessageSquare, ThumbsDown, ThumbsUp } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const SuggestionDetail: React.FC = () => {
   const { id = '' } = useParams<{ id: string }>();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [row, setRow] = useState<LedgerRecord | null>(null);
   const [comment, setComment] = useState('');
@@ -41,15 +43,16 @@ const SuggestionDetail: React.FC = () => {
   const [planObjective, setPlanObjective] = useState('');
   const [selectedGoalId, setSelectedGoalId] = useState('');
   const [selectedPlanId, setSelectedPlanId] = useState('');
+  const owner = user?.id || 'ui-user';
 
   const load = async () => {
     try {
       const [suggestion, events, allGoals, allPlans, connections] = await Promise.all([
         getSuggestion(id),
         listTimelineEvents({ recordId: id }),
-        listGoals(),
-        listPlans(),
-        getRecordConnections(id),
+        listGoals(owner),
+        listPlans(owner),
+        getRecordConnections(id, owner),
       ]);
       setRow(suggestion);
       setTimeline(events);
@@ -81,7 +84,7 @@ const SuggestionDetail: React.FC = () => {
       await createGoal({
         title: goalTitle,
         description: goalDescription || `Goal derived from suggestion ${row.id}`,
-        owner: 'ui-user',
+        owner,
         linkedRecordIds: [row.id],
       });
       setGoalTitle('');
@@ -99,7 +102,7 @@ const SuggestionDetail: React.FC = () => {
       await createPlan({
         name: planName,
         objective: planObjective || `Plan derived from suggestion ${row.id}`,
-        owner: 'ui-user',
+        owner,
         linkedRecordIds: [row.id],
         linkedGoalIds: selectedGoalId ? [selectedGoalId] : [],
       });
@@ -115,7 +118,7 @@ const SuggestionDetail: React.FC = () => {
   const onLinkExistingGoal = async () => {
     if (!row || !selectedGoalId) return;
     try {
-      await linkGoalToRecord(selectedGoalId, row.id);
+      await linkGoalToRecord(selectedGoalId, row.id, owner, owner);
       await load();
       toast.success('Goal linked to this suggestion');
     } catch {
@@ -126,7 +129,12 @@ const SuggestionDetail: React.FC = () => {
   const onLinkExistingPlan = async () => {
     if (!row || !selectedPlanId) return;
     try {
-      await linkPlan(selectedPlanId, { recordId: row.id, goalId: selectedGoalId || undefined });
+      await linkPlan(selectedPlanId, {
+        owner,
+        recordId: row.id,
+        goalId: selectedGoalId || undefined,
+        actor: owner,
+      });
       await load();
       toast.success('Plan linked');
     } catch {
@@ -318,12 +326,16 @@ const SuggestionDetail: React.FC = () => {
       <Card className="p-6 mt-6">
         <h3 className="text-lg font-semibold mb-3">Timeline</h3>
         <div className="space-y-2 max-h-80 overflow-auto">
-          {timeline.length === 0 ? <p className="text-sm text-muted-foreground">No events yet.</p> : null}
+          {timeline.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No events yet.</p>
+          ) : null}
           {timeline.map((event) => (
             <div key={event.id} className="border rounded p-2 text-sm">
               <div className="flex justify-between gap-2">
                 <span className="font-medium">{event.eventType}</span>
-                <span className="text-muted-foreground">{new Date(event.timestamp).toLocaleString()}</span>
+                <span className="text-muted-foreground">
+                  {new Date(event.timestamp).toLocaleString()}
+                </span>
               </div>
               <div className="text-muted-foreground">actor: {event.actor}</div>
             </div>

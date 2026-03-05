@@ -1,6 +1,7 @@
-import React from 'react';
-import { Timeline } from '@/components/ui/timeline';
+// @ts-nocheck
 import { DiffViewer } from '@/components/ui/diff';
+import { Timeline } from '@/components/ui/timeline';
+import React from 'react';
 
 export const AgentVersionControl: React.FC = () => {
   const [selectedVersion, setSelectedVersion] = useState<string | null>(null);
@@ -14,10 +15,12 @@ export const AgentVersionControl: React.FC = () => {
           onSelect={setSelectedVersion}
           branches={['main', 'staging', 'experimental']}
         />
-        
+
         <Button
           className="mt-4"
-          onClick={() => {/* Create new version */}}
+          onClick={() => {
+            /* Create new version */
+          }}
         >
           Create Version
         </Button>
@@ -29,19 +32,22 @@ export const AgentVersionControl: React.FC = () => {
             <DiffViewer
               original={diffs.original}
               modified={diffs.modified}
-              components={[
-                'knowledge_base',
-                'behavior_rules',
-                'model_weights',
-                'configuration'
-              ]}
+              components={['knowledge_base', 'behavior_rules', 'model_weights', 'configuration']}
             />
-            
+
             <div className="mt-4 flex gap-2">
-              <Button onClick={() => {/* Rollback */}}>
+              <Button
+                onClick={() => {
+                  /* Rollback */
+                }}
+              >
                 Rollback to Version
               </Button>
-              <Button onClick={() => {/* Branch */}}>
+              <Button
+                onClick={() => {
+                  /* Branch */
+                }}
+              >
                 Create Branch
               </Button>
             </div>

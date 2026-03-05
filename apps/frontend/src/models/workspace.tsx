@@ -1,5 +1,10 @@
-import { request } from '@/utils/request';
-import { WorkspaceData, WorkspaceThread, WorkspaceStats, WorkspaceSettings } from '@/types/workspace';
+import {
+  WorkspaceData,
+  WorkspaceSettings,
+  WorkspaceStats,
+  WorkspaceThread,
+} from '@/types/workspace';
+import { request, uploadFile, userFromStorage } from '@/utils/request';
 
 class Workspace {
   static async create(data: Partial<WorkspaceData>): Promise<WorkspaceData> {
@@ -38,7 +43,10 @@ class Workspace {
     return request(`/api/workspaces/${slug}/settings`);
   }
 
-  static async updateSettings(slug: string, settings: Partial<WorkspaceSettings>): Promise<WorkspaceSettings> {
+  static async updateSettings(
+    slug: string,
+    settings: Partial<WorkspaceSettings>
+  ): Promise<WorkspaceSettings> {
     return request(`/api/workspaces/${slug}/settings`, {
       method: 'PUT',
       body: JSON.stringify(settings),
@@ -77,11 +85,7 @@ class Workspace {
     });
   }
 
-  static async submitMessageFeedback(
-    slug: string,
-    chatId: string,
-    score: number
-  ): Promise<void> {
+  static async submitMessageFeedback(slug: string, chatId: string, score: number): Promise<void> {
     return request(`/api/workspaces/${slug}/messages/${chatId}/feedback`, {
       method: 'POST',
       body: JSON.stringify({ score }),
@@ -89,12 +93,18 @@ class Workspace {
   }
 
   static async getMessageTTS(slug: string, chatId: string): Promise<ArrayBuffer> {
-    return request(`/api/workspaces/${slug}/messages/${chatId}/tts`, {
-      headers: {
-        'Accept': 'audio/mp3',
-      },
-      responseType: 'arraybuffer',
-    });
+    const headers: HeadersInit = {
+      Accept: 'audio/mp3',
+    };
+    const user = userFromStorage();
+    if (user?.uid) {
+      headers.Authorization = `Bearer ${user.uid}`;
+    }
+    const response = await fetch(`/api/workspaces/${slug}/messages/${chatId}/tts`, { headers });
+    if (!response.ok) {
+      throw new Error('Failed to fetch message TTS');
+    }
+    return response.arrayBuffer();
   }
 
   static async forkThread(
@@ -114,17 +124,7 @@ class Workspace {
     file: File,
     onProgress?: (progress: number) => void
   ): Promise<{ url: string; filename: string }> {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    return request(`/api/workspaces/${slug}/files`, {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'Accept': 'application/json',
-      },
-      onProgress,
-    });
+    return uploadFile(`/api/workspaces/${slug}/files`, file, onProgress);
   }
 }
 

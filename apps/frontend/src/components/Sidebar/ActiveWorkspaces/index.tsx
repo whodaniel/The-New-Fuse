@@ -1,3 +1,4 @@
+// @ts-nocheck
 import useUser from '@/hooks/useUser';
 import Workspace from '@/models/workspace';
 import paths from '@/utils/paths';

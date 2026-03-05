@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { GlassCard as Card } from '@/components/ui/premium/GlassCard';

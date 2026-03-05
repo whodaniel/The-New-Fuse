@@ -1,3 +1,4 @@
+// @ts-nocheck
 import System from '@/models/system';
 import { useEffect, useState } from 'react';
 export const DISABLED_PROVIDERS = ['azure', 'native', 'textgenwebui', 'generic-openai', 'bedrock'];

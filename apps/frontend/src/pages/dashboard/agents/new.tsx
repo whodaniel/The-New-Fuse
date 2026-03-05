@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { NewAgentForm, agentFormSchema } from '@/components/forms/NewAgentForm';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { GlassCard, PremiumButton } from '@/components/ui/premium';

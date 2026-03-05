@@ -241,7 +241,10 @@ export default function TimelinePage() {
           </Button>
         </header>
 
-        <Card className="bg-slate-900/50 border-slate-800 p-6 rounded-2xl space-y-5">
+        <Card
+          data-testid="timeline-rail-card"
+          className="bg-slate-900/50 border-slate-800 p-6 rounded-2xl space-y-5"
+        >
           <div className="flex items-center gap-2 text-slate-300 text-sm">
             <Calendar className="w-4 h-4" />
             Traditional horizontal timeline slider with node dots
@@ -257,6 +260,7 @@ export default function TimelinePage() {
                     <button
                       key={event.id}
                       type="button"
+                      data-testid={`timeline-node-${event.id}`}
                       onClick={() => setSelectedId(event.id)}
                       className="absolute -top-3 -translate-x-1/2 group"
                       style={{ left: `${payload.point}%` }}
@@ -277,9 +281,14 @@ export default function TimelinePage() {
           </div>
 
           {selectedEvent ? (
-            <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div
+              data-testid="timeline-selected-card"
+              className="rounded-xl border border-slate-700 bg-slate-950/60 p-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between"
+            >
               <div>
-                <h2 className="text-lg font-semibold">{readPayload(selectedEvent).title}</h2>
+                <h2 data-testid="timeline-selected-title" className="text-lg font-semibold">
+                  {readPayload(selectedEvent).title}
+                </h2>
                 <p className="text-slate-300 text-sm mt-1">
                   {readPayload(selectedEvent).description || 'No details added yet.'}
                 </p>
@@ -290,6 +299,7 @@ export default function TimelinePage() {
               </div>
               <div className="flex items-center gap-2">
                 <Button
+                  data-testid="timeline-edit-selected"
                   variant="outline"
                   className="border-slate-700"
                   onClick={() => startEdit(selectedEvent)}
@@ -298,6 +308,7 @@ export default function TimelinePage() {
                   Edit
                 </Button>
                 <Button
+                  data-testid="timeline-delete-selected"
                   variant="outline"
                   className="border-red-500/40 text-red-300 hover:bg-red-900/20"
                   onClick={() => removeItem(selectedEvent.id)}
@@ -315,11 +326,15 @@ export default function TimelinePage() {
         </Card>
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-          <Card className="bg-slate-900/50 border-slate-800 p-6 rounded-2xl space-y-4">
+          <Card
+            data-testid="timeline-create-card"
+            className="bg-slate-900/50 border-slate-800 p-6 rounded-2xl space-y-4"
+          >
             <h3 className="text-xl font-bold">Add Timeline Point</h3>
             <div className="space-y-2">
               <Label>Title</Label>
               <Input
+                data-testid="timeline-create-title"
                 value={createForm.title}
                 onChange={(e) => setCreateForm((s) => ({ ...s, title: e.target.value }))}
                 placeholder="Launch MVP"
@@ -329,6 +344,7 @@ export default function TimelinePage() {
             <div className="space-y-2">
               <Label>Description</Label>
               <Textarea
+                data-testid="timeline-create-description"
                 value={createForm.description}
                 onChange={(e) => setCreateForm((s) => ({ ...s, description: e.target.value }))}
                 placeholder="What happened at this point?"
@@ -338,6 +354,7 @@ export default function TimelinePage() {
             <div className="space-y-2">
               <Label>Timeline Position: {createForm.point}</Label>
               <input
+                data-testid="timeline-create-point"
                 type="range"
                 min={0}
                 max={100}
@@ -349,6 +366,7 @@ export default function TimelinePage() {
             <div className="space-y-2">
               <Label>Date & Time</Label>
               <Input
+                data-testid="timeline-create-when"
                 type="datetime-local"
                 value={createForm.when}
                 onChange={(e) => setCreateForm((s) => ({ ...s, when: e.target.value }))}
@@ -356,6 +374,7 @@ export default function TimelinePage() {
               />
             </div>
             <Button
+              data-testid="timeline-create-submit"
               onClick={createItem}
               disabled={saving}
               className="bg-amber-500 hover:bg-amber-600 text-black w-full"
@@ -365,7 +384,10 @@ export default function TimelinePage() {
             </Button>
           </Card>
 
-          <Card className="bg-slate-900/50 border-slate-800 p-6 rounded-2xl space-y-4">
+          <Card
+            data-testid="timeline-edit-card"
+            className="bg-slate-900/50 border-slate-800 p-6 rounded-2xl space-y-4"
+          >
             <h3 className="text-xl font-bold">Edit Selected Point</h3>
             {!editingId ? (
               <p className="text-slate-400 text-sm">
@@ -376,6 +398,7 @@ export default function TimelinePage() {
                 <div className="space-y-2">
                   <Label>Title</Label>
                   <Input
+                    data-testid="timeline-edit-title"
                     value={editForm.title}
                     onChange={(e) => setEditForm((s) => ({ ...s, title: e.target.value }))}
                     className="bg-slate-950 border-slate-700"
@@ -384,6 +407,7 @@ export default function TimelinePage() {
                 <div className="space-y-2">
                   <Label>Description</Label>
                   <Textarea
+                    data-testid="timeline-edit-description"
                     value={editForm.description}
                     onChange={(e) => setEditForm((s) => ({ ...s, description: e.target.value }))}
                     className="bg-slate-950 border-slate-700 min-h-[100px]"
@@ -392,6 +416,7 @@ export default function TimelinePage() {
                 <div className="space-y-2">
                   <Label>Timeline Position: {editForm.point}</Label>
                   <input
+                    data-testid="timeline-edit-point"
                     type="range"
                     min={0}
                     max={100}
@@ -403,6 +428,7 @@ export default function TimelinePage() {
                 <div className="space-y-2">
                   <Label>Date & Time</Label>
                   <Input
+                    data-testid="timeline-edit-when"
                     type="datetime-local"
                     value={editForm.when}
                     onChange={(e) => setEditForm((s) => ({ ...s, when: e.target.value }))}
@@ -411,6 +437,7 @@ export default function TimelinePage() {
                 </div>
                 <div className="flex gap-2">
                   <Button
+                    data-testid="timeline-edit-save"
                     onClick={saveEdit}
                     disabled={saving}
                     className="bg-emerald-500 hover:bg-emerald-600 text-black flex-1"
@@ -418,6 +445,7 @@ export default function TimelinePage() {
                     Save Changes
                   </Button>
                   <Button
+                    data-testid="timeline-edit-cancel"
                     variant="outline"
                     className="border-slate-700"
                     onClick={() => setEditingId(null)}

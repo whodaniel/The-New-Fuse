@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import api from '../../lib/api';
+import api from '../../services/api';
 
 export interface FineTuningModel {
   id: string;

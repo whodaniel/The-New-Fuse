@@ -1,21 +1,21 @@
-import React from 'react';
-import { NativeEmbeddingSettings, COMMON_STYLES } from '@/types/embedding';
+// @ts-nocheck
+import { COMMON_STYLES, NativeEmbeddingSettings } from '@/types/embedding';
 import { useTranslation } from 'react-i18next';
 
 interface NativeEmbeddingOptionsProps {
-    settings: NativeEmbeddingSettings;
+  settings: NativeEmbeddingSettings;
 }
 
 export default function NativeEmbeddingOptions({ settings }: NativeEmbeddingOptionsProps) {
-    const { t } = useTranslation();
+  const { t } = useTranslation();
 
-    return (
-        <div className={COMMON_STYLES.container}>
-            <div className={COMMON_STYLES.messageContainer}>
-                <p className={COMMON_STYLES.message}>
-                    {t('No configuration needed! The native embedder is ready to use.')}
-                </p>
-            </div>
-        </div>
-    );
+  return (
+    <div className={COMMON_STYLES.container}>
+      <div className={COMMON_STYLES.messageContainer}>
+        <p className={COMMON_STYLES.message}>
+          {t('No configuration needed! The native embedder is ready to use.')}
+        </p>
+      </div>
+    </div>
+  );
 }

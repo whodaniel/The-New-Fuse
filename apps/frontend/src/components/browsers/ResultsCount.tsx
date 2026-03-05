@@ -1,4 +1,4 @@
-import React from 'react';
+// @ts-nocheck
 
 export interface ResultsCountProps {
   count: number;

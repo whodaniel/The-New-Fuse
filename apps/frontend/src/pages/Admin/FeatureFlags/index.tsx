@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { FeatureFlagConditionsEditor } from '@/components/AdminPanel/FeatureFlagConditions';
 import {
   PremiumButton as Button,

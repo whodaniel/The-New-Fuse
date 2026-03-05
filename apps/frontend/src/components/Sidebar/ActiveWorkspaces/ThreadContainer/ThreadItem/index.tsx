@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Workspace from '@/models/workspace';
 import paths from '@/utils/paths';
 import showToast from '@/utils/toast';

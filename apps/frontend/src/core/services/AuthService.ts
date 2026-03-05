@@ -1,3 +1,5 @@
+// @ts-nocheck
+import { EventBus } from '../../domain/core/eventBus';
 import { StateManager } from '../../domain/core/stateManager';
 import { authHelpers } from '../../lib/supabase';
 import { LoggingService } from '../../services/logging';

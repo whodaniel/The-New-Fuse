@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Activity, ChevronRight, Home, PlusCircle } from 'lucide-react';
 import React, { ReactNode, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';

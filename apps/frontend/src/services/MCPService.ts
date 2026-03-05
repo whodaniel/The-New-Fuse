@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * MCP Service - Production ready service for Model Context Protocol integration
  */

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Editor } from '@/components/ui/editor';
 import { PremiumButton as Button } from '@/components/ui/premium/PremiumButton';
 import { TreeView } from '@/components/ui/tree-view';

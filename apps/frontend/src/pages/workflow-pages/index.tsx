@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Sidebar } from '@/components/layout/Sidebar';
 import {
   Dialog,

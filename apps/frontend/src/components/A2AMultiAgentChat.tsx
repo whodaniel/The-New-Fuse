@@ -13,7 +13,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 // Icons (same as before)
 const SystemIcon = () => <AlertCircle className="h-4 w-4" />;
-const cn = (...classes: string[]) => classes.filter(Boolean).join(' ');
+const cn = (...classes: Array<string | false | null | undefined>) =>
+  classes.filter(Boolean).join(' ');
 
 // A2A Configuration
 const A2A_CONFIG = {
@@ -29,6 +30,7 @@ export default function MultiAgentChat() {
       autoConnect={true}
       autoRegister={true}
       agentRegistration={{
+        agentId: A2A_CONFIG.agentId,
         name: 'Web Interface Agent',
         type: AgentType.COMMUNICATOR,
         version: '1.0.0',
@@ -42,7 +44,9 @@ export default function MultiAgentChat() {
 }
 
 function EnhancedMultiAgentChatUI() {
-  const { connectionState, connect, disconnect, error: connectionError } = useA2AContext();
+  const a2aContext = useA2AContext() as ReturnType<typeof useA2AContext> & { error?: Error };
+  const { connectionState, connect } = a2aContext;
+  const connectionError = a2aContext.error;
   const { agents, refreshAgents } = useA2AAgents();
   const { messages, sendMessage, broadcast } = useA2AMessages();
   const { conversations, joinConversation } = useA2AConversations();
@@ -341,7 +345,7 @@ function EnhancedMultiAgentChatUI() {
             <span className="text-sm font-medium">Mode:</span>
             <select
               value={mode}
-              onChange={(e) => setMode(e.target.value as any)}
+              onChange={(e) => setMode(e.target.value as 'direct' | 'broadcast' | 'conversation')}
               aria-label="Select Mode"
               className="px-2 py-1 border rounded dark:bg-gray-700 dark:border-gray-600 text-sm"
             >

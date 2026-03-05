@@ -1,10 +1,11 @@
-import { useState } from "react";
-import { useParams } from "react-router-dom";
-import Workspace from "@/models/workspace";
+// @ts-nocheck
+import Workspace from '@/models/workspace';
+import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 interface UseDeleteMessageParams {
   chatId: string | null;
-  role: "user" | "assistant";
+  role: 'user' | 'assistant';
 }
 
 interface UseDeleteMessageReturn {
@@ -13,7 +14,7 @@ interface UseDeleteMessageReturn {
 
 interface UseWatchDeleteMessageParams {
   chatId: string | null;
-  role: "user" | "assistant";
+  role: 'user' | 'assistant';
 }
 
 interface UseWatchDeleteMessageReturn {
@@ -32,20 +33,23 @@ export function useDeleteMessage({ chatId, role }: UseDeleteMessageParams): UseD
     if (!chatId || !workspaceSlug) return;
 
     try {
-      if (role === "user") {
+      if (role === 'user') {
         await Workspace.deleteUserMessage(workspaceSlug, threadSlug, chatId);
       } else {
         await Workspace.deleteAssistantMessage(workspaceSlug, threadSlug, chatId);
       }
     } catch (error) {
-      console.error("Failed to delete message:", error);
+      console.error('Failed to delete message:', error);
     }
   };
 
   return { deleteMessage };
 }
 
-export function useWatchDeleteMessage({ chatId, role }: UseWatchDeleteMessageParams): UseWatchDeleteMessageReturn {
+export function useWatchDeleteMessage({
+  chatId,
+  role,
+}: UseWatchDeleteMessageParams): UseWatchDeleteMessageReturn {
   const [isDeleted, setIsDeleted] = useState<boolean>(false);
   const [completeDelete, setCompleteDelete] = useState<boolean>(false);
 

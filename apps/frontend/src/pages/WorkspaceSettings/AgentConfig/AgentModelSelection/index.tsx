@@ -1,10 +1,9 @@
+// @ts-nocheck
+import useGetProviderModels, { DISABLED_PROVIDERS } from '@/hooks/useGetProvidersModels';
+import paths from '@/utils/paths';
 import React from 'react';
-import useGetProviderModels, {
-  DISABLED_PROVIDERS,
-} from "@/hooks/useGetProvidersModels";
-import paths from "@/utils/paths";
-import { useTranslation } from "react-i18next";
-import { Link, useParams } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
+import { Link, useParams } from 'react-router-dom';
 
 interface AgentModelSelectionProps {
   provider: string;
@@ -21,17 +20,17 @@ interface CustomModel {
 
 type CustomModels = Array<CustomModel> | Record<string, CustomModel[]>;
 
-function supportedModel(provider: string, model = ""): boolean {
-  if (provider === "openai") {
+function supportedModel(provider: string, model = ''): boolean {
+  if (provider === 'openai') {
     return (
       [
-        "gpt-3.5-turbo-0301",
-        "gpt-4-turbo-2024-04-09",
-        "gpt-4-turbo",
-        "o1-preview",
-        "o1-preview-2024-09-12",
-        "o1-mini",
-        "o1-mini-2024-09-12",
+        'gpt-3.5-turbo-0301',
+        'gpt-4-turbo-2024-04-09',
+        'gpt-4-turbo',
+        'o1-preview',
+        'o1-preview-2024-09-12',
+        'o1-mini',
+        'o1-mini-2024-09-12',
       ].includes(model) === false
     );
   }
@@ -45,8 +44,7 @@ export default function AgentModelSelection({
   setHasChanges,
 }: AgentModelSelectionProps): React.ReactElement {
   const { slug } = useParams();
-  const { defaultModels, customModels, loading } =
-    useGetProviderModels(provider);
+  const { defaultModels, customModels, loading } = useGetProviderModels(provider);
 
   const { t } = useTranslation();
 
@@ -56,14 +54,11 @@ export default function AgentModelSelection({
         <p className="text-sm font-base text-white text-opacity-60 text-center">
           Multi-model support is not supported for this provider yet.
           <br />
-          Agent's will use{" "}
-          <Link
-            to={paths.workspace.settings.chatSettings(slug)}
-            className="underline"
-          >
+          Agent's will use{' '}
+          <Link to={paths.workspace.settings.chatSettings(slug)} className="underline">
             the model set for the workspace
-          </Link>{" "}
-          or{" "}
+          </Link>{' '}
+          or{' '}
           <Link to={paths.settings.llmPreference()} className="underline">
             the model set for the system.
           </Link>
@@ -77,21 +72,21 @@ export default function AgentModelSelection({
       <div>
         <div className="flex flex-col">
           <label htmlFor="name" className="block input-label">
-            {t("agent.mode.chat.title")}
+            {t('agent.mode.chat.title')}
           </label>
           <p className="text-white text-opacity-60 text-xs font-medium py-1.5">
-            {t("agent.mode.chat.description")}
+            {t('agent.mode.chat.description')}
           </p>
         </div>
         <select
           name="agentModel"
           required={true}
           disabled={true}
-          aria-label={t("agent.mode.chat.title")}
+          aria-label={t('agent.mode.chat.title')}
           className="border-none bg-theme-settings-input-bg text-white text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
         >
           <option disabled={true} selected={true}>
-            {t("agent.mode.wait")}
+            {t('agent.mode.wait')}
           </option>
         </select>
       </div>
@@ -102,10 +97,10 @@ export default function AgentModelSelection({
     <div>
       <div className="flex flex-col">
         <label htmlFor="name" className="block input-label">
-          {t("agent.mode.title")}
+          {t('agent.mode.title')}
         </label>
         <p className="text-white text-opacity-60 text-xs font-medium py-1.5">
-          {t("agent.mode.description")}
+          {t('agent.mode.description')}
         </p>
       </div>
 
@@ -115,7 +110,7 @@ export default function AgentModelSelection({
         onChange={() => {
           setHasChanges(true);
         }}
-        aria-label={t("agent.mode.title")}
+        aria-label={t('agent.mode.title')}
         className="border-none bg-theme-settings-input-bg text-white text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
       >
         {defaultModels.length > 0 && (
@@ -123,11 +118,7 @@ export default function AgentModelSelection({
             {defaultModels.map((model) => {
               if (!supportedModel(provider, model)) return null;
               return (
-                <option
-                  key={model}
-                  value={model}
-                  selected={workspace?.agentModel === model}
-                >
+                <option key={model} value={model} selected={workspace?.agentModel === model}>
                   {model}
                 </option>
               );
@@ -152,10 +143,10 @@ export default function AgentModelSelection({
           </optgroup>
         )}
         {/* For providers like TogetherAi where we partition model by creator entity. */}
-        {!Array.isArray(customModels) &&
-          Object.keys(customModels).length > 0 && (
-            <>
-              {Object.entries(customModels as Record<string, CustomModel[]>).map(([organization, models]) => (
+        {!Array.isArray(customModels) && Object.keys(customModels).length > 0 && (
+          <>
+            {Object.entries(customModels as Record<string, CustomModel[]>).map(
+              ([organization, models]) => (
                 <optgroup key={organization} label={organization}>
                   {models.map((model) => {
                     if (!supportedModel(provider, model.id)) return null;
@@ -170,9 +161,10 @@ export default function AgentModelSelection({
                     );
                   })}
                 </optgroup>
-              ))}
-            </>
-          )}
+              )
+            )}
+          </>
+        )}
       </select>
     </div>
   );

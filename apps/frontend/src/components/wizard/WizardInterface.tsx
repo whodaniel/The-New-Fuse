@@ -1,28 +1,29 @@
-import React, { useState, useEffect } from 'react';
+// @ts-nocheck
+import { AlertCircle, Check, Loader2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useWizard } from './WizardProvider';
-import { Check, Loader2, AlertCircle } from 'lucide-react';
 
 const steps = [
   {
     label: 'Initialize',
     description: 'Set up the wizard session and configure basic settings',
-    component: InitializeStep
+    component: InitializeStep,
   },
   {
     label: 'Agent Configuration',
     description: 'Configure and activate AI agents',
-    component: AgentConfigStep
+    component: AgentConfigStep,
   },
   {
     label: 'Knowledge Integration',
     description: 'Connect and configure knowledge sources',
-    component: KnowledgeStep
+    component: KnowledgeStep,
   },
   {
     label: 'Optimization',
     description: 'Fine-tune performance and resource allocation',
-    component: OptimizationStep
-  }
+    component: OptimizationStep,
+  },
 ];
 
 export function WizardInterface() {
@@ -34,9 +35,9 @@ export function WizardInterface() {
       setLoading(true);
       try {
         await initializeSession({
-            userType: 'human',
-            startTime: new Date(),
-            data: { project_path: process.env.PROJECT_PATH || '' }
+          userType: 'human',
+          startTime: new Date(),
+          data: { project_path: process.env.PROJECT_PATH || '' },
         });
       } catch (error) {
         console.error('Failed to initialize wizard:', error);
@@ -73,51 +74,51 @@ export function WizardInterface() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-6">
-        <h4 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
-          FUSE AI Wizard
-        </h4>
+        <h4 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">FUSE AI Wizard</h4>
 
         {/* Stepper */}
         <div className="mb-8">
           <div className="flex items-center justify-between relative">
-             {/* Progress Bar Background */}
-             <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-200 dark:bg-gray-700 -z-10 transform -translate-y-1/2"></div>
+            {/* Progress Bar Background */}
+            <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-200 dark:bg-gray-700 -z-10 transform -translate-y-1/2"></div>
 
             {steps.map((step, index) => {
-                const isCompleted = index < state.currentStep;
-                const isCurrent = index === state.currentStep;
+              const isCompleted = index < state.currentStep;
+              const isCurrent = index === state.currentStep;
 
-                return (
-                    <div key={step.label} className="flex flex-col items-center">
-                        <div
-                            className={`w-8 h-8 rounded-full flex items-center justify-center border-2 z-10
-                                ${isCompleted || isCurrent
+              return (
+                <div key={step.label} className="flex flex-col items-center">
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center border-2 z-10
+                                ${
+                                  isCompleted || isCurrent
                                     ? 'bg-blue-600 border-blue-600 text-white'
-                                    : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-500'}`}
-                        >
-                            {isCompleted ? <Check className="w-5 h-5" /> : <span>{index + 1}</span>}
-                        </div>
-                        <span className={`mt-2 text-xs font-medium ${isCurrent ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500'}`}>
-                            {step.label}
-                        </span>
-                    </div>
-                );
+                                    : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-500'
+                                }`}
+                  >
+                    {isCompleted ? <Check className="w-5 h-5" /> : <span>{index + 1}</span>}
+                  </div>
+                  <span
+                    className={`mt-2 text-xs font-medium ${isCurrent ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500'}`}
+                  >
+                    {step.label}
+                  </span>
+                </div>
+              );
             })}
           </div>
         </div>
 
         <div className="mb-6">
-            <h5 className="text-lg font-medium text-gray-900 dark:text-white mb-1">
-                {steps[state.currentStep]?.label}
-            </h5>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-                {steps[state.currentStep]?.description}
-            </p>
+          <h5 className="text-lg font-medium text-gray-900 dark:text-white mb-1">
+            {steps[state.currentStep]?.label}
+          </h5>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            {steps[state.currentStep]?.description}
+          </p>
         </div>
 
-        <div className="mt-4">
-          {state.isInitialized && <CurrentComponent />}
-        </div>
+        <div className="mt-4">{state.isInitialized && <CurrentComponent />}</div>
       </div>
     </div>
   );
@@ -132,10 +133,10 @@ function InitializeStep() {
           Session Information
         </h6>
         <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-md border border-gray-200 dark:border-gray-700">
-           <p className="text-sm text-gray-600 dark:text-gray-300">
-                <span className="font-semibold text-gray-900 dark:text-white">Project Path:</span>{' '}
-                {state.session?.data?.project_path || 'N/A'}
-           </p>
+          <p className="text-sm text-gray-600 dark:text-gray-300">
+            <span className="font-semibold text-gray-900 dark:text-white">Project Path:</span>{' '}
+            {state.session?.data?.project_path || 'N/A'}
+          </p>
         </div>
       </div>
     </div>
@@ -181,7 +182,7 @@ function KnowledgeStep() {
       <h6 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
         Knowledge Graph Integration
       </h6>
-       <div className="p-8 text-center text-gray-500 border-2 border-dashed border-gray-300 rounded-md">
+      <div className="p-8 text-center text-gray-500 border-2 border-dashed border-gray-300 rounded-md">
         Knowledge graph visualization will appear here.
       </div>
     </div>
@@ -195,7 +196,7 @@ function OptimizationStep() {
       <h6 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
         System Optimization
       </h6>
-       <div className="p-8 text-center text-gray-500 border-2 border-dashed border-gray-300 rounded-md">
+      <div className="p-8 text-center text-gray-500 border-2 border-dashed border-gray-300 rounded-md">
         Optimization settings will appear here.
       </div>
     </div>

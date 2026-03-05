@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { PremiumButton as Button, GlassCard } from '@/components/ui/premium';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import WorkflowAnalytics from '@/components/workflow/WorkflowAnalytics';

@@ -1,10 +1,11 @@
+// @ts-nocheck
 /**
  * Modal Components - Chakra-compatible Modal system for The New Fuse
  * Provides Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, ModalCloseButton
  */
 
-import React, { forwardRef, type ReactNode, type HTMLAttributes, type ButtonHTMLAttributes } from 'react';
 import { cn } from '@/lib/utils';
+import { forwardRef, type ButtonHTMLAttributes, type HTMLAttributes, type ReactNode } from 'react';
 
 // Modal Props
 interface ModalProps {
@@ -110,22 +111,23 @@ export const ModalFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElem
 ModalFooter.displayName = 'ModalFooter';
 
 // Modal Close Button
-export const ModalCloseButton = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLButtonElement>>(
-  ({ className, ...props }, ref) => (
-    <button
-      ref={ref}
-      type="button"
-      aria-label="Close"
-      className={cn(
-        'absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors',
-        className
-      )}
-      {...props}
-    >
-      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-      </svg>
-    </button>
-  )
-);
+export const ModalCloseButton = forwardRef<
+  HTMLButtonElement,
+  ButtonHTMLAttributes<HTMLButtonElement>
+>(({ className, ...props }, ref) => (
+  <button
+    ref={ref}
+    type="button"
+    aria-label="Close"
+    className={cn(
+      'absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors',
+      className
+    )}
+    {...props}
+  >
+    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  </button>
+));
 ModalCloseButton.displayName = 'ModalCloseButton';

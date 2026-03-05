@@ -21,7 +21,10 @@ function ethersBrowserResolve(): Plugin {
         return path.resolve(__dirname, 'src/stubs/ethers-provider-ipcsocket-browser.js');
       }
       // Prevent axios Node adapter from pulling server-only modules into browser bundles.
-      if (source === 'axios/lib/adapters/http.js' || source.endsWith('/axios/lib/adapters/http.js')) {
+      if (
+        source === 'axios/lib/adapters/http.js' ||
+        source.endsWith('/axios/lib/adapters/http.js')
+      ) {
         return path.resolve(__dirname, 'src/stubs/axios-http-adapter.ts');
       }
       return null;
@@ -220,7 +223,7 @@ export default defineConfig(({ mode }) => {
       chunkSizeWarningLimit: 500,
       rollupOptions: {
         input: {
-          main: path.resolve(__dirname, 'index.html'),
+          app: path.resolve(__dirname, 'app.html'),
         },
         // Optimize bundle size by eliminating unnecessary code
         treeshake: {
@@ -441,16 +444,17 @@ export default defineConfig(({ mode }) => {
           next();
         });
 
-        // SPA fallback - serve index.html for all non-API routes
+        // SPA fallback - serve app.html for all non-API routes, except root
         server.middlewares.use((req: any, res: any, next: () => void) => {
           if (
             req.url &&
+            req.url !== '/' &&
             !req.url.startsWith('/api') &&
             !req.url.startsWith('/ws') &&
             !req.url.includes('.') &&
             req.method === 'GET'
           ) {
-            req.url = '/';
+            req.url = '/app.html';
           }
           next();
         });

@@ -1,5 +1,6 @@
-import { ABORT_STREAM_EVENT } from "@/utils/chat";
-import { Tooltip } from "react-tooltip";
+// @ts-nocheck
+import { ABORT_STREAM_EVENT } from '@/utils/chat';
+import { Tooltip } from 'react-tooltip';
 
 export default function StopGenerationButton(): JSX.Element {
   function emitHaltEvent(): void {

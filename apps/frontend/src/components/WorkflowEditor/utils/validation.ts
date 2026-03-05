@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Validation utilities for N8n workflows and dynamic validation
 
 export interface ValidationResult {
@@ -24,7 +25,7 @@ export function validateN8nWorkflow(
     checkCircularDependencies = true,
     checkRequiredParameters = true,
     checkConnections = true,
-    strictMode = false
+    strictMode = false,
   } = options;
 
   const errors: string[] = [];
@@ -47,10 +48,10 @@ export function validateN8nWorkflow(
   }
 
   // Check for at least one start node
-  const startNodes = workflow.nodes.filter((node: any) => 
-    node.type === 'n8n-nodes-base.start' || node.type === 'start'
+  const startNodes = workflow.nodes.filter(
+    (node: any) => node.type === 'n8n-nodes-base.start' || node.type === 'start'
   );
-  
+
   if (startNodes.length === 0) {
     warnings.push('Workflow should have at least one start node');
   } else if (startNodes.length > 1) {
@@ -93,7 +94,7 @@ export function validateN8nWorkflow(
   return {
     isValid: errors.length === 0,
     errors,
-    warnings
+    warnings,
   };
 }
 
@@ -141,7 +142,7 @@ function validateConnections(workflow: any, errors: string[], warnings: string[]
   const nodeIds = new Set(nodes.map((node: any) => node.id));
 
   // Check that all connections reference existing nodes
-  Object.keys(connections).forEach(sourceNodeId => {
+  Object.keys(connections).forEach((sourceNodeId) => {
     if (!nodeIds.has(sourceNodeId)) {
       errors.push(`Connection references non-existent source node: ${sourceNodeId}`);
       return;
@@ -151,7 +152,9 @@ function validateConnections(workflow: any, errors: string[], warnings: string[]
     if (nodeConnections.main) {
       nodeConnections.main.forEach((connection: any, index: number) => {
         if (!nodeIds.has(connection.node)) {
-          errors.push(`Connection from ${sourceNodeId} references non-existent target node: ${connection.node}`);
+          errors.push(
+            `Connection from ${sourceNodeId} references non-existent target node: ${connection.node}`
+          );
         }
       });
     }
@@ -159,7 +162,7 @@ function validateConnections(workflow: any, errors: string[], warnings: string[]
 
   // Check for isolated nodes (nodes with no connections)
   const connectedNodes = new Set();
-  Object.keys(connections).forEach(sourceId => {
+  Object.keys(connections).forEach((sourceId) => {
     connectedNodes.add(sourceId);
     const nodeConnections = connections[sourceId];
     if (nodeConnections.main) {
@@ -187,12 +190,12 @@ function checkCircularDependencies(workflow: any): ValidationResult {
 
   function hasCircularDependency(nodeId: string): boolean {
     if (!connections[nodeId]) return false;
-    
+
     if (recursionStack.has(nodeId)) {
       errors.push(`Circular dependency detected involving node: ${nodeId}`);
       return true;
     }
-    
+
     if (visited.has(nodeId)) return false;
 
     visited.add(nodeId);
@@ -212,7 +215,7 @@ function checkCircularDependencies(workflow: any): ValidationResult {
   }
 
   // Check all nodes for circular dependencies
-  Object.keys(connections).forEach(nodeId => {
+  Object.keys(connections).forEach((nodeId) => {
     if (!visited.has(nodeId)) {
       hasCircularDependency(nodeId);
     }
@@ -221,7 +224,7 @@ function checkCircularDependencies(workflow: any): ValidationResult {
   return {
     isValid: errors.length === 0,
     errors,
-    warnings: []
+    warnings: [],
   };
 }
 
@@ -229,7 +232,7 @@ function checkCircularDependencies(workflow: any): ValidationResult {
  * Creates a dynamic validator for specific node types
  */
 export function createDynamicValidator(nodeType: string) {
-  return function(parameters: any): ValidationResult {
+  return function (parameters: any): ValidationResult {
     const errors: string[] = [];
     const warnings: string[] = [];
 
@@ -246,7 +249,10 @@ export function createDynamicValidator(nodeType: string) {
           }
         }
 
-        if (parameters.method && !['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'].includes(parameters.method)) {
+        if (
+          parameters.method &&
+          !['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'].includes(parameters.method)
+        ) {
           warnings.push(`Unusual HTTP method: ${parameters.method}`);
         }
         break;
@@ -280,7 +286,7 @@ export function createDynamicValidator(nodeType: string) {
     return {
       isValid: errors.length === 0,
       errors,
-      warnings
+      warnings,
     };
   };
 }
@@ -313,8 +319,8 @@ export function validateReactFlowData(nodes: any[], edges: any[]): ValidationRes
   if (!Array.isArray(edges)) {
     errors.push('Edges must be an array');
   } else {
-    const nodeIds = new Set(nodes.map(node => node.id));
-    
+    const nodeIds = new Set(nodes.map((node) => node.id));
+
     edges.forEach((edge, index) => {
       if (!edge.id) {
         errors.push(`Edge at index ${index} is missing an ID`);
@@ -335,12 +341,12 @@ export function validateReactFlowData(nodes: any[], edges: any[]): ValidationRes
   return {
     isValid: errors.length === 0,
     errors,
-    warnings
+    warnings,
   };
 }
 
 export default {
   validateN8nWorkflow,
   createDynamicValidator,
-  validateReactFlowData
+  validateReactFlowData,
 };

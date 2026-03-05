@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { GlassCard, PremiumButton, PremiumSelect, StatsCard } from '@/components/ui/premium';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/useToast';

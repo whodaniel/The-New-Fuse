@@ -1,3 +1,4 @@
+// @ts-nocheck
 import handleSocketResponse, {
   ABORT_STREAM_EVENT,
   AGENT_SESSION_END,

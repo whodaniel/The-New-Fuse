@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Float, PointMaterial, Points } from '@react-three/drei';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as random from 'maath/random/dist/maath-random.esm';

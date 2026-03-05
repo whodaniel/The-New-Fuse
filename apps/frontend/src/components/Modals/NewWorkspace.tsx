@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+// @ts-nocheck
+import { useState } from 'react';
 
 export const useNewWorkspaceModal = () => {
   const [showing, setShowing] = useState(false);

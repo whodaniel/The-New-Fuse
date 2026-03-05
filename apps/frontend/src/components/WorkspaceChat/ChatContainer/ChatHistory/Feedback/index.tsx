@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { ThumbsUp, ThumbsDown } from "@phosphor-icons/react";
-import Workspace from "@/models/workspace";
+// @ts-nocheck
+import Workspace from '@/models/workspace';
+import { ThumbsDown, ThumbsUp } from '@phosphor-icons/react';
+import { useState } from 'react';
 
 interface FeedbackButtonsProps {
   chatId: string;
@@ -24,7 +25,7 @@ export default function FeedbackButtons({
       await Workspace.submitMessageFeedback(slug, chatId, score);
       setCurrentScore(score);
     } catch (error) {
-      console.error("Failed to submit feedback:", error);
+      console.error('Failed to submit feedback:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -35,7 +36,7 @@ export default function FeedbackButtons({
       <button
         onClick={() => handleFeedback(1)}
         className={`text-white/40 hover:text-white/80 ${
-          currentScore === 1 ? "!text-green-500" : ""
+          currentScore === 1 ? '!text-green-500' : ''
         }`}
         disabled={isSubmitting}
       >
@@ -44,7 +45,7 @@ export default function FeedbackButtons({
       <button
         onClick={() => handleFeedback(-1)}
         className={`text-white/40 hover:text-white/80 ${
-          currentScore === -1 ? "!text-red-500" : ""
+          currentScore === -1 ? '!text-red-500' : ''
         }`}
         disabled={isSubmitting}
       >

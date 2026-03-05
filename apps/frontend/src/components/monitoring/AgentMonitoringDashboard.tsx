@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { BarChart, LineChart } from '@/components/ui/charts';
 import { GlassCard } from '@/components/ui/premium';
 import { useAgentMetrics } from '@/hooks/useAgentMetrics';

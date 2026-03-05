@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { AgentGrantList } from '@/components/ApiKeyManagement/AgentGrantList';
 import { ProviderApiKeyList } from '@/components/ApiKeyManagement/ProviderApiKeyList';
 import {

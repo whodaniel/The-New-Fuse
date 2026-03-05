@@ -96,6 +96,7 @@ export function ActivityFeed() {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [filter, setFilter] = useState<string>('all');
   const [timeRange, setTimeRange] = useState<string>('all');
+  const [tab, setTab] = useState<'list' | 'grouped'>('list');
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   const [readIds, setReadIds] = useState<Set<string>>(new Set());
   const { subscribe } = useWebSocket();
@@ -103,20 +104,29 @@ export function ActivityFeed() {
   useEffect(() => {
     const handlers = [
       subscribe('activity', (activity: Activity) => {
-        setActivities((prev: any) => [activity, ...prev].slice(0, 50));
+        setActivities((prev) => [activity, ...prev].slice(0, 50));
       }),
 
-      subscribe('system_event', (event: any) => {
+      subscribe('system_event', (event: unknown) => {
+        const safeEvent = (event || {}) as Record<string, unknown>;
         const activity: Activity = {
           id: crypto.randomUUID(),
-          type: event.severity || 'info',
-          message: event.message,
+          type:
+            safeEvent.severity === 'warning' ||
+            safeEvent.severity === 'error' ||
+            safeEvent.severity === 'success'
+              ? safeEvent.severity
+              : 'info',
+          message: String(safeEvent.message || 'System event'),
           timestamp: new Date().toISOString(),
-          category: event.category || 'System',
-          source: event.source || 'System',
-          metadata: event.data,
+          category: String(safeEvent.category || 'System'),
+          source: String(safeEvent.source || 'System'),
+          metadata:
+            safeEvent.data && typeof safeEvent.data === 'object'
+              ? (safeEvent.data as Record<string, unknown>)
+              : undefined,
         };
-        setActivities((prev: any) => [activity, ...prev].slice(0, 50));
+        setActivities((prev) => [activity, ...prev].slice(0, 50));
       }),
 
       subscribe('error', (error: Error) => {
@@ -128,12 +138,12 @@ export function ActivityFeed() {
           category: 'Error',
           source: 'Application',
         };
-        setActivities((prev: any) => [activity, ...prev].slice(0, 50));
+        setActivities((prev) => [activity, ...prev].slice(0, 50));
       }),
     ];
 
     return () => {
-      handlers.forEach((unsubscribe: any) => unsubscribe());
+      handlers.forEach((unsubscribe) => unsubscribe());
     };
   }, [subscribe]);
 
@@ -189,7 +199,7 @@ export function ActivityFeed() {
   }, [filteredActivities]);
 
   const toggleExpand = useCallback((id: string) => {
-    setExpandedIds((prev: any) => {
+    setExpandedIds((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(id)) {
         newSet.delete(id);
@@ -268,7 +278,11 @@ export function ActivityFeed() {
         </div>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="list" className="w-full">
+        <Tabs
+          value={tab}
+          onValueChange={(value) => setTab(value as 'list' | 'grouped')}
+          className="w-full"
+        >
           <TabsList className="mb-2">
             <TabsTrigger value="list">List View</TabsTrigger>
             <TabsTrigger value="grouped">Grouped View</TabsTrigger>
@@ -339,7 +353,7 @@ export function ActivityFeedControls({
         variant="outline"
         size="sm"
         className="h-8 text-xs"
-        onClick={() => setActivities((prev: any) => [...prev])}
+        onClick={() => setActivities((prev) => [...prev])}
       >
         <RefreshCw size={14} className="mr-1" />
         Refresh

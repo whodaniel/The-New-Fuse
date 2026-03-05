@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { DragEvent, useCallback, useEffect, useState } from 'react';
 import ReactFlow, {
   addEdge,

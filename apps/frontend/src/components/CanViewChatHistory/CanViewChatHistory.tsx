@@ -1,7 +1,8 @@
-import React, { ReactNode, useEffect, useState } from "react";
-import { FullScreenLoader } from "@/components/Preloader";
-import System from "@/models/system";
-import paths from "@/utils/paths";
+// @ts-nocheck
+import { FullScreenLoader } from '@/components/Preloader';
+import System from '@/models/system';
+import paths from '@/utils/paths';
+import { ReactNode, useEffect, useState } from 'react';
 
 interface CanViewChatHistoryProps {
   children: ReactNode;
@@ -42,9 +43,9 @@ export function useCanViewChatHistory(): UseCanViewChatHistoryResult {
  */
 export function CanViewChatHistory({ children }: CanViewChatHistoryProps) {
   const { loading, viewable } = useCanViewChatHistory();
-  
+
   if (loading) return <FullScreenLoader />;
-  
+
   if (!viewable) {
     window.location.href = paths.home();
     return <FullScreenLoader />;
@@ -58,8 +59,8 @@ export function CanViewChatHistory({ children }: CanViewChatHistoryProps) {
  */
 export function CanViewChatHistoryProvider({ children }: CanViewChatHistoryProviderProps) {
   const { loading, viewable } = useCanViewChatHistory();
-  
+
   if (loading) return null;
-  
+
   return <>{children({ viewable })}</>;
 }

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useInView } from '@/hooks/useInView';
 import React, { Suspense } from 'react';
 

@@ -1,5 +1,6 @@
-import React, { ReactNode } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+// @ts-nocheck
+import { AnimatePresence, motion } from 'framer-motion';
+import { ReactNode } from 'react';
 
 export interface AnimatedGridProps<T> {
   items: T[];

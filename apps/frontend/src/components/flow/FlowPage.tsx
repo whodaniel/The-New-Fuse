@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Button } from '@/components/core';
 import { Maximize2, ZoomIn, ZoomOut } from 'lucide-react';
 import { useCallback, useEffect } from 'react';

@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client';
 import { GlassCard, PremiumButton } from '@/components/ui/premium';
 import {

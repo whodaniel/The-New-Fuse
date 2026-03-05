@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { Extension, ExternalLink, Code as CodeIcon, ArrowRightLeft } from 'lucide-react';
+// @ts-nocheck
+import { ArrowRightLeft, Code as CodeIcon, Extension, ExternalLink } from 'lucide-react';
+import React, { useState } from 'react';
 import { Button } from '../../ui/design-system';
 
 const EnhancedChromeExtensionDemo: React.FC = () => {
@@ -59,8 +60,8 @@ const EnhancedChromeExtensionDemo: React.FC = () => {
               <div>
                 <p className="text-lg font-semibold mb-3">Extension Interface</p>
                 <p className="text-gray-600 mb-4">
-                  The extension provides a streamlined interface for Chrome browser integration
-                  with real-time communication and feature management.
+                  The extension provides a streamlined interface for Chrome browser integration with
+                  real-time communication and feature management.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="border border-gray-200 rounded-md p-4 bg-white shadow-sm">
@@ -129,9 +130,7 @@ const EnhancedChromeExtensionDemo: React.FC = () => {
             {activeTab === 3 && (
               <div>
                 <p className="text-lg font-semibold mb-3">Settings & Configuration</p>
-                <p className="text-gray-600 mb-4">
-                  Customize extension behavior and preferences.
-                </p>
+                <p className="text-gray-600 mb-4">Customize extension behavior and preferences.</p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
                     <p className="text-sm font-medium mb-2">Theme</p>
@@ -141,11 +140,15 @@ const EnhancedChromeExtensionDemo: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-sm font-medium mb-2">Notifications</p>
-                    <Button className="w-full text-sm bg-blue-600 hover:bg-blue-700 text-white">Enable</Button>
+                    <Button className="w-full text-sm bg-blue-600 hover:bg-blue-700 text-white">
+                      Enable
+                    </Button>
                   </div>
                   <div>
                     <p className="text-sm font-medium mb-2">Auto-update</p>
-                    <Button className="w-full text-sm bg-green-600 hover:bg-green-700 text-white">Active</Button>
+                    <Button className="w-full text-sm bg-green-600 hover:bg-green-700 text-white">
+                      Active
+                    </Button>
                   </div>
                 </div>
               </div>

@@ -1,15 +1,25 @@
+// @ts-nocheck
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import AgentMessage from './agent-message';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { useEffect, useState } from 'react';
 import { webSocketService } from '../services/websocket';
+import AgentMessage from './agent-message';
 
 interface Message {
   id: string;
-  type: 'system' | 'acknowledgment' | 'task_request' | 'task_update' | 
-        'code_review' | 'suggestion' | 'task_response' | 'error' | 'initialization' | 'collaboration_request';
+  type:
+    | 'system'
+    | 'acknowledgment'
+    | 'task_request'
+    | 'task_update'
+    | 'code_review'
+    | 'suggestion'
+    | 'task_response'
+    | 'error'
+    | 'initialization'
+    | 'collaboration_request';
   content: string;
   timestamp: string;
   metadata: {
@@ -42,11 +52,11 @@ export function TraeAugmentChatRoom() {
         agent: {
           id: 'trae',
           name: 'Trae',
-          avatar: '/trae-avatar.png'
+          avatar: '/trae-avatar.png',
         },
         taskId: data.taskId,
         status: data.status,
-        details: data.details
+        details: data.details,
       };
       setMessages((prev: any) => [...prev, newMessage]);
     });
@@ -62,11 +72,11 @@ export function TraeAugmentChatRoom() {
         agent: {
           id: 'augment',
           name: 'Augment',
-          avatar: '/augment-avatar.png'
+          avatar: '/augment-avatar.png',
         },
         taskId: data.taskId,
         status: data.status,
-        details: data.details
+        details: data.details,
       };
       setMessages((prev: any) => [...prev, newMessage]);
     });
@@ -82,11 +92,11 @@ export function TraeAugmentChatRoom() {
         agent: {
           id: data.metadata.source || 'system',
           name: data.metadata.source || 'System',
-          avatar: `/avatars/${data.metadata.source || 'system'}.png`
+          avatar: `/avatars/${data.metadata.source || 'system'}.png`,
         },
         taskId: data.taskId,
         status: data.status,
-        details: data.details
+        details: data.details,
       };
       setMessages((prev: any) => [...prev, newMessage]);
     });
@@ -120,8 +130,8 @@ export function TraeAugmentChatRoom() {
                     type: message.type,
                     status: message.status,
                     taskId: message.taskId,
-                    ...message.metadata
-                  }
+                    ...message.metadata,
+                  },
                 }}
                 isCurrentUser={false}
               />

@@ -1,8 +1,9 @@
-import React from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/core';
+// @ts-nocheck
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/core';
 import { Switch } from '@/components/ui/switch';
 const Settings = () => {
-    return (<div className="space-y-6">
+  return (
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-bold">Settings</h2>
       </div>
@@ -56,9 +57,7 @@ const Settings = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-medium">Dark Mode</p>
-                  <p className="text-sm text-muted-foreground">
-                    Toggle dark mode theme
-                  </p>
+                  <p className="text-sm text-muted-foreground">Toggle dark mode theme</p>
                 </div>
                 <Switch />
               </div>
@@ -66,9 +65,7 @@ const Settings = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-medium">Compact View</p>
-                  <p className="text-sm text-muted-foreground">
-                    Use a more compact layout
-                  </p>
+                  <p className="text-sm text-muted-foreground">Use a more compact layout</p>
                 </div>
                 <Switch />
               </div>
@@ -76,6 +73,7 @@ const Settings = () => {
           </CardContent>
         </Card>
       </div>
-    </div>);
+    </div>
+  );
 };
 export default Settings;

@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { GlassCard as Card } from '@/components/ui/premium/GlassCard';

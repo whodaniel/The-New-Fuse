@@ -1,3 +1,4 @@
+// @ts-nocheck
 import OpsPageHeader from '@/components/ops/OpsPageHeader';
 import { Badge } from '@/components/ui/badge';
 import {

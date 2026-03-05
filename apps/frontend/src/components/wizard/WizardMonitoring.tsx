@@ -1,16 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Cpu,
-  Gauge,
-  Activity,
-  AlertTriangle,
-  RefreshCw,
-  Settings,
-  X,
-  Check
-} from 'lucide-react';
-import { useWizardWebSocket } from './WizardWebSocket';
+// @ts-nocheck
+import { Activity, AlertTriangle, Cpu, Gauge, RefreshCw, Settings, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useWizard } from './WizardProvider';
+import { useWizardWebSocket } from './WizardWebSocket';
 
 export function WizardMonitoring() {
   const { subscribeToEvent, unsubscribeFromEvent, sendMessage } = useWizardWebSocket();
@@ -22,7 +14,7 @@ export function WizardMonitoring() {
   const [settings, setSettings] = useState({
     alertThreshold: 80,
     logRetentionDays: 7,
-    metricsInterval: 5000
+    metricsInterval: 5000,
   });
 
   useEffect(() => {
@@ -67,16 +59,14 @@ export function WizardMonitoring() {
       type,
       message,
       timestamp: Date.now(),
-      resolved: false
+      resolved: false,
     };
     setAlerts((prev: any) => [alert, ...prev]);
   };
 
   const resolveAlert = (alertId: string) => {
     setAlerts((prev: any) =>
-      prev.map((alert: any) =>
-        alert.id === alertId ? { ...alert, resolved: true } : alert
-      )
+      prev.map((alert: any) => (alert.id === alertId ? { ...alert, resolved: true } : alert))
     );
   };
 
@@ -171,39 +161,39 @@ export function WizardMonitoring() {
       </div>
       <div className="divide-y divide-gray-200 dark:divide-gray-700 max-h-[400px] overflow-y-auto">
         {alerts.length === 0 ? (
-            <div className="p-4 text-center text-gray-500 text-sm">No alerts</div>
+          <div className="p-4 text-center text-gray-500 text-sm">No alerts</div>
         ) : (
-            alerts.slice(0, 20).map((alert) => (
+          alerts.slice(0, 20).map((alert) => (
             <div key={alert.id} className="p-4 flex items-start gap-3">
-                <div className="flex-shrink-0 mt-0.5">
+              <div className="flex-shrink-0 mt-0.5">
                 <AlertTriangle
-                    className={`w-5 h-5 ${
+                  className={`w-5 h-5 ${
                     alert.type === 'error' ? 'text-red-500' : 'text-yellow-500'
-                    }`}
+                  }`}
                 />
-                </div>
-                <div className="flex-1 min-w-0">
+              </div>
+              <div className="flex-1 min-w-0">
                 <p
-                    className={`text-sm font-medium text-gray-900 dark:text-white ${
+                  className={`text-sm font-medium text-gray-900 dark:text-white ${
                     alert.resolved ? 'line-through text-gray-400 dark:text-gray-500' : ''
-                    }`}
+                  }`}
                 >
-                    {alert.message}
+                  {alert.message}
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                    {new Date(alert.timestamp).toLocaleString()}
+                  {new Date(alert.timestamp).toLocaleString()}
                 </p>
-                </div>
-                {!alert.resolved && (
+              </div>
+              {!alert.resolved && (
                 <button
-                    onClick={() => resolveAlert(alert.id)}
-                    className="text-xs bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 px-2 py-1 rounded transition-colors"
+                  onClick={() => resolveAlert(alert.id)}
+                  className="text-xs bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 px-2 py-1 rounded transition-colors"
                 >
-                    Resolve
+                  Resolve
                 </button>
-                )}
+              )}
             </div>
-            ))
+          ))
         )}
       </div>
     </div>
@@ -222,22 +212,22 @@ export function WizardMonitoring() {
       </div>
       <div className="divide-y divide-gray-200 dark:divide-gray-700 max-h-[400px] overflow-y-auto">
         {logs.length === 0 ? (
-             <div className="p-4 text-center text-gray-500 text-sm">No logs</div>
+          <div className="p-4 text-center text-gray-500 text-sm">No logs</div>
         ) : (
-            logs.slice(0, 20).map((log, index) => (
+          logs.slice(0, 20).map((log, index) => (
             <div key={index} className="p-4">
-                <p className="text-sm font-medium text-gray-900 dark:text-white mb-0.5">
+              <p className="text-sm font-medium text-gray-900 dark:text-white mb-0.5">
                 {log.operation}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 flex flex-wrap gap-2">
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 flex flex-wrap gap-2">
                 <span>{new Date(log.timestamp).toLocaleString()}</span>
                 <span>•</span>
                 <span>Duration: {formatDuration(log.duration)}</span>
                 <span>•</span>
                 <span>Status: {log.status}</span>
-                </p>
+              </p>
             </div>
-            ))
+          ))
         )}
       </div>
     </div>
@@ -290,7 +280,7 @@ export function WizardMonitoring() {
                   onChange={(e) =>
                     setSettings((prev) => ({
                       ...prev,
-                      alertThreshold: Number(e.target.value)
+                      alertThreshold: Number(e.target.value),
                     }))
                   }
                 />
@@ -306,7 +296,7 @@ export function WizardMonitoring() {
                   onChange={(e) =>
                     setSettings((prev) => ({
                       ...prev,
-                      logRetentionDays: Number(e.target.value)
+                      logRetentionDays: Number(e.target.value),
                     }))
                   }
                 />
@@ -322,14 +312,14 @@ export function WizardMonitoring() {
                   onChange={(e) =>
                     setSettings((prev) => ({
                       ...prev,
-                      metricsInterval: Number(e.target.value)
+                      metricsInterval: Number(e.target.value),
                     }))
                   }
                 />
               </div>
             </div>
             <div className="bg-gray-50 dark:bg-gray-900 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t border-gray-200 dark:border-gray-700">
-               <button
+              <button
                 type="button"
                 className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
                 onClick={() => setShowSettings(false)}

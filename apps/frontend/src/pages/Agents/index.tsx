@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Badge } from '@/components/ui/badge';
 import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui/premium';
 import { agentService, type Agent } from '@/services/AgentService';

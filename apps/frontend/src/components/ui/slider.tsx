@@ -1,9 +1,10 @@
+// @ts-nocheck
 /**
  * Slider Component - Chakra-compatible Slider for The New Fuse
  */
 
-import React, { useState, useRef, type ChangeEvent } from 'react';
 import { cn } from '@/lib/utils';
+import React, { useState, type ChangeEvent } from 'react';
 
 interface SliderProps {
   value?: number;

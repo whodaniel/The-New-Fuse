@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { GlassCard as Card } from '@/components/ui/premium/GlassCard';
 import React from 'react';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';

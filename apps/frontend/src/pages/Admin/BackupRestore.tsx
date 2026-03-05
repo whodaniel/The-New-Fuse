@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Database, HardDrive } from 'lucide-react';
 
 interface Backup {

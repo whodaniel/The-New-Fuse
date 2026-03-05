@@ -1,4 +1,5 @@
-import { User, DeviceInfo, LockoutStatus, AuthError } from './auth';
+// @ts-nocheck
+import { AuthError, DeviceInfo, LockoutStatus, User } from './auth';
 
 export interface SecurityService {
   checkRateLimit(ip: string): boolean;

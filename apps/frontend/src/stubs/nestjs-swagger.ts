@@ -6,24 +6,24 @@
  */
 
 // Decorators
-export const ApiProperty = () => (target: unknown, key: string | symbol) => {};
-export const ApiPropertyOptional = () => (target: unknown, key: string | symbol) => {};
-export const ApiTags = () => (target: unknown) => {};
+export const ApiProperty = () => (_target: unknown, _key: string | symbol) => {};
+export const ApiPropertyOptional = () => (_target: unknown, _key: string | symbol) => {};
+export const ApiTags = () => (_target: unknown) => {};
 export const ApiOperation =
-  () => (target: unknown, key: string | symbol, descriptor: PropertyDescriptor) => {};
+  () => (_target: unknown, _key: string | symbol, _descriptor: PropertyDescriptor) => {};
 export const ApiResponse =
-  () => (target: unknown, key: string | symbol, descriptor: PropertyDescriptor) => {};
-export const ApiBearerAuth = () => (target: unknown) => {};
-export const ApiHeader = () => (target: unknown) => {};
+  () => (_target: unknown, _key: string | symbol, _descriptor: PropertyDescriptor) => {};
+export const ApiBearerAuth = () => (_target: unknown) => {};
+export const ApiHeader = () => (_target: unknown) => {};
 export const ApiParam =
-  () => (target: unknown, key: string | symbol, descriptor: PropertyDescriptor) => {};
+  () => (_target: unknown, _key: string | symbol, _descriptor: PropertyDescriptor) => {};
 export const ApiQuery =
-  () => (target: unknown, key: string | symbol, descriptor: PropertyDescriptor) => {};
+  () => (_target: unknown, _key: string | symbol, _descriptor: PropertyDescriptor) => {};
 export const ApiBody =
-  () => (target: unknown, key: string | symbol, descriptor: PropertyDescriptor) => {};
-export const ApiConsumes = () => (target: unknown) => {};
-export const ApiProduces = () => (target: unknown) => {};
-export const ApiExtraModels = () => (target: unknown) => {};
+  () => (_target: unknown, _key: string | symbol, _descriptor: PropertyDescriptor) => {};
+export const ApiConsumes = () => (_target: unknown) => {};
+export const ApiProduces = () => (_target: unknown) => {};
+export const ApiExtraModels = () => (_target: unknown) => {};
 
 // Mapped types (often used in DTOs)
 export class PartialType {}

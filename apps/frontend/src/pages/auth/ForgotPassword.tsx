@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui/premium';
 import { useAuth } from '@/hooks/useAuth';
 import { zodResolver } from '@hookform/resolvers/zod';

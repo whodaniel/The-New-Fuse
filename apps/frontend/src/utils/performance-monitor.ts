@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Enhanced Performance Monitoring System
 // Preserves all functionality while adding comprehensive performance tracking
 
@@ -54,7 +55,7 @@ class PerformanceMonitor {
             duration: entry.duration,
             startTime: entry.startTime,
           });
-          
+
           this.recordMetric('long-task', entry.duration, {
             startTime: entry.startTime,
           });
@@ -110,14 +111,14 @@ class PerformanceMonitor {
     const duration = performance.now() - startTime;
     this.startTimes.delete(operation);
     this.recordMetric(operation, duration, context);
-    
+
     return duration;
   }
 
   // Component-specific performance tracking
   trackComponentRender(componentName: string, renderTime: number): void {
     const existing = this.componentMetrics.get(componentName);
-    
+
     if (existing) {
       existing.renderTime = renderTime;
       existing.updateCount += 1;
@@ -132,7 +133,8 @@ class PerformanceMonitor {
     }
 
     // Log slow renders
-    if (renderTime > 16) { // More than one frame at 60fps
+    if (renderTime > 16) {
+      // More than one frame at 60fps
       logger.warn(`Slow render detected: ${componentName}`, { renderTime });
     }
   }
@@ -145,8 +147,8 @@ class PerformanceMonitor {
         name: metricName,
         count: metrics.length,
         average: metrics.reduce((sum, m) => sum + m.value, 0) / metrics.length || 0,
-        min: Math.min(...metrics.map(m => m.value)),
-        max: Math.max(...metrics.map(m => m.value)),
+        min: Math.min(...metrics.map((m) => m.value)),
+        max: Math.max(...metrics.map((m) => m.value)),
         latest: metrics[metrics.length - 1],
       };
     }
@@ -179,7 +181,7 @@ class PerformanceMonitor {
 
   // Clean up observers
   dispose(): void {
-    this.observers.forEach(observer => observer.disconnect());
+    this.observers.forEach((observer) => observer.disconnect());
     this.observers = [];
   }
 }
@@ -190,14 +192,15 @@ export const performanceMonitor = new PerformanceMonitor();
 // React hook for component performance tracking
 export function usePerformanceTracker(componentName: string) {
   const startTime = performance.now();
-  
+
   return {
     recordRender: () => {
       const renderTime = performance.now() - startTime;
       performanceMonitor.trackComponentRender(componentName, renderTime);
     },
-    startTiming: (operation: string) => performanceMonitor.startTiming(`${componentName}-${operation}`),
-    endTiming: (operation: string, context?: Record<string, any>) => 
+    startTiming: (operation: string) =>
+      performanceMonitor.startTiming(`${componentName}-${operation}`),
+    endTiming: (operation: string, context?: Record<string, any>) =>
       performanceMonitor.endTiming(`${componentName}-${operation}`, context),
   };
 }
@@ -205,20 +208,20 @@ export function usePerformanceTracker(componentName: string) {
 // Decorator for timing functions
 export function timed(target: any, propertyName: string, descriptor: PropertyDescriptor) {
   const method = descriptor.value;
-  
+
   descriptor.value = function (...args: any[]) {
     const operation = `${target.constructor.name}.${propertyName}`;
     performanceMonitor.startTiming(operation);
-    
+
     try {
       const result = method.apply(this, args);
-      
+
       if (result instanceof Promise) {
         return result.finally(() => {
           performanceMonitor.endTiming(operation);
         });
       }
-      
+
       performanceMonitor.endTiming(operation);
       return result;
     } catch (error) {

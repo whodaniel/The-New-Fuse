@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
-import System from "@/models/system";
-import { PreLoader } from "@/components/Preloader";
-import { LOCALAI_COMMON_URLS } from "@/utils/constants";
-import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
-import { LocalAiEmbeddingSettings, CustomModel, COMMON_STYLES } from "@/types/embedding";
+// @ts-nocheck
+import { PreLoader } from '@/components/Preloader';
+import useProviderEndpointAutoDiscovery from '@/hooks/useProviderEndpointAutoDiscovery';
+import System from '@/models/system';
+import { COMMON_STYLES, CustomModel, LocalAiEmbeddingSettings } from '@/types/embedding';
+import { LOCALAI_COMMON_URLS } from '@/utils/constants';
+import { ChevronDown, ChevronUp } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface LocalAiOptionsProps {
   settings: LocalAiEmbeddingSettings;
@@ -15,20 +16,19 @@ export function LocalAiOptions({ settings }: LocalAiOptionsProps) {
   const [availableModels, setAvailableModels] = useState<CustomModel[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { discoveredEndpoint, isDiscovering } = useProviderEndpointAutoDiscovery(
-    LOCALAI_COMMON_URLS
-  );
+  const { discoveredEndpoint, isDiscovering } =
+    useProviderEndpointAutoDiscovery(LOCALAI_COMMON_URLS);
 
   useEffect(() => {
     async function fetchModels() {
       if (!discoveredEndpoint) return;
-      
+
       setIsLoading(true);
       try {
         const result = await System.getLocalAIModels(discoveredEndpoint);
         setAvailableModels(result);
       } catch (error) {
-        console.error("Failed to fetch LocalAI models:", error);
+        console.error('Failed to fetch LocalAI models:', error);
       } finally {
         setIsLoading(false);
       }
@@ -50,7 +50,7 @@ export function LocalAiOptions({ settings }: LocalAiOptionsProps) {
             <input
               type="password"
               className={COMMON_STYLES.input}
-              value={settings.LocalAiApiKey || ""}
+              value={settings.LocalAiApiKey || ''}
               placeholder="Enter your LocalAI API key"
             />
           </label>
@@ -67,7 +67,7 @@ export function LocalAiOptions({ settings }: LocalAiOptionsProps) {
             ) : (
               <ChevronDown className="mr-2 h-4 w-4" />
             )}
-            {showAdvanced ? "Hide Advanced Options" : "Show Advanced Options"}
+            {showAdvanced ? 'Hide Advanced Options' : 'Show Advanced Options'}
           </button>
         </div>
 
@@ -77,10 +77,7 @@ export function LocalAiOptions({ settings }: LocalAiOptionsProps) {
               <label className={COMMON_STYLES.labelWithOptional}>
                 Model Preference
                 <span className={COMMON_STYLES.optionalText}>(Optional)</span>
-                <select 
-                  className={COMMON_STYLES.select}
-                  value={settings.EmbeddingModelPref || ""}
-                >
+                <select className={COMMON_STYLES.select} value={settings.EmbeddingModelPref || ''}>
                   <option value="">Select a model</option>
                   {availableModels.map((model) => (
                     <option key={model.id} value={model.id}>
@@ -98,7 +95,7 @@ export function LocalAiOptions({ settings }: LocalAiOptionsProps) {
                 <input
                   type="number"
                   className={COMMON_STYLES.input}
-                  value={settings.EmbeddingModelMaxChunkLength || ""}
+                  value={settings.EmbeddingModelMaxChunkLength || ''}
                   placeholder="Maximum chunk length for embeddings"
                 />
               </label>

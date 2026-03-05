@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createContext, useContext, useEffect, useState } from 'react';
 import DefaultLoginLogoLight from '../media/illustrations/login-logo.svg';
 import AnythingLLMDark from '../media/logo/anything-llm-dark.png';

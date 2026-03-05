@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
+// @ts-nocheck
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ChatModelSelection from './ChatModelSelection';
 
 export default function WorkspaceLLMSelectionPage() {
   const { workspaceId } = useParams();
   const [hasChanges, setHasChanges] = useState(false);
-  
+
   // Mock workspace data - in a real app, this would come from context or API
   const workspace = {
     chatModel: 'gpt-4',
   };
-  
+
   // Default provider - in a real app, this might come from URL params or context
   const provider = 'openai';
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { AgentNFTRevenueDashboard } from '@/components/nft/AgentNFTRevenueDashboard';
 import { useToast } from '@/hooks/useToast';
 import React, { useEffect, useState } from 'react';

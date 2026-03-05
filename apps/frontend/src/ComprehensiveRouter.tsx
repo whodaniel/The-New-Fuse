@@ -39,9 +39,7 @@ const Workflows = lazy(() => import('./pages/Workflows.tsx'));
 const WorkflowBuilder = lazy(() => import('./pages/workflow-pages/Builder'));
 const WorkflowEditorWrapper = lazy(() => import('./components/WorkflowEditor'));
 const Analytics = lazy(() => import('./pages/dashboard/Analytics'));
-const Dashboard = lazy(() =>
-  import('./components/Dashboard').then((module) => ({ default: module.Dashboard }))
-);
+const Dashboard = lazy(() => import('./pages/dashboard/TNFConsoleDashboard'));
 const Settings = lazy(() => import('./pages/Settings'));
 const SettingsAppearance = lazy(() => import('./pages/settings/Appearance'));
 const SettingsNotifications = lazy(() => import('./pages/settings/Notifications'));
@@ -114,11 +112,8 @@ const SSOPage = lazy(() => import('./pages/auth/SSO'));
 const GoogleCallbackPage = lazy(() => import('./pages/auth/GoogleCallback'));
 const OAuthCallbackPage = lazy(() => import('./pages/auth/OAuthCallback'));
 
-// Landing components
-const LandingRevolutionPage = lazy(() => import('./pages/LandingRevolution'));
-const FeaturesPage = lazy(() => import('./pages/Features'));
+// Landing components archived to static HTML
 const OnboardingFlowPage = lazy(() => import('./pages/OnboardingFlow'));
-const PricingPage = lazy(() => import('./pages/Pricing'));
 const CommunityHubPage = lazy(() => import('./pages/Community/CommunityHub'));
 const SupportPage = lazy(() => import('./pages/Support'));
 const BrandIdentityPage = lazy(() => import('./pages/BrandIdentity'));
@@ -193,7 +188,6 @@ const GeneralSettings = lazy(() => import('./pages/GeneralSettings/index'));
 const AdminSettings = lazy(() => import('./pages/Admin/AdminSettings'));
 const WorkspaceManagement = lazy(() => import('./pages/Admin/WorkspaceManagement'));
 const AgentDashboard = lazy(() => import('./pages/dashboard/AgentDashboard'));
-const DashboardSettings = lazy(() => import('./pages/dashboard/DashboardSettings'));
 const LayoutExamples = lazy(() => import('./pages/Layout/LayoutExamples'));
 const AIAgentDashboard = lazy(() => import('./pages/AIAgentDashboard'));
 const NotFound = lazy(() => import('./pages/NotFound'));
@@ -221,6 +215,14 @@ const LazyPage = ({ name, path }: { name: string; path: string }) => (
 );
 
 const SmartNavigation = lazy(() => import('./components/SmartNavigation'));
+
+// Redirect component to force reload to static HTML pages
+const RedirectToStatic = ({ to }: { to: string }) => {
+  if (typeof window !== 'undefined') {
+    window.location.href = to;
+  }
+  return null;
+};
 
 // Remove the old ComprehensiveNavigation component and replace with SmartNavigation
 export default function ComprehensiveRouter() {
@@ -279,8 +281,8 @@ export default function ComprehensiveRouter() {
         <Layout>
           <Suspense fallback={<LoadingFallback name="Page" />}>
             <Routes>
-              {/* Core Routes */}
-              <Route path="/" element={<LandingRevolutionPage />} />
+              {/* Core Routes - Root redirects to static HTML Landing Page */}
+              <Route path="/" element={<RedirectToStatic to="/" />} />
               <Route path="/home" element={<AllPages />} />
               {LEGACY_REDIRECTS.map((redirect) => (
                 <Route
@@ -293,6 +295,30 @@ export default function ComprehensiveRouter() {
               {/* Protected Core Routes */}
               <Route
                 path="/dashboard"
+                element={
+                  <RequireAuth>
+                    <Dashboard />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/dashboard/architecture"
+                element={
+                  <RequireAuth>
+                    <Dashboard />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/dashboard/observability"
+                element={
+                  <RequireAuth>
+                    <Dashboard />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/dashboard/logs"
                 element={
                   <RequireAuth>
                     <Dashboard />
@@ -1154,7 +1180,7 @@ export default function ComprehensiveRouter() {
                 path="/dashboard/settings"
                 element={
                   <RequireAuth>
-                    <DashboardSettings />
+                    <Dashboard />
                   </RequireAuth>
                 }
               />

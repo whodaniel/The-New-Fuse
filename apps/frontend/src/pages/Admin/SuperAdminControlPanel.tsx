@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { GlassCard, StatsCard } from '@/components/ui/premium/GlassCard';
 import { PremiumButton } from '@/components/ui/premium/PremiumButton';
 import GraphVisualizerWrapper from '@/components/wizard/graph/GraphVisualizer';

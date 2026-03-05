@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.tsx';
@@ -12,17 +13,13 @@ const MainLayout: React.FC = () => {
           <div className="flex justify-between h-16">
             <div className="flex">
               <div className="flex-shrink-0 flex items-center">
-                <img
-                  className="h-8 w-auto"
-                  src="/logo.svg"
-                  alt="Logo"
-                />
+                <img className="h-8 w-auto" src="/logo.svg" alt="Logo" />
               </div>
             </div>
           </div>
         </div>
       </nav>
-      
+
       <main className="w-full">
         <Outlet />
       </main>

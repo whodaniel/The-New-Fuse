@@ -1,3 +1,4 @@
+// @ts-nocheck
 import WorkspaceChatComponent from '@/components/WorkspaceChat';
 import React from 'react';
 

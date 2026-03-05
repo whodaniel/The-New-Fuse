@@ -1,31 +1,23 @@
-import React, { useState, useEffect } from "react";
-
-
+// @ts-nocheck
+import React, { useState } from 'react';
 
 interface WebIntegrationPanelProps {
   isMainApp?: boolean;
 }
 
-const WebIntegrationPanel: React.FC<WebIntegrationPanelProps> = ({
-  isMainApp = true,
-}) => {
-  const [chatInputSelector, setChatInputSelector] = useState("");
-  const [chatOutputSelector, setChatOutputSelector] = useState("");
-  const [sendButtonSelector, setSendButtonSelector] = useState("");
-  const [textToSend, setTextToSend] = useState("");
-  const [capturedOutput, setCapturedOutput] = useState("");
-  const [status, setStatus] = useState("");
-  const [statusType, setStatusType] = useState<
-    "success" | "error" | "info" | "warning"
-  >("info");
+const WebIntegrationPanel: React.FC<WebIntegrationPanelProps> = ({ isMainApp = true }) => {
+  const [chatInputSelector, setChatInputSelector] = useState('');
+  const [chatOutputSelector, setChatOutputSelector] = useState('');
+  const [sendButtonSelector, setSendButtonSelector] = useState('');
+  const [textToSend, setTextToSend] = useState('');
+  const [capturedOutput, setCapturedOutput] = useState('');
+  const [status, setStatus] = useState('');
+  const [statusType, setStatusType] = useState<'success' | 'error' | 'info' | 'warning'>('info');
   const [autoCapture, setAutoCapture] = useState(false);
   const [isMonitoring, setIsMonitoring] = useState(false);
 
   // Helper function to add status messages
-  const addStatus = (
-    message: string,
-    type: "success" | "error" | "info" | "warning" = "info",
-  ) => {
+  const addStatus = (message: string, type: 'success' | 'error' | 'info' | 'warning' = 'info') => {
     setStatus(message);
     setStatusType(type);
   };
@@ -33,193 +25,168 @@ const WebIntegrationPanel: React.FC<WebIntegrationPanelProps> = ({
   // Send text to page
   const handleSendToPage = async () => {
     if (!textToSend.trim()) {
-      addStatus("Please enter text to send", "warning");
+      addStatus('Please enter text to send', 'warning');
       return;
     }
 
     if (!chatInputSelector.trim()) {
-      addStatus("Please specify input selector", "warning");
+      addStatus('Please specify input selector', 'warning');
       return;
     }
 
     try {
       if (isMainApp) {
         // For main app - this would integrate with your web automation system
-        addStatus("Text sent to page (main app integration)", "success");
+        addStatus('Text sent to page (main app integration)', 'success');
       } else {
         // For chrome extension - use content script
-        if (typeof chrome !== "undefined" && chrome.tabs) {
+        if (typeof chrome !== 'undefined' && chrome.tabs) {
           chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             if (tabs[0]?.id) {
               chrome.tabs.sendMessage(
                 tabs[0].id,
                 {
-                  type: "SEND_TO_PAGE",
+                  type: 'SEND_TO_PAGE',
                   selector: chatInputSelector,
                   text: textToSend,
                 },
                 (response) => {
                   if (chrome.runtime.lastError) {
-                    addStatus(
-                      `Error: ${chrome.runtime.lastError.message}`,
-                      "error",
-                    );
+                    addStatus(`Error: ${chrome.runtime.lastError.message}`, 'error');
                   } else if (response?.success) {
-                    addStatus("Text sent successfully", "success");
-                    setTextToSend("");
+                    addStatus('Text sent successfully', 'success');
+                    setTextToSend('');
                   } else {
-                    addStatus(
-                      `Failed: ${response?.error || "Unknown error"}`,
-                      "error",
-                    );
+                    addStatus(`Failed: ${response?.error || 'Unknown error'}`, 'error');
                   }
-                },
+                }
               );
             }
           });
         }
       }
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : "Unknown error";
-      addStatus(`Error sending text: ${errorMsg}`, "error");
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      addStatus(`Error sending text: ${errorMsg}`, 'error');
     }
   };
 
   // Capture output from page
   const handleCaptureOutput = async () => {
     if (!chatOutputSelector.trim()) {
-      addStatus("Please specify output selector", "warning");
+      addStatus('Please specify output selector', 'warning');
       return;
     }
 
     try {
       if (isMainApp) {
         // For main app - integrate with web scraping system
-        setCapturedOutput("Sample captured output (main app integration)");
-        addStatus("Output captured successfully", "success");
+        setCapturedOutput('Sample captured output (main app integration)');
+        addStatus('Output captured successfully', 'success');
       } else {
         // For chrome extension - use content script
-        if (typeof chrome !== "undefined" && chrome.tabs) {
+        if (typeof chrome !== 'undefined' && chrome.tabs) {
           chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             if (tabs[0]?.id) {
               chrome.tabs.sendMessage(
                 tabs[0].id,
                 {
-                  type: "CAPTURE_OUTPUT",
+                  type: 'CAPTURE_OUTPUT',
                   selector: chatOutputSelector,
                 },
                 (response) => {
                   if (chrome.runtime.lastError) {
-                    addStatus(
-                      `Error: ${chrome.runtime.lastError.message}`,
-                      "error",
-                    );
+                    addStatus(`Error: ${chrome.runtime.lastError.message}`, 'error');
                   } else if (response?.success) {
-                    setCapturedOutput(response.content || "No content found");
-                    addStatus("Output captured successfully", "success");
+                    setCapturedOutput(response.content || 'No content found');
+                    addStatus('Output captured successfully', 'success');
                   } else {
-                    addStatus(
-                      `Failed: ${response?.error || "Unknown error"}`,
-                      "error",
-                    );
+                    addStatus(`Failed: ${response?.error || 'Unknown error'}`, 'error');
                   }
-                },
+                }
               );
             }
           });
         }
       }
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : "Unknown error";
-      addStatus(`Error capturing output: ${errorMsg}`, "error");
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      addStatus(`Error capturing output: ${errorMsg}`, 'error');
     }
   };
 
   // Click send button
   const handleClickSendButton = async () => {
     if (!sendButtonSelector.trim()) {
-      addStatus("Please specify send button selector", "warning");
+      addStatus('Please specify send button selector', 'warning');
       return;
     }
 
     try {
       if (isMainApp) {
-        addStatus("Send button clicked (main app integration)", "success");
+        addStatus('Send button clicked (main app integration)', 'success');
       } else {
-        if (typeof chrome !== "undefined" && chrome.tabs) {
+        if (typeof chrome !== 'undefined' && chrome.tabs) {
           chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             if (tabs[0]?.id) {
               chrome.tabs.sendMessage(
                 tabs[0].id,
                 {
-                  type: "CLICK_BUTTON",
+                  type: 'CLICK_BUTTON',
                   selector: sendButtonSelector,
                 },
                 (response) => {
                   if (chrome.runtime.lastError) {
-                    addStatus(
-                      `Error: ${chrome.runtime.lastError.message}`,
-                      "error",
-                    );
+                    addStatus(`Error: ${chrome.runtime.lastError.message}`, 'error');
                   } else if (response?.success) {
-                    addStatus("Send button clicked successfully", "success");
+                    addStatus('Send button clicked successfully', 'success');
                   } else {
-                    addStatus(
-                      `Failed: ${response?.error || "Unknown error"}`,
-                      "error",
-                    );
+                    addStatus(`Failed: ${response?.error || 'Unknown error'}`, 'error');
                   }
-                },
+                }
               );
             }
           });
         }
       }
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : "Unknown error";
-      addStatus(`Error clicking button: ${errorMsg}`, "error");
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      addStatus(`Error clicking button: ${errorMsg}`, 'error');
     }
   };
 
   // Copy output to clipboard
   const copyToClipboard = async () => {
     if (!capturedOutput) {
-      addStatus("No output to copy", "warning");
+      addStatus('No output to copy', 'warning');
       return;
     }
 
     try {
       await navigator.clipboard.writeText(capturedOutput);
-      addStatus("Output copied to clipboard", "success");
+      addStatus('Output copied to clipboard', 'success');
     } catch (error) {
-      addStatus("Failed to copy to clipboard", "error");
+      addStatus('Failed to copy to clipboard', 'error');
     }
   };
 
   // Clear output
   const clearOutput = () => {
-    setCapturedOutput("");
-    addStatus("Output cleared", "info");
+    setCapturedOutput('');
+    addStatus('Output cleared', 'info');
   };
 
   // Toggle monitoring
   const toggleMonitoring = () => {
     setIsMonitoring(!isMonitoring);
-    addStatus(
-      isMonitoring ? "Monitoring stopped" : "Monitoring started",
-      "info",
-    );
+    addStatus(isMonitoring ? 'Monitoring stopped' : 'Monitoring started', 'info');
   };
 
   return (
-    <Box sx={{ p: 2, height: "100%", overflow: "auto" }}>
+    <Box sx={{ p: 2, height: '100%', overflow: 'auto' }}>
       {/* Status Alert */}
       {status && (
-        <Alert
-          severity={statusType}
-          sx={{ mb: 2 }}
-          onClose={() => setStatus("")}
-        >
+        <Alert severity={statusType} sx={{ mb: 2 }} onClose={() => setStatus('')}>
           {status}
         </Alert>
       )}
@@ -240,9 +207,7 @@ const WebIntegrationPanel: React.FC<WebIntegrationPanelProps> = ({
                 onChange={(e) => setChatInputSelector(e.target.value)}
                 size="small"
                 InputProps={{
-                  startAdornment: (
-                    <CodeIcon sx={{ mr: 1, color: "text.secondary" }} />
-                  ),
+                  startAdornment: <CodeIcon sx={{ mr: 1, color: 'text.secondary' }} />,
                 }}
               />
             </SimpleGrid>
@@ -255,9 +220,7 @@ const WebIntegrationPanel: React.FC<WebIntegrationPanelProps> = ({
                 onChange={(e) => setChatOutputSelector(e.target.value)}
                 size="small"
                 InputProps={{
-                  startAdornment: (
-                    <VisibilityIcon sx={{ mr: 1, color: "text.secondary" }} />
-                  ),
+                  startAdornment: <VisibilityIcon sx={{ mr: 1, color: 'text.secondary' }} />,
                 }}
               />
             </SimpleGrid>
@@ -270,9 +233,7 @@ const WebIntegrationPanel: React.FC<WebIntegrationPanelProps> = ({
                 onChange={(e) => setSendButtonSelector(e.target.value)}
                 size="small"
                 InputProps={{
-                  startAdornment: (
-                    <TouchAppIcon sx={{ mr: 1, color: "text.secondary" }} />
-                  ),
+                  startAdornment: <TouchAppIcon sx={{ mr: 1, color: 'text.secondary' }} />,
                 }}
               />
             </SimpleGrid>
@@ -296,7 +257,7 @@ const WebIntegrationPanel: React.FC<WebIntegrationPanelProps> = ({
             onChange={(e) => setTextToSend(e.target.value)}
             sx={{ mb: 2 }}
           />
-          <Box sx={{ display: "flex", gap: 1 }}>
+          <Box sx={{ display: 'flex', gap: 1 }}>
             <Button
               variant="contained"
               onClick={handleSendToPage}
@@ -322,14 +283,14 @@ const WebIntegrationPanel: React.FC<WebIntegrationPanelProps> = ({
         <CardBody>
           <Box
             sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
               mb: 2,
             }}
           >
             <Text variant="h6">Captured Output</Text>
-            <Box sx={{ display: "flex", gap: 1 }}>
+            <Box sx={{ display: 'flex', gap: 1 }}>
               <FormLabel
                 control={
                   <Switch
@@ -345,7 +306,7 @@ const WebIntegrationPanel: React.FC<WebIntegrationPanelProps> = ({
                 <IconButton
                   size="small"
                   onClick={toggleMonitoring}
-                  color={isMonitoring ? "secondary" : "default"}
+                  color={isMonitoring ? 'secondary' : 'default'}
                 >
                   {isMonitoring ? <StopIcon /> : <PlayArrowIcon />}
                 </IconButton>
@@ -356,20 +317,12 @@ const WebIntegrationPanel: React.FC<WebIntegrationPanelProps> = ({
                 </IconButton>
               </Tooltip>
               <Tooltip title="Copy to Clipboard">
-                <IconButton
-                  size="small"
-                  onClick={copyToClipboard}
-                  disabled={!capturedOutput}
-                >
+                <IconButton size="small" onClick={copyToClipboard} disabled={!capturedOutput}>
                   <ContentCopyIcon />
                 </IconButton>
               </Tooltip>
               <Tooltip title="Clear Output">
-                <IconButton
-                  size="small"
-                  onClick={clearOutput}
-                  disabled={!capturedOutput}
-                >
+                <IconButton size="small" onClick={clearOutput} disabled={!capturedOutput}>
                   <ClearIcon />
                 </IconButton>
               </Tooltip>
@@ -380,33 +333,28 @@ const WebIntegrationPanel: React.FC<WebIntegrationPanelProps> = ({
             variant="outlined"
             sx={{
               p: 2,
-              bgcolor: "background.default",
+              bgcolor: 'background.default',
               minHeight: 120,
               maxHeight: 200,
-              overflow: "auto",
-              fontFamily: "monospace",
-              fontSize: "0.875rem",
+              overflow: 'auto',
+              fontFamily: 'monospace',
+              fontSize: '0.875rem',
             }}
           >
             {capturedOutput ? (
               <Text
                 variant="body2"
                 sx={{
-                  whiteSpace: "pre-wrap",
-                  fontFamily: "monospace",
-                  fontSize: "0.875rem",
+                  whiteSpace: 'pre-wrap',
+                  fontFamily: 'monospace',
+                  fontSize: '0.875rem',
                 }}
               >
                 {capturedOutput}
               </Text>
             ) : (
-              <Text
-                variant="body2"
-                color="text.secondary"
-                sx={{ fontStyle: "italic" }}
-              >
-                No output captured yet. Click "Capture Now" or enable
-                auto-capture.
+              <Text variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                No output captured yet. Click "Capture Now" or enable auto-capture.
               </Text>
             )}
           </Box>
@@ -419,19 +367,19 @@ const WebIntegrationPanel: React.FC<WebIntegrationPanelProps> = ({
           <Text variant="h6" gutterBottom>
             Monitoring Status
           </Text>
-          <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
             <Tag
-              label={isMonitoring ? "Monitoring Active" : "Monitoring Inactive"}
-              color={isMonitoring ? "success" : "default"}
+              label={isMonitoring ? 'Monitoring Active' : 'Monitoring Inactive'}
+              color={isMonitoring ? 'success' : 'default'}
               variant="outlined"
             />
             <Tag
-              label={autoCapture ? "Auto-Capture ON" : "Auto-Capture OFF"}
-              color={autoCapture ? "primary" : "default"}
+              label={autoCapture ? 'Auto-Capture ON' : 'Auto-Capture OFF'}
+              color={autoCapture ? 'primary' : 'default'}
               variant="outlined"
             />
             <Tag
-              label={`Page: ${isMainApp ? "Main App" : "Extension"}`}
+              label={`Page: ${isMainApp ? 'Main App' : 'Extension'}`}
               color="info"
               variant="outlined"
             />

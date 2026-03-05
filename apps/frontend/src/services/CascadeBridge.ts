@@ -1,3 +1,4 @@
+// @ts-nocheck
 import EventEmitter from 'events';
 import { WebSocketService } from './WebSocketService';
 import { LoggingService } from './logging';

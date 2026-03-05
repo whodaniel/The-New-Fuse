@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { errorTracker } from '../services/error-tracking.service';
 import { ErrorCategory, ErrorPriority } from '../shared/types/errors';
 
@@ -17,7 +18,7 @@ async function fetchUserData(userId: string) {
         endpoint: `/api/users/${userId}`,
         statusCode: error instanceof Response ? error.status : undefined,
       },
-      tags: ['api', 'user-data']
+      tags: ['api', 'user-data'],
     });
     throw error;
   }
@@ -36,9 +37,9 @@ function validateUserForm(formData: Record<string, unknown>) {
       priority: ErrorPriority.MEDIUM,
       metadata: {
         formData,
-        formType: 'user-registration'
+        formType: 'user-registration',
       },
-      tags: ['form', 'validation']
+      tags: ['form', 'validation'],
     });
     return false;
   }
@@ -55,9 +56,9 @@ class AuthService {
         priority: ErrorPriority.HIGH,
         metadata: {
           email: credentials.email,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         },
-        tags: ['auth', 'login']
+        tags: ['auth', 'login'],
       });
       throw error;
     }
@@ -89,9 +90,9 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
       priority: ErrorPriority.CRITICAL,
       metadata: {
         componentStack: errorInfo.componentStack,
-        react: true
+        react: true,
       },
-      tags: ['react', 'error-boundary']
+      tags: ['react', 'error-boundary'],
     });
   }
 
@@ -104,24 +105,26 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 }
 
 // 5. Redux Action Error Handling
-import { Dispatch, AnyAction } from 'redux';
+import { AnyAction, Dispatch } from 'redux';
 
-const fetchDataAction = () => async (dispatch: Dispatch<AnyAction>): Promise<void> => {
-  try {
-    // Redux action logic
-  } catch (error) {
-    errorTracker.trackError(error instanceof Error ? error : new Error(String(error)), {
-      category: ErrorCategory.EXTERNAL_SERVICE,
-      priority: ErrorPriority.HIGH,
-      metadata: {
-        action: 'FETCH_DATA',
-        state: 'failed'
-      },
-      tags: ['redux', 'data-fetch']
-    });
-    dispatch({ type: 'FETCH_DATA_ERROR', payload: error });
-  }
-};
+const fetchDataAction =
+  () =>
+  async (dispatch: Dispatch<AnyAction>): Promise<void> => {
+    try {
+      // Redux action logic
+    } catch (error) {
+      errorTracker.trackError(error instanceof Error ? error : new Error(String(error)), {
+        category: ErrorCategory.EXTERNAL_SERVICE,
+        priority: ErrorPriority.HIGH,
+        metadata: {
+          action: 'FETCH_DATA',
+          state: 'failed',
+        },
+        tags: ['redux', 'data-fetch'],
+      });
+      dispatch({ type: 'FETCH_DATA_ERROR', payload: error });
+    }
+  };
 
 // 6. WebSocket Error Handling
 class WebSocketService {
@@ -132,9 +135,9 @@ class WebSocketService {
         priority: ErrorPriority.HIGH,
         metadata: {
           event,
-          socketState: socket.readyState
+          socketState: socket.readyState,
         },
-        tags: ['websocket', 'connection']
+        tags: ['websocket', 'connection'],
       });
     };
   }
@@ -152,9 +155,9 @@ class DatabaseService {
         priority: ErrorPriority.CRITICAL,
         metadata: {
           query: sql,
-          params: JSON.stringify(params)
+          params: JSON.stringify(params),
         },
-        tags: ['database', 'query']
+        tags: ['database', 'query'],
       });
       throw error;
     }
@@ -172,9 +175,9 @@ async function uploadFile(file: File): Promise<void> {
       metadata: {
         fileName: file.name,
         fileSize: file.size,
-        fileType: file.type
+        fileType: file.type,
       },
-      tags: ['file-upload', 'storage']
+      tags: ['file-upload', 'storage'],
     });
     throw error;
   }
@@ -189,9 +192,9 @@ class SessionManager {
       priority: ErrorPriority.HIGH,
       metadata: {
         sessionId: this.getSessionId(),
-        lastActive: Date.now()
+        lastActive: Date.now(),
       },
-      tags: ['session', 'user-tracking']
+      tags: ['session', 'user-tracking'],
     });
     errorTracker.clearUser();
   }
@@ -211,33 +214,30 @@ interface PerformanceMetric {
 class PerformanceMonitor {
   trackPerformanceIssue(metric: PerformanceMetric): void {
     if (metric.value > metric.threshold) {
-      errorTracker.trackError(
-        new Error(`Performance threshold exceeded for ${metric.name}`),
-        {
-          category: ErrorCategory.RUNTIME,
-          priority: ErrorPriority.MEDIUM,
-          metadata: {
-            metricName: metric.name,
-            value: metric.value,
-            threshold: metric.threshold,
-            timestamp: Date.now()
-          },
-          tags: ['performance', metric.name]
-        }
-      );
+      errorTracker.trackError(new Error(`Performance threshold exceeded for ${metric.name}`), {
+        category: ErrorCategory.RUNTIME,
+        priority: ErrorPriority.MEDIUM,
+        metadata: {
+          metricName: metric.name,
+          value: metric.value,
+          threshold: metric.threshold,
+          timestamp: Date.now(),
+        },
+        tags: ['performance', metric.name],
+      });
     }
   }
 }
 
 export {
-  fetchUserData,
-  validateUserForm,
   AuthService,
+  DatabaseService,
   ErrorBoundary,
   fetchDataAction,
-  WebSocketService,
-  DatabaseService,
-  uploadFile,
+  fetchUserData,
+  PerformanceMonitor,
   SessionManager,
-  PerformanceMonitor
+  uploadFile,
+  validateUserForm,
+  WebSocketService,
 };

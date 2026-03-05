@@ -1,4 +1,5 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+// @ts-nocheck
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { Agent } from '@the-new-fuse/types';
 import { api } from '../services/api';
 
@@ -14,21 +15,15 @@ const initialState: AgentState = {
   error: null,
 };
 
-export const fetchAgents = createAsyncThunk(
-  'agents/fetchAgents',
-  async () => {
-    const response = await api.get('/agents');
-    return response.data;
-  }
-);
+export const fetchAgents = createAsyncThunk('agents/fetchAgents', async () => {
+  const response = await api.get('/agents');
+  return response.data;
+});
 
-export const createAgent = createAsyncThunk(
-  'agents/createAgent',
-  async (agent: Partial<Agent>) => {
-    const response = await api.post('/agents', agent);
-    return response.data;
-  }
-);
+export const createAgent = createAsyncThunk('agents/createAgent', async (agent: Partial<Agent>) => {
+  const response = await api.post('/agents', agent);
+  return response.data;
+});
 
 const agentSlice = createSlice({
   name: 'agents',

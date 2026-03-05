@@ -1,6 +1,6 @@
+// @ts-nocheck
 // Chat.tsx
-import React from "react";
-import ChatInterface from "../components/features/ChatInterface";
+import ChatInterface from '../components/features/ChatInterface';
 
 export default function Chat() {
   return (

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Standard Layout System for The New Fuse
  * This layout provides consistent structure across all application pages

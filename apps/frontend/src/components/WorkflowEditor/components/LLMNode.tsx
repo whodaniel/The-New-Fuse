@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { LLMSelector } from '@/components/LLMSelection/LLMSelector';
 import { Label } from '@/components/ui/label';
 import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui/premium';

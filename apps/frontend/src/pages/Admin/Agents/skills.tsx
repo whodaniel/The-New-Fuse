@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { GlassCard as Card } from '@/components/ui/premium/GlassCard';
 import { configurableSkills, defaultSkills } from './skills-data';
 

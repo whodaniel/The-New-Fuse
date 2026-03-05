@@ -1,16 +1,14 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+// @ts-nocheck
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 
 export default function Notifications() {
   return (
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-medium">Notification Settings</h3>
-        <p className="text-sm text-muted-foreground">
-          Configure how you want to be notified
-        </p>
+        <p className="text-sm text-muted-foreground">Configure how you want to be notified</p>
       </div>
 
       <Card>

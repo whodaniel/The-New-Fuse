@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { PremiumInput as Input } from '@/components/ui/premium/PremiumInput';

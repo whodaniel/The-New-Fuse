@@ -1,6 +1,6 @@
 interface AppearanceSettings {
   showScrollbar?: boolean;
-  theme?: string;
+  theme: string;
 }
 
 const SETTINGS_KEY = 'appearance_settings';
@@ -26,7 +26,7 @@ class Appearance {
 
   private loadSettings(): AppearanceSettings {
     if (typeof window === 'undefined') return DEFAULT_SETTINGS;
-    
+
     const savedSettings = localStorage.getItem(SETTINGS_KEY);
     if (!savedSettings) return DEFAULT_SETTINGS;
 
@@ -72,7 +72,7 @@ class Appearance {
   }
 
   static getTheme(): string {
-    return Appearance.getInstance().settings.theme || DEFAULT_SETTINGS.theme;
+    return Appearance.getInstance().settings.theme ?? DEFAULT_SETTINGS.theme;
   }
 }
 

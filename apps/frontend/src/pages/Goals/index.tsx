@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { useAuth } from '@/providers/AuthProvider';
 import {
   addGoalMilestone,
   createGoal,
@@ -13,9 +12,12 @@ import {
   type GoalRecord,
   type TimelineEvent,
 } from '@/services/unifiedLedgerApi';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { Link } from 'react-router-dom';
 
 export default function GoalsPage() {
+  const { user } = useAuth();
   const [goals, setGoals] = useState<GoalRecord[]>([]);
   const [events, setEvents] = useState<TimelineEvent[]>([]);
   const [title, setTitle] = useState('');
@@ -26,10 +28,14 @@ export default function GoalsPage() {
   const [milestoneGoalId, setMilestoneGoalId] = useState('');
   const [milestoneTitle, setMilestoneTitle] = useState('');
   const [milestoneDueAt, setMilestoneDueAt] = useState('');
+  const owner = user?.id || 'ui-user';
 
   const load = async () => {
     try {
-      const [goalRows, timelineRows] = await Promise.all([listGoals(), listTimelineEvents()]);
+      const [goalRows, timelineRows] = await Promise.all([
+        listGoals(owner),
+        listTimelineEvents({ userId: owner }),
+      ]);
       setGoals(goalRows);
       setEvents(timelineRows.filter((e) => !!e.goalId));
     } catch {
@@ -44,7 +50,7 @@ export default function GoalsPage() {
   const onCreate = async () => {
     if (!title.trim()) return;
     try {
-      await createGoal({ title, description, owner: 'ui-user' });
+      await createGoal({ title, description, owner });
       setTitle('');
       setDescription('');
       await load();
@@ -60,7 +66,8 @@ export default function GoalsPage() {
       await createTimelineEvent({
         goalId: selectedGoalId,
         eventType: 'historical_event',
-        actor: 'ui-user',
+        actor: owner,
+        userId: owner,
         timestamp: eventAt ? new Date(eventAt).toISOString() : undefined,
         payload: { note: eventNote, source: 'goals-page' },
       });
@@ -77,6 +84,7 @@ export default function GoalsPage() {
     if (!milestoneGoalId || !milestoneTitle.trim()) return;
     try {
       await addGoalMilestone(milestoneGoalId, {
+        owner,
         title: milestoneTitle,
         dueAt: milestoneDueAt ? new Date(milestoneDueAt).toISOString() : undefined,
       });
@@ -94,7 +102,9 @@ export default function GoalsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Goals</h1>
-          <p className="text-muted-foreground">Primary planning goals connected to task/suggestion records.</p>
+          <p className="text-muted-foreground">
+            Primary planning goals connected to task/suggestion records.
+          </p>
         </div>
         <div className="flex gap-2">
           <Button asChild variant="outline">
@@ -108,7 +118,12 @@ export default function GoalsPage() {
 
       <Card className="p-4 space-y-3">
         <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Goal title" />
-        <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} placeholder="Goal description" />
+        <Textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          rows={3}
+          placeholder="Goal description"
+        />
         <Button onClick={onCreate}>Create Goal</Button>
       </Card>
 
@@ -126,11 +141,7 @@ export default function GoalsPage() {
             </option>
           ))}
         </select>
-        <Input
-          type="datetime-local"
-          value={eventAt}
-          onChange={(e) => setEventAt(e.target.value)}
-        />
+        <Input type="datetime-local" value={eventAt} onChange={(e) => setEventAt(e.target.value)} />
         <Textarea
           value={eventNote}
           onChange={(e) => setEventNote(e.target.value)}
@@ -170,20 +181,28 @@ export default function GoalsPage() {
       <div className="space-y-3">
         {goals.map((g) => (
           <Card key={g.id} className="p-4">
-            <Link to={`/goals/${g.id}`} className="font-semibold underline-offset-2 hover:underline">
+            <Link
+              to={`/goals/${g.id}`}
+              className="font-semibold underline-offset-2 hover:underline"
+            >
               {g.title}
             </Link>
             <div className="text-sm text-muted-foreground">{g.description}</div>
             <div className="text-xs text-muted-foreground mt-2">
-              status: {g.status} | linked records: {g.linkedRecordIds.length} | milestones: {g.milestones.length}
+              status: {g.status} | linked records: {g.linkedRecordIds.length} | milestones:{' '}
+              {g.milestones.length}
             </div>
             <div className="mt-2 space-y-1">
               {events
                 .filter((e) => e.goalId === g.id)
                 .slice(0, 3)
                 .map((e) => (
-                  <div key={e.id} className="text-xs text-muted-foreground border rounded px-2 py-1">
-                    {new Date(e.timestamp).toLocaleString()} | {String((e.payload || {}).note || e.eventType)}
+                  <div
+                    key={e.id}
+                    className="text-xs text-muted-foreground border rounded px-2 py-1"
+                  >
+                    {new Date(e.timestamp).toLocaleString()} |{' '}
+                    {String((e.payload || {}).note || e.eventType)}
                   </div>
                 ))}
             </div>

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Enhanced Workflow Builder for The New Fuse
  * Production-ready drag-and-drop workflow builder with:

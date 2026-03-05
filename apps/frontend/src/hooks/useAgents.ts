@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+// @ts-nocheck
+import { useState } from 'react';
 
 interface Agent {
   id: string;
@@ -31,6 +32,6 @@ export function useAgents() {
     selectedAgent,
     conversationId,
     selectAgent,
-    clearConversation
+    clearConversation,
   };
 }

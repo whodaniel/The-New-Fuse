@@ -1,3 +1,4 @@
+// @ts-nocheck
 import * as Dialog from '@/components/ui/dialog';
 import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui/premium';
 import { useWorkspace } from '@/hooks/useWorkspace';

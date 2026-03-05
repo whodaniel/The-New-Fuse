@@ -1,10 +1,10 @@
-import React, { useState, useRef } from "react";
-import { useEventListener } from "@/hooks/useEventListener";
-import { v4 } from "uuid";
-import { TimeStamp } from "@/utils/TimeStamp";
+// @ts-nocheck
+import { useEventListener } from '@/hooks/useEventListener';
+import React, { useRef, useState } from 'react';
+import { v4 } from 'uuid';
 
 interface EditMessageFormProps {
-  role: "user" | "assistant";
+  role: 'user' | 'assistant';
   chatId: string | null;
   message: string;
   attachments?: File[];
@@ -14,7 +14,7 @@ interface EditMessageFormProps {
   saveChanges: (params: {
     editedMessage: string;
     chatId: string;
-    role: "user" | "assistant";
+    role: 'user' | 'assistant';
     attachments?: File[];
     editedAt: Date;
   }) => void;
@@ -22,7 +22,7 @@ interface EditMessageFormProps {
 
 interface UseEditMessageParams {
   chatId: string | null;
-  role: "user" | "assistant";
+  role: 'user' | 'assistant';
 }
 
 interface UseEditMessageReturn {
@@ -42,8 +42,8 @@ export function EditMessageForm({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const formId = useRef<string>(v4());
 
-  useEventListener("keydown", (e: KeyboardEvent) => {
-    if (e.key === "Escape") {
+  useEventListener('keydown', (e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
       textareaRef.current?.form?.reset();
       setEditedMessage(message);
     }

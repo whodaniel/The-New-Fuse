@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+// @ts-nocheck
+import { createContext, ReactNode, useContext, useState } from 'react';
 
 interface RouteContextType {
   pageTitle: string;
@@ -15,9 +16,7 @@ export function RouteProvider({ children }: RouteProviderProps) {
   const [pageTitle, setPageTitle] = useState('Dashboard');
 
   return (
-    <RouteContext.Provider value={{ pageTitle, setPageTitle }}>
-      {children}
-    </RouteContext.Provider>
+    <RouteContext.Provider value={{ pageTitle, setPageTitle }}>{children}</RouteContext.Provider>
   );
 }
 

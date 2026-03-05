@@ -1,18 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { ChevronLeft, MessageSquare } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { useAuth } from '@/providers/AuthProvider';
 import {
-  addFeedbackIteration,
+  appendTaskExecutionLog,
   createGoal,
   createPlan,
   getRecordConnections,
   getTask,
+  getTaskExecutionLogs,
   linkGoalToRecord,
   linkPlan,
   listGoals,
@@ -22,14 +20,21 @@ import {
   type GoalRecord,
   type LedgerRecord,
   type ProjectPlanRecord,
+  type TaskExecutionLogEntry,
   type TimelineEvent,
 } from '@/services/unifiedLedgerApi';
+import { ChevronLeft, MessageSquare } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const TaskDetail: React.FC = () => {
   const { id = '' } = useParams<{ id: string }>();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [row, setRow] = useState<LedgerRecord | null>(null);
   const [timeline, setTimeline] = useState<TimelineEvent[]>([]);
+  const [executionLogs, setExecutionLogs] = useState<TaskExecutionLogEntry[]>([]);
   const [goals, setGoals] = useState<GoalRecord[]>([]);
   const [plans, setPlans] = useState<ProjectPlanRecord[]>([]);
   const [connectedGoals, setConnectedGoals] = useState<GoalRecord[]>([]);
@@ -41,22 +46,26 @@ const TaskDetail: React.FC = () => {
   const [planObjective, setPlanObjective] = useState('');
   const [selectedGoalId, setSelectedGoalId] = useState('');
   const [selectedPlanId, setSelectedPlanId] = useState('');
+  const owner = user?.id || 'ui-user';
 
   const load = async () => {
     try {
-      const [task, events, allGoals, allPlans, connections] = await Promise.all([
-        getTask(id),
-        listTimelineEvents({ recordId: id }),
-        listGoals(),
-        listPlans(),
-        getRecordConnections(id),
-      ]);
+      const [task, events, allGoals, allPlans, connections, executionLogResponse] =
+        await Promise.all([
+          getTask(id),
+          listTimelineEvents({ recordId: id }),
+          listGoals(owner),
+          listPlans(owner),
+          getRecordConnections(id, owner),
+          getTaskExecutionLogs(id).catch(() => ({ taskId: id, logs: [], count: 0 })),
+        ]);
       setRow(task);
       setTimeline(events);
       setGoals(allGoals);
       setPlans(allPlans);
       setConnectedGoals(connections.goals || []);
       setConnectedPlans(connections.plans || []);
+      setExecutionLogs(executionLogResponse.logs || []);
     } catch {
       toast.error('Failed to load task');
     }
@@ -68,7 +77,7 @@ const TaskDetail: React.FC = () => {
 
   const updateStatus = async (status: LedgerRecord['status']) => {
     try {
-      await updateTask(id, { status, metadata: { actor: 'ui-user' } });
+      await updateTask(id, { status, metadata: { actor: owner } });
       await load();
       toast.success(`Task status set to ${status}`);
     } catch {
@@ -79,16 +88,19 @@ const TaskDetail: React.FC = () => {
   const saveNote = async () => {
     if (!note.trim()) return;
     try {
-      await addFeedbackIteration(id, {
-        hypothesis: `Execution note for task ${id}`,
-        evidence: [note],
-        confidence: 0.75,
-        accepted: true,
-        notes: 'Captured from task detail note panel',
+      await appendTaskExecutionLog(id, {
+        level: 'info',
+        message: note,
+        actor: owner,
+        source: 'task-detail-ui',
+        stage: 'note_capture',
+        metadata: {
+          panel: 'task_detail',
+        },
       });
       setNote('');
       await load();
-      toast.success('Note saved as feedback iteration');
+      toast.success('Note saved to execution log');
     } catch {
       toast.error('Failed to save note');
     }
@@ -100,7 +112,7 @@ const TaskDetail: React.FC = () => {
       await createGoal({
         title: goalTitle,
         description: goalDescription || `Goal derived from task ${row.id}`,
-        owner: 'ui-user',
+        owner,
         linkedRecordIds: [row.id],
       });
       setGoalTitle('');
@@ -118,7 +130,7 @@ const TaskDetail: React.FC = () => {
       await createPlan({
         name: planName,
         objective: planObjective || `Plan derived from task ${row.id}`,
-        owner: 'ui-user',
+        owner,
         linkedRecordIds: [row.id],
         linkedGoalIds: selectedGoalId ? [selectedGoalId] : [],
       });
@@ -134,7 +146,7 @@ const TaskDetail: React.FC = () => {
   const onLinkExistingGoal = async () => {
     if (!row || !selectedGoalId) return;
     try {
-      await linkGoalToRecord(selectedGoalId, row.id);
+      await linkGoalToRecord(selectedGoalId, row.id, owner, owner);
       await load();
       toast.success('Goal linked');
     } catch {
@@ -145,7 +157,12 @@ const TaskDetail: React.FC = () => {
   const onLinkExistingPlan = async () => {
     if (!row || !selectedPlanId) return;
     try {
-      await linkPlan(selectedPlanId, { recordId: row.id, goalId: selectedGoalId || undefined });
+      await linkPlan(selectedPlanId, {
+        owner,
+        recordId: row.id,
+        goalId: selectedGoalId || undefined,
+        actor: owner,
+      });
       await load();
       toast.success('Plan linked');
     } catch {
@@ -192,10 +209,35 @@ const TaskDetail: React.FC = () => {
 
       <Card className="p-6 mb-6">
         <h3 className="text-lg font-semibold mb-3">Task Notes</h3>
-        <Textarea value={note} onChange={(e) => setNote(e.target.value)} rows={4} placeholder="Add execution note" />
+        <Textarea
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          rows={4}
+          placeholder="Add execution note"
+        />
         <Button className="mt-3" onClick={saveNote}>
           <MessageSquare className="h-4 w-4 mr-2" /> Save Note
         </Button>
+        <div className="mt-4 space-y-2 max-h-52 overflow-auto">
+          {executionLogs.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No execution logs yet.</p>
+          ) : (
+            executionLogs.map((entry) => (
+              <div key={entry.id} className="border rounded p-2 text-sm">
+                <div className="flex justify-between gap-2">
+                  <span className="font-medium">{entry.level.toUpperCase()}</span>
+                  <span className="text-muted-foreground">
+                    {new Date(entry.timestamp).toLocaleString()}
+                  </span>
+                </div>
+                <p className="mt-1">{entry.message}</p>
+                <div className="text-muted-foreground">
+                  actor: {entry.actor} | source: {entry.source}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </Card>
 
       <Card className="p-6 mt-6">
@@ -232,35 +274,69 @@ const TaskDetail: React.FC = () => {
         </div>
         <div className="grid md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Input value={goalTitle} onChange={(e) => setGoalTitle(e.target.value)} placeholder="New goal title" />
-            <Textarea rows={3} value={goalDescription} onChange={(e) => setGoalDescription(e.target.value)} placeholder="Goal description" />
+            <Input
+              value={goalTitle}
+              onChange={(e) => setGoalTitle(e.target.value)}
+              placeholder="New goal title"
+            />
+            <Textarea
+              rows={3}
+              value={goalDescription}
+              onChange={(e) => setGoalDescription(e.target.value)}
+              placeholder="Goal description"
+            />
             <Button onClick={onCreateGoal}>Create Goal</Button>
           </div>
           <div className="space-y-2">
-            <Input value={planName} onChange={(e) => setPlanName(e.target.value)} placeholder="New project plan name" />
-            <Textarea rows={3} value={planObjective} onChange={(e) => setPlanObjective(e.target.value)} placeholder="Plan objective" />
+            <Input
+              value={planName}
+              onChange={(e) => setPlanName(e.target.value)}
+              placeholder="New project plan name"
+            />
+            <Textarea
+              rows={3}
+              value={planObjective}
+              onChange={(e) => setPlanObjective(e.target.value)}
+              placeholder="Plan objective"
+            />
             <Button onClick={onCreatePlan}>Create Plan</Button>
           </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-4 mt-4">
           <div className="space-y-2">
-            <select className="h-10 w-full px-3 py-2 rounded-md border border-input bg-background text-sm" value={selectedGoalId} onChange={(e) => setSelectedGoalId(e.target.value)}>
+            <select
+              className="h-10 w-full px-3 py-2 rounded-md border border-input bg-background text-sm"
+              value={selectedGoalId}
+              onChange={(e) => setSelectedGoalId(e.target.value)}
+            >
               <option value="">Select existing goal...</option>
               {goals.map((g) => (
-                <option key={g.id} value={g.id}>{g.title}</option>
+                <option key={g.id} value={g.id}>
+                  {g.title}
+                </option>
               ))}
             </select>
-            <Button variant="outline" onClick={onLinkExistingGoal}>Link Existing Goal</Button>
+            <Button variant="outline" onClick={onLinkExistingGoal}>
+              Link Existing Goal
+            </Button>
           </div>
           <div className="space-y-2">
-            <select className="h-10 w-full px-3 py-2 rounded-md border border-input bg-background text-sm" value={selectedPlanId} onChange={(e) => setSelectedPlanId(e.target.value)}>
+            <select
+              className="h-10 w-full px-3 py-2 rounded-md border border-input bg-background text-sm"
+              value={selectedPlanId}
+              onChange={(e) => setSelectedPlanId(e.target.value)}
+            >
               <option value="">Select existing plan...</option>
               {plans.map((p) => (
-                <option key={p.id} value={p.id}>{p.name}</option>
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
               ))}
             </select>
-            <Button variant="outline" onClick={onLinkExistingPlan}>Link Existing Plan</Button>
+            <Button variant="outline" onClick={onLinkExistingPlan}>
+              Link Existing Plan
+            </Button>
           </div>
         </div>
       </Card>
@@ -268,12 +344,16 @@ const TaskDetail: React.FC = () => {
       <Card className="p-6 mt-6">
         <h3 className="text-lg font-semibold mb-3">Timeline</h3>
         <div className="space-y-2 max-h-80 overflow-auto">
-          {timeline.length === 0 ? <p className="text-sm text-muted-foreground">No events yet.</p> : null}
+          {timeline.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No events yet.</p>
+          ) : null}
           {timeline.map((event) => (
             <div key={event.id} className="border rounded p-2 text-sm">
               <div className="flex justify-between gap-2">
                 <span className="font-medium">{event.eventType}</span>
-                <span className="text-muted-foreground">{new Date(event.timestamp).toLocaleString()}</span>
+                <span className="text-muted-foreground">
+                  {new Date(event.timestamp).toLocaleString()}
+                </span>
               </div>
               <div className="text-muted-foreground">actor: {event.actor}</div>
             </div>

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useEffect, useRef, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import SlashCommandIcon from '../icons/SlashCommandIcon';

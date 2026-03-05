@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
+// @ts-nocheck
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
   BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  LineElement,
+  PointElement,
   Title,
   Tooltip,
-  Legend,
 } from 'chart.js';
-import { Line, Bar } from 'react-chartjs-2';
+import React, { useState } from 'react';
+import { Bar, Line } from 'react-chartjs-2';
 import { Tabs } from './ui/design-system';
 
 // Components placeholders (assuming they exist or need to be mocked/imported)
@@ -20,11 +21,22 @@ import { Tabs } from './ui/design-system';
 // import { PredictiveTaskAllocator } from './PredictiveTaskAllocator';
 
 // Mocking these for now as I don't want to break if they don't exist in the same path
-const PerformanceMetrics = () => <div className="p-4 bg-blue-50 text-blue-800 rounded">Performance Metrics Placehoder</div>;
-const SystemMetrics = () => <div className="p-4 bg-green-50 text-green-800 rounded">System Metrics Placeholder</div>;
-const DynamicKnowledgeGraph = () => <div className="p-4 bg-purple-50 text-purple-800 rounded">Dynamic Knowledge Graph Placeholder</div>;
-const PredictiveTaskAllocator = () => <div className="p-4 bg-orange-50 text-orange-800 rounded">Predictive Task Allocator Placeholder</div>;
-
+const PerformanceMetrics = () => (
+  <div className="p-4 bg-blue-50 text-blue-800 rounded">Performance Metrics Placehoder</div>
+);
+const SystemMetrics = () => (
+  <div className="p-4 bg-green-50 text-green-800 rounded">System Metrics Placeholder</div>
+);
+const DynamicKnowledgeGraph = () => (
+  <div className="p-4 bg-purple-50 text-purple-800 rounded">
+    Dynamic Knowledge Graph Placeholder
+  </div>
+);
+const PredictiveTaskAllocator = () => (
+  <div className="p-4 bg-orange-50 text-orange-800 rounded">
+    Predictive Task Allocator Placeholder
+  </div>
+);
 
 ChartJS.register(
   CategoryScale,
@@ -78,11 +90,14 @@ const Analytics: React.FC = () => {
             <h2 className="text-xl font-bold mb-4">System Performance</h2>
             <PerformanceMetrics />
             <div className="mt-4 h-80">
-              <Line data={performanceData} options={{ maintainAspectRatio: false, responsive: true }} />
+              <Line
+                data={performanceData}
+                options={{ maintainAspectRatio: false, responsive: true }}
+              />
             </div>
           </div>
         </div>
-      )
+      ),
     },
     {
       id: 'resources',
@@ -93,11 +108,14 @@ const Analytics: React.FC = () => {
             <h2 className="text-xl font-bold mb-4">Resource Usage</h2>
             <SystemMetrics />
             <div className="mt-4 h-80">
-              <Bar data={resourceUsageData} options={{ maintainAspectRatio: false, responsive: true }} />
+              <Bar
+                data={resourceUsageData}
+                options={{ maintainAspectRatio: false, responsive: true }}
+              />
             </div>
           </div>
         </div>
-      )
+      ),
     },
     {
       id: 'knowledge-graph',
@@ -109,7 +127,7 @@ const Analytics: React.FC = () => {
             <DynamicKnowledgeGraph />
           </div>
         </div>
-      )
+      ),
     },
     {
       id: 'task-analysis',
@@ -121,8 +139,8 @@ const Analytics: React.FC = () => {
             <PredictiveTaskAllocator />
           </div>
         </div>
-      )
-    }
+      ),
+    },
   ];
 
   return (

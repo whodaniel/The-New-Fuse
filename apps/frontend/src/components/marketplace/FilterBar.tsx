@@ -1,21 +1,33 @@
-Object.defineProperty(exports, "__esModule", { value: true });
+// @ts-nocheck
+Object.defineProperty(exports, '__esModule', { value: true });
 
-import react_1 from 'react';
 import lucide_react_1 from 'lucide-react';
+import Button_1 from '../ui/Button/Button';
 import Input_1 from '../ui/Input/Input';
 import Select_1 from '../ui/Select/Select';
-import Button_1 from '../ui/Button/Button';
-export const FilterBar = ({ categories, tags, onSearchChange, onCategoryChange, onTagChange, onSortChange, onPriceRangeChange, }) => {
-    return (<div className="space-y-4">
-      
+export const FilterBar = ({
+  categories,
+  tags,
+  onSearchChange,
+  onCategoryChange,
+  onTagChange,
+  onSortChange,
+  onPriceRangeChange,
+}) => {
+  return (
+    <div className="space-y-4">
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
-          <Input_1.Input placeholder="Search marketplace..." onChange={(e) => onSearchChange(e.target.value)} icon={<lucide_react_1.Search className="h-4 w-4"/>}/>
+          <Input_1.Input
+            placeholder="Search marketplace..."
+            onChange={(e) => onSearchChange(e.target.value)}
+            icon={<lucide_react_1.Search className="h-4 w-4" />}
+          />
         </div>
         <div className="w-full sm:w-48">
           <Select_1.Select onValueChange={onSortChange}>
             <Select_1.SelectTrigger>
-              <Select_1.SelectValue placeholder="Sort by"/>
+              <Select_1.SelectValue placeholder="Sort by" />
             </Select_1.SelectTrigger>
             <Select_1.SelectContent>
               <Select_1.SelectItem value="popular">Most Popular</Select_1.SelectItem>
@@ -29,16 +41,17 @@ export const FilterBar = ({ categories, tags, onSearchChange, onCategoryChange, 
       </div>
 
       <div className="flex flex-wrap gap-4">
-        
         <div className="w-full sm:w-auto">
           <Select_1.Select onValueChange={onCategoryChange}>
             <Select_1.SelectTrigger className="w-full sm:w-48">
-              <Select_1.SelectValue placeholder="Category"/>
+              <Select_1.SelectValue placeholder="Category" />
             </Select_1.SelectTrigger>
             <Select_1.SelectContent>
-              {categories.map((category) => (<Select_1.SelectItem key={category} value={category}>
+              {categories.map((category) => (
+                <Select_1.SelectItem key={category} value={category}>
                   {category}
-                </Select_1.SelectItem>))}
+                </Select_1.SelectItem>
+              ))}
             </Select_1.SelectContent>
           </Select_1.Select>
         </div>
@@ -46,30 +59,34 @@ export const FilterBar = ({ categories, tags, onSearchChange, onCategoryChange, 
         <div className="w-full sm:w-auto">
           <Select_1.Select onValueChange={onTagChange}>
             <Select_1.SelectTrigger className="w-full sm:w-48">
-              <Select_1.SelectValue placeholder="Tags"/>
+              <Select_1.SelectValue placeholder="Tags" />
             </Select_1.SelectTrigger>
             <Select_1.SelectContent>
-              {tags.map((tag) => (<Select_1.SelectItem key={tag} value={tag}>
+              {tags.map((tag) => (
+                <Select_1.SelectItem key={tag} value={tag}>
                   {tag}
-                </Select_1.SelectItem>))}
+                </Select_1.SelectItem>
+              ))}
             </Select_1.SelectContent>
           </Select_1.Select>
         </div>
 
         <div className="w-full sm:w-auto">
-          <Select_1.Select onValueChange={(value) => {
-            const ranges = {
-                'all': [0, Infinity],
-                'free': [0, 0],
-                'paid': [0.01, Infinity],
+          <Select_1.Select
+            onValueChange={(value) => {
+              const ranges = {
+                all: [0, Infinity],
+                free: [0, 0],
+                paid: [0.01, Infinity],
                 'under-10': [0, 10],
                 'under-50': [0, 50],
                 'over-50': [50, Infinity],
-            };
-            onPriceRangeChange(ranges[value]);
-        }}>
+              };
+              onPriceRangeChange(ranges[value]);
+            }}
+          >
             <Select_1.SelectTrigger className="w-full sm:w-48">
-              <Select_1.SelectValue placeholder="Price Range"/>
+              <Select_1.SelectValue placeholder="Price Range" />
             </Select_1.SelectTrigger>
             <Select_1.SelectContent>
               <Select_1.SelectItem value="all">All Prices</Select_1.SelectItem>
@@ -82,10 +99,14 @@ export const FilterBar = ({ categories, tags, onSearchChange, onCategoryChange, 
           </Select_1.Select>
         </div>
 
-        <Button_1.Button variant="outline" className="w-full sm:w-auto" icon={<lucide_react_1.SlidersHorizontal className="h-4 w-4"/>}>
+        <Button_1.Button
+          variant="outline"
+          className="w-full sm:w-auto"
+          icon={<lucide_react_1.SlidersHorizontal className="h-4 w-4" />}
+        >
           More Filters
         </Button_1.Button>
       </div>
-    </div>);
+    </div>
+  );
 };
-;

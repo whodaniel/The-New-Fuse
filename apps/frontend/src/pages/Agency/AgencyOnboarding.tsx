@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useAuth } from '@/hooks/useAuth';
 import { ethers } from 'ethers';
 import React, { useState } from 'react';

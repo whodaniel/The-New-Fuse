@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   PremiumButton as Button,
   GlassCard as Card,

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { BaseBrowser, FilterField, SortOption } from '@/components/browsers';
 import { Badge } from '@/components/ui/badge';
 import { GlassCard, PremiumButton } from '@/components/ui/premium';

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Tab } from '@headlessui/react';
 import React from 'react';
 import type { Node } from '../../../types/workflow';

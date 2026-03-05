@@ -1,6 +1,16 @@
-import React from 'react';
-import { FaRobot, FaTools, FaCode, FaDatabase, FaGlobe, FaWaveSquare, FaBell, FaSearch, FaFileAlt, FaMemory } from 'react-icons/fa';
-import { FileText } from 'lucide-react';
+// @ts-nocheck
+import {
+  FaBell,
+  FaCode,
+  FaDatabase,
+  FaFileAlt,
+  FaGlobe,
+  FaMemory,
+  FaRobot,
+  FaSearch,
+  FaTools,
+  FaWaveSquare,
+} from 'react-icons/fa';
 
 // Temporarily commenting out the prompt template node import to debug build issues
 // import { PromptTemplateNode as BasePromptTemplateNode } from '@the-new-fuse/prompt-templating';

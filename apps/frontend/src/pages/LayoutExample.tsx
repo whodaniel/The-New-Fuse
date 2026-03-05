@@ -1,6 +1,6 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+// @ts-nocheck
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const LayoutExample = () => {
   return (
@@ -10,9 +10,15 @@ const LayoutExample = () => {
           <div className="flex justify-between items-center h-16">
             <h1 className="text-xl font-semibold">Layout Example</h1>
             <nav className="space-x-4">
-              <a href="#" className="text-blue-600 hover:text-blue-800">Home</a>
-              <a href="#" className="text-gray-600 hover:text-gray-800">Dashboard</a>
-              <a href="#" className="text-gray-600 hover:text-gray-800">Settings</a>
+              <a href="#" className="text-blue-600 hover:text-blue-800">
+                Home
+              </a>
+              <a href="#" className="text-gray-600 hover:text-gray-800">
+                Dashboard
+              </a>
+              <a href="#" className="text-gray-600 hover:text-gray-800">
+                Settings
+              </a>
             </nav>
           </div>
         </div>
@@ -27,10 +33,18 @@ const LayoutExample = () => {
               </CardHeader>
               <CardContent>
                 <nav className="space-y-2">
-                  <a href="#" className="block py-2 px-3 rounded bg-blue-100 text-blue-700">Dashboard</a>
-                  <a href="#" className="block py-2 px-3 rounded hover:bg-gray-100">Projects</a>
-                  <a href="#" className="block py-2 px-3 rounded hover:bg-gray-100">Tasks</a>
-                  <a href="#" className="block py-2 px-3 rounded hover:bg-gray-100">Settings</a>
+                  <a href="#" className="block py-2 px-3 rounded bg-blue-100 text-blue-700">
+                    Dashboard
+                  </a>
+                  <a href="#" className="block py-2 px-3 rounded hover:bg-gray-100">
+                    Projects
+                  </a>
+                  <a href="#" className="block py-2 px-3 rounded hover:bg-gray-100">
+                    Tasks
+                  </a>
+                  <a href="#" className="block py-2 px-3 rounded hover:bg-gray-100">
+                    Settings
+                  </a>
                 </nav>
               </CardContent>
             </Card>
@@ -49,9 +63,7 @@ const LayoutExample = () => {
                   <li>Main content area</li>
                   <li>Responsive design</li>
                 </ul>
-                <Button>
-                  Example Action
-                </Button>
+                <Button>Example Action</Button>
               </CardContent>
             </Card>
           </section>

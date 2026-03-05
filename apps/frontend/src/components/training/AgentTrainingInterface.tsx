@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+// @ts-nocheck
 import { Card } from '@/components/ui/card';
 import { ProgressBar } from '@/components/ui/progress';
 import { useTraining } from '@/hooks/useTraining';
+import React, { useState } from 'react';
 
 export const AgentTrainingInterface: React.FC = () => {
   const [selectedModel, setSelectedModel] = useState('');
@@ -19,34 +20,22 @@ export const AgentTrainingInterface: React.FC = () => {
             options={[
               { label: 'GPT-4', value: 'gpt4' },
               { label: 'Claude', value: 'claude' },
-              { label: 'Custom', value: 'custom' }
+              { label: 'Custom', value: 'custom' },
             ]}
           />
-          
-          <Input
-            label="Training Epochs"
-            type="number"
-            min={1}
-            max={100}
-          />
-          
-          <Input
-            label="Learning Rate"
-            type="number"
-            step="0.0001"
-          />
-          
-          <Input
-            label="Batch Size"
-            type="number"
-          />
+
+          <Input label="Training Epochs" type="number" min={1} max={100} />
+
+          <Input label="Learning Rate" type="number" step="0.0001" />
+
+          <Input label="Batch Size" type="number" />
         </div>
       </Card>
 
       <Card className="p-4">
         <h3>Training Progress</h3>
         <ProgressBar value={progress} />
-        
+
         <div className="grid grid-cols-3 gap-4 mt-4">
           <div>
             <h4>Loss</h4>

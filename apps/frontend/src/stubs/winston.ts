@@ -5,8 +5,8 @@
  * It provides a console-based logging interface that matches winston's API.
  */
 
-const createLogger = (options: any = {}) => {
-  const log = (level: string, message: string, ...args: any[]) => {
+const createLogger = (options: { level?: string } = {}) => {
+  const log = (level: string, message: string, ...args: unknown[]) => {
     const method =
       level === 'error'
         ? console.error
@@ -19,13 +19,13 @@ const createLogger = (options: any = {}) => {
   };
 
   return {
-    log: (level: string, message: string, ...args: any[]) => log(level, message, ...args),
-    info: (message: string, ...args: any[]) => log('info', message, ...args),
-    warn: (message: string, ...args: any[]) => log('warn', message, ...args),
-    error: (message: string, ...args: any[]) => log('error', message, ...args),
-    debug: (message: string, ...args: any[]) => log('debug', message, ...args),
-    verbose: (message: string, ...args: any[]) => log('verbose', message, ...args),
-    silly: (message: string, ...args: any[]) => log('silly', message, ...args),
+    log: (level: string, message: string, ...args: unknown[]) => log(level, message, ...args),
+    info: (message: string, ...args: unknown[]) => log('info', message, ...args),
+    warn: (message: string, ...args: unknown[]) => log('warn', message, ...args),
+    error: (message: string, ...args: unknown[]) => log('error', message, ...args),
+    debug: (message: string, ...args: unknown[]) => log('debug', message, ...args),
+    verbose: (message: string, ...args: unknown[]) => log('verbose', message, ...args),
+    silly: (message: string, ...args: unknown[]) => log('silly', message, ...args),
     add: () => {},
     remove: () => {},
     clear: () => {},
@@ -36,12 +36,12 @@ const createLogger = (options: any = {}) => {
     level: options.level || 'info',
     transports: [],
     format: {
-      combine: (...args: any[]) => ({}),
+      combine: (..._args: unknown[]) => ({}),
       timestamp: () => ({}),
       json: () => ({}),
       simple: () => ({}),
       colorize: () => ({}),
-      printf: (fn: any) => ({}),
+      printf: (_fn: unknown) => ({}),
       label: () => ({}),
       metadata: () => ({}),
     },
@@ -49,12 +49,12 @@ const createLogger = (options: any = {}) => {
 };
 
 const format = {
-  combine: (...args: any[]) => ({}),
+  combine: (..._args: unknown[]) => ({}),
   timestamp: () => ({}),
   json: () => ({}),
   simple: () => ({}),
   colorize: () => ({}),
-  printf: (fn: any) => ({}),
+  printf: (_fn: unknown) => ({}),
   label: () => ({}),
   metadata: () => ({}),
   errors: () => ({}),
@@ -64,16 +64,16 @@ const format = {
 
 const transports = {
   Console: class Console {
-    constructor(options: any = {}) {}
+    constructor(_options: unknown = {}) {}
   },
   File: class File {
-    constructor(options: any = {}) {}
+    constructor(_options: unknown = {}) {}
   },
   Stream: class Stream {
-    constructor(options: any = {}) {}
+    constructor(_options: unknown = {}) {}
   },
   DailyRotateFile: class DailyRotateFile {
-    constructor(options: any = {}) {}
+    constructor(_options: unknown = {}) {}
   },
 };
 
@@ -89,13 +89,13 @@ const winston = {
   config,
   addColors: () => {},
   Logger: class Logger {
-    constructor(options: any = {}) {
+    constructor(options: { level?: string } = {}) {
       return createLogger(options);
     }
   },
   Container: class Container {
-    loggers = new Map();
-    add(id: string, options?: any) {
+    loggers = new Map<string, ReturnType<typeof createLogger>>();
+    add(id: string, options?: { level?: string }) {
       const logger = createLogger(options);
       this.loggers.set(id, logger);
       return logger;

@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import api from '../lib/api';
+import api from '../services/api';
 
 export interface SystemPreferences {
   settings: Record<string, any>;
@@ -24,7 +24,9 @@ class AdminModel {
   }
 
   async updateSystemPreferences(settings: Record<string, any>): Promise<SystemPreferences> {
-    const response: AxiosResponse<SystemPreferences> = await api.patch('/api/admin/preferences', { settings });
+    const response: AxiosResponse<SystemPreferences> = await api.patch('/api/admin/preferences', {
+      settings,
+    });
     return response.data;
   }
 }
