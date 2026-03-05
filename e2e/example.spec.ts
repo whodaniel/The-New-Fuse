@@ -4,31 +4,28 @@
  * This is an example of how to write E2E tests with Playwright.
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('Homepage', () => {
   test('should load successfully', async ({ page }) => {
-    await page.goto('/');
-
-    // Wait for the page to load
-    await page.waitForLoadState('networkidle');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     // Check that the page title is present
     await expect(page).toHaveTitle(/The New Fuse/i);
   });
 
   test('should have navigation menu', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     // Check for navigation elements
-    const nav = page.locator('nav');
+    const nav = page.locator('nav').first();
     await expect(nav).toBeVisible();
   });
 });
 
 test.describe('Authentication', () => {
   test('should show login page for unauthenticated users', async ({ page }) => {
-    await page.goto('/dashboard');
+    await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
 
     // Should redirect to login
     await expect(page).toHaveURL(/\/login/);
@@ -50,14 +47,14 @@ test.describe('Authentication', () => {
 test.describe('Responsive Design', () => {
   test('should work on mobile', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     await expect(page).toHaveTitle(/The New Fuse/i);
   });
 
   test('should work on tablet', async ({ page }) => {
     await page.setViewportSize({ width: 768, height: 1024 });
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     await expect(page).toHaveTitle(/The New Fuse/i);
   });

@@ -4,22 +4,96 @@
  * Tests the workflow creation and editing functionality.
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
+
+async function gotoWithRetry(page: Page, url: string) {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    try {
+      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 20000 });
+      return;
+    } catch (error) {
+      lastError = error;
+      await page.waitForTimeout(750);
+    }
+  }
+  throw lastError;
+}
 
 test.describe('Workflow Creation', () => {
   test.beforeEach(async ({ page }) => {
+    const userId = 'e2e-workflow-user-1';
+
+    await page.addInitScript(
+      ({ token, user }) => {
+        window.localStorage.setItem('auth_token', token);
+        window.localStorage.setItem('token', token);
+        window.localStorage.setItem('user', JSON.stringify(user));
+      },
+      {
+        token: 'e2e-workflow-auth-token',
+        user: {
+          id: userId,
+          email: 'e2e-workflow@tnf.local',
+          name: 'Workflow E2E User',
+          role: 'USER',
+          roles: ['USER'],
+        },
+      }
+    );
+
+    await page.route('**/auth/me*', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          id: userId,
+          email: 'e2e-workflow@tnf.local',
+          name: 'Workflow E2E User',
+          role: 'USER',
+          roles: ['USER'],
+        }),
+      });
+    });
+
+    await page.route('**/api/workflows/executions*', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([]),
+      });
+    });
+
+    await page.route('**/api/workflows*', async (route) => {
+      if (route.request().method() === 'GET') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify([]),
+        });
+        return;
+      }
+      await route.fallback();
+    });
+
     // Navigate to workflows page
-    await page.goto('/workflows');
+    await gotoWithRetry(page, '/workflows');
   });
 
   test('should open workflow canvas', async ({ page }) => {
-    // Click on create workflow button
-    const createButton = page.getByRole('button', { name: /create workflow/i });
+    // Click the available entry point to builder from the current workflows UI.
+    const createButton = page
+      .getByRole('button', {
+        name: /new workflow|create workflow|open builder|orchestrate new intelligence/i,
+      })
+      .first();
     await createButton.click();
 
-    // Check that canvas is visible
-    const canvas = page.locator('[data-testid="workflow-canvas"]');
-    await expect(canvas).toBeVisible();
+    await expect(page).toHaveURL(/\/workflows\/builder/);
+
+    // Check that ReactFlow canvas controls are visible in the builder.
+    await expect(page.getByRole('button', { name: 'zoom in' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'fit view' })).toBeVisible();
   });
 
   test.skip('should add nodes to workflow', async ({ page }) => {
