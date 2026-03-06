@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tax Compliance Agent"
+  short_description: "Help with Tax Compliance Agent tasks"
+  default_prompt: "Run the Tax Compliance Agent workflow using SKILL.md instructions."

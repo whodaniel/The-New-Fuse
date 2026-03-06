@@ -1,0 +1,4 @@
+interface:
+  display_name: "Podcast Ad Network Agent"
+  short_description: "Help with Podcast Ad Network Agent tasks"
+  default_prompt: "Run the Podcast Ad Network Agent workflow using SKILL.md instructions."

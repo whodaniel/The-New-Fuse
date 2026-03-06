@@ -77,7 +77,7 @@ the-new-fuse/
 
 ```bash
 # Create timestamped backup
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/
+cd /path/to/Desktop/A1-Inter-LLM-Com/
 cp -r "The New Fuse" "The New Fuse - Backup $(date +%Y%m%d_%H%M%S)"
 
 # Create Git branch for reorganization
@@ -1259,7 +1259,7 @@ EOF
 echo "🚨 Emergency Rollback Procedure"
 
 # 1. Switch to backup
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/
+cd /path/to/Desktop/A1-Inter-LLM-Com/
 mv "The New Fuse" "The New Fuse - Failed"
 mv "The New Fuse - Backup [timestamp]" "The New Fuse"
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Building @the-new-fuse/hooks package..."
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The\ New\ Fuse/packages/hooks
+cd /path/to/Desktop/A1-Inter-LLM-Com/The\ New\ Fuse/packages/hooks
 yarn tsc --skipLibCheck
 
 if [ $? -eq 0 ]; then

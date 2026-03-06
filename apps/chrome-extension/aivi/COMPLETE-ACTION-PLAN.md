@@ -55,7 +55,7 @@ You now have **TWO working tools** to complete your video processing:
 **Setup:**
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill
 npx ts-node src/TranscriptProcessorV2.ts --start=633 --end=1 --phase=analysis
 ```
 
@@ -100,7 +100,7 @@ npx ts-node src/TranscriptProcessorV2.ts --start=633 --end=1 --phase=analysis
 Once verified, use CLI tool for bulk processing:
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill
 
 # IMPORTANT: Sign in first
 npx ts-node src/LoginHelper.ts
@@ -170,7 +170,7 @@ npx ts-node src/TranscriptProcessorV2.ts --start=633 --end=1 --phase=analysis
 Check the status anytime:
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill
 node src/GenerateStatusReport.js
 cat data/ProcessingStatusReport.md
 ```
@@ -185,7 +185,7 @@ cat data/ProcessingStatusReport.md
 
 ```bash
 # CLI tool reports
-/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-reports/
+/path/to/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-reports/
 
 # Extension reports
 ~/Downloads/Report_*.md
@@ -278,7 +278,7 @@ TOTAL: 2-3 days (mostly unattended)
 After processing completes:
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill
 
 # Generate consolidated knowledge base
 # (This will read all reports and consolidate)

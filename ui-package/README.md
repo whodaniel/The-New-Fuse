@@ -99,7 +99,7 @@ steps
 
 ```bash
 # Start the backend API
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/ui-package
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/ui-package
 python3 api.py
 ```
 

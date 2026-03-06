@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenClaw Onboarding Wizard"
+  short_description: "Guide openclaw onboard setup paths"
+  default_prompt: "Use this skill to run OpenClaw onboarding wizard decisions, defaults, and reconfiguration flow safely across local and remote modes."

@@ -11,8 +11,8 @@ You have **two complementary projects** that serve different purposes:
 
 | Project                  | Type                | Location                                                                                    | Purpose                                    |
 | ------------------------ | ------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------ |
-| **AI Studio Automator**  | Chrome Extension    | `/Users/<owner>/Projects/ai-studio-automator`                                        | End-user distribution via Chrome Web Store |
-| **Gemini Browser Skill** | CLI/TypeScript Tool | `/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill` | Personal automation for your video library |
+| **AI Studio Automator**  | Chrome Extension    | `/path/to/Projects/ai-studio-automator`                                        | End-user distribution via Chrome Web Store |
+| **Gemini Browser Skill** | CLI/TypeScript Tool | `/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill` | Personal automation for your video library |
 
 ---
 
@@ -45,7 +45,7 @@ You have **two complementary projects** that serve different purposes:
 
 ```bash
 # Step 1: Test the extension locally
-cd /Users/<owner>/Projects/ai-studio-automator
+cd /path/to/Projects/ai-studio-automator
 # Load unpacked in Chrome at chrome://extensions
 
 # Step 2: Set up OAuth (if not done)
@@ -193,7 +193,7 @@ _Prepare for distribution_
 ### Chrome Extension
 
 ```
-/Users/<owner>/Projects/ai-studio-automator/
+/path/to/Projects/ai-studio-automator/
 ├── manifest.json          # Extension config
 ├── background.js          # Service worker
 ├── popup.html/js/css      # Main UI
@@ -205,7 +205,7 @@ _Prepare for distribution_
 ### CLI Tool
 
 ```
-/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill/
+/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill/
 ├── package.json           # npm config
 ├── tsconfig.json          # TypeScript config
 ├── src/

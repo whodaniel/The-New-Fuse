@@ -1,0 +1,4 @@
+interface:
+  display_name: "Inter Agentic Workflow Definer"
+  short_description: "Help with Inter Agentic Workflow Definer tasks"
+  default_prompt: "Run the Inter Agentic Workflow Definer workflow using SKILL.md instructions."

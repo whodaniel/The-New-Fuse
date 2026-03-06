@@ -1,0 +1,4 @@
+interface:
+  display_name: "Gemini"
+  short_description: "Help with Gemini tasks and workflows"
+  default_prompt: "Run the Gemini workflow using SKILL.md instructions."

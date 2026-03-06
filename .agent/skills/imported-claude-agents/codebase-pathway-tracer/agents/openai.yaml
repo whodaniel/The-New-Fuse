@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codebase Pathway Tracer"
+  short_description: "Help with Codebase Pathway Tracer tasks"
+  default_prompt: "Run the Codebase Pathway Tracer workflow using SKILL.md instructions."

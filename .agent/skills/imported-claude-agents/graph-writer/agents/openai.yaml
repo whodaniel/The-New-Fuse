@@ -1,0 +1,4 @@
+interface:
+  display_name: "Graph Writer"
+  short_description: "Help with Graph Writer tasks"
+  default_prompt: "Run the Graph Writer workflow using SKILL.md instructions."

@@ -12,7 +12,7 @@ environment variables
 All hardcoded secrets have been extracted and saved to:
 
 ```
-/Users/<owner>/SECRETS-BACKUP.txt
+/path/to/SECRETS-BACKUP.txt
 ```
 
 **⚠️ IMPORTANT:** This file contains sensitive credentials including:
@@ -112,7 +112,7 @@ FIREBASE_PROJECT_ID=the-new-fuse-2025
 FIREBASE_CLIENT_EMAIL=REDACTED-SERVICE-ACCOUNT-1@example.com
 ```
 
-**Note:** The full private key is in `/Users/<owner>/SECRETS-BACKUP.txt`
+**Note:** The full private key is in `/path/to/SECRETS-BACKUP.txt`
 
 ---
 
@@ -123,7 +123,7 @@ FIREBASE_CLIENT_EMAIL=REDACTED-SERVICE-ACCOUNT-1@example.com
 - [ ] **1. Set Up Local Environment**
 
   ```bash
-  cd /Users/<owner>/fuse-repo
+  cd /path/to/fuse-repo
   cp .env.example .env
   # Edit .env and add your secrets from SECRETS-BACKUP.txt
   ```

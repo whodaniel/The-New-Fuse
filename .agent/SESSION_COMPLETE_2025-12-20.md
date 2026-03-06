@@ -81,7 +81,7 @@
 ### Relay Server Log Path
 
 **Issue**: Trying to write to wrong directory  
-**Error**: `/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/` (space
+**Error**: `/path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/` (space
 in path)  
 **Impact**: None - server running fine, just can't write log file
 
@@ -93,7 +93,7 @@ in path)
 
 ```bash
 # Run a 4-agent conversation
-export PATH="/Users/<owner>/.nvm/versions/node/v24.12.0/bin:$PATH"
+export PATH="/path/to/.nvm/versions/node/v24.12.0/bin:$PATH"
 node scripts/orchestration-demo.cjs
 ```
 
@@ -189,8 +189,8 @@ Open in browser: http://localhost:3002
 ### Boot Everything
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
-export PATH="/Users/<owner>/.nvm/versions/node/v24.12.0/bin:$PATH"
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+export PATH="/path/to/.nvm/versions/node/v24.12.0/bin:$PATH"
 ./scripts/boot-tnf.sh
 ```
 

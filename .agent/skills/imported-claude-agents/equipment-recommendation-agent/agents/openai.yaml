@@ -1,0 +1,4 @@
+interface:
+  display_name: "Equipment Recommendation Agent"
+  short_description: "Help with Equipment Recommendation Agent tasks"
+  default_prompt: "Run the Equipment Recommendation Agent workflow using SKILL.md instructions."

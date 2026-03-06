@@ -32,7 +32,7 @@ This guide walks you through integrating the Python-based crypto agent framework
 ### Step 1: Install Python Framework
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/crypto-agent-framework
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/crypto-agent-framework
 
 # Create virtual environment
 python3 -m venv venv

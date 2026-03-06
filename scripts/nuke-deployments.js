@@ -1,7 +1,7 @@
 const fs = require('fs');
 const https = require('https');
 
-const configPath = '/Users/<owner>/.railway/config.json';
+const configPath = '/path/to/.railway/config.json';
 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 const token = config.user.token;
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Interoperability Protocol Agent"
+  short_description: "Help with Interoperability Protocol Agent tasks"
+  default_prompt: "Run the Interoperability Protocol Agent workflow using SKILL.md instructions."

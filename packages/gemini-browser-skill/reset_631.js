@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const statePath =
-  '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/transcript-v2-state.json';
+  '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/transcript-v2-state.json';
 
 try {
   const state = JSON.parse(fs.readFileSync(statePath, 'utf8'));

@@ -41,7 +41,7 @@ guide you through complex tasks. Each matrix is:
 Phase 1: Context Recovery (10 minutes)
 ─────────────────────────────────────────
 [ ] Step 1.1: Read .agent/handoff_notes.txt
-    ├─ Location: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/handoff_notes.txt
+    ├─ Location: /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/handoff_notes.txt
     ├─ Purpose: Understand what was done in last session
     ├─ Extract: Accomplishments, blockers, next steps
     └─ Time: 2 minutes

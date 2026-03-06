@@ -15,13 +15,17 @@ import type {
   HandoffAck,
   HandoffPacket,
 } from '@the-new-fuse/relay-core/dist/protocol/handoff-protocol.js';
+import { UnifiedLedgerService } from '../modules/unified-ledger/unified-ledger.service';
 
 @Injectable()
 export class AgentHandoffService implements OnModuleDestroy {
   private readonly logger = new Logger(AgentHandoffService.name);
   private readonly store: HandoffStoreService;
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly unifiedLedgerService: UnifiedLedgerService
+  ) {
     this.store = new HandoffStoreService({
       redisUrl: this.configService.get<string>('REDIS_URL'),
       keyPrefix: this.configService.get<string>('HANDOFF_KEY_PREFIX') || 'tnf:handoff:v1',
@@ -33,7 +37,23 @@ export class AgentHandoffService implements OnModuleDestroy {
     if (parsed.scope.tenantId !== tenantId) {
       throw new BadRequestException('scope.tenantId must match the requested tenantId');
     }
-    return this.store.publish(parsed);
+    const packet = await this.store.publish(parsed);
+    await this.emitLifecycleEvent(
+      'handoff_publish',
+      {
+        tenantId,
+        packetId: packet.id,
+        fromAgentId: packet.fromAgentId,
+        targetAgentIds: packet.targets.agentIds,
+        priority: packet.priority,
+        scope: packet.scope,
+        tags: packet.tags,
+        workflowId: packet.scope.workflowId,
+        sessionKey: packet.scope.sessionKey,
+        payloadSummary: packet.payload?.summary ?? 'n/a',
+      }
+    );
+    return packet;
   }
 
   async listForAgent(
@@ -54,7 +74,21 @@ export class AgentHandoffService implements OnModuleDestroy {
     if (packet.scope.tenantId !== tenantId) {
       throw new BadRequestException('Packet tenant scope does not match tenantId');
     }
-    return this.store.acknowledge(parsed);
+    const ack = await this.store.acknowledge(parsed);
+    await this.emitLifecycleEvent(
+      'handoff_ack',
+      {
+        tenantId,
+        packetId: parsed.packetId,
+        agentId: parsed.agentId,
+        status: parsed.status,
+        note: parsed.note,
+        ackedAt: ack.ackedAt,
+        workflowId: packet.scope.workflowId,
+        sessionKey: packet.scope.sessionKey,
+      }
+    );
+    return ack;
   }
 
   async listBySession(
@@ -98,6 +132,28 @@ export class AgentHandoffService implements OnModuleDestroy {
       return HandoffAckInput.parse(input);
     } catch (error) {
       throw new BadRequestException(`Invalid handoff ack input: ${(error as Error).message}`);
+    }
+  }
+
+  private async emitLifecycleEvent(
+    category: 'handoff_publish' | 'handoff_ack',
+    payload: Record<string, unknown>
+  ): Promise<void> {
+    try {
+      await this.unifiedLedgerService.createTimelineEvent({
+        eventType: 'historical_event',
+        actor: 'agent_handoff_service',
+        payload: {
+          category,
+          ...payload,
+        },
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to emit handoff lifecycle timeline event (${category}): ${
+          (error as Error).message
+        }`
+      );
     }
   }
 }

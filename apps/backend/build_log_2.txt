@@ -29,7 +29,7 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m236[0m       if (error.code === 'P2025') {
 [7m   [0m [91m          ~~~~~[0m
 [96msrc/app.module.ts[0m:[93m23[0m:[93m31[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/database/drizzle' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m23[0m import { DrizzleModule } from '@the-new-fuse/database/drizzle';
 [7m  [0m [91m                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
@@ -64,12 +64,12 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m63[0m     return this.authService.logout(token);
 [7m  [0m [91m                                   ~~~~~[0m
 [96msrc/auth/auth.service.ts[0m:[93m3[0m:[93m39[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/database/drizzle/repositories' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/repositories/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/repositories/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m3[0m import { drizzleUserRepository } from '@the-new-fuse/database/drizzle/repositories';
 [7m [0m [91m                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
 [96msrc/auth/base-oauth.strategy.ts[0m:[93m2[0m:[93m39[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/database/drizzle' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m2[0m import { drizzleUserRepository } from '@the-new-fuse/database/drizzle';
 [7m [0m [91m                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
@@ -82,7 +82,7 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m71[0m       done(error as Error, null);
 [7m  [0m [91m                           ~~~~[0m
 [96msrc/auth/google.service.ts[0m:[93m4[0m:[93m39[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/database/drizzle' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m4[0m import { drizzleUserRepository } from '@the-new-fuse/database/drizzle';
 [7m [0m [91m                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
@@ -101,7 +101,7 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m29[0m     const payload = ticket.getPayload();
 [7m  [0m [91m                           ~~~~~~~~~~[0m
 [96msrc/auth/guards/roles.guard.ts[0m:[93m3[0m:[93m39[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/database/drizzle' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m3[0m import { drizzleUserRepository } from '@the-new-fuse/database/drizzle';
 [7m [0m [91m                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
@@ -225,7 +225,7 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m46[0m       enabled: task.enabled !== false,
 [7m  [0m [91m               ~~~~~~~~~~~~~~~~~~~~~~[0m
 [96msrc/config/passport.ts[0m:[93m3[0m:[93m39[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/database/drizzle' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m3[0m import { drizzleUserRepository } from '@the-new-fuse/database/drizzle';
 [7m [0m [91m                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
@@ -259,7 +259,7 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m73[0m       const userId = req.user?.id;
 [7m  [0m [91m                               ~~[0m
 [96msrc/controllers/authController.ts[0m:[93m4[0m:[93m39[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/database/drizzle' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m4[0m import { drizzleUserRepository } from '@the-new-fuse/database/drizzle';
 [7m [0m [91m                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
@@ -372,7 +372,7 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m323[0m             error: error.message,
 [7m   [0m [91m                   ~~~~~[0m
 [96msrc/middleware/auth.ts[0m:[93m4[0m:[93m39[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/database/drizzle' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m4[0m import { drizzleUserRepository } from '@the-new-fuse/database/drizzle';
 [7m [0m [91m                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
@@ -679,7 +679,7 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m231[0m       orientationCompleted: registration.orientationCompleted,
 [7m   [0m [91m                                         ~~~~~~~~~~~~~~~~~~~~[0m
 [96msrc/modules/agent-registry/services/agent-registration.service.ts[0m:[93m2[0m:[93m40[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/database/drizzle' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m2[0m import { drizzleAgentRepository } from '@the-new-fuse/database/drizzle';
 [7m [0m [91m                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
@@ -692,7 +692,7 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m120[0m       this.logger.error(`Failed to register agent: ${error.message}`, error.stack);
 [7m   [0m [91m                                                                      ~~~~~[0m
 [96msrc/modules/agent/agent.service.ts[0m:[93m3[0m:[93m40[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/database/drizzle' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m3[0m import { drizzleAgentRepository } from '@the-new-fuse/database/drizzle';
 [7m [0m [91m                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
@@ -935,7 +935,7 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m323[0m   roomId: string;
 [7m   [0m [91m  ~~~~~~[0m
 [96msrc/modules/dashboard/dashboard.controller.ts[0m:[93m3[0m:[93m39[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/database/drizzle' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m3[0m import { drizzleUserRepository } from '@the-new-fuse/database/drizzle';
 [7m [0m [91m                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
@@ -1092,7 +1092,7 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m190[0m   onboardingStatus: string;
 [7m   [0m [91m  ~~~~~~~~~~~~~~~~[0m
 [96msrc/modules/mass/mass-orchestration.service.ts[0m:[93m16[0m:[93m8[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/database/drizzle/repositories' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/repositories/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/repositories/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m16[0m } from '@the-new-fuse/database/drizzle/repositories';
 [7m  [0m [91m       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
@@ -1116,7 +1116,7 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
     [7m  [0m [96m~~~~~[0m
     An argument for 'config' was not provided.
 [96msrc/modules/mass/prompt-optimizer.service.ts[0m:[93m12[0m:[93m8[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/database/drizzle/repositories' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/repositories/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/repositories/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m12[0m } from '@the-new-fuse/database/drizzle/repositories';
 [7m  [0m [91m       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
@@ -1155,7 +1155,7 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m474[0m     variations.push(enhancedExemplars);
 [7m   [0m [91m                    ~~~~~~~~~~~~~~~~~[0m
 [96msrc/modules/mass/topology-optimizer.service.ts[0m:[93m16[0m:[93m8[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/database/drizzle/repositories' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/repositories/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/repositories/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m16[0m } from '@the-new-fuse/database/drizzle/repositories';
 [7m  [0m [91m       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
@@ -1184,7 +1184,7 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m497[0m       selected.push(available[selectedIndex]);
 [7m   [0m [91m                    ~~~~~~~~~~~~~~~~~~~~~~~~[0m
 [96msrc/modules/mass/workflow-prompt-optimizer.service.ts[0m:[93m13[0m:[93m8[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/database/drizzle/repositories' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/repositories/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/repositories/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m13[0m } from '@the-new-fuse/database/drizzle/repositories';
 [7m  [0m [91m       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
@@ -1208,12 +1208,12 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m385[0m           config
 [7m   [0m [91m          ~~~~~~[0m
 [96msrc/modules/mcp/mcp-a2a-bridge.service.ts[0m:[93m3[0m:[93m27[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/mcp-core/broker' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/mcp-core/dist/broker/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/mcp-core/dist/broker/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m3[0m import { MCPBroker } from '@the-new-fuse/mcp-core/broker';
 [7m [0m [91m                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
 [96msrc/modules/mcp/mcp-a2a-bridge.service.ts[0m:[93m4[0m:[93m27[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/mcp-core/client' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/mcp-core/dist/client/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/mcp-core/dist/client/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m4[0m import { MCPClient } from '@the-new-fuse/mcp-core/client';
 [7m [0m [91m                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
@@ -1308,7 +1308,7 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m484[0m       throw new BadRequestException(`Failed to update agent metadata: ${error.message}`);
 [7m   [0m [91m                                                                        ~~~~~[0m
 [96msrc/services/agent.service.ts[0m:[93m3[0m:[93m40[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/database/drizzle/repositories' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/repositories/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/repositories/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m3[0m import { drizzleAgentRepository } from '@the-new-fuse/database/drizzle/repositories';
 [7m [0m [91m                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
@@ -1317,12 +1317,12 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m4[0m import { FeatureTracker } from '@the-new-fuse/feature-tracker';
 [7m [0m [91m                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
 [96msrc/services/auction-relayer.service.ts[0m:[93m4[0m:[93m39[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/database/drizzle/repositories' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/repositories/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/repositories/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m4[0m import { drizzleUserRepository } from '@the-new-fuse/database/drizzle/repositories';
 [7m [0m [91m                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
 [96msrc/services/authService.ts[0m:[93m4[0m:[93m39[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/database/drizzle/repositories' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/repositories/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/repositories/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m4[0m import { drizzleUserRepository } from '@the-new-fuse/database/drizzle/repositories';
 [7m [0m [91m                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
@@ -1339,12 +1339,12 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m319[0m           status: tx.confirmations > 0 ? 'confirmed' : 'pending'
 [7m   [0m [91m                  ~~~~~~~~~~~~~~~~~~~~[0m
 [96msrc/services/chatService.ts[0m:[93m2[0m:[93m39[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/database/drizzle' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m2[0m import { drizzleChatRepository } from '@the-new-fuse/database/drizzle';
 [7m [0m [91m                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
 [96msrc/services/chatService.ts[0m:[93m3[0m:[93m34[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/database/drizzle' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m3[0m import type { ChatMessage } from '@the-new-fuse/database/drizzle';
 [7m [0m [91m                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
@@ -1362,27 +1362,27 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m67[0m     return this.states.get(key);
 [7m  [0m [91m    ~~~~~~[0m
 [96msrc/services/production-blockchain.service.ts[0m:[93m8[0m:[93m8[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/database/drizzle/repositories' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/repositories/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/repositories/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m8[0m } from '@the-new-fuse/database/drizzle/repositories';
 [7m [0m [91m       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
 [96msrc/services/revenue-tracking.service.ts[0m:[93m9[0m:[93m8[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/database/drizzle/repositories' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/repositories/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/repositories/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m9[0m } from '@the-new-fuse/database/drizzle/repositories';
 [7m [0m [91m       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
 [96msrc/test/setup.ts[0m:[93m3[0m:[93m25[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/database/drizzle' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m3[0m import { db, sql } from '@the-new-fuse/database/drizzle';
 [7m [0m [91m                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
 [96msrc/utils/auth.ts[0m:[93m2[0m:[93m39[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/database/drizzle' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m2[0m import { drizzleUserRepository } from '@the-new-fuse/database/drizzle';
 [7m [0m [91m                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
 [96msrc/utils/auth.utils.ts[0m:[93m3[0m:[93m39[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/database/drizzle' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/database/dist/drizzle/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m3[0m import { drizzleUserRepository } from '@the-new-fuse/database/drizzle';
 [7m [0m [91m                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
@@ -1394,23 +1394,23 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 
 [7m89[0m     super(message, options.cause ? { cause: options.cause } : undefined)
 [7m  [0m [91m                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
-[96msrc/modules/relay/relay.controller.ts[0m:[93m115[0m:[93m9[0m - [91merror[0m[90m TS4053: [0mReturn type of public method from exported class has or is using name 'Agent' from external module "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/src/modules/relay/relay.service" but cannot be named.
+[96msrc/modules/relay/relay.controller.ts[0m:[93m115[0m:[93m9[0m - [91merror[0m[90m TS4053: [0mReturn type of public method from exported class has or is using name 'Agent' from external module "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/src/modules/relay/relay.service" but cannot be named.
 
 [7m115[0m   async getAgent(@Param('id') id: string) {
 [7m   [0m [91m        ~~~~~~~~[0m
-[96msrc/modules/relay/relay.controller.ts[0m:[93m128[0m:[93m9[0m - [91merror[0m[90m TS4053: [0mReturn type of public method from exported class has or is using name 'Agent' from external module "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/src/modules/relay/relay.service" but cannot be named.
+[96msrc/modules/relay/relay.controller.ts[0m:[93m128[0m:[93m9[0m - [91merror[0m[90m TS4053: [0mReturn type of public method from exported class has or is using name 'Agent' from external module "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/src/modules/relay/relay.service" but cannot be named.
 
 [7m128[0m   async registerAgent(@Body() dto: RegisterAgentDto) {
 [7m   [0m [91m        ~~~~~~~~~~~~~[0m
-[96msrc/modules/relay/relay.gateway.ts[0m:[93m79[0m:[93m9[0m - [91merror[0m[90m TS4053: [0mReturn type of public method from exported class has or is using name 'Agent' from external module "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/src/modules/relay/relay.service" but cannot be named.
+[96msrc/modules/relay/relay.gateway.ts[0m:[93m79[0m:[93m9[0m - [91merror[0m[90m TS4053: [0mReturn type of public method from exported class has or is using name 'Agent' from external module "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/src/modules/relay/relay.service" but cannot be named.
 
 [7m79[0m   async handleAgentRegistration(
 [7m  [0m [91m        ~~~~~~~~~~~~~~~~~~~~~~~[0m
-[96msrc/modules/relay/relay.gateway.ts[0m:[93m231[0m:[93m9[0m - [91merror[0m[90m TS4053: [0mReturn type of public method from exported class has or is using name 'Agent' from external module "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/src/modules/relay/relay.service" but cannot be named.
+[96msrc/modules/relay/relay.gateway.ts[0m:[93m231[0m:[93m9[0m - [91merror[0m[90m TS4053: [0mReturn type of public method from exported class has or is using name 'Agent' from external module "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/src/modules/relay/relay.service" but cannot be named.
 
 [7m231[0m   async handleStatusRequest() {
 [7m   [0m [91m        ~~~~~~~~~~~~~~~~~~~[0m
-[96msrc/modules/relay/relay.gateway.ts[0m:[93m231[0m:[93m9[0m - [91merror[0m[90m TS4053: [0mReturn type of public method from exported class has or is using name 'SystemStatus' from external module "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/src/modules/relay/relay.service" but cannot be named.
+[96msrc/modules/relay/relay.gateway.ts[0m:[93m231[0m:[93m9[0m - [91merror[0m[90m TS4053: [0mReturn type of public method from exported class has or is using name 'SystemStatus' from external module "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/src/modules/relay/relay.service" but cannot be named.
 
 [7m231[0m   async handleStatusRequest() {
 [7m   [0m [91m        ~~~~~~~~~~~~~~~~~~~[0m

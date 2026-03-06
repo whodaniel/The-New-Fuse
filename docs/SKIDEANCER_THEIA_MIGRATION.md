@@ -262,10 +262,10 @@ Map VS Code settings to SkIDEancer preferences:
 
 ```bash
 # Copy favicon to SkIDEancer
-cp /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/SkIDEancer/SkIDEancer/resources/server/favicon.ico /tmp/skideancer-ide/lib/frontend/
+cp /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/SkIDEancer/SkIDEancer/resources/server/favicon.ico /tmp/skideancer-ide/lib/frontend/
 
 # Copy PWA icons
-cp /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/SkIDEancer/SkIDEancer/resources/server/code-*.png /tmp/skideancer-ide/lib/frontend/
+cp /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/SkIDEancer/SkIDEancer/resources/server/code-*.png /tmp/skideancer-ide/lib/frontend/
 ```
 
 Would you like me to execute this migration now?

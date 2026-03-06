@@ -15,7 +15,7 @@ Create 4 empty services:
 ### Step 2: Run Deployment Script (60-80 min)
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 ./deploy-to-services.sh
 ```
 

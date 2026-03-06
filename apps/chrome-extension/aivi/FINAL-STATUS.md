@@ -151,7 +151,7 @@ documentation
 2. Go to chrome://extensions/
 3. Enable "Developer mode" (top right)
 4. Click "Load unpacked"
-5. Select: /Users/<owner>/Projects/ai-studio-automator/
+5. Select: /path/to/Projects/ai-studio-automator/
 ```
 
 6. **Update OAuth Settings** (2 minutes)
@@ -481,7 +481,7 @@ The foundation is rock-solid. The UI is beautiful. The features are powerful.
 ---
 
 **Project Location:**  
-`/Users/<owner>/Projects/ai-studio-automator`
+`/path/to/Projects/ai-studio-automator`
 
 **Files Created:** 19  
 **Lines of Code:** 4,000+  

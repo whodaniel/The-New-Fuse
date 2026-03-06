@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenClaw Wizard CLI Reference"
+  short_description: "Run and troubleshoot openclaw onboard flows"
+  default_prompt: "Use this skill to execute, explain, and troubleshoot OpenClaw onboarding wizard CLI flows, including reset scopes, auth choices, and remote mode."

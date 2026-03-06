@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path =
-  '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/transcript-v2-state.json';
+  '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/transcript-v2-state.json';
 
 if (fs.existsSync(path)) {
   const data = JSON.parse(fs.readFileSync(path, 'utf8'));

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Brand Identity Agent"
+  short_description: "Help with Brand Identity Agent tasks"
+  default_prompt: "Run the Brand Identity Agent workflow using SKILL.md instructions."

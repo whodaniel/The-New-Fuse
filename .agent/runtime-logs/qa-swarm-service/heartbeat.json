@@ -4,7 +4,7 @@
   "supervisorPid": 95309,
   "childPid": 95315,
   "exitCode": null,
-  "rootDir": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+  "rootDir": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
   "testLoopInterval": "1000",
   "targetScore": "95",
   "continueAfterTarget": "1",

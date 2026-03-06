@@ -6,7 +6,7 @@
 echo "🔍 Chrome Extension Verification Report"
 echo "======================================="
 
-cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/chrome-extension"
+cd "/path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/chrome-extension"
 
 echo ""
 echo "📊 Project Structure Verification"

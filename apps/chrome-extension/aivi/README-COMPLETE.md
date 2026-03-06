@@ -393,7 +393,7 @@ ai-studio-automator/
 **Everything you need is in:**
 
 ```
-/Users/<owner>/Projects/ai-studio-automator/
+/path/to/Projects/ai-studio-automator/
 ```
 
 **Start with:**
@@ -450,7 +450,7 @@ We've created:
 
 **Project:** AI Video Intelligence Suite  
 **Status:** 70% Complete - MVP Ready  
-**Location:** `/Users/<owner>/Projects/ai-studio-automator/`  
+**Location:** `/path/to/Projects/ai-studio-automator/`  
 **Next:** Set up OAuth and start testing!
 
 **LET'S GO! 💪🚀🎊**

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Talent Manager Agent"
+  short_description: "Help with Talent Manager Agent tasks"
+  default_prompt: "Run the Talent Manager Agent workflow using SKILL.md instructions."

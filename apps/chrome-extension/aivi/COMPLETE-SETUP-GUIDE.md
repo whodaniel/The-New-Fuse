@@ -70,7 +70,7 @@ Location:             data/video-reports/
 ### 1. Process Remaining 12 Videos
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill
 export GEMINI_API_KEY="your-api-key-here"
 node src/DirectAPIProcessor.js
 ```
@@ -93,7 +93,7 @@ node process-recent-videos.js
 # Step 5: Update library HTML with new rows
 
 # Step 6: Process new videos
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill
 export GEMINI_API_KEY="your-api-key-here"
 node src/DirectAPIProcessor.js
 ```
@@ -106,7 +106,7 @@ chrome://extensions/
 
 # Enable Developer Mode
 # Click "Load unpacked"
-# Select: /Users/<owner>/Projects/ai-video-intelligence-suite/
+# Select: /path/to/Projects/ai-video-intelligence-suite/
 
 # Test account switching:
 # 1. Sign in with Account A
@@ -186,7 +186,7 @@ node process-recent-videos.js
 # 4. Update library HTML (copy/paste new rows)
 
 # 5. Process all new videos
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill
 export GEMINI_API_KEY="your-key"
 node src/DirectAPIProcessor.js
 
@@ -201,7 +201,7 @@ git push
 ```bash
 # 1. Add video URLs to ai_video_library.html
 # 2. Process
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill
 export GEMINI_API_KEY="your-key"
 node src/DirectAPIProcessor.js
 ```
@@ -210,7 +210,7 @@ node src/DirectAPIProcessor.js
 
 ```bash
 # Consolidate all reports
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 cat data/video-reports/api_*.md > data/consolidated_ai_knowledge.md
 
 # Upload to NotebookLM

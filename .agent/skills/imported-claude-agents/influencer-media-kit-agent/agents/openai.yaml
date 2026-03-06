@@ -1,0 +1,4 @@
+interface:
+  display_name: "Influencer Media Kit Agent"
+  short_description: "Help with Influencer Media Kit Agent tasks"
+  default_prompt: "Run the Influencer Media Kit Agent workflow using SKILL.md instructions."

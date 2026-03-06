@@ -1,7 +1,7 @@
 # TNF × OpenClaw → Cloudflare (Child of Two Parent Protocols)
 
 Date: 2026-02-09 Owner: Daniel Goldberg Author: Antigravity (OpenClaw) Repo:
-`/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse`
+`/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse`
 
 ## Mission statement
 

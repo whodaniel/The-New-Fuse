@@ -85,7 +85,7 @@ app.get('/api/browser/devtools', async (_req, res) => {
 ### Step 3: Deploy to Railway
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 git add apps/cloud-sandbox/src/server.ts
 git commit -m "feat(sandbox): expose browser devtools endpoint for Antigravity"
 git push

@@ -9,7 +9,7 @@ The New Fuse with Browser Hub is now running successfully with all components wo
 1. **Browser Hub Backend Server**: Running on port 3003
    - All backend services initialized
    - WebSocket endpoint active
-   - Configuration directory: `/Users/<owner>/.browser-hub`
+   - Configuration directory: `/path/to/.browser-hub`
 
 2. **MCP Integration**: All servers started successfully
    - ✅ Git MCP Server: Version control integration

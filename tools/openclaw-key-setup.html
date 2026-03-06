@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OpenClaw Secure Key Setup</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --muted: #94a3b8;
+      --text: #e5e7eb;
+      --accent: #22c55e;
+      --border: #334155;
+      --warn: #f59e0b;
+    }
+    body { margin: 0; font-family: ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; background: linear-gradient(160deg, #0b1220, #0f172a 45%, #111827); color: var(--text); }
+    .wrap { max-width: 980px; margin: 32px auto; padding: 0 16px; }
+    .card { background: rgba(17, 24, 39, 0.9); border: 1px solid var(--border); border-radius: 14px; padding: 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+    h1 { margin: 0 0 8px; font-size: 24px; }
+    p { color: var(--muted); margin: 8px 0 14px; }
+    label { display: block; font-weight: 600; margin: 10px 0 6px; }
+    select, input, textarea, button { width: 100%; box-sizing: border-box; }
+    select, input, textarea { background: #0b1220; color: var(--text); border: 1px solid var(--border); border-radius: 10px; padding: 10px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .checks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .check { border: 1px solid var(--border); border-radius: 10px; padding: 8px; }
+    textarea { min-height: 210px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+    button { border: 0; border-radius: 10px; padding: 10px 12px; font-weight: 700; cursor: pointer; }
+    .primary { background: var(--accent); color: #052e16; }
+    .ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .warn { color: var(--warn); font-weight: 600; }
+    .small { font-size: 13px; color: var(--muted); }
+    code { background: #0b1220; border: 1px solid var(--border); border-radius: 6px; padding: 2px 6px; }
+    @media (max-width: 760px) {
+      .row, .checks, .btns { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>OpenClaw Secure Key Setup</h1>
+      <p>This page does not save keys. It generates commands that prompt for a key at runtime and write it into selected OpenClaw profile configs.</p>
+
+      <div class="row">
+        <div>
+          <label for="provider">Provider</label>
+          <select id="provider">
+            <option value="openrouter">OpenRouter</option>
+            <option value="perplexity">Perplexity</option>
+            <option value="groq">Groq</option>
+            <option value="kilo">Kilo</option>
+            <option value="kilocode">KiloCode</option>
+          </select>
+        </div>
+        <div>
+          <label for="varname">Environment Variable</label>
+          <input id="varname" readonly />
+        </div>
+      </div>
+
+      <label>Profiles to Update</label>
+      <div class="checks">
+        <label class="check"><input type="checkbox" value="$HOME/.openclaw/openclaw.json" checked /> <code>~/.openclaw</code></label>
+        <label class="check"><input type="checkbox" value="$HOME/.openclaw-dev/openclaw.json" checked /> <code>~/.openclaw-dev</code></label>
+        <label class="check"><input type="checkbox" value="$HOME/.openclaw-sandbox/openclaw.json" checked /> <code>~/.openclaw-sandbox</code></label>
+      </div>
+
+      <label for="cmd">Generated Command</label>
+      <textarea id="cmd" readonly></textarea>
+
+      <div class="btns">
+        <button class="primary" id="copyBtn">Copy Command</button>
+        <button class="ghost" id="regenBtn">Regenerate</button>
+      </div>
+
+      <p class="small">After running, verify with: <code>openclaw models status --json</code>. Then rotate any key that was previously exposed.</p>
+      <p class="warn">Security note: avoid pasting raw API keys directly into shell commands or files.</p>
+    </div>
+  </div>
+
+  <script>
+    const map = {
+      openrouter: {
+        env: 'OPENROUTER_API_KEY',
+        jq: '.models.providers.openrouter.apiKey=$k | .models.providers["openrouter-stealth"].apiKey=$k'
+      },
+      perplexity: {
+        env: 'PERPLEXITY_API_KEY',
+        jq: '.models.providers.perplexity.apiKey=$k'
+      },
+      groq: {
+        env: 'GROQ_API_KEY',
+        jq: '.models.providers.groq.apiKey=$k'
+      },
+      kilo: {
+        env: 'KILO_API_KEY',
+        jq: '.models.providers.kilo.apiKey=$k'
+      },
+      kilocode: {
+        env: 'KILOCODE_API_KEY',
+        jq: '.models.providers.kilocode.apiKey=$k'
+      }
+    };
+
+    const providerEl = document.getElementById('provider');
+    const varnameEl = document.getElementById('varname');
+    const cmdEl = document.getElementById('cmd');
+
+    function selectedFiles() {
+      return Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(x => x.value);
+    }
+
+    function gen() {
+      const p = map[providerEl.value];
+      varnameEl.value = p.env;
+      const files = selectedFiles();
+      const fileList = files.length ? files.map(f => '"' + f + '"').join(' ') : '"$HOME/.openclaw/openclaw.json"';
+      cmdEl.value =
+`read -rsp "Enter ${p.env}: " ${p.env}; echo
+for f in ${fileList}; do
+  tmp=$(mktemp)
+  jq --arg k "\$${p.env}" '${p.jq}' "\$f" > "\$tmp" && mv "\$tmp" "\$f"
+done
+unset ${p.env}`;
+    }
+
+    providerEl.addEventListener('change', gen);
+    document.querySelectorAll('input[type="checkbox"]').forEach(c => c.addEventListener('change', gen));
+    document.getElementById('regenBtn').addEventListener('click', gen);
+    document.getElementById('copyBtn').addEventListener('click', async () => {
+      await navigator.clipboard.writeText(cmdEl.value);
+      document.getElementById('copyBtn').textContent = 'Copied';
+      setTimeout(() => (document.getElementById('copyBtn').textContent = 'Copy Command'), 1200);
+    });
+    gen();
+  </script>
+</body>
+</html>

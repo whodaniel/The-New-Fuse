@@ -115,7 +115,7 @@ Environment precedence:
 
 ## Recommended Default Workflow
 
-1. `cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse`
+1. `cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse`
 2. `pnpm run tnf:onboard`
 3. Start your AI session in this repository root
 
@@ -125,7 +125,7 @@ Add this to `~/.zshrc`:
 
 ```bash
 tnf_auto_onboard() {
-  local repo="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+  local repo="/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
   if [[ "$PWD" == "$repo" ]]; then
     [[ -n "$TNF_ONBOARDED" ]] && return
     export TNF_ONBOARDED=1
@@ -137,9 +137,9 @@ add-zsh-hook chpwd tnf_auto_onboard
 tnf_auto_onboard
 
 # Optional wrappers for one-command AI launches
-alias codex-tnf='cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse && pnpm run -s tnf:start:codex'
-alias claude-tnf='cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse && pnpm run -s tnf:start:claude'
-alias gemini-tnf='cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse && pnpm run -s tnf:start:gemini'
+alias codex-tnf='cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse && pnpm run -s tnf:start:codex'
+alias claude-tnf='cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse && pnpm run -s tnf:start:claude'
+alias gemini-tnf='cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse && pnpm run -s tnf:start:gemini'
 ```
 
 ## Client-Specific Notes

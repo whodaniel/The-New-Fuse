@@ -13,7 +13,7 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-ROOT_DIR="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+ROOT_DIR="/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
 cd "$ROOT_DIR"
 
 # Counter

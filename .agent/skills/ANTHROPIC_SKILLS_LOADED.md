@@ -85,7 +85,7 @@ accessible via MCP
 
 - **Server**: `tnf-skills`
 - **Path**:
-  `/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/mcp-skills-server/dist/index.js`
+  `/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/mcp-skills-server/dist/index.js`
 - **Skills Directory**: `.agent/skills/anthropic/`
 - **Total Skills in Registry**: 47 (31 TNF + 16 Anthropic)
 

@@ -10,7 +10,7 @@ If you see errors like `command 'thefuse.mcp.showTools' not found`, try these so
 
 1. **Register the Commands**:
    ```bash
-   node /Users/<owner>/Desktop/A1-Inter-LLM-Com/The\ New\ Fuse/scripts/initialize-mcp-commands.js
+   node /path/to/Desktop/A1-Inter-LLM-Com/The\ New\ Fuse/scripts/initialize-mcp-commands.js
    ```
 
 2. **Restart VS Code**:

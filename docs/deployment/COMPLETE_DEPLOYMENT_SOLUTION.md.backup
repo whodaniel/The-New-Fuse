@@ -39,7 +39,7 @@ Railway CLI cannot create services - only the dashboard can. You MUST do this fi
 After creating the services, run this ONE command:
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse && ./final-deploy.sh
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse && ./final-deploy.sh
 ```
 
 This script will:
@@ -155,7 +155,7 @@ railway service
 
 **Deploy command:**
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse && ./final-deploy.sh
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse && ./final-deploy.sh
 ```
 
 **JWT Secret:** `s5vELO0OEO1486BH7clWx5e00U77F7aoGlwalH9lSIA=`

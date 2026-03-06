@@ -62,7 +62,7 @@ urls = [
     "https://labs.google/fx/api/trpc/media.getMediaUrlRedirect?name=adb3e7dd-63ad-4828-be48-ff174904c030"
 ]
 
-output_dir = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games/docs/extracted_flow_images_final"
+output_dir = "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games/docs/extracted_flow_images_final"
 os.makedirs(output_dir, exist_ok=True)
 
 for i, url in enumerate(urls):

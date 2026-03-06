@@ -62,7 +62,7 @@
 2. Enable "Developer mode"
 3. Click "Load unpacked"
 4. Select:
-   `/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/chrome-extension/dist`
+   `/path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/chrome-extension/dist`
 
 ### Test Features:
 

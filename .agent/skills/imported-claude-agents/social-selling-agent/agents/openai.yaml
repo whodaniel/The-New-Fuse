@@ -1,0 +1,4 @@
+interface:
+  display_name: "Social Selling Agent"
+  short_description: "Help with Social Selling Agent tasks"
+  default_prompt: "Run the Social Selling Agent workflow using SKILL.md instructions."

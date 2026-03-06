@@ -20,7 +20,7 @@ cat .agent/handoff_notes.txt
 cd apps/chrome-extension && pnpm run build:v7
 
 # Successful headed smoke runs
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 env HEADLESS=false SMOKE_LIMIT=3 node apps/chrome-extension/scripts/component-smoke.cjs
 env HEADLESS=false node apps/chrome-extension/scripts/component-smoke.cjs
 

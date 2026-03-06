@@ -175,7 +175,7 @@ async function demonstrateSelfLearningSystem() {
     
     // Save export data for analysis
     const fs = require('fs');
-    const exportPath = '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/learning-system-export.json';
+    const exportPath = '/path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/learning-system-export.json';
     fs.writeFileSync(exportPath, JSON.stringify(exportData, null, 2));
     console.log(`   📁 Exported learning data to: ${exportPath}`);
     

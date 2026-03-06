@@ -111,7 +111,7 @@ Perfect alignment with The New Fuse stack:
 
 ## Integration 2: AI Studio Automator
 
-**Source**: `/Users/<owner>/Projects/ai-studio-automator` **Product
+**Source**: `/path/to/Projects/ai-studio-automator` **Product
 Name**: AI Video Intelligence Suite **Target**: The New Fuse Chrome Extension
 
 ### What Was Added
@@ -223,7 +223,7 @@ pnpm run build
 ### Documentation
 
 - [AI_STUDIO_INTEGRATION.md](apps/chrome-extension/AI_STUDIO_INTEGRATION.md)
-- Original docs: `/Users/<owner>/Projects/ai-studio-automator/`
+- Original docs: `/path/to/Projects/ai-studio-automator/`
 
 ---
 

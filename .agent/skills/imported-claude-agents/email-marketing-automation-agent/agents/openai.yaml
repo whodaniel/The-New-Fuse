@@ -1,0 +1,4 @@
+interface:
+  display_name: "Email Marketing Automation Agent"
+  short_description: "Help with Email Marketing Automation Agent tasks"
+  default_prompt: "Run the Email Marketing Automation Agent workflow using SKILL.md instructions."

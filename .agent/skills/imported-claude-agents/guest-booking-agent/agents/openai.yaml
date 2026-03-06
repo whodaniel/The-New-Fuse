@@ -1,0 +1,4 @@
+interface:
+  display_name: "Guest Booking Agent"
+  short_description: "Help with Guest Booking Agent tasks"
+  default_prompt: "Run the Guest Booking Agent workflow using SKILL.md instructions."

@@ -523,7 +523,7 @@ Gemini:
 
 2. **Try on Our Codebase**
    ```
-   Open: /Users/<owner>/self-contained-visualizations
+   Open: /path/to/self-contained-visualizations
    Ask Gemini to:
    - Explain the visualization generator
    - Suggest improvements to template system

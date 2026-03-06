@@ -24,12 +24,12 @@
     {
       "agent": "Continuous Improver",
       "timestamp": "2026-02-22T19:34:58.913Z",
-      "error": "Redis publisher error: AggregateError\n⚠️ Could not connect to Redis at redis://localhost:6379\n⚠️ Redis not available. Running in offline diagnostic mode.\n⚠️ Lint baseline failed. Dispatching cleanup task.\n❌ Continuous Improver failed: MaxRetriesPerRequestError: Reached the max retries per request limit (which is 3). Refer to \"maxRetriesPerRequest\" option for details.\n    at Socket.<anonymous> (/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/ioredis/built/redis/event_handler.js:207:37)\n    at Object.onceWrapper (node:events:623:26)\n    at Socket.emit (node:events:508:28)\n    at TCP.<anonymous> (node:net:346:12)"
+      "error": "Redis publisher error: AggregateError\n⚠️ Could not connect to Redis at redis://localhost:6379\n⚠️ Redis not available. Running in offline diagnostic mode.\n⚠️ Lint baseline failed. Dispatching cleanup task.\n❌ Continuous Improver failed: MaxRetriesPerRequestError: Reached the max retries per request limit (which is 3). Refer to \"maxRetriesPerRequest\" option for details.\n    at Socket.<anonymous> (/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/ioredis/built/redis/event_handler.js:207:37)\n    at Object.onceWrapper (node:events:623:26)\n    at Socket.emit (node:events:508:28)\n    at TCP.<anonymous> (node:net:346:12)"
     },
     {
       "agent": "Continuous Improver",
       "timestamp": "2026-02-22T19:42:05.162Z",
-      "error": "Redis publisher error: AggregateError\n⚠️ Could not connect to Redis at redis://localhost:6379\n⚠️ Redis not available. Running in offline diagnostic mode.\n⚠️ Lint baseline failed. Dispatching cleanup task.\n❌ Continuous Improver failed: MaxRetriesPerRequestError: Reached the max retries per request limit (which is 3). Refer to \"maxRetriesPerRequest\" option for details.\n    at Socket.<anonymous> (/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/ioredis/built/redis/event_handler.js:207:37)\n    at Object.onceWrapper (node:events:623:26)\n    at Socket.emit (node:events:508:28)\n    at TCP.<anonymous> (node:net:346:12)"
+      "error": "Redis publisher error: AggregateError\n⚠️ Could not connect to Redis at redis://localhost:6379\n⚠️ Redis not available. Running in offline diagnostic mode.\n⚠️ Lint baseline failed. Dispatching cleanup task.\n❌ Continuous Improver failed: MaxRetriesPerRequestError: Reached the max retries per request limit (which is 3). Refer to \"maxRetriesPerRequest\" option for details.\n    at Socket.<anonymous> (/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/ioredis/built/redis/event_handler.js:207:37)\n    at Object.onceWrapper (node:events:623:26)\n    at Socket.emit (node:events:508:28)\n    at TCP.<anonymous> (node:net:346:12)"
     }
   ],
   "fixes": []

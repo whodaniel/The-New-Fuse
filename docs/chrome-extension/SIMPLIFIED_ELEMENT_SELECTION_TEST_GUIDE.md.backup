@@ -28,7 +28,7 @@ The Chrome extension has been successfully updated with **simplified direct hove
 
 ### Step 1: Start WebSocket Server
 ```bash
-cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse"
+cd "/path/to/Desktop/A1-Inter-LLM-Com/The New Fuse"
 node websocket-test-server.js
 ```
 You should see:
@@ -41,11 +41,11 @@ You should see:
 1. Open Chrome and go to `chrome://extensions/`
 2. Enable "Developer mode" (top right toggle)
 3. Click "Load unpacked"
-4. Select folder: `/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/dist-backup-working`
+4. Select folder: `/path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/dist-backup-working`
 5. Extension should load successfully
 
 ### Step 3: Open Test Page
-Navigate to: `file:///Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/dist-backup-working/test-page.html`
+Navigate to: `file:///path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/dist-backup-working/test-page.html`
 
 ### Step 4: Test Extension Panel
 1. Click the extension icon (should show floating panel)

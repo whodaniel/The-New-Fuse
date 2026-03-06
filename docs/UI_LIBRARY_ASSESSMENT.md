@@ -112,9 +112,9 @@ Chakra UI package remains in package.json but can be safely removed.
 #### Option 1: Delete Broken Files (Recommended)
 
 ```bash
-rm /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/components/shared/DataCard.tsx
-rm /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/components/shared/DataTable.tsx
-rm /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/components/shared/FormFields.tsx
+rm /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/components/shared/DataCard.tsx
+rm /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/components/shared/DataTable.tsx
+rm /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/components/shared/FormFields.tsx
 ```
 
 This reduces remaining files to **21 files**.

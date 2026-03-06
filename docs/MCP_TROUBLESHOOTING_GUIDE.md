@@ -108,7 +108,7 @@ Expected: Server process running under Claude Desktop
 
 #### User's Claude Desktop Config
 ```
-/Users/<owner>/Library/Application Support/Claude/claude_desktop_config.json
+/path/to/Library/Application Support/Claude/claude_desktop_config.json
 ```
 
 #### Project MCP Config

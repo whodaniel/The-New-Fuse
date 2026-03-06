@@ -229,7 +229,7 @@ Bundle analyzer enables optimization:
 ### Start the Backend
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/ui-package
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/ui-package
 python3 api.py
 ```
 
@@ -299,7 +299,7 @@ open visualizations/monitoring-dashboard.html
 
    ```bash
    # 1. Ensure services running
-   cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+   cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
    pnpm run docker:start
    pnpm run dev
 
@@ -531,7 +531,7 @@ open visualizations/bundle-size-analyzer.html
 open visualizations/monitoring-dashboard.html
 
 # Development
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 pnpm run docker:start
 pnpm run dev
 ```

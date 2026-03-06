@@ -33,7 +33,7 @@ sessions:
 **Impact:** Never repeat instructions; every session knows the project
 
 **Location:**
-`/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/claude.md`
+`/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/claude.md`
 
 #### ✅ Hack #3: MCP Integration
 
@@ -63,7 +63,7 @@ Created 3 specialized task-based agents:
 **Impact:** Focused, parallel-capable agents that complement each other
 
 **Location:**
-`/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/`
+`/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/`
 
 #### ✅ Hack #6: Phases System (`phases.md`)
 
@@ -77,7 +77,7 @@ Implemented unlimited project scope tracking:
 **Impact:** Unlimited project scope without hitting context limits
 
 **Location:**
-`/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/phases.md`
+`/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/phases.md`
 
 ---
 
@@ -247,7 +247,7 @@ ui-package/
 **Usage:**
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/ui-package
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/ui-package
 python3 api.py
 
 # Open any HTML interface
@@ -336,11 +336,11 @@ visualizations)
 
 ```bash
 # 1. Start the UI backend
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/ui-package
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/ui-package
 python3 api.py
 
 # 2. In another terminal, ensure services are running
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 pnpm run docker:start
 pnpm run dev
 
@@ -375,7 +375,7 @@ The Global Brain (`claude.md`) automatically applies project rules:
 
 ```bash
 # Use the Capability Packaging Agent
-cd /Users/<owner>/self-contained-visualizations
+cd /path/to/self-contained-visualizations
 python3 agents/capability-packaging-agent.py
 
 # It will discover capabilities and generate HTML interfaces

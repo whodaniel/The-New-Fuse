@@ -24,14 +24,14 @@ Claude (Antigravity) ←→ TNF Relay ←→ Gemini (Chrome Extension)
 ### 1. Relay Listener Daemon
 
 **File:**
-`/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/tools/relay-listener-daemon.js`
+`/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/tools/relay-listener-daemon.js`
 
 **Purpose:** Continuously listens to relay and writes messages to file
 
 **Start:**
 
 ```bash
-nohup node /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/tools/relay-listener-daemon.js > /tmp/relay-daemon.log 2>&1 &
+nohup node /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/tools/relay-listener-daemon.js > /tmp/relay-daemon.log 2>&1 &
 ```
 
 **Check status:**
@@ -46,7 +46,7 @@ tail -f /tmp/relay-daemon.log
 ### 2. Message Checker Script
 
 **File:**
-`/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/tools/check-relay-messages.sh`
+`/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/tools/check-relay-messages.sh`
 
 **Purpose:** Check for new messages since last check
 

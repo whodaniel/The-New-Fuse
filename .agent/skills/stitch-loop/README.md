@@ -1,12 +1,11 @@
 # Stitch Build Loop Skill
 
-Teaches agents to iteratively build websites using Stitch with an autonomous
-baton-passing loop pattern.
+Teaches agents to iteratively build websites using Stitch with an autonomous baton-passing loop pattern.
 
 ## Install
 
 ```bash
-npx add-skill google-labs-code/stitch-skills --skill stitch-loop --global
+npx skills add google-labs-code/stitch-skills --skill stitch-loop --global
 ```
 
 ## What It Does

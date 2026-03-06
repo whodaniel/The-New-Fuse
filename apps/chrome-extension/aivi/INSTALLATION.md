@@ -7,7 +7,7 @@
 3. Toggle **"Developer mode"** ON (top right corner)
 4. Click **"Load unpacked"**
 5. Navigate to and select this folder:
-   `/Users/<owner>/.gemini/antigravity/scratch/ai-studio-automator`
+   `/path/to/.gemini/antigravity/scratch/ai-studio-automator`
 6. The extension should now appear in your extensions list
 
 ## Step 2: Pin the Extension (Optional)

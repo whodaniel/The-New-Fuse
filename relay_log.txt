@@ -1,9 +1,9 @@
 
-> the-new-fuse@ relay:start /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+> the-new-fuse@ relay:start /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 > pnpm --filter @the-new-fuse/relay-core run relay
 
 
-> @the-new-fuse/relay-core@1.0.0 relay /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core
+> @the-new-fuse/relay-core@1.0.0 relay /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core
 > node dist/standalone-relay.js
 
 
@@ -4080,6 +4080,6 @@
 [Relay] HEARTBEAT from browser-1768185883020-9tzhdzu2w
 [Relay] HEARTBEAT from browser-1768255383942-40pf5zso0
 [Relay] Agent disconnected: antigravity-core
-/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core:
+/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core:
  ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @the-new-fuse/relay-core@1.0.0 relay: `node dist/standalone-relay.js`
 Command failed with signal "SIGHUP"

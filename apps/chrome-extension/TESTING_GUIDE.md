@@ -18,7 +18,7 @@ been fixed. All required files are present in the `dist` directory.
 1. Click "Load unpacked" button
 2. Navigate to and select this directory:
    ```
-   /Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/chrome-extension/dist
+   /path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/chrome-extension/dist
    ```
 3. The extension should appear in your extensions list as "The New Fuse - AI
    Bridge & Element Selector"

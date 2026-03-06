@@ -1,0 +1,4 @@
+interface:
+  display_name: "Podcast Equipment Agent"
+  short_description: "Help with Podcast Equipment Agent tasks"
+  default_prompt: "Run the Podcast Equipment Agent workflow using SKILL.md instructions."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "X Strategy Agent"
+  short_description: "Help with X Strategy Agent tasks"
+  default_prompt: "Run the X Strategy Agent workflow using SKILL.md instructions."

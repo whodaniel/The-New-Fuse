@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -u
-export PATH="/Users/<owner>/.nvm/versions/node/v24.12.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse || exit 1
+export PATH="/path/to/.nvm/versions/node/v24.12.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse || exit 1
 while true; do
   echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] continuous cycle start"
-  /Users/<owner>/.nvm/versions/node/v24.12.0/bin/node scripts/railway/launch-openclaw-qa-swarm.mjs \
+  /path/to/.nvm/versions/node/v24.12.0/bin/node scripts/railway/launch-openclaw-qa-swarm.mjs \
     --services openclaw-cloud,openclaw-primary,openclaw-sandbox-cloud,openclaw-oc004 \
     --agents-per-service 2 \
     --workspace tnf-web-experience-continuous \

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Audience Growth Agent"
+  short_description: "Help with Audience Growth Agent tasks"
+  default_prompt: "Run the Audience Growth Agent workflow using SKILL.md instructions."

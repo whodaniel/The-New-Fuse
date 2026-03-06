@@ -154,7 +154,7 @@
 2. Go to chrome://extensions/
 3. Enable "Developer mode"
 4. Click "Load unpacked"
-5. Select: /Users/<owner>/Projects/ai-studio-automator/
+5. Select: /path/to/Projects/ai-studio-automator/
 6. Note the Extension ID
 7. Add Extension ID to Google Cloud OAuth settings
 ```

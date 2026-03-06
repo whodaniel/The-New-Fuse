@@ -15,7 +15,7 @@ The extension tries to connect to a WebSocket server running at
 
 ```bash
 # Navigate to the extension directory
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/chrome-extension
+cd /path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/chrome-extension
 
 # Install ws package if needed
 npm install ws
@@ -30,7 +30,7 @@ If you've made changes to fix the issues, rebuild the extension:
 
 ```bash
 # Navigate to the extension directory
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/chrome-extension
+cd /path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/chrome-extension
 
 # Run the build script
 ./build.sh

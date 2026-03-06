@@ -65,7 +65,7 @@
 
 ```bash
 # Open in your editor:
-/Users/<owner>/Projects/ai-studio-automator/manifest.json
+/path/to/Projects/ai-studio-automator/manifest.json
 ```
 
 #### 2.2 Update Client ID
@@ -101,7 +101,7 @@ Toggle "Developer mode" in the top right corner
 
 ```
 1. Click "Load unpacked"
-2. Navigate to: /Users/<owner>/Projects/ai-studio-automator/
+2. Navigate to: /path/to/Projects/ai-studio-automator/
 3. Click "Select"
 4. Extension should now appear in the list
 ```

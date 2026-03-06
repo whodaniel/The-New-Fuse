@@ -452,7 +452,7 @@ All four architectural solutions are production-ready with:
 7. **Risk Mitigation**: Rollback plans, gradual rollout strategy
 
 **Ready for Implementation Agent**: All solutions documented in
-`/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/tasks/architectural-solutions.md`
+`/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/tasks/architectural-solutions.md`
 
 **Estimated Implementation Time**: 3 weeks (1 week security, 1 week performance,
 1 week validation)

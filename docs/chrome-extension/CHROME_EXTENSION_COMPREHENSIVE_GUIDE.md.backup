@@ -167,13 +167,13 @@ For more details, see the [Web LLM Integration & Parsing Strategy Guide](../guid
 1. **Open Chrome Extensions**: Navigate to `chrome://extensions/`
 2. **Enable Developer Mode**: Toggle switch in top-right corner
 3. **Load Extension**: Click "Load unpacked"
-4. **Select Directory**: Navigate to `/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/chrome-extension/dist/`
+4. **Select Directory**: Navigate to `/path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/chrome-extension/dist/`
 5. **Verify Installation**: Extension should appear with "The New Fuse - Enhanced" name
 
 #### **Method 2: Build from Source**
 ```bash
 # Navigate to project root
-cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse"
+cd "/path/to/Desktop/A1-Inter-LLM-Com/The New Fuse"
 
 # Build Chrome extension
 yarn build:chrome

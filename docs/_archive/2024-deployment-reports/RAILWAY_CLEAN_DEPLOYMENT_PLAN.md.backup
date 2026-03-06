@@ -155,7 +155,7 @@ Before running the deployment script, verify all 8 services exist in the Railway
 ### Step 3: Run Deployment Script
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 chmod +x railway-clean-deploy.sh
 ./railway-clean-deploy.sh
 ```

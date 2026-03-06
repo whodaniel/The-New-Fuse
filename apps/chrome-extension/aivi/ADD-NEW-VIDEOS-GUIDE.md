@@ -33,7 +33,7 @@ You have 12 unprocessed videos already in your library.
 ### To Process These:
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill
 GEMINI_API_KEY=your_key node src/DirectAPIProcessor.js
 ```
 
@@ -87,7 +87,7 @@ console.log(html);
 
 ```bash
 node process-new-videos.js  # Check what's new
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill
 GEMINI_API_KEY=your_key node src/DirectAPIProcessor.js
 ```
 
@@ -136,7 +136,7 @@ This will:
 ### Step 5: Process All New Videos
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill
 GEMINI_API_KEY=your_key node src/DirectAPIProcessor.js
 ```
 
@@ -160,7 +160,7 @@ node fetch-recent-videos.js
 node process-recent-videos.js
 
 # Process everything
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill
 GEMINI_API_KEY=your_key node src/DirectAPIProcessor.js
 ```
 
@@ -179,7 +179,7 @@ tail -f /tmp/api-processing.log
 ### 3. Check Final Status
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 ls data/video-reports/*.md | wc -l
 ```
 
@@ -241,7 +241,7 @@ Once you've processed all your videos:
 1. **Consolidate knowledge base:**
 
    ```bash
-   cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+   cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
    cat data/video-reports/api_*.md > data/consolidated_ai_knowledge.md
    ```
 
@@ -253,7 +253,7 @@ Once you've processed all your videos:
 
 3. **Commit to GitHub:**
    ```bash
-   cd /Users/<owner>/Projects/ai-studio-automator
+   cd /path/to/Projects/ai-studio-automator
    git add .
    git commit -m "Update: Processed additional videos, now at X/647"
    git push
@@ -262,4 +262,4 @@ Once you've processed all your videos:
 ---
 
 **Status:** Ready to process new videos! **Tools:** All scripts in
-`/Users/<owner>/Projects/ai-studio-automator/`
+`/path/to/Projects/ai-studio-automator/`

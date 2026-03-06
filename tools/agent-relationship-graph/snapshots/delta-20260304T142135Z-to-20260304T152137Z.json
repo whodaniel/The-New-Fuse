@@ -1,0 +1,110 @@
+{
+  "generated_at": "2026-03-04T15:21:37.646683+00:00",
+  "baseline_snapshot": "snapshot-20260304T142135Z.json",
+  "current_snapshot": "snapshot-20260304T152137Z.json",
+  "summary": {
+    "graphs_changed": 0,
+    "nodes_added_total": 0,
+    "nodes_removed_total": 0,
+    "edges_added_total": 0,
+    "edges_removed_total": 0
+  },
+  "details": [
+    {
+      "file": "agent-relationship-brand-subgraph.json",
+      "domain": "brand",
+      "node_count_old": 10,
+      "node_count_new": 10,
+      "edge_count_old": 8,
+      "edge_count_new": 8,
+      "nodes_added": [],
+      "nodes_removed": [],
+      "edges_added": [],
+      "edges_removed": []
+    },
+    {
+      "file": "agent-relationship-content-subgraph.json",
+      "domain": "content",
+      "node_count_old": 9,
+      "node_count_new": 9,
+      "edge_count_old": 10,
+      "edge_count_new": 10,
+      "nodes_added": [],
+      "nodes_removed": [],
+      "edges_added": [],
+      "edges_removed": []
+    },
+    {
+      "file": "agent-relationship-funnel-subgraph.json",
+      "domain": "funnel",
+      "node_count_old": 8,
+      "node_count_new": 8,
+      "edge_count_old": 6,
+      "edge_count_new": 6,
+      "nodes_added": [],
+      "nodes_removed": [],
+      "edges_added": [],
+      "edges_removed": []
+    },
+    {
+      "file": "agent-relationship-graph.json",
+      "domain": "full",
+      "node_count_old": 49,
+      "node_count_new": 49,
+      "edge_count_old": 43,
+      "edge_count_new": 43,
+      "nodes_added": [],
+      "nodes_removed": [],
+      "edges_added": [],
+      "edges_removed": []
+    },
+    {
+      "file": "agent-relationship-ops-subgraph.json",
+      "domain": "ops",
+      "node_count_old": 11,
+      "node_count_new": 11,
+      "edge_count_old": 5,
+      "edge_count_new": 5,
+      "nodes_added": [],
+      "nodes_removed": [],
+      "edges_added": [],
+      "edges_removed": []
+    },
+    {
+      "file": "agent-relationship-podcast-subgraph.json",
+      "domain": "podcast",
+      "node_count_old": 9,
+      "node_count_new": 9,
+      "edge_count_old": 7,
+      "edge_count_new": 7,
+      "nodes_added": [],
+      "nodes_removed": [],
+      "edges_added": [],
+      "edges_removed": []
+    },
+    {
+      "file": "agent-relationship-seo-subgraph.json",
+      "domain": "seo",
+      "node_count_old": 9,
+      "node_count_new": 9,
+      "edge_count_old": 13,
+      "edge_count_new": 13,
+      "nodes_added": [],
+      "nodes_removed": [],
+      "edges_added": [],
+      "edges_removed": []
+    },
+    {
+      "file": "agent-relationship-social-subgraph.json",
+      "domain": "social",
+      "node_count_old": 8,
+      "node_count_new": 8,
+      "edge_count_old": 2,
+      "edge_count_new": 2,
+      "nodes_added": [],
+      "nodes_removed": [],
+      "edges_added": [],
+      "edges_removed": []
+    }
+  ]
+}

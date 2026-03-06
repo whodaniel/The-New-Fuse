@@ -1,0 +1,4 @@
+interface:
+  display_name: "Funnel Economics Analyst Agent"
+  short_description: "Help with Funnel Economics Analyst Agent tasks"
+  default_prompt: "Run the Funnel Economics Analyst Agent workflow using SKILL.md instructions."

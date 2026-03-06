@@ -22,7 +22,7 @@ minutes.
 ### 1.1 Verify Local Changes
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 
 # Check current status
 git status

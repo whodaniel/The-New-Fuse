@@ -1,3 +1,9 @@
+---
+name: library-of-living-knowledge
+description: Foundational TNF meta-skill for bootstrapping context, orchestration, and self-improving knowledge.
+metadata:
+  short-description: Bootstraps agent context and living knowledge
+---
 # META-SKILL: Library of Living Knowledge
 
 ## Purpose

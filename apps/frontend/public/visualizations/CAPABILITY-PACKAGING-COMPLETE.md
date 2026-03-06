@@ -2,7 +2,7 @@
 
 **Generated:** December 22, 2025
 **Agent:** Capability Packaging Agent
-**Output Directory:** `/Users/<owner>/self-contained-visualizations/ui-package`
+**Output Directory:** `/path/to/self-contained-visualizations/ui-package`
 
 ---
 
@@ -192,7 +192,7 @@ ui-package/
 ### 1. Start the Backend API
 
 ```bash
-cd /Users/<owner>/self-contained-visualizations/ui-package
+cd /path/to/self-contained-visualizations/ui-package
 python3 api.py
 ```
 

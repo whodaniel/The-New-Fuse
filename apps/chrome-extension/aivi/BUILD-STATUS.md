@@ -152,7 +152,7 @@
 1. Go to chrome://extensions/
 2. Enable "Developer mode"
 3. Click "Load unpacked"
-4. Select: /Users/<owner>/Projects/ai-studio-automator/
+4. Select: /path/to/Projects/ai-studio-automator/
 ```
 
 #### 3. Test Authentication
@@ -243,7 +243,7 @@
 
 ```bash
 # Navigate to project
-cd /Users/<owner>/Projects/ai-studio-automator
+cd /path/to/Projects/ai-studio-automator
 
 # View structure
 ls -la

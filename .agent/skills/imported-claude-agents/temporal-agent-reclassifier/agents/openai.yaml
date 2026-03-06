@@ -1,0 +1,4 @@
+interface:
+  display_name: "Temporal Agent Reclassifier"
+  short_description: "Help with Temporal Agent Reclassifier tasks"
+  default_prompt: "Run the Temporal Agent Reclassifier workflow using SKILL.md instructions."

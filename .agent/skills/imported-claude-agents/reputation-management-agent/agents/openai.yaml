@@ -1,0 +1,4 @@
+interface:
+  display_name: "Reputation Management Agent"
+  short_description: "Help with Reputation Management Agent tasks"
+  default_prompt: "Run the Reputation Management Agent workflow using SKILL.md instructions."

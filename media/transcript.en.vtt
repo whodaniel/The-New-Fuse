@@ -1,0 +1,1137 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.050 --> 00:00:04.910
+Ready for AI coding on steroids today
+we're showcasing Auto Claude where you
+
+00:00:04.910 --> 00:00:09.169
+can get 10 times the work done on your
+projects with the planning and the
+
+00:00:09.169 --> 00:00:13.165
+quality coding and testing that you
+should demand from your AI coding system.
+
+00:00:14.165 --> 00:00:17.925
+Now Auto Claude is designed to
+work for all skill levels from
+
+00:00:17.925 --> 00:00:21.525
+Vibe coders without any coding
+experience to senior developers.
+
+00:00:22.500 --> 00:00:26.490
+Hi, my name is Andre Mi-kal-sen
+and I use AI to code production
+
+00:00:26.490 --> 00:00:28.230
+level applications every day.
+
+00:00:28.560 --> 00:00:32.490
+And today I'm showcasing Auto
+Claude, a open source and free
+
+00:00:32.490 --> 00:00:38.010
+project for using your claude code
+subscription to get more work done.
+
+00:00:39.550 --> 00:00:43.569
+So when you're opening Auto Claude
+and want to connect it to a existing
+
+00:00:43.569 --> 00:00:48.159
+project or create a new one, you just
+come to the top left corner here,
+
+00:00:48.159 --> 00:00:50.889
+add project open existing folder.
+
+00:00:51.954 --> 00:00:55.504
+When you open it, it gonna prompt
+you to initialize Auto Claude.
+
+00:00:55.534 --> 00:00:58.944
+That's gonna create a.auto Claude folder.
+
+00:00:58.944 --> 00:01:03.324
+Inside your project, you just
+initialize and then the project
+
+00:01:03.324 --> 00:01:04.674
+is ready for you to use.
+
+00:01:04.674 --> 00:01:08.304
+And we're gonna start with showcasing
+the Kanban board here, which is
+
+00:01:08.304 --> 00:01:12.294
+the system for long running agents
+that just runs in the background.
+
+00:01:12.294 --> 00:01:14.994
+Now how it works is
+that you start engaging.
+
+00:01:15.579 --> 00:01:17.739
+The system by just creating a task.
+
+00:01:17.799 --> 00:01:21.909
+And we're gonna start with one simple
+task where I found a little bug here
+
+00:01:21.909 --> 00:01:25.689
+in the actual inside of Auto Claude,
+where we have a double cross here.
+
+00:01:25.959 --> 00:01:30.039
+So we're just gonna take a screenshot
+of that and just paste it into the
+
+00:01:30.039 --> 00:01:34.629
+description and we see it gets added
+as a reference image to the task.
+
+00:01:34.899 --> 00:01:37.719
+And we're just gonna say
+here and I'll use dictation.
+
+00:01:39.369 --> 00:01:42.399
+Please see the image in
+terms of the double cross for
+
+00:01:42.399 --> 00:01:44.709
+closing out the project files.
+
+00:01:44.949 --> 00:01:49.259
+That's overlapping with the model
+for closing the create task modal.
+
+00:01:50.269 --> 00:01:53.569
+So you can see now when we have
+some options here for selecting
+
+00:01:53.569 --> 00:01:55.459
+the model and the thinking level.
+
+00:01:55.459 --> 00:02:00.039
+If you want more control, if you
+don't want any, do any manual things.
+
+00:02:00.039 --> 00:02:03.489
+We have tried to keep
+things at a good level.
+
+00:02:03.999 --> 00:02:07.539
+We are gonna do a little bit of a
+work here where the system itself
+
+00:02:07.779 --> 00:02:11.439
+figures out what model and what
+thinking level it's gonna use.
+
+00:02:11.709 --> 00:02:16.749
+But as you can see now, we also have
+this section for requiring a human review
+
+00:02:16.749 --> 00:02:22.089
+before coding if you want to work on more
+complex tasks where you want more control,
+
+00:02:22.329 --> 00:02:24.879
+but the system will work autonomously.
+
+00:02:25.209 --> 00:02:29.289
+And also we can drag and drop hard
+project files here into the description.
+
+00:02:29.664 --> 00:02:31.914
+Right now it's not working correctly.
+
+00:02:31.914 --> 00:02:35.754
+So we're gonna create a second
+task for showcasing how the system
+
+00:02:35.754 --> 00:02:41.904
+actually identifies how a task is
+either simple or it's a medium sized
+
+00:02:41.904 --> 00:02:43.974
+task, or it's a very complex task.
+
+00:02:44.154 --> 00:02:47.724
+So you can see now it's
+written the task title itself.
+
+00:02:47.904 --> 00:02:50.844
+We don't have to do that if
+we don't want, and we can now.
+
+00:02:51.369 --> 00:02:56.409
+Just start this task and it'll go into
+a planning phase where it starts to
+
+00:02:56.409 --> 00:02:59.109
+identify all the context it needs.
+
+00:02:59.349 --> 00:03:03.429
+It finds out what it needs to
+create as subtasks, and also the
+
+00:03:03.429 --> 00:03:05.649
+complexity level of the task itself.
+
+00:03:06.399 --> 00:03:09.189
+So while that has started, we
+can start to see some logs.
+
+00:03:09.189 --> 00:03:12.729
+We will also create a new
+task care for the issue that
+
+00:03:13.149 --> 00:03:15.339
+we can't drag and drop files.
+
+00:03:16.339 --> 00:03:19.969
+When using the project files
+view, we cannot drag and drop
+
+00:03:19.969 --> 00:03:21.619
+the file into the description.
+
+00:03:21.619 --> 00:03:26.809
+There's only the section for reference
+files further down in the task section,
+
+00:03:27.079 --> 00:03:30.829
+but I think we should just mention
+below the description that the user
+
+00:03:30.829 --> 00:03:35.569
+can both paste screenshots and drag
+and drop files from the project.
+
+00:03:35.619 --> 00:03:36.759
+File Explorer.
+
+00:03:37.759 --> 00:03:42.079
+So now in many cases, this is a
+description that like we could give
+
+00:03:42.079 --> 00:03:46.789
+a lot more context into the task in
+order for it to be a much better task.
+
+00:03:47.029 --> 00:03:50.624
+And the system we're trying
+to, like Auto Claude, is gonna
+
+00:03:50.624 --> 00:03:54.825
+try and identify everything and
+also have a self review process.
+
+00:03:54.885 --> 00:03:56.355
+So it's gonna create a plan.
+
+00:03:56.769 --> 00:03:59.440
+We'll go here and see
+the logs have started.
+
+00:03:59.769 --> 00:04:04.269
+You can see now it's in planning
+phase and it has 27 entries, and if
+
+00:04:04.269 --> 00:04:08.169
+you want to review and understand
+what the AI is actually doing, you
+
+00:04:08.169 --> 00:04:12.429
+can see the logs here with all the
+tools, all the writings and everything.
+
+00:04:12.885 --> 00:04:16.784
+It has identified here we can
+see the complexity level for the
+
+00:04:17.034 --> 00:04:19.044
+fixing overlapping close buttons.
+
+00:04:19.224 --> 00:04:24.755
+It has identified as a simple task
+with a confidence of 90%, and that
+
+00:04:24.755 --> 00:04:26.705
+dictates how everything is gonna work.
+
+00:04:26.885 --> 00:04:30.755
+It's just gonna go and have a
+quick spec and create a simple
+
+00:04:30.755 --> 00:04:34.474
+test for fixing or checking that
+it's actually fixed once it's done.
+
+00:04:34.745 --> 00:04:38.045
+So it's not gonna produce
+a lot of unnecessary tests.
+
+00:04:38.095 --> 00:04:42.805
+A lot of different coding, just so
+it saves upon the context itself
+
+00:04:42.805 --> 00:04:46.885
+here, so we don't have to pay more
+for a simple task integration.
+
+00:04:48.355 --> 00:04:53.135
+And if you're wondering, we are working on
+the same files here and the sales systems,
+
+00:04:53.344 --> 00:04:58.475
+but how Auto Claude is working is that if
+we have a full overview over all the work
+
+00:04:58.475 --> 00:05:00.815
+trees that are for this project itself.
+
+00:05:01.115 --> 00:05:05.345
+So that means a work tree is basically
+a sandbox or an environment where.
+
+00:05:06.190 --> 00:05:10.150
+The coding is happening in one place,
+and it won't touch any of the other
+
+00:05:10.150 --> 00:05:14.260
+files, so you can safely work on the
+same as, for instance, in this case,
+
+00:05:14.260 --> 00:05:18.280
+we're working on the same files on two
+different tasks, and then if you're
+
+00:05:18.280 --> 00:05:21.160
+a developer, you're gonna be like,
+Hey, we're gonna have merge conflicts.
+
+00:05:21.400 --> 00:05:26.410
+But inside Auto Claude we have this
+merge conflict AI layer, which is doing
+
+00:05:26.620 --> 00:05:30.490
+a little bit of programmatic things,
+but also having an AI that does the
+
+00:05:30.490 --> 00:05:33.400
+refactoring and handling merge conflicts.
+
+00:05:33.460 --> 00:05:34.030
+If there's.
+
+00:05:34.725 --> 00:05:36.285
+In these two tasks.
+
+00:05:36.465 --> 00:05:40.095
+So we're gonna see, once it's done,
+we're gonna see that it's actually
+
+00:05:40.095 --> 00:05:44.235
+a merge conflict, and we can just
+quickly, with one button solve it
+
+00:05:44.505 --> 00:05:46.695
+and everything gets done correctly.
+
+00:05:47.695 --> 00:05:50.875
+So as this is working, you can
+already see that the simple task is
+
+00:05:50.875 --> 00:05:53.155
+already going over to an AI review.
+
+00:05:53.275 --> 00:05:57.295
+So the AI is gonna re review its own
+work, and that's the power of Auto
+
+00:05:57.295 --> 00:06:00.505
+Claude, that you can just have this
+running in the background and it's only
+
+00:06:00.505 --> 00:06:05.365
+ready for you once the AI has deemed
+it ready for you to actually test and
+
+00:06:05.545 --> 00:06:07.835
+utilize straight into the project.
+
+00:06:09.545 --> 00:06:13.415
+So we also have this agents terminal,
+and this is a place where you can
+
+00:06:13.415 --> 00:06:18.695
+spawn up to 12 terminals and easily
+invoke Claude in all of the instances.
+
+00:06:18.875 --> 00:06:21.575
+And there's also some smart
+functionalities we're working on
+
+00:06:21.575 --> 00:06:26.195
+because myself, I like to have
+this type of terminal overview that
+
+00:06:26.405 --> 00:06:30.525
+I can name, rename terminals to
+what they're, what they are about.
+
+00:06:30.925 --> 00:06:31.585
+So I can.
+
+00:06:31.985 --> 00:06:35.555
+Hold my my thoughts when I navigate
+around, especially when you start
+
+00:06:35.555 --> 00:06:39.965
+to get more terminals, like when you
+start to get six and nine and even 12.
+
+00:06:40.265 --> 00:06:42.725
+Depends how much like
+multitasking you want to do.
+
+00:06:43.115 --> 00:06:48.585
+But for me when doing like tasks,
+I want to rename the terminals.
+
+00:06:48.585 --> 00:06:52.155
+And also there's a smart functionality
+here in terms of that you can add
+
+00:06:52.155 --> 00:06:57.565
+tasks just straight from the terminal
+view and you can also reference them.
+
+00:06:58.315 --> 00:07:02.515
+Basically like this, and it'll rename
+the terminal into the task description,
+
+00:07:02.665 --> 00:07:06.914
+and it'll also give the description
+straight into the claude code terminal.
+
+00:07:06.914 --> 00:07:10.604
+So you quickly can start new tasks
+if you have planned out things, but
+
+00:07:10.604 --> 00:07:14.534
+want to not utilize the AI system
+with everything happening in the
+
+00:07:14.774 --> 00:07:16.514
+background, you want to be more hands on.
+
+00:07:16.754 --> 00:07:18.669
+This is the system that
+allows you to do that.
+
+00:07:19.669 --> 00:07:23.009
+We also have some session restoring
+so that you can close down the
+
+00:07:23.009 --> 00:07:26.519
+application and spawn it up again,
+it will save the session so you
+
+00:07:26.519 --> 00:07:28.379
+can continue if anything happens.
+
+00:07:28.749 --> 00:07:32.529
+And we'll continue to iterate on this
+based upon how many people use the
+
+00:07:32.529 --> 00:07:34.269
+agent terminals in their day-to-day.
+
+00:07:36.159 --> 00:07:38.164
+We also have insights, which is basically.
+
+00:07:38.884 --> 00:07:42.694
+a chat with history, which is
+a Claude called instance that
+
+00:07:42.694 --> 00:07:45.964
+have access to your project and
+you can spawn chat history here.
+
+00:07:46.144 --> 00:07:49.119
+Myself, I like to use
+this for more like just.
+
+00:07:50.089 --> 00:07:52.939
+Investigating things that I'm
+wondering about, maybe having a
+
+00:07:52.939 --> 00:07:54.889
+sparring partner, something like that.
+
+00:07:54.889 --> 00:07:55.819
+It's nice to have.
+
+00:07:56.159 --> 00:08:01.389
+And also the roadmap functionality is
+a very good thing, for you actually
+
+00:08:01.389 --> 00:08:03.624
+getting good traction with your project.
+
+00:08:04.519 --> 00:08:08.059
+So here you can see we have different
+views for creating a roadmap, and we
+
+00:08:08.059 --> 00:08:12.949
+are also gonna be integrating third
+party software like canny in order to
+
+00:08:12.949 --> 00:08:17.589
+get feedback from users, from their
+softwares, and just incorporating it
+
+00:08:17.589 --> 00:08:19.449
+straight into the Auto Claude system.
+
+00:08:19.904 --> 00:08:24.224
+So here you can see the AI has tried
+to identify your target audience, and
+
+00:08:24.224 --> 00:08:28.874
+then it's breaking down features that
+you should implement into your project.
+
+00:08:29.174 --> 00:08:33.914
+This is just gonna become better and
+better as the more you use it because
+
+00:08:34.194 --> 00:08:36.529
+Auto Claude has its own memory layer.
+
+00:08:37.079 --> 00:08:41.249
+So we can go here to context and the first
+thing you'll see is the project index.
+
+00:08:41.429 --> 00:08:44.429
+So it's basically what we can
+programmatically figure out
+
+00:08:44.729 --> 00:08:46.139
+what the project is about.
+
+00:08:46.139 --> 00:08:51.719
+It has identified, we are in the Auto
+Claude repo here and it is identified
+
+00:08:51.719 --> 00:08:56.639
+the electron front end and the python
+backend with the API routes and the
+
+00:08:56.639 --> 00:09:01.769
+dependencies, just so that things like
+this, the actual project infrastructure,
+
+00:09:01.919 --> 00:09:04.589
+is quickly given as context to the user.
+
+00:09:05.404 --> 00:09:09.394
+And something we're working very
+heavily on is the memory system.
+
+00:09:09.484 --> 00:09:14.884
+It's a, graph memory system also
+incorporated with Semantic Rag.
+
+00:09:15.034 --> 00:09:17.854
+If you don't know what that
+means, it's basically that we
+
+00:09:17.854 --> 00:09:21.244
+have different methods for letting
+the AI know about your project.
+
+00:09:21.544 --> 00:09:26.044
+And as you're doing and you're working
+with tasks here, the more you use
+
+00:09:26.044 --> 00:09:27.904
+it, the smarter the system becomes.
+
+00:09:28.174 --> 00:09:31.144
+And for people who has a
+little bit more knowledge about
+
+00:09:31.144 --> 00:09:33.364
+context, windows and token usage.
+
+00:09:33.984 --> 00:09:38.394
+The more you use Auto Claude, the
+smarter it becomes at actually retrieving
+
+00:09:38.394 --> 00:09:41.164
+context at a smaller token usage.
+
+00:09:41.344 --> 00:09:45.544
+So it'll become cheaper to actually
+use Auto Claude over claude
+
+00:09:45.564 --> 00:09:47.334
+code when you use it over time.
+
+00:09:48.334 --> 00:09:52.744
+So the roadmap functionality, definitely
+something to check out and see what
+
+00:09:52.744 --> 00:09:56.294
+it, suggests that you should do
+for your project, but also we have
+
+00:09:56.294 --> 00:10:01.064
+the ideation tab here where we just
+can get some quick tasks if you are
+
+00:10:01.064 --> 00:10:02.684
+not sure about what you should do.
+
+00:10:02.834 --> 00:10:07.634
+And also if you have something like,
+I just want to see, for instance,
+
+00:10:07.634 --> 00:10:13.094
+security and code improvements at a
+general step, you can generate that.
+
+00:10:13.339 --> 00:10:17.899
+And Auto Claude will figure out based
+upon your project, investigate where,
+
+00:10:17.899 --> 00:10:19.969
+how do we have some security issues?
+
+00:10:20.179 --> 00:10:24.769
+We also have performance, so we can do
+performance enhancement, but also like
+
+00:10:24.769 --> 00:10:29.749
+code improvements is generally, it's
+trying to locate like low hanging fruits
+
+00:10:29.749 --> 00:10:33.979
+and quick wins where we can quickly
+incorporate something that has good
+
+00:10:33.979 --> 00:10:36.139
+value for the users of the project.
+
+00:10:37.139 --> 00:10:39.059
+So we'll go, just go back here and see.
+
+00:10:39.059 --> 00:10:43.749
+You can see now that the two tasks that
+we have, done is done with AI review.
+
+00:10:44.079 --> 00:10:47.699
+We can see here it hasn't identified
+actually that there is any
+
+00:10:47.699 --> 00:10:49.349
+merge conflicts ready for this.
+
+00:10:50.459 --> 00:10:51.749
+Let's just recheck it.
+
+00:10:53.099 --> 00:10:57.399
+These tasks, you can go in and see
+the subtasks, what it has done.
+
+00:10:57.639 --> 00:11:01.089
+You can also check the full
+logs in terms of what it did for
+
+00:11:01.089 --> 00:11:03.099
+validation, what it did for coding.
+
+00:11:03.249 --> 00:11:05.919
+So you have full overview
+over what the AI system has
+
+00:11:05.919 --> 00:11:07.569
+actually done for each of these.
+
+00:11:08.569 --> 00:11:11.269
+We're just gonna let this run
+because it finds five different
+
+00:11:11.269 --> 00:11:12.999
+things with it each category.
+
+00:11:13.329 --> 00:11:15.639
+And while we do that, we'll
+talk about the change log
+
+00:11:15.639 --> 00:11:17.439
+functionality inside Auto Claude.
+
+00:11:17.619 --> 00:11:19.209
+And it's something I really like.
+
+00:11:19.449 --> 00:11:23.439
+It has the possibility to create change
+logs, and also it's integrated with
+
+00:11:23.439 --> 00:11:28.209
+GitHub, so you can create a change
+log based upon either all the tasks
+
+00:11:28.209 --> 00:11:33.279
+you have done inside Auto Claude, but
+what we use most is the GIT history.
+
+00:11:33.529 --> 00:11:38.629
+Because I like to work with both
+the Task Kanban board, but also
+
+00:11:38.629 --> 00:11:40.579
+like I showcased more manually.
+
+00:11:40.579 --> 00:11:45.229
+So I'm manually doing commits to GitHub
+and I'm manually doing work with ai.
+
+00:11:46.009 --> 00:11:49.129
+And that makes it so that when you
+go into GI History here, you can
+
+00:11:49.129 --> 00:11:54.449
+for instance, say since last version
+and we are version, 2.1 right now.
+
+00:11:54.660 --> 00:11:58.709
+And it will actually load all the commits
+that's happening since that version.
+
+00:11:58.979 --> 00:12:00.209
+And you can just continue.
+
+00:12:01.099 --> 00:12:07.399
+And we will say 2.0 version, and
+this is a GitHub release and we want
+
+00:12:07.399 --> 00:12:10.309
+some emojis, and it's just like that.
+
+00:12:10.309 --> 00:12:12.204
+It's gonna generate a change log.
+
+00:12:13.449 --> 00:12:14.289
+And it's quite quick.
+
+00:12:14.299 --> 00:12:17.029
+we don't use Opus for this
+functionality right now.
+
+00:12:17.239 --> 00:12:20.569
+And you'll see it identifies the
+new features, improvements, bug
+
+00:12:20.569 --> 00:12:23.059
+fixes, and also all the changes.
+
+00:12:23.359 --> 00:12:25.909
+So we can quickly just save
+this to the change log.
+
+00:12:25.939 --> 00:12:29.179
+And once it does that, we can
+just click create release, and
+
+00:12:29.179 --> 00:12:31.664
+that goes straight up until Gith.
+
+00:12:32.584 --> 00:12:36.454
+So that's a very fast way to get
+good change logs and do GitHub
+
+00:12:36.454 --> 00:12:40.275
+releases if you want, something
+like that for your project.
+
+00:12:40.574 --> 00:12:45.765
+I do recommend using the change
+log for actually keeping track of
+
+00:12:45.765 --> 00:12:49.485
+what's happening inside your project
+just so you have control over time.
+
+00:12:50.485 --> 00:12:52.435
+So we talked about the context as well.
+
+00:12:52.495 --> 00:12:56.455
+It's something we really are
+working hard on and there's
+
+00:12:56.455 --> 00:12:57.985
+integrations with GitHub issues.
+
+00:12:57.985 --> 00:13:02.215
+So GitHub issues will come straight into
+Auto Claude and you can create tasks and
+
+00:13:02.215 --> 00:13:06.325
+it can start to identify what's wrong and
+fix it automatically in the background.
+
+00:13:08.245 --> 00:13:10.225
+There's a lot of other
+things that's coming.
+
+00:13:10.225 --> 00:13:12.925
+There's a lot of good
+things in the settings.
+
+00:13:13.255 --> 00:13:18.345
+For instance, if you are a very
+heavy power user like me you can
+
+00:13:18.345 --> 00:13:21.135
+utilize the integrations tab.
+
+00:13:21.135 --> 00:13:24.105
+Here we have multiple Claude
+accounts because what.
+
+00:13:24.780 --> 00:13:30.540
+Auto Claude actually allows you to do
+is to create a lot of tasks and just run
+
+00:13:30.540 --> 00:13:34.830
+them in the background, so you get a lot
+of features done quickly, but that also
+
+00:13:34.830 --> 00:13:36.660
+implies that you're getting things done.
+
+00:13:37.605 --> 00:13:42.075
+Not only quicker, but for instance, I
+get a lot of tasks done while I sleep.
+
+00:13:42.105 --> 00:13:45.435
+So basically all my claude
+code usage has doubled.
+
+00:13:45.655 --> 00:13:51.105
+So I need two claude code max
+plans and we have created a system
+
+00:13:51.105 --> 00:13:54.515
+that you can incorporate both of
+them, into the Auto Claude system
+
+00:13:54.725 --> 00:13:56.945
+and easily swap between them.
+
+00:13:57.185 --> 00:14:01.355
+And we will incorporate some type of like
+auto switching so it knows about what
+
+00:14:01.355 --> 00:14:05.730
+the rate limits for one account and it
+swaps when you need to swap basically
+
+00:14:06.279 --> 00:14:10.299
+so now we can go ahead and just
+get the task into our project.
+
+00:14:10.719 --> 00:14:15.339
+We open the task, which is ready now
+for human review, and we just press
+
+00:14:15.369 --> 00:14:20.619
+stage changes and that makes it so
+that if there's any merge conflicts,
+
+00:14:20.679 --> 00:14:22.629
+it's gonna solve that by itself.
+
+00:14:23.154 --> 00:14:26.994
+And we can go here into the IDE
+now and we see that the changes
+
+00:14:26.994 --> 00:14:32.454
+have come into our repo and we can
+repeat, uh, review them if we want.
+
+00:14:32.844 --> 00:14:36.924
+And we now also can just go into
+the, um, you can see here the
+
+00:14:36.924 --> 00:14:38.814
+changes staged successfully.
+
+00:14:39.199 --> 00:14:43.519
+So if there is any merge conflicts, and
+this is a very good, which I appreciate,
+
+00:14:43.519 --> 00:14:49.249
+which is the merge conflict AI layer
+that fixes merge conflicts automatically
+
+00:14:49.489 --> 00:14:53.899
+so you can work on a lot of tasks and
+also work manually in other branches.
+
+00:14:54.744 --> 00:14:59.274
+The system will follow along as
+files evolve, but we can now go
+
+00:14:59.274 --> 00:15:00.684
+and see if this is successful.
+
+00:15:00.684 --> 00:15:04.224
+This was the fixed overlapping
+buttons and that was that.
+
+00:15:04.224 --> 00:15:08.094
+If we go here and we see
+it, browse the uh files.
+
+00:15:08.304 --> 00:15:13.194
+You can see now the task was successful,
+it implemented it, and we can go ahead
+
+00:15:13.194 --> 00:15:14.969
+and merge this with our main branch.
+
+00:15:14.989 --> 00:15:15.889
+So what's coming next?
+
+00:15:15.889 --> 00:15:19.279
+We have a great focus on the framework
+itself that runs behind the hood.
+
+00:15:19.549 --> 00:15:23.569
+We also have the Python CLI that you
+can utilize if you don't want to use
+
+00:15:23.569 --> 00:15:26.269
+the frontend electron application.
+
+00:15:26.859 --> 00:15:31.539
+Now we're also working on incorporating
+the BMAD method for context
+
+00:15:31.539 --> 00:15:34.119
+engineering, AI coding validation.
+
+00:15:34.299 --> 00:15:38.409
+And we're just gonna put it on steroids
+by putting it inside Auto Claude where
+
+00:15:38.409 --> 00:15:44.309
+we get like the long running agents, QA,
+looping, rag memory system, and much more.
+
+00:15:44.309 --> 00:15:47.819
+We also welcome everybody to
+our free Discord community.
+
+00:15:47.819 --> 00:15:51.929
+The link is in the description to talk
+about features, bugs, and you can also
+
+00:15:51.929 --> 00:15:56.489
+network with like-minded AI enthusiasts,
+developers, entrepreneurs, marketers.
+
+00:15:56.879 --> 00:16:00.239
+There's a lot of people there,
+and then generally a nice
+
+00:16:00.239 --> 00:16:01.709
+community to feel at home.
+
+00:16:01.709 --> 00:16:04.284
+So stay tuned for big
+productivity updates.
+
+00:16:05.574 --> 00:16:08.844
+So I just wanted to showcase
+how you can install Auto Cloud.
+
+00:16:08.844 --> 00:16:12.594
+If you're wondering about how to do
+that, we have a very descriptive,
+
+00:16:12.684 --> 00:16:15.684
+quick install description if
+you want to follow along that.
+
+00:16:16.164 --> 00:16:18.174
+If not, here's how you do it quickly.
+
+00:16:18.444 --> 00:16:22.764
+You download the zip file here on GitHub,
+and the link is down in the description.
+
+00:16:24.714 --> 00:16:26.034
+Then you go and.
+
+00:16:26.439 --> 00:16:32.049
+You create either a new folder or you
+unzip the auto cloud folder, which is, uh,
+
+00:16:32.079 --> 00:16:37.299
+which you downloaded, and you just go to
+your favorite IDE here we use in Cursor
+
+00:16:37.299 --> 00:16:42.459
+just because it's, uh, simple to use
+with ai, especially if you're a beginner.
+
+00:16:42.909 --> 00:16:46.359
+And we just open up the
+folder that we just unzipped.
+
+00:16:47.769 --> 00:16:54.789
+Now we have the Auto Cloud project open
+here, and the first thing you're gonna do.
+
+00:16:54.789 --> 00:17:01.869
+Is that if you, is that, if you
+haven't installed the uh, node, JJS,
+
+00:17:01.869 --> 00:17:07.959
+Python and Docker desktop, just follow
+the instructions or just, what you
+
+00:17:07.959 --> 00:17:12.459
+also can do is basically just copy
+and paste this into something like.
+
+00:17:13.944 --> 00:17:17.484
+Cursor and just say, help me install this.
+
+00:17:17.694 --> 00:17:21.234
+And it will help you do that,
+uh, uh, based upon your system.
+
+00:17:21.414 --> 00:17:24.534
+And that's actually a very quick
+way for you to get started.
+
+00:17:24.864 --> 00:17:30.294
+Once everything is installed,
+you're just gonna do the first
+
+00:17:30.294 --> 00:17:35.034
+step here, which is to do these
+commands inside the terminal here.
+
+00:17:35.034 --> 00:17:41.034
+So if you don't have uv, you can basically
+just tell Opus to, or, or the agent
+
+00:17:41.034 --> 00:17:47.094
+you have inside Cursor or any other, a
+AI agent to just help me use, uh, uv,
+
+00:17:47.154 --> 00:17:52.194
+which is basically just for managing
+the packages here in a environment.
+
+00:17:52.494 --> 00:17:56.844
+Or you can use this, you can
+try this also, if you're, um.
+
+00:17:57.624 --> 00:18:04.674
+If the first command here is failing,
+that will basically spin up a, uh, virtual
+
+00:18:04.824 --> 00:18:07.044
+environment and install everything.
+
+00:18:07.044 --> 00:18:08.934
+So now it's ready to be used.
+
+00:18:11.004 --> 00:18:14.574
+The next step is to actually start
+the memory layer, and here we need
+
+00:18:14.574 --> 00:18:16.464
+Docker compose in order to do that.
+
+00:18:17.034 --> 00:18:21.594
+So you will just go and do this
+command in its own database.
+
+00:18:21.984 --> 00:18:26.634
+Uh, it'll create the database and spin up
+what's necessary for the memory to work.
+
+00:18:27.189 --> 00:18:31.209
+And the last thing is to actually just
+install and launch the application.
+
+00:18:31.209 --> 00:18:34.329
+So we are gonna do p and PM
+install that installs everything,
+
+00:18:35.349 --> 00:18:39.279
+and then just command, copy this
+command once it's done here.
+
+00:18:39.279 --> 00:18:43.774
+So now it'll just build everything
+and it'll start the application as
+
+00:18:43.774 --> 00:18:47.944
+soon as it's done, and it's taking
+quite a short amount of time.
+
+00:18:49.054 --> 00:18:53.584
+Now we can see we're getting a
+new application up and going here.
+
+00:18:54.484 --> 00:18:56.164
+So there you have it.
+
+00:18:56.614 --> 00:18:57.634
+It's up and going.
+
+00:18:59.554 --> 00:19:03.634
+And if you have any questions, I highly
+suggest you join our Discord community.
+
+00:19:03.904 --> 00:19:06.784
+I will be very interactive
+there in terms of helping you
+
+00:19:07.054 --> 00:19:08.554
+if you have any issues or bugs.
+
+00:19:09.004 --> 00:19:14.284
+And if you have liked the video,
+be sure to subscribe and like it.
+
+00:19:14.644 --> 00:19:15.184
+And.
+
+00:19:15.949 --> 00:19:19.909
+Help other people find this amazing
+system that we are working on so we can
+
+00:19:19.909 --> 00:19:24.949
+get going with our projects at lightning
+speed while keep, keep still keeping that
+
+00:19:24.949 --> 00:19:27.174
+quality that we want from our AI coding.
+

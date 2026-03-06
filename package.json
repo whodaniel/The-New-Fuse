@@ -220,7 +220,16 @@
     "cloudflare:zeroclaw:relay:dev": "pnpm --dir cloudflare-zeroclaw-relay run dev",
     "cloudflare:zeroclaw:relay:deploy": "pnpm --dir cloudflare-zeroclaw-relay run deploy",
     "factory:release:seed": "scripts/orchestrator/seed-public-release-swarm-tasks.sh",
-    "reports:lifecycle": "node scripts/swarm/report-lifecycle.cjs"
+    "reports:lifecycle": "node scripts/swarm/report-lifecycle.cjs",
+    "graph:all": "make -C tools/agent-relationship-graph all",
+    "graph:subgraphs": "make -C tools/agent-relationship-graph subgraphs",
+    "graph:analytics": "make -C tools/agent-relationship-graph analytics",
+    "graph:neo4j": "make -C tools/agent-relationship-graph neo4j",
+    "graph:temporal": "make -C tools/agent-relationship-graph temporal",
+    "graph:alerts": "make -C tools/agent-relationship-graph alerts",
+    "graph:html": "make -C tools/agent-relationship-graph html",
+    "graph:help": "make -C tools/agent-relationship-graph help",
+    "viz:generate": "node visualizations/tools/cli.js"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",

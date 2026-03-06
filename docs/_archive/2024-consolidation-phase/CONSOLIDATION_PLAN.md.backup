@@ -1108,7 +1108,7 @@ If you need functionality from a deprecated script:
 
 ```bash
 # 1. Create new directory structure
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs
 mkdir -p getting-started guides reference/architecture reference/api reference/protocols
 mkdir -p troubleshooting project/_archive/2024-pre-restructure
 
@@ -1139,7 +1139,7 @@ find . -name "*.md" -exec markdown-link-check {} \;
 
 ```bash
 # 1. Create new scripts directory structure
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts
 mkdir -p core build launch database mcp maintenance development testing
 mkdir -p _deprecated/2024-q4/{fix-scripts,root-builds,root-launches,root-fixes}
 
@@ -1155,7 +1155,7 @@ mv build-intelligent.sh _deprecated/2024-q4/
 # ... etc
 
 # 4. Handle root directory scripts
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 mv build-*.sh scripts/_deprecated/2024-q4/root-builds/
 mv launch-*.sh scripts/_deprecated/2024-q4/root-launches/
 mv fix-*.sh scripts/_deprecated/2024-q4/root-fixes/
@@ -1192,7 +1192,7 @@ cd scripts
 grep -r "scripts/" . | grep "\.sh:" | cut -d: -f1 | sort -u
 
 # Check for scripts called in package.json
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 grep -r "scripts/" package.json apps/*/package.json packages/*/package.json
 
 # Test that key scripts still work

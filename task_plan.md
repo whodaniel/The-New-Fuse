@@ -133,8 +133,8 @@ Phase 4 (Implementation) - in progress
 
 | Skill                   | Purpose                            | Location                                                               |
 | ----------------------- | ---------------------------------- | ---------------------------------------------------------------------- |
-| framework-consciousness | System-wide orchestration strategy | `/Users/<owner>/.codex/skills/framework-consciousness/SKILL.md` |
-| context-frontloader     | Session context bootstrapping      | `/Users/<owner>/.codex/skills/context-frontloader/SKILL.md`     |
+| framework-consciousness | System-wide orchestration strategy | `/path/to/.codex/skills/framework-consciousness/SKILL.md` |
+| context-frontloader     | Session context bootstrapping      | `/path/to/.codex/skills/context-frontloader/SKILL.md`     |
 
 ### Agents Involved
 

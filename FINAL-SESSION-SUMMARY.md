@@ -246,7 +246,7 @@ Live system visibility:
 python3 --version
 
 # The New Fuse project
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 ```
 
 ### Setup Backend API (One-Time)
@@ -561,7 +561,7 @@ production deployment.** 🚀
 
 ```bash
 # 1. Navigate to project
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 
 # 2. Start services
 pnpm run docker:start

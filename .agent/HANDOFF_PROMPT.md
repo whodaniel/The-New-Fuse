@@ -226,7 +226,7 @@ The next session is successful when:
 
 ---
 
-**PROJECT ROOT**: `/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse`
+**PROJECT ROOT**: `/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse`
 
 _Last Updated: January 16, 2026_ _Focus: Multi-Agent Orchestration, Stall
 Recovery, Self-Prompting_

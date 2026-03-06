@@ -4,7 +4,7 @@ set -e
 
 echo "🔧 Fixing VSCode Extension TypeScript Errors..."
 
-cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/src/vscode-extension"
+cd "/path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/src/vscode-extension"
 
 # Remove problematic files that have compilation errors
 echo "Removing files with compilation errors..."

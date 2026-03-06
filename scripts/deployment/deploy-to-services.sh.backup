@@ -16,7 +16,7 @@ RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 # Project root
-PROJECT_ROOT="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+PROJECT_ROOT="/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
 
 # Check Railway CLI
 if ! command -v railway &> /dev/null; then

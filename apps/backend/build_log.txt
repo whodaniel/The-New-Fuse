@@ -1192,12 +1192,12 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 [7m385[0m           config
 [7m   [0m [91m          ~~~~~~[0m
 [96msrc/modules/mcp/mcp-a2a-bridge.service.ts[0m:[93m3[0m:[93m27[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/mcp-core/broker' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/mcp-core/dist/broker/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/mcp-core/dist/broker/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m3[0m import { MCPBroker } from '@the-new-fuse/mcp-core/broker';
 [7m [0m [91m                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
 [96msrc/modules/mcp/mcp-a2a-bridge.service.ts[0m:[93m4[0m:[93m27[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/mcp-core/client' or its corresponding type declarations.
-  There are types at '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/mcp-core/dist/client/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+  There are types at '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/node_modules/@the-new-fuse/mcp-core/dist/client/index.d.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
 
 [7m4[0m import { MCPClient } from '@the-new-fuse/mcp-core/client';
 [7m [0m [91m                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
@@ -1368,23 +1368,23 @@ npm warn Unknown project config "enable-pre-post-scripts". This will stop workin
 
 [7m89[0m     super(message, options.cause ? { cause: options.cause } : undefined)
 [7m  [0m [91m                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
-[96msrc/modules/relay/relay.controller.ts[0m:[93m115[0m:[93m9[0m - [91merror[0m[90m TS4053: [0mReturn type of public method from exported class has or is using name 'Agent' from external module "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/src/modules/relay/relay.service" but cannot be named.
+[96msrc/modules/relay/relay.controller.ts[0m:[93m115[0m:[93m9[0m - [91merror[0m[90m TS4053: [0mReturn type of public method from exported class has or is using name 'Agent' from external module "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/src/modules/relay/relay.service" but cannot be named.
 
 [7m115[0m   async getAgent(@Param('id') id: string) {
 [7m   [0m [91m        ~~~~~~~~[0m
-[96msrc/modules/relay/relay.controller.ts[0m:[93m128[0m:[93m9[0m - [91merror[0m[90m TS4053: [0mReturn type of public method from exported class has or is using name 'Agent' from external module "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/src/modules/relay/relay.service" but cannot be named.
+[96msrc/modules/relay/relay.controller.ts[0m:[93m128[0m:[93m9[0m - [91merror[0m[90m TS4053: [0mReturn type of public method from exported class has or is using name 'Agent' from external module "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/src/modules/relay/relay.service" but cannot be named.
 
 [7m128[0m   async registerAgent(@Body() dto: RegisterAgentDto) {
 [7m   [0m [91m        ~~~~~~~~~~~~~[0m
-[96msrc/modules/relay/relay.gateway.ts[0m:[93m79[0m:[93m9[0m - [91merror[0m[90m TS4053: [0mReturn type of public method from exported class has or is using name 'Agent' from external module "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/src/modules/relay/relay.service" but cannot be named.
+[96msrc/modules/relay/relay.gateway.ts[0m:[93m79[0m:[93m9[0m - [91merror[0m[90m TS4053: [0mReturn type of public method from exported class has or is using name 'Agent' from external module "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/src/modules/relay/relay.service" but cannot be named.
 
 [7m79[0m   async handleAgentRegistration(
 [7m  [0m [91m        ~~~~~~~~~~~~~~~~~~~~~~~[0m
-[96msrc/modules/relay/relay.gateway.ts[0m:[93m231[0m:[93m9[0m - [91merror[0m[90m TS4053: [0mReturn type of public method from exported class has or is using name 'Agent' from external module "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/src/modules/relay/relay.service" but cannot be named.
+[96msrc/modules/relay/relay.gateway.ts[0m:[93m231[0m:[93m9[0m - [91merror[0m[90m TS4053: [0mReturn type of public method from exported class has or is using name 'Agent' from external module "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/src/modules/relay/relay.service" but cannot be named.
 
 [7m231[0m   async handleStatusRequest() {
 [7m   [0m [91m        ~~~~~~~~~~~~~~~~~~~[0m
-[96msrc/modules/relay/relay.gateway.ts[0m:[93m231[0m:[93m9[0m - [91merror[0m[90m TS4053: [0mReturn type of public method from exported class has or is using name 'SystemStatus' from external module "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/src/modules/relay/relay.service" but cannot be named.
+[96msrc/modules/relay/relay.gateway.ts[0m:[93m231[0m:[93m9[0m - [91merror[0m[90m TS4053: [0mReturn type of public method from exported class has or is using name 'SystemStatus' from external module "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/backend/src/modules/relay/relay.service" but cannot be named.
 
 [7m231[0m   async handleStatusRequest() {
 [7m   [0m [91m        ~~~~~~~~~~~~~~~~~~~[0m

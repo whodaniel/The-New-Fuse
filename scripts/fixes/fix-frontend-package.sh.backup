@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FRONTEND_DIR="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/packages/frontend"
+FRONTEND_DIR="/path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/packages/frontend"
 echo "🔧 Fixing issues in the frontend package..."
 
 # 1. Fix file extensions in import paths

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent Registry Manager"
+  short_description: "Help with Agent Registry Manager tasks"
+  default_prompt: "Run the Agent Registry Manager workflow using SKILL.md instructions."

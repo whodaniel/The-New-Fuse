@@ -15,7 +15,7 @@ You have **3 options** to start the QA test:
 #### Option A: Use the Cloud QA Script (Recommended)
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 ./scripts/run-cloud-qa.sh
 ```
 

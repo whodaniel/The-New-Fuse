@@ -49,7 +49,7 @@ code --install-extension apps/vscode-extension/the-new-fuse-9.0.0.vsix
 2. Enable **Developer Mode** (top right toggle).
 3. Click **Load unpacked**.
 4. Select the directory:
-   `/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/dist-v5`
+   `/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/dist-v5`
    _(Note: This version has been patched to allow connections to the production
    relay)._
 

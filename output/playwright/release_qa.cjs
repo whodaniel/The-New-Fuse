@@ -4,7 +4,7 @@ const path = require('path');
 
 const ARCADE_URL = 'https://ai-arcade.xyz';
 const MUSIC_URL = 'https://open-audio-deck-production.up.railway.app';
-const outDir = '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/output/playwright';
+const outDir = '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/output/playwright';
 fs.mkdirSync(outDir, { recursive: true });
 
 const results = {

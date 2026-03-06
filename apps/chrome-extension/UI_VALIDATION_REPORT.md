@@ -41,7 +41,7 @@ Here's what should now be visible:
 
 ```bash
 # Extension is already built at:
-/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/chrome-extension/dist
+/path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/chrome-extension/dist
 
 # In Chrome:
 # 1. Go to chrome://extensions/

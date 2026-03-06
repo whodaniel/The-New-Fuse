@@ -417,7 +417,7 @@ interface FeedbackLoop {
 2. **Verify Orchestrator Service Can Initialize**
 
    ```bash
-   cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+   cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
    npx ts-node packages/relay-core/src/services/OrchestratorIntegrationService.ts
    ```
 

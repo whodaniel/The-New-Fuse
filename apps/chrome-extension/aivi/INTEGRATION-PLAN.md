@@ -39,7 +39,7 @@ This document outlines the strategy for:
 ### Personal Data Location
 
 **Store locally:**
-`/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/`
+`/path/to/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/`
 
 ```
 The-New-Fuse/
@@ -139,7 +139,7 @@ function exportForNotebookLM(videos) {
 ### Current State (from Explore agent findings)
 
 **TNF Chrome Extension:**
-`/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/`
+`/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/`
 
 **Already Has:**
 

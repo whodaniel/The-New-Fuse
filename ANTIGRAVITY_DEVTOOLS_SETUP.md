@@ -107,7 +107,7 @@ Uses `list_console_messages` to show all logs, errors, warnings.
 In your terminal:
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 node apps/cloud-sandbox/scripts/audit_website.js
 ```
 
@@ -127,7 +127,7 @@ All skills are documented in `.agent/skills/chrome-devtools/`:
 
 ### 1. Console Debugger (`/console-debug`)
 
-**File**: [`.agent/skills/chrome-devtools/console-debugger.md`](file:///Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/chrome-devtools/console-debugger.md)
+**File**: [`.agent/skills/chrome-devtools/console-debugger.md`](file:///path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/chrome-devtools/console-debugger.md)
 
 ```markdown
 # Example prompts:
@@ -143,7 +143,7 @@ All skills are documented in `.agent/skills/chrome-devtools/`:
 
 ### 2. Performance Monitor (`/performance-trace`)
 
-**File**: [`.agent/skills/chrome-devtools/performance-monitor.md`](file:///Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/chrome-devtools/performance-monitor.md)
+**File**: [`.agent/skills/chrome-devtools/performance-monitor.md`](file:///path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/chrome-devtools/performance-monitor.md)
 
 ```markdown
 # Example prompts:
@@ -160,7 +160,7 @@ All skills are documented in `.agent/skills/chrome-devtools/`:
 
 ### 3. Network Analyzer (`/network-debug`)
 
-**File**: [`.agent/skills/chrome-devtools/network-analyzer.md`](file:///Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/chrome-devtools/network-analyzer.md)
+**File**: [`.agent/skills/chrome-devtools/network-analyzer.md`](file:///path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/chrome-devtools/network-analyzer.md)
 
 ```markdown
 # Example prompts:
@@ -175,7 +175,7 @@ All skills are documented in `.agent/skills/chrome-devtools/`:
 
 ### 4. Browser Automation (`/browser-automate`)
 
-**File**: [`.agent/skills/chrome-devtools/browser-automation.md`](file:///Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/chrome-devtools/browser-automation.md)
+**File**: [`.agent/skills/chrome-devtools/browser-automation.md`](file:///path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/chrome-devtools/browser-automation.md)
 
 ```markdown
 # Example prompts:
@@ -191,7 +191,7 @@ All skills are documented in `.agent/skills/chrome-devtools/`:
 
 ### 5. Master Skill (`/devtools`)
 
-**File**: [`.agent/skills/chrome-devtools/README.md`](file:///Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/chrome-devtools/README.md)
+**File**: [`.agent/skills/chrome-devtools/README.md`](file:///path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/chrome-devtools/README.md)
 
 Complete diagnostic combining all features.
 
@@ -394,11 +394,11 @@ The Chrome DevTools MCP uses `take_screenshot` which works differently than Sock
 
 ## 📖 Documentation
 
-- **Quick Start**: [`.agent/skills/chrome-devtools/QUICK_START.md`](file:///Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/chrome-devtools/QUICK_START.md)
-- **Installation**: [`.agent/skills/chrome-devtools/INSTALLATION.md`](file:///Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/chrome-devtools/INSTALLATION.md)
-- **Master Guide**: [`.agent/skills/chrome-devtools/README.md`](file:///Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/chrome-devtools/README.md)
-- **Quick Fix Explanation**: [`QUICK_FIX_LIVE_VIEW.md`](file:///Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/QUICK_FIX_LIVE_VIEW.md)
-- **Full Integration Plan**: [`apps/cloud-sandbox/DEVTOOLS_INTEGRATION.md`](file:///Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/cloud-sandbox/DEVTOOLS_INTEGRATION.md)
+- **Quick Start**: [`.agent/skills/chrome-devtools/QUICK_START.md`](file:///path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/chrome-devtools/QUICK_START.md)
+- **Installation**: [`.agent/skills/chrome-devtools/INSTALLATION.md`](file:///path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/chrome-devtools/INSTALLATION.md)
+- **Master Guide**: [`.agent/skills/chrome-devtools/README.md`](file:///path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/chrome-devtools/README.md)
+- **Quick Fix Explanation**: [`QUICK_FIX_LIVE_VIEW.md`](file:///path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/QUICK_FIX_LIVE_VIEW.md)
+- **Full Integration Plan**: [`apps/cloud-sandbox/DEVTOOLS_INTEGRATION.md`](file:///path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/cloud-sandbox/DEVTOOLS_INTEGRATION.md)
 
 ---
 

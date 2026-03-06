@@ -23,9 +23,9 @@ interface SkillDefinition {
   path: string;
 }
 
-const ANTHROPIC_SKILLS_DIR = '/Users/<owner>/.claude/skills/skills';
+const ANTHROPIC_SKILLS_DIR = '/path/to/.claude/skills/skills';
 const TNF_SKILLS_DIR =
-  '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic';
+  '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic';
 
 function parseSkillMd(filePath: string): SkillDefinition | null {
   try {

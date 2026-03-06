@@ -13,16 +13,16 @@ export class AuthController {
   @Post('login')
   @ApiOperation({ summary: 'User login' })
   @ApiResponse({ status: 200, description: 'Login successful' })
-  async login(@Body() loginDto: LoginDto, @Req() req: Request) {
-    const ipAddress = req.ip || req.socket?.remoteAddress;
+  async login(@Body() loginDto: LoginDto, @Req() req?: Request) {
+    const ipAddress = req?.ip || req?.socket?.remoteAddress;
     return this.authService.login(loginDto, { ipAddress });
   }
 
   @Post('register')
   @ApiOperation({ summary: 'User registration' })
   @ApiResponse({ status: 201, description: 'Registration successful' })
-  async register(@Body() registerDto: RegisterDto, @Req() req: Request) {
-    const ipAddress = req.ip || req.socket?.remoteAddress;
+  async register(@Body() registerDto: RegisterDto, @Req() req?: Request) {
+    const ipAddress = req?.ip || req?.socket?.remoteAddress;
     return this.authService.register(registerDto, { ipAddress });
   }
 

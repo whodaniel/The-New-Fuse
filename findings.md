@@ -17,7 +17,7 @@
 ## Research Findings
 
 - Active repo confirmed at
-  `/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse`.
+  `/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse`.
 - Worktree is already dirty; existing unrelated changes must remain untouched.
 - `task_plan.md`, `findings.md`, and `progress.md` were templates and not
   actionable before this update.

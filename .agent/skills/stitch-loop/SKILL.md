@@ -1,27 +1,21 @@
 ---
 name: stitch-loop
-description:
-  Teaches agents to iteratively build websites using Stitch with an autonomous
-  baton-passing loop pattern
+description: Teaches agents to iteratively build websites using Stitch with an autonomous baton-passing loop pattern
 allowed-tools:
-  - 'stitch*:*'
-  - 'chrome*:*'
-  - 'Read'
-  - 'Write'
-  - 'Bash'
+  - "stitch*:*"
+  - "chrome*:*"
+  - "Read"
+  - "Write"
+  - "Bash"
 ---
 
 # Stitch Build Loop
 
-You are an **autonomous frontend builder** participating in an iterative
-site-building loop. Your goal is to generate a page using Stitch, integrate it
-into the site, and prepare instructions for the next iteration.
+You are an **autonomous frontend builder** participating in an iterative site-building loop. Your goal is to generate a page using Stitch, integrate it into the site, and prepare instructions for the next iteration.
 
 ## Overview
 
-The Build Loop pattern enables continuous, autonomous website development
-through a "baton" system. Each iteration:
-
+The Build Loop pattern enables continuous, autonomous website development through a "baton" system. Each iteration:
 1. Reads the current task from a baton file (`next-prompt.md`)
 2. Generates a page using Stitch MCP tools
 3. Integrates the page into the site structure
@@ -30,14 +24,12 @@ through a "baton" system. Each iteration:
 ## Prerequisites
 
 **Required:**
-
 - Access to the Stitch MCP Server
 - A Stitch project (existing or will be created)
 - A `DESIGN.md` file (generate one using the `design-md` skill if needed)
 - A `SITE.md` file documenting the site vision and roadmap
 
 **Optional:**
-
 - Chrome DevTools MCP Server — enables visual verification of generated pages
 
 ## The Baton System
@@ -48,20 +40,18 @@ The `next-prompt.md` file acts as a relay baton between iterations:
 ---
 page: about
 ---
-
 A page describing how jules.top tracking works.
 
-**DESIGN SYSTEM (REQUIRED):** [Copy from DESIGN.md Section 6]
+**DESIGN SYSTEM (REQUIRED):**
+[Copy from DESIGN.md Section 6]
 
 **Page Structure:**
-
 1. Header with navigation
 2. Explanation of tracking methodology
 3. Footer with links
 ```
 
 **Critical rules:**
-
 - The `page` field in YAML frontmatter determines the output filename
 - The prompt content must include the design system block from `DESIGN.md`
 - You MUST update this file before completing your work to continue the loop
@@ -71,7 +61,6 @@ A page describing how jules.top tracking works.
 ### Step 1: Read the Baton
 
 Parse `next-prompt.md` to extract:
-
 - **Page name** from the `page` frontmatter field
 - **Prompt content** from the markdown body
 
@@ -79,13 +68,12 @@ Parse `next-prompt.md` to extract:
 
 Before generating, read these files:
 
-| File        | Purpose                                                               |
-| ----------- | --------------------------------------------------------------------- |
-| `SITE.md`   | Site vision, **Stitch Project ID**, existing pages (sitemap), roadmap |
-| `DESIGN.md` | Required visual style for Stitch prompts                              |
+| File | Purpose |
+|------|---------|
+| `SITE.md` | Site vision, **Stitch Project ID**, existing pages (sitemap), roadmap |
+| `DESIGN.md` | Required visual style for Stitch prompts |
 
 **Important checks:**
-
 - Section 4 (Sitemap) — Do NOT recreate pages that already exist
 - Section 5 (Roadmap) — Pick tasks from here if backlog exists
 - Section 6 (Creative Freedom) — Ideas for new pages if roadmap is empty
@@ -95,7 +83,7 @@ Before generating, read these files:
 Use the Stitch MCP tools to generate the page:
 
 1. **Discover namespace**: Run `list_tools` to find the Stitch MCP prefix
-2. **Get or create project**:
+2. **Get or create project**: 
    - If `stitch.json` exists, use the `projectId` from it
    - Otherwise, call `[prefix]:create_project` and save the ID to `stitch.json`
 3. **Generate screen**: Call `[prefix]:generate_screen_from_text` with:
@@ -106,13 +94,38 @@ Use the Stitch MCP tools to generate the page:
    - `htmlCode.downloadUrl` — Download and save as `queue/{page}.html`
    - `screenshot.downloadUrl` — Download and save as `queue/{page}.png`
 
+### Step 3.5: Handle Async Timeouts (Required)
+
+Stitch can be asynchronous: client calls may return timeout errors while generation still completes later.
+
+Required behavior when generation times out (for example `MCP error -32001`):
+1. Do **not** immediately retry.
+2. Wait 5-15 minutes.
+3. Check `list_projects` for recently updated projects.
+4. Run `list_screens` on recently updated projects (not only the last project ID used).
+5. Pull any newly materialized screens before launching new generations.
+
+Important:
+- Timeout does not always mean failure.
+- Credits may still be consumed by backend jobs even if the client call times out.
+- Results can appear later in the Stitch web UI even when MCP did not return assets immediately.
+- Before submitting a new generation for the same prompt/page, wait at least 10 minutes and re-check project screens to avoid duplicate-credit burns.
+
+### Step 3.6: Async Audit Trail (Required)
+
+Maintain a short local log (for example `ATTEMPT_LOG_YYYY-MM-DD.md`) for each generation attempt:
+1. Timestamp, project ID, prompt/page label, and device type.
+2. MCP response status (success, timeout, transport error).
+3. Follow-up polling timestamps and whether screens later materialized.
+
+This prevents confusion about "missing" generations and helps correlate delayed Stitch outputs with consumed credits.
+
 ### Step 4: Integrate into Site
 
 1. Move generated HTML from `queue/{page}.html` to `site/public/{page}.html`
 2. Fix any asset paths to be relative to the public folder
 3. Update navigation:
-   - Find existing placeholder links (e.g., `href="#"`) and wire them to the new
-     page
+   - Find existing placeholder links (e.g., `href="#"`) and wire them to the new page
    - Add the new page to the global navigation if appropriate
 4. Ensure consistent headers/footers across all pages
 
@@ -120,35 +133,27 @@ Use the Stitch MCP tools to generate the page:
 
 If the **Chrome DevTools MCP Server** is available, verify the generated page:
 
-1. **Check availability**: Run `list_tools` to see if `chrome*` tools are
-   present
-2. **Start dev server**: Use Bash to start a local server (e.g.,
-   `npx serve site/public`)
-3. **Navigate to page**: Call `[chrome_prefix]:navigate` to open
-   `http://localhost:3000/{page}.html`
-4. **Capture screenshot**: Call `[chrome_prefix]:screenshot` to capture the
-   rendered page
-5. **Visual comparison**: Compare against the Stitch screenshot
-   (`queue/{page}.png`) for fidelity
+1. **Check availability**: Run `list_tools` to see if `chrome*` tools are present
+2. **Start dev server**: Use Bash to start a local server (e.g., `npx serve site/public`)
+3. **Navigate to page**: Call `[chrome_prefix]:navigate` to open `http://localhost:3000/{page}.html`
+4. **Capture screenshot**: Call `[chrome_prefix]:screenshot` to capture the rendered page
+5. **Visual comparison**: Compare against the Stitch screenshot (`queue/{page}.png`) for fidelity
 6. **Stop server**: Terminate the dev server process
 
-> **Note:** This step is optional. If Chrome DevTools MCP is not installed, skip
-> to Step 5.
+> **Note:** This step is optional. If Chrome DevTools MCP is not installed, skip to Step 5.
 
 ### Step 5: Update Site Documentation
 
 Modify `SITE.md`:
-
 - Add the new page to Section 4 (Sitemap) with `[x]`
 - Remove any idea you consumed from Section 6 (Creative Freedom)
 - Update Section 5 (Roadmap) if you completed a backlog item
 
 ### Step 6: Prepare the Next Baton (Critical)
 
-**You MUST update `next-prompt.md` before completing.** This keeps the loop
-alive.
+**You MUST update `next-prompt.md` before completing.** This keeps the loop alive.
 
-1. **Decide the next page**:
+1. **Decide the next page**: 
    - Check `SITE.md` Section 5 (Roadmap) for pending items
    - If empty, pick from Section 6 (Creative Freedom)
    - Or invent something new that fits the site vision
@@ -158,14 +163,12 @@ alive.
 ---
 page: achievements
 ---
-
 A competitive achievements page showing developer badges and milestones.
 
-**DESIGN SYSTEM (REQUIRED):** [Copy the entire design system block from
-DESIGN.md]
+**DESIGN SYSTEM (REQUIRED):**
+[Copy the entire design system block from DESIGN.md]
 
 **Page Structure:**
-
 1. Header with title and navigation
 2. Badge grid showing unlocked/locked states
 3. Progress bars for milestone tracking
@@ -191,24 +194,21 @@ project/
 
 The loop can be driven by different orchestration layers:
 
-| Method            | How it works                                           |
-| ----------------- | ------------------------------------------------------ |
-| **CI/CD**         | GitHub Actions triggers on `next-prompt.md` changes    |
-| **Human-in-loop** | Developer reviews each iteration before continuing     |
-| **Agent chains**  | One agent dispatches to another (e.g., Jules API)      |
-| **Manual**        | Developer runs the agent repeatedly with the same repo |
+| Method | How it works |
+|--------|--------------|
+| **CI/CD** | GitHub Actions triggers on `next-prompt.md` changes |
+| **Human-in-loop** | Developer reviews each iteration before continuing |
+| **Agent chains** | One agent dispatches to another (e.g., Jules API) |
+| **Manual** | Developer runs the agent repeatedly with the same repo |
 
-The skill is orchestration-agnostic — focus on the pattern, not the trigger
-mechanism.
+The skill is orchestration-agnostic — focus on the pattern, not the trigger mechanism.
 
 ## Design System Integration
 
 This skill works best with the `design-md` skill:
 
-1. **First time setup**: Generate `DESIGN.md` using the `design-md` skill from
-   an existing Stitch screen
-2. **Every iteration**: Copy Section 6 ("Design System Notes for Stitch
-   Generation") into your baton prompt
+1. **First time setup**: Generate `DESIGN.md` using the `design-md` skill from an existing Stitch screen
+2. **Every iteration**: Copy Section 6 ("Design System Notes for Stitch Generation") into your baton prompt
 3. **Consistency**: All generated pages will share the same visual language
 
 ## Common Pitfalls
@@ -221,9 +221,10 @@ This skill works best with the `design-md` skill:
 
 ## Troubleshooting
 
-| Issue                   | Solution                                                   |
-| ----------------------- | ---------------------------------------------------------- |
-| Stitch generation fails | Check that the prompt includes the design system block     |
-| Inconsistent styles     | Ensure DESIGN.md is up-to-date and copied correctly        |
-| Loop stalls             | Verify `next-prompt.md` was updated with valid frontmatter |
-| Navigation broken       | Check all internal links use correct relative paths        |
+| Issue | Solution |
+|-------|----------|
+| Stitch generation fails | Check that the prompt includes the design system block |
+| Stitch times out (`-32001`) but credits decrease | Treat as async job: wait 5-15 min, check updated projects/screens, pull results before retrying |
+| Inconsistent styles | Ensure DESIGN.md is up-to-date and copied correctly |
+| Loop stalls | Verify `next-prompt.md` was updated with valid frontmatter |
+| Navigation broken | Check all internal links use correct relative paths |

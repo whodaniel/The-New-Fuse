@@ -2,7 +2,7 @@
 
 This directory contains the full source tree from:
 
-`/Users/<owner>/Projects/ai-studio-automator`
+`/path/to/Projects/ai-studio-automator`
 
 It is integrated into TNF as a first-class module source for reference, reuse,
 and execution from the TNF monorepo scripts.

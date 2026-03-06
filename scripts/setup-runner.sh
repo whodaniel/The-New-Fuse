@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-RUNNER_DIR="/Users/<owner>/Desktop/A1-Inter-LLM-Com/tnf-runner"
+RUNNER_DIR="/path/to/Desktop/A1-Inter-LLM-Com/tnf-runner"
 RUNNER_VERSION="2.330.0"
 REPO_URL="https://github.com/whodaniel/fuse"
 TOKEN="AU5U42LSSRWIQPDEEBQQUM3JIHVSY"

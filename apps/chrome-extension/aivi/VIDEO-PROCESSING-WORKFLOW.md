@@ -116,7 +116,7 @@ yt-dlp --version
 3. **Verify video library exists:**
 
 - File:
-  `/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-library/ai_video_library.html`
+  `/path/to/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-library/ai_video_library.html`
 - Should contain 647 videos
 
 ### Step-by-Step Processing

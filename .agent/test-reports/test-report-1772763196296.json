@@ -1,0 +1,52 @@
+{
+  "timestamp": "2026-03-06T02:05:00.496Z",
+  "frontend": {
+    "passed": 4,
+    "failed": 1,
+    "errors": [
+      {
+        "test": "type-check",
+        "error": "Command failed: pnpm exec tsc --noEmit"
+      },
+      {
+        "test": "critical-files",
+        "error": "Missing required groups: Vite HTML entry"
+      }
+    ]
+  },
+  "backend": {
+    "passed": 5,
+    "failed": 0,
+    "errors": [
+      {
+        "test": "type-check",
+        "error": "Command failed: pnpm exec tsc --noEmit"
+      }
+    ]
+  },
+  "integration": {
+    "passed": 5,
+    "failed": 0,
+    "errors": []
+  },
+  "overall": {
+    "status": "healthy",
+    "score": 93
+  },
+  "_metadata": {
+    "reportType": "test-report",
+    "domain": "Observe",
+    "lifecycle": "production",
+    "owner": "website-testing-agent",
+    "description": "Frontend/backend build, lint, type-check, and unit test results",
+    "canonicalJourney": "Detect -> Triage -> Execute",
+    "phaseRelevance": [
+      "Phase 1: Product Metadata Foundation",
+      "Phase 4: System Integrity"
+    ],
+    "generatedAt": "2026-03-06T02:13:16.296Z",
+    "cycleNumber": null,
+    "version": "1.0.0",
+    "schema": "tnf-report-lifecycle-v1"
+  }
+}

@@ -108,7 +108,7 @@ my-ai-knowledge-base/           # YOUR PRIVATE REPO
 ### Step 1: Run Setup
 
 ```bash
-cd /Users/<owner>/Projects/ai-video-intelligence-suite
+cd /path/to/Projects/ai-video-intelligence-suite
 node setup-personal-knowledge-base.js
 ```
 
@@ -116,7 +116,7 @@ node setup-personal-knowledge-base.js
 
 1. Ask where to create your personal knowledge base
    - Default:
-     `/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base`
+     `/path/to/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base`
 2. Detect your existing data (645 reports, video library, etc.)
 3. Ask if you want to migrate it
 4. Create complete folder structure
@@ -129,7 +129,7 @@ node setup-personal-knowledge-base.js
 ### Step 2: Create Private GitHub Repo
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base
+cd /path/to/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base
 gh repo create my-ai-knowledge-base --private --source=.
 git push -u origin main
 ```
@@ -143,7 +143,7 @@ All processing scripts now automatically use YOUR personal data location:
 node process-videos-with-personal-data.js
 
 # Check stats
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base
+cd /path/to/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base
 ./quick-stats.js
 
 # Create backup
@@ -188,7 +188,7 @@ const stats = pdm.loadStats(); // User's stats
 
 ```javascript
 // ❌ OLD WAY (only works for you):
-const REPORTS_DIR = '/Users/<owner>/Desktop/.../video-reports';
+const REPORTS_DIR = '/path/to/Desktop/.../video-reports';
 
 // ✅ NEW WAY (works for anyone):
 const REPORTS_DIR = pdm.getVideoReportsDir();

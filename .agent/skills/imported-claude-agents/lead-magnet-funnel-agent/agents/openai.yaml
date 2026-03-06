@@ -1,0 +1,4 @@
+interface:
+  display_name: "Lead Magnet Funnel Agent"
+  short_description: "Help with Lead Magnet Funnel Agent tasks"
+  default_prompt: "Run the Lead Magnet Funnel Agent workflow using SKILL.md instructions."

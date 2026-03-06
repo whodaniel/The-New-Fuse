@@ -1,0 +1,4 @@
+interface:
+  display_name: "Deterministic Web Game Loop"
+  short_description: "Iterate and verify canvas web games reliably"
+  default_prompt: "Use $web-game-deterministic-loop to implement a small gameplay change and verify it with Playwright screenshots, state text, and console checks."

@@ -37,7 +37,7 @@ comprehensive knowledge bases.
 **Processing Location:**
 
 ```
-/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/
+/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/
 ```
 
 **Details:** See [VIDEO-PROCESSING-STATUS.md](VIDEO-PROCESSING-STATUS.md)
@@ -131,11 +131,11 @@ ai-studio-automator/
 
 ### Archived Documentation (Desktop)
 
-- `/Users/<owner>/Desktop/VIDEO-PROCESSING-COMPLETE-GUIDE.md` -
+- `/path/to/Desktop/VIDEO-PROCESSING-COMPLETE-GUIDE.md` -
   Comprehensive technical guide
-- `/Users/<owner>/Desktop/CLI-BUG-ANALYSIS.md` - Browser automation
+- `/path/to/Desktop/CLI-BUG-ANALYSIS.md` - Browser automation
   analysis
-- `/Users/<owner>/Desktop/old-documentation/` - Historical guides
+- `/path/to/Desktop/old-documentation/` - Historical guides
 
 ### In-Repo Documentation
 

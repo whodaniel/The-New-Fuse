@@ -1,0 +1,4 @@
+interface:
+  display_name: "Productivity and Burnout Prevention Agent"
+  short_description: "Help with Productivity and Burnout Prevention Agent tasks"
+  default_prompt: "Run the Productivity And Burnout Prevention Agent workflow using SKILL.md instructions."

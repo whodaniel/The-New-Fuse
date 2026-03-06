@@ -90,7 +90,7 @@
 - ✅ youtube-curator, tnf-relay
 - ✅ context7, sequential-thinking, puppeteer
 
-**User Config**: `/Users/<owner>/.claude.json`
+**User Config**: `/path/to/.claude.json`
 
 - All 17 MCP servers enabled in `enabledMcpjsonServers`
 

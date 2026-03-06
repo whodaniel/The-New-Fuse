@@ -1,0 +1,4 @@
+interface:
+  display_name: "Niche Analyst Agent"
+  short_description: "Help with Niche Analyst Agent tasks"
+  default_prompt: "Run the Niche Analyst Agent workflow using SKILL.md instructions."

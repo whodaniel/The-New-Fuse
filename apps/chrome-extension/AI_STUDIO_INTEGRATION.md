@@ -1,7 +1,7 @@
 # AI Studio Automator Integration
 
 **Integration Date**: January 18, 2026 **Source Project**:
-[ai-studio-automator](/Users/<owner>/Projects/ai-studio-automator)
+[ai-studio-automator](/path/to/Projects/ai-studio-automator)
 **Target**: The New Fuse Chrome Extension
 
 ## Overview
@@ -426,7 +426,7 @@ pnpm run test
 
 ## Documentation
 
-- **Original Project**: `/Users/<owner>/Projects/ai-studio-automator`
+- **Original Project**: `/path/to/Projects/ai-studio-automator`
 - **Architecture**: `ai-studio-automator/ARCHITECTURE.md`
 - **Business Strategy**: `ai-studio-automator/BUSINESS-STRATEGY.md`
 - **Cost Optimization**: `ai-studio-automator/COST-OPTIMIZATION.md`

@@ -128,7 +128,7 @@ Add to `~/.gemini/antigravity/mcp_config.json`:
 "tnf-relay": {
   "command": "node",
   "args": [
-    "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/tools/relay-mcp-server/relay-mcp-server.js"
+    "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/tools/relay-mcp-server/relay-mcp-server.js"
   ],
   "env": {
     "RELAY_URL": "ws://localhost:3001/ws"
@@ -154,7 +154,7 @@ Add to `~/.gemini/antigravity/mcp_config.json`:
 ### 1. Start the Relay Server
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 pnpm run relay
 # Or: node packages/relay-core/src/standalone-relay.ts
 ```

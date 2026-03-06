@@ -1,0 +1,4 @@
+interface:
+  display_name: "Content Repurposing Agent"
+  short_description: "Help with Content Repurposing Agent tasks"
+  default_prompt: "Run the Content Repurposing Agent workflow using SKILL.md instructions."

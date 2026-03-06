@@ -6,7 +6,7 @@
 
 **Step 1:** Test the AG-UI tool standalone
 ```bash
-cd /Users/<owner>/self-contained-visualizations
+cd /path/to/self-contained-visualizations
 chmod +x tools/ag-ui-tool.js
 node tools/ag-ui-tool.js
 ```
@@ -562,7 +562,7 @@ data = {"name": "root", "children": [...]}
 **2. "Module not found: VisualizationGenerator"**
 ```bash
 # Ensure you're in the correct directory
-cd /Users/<owner>/self-contained-visualizations
+cd /path/to/self-contained-visualizations
 
 # Or set PYTHONPATH
 export PYTHONPATH="${PYTHONPATH}:/path/to/self-contained-visualizations"

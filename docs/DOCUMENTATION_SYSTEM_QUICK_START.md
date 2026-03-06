@@ -27,7 +27,7 @@ It will:
 
 ```bash
 # Navigate to project root
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 
 # Run the discovery script
 ./scripts/documentation-system/01-discover.sh

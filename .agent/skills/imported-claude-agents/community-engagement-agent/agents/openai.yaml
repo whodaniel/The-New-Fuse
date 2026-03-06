@@ -1,0 +1,4 @@
+interface:
+  display_name: "Community Engagement Agent"
+  short_description: "Help with Community Engagement Agent tasks"
+  default_prompt: "Run the Community Engagement Agent workflow using SKILL.md instructions."

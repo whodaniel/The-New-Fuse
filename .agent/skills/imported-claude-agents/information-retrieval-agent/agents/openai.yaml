@@ -1,0 +1,4 @@
+interface:
+  display_name: "Information Retrieval Agent"
+  short_description: "Help with Information Retrieval Agent tasks"
+  default_prompt: "Run the Information Retrieval Agent workflow using SKILL.md instructions."

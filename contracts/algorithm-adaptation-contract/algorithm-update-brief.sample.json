@@ -1,0 +1,101 @@
+{
+  "as_of": "2026-03-05",
+  "input_assumptions": {
+    "platforms": ["Instagram", "TikTok", "YouTube"],
+    "current_content_strategy": "Short-form video-first, broad-topic posting, limited explicit testing of recommendation controls and search-intent packaging."
+  },
+  "limitation_statement": "This is the limitation I ran up against: algorithm shifts are changing discovery mechanics faster than the current posting playbook is adapting.",
+  "challenge_objective": "So, this is the challenge we will overcome: run a platform-specific adaptation loop that updates format, metadata, and feedback signals every 2 weeks based on confirmed changes.",
+  "algorithm_findings": [
+    {
+      "platform": "TikTok",
+      "date_of_change": "2025-08-15",
+      "change_summary": "TikTok introduced stronger feed-personalization controls (Manage Topics and AI-powered Smart Keyword Filters), reinforcing user feedback and preference signals in recommendation shaping.",
+      "strategy_impact": "Content must be more clearly topical and context-labeled so it is favored in user-tuned feeds; weak topic clarity will lose distribution.",
+      "confidence": "high",
+      "sources": [
+        "https://newsroom.tiktok.com/tiktok-trending-summer-2025-plus-new-ways-to-shape-your-feed",
+        "https://newsroom.tiktok.com/community-guidelines-update-newsroom"
+      ]
+    },
+    {
+      "platform": "Instagram",
+      "date_of_change": "2025-04-08 to 2026-01 (reported)",
+      "change_summary": "Instagram leadership emphasized improving content search and expanded user control over Reels recommendations (reported by major tech press).",
+      "strategy_impact": "Discovery is less purely follower-graph driven; keyword-rich packaging, comment-context relevance, and recommendation eligibility hygiene are more important.",
+      "confidence": "medium",
+      "sources": [
+        "https://techcrunch.com/2025/04/08/instagram-is-beefing-up-its-search-to-compete-with-tiktok/",
+        "https://www.theverge.com/news/841399/instagram-reels-tune-algorithm-feature"
+      ]
+    },
+    {
+      "platform": "YouTube",
+      "date_of_change": "2025-06-26 and 2026-02-04",
+      "change_summary": "YouTube rolled out AI search/discovery experiences and expanded auto-dubbing reach across more languages.",
+      "strategy_impact": "Search-intent framing and multilingual accessibility now have larger upside for recommendation expansion.",
+      "confidence": "high",
+      "sources": [
+        "https://blog.youtube/news-and-events/new-youtube-ai-tools-summer-2025/",
+        "https://blog.youtube/news-and-events/youtube-auto-dubbing-expressive-speech/"
+      ]
+    }
+  ],
+  "strategy_adjustments": [
+    {
+      "priority": "P0",
+      "recommendation": "Refactor content calendar into platform-native intent buckets (educate, compare, react, utility) and tag each asset with one primary topic only.",
+      "justification": "Both TikTok and Instagram are tightening discovery around clearer topic and personalization signals.",
+      "owner": "Content strategy lead",
+      "kpi": "Non-follower reach per post, save/share rate, search-sourced views",
+      "timeframe": "Start within 7 days"
+    },
+    {
+      "priority": "P0",
+      "recommendation": "Adopt a metadata standard: title hook + 3 search-intent keywords + explicit on-screen topic phrase in first 3 seconds.",
+      "justification": "Improved search layers on Instagram and YouTube reward clearer content-query matching.",
+      "owner": "Channel editor",
+      "kpi": "Impressions from search, average view duration from search traffic",
+      "timeframe": "Immediate"
+    },
+    {
+      "priority": "P1",
+      "recommendation": "Build a biweekly algorithm adaptation sprint: test 2 variants per platform (hook style, length band, CTA type) and promote only winners.",
+      "justification": "Algorithm behavior is shifting; static best-practice playbooks decay quickly.",
+      "owner": "Growth lead",
+      "kpi": "Lift in reach per impression, completion rate, send/share rate",
+      "timeframe": "Every 14 days"
+    },
+    {
+      "priority": "P1",
+      "recommendation": "Optimize for recommendation hygiene: avoid cross-platform watermarking, strengthen originality, maintain account-status compliance checks.",
+      "justification": "Recommendation eligibility friction suppresses distribution even when engagement is strong.",
+      "owner": "Publishing ops",
+      "kpi": "Recommendation eligibility incidents, content suppression flags",
+      "timeframe": "Weekly checklist"
+    },
+    {
+      "priority": "P2",
+      "recommendation": "Pilot localization workflow for top 10% videos (captions + dubbed versions where supported).",
+      "justification": "YouTube's expanded auto-dubbing increases discoverability beyond primary-language audience.",
+      "owner": "Video ops",
+      "kpi": "International watch time, non-primary-language CTR",
+      "timeframe": "30-day pilot"
+    }
+  ],
+  "monitoring_plan": {
+    "cadence": "Weekly signal review, biweekly strategy adjustments, monthly retrospective",
+    "watch_signals": [
+      "Non-follower reach ratio",
+      "Search-origin impressions",
+      "Shares/sends per 1,000 impressions",
+      "Saves per 1,000 impressions",
+      "Retention at 3s and 30s"
+    ],
+    "decision_rules": [
+      "If non-follower reach drops >20% week-over-week for 2 weeks, trigger rapid format test sprint.",
+      "If shares/sends outperform baseline by >25%, replicate concept in 3 new topic variants.",
+      "If search impressions grow but retention falls, tighten hook-to-promise match."
+    ]
+  }
+}

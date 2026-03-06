@@ -35,7 +35,7 @@ The New Fuse is a **comprehensive multi-service SaaS platform** with:
 **Create Project-Level Rules:**
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 
 # Create claude.md with permanent instructions
 # all code must follow NestJS conventions
@@ -262,9 +262,9 @@ packages/workflow-engine/
 **Run Capability Packaging Agent on The New Fuse:**
 
 ```bash
-cd /Users/<owner>/self-contained-visualizations
+cd /path/to/self-contained-visualizations
 python3 agents/capability-packaging-agent.py \
-  --codebase "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse" \
+  --codebase "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse" \
   --output "./the-new-fuse-ui-package"
 ```
 
@@ -489,7 +489,7 @@ pnpm run dev
 ### 1. Implement Hack #1 (5 minutes)
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 
 cat > claude.md << 'EOF'
 # The New Fuse Global Brain
@@ -544,7 +544,7 @@ cat docs/agents/COMPLETE-AGENT-GUIDE.md
 ### 3. Run Capability Packaging Agent (15 minutes)
 
 ```bash
-cd /Users/<owner>/self-contained-visualizations
+cd /path/to/self-contained-visualizations
 
 # Package The New Fuse capabilities
 python3 agents/capability-packaging-agent.py

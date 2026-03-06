@@ -34,14 +34,14 @@ chrome://extensions/
 
 # Enable "Developer mode" (top right)
 # Click "Load unpacked"
-# Select folder: /Users/<owner>/.gemini/antigravity/scratch/ai-studio-automator
+# Select folder: /path/to/.gemini/antigravity/scratch/ai-studio-automator
 ```
 
 ### 2. Extract Your Video URLs
 
 ```bash
 # Open the URL extractor tool:
-open /Users/<owner>/.gemini/antigravity/scratch/ai-studio-automator/url-extractor.html
+open /path/to/.gemini/antigravity/scratch/ai-studio-automator/url-extractor.html
 
 # Paste your ai_video_library.html content
 # Click "Extract URLs"
@@ -236,6 +236,6 @@ Just install, load your queue, and let it run! 🚀
 ---
 
 **Location**:
-`/Users/<owner>/.gemini/antigravity/scratch/ai-studio-automator`
+`/path/to/.gemini/antigravity/scratch/ai-studio-automator`
 
 **Recommended**: Set this as your workspace for easy access!

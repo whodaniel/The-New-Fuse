@@ -390,7 +390,7 @@ suggested have made this a truly robust automation system.
 ---
 
 **Project Location:**  
-`/Users/<owner>/.gemini/antigravity/scratch/ai-studio-automator`
+`/path/to/.gemini/antigravity/scratch/ai-studio-automator`
 
 **Documentation:**
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Sponsorship Outreach Agent"
+  short_description: "Help with Sponsorship Outreach Agent tasks"
+  default_prompt: "Run the Sponsorship Outreach Agent workflow using SKILL.md instructions."

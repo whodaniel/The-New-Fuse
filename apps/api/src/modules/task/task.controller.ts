@@ -30,12 +30,17 @@ export class TaskController {
     private readonly unifiedLedgerService: UnifiedLedgerService
   ) {}
 
-  @Get()
-  async listTasks(@CurrentUser() user: { id?: string }, @Query() query: ListTasksQueryDto) {
-    const userId = user?.id;
+  private requireUserId(user: { id?: string; sub?: string } | undefined): string {
+    const userId = user?.id || user?.sub;
     if (!userId) {
       throw new UnauthorizedException('Missing authenticated user');
     }
+    return userId;
+  }
+
+  @Get()
+  async listTasks(@CurrentUser() user: { id?: string; sub?: string }, @Query() query: ListTasksQueryDto) {
+    const userId = this.requireUserId(user);
 
     const { tasks, total } = await this.taskService.listTasks(userId, {
       status: query.status,
@@ -55,11 +60,8 @@ export class TaskController {
   }
 
   @Post()
-  async createTask(@CurrentUser() user: { id?: string }, @Body() dto: CreateTaskDto) {
-    const userId = user?.id;
-    if (!userId) {
-      throw new UnauthorizedException('Missing authenticated user');
-    }
+  async createTask(@CurrentUser() user: { id?: string; sub?: string }, @Body() dto: CreateTaskDto) {
+    const userId = this.requireUserId(user);
 
     const taskInput: NewTask = {
       type: dto.type,
@@ -78,11 +80,8 @@ export class TaskController {
   }
 
   @Get(':taskId')
-  async getTask(@CurrentUser() user: { id?: string }, @Param('taskId') taskId: string) {
-    const userId = user?.id;
-    if (!userId) {
-      throw new UnauthorizedException('Missing authenticated user');
-    }
+  async getTask(@CurrentUser() user: { id?: string; sub?: string }, @Param('taskId') taskId: string) {
+    const userId = this.requireUserId(user);
 
     const task = await this.taskService.getTaskByIdForUser(taskId, userId);
     if (!task) {
@@ -94,14 +93,11 @@ export class TaskController {
 
   @Patch(':taskId/status')
   async updateTaskStatus(
-    @CurrentUser() user: { id?: string },
+    @CurrentUser() user: { id?: string; sub?: string },
     @Param('taskId') taskId: string,
     @Body() dto: UpdateTaskStatusDto
   ) {
-    const userId = user?.id;
-    if (!userId) {
-      throw new UnauthorizedException('Missing authenticated user');
-    }
+    const userId = this.requireUserId(user);
 
     const existing = await this.taskService.getTaskByIdForUser(taskId, userId);
     if (!existing) {
@@ -117,11 +113,11 @@ export class TaskController {
   }
 
   @Get(':taskId/execution-logs')
-  async getExecutionLogs(@CurrentUser() user: { id?: string }, @Param('taskId') taskId: string) {
-    const userId = user?.id;
-    if (!userId) {
-      throw new UnauthorizedException('Missing authenticated user');
-    }
+  async getExecutionLogs(
+    @CurrentUser() user: { id?: string; sub?: string },
+    @Param('taskId') taskId: string
+  ) {
+    const userId = this.requireUserId(user);
 
     const task = await this.taskService.getTaskByIdForUser(taskId, userId);
     if (!task) {
@@ -138,14 +134,11 @@ export class TaskController {
 
   @Post(':taskId/execution-logs')
   async createExecutionLog(
-    @CurrentUser() user: { id?: string },
+    @CurrentUser() user: { id?: string; sub?: string },
     @Param('taskId') taskId: string,
     @Body() dto: CreateTaskExecutionLogDto
   ) {
-    const userId = user?.id;
-    if (!userId) {
-      throw new UnauthorizedException('Missing authenticated user');
-    }
+    const userId = this.requireUserId(user);
 
     const task = await this.taskService.getTaskByIdForUser(taskId, userId);
     if (!task) {

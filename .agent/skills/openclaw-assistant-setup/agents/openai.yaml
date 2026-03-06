@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenClaw Assistant Setup"
+  short_description: "Set up an OpenClaw personal assistant safely"
+  default_prompt: "Use this skill to configure and verify OpenClaw personal assistant setup with safe defaults and WhatsApp allowlist controls."

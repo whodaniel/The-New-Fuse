@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tiktok Strategy Agent"
+  short_description: "Help with Tiktok Strategy Agent tasks"
+  default_prompt: "Run the Tiktok Strategy Agent workflow using SKILL.md instructions."

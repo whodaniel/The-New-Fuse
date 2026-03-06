@@ -1,0 +1,4 @@
+interface:
+  display_name: "Audience Segmentation Agent"
+  short_description: "Help with Audience Segmentation Agent tasks"
+  default_prompt: "Run the Audience Segmentation Agent workflow using SKILL.md instructions."

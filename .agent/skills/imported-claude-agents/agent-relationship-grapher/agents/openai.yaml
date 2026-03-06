@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent Relationship Grapher"
+  short_description: "Help with Agent Relationship Grapher tasks"
+  default_prompt: "Run the Agent Relationship Grapher workflow using SKILL.md instructions."

@@ -5,7 +5,7 @@
 echo "🔧 Creating a custom build script to bypass database migration errors..."
 
 # Create the build script
-cat > "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/build-skip-db-migrate.sh" << 'EOF'
+cat > "/path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/build-skip-db-migrate.sh" << 'EOF'
 #!/bin/bash
 
 # Custom build script that skips database migrations
@@ -22,7 +22,7 @@ echo "✅ Build completed while skipping database migrations!"
 EOF
 
 # Make the new script executable
-chmod +x "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/build-skip-db-migrate.sh"
+chmod +x "/path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/build-skip-db-migrate.sh"
 
 echo "✅ Created build-skip-db-migrate.sh"
 echo "Run './build-skip-db-migrate.sh' to build your project while skipping database migrations"

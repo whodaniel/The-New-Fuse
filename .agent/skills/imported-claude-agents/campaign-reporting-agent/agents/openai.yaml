@@ -1,0 +1,4 @@
+interface:
+  display_name: "Campaign Reporting Agent"
+  short_description: "Help with Campaign Reporting Agent tasks"
+  default_prompt: "Run the Campaign Reporting Agent workflow using SKILL.md instructions."

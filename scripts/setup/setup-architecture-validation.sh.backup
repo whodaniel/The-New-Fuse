@@ -13,7 +13,7 @@ pnpm install --save js-yaml
 # Set up cron job for validation
 cat << EOF > /etc/fuse/cron.d/architecture-validation
 # Run architecture validation every 6 hours
-0 */6 * * * root node /Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/validation/validate-architecture.js >> /var/log/fuse/architecture-monitoring/validation.log 2>&1
+0 */6 * * * root node /path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/validation/validate-architecture.js >> /var/log/fuse/architecture-monitoring/validation.log 2>&1
 EOF
 
 # Set proper permissions

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Podcast Analytics Agent"
+  short_description: "Help with Podcast Analytics Agent tasks"
+  default_prompt: "Run the Podcast Analytics Agent workflow using SKILL.md instructions."

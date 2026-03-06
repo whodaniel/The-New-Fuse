@@ -87,6 +87,7 @@ export class AuthService {
 
   async register(registerDto: RegisterDto, meta: AuthRequestMeta = {}): Promise<AuthResponse> {
     await this.verifyTurnstileIfEnabled(registerDto.cfTurnstileToken, meta.ipAddress);
+    this.verifyInviteCodeIfEnabled(registerDto.inviteCode);
 
     const existingEmail = await this.db.users.findByEmail(registerDto.email);
     if (existingEmail) {
@@ -188,8 +189,11 @@ export class AuthService {
   }
 
   private async generateTokens(user: User): Promise<AuthResponse> {
-    const roles = Array.isArray(user.roles) && user.roles.length > 0 ? user.roles : [user.role];
-    const permissions = this.resolvePermissions(roles);
+    const roles = this.resolveRoles(user);
+    const explicitPermissions = Array.isArray((user as any).permissions)
+      ? ((user as any).permissions as string[])
+      : [];
+    const permissions = this.resolvePermissions(roles, explicitPermissions);
 
     const payload: JwtPayload = {
       sub: user.id,
@@ -236,19 +240,89 @@ export class AuthService {
     };
   }
 
-  private resolvePermissions(roles: string[]): string[] {
-    if (roles.includes('SUPER_ADMIN') || roles.includes('ADMIN')) {
-      return ['*'];
-    }
-
-    return [
+  private resolvePermissions(roles: string[], explicitPermissions: string[] = []): string[] {
+    const normalized = new Set(roles);
+    const permissions = new Set<string>([
       'profile:read',
       'profile:update',
       'workspace:read',
       'agents:read',
       'chat:read',
       'chat:write',
-    ];
+    ]);
+
+    const isAdmin =
+      normalized.has('ADMIN') ||
+      normalized.has('admin') ||
+      normalized.has('SUPER_ADMIN') ||
+      normalized.has('super_admin');
+    const isSystem =
+      normalized.has('SUPER_ADMIN') ||
+      normalized.has('super_admin') ||
+      normalized.has('SYSTEM') ||
+      normalized.has('system');
+
+    if (isAdmin || isSystem) {
+      permissions.add('admin:access');
+      permissions.add('handoff:publish');
+      permissions.add('handoff:read:any');
+      permissions.add('handoff:ack:any');
+    }
+
+    if (isSystem) {
+      permissions.add('system:access');
+    }
+
+    for (const permission of explicitPermissions) {
+      if (typeof permission === 'string' && permission.trim().length > 0) {
+        permissions.add(permission.trim());
+      }
+    }
+
+    return [...permissions];
+  }
+
+  private resolveRoles(user: User): string[] {
+    const roleCandidates = Array.isArray(user.roles) && user.roles.length > 0 ? user.roles : [user.role];
+    const roles = new Set<string>();
+
+    for (const role of roleCandidates) {
+      if (typeof role !== 'string' || role.trim().length === 0) continue;
+      const raw = role.trim();
+      const upper = raw.toUpperCase();
+      const lower = raw.toLowerCase();
+      roles.add(upper);
+      roles.add(lower);
+    }
+
+    if (roles.has('SUPER_ADMIN') || roles.has('super_admin')) {
+      roles.add('SYSTEM');
+      roles.add('system');
+      roles.add('ADMIN');
+      roles.add('admin');
+    } else if (roles.has('ADMIN') || roles.has('admin')) {
+      roles.add('admin');
+    }
+
+    return [...roles];
+  }
+
+  private verifyInviteCodeIfEnabled(inviteCode: string | undefined): void {
+    const inviteOnly = isTruthy(this.configService.get('AUTH_INVITE_ONLY'));
+    if (!inviteOnly) {
+      return;
+    }
+
+    const codesValue = this.configService.get<string>('AUTH_INVITE_CODES') || '';
+    const allowedCodes = codesValue
+      .split(',')
+      .map((value) => value.trim())
+      .filter((value) => value.length > 0);
+
+    const submittedCode = inviteCode?.trim();
+    if (!submittedCode || !allowedCodes.includes(submittedCode)) {
+      throw new UnauthorizedException('Valid invitation code is required');
+    }
   }
 
   private buildDisplayName(registerDto: RegisterDto): string | null {

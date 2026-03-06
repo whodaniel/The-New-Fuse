@@ -311,7 +311,7 @@ function generateRecommendations(results, portConflicts, serverConfigs, serverEx
   
   // Recommend restarting servers
   console.log(`${Colors.yellow}5. Restart MCP servers:${Colors.reset}`);
-  console.log(`   - Run 'node /Users/<owner>/Desktop/A1-Inter-LLM-Com/The\\ New\\ Fuse/scripts/initialize-mcp-commands.js'`);
+  console.log(`   - Run 'node /path/to/Desktop/A1-Inter-LLM-Com/The\\ New\\ Fuse/scripts/initialize-mcp-commands.js'`);
 }
 
 /**

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Influencer Niche Agent"
+  short_description: "Help with Influencer Niche Agent tasks"
+  default_prompt: "Run the Influencer Niche Agent workflow using SKILL.md instructions."

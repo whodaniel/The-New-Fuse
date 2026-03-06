@@ -1,0 +1,4 @@
+interface:
+  display_name: "Lead Capture Agent"
+  short_description: "Help with Lead Capture Agent tasks"
+  default_prompt: "Run the Lead Capture Agent workflow using SKILL.md instructions."

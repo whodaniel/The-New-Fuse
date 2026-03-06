@@ -1,0 +1,4 @@
+interface:
+  display_name: "Legal Compliance Agent"
+  short_description: "Help with Legal Compliance Agent tasks"
+  default_prompt: "Run the Legal Compliance Agent workflow using SKILL.md instructions."

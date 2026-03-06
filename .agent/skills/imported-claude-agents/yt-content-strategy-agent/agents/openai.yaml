@@ -1,0 +1,4 @@
+interface:
+  display_name: "Yt Content Strategy Agent"
+  short_description: "Help with Yt Content Strategy Agent tasks"
+  default_prompt: "Run the Yt Content Strategy Agent workflow using SKILL.md instructions."

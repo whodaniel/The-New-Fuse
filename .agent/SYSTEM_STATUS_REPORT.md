@@ -156,7 +156,7 @@ oagi::wait_duration       // Pause
 ### Option 1: Run Boot Script (Recommended)
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 ./scripts/boot-tnf.sh
 ```
 

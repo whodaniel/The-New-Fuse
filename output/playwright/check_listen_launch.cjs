@@ -24,6 +24,6 @@ const { chromium } = require('playwright');
   console.log('BEFORE_URL', before);
   console.log('AFTER_URL', after);
   console.log('POPUP_URL', popupUrl);
-  await page.screenshot({ path: '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/output/playwright/arcade-after-listen-click.png', fullPage: true });
+  await page.screenshot({ path: '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/output/playwright/arcade-after-listen-click.png', fullPage: true });
   await browser.close();
 })();

@@ -121,7 +121,7 @@ If using Google Antigravity IDE, point it to your MCP config:
 
 ```bash
 # Set environment variable
-export MCP_CONFIG_PATH=/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/mcp_config.json
+export MCP_CONFIG_PATH=/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/mcp_config.json
 
 # Or add to .env file
 echo "MCP_CONFIG_PATH=$(pwd)/data/mcp_config.json" >> .env
@@ -170,7 +170,7 @@ npm cache clean --force
 
 ```bash
 # Make sure paths in config are absolute
-# Use full paths like: /Users/<owner>/Desktop/...
+# Use full paths like: /path/to/Desktop/...
 # Not relative paths like: ./data/...
 ```
 

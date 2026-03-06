@@ -28,7 +28,7 @@ verified
 
 ```bash
 $ which typescript-language-server
-/Users/<owner>/.nvm/versions/node/v24.12.0/bin/typescript-language-server
+/path/to/.nvm/versions/node/v24.12.0/bin/typescript-language-server
 
 $ typescript-language-server --version
 5.1.3
@@ -186,7 +186,7 @@ git checkout feature-branch
 **TypeScript LSP**:
 
 - Binary:
-  `/Users/<owner>/.nvm/versions/node/v24.12.0/bin/typescript-language-server`
+  `/path/to/.nvm/versions/node/v24.12.0/bin/typescript-language-server`
 - Config: Auto-discovered from project's `tsconfig.json`
 
 **Code Review**:

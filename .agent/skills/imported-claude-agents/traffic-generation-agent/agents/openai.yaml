@@ -1,0 +1,4 @@
+interface:
+  display_name: "Traffic Generation Agent"
+  short_description: "Help with Traffic Generation Agent tasks"
+  default_prompt: "Run the Traffic Generation Agent workflow using SKILL.md instructions."

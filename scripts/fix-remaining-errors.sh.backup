@@ -4,7 +4,7 @@ set -e
 
 echo "🔧 Fixing Remaining VSCode Extension Errors..."
 
-cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/src/vscode-extension"
+cd "/path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/src/vscode-extension"
 
 # Remove more problematic files
 echo "Removing additional problematic files..."

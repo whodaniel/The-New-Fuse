@@ -1,0 +1,170 @@
+diff --git a/apps/frontend/src/components/ChatRoom.tsx b/apps/frontend/src/components/ChatRoom.tsx
+index af67bc32b..85b915e83 100644
+--- a/apps/frontend/src/components/ChatRoom.tsx
++++ b/apps/frontend/src/components/ChatRoom.tsx
+@@ -1,4 +1,5 @@
+ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
++import { CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+ import { GlassCard as Card } from '@/components/ui/premium/GlassCard';
+ import { PremiumButton as Button, IconButton } from '@/components/ui/premium/PremiumButton';
+ import { PremiumInput as Input } from '@/components/ui/premium/PremiumInput';
+diff --git a/apps/frontend/src/components/profile/UserProfilePage.tsx b/apps/frontend/src/components/profile/UserProfilePage.tsx
+index 5f8430bba..3da8bd845 100644
+--- a/apps/frontend/src/components/profile/UserProfilePage.tsx
++++ b/apps/frontend/src/components/profile/UserProfilePage.tsx
+@@ -36,9 +36,18 @@ const UserProfilePage: React.FC = () => {
+   const [confirmPassword, setConfirmPassword] = useState('');
+   const [isChangingPassword, setIsChangingPassword] = useState(false);
+ 
+-  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3003';
++  const API_BASE_URL =
++    import.meta.env.VITE_API_URL ||
++    (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3003');
+ 
+   useEffect(() => {
++    if (!user) {
++      setProfile(null);
++      setError('Please sign in to view your profile.');
++      setIsLoading(false);
++      return;
++    }
++
+     const fetchProfile = async () => {
+       setIsLoading(true);
+       setError(null);
+@@ -49,6 +58,12 @@ const UserProfilePage: React.FC = () => {
+         });
+ 
+         if (!response.ok) {
++          if (response.status === 401 || response.status === 403) {
++            setError('Please sign in to view your profile.');
++            setProfile(null);
++            return;
++          }
++
+           // If API fails, use Firebase user data as fallback
+           if (user) {
+             const fallbackProfile: UserProfile = {
+diff --git a/apps/frontend/src/hooks/useGetProvidersModels.ts b/apps/frontend/src/hooks/useGetProvidersModels.ts
+index 485a3ac6d..52cebddd7 100644
+--- a/apps/frontend/src/hooks/useGetProvidersModels.ts
++++ b/apps/frontend/src/hooks/useGetProvidersModels.ts
+@@ -1,4 +1,5 @@
+ import { useEffect, useState } from "react";
++import System from "@/models/system";
+ export const DISABLED_PROVIDERS = [
+     "azure",
+     "native",
+@@ -75,9 +76,19 @@ export default function useGetProviderModels(provider = null): any {
+     const [loading, setLoading] = useState(true);
+     useEffect(() => {
+         async function fetchProviderModels(): any {
+-            if (!provider)
++            if (!provider) {
++                setLoading(false);
+                 return;
+-            const { models = [] } = await System.customModels(provider);
++            }
++            setLoading(true);
++            let models: any[] = [];
++            try {
++                const response = await System.customModels(provider);
++                models = (response === null || response === void 0 ? void 0 : response.models) || [];
++            }
++            catch {
++                models = [];
++            }
+             if (PROVIDER_DEFAULT_MODELS.hasOwnProperty(provider) &&
+                 !groupedProviders.includes(provider)) {
+                 setDefaultModels(PROVIDER_DEFAULT_MODELS[provider]);
+diff --git a/apps/frontend/src/hooks/useSocket.ts b/apps/frontend/src/hooks/useSocket.ts
+index e94fc012a..58c8fe229 100644
+--- a/apps/frontend/src/hooks/useSocket.ts
++++ b/apps/frontend/src/hooks/useSocket.ts
+@@ -18,7 +18,9 @@ const nullSocket: SocketWithEvents = {
+ export const useSocket = (): SocketWithEvents => {
+   const [socket, setSocket] = useState<Socket | null>(null);
+   const { user } = useAuth();
+-  const socketUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
++  const socketUrl =
++    import.meta.env.VITE_API_URL ||
++    (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3001');
+ 
+   useEffect(() => {
+     if (user) {
+diff --git a/apps/frontend/src/pages/Community/CommunityHub.tsx b/apps/frontend/src/pages/Community/CommunityHub.tsx
+index 9bf928141..4fbfc5b16 100644
+--- a/apps/frontend/src/pages/Community/CommunityHub.tsx
++++ b/apps/frontend/src/pages/Community/CommunityHub.tsx
+@@ -111,7 +111,22 @@ const CommunityHub: React.FC = () => {
+       if (postsResponse.ok && statsResponse.ok && isJson(postsResponse) && isJson(statsResponse)) {
+         const postsData = await postsResponse.json();
+         const statsData = await statsResponse.json();
+-        setPosts(Array.isArray(postsData) ? postsData : []);
++        const normalizedPosts: CommunityPost[] = Array.isArray(postsData)
++          ? postsData.map((post: any) => ({
++              ...post,
++              tags: Array.isArray(post?.tags) ? post.tags : [],
++              votes: {
++                upvotes: Number(post?.votes?.upvotes || 0),
++                downvotes: Number(post?.votes?.downvotes || 0),
++                userVote: post?.votes?.userVote ?? null,
++              },
++              author: {
++                ...(post?.author || {}),
++                badges: Array.isArray(post?.author?.badges) ? post.author.badges : [],
++              },
++            }))
++          : [];
++        setPosts(normalizedPosts);
+         setStats(statsData ?? null);
+       } else {
+         setPosts([]);
+@@ -397,9 +412,9 @@ const CommunityHub: React.FC = () => {
+                   </p>
+ 
+                   {/* Tags */}
+-                  {post.tags.length > 0 && (
++                  {(post.tags || []).length > 0 && (
+                     <div className="flex flex-wrap gap-2 mb-3">
+-                      {post.tags.map((tag) => (
++                      {(post.tags || []).map((tag) => (
+                         <span
+                           key={tag}
+                           className="inline-flex items-center px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer"
+@@ -428,7 +443,7 @@ const CommunityHub: React.FC = () => {
+                             </span>
+                           </div>
+                           <div className="flex items-center space-x-1">
+-                            {post.author.badges.map((badge) => (
++                            {(post.author?.badges || []).map((badge) => (
+                               <span
+                                 key={badge}
+                                 className="text-xs text-blue-600 dark:text-blue-400"
+diff --git a/apps/frontend/src/services/WebSocketService.ts b/apps/frontend/src/services/WebSocketService.ts
+index 8f95e7de6..9ac14929c 100644
+--- a/apps/frontend/src/services/WebSocketService.ts
++++ b/apps/frontend/src/services/WebSocketService.ts
+@@ -33,6 +33,13 @@ import { EventEmitter } from 'events';
+ import { io, Socket } from 'socket.io-client';
+ import { logger } from '../utils/logger';
+ 
++function resolveDefaultSocketUrl(): string {
++  if (import.meta.env.VITE_WS_URL) return import.meta.env.VITE_WS_URL;
++  if (typeof window === 'undefined') return 'ws://localhost:3001';
++  const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
++  return `${wsProtocol}//${window.location.host}`;
++}
++
+ // ============================================================================
+ // Types and Interfaces
+ // ============================================================================
+@@ -181,7 +188,7 @@ export class WebSocketService {
+   private constructor(config: Partial<WebSocketConfig> = {}) {
+     // Default configuration
+     this.config = {
+-      url: import.meta.env.VITE_WS_URL || 'ws://localhost:3001',
++      url: resolveDefaultSocketUrl(),
+       reconnectionAttempts: 5,
+       reconnectionDelay: 1000,
+       autoConnect: false,

@@ -169,7 +169,7 @@ If you prefer to use the CLI, you can try this approach:
 ### For API Service:
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 
 # Ensure railway.toml points to API
 cat > railway.toml << 'EOF'
@@ -191,7 +191,7 @@ railway up --service api
 ### For Frontend Service:
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 
 # Update railway.toml for frontend
 cat > railway.toml << 'EOF'

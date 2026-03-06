@@ -1,0 +1,4 @@
+interface:
+  display_name: "Value Ladder Architect Agent"
+  short_description: "Help with Value Ladder Architect Agent tasks"
+  default_prompt: "Run the Value Ladder Architect Agent workflow using SKILL.md instructions."

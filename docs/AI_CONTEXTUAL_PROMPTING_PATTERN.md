@@ -316,5 +316,5 @@ automation, and user assistance.
 - TNF Chrome Extension:
   `apps/chrome-extension/src/v5/content/injectable/FloatingPanel.ts`
 - Test Report:
-  `/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/COMPREHENSIVE_TEST_REPORT.md`
+  `/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/COMPREHENSIVE_TEST_REPORT.md`
 - Original Issue: Channel creation failed during automated testing (2025-01-13)

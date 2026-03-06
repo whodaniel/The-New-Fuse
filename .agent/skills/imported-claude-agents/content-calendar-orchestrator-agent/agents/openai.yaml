@@ -1,0 +1,4 @@
+interface:
+  display_name: "Content Calendar Orchestrator Agent"
+  short_description: "Help with Content Calendar Orchestrator Agent tasks"
+  default_prompt: "Run the Content Calendar Orchestrator Agent workflow using SKILL.md instructions."

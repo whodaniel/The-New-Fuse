@@ -1,0 +1,4 @@
+interface:
+  display_name: "Podcast Seo Agent"
+  short_description: "Help with Podcast Seo Agent tasks"
+  default_prompt: "Run the Podcast Seo Agent workflow using SKILL.md instructions."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Yt Seo Optimizer Agent"
+  short_description: "Help with Yt Seo Optimizer Agent tasks"
+  default_prompt: "Run the Yt Seo Optimizer Agent workflow using SKILL.md instructions."

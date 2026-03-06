@@ -15,7 +15,7 @@ Unlimited project scope ✅ **Global Brain** - Automatic project rules
 ### Step 1: Start the UI Backend
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/ui-package
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/ui-package
 python3 api.py
 ```
 
@@ -33,7 +33,7 @@ You'll see:
 
 ```bash
 # Try the service health check
-open /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/ui-package/one-click/service-health-check.html
+open /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/ui-package/one-click/service-health-check.html
 ```
 
 Click the "🔍 Check Services" button - See instant results!
@@ -42,7 +42,7 @@ Click the "🔍 Check Services" button - See instant results!
 
 ```bash
 # These work offline - no API needed!
-open /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/visualizations/agent-communication-flow.html
+open /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/visualizations/agent-communication-flow.html
 ```
 
 ---

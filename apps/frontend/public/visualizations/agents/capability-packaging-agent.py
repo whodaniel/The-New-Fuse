@@ -863,10 +863,10 @@ This package provides **{len(capabilities)}** capabilities packaged into user-fr
 # Example usage
 if __name__ == "__main__":
     agent = CapabilityPackagingAgent(
-        codebase_path="/Users/<owner>/self-contained-visualizations"
+        codebase_path="/path/to/self-contained-visualizations"
     )
 
     # Generate complete package
     agent.generate_complete_package(
-        output_dir="/Users/<owner>/self-contained-visualizations/ui-package"
+        output_dir="/path/to/self-contained-visualizations/ui-package"
     )

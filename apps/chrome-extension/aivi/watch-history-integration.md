@@ -65,7 +65,7 @@ This will:
 ### Step 6: Process All Videos
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill
 GEMINI_API_KEY=your_key node src/DirectAPIProcessor.js
 ```
 
@@ -124,7 +124,7 @@ node process-recent-videos.js
 # 4. Add HTML rows to ai_video_library.html
 
 # 5. Process videos
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill
 GEMINI_API_KEY=your_key node src/DirectAPIProcessor.js
 ```
 
@@ -251,7 +251,7 @@ node process-recent-videos.js
 node process-playlist.js PLAYLIST_ID
 
 # Consolidate all
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 cat data/video-reports/api_*.md > data/consolidated_knowledge.md
 ```
 

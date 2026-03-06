@@ -62,8 +62,8 @@ consolidated_ai_knowledge.md
 **Next Step:** Move personal data to The New Fuse:
 
 ```bash
-mkdir -p /Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-library
-mv ai_video_library.html /Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-library/
+mkdir -p /path/to/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-library
+mv ai_video_library.html /path/to/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-library/
 # ... (see INTEGRATION-PLAN.md for full migration)
 ```
 
@@ -132,7 +132,7 @@ Both approaches complement each other!
 ### Current TNF State (from analysis)
 
 **TNF Chrome Extension Location:**
-`/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/`
+`/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/`
 
 **Already Has:**
 
@@ -342,11 +342,11 @@ cat batch-1-urls.txt  # First 50 videos
 
 ```bash
 # 1. Backup TNF
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 tar -czf ../TNF-backup-$(date +%Y%m%d).tar.gz .
 
 # 2. Review integration plan
-open /Users/<owner>/Projects/ai-studio-automator/INTEGRATION-PLAN.md
+open /path/to/Projects/ai-studio-automator/INTEGRATION-PLAN.md
 
 # 3. Start Phase 1.1 (Authentication)
 # ... (requires approval)
@@ -356,8 +356,8 @@ open /Users/<owner>/Projects/ai-studio-automator/INTEGRATION-PLAN.md
 
 ```bash
 # Create TNF data structure
-mkdir -p /Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-library
-mkdir -p /Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-reports
+mkdir -p /path/to/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-library
+mkdir -p /path/to/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-reports
 
 # Move personal files (after backup!)
 # ... (see INTEGRATION-PLAN.md Section 1)

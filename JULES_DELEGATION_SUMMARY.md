@@ -95,7 +95,7 @@ jules remote pull --session <SESSION_ID> --apply
 Created `submit-jules-tasks.sh` for batch task submission:
 
 - Location:
-  `/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/submit-jules-tasks.sh`
+  `/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/submit-jules-tasks.sh`
 - Usage: `./submit-jules-tasks.sh`
 - Features: Automatic task file reading, parallel submission, status tracking
 

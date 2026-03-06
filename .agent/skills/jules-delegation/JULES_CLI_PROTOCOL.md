@@ -12,7 +12,7 @@ Jules is installed as a Node.js binary and uses OAuth for authentication.
 
 ```bash
 # Check installation
-which jules  # /Users/<owner>/.nvm/versions/node/v24.12.0/bin/jules
+which jules  # /path/to/.nvm/versions/node/v24.12.0/bin/jules
 
 # Check version
 jules version

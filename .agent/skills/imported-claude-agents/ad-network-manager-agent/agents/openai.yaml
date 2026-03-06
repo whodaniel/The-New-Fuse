@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ad Network Manager Agent"
+  short_description: "Help with Ad Network Manager Agent tasks"
+  default_prompt: "Run the Ad Network Manager Agent workflow using SKILL.md instructions."

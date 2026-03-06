@@ -1,0 +1,4 @@
+interface:
+  display_name: "Logical Reasoning Agent"
+  short_description: "Help with Logical Reasoning Agent tasks"
+  default_prompt: "Run the Logical Reasoning Agent workflow using SKILL.md instructions."

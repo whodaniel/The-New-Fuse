@@ -349,7 +349,7 @@ Plus our extension is FREE (or cheaper if you monetize)!
 ### After Removing Extensions:
 
 1. ✅ Uninstall from Chrome/Antigravity
-2. ✅ Delete from `/Users/<owner>/Projects/`
+2. ✅ Delete from `/path/to/Projects/`
 3. ✅ Keep our extension only
 4. ✅ Test our extension thoroughly
 5. ✅ Enjoy the savings!

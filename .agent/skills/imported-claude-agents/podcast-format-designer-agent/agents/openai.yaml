@@ -1,0 +1,4 @@
+interface:
+  display_name: "Podcast Format Designer Agent"
+  short_description: "Help with Podcast Format Designer Agent tasks"
+  default_prompt: "Run the Podcast Format Designer Agent workflow using SKILL.md instructions."

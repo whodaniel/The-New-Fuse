@@ -28,7 +28,7 @@ This document captures the complete integration of the **TNF Agent Communication
 ### **Core Components**
 
 #### 1. **The New Fuse VSCode Extension** (Main Hub)
-- **Location:** `/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/vscode-extension`
+- **Location:** `/path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/vscode-extension`
 - **Role:** Central command center for all AI communication
 - **Capabilities:** Agent discovery, message routing, UI management
 
@@ -113,7 +113,7 @@ VSCode Extension Hub
 
 1. **Navigate to Extension Directory:**
    ```bash
-   cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/vscode-extension"
+   cd "/path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/vscode-extension"
    ```
 
 2. **Install Dependencies:**
@@ -788,14 +788,14 @@ ps aux | grep -E "(applescript-mcp|browsermcp)" | grep -v grep
 code --list-extensions | grep -i copilot
 
 # Check workspace permissions
-ls -la "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/"
+ls -la "/path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/"
 ```
 
 #### **Message Routing Errors:**
 ```bash
 # Check log files for errors
-tail -f "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/extension.log"
-tail -f "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/messages.log"
+tail -f "/path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/extension.log"
+tail -f "/path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/messages.log"
 ```
 
 #### **Extension Compilation Issues:**

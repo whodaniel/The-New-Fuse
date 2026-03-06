@@ -43,11 +43,11 @@ cat > "$CLAUDE_CONFIG" <<EOF
     "context7-server": {
       "command": "node",
       "args": [
-        "/Users/<owner>/Documents/Cline/MCP/context7-server/build/index.js"
+        "/path/to/Documents/Cline/MCP/context7-server/build/index.js"
       ]
     },
     "applescript_execute": {
-      "command": "/Users/<owner>/.nvm/versions/node/v18.20.5/bin/npx",
+      "command": "/path/to/.nvm/versions/node/v18.20.5/bin/npx",
       "args": [
         "@peakmojo/applescript-mcp"
       ]
@@ -61,7 +61,7 @@ cat > "$CLAUDE_CONFIG" <<EOF
     "mcp-config-manager": {
       "command": "node",
       "args": [
-        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/mcp-config-manager-server.js"
+        "/path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/mcp-config-manager-server.js"
       ]
     },
     "filesystem": {

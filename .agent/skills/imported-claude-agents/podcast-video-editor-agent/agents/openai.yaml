@@ -1,0 +1,4 @@
+interface:
+  display_name: "Podcast Video Editor Agent"
+  short_description: "Help with Podcast Video Editor Agent tasks"
+  default_prompt: "Run the Podcast Video Editor Agent workflow using SKILL.md instructions."

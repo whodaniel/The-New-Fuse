@@ -85,7 +85,7 @@ This will open your browser to the API service URL. Copy that URL.
 Run the configuration script with the API URL you copied:
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 ./configure-env-vars.sh <paste-api-url-here>
 ```
 

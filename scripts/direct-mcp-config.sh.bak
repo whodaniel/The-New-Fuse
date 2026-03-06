@@ -43,7 +43,7 @@ cat > "$CLAUDE_CONFIG" <<EOF
     "context7-server": {
       "command": "node",
       "args": [
-        "/Users/<owner>/Documents/Cline/MCP/context7-server/build/index.js"
+        "/path/to/Documents/Cline/MCP/context7-server/build/index.js"
       ]
     },
     "applescript_execute": {

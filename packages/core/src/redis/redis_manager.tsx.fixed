@@ -1,4 +1,4 @@
-// filepath: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/packages/core/src/redis_manager.tsx
+// filepath: /path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/packages/core/src/redis_manager.tsx
 import { Injectable } from '@nestjs/common';
 import Redis from 'ioredis';
 import { Logger } from './utils/logger.js';

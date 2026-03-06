@@ -1,0 +1,4 @@
+interface:
+  display_name: "Digital Product Creator Agent"
+  short_description: "Help with Digital Product Creator Agent tasks"
+  default_prompt: "Run the Digital Product Creator Agent workflow using SKILL.md instructions."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Audience Persona Architect Agent"
+  short_description: "Help with Audience Persona Architect Agent tasks"
+  default_prompt: "Run the Audience Persona Architect Agent workflow using SKILL.md instructions."

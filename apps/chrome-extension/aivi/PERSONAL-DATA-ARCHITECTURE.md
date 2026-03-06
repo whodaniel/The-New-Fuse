@@ -21,7 +21,7 @@ management**, allowing every user to:
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  AI Video Intelligence Suite (Public GitHub Repo)          │
-│  /Users/<owner>/Projects/ai-video-intelligence-suite│
+│  /path/to/Projects/ai-video-intelligence-suite│
 │                                                             │
 │  Contains:                                                  │
 │  - Chrome extension framework                               │
@@ -40,7 +40,7 @@ management**, allowing every user to:
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
 │  Personal AI Knowledge Base (Private Git Repo)             │
-│  /Users/<owner>/.../my-ai-knowledge-base            │
+│  /path/to/.../my-ai-knowledge-base            │
 │                                                             │
 │  Contains:                                                  │
 │  - YOUR video library                                       │
@@ -119,7 +119,7 @@ my-ai-knowledge-base/
 
 ```bash
 # 1. Run automated setup
-cd /Users/<owner>/Projects/ai-video-intelligence-suite
+cd /path/to/Projects/ai-video-intelligence-suite
 node setup-personal-knowledge-base.js
 
 # Prompts:
@@ -133,7 +133,7 @@ node setup-personal-knowledge-base.js
 # 5. Creates helper scripts
 
 # 3. Create private GitHub repo
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base
+cd /path/to/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base
 gh repo create my-ai-knowledge-base --private --source=.
 git push -u origin main
 
@@ -264,8 +264,8 @@ const backupPath = pdm.createBackup();
 
 ```javascript
 // ❌ Bad: Hardcoded personal data path
-const REPORTS_DIR = '/Users/<owner>/Desktop/.../video-reports';
-const LIBRARY_FILE = '/Users/<owner>/Desktop/.../ai_video_library.html';
+const REPORTS_DIR = '/path/to/Desktop/.../video-reports';
+const LIBRARY_FILE = '/path/to/Desktop/.../ai_video_library.html';
 
 // Only works for one user!
 ```

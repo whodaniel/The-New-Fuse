@@ -59,7 +59,7 @@ bash install-v7.sh
 3. Enable **"Developer mode"** (toggle in the top right).
 4. Click **"Load unpacked"**.
 5. Select the `dist-v7` directory:
-   `/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/dist-v7`
+   `/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/dist-v7`
 
 ---
 

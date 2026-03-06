@@ -76,7 +76,7 @@ https://console.cloud.google.com/apis/credentials/consent?project=antigravity-yo
 5. **Navigate to:**
 
    ```
-   /Users/<owner>/Projects/ai-studio-automator/
+   /path/to/Projects/ai-studio-automator/
    ```
 
 6. **Click "Select"**
@@ -124,7 +124,7 @@ https://console.cloud.google.com/apis/credentials?project=antigravity-youtube-48
 1. **Open file:**
 
    ```
-   /Users/<owner>/Projects/ai-studio-automator/manifest.json
+   /path/to/Projects/ai-studio-automator/manifest.json
    ```
 
 2. **Find line 28:**

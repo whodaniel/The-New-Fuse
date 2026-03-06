@@ -1,0 +1,4 @@
+interface:
+  display_name: "Visual Asset Creator Agent"
+  short_description: "Help with Visual Asset Creator Agent tasks"
+  default_prompt: "Run the Visual Asset Creator Agent workflow using SKILL.md instructions."

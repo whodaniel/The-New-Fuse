@@ -11,7 +11,7 @@ Video Knowledge Base Generation
 Progress: 166 / 647 videos (25.7%)
 Status: ✅ RUNNING
 Process: DirectAPIProcessor.js (PID: 31027)
-Location: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+Location: /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 Method: Direct Gemini API (gemini-2.0-flash-exp)
 ```
 
@@ -59,7 +59,7 @@ your AI playlist:
 ### Quick Check
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 echo "Completed: $(ls data/video-reports/*.md 2>/dev/null | wc -l) / 647"
 ```
 
@@ -82,7 +82,7 @@ ps aux | grep "DirectAPIProcessor" | grep -v grep
 **Reports Directory:**
 
 ```
-/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-reports/
+/path/to/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-reports/
 ```
 
 **File Naming:**
@@ -111,7 +111,7 @@ ps aux | grep "DirectAPIProcessor" | grep -v grep
 ### 1. Verify Completion
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 count=$(ls data/video-reports/*.md 2>/dev/null | wc -l)
 echo "Completed: $count / 647"
 ```
@@ -146,7 +146,7 @@ node src/GenerateStatusReport.js
 ## 🛠️ Implementation Details
 
 **Processor:** DirectAPIProcessor.js **Location:**
-`/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill/src/DirectAPIProcessor.js`
+`/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/gemini-browser-skill/src/DirectAPIProcessor.js`
 
 **Key Features:**
 
@@ -172,9 +172,9 @@ node src/GenerateStatusReport.js
 
 **Desktop Documentation:**
 
-- `/Users/<owner>/Desktop/VIDEO-PROCESSING-COMPLETE-GUIDE.md`
-- `/Users/<owner>/Desktop/CURRENT-STATUS.md`
-- `/Users/<owner>/Desktop/CLI-BUG-ANALYSIS.md`
+- `/path/to/Desktop/VIDEO-PROCESSING-COMPLETE-GUIDE.md`
+- `/path/to/Desktop/CURRENT-STATUS.md`
+- `/path/to/Desktop/CLI-BUG-ANALYSIS.md`
 
 ---
 
