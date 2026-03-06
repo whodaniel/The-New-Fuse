@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Project Summary: Self-Contained Visualizations — The New Fuse Documentation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #06080f;
+        --surface: #0f1319;
+        --border: #1c2333;
+        --text: #e2e8f0;
+        --muted: #8892a4;
+        --accent: #3b82f6;
+      }
+      body {
+        font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+        margin: 0;
+        padding: 0;
+      }
+      .nav {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(6, 8, 15, 0.85);
+        backdrop-filter: blur(16px) saturate(1.8);
+        -webkit-backdrop-filter: blur(16px) saturate(1.8);
+        border-bottom: 1px solid var(--border);
+        padding: 0 40px;
+      }
+      .nav-inner {
+        max-width: 900px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 56px;
+      }
+      .nav-brand {
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+        color: var(--text);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .back-link {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+      }
+      .back-link:hover {
+        color: var(--text);
+      }
+      .md-viewer {
+        max-width: 900px;
+        margin: 60px auto;
+        padding: 40px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        line-height: 1.7;
+        font-size: 15px;
+      }
+      .md-viewer h1 { font-size: 28px; margin-bottom: 24px; font-weight: 800; letter-spacing: -0.5px; }
+      .md-viewer h2 { font-size: 22px; margin: 32px 0 16px; color: var(--accent); font-weight: 700; letter-spacing: -0.3px; }
+      .md-viewer h3 { font-size: 18px; margin: 24px 0 12px; font-weight: 600; }
+      .md-viewer p { margin-bottom: 16px; color: #cbd5e1; }
+      .md-viewer a { color: var(--accent); text-decoration: none; }
+      .md-viewer a:hover { text-decoration: underline; }
+      .md-viewer ul, .md-viewer ol { margin: 12px 0 20px 24px; color: #cbd5e1; }
+      .md-viewer li { margin: 6px 0; }
+      .md-viewer code {
+        background: rgba(255, 255, 255, 0.06);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 13.5px;
+        font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+      }
+      .md-viewer pre {
+        background: #0a0f18;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 16px;
+        overflow-x: auto;
+        margin: 20px 0;
+      }
+      .md-viewer pre code {
+        background: none;
+        padding: 0;
+        color: #7dd3fc;
+      }
+      .md-viewer blockquote {
+        margin: 20px 0;
+        padding: 12px 20px;
+        border-left: 4px solid var(--accent);
+        background: rgba(59, 130, 246, 0.05);
+        border-radius: 0 8px 8px 0;
+        color: #94a3b8;
+      }
+      .md-viewer table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+      }
+      .md-viewer th, .md-viewer td {
+        border: 1px solid var(--border);
+        padding: 10px 14px;
+        clear: left;
+        font-size: 14px;
+      }
+      .md-viewer th {
+        background: rgba(255, 255, 255, 0.04);
+        font-weight: 600;
+        text-align: left;
+      }
+      @media (max-width: 768px) {
+        .md-viewer {
+          margin: 0;
+          padding: 24px;
+          border-radius: 0;
+          border-left: none;
+          border-right: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="nav">
+      <div class="nav-inner">
+        <div class="nav-brand">
+          The New Fuse Docs
+        </div>
+        <a href="dashboard.html" class="back-link">← Back to Dashboard</a>
+      </div>
+    </nav>
+    <div class="md-viewer">
+      <h1>Project Summary: Self-Contained Visualizations</h1>
+<h2>What We&#39;ve Built</h2>
+<p>A complete toolkit for creating <strong>self-contained interactive HTML visualizations</strong> - single files that embed D3.js, data, and visualization logic with no external dependencies.</p>
+<h2>📁 Project Structure</h2>
+<pre><code>self-contained-visualizations/
+│
+├── 📖 README.md                     # Complete documentation &amp; architecture guide
+├── 🚀 QUICKSTART.md                 # 5-minute getting started guide
+├── 📦 package.json                  # NPM package configuration
+│
+├── 🔧 tools/
+│   ├── generate.js                  # Core generator logic
+│   └── cli.js                       # Command-line interface
+│
+├── 📐 templates/
+│   └── visualization-template.html  # Customizable template with placeholders
+│
+└── 💡 examples/
+    ├── minimal-example.html         # Working demo (open in browser!)
+    ├── config.json                  # Example configuration
+    └── sample-data.json             # Sample hierarchical data
+</code></pre>
+<h2>🎯 Key Features</h2>
+<h3>1. Comprehensive Documentation (README.md)</h3>
+<ul>
+<li><strong>Architecture explanation</strong> of self-contained HTML pattern</li>
+<li><strong>Technical deep dive</strong> into bundle-analysis.html</li>
+<li><strong>Best practices</strong> for implementation</li>
+<li><strong>Use cases</strong> and examples</li>
+<li><strong>Comparison tables</strong> and diagrams</li>
+<li><strong>Resource links</strong> to D3.js, Preact, etc.</li>
+</ul>
+<p><strong>Highlights:</strong></p>
+<ul>
+<li>Explains the 3-component architecture (Libraries + Data + Logic)</li>
+<li>Documents D3.js treemap implementation</li>
+<li>Shows color generation algorithms</li>
+<li>Provides optimization strategies</li>
+</ul>
+<h3>2. Working Example (examples/minimal-example.html)</h3>
+<p>A fully functional demonstration that you can:</p>
+<ul>
+<li>✅ Open directly in any browser</li>
+<li>✅ Interact with (click to zoom, hover for details)</li>
+<li>✅ Use as learning material</li>
+<li>✅ Modify for your own projects</li>
+</ul>
+<p><strong>Features:</strong></p>
+<ul>
+<li>Interactive treemap visualization</li>
+<li>Beautiful gradient UI</li>
+<li>Metric switcher (size/count)</li>
+<li>Breadcrumb navigation</li>
+<li>Responsive design</li>
+<li>Tooltip with statistics</li>
+</ul>
+<h3>3. Customizable Template (templates/visualization-template.html)</h3>
+<p>A production-ready template with 20+ placeholders:</p>
+<pre><code>{{TITLE}}                    → Page title
+{{HEADER_TITLE}}             → Main heading
+{{DATA_JSON}}                → Your hierarchical data
+{{PRIMARY_COLOR}}            → Brand color
+{{CUSTOM_CSS}}               → Additional styles
+{{CUSTOM_FUNCTIONS}}         → Custom JavaScript
+{{METRICS}}                  → Configurable metrics
+... and more!
+</code></pre>
+<h3>4. Generator Tool (tools/generate.js)</h3>
+<p>A complete JavaScript class for programmatic generation:</p>
+<pre><code class="language-javascript">import { VisualizationGenerator } from &#39;./tools/generate.js&#39;;
+
+const generator = new VisualizationGenerator();
+const html = await generator.generate({
+  title: &quot;My Viz&quot;,
+  data: myHierarchicalData
+});
+</code></pre>
+<p><strong>Capabilities:</strong></p>
+<ul>
+<li>Load templates</li>
+<li>Embed D3.js library (local or CDN)</li>
+<li>Validate configuration</li>
+<li>Replace all placeholders</li>
+<li>Generate output HTML</li>
+<li>Save to file</li>
+</ul>
+<h3>5. CLI Tool (tools/cli.js)</h3>
+<p>Command-line interface for easy generation:</p>
+<pre><code class="language-bash"># Basic usage
+scv --config my-config.json --output viz.html
+
+# With custom data
+scv --config config.json --data my-data.json --output result.html
+
+# Generate and open
+scv --config config.json --output viz.html --open
+</code></pre>
+<p><strong>Features:</strong></p>
+<ul>
+<li>Argument parsing</li>
+<li>Validation</li>
+<li>Error handling</li>
+<li>Browser integration</li>
+<li>Cross-platform support</li>
+</ul>
+<h3>6. Example Configurations</h3>
+<p>Two ready-to-use examples:</p>
+<p><strong>config.json</strong> - Project dependencies visualization</p>
+<ul>
+<li>Bundle size analysis</li>
+<li>Multiple metrics (size, gzip, count)</li>
+<li>Custom formatters</li>
+<li>Color scheme configuration</li>
+</ul>
+<p><strong>sample-data.json</strong> - Company departments</p>
+<ul>
+<li>Organizational hierarchy</li>
+<li>Employee data</li>
+<li>Performance metrics</li>
+<li>Multi-level nesting</li>
+</ul>
+<h2>🔑 Key Concepts Documented</h2>
+<h3>Self-Contained Pattern</h3>
+<ol>
+<li><strong>Embedded Libraries</strong> - Inline minified JavaScript</li>
+<li><strong>Embedded Data</strong> - JSON objects as JavaScript</li>
+<li><strong>Visualization Logic</strong> - Custom application code</li>
+</ol>
+<h3>Technologies Explained</h3>
+<ul>
+<li><strong>Preact</strong> - Lightweight React alternative</li>
+<li><strong>D3.js Modules</strong> - Hierarchy, selection, treemap, zoom, etc.</li>
+<li><strong>Treemap Algorithm</strong> - Squarified layout with golden ratio</li>
+<li><strong>Color Generation</strong> - Rainbow coloring with contrast calculation</li>
+</ul>
+<h3>Implementation Strategies</h3>
+<ul>
+<li>Template-based generation</li>
+<li>Build-time embedding</li>
+<li>Runtime assembly</li>
+<li>Progressive enhancement</li>
+</ul>
+<h3>Best Practices</h3>
+<ul>
+<li>Library size optimization</li>
+<li>Data efficiency techniques</li>
+<li>Performance optimization</li>
+<li>Accessibility considerations</li>
+</ul>
+<h2>💡 Use Cases Covered</h2>
+<ol>
+<li><strong>Bundle Analysis</strong> - Webpack/Rollup output visualization</li>
+<li><strong>Data Reports</strong> - Static analysis reports</li>
+<li><strong>Interactive Dashboards</strong> - Metrics and KPIs</li>
+<li><strong>Data Exploration</strong> - Navigate hierarchical data</li>
+<li><strong>Documentation</strong> - API browsers, config explorers</li>
+</ol>
+<h2>🚀 How to Get Started</h2>
+<h3>Option 1: Quick Demo</h3>
+<pre><code class="language-bash">cd self-contained-visualizations
+open examples/minimal-example.html
+</code></pre>
+<h3>Option 2: Generate Your First Viz</h3>
+<pre><code class="language-bash">node tools/cli.js \
+  --config examples/config.json \
+  --output my-viz.html \
+  --open
+</code></pre>
+<h3>Option 3: Use Your Own Data</h3>
+<ol>
+<li>Create <code>my-data.json</code> with hierarchical structure</li>
+<li>Run: <code>node tools/cli.js --config examples/config.json --data my-data.json --output viz.html</code></li>
+<li>Open <code>viz.html</code> in browser</li>
+</ol>
+<h2>📊 Data Structure</h2>
+<p>Your data must follow this format:</p>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;root&quot;,
+  &quot;children&quot;: [
+    {
+      &quot;name&quot;: &quot;Category&quot;,
+      &quot;children&quot;: [
+        {
+          &quot;name&quot;: &quot;Item&quot;,
+          &quot;size&quot;: 100,
+          &quot;count&quot;: 5,
+          &quot;anyCustomMetric&quot;: 42
+        }
+      ]
+    }
+  ]
+}
+</code></pre>
+<p><strong>Requirements:</strong></p>
+<ul>
+<li>Root must have <code>name</code> property</li>
+<li>Children are optional (leaf nodes)</li>
+<li>Numeric properties become available metrics</li>
+<li>Unlimited nesting depth supported</li>
+</ul>
+<h2>🎨 Customization Options</h2>
+<h3>Visual Customization</h3>
+<ul>
+<li>Title and headers</li>
+<li>Color scheme (20+ D3 schemes)</li>
+<li>Background gradients</li>
+<li>Padding and spacing</li>
+<li>Font sizes and styles</li>
+</ul>
+<h3>Functional Customization</h3>
+<ul>
+<li>Metrics (any numeric properties)</li>
+<li>Default metric</li>
+<li>Custom formatters</li>
+<li>Custom event handlers</li>
+<li>Custom render logic</li>
+</ul>
+<h3>Advanced Customization</h3>
+<ul>
+<li>Custom CSS</li>
+<li>Custom JavaScript functions</li>
+<li>Custom tooltips</li>
+<li>Custom navigation</li>
+<li>Custom animations</li>
+</ul>
+<h2>📈 Real-World Example</h2>
+<p>The bundle-analysis.html that inspired this project:</p>
+<ul>
+<li><strong>Size:</strong> 483.8 KB</li>
+<li><strong>Components:</strong> Preact + D3.js + Data</li>
+<li><strong>Features:</strong> Treemap, zoom, filter, multiple size modes</li>
+<li><strong>Data:</strong> ~320 KB embedded bundle information</li>
+<li><strong>Performance:</strong> Single HTTP request, instant rendering</li>
+</ul>
+<h2>🎯 Project Goals Achieved</h2>
+<p>✅ <strong>Documentation</strong> - Complete architecture explanation
+✅ <strong>Working Example</strong> - Minimal but fully functional demo
+✅ <strong>Template System</strong> - Customizable with placeholders
+✅ <strong>Tooling</strong> - CLI and programmatic API
+✅ <strong>Examples</strong> - Multiple configurations
+✅ <strong>Best Practices</strong> - Performance, accessibility, security
+✅ <strong>Portability</strong> - Works anywhere, no dependencies</p>
+<h2>🔮 Future Enhancements</h2>
+<p>Potential additions:</p>
+<ul>
+<li><input disabled="" type="checkbox"> Additional visualization types (bar charts, networks)</li>
+<li><input disabled="" type="checkbox"> More example templates</li>
+<li><input disabled="" type="checkbox"> Interactive template builder</li>
+<li><input disabled="" type="checkbox"> Data conversion utilities</li>
+<li><input disabled="" type="checkbox"> Export to PNG/SVG</li>
+<li><input disabled="" type="checkbox"> Embedded search functionality</li>
+<li><input disabled="" type="checkbox"> Theme system</li>
+</ul>
+<h2>📚 Learning Resources</h2>
+<h3>Included Documentation</h3>
+<ul>
+<li><strong>README.md</strong> - Full technical reference</li>
+<li><strong>QUICKSTART.md</strong> - Step-by-step tutorial</li>
+<li><strong>examples/minimal-example.html</strong> - Annotated source code</li>
+<li><strong>templates/visualization-template.html</strong> - Customization guide</li>
+</ul>
+<h3>External References</h3>
+<ul>
+<li>D3.js Documentation: <a href="https://d3js.org/">https://d3js.org/</a></li>
+<li>Preact Documentation: <a href="https://preactjs.com/">https://preactjs.com/</a></li>
+<li>Rollup Visualizer: <a href="https://github.com/btd/rollup-plugin-visualizer">https://github.com/btd/rollup-plugin-visualizer</a></li>
+</ul>
+<h2>🤝 Contributing</h2>
+<p>This is a complete, working system ready for:</p>
+<ul>
+<li>Personal projects</li>
+<li>Team tools</li>
+<li>Open source contributions</li>
+<li>Commercial use (MIT license)</li>
+</ul>
+<p>Modify, extend, and share as needed!</p>
+<h2>📝 License</h2>
+<p>MIT License - Use freely in any project</p>
+<hr>
+<h2>Summary</h2>
+<p>You now have:</p>
+<ol>
+<li>✅ <strong>Complete understanding</strong> of self-contained HTML visualizations</li>
+<li>✅ <strong>Working example</strong> to study and modify</li>
+<li>✅ <strong>Template system</strong> for custom visualizations</li>
+<li>✅ <strong>Tooling</strong> to generate new visualizations easily</li>
+<li>✅ <strong>Documentation</strong> for every aspect of the system</li>
+</ol>
+<p><strong>Next Steps:</strong></p>
+<ol>
+<li>Open <code>examples/minimal-example.html</code> to see it in action</li>
+<li>Read <code>QUICKSTART.md</code> for your first generation</li>
+<li>Customize <code>examples/config.json</code> for your data</li>
+<li>Generate and share your visualizations!</li>
+</ol>
+<p><strong>Created:</strong> 2025-12-21
+<strong>Version:</strong> 1.0.0
+<strong>Author:</strong> Daniel Goldberg</p>
+
+    </div>
+  </body>
+</html>

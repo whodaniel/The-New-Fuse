@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Self-Contained Interactive HTML Visualizations — The New Fuse Documentation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #06080f;
+        --surface: #0f1319;
+        --border: #1c2333;
+        --text: #e2e8f0;
+        --muted: #8892a4;
+        --accent: #3b82f6;
+      }
+      body {
+        font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+        margin: 0;
+        padding: 0;
+      }
+      .nav {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(6, 8, 15, 0.85);
+        backdrop-filter: blur(16px) saturate(1.8);
+        -webkit-backdrop-filter: blur(16px) saturate(1.8);
+        border-bottom: 1px solid var(--border);
+        padding: 0 40px;
+      }
+      .nav-inner {
+        max-width: 900px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 56px;
+      }
+      .nav-brand {
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+        color: var(--text);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .back-link {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+      }
+      .back-link:hover {
+        color: var(--text);
+      }
+      .md-viewer {
+        max-width: 900px;
+        margin: 60px auto;
+        padding: 40px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        line-height: 1.7;
+        font-size: 15px;
+      }
+      .md-viewer h1 { font-size: 28px; margin-bottom: 24px; font-weight: 800; letter-spacing: -0.5px; }
+      .md-viewer h2 { font-size: 22px; margin: 32px 0 16px; color: var(--accent); font-weight: 700; letter-spacing: -0.3px; }
+      .md-viewer h3 { font-size: 18px; margin: 24px 0 12px; font-weight: 600; }
+      .md-viewer p { margin-bottom: 16px; color: #cbd5e1; }
+      .md-viewer a { color: var(--accent); text-decoration: none; }
+      .md-viewer a:hover { text-decoration: underline; }
+      .md-viewer ul, .md-viewer ol { margin: 12px 0 20px 24px; color: #cbd5e1; }
+      .md-viewer li { margin: 6px 0; }
+      .md-viewer code {
+        background: rgba(255, 255, 255, 0.06);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 13.5px;
+        font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+      }
+      .md-viewer pre {
+        background: #0a0f18;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 16px;
+        overflow-x: auto;
+        margin: 20px 0;
+      }
+      .md-viewer pre code {
+        background: none;
+        padding: 0;
+        color: #7dd3fc;
+      }
+      .md-viewer blockquote {
+        margin: 20px 0;
+        padding: 12px 20px;
+        border-left: 4px solid var(--accent);
+        background: rgba(59, 130, 246, 0.05);
+        border-radius: 0 8px 8px 0;
+        color: #94a3b8;
+      }
+      .md-viewer table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+      }
+      .md-viewer th, .md-viewer td {
+        border: 1px solid var(--border);
+        padding: 10px 14px;
+        clear: left;
+        font-size: 14px;
+      }
+      .md-viewer th {
+        background: rgba(255, 255, 255, 0.04);
+        font-weight: 600;
+        text-align: left;
+      }
+      @media (max-width: 768px) {
+        .md-viewer {
+          margin: 0;
+          padding: 24px;
+          border-radius: 0;
+          border-left: none;
+          border-right: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="nav">
+      <div class="nav-inner">
+        <div class="nav-brand">
+          The New Fuse Docs
+        </div>
+        <a href="dashboard.html" class="back-link">← Back to Dashboard</a>
+      </div>
+    </nav>
+    <div class="md-viewer">
+      <h1>Self-Contained Interactive HTML Visualizations</h1>
+<h2>Overview</h2>
+<p>This project documents and provides tooling for creating <strong>self-contained interactive HTML visualizations</strong> - single-file applications that require no external dependencies, servers, or build steps to run.</p>
+<h2>Architecture Pattern</h2>
+<p>Based on the analysis of <code>bundle-analysis.html</code> from Rollup Visualizer, this pattern consists of three key components embedded in a single HTML file:</p>
+<h3>1. Embedded JavaScript Libraries</h3>
+<p>Libraries are <strong>inlined as minified code</strong> directly in <code>&lt;script&gt;</code> tags:</p>
+<pre><code class="language-html">&lt;script&gt;
+  // Minified library code (e.g., Preact, D3.js)
+  var MyLibrary = (function() { /* ... */ })();
+&lt;/script&gt;
+</code></pre>
+<p><strong>Common choices:</strong></p>
+<ul>
+<li><strong>UI Framework</strong>: Preact (~3KB), or vanilla JavaScript</li>
+<li><strong>Visualization</strong>: D3.js (treemaps, hierarchies, charts)</li>
+<li><strong>Utilities</strong>: Small helper libraries for specific tasks</li>
+</ul>
+<p><strong>Why this works:</strong></p>
+<ul>
+<li>No network requests needed</li>
+<li>Instant load time (after initial download)</li>
+<li>Works offline and in any environment</li>
+<li>Can be emailed, stored locally, or embedded anywhere</li>
+</ul>
+<h3>2. Embedded Data</h3>
+<p>Data is <strong>embedded as JavaScript</strong> at the end of the file:</p>
+<pre><code class="language-html">&lt;script&gt;
+  const data = {
+    &quot;version&quot;: 2,
+    &quot;tree&quot;: { /* nested data structure */ },
+    &quot;metadata&quot;: { /* additional info */ }
+  };
+
+  // Initialize visualization with embedded data
+  initVisualization(document.body, data);
+&lt;/script&gt;
+</code></pre>
+<p><strong>Data formats:</strong></p>
+<ul>
+<li>JSON objects (most common)</li>
+<li>Arrays of values</li>
+<li>Hierarchical/nested structures</li>
+<li>Can be quite large (hundreds of KB)</li>
+</ul>
+<h3>3. Interactive Visualization Logic</h3>
+<p>Custom application code that:</p>
+<ul>
+<li>Creates the DOM structure</li>
+<li>Binds data to visual elements</li>
+<li>Handles user interactions (click, hover, zoom)</li>
+<li>Updates the display dynamically</li>
+</ul>
+<pre><code class="language-javascript">// Example: D3 treemap visualization
+const layout = treemap()
+  .size([width, height])
+  .padding(5);
+
+const root = hierarchy(data.tree)
+  .sum(d =&gt; d.value);
+
+layout(root);
+
+// Render rectangles for each node
+svg.selectAll(&quot;rect&quot;)
+  .data(root.leaves())
+  .enter()
+  .append(&quot;rect&quot;)
+  .attr(&quot;x&quot;, d =&gt; d.x0)
+  .attr(&quot;y&quot;, d =&gt; d.y0)
+  .attr(&quot;width&quot;, d =&gt; d.x1 - d.x0)
+  .attr(&quot;height&quot;, d =&gt; d.y1 - d.y0)
+  .on(&quot;click&quot;, zoom);
+</code></pre>
+<h2>Key Technologies from bundle-analysis.html</h2>
+<h3>1. Preact (Lightweight React)</h3>
+<ul>
+<li><strong>Size</strong>: ~3KB minified</li>
+<li><strong>Purpose</strong>: Component-based UI rendering</li>
+<li><strong>API</strong>: Nearly identical to React (JSX, hooks, components)</li>
+<li><strong>Usage</strong>: Perfect for interactive dashboards</li>
+</ul>
+<h3>2. D3.js Modules</h3>
+<p>Used modules in bundle-analysis.html:</p>
+<ul>
+<li><strong>d3-hierarchy</strong>: Tree/hierarchy data structures</li>
+<li><strong>d3-selection</strong>: DOM manipulation</li>
+<li><strong>d3-drag</strong>: Drag interactions</li>
+<li><strong>d3-zoom</strong>: Zoom/pan behaviors</li>
+<li><strong>d3-transition</strong>: Smooth animations</li>
+<li><strong>d3-interpolate</strong>: Value interpolation</li>
+</ul>
+<p><strong>Treemap Algorithm:</strong></p>
+<ul>
+<li>Squarified layout (minimizes aspect ratios)</li>
+<li>Golden ratio-based subdivision</li>
+<li>Nested rectangles representing hierarchies</li>
+<li>Size proportional to numeric values</li>
+</ul>
+<h3>3. Color Generation</h3>
+<p>Rainbow color algorithm for visual grouping:</p>
+<ul>
+<li>Uses HSL color space</li>
+<li>Distributes hues evenly across hierarchy</li>
+<li>Calculates contrast ratios for readable text</li>
+<li>Caches colors for performance</li>
+</ul>
+<h3>4. State Management</h3>
+<ul>
+<li>URL hash for navigation state</li>
+<li>Local component state (Preact hooks)</li>
+<li>Cached computations (Map/WeakMap)</li>
+</ul>
+<h2>Advantages of This Pattern</h2>
+<h3>1. <strong>Portability</strong></h3>
+<ul>
+<li>Single file = easy to share</li>
+<li>Email attachments</li>
+<li>Drag-and-drop to browser</li>
+<li>Store in git repos</li>
+</ul>
+<h3>2. <strong>Zero Dependencies</strong></h3>
+<ul>
+<li>No <code>node_modules</code></li>
+<li>No CDN requirements</li>
+<li>No version conflicts</li>
+<li>Works offline</li>
+</ul>
+<h3>3. <strong>Performance</strong></h3>
+<ul>
+<li>One HTTP request</li>
+<li>Pre-computed data</li>
+<li>Efficient caching</li>
+<li>Fast initial render</li>
+</ul>
+<h3>4. <strong>Security</strong></h3>
+<ul>
+<li>No external resource loading</li>
+<li>Content Security Policy friendly</li>
+<li>Can be audited as single file</li>
+<li>No supply chain attacks</li>
+</ul>
+<h3>5. <strong>Longevity</strong></h3>
+<ul>
+<li>HTML/CSS/JS = universal</li>
+<li>No framework updates needed</li>
+<li>Works in old and new browsers</li>
+<li>Self-documenting artifact</li>
+</ul>
+<h2>Use Cases</h2>
+<h3>1. <strong>Bundle Analysis</strong> (Original)</h3>
+<ul>
+<li>Visualize webpack/rollup output</li>
+<li>Identify large dependencies</li>
+<li>Optimize bundle size</li>
+<li>Track changes over time</li>
+</ul>
+<h3>2. <strong>Data Reports</strong></h3>
+<ul>
+<li>Generate static reports from data pipelines</li>
+<li>Share analysis results with stakeholders</li>
+<li>Archive point-in-time snapshots</li>
+<li>Embed in documentation</li>
+</ul>
+<h3>3. <strong>Interactive Dashboards</strong></h3>
+<ul>
+<li>Project metrics</li>
+<li>Test coverage reports</li>
+<li>Performance benchmarks</li>
+<li>Dependency graphs</li>
+</ul>
+<h3>4. <strong>Data Exploration</strong></h3>
+<ul>
+<li>Browse hierarchical data</li>
+<li>Navigate large datasets</li>
+<li>Filter and search</li>
+<li>Export findings</li>
+</ul>
+<h3>5. <strong>Documentation</strong></h3>
+<ul>
+<li>API reference browsers</li>
+<li>Configuration explorers</li>
+<li>Code structure maps</li>
+<li>Architecture diagrams</li>
+</ul>
+<h2>Implementation Strategies</h2>
+<h3>Strategy 1: Template-Based Generation</h3>
+<pre><code class="language-javascript">// Generate custom visualization
+const template = fs.readFileSync(&#39;template.html&#39;, &#39;utf-8&#39;);
+const data = generateMyData();
+const output = template.replace(&#39;__DATA_PLACEHOLDER__&#39;, JSON.stringify(data));
+fs.writeFileSync(&#39;output.html&#39;, output);
+</code></pre>
+<h3>Strategy 2: Build-Time Embedding</h3>
+<pre><code class="language-javascript">// Vite/Rollup plugin
+export default {
+  plugins: [
+    {
+      name: &#39;embed-visualization&#39;,
+      generateBundle(options, bundle) {
+        // Inline all assets into single HTML
+      }
+    }
+  ]
+}
+</code></pre>
+<h3>Strategy 3: Runtime Assembly</h3>
+<pre><code class="language-javascript">// Server-side rendering
+app.get(&#39;/report/:id&#39;, async (req, res) =&gt; {
+  const data = await fetchReportData(req.params.id);
+  const html = await renderVisualization(data);
+  res.send(html);
+});
+</code></pre>
+<h2>Best Practices</h2>
+<h3>1. <strong>Optimize Library Size</strong></h3>
+<ul>
+<li>Use tree-shaking to include only needed modules</li>
+<li>Choose lightweight alternatives (Preact vs React)</li>
+<li>Minify and compress</li>
+<li>Consider removing unused D3 modules</li>
+</ul>
+<h3>2. <strong>Data Efficiency</strong></h3>
+<ul>
+<li>Compress data (especially repeated strings)</li>
+<li>Use short property names</li>
+<li>Remove unnecessary metadata</li>
+<li>Consider data deduplication</li>
+</ul>
+<h3>3. <strong>Progressive Enhancement</strong></h3>
+<ul>
+<li>Graceful degradation for old browsers</li>
+<li>Loading states for large datasets</li>
+<li>Error boundaries</li>
+<li>Fallback content</li>
+</ul>
+<h3>4. <strong>Performance</strong></h3>
+<ul>
+<li>Lazy render large datasets</li>
+<li>Virtualize long lists</li>
+<li>Debounce interactions</li>
+<li>Cache expensive computations</li>
+</ul>
+<h3>5. <strong>Accessibility</strong></h3>
+<ul>
+<li>Keyboard navigation</li>
+<li>Screen reader support</li>
+<li>Color contrast</li>
+<li>Focus management</li>
+</ul>
+<h2>Technical Deep Dive</h2>
+<h3>How Rollup Visualizer Works</h3>
+<h4>1. Build Process</h4>
+<pre><code class="language-bash"># During rollup build
+rollup --config --plugin visualizer
+</code></pre>
+<p>The plugin:</p>
+<ol>
+<li>Hooks into <code>generateBundle</code> lifecycle</li>
+<li>Analyzes module graph</li>
+<li>Calculates sizes (rendered, minified, gzipped, brotli)</li>
+<li>Builds hierarchical tree structure</li>
+<li>Generates HTML with embedded data</li>
+</ol>
+<h4>2. Data Structure</h4>
+<pre><code class="language-typescript">interface VisualizationData {
+  version: number;
+  tree: ModuleTree;
+  nodeParts: Record&lt;string, ModuleSizes&gt;;
+  options: {
+    gzip: boolean;
+    brotli: boolean;
+  };
+}
+
+interface ModuleTree {
+  name: string;
+  children?: ModuleTree[];
+  uid?: string; // Leaf nodes have UIDs
+}
+
+interface ModuleSizes {
+  renderedLength: number;
+  gzipLength?: number;
+  brotliLength?: number;
+}
+</code></pre>
+<h4>3. Rendering Pipeline</h4>
+<pre><code>Data → Hierarchy → Treemap Layout → SVG Rendering → User Interaction
+</code></pre>
+<p><strong>Hierarchy Creation:</strong></p>
+<pre><code class="language-javascript">const rawHierarchy = hierarchy(data.tree);
+rawHierarchy.sum(node =&gt; getModuleSize(node, sizeKey));
+</code></pre>
+<p><strong>Layout Calculation:</strong></p>
+<pre><code class="language-javascript">const layout = treemap()
+  .size([width, height])
+  .paddingOuter(5)
+  .paddingTop(20)  // Space for labels
+  .paddingInner(2)
+  .round(true)
+  .tile(treemapResquarify);  // Squarified algorithm
+
+layout(rawHierarchy);
+</code></pre>
+<p><strong>SVG Generation:</strong></p>
+<pre><code class="language-javascript">// Each node becomes a &lt;g&gt; with &lt;rect&gt; and &lt;text&gt;
+nodes.forEach(node =&gt; {
+  const group = svg.append(&#39;g&#39;)
+    .attr(&#39;transform&#39;, `translate(${node.x0},${node.y0})`);
+
+  group.append(&#39;rect&#39;)
+    .attr(&#39;width&#39;, node.x1 - node.x0)
+    .attr(&#39;height&#39;, node.y1 - node.y0)
+    .attr(&#39;fill&#39;, getColor(node));
+
+  group.append(&#39;text&#39;)
+    .text(node.data.name);
+});
+</code></pre>
+<h4>4. Interaction Handling</h4>
+<pre><code class="language-javascript">// Click to zoom
+function zoom(event, node) {
+  // Calculate transform to fill viewport
+  const kx = width / (node.x1 - node.x0);
+  const ky = height / (node.y1 - node.y0);
+  const k = Math.min(kx, ky);
+
+  // Animate transition
+  svg.transition()
+    .duration(750)
+    .attr(&#39;transform&#39;,
+      `translate(${-node.x0 * k},${-node.y0 * k}) scale(${k})`);
+}
+
+// Hover tooltips
+nodes.on(&#39;mouseenter&#39;, (event, node) =&gt; {
+  tooltip
+    .style(&#39;visibility&#39;, &#39;visible&#39;)
+    .html(`
+      &lt;strong&gt;${node.data.name}&lt;/strong&gt;&lt;br&gt;
+      Size: ${formatBytes(node.value)}&lt;br&gt;
+      Percentage: ${(node.value / root.value * 100).toFixed(2)}%
+    `);
+});
+</code></pre>
+<h2>Comparison: Bundle Analysis Example</h2>
+<h3>What Makes It Special</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Implementation</th>
+<th>Benefit</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>File Size</strong></td>
+<td>483.8 KB total</td>
+<td>Reasonable for rich interactive app</td>
+</tr>
+<tr>
+<td><strong>Load Time</strong></td>
+<td>Single HTTP request</td>
+<td>Fast initial load</td>
+</tr>
+<tr>
+<td><strong>Interactivity</strong></td>
+<td>D3 zoom/drag/click</td>
+<td>Explore large datasets</td>
+</tr>
+<tr>
+<td><strong>Responsiveness</strong></td>
+<td>Dynamic resize</td>
+<td>Works on any screen</td>
+</tr>
+<tr>
+<td><strong>Data Size</strong></td>
+<td>~300KB JSON</td>
+<td>Handles thousands of modules</td>
+</tr>
+<tr>
+<td><strong>Rendering</strong></td>
+<td>SVG treemap</td>
+<td>Crisp at any zoom level</td>
+</tr>
+<tr>
+<td><strong>Filtering</strong></td>
+<td>Text input + regex</td>
+<td>Find specific modules</td>
+</tr>
+<tr>
+<td><strong>Size Modes</strong></td>
+<td>Toggle rendered/gzip/brotli</td>
+<td>Compare compression</td>
+</tr>
+</tbody></table>
+<h3>Size Breakdown (Approximate)</h3>
+<pre><code>Total: 483.8 KB
+├── Preact Library: ~15 KB
+├── D3 Modules: ~80 KB
+├── Custom Code: ~60 KB
+├── CSS Styles: ~5 KB
+├── Embedded Data: ~320 KB
+└── Whitespace/Comments: ~4 KB
+</code></pre>
+<h2>Tooling Ecosystem</h2>
+<p>This repository provides:</p>
+<ol>
+<li><strong>Documentation</strong> (this file)</li>
+<li><strong>Minimal Example</strong> - Simplest working implementation</li>
+<li><strong>Template System</strong> - Customizable base template</li>
+<li><strong>Generator CLI</strong> - Command-line tool to create visualizations</li>
+<li><strong>Example Visualizations</strong> - Various use cases</li>
+</ol>
+<h2>Getting Started</h2>
+<h3>Quick Start</h3>
+<pre><code class="language-bash"># Clone or download this repository
+cd self-contained-visualizations
+
+# Install dependencies (for tooling only)
+npm install
+
+# Generate a sample visualization
+npm run generate -- --data my-data.json --output my-viz.html
+
+# Open in browser
+open my-viz.html
+</code></pre>
+<h3>Manual Creation</h3>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;My Visualization&lt;/title&gt;
+  &lt;style&gt;/* Your styles */&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div id=&quot;root&quot;&gt;&lt;/div&gt;
+
+  &lt;!-- Embedded libraries --&gt;
+  &lt;script src=&quot;https://unpkg.com/preact@latest/dist/preact.umd.js&quot;&gt;&lt;/script&gt;
+  &lt;script src=&quot;https://unpkg.com/d3@latest/dist/d3.min.js&quot;&gt;&lt;/script&gt;
+
+  &lt;!-- Your code --&gt;
+  &lt;script&gt;
+    const data = { /* Your data */ };
+    // Your visualization logic
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>Then inline the external scripts to make it self-contained.</p>
+<h2>Advanced Topics</h2>
+<h3>Data Compression</h3>
+<p>For large datasets, compress the embedded data:</p>
+<pre><code class="language-javascript">// Use shorter keys
+const compressed = {
+  n: node.name,
+  c: node.children,
+  v: node.value
+};
+
+// Deduplicate repeated strings
+const strings = new Map();
+const deduped = JSON.stringify(data, (key, value) =&gt; {
+  if (typeof value === &#39;string&#39; &amp;&amp; value.length &gt; 10) {
+    if (!strings.has(value)) {
+      strings.set(value, strings.size);
+    }
+    return { __ref: strings.get(value) };
+  }
+  return value;
+});
+</code></pre>
+<h3>Progressive Loading</h3>
+<p>For very large datasets, load incrementally:</p>
+<pre><code class="language-javascript">// Split data into chunks
+const chunks = [
+  data.slice(0, 1000),
+  data.slice(1000, 2000),
+  // ...
+];
+
+// Render first chunk immediately
+renderChunk(chunks[0]);
+
+// Load remaining chunks with requestIdleCallback
+chunks.slice(1).forEach((chunk, i) =&gt; {
+  requestIdleCallback(() =&gt; renderChunk(chunk));
+});
+</code></pre>
+<h3>URL State Management</h3>
+<p>Preserve state in URL for sharing:</p>
+<pre><code class="language-javascript">// Encode state in hash
+function updateURL(state) {
+  const hash = btoa(JSON.stringify(state));
+  window.location.hash = hash;
+}
+
+// Restore from hash
+function loadState() {
+  try {
+    const state = JSON.parse(atob(window.location.hash.slice(1)));
+    return state;
+  } catch {
+    return defaultState;
+  }
+}
+</code></pre>
+<h2>Resources</h2>
+<h3>Libraries for Self-Contained Visualizations</h3>
+<ul>
+<li><strong>Preact</strong>: <a href="https://preactjs.com/">https://preactjs.com/</a></li>
+<li><strong>D3.js</strong>: <a href="https://d3js.org/">https://d3js.org/</a></li>
+<li><strong>Plotly</strong>: <a href="https://plotly.com/javascript/">https://plotly.com/javascript/</a></li>
+<li><strong>Chart.js</strong>: <a href="https://www.chartjs.org/">https://www.chartjs.org/</a></li>
+<li><strong>Vis.js</strong>: <a href="https://visjs.org/">https://visjs.org/</a></li>
+</ul>
+<h3>Build Tools</h3>
+<ul>
+<li><strong>Rollup Plugin Visualizer</strong>: <a href="https://github.com/btd/rollup-plugin-visualizer">https://github.com/btd/rollup-plugin-visualizer</a></li>
+<li><strong>Webpack Bundle Analyzer</strong>: <a href="https://github.com/webpack-contrib/webpack-bundle-analyzer">https://github.com/webpack-contrib/webpack-bundle-analyzer</a></li>
+<li><strong>Vite Plugin Visualizer</strong>: <a href="https://github.com/btd/rollup-plugin-visualizer">https://github.com/btd/rollup-plugin-visualizer</a></li>
+</ul>
+<h3>Inspiration</h3>
+<ul>
+<li><strong>Observable Notebooks</strong>: Self-contained interactive documents</li>
+<li><strong>Jupyter Notebooks</strong>: Mix code, data, and visualizations</li>
+<li><strong>R Markdown</strong>: Generate standalone HTML reports</li>
+</ul>
+<h2>License</h2>
+<p>MIT</p>
+<h2>Contributing</h2>
+<p>Contributions welcome! Please open an issue or PR.</p>
+<hr>
+<p><strong>Created by</strong>: Daniel Goldberg
+<strong>Last Updated</strong>: 2025-12-21
+<strong>Version</strong>: 1.0.0</p>
+
+    </div>
+  </body>
+</html>

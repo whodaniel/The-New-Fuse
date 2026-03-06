@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Quick Start Guide — The New Fuse Documentation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #06080f;
+        --surface: #0f1319;
+        --border: #1c2333;
+        --text: #e2e8f0;
+        --muted: #8892a4;
+        --accent: #3b82f6;
+      }
+      body {
+        font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+        margin: 0;
+        padding: 0;
+      }
+      .nav {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(6, 8, 15, 0.85);
+        backdrop-filter: blur(16px) saturate(1.8);
+        -webkit-backdrop-filter: blur(16px) saturate(1.8);
+        border-bottom: 1px solid var(--border);
+        padding: 0 40px;
+      }
+      .nav-inner {
+        max-width: 900px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 56px;
+      }
+      .nav-brand {
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+        color: var(--text);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .back-link {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+      }
+      .back-link:hover {
+        color: var(--text);
+      }
+      .md-viewer {
+        max-width: 900px;
+        margin: 60px auto;
+        padding: 40px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        line-height: 1.7;
+        font-size: 15px;
+      }
+      .md-viewer h1 { font-size: 28px; margin-bottom: 24px; font-weight: 800; letter-spacing: -0.5px; }
+      .md-viewer h2 { font-size: 22px; margin: 32px 0 16px; color: var(--accent); font-weight: 700; letter-spacing: -0.3px; }
+      .md-viewer h3 { font-size: 18px; margin: 24px 0 12px; font-weight: 600; }
+      .md-viewer p { margin-bottom: 16px; color: #cbd5e1; }
+      .md-viewer a { color: var(--accent); text-decoration: none; }
+      .md-viewer a:hover { text-decoration: underline; }
+      .md-viewer ul, .md-viewer ol { margin: 12px 0 20px 24px; color: #cbd5e1; }
+      .md-viewer li { margin: 6px 0; }
+      .md-viewer code {
+        background: rgba(255, 255, 255, 0.06);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 13.5px;
+        font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+      }
+      .md-viewer pre {
+        background: #0a0f18;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 16px;
+        overflow-x: auto;
+        margin: 20px 0;
+      }
+      .md-viewer pre code {
+        background: none;
+        padding: 0;
+        color: #7dd3fc;
+      }
+      .md-viewer blockquote {
+        margin: 20px 0;
+        padding: 12px 20px;
+        border-left: 4px solid var(--accent);
+        background: rgba(59, 130, 246, 0.05);
+        border-radius: 0 8px 8px 0;
+        color: #94a3b8;
+      }
+      .md-viewer table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+      }
+      .md-viewer th, .md-viewer td {
+        border: 1px solid var(--border);
+        padding: 10px 14px;
+        clear: left;
+        font-size: 14px;
+      }
+      .md-viewer th {
+        background: rgba(255, 255, 255, 0.04);
+        font-weight: 600;
+        text-align: left;
+      }
+      @media (max-width: 768px) {
+        .md-viewer {
+          margin: 0;
+          padding: 24px;
+          border-radius: 0;
+          border-left: none;
+          border-right: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="nav">
+      <div class="nav-inner">
+        <div class="nav-brand">
+          The New Fuse Docs
+        </div>
+        <a href="dashboard.html" class="back-link">← Back to Dashboard</a>
+      </div>
+    </nav>
+    <div class="md-viewer">
+      <h1>Quick Start Guide</h1>
+<p>Get started with Self-Contained Visualizations in 5 minutes!</p>
+<h2>1. Quick Demo</h2>
+<p>Open the pre-built example in your browser:</p>
+<pre><code class="language-bash">cd self-contained-visualizations
+open examples/minimal-example.html
+</code></pre>
+<p>This demonstrates:</p>
+<ul>
+<li>✓ Interactive treemap visualization</li>
+<li>✓ Click to zoom into categories</li>
+<li>✓ Hover for detailed tooltips</li>
+<li>✓ Multiple metric views</li>
+<li>✓ Fully self-contained (works offline)</li>
+</ul>
+<h2>2. Generate Your First Visualization</h2>
+<h3>Option A: Use the Example Configuration</h3>
+<pre><code class="language-bash"># Make CLI executable
+chmod +x tools/cli.js
+
+# Generate using example config
+node tools/cli.js \
+  --config examples/config.json \
+  --output my-first-viz.html \
+  --open
+</code></pre>
+<p>This will:</p>
+<ol>
+<li>Load the example configuration</li>
+<li>Generate a self-contained HTML file</li>
+<li>Open it in your browser</li>
+</ol>
+<h3>Option B: Use Your Own Data</h3>
+<p>Create a data file <code>my-data.json</code>:</p>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;root&quot;,
+  &quot;children&quot;: [
+    {
+      &quot;name&quot;: &quot;Category A&quot;,
+      &quot;children&quot;: [
+        { &quot;name&quot;: &quot;Item 1&quot;, &quot;size&quot;: 100, &quot;count&quot;: 5 },
+        { &quot;name&quot;: &quot;Item 2&quot;, &quot;size&quot;: 200, &quot;count&quot;: 10 }
+      ]
+    },
+    {
+      &quot;name&quot;: &quot;Category B&quot;,
+      &quot;children&quot;: [
+        { &quot;name&quot;: &quot;Item 3&quot;, &quot;size&quot;: 150, &quot;count&quot;: 7 },
+        { &quot;name&quot;: &quot;Item 4&quot;, &quot;size&quot;: 250, &quot;count&quot;: 12 }
+      ]
+    }
+  ]
+}
+</code></pre>
+<p>Generate the visualization:</p>
+<pre><code class="language-bash">node tools/cli.js \
+  --config examples/config.json \
+  --data my-data.json \
+  --output my-viz.html \
+  --open
+</code></pre>
+<h2>3. Customize Your Visualization</h2>
+<p>Create your own config file <code>my-config.json</code>:</p>
+<pre><code class="language-json">{
+  &quot;title&quot;: &quot;My Data Visualization&quot;,
+  &quot;headerTitle&quot;: &quot;🎯 My Project Stats&quot;,
+  &quot;headerSubtitle&quot;: &quot;Interactive data exploration&quot;,
+  &quot;primaryColor&quot;: &quot;#3b82f6&quot;,
+  &quot;primaryColorDark&quot;: &quot;#2563eb&quot;,
+  &quot;backgroundColor&quot;: &quot;linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)&quot;,
+  &quot;metrics&quot;: {
+    &quot;size&quot;: &quot;Total Size&quot;,
+    &quot;count&quot;: &quot;Item Count&quot;,
+    &quot;value&quot;: &quot;Revenue&quot;
+  },
+  &quot;defaultMetric&quot;: &quot;size&quot;,
+  &quot;data&quot;: {
+    &quot;name&quot;: &quot;root&quot;,
+    &quot;children&quot;: [...]
+  }
+}
+</code></pre>
+<p>Generate with custom config:</p>
+<pre><code class="language-bash">node tools/cli.js \
+  --config my-config.json \
+  --output custom-viz.html \
+  --open
+</code></pre>
+<h2>4. Understanding the Output</h2>
+<p>The generated HTML file contains:</p>
+<pre><code>my-viz.html (single file)
+├── Embedded CSS (styling)
+├── Embedded D3.js (visualization library)
+├── Embedded Data (your hierarchical data)
+└── Embedded JavaScript (visualization logic)
+</code></pre>
+<p><strong>Key Features:</strong></p>
+<ul>
+<li>📦 Single file - easy to share</li>
+<li>🚀 No dependencies - works offline</li>
+<li>🎨 Fully interactive - zoom, filter, explore</li>
+<li>📱 Responsive - works on any screen</li>
+<li>🔒 Secure - no external requests</li>
+</ul>
+<h2>5. Common Use Cases</h2>
+<h3>A. Bundle Size Analysis</h3>
+<pre><code class="language-bash"># Analyze webpack/rollup bundle
+node tools/cli.js \
+  --config examples/config.json \
+  --data bundle-stats.json \
+  --output bundle-analysis.html
+</code></pre>
+<h3>B. Project Structure</h3>
+<pre><code class="language-bash"># Visualize project directory structure
+node tools/cli.js \
+  --config examples/config.json \
+  --data project-tree.json \
+  --title &quot;Project Structure&quot; \
+  --output project-viz.html
+</code></pre>
+<h3>C. Data Reports</h3>
+<pre><code class="language-bash"># Create interactive data report
+node tools/cli.js \
+  --config report-config.json \
+  --data report-data.json \
+  --output monthly-report.html
+</code></pre>
+<h2>6. Advanced: Fully Self-Contained</h2>
+<p>To make the visualization <strong>truly</strong> self-contained (no CDN dependencies):</p>
+<ol>
+<li>Download D3.js:</li>
+</ol>
+<pre><code class="language-bash">mkdir -p lib
+curl -o lib/d3.v7.min.js https://d3js.org/d3.v7.min.js
+</code></pre>
+<ol start="2">
+<li>Generate visualization:</li>
+</ol>
+<pre><code class="language-bash">node tools/cli.js \
+  --config my-config.json \
+  --output viz.html
+</code></pre>
+<p>The tool will automatically embed the local D3.js library.</p>
+<h2>7. Data Structure Requirements</h2>
+<p>Your data must follow this hierarchical structure:</p>
+<pre><code class="language-javascript">{
+  &quot;name&quot;: &quot;root&quot;,           // Required: root node name
+  &quot;children&quot;: [             // Optional: child nodes
+    {
+      &quot;name&quot;: &quot;Category&quot;,   // Required: node name
+      &quot;children&quot;: [...],    // Optional: nested children
+      &quot;size&quot;: 100,          // Optional: numeric metrics
+      &quot;count&quot;: 5,           // Can have multiple metrics
+      &quot;customMetric&quot;: 42    // Any custom properties
+    }
+  ]
+}
+</code></pre>
+<p><strong>Rules:</strong></p>
+<ul>
+<li>Root must have a <code>name</code> property</li>
+<li>Leaf nodes can have any numeric properties</li>
+<li>Properties become available as metrics</li>
+<li>Deeply nested structures supported</li>
+</ul>
+<h2>8. Troubleshooting</h2>
+<h3>Issue: &quot;Config file not found&quot;</h3>
+<p><strong>Solution:</strong> Check the file path is correct and relative to current directory</p>
+<h3>Issue: &quot;D3.js not found locally&quot;</h3>
+<p><strong>Solution:</strong> This is fine - it will use CDN. To fix, download D3.js to <code>lib/</code> directory</p>
+<h3>Issue: Visualization is blank</h3>
+<p><strong>Solution:</strong> Check browser console for errors. Ensure data has valid structure</p>
+<h3>Issue: Colors look wrong</h3>
+<p><strong>Solution:</strong> Customize <code>colorScheme</code> in config (options: <code>schemeSet3</code>, <code>schemeCategory10</code>, etc.)</p>
+<h2>9. Next Steps</h2>
+<ul>
+<li>Read the full <a href="README.md">README.md</a> for architecture details</li>
+<li>Explore <a href="templates/">templates/</a> for customization options</li>
+<li>Check <a href="examples/">examples/</a> for more configurations</li>
+<li>Modify the template for custom visualizations</li>
+</ul>
+<h2>10. Tips &amp; Tricks</h2>
+<h3>Tip 1: Use with npm scripts</h3>
+<pre><code class="language-json">{
+  &quot;scripts&quot;: {
+    &quot;viz&quot;: &quot;node tools/cli.js --config config.json --output dist/viz.html --open&quot;
+  }
+}
+</code></pre>
+<h3>Tip 2: Generate in CI/CD</h3>
+<pre><code class="language-yaml"># .github/workflows/visualize.yml
+- name: Generate bundle visualization
+  run: |
+    node tools/cli.js \
+      --config bundle-config.json \
+      --output dist/bundle-viz.html
+</code></pre>
+<h3>Tip 3: Version control</h3>
+<pre><code class="language-gitignore"># .gitignore
+output/
+*.html  # Or keep generated files if needed
+</code></pre>
+<h3>Tip 4: Customize colors by category</h3>
+<p>Edit the template to assign specific colors to categories:</p>
+<pre><code class="language-javascript">const categoryColors = {
+  &#39;Frontend&#39;: &#39;#3b82f6&#39;,
+  &#39;Backend&#39;: &#39;#10b981&#39;,
+  &#39;Tools&#39;: &#39;#f59e0b&#39;
+};
+</code></pre>
+<h2>Need Help?</h2>
+<ul>
+<li>📖 Read the full documentation: <a href="README.md">README.md</a></li>
+<li>💡 Check examples: <a href="examples/">examples/</a></li>
+<li>🐛 Report issues: Create an issue in the repository</li>
+<li>💬 Ask questions: Open a discussion</li>
+</ul>
+<hr>
+<p><strong>Happy Visualizing! 🎨📊</strong></p>
+
+    </div>
+  </body>
+</html>

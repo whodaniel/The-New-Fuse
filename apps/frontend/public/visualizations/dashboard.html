@@ -668,66 +668,74 @@
         {
           title: 'AG-UI Integration Analysis',
           desc: 'Comprehensive analysis of AG-UI protocol integration strategies',
-          file: 'AG-UI-INTEGRATION-ANALYSIS.md',
+          file: 'AG-UI-INTEGRATION-ANALYSIS.html',
           icon: '🧩',
           badges: ['AG-UI', 'Protocol'],
           color: 'green',
+          isDoc: true,
         },
         {
           title: 'AG-UI Integration Guide',
           desc: 'Step-by-step implementation guide for the AG-UI protocol',
-          file: 'AG-UI-INTEGRATION-GUIDE.md',
+          file: 'AG-UI-INTEGRATION-GUIDE.html',
           icon: '📋',
           badges: ['Guide', 'AG-UI'],
           color: 'green',
+          isDoc: true,
         },
         {
           title: 'Capability Packaging',
           desc: 'Package agent capabilities for distribution and deployment',
-          file: 'CAPABILITY-PACKAGING-COMPLETE.md',
+          file: 'CAPABILITY-PACKAGING-COMPLETE.html',
           icon: '📦',
           badges: ['Packaging', 'Deploy'],
           color: 'green',
+          isDoc: true,
         },
         {
           title: 'Claude Code at Scale',
           desc: 'Patterns for scaling Claude Code across organizations',
-          file: 'CLAUDE-CODE-AT-SCALE.md',
+          file: 'CLAUDE-CODE-AT-SCALE.html',
           icon: '🚀',
           badges: ['Scale', 'Claude'],
           color: 'purple',
+          isDoc: true,
         },
         {
           title: 'Gemini Code Assist',
           desc: 'Integration patterns for Gemini Code Assist in TNF',
-          file: 'GEMINI-CODE-ASSIST-INTEGRATION.md',
+          file: 'GEMINI-CODE-ASSIST-INTEGRATION.html',
           icon: '♊',
           badges: ['Gemini', 'Integration'],
           color: 'accent',
+          isDoc: true,
         },
         {
           title: 'Visual Demo',
           desc: 'Interactive demonstration of visualization capabilities',
-          file: 'VISUAL-DEMO.md',
+          file: 'VISUAL-DEMO.html',
           icon: '🎨',
           badges: ['Demo', 'Interactive'],
           color: 'purple',
+          isDoc: true,
         },
         {
           title: 'Project Summary',
           desc: 'High-level overview of the visualization architecture',
-          file: 'PROJECT-SUMMARY.md',
+          file: 'PROJECT-SUMMARY.html',
           icon: '📄',
           badges: ['Overview', 'Architecture'],
           color: 'amber',
+          isDoc: true,
         },
         {
           title: 'Nine Multiplier Hacks',
           desc: 'Productivity multipliers for agent-assisted development',
-          file: 'NINE-MULTIPLIER-HACKS.md',
+          file: 'NINE-MULTIPLIER-HACKS.html',
           icon: '⚡',
           badges: ['Productivity', 'Tips'],
           color: 'amber',
+          isDoc: true,
         },
       ];
 
@@ -746,26 +754,18 @@
         const el = document.getElementById(containerId);
         items.forEach((item) => {
           const c = colorMap[item.color] || colorMap.accent;
-          const isMd = item.file.endsWith('.md');
           const card = document.createElement('a');
           card.className = 'card';
           card.style.setProperty('--card-accent', c.accent);
-          if (isMd) {
-            card.href = '#';
-            card.addEventListener('click', function (e) {
-              e.preventDefault();
-              openMarkdown(item.file, item.title);
-            });
-          } else {
-            card.href = item.file;
-          }
+          card.href = item.file;
+
           card.innerHTML = `
           <div class="card-icon" style="background:${c.bg}">${item.icon}</div>
           <div class="card-title">${item.title}</div>
           <div class="card-desc">${item.desc}</div>
           <div class="card-meta">
             ${item.badges.map((b) => `<span class="badge" style="background:${c.bg};color:${c.text}">${b}</span>`).join('')}
-            ${isMd ? '<span class="badge" style="background:rgba(255,255,255,0.04);color:var(--muted)">📄 Doc</span>' : '<span class="badge" style="background:rgba(255,255,255,0.04);color:var(--muted)">🖥️ Interactive</span>'}
+            ${item.isDoc ? '<span class="badge" style="background:rgba(255,255,255,0.04);color:var(--muted)">📄 Doc</span>' : '<span class="badge" style="background:rgba(255,255,255,0.04);color:var(--muted)">🖥️ Interactive</span>'}
           </div>
         `;
           el.appendChild(card);
@@ -775,162 +775,6 @@
       renderCards('graph-grid', subgraphs);
       renderCards('system-grid', systemViz);
       renderCards('docs-grid', docs);
-
-      // ---- Markdown Viewer ----
-      const overlay = document.getElementById('md-overlay');
-      const mdContent = document.getElementById('md-content');
-      document
-        .getElementById('md-close')
-        .addEventListener('click', () => overlay.classList.remove('active'));
-      overlay.addEventListener('click', (e) => {
-        if (e.target === overlay) overlay.classList.remove('active');
-      });
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') overlay.classList.remove('active');
-      });
-
-      function openMarkdown(file, title) {
-        mdContent.innerHTML = '<p style="color:var(--muted)">Loading...</p>';
-        overlay.classList.add('active');
-
-        // Detect if running locally via file:// protocol
-        const isLocal = window.location.protocol === 'file:';
-
-        if (isLocal) {
-          // Use synchronous XMLHttpRequest for file:// (fetch is blocked by CORS)
-          try {
-            const xhr = new XMLHttpRequest();
-            xhr.open('GET', file, false); // synchronous
-            xhr.send();
-            if (xhr.status === 0 || xhr.status === 200) {
-              mdContent.innerHTML = renderMarkdown(xhr.responseText);
-            } else {
-              // Fallback: open the raw .md file directly
-              overlay.classList.remove('active');
-              window.open(file, '_blank');
-            }
-          } catch (e) {
-            // Final fallback: open the raw .md file directly
-            overlay.classList.remove('active');
-            window.open(file, '_blank');
-          }
-        } else {
-          // Production: use fetch (HTTP/HTTPS works fine)
-          fetch(file)
-            .then((r) => r.text())
-            .then((text) => {
-              mdContent.innerHTML = renderMarkdown(text);
-            })
-            .catch(() => {
-              mdContent.innerHTML = '<p style="color:var(--red)">Failed to load document.</p>';
-            });
-        }
-      }
-
-      function renderMarkdown(md) {
-        // Lightweight MD renderer — handles headers, lists, code blocks, bold, links, tables
-        let html = '';
-        let inCode = false;
-        let inTable = false;
-        let tableRows = [];
-        const lines = md.split('\n');
-
-        for (let i = 0; i < lines.length; i++) {
-          let line = lines[i];
-
-          // Code blocks
-          if (line.startsWith('```')) {
-            if (inCode) {
-              html += '</code></pre>';
-              inCode = false;
-            } else {
-              html += '<pre><code>';
-              inCode = true;
-            }
-            continue;
-          }
-          if (inCode) {
-            html += escHtml(line) + '\n';
-            continue;
-          }
-
-          // Tables
-          if (line.includes('|') && line.trim().startsWith('|')) {
-            if (line.replace(/[|\s-]/g, '').length === 0) continue; // separator row
-            const cells = line
-              .split('|')
-              .filter((c) => c.trim())
-              .map((c) => c.trim());
-            if (!inTable) {
-              inTable = true;
-              tableRows = [];
-            }
-            tableRows.push(cells);
-            // Check if next line is NOT a table row
-            if (i + 1 >= lines.length || !lines[i + 1].trim().startsWith('|')) {
-              html += renderTable(tableRows);
-              inTable = false;
-            }
-            continue;
-          }
-
-          // Headers
-          if (line.startsWith('# ')) {
-            html += `<h1>${inline(line.slice(2))}</h1>`;
-            continue;
-          }
-          if (line.startsWith('## ')) {
-            html += `<h2>${inline(line.slice(3))}</h2>`;
-            continue;
-          }
-          if (line.startsWith('### ')) {
-            html += `<h3>${inline(line.slice(4))}</h3>`;
-            continue;
-          }
-
-          // Lists
-          if (line.match(/^\s*[-*]\s/)) {
-            html += `<li>${inline(line.replace(/^\s*[-*]\s/, ''))}</li>`;
-            continue;
-          }
-          if (line.match(/^\s*\d+\.\s/)) {
-            html += `<li>${inline(line.replace(/^\s*\d+\.\s/, ''))}</li>`;
-            continue;
-          }
-
-          // Empty line
-          if (line.trim() === '') continue;
-
-          // Paragraph
-          html += `<p>${inline(line)}</p>`;
-        }
-        return html;
-      }
-
-      function inline(text) {
-        return escHtml(text)
-          .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-          .replace(/`(.+?)`/g, '<code>$1</code>')
-          .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" style="color:var(--accent)">$1</a>');
-      }
-
-      function escHtml(s) {
-        return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      }
-
-      function renderTable(rows) {
-        if (rows.length === 0) return '';
-        let h = '<table><thead><tr>';
-        rows[0].forEach((c) => (h += `<th>${inline(c)}</th>`));
-        h += '</tr></thead><tbody>';
-        for (let i = 1; i < rows.length; i++) {
-          h += '<tr>';
-          rows[i].forEach((c) => (h += `<td>${inline(c)}</td>`));
-          h += '</tr>';
-        }
-        h += '</tbody></table>';
-        return h;
-      }
 
       // ---- Smooth scroll ----
       document.querySelectorAll('.nav-links a').forEach((a) => {
@@ -948,3 +792,4 @@
     </script>
   </body>
 </html>
+
