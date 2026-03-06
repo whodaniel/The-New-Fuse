@@ -5712,6 +5712,74 @@ function serveStatic(req, res) {
 const endpoint = (handler) => async (req, res, _urlObj) => handler(req, res);
 const endpointWithQuery = (handler) => async (req, res, urlObj) => handler(req, res, urlObj);
 
+async function handleGeminiContent(req, res) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return writeJson(res, 500, { ok: false, error: 'GEMINI_API_KEY not configured' });
+  const body = await readBodyJson(req);
+  const prompt = typeof body.contents === 'string' ? body.contents : JSON.stringify(body.contents);
+  const sysInst = body.config?.systemInstruction
+    ? { parts: [{ text: body.config.systemInstruction }] }
+    : undefined;
+  try {
+    const gRes = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ role: 'user', parts: [{ text: prompt }] }],
+          systemInstruction: sysInst,
+        }),
+      }
+    );
+    if (!gRes.ok) {
+      const errText = await gRes.text();
+      return writeJson(res, gRes.status, {
+        ok: false,
+        error: 'Gemini API error',
+        details: errText,
+      });
+    }
+    const data = await gRes.json();
+    const textOut = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    writeJson(res, 200, { ok: true, text: textOut });
+  } catch (err) {
+    writeJson(res, 500, { ok: false, error: err.message });
+  }
+}
+
+async function handleGeminiImages(req, res) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return writeJson(res, 500, { ok: false, error: 'GEMINI_API_KEY not configured' });
+  const body = await readBodyJson(req);
+  try {
+    const gRes = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-001:predict?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          instances: [{ prompt: body.prompt }],
+          parameters: { sampleCount: 1, aspectRatio: '1:1' },
+        }),
+      }
+    );
+    if (!gRes.ok) {
+      const errText = await gRes.text();
+      return writeJson(res, gRes.status, {
+        ok: false,
+        error: 'Imagen API error',
+        details: errText,
+      });
+    }
+    const data = await gRes.json();
+    const b64 = data.predictions?.[0]?.bytesBase64Encoded || '';
+    writeJson(res, 200, { ok: true, base64: b64 ? `data:image/jpeg;base64,${b64}` : '' });
+  } catch (err) {
+    writeJson(res, 500, { ok: false, error: err.message });
+  }
+}
+
 const API_ROUTES = new Map([
   [
     'GET /api/health',
@@ -5787,6 +5855,9 @@ const API_ROUTES = new Map([
   ['POST /api/table/round/auto', endpoint(handleTableRoundAuto)],
   ['GET /api/table/stream', endpointWithQuery(handleTableStream)],
   ['GET /api/hands', endpointWithQuery(handleHandsList)],
+
+  ['POST /api/gemini/content', endpoint(handleGeminiContent)],
+  ['POST /api/gemini/images', endpoint(handleGeminiImages)],
 
   ['POST /api/agents/register', endpoint(handleAgentRegister)],
   ['POST /api/agents/configure-style', endpoint(handleAgentConfigureStyle)],
