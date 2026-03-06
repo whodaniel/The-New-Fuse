@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games"
+ROOT="/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games"
 
 node --check "$ROOT/swarm/shared/contracts.mjs"
 node --check "$ROOT/swarm/engine-core/index.mjs"

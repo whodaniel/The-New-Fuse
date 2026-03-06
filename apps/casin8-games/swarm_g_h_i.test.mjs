@@ -5,7 +5,7 @@ import { setTimeout as delay } from 'node:timers/promises';
 import crypto from 'node:crypto';
 import path from 'node:path';
 
-const cwd = '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games';
+const cwd = '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games';
 
 async function waitForHealth(baseUrl, timeoutMs = 10000) {
   const start = Date.now();

@@ -6,7 +6,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { mkdtemp, rm } from 'node:fs/promises';
 
-const cwd = '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games';
+const cwd = '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games';
 const TEST_API_TOKEN = 'test-token';
 
 async function waitForHealth(baseUrl, timeoutMs = 20000) {

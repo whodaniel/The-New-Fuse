@@ -3,7 +3,7 @@
 # Script to rename .tsx files that don't contain JSX to .ts files
 # This script specifically targets the packages/core/src/types directory
 
-TYPES_DIR="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/packages/core/src/types"
+TYPES_DIR="/path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/packages/core/src/types"
 
 # Find all .tsx files and check if they contain JSX
 echo "Scanning for .tsx files without JSX in: $TYPES_DIR"

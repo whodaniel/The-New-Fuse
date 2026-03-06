@@ -38,7 +38,7 @@ The TNF (The New Fuse) Relay is a comprehensive AI API interception and manageme
 
 ### Quick Install
 ```bash
-cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/tnf-relay-package"
+cd "/path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/tnf-relay-package"
 ./install.sh
 ```
 

@@ -79,4 +79,4 @@
 - Rollout/drift/recommendation state is persisted in `riskdb` tables for
   restart-safe operations.
 - Release criteria and emergency actions are in
-  [trait-release-policy.md](/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games/docs/trait-release-policy.md).
+  [trait-release-policy.md](/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games/docs/trait-release-policy.md).

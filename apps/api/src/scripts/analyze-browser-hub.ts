@@ -7,9 +7,9 @@
  */
 
 import * as fs from 'fs';
-import * as path from 'path';
 
-const BROWSER_HUB_PATH = '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/browser-hub/enhanced-browser-hub.html';
+const BROWSER_HUB_PATH =
+  '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/browser-hub/enhanced-browser-hub.html';
 
 // TNF Brand Colors
 const TNF_BRAND = {
@@ -19,7 +19,7 @@ const TNF_BRAND = {
   background: '#0f172a',
   surface: '#1e293b',
   text: '#f8fafc',
-  textMuted: '#94a3b8'
+  textMuted: '#94a3b8',
 };
 
 function main() {
@@ -38,7 +38,7 @@ function main() {
   const issues = {
     accessibility: 0,
     branding: 0,
-    functionality: 0
+    functionality: 0,
   };
 
   // Check for missing aria-labels
@@ -48,9 +48,21 @@ function main() {
 
   // Check for hardcoded colors that aren't TNF brand
   const hardcodedColors = content.match(/#[0-9a-fA-F]{6}/g) || [];
-  const nonBrandColors = hardcodedColors.filter(c =>
-    !Object.values(TNF_BRAND).some(b => b.toLowerCase() === c.toLowerCase()) &&
-    !['#ffffff', '#000000', '#1a1d29', '#252836', '#2d3142', '#374151', '#4b5563', '#9ca3af', '#10b981', '#ef4444'].includes(c.toLowerCase())
+  const nonBrandColors = hardcodedColors.filter(
+    (c) =>
+      !Object.values(TNF_BRAND).some((b) => b.toLowerCase() === c.toLowerCase()) &&
+      ![
+        '#ffffff',
+        '#000000',
+        '#1a1d29',
+        '#252836',
+        '#2d3142',
+        '#374151',
+        '#4b5563',
+        '#9ca3af',
+        '#10b981',
+        '#ef4444',
+      ].includes(c.toLowerCase())
   );
   console.log(`🟠 Non-brand colors detected: ${nonBrandColors.length}`);
   if (nonBrandColors.length > 0) {
@@ -75,7 +87,7 @@ function main() {
 
   // Calculate score
   const totalIssues = issues.accessibility + issues.branding + issues.functionality;
-  const score = Math.max(0, 100 - (totalIssues * 0.5));
+  const score = Math.max(0, 100 - totalIssues * 0.5);
 
   console.log(`
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

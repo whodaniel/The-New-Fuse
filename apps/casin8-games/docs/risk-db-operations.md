@@ -44,7 +44,7 @@ Backfill sources:
 ## Incident Audit Queries
 
 - See
-  [risk-incident-audit-query-pack.sql](/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games/docs/risk-incident-audit-query-pack.sql)
+  [risk-incident-audit-query-pack.sql](/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games/docs/risk-incident-audit-query-pack.sql)
 
 ## Notes
 

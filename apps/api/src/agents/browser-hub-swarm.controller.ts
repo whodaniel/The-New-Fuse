@@ -4,18 +4,16 @@
  * REST API for controlling the Browser Hub Improvement Agent Swarm.
  */
 
-import { Controller, Get, Post, Body, Logger } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Post } from '@nestjs/common';
+import { AuthLevel, RequireAuthLevel } from '../guards/secure-auth.guard';
 import { BrowserHubSwarmService } from './browser-hub-swarm.service';
-import { RequireAuthLevel, AuthLevel } from '../guards/secure-auth.guard';
 
 @Controller('agents/browser-hub-swarm')
 @RequireAuthLevel(AuthLevel.PUBLIC)
 export class BrowserHubSwarmController {
   private readonly logger = new Logger(BrowserHubSwarmController.name);
 
-  constructor(
-    private readonly swarmService: BrowserHubSwarmService
-  ) {}
+  constructor(private readonly swarmService: BrowserHubSwarmService) {}
 
   /**
    * Get current swarm status
@@ -30,12 +28,13 @@ export class BrowserHubSwarmController {
    */
   @Post('load-codebase')
   async loadCodebase(@Body() body: { path?: string }) {
-    const basePath = body.path || '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/electron-desktop/src';
+    const basePath =
+      body.path || '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/electron-desktop/src';
     await this.swarmService.loadCodebase(basePath);
     return {
       success: true,
       message: 'Codebase loaded',
-      path: basePath
+      path: basePath,
     };
   }
 
@@ -67,10 +66,10 @@ export class BrowserHubSwarmController {
     const issues = this.swarmService.getAllIssues();
     return {
       total: issues.length,
-      critical: issues.filter(i => i.severity === 'critical').length,
-      major: issues.filter(i => i.severity === 'major').length,
-      minor: issues.filter(i => i.severity === 'minor').length,
-      issues
+      critical: issues.filter((i) => i.severity === 'critical').length,
+      major: issues.filter((i) => i.severity === 'major').length,
+      minor: issues.filter((i) => i.severity === 'minor').length,
+      issues,
     };
   }
 
@@ -80,7 +79,7 @@ export class BrowserHubSwarmController {
   @Get('suggestions')
   getAllSuggestions() {
     return {
-      suggestions: this.swarmService.getAllSuggestions()
+      suggestions: this.swarmService.getAllSuggestions(),
     };
   }
 
@@ -100,7 +99,7 @@ export class BrowserHubSwarmController {
     this.logger.log('🚀 Starting Browser Hub Swarm Demo...');
 
     // Load the codebase
-    const basePath = '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/electron-desktop/src';
+    const basePath = '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/electron-desktop/src';
     await this.swarmService.loadCodebase(basePath);
 
     // Run one iteration
@@ -114,7 +113,7 @@ export class BrowserHubSwarmController {
       status,
       improvementPlan: plan,
       issues: this.swarmService.getAllIssues(),
-      suggestions: this.swarmService.getAllSuggestions()
+      suggestions: this.swarmService.getAllSuggestions(),
     };
   }
 }

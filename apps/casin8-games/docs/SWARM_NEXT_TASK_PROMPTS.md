@@ -5,7 +5,7 @@ Use these prompts as-is with your other agent teams.
 ## Prompt 1: Backend No-Limit Guardrails
 
 You are working in:
-`/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games`
+`/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games`
 
 Goal: Harden poker no-limit action validation in `server.js` so betting is
 realistic and cannot break state.
@@ -41,7 +41,7 @@ Output:
 ## Prompt 2: Hand History + Replay API
 
 You are working in:
-`/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games`
+`/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games`
 
 Goal: Create persistent hand history and replay payload APIs.
 
@@ -75,7 +75,7 @@ Output:
 ## Prompt 3: Agent Hints + Pot Odds Service
 
 You are working in:
-`/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games`
+`/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games`
 
 Goal: Provide a deterministic hint API for agents/humans.
 
@@ -107,7 +107,7 @@ Output:
 ## Prompt 4: Frontend Replay + Poker HUD Integration
 
 You are working in:
-`/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games`
+`/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games`
 
 Goal: Integrate new backend features into current poker UI (`index.html`,
 `script.js`, `styles.css`).
@@ -136,7 +136,7 @@ Output:
 ## Prompt 5: QA + Scenario Regression Pack
 
 You are working in:
-`/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games`
+`/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games`
 
 Goal: Add robust scenario tests for poker engine APIs.
 
@@ -164,7 +164,7 @@ Output:
 ## Prompt 6: Graphics Team (NanoBanana) Production Loop
 
 You are working in:
-`/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games`
+`/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games`
 
 Goal: Generate and drop assets lane-by-lane, then validate progress.
 

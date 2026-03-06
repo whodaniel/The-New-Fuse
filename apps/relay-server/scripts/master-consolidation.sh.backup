@@ -4,21 +4,21 @@ set -e
 echo "🚀 Starting master consolidation process..."
 
 # Make scripts executable
-chmod +x "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/consolidated-dependencies.sh"
-chmod +x "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/consolidate-frontend.sh"
-chmod +x "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/cleanup-redundant-scripts.sh"
+chmod +x "/path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/consolidated-dependencies.sh"
+chmod +x "/path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/consolidate-frontend.sh"
+chmod +x "/path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/cleanup-redundant-scripts.sh"
 
 # Step 1: Run consolidated dependencies script
 echo "📦 Step 1: Running consolidated dependencies script..."
-"/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/consolidated-dependencies.sh"
+"/path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/consolidated-dependencies.sh"
 
 # Step 2: Run frontend consolidation script
 echo "🔄 Step 2: Running frontend consolidation script..."
-"/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/consolidate-frontend.sh"
+"/path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/consolidate-frontend.sh"
 
 # Step 3: Clean up redundant scripts
 echo "🧹 Step 3: Cleaning up redundant scripts..."
-"/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/cleanup-redundant-scripts.sh"
+"/path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/cleanup-redundant-scripts.sh"
 
 echo "✅ Master consolidation process completed successfully!"
 echo "📝 Summary:"

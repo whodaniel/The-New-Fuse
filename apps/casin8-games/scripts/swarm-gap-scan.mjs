@@ -3,8 +3,8 @@ import { execSync } from 'node:child_process';
 import { existsSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
-const appRoot = '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games';
-const repoRoot = '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse';
+const appRoot = '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games';
+const repoRoot = '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse';
 
 const domainMatchers = [
   { domain: 'ui-poker-room', pattern: /index\.html$|script\.js$|styles\.css$|design\/stitch\// },

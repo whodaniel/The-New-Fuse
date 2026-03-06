@@ -35,10 +35,10 @@ resolve '@theia/variable-resolver/lib/browser/variable-resolver-frontend-module'
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/variable-resolver doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/variable-resolver doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/variable-resolver doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
 
@@ -56,10 +56,10 @@ resolve '@theia/process/lib/common/process-common-module' in './apps/theia-ide/s
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/process doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/process doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/process doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
 
@@ -77,10 +77,10 @@ resolve '@theia/file-search/lib/browser/file-search-frontend-module' in './apps/
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/file-search doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/file-search doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/file-search doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
 
@@ -96,13 +96,13 @@ resolve '@theia/console/lib/browser/console-frontend-module' in './apps/theia-id
       looking for modules in ./apps/theia-ide/node_modules
         ./apps/theia-ide/node_modules/@theia/console doesn't exist
       ./apps/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New
+      looking for modules in /path/to/Desktop/A1-Inter-LLM-Com/The-New
 -Fuse/node_modules
         ./node_modules/@theia/console doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/console doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/console doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
 
@@ -120,10 +120,10 @@ resolve '@theia/userstorage/lib/browser/user-storage-frontend-module' in './apps
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/userstorage doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/userstorage doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/userstorage doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
 
@@ -141,10 +141,10 @@ resolve '@theia/task/lib/browser/task-frontend-module' in './apps/theia-ide/src-
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/task doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/task doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/task doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
 
@@ -162,10 +162,10 @@ resolve '@theia/test/lib/browser/view/test-view-frontend-module' in './apps/thei
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/test doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/test doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/test doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
 
@@ -183,11 +183,11 @@ resolve '@theia/keymaps/lib/browser/keymaps-frontend-module' in './apps/theia-id
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/keymaps doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
       looking for mo
-dules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/keymaps doesn't exist
+dules in /path/to/node_modules
+        /path/to/node_modules/@theia/keymaps doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
 
@@ -205,10 +205,10 @@ resolve '@theia/mini-browser/lib/browser/mini-browser-frontend-module' in './app
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/mini-browser doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/mini-browser doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/mini-browser doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
 
@@ -226,10 +226,10 @@ resolve '@theia/mini-browser/lib/browser/environment/mini-browser-environment-mo
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/mini-browser doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/mini-browser doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/mini-browser doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
 
@@ -247,10 +247,10 @@ resolve '@theia/preview/lib/browser/preview-frontend-module' in './apps/theia-id
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/preview doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/preview doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/preview doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
 
@@ -268,10 +268,10 @@ resolve '@theia/ai-mcp/lib/browser/mcp-frontend-module' in './apps/theia-ide/src
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/ai-mcp doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/ai-mcp doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/ai-mcp doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
 
@@ -290,10 +290,10 @@ resolve '@theia/bulk-edit/lib/browser/bulk-edit-frontend-module' in './apps/thei
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/bulk-edit doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/bulk-edit doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/bulk-edit doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
 
@@ -311,10 +311,10 @@ resolve '@theia/callhierarchy/lib/browser/callhierarchy-frontend-module' in './a
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/callhierarchy doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/callhierarchy doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/callhierarchy doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
 
@@ -332,10 +332,10 @@ resolve '@theia/editor-preview/lib/browser/editor-preview-frontend-module' in '.
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/editor-preview doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/editor-preview doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/editor-preview doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
 
@@ -353,10 +353,10 @@ resolve '@theia/notebook/lib/browser/notebook-frontend-module' in './apps/theia-
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/notebook doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/notebook doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/notebook doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
 
@@ -375,10 +375,10 @@ theia/timeline/lib/browser/timeline-frontend-module' in './apps/theia-ide/src-ge
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/timeline doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/timeline doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/timeline doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
 
@@ -396,10 +396,10 @@ resolve '@theia/typehierarchy/lib/browser/typehierarchy-frontend-module' in './a
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/typehierarchy doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/typehierarchy doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/typehierarchy doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
 
@@ -450,10 +450,10 @@ resolve '@theia/monaco-editor-core/esm/vs/editor/editor.worker.js' in './apps/th
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/monaco-editor-core doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/monaco-editor-core doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/monaco-editor-core doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
 
@@ -527,10 +527,10 @@ resolve '@theia/preview/lib/browser/preview-frontend-module' in './apps/theia-id
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/preview doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/preview doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/preview doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
 
@@ -565,10 +565,10 @@ resolve '@theia/process/lib/common/process-common-module' in './apps/theia-ide/s
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/process doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/process doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/process doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
  @ ./src-gen/backend/main.js 190:21-40
@@ -586,10 +586,10 @@ resolve '@theia/process/lib/node/process-backend-module' in './apps/theia-ide/sr
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/process doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/process doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/process doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
  @ ./src-gen/backend/main.js 190:21-40
@@ -598,7 +598,7 @@ WARNING in ./src-gen/backend/server.js 65:19-84
 Module not found: Error: Can't resolve '@theia/file-search/lib/node/file-search-backend-module' in './apps/theia-ide/src-gen/backend'
 resolve '@theia/file-search/lib/node/file-search-backend-module' in './apps/theia-ide/src-gen/backend'
   Parsed request is a module
-  using description file: /Users/<owner>/Desktop/A1-Inter-LLM
+  using description file: /path/to/Desktop/A1-Inter-LLM
 -Com/The-New-Fuse/apps/theia-ide/package.json (relative path: ./src-gen/backend)
     resolve as module
       ./apps/theia-ide/src-gen/backend/node_modules doesn't exist or is not a directory
@@ -608,10 +608,10 @@ resolve '@theia/file-search/lib/node/file-search-backend-module' in './apps/thei
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/file-search doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/file-search doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/file-search doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
  @ ./src-gen/backend/main.js 190:21-40
@@ -629,10 +629,10 @@ resolve '@theia/task/lib/node/task-backend-module' in './apps/theia-ide/src-gen/
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/task doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/task doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/task doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
  @ ./src-gen/backend/main.js 190:21-40
@@ -650,10 +650,10 @@ resolve '@theia/test/lib/node/test-backend-module' in './apps/theia-ide/src-gen/
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/test doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/test doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/test doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
  @ ./src-gen/backend/main.js 190:21-40
@@ -671,10 +671,10 @@ resolve '@theia/mini-browser/lib/node/mini-browser-backend-module' in './apps/th
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/mini-browser doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/mini-browser doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/mini-browser doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
  @ ./src-gen/backend/main.js 190:21-40
@@ -693,10 +693,10 @@ node_modules
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/preview doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/preview doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/preview doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
  @ ./src-gen/backend/main.js 190:21-40
@@ -714,10 +714,10 @@ resolve '@theia/ai-mcp/lib/node/mcp-backend-module' in './apps/theia-ide/src-gen
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/ai-mcp doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/ai-mcp doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/ai-mcp doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
  @ ./src-gen/backend/main.js 190:21-40
@@ -735,10 +735,10 @@ resolve '@theia/editor-preview/lib/node/editor-preview-backend-module' in './app
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/editor-preview doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/editor-preview doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/editor-preview doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
  @ ./src-gen/backend/main.js 190:21-40
@@ -756,10 +756,10 @@ resolve '@theia/notebook/lib/node/notebook-backend-module' in './apps/theia-ide/
       ./apps/node_modules doesn't exist or is not a directory
       looking for modules in ./node_modules
         ./node_modules/@theia/notebook doesn't exist
-      /Users/<owner>/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
-      /Users/<owner>/Desktop/node_modules doesn't exist or is not a directory
-      looking for modules in /Users/<owner>/node_modules
-        /Users/<owner>/node_modules/@theia/notebook doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/notebook doesn't exist
       /Users/node_modules doesn't exist or is not a directory
       /node_modules doesn't exist or is not a directory
  @ ./src-gen/backend/main.js 190:21-40
