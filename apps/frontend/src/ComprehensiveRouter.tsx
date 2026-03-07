@@ -1001,9 +1001,9 @@ export default function ComprehensiveRouter() {
               <Route path="/auth/oauth-callback" element={<OAuthCallbackPage />} />
 
               {/* Enhanced Landing Routes */}
-              <Route path="/landing" element={<LandingRevolutionPage />} />
-              <Route path="/features" element={<FeaturesPage />} />
-              <Route path="/pricing" element={<PricingPage />} />
+              <Route path="/landing" element={<RedirectToStatic to="/" />} />
+              <Route path="/features" element={<RedirectToStatic to="/#features" />} />
+              <Route path="/pricing" element={<RedirectToStatic to="/#pricing" />} />
               <Route path="/community" element={<CommunityHubPage />} />
               <Route path="/support" element={<SupportPage />} />
               <Route path="/contact" element={<SupportPage />} />
