@@ -4,10 +4,11 @@ nixpacks.toml
 # Ignore development files
 .env*
 .git/
-node_modules/
+**/node_modules/
 *.log
 .DS_Store
-
+apps/casin8-games/AI-ARCADE.XYZ---POKER-ROOM/
+apps/casin8-games/.data-tests/
 # Exclude large non-build artifacts from upload context
 /output/
 /docs/
@@ -21,3 +22,7 @@ node_modules/
 /assets/
 /data/agent-registry/
 /scripts/agent-registry/
+/pull-create/
+/solid-shrimp/
+/strategic-cow/
+/tools/

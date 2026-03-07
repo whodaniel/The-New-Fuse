@@ -1,170 +1,178 @@
+import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import {
-  ArrowRight,
-  Bot,
-  Compass,
-  GitBranch,
-  LayoutDashboard,
-  Library,
-  Lock,
-  Settings2,
-  Users,
-} from 'lucide-react';
+import { ArrowRight, Compass, Flame, Package, Sparkles, Zap } from 'lucide-react';
+import { useMemo } from 'react';
+import { marketplaceService } from '../../services/marketplace.service';
+import './MarketplacePublicPage.css';
+
+const sectionDelay = (index: number) => ({ duration: 0.36, delay: 0.08 * index });
 
 export default function MarketplacePublicPage() {
+  const { data, isLoading } = useQuery({
+    queryKey: ['marketplace-public-catalog'],
+    queryFn: () => marketplaceService.getCatalog({ status: 'published', limit: 12, offset: 0 }),
+    staleTime: 60_000,
+  });
+
+  const stats = useMemo(() => {
+    const items = data?.items ?? [];
+    const kindCounts = items.reduce<Record<string, number>>((acc, item) => {
+      acc[item.kind] = (acc[item.kind] || 0) + 1;
+      return acc;
+    }, {});
+    const avgSuccessRate =
+      items.length > 0
+        ? Math.round(items.reduce((sum, item) => sum + (item.successRate || 0), 0) / items.length)
+        : 0;
+
+    return {
+      total: data?.total ?? 0,
+      topKinds: Object.entries(kindCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3),
+      avgSuccessRate,
+    };
+  }, [data]);
+
+  const featured = (data?.items ?? []).slice(0, 6);
+
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
-      <section className="relative overflow-hidden border-b border-white/10">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute -top-20 left-1/4 h-72 w-72 rounded-full bg-cyan-500/20 blur-[120px]" />
-          <div className="absolute top-16 right-1/4 h-72 w-72 rounded-full bg-blue-500/20 blur-[120px]" />
-        </div>
-        <div className="relative mx-auto max-w-6xl px-6 py-20 lg:py-24">
-          <div className="flex items-center gap-4 mb-6">
-            <img
-              src="/assets/brand/logo-monogram-neon.png"
-              alt="The New Fuse"
-              className="h-12 w-12 rounded-xl object-cover shadow-lg"
-            />
-            <span className="text-xs uppercase tracking-[0.2em] text-cyan-300">
-              The New Fuse Platform
-            </span>
-          </div>
-          <h1 className="text-4xl md:text-6xl font-black leading-tight">
-            One Platform.
+    <div className="marketplace-public">
+      <div className="mp-bg-grid" />
+      <div className="mp-bg-gradient" />
+
+      <section className="mp-hero">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={sectionDelay(0)}
+        >
+          <p className="mp-kicker">The New Fuse • AI Assets Marketplace</p>
+          <h1>
+            Deployable AI assets,
             <br />
-            <span className="bg-linear-to-r from-cyan-300 via-blue-300 to-sky-400 bg-clip-text text-transparent">
-              Clear Public Experience.
-            </span>
+            <span>curated for execution.</span>
           </h1>
-          <p className="mt-6 max-w-3xl text-lg text-slate-300 leading-relaxed">
-            This page is a public orientation layer for The New Fuse. It explains where to go, what
-            each surface does, and how users move through the product. It is intentionally not a
-            store or item marketplace.
+          <p className="mp-subhead">
+            Discover workflows, MCP servers, prompts, and skills that move from discovery to action
+            without copy-pasting across tools.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <a
-              href="/dashboard"
-              className="inline-flex items-center gap-2 rounded-xl bg-white text-slate-900 px-5 py-3 font-bold hover:bg-slate-100 transition-colors"
-            >
-              Open Dashboard <ArrowRight className="w-4 h-4" />
+          <div className="mp-cta-row">
+            <a href="/resources" className="mp-btn mp-btn-primary">
+              Open Resource Catalog <ArrowRight size={16} />
             </a>
-            <a
-              href="/docs"
-              className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/5 px-5 py-3 font-semibold hover:bg-white/10 transition-colors"
-            >
-              Read Docs
+            <a href="/resources" className="mp-btn mp-btn-ghost">
+              Browse Resources
             </a>
           </div>
-        </div>
+        </motion.div>
+
+        <motion.div
+          className="mp-status-card"
+          initial={{ opacity: 0, scale: 0.97 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={sectionDelay(1)}
+        >
+          <div className="mp-status-top">
+            <span className="mp-dot" />
+            <span>{isLoading ? 'Loading catalog' : 'Live catalog snapshot'}</span>
+          </div>
+          <div className="mp-stat-grid">
+            <article>
+              <h3>{stats.total}</h3>
+              <p>published assets</p>
+            </article>
+            <article>
+              <h3>{stats.avgSuccessRate}%</h3>
+              <p>average success rate</p>
+            </article>
+          </div>
+          <ul className="mp-kind-list">
+            {stats.topKinds.map(([kind, count]) => (
+              <li key={kind}>
+                <span>{kind.replace('_', ' ')}</span>
+                <strong>{count}</strong>
+              </li>
+            ))}
+            {stats.topKinds.length === 0 && <li>No catalog metrics yet.</li>}
+          </ul>
+        </motion.div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 py-12">
-        <h2 className="text-2xl md:text-3xl font-bold mb-6">Public Surfaces</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-            <LayoutDashboard className="h-5 w-5 text-cyan-300" />
-            <h3 className="mt-3 text-lg font-bold">Dashboard</h3>
-            <p className="mt-2 text-sm text-slate-300">
-              Operational center for active work, current sessions, and high-signal status.
-            </p>
-          </div>
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-            <Bot className="h-5 w-5 text-blue-300" />
-            <h3 className="mt-3 text-lg font-bold">Agents</h3>
-            <p className="mt-2 text-sm text-slate-300">
-              Configure and run agent flows, orchestration patterns, and collaboration topology.
-            </p>
-          </div>
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-            <GitBranch className="h-5 w-5 text-sky-300" />
-            <h3 className="mt-3 text-lg font-bold">Workflows</h3>
-            <p className="mt-2 text-sm text-slate-300">
-              Build repeatable automations and connect execution logic across product surfaces.
-            </p>
-          </div>
-        </div>
+      <section className="mp-signals">
+        {[
+          {
+            icon: Sparkles,
+            title: 'Curated for production',
+            body: 'Assets are filtered toward operational quality, not just novelty.',
+          },
+          {
+            icon: Zap,
+            title: 'Fast integration path',
+            body: 'Move from discovery to active use with route-level handoff patterns.',
+          },
+          {
+            icon: Compass,
+            title: 'Clear navigation model',
+            body: 'Single marketplace surface, TNF-native data model, no duplicated stacks.',
+          },
+          {
+            icon: Flame,
+            title: 'Research-driven expansion',
+            body: 'New assets can be sourced from crawl pipelines and promoted through moderation.',
+          },
+        ].map((signal, idx) => (
+          <motion.article
+            key={signal.title}
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={sectionDelay(idx)}
+            className="mp-signal-card"
+          >
+            <signal.icon size={18} />
+            <h3>{signal.title}</h3>
+            <p>{signal.body}</p>
+          </motion.article>
+        ))}
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 pb-16">
-        <h2 className="text-2xl md:text-3xl font-bold mb-6">Where To Go Next</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[
-            {
-              href: '/agents',
-              title: 'Agents',
-              description: 'Create, manage, and coordinate agents.',
-              icon: Users,
-            },
-            {
-              href: '/workflows',
-              title: 'Workflows',
-              description: 'Design automation pipelines and execution chains.',
-              icon: GitBranch,
-            },
-            {
-              href: '/knowledge-hub',
-              title: 'Knowledge Hub',
-              description: 'Reference docs, shared context, and artifacts.',
-              icon: Library,
-            },
-            {
-              href: '/mcp-hub',
-              title: 'MCP Hub',
-              description: 'Manage context protocol integrations and connectivity.',
-              icon: Compass,
-            },
-          ].map(({ href, title, description, icon: Icon }, index) => (
+      <section className="mp-featured">
+        <div className="mp-section-title">
+          <h2>Featured assets</h2>
+          <a href="/resources">
+            View all <ArrowRight size={15} />
+          </a>
+        </div>
+        <div className="mp-cards">
+          {featured.map((item, idx) => (
             <motion.a
-              key={href}
-              href={href}
-              initial={{ opacity: 0, y: 16 }}
+              key={item.id}
+              href={item.launchUrl || `/resources`}
+              initial={{ opacity: 0, y: 14 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.35, delay: index * 0.06 }}
-              className="rounded-2xl border border-white/10 bg-white/5 p-5 hover:bg-white/10 transition-colors"
+              viewport={{ once: true, amount: 0.2 }}
+              transition={sectionDelay(idx)}
+              className="mp-item"
             >
-              <Icon className="h-5 w-5 text-cyan-300" />
-              <h3 className="mt-3 text-lg font-bold">{title}</h3>
-              <p className="mt-2 text-sm text-slate-300">{description}</p>
-              <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-cyan-300">
-                Open {title}
-                <ArrowRight className="w-4 h-4" />
-              </span>
+              <div className="mp-item-top">
+                <Package size={16} />
+                <span>{item.kind.replace('_', ' ')}</span>
+              </div>
+              <h3>{item.name}</h3>
+              <p>{item.description}</p>
+              <div className="mp-item-meta">
+                <span>Rating {item.rating.toFixed(1)}</span>
+                <span>{item.successRate}% success</span>
+              </div>
             </motion.a>
           ))}
-        </div>
-      </section>
-
-      <section className="border-t border-white/10">
-        <div className="mx-auto max-w-6xl px-6 py-12 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="rounded-xl border border-white/10 bg-white/5 p-5">
-            <div className="flex items-center gap-3">
-              <Lock className="h-5 w-5 text-amber-300" />
-              <h3 className="text-lg font-bold">Backend Controls Are Separate</h3>
+          {featured.length === 0 && (
+            <div className="mp-item mp-item-empty">
+              <h3>Catalog loading</h3>
+              <p>Published assets will appear here as soon as the API responds.</p>
             </div>
-            <p className="mt-2 text-sm text-slate-300">
-              Publishing and moderation controls are restricted to admin interfaces and are not part
-              of this public page.
-            </p>
-            <a
-              href="/admin/marketplace"
-              className="mt-4 inline-flex items-center gap-2 text-sm text-amber-300"
-            >
-              Admin Controls
-              <ArrowRight className="w-4 h-4" />
-            </a>
-          </div>
-          <div className="rounded-xl border border-white/10 bg-white/5 p-5">
-            <div className="flex items-center gap-3">
-              <Settings2 className="h-5 w-5 text-cyan-300" />
-              <h3 className="text-lg font-bold">Public Orientation Layer</h3>
-            </div>
-            <p className="mt-2 text-sm text-slate-300">
-              This route remains available for compatibility but now acts as a product map, not a
-              marketplace.
-            </p>
-          </div>
+          )}
         </div>
       </section>
     </div>

@@ -5,11 +5,14 @@ import { relations } from 'drizzle-orm';
 import {
   boolean,
   decimal,
+  index,
   integer,
   jsonb,
   pgTable,
+  real,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
@@ -106,6 +109,41 @@ export const marketplaceOffers = pgTable('marketplace_offers', {
 });
 
 // =============================================================================
+// MARKETPLACE CATALOG ITEM (TNF APP MARKETPLACE)
+// =============================================================================
+
+export const marketplaceCatalogItems = pgTable(
+  'marketplace_catalog_items',
+  {
+    id: text('id').primaryKey(),
+    slug: text('slug').notNull(),
+    name: text('name').notNull(),
+    description: text('description').notNull(),
+    kind: varchar('kind', { length: 40 }).notNull(),
+    category: varchar('category', { length: 120 }).notNull(),
+    tags: jsonb('tags').$type<string[]>().default([]).notNull(),
+    capabilities: jsonb('capabilities').$type<string[]>().default([]).notNull(),
+    rating: real('rating').default(0).notNull(),
+    totalRuns: integer('total_runs').default(0).notNull(),
+    successRate: real('success_rate').default(0).notNull(),
+    pricePerRun: real('price_per_run').default(0).notNull(),
+    status: varchar('status', { length: 20 }).default('online').notNull(),
+    publicationStatus: varchar('publication_status', { length: 20 }).default('draft').notNull(),
+    launchUrl: text('launch_url'),
+    avatarUrl: text('avatar_url'),
+    createdBy: text('created_by'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  },
+  (table) => ({
+    slugUniqueIdx: uniqueIndex('marketplace_catalog_items_slug_uq').on(table.slug),
+    kindIdx: index('marketplace_catalog_items_kind_idx').on(table.kind),
+    publicationIdx: index('marketplace_catalog_items_publication_idx').on(table.publicationStatus),
+    updatedAtIdx: index('marketplace_catalog_items_updated_at_idx').on(table.updatedAt),
+  })
+);
+
+// =============================================================================
 // RELATIONS
 // =============================================================================
 
@@ -145,3 +183,6 @@ export const marketplaceOffersRelations = relations(marketplaceOffers, ({ one })
     references: [marketplaceListings.id],
   }),
 }));
+
+export type MarketplaceCatalogItemRow = typeof marketplaceCatalogItems.$inferSelect;
+export type NewMarketplaceCatalogItemRow = typeof marketplaceCatalogItems.$inferInsert;

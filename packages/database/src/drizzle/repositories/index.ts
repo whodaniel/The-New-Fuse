@@ -20,6 +20,10 @@ export {
 } from './configuration.repository';
 export { DrizzleJulesRepository, drizzleJulesRepository } from './jules.repository';
 export { DrizzleLLMConfigRepository, drizzleLLMConfigRepository } from './llm_config.repository';
+export {
+  DrizzleMarketplaceCatalogRepository,
+  drizzleMarketplaceCatalogRepository,
+} from './marketplace-catalog.repository';
 export * from './marketplace.repository';
 export * from './mass.repository';
 export {

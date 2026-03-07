@@ -40,6 +40,45 @@ export class MarketplaceController {
     return item;
   }
 
+  @Get('research/counts')
+  async getResearchCounts() {
+    return await this.marketplaceService.getResearchCounts();
+  }
+
+  @Get('research/prompts')
+  async searchResearchPrompts(
+    @Query('q') q?: string,
+    @Query('limit') limit?: string,
+    @Query('offset') offset?: string
+  ) {
+    return await this.marketplaceService.searchResearchPrompts({
+      q,
+      limit: Number(limit),
+      offset: Number(offset),
+    });
+  }
+
+  @Post('research/crawl/run')
+  async triggerResearchCrawl(
+    @Body()
+    body: {
+      command?: string;
+      dryRun?: boolean;
+    }
+  ) {
+    return await this.marketplaceService.triggerResearchCrawl(body || {});
+  }
+
+  @Get('research/crawl/runs')
+  async listResearchCrawlRuns(@Query('limit') limit?: string) {
+    return await this.marketplaceService.listResearchCrawlRuns(Number(limit) || 20);
+  }
+
+  @Get('research/crawl/runs/:id')
+  async getResearchCrawlRun(@Param('id') id: string) {
+    return await this.marketplaceService.getResearchCrawlRun(id);
+  }
+
   @Post('experiences/submit')
   submitExperience(
     @Body()

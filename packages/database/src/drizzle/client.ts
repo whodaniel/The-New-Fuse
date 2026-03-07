@@ -7,7 +7,10 @@ import postgres from 'postgres';
 import * as schema from './schema';
 
 // Database connection URL
-const connectionString = process.env.DATABASE_URL ?? 'postgresql://localhost:5432/fuse';
+const connectionString =
+  process.env.DATABASE_URL ??
+  process.env.MARKETPLACE_DATABASE_URL ??
+  'postgresql://localhost:5432/fuse';
 
 // Create the postgres.js client connection
 // For query purposes (used by Drizzle ORM)

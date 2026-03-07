@@ -7,8 +7,9 @@
 export * from './enums';
 
 // Tables
-export * from './agents';
 export * from './agent-tracking';
+export * from './agents';
+export * from './ai-assets-marketplace';
 export * from './api-logs';
 export * from './audit-logs';
 export * from './billing';

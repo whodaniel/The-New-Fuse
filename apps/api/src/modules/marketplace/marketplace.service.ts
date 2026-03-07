@@ -1,4 +1,7 @@
 import { BadRequestException, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { drizzleMarketplaceCatalogRepository } from '@the-new-fuse/database';
+import { spawn } from 'child_process';
+import { randomUUID } from 'crypto';
 import postgres, { Sql } from 'postgres';
 import {
   MarketplaceCatalogItem,
@@ -15,11 +18,41 @@ const MAX_DESCRIPTION_LENGTH = 5000;
 const MAX_TAGS = 12;
 const MAX_CAPABILITIES = 16;
 
+type MarketplaceResearchCounts = {
+  categories: number;
+  sources: number;
+  sourceLinks: number;
+  prompts: number;
+  artifacts: number;
+};
+
+type MarketplaceResearchPromptRow = {
+  id: number;
+  sourceId: number;
+  title: string | null;
+  promptText: string;
+  url: string | null;
+  license: string | null;
+  tags: string | null;
+  createdAt: string | null;
+};
+
+type MarketplaceCrawlRunRow = {
+  id: string;
+  status: string;
+  startedAt: string;
+  finishedAt: string | null;
+  stats: Record<string, unknown> | null;
+  error: string | null;
+};
+
 @Injectable()
 export class MarketplaceService implements OnModuleInit, OnModuleDestroy {
   private initialized = false;
   private dbEnabled = true;
   private dbClient: Sql | null = null;
+  private readonly activeResearchRuns = new Set<string>();
+  private readonly researchRunStartedAt = new Map<string, string>();
 
   private readonly seedItems: MarketplaceCatalogItem[] = [
     {
@@ -326,9 +359,324 @@ export class MarketplaceService implements OnModuleInit, OnModuleDestroy {
     });
   }
 
+  async getResearchCounts(): Promise<{
+    available: boolean;
+    counts: MarketplaceResearchCounts;
+    error?: string;
+  }> {
+    const empty: MarketplaceResearchCounts = {
+      categories: 0,
+      sources: 0,
+      sourceLinks: 0,
+      prompts: 0,
+      artifacts: 0,
+    };
+
+    await this.ensureInitialized();
+    if (!this.dbEnabled || !this.dbClient) {
+      return { available: false, counts: empty, error: 'Marketplace DB unavailable' };
+    }
+
+    try {
+      const [categories] = await this
+        .dbClient`SELECT COUNT(*)::int AS n FROM ai_assets_marketplace.categories`;
+      const [sources] = await this
+        .dbClient`SELECT COUNT(*)::int AS n FROM ai_assets_marketplace.sources`;
+      const [sourceLinks] = await this
+        .dbClient`SELECT COUNT(*)::int AS n FROM ai_assets_marketplace.source_links`;
+      const [prompts] = await this
+        .dbClient`SELECT COUNT(*)::int AS n FROM ai_assets_marketplace.prompts`;
+      const [artifacts] = await this
+        .dbClient`SELECT COUNT(*)::int AS n FROM ai_assets_marketplace.artifacts`;
+
+      return {
+        available: true,
+        counts: {
+          categories: Number(categories?.n || 0),
+          sources: Number(sources?.n || 0),
+          sourceLinks: Number(sourceLinks?.n || 0),
+          prompts: Number(prompts?.n || 0),
+          artifacts: Number(artifacts?.n || 0),
+        },
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      return {
+        available: false,
+        counts: empty,
+        error: `Research tables unavailable: ${message}`,
+      };
+    }
+  }
+
+  async searchResearchPrompts(input: {
+    q?: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<{
+    items: MarketplaceResearchPromptRow[];
+    total: number;
+    available: boolean;
+    error?: string;
+  }> {
+    const empty = { items: [] as MarketplaceResearchPromptRow[], total: 0, available: false };
+    const q = this.sanitizeText(input.q || '', MAX_DESCRIPTION_LENGTH).toLowerCase();
+    const limit = this.normalizeLimit(input.limit);
+    const offset = this.normalizeOffset(input.offset);
+
+    await this.ensureInitialized();
+    if (!this.dbEnabled || !this.dbClient) {
+      return { ...empty, error: 'Marketplace DB unavailable' };
+    }
+
+    try {
+      const whereLike = `%${q}%`;
+      const whereClause = q
+        ? this.dbClient`
+            WHERE lower(coalesce(title, '')) LIKE ${whereLike}
+               OR lower(prompt_text) LIKE ${whereLike}
+               OR lower(coalesce(tags, '')) LIKE ${whereLike}
+          `
+        : this.dbClient``;
+
+      const totalRows = await this.dbClient`
+        SELECT COUNT(*)::int AS n
+        FROM ai_assets_marketplace.prompts
+        ${whereClause}
+      `;
+
+      const rows = await this.dbClient<MarketplaceResearchPromptRow[]>`
+        SELECT
+          id,
+          source_id AS "sourceId",
+          title,
+          prompt_text AS "promptText",
+          url,
+          license,
+          tags,
+          created_at AS "createdAt"
+        FROM ai_assets_marketplace.prompts
+        ${whereClause}
+        ORDER BY id DESC
+        LIMIT ${limit}
+        OFFSET ${offset}
+      `;
+
+      return {
+        available: true,
+        items: this.extractRows(rows).map((row) => ({
+          id: Number(row.id),
+          sourceId: Number(row.sourceId),
+          title: row.title ?? null,
+          promptText: String(row.promptText || ''),
+          url: row.url ?? null,
+          license: row.license ?? null,
+          tags: row.tags ?? null,
+          createdAt: row.createdAt ?? null,
+        })),
+        total: Number(this.extractRows(totalRows)[0]?.n || 0),
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      return { ...empty, error: `Research prompt search unavailable: ${message}` };
+    }
+  }
+
+  async triggerResearchCrawl(input?: { command?: string; dryRun?: boolean }): Promise<{
+    accepted: boolean;
+    runId: string;
+    status: string;
+    command?: string;
+    message?: string;
+    error?: string;
+  }> {
+    await this.ensureInitialized();
+    if (!this.dbEnabled || !this.dbClient) {
+      throw new BadRequestException('Marketplace DB unavailable');
+    }
+
+    const runId = `crawl-${Date.now()}-${randomUUID().slice(0, 8)}`;
+    const command =
+      this.sanitizeText(input?.command, MAX_DESCRIPTION_LENGTH) ||
+      this.sanitizeText(process.env.CRAWL4AI_PIPELINE_COMMAND, MAX_DESCRIPTION_LENGTH);
+
+    await this.upsertCrawlRun({
+      id: runId,
+      status: input?.dryRun ? 'dry_run' : 'queued',
+      startedAt: new Date().toISOString(),
+      finishedAt: input?.dryRun ? new Date().toISOString() : null,
+      stats: input?.dryRun ? { dryRun: true } : null,
+      error: !command ? 'CRAWL4AI_PIPELINE_COMMAND is not configured' : null,
+    });
+
+    if (!command) {
+      return {
+        accepted: false,
+        runId,
+        status: 'failed',
+        error: 'CRAWL4AI_PIPELINE_COMMAND is not configured',
+      };
+    }
+
+    if (input?.dryRun) {
+      return {
+        accepted: true,
+        runId,
+        status: 'dry_run',
+        command,
+        message: 'Dry run recorded; crawl command not executed.',
+      };
+    }
+
+    this.activeResearchRuns.add(runId);
+    const startedAt = new Date().toISOString();
+    this.researchRunStartedAt.set(runId, startedAt);
+    await this.upsertCrawlRun({
+      id: runId,
+      status: 'running',
+      startedAt,
+      finishedAt: null,
+      stats: null,
+      error: null,
+    });
+
+    const child = spawn('sh', ['-lc', command], { stdio: ['ignore', 'pipe', 'pipe'] });
+    let stdoutBuffer = '';
+    let stderrBuffer = '';
+
+    child.stdout.on('data', (chunk) => {
+      stdoutBuffer = `${stdoutBuffer}${String(chunk)}`.slice(-16000);
+    });
+    child.stderr.on('data', (chunk) => {
+      stderrBuffer = `${stderrBuffer}${String(chunk)}`.slice(-16000);
+    });
+
+    child.on('close', async (code) => {
+      const finishedAt = new Date().toISOString();
+      const status = code === 0 ? 'succeeded' : 'failed';
+      const stats = code === 0 ? this.tryParseLastJsonObject(stdoutBuffer) : null;
+      const error =
+        code === 0 ? null : this.sanitizeText(stderrBuffer || `exit code ${code}`, 8000);
+      const startedAt = this.researchRunStartedAt.get(runId) || new Date().toISOString();
+      try {
+        await this.upsertCrawlRun({
+          id: runId,
+          status,
+          startedAt,
+          finishedAt,
+          stats,
+          error,
+        });
+      } finally {
+        this.activeResearchRuns.delete(runId);
+        this.researchRunStartedAt.delete(runId);
+      }
+    });
+
+    child.on('error', async (err) => {
+      const startedAt = this.researchRunStartedAt.get(runId) || new Date().toISOString();
+      try {
+        await this.upsertCrawlRun({
+          id: runId,
+          status: 'failed',
+          startedAt,
+          finishedAt: new Date().toISOString(),
+          stats: null,
+          error: this.sanitizeText(err.message, 8000),
+        });
+      } finally {
+        this.activeResearchRuns.delete(runId);
+        this.researchRunStartedAt.delete(runId);
+      }
+    });
+
+    return {
+      accepted: true,
+      runId,
+      status: 'running',
+      command,
+      message: 'Crawl job started in background.',
+    };
+  }
+
+  async getResearchCrawlRun(
+    id: string
+  ): Promise<{ available: boolean; run: MarketplaceCrawlRunRow | null; error?: string }> {
+    await this.ensureInitialized();
+    if (!this.dbEnabled || !this.dbClient) {
+      return { available: false, run: null, error: 'Marketplace DB unavailable' };
+    }
+
+    try {
+      const rows = await this.dbClient`
+        SELECT
+          id,
+          status,
+          started_at AS "startedAt",
+          finished_at AS "finishedAt",
+          stats,
+          error
+        FROM ai_assets_marketplace.crawl_runs
+        WHERE id = ${id}
+        LIMIT 1
+      `;
+      const row = this.extractRows(rows)[0];
+      return { available: true, run: row ? this.mapCrawlRunRow(row) : null };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      return { available: false, run: null, error: `Crawl run lookup unavailable: ${message}` };
+    }
+  }
+
+  async listResearchCrawlRuns(limit = 20): Promise<{
+    available: boolean;
+    items: MarketplaceCrawlRunRow[];
+    total: number;
+    error?: string;
+  }> {
+    await this.ensureInitialized();
+    if (!this.dbEnabled || !this.dbClient) {
+      return { available: false, items: [], total: 0, error: 'Marketplace DB unavailable' };
+    }
+
+    const boundedLimit = Math.max(1, Math.min(Number(limit) || 20, 200));
+    try {
+      const totalRows = await this.dbClient`
+        SELECT COUNT(*)::int AS n
+        FROM ai_assets_marketplace.crawl_runs
+      `;
+      const rows = await this.dbClient`
+        SELECT
+          id,
+          status,
+          started_at AS "startedAt",
+          finished_at AS "finishedAt",
+          stats,
+          error
+        FROM ai_assets_marketplace.crawl_runs
+        ORDER BY started_at DESC
+        LIMIT ${boundedLimit}
+      `;
+      return {
+        available: true,
+        items: this.extractRows(rows).map((row) => this.mapCrawlRunRow(row)),
+        total: Number(this.extractRows(totalRows)[0]?.n || 0),
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      return {
+        available: false,
+        items: [],
+        total: 0,
+        error: `Crawl run listing unavailable: ${message}`,
+      };
+    }
+  }
+
   async getItemById(id: string): Promise<MarketplaceCatalogItem | null> {
-    const items = await this.getAllItems();
-    return items.find((item) => item.id === id || item.slug === id) || null;
+    await this.ensureInitialized();
+    const row = await drizzleMarketplaceCatalogRepository.findByIdOrSlug(id);
+    return row ? this.mapCatalogRowToItem(row) : null;
   }
 
   async submitExperience(
@@ -458,38 +806,12 @@ export class MarketplaceService implements OnModuleInit, OnModuleDestroy {
         onnotice: () => {},
       });
 
-      await this.dbClient`
-        CREATE TABLE IF NOT EXISTS marketplace_catalog_items (
-          id TEXT PRIMARY KEY,
-          slug TEXT NOT NULL UNIQUE,
-          name TEXT NOT NULL,
-          description TEXT NOT NULL,
-          kind TEXT NOT NULL,
-          category TEXT NOT NULL,
-          tags JSONB NOT NULL DEFAULT '[]'::jsonb,
-          capabilities JSONB NOT NULL DEFAULT '[]'::jsonb,
-          rating DOUBLE PRECISION NOT NULL DEFAULT 0,
-          total_runs INTEGER NOT NULL DEFAULT 0,
-          success_rate DOUBLE PRECISION NOT NULL DEFAULT 0,
-          price_per_run DOUBLE PRECISION NOT NULL DEFAULT 0,
-          status TEXT NOT NULL DEFAULT 'online',
-          publication_status TEXT NOT NULL DEFAULT 'draft',
-          launch_url TEXT,
-          avatar_url TEXT,
-          created_by TEXT,
-          created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-          updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-        );
-      `;
-
-      const existingRows = await this.dbClient`
-        SELECT id FROM marketplace_catalog_items LIMIT 1;
-      `;
+      await this.dbClient`SELECT 1`;
 
       // Mark initialized before seed inserts to avoid re-entrant ensureInitialized calls.
       this.initialized = true;
-      const hasRows = this.extractRows(existingRows).length > 0;
-      if (!hasRows) {
+      const rowCount = await drizzleMarketplaceCatalogRepository.count();
+      if (rowCount === 0) {
         for (const item of this.seedItems) {
           await this.persistItem(item, false);
         }
@@ -507,163 +829,68 @@ export class MarketplaceService implements OnModuleInit, OnModuleDestroy {
   private async getAllItems(): Promise<MarketplaceCatalogItem[]> {
     await this.ensureInitialized();
 
-    if (!this.dbEnabled || !this.dbClient) {
-      return [];
-    }
-
-    const result = await this.dbClient`
-      SELECT
-        id,
-        slug,
-        name,
-        description,
-        kind,
-        category,
-        tags,
-        capabilities,
-        rating,
-        total_runs,
-        success_rate,
-        price_per_run,
-        status,
-        publication_status,
-        launch_url,
-        avatar_url,
-        created_by,
-        created_at,
-        updated_at
-      FROM marketplace_catalog_items
-      ORDER BY created_at DESC;
-    `;
-
-    return this.extractRows(result).map((row) => this.mapRowToItem(row));
+    const rows = await drizzleMarketplaceCatalogRepository.findAll();
+    return rows.map((row: any) => this.mapCatalogRowToItem(row));
   }
 
   private async persistItem(item: MarketplaceCatalogItem, upsert: boolean): Promise<void> {
     await this.ensureInitialized();
-    if (!this.dbEnabled || !this.dbClient) {
-      throw new Error('Marketplace storage unavailable');
-    }
-
-    const tags = JSON.stringify(item.tags || []);
-    const capabilities = JSON.stringify(item.capabilities || []);
 
     try {
       if (upsert) {
-        await this.dbClient`
-          INSERT INTO marketplace_catalog_items (
-            id,
-            slug,
-            name,
-            description,
-            kind,
-            category,
-            tags,
-            capabilities,
-            rating,
-            total_runs,
-            success_rate,
-            price_per_run,
-            status,
-            publication_status,
-            launch_url,
-            avatar_url,
-            created_by,
-            created_at,
-            updated_at
-          ) VALUES (
-            ${item.id},
-            ${item.slug},
-            ${item.name},
-            ${item.description},
-            ${item.kind},
-            ${item.category},
-            CAST(${tags} AS jsonb),
-            CAST(${capabilities} AS jsonb),
-            ${item.rating},
-            ${item.totalRuns},
-            ${item.successRate},
-            ${item.pricePerRun},
-            ${item.status},
-            ${item.publicationStatus},
-            ${item.launchUrl ?? null},
-            ${item.avatarUrl ?? null},
-            ${item.createdBy ?? null},
-            ${item.createdAt},
-            ${item.updatedAt}
-          )
-          ON CONFLICT (id) DO UPDATE SET
-            slug = EXCLUDED.slug,
-            name = EXCLUDED.name,
-            description = EXCLUDED.description,
-            kind = EXCLUDED.kind,
-            category = EXCLUDED.category,
-            tags = EXCLUDED.tags,
-            capabilities = EXCLUDED.capabilities,
-            rating = EXCLUDED.rating,
-            total_runs = EXCLUDED.total_runs,
-            success_rate = EXCLUDED.success_rate,
-            price_per_run = EXCLUDED.price_per_run,
-            status = EXCLUDED.status,
-            publication_status = EXCLUDED.publication_status,
-            launch_url = EXCLUDED.launch_url,
-            avatar_url = EXCLUDED.avatar_url,
-            created_by = EXCLUDED.created_by,
-            created_at = EXCLUDED.created_at,
-            updated_at = EXCLUDED.updated_at;
-        `;
+        await drizzleMarketplaceCatalogRepository.upsert({
+          id: item.id,
+          slug: item.slug,
+          name: item.name,
+          description: item.description,
+          kind: item.kind,
+          category: item.category,
+          tags: item.tags || [],
+          capabilities: item.capabilities || [],
+          rating: item.rating,
+          totalRuns: item.totalRuns,
+          successRate: item.successRate,
+          pricePerRun: item.pricePerRun,
+          status: item.status,
+          publicationStatus: item.publicationStatus,
+          launchUrl: item.launchUrl ?? null,
+          avatarUrl: item.avatarUrl ?? null,
+          createdBy: item.createdBy ?? null,
+          createdAt: new Date(item.createdAt),
+          updatedAt: new Date(item.updatedAt),
+        });
         return;
       }
 
-      await this.dbClient`
-        INSERT INTO marketplace_catalog_items (
-          id,
-          slug,
-          name,
-          description,
-          kind,
-          category,
-          tags,
-          capabilities,
-          rating,
-          total_runs,
-          success_rate,
-          price_per_run,
-          status,
-          publication_status,
-          launch_url,
-          avatar_url,
-          created_by,
-          created_at,
-          updated_at
-        ) VALUES (
-          ${item.id},
-          ${item.slug},
-          ${item.name},
-          ${item.description},
-          ${item.kind},
-          ${item.category},
-          CAST(${tags} AS jsonb),
-          CAST(${capabilities} AS jsonb),
-          ${item.rating},
-          ${item.totalRuns},
-          ${item.successRate},
-          ${item.pricePerRun},
-          ${item.status},
-          ${item.publicationStatus},
-          ${item.launchUrl ?? null},
-          ${item.avatarUrl ?? null},
-          ${item.createdBy ?? null},
-          ${item.createdAt},
-          ${item.updatedAt}
-        )
-        ON CONFLICT (id) DO NOTHING;
-      `;
+      await drizzleMarketplaceCatalogRepository.insertIfMissing({
+        id: item.id,
+        slug: item.slug,
+        name: item.name,
+        description: item.description,
+        kind: item.kind,
+        category: item.category,
+        tags: item.tags || [],
+        capabilities: item.capabilities || [],
+        rating: item.rating,
+        totalRuns: item.totalRuns,
+        successRate: item.successRate,
+        pricePerRun: item.pricePerRun,
+        status: item.status,
+        publicationStatus: item.publicationStatus,
+        launchUrl: item.launchUrl ?? null,
+        avatarUrl: item.avatarUrl ?? null,
+        createdBy: item.createdBy ?? null,
+        createdAt: new Date(item.createdAt),
+        updatedAt: new Date(item.updatedAt),
+      });
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
+      const code = (error as { code?: string })?.code;
       if (
+        code === '23505' ||
         message.includes('duplicate key value') ||
-        message.includes('marketplace_catalog_items_slug_key')
+        message.includes('marketplace_catalog_items_slug_key') ||
+        message.includes('marketplace_catalog_items_slug_uq')
       ) {
         throw new BadRequestException('A catalog item with a similar name already exists');
       }
@@ -684,7 +911,7 @@ export class MarketplaceService implements OnModuleInit, OnModuleDestroy {
     return [];
   }
 
-  private mapRowToItem(row: any): MarketplaceCatalogItem {
+  private mapCatalogRowToItem(row: any): MarketplaceCatalogItem {
     const normalizeArray = (value: unknown): string[] => {
       if (Array.isArray(value)) {
         return value.map((entry) => String(entry));
@@ -712,17 +939,81 @@ export class MarketplaceService implements OnModuleInit, OnModuleDestroy {
       tags: normalizeArray(row.tags),
       capabilities: normalizeArray(row.capabilities),
       rating: Number(row.rating || 0),
-      totalRuns: Number(row.total_runs || 0),
-      successRate: Number(row.success_rate || 0),
-      pricePerRun: Number(row.price_per_run || 0),
+      totalRuns: Number((row.totalRuns ?? row.total_runs) || 0),
+      successRate: Number((row.successRate ?? row.success_rate) || 0),
+      pricePerRun: Number((row.pricePerRun ?? row.price_per_run) || 0),
       status: String(row.status || 'online') as 'online' | 'busy' | 'offline',
-      publicationStatus: this.normalizeStatus(String(row.publication_status)) || 'draft',
-      launchUrl: row.launch_url ? String(row.launch_url) : undefined,
-      avatarUrl: row.avatar_url ? String(row.avatar_url) : undefined,
-      createdBy: row.created_by ? String(row.created_by) : undefined,
-      createdAt: new Date(row.created_at || Date.now()).toISOString(),
-      updatedAt: new Date(row.updated_at || Date.now()).toISOString(),
+      publicationStatus:
+        this.normalizeStatus(String(row.publicationStatus ?? row.publication_status)) || 'draft',
+      launchUrl:
+        row.launchUrl || row.launch_url ? String(row.launchUrl ?? row.launch_url) : undefined,
+      avatarUrl:
+        row.avatarUrl || row.avatar_url ? String(row.avatarUrl ?? row.avatar_url) : undefined,
+      createdBy:
+        row.createdBy || row.created_by ? String(row.createdBy ?? row.created_by) : undefined,
+      createdAt: new Date((row.createdAt ?? row.created_at) || Date.now()).toISOString(),
+      updatedAt: new Date((row.updatedAt ?? row.updated_at) || Date.now()).toISOString(),
     };
+  }
+
+  private mapCrawlRunRow(row: any): MarketplaceCrawlRunRow {
+    return {
+      id: String(row.id),
+      status: String(row.status),
+      startedAt: new Date(row.startedAt || row.started_at || Date.now()).toISOString(),
+      finishedAt:
+        row.finishedAt || row.finished_at
+          ? new Date(row.finishedAt || row.finished_at).toISOString()
+          : null,
+      stats: row.stats && typeof row.stats === 'object' ? row.stats : null,
+      error: row.error ? String(row.error) : null,
+    };
+  }
+
+  private async upsertCrawlRun(run: MarketplaceCrawlRunRow): Promise<void> {
+    if (!this.dbClient) {
+      throw new Error('Marketplace DB client is not initialized');
+    }
+    await this.dbClient`
+      INSERT INTO ai_assets_marketplace.crawl_runs (
+        id,
+        status,
+        started_at,
+        finished_at,
+        stats,
+        error
+      ) VALUES (
+        ${run.id},
+        ${run.status},
+        ${run.startedAt},
+        ${run.finishedAt},
+        ${run.stats ? JSON.stringify(run.stats) : null}::jsonb,
+        ${run.error}
+      )
+      ON CONFLICT (id) DO UPDATE SET
+        status = EXCLUDED.status,
+        started_at = EXCLUDED.started_at,
+        finished_at = EXCLUDED.finished_at,
+        stats = EXCLUDED.stats,
+        error = EXCLUDED.error
+    `;
+  }
+
+  private tryParseLastJsonObject(raw: string): Record<string, unknown> | null {
+    const trimmed = raw.trim();
+    if (!trimmed) return null;
+    const lines = trimmed.split('\n').reverse();
+    for (const line of lines) {
+      try {
+        const parsed = JSON.parse(line);
+        if (parsed && typeof parsed === 'object') {
+          return parsed as Record<string, unknown>;
+        }
+      } catch {
+        continue;
+      }
+    }
+    return null;
   }
 
   private validateSubmissionInput(
