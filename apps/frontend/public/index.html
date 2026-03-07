@@ -21,6 +21,16 @@
   <meta property="og:site_name" content="The New Fuse">
   <meta name="twitter:card" content="summary_large_image">
 
+  <script>
+    (function routeMarketplaceHostToSpa() {
+      var isMarketplaceHost = window.location.hostname === 'marketplace.thenewfuse.com';
+      var isRootPath = window.location.pathname === '/' || window.location.pathname === '';
+      if (isMarketplaceHost && isRootPath) {
+        window.location.replace('/app.html');
+      }
+    })();
+  </script>
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

@@ -300,6 +300,7 @@ export default function ComprehensiveRouter() {
             <Routes>
               {/* Core Routes - Root switches based on hostname (marketplace vs main landing) */}
               <Route path="/" element={<MarketplaceRootRoute />} />
+              <Route path="/app.html" element={<MarketplaceRootRoute />} />
               <Route path="/home" element={<AllPages />} />
               {LEGACY_REDIRECTS.map((redirect) => (
                 <Route
