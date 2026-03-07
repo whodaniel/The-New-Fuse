@@ -224,6 +224,23 @@ const RedirectToStatic = ({ to }: { to: string }) => {
   return null;
 };
 
+const MarketplaceRootRoute = () => {
+  if (typeof window === 'undefined') {
+    return <RedirectToStatic to="/" />;
+  }
+
+  const host = window.location.hostname;
+  const isMarketplaceHost = host === 'marketplace.thenewfuse.com';
+
+  return isMarketplaceHost ? (
+    <Suspense fallback={<LoadingFallback name="Marketplace" />}>
+      <MarketplacePublicPage />
+    </Suspense>
+  ) : (
+    <RedirectToStatic to="/" />
+  );
+};
+
 // Remove the old ComprehensiveNavigation component and replace with SmartNavigation
 export default function ComprehensiveRouter() {
   const location = useLocation();
@@ -281,8 +298,8 @@ export default function ComprehensiveRouter() {
         <Layout>
           <Suspense fallback={<LoadingFallback name="Page" />}>
             <Routes>
-              {/* Core Routes - Root redirects to static HTML Landing Page */}
-              <Route path="/" element={<RedirectToStatic to="/" />} />
+              {/* Core Routes - Root switches based on hostname (marketplace vs main landing) */}
+              <Route path="/" element={<MarketplaceRootRoute />} />
               <Route path="/home" element={<AllPages />} />
               {LEGACY_REDIRECTS.map((redirect) => (
                 <Route
