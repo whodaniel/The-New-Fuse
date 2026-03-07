@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 3,
+  "schemaVersion": 4,
   "migrations": [
     {
       "version": 1,
@@ -15,10 +15,15 @@
       "version": 3,
       "name": "normalize-provider-fraud-signals",
       "at": "2026-02-27T23:15:00.435Z"
+    },
+    {
+      "version": 4,
+      "name": "add-trait-control-plane-tables",
+      "at": "2026-03-07T07:53:48.894Z"
     }
   ],
   "createdAt": "2026-02-27T23:15:00.435Z",
-  "updatedAt": "2026-02-27T23:15:00.435Z",
+  "updatedAt": "2026-03-07T07:53:48.894Z",
   "tables": {
     "compliance_profiles": [],
     "payment_orders": [],
@@ -26,6 +31,10 @@
     "velocity_events": [],
     "risk_alerts": [],
     "sponsorship_positions": [],
-    "funding_attempts": []
+    "funding_attempts": [],
+    "trait_rollouts": [],
+    "trait_observations": [],
+    "trait_recommendations": [],
+    "trait_policy_events": []
   }
 }

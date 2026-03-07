@@ -1,11 +1,11 @@
-import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
-import { setTimeout as delay } from 'node:timers/promises';
 import crypto from 'node:crypto';
 import path from 'node:path';
+import test from 'node:test';
+import { setTimeout as delay } from 'node:timers/promises';
 
-const cwd = '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games';
+const cwd = import.meta.dirname || process.cwd();
 const TEST_API_TOKEN = 'test-token';
 
 async function waitForHealth(baseUrl, timeoutMs = 8000) {
@@ -30,7 +30,9 @@ function startServer(port) {
       ...process.env,
       PORT: String(port),
       CASIN8_DATA_DIR: dataDir,
-      CASIN8_API_TOKENS: JSON.stringify({ [TEST_API_TOKEN]: ['admin', 'poker', 'risk', 'compliance'] }),
+      CASIN8_API_TOKENS: JSON.stringify({
+        [TEST_API_TOKEN]: ['admin', 'poker', 'risk', 'compliance'],
+      }),
       CASIN8_STRIPE_WEBHOOK_SECRET: 'stripe-secret-test',
       CASIN8_PAYPAL_WEBHOOK_SECRET: 'paypal-secret-test',
       CASIN8_RESERVE_ATTESTATION_SECRET: 'reserve-attestation-secret-test',
@@ -143,7 +145,10 @@ test('payments + compliance + webhook + sponsorship settle credit flow', async (
   assert.equal(dupeWebhook.status, 200);
   assert.equal(dupeJson.duplicate, true);
 
-  const wallet = await api(baseUrl, `/api/cashier/wallet?ledgerId=default&playerId=${encodeURIComponent(playerId)}`);
+  const wallet = await api(
+    baseUrl,
+    `/api/cashier/wallet?ledgerId=default&playerId=${encodeURIComponent(playerId)}`
+  );
   assert.equal(wallet.res.status, 200);
   assert.equal(wallet.json.wallet.availableUnits, '2500');
 
@@ -315,7 +320,10 @@ test('treasury policy circuit breaker enforces reserve/withdraw/settle caps', as
     },
   });
   assert.equal(withdrawTooLarge.res.status, 423);
-  assert.equal(withdrawTooLarge.json.reasons.includes('TREASURY_WITHDRAWAL_PER_REQUEST_CAP_EXCEEDED'), true);
+  assert.equal(
+    withdrawTooLarge.json.reasons.includes('TREASURY_WITHDRAWAL_PER_REQUEST_CAP_EXCEEDED'),
+    true
+  );
 
   const policyClear2 = await api(baseUrl, '/api/risk/treasury-policy', {
     method: 'POST',
@@ -341,7 +349,10 @@ test('treasury policy circuit breaker enforces reserve/withdraw/settle caps', as
     },
   });
   assert.equal(settleTooLarge.res.status, 423);
-  assert.equal(settleTooLarge.json.reasons.includes('TREASURY_PAYOUT_PER_SETTLEMENT_CAP_EXCEEDED'), true);
+  assert.equal(
+    settleTooLarge.json.reasons.includes('TREASURY_PAYOUT_PER_SETTLEMENT_CAP_EXCEEDED'),
+    true
+  );
 
   assert.equal(getStderr(), '');
 });

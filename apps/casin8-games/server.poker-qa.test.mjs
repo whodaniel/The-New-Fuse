@@ -1,11 +1,11 @@
-import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
-import { setTimeout as delay } from 'node:timers/promises';
 import crypto from 'node:crypto';
 import path from 'node:path';
+import test from 'node:test';
+import { setTimeout as delay } from 'node:timers/promises';
 
-const cwd = '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games';
+const cwd = import.meta.dirname || process.cwd();
 const TEST_API_TOKEN = 'test-token';
 
 async function waitForHealth(baseUrl, timeoutMs = 10000) {
@@ -28,7 +28,9 @@ function startServer(port) {
       ...process.env,
       PORT: String(port),
       CASIN8_DATA_DIR: dataDir,
-      CASIN8_API_TOKENS: JSON.stringify({ [TEST_API_TOKEN]: ['admin', 'poker', 'risk', 'compliance'] }),
+      CASIN8_API_TOKENS: JSON.stringify({
+        [TEST_API_TOKEN]: ['admin', 'poker', 'risk', 'compliance'],
+      }),
     },
     stdio: ['ignore', 'pipe', 'pipe'],
   });
@@ -81,7 +83,11 @@ test('rule correctness: cash table actions enforce turn and bet constraints', as
     body: {
       tableId,
       handId: id('hand'),
-      seats: [{ seat: 0, stack: 150 }, { seat: 1, stack: 150 }, { seat: 2, stack: 150 }],
+      seats: [
+        { seat: 0, stack: 150 },
+        { seat: 1, stack: 150 },
+        { seat: 2, stack: 150 },
+      ],
       smallBlind: 10,
       bigBlind: 20,
     },
@@ -166,9 +172,15 @@ test('rule correctness: SNG + MTT lifecycle endpoints stay consistent', async (t
     });
     assert.equal(out.res.status, 200);
   }
-  const sngPayouts = await api(baseUrl, `/api/sng/payouts?tournamentId=${encodeURIComponent(sngId)}`);
+  const sngPayouts = await api(
+    baseUrl,
+    `/api/sng/payouts?tournamentId=${encodeURIComponent(sngId)}`
+  );
   assert.equal(sngPayouts.res.status, 200);
-  const totalSngPaid = sngPayouts.json.payouts.reduce((sum, row) => sum + BigInt(row.payoutUnits), 0n);
+  const totalSngPaid = sngPayouts.json.payouts.reduce(
+    (sum, row) => sum + BigInt(row.payoutUnits),
+    0n
+  );
   assert.equal(totalSngPaid, 600n);
 
   const mttId = id('mtt');
@@ -218,7 +230,10 @@ test('concurrency: duplicate actions and stale reconnect action are rejected', a
     body: {
       tableId,
       handId: id('hand'),
-      seats: [{ seat: 0, stack: 100 }, { seat: 1, stack: 100 }],
+      seats: [
+        { seat: 0, stack: 100 },
+        { seat: 1, stack: 100 },
+      ],
       smallBlind: 5,
       bigBlind: 10,
     },
@@ -254,6 +269,12 @@ test('concurrency: duplicate actions and stale reconnect action are rejected', a
       },
     }),
   ]);
+  console.log('test results:', {
+    a: a.json,
+    a_status: a.res.status,
+    b: b.json,
+    b_status: b.res.status,
+  });
   const accepted = [a, b].filter((row) => row.json?.accepted === true);
   const rejected = [a, b].filter((row) => row.json?.accepted === false);
   assert.equal(accepted.length, 1);
@@ -302,8 +323,11 @@ test('settlement integrity: persists across restart and settlement retries are i
     body: {
       tableId,
       handId: id('hand'),
-      seats: [{ seat: 0, stack: 1000 }, { seat: 1, stack: 1000 }],
-      sessionBySeat: { '0': s1.json.session.sessionId, '1': s2.json.session.sessionId },
+      seats: [
+        { seat: 0, stack: 1000 },
+        { seat: 1, stack: 1000 },
+      ],
+      sessionBySeat: { 0: s1.json.session.sessionId, 1: s2.json.session.sessionId },
       smallBlind: 10,
       bigBlind: 20,
     },
@@ -351,14 +375,8 @@ test('settlement integrity: persists across restart and settlement retries are i
   );
   assert.equal(winnerAfterRestart.res.status, 200);
   assert.equal(loserAfterRestart.res.status, 200);
-  assert.equal(
-    winnerAfterRestart.json.session.bankroll,
-    winnerBeforeRestart.json.session.bankroll
-  );
-  assert.equal(
-    loserAfterRestart.json.session.bankroll,
-    loserBeforeRestart.json.session.bankroll
-  );
+  assert.equal(winnerAfterRestart.json.session.bankroll, winnerBeforeRestart.json.session.bankroll);
+  assert.equal(loserAfterRestart.json.session.bankroll, loserBeforeRestart.json.session.bankroll);
 
   const retryTableId = id('retry-settle');
   const retryInit = await api(baseUrl, '/api/table/state/init', {
@@ -366,7 +384,10 @@ test('settlement integrity: persists across restart and settlement retries are i
     body: {
       tableId: retryTableId,
       handId: id('retry-hand'),
-      seats: [{ seat: 0, stack: 100 }, { seat: 1, stack: 100 }],
+      seats: [
+        { seat: 0, stack: 100 },
+        { seat: 1, stack: 100 },
+      ],
       smallBlind: 5,
       bigBlind: 10,
     },
@@ -421,7 +442,11 @@ test('fuzz and abuse resistance: malformed payloads and extreme bets', async (t)
   });
   const hugeBet = await api(baseUrl, '/api/play', {
     method: 'POST',
-    body: { sessionId: created.json.session.sessionId, game: 'poker', bet: Number.MAX_SAFE_INTEGER },
+    body: {
+      sessionId: created.json.session.sessionId,
+      game: 'poker',
+      bet: Number.MAX_SAFE_INTEGER,
+    },
   });
   assert.equal(hugeBet.res.status, 400);
   assert.match(String(hugeBet.json.error || ''), /Insufficient bankroll/);
@@ -461,10 +486,7 @@ test('fairness verification round-trip works for valid and invalid digests', asy
     body: { sessionId },
   });
   assert.equal(rotated.res.status, 200);
-  assert.equal(
-    rotated.json.reveal.previousServerSeedHash,
-    commit.json.commit.serverSeedHash
-  );
+  assert.equal(rotated.json.reveal.previousServerSeedHash, commit.json.commit.serverSeedHash);
 
   const verifyOne = await api(baseUrl, '/api/fair/verify', {
     method: 'POST',

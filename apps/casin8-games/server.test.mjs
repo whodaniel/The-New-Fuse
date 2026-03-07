@@ -1,10 +1,10 @@
-import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
-import { setTimeout as delay } from 'node:timers/promises';
 import path from 'node:path';
+import test from 'node:test';
+import { setTimeout as delay } from 'node:timers/promises';
 
-const cwd = '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games';
+const cwd = import.meta.dirname || process.cwd();
 const TEST_API_TOKEN = 'test-token';
 
 async function waitForHealth(baseUrl, timeoutMs = 8000) {
@@ -29,7 +29,9 @@ function startServer(port) {
       ...process.env,
       PORT: String(port),
       CASIN8_DATA_DIR: dataDir,
-      CASIN8_API_TOKENS: JSON.stringify({ [TEST_API_TOKEN]: ['admin', 'poker', 'risk', 'compliance'] }),
+      CASIN8_API_TOKENS: JSON.stringify({
+        [TEST_API_TOKEN]: ['admin', 'poker', 'risk', 'compliance'],
+      }),
     },
     stdio: ['ignore', 'pipe', 'pipe'],
   });
@@ -353,7 +355,10 @@ test('session -> poker play -> ledger -> reveal flow + agent ops', async (t) => 
   assert.equal(sponsorshipHistory.json.ok, true);
   assert.equal(Array.isArray(sponsorshipHistory.json.settlements), true);
 
-  const cashierEntries = await api(baseUrl, '/api/cashier/entries?ledgerId=default&playerId=sponsor-it-1');
+  const cashierEntries = await api(
+    baseUrl,
+    '/api/cashier/entries?ledgerId=default&playerId=sponsor-it-1'
+  );
   assert.equal(cashierEntries.res.status, 200);
   assert.equal(cashierEntries.json.ok, true);
   assert.equal(Array.isArray(cashierEntries.json.entries), true);

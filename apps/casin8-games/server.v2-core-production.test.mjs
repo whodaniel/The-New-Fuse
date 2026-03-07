@@ -1,12 +1,12 @@
-import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
-import { setTimeout as delay } from 'node:timers/promises';
+import { mkdtemp, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { mkdtemp, rm } from 'node:fs/promises';
+import test from 'node:test';
+import { setTimeout as delay } from 'node:timers/promises';
 
-const cwd = '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games';
+const cwd = import.meta.dirname || process.cwd();
 const TEST_API_TOKEN = 'test-token';
 
 async function waitForHealth(baseUrl, timeoutMs = 20000) {
@@ -27,7 +27,9 @@ function startServer(port, opts = {}) {
     env: {
       ...process.env,
       PORT: String(port),
-      CASIN8_API_TOKENS: JSON.stringify({ [TEST_API_TOKEN]: ['admin', 'poker', 'risk', 'compliance'] }),
+      CASIN8_API_TOKENS: JSON.stringify({
+        [TEST_API_TOKEN]: ['admin', 'poker', 'risk', 'compliance'],
+      }),
       ...(opts.dataDir ? { CASIN8_DATA_DIR: opts.dataDir } : {}),
     },
     stdio: ['ignore', 'pipe', 'pipe'],
@@ -145,10 +147,12 @@ test('v2 holdem resume token + stale cursor + reconnect semantics', async (t) =>
       playerId: 'p2',
       action: 'check',
       idempotencyKey: 'v2-a-disc',
-      resumeToken: (await api(baseUrl, '/api/v2/holdem/resume', {
-        method: 'POST',
-        body: { tableId, playerId: 'p2' },
-      })).json.resume.token,
+      resumeToken: (
+        await api(baseUrl, '/api/v2/holdem/resume', {
+          method: 'POST',
+          body: { tableId, playerId: 'p2' },
+        })
+      ).json.resume.token,
     },
   });
   assert.equal(disconnectedAction.res.status, 400);
@@ -272,7 +276,10 @@ test('v2 holdem + tournament state persist across restart', async (t) => {
   server = startServer(port, { dataDir });
   await waitForHealth(baseUrl);
 
-  const tableState = await api(baseUrl, `/api/v2/holdem/state?tableId=${encodeURIComponent(tableId)}`);
+  const tableState = await api(
+    baseUrl,
+    `/api/v2/holdem/state?tableId=${encodeURIComponent(tableId)}`
+  );
   assert.equal(tableState.res.status, 200);
   assert.equal(tableState.json.table.tableId, tableId);
   assert.equal(tableState.json.table.hand.handId, 'persist-h1');

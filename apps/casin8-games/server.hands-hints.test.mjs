@@ -1,10 +1,10 @@
-import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
-import { setTimeout as delay } from 'node:timers/promises';
 import path from 'node:path';
+import test from 'node:test';
+import { setTimeout as delay } from 'node:timers/promises';
 
-const cwd = '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games';
+const cwd = import.meta.dirname || process.cwd();
 const TEST_API_TOKEN = 'test-token';
 
 async function waitForHealth(baseUrl, timeoutMs = 8000) {
@@ -29,7 +29,9 @@ function startServer(port) {
       ...process.env,
       PORT: String(port),
       CASIN8_DATA_DIR: dataDir,
-      CASIN8_API_TOKENS: JSON.stringify({ [TEST_API_TOKEN]: ['admin', 'poker', 'risk', 'compliance'] }),
+      CASIN8_API_TOKENS: JSON.stringify({
+        [TEST_API_TOKEN]: ['admin', 'poker', 'risk', 'compliance'],
+      }),
     },
     stdio: ['ignore', 'pipe', 'pipe'],
   });
@@ -92,7 +94,9 @@ test('table hints endpoint returns actionable guidance', async (t) => {
   assert.equal(hints.json.ok, true);
   assert.equal(typeof hints.json.hint.potOddsPct, 'number');
   assert.equal(typeof hints.json.hint.requiredEquityThresholdPct, 'number');
-  assert.ok(['fold', 'check', 'call', 'bet', 'raise'].includes(hints.json.hint.recommendedActionBucket));
+  assert.ok(
+    ['fold', 'check', 'call', 'bet', 'raise'].includes(hints.json.hint.recommendedActionBucket)
+  );
   assert.equal(typeof hints.json.hint.raiseSizingBands.minUnits, 'number');
 
   assert.equal(getStderr(), '');

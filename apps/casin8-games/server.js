@@ -1187,6 +1187,7 @@ async function getOrCreateRealtimeBus(tableId) {
   const key = String(tableId || 'lobby-1');
   if (swarmState.realtimeBuses.has(key)) return swarmState.realtimeBuses.get(key);
   const mod = await realtimePromise;
+  if (swarmState.realtimeBuses.has(key)) return swarmState.realtimeBuses.get(key);
   const bus = new mod.RealtimeTableBus({ tableId: key });
   swarmState.realtimeBuses.set(key, bus);
   return bus;
@@ -4959,22 +4960,15 @@ async function handleTableAction(req, res) {
   if (!snapshot) return badRequest(res, 'No table snapshot found. Initialize table first.');
 
   const bus = await getOrCreateRealtimeBus(tableId);
-  const seat = Number(body.seat);
-  if (!Number.isInteger(seat) || seat < 0) {
-    return badRequest(res, 'seat must be a non-negative integer');
-  }
-  if (snapshot.terminal === true || snapshot.settled === true) {
-    return badRequest(res, 'Hand already settled');
-  }
-  if (seat !== Number(snapshot.actingSeat)) {
-    return badRequest(res, 'Not your turn');
-  }
   const actionIn = String(body.action || '')
     .trim()
     .toLowerCase();
   const requestedAction = actionIn;
   const intentType = String(body.type || 'player.action').trim();
   const idempotencyKey = String(body.idempotencyKey || crypto.randomUUID()).trim();
+
+  const seat = Number(body.seat);
+
   if (bus.hasProcessedIdempotencyKey(idempotencyKey)) {
     const duplicateMutation = bus.consumeMutation({
       idempotencyKey,
@@ -5030,8 +5024,19 @@ async function handleTableAction(req, res) {
     return conflict(res, 'STALE_ACTION: seq mismatch');
   }
 
+  if (!Number.isInteger(seat) || seat < 0) {
+    return badRequest(res, 'seat must be a non-negative integer');
+  }
+  if (snapshot.terminal === true || snapshot.settled === true) {
+    return badRequest(res, 'Hand already settled');
+  }
+  if (seat !== Number(snapshot.actingSeat)) {
+    return badRequest(res, 'Not your turn');
+  }
+
   const streetBets =
     snapshot.streetBets && typeof snapshot.streetBets === 'object' ? snapshot.streetBets : {};
+
   const seatStreetBet = Number(streetBets[String(seat)] || 0);
   const currentBet = Number(snapshot.currentBet || 0);
   const rawAmount = Number(body.amount || 0);

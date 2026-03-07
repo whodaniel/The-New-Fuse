@@ -1,11 +1,11 @@
-import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
-import { setTimeout as delay } from 'node:timers/promises';
 import crypto from 'node:crypto';
 import path from 'node:path';
+import test from 'node:test';
+import { setTimeout as delay } from 'node:timers/promises';
 
-const cwd = '/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games';
+const cwd = import.meta.dirname || process.cwd();
 
 async function waitForHealth(baseUrl, timeoutMs = 10000) {
   const start = Date.now();
@@ -116,7 +116,9 @@ test('Swarm G/H/I persistence + provider webhook normalization + sponsorship pro
           data: [
             {
               outcome: { risk_level: 'normal', risk_score: 12 },
-              payment_method_details: { card: { checks: { cvc_check: 'pass', address_postal_code_check: 'pass' } } },
+              payment_method_details: {
+                card: { checks: { cvc_check: 'pass', address_postal_code_check: 'pass' } },
+              },
             },
           ],
         },
@@ -186,7 +188,10 @@ test('Swarm G/H/I persistence + provider webhook normalization + sponsorship pro
   assert.equal(webhookReplay.status, 200);
   assert.equal(replayJson.duplicate, true);
 
-  const orderRead = await api(baseUrl, `/api/payments/order?orderId=${encodeURIComponent(orderId)}`);
+  const orderRead = await api(
+    baseUrl,
+    `/api/payments/order?orderId=${encodeURIComponent(orderId)}`
+  );
   assert.equal(orderRead.res.status, 200);
   assert.equal(orderRead.json.order.status, 'paid');
 
