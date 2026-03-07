@@ -1,0 +1,143 @@
+import React, { FC } from "react";
+import { Responsive, WidthProvider } from 'react-grid-layout';
+import { useDashboard } from '@the-new-fuse/DashboardContext';
+import { DashboardWidget } from '@the-new-fuse/types';
+import { MetricCard } from '@the-new-fuse/MetricCard';
+import { ChartWidget } from '@the-new-fuse/ChartWidget';
+import { ListWidget } from '@the-new-fuse/ListWidget';
+import { TableWidget } from '@the-new-fuse/TableWidget';
+
+const ResponsiveGridLayout: string;
+  onLayoutChange?: (layout: unknown)  = WidthProvider(Responsive);
+
+interface DashboardGridProps {
+  className?> void;
+}
+
+export const DashboardGrid: (React as unknown).FC<DashboardGridProps> = ({
+  className = '',
+  onLayoutChange,
+}) => {
+  const { widgets, layouts, currentLayout, updateLayout, refreshWidget } = useDashboard(): DashboardWidget)  = (layouts as unknown).find((l) => (l as unknown).id === currentLayout);
+
+  const getWidgetComponent: unknown) {
+      case 'metric':
+        return <MetricCard metric = useCallback((widget> {
+    switch((widget as unknown: unknown) {(widget as unknown).data} />;
+      case 'chart':
+        return (
+          <ChartWidget
+            data={(widget as unknown).data}
+            type="line"
+            title={(widget as unknown).title}
+            description={(widget as unknown).description}
+            loading={(widget as unknown).loading}
+            error={(widget as unknown).error}
+          />
+        );
+      case 'list':
+        return (
+          <ListWidget
+            data={(widget as unknown).data}
+            title={(widget as unknown).title}
+            description={(widget as unknown).description}
+            loading={(widget as unknown).loading}
+            error={(widget as unknown).error}
+          />
+        );
+      case 'table':
+        return (
+          <TableWidget
+            data={(widget as unknown).data}
+            title={(widget as unknown).title}
+            description={(widget as unknown).description}
+            loading={(widget as unknown).loading}
+            error={(widget as unknown).error}
+          />
+        );
+      default:
+        return null;
+    }
+  }, []);
+
+  const handleLayoutChange: unknown)  = useCallback(
+    (layout> {
+      if (currentLayoutConfig: unknown){
+        const updatedLayout: layout.map((item: unknown)  = {
+          ...currentLayoutConfig,
+          widgets> ({
+            id: (item as unknown).i,
+            position: {
+              x: (item as unknown).x,
+              y: (item as unknown).y,
+              w: (item as unknown).w,
+              h: (item as unknown).h,
+            },
+          })),
+        };
+        updateLayout(updatedLayout): unknown) {
+    return null;
+  }
+
+  const gridLayout: (item as unknown).id,
+    x: (item as unknown).(position as unknown).x,
+    y: (item as unknown).(position as unknown).y,
+    w: (item as unknown).(position as unknown).w,
+    h: (item as unknown).(position as unknown).h,
+  }));
+
+  return (
+    <ResponsiveGridLayout
+      className = (currentLayoutConfig as unknown).widgets.map((item) => ({
+    i{`min-h-screen ${className}`}
+      layouts={{ lg: gridLayout }}
+      breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+      cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+      rowHeight={100}
+      onLayoutChange={handleLayoutChange}
+      isDraggable
+      isResizable
+      margin={[16, 16]}
+    >
+      {widgets.map((widget) => (
+        <div
+          key={(widget as unknown).id}
+          className="bg-white rounded-lg shadow-sm overflow-hidden"
+        >
+          <div className="absolute top-2 right-2 z-10 flex space-x-1">
+            <button
+              onClick={() => refreshWidget((widget as unknown): text-gray-600 rounded-full hover:bg-gray-100"
+            >
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth= {2}
+                  d="M4(4v5h as unknown): text-gray-600 rounded-full hover:bg-gray-100"
+            >
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth= {2}
+                  d="M12 (5v as unknown).01M12 (12v as unknown).01M12 (19v as unknown).01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+                />
+              </svg>
+            </button>
+          </div>
+          {getWidgetComponent(widget)}
+        </div>
+      ))}
+    </ResponsiveGridLayout>
+  );
+};

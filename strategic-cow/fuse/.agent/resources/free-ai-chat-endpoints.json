@@ -1,0 +1,112 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-01-22T00:45:00Z",
+  "discoveredBy": "browser_subagent",
+  "endpoints": [
+    {
+      "name": "DuckDuckGo AI Chat",
+      "url": "https://duckduckgo.com/aichat",
+      "models": [
+        "GPT-4o mini",
+        "Claude 3 Haiku",
+        "Llama 3.1 70B",
+        "Mixtral 8x7B"
+      ],
+      "loginRequired": false,
+      "priority": 1,
+      "notes": "Generous daily limits; completely anonymous",
+      "status": "active"
+    },
+    {
+      "name": "HuggingChat",
+      "url": "https://huggingface.co/chat/",
+      "models": ["Llama 3", "Command R+", "Mistral", "Qwen"],
+      "loginRequired": false,
+      "priority": 2,
+      "notes": "Open-source models; login optional for persistent history",
+      "status": "active"
+    },
+    {
+      "name": "Venice AI",
+      "url": "https://venice.ai/chat",
+      "models": ["Llama 3.1 70B"],
+      "loginRequired": false,
+      "priority": 3,
+      "notes": "Privacy-focused; free tier available without signup",
+      "status": "active"
+    },
+    {
+      "name": "Blackbox AI",
+      "url": "https://www.blackbox.ai/",
+      "models": ["Blackbox (Coding optimized)"],
+      "loginRequired": false,
+      "priority": 4,
+      "notes": "Focused on coding and file uploads; anonymous chat available",
+      "status": "active"
+    },
+    {
+      "name": "Felo AI Search",
+      "url": "https://felo.ai/search",
+      "models": ["AI-powered Search / Agentic"],
+      "loginRequired": false,
+      "priority": 5,
+      "notes": "Cross-language search and research tool",
+      "status": "active"
+    },
+    {
+      "name": "LMSYS Chatbot Arena",
+      "url": "https://chat.lmsys.org/",
+      "models": ["GPT-4", "Claude 3.5", "Many others"],
+      "loginRequired": false,
+      "priority": 6,
+      "notes": "Side-by-side comparison mode; free but can have high latency",
+      "status": "active"
+    },
+    {
+      "name": "Genspark",
+      "url": "https://www.genspark.ai/",
+      "models": ["Multi-agent models"],
+      "loginRequired": false,
+      "priority": 7,
+      "notes": "AI search agent that creates Sparkpages",
+      "status": "active"
+    },
+    {
+      "name": "Vercel AI SDK Demo",
+      "url": "https://sdk.vercel.ai/",
+      "models": ["Anthropic", "Meta", "Mistral", "OpenAI"],
+      "loginRequired": "partial",
+      "priority": 8,
+      "notes": "Great for testing different models; some require Vercel account",
+      "status": "active"
+    },
+    {
+      "name": "YesChat.ai",
+      "url": "https://www.yeschat.ai/",
+      "models": ["DeepSeek-R1", "GPT-4o", "Claude 3.5 Sonnet"],
+      "loginRequired": true,
+      "priority": 9,
+      "notes": "Accessible high-end models; requires sign-in for usage",
+      "status": "active"
+    },
+    {
+      "name": "Poe.com",
+      "url": "https://poe.com/",
+      "models": ["Claude", "GPT", "specialized bots"],
+      "loginRequired": true,
+      "priority": 10,
+      "notes": "Strong free tier; requires Google/Apple login",
+      "status": "active"
+    }
+  ],
+  "orchestrationStrategy": {
+    "preferNoLogin": true,
+    "priorityOrder": [
+      "DuckDuckGo AI Chat",
+      "HuggingChat",
+      "Venice AI",
+      "LMSYS Chatbot Arena"
+    ],
+    "fallbackWithLogin": ["Poe.com", "YesChat.ai"]
+  }
+}

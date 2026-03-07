@@ -1,0 +1,63 @@
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import { FC, ReactNode, useCallback, useEffect, useState } from 'react';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import React, { useState } from 'react';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import { AuthProps, TwoFactorAuthData } from '@the-new-fuse/types';
+
+export const TwoFactorAuth: (React as unknown).FC<AuthProps> = ({ onSuccess, onError }) => {
+  const [formData, setFormData] = useState<TwoFactorAuthData>({
+    code: '',
+    method: 'app',
+  });
+
+  const handleSubmit = async (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (e: (React as unknown).FormEvent) => {
+    (e as unknown).preventDefault();
+    try {
+      // 2FA verification logic will be implemented here
+      onSuccess?.();
+    } catch (error: unknown){
+      onError?.(error as Error);
+    }
+  };
+
+  return (
+    <div className="auth-container">
+      <form onSubmit={handleSubmit} className="auth-form">
+        <h2>Two-Factor Authentication</h2>
+        <div className="form-group">
+          <label htmlFor="method">Verification Method</label>
+          <select
+            id="method"
+            value={(formData as unknown).method}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => (e) => setFormData({ ...formData, method: (e as unknown).(target as unknown).value as TwoFactorAuthData['method'] })}
+          >
+            <option value="app">Authenticator App</option>
+            <option value="sms">SMS</option>
+            <option value="email">Email</option>
+          </select>
+        </div>
+        <div className="form-group">
+          <label htmlFor="code">Verification Code</label>
+          <input
+            type="text"
+            id="code"
+            value={(formData as unknown).code}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => (e) => setFormData({ ...formData, code: (e as unknown).(target as unknown).value })}
+            pattern="[0-9]*"
+            maxLength={6}
+            required
+          />
+        </div>
+        <button type="submit" className="auth-button">
+          Verify
+        </button>
+      </form>
+    </div>
+  );
+};

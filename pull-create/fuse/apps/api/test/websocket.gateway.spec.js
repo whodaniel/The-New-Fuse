@@ -1,0 +1,77 @@
+import { Test } from '@nestjs/testing';
+import { WebsocketGateway } from '../src/websocket/websocket.gateway';
+import { CacheService } from '../src/cache/cache.service';
+import { UnifiedMonitoringService } from '@the-new-fuse/core';
+describe('WebsocketGateway', () => {
+    let gateway;
+    let cacheService;
+    const mockSocket = {
+        id: 'test-socket-id',
+        handshake: {
+            auth: {
+                token: 'test-user-id'
+            }
+        },
+        disconnect: jest.fn(),
+        emit: jest.fn(),
+    };
+    const mockServer = {
+        emit: jest.fn(),
+        to: jest.fn().mockReturnThis(),
+    };
+    beforeEach(async () => {
+        const module = await Test.createTestingModule({
+            providers: [
+                WebsocketGateway,
+                {
+                    provide: CacheService,
+                    useValue: {
+                        set: jest.fn(),
+                        get: jest.fn(),
+                        sadd: jest.fn(),
+                        srem: jest.fn(),
+                        scard: jest.fn(),
+                        del: jest.fn(),
+                    },
+                },
+                {
+                    provide: UnifiedMonitoringService,
+                    useValue: {
+                        recordMetric: jest.fn(),
+                        captureError: jest.fn(),
+                    },
+                },
+            ],
+        }).compile();
+        gateway = module.get(WebsocketGateway);
+        gateway.server = mockServer;
+        cacheService = module.get(CacheService);
+    });
+    describe('handleConnection', () => {
+        it('should handle new connection successfully', async () => {
+            await gateway.handleConnection(mockSocket);
+            expect(cacheService.set).toHaveBeenCalledWith('socket:test-socket-id', 'test-user-id');
+            expect(cacheService.sadd).toHaveBeenCalledWith('online_users', 'test-user-id');
+            expect(mockServer.emit).toHaveBeenCalled();
+        });
+        it('should disconnect client on error', async () => {
+            jest.spyOn(cacheService, 'set').mockRejectedValue(new Error());
+            await gateway.handleConnection(mockSocket);
+            expect(mockSocket.disconnect).toHaveBeenCalled();
+        });
+    });
+    describe('handleMessage', () => {
+        it('should broadcast message to room', async () => {
+            const payload = {
+                roomId: 'test-room',
+                agentId: 'test-agent',
+                content: 'test message'
+            };
+            jest.spyOn(cacheService, 'get').mockResolvedValue('test-user-id');
+            await gateway.handleMessage(mockSocket, payload);
+            expect(mockServer.to).toHaveBeenCalledWith('test-room');
+            expect(mockServer.emit).toHaveBeenCalled();
+        });
+    });
+});
+//# sourceMappingURL=websocket.gateway.spec.js.map

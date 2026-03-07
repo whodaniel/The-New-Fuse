@@ -1,0 +1,59 @@
+{
+  "project": "The New Fuse (TNF) Platform Audit",
+  "version": "1.0.0",
+  "audit_summary": "The platform is currently a functional skeleton. The UI/UX layout is high-quality, but backend connectivity is missing across 80% of the site, and critical responsive bugs prevent basic navigation at default zoom levels.",
+  "priority_1_critical_fixes": [
+    {
+      "component": "Responsive Layout",
+      "issue": "Sidebar hidden at 100% zoom.",
+      "fix": "Update CSS media queries for viewport stability."
+    },
+    {
+      "component": "Navigation",
+      "issue": "Hamburger menu is unresponsive; 404s on /tnf-hub and /audit-logs.",
+      "fix": "Wire onClick handlers and register missing routes."
+    },
+    {
+      "component": "Core Logic",
+      "issue": "Command+C hijacked; Agent Fleet /agents route crashes the app.",
+      "fix": "Restore native clipboard events and debug route initialization."
+    }
+  ],
+  "structural_pivots": {
+    "command_center": "Remove current Iframe-based architecture. Replace with native React 'Agent Card' components.",
+    "documentation": "Documentation routes (/docs/*) currently do not load content. Routing logic needs to be connected to a CMS or local markdown files."
+  },
+  "full_audit_inventory": {
+    "grid_cluster": {
+      "dashboard": "Skeleton shell; needs connection to event ledger.",
+      "timeline": "Functional UI; needs data hookup to /ledger API.",
+      "analytics": "Placeholder shell; no live metrics.",
+      "tasks": "Wired form at /tasks/new; requires 'Create' logic verification."
+    },
+    "forge_cluster": {
+      "ai_portal": "Route works; 'Deploy' buttons are mock-state only.",
+      "workflows": "Builder UI is present; needs JSON schema persistence and Save API.",
+      "agent_fleet": "CRITICAL: Page crashes on load."
+    },
+    "nexus_cluster": {
+      "knowledge_hub": "Visualizer is a 'Coming Soon' placeholder.",
+      "mcp_hub": "Server inventory endpoint is currently unavailable (0 stats).",
+      "platform": "Sidebar link is dead."
+    },
+    "apex_cluster": {
+      "observatory": "Connection timed out (ERR_CONNECTION_TIMED_OUT).",
+      "admin": "Dashboard values remain at 0; telemetry not connected.",
+      "debug": "Internal dev tool; should be restricted/removed from production."
+    },
+    "user_interface": {
+      "user_menu": "Dropdown functional but lacks Billing, Team Management, and Seats.",
+      "appearance": "Theme and Font scaling inputs are disconnected from CSS variables.",
+      "toasts": "Global feedback system (Success/Error notifications) is missing."
+    }
+  },
+  "strategic_roadmap": [
+    "Implement WebSockets for real-time status pills (Mesh/Agent status).",
+    "Switch to a centralized state manager (Redux/Context) for global appearance settings.",
+    "Replace 'Marketplace' with 'Capabilities Map' to align with current content."
+  ]
+}

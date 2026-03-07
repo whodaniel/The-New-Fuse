@@ -1,0 +1,16 @@
+{
+  "name": "the-new-fuse-relay-server",
+  "version": "1.0.0",
+  "description": "Relay server for The New Fuse VSCode extension",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2",
+    "redis": "^4.6.7",
+    "cors": "^2.8.5"
+  }
+}

@@ -1,0 +1,116 @@
+#!/bin/bash
+# Final Automated Railway Deployment
+# Run this AFTER creating services in Railway dashboard
+
+set -e
+
+PROJECT_ID="041cee9d-8648-4074-b5a6-0eae436de1d1"
+ENV_ID="f706eaae-de9e-4a9b-a970-944dd4a6be41"
+JWT_SECRET="s5vELO0OEO1486BH7clWx5e00U77F7aoGlwalH9lSIA="
+
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m'
+
+echo "========================================="
+echo "The New Fuse - Final Deployment"
+echo "========================================="
+echo ""
+
+cd .
+
+# Deploy API
+echo -e "${YELLOW}[1/4] Deploying API service...${NC}"
+cd apps/api
+export RAILWAY_PROJECT_ID=$PROJECT_ID
+export RAILWAY_ENVIRONMENT_ID=$ENV_ID
+railway up --service api --detach && echo -e "${GREEN}✅ API deployment started${NC}" || echo -e "${RED}❌ API deployment failed - did you create the service?${NC}"
+cd ../..
+sleep 2
+
+# Deploy Backend
+echo ""
+echo -e "${YELLOW}[2/4] Deploying Backend service...${NC}"
+cd apps/backend
+railway up --service backend --detach && echo -e "${GREEN}✅ Backend deployment started${NC}" || echo -e "${RED}❌ Backend deployment failed - did you create the service?${NC}"
+cd ../..
+sleep 2
+
+# Deploy API Gateway
+echo ""
+echo -e "${YELLOW}[3/4] Deploying API Gateway...${NC}"
+cd apps/api-gateway
+railway up --service api-gateway --detach && echo -e "${GREEN}✅ API Gateway deployment started${NC}" || echo -e "${RED}❌ API Gateway deployment failed - did you create the service?${NC}"
+cd ../..
+sleep 2
+
+# Redeploy Frontend
+echo ""
+echo -e "${YELLOW}[4/4] Redeploying Frontend...${NC}"
+cd apps/frontend
+railway up --service "Frontend Application" --detach && echo -e "${GREEN}✅ Frontend deployment started${NC}" || railway up --service frontend --detach && echo -e "${GREEN}✅ Frontend deployment started${NC}" || echo -e "${RED}❌ Frontend deployment failed${NC}"
+cd ../..
+
+echo ""
+echo "========================================="
+echo "Deployments Initiated!"
+echo "========================================="
+echo ""
+echo "⏳ Builds will take 40-60 minutes"
+echo ""
+echo "Monitor progress:"
+echo "  railway logs --service api"
+echo "  railway logs --service backend"
+echo "  railway logs --service api-gateway"
+echo "  railway logs --service frontend"
+echo ""
+echo "Dashboard:"
+echo "  https://railway.com/project/$PROJECT_ID"
+echo ""
+
+# Now configure environment variables
+echo "========================================="
+echo "Configuring Environment Variables"
+echo "========================================="
+echo ""
+
+echo "Setting API variables..."
+railway variables --service api set NODE_ENV=production 2>/dev/null || true
+railway variables --service api set PORT=3001 2>/dev/null || true
+railway variables --service api set DATABASE_URL='${{Postgres.DATABASE_URL}}' 2>/dev/null || true
+railway variables --service api set REDIS_URL='${{Redis.REDIS_URL}}' 2>/dev/null || true
+railway variables --service api set JWT_SECRET="$JWT_SECRET" 2>/dev/null || true
+
+echo "Setting Backend variables..."
+railway variables --service backend set NODE_ENV=production 2>/dev/null || true
+railway variables --service backend set PORT=3004 2>/dev/null || true
+railway variables --service backend set DATABASE_URL='${{Postgres.DATABASE_URL}}' 2>/dev/null || true
+railway variables --service backend set REDIS_URL='${{Redis.REDIS_URL}}' 2>/dev/null || true
+
+echo "Setting API Gateway variables..."
+railway variables --service api-gateway set NODE_ENV=production 2>/dev/null || true
+railway variables --service api-gateway set PORT=3002 2>/dev/null || true
+railway variables --service api-gateway set API_URL='${{api.RAILWAY_PRIVATE_DOMAIN}}' 2>/dev/null || true
+railway variables --service api-gateway set BACKEND_URL='${{backend.RAILWAY_PRIVATE_DOMAIN}}' 2>/dev/null || true
+
+echo "Setting Frontend variables..."
+railway variables --service "Frontend Application" set NODE_ENV=production 2>/dev/null || railway variables --service frontend set NODE_ENV=production 2>/dev/null || true
+railway variables --service "Frontend Application" set PORT=3000 2>/dev/null || railway variables --service frontend set PORT=3000 2>/dev/null || true
+railway variables --service "Frontend Application" set VITE_API_URL='https://${{api-gateway.RAILWAY_PUBLIC_DOMAIN}}' 2>/dev/null || railway variables --service frontend set VITE_API_URL='https://${{api-gateway.RAILWAY_PUBLIC_DOMAIN}}' 2>/dev/null || true
+
+echo ""
+echo -e "${GREEN}✅ Environment variables configured!${NC}"
+echo ""
+echo "========================================="
+echo "Deployment Complete!"
+echo "========================================="
+echo ""
+echo "Next steps:"
+echo "1. Wait for builds to complete (40-60 min)"
+echo "2. Check deployment status: railway status"
+echo "3. View logs: railway logs --service <name>"
+echo "4. Open dashboard: https://railway.com/project/$PROJECT_ID"
+echo ""
+echo -e "${GREEN}All done! Your services are deploying.${NC}"
+echo ""

@@ -1,0 +1,37 @@
+gdesigner:
+  adapter:
+    poolSize: 8
+    cacheTimeout: 300
+    maxConcurrent: 1000
+    backpressure:
+      maxQueueSize: 1000
+      strategy: "windowed_drop"
+      windowSize: 100
+    monitoring:
+      metrics:
+        enabled: true
+        interval: 60
+      alerting:
+        enabled: true
+        threshold:
+          memory: "500MB"
+          latency: "150ms"
+          errorRate: "0.1%"
+
+database:
+  pooling:
+    min: 5
+    max: 20
+    idleTimeout: 60000
+
+cache:
+  redis:
+    host: "redis-primary"
+    port: 6379
+    maxMemory: "2gb"
+    evictionPolicy: "volatile-lru"
+
+logging:
+  level: "info"
+  format: "json"
+  outputs: ["file", "stdout"]

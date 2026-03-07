@@ -1,0 +1,101 @@
+import React, { useEffect, useCallback } from 'react';
+import {
+  ReactFlow,
+  Controls,
+  Background,
+  useNodesState,
+  useEdgesState,
+  Connection,
+  addEdge,
+  MarkerType,
+  NodeTypes,
+} from 'reactflow';
+import { Injectable } from '@nestjs/common';
+import 'reactflow/dist/style.css';
+
+import { Tool } from '@the-new-fuse/tools/base';
+import { CustomNode } from '@the-new-fuse/components/CustomNode';
+import { WorkflowData, FlowNode, FlowEdge } from '@the-new-fuse/types/flow';
+
+const nodeTypes: NodeTypes = {
+  custom: CustomNode,
+};
+
+@Injectable()
+export class ProjectVisualizer extends Tool {
+  private readonly defaultStyles = {
+    edge: {
+      stroke: '#888',
+      strokeWidth: 2,
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+      },
+    },
+  };
+
+  constructor() {
+    super('Flow Visualizer', 'Visualizes workflow using React Flow');
+  }
+
+  calculateNodePosition(id: string): { x: number; y: number } {
+    const index = parseInt(id, 10) || 0;
+    return {
+      x: (index % 3) * 250 + 50,
+      y: Math.floor(index / 3) * 250 + 50,
+    };
+  }
+
+  visualize(workflowData: WorkflowData): JSX.Element {
+    const [nodes, setNodes, onNodesChange] = useNodesState([]);
+    const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
+    useEffect(() => {
+      const formattedNodes: FlowNode[] = workflowData.nodes.map((node) => ({
+        id: node.id,
+        type: 'custom',
+        position: node.position || this.calculateNodePosition(node.id),
+        data: {
+          label: node.label,
+          type: node.type,
+          parameters: node.parameters,
+        },
+      }));
+
+      const formattedEdges: FlowEdge[] = workflowData.edges.map((edge) => ({
+        id: `${edge.source}-${edge.target}`,
+        source: edge.source,
+        target: edge.target,
+        label: edge.label,
+        style: this.defaultStyles.edge,
+        markerEnd: this.defaultStyles.edge.markerEnd,
+      }));
+
+      setNodes(formattedNodes);
+      setEdges(formattedEdges);
+    }, [workflowData]);
+
+    const onConnect = useCallback(
+      (connection: Connection) => {
+        setEdges((eds) => addEdge({ ...connection, ...this.defaultStyles.edge }, eds));
+      },
+      [setEdges]
+    );
+
+    return (
+      <div style={{ width: '100%', height: '100vh' }}>
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          nodeTypes={nodeTypes}
+          fitView
+        >
+          <Background />
+          <Controls />
+        </ReactFlow>
+      </div>
+    );
+  }
+}

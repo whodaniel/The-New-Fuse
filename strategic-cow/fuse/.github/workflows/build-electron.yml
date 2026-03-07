@@ -1,0 +1,48 @@
+name: Build Electron Desktop
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "apps/electron-desktop/**"
+      - "apps/browser-hub/**"
+      - "packages/**"
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build & Package DMG
+    # runs-on: self-hosted uses the local machine runner
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify Node and PNPM
+        run: |
+          # Use system-installed node and pnpm (already on self-hosted runner)
+          export PATH="$HOME/Library/pnpm:$PATH"
+          node --version
+          pnpm --version
+
+      - name: Install Dependencies
+        run: |
+          export PATH="$HOME/Library/pnpm:$PATH"
+          pnpm install --no-frozen-lockfile
+
+      - name: Build and Package
+        working-directory: apps/electron-desktop
+        env:
+          # Use the GITHUB_TOKEN for releasing/publishing integration if needed later
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          export PATH="$HOME/Library/pnpm:$PATH"
+          pnpm run dist
+
+      - name: Upload DMG Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: The-New-Fuse-Installer
+          path: apps/electron-desktop/release/*.dmg
+          retention-days: 7

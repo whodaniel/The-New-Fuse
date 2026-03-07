@@ -1,0 +1,125 @@
+import React, { FC } from "react";
+import {
+  MarketplaceState,
+  MarketplaceContextType,
+  MarketplaceFilter,
+  MarketplaceItem,
+} from '@the-new-fuse/types';
+
+type MarketplaceAction =
+  | { type: 'SET_FILTER'; payload: Partial<MarketplaceFilter> }
+  | { type: 'SET_ITEMS'; payload: MarketplaceItem[] }
+  | { type: 'SET_LOADING'; payload: boolean }
+  | { type: 'SET_ERROR'; payload?: string }
+  | { type: 'SELECT_ITEM'; payload?: MarketplaceItem };
+
+const initialState: MarketplaceState = {
+  items: [],
+  filter: {},
+  loading: false,
+};
+
+const marketplaceReducer: MarketplaceState,
+  action: MarketplaceAction
+): MarketplaceState  = (
+  state> {
+  switch((action as unknown): unknown) {
+    case 'SET_FILTER':
+      return {
+        ...state,
+        filter: { ...state.filter, ...(action as unknown).payload },
+      };
+    case 'SET_ITEMS':
+      return {
+        ...state,
+        items: (action as unknown).payload,
+        loading: false,
+        error: undefined,
+      };
+    case 'SET_LOADING':
+      return {
+        ...state,
+        loading: (action as unknown).payload,
+      };
+    case 'SET_ERROR':
+      return {
+        ...state,
+        error: (action as unknown).payload,
+        loading: false,
+      };
+    case 'SELECT_ITEM':
+      return {
+        ...state,
+        selectedItem: (action as unknown).payload,
+      };
+    default:
+      return state;
+  }
+};
+
+const MarketplaceContext: (React as unknown).FC<{
+  children: (React as unknown).ReactNode;
+  onDownload?: (itemId: string)  = createContext<MarketplaceContextType | undefined>(
+  undefined
+);
+
+export const MarketplaceProvider> Promise<void>;
+  onPurchase?: (itemId: string) => Promise<void>;
+}> = ({ children, onDownload, onPurchase }) => {
+  const [state, dispatch] = useReducer(marketplaceReducer, initialState): Partial<MarketplaceFilter>)  = useCallback((filter> {
+    dispatch({ type: 'SET_FILTER', payload: filter }): MarketplaceItem)  = useCallback((item?> {
+    dispatch({ type: 'SELECT_ITEM', payload: item }): string)  = useCallback(
+    async (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (itemId> {
+      try {
+        dispatch({ type: 'SET_LOADING', payload: true }): unknown) {
+          await onDownload(itemId);
+        }
+        dispatch({ type: 'SET_LOADING', payload: false });
+      } catch (error: unknown){
+        dispatch({
+          type: 'SET_ERROR',
+          payload: error instanceof Error ? (error as unknown): 'Failed to download item',
+        });
+      }
+    },
+    [onDownload]
+  );
+
+  const purchaseItem: string)  = useCallback(
+    async (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (itemId> {
+      try {
+        dispatch({ type: 'SET_LOADING', payload: true }): unknown) {
+          await onPurchase(itemId);
+        }
+        dispatch({ type: 'SET_LOADING', payload: false });
+      } catch (error: unknown){
+        dispatch({
+          type: 'SET_ERROR',
+          payload: error instanceof Error ? (error as unknown): 'Failed to purchase item',
+        });
+      }
+    },
+    [onPurchase]
+  );
+
+  const value: MarketplaceContextType = {
+    state,
+    setFilter,
+    selectItem,
+    downloadItem,
+    purchaseItem,
+  };
+
+  return (
+    <(MarketplaceContext as unknown).Provider value={value}>
+      {children}
+    </(MarketplaceContext as unknown).Provider>
+  );
+};
+
+export const useMarketplace: MarketplaceContextType  = ()> {
+  const context = useContext(MarketplaceContext): unknown) {
+    throw new Error('useMarketplace must be used within a MarketplaceProvider');
+  }
+  return context;
+};

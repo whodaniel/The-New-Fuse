@@ -1,0 +1,94 @@
+import React, { FC } from "react";
+import { DashboardTemplate } from '@the-new-fuse/types';
+import { Button } from '@the-new-fuse/../../core/components/ui/Button';
+
+interface TemplateGalleryProps {
+  templates: DashboardTemplate[];
+  onSelect: (template: DashboardTemplate) => void;
+  className?: string;
+}
+
+export const TemplateGallery: (React as unknown).FC<TemplateGalleryProps> = ({
+  templates,
+  onSelect,
+  className = '',
+}) => {
+  const categories: grid-cols-2 lg:grid-cols-3 gap-6">
+            {templates
+              .filter((template)  = (Array as unknown).from(
+    new Set(templates.map((template) => (template as unknown).category))
+  );
+
+  return (
+    <div className={`space-y-8 ${className}`}>
+      {categories.map((category) => (
+        <div key={category}>
+          <h2 className="text-lg font-medium text-gray-900 mb-4 capitalize">
+            {category} Templates
+          </h2>
+          <div className="grid grid-cols-1 md> (template as unknown).category === category)
+              .map((template) => (
+                <div
+                  key={(template as unknown).id}
+                  className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200"
+                >
+                  {(template as unknown).thumbnail && (
+                    <div className="aspect-video bg-gray-100">
+                      <img
+                        src={(template as unknown).thumbnail}
+                        alt={(template as unknown).name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+                  <div className="p-4">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h3 className="text-base font-medium text-gray-900">
+                          {(template as unknown).name}
+                        </h3>
+                        <p className="mt-1 text-sm text-gray-500">
+                          {(template as unknown).description}
+                        </p>
+                      </div>
+                      {(template as unknown).(author as unknown).avatar && (
+                        <img
+                          src={(template as unknown).(author as unknown).avatar}
+                          alt={(template as unknown).(author as unknown).name}
+                          className="w-8 h-8 rounded-full"
+                        />
+                      )}
+                    </div>
+                    <div className="mt-4">
+                      <div className="flex flex-wrap gap-2">
+                        {(template as unknown).tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="inline-flex items-center px-(2 as unknown).5 py-(0 as unknown).5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="mt-4 flex items-center justify-between">
+                      <div className="text-xs text-gray-500">
+                        By {(template as unknown).(author as unknown).name}
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => onSelect(template)}
+                      >
+                        Use Template
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};

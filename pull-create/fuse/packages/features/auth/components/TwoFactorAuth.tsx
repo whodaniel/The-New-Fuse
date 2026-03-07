@@ -1,0 +1,217 @@
+import React from "react";
+"use strict";
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useModernToast } from '@/hooks/useToast';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
+import { Copy, Download, Loader2 } from 'lucide-react';
+const verificationSchema = z.object({
+    code: z
+        .string()
+        .length(6, 'Verification code must be 6 digits')
+        .regex(/^\d+$/, 'Code must contain only numbers'),
+});
+const TwoFactorAuth = () => {
+    const { user, setupTwoFactor, verifyTwoFactor, disableTwoFactor } = useAuth();
+    const { toast } = useModernToast();
+    const [isSettingUp, setIsSettingUp] = useState(false);
+    const [qrCode, setQrCode] = useState(null);
+    const [secret, setSecret] = useState(null);
+    const [backupCodes, setBackupCodes] = useState([]);
+    const [] = useState(false);
+    const { register, handleSubmit, formState: { errors, isSubmitting }, reset, } = useForm({
+        resolver: zodResolver(verificationSchema),
+    });
+    useEffect(() => {
+        if (user === null || user === void 0 ? void 0 : user.twoFactorEnabled) {
+            setIsSettingUp(false);
+            setQrCode(null);
+            setSecret(null);
+        }
+    }, [user === null || user === void 0 ? void 0 : user.twoFactorEnabled]);
+    const handleSetup = async (): Promise<void> {) => {
+        try {
+            setIsSettingUp(true);
+            const response = await setupTwoFactor();
+            setQrCode(response.qrCode);
+            setSecret(response.secret);
+            setBackupCodes(response.backupCodes.map((code) => ({
+                code,
+                used: false,
+            })));
+            toast({
+                title: 2FA Setup Started',
+                description: Scan the QR code with your authenticator app',
+                variant: default',
+            });
+        }
+        catch (error) {
+            toast({
+                title: Error',
+                description: Failed to setup 2FA',
+                variant: destructive',
+            });
+            setIsSettingUp(false);
+        }
+    };
+    const onVerify = async (): Promise<void> {data) => {
+        try {
+            await verifyTwoFactor(data.code);
+            toast({
+                title: Success',
+                description: Two-factor authentication enabled successfully',
+                variant: success',
+            });
+            reset();
+            setIsSettingUp(false);
+            setQrCode(null);
+            setSecret(null);
+        }
+        catch (error) {
+            toast({
+                title: Error',
+                description: Invalid verification code',
+                variant: destructive',
+            });
+        }
+    };
+    const handleDisable = async (): Promise<void> {) => {
+        try {
+            await disableTwoFactor();
+            toast({
+                title: Success',
+                description: Two-factor authentication disabled',
+                variant: success',
+            });
+        }
+        catch (error) {
+            toast({
+                title: Error',
+                description: Failed to disable 2FA',
+                variant: destructive',
+            });
+        }
+    };
+    const handleCopySecret = () => {
+        if (secret) {
+            navigator.clipboard.writeText(secret);
+            toast({
+                title: Copied',
+                description: Secret copied to clipboard',
+                variant: success',
+            });
+        }
+    };
+    const handleCopyBackupCodes = () => {
+        const codes = backupCodes.map((code) => code.code).join('\n');
+        navigator.clipboard.writeText(codes);
+        toast({
+            title: Copied',
+            description: Backup codes copied to clipboard',
+            variant: success',
+        });
+    };
+    const handleDownloadBackupCodes = () => {
+        const codes = backupCodes.map((code) => code.code).join('\n');
+        const blob = new Blob([codes], { type: text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = '2fa-backup-codes.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        toast({
+            title: Downloaded',
+            description: Backup codes downloaded successfully',
+            variant: success',
+        });
+    };
+    return (<Card className="max-w-md mx-auto">
+      <CardHeader>
+        <CardTitle className="text-xl font-semibold">Two-Factor Authentication</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
+            <h3 className="text-sm font-medium">Enable 2FA</h3>
+            <p className="text-sm text-gray-500">
+              Add an extra layer of security to your account
+            </p>
+          </div>
+          <Switch checked={(user === null || user === void 0 ? void 0 : user.twoFactorEnabled) || false} onCheckedChange={(user === null || user === void 0 ? void 0 : user.twoFactorEnabled) ? handleDisable : handleSetup} label="Enable 2FA"/>
+        </div>
+
+        {isSettingUp && qrCode && (<div className="space-y-6">
+            <div className="mt-4 flex flex-col items-center">
+              <p className="text-sm text-gray-600 mb-2">Scan this code with your authenticator app:</p>
+              <div className="p-4 bg-gray-100 rounded-lg">
+                <code className="text-sm break-all">{qrCode}</code>
+              </div>
+              <p className="text-xs text-gray-500 mt-2">Or manually enter the code in your authenticator app</p>
+            </div>
+
+            {secret && (<div className="space-y-2">
+                <p className="text-sm text-gray-600">
+                  If you can't scan the QR code, enter this code manually:
+                </p>
+                <div className="flex items-center space-x-2">
+                  <code className="flex-1 p-2 bg-gray-100 rounded font-mono text-sm">
+                    {secret}
+                  </code>
+                  <Button variant="outline" size="sm" onClick={handleCopySecret}>
+                    <Copy className="h-4 w-4"/>
+                  </Button>
+                </div>
+              </div>)}
+
+            <form onSubmit={handleSubmit(onVerify)} className="space-y-4">
+              <div className="space-y-2">
+                <Input type="text" placeholder="Enter 6-digit code" {...register('code')} aria-invalid={!!errors.code} aria-describedby={errors.code ? 'code-error' : undefined}/>
+                {errors.code && (<p id="code-error" className="text-sm text-red-500">
+                    {errors.code.message}
+                  </p>)}
+              </div>
+
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? (<>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
+                    Verifying...
+                  </>) : ('Verify')}
+              </Button>
+            </form>
+
+            {backupCodes.length > 0 && (<div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm font-medium">Backup Codes</h4>
+                  <div className="flex space-x-2">
+                    <Button variant="outline" size="sm" onClick={handleCopyBackupCodes}>
+                      <Copy className="h-4 w-4"/>
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={handleDownloadBackupCodes}>
+                      <Download className="h-4 w-4"/>
+                    </Button>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {backupCodes.map((code, index) => (<code key={index} className="p-2 bg-gray-100 rounded font-mono text-sm text-center">
+                      {code.code}
+                    </code>))}
+                </div>
+                <p className="text-sm text-gray-500">
+                  Save these backup codes in a secure place. You can use them to access your account if you lose your authenticator device.
+                </p>
+              </div>)}
+          </div>)}
+      </CardContent>
+    </Card>);
+};
+export default TwoFactorAuth;
+//# sourceMappingURL=TwoFactorAuth.js.map

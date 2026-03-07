@@ -1,0 +1,7 @@
+{
+  "name": "com.your_company.thenewfuse",
+  "description": "The New Fuse Native Messaging Host",
+  "path": "/absolute/path/to/host.py",
+  "type": "stdio",
+  "allowed_origins": ["chrome-extension://__EXTENSION_ID__/"]
+}

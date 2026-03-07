@@ -1,0 +1,211 @@
+.workflow-editor-container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 300px;
+  background-color: #f5f5f5;
+  border-right: 1px solid #ddd;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.sidebar h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.node-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.category-section {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 15px;
+}
+
+.category-section h3 {
+  color: #666;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.node-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.node-button {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 13px;
+}
+
+.node-button:hover {
+  background-color: #f0f0f0;
+  border-color: #999;
+}
+
+.react-flow-wrapper {
+  flex: 1;
+  position: relative;
+  background-color: #fff;
+}
+
+.workflow-name-input {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 5;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 250px;
+}
+
+.validation-errors {
+  position: absolute;
+  bottom: 80px;
+  left: 20px;
+  right: 20px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.error-message {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  border: 1px solid #ef9a9a;
+}
+
+.save-button {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  z-index: 5;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.save-button:hover {
+  background-color: #43A047;
+}
+
+.save-button:disabled {
+  background-color: #9E9E9E;
+  cursor: not-allowed;
+}
+
+/* Node Styles */
+.dynamic-node {
+  padding: 15px;
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-width: 200px;
+}
+
+.node-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.node-header h4 {
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.node-type-tag {
+  font-size: 12px;
+  color: #666;
+  background-color: #f0f0f0;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.node-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.parameter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.parameter-group label {
+  font-size: 12px;
+  color: #666;
+}
+
+.parameter-input {
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.credential-group {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+/* Node Category Colors */
+.trigger-node { border-left: 4px solid #FF9800; }
+.input-node { border-left: 4px solid #2196F3; }
+.output-node { border-left: 4px solid #4CAF50; }
+.action-node { border-left: 4px solid #9C27B0; }
+.utility-node { border-left: 4px solid #607D8B; }
+.advanced-node { border-left: 4px solid #795548; }
+.transform-node { border-left: 4px solid #00BCD4; }
+.integration-node { border-left: 4px solid #3F51B5; }
+.flow-node { border-left: 4px solid #FF5722; }
+
+/* Handle Styles */
+.react-flow__handle {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #555;
+}
+
+.react-flow__handle-top {
+  top: -4px;
+}
+
+.react-flow__handle-bottom {
+  bottom: -4px;
+}
+
+.react-flow__handle:hover {
+  background-color: #000;
+}

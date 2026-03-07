@@ -1,0 +1,7 @@
+{
+  "personalDataDir": "./data",
+  "reportsDir": "./data/video-reports",
+  "transcriptsDir": "./data/transcripts",
+  "libraryFile": "./data/video-library/ai_video_library.html",
+  "consolidatedKB": "./data/consolidated_ai_knowledge.md"
+}

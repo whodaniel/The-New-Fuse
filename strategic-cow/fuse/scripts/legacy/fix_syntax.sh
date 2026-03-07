@@ -1,0 +1,104 @@
+#!/bin/bash
+
+# TypeScript Syntax Fix Script for The New Fuse Project
+# This script fixes common TypeScript syntax issues found in the build errors
+
+PROJECT_PATH="."
+cd "$PROJECT_PATH"
+
+echo "🔧 TypeScript Syntax Fix Script"
+echo "================================"
+echo ""
+
+# Function to backup a file before modifying
+backup_file() {
+    local file="$1"
+    if [ -f "$file" ]; then
+        cp "$file" "$file.backup.$(date +%s)"
+        echo "✅ Backed up: $file"
+    fi
+}
+
+# Function to fix malformed function signatures
+fix_function_signatures() {
+    echo "🔍 Fixing malformed function signatures..."
+    
+    # Find files with malformed function signatures
+    find packages/core/src -name "*.tsx" -o -name "*.ts" | while read -r file; do
+        if grep -q "): Promise<.*>.*{.*}: Promise<" "$file" 2>/dev/null; then
+            echo "⚠️  Found malformed signatures in: $file"
+            backup_file "$file"
+            
+            # Fix common patterns
+            sed -i '' 's/): Promise<void> {[^}]*}: Promise</): Promise</g' "$file"
+            sed -i '' 's/): Promise<.*> {[^}]*}: Promise<\([^>]*\)>/): Promise<\1>/g' "$file"
+            echo "✅ Fixed: $file"
+        fi
+    done
+}
+
+# Function to fix malformed catch blocks
+fix_catch_blocks() {
+    echo "🔍 Fixing malformed catch blocks..."
+    
+    find packages/core/src -name "*.tsx" -o -name "*.ts" | while read -r file; do
+        if grep -q "} catch (e): void {" "$file" 2>/dev/null; then
+            echo "⚠️  Found malformed catch in: $file"
+            backup_file "$file"
+            
+            sed -i '' 's/} catch (e): void {/} catch (e: unknown) {/g' "$file"
+            echo "✅ Fixed: $file"
+        fi
+    done
+}
+
+# Function to fix TypeORM annotations
+fix_typeorm_annotations() {
+    echo "🔍 Fixing TypeORM annotations..."
+    
+    find packages/core/src -name "*.tsx" -o -name "*.ts" | while read -r file; do
+        if grep -q "}): Date;" "$file" 2>/dev/null; then
+            echo "⚠️  Found malformed TypeORM annotation in: $file"
+            backup_file "$file"
+            
+            sed -i '' 's/}): Date;/})!/g' "$file"
+            sed -i '' 's/@UpdateDateColumn.*}): Date;/@UpdateDateColumn({ type: '\''timestamp'\'' })!/g' "$file"
+            echo "✅ Fixed: $file"
+        fi
+    done
+}
+
+# Function to fix constructor syntax
+fix_constructor_syntax() {
+    echo "🔍 Fixing constructor syntax..."
+    
+    find packages/core/src -name "*.tsx" -o -name "*.ts" | while read -r file; do
+        if grep -q "if(partial): void {" "$file" 2>/dev/null; then
+            echo "⚠️  Found malformed constructor in: $file"
+            backup_file "$file"
+            
+            sed -i '' 's/if(partial): void {/if (partial) {/g' "$file"
+            echo "✅ Fixed: $file"
+        fi
+    done
+}
+
+# Main execution
+echo "Starting syntax fixes..."
+echo ""
+
+# Apply all fixes
+fix_function_signatures
+fix_catch_blocks  
+fix_typeorm_annotations
+fix_constructor_syntax
+
+echo ""
+echo "🧪 Testing build after fixes..."
+yarn build 2>&1 | head -50
+
+echo ""
+echo "🎯 Syntax Fix Summary"
+echo "====================="
+echo "✅ Applied systematic syntax fixes"
+echo "If build still fails, check the output above for remaining issues"

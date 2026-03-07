@@ -1,0 +1,24 @@
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC } from 'react';
+import { WidgetGrid } from '@the-new-fuse/widgets/WidgetGrid';
+import { DataVisualization } from '@the-new-fuse/visualization/DataVisualization';
+import { MetricsPanel } from '@the-new-fuse/metrics/MetricsPanel';
+
+export const DashboardRoot: FC = (): JSX.Element => (): JSX.Element => (): JSX.Element => {
+  return (
+    <div className="dashboard-container">
+      <MetricsPanel />
+      <WidgetGrid />
+      <DataVisualization />
+    </div>
+  );
+};
+
+export * from '@the-new-fuse/widgets';
+export * from '@the-new-fuse/visualization';
+export * from '@the-new-fuse/metrics';

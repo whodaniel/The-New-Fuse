@@ -1,0 +1,10 @@
+{"ts":"2026-02-20T18:35:35.479Z","type":"status_change","id":"2526345991425147424","from":null,"to":"IN_PROGRESS","description":"Task bucket 2/3: Fix TypeScript compile errors in frontend …"}
+{"ts":"2026-02-20T18:35:35.482Z","type":"status_change","id":"7229620008908814241","from":null,"to":"IN_PROGRESS","description":"Task bucket 1/3: Fix TypeScript compile errors in apps/fron…"}
+{"ts":"2026-02-20T18:35:35.482Z","type":"status_change","id":"7908897338896201034","from":null,"to":"IN_PROGRESS","description":"Task bucket 3/3: Fix TypeScript compile errors in A2A/multi…"}
+{"ts":"2026-02-20T18:38:45.182Z","type":"status_change","id":"7229620008908814241","from":"IN_PROGRESS","to":"COMPLETED","description":"Task bucket 1/3: Fix TypeScript compile errors in apps/fron…"}
+{"ts":"2026-02-20T18:38:48.875Z","type":"session_applied","id":"7229620008908814241"}
+{"ts":"2026-02-20T18:39:45.400Z","type":"status_change","id":"7908897338896201034","from":"IN_PROGRESS","to":"COMPLETED","description":"Task bucket 3/3: Fix TypeScript compile errors in A2A/multi…"}
+{"ts":"2026-02-20T18:39:49.342Z","type":"session_applied","id":"7908897338896201034"}
+{"ts":"2026-02-20T18:41:28.267Z","type":"config_migrated","field":"requireReviewBeforeApply","value":true}
+{"ts":"2026-02-20T18:52:30.408Z","type":"status_change","id":"2526345991425147424","from":"IN_PROGRESS","to":"COMPLETED","description":"Task bucket 2/3: Fix TypeScript compile errors in frontend …"}
+{"ts":"2026-02-20T18:52:34.604Z","type":"session_applied","id":"2526345991425147424"}

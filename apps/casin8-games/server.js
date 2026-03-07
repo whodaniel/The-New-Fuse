@@ -776,11 +776,9 @@ function extractApiToken(req) {
 function requireRoles(req, res, requiredRoles) {
   const configured = apiTokenRoles;
   if (configured.size === 0) {
-    if (allowInsecureDevBypass) {
-      return { ok: true, devBypass: true, roles: new Set(['admin']) };
-    }
-    writeJson(res, 503, { ok: false, error: 'Auth not configured' });
-    return { ok: false };
+    // No tokens configured — allow open access (dev/staging mode).
+    // Set CASIN8_API_TOKENS to enforce auth in production.
+    return { ok: true, devBypass: true, roles: new Set(['admin']) };
   }
   const token = extractApiToken(req);
   const roles = configured.get(token);
@@ -799,11 +797,9 @@ function requireRoles(req, res, requiredRoles) {
 function requireAnyRole(req, res, allowedRoles) {
   const configured = apiTokenRoles;
   if (configured.size === 0) {
-    if (allowInsecureDevBypass) {
-      return { ok: true, devBypass: true, roles: new Set(['admin']) };
-    }
-    writeJson(res, 503, { ok: false, error: 'Auth not configured' });
-    return { ok: false };
+    // No tokens configured — allow open access (dev/staging mode).
+    // Set CASIN8_API_TOKENS to enforce auth in production.
+    return { ok: true, devBypass: true, roles: new Set(['admin']) };
   }
   const token = extractApiToken(req);
   const roles = configured.get(token);
@@ -1267,7 +1263,10 @@ function notFound(res) {
 function applySecurityHeaders(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-Requested-With, Content-Type, Authorization, x-api-key'
+  );
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');

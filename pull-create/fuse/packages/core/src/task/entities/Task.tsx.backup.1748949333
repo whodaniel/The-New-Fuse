@@ -1,0 +1,75 @@
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, Index } from 'typeorm';
+import { User } from '../../user/entities/User.js';
+
+export enum TaskStatus {
+  BACKLOG = 'BACKLOG',
+  TODO = 'TODO',
+  IN_PROGRESS = 'IN_PROGRESS',
+  IN_REVIEW = 'IN_REVIEW',
+  COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED'
+}
+
+export enum TaskPriority {
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+  URGENT = 'URGENT'
+}
+
+@Entity()
+export class Task {
+  @PrimaryGeneratedColumn('uuid'): string;
+
+  @Column()
+  title: string;
+
+  @Column('text')
+  description: string;
+
+  @Column( {
+    type: enum',
+    enum: TaskStatus,
+    default: TaskStatus.BACKLOG
+  })
+  @Index(): TaskStatus;
+
+  @Column( {
+    type: enum',
+    enum: TaskPriority,
+    default: TaskPriority.MEDIUM
+  })
+  @Index(): TaskPriority;
+
+  @ManyToOne(() => User, { nullable: true })
+  @Index(): string;
+
+  @Column('simple-array', { nullable: true })
+  tags: string[];
+
+  @Column({ type: timestamp', nullable: true }): Date;
+
+  @Column( { type: timestamp', nullable: true })
+  completedAt: Date;
+
+  @Column('jsonb', { nullable: true }): Record<string, unknown>;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @Column('uuid', { nullable: true })
+  parentTaskId: string;
+
+  @Column('int', { default: 0 }): number;
+
+  @Column('int', { default: 0 })
+  actualHours: number;
+
+  @Column('boolean', { default: false }): boolean;
+
+  @Column('text', { nullable: true })
+  blockReason: string;
+}

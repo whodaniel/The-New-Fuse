@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reports - AI Video Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #030712;
+      --text-color: #f9fafb;
+      --text-muted: #9ca3af;
+      --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #d946ef 100%);
+      --glass-bg: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-hover: rgba(255, 255, 255, 0.06);
+      --card-radius: 16px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      padding: 80px 24px 40px;
+    }
+
+    .bg-glow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      background: radial-gradient(circle at 50% 0%, #172033 0%, #030712 60%);
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 20px 24px;
+      background: rgba(3, 7, 18, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--glass-border);
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: white;
+      text-decoration: none;
+    }
+
+    nav {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    nav a:hover, nav a.active {
+      color: white;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      margin-bottom: 40px;
+    }
+
+    .search-bar {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      padding: 12px 20px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 500px;
+      color: white;
+      font-size: 1rem;
+      margin-bottom: 30px;
+    }
+
+    .search-bar::placeholder {
+      color: var(--text-muted);
+    }
+
+    .reports-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 24px;
+    }
+
+    .report-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--card-radius);
+      padding: 24px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .report-card:hover {
+      background: var(--glass-hover);
+      border-color: rgba(139, 92, 246, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .report-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      color: white;
+      line-height: 1.3;
+    }
+
+    .report-meta {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .report-excerpt {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 16px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .report-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      background: rgba(59, 130, 246, 0.1);
+      color: #60a5fa;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      padding: 40px 20px;
+      overflow-y: auto;
+    }
+
+    .modal.active {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: var(--bg-color);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--card-radius);
+      max-width: 900px;
+      width: 100%;
+      padding: 40px;
+      margin: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 24px;
+    }
+
+    .modal-close {
+      font-size: 2rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .modal-close:hover {
+      color: white;
+    }
+
+    .report-content {
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+
+    .report-content h2 {
+      margin-top: 32px;
+      margin-bottom: 16px;
+      color: white;
+    }
+
+    .report-content ul {
+      margin-left: 20px;
+      margin-bottom: 20px;
+    }
+
+    .report-content li {
+      margin-bottom: 8px;
+    }
+
+    .empty-state {
+      padding: 60px 20px;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    .empty-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+      opacity: 0.3;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-glow"></div>
+
+  <header>
+    <div class="header-content">
+      <a href="/" class="logo">AI Video Intelligence</a>
+      <nav>
+        <a href="/dashboard.html">Dashboard</a>
+        <a href="/reports.html" class="active">Reports</a>
+        <a href="/account.html">Account</a>
+        <a href="https://chrome.google.com/webstore/detail/ai-video-intelligence-suite/YOUR_EXTENSION_ID" target="_blank">Extension</a>
+        <a href="/support.html">Support</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1>Reports</h1>
+    <p class="subtitle">Browse and search your processed video reports</p>
+
+    <input type="text" id="searchInput" class="search-bar" placeholder="Search reports...">
+
+    <div id="reportsGrid" class="reports-grid">
+      <div class="empty-state">
+        <div class="empty-icon">📄</div>
+        <p>Loading reports...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Report Modal -->
+  <div id="reportModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle" style="margin: 0; color: white;">Report</h2>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div id="modalContent" class="report-content"></div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = window.location.origin + '/api';
+    let allReports = [];
+
+    async function loadReports() {
+      try {
+        // Check authentication
+        const authRes = await fetch(`${API_URL}/auth/me`);
+        if (!authRes.ok) {
+          window.location.href = '/';
+          return;
+        }
+
+        // Load reports
+        const reportsRes = await fetch(`${API_URL}/reports?limit=100`);
+        if (!reportsRes.ok) throw new Error('Failed to load reports');
+
+        const data = await reportsRes.json();
+        allReports = data.data.reports || [];
+
+        renderReports(allReports);
+      } catch (error) {
+        console.error('Failed to load reports:', error);
+        document.getElementById('reportsGrid').innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">⚠️</div>
+            <p>Failed to load reports</p>
+          </div>
+        `;
+      }
+    }
+
+    function renderReports(reports) {
+      const grid = document.getElementById('reportsGrid');
+
+      if (!reports || reports.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <p>No reports yet</p>
+            <p style="font-size: 0.9rem; margin-top: 8px;">Process some videos to see them here</p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = reports.map(report => {
+        const excerpt = report.content_markdown ?
+          report.content_markdown.substring(0, 200).replace(/#/g, '').replace(/\*/g, '') + '...' :
+          'No content available';
+
+        const tags = report.ai_concepts || [];
+
+        return `
+          <div class="report-card" onclick="openReport(${report.id})">
+            <div class="report-title">${report.video_title || 'Untitled Video'}</div>
+            <div class="report-meta">
+              <span>📅 ${new Date(report.created_at).toLocaleDateString()}</span>
+              <span>📊 ${report.word_count || 0} words</span>
+            </div>
+            <div class="report-excerpt">${excerpt}</div>
+            ${tags.length > 0 ? `
+              <div class="report-tags">
+                ${tags.slice(0, 3).map(tag => `<span class="tag">${tag}</span>`).join('')}
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function openReport(reportId) {
+      try {
+        const res = await fetch(`${API_URL}/reports/${reportId}`);
+        if (!res.ok) throw new Error('Failed to load report');
+
+        const data = await res.json();
+        const report = data.data.report;
+
+        document.getElementById('modalTitle').textContent = report.video_title || 'Report';
+        document.getElementById('modalContent').innerHTML = marked ? marked.parse(report.content_markdown) : `<pre>${report.content_markdown}</pre>`;
+        document.getElementById('reportModal').classList.add('active');
+      } catch (error) {
+        console.error('Failed to open report:', error);
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('reportModal').classList.remove('active');
+    }
+
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      const search = e.target.value.toLowerCase();
+      const filtered = allReports.filter(report =>
+        (report.video_title || '').toLowerCase().includes(search) ||
+        (report.content_markdown || '').toLowerCase().includes(search)
+      );
+      renderReports(filtered);
+    });
+
+    // Close modal on background click
+    document.getElementById('reportModal').addEventListener('click', (e) => {
+      if (e.target.id === 'reportModal') closeModal();
+    });
+
+    // Load reports on page load
+    loadReports();
+  </script>
+</body>
+</html>

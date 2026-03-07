@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: thefuse
+  namespace: staging
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: thefuse
+  template:
+    metadata:
+      labels:
+        app: thefuse
+      annotations:
+        checksum/config: ${CONFIG_CHECKSUM}
+    spec:
+      containers:
+      - name: thefuse
+        image: thefuse:${VERSION_TAG}
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        ports:
+        - containerPort: 3000
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        env:
+        - name: NODE_ENV
+          value: staging
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: thefuse-secrets
+              key: database-url
+        - name: FEATURE_FLAGS
+          value: "canary_features=true,beta_testing=true"
+        - name: DEPLOYMENT_VALIDATION
+          value: "true"
+      initContainers:
+      - name: validation-check
+        image: thefuse-validator:latest
+        env:
+        - name: VALIDATION_TYPE
+          value: staging
+        - name: MIN_TEST_COVERAGE
+          value: "80"
+      imagePullSecrets:
+      - name: registry-credentials

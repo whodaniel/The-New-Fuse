@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The New Fuse - MCP Browser Hub</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff4757;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.connected {
+            background: #2ed573;
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            height: calc(100vh - 80px);
+        }
+
+        .sidebar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+
+        .content {
+            padding: 2rem;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .resource-list, .tool-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .resource-item, .tool-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .resource-name, .tool-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .resource-uri, .tool-description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .resource-actions, .tool-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 1px solid #dee2e6;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+
+        .log-container {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            margin-bottom: 0.5rem;
+            padding: 0.25rem 0;
+            border-left: 3px solid transparent;
+            padding-left: 0.5rem;
+        }
+
+        .log-entry.info {
+            border-left-color: #007acc;
+        }
+
+        .log-entry.warn {
+            border-left-color: #ff9800;
+        }
+
+        .log-entry.error {
+            border-left-color: #f44336;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 80%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .json-viewer {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .service-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .service-status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-running { background: #d4edda; color: #155724; }
+        .status-stopped { background: #f8d7da; color: #721c24; }
+        .status-discovered { background: #d1ecf1; color: #0c5460; }
+        .status-error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-network-wired"></i>
+            The New Fuse - MCP Browser Hub
+        </div>
+        <div class="connection-status">
+            <div class="status-indicator" id="statusIndicator"></div>
+            <span id="statusText">Connecting...</span>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <nav class="sidebar">
+            <a href="#" class="nav-item active" data-section="dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+                Dashboard
+            </a>
+            <a href="#" class="nav-item" data-section="resources">
+                <i class="fas fa-database"></i>
+                Resources
+            </a>
+            <a href="#" class="nav-item" data-section="tools">
+                <i class="fas fa-tools"></i>
+                Tools
+            </a>
+            <a href="#" class="nav-item" data-section="services">
+                <i class="fas fa-server"></i>
+                Services
+            </a>
+            <a href="#" class="nav-item" data-section="logs">
+                <i class="fas fa-list"></i>
+                Logs
+            </a>
+            <a href="#" class="nav-item" data-section="settings">
+                <i class="fas fa-cog"></i>
+                Settings
+            </a>
+        </nav>
+
+        <main class="content">
+            <!-- Dashboard Section -->
+            <section class="section active" id="dashboard">
+                <h1>Dashboard</h1>
+                <div class="grid">
+                    <div class="metric-card">
+                        <div class="metric-value" id="activeConnections">-</div>
+                        <div class="metric-label">Active Connections</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="totalRequests">-</div>
+                        <div class="metric-label">Total Requests</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="errorRate">-</div>
+                        <div class="metric-label">Error Rate</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="uptime">-</div>
+                        <div class="metric-label">Uptime (s)</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">System Health</h2>
+                    </div>
+                    <div id="healthStatus">
+                        <div class="loading"></div>
+                        Loading health status...
+                    </div>
+                </div>
+            </section>
+
+            <!-- Resources Section -->
+            <section class="section" id="resources">
+                <h1>Resources</h1>
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Available Resources</h2>
+                        <button class="btn btn-primary" onclick="showAddResourceModal()">
+                            <i class="fas fa-plus"></i> Add Resource
+                        </button>
+                    </div>
+                    <div id="resourcesList">
+                        <div class="loading"></div>
+                        Loading resources...
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tools Section -->
+            <section class="section" id="tools">
+                <h1>Tools</h1>
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Available Tools</h2>
+                        <button class="btn btn-primary" onclick="showAddToolModal()">
+                            <i class="fas fa-plus"></i> Add Tool
+                        </button>
+                    </div>
+                    <div id="toolsList">
+                        <div class="loading"></div>
+                        Loading tools...
+                    </div>
+                </div>
+            </section>
+
+            <!-- Services Section -->
+            <section class="section" id="services">
+                <h1>Services</h1>
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">MCP Services</h2>
+                    </div>
+                    <div id="servicesList">
+                        <div class="loading"></div>
+                        Loading services...
+                    </div>
+                </div>
+            </section>
+
+            <!-- Logs Section -->
+            <section class="section" id="logs">
+                <h1>Logs</h1>
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">System Logs</h2>
+                        <button class="btn btn-secondary" onclick="clearLogs()">
+                            <i class="fas fa-trash"></i> Clear
+                        </button>
+                    </div>
+                    <div class="log-container" id="logContainer">
+                        <div class="log-entry info">System initialized...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section class="section" id="settings">
+                <h1>Settings</h1>
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Configuration</h2>
+                    </div>
+                    <form id="settingsFormElement">
+                        <div class="form-group">
+                            <label>WebSocket URL</label>
+                            <input type="text" id="wsUrl" value="ws://localhost:3000" />
+                        </div>
+                        <div class="form-group">
+                            <label>Request Timeout (ms)</label>
+                            <input type="number" id="requestTimeout" value="5000" />
+                        </div>
+                        <div class="form-group">
+                            <label>Reconnect Interval (ms)</label>
+                            <input type="number" id="reconnectInterval" value="3000" />
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Settings
+                        </button>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Add Resource Modal -->
+    <div id="addResourceModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addResourceModal')">&times;</span>
+            <h2>Add Resource</h2>
+            <form id="addResourceForm">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="resourceName" required />
+                </div>
+                <div class="form-group">
+                    <label>URI</label>
+                    <input type="text" id="resourceUri" required />
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="resourceDescription"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>MIME Type</label>
+                    <input type="text" id="resourceMimeType" value="text/plain" />
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Resource
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Tool Modal -->
+    <div id="addToolModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addToolModal')">&times;</span>
+            <h2>Add Tool</h2>
+            <form id="addToolForm">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="toolName" required />
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="toolDescription" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Input Schema (JSON)</label>
+                    <textarea id="toolInputSchema" placeholder='{"type": "object", "properties": {}}'></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Tool
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        class MCPClient {
+            constructor() {
+                this.ws = null;
+                this.isConnected = false;
+                this.messageId = 0;
+                this.pendingRequests = new Map();
+                this.requestTimeout = 5000;
+                this.reconnectInterval = 3000;
+            }
+
+            async connect(url = 'ws://localhost:3000') {
+                return new Promise((resolve, reject) => {
+                    try {
+                        this.ws = new WebSocket(url);
+                        
+                        this.ws.onopen = () => {
+                            this.isConnected = true;
+                            updateConnectionStatus(true);
+                            log('info', 'Connected to MCP server');
+                            resolve();
+                        };
+                        
+                        this.ws.onmessage = (event) => {
+                            try {
+                                const message = JSON.parse(event.data);
+                                this.handleMessage(message);
+                            } catch (error) {
+                                log('error', `Failed to parse message: ${error.message}`);
+                            }
+                        };
+                        
+                        this.ws.onclose = () => {
+                            this.isConnected = false;
+                            updateConnectionStatus(false);
+                            log('warn', 'Disconnected from MCP server');
+                            
+                            // Attempt to reconnect
+                            setTimeout(() => {
+                                if (!this.isConnected) {
+                                    log('info', 'Attempting to reconnect...');
+                                    this.connect(url);
+                                }
+                            }, this.reconnectInterval);
+                        };
+                        
+                        this.ws.onerror = (error) => {
+                            log('error', `WebSocket error: ${error.message || 'Connection failed'}`);
+                            reject(error);
+                        };
+                    } catch (error) {
+                        reject(error);
+                    }
+                });
+            }
+
+            isReady() {
+                return this.isConnected && this.ws && this.ws.readyState === WebSocket.OPEN;
+            }
+
+            sendRequest(method, params = {}) {
+                if (!this.isReady()) {
+                    return Promise.reject(new Error('WebSocket not connected'));
+                }
+
+                return new Promise((resolve, reject) => {
+                    const id = ++this.messageId;
+                    const message = {
+                        jsonrpc: '2.0',
+                        id,
+                        method,
+                        params
+                    };
+
+                    this.pendingRequests.set(id, { resolve, reject });
+                    this.ws.send(JSON.stringify(message));
+
+                    setTimeout(() => {
+                        if (this.pendingRequests.has(id)) {
+                            this.pendingRequests.delete(id);
+                            reject(new Error('Request timeout'));
+                        }
+                    }, this.requestTimeout);
+                });
+            }
+
+            handleMessage(message) {
+                if (message.id && this.pendingRequests.has(message.id)) {
+                    const { resolve, reject } = this.pendingRequests.get(message.id);
+                    this.pendingRequests.delete(message.id);
+                    
+                    if (message.error) {
+                        reject(new Error(message.error.message));
+                    } else {
+                        resolve(message.result);
+                    }
+                } else if (message.method) {
+                    // Handle notifications
+                    log('info', `Received notification: ${message.method}`);
+                }
+            }
+
+            async getHealth() {
+                return this.sendRequest('mcp.getHealth');
+            }
+
+            async getMetrics() {
+                return this.sendRequest('mcp.getMetrics');
+            }
+
+            async getResources() {
+                return this.sendRequest('resources/list');
+            }
+
+            async getTools() {
+                return this.sendRequest('tools/list');
+            }
+
+            async readResource(uri) {
+                return this.sendRequest('resources/read', { uri });
+            }
+
+            async callTool(name, arguments_ = {}) {
+                return this.sendRequest('tools/call', { name, arguments: arguments_ });
+            }
+
+            async registerResource(resource) {
+                return this.sendRequest('resources/register', resource);
+            }
+
+            async registerTool(tool) {
+                return this.sendRequest('tools/register', tool);
+            }
+        }
+
+        // Global variables
+        let client = new MCPClient();
+        let currentSection = 'dashboard';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            setupNavigation();
+            setupModals();
+            
+            try {
+                await client.connect();
+                await loadSectionData('dashboard');
+            } catch (error) {
+                log('error', `Failed to connect: ${error.message}`);
+            }
+        });
+
+        // Utility functions
+        function log(level, message) {
+            const container = document.getElementById('logContainer');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${level}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            container.appendChild(entry);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function updateConnectionStatus(connected) {
+            const indicator = document.getElementById('statusIndicator');
+            const text = document.getElementById('statusText');
+            
+            if (connected) {
+                indicator.classList.add('connected');
+                text.textContent = 'Connected';
+            } else {
+                indicator.classList.remove('connected');
+                text.textContent = 'Disconnected';
+            }
+        }
+
+        function setupNavigation() {
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    // Update active nav item
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    item.classList.add('active');
+                    
+                    // Show corresponding section
+                    const sectionId = item.dataset.section;
+                    showSection(sectionId);
+                });
+            });
+        }
+
+        function setupModals() {
+            // Close modals when clicking outside
+            window.onclick = function(event) {
+                if (event.target.classList.contains('modal')) {
+                    event.target.style.display = 'none';
+                }
+            };
+
+            // Form submissions
+            document.getElementById('addResourceForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await addResource();
+            });
+
+            document.getElementById('addToolForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await addTool();
+            });
+
+            document.getElementById('settingsFormElement')?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await saveSettings();
+            });
+        }
+
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => section.classList.remove('active'));
+            
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+                currentSection = sectionId;
+                
+                // Load section-specific data
+                loadSectionData(sectionId);
+            }
+        }
+
+        async function loadSectionData(sectionId) {
+            if (!client.isReady()) return;
+            
+            try {
+                switch (sectionId) {
+                    case 'dashboard':
+                        await loadDashboardData();
+                        break;
+                    case 'resources':
+                        await loadResources();
+                        break;
+                    case 'tools':
+                        await loadTools();
+                        break;
+                    case 'services':
+                        await loadServices();
+                        break;
+                    case 'settings':
+                        await loadSettings();
+                        break;
+                }
+            } catch (error) {
+                log('error', `Error loading ${sectionId}: ${error.message}`);
+            }
+        }
+
+        async function loadDashboardData() {
+            try {
+                const [health, metrics] = await Promise.all([
+                    client.getHealth(),
+                    client.getMetrics()
+                ]);
+                
+                updateDashboardMetrics(health, metrics);
+            } catch (error) {
+                log('error', `Error loading dashboard: ${error.message}`);
+            }
+        }
+
+        function updateDashboardMetrics(health, metrics) {
+            document.getElementById('activeConnections').textContent = metrics.activeConnections || 0;
+            document.getElementById('totalRequests').textContent = metrics.totalRequests || 0;
+            document.getElementById('errorRate').textContent = `${(metrics.errorRate || 0).toFixed(2)}%`;
+            document.getElementById('uptime').textContent = Math.floor((metrics.uptime || 0) / 1000);
+            
+            const healthStatus = document.getElementById('healthStatus');
+            healthStatus.innerHTML = `
+                <div class="json-viewer">${JSON.stringify(health, null, 2)}</div>
+            `;
+        }
+
+        async function loadResources() {
+            try {
+                const resources = await client.getResources();
+                displayResources(resources);
+            } catch (error) {
+                log('error', `Error loading resources: ${error.message}`);
+            }
+        }
+
+        function displayResources(resources) {
+            const container = document.getElementById('resourcesList');
+            if (!resources || resources.length === 0) {
+                container.innerHTML = '<p>No resources available</p>';
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="resource-list">
+                    ${resources.map(resource => `
+                        <div class="resource-item">
+                            <div class="resource-name">${resource.name}</div>
+                            <div class="resource-uri">${resource.uri}</div>
+                            <div class="resource-description">${resource.description || 'No description'}</div>
+                            <div class="resource-actions">
+                                <button class="btn btn-primary" onclick="readResource('${resource.uri}')">
+                                    <i class="fas fa-eye"></i> Read
+                                </button>
+                                <button class="btn btn-secondary" onclick="copyToClipboard('${resource.uri}')">
+                                    <i class="fas fa-copy"></i> Copy URI
+                                </button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        async function loadTools() {
+            try {
+                const tools = await client.getTools();
+                displayTools(tools);
+            } catch (error) {
+                log('error', `Error loading tools: ${error.message}`);
+            }
+        }
+
+        function displayTools(tools) {
+            const container = document.getElementById('toolsList');
+            if (!tools || tools.length === 0) {
+                container.innerHTML = '<p>No tools available</p>';
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="tool-list">
+                    ${tools.map(tool => `
+                        <div class="tool-item">
+                            <div class="tool-name">${tool.name}</div>
+                            <div class="tool-description">${tool.description || 'No description'}</div>
+                            <div class="tool-actions">
+                                <button class="btn btn-primary" onclick="callTool('${tool.name}')">
+                                    <i class="fas fa-play"></i> Execute
+                                </button>
+                                <button class="btn btn-secondary" onclick="viewToolSchema('${tool.name}')">
+                                    <i class="fas fa-code"></i> View Schema
+                                </button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        async function loadServices() {
+            // Mock services data - in real implementation, this would come from MCP
+            const services = [
+                { name: 'File System', status: 'running', description: 'File system operations'

@@ -1,0 +1,21 @@
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+// @ts-checkimport React from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+const PrivateRoute: location }} replace/>;
+    }
+    return <>{children}</>;
+};
+export default PrivateRoute;
+//# sourceMappingURL = ({ children }) => {
+    const { user, loading } = useAuth(): unknown) {
+        return <div>Loading...</div>;
+    }
+    if(!user: unknown) {
+        return <Navigate to = useLocation();
+    if(loading"/login" state={{ fromPrivateRoute.js.map

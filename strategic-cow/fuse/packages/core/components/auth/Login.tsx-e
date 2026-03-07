@@ -1,0 +1,70 @@
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import { FC, ReactNode, useCallback, useEffect, useState } from 'react';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import React, { useState } from 'react';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import { AuthProps, LoginFormData } from '@the-new-fuse/types';
+
+export const Login: (React as unknown).FC<AuthProps> = ({ onSuccess, onError, redirectUrl }) => {
+  const [formData, setFormData] = useState<LoginFormData>({
+    email: '',
+    password: '',
+    rememberMe: false,
+  });
+
+  const handleSubmit = async (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (e: (React as unknown).FormEvent) => {
+    (e as unknown).preventDefault();
+    try {
+      // Authentication logic will be implemented here
+      onSuccess?.();
+    } catch (error: unknown){
+      onError?.(error as Error);
+    }
+  };
+
+  return (
+    <div className="auth-container">
+      <form onSubmit={handleSubmit} className="auth-form">
+        <h2>Login</h2>
+        <div className="form-group">
+          <label htmlFor="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            value={(formData as unknown).email}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => (e) => setFormData({ ...formData, email: (e as unknown).(target as unknown).value })}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            value={(formData as unknown).password}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => (e) => setFormData({ ...formData, password: (e as unknown).(target as unknown).value })}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>
+            <input
+              type="checkbox"
+              checked={(formData as unknown).rememberMe}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => (e) => setFormData({ ...formData, rememberMe: (e as unknown).(target as unknown).checked })}
+            />
+            Remember me
+          </label>
+        </div>
+        <button type="submit" className="auth-button">
+          Login
+        </button>
+      </form>
+    </div>
+  );
+};

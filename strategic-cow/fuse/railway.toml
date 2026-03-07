@@ -1,0 +1,215 @@
+# railway.toml for The New Fuse Monorepo
+# NOTE: Do NOT set global [build] section - each service specifies its own builder
+
+# API Gateway Service (uses Docker)
+# API Gateway Service (uses Docker)
+[services.api-gateway]
+builder = "DOCKERFILE"
+[services.api-gateway.build]
+dockerfilePath = "Dockerfile.railway"
+dockerBuildArgs = { SERVICE_PATH = "api-gateway", SERVICE_NAME = "@the-new-fuse/api-gateway" }
+watchPatterns = ["apps/api-gateway/**", "packages/**"]
+[services.api-gateway.deploy]
+healthcheckPath = "/health"
+
+# API Service (uses Docker)
+[services.api]
+builder = "DOCKERFILE"
+[services.api.build]
+dockerfilePath = "Dockerfile.railway"
+dockerBuildArgs = { SERVICE_PATH = "api", SERVICE_NAME = "@the-new-fuse/api-server" }
+watchPatterns = ["apps/api/**", "packages/**"]
+[services.api.deploy]
+healthcheckPath = "/health"
+startCommand = "/bin/sh ./run-service.sh"
+restartPolicyType = "ON_FAILURE"
+# Redis service is linked - REDIS_URL will be automatically provided by Railway
+
+# Backend Service (uses Docker)
+[services.backend]
+builder = "DOCKERFILE"
+[services.backend.build]
+dockerfilePath = "Dockerfile.railway"
+dockerBuildArgs = { SERVICE_PATH = "backend", SERVICE_NAME = "@the-new-fuse/backend-app" }
+watchPatterns = ["apps/backend/**", "packages/**"]
+[services.backend.deploy]
+healthcheckPath = "/health"
+# Redis service is linked - REDIS_URL will be automatically provided by Railway
+
+# Frontend Service (uses root Dockerfile)
+# IMPORTANT: Make sure "Root Directory" is NOT set in Railway UI
+# This service MUST use Docker to properly build and serve production files
+[services.TheNewFuse]
+builder = "DOCKERFILE"
+[services.TheNewFuse.build]
+dockerfilePath = "Dockerfile"
+# Build context is from repository root (not a subdirectory)
+# This allows access to workspace files like pnpm-lock.yaml
+watchPatterns = ["apps/frontend/**", "packages/**", "scripts/**"]
+dockerBuildArgs = { VITE_FIREBASE_API_KEY = "${{VITE_FIREBASE_API_KEY}}", VITE_FIREBASE_AUTH_DOMAIN = "${{VITE_FIREBASE_AUTH_DOMAIN}}", VITE_FIREBASE_PROJECT_ID = "${{VITE_FIREBASE_PROJECT_ID}}", VITE_FIREBASE_STORAGE_BUCKET = "${{VITE_FIREBASE_STORAGE_BUCKET}}", VITE_FIREBASE_MESSAGING_SENDER_ID = "${{VITE_FIREBASE_MESSAGING_SENDER_ID}}", VITE_FIREBASE_APP_ID = "${{VITE_FIREBASE_APP_ID}}", VITE_TURNSTILE_SITE_KEY = "${{VITE_TURNSTILE_SITE_KEY}}", VITE_AUTH_REQUIRE_TURNSTILE = "${{VITE_AUTH_REQUIRE_TURNSTILE}}", VITE_API_GATEWAY_URL = "${{VITE_API_GATEWAY_URL}}", VITE_SUPABASE_URL = "${{VITE_SUPABASE_URL}}", VITE_SUPABASE_ANON_KEY = "${{VITE_SUPABASE_ANON_KEY}}" }
+[services.TheNewFuse.deploy]
+healthcheckPath = "/"
+startCommand = "npx --yes serve ./dist -p ${PORT:-3000} -s -n"
+
+# AI Arcade Service (standalone agent storefront)
+[services.ai-arcade]
+builder = "DOCKERFILE"
+[services.ai-arcade.build]
+dockerfilePath = "apps/ai-arcade/Dockerfile"
+watchPatterns = ["apps/ai-arcade/**"]
+dockerBuildArgs = { VITE_MUSIC_APP_URL = "${{VITE_MUSIC_APP_URL}}", VITE_CHAIN_NETWORK = "${{VITE_CHAIN_NETWORK}}", VITE_CHAIN_ID = "${{VITE_CHAIN_ID}}", VITE_CHAIN_RPC_URL = "${{VITE_CHAIN_RPC_URL}}", VITE_CONTRACT_TOKEN = "${{VITE_CONTRACT_TOKEN}}", VITE_CONTRACT_MERKABA = "${{VITE_CONTRACT_MERKABA}}", VITE_CONTRACT_GENESIS = "${{VITE_CONTRACT_GENESIS}}", VITE_CONTRACT_ENGINE = "${{VITE_CONTRACT_ENGINE}}", VITE_CONTRACT_SIDEPOT_MANAGER = "${{VITE_CONTRACT_SIDEPOT_MANAGER}}", VITE_CONTRACT_PRIZE_HOOK_ROUTER = "${{VITE_CONTRACT_PRIZE_HOOK_ROUTER}}" }
+[services.ai-arcade.deploy]
+healthcheckPath = "/"
+
+# Fallback for 'frontend' or "Frontend Application" service name
+# Ensure production mode - NEVER run dev server in production
+[services.frontend]
+builder = "DOCKERFILE"
+[services.frontend.build]
+dockerfilePath = "Dockerfile"
+watchPatterns = ["apps/frontend/**", "packages/**", "scripts/**"]
+dockerBuildArgs = { VITE_FIREBASE_API_KEY = "${{VITE_FIREBASE_API_KEY}}", VITE_FIREBASE_AUTH_DOMAIN = "${{VITE_FIREBASE_AUTH_DOMAIN}}", VITE_FIREBASE_PROJECT_ID = "${{VITE_FIREBASE_PROJECT_ID}}", VITE_FIREBASE_STORAGE_BUCKET = "${{VITE_FIREBASE_STORAGE_BUCKET}}", VITE_FIREBASE_MESSAGING_SENDER_ID = "${{VITE_FIREBASE_MESSAGING_SENDER_ID}}", VITE_FIREBASE_APP_ID = "${{VITE_FIREBASE_APP_ID}}", VITE_TURNSTILE_SITE_KEY = "${{VITE_TURNSTILE_SITE_KEY}}", VITE_AUTH_REQUIRE_TURNSTILE = "${{VITE_AUTH_REQUIRE_TURNSTILE}}", VITE_API_GATEWAY_URL = "${{VITE_API_GATEWAY_URL}}", VITE_SUPABASE_URL = "${{VITE_SUPABASE_URL}}", VITE_SUPABASE_ANON_KEY = "${{VITE_SUPABASE_ANON_KEY}}" }
+[services.frontend.deploy]
+healthcheckPath = "/"
+startCommand = "npx --yes serve ./dist -p ${PORT:-3000} -s -n"
+
+# Another fallback for "Frontend Application" service name (with space)
+[services."Frontend Application"]
+builder = "DOCKERFILE"
+[services."Frontend Application".deploy]
+healthcheckPath = "/"
+startCommand = "npx --yes serve ./dist -p ${PORT:-3000} -s -n"
+
+[services."Frontend Application".build]
+dockerfilePath = "Dockerfile"
+watchPatterns = ["apps/frontend/**", "packages/**", "scripts/**"]
+dockerBuildArgs = { VITE_FIREBASE_API_KEY = "${{VITE_FIREBASE_API_KEY}}", VITE_FIREBASE_AUTH_DOMAIN = "${{VITE_FIREBASE_AUTH_DOMAIN}}", VITE_FIREBASE_PROJECT_ID = "${{VITE_FIREBASE_PROJECT_ID}}", VITE_FIREBASE_STORAGE_BUCKET = "${{VITE_FIREBASE_STORAGE_BUCKET}}", VITE_FIREBASE_MESSAGING_SENDER_ID = "${{VITE_FIREBASE_MESSAGING_SENDER_ID}}", VITE_FIREBASE_APP_ID = "${{VITE_FIREBASE_APP_ID}}", VITE_TURNSTILE_SITE_KEY = "${{VITE_TURNSTILE_SITE_KEY}}", VITE_AUTH_REQUIRE_TURNSTILE = "${{VITE_AUTH_REQUIRE_TURNSTILE}}", VITE_API_GATEWAY_URL = "${{VITE_API_GATEWAY_URL}}", VITE_SUPABASE_URL = "${{VITE_SUPABASE_URL}}", VITE_SUPABASE_ANON_KEY = "${{VITE_SUPABASE_ANON_KEY}}" }
+
+
+# TNF Cloud Sandbox (MCP Server for Tauri bridge)
+# Uses shared Dockerfile.railway from repository root
+[services.tnf-cloud-sandbox]
+builder = "DOCKERFILE"
+[services.tnf-cloud-sandbox.build]
+dockerfilePath = "Dockerfile.railway"
+dockerBuildArgs = { SERVICE_PATH = "cloud-sandbox", SERVICE_NAME = "@the-new-fuse/cloud-sandbox" }
+watchPatterns = ["apps/cloud-sandbox/**", "packages/**"]
+[services.tnf-cloud-sandbox.deploy]
+healthcheckPath = "/health"
+restartPolicyType = "ON_FAILURE"
+
+# Secure Cloud Sandbox V2 - Production deployment with RBAC and multi-tenant isolation
+[services.tnf-cloud-sandbox-v2]
+builder = "DOCKERFILE"
+[services.tnf-cloud-sandbox-v2.build]
+dockerfilePath = "apps/cloud-sandbox/Dockerfile.railway"
+watchPatterns = ["apps/cloud-sandbox/**", "packages/database/**", "packages/types/**"]
+[services.tnf-cloud-sandbox-v2.deploy]
+healthcheckPath = "/health"
+healthcheckTimeout = 10
+startCommand = "/app/start.sh"
+restartPolicyType = "ON_FAILURE"
+
+# OpenClaw Sandbox Cloud Gateway - Agent mesh gateway for TNF network
+[services.openclaw-sandbox-cloud]
+builder = "DOCKERFILE"
+[services.openclaw-sandbox-cloud.build]
+dockerfilePath = "railway-openclaw-sandbox/Dockerfile"
+watchPatterns = ["railway-openclaw-sandbox/**"]
+[services.openclaw-sandbox-cloud.deploy]
+port = 8080
+startCommand = "openclaw gateway run --port 8080 --bind 0.0.0.0 --allow-unconfigured"
+healthcheckPath = "/health"
+healthcheckTimeout = 60
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
+# OpenClaw Cloud Primary Gateway - Main cloud gateway with proxy
+[services.openclaw-cloud]
+builder = "DOCKERFILE"
+[services.openclaw-cloud.build]
+dockerfilePath = "railway-openclaw-gateway/Dockerfile"
+watchPatterns = ["railway-openclaw-gateway/**"]
+[services.openclaw-cloud.deploy]
+port = 8080
+startCommand = "/entrypoint.sh"
+healthcheckPath = "/health"
+healthcheckTimeout = 60
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
+# OpenClaw Primary Secondary Gateway - Secondary cloud gateway with proxy
+[services.openclaw-primary]
+builder = "DOCKERFILE"
+[services.openclaw-primary.build]
+dockerfilePath = "railway-openclaw-gateway/Dockerfile"
+watchPatterns = ["railway-openclaw-gateway/**"]
+[services.openclaw-primary.deploy]
+port = 8080
+startCommand = "/entrypoint.sh"
+healthcheckPath = "/health"
+healthcheckTimeout = 60
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
+# OpenClaw OC004 Gateway - Expansion instance for TNF-OC-004
+[services.openclaw-oc004]
+builder = "DOCKERFILE"
+[services.openclaw-oc004.build]
+dockerfilePath = "railway-openclaw-gateway/Dockerfile"
+watchPatterns = ["railway-openclaw-gateway/**"]
+[services.openclaw-oc004.deploy]
+port = 8080
+startCommand = "/entrypoint.sh"
+healthcheckPath = "/health"
+healthcheckTimeout = 60
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
+# Core Vector DB Service
+[services.core-vector-db]
+builder = "DOCKERFILE"
+[services.core-vector-db.build]
+dockerfilePath = "Dockerfile.railway"
+dockerBuildArgs = { SERVICE_PATH = "core-vector-db", SERVICE_NAME = "@the-new-fuse/core-vector-db", SERVICE_ROOT = "packages" }
+watchPatterns = ["packages/core-vector-db/**", "packages/core/**"]
+[services.core-vector-db.deploy]
+healthcheckPath = "/health"
+restartPolicyType = "ON_FAILURE"
+
+# PicoClaw Fleet - Go-based agent instances for testing and research
+# PicoClaw Tester - Endpoint probing and model validation
+[services.picoclaw-tester]
+builder = "DOCKERFILE"
+[services.picoclaw-tester.build]
+dockerfilePath = "apps/picoclaw-overseer/Dockerfile"
+watchPatterns = ["apps/picoclaw-overseer/**"]
+[services.picoclaw-tester.deploy]
+healthcheckPath = "/health.json"
+healthcheckTimeout = 30
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
+# PicoClaw Subject - Model testing target
+[services.picoclaw-subject]
+builder = "DOCKERFILE"
+[services.picoclaw-subject.build]
+dockerfilePath = "apps/picoclaw-overseer/Dockerfile"
+watchPatterns = ["apps/picoclaw-overseer/**"]
+[services.picoclaw-subject.deploy]
+healthcheckPath = "/health.json"
+healthcheckTimeout = 30
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
+# PicoClaw Perplexity - Research specialist
+[services.picoclaw-perplexity]
+builder = "DOCKERFILE"
+[services.picoclaw-perplexity.build]
+dockerfilePath = "apps/picoclaw-overseer/Dockerfile"
+watchPatterns = ["apps/picoclaw-overseer/**"]
+[services.picoclaw-perplexity.deploy]
+healthcheckPath = "/health.json"
+healthcheckTimeout = 30
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3

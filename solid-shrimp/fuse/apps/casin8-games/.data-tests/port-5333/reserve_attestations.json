@@ -1,0 +1,58 @@
+{
+  "default": [
+    {
+      "version": 1,
+      "payload": {
+        "artifactId": "9fbce4db-47ab-421f-b1a4-df286409fbef",
+        "ledgerId": "default",
+        "sequence": 1,
+        "publishedAt": "2026-02-28T22:39:08.407Z",
+        "actor": "ops-bot",
+        "periodStartIso": "2026-02-01T00:00:00.000Z",
+        "periodEndIso": "2026-02-28T00:00:00.000Z",
+        "reportLabel": "month-end",
+        "previousArtifactDigest": "",
+        "attestationDigest": "e26c906062bcba5f16ca6d273b9751d50dba2d67fd970c505b60c0e0e7e3de25",
+        "attestation": {
+          "ledgerId": "default",
+          "entriesCount": 1,
+          "totals": {
+            "availableUnits": "900",
+            "reservedUnits": "0",
+            "pendingWithdrawalUnits": "0"
+          },
+          "derived": {
+            "availableUnits": "900",
+            "reservedUnits": "0",
+            "pendingWithdrawalUnits": "0"
+          },
+          "invariants": {
+            "nonNegativeWallets": true,
+            "totalsMatchDerived": true,
+            "nonNegativeLedgerTotals": true,
+            "noMalformedEntries": true
+          },
+          "malformedEntryCount": 0,
+          "walletInvariantFailureCount": 0,
+          "policy": {
+            "enabled": true,
+            "manualTrip": false,
+            "trippedUntilMs": 0,
+            "liabilityCapUnits": "1000000000000",
+            "pendingWithdrawalCapUnits": "250000000000",
+            "maxPayoutPerSettlementUnits": "10000000000",
+            "maxWithdrawalPerRequestUnits": "5000000000",
+            "maxUtilizationBps": 9000
+          },
+          "entriesDigest": "99410b44fcb3b3558fb697f60b9659ba0f2aa4c657829d547a2297933af377d6"
+        }
+      },
+      "signature": {
+        "algorithm": "hmac-sha256",
+        "value": "f8350b1a248c05864a9d2a0f417e391f6f89561fda9406f2b66ce21defdcc3fb",
+        "signed": true
+      },
+      "digest": "53b7cd59770d74ce958b5f215ce6eca722038c546b30b8637ba94bc7757eed6a"
+    }
+  ]
+}

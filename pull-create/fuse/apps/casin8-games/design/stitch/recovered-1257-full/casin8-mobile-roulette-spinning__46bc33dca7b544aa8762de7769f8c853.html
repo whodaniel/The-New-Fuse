@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Casin8 Mobile Roulette - Spinning</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#f4c025",
+              "background-light": "#f8f8f5",
+              "background-dark": "#221e10",
+              "emerald-glow": "#10b981",
+              "cyan-pulse": "#06b6d4",
+            },
+            fontFamily: {
+              "display": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(34, 30, 16, 0.8);
+            backdrop-filter: blur(12px);
+        }
+        .spinning-blur {
+            filter: blur(8px);
+            transform: rotate(360deg);
+            transition: transform 10s linear;
+        }
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(244, 192, 37, 0.2), transparent);
+            background-size: 200% 100%;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased overflow-hidden">
+<div class="relative flex h-screen w-full flex-col max-w-[430px] mx-auto bg-background-light dark:bg-background-dark shadow-2xl overflow-hidden border-x border-primary/10">
+<!-- Header -->
+<div class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between z-10 border-b border-primary/10">
+<div class="text-slate-900 dark:text-slate-100 flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-primary/10 transition-colors cursor-pointer">
+<span class="material-symbols-outlined">arrow_back</span>
+</div>
+<div class="flex flex-col items-center">
+<h2 class="text-slate-900 dark:text-slate-100 text-sm font-bold leading-tight tracking-tight uppercase tracking-[0.1em]">Casin8 Roulette</h2>
+<div class="flex items-center gap-1">
+<div class="w-1.5 h-1.5 rounded-full bg-emerald-glow"></div>
+<span class="text-[10px] text-emerald-glow font-bold uppercase">Live Table #402</span>
+</div>
+</div>
+<div class="flex size-10 items-center justify-end">
+<button class="text-slate-900 dark:text-slate-100 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+</div>
+<!-- Main Cinematic Area -->
+<div class="relative flex-1 flex flex-col overflow-hidden">
+<!-- Roulette Wheel Visualization -->
+<div class="relative w-full h-72 flex items-center justify-center p-6 bg-gradient-to-b from-background-dark to-slate-900/50">
+<!-- Outer Ring Glow -->
+<div class="absolute w-64 h-64 rounded-full border border-primary/20 shadow-[0_0_50px_rgba(244,192,37,0.1)]"></div>
+<!-- The Wheel (Motion Blurred) -->
+<div class="relative w-56 h-56 rounded-full border-4 border-slate-800 spinning-blur shadow-2xl flex items-center justify-center overflow-hidden" data-alt="Blurred spinning luxury wooden roulette wheel top view" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCGjA9zcPsSCodUWVM7nwBuKwdbE6O8e11hLu0dUi_43zrRKX9-yYYG1WKRmNpaTrPFupvI9878dWrjzRMfEqBSz0kTNgO38HbRIEDiC6SdnS3AwXzW5WBFC14f5SF0fqByN4LlqbRezPqK9PpCyNMpYtxpMWM9KPEvSUez8WQawpU5SoRGJbPtMBWgXE0MC4wSxp7rd_DumFLf83qcjagG4MrSejy7vx2JBemzngr9aNMTu7yC-vGI0XXjIKNdozS2bRKzmzD0w1Xc'); background-size: cover;">
+<div class="absolute inset-0 bg-background-dark/40"></div>
+</div>
+<!-- Glowing Ball -->
+<div class="absolute w-4 h-4 bg-white rounded-full shadow-[0_0_15px_#fff,0_0_30px_#f4c025] top-1/2 left-1/2 -translate-x-1/2 -translate-y-24 z-20"></div>
+<!-- Floating Particles Overlay -->
+<div class="absolute inset-0 pointer-events-none opacity-40">
+<div class="absolute top-1/4 left-1/4 w-1 h-1 bg-primary rounded-full blur-[1px]"></div>
+<div class="absolute top-1/2 left-2/3 w-1.5 h-1.5 bg-primary/50 rounded-full blur-[2px]"></div>
+<div class="absolute bottom-1/4 left-1/2 w-1 h-1 bg-white/30 rounded-full"></div>
+</div>
+</div>
+<!-- Spinning Progress -->
+<div class="flex flex-col gap-3 px-6 py-4 bg-background-dark/80">
+<div class="flex gap-6 justify-between items-end">
+<div>
+<p class="text-primary text-xl font-bold leading-none">Spinning...</p>
+<p class="text-slate-400 text-[10px] uppercase tracking-widest mt-1">Wheel Velocity: 42 RPM</p>
+</div>
+<div class="flex flex-col items-end">
+<p class="text-slate-100 text-lg font-mono font-medium leading-none">6.5s</p>
+<p class="text-slate-400 text-[10px] uppercase tracking-widest mt-1">Remaining</p>
+</div>
+</div>
+<div class="relative h-1.5 w-full rounded-full bg-primary/10 overflow-hidden">
+<div class="absolute top-0 left-0 h-full bg-primary rounded-full" style="width: 65%;"></div>
+<div class="absolute top-0 left-0 h-full w-full shimmer opacity-30"></div>
+</div>
+</div>
+<!-- Betting Board (Locked State) -->
+<div class="relative flex-1 px-4 py-2 overflow-hidden opacity-40 grayscale-[0.5] transition-opacity duration-1000">
+<div class="grid grid-cols-6 grid-rows-3 gap-1 h-full max-h-48 border border-white/5 p-1 rounded-lg">
+<!-- Placeholder betting squares -->
+<div class="bg-red-900/40 rounded flex items-center justify-center text-[10px] border border-white/10">3</div>
+<div class="bg-slate-900/40 rounded flex items-center justify-center text-[10px] border border-white/10">6</div>
+<div class="bg-red-900/40 rounded flex items-center justify-center text-[10px] border border-white/10">9</div>
+<div class="bg-red-900/40 rounded flex items-center justify-center text-[10px] border border-white/10">12</div>
+<div class="bg-slate-900/40 rounded flex items-center justify-center text-[10px] border border-white/10">15</div>
+<div class="bg-red-900/40 rounded flex items-center justify-center text-[10px] border border-white/10">18</div>
+<div class="bg-slate-900/40 rounded flex items-center justify-center text-[10px] border border-white/10">2</div>
+<div class="bg-red-900/40 rounded flex items-center justify-center text-[10px] border border-white/10">5</div>
+<div class="bg-slate-900/40 rounded flex items-center justify-center text-[10px] border border-white/10">8</div>
+<div class="bg-slate-900/40 rounded flex items-center justify-center text-[10px] border border-white/10">11</div>
+<div class="bg-red-900/40 rounded flex items-center justify-center text-[10px] border border-white/10">14</div>
+<div class="bg-slate-900/40 rounded flex items-center justify-center text-[10px] border border-white/10">17</div>
+<div class="bg-red-900/40 rounded flex items-center justify-center text-[10px] border border-white/10">1</div>
+<div class="bg-slate-900/40 rounded flex items-center justify-center text-[10px] border border-white/10">4</div>
+<div class="bg-red-900/40 rounded flex items-center justify-center text-[10px] border border-white/10">7</div>
+<div class="bg-red-900/40 rounded flex items-center justify-center text-[10px] border border-white/10">10</div>
+<div class="bg-slate-900/40 rounded flex items-center justify-center text-[10px] border border-white/10">13</div>
+<div class="bg-red-900/40 rounded flex items-center justify-center text-[10px] border border-white/10">16</div>
+</div>
+<!-- BETS LOCKED Overlay -->
+<div class="absolute inset-0 z-20 flex items-center justify-center">
+<div class="bg-emerald-glow/20 backdrop-blur-md border border-emerald-glow/40 px-6 py-2 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+<p class="text-emerald-glow font-black text-xs tracking-[0.3em] uppercase">Bets Locked</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Trust Drawer / Transaction Status -->
+<div class="bg-slate-900/90 border-t border-white/10 px-4 py-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="relative flex items-center justify-center">
+<div class="absolute w-2 h-2 rounded-full bg-cyan-pulse animate-ping"></div>
+<div class="relative w-2 h-2 rounded-full bg-cyan-pulse"></div>
+</div>
+<div>
+<p class="text-xs font-medium text-slate-100">Transaction Pending</p>
+<p class="text-[10px] font-mono text-cyan-pulse/80 tracking-tight">0x7a8...c2e9</p>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<p class="text-xs text-slate-400">Total Bet</p>
+<p class="text-sm font-bold text-primary">$250.00</p>
+</div>
+</div>
+</div>
+<!-- Bottom Controls -->
+<div class="p-4 bg-background-dark z-20 border-t border-primary/10">
+<button class="w-full flex items-center justify-center gap-3 rounded-xl h-16 bg-primary/20 border border-primary/30 text-primary/60 cursor-not-allowed" disabled="">
+<!-- Circular Progress Ring (Simulation) -->
+<div class="relative w-6 h-6 rounded-full border-2 border-primary/20 border-t-primary animate-spin"></div>
+<span class="text-base font-bold tracking-widest uppercase">Spinning...</span>
+</button>
+</div>
+<!-- Navigation Bar -->
+<div class="flex gap-2 border-t border-primary/10 bg-background-dark/95 px-4 pb-6 pt-2">
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-primary/60" href="#">
+<span class="material-symbols-outlined text-[24px]">home</span>
+<p class="text-[10px] font-medium leading-normal tracking-[0.015em]">Lobby</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-100" href="#">
+<span class="material-symbols-outlined text-[24px] fill-current">grid_view</span>
+<p class="text-[10px] font-medium leading-normal tracking-[0.015em]">Tables</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-primary/60" href="#">
+<span class="material-symbols-outlined text-[24px]">history</span>
+<p class="text-[10px] font-medium leading-normal tracking-[0.015em]">History</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-primary/60" href="#">
+<span class="material-symbols-outlined text-[24px]">account_circle</span>
+<p class="text-[10px] font-medium leading-normal tracking-[0.015em]">Profile</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-primary/60" href="#">
+<span class="material-symbols-outlined text-[24px]">support_agent</span>
+<p class="text-[10px] font-medium leading-normal tracking-[0.015em]">Support</p>
+</a>
+</div>
+</div>
+</body></html>

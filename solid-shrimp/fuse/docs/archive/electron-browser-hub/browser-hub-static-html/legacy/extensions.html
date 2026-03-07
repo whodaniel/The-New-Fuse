@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chrome Extensions - TNF Browser Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #60a5fa;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .extensions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .extension-card {
+            background: #2d3748;
+            border: 2px solid #4a5568;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .extension-card:hover {
+            border-color: #60a5fa;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(96, 165, 250, 0.15);
+        }
+
+        .extension-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .extension-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .extension-info h3 {
+            color: #e2e8f0;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .extension-info .version {
+            color: #a0aec0;
+            font-size: 0.9rem;
+        }
+
+        .extension-status {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-enabled {
+            background: #48bb78;
+            color: white;
+        }
+
+        .status-disabled {
+            background: #f56565;
+            color: white;
+        }
+
+        .extension-description {
+            color: #cbd5e0;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .extension-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: #4299e1;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #718096;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #f56565;
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+            opacity: 0.9;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #4a5568;
+            color: #e2e8f0;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            background: #6b7280;
+        }
+
+        .stats-bar {
+            background: #1a202c;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            border: 2px solid #4a5568;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            color: #60a5fa;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            color: #a0aec0;
+            margin-top: 5px;
+        }
+
+        .install-section {
+            background: #2d3748;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid #4a5568;
+        }
+
+        .install-section h2 {
+            color: #60a5fa;
+            margin-bottom: 15px;
+        }
+
+        .install-input {
+            width: 100%;
+            padding: 12px;
+            background: #4a5568;
+            border: 1px solid #718096;
+            border-radius: 6px;
+            color: #e2e8f0;
+            margin-bottom: 10px;
+        }
+
+        .install-btn {
+            background: #48bb78;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="goBack()">← Back to Browser Hub</button>
+    
+    <div class="header">
+        <h1>
+            <span>🧩</span>
+            <span>Chrome Extensions</span>
+        </h1>
+        <p style="color: #a0aec0; font-size: 1.1rem;">Manage your browser extensions</p>
+    </div>
+
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="stat-value" id="total-extensions">2</div>
+            <div class="stat-label">Total Extensions</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="enabled-extensions">2</div>
+            <div class="stat-label">Enabled</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="disabled-extensions">0</div>
+            <div class="stat-label">Disabled</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">✅</div>
+            <div class="stat-label">Extension Support</div>
+        </div>
+    </div>
+
+    <div class="install-section">
+        <h2>Install New Extension</h2>
+        <input type="text" class="install-input" id="extension-url" placeholder="Chrome Web Store URL or Extension ID">
+        <button class="install-btn" onclick="installExtension()">Install Extension</button>
+    </div>
+
+    <div class="extensions-grid" id="extensions-container">
+        <!-- Browser MCP Extension -->
+        <div class="extension-card">
+            <div class="extension-status status-enabled">Enabled</div>
+            <div class="extension-header">
+                <div class="extension-icon">🌐</div>
+                <div class="extension-info">
+                    <h3>Browser MCP</h3>
+                    <div class="version">Version 1.0.0</div>
+                </div>
+            </div>
+            <div class="extension-description">
+                Browser automation extension for MCP integration. Enables AI-powered web automation with element interaction, form filling, and page analysis.
+            </div>
+            <div class="extension-actions">
+                <button class="action-btn btn-primary" onclick="configureExtension('browser-mcp')">Configure</button>
+                <button class="action-btn btn-secondary" onclick="toggleExtension('browser-mcp')">Disable</button>
+                <button class="action-btn btn-danger" onclick="removeExtension('browser-mcp')">Remove</button>
+            </div>
+        </div>
+
+        <!-- Browser Tools MCP Extension (Fallback) -->
+        <div class="extension-card">
+            <div class="extension-status status-enabled">Enabled</div>
+            <div class="extension-header">
+                <div class="extension-icon">🛠️</div>
+                <div class="extension-info">
+                    <h3>Browser Tools MCP</h3>
+                    <div class="version">Version 0.1.0</div>
+                </div>
+            </div>
+            <div class="extension-description">
+                Advanced browser tools and automation framework. Provides screenshot capture, element detection, and advanced browser control capabilities.
+            </div>
+            <div class="extension-actions">
+                <button class="action-btn btn-primary" onclick="configureExtension('browser-tools')">Configure</button>
+                <button class="action-btn btn-secondary" onclick="toggleExtension('browser-tools')">Disable</button>
+                <button class="action-btn btn-danger" onclick="removeExtension('browser-tools')">Remove</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function goBack() {
+            if (window.electronAPI && window.electronAPI.navigateToRoute) {
+                // Go back to Browser Hub
+                window.electronAPI.navigateToRoute('/');
+            } else {
+                window.history.back();
+            }
+        }
+
+        function installExtension() {
+            const url = document.getElementById('extension-url').value;
+            if (!url) {
+                alert('Please enter an extension URL or ID');
+                return;
+            }
+
+            // Show installation progress
+            const btn = document.querySelector('.install-btn');
+            const originalText = btn.textContent;
+            btn.textContent = 'Installing...';
+            btn.disabled = true;
+
+            // Simulate installation process
+            setTimeout(() => {
+                alert(`Extension installation initiated for: ${url}\nCheck the browser console for details.`);
+                btn.textContent = originalText;
+                btn.disabled = false;
+                document.getElementById('extension-url').value = '';
+                
+                // Update stats
+                updateExtensionStats();
+            }, 2000);
+        }
+
+        function configureExtension(extensionId) {
+            alert(`Opening configuration for ${extensionId} extension...`);
+            
+            // In a real implementation, this would open extension options
+            if (window.electronAPI && window.electronAPI.navigateToRoute) {
+                window.electronAPI.navigateToRoute(`/extensions/${extensionId}/options`);
+            }
+        }
+
+        function toggleExtension(extensionId) {
+            const card = event.target.closest('.extension-card');
+            const statusEl = card.querySelector('.extension-status');
+            const button = event.target;
+
+            if (statusEl.classList.contains('status-enabled')) {
+                statusEl.classList.remove('status-enabled');
+                statusEl.classList.add('status-disabled');
+                statusEl.textContent = 'Disabled';
+                button.textContent = 'Enable';
+                button.classList.remove('btn-secondary');
+                button.classList.add('btn-primary');
+            } else {
+                statusEl.classList.remove('status-disabled');
+                statusEl.classList.add('status-enabled');
+                statusEl.textContent = 'Enabled';
+                button.textContent = 'Disable';
+                button.classList.remove('btn-primary');
+                button.classList.add('btn-secondary');
+            }
+
+            updateExtensionStats();
+        }
+
+        function removeExtension(extensionId) {
+            if (confirm(`Are you sure you want to remove the ${extensionId} extension?`)) {
+                const card = event.target.closest('.extension-card');
+                card.style.opacity = '0.5';
+                
+                setTimeout(() => {
+                    card.remove();
+                    updateExtensionStats();
+                    alert(`${extensionId} extension has been removed.`);
+                }, 1000);
+            }
+        }
+
+        function updateExtensionStats() {
+            const cards = document.querySelectorAll('.extension-card');
+            const enabledCards = document.querySelectorAll('.status-enabled');
+            const disabledCards = document.querySelectorAll('.status-disabled');
+
+            document.getElementById('total-extensions').textContent = cards.length;
+            document.getElementById('enabled-extensions').textContent = enabledCards.length;
+            document.getElementById('disabled-extensions').textContent = disabledCards.length;
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            updateExtensionStats();
+            
+            // Show loading animation
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+
+        document.body.style.opacity = '0';
+        document.body.style.transition = 'opacity 0.3s ease';
+    </script>
+</body>
+</html>

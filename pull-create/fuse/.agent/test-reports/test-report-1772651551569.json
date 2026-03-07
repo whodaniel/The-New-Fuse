@@ -1,0 +1,36 @@
+{
+  "timestamp": "2026-03-04T18:56:14.010Z",
+  "frontend": {
+    "passed": 4,
+    "failed": 1,
+    "errors": [
+      {
+        "test": "type-check",
+        "error": "Timed out: spawnSync /bin/sh ETIMEDOUT"
+      },
+      {
+        "test": "build",
+        "error": "Timed out: [plugin vite:resolve] Module \"http2\" has been externalized for browser compatibility, imported by \"/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/axios/lib/adapters/http.js\". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.\n[plugin vite:resolve] Module \"tty\" has been externalized for browser compatibility, imported by \"/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/debug/"
+      }
+    ]
+  },
+  "backend": {
+    "passed": 5,
+    "failed": 0,
+    "errors": [
+      {
+        "test": "type-check",
+        "error": "Command failed: pnpm exec tsc --noEmit"
+      }
+    ]
+  },
+  "integration": {
+    "passed": 5,
+    "failed": 0,
+    "errors": []
+  },
+  "overall": {
+    "status": "healthy",
+    "score": 93
+  }
+}

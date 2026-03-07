@@ -1,0 +1,7 @@
+Summary:
+----------------------------------------
+Total UI files found:     6924
+Files with Page/View/Screen in name:       89
+Page component definitions found:      200
+Route definitions found:      238
+Pages in standard directories:     1412

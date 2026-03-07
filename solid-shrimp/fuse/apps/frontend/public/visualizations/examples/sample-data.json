@@ -1,0 +1,91 @@
+{
+  "name": "Company Departments",
+  "children": [
+    {
+      "name": "Engineering",
+      "children": [
+        {
+          "name": "Frontend Team",
+          "children": [
+            { "name": "Alice Johnson", "size": 85000, "count": 42, "performance": 95 },
+            { "name": "Bob Smith", "size": 78000, "count": 38, "performance": 88 },
+            { "name": "Carol White", "size": 92000, "count": 45, "performance": 97 }
+          ]
+        },
+        {
+          "name": "Backend Team",
+          "children": [
+            { "name": "David Lee", "size": 95000, "count": 48, "performance": 92 },
+            { "name": "Emma Davis", "size": 88000, "count": 40, "performance": 90 },
+            { "name": "Frank Wilson", "size": 91000, "count": 44, "performance": 93 }
+          ]
+        },
+        {
+          "name": "DevOps Team",
+          "children": [
+            { "name": "Grace Chen", "size": 98000, "count": 35, "performance": 96 },
+            { "name": "Henry Martinez", "size": 93000, "count": 32, "performance": 91 }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Product",
+      "children": [
+        {
+          "name": "Product Managers",
+          "children": [
+            { "name": "Isabel Garcia", "size": 105000, "count": 28, "performance": 94 },
+            { "name": "Jack Brown", "size": 102000, "count": 26, "performance": 92 }
+          ]
+        },
+        {
+          "name": "Designers",
+          "children": [
+            { "name": "Kate Anderson", "size": 82000, "count": 35, "performance": 89 },
+            { "name": "Leo Taylor", "size": 85000, "count": 38, "performance": 91 },
+            { "name": "Mia Thomas", "size": 88000, "count": 40, "performance": 93 }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Sales",
+      "children": [
+        {
+          "name": "Enterprise Sales",
+          "children": [
+            { "name": "Nathan Moore", "size": 95000, "count": 22, "performance": 88 },
+            { "name": "Olivia Jackson", "size": 98000, "count": 25, "performance": 92 }
+          ]
+        },
+        {
+          "name": "SMB Sales",
+          "children": [
+            { "name": "Paul Martin", "size": 75000, "count": 30, "performance": 85 },
+            { "name": "Quinn Lee", "size": 78000, "count": 32, "performance": 87 }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Marketing",
+      "children": [
+        {
+          "name": "Content Team",
+          "children": [
+            { "name": "Rachel Green", "size": 72000, "count": 28, "performance": 90 },
+            { "name": "Sam Wilson", "size": 70000, "count": 26, "performance": 88 }
+          ]
+        },
+        {
+          "name": "Growth Team",
+          "children": [
+            { "name": "Tina Rodriguez", "size": 85000, "count": 24, "performance": 93 },
+            { "name": "Uma Patel", "size": 82000, "count": 22, "performance": 91 }
+          ]
+        }
+      ]
+    }
+  ]
+}

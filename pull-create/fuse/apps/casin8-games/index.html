@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI-ARCADE.XYZ Poker App</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="header">
+        <div class="logo">
+          <h1>AI-ARCADE.XYZ</h1>
+        </div>
+        <p class="subtitle">Global Poker Network</p>
+      </header>
+
+      <section class="toolbar">
+        <label for="game-select">Node</label>
+        <select id="game-select">
+          <option value="poker">POKER ROOM LIVE</option>
+        </select>
+        <label for="bet-amount">Stakes</label>
+        <input id="bet-amount" type="number" min="1" step="1" value="10" />
+        <button id="reset-bankroll" type="button">Reset Bankroll</button>
+        <button id="play-button" class="btn-primary">Initialize Hand</button>
+      </section>
+
+      <!-- SCREEN: Wallet / Buy-in -->
+      <section class="panel">
+        <h3>Wallet & Buy-in (Layer 2)</h3>
+        <div class="account-row">
+          <label for="player-name">Alias</label>
+          <input id="player-name" type="text" placeholder="Human_Operator_01" />
+          <button id="save-player" type="button">Register Identity</button>
+        </div>
+        <div class="account-row glass-bg">
+          <button id="connect-wallet" type="button" class="btn-outline">
+            Connect On-Chain Wallet
+          </button>
+          <span id="wallet-status" class="controls-hint">Status: Disconnected</span>
+        </div>
+        <div class="account-row">
+          <label for="onchain-settle">Enforce On-Chain Settlement</label>
+          <input id="onchain-settle" type="checkbox" />
+          <span id="chain-status" class="controls-hint text-cyan">Chain sync OK</span>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h3>Payments / Compliance Ops</h3>
+        <div class="account-row">
+          <label for="pay-player-id">Player ID</label>
+          <input id="pay-player-id" type="text" value="player-ops-1" />
+          <label for="pay-provider">Provider</label>
+          <select id="pay-provider">
+            <option value="stripe">stripe</option>
+            <option value="paypal">paypal</option>
+          </select>
+          <label for="pay-fiat-minor">Fiat Minor</label>
+          <input id="pay-fiat-minor" type="number" min="1" value="4999" />
+          <label for="pay-token-units">Token Units</label>
+          <input id="pay-token-units" type="number" min="1" value="2500" />
+        </div>
+        <div class="account-row">
+          <label for="pay-country">Country</label>
+          <input id="pay-country" type="text" value="US" />
+          <label for="pay-api-token">API Token</label>
+          <input id="pay-api-token" type="password" value="" placeholder="optional bearer" />
+          <label for="pay-kyc">KYC</label>
+          <select id="pay-kyc">
+            <option value="approved">approved</option>
+            <option value="pending">pending</option>
+            <option value="review">review</option>
+            <option value="rejected">rejected</option>
+          </select>
+          <label for="pay-risk-level">AML Risk</label>
+          <select id="pay-risk-level">
+            <option value="low">low</option>
+            <option value="medium">medium</option>
+            <option value="high">high</option>
+          </select>
+        </div>
+        <div class="account-row">
+          <button id="pay-upsert-compliance" type="button">Upsert Compliance</button>
+          <button id="pay-create-intent" type="button" class="btn-primary">Create Intent</button>
+          <button id="pay-load-order" type="button">Load Last Order</button>
+          <button id="pay-risk-alerts" type="button" class="btn-outline">Risk Alerts</button>
+        </div>
+        <pre id="pay-output" class="result"></pre>
+      </section>
+
+      <!-- SCREEN: Global Lobby -->
+      <section class="panel">
+        <h3>Global Cash Lobby</h3>
+        <div class="account-row">
+          <label for="table-id">Table Key</label>
+          <input id="table-id" type="text" value="cash-ring-1" />
+          <button id="join-table" type="button" class="btn-primary">Join Live Table</button>
+        </div>
+        <div id="table-status" class="controls-hint text-purple">Awaiting Table Connection...</div>
+        <ul id="table-feed" class="feed-list"></ul>
+      </section>
+
+      <!-- SCREEN: Live Table View -->
+      <section class="panel feature-panel">
+        <h3>Live Table Interface</h3>
+        <div class="account-row">
+          <label for="live-hero-seat">Hero Node</label>
+          <input id="live-hero-seat" type="number" min="0" max="8" value="0" />
+          <label for="live-raise-amount">Input</label>
+          <input id="live-raise-amount" type="number" min="1" value="20" />
+          <button id="live-refresh" type="button" class="btn-outline">Sync State</button>
+        </div>
+        <div id="live-table-status" class="controls-hint">Simulation idle.</div>
+        <div class="live-table" id="live-table"></div>
+
+        <!-- Smooth Action Bar -->
+        <div class="action-bar account-row">
+          <button id="live-action-fold" type="button" class="btn-action action-fold">Fold</button>
+          <button id="live-action-check" type="button" class="btn-action action-check">
+            Check
+          </button>
+          <button id="live-action-call" type="button" class="btn-action action-call">Call</button>
+          <button id="live-action-raise" type="button" class="btn-action action-raise">
+            Raise
+          </button>
+          <button id="live-auto-round" type="button" class="btn-outline">Auto Resolve</button>
+        </div>
+      </section>
+
+      <!-- SCREEN: Hand History / Table State Console -->
+      <section class="panel hidden-inputs">
+        <h3>Hand History & Diagnostics</h3>
+        <div class="account-row">
+          <label for="table-hand-id">TxID</label>
+          <input id="table-hand-id" type="text" value="hand-1" />
+          <label for="table-seat-count">Nodes</label>
+          <input id="table-seat-count" type="number" min="2" max="9" value="2" />
+        </div>
+        <!-- Hidden/Minimized the excessive inputs to optimize space -->
+        <div class="account-row hidden">
+          <input id="table-acting-seat" type="hidden" value="0" />
+          <input id="table-action-seat" type="hidden" value="0" />
+          <select id="table-action-type">
+            <option value="player.action">player.action</option>
+          </select>
+          <select id="table-action-name">
+            <option value="check">check</option>
+          </select>
+          <input id="table-action-amount" type="hidden" value="10" />
+          <input id="table-winner-seat" type="hidden" value="0" />
+          <input id="table-payout-units" type="hidden" value="100" />
+        </div>
+        <div class="account-row">
+          <button id="table-init" type="button">Init Hand</button>
+          <button id="table-action" type="button">Push Action</button>
+          <button id="table-settle" type="button">Settle</button>
+          <button id="live-new-hand" type="button">Next Hand</button>
+          <button id="table-auto-round" type="button" style="display: none">Auto Round</button>
+          <button id="table-refresh-state" type="button" style="display: none">
+            Refresh State
+          </button>
+        </div>
+        <div class="account-row">
+          <label for="v2-player-id">V2 Player</label>
+          <input id="v2-player-id" type="text" value="hv2-a" />
+          <label for="v2-action-name">V2 Action</label>
+          <select id="v2-action-name">
+            <option value="fold">fold</option>
+            <option value="check">check</option>
+            <option value="call">call</option>
+            <option value="bet">bet</option>
+            <option value="raise">raise</option>
+            <option value="allin">allin</option>
+          </select>
+          <label for="v2-action-amount">V2 Amount</label>
+          <input id="v2-action-amount" type="number" min="0" value="200" />
+        </div>
+        <div class="account-row">
+          <button id="v2-table-create" type="button">V2 Create Table</button>
+          <button id="v2-table-seat" type="button">V2 Seat Player</button>
+          <button id="v2-hand-start" type="button">V2 Start Hand</button>
+          <button id="v2-action" type="button">V2 Action</button>
+          <button id="v2-settle" type="button">V2 Settle</button>
+          <button id="v2-replay" type="button">V2 Replay</button>
+          <button id="v2-state" type="button">V2 State</button>
+        </div>
+        <div class="account-row">
+          <label for="hands-limit">History Limit</label>
+          <input id="hands-limit" type="number" min="1" max="200" value="20" />
+          <label for="hands-selected-id">Selected Hand</label>
+          <input id="hands-selected-id" type="text" value="" />
+        </div>
+        <div class="account-row">
+          <button id="hands-load" type="button">Load Hands</button>
+          <button id="hands-view" type="button">View Hand</button>
+          <button id="hands-replay-load" type="button">Load Replay</button>
+          <button id="hands-replay-back" type="button">Replay Back</button>
+          <button id="hands-replay-next" type="button">Replay Next</button>
+          <button id="hands-replay-play" type="button">Replay Play/Pause</button>
+          <label for="hands-replay-speed">Replay Speed</label>
+          <select id="hands-replay-speed">
+            <option value="1400">1x</option>
+            <option value="900">1.5x</option>
+            <option value="600">2x</option>
+          </select>
+        </div>
+        <div class="account-row">
+          <label for="hint-to-call">To Call</label>
+          <input id="hint-to-call" type="number" min="0" value="10" />
+          <label for="hint-pot">Pot</label>
+          <input id="hint-pot" type="number" min="0" value="30" />
+          <label for="hint-stack">Stack</label>
+          <input id="hint-stack" type="number" min="0" value="200" />
+          <label for="hint-strength">Strength (0-1)</label>
+          <input id="hint-strength" type="number" min="0" max="1" step="0.01" value="0.55" />
+          <button id="table-hints" type="button">Get Hints</button>
+        </div>
+        <pre id="table-state-output" class="result"></pre>
+      </section>
+
+      <!-- SCREEN: Tournament / Sit & Go -->
+      <section class="panel">
+        <h3>Tournaments & Sit & Go</h3>
+        <div class="account-row">
+          <label for="tournament-id">Event ID</label>
+          <input id="tournament-id" type="text" value="sng-gamma" />
+          <label for="tournament-player-id">Alias</label>
+          <input id="tournament-player-id" type="text" value="player-1" />
+        </div>
+        <div class="account-row">
+          <button id="sng-create" type="button">Deploy SNG</button>
+          <button id="sng-register" type="button">Register</button>
+          <button id="sng-start-level" type="button">Bump Blinds</button>
+          <button id="sng-payouts" type="button" class="btn-outline">Calc ICM</button>
+          <button id="sng-eliminate" type="button" style="display: none">Eliminate SNG</button>
+        </div>
+        <div class="account-row hidden">
+          <button id="mtt-create" type="button">Create MTT</button>
+          <button id="mtt-register" type="button">Register MTT</button>
+          <button id="mtt-start" type="button">Start MTT</button>
+          <button id="mtt-eliminate" type="button">Eliminate MTT</button>
+          <button id="mtt-state" type="button">MTT State</button>
+        </div>
+        <div class="account-row">
+          <label for="v2-tour-type">V2 Type</label>
+          <select id="v2-tour-type">
+            <option value="mtt">mtt</option>
+            <option value="sng">sng</option>
+          </select>
+          <label for="v2-clock-seconds">Clock +sec</label>
+          <input id="v2-clock-seconds" type="number" min="1" value="600" />
+          <label for="v2-finish-position">Finish</label>
+          <input id="v2-finish-position" type="number" min="1" value="6" />
+        </div>
+        <div class="account-row">
+          <button id="v2-tour-create" type="button">V2 Create</button>
+          <button id="v2-tour-register" type="button">V2 Register</button>
+          <button id="v2-tour-start" type="button">V2 Start</button>
+          <button id="v2-tour-clock" type="button">V2 Clock</button>
+          <button id="v2-tour-rebuy" type="button">V2 Rebuy</button>
+          <button id="v2-tour-addon" type="button">V2 Add-on</button>
+          <button id="v2-tour-eliminate" type="button">V2 Eliminate</button>
+          <button id="v2-tour-state" type="button">V2 State</button>
+          <button id="v2-tour-payouts" type="button">V2 Payouts</button>
+        </div>
+        <pre id="tournament-output" class="result"></pre>
+      </section>
+
+      <!-- SCREEN: Agent Sponsor & Console -->
+      <section class="panel sponsor-panel">
+        <h3>Agent Ops & Sponsorship Market</h3>
+        <div class="account-row">
+          <label for="agent-id">Agent Name</label>
+          <input id="agent-id" type="text" value="agent-omega" />
+          <label for="sponsorship-sponsor-id">Backer Wallet</label>
+          <input id="sponsorship-sponsor-id" type="text" value="backer-0x" />
+        </div>
+        <div class="account-row">
+          <label for="agent-style">Logic Model</label>
+          <select id="agent-style">
+            <option value="tight_aggressive" selected>GTO - Tig.Agg</option>
+            <option value="loose_aggressive">Loose Aggressive</option>
+            <option value="tight_passive">Tight Passive</option>
+            <option value="exploitative">Node Exploitative</option>
+            <option value="icm_focused">ICM Optimizer</option>
+          </select>
+          <label for="sponsorship-buyin">Stake (ETH)</label>
+          <input id="sponsorship-buyin" type="number" min="0" value="100" />
+          <label for="sponsorship-principal">Backer Amount</label>
+          <input id="sponsorship-principal" type="number" min="1" value="100" />
+        </div>
+        <div class="account-row">
+          <button id="agent-register" type="button" class="btn-primary">Instantiate Agent</button>
+          <button id="agent-craft-texassolver" type="button">Craft Traits (TexasSolver)</button>
+          <button id="sponsorship-open" type="button">Open Staking</button>
+          <button id="sponsorship-fund" type="button">Fund Agent</button>
+          <button id="sponsorship-one-click-fund" type="button">1-Click Fund</button>
+          <button id="sponsorship-settle" type="button" class="btn-outline">
+            Settle Waterfall
+          </button>
+          <button id="sponsorship-marketplace" type="button" class="btn-outline">Marketplace</button>
+          <button id="sponsorship-analytics" type="button" class="btn-outline">My ROI</button>
+        </div>
+        <div class="account-row">
+          <label for="nurture-target-bbps">Target bb/100</label>
+          <input id="nurture-target-bbps" type="number" min="-20" max="50" step="0.1" value="2.0" />
+          <label for="nurture-bb100">Episode bb/100</label>
+          <input id="nurture-bb100" type="number" min="-50" max="100" step="0.1" value="1.2" />
+          <label for="nurture-exploitability">Exploitability Proxy</label>
+          <input id="nurture-exploitability" type="number" min="0" max="500" step="1" value="55" />
+        </div>
+        <div class="account-row">
+          <label for="nurture-entropy">Policy Entropy</label>
+          <input id="nurture-entropy" type="number" min="0" max="1" step="0.01" value="0.33" />
+          <label for="nurture-latency">Latency p95 ms</label>
+          <input id="nurture-latency" type="number" min="0" max="5000" step="1" value="220" />
+          <label for="nurture-violations">Legal Violations (bps)</label>
+          <input id="nurture-violations" type="number" min="0" max="10000" step="1" value="0" />
+        </div>
+        <div class="account-row">
+          <label for="nurture-showdown-error">Showdown Errors (bps)</label>
+          <input id="nurture-showdown-error" type="number" min="0" max="10000" step="1" value="8" />
+          <label for="nurture-volatility">Volatility (bps)</label>
+          <input id="nurture-volatility" type="number" min="0" max="10000" step="1" value="900" />
+          <label for="nurture-source">Episode Source</label>
+          <select id="nurture-source">
+            <option value="ui_manual" selected>ui_manual</option>
+            <option value="self_play">self_play</option>
+            <option value="probe">probe</option>
+            <option value="head_to_head">head_to_head</option>
+          </select>
+        </div>
+        <div class="account-row">
+          <label for="nurture-actors">Learner Actors</label>
+          <input id="nurture-actors" type="number" min="1" max="128" step="1" value="4" />
+          <label for="nurture-traversals">Traversals/Iter</label>
+          <input id="nurture-traversals" type="number" min="1" max="50000" step="1" value="1200" />
+          <label for="nurture-batch-size">Mini Batch</label>
+          <input id="nurture-batch-size" type="number" min="32" max="65536" step="32" value="2048" />
+        </div>
+        <div class="account-row">
+          <button id="nurture-init" type="button">Nurture Init</button>
+          <button id="nurture-episode" type="button">Log Episode</button>
+          <button id="nurture-batch10" type="button">Log 10 Episodes</button>
+          <button id="nurture-evaluate" type="button">Evaluate Program</button>
+          <button id="nurture-state" type="button" class="btn-outline">Coach Card</button>
+          <button id="nurture-export" type="button" class="btn-outline">Export Program</button>
+        </div>
+        <div class="account-row">
+          <label for="nurture-refresh-sec">Auto-refresh (sec)</label>
+          <input id="nurture-refresh-sec" type="number" min="3" max="300" step="1" value="12" />
+          <button id="nurture-auto-toggle" type="button" class="btn-outline">Start Auto Refresh</button>
+          <label for="nurture-compare-ids">Compare Agents</label>
+          <input id="nurture-compare-ids" type="text" value="agent-omega,agent-alpha,agent-it-1" />
+          <button id="nurture-compare" type="button">Compare</button>
+        </div>
+        <div class="account-row">
+          <label for="nurture-preset">Scenario Preset</label>
+          <select id="nurture-preset">
+            <option value="baseline_ladder" selected>Baseline Ladder</option>
+            <option value="stability_hardening">Stability Hardening</option>
+            <option value="exploit_hunt">Exploit Hunt</option>
+            <option value="latency_stress">Latency Stress</option>
+          </select>
+          <button id="nurture-preset-apply" type="button" class="btn-outline">Apply Preset</button>
+          <button id="nurture-macro-run" type="button">Run Macro</button>
+          <label for="nurture-macro-episodes">Macro Episodes</label>
+          <input id="nurture-macro-episodes" type="number" min="1" max="200" step="1" value="20" />
+          <label for="nurture-compare-sort">Compare Sort</label>
+          <select id="nurture-compare-sort">
+            <option value="bb100_desc" selected>bb/100 Desc</option>
+            <option value="exploitability_asc">Exploitability Asc</option>
+            <option value="episodes_desc">Episodes Desc</option>
+            <option value="latency_asc">Latency Asc</option>
+          </select>
+          <label for="nurture-compare-stage-filter">Stage Filter</label>
+          <select id="nurture-compare-stage-filter">
+            <option value="all" selected>All</option>
+            <option value="bootstrap">bootstrap</option>
+            <option value="stable_self_play">stable_self_play</option>
+            <option value="exploit_test">exploit_test</option>
+            <option value="ladder_ready">ladder_ready</option>
+          </select>
+          <label for="nurture-compare-min-episodes">Min Episodes</label>
+          <input id="nurture-compare-min-episodes" type="number" min="0" max="100000" step="1" value="0" />
+          <button id="nurture-baseline-set" type="button" class="btn-outline">Set Delta Baseline</button>
+          <button id="nurture-baseline-clear" type="button" class="btn-outline">Clear Baseline</button>
+          <button id="nurture-compare-export-json" type="button" class="btn-outline">Export Compare JSON</button>
+          <button id="nurture-compare-export-csv" type="button" class="btn-outline">Export Compare CSV</button>
+          <button id="agent-console-clear" type="button" class="btn-outline">Clear Console</button>
+        </div>
+        <div class="account-row">
+          <label for="agent-texassolver-json">TexasSolver Node JSON</label>
+          <textarea id="agent-texassolver-json" rows="6">{"strategy":{"actions":["fold","call","raise"],"strategy":{"AhKh":[0.05,0.35,0.6],"QsQh":[0.1,0.2,0.7],"7c6c":[0.25,0.5,0.25]}}}</textarea>
+        </div>
+        <div class="account-row">
+          <button id="trait-dashboard" type="button" class="btn-outline">Trait Dashboard</button>
+          <label for="trait-freeze">Freeze Crafting</label>
+          <input id="trait-freeze" type="checkbox" />
+          <button id="trait-freeze-apply" type="button" class="btn-outline">Apply Freeze</button>
+          <label for="trait-rollout-id">Rollout ID</label>
+          <input id="trait-rollout-id" type="text" placeholder="rollout-uuid" />
+          <button id="trait-rollout-state" type="button" class="btn-outline">Get Rollout</button>
+        </div>
+        <div class="account-row">
+          <label for="trait-artifact-id">Artifact ID</label>
+          <input id="trait-artifact-id" type="text" placeholder="artifact signature id" />
+          <button id="trait-revoke-artifact" type="button" class="btn-outline">Revoke Artifact</button>
+        </div>
+        <div id="nurture-card" class="nurture-card">
+          <div class="nurture-title">Nurture Coach</div>
+          <div class="nurture-sub">Initialize a nurture program to see stage and recommendations.</div>
+          <div id="nurture-stage-rail" class="nurture-stage-rail"></div>
+          <div class="nurture-chart-grid">
+            <div class="nurture-chart-wrap">
+              <div class="nurture-label">bb/100 Trend</div>
+              <div id="nurture-chart-bb100" class="nurture-chart"></div>
+            </div>
+            <div class="nurture-chart-wrap">
+              <div class="nurture-label">Exploitability Trend</div>
+              <div id="nurture-chart-exploit" class="nurture-chart"></div>
+            </div>
+          </div>
+        </div>
+        <div id="nurture-compare-status" class="nurture-sub"></div>
+        <div id="nurture-compare-grid" class="nurture-compare-grid"></div>
+        <pre id="agent-console-output" class="result"></pre>
+
+        <!-- Hidden elements to preserve JS bindings -->
+        <span class="hidden">
+          <input id="agent-owner-id" type="hidden" value="root" />
+          <select id="agent-tier">
+            <option value="B" selected>B</option>
+            <option value="A">A</option>
+            <option value="C">C</option>
+          </select>
+          <button id="strategy-profile" type="button" class="hidden">Create Profile</button>
+          <button id="strategy-decide" type="button" class="hidden">Decide</button>
+          <button id="agent-autoplay" type="button" class="hidden">Autoplay</button>
+          <button id="sim-equity" type="button" class="hidden">Sim</button>
+          <button id="swarm-status" type="button" class="hidden">Swarm</button>
+          <input id="sponsorship-position-id" type="hidden" value="pos" />
+          <input id="sponsorship-agent-id" type="hidden" value="agent" />
+          <input id="sponsorship-prize" type="hidden" value="200" />
+          <button id="sponsorship-close" type="button" class="hidden">Close Funding</button>
+          <button id="sponsorship-claim" type="button" class="hidden">Claim Sponsor</button>
+          <button id="sponsorship-view" type="button" class="hidden">View Position</button>
+        </span>
+        <pre id="sponsorship-output" class="result" style="display: none"></pre>
+        <pre id="sponsorship-market-output" class="result"></pre>
+      </section>
+
+      <!-- SCREEN: Game Render Layer (Legacy Showcase) -->
+      <section class="panel">
+        <h2 id="game-title">AI-ARCADE RENDER ENGINE</h2>
+        <div id="game-controls" class="controls"></div>
+        <div id="game-showcase" class="game-showcase"></div>
+      </section>
+
+      <!-- SCREEN: Trust UX / Provably Fair Panel -->
+      <section class="panel focus-panel">
+        <h3>Trust Architecture & Realtime Fair-Play</h3>
+        <div class="account-row">
+          <label for="client-seed">Local Seed</label>
+          <input id="client-seed" type="text" />
+          <button id="roll-client-seed" type="button" class="btn-outline">Mutate Hash</button>
+        </div>
+        <div class="stats trust-stats">
+          <span>Net Bankroll: <strong id="bankroll" class="text-cyan">1000</strong></span>
+          <span>Validated Hands: <strong id="rounds">0</strong></span>
+          <span>Win Delta: <strong id="wins">0</strong></span>
+          <span>Loss Edge: <strong id="losses">0</strong></span>
+        </div>
+        <pre id="result" class="result" style="display: none"></pre>
+        <ul id="ledger-list" class="feed-list" style="display: none"></ul>
+        <pre id="fairness-receipt" class="result hash-log text-purple">
+// Awaiting secure PRNG hash generation...</pre
+        >
+      </section>
+    </main>
+    <script type="module" src="./script.js"></script>
+  </body>
+</html>

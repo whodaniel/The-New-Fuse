@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/modelcontextprotocol/specification/main/schema/server.schema.json",
+  "mcpServers": {
+    "jules": {
+      "command": "node",
+      "args": ["packages/jules-skill/dist/mcp-server.js"],
+      "description": "Jules CLI integration - Delegate coding tasks to Google's autonomous AI coding agent",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  }
+}

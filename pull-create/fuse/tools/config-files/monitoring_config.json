@@ -1,0 +1,80 @@
+{
+    "type": "MONITORING_CONFIG",
+    "source": "TNF_AG_001",
+    "target": "new_fuse_core",
+    "content": {
+        "metrics": {
+            "task_processing": {
+                "latency": {
+                    "threshold": 100,
+                    "window": "1m",
+                    "alert_on": ">150ms"
+                },
+                "memory_usage": {
+                    "threshold": "450MB",
+                    "window": "5m",
+                    "alert_on": ">500MB"
+                },
+                "queue_depth": {
+                    "threshold": 800,
+                    "window": "30s",
+                    "alert_on": ">900"
+                }
+            },
+            "team_coordination": {
+                "response_time": {
+                    "threshold": 2000,
+                    "window": "1m",
+                    "alert_on": ">3000ms"
+                }
+            }
+        },
+        "logging": {
+            "level": "INFO",
+            "handlers": ["console", "file"],
+            "rotation": "1d"
+        },
+        "extension_sync": {
+            "channel_synchronization": {
+    "sync_interval": "2s",
+    "allowed_domains": ["tnf-core", "ai-agent", "doc-processor", "cline"],
+    "endpoints": {
+      "cline": {
+        "url": "https://cline-api.tnf",
+        "port": 443,
+        "protocol": "wss",
+        "validation": "signature"
+      }
+    "heartbeat_settings": {
+      "timeout": "10s",
+      "retry_policy": "exponential_backoff"
+    },
+    "authentication": {
+      "jwt": {
+        "version": "1.1",
+        "algorithm": "HS256",
+        "secret_env_var": "EXTENSION_JWT_SECRET",
+        "token_expiration": "15m",
+        "issuer": "tnf-message-broker"
+      }
+    },
+    "conflict_resolution": "version_vector",
+    "max_channel_retention": "24h"
+  },
+  "state_synchronization": {
+                "sync_interval": "5s",
+                "conflict_resolution": "last_write_win",
+                "retry_policy": {
+                    "max_attempts": 3,
+                    "backoff_factor": 1.5
+                },
+                "endpoints": [
+                    "ai_agent_state",
+                    "protocol_handler_status",
+                    "message_broker_health"
+                ]
+            }
+        }
+    },
+    "timestamp": "2024-01-06T10:08:00Z"
+}

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Casin8 Desktop - Texas Hold'em Poker</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f4c025",
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#0a0c10",
+                        "navy-felt": "#111827",
+                        "emerald-accent": "#10b981",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .poker-table {
+            background: radial-gradient(circle, #1e293b 0%, #0f172a 100%);
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.8), 0 0 0 8px #f4c025;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .active-glow {
+            box-shadow: 0 0 20px rgba(244, 192, 37, 0.4);
+            border: 1px solid #f4c025;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col overflow-hidden">
+<header class="h-16 border-b border-slate-800 bg-background-dark flex items-center justify-between px-6 z-50">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-3xl">token</span>
+<h1 class="text-xl font-extrabold tracking-tighter text-white">CASIN8</h1>
+</div>
+<div class="h-8 w-px bg-slate-800"></div>
+<div class="flex items-center gap-4">
+<span class="text-sm font-medium text-slate-400">Emerald High Roller</span>
+<div class="flex items-center gap-2 bg-slate-900 px-3 py-1 rounded-full border border-slate-800">
+<span class="size-2 bg-emerald-accent rounded-full animate-pulse"></span>
+<span class="text-xs font-mono text-slate-300">Tx: 0x7a2...f3b | Confirmed</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-lg border border-primary/20">
+<span class="material-symbols-outlined text-primary text-sm">account_balance_wallet</span>
+<span class="text-sm font-bold text-primary">12.450 ETH</span>
+</div>
+<button class="material-symbols-outlined p-2 text-slate-400 hover:text-white transition-colors">settings</button>
+<button class="material-symbols-outlined p-2 text-slate-400 hover:text-white transition-colors">notifications</button>
+<div class="size-9 rounded-full bg-slate-800 border border-slate-700" data-alt="User profile avatar silhouette"></div>
+</div>
+</header>
+<main class="flex-1 flex overflow-hidden">
+<div class="flex-1 relative flex items-center justify-center p-12 overflow-hidden">
+<div class="absolute inset-0 opacity-20 pointer-events-none" data-alt="Subtle geometric dot pattern background" style="background-image: radial-gradient(#f4c025 1px, transparent 1px); background-size: 40px 40px;"></div>
+<div class="poker-table w-full max-w-5xl aspect-[2/1] rounded-[200px] relative flex flex-col items-center justify-center border-8 border-primary/30">
+<div class="absolute inset-x-0 top-0 flex justify-center -translate-y-1/2">
+<div class="glass-card px-6 py-4 rounded-xl flex flex-col items-center w-40">
+<div class="size-14 rounded-full bg-slate-700 border-2 border-slate-600 mb-2" data-alt="High fidelity character avatar for Player 2"></div>
+<span class="text-xs font-bold">Player 2</span>
+<span class="text-emerald-accent text-sm font-mono">2.15 ETH</span>
+</div>
+</div>
+<div class="absolute top-1/4 left-0 -translate-x-1/2">
+<div class="glass-card px-6 py-4 rounded-xl flex flex-col items-center w-40">
+<div class="size-14 rounded-full bg-slate-700 border-2 border-slate-600 mb-2" data-alt="High fidelity character avatar for Player 1"></div>
+<span class="text-xs font-bold">Player 1</span>
+<span class="text-emerald-accent text-sm font-mono">5.40 ETH</span>
+</div>
+</div>
+<div class="absolute top-1/4 right-0 translate-x-1/2">
+<div class="glass-card px-6 py-4 rounded-xl flex flex-col items-center w-40">
+<div class="size-14 rounded-full bg-slate-700 border-2 border-slate-600 mb-2" data-alt="High fidelity character avatar for Player 3"></div>
+<span class="text-xs font-bold">Player 3</span>
+<span class="text-emerald-accent text-sm font-mono">1.05 ETH</span>
+</div>
+</div>
+<div class="absolute bottom-1/4 left-0 -translate-x-1/2">
+<div class="glass-card px-6 py-4 rounded-xl flex flex-col items-center w-40">
+<div class="size-14 rounded-full bg-slate-700 border-2 border-slate-600 mb-2" data-alt="High fidelity character avatar for Player 6"></div>
+<span class="text-xs font-bold">Player 6</span>
+<span class="text-emerald-accent text-sm font-mono">0.88 ETH</span>
+</div>
+</div>
+<div class="absolute bottom-1/4 right-0 translate-x-1/2">
+<div class="glass-card px-6 py-4 rounded-xl flex flex-col items-center w-40">
+<div class="size-14 rounded-full bg-slate-700 border-2 border-slate-600 mb-2" data-alt="High fidelity character avatar for Player 4"></div>
+<span class="text-xs font-bold">Player 4</span>
+<span class="text-emerald-accent text-sm font-mono">3.22 ETH</span>
+<div class="absolute -left-4 top-0 bg-primary text-background-dark size-6 rounded-full flex items-center justify-center font-black text-[10px] shadow-lg">D</div>
+</div>
+</div>
+<div class="flex flex-col items-center gap-6">
+<div class="flex flex-col items-center">
+<span class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">Current Pot</span>
+<div class="flex items-center gap-3 bg-black/40 px-6 py-2 rounded-full border border-white/10 backdrop-blur-md">
+<div class="flex -space-x-2">
+<div class="size-5 rounded-full bg-primary border border-yellow-600"></div>
+<div class="size-5 rounded-full bg-primary border border-yellow-600"></div>
+<div class="size-5 rounded-full bg-primary border border-yellow-600"></div>
+</div>
+<span class="text-xl font-black text-white">1.250 ETH</span>
+</div>
+</div>
+<div class="flex gap-3">
+<div class="w-16 h-24 bg-white rounded-lg flex flex-col items-center justify-center shadow-2xl relative overflow-hidden group">
+<span class="absolute top-1 left-1 text-red-600 font-bold text-sm">A</span>
+<span class="material-symbols-outlined text-red-600 text-3xl">favorite</span>
+</div>
+<div class="w-16 h-24 bg-white rounded-lg flex flex-col items-center justify-center shadow-2xl relative overflow-hidden group">
+<span class="absolute top-1 left-1 text-slate-900 font-bold text-sm">K</span>
+<span class="material-symbols-outlined text-slate-900 text-3xl">playing_cards</span>
+</div>
+<div class="w-16 h-24 bg-white rounded-lg flex flex-col items-center justify-center shadow-2xl relative overflow-hidden group">
+<span class="absolute top-1 left-1 text-red-600 font-bold text-sm">Q</span>
+<span class="material-symbols-outlined text-red-600 text-3xl">favorite</span>
+</div>
+<div class="w-16 h-24 bg-slate-800/50 border-2 border-dashed border-slate-700 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-700">lock</span>
+</div>
+<div class="w-16 h-24 bg-slate-800/50 border-2 border-dashed border-slate-700 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-700">lock</span>
+</div>
+</div>
+</div>
+<div class="absolute inset-x-0 bottom-0 flex justify-center translate-y-1/2 z-10">
+<div class="active-glow bg-slate-900 px-8 py-5 rounded-2xl flex flex-col items-center w-56 border-t-2 border-primary">
+<div class="absolute -top-3 bg-primary text-background-dark text-[10px] font-black px-3 py-0.5 rounded-full uppercase tracking-widest">Active</div>
+<div class="flex items-center gap-4 mb-2">
+<div class="size-16 rounded-full bg-primary/20 border-2 border-primary overflow-hidden" data-alt="Close up high fidelity avatar of the current user">
+<img alt="Hero Avatar" class="w-full h-full object-cover" data-alt="Hero player avatar portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA96FiKbh1WOz2062Lv7suItAg_FKOsjXp0oA6JQg1a3Nh-ZLsmXkJptvpawqcuCVSoOlJG-kagYO9xm9asg3CbuiEuATVlqs3l9BQ_7GYUayxG26PjOmuHXGo_JiDeSo5UYh9rFMkQqbFxkDOlXslr58ZJ5thEmUlrOqAECT2bBNMWIq29zim2s0BIutRPRA2ioZmYyvj_STY5BIln8IyT8enaggvF6_GeyvFnv2jRCRFFmUNkAzRBweYpSklZwrYopnHaw9hT0L0w"/>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold">Hero (You)</span>
+<span class="text-primary text-lg font-black font-mono">12.45 ETH</span>
+</div>
+</div>
+<div class="flex gap-2">
+<div class="w-10 h-14 bg-white rounded flex flex-col items-center justify-center shadow-lg relative">
+<span class="absolute top-0.5 left-0.5 text-slate-900 font-bold text-[10px]">10</span>
+<span class="material-symbols-outlined text-slate-900 text-lg">diamond</span>
+</div>
+<div class="w-10 h-14 bg-white rounded flex flex-col items-center justify-center shadow-lg relative">
+<span class="absolute top-0.5 left-0.5 text-slate-900 font-bold text-[10px]">J</span>
+<span class="material-symbols-outlined text-slate-900 text-lg">diamond</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="absolute bottom-6 left-1/2 -translate-x-1/2 w-full max-w-4xl flex items-end gap-6 px-12 z-20">
+<div class="flex-1 glass-card p-4 rounded-xl flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div class="flex gap-2">
+<button class="bg-slate-800 hover:bg-slate-700 text-white text-[10px] font-bold px-3 py-1.5 rounded uppercase border border-slate-700">Min</button>
+<button class="bg-slate-800 hover:bg-slate-700 text-white text-[10px] font-bold px-3 py-1.5 rounded uppercase border border-slate-700">1/2 Pot</button>
+<button class="bg-slate-800 hover:bg-slate-700 text-white text-[10px] font-bold px-3 py-1.5 rounded uppercase border border-slate-700">Pot</button>
+<button class="bg-slate-800 hover:bg-slate-700 text-white text-[10px] font-bold px-3 py-1.5 rounded uppercase border border-slate-700">All-In</button>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-xs font-bold text-primary">0.45 ETH</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">edit</span>
+</div>
+</div>
+<div class="relative h-2 bg-slate-800 rounded-full">
+<div class="absolute inset-y-0 left-0 bg-primary w-1/3 rounded-full"></div>
+<div class="absolute top-1/2 left-1/3 -translate-y-1/2 size-5 bg-white rounded-full shadow-lg cursor-pointer border-4 border-primary"></div>
+</div>
+<div class="flex gap-3 h-14">
+<button class="flex-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold rounded-lg transition-all flex items-center justify-center uppercase tracking-widest text-sm">Fold</button>
+<button class="flex-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold rounded-lg transition-all flex items-center justify-center uppercase tracking-widest text-sm">Check / Call</button>
+<button class="flex-[1.5] bg-primary hover:bg-yellow-500 text-background-dark font-black rounded-lg transition-all flex items-center justify-center uppercase tracking-widest text-sm shadow-lg shadow-primary/20">Raise to 0.45</button>
+</div>
+</div>
+</div>
+</div>
+<aside class="w-80 border-l border-slate-800 flex flex-col bg-background-dark/50 backdrop-blur-xl">
+<div class="p-4 border-b border-slate-800">
+<div class="flex items-center gap-2 text-primary mb-4">
+<span class="material-symbols-outlined text-xl">verified_user</span>
+<h2 class="text-sm font-bold uppercase tracking-widest">Provably Fair</h2>
+</div>
+<div class="space-y-3">
+<div class="flex flex-col gap-1">
+<label class="text-[10px] text-slate-500 font-bold uppercase">Server Seed Hash</label>
+<div class="bg-slate-900/50 p-2 rounded border border-slate-800 font-mono text-[10px] text-slate-300 break-all">
+                            8f4a2b...c9d0e1
+                        </div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-[10px] text-slate-500 font-bold uppercase">Client Seed</label>
+<input class="bg-slate-900/50 p-2 rounded border border-slate-800 font-mono text-[10px] text-slate-300 w-full outline-none focus:border-primary" type="text" value="casin8-session-772"/>
+</div>
+<div class="flex justify-between items-center text-[10px] text-slate-500 font-bold uppercase">
+<span>Nonce: 142</span>
+<button class="text-primary hover:underline">Verify Hand</button>
+</div>
+</div>
+</div>
+<div class="flex-1 flex flex-col min-h-0">
+<div class="p-4 flex items-center justify-between border-b border-slate-800">
+<div class="flex items-center gap-2 text-slate-400">
+<span class="material-symbols-outlined text-xl">history</span>
+<h2 class="text-sm font-bold uppercase tracking-widest">Hand History</h2>
+</div>
+<span class="text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-400">Rnd #48291</span>
+</div>
+<div class="flex-1 overflow-y-auto p-4 space-y-3">
+<div class="flex gap-3 text-xs">
+<span class="text-slate-500 shrink-0">14:02:11</span>
+<p class="text-slate-300"><span class="text-white font-bold">Player 4</span> posted Big Blind 0.05 ETH</p>
+</div>
+<div class="flex gap-3 text-xs">
+<span class="text-slate-500 shrink-0">14:02:15</span>
+<p class="text-slate-300"><span class="text-white font-bold">Hero</span> called 0.05 ETH</p>
+</div>
+<div class="flex gap-3 text-xs">
+<span class="text-slate-500 shrink-0">14:02:18</span>
+<p class="text-slate-300"><span class="text-white font-bold">Player 2</span> raised to 0.15 ETH</p>
+</div>
+<div class="flex gap-3 text-xs">
+<span class="text-slate-500 shrink-0">14:02:22</span>
+<p class="text-slate-300"><span class="text-white font-bold">Player 3</span> folded</p>
+</div>
+<div class="flex gap-3 text-xs">
+<span class="text-slate-500 shrink-0">14:02:25</span>
+<p class="text-slate-300"><span class="text-white font-bold">Hero</span> called 0.10 ETH</p>
+</div>
+<div class="flex gap-3 text-xs bg-primary/5 p-2 rounded border border-primary/10">
+<span class="text-slate-500 shrink-0">14:02:30</span>
+<p class="text-slate-300"><span class="text-primary font-bold">FLOP:</span> [A♥] [K♠] [Q♥]</p>
+</div>
+</div>
+</div>
+<div class="p-4 border-t border-slate-800 bg-slate-900/30">
+<div class="flex gap-2">
+<input class="flex-1 bg-slate-800 border-none rounded-lg text-xs py-2 px-3 focus:ring-1 focus:ring-primary" placeholder="Send a message..." type="text"/>
+<button class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">send</button>
+</div>
+</div>
+</aside>
+</main>
+<footer class="h-8 bg-black/80 flex items-center justify-between px-6 border-t border-slate-900">
+<div class="flex items-center gap-4">
+<span class="text-[10px] text-slate-500 font-medium">Status: Connected to Ethereum Mainnet</span>
+<div class="h-3 w-px bg-slate-800"></div>
+<span class="text-[10px] text-slate-500 font-medium">Latency: 24ms</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="text-[10px] text-slate-500 font-medium">Players Online: 1,482</span>
+<span class="text-[10px] text-slate-500 font-medium">24h Vol: 412.5 ETH</span>
+</div>
+</footer>
+</body></html>

@@ -1,0 +1,84 @@
+/* Command Palette */
+#command-palette {
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Toast Notifications */
+.toast {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Dark Mode Transitions */
+.dark-mode-transition {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Workflow Canvas */
+.workflow-canvas {
+  touch-action: none;
+  background-size: 20px 20px;
+  background-image: 
+    linear-gradient(to right, rgba(128, 128, 128, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(128, 128, 128, 0.1) 1px, transparent 1px);
+}
+
+/* Agent Card Animations */
+.agent-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.agent-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.event-tooltip {
+  display: none;
+}
+
+.event-tooltip.visible {
+  display: block;
+}
+
+/* Collaborator Cursor */
+/* Note: Position and background-color are set via inline styles in WorkflowCanvas.tsx as they are dynamic. */
+.collaborator-cursor {
+  position: absolute;
+  z-index: 10; /* Ensure cursor is above canvas elements */
+  pointer-events: none; /* Allow clicks to pass through the cursor */
+  transform: translate(-50%, -50%); /* Center the cursor on the exact position */
+  /* Add any other static styles here */
+}

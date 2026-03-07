@@ -1,0 +1,29 @@
+{
+  "generatedAt": "2026-03-03T11:19:34.293Z",
+  "counts": {
+    "canonicalProduction": 13,
+    "routeCatalogPaths": 158,
+    "sidebarPaths": 21,
+    "missingFromRouteCatalog": 0,
+    "missingFromSidebar": 0
+  },
+  "paths": {
+    "canonicalProduction": [
+      "/admin",
+      "/agents",
+      "/analytics",
+      "/chat",
+      "/dashboard",
+      "/hub",
+      "/marketplace",
+      "/mcp-hub",
+      "/observatory",
+      "/settings",
+      "/tasks",
+      "/workflows",
+      "/workspace/overview"
+    ],
+    "missingFromRouteCatalog": [],
+    "missingFromSidebar": []
+  }
+}

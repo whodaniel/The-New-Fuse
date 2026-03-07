@@ -1,0 +1,137 @@
+"use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AgentOptimization = void 0;
+var react_1 = require("react");
+var Card_1 = require("../ui/Card");
+var Input_1 = require("../ui/Input");
+var Button_1 = require("../ui/Button");
+var defaultMetrics = [
+    'responseTime',
+    'accuracy',
+    'resourceUsage',
+    'throughput',
+];
+var AgentOptimization = function (_a) {
+    var onOptimize = _a.onOptimize, _b = _a.loading, loading = _b === void 0 ? false : _b, _c = _a.className, className = _c === void 0 ? '' : _c;
+    var _d = (0, react_1.useState)({
+        metrics: [],
+        targets: {},
+        constraints: {},
+        strategy: balanced',
+    }), config = _d[0], setConfig = _d[1];
+    var _e = (0, react_1.useState)(''), selectedMetric = _e[0], setSelectedMetric = _e[1];
+    var _f = (0, react_1.useState)(''), targetValue = _f[0], setTargetValue = _f[1];
+    var addMetric = function () {
+        if (selectedMetric && targetValue) {
+            setConfig(function (prev) {
+                var _a;
+                return (__assign(__assign({}, prev), { metrics: __spreadArray(__spreadArray([], prev.metrics, true), [selectedMetric], false), targets: __assign(__assign({}, prev.targets), (_a = {}, _a[selectedMetric] = parseFloat(targetValue), _a)) }));
+            });
+            setSelectedMetric('');
+            setTargetValue('');
+        }
+    };
+    var removeMetric = function (metric) {
+        setConfig(function (prev) {
+            var _a = prev.targets, _b = metric, _ = _a[_b], remainingTargets = __rest(_a, [typeof _b === "symbol" ? _b : _b + ""]);
+            return __assign(__assign({}, prev), { metrics: prev.metrics.filter(function (m) { return m !== metric; }), targets: remainingTargets });
+        });
+    };
+    var handleSubmit = function (e) {
+        e.preventDefault();
+        onOptimize(config);
+    };
+    return (<Card_1.Card className={className}>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <h3 className="text-lg font-medium text-gray-900">Agent Optimization</h3>
+          <p className="mt-1 text-sm text-gray-500">
+            Configure optimization parameters and targets
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Optimization Strategy
+            </label>
+            <select value={config.strategy} onChange={function (e) { return setConfig(function (prev) { return (__assign(__assign({}, prev), { strategy: e.target.value })); }); }} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2">
+              <option value="balanced">Balanced</option>
+              <option value="performance">Performance</option>
+              <option value="efficiency">Efficiency</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Optimization Metrics
+            </label>
+            <div className="mt-2 flex space-x-2">
+              <select value={selectedMetric} onChange={function (e) { return setSelectedMetric(e.target.value); }} className="block w-full rounded-md border border-gray-300 px-3 py-2">
+                <option value="">Select metric</option>
+                {defaultMetrics
+            .filter(function (m) { return !config.metrics.includes(m); })
+            .map(function (metric) { return (<option key={metric} value={metric}>
+                      {metric.charAt(0).toUpperCase() + metric.slice(1)}
+                    </option>); })}
+              </select>
+              <Input_1.Input type="number" value={targetValue} onChange={function (e) { return setTargetValue(e.target.value); }} placeholder="Target value" className="w-32"/>
+              <Button_1.Button type="button" onClick={addMetric} variant="outline" disabled={!selectedMetric || !targetValue}>
+                Add
+              </Button_1.Button>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            {config.metrics.map(function (metric) { return (<div key={metric} className="flex items-center justify-between p-2 bg-gray-50 rounded-md">
+                <span className="text-sm font-medium text-gray-700">
+                  {metric}: {config.targets[metric]}
+                </span>
+                <button type="button" onClick={function () { return removeMetric(metric); }} className="text-red-600 hover:text-red-800">
+                  Remove
+                </button>
+              </div>); })}
+          </div>
+        </div>
+
+        <div className="flex justify-end">
+          <Button_1.Button type="submit" loading={loading} disabled={config.metrics.length === 0}>
+            Start Optimization
+          </Button_1.Button>
+        </div>
+      </form>
+    </Card_1.Card>);
+};
+exports.AgentOptimization = AgentOptimization;
+export {};

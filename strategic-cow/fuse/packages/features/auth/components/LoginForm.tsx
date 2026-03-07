@@ -1,0 +1,132 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { useApi } from '@/hooks/useApi';
+import { useToast } from '@/hooks/useToast';
+import { Button, Input, FormControl, FormLabel, FormErrorMessage, VStack, Text, Link, Box, InputGroup, InputRightElement, IconButton, Checkbox, HStack, } from '@chakra-ui/react';
+import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
+const LoginForm = () => {
+    const navigate = useNavigate();
+    const { actions } = useAuth();
+    const { callApi } = useApi();
+    const { showToast } = useToast();
+    const [formData, setFormData] = useState({
+        email: ',
+        password: ',
+        rememberMe: false,
+    });
+    const [errors, setErrors] = useState({});
+    const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const validateForm = () => {
+        const newErrors = {};
+        if (!formData.email) {
+            newErrors.email = 'Email is required';
+        }
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            newErrors.email = 'Please enter a valid email address';
+        }
+        if (!formData.password) {
+            newErrors.password = 'Password is required';
+        }
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+    const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setFormData(prev => (Object.assign(Object.assign({}, prev), { [name]: type === 'checkbox' ? checked : value })));
+        if (errors[name]) {
+            setErrors(prev => (Object.assign(Object.assign({}, prev), { [name]: ' })));
+        }
+    };
+    const handleSubmit = async (): Promise<void> {e) => {
+        e.preventDefault();
+        if (!validateForm()) {
+            showToast({
+                type: error',
+                message: Please fix the errors in the form',
+            });
+            return;
+        }
+        setLoading(true);
+        try {
+            const response = await callApi({
+                endpoint: /api/auth/login',
+                method: POST',
+                body: {
+                    email: formData.email,
+                    password: formData.password,
+                },
+            });
+            if ((response === null || response === void 0 ? void 0 : response.user) && (response === null || response === void 0 ? void 0 : response.token)) {
+                if (formData.rememberMe) {
+                    localStorage.setItem('rememberMe', 'true');
+                }
+                actions.updateUser(response.user, response.token);
+                showToast({
+                    type: success',
+                    message: Login successful! Redirecting to dashboard...',
+                });
+                setTimeout(() => {
+                    navigate('/dashboard');
+                }, 1000);
+            }
+        }
+        catch (error) {
+            showToast({
+                type: error',
+                message: error.message || 'Invalid email or password',
+            });
+        }
+        finally {
+            setLoading(false);
+        }
+    };
+    const handleForgotPassword = () => {
+        navigate('/forgot-password');
+    };
+    return (<Box maxW="400px" w="100%">
+      <form onSubmit={handleSubmit}>
+        <VStack spacing={4}>
+          <FormControl isInvalid={!!errors.email}>
+            <FormLabel>Email</FormLabel>
+            <Input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Enter your email" autoComplete="email"/>
+            <FormErrorMessage>{errors.email}</FormErrorMessage>
+          </FormControl>
+
+          <FormControl isInvalid={!!errors.password}>
+            <FormLabel>Password</FormLabel>
+            <InputGroup>
+              <Input type={showPassword ? 'text' : password'} name="password" value={formData.password} onChange={handleChange} placeholder="Enter your password" autoComplete="current-password"/>
+              <InputRightElement>
+                <IconButton aria-label={showPassword ? 'Hide password' : Show password'} icon={showPassword ? <ViewOffIcon /> : <ViewIcon />} onClick={() => setShowPassword(!showPassword)} variant="ghost" size="sm"/>
+              </InputRightElement>
+            </InputGroup>
+            <FormErrorMessage>{errors.password}</FormErrorMessage>
+          </FormControl>
+
+          <HStack justify="space-between" width="100%">
+            <Checkbox name="rememberMe" isChecked={formData.rememberMe} onChange={handleChange}>
+              Remember me
+            </Checkbox>
+            <Link color="blue.500" onClick={handleForgotPassword} fontSize="sm">
+              Forgot password?
+            </Link>
+          </HStack>
+
+          <Button type="submit" colorScheme="blue" width="100%" isLoading={loading} loadingText="Signing in...">
+            Sign In
+          </Button>
+
+          <Text fontSize="sm">
+            Don't have an account?{' '}
+            <Link color="blue.500" onClick={() => navigate('/register')}>
+              Create one
+            </Link>
+          </Text>
+        </VStack>
+      </form>
+    </Box>);
+};
+export default LoginForm;
+//# sourceMappingURL=LoginForm.js.map

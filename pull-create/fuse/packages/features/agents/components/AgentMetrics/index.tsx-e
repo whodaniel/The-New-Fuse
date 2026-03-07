@@ -1,0 +1,95 @@
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+// @ts-checkimport React, { useEffect, useState } from 'react';
+import { Card } from '@/components/ui/Card';
+import { Progress } from '@/components/ui/Progress';
+import { toast } from 'react-toastify';
+export const AgentMetricsDisplay: onMetricsUpdate(data): unknown) {
+                console.error('Error fetching metrics:', error);
+                toast.error('Failed to fetch agent metrics');
+            }
+            finally {
+                setLoading(false): unknown) {
+        return (<Card className = ({ agentId, refreshInterval = 30000, onMetricsUpdate, }) => {
+    const [metrics, setMetrics] = useState(null);
+    const [loading, setLoading] = useState(true);
+    useEffect(() => {
+        const fetchMetrics = async (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> () => {
+            try {
+                const response = await fetch(`/api/agents/${agentId}/metrics`): unknown) {
+        return (<Card className="p-6">
+        <p className="text-gray-500">No metrics available</p>
+      </Card>);
+    }
+    return (<Card className="p-6 space-y-6">
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <h3 className="text-sm font-medium text-gray-500">Success Rate</h3>
+          <div className="mt-2 flex items-baseline">
+            <p className="text-2xl font-semibold text-gray-900">
+              {metrics.successRate}%
+            </p>
+          </div>
+          <Progress value={metrics.successRate} className="mt-2"/>
+        </div>
+
+        <div>
+          <h3 className="text-sm font-medium text-gray-500">Response Time</h3>
+          <div className="mt-2 flex items-baseline">
+            <p className="text-2xl font-semibold text-gray-900">
+              {metrics.averageResponseTime}ms
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <h3 className="text-sm font-medium text-gray-500">Tasks</h3>
+          <div className="mt-2">
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-500">Completed</span>
+              <span className="text-sm font-medium text-gray-900">
+                {metrics.completedTasks}/{metrics.totalTasks}
+              </span>
+            </div>
+            <div className="flex justify-between mt-1">
+              <span className="text-sm text-gray-500">Failed</span>
+              <span className="text-sm font-medium text-gray-900">
+                {metrics.failedTasks}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 className="text-sm font-medium text-gray-500">Resource Usage</h3>
+          <div className="mt-2">
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-500">CPU</span>
+              <span className="text-sm font-medium text-gray-900">
+                {metrics.resourceUsage.cpu}%
+              </span>
+            </div>
+            <Progress value={metrics.resourceUsage.cpu} className="mt-1"/>
+            <div className="flex justify-between mt-2">
+              <span className="text-sm text-gray-500">Memory</span>
+              <span className="text-sm font-medium text-gray-900">
+                {metrics.resourceUsage.memory}%
+              </span>
+            </div>
+            <Progress value={metrics.resourceUsage.memory} className="mt-1"/>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-4 text-sm text-gray-500">
+        Last active: {new Date(metrics.lastActive).toLocaleString()}
+      </div>
+    </Card>);
+};
+//# sourceMappingURL=index.js.map

@@ -1,0 +1,113 @@
+import React, { useEffect, useState } from "react";
+import { CaretDown, CaretUp } from "@phosphor-icons/react";
+import System from "@/models/system";
+import { PreLoader } from "@/components/Preloader";
+import { LOCALAI_COMMON_URLS } from "@/utils/constants";
+import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
+const STYLES = {
+    container: "w-full flex flex-col gap-y-7",
+    inputGroup: "w-full flex items-center gap-[36px] mt-1.5",
+    inputContainer: "flex flex-col w-60",
+    label: "text-white text-sm font-semibold block mb-2",
+    input: "border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5",
+    select: "border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5",
+    button: "flex items-center gap-x-2 text-sm font-semibold text-white text-opacity-60 hover:text-opacity-100",
+    helperText: "text-xs leading-[18px] font-base text-white text-opacity-60 mt-2",
+    labelWithGap: "text-white text-sm font-semibold flex items-center gap-x-2",
+};
+function LocalAIModelSelection({ settings, apiKey = null, basePath = null }) {
+    const [models, setModels] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    useEffect(() => {
+        async function fetchModels(): Promise<void> {) {
+            if (!basePath)
+                return;
+            setLoading(true);
+            setError(null);
+            try {
+                const { models } = await System.fetchLocalAIModels(basePath, apiKey);
+                setModels(models);
+            }
+            catch (error) {
+                console.error("Failed to fetch LocalAI models", error);
+                setError("Could not fetch models from LocalAI server. Ensure your server is running and the URL is correct.");
+            }
+            setLoading(false);
+        }
+        fetchModels();
+    }, [basePath, apiKey]);
+    return (<div className={STYLES.inputContainer}>
+      <label className={STYLES.label}>Model Preference</label>
+      <select name="EmbeddingModelPref" required disabled={loading || !models.length} className={STYLES.select} defaultValue={settings === null || settings === void 0 ? void 0 : settings.EmbeddingModelPref}>
+        <optgroup label={loading ? "Loading models..." : "Available embedding models"}>
+          {error ? (<option value="" disabled>
+              {error}
+            </option>) : models.length ? (models.map((model) => (<option key={model} value={model}>
+                {model}
+              </option>))) : (<option value="" disabled>
+              Enter LocalAI URL first
+            </option>)}
+        </optgroup>
+      </select>
+    </div>);
+}
+export function LocalAiOptions({ settings }) {
+    const { autoDetecting: loading, basePath, basePathValue, showAdvancedControls, setShowAdvancedControls, handleAutoDetectClick, } = useProviderEndpointAutoDiscovery({
+        provider: "localai",
+        initialBasePath: settings === null || settings === void 0 ? void 0 : settings.EmbeddingBasePath,
+        ENDPOINTS: LOCALAI_COMMON_URLS,
+    });
+    const [apiKeyValue, setApiKeyValue] = useState(settings === null || settings === void 0 ? void 0 : settings.LocalAiApiKey);
+    const [apiKey, setApiKey] = useState(settings === null || settings === void 0 ? void 0 : settings.LocalAiApiKey);
+    return (<div className={STYLES.container}>
+      <div className={STYLES.inputGroup}>
+        <LocalAIModelSelection settings={settings} apiKey={apiKey !== null && apiKey !== void 0 ? apiKey : null} basePath={basePath.value}/>
+        <div className={STYLES.inputContainer}>
+          <label className={STYLES.label}>
+            Max embedding chunk length
+          </label>
+          <input type="number" name="EmbeddingModelMaxChunkLength" className={STYLES.input} placeholder="1000" min={1} onScroll={(e) => e.target.blur()} defaultValue={settings === null || settings === void 0 ? void 0 : settings.EmbeddingModelMaxChunkLength} autoComplete="off"/>
+        </div>
+        <div className={STYLES.inputContainer}>
+          <div className="flex flex-col gap-y-1 mb-2">
+            <label className={STYLES.labelWithGap}>
+              Local AI API Key{" "}
+              <span className="text-xs text-white text-opacity-60">(Optional)</span>
+            </label>
+          </div>
+          <input type="password" name="LocalAiApiKey" className={STYLES.input} placeholder="Local AI API Key" defaultValue={(settings === null || settings === void 0 ? void 0 : settings.LocalAiApiKey) ? "*".repeat(20) : ""} autoComplete="off" spellCheck={false} onChange={(e) => setApiKeyValue(e.target.value)} onBlur={() => setApiKey(apiKeyValue)}/>
+        </div>
+      </div>
+
+      <div className={STYLES.inputGroup}>
+        <div className={STYLES.inputContainer}>
+          <label className={STYLES.label}>Base URL</label>
+          <div className="flex items-center gap-x-4">
+            <input type="url" name="EmbeddingBasePath" className={STYLES.input} placeholder="http://localhost:8080" value={basePathValue} onChange={(e) => basePath.onChange(e.target.value)} onBlur={() => basePath.onBlur()} required autoComplete="off" spellCheck={false}/>
+            <button type="button" className={STYLES.button} onClick={handleAutoDetectClick} disabled={loading}>
+              {loading ? <PreLoader size="sm"/> : "Auto-detect"}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" className={STYLES.button} onClick={() => setShowAdvancedControls(!showAdvancedControls)}>
+        Advanced Controls
+        {showAdvancedControls ? (<CaretUp className="h-4 w-4"/>) : (<CaretDown className="h-4 w-4"/>)}
+      </button>
+
+      {showAdvancedControls && (<div className={STYLES.inputGroup}>
+          <div className={STYLES.inputContainer}>
+            <label className={STYLES.label}>
+              Model Base Path (Optional)
+            </label>
+            <input type="text" name="EmbeddingModelBasePath" className={STYLES.input} placeholder="/path/to/models" defaultValue={settings === null || settings === void 0 ? void 0 : settings.EmbeddingModelBasePath} autoComplete="off" spellCheck={false}/>
+            <p className={STYLES.helperText}>
+              Path to your models directory. Leave empty to use default path.
+            </p>
+          </div>
+        </div>)}
+    </div>);
+}
+//# sourceMappingURL=LocalAiOptions.js.map

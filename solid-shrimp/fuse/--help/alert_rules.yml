@@ -1,0 +1,124 @@
+groups:
+- 
+    name: system_alerts
+    rules:
+    - 
+        alert: HighCPUUsage
+        expr: cpu_usage_percent > 85
+        for: 5m
+        labels:
+          severity: critical
+          category: system
+        annotations:
+          summary: High CPU usage detected
+          description: CPU usage is above 85% for more than 5 minutes
+      - 
+        alert: HighMemoryUsage
+        expr: memory_usage_percent > 90
+        for: 5m
+        labels:
+          severity: critical
+          category: system
+        annotations:
+          summary: High memory usage detected
+          description: Memory usage is above 90% for more than 5 minutes
+      - 
+        alert: DiskSpaceLow
+        expr: disk_usage_percent > 90
+        for: 1m
+        labels:
+          severity: critical
+          category: system
+        annotations:
+          summary: Disk space critically low
+          description: Disk usage is above 90%
+    - 
+    name: application_alerts
+    rules:
+    - 
+        alert: HighErrorRate
+        expr: error_rate_percent > 5
+        for: 2m
+        labels:
+          severity: critical
+          category: application
+        annotations:
+          summary: High error rate detected
+          description: Error rate is above 5% for more than 2 minutes
+      - 
+        alert: SlowResponseTime
+        expr: response_time_p95 > 3000
+        for: 5m
+        labels:
+          severity: warning
+          category: application
+        annotations:
+          summary: Slow response times detected
+          description: 95th percentile response time is above 3 seconds
+      - 
+        alert: LowThroughput
+        expr: requests_per_second < 500
+        for: 10m
+        labels:
+          severity: warning
+          category: application
+        annotations:
+          summary: Low throughput detected
+          description: Request throughput is below 500 requests/second
+    - 
+    name: business_alerts
+    rules:
+    - 
+        alert: UserRegistrationDrop
+        expr: user_registrations_per_hour < 100
+        for: 30m
+        labels:
+          severity: warning
+          category: business
+        annotations:
+          summary: User registration rate dropped
+          description: User registrations are below normal levels
+      - 
+        alert: MessageVolumeSpike
+        expr: messages_per_second > 10000
+        for: 5m
+        labels:
+          severity: warning
+          category: business
+        annotations:
+          summary: Message volume spike detected
+          description: Message volume is unusually high
+    - 
+    name: infrastructure_alerts
+    rules:
+    - 
+        alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+          category: infrastructure
+        annotations:
+          summary: Service is down
+          description: Service is not responding to health checks
+      - 
+        alert: DatabaseConnectionsHigh
+        expr: database_connections_active / database_connections_max > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          category: infrastructure
+        annotations:
+          summary: High database connection usage
+          description: Database connection pool is above 80% capacity
+      - 
+        alert: CacheHitRateLow
+        expr: cache_hit_rate < 0.8
+        for: 10m
+        labels:
+          severity: warning
+          category: infrastructure
+        annotations:
+          summary: Low cache hit rate
+          description: Cache hit rate is below 80%
+    

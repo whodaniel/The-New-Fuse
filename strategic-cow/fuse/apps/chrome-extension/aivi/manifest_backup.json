@@ -1,0 +1,95 @@
+{
+  "manifest_version": 3,
+  "name": "AI Video Intelligence Suite",
+  "version": "1.0.0",
+  "description": "Process YouTube videos through AI Studio and NotebookLM automatically. Build your AI-powered knowledge base 10x faster.",
+  "author": "Your Name",
+
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3dwTWwdbMyZbpq3O5VWplCZdkjeSCRcgEw9gN7t/eWLN0dMs9+rcBgMa/XZrF/kRJM1KYkRqGuL23X1zWcElrtKQHQt7sJQ9WvqDkSbd14GeY30eyp1GtzqemCdbD0VLGxJUMoemHzjQdjFsgDBQs3J5nvH1fhWTZPDsDBukcWiA666yrpiy5AjTV3pfkw2Hgx44Apj1FDRSHy9jmCh+MoWqX+PZKhILGEEIynACVAXOU3jp21I3AxOVqHukoqtFlRJE6rRjZQToChricMz0grTSiCzNP/6NBb0O/mrfzdBSVV/PnZ7BSWOWNlPCIHTZ1dIVeAp4Q71pvXq4PSK+CQIDAQAB",
+
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "activeTab",
+    "tabs",
+    "scripting",
+    "identity",
+    "cookies",
+    "alarms",
+    "contextMenus",
+    "webRequest",
+    "notifications"
+  ],
+
+  "host_permissions": [
+    "https://*.youtube.com/*",
+    "https://aistudio.google.com/*",
+    "https://notebooklm.google.com/*",
+    "https://www.googleapis.com/*",
+    "https://*.usercontent.goog/*",
+    "https://backend-production-ee16.up.railway.app/*"
+  ],
+
+  "oauth2": {
+    "client_id": "998509408180-k62olkpaolebn62dvm386nrq6gicuour.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/youtube.readonly",
+      "https://www.googleapis.com/auth/drive.appdata",
+      "profile",
+      "email"
+    ]
+  },
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "AI Video Intelligence Suite"
+  },
+
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["https://aistudio.google.com/*"],
+      "js": ["content-scripts/ai-studio.js"],
+      "run_at": "document_idle",
+      "all_frames": true
+    },
+    {
+      "matches": ["https://*.usercontent.goog/*"],
+      "js": ["content-scripts/iframe-bridge.js"],
+      "run_at": "document_idle",
+      "all_frames": true
+    },
+    {
+      "matches": ["https://*.youtube.com/*"],
+      "js": ["content-scripts/youtube.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://notebooklm.google.com/*"],
+      "js": ["content-scripts/notebooklm.js"],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/*", "styles/*"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

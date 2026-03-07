@@ -1,0 +1,46 @@
+[package]
+name = "tnf-desktop"
+version = "4.0.0"
+description = "The New Fuse - Lightweight Desktop Hub"
+authors = ["Daniel Goldberg"]
+edition = "2021"
+license = "MIT"
+
+[lib]
+name = "tauri_app_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-opener = "2"
+tauri-plugin-shell = "2"
+tauri-plugin-fs = "2"
+tauri-plugin-http = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Async runtime for WebSocket bridge
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync", "time"] }
+tokio-tungstenite = { version = "0.24", features = ["native-tls"] }
+futures-util = "0.3"
+uuid = { version = "1", features = ["v4"] }
+
+# HTTP client for Antigravity integration
+reqwest = { version = "0.12", features = ["json", "multipart", "rustls-tls"], default-features = false }
+
+# OAGI/Lux Computer Use - Screen capture and automation
+enigo = "0.2"
+screenshots = "0.8"
+image = "0.24"
+base64 = "0.21"
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+lto = true
+opt-level = "z"
+strip = true
+

@@ -1,0 +1,199 @@
+import React, { FC } from "react";
+import { DashboardWidget } from '@the-new-fuse/types';
+import { Modal } from '@the-new-fuse/../../core/components/ui/Modal';
+import { Input } from '@/shared/ui/core/Input';
+import { Button } from '@the-new-fuse/../../core/components/ui/Button';
+
+interface WidgetConfigModalProps {
+  widget: DashboardWidget;
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (widget: DashboardWidget) => void;
+}
+
+export const WidgetConfigModal: (React as unknown).FC<WidgetConfigModalProps> = ({
+  widget,
+  isOpen,
+  onClose,
+  onSave,
+}) => {
+  const [config, setConfig] = useState<DashboardWidget>(widget);
+
+  const handleSave: unknown  = ()> {
+    onSave(config): keyof DashboardWidget, value: unknown): unknown  = (key> {
+    setConfig((prev) => ({ ...prev, [key]: value }));
+  };
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Configure Widget"
+      size="lg"
+    >
+      <div className="space-y-6">
+        {/* Basic Settings */}
+        <div>
+          <h3 className="text-lg font-medium text-gray-900 mb-4">
+            Basic Settings
+          </h3>
+          <div className="space-y-4">
+            <div>
+              <label
+                htmlFor="title"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Title
+              </label>
+              <Input
+                id="title"
+                value={(config as unknown).title}
+                onChange={(e) => updateConfig('title', (e as unknown).(target as unknown).value)}
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Description
+              </label>
+              <Input
+                id="description"
+                value={(config as unknown).description || ''}
+                onChange={(e) => updateConfig('description', (e as unknown).(target as unknown).value)}
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="size"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Size
+              </label>
+              <select
+                id="size"
+                value={(config as unknown).size}
+                onChange={(e) =>
+                  updateConfig('size', (e as unknown): border-blue-500 focus:ring-blue-500"
+              >
+                <option value="small">Small</option>
+                <option value="medium">Medium</option>
+                <option value="large">Large</option>
+              </select>
+            </div>
+          </div>
+        </div> {/* Widget-specific Settings */}
+        <div>
+          <h3 className="text-lg font-medium text-gray-900 mb-4">
+            Widget Settings
+          </h3>
+          {(config as unknown).type === 'metric' && (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Color
+                </label>
+                <select
+                  value={(config as unknown).(data as unknown).color || ''}
+                  onChange={(e) =>
+                    updateConfig('data', {
+                      ...(config as unknown): (e as unknown).(target as unknown).value,
+                    })
+                  }
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                >
+                  <option value="">Default</option>
+                  <option value="blue">Blue</option>
+                  <option value="green">Green</option>
+                  <option value="yellow">Yellow</option>
+                  <option value="red">Red</option>
+                  <option value="indigo">Indigo</option>
+                  <option value="purple">Purple</option>
+                </select>
+              </div>
+            </div>
+          )} {(config as unknown).type === 'chart' && (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Chart Type
+                </label>
+                <select
+                  value={(config as unknown).(data as unknown).type || 'line'}
+                  onChange={(e) =>
+                    updateConfig('data', {
+                      ...(config as unknown): (e as unknown).(target as unknown).value,
+                    })
+                  }
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                >
+                  <option value="line">Line</option>
+                  <option value="bar">Bar</option>
+                  <option value="pie">Pie</option>
+                </select>
+              </div>
+            </div>
+          )} {((config as unknown).type === 'list' || (config as unknown).type === 'table') && (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Items Per Page
+                </label>
+                <Input
+                  type="number"
+                  value={(config as unknown).(data as unknown).pageSize || 5}
+                  onChange={(e) =>
+                    updateConfig('data', {
+                      ...(config as unknown): parseInt((e as unknown).(target as unknown).value, 10),
+                    })
+                  }
+                  min= {1}
+                  max={50}
+                  className="mt-1"
+                />
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Refresh Settings */}
+        <div>
+          <h3 className="text-lg font-medium text-gray-900 mb-4">
+            Refresh Settings
+          </h3>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Auto-refresh Interval (seconds)
+            </label>
+            <Input
+              type="number"
+              value={(config as unknown).refreshInterval || 0}
+              onChange={(e) =>
+                updateConfig('refreshInterval', parseInt((e as unknown).(target as unknown).value, 10))
+              }
+              min={0}
+              step={5}
+              className="mt-1"
+            />
+            <p className="mt-1 text-sm text-gray-500">
+              Set to 0 to disable auto-refresh
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="mt-6 flex justify-end space-x-3">
+        <Button variant="outline" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button variant="primary" onClick={handleSave}>
+          Save Changes
+        </Button>
+      </div>
+    </Modal>
+  );
+};

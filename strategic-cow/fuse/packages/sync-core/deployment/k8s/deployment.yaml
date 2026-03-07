@@ -1,0 +1,152 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sync-core
+  namespace: the-new-fuse
+  labels:
+    app: sync-core
+    component: synchronization
+    tier: backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: sync-core
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: sync-core
+        version: v1
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: sync-core
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001
+
+      initContainers:
+        - name: wait-for-redis
+          image: busybox:1.35
+          command: ['sh', '-c', 'until nc -z redis-service 6379; do echo waiting for redis; sleep 2; done']
+
+        - name: wait-for-postgres
+          image: busybox:1.35
+          command: ['sh', '-c', 'until nc -z postgres-service 5432; do echo waiting for postgres; sleep 2; done']
+
+        - name: run-migrations
+          image: ghcr.io/whodaniel/tnf-sync-core:latest
+          command: ['node', 'packages/database/migrate.js']
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: sync-core-secrets
+                  key: database-url
+
+      containers:
+        - name: sync-core
+          image: ghcr.io/whodaniel/tnf-sync-core:latest
+          imagePullPolicy: Always
+          ports:
+            - name: websocket
+              containerPort: 3001
+              protocol: TCP
+            - name: metrics
+              containerPort: 9090
+              protocol: TCP
+
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: sync-core-secrets
+                  key: database-url
+            - name: REDIS_URL
+              value: "redis://redis-service:6379"
+            - name: WEBSOCKET_PORT
+              value: "3001"
+            - name: SYNC_BATCH_SIZE
+              valueFrom:
+                configMapKeyRef:
+                  name: sync-core-config
+                  key: sync-batch-size
+            - name: SYNC_TIMEOUT
+              valueFrom:
+                configMapKeyRef:
+                  name: sync-core-config
+                  key: sync-timeout
+            - name: CONFLICT_STRATEGY
+              valueFrom:
+                configMapKeyRef:
+                  name: sync-core-config
+                  key: conflict-strategy
+            - name: TENANT_ISOLATION
+              value: "true"
+            - name: CACHE_SIZE_MB
+              value: "256"
+            - name: MAX_CONNECTIONS
+              value: "100"
+            - name: LOG_LEVEL
+              value: "info"
+
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              cpu: 2000m
+              memory: 2Gi
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3001
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 3001
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 2
+
+          volumeMounts:
+            - name: logs
+              mountPath: /app/logs
+            - name: tmp
+              mountPath: /tmp
+
+      volumes:
+        - name: logs
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - sync-core
+                topologyKey: kubernetes.io/hostname

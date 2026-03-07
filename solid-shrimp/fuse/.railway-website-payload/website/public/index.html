@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TNF Marketplace</title>
+  <link rel="stylesheet" href="/assets/style.css" />
+</head>
+<body>
+  <header class="hero">
+    <div class="container">
+      <p class="kicker">THE NEW FUSE</p>
+      <h1>Marketplace + Arcade Control Surface</h1>
+      <p class="sub">AI Arcade is for games, music, social toys, and creator fun. Marketplace is for primitives: MCP servers, skills, prompts, templates, ready agents, and models.</p>
+      <div class="actions">
+        <a class="btn primary" href="https://ai-arcade.xyz" target="_blank" rel="noreferrer">Open AI Arcade</a>
+        <a class="btn" href="https://thenewfuse.com/marketplace" target="_blank" rel="noreferrer">Open TNF Marketplace</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Catalog Browser</h2>
+        <p id="status">Loading catalog...</p>
+      </div>
+
+      <div class="toolbar">
+        <input id="q" type="search" placeholder="Search name, tags, capabilities" />
+        <select id="surface">
+          <option value="all">All surfaces</option>
+          <option value="arcade">Arcade experiences</option>
+          <option value="marketplace">Marketplace primitives</option>
+        </select>
+        <select id="kind">
+          <option value="">All kinds</option>
+          <option value="experience">Experience</option>
+          <option value="workflow">Workflow</option>
+          <option value="mcp_server">MCP Server</option>
+          <option value="skill">Skill</option>
+          <option value="prompt">Prompt</option>
+          <option value="agent_template">Template</option>
+          <option value="agent">Agent</option>
+          <option value="model">Model</option>
+        </select>
+        <select id="pub">
+          <option value="published">Published</option>
+          <option value="review">Review</option>
+          <option value="draft">Draft</option>
+          <option value="archived">Archived</option>
+        </select>
+        <button id="refresh" class="btn">Refresh</button>
+      </div>
+
+      <div class="stats" id="stats"></div>
+      <div id="grid" class="grid"></div>
+    </section>
+
+    <section class="split">
+      <article class="panel">
+        <h2>Submit Arcade Experience</h2>
+        <p class="muted">Games, music apps, social toys, content jams, and community creations.</p>
+        <form id="submit-experience-form" class="submit-form">
+          <input name="name" required placeholder="Experience name" />
+          <input name="category" required placeholder="Category (games, music, social-toys...)" />
+          <input name="launchUrl" placeholder="Launch URL (https://...)" />
+          <input name="tags" placeholder="tags comma-separated" />
+          <textarea name="description" rows="3" required placeholder="Describe the experience"></textarea>
+          <button class="btn primary" type="submit">Submit Experience</button>
+        </form>
+        <p id="submit-experience-status" class="muted"></p>
+      </article>
+
+      <article class="panel">
+        <h2>Submit Marketplace Primitive</h2>
+        <p class="muted">Publish MCP servers, skills, prompts, templates, ready agents, and models.</p>
+        <form id="submit-primitive-form" class="submit-form">
+          <select name="kind" required>
+            <option value="">Select kind</option>
+            <option value="mcp_server">MCP Server</option>
+            <option value="skill">Skill</option>
+            <option value="prompt">Prompt</option>
+            <option value="agent_template">Agent Template</option>
+            <option value="agent">Ready Agent</option>
+            <option value="model">Model</option>
+            <option value="workflow">Workflow</option>
+          </select>
+          <input name="category" required placeholder="Category (coding, finance, support...)" />
+          <input name="name" required placeholder="Primitive name" />
+          <input name="launchUrl" placeholder="Docs/endpoint URL (https://...)" />
+          <input name="tags" placeholder="tags comma-separated" />
+          <input name="capabilities" placeholder="capabilities comma-separated" />
+          <textarea name="description" rows="3" required placeholder="Describe what this primitive does"></textarea>
+          <button class="btn" type="submit">Submit Primitive</button>
+        </form>
+        <p id="submit-primitive-status" class="muted"></p>
+      </article>
+    </section>
+  </main>
+
+  <script src="/assets/app.js" type="module"></script>
+</body>
+</html>

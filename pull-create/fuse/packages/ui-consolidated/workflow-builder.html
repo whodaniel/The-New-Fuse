@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The New Fuse - Workflow Builder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Base styles */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      color: #333;
+      line-height: 1.5;
+      background-color: #f9fafb;
+    }
+    
+    /* Layout styles */
+    .layout {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    
+    .layout-header {
+      background-color: white;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    
+    .layout-main {
+      display: flex;
+      flex: 1;
+    }
+    
+    .layout-content {
+      flex: 1;
+      padding: 1.5rem;
+      overflow-y: auto;
+    }
+    
+    .layout-footer {
+      background-color: white;
+      border-top: 1px solid #e5e7eb;
+      padding: 1rem;
+      text-align: center;
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+    
+    /* Sidebar styles */
+    .sidebar {
+      width: 16rem;
+      background-color: white;
+      border-right: 1px solid #e5e7eb;
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      overflow-y: auto;
+      transition: width 0.3s ease;
+    }
+    
+    .sidebar-collapsed {
+      width: 4.5rem;
+    }
+    
+    .sidebar-header {
+      padding: 1.25rem 1rem;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      color: #4b5563;
+      text-decoration: none;
+      transition: background-color 0.2s ease;
+      border-radius: 0.375rem;
+      margin: 0.25rem 0.5rem;
+    }
+    
+    .sidebar-item:hover {
+      background-color: #f3f4f6;
+    }
+    
+    .sidebar-item-active {
+      background-color: #f3f4f6;
+      color: #3b82f6;
+      font-weight: 500;
+    }
+    
+    .sidebar-icon {
+      width: 1.5rem;
+      height: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 0.75rem;
+    }
+    
+    /* Card styles */
+    .card {
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+    }
+    
+    /* Button styles */
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0.375rem;
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      line-height: 1.25rem;
+      transition-property: color, background-color, border-color;
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      transition-duration: 150ms;
+    }
+    
+    .button-primary {
+      background-color: #3b82f6;
+      color: white;
+    }
+    
+    .button-primary:hover {
+      background-color: #2563eb;
+    }
+    
+    .button-outline {
+      background-color: transparent;
+      border: 1px solid #e5e7eb;
+      color: #374151;
+    }
+    
+    .button-outline:hover {
+      background-color: #f9fafb;
+    }
+    
+    /* Workflow builder specific styles */
+    .workflow-canvas {
+      background-color: #f9fafb;
+      background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+      background-size: 20px 20px;
+      min-height: 600px;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      position: relative;
+    }
+    
+    .workflow-node {
+      position: absolute;
+      width: 200px;
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      cursor: move;
+      user-select: none;
+    }
+    
+    .workflow-node-header {
+      padding: 0.75rem;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .workflow-node-body {
+      padding: 0.75rem;
+    }
+    
+    .workflow-node-footer {
+      padding: 0.75rem;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .workflow-connector {
+      position: absolute;
+      background-color: #9ca3af;
+      height: 2px;
+      transform-origin: left center;
+      z-index: -1;
+    }
+    
+    .workflow-connector::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: -4px;
+      width: 0;
+      height: 0;
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      border-left: 8px solid #9ca3af;
+    }
+    
+    .workflow-toolbox {
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .workflow-toolbox-item {
+      padding: 0.5rem;
+      border: 1px dashed #e5e7eb;
+      border-radius: 0.375rem;
+      margin-bottom: 0.5rem;
+      cursor: grab;
+      display: flex;
+      align-items: center;
+    }
+    
+    .workflow-toolbox-item:hover {
+      background-color: #f3f4f6;
+    }
+    
+    .workflow-toolbox-item-icon {
+      width: 1.5rem;
+      height: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 0.5rem;
+      color: #4b5563;
+    }
+    
+    .workflow-properties {
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      padding: 1rem;
+    }
+    
+    .workflow-properties-header {
+      font-weight: 600;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .workflow-properties-group {
+      margin-bottom: 1rem;
+    }
+    
+    .workflow-properties-label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+    
+    .workflow-properties-input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+    }
+    
+    .workflow-properties-select {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      background-color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <header class="layout-header">
+      <div class="flex items-center">
+        <button id="sidebar-toggle" class="mr-4 text-gray-500 hover:text-gray-700">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="text-xl font-bold text-blue-600">The New Fuse</div>
+      </div>
+      <div class="flex items-center">
+        <div class="mr-4 relative">
+          <button class="text-gray-500 hover:text-gray-700">
+            <i class="fas fa-bell"></i>
+            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">3</span>
+          </button>
+        </div>
+        <div class="dropdown">
+          <div class="flex items-center cursor-pointer">
+            <div class="mr-2 text-sm font-medium">John Doe</div>
+            <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium">JD</div>
+          </div>
+        </div>
+      </div>
+    </header>
+    
+    <div class="layout-main">
+      <aside id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+          <div class="text-lg font-bold text-blue-600 sidebar-text">Navigation</div>
+          <button id="sidebar-collapse" class="text-gray-500 hover:text-gray-700">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+        </div>
+        <nav class="py-4">
+          <a href="#" class="sidebar-item">
+            <div class="sidebar-icon">
+              <i class="fas fa-home"></i>
+            </div>
+            <span class="sidebar-text">Dashboard</span>
+          </a>
+          <a href="#" class="sidebar-item">
+            <div class="sidebar-icon">
+              <i class="fas fa-robot"></i>
+            </div>
+            <span class="sidebar-text">Agents</span>
+          </a>
+          <a href="#" class="sidebar-item">
+            <div class="sidebar-icon">
+              <i class="fas fa-tasks"></i>
+            </div>
+            <span class="sidebar-text">Tasks</span>
+          </a>
+          <a href="#" class="sidebar-item sidebar-item-active">
+            <div class="sidebar-icon">
+              <i class="fas fa-project-diagram"></i>
+            </div>
+            <span class="sidebar-text">Workflows</span>
+          </a>
+          <a href="#" class="sidebar-item">
+            <div class="sidebar-icon">
+              <i class="fas fa-lightbulb"></i>
+            </div>
+            <span class="sidebar-text">Suggestions</span>
+          </a>
+          <a href="#" class="sidebar-item">
+            <div class="sidebar-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <span class="sidebar-text">Analytics</span>
+          </a>
+          <a href="#" class="sidebar-item">
+            <div class="sidebar-icon">
+              <i class="fas fa-cog"></i>
+            </div>
+            <span class="sidebar-text">Settings</span>
+          </a>
+        </nav>
+      </aside>
+      
+      <main class="layout-content">
+        <div class="max-w-7xl mx-auto">
+          <div class="flex justify-between items-center mb-6">
+            <div>
+              <h1 class="text-2xl font-bold">Workflow Builder</h1>
+              <p class="text-gray-600">Create and edit agent workflows</p>
+            </div>
+            <div class="flex space-x-2">
+              <button class="button button-outline">
+                <i class="fas fa-undo mr-2"></i> Undo
+              </button>
+              <button class="button button-outline">
+                <i class="fas fa-redo mr-2"></i> Redo
+              </button>
+              <button class="button button-outline">
+                <i class="fas fa-eye mr-2"></i> Preview
+              </button>
+              <button class="button button-primary">
+                <i class="fas fa-save mr-2"></i> Save
+              </button>
+            </div>
+          </div>
+          
+          <div class="flex flex-col lg:flex-row gap-4">
+            <!-- Toolbox -->
+            <div class="lg:w-64">
+              <div class="workflow-toolbox">
+                <h3 class="font-medium mb-3">Workflow Nodes</h3>
+                
+                <div class="workflow-toolbox-item">
+                  <div class="workflow-toolbox-item-icon">
+                    <i class="fas fa-play-circle"></i>
+                  </div>
+                  <span>Start</span>
+                </div>
+                
+                <div class="workflow-toolbox-item">
+                  <div class="workflow-toolbox-item-icon">
+                    <i class="fas fa-robot"></i>
+                  </div>
+                  <span>Agent Task</span>
+                </div>
+                
+                <div class="workflow-toolbox-item">
+                  <div class="workflow-toolbox-item-icon">
+                    <i class="fas fa-code-branch"></i>
+                  </div>
+                  <span>Condition</span>
+                </div>
+                
+                <div class="workflow-toolbox-item">
+                  <div class="workflow-toolbox-item-icon">
+                    <i class="fas fa-exchange-alt"></i>
+                  </div>
+                  <span>Transform</span>
+                </div>
+                
+                <div class="workflow-toolbox-item">
+                  <div class="workflow-toolbox-item-icon">
+                    <i class="fas fa-clock"></i>
+                  </div>
+                  <span>Delay</span>
+                </div>
+                
+                <div class="workflow-toolbox-item">
+                  <div class="workflow-toolbox-item-icon">
+                    <i class="fas fa-bell"></i>
+                  </div>
+                  <span>Notification</span>
+                </div>
+                
+                <div class="workflow-toolbox-item">
+                  <div class="workflow-toolbox-item-icon">
+                    <i class="fas fa-stop-circle"></i>
+                  </div>
+                  <span>End</span>
+                </div>
+              </div>
+              
+              <div class="workflow-properties">
+                <div class="workflow-properties-header">Workflow Properties</div>
+                
+                <div class="workflow-properties-group">
+                  <div class="workflow-properties-label">Name</div>
+                  <input type="text" class="workflow-properties-input" value="New Workflow" />
+                </div>
+                
+                <div class="workflow-properties-group">
+                  <div class="workflow-properties-label">Description</div>
+                  <textarea class="workflow-properties-input" rows="3"></textarea>
+                </div>
+                
+                <div class="workflow-properties-group">
+                  <div class="workflow-properties-label">Trigger</div>
+                  <select class="workflow-properties-select">
+                    <option>Manual</option>
+                    <option>Scheduled</option>
+                    <option>Event-based</option>
+                  </select>
+                </div>
+                
+                <div class="workflow-properties-group">
+                  <div class="workflow-properties-label">Tags</div>
+                  <input type="text" class="workflow-properties-input" placeholder="Add tags..." />
+                </div>
+              </div>
+            </div>
+            
+            <!-- Canvas -->
+            <div class="flex-1">
+              <div class="workflow-canvas">
+                <!-- Start Node -->
+                <div class="workflow-node" style="top: 50px; left: 100px;">
+                  <div class="workflow-node-header bg-green-100">
+                    <div class="flex items-center">
+                      <i class="fas fa-play-circle text-green-600 mr-2"></i>
+                      <span class="font-medium">Start</span>
+                    </div>
+                    <div>
+                      <button class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-ellipsis-v"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="workflow-node-body">
+                    <p class="text-sm text-gray-600">Workflow entry point</p>
+                  </div>
+                  <div class="workflow-node-footer">
+                    <div></div>
+                    <div>
+                      <button class="text-blue-600 hover:text-blue-800 text-sm">
+                        <i class="fas fa-plus-circle mr-1"></i> Add Output
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Agent Task Node -->
+                <div class="workflow-node" style="top: 50px; left: 400px;">
+                  <div class="workflow-node-header bg-blue-100">
+                    <div class="flex items-center">
+                      <i class="fas fa-robot text-blue-600 mr-2"></i>
+                      <span class="font-medium">Agent Task</span>
+                    </div>
+                    <div>
+                      <button class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-ellipsis-v"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="workflow-node-body">
+                    <div class="mb-2">
+                      <label class="text-xs text-gray-500">Agent</label>
+                      <select class="w-full text-sm p-1 border border-gray-300 rounded">
+                        <option>CodeAssistant</option>
+                        <option>DataAnalyzer</option>
+                        <option>ContentWriter</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="text-xs text-gray-500">Action</label>
+                      <select class="w-full text-sm p-1 border border-gray-300 rounded">
+                        <option>Generate Code</option>
+                        <option>Review Code</option>
+                        <option>Fix Bugs</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="workflow-node-footer">
+                    <div>
+                      <button class="text-blue-600 hover:text-blue-800 text-sm">
+                        <i class="fas fa-plus-circle mr-1"></i> Add Input
+                      </button>
+                    </div>
+                    <div>
+                      <button class="text-blue-600 hover:text-blue-800 text-sm">
+                        <i class="fas fa-plus-circle mr-1"></i> Add Output
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Condition Node -->
+                <div class="workflow-node" style="top: 200px; left: 400px;">
+                  <div class="workflow-node-header bg-yellow-100">
+                    <div class="flex items-center">
+                      <i class="fas fa-code-branch text-yellow-600 mr-2"></i>
+                      <span class="font-medium">Condition</span>
+                    </div>
+                    <div>
+                      <button class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-ellipsis-v"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="workflow-node-body">
+                    <div class="mb-2">
+                      <label class="text-xs text-gray-500">Condition</label>
+                      <select class="w-full text-sm p-1 border border-gray-300 rounded">
+                        <option>Success</option>
+                        <option>Error</option>
+                        <option>Custom</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="text-xs text-gray-500">Expression</label>
+                      <input type="text" class="w-full text-sm p-1 border border-gray-300 rounded" placeholder="result == true" />
+                    </div>
+                  </div>
+                  <div class="workflow-node-footer">
+                    <div>
+                      <button class="text-blue-600 hover:text-blue-800 text-sm">
+                        <i class="fas fa-plus-circle mr-1"></i> Add Input
+                      </button>
+                    </div>
+                    <div>
+                      <button class="text-blue-600 hover:text-blue-800 text-sm">
+                        <i class="fas fa-plus-circle mr-1"></i> Add Output
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- End Node -->
+                <div class="workflow-node" style="top: 350px; left: 400px;">
+                  <div class="workflow-node-header bg-red-100">
+                    <div class="flex items-center">
+                      <i class="fas fa-stop-circle text-red-600 mr-2"></i>
+                      <span class="font-medium">End</span>
+                    </div>
+                    <div>
+                      <button class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-ellipsis-v"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="workflow-node-body">
+                    <p class="text-sm text-gray-600">Workflow end point</p>
+                  </div>
+                  <div class="workflow-node-footer">
+                    <div>
+                      <button class="text-blue-600 hover:text-blue-800 text-sm">
+                        <i class="fas fa-plus-circle mr-1"></i> Add Input
+                      </button>
+                    </div>
+                    <div></div>
+                  </div>
+                </div>
+                
+                <!-- Connectors -->
+                <div class="workflow-connector" style="width: 100px; left: 300px; top: 75px;"></div>
+                <div class="workflow-connector" style="width: 100px; left: 500px; top: 125px; transform: rotate(90deg); transform-origin: left center;"></div>
+                <div class="workflow-connector" style="width: 100px; left: 500px; top: 275px; transform: rotate(90deg); transform-origin: left center;"></div>
+              </div>
+            </div>
+            
+            <!-- Node Properties -->
+            <div class="lg:w-64">
+              <div class="workflow-properties">
+                <div class="workflow-properties-header">Node Properties</div>
+                
+                <div class="workflow-properties-group">
+                  <div class="workflow-properties-label">Type</div>
+                  <input type="text" class="workflow-properties-input" value="Agent Task" disabled />
+                </div>
+                
+                <div class="workflow-properties-group">
+                  <div class="workflow-properties-label">Name</div>
+                  <input type="text" class="workflow-properties-input" value="Process Data" />
+                </div>
+                
+                <div class="workflow-properties-group">
+                  <div class="workflow-properties-label">Agent</div>
+                  <select class="workflow-properties-select">
+                    <option>CodeAssistant</option>
+                    <option>DataAnalyzer</option>
+                    <option>ContentWriter</option>
+                  </select>
+                </div>
+                
+                <div class="workflow-properties-group">
+                  <div class="workflow-properties-label">Action</div>
+                  <select class="workflow-properties-select">
+                    <option>Generate Code</option>
+                    <option>Review Code</option>
+                    <option>Fix Bugs</option>
+                  </select>
+                </div>
+                
+                <div class="workflow-properties-group">
+                  <div class="workflow-properties-label">Timeout (seconds)</div>
+                  <input type="number" class="workflow-properties-input" value="60" />
+                </div>
+                
+                <div class="workflow-properties-group">
+                  <div class="workflow-properties-label">Retry Count</div>
+                  <input type="number" class="workflow-properties-input" value="3" />
+                </div>
+                
+                <div class="workflow-properties-group">
+                  <div class="workflow-properties-label">Error Handling</div>
+                  <select class="workflow-properties-select">
+                    <option>Continue</option>
+                    <option>Stop Workflow</option>
+                    <option>Custom Path</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+    
+    <footer class="layout-footer">
+      <div class="flex justify-center space-x-4">
+        <a href="#" class="text-gray-500 hover:text-gray-700">Privacy Policy</a>
+        <a href="#" class="text-gray-500 hover:text-gray-700">Terms of Service</a>
+        <a href="#" class="text-gray-500 hover:text-gray-700">Contact Us</a>
+      </div>
+      <div class="mt-2 text-gray-500">© 2023 The New Fuse. All rights reserved.</div>
+    </footer>
+  </div>
+  
+  <script>
+    // Sidebar toggle functionality
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    const sidebarCollapse = document.getElementById('sidebar-collapse');
+    const sidebar = document.getElementById('sidebar');
+    
+    sidebarToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('sidebar-collapsed');
+    });
+    
+    sidebarCollapse.addEventListener('click', () => {
+      sidebar.classList.toggle('sidebar-collapsed');
+    });
+    
+    // Make nodes draggable
+    const nodes = document.querySelectorAll('.workflow-node');
+    
+    nodes.forEach(node => {
+      let isDragging = false;
+      let offsetX, offsetY;
+      
+      node.addEventListener('mousedown', (e) => {
+        if (e.target.closest('button') || e.target.closest('select') || e.target.closest('input')) {
+          return;
+        }
+        
+        isDragging = true;
+        offsetX = e.clientX - node.getBoundingClientRect().left;
+        offsetY = e.clientY - node.getBoundingClientRect().top;
+        
+        node.style.zIndex = '10';
+      });
+      
+      document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        
+        const canvas = document.querySelector('.workflow-canvas');
+        const canvasRect = canvas.getBoundingClientRect();
+        
+        let newX = e.clientX - canvasRect.left - offsetX;
+        let newY = e.clientY - canvasRect.top - offsetY;
+        
+        // Keep node within canvas bounds
+        newX = Math.max(0, Math.min(newX, canvasRect.width - node.offsetWidth));
+        newY = Math.max(0, Math.min(newY, canvasRect.height - node.offsetHeight));
+        
+        node.style.left = `${newX}px`;
+        node.style.top = `${newY}px`;
+      });
+      
+      document.addEventListener('mouseup', () => {
+        if (isDragging) {
+          isDragging = false;
+          node.style.zIndex = '';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

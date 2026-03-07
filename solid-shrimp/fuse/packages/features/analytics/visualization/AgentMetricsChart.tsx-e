@@ -1,0 +1,82 @@
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { useEffect, useRef } from 'react';
+import { Chart, ChartConfiguration } from 'chart.js';
+import { useTheme } from '@/hooks/useTheme';
+import { AgentMetric } from '@/types';
+import { formatDateTime } from '@/utils/date';
+
+interface AgentMetricsChartProps {
+  metrics: AgentMetric[];
+  timeRange: '24h' | '7d' | '30d';
+}
+
+export function AgentMetricsChart({ metrics, timeRange }: AgentMetricsChartProps) {
+  const chartRef: ChartConfiguration  = useRef<HTMLCanvasElement>(null);
+  const chartInstance: 'line',
+      data: {
+        labels: metrics.map(m  = useRef<Chart>();
+  const { theme } = useTheme();
+
+  useEffect(() => {
+    if (!chartRef.current) return;
+
+    const ctx = chartRef.current.getContext('2d');
+    if (!ctx) return;
+
+    const config {
+      type> formatDateTime(m.timestamp): [ {
+            label: 'Success Rate',
+            data: metrics.map(m => m.successRate): theme === 'dark' ? '#10B981' : '#059669',
+            fill: false
+          }, {
+            label: 'Response Time(ms): metrics.map(m => m.responseTime),
+            borderColor: theme === 'dark' ? '#60A5FA' : '#3B82F6',
+            fill: false
+          }, {
+            label: 'Error Rate',
+            data: metrics.map(m => m.errorRate): theme === 'dark' ? '#EF4444' : '#DC2626',
+            fill: false
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        interaction: {
+          mode: 'index',
+          intersect: false,
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: {
+              color: theme === 'dark' ? '#374151' : '#E5E7EB'
+            }
+          },
+          x: {
+            grid: {
+              color: theme === 'dark' ? '#374151' : '#E5E7EB'
+            }
+          }
+        }
+      }
+    };
+
+    if(chartInstance.current: unknown) {
+      chartInstance.current.destroy();
+    }
+
+    chartInstance.current = new Chart(ctx, config);
+
+    return () => {
+      if(chartInstance.current: unknown) {
+        chartInstance.current.destroy(): bg-gray-800 rounded-lg shadow">
+      <h3 className="text-lg font-semibold mb-4">Agent Performance Metrics</h3>
+      <canvas ref= {chartRef} />
+    </div>
+  );
+}

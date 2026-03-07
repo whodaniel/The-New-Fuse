@@ -1,0 +1,37 @@
+[
+  {
+    "title": "Gemini 3.1 Pro Released",
+    "source": "Google DeepMind",
+    "threat": "High",
+    "link": "https://blog.google",
+    "details": "Major upgrade focusing on advanced reasoning, achieving 77.1% on ARC-AGI-2."
+  },
+  {
+    "title": "Claude Sonnet 4.6 Launch",
+    "source": "Anthropic",
+    "threat": "High",
+    "link": "https://anthropic.com",
+    "details": "Opus-level performance at Sonnet prices. Default model for free plans."
+  },
+  {
+    "title": "GPT-5.3-Codex Released",
+    "source": "OpenAI",
+    "threat": "Medium",
+    "link": "https://openai.com",
+    "details": "Specialized coding model for terminal-based workflows."
+  },
+  {
+    "title": "DeepSeek-V4 Released",
+    "source": "DeepSeek",
+    "threat": "High",
+    "link": "https://deepseek.ai",
+    "details": "New records in math and coding benchmarks."
+  },
+  {
+    "title": "Free Llama 3.3 70B Inference",
+    "source": "Groq",
+    "threat": "Medium",
+    "link": "https://groq.com",
+    "details": "Fast inference with generous free rate limits."
+  }
+]

@@ -1,0 +1,30 @@
+{
+  "modelPrimary": "openai-codex/gpt-5.3-codex",
+  "modelFallbacks": "openai-codex/gpt-5.2-codex,openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini",
+  "tenants": [
+    {
+      "name": "account-1",
+      "instanceId": "TNF-OC-001",
+      "instanceName": "OpenClaw Cloud",
+      "service": "openclaw-cloud",
+      "authFile": "~/.codex-tenants/proof-tenant-a/auth.json",
+      "targetAccountId": "c99c8f6e-e3b8-4985-a3a1-34a8d46a5f30",
+      "mode": "locked"
+    },
+    {
+      "name": "account-2",
+      "instanceId": "TNF-OC-002",
+      "instanceName": "OpenClaw Primary",
+      "service": "openclaw-primary",
+      "authFile": "~/.codex-tenants/openclaw-cloud-account/auth.json",
+      "targetAccountId": "8d3de55e-98d9-442d-9e10-1cd6c782c4be",
+      "mode": "locked"
+    },
+    {
+      "name": "account-pending",
+      "authFile": "~/.codex-tenants/new-account/auth.json",
+      "targetAccountEmail": "new-account@example.com",
+      "mode": "pending"
+    }
+  ]
+}

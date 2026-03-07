@@ -1,0 +1,32 @@
+{
+  "traits": [
+    {
+      "name": "Aggressive",
+      "description": "The agent is more assertive and proactive in its actions."
+    },
+    {
+      "name": "Passive",
+      "description": "The agent is more reserved and reactive in its actions."
+    }
+  ],
+  "abilities": [
+    {
+      "name": "Data Analysis",
+      "description": "The agent can perform complex data analysis tasks."
+    },
+    {
+      "name": "Natural Language Processing",
+      "description": "The agent can understand and generate human-like text."
+    }
+  ],
+  "tools": [
+    {
+      "name": "FileLogger",
+      "description": "Logs messages to a file."
+    },
+    {
+      "name": "ChecklistManager",
+      "description": "Manages a checklist of tasks."
+    }
+  ]
+}

@@ -1,0 +1,200 @@
+./packages/frontend/src/pages/LandingPage.tsx:export function LandingPage() {
+./packages/ui-components/src/features/workflow/components/WorkflowStepViewer.tsx:export const WorkflowStepViewer: FC<WorkflowStepViewerProps> = ({
+./packages/layout/components/PageHeader.tsx:export const PageHeader: (React as unknown).FC<PageHeaderProps> = ({
+./packages/shared/components/index.tsx:export const FullScreenLoader: FC = (): JSX.Element => () => {
+./packages/shared/components/Preloader.tsx:export function FullScreenLoader(): React.JSX.Element {
+./apps/frontend/src/features/timeline/components/EnhancedTimelineView.tsx:export const EnhancedTimelineView: React.FC<TimelineViewProps> = ({
+./apps/frontend/src/shared/ui/core/Sidebar/Sidebar.tsx:export function Sidebar({ items, bottomItems = [], activeView, onViewChange, className, expanded = false, onExpandedChange, width = {
+./apps/frontend/src/components/Preloader.jsx:export function FullScreenLoader() {
+./apps/frontend/src/components/CanViewChatHistory/index.tsx:export function CanViewChatHistory({ children }: CanViewChatHistoryProps) {
+./apps/frontend/src/components/CanViewChatHistory/index.tsx:export function CanViewChatHistoryProvider({ children }: CanViewChatHistoryProviderProps) {
+./apps/frontend/src/components/CanViewChatHistory/index.tsx:export function useCanViewChatHistory(): CanViewChatHistoryState {
+./apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.tsx:export function useCanViewChatHistory(): UseCanViewChatHistoryResult {
+./apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.tsx:export function CanViewChatHistory({ children }: CanViewChatHistoryProps) {
+./apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.tsx:export function CanViewChatHistoryProvider({ children }: CanViewChatHistoryProviderProps) {
+./apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.jsx:export function useCanViewChatHistory() {
+./apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.jsx:export function CanViewChatHistory({ children }) {
+./apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.jsx:export function CanViewChatHistoryProvider({ children }) {
+./apps/frontend/src/components/toast.tsx:export const ToastViewport = React.forwardRef<
+./apps/frontend/src/components/page.tsx:export default function Page() {
+./apps/frontend/src/pages/Landing/index.tsx:export default function LandingPage() {
+./apps/frontend/src/pages/dashboard/agents/index.tsx:export default function AgentsPage() {
+./apps/frontend/src/pages/dashboard/agents/new.tsx:export const NewAgentPage = () => {
+./apps/frontend/src/pages/Invite/index.jsx:export default function InvitePage() {
+./backups/final_consolidation_20250320_014157/packages/frontend/src/pages/LandingPage.tsx:export function LandingPage() {
+./backups/final_consolidation_20250320_014157/packages/ui-components/src/features/workflow/components/WorkflowStepViewer.tsx:export const WorkflowStepViewer: FC<WorkflowStepViewerProps> = ({
+./backups/final_consolidation_20250320_014157/packages/layout/components/PageHeader.tsx:export const PageHeader: (React as unknown).FC<PageHeaderProps> = ({
+./backups/final_consolidation_20250320_014157/packages/shared/components/index.tsx:export const FullScreenLoader: FC = (): JSX.Element => () => {
+./backups/final_consolidation_20250320_014157/packages/shared/components/Preloader.tsx:export function FullScreenLoader(): React.JSX.Element {
+./backups/final_consolidation_20250320_014157/apps/frontend/src/features/timeline/components/EnhancedTimelineView.tsx:export const EnhancedTimelineView: React.FC<TimelineViewProps> = ({
+./backups/final_consolidation_20250320_014157/apps/frontend/src/shared/ui/core/Sidebar/Sidebar.tsx:export function Sidebar({ items, bottomItems = [], activeView, onViewChange, className, expanded = false, onExpandedChange, width = {
+./backups/final_consolidation_20250320_014157/apps/frontend/src/components/Preloader.jsx:export function FullScreenLoader() {
+./backups/final_consolidation_20250320_014157/apps/frontend/src/components/CanViewChatHistory/index.tsx:export function CanViewChatHistory({ children }: CanViewChatHistoryProps) {
+./backups/final_consolidation_20250320_014157/apps/frontend/src/components/CanViewChatHistory/index.tsx:export function CanViewChatHistoryProvider({ children }: CanViewChatHistoryProviderProps) {
+./backups/final_consolidation_20250320_014157/apps/frontend/src/components/CanViewChatHistory/index.tsx:export function useCanViewChatHistory(): CanViewChatHistoryState {
+./backups/final_consolidation_20250320_014157/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.tsx:export function useCanViewChatHistory(): UseCanViewChatHistoryResult {
+./backups/final_consolidation_20250320_014157/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.tsx:export function CanViewChatHistory({ children }: CanViewChatHistoryProps) {
+./backups/final_consolidation_20250320_014157/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.tsx:export function CanViewChatHistoryProvider({ children }: CanViewChatHistoryProviderProps) {
+./backups/final_consolidation_20250320_014157/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.jsx:export function useCanViewChatHistory() {
+./backups/final_consolidation_20250320_014157/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.jsx:export function CanViewChatHistory({ children }) {
+./backups/final_consolidation_20250320_014157/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.jsx:export function CanViewChatHistoryProvider({ children }) {
+./backups/final_consolidation_20250320_014157/apps/frontend/src/components/toast.tsx:export const ToastViewport = React.forwardRef<
+./backups/final_consolidation_20250320_014157/apps/frontend/src/components/page.tsx:export default function Page() {
+./backups/final_consolidation_20250320_014157/apps/frontend/src/pages/Landing/index.tsx:export default function LandingPage() {
+./backups/final_consolidation_20250320_014157/apps/frontend/src/pages/dashboard/agents/index.tsx:export default function AgentsPage() {
+./backups/final_consolidation_20250320_014157/apps/frontend/src/pages/dashboard/agents/new.tsx:export const NewAgentPage = () => {
+./backups/final_consolidation_20250320_014157/apps/frontend/src/pages/Invite/index.jsx:export default function InvitePage() {
+./backups/components_20250311_154619/components/Preloader.jsx:export function FullScreenLoader() {
+./backups/components_20250311_154619/components/CanViewChatHistory/index.tsx:export function CanViewChatHistory({ children }: CanViewChatHistoryProps) {
+./backups/components_20250311_154619/components/CanViewChatHistory/index.tsx:export function CanViewChatHistoryProvider({ children }: CanViewChatHistoryProviderProps) {
+./backups/components_20250311_154619/components/CanViewChatHistory/index.tsx:export function useCanViewChatHistory(): CanViewChatHistoryState {
+./backups/components_20250311_154619/components/CanViewChatHistory/CanViewChatHistory.tsx:export function useCanViewChatHistory(): UseCanViewChatHistoryResult {
+./backups/components_20250311_154619/components/CanViewChatHistory/CanViewChatHistory.tsx:export function CanViewChatHistory({ children }: CanViewChatHistoryProps) {
+./backups/components_20250311_154619/components/CanViewChatHistory/CanViewChatHistory.tsx:export function CanViewChatHistoryProvider({ children }: CanViewChatHistoryProviderProps) {
+./backups/components_20250311_154619/components/CanViewChatHistory/CanViewChatHistory.jsx:export function useCanViewChatHistory() {
+./backups/components_20250311_154619/components/CanViewChatHistory/CanViewChatHistory.jsx:export function CanViewChatHistory({ children }) {
+./backups/components_20250311_154619/components/CanViewChatHistory/CanViewChatHistory.jsx:export function CanViewChatHistoryProvider({ children }) {
+./backups/components_20250311_154619/components/Preloader.tsx:export function FullScreenLoader() {
+./backups/components_20250311_154619/components/toast.tsx:export const ToastViewport = React.forwardRef<
+./backups/components_20250311_154619/components/page.tsx:export default function Page() {
+./backups/final_consolidation_20250319_030606/packages/frontend/src/pages/LandingPage.tsx:export default function LandingPage() {
+./backups/final_consolidation_20250319_030606/packages/ui-components/src/features/workflow/components/WorkflowStepViewer.tsx:export const WorkflowStepViewer: FC<WorkflowStepViewerProps> = ({
+./backups/final_consolidation_20250319_030606/packages/layout/components/PageHeader.tsx:export const PageHeader: (React as unknown).FC<PageHeaderProps> = ({
+./backups/final_consolidation_20250319_030606/packages/shared/components/index.tsx:export const FullScreenLoader: FC = (): JSX.Element => () => {
+./backups/final_consolidation_20250319_030606/packages/shared/components/Preloader.tsx:export function FullScreenLoader(): React.JSX.Element {
+./backups/final_consolidation_20250319_030606/apps/frontend/src/features/timeline/components/EnhancedTimelineView.tsx:export const EnhancedTimelineView: React.FC<TimelineViewProps> = ({
+./backups/final_consolidation_20250319_030606/apps/frontend/src/shared/ui/core/Sidebar/Sidebar.tsx:export function Sidebar({ items, bottomItems = [], activeView, onViewChange, className, expanded = false, onExpandedChange, width = {
+./backups/final_consolidation_20250319_030606/apps/frontend/src/components/Preloader.jsx:export function FullScreenLoader() {
+./backups/final_consolidation_20250319_030606/apps/frontend/src/components/CanViewChatHistory/index.tsx:export function CanViewChatHistory({ children }: CanViewChatHistoryProps) {
+./backups/final_consolidation_20250319_030606/apps/frontend/src/components/CanViewChatHistory/index.tsx:export function CanViewChatHistoryProvider({ children }: CanViewChatHistoryProviderProps) {
+./backups/final_consolidation_20250319_030606/apps/frontend/src/components/CanViewChatHistory/index.tsx:export function useCanViewChatHistory(): CanViewChatHistoryState {
+./backups/final_consolidation_20250319_030606/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.tsx:export function useCanViewChatHistory(): UseCanViewChatHistoryResult {
+./backups/final_consolidation_20250319_030606/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.tsx:export function CanViewChatHistory({ children }: CanViewChatHistoryProps) {
+./backups/final_consolidation_20250319_030606/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.tsx:export function CanViewChatHistoryProvider({ children }: CanViewChatHistoryProviderProps) {
+./backups/final_consolidation_20250319_030606/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.jsx:export function useCanViewChatHistory() {
+./backups/final_consolidation_20250319_030606/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.jsx:export function CanViewChatHistory({ children }) {
+./backups/final_consolidation_20250319_030606/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.jsx:export function CanViewChatHistoryProvider({ children }) {
+./backups/final_consolidation_20250319_030606/apps/frontend/src/components/toast.tsx:export const ToastViewport = React.forwardRef<
+./backups/final_consolidation_20250319_030606/apps/frontend/src/components/page.tsx:export default function Page() {
+./backups/final_consolidation_20250319_030606/apps/frontend/src/pages/Landing/index.tsx:export default function LandingPage() {
+./backups/final_consolidation_20250319_030606/apps/frontend/src/pages/dashboard/agents/index.tsx:export default function AgentsPage() {
+./backups/final_consolidation_20250319_030606/apps/frontend/src/pages/dashboard/agents/new.tsx:export const NewAgentPage = () => {
+./backups/final_consolidation_20250319_030606/apps/frontend/src/pages/Invite/index.jsx:export default function InvitePage() {
+./backups/components_20250311_153732/components/Preloader/index.tsx:export const FullScreenLoader: React.FC<{}> = () => {
+./backups/components_20250311_153732/components/Preloader/Preloader.tsx:export function FullScreenLoader() {
+./backups/components_20250311_153732/components/Preloader.jsx:export function FullScreenLoader() {
+./backups/components_20250311_153732/components/CanViewChatHistory/index.tsx:export function CanViewChatHistory({ children }: CanViewChatHistoryProps) {
+./backups/components_20250311_153732/components/CanViewChatHistory/index.tsx:export function CanViewChatHistoryProvider({ children }: CanViewChatHistoryProviderProps) {
+./backups/components_20250311_153732/components/CanViewChatHistory/index.tsx:export function useCanViewChatHistory(): CanViewChatHistoryState {
+./backups/components_20250311_153732/components/CanViewChatHistory/CanViewChatHistory.tsx:export function useCanViewChatHistory(): UseCanViewChatHistoryResult {
+./backups/components_20250311_153732/components/CanViewChatHistory/CanViewChatHistory.tsx:export function CanViewChatHistory({ children }: CanViewChatHistoryProps) {
+./backups/components_20250311_153732/components/CanViewChatHistory/CanViewChatHistory.tsx:export function CanViewChatHistoryProvider({ children }: CanViewChatHistoryProviderProps) {
+./backups/components_20250311_153732/components/CanViewChatHistory/CanViewChatHistory.jsx:export function useCanViewChatHistory() {
+./backups/components_20250311_153732/components/CanViewChatHistory/CanViewChatHistory.jsx:export function CanViewChatHistory({ children }) {
+./backups/components_20250311_153732/components/CanViewChatHistory/CanViewChatHistory.jsx:export function CanViewChatHistoryProvider({ children }) {
+./backups/components_20250311_153732/components/Preloader.tsx:export function FullScreenLoader() {
+./backups/components_20250311_153732/components/toast.tsx:export const ToastViewport = React.forwardRef<
+./backups/components_20250311_153732/components/page.tsx:export default function Page() {
+./backups/typescript_migration_20250318_123855/packages/frontend/src/pages/LandingPage.tsx:export default function LandingPage() {
+./backups/typescript_migration_20250318_123855/packages/ui-components/src/features/workflow/components/WorkflowStepViewer.tsx:export const WorkflowStepViewer: React.FC<WorkflowStepViewerProps> = ({
+./backups/typescript_migration_20250318_123855/packages/layout/components/PageHeader.tsx:export const PageHeader: (React as unknown).FC<PageHeaderProps> = ({
+./backups/typescript_migration_20250318_123855/packages/shared/components/index.tsx:export const FullScreenLoader: React.FC = () => {
+./backups/typescript_migration_20250318_123855/packages/shared/components/Preloader.tsx:export function FullScreenLoader(): React.JSX.Element {
+./backups/typescript_migration_20250318_123855/apps/frontend/src/features/timeline/components/EnhancedTimelineView.tsx:export const EnhancedTimelineView: React.FC<TimelineViewProps> = ({
+./backups/typescript_migration_20250318_123855/apps/frontend/src/shared/ui/core/Sidebar/Sidebar.tsx:export function Sidebar({ items, bottomItems = [], activeView, onViewChange, className, expanded = false, onExpandedChange, width = {
+./backups/typescript_migration_20250318_123855/apps/frontend/src/components/Preloader.jsx:export function FullScreenLoader() {
+./backups/typescript_migration_20250318_123855/apps/frontend/src/components/CanViewChatHistory/index.tsx:export function CanViewChatHistory({ children }: CanViewChatHistoryProps) {
+./backups/typescript_migration_20250318_123855/apps/frontend/src/components/CanViewChatHistory/index.tsx:export function CanViewChatHistoryProvider({ children }: CanViewChatHistoryProviderProps) {
+./backups/typescript_migration_20250318_123855/apps/frontend/src/components/CanViewChatHistory/index.tsx:export function useCanViewChatHistory(): CanViewChatHistoryState {
+./backups/typescript_migration_20250318_123855/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.tsx:export function useCanViewChatHistory(): UseCanViewChatHistoryResult {
+./backups/typescript_migration_20250318_123855/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.tsx:export function CanViewChatHistory({ children }: CanViewChatHistoryProps) {
+./backups/typescript_migration_20250318_123855/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.tsx:export function CanViewChatHistoryProvider({ children }: CanViewChatHistoryProviderProps) {
+./backups/typescript_migration_20250318_123855/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.jsx:export function useCanViewChatHistory() {
+./backups/typescript_migration_20250318_123855/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.jsx:export function CanViewChatHistory({ children }) {
+./backups/typescript_migration_20250318_123855/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.jsx:export function CanViewChatHistoryProvider({ children }) {
+./backups/typescript_migration_20250318_123855/apps/frontend/src/components/toast.tsx:export const ToastViewport = React.forwardRef<
+./backups/typescript_migration_20250318_123855/apps/frontend/src/components/page.tsx:export default function Page() {
+./backups/typescript_migration_20250318_123855/apps/frontend/src/pages/Landing/index.tsx:export default function LandingPage() {
+./backups/typescript_migration_20250318_123855/apps/frontend/src/pages/dashboard/agents/index.tsx:export default function AgentsPage() {
+./backups/typescript_migration_20250318_123855/apps/frontend/src/pages/dashboard/agents/new.tsx:export const NewAgentPage = () => {
+./backups/typescript_migration_20250318_123855/apps/frontend/src/pages/Invite/index.jsx:export default function InvitePage() {
+./backups/components_20250311_152931/components/Preloader/index.tsx:export const FullScreenLoader: React.FC<{}> = () => {
+./backups/components_20250311_152931/components/Preloader/Preloader.tsx:export function FullScreenLoader() {
+./backups/components_20250311_152931/components/Preloader.jsx:export function FullScreenLoader() {
+./backups/components_20250311_152931/components/CanViewChatHistory/index.tsx:export function CanViewChatHistory({ children }: CanViewChatHistoryProps) {
+./backups/components_20250311_152931/components/CanViewChatHistory/index.tsx:export function CanViewChatHistoryProvider({ children }: CanViewChatHistoryProviderProps) {
+./backups/components_20250311_152931/components/CanViewChatHistory/index.tsx:export function useCanViewChatHistory(): CanViewChatHistoryState {
+./backups/components_20250311_152931/components/CanViewChatHistory/CanViewChatHistory.tsx:export function useCanViewChatHistory(): UseCanViewChatHistoryResult {
+./backups/components_20250311_152931/components/CanViewChatHistory/CanViewChatHistory.tsx:export function CanViewChatHistory({ children }: CanViewChatHistoryProps) {
+./backups/components_20250311_152931/components/CanViewChatHistory/CanViewChatHistory.tsx:export function CanViewChatHistoryProvider({ children }: CanViewChatHistoryProviderProps) {
+./backups/components_20250311_152931/components/CanViewChatHistory/CanViewChatHistory.jsx:export function useCanViewChatHistory() {
+./backups/components_20250311_152931/components/CanViewChatHistory/CanViewChatHistory.jsx:export function CanViewChatHistory({ children }) {
+./backups/components_20250311_152931/components/CanViewChatHistory/CanViewChatHistory.jsx:export function CanViewChatHistoryProvider({ children }) {
+./backups/components_20250311_152931/components/Preloader.tsx:export function FullScreenLoader() {
+./backups/components_20250311_152931/components/toast.tsx:export const ToastViewport = React.forwardRef<
+./backups/components_20250311_152931/components/page.tsx:export default function Page() {
+./backups/final_consolidation_20250319_021143/packages/frontend/src/pages/LandingPage.tsx:export default function LandingPage() {
+./backups/final_consolidation_20250319_021143/packages/ui-components/src/features/workflow/components/WorkflowStepViewer.tsx:export const WorkflowStepViewer: FC<WorkflowStepViewerProps> = ({
+./backups/final_consolidation_20250319_021143/packages/layout/components/PageHeader.tsx:export const PageHeader: (React as unknown).FC<PageHeaderProps> = ({
+./backups/final_consolidation_20250319_021143/packages/shared/components/index.tsx:export const FullScreenLoader: FC = (): JSX.Element => () => {
+./backups/final_consolidation_20250319_021143/packages/shared/components/Preloader.tsx:export function FullScreenLoader(): React.JSX.Element {
+./backups/final_consolidation_20250319_021143/apps/frontend/src/features/timeline/components/EnhancedTimelineView.tsx:export const EnhancedTimelineView: React.FC<TimelineViewProps> = ({
+./backups/final_consolidation_20250319_021143/apps/frontend/src/shared/ui/core/Sidebar/Sidebar.tsx:export function Sidebar({ items, bottomItems = [], activeView, onViewChange, className, expanded = false, onExpandedChange, width = {
+./backups/final_consolidation_20250319_021143/apps/frontend/src/components/Preloader.jsx:export function FullScreenLoader() {
+./backups/final_consolidation_20250319_021143/apps/frontend/src/components/CanViewChatHistory/index.tsx:export function CanViewChatHistory({ children }: CanViewChatHistoryProps) {
+./backups/final_consolidation_20250319_021143/apps/frontend/src/components/CanViewChatHistory/index.tsx:export function CanViewChatHistoryProvider({ children }: CanViewChatHistoryProviderProps) {
+./backups/final_consolidation_20250319_021143/apps/frontend/src/components/CanViewChatHistory/index.tsx:export function useCanViewChatHistory(): CanViewChatHistoryState {
+./backups/final_consolidation_20250319_021143/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.tsx:export function useCanViewChatHistory(): UseCanViewChatHistoryResult {
+./backups/final_consolidation_20250319_021143/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.tsx:export function CanViewChatHistory({ children }: CanViewChatHistoryProps) {
+./backups/final_consolidation_20250319_021143/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.tsx:export function CanViewChatHistoryProvider({ children }: CanViewChatHistoryProviderProps) {
+./backups/final_consolidation_20250319_021143/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.jsx:export function useCanViewChatHistory() {
+./backups/final_consolidation_20250319_021143/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.jsx:export function CanViewChatHistory({ children }) {
+./backups/final_consolidation_20250319_021143/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.jsx:export function CanViewChatHistoryProvider({ children }) {
+./backups/final_consolidation_20250319_021143/apps/frontend/src/components/toast.tsx:export const ToastViewport = React.forwardRef<
+./backups/final_consolidation_20250319_021143/apps/frontend/src/components/page.tsx:export default function Page() {
+./backups/final_consolidation_20250319_021143/apps/frontend/src/pages/Landing/index.tsx:export default function LandingPage() {
+./backups/final_consolidation_20250319_021143/apps/frontend/src/pages/dashboard/agents/index.tsx:export default function AgentsPage() {
+./backups/final_consolidation_20250319_021143/apps/frontend/src/pages/dashboard/agents/new.tsx:export const NewAgentPage = () => {
+./backups/final_consolidation_20250319_021143/apps/frontend/src/pages/Invite/index.jsx:export default function InvitePage() {
+./backups/component_backup_20250311_150854/components/Preloader/index.tsx:export const FullScreenLoader: React.FC<{}> = () => {
+./backups/component_backup_20250311_150854/components/Preloader/Preloader.tsx:export function FullScreenLoader() {
+./backups/component_backup_20250311_150854/components/Preloader.jsx:export function FullScreenLoader() {
+./backups/component_backup_20250311_150854/components/CanViewChatHistory/index.tsx:export function CanViewChatHistory({ children }: CanViewChatHistoryProps) {
+./backups/component_backup_20250311_150854/components/CanViewChatHistory/index.tsx:export function CanViewChatHistoryProvider({ children }: CanViewChatHistoryProviderProps) {
+./backups/component_backup_20250311_150854/components/CanViewChatHistory/index.tsx:export function useCanViewChatHistory(): CanViewChatHistoryState {
+./backups/component_backup_20250311_150854/components/CanViewChatHistory/CanViewChatHistory.tsx:export function useCanViewChatHistory(): UseCanViewChatHistoryResult {
+./backups/component_backup_20250311_150854/components/CanViewChatHistory/CanViewChatHistory.tsx:export function CanViewChatHistory({ children }: CanViewChatHistoryProps) {
+./backups/component_backup_20250311_150854/components/CanViewChatHistory/CanViewChatHistory.tsx:export function CanViewChatHistoryProvider({ children }: CanViewChatHistoryProviderProps) {
+./backups/component_backup_20250311_150854/components/CanViewChatHistory/CanViewChatHistory.jsx:export function useCanViewChatHistory() {
+./backups/component_backup_20250311_150854/components/CanViewChatHistory/CanViewChatHistory.jsx:export function CanViewChatHistory({ children }) {
+./backups/component_backup_20250311_150854/components/CanViewChatHistory/CanViewChatHistory.jsx:export function CanViewChatHistoryProvider({ children }) {
+./backups/component_backup_20250311_150854/components/Preloader.tsx:export function FullScreenLoader() {
+./backups/component_backup_20250311_150854/components/toast.tsx:export const ToastViewport = React.forwardRef<
+./backups/component_backup_20250311_150854/components/page.tsx:export default function Page() {
+./backups/component_backup_20250311_150854/pages/Landing/index.tsx:export default function LandingPage() {
+./backups/component_backup_20250311_150854/pages/dashboard/agents/index.tsx:export default function AgentsPage() {
+./backups/component_backup_20250311_150854/pages/dashboard/agents/new.tsx:export const NewAgentPage = () => {
+./backups/component_backup_20250311_150854/pages/Invite/index.jsx:export default function InvitePage() {
+./backups/final_consolidation_20250319_011835/packages/frontend/src/pages/LandingPage.tsx:export default function LandingPage() {
+./backups/final_consolidation_20250319_011835/packages/ui-components/src/features/workflow/components/WorkflowStepViewer.tsx:export const WorkflowStepViewer: FC<WorkflowStepViewerProps> = ({
+./backups/final_consolidation_20250319_011835/packages/layout/components/PageHeader.tsx:export const PageHeader: (React as unknown).FC<PageHeaderProps> = ({
+./backups/final_consolidation_20250319_011835/packages/shared/components/index.tsx:export const FullScreenLoader: FC = (): JSX.Element => () => {
+./backups/final_consolidation_20250319_011835/packages/shared/components/Preloader.tsx:export function FullScreenLoader(): React.JSX.Element {
+./backups/final_consolidation_20250319_011835/apps/frontend/src/features/timeline/components/EnhancedTimelineView.tsx:export const EnhancedTimelineView: React.FC<TimelineViewProps> = ({
+./backups/final_consolidation_20250319_011835/apps/frontend/src/shared/ui/core/Sidebar/Sidebar.tsx:export function Sidebar({ items, bottomItems = [], activeView, onViewChange, className, expanded = false, onExpandedChange, width = {
+./backups/final_consolidation_20250319_011835/apps/frontend/src/components/Preloader.jsx:export function FullScreenLoader() {
+./backups/final_consolidation_20250319_011835/apps/frontend/src/components/CanViewChatHistory/index.tsx:export function CanViewChatHistory({ children }: CanViewChatHistoryProps) {
+./backups/final_consolidation_20250319_011835/apps/frontend/src/components/CanViewChatHistory/index.tsx:export function CanViewChatHistoryProvider({ children }: CanViewChatHistoryProviderProps) {
+./backups/final_consolidation_20250319_011835/apps/frontend/src/components/CanViewChatHistory/index.tsx:export function useCanViewChatHistory(): CanViewChatHistoryState {
+./backups/final_consolidation_20250319_011835/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.tsx:export function useCanViewChatHistory(): UseCanViewChatHistoryResult {
+./backups/final_consolidation_20250319_011835/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.tsx:export function CanViewChatHistory({ children }: CanViewChatHistoryProps) {
+./backups/final_consolidation_20250319_011835/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.tsx:export function CanViewChatHistoryProvider({ children }: CanViewChatHistoryProviderProps) {
+./backups/final_consolidation_20250319_011835/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.jsx:export function useCanViewChatHistory() {
+./backups/final_consolidation_20250319_011835/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.jsx:export function CanViewChatHistory({ children }) {
+./backups/final_consolidation_20250319_011835/apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.jsx:export function CanViewChatHistoryProvider({ children }) {
+./backups/final_consolidation_20250319_011835/apps/frontend/src/components/toast.tsx:export const ToastViewport = React.forwardRef<
+./backups/final_consolidation_20250319_011835/apps/frontend/src/components/page.tsx:export default function Page() {
+./backups/final_consolidation_20250319_011835/apps/frontend/src/pages/Landing/index.tsx:export default function LandingPage() {
+./backups/final_consolidation_20250319_011835/apps/frontend/src/pages/dashboard/agents/index.tsx:export default function AgentsPage() {
+./backups/final_consolidation_20250319_011835/apps/frontend/src/pages/dashboard/agents/new.tsx:export const NewAgentPage = () => {
+./backups/final_consolidation_20250319_011835/apps/frontend/src/pages/Invite/index.jsx:export default function InvitePage() {

@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fuse Connect</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="popup">
+      <!-- Header -->
+      <header class="header">
+        <div class="header-logo">
+          <div class="logo-icon">⚡</div>
+          <div class="logo-text">
+            <span class="logo-title">FUSE CONNECT</span>
+            <span class="logo-version">v6.0</span>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button
+            class="btn-icon-only open-panel-btn"
+            id="open-panel-btn"
+            title="Open Panel on Page (Ctrl+Shift+F)"
+          >
+            🪟
+          </button>
+          <div class="header-status" id="connection-indicator">
+            <span class="status-dot disconnected"></span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Tab Navigation -->
+      <nav class="tabs">
+        <button class="tab active" data-tab="connect">
+          <span class="tab-icon">🔌</span>
+          <span class="tab-label">Connect</span>
+        </button>
+        <button class="tab" data-tab="network">
+          <span class="tab-icon">🌐</span>
+          <span class="tab-label">Network</span>
+        </button>
+        <button class="tab" data-tab="services">
+          <span class="tab-icon">🖥️</span>
+          <span class="tab-label">Services</span>
+        </button>
+        <button class="tab" data-tab="settings">
+          <span class="tab-icon">⚙️</span>
+          <span class="tab-label">Settings</span>
+        </button>
+      </nav>
+
+      <!-- Tab Content -->
+      <main class="content">
+        <!-- Connect Tab -->
+        <section class="tab-content active" id="tab-connect">
+          <div class="connection-card">
+            <div class="connection-status">
+              <div class="connection-icon" id="connection-icon">
+                <div class="pulse-ring"></div>
+                <span>⚡</span>
+              </div>
+              <div class="connection-info">
+                <h2 id="connection-status-text">Disconnected</h2>
+                <p id="connection-url">ws://localhost:3001/ws</p>
+              </div>
+            </div>
+            <button class="btn-primary" id="connect-btn">
+              <span class="btn-icon">🔌</span>
+              Connect to Relay
+            </button>
+          </div>
+
+          <!-- Quick Start Helper - shown when relay not running -->
+          <div class="quick-start-helper" id="quick-start-helper" style="display: none">
+            <div class="helper-card">
+              <div class="helper-icon">⚡</div>
+              <div class="helper-content">
+                <h4>Relay Not Running</h4>
+                <p>Start the TNF Relay to connect agents</p>
+                <button class="btn-secondary" id="quick-start-relay">🚀 Start Relay Server</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="platform-section">
+            <h3 class="section-title">Platform Detection</h3>
+            <div class="platform-card" id="platform-card">
+              <div class="platform-icon">🔍</div>
+              <div class="platform-info">
+                <span class="platform-name" id="platform-name">Detecting...</span>
+                <span class="platform-status" id="platform-status">Open an AI chat page</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="quick-stats">
+            <div class="stat-item">
+              <span class="stat-value" id="stat-agents">0</span>
+              <span class="stat-label">Agents</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="stat-messages">0</span>
+              <span class="stat-label">Messages</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="stat-uptime">--</span>
+              <span class="stat-label">Uptime</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Network Tab (merged with Agents) -->
+        <section class="tab-content" id="tab-network">
+          <!-- Connected Agents Section -->
+          <div class="network-section">
+            <div class="agents-header">
+              <h3 class="section-title">🤖 Connected Agents</h3>
+              <button class="btn-icon-only" id="refresh-agents" title="Refresh">🔄</button>
+            </div>
+            <div class="agents-list" id="agents-list">
+              <div class="empty-state">
+                <span class="empty-icon">🤖</span>
+                <p>No agents connected</p>
+                <span class="empty-hint">Connect to the relay to see agents</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Network Visualization Section -->
+          <div class="network-section" style="margin-top: 16px">
+            <h3 class="section-title">🌐 Network Topology</h3>
+            <div class="network-visual">
+              <div class="network-node center">
+                <span>RELAY</span>
+              </div>
+              <div class="network-connections" id="network-connections">
+                <!-- Dynamic agent nodes -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Activity Section -->
+          <div class="message-log" style="margin-top: 16px">
+            <h3 class="section-title">📋 Recent Activity</h3>
+            <div class="message-list" id="message-list">
+              <div class="empty-state small">
+                <p>No recent messages</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Services Tab -->
+        <section class="tab-content" id="tab-services">
+          <div class="services-header">
+            <h3 class="section-title">TNF Services</h3>
+            <button class="btn-icon-only" id="refresh-services" title="Refresh">🔄</button>
+          </div>
+
+          <div class="service-card" data-service="relay">
+            <div class="service-icon">🔌</div>
+            <div class="service-info">
+              <div class="service-name">TNF Relay</div>
+              <div class="service-port">Port 3001</div>
+            </div>
+            <div class="service-status" id="service-relay-status">
+              <span class="status-dot disconnected"></span>
+            </div>
+            <div class="service-actions">
+              <button class="btn-small" data-action="start" data-service="relay">Start</button>
+              <button class="btn-small danger" data-action="stop" data-service="relay">Stop</button>
+            </div>
+          </div>
+
+          <div class="service-card" data-service="backend">
+            <div class="service-icon">⚙️</div>
+            <div class="service-info">
+              <div class="service-name">TNF Backend</div>
+              <div class="service-port">Port 3000</div>
+            </div>
+            <div class="service-status" id="service-backend-status">
+              <span class="status-dot disconnected"></span>
+            </div>
+            <div class="service-actions">
+              <button class="btn-small" data-action="start" data-service="backend">Start</button>
+              <button class="btn-small danger" data-action="stop" data-service="backend">
+                Stop
+              </button>
+            </div>
+          </div>
+
+          <div class="service-card" data-service="frontend">
+            <div class="service-icon">🌐</div>
+            <div class="service-info">
+              <div class="service-name">TNF Frontend</div>
+              <div class="service-port">Port 3002</div>
+            </div>
+            <div class="service-status" id="service-frontend-status">
+              <span class="status-dot disconnected"></span>
+            </div>
+            <div class="service-actions">
+              <button class="btn-small" data-action="start" data-service="frontend">Start</button>
+              <button class="btn-small danger" data-action="stop" data-service="frontend">
+                Stop
+              </button>
+            </div>
+          </div>
+
+          <div class="service-card" data-service="ai-studio">
+            <div class="service-icon">🎬</div>
+            <div class="service-info">
+              <div class="service-name">AI Video Intelligence</div>
+              <div class="service-port">YouTube + AI Studio</div>
+            </div>
+            <div class="service-status" id="service-ai-studio-status">
+              <span class="status-dot disconnected"></span>
+            </div>
+            <div class="service-actions">
+              <button class="btn-small" data-action="auth" data-service="ai-studio">Auth</button>
+              <button class="btn-small" data-action="process" data-service="ai-studio">
+                Process
+              </button>
+            </div>
+          </div>
+
+          <div class="services-actions" style="margin-top: 16px">
+            <button class="btn-primary" id="start-all-services" style="width: 100%">
+              🚀 Start All Services
+            </button>
+            <button
+              class="btn-secondary"
+              id="stop-all-services"
+              style="width: 100%; margin-top: 8px"
+            >
+              ⏹️ Stop All Services
+            </button>
+          </div>
+
+          <div
+            class="native-host-status"
+            style="
+              margin-top: 16px;
+              padding: 10px;
+              background: rgba(255, 255, 255, 0.03);
+              border-radius: 8px;
+            "
+          >
+            <div style="display: flex; justify-content: space-between; align-items: center">
+              <span style="font-size: 11px; color: rgba(255, 255, 255, 0.5)"
+                >Native Host Status</span
+              >
+              <span id="native-host-indicator" style="font-size: 11px">⚪ Unknown</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Settings Tab -->
+        <section class="tab-content" id="tab-settings">
+          <div class="settings-section">
+            <h3 class="section-title">Connection</h3>
+            <div class="setting-item">
+              <label for="relay-url">Relay URL</label>
+              <input
+                type="text"
+                id="relay-url"
+                value="ws://localhost:3001/ws"
+                placeholder="ws://..."
+              />
+            </div>
+            <div class="setting-item">
+              <label>Auto-Reconnect</label>
+              <label class="toggle">
+                <input type="checkbox" id="auto-reconnect" checked />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3 class="section-title">Interface</h3>
+            <div class="setting-item">
+              <label>Show Panel on All Pages</label>
+              <label class="toggle">
+                <input type="checkbox" id="show-panel" checked />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="setting-item">
+              <label>Keyboard Shortcut</label>
+              <span class="shortcut-badge">Ctrl+Shift+F</span>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3 class="section-title">Debug</h3>
+            <div class="setting-item">
+              <label>Debug Mode</label>
+              <label class="toggle">
+                <input type="checkbox" id="debug-mode" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <button class="btn-secondary" id="export-logs">📋 Export Logs</button>
+          </div>
+
+          <div class="settings-footer">
+            <button class="btn-primary" id="save-settings">💾 Save Settings</button>
+          </div>
+        </section>
+      </main>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <span class="footer-text">The New Fuse • Agent Network</span>
+        <a href="#" class="footer-link" id="open-docs">Docs</a>
+      </footer>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

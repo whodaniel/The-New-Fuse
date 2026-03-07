@@ -1,0 +1,43 @@
+# Dockerfile for AI Arcade service (built from monorepo root context)
+ARG NODE_VERSION=22
+
+FROM node:${NODE_VERSION}-alpine AS builder
+WORKDIR /app/apps/ai-arcade
+ARG VITE_MUSIC_APP_URL
+ARG VITE_CHAIN_NETWORK
+ARG VITE_CHAIN_ID
+ARG VITE_CHAIN_RPC_URL
+ARG VITE_CONTRACT_TOKEN
+ARG VITE_CONTRACT_MERKABA
+ARG VITE_CONTRACT_GENESIS
+ARG VITE_CONTRACT_ENGINE
+ARG VITE_CONTRACT_SIDEPOT_MANAGER
+ARG VITE_CONTRACT_PRIZE_HOOK_ROUTER
+ENV VITE_MUSIC_APP_URL=${VITE_MUSIC_APP_URL}
+ENV VITE_CHAIN_NETWORK=${VITE_CHAIN_NETWORK}
+ENV VITE_CHAIN_ID=${VITE_CHAIN_ID}
+ENV VITE_CHAIN_RPC_URL=${VITE_CHAIN_RPC_URL}
+ENV VITE_CONTRACT_TOKEN=${VITE_CONTRACT_TOKEN}
+ENV VITE_CONTRACT_MERKABA=${VITE_CONTRACT_MERKABA}
+ENV VITE_CONTRACT_GENESIS=${VITE_CONTRACT_GENESIS}
+ENV VITE_CONTRACT_ENGINE=${VITE_CONTRACT_ENGINE}
+ENV VITE_CONTRACT_SIDEPOT_MANAGER=${VITE_CONTRACT_SIDEPOT_MANAGER}
+ENV VITE_CONTRACT_PRIZE_HOOK_ROUTER=${VITE_CONTRACT_PRIZE_HOOK_ROUTER}
+
+# Install only ai-arcade deps (avoid monorepo root native deps)
+COPY apps/ai-arcade/package.json ./
+RUN npm install --legacy-peer-deps
+
+# Build app
+COPY apps/ai-arcade/ ./
+RUN npm run build
+
+FROM node:${NODE_VERSION}-alpine AS runner
+RUN npm install -g serve
+WORKDIR /app
+COPY --from=builder /app/apps/ai-arcade/dist ./dist
+
+EXPOSE ${PORT:-3005}
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:${PORT:-3005}/ || exit 1
+CMD ["sh", "-c", "serve ./dist -p ${PORT:-3005} -s -n"]

@@ -1,0 +1,46 @@
+import React from 'react';
+import { DashboardProvider } from '@the-new-fuse/DashboardProvider';
+import { FeatureControls } from '@the-new-fuse/FeatureControls';
+
+export function Dashboard(): unknown {
+  return (
+    <DashboardProvider>
+      <div className="dashboard">
+        <header className="dashboard-header">
+          <h1>Interactive Dashboard</h1>
+          <FeatureControls />
+        </header>
+        
+        <main className="dashboard-content">
+          {/* Add your dashboard widgets here */}
+        </main>
+
+        <style jsx>{`
+          .dashboard {
+            min-height: 100vh;
+            padding: 2rem;
+            background: var(--background-primary);
+          }
+
+          .dashboard-header {
+            margin-bottom: 2rem;
+          }
+
+          .dashboard-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr): 2rem;
+            padding: 1rem;
+            background: var(--background-secondary);
+            border-radius: 8px;
+          }
+
+          h1 {
+            margin-bottom: 1rem;
+            font-size: 2rem;
+            font-weight: 600;
+          }
+        `}</style>
+      </div>
+    </DashboardProvider>
+  );
+}

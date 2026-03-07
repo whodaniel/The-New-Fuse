@@ -1,0 +1,66 @@
+{
+  "extends": "../../packages/tsconfig.base.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "ignoreDeprecations": "5.0",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@components/*": ["./components/*"],
+      "@lib/*": ["./lib/*"]
+    },
+    "types": ["jest", "node", "react", "react-dom", "vite/client"],
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "allowJs": false,
+    "sourceMap": false, // Ensure TS doesn't try to generate source maps
+    "inlineSourceMap": false // Ensure TS doesn't try to inline source maps
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/App.simplified.tsx",
+    "src/components/AdminPanel/**/*",
+    "src/components/admin/**/*",
+    "src/components/a11y/**/*",
+    "src/components/debugging/**/*",
+    "src/components/agent-collaboration-dashboard.tsx",
+    "src/components/agent-network.tsx",
+    "src/components/agent-personality-customizer.tsx",
+    "src/components/agent-selector.tsx",
+    "src/core/**/*",
+    "src/domain/**/*",
+    "src/shared/**/*",
+    "src/utils/**/*",
+    "src/stubs/class-validator.ts",
+    "src/test/**/*",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
+  ]
+  // "references": [
+  //   { "path": "../../packages/types" },
+  //   { "path": "../../packages/utils" },
+  //   { "path": "./tsconfig.node.json" }
+  // ]
+}

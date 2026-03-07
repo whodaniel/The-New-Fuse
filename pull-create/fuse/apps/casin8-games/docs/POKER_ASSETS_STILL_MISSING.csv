@@ -1,0 +1,26 @@
+assetCode,groupName,requiredWidth,requiredHeight,requiredVariants,canonicalFilename,basePrompt
+pkr_chip_denom_25_idle_v01,"Chips, Pot, and Markers",2048,2048,idle,pkr_chip_denom_25_idle_v01.png,"Generate denomination 25 chip, emerald base, technical radial inlay, precise legibility."
+pkr_panel_tx_lifecycle_idle_v01,HUD Panels and Utility Components,1600,900,idle,pkr_panel_tx_lifecycle_idle_v01.png,"Design transaction lifecycle panel with steps: submitted, pending, confirmed, failed. Include icon placeholders and status rails."
+pkr_panel_ledger_row_set_v01,HUD Panels and Utility Components,1600,900,,pkr_panel_ledger_row_set_v01.png,"Create ledger row UI strips: default, positive result, negative result, disputed. Clean spacing and readability."
+pkr_panel_network_health_set_v01,HUD Panels and Utility Components,1600,900,green|amber|red|unknown,pkr_panel_network_health_set_v01.png,"Create network health chips for API, table stream, chain RPC, wallet. States: green/amber/red/unknown."
+pkr_panel_chat_feed_bg_v01,HUD Panels and Utility Components,2560,1440,bg,pkr_panel_chat_feed_bg_v01.png,Design chat/activity feed panel background with subtle dividers and timestamp lane.
+pkr_panel_sponsor_market_card_v01,HUD Panels and Utility Components,1600,900,card,pkr_panel_sponsor_market_card_v01.png,"Design sponsor marketplace card for agent stake listings: markup, stake-for-sale, exposure cap, CTA area."
+pkr_btn_fold_set_v01,Action Controls,2048,2048,idle|hover|pressed|disabled,pkr_btn_fold_set_v01.png,"Create Fold button set: idle/hover/pressed/disabled. Tone: serious risk action, not alarming cartoon red."
+pkr_btn_checkcall_set_v01,Action Controls,2048,2048,,pkr_btn_checkcall_set_v01.png,Create Check/Call button set with balanced priority and clear hierarchy.
+pkr_btn_raise_primary_set_v01,Action Controls,2048,2048,,pkr_btn_raise_primary_set_v01.png,"Create Raise primary CTA set with premium emerald glow, high contrast, accessible text."
+pkr_slider_raise_track_set_v01,Action Controls,2048,2048,,pkr_slider_raise_track_set_v01.png,Design raise slider track and thumb kit: idle/active/disabled plus tick marks for preset bets.
+pkr_quickbet_chip_row_v01,Action Controls,2048,2048,row,pkr_quickbet_chip_row_v01.png,Create horizontal quick-bet chip row visual with selected and disabled states.
+pkr_tourney_lobby_hero_bg_v01,Tournament-Specific Graphics,2560,1440,bg,pkr_tourney_lobby_hero_bg_v01.png,"Design tournament lobby hero background for MTT/SNG with bracket-like geometry, leaderboard stage lighting, and registration urgency vibe."
+pkr_blind_level_timeline_v01,Tournament-Specific Graphics,1600,900,timeline,pkr_blind_level_timeline_v01.png,Create blind-level timeline component skin with current level emphasis and next-level markers.
+pkr_payout_ladder_panel_v01,Tournament-Specific Graphics,1600,900,panel,pkr_payout_ladder_panel_v01.png,Design payout ladder panel background with rank columns and prize emphasis.
+pkr_final_table_banner_v01,Tournament-Specific Graphics,1600,900,banner,pkr_final_table_banner_v01.png,Create dramatic final-table banner overlay with premium royal gold accents and controlled celebration energy.
+pkr_elimination_burst_fx_v01,Tournament-Specific Graphics,2048,2048,fx,pkr_elimination_burst_fx_v01.png,"Create subtle elimination FX overlay (not explosive arcade), transparent PNG."
+pkr_state_reconnecting_banner_v01,"Trust, Error, and Resilience States",1600,900,banner,pkr_state_reconnecting_banner_v01.png,"Design reconnecting banner: calm amber warning, concise status slot, retry control placeholder."
+pkr_state_chain_mismatch_card_v01,"Trust, Error, and Resilience States",2048,2048,card,pkr_state_chain_mismatch_card_v01.png,Design chain mismatch modal card with clear corrective action area.
+pkr_state_insufficient_funds_card_v01,"Trust, Error, and Resilience States",2048,2048,card,pkr_state_insufficient_funds_card_v01.png,Design insufficient funds card with top-up callout and quick funding action area.
+pkr_state_duplicate_action_guard_v01,"Trust, Error, and Resilience States",2048,2048,guard,pkr_state_duplicate_action_guard_v01.png,Create compact duplicate-action prevented indicator badge for action bar/HUD.
+pkr_state_settlement_pending_overlay_v01,"Trust, Error, and Resilience States",2048,2048,overlay,pkr_state_settlement_pending_overlay_v01.png,Create settlement pending overlay panel with trust-preserving tone and progress lane.
+pkr_mobile_bottom_action_sheet_v01,Mobile-First Specific Assets,1600,900,sheet,pkr_mobile_bottom_action_sheet_v01.png,Design mobile sticky action sheet background with zones for Fold/Check-Call/Raise + slider + quick chips.
+pkr_mobile_tabbar_pokerroom_v01,Mobile-First Specific Assets,1600,900,pokerroom,pkr_mobile_tabbar_pokerroom_v01.png,"Design bottom tab bar for poker app sections (Lobby, Tables, Tourneys, Sponsorship, Wallet), with active/inactive states."
+pkr_mobile_hud_drawer_handle_v01,Mobile-First Specific Assets,2048,2048,handle,pkr_mobile_hud_drawer_handle_v01.png,Design HUD drawer handle and collapsed chip for fairness/health quick status.
+pkr_mobile_table_header_compact_v01,Mobile-First Specific Assets,1600,900,compact,pkr_mobile_table_header_compact_v01.png,"Design compact table header strip: blinds, pot, network ping, fair badge."

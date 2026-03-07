@@ -1,0 +1,29 @@
+import React from 'react';
+const MISTRAL_MODELS = ['mistral-embed'];
+export function MistralAiOptions({ settings }) {
+    const inputClasses = "border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5";
+    const labelClasses = "text-white text-sm font-semibold block mb-3";
+    return (<div className="w-full flex flex-col gap-y-4">
+      <div className="w-full flex items-center gap-[36px] mt-1.5">
+        <div className="flex flex-col w-60">
+          <label className={labelClasses}>
+            API Key
+          </label>
+          <input type="password" name="MistralApiKey" className={inputClasses} placeholder="Mistral AI API Key" defaultValue={(settings === null || settings === void 0 ? void 0 : settings.MistralApiKey) ? "*".repeat(20) : ""} required autoComplete="off" spellCheck={false}/>
+        </div>
+        <div className="flex flex-col w-60">
+          <label className={labelClasses}>
+            Model Preference
+          </label>
+          <select name="EmbeddingModelPref" required defaultValue={settings === null || settings === void 0 ? void 0 : settings.EmbeddingModelPref} className={inputClasses}>
+            <optgroup label="Available embedding models">
+              {MISTRAL_MODELS.map((model) => (<option key={model} value={model}>
+                  {model}
+                </option>))}
+            </optgroup>
+          </select>
+        </div>
+      </div>
+    </div>);
+}
+//# sourceMappingURL=MistralAiOptions.js.map

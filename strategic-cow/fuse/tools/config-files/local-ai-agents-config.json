@@ -1,0 +1,135 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2025-07-07T20:59:48.867Z",
+  "totalAgents": 2,
+  "agents": [
+    {
+      "id": "local-ai-claude code cli",
+      "name": "Claude Code CLI",
+      "type": "ASSISTANT",
+      "status": "ACTIVE",
+      "description": "Anthropic Claude Code CLI - Local AI assistant",
+      "systemPrompt": "You are Claude Code CLI, a local AI assistant integrated with The New Fuse platform. You provide intelligent assistance for coding, analysis, and automation tasks.",
+      "capabilities": [
+        {
+          "name": "CHAT",
+          "description": "CHAT capability provided by Claude Code CLI",
+          "parameters": {
+            "provider": "Claude Code CLI",
+            "command": "claude",
+            "defaultModel": "claude-3-5-sonnet-20241022"
+          }
+        },
+        {
+          "name": "CODE_GENERATION",
+          "description": "CODE_GENERATION capability provided by Claude Code CLI",
+          "parameters": {
+            "provider": "Claude Code CLI",
+            "command": "claude",
+            "defaultModel": "claude-3-5-sonnet-20241022"
+          }
+        },
+        {
+          "name": "FILE_MANAGEMENT",
+          "description": "FILE_MANAGEMENT capability provided by Claude Code CLI",
+          "parameters": {
+            "provider": "Claude Code CLI",
+            "command": "claude",
+            "defaultModel": "claude-3-5-sonnet-20241022"
+          }
+        },
+        {
+          "name": "DATA_ANALYSIS",
+          "description": "DATA_ANALYSIS capability provided by Claude Code CLI",
+          "parameters": {
+            "provider": "Claude Code CLI",
+            "command": "claude",
+            "defaultModel": "claude-3-5-sonnet-20241022"
+          }
+        },
+        {
+          "name": "AUTOMATION",
+          "description": "AUTOMATION capability provided by Claude Code CLI",
+          "parameters": {
+            "provider": "Claude Code CLI",
+            "command": "claude",
+            "defaultModel": "claude-3-5-sonnet-20241022"
+          }
+        }
+      ],
+      "configuration": {
+        "provider": "Claude Code CLI",
+        "command": "claude",
+        "defaultModel": "claude-3-5-sonnet-20241022",
+        "localAI": true,
+        "autoDetected": true,
+        "systemAgent": true
+      },
+      "metadata": {
+        "detectedAt": "2025-07-07T20:59:48.862Z",
+        "providerType": "local",
+        "version": "auto-detected",
+        "initialized": true
+      },
+      "provider": "Claude Code CLI",
+      "userId": "system",
+      "createdAt": "2025-07-07T20:59:48.866Z",
+      "updatedAt": "2025-07-07T20:59:48.866Z"
+    },
+    {
+      "id": "local-ai-gemini cli",
+      "name": "Gemini CLI",
+      "type": "ASSISTANT",
+      "status": "ACTIVE",
+      "description": "Google Gemini CLI - Local AI assistant",
+      "systemPrompt": "You are Gemini CLI, a local AI assistant integrated with The New Fuse platform. You provide intelligent assistance for chat, coding, and data analysis.",
+      "capabilities": [
+        {
+          "name": "CHAT",
+          "description": "CHAT capability provided by Gemini CLI",
+          "parameters": {
+            "provider": "Gemini CLI",
+            "command": "gemini",
+            "defaultModel": "gemini-pro"
+          }
+        },
+        {
+          "name": "CODE_GENERATION",
+          "description": "CODE_GENERATION capability provided by Gemini CLI",
+          "parameters": {
+            "provider": "Gemini CLI",
+            "command": "gemini",
+            "defaultModel": "gemini-pro"
+          }
+        },
+        {
+          "name": "DATA_ANALYSIS",
+          "description": "DATA_ANALYSIS capability provided by Gemini CLI",
+          "parameters": {
+            "provider": "Gemini CLI",
+            "command": "gemini",
+            "defaultModel": "gemini-pro"
+          }
+        }
+      ],
+      "configuration": {
+        "provider": "Gemini CLI",
+        "command": "gemini",
+        "defaultModel": "gemini-pro",
+        "localAI": true,
+        "autoDetected": true,
+        "systemAgent": true
+      },
+      "metadata": {
+        "detectedAt": "2025-07-07T20:59:48.866Z",
+        "providerType": "local",
+        "version": "auto-detected",
+        "initialized": true
+      },
+      "provider": "Gemini CLI",
+      "userId": "system",
+      "createdAt": "2025-07-07T20:59:48.866Z",
+      "updatedAt": "2025-07-07T20:59:48.866Z"
+    }
+  ]
+}

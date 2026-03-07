@@ -1,0 +1,88 @@
+{
+  "name": "@the-new-fuse/api-gateway",
+  "version": "1.0.2",
+  "description": "Unified API Gateway for The New Fuse Platform",
+  "main": "dist/main.js",
+  "scripts": {
+    "prebuild": "pnpm --filter @the-new-fuse/types build && pnpm --filter @the-new-fuse/utils build && pnpm --filter @the-new-fuse/database build && pnpm --filter @the-new-fuse/infrastructure build && pnpm --filter @the-new-fuse/core build",
+    "build": "tsc --skipLibCheck",
+    "build:watch": "tsc --watch --skipLibCheck --noEmitOnError false",
+    "dev": "DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/thenewfuse} nest start --watch",
+    "start": "DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/thenewfuse} nest start",
+    "start:dev": "DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/thenewfuse} nest start --watch",
+    "start:debug": "DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/thenewfuse} nest start --debug --watch",
+    "start:prod": "DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/thenewfuse} node dist/main",
+    "test": "jest --passWithNoTests",
+    "test:unit": "jest --testPathPatterns=unit --passWithNoTests",
+    "test:integration": "jest --testPathPatterns=integration --passWithNoTests",
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
+    "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
+    "type-check": "tsc --noEmit",
+    "clean": "rimraf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo"
+  },
+  "dependencies": {
+    "@nestjs/axios": "^4.0.1",
+    "@nestjs/config": "^4.0.3",
+    "@nestjs/platform-express": "^11.1.11",
+    "@nestjs/swagger": "^11.2.6",
+    "@the-new-fuse/core": "workspace:*",
+    "@the-new-fuse/database": "workspace:*",
+    "@the-new-fuse/jules-integration": "workspace:*",
+    "@the-new-fuse/relay-core": "workspace:*",
+    "@the-new-fuse/types": "workspace:*",
+    "axios": "^1.13.5",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.3",
+    "express": "^5.2.1",
+    "ioredis": "^5.9.2",
+    "redis": "^4.7.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^11.0.16",
+    "@nestjs/schematics": "^11.0.9",
+    "@nestjs/testing": "^11.1.11",
+    "@types/express": "^5.0.6",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.3.0",
+    "@types/supertest": "^6.0.3",
+    "@typescript-eslint/eslint-plugin": "^8.56.1",
+    "@typescript-eslint/parser": "^8.54.0",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "jest": "^30.2.0",
+    "prettier": "^3.8.1",
+    "source-map-support": "^0.5.21",
+    "supertest": "^7.2.2",
+    "ts-jest": "^29.4.6",
+    "ts-loader": "^9.5.4",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.9.3"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node"
+  }
+}

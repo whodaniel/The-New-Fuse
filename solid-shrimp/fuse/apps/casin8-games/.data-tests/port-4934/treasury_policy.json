@@ -1,0 +1,16 @@
+{
+  "default": {
+    "enabled": true,
+    "liabilityCapUnits": "500",
+    "pendingWithdrawalCapUnits": "20",
+    "maxPayoutPerSettlementUnits": "30",
+    "maxWithdrawalPerRequestUnits": "100",
+    "maxUtilizationBps": 9000,
+    "autoTripMs": 60000,
+    "manualTrip": false,
+    "tripReason": "TREASURY_PAYOUT_PER_SETTLEMENT_CAP_EXCEEDED",
+    "trippedAtMs": 1772318067748,
+    "trippedUntilMs": 1772318127748,
+    "updatedAt": "2026-02-28T22:34:27.748Z"
+  }
+}

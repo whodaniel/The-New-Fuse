@@ -1,0 +1,240 @@
+<html class="dark"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#f4c025",
+            "background-light": "#f8f8f5",
+            "background-dark": "#221e10",
+          },
+          fontFamily: {
+            "display": ["Spline Sans", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "1rem",
+            "lg": "2rem",
+            "xl": "3rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #f4c02533;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<div class="relative flex h-screen w-full flex-col overflow-hidden max-w-[390px] mx-auto border-x border-primary/10 shadow-2xl">
+<!-- Top Header -->
+<header class="flex items-center justify-between px-4 py-3 bg-background-light/50 dark:bg-background-dark/50 backdrop-blur-md border-b border-primary/20 sticky top-0 z-50">
+<div class="flex items-center gap-2">
+<div class="text-primary">
+<span class="material-symbols-outlined text-2xl">casino</span>
+</div>
+<h1 class="text-sm font-bold tracking-tight uppercase">Casin8</h1>
+</div>
+<div class="flex items-center gap-3">
+<div class="bg-primary/10 px-3 py-1 rounded-full border border-primary/20 flex items-center gap-2">
+<span class="text-xs font-bold text-primary">0.42 ETH</span>
+<span class="material-symbols-outlined text-xs text-primary">account_balance_wallet</span>
+</div>
+<div class="size-8 rounded-full border border-primary/40 bg-cover bg-center" data-alt="User avatar gold and black aesthetic" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC4U7q8NilYJl92fkAw5sEH8Zo9OW7r09ct0iqXxD5My9C_pcoM-QpDYrqq5bVrRLhBVKVVSGPG4YAlJP9dAv9f5eefBpx57Ob0o_LnMHsXmt-49hK2p-zbD1BZGv1FBDkmct_4Dg2TxZKSqfbfYg1T8aZmjHvLcq-fxdvjLWDZ4-fDvKoE6t94TmmLfqRSCOk0mBxjQOeJNw-yqYSz4lllHqCC012QfDsQFCHkUhC9VC8mpzwodG-t-qfe8nNMW0GII5jRfDlRSgrb");'></div>
+</div>
+</header>
+<!-- Tx Status Bar -->
+<div class="bg-primary/5 px-4 py-2 flex items-center justify-between border-b border-primary/10">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-primary animate-pulse">history_edu</span>
+<p class="text-[10px] font-mono opacity-60">TX: 0x7f...3a92</p>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="size-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(244,192,37,0.6)]"></span>
+<span class="text-[10px] font-bold uppercase tracking-widest text-primary">Pending</span>
+</div>
+</div>
+<!-- Main Game Area -->
+<main class="flex-1 relative flex flex-col items-center justify-center p-4 overflow-hidden">
+<!-- Poker Table Layout (6-Max) -->
+<div class="relative w-full aspect-[4/5] max-h-[500px] flex items-center justify-center">
+<!-- Table Felt -->
+<div class="absolute inset-0 rounded-[4rem] border-[12px] border-primary/10 bg-gradient-to-br from-primary/20 to-transparent shadow-inner"></div>
+<div class="absolute inset-4 rounded-[3.5rem] border border-primary/30 flex flex-col items-center justify-center">
+<!-- Pot Display -->
+<div class="mb-6 flex flex-col items-center">
+<span class="text-[10px] font-bold uppercase tracking-widest opacity-60">Main Pot</span>
+<span class="text-2xl font-bold text-primary">1.85 ETH</span>
+</div>
+<!-- Community Cards -->
+<div class="flex gap-1.5 justify-center">
+<div class="w-10 h-14 rounded-md bg-white border border-slate-200 flex flex-col items-center justify-center text-red-600 shadow-lg">
+<span class="text-sm font-bold">A</span>
+<span class="material-symbols-outlined text-xs">favorite</span>
+</div>
+<div class="w-10 h-14 rounded-md bg-white border border-slate-200 flex flex-col items-center justify-center text-slate-900 shadow-lg">
+<span class="text-sm font-bold">K</span>
+<span class="material-symbols-outlined text-xs">playing_cards</span>
+</div>
+<div class="w-10 h-14 rounded-md bg-white border border-slate-200 flex flex-col items-center justify-center text-slate-900 shadow-lg">
+<span class="text-sm font-bold">Q</span>
+<span class="material-symbols-outlined text-xs">match_case</span>
+</div>
+<div class="w-10 h-14 rounded-md bg-primary/20 border border-primary/40 flex flex-col items-center justify-center shadow-lg backdrop-blur-sm">
+<span class="material-symbols-outlined text-primary/60">help_outline</span>
+</div>
+<div class="w-10 h-14 rounded-md bg-primary/20 border border-primary/40 flex flex-col items-center justify-center shadow-lg backdrop-blur-sm">
+<span class="material-symbols-outlined text-primary/60">help_outline</span>
+</div>
+</div>
+</div>
+<!-- Players Grid -->
+<!-- P1 Top Left -->
+<div class="absolute -top-2 left-4 flex flex-col items-center">
+<div class="size-14 rounded-full border-2 border-primary/40 p-1 bg-background-dark">
+<div class="w-full h-full rounded-full bg-cover bg-center" data-alt="Cyberpunk avatar male" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBTTik7Bq6M3dUb_61Gmk1sZJnOd6I3GTIgczeH5ghu-7w_1JWhpZmufhpm34vRivIOktAEHV8SyR-RLwHs2oSurdtF0EdePmWAsXeK130eTgYscVXb_l3BJHdXsyLc2svH6StV6lk9FqurnbfPJsp29Ji3LPEX32RyziKq6rYrEOQepxiUU-Biisqux14IFZrSZAUnGItkhGf_MGtP8O0nm_mkdrh1bKxE8Q0K99A8nK3QhcEjWH1C9W8Jxo8W27ZPVN8UfVKMYH4V");'></div>
+</div>
+<div class="bg-background-dark/90 px-2 py-0.5 rounded border border-primary/20 -mt-2">
+<p class="text-[9px] font-bold truncate w-12 text-center">Zeus_01</p>
+</div>
+</div>
+<!-- P2 Top Right -->
+<div class="absolute -top-2 right-4 flex flex-col items-center">
+<div class="size-14 rounded-full border-2 border-slate-500/40 p-1 bg-background-dark grayscale">
+<div class="w-full h-full rounded-full bg-cover bg-center" data-alt="Futuristic neon avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCCccOxN56pdiRoZfIfH0v_fRPqfpMKHR-0lANxGVEok0ek9FP8czqGgttpUt_aB92h8BRx4NUAr0EFmJc_bQ4TQnhdggXV-GaJHm9ZwXuqLUMkh-NA-kzSVgFpomLbnXSPV4wH7Eb_5fqYnZVjfa5u-tOgXVG1yG8jE_XGRooBdfAN9YSy6FhrOgkg3Bgmhm8hU3jq52N6EE-b5B6ts5f-Sqt0uvd1Glp0dP9GMs0YBOnmqnERrWeB2C5QA5MjQ3Td_q-Hhz_jhwB5");'></div>
+</div>
+<div class="bg-background-dark/90 px-2 py-0.5 rounded border border-slate-500/20 -mt-2">
+<p class="text-[9px] font-bold truncate w-12 text-center">NeoGirl</p>
+</div>
+</div>
+<!-- P3 Center Right -->
+<div class="absolute top-1/2 -translate-y-1/2 -right-2 flex flex-col items-center">
+<div class="size-14 rounded-full border-2 border-primary p-1 bg-background-dark shadow-[0_0_15px_rgba(244,192,37,0.3)]">
+<div class="w-full h-full rounded-full bg-cover bg-center" data-alt="Abstract droid profile" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBFUuPoHhSCFyOuZFC1nBqP0z94b7vnxY3iX-jH8EdWROtNbKk8wiRm3zW5PUxrudjSqaipXe0eH2hP9Uk2-HZnT8ic_BSrO4EXBkMK0vTkg3SvN6sVtrvuRKHhptnTLvVHRauJ7e0xMdxfn-MpDMSbg8Q898418YouLIfiqu3LNpTQe2yXjjLGEft21bhg-hyB76BX3xqhlE6bU4tnZaK-_y-YF__PBaZJMSXbnLsxiYI-r9Nu6XUUHI6k-Rih9RkbZyhWiM9xs6-X");'></div>
+</div>
+<div class="bg-primary px-2 py-0.5 rounded border border-primary -mt-2">
+<p class="text-[9px] font-bold text-background-dark truncate w-12 text-center">Midas</p>
+</div>
+</div>
+<!-- P4 Bottom Right -->
+<div class="absolute -bottom-2 right-4 flex flex-col items-center">
+<div class="size-14 rounded-full border-2 border-slate-500/40 p-1 bg-background-dark">
+<div class="w-full h-full rounded-full bg-cover bg-center" data-alt="Robot avatar simple" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDadx-UFB_kgLdk3mn11aqPlNfZWJnDodQhVdIlmUBjbrjcxp30YiQzSGmbLd3TL5K-oiQCfvOBR2HGctUZlZoeBSrQRqVleqjO9i2NcDEKBACPC9rMp4S4J9Pb1mGnYviRxzkYm7f4p-Yer1-9PCva8c0Fsr3y2n3VvLNfJxWogrRoK180ONZXXG5LE7O75Y0EYze4Ld3IK9Lquu-gVj-C0s18M8eUzWzSxpj0NS1aO5ayNezJC_6yxPvUEM0XR2cuteNbJt4TmtOU");'></div>
+</div>
+<div class="bg-background-dark/90 px-2 py-0.5 rounded border border-primary/20 -mt-2">
+<p class="text-[9px] font-bold truncate w-12 text-center">Doge_X</p>
+</div>
+</div>
+<!-- P5 Bottom Left -->
+<div class="absolute -bottom-2 left-4 flex flex-col items-center">
+<div class="size-14 rounded-full border-2 border-slate-500/40 p-1 bg-background-dark">
+<div class="w-full h-full rounded-full bg-cover bg-center" data-alt="Synthwave portrait" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC-HZENxpCnfDVe5eknHUX0JHqKy18FtUDRKoM4hCbgjX9KmIw_Y-iN-f1PjED_vDpLmp-gfL05klJDzgoKyafMbHhe-N1FuWY0Z_8qwZ04xYmXKQOHdMwK_aZGgG-pTdPY4Fksn302KRXcGAqswELSpKSZqByUWn_pb4A37G4tew6z_VV3pa6Yo1Ne30CETTejoq9FEutksoquO0BJ_6L4OeI66Yzfz57DsbLwLEHNL-lDCU-b6ZF381Ug73dUzrPBaXiKC_TcQkaZ");'></div>
+</div>
+<div class="bg-background-dark/90 px-2 py-0.5 rounded border border-primary/20 -mt-2">
+<p class="text-[9px] font-bold truncate w-12 text-center">Anon42</p>
+</div>
+</div>
+<!-- P6 Center Left (Dealer) -->
+<div class="absolute top-1/2 -translate-y-1/2 -left-2 flex flex-col items-center">
+<div class="relative">
+<div class="size-14 rounded-full border-2 border-primary/40 p-1 bg-background-dark">
+<div class="w-full h-full rounded-full bg-cover bg-center" data-alt="Minimalist person icon" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAnDFBemkw5PPSHQXg5xG2su9S_j6iCsgLO1HcBUIAw1DOh73KSyS5I5U79auWhVYdeM4RsrOSAbUkReqOEFj0AieJsz6jHSdGc3qGbLajU5x1L8-WGBB1_uUZoH1OyzqQfhln0Ltar9kwxCExBNlYoRzOeU4aPCkzHck8sCCNT1tnxjtXgtB4eC3Ct6Y1yDixkk4Tn1VFXf4HfFL275rkO8I7pfxSiED5Q6EwNdJ53RDxJ7I3du_O3ESmDW5kDsAcaaU8Cr2ejPlw_");'></div>
+</div>
+<div class="absolute -right-2 top-0 size-5 rounded-full bg-white text-background-dark flex items-center justify-center font-bold text-[10px] shadow-lg">D</div>
+</div>
+<div class="bg-background-dark/90 px-2 py-0.5 rounded border border-primary/20 -mt-2">
+<p class="text-[9px] font-bold truncate w-12 text-center">Satoshi</p>
+</div>
+</div>
+<!-- User Cards (The Hero) -->
+<div class="absolute bottom-12 flex -space-x-4 scale-110">
+<div class="w-12 h-16 rounded-lg bg-white border-2 border-primary rotate-[-5deg] flex flex-col items-center justify-center text-red-600 shadow-2xl relative z-10">
+<span class="text-xs font-bold leading-none">10</span>
+<span class="material-symbols-outlined text-sm">favorite</span>
+</div>
+<div class="w-12 h-16 rounded-lg bg-white border-2 border-primary rotate-[5deg] flex flex-col items-center justify-center text-red-600 shadow-2xl">
+<span class="text-xs font-bold leading-none">J</span>
+<span class="material-symbols-outlined text-sm">favorite</span>
+</div>
+</div>
+</div>
+<!-- Secondary Panels (Tabs) -->
+<div class="w-full mt-6 flex flex-col">
+<div class="flex border-b border-primary/10 px-2">
+<button class="flex-1 py-2 text-[10px] font-bold uppercase tracking-wider text-primary border-b-2 border-primary">History</button>
+<button class="flex-1 py-2 text-[10px] font-bold uppercase tracking-wider opacity-40">Fairness</button>
+<button class="flex-1 py-2 text-[10px] font-bold uppercase tracking-wider opacity-40">Chat</button>
+</div>
+<div class="h-16 overflow-y-auto py-2 px-2 text-[10px] space-y-1 opacity-60">
+<p><span class="text-primary">Midas</span> called 0.05 ETH</p>
+<p><span class="text-primary">Zeus_01</span> folded</p>
+<p><span class="text-primary">You</span> called 0.05 ETH</p>
+</div>
+</div>
+</main>
+<!-- Bottom Action Sheet -->
+<div class="bg-background-light dark:bg-[#2d2818] border-t border-primary/30 p-4 pb-8 space-y-4 rounded-t-xl shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
+<!-- Bet Slider -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-center px-1">
+<span class="text-[10px] font-bold uppercase tracking-widest opacity-60">Bet Size</span>
+<span class="text-sm font-bold text-primary">0.12 ETH</span>
+</div>
+<div class="relative h-6 flex items-center">
+<div class="absolute inset-0 h-1.5 bg-primary/20 rounded-full my-auto"></div>
+<div class="absolute inset-y-0 left-0 w-2/3 h-1.5 bg-primary rounded-full my-auto"></div>
+<div class="absolute left-2/3 -translate-x-1/2 size-5 bg-primary rounded-full border-2 border-background-dark shadow-lg cursor-pointer"></div>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 py-1 text-[9px] font-bold border border-primary/20 rounded uppercase">Min</button>
+<button class="flex-1 py-1 text-[9px] font-bold border border-primary/20 rounded uppercase">1/2 Pot</button>
+<button class="flex-1 py-1 text-[9px] font-bold border border-primary/20 rounded uppercase">Pot</button>
+<button class="flex-1 py-1 text-[9px] font-bold border border-primary/20 rounded uppercase">All-In</button>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="grid grid-cols-3 gap-3">
+<button class="flex flex-col items-center justify-center h-14 rounded-lg bg-slate-800/50 border border-slate-700 active:scale-95 transition-transform">
+<span class="text-xs font-bold uppercase tracking-wider">Fold</span>
+<span class="text-[8px] opacity-40 mt-1">Free</span>
+</button>
+<button class="flex flex-col items-center justify-center h-14 rounded-lg bg-slate-800/50 border border-primary/40 active:scale-95 transition-transform">
+<span class="text-xs font-bold uppercase tracking-wider">Check</span>
+<span class="text-[8px] text-primary mt-1">Wait</span>
+</button>
+<button class="flex flex-col items-center justify-center h-14 rounded-lg bg-primary text-background-dark font-bold active:scale-95 transition-transform">
+<span class="text-xs font-bold uppercase tracking-wider">Raise</span>
+<span class="text-[8px] font-bold mt-1">0.12 ETH</span>
+</button>
+</div>
+</div>
+<!-- Floating UI Helper -->
+<div class="fixed bottom-32 right-4 flex flex-col gap-3 z-40">
+<button class="size-10 rounded-full bg-background-dark/80 backdrop-blur-md border border-primary/20 flex items-center justify-center text-primary shadow-xl">
+<span class="material-symbols-outlined text-xl">settings</span>
+</button>
+<button class="size-10 rounded-full bg-background-dark/80 backdrop-blur-md border border-primary/20 flex items-center justify-center text-primary shadow-xl">
+<span class="material-symbols-outlined text-xl">chat</span>
+</button>
+</div>
+</div>
+
+```</body></html>

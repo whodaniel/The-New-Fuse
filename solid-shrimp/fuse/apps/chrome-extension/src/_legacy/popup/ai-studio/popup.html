@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Video Intelligence Suite</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo">
+        <img src="icons/icon48.png" alt="AI Video Intelligence">
+        <div class="logo-text">
+          <h1>AI Video Intelligence</h1>
+          <span class="version">v1.0.0</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span id="userEmail" class="user-email"></span>
+        <span id="tierBadge" class="tier-badge"></span>
+        <button id="settingsBtn" class="icon-btn" title="Settings">⚙️</button>
+      </div>
+    </header>
+
+    <!-- Usage Stats (Free Tier) -->
+    <div id="usageStats" class="usage-stats hidden">
+      <div class="usage-info">
+        <span class="usage-label">Today's Usage:</span>
+        <span class="usage-value">
+          <span id="dailyUsage">0</span>/<span id="dailyLimit">20</span> videos
+        </span>
+      </div>
+      <div class="progress-bar">
+        <div id="usageProgress" class="progress-fill"></div>
+      </div>
+      <button id="upgradePrompt" class="btn-upgrade-small">
+        ⬆️ Upgrade for Unlimited
+      </button>
+    </div>
+
+    <!-- Main Content -->
+    <main class="app-main">
+      <!-- Authentication Panel -->
+      <div id="authPanel" class="panel auth-panel hidden">
+        <div class="auth-hero">
+          <div class="auth-icon-circle">
+            <span class="auth-icon">✨</span>
+          </div>
+        </div>
+        
+        <h2>Welcome to AI Video Intelligence</h2>
+        <p class="auth-subtitle">Unlock the full power of your YouTube library with AI-driven insights.</p>
+        
+        <div class="feature-pills">
+          <div class="pill">
+            <span class="pill-icon">📺</span> Sync Playlists
+          </div>
+          <div class="pill">
+            <span class="pill-icon">🤖</span> AI Analysis
+          </div>
+          <div class="pill">
+            <span class="pill-icon">📓</span> NotebookLM
+          </div>
+        </div>
+        
+        <button id="authBtn" class="btn btn-google btn-large">
+          <svg class="google-logo" viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          <span>Sign in with Google</span>
+        </button>
+        
+        <p class="auth-footer-text">Secure authentication via Google Cloud</p>
+      </div>
+
+      <!-- Main Interface -->
+      <div id="mainInterface" class="hidden">
+        <!-- Playlist Selection -->
+        <section class="section">
+          <div class="section-header">
+            <h3>📺 Source Playlist</h3>
+            <button id="refreshPlaylists" class="btn btn-icon-only" title="Refresh playlists">
+              🔄
+            </button>
+          </div>
+          <select id="sourcePlaylist" class="select-large">
+            <option value="">Loading playlists...</option>
+          </select>
+          <div class="playlist-info">
+            <span id="playlistVideoCount" class="info-text"></span>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <h3>🎯 Destination Playlist</h3>
+            <button id="createPlaylist" class="btn btn-sm btn-secondary" title="Create new playlist">
+              ➕ New
+            </button>
+          </div>
+          <select id="destPlaylist" class="select-large">
+            <option value="">Select destination...</option>
+          </select>
+        </section>
+
+        <!-- Filter & Search -->
+        <section class="section">
+          <div class="section-header">
+            <h3>🔍 Filter Videos</h3>
+            <button id="clearFilter" class="btn btn-sm btn-ghost">Clear</button>
+          </div>
+          <input 
+            type="text" 
+            id="searchFilter" 
+            class="input-large" 
+            placeholder="Search by title, channel, or keywords..."
+          >
+          <div class="filter-options">
+            <label class="checkbox-label">
+              <input type="checkbox" id="filterWatched">
+              <span>Hide watched</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="filterDuplicates">
+              <span>Hide duplicates</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="filterShort">
+              <span>Only videos > 10min</span>
+            </label>
+          </div>
+        </section>
+
+        <!-- Video List -->
+        <section class="section">
+          <div class="section-header">
+            <h3>📹 Videos (<span id="videoCount">0</span>)</h3>
+            <div class="selection-controls">
+              <button id="selectAll" class="btn btn-sm">Select All</button>
+              <button id="deselectAll" class="btn btn-sm">Deselect All</button>
+            </div>
+          </div>
+          
+          <div id="videoList" class="video-list">
+            <div class="loading-state">
+              <div class="spinner"></div>
+              <p>Loading videos...</p>
+            </div>
+          </div>
+          
+          <div id="videoListEmpty" class="empty-state hidden">
+            <div class="empty-icon">📭</div>
+            <p>No videos found</p>
+            <p class="empty-hint">Select a playlist to get started</p>
+          </div>
+        </section>
+
+        <!-- Actions -->
+        <section class="section actions-section">
+          <button id="processBtn" class="btn btn-success btn-large" disabled>
+            <span class="btn-icon">🚀</span>
+            Process Selected (<span id="selectedCount">0</span> videos)
+          </button>
+          <div class="secondary-actions">
+            <button id="bulkImportBtn" class="btn btn-secondary">
+              <span class="btn-icon">📥</span>
+              Bulk Import to NotebookLM
+            </button>
+            <button id="exportQueueBtn" class="btn btn-secondary">
+              <span class="btn-icon">💾</span>
+              Export Queue
+            </button>
+          </div>
+        </section>
+      </div>
+
+      <!-- Processing View -->
+      <div id="processingView" class="hidden">
+        <div class="processing-header">
+          <h2>🎬 Processing Videos</h2>
+          <button id="backToQueue" class="btn btn-sm btn-ghost">← Back to Queue</button>
+        </div>
+        
+        <div class="progress-section">
+          <div class="progress-stats">
+            <div class="stat-item">
+              <span class="stat-label">Progress:</span>
+              <span class="stat-value">
+                <span id="processedCount">0</span>/<span id="totalCount">0</span>
+              </span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Success Rate:</span>
+              <span class="stat-value" id="successRate">100%</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Est. Time:</span>
+              <span class="stat-value" id="estimatedTime">--:--</span>
+            </div>
+          </div>
+          
+          <div class="progress-bar-large">
+            <div id="processProgress" class="progress-fill">
+              <span class="progress-text" id="progressPercent">0%</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="current-video">
+          <h4>Current Video:</h4>
+          <div class="video-card">
+            <div class="video-thumbnail">
+              <img id="currentVideoThumb" src="" alt="">
+            </div>
+            <div class="video-details">
+              <p class="video-title" id="currentVideoTitle">-</p>
+              <p class="video-status" id="currentVideoStatus">-</p>
+              <div class="video-progress">
+                <div class="mini-progress-bar">
+                  <div id="currentVideoProgress" class="mini-progress-fill"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="logs-container">
+          <div class="logs-header">
+            <h4>Activity Log</h4>
+            <button id="clearLogs" class="btn btn-sm btn-ghost">Clear</button>
+          </div>
+          <div id="processLogs" class="logs"></div>
+        </div>
+        
+        <div class="process-controls">
+          <button id="pauseBtn" class="btn btn-warning">
+            <span class="btn-icon">⏸️</span>
+            Pause
+          </button>
+          <button id="resumeBtn" class="btn btn-success hidden">
+            <span class="btn-icon">▶️</span>
+            Resume
+          </button>
+          <button id="stopBtn" class="btn btn-danger">
+            <span class="btn-icon">⏹️</span>
+            Stop
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-links">
+        <a href="#" id="helpLink">Help</a>
+        <a href="#" id="feedbackLink">Feedback</a>
+        <a href="#" id="docsLink">Docs</a>
+      </div>
+      <div class="footer-stats">
+        <span id="totalProcessed">0 videos processed</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Modals -->
+  
+  <!-- Subscription Modal -->
+  <div id="subscriptionModal" class="modal hidden">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Upgrade to Pro</h2>
+        <button class="modal-close" data-modal="subscriptionModal">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="pricing-cards">
+          <!-- Free Tier -->
+          <div class="pricing-card current">
+            <div class="tier-badge-large">Current Plan</div>
+            <h3>Free</h3>
+            <div class="price">$0<span class="period">/month</span></div>
+            <ul class="features-list">
+              <li>✓ 20 videos per day</li>
+              <li>✓ 1 concurrent process</li>
+              <li>✓ Basic prompts</li>
+              <li>✓ Auto-download</li>
+              <li>✗ Custom prompts</li>
+              <li>✗ NotebookLM integration</li>
+              <li>✗ Podcasts</li>
+            </ul>
+          </div>
+          
+          <!-- Pro Tier -->
+          <div class="pricing-card featured">
+            <div class="tier-badge-large popular">Most Popular</div>
+            <h3>Pro</h3>
+            <div class="price">$9.99<span class="period">/month</span></div>
+            <div class="price-annual">or $99/year (save 17%)</div>
+            <ul class="features-list">
+              <li>✓ Unlimited videos</li>
+              <li>✓ 3 concurrent processes</li>
+              <li>✓ Custom prompts (50)</li>
+              <li>✓ NotebookLM integration</li>
+              <li>✓ Podcast creation (5)</li>
+              <li>✓ Cloud sync</li>
+              <li>✓ Priority support</li>
+            </ul>
+            <button class="btn btn-primary btn-large" data-tier="pro">
+              Upgrade to Pro
+            </button>
+          </div>
+          
+          <!-- Enterprise Tier -->
+          <div class="pricing-card">
+            <div class="tier-badge-large">For Teams</div>
+            <h3>Enterprise</h3>
+            <div class="price">$29.99<span class="period">/month</span></div>
+            <div class="price-annual">or $299/year (save 17%)</div>
+            <ul class="features-list">
+              <li>✓ Everything in Pro</li>
+              <li>✓ 10 concurrent processes</li>
+              <li>✓ Unlimited prompts</li>
+              <li>✓ Unlimited podcasts</li>
+              <li>✓ API access</li>
+              <li>✓ Team collaboration</li>
+              <li>✓ Dedicated support</li>
+            </ul>
+            <button class="btn btn-primary btn-large" data-tier="enterprise">
+              Upgrade to Enterprise
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settingsModal" class="modal hidden">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Settings</h2>
+        <button class="modal-close" data-modal="settingsModal">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="settings-section">
+          <h3>Automation</h3>
+          <label class="setting-item">
+            <span>Segment Duration (minutes)</span>
+            <input type="number" id="segmentDuration" min="1" max="120" value="45">
+          </label>
+          <label class="setting-item">
+            <span>Concurrent Processes</span>
+            <input type="number" id="concurrentProcesses" min="1" max="10" value="1">
+          </label>
+          <label class="setting-item checkbox">
+            <input type="checkbox" id="autoOpenNotebook">
+            <span>Auto-open notebook after import</span>
+          </label>
+          <label class="setting-item checkbox">
+            <input type="checkbox" id="autoAudioOverview">
+            <span>Auto-generate audio overview</span>
+          </label>
+        </div>
+        
+        <div class="settings-section">
+          <h3>Account</h3>
+          <div class="account-info">
+            <p><strong>Email:</strong> <span id="settingsEmail">-</span></p>
+            <p><strong>Tier:</strong> <span id="settingsTier">-</span></p>
+            <p><strong>Member Since:</strong> <span id="settingsMemberSince">-</span></p>
+          </div>
+          <button id="signOutBtn" class="btn btn-danger">Sign Out</button>
+        </div>
+        
+        <div class="settings-section">
+          <h3>Data</h3>
+          <button id="clearCacheBtn" class="btn btn-secondary">Clear Cache</button>
+          <button id="exportDataBtn" class="btn btn-secondary">Export Data</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

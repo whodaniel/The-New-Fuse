@@ -1,0 +1,32 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: fuse-alerts
+  namespace: monitoring
+spec:
+  groups:
+  - name: fuse.rules
+    rules:
+    - alert: HighErrorRate
+      expr: rate(fuse_error_total[5m]) > 0.01
+      for: 2m
+      labels:
+        severity: critical
+      annotations:
+        description: "High error rate detected in the system"
+        
+    - alert: GDesignerLatency
+      expr: gdesigner_request_duration_seconds > 0.5
+      for: 1m
+      labels:
+        severity: warning
+      annotations:
+        description: "GDesigner integration showing high latency"
+
+    - alert: CacheHitRateLow
+      expr: rate(cache_hits_total[5m]) / rate(cache_requests_total[5m]) < 0.8
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        description: "Cache hit rate is below threshold"

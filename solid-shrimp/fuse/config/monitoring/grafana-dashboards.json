@@ -1,0 +1,355 @@
+{
+  "dashboards": [
+    {
+      "id": "infrastructure-overview",
+      "title": "Infrastructure Overview",
+      "tags": ["infrastructure", "overview"],
+      "panels": [
+        {
+          "id": 1,
+          "title": "System Load",
+          "type": "graph",
+          "targets": [
+            {
+              "expr": "node_load1",
+              "legendFormat": "1m load average"
+            },
+            {
+              "expr": "node_load5",
+              "legendFormat": "5m load average"
+            },
+            {
+              "expr": "node_load15",
+              "legendFormat": "15m load average"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Memory Usage",
+          "type": "graph",
+          "targets": [
+            {
+              "expr": "(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100",
+              "legendFormat": "Memory Usage %"
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "CPU Usage",
+          "type": "graph",
+          "targets": [
+            {
+              "expr": "100 - (avg by (instance) (irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+              "legendFormat": "CPU Usage %"
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "title": "Disk I/O",
+          "type": "graph",
+          "targets": [
+            {
+              "expr": "irate(node_disk_read_bytes_total[5m])",
+              "legendFormat": "Read {{device}}"
+            },
+            {
+              "expr": "irate(node_disk_written_bytes_total[5m])",
+              "legendFormat": "Write {{device}}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "application-metrics",
+      "title": "Application Metrics",
+      "tags": ["application", "performance"],
+      "panels": [
+        {
+          "id": 1,
+          "title": "Request Rate",
+          "type": "graph",
+          "targets": [
+            {
+              "expr": "sum(rate(http_requests_total[5m])) by (service)",
+              "legendFormat": "{{service}} requests/sec"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Response Time",
+          "type": "graph",
+          "targets": [
+            {
+              "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, service))",
+              "legendFormat": "{{service}} 95th percentile"
+            },
+            {
+              "expr": "histogram_quantile(0.50, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, service))",
+              "legendFormat": "{{service}} 50th percentile"
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Error Rate",
+          "type": "graph",
+          "targets": [
+            {
+              "expr": "sum(rate(http_requests_total{status=~\"5..\"}[5m])) by (service) / sum(rate(http_requests_total[5m])) by (service) * 100",
+              "legendFormat": "{{service}} error rate %"
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "title": "Active Connections",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "sum(nginx_connections_active)",
+              "legendFormat": "Active Connections"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "database-metrics",
+      "title": "Database Performance",
+      "tags": ["database", "postgresql"],
+      "panels": [
+        {
+          "id": 1,
+          "title": "Database Connections",
+          "type": "graph",
+          "targets": [
+            {
+              "expr": "pg_stat_database_numbackends",
+              "legendFormat": "{{datname}} connections"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Query Performance",
+          "type": "graph",
+          "targets": [
+            {
+              "expr": "rate(pg_stat_database_tup_fetched[5m])",
+              "legendFormat": "{{datname}} tuples fetched/sec"
+            },
+            {
+              "expr": "rate(pg_stat_database_tup_inserted[5m])",
+              "legendFormat": "{{datname}} tuples inserted/sec"
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Cache Hit Ratio",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "pg_stat_database_blks_hit / (pg_stat_database_blks_hit + pg_stat_database_blks_read) * 100",
+              "legendFormat": "{{datname}} cache hit %"
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "title": "Lock Waits",
+          "type": "graph",
+          "targets": [
+            {
+              "expr": "pg_locks_count",
+              "legendFormat": "{{mode}} locks"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "redis-metrics",
+      "title": "Redis Performance",
+      "tags": ["redis", "cache"],
+      "panels": [
+        {
+          "id": 1,
+          "title": "Memory Usage",
+          "type": "graph",
+          "targets": [
+            {
+              "expr": "redis_memory_used_bytes",
+              "legendFormat": "Used Memory"
+            },
+            {
+              "expr": "redis_memory_max_bytes",
+              "legendFormat": "Max Memory"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Commands/sec",
+          "type": "graph",
+          "targets": [
+            {
+              "expr": "rate(redis_commands_processed_total[5m])",
+              "legendFormat": "Commands/sec"
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Hit Rate",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "redis_keyspace_hits_total / (redis_keyspace_hits_total + redis_keyspace_misses_total) * 100",
+              "legendFormat": "Hit Rate %"
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "title": "Connected Clients",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "redis_connected_clients",
+              "legendFormat": "Connected Clients"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nginx-metrics",
+      "title": "Load Balancer Performance",
+      "tags": ["nginx", "load-balancer"],
+      "panels": [
+        {
+          "id": 1,
+          "title": "Request Rate",
+          "type": "graph",
+          "targets": [
+            {
+              "expr": "rate(nginx_http_requests_total[5m])",
+              "legendFormat": "{{server}} requests/sec"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Response Codes",
+          "type": "graph",
+          "targets": [
+            {
+              "expr": "rate(nginx_http_requests_total{status=~\"2..\"}[5m])",
+              "legendFormat": "2xx responses/sec"
+            },
+            {
+              "expr": "rate(nginx_http_requests_total{status=~\"4..\"}[5m])",
+              "legendFormat": "4xx responses/sec"
+            },
+            {
+              "expr": "rate(nginx_http_requests_total{status=~\"5..\"}[5m])",
+              "legendFormat": "5xx responses/sec"
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Upstream Response Time",
+          "type": "graph",
+          "targets": [
+            {
+              "expr": "nginx_upstream_response_time",
+              "legendFormat": "{{upstream}} response time"
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "title": "Active Connections",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "nginx_connections_active",
+              "legendFormat": "Active Connections"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "alerting": {
+    "rules": [
+      {
+        "name": "high-cpu-usage",
+        "expr": "100 - (avg by (instance) (irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100) > 80",
+        "for": "5m",
+        "labels": {
+          "severity": "warning"
+        },
+        "annotations": {
+          "summary": "High CPU usage detected",
+          "description": "CPU usage is above 80% for more than 5 minutes"
+        }
+      },
+      {
+        "name": "high-memory-usage",
+        "expr": "(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 85",
+        "for": "5m",
+        "labels": {
+          "severity": "warning"
+        },
+        "annotations": {
+          "summary": "High memory usage detected",
+          "description": "Memory usage is above 85% for more than 5 minutes"
+        }
+      },
+      {
+        "name": "high-error-rate",
+        "expr": "sum(rate(http_requests_total{status=~\"5..\"}[5m])) by (service) / sum(rate(http_requests_total[5m])) by (service) * 100 > 5",
+        "for": "2m",
+        "labels": {
+          "severity": "critical"
+        },
+        "annotations": {
+          "summary": "High error rate detected",
+          "description": "Error rate is above 5% for {{$labels.service}}"
+        }
+      },
+      {
+        "name": "database-connection-limit",
+        "expr": "pg_stat_database_numbackends > 80",
+        "for": "5m",
+        "labels": {
+          "severity": "warning"
+        },
+        "annotations": {
+          "summary": "Database connection limit approaching",
+          "description": "Database {{$labels.datname}} has more than 80 active connections"
+        }
+      },
+      {
+        "name": "redis-memory-usage",
+        "expr": "redis_memory_used_bytes / redis_memory_max_bytes * 100 > 90",
+        "for": "5m",
+        "labels": {
+          "severity": "critical"
+        },
+        "annotations": {
+          "summary": "Redis memory usage critical",
+          "description": "Redis memory usage is above 90%"
+        }
+      }
+    ]
+  }
+}

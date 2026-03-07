@@ -1,0 +1,36 @@
+# L1: Agent Framework
+uagents==0.12.0              # Fetch.ai uAgents framework
+# elizaos-sdk                # Alternative: ElizaOS (install if using)
+
+# L2: Interoperability (ENSO)
+requests==2.32.4             # HTTP requests for ENSO API
+web3==6.11.3                 # Web3 interactions
+eth-account==0.10.0          # Ethereum account management
+
+# L3: Compute (Akash & Render)
+httpx==0.25.2                # Async HTTP client
+aiohttp==3.13.3               # Async HTTP for compute APIs (security update)
+
+# L4: Memory (Arweave & AO)
+arweave-python-client==1.0.16  # Arweave storage
+# aoconnect                  # AO protocol (custom implementation needed)
+
+# Utilities
+python-dotenv==1.0.0         # Environment variable management
+pydantic==2.5.2              # Data validation
+tenacity==8.2.3              # Retry logic
+jsonschema==4.20.0           # JSON schema validation
+
+# Crypto utilities
+cryptography==46.0.5         # Cryptographic operations (security update)
+ecdsa==0.18.0                # ECDSA signing (awaiting security patch)
+base58==2.1.1                # Base58 encoding
+
+# Logging and monitoring
+structlog==23.2.0            # Structured logging
+prometheus-client==0.19.0    # Metrics
+
+# Testing
+pytest==7.4.3                # Testing framework
+pytest-asyncio==0.21.1       # Async testing
+pytest-mock==3.12.0          # Mocking

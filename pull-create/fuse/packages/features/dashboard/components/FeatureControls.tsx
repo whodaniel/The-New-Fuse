@@ -1,0 +1,24 @@
+import React from "react";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.FeatureControls = FeatureControls;
+var react_1 = require("react");
+var DashboardProvider_1 = require("./DashboardProvider");
+function FeatureControls(): JSX.Element ) {
+    var _a = (0, DashboardProvider_1.useDashboardContext)(), state = _a.state, toggleFeature = _a.toggleFeature;
+    var features = ['voice', 'gesture', 'xr'];
+    return (<div className="feature-controls">
+      <h2>Dashboard Features</h2>
+      <div className="feature-grid">
+        {features.map(function (): JSX.Element feature) { return (<div key={feature} className="feature-item">
+            <label>
+              <input type="checkbox" checked={state.features[feature]} onChange={function (): JSX.Element ) { return toggleFeature(feature); }}/>
+              {feature.charAt(0).toUpperCase() + feature.slice(1)}
+            </label>
+          </div>); })}
+      </div>
+
+      <style jsx>{"\n        .feature-controls {\n          padding: 1rem;\n          background: var(--background-secondary);\n          border-radius: 8px;\n        }\n\n        .feature-grid {\n          display: grid;\n          grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));\n          gap: 1rem;\n          margin-top: 1rem;\n        }\n\n        .feature-item {\n          padding: 0.5rem;\n          background: var(--background-primary);\n          border-radius: 4px;\n          transition: all 0.2s ease;\n        }\n\n        .feature-item:hover {\n          transform: translateY(-2px);\n          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n        }\n\n        label {\n          display: flex;\n          align-items: center;\n          gap: 0.5rem;\n          cursor: pointer;\n        }\n\n        input[type=\"checkbox\"] {\n          width: 16px;\n          height: 16px;\n        }\n      "}</style>
+    </div>);
+}
+export {};

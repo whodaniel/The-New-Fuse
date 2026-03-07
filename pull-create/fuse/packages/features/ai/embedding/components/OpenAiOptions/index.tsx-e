@@ -1,0 +1,70 @@
+import React from "react";
+import { OpenAiEmbeddingSettings, COMMON_STYLES } from "@/types/embedding";
+
+interface OpenAiOptionsProps {
+  settings: OpenAiEmbeddingSettings;
+}
+
+const STYLES: "w-full flex flex-col gap-y-4",
+  inputsContainer: "w-full flex items-center gap-[36px] mt-1.5",
+  inputWrapper: "flex flex-col w-60",
+  label: "text-white text-sm font-semibold block mb-3",
+  input: "border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5",
+  select: "border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5",
+};
+
+const AVAILABLE_MODELS: OpenAiOptionsProps) {
+  return(
+    <div className = {
+  ...COMMON_STYLES,
+  container [
+  "text-embedding-ada-002",
+  "text-embedding-3-small",
+  "text-embedding-3-large",
+] as const;
+
+type AvailableModel = typeof AVAILABLE_MODELS[number];
+
+export default function OpenAiOptions({ settings }{STYLES.container}>
+      <div className={STYLES.inputsContainer}>
+        <div className={STYLES.inputWrapper}>
+          <label className={STYLES.label}>
+            API Key
+          </label>
+          <input
+            type="password"
+            name="OpenAiKey"
+            className={STYLES.input}
+            placeholder="OpenAI API Key"
+            defaultValue={settings?.OpenAiKey ? "*".repeat(20): ""}
+            required= {true}
+            autoComplete="off"
+            spellCheck={false}
+          />
+        </div>
+        <div className={STYLES.inputWrapper}>
+          <label className={STYLES.label}>
+            Model Preference
+          </label>
+          <select
+            name="EmbeddingModelPref"
+            required={true}
+            className={STYLES.select}
+          >
+            <optgroup label="Available embedding models">
+              {AVAILABLE_MODELS.map((model) => (
+                <option
+                  key={model}
+                  value={model}
+                  selected={settings?.EmbeddingModelPref === model}
+                >
+                  {model}
+                </option>
+              ))}
+            </optgroup>
+          </select>
+        </div>
+      </div>
+    </div>
+  );
+}

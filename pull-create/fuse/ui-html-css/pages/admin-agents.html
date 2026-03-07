@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin: Agent Configuration - The New Fuse</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; }
+        header { background-color: #333; color: #fff; padding: 1em 0; text-align: center; }
+        nav { background-color: #444; padding: 0.5em; text-align: center; }
+        nav a { color: #fff; margin: 0 15px; text-decoration: none; font-weight: bold; }
+        nav a:hover { text-decoration: underline; }
+        .container { width: 90%; margin: 2em auto; padding: 2em; background-color: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1, h2, h3 { color: #333; }
+        .breadcrumb { margin-bottom: 1em; font-size: 0.9em; color: #555; }
+        .breadcrumb a { color: #007bff; text-decoration: none; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .button-primary { background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 1em; text-decoration: none; display: inline-block; margin-bottom: 1em;}
+        .button-primary:hover { background-color: #0056b3; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1em; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f0f0f0; }
+        .actions a, .actions button { margin-right: 5px; padding: 5px 10px; text-decoration: none; border-radius: 3px; font-size: 0.9em; cursor: pointer;}
+        .actions .configure-btn { background-color: #17a2b8; color:white; border:none; }
+        .actions .status-btn { background-color: #28a745; color:white; border:none; }
+        .actions .status-btn.disable { background-color: #6c757d; }
+        footer { text-align: center; padding: 1em 0; background-color: #333; color: #fff; margin-top: 2em; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>The New Fuse - HTML/CSS Showcase</h1>
+    </header>
+    <nav>
+        <a href="home.html">Home</a>
+        <a href="login.html">Login</a>
+        <a href="register.html">Register</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="chat.html">Chat</a>
+        <a href="tasks.html">Tasks</a>
+        <a href="workflows.html">Workflows</a>
+        <a href="admin.html">Admin</a>
+        <a href="agents.html">Agents</a>
+        <a href="suggestions.html">Suggestions</a>
+        <a href="settings.html">Settings</a>
+        <a href="../index.html">Component Demos</a>
+    </nav>
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="admin.html">Admin</a> > Agent Configuration
+        </div>
+        <h2>Agent Configuration</h2>
+        <a href="#" class="button-primary">Register New Agent</a> <!-- Placeholder for agent registration form/page -->
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>AGENT001</td>
+                    <td>TaskMaster Pro</td>
+                    <td>Task Execution</td>
+                    <td>Enabled</td>
+                    <td class="actions">
+                        <a href="#" class="configure-btn">Configure</a>
+                        <form action="/api/admin/agents/status/AGENT001" method="POST" style="display:inline;">
+                            <input type="hidden" name="status" value="disabled"> <!-- Value would be dynamic -->
+                            <button type="submit" class="status-btn disable">Disable</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <td>AGENT002</td>
+                    <td>DataCruncher X</td>
+                    <td>Data Analysis</td>
+                    <td>Disabled</td>
+                    <td class="actions">
+                        <a href="#" class="configure-btn">Configure</a>
+                        <form action="/api/admin/agents/status/AGENT002" method="POST" style="display:inline;">
+                            <input type="hidden" name="status" value="enabled"> <!-- Value would be dynamic -->
+                            <button type="submit" class="status-btn">Enable</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <td>AGENT003</td>
+                    <td>SupportBot Prime</td>
+                    <td>Customer Support</td>
+                    <td>Enabled</td>
+                    <td class="actions">
+                        <a href="#" class="configure-btn">Configure</a>
+                        <form action="/api/admin/agents/status/AGENT003" method="POST" style="display:inline;">
+                            <input type="hidden" name="status" value="disabled">
+                            <button type="submit" class="status-btn disable">Disable</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <footer>
+        <p>&copy; 2025 The New Fuse - HTML/CSS Showcase</p>
+    </footer>
+</body>
+</html>

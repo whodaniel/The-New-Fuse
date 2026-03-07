@@ -1,0 +1,27 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'gdesigner'
+    static_configs:
+      - targets: ['localhost:9090']
+    metrics_path: '/metrics'
+    scheme: 'http'
+    
+alerting:
+  alertmanagers:
+    - static_configs:
+      - targets: ['alertmanager:9093']
+
+rules:
+  - alert: HighLatency
+    expr: gdesigner_request_duration_seconds > 0.15
+    for: 5m
+    labels:
+      severity: warning
+  - alert: HighMemoryUsage
+    expr: process_resident_memory_bytes > 500000000
+    for: 5m
+    labels:
+      severity: warning

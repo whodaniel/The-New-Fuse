@@ -1,0 +1,171 @@
+- main [ref=e5]:
+    - iframe [active] [ref=e7]:
+        - main [ref=f7e5]:
+            - generic [ref=f7e6]:
+                - generic [ref=f7e8]:
+                    - link "Product name, Stitch (beta)" [ref=f7e9] [cursor=pointer]:
+                        - img "Product name, Stitch (beta)" [ref=f7e10]
+                    - button "Try now" [ref=f7e12] [cursor=pointer]
+                - generic [ref=f7e13]:
+                    - main [ref=f7e14]:
+                        - generic [ref=f7e15]:
+                            - generic [ref=f7e16]:
+                                - img "Swirly grainy gradient of pink, blues, purples, and black" [ref=f7e18]
+                                - generic [ref=f7e19]:
+                                    - generic [ref=f7e20]:
+                                        - heading "Design at the speed of AI" [level=1] [ref=f7e21]
+                                        - generic [ref=f7e23]:
+                                            - textbox [ref=f7e27]:
+                                                - paragraph [ref=f7e28]: Describe your design
+                                            - generic [ref=f7e29]:
+                                                - button "Choose File" [ref=f7e30]
+                                                - generic [ref=f7e31]:
+                                                    - generic [ref=f7e32]:
+                                                        - button [ref=f7e35] [cursor=pointer]:
+                                                            - img [ref=f7e37]
+                                                        - button "App" [ref=f7e39] [cursor=pointer]:
+                                                            - img [ref=f7e41]
+                                                            - generic [ref=f7e43]: App
+                                                    - generic [ref=f7e45]:
+                                                        - button "Gemini 3.0 Flash" [expanded] [ref=f7e46] [cursor=pointer]:
+                                                            - img "Gemini" [ref=f7e48]
+                                                            - generic [ref=f7e49]: 3.0 Flash
+                                                            - img [ref=f7e52]
+                                                        - menu "Gemini 3.0 Flash" [active] [ref=f7e201]:
+                                                            - menuitem "Gemini 3 Flash High-quality designs in HTML with Gemini 3.0 Flash. Export to coding agents." [ref=f7e203] [cursor=pointer]:
+                                                                - img "Gemini" [ref=f7e205]
+                                                                - generic [ref=f7e206]:
+                                                                    - generic [ref=f7e208]: 3 Flash
+                                                                    - generic [ref=f7e209]: High-quality designs in HTML with Gemini 3.0 Flash. Export to coding agents.
+                                                                - img [ref=f7e212]
+                                                            - menuitem "Gemini Thinking with 3 Pro Uses Gemini 3 Pro. Prioritizes maximum quality and reasoning over speed." [ref=f7e215] [cursor=pointer]:
+                                                                - img "Gemini" [ref=f7e217]
+                                                                - generic [ref=f7e218]:
+                                                                    - generic [ref=f7e220]: Thinking with 3 Pro
+                                                                    - generic [ref=f7e221]: Uses Gemini 3 Pro. Prioritizes maximum quality and reasoning over speed.
+                                                            - menuitem "🍌 Redesign Redesign existing apps or sites with Nano Banana Pro. Attach a screenshot." [ref=f7e223] [cursor=pointer]:
+                                                                - generic [ref=f7e225]: 🍌
+                                                                - generic [ref=f7e226]:
+                                                                    - generic [ref=f7e228]: Redesign
+                                                                    - generic [ref=f7e229]: Redesign existing apps or sites with Nano Banana Pro. Attach a screenshot.
+                                                            - menuitem "💡 Ideate New Bring a problem to solve and see solutions." [ref=f7e231] [cursor=pointer]:
+                                                                - generic [ref=f7e233]: 💡
+                                                                - generic [ref=f7e234]:
+                                                                    - generic [ref=f7e235]:
+                                                                        - generic [ref=f7e236]: Ideate
+                                                                        - generic [ref=f7e237]: New
+                                                                    - generic [ref=f7e238]: Bring a problem to solve and see solutions.
+                                                        - button "Generate designs" [disabled] [ref=f7e55]:
+                                                            - img [ref=f7e57]
+                                    - paragraph [ref=f7e59]: Transform ideas into UI designs for mobile and web applications.
+                                - generic [ref=f7e60]:
+                                    - paragraph [ref=f7e63]:
+                                        - text: "New:"
+                                        - link "Export to Figma" [ref=f7e64] [cursor=pointer]:
+                                            - /url: https://x.com/stitchbygoogle/status/2021320125983621626
+                                    - button [ref=f7e65] [cursor=pointer]:
+                                        - img [ref=f7e67]
+                            - generic [ref=f7e69]:
+                                - heading "Explore Examples" [level=2] [ref=f7e70]
+                                - generic [ref=f7e72]:
+                                    - generic [ref=f7e73]:
+                                        - link [ref=f7e74] [cursor=pointer]
+                                        - generic [ref=f7e76]: Indoor Plant Care Dashboard
+                                    - generic [ref=f7e77]:
+                                        - link [ref=f7e78] [cursor=pointer]
+                                        - generic [ref=f7e80]: Alps skiing guide
+                                    - generic [ref=f7e81]:
+                                        - link [ref=f7e82] [cursor=pointer]
+                                        - generic [ref=f7e84]: Ceramic & Pottery Marketplace
+                                    - generic [ref=f7e85]:
+                                        - link [ref=f7e86] [cursor=pointer]
+                                        - generic [ref=f7e88]: Board game club planner
+                                    - generic [ref=f7e89]:
+                                        - link [ref=f7e90] [cursor=pointer]
+                                        - generic [ref=f7e92]: Homemade Pizza Cooking Elite Class
+                                    - generic [ref=f7e93]:
+                                        - link [ref=f7e94] [cursor=pointer]
+                                        - generic [ref=f7e96]: Personal photo library
+                                    - generic [ref=f7e97]:
+                                        - link [ref=f7e98] [cursor=pointer]
+                                        - generic [ref=f7e100]: Employee Feedback Dashboard
+                                - generic [ref=f7e102]:
+                                    - button [disabled] [ref=f7e103]:
+                                        - img [ref=f7e104]
+                                    - button [ref=f7e106] [cursor=pointer]:
+                                        - img [ref=f7e107]
+                        - generic [ref=f7e110]:
+                            - heading "AI for your UI" [level=2] [ref=f7e111]
+                            - paragraph [ref=f7e112]: Write a few words, attach an image and watch your UI come to life
+                            - img "Stack of UI designs in perspective" [ref=f7e114]
+                        - generic [ref=f7e116]:
+                            - generic [ref=f7e117]:
+                                - generic [ref=f7e118]:
+                                    - img "Scrolling through generated screens" [ref=f7e120]
+                                    - heading "Easy edits" [level=2] [ref=f7e121]
+                                    - paragraph [ref=f7e122]: Iterate and tweak designs to build an interface that works best for you.
+                                - generic [ref=f7e123]:
+                                    - img "Closeup of mouse pointer adjusting a design" [ref=f7e125]
+                                    - heading "Export code" [level=2] [ref=f7e126]
+                                    - paragraph [ref=f7e127]: Export static HTML code that matches the design and Figma export.
+                            - generic [ref=f7e128]:
+                                - generic [ref=f7e129]:
+                                    - img "Gemini spark" [ref=f7e131]
+                                    - heading "Build with Gemini" [level=2] [ref=f7e132]
+                                    - paragraph [ref=f7e133]: Leverage some of the latest AI models from Google DeepMind to generate designs.
+                                - generic [ref=f7e134]:
+                                    - img "Closeup of mouse pointer adjusting a design" [ref=f7e136]
+                                    - heading "You can own your design" [level=2] [ref=f7e137]
+                                    - paragraph [ref=f7e138]: Use your original generations as you see fit. Export designs to Figma to fiddle further or copy the code to use how you’d like.
+                        - generic [ref=f7e140]:
+                            - img "Swirly grainy gradient of pink, blues, purples, and black" [ref=f7e142]
+                            - generic [ref=f7e143]:
+                                - generic [ref=f7e144]:
+                                    - heading "Available now Free of charge*" [level=2] [ref=f7e145]:
+                                        - text: Available now
+                                        - text: Free of charge*
+                                    - paragraph [ref=f7e146]: Stitch makes UI creation incredibly simple. No matter your background or expertise, Stitch will help you bring your ideas to life.
+                                - generic [ref=f7e147]:
+                                    - button "Start designing" [ref=f7e148] [cursor=pointer]
+                                    - complementary [ref=f7e149]:
+                                        - text: "*Available to 18+ users in select countries and territories."
+                                        - text: Personal Google Account required.
+                    - generic [ref=f7e151]:
+                        - heading "Questions?" [level=2] [ref=f7e152]
+                        - region [ref=f7e154]:
+                            - heading "What is Stitch?" [level=3] [ref=f7e156]:
+                                - button "What is Stitch?" [ref=f7e157] [cursor=pointer]:
+                                    - text: What is Stitch?
+                                    - img [ref=f7e158]
+                            - heading "Is Stitch free of charge?" [level=3] [ref=f7e161]:
+                                - button "Is Stitch free of charge?" [ref=f7e162] [cursor=pointer]:
+                                    - text: Is Stitch free of charge?
+                                    - img [ref=f7e163]
+                            - heading "What happens if I exceed my monthly limits?" [level=3] [ref=f7e166]:
+                                - button "What happens if I exceed my monthly limits?" [ref=f7e167] [cursor=pointer]:
+                                    - text: What happens if I exceed my monthly limits?
+                                    - img [ref=f7e168]
+                            - heading "Where is Stitch available?" [level=3] [ref=f7e171]:
+                                - button "Where is Stitch available?" [ref=f7e172] [cursor=pointer]:
+                                    - text: Where is Stitch available?
+                                    - img [ref=f7e173]
+                            - heading "Can I use designs generated from Stitch for commercial purposes?" [level=3] [ref=f7e176]:
+                                - button "Can I use designs generated from Stitch for commercial purposes?" [ref=f7e177] [cursor=pointer]:
+                                    - text: Can I use designs generated from Stitch for commercial purposes?
+                                    - img [ref=f7e178]
+                            - heading "Can I import data from Galileo AI?" [level=3] [ref=f7e181]:
+                                - button "Can I import data from Galileo AI?" [ref=f7e182] [cursor=pointer]:
+                                    - text: Can I import data from Galileo AI?
+                                    - img [ref=f7e183]
+                            - heading "I want to get in touch with the Stitch team, how can I reach out?" [level=3] [ref=f7e186]:
+                                - button "I want to get in touch with the Stitch team, how can I reach out?" [ref=f7e187] [cursor=pointer]:
+                                    - text: I want to get in touch with the Stitch team, how can I reach out?
+                                    - img [ref=f7e188]
+                    - generic [ref=f7e190]:
+                        - img [ref=f7e192]
+                        - generic [ref=f7e194]:
+                            - link "Privacy Notice" [ref=f7e195] [cursor=pointer]
+                            - link "Terms & Privacy" [ref=f7e196] [cursor=pointer]:
+                                - /url: https://policies.google.com/
+                            - link "Third Party Notices" [ref=f7e197] [cursor=pointer]:
+                                - /url: /third-party-licenses.txt

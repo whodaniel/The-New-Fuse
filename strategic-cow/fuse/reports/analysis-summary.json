@@ -1,0 +1,21 @@
+{
+  "summary": {
+    "unusedFiles": 0,
+    "duplicateFunctions": 0,
+    "outdatedDocs": 0,
+    "highlyImportedModules": 0,
+    "complexComponents": 0,
+    "details": {
+      "unusedFiles": [],
+      "topDuplicateFunctions": [],
+      "outdatedDocs": [],
+      "topImported": [],
+      "topComplex": []
+    }
+  },
+  "suggestedPriorities": [
+    "Run final-cleanup.js to remove console.logs and standardize imports",
+    "Update documentation to reflect current architecture",
+    "Standardize folder structure"
+  ]
+}

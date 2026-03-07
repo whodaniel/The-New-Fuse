@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Casin8 Slots Lobby</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#7f13ec",
+                        "primary-content": "#ffffff",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#191022",
+                        "surface-dark": "#251a33",
+                        "accent-gold": "#ffd700",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar hiding for smooth horizontal scrolling */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .glass-card {
+            background: rgba(37, 26, 51, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(127, 19, 236, 0.2);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display antialiased overflow-x-hidden pb-20">
+<!-- Status Bar Safe Area Stub -->
+<div class="h-10 w-full bg-background-light dark:bg-background-dark sticky top-0 z-50"></div>
+<!-- Header Section -->
+<header class="sticky top-10 z-40 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-primary/20 px-4 py-3">
+<div class="flex items-center justify-between mb-4">
+<!-- User/Wallet Area -->
+<div class="flex items-center gap-3 flex-1">
+<div class="relative group cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-purple-900 p-[2px]">
+<div class="w-full h-full rounded-full bg-surface-dark flex items-center justify-center overflow-hidden">
+<span class="material-symbols-outlined text-primary text-[24px]">account_circle</span>
+</div>
+</div>
+<div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-background-dark rounded-full"></div>
+</div>
+<div class="flex flex-col">
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-none tracking-tight">$12,450.50</h2>
+<div class="flex items-center gap-1 mt-1">
+<span class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">0.452 BTC</span>
+<span class="material-symbols-outlined text-accent-gold text-[12px]">verified</span>
+</div>
+</div>
+</div>
+<!-- Network Status -->
+<div class="flex flex-col items-end gap-1">
+<div class="flex items-center gap-2 bg-surface-dark/50 px-2 py-1 rounded-full border border-white/5">
+<div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+<span class="text-xs font-bold text-green-400">24ms</span>
+</div>
+<span class="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wider">Mainnet</span>
+</div>
+</div>
+<!-- Quick Filters/Search -->
+<div class="flex items-center gap-3 overflow-x-auto scrollbar-hide pb-1">
+<div class="flex-1 relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">search</span>
+<input class="w-full h-10 bg-surface-dark border border-white/10 rounded-xl pl-10 pr-4 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50" placeholder="Search games..." type="text"/>
+</div>
+<button class="h-10 w-10 shrink-0 flex items-center justify-center rounded-xl bg-surface-dark border border-white/10 text-slate-300">
+<span class="material-symbols-outlined">tune</span>
+</button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex flex-col gap-6 pt-4">
+<!-- Hero Carousel -->
+<section class="px-4">
+<div class="relative w-full aspect-[16/9] rounded-2xl overflow-hidden shadow-2xl shadow-primary/20 group">
+<!-- Hero Image -->
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" data-alt="Futuristic neon cyberpunk city slot game background" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC_oV7WnItPiO5niGB7WQSkaMlw-3YzdYtCs0pVsimzviIFB-vXIn1NgESD8j7CwWH-cr0bddAcZ21vF5PABfSMEb09lladDvmD7SZ4NzGjcbgIuJb37HTyBn9c-_x6wJ5lHJIp1AMU7WUWvObQsCjFuoxXZO3NBKoQAry77b88nAWIh_mYBwOGIbovtWy4tJ24fOPU1sPXueZYVvMNXhGZlbmoTdiXhVOuspq5-iYBubZcq9Gn6YCcG57rVofcTxZYj8uBy1Diwz4');">
+</div>
+<!-- Gradient Overlay -->
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark via-background-dark/50 to-transparent"></div>
+<!-- Content -->
+<div class="absolute bottom-0 left-0 right-0 p-5 flex flex-col items-start gap-3">
+<div class="inline-flex px-2 py-1 rounded-md bg-accent-gold text-black text-[10px] font-bold uppercase tracking-wider">Exclusive</div>
+<h1 class="text-3xl font-bold text-white leading-tight drop-shadow-md">Cyber Nexus <span class="text-primary font-light">Jackpot</span></h1>
+<div class="flex items-center gap-4 text-sm text-slate-300">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">local_fire_department</span> Hot</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">trending_up</span> 98.2% RTP</span>
+</div>
+<button class="mt-2 bg-primary hover:bg-primary/90 text-white px-6 py-2.5 rounded-lg font-bold text-sm shadow-lg shadow-primary/30 w-full md:w-auto transition-all active:scale-95 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[20px]">play_arrow</span> Play Now
+                    </button>
+</div>
+</div>
+<!-- Pagination Dots -->
+<div class="flex justify-center gap-2 mt-4">
+<div class="w-6 h-1.5 rounded-full bg-primary"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-slate-600"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-slate-600"></div>
+</div>
+</section>
+<!-- Categories -->
+<section>
+<div class="flex gap-3 px-4 overflow-x-auto scrollbar-hide">
+<button class="flex items-center gap-2 px-4 py-2 rounded-full bg-primary text-white text-sm font-semibold whitespace-nowrap shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[18px]">casino</span> All Games
+                </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-full bg-surface-dark border border-white/10 text-slate-300 text-sm font-medium whitespace-nowrap hover:bg-surface-dark/80">
+<span class="material-symbols-outlined text-[18px] text-accent-gold">star</span> Popular
+                </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-full bg-surface-dark border border-white/10 text-slate-300 text-sm font-medium whitespace-nowrap hover:bg-surface-dark/80">
+<span class="material-symbols-outlined text-[18px] text-blue-400">new_releases</span> New
+                </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-full bg-surface-dark border border-white/10 text-slate-300 text-sm font-medium whitespace-nowrap hover:bg-surface-dark/80">
+<span class="material-symbols-outlined text-[18px] text-green-400">rocket_launch</span> Crash
+                </button>
+</div>
+</section>
+<!-- Featured Section Title -->
+<section class="px-4 flex items-end justify-between">
+<h2 class="text-xl font-bold text-white tracking-tight">Featured Slots</h2>
+<a class="text-primary text-sm font-medium hover:text-primary/80 flex items-center" href="#">View all <span class="material-symbols-outlined text-base">chevron_right</span></a>
+</section>
+<!-- Glassmorphic Grid -->
+<section class="grid grid-cols-2 gap-4 px-4">
+<!-- Card 1 -->
+<div class="glass-card rounded-xl overflow-hidden group relative">
+<div class="relative aspect-[3/4] overflow-hidden">
+<div class="absolute top-2 right-2 z-10 bg-black/60 backdrop-blur-sm px-2 py-1 rounded text-[10px] font-bold text-accent-gold border border-accent-gold/20">
+                        x5000
+                    </div>
+<div class="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-110" data-alt="Neon purple abstract geometric shapes representing a slot game" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBLHIjdIniw0Gd5uIJPLOkUn2Ftd9-Yk7pFKvdiakNsNrtkKKljugdK5Y2DLq_0PmvHN9AOXHZuLLgnmlDGIAyfxXy3MljxOXbXqLfj3SdBiZJBgMn9ou_MCTVDCukl_fSfTcGQNG8_KFevI39JF4y5z4Ze0wvxg-faydT-UanjZxkOb0bFNnCnb7I12vPjTqbVVl3dRaaNXP3g4S4jyVl0Nq6vtXB3w5eI-j6jmU4pLtcH37CoNaTUDzvKo3g9qeJxGzHCGu-Jgog');"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="absolute bottom-0 left-0 right-0 p-3">
+<h3 class="text-white font-bold text-sm truncate">Nebula Jackpots</h3>
+<div class="flex items-center justify-between mt-2 text-[10px] text-slate-300">
+<span class="flex items-center gap-0.5"><span class="material-symbols-outlined text-[10px] text-green-400">bolt</span> High Vol</span>
+<span class="font-mono text-primary-300">Min $0.20</span>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="glass-card rounded-xl overflow-hidden group relative">
+<div class="relative aspect-[3/4] overflow-hidden">
+<div class="absolute top-2 right-2 z-10 bg-black/60 backdrop-blur-sm px-2 py-1 rounded text-[10px] font-bold text-accent-gold border border-accent-gold/20">
+                        HOT
+                    </div>
+<div class="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-110" data-alt="Abstract golden coins and digital wealth concept" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDCHqMeKTSzDCwfHJBbxah-YKusauc0rYCxCFzX2Ojz3MnOuEAQOB9zztvzqUSbUq0sTe4kBrp6hGq4hbMx62wYAdgN_P99cUgyeU5BTazjBtbRzrH2cb3kFZfCe003zJMcEEQEb1RcDBLWM0JAKhrknrk1qrZfYtnnH3-NF_TSEAi62CEFtcqjacrFBkkxe-eyu4VRqgXHBhvgJGWsaxuhqEZrOH-wXRvxZlKLwjKwX0znxAfc3IypGIZa5kWtjFnuzTgQJ4wUY64');"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="absolute bottom-0 left-0 right-0 p-3">
+<h3 class="text-white font-bold text-sm truncate">Golden Crypto</h3>
+<div class="flex items-center justify-between mt-2 text-[10px] text-slate-300">
+<span class="flex items-center gap-0.5"><span class="material-symbols-outlined text-[10px] text-yellow-400">balance</span> Med Vol</span>
+<span class="font-mono text-primary-300">Min $0.10</span>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="glass-card rounded-xl overflow-hidden group relative">
+<div class="relative aspect-[3/4] overflow-hidden">
+<div class="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-110" data-alt="Mystical ancient Egyptian tomb entrance with glowing glyphs" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDqdIIcGcxdt6_gFr3QkIXlw8YPgbOxPAo7oup7s3EsK2VczAgAZdTFrCiBjGVEagf0gAn-J5PRjb21PxYlKwVcvzYxzRBuosMy--kn6lRJbos3c0RXEy8zsvXKfceB2XxMQ3lBOs41chLfAQmWdvlm7HtDj0IVvvBeegh9Zf6uQZYhmTbYsAlEQYsEvpgFfdXJNBmSyh8sUj9IQEFs8VwutG_8X0kamwpgYB8dLh0cmRAYNyqD8u3P2SOvwSYahFpq9bwPw4DdxMM');"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="absolute bottom-0 left-0 right-0 p-3">
+<h3 class="text-white font-bold text-sm truncate">Book of Satoshi</h3>
+<div class="flex items-center justify-between mt-2 text-[10px] text-slate-300">
+<span class="flex items-center gap-0.5"><span class="material-symbols-outlined text-[10px] text-red-400">warning</span> Extr Vol</span>
+<span class="font-mono text-primary-300">Min $0.50</span>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="glass-card rounded-xl overflow-hidden group relative">
+<div class="relative aspect-[3/4] overflow-hidden">
+<div class="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-110" data-alt="Retro 80s synthwave sunset grid landscape" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCN9g3xwJSHgCouS1Nqhwaj7R5vhAUzg61MMm7ct5fMHvZpoEoELpsDT68xxexDIHyS_JGEVKf-nXMoUh_uiCzL9XWkQoeROcsjouc9XV1WoonBDHs8atYwhxjzX40VyB2UmyIU-t-nU2D2a6-EsYJLOxZlo97iQgq2g_0aCG-0f48HB2e1I2dXs9JOX9hC8N6zEIu44G_td4GvTQiWtSH3XH1Zzsf5ekNQ0GG-rS7MEMdbGxReFfYF2BVEGa_yywznHOdDZpAVu98');"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="absolute bottom-0 left-0 right-0 p-3">
+<h3 class="text-white font-bold text-sm truncate">Retro Reels 2077</h3>
+<div class="flex items-center justify-between mt-2 text-[10px] text-slate-300">
+<span class="flex items-center gap-0.5"><span class="material-symbols-outlined text-[10px] text-green-400">bolt</span> High Vol</span>
+<span class="font-mono text-primary-300">Min $0.25</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Live Winners Ticker -->
+<section class="mt-2 px-4">
+<div class="w-full bg-surface-dark border border-white/5 rounded-lg p-3 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center text-green-400">
+<span class="material-symbols-outlined text-[18px]">trophy</span>
+</div>
+<div class="flex flex-col">
+<span class="text-xs text-slate-400">Latest Win</span>
+<span class="text-sm font-bold text-white">user88...2x <span class="text-green-400">+$420.00</span></span>
+</div>
+</div>
+<div class="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
+</div>
+</section>
+<!-- Live Casino Teaser -->
+<section class="px-4 pb-6">
+<h2 class="text-xl font-bold text-white tracking-tight mb-4">Live Casino</h2>
+<div class="flex overflow-x-auto gap-4 scrollbar-hide">
+<!-- Live Card 1 -->
+<div class="min-w-[200px] h-32 rounded-xl relative overflow-hidden flex-shrink-0 border border-white/10">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Roulette wheel close up" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDXnWERL4eZguujdOrjywxLIB-simr-PlD_gZ5GR4kRnsDqU01ZKAbpZ_Uxt0lYwrgFA53JmqHJgl1gntsC1g2Ttq5Z9xMtAK3O6cmPx3H7iEgUZZDv1VUvXOfkeMF75gCBp5KKy9RdC-tap0tG2gaviXCo0eaPynoPu3Ni2YSPKk9rFtOAri_Adz_RcbodT1Nsoki1gMwMsBtX-01TM1UCSWKz_EDOwWmlRE9xqp8aUPljjzC_c86BprPaWGjhBkO0cRdHICyTaBg');"></div>
+<div class="absolute inset-0 bg-black/50"></div>
+<div class="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1">
+<div class="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div> LIVE
+                     </div>
+<div class="absolute bottom-3 left-3">
+<h4 class="text-white font-bold text-sm">Lightning Roulette</h4>
+<p class="text-slate-300 text-[10px]">1.2k Players</p>
+</div>
+</div>
+<!-- Live Card 2 -->
+<div class="min-w-[200px] h-32 rounded-xl relative overflow-hidden flex-shrink-0 border border-white/10">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Blackjack cards on table" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCL-3B0xjTMYm9PjZxTEzfQKhpwsS9Wj1rr2pou-3qfj49LwEyCJXnaKR3f4rSRvRJ9y1r6mx2Wuhjo1xfkTUVbG9dSBtN7rYURRbiSk0z7vM2_vnn-H5dSc5C0jw1F5Gbb3Mx1lxvybSqhfqr0-f5PAxfjUFbXZcipu8jW0d6FPlglvSa61UX8wkVbr6koNmOmyEtZ9fGzPF9MVPv2NqE8NVcURdKEqLH9wD9NNS72ZgByPeJgzsniX5s603U2S99xvYXqjuiNYa0');"></div>
+<div class="absolute inset-0 bg-black/50"></div>
+<div class="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1">
+<div class="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div> LIVE
+                     </div>
+<div class="absolute bottom-3 left-3">
+<h4 class="text-white font-bold text-sm">VIP Blackjack</h4>
+<p class="text-slate-300 text-[10px]">342 Players</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation -->
+<nav class="fixed bottom-0 left-0 w-full bg-background-dark border-t border-primary/20 z-50 pb-safe">
+<div class="flex justify-around items-end px-2 pt-2 pb-5 bg-background-dark">
+<a class="flex flex-col items-center gap-1 flex-1 group" href="#">
+<div class="p-1 rounded-full group-hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-primary text-[24px]">home</span>
+</div>
+<span class="text-[10px] font-medium text-primary">Lobby</span>
+</a>
+<a class="flex flex-col items-center gap-1 flex-1 group" href="#">
+<div class="p-1 rounded-full group-hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-white text-[24px]">search</span>
+</div>
+<span class="text-[10px] font-medium text-slate-400 group-hover:text-white">Search</span>
+</a>
+<!-- Center FAB -->
+<div class="relative -top-6">
+<button class="w-14 h-14 rounded-full bg-gradient-to-br from-primary to-purple-600 shadow-[0_0_15px_rgba(127,19,236,0.5)] flex items-center justify-center text-white border-4 border-background-dark transform transition-transform active:scale-95">
+<span class="material-symbols-outlined text-[28px]">account_balance_wallet</span>
+</button>
+</div>
+<a class="flex flex-col items-center gap-1 flex-1 group" href="#">
+<div class="p-1 rounded-full group-hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-white text-[24px]">emoji_events</span>
+</div>
+<span class="text-[10px] font-medium text-slate-400 group-hover:text-white">Rewards</span>
+</a>
+<a class="flex flex-col items-center gap-1 flex-1 group" href="#">
+<div class="p-1 rounded-full group-hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-white text-[24px]">person</span>
+</div>
+<span class="text-[10px] font-medium text-slate-400 group-hover:text-white">Profile</span>
+</a>
+</div>
+</nav>
+</body></html>

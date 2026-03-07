@@ -1,0 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Syne:wght@600;700&display=swap');
+
+:root {
+  --font-body: 'Space Grotesk', sans-serif;
+  --font-display: 'Syne', sans-serif;
+  --text-main: #f4faf6;
+  --text-muted: #a2b7ab;
+  font-family: var(--font-body);
+  line-height: 1.45;
+  font-weight: 400;
+  color: var(--text-main);
+  background: radial-gradient(circle at top left, #11231b 0%, #0a0f12 45%, #06080a 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: transparent;
+}

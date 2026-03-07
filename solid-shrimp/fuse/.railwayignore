@@ -1,0 +1,23 @@
+# Force Railway to use Dockerfile instead of auto-detection
+nixpacks.toml
+
+# Ignore development files
+.env*
+.git/
+node_modules/
+*.log
+.DS_Store
+
+# Exclude large non-build artifacts from upload context
+/output/
+/docs/
+/tools/
+/analysis/
+/reports/
+/playwright-report/
+/page-analysis-results/
+/component-inventory/
+/ui-audit-results/
+/assets/
+/data/agent-registry/
+/scripts/agent-registry/

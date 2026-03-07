@@ -1,0 +1,111 @@
+{
+  "sessions": {},
+  "tables": {
+    "qa-rules-cash-7edeb1fe": {
+      "id": "qa-rules-cash-7edeb1fe",
+      "events": [
+        {
+          "type": "table_state_init",
+          "tableId": "qa-rules-cash-7edeb1fe",
+          "handId": "hand-dd2d187f",
+          "actingSeat": 0,
+          "pot": 30,
+          "street": "preflop",
+          "cursor": "qa-rules-cash-7edeb1fe:1",
+          "ts": "2026-02-28T22:34:26.941Z"
+        }
+      ],
+      "snapshot": {
+        "eventType": "table.snapshot",
+        "tableId": "qa-rules-cash-7edeb1fe",
+        "handId": "hand-dd2d187f",
+        "actingSeat": 1,
+        "pot": 50,
+        "street": "preflop",
+        "seats": [
+          { "seat": 0, "folded": false, "stack": 130, "invested": 20 },
+          { "seat": 1, "folded": false, "stack": 140, "invested": 10 },
+          { "seat": 2, "folded": false, "stack": 130, "invested": 20 }
+        ],
+        "seq": 1,
+        "cursor": "qa-rules-cash-7edeb1fe:1",
+        "terminal": false,
+        "variant": "holdem-cash",
+        "communityCards": [],
+        "deckCards": [
+          "6♣",
+          "A♣",
+          "J♥",
+          "4♣",
+          "6♠",
+          "3♦",
+          "K♦",
+          "8♥",
+          "A♦",
+          "10♠",
+          "3♣",
+          "2♥",
+          "7♣",
+          "A♥",
+          "6♥",
+          "10♥",
+          "J♣",
+          "6♦",
+          "Q♥",
+          "5♠",
+          "5♥",
+          "Q♦",
+          "4♦",
+          "9♣",
+          "2♣",
+          "4♠",
+          "7♥",
+          "Q♠",
+          "10♣",
+          "8♣",
+          "2♦",
+          "8♦",
+          "K♠",
+          "J♠",
+          "9♦",
+          "10♦",
+          "K♣",
+          "K♥",
+          "2♠",
+          "A♠",
+          "8♠",
+          "5♣",
+          "7♠",
+          "J♦",
+          "3♥",
+          "5♦"
+        ],
+        "holeCards": {
+          "0": ["3♠", "9♥"],
+          "1": ["7♦", "9♠"],
+          "2": ["Q♣", "4♥"]
+        },
+        "actionCountStreet": 1,
+        "settled": false,
+        "winnerSeat": null,
+        "payoutUnits": 0,
+        "showdown": null,
+        "actedSeats": [0],
+        "streetBets": { "0": 20, "1": 10, "2": 20 },
+        "currentBet": 20,
+        "sessionBySeat": null,
+        "buttonSeat": 0,
+        "blinds": {
+          "smallBlind": 10,
+          "bigBlind": 20,
+          "sbSeat": 1,
+          "bbSeat": 2
+        },
+        "minRaise": 20,
+        "lastRaiseSize": 20
+      },
+      "snapshotUpdatedAt": "2026-02-28T22:34:26.958Z"
+    }
+  },
+  "v2": { "holdemTables": {}, "holdemTournaments": {} }
+}

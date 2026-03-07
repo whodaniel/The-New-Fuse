@@ -1,0 +1,341 @@
+name: Build Verification
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+  push:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_ENV: production
+  PNPM_VERSION: 10.22.0
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+  BUILD_MEMORY_LIMIT: 4096
+  BUILD_CONCURRENCY: 2
+
+jobs:
+  setup:
+    name: Setup and Cache
+    runs-on: ubuntu-latest
+    outputs:
+      cache-key: ${{ steps.cache-keys.outputs.modules }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Setup cache keys
+        id: cache-keys
+        run: |
+          echo "modules=${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}" >> $GITHUB_OUTPUT
+
+      - name: Cache pnpm modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+            ~/.cache/pnpm
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: ${{ steps.cache-keys.outputs.modules }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile --prefer-offline
+
+  build-packages:
+    name: Build Packages
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Restore cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pnpm
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: ${{ needs.setup.outputs.cache-key }}
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile --prefer-offline
+
+      - name: Cache Turbo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-build-packages-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-build-packages-
+
+      - name: Build packages in dependency order
+        run: pnpm run build:packages
+        env:
+          NODE_OPTIONS: "--max-old-space-size=4096"
+
+      - name: Upload package build artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: packages-dist
+          path: |
+            packages/*/dist
+            packages/*/lib
+            packages/*/types
+          retention-days: 7
+
+  build-apps:
+    name: Build Apps
+    needs: [setup, build-packages]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app:
+          - name: api-gateway
+            path: apps/api-gateway
+          - name: api
+            path: apps/api
+          - name: backend
+            path: apps/backend
+          - name: frontend
+            path: apps/frontend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Restore cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pnpm
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: ${{ needs.setup.outputs.cache-key }}
+
+      - name: Download package artifacts
+        uses: actions/download-artifact@v6
+        with:
+          name: packages-dist
+          path: packages
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile --prefer-offline
+
+      - name: Cache Turbo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-build-${{ matrix.app.name }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-build-${{ matrix.app.name }}-
+
+      - name: Build ${{ matrix.app.name }}
+        run: |
+          pnpm run build:${{ matrix.app.name }}
+        env:
+          NODE_OPTIONS: "--max-old-space-size=4096"
+
+      - name: Verify build artifacts exist
+        run: |
+          if [ "${{ matrix.app.name }}" == "frontend" ]; then
+            if [ ! -d "${{ matrix.app.path }}/dist" ]; then
+              echo "Error: Frontend build artifacts not found"
+              exit 1
+            fi
+          else
+            if [ ! -d "${{ matrix.app.path }}/dist" ] && [ ! -d "${{ matrix.app.path }}/build" ]; then
+              echo "Error: Build artifacts not found"
+              exit 1
+            fi
+          fi
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: build-${{ matrix.app.name }}
+          path: |
+            ${{ matrix.app.path }}/dist
+            ${{ matrix.app.path }}/build
+            ${{ matrix.app.path }}/.next
+          retention-days: 7
+
+  bundle-analysis:
+    name: Bundle Analysis
+    needs: build-apps
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download frontend build
+        uses: actions/download-artifact@v6
+        with:
+          name: build-frontend
+          path: apps/frontend/dist
+
+      - name: Analyze bundle size
+        id: analyze
+        run: |
+          # Calculate total bundle size
+          TOTAL_SIZE=$(du -sb apps/frontend/dist | cut -f1)
+          TOTAL_SIZE_MB=$(echo "scale=2; $TOTAL_SIZE / 1024 / 1024" | bc)
+
+          # Calculate JS bundle size
+          JS_SIZE=$(find apps/frontend/dist -name "*.js" -type f -exec du -cb {} + | tail -1 | cut -f1)
+          JS_SIZE_MB=$(echo "scale=2; $JS_SIZE / 1024 / 1024" | bc)
+
+          echo "total_size=$TOTAL_SIZE_MB" >> $GITHUB_OUTPUT
+          echo "js_size=$JS_SIZE_MB" >> $GITHUB_OUTPUT
+
+      - name: Comment bundle size on PR
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const totalSize = '${{ steps.analyze.outputs.total_size }}';
+            const jsSize = '${{ steps.analyze.outputs.js_size }}';
+
+            const comment = `### Bundle Size Analysis 📦
+
+            | Metric | Size |
+            |--------|------|
+            | Total Bundle | ${totalSize} MB |
+            | JavaScript | ${jsSize} MB |
+
+            ${jsSize > 5 ? '⚠️ **Warning**: JavaScript bundle size exceeds 5MB' : '✅ Bundle size looks good'}
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  production-smoke-test:
+    name: Production Smoke Test
+    needs: build-apps
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app: [api-gateway, backend, frontend]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v6
+        with:
+          name: build-${{ matrix.app }}
+          path: apps/${{ matrix.app }}
+
+      - name: Download package artifacts
+        uses: actions/download-artifact@v6
+        with:
+          name: packages-dist
+          path: packages
+
+      - name: Install production dependencies
+        run: pnpm install --prod --no-frozen-lockfile
+
+      - name: Test production build starts
+        timeout-minutes: 2
+        run: |
+          if [ "${{ matrix.app }}" == "frontend" ]; then
+            cd apps/${{ matrix.app }}
+            # For frontend, just verify the build exists
+            if [ ! -f "dist/index.html" ]; then
+              echo "Error: Frontend build missing index.html"
+              exit 1
+            fi
+          else
+            # For backend services, try to start them briefly
+            cd apps/${{ matrix.app }}
+            timeout 30s pnpm start || true
+          fi
+
+  build-summary:
+    name: Build Summary
+    needs: [build-packages, build-apps, production-smoke-test]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Check build results
+        run: |
+          echo "Build Packages: ${{ needs.build-packages.result }}"
+          echo "Build Apps: ${{ needs.build-apps.result }}"
+          echo "Production Smoke Test: ${{ needs.production-smoke-test.result }}"
+
+          if [[ "${{ needs.build-packages.result }}" != "success" ]] || \
+             [[ "${{ needs.build-apps.result }}" != "success" ]] || \
+             [[ "${{ needs.production-smoke-test.result }}" != "success" ]]; then
+            echo "One or more build jobs failed"
+            exit 1
+          fi
+
+      - name: Post summary
+        run: |
+          echo "### Build Verification Results :hammer:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Build Packages | ${{ needs.build-packages.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Build Apps | ${{ needs.build-apps.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Production Smoke Test | ${{ needs.production-smoke-test.result }} |" >> $GITHUB_STEP_SUMMARY

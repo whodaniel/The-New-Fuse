@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Casin8 Mobile - Roulette Interface</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0ac285",
+                        "background-light": "#f5f8f7",
+                        "background-dark": "#10221c",
+                        "roulette-red": "#e11d48",
+                        "roulette-black": "#18181b",
+                        "gold-accent": "#fbbf24",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .roulette-grid-item { aspect-ratio: 1/1.2; display: flex; align-items: center; justify-content: center; font-weight: 700; border: 1px solid rgba(255,255,255,0.1); }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased font-display">
+<!-- Main Mobile Container (390px simulated) -->
+<div class="relative mx-auto min-h-screen w-full max-w-[390px] flex flex-col bg-background-light dark:bg-background-dark overflow-hidden shadow-2xl">
+<!-- Header -->
+<header class="sticky top-0 z-50 flex items-center justify-between px-4 py-3 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-primary/10">
+<div class="flex items-center gap-2">
+<div class="bg-primary p-1.5 rounded-lg">
+<span class="material-symbols-outlined text-background-dark text-xl leading-none">casino</span>
+</div>
+<h1 class="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">Casin8</h1>
+</div>
+<div class="flex items-center gap-2">
+<div class="flex items-center gap-1.5 bg-primary/10 px-2 py-1 rounded-full border border-primary/20">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="text-[10px] font-bold text-primary uppercase">Mainnet</span>
+</div>
+<button class="flex items-center justify-center p-2 rounded-lg bg-slate-200 dark:bg-primary/20 text-slate-700 dark:text-primary border border-primary/10">
+<span class="material-symbols-outlined text-xl">account_balance_wallet</span>
+</button>
+</div>
+</header>
+<!-- Notification Banner -->
+<div class="px-4 py-2 bg-amber-500/10 border-b border-amber-500/20 flex items-center justify-between gap-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-amber-500 text-lg">warning</span>
+<p class="text-[11px] font-medium text-amber-600 dark:text-amber-400">Chain Mismatch: Switch to Ethereum</p>
+</div>
+<button class="text-[11px] font-bold text-amber-600 dark:text-amber-400 underline uppercase tracking-wider">Switch</button>
+</div>
+<!-- Scrollable Game Content -->
+<main class="flex-1 overflow-y-auto pb-32">
+<!-- Roulette Wheel Visual -->
+<div class="relative flex flex-col items-center py-6 overflow-hidden">
+<div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary via-transparent to-transparent"></div>
+<div class="relative w-64 h-64 rounded-full border-8 border-slate-800 dark:border-slate-900 shadow-[0_0_50px_rgba(10,194,133,0.15)] flex items-center justify-center bg-background-dark overflow-hidden">
+<!-- Placeholder for Wheel Image -->
+<div class="absolute inset-0 w-full h-full bg-center bg-cover scale-110 opacity-80" data-alt="Top down view of a premium roulette wheel" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBGxkRXGrPPkKGawGL65NyaL1Aua4fFKNeOLdAhzBPZr3v6Y3I7cJ-FKTenD3yiM-Hy9m7GLwB3u0WxaUKrM4hmQnR04giQjPWf23yFQSzJXrZJkilpQ_7YGtxoUnHxqnxPu1gr8tCJ2mqfaH0G7A-jZ2vXVfFan5FFNMDKeH1EQ82KjVn8ymkS2WfwCEW13Uojp7pUGOktN7Ij2sB-nJpi6zBAkBonXs3HXrvBpFC_gXVNvIO_R9f0TgQswSlbIG0L35Ci15W0tPnY');"></div>
+<!-- Center Hub -->
+<div class="relative z-10 w-16 h-16 rounded-full bg-gradient-to-tr from-slate-900 to-slate-700 border-4 border-gold-accent/40 shadow-xl flex items-center justify-center">
+<span class="text-gold-accent text-xl font-bold">8</span>
+</div>
+</div>
+<div class="mt-4 flex flex-col items-center gap-1">
+<h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">European Roulette</h2>
+<p class="text-xs text-slate-500 dark:text-primary/60 font-medium">MIN: 0.001 ETH | MAX: 5 ETH</p>
+</div>
+</div>
+<!-- Recent Results -->
+<div class="px-4 mb-6 flex gap-2 overflow-x-auto no-scrollbar">
+<div class="flex-none w-8 h-8 rounded-full bg-roulette-red flex items-center justify-center text-xs font-bold text-white shadow-lg">32</div>
+<div class="flex-none w-8 h-8 rounded-full bg-roulette-black flex items-center justify-center text-xs font-bold text-white shadow-lg">15</div>
+<div class="flex-none w-8 h-8 rounded-full bg-primary flex items-center justify-center text-xs font-bold text-background-dark shadow-lg">0</div>
+<div class="flex-none w-8 h-8 rounded-full bg-roulette-red flex items-center justify-center text-xs font-bold text-white shadow-lg">19</div>
+<div class="flex-none w-8 h-8 rounded-full bg-roulette-black flex items-center justify-center text-xs font-bold text-white shadow-lg">4</div>
+<div class="flex-none w-8 h-8 rounded-full bg-roulette-red flex items-center justify-center text-xs font-bold text-white shadow-lg">21</div>
+<div class="flex-none w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-xs font-bold opacity-30">...</div>
+</div>
+<!-- Betting Grid -->
+<div class="px-4">
+<div class="grid grid-cols-4 gap-1.5 p-2 bg-slate-200 dark:bg-slate-900/50 rounded-xl border border-primary/5">
+<!-- Zero -->
+<div class="col-span-1 roulette-grid-item bg-primary/20 text-primary border-primary/30 rounded-lg">0</div>
+<!-- Main Numbers (Simplified Subset for Demo) -->
+<div class="roulette-grid-item bg-roulette-red text-white rounded-lg shadow-sm">3</div>
+<div class="roulette-grid-item bg-roulette-black text-white rounded-lg shadow-sm">6</div>
+<div class="roulette-grid-item bg-roulette-red text-white rounded-lg shadow-sm">9</div>
+<div class="col-start-2 roulette-grid-item bg-roulette-black text-white rounded-lg shadow-sm">2</div>
+<div class="roulette-grid-item bg-roulette-red text-white rounded-lg shadow-sm relative overflow-hidden">
+                        5
+                        <!-- Sample Chip -->
+<div class="absolute inset-0 flex items-center justify-center bg-gold-accent/80 backdrop-blur-sm">
+<span class="text-[10px] text-background-dark font-black">0.1</span>
+</div>
+</div>
+<div class="roulette-grid-item bg-roulette-black text-white rounded-lg shadow-sm">8</div>
+<div class="col-start-2 roulette-grid-item bg-roulette-red text-white rounded-lg shadow-sm">1</div>
+<div class="roulette-grid-item bg-roulette-black text-white rounded-lg shadow-sm">4</div>
+<div class="roulette-grid-item bg-roulette-red text-white rounded-lg shadow-sm">7</div>
+<!-- Outside Bets -->
+<div class="col-span-2 py-3 bg-slate-300 dark:bg-slate-800 flex items-center justify-center text-[10px] font-bold uppercase tracking-widest rounded-lg border border-slate-400 dark:border-slate-700">1st 12</div>
+<div class="col-span-2 py-3 bg-slate-300 dark:bg-slate-800 flex items-center justify-center text-[10px] font-bold uppercase tracking-widest rounded-lg border border-slate-400 dark:border-slate-700">2nd 12</div>
+<div class="col-span-1 py-3 bg-slate-300 dark:bg-slate-800 flex items-center justify-center text-[10px] font-bold uppercase rounded-lg border border-slate-400 dark:border-slate-700">1-18</div>
+<div class="col-span-1 py-3 bg-roulette-red text-white flex items-center justify-center text-[10px] font-bold uppercase rounded-lg border border-red-400/20">Red</div>
+<div class="col-span-1 py-3 bg-roulette-black text-white flex items-center justify-center text-[10px] font-bold uppercase rounded-lg border border-slate-700">Black</div>
+<div class="col-span-1 py-3 bg-slate-300 dark:bg-slate-800 flex items-center justify-center text-[10px] font-bold uppercase rounded-lg border border-slate-400 dark:border-slate-700">19-36</div>
+</div>
+</div>
+<!-- Chip Selector -->
+<div class="px-4 py-8 flex justify-center gap-4">
+<button class="w-10 h-10 rounded-full bg-blue-500 border-2 border-dashed border-white/50 flex items-center justify-center text-[10px] font-black text-white shadow-lg">0.01</button>
+<button class="w-12 h-12 rounded-full bg-primary ring-4 ring-primary/20 border-2 border-dashed border-white/50 flex items-center justify-center text-xs font-black text-background-dark shadow-xl scale-110">0.1</button>
+<button class="w-10 h-10 rounded-full bg-purple-500 border-2 border-dashed border-white/50 flex items-center justify-center text-[10px] font-black text-white shadow-lg">1.0</button>
+<button class="w-10 h-10 rounded-full bg-gold-accent border-2 border-dashed border-white/50 flex items-center justify-center text-[10px] font-black text-background-dark shadow-lg">MAX</button>
+</div>
+</main>
+<!-- Floating Action Button Area -->
+<div class="absolute bottom-20 left-0 right-0 px-6 z-40">
+<button class="w-full bg-primary hover:bg-primary/90 text-background-dark font-black py-4 rounded-xl shadow-[0_10px_30px_rgba(10,194,133,0.3)] flex items-center justify-center gap-3 transition-transform active:scale-95">
+<span class="material-symbols-outlined font-bold">play_arrow</span>
+<span class="uppercase tracking-widest text-sm">Place Bet (0.1 ETH)</span>
+</button>
+</div>
+<!-- Tab Bar Navigation -->
+<nav class="absolute bottom-0 left-0 right-0 h-16 bg-background-light dark:bg-background-dark border-t border-primary/10 px-6 flex items-center justify-between z-50">
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Home</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined fill-1">sports_esports</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Games</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Wallet</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Profile</span>
+</button>
+</nav>
+</div>
+</body></html>

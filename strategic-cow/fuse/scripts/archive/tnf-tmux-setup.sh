@@ -1,0 +1,181 @@
+#!/bin/bash
+
+# TNF Relay Tmux Management Script
+# Sets up a complete terminal multiplexer environment for The New Fuse project
+
+PROJECT_DIR="."
+SESSION_NAME="tnf-relay"
+
+# Function to start TNF relay session
+start_tnf_session() {
+    echo "🚀 Starting TNF Relay Tmux Session..."
+    
+    # Create new tmux session
+    tmux new-session -d -s $SESSION_NAME -c "$PROJECT_DIR"
+    
+    # Window 0: Main Relay Server
+    tmux rename-window -t $SESSION_NAME:0 'relay-server'
+    tmux send-keys -t $SESSION_NAME:0 "node enhanced-tnf-relay.js start" C-m
+    
+    # Window 1: Log Monitoring
+    tmux new-window -t $SESSION_NAME -n 'logs' -c "$PROJECT_DIR"
+    tmux split-window -h -t $SESSION_NAME:logs
+    tmux split-window -v -t $SESSION_NAME:logs.0
+    tmux split-window -v -t $SESSION_NAME:logs.1
+    
+    # Set up log monitoring in each pane
+    tmux send-keys -t $SESSION_NAME:logs.0 "tail -f enhanced-relay.log" C-m
+    tmux send-keys -t $SESSION_NAME:logs.1 "tail -f relay.log" C-m
+    tmux send-keys -t $SESSION_NAME:logs.2 "tail -f relay-startup.log" C-m
+    tmux send-keys -t $SESSION_NAME:logs.3 "tail -f logs/relay.log" C-m
+    
+    # Window 2: MCP Agents
+    tmux new-window -t $SESSION_NAME -n 'mcp-agents' -c "$PROJECT_DIR"
+    tmux split-window -h -t $SESSION_NAME:mcp-agents
+    
+    # Monitor MCP processes
+    tmux send-keys -t $SESSION_NAME:mcp-agents.0 "watch 'ps aux | grep -E \"(mcp|applescript|browser)\" | grep -v grep'" C-m
+    tmux send-keys -t $SESSION_NAME:mcp-agents.1 "watch 'lsof -i :3000,3001,3772'" C-m
+    
+    # Window 3: Chrome Extension Dev
+    tmux new-window -t $SESSION_NAME -n 'chrome-ext' -c "$PROJECT_DIR"
+    tmux split-window -v -t $SESSION_NAME:chrome-ext
+    
+    # Chrome extension development
+    tmux send-keys -t $SESSION_NAME:chrome-ext.0 "cd 'The New Fuse Chrome extension June-4-25Archive/chrome-extension'" C-m
+    tmux send-keys -t $SESSION_NAME:chrome-ext.0 "echo 'Chrome Extension Development Environment Ready'" C-m
+    tmux send-keys -t $SESSION_NAME:chrome-ext.1 "cd 'The New Fuse Chrome extension June-4-25Archive/chrome-extension'" C-m
+    tmux send-keys -t $SESSION_NAME:chrome-ext.1 "echo 'Run: pnpm run build && pnpm run dev'" C-m
+    
+    # Window 4: API Testing
+    tmux new-window -t $SESSION_NAME -n 'api-test' -c "$PROJECT_DIR"
+    tmux split-window -h -t $SESSION_NAME:api-test
+    
+    # API testing commands
+    tmux send-keys -t $SESSION_NAME:api-test.0 "echo 'API Testing Environment'" C-m
+    tmux send-keys -t $SESSION_NAME:api-test.0 "echo 'Test status: curl http://localhost:3000/status'" C-m
+    tmux send-keys -t $SESSION_NAME:api-test.1 "echo 'WebSocket Test: wscat -c ws://localhost:3001'" C-m
+    
+    # Window 5: File Operations
+    tmux new-window -t $SESSION_NAME -n 'files' -c "$PROJECT_DIR"
+    tmux send-keys -t $SESSION_NAME:files "ls -la" C-m
+    
+    # Set up monitoring with alerts
+    tmux set-option -g visual-activity on
+    tmux set-window-option -g monitor-activity on
+    
+    # Attach to session
+    tmux attach-session -t $SESSION_NAME
+}
+
+# Function to stop TNF relay session
+stop_tnf_session() {
+    echo "🛑 Stopping TNF Relay Session..."
+    tmux kill-session -t $SESSION_NAME 2>/dev/null && echo "Session stopped" || echo "No session found"
+}
+
+# Function to list tmux sessions
+list_sessions() {
+    echo "📋 Active Tmux Sessions:"
+    tmux list-sessions 2>/dev/null || echo "No active sessions"
+}
+
+# Function to attach to existing session
+attach_session() {
+    if tmux has-session -t $SESSION_NAME 2>/dev/null; then
+        echo "🔗 Attaching to existing TNF Relay session..."
+        tmux attach-session -t $SESSION_NAME
+    else
+        echo "❌ No TNF Relay session found. Use 'start' to create one."
+    fi
+}
+
+# Function to show session status
+session_status() {
+    echo "📊 TNF Relay Session Status:"
+    if tmux has-session -t $SESSION_NAME 2>/dev/null; then
+        echo "✅ Session '$SESSION_NAME' is running"
+        echo ""
+        echo "Windows:"
+        tmux list-windows -t $SESSION_NAME
+        echo ""
+        echo "Panes:"
+        tmux list-panes -t $SESSION_NAME -a
+    else
+        echo "❌ Session '$SESSION_NAME' is not running"
+    fi
+}
+
+# Function to send command to specific window
+send_command() {
+    local window=$1
+    local command=$2
+    
+    if [ -z "$window" ] || [ -z "$command" ]; then
+        echo "Usage: send_command <window> <command>"
+        echo "Available windows: relay-server, logs, mcp-agents, chrome-ext, api-test, files"
+        return 1
+    fi
+    
+    if tmux has-session -t $SESSION_NAME 2>/dev/null; then
+        tmux send-keys -t "$SESSION_NAME:$window" "$command" C-m
+        echo "✅ Command sent to $window: $command"
+    else
+        echo "❌ Session not running"
+    fi
+}
+
+# Main command handling
+case "$1" in
+    start)
+        stop_tnf_session  # Stop any existing session first
+        start_tnf_session
+        ;;
+    stop)
+        stop_tnf_session
+        ;;
+    attach)
+        attach_session
+        ;;
+    status)
+        session_status
+        ;;
+    list)
+        list_sessions
+        ;;
+    send)
+        send_command "$2" "$3"
+        ;;
+    restart)
+        stop_tnf_session
+        sleep 2
+        start_tnf_session
+        ;;
+    *)
+        echo "🚀 TNF Relay Tmux Manager"
+        echo ""
+        echo "Usage: $0 {start|stop|attach|status|list|send|restart}"
+        echo ""
+        echo "Commands:"
+        echo "  start    - Create and start TNF relay tmux session"
+        echo "  stop     - Stop the TNF relay session"
+        echo "  attach   - Attach to existing session"
+        echo "  status   - Show session status"
+        echo "  list     - List all tmux sessions"
+        echo "  send     - Send command to specific window"
+        echo "  restart  - Stop and start session"
+        echo ""
+        echo "Examples:"
+        echo "  $0 start                           # Start full TNF environment"
+        echo "  $0 send relay-server 'node --version'  # Send command to relay server"
+        echo "  $0 attach                         # Reconnect to running session"
+        echo ""
+        echo "Tmux Quick Keys (once attached):"
+        echo "  Ctrl+b + c    - Create new window"
+        echo "  Ctrl+b + n    - Next window"
+        echo "  Ctrl+b + p    - Previous window"
+        echo "  Ctrl+b + d    - Detach (session keeps running)"
+        echo "  Ctrl+b + %    - Split pane vertically"
+        echo "  Ctrl+b + \"    - Split pane horizontally"
+        ;;
+esac

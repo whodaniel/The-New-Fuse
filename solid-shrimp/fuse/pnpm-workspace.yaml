@@ -1,0 +1,6 @@
+packages:
+  - "apps/*"
+  - "apps/mcp-servers/*"
+  - "!apps/skideancer-ide"
+  - "packages/*"
+  - "tools/*"

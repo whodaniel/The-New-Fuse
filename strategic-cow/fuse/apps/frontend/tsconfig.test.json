@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["jest", "node", "selenium-webdriver"],
+    "esModuleInterop": true,
+    "module": "commonjs"
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/test/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

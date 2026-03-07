@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The New Fuse Chrome Extension - Transform YouTube Videos with AI</title>
+  <meta name="description" content="Process YouTube videos with Gemini AI, generate structured reports, and build your personal knowledge base.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #030712;
+      --text-color: #f9fafb;
+      --text-muted: #9ca3af;
+      --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #d946ef 100%);
+      --glass-bg: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-hover: rgba(255, 255, 255, 0.06);
+      --card-radius: 24px;
+      --btn-radius: 9999px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Animated Background */
+    .bg-glow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 0%, #172033 0%, #030712 60%);
+    }
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.4;
+      animation: float 10s infinite ease-in-out;
+    }
+    .orb-1 {
+      top: -10%;
+      left: 10%;
+      width: 500px;
+      height: 500px;
+      background: #3b82f6;
+      animation-delay: 0s;
+    }
+    .orb-2 {
+      bottom: 20%;
+      right: 5%;
+      width: 400px;
+      height: 400px;
+      background: #8b5cf6;
+      animation-delay: -5s;
+    }
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(20px, -40px); }
+    }
+
+    /* Typography */
+    h1, h2, h3 {
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .gradient-text {
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Layout */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    section {
+      padding: 100px 0;
+    }
+
+    /* Header */
+    header {
+      padding: 24px 0;
+      position: absolute;
+      width: 100%;
+      top: 0;
+      z-index: 10;
+    }
+    .nav-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: white;
+      text-decoration: none;
+    }
+    .logo-badge {
+      font-size: 0.75rem;
+      background: rgba(59, 130, 246, 0.1);
+      color: #60a5fa;
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 160px 0 100px;
+      position: relative;
+    }
+    .hero h1 {
+      font-size: 4rem;
+      line-height: 1.1;
+      margin-bottom: 24px;
+    }
+    .hero p {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto 40px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 32px;
+      border-radius: var(--btn-radius);
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      font-size: 1.125rem;
+    }
+    .btn-primary {
+      background: var(--primary-gradient);
+      color: white;
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 40px rgba(139, 92, 246, 0.5);
+    }
+    .hero-meta {
+      margin-top: 24px;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+    }
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Features */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 24px;
+      margin-top: 60px;
+    }
+    .feature-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      padding: 32px;
+      border-radius: var(--card-radius);
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+    .feature-card:hover {
+      background: var(--glass-hover);
+      transform: translateY(-5px);
+      border-color: rgba(139, 92, 246, 0.3);
+    }
+    .icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 24px;
+    }
+    .feature-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 12px;
+      color: white;
+    }
+    .feature-card p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* Pricing */
+    .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    .section-header h2 {
+      font-size: 2.5rem;
+      margin-bottom: 16px;
+    }
+    .section-header p {
+      color: var(--text-muted);
+    }
+    
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    .pricing-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--card-radius);
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    .pricing-card.featured {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(139, 92, 246, 0.4);
+      box-shadow: 0 0 40px rgba(139, 92, 246, 0.1);
+    }
+    .badge-popular {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--primary-gradient);
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 6px 16px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .price-block {
+      margin: 24px 0;
+    }
+    .price {
+      font-size: 3rem;
+      font-weight: 800;
+      color: white;
+    }
+    .period {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+    .features-list {
+      list-style: none;
+      margin: 24px 0 40px;
+      flex-grow: 1;
+    }
+    .features-list li {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      color: var(--text-color);
+      font-size: 0.95rem;
+    }
+    .check {
+      color: #10b981;
+      font-weight: bold;
+    }
+    .btn-full {
+      width: 100%;
+      justify-content: center;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white;
+      width: 100%;
+      justify-content: center;
+    }
+    .btn-outline:hover {
+      border-color: white;
+      background: rgba(255,255,255,0.05);
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--glass-border);
+      padding: 60px 0;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 24px;
+    }
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover {
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.5rem; }
+      .hero { padding: 120px 0 60px; }
+      .features-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-glow">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+  </div>
+
+  <header>
+    <div class="container nav-flex">
+      <a href="#" class="logo">
+        <img src="logo.png" alt="Logo" style="height: 40px; width: auto; border-radius: 8px;">
+        AI Video Intel <span class="logo-badge">v1.5</span>
+      </a>
+      <button onclick="signIn()" class="btn btn-outline login-btn" style="padding: 8px 16px; font-size: 0.9rem;">Sign In</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h1>
+        Unlock the Knowledge in <br>
+        <span class="gradient-text">Every YouTube Video</span>
+      </h1>
+      <p>
+        Your personal AI research assistant. Summarize videos, extract insights, and build a queryable knowledge base in seconds with Gemini AI.
+      </p>
+      <a href="https://chrome.google.com/webstore/detail/ai-video-intelligence-suite/YOUR_EXTENSION_ID" class="btn btn-primary">
+        Add to Chrome - Free
+      </a>
+      
+      <div class="hero-meta">
+        <div class="meta-item">
+          <span>⚡</span> 20 Free Daily Processings
+        </div>
+        <div class="meta-item">
+          <span>🔒</span> Private & Secure
+        </div>
+        <div class="meta-item">
+          <span>✅</span> No Credit Card Required
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="container">
+      <div class="section-header">
+        <h2>Features that give you <span class="gradient-text">Superpowers</span></h2>
+        <p>Built for researchers, students, and content creators.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="icon-box">🧠</div>
+          <h3>Deep Semantic Analysis</h3>
+          <p>Don't just get a summary. Get structured breakdowns of concepts, tools mentioned, code snippets, and key arguments.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon-box">📂</div>
+          <h3>Smart Library</h3>
+          <p>Every processed video is saved to your personal library. Search across all your watched content instantly.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon-box">⚡</div>
+          <h3>Batch Playlist Queue</h3>
+          <p>Add an entire course or playlist to the queue. Let the AI work while you sleep, waking up to formatted notes.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon-box">📓</div>
+          <h3>NotebookLM Export</h3>
+          <p>One-click export to Google's NotebookLM to turn your video notes into podcasts or collaborative study guides.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon-box">🔎</div>
+          <h3>Contextual Search</h3>
+          <p>Find the exact timestamp where "RAG Architecture" was discussed across 50 different videos.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon-box">☁️</div>
+          <h3>Cross-Device Sync</h3>
+          <p>Your library follows you. Access your insights from the extension or the web dashboard anywhere.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="container">
+      <div class="section-header">
+        <h2>Simple Pricing</h2>
+        <p>Start for free, upgrade for power.</p>
+      </div>
+
+      <div class="pricing-grid">
+        <!-- FREE TIER -->
+        <div class="pricing-card">
+          <h3>Free</h3>
+          <div class="price-block">
+            <span class="price">$0</span>
+            <span class="period">/ month</span>
+          </div>
+          <p style="color:var(--text-muted); margin-bottom:20px;">Perfect for casual learners.</p>
+          <ul class="features-list">
+            <li><span class="check">✓</span> 20 videos per day</li>
+            <li><span class="check">✓</span> 1 concurrent process</li>
+            <li><span class="check">✓</span> Basic prompts</li>
+            <li><span class="check">✓</span> Auto-download (local)</li>
+          </ul>
+          <a href="https://chrome.google.com/webstore/detail/ai-video-intelligence-suite/YOUR_EXTENSION_ID" class="btn btn-outline">Add to Chrome</a>
+        </div>
+
+        <!-- PRO TIER -->
+        <div class="pricing-card featured">
+          <div class="badge-popular">Most Popular</div>
+          <h3>Pro</h3>
+          <div class="price-block">
+            <span class="price">$9.99</span>
+            <span class="period">/ month</span>
+          </div>
+          <p style="color:var(--text-muted); margin-bottom:20px;">For power users and researchers.</p>
+          <ul class="features-list">
+            <li><span class="check">✓</span> <strong>Unlimited</strong> videos</li>
+            <li><span class="check">✓</span> 3 concurrent processes</li>
+            <li><span class="check">✓</span> Custom prompts (50 templates)</li>
+            <li><span class="check">✓</span> NotebookLM integration</li>
+            <li><span class="check">✓</span> Podcast creation (5/month)</li>
+            <li><span class="check">✓</span> Personal knowledge base browser</li>
+            <li><span class="check">✓</span> Topic extraction & organization</li>
+            <li><span class="check">✓</span> Cloud sync</li>
+            <li><span class="check">✓</span> Advanced retry logic</li>
+            <li><span class="check">✓</span> Auto-download reports</li>
+            <li><span class="check">✓</span> Analytics dashboard</li>
+            <li><span class="check">✓</span> Priority support</li>
+          </ul>
+          <button onclick="upgradeTo('pro', 'monthly')" class="btn btn-primary btn-full">Upgrade to Pro</button>
+        </div>
+
+        <!-- TNF TIER -->
+        <div class="pricing-card">
+          <h3>The New Fuse</h3>
+          <div class="price-block">
+            <span class="price">$30</span>
+            <span class="period">/ month</span>
+          </div>
+          <p style="color:var(--text-muted); margin-bottom:20px;">Separate premium product suite.</p>
+          <ul class="features-list">
+            <li><span class="check">✓</span> Everything in Pro</li>
+            <li><span class="check">✓</span> The New Fuse Chrome extension</li>
+            <li><span class="check">✓</span> 10 concurrent processes</li>
+            <li><span class="check">✓</span> Unlimited custom prompts</li>
+            <li><span class="check">✓</span> Unlimited podcasts</li>
+            <li><span class="check">✓</span> API access</li>
+            <li><span class="check">✓</span> RAG semantic search</li>
+            <li><span class="check">✓</span> Personal AI assistant</li>
+            <li><span class="check">✓</span> Agent integration</li>
+            <li><span class="check">✓</span> Knowledge base as agent memory</li>
+            <li><span class="check">✓</span> Team collaboration</li>
+            <li><span class="check">✓</span> White-label option</li>
+            <li><span class="check">✓</span> Dedicated support</li>
+          </ul>
+          <a href="https://thenewfuse.com" target="_blank" class="btn btn-outline btn-full" style="text-decoration:none; display:flex; justify-content:center;">Learn More</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 AI Video Intelligence. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="terms-of-service.html">Terms of Service</a>
+        <a href="support.html">Support</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script>
+    const API_URL = window.location.origin + '/api'; // Assumes backend serves this page
+    const GOOGLE_CLIENT_ID = '998509408180-8ucfo5f3chd77p0qm7j5c2rqgpuqkpgo.apps.googleusercontent.com'; // From .env
+
+    // State
+    let currentUser = null;
+
+    // Initialize Google Auth
+    window.onload = function() {
+      google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: handleCredentialResponse
+      });
+
+      // Check if already logged in (verify cookie logic would go here, or shallow check)
+      checkAuthStatus();
+    }
+
+    async function checkAuthStatus() {
+      try {
+        const res = await fetch(`${API_URL}/auth/me`);
+        const data = await res.json();
+        if (data.success) {
+          currentUser = data.data.user;
+          updateUIForLogin();
+        }
+      } catch (e) {
+        // Not logged in
+      }
+    }
+
+    async function handleCredentialResponse(response) {
+      try {
+        const payload = parseJwt(response.credential);
+        
+        const bodyData = {
+          googleId: payload.sub,
+          email: payload.email,
+          displayName: payload.name,
+          avatarUrl: payload.picture,
+          youtubeRefreshToken: null
+        };
+        
+        console.log('[DEBUG] Sending login payload:', JSON.stringify(bodyData));
+
+        const res = await fetch(`${API_URL}/auth/google`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bodyData)
+        });
+
+        const data = await res.json();
+        
+        if (!data.success) {
+           throw new Error(data.error?.message || 'Login failed on backend');
+        }
+
+        currentUser = data.data.user;
+        updateUIForLogin();
+      } catch (e) {
+        console.error('Login failed', e);
+        alert('Login failed: ' + e.message);
+      }
+    }
+
+    function updateUIForLogin() {
+      const header = document.querySelector('header .container');
+
+      // Remove old login button if it exists
+      const oldBtn = header.querySelector('.login-btn');
+      if (oldBtn) oldBtn.remove();
+
+      // Remove any existing user-nav to prevent duplicates
+      const oldUserNav = header.querySelector('.user-nav');
+      if (oldUserNav) oldUserNav.remove();
+
+      // Show User Profile and Navigation
+      const userDiv = document.createElement('div');
+      userDiv.className = 'user-nav';
+      userDiv.style.display = 'flex';
+      userDiv.style.alignItems = 'center';
+      userDiv.style.gap = '20px';
+      userDiv.innerHTML = `
+        <nav style="display: flex; gap: 20px; align-items: center;">
+          <a href="/dashboard.html" style="color: var(--text-color); text-decoration: none; font-weight: 500; transition: color 0.2s;" onmouseover="this.style.color='#60a5fa'" onmouseout="this.style.color='var(--text-color)'">Dashboard</a>
+          <a href="/reports.html" style="color: var(--text-color); text-decoration: none; font-weight: 500; transition: color 0.2s;" onmouseover="this.style.color='#60a5fa'" onmouseout="this.style.color='var(--text-color)'">Reports</a>
+          <a href="/account.html" style="color: var(--text-color); text-decoration: none; font-weight: 500; transition: color 0.2s;" onmouseover="this.style.color='#60a5fa'" onmouseout="this.style.color='var(--text-color)'">Account</a>
+          <a href="https://chrome.google.com/webstore/detail/ai-video-intelligence-suite/YOUR_EXTENSION_ID" target="_blank" style="color: var(--text-color); text-decoration: none; font-weight: 500; transition: color 0.2s;" onmouseover="this.style.color='#60a5fa'" onmouseout="this.style.color='var(--text-color)'">Get Extension</a>
+          <a href="support.html" style="color: var(--text-color); text-decoration: none; font-weight: 500; transition: color 0.2s;" onmouseover="this.style.color='#60a5fa'" onmouseout="this.style.color='var(--text-color)'">Support</a>
+        </nav>
+        <div style="display: flex; align-items: center; gap: 12px; padding-left: 20px; border-left: 1px solid rgba(255,255,255,0.1);">
+          <span style="color:white; font-weight:500;">${currentUser.displayName}</span>
+          <button onclick="logout()" class="btn btn-outline" style="padding: 8px 16px; font-size: 0.9rem;">Sign Out</button>
+        </div>
+      `;
+      header.appendChild(userDiv);
+
+      // Also update hero section to show quick start for logged-in users
+      const hero = document.querySelector('.hero');
+      if (hero && !document.querySelector('.logged-in-hero')) {
+        const quickStart = document.createElement('div');
+        quickStart.className = 'logged-in-hero';
+        quickStart.style.marginTop = '40px';
+        quickStart.style.padding = '32px';
+        quickStart.style.background = 'rgba(255, 255, 255, 0.03)';
+        quickStart.style.border = '1px solid rgba(255, 255, 255, 0.08)';
+        quickStart.style.borderRadius = '24px';
+        quickStart.innerHTML = `
+          <h3 style="font-size: 1.5rem; margin-bottom: 20px; color: white;">🎉 Welcome back, ${currentUser.displayName.split(' ')[0]}!</h3>
+          <p style="color: var(--text-muted); margin-bottom: 24px;">Ready to process more videos? Choose your next step:</p>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+            <a href="/dashboard.html" class="btn btn-outline" style="text-decoration: none; text-align: center;">
+              📊 View Dashboard
+            </a>
+            <a href="/reports.html" class="btn btn-outline" style="text-decoration: none; text-align: center;">
+              📝 Your Reports
+            </a>
+            <a href="https://chrome.google.com/webstore/detail/ai-video-intelligence-suite/YOUR_EXTENSION_ID" target="_blank" class="btn btn-primary" style="text-decoration: none; text-align: center;">
+              🚀 Launch Extension
+            </a>
+          </div>
+        `;
+        hero.querySelector('.container').appendChild(quickStart);
+      }
+    }
+
+    async function logout() {
+      await fetch(`${API_URL}/auth/logout`, { method: 'POST' });
+      currentUser = null;
+      location.reload();
+    }
+
+    function signIn() {
+      google.accounts.id.prompt(); // Show One Tap or use renderButton
+    }
+
+    function parseJwt (token) {
+        var base64Url = token.split('.')[1];
+        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+    }
+
+    // --- SUBSCRIPTION LOGIC ---
+
+    async function upgradeTo(tier, period) {
+      if (!currentUser) {
+        alert('Please sign in to upgrade.');
+        google.accounts.id.prompt();
+        return;
+      }
+
+      const btn = event.target;
+      const originalText = btn.innerText;
+      btn.innerText = 'Processing...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(`${API_URL}/subscriptions/checkout`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tier, billingPeriod: period })
+        });
+
+        const data = await res.json();
+
+        if (data.success && data.data.approvalUrl) {
+          window.location.href = data.data.approvalUrl;
+        } else {
+          alert('Failed to initiate checkout: ' + (data.error?.message || 'Unknown error'));
+        }
+      } catch (e) {
+        console.error(e);
+        alert('An error occurred. Please try again.');
+        btn.innerText = originalText;
+        btn.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The New Fuse - Suggestions</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Base styles */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      color: #333;
+      line-height: 1.5;
+      background-color: #f9fafb;
+    }
+    
+    /* Layout styles */
+    .layout {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    
+    .layout-header {
+      background-color: white;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    
+    .layout-main {
+      display: flex;
+      flex: 1;
+    }
+    
+    .layout-content {
+      flex: 1;
+      padding: 1.5rem;
+      overflow-y: auto;
+    }
+    
+    .layout-footer {
+      background-color: white;
+      border-top: 1px solid #e5e7eb;
+      padding: 1rem;
+      text-align: center;
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+    
+    /* Sidebar styles */
+    .sidebar {
+      width: 16rem;
+      background-color: white;
+      border-right: 1px solid #e5e7eb;
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      overflow-y: auto;
+      transition: width 0.3s ease;
+    }
+    
+    .sidebar-collapsed {
+      width: 4.5rem;
+    }
+    
+    .sidebar-header {
+      padding: 1.25rem 1rem;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      color: #4b5563;
+      text-decoration: none;
+      transition: background-color 0.2s ease;
+      border-radius: 0.375rem;
+      margin: 0.25rem 0.5rem;
+    }
+    
+    .sidebar-item:hover {
+      background-color: #f3f4f6;
+    }
+    
+    .sidebar-item-active {
+      background-color: #f3f4f6;
+      color: #3b82f6;
+      font-weight: 500;
+    }
+    
+    .sidebar-icon {
+      width: 1.5rem;
+      height: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 0.75rem;
+    }
+    
+    /* Card styles */
+    .card {
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    /* Badge styles */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 9999px;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      line-height: 1;
+    }
+    
+    .badge-blue {
+      background-color: #dbeafe;
+      color: #1e40af;
+    }
+    
+    .badge-green {
+      background-color: #d1fae5;
+      color: #065f46;
+    }
+    
+    .badge-yellow {
+      background-color: #fef3c7;
+      color: #92400e;
+    }
+    
+    .badge-purple {
+      background-color: #ede9fe;
+      color: #5b21b6;
+    }
+    
+    .badge-red {
+      background-color: #fee2e2;
+      color: #b91c1c;
+    }
+    
+    .badge-outline {
+      background-color: transparent;
+      border: 1px solid #e5e7eb;
+      color: #374151;
+    }
+    
+    /* Button styles */
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0.375rem;
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      line-height: 1.25rem;
+      transition-property: color, background-color, border-color;
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      transition-duration: 150ms;
+    }
+    
+    .button-primary {
+      background-color: #3b82f6;
+      color: white;
+    }
+    
+    .button-primary:hover {
+      background-color: #2563eb;
+    }
+    
+    .button-outline {
+      background-color: transparent;
+      border: 1px solid #e5e7eb;
+      color: #374151;
+    }
+    
+    .button-outline:hover {
+      background-color: #f9fafb;
+    }
+    
+    /* Input styles */
+    .input {
+      display: block;
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.375rem;
+      border: 1px solid #e5e7eb;
+      background-color: white;
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+    }
+    
+    .input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+    }
+    
+    /* Avatar styles */
+    .avatar {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 9999px;
+      background-color: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: #4b5563;
+    }
+    
+    /* Dropdown styles */
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      min-width: 12rem;
+      background-color: white;
+      border-radius: 0.375rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      z-index: 50;
+      margin-top: 0.5rem;
+      border: 1px solid #e5e7eb;
+    }
+    
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+    
+    .dropdown-item {
+      display: block;
+      padding: 0.5rem 1rem;
+      color: #4b5563;
+      text-decoration: none;
+      font-size: 0.875rem;
+    }
+    
+    .dropdown-item:hover {
+      background-color: #f3f4f6;
+    }
+    
+    .dropdown-divider {
+      height: 1px;
+      background-color: #e5e7eb;
+      margin: 0.25rem 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <header class="layout-header">
+      <div class="flex items-center">
+        <button id="sidebar-toggle" class="mr-4 text-gray-500 hover:text-gray-700">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="text-xl font-bold text-blue-600">The New Fuse</div>
+      </div>
+      <div class="flex items-center">
+        <div class="mr-4 relative">
+          <button class="text-gray-500 hover:text-gray-700">
+            <i class="fas fa-bell"></i>
+            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">3</span>
+          </button>
+        </div>
+        <div class="dropdown">
+          <div class="flex items-center cursor-pointer">
+            <div class="mr-2 text-sm font-medium">John Doe</div>
+            <div class="avatar">JD</div>
+          </div>
+          <div class="dropdown-content">
+            <a href="#" class="dropdown-item">
+              <i class="fas fa-user mr-2"></i> Profile
+            </a>
+            <a href="#" class="dropdown-item">
+              <i class="fas fa-cog mr-2"></i> Settings
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item">
+              <i class="fas fa-sign-out-alt mr-2"></i> Logout
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+    
+    <div class="layout-main">
+      <aside id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+          <div class="text-lg font-bold text-blue-600 sidebar-text">Navigation</div>
+          <button id="sidebar-collapse" class="text-gray-500 hover:text-gray-700">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+        </div>
+        <nav class="py-4">
+          <a href="#" class="sidebar-item">
+            <div class="sidebar-icon">
+              <i class="fas fa-home"></i>
+            </div>
+            <span class="sidebar-text">Dashboard</span>
+          </a>
+          <a href="#" class="sidebar-item">
+            <div class="sidebar-icon">
+              <i class="fas fa-robot"></i>
+            </div>
+            <span class="sidebar-text">Agents</span>
+          </a>
+          <a href="#" class="sidebar-item">
+            <div class="sidebar-icon">
+              <i class="fas fa-tasks"></i>
+            </div>
+            <span class="sidebar-text">Tasks</span>
+          </a>
+          <a href="#" class="sidebar-item sidebar-item-active">
+            <div class="sidebar-icon">
+              <i class="fas fa-lightbulb"></i>
+            </div>
+            <span class="sidebar-text">Suggestions</span>
+          </a>
+          <a href="#" class="sidebar-item">
+            <div class="sidebar-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <span class="sidebar-text">Analytics</span>
+          </a>
+          <a href="#" class="sidebar-item">
+            <div class="sidebar-icon">
+              <i class="fas fa-cog"></i>
+            </div>
+            <span class="sidebar-text">Settings</span>
+          </a>
+        </nav>
+      </aside>
+      
+      <main class="layout-content">
+        <div class="max-w-6xl mx-auto">
+          <div class="flex justify-between items-center mb-8">
+            <div>
+              <h1 class="text-3xl font-bold">Feature Suggestions</h1>
+              <p class="text-gray-600">Browse and submit feature suggestions</p>
+            </div>
+            <button class="button button-primary">
+              <i class="fas fa-plus mr-2"></i> Submit Suggestion
+            </button>
+          </div>
+          
+          <!-- Search and filters -->
+          <div class="flex flex-col md:flex-row gap-4 mb-6">
+            <div class="relative flex-1">
+              <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
+              <input type="text" class="input pl-10" placeholder="Search suggestions...">
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <div class="relative">
+                <select class="input pr-8">
+                  <option value="all">All Statuses</option>
+                  <option value="submitted">Submitted</option>
+                  <option value="under_review">Under Review</option>
+                  <option value="approved">Approved</option>
+                  <option value="implemented">Implemented</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+                <i class="fas fa-filter absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
+              </div>
+              <div class="relative">
+                <select class="input pr-8">
+                  <option value="all">All Categories</option>
+                  <option value="development">Development</option>
+                  <option value="ui">User Interface</option>
+                  <option value="integration">Integration</option>
+                  <option value="collaboration">Collaboration</option>
+                  <option value="mobile">Mobile</option>
+                </select>
+                <i class="fas fa-filter absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
+              </div>
+              <div class="relative">
+                <select class="input pr-8">
+                  <option value="votes">Most Votes</option>
+                  <option value="comments">Most Comments</option>
+                  <option value="newest">Newest First</option>
+                  <option value="oldest">Oldest First</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Suggestions list -->
+          <div class="space-y-4">
+            <!-- Suggestion 1 -->
+            <div class="card">
+              <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                  <h3 class="text-xl font-semibold">Implement AI-powered code review</h3>
+                  <div class="flex items-center">
+                    <span class="badge badge-yellow">Under Review</span>
+                    <button class="ml-2 text-gray-500 hover:text-gray-700">
+                      <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                  </div>
+                </div>
+                <p class="text-gray-600 mb-4">Create an AI agent that can automatically review code and provide suggestions for improvements.</p>
+                <div class="flex flex-wrap gap-2 mb-4">
+                  <span class="badge badge-outline">
+                    <i class="fas fa-tag text-xs mr-1"></i> AI
+                  </span>
+                  <span class="badge badge-outline">
+                    <i class="fas fa-tag text-xs mr-1"></i> Code Quality
+                  </span>
+                  <span class="badge badge-outline">
+                    <i class="fas fa-tag text-xs mr-1"></i> Automation
+                  </span>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  <div>
+                    <p class="text-gray-500">Submitted By</p>
+                    <p class="font-medium flex items-center">
+                      <i class="fas fa-user text-xs mr-1"></i>
+                      John Doe
+                    </p>
+                  </div>
+                  <div>
+                    <p class="text-gray-500">Submitted On</p>
+                    <p class="font-medium flex items-center">
+                      <i class="fas fa-calendar-alt text-xs mr-1"></i>
+                      May 15, 2023
+                    </p>
+                  </div>
+                  <div>
+                    <p class="text-gray-500">Category</p>
+                    <p class="font-medium">Development</p>
+                  </div>
+                  <div>
+                    <p class="text-gray-500">Votes</p>
+                    <p class="font-medium flex items-center">
+                      <i class="fas fa-thumbs-up text-xs mr-1"></i>
+                      42
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="px-6 py-4 bg-gray-50 flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                  <button class="flex items-center text-green-600 hover:text-green-700">
+                    <i class="fas fa-thumbs-up mr-1"></i>
+                    Upvote
+                  </button>
+                  <button class="flex items-center text-red-600 hover:text-red-700">
+                    <i class="fas fa-thumbs-down mr-1"></i>
+                    Downvote
+                  </button>
+                  <button class="flex items-center text-blue-600 hover:text-blue-700">
+                    <i class="fas fa-comment mr-1"></i>
+                    Comments (8)
+                  </button>
+                </div>
+                <button class="button button-outline text-sm">
+                  View Details
+                </button>
+              </div>
+            </div>
+            
+            <!-- Suggestion 2 -->
+            <div class="card">
+              <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                  <h3 class="text-xl font-semibold">Add natural language search to documentation</h3>
+                  <div class="flex items-center">
+                    <span class="badge badge-green">Approved</span>
+                    <button class="ml-2 text-gray-500 hover:text-gray-700">
+                      <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                  </div>
+                </div>
+                <p class="text-gray-600 mb-4">Implement a natural language search feature for the documentation to make it easier for users to find what they need.</p>
+                <div class="flex flex-wrap gap-2 mb-4">
+                  <span class="badge badge-outline">
+                    <i class="fas fa-tag text-xs mr-1"></i> Search
+                  </span>
+                  <span class="badge badge-outline">
+                    <i class="fas fa-tag text-xs mr-1"></i> Documentation
+                  </span>
+                  <span class="badge badge-outline">
+                    <i class="fas fa-tag text-xs mr-1"></i> User Experience
+                  </span>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  <div>
+                    <p class="text-gray-500">Submitted By</p>
+                    <p class="font-medium flex items-center">
+                      <i class="fas fa-user text-xs mr-1"></i>
+                      Jane Smith
+                    </p>
+                  </div>
+                  <div>
+                    <p class="text-gray-500">Submitted On</p>
+                    <p class="font-medium flex items-center">
+                      <i class="fas fa-calendar-alt text-xs mr-1"></i>
+                      May 20, 2023
+                    </p>
+                  </div>
+                  <div>
+                    <p class="text-gray-500">Category</p>
+                    <p class="font-medium">Documentation</p>
+                  </div>
+                  <div>
+                    <p class="text-gray-500">Votes</p>
+                    <p class="font-medium flex items-center">
+                      <i class="fas fa-thumbs-up text-xs mr-1"></i>
+                      38
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="px-6 py-4 bg-gray-50 flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                  <button class="flex items-center text-green-600 hover:text-green-700">
+                    <i class="fas fa-thumbs-up mr-1"></i>
+                    Upvote
+                  </button>
+                  <button class="flex items-center text-red-600 hover:text-red-700">
+                    <i class="fas fa-thumbs-down mr-1"></i>
+                    Downvote
+                  </button>
+                  <button class="flex items-center text-blue-600 hover:text-blue-700">
+                    <i class="fas fa-comment mr-1"></i>
+                    Comments (5)
+                  </button>
+                </div>
+                <button class="button button-outline text-sm">
+                  View Details
+                </button>
+              </div>
+            </div>
+            
+            <!-- Suggestion 3 -->
+            <div class="card">
+              <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                  <h3 class="text-xl font-semibold">Create a visual workflow builder</h3>
+                  <div class="flex items-center">
+                    <span class="badge badge-purple">Implemented</span>
+                    <button class="ml-2 text-gray-500 hover:text-gray-700">
+                      <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                  </div>
+                </div>
+                <p class="text-gray-600 mb-4">Develop a drag-and-drop interface for creating agent workflows without writing code.</p>
+                <div class="flex flex-wrap gap-2 mb-4">
+                  <span class="badge badge-outline">
+                    <i class="fas fa-tag text-xs mr-1"></i> UI
+                  </span>
+                  <span class="badge badge-outline">
+                    <i class="fas fa-tag text-xs mr-1"></i> Workflow
+                  </span>
+                  <span class="badge badge-outline">
+                    <i class="fas fa-tag text-xs mr-1"></i> No-Code
+                  </span>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  <div>
+                    <p class="text-gray-500">Submitted By</p>
+                    <p class="font-medium flex items-center">
+                      <i class="fas fa-user text-xs mr-1"></i>
+                      Mike Johnson
+                    </p>
+                  </div>
+                  <div>
+                    <p class="text-gray-500">Submitted On</p>
+                    <p class="font-medium flex items-center">
+                      <i class="fas fa-calendar-alt text-xs mr-1"></i>
+                      Apr 10, 2023
+                    </p>
+                  </div>
+                  <div>
+                    <p class="text-gray-500">Category</p>
+                    <p class="font-medium">User Interface</p>
+                  </div>
+                  <div>
+                    <p class="text-gray-500">Votes</p>
+                    <p class="font-medium flex items-center">
+                      <i class="fas fa-thumbs-up text-xs mr-1"></i>
+                      65
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="px-6 py-4 bg-gray-50 flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                  <button class="flex items-center text-green-600 hover:text-green-700">
+                    <i class="fas fa-thumbs-up mr-1"></i>
+                    Upvote
+                  </button>
+                  <button class="flex items-center text-red-600 hover:text-red-700">
+                    <i class="fas fa-thumbs-down mr-1"></i>
+                    Downvote
+                  </button>
+                  <button class="flex items-center text-blue-600 hover:text-blue-700">
+                    <i class="fas fa-comment mr-1"></i>
+                    Comments (12)
+                  </button>
+                </div>
+                <button class="button button-outline text-sm">
+                  View Details
+                </button>
+              </div>
+            </div>
+            
+            <!-- Suggestion 4 -->
+            <div class="card">
+              <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                  <h3 class="text-xl font-semibold">Integrate with third-party AI services</h3>
+                  <div class="flex items-center">
+                    <span class="badge badge-blue">Submitted</span>
+                    <button class="ml-2 text-gray-500 hover:text-gray-700">
+                      <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                  </div>
+                </div>
+                <p class="text-gray-600 mb-4">Add support for integrating with popular third-party AI services like OpenAI, Anthropic, and Cohere.</p>
+                <div class="flex flex-wrap gap-2 mb-4">
+                  <span class="badge badge-outline">
+                    <i class="fas fa-tag text-xs mr-1"></i> Integration
+                  </span>
+                  <span class="badge badge-outline">
+                    <i class="fas fa-tag text-xs mr-1"></i> AI
+                  </span>
+                  <span class="badge badge-outline">
+                    <i class="fas fa-tag text-xs mr-1"></i> Third-Party
+                  </span>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  <div>
+                    <p class="text-gray-500">Submitted By</p>
+                    <p class="font-medium flex items-center">
+                      <i class="fas fa-user text-xs mr-1"></i>
+                      Sarah Williams
+                    </p>
+                  </div>
+                  <div>
+                    <p class="text-gray-500">Submitted On</p>
+                    <p class="font-medium flex items-center">
+                      <i class="fas fa-calendar-alt text-xs mr-1"></i>
+                      Jun 1, 2023
+                    </p>
+                  </div>
+                  <div>
+                    <p class="text-gray-500">Category</p>
+                    <p class="font-medium">Integration</p>
+                  </div>
+                  <div>
+                    <p class="text-gray-500">Votes</p>
+                    <p class="font-medium flex items-center">
+                      <i class="fas fa-thumbs-up text-xs mr-1"></i>
+                      27
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="px-6 py-4 bg-gray-50 flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                  <button class="flex items-center text-green-600 hover:text-green-700">
+                    <i class="fas fa-thumbs-up mr-1"></i>
+                    Upvote
+                  </button>
+                  <button class="flex items-center text-red-600 hover:text-red-700">
+                    <i class="fas fa-thumbs-down mr-1"></i>
+                    Downvote
+                  </button>
+                  <button class="flex items-center text-blue-600 hover:text-blue-700">
+                    <i class="fas fa-comment mr-1"></i>
+                    Comments (3)
+                  </button>
+                </div>
+                <button class="button button-outline text-sm">
+                  View Details
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+    
+    <footer class="layout-footer">
+      <div class="flex justify-center space-x-4">
+        <a href="#" class="text-gray-500 hover:text-gray-700">Privacy Policy</a>
+        <a href="#" class="text-gray-500 hover:text-gray-700">Terms of Service</a>
+        <a href="#" class="text-gray-500 hover:text-gray-700">Contact Us</a>
+      </div>
+      <div class="mt-2 text-gray-500">© 2023 The New Fuse. All rights reserved.</div>
+    </footer>
+  </div>
+  
+  <script>
+    // Sidebar toggle functionality
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    const sidebarCollapse = document.getElementById('sidebar-collapse');
+    const sidebar = document.getElementById('sidebar');
+    
+    sidebarToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('sidebar-collapsed');
+    });
+    
+    sidebarCollapse.addEventListener('click', () => {
+      sidebar.classList.toggle('sidebar-collapsed');
+    });
+  </script>
+</body>
+</html>

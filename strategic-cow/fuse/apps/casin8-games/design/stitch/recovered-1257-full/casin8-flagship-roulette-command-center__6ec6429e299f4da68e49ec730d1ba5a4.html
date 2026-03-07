@@ -1,0 +1,327 @@
+<html class="dark"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Cinzel:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-sapphire": "#0047AB",
+                        "deep-sapphire": "#0a1e3d",
+                        "accent-gold": "#f5c469",
+                        "velvet-black": "#030407",
+                        "midnight-lounge": "#080b14",
+                        "glass-border": "rgba(30, 64, 175, 0.3)",
+                    },
+                    fontFamily: {
+                        "display": ["Cinzel", "serif"],
+                        "sans": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.375rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer utilities {
+            .glass-panel {
+                background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(8, 11, 20, 0.9) 100%);
+                backdrop-filter: blur(16px);
+                border: 1px solid rgba(30, 64, 175, 0.2);
+            }
+            .gold-glow {
+                box-shadow: 0 0 30px rgba(245, 196, 105, 0.25);
+            }
+            .sapphire-glow {
+                box-shadow: 0 0 20px rgba(0, 71, 171, 0.4);
+            }
+            .sapphire-gradient {
+                background: linear-gradient(180deg, #1e40af 0%, #0047AB 100%);
+            }
+            .gold-text-gradient {
+                background: linear-gradient(to bottom, #f5c469, #b8860b);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+            .pulse-luxury {
+                animation: pulse-luxury 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            }
+            @keyframes pulse-luxury {
+                0%, 100% { opacity: 0.8; transform: scale(1); }
+                50% { opacity: 0.4; transform: scale(1.05); }
+            }
+        }
+    </style>
+</head>
+<body class="bg-velvet-black font-sans text-slate-100 selection:bg-primary-sapphire/30 overflow-hidden h-screen flex flex-col">
+<header class="flex h-20 shrink-0 items-center justify-between border-b border-white/5 bg-midnight-lounge px-8 relative z-20">
+<div class="flex items-center gap-10">
+<div class="flex items-center gap-4">
+<div class="size-10 rounded-sm bg-gradient-to-br from-accent-gold to-yellow-800 flex items-center justify-center shadow-lg gold-glow">
+<span class="material-symbols-outlined text-velvet-black font-bold text-2xl">casino</span>
+</div>
+<div class="flex flex-col">
+<h1 class="font-display text-2xl font-bold tracking-widest text-white leading-none">CASIN8</h1>
+<span class="text-[9px] uppercase tracking-[0.4em] text-accent-gold font-bold">Midnight Lounge</span>
+</div>
+</div>
+<div class="h-10 w-px bg-white/5"></div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-3 rounded-full bg-deep-sapphire/40 px-4 py-2 border border-primary-sapphire/20">
+<div class="size-2 rounded-full bg-primary-sapphire sapphire-glow"></div>
+<span class="text-xs font-bold text-slate-300 tracking-wide">Ethereum Mainnet</span>
+</div>
+<div class="flex items-center gap-2 text-slate-500">
+<span class="material-symbols-outlined text-sm">sensors</span>
+<span class="text-xs font-bold">18ms</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 p-1.5 rounded-xl bg-black/60 border border-white/5">
+<button class="flex items-center gap-3 rounded-lg sapphire-gradient px-5 py-2 text-white text-sm font-bold shadow-xl">
+<span class="material-symbols-outlined text-sm">account_balance_wallet</span>
+<span>0.85 ETH</span>
+</button>
+<div class="px-4 text-accent-gold text-xs font-bold tracking-widest">3,400 USDT</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="size-11 flex items-center justify-center rounded-xl bg-white/5 text-slate-300 hover:text-white border border-white/10 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="size-11 rounded-xl border-2 border-accent-gold/40 p-0.5 overflow-hidden">
+<div class="size-full rounded-lg bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBy0WcYZZQZVl3UeLJDxCc9OhgRrCSzrQFGxk7RfmXcltkLuADEMD_bmi5IKhSHu8eNlIMQWcuzoXR0tveAoAqHHF5dNg40XK10U4gpKfU2YckejYlDRHz1cbZaJt78MXo_ZjKN1lw8fCz2qM-zu5gfRUfw2DEAFRrDKdonUMy_doymgbyHyEr8Yp6eJeHCdAzO18ioOpLStoJayanog9Ag1sIcXS4SmGnBQf_xAMo-INejc-De9gfkanUiTcojcAOXYRinaJJSVp5w');"></div>
+</div>
+</div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<aside class="w-24 shrink-0 flex flex-col items-center py-10 gap-8 bg-midnight-lounge border-r border-white/5">
+<a class="group flex flex-col items-center gap-2 text-slate-500 hover:text-white transition-all" href="#">
+<div class="size-14 rounded-2xl flex items-center justify-center border border-white/5 group-hover:bg-primary-sapphire/10 group-hover:border-primary-sapphire/30 transition-all">
+<span class="material-symbols-outlined text-3xl">style</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest">Poker</span>
+</a>
+<a class="group flex flex-col items-center gap-2 text-slate-500 hover:text-white transition-all" href="#">
+<div class="size-14 rounded-2xl flex items-center justify-center border border-white/5 group-hover:bg-primary-sapphire/10 group-hover:border-primary-sapphire/30 transition-all">
+<span class="material-symbols-outlined text-3xl">playing_cards</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest">BJ</span>
+</a>
+<a class="group flex flex-col items-center gap-2 text-accent-gold" href="#">
+<div class="size-14 rounded-2xl flex items-center justify-center bg-deep-sapphire border border-accent-gold/50 gold-glow transition-all">
+<span class="material-symbols-outlined text-3xl filled">motion_photos_on</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest">Roulette</span>
+</a>
+<a class="group flex flex-col items-center gap-2 text-slate-500 hover:text-white transition-all" href="#">
+<div class="size-14 rounded-2xl flex items-center justify-center border border-white/5 group-hover:bg-primary-sapphire/10 group-hover:border-primary-sapphire/30 transition-all">
+<span class="material-symbols-outlined text-3xl">grid_view</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest">Slots</span>
+</a>
+<div class="mt-auto">
+<button class="size-12 rounded-full flex items-center justify-center text-slate-500 hover:text-accent-gold transition-all">
+<span class="material-symbols-outlined text-2xl">settings_account_box</span>
+</button>
+</div>
+</aside>
+<main class="flex-1 relative flex flex-col bg-[#010204]">
+<div class="flex-1 relative overflow-hidden flex items-center justify-center p-12">
+<div class="absolute inset-0 bg-gradient-to-b from-primary-sapphire/10 to-transparent"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[700px] bg-primary-sapphire/5 blur-[150px] rounded-full"></div>
+<div class="relative w-full max-w-6xl aspect-[21/9] flex items-center justify-between gap-16">
+<div class="relative shrink-0 size-[500px] group">
+<div class="absolute inset-0 overflow-visible pointer-events-none z-10">
+<div class="absolute top-1/4 left-1/4 size-1 bg-accent-gold/40 rounded-full blur-sm pulse-luxury"></div>
+<div class="absolute bottom-1/3 right-1/4 size-1.5 bg-primary-sapphire/50 rounded-full blur-sm pulse-luxury"></div>
+</div>
+<div class="size-full rounded-full bg-gradient-to-br from-[#121826] to-black border-[16px] border-[#1e1e24] shadow-[0_40px_100px_rgba(0,0,0,0.8)] relative flex items-center justify-center">
+<div class="absolute inset-[-4px] rounded-full border border-accent-gold/20"></div>
+<div class="size-[88%] rounded-full border-2 border-accent-gold/30 flex items-center justify-center bg-velvet-black relative overflow-hidden">
+<div class="absolute inset-0 bg-[conic-gradient(from_0deg,transparent_0deg,rgba(245,196,105,0.08)_60deg,transparent_120deg)] animate-[spin_15s_linear_infinite]"></div>
+<div class="size-full bg-cover bg-center opacity-90 mix-blend-screen" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC6c-G93jt9nPeWUqRCwBkmb1vRj91GtyTXSg_iaz3b-tzpc5h_C8cUrZ9m65rzF5CQ0b6d2wj1L8gpRkiJ7vz-M7xamQ_kUR2hxrtlR9-P_jHeYJrhdws6FrKbvEFMamwjyFxxnQi-TZ4sSLIT49PB-2o8D7JjVAId2SIp_0KmyoE3WBQTmMmcZYiq46tPmplfZRrJzgbzphB7ieHDAqaw8Rhv6GsAmrD_YrUcKAOD7HiYLoHX3Kn-xAvmqbdi-jBYaDl0ZPeNO4Rl');"></div>
+<div class="absolute size-28 rounded-full bg-gradient-to-b from-accent-gold via-[#b8860b] to-accent-gold shadow-2xl border border-white/30 flex items-center justify-center gold-glow">
+<div class="size-8 rounded-full bg-white/30 blur-md"></div>
+</div>
+</div>
+</div>
+<div class="absolute -bottom-8 left-1/2 -translate-x-1/2 glass-panel border-accent-gold/40 px-10 py-3 rounded-full shadow-2xl">
+<span class="text-accent-gold font-display font-bold tracking-[0.3em] text-sm">LAST: <span class="text-white">32 RED</span></span>
+</div>
+</div>
+<div class="flex-1 h-[480px] bg-deep-sapphire/30 rounded-3xl border border-white/5 shadow-[0_50px_100px_rgba(0,0,0,0.6)] overflow-hidden relative flex flex-col group">
+<div class="absolute inset-0 bg-gradient-to-br from-primary-sapphire/5 to-transparent pointer-events-none"></div>
+<div class="flex-1 p-6 grid grid-cols-12 grid-rows-3 gap-1.5 relative">
+<div class="col-span-1 row-span-3 bg-primary-sapphire/20 border border-primary-sapphire/40 rounded-xl flex items-center justify-center text-accent-gold font-display text-2xl font-black">0</div>
+<div class="col-span-11 row-span-3 grid grid-cols-11 grid-rows-3 gap-1.5">
+<div class="bg-red-950/40 border border-red-500/20 rounded-lg flex items-center justify-center text-sm font-bold text-white/60">1</div>
+<div class="bg-slate-900/40 border border-white/5 rounded-lg flex items-center justify-center text-sm font-bold text-white/60">2</div>
+<div class="bg-red-950/40 border border-red-500/20 rounded-lg flex items-center justify-center text-sm font-bold text-white/60">3</div>
+<div class="bg-slate-900/40 border border-white/5 rounded-lg flex items-center justify-center text-sm font-bold text-white/60">4</div>
+<div class="bg-red-950/40 border border-red-500/20 rounded-lg flex items-center justify-center text-sm font-bold text-white/60 relative">
+                                5
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="size-8 rounded-full sapphire-gradient border-2 border-accent-gold/80 shadow-2xl sapphire-glow flex items-center justify-center text-[10px] text-white font-black">10</div>
+</div>
+</div>
+<div class="bg-slate-900/40 border border-white/5 rounded-lg flex items-center justify-center text-sm font-bold text-white/60">6</div>
+<div class="bg-red-950/40 border border-red-500/20 rounded-lg flex items-center justify-center text-sm font-bold text-white/60">7</div>
+<div class="bg-slate-900/40 border border-white/5 rounded-lg flex items-center justify-center text-sm font-bold text-white/60">8</div>
+<div class="bg-red-950/40 border border-red-500/20 rounded-lg flex items-center justify-center text-sm font-bold text-white/60">9</div>
+<div class="bg-slate-900/40 border border-white/5 rounded-lg flex items-center justify-center text-sm font-bold text-white/60">10</div>
+<div class="bg-red-950/40 border border-red-500/20 rounded-lg flex items-center justify-center text-sm font-bold text-white/60">11</div>
+<div class="col-span-11 mt-4 grid grid-cols-3 gap-2 h-14">
+<div class="bg-white/5 border border-white/10 rounded-xl text-[11px] flex items-center justify-center font-bold text-slate-400 uppercase tracking-widest hover:bg-primary-sapphire/20 hover:text-white transition-all cursor-pointer">1st 12</div>
+<div class="bg-white/5 border border-white/10 rounded-xl text-[11px] flex items-center justify-center font-bold text-slate-400 uppercase tracking-widest hover:bg-primary-sapphire/20 hover:text-white transition-all cursor-pointer">2nd 12</div>
+<div class="bg-white/5 border border-white/10 rounded-xl text-[11px] flex items-center justify-center font-bold text-slate-400 uppercase tracking-widest hover:bg-primary-sapphire/20 hover:text-white transition-all cursor-pointer">3rd 12</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="h-32 shrink-0 bg-midnight-lounge border-t border-white/5 px-12 flex items-center justify-between">
+<div class="flex items-center gap-10">
+<div class="flex flex-col gap-3">
+<span class="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-500">Wager Amount</span>
+<div class="flex items-center bg-black/60 border border-white/10 rounded-xl p-1.5">
+<button class="size-10 flex items-center justify-center text-slate-400 hover:text-accent-gold transition-colors"><span class="material-symbols-outlined">remove</span></button>
+<input class="w-28 bg-transparent border-none text-center text-lg font-bold text-white font-display focus:ring-0" readonly="" type="text" value="0.05 ETH"/>
+<button class="size-10 flex items-center justify-center text-slate-400 hover:text-accent-gold transition-colors"><span class="material-symbols-outlined">add</span></button>
+</div>
+</div>
+<div class="h-16 w-px bg-white/5"></div>
+<div class="flex items-center gap-4">
+<button class="size-14 rounded-full border-2 border-dashed border-white/10 flex items-center justify-center text-slate-500 hover:border-accent-gold/40 hover:text-white transition-all">
+<span class="text-xs font-bold">1</span>
+</button>
+<button class="size-16 rounded-full sapphire-gradient border-2 border-white/20 shadow-2xl sapphire-glow flex items-center justify-center text-white font-black scale-110">
+<span>10</span>
+</button>
+<button class="size-14 rounded-full bg-indigo-900/60 border-2 border-white/10 flex items-center justify-center text-white/60 font-bold hover:text-white hover:border-white/30 transition-all">
+<span>50</span>
+</button>
+<button class="size-14 rounded-full bg-amber-700/60 border-2 border-white/10 flex items-center justify-center text-white/60 font-bold hover:text-white hover:border-white/30 transition-all">
+<span>100</span>
+</button>
+<button class="size-14 rounded-full bg-red-900/60 border-2 border-white/10 flex items-center justify-center text-white/60 font-bold hover:text-white hover:border-white/30 transition-all">
+<span>500</span>
+</button>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 px-8 py-4 rounded-xl border border-white/10 text-slate-400 hover:bg-white/5 hover:text-white transition-all text-xs font-bold uppercase tracking-widest">
+<span class="material-symbols-outlined text-lg">undo</span>
+                        Undo
+                    </button>
+<button class="flex items-center gap-2 px-8 py-4 rounded-xl border border-white/10 text-slate-400 hover:bg-white/5 hover:text-white transition-all text-xs font-bold uppercase tracking-widest">
+<span class="material-symbols-outlined text-lg">delete_sweep</span>
+                        Clear
+                    </button>
+</div>
+<button class="flex items-center gap-4 px-16 py-4 rounded-xl bg-slate-800/50 text-slate-500 cursor-not-allowed text-xl font-display font-black uppercase tracking-[0.2em] shadow-inner" disabled="">
+<span class="material-symbols-outlined text-2xl">play_circle</span>
+                    Spin
+                </button>
+</div>
+</div>
+</main>
+<aside class="w-96 shrink-0 bg-midnight-lounge border-l border-white/5 p-8 flex flex-col gap-8 overflow-y-auto">
+<div class="glass-panel rounded-2xl p-6 flex flex-col gap-6 border-primary-sapphire/30">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-sapphire text-2xl">verified_user</span>
+<h3 class="font-display text-sm font-bold tracking-widest text-white">PROVABLY FAIR</h3>
+</div>
+<span class="size-2 rounded-full bg-primary-sapphire sapphire-glow pulse-luxury"></span>
+</div>
+<div class="space-y-4">
+<div class="space-y-2">
+<p class="text-[9px] uppercase font-bold text-slate-500 tracking-[0.2em]">Server Seed Fragment</p>
+<div class="bg-black/60 rounded-lg border border-white/5 p-3 font-mono text-[11px] text-slate-400 truncate">
+                        0x7a2d8e4f1b9c3d5a6f0e...
+                    </div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-2">
+<p class="text-[9px] uppercase font-bold text-slate-500 tracking-[0.2em]">Nonce</p>
+<div class="bg-black/60 rounded-lg border border-primary-sapphire/20 p-3 font-mono text-sm text-primary-sapphire font-bold">
+                            4,192
+                        </div>
+</div>
+<div class="space-y-2">
+<p class="text-[9px] uppercase font-bold text-slate-500 tracking-[0.2em]">Client Seed</p>
+<div class="bg-black/60 rounded-lg border border-white/5 p-3 font-mono text-sm text-slate-300">
+                            lounge_8
+                        </div>
+</div>
+</div>
+</div>
+<button class="w-full py-3 rounded-xl bg-primary-sapphire/10 border border-primary-sapphire/30 text-primary-sapphire text-xs font-bold hover:bg-primary-sapphire/20 hover:border-primary-sapphire/50 transition-all uppercase tracking-widest">
+                Verify Integrity
+            </button>
+</div>
+<div class="space-y-6">
+<h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.3em] px-1">Lounge Activity</h3>
+<div class="space-y-4">
+<div class="flex items-start gap-5 p-4 rounded-2xl bg-primary-sapphire/5 border border-primary-sapphire/20 relative overflow-hidden">
+<div class="absolute inset-y-0 left-0 w-1 sapphire-gradient sapphire-glow"></div>
+<div class="size-10 rounded-xl bg-primary-sapphire/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary-sapphire text-xl animate-spin">refresh</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-bold text-white truncate">Placing Bet...</p>
+<p class="text-[10px] text-slate-500 mt-0.5 tracking-wide">Tx: 0x3f...e4a1</p>
+<div class="mt-3 h-1 w-full bg-white/5 rounded-full overflow-hidden">
+<div class="h-full sapphire-gradient w-3/4"></div>
+</div>
+</div>
+</div>
+<div class="flex items-start gap-5 p-4 rounded-2xl bg-black/40 border border-white/5">
+<div class="size-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-accent-gold text-xl">account_balance</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-bold text-slate-300 truncate">Deposit Verified</p>
+<p class="text-[10px] text-slate-500 mt-0.5">4 minutes ago</p>
+</div>
+<span class="text-xs font-bold text-primary-sapphire tracking-tighter">+0.25 ETH</span>
+</div>
+</div>
+</div>
+<div class="mt-auto border-t border-white/5 pt-8 space-y-6">
+<div class="grid grid-cols-2 gap-4">
+<div class="p-4 rounded-xl bg-black/20 border border-white/5">
+<p class="text-[9px] uppercase font-bold text-slate-500 tracking-widest">Session</p>
+<p class="text-lg font-display font-bold text-red-500 mt-1">-0.045</p>
+</div>
+<div class="p-4 rounded-xl bg-black/20 border border-white/5">
+<p class="text-[9px] uppercase font-bold text-slate-500 tracking-widest">In Play</p>
+<p class="text-lg font-display font-bold text-primary-sapphire mt-1">0.05</p>
+</div>
+</div>
+<button class="w-full py-4 rounded-xl bg-white/5 border border-white/10 text-slate-300 font-bold hover:bg-white/10 hover:text-white transition-all flex items-center justify-center gap-3 text-sm uppercase tracking-[0.15em]">
+<span class="material-symbols-outlined text-xl">history_edu</span>
+                Audit Ledger
+            </button>
+</div>
+</aside>
+</div>
+<div class="fixed top-24 left-1/2 -translate-x-1/2 z-50 w-full max-w-sm">
+<div class="flex items-center justify-between gap-6 rounded-2xl bg-amber-500/5 border border-amber-500/20 px-6 py-4 text-amber-500 backdrop-blur-xl shadow-2xl">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-lg animate-spin">sync_saved_locally</span>
+<p class="text-xs font-bold uppercase tracking-widest">Resyncing Lounge...</p>
+</div>
+<button class="text-[10px] font-black uppercase tracking-widest hover:text-white border-b border-amber-500/30">REFRESH</button>
+</div>
+</div>
+
+</body></html>

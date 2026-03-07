@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home - UI HTML/CSS Showcase</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #f9f9f9; }
+    header { background: #1976d2; color: #fff; padding: 1.5rem 2rem; }
+    nav a { color: #fff; margin-right: 1.5rem; text-decoration: none; font-weight: bold; }
+    nav a:hover { text-decoration: underline; }
+    main { max-width: 800px; margin: 2rem auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #0001; padding: 2rem; }
+    h1 { color: #1976d2; }
+    .dashboard-cards { display: flex; gap: 2rem; margin-top: 2rem; flex-wrap: wrap; }
+    .card {
+      background: #f5f7fa;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px #0002;
+      padding: 1.5rem;
+      flex: 1 1 220px;
+      min-width: 220px;
+      max-width: 300px;
+      text-align: center;
+    }
+    .card h2 { margin: 0 0 0.5rem 0; color: #222; }
+    .card p { color: #555; }
+    footer { text-align: center; color: #888; margin: 3rem 0 1rem 0; }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="../index.html">Showcase Home</a>
+      <a href="home.html">Home</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="chat.html">Chat</a>
+      <a href="tasks.html">Tasks</a>
+      <a href="workflows.html">Workflows</a>
+      <a href="settings.html">Settings</a>
+      <a href="admin.html">Admin</a>
+      <a href="agents.html">Agents</a>
+      <a href="suggestions.html">Suggestions</a>
+      <a href="register.html">Register</a>
+      <a href="login.html" style="float:right;">Login</a>
+    </nav>
+  </header>
+  <main>
+    <h1>Welcome to The New Fuse</h1>
+    <p>This is a static HTML/CSS representation of the Home page. Explore the navigation above to view other pages and UI components.</p>
+    <div class="dashboard-cards">
+      <div class="card">
+        <h2>Agents</h2>
+        <p>Manage and view all AI agents in your workspace.</p>
+      </div>
+      <div class="card">
+        <h2>Tasks</h2>
+        <p>Track, assign, and complete your workflow tasks.</p>
+      </div>
+      <div class="card">
+        <h2>Analytics</h2>
+        <p>View usage analytics and system health metrics.</p>
+      </div>
+    </div>
+  </main>
+  <footer>
+    &copy; 2025 The New Fuse &mdash; UI HTML/CSS Showcase
+  </footer>
+</body>
+</html>

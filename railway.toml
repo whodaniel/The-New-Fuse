@@ -213,3 +213,12 @@ healthcheckPath = "/health.json"
 healthcheckTimeout = 30
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 3
+
+# Casin8 Games Service (Poker Backend)
+[services.casin8-games]
+builder = "DOCKERFILE"
+[services.casin8-games.build]
+dockerfilePath = "apps/casin8-games/Dockerfile"
+watchPatterns = ["apps/casin8-games/**"]
+[services.casin8-games.deploy]
+healthcheckPath = "/api/health"

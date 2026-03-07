@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Casin8 | Texas Hold'em - The High Roller</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f4c025",
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#0a1210",
+                        "emerald-dark": "#062d24",
+                        "navy-felt": "#0f172a",
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 overflow-hidden">
+<div class="relative flex h-screen w-full flex-col overflow-hidden">
+<!-- Top Bar -->
+<header class="flex items-center justify-between border-b border-primary/10 bg-background-dark/80 backdrop-blur-md px-8 py-3 z-50">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-3xl">token</span>
+<h1 class="text-xl font-bold tracking-tight uppercase">Casin8</h1>
+</div>
+<div class="h-6 w-px bg-slate-700"></div>
+<div class="flex flex-col">
+<span class="text-xs uppercase tracking-widest text-slate-500 font-bold">Table</span>
+<span class="text-sm font-medium">The High Roller • 6-Max</span>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-emerald-dark/40 border border-primary/20 px-4 py-2 rounded-lg">
+<div class="flex flex-col items-center border-r border-primary/20 pr-4">
+<span class="text-[10px] uppercase text-primary font-bold">Current Pot</span>
+<span class="text-lg font-bold text-white">2.450 ETH</span>
+</div>
+<div class="flex flex-col pl-2">
+<span class="text-[10px] uppercase text-slate-400">On-Chain Settlement</span>
+<div class="flex items-center gap-2">
+<span class="text-xs font-mono text-primary/80">0x74a...f2e</span>
+<span class="flex items-center gap-1 text-[10px] bg-emerald-500/20 text-emerald-400 px-1.5 rounded uppercase font-bold">
+<span class="size-1.5 bg-emerald-500 rounded-full animate-pulse"></span> Confirmed
+                        </span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 bg-slate-800/50 p-1.5 rounded-full pr-4 border border-slate-700">
+<div class="size-8 rounded-full bg-primary flex items-center justify-center text-background-dark">
+<span class="material-symbols-outlined text-sm font-bold">account_balance_wallet</span>
+</div>
+<span class="text-sm font-bold">24,500.50 ETH</span>
+</div>
+<button class="size-10 flex items-center justify-center rounded-full bg-slate-800 hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined text-slate-300">settings</span>
+</button>
+<div class="size-10 rounded-full border-2 border-primary overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User avatar gold framed" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8Z7iJlrlePpszMRTOXpSkfjYQgTWd22Cs43G9NIFc73rHNLSyPtaXsSszCS1cWoGJgX_7NesjkOyj56ZogSpknljWOfpYCHEcKweR0ujFhdrTZ13NwIbvNFVohJuEu-lgQHFvgKb839kCYHxIF-jnvEB-whN1kDBOFqSu9AAd-XnxbH1-_YkdG4-u97zOFSd5vpSp9kWljO7nxEQkEfhI-Thjl6WGWUbMiFUk0d06CvUnF9pQNBqDrnqK-wO-HIIc1PtKYFwjGL3H"/>
+</div>
+</div>
+</header>
+<main class="flex flex-1 overflow-hidden">
+<!-- Left Sidebar (Navigation/Social) -->
+<div class="w-20 flex flex-col items-center py-6 gap-8 border-r border-white/5 bg-background-dark/40">
+<button class="text-primary"><span class="material-symbols-outlined size-10 flex items-center justify-center rounded-xl bg-primary/10">grid_view</span></button>
+<button class="text-slate-500 hover:text-white transition-colors"><span class="material-symbols-outlined">leaderboard</span></button>
+<button class="text-slate-500 hover:text-white transition-colors"><span class="material-symbols-outlined">military_tech</span></button>
+<button class="text-slate-500 hover:text-white transition-colors"><span class="material-symbols-outlined">forum</span></button>
+<div class="mt-auto">
+<button class="text-slate-500 hover:text-white transition-colors"><span class="material-symbols-outlined">help</span></button>
+</div>
+</div>
+<!-- Game Area -->
+<div class="flex-1 relative flex flex-col items-center justify-center p-12 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-emerald-dark/20 via-background-dark to-background-dark">
+<!-- Poker Table -->
+<div class="relative w-full max-w-5xl aspect-[2/1] bg-navy-felt rounded-[10rem] border-[12px] border-slate-800 shadow-[0_0_100px_rgba(0,0,0,0.8),inset_0_0_60px_rgba(244,192,37,0.1)] flex items-center justify-center">
+<div class="absolute inset-4 border-2 border-primary/10 rounded-[9rem] pointer-events-none"></div>
+<div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#f4c025 0.5px, transparent 0.5px); background-size: 24px 24px;"></div>
+<!-- Seats -->
+<!-- Top Left -->
+<div class="absolute -top-12 left-1/4 -translate-x-1/2 flex flex-col items-center">
+<div class="backdrop-blur-md bg-white/5 border border-white/10 p-3 rounded-xl flex items-center gap-3 w-40 shadow-2xl">
+<img class="size-10 rounded-lg bg-cyan-500/20" data-alt="Opponent avatar cyan" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCf4AvAyyIhfVBAhwVF2vARI0W_BxJs9aYPnyPNEim9Y5NOvhV4Vdqas1LU1vjNOgXaeC1d5T0OxqH2xxK-16GhLw2OLGHJvcRw3o9gyLoqiQyk4bCKSAiosHW3fhdqtyekYeEZfefLlxmcBr9m6VGqrQpvOKVkm3KZC9KLyRJj8JehjDvOmm99xymBieXS2Px1pFU8h4b1izczRf92K-JD3UZXUKo3YJSyNgRAvace1tJ3JCYzryIBC0wMYHhak6PBvIOAa_g4e-zd"/>
+<div class="flex flex-col overflow-hidden">
+<span class="text-xs font-bold truncate">CyberPunker</span>
+<span class="text-xs text-primary font-mono">1.24 ETH</span>
+</div>
+</div>
+</div>
+<!-- Top Right -->
+<div class="absolute -top-12 right-1/4 translate-x-1/2 flex flex-col items-center">
+<div class="backdrop-blur-md bg-white/5 border border-white/10 p-3 rounded-xl flex items-center gap-3 w-40 shadow-2xl">
+<img class="size-10 rounded-lg bg-purple-500/20" data-alt="Opponent avatar purple" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAv8Kg3t-WD0-VrjnuowodP-56p9KZVWQdcrtJ5teiHLYM5q0ZWyUjLM-9crOgSCy1s9r1c8Nd-AT5btUMg_uf2X4nEerhrZ4l00BPKBcwpoE4jpMWwUe7ttFNovKFIZagy_zhn3XSZsfl0NrQaWXh6EL4FFDAUA5yZn6xWL8qeKAlJa-7wNVCGtLug66pbaRY3FVCFMenOiCgZkQzXDV_8aaCe1HQBVl4SvdFXhW_XwgQacadUBEu2liAFnfWu8lhPzGWWwk9yA4xo"/>
+<div class="flex flex-col overflow-hidden">
+<span class="text-xs font-bold truncate">WhaleHunter</span>
+<span class="text-xs text-primary font-mono">14.00 ETH</span>
+</div>
+</div>
+</div>
+<!-- Right Middle -->
+<div class="absolute top-1/2 -right-16 -translate-y-1/2 flex items-center gap-4">
+<div class="size-8 bg-white text-background-dark rounded-full flex items-center justify-center font-black shadow-lg">D</div>
+<div class="backdrop-blur-md bg-white/5 border border-white/10 p-3 rounded-xl flex items-center gap-3 w-40 shadow-2xl">
+<img class="size-10 rounded-lg bg-emerald-500/20" data-alt="Opponent avatar green" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_ZxR-Fc6Qv2deLFLZ2_SN604claSZTyWjpxZ9FF7xDmNGhHQ8uzNhInI87Q1GFbT09rfaeaQwz2IH5mR7rFRfe7xK74o5UdPFgrsbYr_k7JMRk6EUtqhjG5y2XjsSKzi2IF3EvJ7clvLyx7-uy4q_LumsvAqBFeRYSXZNaE-rL-fQwt5bgYqsENzI706QJ3a4h37WBz4g9DIeSn5FMudFZWqdlB6A9e0MrGaISjM_ffJYsD7JT42S8OAPTrGuQgOvFIOEC9iR_kX2"/>
+<div class="flex flex-col overflow-hidden">
+<span class="text-xs font-bold truncate">Satoshi_01</span>
+<span class="text-xs text-primary font-mono">0.85 ETH</span>
+</div>
+</div>
+</div>
+<!-- Left Middle -->
+<div class="absolute top-1/2 -left-16 -translate-y-1/2">
+<div class="backdrop-blur-md bg-white/5 border border-white/10 p-3 rounded-xl flex items-center gap-3 w-40 shadow-2xl">
+<img class="size-10 rounded-lg bg-red-500/20" data-alt="Opponent avatar red" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCv2mXH1xMOGB_8_7U_fokeBroctanzPGqV55mY_wCO4hHDTc3TytTrvjeqdPSiMyNny_Bj-6j8GWK_9pkWUmns5TQP78o7Yo9lAsgsGCe7a2wQsgVCXjDYdUjPkGf0aNBBHECPMa1eUJIRIX0o0Q0h1nsQmB1nsuD-wGXV9IjDi8yL_KHQmydVHHeiHJ3eKfNCmnat5r1X2xwA-oM7lCZtaljB3NRztYoZekkxjoo0bpUfVvkLdJ_dD48q6MiAb0EphiipMDkExkxc"/>
+<div class="flex flex-col overflow-hidden">
+<span class="text-xs font-bold truncate">FoldMachine</span>
+<span class="text-xs text-primary font-mono">5.20 ETH</span>
+</div>
+</div>
+</div>
+<!-- Hero Seat (Bottom Center) -->
+<div class="absolute -bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center z-20">
+<div class="backdrop-blur-xl bg-primary/10 border-2 border-primary p-4 rounded-xl flex items-center gap-4 w-52 shadow-[0_0_30px_rgba(244,192,37,0.3)]">
+<div class="relative">
+<img class="size-12 rounded-lg bg-primary/20" data-alt="Hero player avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOl2XQ3qwaX3qlu8iArHiL5QsuujoHlCMRsdTtQY___4KqqFnSo4ZRlLPzs657xLiAPLlzmM2ImJp7KXzpviNEQn3jLhGgGsd1-3tcLINmFP3-XiKeZYeOi4ntVmdQPozOE5KeoiISO2848nvJMfJd3FBN0rP_nBpAxrapFSWw_eMA27FlaKGnrMLRQ_gr6ISDTYIUaOGZEUVO_ePS0JB8t73lpt5xu-afr6la2b_LI5hZKWm2gOHRcdR-0ZQdy_pqIDzqZ0Y6sI_c"/>
+<div class="absolute -bottom-1 -right-1 bg-primary text-background-dark text-[8px] px-1 rounded font-black">ACTIVE</div>
+</div>
+<div class="flex flex-col overflow-hidden">
+<span class="text-sm font-bold truncate">0xHero_Player</span>
+<span class="text-lg font-bold text-primary font-mono leading-none">24.50 ETH</span>
+</div>
+</div>
+<!-- Hero Cards -->
+<div class="flex gap-2 -mt-4 transform translate-y-4">
+<div class="w-16 h-24 bg-white rounded-lg shadow-xl flex flex-col p-2 text-slate-900 border border-slate-300">
+<span class="text-xl font-bold leading-none">A</span>
+<span class="material-symbols-outlined text-red-600 fill-1">favorite</span>
+</div>
+<div class="w-16 h-24 bg-white rounded-lg shadow-xl flex flex-col p-2 text-slate-900 border border-slate-300">
+<span class="text-xl font-bold leading-none">K</span>
+<span class="material-symbols-outlined text-red-600 fill-1">favorite</span>
+</div>
+</div>
+</div>
+<!-- Community Cards -->
+<div class="flex gap-4">
+<div class="w-20 h-28 bg-white rounded-lg shadow-2xl flex flex-col p-3 text-slate-900 transform -rotate-1">
+<span class="text-2xl font-bold leading-none">Q</span>
+<span class="material-symbols-outlined text-red-600 fill-1">favorite</span>
+</div>
+<div class="w-20 h-28 bg-white rounded-lg shadow-2xl flex flex-col p-3 text-slate-900 transform rotate-1">
+<span class="text-2xl font-bold leading-none">10</span>
+<span class="material-symbols-outlined text-red-600 fill-1">favorite</span>
+</div>
+<div class="w-20 h-28 bg-white rounded-lg shadow-2xl flex flex-col p-3 text-slate-900">
+<span class="text-2xl font-bold leading-none">J</span>
+<span class="material-symbols-outlined text-slate-900 fill-1">stat_0</span>
+</div>
+<!-- Empty Card Slots -->
+<div class="w-20 h-28 bg-background-dark/40 border-2 border-dashed border-primary/20 rounded-lg flex items-center justify-center">
+<div class="w-16 h-24 bg-gradient-to-br from-primary/20 to-primary/5 rounded-md border border-primary/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary/40 text-4xl">lock</span>
+</div>
+</div>
+<div class="w-20 h-28 bg-background-dark/40 border-2 border-dashed border-primary/20 rounded-lg flex items-center justify-center">
+<div class="w-16 h-24 bg-gradient-to-br from-primary/20 to-primary/5 rounded-md border border-primary/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary/40 text-4xl">lock</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Bar -->
+<div class="absolute bottom-8 left-1/2 -translate-x-1/2 w-full max-w-4xl bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl flex flex-col gap-6">
+<div class="flex items-center justify-between gap-8">
+<!-- Left Actions -->
+<div class="flex gap-3">
+<button class="h-14 px-10 rounded-xl bg-slate-700 hover:bg-slate-600 font-bold uppercase tracking-wider text-slate-300 transition-all active:scale-95 shadow-lg">Fold</button>
+<button class="h-14 px-10 rounded-xl bg-emerald-600 hover:bg-emerald-500 font-bold uppercase tracking-wider text-white transition-all active:scale-95 shadow-lg border-b-4 border-emerald-800">Check</button>
+</div>
+<!-- Bet Slider Area -->
+<div class="flex-1 flex flex-col gap-3 px-6">
+<div class="flex justify-between text-xs font-bold text-slate-400 uppercase tracking-widest">
+<span>Min: 0.05</span>
+<span class="text-primary">Bet Amount: 0.50 ETH</span>
+<span>Max: 24.50</span>
+</div>
+<input class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-primary" type="range"/>
+<div class="flex gap-2">
+<button class="flex-1 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-[10px] font-bold uppercase">1/2 Pot</button>
+<button class="flex-1 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-[10px] font-bold uppercase">Pot</button>
+<button class="flex-1 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-[10px] font-bold uppercase">All-In</button>
+</div>
+</div>
+<!-- Raise Action -->
+<button class="h-14 px-12 rounded-xl bg-primary hover:bg-yellow-400 text-background-dark font-black uppercase tracking-wider transition-all active:scale-95 shadow-[0_0_20px_rgba(244,192,37,0.4)] border-b-4 border-yellow-700">Raise to 0.50</button>
+</div>
+</div>
+</div>
+<!-- Right Rail -->
+<aside class="w-80 border-l border-white/5 bg-background-dark/60 flex flex-col">
+<!-- Provably Fair Section -->
+<div class="p-6 border-b border-white/5">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary text-sm">shield</span>
+<h3 class="text-xs font-black uppercase tracking-widest text-slate-400">Provably Fair</h3>
+</div>
+<div class="space-y-4">
+<div class="flex flex-col gap-1">
+<span class="text-[10px] text-slate-500 uppercase font-bold">Server Seed Hash</span>
+<div class="bg-black/40 p-2 rounded border border-white/5 font-mono text-[10px] break-all text-emerald-400">
+                                a8f2d5c3e7b1a9f0e2d3c4b5a6f7e8d9c0b1a2f3e4d5c6b7a8f9e0d1c2b3a4f5
+                            </div>
+</div>
+<div class="flex gap-4">
+<div class="flex-1 flex flex-col gap-1">
+<span class="text-[10px] text-slate-500 uppercase font-bold">Nonce</span>
+<div class="bg-black/40 p-2 rounded border border-white/5 font-mono text-xs text-center text-primary">
+                                    442
+                                </div>
+</div>
+<div class="flex-1 flex flex-col gap-1">
+<span class="text-[10px] text-slate-500 uppercase font-bold">Client Seed</span>
+<div class="bg-black/40 p-2 rounded border border-white/5 font-mono text-xs text-center">
+                                    Casin8_v1
+                                </div>
+</div>
+</div>
+<button class="w-full py-2 bg-primary/10 border border-primary/30 text-primary text-xs font-bold rounded-lg hover:bg-primary/20 transition-colors uppercase tracking-widest">
+                            Verify Hand
+                        </button>
+</div>
+</div>
+<!-- Hand History -->
+<div class="flex-1 flex flex-col overflow-hidden">
+<div class="px-6 py-4 border-b border-white/5 flex justify-between items-center">
+<h3 class="text-xs font-black uppercase tracking-widest text-slate-400">Hand History</h3>
+<span class="text-[10px] text-slate-600">ID: #9,482,103</span>
+</div>
+<div class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
+<div class="flex items-start gap-3 p-2 rounded-lg bg-white/5">
+<div class="size-6 bg-cyan-500/20 rounded flex items-center justify-center"><span class="material-symbols-outlined text-sm text-cyan-400">person</span></div>
+<div class="flex flex-col flex-1">
+<p class="text-[11px]"><span class="font-bold">CyberPunker</span> posted Small Blind <span class="text-primary font-mono">0.05</span></p>
+<span class="text-[9px] text-slate-500">14:20:12</span>
+</div>
+</div>
+<div class="flex items-start gap-3 p-2 rounded-lg bg-white/5">
+<div class="size-6 bg-purple-500/20 rounded flex items-center justify-center"><span class="material-symbols-outlined text-sm text-purple-400">person</span></div>
+<div class="flex flex-col flex-1">
+<p class="text-[11px]"><span class="font-bold">WhaleHunter</span> posted Big Blind <span class="text-primary font-mono">0.10</span></p>
+<span class="text-[9px] text-slate-500">14:20:15</span>
+</div>
+</div>
+<div class="flex items-start gap-3 p-2 rounded-lg bg-emerald-500/10 border-l-2 border-emerald-500">
+<div class="size-6 bg-emerald-500/20 rounded flex items-center justify-center"><span class="material-symbols-outlined text-sm text-emerald-400">done_all</span></div>
+<div class="flex flex-col flex-1">
+<p class="text-[11px] font-bold">Flop Dealt</p>
+<div class="flex gap-1 mt-1">
+<div class="text-[10px] bg-white text-slate-900 px-1 rounded font-bold">Q♥</div>
+<div class="text-[10px] bg-white text-slate-900 px-1 rounded font-bold">10♥</div>
+<div class="text-[10px] bg-white text-slate-900 px-1 rounded font-bold">J♠</div>
+</div>
+</div>
+</div>
+<div class="flex items-start gap-3 p-2 rounded-lg bg-primary/5">
+<div class="size-6 bg-primary/20 rounded flex items-center justify-center"><span class="material-symbols-outlined text-sm text-primary">person</span></div>
+<div class="flex flex-col flex-1">
+<p class="text-[11px]"><span class="font-bold">You</span> checked</p>
+<span class="text-[9px] text-slate-500">14:21:05</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Chat Minimal -->
+<div class="h-14 bg-black/60 border-t border-white/5 flex items-center px-4 gap-3">
+<span class="material-symbols-outlined text-slate-500 text-sm">chat_bubble</span>
+<input class="bg-transparent border-none text-xs w-full focus:ring-0 text-slate-300" placeholder="Send message..." type="text"/>
+</div>
+</aside>
+</main>
+</div>
+<style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(244, 192, 37, 0.2);
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(244, 192, 37, 0.4);
+        }
+    </style>
+</body></html>

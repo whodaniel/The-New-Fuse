@@ -1,0 +1,146 @@
+{
+  "sessions": {
+    "f070a0a2-7cbc-4c86-9b26-5d9d3b67305c": {
+      "id": "f070a0a2-7cbc-4c86-9b26-5d9d3b67305c",
+      "playerName": "fuzzer",
+      "bankroll": 974,
+      "rounds": 3,
+      "wins": 0,
+      "losses": 3,
+      "clientSeed": "seed-fuzz",
+      "serverSeed": "9796484eb63beb706e4a0df535a7998ced55950203f5eb389382fb47a28d9261",
+      "serverSeedHash": "e4fe92a3dad768ed9adc0ddba156f79a94722cb4da2437c31d55dff64af1fe25",
+      "nonce": 4,
+      "tableId": "fuzz-507d15f6",
+      "ledger": [
+        {
+          "id": "fa64d2dd-7b93-4518-8428-3202a5e96ebb",
+          "ts": "2026-02-28T22:34:30.126Z",
+          "game": "poker",
+          "bet": 14,
+          "payout": 0,
+          "delta": -14,
+          "bankroll": 974,
+          "receipt": {
+            "digest": "2db4928dc39c6046e82847cf8db5a2efbb2e590609e8b312fe3ec721250c6f16",
+            "digestAlgorithm": "sha256",
+            "receiptVersion": 2,
+            "game": "poker",
+            "bet": 14,
+            "options": {},
+            "serverSeedHash": "e4fe92a3dad768ed9adc0ddba156f79a94722cb4da2437c31d55dff64af1fe25",
+            "clientSeed": "seed-fuzz",
+            "nonce": 3
+          },
+          "detail": {
+            "hand": ["9♦", "4♥", "5♣", "A♦", "5♦"],
+            "rank": "Low Pair"
+          },
+          "onchain": null,
+          "onchainVerification": null
+        },
+        {
+          "id": "31894eac-fe4c-4850-8fab-c76620036332",
+          "ts": "2026-02-28T22:34:30.119Z",
+          "game": "poker",
+          "bet": 10,
+          "payout": 0,
+          "delta": -10,
+          "bankroll": 988,
+          "receipt": {
+            "digest": "22305cf9ad5147c2349322e57bc3a8d20bff65bbe0a15a31df9cb7f0d4ac8ad6",
+            "digestAlgorithm": "sha256",
+            "receiptVersion": 2,
+            "game": "poker",
+            "bet": 10,
+            "options": {},
+            "serverSeedHash": "e4fe92a3dad768ed9adc0ddba156f79a94722cb4da2437c31d55dff64af1fe25",
+            "clientSeed": "seed-fuzz",
+            "nonce": 2
+          },
+          "detail": {
+            "hand": ["Q♥", "2♠", "7♣", "10♥", "8♣"],
+            "rank": "High Card"
+          },
+          "onchain": null,
+          "onchainVerification": null
+        },
+        {
+          "id": "89d99d64-cf11-4832-aaba-881387ef2ae8",
+          "ts": "2026-02-28T22:34:30.089Z",
+          "game": "poker",
+          "bet": 2,
+          "payout": 0,
+          "delta": -2,
+          "bankroll": 998,
+          "receipt": {
+            "digest": "a2d5438a729021a559f112c3f01b398eb249b0cf48b5bdc4081dcc93ce1d5217",
+            "digestAlgorithm": "sha256",
+            "receiptVersion": 2,
+            "game": "poker",
+            "bet": 2,
+            "options": {},
+            "serverSeedHash": "e4fe92a3dad768ed9adc0ddba156f79a94722cb4da2437c31d55dff64af1fe25",
+            "clientSeed": "seed-fuzz",
+            "nonce": 1
+          },
+          "detail": {
+            "hand": ["2♦", "7♥", "6♠", "2♣", "8♣"],
+            "rank": "Low Pair"
+          },
+          "onchain": null,
+          "onchainVerification": null
+        }
+      ],
+      "createdAt": "2026-02-28T22:34:29.896Z",
+      "updatedAt": "2026-02-28T22:34:30.126Z"
+    }
+  },
+  "tables": {
+    "fuzz-507d15f6": {
+      "id": "fuzz-507d15f6",
+      "events": [
+        {
+          "type": "round",
+          "ts": "2026-02-28T22:34:30.126Z",
+          "tableId": "fuzz-507d15f6",
+          "playerName": "fuzzer",
+          "game": "poker",
+          "bet": 14,
+          "payout": 0,
+          "delta": -14,
+          "bankroll": 974
+        },
+        {
+          "type": "round",
+          "ts": "2026-02-28T22:34:30.119Z",
+          "tableId": "fuzz-507d15f6",
+          "playerName": "fuzzer",
+          "game": "poker",
+          "bet": 10,
+          "payout": 0,
+          "delta": -10,
+          "bankroll": 988
+        },
+        {
+          "type": "round",
+          "ts": "2026-02-28T22:34:30.089Z",
+          "tableId": "fuzz-507d15f6",
+          "playerName": "fuzzer",
+          "game": "poker",
+          "bet": 2,
+          "payout": 0,
+          "delta": -2,
+          "bankroll": 998
+        },
+        {
+          "type": "join",
+          "tableId": "fuzz-507d15f6",
+          "playerName": "fuzzer",
+          "ts": "2026-02-28T22:34:29.896Z"
+        }
+      ]
+    }
+  },
+  "v2": { "holdemTables": {}, "holdemTournaments": {} }
+}

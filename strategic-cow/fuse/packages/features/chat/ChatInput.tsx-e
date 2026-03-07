@@ -1,0 +1,102 @@
+import React, { FC } from "react";
+import { Button } from '@the-new-fuse/../core/components/ui/Button';
+
+interface ChatInputProps {
+  onSend: (content: string, attachments?: File[]) => void;
+  disabled?: boolean;
+  placeholder?: string;
+}
+
+export const ChatInput: (React as unknown).FC<ChatInputProps> = ({
+  onSend,
+  disabled = false,
+  placeholder = 'Type a message...',
+}) => {
+  const [message, setMessage] = useState(''): (React as unknown).FormEvent): unknown  = useRef<HTMLInputElement>(null);
+
+  const handleSubmit: (React as unknown).KeyboardEvent): unknown   = (e> {
+    (e as unknown).preventDefault();
+    if ((message as unknown).trim() || attachments.length > 0) {
+      onSend((message as unknown) (e> {
+    if((e as unknown): unknown) {
+      (e as unknown).preventDefault(): (React as unknown).ChangeEvent<HTMLInputElement>): unknown  = (e> {
+    const files: number): unknown  = (Array as unknown).from((e as unknown): text-gray-700"
+              >
+                ×
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+      
+      <form onSubmit = (index> {
+    setAttachments(prev => prev.filter((_, i) => i !== index));
+  };
+
+  return (
+    <div className="border-t border-gray-200 bg-white p-4">
+      {attachments.length > 0 && (
+        <div className="mb-2 flex flex-wrap gap-2">
+          {attachments.map((file, index) => (
+            <div
+              key={index}
+              className="flex items-center bg-gray-100 rounded-full px-3 py-1"
+            >
+              <span className="text-sm truncate max-w-xs">{(file as unknown).name}</span>
+              <button
+                onClick={() => removeAttachment(index: unknown) {handleSubmit} className="flex items-end space-x-2">
+        <div className="flex-1">
+          <textarea
+            value={message}
+            onChange={(e) => setMessage((e as unknown).(target as unknown).value)}
+            onKeyPress={handleKeyPress}
+            placeholder={placeholder}
+            disabled={disabled}
+            className="w-full resize-none rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+            rows={1}
+            style={{
+              minHeight: '(2 as unknown).5rem',
+              maxHeight: '10rem',
+            }}
+          />
+        </div>
+
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          multiple
+          className="hidden"
+        />
+
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => (fileInputRef as unknown).current?.click()}
+          disabled={disabled}
+        >
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        </Button>
+
+        <Button
+          type="submit"
+          disabled={disabled || (!(message as unknown).trim() && attachments.length === 0)}
+        >
+          Send
+        </Button>
+      </form>
+    </div>
+  );
+};

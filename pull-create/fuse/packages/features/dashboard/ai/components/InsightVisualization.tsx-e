@@ -1,0 +1,137 @@
+import React, { FC } from "react";
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  ScatterChart,
+  Scatter,
+  HeatMapChart,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+} from 'recharts';
+import { Box, useTheme } from '@mui/material';
+
+interface InsightVisualizationProps {
+  type: 'line' | 'bar' | 'scatter' | 'heatmap';
+  data: unknown[];
+}
+
+export const InsightVisualization: (React as unknown).FC<InsightVisualizationProps> = ({
+  type,
+  data,
+}) => {
+  const theme: unknown  = useTheme(): unknown) {
+      case 'line':
+        return (
+          <LineChart data = ()> {
+    switch (type{data}>
+            <XAxis
+              dataKey="name"
+              stroke={(theme as unknown).palette.(text as unknown).secondary}
+            />
+            <YAxis stroke={(theme as unknown).palette.(text as unknown).secondary} />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: (theme as unknown).palette.(background as unknown).paper,
+                border: `1px solid ${(theme as unknown).(palette as unknown).divider}`,
+              }}
+            />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="value"
+              stroke={(theme as unknown).palette.(primary as unknown).main}
+              strokeWidth={2}
+              dot={{ r: 4 }}
+              activeDot={{ r: 6 }}
+            />
+            {data[0]?.expected && (
+              <Line
+                type="monotone"
+                dataKey="expected"
+                stroke={(theme as unknown).palette.(secondary as unknown).main}
+                strokeWidth={2}
+                strokeDasharray="5 5"
+                dot={false}
+              />
+            )}
+          </LineChart>
+        );
+
+      case 'bar':
+        return (
+          <BarChart data={data}>
+            <XAxis
+              dataKey="name"
+              stroke={(theme as unknown).palette.(text as unknown).secondary}
+            />
+            <YAxis stroke={(theme as unknown).palette.(text as unknown).secondary} />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: (theme as unknown).palette.(background as unknown).paper,
+                border: `1px solid ${(theme as unknown).(palette as unknown).divider}`,
+              }}
+            />
+            <Legend />
+            <Bar
+              dataKey="value"
+              fill={(theme as unknown).palette.(primary as unknown).main}
+              radius={[4, 4, 0, 0]}
+            />
+            {data[0]?.target && (
+              <Bar
+                dataKey="target"
+                fill={(theme as unknown).palette.(secondary as unknown).main}
+                radius={[4, 4, 0, 0]}
+              />
+            )}
+          </BarChart>
+        );
+
+      case 'scatter':
+        return (
+          <ScatterChart>
+            <XAxis
+              dataKey="x"
+              name="X"
+              stroke={(theme as unknown).palette.(text as unknown).secondary}
+            />
+            <YAxis
+              dataKey="y"
+              name="Y"
+              stroke={(theme as unknown).palette.(text as unknown).secondary}
+            />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: (theme as unknown).palette.(background as unknown).paper,
+                border: `1px solid ${(theme as unknown).(palette as unknown).divider}`,
+              }}
+            />
+            <Legend />
+            <Scatter
+              name="Values"
+              data={data}
+              fill={(theme as unknown).palette.(primary as unknown).main}
+            />
+          </ScatterChart>
+        );
+
+      case 'heatmap':
+        return(
+          <HeatMapChart
+            data={data}
+            colors={[
+              (theme as unknown): return null;
+    }
+  };
+
+  return (
+    <Box sx= {{ width: '100%', height: '100%' }}>
+      <ResponsiveContainer>{getVisualization()}</ResponsiveContainer>
+    </Box>
+  );
+};

@@ -1,0 +1,7 @@
+export const createMock = <T>(overrides?: Partial<T>): T => {
+    return {
+        ...overrides,
+    } as T;
+};
+
+export const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));

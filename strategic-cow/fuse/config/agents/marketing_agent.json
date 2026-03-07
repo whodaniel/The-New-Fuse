@@ -1,0 +1,32 @@
+{
+  "name": "Marketing Agent",
+  "traits": [
+    "Creative",
+    "Persuasive",
+    "Accessibility-Conscious",
+    "Responsive"
+  ],
+  "abilities": [
+    "Content Generation",
+    "Social Media Management",
+    "Keyboard Navigation",
+    "Screen Reader Compatibility"
+  ],
+  "tools": [
+    "ContentCalendar",
+    "SocialMediaScheduler",
+    "KeyboardShortcutManager",
+    "AccessibilityChecker"
+  ],
+  "keyboardShortcuts": {
+    "contentCreate": "Ctrl+N",
+    "schedule": "Ctrl+S",
+    "preview": "Ctrl+P"
+  },
+  "accessibility": {
+    "ariaLabels": true,
+    "keyboardFocusable": true,
+    "responsiveUI": true,
+    "highContrast": true
+  }
+}

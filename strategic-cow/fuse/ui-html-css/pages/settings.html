@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Settings - The New Fuse</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; }
+        header { background-color: #333; color: #fff; padding: 1em 0; text-align: center; }
+        nav { background-color: #444; padding: 0.5em; text-align: center; }
+        nav a { color: #fff; margin: 0 15px; text-decoration: none; font-weight: bold; }
+        nav a:hover { text-decoration: underline; }
+        .container { width: 80%; margin: 2em auto; padding: 2em; background-color: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1, h2, h3 { color: #333; }
+        .settings-section { margin-bottom: 2.5em; padding-bottom: 1.5em; border-bottom: 1px solid #eee; }
+        .settings-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0;}
+        .settings-section h3 { margin-top: 0; color: #007bff; border-bottom: 2px solid #007bff; padding-bottom: 0.3em; display: inline-block;}
+        .form-group { margin-bottom: 1.5em; }
+        label { display: block; margin-bottom: 0.5em; font-weight: bold; }
+        input[type="text"], input[type="email"], input[type="password"], select { width: calc(100% - 22px); padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        input[readonly] { background-color: #e9ecef; cursor: not-allowed; }
+        .checkbox-group label { display: inline-block; margin-left: 8px; font-weight: normal;}
+        .checkbox-group input[type="checkbox"] { vertical-align: middle; }
+        .button-secondary { background-color: #6c757d; color: white; padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9em; text-decoration: none; display: inline-block; margin-top: 5px;}
+        .button-secondary:hover { background-color: #5a6268; }
+        .save-button-container { text-align: right; margin-top: 2em; }
+        button[type="submit"] { background-color: #28a745; color: white; padding: 12px 25px; border: none; border-radius: 4px; cursor: pointer; font-size: 1em; }
+        button[type="submit"]:hover { background-color: #218838; }
+        footer { text-align: center; padding: 1em 0; background-color: #333; color: #fff; margin-top: 2em; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>The New Fuse - HTML/CSS Showcase</h1>
+    </header>
+    <nav>
+        <a href="home.html">Home</a>
+        <a href="login.html">Login</a>
+        <a href="register.html">Register</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="chat.html">Chat</a>
+        <a href="tasks.html">Tasks</a>
+        <a href="workflows.html">Workflows</a>
+        <a href="admin.html">Admin</a>
+        <a href="agents.html">Agents</a>
+        <a href="suggestions.html">Suggestions</a>
+        <a href="settings.html">Settings</a>
+        <a href="../index.html">Component Demos</a>
+    </nav>
+    <div class="container">
+        <h2>User Settings</h2>
+        
+        <form action="/api/user/settings/update" method="POST">
+            <div class="settings-section">
+                <h3>Profile Information</h3>
+                <div class="form-group">
+                    <label for="full-name">Full Name:</label>
+                    <input type="text" id="full-name" name="full_name" value="Current User Name">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address:</label>
+                    <input type="email" id="email" name="email" value="current.user@example.com" readonly>
+                    <small>Email address cannot be changed here. Contact support if needed.</small>
+                </div>
+                <div class="form-group">
+                    <label>Password:</label>
+                    <a href="#" class="button-secondary">Change Password</a> 
+                    <!-- This would typically link to a separate page or modal for password change -->
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3>Notification Preferences</h3>
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="notify-task-assignment" name="notify_task_assignment" checked>
+                    <label for="notify-task-assignment">Email me for new task assignments.</label>
+                </div>
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="notify-task-updates" name="notify_task_updates">
+                    <label for="notify-task-updates">Email me for updates on tasks I'm following.</label>
+                </div>
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="notify-workflow-status" name="notify_workflow_status" checked>
+                    <label for="notify-workflow-status">Email me for workflow status updates (e.g., completion, errors).</label>
+                </div>
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="notify-suggestions" name="notify_suggestions">
+                    <label for="notify-suggestions">Notify me about new AI-generated suggestions.</label>
+                </div>
+                 <div class="form-group checkbox-group">
+                    <input type="checkbox" id="notify-platform-news" name="notify_platform_news" checked>
+                    <label for="notify-platform-news">Receive platform news and updates.</label>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3>Interface Preferences</h3>
+                <div class="form-group">
+                    <label for="interface-theme">Theme:</label>
+                    <select id="interface-theme" name="interface_theme">
+                        <option value="light" selected>Light Mode</option>
+                        <option value="dark">Dark Mode</option>
+                        <option value="system">System Default</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="language">Language:</label>
+                    <select id="language" name="language">
+                        <option value="en" selected>English (US)</option>
+                        <option value="en_gb">English (UK)</option>
+                        <option value="es">Español</option>
+                        <option value="fr">Français</option>
+                        <option value="de">Deutsch</option>
+                    </select>
+                </div>
+                 <div class="form-group">
+                    <label for="items-per-page">Items per Page (Lists/Tables):</label>
+                    <select id="items-per-page" name="items_per_page">
+                        <option value="10">10</option>
+                        <option value="25" selected>25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="save-button-container">
+                <button type="submit">Save All Settings</button>
+            </div>
+        </form>
+    </div>
+    <footer>
+        <p>&copy; 2025 The New Fuse - HTML/CSS Showcase</p>
+    </footer>
+</body>
+</html>

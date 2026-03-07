@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Database Operations - The New Fuse</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 40px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 32px;
+        }
+
+        .header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #334155;
+            font-size: 14px;
+        }
+
+        .required {
+            color: #ef4444;
+            margin-left: 4px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        .operation-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .operation-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .operation-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        .operation-card.selected {
+            border-color: #667eea;
+            background: #f1f5f9;
+        }
+
+        .operation-card h3 {
+            margin: 10px 0 5px 0;
+            font-size: 16px;
+            color: #1e293b;
+        }
+
+        .operation-card p {
+            margin: 0;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .operation-icon {
+            font-size: 32px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e1;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .result.success {
+            background: #dcfce7;
+            border: 2px solid #86efac;
+            color: #166534;
+        }
+
+        .result.error {
+            background: #fee2e2;
+            border: 2px solid #fca5a5;
+            color: #991b1b;
+        }
+
+        .result.info {
+            background: #dbeafe;
+            border: 2px solid #93c5fd;
+            color: #1e40af;
+        }
+
+        .result h3 {
+            margin: 0 0 10px 0;
+            font-size: 18px;
+        }
+
+        .result pre {
+            background: rgba(0,0,0,0.05);
+            padding: 12px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 12px;
+            margin: 10px 0 0 0;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .advanced-options {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .advanced-options h3 {
+            margin: 0 0 15px 0;
+            font-size: 16px;
+            color: #475569;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🗄️ Database Operations</h1>
+            <p>Manage database migrations, schema, and data operations</p>
+        </div>
+
+        <div class="form-container">
+            <div class="form-group">
+                <label>Select Operation <span class="required">*</span></label>
+                <div class="operation-cards">
+                    <div class="operation-card" onclick="selectOperation('migrate')">
+                        <div class="operation-icon">🔄</div>
+                        <h3>Migrate</h3>
+                        <p>Run pending migrations</p>
+                    </div>
+                    <div class="operation-card" onclick="selectOperation('generate')">
+                        <div class="operation-icon">⚙️</div>
+                        <h3>Generate</h3>
+                        <p>Generate Drizzle client</p>
+                    </div>
+                    <div class="operation-card" onclick="selectOperation('reset')">
+                        <div class="operation-icon">🔥</div>
+                        <h3>Reset</h3>
+                        <p>Reset database</p>
+                    </div>
+                    <div class="operation-card" onclick="selectOperation('seed')">
+                        <div class="operation-icon">🌱</div>
+                        <h3>Seed</h3>
+                        <p>Populate test data</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="migrateOptions" class="advanced-options" style="display: none;">
+                <h3>Migration Options</h3>
+                <div class="form-group">
+                    <label>Migration Name</label>
+                    <input type="text" id="migrationName" placeholder="init, add_users_table, etc.">
+                    <div class="help-text">Name for this migration (optional for existing migrations)</div>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="createOnly">
+                    <label for="createOnly">Create migration without applying</label>
+                </div>
+            </div>
+
+            <div id="resetOptions" class="advanced-options" style="display: none;">
+                <h3>⚠️ Reset Options</h3>
+                <p style="color: #dc2626; margin-bottom: 15px;">
+                    <strong>Warning:</strong> This will delete ALL data in the database!
+                </p>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="confirmReset" required>
+                    <label for="confirmReset">I understand this will delete all data</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="skipSeed">
+                    <label for="skipSeed">Skip seeding after reset</label>
+                </div>
+            </div>
+
+            <div id="seedOptions" class="advanced-options" style="display: none;">
+                <h3>Seed Options</h3>
+                <div class="form-group">
+                    <label>Seed Type</label>
+                    <select id="seedType">
+                        <option value="default">Default seed data</option>
+                        <option value="dev">Development data</option>
+                        <option value="test">Test data</option>
+                        <option value="production">Production data</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="btn-secondary" onclick="resetForm()">Reset</button>
+                <button type="button" class="btn-primary" onclick="executeOperation()" id="executeBtn" disabled>
+                    Execute Operation
+                </button>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Processing database operation...</p>
+            </div>
+
+            <div class="result" id="result"></div>
+        </div>
+    </div>
+
+    <script>
+        let selectedOperation = null;
+
+        function selectOperation(operation) {
+            selectedOperation = operation;
+
+            // Update UI
+            document.querySelectorAll('.operation-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+
+            // Hide all options
+            document.querySelectorAll('.advanced-options').forEach(opt => {
+                opt.style.display = 'none';
+            });
+
+            // Show relevant options
+            if (operation === 'migrate') {
+                document.getElementById('migrateOptions').style.display = 'block';
+            } else if (operation === 'reset') {
+                document.getElementById('resetOptions').style.display = 'block';
+            } else if (operation === 'seed') {
+                document.getElementById('seedOptions').style.display = 'block';
+            }
+
+            // Enable execute button
+            document.getElementById('executeBtn').disabled = false;
+        }
+
+        async function executeOperation() {
+            if (!selectedOperation) {
+                showResult('error', 'Please select an operation');
+                return;
+            }
+
+            // Validate reset confirmation
+            if (selectedOperation === 'reset') {
+                const confirmed = document.getElementById('confirmReset').checked;
+                if (!confirmed) {
+                    showResult('error', 'Please confirm that you understand the reset will delete all data');
+                    return;
+                }
+            }
+
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('executeBtn').disabled = true;
+
+            try {
+                // Build request payload
+                const payload = {
+                    type: selectedOperation
+                };
+
+                if (selectedOperation === 'migrate') {
+                    payload.migrationName = document.getElementById('migrationName').value;
+                    payload.createOnly = document.getElementById('createOnly').checked;
+                } else if (selectedOperation === 'reset') {
+                    payload.skipSeed = document.getElementById('skipSeed').checked;
+                } else if (selectedOperation === 'seed') {
+                    payload.seedType = document.getElementById('seedType').value;
+                }
+
+                // Call API
+                const response = await fetch('http://localhost:5000/api/database/migrate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                // Hide loading
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('executeBtn').disabled = false;
+
+                // Show result
+                if (result.success) {
+                    showResult('success', result.message, result.output);
+                } else {
+                    showResult('error', result.error || 'Operation failed', result.errors);
+                }
+
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('executeBtn').disabled = false;
+                showResult('error', `Network error: ${error.message}`);
+            }
+        }
+
+        function showResult(type, message, details) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = `result ${type}`;
+            resultDiv.style.display = 'block';
+
+            let html = `<h3>${message}</h3>`;
+            if (details) {
+                html += `<pre>${details}</pre>`;
+            }
+
+            resultDiv.innerHTML = html;
+        }
+
+        function resetForm() {
+            selectedOperation = null;
+            document.querySelectorAll('.operation-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.querySelectorAll('.advanced-options').forEach(opt => {
+                opt.style.display = 'none';
+            });
+            document.getElementById('executeBtn').disabled = true;
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('migrationName').value = '';
+            document.getElementById('createOnly').checked = false;
+            document.getElementById('confirmReset').checked = false;
+            document.getElementById('skipSeed').checked = false;
+        }
+    </script>
+</body>
+</html>

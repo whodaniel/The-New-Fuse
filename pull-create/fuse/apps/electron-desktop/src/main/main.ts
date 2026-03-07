@@ -1,0 +1,579 @@
+const { app, BrowserWindow, BrowserView, ipcMain, session, shell } = require('electron');
+type BrowserWindow = import('electron').BrowserWindow;
+type BrowserView = import('electron').BrowserView;
+type IpcMain = import('electron').IpcMain;
+type Session = import('electron').Session;
+type Shell = import('electron').Shell;
+import { join } from 'path';
+import { CopilotLoop } from './CopilotLoop';
+import { HybridBackend } from './HybridBackend';
+import { getSecureStorage, SecureStorageService } from './SecureStorageService';
+
+const isDev = process.env.NODE_ENV === 'development' || process.env.ELECTRON_DEV === '1';
+const browserHubEntry = process.env.BROWSER_HUB_ENTRY || 'unified-hub.html';
+
+class ElectronMain {
+  private mainWindow: BrowserWindow | null = null;
+  private hybridBackend: HybridBackend | null = null;
+  private secureStorage: SecureStorageService | null = null;
+  private copilotLoop: CopilotLoop = new CopilotLoop();
+  private views: Map<string, BrowserView> = new Map();
+  private activeViewId: string | null = null;
+
+  constructor() {
+    this.init();
+  }
+
+  private async init() {
+    // Handle app ready
+    app.whenReady().then(() => {
+      // Inject permissive CORS headers for responses loaded inside Electron (dev only)
+      if (!process.env.NODE_ENV || process.env.NODE_ENV !== 'production') {
+        const ses = session.defaultSession;
+        ses.webRequest.onHeadersReceived((details: any, callback: any) => {
+          const responseHeaders = details.responseHeaders || {};
+          responseHeaders['Access-Control-Allow-Origin'] = ['*'];
+          responseHeaders['Access-Control-Allow-Methods'] = ['GET,POST,PUT,PATCH,DELETE,OPTIONS'];
+          responseHeaders['Access-Control-Allow-Headers'] = ['*'];
+          responseHeaders['Access-Control-Expose-Headers'] = ['Content-Length,ETag'];
+
+          // Remove iframe-blocking headers for SkIDEancer integration
+          delete responseHeaders['X-Frame-Options'];
+          delete responseHeaders['x-frame-options'];
+
+          // Set proper CSP for development
+          responseHeaders['Content-Security-Policy'] = [
+            "default-src 'self' 'unsafe-inline' data: blob: ws: wss: http: https:; " +
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https: data:; " +
+              'frame-src *; child-src *; object-src *;',
+          ];
+
+          callback({ responseHeaders });
+        });
+
+        // Configure permissions for iframe content
+        ses.setPermissionRequestHandler((webContents: any, permission: any, callback: any) => {
+          // Allow all permissions for development
+          callback(true);
+        });
+
+        // Set user agent to avoid iframe detection
+        ses.setUserAgent(ses.getUserAgent().replace(/Electron\/[\d.]+\s/, ''));
+      }
+      this.createWindow();
+      this.initializeHybridBackend();
+    });
+
+    // Handle all windows closed
+    app.on('window-all-closed', () => {
+      if (process.platform !== 'darwin') {
+        app.quit();
+      }
+    });
+
+    // Handle activate (macOS)
+    app.on('activate', () => {
+      if (BrowserWindow.getAllWindows().length === 0) {
+        this.createWindow();
+      }
+    });
+
+    // Handle before quit
+    app.on('before-quit', async () => {
+      if (this.hybridBackend) {
+        await this.hybridBackend.shutdown();
+      }
+    });
+  }
+
+  // BrowserView Management
+  private createMetaTab(url: string | null): string | null {
+    if (!this.mainWindow) return null;
+
+    const view = new BrowserView({
+      webPreferences: {
+        nodeIntegration: false,
+        contextIsolation: true,
+        sandbox: true,
+      },
+    });
+
+    const viewId = Math.random().toString(36).substring(7);
+    this.views.set(viewId, view);
+
+    // Load URL
+    view.webContents.loadURL(url || 'https://google.com');
+
+    // Auto-switch to new tab
+    this.switchTab(viewId);
+
+    return viewId;
+  }
+
+  private switchTab(viewId: string) {
+    if (!this.mainWindow) return;
+
+    // Detach current
+    if (this.activeViewId) {
+      const current = this.views.get(this.activeViewId);
+      if (current) this.mainWindow.removeBrowserView(current);
+    }
+
+    // Attach new
+    if (!viewId) {
+      this.activeViewId = null;
+      return;
+    }
+
+    const next = this.views.get(viewId);
+    if (next) {
+      this.mainWindow.addBrowserView(next);
+      this.activeViewId = viewId;
+      this.updateViewBounds(viewId);
+    }
+  }
+
+  private closeTab(viewId: string) {
+    const view = this.views.get(viewId);
+    if (view && this.mainWindow) {
+      this.mainWindow.removeBrowserView(view);
+      // (view.webContents as any).destroy();
+      this.views.delete(viewId);
+
+      if (this.activeViewId === viewId) {
+        this.activeViewId = null;
+      }
+    }
+  }
+
+  private updateViewBounds(viewId: string, bounds?: Electron.Rectangle) {
+    const view = this.views.get(viewId);
+    if (!view || !this.mainWindow) return;
+
+    // Default bounds (below header)
+    // Assuming header is ~80px. You might need to adjust this default.
+    // The renderer should send explicit bounds via view:update-bounds
+    const winBounds = this.mainWindow.getBounds();
+
+    if (bounds) {
+      view.setBounds(bounds);
+    } else {
+      // Fallback default
+      view.setBounds({
+        x: 0,
+        y: 100,
+        width: winBounds.width,
+        height: winBounds.height - 100,
+      });
+    }
+  }
+
+  private createWindow(): void {
+    // Create the browser window with modern styling
+    this.mainWindow = new BrowserWindow({
+      width: 1400,
+      height: 900,
+      minWidth: 1200,
+      minHeight: 800,
+      webPreferences: {
+        nodeIntegration: false,
+        contextIsolation: true,
+        preload: join(__dirname, '../preload/preload.js'),
+        webviewTag: true,
+        webSecurity: true, // Always enable web security
+        allowRunningInsecureContent: false, // Disable insecure content
+        experimentalFeatures: true,
+        enableBlinkFeatures: 'CSSColorSchemeUARendering',
+        disableBlinkFeatures: 'OutOfBlinkCors',
+        partition: 'persist:browser-hub',
+      },
+      titleBarStyle: 'hiddenInset',
+      backgroundColor: '#0f0f23',
+      vibrancy: 'ultra-dark',
+      show: false,
+      icon: join(__dirname, '../../assets/icon.png'),
+    });
+
+    // Load the React App
+    const indexPath = join(__dirname, '../renderer/index.html');
+    this.mainWindow?.loadFile(indexPath);
+    if (isDev) {
+      this.mainWindow?.webContents.openDevTools();
+    }
+
+    // Show window when ready
+    this.mainWindow?.once('ready-to-show', () => {
+      this.mainWindow?.show();
+    });
+
+    // Handle window closed
+    this.mainWindow?.on('closed', () => {
+      this.mainWindow = null;
+    });
+  }
+
+  private async initializeHybridBackend(): Promise<void> {
+    try {
+      // Initialize secure storage first (for API keys)
+      this.secureStorage = getSecureStorage();
+      const storageInit = await this.secureStorage.initialize();
+      console.log('[ElectronMain] SecureStorage initialized:', storageInit);
+
+      // Load stored API keys into environment
+      await this.secureStorage.loadAllKeysToEnv();
+
+      this.hybridBackend = new HybridBackend();
+      await this.hybridBackend.initialize();
+
+      // Set up IPC handlers for communication with renderer
+      this.setupIpcHandlers();
+
+      // Start API and Backend services
+      console.log('Attempting to start API service...');
+      await this.hybridBackend.executeNativeCommand('start_service', ['api']);
+      console.log('Attempting to start Backend service...');
+      await this.hybridBackend.executeNativeCommand('start_service', ['backend']);
+
+      // Initial system status update in main.ts
+      this.updateSystemStatus(); // Call once immediately
+      setInterval(() => this.updateSystemStatus(), 5000); // Update every 5 seconds
+    } catch (error) {
+      console.error('Failed to initialize HybridBackend or start services:', error);
+    }
+  }
+
+  // Add this new method to send system status updates to the renderer
+  private async updateSystemStatus(): Promise<void> {
+    if (!this.hybridBackend || !this.mainWindow) return;
+    try {
+      const status = await this.hybridBackend.executeNativeCommand('get_all_service_statuses', []);
+      this.mainWindow.webContents.send('system-status-update', status);
+    } catch (error) {
+      console.error('Failed to get system status:', error);
+    }
+  }
+
+  private setupIpcHandlers(): void {
+    if (!this.hybridBackend) return;
+
+    // TNF Relay commands
+    ipcMain.handle('tnf:connect', async (_: any, config: any) => {
+      return await this.hybridBackend!.connectTNFRelay(config);
+    });
+
+    ipcMain.handle('tnf:disconnect', async () => {
+      return await this.hybridBackend!.disconnectTNFRelay();
+    });
+
+    ipcMain.handle('tnf:status', async () => {
+      return this.hybridBackend!.getTNFRelayStatus();
+    });
+
+    // Copilot Loop commands
+    ipcMain.handle('copilot:start', async (_: any, config: any) => {
+      if (config) this.copilotLoop.setConfig(config);
+      this.copilotLoop.start();
+      return { success: true, active: true };
+    });
+
+    ipcMain.handle('copilot:stop', async () => {
+      this.copilotLoop.stop();
+      return { success: true, active: false };
+    });
+
+    ipcMain.handle('copilot:status', async () => {
+      return { active: this.copilotLoop.isActive() };
+    });
+
+    ipcMain.handle('copilot:configure', async (_: any, config: any) => {
+      this.copilotLoop.setConfig(config);
+      return { success: true };
+    });
+
+    // MCP commands
+    ipcMain.handle('mcp:connect', async (_: any, config: any) => {
+      return await this.hybridBackend!.connectMCP(config);
+    });
+
+    ipcMain.handle('mcp:disconnect', async () => {
+      return await this.hybridBackend!.disconnectMCP();
+    });
+
+    ipcMain.handle('mcp:status', async () => {
+      return this.hybridBackend!.getMCPStatus();
+    });
+
+    // Port monitoring commands
+    ipcMain.handle('ports:add', async (_: any, port: any) => {
+      return this.hybridBackend!.addPortToMonitor(port);
+    });
+
+    ipcMain.handle('ports:remove', async (_: any, port: any) => {
+      return this.hybridBackend!.removePortFromMonitor(port);
+    });
+
+    ipcMain.handle('ports:list', async () => {
+      return this.hybridBackend!.getMonitoredPorts();
+    });
+
+    ipcMain.handle('ports:status', async () => {
+      return this.hybridBackend!.getPortStatuses();
+    });
+
+    // Native commands
+    ipcMain.handle('native:execute', async (_: any, command: any, args: any) => {
+      return await this.hybridBackend!.executeNativeCommand(command, args);
+    });
+
+    // Chrome extension commands
+    ipcMain.handle('chrome:element-detected', async (_: any, elementData: any) => {
+      return this.hybridBackend!.handleElementDetection(elementData);
+    });
+
+    ipcMain.handle('chrome:send-message', async (_: any, message: any) => {
+      return await this.hybridBackend!.sendMessageToChrome(message);
+    });
+
+    // System status
+    ipcMain.handle('system:status', async () => {
+      return this.hybridBackend!.getSystemStatus();
+    });
+
+    // Chat commands
+    ipcMain.handle('chat:send', async (_: any, message: any) => {
+      return await this.hybridBackend!.processChatMessage(message);
+    });
+
+    ipcMain.handle('chat:history', async () => {
+      return this.hybridBackend!.getChatHistory();
+    });
+
+    // Shell integration - Override to use BrowserView for external links
+    ipcMain.handle('shell:open-external', async (_: any, url: string) => {
+      try {
+        // Create a new tab (BrowserView) instead of opening system browser
+        const viewId = this.createMetaTab(url);
+        return { success: true, viewId };
+      } catch (error) {
+        return { success: false, error: (error as Error).message };
+      }
+    });
+
+    // Browser Hub compatibility handlers
+    ipcMain.handle('browser:new-tab', async (_: any, options: any) => {
+      const url = options?.url || 'https://google.com';
+      const viewId = this.createMetaTab(url);
+      return { success: true, tabId: viewId };
+    });
+
+    // Additional Tab Management Handlers
+    ipcMain.handle('tab:create', (_event: Electron.IpcMainInvokeEvent, url: string) => {
+      return this.createMetaTab(url);
+    });
+
+    ipcMain.handle('tab:switch', (_event: Electron.IpcMainInvokeEvent, viewId: string) => {
+      this.switchTab(viewId);
+    });
+
+    ipcMain.handle('tab:close', (_event: Electron.IpcMainInvokeEvent, viewId: string) => {
+      this.closeTab(viewId);
+    });
+
+    ipcMain.handle('view:update-bounds', (_event: Electron.IpcMainInvokeEvent, bounds: any) => {
+      if (this.activeViewId) {
+        this.updateViewBounds(this.activeViewId, bounds);
+      }
+    });
+
+    ipcMain.handle('browser:set-engine', async (_: any, _engine: string) => {
+      return { success: true };
+    });
+    ipcMain.handle('browser:navigate', async (_: any, _url: string) => {
+      return { success: true };
+    });
+    ipcMain.handle('browser:action', async (_: any, _action: string) => {
+      return { success: true };
+    });
+    ipcMain.handle('browser:toggle-devtools', async () => {
+      if (this.mainWindow) {
+        if (this.mainWindow.webContents.isDevToolsOpened()) {
+          this.mainWindow.webContents.closeDevTools();
+        } else {
+          this.mainWindow.webContents.openDevTools();
+        }
+      }
+      return { success: true };
+    });
+
+    ipcMain.handle('browser:screenshot', async () => ({ success: true }));
+    ipcMain.handle('browser:generate-pdf', async () => ({ success: true }));
+    ipcMain.handle('browser:start-recording', async () => ({ success: true }));
+    ipcMain.handle('browser:toggle-bookmarks', async () => ({ success: true }));
+    ipcMain.handle('browser:show-history', async () => ({ success: true }));
+    ipcMain.handle('browser:show-downloads', async () => ({ success: true }));
+    ipcMain.handle('browser:show-more', async () => ({ success: true }));
+
+    // App integrations (stubs)
+    ipcMain.handle('app:open-ide', async () => ({ success: true }));
+    ipcMain.handle('app:start-ide', async () => ({ success: true }));
+    ipcMain.handle('app:open-vscode', async () => ({ success: true }));
+    ipcMain.handle('app:open-terminal', async () => ({ success: true }));
+    ipcMain.handle('app:open-file-explorer', async () => ({ success: true }));
+    ipcMain.handle('app:open-ide-terminal', async () => ({ success: true }));
+    ipcMain.handle('app:open-ide-git', async () => ({ success: true }));
+    ipcMain.handle('app:open-ide-debugger', async () => ({ success: true }));
+    ipcMain.handle('app:refresh-services', async () => ({ success: true }));
+
+    // Terminal integration
+    ipcMain.handle('terminal:get-output', async () => {
+      try {
+        if (this.hybridBackend) {
+          return await this.hybridBackend.executeNativeCommand('get_terminal_output', []);
+        }
+        return { success: false, error: 'Backend not available' };
+      } catch (error) {
+        return { success: false, error: (error as Error).message };
+      }
+    });
+
+    ipcMain.handle('terminal:clear', async () => {
+      try {
+        if (this.hybridBackend) {
+          return await this.hybridBackend.executeNativeCommand('clear_terminal', []);
+        }
+        return { success: false, error: 'Backend not available' };
+      } catch (error) {
+        return { success: false, error: (error as Error).message };
+      }
+    });
+
+    // Prompt management integration
+    ipcMain.handle('prompt:get-templates', async () => {
+      try {
+        if (this.hybridBackend) {
+          return await this.hybridBackend.executeNativeCommand('get_prompt_templates', []);
+        }
+        return { success: false, error: 'Backend not available' };
+      } catch (error) {
+        return { success: false, error: (error as Error).message };
+      }
+    });
+
+    ipcMain.handle('prompt:create-template', async (_: any, template: any) => {
+      try {
+        if (this.hybridBackend) {
+          return await this.hybridBackend.executeNativeCommand('create_prompt_template', [
+            JSON.stringify(template),
+          ]);
+        }
+        return { success: false, error: 'Backend not available' };
+      } catch (error) {
+        return { success: false, error: (error as Error).message };
+      }
+    });
+
+    ipcMain.handle('prompt:generate', async (_: any, templateId: string, variables: any) => {
+      try {
+        if (this.hybridBackend) {
+          return await this.hybridBackend.executeNativeCommand('generate_prompt', [
+            templateId,
+            JSON.stringify(variables),
+          ]);
+        }
+        return { success: false, error: 'Backend not available' };
+      } catch (error) {
+        return { success: false, error: (error as Error).message };
+      }
+    });
+
+    // Secure Storage / API Key Management handlers
+    ipcMain.handle(
+      'secure-storage:save',
+      async (
+        _: any,
+        provider: string,
+        apiKey: string,
+        customName?: string,
+        metadata?: Record<string, string>
+      ) => {
+        try {
+          if (!this.secureStorage) {
+            return { success: false, id: '', error: 'Secure storage not initialized' };
+          }
+          return await this.secureStorage.saveApiKey(provider, apiKey, customName, metadata);
+        } catch (error) {
+          return { success: false, id: '', error: (error as Error).message };
+        }
+      }
+    );
+
+    ipcMain.handle('secure-storage:get', async (_: any, provider: string) => {
+      try {
+        if (!this.secureStorage) {
+          return { success: false, error: 'Secure storage not initialized' };
+        }
+        return await this.secureStorage.getApiKey(provider);
+      } catch (error) {
+        return { success: false, error: (error as Error).message };
+      }
+    });
+
+    ipcMain.handle('secure-storage:delete', async (_: any, provider: string) => {
+      try {
+        if (!this.secureStorage) {
+          return { success: false, error: 'Secure storage not initialized' };
+        }
+        return await this.secureStorage.deleteApiKey(provider);
+      } catch (error) {
+        return { success: false, error: (error as Error).message };
+      }
+    });
+
+    ipcMain.handle('secure-storage:list', async () => {
+      try {
+        if (!this.secureStorage) {
+          return { success: false, credentials: [], error: 'Secure storage not initialized' };
+        }
+        return await this.secureStorage.listCredentials();
+      } catch (error) {
+        return { success: false, credentials: [], error: (error as Error).message };
+      }
+    });
+
+    ipcMain.handle('secure-storage:has', async (_: any, provider: string) => {
+      try {
+        if (!this.secureStorage) {
+          return false;
+        }
+        return await this.secureStorage.hasApiKey(provider);
+      } catch (error) {
+        return false;
+      }
+    });
+
+    ipcMain.handle('secure-storage:status', async () => {
+      try {
+        if (!this.secureStorage) {
+          return { available: false, usingKeychain: false };
+        }
+        return this.secureStorage.getEncryptionStatus();
+      } catch (error) {
+        return { available: false, usingKeychain: false };
+      }
+    });
+
+    ipcMain.handle('secure-storage:providers', async () => {
+      try {
+        if (!this.secureStorage) {
+          return {};
+        }
+        return this.secureStorage.getSupportedProviders();
+      } catch (error) {
+        return {};
+      }
+    });
+  }
+}
+
+// Start the application
+new ElectronMain();

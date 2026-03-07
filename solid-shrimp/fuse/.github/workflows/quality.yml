@@ -1,0 +1,544 @@
+name: Quality Gates
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+  push:
+    branches:
+      - main
+      - develop
+  schedule:
+    - cron: "0 0 * * 0" # Weekly on Sunday
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PNPM_VERSION: 10.22.0+sha512.bf049efe995b28f527fd2b41ae0474ce29186f7edcb3bf545087bd61fbbebb2bf75362d1307fda09c2d288e1e499787ac12d4fcb617a974718a6051f2eee741c
+
+jobs:
+  architecture-audits:
+    name: Experience Architecture Audits
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Cache pnpm modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pnpm
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile --prefer-offline
+
+      - name: Run experience architecture audit
+        run: pnpm --dir apps/frontend run audit:experience-architecture
+
+      - name: Run navigation audit
+        run: pnpm --dir apps/frontend run audit:navigation
+
+      - name: Upload architecture audit artifacts
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: frontend-architecture-audits
+          path: |
+            apps/frontend/docs/audits/experience-architecture-audit.md
+            apps/frontend/docs/audits/experience-architecture-audit.json
+            apps/frontend/docs/audits/navigation-route-audit.md
+            apps/frontend/docs/audits/navigation-route-audit.json
+          retention-days: 7
+
+  coverage-check:
+    name: Test Coverage Requirements
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Cache pnpm modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pnpm
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile --prefer-offline
+
+      - name: Run tests with coverage
+        run: pnpm run test:coverage
+        env:
+          CI: true
+
+      - name: Check coverage thresholds
+        run: |
+          # Define minimum coverage requirements
+          MIN_COVERAGE=70
+          MIN_BRANCH_COVERAGE=65
+          MIN_FUNCTION_COVERAGE=70
+          MIN_LINE_COVERAGE=70
+
+          echo "Checking coverage thresholds..."
+          echo "Minimum requirements:"
+          echo "  - Overall: $MIN_COVERAGE%"
+          echo "  - Branches: $MIN_BRANCH_COVERAGE%"
+          echo "  - Functions: $MIN_FUNCTION_COVERAGE%"
+          echo "  - Lines: $MIN_LINE_COVERAGE%"
+
+          # This would check actual coverage - adjust based on your coverage tool
+          # For Jest, you can use coverage-summary.json
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+          flags: all
+          name: codecov-umbrella
+
+      - name: Comment coverage on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const comment = `### Test Coverage Report :test_tube:
+
+            Coverage reports have been uploaded to Codecov.
+
+            [View detailed coverage report](https://codecov.io/gh/${{ github.repository }}/pull/${{ github.event.pull_request.number }})
+
+            Please ensure:
+            - Overall coverage is above 70%
+            - New code has at least 80% coverage
+            - No critical paths are left untested
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  bundle-size-check:
+    name: Bundle Size Monitoring
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Checkout base branch
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          git checkout origin/${{ github.base_ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies (base)
+        run: pnpm install --no-frozen-lockfile --prefer-offline
+
+      - name: Build frontend (base)
+        run: pnpm run build:frontend
+        env:
+          NODE_ENV: production
+
+      - name: Calculate base bundle size
+        id: base-size
+        run: |
+          BASE_SIZE=$(du -sb apps/frontend/dist | cut -f1)
+          echo "size=$BASE_SIZE" >> $GITHUB_OUTPUT
+
+      - name: Checkout PR branch
+        run: |
+          git checkout ${{ github.head_ref }}
+
+      - name: Clean and install dependencies (PR)
+        run: |
+          rm -rf node_modules apps/*/node_modules packages/*/node_modules
+          rm -rf apps/frontend/dist
+          pnpm install --no-frozen-lockfile --prefer-offline
+
+      - name: Build frontend (PR)
+        run: pnpm run build:frontend
+        env:
+          NODE_ENV: production
+
+      - name: Calculate PR bundle size
+        id: pr-size
+        run: |
+          PR_SIZE=$(du -sb apps/frontend/dist | cut -f1)
+          echo "size=$PR_SIZE" >> $GITHUB_OUTPUT
+
+      - name: Compare bundle sizes
+        id: compare
+        run: |
+          BASE_SIZE=${{ steps.base-size.outputs.size }}
+          PR_SIZE=${{ steps.pr-size.outputs.size }}
+
+          DIFF=$((PR_SIZE - BASE_SIZE))
+          DIFF_PERCENT=$(echo "scale=2; ($DIFF / $BASE_SIZE) * 100" | bc)
+
+          BASE_SIZE_MB=$(echo "scale=2; $BASE_SIZE / 1024 / 1024" | bc)
+          PR_SIZE_MB=$(echo "scale=2; $PR_SIZE / 1024 / 1024" | bc)
+          DIFF_MB=$(echo "scale=2; $DIFF / 1024 / 1024" | bc)
+
+          echo "base_size_mb=$BASE_SIZE_MB" >> $GITHUB_OUTPUT
+          echo "pr_size_mb=$PR_SIZE_MB" >> $GITHUB_OUTPUT
+          echo "diff_mb=$DIFF_MB" >> $GITHUB_OUTPUT
+          echo "diff_percent=$DIFF_PERCENT" >> $GITHUB_OUTPUT
+
+          # Fail if bundle size increased by more than 10%
+          if (( $(echo "$DIFF_PERCENT > 10" | bc -l) )); then
+            echo "::error::Bundle size increased by more than 10% ($DIFF_PERCENT%)"
+            exit 1
+          fi
+
+      - name: Comment bundle size comparison on PR
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const baseSizeMb = '${{ steps.compare.outputs.base_size_mb }}';
+            const prSizeMb = '${{ steps.compare.outputs.pr_size_mb }}';
+            const diffMb = '${{ steps.compare.outputs.diff_mb }}';
+            const diffPercent = '${{ steps.compare.outputs.diff_percent }}';
+
+            const emoji = parseFloat(diffMb) > 0 ? '📈' : '📉';
+            const status = parseFloat(diffPercent) > 10 ? '❌ FAILED' : parseFloat(diffPercent) > 5 ? '⚠️ WARNING' : '✅ PASSED';
+
+            const comment = `### Bundle Size Comparison ${emoji}
+
+            | Metric | Base | PR | Difference |
+            |--------|------|----|-----------|
+            | Total Size | ${baseSizeMb} MB | ${prSizeMb} MB | ${diffMb} MB (${diffPercent}%) |
+
+            **Status**: ${status}
+
+            ${parseFloat(diffPercent) > 10 ? '❌ Bundle size increased by more than 10%. Please review and optimize.' : ''}
+            ${parseFloat(diffPercent) > 5 && parseFloat(diffPercent) <= 10 ? '⚠️ Bundle size increased by more than 5%. Consider optimization.' : ''}
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  lighthouse-ci:
+    name: Lighthouse Performance
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile --prefer-offline
+
+      - name: Build frontend
+        run: pnpm run build:frontend
+        env:
+          NODE_ENV: production
+
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: |
+            http://localhost:3000
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+          configPath: "./.github/lighthouse/lighthouserc.json"
+
+  dependency-audit:
+    name: Security & Dependency Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Run pnpm audit
+        id: audit
+        run: |
+          pnpm audit --audit-level=moderate --json > audit-results.json || true
+
+      - name: Check for critical vulnerabilities
+        run: |
+          CRITICAL=$(cat audit-results.json | jq '.metadata.vulnerabilities.critical // 0')
+          HIGH=$(cat audit-results.json | jq '.metadata.vulnerabilities.high // 0')
+
+          echo "Critical vulnerabilities: $CRITICAL"
+          echo "High vulnerabilities: $HIGH"
+
+          if [ "$CRITICAL" -gt 0 ]; then
+            echo "::error::Found $CRITICAL critical vulnerabilities"
+            exit 1
+          fi
+
+          if [ "$HIGH" -gt 5 ]; then
+            echo "::warning::Found $HIGH high vulnerabilities"
+          fi
+
+      - name: Upload audit results
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: audit-results
+          path: audit-results.json
+
+  code-quality:
+    name: Code Quality Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=${{ github.repository_owner }}_fuse
+            -Dsonar.organization=${{ github.repository_owner }}
+            -Dsonar.sources=apps,packages
+            -Dsonar.tests=apps,packages
+            -Dsonar.test.inclusions=**/*.test.ts,**/*.test.tsx,**/*.spec.ts,**/*.spec.tsx
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.coverage.exclusions=**/*.test.ts,**/*.test.tsx,**/*.spec.ts,**/*.spec.tsx,**/*.config.ts,**/*.config.js
+
+  circular-dependencies:
+    name: Check Circular Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install madge
+        run: npm install -g madge
+
+      - name: Check for circular dependencies
+        run: |
+          echo "Checking for circular dependencies..."
+
+          # Check each app
+          for app in apps/*; do
+            if [ -d "$app/src" ]; then
+              echo "Checking $app..."
+              madge --circular --extensions ts,tsx,js,jsx "$app/src" || true
+            fi
+          done
+
+          # Check packages
+          for pkg in packages/*; do
+            if [ -d "$pkg/src" ]; then
+              echo "Checking $pkg..."
+              madge --circular --extensions ts,tsx,js,jsx "$pkg/src" || true
+            fi
+          done
+
+  proactive-module-check:
+    name: Proactive Module Check
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout PR code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0 # Fetch all history for git diff
+
+      - name: Fetch base branch
+        run: git fetch origin ${{ github.event.pull_request.base.sha }} --depth=1
+
+      - name: Identify problematic files
+        id: find-problems
+        run: |
+          PROBLEMATIC_FILES=""
+          # Get only added or modified .js files
+          CHANGED_FILES=$(git diff --name-only --diff-filter=AM ${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }} | grep '\.js$')
+
+          for file in $CHANGED_FILES; do
+            if [ ! -f "$file" ]; then continue; fi
+
+            dir=$(dirname "$file")
+            # Find the nearest package.json
+            pkg_json=$(find "$dir" -maxdepth 5 -name "package.json" -print -quit)
+
+            if [ -n "$pkg_json" ] && grep -q '"type": "module"' "$pkg_json"; then
+              # If it's a module and uses require(), it's a problem
+              if grep -q "require(" "$file"; then
+                PROBLEMATIC_FILES="${PROBLEMATIC_FILES} \n- \`${file}\`"
+              fi
+            fi
+          done
+
+          if [ -n "$PROBLEMATIC_FILES" ]; then
+            echo "problem_found=true" >> $GITHUB_OUTPUT
+            echo "files<<EOF" >> $GITHUB_OUTPUT
+            echo -e "$PROBLEMATIC_FILES" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "problem_found=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Post comment and fail job if problems found
+        if: steps.find-problems.outputs.problem_found == 'true'
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const files = `${{ steps.find-problems.outputs.files }}`;
+            const comment = `### 🤖 Proactive Module Check Failed\n\nI've detected a potential ESM/CJS module conflict in this PR. The following files use \`require()\` but appear to be in an ES Module context (due to a nearby \`package.json\` with \`"type": "module"\`):\n${files}\n\n**To fix this, please either:**\n1.  Rename the file(s) to use a \`.cjs\` extension.\n2.  Refactor the file(s) to use ES Module \`import\` syntax instead of \`require()\`.`;
+
+            await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number, body: comment });
+            core.setFailed('Potential module system conflict detected. Please see the comment for details.');
+
+  codebase-steward:
+    name: Codebase Steward
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Check for outdated dependencies
+        id: outdated
+        run: |
+          pnpm outdated --long --json > outdated.json || true
+          echo "report=$(cat outdated.json)" >> $GITHUB_OUTPUT
+
+      - name: Create issue for outdated dependencies
+        if: steps.outdated.outputs.report != '[]'
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const report = JSON.parse('${{ steps.outdated.outputs.report }}');
+            if (report.length === 0) return;
+
+            let body = `### 🤖 Codebase Steward Report: Outdated Dependencies\n\nI have identified the following outdated dependencies:\n\n| Package | Current | Wanted | Latest |\n|---|---|---|---|\n`;
+            for (const pkg of report) {
+              body += `| ${pkg.name} | ${pkg.current} | ${pkg.wanted} | ${pkg.latest} |\n`;
+            }
+            body += `\n\nPlease review and create PRs to update these packages.`;
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Codebase Steward: Outdated Dependencies Found',
+              body: body,
+              labels: ['tech-debt', 'dependencies', 'agent-task']
+            });
+
+  quality-summary:
+    name: Quality Gates Summary
+    needs:
+      - architecture-audits
+      - coverage-check
+      - dependency-audit
+      - code-quality
+      - circular-dependencies
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Check quality gates
+        run: |
+          echo "Architecture Audits: ${{ needs.architecture-audits.result }}"
+          echo "Coverage Check: ${{ needs.coverage-check.result }}"
+          echo "Dependency Audit: ${{ needs.dependency-audit.result }}"
+          echo "Code Quality: ${{ needs.code-quality.result }}"
+          echo "Circular Dependencies: ${{ needs.circular-dependencies.result }}"
+
+          if [[ "${{ needs.architecture-audits.result }}" == "failure" ]] || \
+             [[ "${{ needs.coverage-check.result }}" == "failure" ]] || \
+             [[ "${{ needs.dependency-audit.result }}" == "failure" ]]; then
+            echo "Quality gates failed"
+            exit 1
+          fi
+
+      - name: Post summary
+        run: |
+          echo "### Quality Gates Results :shield:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Architecture Audits | ${{ needs.architecture-audits.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Coverage | ${{ needs.coverage-check.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Security Audit | ${{ needs.dependency-audit.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Code Quality | ${{ needs.code-quality.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Circular Dependencies | ${{ needs.circular-dependencies.result }} |" >> $GITHUB_STEP_SUMMARY

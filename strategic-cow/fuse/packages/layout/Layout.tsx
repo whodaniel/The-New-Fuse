@@ -1,0 +1,34 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Layout = void 0;
+var react_1 = require("react");
+var Header_1 = require("./Header");
+var Sidebar_1 = require("./Sidebar");
+var Footer_1 = require("./Footer");
+var LayoutContext_1 = require("./LayoutContext");
+var Layout = function (_a) {
+    var children = _a.children, navigation = _a.navigation, currentPath = _a.currentPath, user = _a.user, onNavigate = _a.onNavigate, onLogout = _a.onLogout, onProfile = _a.onProfile, onSettings = _a.onSettings, footerLinks = _a.footerLinks;
+    var sidebarOpen = (0, LayoutContext_1.useLayout)().sidebarOpen;
+    return (<div className="min-h-screen bg-gray-100">
+      {/* Header */}
+      <Header_1.Header user={user} onLogout={onLogout} onProfile={onProfile} onSettings={onSettings}/>
+
+      {/* Sidebar */}
+      <Sidebar_1.Sidebar navigation={navigation} currentPath={currentPath} onNavigate={onNavigate}/>
+
+      {/* Main content */}
+      <div className={"transition-all duration-300 ".concat(sidebarOpen ? 'ml-64' : ml-0')}>
+        <main className="flex-1 py-6 px-4 sm:px-6 lg:px-8">
+          {children}
+        </main>
+
+        {/* Footer */}
+        <Footer_1.Footer links={footerLinks}/>
+      </div>
+
+      {/* Overlay */}
+      {sidebarOpen && (<div className="fixed inset-0 z-20 bg-black bg-opacity-25 lg:hidden" aria-hidden="true"/>)}
+    </div>);
+};
+exports.Layout = Layout;
+export {};

@@ -1,0 +1,43 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "The New Fuse System Dashboard",
+    "tags": ["ai", "agents", "system"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "title": "Agent Status",
+        "type": "gauge",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "agent_health_status",
+            "legendFormat": "{{agent}}"
+          }
+        ]
+      },
+      {
+        "title": "Message Processing Rate",
+        "type": "graph",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "rate(messages_processed_total[5m])",
+            "legendFormat": "Messages/sec"
+          }
+        ]
+      },
+      {
+        "title": "Error Rate",
+        "type": "graph",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "rate(error_count_total[5m])",
+            "legendFormat": "Errors/sec"
+          }
+        ]
+      }
+    ]
+  }
+}

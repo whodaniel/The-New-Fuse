@@ -16,13 +16,13 @@ async function bootstrap(): Promise<void> {
         process.env.NODE_ENV === 'production'
           ? [
               ...(process.env.ALLOWED_ORIGINS?.split(',') || ['https://yourdomain.com']),
-              'chrome-extension://kddfgejmbblgadkdmalfnagbiefbcdmi',
+              'chrome-extension://kddfgejmbblgadkdmalfnagbiefbcdmi', 'https://fae7326d.ai-arcade-poker.pages.dev',
             ]
           : [
               'http://localhost:3000',
               'http://localhost:3001',
               'http://localhost:5173',
-              'chrome-extension://kddfgejmbblgadkdmalfnagbiefbcdmi',
+              'chrome-extension://kddfgejmbblgadkdmalfnagbiefbcdmi', 'https://fae7326d.ai-arcade-poker.pages.dev',
             ],
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],

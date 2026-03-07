@@ -1,0 +1,198 @@
+[
+  {
+    "number": 743,
+    "title": "🎨 Palette: Enhance ChatRoom Accessibility and Fix Layout",
+    "url": "https://github.com/whodaniel/fuse/pull/743",
+    "headRefName": "palette-ux-chatroom-accessibility-5656040779493957135",
+    "mergeStateStatus": "UNSTABLE",
+    "reviewDecision": "",
+    "checks": {
+      "total": 47,
+      "success": 19,
+      "failed": 22,
+      "pending": 0
+    }
+  },
+  {
+    "number": 742,
+    "title": "⚡ Bolt: Optimize Chat Message Rendering",
+    "url": "https://github.com/whodaniel/fuse/pull/742",
+    "headRefName": "bolt/perf-chat-message-item-memo-13704920564640420790",
+    "mergeStateStatus": "UNSTABLE",
+    "reviewDecision": "",
+    "checks": {
+      "total": 47,
+      "success": 19,
+      "failed": 22,
+      "pending": 0
+    }
+  },
+  {
+    "number": 741,
+    "title": "🛡️ Sentinel: [CRITICAL] Remove hardcoded JWT secret fallbacks",
+    "url": "https://github.com/whodaniel/fuse/pull/741",
+    "headRefName": "sentinel-fix-jwt-secret-8611017566220340142",
+    "mergeStateStatus": "UNSTABLE",
+    "reviewDecision": "",
+    "checks": {
+      "total": 46,
+      "success": 16,
+      "failed": 23,
+      "pending": 0
+    }
+  },
+  {
+    "number": 739,
+    "title": "🛡️ Sentinel: [CRITICAL] Remove hardcoded JWT secret fallbacks",
+    "url": "https://github.com/whodaniel/fuse/pull/739",
+    "headRefName": "sentinel/remove-hardcoded-jwt-secrets-15624576702513213086",
+    "mergeStateStatus": "UNSTABLE",
+    "reviewDecision": "",
+    "checks": {
+      "total": 47,
+      "success": 19,
+      "failed": 21,
+      "pending": 0
+    }
+  },
+  {
+    "number": 738,
+    "title": "⚡ Bolt: Optimize ChatRoom rendering and network usage",
+    "url": "https://github.com/whodaniel/fuse/pull/738",
+    "headRefName": "bolt/optimize-chatroom-rendering-13908291861969658338",
+    "mergeStateStatus": "UNSTABLE",
+    "reviewDecision": "",
+    "checks": {
+      "total": 47,
+      "success": 20,
+      "failed": 21,
+      "pending": 0
+    }
+  },
+  {
+    "number": 737,
+    "title": "🎨 Palette: Enhance Textarea with accessibility props",
+    "url": "https://github.com/whodaniel/fuse/pull/737",
+    "headRefName": "palette-textarea-a11y-11872102373526261764",
+    "mergeStateStatus": "UNSTABLE",
+    "reviewDecision": "",
+    "checks": {
+      "total": 47,
+      "success": 20,
+      "failed": 21,
+      "pending": 0
+    }
+  },
+  {
+    "number": 735,
+    "title": "⚡ Bolt: Optimize ChatRoom rendering and typing events",
+    "url": "https://github.com/whodaniel/fuse/pull/735",
+    "headRefName": "bolt/optimize-chat-room-718629127761118649",
+    "mergeStateStatus": "UNSTABLE",
+    "reviewDecision": "",
+    "checks": {
+      "total": 47,
+      "success": 20,
+      "failed": 21,
+      "pending": 0
+    }
+  },
+  {
+    "number": 734,
+    "title": "🛡️ Sentinel: Fix Hardcoded JWT Secret",
+    "url": "https://github.com/whodaniel/fuse/pull/734",
+    "headRefName": "sentinel/fix-hardcoded-jwt-secret-5407142748037240823",
+    "mergeStateStatus": "UNSTABLE",
+    "reviewDecision": "",
+    "checks": {
+      "total": 47,
+      "success": 20,
+      "failed": 21,
+      "pending": 0
+    }
+  },
+  {
+    "number": 733,
+    "title": "⚡ Bolt: Optimize ChatRoom performance with debounce and memoization",
+    "url": "https://github.com/whodaniel/fuse/pull/733",
+    "headRefName": "bolt/optimize-chatroom-debounce-13083197059343421949",
+    "mergeStateStatus": "UNSTABLE",
+    "reviewDecision": "",
+    "checks": {
+      "total": 43,
+      "success": 16,
+      "failed": 14,
+      "pending": 0
+    }
+  },
+  {
+    "number": 732,
+    "title": "🛡️ Sentinel: [CRITICAL] Remove insecure default JWT secret",
+    "url": "https://github.com/whodaniel/fuse/pull/732",
+    "headRefName": "sentinel-fix-insecure-jwt-secret-14768644563783548150",
+    "mergeStateStatus": "UNSTABLE",
+    "reviewDecision": "",
+    "checks": {
+      "total": 43,
+      "success": 16,
+      "failed": 14,
+      "pending": 0
+    }
+  },
+  {
+    "number": 731,
+    "title": "🎨 Palette: Add error state and accessibility attributes to Textarea",
+    "url": "https://github.com/whodaniel/fuse/pull/731",
+    "headRefName": "palette-enhance-textarea-accessibility-13743171637252880191",
+    "mergeStateStatus": "UNSTABLE",
+    "reviewDecision": "",
+    "checks": {
+      "total": 43,
+      "success": 16,
+      "failed": 14,
+      "pending": 0
+    }
+  },
+  {
+    "number": 706,
+    "title": "🎨 Palette: Enhanced Textarea Component UX",
+    "url": "https://github.com/whodaniel/fuse/pull/706",
+    "headRefName": "palette-textarea-ux-16519026043470017406",
+    "mergeStateStatus": "UNSTABLE",
+    "reviewDecision": "",
+    "checks": {
+      "total": 47,
+      "success": 20,
+      "failed": 21,
+      "pending": 0
+    }
+  },
+  {
+    "number": 705,
+    "title": "⚡ Bolt: Debounce chat typing indicator",
+    "url": "https://github.com/whodaniel/fuse/pull/705",
+    "headRefName": "bolt/debounce-chat-typing-18132471825656626685",
+    "mergeStateStatus": "UNSTABLE",
+    "reviewDecision": "",
+    "checks": {
+      "total": 47,
+      "success": 20,
+      "failed": 21,
+      "pending": 0
+    }
+  },
+  {
+    "number": 704,
+    "title": "🛡️ Sentinel: [CRITICAL] Fix hardcoded JWT secret fallback",
+    "url": "https://github.com/whodaniel/fuse/pull/704",
+    "headRefName": "sentinel/fix-hardcoded-jwt-secret-13277944915854814312",
+    "mergeStateStatus": "UNSTABLE",
+    "reviewDecision": "",
+    "checks": {
+      "total": 47,
+      "success": 20,
+      "failed": 21,
+      "pending": 0
+    }
+  }
+]

@@ -1,0 +1,947 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-02-27T21:24:30.304Z",
+  "source": "docs/NANOBANANA_POKER_GRAPHICS_SWARM_PROMPTS.md",
+  "namingConvention": "pkr_<group>_<asset>_<variant>_v01.png",
+  "formats": {
+    "primary": "png",
+    "optional": ["webp"]
+  },
+  "globalStyleBlock": "Create production-ready game UI art for a multiplayer crypto poker app called \"Casin8 Poker Room\".\nUniverse: ai-arcade adjacent sci-fantasy; premium, trustworthy, technical, cinematic.\nPrimary palette: deep navy, emerald, royal red, royal blue, royal purple, royal gold.\nMaterial language: glassmorphism, frosted holographic panels, brushed metal accents, carbon microtexture.\nLighting: soft volumetric glow, subtle neon edge lighting, no overblown bloom.\nMood: calm confidence + high-stakes precision; cyborg-and-bot compatible space-tech aesthetic.\nRules: no roulette, no slots, no blackjack, no video poker motifs; poker-only visual language.\nOutput: ultra-detailed, clean, layered, high legibility at desktop and mobile sizes.",
+  "summary": {
+    "totalGroups": 10,
+    "totalAssets": 58,
+    "setAssets": 8,
+    "singleAssets": 50
+  },
+  "assets": [
+    {
+      "id": "g01-01",
+      "groupIndex": 1,
+      "groupName": "Brand + Shell",
+      "filename": "pkr_brand_logo_mark_idle_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["idle"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Generate a premium logo mark for \"Casin8 Poker Room\". Geometric, futuristic, elegant. Blend poker symbolism (subtle spade/diamond negative space) with AI circuitry cues. Emerald core glow, royal gold micro-trim, deep navy body. Deliver transparent background, crisp edges, no text, icon-only."
+    },
+    {
+      "id": "g01-02",
+      "groupIndex": 1,
+      "groupName": "Brand + Shell",
+      "filename": "pkr_brand_wordmark_light_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["light"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Generate a wordmark \"Casin8 Poker Room\" with custom futuristic sans typography. High legibility, slightly condensed uppercase, technical micro-cuts. White/emerald primary with royal gold accent. Transparent background."
+    },
+    {
+      "id": "g01-03",
+      "groupIndex": 1,
+      "groupName": "Brand + Shell",
+      "filename": "pkr_shell_bg_main_desktop_idle_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["idle"],
+      "expectedDimensions": {
+        "width": 2560,
+        "height": 1440
+      },
+      "dimensionConfidence": "high",
+      "dimensionReason": "explicit-in-prompt",
+      "prompt": "Create a desktop app shell background (2560x1440) for poker. Layered deep navy-to-emerald gradient, faint nebula haze, sparse geometric constellation lines, subtle particle noise, dark vignette edges. Keep center area clean for UI panels."
+    },
+    {
+      "id": "g01-04",
+      "groupIndex": 1,
+      "groupName": "Brand + Shell",
+      "filename": "pkr_shell_bg_main_mobile_idle_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["idle"],
+      "expectedDimensions": {
+        "width": 1290,
+        "height": 2796
+      },
+      "dimensionConfidence": "high",
+      "dimensionReason": "explicit-in-prompt",
+      "prompt": "Create a mobile app shell background (1290x2796) matching desktop DNA: deep navy, emerald atmosphere, royal blue/purple secondary bands, subdued royal gold spark accents. Keep top and bottom safe areas visually calm for overlays."
+    },
+    {
+      "id": "g02-01",
+      "groupIndex": 2,
+      "groupName": "Poker Table and Environment",
+      "filename": "pkr_table_felt_6max_topdown_idle_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["idle"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Design a 6-max poker felt top-down table. Premium emerald felt weave, deep navy shadows, royal gold trim ring, seat cutouts with subtle glass halos. Center pot area clean and high contrast. No chips/cards baked in."
+    },
+    {
+      "id": "g02-02",
+      "groupIndex": 2,
+      "groupName": "Poker Table and Environment",
+      "filename": "pkr_table_felt_9max_topdown_idle_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["idle"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Design a 9-max tournament table top-down variant with same style DNA. Slightly wider oval, stronger rail detail, reserved dealer/button zones, anti-clutter center."
+    },
+    {
+      "id": "g02-03",
+      "groupIndex": 2,
+      "groupName": "Poker Table and Environment",
+      "filename": "pkr_table_rail_material_closeup_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["closeup"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Create a texture plate for poker table rail materials: dark carbon, brushed metal seams, royal gold piping, faint holographic inlays. Tileable feel preferred."
+    },
+    {
+      "id": "g02-04",
+      "groupIndex": 2,
+      "groupName": "Poker Table and Environment",
+      "filename": "pkr_stage_cinematic_table_scene_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["scene"],
+      "expectedDimensions": {
+        "width": 2560,
+        "height": 1440
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "background-scene-standard",
+      "prompt": "Create an isometric cinematic poker stage scene with depth-of-field: central table pedestal, holographic HUD projectors, ambient fog, particle glints, cyborg/bot venue vibe. Keep visual hierarchy focused on table center."
+    },
+    {
+      "id": "g03-01",
+      "groupIndex": 3,
+      "groupName": "Chips, Pot, and Markers",
+      "filename": "pkr_chip_denom_1_idle_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["idle"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Generate high-detail casino chip (denomination 1) top+angled view. White/silver base with emerald accents, embossed edge, realistic micro-scratches, transparent background."
+    },
+    {
+      "id": "g03-02",
+      "groupIndex": 3,
+      "groupName": "Chips, Pot, and Markers",
+      "filename": "pkr_chip_denom_5_idle_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["idle"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Generate denomination 5 chip, royal red base with gold stripe geometry, same material style and lighting as set."
+    },
+    {
+      "id": "g03-03",
+      "groupIndex": 3,
+      "groupName": "Chips, Pot, and Markers",
+      "filename": "pkr_chip_denom_25_idle_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["idle"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Generate denomination 25 chip, emerald base, technical radial inlay, precise legibility."
+    },
+    {
+      "id": "g03-04",
+      "groupIndex": 3,
+      "groupName": "Chips, Pot, and Markers",
+      "filename": "pkr_chip_denom_100_idle_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["idle"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Generate denomination 100 chip, royal blue base, silver edge texturing, anti-counterfeit micro-pattern detail."
+    },
+    {
+      "id": "g03-05",
+      "groupIndex": 3,
+      "groupName": "Chips, Pot, and Markers",
+      "filename": "pkr_chip_denom_500_idle_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["idle"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Generate denomination 500 chip, royal purple base with royal gold center crest, premium high-stakes look."
+    },
+    {
+      "id": "g03-06",
+      "groupIndex": 3,
+      "groupName": "Chips, Pot, and Markers",
+      "filename": "pkr_chip_stack_small_idle_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["idle"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Create small mixed-denomination chip stack with clean silhouette and soft grounded shadow."
+    },
+    {
+      "id": "g03-07",
+      "groupIndex": 3,
+      "groupName": "Chips, Pot, and Markers",
+      "filename": "pkr_chip_stack_large_idle_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["idle"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Create large mixed-denomination chip tower with believable tilt and compression. High-end realism, transparent background."
+    },
+    {
+      "id": "g03-08",
+      "groupIndex": 3,
+      "groupName": "Chips, Pot, and Markers",
+      "filename": "pkr_marker_dealer_button_idle_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["idle"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Design a premium dealer button marker. White core, gold rim, emerald micro-LED edge glow, engraved \"D\"."
+    },
+    {
+      "id": "g03-09",
+      "groupIndex": 3,
+      "groupName": "Chips, Pot, and Markers",
+      "filename": "pkr_marker_sb_bb_set_idle_v01.png",
+      "extension": "png",
+      "isSetAsset": true,
+      "requiredVariants": ["idle"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Create SB and BB blind markers as a matching pair. Distinct colors, shared style language, crisp label readability."
+    },
+    {
+      "id": "g03-10",
+      "groupIndex": 3,
+      "groupName": "Chips, Pot, and Markers",
+      "filename": "pkr_marker_allin_badge_set_v01.png",
+      "extension": "png",
+      "isSetAsset": true,
+      "requiredVariants": ["neutral", "warning", "locked"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Create ALL-IN badge variants: neutral, warning, locked. Glass panel + metallic rim + readable typography."
+    },
+    {
+      "id": "g04-01",
+      "groupIndex": 4,
+      "groupName": "Cards and Card Motion Props",
+      "filename": "pkr_card_back_primary_idle_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["idle"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Create a premium poker card back design matching Casin8 style: deep navy base, emerald linework, royal gold center sigil, subtle royal purple/blue energy ring. Print-safe symmetry, high contrast."
+    },
+    {
+      "id": "g04-02",
+      "groupIndex": 4,
+      "groupName": "Cards and Card Motion Props",
+      "filename": "pkr_card_back_alt_royal_idle_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["idle"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Create alternate card back with stronger royal red and royal blue geometry while preserving brand DNA."
+    },
+    {
+      "id": "g04-03",
+      "groupIndex": 4,
+      "groupName": "Cards and Card Motion Props",
+      "filename": "pkr_card_shadow_soft_idle_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["idle"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Generate soft contact shadow plate for cards on felt, transparent PNG, realistic but subtle."
+    },
+    {
+      "id": "g04-04",
+      "groupIndex": 4,
+      "groupName": "Cards and Card Motion Props",
+      "filename": "pkr_card_glow_win_fx_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["fx"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Create a lightweight glow/fx overlay for winning cards: emerald + gold pulse, no heavy bloom, transparent background."
+    },
+    {
+      "id": "g04-05",
+      "groupIndex": 4,
+      "groupName": "Cards and Card Motion Props",
+      "filename": "pkr_card_flip_frame_01_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["01"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Frame 1 of card flip motion (back-facing, slight tilt), cinematic lighting, transparent."
+    },
+    {
+      "id": "g04-06",
+      "groupIndex": 4,
+      "groupName": "Cards and Card Motion Props",
+      "filename": "pkr_card_flip_frame_02_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["02"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Frame 2 of card flip motion (mid-rotation blur suggestion), consistent camera and lighting."
+    },
+    {
+      "id": "g04-07",
+      "groupIndex": 4,
+      "groupName": "Cards and Card Motion Props",
+      "filename": "pkr_card_flip_frame_03_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["03"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Frame 3 of card flip motion (front-facing reveal pose), consistent framing with frame 1 and 2."
+    },
+    {
+      "id": "g05-01",
+      "groupIndex": 5,
+      "groupName": "Seats, Avatars, Agent Identity",
+      "filename": "pkr_seat_ring_idle_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["idle"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Create empty seat ring with subtle holographic halo and deep shadow; must read clearly over felt."
+    },
+    {
+      "id": "g05-02",
+      "groupIndex": 5,
+      "groupName": "Seats, Avatars, Agent Identity",
+      "filename": "pkr_seat_ring_active_turn_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["turn"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Create active-turn seat ring variant: animated look implied, emerald pulse channels, high clarity."
+    },
+    {
+      "id": "g05-03",
+      "groupIndex": 5,
+      "groupName": "Seats, Avatars, Agent Identity",
+      "filename": "pkr_avatar_frame_human_idle_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["idle"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Design circular avatar frame for human players, elegant glass + metallic finish, minimal ornament."
+    },
+    {
+      "id": "g05-04",
+      "groupIndex": 5,
+      "groupName": "Seats, Avatars, Agent Identity",
+      "filename": "pkr_avatar_frame_agent_idle_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["idle"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Design circular avatar frame for AI agents, more technical with circuit motifs, royal blue/purple accents."
+    },
+    {
+      "id": "g05-05",
+      "groupIndex": 5,
+      "groupName": "Seats, Avatars, Agent Identity",
+      "filename": "pkr_badge_agent_tier_a_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["a"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Create autonomy badge tier A (advisory): refined icon + label chip."
+    },
+    {
+      "id": "g05-06",
+      "groupIndex": 5,
+      "groupName": "Seats, Avatars, Agent Identity",
+      "filename": "pkr_badge_agent_tier_b_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["b"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Create autonomy badge tier B (semi-auto): matching family style."
+    },
+    {
+      "id": "g05-07",
+      "groupIndex": 5,
+      "groupName": "Seats, Avatars, Agent Identity",
+      "filename": "pkr_badge_agent_tier_c_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["c"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Create autonomy badge tier C (full-auto): matching family style."
+    },
+    {
+      "id": "g05-08",
+      "groupIndex": 5,
+      "groupName": "Seats, Avatars, Agent Identity",
+      "filename": "pkr_badge_sponsored_player_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["player"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Create sponsorship badge indicating backed agent/player. Trustworthy financial aesthetic, not gimmicky."
+    },
+    {
+      "id": "g06-01",
+      "groupIndex": 6,
+      "groupName": "HUD Panels and Utility Components",
+      "filename": "pkr_panel_fairness_idle_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["idle"],
+      "expectedDimensions": {
+        "width": 1600,
+        "height": 900
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "panel-component-standard",
+      "prompt": "Design right-rail fairness panel container: commit-reveal slots, seed hash display regions, verify CTA zone. Glassmorphism with clear information lanes."
+    },
+    {
+      "id": "g06-02",
+      "groupIndex": 6,
+      "groupName": "HUD Panels and Utility Components",
+      "filename": "pkr_panel_tx_lifecycle_idle_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["idle"],
+      "expectedDimensions": {
+        "width": 1600,
+        "height": 900
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "panel-component-standard",
+      "prompt": "Design transaction lifecycle panel with steps: submitted, pending, confirmed, failed. Include icon placeholders and status rails."
+    },
+    {
+      "id": "g06-03",
+      "groupIndex": 6,
+      "groupName": "HUD Panels and Utility Components",
+      "filename": "pkr_panel_ledger_row_set_v01.png",
+      "extension": "png",
+      "isSetAsset": true,
+      "requiredVariants": [],
+      "expectedDimensions": {
+        "width": 1600,
+        "height": 900
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "panel-component-standard",
+      "prompt": "Create ledger row UI strips: default, positive result, negative result, disputed. Clean spacing and readability."
+    },
+    {
+      "id": "g06-04",
+      "groupIndex": 6,
+      "groupName": "HUD Panels and Utility Components",
+      "filename": "pkr_panel_network_health_set_v01.png",
+      "extension": "png",
+      "isSetAsset": true,
+      "requiredVariants": ["green", "amber", "red", "unknown"],
+      "expectedDimensions": {
+        "width": 1600,
+        "height": 900
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "panel-component-standard",
+      "prompt": "Create network health chips for API, table stream, chain RPC, wallet. States: green/amber/red/unknown."
+    },
+    {
+      "id": "g06-05",
+      "groupIndex": 6,
+      "groupName": "HUD Panels and Utility Components",
+      "filename": "pkr_panel_chat_feed_bg_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["bg"],
+      "expectedDimensions": {
+        "width": 2560,
+        "height": 1440
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "background-scene-standard",
+      "prompt": "Design chat/activity feed panel background with subtle dividers and timestamp lane."
+    },
+    {
+      "id": "g06-06",
+      "groupIndex": 6,
+      "groupName": "HUD Panels and Utility Components",
+      "filename": "pkr_panel_sponsor_market_card_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["card"],
+      "expectedDimensions": {
+        "width": 1600,
+        "height": 900
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "panel-component-standard",
+      "prompt": "Design sponsor marketplace card for agent stake listings: markup, stake-for-sale, exposure cap, CTA area."
+    },
+    {
+      "id": "g07-01",
+      "groupIndex": 7,
+      "groupName": "Action Controls",
+      "filename": "pkr_btn_fold_set_v01.png",
+      "extension": "png",
+      "isSetAsset": true,
+      "requiredVariants": ["idle", "hover", "pressed", "disabled"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Create Fold button set: idle/hover/pressed/disabled. Tone: serious risk action, not alarming cartoon red."
+    },
+    {
+      "id": "g07-02",
+      "groupIndex": 7,
+      "groupName": "Action Controls",
+      "filename": "pkr_btn_checkcall_set_v01.png",
+      "extension": "png",
+      "isSetAsset": true,
+      "requiredVariants": [],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Create Check/Call button set with balanced priority and clear hierarchy."
+    },
+    {
+      "id": "g07-03",
+      "groupIndex": 7,
+      "groupName": "Action Controls",
+      "filename": "pkr_btn_raise_primary_set_v01.png",
+      "extension": "png",
+      "isSetAsset": true,
+      "requiredVariants": [],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Create Raise primary CTA set with premium emerald glow, high contrast, accessible text."
+    },
+    {
+      "id": "g07-04",
+      "groupIndex": 7,
+      "groupName": "Action Controls",
+      "filename": "pkr_slider_raise_track_set_v01.png",
+      "extension": "png",
+      "isSetAsset": true,
+      "requiredVariants": [],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Design raise slider track and thumb kit: idle/active/disabled plus tick marks for preset bets."
+    },
+    {
+      "id": "g07-05",
+      "groupIndex": 7,
+      "groupName": "Action Controls",
+      "filename": "pkr_quickbet_chip_row_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["row"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Create horizontal quick-bet chip row visual with selected and disabled states."
+    },
+    {
+      "id": "g08-01",
+      "groupIndex": 8,
+      "groupName": "Tournament-Specific Graphics",
+      "filename": "pkr_tourney_lobby_hero_bg_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["bg"],
+      "expectedDimensions": {
+        "width": 2560,
+        "height": 1440
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "background-scene-standard",
+      "prompt": "Design tournament lobby hero background for MTT/SNG with bracket-like geometry, leaderboard stage lighting, and registration urgency vibe."
+    },
+    {
+      "id": "g08-02",
+      "groupIndex": 8,
+      "groupName": "Tournament-Specific Graphics",
+      "filename": "pkr_blind_level_timeline_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["timeline"],
+      "expectedDimensions": {
+        "width": 1600,
+        "height": 900
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "panel-component-standard",
+      "prompt": "Create blind-level timeline component skin with current level emphasis and next-level markers."
+    },
+    {
+      "id": "g08-03",
+      "groupIndex": 8,
+      "groupName": "Tournament-Specific Graphics",
+      "filename": "pkr_payout_ladder_panel_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["panel"],
+      "expectedDimensions": {
+        "width": 1600,
+        "height": 900
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "panel-component-standard",
+      "prompt": "Design payout ladder panel background with rank columns and prize emphasis."
+    },
+    {
+      "id": "g08-04",
+      "groupIndex": 8,
+      "groupName": "Tournament-Specific Graphics",
+      "filename": "pkr_final_table_banner_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["banner"],
+      "expectedDimensions": {
+        "width": 1600,
+        "height": 900
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "panel-component-standard",
+      "prompt": "Create dramatic final-table banner overlay with premium royal gold accents and controlled celebration energy."
+    },
+    {
+      "id": "g08-05",
+      "groupIndex": 8,
+      "groupName": "Tournament-Specific Graphics",
+      "filename": "pkr_elimination_burst_fx_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["fx"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Create subtle elimination FX overlay (not explosive arcade), transparent PNG."
+    },
+    {
+      "id": "g09-01",
+      "groupIndex": 9,
+      "groupName": "Trust, Error, and Resilience States",
+      "filename": "pkr_state_reconnecting_banner_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["banner"],
+      "expectedDimensions": {
+        "width": 1600,
+        "height": 900
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "panel-component-standard",
+      "prompt": "Design reconnecting banner: calm amber warning, concise status slot, retry control placeholder."
+    },
+    {
+      "id": "g09-02",
+      "groupIndex": 9,
+      "groupName": "Trust, Error, and Resilience States",
+      "filename": "pkr_state_chain_mismatch_card_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["card"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Design chain mismatch modal card with clear corrective action area."
+    },
+    {
+      "id": "g09-03",
+      "groupIndex": 9,
+      "groupName": "Trust, Error, and Resilience States",
+      "filename": "pkr_state_insufficient_funds_card_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["card"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Design insufficient funds card with top-up callout and quick funding action area."
+    },
+    {
+      "id": "g09-04",
+      "groupIndex": 9,
+      "groupName": "Trust, Error, and Resilience States",
+      "filename": "pkr_state_duplicate_action_guard_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["guard"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Create compact duplicate-action prevented indicator badge for action bar/HUD."
+    },
+    {
+      "id": "g09-05",
+      "groupIndex": 9,
+      "groupName": "Trust, Error, and Resilience States",
+      "filename": "pkr_state_settlement_pending_overlay_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["overlay"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Create settlement pending overlay panel with trust-preserving tone and progress lane."
+    },
+    {
+      "id": "g10-01",
+      "groupIndex": 10,
+      "groupName": "Mobile-First Specific Assets",
+      "filename": "pkr_mobile_bottom_action_sheet_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["sheet"],
+      "expectedDimensions": {
+        "width": 1600,
+        "height": 900
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "panel-component-standard",
+      "prompt": "Design mobile sticky action sheet background with zones for Fold/Check-Call/Raise + slider + quick chips."
+    },
+    {
+      "id": "g10-02",
+      "groupIndex": 10,
+      "groupName": "Mobile-First Specific Assets",
+      "filename": "pkr_mobile_tabbar_pokerroom_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["pokerroom"],
+      "expectedDimensions": {
+        "width": 1600,
+        "height": 900
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "panel-component-standard",
+      "prompt": "Design bottom tab bar for poker app sections (Lobby, Tables, Tourneys, Sponsorship, Wallet), with active/inactive states."
+    },
+    {
+      "id": "g10-03",
+      "groupIndex": 10,
+      "groupName": "Mobile-First Specific Assets",
+      "filename": "pkr_mobile_hud_drawer_handle_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["handle"],
+      "expectedDimensions": {
+        "width": 2048,
+        "height": 2048
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "prop-icon-standard",
+      "prompt": "Design HUD drawer handle and collapsed chip for fairness/health quick status."
+    },
+    {
+      "id": "g10-04",
+      "groupIndex": 10,
+      "groupName": "Mobile-First Specific Assets",
+      "filename": "pkr_mobile_table_header_compact_v01.png",
+      "extension": "png",
+      "isSetAsset": false,
+      "requiredVariants": ["compact"],
+      "expectedDimensions": {
+        "width": 1600,
+        "height": 900
+      },
+      "dimensionConfidence": "medium",
+      "dimensionReason": "panel-component-standard",
+      "prompt": "Design compact table header strip: blinds, pot, network ping, fair badge."
+    }
+  ]
+}

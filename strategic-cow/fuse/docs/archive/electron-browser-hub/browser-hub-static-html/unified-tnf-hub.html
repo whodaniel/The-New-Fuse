@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The New Fuse - Central Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0c1426 0%, #1a202c 50%, #2d3748 100%);
+            color: #e2e8f0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Enhanced Title Bar with System Status */
+        .title-bar {
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+            height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            border-bottom: 2px solid #4a5568;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .title-bar .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #60a5fa;
+            font-weight: 800;
+            font-size: 20px;
+        }
+
+        .system-status {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 12px;
+        }
+
+        .status-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ef4444;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.connected { background: #10b981; }
+        .status-dot.partial { background: #f59e0b; }
+        .status-dot.admin { background: #8b5cf6; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .user-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid #8b5cf6;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .admin-badge {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .control-btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .control-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .control-btn.admin {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+
+        /* Advanced Tab System */
+        .tab-system {
+            background: #2d3748;
+            border-bottom: 1px solid #4a5568;
+        }
+
+        .tab-bar {
+            height: 50px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .tab-bar::-webkit-scrollbar { display: none; }
+
+        .tab {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #374151;
+            border: 1px solid #4a5568;
+            border-radius: 8px 8px 0 0;
+            padding: 8px 16px;
+            margin-right: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+            font-weight: 500;
+            min-width: 120px;
+        }
+
+        .tab.active {
+            background: #4a5568;
+            border-bottom-color: #4a5568;
+        }
+
+        .tab:hover {
+            background: #4a5568;
+        }
+
+        .tab-close {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .tab-close:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .new-tab-btn {
+            background: #4a5568;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            color: #e2e8f0;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .new-tab-btn:hover {
+            background: #6b7280;
+            transform: scale(1.05);
+        }
+
+        /* Enhanced Navigation Bar */
+        .nav-bar {
+            background: #374151;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 12px;
+            border-bottom: 1px solid #4a5568;
+        }
+
+        .nav-btn {
+            background: #4a5568;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            color: #e2e8f0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            background: #6b7280;
+            transform: translateY(-1px);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .url-bar {
+            flex: 1;
+            background: #2d3748;
+            border: 2px solid #4a5568;
+            border-radius: 25px;
+            padding: 0 20px;
+            height: 40px;
+            color: #e2e8f0;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .url-bar:focus {
+            outline: none;
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+        }
+
+        /* Comprehensive Services Panel */
+        .services-panel {
+            background: linear-gradient(135deg, #374151 0%, #4a5568 100%);
+            border-bottom: 1px solid #4a5568;
+            padding: 16px 20px;
+        }
+
+        .services-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .services-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #60a5fa;
+        }
+
+        .services-status {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 12px;
+        }
+
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .service-category {
+            background: rgba(45, 55, 72, 0.6);
+            border: 1px solid #4a5568;
+            border-radius: 12px;
+            padding: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        .service-category-header {
+            display: flex;
+            align-items: center;
+            justify-content: between;
+            margin-bottom: 12px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .service-category-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .service-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 8px;
+        }
+
+        .service-btn {
+            background: linear-gradient(135deg, #4a5568 0%, #6b7280 100%);
+            border: 1px solid #6b7280;
+            padding: 10px 12px;
+            border-radius: 8px;
+            color: #e2e8f0;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .service-btn:hover {
+            background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .service-btn.active {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            border-color: #3b82f6;
+        }
+
+        .service-btn .icon {
+            font-size: 14px;
+            min-width: 14px;
+        }
+
+        /* Category-specific colors */
+        .ai-clis .service-category-title { color: #f472b6; }
+        .automation .service-category-title { color: #10b981; }
+        .development .service-category-title { color: #8b5cf6; }
+        .mcp-server .service-category-title { color: #f59e0b; }
+        .tnf-core .service-category-title { color: #60a5fa; }
+        .admin-tools .service-category-title { color: #ef4444; }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content-frame {
+            flex: 1;
+            border: none;
+            background: #1a202c;
+        }
+
+        .welcome-screen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+            text-align: center;
+            padding: 40px;
+        }
+
+        .welcome-screen h1 {
+            color: #60a5fa;
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .welcome-screen h2 {
+            color: #94a3b8;
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-bottom: 32px;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .quick-action {
+            background: rgba(45, 55, 72, 0.8);
+            border: 1px solid #4a5568;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            backdrop-filter: blur(10px);
+        }
+
+        .quick-action:hover {
+            background: rgba(74, 85, 104, 0.8);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+
+        .quick-action .icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .quick-action h3 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: #e2e8f0;
+        }
+
+        .quick-action p {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            line-height: 1.4;
+        }
+
+        /* Enhanced Status Bar */
+        .status-bar {
+            background: linear-gradient(135deg, #374151 0%, #4a5568 100%);
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            font-size: 11px;
+            color: #94a3b8;
+            border-top: 1px solid #4a5568;
+        }
+
+        .status-left {
+            display: flex;
+            gap: 20px;
+        }
+
+        .status-right {
+            display: flex;
+            gap: 20px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .service-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+            
+            .system-status {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Enhanced Title Bar -->
+    <div class="title-bar">
+        <div class="logo">
+            <span>🚀</span>
+            <span>The New Fuse</span>
+        </div>
+        
+        <div class="system-status">
+            <div class="status-group">
+                <div class="status-dot" id="tnf-core-status"></div>
+                <span>TNF Core</span>
+            </div>
+            <div class="status-group">
+                <div class="status-dot" id="database-status"></div>
+                <span>Database</span>
+            </div>
+            <div class="status-group">
+                <div class="status-dot" id="relay-status"></div>
+                <span>Relay</span>
+            </div>
+            <div class="status-group">
+                <div class="status-dot" id="ide-status"></div>
+                <span>SkIDEancer IDE</span>
+            </div>
+        </div>
+
+        <div class="user-controls">
+            <div class="user-info" id="user-info">
+                <span>👤</span>
+                <span id="username">Guest</span>
+                <div class="admin-badge" id="admin-badge" style="display: none;">ADMIN</div>
+            </div>
+            <button class="control-btn admin" onclick="openAdminPanel()">Admin Panel</button>
+            <button class="control-btn" onclick="openSettings()">Settings</button>
+        </div>
+    </div>
+
+    <!-- Advanced Tab System -->
+    <div class="tab-system">
+        <div class="tab-bar">
+            <div class="tab active" data-tab="welcome">
+                <span>🏠</span>
+                <span>Home</span>
+                <button class="tab-close" onclick="closeTab('welcome')">&times;</button>
+            </div>
+            <button class="new-tab-btn" onclick="createNewTab()" title="New Tab">+</button>
+        </div>
+    </div>
+
+    <!-- Enhanced Navigation Bar -->
+    <div class="nav-bar">
+        <button class="nav-btn" onclick="goBack()" title="Back">←</button>
+        <button class="nav-btn" onclick="goForward()" title="Forward">→</button>
+        <button class="nav-btn" onclick="refresh()" title="Refresh">↻</button>
+        <input type="text" class="url-bar" placeholder="Enter URL, search, or navigate to TNF services..." onkeypress="handleUrlEnter(event)" id="url-bar">
+        <button class="nav-btn" onclick="navigateToUrl()" title="Go">→</button>
+        <button class="nav-btn" onclick="toggleDevTools()" title="DevTools">⚙</button>
+    </div>
+
+    <!-- Comprehensive Services Panel -->
+    <div class="services-panel">
+        <div class="services-header">
+            <div class="services-title">🌟 TNF Service Hub</div>
+            <div class="services-status">
+                <span>Status: <span id="overall-status">Initializing...</span></span>
+                <button class="control-btn" onclick="refreshAllServices()">🔄 Refresh All</button>
+            </div>
+        </div>
+
+        <div class="service-grid">
+            <!-- AI & LLM Services -->
+            <div class="service-category ai-clis">
+                <div class="service-category-header">
+                    <div class="service-category-title">
+                        <span>🧠</span>
+                        <span>AI & LLM Services</span>
+                    </div>
+                    <div class="status-dot" id="ai-services-status"></div>
+                </div>
+                <div class="service-buttons">
+                    <button class="service-btn" onclick="openClaude()">
+                        <span class="icon">⭐</span>
+                        <span>Claude</span>
+                    </button>
+                    <button class="service-btn" onclick="openGemini()">
+                        <span class="icon">💎</span>
+                        <span>Gemini</span>
+                    </button>
+                    <button class="service-btn" onclick="openChatGPT()">
+                        <span class="icon">🤖</span>
+                        <span>ChatGPT</span>
+                    </button>
+                    <button class="service-btn" onclick="openPerplexity()">
+                        <span class="icon">🔍</span>
+                        <span>Perplexity</span>
+                    </button>
+                    <button class="service-btn" onclick="analyzePage()">
+                        <span class="icon">📊</span>
+                        <span>Analyze Page</span>
+                    </button>
+                    <button class="service-btn" onclick="openLocalAI()">
+                        <span class="icon">🏠</span>
+                        <span>Local AI</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Development Tools -->
+            <div class="service-category development">
+                <div class="service-category-header">
+                    <div class="service-category-title">
+                        <span>👨‍💻</span>
+                        <span>Development Tools</span>
+                    </div>
+                    <div class="status-dot" id="dev-tools-status"></div>
+                </div>
+                <div class="service-buttons">
+                    <button class="service-btn" onclick="openSkIDEancerIDE()">
+                        <span class="icon">🌟</span>
+                        <span>SkIDEancer IDE</span>
+                    </button>
+                    <button class="service-btn" onclick="openVSCode()">
+                        <span class="icon">💻</span>
+                        <span>VS Code</span>
+                    </button>
+                    <button class="service-btn" onclick="openTerminal()">
+                        <span class="icon">⌨️</span>
+                        <span>Terminal</span>
+                    </button>
+                    <button class="service-btn" onclick="openDatabase()">
+                        <span class="icon">🗄️</span>
+                        <span>Database</span>
+                    </button>
+                    <button class="service-btn" onclick="openGitHub()">
+                        <span class="icon">🐙</span>
+                        <span>GitHub</span>
+                    </button>
+                    <button class="service-btn" onclick="openAPIExplorer()">
+                        <span class="icon">🔗</span>
+                        <span>API Explorer</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Automation & Testing -->
+            <div class="service-category automation">
+                <div class="service-category-header">
+                    <div class="service-category-title">
+                        <span>🤖</span>
+                        <span>Automation & Testing</span>
+                    </div>
+                    <div class="status-dot" id="automation-status"></div>
+                </div>
+                <div class="service-buttons">
+                    <button class="service-btn" onclick="openPuppeteer()">
+                        <span class="icon">🎭</span>
+                        <span>Puppeteer</span>
+                    </button>
+                    <button class="service-btn" onclick="openPlaywright()">
+                        <span class="icon">🎪</span>
+                        <span>Playwright</span>
+                    </button>
+                    <button class="service-btn" onclick="takeScreenshot()">
+                        <span class="icon">📷</span>
+                        <span>Screenshot</span>
+                    </button>
+                    <button class="service-btn" onclick="generatePDF()">
+                        <span class="icon">📄</span>
+                        <span>PDF Export</span>
+                    </button>
+                    <button class="service-btn" onclick="startRecording()">
+                        <span class="icon">⏺</span>
+                        <span>Screen Record</span>
+                    </button>
+                    <button class="service-btn" onclick="runTests()">
+                        <span class="icon">✅</span>
+                        <span>Run Tests</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TNF Core Services -->
+            <div class="service-category tnf-core">
+                <div class="service-category-header">
+                    <div class="service-category-title">
+                        <span>🚀</span>
+                        <span>TNF Core Services</span>
+                    </div>
+                    <div class="status-dot" id="tnf-services-status"></div>
+                </div>
+                <div class="service-buttons">
+                    <button class="service-btn" onclick="openDashboard()">
+                        <span class="icon">📈</span>
+                        <span>Dashboard</span>
+                    </button>
+                    <button class="service-btn" onclick="openAgents()">
+                        <span class="icon">🤖</span>
+                        <span>Agents</span>
+                    </button>
+                    <button class="service-btn" onclick="openTasks()">
+                        <span class="icon">📝</span>
+                        <span>Tasks</span>
+                    </button>
+                    <button class="service-btn" onclick="openWorkflows()">
+                        <span class="icon">⚡</span>
+                        <span>Workflows</span>
+                    </button>
+                    <button class="service-btn" onclick="openIntegrations()">
+                        <span class="icon">🔗</span>
+                        <span>Integrations</span>
+                    </button>
+                    <button class="service-btn" onclick="openAnalytics()">
+                        <span class="icon">📊</span>
+                        <span>Analytics</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- MCP Servers -->
+            <div class="service-category mcp-server">
+                <div class="service-category-header">
+                    <div class="service-category-title">
+                        <span>🖥</span>
+                        <span>MCP Servers</span>
+                    </div>
+                    <div class="status-dot" id="mcp-status"></div>
+                </div>
+                <div class="service-buttons">
+                    <button class="service-btn" onclick="startMCP()">
+                        <span class="icon">🚀</span>
+                        <span>Start MCP</span>
+                    </button>
+                    <button class="service-btn" onclick="mcpStatus()">
+                        <span class="icon">📊</span>
+                        <span>Status</span>
+                    </button>
+                    <button class="service-btn" onclick="mcpLogs()">
+                        <span class="icon">📋</span>
+                        <span>Logs</span>
+                    </button>
+                    <button class="service-btn" onclick="mcpConfig()">
+                        <span class="icon">⚙️</span>
+                        <span>Config</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Admin Tools (Only visible to System Admin) -->
+            <div class="service-category admin-tools" id="admin-tools-category" style="display: none;">
+                <div class="service-category-header">
+                    <div class="service-category-title">
+                        <span>👑</span>
+                        <span>System Administration</span>
+                    </div>
+                    <div class="status-dot" id="admin-status"></div>
+                </div>
+                <div class="service-buttons">
+                    <button class="service-btn admin-panel-btn" onclick="navigateToAdminPanel()" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; font-weight: bold;">
+                        <span class="icon">🛡️</span>
+                        <span>Master Control Panel</span>
+                    </button>
+                    <button class="service-btn" onclick="openUserManagement()">
+                        <span class="icon">👥</span>
+                        <span>Users</span>
+                    </button>
+                    <button class="service-btn" onclick="openSystemSettings()">
+                        <span class="icon">⚙️</span>
+                        <span>Settings</span>
+                    </button>
+                    <button class="service-btn" onclick="openAuditLogs()">
+                        <span class="icon">📜</span>
+                        <span>Audit Logs</span>
+                    </button>
+                    <button class="service-btn" onclick="openSystemMonitor()">
+                        <span class="icon">📊</span>
+                        <span>Monitor</span>
+                    </button>
+                    <button class="service-btn" onclick="openBackupRestore()">
+                        <span class="icon">💾</span>
+                        <span>Backup</span>
+                    </button>
+                    <button class="service-btn" onclick="systemMaintenance()">
+                        <span class="icon">🔧</span>
+                        <span>Maintenance</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <div class="welcome-screen" id="main-content">
+            <h1>
+                <span>🚀</span>
+                <span>The New Fuse</span>
+            </h1>
+            <h2>Your Comprehensive Multi-Agent Development Hub</h2>
+            
+            <div class="quick-actions">
+                <div class="quick-action" onclick="openDashboard()">
+                    <span class="icon">📈</span>
+                    <h3>Dashboard</h3>
+                    <p>Monitor system status, agents, and workflows</p>
+                </div>
+                <div class="quick-action" onclick="openSkIDEancerIDE()">
+                    <span class="icon">💻</span>
+                    <h3>SkIDEancer IDE</h3>
+                    <p>Full-stack development environment</p>
+                </div>
+                <div class="quick-action" onclick="openAgents()">
+                    <span class="icon">🤖</span>
+                    <h3>AI Agents</h3>
+                    <p>Manage and deploy intelligent agents</p>
+                </div>
+                <div class="quick-action" onclick="openWorkflows()">
+                    <span class="icon">⚡</span>
+                    <h3>Workflows</h3>
+                    <p>Automate complex multi-step processes</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Status Bar -->
+    <div class="status-bar">
+        <div class="status-left">
+            <div class="status-item">
+                <span class="status-dot connected"></span>
+                <span id="connection-status">Connected to TNF Core</span>
+            </div>
+            <div class="status-item">
+                <span>Version: 2.1.0</span>
+            </div>
+        </div>
+        <div class="status-right">
+            <div class="status-item">
+                <span id="tab-count">1 tab</span>
+            </div>
+            <div class="status-item">
+                <span id="memory-usage">Memory: 0 MB</span>
+            </div>
+            <div class="status-item">
+                <span id="cpu-usage">CPU: 0%</span>
+            </div>
+            <div class="status-item">
+                <span>⚡</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state management
+        let currentUser = null;
+        let isSystemAdmin = false;
+        let tabs = [];
+        let activeTabId = 'welcome';
+        let systemStatus = {
+            tnfCore: false,
+            database: false,
+            relay: false,
+            ideIDE: false
+        };
+
+        // Initialize the application
+        async function initializeApp() {
+            console.log('🚀 Initializing The New Fuse Hub...');
+            
+            // Check authentication status
+            await checkAuthStatus();
+            
+            // Initialize system status monitoring
+            await updateSystemStatus();
+            
+            // Set up periodic status updates
+            setInterval(updateSystemStatus, 30000); // Every 30 seconds
+            
+            // Initialize tabs
+            initializeTabs();
+            
+            console.log('✅ The New Fuse Hub initialized');
+        }
+
+        // Authentication and user management
+        async function checkAuthStatus() {
+            try {
+                if (window.electronAPI) {
+                    const authStatus = await window.electronAPI.checkAuth();
+                    if (authStatus && authStatus.user) {
+                        currentUser = authStatus.user;
+                        isSystemAdmin = authStatus.user.email === 'owner@example.com' || authStatus.user.role === 'system_admin';
+                        updateUserInterface();
+                        
+                        // If system admin, automatically navigate to admin panel after 2 seconds
+                        if (isSystemAdmin) {
+                            console.log('👑 System Admin detected - redirecting to control panel...');
+                            setTimeout(() => {
+                                navigateToAdminPanel();
+                            }, 2000);
+                        }
+                    } else {
+                        // Redirect to login
+                        showLogin();
+                    }
+                } else {
+                    // Mock authentication for standalone mode
+                    currentUser = { username: 'Guest', email: 'guest@tnf.com' };
+                    updateUserInterface();
+                }
+            } catch (error) {
+                console.error('Authentication check failed:', error);
+                showLogin();
+            }
+        }
+
+        function navigateToAdminPanel() {
+            console.log('🚀 Navigating to Master Admin Control Panel...');
+            if (window.electronAPI) {
+                window.electronAPI.navigateToRoute('tnf://admin');
+            }
+        }
+
+        function updateUserInterface() {
+            const usernameEl = document.getElementById('username');
+            const adminBadge = document.getElementById('admin-badge');
+            const adminCategory = document.getElementById('admin-tools-category');
+            
+            if (currentUser) {
+                usernameEl.textContent = currentUser.username || currentUser.email;
+                
+                if (isSystemAdmin) {
+                    adminBadge.style.display = 'block';
+                    adminCategory.style.display = 'block';
+                    console.log('👑 System Admin access granted');
+                } else {
+                    adminBadge.style.display = 'none';
+                    adminCategory.style.display = 'none';
+                }
+            }
+        }
+
+        function showLogin() {
+            // Navigate to login page
+            const loginUrl = window.location.origin + '/login';
+            if (window.electronAPI) {
+                window.electronAPI.navigateToUrl(loginUrl);
+            } else {
+                window.location.href = loginUrl;
+            }
+        }
+
+        // System status monitoring
+        async function updateSystemStatus() {
+            try {
+                if (window.electronAPI) {
+                    const status = await window.electronAPI.getSystemStatus();
+                    systemStatus = { ...systemStatus, ...status };
+                } else {
+                    // Mock status for standalone mode
+                    systemStatus = {
+                        tnfCore: Math.random() > 0.3,
+                        database: Math.random() > 0.2,
+                        relay: Math.random() > 0.4,
+                        ideIDE: Math.random() > 0.5
+                    };
+                }
+                
+                updateStatusIndicators();
+                updateServiceStatuses();
+            } catch (error) {
+                console.error('Failed to update system status:', error);
+            }
+        }
+
+        function updateStatusIndicators() {
+            const indicators = {
+                'tnf-core-status': systemStatus.tnfCore,
+                'database-status': systemStatus.database,
+                'relay-status': systemStatus.relay,
+                'ide-status': systemStatus.ideIDE
+            };
+
+            Object.entries(indicators).forEach(([id, status]) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.className = `status-dot ${status ? 'connected' : ''}`;
+                }
+            });
+
+            // Update overall status
+            const overallStatusEl = document.getElementById('overall-status');
+            const connectedServices = Object.values(systemStatus).filter(Boolean).length;
+            const totalServices = Object.keys(systemStatus).length;
+            
+            if (overallStatusEl) {
+                if (connectedServices === totalServices) {
+                    overallStatusEl.textContent = 'All Systems Operational';
+                    overallStatusEl.style.color = '#10b981';
+                } else if (connectedServices > 0) {
+                    overallStatusEl.textContent = `${connectedServices}/${totalServices} Services Active`;
+                    overallStatusEl.style.color = '#f59e0b';
+                } else {
+                    overallStatusEl.textContent = 'Systems Offline';
+                    overallStatusEl.style.color = '#ef4444';
+                }
+            }
+        }
+
+        function updateServiceStatuses() {
+            const serviceStatuses = {
+                'ai-services-status': true, // Always available
+                'dev-tools-status': systemStatus.ideIDE,
+                'automation-status': systemStatus.tnfCore,
+                'tnf-services-status': systemStatus.tnfCore && systemStatus.database,
+                'mcp-status': systemStatus.relay,
+                'admin-status': isSystemAdmin
+            };
+
+            Object.entries(serviceStatuses).forEach(([id, status]) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.className = `status-dot ${status ? 'connected' : ''}`;
+                }
+            });
+        }
+
+        // Tab management
+        function initializeTabs() {
+            tabs = [{ id: 'welcome', title: 'Home', url: 'about:blank', icon: '🏠' }];
+            updateTabDisplay();
+        }
+
+        function createNewTab() {
+            const tabId = `tab-${Date.now()}`;
+            const newTab = {
+                id: tabId,
+                title: 'New Tab',
+                url: 'about:blank',
+                icon: '📄'
+            };
+            
+            tabs.push(newTab);
+            activeTabId = tabId;
+            updateTabDisplay();
+            showWelcomeScreen();
+        }
+
+        function closeTab(tabId) {
+            if (tabs.length <= 1) return; // Don't close the last tab
+            
+            tabs = tabs.filter(tab => tab.id !== tabId);
+            
+            if (activeTabId === tabId) {
+                activeTabId = tabs[0].id;
+            }
+            
+            updateTabDisplay();
+        }
+
+        function switchTab(tabId) {
+            activeTabId = tabId;
+            updateTabDisplay();
+            
+            const tab = tabs.find(t => t.id === tabId);
+            if (tab && tab.url !== 'about:blank') {
+                loadTabContent(tab.url);
+            } else {
+                showWelcomeScreen();
+            }
+        }
+
+        function updateTabDisplay() {
+            const tabBar = document.querySelector('.tab-bar');
+            const newTabBtn = tabBar.querySelector('.new-tab-btn');
+            
+            // Remove existing tabs
+            tabBar.querySelectorAll('.tab').forEach(tab => tab.remove());
+            
+            // Add current tabs
+            tabs.forEach(tab => {
+                const tabElement = document.createElement('div');
+                tabElement.className = `tab ${tab.id === activeTabId ? 'active' : ''}`;
+                tabElement.dataset.tab = tab.id;
+                tabElement.innerHTML = `
+                    <span>${tab.icon}</span>
+                    <span>${tab.title}</span>
+                    <button class="tab-close" onclick="closeTab('${tab.id}')">&times;</button>
+                `;
+                tabElement.onclick = (e) => {
+                    if (!e.target.classList.contains('tab-close')) {
+                        switchTab(tab.id);
+                    }
+                };
+                
+                tabBar.insertBefore(tabElement, newTabBtn);
+            });
+
+            // Update tab count in status bar
+            const tabCountEl = document.getElementById('tab-count');
+            if (tabCountEl) {
+                tabCountEl.textContent = `${tabs.length} tab${tabs.length > 1 ? 's' : ''}`;
+            }
+        }
+
+        // Navigation functions
+        function goBack() {
+            console.log('Navigate back');
+            if (window.electronAPI) {
+                window.electronAPI.browserAction('back');
+            }
+        }
+
+        function goForward() {
+            console.log('Navigate forward');
+            if (window.electronAPI) {
+                window.electronAPI.browserAction('forward');
+            }
+        }
+
+        function refresh() {
+            console.log('Refresh current content');
+            if (window.electronAPI) {
+                window.electronAPI.browserAction('refresh');
+            } else {
+                location.reload();
+            }
+        }
+
+        function handleUrlEnter(event) {
+            if (event.key === 'Enter') {
+                navigateToUrl();
+            }
+        }
+
+        function navigateToUrl() {
+            const urlBar = document.getElementById('url-bar');
+            const url = urlBar.value.trim();
+            
+            if (!url) return;
+
+            // Handle TNF service shortcuts
+            const serviceShortcuts = {
+                'dashboard': () => openDashboard(),
+                'agents': () => openAgents(),
+                'tasks': () => openTasks(),
+                'workflows': () => openWorkflows(),
+                'ide': () => openSkIDEancerIDE(),
+                'admin': () => openAdminPanel(),
+                'claude': () => openClaude(),
+                'gemini': () => openGemini(),
+                'chatgpt': () => openChatGPT()
+            };
+
+            if (serviceShortcuts[url.toLowerCase()]) {
+                serviceShortcuts[url.toLowerCase()]();
+                return;
+            }
+
+            // Handle regular URLs
+            if (window.electronAPI) {
+                window.electronAPI.navigateToUrl(url);
+            } else {
+                loadTabContent(url);
+            }
+
+            // Update current tab
+            const currentTab = tabs.find(tab => tab.id === activeTabId);
+            if (currentTab) {
+                currentTab.url = url;
+                currentTab.title = new URL(url).hostname;
+                updateTabDisplay();
+            }
+        }
+
+        function loadTabContent(url) {
+            const mainContent = document.getElementById('main-content');
+            
+            if (url.startsWith('http') || url.startsWith('https')) {
+                mainContent.innerHTML = `<iframe src="${url}" class="content-frame"></iframe>`;
+            } else {
+                showWelcomeScreen();
+            }
+        }
+
+        function showWelcomeScreen() {
+            const mainContent = document.getElementById('main-content');
+            mainContent.className = 'welcome-screen';
+            mainContent.innerHTML = `
+                <h1>
+                    <span>🚀</span>
+                    <span>The New Fuse</span>
+                </h1>
+                <h2>Your Comprehensive Multi-Agent Development Hub</h2>
+                
+                <div class="quick-actions">
+                    <div class="quick-action" onclick="openDashboard()">
+                        <span class="icon">📈</span>
+                        <h3>Dashboard</h3>
+                        <p>Monitor system status, agents, and workflows</p>
+                    </div>
+                    <div class="quick-action" onclick="openSkIDEancerIDE()">
+                        <span class="icon">💻</span>
+                        <h3>SkIDEancer IDE</h3>
+                        <p>Full-stack development environment</p>
+                    </div>
+                    <div class="quick-action" onclick="openAgents()">
+                        <span class="icon">🤖</span>
+                        <h3>AI Agents</h3>
+                        <p>Manage and deploy intelligent agents</p>
+                    </div>
+                    <div class="quick-action" onclick="openWorkflows()">
+                        <span class="icon">⚡</span>
+                        <h3>Workflows</h3>
+                        <p>Automate complex multi-step processes</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleDevTools() {
+            console.log('Toggle DevTools');
+            if (window.electronAPI) {
+                window.electronAPI.toggleDevTools();
+            }
+        }
+
+        // TNF Service Functions
+        function openDashboard() {
+            navigateToService('/dashboard', 'Dashboard', '📈');
+        }
+
+        function openAgents() {
+            navigateToService('/agents', 'Agents', '🤖');
+        }
+
+        function openTasks() {
+            navigateToService('/tasks', 'Tasks', '📝');    
+        }
+
+        function openWorkflows() {
+            navigateToService('/workflows', 'Workflows', '⚡');
+        }
+
+        function openIntegrations() {
+            navigateToService('/integration/api-keys', 'Integrations', '🔗');
+        }
+
+        function openAnalytics() {
+            navigateToService('/analytics', 'Analytics', '📊');
+        }
+
+        function openAdminPanel() {
+            if (!isSystemAdmin) {
+                alert('Access denied. System Administrator privileges required.');
+                return;
+            }
+            navigateToService('/admin/users', 'Admin Panel', '👑');
+        }
+
+        function openUserManagement() {
+            navigateToService('/admin/users', 'User Management', '👥');
+        }
+
+        function openSystemSettings() {
+            navigateToService('/admin/settings', 'System Settings', '⚙️');
+        }
+
+        function openAuditLogs() {
+            navigateToService('/admin/audit-logs', 'Audit Logs', '📜');
+        }
+
+        function openSystemMonitor() {
+            navigateToService('/admin/usage', 'System Monitor', '📊');
+        }
+
+        function navigateToService(path, title, icon) {
+            const baseUrl = window.location.origin;
+            const fullUrl = baseUrl + path;
+            
+            // Update current tab or create new one
+            const currentTab = tabs.find(tab => tab.id === activeTabId);
+            if (currentTab) {
+                currentTab.url = fullUrl;
+                currentTab.title = title;
+                currentTab.icon = icon;
+                updateTabDisplay();
+            }
+
+            if (window.electronAPI) {
+                window.electronAPI.navigateToUrl(fullUrl);
+            } else {
+                loadTabContent(fullUrl);
+            }
+        }
+
+        // Development Tools
+        function openSkIDEancerIDE() {
+            console.log('Opening SkIDEancer IDE');
+            if (window.electronAPI) {
+                window.electronAPI.openSkIDEancer();
+            } else {
+                navigateToService('http://localhost:3000', 'SkIDEancer IDE', '💻');
+            }
+        }
+
+        function openVSCode() {
+            console.log('Opening VS Code');
+            if (window.electronAPI) {
+                window.electronAPI.openVSCode();
+            }
+        }
+
+        function openTerminal() {
+            console.log('Opening Terminal');
+            if (window.electronAPI) {
+                window.electronAPI.openTerminal();
+            }
+        }
+
+        function openDatabase() {
+            navigateToService('/admin/database', 'Database', '🗄️');
+        }
+
+        function openGitHub() {
+            const githubUrl = 'https://github.com';
+            navigateToService(githubUrl, 'GitHub', '🐙');
+        }
+
+        function openAPIExplorer() {
+            navigateToService('/integration/api-explorer', 'API Explorer', '🔗');
+        }
+
+        // AI Services
+        function openClaude() {
+            navigateToService('https://claude.ai', 'Claude', '⭐');
+        }
+
+        function openGemini() {
+            navigateToService('https://gemini.google.com', 'Gemini', '💎');
+        }
+
+        function openChatGPT() {
+            navigateToService('https://chatgpt.com', 'ChatGPT', '🤖');
+        }
+
+        function openPerplexity() {
+            navigateToService('https://perplexity.ai', 'Perplexity', '🔍');
+        }
+
+        function openLocalAI() {
+            navigateToService('http://localhost:8080', 'Local AI', '🏠');
+        }
+
+        function analyzePage() {
+            console.log('Analyzing current page');
+            if (window.electronAPI) {
+                window.electronAPI.analyzePage();
+            }
+        }
+
+        // Automation Tools
+        function openPuppeteer() {
+            console.log('Opening Puppeteer interface');
+            navigateToService('/automation/puppeteer', 'Puppeteer', '🎭');
+        }
+
+        function openPlaywright() {
+            console.log('Opening Playwright interface');
+            navigateToService('/automation/playwright', 'Playwright', '🎪');
+        }
+
+        function takeScreenshot() {
+            console.log('Taking screenshot');
+            if (window.electronAPI) {
+                window.electronAPI.takeScreenshot();
+            }
+        }
+
+        function generatePDF() {
+            console.log('Generating PDF');
+            if (window.electronAPI) {
+                window.electronAPI.generatePDF();
+            }
+        }
+
+        function startRecording() {
+            console.log('Starting screen recording');
+            if (window.electronAPI) {
+                window.electronAPI.startRecording();
+            }
+        }
+
+        function runTests() {
+            console.log('Running automated tests');
+            navigateToService('/testing/dashboard', 'Test Runner', '✅');
+        }
+
+        // MCP Server Functions
+        function startMCP() {
+            console.log('Starting MCP Server');
+            if (window.electronAPI) {
+                window.electronAPI.startMCP();
+            }
+        }
+
+        function mcpStatus() {
+            console.log('Checking MCP Status');
+            navigateToService('/mcp/status', 'MCP Status', '📊');
+        }
+
+        function mcpLogs() {
+            console.log('Viewing MCP Logs');
+            navigateToService('/mcp/logs', 'MCP Logs', '📋');
+        }
+
+        function mcpConfig() {
+            console.log('MCP Configuration');
+            navigateToService('/mcp/config', 'MCP Config', '⚙️');
+        }
+
+        // System Functions
+        function refreshAllServices() {
+            console.log('Refreshing all services');
+            updateSystemStatus();
+            if (window.electronAPI) {
+                window.electronAPI.refreshServices();
+            }
+        }
+
+        function openSettings() {
+            navigateToService('/settings/profile', 'Settings', '⚙️');
+        }
+
+        function openBackupRestore() {
+            navigateToService('/admin/backup', 'Backup & Restore', '💾');
+        }
+
+        function systemMaintenance() {
+            navigateToService('/admin/maintenance', 'System Maintenance', '🔧');
+        }
+
+        // Initialize the application when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', initializeApp);
+
+        // Performance monitoring
+        function updatePerformanceMetrics() {
+            const memoryUsageEl = document.getElementById('memory-usage');
+            const cpuUsageEl = document.getElementById('cpu-usage');
+
+            if (performance.memory) {
+                const memoryMB = Math.round(performance.memory.usedJSHeapSize / (1024 * 1024));
+                if (memoryUsageEl) {
+                    memoryUsageEl.textContent = `Memory: ${memoryMB} MB`;
+                }
+            }
+
+            // Mock CPU usage for now
+            if (cpuUsageEl) {
+                const cpuUsage = Math.floor(Math.random() * 20) + 5;
+                cpuUsageEl.textContent = `CPU: ${cpuUsage}%`;
+            }
+        }
+
+        // Update performance metrics periodically
+        setInterval(updatePerformanceMetrics, 5000);
+    </script>
+</body>
+</html>
