@@ -4,6 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <script>
+      // Static hosting compatibility: allow /app.html#/route deep-link entry.
+      (function bootstrapHashRoute() {
+        if (typeof window === 'undefined') return;
+        var hash = window.location.hash || '';
+        if (window.location.pathname.endsWith('/app.html') && hash.startsWith('#/')) {
+          window.history.replaceState(null, '', hash.slice(1));
+        }
+      })();
+    </script>
+
     <!-- Import Map: Provides fallback resolution for bare module specifiers that external scripts may try to load -->
     <script type="importmap">
       {

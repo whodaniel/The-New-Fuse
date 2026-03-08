@@ -22,12 +22,33 @@
   <meta name="twitter:card" content="summary_large_image">
 
   <script>
-    (function routeMarketplaceHostToSpa() {
-      var isMarketplaceHost = window.location.hostname === 'marketplace.thenewfuse.com';
-      var isRootPath = window.location.pathname === '/' || window.location.pathname === '';
+    (function routeStaticHostingToSpa() {
+      var host = window.location.hostname;
+      var pathname = window.location.pathname || '/';
+      var isMarketplaceHost = host === 'marketplace.thenewfuse.com';
+      var isRootPath = pathname === '/' || pathname === '';
+
+      // Railway static hosting serves only concrete files at root.
+      // Route marketplace root to SPA entry immediately.
       if (isMarketplaceHost && isRootPath) {
-        window.location.replace('/marketplace');
+        window.location.replace('/app.html#');
+        return;
       }
+
+      // Rewrite app links from static landing into SPA entrypoint routes.
+      document.addEventListener('DOMContentLoaded', function () {
+        var links = document.querySelectorAll('a[href^="/"]');
+        links.forEach(function (link) {
+          var href = link.getAttribute('href');
+          if (!href) return;
+          if (href === '/' || href.startsWith('/#')) return;
+          if (href.startsWith('/app.html')) return;
+          if (href.startsWith('/visualizations/')) return;
+          if (href.startsWith('/api/')) return;
+          if (href.endsWith('.html')) return;
+          link.setAttribute('href', '/app.html#' + href);
+        });
+      });
     })();
   </script>
 
