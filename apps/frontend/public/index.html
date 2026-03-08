@@ -46,6 +46,15 @@
           if (href.startsWith('/visualizations/')) return;
           if (href.startsWith('/api/')) return;
           if (href.endsWith('.html')) return;
+
+          // Marketplace host is public-only; do not emit auth entry links there.
+          if (
+            isMarketplaceHost &&
+            (href.startsWith('/auth') || href === '/login' || href === '/register')
+          ) {
+            link.setAttribute('href', '/app.html#');
+            return;
+          }
           link.setAttribute('href', '/app.html#' + href);
         });
       });
