@@ -92,6 +92,49 @@ export class MarketplaceController {
     });
   }
 
+  @Get('research/skills/marketplace/counts')
+  async getResearchSkillMarketplaceCounts() {
+    return await this.marketplaceService.getResearchSkillMarketplaceCounts();
+  }
+
+  @Get('research/skills/marketplace/entries')
+  async listResearchSkillMarketplaceEntries(
+    @Query('q') q?: string,
+    @Query('limit') limit?: string,
+    @Query('offset') offset?: string
+  ) {
+    return await this.marketplaceService.listResearchSkillMarketplaceEntries({
+      q,
+      limit: Number(limit),
+      offset: Number(offset),
+    });
+  }
+
+  @Get('research/mcp/counts')
+  async getResearchMcpCounts() {
+    return await this.marketplaceService.getResearchMcpCounts();
+  }
+
+  @Get('research/mcp/sources')
+  async getResearchMcpSources(@Query('limitPerCategory') limitPerCategory?: string) {
+    return await this.marketplaceService.getResearchMcpSources({
+      limitPerCategory: Number(limitPerCategory) || 8,
+    });
+  }
+
+  @Get('research/mcp/servers')
+  async searchResearchMcpServers(
+    @Query('q') q?: string,
+    @Query('limit') limit?: string,
+    @Query('offset') offset?: string
+  ) {
+    return await this.marketplaceService.searchResearchMcpServers({
+      q,
+      limit: Number(limit),
+      offset: Number(offset),
+    });
+  }
+
   @Post('research/crawl/run')
   async triggerResearchCrawl(
     @Body()

@@ -33,6 +33,17 @@ type MarketplaceResearchSkillCounts = {
   files: number;
 };
 
+type MarketplaceResearchSkillMarketplaceCounts = {
+  entries: number;
+};
+
+type MarketplaceResearchMcpCounts = {
+  categories: number;
+  sources: number;
+  links: number;
+  servers: number;
+};
+
 type MarketplaceResearchPromptRow = {
   id: number;
   sourceId: number;
@@ -74,6 +85,40 @@ type MarketplaceResearchSkillFileRow = {
   content: string;
   license: string | null;
   tags: string | null;
+  createdAt: string | null;
+};
+
+type MarketplaceResearchSkillMarketplaceEntryRow = {
+  id: number;
+  source: string;
+  entryUrl: string;
+  title: string | null;
+  brief: string | null;
+  tags: string | null;
+  discoveredAt: string | null;
+};
+
+type MarketplaceResearchMcpSourceRow = {
+  categoryId: number;
+  categoryName: string;
+  sourceId: number;
+  sourceName: string;
+  sourceUrl: string;
+  sourceBrief: string | null;
+};
+
+type MarketplaceResearchMcpServerRow = {
+  id: number;
+  sourceId: number | null;
+  serverName: string;
+  serverUrl: string | null;
+  repoUrl: string | null;
+  description: string | null;
+  tags: string | null;
+  maintainer: string | null;
+  stars: number | null;
+  license: string | null;
+  transport: string | null;
   createdAt: string | null;
 };
 
@@ -840,6 +885,327 @@ export class MarketplaceService implements OnModuleInit, OnModuleDestroy {
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       return { ...empty, error: `Research skill file search unavailable: ${message}` };
+    }
+  }
+
+  async getResearchSkillMarketplaceCounts(): Promise<{
+    available: boolean;
+    counts: MarketplaceResearchSkillMarketplaceCounts;
+    error?: string;
+  }> {
+    const empty: MarketplaceResearchSkillMarketplaceCounts = {
+      entries: 0,
+    };
+
+    await this.ensureInitialized();
+    if (!this.dbEnabled || !this.dbClient) {
+      return { available: false, counts: empty, error: 'Marketplace DB unavailable' };
+    }
+
+    try {
+      const [entries] = await this
+        .dbClient`SELECT COUNT(*)::int AS n FROM ai_assets_marketplace.skill_marketplace_entries`;
+      return {
+        available: true,
+        counts: {
+          entries: Number(entries?.n || 0),
+        },
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      return {
+        available: false,
+        counts: empty,
+        error: `Research skill marketplace tables unavailable: ${message}`,
+      };
+    }
+  }
+
+  async listResearchSkillMarketplaceEntries(input: {
+    q?: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<{
+    items: MarketplaceResearchSkillMarketplaceEntryRow[];
+    total: number;
+    available: boolean;
+    error?: string;
+  }> {
+    const empty = {
+      items: [] as MarketplaceResearchSkillMarketplaceEntryRow[],
+      total: 0,
+      available: false,
+    };
+    const q = this.sanitizeText(input.q || '', MAX_DESCRIPTION_LENGTH).toLowerCase();
+    const limit = this.normalizeLimit(input.limit);
+    const offset = this.normalizeOffset(input.offset);
+
+    await this.ensureInitialized();
+    if (!this.dbEnabled || !this.dbClient) {
+      return { ...empty, error: 'Marketplace DB unavailable' };
+    }
+
+    try {
+      const whereLike = `%${q}%`;
+      const whereClause = q
+        ? this.dbClient`
+            WHERE lower(coalesce(source, '')) LIKE ${whereLike}
+               OR lower(coalesce(title, '')) LIKE ${whereLike}
+               OR lower(coalesce(brief, '')) LIKE ${whereLike}
+               OR lower(coalesce(tags, '')) LIKE ${whereLike}
+               OR lower(coalesce(entry_url, '')) LIKE ${whereLike}
+          `
+        : this.dbClient``;
+
+      const totalRows = await this.dbClient`
+        SELECT COUNT(*)::int AS n
+        FROM ai_assets_marketplace.skill_marketplace_entries
+        ${whereClause}
+      `;
+
+      const rows = await this.dbClient<MarketplaceResearchSkillMarketplaceEntryRow[]>`
+        SELECT
+          id,
+          source,
+          entry_url AS "entryUrl",
+          title,
+          brief,
+          tags,
+          discovered_at AS "discoveredAt"
+        FROM ai_assets_marketplace.skill_marketplace_entries
+        ${whereClause}
+        ORDER BY id DESC
+        LIMIT ${limit}
+        OFFSET ${offset}
+      `;
+
+      return {
+        available: true,
+        items: this.extractRows(rows).map((row) => ({
+          id: Number(row.id),
+          source: String(row.source || ''),
+          entryUrl: String(row.entryUrl || ''),
+          title: row.title ?? null,
+          brief: row.brief ?? null,
+          tags: row.tags ?? null,
+          discoveredAt: row.discoveredAt ?? null,
+        })),
+        total: Number(this.extractRows(totalRows)[0]?.n || 0),
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      return { ...empty, error: `Skill marketplace listing unavailable: ${message}` };
+    }
+  }
+
+  async getResearchMcpCounts(): Promise<{
+    available: boolean;
+    counts: MarketplaceResearchMcpCounts;
+    error?: string;
+  }> {
+    const empty: MarketplaceResearchMcpCounts = {
+      categories: 0,
+      sources: 0,
+      links: 0,
+      servers: 0,
+    };
+
+    await this.ensureInitialized();
+    if (!this.dbEnabled || !this.dbClient) {
+      return { available: false, counts: empty, error: 'Marketplace DB unavailable' };
+    }
+
+    try {
+      const [categories] = await this
+        .dbClient`SELECT COUNT(*)::int AS n FROM ai_assets_marketplace.mcp_categories`;
+      const [sources] = await this
+        .dbClient`SELECT COUNT(*)::int AS n FROM ai_assets_marketplace.mcp_sources`;
+      const [links] = await this
+        .dbClient`SELECT COUNT(*)::int AS n FROM ai_assets_marketplace.mcp_links`;
+      const [servers] = await this
+        .dbClient`SELECT COUNT(*)::int AS n FROM ai_assets_marketplace.mcp_servers`;
+
+      return {
+        available: true,
+        counts: {
+          categories: Number(categories?.n || 0),
+          sources: Number(sources?.n || 0),
+          links: Number(links?.n || 0),
+          servers: Number(servers?.n || 0),
+        },
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      return {
+        available: false,
+        counts: empty,
+        error: `MCP research tables unavailable: ${message}`,
+      };
+    }
+  }
+
+  async getResearchMcpSources(input?: { limitPerCategory?: number }): Promise<{
+    available: boolean;
+    categories: Array<{
+      id: number;
+      name: string;
+      sources: Array<{
+        id: number;
+        name: string;
+        url: string;
+        brief: string | null;
+      }>;
+    }>;
+    error?: string;
+  }> {
+    type ResearchMcpSourceCategory = {
+      id: number;
+      name: string;
+      sources: Array<{ id: number; name: string; url: string; brief: string | null }>;
+    };
+    const empty = { available: false, categories: [] as ResearchMcpSourceCategory[] };
+    const limitPerCategory = Math.max(1, Math.min(Number(input?.limitPerCategory) || 8, 30));
+
+    await this.ensureInitialized();
+    if (!this.dbEnabled || !this.dbClient) {
+      return { ...empty, error: 'Marketplace DB unavailable' };
+    }
+
+    try {
+      const rows = await this.dbClient<MarketplaceResearchMcpSourceRow[]>`
+        WITH ranked AS (
+          SELECT
+            c.id AS "categoryId",
+            c.name AS "categoryName",
+            s.id AS "sourceId",
+            s.name AS "sourceName",
+            s.url AS "sourceUrl",
+            s.brief AS "sourceBrief",
+            ROW_NUMBER() OVER (
+              PARTITION BY c.id
+              ORDER BY s.updated_at DESC NULLS LAST, s.created_at DESC NULLS LAST, s.id DESC
+            ) AS rn
+          FROM ai_assets_marketplace.mcp_categories c
+          JOIN ai_assets_marketplace.mcp_sources s ON s.category_id = c.id
+        )
+        SELECT
+          "categoryId",
+          "categoryName",
+          "sourceId",
+          "sourceName",
+          "sourceUrl",
+          "sourceBrief"
+        FROM ranked
+        WHERE rn <= ${limitPerCategory}
+        ORDER BY "categoryName" ASC, "sourceName" ASC
+      `;
+
+      const grouped = new Map<number, ResearchMcpSourceCategory>();
+      this.extractRows(rows).forEach((row) => {
+        const categoryId = Number(row.categoryId);
+        if (!grouped.has(categoryId)) {
+          grouped.set(categoryId, {
+            id: categoryId,
+            name: String(row.categoryName),
+            sources: [],
+          });
+        }
+        grouped.get(categoryId)!.sources.push({
+          id: Number(row.sourceId),
+          name: String(row.sourceName || ''),
+          url: String(row.sourceUrl || ''),
+          brief: row.sourceBrief ?? null,
+        });
+      });
+
+      return { available: true, categories: Array.from(grouped.values()) };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      return { ...empty, error: `MCP source listing unavailable: ${message}` };
+    }
+  }
+
+  async searchResearchMcpServers(input: { q?: string; limit?: number; offset?: number }): Promise<{
+    items: MarketplaceResearchMcpServerRow[];
+    total: number;
+    available: boolean;
+    error?: string;
+  }> {
+    const empty = {
+      items: [] as MarketplaceResearchMcpServerRow[],
+      total: 0,
+      available: false,
+    };
+    const q = this.sanitizeText(input.q || '', MAX_DESCRIPTION_LENGTH).toLowerCase();
+    const limit = this.normalizeLimit(input.limit);
+    const offset = this.normalizeOffset(input.offset);
+
+    await this.ensureInitialized();
+    if (!this.dbEnabled || !this.dbClient) {
+      return { ...empty, error: 'Marketplace DB unavailable' };
+    }
+
+    try {
+      const whereLike = `%${q}%`;
+      const whereClause = q
+        ? this.dbClient`
+            WHERE lower(coalesce(server_name, '')) LIKE ${whereLike}
+               OR lower(coalesce(description, '')) LIKE ${whereLike}
+               OR lower(coalesce(tags, '')) LIKE ${whereLike}
+               OR lower(coalesce(maintainer, '')) LIKE ${whereLike}
+               OR lower(coalesce(server_url, '')) LIKE ${whereLike}
+               OR lower(coalesce(repo_url, '')) LIKE ${whereLike}
+          `
+        : this.dbClient``;
+
+      const totalRows = await this.dbClient`
+        SELECT COUNT(*)::int AS n
+        FROM ai_assets_marketplace.mcp_servers
+        ${whereClause}
+      `;
+
+      const rows = await this.dbClient<MarketplaceResearchMcpServerRow[]>`
+        SELECT
+          id,
+          source_id AS "sourceId",
+          server_name AS "serverName",
+          server_url AS "serverUrl",
+          repo_url AS "repoUrl",
+          description,
+          tags,
+          maintainer,
+          stars,
+          license,
+          transport,
+          created_at AS "createdAt"
+        FROM ai_assets_marketplace.mcp_servers
+        ${whereClause}
+        ORDER BY id DESC
+        LIMIT ${limit}
+        OFFSET ${offset}
+      `;
+
+      return {
+        available: true,
+        items: this.extractRows(rows).map((row) => ({
+          id: Number(row.id),
+          sourceId: row.sourceId == null ? null : Number(row.sourceId),
+          serverName: String(row.serverName || ''),
+          serverUrl: row.serverUrl ?? null,
+          repoUrl: row.repoUrl ?? null,
+          description: row.description ?? null,
+          tags: row.tags ?? null,
+          maintainer: row.maintainer ?? null,
+          stars: row.stars == null ? null : Number(row.stars),
+          license: row.license ?? null,
+          transport: row.transport ?? null,
+          createdAt: row.createdAt ?? null,
+        })),
+        total: Number(this.extractRows(totalRows)[0]?.n || 0),
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      return { ...empty, error: `MCP server search unavailable: ${message}` };
     }
   }
 
