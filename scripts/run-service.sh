@@ -12,8 +12,11 @@ ls -la
 
 if [ "$SERVICE_PATH" = "frontend" ]; then
   echo "Starting frontend service..."
-  # Serve as SPA so deep links (/login, /auth/register, etc.) resolve to index.html.
-  exec npx --yes serve ./dist -l ${PORT:-3000} -s -n
+  # Host-aware static routing:
+  # - app.thenewfuse.com/ -> static landing (index.html)
+  # - marketplace.thenewfuse.com/ -> standalone marketplace app (app.html)
+  # - /login, /register, /dashboard, etc. -> app.html SPA fallback
+  exec node ./scripts/production-server.mjs
 else
   echo "Starting backend service: $SERVICE_PATH..."
 
