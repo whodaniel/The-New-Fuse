@@ -75,6 +75,55 @@ export interface MarketplaceResearchSourcesResponse {
   error?: string;
 }
 
+export interface MarketplaceResearchSkillCountsResponse {
+  available: boolean;
+  counts: {
+    categories: number;
+    sources: number;
+    sourceLinks: number;
+    files: number;
+  };
+  error?: string;
+}
+
+export interface MarketplaceResearchSkillSourcesResponse {
+  available: boolean;
+  categories: Array<{
+    id: number;
+    name: string;
+    sources: Array<{
+      id: number;
+      name: string;
+      url: string;
+      brief: string | null;
+    }>;
+  }>;
+  error?: string;
+}
+
+export interface MarketplaceResearchSkillFile {
+  id: number;
+  sourceId: number;
+  sourceName: string | null;
+  categoryName: string | null;
+  repoUrl: string | null;
+  fileUrl: string;
+  filePath: string | null;
+  title: string | null;
+  content: string;
+  snippet: string;
+  license: string | null;
+  tags: string | null;
+  createdAt: string | null;
+}
+
+export interface MarketplaceResearchSkillFilesResponse {
+  available: boolean;
+  items: MarketplaceResearchSkillFile[];
+  total: number;
+  error?: string;
+}
+
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 class MarketplaceService {
@@ -99,6 +148,30 @@ class MarketplaceService {
     const response = await axios.get(`${API_BASE}/marketplace/research/sources`, {
       params: { limitPerCategory },
     });
+    return response.data;
+  }
+
+  async getResearchSkillCounts(): Promise<MarketplaceResearchSkillCountsResponse> {
+    const response = await axios.get(`${API_BASE}/marketplace/research/skills/counts`);
+    return response.data;
+  }
+
+  async getResearchSkillSources(
+    limitPerCategory = 8
+  ): Promise<MarketplaceResearchSkillSourcesResponse> {
+    const response = await axios.get(`${API_BASE}/marketplace/research/skills/sources`, {
+      params: { limitPerCategory },
+    });
+    return response.data;
+  }
+
+  async searchResearchSkillFiles(params?: {
+    q?: string;
+    sourceId?: number;
+    limit?: number;
+    offset?: number;
+  }): Promise<MarketplaceResearchSkillFilesResponse> {
+    const response = await axios.get(`${API_BASE}/marketplace/research/skills/files`, { params });
     return response.data;
   }
 

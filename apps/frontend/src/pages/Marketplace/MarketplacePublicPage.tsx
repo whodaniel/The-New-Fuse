@@ -2,7 +2,11 @@ import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { ArrowUpRight, ExternalLink, Filter, Search, Sparkles } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import type { MarketplaceCatalogItem, MarketplaceKind } from '../../services/marketplace.service';
+import type {
+  MarketplaceCatalogItem,
+  MarketplaceKind,
+  MarketplaceResearchSkillFile,
+} from '../../services/marketplace.service';
 import { marketplaceService } from '../../services/marketplace.service';
 import './MarketplacePublicPage.css';
 
@@ -226,10 +230,27 @@ export default function MarketplacePublicPage() {
     queryFn: () => marketplaceService.getResearchSources(8),
     staleTime: 60_000,
   });
+  const { data: researchSkillCounts } = useQuery({
+    queryKey: ['marketplace-research-skill-counts'],
+    queryFn: () => marketplaceService.getResearchSkillCounts(),
+    staleTime: 60_000,
+  });
+  const { data: researchSkillFiles, isLoading: researchSkillFilesLoading } = useQuery({
+    queryKey: ['marketplace-research-skill-files'],
+    queryFn: () => marketplaceService.searchResearchSkillFiles({ limit: 12, offset: 0 }),
+    staleTime: 60_000,
+  });
 
   const items = data?.items && data.items.length > 0 ? data.items : FALLBACK_MARKETPLACE_ITEMS;
   const corpusCounts = researchCounts?.counts || RESEARCH_BASELINE;
+  const skillCounts = researchSkillCounts?.counts || {
+    categories: 0,
+    sources: 0,
+    sourceLinks: 0,
+    files: 0,
+  };
   const sourceGroups = researchSources?.categories || [];
+  const skillFileItems = researchSkillFiles?.items || [];
 
   const categories = useMemo(() => {
     const unique = new Set<string>();
@@ -309,6 +330,10 @@ export default function MarketplacePublicPage() {
     return `${AUTH_LOGIN_URL}?next=${encodeURIComponent('/marketplace?item=' + item.id)}`;
   };
 
+  const getSkillSnippet = (file: MarketplaceResearchSkillFile): string => {
+    return (file.snippet || file.content || '').replace(/\s+/g, ' ').trim().slice(0, 260);
+  };
+
   return (
     <div className="marketplace-public">
       <div className="mp-bg-grid" />
@@ -353,30 +378,96 @@ export default function MarketplacePublicPage() {
         >
           <div className="mp-status-top mp-status-top-solid">
             <span className="mp-dot" />
-            <span>Prior Research Corpus Integrated</span>
+            <span>Live research corpus integrated</span>
           </div>
           <div className="mp-stat-grid">
             <article>
               <h3>{corpusCounts.categories}</h3>
-              <p>major categories</p>
+              <p>prompt categories</p>
             </article>
             <article>
               <h3>{corpusCounts.sources}</h3>
-              <p>tracked sources</p>
+              <p>prompt sources</p>
             </article>
             <article>
               <h3>{corpusCounts.sourceLinks.toLocaleString()}</h3>
-              <p>collected links</p>
+              <p>prompt links</p>
             </article>
             <article>
               <h3>{corpusCounts.prompts.toLocaleString()}</h3>
               <p>prompt records</p>
             </article>
+            <article>
+              <h3>{skillCounts.sources.toLocaleString()}</h3>
+              <p>skill sources</p>
+            </article>
+            <article>
+              <h3>{skillCounts.files.toLocaleString()}</h3>
+              <p>skill files</p>
+            </article>
           </div>
           <p className="mp-status-note">
-            Live from TNF research corpus storage and ready for ongoing ingestion.
+            Live from TNF corpus storage with Crawl4AI ingestion and ongoing refresh support.
           </p>
         </motion.div>
+      </section>
+
+      <section className="mp-featured mp-catalog">
+        <div className="mp-section-title">
+          <h2>Live skill files</h2>
+          <span className="mp-result-count">
+            {researchSkillFiles?.total || 0} indexed skill files
+          </span>
+        </div>
+
+        <div className="mp-cards">
+          {skillFileItems.map((file, idx) => (
+            <motion.a
+              key={`${file.id}-${file.fileUrl}`}
+              href={file.fileUrl}
+              initial={{ opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={sectionDelay(idx)}
+              className="mp-item"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <div className="mp-item-top">
+                <span>{file.categoryName || 'Skill file'}</span>
+                <strong>{file.title || file.filePath || 'Open file'}</strong>
+              </div>
+              <h3>{file.sourceName || file.repoUrl || 'Source repository'}</h3>
+              <p>{getSkillSnippet(file) || 'Skill content preview unavailable.'}</p>
+              <div className="mp-item-tags">
+                {file.filePath && <span>{file.filePath}</span>}
+                {file.tags && <span>{file.tags}</span>}
+              </div>
+              <div className="mp-item-meta">
+                <span>{file.license || 'License: upstream repo'}</span>
+                <span>
+                  {file.createdAt ? new Date(file.createdAt).toLocaleDateString() : 'Unknown date'}
+                </span>
+              </div>
+              <div className="mp-item-cta">
+                <span>Open skill file</span>
+                <ArrowUpRight size={14} />
+              </div>
+            </motion.a>
+          ))}
+          {!researchSkillFilesLoading && skillFileItems.length === 0 && (
+            <div className="mp-item mp-item-empty">
+              <h3>Skill corpus unavailable</h3>
+              <p>Skill file data is not available yet in this environment.</p>
+            </div>
+          )}
+          {researchSkillFilesLoading && (
+            <div className="mp-item mp-item-empty">
+              <h3>Loading skill corpus...</h3>
+              <p>Fetching live skill files from TNF marketplace research APIs.</p>
+            </div>
+          )}
+        </div>
       </section>
 
       <section className="mp-featured mp-catalog">
