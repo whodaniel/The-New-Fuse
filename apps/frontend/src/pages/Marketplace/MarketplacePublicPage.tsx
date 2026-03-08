@@ -7,6 +7,8 @@ import { marketplaceService } from '../../services/marketplace.service';
 import './MarketplacePublicPage.css';
 
 const sectionDelay = (index: number) => ({ duration: 0.36, delay: 0.08 * index });
+const AUTH_LOGIN_URL = 'https://thenewfuse.com/auth/login';
+const AUTH_REGISTER_URL = 'https://thenewfuse.com/auth/register';
 
 const KIND_LABELS: Record<MarketplaceKind, string> = {
   agent: 'Complete Agents',
@@ -35,7 +37,7 @@ const FALLBACK_MARKETPLACE_ITEMS: MarketplaceCatalogItem[] = [
     pricePerRun: 0.18,
     status: 'online',
     publicationStatus: 'published',
-    launchUrl: '/auth/login',
+    launchUrl: AUTH_LOGIN_URL,
     createdBy: 'tnf-core',
     createdAt: '2026-03-01T00:00:00.000Z',
     updatedAt: '2026-03-07T00:00:00.000Z',
@@ -55,7 +57,7 @@ const FALLBACK_MARKETPLACE_ITEMS: MarketplaceCatalogItem[] = [
     pricePerRun: 0.03,
     status: 'online',
     publicationStatus: 'published',
-    launchUrl: '/auth/login',
+    launchUrl: AUTH_LOGIN_URL,
     createdBy: 'community',
     createdAt: '2026-03-01T00:00:00.000Z',
     updatedAt: '2026-03-07T00:00:00.000Z',
@@ -75,7 +77,7 @@ const FALLBACK_MARKETPLACE_ITEMS: MarketplaceCatalogItem[] = [
     pricePerRun: 0.05,
     status: 'online',
     publicationStatus: 'published',
-    launchUrl: '/auth/login',
+    launchUrl: AUTH_LOGIN_URL,
     createdBy: 'tnf-core',
     createdAt: '2026-03-01T00:00:00.000Z',
     updatedAt: '2026-03-07T00:00:00.000Z',
@@ -95,7 +97,7 @@ const FALLBACK_MARKETPLACE_ITEMS: MarketplaceCatalogItem[] = [
     pricePerRun: 0.01,
     status: 'online',
     publicationStatus: 'published',
-    launchUrl: '/auth/login',
+    launchUrl: AUTH_LOGIN_URL,
     createdBy: 'tnf-core',
     createdAt: '2026-03-01T00:00:00.000Z',
     updatedAt: '2026-03-07T00:00:00.000Z',
@@ -115,7 +117,7 @@ const FALLBACK_MARKETPLACE_ITEMS: MarketplaceCatalogItem[] = [
     pricePerRun: 0.04,
     status: 'online',
     publicationStatus: 'published',
-    launchUrl: '/auth/login',
+    launchUrl: AUTH_LOGIN_URL,
     createdBy: 'community',
     createdAt: '2026-03-01T00:00:00.000Z',
     updatedAt: '2026-03-07T00:00:00.000Z',
@@ -135,7 +137,7 @@ const FALLBACK_MARKETPLACE_ITEMS: MarketplaceCatalogItem[] = [
     pricePerRun: 0.12,
     status: 'online',
     publicationStatus: 'published',
-    launchUrl: '/auth/login',
+    launchUrl: AUTH_LOGIN_URL,
     createdBy: 'tnf-marketplace',
     createdAt: '2026-03-01T00:00:00.000Z',
     updatedAt: '2026-03-07T00:00:00.000Z',
@@ -155,7 +157,7 @@ const FALLBACK_MARKETPLACE_ITEMS: MarketplaceCatalogItem[] = [
     pricePerRun: 0.22,
     status: 'online',
     publicationStatus: 'published',
-    launchUrl: '/auth/login',
+    launchUrl: AUTH_LOGIN_URL,
     createdBy: 'tnf-academy',
     createdAt: '2026-03-01T00:00:00.000Z',
     updatedAt: '2026-03-07T00:00:00.000Z',
@@ -175,7 +177,7 @@ const FALLBACK_MARKETPLACE_ITEMS: MarketplaceCatalogItem[] = [
     pricePerRun: 0.06,
     status: 'online',
     publicationStatus: 'published',
-    launchUrl: '/auth/login',
+    launchUrl: AUTH_LOGIN_URL,
     createdBy: 'tnf-core',
     createdAt: '2026-03-01T00:00:00.000Z',
     updatedAt: '2026-03-07T00:00:00.000Z',
@@ -313,7 +315,7 @@ export default function MarketplacePublicPage() {
     if (item.launchUrl && item.launchUrl.trim().length > 0) {
       return item.launchUrl;
     }
-    return `/auth/login?next=${encodeURIComponent('/marketplace?item=' + item.id)}`;
+    return `${AUTH_LOGIN_URL}?next=${encodeURIComponent('/marketplace?item=' + item.id)}`;
   };
 
   return (
@@ -343,10 +345,10 @@ export default function MarketplacePublicPage() {
             </p>
           )}
           <div className="mp-cta-row">
-            <a href="/auth/login" className="mp-btn mp-btn-primary">
+            <a href={AUTH_LOGIN_URL} className="mp-btn mp-btn-primary">
               Sign in to TNF
             </a>
-            <a href="/auth/register" className="mp-btn mp-btn-ghost">
+            <a href={AUTH_REGISTER_URL} className="mp-btn mp-btn-ghost">
               Create account
             </a>
           </div>
