@@ -849,7 +849,7 @@
     "zod-to-json-schema": "^3.25.1"
   },
   "optionalDependencies": {
-    "electron": "^28.0.0"
+    "electron": "^35.7.5"
   },
   "directories": {
     "doc": "docs"
