@@ -270,7 +270,7 @@ urllib3==2.6.3
 wheel==0.46.2
 uvicorn==0.31.1
 uvloop==0.20.0
-virtualenv==20.26.6
+virtualenv==20.36.1
 watchfiles==0.24.0
 wcwidth==0.2.13
 WebOb==1.8.9
