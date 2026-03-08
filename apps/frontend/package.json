@@ -53,6 +53,7 @@
     "@the-new-fuse/a2a-react": "workspace:*",
     "@the-new-fuse/feature-suggestions": "workspace:*",
     "@the-new-fuse/features": "workspace:*",
+    "@the-new-fuse/nexus-orchestrator": "workspace:*",
     "@the-new-fuse/port-management": "workspace:*",
     "@the-new-fuse/prompt-templating": "workspace:*",
     "@the-new-fuse/types": "workspace:*",

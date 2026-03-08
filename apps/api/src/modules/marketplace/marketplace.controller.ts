@@ -7,7 +7,10 @@ import {
   Param,
   Post,
   Query,
+  Req,
 } from '@nestjs/common';
+import type { Request } from 'express';
+import { MemberOrAdmin } from '../../guards/member-or-admin.guard';
 import { AdminOnly } from '../../guards/secure-auth.guard';
 import { MarketplaceService } from './marketplace.service';
 import {
@@ -16,6 +19,13 @@ import {
   MarketplaceExperienceSubmissionInput,
   MarketplacePublicationStatus,
 } from './marketplace.types';
+
+type MarketplacePrincipal = {
+  id?: string;
+  email?: string;
+  role?: string;
+  roles?: string[];
+};
 
 @Controller('marketplace')
 export class MarketplaceController {
@@ -136,6 +146,7 @@ export class MarketplaceController {
   }
 
   @Post('research/crawl/run')
+  @AdminOnly()
   async triggerResearchCrawl(
     @Body()
     body: {
@@ -147,29 +158,35 @@ export class MarketplaceController {
   }
 
   @Get('research/crawl/runs')
+  @AdminOnly()
   async listResearchCrawlRuns(@Query('limit') limit?: string) {
     return await this.marketplaceService.listResearchCrawlRuns(Number(limit) || 20);
   }
 
   @Get('research/crawl/runs/:id')
+  @AdminOnly()
   async getResearchCrawlRun(@Param('id') id: string) {
     return await this.marketplaceService.getResearchCrawlRun(id);
   }
 
   @Post('experiences/submit')
+  @MemberOrAdmin()
   submitExperience(
     @Body()
-    body: MarketplaceExperienceSubmissionInput
+    body: MarketplaceExperienceSubmissionInput,
+    @Req() req: Request & { user?: MarketplacePrincipal }
   ) {
-    return this.marketplaceService.submitExperience(body);
+    return this.submitForMemberOrAdmin(body, req, 'experience');
   }
 
   @Post('catalog/submit')
+  @MemberOrAdmin()
   submitCatalogItem(
     @Body()
-    body: MarketplaceCatalogSubmissionInput
+    body: MarketplaceCatalogSubmissionInput,
+    @Req() req: Request & { user?: MarketplacePrincipal }
   ) {
-    return this.marketplaceService.submitCatalogItem(body);
+    return this.submitForMemberOrAdmin(body, req, 'catalog');
   }
 
   @Post('catalog/:id/publication-status')
@@ -202,5 +219,30 @@ export class MarketplaceController {
       }
       throw new BadRequestException((error as Error).message);
     }
+  }
+
+  private async submitForMemberOrAdmin(
+    body: MarketplaceExperienceSubmissionInput | MarketplaceCatalogSubmissionInput,
+    req: Request & { user?: MarketplacePrincipal },
+    kind: 'experience' | 'catalog'
+  ) {
+    const principal: MarketplacePrincipal = req.user || {};
+    const userId = principal.id;
+    if (!userId) {
+      throw new BadRequestException('Authenticated user is required');
+    }
+
+    const createdBy = principal.email || userId;
+    if (kind === 'experience') {
+      return this.marketplaceService.submitExperience({
+        ...(body as MarketplaceExperienceSubmissionInput),
+        createdBy,
+      });
+    }
+
+    return this.marketplaceService.submitCatalogItem({
+      ...(body as MarketplaceCatalogSubmissionInput),
+      createdBy,
+    });
   }
 }

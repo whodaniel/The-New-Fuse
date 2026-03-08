@@ -2,6 +2,7 @@ export type AuthorizationLevel = 'public' | 'user' | 'admin' | 'system';
 
 export type AuthPrincipal = {
   id?: string;
+  email?: string | null;
   role?: string | null;
   roles?: unknown;
   permissions?: unknown;
@@ -26,6 +27,7 @@ const SYSTEM_PERMISSION = 'system:access';
 const HANDOFF_PUBLISH_PERMISSION = 'handoff:publish';
 const HANDOFF_READ_ANY_PERMISSION = 'handoff:read:any';
 const HANDOFF_ACK_ANY_PERMISSION = 'handoff:ack:any';
+const DEFAULT_MASTER_SUPER_ADMIN_EMAIL = 'owner@example.com';
 
 const INVITE_ONLY_KEYS = [
   'AUTH_INVITE_ONLY',
@@ -157,7 +159,29 @@ function normalizedRoleSet(principal: AuthPrincipal): Set<string> {
       roleSet.add(normalized);
     }
   }
+  if (isMasterSuperAdminEmail(principal.email)) {
+    roleSet.add(ROLE_SUPER_ADMIN);
+    roleSet.add(ROLE_ADMIN);
+    roleSet.add(ROLE_SYSTEM);
+  }
   return roleSet;
+}
+
+function masterSuperAdminEmails(): string[] {
+  return (process.env.MASTER_SUPER_ADMIN_EMAILS || DEFAULT_MASTER_SUPER_ADMIN_EMAIL)
+    .split(',')
+    .map((email) => email.trim().toLowerCase())
+    .filter((email) => email.length > 0);
+}
+
+export function isMasterSuperAdminEmail(email: string | null | undefined): boolean {
+  const normalizedEmail = String(email || '')
+    .trim()
+    .toLowerCase();
+  if (!normalizedEmail) {
+    return false;
+  }
+  return masterSuperAdminEmails().includes(normalizedEmail);
 }
 
 function normalizedPermissionSet(principal: AuthPrincipal): Set<string> {

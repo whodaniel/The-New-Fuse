@@ -2,7 +2,17 @@
  * Drizzle ORM Schema - User Management & Authentication
  */
 import { relations } from 'drizzle-orm';
-import { boolean, jsonb, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
+import {
+  boolean,
+  integer,
+  jsonb,
+  pgEnum,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+  varchar,
+} from 'drizzle-orm/pg-core';
 import { userRoleEnum } from './enums';
 
 // =============================================================================
@@ -28,6 +38,24 @@ export const users = pgTable('users', {
   verificationToken: varchar('verification_token', { length: 255 }),
   verificationExpires: timestamp('verification_expires'),
   walletAddress: varchar('wallet_address', { length: 255 }).unique(),
+});
+
+export const inviteCodeStatusEnum = pgEnum('InviteCodeStatus', ['ACTIVE', 'DISABLED']);
+
+export const registrationInviteCodes = pgTable('registration_invite_codes', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  code: varchar('code', { length: 128 }).unique().notNull(),
+  label: varchar('label', { length: 255 }),
+  federationId: varchar('federation_id', { length: 255 }),
+  status: inviteCodeStatusEnum('status').notNull().default('ACTIVE'),
+  maxUses: integer('max_uses').default(1).notNull(),
+  usedCount: integer('used_count').default(0).notNull(),
+  expiresAt: timestamp('expires_at'),
+  lastUsedAt: timestamp('last_used_at'),
+  createdByUserId: uuid('created_by_user_id').references(() => users.id, { onDelete: 'set null' }),
+  metadata: jsonb('metadata'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
 // =============================================================================
@@ -80,6 +108,14 @@ export const usersRelations = relations(users, ({ many }) => ({
   authSessions: many(authSessions),
   loginAttempts: many(loginAttempts),
   authEvents: many(authEvents),
+  createdInviteCodes: many(registrationInviteCodes),
+}));
+
+export const registrationInviteCodesRelations = relations(registrationInviteCodes, ({ one }) => ({
+  createdBy: one(users, {
+    fields: [registrationInviteCodes.createdByUserId],
+    references: [users.id],
+  }),
 }));
 
 export const authSessionsRelations = relations(authSessions, ({ one }) => ({

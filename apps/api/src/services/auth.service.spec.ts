@@ -4,14 +4,21 @@ import { AuthService } from './auth.service';
 
 describe('AuthService', () => {
   const createService = () => {
-    const db = { users: {} } as any;
+    const db = {
+      users: {},
+      client: {
+        execute: jest.fn(),
+      },
+    } as any;
     const jwtService = {
       signAsync: jest.fn().mockResolvedValue('signed-token'),
     } as any;
     const configService = {
-      get: jest.fn((key: string) =>
-        key === 'JWT_REFRESH_SECRET' ? 'refresh-secret' : 'access-secret'
-      ),
+      get: jest.fn((key: string) => {
+        if (key === 'JWT_REFRESH_SECRET') return 'refresh-secret';
+        if (key === 'JWT_SECRET') return 'access-secret';
+        return undefined;
+      }),
     } as any;
 
     const service = new AuthService(db, jwtService, configService);
@@ -74,6 +81,27 @@ describe('AuthService', () => {
     );
   });
 
+  it('elevates configured master super admin email to SUPER_ADMIN claims', async () => {
+    const { service, jwtService } = createService();
+
+    await (service as any).generateTokens({
+      id: 'u-master',
+      email: 'owner@example.com',
+      username: 'bizsynth',
+      name: 'Master',
+      role: 'USER',
+      roles: ['USER'],
+      emailVerified: true,
+      isActive: true,
+    });
+
+    const payload = jwtService.signAsync.mock.calls[0][0];
+    expect(payload.roles).toEqual(
+      expect.arrayContaining(['SUPER_ADMIN', 'super_admin', 'admin', 'system'])
+    );
+    expect(payload.permissions).toEqual(expect.arrayContaining(['system:access', 'admin:access']));
+  });
+
   it('preserves explicit user permissions while avoiding admin grants for regular users', async () => {
     const { service, jwtService } = createService();
 
@@ -124,5 +152,40 @@ describe('AuthService', () => {
       } as any)
     ).rejects.toThrow('Valid invitation code is required');
     expect(db.users.findByEmail).not.toHaveBeenCalled();
+  });
+
+  it('accepts a DB-backed invite code when invite-only is enabled', async () => {
+    const db = {
+      users: {},
+      client: {
+        execute: jest.fn().mockResolvedValue([
+          {
+            id: 'inv-1',
+            code: 'TNF-CORE-AB12CD',
+            status: 'ACTIVE',
+            used_count: 0,
+            max_uses: 1,
+            expires_at: null,
+            federation_id: 'FED-42',
+          },
+        ]),
+      },
+    } as any;
+    const jwtService = { signAsync: jest.fn().mockResolvedValue('signed-token') } as any;
+    const configService = {
+      get: jest.fn((key: string) => {
+        if (key === 'AUTH_INVITE_ONLY') return 'true';
+        return 'access-secret';
+      }),
+    } as any;
+    const service = new AuthService(db, jwtService, configService);
+
+    const validated = await (service as any).verifyInviteCodeIfEnabled('TNF-CORE-AB12CD');
+    expect(validated).toMatchObject({
+      code: 'TNF-CORE-AB12CD',
+      source: 'db',
+      inviteId: 'inv-1',
+      federationId: 'FED-42',
+    });
   });
 });

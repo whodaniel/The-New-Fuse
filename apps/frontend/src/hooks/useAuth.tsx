@@ -23,6 +23,7 @@ type AuthPayload = {
 
 type AuthSubmitOptions = {
   cfTurnstileToken?: string;
+  inviteCode?: string;
 };
 
 const unwrapPayload = (payload: any): AuthPayload => {
@@ -92,6 +93,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const apiBaseUrl = sanitizeApiBaseUrl(import.meta.env.VITE_API_URL || '');
   const gatewayBaseUrl = sanitizeApiBaseUrl(import.meta.env.VITE_API_GATEWAY_URL || '');
   const gatewayPrefix = import.meta.env.PROD ? '/v1' : '/api';
+
+  const inviteOnlyMode = ['1', 'true', 'yes', 'on', 'enabled'].includes(
+    String(import.meta.env.VITE_AUTH_INVITE_ONLY || '')
+      .trim()
+      .toLowerCase()
+  );
 
   const authEndpoints = useMemo(
     () => ({
@@ -353,9 +360,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               name,
               email,
               password,
+              inviteCode: _options?.inviteCode,
               cfTurnstileToken: _options?.cfTurnstileToken,
             },
             'register'
+          );
+        }
+
+        if (inviteOnlyMode) {
+          return await exchangeApiAuth(
+            authEndpoints.register,
+            {
+              name,
+              email,
+              password,
+              inviteCode: _options?.inviteCode,
+              cfTurnstileToken: _options?.cfTurnstileToken,
+            },
+            'register_invite_only'
           );
         }
 
@@ -377,6 +399,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 name,
                 email,
                 password,
+                inviteCode: _options?.inviteCode,
                 cfTurnstileToken: _options?.cfTurnstileToken,
               },
               'register_fallback'
@@ -402,7 +425,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(false);
       }
     },
-    [authEndpoints.register, exchangeApiAuth, exchangeSupabaseToken]
+    [authEndpoints.register, exchangeApiAuth, exchangeSupabaseToken, inviteOnlyMode]
   );
 
   const signInWithGoogle = useCallback(async () => {

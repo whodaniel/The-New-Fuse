@@ -1,5 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Request } from 'express';
 
 @Injectable()
 export class CommunityApiKeyGuard implements CanActivate {
@@ -12,8 +13,7 @@ export class CommunityApiKeyGuard implements CanActivate {
       throw new UnauthorizedException('Community API key is not configured');
     }
 
-    const provided =
-      request.headers['x-community-api-key'] || request.headers['X-Community-Api-Key'] || '';
+    const provided = request.get('x-community-api-key') || '';
     const normalized = Array.isArray(provided) ? provided[0] : provided;
     if (!normalized || normalized.trim() !== expected) {
       throw new UnauthorizedException('Invalid Community API key');

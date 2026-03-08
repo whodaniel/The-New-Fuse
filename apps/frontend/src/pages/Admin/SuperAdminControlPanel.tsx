@@ -97,7 +97,7 @@ const itemVariants: Variants = {
 };
 
 export default function SuperAdminControlPanel() {
-  const { isSuperAdmin, userRole } = useAuthorization();
+  const { isSuperAdmin, isBizSynthMasterAdmin, userRole } = useAuthorization();
 
   // Relay URLs
   const relayHttpBase = useMemo(
@@ -687,6 +687,19 @@ export default function SuperAdminControlPanel() {
             />
             Sync Mesh
           </PremiumButton>
+
+          {isBizSynthMasterAdmin && (
+            <Link to="/nexus" target="_blank">
+              <PremiumButton
+                variant="primary"
+                size="sm"
+                className="bg-indigo-600 hover:bg-indigo-500 shadow-[0_0_20px_rgba(79,70,229,0.4)]"
+              >
+                <Search className="w-4 h-4 mr-2" />
+                Launch Nexus 3D
+              </PremiumButton>
+            </Link>
+          )}
         </div>
       </motion.header>
 

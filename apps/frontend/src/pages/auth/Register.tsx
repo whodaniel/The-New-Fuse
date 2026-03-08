@@ -17,8 +17,12 @@ const Register: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [inviteCode, setInviteCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [inviteOnly, setInviteOnly] = useState(
+    isTruthy(import.meta.env.VITE_AUTH_INVITE_ONLY || '')
+  );
   const [cfTurnstileToken, setCfTurnstileToken] = useState<string | null>(null);
 
   const turnstileSiteKey = (import.meta.env.VITE_TURNSTILE_SITE_KEY || '').trim();
@@ -30,12 +34,36 @@ const Register: React.FC = () => {
     }
   }, [isAuthenticated, isAuthLoading, navigate]);
 
+  useEffect(() => {
+    let ignore = false;
+    const checkInvitePolicy = async () => {
+      try {
+        const res = await fetch('/api/auth/invite-policy');
+        if (!res.ok) return;
+        const payload = await res.json();
+        if (!ignore && typeof payload?.inviteOnly === 'boolean') {
+          setInviteOnly(payload.inviteOnly);
+        }
+      } catch {
+        // Keep env fallback value.
+      }
+    };
+    checkInvitePolicy();
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
 
     if (password !== confirmPassword) {
       setError('Passwords do not match');
+      return;
+    }
+    if (inviteOnly && !inviteCode.trim()) {
+      setError('Invite code is required for registration');
       return;
     }
 
@@ -46,6 +74,7 @@ const Register: React.FC = () => {
       }
 
       const result = await register(name, email, password, {
+        inviteCode: inviteCode.trim() || undefined,
         cfTurnstileToken: cfTurnstileToken || undefined,
       });
 
@@ -119,6 +148,23 @@ const Register: React.FC = () => {
               placeholder="you@example.com"
             />
           </div>
+
+          {inviteOnly && (
+            <div>
+              <label htmlFor="inviteCode" className="block text-sm text-slate-300">
+                Invite code
+              </label>
+              <input
+                id="inviteCode"
+                type="text"
+                required
+                value={inviteCode}
+                onChange={(e) => setInviteCode(e.target.value)}
+                className="mt-1 w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+                placeholder="TNF-XXXX-XXXX"
+              />
+            </div>
+          )}
 
           <div>
             <label htmlFor="password" className="block text-sm text-slate-300">

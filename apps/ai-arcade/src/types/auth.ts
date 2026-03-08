@@ -3,6 +3,12 @@ export interface User {
   email: string;
   username: string;
   tokens: number;
+  role?: string;
+  roles?: string[];
+  membershipStatus?: string;
+  subscriptionTier?: string;
+  federationId?: string;
+  identityId?: string;
   subscriptions: Subscription[];
   createdAt: string;
 }

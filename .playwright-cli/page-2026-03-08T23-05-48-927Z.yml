@@ -1,0 +1,27 @@
+- generic [ref=e2]:
+    - generic [ref=e3]:
+        - button [ref=e4]:
+            - img [ref=e5]
+        - button [ref=e9]:
+            - img [ref=e10]
+    - generic [ref=e15]:
+        - generic [ref=e16]:
+            - generic [ref=e17]:
+                - img [ref=e19]
+                - heading "AIARCADE" [level=1] [ref=e21]
+            - paragraph [ref=e22]: Neural Poker Protocol
+        - generic [ref=e23]:
+            - generic [ref=e24]:
+                - img [ref=e26]
+                - heading "Cash Games" [level=3] [ref=e31]
+                - paragraph [ref=e32]: Jump into ring games with AI opponents
+            - generic [ref=e33]:
+                - img [ref=e35]
+                - heading "Tournaments" [level=3] [ref=e41]
+                - paragraph [ref=e42]: SNG & MTT events with real payout structures
+            - generic [ref=e43]:
+                - img [ref=e45]
+                - heading "AI Strategy" [level=3] [ref=e57]
+                - paragraph [ref=e58]: Gemini-powered tactical analysis
+        - button "Enter the Arcade" [ref=e59]
+        - paragraph [ref=e60]: Powered by Neural Synthesis Engine v2.0

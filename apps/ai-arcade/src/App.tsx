@@ -11,6 +11,13 @@ import UserProfile from './components/UserProfile';
 import { config } from './config';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { formatTokenAmount, useMerkabaContract } from './hooks/useMerkabaContract';
+import {
+  canAccessGenesisProtocol,
+  canOpenAdminConsole,
+  canSubmitArcadeApps,
+  canViewInternalEconomics,
+  deriveAccessContext,
+} from './security/accessPolicy';
 import { ArcadeService } from './services/ArcadeService';
 
 import type { AgentListing } from './services/ArcadeService';
@@ -171,6 +178,11 @@ function AppContent() {
     setSelectedAgent(agent);
   };
 
+  const access = deriveAccessContext(user);
+  const showInternalEconomics = canViewInternalEconomics(access);
+  const canUseAdmin = canOpenAdminConsole(access);
+  const canSubmitApps = canSubmitArcadeApps(access);
+
   const categories = [
     { id: 'all', label: 'All' },
     { id: 'games', label: 'Games' },
@@ -180,7 +192,7 @@ function AppContent() {
     { id: 'social-toys', label: 'Social Toys' },
     { id: 'pooltogether', label: 'Pool Variations' },
     { id: 'community', label: 'Community' },
-    { id: 'lab', label: 'Lab' },
+    ...(showInternalEconomics ? [{ id: 'lab', label: 'Lab' }] : []),
   ];
 
   const types = [
@@ -189,9 +201,6 @@ function AppContent() {
     { id: 'SOCIAL', label: 'Social' },
     { id: 'CONTENT', label: 'Content' },
   ];
-
-  // Check if user is admin (mock - in production this would check actual roles)
-  const isAdmin = user?.email?.includes('admin') || user?.username?.includes('admin');
 
   return (
     <div className="arcade-container">
@@ -206,7 +215,7 @@ function AppContent() {
                 <span className="token-icon">🪙</span>
                 <span>{user.tokens.toLocaleString()}</span>
               </div>
-              {isAdmin && (
+              {canUseAdmin && (
                 <button
                   className="admin-button"
                   onClick={() => setShowAdmin(true)}
@@ -236,6 +245,11 @@ function AppContent() {
             A retro-future arcade for games, micro-apps, and playful experiments. Jump in, explore
             creator worlds, and power up with tokens.
           </p>
+          {!canSubmitApps ? (
+            <p className="description text-sm">
+              App submission is members-only. Upgrade membership to publish in AI-ARCADE.
+            </p>
+          ) : null}
 
           <div className="hero-actions">
             <button
@@ -253,12 +267,14 @@ function AppContent() {
             <button className="cta-button cta-token" onClick={() => setShowLogin(true)}>
               Buy Tokens
             </button>
-            <button
-              className="cta-button cta-lab"
-              onClick={() => labRef.current?.scrollIntoView({ behavior: 'smooth' })}
-            >
-              Open Merkaba Lab
-            </button>
+            {showInternalEconomics ? (
+              <button
+                className="cta-button cta-lab"
+                onClick={() => labRef.current?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                Open Merkaba Lab
+              </button>
+            ) : null}
             <button
               className="cta-button cta-secondary"
               onClick={() =>
@@ -356,20 +372,24 @@ function AppContent() {
           )}
         </section>
 
-        {/* Merkaba Treasury Monitor - persistent ticker */}
-        <section className="merkaba-monitor-section">
-          <MerkabaMonitor
-            sunBalance={Math.round(sunBalance)}
-            earthBalance={Math.round(earthBalance)}
-            rebalanceActive={rebalanceActive}
-            isLive={isLive}
-            tokenSymbol={isLive && chainState ? chainState.tokenSymbol : undefined}
-          />
-        </section>
+        {showInternalEconomics ? (
+          <>
+            {/* Internal economics visibility: admin and AI-agent strata only */}
+            <section className="merkaba-monitor-section">
+              <MerkabaMonitor
+                sunBalance={Math.round(sunBalance)}
+                earthBalance={Math.round(earthBalance)}
+                rebalanceActive={rebalanceActive}
+                isLive={isLive}
+                tokenSymbol={isLive && chainState ? chainState.tokenSymbol : undefined}
+              />
+            </section>
 
-        <section ref={labRef}>
-          <MerkabaLab />
-        </section>
+            <section ref={labRef}>
+              <MerkabaLab />
+            </section>
+          </>
+        ) : null}
       </main>
 
       {launchNotice ? <div className="launch-notice">{launchNotice}</div> : null}
@@ -391,7 +411,7 @@ function AppContent() {
 
       {showProfile && <UserProfile onClose={() => setShowProfile(false)} />}
 
-      {showAdmin && (
+      {canUseAdmin && showAdmin && (
         <Suspense fallback={<div className="launch-notice">Loading admin console...</div>}>
           <AdminDashboard onClose={() => setShowAdmin(false)} />
         </Suspense>
@@ -406,18 +426,29 @@ function AppContent() {
 
 function App() {
   const [currentView, setCurrentView] = useState<'arcade' | 'genesis'>('arcade');
+  const { user } = useAuth();
+  const access = deriveAccessContext(user);
+  const canUseGenesis = canAccessGenesisProtocol(access);
+
+  useEffect(() => {
+    if (!canUseGenesis && currentView === 'genesis') {
+      setCurrentView('arcade');
+    }
+  }, [canUseGenesis, currentView]);
 
   return (
-    <AuthProvider>
+    <>
       {currentView === 'arcade' ? (
         <>
           <div className="view-toggle-wrap">
-            <button
-              className="view-toggle-btn view-toggle-genesis"
-              onClick={() => setCurrentView('genesis')}
-            >
-              ENTER GENESIS PROTOCOL
-            </button>
+            {canUseGenesis ? (
+              <button
+                className="view-toggle-btn view-toggle-genesis"
+                onClick={() => setCurrentView('genesis')}
+              >
+                ENTER GENESIS PROTOCOL
+              </button>
+            ) : null}
           </div>
           <AppContent />
         </>
@@ -436,8 +467,16 @@ function App() {
           </Suspense>
         </>
       )}
+    </>
+  );
+}
+
+function AppWithAuth() {
+  return (
+    <AuthProvider>
+      <App />
     </AuthProvider>
   );
 }
 
-export default App;
+export default AppWithAuth;

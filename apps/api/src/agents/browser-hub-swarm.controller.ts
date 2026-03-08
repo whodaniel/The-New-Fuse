@@ -9,7 +9,7 @@ import { AuthLevel, RequireAuthLevel } from '../guards/secure-auth.guard';
 import { BrowserHubSwarmService } from './browser-hub-swarm.service';
 
 @Controller('agents/browser-hub-swarm')
-@RequireAuthLevel(AuthLevel.PUBLIC)
+@RequireAuthLevel(AuthLevel.USER)
 export class BrowserHubSwarmController {
   private readonly logger = new Logger(BrowserHubSwarmController.name);
 

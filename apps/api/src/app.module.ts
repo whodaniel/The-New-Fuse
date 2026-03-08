@@ -25,6 +25,7 @@ import { HealthController } from './controllers/health.controller';
 import { MCPController } from './controllers/mcp.controller';
 import { ModelsController } from './controllers/models.controller';
 import { N8nWorkflowsController } from './controllers/n8n-workflows.controller';
+import { OnboardingController } from './controllers/onboarding.controller';
 import { ProviderKeysController } from './controllers/provider-keys.controller';
 import { SystemController } from './controllers/system.controller';
 import { UserManagementController } from './controllers/user-management.controller';
@@ -38,6 +39,7 @@ import { TNFMCPModule } from './mcp/TNFMCPModule';
 import { AdminModule } from './modules/admin/admin.module';
 import { AgencyHubModule } from './modules/agency-hub/agency-hub.module';
 import { AgentModule } from './modules/agent.module';
+import { GooseModule } from './modules/agentic/goose/goose.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { BillingModule } from './modules/billing/billing.module';
 import { ChatModule } from './modules/chat/chat.module';
@@ -110,6 +112,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     AgentModule, // Add our new agent module
     AgentsModule, // Self-Improvement Agents Module
     AgencyHubModule, // Agency Hub with Swarm coordination
+    GooseModule, // Goose CLI dispatch bridge under policy
     ChatModule,
     TaskModule, // Task management - Migrated to Drizzle ORM
     EntityDiscoveryModule,
@@ -157,6 +160,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     ProviderKeysController, // Per-user provider API key management
     AdminOpenClawOAuthController,
     N8nWorkflowsController,
+    OnboardingController,
   ],
   providers: [
     AppService,

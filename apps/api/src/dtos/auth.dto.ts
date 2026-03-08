@@ -1,5 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsInt,
+  IsISO8601,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+  MinLength,
+} from 'class-validator';
 
 export class LoginDto {
   @ApiProperty()
@@ -74,4 +83,38 @@ export class TokenDto {
   @ApiProperty()
   @IsString()
   refreshToken: string = '';
+}
+
+export class GenerateInviteCodeDto {
+  @ApiProperty({
+    required: false,
+    description: 'Optional internal label for this invite batch/code',
+  })
+  @IsString()
+  @IsOptional()
+  label?: string;
+
+  @ApiProperty({
+    required: false,
+    description: 'Optional federation ID tag for attribution/routing',
+  })
+  @IsString()
+  @IsOptional()
+  federationId?: string;
+
+  @ApiProperty({ required: false, description: 'Maximum allowed redemptions', default: 1 })
+  @IsInt()
+  @Min(1)
+  @Max(1000)
+  @IsOptional()
+  maxUses?: number;
+
+  @ApiProperty({
+    required: false,
+    description: 'ISO timestamp after which this code expires',
+    example: '2026-12-31T23:59:59.000Z',
+  })
+  @IsISO8601()
+  @IsOptional()
+  expiresAt?: string;
 }

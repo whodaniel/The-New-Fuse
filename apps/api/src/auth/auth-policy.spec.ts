@@ -27,6 +27,11 @@ describe('auth-policy', () => {
     expect(hasAuthorizationLevel({ permissions: ['ADMIN:ACCESS'] }, 'admin')).toBe(true);
   });
 
+  it('treats master super admin email as privileged', () => {
+    expect(hasAuthorizationLevel({ email: 'owner@example.com' }, 'admin')).toBe(true);
+    expect(hasAuthorizationLevel({ email: 'owner@example.com' }, 'system')).toBe(true);
+  });
+
   it('supports invite-only policy via config/env style keys', () => {
     const config = {
       get: (key: string) => {

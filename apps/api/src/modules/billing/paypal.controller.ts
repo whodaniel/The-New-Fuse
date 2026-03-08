@@ -1,8 +1,10 @@
 import {
   Body,
   Controller,
+  Get,
   Headers,
   Logger,
+  Param,
   Post,
   Req,
   UnauthorizedException,
@@ -10,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import * as crypto from 'crypto';
+import { CommunityApiKeyGuard } from '../../guards/community-api-key.guard';
 import { PayPalService } from './paypal.service';
 
 @Controller('billing/paypal')
@@ -23,6 +26,12 @@ export class PayPalController {
   ]);
 
   constructor(private readonly paypalService: PayPalService) {}
+
+  @Get('community-membership/:identity')
+  @UseGuards(CommunityApiKeyGuard)
+  async verifyCommunityMembership(@Param('identity') identity: string) {
+    return this.paypalService.getMembershipByIdentity(identity);
+  }
 
   @Post('webhook')
   async handleWebhook(@Headers() headers: any, @Body() body: any) {

@@ -10,19 +10,22 @@ const logger = new Logger('Bootstrap');
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, {
+    rawBody: true,
     // Enable CORS with strict configuration
     cors: {
       origin:
         process.env.NODE_ENV === 'production'
           ? [
               ...(process.env.ALLOWED_ORIGINS?.split(',') || ['https://yourdomain.com']),
-              'chrome-extension://kddfgejmbblgadkdmalfnagbiefbcdmi', 'https://fae7326d.ai-arcade-poker.pages.dev',
+              'chrome-extension://kddfgejmbblgadkdmalfnagbiefbcdmi',
+              'https://fae7326d.ai-arcade-poker.pages.dev',
             ]
           : [
               'http://localhost:3000',
               'http://localhost:3001',
               'http://localhost:5173',
-              'chrome-extension://kddfgejmbblgadkdmalfnagbiefbcdmi', 'https://fae7326d.ai-arcade-poker.pages.dev',
+              'chrome-extension://kddfgejmbblgadkdmalfnagbiefbcdmi',
+              'https://fae7326d.ai-arcade-poker.pages.dev',
             ],
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],

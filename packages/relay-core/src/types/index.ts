@@ -99,14 +99,15 @@ export interface WorkflowStep {
   error?: string;
 }
 
-export type ProtocolType = 
-  | 'a2a-v1.0' 
+export type ProtocolType =
+  | 'a2a-v1.0'
   | 'a2a-v2.0'
   | 'mcp-v1.0'
   | 'anthropic-xml-v1.0'
   | 'openai-assistant-v1.0'
   | 'langchain-v1.0'
   | 'crewai-v1.0'
+  | 'goose-cli-v1.0'
   | 'pydantic-v1.0'
   | 'websocket'
   | 'http'

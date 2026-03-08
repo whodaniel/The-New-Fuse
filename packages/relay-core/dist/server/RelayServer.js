@@ -17,6 +17,7 @@ const JWTAuthService_js_1 = require("../auth/JWTAuthService.js");
 const A2AProtocolAdapter_js_1 = require("../protocols/A2AProtocolAdapter.js");
 const AnthropicXmlAdapter_js_1 = require("../protocols/AnthropicXmlAdapter.js");
 const CrewAIAdapter_js_1 = require("../protocols/CrewAIAdapter.js");
+const GooseAdapter_js_1 = require("../protocols/GooseAdapter.js");
 const LangchainAdapter_js_1 = require("../protocols/LangchainAdapter.js");
 const OpenAIAdapter_js_1 = require("../protocols/OpenAIAdapter.js");
 const ProtocolTranslator_js_1 = require("../protocols/ProtocolTranslator.js");
@@ -329,6 +330,7 @@ class RelayServer extends events_1.EventEmitter {
             'agent_discovery',
             'message_routing',
             'protocol_translation',
+            'goose_cli_bridge',
             'workflow_execution',
             'api_interception',
             'multi_transport_support',
@@ -375,7 +377,10 @@ class RelayServer extends events_1.EventEmitter {
         // CrewAI adapter
         const crewaiAdapter = new CrewAIAdapter_js_1.CrewAIAdapter(this.logger);
         this.protocolTranslator.registerAdapter(crewaiAdapter);
-        this.logger.info('Protocol adapters initialized: A2A, Anthropic XML, OpenAI, Langchain, CrewAI');
+        // Goose CLI adapter
+        const gooseAdapter = new GooseAdapter_js_1.GooseAdapter(this.logger);
+        this.protocolTranslator.registerAdapter(gooseAdapter);
+        this.logger.info('Protocol adapters initialized: A2A, Anthropic XML, OpenAI, Langchain, CrewAI, Goose');
     }
 }
 exports.RelayServer = RelayServer;

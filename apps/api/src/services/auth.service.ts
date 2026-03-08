@@ -1,9 +1,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { DatabaseService, User } from '@the-new-fuse/database';
+import { DatabaseService, sql, User } from '@the-new-fuse/database';
 import { compare, hash } from 'bcrypt';
-import { LoginDto, RegisterDto, TokenDto } from '../dtos/auth.dto';
+import { GenerateInviteCodeDto, LoginDto, RegisterDto, TokenDto } from '../dtos/auth.dto';
 
 type AuthResponse = TokenDto & {
   access_token: string;
@@ -32,6 +32,29 @@ type JwtPayload = {
 
 type AuthRequestMeta = {
   ipAddress?: string;
+};
+
+type InviteValidationResult = {
+  code: string;
+  source: 'db' | 'env';
+  inviteId?: string;
+  federationId?: string | null;
+};
+
+type InviteCodeRow = {
+  id: string;
+  code: string;
+  label: string | null;
+  federation_id: string | null;
+  status: 'ACTIVE' | 'DISABLED';
+  max_uses: number;
+  used_count: number;
+  expires_at: Date | string | null;
+  last_used_at: Date | string | null;
+  created_by_user_id: string | null;
+  metadata: unknown;
+  created_at: Date | string;
+  updated_at: Date | string;
 };
 
 type TurnstileVerificationResponse = {
@@ -87,7 +110,7 @@ export class AuthService {
 
   async register(registerDto: RegisterDto, meta: AuthRequestMeta = {}): Promise<AuthResponse> {
     await this.verifyTurnstileIfEnabled(registerDto.cfTurnstileToken, meta.ipAddress);
-    this.verifyInviteCodeIfEnabled(registerDto.inviteCode);
+    const validatedInvite = await this.verifyInviteCodeIfEnabled(registerDto.inviteCode);
 
     const existingEmail = await this.db.users.findByEmail(registerDto.email);
     if (existingEmail) {
@@ -109,7 +132,88 @@ export class AuthService {
       emailVerified: false,
     } as any);
 
+    if (validatedInvite?.source === 'db' && validatedInvite.inviteId) {
+      await this.consumeDbInviteCode(validatedInvite.inviteId);
+    }
+
     return this.generateTokens(user);
+  }
+
+  async getInvitePolicy() {
+    const inviteOnly = isTruthy(this.configService.get('AUTH_INVITE_ONLY'));
+    const envCodes = this.getInviteCodesFromConfig();
+    const activeDbCodes = (await this.db.client.execute(
+      sql`SELECT count(*)::int AS count
+          FROM registration_invite_codes
+          WHERE status = 'ACTIVE'
+            AND used_count < max_uses
+            AND (expires_at IS NULL OR expires_at > now())`
+    )) as Array<{ count?: number | string }>;
+
+    return {
+      inviteOnly,
+      envCodeCount: envCodes.length,
+      dbCodeCount: Number(activeDbCodes[0]?.count || 0),
+    };
+  }
+
+  async validateInviteCode(inviteCode: string): Promise<InviteValidationResult> {
+    const submittedCode = inviteCode?.trim();
+    if (!submittedCode) {
+      throw new UnauthorizedException('Valid invitation code is required');
+    }
+    return this.validateInviteCodeRaw(submittedCode);
+  }
+
+  async generateInviteCode(payload: GenerateInviteCodeDto, actorUserId?: string) {
+    const code = this.generateInviteCodeValue(payload.federationId);
+    const maxUses = payload.maxUses && payload.maxUses > 0 ? payload.maxUses : 1;
+    const expiresAt = payload.expiresAt ? new Date(payload.expiresAt) : null;
+    if (expiresAt && Number.isNaN(expiresAt.getTime())) {
+      throw new UnauthorizedException('Invalid invite expiry date');
+    }
+
+    const created = (await this.db.client.execute(
+      sql`INSERT INTO registration_invite_codes (
+              code, label, federation_id, status, max_uses, used_count, expires_at, created_by_user_id
+            ) VALUES (
+              ${code},
+              ${payload.label?.trim() || null},
+              ${payload.federationId?.trim() || null},
+              'ACTIVE',
+              ${maxUses},
+              0,
+              ${expiresAt},
+              ${actorUserId || null}
+            )
+            RETURNING *`
+    )) as InviteCodeRow[];
+    return created[0] || null;
+  }
+
+  async listInviteCodes(limit = 100) {
+    const safeLimit = Math.max(1, Math.min(500, limit || 100));
+    const result = (await this.db.client.execute(
+      sql`SELECT *
+          FROM registration_invite_codes
+          ORDER BY created_at DESC
+          LIMIT ${safeLimit}`
+    )) as InviteCodeRow[];
+    return result || [];
+  }
+
+  async disableInviteCode(inviteId: string) {
+    const result = (await this.db.client.execute(
+      sql`UPDATE registration_invite_codes
+          SET status = 'DISABLED', updated_at = now()
+          WHERE id = ${inviteId}
+          RETURNING *`
+    )) as InviteCodeRow[];
+    const updated = result[0];
+    if (!updated) {
+      throw new UnauthorizedException('Invite code not found');
+    }
+    return updated;
   }
 
   async refresh(refreshToken: string): Promise<AuthResponse> {
@@ -283,8 +387,20 @@ export class AuthService {
   }
 
   private resolveRoles(user: User): string[] {
-    const roleCandidates = Array.isArray(user.roles) && user.roles.length > 0 ? user.roles : [user.role];
+    const roleCandidates =
+      Array.isArray(user.roles) && user.roles.length > 0 ? user.roles : [user.role];
     const roles = new Set<string>();
+    const masterSuperAdmins = (
+      this.configService.get<string>('MASTER_SUPER_ADMIN_EMAILS') || 'owner@example.com'
+    )
+      .split(',')
+      .map((email) => email.trim().toLowerCase())
+      .filter(Boolean);
+    const normalizedEmail = String(user.email || '')
+      .trim()
+      .toLowerCase();
+    const isMasterSuperAdmin =
+      normalizedEmail.length > 0 && masterSuperAdmins.includes(normalizedEmail);
 
     for (const role of roleCandidates) {
       if (typeof role !== 'string' || role.trim().length === 0) continue;
@@ -293,6 +409,11 @@ export class AuthService {
       const lower = raw.toLowerCase();
       roles.add(upper);
       roles.add(lower);
+    }
+
+    if (isMasterSuperAdmin) {
+      roles.add('SUPER_ADMIN');
+      roles.add('super_admin');
     }
 
     if (roles.has('SUPER_ADMIN') || roles.has('super_admin')) {
@@ -307,21 +428,93 @@ export class AuthService {
     return [...roles];
   }
 
-  private verifyInviteCodeIfEnabled(inviteCode: string | undefined): void {
+  private async verifyInviteCodeIfEnabled(
+    inviteCode: string | undefined
+  ): Promise<InviteValidationResult | null> {
     const inviteOnly = isTruthy(this.configService.get('AUTH_INVITE_ONLY'));
     if (!inviteOnly) {
-      return;
+      return null;
     }
 
+    const submittedCode = inviteCode?.trim();
+    if (!submittedCode) {
+      throw new UnauthorizedException('Valid invitation code is required');
+    }
+    return this.validateInviteCodeRaw(submittedCode);
+  }
+
+  private async validateInviteCodeRaw(submittedCode: string): Promise<InviteValidationResult> {
+    const dbInviteRes = (await this.db.client.execute(
+      sql`SELECT *
+          FROM registration_invite_codes
+          WHERE code = ${submittedCode}
+            AND status = 'ACTIVE'
+          LIMIT 1`
+    )) as InviteCodeRow[];
+    const dbInvite = (dbInviteRes[0] || null) as InviteCodeRow | null;
+
+    if (dbInvite) {
+      const expiresAt = dbInvite.expires_at ? new Date(dbInvite.expires_at).getTime() : null;
+      const now = Date.now();
+      if (expiresAt && expiresAt <= now) {
+        throw new UnauthorizedException('Invite code has expired');
+      }
+      if (dbInvite.used_count >= dbInvite.max_uses) {
+        throw new UnauthorizedException('Invite code has reached redemption limit');
+      }
+      return {
+        code: dbInvite.code,
+        source: 'db',
+        inviteId: dbInvite.id,
+        federationId: dbInvite.federation_id,
+      };
+    }
+
+    const allowedCodes = this.getInviteCodesFromConfig();
+    if (allowedCodes.includes(submittedCode)) {
+      return { code: submittedCode, source: 'env' };
+    }
+
+    throw new UnauthorizedException('Valid invitation code is required');
+  }
+
+  private getInviteCodesFromConfig(): string[] {
     const codesValue = this.configService.get<string>('AUTH_INVITE_CODES') || '';
-    const allowedCodes = codesValue
+    return codesValue
       .split(',')
       .map((value) => value.trim())
       .filter((value) => value.length > 0);
+  }
 
-    const submittedCode = inviteCode?.trim();
-    if (!submittedCode || !allowedCodes.includes(submittedCode)) {
-      throw new UnauthorizedException('Valid invitation code is required');
+  private generateInviteCodeValue(federationId?: string): string {
+    const prefix = (federationId || 'tnf')
+      .replace(/[^a-z0-9]+/gi, '')
+      .slice(0, 6)
+      .toUpperCase();
+    const randomBlock = Math.random().toString(36).slice(2, 8).toUpperCase();
+    const timeBlock = Date.now().toString(36).slice(-4).toUpperCase();
+    return `TNF-${prefix || 'CORE'}-${randomBlock}${timeBlock}`;
+  }
+
+  private async consumeDbInviteCode(inviteId: string): Promise<void> {
+    const updated = (await this.db.client.execute(
+      sql`UPDATE registration_invite_codes
+          SET used_count = used_count + 1,
+              last_used_at = now(),
+              updated_at = now(),
+              status = CASE
+                WHEN (used_count + 1) >= max_uses THEN 'DISABLED'::"InviteCodeStatus"
+                ELSE status
+              END
+          WHERE id = ${inviteId}
+            AND status = 'ACTIVE'
+            AND used_count < max_uses
+            AND (expires_at IS NULL OR expires_at > now())
+          RETURNING id`
+    )) as Array<{ id: string }>;
+
+    if (!updated[0]?.id) {
+      throw new UnauthorizedException('Invite code is no longer valid');
     }
   }
 

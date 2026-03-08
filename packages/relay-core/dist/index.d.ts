@@ -5,6 +5,7 @@ export * from './server/RelayServer';
 export * from './services/HandoffStoreService';
 export * from './services/HeartbeatMonitoringService';
 export * from './services/MasterAgentRegistry';
+export * from './services/GooseCliBridgeService';
 export * from './transports/FileTransport';
 export * from './transports/HTTPTransport';
 export * from './transports/MCPTransport';

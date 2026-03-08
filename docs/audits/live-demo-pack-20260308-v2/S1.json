@@ -1,0 +1,665 @@
+{
+  "id": "S1",
+  "title": "Short-Stack Balanced",
+  "sessionId": "v2-S1-1773010738922",
+  "tableId": "v2tbl-S1-1773010738922",
+  "terminal": true,
+  "settled": true,
+  "winnerSeat": 2,
+  "pot": 117,
+  "street": "showdown",
+  "actions": 21,
+  "rows": [
+    {
+      "round": 1,
+      "accepted": true,
+      "reason": "OK",
+      "agentId": "s1-d",
+      "action": "fold",
+      "amount": 0,
+      "pot": 3,
+      "actingSeat": 0,
+      "handStrength": 0.5153,
+      "pressure": 0.6667,
+      "toCallUnits": 2,
+      "legalActions": ["fold", "call", "raise"],
+      "policy": {
+        "allowed": true,
+        "code": "OK",
+        "policy": {
+          "tier": "B",
+          "style": "tight_aggressive",
+          "styleConfig": {
+            "vpipBps": 1800,
+            "pfrBps": 1500,
+            "bluffBps": 900,
+            "icmDisciplineBps": 8200
+          }
+        }
+      },
+      "terminal": false,
+      "cursor": "v2tbl-s1-1773010738922:3",
+      "mutationSeq": 2
+    },
+    {
+      "round": 1,
+      "accepted": true,
+      "reason": "OK",
+      "agentId": "s1-a",
+      "action": "fold",
+      "amount": 0,
+      "pot": 3,
+      "actingSeat": 1,
+      "handStrength": 0.5407,
+      "pressure": 0.6667,
+      "toCallUnits": 2,
+      "legalActions": ["fold", "call", "raise"],
+      "policy": {
+        "allowed": true,
+        "code": "OK",
+        "policy": {
+          "tier": "B",
+          "style": "tight_aggressive",
+          "styleConfig": {
+            "vpipBps": 1800,
+            "pfrBps": 1500,
+            "bluffBps": 900,
+            "icmDisciplineBps": 8200
+          }
+        }
+      },
+      "terminal": false,
+      "cursor": "v2tbl-s1-1773010738922:5",
+      "mutationSeq": 4
+    },
+    {
+      "round": 1,
+      "accepted": true,
+      "reason": "OK",
+      "agentId": "s1-b",
+      "action": "raise",
+      "amount": 3,
+      "pot": 6,
+      "actingSeat": 2,
+      "handStrength": 0.5286,
+      "pressure": 0.3333,
+      "toCallUnits": 1,
+      "legalActions": ["fold", "call", "raise"],
+      "policy": {
+        "allowed": true,
+        "code": "OK",
+        "policy": {
+          "tier": "B",
+          "style": "tight_aggressive",
+          "styleConfig": {
+            "vpipBps": 1800,
+            "pfrBps": 1500,
+            "bluffBps": 900,
+            "icmDisciplineBps": 8200
+          }
+        }
+      },
+      "terminal": false,
+      "cursor": "v2tbl-s1-1773010738922:7",
+      "mutationSeq": 6
+    },
+    {
+      "round": 1,
+      "accepted": true,
+      "reason": "OK",
+      "agentId": "s1-c",
+      "action": "raise",
+      "amount": 4,
+      "pot": 10,
+      "actingSeat": 1,
+      "handStrength": 0.3805,
+      "pressure": 0.3333,
+      "toCallUnits": 2,
+      "legalActions": ["fold", "call", "raise"],
+      "policy": {
+        "allowed": true,
+        "code": "OK",
+        "policy": {
+          "tier": "B",
+          "style": "tight_aggressive",
+          "styleConfig": {
+            "vpipBps": 1800,
+            "pfrBps": 1500,
+            "bluffBps": 900,
+            "icmDisciplineBps": 8200
+          }
+        }
+      },
+      "terminal": false,
+      "cursor": "v2tbl-s1-1773010738922:9",
+      "mutationSeq": 8
+    },
+    {
+      "round": 1,
+      "accepted": true,
+      "reason": "OK",
+      "agentId": "s1-b",
+      "action": "raise",
+      "amount": 6,
+      "pot": 16,
+      "actingSeat": 2,
+      "handStrength": 0.5559,
+      "pressure": 0.2,
+      "toCallUnits": 2,
+      "legalActions": ["fold", "call", "raise"],
+      "policy": {
+        "allowed": true,
+        "code": "OK",
+        "policy": {
+          "tier": "B",
+          "style": "tight_aggressive",
+          "styleConfig": {
+            "vpipBps": 1800,
+            "pfrBps": 1500,
+            "bluffBps": 900,
+            "icmDisciplineBps": 8200
+          }
+        }
+      },
+      "terminal": false,
+      "cursor": "v2tbl-s1-1773010738922:11",
+      "mutationSeq": 10
+    },
+    {
+      "round": 1,
+      "accepted": true,
+      "reason": "OK",
+      "agentId": "s1-c",
+      "action": "raise",
+      "amount": 10,
+      "pot": 26,
+      "actingSeat": 1,
+      "handStrength": 0.3365,
+      "pressure": 0.25,
+      "toCallUnits": 4,
+      "legalActions": ["fold", "call", "raise"],
+      "policy": {
+        "allowed": true,
+        "code": "OK",
+        "policy": {
+          "tier": "B",
+          "style": "tight_aggressive",
+          "styleConfig": {
+            "vpipBps": 1800,
+            "pfrBps": 1500,
+            "bluffBps": 900,
+            "icmDisciplineBps": 8200
+          }
+        }
+      },
+      "terminal": false,
+      "cursor": "v2tbl-s1-1773010738922:13",
+      "mutationSeq": 12
+    },
+    {
+      "round": 1,
+      "accepted": true,
+      "reason": "OK",
+      "agentId": "s1-b",
+      "action": "raise",
+      "amount": 17,
+      "pot": 43,
+      "actingSeat": 2,
+      "handStrength": 0.5276,
+      "pressure": 0.2308,
+      "toCallUnits": 6,
+      "legalActions": ["fold", "call", "raise"],
+      "policy": {
+        "allowed": true,
+        "code": "OK",
+        "policy": {
+          "tier": "B",
+          "style": "tight_aggressive",
+          "styleConfig": {
+            "vpipBps": 1800,
+            "pfrBps": 1500,
+            "bluffBps": 900,
+            "icmDisciplineBps": 8200
+          }
+        }
+      },
+      "terminal": false,
+      "cursor": "v2tbl-s1-1773010738922:15",
+      "mutationSeq": 14
+    },
+    {
+      "round": 1,
+      "accepted": true,
+      "reason": "OK",
+      "agentId": "s1-c",
+      "action": "raise",
+      "amount": 28,
+      "pot": 71,
+      "actingSeat": 1,
+      "handStrength": 0.3343,
+      "pressure": 0.2558,
+      "toCallUnits": 11,
+      "legalActions": ["fold", "call", "raise"],
+      "policy": {
+        "allowed": true,
+        "code": "OK",
+        "policy": {
+          "tier": "B",
+          "style": "tight_aggressive",
+          "styleConfig": {
+            "vpipBps": 1800,
+            "pfrBps": 1500,
+            "bluffBps": 900,
+            "icmDisciplineBps": 8200
+          }
+        }
+      },
+      "terminal": false,
+      "cursor": "v2tbl-s1-1773010738922:17",
+      "mutationSeq": 16
+    },
+    {
+      "round": 1,
+      "accepted": true,
+      "reason": "OK",
+      "agentId": "s1-b",
+      "action": "raise",
+      "amount": 13,
+      "pot": 84,
+      "actingSeat": 2,
+      "handStrength": 0.5196,
+      "pressure": 0.2394,
+      "toCallUnits": 17,
+      "legalActions": ["fold", "call", "raise"],
+      "policy": {
+        "allowed": true,
+        "code": "OK",
+        "policy": {
+          "tier": "B",
+          "style": "tight_aggressive",
+          "styleConfig": {
+            "vpipBps": 1800,
+            "pfrBps": 1500,
+            "bluffBps": 900,
+            "icmDisciplineBps": 8200
+          }
+        }
+      },
+      "terminal": false,
+      "cursor": "v2tbl-s1-1773010738922:19",
+      "mutationSeq": 18
+    },
+    {
+      "round": 1,
+      "accepted": true,
+      "reason": "OK",
+      "agentId": "s1-c",
+      "action": "bet",
+      "amount": 10,
+      "pot": 94,
+      "actingSeat": 1,
+      "handStrength": 0.3472,
+      "pressure": 0,
+      "toCallUnits": 0,
+      "legalActions": ["fold", "check", "bet"],
+      "policy": {
+        "allowed": true,
+        "code": "OK",
+        "policy": {
+          "tier": "B",
+          "style": "tight_aggressive",
+          "styleConfig": {
+            "vpipBps": 1800,
+            "pfrBps": 1500,
+            "bluffBps": 900,
+            "icmDisciplineBps": 8200
+          }
+        }
+      },
+      "terminal": false,
+      "cursor": "v2tbl-s1-1773010738922:21",
+      "mutationSeq": 20
+    },
+    {
+      "round": 1,
+      "accepted": true,
+      "reason": "OK",
+      "agentId": "s1-b",
+      "action": "raise",
+      "amount": 8,
+      "pot": 102,
+      "actingSeat": 2,
+      "handStrength": 0.5599,
+      "pressure": 0.1489,
+      "toCallUnits": 14,
+      "legalActions": ["fold", "call", "raise"],
+      "policy": {
+        "allowed": true,
+        "code": "OK",
+        "policy": {
+          "tier": "B",
+          "style": "tight_aggressive",
+          "styleConfig": {
+            "vpipBps": 1800,
+            "pfrBps": 1500,
+            "bluffBps": 900,
+            "icmDisciplineBps": 8200
+          }
+        }
+      },
+      "terminal": false,
+      "cursor": "v2tbl-s1-1773010738922:23",
+      "mutationSeq": 22
+    },
+    {
+      "round": 1,
+      "accepted": true,
+      "reason": "OK",
+      "agentId": "s1-c",
+      "action": "bet",
+      "amount": 3,
+      "pot": 105,
+      "actingSeat": 1,
+      "handStrength": 0.3264,
+      "pressure": 0,
+      "toCallUnits": 0,
+      "legalActions": ["fold", "check", "bet"],
+      "policy": {
+        "allowed": true,
+        "code": "OK",
+        "policy": {
+          "tier": "B",
+          "style": "tight_aggressive",
+          "styleConfig": {
+            "vpipBps": 1800,
+            "pfrBps": 1500,
+            "bluffBps": 900,
+            "icmDisciplineBps": 8200
+          }
+        }
+      },
+      "terminal": false,
+      "cursor": "v2tbl-s1-1773010738922:25",
+      "mutationSeq": 24
+    },
+    {
+      "round": 2,
+      "accepted": true,
+      "reason": "OK",
+      "agentId": "s1-b",
+      "action": "raise",
+      "amount": 5,
+      "pot": 110,
+      "actingSeat": 2,
+      "handStrength": 0.5588,
+      "pressure": 0.0857,
+      "toCallUnits": 9,
+      "legalActions": ["fold", "call", "raise"],
+      "policy": {
+        "allowed": true,
+        "code": "OK",
+        "policy": {
+          "tier": "B",
+          "style": "tight_aggressive",
+          "styleConfig": {
+            "vpipBps": 1800,
+            "pfrBps": 1500,
+            "bluffBps": 900,
+            "icmDisciplineBps": 8200
+          }
+        }
+      },
+      "terminal": false,
+      "cursor": "v2tbl-s1-1773010738922:27",
+      "mutationSeq": 26
+    },
+    {
+      "round": 2,
+      "accepted": true,
+      "reason": "OK",
+      "agentId": "s1-c",
+      "action": "check",
+      "amount": 0,
+      "pot": 110,
+      "actingSeat": 1,
+      "handStrength": 0.3558,
+      "pressure": 0,
+      "toCallUnits": 0,
+      "legalActions": ["fold", "check", "bet"],
+      "policy": {
+        "allowed": true,
+        "code": "OK",
+        "policy": {
+          "tier": "B",
+          "style": "tight_aggressive",
+          "styleConfig": {
+            "vpipBps": 1800,
+            "pfrBps": 1500,
+            "bluffBps": 900,
+            "icmDisciplineBps": 8200
+          }
+        }
+      },
+      "terminal": false,
+      "cursor": "v2tbl-s1-1773010738922:29",
+      "mutationSeq": 28
+    },
+    {
+      "round": 2,
+      "accepted": true,
+      "reason": "OK",
+      "agentId": "s1-b",
+      "action": "bet",
+      "amount": 2,
+      "pot": 112,
+      "actingSeat": 2,
+      "handStrength": 0.5284,
+      "pressure": 0,
+      "toCallUnits": 0,
+      "legalActions": ["fold", "check", "bet"],
+      "policy": {
+        "allowed": true,
+        "code": "OK",
+        "policy": {
+          "tier": "B",
+          "style": "tight_aggressive",
+          "styleConfig": {
+            "vpipBps": 1800,
+            "pfrBps": 1500,
+            "bluffBps": 900,
+            "icmDisciplineBps": 8200
+          }
+        }
+      },
+      "terminal": false,
+      "cursor": "v2tbl-s1-1773010738922:31",
+      "mutationSeq": 30
+    },
+    {
+      "round": 2,
+      "accepted": true,
+      "reason": "OK",
+      "agentId": "s1-c",
+      "action": "check",
+      "amount": 0,
+      "pot": 112,
+      "actingSeat": 1,
+      "handStrength": 0.3173,
+      "pressure": 0,
+      "toCallUnits": 0,
+      "legalActions": ["fold", "check", "bet"],
+      "policy": {
+        "allowed": true,
+        "code": "OK",
+        "policy": {
+          "tier": "B",
+          "style": "tight_aggressive",
+          "styleConfig": {
+            "vpipBps": 1800,
+            "pfrBps": 1500,
+            "bluffBps": 900,
+            "icmDisciplineBps": 8200
+          }
+        }
+      },
+      "terminal": false,
+      "cursor": "v2tbl-s1-1773010738922:33",
+      "mutationSeq": 32
+    },
+    {
+      "round": 2,
+      "accepted": true,
+      "reason": "OK",
+      "agentId": "s1-b",
+      "action": "bet",
+      "amount": 2,
+      "pot": 114,
+      "actingSeat": 2,
+      "handStrength": 0.5132,
+      "pressure": 0,
+      "toCallUnits": 0,
+      "legalActions": ["fold", "check", "bet"],
+      "policy": {
+        "allowed": true,
+        "code": "OK",
+        "policy": {
+          "tier": "B",
+          "style": "tight_aggressive",
+          "styleConfig": {
+            "vpipBps": 1800,
+            "pfrBps": 1500,
+            "bluffBps": 900,
+            "icmDisciplineBps": 8200
+          }
+        }
+      },
+      "terminal": false,
+      "cursor": "v2tbl-s1-1773010738922:35",
+      "mutationSeq": 34
+    },
+    {
+      "round": 2,
+      "accepted": true,
+      "reason": "OK",
+      "agentId": "s1-c",
+      "action": "bet",
+      "amount": 1,
+      "pot": 115,
+      "actingSeat": 1,
+      "handStrength": 0.38,
+      "pressure": 0,
+      "toCallUnits": 0,
+      "legalActions": ["fold", "check", "bet"],
+      "policy": {
+        "allowed": true,
+        "code": "OK",
+        "policy": {
+          "tier": "B",
+          "style": "tight_aggressive",
+          "styleConfig": {
+            "vpipBps": 1800,
+            "pfrBps": 1500,
+            "bluffBps": 900,
+            "icmDisciplineBps": 8200
+          }
+        }
+      },
+      "terminal": false,
+      "cursor": "v2tbl-s1-1773010738922:37",
+      "mutationSeq": 36
+    },
+    {
+      "round": 2,
+      "accepted": true,
+      "reason": "OK",
+      "agentId": "s1-b",
+      "action": "raise",
+      "amount": 1,
+      "pot": 116,
+      "actingSeat": 2,
+      "handStrength": 0.5626,
+      "pressure": 0.0087,
+      "toCallUnits": 1,
+      "legalActions": ["fold", "call", "raise"],
+      "policy": {
+        "allowed": true,
+        "code": "OK",
+        "policy": {
+          "tier": "B",
+          "style": "tight_aggressive",
+          "styleConfig": {
+            "vpipBps": 1800,
+            "pfrBps": 1500,
+            "bluffBps": 900,
+            "icmDisciplineBps": 8200
+          }
+        }
+      },
+      "terminal": false,
+      "cursor": "v2tbl-s1-1773010738922:39",
+      "mutationSeq": 38
+    },
+    {
+      "round": 2,
+      "accepted": true,
+      "reason": "OK",
+      "agentId": "s1-c",
+      "action": "bet",
+      "amount": 1,
+      "pot": 117,
+      "actingSeat": 1,
+      "handStrength": 0.4003,
+      "pressure": 0,
+      "toCallUnits": 0,
+      "legalActions": ["fold", "check", "bet"],
+      "policy": {
+        "allowed": true,
+        "code": "OK",
+        "policy": {
+          "tier": "B",
+          "style": "tight_aggressive",
+          "styleConfig": {
+            "vpipBps": 1800,
+            "pfrBps": 1500,
+            "bluffBps": 900,
+            "icmDisciplineBps": 8200
+          }
+        }
+      },
+      "terminal": false,
+      "cursor": "v2tbl-s1-1773010738922:41",
+      "mutationSeq": 40
+    },
+    {
+      "round": 2,
+      "accepted": true,
+      "reason": "OK",
+      "agentId": "s1-b",
+      "action": "fold",
+      "amount": 0,
+      "pot": 117,
+      "actingSeat": 2,
+      "handStrength": 0.5656,
+      "pressure": 0.0085,
+      "toCallUnits": 1,
+      "legalActions": ["fold", "call", "raise"],
+      "policy": {
+        "allowed": true,
+        "code": "OK",
+        "policy": {
+          "tier": "B",
+          "style": "tight_aggressive",
+          "styleConfig": {
+            "vpipBps": 1800,
+            "pfrBps": 1500,
+            "bluffBps": 900,
+            "icmDisciplineBps": 8200
+          }
+        }
+      },
+      "terminal": true,
+      "cursor": "v2tbl-s1-1773010738922:43",
+      "mutationSeq": 42
+    }
+  ]
+}

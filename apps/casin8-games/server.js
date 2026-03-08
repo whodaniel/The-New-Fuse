@@ -1771,6 +1771,247 @@ function isStreetRoundComplete(snapshot) {
   return true;
 }
 
+const TEMPERAMENT_DECISION_FACTORS = Object.freeze({
+  tight_aggressive: { aggression: 0.72, bluff: 0.12, volatility: 0.07, caution: 0.28 },
+  loose_aggressive: { aggression: 0.86, bluff: 0.26, volatility: 0.16, caution: 0.16 },
+  tight_passive: { aggression: 0.34, bluff: 0.04, volatility: 0.05, caution: 0.46 },
+  balanced: { aggression: 0.58, bluff: 0.1, volatility: 0.1, caution: 0.3 },
+});
+
+const TEMPERAMENT_ALIAS_MAP = Object.freeze({
+  ta: 'tight_aggressive',
+  tag: 'tight_aggressive',
+  tight: 'tight_aggressive',
+  aggressive: 'loose_aggressive',
+  aggro: 'loose_aggressive',
+  lag: 'loose_aggressive',
+  loose: 'loose_aggressive',
+  tp: 'tight_passive',
+  passive: 'tight_passive',
+  nit: 'tight_passive',
+  default: 'balanced',
+  standard: 'balanced',
+  normal: 'balanced',
+});
+
+function normalizeTemperament(rawTemperament) {
+  const key = String(rawTemperament || 'balanced')
+    .trim()
+    .toLowerCase();
+  if (TEMPERAMENT_DECISION_FACTORS[key]) return key;
+  const alias = TEMPERAMENT_ALIAS_MAP[key];
+  if (alias && TEMPERAMENT_DECISION_FACTORS[alias]) return alias;
+  return 'balanced';
+}
+
+function decisionFactorsForTemperament(rawTemperament) {
+  const key = normalizeTemperament(rawTemperament);
+  return TEMPERAMENT_DECISION_FACTORS[key] || TEMPERAMENT_DECISION_FACTORS.balanced;
+}
+
+function seatRowBySeat(snapshot, seatNo) {
+  const rows = Array.isArray(snapshot?.seats) ? snapshot.seats : [];
+  for (let idx = 0; idx < rows.length; idx += 1) {
+    const row = rows[idx];
+    const normalizedSeat = Number.isInteger(row?.seat) ? row.seat : idx;
+    if (normalizedSeat === seatNo) return row;
+  }
+  return null;
+}
+
+function normalizeLegalActions(snapshot, seatNo) {
+  const seatRow = seatRowBySeat(snapshot, seatNo);
+  if (!seatRow) return ['check'];
+  const stack = Math.max(0, Number(seatRow.stack || 0));
+  const streetBets =
+    snapshot?.streetBets && typeof snapshot.streetBets === 'object' ? snapshot.streetBets : {};
+  const seatStreetBet = Math.max(0, Number(streetBets[String(seatNo)] || 0));
+  const currentBet = Math.max(0, Number(snapshot?.currentBet || 0));
+  const toCallUnits = Math.max(0, currentBet - seatStreetBet);
+
+  const legal = new Set(['fold']);
+  if (toCallUnits <= 0) {
+    legal.add('check');
+    if (stack > 0) legal.add('bet');
+  } else {
+    if (stack > 0) legal.add('call');
+    if (stack > toCallUnits) legal.add('raise');
+  }
+  if (!legal.has('check') && !legal.has('call') && !legal.has('raise') && !legal.has('bet')) {
+    legal.add('check');
+  }
+  return [...legal.values()];
+}
+
+function estimatePreflopStrength(holeCards, rng, temperament) {
+  if (!Array.isArray(holeCards) || holeCards.length < 2) return 0.5;
+  const c1 = parseCardCode(holeCards[0]);
+  const c2 = parseCardCode(holeCards[1]);
+  if (!c1 || !c2) return 0.5;
+
+  const v1 = rankValue(c1.rank);
+  const v2 = rankValue(c2.rank);
+  const hi = Math.max(v1, v2);
+  const lo = Math.min(v1, v2);
+  const pair = v1 === v2;
+  const suited = c1.suit === c2.suit;
+  const gap = Math.abs(v1 - v2);
+
+  const factors = decisionFactorsForTemperament(temperament);
+  let strength = 0.18 + ((hi - 2) / 12) * 0.45 + ((lo - 2) / 12) * 0.2;
+  if (pair) strength += 0.24 + (hi / 14) * 0.16;
+  if (suited) strength += 0.05;
+  if (gap <= 1) strength += 0.05;
+  else if (gap >= 4) strength -= 0.05;
+  if (hi >= 12 && lo >= 10) strength += 0.06;
+  const jitter = (rng() - 0.5) * factors.volatility * 0.9;
+  return Math.max(0.05, Math.min(0.99, strength + jitter));
+}
+
+function estimatePostflopStrength(holeCards, communityCards, rng, temperament) {
+  const factors = decisionFactorsForTemperament(temperament);
+  const all = [
+    ...(Array.isArray(holeCards) ? holeCards : []),
+    ...(Array.isArray(communityCards) ? communityCards : []),
+  ]
+    .map(parseCardCode)
+    .filter(Boolean);
+  if (all.length < 5) return estimatePreflopStrength(holeCards, rng, temperament);
+
+  const score = bestSevenScore(all);
+  const category = Number(score[0] || 0);
+  const categoryBase = [0.22, 0.38, 0.52, 0.62, 0.72, 0.8, 0.88, 0.94, 0.98];
+  let strength = categoryBase[Math.max(0, Math.min(8, category))];
+
+  const suitCounts = new Map();
+  const rankValues = all.map((c) => rankValue(c.rank)).sort((a, b) => a - b);
+  for (const card of all) suitCounts.set(card.suit, (suitCounts.get(card.suit) || 0) + 1);
+  const maxSuitCount = Math.max(...suitCounts.values());
+  const uniqueRanks = [...new Set(rankValues)];
+  let nearStraight = false;
+  for (let i = 0; i <= uniqueRanks.length - 4; i += 1) {
+    if (uniqueRanks[i + 3] - uniqueRanks[i] <= 4) {
+      nearStraight = true;
+      break;
+    }
+  }
+  if (category < 5 && maxSuitCount >= 4) strength += 0.06;
+  if (category < 4 && nearStraight) strength += 0.04;
+
+  const jitter = (rng() - 0.5) * factors.volatility;
+  return Math.max(0.05, Math.min(0.99, strength + jitter));
+}
+
+function chooseAutoActionFromState({ snapshot, seatNo, profile, rng, strategy }) {
+  const seatRow = seatRowBySeat(snapshot, seatNo);
+  const stackUnits = Math.max(0, Number(seatRow?.stack || 0));
+  const legalActions = normalizeLegalActions(snapshot, seatNo);
+  const streetBets =
+    snapshot?.streetBets && typeof snapshot.streetBets === 'object' ? snapshot.streetBets : {};
+  const seatStreetBet = Math.max(0, Number(streetBets[String(seatNo)] || 0));
+  const currentBet = Math.max(0, Number(snapshot?.currentBet || 0));
+  const toCallUnits = Math.max(0, currentBet - seatStreetBet);
+  const potUnits = Math.max(0, Number(snapshot?.pot || 0));
+  const minRaise = Math.max(1, Number(snapshot?.minRaise || snapshot?.blinds?.bigBlind || 1));
+  const holeCards =
+    snapshot?.holeCards && typeof snapshot.holeCards === 'object'
+      ? snapshot.holeCards[String(seatNo)] || []
+      : [];
+  const communityCards = Array.isArray(snapshot?.communityCards) ? snapshot.communityCards : [];
+  const factors = decisionFactorsForTemperament(profile?.temperament);
+  const handStrength =
+    communityCards.length === 0
+      ? estimatePreflopStrength(holeCards, rng, profile?.temperament)
+      : estimatePostflopStrength(holeCards, communityCards, rng, profile?.temperament);
+
+  const pressure = potUnits > 0 ? toCallUnits / Math.max(1, potUnits) : 0;
+  const baseDecision = strategy.chooseAction({
+    profile,
+    legalActions,
+    handStrength,
+    potUnits,
+    toCallUnits,
+  });
+
+  let action = String(baseDecision.action || 'check');
+  let amountUnits = Math.max(0, Number(baseDecision.amountUnits || 0));
+
+  if ((legalActions.includes('raise') || legalActions.includes('bet')) && stackUnits > 0) {
+    const valueEdge = Math.max(0, handStrength - (0.42 + pressure * factors.caution));
+    const aggressionWindow = factors.aggression * (1 - Math.min(0.85, pressure * 0.7));
+    const raiseIntent = valueEdge * 0.9 + aggressionWindow * 0.25 + factors.bluff * (rng() - 0.35);
+    if (raiseIntent > 0.15 && (legalActions.includes('raise') || legalActions.includes('bet'))) {
+      action = legalActions.includes('raise') ? 'raise' : 'bet';
+      const baseRaise = Math.max(
+        action === 'raise' ? toCallUnits + minRaise : minRaise,
+        Math.round(potUnits * (0.32 + factors.aggression * 0.45))
+      );
+      const variance = Math.round(baseRaise * ((rng() - 0.5) * factors.volatility * 1.5));
+      amountUnits = Math.max(
+        action === 'raise' ? toCallUnits + minRaise : minRaise,
+        baseRaise + variance
+      );
+    }
+  }
+
+  if (toCallUnits > 0 && handStrength < Math.max(0.12, pressure - factors.bluff * 0.35)) {
+    action = legalActions.includes('fold')
+      ? 'fold'
+      : legalActions.includes('call')
+        ? 'call'
+        : legalActions.includes('check')
+          ? 'check'
+          : action;
+  }
+
+  if (action === 'call') amountUnits = Math.min(stackUnits, toCallUnits);
+  if (action === 'check' || action === 'fold') amountUnits = 0;
+  if (action === 'raise') {
+    amountUnits = Math.max(toCallUnits + minRaise, amountUnits);
+    amountUnits = Math.min(stackUnits, amountUnits);
+    if (amountUnits <= toCallUnits) {
+      action = legalActions.includes('call') ? 'call' : 'fold';
+      amountUnits = action === 'call' ? Math.min(stackUnits, toCallUnits) : 0;
+    }
+  }
+  if (action === 'bet') {
+    amountUnits = Math.max(minRaise, Math.min(stackUnits, amountUnits));
+    if (amountUnits <= 0) {
+      action = legalActions.includes('check') ? 'check' : 'fold';
+      amountUnits = 0;
+    }
+  }
+  if ((action === 'raise' || action === 'bet' || action === 'call') && amountUnits <= 0) {
+    if (legalActions.includes('check') && toCallUnits <= 0) {
+      action = 'check';
+      amountUnits = 0;
+    } else if (legalActions.includes('fold')) {
+      action = 'fold';
+      amountUnits = 0;
+    } else if (legalActions.includes('call')) {
+      action = 'call';
+      amountUnits = Math.max(1, Math.min(stackUnits, toCallUnits));
+    }
+  }
+  if (!legalActions.includes(action)) {
+    if (legalActions.includes('check')) action = 'check';
+    else if (legalActions.includes('call')) action = 'call';
+    else if (legalActions.includes('fold')) action = 'fold';
+    amountUnits = action === 'call' ? Math.min(stackUnits, toCallUnits) : 0;
+  }
+
+  return {
+    handStrength: Number(handStrength.toFixed(4)),
+    legalActions,
+    toCallUnits,
+    potUnits,
+    stackUnits,
+    pressure: Number(pressure.toFixed(4)),
+    action,
+    amountUnits: Math.max(0, Math.floor(amountUnits)),
+  };
+}
+
 function settleSessionsFromSnapshot(snapshot) {
   if (!snapshot || snapshot.sessionSettledAt) return null;
   const map =
@@ -2531,7 +2772,7 @@ async function handleStrategyProfile(req, res) {
   const mod = await agentStrategyPromise;
   const profile = mod.buildStrategyProfile({
     agentId: String(body.agentId || '').trim(),
-    temperament: body.temperament,
+    temperament: normalizeTemperament(body.temperament),
     maxRiskBps: Number(body.maxRiskBps ?? 800),
   });
   swarmState.agentStrategies.set(profile.agentId, profile);
@@ -2547,7 +2788,7 @@ async function handleStrategyDecide(req, res) {
   if (!profile) {
     profile = mod.buildStrategyProfile({
       agentId,
-      temperament: body.temperament || mod.TEMPERAMENTS.BALANCED,
+      temperament: normalizeTemperament(body.temperament || mod.TEMPERAMENTS.BALANCED),
       maxRiskBps: Number(body.maxRiskBps ?? 800),
     });
     swarmState.agentStrategies.set(agentId, profile);
@@ -4841,6 +5082,13 @@ async function handleTableStateInit(req, res) {
       folded: false,
       stack: Number.isFinite(Number(seat?.stack)) ? Number(seat.stack) : 1000,
       invested: 0,
+      playerId: String(seat?.playerId || '').trim() || `player-${idx}`,
+      agentId: String(seat?.agentId || '').trim() || String(seat?.playerId || '').trim() || null,
+      temperament: seat?.temperament == null ? null : normalizeTemperament(seat.temperament),
+      maxRiskBps:
+        Number.isFinite(Number(seat?.maxRiskBps)) && Number(seat?.maxRiskBps) > 0
+          ? Math.floor(Number(seat.maxRiskBps))
+          : null,
     })
   );
   const actingSeat = Number.isInteger(body.actingSeat) ? body.actingSeat : 0;
@@ -4949,6 +5197,100 @@ async function handleTableStateGet(req, res, urlObj) {
   const snapshot = swarmState.tableSnapshots.get(tableId);
   if (!snapshot) return badRequest(res, 'No table snapshot found. Initialize table first.');
   writeJson(res, 200, { ok: true, snapshot });
+}
+
+function applyAcceptedTableAction(snapshot, engine, options) {
+  const seat = Number(options?.seat);
+  const action = String(options?.action || '')
+    .trim()
+    .toLowerCase();
+  const requestedAmount = Math.max(0, Number(options?.amount || 0));
+  const requestedAction = String(options?.requestedAction || action)
+    .trim()
+    .toLowerCase();
+  const streetBeforeAction = String(options?.streetBeforeAction || snapshot?.street || 'preflop');
+  const currentBetBeforeAction = Math.max(0, Number(options?.currentBetBeforeAction || 0));
+  const bettingRoundBeforeAction = Math.max(1, Number(options?.bettingRoundBeforeAction || 1));
+
+  snapshot.actionCountStreet = Number(snapshot.actionCountStreet || 0) + 1;
+
+  let spend = requestedAmount;
+  const seatRows = Array.isArray(snapshot.seats) ? snapshot.seats : [];
+  const seatRow = seatRows.find(
+    (row, idx) => (Number.isInteger(row?.seat) ? row.seat : idx) === seat
+  );
+  if (seatRow) {
+    const available = Math.max(0, Number(seatRow.stack || 0));
+    spend = Math.min(available, requestedAmount);
+    seatRow.invested = Number(seatRow.invested || 0) + spend;
+    seatRow.stack = Math.max(0, available - spend);
+  }
+
+  const existingStreetBets =
+    snapshot.streetBets && typeof snapshot.streetBets === 'object' ? snapshot.streetBets : {};
+  const updatedStreetBet = Number(existingStreetBets[String(seat)] || 0) + spend;
+  snapshot.streetBets = { ...existingStreetBets, [String(seat)]: updatedStreetBet };
+
+  const actedSet = new Set(Array.isArray(snapshot.actedSeats) ? snapshot.actedSeats : []);
+  let currentBetAfterAction = Number(snapshot.currentBet || 0);
+  if (action === 'bet' || action === 'raise') {
+    const prevBet = Number(snapshot.currentBet || 0);
+    snapshot.currentBet = updatedStreetBet;
+    snapshot.lastRaiseSize = Math.max(1, updatedStreetBet - prevBet);
+    snapshot.minRaise = snapshot.lastRaiseSize;
+    snapshot.lastAggressorSeat = seat;
+    actedSet.clear();
+    actedSet.add(seat);
+    currentBetAfterAction = Number(snapshot.currentBet || 0);
+  } else {
+    actedSet.add(seat);
+    currentBetAfterAction = Number(snapshot.currentBet || 0);
+  }
+  snapshot.actedSeats = [...actedSet.values()];
+
+  const activeCount = activeSeats(snapshot).length;
+  if (activeCount <= 1) {
+    snapshot.street = 'showdown';
+    snapshot.terminal = true;
+    snapshot.settled = true;
+    snapshot.winnerSeat = firstActiveSeat(snapshot);
+    snapshot.payoutUnits = Math.max(0, Number(snapshot.pot || 0));
+    snapshot.payoutBySeat = { [String(snapshot.winnerSeat)]: snapshot.payoutUnits };
+    snapshot.showdown = [{ seat: snapshot.winnerSeat, scoreTuple: [99] }];
+    settleSessionsFromSnapshot(snapshot);
+  } else if (isStreetRoundComplete(snapshot)) {
+    snapshot.actionCountStreet = 0;
+    const prevStreet = String(snapshot.street || 'preflop');
+    advanceStreet(snapshot, engine);
+    if (String(snapshot.street || '') !== prevStreet) {
+      snapshot.bettingRoundId = Number(snapshot.bettingRoundId || 1) + 1;
+      snapshot.lastAggressorSeat = null;
+    }
+    if (!snapshot.terminal) {
+      snapshot.actingSeat = nextActiveSeat(snapshot, Number(snapshot.buttonSeat || 0));
+    }
+    if (snapshot.terminal === true && snapshot.settled === true) {
+      settleSessionsFromSnapshot(snapshot);
+    }
+  } else {
+    snapshot.actingSeat = nextActiveSeat(snapshot, seat);
+  }
+
+  const timeline = Array.isArray(snapshot.actionTimeline) ? snapshot.actionTimeline : [];
+  timeline.push({
+    seq: Number(snapshot.seq || 0),
+    ts: nowIso(),
+    seat,
+    requestedAction,
+    action,
+    amount: spend,
+    street: streetBeforeAction,
+    bettingRoundId: bettingRoundBeforeAction,
+    currentBetBefore: currentBetBeforeAction,
+    currentBetAfter: currentBetAfterAction,
+    potAfter: Math.max(0, Number(snapshot.pot || 0)),
+  });
+  snapshot.actionTimeline = timeline;
 }
 
 async function handleTableAction(req, res) {
@@ -5086,92 +5428,15 @@ async function handleTableAction(req, res) {
   const out = engineCore.applyAction(snapshot, intent);
   const nextSnapshot = out.snapshot;
   if (out.accepted) {
-    const streetBeforeAction = String(snapshot.street || 'preflop');
-    const currentBetBeforeAction = Number(currentBet || 0);
-    const bettingRoundBeforeAction = Number(nextSnapshot.bettingRoundId || 1);
-    nextSnapshot.actionCountStreet = Number(nextSnapshot.actionCountStreet || 0) + 1;
-
-    const seatRows = Array.isArray(nextSnapshot.seats) ? nextSnapshot.seats : [];
-    const seatRow = seatRows.find(
-      (row, idx) => (Number.isInteger(row?.seat) ? row.seat : idx) === intent.seat
-    );
-    if (seatRow) {
-      const spend = Math.max(0, Number(intent.amount || 0));
-      seatRow.invested = Number(seatRow.invested || 0) + spend;
-      seatRow.stack = Math.max(0, Number(seatRow.stack || 0) - spend);
-    }
-
-    const updatedStreetBet = Number(streetBets[String(seat)] || 0) + spend;
-    nextSnapshot.streetBets = {
-      ...(nextSnapshot.streetBets && typeof nextSnapshot.streetBets === 'object'
-        ? nextSnapshot.streetBets
-        : {}),
-      [String(seat)]: updatedStreetBet,
-    };
-    const actedSet = new Set(Array.isArray(nextSnapshot.actedSeats) ? nextSnapshot.actedSeats : []);
-    let currentBetAfterAction = Number(nextSnapshot.currentBet || 0);
-
-    if (normalizedAction === 'bet' || normalizedAction === 'raise') {
-      const prevBet = Number(nextSnapshot.currentBet || 0);
-      nextSnapshot.currentBet = updatedStreetBet;
-      nextSnapshot.lastRaiseSize = Math.max(1, updatedStreetBet - prevBet);
-      nextSnapshot.minRaise = nextSnapshot.lastRaiseSize;
-      nextSnapshot.lastAggressorSeat = seat;
-      actedSet.clear();
-      actedSet.add(seat);
-      currentBetAfterAction = Number(nextSnapshot.currentBet || 0);
-    } else {
-      actedSet.add(seat);
-      currentBetAfterAction = Number(nextSnapshot.currentBet || 0);
-    }
-    nextSnapshot.actedSeats = [...actedSet.values()];
-
-    const activeCount = activeSeats(nextSnapshot).length;
-    if (activeCount <= 1) {
-      nextSnapshot.street = 'showdown';
-      nextSnapshot.terminal = true;
-      nextSnapshot.settled = true;
-      nextSnapshot.winnerSeat = firstActiveSeat(nextSnapshot);
-      nextSnapshot.payoutUnits = Math.max(0, Number(nextSnapshot.pot || 0));
-      nextSnapshot.payoutBySeat = { [String(nextSnapshot.winnerSeat)]: nextSnapshot.payoutUnits };
-      nextSnapshot.showdown = [{ seat: nextSnapshot.winnerSeat, scoreTuple: [99] }];
-      settleSessionsFromSnapshot(nextSnapshot);
-    } else if (isStreetRoundComplete(nextSnapshot)) {
-      nextSnapshot.actionCountStreet = 0;
-      const prevStreet = String(nextSnapshot.street || 'preflop');
-      advanceStreet(nextSnapshot, engine);
-      if (String(nextSnapshot.street || '') !== prevStreet) {
-        nextSnapshot.bettingRoundId = Number(nextSnapshot.bettingRoundId || 1) + 1;
-        nextSnapshot.lastAggressorSeat = null;
-      }
-      if (!nextSnapshot.terminal) {
-        nextSnapshot.actingSeat = nextActiveSeat(
-          nextSnapshot,
-          Number(nextSnapshot.buttonSeat || 0)
-        );
-      }
-      if (nextSnapshot.terminal === true && nextSnapshot.settled === true) {
-        settleSessionsFromSnapshot(nextSnapshot);
-      }
-    } else {
-      nextSnapshot.actingSeat = nextActiveSeat(nextSnapshot, seat);
-    }
-
-    const timeline = Array.isArray(nextSnapshot.actionTimeline) ? nextSnapshot.actionTimeline : [];
-    timeline.push({
-      seq: Number(nextSnapshot.seq || 0),
-      ts: nowIso(),
+    applyAcceptedTableAction(nextSnapshot, engine, {
       seat,
-      requestedAction,
       action: normalizedAction,
       amount: spend,
-      street: streetBeforeAction,
-      bettingRoundId: bettingRoundBeforeAction,
-      currentBetBefore: currentBetBeforeAction,
-      currentBetAfter: currentBetAfterAction,
-      potAfter: Math.max(0, Number(nextSnapshot.pot || 0)),
+      requestedAction,
+      streetBeforeAction: String(snapshot.street || 'preflop'),
+      currentBetBeforeAction: Number(currentBet || 0),
+      bettingRoundBeforeAction: Number(nextSnapshot.bettingRoundId || 1),
     });
-    nextSnapshot.actionTimeline = timeline;
     persistHandHistoryIfSettled(nextSnapshot, 'table_action');
   }
   swarmState.tableSnapshots.set(tableId, nextSnapshot);
@@ -5306,7 +5571,7 @@ async function handleTableRoundAuto(req, res) {
   }
 
   const bus = await getOrCreateRealtimeBus(tableId);
-  const rng = engine.createRng(`${tableId}:${snapshot.handId}:${Date.now()}`);
+  const rng = engine.createRng(`${tableId}:${snapshot.handId}:${snapshot.seq || 0}:${Date.now()}`);
   const timeline = [];
 
   for (let i = 0; i < maxActions; i += 1) {
@@ -5325,37 +5590,85 @@ async function handleTableRoundAuto(req, res) {
       });
     }
 
+    const seatTemperament = normalizeTemperament(
+      seatMeta.temperament || body.temperament || 'balanced'
+    );
+    const seatMaxRiskBps = Number(seatMeta.maxRiskBps ?? body.maxRiskBps ?? 800);
+
     let profile = swarmState.agentStrategies.get(seatAgentId);
     if (!profile) {
       profile = strategy.buildStrategyProfile({
         agentId: seatAgentId,
-        temperament: String(body.temperament || 'balanced'),
-        maxRiskBps: Number(body.maxRiskBps ?? 800),
+        temperament: seatTemperament,
+        maxRiskBps: seatMaxRiskBps,
       });
       swarmState.agentStrategies.set(seatAgentId, profile);
     }
 
-    const handStrength = Number((0.35 + rng() * 0.55).toFixed(3));
-    const decision = strategy.chooseAction({
+    const stateDecision = chooseAutoActionFromState({
+      snapshot,
+      seatNo: actingSeat,
       profile,
-      legalActions: ['fold', 'check', 'call', 'bet'],
-      handStrength,
-      potUnits: Number(snapshot.pot || 0),
-      toCallUnits: Math.max(0, Math.floor(5 + rng() * 20)),
+      rng,
+      strategy,
     });
     const capped = strategy.enforceRiskCap({
-      actionDecision: decision,
-      bankrollUnits: BigInt(String(body.bankrollUnits ?? 1000)),
-      maxRiskBps: Number(body.maxRiskBps ?? profile.maxRiskBps ?? 800),
+      actionDecision: {
+        agentId: profile.agentId,
+        temperament: profile.temperament,
+        action: stateDecision.action,
+        amountUnits: stateDecision.amountUnits,
+        rationale: {
+          handStrength: stateDecision.handStrength,
+          pressure: stateDecision.pressure,
+          legalActions: stateDecision.legalActions,
+          toCallUnits: stateDecision.toCallUnits,
+          potUnits: stateDecision.potUnits,
+          stackUnits: stateDecision.stackUnits,
+        },
+      },
+      bankrollUnits: BigInt(String(body.bankrollUnits ?? Math.max(1, stateDecision.stackUnits))),
+      maxRiskBps: Number(seatMaxRiskBps || profile.maxRiskBps || 800),
     });
     const policy = registry.evaluateActionPolicy(seatAgentId, {
       action: capped.action,
       amountUnits: BigInt(capped.amountUnits || 0),
-      bankrollUnits: BigInt(String(body.bankrollUnits ?? 1000)),
+      bankrollUnits: BigInt(String(body.bankrollUnits ?? Math.max(1, stateDecision.stackUnits))),
     });
-    const action = policy.allowed ? capped.action : 'check';
-    const amount = policy.allowed ? Number(capped.amountUnits || 0) : 0;
+    let action = policy.allowed ? capped.action : 'check';
+    let amount = policy.allowed ? Number(capped.amountUnits || 0) : 0;
+    amount = Math.max(0, Math.floor(amount));
+    amount = Math.min(amount, Math.max(0, Math.floor(stateDecision.stackUnits)));
+    if (action === 'call') {
+      amount = Math.min(
+        Math.max(0, stateDecision.toCallUnits),
+        Math.max(0, stateDecision.stackUnits)
+      );
+    }
+    if ((action === 'bet' || action === 'raise' || action === 'call') && amount <= 0) {
+      if (stateDecision.toCallUnits > 0) {
+        if (stateDecision.legalActions.includes('fold')) {
+          action = 'fold';
+          amount = 0;
+        } else if (stateDecision.legalActions.includes('call')) {
+          action = 'call';
+          amount = Math.max(1, Math.min(stateDecision.stackUnits, stateDecision.toCallUnits));
+        } else {
+          action = 'check';
+          amount = 0;
+        }
+      } else if (stateDecision.legalActions.includes('check')) {
+        action = 'check';
+        amount = 0;
+      } else if (stateDecision.legalActions.includes('fold')) {
+        action = 'fold';
+        amount = 0;
+      }
+    }
 
+    const streetBeforeAction = String(snapshot.street || 'preflop');
+    const currentBetBeforeAction = Number(snapshot.currentBet || 0);
+    const bettingRoundBeforeAction = Number(snapshot.bettingRoundId || 1);
     const out = engineCore.applyAction(snapshot, {
       type: 'agent.action',
       seat: actingSeat,
@@ -5364,6 +5677,32 @@ async function handleTableRoundAuto(req, res) {
     });
     snapshot = out.snapshot;
     swarmState.tableSnapshots.set(tableId, snapshot);
+
+    if (!out.accepted) {
+      timeline.push({
+        accepted: false,
+        reason: out.reason,
+        agentId: seatAgentId,
+        action,
+        amount,
+        pot: snapshot?.pot,
+        actingSeat: snapshot?.actingSeat,
+        policy,
+        terminal: snapshot?.terminal === true,
+        cursor: snapshot?.cursor || null,
+      });
+      break;
+    }
+
+    applyAcceptedTableAction(snapshot, engine, {
+      seat: actingSeat,
+      action,
+      amount,
+      requestedAction: action,
+      streetBeforeAction,
+      currentBetBeforeAction,
+      bettingRoundBeforeAction,
+    });
 
     const mutation = bus.consumeMutation({
       idempotencyKey: crypto.randomUUID(),
@@ -5380,6 +5719,10 @@ async function handleTableRoundAuto(req, res) {
       amount,
       pot: snapshot.pot,
       actingSeat: snapshot.actingSeat,
+      handStrength: stateDecision.handStrength,
+      pressure: stateDecision.pressure,
+      toCallUnits: stateDecision.toCallUnits,
+      legalActions: stateDecision.legalActions,
       policy,
       terminal: snapshot.terminal === true,
       cursor: snapEvent.cursor,

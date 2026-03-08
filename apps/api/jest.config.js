@@ -21,6 +21,7 @@ module.exports = {
     '^@the-new-fuse/a2a-core/(.*)$': '<rootDir>/../../packages/a2a-core/src/$1',
     '^@the-new-fuse/database/(.*)$': '<rootDir>/../../packages/database/src/$1',
     '^@the-new-fuse/types/(.*)$': '<rootDir>/../../packages/types/src/$1',
+    '^node-fetch$': '<rootDir>/test/mocks/node-fetch.ts',
   },
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js', 'tsconfig-paths/register'],
   collectCoverageFrom: ['src/**/*.ts', '!src/**/*.d.ts', '!src/**/index.ts'],

@@ -22,6 +22,7 @@ __exportStar(require("./server/RelayServer"), exports);
 __exportStar(require("./services/HandoffStoreService"), exports);
 __exportStar(require("./services/HeartbeatMonitoringService"), exports);
 __exportStar(require("./services/MasterAgentRegistry"), exports);
+__exportStar(require("./services/GooseCliBridgeService"), exports);
 __exportStar(require("./transports/FileTransport"), exports);
 __exportStar(require("./transports/HTTPTransport"), exports);
 __exportStar(require("./transports/MCPTransport"), exports);

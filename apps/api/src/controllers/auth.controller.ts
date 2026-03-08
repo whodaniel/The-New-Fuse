@@ -1,7 +1,18 @@
-import { BadRequestException, Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  ForbiddenException,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
-import { LoginDto, RegisterDto } from '../dtos/auth.dto';
+import { hasAuthorizationLevel } from '../auth/auth-policy';
+import { GenerateInviteCodeDto, LoginDto, RegisterDto } from '../dtos/auth.dto';
 import { AuthGuard } from '../guards/auth.guard';
 import { AuthService } from '../services/auth.service';
 
@@ -24,6 +35,41 @@ export class AuthController {
   async register(@Body() registerDto: RegisterDto, @Req() req?: Request) {
     const ipAddress = req?.ip || req?.socket?.remoteAddress;
     return this.authService.register(registerDto, { ipAddress });
+  }
+
+  @Get('invite-policy')
+  @ApiOperation({ summary: 'Get invite-only registration policy state' })
+  @ApiResponse({ status: 200, description: 'Invite policy payload' })
+  async invitePolicy() {
+    return this.authService.getInvitePolicy();
+  }
+
+  @Post('invite-codes/generate')
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Generate a registration invite code (admin only)' })
+  @ApiResponse({ status: 201, description: 'Invite code generated' })
+  async generateInviteCode(@Body() dto: GenerateInviteCodeDto, @Req() req: any) {
+    this.assertAdmin(req?.user);
+    return this.authService.generateInviteCode(dto, req?.user?.id);
+  }
+
+  @Get('invite-codes')
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'List registration invite codes (admin only)' })
+  @ApiResponse({ status: 200, description: 'Invite code list' })
+  async listInviteCodes(@Req() req: any) {
+    this.assertAdmin(req?.user);
+    return this.authService.listInviteCodes();
+  }
+
+  @Post('invite-codes/:inviteId/disable')
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Disable registration invite code (admin only)' })
+  @ApiResponse({ status: 200, description: 'Invite code disabled' })
+  async disableInviteCode(@Param('inviteId') inviteId: string, @Req() req: any) {
+    this.assertAdmin(req?.user);
+    if (!inviteId) throw new BadRequestException('Invite ID is required');
+    return this.authService.disableInviteCode(inviteId);
   }
 
   @Post('refresh')
@@ -95,5 +141,10 @@ export class AuthController {
     } catch {
       return { authenticated: false, user: null };
     }
+  }
+
+  private assertAdmin(user: any) {
+    const isAdmin = hasAuthorizationLevel(user || {}, 'admin');
+    if (!isAdmin) throw new ForbiddenException('Admin access required');
   }
 }

@@ -32,11 +32,20 @@ const normalizeRoles = (roles: Array<string | undefined | null>): string[] => {
   return Array.from(new Set(roles.map(normalizeRole).filter(Boolean)));
 };
 
+const MASTER_SUPER_ADMIN_EMAILS = (
+  import.meta.env.VITE_MASTER_SUPER_ADMIN_EMAILS || 'owner@example.com'
+)
+  .split(',')
+  .map((email: string) => email.trim().toLowerCase())
+  .filter(Boolean);
+
 export const useAuthorization = () => {
   const { user } = useAuth();
 
   // Specific override for the Super Admin / Master Admin
-  const isBizSynthMasterAdmin = user?.email?.toLowerCase() === 'owner@example.com';
+  const isBizSynthMasterAdmin = MASTER_SUPER_ADMIN_EMAILS.includes(
+    (user?.email || '').toLowerCase()
+  );
 
   const hasRole = (roles: string[]): boolean => {
     if (!user) return false;
@@ -141,6 +150,7 @@ export const useAuthorization = () => {
     canAccess,
     // Master admin checks
     isSuperAdmin: isBizSynthMasterAdmin || hasRole(['SUPER_ADMIN']),
+    isBizSynthMasterAdmin,
     // Agency admin checks
     isAgencyOwner: hasRole(['AGENCY_OWNER']),
     isAgencyAdmin: hasRole(['AGENCY_ADMIN', 'AGENCY_MANAGER']),

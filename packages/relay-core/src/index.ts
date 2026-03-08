@@ -3,6 +3,7 @@
  */
 
 export * from './server/RelayServer';
+export * from './services/GooseCliBridgeService';
 export * from './services/HandoffStoreService';
 export * from './services/HeartbeatMonitoringService';
 export * from './services/MasterAgentRegistry';

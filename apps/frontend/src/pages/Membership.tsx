@@ -1,12 +1,12 @@
 import { ArrowRight, Crown, Shield, Sparkles } from 'lucide-react';
-import React from 'react';
-import { PayPalSubscriptionButton } from '../components/billing/PayPalSubscriptionButton';
 import { Link } from 'react-router-dom';
+import { PayPalSubscriptionButton } from '../components/billing/PayPalSubscriptionButton';
 
 const benefits = [
   {
     title: 'Priority Agent Support',
-    description: 'Direct hotline to our strategy architects and mission control for onboarding or upgrades.',
+    description:
+      'Direct hotline to our strategy architects and mission control for onboarding or upgrades.',
     icon: <Sparkles className="w-5 h-5 text-cyan-300" />,
   },
   {
@@ -16,12 +16,17 @@ const benefits = [
   },
   {
     title: 'Security & Compliance',
-    description: 'PayPal-backed recurring billing plus fraud monitoring that keeps the Protocol trusted.',
+    description:
+      'Dual-rail billing (PayPal + Stripe) with fraud monitoring that keeps the Protocol trusted.',
     icon: <Shield className="w-5 h-5 text-emerald-400" />,
   },
 ];
 
 export default function Membership() {
+  const stripeMembershipCheckoutUrl = (
+    import.meta.env.VITE_STRIPE_MEMBERSHIP_CHECKOUT_URL || ''
+  ).trim();
+
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       <div className="relative overflow-hidden pt-16 pb-24">
@@ -29,21 +34,23 @@ export default function Membership() {
         <div className="mx-auto max-w-6xl px-6">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div className="space-y-6">
-              <p className="text-xs uppercase tracking-[0.6em] text-cyan-400">PayPal Subscription</p>
+              <p className="text-xs uppercase tracking-[0.6em] text-cyan-400">Membership Billing</p>
               <h1 className="text-4xl font-black leading-tight sm:text-5xl xl:text-6xl">
-                TNF Membership<br />
+                TNF Membership
+                <br />
                 <span className="text-cyan-300">Live access to AI-ARCADE & the Protocol</span>
               </h1>
               <p className="max-w-2xl text-base text-slate-300 sm:text-lg">
-                Membership for The New Fuse is powered by PayPal — the same system used on aivideointel.thenewfuse.com. Subscribe once, stay active
-                forever (until you cancel). Once you join, the community apps, agent studio, and mission control unlock instantly.
+                TNF Membership is $30/month. PayPal remains the default subscription rail, with
+                Stripe available as an additional checkout option when enabled. Once you join, the
+                community apps, agent studio, and mission control unlock instantly.
               </p>
               <div className="flex flex-wrap gap-3">
                 <span className="rounded-full border border-cyan-500/60 bg-cyan-500/10 px-4 py-1 text-xs font-black uppercase tracking-widest text-cyan-200">
-                  PayPal subscription
+                  PayPal + Stripe
                 </span>
                 <span className="rounded-full border border-white/15 px-4 py-1 text-xs uppercase tracking-[0.3em] text-slate-300">
-                  $49 / month · $490 / year
+                  $30 / month
                 </span>
               </div>
             </div>
@@ -51,12 +58,22 @@ export default function Membership() {
               <p className="text-xs uppercase tracking-[0.4em] text-slate-400">Active Membership</p>
               <h2 className="mt-4 text-2xl font-black text-white">Join the Protocol</h2>
               <p className="mt-3 text-sm text-slate-300">
-                Recurring billing is handled via PayPal, so you keep control over the card attached to your thenewfuse.com account.
-                Pause or cancel directly from the PayPal dashboard.
+                PayPal remains the default recurring billing path for thenewfuse.com. Stripe can run
+                in parallel as an additional checkout rail for agentic billing workflows.
               </p>
               <div className="mt-6">
                 <PayPalSubscriptionButton />
               </div>
+              {stripeMembershipCheckoutUrl && (
+                <a
+                  href={stripeMembershipCheckoutUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-4 inline-flex w-full items-center justify-center rounded-md border border-white/20 bg-white/10 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/15"
+                >
+                  Checkout with Stripe
+                </a>
+              )}
             </div>
           </div>
         </div>
@@ -86,27 +103,36 @@ export default function Membership() {
                 <span className="mt-1 inline-flex h-8 w-8 items-center justify-center rounded-full bg-cyan-500 text-xs font-black uppercase">
                   1
                 </span>
-                Subscribe via PayPal using the button above.
+                Subscribe with PayPal or Stripe using the controls above.
               </li>
               <li className="flex items-start gap-3">
                 <span className="mt-1 inline-flex h-8 w-8 items-center justify-center rounded-full bg-cyan-500 text-xs font-black uppercase">
                   2
                 </span>
-                We record the subscription on the server and mark you as <strong>active member</strong> in the community table.
+                We record the subscription on the server and mark you as{' '}
+                <strong>active member</strong> in the community table.
               </li>
               <li className="flex items-start gap-3">
                 <span className="mt-1 inline-flex h-8 w-8 items-center justify-center rounded-full bg-cyan-500 text-xs font-black uppercase">
                   3
                 </span>
-                Unlock all member-only routes in The New Fuse, including AI-ARCADE submissions and Ops dashboards.
+                Unlock all member-only routes in The New Fuse, including AI-ARCADE submissions and
+                Ops dashboards.
               </li>
             </ol>
           </div>
           <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
             <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Need help?</p>
             <p className="mt-4 text-sm text-slate-200">
-              Membership questions? Reach our concierge by emailing <a className="text-cyan-300 underline" href="mailto:support@thenewfuse.com">support@thenewfuse.com</a> or jump into
-              the live Discord. You can also visit <Link className="text-cyan-300 underline" to="/support">Support</Link> to open a ticket.
+              Membership questions? Reach our concierge by emailing{' '}
+              <a className="text-cyan-300 underline" href="mailto:support@thenewfuse.com">
+                support@thenewfuse.com
+              </a>{' '}
+              or jump into the live Discord. You can also visit{' '}
+              <Link className="text-cyan-300 underline" to="/support">
+                Support
+              </Link>{' '}
+              to open a ticket.
             </p>
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}

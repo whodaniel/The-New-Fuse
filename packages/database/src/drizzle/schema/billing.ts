@@ -60,6 +60,27 @@ export const payPalSubscriptions = pgTable('paypal_subscriptions', {
 });
 
 // =============================================================================
+// STRIPE SUBSCRIPTIONS
+// =============================================================================
+
+export const stripeSubscriptions = pgTable('stripe_subscriptions', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  stripeCustomerId: varchar('stripe_customer_id', { length: 255 }),
+  stripeSubscriptionId: varchar('stripe_subscription_id', { length: 255 }).unique().notNull(),
+  stripePriceId: varchar('stripe_price_id', { length: 255 }),
+  status: subscriptionStatusEnum('status').notNull().default('PENDING'),
+  tier: subscriptionTierEnum('tier').notNull().default('STARTER'),
+  currentPeriodStart: timestamp('current_period_start').notNull(),
+  currentPeriodEnd: timestamp('current_period_end').notNull(),
+  cancelAtPeriodEnd: boolean('cancel_at_period_end').default(false).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// =============================================================================
 // CREDIT BALANCES
 // =============================================================================
 // Used for "Top Up" or "Overage" billing
@@ -100,6 +121,13 @@ export const usageRecords = pgTable('usage_records', {
 export const payPalSubscriptionsRelations = relations(payPalSubscriptions, ({ one }) => ({
   user: one(users, {
     fields: [payPalSubscriptions.userId],
+    references: [users.id],
+  }),
+}));
+
+export const stripeSubscriptionsRelations = relations(stripeSubscriptions, ({ one }) => ({
+  user: one(users, {
+    fields: [stripeSubscriptions.userId],
     references: [users.id],
   }),
 }));

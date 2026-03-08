@@ -1,5 +1,5 @@
 import { GlassCard } from '@/components/ui/premium';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { AlertCircle, Bot, Check, Loader2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
@@ -38,8 +38,14 @@ export const UserTypeDetection: React.FC<UserTypeDetectionProps> = ({ onDetectio
 
         await new Promise((resolve) => setTimeout(resolve, 500));
 
-        // Make API call to detect user type
-        const response = await axios.post('/api/onboarding/start');
+        // Make API call to detect user type with optional invite/token query hints.
+        const params = new URLSearchParams(window.location.search);
+        const inviteCode = params.get('inviteCode') || params.get('invite') || undefined;
+        const onboardingToken = params.get('onboardingToken') || params.get('token') || undefined;
+        const response = await axios.post('/api/onboarding/start', {
+          inviteCode,
+          onboardingToken,
+        });
 
         // Update third step
         setDetectionSteps((prev) => {
@@ -64,10 +70,16 @@ export const UserTypeDetection: React.FC<UserTypeDetectionProps> = ({ onDetectio
         onDetectionComplete(response.data.userType);
       } catch (err) {
         console.error('Error detecting user type:', err);
-        setError('Failed to detect user type. Please try again.');
+        const axiosError = err as AxiosError<{ message?: string }>;
+        const status = axiosError.response?.status;
+        const apiMessage = axiosError.response?.data?.message;
 
-        // Default to human if detection fails
-        onDetectionComplete('human');
+        if (status === 403) {
+          setError(apiMessage || 'Invite code or onboarding token is required to continue.');
+          return;
+        }
+
+        setError('Failed to detect user type. Please try again.');
       } finally {
         setLoading(false);
       }

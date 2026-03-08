@@ -162,6 +162,22 @@ export class PayPalService {
    * Get the current tier for a user
    */
   async getUserTier(userId: string): Promise<'STARTER' | 'PRO' | 'ENTERPRISE'> {
+    const [paypalTier, stripeTier] = await Promise.all([
+      this.getPayPalTier(userId),
+      this.getStripeTier(userId),
+    ]);
+    return this.maxTier(paypalTier, stripeTier);
+  }
+
+  private maxTier(
+    a: 'STARTER' | 'PRO' | 'ENTERPRISE',
+    b: 'STARTER' | 'PRO' | 'ENTERPRISE'
+  ): 'STARTER' | 'PRO' | 'ENTERPRISE' {
+    const rank = { STARTER: 0, PRO: 1, ENTERPRISE: 2 } as const;
+    return rank[a] >= rank[b] ? a : b;
+  }
+
+  private async getPayPalTier(userId: string): Promise<'STARTER' | 'PRO' | 'ENTERPRISE'> {
     try {
       const client = this.db.client as any;
       const sub = await client.query.payPalSubscriptions.findFirst({
@@ -174,8 +190,143 @@ export class PayPalService {
 
       return sub.tier as 'STARTER' | 'PRO' | 'ENTERPRISE';
     } catch (error) {
-      this.logger.error(`Error fetching tier for user ${userId}: ${error}`);
+      this.logger.error(`Error fetching PayPal tier for user ${userId}: ${error}`);
       return 'STARTER';
     }
+  }
+
+  private async getStripeTier(userId: string): Promise<'STARTER' | 'PRO' | 'ENTERPRISE'> {
+    try {
+      const rows = await this.db.executeRaw<
+        Array<{
+          tier: 'STARTER' | 'PRO' | 'ENTERPRISE';
+          status: string;
+        }>
+      >(
+        `SELECT tier, status
+         FROM stripe_subscriptions
+         WHERE user_id = '${String(userId).replace(/'/g, "''")}'
+         ORDER BY updated_at DESC
+         LIMIT 1`
+      );
+      const sub = (
+        rows as unknown as Array<{ tier: 'STARTER' | 'PRO' | 'ENTERPRISE'; status: string }>
+      )[0];
+      if (!sub || sub.status !== 'ACTIVE') {
+        return 'STARTER';
+      }
+
+      return sub.tier || 'PRO';
+    } catch (error) {
+      // Stripe table might not exist before migration is applied.
+      this.logger.warn(`Stripe tier lookup unavailable for user ${userId}: ${String(error)}`);
+      return 'STARTER';
+    }
+  }
+
+  async getMembershipByIdentity(identity: string): Promise<{
+    identity: string;
+    found: boolean;
+    active: boolean;
+    tier: 'STARTER' | 'PRO' | 'ENTERPRISE';
+    user: null | {
+      id: string;
+      email: string;
+      username: string | null;
+      role: string;
+      roles: string[];
+    };
+    source: 'email' | 'username' | 'none';
+  }> {
+    const normalized = String(identity || '').trim();
+    const empty = {
+      identity: normalized,
+      found: false,
+      active: false,
+      tier: 'STARTER' as const,
+      user: null,
+      source: 'none' as const,
+    };
+    if (!normalized) return empty;
+
+    const lowered = normalized.toLowerCase();
+    const matchByEmail = lowered.includes('@');
+    const escapeSqlLiteral = (value: string) => value.replace(/'/g, "''");
+    const emailLiteral = escapeSqlLiteral(lowered);
+    const usernameLiteral = escapeSqlLiteral(normalized);
+    const rows = await this.db.executeRaw<
+      Array<{
+        id: string;
+        email: string;
+        username: string | null;
+        role: string;
+        roles: string[] | null;
+      }>
+    >(
+      matchByEmail
+        ? `SELECT id, email, username, role, roles
+           FROM users
+           WHERE lower(email) = '${emailLiteral}'
+             AND deleted_at IS NULL
+           LIMIT 1`
+        : `SELECT id, email, username, role, roles
+           FROM users
+           WHERE username = '${usernameLiteral}'
+             AND deleted_at IS NULL
+           LIMIT 1`
+    );
+    const user = (
+      rows as unknown as Array<{
+        id: string;
+        email: string;
+        username: string | null;
+        role: string;
+        roles: string[] | null;
+      }>
+    )[0];
+    if (!user) return empty;
+
+    const tier = await this.getUserTier(user.id);
+    const configuredMasters = (this.configService.get<string>('MASTER_SUPER_ADMIN_EMAILS') || '')
+      .split(',')
+      .map((email) => email.trim().toLowerCase())
+      .filter(Boolean);
+    const isMasterSuperAdmin =
+      configuredMasters.includes((user.email || '').toLowerCase()) ||
+      (user.email || '').toLowerCase() === 'owner@example.com';
+    const normalizedRoles = Array.from(
+      new Set([...(Array.isArray(user.roles) ? user.roles : []), user.role].filter(Boolean))
+    ).map((r: string) => r.toUpperCase());
+    const isElevated = isMasterSuperAdmin || normalizedRoles.includes('SUPER_ADMIN');
+
+    return {
+      identity: normalized,
+      found: true,
+      active: tier !== 'STARTER' || isElevated,
+      tier,
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username || null,
+        role: user.role,
+        roles: normalizedRoles,
+      },
+      source: matchByEmail ? 'email' : 'username',
+    };
+  }
+
+  async getMembershipForUser(userId: string): Promise<{
+    found: boolean;
+    active: boolean;
+    tier: 'STARTER' | 'PRO' | 'ENTERPRISE';
+    userId: string;
+  }> {
+    const tier = await this.getUserTier(userId);
+    return {
+      found: true,
+      active: tier !== 'STARTER',
+      tier,
+      userId,
+    };
   }
 }
