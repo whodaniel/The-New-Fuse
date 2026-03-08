@@ -8,24 +8,8 @@
       // Static hosting compatibility: allow /app.html#/route deep-link entry.
       (function bootstrapHashRoute() {
         if (typeof window === 'undefined') return;
-        var host = window.location.hostname || '';
-        var isMarketplaceHost = host === 'marketplace.thenewfuse.com';
         var hash = window.location.hash || '';
-
-        // Marketplace is public-only and does not host auth flows.
-        if (
-          isMarketplaceHost &&
-          (hash.startsWith('#/auth') || hash.startsWith('#/login') || hash.startsWith('#/register'))
-        ) {
-          window.history.replaceState(null, '', '/app.html#');
-          return;
-        }
-
-        if (
-          !isMarketplaceHost &&
-          window.location.pathname.endsWith('/app.html') &&
-          hash.startsWith('#/')
-        ) {
+        if (window.location.pathname.endsWith('/app.html') && hash.startsWith('#/')) {
           window.history.replaceState(null, '', hash.slice(1));
         }
       })();
