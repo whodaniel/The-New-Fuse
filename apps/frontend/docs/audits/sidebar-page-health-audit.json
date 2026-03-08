@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-03-04T19:14:43.639Z",
+  "generatedAt": "2026-03-07T23:59:39.705Z",
   "counts": {
     "total": 21,
-    "working": 21,
+    "working": 20,
     "partialMedium": 0,
-    "partialHigh": 0,
+    "partialHigh": 1,
     "broken": 0
   },
   "results": [
@@ -39,12 +39,21 @@
       "name": "Agent Fleet",
       "route": "/agents",
       "targetRoute": "/agents",
-      "component": "AgentsPage",
-      "file": "pages/AgentsRevolution.tsx",
+      "component": "ErrorBoundary",
+      "file": "components/ErrorBoundary.tsx",
       "surface": "app",
-      "risk": 0,
-      "status": "working",
-      "hits": []
+      "risk": 158,
+      "status": "partial-high-risk",
+      "hits": [
+        {
+          "id": "fallback_demo",
+          "count": 78
+        },
+        {
+          "id": "randomized_behavior",
+          "count": 1
+        }
+      ]
     },
     {
       "name": "Command Center",
@@ -100,13 +109,13 @@
       "route": "/dashboard",
       "targetRoute": "/dashboard",
       "component": "Dashboard",
-      "file": "components/Dashboard.tsx",
+      "file": "pages/dashboard/TNFConsoleDashboard.tsx",
       "surface": "app",
-      "risk": 2,
+      "risk": 1,
       "status": "working",
       "hits": [
         {
-          "id": "fallback_demo",
+          "id": "raw_fetch",
           "count": 1
         }
       ]
@@ -233,9 +242,14 @@
       "component": "TimelinePage",
       "file": "pages/Timeline/index.tsx",
       "surface": "app",
-      "risk": 0,
+      "risk": 2,
       "status": "working",
-      "hits": []
+      "hits": [
+        {
+          "id": "randomized_behavior",
+          "count": 1
+        }
+      ]
     },
     {
       "name": "Workflows",

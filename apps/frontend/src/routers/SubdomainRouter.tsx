@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import ComprehensiveRouter from '../ComprehensiveRouter';
 import ConnectExtensionPage from '../pages/ConnectExtension';
+import MarketplacePublicPage from '../pages/Marketplace/MarketplacePublicPage';
 
 // Mock function to determine if we are on an agency subdomain
 const getSubdomain = () => {
@@ -30,13 +31,6 @@ const SubdomainRouter: React.FC = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (subdomain === 'marketplace' && window.location.pathname === '/') {
-      window.history.replaceState({}, '', '/marketplace');
-      window.dispatchEvent(new PopStateEvent('popstate'));
-    }
-  }, [subdomain]);
-
   // If we are on a subdomain (e.g., alpha.thenewfuse.hub), we might want to show
   // the Agency's Public Landing Page OR their Admin Dashboard if they are logged in as owner.
   // For the purpose of "Accessing their own super admin account",
@@ -50,6 +44,11 @@ const SubdomainRouter: React.FC = () => {
   // So `agency.thenewfuse.hub` should look like a branded version of TNF.
 
   if (subdomain) {
+    // Force marketplace subdomain into standalone public marketplace experience.
+    if (subdomain === 'marketplace') {
+      return <MarketplacePublicPage />;
+    }
+
     // Keep connect subdomain at root URL and render a focused extension landing page.
     if (subdomain === 'connect' && window.location.pathname === '/') {
       return <ConnectExtensionPage />;
