@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { ArrowUpRight, Filter, Search, Sparkles } from 'lucide-react';
+import { ArrowUpRight, ExternalLink, Filter, Search, Sparkles } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import type { MarketplaceCatalogItem, MarketplaceKind } from '../../services/marketplace.service';
 import { marketplaceService } from '../../services/marketplace.service';
@@ -9,6 +9,12 @@ import './MarketplacePublicPage.css';
 const sectionDelay = (index: number) => ({ duration: 0.36, delay: 0.08 * index });
 const AUTH_LOGIN_URL = 'https://thenewfuse.com/auth/login';
 const AUTH_REGISTER_URL = 'https://thenewfuse.com/auth/register';
+const RESEARCH_BASELINE = {
+  categories: 10,
+  sources: 52,
+  links: 8479,
+  prompts: 1985,
+};
 
 const KIND_LABELS: Record<MarketplaceKind, string> = {
   agent: 'Complete Agents',
@@ -184,6 +190,159 @@ const FALLBACK_MARKETPLACE_ITEMS: MarketplaceCatalogItem[] = [
   },
 ];
 
+const RESEARCH_CATEGORIES = [
+  {
+    title: 'Commercial Marketplaces',
+    sources: [
+      {
+        name: 'PromptBase',
+        url: 'https://promptbase.com',
+        brief: 'Paid prompt marketplace with template listings across text and image models.',
+      },
+      {
+        name: 'PromptHero',
+        url: 'https://prompthero.com',
+        brief: 'Community-driven prompt discovery and sharing hub.',
+      },
+      {
+        name: 'AIPRM',
+        url: 'https://www.aiprm.com',
+        brief: 'Prompt library extension heavily used for SEO and marketing workflows.',
+      },
+      {
+        name: 'God of Prompt',
+        url: 'https://www.godofprompt.ai',
+        brief: 'Large curated prompt bundles and industry templates.',
+      },
+    ],
+  },
+  {
+    title: 'Enterprise Orchestration',
+    sources: [
+      {
+        name: 'Maxim AI',
+        url: 'https://www.getmaxim.ai',
+        brief: 'Prompt IDE, eval stack, and model gateway focused on production reliability.',
+      },
+      {
+        name: 'LangSmith',
+        url: 'https://www.langchain.com/langsmith',
+        brief: 'Tracing, evals, and prompt/version management for LLM apps.',
+      },
+      {
+        name: 'Arize AX / Phoenix',
+        url: 'https://arize.com',
+        brief: 'LLM observability platform with strong production telemetry patterns.',
+      },
+      {
+        name: 'PromptLayer',
+        url: 'https://promptlayer.com',
+        brief: 'Prompt logging and management focused on workflow instrumentation.',
+      },
+    ],
+  },
+  {
+    title: 'Open-Source Repositories',
+    sources: [
+      {
+        name: 'f/awesome-chatgpt-prompts',
+        url: 'https://github.com/f/awesome-chatgpt-prompts',
+        brief: 'Massive prompt collection and role template repository.',
+      },
+      {
+        name: 'langgptai/awesome-claude-prompts',
+        url: 'https://github.com/langgptai/awesome-claude-prompts',
+        brief: 'Claude-focused prompt patterns and long-context examples.',
+      },
+      {
+        name: 'dair-ai/Prompt-Engineering-Guide',
+        url: 'https://github.com/dair-ai/Prompt-Engineering-Guide',
+        brief: 'Educational prompt engineering guide with methods and references.',
+      },
+      {
+        name: 'x1xhlol/system-prompts',
+        url: 'https://github.com/x1xhlol/system-prompts',
+        brief: 'System prompt archive for model and tool behavior analysis.',
+      },
+    ],
+  },
+  {
+    title: 'Visual / Multimodal',
+    sources: [
+      {
+        name: 'Civitai',
+        url: 'https://civitai.com',
+        brief: 'Model checkpoints and LoRA distribution center for generative art.',
+      },
+      {
+        name: 'OpenArt',
+        url: 'https://openart.ai',
+        brief: 'Visual style references, palettes, and prompt-driven image tooling.',
+      },
+      {
+        name: 'Lexica',
+        url: 'https://lexica.art',
+        brief: 'Prompt-to-image search index for Stable Diffusion outputs.',
+      },
+      {
+        name: 'SeaArt',
+        url: 'https://www.seaart.ai',
+        brief: 'Cloud generation and style exploration platform for image workflows.',
+      },
+    ],
+  },
+  {
+    title: 'Community Labs',
+    sources: [
+      {
+        name: 'r/PromptEngineering',
+        url: 'https://www.reddit.com/r/PromptEngineering',
+        brief: 'High-volume prompt experimentation and tactical framework sharing.',
+      },
+      {
+        name: 'r/VibeCoding',
+        url: 'https://www.reddit.com/r/VibeCoding',
+        brief: 'Natural-language software build workflows and prompt patterns.',
+      },
+      {
+        name: 'OpenAI Discord',
+        url: 'https://discord.gg/openai',
+        brief: 'Developer discussions around ChatGPT, APIs, and tool-calling.',
+      },
+      {
+        name: 'Midjourney Discord',
+        url: 'https://discord.gg/midjourney',
+        brief: 'Primary prompt and generation community for Midjourney workflows.',
+      },
+    ],
+  },
+  {
+    title: 'Academic / Benchmark',
+    sources: [
+      {
+        name: 'Hugging Face Datasets',
+        url: 'https://huggingface.co/datasets',
+        brief: 'Prompt and benchmark datasets used for evaluation and research.',
+      },
+      {
+        name: 'OpenReview',
+        url: 'https://openreview.net',
+        brief: 'Research papers and benchmark methodology discussions.',
+      },
+      {
+        name: 'GAIR DatasetResearch',
+        url: 'https://huggingface.co/datasets/GAIR',
+        brief: 'Dataset family used in your prior phase for prompt taxonomy references.',
+      },
+      {
+        name: 'Stanford DSPy',
+        url: 'https://github.com/stanfordnlp/dspy',
+        brief: 'Programmatic prompt optimization framework for automated instruction tuning.',
+      },
+    ],
+  },
+];
+
 type PriceFilter = 'all' | 'free' | 'paid';
 type SortMode = 'featured' | 'rating' | 'runs' | 'newest' | 'price_low' | 'price_high';
 
@@ -225,28 +384,6 @@ export default function MarketplacePublicPage() {
     });
     return ['all', ...Array.from(unique).sort((a, b) => a.localeCompare(b))];
   }, [items]);
-
-  const stats = useMemo(() => {
-    const items = data?.items ?? [];
-    const kindCounts = items.reduce<Record<string, number>>((acc, item) => {
-      acc[item.kind] = (acc[item.kind] || 0) + 1;
-      return acc;
-    }, {});
-    const avgSuccessRate =
-      items.length > 0
-        ? Math.round(items.reduce((sum, item) => sum + (item.successRate || 0), 0) / items.length)
-        : 0;
-
-    return {
-      total: data?.total ?? 0,
-      free: items.filter((item) => (item.pricePerRun || 0) <= 0).length,
-      paid: items.filter((item) => (item.pricePerRun || 0) > 0).length,
-      topKinds: Object.entries(kindCounts)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 3),
-      avgSuccessRate,
-    };
-  }, [data]);
 
   const filteredAndSorted = useMemo(() => {
     const q = normalize(query);
@@ -360,37 +497,31 @@ export default function MarketplacePublicPage() {
           animate={{ opacity: 1, scale: 1 }}
           transition={sectionDelay(1)}
         >
-          <div className="mp-status-top">
+          <div className="mp-status-top mp-status-top-solid">
             <span className="mp-dot" />
-            <span>{isLoading ? 'Loading catalog' : 'Live catalog snapshot'}</span>
+            <span>Prior Research Corpus Integrated</span>
           </div>
           <div className="mp-stat-grid">
             <article>
-              <h3>{stats.total}</h3>
-              <p>published listings</p>
+              <h3>{RESEARCH_BASELINE.categories}</h3>
+              <p>major categories</p>
             </article>
             <article>
-              <h3>{stats.avgSuccessRate}%</h3>
-              <p>average success rate</p>
+              <h3>{RESEARCH_BASELINE.sources}</h3>
+              <p>tracked sources</p>
             </article>
             <article>
-              <h3>{stats.free}</h3>
-              <p>free resources</p>
+              <h3>{RESEARCH_BASELINE.links.toLocaleString()}</h3>
+              <p>collected links</p>
             </article>
             <article>
-              <h3>{stats.paid}</h3>
-              <p>paid resources</p>
+              <h3>{RESEARCH_BASELINE.prompts.toLocaleString()}</h3>
+              <p>prompt records</p>
             </article>
           </div>
-          <ul className="mp-kind-list">
-            {stats.topKinds.map(([kind, count]) => (
-              <li key={kind}>
-                <span>{KIND_LABELS[kind as MarketplaceKind] || kind.replace('_', ' ')}</span>
-                <strong>{count}</strong>
-              </li>
-            ))}
-            {stats.topKinds.length === 0 && <li>No catalog metrics yet.</li>}
-          </ul>
+          <p className="mp-status-note">
+            Seeded with your archetypal repository research phase and ready for ongoing ingestion.
+          </p>
         </motion.div>
       </section>
 
@@ -404,6 +535,31 @@ export default function MarketplacePublicPage() {
             <button key={typeName} type="button" className="mp-chip">
               {typeName} ({count})
             </button>
+          ))}
+        </div>
+      </section>
+
+      <section className="mp-featured mp-catalog">
+        <div className="mp-section-title">
+          <h2>Curated research sources</h2>
+          <span className="mp-result-count">from your prior instruction-engineering phase</span>
+        </div>
+        <div className="mp-source-groups">
+          {RESEARCH_CATEGORIES.map((group) => (
+            <article key={group.title} className="mp-source-group">
+              <h3>{group.title}</h3>
+              <ul>
+                {group.sources.map((source) => (
+                  <li key={source.url}>
+                    <a href={source.url} target="_blank" rel="noreferrer">
+                      <span>{source.name}</span>
+                      <ExternalLink size={13} />
+                    </a>
+                    <p>{source.brief}</p>
+                  </li>
+                ))}
+              </ul>
+            </article>
           ))}
         </div>
       </section>
