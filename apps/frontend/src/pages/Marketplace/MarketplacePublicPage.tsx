@@ -1,18 +1,57 @@
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { ArrowRight, Compass, Flame, Package, Sparkles, Zap } from 'lucide-react';
-import { useMemo } from 'react';
+import { ArrowUpRight, Filter, Search, Sparkles } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import type { MarketplaceCatalogItem, MarketplaceKind } from '../../services/marketplace.service';
 import { marketplaceService } from '../../services/marketplace.service';
 import './MarketplacePublicPage.css';
 
 const sectionDelay = (index: number) => ({ duration: 0.36, delay: 0.08 * index });
 
+const KIND_LABELS: Record<MarketplaceKind, string> = {
+  agent: 'Complete Agents',
+  prompt: 'Prompts',
+  skill: 'Skills',
+  mcp_server: 'MCP Servers',
+  workflow: 'Workflows',
+  experience: 'Experiences',
+  agent_template: 'Agent Templates',
+  model: 'Models',
+};
+
+type PriceFilter = 'all' | 'free' | 'paid';
+type SortMode = 'featured' | 'rating' | 'runs' | 'newest' | 'price_low' | 'price_high';
+
+function normalize(text: string | undefined): string {
+  return (text || '').trim().toLowerCase();
+}
+
+function isAbsoluteUrl(value: string): boolean {
+  return /^https?:\/\//i.test(value);
+}
+
 export default function MarketplacePublicPage() {
+  const [query, setQuery] = useState('');
+  const [kindFilter, setKindFilter] = useState<'all' | MarketplaceKind>('all');
+  const [priceFilter, setPriceFilter] = useState<PriceFilter>('all');
+  const [sortMode, setSortMode] = useState<SortMode>('featured');
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
+
   const { data, isLoading } = useQuery({
     queryKey: ['marketplace-public-catalog'],
-    queryFn: () => marketplaceService.getCatalog({ status: 'published', limit: 12, offset: 0 }),
+    queryFn: () => marketplaceService.getCatalog({ status: 'published', limit: 200, offset: 0 }),
     staleTime: 60_000,
   });
+
+  const items = data?.items ?? [];
+
+  const categories = useMemo(() => {
+    const unique = new Set<string>();
+    items.forEach((item) => {
+      if (item.category) unique.add(item.category);
+    });
+    return ['all', ...Array.from(unique).sort((a, b) => a.localeCompare(b))];
+  }, [items]);
 
   const stats = useMemo(() => {
     const items = data?.items ?? [];
@@ -27,6 +66,8 @@ export default function MarketplacePublicPage() {
 
     return {
       total: data?.total ?? 0,
+      free: items.filter((item) => (item.pricePerRun || 0) <= 0).length,
+      paid: items.filter((item) => (item.pricePerRun || 0) > 0).length,
       topKinds: Object.entries(kindCounts)
         .sort((a, b) => b[1] - a[1])
         .slice(0, 3),
@@ -34,7 +75,66 @@ export default function MarketplacePublicPage() {
     };
   }, [data]);
 
-  const featured = (data?.items ?? []).slice(0, 6);
+  const filteredAndSorted = useMemo(() => {
+    const q = normalize(query);
+
+    const filtered = items.filter((item) => {
+      if (kindFilter !== 'all' && item.kind !== kindFilter) return false;
+      if (priceFilter === 'free' && (item.pricePerRun || 0) > 0) return false;
+      if (priceFilter === 'paid' && (item.pricePerRun || 0) <= 0) return false;
+      if (categoryFilter !== 'all' && normalize(item.category) !== normalize(categoryFilter))
+        return false;
+
+      if (!q) return true;
+
+      const searchBlob = [
+        item.name,
+        item.description,
+        item.category,
+        ...(item.tags || []),
+        ...(item.capabilities || []),
+        KIND_LABELS[item.kind],
+      ]
+        .join(' ')
+        .toLowerCase();
+
+      return searchBlob.includes(q);
+    });
+
+    const sorted = [...filtered].sort((a, b) => {
+      if (sortMode === 'rating') return (b.rating || 0) - (a.rating || 0);
+      if (sortMode === 'runs') return (b.totalRuns || 0) - (a.totalRuns || 0);
+      if (sortMode === 'newest') return +new Date(b.updatedAt) - +new Date(a.updatedAt);
+      if (sortMode === 'price_low') return (a.pricePerRun || 0) - (b.pricePerRun || 0);
+      if (sortMode === 'price_high') return (b.pricePerRun || 0) - (a.pricePerRun || 0);
+
+      // featured
+      const scoreA =
+        (a.rating || 0) * 0.45 + (a.successRate || 0) * 0.35 + Math.log1p(a.totalRuns || 0);
+      const scoreB =
+        (b.rating || 0) * 0.45 + (b.successRate || 0) * 0.35 + Math.log1p(b.totalRuns || 0);
+      return scoreB - scoreA;
+    });
+
+    return sorted;
+  }, [items, kindFilter, priceFilter, sortMode, categoryFilter, query]);
+
+  const kinds = useMemo(() => {
+    return ['all', ...Object.keys(KIND_LABELS)] as Array<'all' | MarketplaceKind>;
+  }, []);
+
+  const formatPrice = (item: MarketplaceCatalogItem): string => {
+    const value = item.pricePerRun || 0;
+    if (value <= 0) return 'Free';
+    return `$${value.toFixed(2)} / run`;
+  };
+
+  const resolveItemHref = (item: MarketplaceCatalogItem): string => {
+    if (item.launchUrl && item.launchUrl.trim().length > 0) {
+      return item.launchUrl;
+    }
+    return `/marketplace?item=${encodeURIComponent(item.id)}`;
+  };
 
   return (
     <div className="marketplace-public">
@@ -49,20 +149,20 @@ export default function MarketplacePublicPage() {
         >
           <p className="mp-kicker">The New Fuse • AI Assets Marketplace</p>
           <h1>
-            Deployable AI assets,
+            The AI Agent resource
             <br />
-            <span>curated for execution.</span>
+            <span>marketplace for TNF.</span>
           </h1>
           <p className="mp-subhead">
-            Discover workflows, MCP servers, prompts, and skills that move from discovery to action
-            without copy-pasting across tools.
+            Find free and paid assets across the full AI Agent stack: complete agents, prompts,
+            skills, MCP servers, workflows, templates, models, courses, and collectible assets.
           </p>
           <div className="mp-cta-row">
-            <a href="/resources" className="mp-btn mp-btn-primary">
-              Open Resource Catalog <ArrowRight size={16} />
+            <a href="/auth/login" className="mp-btn mp-btn-primary">
+              Sign in to TNF
             </a>
-            <a href="/resources" className="mp-btn mp-btn-ghost">
-              Browse Resources
+            <a href="/auth/register" className="mp-btn mp-btn-ghost">
+              Create account
             </a>
           </div>
         </motion.div>
@@ -80,17 +180,25 @@ export default function MarketplacePublicPage() {
           <div className="mp-stat-grid">
             <article>
               <h3>{stats.total}</h3>
-              <p>published assets</p>
+              <p>published listings</p>
             </article>
             <article>
               <h3>{stats.avgSuccessRate}%</h3>
               <p>average success rate</p>
             </article>
+            <article>
+              <h3>{stats.free}</h3>
+              <p>free resources</p>
+            </article>
+            <article>
+              <h3>{stats.paid}</h3>
+              <p>paid resources</p>
+            </article>
           </div>
           <ul className="mp-kind-list">
             {stats.topKinds.map(([kind, count]) => (
               <li key={kind}>
-                <span>{kind.replace('_', ' ')}</span>
+                <span>{KIND_LABELS[kind as MarketplaceKind] || kind.replace('_', ' ')}</span>
                 <strong>{count}</strong>
               </li>
             ))}
@@ -99,81 +207,140 @@ export default function MarketplacePublicPage() {
         </motion.div>
       </section>
 
-      <section className="mp-signals">
-        {[
-          {
-            icon: Sparkles,
-            title: 'Curated for production',
-            body: 'Assets are filtered toward operational quality, not just novelty.',
-          },
-          {
-            icon: Zap,
-            title: 'Fast integration path',
-            body: 'Move from discovery to active use with route-level handoff patterns.',
-          },
-          {
-            icon: Compass,
-            title: 'Clear navigation model',
-            body: 'Single marketplace surface, TNF-native data model, no duplicated stacks.',
-          },
-          {
-            icon: Flame,
-            title: 'Research-driven expansion',
-            body: 'New assets can be sourced from crawl pipelines and promoted through moderation.',
-          },
-        ].map((signal, idx) => (
-          <motion.article
-            key={signal.title}
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.25 }}
-            transition={sectionDelay(idx)}
-            className="mp-signal-card"
-          >
-            <signal.icon size={18} />
-            <h3>{signal.title}</h3>
-            <p>{signal.body}</p>
-          </motion.article>
-        ))}
-      </section>
-
-      <section className="mp-featured">
+      <section className="mp-featured mp-catalog">
         <div className="mp-section-title">
-          <h2>Featured assets</h2>
-          <a href="/resources">
-            View all <ArrowRight size={15} />
-          </a>
+          <h2>Marketplace catalog</h2>
+          <span className="mp-result-count">{filteredAndSorted.length} results</span>
         </div>
+
+        <div className="mp-toolbar">
+          <label className="mp-search">
+            <Search size={15} />
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search agents, prompts, skills, MCP servers, workflows, NFTs, courses..."
+            />
+          </label>
+
+          <div className="mp-select-wrap">
+            <Filter size={14} />
+            <select
+              value={sortMode}
+              onChange={(event) => setSortMode(event.target.value as SortMode)}
+              aria-label="Sort resources"
+            >
+              <option value="featured">Sort: Featured</option>
+              <option value="newest">Sort: Newest</option>
+              <option value="rating">Sort: Highest rated</option>
+              <option value="runs">Sort: Most used</option>
+              <option value="price_low">Sort: Price low to high</option>
+              <option value="price_high">Sort: Price high to low</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="mp-filters">
+          <div className="mp-chip-group">
+            {kinds.map((kind) => (
+              <button
+                key={kind}
+                type="button"
+                className={`mp-chip ${kindFilter === kind ? 'is-active' : ''}`}
+                onClick={() => setKindFilter(kind)}
+              >
+                {kind === 'all' ? 'All Types' : KIND_LABELS[kind]}
+              </button>
+            ))}
+          </div>
+
+          <div className="mp-chip-group">
+            {(['all', 'free', 'paid'] as PriceFilter[]).map((value) => (
+              <button
+                key={value}
+                type="button"
+                className={`mp-chip ${priceFilter === value ? 'is-active' : ''}`}
+                onClick={() => setPriceFilter(value)}
+              >
+                {value === 'all' ? 'All Pricing' : value === 'free' ? 'Free' : 'Paid'}
+              </button>
+            ))}
+          </div>
+
+          <div className="mp-select-wrap">
+            <select
+              value={categoryFilter}
+              onChange={(event) => setCategoryFilter(event.target.value)}
+              aria-label="Category filter"
+            >
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category === 'all' ? 'All Categories' : category}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
         <div className="mp-cards">
-          {featured.map((item, idx) => (
+          {filteredAndSorted.map((item, idx) => (
             <motion.a
               key={item.id}
-              href={item.launchUrl || `/resources`}
+              href={resolveItemHref(item)}
               initial={{ opacity: 0, y: 14 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.2 }}
               transition={sectionDelay(idx)}
               className="mp-item"
+              target={item.launchUrl && isAbsoluteUrl(item.launchUrl) ? '_blank' : undefined}
+              rel={item.launchUrl && isAbsoluteUrl(item.launchUrl) ? 'noreferrer' : undefined}
             >
               <div className="mp-item-top">
-                <Package size={16} />
-                <span>{item.kind.replace('_', ' ')}</span>
+                <span>{KIND_LABELS[item.kind] || item.kind.replace('_', ' ')}</span>
+                <strong>{formatPrice(item)}</strong>
               </div>
               <h3>{item.name}</h3>
               <p>{item.description}</p>
+              <div className="mp-item-tags">
+                {(item.tags || []).slice(0, 3).map((tag) => (
+                  <span key={tag}>{tag}</span>
+                ))}
+                {(!item.tags || item.tags.length === 0) && (
+                  <span>{item.category || 'General'}</span>
+                )}
+              </div>
               <div className="mp-item-meta">
-                <span>Rating {item.rating.toFixed(1)}</span>
-                <span>{item.successRate}% success</span>
+                <span>Rating {(item.rating || 0).toFixed(1)}</span>
+                <span>{(item.totalRuns || 0).toLocaleString()} runs</span>
+                <span>{item.successRate || 0}% success</span>
+              </div>
+              <div className="mp-item-cta">
+                <span>{item.launchUrl ? 'Open resource' : 'View details'}</span>
+                <ArrowUpRight size={14} />
               </div>
             </motion.a>
           ))}
-          {featured.length === 0 && (
+          {!isLoading && filteredAndSorted.length === 0 && (
             <div className="mp-item mp-item-empty">
-              <h3>Catalog loading</h3>
-              <p>Published assets will appear here as soon as the API responds.</p>
+              <h3>No resources matched the current filters.</h3>
+              <p>Adjust search, type, category, or pricing to broaden the result set.</p>
+            </div>
+          )}
+          {isLoading && (
+            <div className="mp-item mp-item-empty">
+              <h3>Loading marketplace catalog...</h3>
+              <p>Fetching published resource listings from TNF marketplace APIs.</p>
             </div>
           )}
         </div>
+      </section>
+
+      <section className="mp-footnote">
+        <Sparkles size={14} />
+        <p>
+          Single marketplace surface for TNF: complete agents, prompts, skills, MCP servers,
+          workflows, models, educational assets, and monetizable artifacts.
+        </p>
       </section>
     </div>
   );

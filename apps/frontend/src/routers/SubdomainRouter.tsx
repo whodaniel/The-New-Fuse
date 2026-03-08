@@ -44,8 +44,19 @@ const SubdomainRouter: React.FC = () => {
   // So `agency.thenewfuse.hub` should look like a branded version of TNF.
 
   if (subdomain) {
-    // Force marketplace subdomain into standalone public marketplace experience.
+    // Marketplace runs as a standalone surface, but it still uses shared TNF auth routes.
     if (subdomain === 'marketplace') {
+      const pathname = window.location.pathname;
+      const isSharedAuthPath =
+        pathname === '/login' ||
+        pathname === '/register' ||
+        pathname.startsWith('/auth/') ||
+        pathname === '/auth';
+
+      if (isSharedAuthPath) {
+        return <ComprehensiveRouter />;
+      }
+
       return <MarketplacePublicPage />;
     }
 

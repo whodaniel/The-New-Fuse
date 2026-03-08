@@ -195,32 +195,6 @@
   color: var(--mp-text);
 }
 
-.mp-signals {
-  margin-top: 2.2rem;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.72rem;
-}
-
-.mp-signal-card {
-  border-radius: 0.9rem;
-  border: 1px solid var(--mp-border);
-  background: rgba(8, 35, 50, 0.58);
-  padding: 0.9rem;
-}
-
-.mp-signal-card h3 {
-  margin: 0.55rem 0 0;
-  font-size: 1rem;
-}
-
-.mp-signal-card p {
-  margin: 0.5rem 0 0;
-  color: var(--mp-muted);
-  font-size: 0.84rem;
-  line-height: 1.45;
-}
-
 .mp-featured {
   margin-top: 2.2rem;
 }
@@ -231,6 +205,97 @@
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: 0.8rem;
+}
+
+.mp-result-count {
+  font-size: 0.82rem;
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--mp-muted);
+}
+
+.mp-catalog {
+  border: 1px solid rgba(145, 219, 255, 0.2);
+  background: rgba(4, 24, 36, 0.55);
+  backdrop-filter: blur(12px);
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.mp-toolbar {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.7rem;
+  margin-bottom: 0.8rem;
+}
+
+.mp-search {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid rgba(145, 219, 255, 0.24);
+  background: rgba(6, 36, 52, 0.65);
+  border-radius: 0.75rem;
+  padding: 0.55rem 0.7rem;
+}
+
+.mp-search input {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  color: var(--mp-text);
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.mp-search input::placeholder {
+  color: #8eb7cb;
+}
+
+.mp-select-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.62rem;
+  border: 1px solid rgba(145, 219, 255, 0.24);
+  background: rgba(6, 36, 52, 0.65);
+  border-radius: 0.75rem;
+}
+
+.mp-select-wrap select {
+  background: transparent;
+  border: 0;
+  color: var(--mp-text);
+  font-size: 0.84rem;
+  outline: none;
+}
+
+.mp-filters {
+  display: grid;
+  gap: 0.6rem;
+  margin-bottom: 0.9rem;
+}
+
+.mp-chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.46rem;
+}
+
+.mp-chip {
+  border: 1px solid rgba(145, 219, 255, 0.22);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--mp-muted);
+  border-radius: 999px;
+  padding: 0.36rem 0.68rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mp-chip.is-active {
+  color: #07273b;
+  background: linear-gradient(90deg, var(--mp-accent), #7ff0ff);
+  border-color: transparent;
 }
 
 .mp-section-title h2 {
@@ -274,13 +339,22 @@
 }
 
 .mp-item-top {
-  display: inline-flex;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   align-items: center;
   gap: 0.42rem;
   font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--mp-accent-2);
+}
+
+.mp-item-top strong {
+  color: #87f3bd;
+  letter-spacing: 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
 }
 
 .mp-item h3 {
@@ -296,9 +370,24 @@
   min-height: 3.2em;
 }
 
+.mp-item-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.34rem;
+  margin-top: 0.56rem;
+}
+
+.mp-item-tags span {
+  border-radius: 999px;
+  border: 1px solid rgba(148, 208, 234, 0.34);
+  color: #9cc5d8;
+  font-size: 0.68rem;
+  padding: 0.16rem 0.5rem;
+}
+
 .mp-item-meta {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
   gap: 0.6rem;
   margin-top: 0.7rem;
   color: #bce7ff;
@@ -306,16 +395,41 @@
   font-family: 'IBM Plex Mono', monospace;
 }
 
+.mp-item-cta {
+  margin-top: 0.72rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+  font-size: 0.78rem;
+  color: #7ce6ff;
+  font-weight: 700;
+}
+
 .mp-item-empty p {
   min-height: 0;
+}
+
+.mp-footnote {
+  max-width: 1140px;
+  margin: 1rem auto 0;
+  padding: 0.8rem 1rem;
+  border-radius: 0.8rem;
+  border: 1px dashed rgba(145, 219, 255, 0.28);
+  background: rgba(8, 36, 52, 0.4);
+  color: var(--mp-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.56rem;
+}
+
+.mp-footnote p {
+  margin: 0;
+  font-size: 0.82rem;
 }
 
 @media (max-width: 1024px) {
   .mp-hero {
     grid-template-columns: 1fr;
-  }
-  .mp-signals {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .mp-cards {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -326,7 +440,7 @@
   .marketplace-public {
     padding: 1rem 0.8rem 2.5rem;
   }
-  .mp-signals {
+  .mp-toolbar {
     grid-template-columns: 1fr;
   }
   .mp-cards {
