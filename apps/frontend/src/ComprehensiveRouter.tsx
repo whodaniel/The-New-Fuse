@@ -261,6 +261,7 @@ export default function ComprehensiveRouter() {
       '/product-map',
       '/capabilities',
       '/design-system',
+      '/app.html',
     ].includes(location.pathname) ||
     location.pathname.startsWith('/auth') ||
     location.pathname.startsWith('/legal') ||

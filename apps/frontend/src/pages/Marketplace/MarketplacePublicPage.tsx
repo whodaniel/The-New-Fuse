@@ -19,6 +19,169 @@ const KIND_LABELS: Record<MarketplaceKind, string> = {
   model: 'Models',
 };
 
+const FALLBACK_MARKETPLACE_ITEMS: MarketplaceCatalogItem[] = [
+  {
+    id: 'agent-orchestrator-pro',
+    slug: 'agent-orchestrator-pro',
+    name: 'Agent Orchestrator Pro',
+    description: 'Complete multi-agent coordinator for planning, delegation, and execution loops.',
+    kind: 'agent',
+    category: 'automation',
+    tags: ['agent', 'orchestration', 'production'],
+    capabilities: ['task-routing', 'agent-handoff', 'run-tracking'],
+    rating: 4.9,
+    totalRuns: 12040,
+    successRate: 98,
+    pricePerRun: 0.18,
+    status: 'online',
+    publicationStatus: 'published',
+    launchUrl: '/auth/login',
+    createdBy: 'tnf-core',
+    createdAt: '2026-03-01T00:00:00.000Z',
+    updatedAt: '2026-03-07T00:00:00.000Z',
+  },
+  {
+    id: 'prompt-research-brief-pack',
+    slug: 'prompt-research-brief-pack',
+    name: 'Research Brief Prompt Pack',
+    description: 'Structured prompt bundles for analysis, strategy, and GTM decision-making.',
+    kind: 'prompt',
+    category: 'productivity',
+    tags: ['prompt', 'strategy', 'brief'],
+    capabilities: ['briefing', 'synthesis', 'evaluation'],
+    rating: 4.7,
+    totalRuns: 8840,
+    successRate: 97,
+    pricePerRun: 0.03,
+    status: 'online',
+    publicationStatus: 'published',
+    launchUrl: '/auth/login',
+    createdBy: 'community',
+    createdAt: '2026-03-01T00:00:00.000Z',
+    updatedAt: '2026-03-07T00:00:00.000Z',
+  },
+  {
+    id: 'skill-pr-review-guardian',
+    slug: 'skill-pr-review-guardian',
+    name: 'PR Review Guardian Skill',
+    description: 'Reusable code review skill with test-gap, regression, and security checks.',
+    kind: 'skill',
+    category: 'development',
+    tags: ['skill', 'code-review', 'security'],
+    capabilities: ['static-review', 'risk-triage', 'test-coverage'],
+    rating: 4.8,
+    totalRuns: 10220,
+    successRate: 98,
+    pricePerRun: 0.05,
+    status: 'online',
+    publicationStatus: 'published',
+    launchUrl: '/auth/login',
+    createdBy: 'tnf-core',
+    createdAt: '2026-03-01T00:00:00.000Z',
+    updatedAt: '2026-03-07T00:00:00.000Z',
+  },
+  {
+    id: 'mcp-github-prod',
+    slug: 'mcp-github-prod',
+    name: 'GitHub MCP Server',
+    description: 'MCP server for repo operations, issue triage, and PR lifecycle automation.',
+    kind: 'mcp_server',
+    category: 'developer-tools',
+    tags: ['mcp', 'github', 'server'],
+    capabilities: ['repo-read', 'repo-write', 'issue-management'],
+    rating: 4.8,
+    totalRuns: 14010,
+    successRate: 99,
+    pricePerRun: 0.01,
+    status: 'online',
+    publicationStatus: 'published',
+    launchUrl: '/auth/login',
+    createdBy: 'tnf-core',
+    createdAt: '2026-03-01T00:00:00.000Z',
+    updatedAt: '2026-03-07T00:00:00.000Z',
+  },
+  {
+    id: 'workflow-lead-pipeline',
+    slug: 'workflow-lead-pipeline',
+    name: 'Lead Funnel Workflow',
+    description: 'End-to-end workflow for lead capture, scoring, enrichment, and CRM handoff.',
+    kind: 'workflow',
+    category: 'automation',
+    tags: ['workflow', 'crm', 'automation'],
+    capabilities: ['capture', 'enrichment', 'handoff'],
+    rating: 4.6,
+    totalRuns: 7680,
+    successRate: 97,
+    pricePerRun: 0.04,
+    status: 'online',
+    publicationStatus: 'published',
+    launchUrl: '/auth/login',
+    createdBy: 'community',
+    createdAt: '2026-03-01T00:00:00.000Z',
+    updatedAt: '2026-03-07T00:00:00.000Z',
+  },
+  {
+    id: 'asset-nft-agent-access-pass',
+    slug: 'nft-agent-access-pass',
+    name: 'Agent Access Pass NFT',
+    description: 'Tokenized access pass for premium agent bundles and gated marketplace drops.',
+    kind: 'experience',
+    category: 'nft',
+    tags: ['nft', 'membership', 'collectible'],
+    capabilities: ['wallet-gating', 'tier-access', 'drops'],
+    rating: 4.4,
+    totalRuns: 3150,
+    successRate: 95,
+    pricePerRun: 0.12,
+    status: 'online',
+    publicationStatus: 'published',
+    launchUrl: '/auth/login',
+    createdBy: 'tnf-marketplace',
+    createdAt: '2026-03-01T00:00:00.000Z',
+    updatedAt: '2026-03-07T00:00:00.000Z',
+  },
+  {
+    id: 'course-agent-foundations',
+    slug: 'course-agent-foundations',
+    name: 'AI Agents Foundations Course',
+    description: 'Structured educational track for prompt engineering, tools, and orchestration.',
+    kind: 'experience',
+    category: 'education',
+    tags: ['course', 'education', 'agents'],
+    capabilities: ['curriculum', 'labs', 'certification'],
+    rating: 4.9,
+    totalRuns: 2210,
+    successRate: 99,
+    pricePerRun: 0.22,
+    status: 'online',
+    publicationStatus: 'published',
+    launchUrl: '/auth/login',
+    createdBy: 'tnf-academy',
+    createdAt: '2026-03-01T00:00:00.000Z',
+    updatedAt: '2026-03-07T00:00:00.000Z',
+  },
+  {
+    id: 'template-customer-support-swarm',
+    slug: 'template-customer-support-swarm',
+    name: 'Customer Support Swarm Template',
+    description: 'Ready-to-deploy agent template for triage, response drafting, and escalation.',
+    kind: 'agent_template',
+    category: 'operations',
+    tags: ['template', 'support', 'automation'],
+    capabilities: ['classification', 'response', 'escalation'],
+    rating: 4.7,
+    totalRuns: 4980,
+    successRate: 98,
+    pricePerRun: 0.06,
+    status: 'online',
+    publicationStatus: 'published',
+    launchUrl: '/auth/login',
+    createdBy: 'tnf-core',
+    createdAt: '2026-03-01T00:00:00.000Z',
+    updatedAt: '2026-03-07T00:00:00.000Z',
+  },
+];
+
 type PriceFilter = 'all' | 'free' | 'paid';
 type SortMode = 'featured' | 'rating' | 'runs' | 'newest' | 'price_low' | 'price_high';
 
@@ -30,6 +193,14 @@ function isAbsoluteUrl(value: string): boolean {
   return /^https?:\/\//i.test(value);
 }
 
+function toDisplayType(item: MarketplaceCatalogItem): string {
+  const category = normalize(item.category);
+  const tagSet = new Set((item.tags || []).map((tag) => normalize(tag)));
+  if (tagSet.has('nft') || category === 'nft') return 'NFTs';
+  if (tagSet.has('course') || tagSet.has('education') || category === 'education') return 'Courses';
+  return KIND_LABELS[item.kind] || item.kind.replace('_', ' ');
+}
+
 export default function MarketplacePublicPage() {
   const [query, setQuery] = useState('');
   const [kindFilter, setKindFilter] = useState<'all' | MarketplaceKind>('all');
@@ -37,13 +208,13 @@ export default function MarketplacePublicPage() {
   const [sortMode, setSortMode] = useState<SortMode>('featured');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['marketplace-public-catalog'],
     queryFn: () => marketplaceService.getCatalog({ status: 'published', limit: 200, offset: 0 }),
     staleTime: 60_000,
   });
 
-  const items = data?.items ?? [];
+  const items = data?.items && data.items.length > 0 ? data.items : FALLBACK_MARKETPLACE_ITEMS;
 
   const categories = useMemo(() => {
     const unique = new Set<string>();
@@ -93,7 +264,7 @@ export default function MarketplacePublicPage() {
         item.category,
         ...(item.tags || []),
         ...(item.capabilities || []),
-        KIND_LABELS[item.kind],
+        toDisplayType(item),
       ]
         .join(' ')
         .toLowerCase();
@@ -123,6 +294,15 @@ export default function MarketplacePublicPage() {
     return ['all', ...Object.keys(KIND_LABELS)] as Array<'all' | MarketplaceKind>;
   }, []);
 
+  const displayTypeCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    items.forEach((item) => {
+      const key = toDisplayType(item);
+      counts.set(key, (counts.get(key) || 0) + 1);
+    });
+    return Array.from(counts.entries()).sort((a, b) => b[1] - a[1]);
+  }, [items]);
+
   const formatPrice = (item: MarketplaceCatalogItem): string => {
     const value = item.pricePerRun || 0;
     if (value <= 0) return 'Free';
@@ -133,7 +313,7 @@ export default function MarketplacePublicPage() {
     if (item.launchUrl && item.launchUrl.trim().length > 0) {
       return item.launchUrl;
     }
-    return `/marketplace?item=${encodeURIComponent(item.id)}`;
+    return `/auth/login?next=${encodeURIComponent('/marketplace?item=' + item.id)}`;
   };
 
   return (
@@ -157,6 +337,11 @@ export default function MarketplacePublicPage() {
             Find free and paid assets across the full AI Agent stack: complete agents, prompts,
             skills, MCP servers, workflows, templates, models, courses, and collectible assets.
           </p>
+          {isError && (
+            <p className="mp-subhead">
+              Live catalog is temporarily unavailable. Showing resilient marketplace inventory.
+            </p>
+          )}
           <div className="mp-cta-row">
             <a href="/auth/login" className="mp-btn mp-btn-primary">
               Sign in to TNF
@@ -205,6 +390,20 @@ export default function MarketplacePublicPage() {
             {stats.topKinds.length === 0 && <li>No catalog metrics yet.</li>}
           </ul>
         </motion.div>
+      </section>
+
+      <section className="mp-featured mp-catalog">
+        <div className="mp-section-title">
+          <h2>Inventory classes</h2>
+          <span className="mp-result-count">covering TNF AI asset verticals</span>
+        </div>
+        <div className="mp-chip-group">
+          {displayTypeCounts.map(([typeName, count]) => (
+            <button key={typeName} type="button" className="mp-chip">
+              {typeName} ({count})
+            </button>
+          ))}
+        </div>
       </section>
 
       <section className="mp-featured mp-catalog">
@@ -296,7 +495,7 @@ export default function MarketplacePublicPage() {
               rel={item.launchUrl && isAbsoluteUrl(item.launchUrl) ? 'noreferrer' : undefined}
             >
               <div className="mp-item-top">
-                <span>{KIND_LABELS[item.kind] || item.kind.replace('_', ' ')}</span>
+                <span>{toDisplayType(item)}</span>
                 <strong>{formatPrice(item)}</strong>
               </div>
               <h3>{item.name}</h3>

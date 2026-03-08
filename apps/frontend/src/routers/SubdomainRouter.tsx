@@ -21,14 +21,15 @@ const getSubdomain = () => {
 };
 
 const SubdomainRouter: React.FC = () => {
-  const [subdomain, setSubdomain] = useState<string | null>(null);
+  const [subdomain, setSubdomain] = useState<string | null>(() => {
+    if (typeof window === 'undefined') return null;
+    return getSubdomain();
+  });
 
   useEffect(() => {
     const sub = getSubdomain();
-    if (sub) {
-      console.log('Detected Agency Subdomain:', sub);
-      setSubdomain(sub);
-    }
+    if (sub) console.log('Detected Agency Subdomain:', sub);
+    setSubdomain(sub);
   }, []);
 
   // If we are on a subdomain (e.g., alpha.thenewfuse.hub), we might want to show
