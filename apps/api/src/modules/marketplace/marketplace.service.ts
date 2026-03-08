@@ -26,6 +26,13 @@ type MarketplaceResearchCounts = {
   artifacts: number;
 };
 
+type MarketplaceResearchSkillCounts = {
+  categories: number;
+  sources: number;
+  sourceLinks: number;
+  files: number;
+};
+
 type MarketplaceResearchPromptRow = {
   id: number;
   sourceId: number;
@@ -44,6 +51,30 @@ type MarketplaceResearchSourceRow = {
   sourceName: string;
   sourceUrl: string;
   sourceBrief: string | null;
+};
+
+type MarketplaceResearchSkillSourceRow = {
+  categoryId: number;
+  categoryName: string;
+  sourceId: number;
+  sourceName: string;
+  sourceUrl: string;
+  sourceBrief: string | null;
+};
+
+type MarketplaceResearchSkillFileRow = {
+  id: number;
+  sourceId: number;
+  sourceName: string | null;
+  categoryName: string | null;
+  repoUrl: string | null;
+  fileUrl: string;
+  filePath: string | null;
+  title: string | null;
+  content: string;
+  license: string | null;
+  tags: string | null;
+  createdAt: string | null;
 };
 
 type MarketplaceCrawlRunRow = {
@@ -569,6 +600,246 @@ export class MarketplaceService implements OnModuleInit, OnModuleDestroy {
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       return { ...empty, error: `Research source listing unavailable: ${message}` };
+    }
+  }
+
+  async getResearchSkillCounts(): Promise<{
+    available: boolean;
+    counts: MarketplaceResearchSkillCounts;
+    error?: string;
+  }> {
+    const empty: MarketplaceResearchSkillCounts = {
+      categories: 0,
+      sources: 0,
+      sourceLinks: 0,
+      files: 0,
+    };
+
+    await this.ensureInitialized();
+    if (!this.dbEnabled || !this.dbClient) {
+      return { available: false, counts: empty, error: 'Marketplace DB unavailable' };
+    }
+
+    try {
+      const [categories] = await this
+        .dbClient`SELECT COUNT(*)::int AS n FROM ai_assets_marketplace.skill_categories`;
+      const [sources] = await this
+        .dbClient`SELECT COUNT(*)::int AS n FROM ai_assets_marketplace.skill_sources`;
+      const [sourceLinks] = await this
+        .dbClient`SELECT COUNT(*)::int AS n FROM ai_assets_marketplace.skill_links`;
+      const [files] = await this
+        .dbClient`SELECT COUNT(*)::int AS n FROM ai_assets_marketplace.skill_files`;
+
+      return {
+        available: true,
+        counts: {
+          categories: Number(categories?.n || 0),
+          sources: Number(sources?.n || 0),
+          sourceLinks: Number(sourceLinks?.n || 0),
+          files: Number(files?.n || 0),
+        },
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      return {
+        available: false,
+        counts: empty,
+        error: `Research skill tables unavailable: ${message}`,
+      };
+    }
+  }
+
+  async getResearchSkillSources(input?: { limitPerCategory?: number }): Promise<{
+    available: boolean;
+    categories: Array<{
+      id: number;
+      name: string;
+      sources: Array<{
+        id: number;
+        name: string;
+        url: string;
+        brief: string | null;
+      }>;
+    }>;
+    error?: string;
+  }> {
+    type ResearchSkillSourceCategory = {
+      id: number;
+      name: string;
+      sources: Array<{ id: number; name: string; url: string; brief: string | null }>;
+    };
+    const empty = { available: false, categories: [] as ResearchSkillSourceCategory[] };
+    const limitPerCategory = Math.max(1, Math.min(Number(input?.limitPerCategory) || 8, 20));
+
+    await this.ensureInitialized();
+    if (!this.dbEnabled || !this.dbClient) {
+      return { ...empty, error: 'Marketplace DB unavailable' };
+    }
+
+    try {
+      const rows = await this.dbClient<MarketplaceResearchSkillSourceRow[]>`
+        WITH ranked AS (
+          SELECT
+            c.id AS "categoryId",
+            c.name AS "categoryName",
+            s.id AS "sourceId",
+            s.name AS "sourceName",
+            s.url AS "sourceUrl",
+            s.brief AS "sourceBrief",
+            ROW_NUMBER() OVER (
+              PARTITION BY c.id
+              ORDER BY s.updated_at DESC NULLS LAST, s.created_at DESC NULLS LAST, s.id DESC
+            ) AS rn
+          FROM ai_assets_marketplace.skill_categories c
+          JOIN ai_assets_marketplace.skill_sources s ON s.category_id = c.id
+        )
+        SELECT
+          "categoryId",
+          "categoryName",
+          "sourceId",
+          "sourceName",
+          "sourceUrl",
+          "sourceBrief"
+        FROM ranked
+        WHERE rn <= ${limitPerCategory}
+        ORDER BY "categoryName" ASC, "sourceName" ASC
+      `;
+
+      const grouped = new Map<number, ResearchSkillSourceCategory>();
+
+      this.extractRows(rows).forEach((row) => {
+        const categoryId = Number(row.categoryId);
+        if (!grouped.has(categoryId)) {
+          grouped.set(categoryId, {
+            id: categoryId,
+            name: String(row.categoryName),
+            sources: [],
+          });
+        }
+        grouped.get(categoryId)!.sources.push({
+          id: Number(row.sourceId),
+          name: String(row.sourceName || ''),
+          url: String(row.sourceUrl || ''),
+          brief: row.sourceBrief ?? null,
+        });
+      });
+
+      return {
+        available: true,
+        categories: Array.from(grouped.values()),
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      return { ...empty, error: `Research skill source listing unavailable: ${message}` };
+    }
+  }
+
+  async searchResearchSkillFiles(input: {
+    q?: string;
+    sourceId?: number;
+    limit?: number;
+    offset?: number;
+  }): Promise<{
+    items: Array<
+      MarketplaceResearchSkillFileRow & {
+        snippet: string;
+      }
+    >;
+    total: number;
+    available: boolean;
+    error?: string;
+  }> {
+    const empty = {
+      items: [] as Array<MarketplaceResearchSkillFileRow & { snippet: string }>,
+      total: 0,
+      available: false,
+    };
+    const q = this.sanitizeText(input.q || '', MAX_DESCRIPTION_LENGTH).toLowerCase();
+    const sourceId = Number.isFinite(input.sourceId) ? Number(input.sourceId) : 0;
+    const limit = this.normalizeLimit(input.limit);
+    const offset = this.normalizeOffset(input.offset);
+
+    await this.ensureInitialized();
+    if (!this.dbEnabled || !this.dbClient) {
+      return { ...empty, error: 'Marketplace DB unavailable' };
+    }
+
+    try {
+      const whereLike = `%${q}%`;
+      const queryFilter = q
+        ? this.dbClient`
+            AND (
+              lower(coalesce(f.title, '')) LIKE ${whereLike}
+              OR lower(coalesce(f.file_path, '')) LIKE ${whereLike}
+              OR lower(coalesce(f.tags, '')) LIKE ${whereLike}
+              OR lower(f.content) LIKE ${whereLike}
+            )
+          `
+        : this.dbClient``;
+
+      const sourceFilter = sourceId
+        ? this.dbClient`AND f.source_id = ${sourceId}`
+        : this.dbClient``;
+
+      const totalRows = await this.dbClient`
+        SELECT COUNT(*)::int AS n
+        FROM ai_assets_marketplace.skill_files f
+        WHERE 1 = 1
+        ${queryFilter}
+        ${sourceFilter}
+      `;
+
+      const rows = await this.dbClient<MarketplaceResearchSkillFileRow[]>`
+        SELECT
+          f.id,
+          f.source_id AS "sourceId",
+          s.name AS "sourceName",
+          c.name AS "categoryName",
+          f.repo_url AS "repoUrl",
+          f.file_url AS "fileUrl",
+          f.file_path AS "filePath",
+          f.title,
+          f.content,
+          f.license,
+          f.tags,
+          f.created_at AS "createdAt"
+        FROM ai_assets_marketplace.skill_files f
+        LEFT JOIN ai_assets_marketplace.skill_sources s ON s.id = f.source_id
+        LEFT JOIN ai_assets_marketplace.skill_categories c ON c.id = s.category_id
+        WHERE 1 = 1
+        ${queryFilter}
+        ${sourceFilter}
+        ORDER BY f.id DESC
+        LIMIT ${limit}
+        OFFSET ${offset}
+      `;
+
+      return {
+        available: true,
+        items: this.extractRows(rows).map((row) => {
+          const content = String(row.content || '');
+          const snippet = content.slice(0, 1200);
+          return {
+            id: Number(row.id),
+            sourceId: Number(row.sourceId),
+            sourceName: row.sourceName ?? null,
+            categoryName: row.categoryName ?? null,
+            repoUrl: row.repoUrl ?? null,
+            fileUrl: String(row.fileUrl || ''),
+            filePath: row.filePath ?? null,
+            title: row.title ?? null,
+            content,
+            snippet,
+            license: row.license ?? null,
+            tags: row.tags ?? null,
+            createdAt: row.createdAt ?? null,
+          };
+        }),
+        total: Number(this.extractRows(totalRows)[0]?.n || 0),
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      return { ...empty, error: `Research skill file search unavailable: ${message}` };
     }
   }
 

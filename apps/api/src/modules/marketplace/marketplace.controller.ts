@@ -65,6 +65,33 @@ export class MarketplaceController {
     });
   }
 
+  @Get('research/skills/counts')
+  async getResearchSkillCounts() {
+    return await this.marketplaceService.getResearchSkillCounts();
+  }
+
+  @Get('research/skills/sources')
+  async getResearchSkillSources(@Query('limitPerCategory') limitPerCategory?: string) {
+    return await this.marketplaceService.getResearchSkillSources({
+      limitPerCategory: Number(limitPerCategory) || 8,
+    });
+  }
+
+  @Get('research/skills/files')
+  async searchResearchSkillFiles(
+    @Query('q') q?: string,
+    @Query('sourceId') sourceId?: string,
+    @Query('limit') limit?: string,
+    @Query('offset') offset?: string
+  ) {
+    return await this.marketplaceService.searchResearchSkillFiles({
+      q,
+      sourceId: Number(sourceId),
+      limit: Number(limit),
+      offset: Number(offset),
+    });
+  }
+
   @Post('research/crawl/run')
   async triggerResearchCrawl(
     @Body()
