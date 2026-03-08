@@ -31,9 +31,9 @@
       var isRootPath = pathname === '/' || pathname === '';
 
       // Railway static hosting serves only concrete files at root.
-      // Route marketplace root to SPA entry immediately.
+      // Hand off to SPA entry and normalize back to "/" (no /app.html# in final URL).
       if (isMarketplaceHost && isRootPath) {
-        window.location.replace('/app.html#/marketplace');
+        window.location.replace('/app.html#/');
         return;
       }
 
