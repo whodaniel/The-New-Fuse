@@ -48,6 +48,33 @@ export interface MarketplaceCatalogQuery {
   offset?: number;
 }
 
+export interface MarketplaceResearchCountsResponse {
+  available: boolean;
+  counts: {
+    categories: number;
+    sources: number;
+    sourceLinks: number;
+    prompts: number;
+    artifacts: number;
+  };
+  error?: string;
+}
+
+export interface MarketplaceResearchSourcesResponse {
+  available: boolean;
+  categories: Array<{
+    id: number;
+    name: string;
+    sources: Array<{
+      id: number;
+      name: string;
+      url: string;
+      brief: string | null;
+    }>;
+  }>;
+  error?: string;
+}
+
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 class MarketplaceService {
@@ -60,6 +87,18 @@ class MarketplaceService {
     status?: MarketplacePublicationStatus;
   }): Promise<MarketplaceCatalogResponse> {
     const response = await axios.get(`${API_BASE}/marketplace/experiences`, { params });
+    return response.data;
+  }
+
+  async getResearchCounts(): Promise<MarketplaceResearchCountsResponse> {
+    const response = await axios.get(`${API_BASE}/marketplace/research/counts`);
+    return response.data;
+  }
+
+  async getResearchSources(limitPerCategory = 8): Promise<MarketplaceResearchSourcesResponse> {
+    const response = await axios.get(`${API_BASE}/marketplace/research/sources`, {
+      params: { limitPerCategory },
+    });
     return response.data;
   }
 

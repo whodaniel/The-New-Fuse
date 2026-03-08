@@ -58,6 +58,13 @@ export class MarketplaceController {
     });
   }
 
+  @Get('research/sources')
+  async getResearchSources(@Query('limitPerCategory') limitPerCategory?: string) {
+    return await this.marketplaceService.getResearchSources({
+      limitPerCategory: Number(limitPerCategory) || 8,
+    });
+  }
+
   @Post('research/crawl/run')
   async triggerResearchCrawl(
     @Body()

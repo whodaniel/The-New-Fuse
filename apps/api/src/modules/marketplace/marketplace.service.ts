@@ -37,6 +37,15 @@ type MarketplaceResearchPromptRow = {
   createdAt: string | null;
 };
 
+type MarketplaceResearchSourceRow = {
+  categoryId: number;
+  categoryName: string;
+  sourceId: number;
+  sourceName: string;
+  sourceUrl: string;
+  sourceBrief: string | null;
+};
+
 type MarketplaceCrawlRunRow = {
   id: string;
   status: string;
@@ -409,11 +418,7 @@ export class MarketplaceService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  async searchResearchPrompts(input: {
-    q?: string;
-    limit?: number;
-    offset?: number;
-  }): Promise<{
+  async searchResearchPrompts(input: { q?: string; limit?: number; offset?: number }): Promise<{
     items: MarketplaceResearchPromptRow[];
     total: number;
     available: boolean;
@@ -479,6 +484,91 @@ export class MarketplaceService implements OnModuleInit, OnModuleDestroy {
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       return { ...empty, error: `Research prompt search unavailable: ${message}` };
+    }
+  }
+
+  async getResearchSources(input?: { limitPerCategory?: number }): Promise<{
+    available: boolean;
+    categories: Array<{
+      id: number;
+      name: string;
+      sources: Array<{
+        id: number;
+        name: string;
+        url: string;
+        brief: string | null;
+      }>;
+    }>;
+    error?: string;
+  }> {
+    type ResearchSourceCategory = {
+      id: number;
+      name: string;
+      sources: Array<{ id: number; name: string; url: string; brief: string | null }>;
+    };
+    const empty = { available: false, categories: [] as ResearchSourceCategory[] };
+    const limitPerCategory = Math.max(1, Math.min(Number(input?.limitPerCategory) || 8, 20));
+
+    await this.ensureInitialized();
+    if (!this.dbEnabled || !this.dbClient) {
+      return { ...empty, error: 'Marketplace DB unavailable' };
+    }
+
+    try {
+      const rows = await this.dbClient<MarketplaceResearchSourceRow[]>`
+        WITH ranked AS (
+          SELECT
+            c.id AS "categoryId",
+            c.name AS "categoryName",
+            s.id AS "sourceId",
+            s.name AS "sourceName",
+            s.url AS "sourceUrl",
+            s.brief AS "sourceBrief",
+            ROW_NUMBER() OVER (
+              PARTITION BY c.id
+              ORDER BY s.updated_at DESC NULLS LAST, s.created_at DESC NULLS LAST, s.id DESC
+            ) AS rn
+          FROM ai_assets_marketplace.categories c
+          JOIN ai_assets_marketplace.sources s ON s.category_id = c.id
+        )
+        SELECT
+          "categoryId",
+          "categoryName",
+          "sourceId",
+          "sourceName",
+          "sourceUrl",
+          "sourceBrief"
+        FROM ranked
+        WHERE rn <= ${limitPerCategory}
+        ORDER BY "categoryName" ASC, "sourceName" ASC
+      `;
+
+      const grouped = new Map<number, ResearchSourceCategory>();
+
+      this.extractRows(rows).forEach((row) => {
+        const categoryId = Number(row.categoryId);
+        if (!grouped.has(categoryId)) {
+          grouped.set(categoryId, {
+            id: categoryId,
+            name: String(row.categoryName),
+            sources: [],
+          });
+        }
+        grouped.get(categoryId)!.sources.push({
+          id: Number(row.sourceId),
+          name: String(row.sourceName || ''),
+          url: String(row.sourceUrl || ''),
+          brief: row.sourceBrief ?? null,
+        });
+      });
+
+      return {
+        available: true,
+        categories: Array.from(grouped.values()),
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      return { ...empty, error: `Research source listing unavailable: ${message}` };
     }
   }
 
