@@ -43,10 +43,19 @@ export interface AuthenticationResult {
  */
 export class CloudSandboxAuthGuard {
   // Use console or a simple logger wrapper if needed
-  private readonly jwtSecret = process.env.JWT_SECRET || 'dev-secret';
+  private readonly jwtSecret: string;
 
   constructor() {
     // No dependency injection needed
+    if (!process.env.JWT_SECRET) {
+      throw new Error('JWT_SECRET environment variable is required but not set');
+    }
+
+    if (process.env.JWT_SECRET.length < 32) {
+      throw new Error('JWT_SECRET must be at least 32 characters long for security');
+    }
+
+    this.jwtSecret = process.env.JWT_SECRET;
   }
 
   /**
