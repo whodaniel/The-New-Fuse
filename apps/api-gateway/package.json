@@ -29,7 +29,7 @@
   "dependencies": {
     "@nestjs/axios": "^4.0.1",
     "@nestjs/config": "^4.0.3",
-    "@nestjs/platform-express": "^11.1.11",
+    "@nestjs/platform-express": "^11.1.16",
     "@nestjs/swagger": "^11.2.6",
     "@the-new-fuse/core": "workspace:*",
     "@the-new-fuse/database": "workspace:*",
@@ -48,7 +48,7 @@
   "devDependencies": {
     "@nestjs/cli": "^11.0.16",
     "@nestjs/schematics": "^11.0.9",
-    "@nestjs/testing": "^11.1.11",
+    "@nestjs/testing": "^11.1.16",
     "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
     "@types/node": "^25.3.0",

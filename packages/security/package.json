@@ -15,7 +15,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@nestjs/common": "^11.1.10",
+    "@nestjs/common": "^11.1.16",
     "@the-new-fuse/core": "workspace:*",
     "@the-new-fuse/database": "workspace:*",
     "bcrypt": "^6.0.0",
