@@ -71,8 +71,13 @@ export default function Sidebar() {
             <div className={STYLES.scrollArea}>
               <div className={STYLES.workspaceArea}>
                 <div className={STYLES.workspaceHeader}>
-                  {(!user || user?.role !== 'default') && (
-                    <button onClick={showNewWsModal} className={STYLES.newWorkspaceButton}>
+                  {(!user || user?.role !== "default") && (
+                    <button
+                      onClick={showNewWsModal}
+                      aria-label="New Workspace"
+                      title="New Workspace"
+                      className={STYLES.newWorkspaceButton}
+                    >
                       <Plus size={18} />
                       <p className="text-sidebar text-sm font-semibold">
                         {t('new-workspace.title')}
@@ -175,6 +180,8 @@ export function SidebarMobileHeader() {
                     {(!user || user?.role !== 'default') && (
                       <button
                         onClick={showNewWsModal}
+                        aria-label="New Workspace"
+                        title="New Workspace"
                         className="flex flex-grow w-[75%] h-[44px] gap-x-2 py-[5px] px-4 bg-white rounded-lg text-sidebar justify-center items-center hover:bg-opacity-80 transition-all duration-300"
                       >
                         <Plus className="h-5 w-5" />

@@ -151,19 +151,18 @@ export default function ThreadContainer({ workspace }) {
   );
 }
 function NewThreadButton({ workspace }) {
-  const [loading, setLoading] = useState(false);
-  const onClick = async () => {
-    setLoading(true);
-    const { thread, error } = await Workspace.threads.new(workspace.slug);
-    if (!!error) {
-      showToast(`Could not create thread - ${error}`, 'error', { clear: true });
-      setLoading(false);
-      return;
-    }
-    window.location.replace(paths.workspace.thread(workspace.slug, thread.slug));
-  };
-  return (
-    <button onClick={onClick} className={STYLES.newThreadButton}>
+    const [loading, setLoading] = useState(false);
+    const onClick = async () => {
+        setLoading(true);
+        const { thread, error } = await Workspace.threads.new(workspace.slug);
+        if (!!error) {
+            showToast(`Could not create thread - ${error}`, "error", { clear: true });
+            setLoading(false);
+            return;
+        }
+        window.location.replace(paths.workspace.thread(workspace.slug, thread.slug));
+    };
+    return (<button onClick={onClick} disabled={loading} aria-label="New Thread" title="New Thread" className={STYLES.newThreadButton}>
       <div className={STYLES.buttonContent}>
         <div className={STYLES.iconContainer}>
           {loading ? (
@@ -179,9 +178,9 @@ function NewThreadButton({ workspace }) {
   );
 }
 function DeleteAllThreadButton({ ctrlPressed, threads, onDelete }) {
-  if (!ctrlPressed || threads.filter((t) => t.deleted).length === 0) return null;
-  return (
-    <button type="button" onClick={onDelete} className={STYLES.deleteButton}>
+    if (!ctrlPressed || threads.filter((t) => t.deleted).length === 0)
+        return null;
+    return (<button type="button" onClick={onDelete} aria-label="Delete Selected Threads" title="Delete Selected Threads" className={STYLES.deleteButton}>
       <div className={STYLES.buttonContent}>
         <div className="bg-transparent p-2 rounded-lg h-[24px] w-[24px] flex items-center justify-center">
           <Trash weight="bold" size={14} className={STYLES.deleteIcon} />
