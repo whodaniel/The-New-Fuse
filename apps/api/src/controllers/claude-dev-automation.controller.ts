@@ -28,7 +28,7 @@ import {
 } from '../services/claude-dev-templates';
 
 // DTOs for API requests and responses
-export class CreateAgentDto {
+export class ClaudeDevCreateAgentDto {
   name?: string;
   description?: string;
   template: string = '';
@@ -37,7 +37,7 @@ export class CreateAgentDto {
   metadata?: Record<string, any>;
 }
 
-export class UpdateAgentDto {
+export class ClaudeDevUpdateAgentDto {
   name?: string;
   description?: string;
   configuration?: any;
@@ -64,7 +64,7 @@ export class ExecuteTaskDto {
 }
 
 export class CreateAgentBatchDto {
-  agents: CreateAgentDto[] = [];
+  agents: ClaudeDevCreateAgentDto[] = [];
 }
 
 export class TemplateCustomizationDto {
@@ -126,7 +126,10 @@ export class ClaudeDevAutomationController {
   @ApiParam({ name: 'tenantId', description: 'Tenant identifier' })
   @ApiResponse({ status: 201, description: 'Agent created successfully' })
   @ApiResponse({ status: 400, description: 'Invalid request data' })
-  async createAgent(@Param('tenantId') tenantId: string, @Body() createAgentDto: CreateAgentDto) {
+  async createAgent(
+    @Param('tenantId') tenantId: string,
+    @Body() createAgentDto: ClaudeDevCreateAgentDto
+  ) {
     try {
       this.validateTenantId(tenantId);
       this.validateCreateAgentDto(createAgentDto);
@@ -557,7 +560,7 @@ export class ClaudeDevAutomationController {
     }
   }
 
-  private validateCreateAgentDto(dto: CreateAgentDto): void {
+  private validateCreateAgentDto(dto: ClaudeDevCreateAgentDto): void {
     if (!dto.template) {
       throw new HttpException('Template is required', HttpStatus.BAD_REQUEST);
     }
