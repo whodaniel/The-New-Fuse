@@ -1,0 +1,64 @@
+{
+  "summary": {
+    "generatedAt": "2026-03-09T08:48:42.910Z",
+    "total": 4,
+    "passed": 4,
+    "failed": 0,
+    "publicBaseUrl": "https://thenewfuse.com",
+    "apiBaseUrl": "https://api.thenewfuse.com"
+  },
+  "results": [
+    {
+      "name": "Public /api/auth/login compatibility route",
+      "method": "POST",
+      "url": "https://thenewfuse.com/api/auth/login",
+      "expectedStatus": [400, 401],
+      "body": {
+        "email": "invalid@example.com",
+        "password": "bad-password"
+      },
+      "status": 401,
+      "ok": true,
+      "elapsedMs": 247,
+      "responseSnippet": "{\"statusCode\":401,\"timestamp\":\"2026-03-09T08:48:42.599Z\",\"path\":\"/v1/auth/login\",\"method\":\"POST\",\"message\":\"Invalid credentials\",\"error\":\"Unauthorized\"}"
+    },
+    {
+      "name": "Public /api/v1/auth/login compatibility route",
+      "method": "POST",
+      "url": "https://thenewfuse.com/api/v1/auth/login",
+      "expectedStatus": [400, 401],
+      "body": {
+        "email": "invalid@example.com",
+        "password": "bad-password"
+      },
+      "status": 401,
+      "ok": true,
+      "elapsedMs": 145,
+      "responseSnippet": "{\"statusCode\":401,\"timestamp\":\"2026-03-09T08:48:42.743Z\",\"path\":\"/v1/auth/login\",\"method\":\"POST\",\"message\":\"Invalid credentials\",\"error\":\"Unauthorized\"}"
+    },
+    {
+      "name": "Gateway /v1/auth/login canonical route",
+      "method": "POST",
+      "url": "https://api.thenewfuse.com/v1/auth/login",
+      "expectedStatus": [400, 401],
+      "body": {
+        "email": "invalid@example.com",
+        "password": "bad-password"
+      },
+      "status": 401,
+      "ok": true,
+      "elapsedMs": 168,
+      "responseSnippet": "{\"statusCode\":401,\"timestamp\":\"2026-03-09T08:48:42.921Z\",\"path\":\"/v1/auth/login\",\"method\":\"POST\",\"message\":\"Invalid credentials\",\"error\":\"Unauthorized\"}"
+    },
+    {
+      "name": "Public /health route",
+      "method": "GET",
+      "url": "https://thenewfuse.com/health",
+      "expectedStatus": [200],
+      "status": 200,
+      "ok": true,
+      "elapsedMs": 40,
+      "responseSnippet": "healthy\n"
+    }
+  ]
+}
