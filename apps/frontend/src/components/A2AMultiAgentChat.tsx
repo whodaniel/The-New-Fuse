@@ -106,7 +106,7 @@ function EnhancedMultiAgentChatUI() {
       }
 
       setInputValue('');
-    } catch (error) {
+    } catch {
       // Handle error - could use a state variable to show error in UI
       setInputValue((prev) => `${prev} (Failed to send)`);
     }
@@ -328,15 +328,19 @@ function EnhancedMultiAgentChatUI() {
           <button
             onClick={handleAutomateAgentCreation}
             disabled={isAutomating || !connectionState.authenticated}
-            className="px-3 py-2 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-700 disabled:bg-purple-400"
+            className="px-3 py-2 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-700 disabled:bg-purple-400 flex items-center justify-center gap-2"
+            title={!connectionState.authenticated ? "Requires active connection to setup agents" : "Automatically setup agents"}
+            aria-label="Auto-Setup A2A Agents"
           >
-            🚀 Auto-Setup A2A
+            {isAutomating ? <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span> Setting up...</> : "🚀 Auto-Setup A2A"}
           </button>
 
           <button
             onClick={handleCreateConversation}
             disabled={agents.length < 2}
             className="px-3 py-2 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600 disabled:bg-green-400"
+            title={agents.length < 2 ? "Requires at least 2 connected agents" : "Start a new conversation"}
+            aria-label="Start Conversation"
           >
             Start Conversation
           </button>
