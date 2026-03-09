@@ -105,8 +105,8 @@ COPY --from=builder --chown=app-user:app-user /app/pnpm-workspace.yaml ./
 RUN test -f /app/apps/cloud-sandbox/dist/server.js || \
     (echo "ERROR: server.js not found!" && exit 1)
 
-# Copy startup script
-COPY --chown=app-user:app-user apps/cloud-sandbox/scripts/start.sh /app/start.sh
+# Copy startup script from builder output to avoid build-context path mismatches
+COPY --from=builder --chown=app-user:app-user /app/apps/cloud-sandbox/scripts/start.sh /app/start.sh
 RUN chmod +x /app/start.sh
 
 # Switch to non-root user
