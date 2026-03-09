@@ -224,7 +224,7 @@ const ModerationDashboard: React.FC = () => {
           <ListItem
             key={rule.id}
             secondaryAction={
-              <IconButton edge="end" onClick={() => handleRuleEdit(rule)}>
+              <IconButton edge="end" onClick={() => handleRuleEdit(rule)} aria-label="Edit rule" title="Edit rule">
                 <Edit />
               </IconButton>
             }
