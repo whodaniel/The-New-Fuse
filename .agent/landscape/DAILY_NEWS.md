@@ -1,224 +1,24 @@
-# AI Landscape Report - 3/6/2026
+# AI Landscape Report - 3/8/2026
 
-*Generated at: 2026-03-07T03:10:50.958Z*
+*Generated at: 2026-03-09T02:25:58.334Z*
 
 ## 🚀 Latest Verified Trends
 
-### OpenAI GPT-5.4 launches with native computer-use and 1M tokens
-- **Source**: interestingengineering.com
+### LLM API List for Free Tier | Jose Robinson posted on the topic
+- **Source**: linkedin.com
 - **Impact**: High
-- **Details**: OpenAI GPT-5.4 launches with native computer-use and 1M tokens
+- **Details**: LLM API List for Free Tier | Jose Robinson posted on the topic | LinkedIn
 
-Skip to content
+Agree & Join LinkedIn
 
-Smartphone displaying the OpenAI logo against a blurred background. Getty Images
+By clicking Continue to join or sign in, you agree to LinkedIn’s User Agreement, Privacy Policy, and Cookie Policy.
 
-OpenAI on Thursday introduced GPT-5.4, its newest foundation model designed for professional and technical work.
+# LLM API List for Free Tier
 
-The company says the mo...
-- **Link**: [View Source](https://interestingengineering.com/ai-robotics/gpt-5-4-openai-ai-model-release)
+This title was summarized by AI from the post below.
 
-### Google unveils Gemini 3.1 Flash-Lite — a fast, low-cost LLM - CometAPI - All AI Models in One API
-- **Source**: cometapi.com
-- **Impact**: Medium
-- **Details**: Google unveils Gemini 3.1 Flash-Lite — a fast, low-cost LLM - CometAPI - All AI Models in One API
-
-# Google unveils Gemini 3.1 Flash-Lite — a fast, low-cost LLM
-
-AnnaMar 5, 2026
-
-On March 3, 2026, Google introduced Gemini 3.1 Flash-Lite, the newest member of the Gemini 3 family designed specifically...
-- **Link**: [View Source](https://www.cometapi.com/google-unveils-gemini-3-1-flash-lite-%E2%80%94-a-fast-low-cost-llm/)
-
-### Alibaba Released Qwen3.5 for Free: 397 Billion Parameters and Context Up to 1 Million Tokens
-- **Source**: abit.ee
-- **Impact**: High
-- **Details**: Alibaba Released Qwen3.5 for Free: 397 Billion Parameters and Context Up to 1 Million Tokens
-
-Search
-
-Alibaba added two powerful next-generation models to the Qwen Chat chatbot and mobile application — Qwen3.5-Plus and Qwen3.5-397B-A17B. Both are available for free and support text, images, and vide...
-- **Link**: [View Source](https://abit.ee/en/artificial-intelligence/qwen35-alibaba-language-models-ai-moe-artificial-intelligence-chatbot-multimodal-machine-learning-en)
-
-### 15 Free LLM APIs You Can Use in 2026
-- **Source**: analyticsvidhya.com
-- **Impact**: High
-- **Details**: -- 15 Free LLM APIs You Can Use in 2026
-
-Master Generative AI with 10+ Real-world Projects in 2025! -- d : h : m : s Download Projects --
-
-Interview Prep
-
-Career
-
-GenAI
-
-Prompt Engg
-
-ChatGPT
-
-LLM
-
-Langchain
-
-RAG
-
-AI Agents
-
-Machine Learning
-
-Deep Learning
-
-GenAI Tools
-
-LLMOps
-
-Python
-
-NLP
-
-SQL
-
-AIML...
-- **Link**: [View Source](https://www.analyticsvidhya.com/blog/2026/01/top-free-llm-apis/)
-
-### Best Free LLM API Providers of 2026
-- **Source**: sourceforge.net
-- **Impact**: High
-- **Details**: Best Free LLM API Providers of 2026 - Reviews & Comparison
-
-- Support Request
-- Subscribe to our Newsletter
-- Support / Documentation
-- SourceForge Podcast
-- Articles
-
-# Best Free LLM API Providers
-
-x
-
-View:
-
-Open Source Commercial
-
-## Compare the Top Free LLM API Providers as of February 2026
-
-Sort...
-- **Link**: [View Source](https://sourceforge.net/software/llm-api/free-version/)
-
-### Claude 5 API Update: 500K Context Window & New Reasoning Modes | Feb 2026 | Claude 5
-- **Source**: claude5.ai
-- **Impact**: High
-- **Details**: Claude 5 API Update: 500K Context Window & New Reasoning Modes | Feb 2026 | Claude 5
-
-## Anthropic Expands Claude 5 API with 500K Context and Reasoning Upgrades
-
-Anthropic has released a major update to the Claude 5 API, delivering three developer-requested capabilities: a 500K token context window,...
-- **Link**: [View Source](https://claude5.ai/ja/news/anthropic-claude-5-api-500k-context-launch)
-
-### The Latest Open-Source AI Model Releases in 2026
-- **Source**: stormap.ai
-- **Impact**: High
-- **Details**: The Latest Open-Source AI Model Releases in 2026: What You Need to Know | Stormap
-
-Back to Blog
-
-```markdown ## Introduction to the Open-Source AI space in 2026 ### Why 2026 is a Pivotal Year for Open-Source AI The year 2026 marks a rapid acceleration in the race towards open-source dominance in AI....
-- **Link**: [View Source](https://stormap.ai/post/latest-open-source-ai-model-releases)
-
-### Steerling-8B: The First Inherently Interpretable Language Model
-- **Source**: guidelabs.ai
-- **Impact**: Medium
-- **Details**: Steerling-8B: The First Inherently Interpretable Language Model
-
-# Steerling-8B: The First Inherently Interpretable Language Model
-
----
-
-Author: Guide Labs Team
-
-Published: February 23, 2026
-
----
-
-We are releasing Steerling-8B, the first interpretable model that can trace any token it generates to i...
-- **Link**: [View Source](https://www.guidelabs.ai/post/steerling-8b-base-model-release/)
-
-### Qwen Team Releases Qwen3-Coder-Next: An Open-Weight Language Model Designed Specifically for Coding Agents and Local Development - MarkTechPost
-- **Source**: marktechpost.com
-- **Impact**: High
-- **Details**: Qwen Team Releases Qwen3-Coder-Next: An Open-Weight Language Model Designed Specifically for Coding Agents and Local Development - MarkTechPost
-
-Discord Linkedin Reddit Twitter
-
-- Sponsorship
-- AINews.sh
-- Voice AI
-- Tutorials
-- AI Agents
-- Open Source/Weights
-- Home
-
-Search
-
-NewsHub
-
-NewsHub
-
-Premi...
-- **Link**: [View Source](https://www.marktechpost.com/2026/02/03/qwen-team-releases-qwen3-coder-next-an-open-weight-language-model-designed-specifically-for-coding-agents-and-local-development/)
-
-### Jamba2: Open Source LLMs for Enterprise Reliability
-- **Source**: ai21.com
-- **Impact**: High
-- **Details**: Jamba2: Open Source LLMs for Enterprise Reliability
-
-- Skip to Footer
-- Skip to Main Content
-- Skip to Main Menu
-
-Back to Blog --
-
-Back to Blog
-
-Today, we are introducing Jamba2, an open source family of language models built for maximum reliability and steerability in the enterprise.
-
-Built on our...
-- **Link**: [View Source](https://www.ai21.com/blog/introducing-jamba2/)
-
-### 10 Best Open-Source LLM Models (2025 Updated): Llama ...
-- **Source**: huggingface.co
-- **Impact**: High
-- **Details**: 10 Best Open-Source LLM Models (2025 Updated): Llama 4, Qwen 3 and DeepSeek R1
-
-Back to Articles
-
-# 10 Best Open-Source LLM Models (2025 Updated): Llama 4, Qwen 3 and DeepSeek R1
-
-Community Article Published November 13, 2025
-
-Upvote 11
-
-- +5
-
-Daya Shankar daya-shankar Follow
-
-The world of open sour...
-- **Link**: [View Source](https://huggingface.co/blog/daya-shankar/open-source-llms)
-
-### Top 10 open source LLMs for 2025
-- **Source**: instaclustr.com
-- **Impact**: High
-- **Details**: Top 10 open source LLMs for 2025
-
-# Top 10 open source LLMs for 2025
-
-Large Language Models (LLMs) are machine learning models that can understand and generate human language based on large-scale datasets.
-
-## What are open source LLMs?
-
-Large Language Models (LLMs) are machine learning models that...
-- **Link**: [View Source](https://www.instaclustr.com/education/open-source-ai/top-10-open-source-llms-for-2025/)
+J...
+- **Link**: [View Source](https://www.linkedin.com/posts/jrobinsonc_github-cheahjsfree-llm-api-resources-activity-7430236307001454592-8qax)
 
 ### 15 Free LLM APIs You Can Use in 2026 - Analytics Vidhya
 - **Source**: analyticsvidhya.com
@@ -262,6 +62,220 @@ SQL
 AIML...
 - **Link**: [View Source](https://www.analyticsvidhya.com/blog/2026/01/top-free-llm-apis/)
 
+### Best AI API's 2026 For Free | AIMLAPI.com
+- **Source**: aimlapi.com
+- **Impact**: High
+- **Details**: Best AI API's 2026 For Free | AIMLAPI.com
+
+# Best Top Performing AIs of 2026
+
+Use Best AI APIs with AI/ML for Free. ChatGPT, Claude, Deepseek, Flux 1.1 and 200+ more AI Models available via API and playground
+
+Get API Key
+
+## Autonomous AI Assistant for Real Work
+
+OpenClaw runs locally, under your s...
+- **Link**: [View Source](https://aimlapi.com/best-ai-apis-for-free)
+
+### Summary of some free LLMs APIs providers - 2coffee.dev
+- **Source**: 2coffee.dev
+- **Impact**: High
+- **Details**: List of free LLMs APIs: Top providers suggestions
+🎉**New feature**
+Discover weekly articles for you by clicking here.
+Got it 👌Summary of some free LLMs APIs providers
+# Summary of some free LLMs APIs providers
+Daily short news for you
+* It&#39;s strange that in just a dozen or so days, it will be...
+- **Link**: [View Source](https://2coffee.dev/en/articles/free-llms-api-providers-summary)
+
+### cheahjs/free-llm-api-resources - GitHub
+- **Source**: github.com
+- **Impact**: High
+- **Details**: # Repository: cheahjs/free-llm-api-resources
+
+A list of free LLM inference resources accessible via API.
+
+- Stars: 14554
+- Forks: 1469
+- Watchers: 14554
+- Open issues: 33
+- Primary language: Python
+- Languages: Python
+- Topics: ai, claude, gemini, llama, llm, openai
+- Default branch: main
+- Created:...
+- **Link**: [View Source](https://github.com/cheahjs/free-llm-api-resources)
+
+### Brave launches most powerful search API for AI to date | Brave
+- **Source**: brave.com
+- **Impact**: High
+- **Details**: Brave launches most powerful search API for AI to date | Brave
+
+Testing proves Brave’s high-quality grounding data allows cheaper open-weight LLMs to beat ChatGPT, Google AI Mode, and Perplexity
+
+Today we’re launching a revamped Brave Search API that makes web search dramatically more useful for AI...
+- **Link**: [View Source](https://brave.com/blog/most-powerful-search-api-for-ai/)
+
+### Phi-4-reasoning-vision and the lessons of training a multimodal reasoning model - Microsoft Research
+- **Source**: microsoft.com
+- **Impact**: Medium
+- **Details**: Phi-4-reasoning-vision and the lessons of training a multimodal reasoning model - Microsoft Research
+
+We use optional cookies to improve your experience on our websites, such as through social media connections, and to display personalized advertising based on your online activity. If you reject opt...
+- **Link**: [View Source](https://www.microsoft.com/en-us/research/blog/phi-4-reasoning-vision-and-the-lessons-of-training-a-multimodal-reasoning-model/)
+
+### Steerling-8B: The First Inherently Interpretable Language Model
+- **Source**: guidelabs.ai
+- **Impact**: Medium
+- **Details**: Steerling-8B: The First Inherently Interpretable Language Model
+
+# Steerling-8B: The First Inherently Interpretable Language Model
+
+---
+
+Author: Guide Labs Team
+
+Published: February 23, 2026
+
+---
+
+We are releasing Steerling-8B, the first interpretable model that can trace any token it generates to i...
+- **Link**: [View Source](https://www.guidelabs.ai/post/steerling-8b-base-model-release/)
+
+### The Best Open-Source LLMs in 2026: A Complete Guide for AI Developers
+- **Source**: vertu.com
+- **Impact**: High
+- **Details**: The Best Open-Source LLMs in 2026: A Complete Guide for AI Developers - VERTU® Official Site
+
+# The Best Open-Source LLMs in 2026: A Complete Guide for AI Developers
+
+- 1:19 pm
+- February 24, 2026
+
+---
+
+The landscape of artificial intelligence has never moved faster. In 2026, open-source large langu...
+- **Link**: [View Source](https://vertu.com/lifestyle/the-best-open-source-llms-in-2026-a-complete-guide-for-ai-developers/)
+
+### Top 10 Open Source LLMs 2026: DeepSeek Revolution Guide | Articles - O-mega.ai
+- **Source**: o-mega.ai
+- **Impact**: High
+- **Details**: Top 10 Open Source LLMs 2026: DeepSeek Revolution Guide | Articles | o-mega
+
+Top 10 Open Source LLMs 2026: DeepSeek Revolution Guide | Articles | o-mega
+
+** Back to articles
+
+
+Back to articles
+
+Blog
+# Top 10 Open Source LLMs: The DeepSeek Revolution (2026)
+Top 10 open-source LLMs of 2025 deliver GPT...
+- **Link**: [View Source](https://o-mega.ai/articles/top-10-open-source-llms-the-deepseek-revolution-2026)
+
+### 10 Best Open-Source LLM Models (2025 Updated): Llama 4, Qwen 3 and DeepSeek R1
+- **Source**: huggingface.co
+- **Impact**: High
+- **Details**: 10 Best Open-Source LLM Models (2025 Updated): Llama 4, Qwen 3 and DeepSeek R1
+
+Back to Articles
+
+# 10 Best Open-Source LLM Models (2025 Updated): Llama 4, Qwen 3 and DeepSeek R1
+
+Community Article Published November 13, 2025
+
+Upvote 11
+
+- +5
+
+Daya Shankar daya-shankar Follow
+
+The world of open sour...
+- **Link**: [View Source](https://huggingface.co/blog/daya-shankar/open-source-llms)
+
+### The Best Open-Source Small Language Models (SLMs) in 2026
+- **Source**: bentoml.com
+- **Impact**: High
+- **Details**: The Best Open-Source Small Language Models (SLMs) in 2026
+
+ModelsModels
+
+# The Best Open-Source Small Language Models (SLMs) in 2026
+
+Small language models (SLMs) are compact LLMs designed to run efficiently in resource-constrained environments. They are now good enough for many production workloads...
+- **Link**: [View Source](https://www.bentoml.com/blog/the-best-open-source-small-language-models)
+
+### Every Free AI API in 2026: The Complete Guide to Zero-Cost ...
+- **Source**: awesomeagents.ai
+- **Impact**: High
+- **Details**: Every Free AI API in 2026: The Complete Guide to Zero-Cost Inference | Awesome Agents
+
+You don't need to spend a dollar to run frontier AI models. That isn't a pitch or a caveat-laden promise. In 2026, multiple providers offer truly free API access to models that would have cost hundreds of dollars...
+- **Link**: [View Source](https://awesomeagents.ai/tools/free-ai-inference-providers-2026/)
+
+### 15 Free LLM APIs You Can Use in 2026
+- **Source**: analyticsvidhya.com
+- **Impact**: High
+- **Details**: -- 15 Free LLM APIs You Can Use in 2026
+
+Master Generative AI with 10+ Real-world Projects in 2025! -- d : h : m : s Download Projects --
+
+Interview Prep
+
+Career
+
+GenAI
+
+Prompt Engg
+
+ChatGPT
+
+LLM
+
+Langchain
+
+RAG
+
+AI Agents
+
+Machine Learning
+
+Deep Learning
+
+GenAI Tools
+
+LLMOps
+
+Python
+
+NLP
+
+SQL
+
+AIML...
+- **Link**: [View Source](https://www.analyticsvidhya.com/blog/2026/01/top-free-llm-apis/)
+
+### Top Free LLM Models You Can Use Without Token Caps
+- **Source**: linkedin.com
+- **Impact**: High
+- **Details**: Top Free LLM Models You Can Use Without Token Caps
+
+AI is no longer just a futuristic concept, it’s part of our daily digital lives. Whether you’re a developer, student, content creator, or entrepreneur, large language models (LLMs) are powering everything from chatbots and summarizers to creative t...
+- **Link**: [View Source](https://www.linkedin.com/pulse/top-free-llm-models-you-can-use-without-token-caps-ritesh-sharma-fs8lf)
+
+### 4 Free Methods to use LLM APIs in Development
+- **Source**: leonardomontini.dev
+- **Impact**: High
+- **Details**: 4 Free Methods to use LLM APIs in Development | Leonardo Montini --
+
+You might be in the situation I was the other day: I wanted to develop a small AI feature for learning purposes on my side project, but I didn’t want to pay for an api key.
+
+So I did some research: let me show you 4 different ways...
+- **Link**: [View Source](https://leonardomontini.dev/free-llm-api)
+
 ### Inference free trial--ModelArk-Byteplus
 - **Source**: docs.byteplus.com
 - **Impact**: High
@@ -296,78 +310,32 @@ Model releases
 Model...
 - **Link**: [View Source](https://docs.byteplus.com/en/docs/ModelArk/1399514)
 
-### Best AI API's 2026 For Free | AIMLAPI.com
-- **Source**: aimlapi.com
+### Google opens up Gemini 2.5 Pro to free users just days after launch
+- **Source**: gigazine.net
 - **Impact**: High
-- **Details**: Best AI API's 2026 For Free | AIMLAPI.com
+- **Details**: Google opens up Gemini 2.5 Pro to free users just days after launch - GIGAZINE
+GIGAZINE
+TwitterFacebookYouTube
+Mar 31, 2025 12:24:00# Google opens up Gemini 2.5 Pro to free users just days after launch
 
-# Best Top Performing AIs of 2026
+Google has announced that it will offer its newly announced next-generation inference AI model, G...
+- **Link**: [View Source](https://gigazine.net/gsc_news/en/20250331-google-surprisingly-roll-out-gemini-2-5-pro-free/)
 
-Use Best AI APIs with AI/ML for Free. ChatGPT, Claude, Deepseek, Flux 1.1 and 200+ more AI Models available via API and playground
-
-Get API Key
-
-## Autonomous AI Assistant for Real Work
-
-OpenClaw runs locally, under your s...
-- **Link**: [View Source](https://aimlapi.com/best-ai-apis-for-free)
-
-### Top Free LLM Models You Can Use Without Token Caps - LinkedIn
-- **Source**: linkedin.com
+### Qwen 3.5 Models Now Live on Hugging Face: Breakthroughs in Multimodal AI | AI News
+- **Source**: aihaberleri.org
 - **Impact**: High
-- **Details**: Top Free LLM Models You Can Use Without Token Caps
+- **Details**: Qwen 3.5 Models Now Live on Hugging Face: Breakthroughs in Multimodal AI | AI News
 
-AI is no longer just a futuristic concept, it’s part of our daily digital lives. Whether you’re a developer, student, content creator, or entrepreneur, large language models (LLMs) are powering everything from chatbots and summarizers to creative t...
-- **Link**: [View Source](https://www.linkedin.com/pulse/top-free-llm-models-you-can-use-without-token-caps-ritesh-sharma-fs8lf)
+YAPAY ZEKA SPİKERİ
 
-### 4 Free Methods to use LLM APIs in Development | Leonardo Montini
-- **Source**: leonardomontini.dev
-- **Impact**: High
-- **Details**: 4 Free Methods to use LLM APIs in Development | Leonardo Montini
+### Qwen 3.5 Models Now Live on Hugging Face: Breakthroughs in Multimodal AI
 
-NEW My latest project: Confhub — discover tech conferences, CFPs, and speaking gigs in one place. Explore →
+0:000:00
 
-✕
+## summarize3-Point Summary
 
-You might be in the situation I was the other day: I wanted to develop a small AI feature for learning purposes on my side...
-- **Link**: [View Source](https://leonardomontini.dev/free-llm-api/)
-
-### Free AI Models on OpenRouter
-- **Source**: openrouter.ai
-- **Impact**: High
-- **Details**: Free AI Models on OpenRouter | OpenRouter
-
-Free AI Models on OpenRouter | OpenRouter
-# Free AI Models on OpenRouter
-Model rankings updated March 2026 based on real usage data.
-At OpenRouter, we believe that free models play a crucial role in democratizing access to AI. These models allow hundreds of...
-- **Link**: [View Source](https://openrouter.ai/collections/free-models)
-
-### Alibaba just released Qwen 3.5 Small models: a family of 0.8B to 9B parameters built for on-device applications - MarkTechPost
-- **Source**: marktechpost.com
-- **Impact**: High
-- **Details**: Alibaba just released Qwen 3.5 Small models: a family of 0.8B to 9B parameters built for on-device applications - MarkTechPost
-
-Discord Linkedin Reddit Twitter
-
-- Sponsorship
-- AINews.sh
-- Voice AI
-- Tutorials
-- AI Agents
-- Open Source/Weights
-- Home
-
-Search
-
-NewsHub
-
-NewsHub
-
-Premium Content
-
-Read...
-- **Link**: [View Source](https://www.marktechpost.com/2026/03/02/alibaba-just-released-qwen-3-5-small-models-a-family-of-0-8b-to-9b-parameters-built-for-on-device-applications/)
+- 3The flagship Qwen3.5-35B-A3B model, now available for download and local dep...
+- **Link**: [View Source](https://aihaberleri.org/en/news/qwen-35-models-now-live-on-hugging-face-breakthroughs-in-multimodal-ai)
 
 ### Hugging Face Model Releases | Yutori
 - **Source**: scouts.yutori.com
@@ -380,23 +348,23 @@ Loading Scout...
 
 ## 🎯 Swarm Action Items
 
-- [ ] **PRIORITY**: Assimilation: OpenAI GPT-5.4 launches with native computer-use and 1M tokens
-- [ ] **PRIORITY**: Assimilation: Google unveils Gemini 3.1 Flash-Lite — a fast, low-cost LLM - CometAPI - All AI Models in One API
-- [ ] **PRIORITY**: Assimilation: Alibaba Released Qwen3.5 for Free: 397 Billion Parameters and Context Up to 1 Million Tokens
-- [ ] **PRIORITY**: Assimilation: 15 Free LLM APIs You Can Use in 2026
-- [ ] **PRIORITY**: Assimilation: Best Free LLM API Providers of 2026
-- [ ] **PRIORITY**: Assimilation: Claude 5 API Update: 500K Context Window & New Reasoning Modes | Feb 2026 | Claude 5
-- [ ] **PRIORITY**: Assimilation: The Latest Open-Source AI Model Releases in 2026
-- [ ] **PRIORITY**: Assimilation: Steerling-8B: The First Inherently Interpretable Language Model
-- [ ] **PRIORITY**: Assimilation: Qwen Team Releases Qwen3-Coder-Next: An Open-Weight Language Model Designed Specifically for Coding Agents and Local Development - MarkTechPost
-- [ ] **PRIORITY**: Assimilation: Jamba2: Open Source LLMs for Enterprise Reliability
-- [ ] **PRIORITY**: Assimilation: 10 Best Open-Source LLM Models (2025 Updated): Llama ...
-- [ ] **PRIORITY**: Assimilation: Top 10 open source LLMs for 2025
+- [ ] **PRIORITY**: Assimilation: LLM API List for Free Tier | Jose Robinson posted on the topic
 - [ ] **PRIORITY**: Assimilation: 15 Free LLM APIs You Can Use in 2026 - Analytics Vidhya
-- [ ] **PRIORITY**: Assimilation: Inference free trial--ModelArk-Byteplus
 - [ ] **PRIORITY**: Assimilation: Best AI API's 2026 For Free | AIMLAPI.com
-- [ ] **PRIORITY**: Assimilation: Top Free LLM Models You Can Use Without Token Caps - LinkedIn
-- [ ] **PRIORITY**: Assimilation: 4 Free Methods to use LLM APIs in Development | Leonardo Montini
-- [ ] **PRIORITY**: Assimilation: Free AI Models on OpenRouter
-- [ ] **PRIORITY**: Assimilation: Alibaba just released Qwen 3.5 Small models: a family of 0.8B to 9B parameters built for on-device applications - MarkTechPost
+- [ ] **PRIORITY**: Assimilation: Summary of some free LLMs APIs providers - 2coffee.dev
+- [ ] **PRIORITY**: Assimilation: cheahjs/free-llm-api-resources - GitHub
+- [ ] **PRIORITY**: Assimilation: Brave launches most powerful search API for AI to date | Brave
+- [ ] **PRIORITY**: Assimilation: Phi-4-reasoning-vision and the lessons of training a multimodal reasoning model - Microsoft Research
+- [ ] **PRIORITY**: Assimilation: Steerling-8B: The First Inherently Interpretable Language Model
+- [ ] **PRIORITY**: Assimilation: The Best Open-Source LLMs in 2026: A Complete Guide for AI Developers
+- [ ] **PRIORITY**: Assimilation: Top 10 Open Source LLMs 2026: DeepSeek Revolution Guide | Articles - O-mega.ai
+- [ ] **PRIORITY**: Assimilation: 10 Best Open-Source LLM Models (2025 Updated): Llama 4, Qwen 3 and DeepSeek R1
+- [ ] **PRIORITY**: Assimilation: The Best Open-Source Small Language Models (SLMs) in 2026
+- [ ] **PRIORITY**: Assimilation: Every Free AI API in 2026: The Complete Guide to Zero-Cost ...
+- [ ] **PRIORITY**: Assimilation: 15 Free LLM APIs You Can Use in 2026
+- [ ] **PRIORITY**: Assimilation: Top Free LLM Models You Can Use Without Token Caps
+- [ ] **PRIORITY**: Assimilation: 4 Free Methods to use LLM APIs in Development
+- [ ] **PRIORITY**: Assimilation: Inference free trial--ModelArk-Byteplus
+- [ ] **PRIORITY**: Assimilation: Google opens up Gemini 2.5 Pro to free users just days after launch
+- [ ] **PRIORITY**: Assimilation: Qwen 3.5 Models Now Live on Hugging Face: Breakthroughs in Multimodal AI | AI News
 - [ ] **PRIORITY**: Assimilation: Hugging Face Model Releases | Yutori

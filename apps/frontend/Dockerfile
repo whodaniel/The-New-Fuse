@@ -33,9 +33,9 @@ COPY package.json ./
 # Copy all source files
 COPY . ./frontend-source/
 
-# Install dependencies
+# Install dependencies with pnpm only (workspace:* deps are unsupported by npm)
 WORKDIR /app/frontend-source
-RUN npm install --legacy-peer-deps || pnpm install --no-frozen-lockfile --ignore-scripts
+RUN pnpm install --no-frozen-lockfile --ignore-scripts
 
 # Build the application
 ENV NODE_ENV=production
@@ -64,7 +64,7 @@ ENV TURBO_FORCE=true
 
 # Build frontend with exclusions for packages that aren't needed and have issues
 # Explicitly exclude ai-arcade so TheNewFuse production is decoupled from Arcade failures
-RUN npm run build:frontend
+RUN pnpm run build:frontend
 
 # Normalize dist directory location
 # If running from monorepo root, build output is in apps/frontend/dist

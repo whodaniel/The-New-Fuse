@@ -105,7 +105,9 @@ const BackupRestore = lazy(() => import('./pages/Admin/BackupRestore'));
 const OpenClawSecurity = lazy(() => import('./pages/Admin/OpenClawSecurity'));
 const SuperAdminControlPanel = lazy(() => import('./pages/Admin/SuperAdminControlPanel'));
 const NexusVisualizer = lazy(() =>
-  import('../../nexus-orchestrator/src/App').then((module) => ({ default: module.NexusApp }))
+  import('@the-new-fuse/nexus-orchestrator/src/App').then((module) => ({
+    default: module.NexusApp,
+  }))
 );
 
 // Auth components

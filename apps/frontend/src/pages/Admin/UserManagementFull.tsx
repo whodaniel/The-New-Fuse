@@ -30,6 +30,22 @@ interface User {
   agents: number;
 }
 
+interface ApiUserResponse {
+  id: string;
+  email: string;
+  name?: string;
+  username?: string;
+  role: string;
+  isActive: boolean;
+  createdAt: string;
+  lastLogin?: string;
+  emailVerified?: boolean;
+  _count?: {
+    workspaces?: number;
+    agents?: number;
+  };
+}
+
 export default function UserManagementFull() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -62,7 +78,7 @@ export default function UserManagementFull() {
       const data = await response.json();
 
       // Transform API response to match UI interface
-      const transformedUsers: User[] = data.data.map((apiUser: any) => ({
+      const transformedUsers: User[] = (data.data as ApiUserResponse[]).map((apiUser) => ({
         id: apiUser.id,
         email: apiUser.email,
         name: apiUser.name || apiUser.username || 'Unknown',
@@ -71,8 +87,11 @@ export default function UserManagementFull() {
         createdAt: new Date(apiUser.createdAt),
         lastLogin: apiUser.lastLogin ? new Date(apiUser.lastLogin) : new Date(apiUser.createdAt),
         emailVerified: apiUser.emailVerified || false,
-        workspaces: 0, // TODO: Count from workspaces table
-        agents: 0, // TODO: Count from agents table
+        // TODO: Fetch workspace count from /api/users/:id/workspaces endpoint
+        // Current API doesn't include this data in the user list response
+        workspaces: apiUser._count?.workspaces ?? 0,
+        // TODO: Fetch agent count from /api/users/:id/agents endpoint
+        agents: apiUser._count?.agents ?? 0,
       }));
 
       setUsers(transformedUsers);

@@ -1,4 +1,5 @@
 import { config } from '../config';
+import type { ApiError, ApiResponse } from '../types/api-response';
 
 export interface Workspace {
   id: string;
@@ -9,18 +10,26 @@ export interface Workspace {
   updatedAt?: string;
 }
 
-interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  message?: string;
-}
-
 export class WorkspaceApiService {
   private baseUrl: string;
 
   constructor() {
     this.baseUrl = `${config.apiUrl}/workspaces`;
+  }
+
+  private toApiError(error: unknown, code: string = 'REQUEST_FAILED'): ApiError {
+    if (typeof error === 'string') {
+      return { code, message: error };
+    }
+
+    if (error && typeof error === 'object' && 'message' in error) {
+      const maybeMessage = (error as { message?: unknown }).message;
+      if (typeof maybeMessage === 'string' && maybeMessage.length > 0) {
+        return { code, message: maybeMessage };
+      }
+    }
+
+    return { code, message: 'Request failed' };
   }
 
   private getAuthHeaders(): Record<string, string> {
@@ -36,13 +45,13 @@ export class WorkspaceApiService {
         const errorData = await response.json();
         return {
           success: false,
-          error: errorData.message || 'Request failed',
+          error: this.toApiError(errorData?.message || 'Request failed'),
           message: errorData.message || 'Request failed',
         };
       } catch {
         return {
           success: false,
-          error: response.statusText || 'Request failed',
+          error: this.toApiError(response.statusText || 'Request failed'),
           message: response.statusText || 'Request failed',
         };
       }
@@ -82,7 +91,7 @@ export class WorkspaceApiService {
       }
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Network error',
+        error: this.toApiError(error, 'NETWORK_ERROR'),
         message: 'Failed to fetch current workspace',
       };
     }
@@ -120,7 +129,7 @@ export class WorkspaceApiService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Network error',
+        error: this.toApiError(error, 'NETWORK_ERROR'),
         message: 'Failed to fetch workspaces',
       };
     }
@@ -137,7 +146,7 @@ export class WorkspaceApiService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Network error',
+        error: this.toApiError(error, 'NETWORK_ERROR'),
         message: `Failed to fetch workspace ${id}`,
       };
     }
@@ -158,7 +167,7 @@ export class WorkspaceApiService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Network error',
+        error: this.toApiError(error, 'NETWORK_ERROR'),
         message: 'Failed to create workspace',
       };
     }

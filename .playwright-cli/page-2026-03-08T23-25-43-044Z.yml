@@ -1,0 +1,35 @@
+- generic [active]:
+  - generic:
+    - generic [ref=e3]:
+      - button [ref=e4]:
+        - img [ref=e5]
+      - button [ref=e9]:
+        - img [ref=e10]
+    - generic [ref=e62]:
+      - generic [ref=e64]:
+        - img [ref=e66]
+        - heading "Initialize Protocol" [level=2] [ref=e68]
+      - generic [ref=e69]:
+        - generic [ref=e70]:
+          - generic [ref=e71]: Agent Callsign
+          - textbox "Enter your callsign..." [ref=e72]
+          - paragraph [ref=e99]: Callsign must be 3-16 characters.
+        - generic [ref=e73]:
+          - generic [ref=e74]: Member Email (Optional)
+          - textbox "For membership and creator access checks" [ref=e75]
+        - generic [ref=e76]:
+          - generic [ref=e77]: Neural Identity
+          - generic [ref=e78]:
+            - img "Avatar" [ref=e80] [cursor=pointer]
+            - img "Avatar" [ref=e82] [cursor=pointer]
+            - img "Avatar" [ref=e84] [cursor=pointer]
+            - img "Avatar" [ref=e86] [cursor=pointer]
+            - img "Avatar" [ref=e88] [cursor=pointer]
+            - img "Avatar" [ref=e90] [cursor=pointer]
+          - button "Generate AI Avatar" [disabled] [ref=e91]:
+            - img [ref=e92]
+            - text: Generate AI Avatar
+        - generic [ref=e95]:
+          - paragraph [ref=e96]: Starting Balance
+          - paragraph [ref=e97]: $100,000
+        - button "Jack In" [ref=e98]

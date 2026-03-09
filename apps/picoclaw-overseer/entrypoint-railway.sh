@@ -143,6 +143,10 @@ echo "Provider/Model: ${PICOCLAW_AGENTS_DEFAULTS_PROVIDER:-openai}/${PICOCLAW_AG
 # Start HTTP health server on Railway's PORT for health checks
 mkdir -p /tmp/www
 echo '{"ok":true,"status":"healthy"}' > /tmp/www/health.json
+# Also serve root path for platforms that probe "/" by default.
+echo '{"ok":true,"status":"healthy","path":"/"}' > /tmp/www/index.html
+# And serve /health for platforms that probe this conventional route.
+echo '{"ok":true,"status":"healthy","path":"/health"}' > /tmp/www/health
 httpd -p ${HEALTH_PORT} -h /tmp/www &
 echo "Health server started on port ${HEALTH_PORT}"
 

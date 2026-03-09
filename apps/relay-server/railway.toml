@@ -1,77 +1,10 @@
-# TNF Master Clock - Railway Configuration
-# =========================================
-# Primary: MASTER CLOCK (always-on orchestration daemon)
-# Secondary: TNF Relay Server (WebSocket + HTTP)
-#
-# THE BUTTON IS ALWAYS BEING HELD.
-
 [build]
-builder = "NIXPACKS"
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
 
 [deploy]
-# Start the Master Clock alongside the relay
-startCommand = "node src/comprehensive-tnf-relay.js & node ../packages/relay-core/src/master-clock.ts"
+startCommand = "node src/comprehensive-tnf-relay.js"
 healthcheckPath = "/health"
 healthcheckTimeout = 30
-# CRITICAL: Always restart on failure - the baton cannot be dropped
-restartPolicyType = "ALWAYS"
-restartPolicyMaxRetries = -1  # Unlimited restarts
-
-# Number of instances (for redundancy)
-numReplicas = 1
-
-[env]
-# Master Clock Timing (in milliseconds)
-HEARTBEAT_INTERVAL = "3000"     # Heartbeat every 3 seconds
-STALL_THRESHOLD = "5000"        # Detect stalls within 5 seconds
-RECOVERY_INTERVAL = "10000"     # Recovery ping every 10 seconds
-ONBOARDING_TIMEOUT = "30000"    # 30 second onboarding window
-
-# Redis Bridge
-ENABLE_REDIS_BRIDGE = "true"
-
-# Server Config
-PORT = "3001"
-RELAY_PORT = "3001"
-
-# Logging
-LOG_LEVEL = "info"
-
-# Node environment
-NODE_ENV = "production"
-
-# =============================================================================
-# CRON JOBS ARE BACKUP ONLY
-# The Master Clock handles all timing internally with its loop.
-# These crons are for backup/recovery scenarios ONLY.
-# =============================================================================
-
-# Backup: Health check (only if Master Clock goes down)
-[[crons]]
-name = "backup-healthcheck"
-schedule = "*/2 * * * *"
-command = "node scripts/cron/healthcheck.js || echo 'Master Clock handling'"
-
-# Backup: Discovery broadcast (runs alongside Master Clock broadcasts)
-[[crons]]
-name = "backup-discovery"
-schedule = "*/30 * * * *"
-command = "node scripts/cron/discovery-broadcast.js || echo 'Master Clock handling'"
-
-# Self-improvement cycle (hourly - supplements Master Clock)
-[[crons]]
-name = "self-improvement"
-schedule = "0 * * * *"
-command = "node scripts/cron/self-improvement.js"
-
-# Free resource scan (every 6 hours - API check)
-[[crons]]
-name = "free-resource-scan"
-schedule = "0 */6 * * *"
-command = "node scripts/cron/free-resource-scan.js"
-
-# Master Clock recovery (emergency: restart if Redis shows no orchestrator)
-[[crons]]
-name = "orchestrator-recovery"
-schedule = "*/5 * * * *"
-command = "node scripts/cron/orchestrator-recovery.js || true"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10

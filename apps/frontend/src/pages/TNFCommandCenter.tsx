@@ -431,7 +431,6 @@ const QuickActionsPanel: React.FC<{
 }> = ({ onAction, actionAvailability }) => {
   const actions = [
     { id: 'deploy', label: 'Deploy to Production', icon: Globe, color: 'text-green-400' },
-    { id: 'restart-mesh', label: 'Restart Mesh', icon: RefreshCw, color: 'text-yellow-400' },
     { id: 'clear-logs', label: 'Clear Logs', icon: Terminal, color: 'text-gray-400' },
     { id: 'run-tests', label: 'Run Tests', icon: Shield, color: 'text-blue-400' },
     { id: 'new-agent', label: 'New Agent', icon: Brain, color: 'text-purple-400' },
@@ -529,12 +528,6 @@ export const TNFCommandCenter: React.FC = () => {
         enabled: false,
         reason: 'Deployment action is not wired in this environment.',
       },
-      'restart-mesh': {
-        enabled: capabilities.swarm
-          ? Object.keys(capabilities.swarm.unavailable || {}).length === 0
-          : false,
-        reason: 'Swarm restart is unavailable because swarm control APIs are partially deployed.',
-      },
       'clear-logs': { enabled: true },
       'run-tests': {
         enabled: false,
@@ -543,7 +536,7 @@ export const TNFCommandCenter: React.FC = () => {
       'new-agent': { enabled: true },
       'view-docs': { enabled: true },
     }),
-    [capabilities.swarm]
+    []
   );
 
   useEffect(() => {
@@ -835,9 +828,6 @@ export const TNFCommandCenter: React.FC = () => {
     ]);
 
     switch (action) {
-      case 'restart-mesh':
-        // TODO: Implement mesh restart
-        break;
       case 'new-agent':
         window.location.href = '/agents/new';
         break;

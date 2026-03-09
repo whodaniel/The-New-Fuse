@@ -1,0 +1,329 @@
+- main [ref=e2]:
+  - generic [ref=e3]:
+    - heading "AI-ARCADE.XYZ" [level=1] [ref=e5]
+    - paragraph [ref=e6]: Global Poker Network
+  - generic [ref=e7]:
+    - generic [ref=e8]: Node
+    - combobox "Node" [disabled] [ref=e9]:
+      - option "POKER ROOM LIVE" [selected]
+    - generic [ref=e10]: Stakes
+    - spinbutton "Stakes" [ref=e11]: "10"
+    - button "Reset Bankroll" [ref=e12] [cursor=pointer]
+    - button "Initialize Hand" [ref=e13] [cursor=pointer]
+  - generic [ref=e14]:
+    - heading "Wallet & Buy-in (Layer 2)" [level=3] [ref=e15]
+    - generic [ref=e16]:
+      - generic [ref=e17]: Alias
+      - textbox "Alias" [ref=e18]:
+        - /placeholder: Human_Operator_01
+        - text: Player
+      - button "Register Identity" [ref=e19] [cursor=pointer]
+    - generic [ref=e20]:
+      - button "Connect On-Chain Wallet" [ref=e21] [cursor=pointer]
+      - generic [ref=e22]: Wallet not connected
+    - generic [ref=e23]:
+      - generic [ref=e24]: Enforce On-Chain Settlement
+      - checkbox "Enforce On-Chain Settlement" [ref=e25]
+      - generic [ref=e26]: Chain base (84532)
+  - generic [ref=e27]:
+    - heading "Payments / Compliance Ops" [level=3] [ref=e28]
+    - generic [ref=e29]:
+      - generic [ref=e30]: Player ID
+      - textbox "Player ID" [ref=e31]: player-ops-1
+      - generic [ref=e32]: Provider
+      - combobox "Provider" [ref=e33]:
+        - option "stripe" [selected]
+        - option "paypal"
+      - generic [ref=e34]: Fiat Minor
+      - spinbutton "Fiat Minor" [ref=e35]: "4999"
+      - generic [ref=e36]: Token Units
+      - spinbutton "Token Units" [ref=e37]: "2500"
+    - generic [ref=e38]:
+      - generic [ref=e39]: Country
+      - textbox "Country" [ref=e40]: US
+      - generic [ref=e41]: API Token
+      - textbox "API Token" [ref=e42]:
+        - /placeholder: optional bearer
+      - generic [ref=e43]: KYC
+      - combobox "KYC" [ref=e44]:
+        - option "approved" [selected]
+        - option "pending"
+        - option "review"
+        - option "rejected"
+      - generic [ref=e45]: AML Risk
+      - combobox "AML Risk" [ref=e46]:
+        - option "low" [selected]
+        - option "medium"
+        - option "high"
+    - generic [ref=e47]:
+      - button "Upsert Compliance" [ref=e48] [cursor=pointer]
+      - button "Create Intent" [ref=e49] [cursor=pointer]
+      - button "Load Last Order" [ref=e50] [cursor=pointer]
+      - button "Risk Alerts" [ref=e51] [cursor=pointer]
+  - generic [ref=e53]:
+    - heading "Global Cash Lobby" [level=3] [ref=e54]
+    - generic [ref=e55]:
+      - generic [ref=e56]: Table Key
+      - textbox "Table Key" [ref=e57]: lobby-1
+      - button "Join Live Table" [ref=e58] [cursor=pointer]
+    - generic [ref=e59]: Awaiting Table Connection...
+    - list [ref=e60]:
+      - listitem [ref=e61]: No table activity yet.
+  - generic [ref=e62]:
+    - heading "Live Table Interface" [level=3] [ref=e63]
+    - generic [ref=e64]:
+      - generic [ref=e65]: Hero Node
+      - spinbutton "Hero Node" [ref=e66]: "0"
+      - generic [ref=e67]: Input
+      - spinbutton "Input" [ref=e68]: "20"
+      - button "Sync State" [ref=e69] [cursor=pointer]
+    - generic [ref=e70]: Simulation idle.
+    - generic [ref=e72]:
+      - button "Fold" [ref=e73] [cursor=pointer]
+      - button "Check" [ref=e74] [cursor=pointer]
+      - button "Call" [ref=e75] [cursor=pointer]
+      - button "Raise" [ref=e76] [cursor=pointer]
+      - button "Auto Resolve" [ref=e77] [cursor=pointer]
+  - generic [ref=e78]:
+    - heading "Hand History & Diagnostics" [level=3] [ref=e79]
+    - generic [ref=e80]:
+      - generic [ref=e81]: TxID
+      - textbox "TxID" [ref=e82]: hand-1
+      - generic [ref=e83]: Nodes
+      - spinbutton "Nodes" [ref=e84]: "2"
+    - generic [ref=e85]:
+      - button "Init Hand" [ref=e86] [cursor=pointer]
+      - button "Push Action" [ref=e87] [cursor=pointer]
+      - button "Settle" [ref=e88] [cursor=pointer]
+      - button "Next Hand" [ref=e89] [cursor=pointer]
+    - generic [ref=e90]:
+      - generic [ref=e91]: V2 Player
+      - textbox "V2 Player" [ref=e92]: hv2-a
+      - generic [ref=e93]: V2 Action
+      - combobox "V2 Action" [ref=e94]:
+        - option "fold" [selected]
+        - option "check"
+        - option "call"
+        - option "bet"
+        - option "raise"
+        - option "allin"
+      - generic [ref=e95]: V2 Amount
+      - spinbutton "V2 Amount" [ref=e96]: "200"
+    - generic [ref=e97]:
+      - button "V2 Create Table" [ref=e98] [cursor=pointer]
+      - button "V2 Seat Player" [ref=e99] [cursor=pointer]
+      - button "V2 Start Hand" [ref=e100] [cursor=pointer]
+      - button "V2 Action" [ref=e101] [cursor=pointer]
+      - button "V2 Settle" [ref=e102] [cursor=pointer]
+      - button "V2 Replay" [ref=e103] [cursor=pointer]
+      - button "V2 State" [ref=e104] [cursor=pointer]
+    - generic [ref=e105]:
+      - generic [ref=e106]: History Limit
+      - spinbutton "History Limit" [ref=e107]: "20"
+      - generic [ref=e108]: Selected Hand
+      - textbox "Selected Hand" [ref=e109]
+    - generic [ref=e110]:
+      - button "Load Hands" [ref=e111] [cursor=pointer]
+      - button "View Hand" [ref=e112] [cursor=pointer]
+      - button "Load Replay" [ref=e113] [cursor=pointer]
+      - button "Replay Back" [ref=e114] [cursor=pointer]
+      - button "Replay Next" [ref=e115] [cursor=pointer]
+      - button "Replay Play/Pause" [ref=e116] [cursor=pointer]
+      - generic [ref=e117]: Replay Speed
+      - combobox "Replay Speed" [ref=e118]:
+        - option "1x" [selected]
+        - option "1.5x"
+        - option "2x"
+    - generic [ref=e119]:
+      - generic [ref=e120]: To Call
+      - spinbutton "To Call" [ref=e121]: "10"
+      - generic [ref=e122]: Pot
+      - spinbutton "Pot" [ref=e123]: "30"
+      - generic [ref=e124]: Stack
+      - spinbutton "Stack" [ref=e125]: "200"
+      - generic [ref=e126]: Strength (0-1)
+      - spinbutton "Strength (0-1)" [ref=e127]: "0.55"
+      - button "Get Hints" [ref=e128] [cursor=pointer]
+  - generic [ref=e130]:
+    - heading "Tournaments & Sit & Go" [level=3] [ref=e131]
+    - generic [ref=e132]:
+      - generic [ref=e133]: Event ID
+      - textbox "Event ID" [ref=e134]: sng-gamma
+      - generic [ref=e135]: Alias
+      - textbox "Alias" [ref=e136]: player-1
+    - generic [ref=e137]:
+      - button "Deploy SNG" [ref=e138] [cursor=pointer]
+      - button "Register" [ref=e139] [cursor=pointer]
+      - button "Bump Blinds" [ref=e140] [cursor=pointer]
+      - button "Calc ICM" [ref=e141] [cursor=pointer]
+    - generic [ref=e142]:
+      - generic [ref=e143]: V2 Type
+      - combobox "V2 Type" [ref=e144]:
+        - option "mtt" [selected]
+        - option "sng"
+      - generic [ref=e145]: Clock +sec
+      - spinbutton "Clock +sec" [ref=e146]: "600"
+      - generic [ref=e147]: Finish
+      - spinbutton "Finish" [ref=e148]: "6"
+    - generic [ref=e149]:
+      - button "V2 Create" [ref=e150] [cursor=pointer]
+      - button "V2 Register" [ref=e151] [cursor=pointer]
+      - button "V2 Start" [ref=e152] [cursor=pointer]
+      - button "V2 Clock" [ref=e153] [cursor=pointer]
+      - button "V2 Rebuy" [ref=e154] [cursor=pointer]
+      - button "V2 Add-on" [ref=e155] [cursor=pointer]
+      - button "V2 Eliminate" [ref=e156] [cursor=pointer]
+      - button "V2 State" [ref=e157] [cursor=pointer]
+      - button "V2 Payouts" [ref=e158] [cursor=pointer]
+  - generic [ref=e160]:
+    - heading "Agent Ops & Sponsorship Market" [level=3] [ref=e161]
+    - generic [ref=e162]:
+      - generic [ref=e163]: Agent Name
+      - textbox "Agent Name" [ref=e164]: agent-omega
+      - generic [ref=e165]: Backer Wallet
+      - textbox "Backer Wallet" [ref=e166]: backer-0x
+    - generic [ref=e167]:
+      - generic [ref=e168]: Logic Model
+      - combobox "Logic Model" [ref=e169]:
+        - option "GTO - Tig.Agg" [selected]
+        - option "Loose Aggressive"
+        - option "Tight Passive"
+        - option "Node Exploitative"
+        - option "ICM Optimizer"
+      - generic [ref=e170]: Stake (ETH)
+      - spinbutton "Stake (ETH)" [ref=e171]: "100"
+      - generic [ref=e172]: Backer Amount
+      - spinbutton "Backer Amount" [ref=e173]: "100"
+    - generic [ref=e174]:
+      - button "Instantiate Agent" [ref=e175] [cursor=pointer]
+      - button "Craft Traits (TexasSolver)" [ref=e176] [cursor=pointer]
+      - button "Open Staking" [ref=e177] [cursor=pointer]
+      - button "Fund Agent" [ref=e178] [cursor=pointer]
+      - button "1-Click Fund" [ref=e179] [cursor=pointer]
+      - button "Settle Waterfall" [ref=e180] [cursor=pointer]
+      - button "Marketplace" [ref=e181] [cursor=pointer]
+      - button "My ROI" [ref=e182] [cursor=pointer]
+    - generic [ref=e183]:
+      - generic [ref=e184]: Target bb/100
+      - spinbutton "Target bb/100" [ref=e185]: "2.0"
+      - generic [ref=e186]: Episode bb/100
+      - spinbutton "Episode bb/100" [ref=e187]: "1.2"
+      - generic [ref=e188]: Exploitability Proxy
+      - spinbutton "Exploitability Proxy" [ref=e189]: "55"
+    - generic [ref=e190]:
+      - generic [ref=e191]: Policy Entropy
+      - spinbutton "Policy Entropy" [ref=e192]: "0.33"
+      - generic [ref=e193]: Latency p95 ms
+      - spinbutton "Latency p95 ms" [ref=e194]: "220"
+      - generic [ref=e195]: Legal Violations (bps)
+      - spinbutton "Legal Violations (bps)" [ref=e196]: "0"
+    - generic [ref=e197]:
+      - generic [ref=e198]: Showdown Errors (bps)
+      - spinbutton "Showdown Errors (bps)" [ref=e199]: "8"
+      - generic [ref=e200]: Volatility (bps)
+      - spinbutton "Volatility (bps)" [ref=e201]: "900"
+      - generic [ref=e202]: Episode Source
+      - combobox "Episode Source" [ref=e203]:
+        - option "ui_manual" [selected]
+        - option "self_play"
+        - option "probe"
+        - option "head_to_head"
+    - generic [ref=e204]:
+      - generic [ref=e205]: Learner Actors
+      - spinbutton "Learner Actors" [ref=e206]: "4"
+      - generic [ref=e207]: Traversals/Iter
+      - spinbutton "Traversals/Iter" [ref=e208]: "1200"
+      - generic [ref=e209]: Mini Batch
+      - spinbutton "Mini Batch" [ref=e210]: "2048"
+    - generic [ref=e211]:
+      - button "Nurture Init" [ref=e212] [cursor=pointer]
+      - button "Log Episode" [ref=e213] [cursor=pointer]
+      - button "Log 10 Episodes" [ref=e214] [cursor=pointer]
+      - button "Evaluate Program" [ref=e215] [cursor=pointer]
+      - button "Coach Card" [ref=e216] [cursor=pointer]
+      - button "Export Program" [ref=e217] [cursor=pointer]
+    - generic [ref=e218]:
+      - generic [ref=e219]: Auto-refresh (sec)
+      - spinbutton "Auto-refresh (sec)" [ref=e220]: "12"
+      - button "Start Auto Refresh" [ref=e221] [cursor=pointer]
+      - generic [ref=e222]: Compare Agents
+      - textbox "Compare Agents" [ref=e223]: agent-omega,agent-alpha,agent-it-1
+      - button "Compare" [ref=e224] [cursor=pointer]
+    - generic [ref=e225]:
+      - generic [ref=e226]: Scenario Preset
+      - combobox "Scenario Preset" [ref=e227]:
+        - option "Baseline Ladder" [selected]
+        - option "Stability Hardening"
+        - option "Exploit Hunt"
+        - option "Latency Stress"
+      - button "Apply Preset" [ref=e228] [cursor=pointer]
+      - button "Run Macro" [ref=e229] [cursor=pointer]
+      - generic [ref=e230]: Macro Episodes
+      - spinbutton "Macro Episodes" [ref=e231]: "20"
+      - generic [ref=e232]: Compare Sort
+      - combobox "Compare Sort" [ref=e233]:
+        - option "bb/100 Desc" [selected]
+        - option "Exploitability Asc"
+        - option "Episodes Desc"
+        - option "Latency Asc"
+      - generic [ref=e234]: Stage Filter
+      - combobox "Stage Filter" [ref=e235]:
+        - option "All" [selected]
+        - option "bootstrap"
+        - option "stable_self_play"
+        - option "exploit_test"
+        - option "ladder_ready"
+      - generic [ref=e236]: Min Episodes
+      - spinbutton "Min Episodes" [ref=e237]: "0"
+      - button "Set Delta Baseline" [ref=e238] [cursor=pointer]
+      - button "Clear Baseline" [ref=e239] [cursor=pointer]
+      - button "Export Compare JSON" [ref=e240] [cursor=pointer]
+      - button "Export Compare CSV" [ref=e241] [cursor=pointer]
+      - button "Clear Console" [ref=e242] [cursor=pointer]
+    - generic [ref=e243]:
+      - generic [ref=e244]: TexasSolver Node JSON
+      - textbox "TexasSolver Node JSON" [ref=e245]: "{\"strategy\":{\"actions\":[\"fold\",\"call\",\"raise\"],\"strategy\":{\"AhKh\":[0.05,0.35,0.6],\"QsQh\":[0.1,0.2,0.7],\"7c6c\":[0.25,0.5,0.25]}}}"
+    - generic [ref=e246]:
+      - button "Trait Dashboard" [ref=e247] [cursor=pointer]
+      - generic [ref=e248]: Freeze Crafting
+      - checkbox "Freeze Crafting" [ref=e249]
+      - button "Apply Freeze" [ref=e250] [cursor=pointer]
+      - generic [ref=e251]: Rollout ID
+      - textbox "Rollout ID" [ref=e252]:
+        - /placeholder: rollout-uuid
+      - button "Get Rollout" [ref=e253] [cursor=pointer]
+    - generic [ref=e254]:
+      - generic [ref=e255]: Artifact ID
+      - textbox "Artifact ID" [ref=e256]:
+        - /placeholder: artifact signature id
+      - button "Revoke Artifact" [ref=e257] [cursor=pointer]
+    - generic [ref=e258]:
+      - generic [ref=e259]: Nurture Coach
+      - generic [ref=e260]: Initialize a nurture program to see stage and recommendations.
+    - generic [ref=e261]: Compare rows 0/0 | Baseline agents 0
+  - generic [ref=e264]:
+    - heading "POKER ROOM LIVE" [level=2] [ref=e265]
+    - generic [ref=e266]:
+      - paragraph [ref=e267]: Use Reveal + Rotate periodically to verify fairness chain.
+      - button "Reveal + Rotate Server Seed" [ref=e268] [cursor=pointer]
+    - paragraph [ref=e270]: Awaiting next round...
+  - generic [ref=e271]:
+    - heading "Trust Architecture & Realtime Fair-Play" [level=3] [ref=e272]
+    - generic [ref=e273]:
+      - generic [ref=e274]: Local Seed
+      - textbox "Local Seed" [ref=e275]: 781a10755a4058b514f41dc5a7d56347
+      - button "Mutate Hash" [ref=e276] [cursor=pointer]
+    - generic [ref=e277]:
+      - generic [ref=e278]:
+        - text: "Net Bankroll:"
+        - strong [ref=e279]: "1000"
+      - generic [ref=e280]:
+        - text: "Validated Hands:"
+        - strong [ref=e281]: "0"
+      - generic [ref=e282]:
+        - text: "Win Delta:"
+        - strong [ref=e283]: "0"
+      - generic [ref=e284]:
+        - text: "Loss Edge:"
+        - strong [ref=e285]: "0"
+    - generic [ref=e286]: No round receipt yet.

@@ -5194,7 +5194,28 @@ async function handleTableStateInit(req, res) {
 
 async function handleTableStateGet(req, res, urlObj) {
   const tableId = sanitizeTable(urlObj.searchParams.get('tableId') || 'lobby-1');
-  const snapshot = swarmState.tableSnapshots.get(tableId);
+  let snapshot = swarmState.tableSnapshots.get(tableId);
+  if (!snapshot) {
+    const direct = state.tables?.[tableId]?.snapshot;
+    if (direct && typeof direct === 'object') {
+      snapshot = direct;
+      swarmState.tableSnapshots.set(tableId, snapshot);
+    }
+  }
+  if (!snapshot) {
+    for (const [rawTableId, table] of Object.entries(state.tables || {})) {
+      if (sanitizeTable(rawTableId) !== tableId) continue;
+      const candidate = table && typeof table === 'object' ? table.snapshot : null;
+      if (!candidate || typeof candidate !== 'object') continue;
+      snapshot = candidate;
+      swarmState.tableSnapshots.set(tableId, snapshot);
+      if (!state.tables[tableId]) {
+        state.tables[tableId] = { id: tableId, events: [], snapshot: cloneJsonSafe(candidate) };
+        persistState();
+      }
+      break;
+    }
+  }
   if (!snapshot) return badRequest(res, 'No table snapshot found. Initialize table first.');
   writeJson(res, 200, { ok: true, snapshot });
 }

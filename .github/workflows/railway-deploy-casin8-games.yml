@@ -1,0 +1,38 @@
+name: Railway Deploy casin8-games
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/casin8-games/**'
+      - 'railway.toml'
+      - '.github/workflows/railway-deploy-casin8-games.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      RAILWAY_PROJECT_ID: 041cee9d-8648-4074-b5a6-0eae436de1d1
+      RAILWAY_ENVIRONMENT: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Railway CLI
+        run: npm i -g @railway/cli
+
+      - name: Validate Railway Auth
+        run: railway whoami
+
+      - name: Link Railway Project + Environment
+        run: railway link -p "$RAILWAY_PROJECT_ID" -e "$RAILWAY_ENVIRONMENT"
+
+      - name: Deploy casin8-games from monorepo source
+        run: railway up -s casin8-games -d

@@ -76,12 +76,20 @@ wait_for_database() {
 init_playwright() {
     echo "Initializing Playwright browsers..."
 
-    if [ -d "$PLAYWRIGHT_BROWSERS_PATH" ]; then
-        echo "Playwright browser path: $PLAYWRIGHT_BROWSERS_PATH"
-    else
-        echo "Creating Playwright browser directory: $PLAYWRIGHT_BROWSERS_PATH"
-        mkdir -p "$PLAYWRIGHT_BROWSERS_PATH"
+    if [ -z "$PLAYWRIGHT_BROWSERS_PATH" ]; then
+        PLAYWRIGHT_BROWSERS_PATH="$HOME/pw-browsers"
     fi
+
+    if [ ! -d "$PLAYWRIGHT_BROWSERS_PATH" ]; then
+        echo "Creating Playwright browser directory: $PLAYWRIGHT_BROWSERS_PATH"
+        if ! mkdir -p "$PLAYWRIGHT_BROWSERS_PATH" 2>/dev/null; then
+            echo "Cannot write to $PLAYWRIGHT_BROWSERS_PATH, using /tmp/pw-browsers"
+            PLAYWRIGHT_BROWSERS_PATH="/tmp/pw-browsers"
+            mkdir -p "$PLAYWRIGHT_BROWSERS_PATH"
+        fi
+    fi
+    export PLAYWRIGHT_BROWSERS_PATH
+    echo "Playwright browser path: $PLAYWRIGHT_BROWSERS_PATH"
 
     # Browsers should already be installed in the base image
     # but we verify they exist

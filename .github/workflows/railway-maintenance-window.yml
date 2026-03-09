@@ -1,0 +1,40 @@
+name: Railway Maintenance Window
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  maintenance-redeploy:
+    runs-on: ubuntu-latest
+    env:
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      RAILWAY_PROJECT_ID: 041cee9d-8648-4074-b5a6-0eae436de1d1
+      RAILWAY_ENVIRONMENT: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Railway CLI
+        run: npm i -g @railway/cli
+
+      - name: Validate Railway Auth
+        run: railway whoami
+
+      - name: Link Railway Project + Environment
+        run: railway link -p "$RAILWAY_PROJECT_ID" -e "$RAILWAY_ENVIRONMENT"
+
+      - name: Redeploy Redis During Maintenance Window
+        run: railway redeploy -s Redis
+
+      - name: Redeploy Postgres During Maintenance Window
+        run: railway redeploy -s Postgres
+
+      - name: Redeploy searxng During Maintenance Window
+        run: railway redeploy -s searxng

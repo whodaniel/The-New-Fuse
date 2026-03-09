@@ -222,3 +222,12 @@ dockerfilePath = "apps/casin8-games/Dockerfile"
 watchPatterns = ["apps/casin8-games/**"]
 [services.casin8-games.deploy]
 healthcheckPath = "/api/health"
+
+# Relay Server Service (agent relay + networking health)
+[services.relay-server]
+builder = "DOCKERFILE"
+[services.relay-server.build]
+dockerfilePath = "apps/relay-server/Dockerfile"
+watchPatterns = ["apps/relay-server/**", "packages/**"]
+[services.relay-server.deploy]
+healthcheckPath = "/health"

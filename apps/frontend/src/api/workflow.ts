@@ -1,4 +1,5 @@
 import { config } from '../config';
+import type { ApiError, ApiResponse } from '../types/api-response';
 
 interface Workflow {
   id: string;
@@ -19,13 +20,6 @@ interface WorkflowExecution {
   input?: any;
   output?: any;
   error?: string;
-}
-
-interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  message?: string;
 }
 
 export interface WorkflowTemplate {
@@ -49,19 +43,34 @@ export class WorkflowApiService {
     this.baseUrl = `${config.apiUrl}/workflows`;
   }
 
+  private toApiError(error: unknown, code: string = 'REQUEST_FAILED'): ApiError {
+    if (typeof error === 'string') {
+      return { code, message: error };
+    }
+
+    if (error && typeof error === 'object' && 'message' in error) {
+      const maybeMessage = (error as { message?: unknown }).message;
+      if (typeof maybeMessage === 'string' && maybeMessage.length > 0) {
+        return { code, message: maybeMessage };
+      }
+    }
+
+    return { code, message: 'Request failed' };
+  }
+
   private async handleResponse<T>(response: Response): Promise<ApiResponse<T>> {
     if (!response.ok) {
       try {
         const errorData = await response.json();
         return {
           success: false,
-          error: errorData.message || 'Request failed',
+          error: this.toApiError(errorData?.message || 'Request failed'),
           message: errorData.message || 'Request failed',
         };
       } catch {
         return {
           success: false,
-          error: response.statusText || 'Request failed',
+          error: this.toApiError(response.statusText || 'Request failed'),
           message: response.statusText || 'Request failed',
         };
       }
@@ -96,7 +105,7 @@ export class WorkflowApiService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Network error',
+        error: this.toApiError(error, 'NETWORK_ERROR'),
         message: 'Failed to fetch workflows',
       };
     }
@@ -116,7 +125,7 @@ export class WorkflowApiService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Network error',
+        error: this.toApiError(error, 'NETWORK_ERROR'),
         message: `Failed to fetch workflow ${id}`,
       };
     }
@@ -142,7 +151,7 @@ export class WorkflowApiService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Network error',
+        error: this.toApiError(error, 'NETWORK_ERROR'),
         message: 'Failed to create workflow',
       };
     }
@@ -171,7 +180,7 @@ export class WorkflowApiService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Network error',
+        error: this.toApiError(error, 'NETWORK_ERROR'),
         message: `Failed to update workflow ${id}`,
       };
     }
@@ -195,7 +204,7 @@ export class WorkflowApiService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Network error',
+        error: this.toApiError(error, 'NETWORK_ERROR'),
         message: `Failed to execute workflow ${workflowId}`,
       };
     }
@@ -215,7 +224,7 @@ export class WorkflowApiService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Network error',
+        error: this.toApiError(error, 'NETWORK_ERROR'),
         message: `Failed to get execution status ${executionId}`,
       };
     }
@@ -245,7 +254,7 @@ export class WorkflowApiService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Network error',
+        error: this.toApiError(error, 'NETWORK_ERROR'),
         message: 'Failed to save workflow',
       };
     }
@@ -265,7 +274,7 @@ export class WorkflowApiService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Network error',
+        error: this.toApiError(error, 'NETWORK_ERROR'),
         message: `Failed to publish workflow ${id}`,
       };
     }
@@ -288,7 +297,7 @@ export class WorkflowApiService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Network error',
+        error: this.toApiError(error, 'NETWORK_ERROR'),
         message: 'Failed to fetch workflow templates',
       };
     }
@@ -308,7 +317,7 @@ export class WorkflowApiService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Network error',
+        error: this.toApiError(error, 'NETWORK_ERROR'),
         message: `Failed to fetch workflow template ${id}`,
       };
     }
@@ -331,7 +340,7 @@ export class WorkflowApiService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Network error',
+        error: this.toApiError(error, 'NETWORK_ERROR'),
         message: 'Failed to create workflow template',
       };
     }
@@ -355,7 +364,7 @@ export class WorkflowApiService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Network error',
+        error: this.toApiError(error, 'NETWORK_ERROR'),
         message: `Failed to update workflow template ${id}`,
       };
     }
@@ -382,7 +391,7 @@ export class WorkflowApiService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Network error',
+        error: this.toApiError(error, 'NETWORK_ERROR'),
         message: `Failed to delete workflow template ${id}`,
       };
     }
