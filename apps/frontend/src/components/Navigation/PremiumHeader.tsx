@@ -143,7 +143,7 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ onMenuClick, title
                       Billing & Plans
                     </Link>
                     <Link
-                      to="/workspace"
+                      to="/workspace/members"
                       className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-white/5 hover:text-white"
                       onClick={() => setIsUserMenuOpen(false)}
                     >
@@ -151,7 +151,7 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ onMenuClick, title
                       Team Management
                     </Link>
                     <Link
-                      to="/workspace"
+                      to="/workspace/settings"
                       className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-white/5 hover:text-white"
                       onClick={() => setIsUserMenuOpen(false)}
                     >

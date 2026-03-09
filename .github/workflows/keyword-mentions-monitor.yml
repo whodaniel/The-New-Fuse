@@ -1,0 +1,51 @@
+name: Keyword Mentions Monitor
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "11 * * * *"
+
+concurrency:
+  group: keyword-mentions-monitor
+  cancel-in-progress: false
+
+jobs:
+  map-mentions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Build frontend+api grep snapshots
+        run: |
+          mkdir -p reports/keyword-mentions
+          rg -n --no-heading -S "\bpages\b" apps/frontend apps/api > reports/keyword-mentions/frontend-api-pages.txt || true
+          rg -n --no-heading -S "all pages" apps/frontend apps/api > reports/keyword-mentions/frontend-api-all-pages.txt || true
+          rg -n --no-heading -S "\bsitemap\b" apps/frontend apps/api > reports/keyword-mentions/frontend-api-sitemap.txt || true
+          rg -n --no-heading -S "\bmermaid\b" apps/frontend apps/api > reports/keyword-mentions/frontend-api-mermaid.txt || true
+          rg -n --no-heading -S "\bpages\b" apps/frontend/src apps/api/src > reports/keyword-mentions/frontend-api-src-pages.txt || true
+          rg -n --no-heading -S "all pages" apps/frontend/src apps/api/src > reports/keyword-mentions/frontend-api-src-all-pages.txt || true
+          rg -n --no-heading -S "\bsitemap\b" apps/frontend/src apps/api/src > reports/keyword-mentions/frontend-api-src-sitemap.txt || true
+          rg -n --no-heading -S "\bmermaid\b" apps/frontend/src apps/api/src > reports/keyword-mentions/frontend-api-src-mermaid.txt || true
+
+      - name: Generate canonical mention map + delta
+        run: node scripts/keyword-mentions-map.mjs
+
+      - name: Upload keyword mention artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: keyword-mentions
+          path: |
+            reports/keyword-mentions/frontend-api*.txt
+            reports/keyword-mentions/frontend-api-src*.txt
+            reports/keyword-mentions/mentions-map.json
+            reports/keyword-mentions/mentions-map.md
+            reports/keyword-mentions/mentions-map.delta.json
+            reports/keyword-mentions/mentions-map.delta.md

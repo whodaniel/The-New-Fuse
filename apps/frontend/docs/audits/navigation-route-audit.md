@@ -1,12 +1,12 @@
 # Navigation and Route Audit
 
-Generated: 2026-03-09T05:51:24.244Z
+Generated: 2026-03-09T06:12:12.833Z
 
 ## Counts
 
 - router paths: 167
-- legacy redirect from-paths: 27
-- effective router paths (router + redirects): 194
+- legacy redirect from-paths: 39
+- effective router paths (router + redirects): 206
 - all-pages paths: 158
 - canonical sidebar paths: 21
 - canonical sidebar paths not in router: 0

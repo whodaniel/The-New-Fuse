@@ -22,6 +22,8 @@
     "test:ui": "vitest --ui",
     "audit:navigation": "node scripts/audit-navigation-routes.mjs",
     "audit:static-links": "node scripts/audit-static-links.mjs",
+    "audit:all-links": "node scripts/audit-all-links.mjs",
+    "audit:live-links": "node scripts/audit-live-links.mjs",
     "audit:experience-architecture": "node scripts/audit-experience-architecture.mjs",
     "audit:sidebar-health": "node scripts/audit-sidebar-page-health.mjs",
     "audit:route-guards": "node scripts/audit-route-guards.mjs",

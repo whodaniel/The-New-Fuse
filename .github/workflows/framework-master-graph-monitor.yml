@@ -1,0 +1,43 @@
+name: Framework Master Graph Monitor
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/15 * * * *"
+
+concurrency:
+  group: framework-master-graph-monitor
+  cancel-in-progress: false
+
+jobs:
+  build-framework-graph:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Build master framework graph
+        run: ./tools/framework-master-graph/rebuild_framework_master_graph.sh
+
+      - name: Upload framework graph artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: framework-master-graph
+          path: |
+            tools/framework-master-graph/master-framework-graph.json
+            tools/framework-master-graph/master-framework-graph.md
+            tools/framework-master-graph/master-framework-graph.mmd
+            tools/framework-master-graph/master-framework-graph.noapoc.cypher
+            tools/framework-master-graph/master-framework-graph.cypher
+            tools/framework-master-graph/neo4j-package/nodes.csv
+            tools/framework-master-graph/neo4j-package/edges.csv
+            tools/framework-master-graph/neo4j-package/load.noapoc.cypher
+            tools/framework-master-graph/neo4j-package/load.apoc.cypher
+            tools/framework-master-graph/neo4j-package/README.md

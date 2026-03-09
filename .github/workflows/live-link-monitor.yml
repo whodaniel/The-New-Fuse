@@ -1,0 +1,53 @@
+name: Live Link Monitor
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 * * * *"
+
+concurrency:
+  group: live-link-monitor
+  cancel-in-progress: false
+
+jobs:
+  crawl-links:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright Chromium
+        working-directory: apps/frontend
+        run: pnpm exec playwright install chromium
+
+      - name: Run depth-5 live link audit
+        working-directory: apps/frontend
+        env:
+          LIVE_AUDIT_MAX_DEPTH: "5"
+          LIVE_AUDIT_MAX_PAGES: "500"
+          LIVE_AUDIT_MAX_EXTERNAL: "400"
+          FAIL_ON_BROKEN: "1"
+        run: pnpm run audit:live-links
+
+      - name: Upload audit artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-link-crawl
+          path: |
+            apps/frontend/docs/audits/live-link-crawl.json
+            apps/frontend/docs/audits/live-link-crawl.md

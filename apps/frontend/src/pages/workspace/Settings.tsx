@@ -43,7 +43,7 @@ const WorkspaceSettings = () => {
     }
     setShowDeleteDialog(false);
     setDeleteConfirmation('');
-    navigate('/workspace');
+    navigate('/workspace/overview');
   };
   return (
     <div className="space-y-6">

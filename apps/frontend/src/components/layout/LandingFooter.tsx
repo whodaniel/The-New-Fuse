@@ -39,7 +39,7 @@ export const LandingFooter = () => {
                 </li>
                 <li>
                   <Link
-                    to="/integrations"
+                    to="/connect"
                     className="hover:text-foreground transition-colors focus:outline-none focus:underline"
                   >
                     Integrations

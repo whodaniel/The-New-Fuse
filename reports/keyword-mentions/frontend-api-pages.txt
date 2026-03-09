@@ -1,0 +1,686 @@
+apps/frontend/PRODUCTION_OPTIMIZATIONS.md:382:- Only loaded when visualization pages accessed
+apps/frontend/scripts/audit-navigation-routes.mjs:142:    `- all-pages paths: ${payload.counts.allPagesPaths}`,
+apps/frontend/scripts/audit-navigation-routes.mjs:147:    `- all-pages paths not in router: ${payload.counts.allPagesNotInRouter}`,
+apps/frontend/scripts/audit-navigation-routes.mjs:148:    `- router paths not in all-pages: ${payload.counts.routerNotInAllPages}`,
+apps/frontend/scripts/audit-navigation-routes.mjs:154:    toSection('All Pages Paths Not In Router', allPagesNotInRouter),
+apps/frontend/scripts/audit-navigation-routes.mjs:156:    toSection('Router Paths Not In All Pages', routerNotInAllPages),
+apps/frontend/scripts/audit-live-links.mjs:13:  'https://ai-arcade.xyz/,https://poker.ai-arcade.xyz/,https://ai-arcade-poker.pages.dev/,https://thenewfuse.com/'
+apps/frontend/scripts/audit-live-links.mjs:293:    `- max pages/domain: ${summary.settings.maxPagesPerDomain}`,
+apps/frontend/scripts/audit-live-links.mjs:306:        `- ${seed.seed} | pages=${seed.crawledPages} | maxDepth=${seed.maxDepthReached} | checked=${seed.checked} | broken=${seed.broken} | pageErrors=${seed.pageErrors}`
+apps/frontend/scripts/audit-sidebar-page-health.mjs:166:  const pages = sidebarItems.map((item) => {
+apps/frontend/scripts/audit-sidebar-page-health.mjs:180:  const results = pages.map((page) => {
+apps/frontend/scripts/audit-static-links.mjs:13:  { label: 'src/pages/Home.tsx', path: join(ROOT, 'src/pages/Home.tsx') },
+apps/frontend/OPTIMIZATION_SUMMARY.md:36:| `firebase.js` | 328.80 KB | 99.95 KB | 97.38 KB | Lazy (Auth pages only) |
+apps/frontend/OPTIMIZATION_SUMMARY.md:38:| `recharts.js` | 244.77 KB | 62.82 KB | 60.31 KB | Lazy (Analytics pages) |
+apps/frontend/OPTIMIZATION_SUMMARY.md:40:| `d3-vendor.js` | 102.40 KB | 32.05 KB | 31.21 KB | Lazy (Visualization pages) |
+apps/frontend/OPTIMIZATION_SUMMARY.md:164:- Auth pages (Login, Register, etc.)
+apps/frontend/OPTIMIZATION_SUMMARY.md:165:- Dashboard pages
+apps/frontend/OPTIMIZATION_SUMMARY.md:166:- Agent pages
+apps/frontend/OPTIMIZATION_SUMMARY.md:167:- Workflow pages
+apps/frontend/OPTIMIZATION_SUMMARY.md:168:- Settings pages
+apps/frontend/OPTIMIZATION_SUMMARY.md:169:- Admin pages
+apps/frontend/OPTIMIZATION_SUMMARY.md:170:- Help pages
+apps/frontend/OPTIMIZATION_SUMMARY.md:173:- Firebase: Only loaded on auth pages (~100 KB)
+apps/frontend/OPTIMIZATION_SUMMARY.md:174:- Monaco Editor: Only loaded on code editor pages (~3 KB wrapper + Monaco)
+apps/frontend/OPTIMIZATION_SUMMARY.md:175:- D3: Only loaded on visualization pages (~32 KB)
+apps/frontend/OPTIMIZATION_SUMMARY.md:177:- Recharts: Only loaded on analytics pages (~63 KB)
+apps/frontend/OPTIMIZATION_SUMMARY.md:268:3. `/home/user/fuse/apps/frontend/src/pages/Home.tsx` - Fixed duplicate export (build blocker)
+apps/api/src/main.ts:21:              'https://fae7326d.ai-arcade-poker.pages.dev',
+apps/api/src/main.ts:28:              'https://fae7326d.ai-arcade-poker.pages.dev',
+apps/api/src/controllers/workflow.controller.ts:84:          pages: Math.ceil(total / Number(limit)),
+apps/api/src/controllers/workflow.controller.ts:380:          pages: Math.ceil(total / Number(limit)),
+apps/api/src/controllers/system.controller.ts:510:   * status pages that need to show overall system health at a glance.
+apps/frontend/src/routes/WorkflowRoutes.tsx:11:const WorkflowsPage = React.lazy(() => import('../pages/Workflows/index'));
+apps/frontend/src/routes/WorkflowRoutes.tsx:12:const WorkflowBuilder = React.lazy(() => import('../pages/Workflows/Builder'));
+apps/frontend/src/routes/WorkflowRoutes.tsx:13:const ModernBuilder = React.lazy(() => import('../pages/Workflows/ModernBuilder'));
+apps/frontend/src/routes/WorkflowRoutes.tsx:14:const WorkflowDetail = React.lazy(() => import('../pages/Workflows/Detail'));
+apps/frontend/src/routes/WorkflowRoutes.tsx:15:const WorkflowExecution = React.lazy(() => import('../pages/Workflows/Execution'));
+apps/frontend/src/routes/WorkflowRoutes.tsx:16:const WorkflowTemplates = React.lazy(() => import('../pages/Workflows/Templates'));
+apps/frontend/src/routes/RouterProtection.test.tsx:19:// Mock specific pages to verify if they are rendered
+apps/frontend/src/routes/RouterProtection.test.tsx:20:vi.mock('@/pages/auth/Login', () => ({ default: () => <div data-testid="login-page">Login Page</div> }));
+apps/frontend/src/routes/RouterProtection.test.tsx:21:vi.mock('@/pages/auth/Register', () => ({ default: () => <div>Register Page</div> }));
+apps/frontend/src/routes/RouterProtection.test.tsx:22:vi.mock('@/pages/Unauthorized', () => ({ default: () => <div data-testid="unauthorized-page">Unauthorized Page</div> }));
+apps/frontend/src/routes/RouterProtection.test.tsx:23:vi.mock('@/pages/AllPages', () => ({ default: () => <div>All Pages</div> }));
+apps/frontend/src/routes/RouterProtection.test.tsx:24:vi.mock('@/pages/BuildInfo', () => ({ default: () => <div>Build Info</div> }));
+apps/frontend/src/routes/RouterProtection.test.tsx:25:vi.mock('@/pages/Debug', () => ({ default: () => <div>Debug</div> }));
+apps/frontend/src/routes/RouterProtection.test.tsx:26:vi.mock('@/pages/DebugRouting', () => ({ default: () => <div>Debug Routing</div> }));
+apps/frontend/src/routes/RouterProtection.test.tsx:27:vi.mock('@/pages/Test', () => ({ default: () => <div>Test</div> }));
+apps/frontend/src/routes/RouterProtection.test.tsx:29:vi.mock('@/pages/workspace/Settings', () => ({ default: () => <div data-testid="page-workspace-settings">Workspace Settings</div> }));
+apps/frontend/src/routes/RouterProtection.test.tsx:30:vi.mock('@/pages/workflow-pages/Builder', () => ({ default: () => <div data-testid="page-workflow-builder">Workflow Builder</div> }));
+apps/frontend/src/routes/RouterProtection.test.tsx:31:vi.mock('@/pages/Agents/UnifiedAgentCreator', () => ({ default: () => <div data-testid="page-agent-creator">Agent Creator</div> }));
+apps/frontend/src/routes/RouterProtection.test.tsx:32:vi.mock('@/pages/Tasks/New', () => ({ default: () => <div data-testid="page-task-new">New Task</div> }));
+apps/frontend/src/routes/RouterProtection.test.tsx:33:vi.mock('@/pages/settings/API', () => ({ default: () => <div data-testid="page-settings-api">Settings API</div> }));
+apps/frontend/src/routes/RouterProtection.test.tsx:34:vi.mock('@/pages/Admin/Agents/skills', () => ({ default: () => <div data-testid="page-admin-skills">Admin Skills</div> }));
+apps/frontend/src/routes/auth.routes.tsx:13:const LoginPage = lazy(() => import('../pages/auth/Login'));
+apps/frontend/src/routes/auth.routes.tsx:14:const RegisterPage = lazy(() => import('../pages/auth/Register'));
+apps/frontend/src/routes/auth.routes.tsx:15:const AuthIndexPage = lazy(() => import('../pages/auth/index'));
+apps/frontend/src/routes/auth.routes.tsx:16:const ForgotPasswordPage = lazy(() => import('../pages/auth/ForgotPassword'));
+apps/frontend/src/routes/auth.routes.tsx:17:const ResetPasswordPage = lazy(() => import('../pages/auth/ResetPassword'));
+apps/frontend/src/routes/auth.routes.tsx:18:const SSOPage = lazy(() => import('../pages/auth/SSO'));
+apps/frontend/src/routes/auth.routes.tsx:19:const GoogleCallbackPage = lazy(() => import('../pages/auth/GoogleCallback'));
+apps/frontend/src/routes/auth.routes.tsx:20:const OAuthCallbackPage = lazy(() => import('../pages/auth/OAuthCallback'));
+apps/frontend/src/routes/core.routes.tsx:6: * - Public landing pages
+apps/frontend/src/routes/core.routes.tsx:7: * - Error pages
+apps/frontend/src/routes/core.routes.tsx:15:const AllPages = lazy(() => import('../pages/AllPages'));
+apps/frontend/src/routes/core.routes.tsx:16:const CommunityHubPage = lazy(() => import('../pages/Community/CommunityHub'));
+apps/frontend/src/routes/core.routes.tsx:17:const MembershipPage = lazy(() => import('../pages/Membership'));
+apps/frontend/src/routes/core.routes.tsx:18:const SupportPage = lazy(() => import('../pages/Support'));
+apps/frontend/src/routes/core.routes.tsx:19:const OnboardingFlowPage = lazy(() => import('../pages/OnboardingFlow'));
+apps/frontend/src/routes/core.routes.tsx:20:const DocsPage = lazy(() => import('../pages/Docs'));
+apps/frontend/src/routes/core.routes.tsx:21:const ConnectExtensionPage = lazy(() => import('../pages/ConnectExtension'));
+apps/frontend/src/routes/core.routes.tsx:22:const PrivacyPolicyPage = lazy(() => import('../pages/legal/PrivacyPolicy'));
+apps/frontend/src/routes/core.routes.tsx:23:const TermsOfServicePage = lazy(() => import('../pages/legal/TermsOfService'));
+apps/frontend/src/routes/core.routes.tsx:24:const BrandIdentityPage = lazy(() => import('../pages/BrandIdentity'));
+apps/frontend/src/routes/core.routes.tsx:25:const BlogPage = lazy(() => import('../pages/Blog').then((module) => ({ default: module.Blog })));
+apps/frontend/src/routes/core.routes.tsx:26:const OnboardingPreviewPage = lazy(() => import('../pages/preview/OnboardingPreview'));
+apps/frontend/src/routes/core.routes.tsx:27:const NotFound = lazy(() => import('../pages/NotFound'));
+apps/frontend/src/routes/core.routes.tsx:28:const UnauthorizedPage = lazy(() => import('../pages/Unauthorized'));
+apps/frontend/src/routes/core.routes.tsx:63:  // Public Pages
+apps/frontend/src/routes/core.routes.tsx:94:  // Error Pages
+apps/api/src/modules/task/task.controller.ts:57:        pages: Math.ceil(total / query.limit),
+apps/frontend/README.md:44:├── pages/                   # Page components
+apps/frontend/README.md:45:│   ├── auth/                # Authentication pages
+apps/frontend/README.md:49:│   ├── dashboard/           # Dashboard pages
+apps/frontend/README.md:50:│   ├── settings/            # Settings pages
+apps/frontend/README.md:51:│   ├── agents/              # Agent-related pages
+apps/frontend/README.md:109:   principles (atoms, molecules, organisms, templates, pages).
+apps/frontend/README.md:155:- [All Pages List](./ALL_PAGES_LIST.md) - Complete page inventory
+apps/frontend/README.md:184:### Pages
+apps/frontend/README.md:186:- [Resources Page](./src/pages/Resources/README.md) - Resources dashboard
+apps/frontend/README.md:187:- [Admin Settings](./src/pages/Admin/README.md) - Admin Dashboard & Settings
+apps/frontend/docs/audits/live-link-crawl.md:13:- https://ai-arcade-poker.pages.dev/ | status=200 | discovered=0 | checked=0 | broken=0
+apps/frontend/docs/audits/static-link-audit.json:16:        "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/static-link-audit.json:273:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/static-link-audit.json:278:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/static-link-audit.json:283:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/static-link-audit.json:288:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/static-link-audit.json:293:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/static-link-audit.json:298:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/static-link-audit.json:303:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/static-link-audit.json:308:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/static-link-audit.json:313:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/static-link-audit.json:318:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/static-link-audit.json:323:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/static-link-audit.json:328:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/static-link-audit.json:333:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/static-link-audit.json:338:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/static-link-audit.json:343:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/static-link-audit.json:348:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/sidebar-page-health-audit.json:16:      "file": "pages/Admin/ComprehensiveAdminDashboard.tsx",
+apps/frontend/docs/audits/sidebar-page-health-audit.json:27:      "file": "pages/Admin/AuditLogViewer.tsx",
+apps/frontend/docs/audits/sidebar-page-health-audit.json:63:      "file": "pages/AICommandCenter/index.tsx",
+apps/frontend/docs/audits/sidebar-page-health-audit.json:74:      "file": "pages/AIAgentDashboard.tsx",
+apps/frontend/docs/audits/sidebar-page-health-audit.json:90:      "file": "pages/dashboard/Analytics.tsx",
+apps/frontend/docs/audits/sidebar-page-health-audit.json:101:      "file": "pages/chat/ChatPage.tsx",
+apps/frontend/docs/audits/sidebar-page-health-audit.json:112:      "file": "pages/dashboard/TNFConsoleDashboard.tsx",
+apps/frontend/docs/audits/sidebar-page-health-audit.json:128:      "file": "pages/Debug.tsx",
+apps/frontend/docs/audits/sidebar-page-health-audit.json:139:      "file": "pages/Docs.tsx",
+apps/frontend/docs/audits/sidebar-page-health-audit.json:150:      "file": "pages/Hub/ModernHub.tsx",
+apps/frontend/docs/audits/sidebar-page-health-audit.json:161:      "file": "pages/KnowledgeHub.tsx",
+apps/frontend/docs/audits/sidebar-page-health-audit.json:177:      "file": "pages/Marketplace/MarketplacePublicPage.tsx",
+apps/frontend/docs/audits/sidebar-page-health-audit.json:188:      "file": "pages/mcp/MCPHub.tsx",
+apps/frontend/docs/audits/sidebar-page-health-audit.json:199:      "file": "pages/SystemObservatory.tsx",
+apps/frontend/docs/audits/sidebar-page-health-audit.json:210:      "file": "pages/Settings.tsx",
+apps/frontend/docs/audits/sidebar-page-health-audit.json:221:      "file": "pages/Suggestions/index.tsx",
+apps/frontend/docs/audits/sidebar-page-health-audit.json:232:      "file": "pages/Tasks/TasksPage.tsx",
+apps/frontend/docs/audits/sidebar-page-health-audit.json:243:      "file": "pages/Timeline/index.tsx",
+apps/frontend/docs/audits/sidebar-page-health-audit.json:259:      "file": "pages/Workflows.tsx",
+apps/frontend/docs/audits/sidebar-page-health-audit.json:275:      "file": "pages/workspace/Overview.tsx",
+apps/frontend/public/observatory/agents.index.json:232:            "path": "docs/development/gui-components-and-pages.md",
+apps/frontend/public/observatory/agents.index.json:234:            "snippet": "# The New Fuse - GUI Components and Pages Documentation This document provides a comprehensive overview of all GUI components and pages in The New Fuse application. It serves as a reference for developers to understand the application structure and find specific components. ## Table of Contents - [Main Pages](#main-pag"
+apps/frontend/public/observatory/agents.index.json:277:      "bodyMarkdown": "You are a meticulous compliance officer for a digital media company. Your job is to ensure that all web properties meet the strict eligibility requirements of advertising networks before an application is submitted, maximizing the chance of approval.\n\nYour operational workflow is as follows:\n\n1.  **Parse Input:** Receive and parse the `AdNetworkManagerInput`.\n2.  **Perform Eligibility Audit:** Conduct a series of checks to ensure the blog meets all eligibility requirements for Google AdSense. This includes:\n    * Verifying the presence of sufficient, high-quality content.\n    * Confirming the existence of essential pages (About, Contact, Privacy Policy).\n    * Checking for a user-friendly site design.\n    * Scanning for any copyrighted material.\n3.  **Populate Checklist:** For each audit point, create an `EligibilityCheck` record with the status and details.\n4.  **Submit Application:** If all eligibility checks pass, use the `AdSenseAPI` to formally submit the application for the blog.\n5.  **Generate Report:** Compile the full eligibility checklist and the final application status into the `AdNetworkApplicationReport` Pydantic model. If checks fail, the report must clearly state what needs to be fixed. The output must be a single, valid JSON object.",
+apps/frontend/public/observatory/agents.index.json:1073:            "snippet": "# Production Readiness Audit - The New Fuse **Date:** 2025-12-14 **Status:** In Progress ## Executive Summary This document tracks the work to move The New Fuse from development mode (mock data) to production-ready (real API integrations, live database data). ## 2. ✅ COMPLETED - Frontend API Integration ### Pages Updat"
+apps/frontend/public/observatory/agents.index.json:1078:            "snippet": "# 🗺️ The New Fuse - Complete Sitemap & Navigation Guide ## 🎯 Production Status: **FULLY FUNCTIONAL** ### All 48+ pages are live and accessible with comprehensive navigation system ## 🏠 Main Landing Page - **Home**: <http://localhost:3000> - Main landing page with navigation to all sections ## 🎯 Core Application Rou"
+apps/frontend/public/observatory/agents.index.json:3715:            "snippet": "# 🗺️ The New Fuse - Complete Sitemap & Navigation Guide ## 🎯 Production Status: **FULLY FUNCTIONAL** ### All 48+ pages are live and accessible with comprehensive navigation system ## 🏠 Main Landing Page - **Home**: <http://localhost:3000> - Main landing page with navigation to all sections ## 🎯 Core Application Rou"
+apps/frontend/public/observatory/agents.index.json:4315:            "snippet": "# SaaS Site Audit Progress - December 16, 2024 ## Summary **Objective**: Audit and fix all pages on thenewfuse.com to ensure a world-class experience. **Status**: ✅ **Major issues fixed and deployed** -------- | ----------------------------------------------------- | | `db7467f49` | Landing page footer and link fixes |"
+apps/frontend/public/observatory/agents.index.json:4320:            "snippet": "# 🗺️ The New Fuse - Complete Sitemap & Navigation Guide ## 🎯 Production Status: **FULLY FUNCTIONAL** ### All 48+ pages are live and accessible with comprehensive navigation system ## 🏠 Main Landing Page - **Home**: <http://localhost:3000> - Main landing page with navigation to all sections ## 🎯 Core Application Rou"
+apps/frontend/public/observatory/agents.index.json:5284:            "snippet": "# Production Readiness Audit - The New Fuse **Date:** 2025-12-14 **Status:** In Progress ## Executive Summary This document tracks the work to move The New Fuse from development mode (mock data) to production-ready (real API integrations, live database data). ## 2. ✅ COMPLETED - Frontend API Integration ### Pages Updat"
+apps/frontend/public/observatory/agents.index.json:5529:            "snippet": "# Production Readiness Audit - The New Fuse **Date:** 2025-12-14 **Status:** In Progress ## Executive Summary This document tracks the work to move The New Fuse from development mode (mock data) to production-ready (real API integrations, live database data). ## 2. ✅ COMPLETED - Frontend API Integration ### Pages Updat"
+apps/frontend/public/observatory/agents.index.json:5897:            "snippet": "# Production Readiness Audit - The New Fuse **Date:** 2025-12-14 **Status:** In Progress ## Executive Summary This document tracks the work to move The New Fuse from development mode (mock data) to production-ready (real API integrations, live database data). ## 2. ✅ COMPLETED - Frontend API Integration ### Pages Updat"
+apps/frontend/public/observatory/agents.index.json:6138:            "path": "docs/development/gui-components-and-pages.md",
+apps/frontend/public/observatory/agents.index.json:7239:      "bodyMarkdown": "# Purpose\n\nYou are the Jules CLI Agent integration layer for The New Fuse framework. Jules\nis Google's asynchronous coding agent that operates via CLI, enabling parallel\nexecution of multiple coding tasks across sessions. Your role is to delegate\ncomplex, repository-wide coding tasks to Jules, manage multiple concurrent\nsessions, and retrieve results when complete.\n\n## Core Capabilities\n\n- **Parallel Task Execution**: Launch multiple Jules sessions concurrently for\n  maximum efficiency\n- **Asynchronous Processing**: Submit long-running tasks without blocking other\n  operations\n- **Repository-Wide Changes**: Make systematic improvements across the entire\n  codebase\n- **Session Management**: Track and monitor multiple Jules sessions\n  simultaneously\n- **Result Retrieval**: Pull completed work and apply patches to local\n  repository\n- **Task Delegation**: Break complex work into targeted, specialized Jules tasks\n\n## When to Use Jules CLI Agent\n\n### ✅ IDEAL USE CASES\n\n1. **Large-Scale Refactoring**\n   - Renaming functions/variables across 10+ files\n   - Migrating entire codebase to new patterns\n   - Updating deprecated APIs throughout project\n\n2. **Systematic Code Quality Improvements**\n   - Adding TypeScript types to untyped codebase\n   - Implementing error handling across all modules\n   - Standardizing code formatting and style\n\n3. **Parallel Development Tasks**\n   - Multiple independent feature implementations\n   - Bug fixes across different modules\n   - Documentation generation for multiple components\n\n4. **Time-Consuming Operations**\n   - Tasks requiring > 5 minutes of work\n   - Operations benefiting from batch processing\n   - Work that can continue while you do other tasks\n\n5. **Website/UI Overhauls**\n   - Fixing layout issues across all pages\n   - Implementing accessibility improvements\n   - Optimizing performance on multiple routes\n   - Design system consistency enforcement\n\n### ❌ NOT SUITABLE FOR\n\n- Quick, single-file edits (use direct editing instead)\n- Interactive debugging requiring immediate feedback\n- Tasks needing real-time user input\n- Operations requiring local environment state\n\n## Jules CLI Commands\n\n### Create New Session\n\n```bash\n# Basic session creation\njules new \"task description\"\n\n# Specify repository explicitly\njules new --repo owner/repo \"task description\"\n\n# Launch parallel sessions for same task\njules new --repo owner/repo --parallel 3 \"task description\"\n```\n\n### List Sessions\n\n```bash\n# List all sessions\njules remote list --session\n\n# List all repositories\njules remote list --repo\n```\n\n### Retrieve Results\n\n```bash\n# Pull session result (view only)\njules remote pull --session SESSION_ID\n\n# Pull and apply patch to local repository\njules remote pull --session SESSION_ID --apply\n```\n\n## Integration with TNF Agent Registry\n\n### Agent Profile\n\n```json\n{\n  \"name\": \"jules-cli-agent\",\n  \"display_name\": \"Google Jules CLI\",\n  \"type\": \"external\",\n  \"category\": \"development-automation\",\n  \"capabilities\": [\n    \"parallel-code-generation\",\n    \"asynchronous-task-execution\",\n    \"repository-wide-refactoring\",\n    \"multi-session-management\",\n    \"automated-code-improvements\"\n  ],\n  \"tools\": {\n    \"required\": [\"Bash\"],\n    \"integration_method\": \"cli\",\n    \"executable\": \"jules\"\n  },\n  \"session_management\": {\n    \"supports_parallel\": true,\n    \"max_concurrent_sessions\": 50,\n    \"async_execution\": true,\n    \"result_retrieval\": \"pull-based\"\n  }\n}\n```\n\n### Registration Data\n\n```typescript\n{\n  name: \"jules-cli-agent\",\n  version: \"1.0.0\",\n  author: \"Google\",\n  description: \"Asynchronous coding agent for parallel multi-session code generation\",\n  capabilities: [\n    {\n      name: \"parallel-task-execution\",\n      type: \"core\",\n      description: \"Launch multiple coding sessions concurrently\"\n    },\n    {\n      name: \"async-code-generation\",\n      type: \"core\",\n      description: \"Generate code asynchronously without blocking\"\n    },\n    {\n      name: \"repository-refactoring\",\n      type: \"core\",\n      description: \"Make systematic changes across entire codebase\"\n    },\n    {\n      name: \"session-management\",\n      type: \"core\",\n      description: \"Track and manage multiple Jules sessions\"\n    }\n  ],\n  metadata: {\n    executable: \"jules\",\n    requires_repo: true,\n    supports_parallel: true,\n    integration_type: \"cli\",\n    documentation: \"https://jules.google.com\"\n  }\n}\n```\n\n## Task Delegation Patterns\n\n### Pattern 1: Parallel Specialized Tasks\n\n```typescript\n// Launch 10 specialized tasks in parallel\nconst tasks = [\n  'Fix all broken navigation links',\n  'Implement accessibility improvements (WCAG 2.1 AA)',\n  'Optimize frontend performance (Lighthouse 90+)',\n  'Enhance authentication pages UX',\n  'Create missing page implementations',\n  'Fix WebSocket configuration errors',\n  'Implement comprehensive error handling',\n  'Standardize design system consistency',\n  'Complete end-to-end user flow testing',\n  'Add SEO meta tags and semantic HTML',\n];\n\nfor (const task of tasks) {\n  await executeJulesSession(task);\n}\n```\n\n### Pattern 2: Batch Repository Improvements\n\n```typescript\n// Systematic codebase improvements\nconst improvements = [\n  'Add TypeScript strict mode to all files',\n  'Implement error boundaries in all routes',\n  'Add loading states to all async operations',\n  'Standardize all API error handling',\n];\n```\n\n### Pattern 3: Multi-Phase Complex Work\n\n```typescript\n// Phase 1: Analysis\njules new --repo owner/repo \"Analyze codebase for accessibility violations\"\n\n// Phase 2: Implementation (after review)\njules new --repo owner/repo \"Fix accessibility violations identified in session X\"\n\n// Phase 3: Testing\njules new --repo owner/repo \"Add automated accessibility tests\"\n```\n\n## Best Practices\n\n### Task Description Quality\n\n✅ **GOOD**: \"Fix all broken navigation links in website pages. Test each link\nfrom QA log at docs/WEBSITE_QA_TESTING_LOG.md. Update log with results (✅\nWORKING or ❌ BROKEN).\"\n\n❌ **BAD**: \"Fix the website\"\n\n### Effective Delegation Guidelines\n\n1. **Be Specific**: Provide clear scope, files, and success criteria\n2. **Include Context**: Reference relevant docs, logs, or prior work\n3. **Set Standards**: Define quality requirements (Lighthouse scores, WCAG\n   levels, etc.)\n4. **Provide Examples**: Reference existing code patterns to follow\n5. **List Deliverables**: Specify expected outputs (files, docs, test results)\n\n### Session Management\n\n- Launch related tasks in parallel for efficiency\n- Use descriptive task descriptions for easy tracking\n- Monitor session status via `jules remote list --session`\n- Pull and review results before applying patches\n- Keep session count reasonable (< 20 concurrent)\n\n### Result Integration\n\n1. **Review First**: Always `pull` without `--apply` to review changes\n2. **Validate Changes**: Check diff for unexpected modifications\n3. **Test Locally**: Run tests before accepting changes\n4. **Apply Selectively**: Can apply specific sessions, not all\n5. **Document**: Track which sessions were applied and why\n\n## Monitoring and Tracking\n\n### Session Status\n\n```bash\n# Check all active sessions\njules remote list --session\n\n# Monitor specific session\n# Visit: https://jules.google.com/session/SESSION_ID\n```\n\n### Session States\n\n- **Awaiting Plan Approval**: Jules needs user approval to proceed\n- **Running**: Active code generation in progress\n- **Completed**: Session finished, results available\n- **Failed**: Session encountered errors\n\n### Performance Metrics\n\nTrack Jules effectiveness:\n\n- Sessions launched vs completed\n- Success rate of applied patches\n- Time savings vs direct implementation\n- Code quality of generated output\n\n## Integration with TNF Workflow\n\n### In Multi-Agent Workflows\n\n```typescript\n// Jules as specialized executor in workflow\nconst workflow = {\n  nodes: [\n    { type: 'analysis', agent: 'code-review-agent' },\n    { type: 'planning', agent: 'architecture-agent' },\n    { type: 'execution', agent: 'jules-cli-agent', parallel: 5 },\n    { type: 'validation', agent: 'testing-agent' },\n  ],\n};\n```\n\n### With Other TNF Agents\n\n- **temporal-agent-reclassifier**: Promote Jules from sub-agent to primary\n- **codebase-pathway-tracer**: Use Jules to implement traced pathways\n- **agent-search-engine**: Discover Jules for code generation tasks\n- **orchestrator-agent**: Delegate sub-tasks to Jules in workflows\n\n## Error Handling\n\n### Common Issues\n\n1. **No repo flag**: Ensure `--repo owner/repo` or run from git directory\n2. **Session timeout**: Long tasks may need to be broken down\n3. **Merge conflicts**: Pull and resolve before applying patches\n4. **Network issues**: Jules requires internet connectivity\n\n### Recovery Strategies\n\n- Check session status if no response\n- Re-launch failed sessions with updated instructions\n- Pull partial results even from failed sessions\n- Use `--apply` carefully after validation\n\n## Example: Complete Workflow\n\n```bash\n# 1. Launch multiple specialized sessions\njules new --repo whodaniel/fuse \"Fix navigation links and dead ends\"\njules new --repo whodaniel/fuse \"Implement WCAG 2.1 AA accessibility\"\njules new --repo whodaniel/fuse \"Optimize performance (Lighthouse 90+)\"\n\n# 2. Monitor sessions\njules remote list --session\n\n# 3. Review completed session\njules remote pull --session 12345\n\n# 4. Apply approved changes\njules remote pull --session 12345 --apply\n\n# 5. Test and commit\npnpm run build && pnpm test\ngit add . && git commit -m \"feat: Applied Jules sessions for website improvements\"\n```\n\n## Output Format\n\nWhen reporting Jules session results:\n\n```markdown\n## Jules Sessions Summary\n\n### Sessions Launched: X\n\n- Session ID 1: [Task Description] - Status: [Running|Completed|Failed]\n- Session ID 2: [Task Description] - Status: [Running|Completed|Failed]\n\n### Completion Status\n\n✅ Completed: X sessions ⏳ Running: X sessions ❌ Failed: X sessions\n\n### Results Applied\n\n- Session [ID]: [Brief description of changes]\n  - Files modified: X\n  - Impact: [Description]\n\n### Next Steps\n\n1. Monitor remaining active sessions\n2. Review completed sessions at: [URLs]\n3. Test applied changes locally\n4. Create follow-up sessions if needed\n```\n\n## Report / Response\n\nUpon completing Jules delegation tasks:\n\n1. **Session Summary**: All launched sessions with IDs and descriptions\n2. **Status Overview**: Current state of each session\n   (Awaiting/Running/Completed)\n3. **Monitoring Links**: Direct URLs to track sessions\n4. **Documentation**: Created tracker files with session details\n5. **Next Actions**: Steps to review and apply results\n6. **Performance Impact**: Expected improvements from delegated work\n\nFormat responses with:\n\n- 🚀 **Sessions Launched**: Count and brief descriptions\n- 📊 **Status Dashboard**: Current state of all sessions\n- 🔗 **Tracking URLs**: Links to monitor progress\n- 📁 **Documentation**: Reference to tracker files\n- ⏭️ **Next Steps**: How to retrieve and apply results\n",
+apps/frontend/public/observatory/agents.index.json:7611:      "description": "MUST BE USED to ensure the entire content business adheres to laws and platform policies. Its core functions are generating legal pages, ensuring FTC disclosures, and managing copyright issues.",
+apps/frontend/public/observatory/agents.index.json:7725:      "bodyMarkdown": "You are a virtual legal compliance officer for a digital media business. You are not a lawyer, but you are an expert in platform policies and standard legal requirements for online creators. Your job is to proactively identify and flag compliance risks.\n\nYour operational workflow is as follows:\n\n1.  **Analyze Input:** Receive and parse the `LegalComplianceInput`.\n2.  **Audit Website Legal Pages:** For each website in `website_urls`, check for the presence and correctness of essential legal pages. If a page is missing, use the `LegalTemplateAPI` to generate a standard **Privacy Policy** and **Terms of Service**.\n3.  **Audit FTC Disclosures:** Review each piece of `content_for_review`. Check that all sponsored content and affiliate marketing efforts include **clear, conspicuous, and correctly worded disclosures** in accordance with FTC guidelines, which you can verify with `WebSearch`.\n4.  **Manage Copyright Issues:** Review the list of `copyright_claims`. For any YouTube Content ID claims, use the `YouTubeAPI` to initiate the dispute process if applicable. Ensure that all assets used are original or properly licensed.\n5.  **Generate Report:** Compile the status of each audit area into the `LegalComplianceAuditReport` Pydantic model. If any area requires action, the `details` must explain the exact steps needed to achieve compliance. The output must be a single, valid JSON object.",
+apps/frontend/public/observatory/agents.index.json:8159:            "snippet": "# Production Readiness Audit - The New Fuse **Date:** 2025-12-14 **Status:** In Progress ## Executive Summary This document tracks the work to move The New Fuse from development mode (mock data) to production-ready (real API integrations, live database data). ## 2. ✅ COMPLETED - Frontend API Integration ### Pages Updat"
+apps/frontend/public/observatory/agents.index.json:8531:            "snippet": "# Production Readiness Audit - The New Fuse **Date:** 2025-12-14 **Status:** In Progress ## Executive Summary This document tracks the work to move The New Fuse from development mode (mock data) to production-ready (real API integrations, live database data). ## 2. ✅ COMPLETED - Frontend API Integration ### Pages Updat"
+apps/frontend/public/observatory/agents.index.json:8651:            "snippet": "# Production Readiness Audit - The New Fuse **Date:** 2025-12-14 **Status:** In Progress ## Executive Summary This document tracks the work to move The New Fuse from development mode (mock data) to production-ready (real API integrations, live database data). ## 2. ✅ COMPLETED - Frontend API Integration ### Pages Updat"
+apps/frontend/public/observatory/agents.index.json:9273:            "path": "docs/development/gui-components-and-pages.md",
+apps/frontend/public/observatory/agents.index.json:9483:            "snippet": "# Production Readiness Audit - The New Fuse **Date:** 2025-12-14 **Status:** In Progress ## Executive Summary This document tracks the work to move The New Fuse from development mode (mock data) to production-ready (real API integrations, live database data). ## 2. ✅ COMPLETED - Frontend API Integration ### Pages Updat"
+apps/frontend/public/observatory/agents.index.json:9498:            "snippet": "# 🗺️ The New Fuse - Complete Sitemap & Navigation Guide ## 🎯 Production Status: **FULLY FUNCTIONAL** ### All 48+ pages are live and accessible with comprehensive navigation system ## 🏠 Main Landing Page - **Home**: <http://localhost:3000> - Main landing page with navigation to all sections ## 🎯 Core Application Rou"
+apps/frontend/public/observatory/agents.index.json:9603:            "snippet": "# Production Readiness Audit - The New Fuse **Date:** 2025-12-14 **Status:** In Progress ## Executive Summary This document tracks the work to move The New Fuse from development mode (mock data) to production-ready (real API integrations, live database data). ## 2. ✅ COMPLETED - Frontend API Integration ### Pages Updat"
+apps/frontend/public/observatory/agents.index.json:9629:            "path": "docs/reference/pages-by-type.md",
+apps/frontend/public/observatory/agents.index.json:9633:            "path": "docs/reference/pages-by-function.md",
+apps/frontend/public/observatory/agents.index.json:9637:            "path": "docs/reference/pages-by-directory.md",
+apps/frontend/public/observatory/agents.index.json:10699:            "path": "docs/development/gui-components-and-pages.md",
+apps/frontend/public/observatory/agents.index.json:10701:            "snippet": "# The New Fuse - GUI Components and Pages Documentation This document provides a comprehensive overview of all GUI components and pages in The New Fuse application. It serves as a reference for developers to understand the application structure and find specific components. ## Table of Contents - [Main Pages](#main-pag"
+apps/frontend/public/observatory/agents.index.json:11540:            "snippet": "# Production Readiness Audit - The New Fuse **Date:** 2025-12-14 **Status:** In Progress ## Executive Summary This document tracks the work to move The New Fuse from development mode (mock data) to production-ready (real API integrations, live database data). ## 2. ✅ COMPLETED - Frontend API Integration ### Pages Updat"
+apps/frontend/public/observatory/agents.index.json:11767:            "snippet": "# 🗺️ The New Fuse - Complete Sitemap & Navigation Guide ## 🎯 Production Status: **FULLY FUNCTIONAL** ### All 48+ pages are live and accessible with comprehensive navigation system ## 🏠 Main Landing Page - **Home**: <http://localhost:3000> - Main landing page with navigation to all sections ## 🎯 Core Application Rou"
+apps/frontend/public/observatory/agents.index.json:12174:      "bodyMarkdown": "You are a diligent and thorough technical SEO analyst. Your responsibility is to ensure the website's foundation is sound, allowing search engines to crawl and index it efficiently. You catch technical issues before they become ranking problems.\n\nYour operational workflow is as follows:\n\n1.  **Parse Input:** Receive and parse the `TechnicalSEO_AuditorInput`.\n2.  **Perform Audits:**\n    * Use the `SiteSpeedCheckerAPI` to test the website's loading performance and identify bottlenecks.\n    * Use the `MobileFriendlyTestAPI` to ensure the website is fully responsive and provides a good user experience on mobile devices.\n    * Perform a crawl of the website to check for broken links, redirect chains, and other crawlability issues.\n3.  **Manage Sitemap:**\n    * Use the `SitemapGeneratorAPI` to generate an up-to-date XML sitemap of the blog.\n    * Use the `SearchConsoleAPI` to submit the newly generated sitemap to Google Search Console and Bing Webmaster Tools to ensure all pages are properly indexed.\n4.  **Compile Findings:** For each check performed, create an `AuditFinding` record with the result and a detailed explanation.\n5.  **Generate Report:** Assemble all findings and the sitemap submission status into the `TechnicalAuditReport` Pydantic model. The output must be a single, valid JSON object.",
+apps/frontend/public/observatory/agents.index.json:12268:            "snippet": "# 🗺️ The New Fuse - Complete Sitemap & Navigation Guide ## 🎯 Production Status: **FULLY FUNCTIONAL** ### All 48+ pages are live and accessible with comprehensive navigation system ## 🏠 Main Landing Page - **Home**: <http://localhost:3000> - Main landing page with navigation to all sections ## 🎯 Core Application Rou"
+apps/frontend/public/observatory/agents.index.json:12972:            "path": "docs/development/gui-components-and-pages.md",
+apps/frontend/public/observatory/agents.index.json:12974:            "snippet": "# The New Fuse - GUI Components and Pages Documentation This document provides a comprehensive overview of all GUI components and pages in The New Fuse application. It serves as a reference for developers to understand the application structure and find specific components. ## Table of Contents - [Main Pages](#main-pag"
+apps/frontend/docs/audits/sidebar-page-health-audit.md:18:- `/ai-portal` -> target `/ai-portal` -> `pages/AIAgentDashboard.tsx` | status:
+apps/frontend/docs/audits/sidebar-page-health-audit.md:20:- `/knowledge-hub` -> target `/knowledge-hub` -> `pages/KnowledgeHub.tsx` |
+apps/frontend/docs/audits/sidebar-page-health-audit.md:22:- `/timeline` -> target `/timeline` -> `pages/Timeline/index.tsx` | status:
+apps/frontend/docs/audits/sidebar-page-health-audit.md:25:  `pages/Admin/AuditLogViewer.tsx` | status: `working` | risk: 1 | hits:
+apps/frontend/docs/audits/sidebar-page-health-audit.md:28:  `pages/dashboard/TNFConsoleDashboard.tsx` | status: `working` | risk: 1 |
+apps/frontend/docs/audits/sidebar-page-health-audit.md:30:- `/workflows` -> target `/workflows` -> `pages/Workflows.tsx` | status:
+apps/frontend/docs/audits/sidebar-page-health-audit.md:32:- `/admin` -> target `/admin` -> `pages/Admin/ComprehensiveAdminDashboard.tsx` |
+apps/frontend/docs/audits/sidebar-page-health-audit.md:35:  `pages/AICommandCenter/index.tsx` | status: `working` | risk: 0 | hits: none
+apps/frontend/docs/audits/sidebar-page-health-audit.md:36:- `/analytics` -> target `/analytics` -> `pages/dashboard/Analytics.tsx` |
+apps/frontend/docs/audits/sidebar-page-health-audit.md:38:- `/chat` -> target `/chat` -> `pages/chat/ChatPage.tsx` | status: `working` |
+apps/frontend/docs/audits/sidebar-page-health-audit.md:40:- `/debug` -> target `/debug` -> `pages/Debug.tsx` | status: `working` | risk: 0
+apps/frontend/docs/audits/sidebar-page-health-audit.md:42:- `/docs` -> target `/docs` -> `pages/Docs.tsx` | status: `working` | risk: 0 |
+apps/frontend/docs/audits/sidebar-page-health-audit.md:44:- `/hub` -> target `/hub` -> `pages/Hub/ModernHub.tsx` | status: `working` |
+apps/frontend/docs/audits/sidebar-page-health-audit.md:47:  `pages/Marketplace/MarketplacePublicPage.tsx` | status: `working` | risk: 0 |
+apps/frontend/docs/audits/sidebar-page-health-audit.md:49:- `/mcp-hub` -> target `/mcp-hub` -> `pages/mcp/MCPHub.tsx` | status: `working`
+apps/frontend/docs/audits/sidebar-page-health-audit.md:51:- `/observatory` -> target `/observatory` -> `pages/SystemObservatory.tsx` |
+apps/frontend/docs/audits/sidebar-page-health-audit.md:53:- `/settings` -> target `/settings` -> `pages/Settings.tsx` | status: `working`
+apps/frontend/docs/audits/sidebar-page-health-audit.md:55:- `/suggestions` -> target `/suggestions` -> `pages/Suggestions/index.tsx` |
+apps/frontend/docs/audits/sidebar-page-health-audit.md:57:- `/tasks` -> target `/tasks` -> `pages/Tasks/TasksPage.tsx` | status: `working`
+apps/frontend/docs/audits/sidebar-page-health-audit.md:60:  `pages/workspace/Overview.tsx` | status: `working` | risk: 0 | hits: none
+apps/api/src/modules/unified-ledger/unified-ledger.controller.ts:252:  // Compatibility routes for existing frontend pages under unified-ledger namespace.
+apps/frontend/docs/audits/navigation-validator-report.md:18:| `/forgot-password`                | pages/Login.tsx                     |
+apps/frontend/docs/audits/navigation-validator-report.md:19:| `/docs/getting-started`           | pages/Docs.tsx                      |
+apps/frontend/docs/audits/navigation-validator-report.md:20:| `/docs/api`                       | pages/Docs.tsx                      |
+apps/frontend/docs/audits/navigation-validator-report.md:21:| `/docs/tutorials`                 | pages/Docs.tsx                      |
+apps/frontend/docs/audits/navigation-validator-report.md:22:| `/workspace`                      | pages/workspace/Settings.tsx        |
+apps/frontend/docs/audits/navigation-validator-report.md:23:| `/dashboard/monitoring`           | pages/dashboard/index.tsx           |
+apps/frontend/docs/audits/navigation-validator-report.md:24:| `/workspace`                      | pages/auth/Register/index.tsx       |
+apps/frontend/docs/audits/navigation-validator-report.md:25:| `/ide`                            | pages/Hub/SophisticatedTNFHub.tsx   |
+apps/frontend/docs/audits/navigation-validator-report.md:26:| `/workflows/new`                  | pages/Hub/SophisticatedTNFHub.tsx   |
+apps/frontend/docs/audits/navigation-validator-report.md:27:| `/agents/create`                  | pages/Agents/NFTMarketplacePage.tsx |
+apps/frontend/docs/audits/navigation-validator-report.md:28:| `/docs/ai-agents/getting-started` | pages/AIAgentPortal/index.tsx       |
+apps/frontend/docs/audits/navigation-validator-report.md:29:| `/docs/ai-agents/api-reference`   | pages/AIAgentPortal/index.tsx       |
+apps/frontend/docs/audits/navigation-validator-report.md:273:| `/all-pages` | Unknown | config/routeCatalog.ts | | `/test` | Unknown |
+apps/frontend/docs/audits/navigation-validator-report.md:464:/all-pages (Unknown)
+apps/frontend/docs/audits/all-links-audit.json:84:      "link": "/all-pages",
+apps/frontend/docs/audits/all-links-audit.json:258:      "link": "/all-pages",
+apps/frontend/docs/audits/all-links-audit.json:551:      "source": "src/pages/AIAgentDashboard.tsx",
+apps/frontend/docs/audits/all-links-audit.json:557:      "source": "src/pages/AIAgentPortal/index.tsx",
+apps/frontend/docs/audits/all-links-audit.json:563:      "source": "src/pages/AIAgentPortal/index.tsx",
+apps/frontend/docs/audits/all-links-audit.json:569:      "source": "src/pages/Admin/ComprehensiveAdminDashboard.tsx",
+apps/frontend/docs/audits/all-links-audit.json:575:      "source": "src/pages/Admin/ComprehensiveAdminDashboard.tsx",
+apps/frontend/docs/audits/all-links-audit.json:581:      "source": "src/pages/Admin/SuperAdminControlPanel.tsx",
+apps/frontend/docs/audits/all-links-audit.json:587:      "source": "src/pages/Admin/SuperAdminControlPanel.tsx",
+apps/frontend/docs/audits/all-links-audit.json:593:      "source": "src/pages/Admin/SuperAdminControlPanel.tsx",
+apps/frontend/docs/audits/all-links-audit.json:599:      "source": "src/pages/Agency/AgencyDashboard.tsx",
+apps/frontend/docs/audits/all-links-audit.json:605:      "source": "src/pages/Agency/AgencyOnboarding.tsx",
+apps/frontend/docs/audits/all-links-audit.json:611:      "source": "src/pages/Agents/AgentsPage.tsx",
+apps/frontend/docs/audits/all-links-audit.json:617:      "source": "src/pages/Agents/AgentsPage.tsx",
+apps/frontend/docs/audits/all-links-audit.json:623:      "source": "src/pages/Agents/Detail.tsx",
+apps/frontend/docs/audits/all-links-audit.json:629:      "source": "src/pages/Agents/NFTMarketplacePage.tsx",
+apps/frontend/docs/audits/all-links-audit.json:635:      "source": "src/pages/Agents/New.tsx",
+apps/frontend/docs/audits/all-links-audit.json:641:      "source": "src/pages/Agents/Onboard.tsx",
+apps/frontend/docs/audits/all-links-audit.json:647:      "source": "src/pages/Agents/Onboard.tsx",
+apps/frontend/docs/audits/all-links-audit.json:653:      "source": "src/pages/Agents/RevenueDashboardPage.tsx",
+apps/frontend/docs/audits/all-links-audit.json:659:      "source": "src/pages/Agents/RevenueDashboardPage.tsx",
+apps/frontend/docs/audits/all-links-audit.json:665:      "source": "src/pages/Agents/UnifiedAgentCreator.tsx",
+apps/frontend/docs/audits/all-links-audit.json:671:      "source": "src/pages/Agents/index.tsx",
+apps/frontend/docs/audits/all-links-audit.json:677:      "source": "src/pages/AgentsListPage.tsx",
+apps/frontend/docs/audits/all-links-audit.json:683:      "source": "src/pages/AgentsListPage.tsx",
+apps/frontend/docs/audits/all-links-audit.json:689:      "source": "src/pages/AgentsListPage.tsx",
+apps/frontend/docs/audits/all-links-audit.json:695:      "source": "src/pages/AgentsRevolution.tsx",
+apps/frontend/docs/audits/all-links-audit.json:701:      "source": "src/pages/Blog.tsx",
+apps/frontend/docs/audits/all-links-audit.json:707:      "source": "src/pages/ComponentsNav.tsx",
+apps/frontend/docs/audits/all-links-audit.json:713:      "source": "src/pages/ComponentsNav.tsx",
+apps/frontend/docs/audits/all-links-audit.json:719:      "source": "src/pages/ComponentsNav.tsx",
+apps/frontend/docs/audits/all-links-audit.json:725:      "source": "src/pages/ConnectExtension.tsx",
+apps/frontend/docs/audits/all-links-audit.json:731:      "source": "src/pages/ConnectExtension.tsx",
+apps/frontend/docs/audits/all-links-audit.json:737:      "source": "src/pages/ConnectExtension.tsx",
+apps/frontend/docs/audits/all-links-audit.json:743:      "source": "src/pages/ConnectExtension.tsx",
+apps/frontend/docs/audits/all-links-audit.json:749:      "source": "src/pages/ConnectExtension.tsx",
+apps/frontend/docs/audits/all-links-audit.json:755:      "source": "src/pages/ConnectExtension.tsx",
+apps/frontend/docs/audits/all-links-audit.json:761:      "source": "src/pages/ConnectExtension.tsx",
+apps/frontend/docs/audits/all-links-audit.json:767:      "source": "src/pages/ConnectExtension.tsx",
+apps/frontend/docs/audits/all-links-audit.json:773:      "source": "src/pages/ConnectExtension.tsx",
+apps/frontend/docs/audits/all-links-audit.json:779:      "source": "src/pages/ConnectExtension.tsx",
+apps/frontend/docs/audits/all-links-audit.json:785:      "source": "src/pages/ConnectExtension.tsx",
+apps/frontend/docs/audits/all-links-audit.json:791:      "source": "src/pages/ConnectExtension.tsx",
+apps/frontend/docs/audits/all-links-audit.json:797:      "source": "src/pages/Docs.tsx",
+apps/frontend/docs/audits/all-links-audit.json:803:      "source": "src/pages/Docs.tsx",
+apps/frontend/docs/audits/all-links-audit.json:809:      "source": "src/pages/Docs.tsx",
+apps/frontend/docs/audits/all-links-audit.json:815:      "source": "src/pages/Docs.tsx",
+apps/frontend/docs/audits/all-links-audit.json:821:      "source": "src/pages/Docs.tsx",
+apps/frontend/docs/audits/all-links-audit.json:827:      "source": "src/pages/Goals/Detail.tsx",
+apps/frontend/docs/audits/all-links-audit.json:833:      "source": "src/pages/Goals/Detail.tsx",
+apps/frontend/docs/audits/all-links-audit.json:839:      "source": "src/pages/Goals/index.tsx",
+apps/frontend/docs/audits/all-links-audit.json:845:      "source": "src/pages/Goals/index.tsx",
+apps/frontend/docs/audits/all-links-audit.json:851:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/all-links-audit.json:857:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/all-links-audit.json:863:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/all-links-audit.json:869:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/all-links-audit.json:875:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/all-links-audit.json:881:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/all-links-audit.json:887:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/all-links-audit.json:893:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/all-links-audit.json:899:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/all-links-audit.json:905:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/all-links-audit.json:911:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/all-links-audit.json:917:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/all-links-audit.json:923:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/all-links-audit.json:929:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/all-links-audit.json:935:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/all-links-audit.json:941:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/all-links-audit.json:947:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/all-links-audit.json:953:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/all-links-audit.json:959:      "source": "src/pages/Home.tsx",
+apps/frontend/docs/audits/all-links-audit.json:965:      "source": "src/pages/Hub/ModernHub.tsx",
+apps/frontend/docs/audits/all-links-audit.json:971:      "source": "src/pages/Hub/ModernHub.tsx",
+apps/frontend/docs/audits/all-links-audit.json:977:      "source": "src/pages/Hub/SophisticatedTNFHub.tsx",
+apps/frontend/docs/audits/all-links-audit.json:983:      "source": "src/pages/Hub/SophisticatedTNFHub.tsx",
+apps/frontend/docs/audits/all-links-audit.json:989:      "source": "src/pages/Hub/SophisticatedTNFHub.tsx",
+apps/frontend/docs/audits/all-links-audit.json:995:      "source": "src/pages/Hub/SophisticatedTNFHub.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1001:      "source": "src/pages/Hub/SophisticatedTNFHub.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1007:      "source": "src/pages/Hub/SophisticatedTNFHub.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1013:      "source": "src/pages/Hub/SophisticatedTNFHub.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1019:      "source": "src/pages/Integrations.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1025:      "source": "src/pages/Integrations.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1031:      "source": "src/pages/Integrations.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1037:      "source": "src/pages/Integrations.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1043:      "source": "src/pages/Integrations.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1049:      "source": "src/pages/Landing/index.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1055:      "source": "src/pages/Landing/index.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1061:      "source": "src/pages/Landing/index.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1067:      "source": "src/pages/Landing/index.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1073:      "source": "src/pages/Landing/index.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1079:      "source": "src/pages/Landing/index.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1085:      "source": "src/pages/Landing/index.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1091:      "source": "src/pages/Layout/LayoutExamples.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1097:      "source": "src/pages/LayoutExample.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1103:      "source": "src/pages/Login.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1109:      "source": "src/pages/Login.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1115:      "source": "src/pages/Login.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1121:      "source": "src/pages/Marketplace/MarketplaceDashboard.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1127:      "source": "src/pages/Marketplace/MarketplaceDashboard.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1133:      "source": "src/pages/Membership.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1139:      "source": "src/pages/Membership.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1145:      "source": "src/pages/NotFound.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1151:      "source": "src/pages/OnboardingFlow/index.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1157:      "source": "src/pages/OnboardingFlow/index.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1163:      "source": "src/pages/Plans/Detail.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1169:      "source": "src/pages/Plans/Detail.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1175:      "source": "src/pages/Plans/index.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1181:      "source": "src/pages/Plans/index.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1187:      "source": "src/pages/Suggestions/Detail.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1193:      "source": "src/pages/Suggestions/New.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1199:      "source": "src/pages/Suggestions/index.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1205:      "source": "src/pages/Support.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1211:      "source": "src/pages/TNFCommandCenter.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1217:      "source": "src/pages/TNFCommandCenter.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1223:      "source": "src/pages/TNFCommandCenter.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1229:      "source": "src/pages/TNFCommandCenter.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1235:      "source": "src/pages/TNFCommandCenter.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1241:      "source": "src/pages/TNFCommandCenter.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1247:      "source": "src/pages/Tasks/Detail.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1253:      "source": "src/pages/Tasks/New.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1259:      "source": "src/pages/Tasks/TasksPage.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1265:      "source": "src/pages/Tasks/index.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1271:      "source": "src/pages/Unauthorized.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1277:      "source": "src/pages/Unauthorized.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1283:      "source": "src/pages/Workflows.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1289:      "source": "src/pages/auth/ForgotPassword.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1295:      "source": "src/pages/auth/GitHubCallback.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1301:      "source": "src/pages/auth/GitHubCallback.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1307:      "source": "src/pages/auth/GoogleCallback.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1313:      "source": "src/pages/auth/GoogleCallback.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1319:      "source": "src/pages/auth/Login.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1325:      "source": "src/pages/auth/Login.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1331:      "source": "src/pages/auth/OAuthCallback.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1337:      "source": "src/pages/auth/OAuthCallback.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1343:      "source": "src/pages/auth/Register.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1349:      "source": "src/pages/auth/Register.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1355:      "source": "src/pages/auth/RegisterSimple.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1361:      "source": "src/pages/auth/RegisterSimple.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1367:      "source": "src/pages/auth/ResetPassword.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1373:      "source": "src/pages/auth/index.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1379:      "source": "src/pages/auth/index.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1385:      "source": "src/pages/chat/ChatPage.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1391:      "source": "src/pages/chat/ChatPage.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1397:      "source": "src/pages/chat/ChatPage.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1403:      "source": "src/pages/dashboard/AgentDashboard.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1409:      "source": "src/pages/dashboard/Agents.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1415:      "source": "src/pages/dashboard/CreateAgent.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1421:      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1427:      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1433:      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1439:      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1445:      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1451:      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1457:      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1463:      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1469:      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1475:      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1481:      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1487:      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1493:      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1499:      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1505:      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1511:      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1517:      "source": "src/pages/dashboard/agents/new.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1523:      "source": "src/pages/dashboard/index.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1529:      "source": "src/pages/dashboard/index.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1535:      "source": "src/pages/dashboard/index.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1541:      "source": "src/pages/dashboard/index.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1547:      "source": "src/pages/dashboard/index.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1553:      "source": "src/pages/dashboard/index.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1559:      "source": "src/pages/workflow-pages/Builder.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1565:      "source": "src/pages/workflow-pages/Detail.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1571:      "source": "src/pages/workflow-pages/Execution.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1577:      "source": "src/pages/workflow-pages/Templates.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1583:      "source": "src/pages/workflow-pages/Templates.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1589:      "source": "src/pages/workspace/Settings.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1595:      "source": "src/pages/workspace/WorkspaceAnalytics.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1601:      "source": "src/pages/workspace/WorkspaceAnalytics.tsx",
+apps/frontend/docs/audits/all-links-audit.json:1607:      "source": "src/pages/workspace/index.tsx",
+apps/frontend/src/config/sitemap.ts:177:  // Public pages
+apps/frontend/src/config/sitemap.ts:188:  // Dev/Showcase pages (can be public or auth-gated)
+apps/frontend/docs/audits/navigation-route-audit.md:9:- all-pages paths: 158
+apps/frontend/docs/audits/navigation-route-audit.md:14:- all-pages paths not in router: 0
+apps/frontend/docs/audits/navigation-route-audit.md:15:- router paths not in all-pages: 21
+apps/frontend/docs/audits/navigation-route-audit.md:23:## All Pages Paths Not In Router
+apps/frontend/docs/audits/navigation-route-audit.md:26:## Router Paths Not In All Pages
+apps/frontend/src/config/experienceArchitecture.ts:124:    path: '/all-pages',
+apps/frontend/src/config/routeCatalog.ts:18:  pages: PageInfo[];
+apps/frontend/src/config/routeCatalog.ts:24:  // Core Application Pages
+apps/frontend/src/config/routeCatalog.ts:270:  { name: 'All Pages List', path: '/all-pages', description: 'Page Directory (Current Page)' },
+apps/frontend/src/config/routeCatalog.ts:294:  // Package-Level Pages (Alternative Implementations)
+apps/frontend/src/config/routeCatalog.ts:313:  // Static HTML Pages (Development/Prototyping)
+apps/frontend/src/config/routeCatalog.ts:457:  { name: 'Core Application', pages: ALL_PAGES_CATALOG.slice(0, 3) },
+apps/frontend/src/config/routeCatalog.ts:458:  { name: 'AI & Agents', pages: ALL_PAGES_CATALOG.slice(3, 18) },
+apps/frontend/src/config/routeCatalog.ts:459:  { name: 'Workspace Management', pages: ALL_PAGES_CATALOG.slice(18, 25) },
+apps/frontend/src/config/routeCatalog.ts:460:  { name: 'Tasks & Workflows', pages: ALL_PAGES_CATALOG.slice(25, 37) },
+apps/frontend/src/config/routeCatalog.ts:461:  { name: 'Suggestions System', pages: ALL_PAGES_CATALOG.slice(37, 40) },
+apps/frontend/src/config/routeCatalog.ts:462:  { name: 'Administration', pages: ALL_PAGES_CATALOG.slice(40, 52) },
+apps/frontend/src/config/routeCatalog.ts:463:  { name: 'Dashboard & Analytics', pages: ALL_PAGES_CATALOG.slice(52, 55) },
+apps/frontend/src/config/routeCatalog.ts:464:  { name: 'Settings & Configuration', pages: ALL_PAGES_CATALOG.slice(55, 67) },
+apps/frontend/src/config/routeCatalog.ts:465:  { name: 'Authentication', pages: ALL_PAGES_CATALOG.slice(67, 78) },
+apps/frontend/src/config/routeCatalog.ts:466:  { name: 'Landing & Marketing', pages: ALL_PAGES_CATALOG.slice(78, 83) },
+apps/frontend/src/config/routeCatalog.ts:467:  { name: 'Legal', pages: ALL_PAGES_CATALOG.slice(83, 85) },
+apps/frontend/src/config/routeCatalog.ts:468:  { name: 'Components & Demos', pages: ALL_PAGES_CATALOG.slice(85, 94) },
+apps/frontend/src/config/routeCatalog.ts:469:  { name: 'Development & Debug', pages: ALL_PAGES_CATALOG.slice(94, 99) },
+apps/frontend/src/config/routeCatalog.ts:470:  { name: 'API Endpoints', pages: ALL_PAGES_CATALOG.slice(99, 102) },
+apps/frontend/src/config/routeCatalog.ts:471:  { name: 'Error Handling', pages: ALL_PAGES_CATALOG.slice(102, 104) },
+apps/frontend/src/config/routeCatalog.ts:472:  { name: 'Package-Level Pages', pages: ALL_PAGES_CATALOG.slice(104, 109) },
+apps/frontend/src/config/routeCatalog.ts:473:  { name: 'Static HTML Pages', pages: ALL_PAGES_CATALOG.slice(109, BASE_CATALOG_COUNT) },
+apps/frontend/src/config/routeCatalog.ts:474:  { name: 'Router Coverage Additions', pages: ALL_PAGES_CATALOG.slice(BASE_CATALOG_COUNT) },
+apps/frontend/docs/audits/navigation-route-audit.json:58:      "/all-pages",
+apps/frontend/docs/audits/navigation-route-audit.json:273:      "/all-pages",
+apps/frontend/docs/audits/navigation-route-audit.json:476:      "/all-pages",
+apps/frontend/docs/audits/live-link-crawl.json:26:        "seed": "https://ai-arcade-poker.pages.dev/",
+apps/frontend/docs/audits/live-link-crawl.json:63:      "seed": "https://ai-arcade-poker.pages.dev/",
+apps/frontend/docs/audits/live-link-crawl.json:64:      "domain": "ai-arcade-poker.pages.dev",
+apps/frontend/docs/audits/static-link-audit.md:14:- src/pages/Home.tsx: 0
+apps/api/src/scripts/scan-frontend-brand.ts:41:    'apps/frontend/src/pages/dashboard.tsx',
+apps/api/src/scripts/scan-frontend-brand.ts:42:    'apps/frontend/src/pages/login.tsx',
+apps/api/src/scripts/scan-frontend-brand.ts:43:    'apps/frontend/src/pages/register.tsx'
+apps/frontend/Multi-Agent Chat & Frontend Application Dashboard.html:227:                <a href="/src/pages/MultiAgentChat.tsx" target="_blank">Chat Page</a>
+apps/frontend/Multi-Agent Chat & Frontend Application Dashboard.html:231:                <h3>🏠 Main Pages</h3>
+apps/frontend/Multi-Agent Chat & Frontend Application Dashboard.html:232:                <p>Core application pages and entry points.</p>
+apps/frontend/Multi-Agent Chat & Frontend Application Dashboard.html:233:                <a href="/src/pages/Home.tsx" target="_blank">Home</a>
+apps/frontend/Multi-Agent Chat & Frontend Application Dashboard.html:234:                <a href="/src/pages/Dashboard.tsx" target="_blank">Dashboard</a>
+apps/frontend/Multi-Agent Chat & Frontend Application Dashboard.html:235:                <a href="/src/pages/Landing.tsx" target="_blank">Landing</a>
+apps/frontend/Multi-Agent Chat & Frontend Application Dashboard.html:241:                <a href="/src/pages/auth/Login.tsx" target="_blank">Login</a>
+apps/frontend/Multi-Agent Chat & Frontend Application Dashboard.html:242:                <a href="/src/pages/auth/Register.tsx" target="_blank">Register</a>
+apps/frontend/Multi-Agent Chat & Frontend Application Dashboard.html:243:                <a href="/src/pages/auth/SSO.tsx" target="_blank">SSO</a>
+apps/frontend/Multi-Agent Chat & Frontend Application Dashboard.html:249:                <a href="/src/pages/Agents/index.tsx" target="_blank">Agents</a>
+apps/frontend/Multi-Agent Chat & Frontend Application Dashboard.html:250:                <a href="/src/pages/AIAgentPortal/index.tsx" target="_blank">AI Portal</a>
+apps/frontend/Multi-Agent Chat & Frontend Application Dashboard.html:251:                <a href="/src/pages/Chat.tsx" target="_blank">Chat</a>
+apps/frontend/Multi-Agent Chat & Frontend Application Dashboard.html:257:                <a href="/src/pages/Workflows.tsx" target="_blank">Workflows</a>
+apps/frontend/Multi-Agent Chat & Frontend Application Dashboard.html:258:                <a href="/src/pages/WorkflowsEnhanced.tsx" target="_blank">Enhanced</a>
+apps/frontend/Multi-Agent Chat & Frontend Application Dashboard.html:265:                <a href="/src/pages/workspace/Overview.tsx" target="_blank">Overview</a>
+apps/frontend/Multi-Agent Chat & Frontend Application Dashboard.html:266:                <a href="/src/pages/workspace/Settings.tsx" target="_blank">Settings</a>
+apps/frontend/Multi-Agent Chat & Frontend Application Dashboard.html:267:                <a href="/src/pages/WorkspaceChat/index.tsx" target="_blank">Chat</a>
+apps/frontend/Multi-Agent Chat & Frontend Application Dashboard.html:273:                <a href="/src/pages/Admin/index.tsx" target="_blank">Admin Panel</a>
+apps/frontend/Multi-Agent Chat & Frontend Application Dashboard.html:274:                <a href="/src/pages/Admin/FeatureFlags/index.tsx" target="_blank">Feature Flags</a>
+apps/frontend/Multi-Agent Chat & Frontend Application Dashboard.html:275:                <a href="/src/pages/Admin/Settings.tsx" target="_blank">Settings</a>
+apps/frontend/Multi-Agent Chat & Frontend Application Dashboard.html:281:                <a href="/src/pages/Analytics.tsx" target="_blank">Analytics</a>
+apps/frontend/Multi-Agent Chat & Frontend Application Dashboard.html:282:                <a href="/src/pages/ComponentsShowcase.tsx" target="_blank">Showcase</a>
+apps/frontend/Multi-Agent Chat & Frontend Application Dashboard.html:283:                <a href="/src/pages/graph-demo.tsx" target="_blank">Graph Demo</a>
+apps/frontend/Multi-Agent Chat & Frontend Application Dashboard.html:284:                <a href="/src/pages/TimelineDemo.tsx" target="_blank">Timeline</a>
+apps/frontend/Multi-Agent Chat & Frontend Application Dashboard.html:290:                <a href="/src/pages/Test.tsx" target="_blank">Test Page</a>
+apps/frontend/Multi-Agent Chat & Frontend Application Dashboard.html:291:                <a href="/src/pages/SuperSimpleTest.tsx" target="_blank">Simple Test</a>
+apps/frontend/Multi-Agent Chat & Frontend Application Dashboard.html:292:                <a href="/src/pages/Debug.tsx" target="_blank">Debug</a>
+apps/frontend/ALL_PAGES_LIST.md:3:## Core Application Pages
+apps/frontend/ALL_PAGES_LIST.md:135:- [All Pages List](http://localhost:3000/all-pages) - Page Directory
+apps/frontend/ALL_PAGES_LIST.md:147:- **Total Pages**: 60+ individual routes
+apps/frontend/ALL_PAGES_LIST.md:155:Use the AppleScript below to open all pages in Chrome tabs automatically.
+apps/frontend/jsx_files.txt:314:src/pages/GeneralSettings/EmbeddingPreference/index.ts
+apps/frontend/jsx_files.txt:315:src/pages/GeneralSettings/EmbeddingPreference.d.ts
+apps/frontend/jsx_files.txt:316:src/pages/GeneralSettings/index.ts
+apps/frontend/jsx_files.txt:317:src/pages/GeneralSettings/index.d.ts
+apps/frontend/jsx_files.txt:318:src/pages/GeneralSettings/EmbeddingPreference.ts
+apps/frontend/jsx_files.txt:319:src/pages/settings/General.ts
+apps/frontend/jsx_files.txt:320:src/pages/Landing/index.ts
+apps/frontend/jsx_files.txt:321:src/pages/TimelineDemo.d.ts
+apps/frontend/jsx_files.txt:322:src/pages/auth/GoogleCallback.ts
+apps/frontend/jsx_files.txt:323:src/pages/auth/ForgotPassword.ts
+apps/frontend/jsx_files.txt:324:src/pages/auth/ResetPassword.ts
+apps/frontend/jsx_files.txt:325:src/pages/auth/Register/index.ts
+apps/frontend/jsx_files.txt:326:src/pages/auth/Register.d.ts
+apps/frontend/jsx_files.txt:327:src/pages/auth/OAuthCallback.ts
+apps/frontend/jsx_files.txt:328:src/pages/auth/SSO.ts
+apps/frontend/jsx_files.txt:329:src/pages/auth/index.ts
+apps/frontend/jsx_files.txt:330:src/pages/workspace/WorkspaceLayout.ts
+apps/frontend/jsx_files.txt:331:src/pages/workspace/Settings.d.ts
+apps/frontend/jsx_files.txt:332:src/pages/workspace/Analytics.d.ts
+apps/frontend/jsx_files.txt:333:src/pages/workspace/Analytics.ts
+apps/frontend/jsx_files.txt:334:src/pages/workspace/Settings.ts
+apps/frontend/jsx_files.txt:335:src/pages/workspace/Overview.d.ts
+apps/frontend/jsx_files.txt:336:src/pages/workspace/WorkspaceLayout.d.ts
+apps/frontend/jsx_files.txt:337:src/pages/workspace/index.ts
+apps/frontend/jsx_files.txt:338:src/pages/workspace/index.d.ts
+apps/frontend/jsx_files.txt:339:src/pages/Admin/Workspaces.ts
+apps/frontend/jsx_files.txt:340:src/pages/Admin/Settings.ts
+apps/frontend/jsx_files.txt:341:src/pages/Admin/Dashboard.ts
+apps/frontend/jsx_files.txt:342:src/pages/Admin/AdminLayout.ts
+apps/frontend/jsx_files.txt:343:src/pages/Admin/Users.ts
+apps/frontend/jsx_files.txt:344:src/pages/Admin/index.ts
+apps/frontend/jsx_files.txt:345:src/pages/Admin/SystemHealth.ts
+apps/frontend/jsx_files.txt:346:src/pages/dashboard/Analytics.ts
+apps/frontend/jsx_files.txt:347:src/pages/dashboard/Settings.ts
+apps/frontend/jsx_files.txt:348:src/pages/dashboard/agents/new.ts
+apps/frontend/jsx_files.txt:349:src/pages/dashboard/agents/[id].d.ts
+apps/frontend/jsx_files.txt:350:src/pages/dashboard/agents/[id].ts
+apps/frontend/jsx_files.txt:351:src/pages/dashboard/agents/index.ts
+apps/frontend/jsx_files.txt:352:src/pages/dashboard/Agents.ts
+apps/frontend/jsx_files.txt:353:src/pages/dashboard/index.ts
+apps/frontend/jsx_files.txt:354:src/pages/404.d.ts
+apps/frontend/jsx_files.txt:355:src/pages/graph-demo.ts
+apps/frontend/jsx_files.txt:356:src/pages/timeline-demo.ts
+apps/frontend/jsx_files.txt:357:src/pages/WorkspaceChat/index.ts
+apps/frontend/jsx_files.txt:358:src/pages/legal/TermsOfService.ts
+apps/frontend/jsx_files.txt:359:src/pages/legal/TermsOfService.d.ts
+apps/frontend/jsx_files.txt:360:src/pages/legal/PrivacyPolicy.d.ts
+apps/frontend/jsx_files.txt:361:src/pages/legal/PrivacyPolicy.ts
+apps/frontend/jsx_files.txt:362:src/pages/Login/index.ts
+apps/frontend/MOBILE_RESPONSIVE_SUMMARY.md:310:3. `/apps/frontend/src/pages/Landing/index.tsx` - Complete responsive redesign
+apps/frontend/CHAKRA_MIGRATION_FINAL_SUMMARY.md:7:Tailwind CSS. All identified components and pages utilizing Chakra UI have been
+apps/frontend/CHAKRA_MIGRATION_FINAL_SUMMARY.md:40:Major application pages were refactored:
+apps/frontend/CHAKRA_MIGRATION_FINAL_SUMMARY.md:42:- `pages/fairtable/FairtableDashboard.tsx`: Completely rewrote the dashboard
+apps/frontend/CHAKRA_MIGRATION_FINAL_SUMMARY.md:45:- `pages/MetricsDashboard.tsx`: Refactored statistics display to use Tailwind
+apps/frontend/CHAKRA_MIGRATION_FINAL_SUMMARY.md:47:- `pages/MemoryInspector.tsx`: Simplified structure using Tailwind utility
+apps/frontend/CHAKRA_MIGRATION_FINAL_SUMMARY.md:49:- `pages/web3/NFTMarketplace.tsx`: Massive refactor of the NFT marketplace
+apps/frontend/CHAKRA_MIGRATION_FINAL_SUMMARY.md:52:- `pages/IDE/TheiaIDE.tsx`: Refactored the IDE wrapper to use clean Tailwind
+apps/frontend/CHAKRA_MIGRATION_FINAL_SUMMARY.md:70:- **Visual QA**: Manually test the migrated pages (Fairtable, NFT Marketplace,
+apps/frontend/src/types/routes.ts:96:export type DevRoute = '/debug' | '/build-info' | '/debug-routing' | '/all-pages';
+apps/frontend/src/types/routes.ts:299:    route.startsWith('/all-pages')
+apps/frontend/src/routers/SubdomainRouter.tsx:3:import ConnectExtensionPage from '../pages/ConnectExtension';
+apps/frontend/src/routers/SubdomainRouter.tsx:4:import MarketplacePublicPage from '../pages/Marketplace/MarketplacePublicPage';
+apps/frontend/PERFORMANCE_OPTIMIZATION.md:118:    component: lazy(() => import('../pages/dashboard')),
+apps/frontend/PERFORMANCE_OPTIMIZATION.md:123:    component: lazy(() => import('../pages/admin')),
+apps/frontend/PERFORMANCE_OPTIMIZATION.md:128:    component: lazy(() => import('../pages/analytics')),
+apps/frontend/CHAKRA_TO_TAILWIND_MIGRATION.md:14:1. **Admin Panels** (`src/pages/Admin/*`)
+apps/frontend/CHAKRA_TO_TAILWIND_MIGRATION.md:21:1. **Workflows** (`src/pages/Workflows/*`)
+apps/frontend/CHAKRA_TO_TAILWIND_MIGRATION.md:382:- [x] Dashboard pages
+apps/frontend/src/__tests__/EnhancedWorkflowBuilder.test.tsx:8:import EnhancedWorkflowBuilder from '../pages/Workflows/EnhancedWorkflowBuilder';
+apps/api/src/agents/brand-consistency-agent.service.ts:5: * across all pages and networked components of The New Fuse platform.
+apps/frontend/src/_archive/LandingRevolution.tsx:83:              to="/all-pages"
+apps/frontend/src/pages/AllPages.tsx:18:        pages: category.pages.filter(
+apps/frontend/src/pages/AllPages.tsx:26:      })).filter((category) => category.pages.length > 0),
+apps/frontend/src/pages/AllPages.tsx:55:            🚀 The New Fuse - All Pages
+apps/frontend/src/pages/AllPages.tsx:58:            Complete directory of {totalPages} cataloged pages in The New Fuse application
+apps/frontend/src/pages/AllPages.tsx:69:              placeholder="Search pages by name, path, or description..."
+apps/frontend/src/pages/AllPages.tsx:84:                  {category.name} ({category.pages.length})
+apps/frontend/src/pages/AllPages.tsx:95:                {category.pages.length}
+apps/frontend/src/pages/AllPages.tsx:100:              {category.pages.map((page) => (
+apps/frontend/src/pages/AllPages.tsx:160:              No pages found matching your search criteria.
+apps/frontend/src/pages/AllPages.tsx:171:              <strong className="text-blue-700 dark:text-blue-300">Total Pages:</strong>
+apps/frontend/src/pages/FrontendShowcase.tsx:183:      description: 'Static HTML demonstration pages index',
+apps/frontend/src/pages/FrontendShowcase.tsx:189:      to: 'http://localhost:3001/static/pages/dashboard.html',
+apps/frontend/src/pages/FrontendShowcase.tsx:197:      to: 'http://localhost:3001/static/pages/chat.html',
+apps/frontend/src/pages/FrontendShowcase.tsx:218:            Explore all the frontend pages and components built with React, TypeScript, and Tailwind CSS.
+apps/frontend/src/pages/FrontendShowcase.tsx:241:        {/* Main Application Pages */}
+apps/frontend/src/pages/FrontendShowcase.tsx:245:            Main Application Pages
+apps/frontend/src/pages/FrontendShowcase.tsx:254:        {/* Demo Pages */}
+apps/frontend/src/pages/FrontendShowcase.tsx:267:        {/* Development Pages */}
+apps/frontend/src/layouts/AuthLayout.tsx:5: * Layout for authentication pages (login, register, etc.)
+apps/frontend/src/layouts/HelpLayout.tsx:14: * Layout for help and support pages
+apps/frontend/src/pages/Resources/README.md:155:import { ResourcesDashboard } from './pages/Resources';
+apps/frontend/src/components/ui/select.tsx:4:// Simple select component that matches the API used in the pages
+apps/frontend/src/components/WorkflowEditor/README.md:125:**File:** `pages/workflow-pages/WorkflowBuilderEnhanced.tsx`
+apps/frontend/src/components/WorkflowEditor/README.md:136:import WorkflowBuilderEnhanced from '@/pages/workflow-pages/WorkflowBuilderEnhanced';
+apps/frontend/src/styles/design-system.css:3: * This file establishes a cohesive design system for all pages and components
+apps/frontend/src/docs/UI_UX_TRANSFORMATION_ROADMAP.md:34:### Phase 2: Secondary Pages
+apps/frontend/src/docs/UI_UX_TRANSFORMATION_ROADMAP.md:50:- **Use `PremiumLayout`** as the wrapper for all main application pages.
+apps/frontend/src/components/SmartNavigation.tsx:282:                to="/all-pages"
+apps/frontend/src/components/SmartNavigation.tsx:285:                📂 All Pages
+apps/frontend/src/ComprehensiveRouter.tsx:9:import LoginPage from './pages/auth/Login';
+apps/frontend/src/ComprehensiveRouter.tsx:10:import RegisterPage from './pages/auth/Register';
+apps/frontend/src/ComprehensiveRouter.tsx:19:const WorkspaceAnalytics = lazy(() => import('./pages/workspace/WorkspaceAnalytics'));
+apps/frontend/src/ComprehensiveRouter.tsx:20:const WorkspaceSettings = lazy(() => import('./pages/workspace/Settings'));
+apps/frontend/src/ComprehensiveRouter.tsx:21:const ComponentsShowcase = lazy(() => import('./pages/ComponentsShowcase'));
+apps/frontend/src/ComprehensiveRouter.tsx:22:const TimelineDemo = lazy(() => import('./pages/timeline-demo'));
+apps/frontend/src/ComprehensiveRouter.tsx:24:  import('./pages/graph-demo').then((module) => ({ default: module.GraphDemo }))
+apps/frontend/src/ComprehensiveRouter.tsx:26:const TasksPage = lazy(() => import('./pages/Tasks/TasksPage'));
+apps/frontend/src/ComprehensiveRouter.tsx:27:const AgencyDashboard = lazy(() => import('./pages/Agency/AgencyDashboard'));
+apps/frontend/src/ComprehensiveRouter.tsx:28:const AgencyOnboarding = lazy(() => import('./pages/Agency/AgencyOnboarding'));
+apps/frontend/src/ComprehensiveRouter.tsx:29:const MCPHub = lazy(() => import('./pages/mcp/MCPHub'));
+apps/frontend/src/ComprehensiveRouter.tsx:30:const A2AControl = lazy(() => import('./pages/A2AControl'));
+apps/frontend/src/ComprehensiveRouter.tsx:31:const KnowledgeHub = lazy(() => import('./pages/KnowledgeHub'));
+apps/frontend/src/ComprehensiveRouter.tsx:32:const ExecutionConsole = lazy(() => import('./pages/workflow-pages/ExecutionConsole'));
+apps/frontend/src/ComprehensiveRouter.tsx:33:const AgentIdentity = lazy(() => import('./pages/Agents/AgentIdentity'));
+apps/frontend/src/ComprehensiveRouter.tsx:34:const SystemObservatory = lazy(() => import('./pages/SystemObservatory'));
+apps/frontend/src/ComprehensiveRouter.tsx:35:const TNFCommandCenter = lazy(() => import('./pages/TNFCommandCenter'));
+apps/frontend/src/ComprehensiveRouter.tsx:36:const SystemHealth = lazy(() => import('./pages/Admin/SystemHealth'));
+apps/frontend/src/ComprehensiveRouter.tsx:37:const AgentsPage = lazy(() => import('./pages/AgentsRevolution')); // REVOLUTIONARY NEW DESIGN
+apps/frontend/src/ComprehensiveRouter.tsx:38:const AgentDetail = lazy(() => import('./pages/Agents/Detail'));
+apps/frontend/src/ComprehensiveRouter.tsx:39:const Workflows = lazy(() => import('./pages/Workflows.tsx'));
+apps/frontend/src/ComprehensiveRouter.tsx:40:const WorkflowBuilder = lazy(() => import('./pages/workflow-pages/Builder'));
+apps/frontend/src/ComprehensiveRouter.tsx:42:const Analytics = lazy(() => import('./pages/dashboard/Analytics'));
+apps/frontend/src/ComprehensiveRouter.tsx:43:const Dashboard = lazy(() => import('./pages/dashboard/TNFConsoleDashboard'));
+apps/frontend/src/ComprehensiveRouter.tsx:44:const Settings = lazy(() => import('./pages/Settings'));
+apps/frontend/src/ComprehensiveRouter.tsx:45:const SettingsAppearance = lazy(() => import('./pages/settings/Appearance'));
+apps/frontend/src/ComprehensiveRouter.tsx:46:const SettingsNotifications = lazy(() => import('./pages/settings/Notifications'));
+apps/frontend/src/ComprehensiveRouter.tsx:47:const SettingsSecurity = lazy(() => import('./pages/settings/Security'));
+apps/frontend/src/ComprehensiveRouter.tsx:48:const SettingsAPI = lazy(() => import('./pages/settings/API'));
+apps/frontend/src/ComprehensiveRouter.tsx:49:const WorkspaceOverview = lazy(() => import('./pages/workspace/Overview'));
+apps/frontend/src/ComprehensiveRouter.tsx:50:const WorkspaceMembers = lazy(() => import('./pages/workspace/Members'));
+apps/frontend/src/ComprehensiveRouter.tsx:51:const WorkspaceChatPage = lazy(() => import('./pages/WorkspaceChat/index'));
+apps/frontend/src/ComprehensiveRouter.tsx:52:const NFTMarketplacePage = lazy(() => import('./pages/Agents/NFTMarketplacePage'));
+apps/frontend/src/ComprehensiveRouter.tsx:53:const RevenueDashboardPage = lazy(() => import('./pages/Agents/RevenueDashboardPage'));
+apps/frontend/src/ComprehensiveRouter.tsx:54:const UnifiedAgentCreator = lazy(() => import('./pages/Agents/UnifiedAgentCreator'));
+apps/frontend/src/ComprehensiveRouter.tsx:55:const SophisticatedTNFHub = lazy(() => import('./pages/Hub/SophisticatedTNFHub'));
+apps/frontend/src/ComprehensiveRouter.tsx:56:const ModernHub = lazy(() => import('./pages/Hub/ModernHub'));
+apps/frontend/src/ComprehensiveRouter.tsx:58:// Resources pages
+apps/frontend/src/ComprehensiveRouter.tsx:59:const ResourcesDashboard = lazy(() => import('./pages/Resources/ResourcesDashboard'));
+apps/frontend/src/ComprehensiveRouter.tsx:60:const MarketplaceDashboard = lazy(() => import('./pages/Marketplace'));
+apps/frontend/src/ComprehensiveRouter.tsx:61:const MarketplacePublicPage = lazy(() => import('./pages/Marketplace/MarketplacePublicPage'));
+apps/frontend/src/ComprehensiveRouter.tsx:74:import AllPages from './pages/AllPages';
+apps/frontend/src/ComprehensiveRouter.tsx:75:import BuildInfoPage from './pages/BuildInfo';
+apps/frontend/src/ComprehensiveRouter.tsx:76:import DebugPageComponent from './pages/Debug';
+apps/frontend/src/ComprehensiveRouter.tsx:77:import DebugRoutingComponent from './pages/DebugRouting';
+apps/frontend/src/ComprehensiveRouter.tsx:78:import TestPage from './pages/Test';
+apps/frontend/src/ComprehensiveRouter.tsx:81:const SuggestionsPage = lazy(() => import('./pages/Suggestions'));
+apps/frontend/src/ComprehensiveRouter.tsx:82:const NewSuggestionPage = lazy(() => import('./pages/Suggestions/New'));
+apps/frontend/src/ComprehensiveRouter.tsx:83:const SuggestionDetailPage = lazy(() => import('./pages/Suggestions/Detail'));
+apps/frontend/src/ComprehensiveRouter.tsx:84:const GoalsPage = lazy(() => import('./pages/Goals'));
+apps/frontend/src/ComprehensiveRouter.tsx:85:const GoalDetailPage = lazy(() => import('./pages/Goals/Detail'));
+apps/frontend/src/ComprehensiveRouter.tsx:86:const PlansPage = lazy(() => import('./pages/Plans'));
+apps/frontend/src/ComprehensiveRouter.tsx:87:const PlanDetailPage = lazy(() => import('./pages/Plans/Detail'));
+apps/frontend/src/ComprehensiveRouter.tsx:88:const TimelinePage = lazy(() => import('./pages/Timeline'));
+apps/frontend/src/ComprehensiveRouter.tsx:91:const AdminUserManagement = lazy(() => import('./pages/Admin/UserManagement'));
+apps/frontend/src/ComprehensiveRouter.tsx:92:const AdminFeatureFlags = lazy(() => import('./pages/Admin/FeatureFlags'));
+apps/frontend/src/ComprehensiveRouter.tsx:93:const AdminPortManagement = lazy(() => import('./pages/Admin/PortManagement'));
+apps/frontend/src/ComprehensiveRouter.tsx:95:// Comprehensive Admin Pages (Full-featured versions for SUPER_ADMIN)
+apps/frontend/src/ComprehensiveRouter.tsx:96:const ComprehensiveAdminDashboard = lazy(() => import('./pages/Admin/ComprehensiveAdminDashboard'));
+apps/frontend/src/ComprehensiveRouter.tsx:97:const UserManagementFull = lazy(() => import('./pages/Admin/UserManagementFull'));
+apps/frontend/src/ComprehensiveRouter.tsx:98:const SystemMetricsDashboard = lazy(() => import('./pages/Admin/SystemMetricsDashboard'));
+apps/frontend/src/ComprehensiveRouter.tsx:99:const AgentManagementFull = lazy(() => import('./pages/Admin/AgentManagementFull'));
+apps/frontend/src/ComprehensiveRouter.tsx:100:const DatabaseAdminPanel = lazy(() => import('./pages/Admin/DatabaseAdminPanel'));
+apps/frontend/src/ComprehensiveRouter.tsx:101:const APIAnalyticsFull = lazy(() => import('./pages/Admin/APIAnalyticsFull'));
+apps/frontend/src/ComprehensiveRouter.tsx:102:const ConfigurationManagement = lazy(() => import('./pages/Admin/ConfigurationManagement'));
+apps/frontend/src/ComprehensiveRouter.tsx:103:const AuditLogViewer = lazy(() => import('./pages/Admin/AuditLogViewer'));
+apps/frontend/src/ComprehensiveRouter.tsx:104:const BackupRestore = lazy(() => import('./pages/Admin/BackupRestore'));
+apps/frontend/src/ComprehensiveRouter.tsx:105:const OpenClawSecurity = lazy(() => import('./pages/Admin/OpenClawSecurity'));
+apps/frontend/src/ComprehensiveRouter.tsx:106:const SuperAdminControlPanel = lazy(() => import('./pages/Admin/SuperAdminControlPanel'));
+apps/frontend/src/ComprehensiveRouter.tsx:107:const NexusVisualizer = lazy(() => import('./pages/SystemObservatory'));
+apps/frontend/src/ComprehensiveRouter.tsx:110:const AuthIndexPage = lazy(() => import('./pages/auth/index'));
+apps/frontend/src/ComprehensiveRouter.tsx:111:const ForgotPasswordPage = lazy(() => import('./pages/auth/ForgotPassword'));
+apps/frontend/src/ComprehensiveRouter.tsx:112:const ResetPasswordPage = lazy(() => import('./pages/auth/ResetPassword'));
+apps/frontend/src/ComprehensiveRouter.tsx:113:const SSOPage = lazy(() => import('./pages/auth/SSO'));
+apps/frontend/src/ComprehensiveRouter.tsx:114:const GoogleCallbackPage = lazy(() => import('./pages/auth/GoogleCallback'));
+apps/frontend/src/ComprehensiveRouter.tsx:115:const OAuthCallbackPage = lazy(() => import('./pages/auth/OAuthCallback'));
+apps/frontend/src/ComprehensiveRouter.tsx:118:const OnboardingFlowPage = lazy(() => import('./pages/OnboardingFlow'));
+apps/frontend/src/ComprehensiveRouter.tsx:119:const CommunityHubPage = lazy(() => import('./pages/Community/CommunityHub'));
+apps/frontend/src/ComprehensiveRouter.tsx:120:const SupportPage = lazy(() => import('./pages/Support'));
+apps/frontend/src/ComprehensiveRouter.tsx:121:const BrandIdentityPage = lazy(() => import('./pages/BrandIdentity'));
+apps/frontend/src/ComprehensiveRouter.tsx:122:const DocsPage = lazy(() => import('./pages/Docs'));
+apps/frontend/src/ComprehensiveRouter.tsx:123:const BlogPage = lazy(() => import('./pages/Blog').then((module) => ({ default: module.Blog })));
+apps/frontend/src/ComprehensiveRouter.tsx:124:const ConnectExtensionPage = lazy(() => import('./pages/ConnectExtension'));
+apps/frontend/src/ComprehensiveRouter.tsx:125:const MembershipPage = lazy(() => import('./pages/Membership'));
+apps/frontend/src/ComprehensiveRouter.tsx:137:const AgentOnboardPage = lazy(() => import('./pages/Agents/Onboard'));
+apps/frontend/src/ComprehensiveRouter.tsx:142:const TaskDetailPage = lazy(() => import('./pages/Tasks/Detail'));
+apps/frontend/src/ComprehensiveRouter.tsx:143:const TaskEditPage = lazy(() => import('./pages/Tasks/Edit'));
+apps/frontend/src/ComprehensiveRouter.tsx:144:const NewTaskPage = lazy(() => import('./pages/Tasks/New'));
+apps/frontend/src/ComprehensiveRouter.tsx:146:// Additional pages
+apps/frontend/src/ComprehensiveRouter.tsx:147:const UnauthorizedPage = lazy(() => import('./pages/Unauthorized'));
+apps/frontend/src/ComprehensiveRouter.tsx:148:const AIAgentRegistration = lazy(() => import('./pages/AIAgentPortal/index'));
+apps/frontend/src/ComprehensiveRouter.tsx:149:const FrontendShowcasePage = lazy(() => import('./pages/FrontendShowcase'));
+apps/frontend/src/ComprehensiveRouter.tsx:150:const SimpleTestPage = lazy(() => import('./pages/SimpleTest'));
+apps/frontend/src/ComprehensiveRouter.tsx:152:// Chat pages
+apps/frontend/src/ComprehensiveRouter.tsx:153:const ChatPage = lazy(() => import('./pages/chat/ChatPage'));
+apps/frontend/src/ComprehensiveRouter.tsx:155:// Legal pages
+apps/frontend/src/ComprehensiveRouter.tsx:156:const PrivacyPolicyPage = lazy(() => import('./pages/legal/PrivacyPolicy'));
+apps/frontend/src/ComprehensiveRouter.tsx:157:const TermsOfServicePage = lazy(() => import('./pages/legal/TermsOfService'));
+apps/frontend/src/ComprehensiveRouter.tsx:159:// Workspace pages
+apps/frontend/src/ComprehensiveRouter.tsx:161:// Additional component pages
+apps/frontend/src/ComprehensiveRouter.tsx:163:// Enhanced workflow pages
+apps/frontend/src/ComprehensiveRouter.tsx:164:const WorkflowsEnhancedPage = lazy(() => import('./pages/WorkflowsEnhanced'));
+apps/frontend/src/ComprehensiveRouter.tsx:165:const WorkflowDetailPage = lazy(() => import('./pages/workflow-pages/Detail'));
+apps/frontend/src/ComprehensiveRouter.tsx:166:const WorkflowExecutionPage = lazy(() => import('./pages/workflow-pages/Execution'));
+apps/frontend/src/ComprehensiveRouter.tsx:167:const WorkflowTemplatesPage = lazy(() => import('./pages/workflow-pages/Templates'));
+apps/frontend/src/ComprehensiveRouter.tsx:169:// Preview pages
+apps/frontend/src/ComprehensiveRouter.tsx:170:const OnboardingPreviewPage = lazy(() => import('./pages/preview/OnboardingPreview'));
+apps/frontend/src/ComprehensiveRouter.tsx:174:  () => import('./pages/WorkspaceSettings/ChatSettings/WorkspaceLLMSelection')
+apps/frontend/src/ComprehensiveRouter.tsx:177:  () => import('./pages/WorkspaceSettings/AgentConfig/AgentModelSelection')
+apps/frontend/src/ComprehensiveRouter.tsx:181:const AdminAgentSkillsPage = lazy(() => import('./pages/Admin/Agents/skills'));
+apps/frontend/src/ComprehensiveRouter.tsx:184:const WebSearchSelection = lazy(() => import('./pages/Admin/Agents/WebSearchSelection'));
+apps/frontend/src/ComprehensiveRouter.tsx:188:  () => import('./pages/GeneralSettings/EmbeddingPreference')
+apps/frontend/src/ComprehensiveRouter.tsx:190:const GeneralSettings = lazy(() => import('./pages/GeneralSettings/index'));
+apps/frontend/src/ComprehensiveRouter.tsx:191:const AdminSettings = lazy(() => import('./pages/Admin/AdminSettings'));
+apps/frontend/src/ComprehensiveRouter.tsx:192:const WorkspaceManagement = lazy(() => import('./pages/Admin/WorkspaceManagement'));
+apps/frontend/src/ComprehensiveRouter.tsx:193:const AgentDashboard = lazy(() => import('./pages/dashboard/AgentDashboard'));
+apps/frontend/src/ComprehensiveRouter.tsx:194:const LayoutExamples = lazy(() => import('./pages/Layout/LayoutExamples'));
+apps/frontend/src/ComprehensiveRouter.tsx:195:const AIAgentDashboard = lazy(() => import('./pages/AIAgentDashboard'));
+apps/frontend/src/ComprehensiveRouter.tsx:196:const NotFound = lazy(() => import('./pages/NotFound'));
+apps/frontend/src/ComprehensiveRouter.tsx:200:const MainPage = lazy(() => import('./pages/Main'));
+apps/frontend/src/ComprehensiveRouter.tsx:203:const LiveViewPage = lazy(() => import('./pages/LiveView'));
+apps/frontend/src/ComprehensiveRouter.tsx:206:const AICommandCenter = lazy(() => import('./pages/AICommandCenter'));
+apps/frontend/src/ComprehensiveRouter.tsx:208:// Create fallback components for pages that might have import issues
+apps/frontend/src/ComprehensiveRouter.tsx:222:// Redirect component to force reload to static HTML pages
+apps/frontend/src/ComprehensiveRouter.tsx:929:                path="/all-pages"
+apps/frontend/src/utils/dynamicImport.ts:137:  pages: {
+apps/frontend/src/utils/dynamicImport.ts:138:    Home: () => import('../pages/Home'),
+apps/frontend/src/utils/dynamicImport.ts:139:    Dashboard: () => import('../pages/dashboard/index'),
+apps/frontend/src/utils/dynamicImport.ts:140:    Login: () => import('../pages/auth/Login'),
+apps/frontend/src/utils/dynamicImport.ts:141:    Register: () => import('../pages/auth/Register'),
+apps/frontend/src/utils/dynamicImport.ts:142:    NotFound: () => import('../pages/NotFound'),
+apps/frontend/src/utils/dynamicImport.ts:281:    { fn: ComponentImports.pages.Home, id: 'home' },
+apps/frontend/src/utils/dynamicImport.ts:282:    { fn: ComponentImports.pages.Dashboard, id: 'dashboard' },
+apps/frontend/src/utils/organize_files.ts:62:        'pages',
+apps/frontend/src/utils/organize_files.tsx:13:                'pages',
+apps/frontend/src/components/wizard/steps/ToolsSelectionStep.tsx:159:          description: 'Access and update Confluence pages',
+apps/frontend/src/components/wizard/steps/ToolsSelectionStep.tsx:167:        { id: 'notion', label: 'Notion', description: 'Interact with Notion databases and pages' },
+apps/frontend/src/components/layout/README.md:321:1. **Use PremiumLayout for all authenticated pages** to maintain consistency
+apps/frontend/src/components/layout/StandardLayout.tsx:4: * This layout provides consistent structure across all application pages

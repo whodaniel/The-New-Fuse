@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-09T02:25:28.918Z",
+  "generatedAt": "2026-03-09T07:00:47.828Z",
   "schema": "tnf-rolling-summary-v1",
   "config": {
     "maxReportsPerType": 50,
@@ -13,85 +13,85 @@
       "owner": "website-testing-agent",
       "totalOnDisk": 50,
       "recentCount": 10,
-      "recentAvgScore": 88,
-      "recentMinScore": 80,
+      "recentAvgScore": 92,
+      "recentMinScore": 87,
       "recentMaxScore": 93,
-      "trend": "declining",
+      "trend": "stable-or-improving",
       "latestReport": {
-        "file": "test-report-1773023128066.json",
-        "timestamp": "2026-03-09T02:16:22.946Z",
-        "score": 87,
+        "file": "test-report-1773039647553.json",
+        "timestamp": "2026-03-09T06:57:09.896Z",
+        "score": 93,
         "status": "healthy",
         "lifecycle": "production"
       },
       "entries": [
         {
-          "file": "test-report-1772851669035.json",
-          "timestamp": "2026-03-07T02:40:05.292Z",
+          "file": "test-report-1773035686839.json",
+          "timestamp": "2026-03-09T05:50:31.242Z",
           "score": 93,
           "status": "healthy",
           "lifecycle": "production"
         },
         {
-          "file": "test-report-1772852339587.json",
-          "timestamp": "2026-03-07T02:51:18.839Z",
+          "file": "test-report-1773036236837.json",
+          "timestamp": "2026-03-09T05:58:08.118Z",
           "score": 93,
           "status": "healthy",
           "lifecycle": "production"
         },
         {
-          "file": "test-report-1772853027693.json",
-          "timestamp": "2026-03-07T03:02:28.643Z",
+          "file": "test-report-1773036682047.json",
+          "timestamp": "2026-03-09T06:07:26.763Z",
           "score": 93,
           "status": "healthy",
           "lifecycle": "production"
         },
         {
-          "file": "test-report-1773018058625.json",
-          "timestamp": "2026-03-09T00:52:42.221Z",
+          "file": "test-report-1773037105228.json",
+          "timestamp": "2026-03-09T06:14:41.540Z",
+          "score": 93,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "test-report-1773037575468.json",
+          "timestamp": "2026-03-09T06:21:45.133Z",
+          "score": 93,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "test-report-1773038008066.json",
+          "timestamp": "2026-03-09T06:29:35.594Z",
+          "score": 93,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "test-report-1773038429660.json",
+          "timestamp": "2026-03-09T06:36:47.351Z",
+          "score": 93,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "test-report-1773038855245.json",
+          "timestamp": "2026-03-09T06:43:48.035Z",
+          "score": 93,
+          "status": "healthy",
+          "lifecycle": "production"
+        },
+        {
+          "file": "test-report-1773039231960.json",
+          "timestamp": "2026-03-09T06:50:55.627Z",
           "score": 87,
           "status": "healthy",
           "lifecycle": "production"
         },
         {
-          "file": "test-report-1773018683412.json",
-          "timestamp": "2026-03-09T01:04:28.541Z",
-          "score": 87,
-          "status": "healthy",
-          "lifecycle": "production"
-        },
-        {
-          "file": "test-report-1773019461634.json",
-          "timestamp": "2026-03-09T01:14:58.640Z",
-          "score": 87,
-          "status": "healthy",
-          "lifecycle": "production"
-        },
-        {
-          "file": "test-report-1773020018287.json",
-          "timestamp": "2026-03-09T01:28:07.511Z",
-          "score": 87,
-          "status": "healthy",
-          "lifecycle": "production"
-        },
-        {
-          "file": "test-report-1773020716953.json",
-          "timestamp": "2026-03-09T01:37:02.571Z",
-          "score": 87,
-          "status": "healthy",
-          "lifecycle": "production"
-        },
-        {
-          "file": "test-report-1773022246189.json",
-          "timestamp": "2026-03-09T01:48:47.042Z",
-          "score": 80,
-          "status": "healthy",
-          "lifecycle": "production"
-        },
-        {
-          "file": "test-report-1773023128066.json",
-          "timestamp": "2026-03-09T02:16:22.946Z",
-          "score": 87,
+          "file": "test-report-1773039647553.json",
+          "timestamp": "2026-03-09T06:57:09.896Z",
+          "score": 93,
           "status": "healthy",
           "lifecycle": "production"
         }
@@ -108,79 +108,79 @@
       "recentMaxScore": 100,
       "trend": "stable-or-improving",
       "latestReport": {
-        "file": "integration-report-1773023128341.json",
-        "timestamp": "2026-03-09T02:25:28.316Z",
+        "file": "integration-report-1773039647636.json",
+        "timestamp": "2026-03-09T07:00:47.623Z",
         "score": 100,
         "status": "healthy",
         "lifecycle": "production"
       },
       "entries": [
         {
-          "file": "integration-report-1772851669192.json",
-          "timestamp": "2026-03-07T02:47:49.161Z",
+          "file": "integration-report-1773035686921.json",
+          "timestamp": "2026-03-09T05:54:46.908Z",
           "score": 100,
           "status": "healthy",
           "lifecycle": "production"
         },
         {
-          "file": "integration-report-1772852339758.json",
-          "timestamp": "2026-03-07T02:58:59.736Z",
+          "file": "integration-report-1773036236936.json",
+          "timestamp": "2026-03-09T06:03:56.917Z",
           "score": 100,
           "status": "healthy",
           "lifecycle": "production"
         },
         {
-          "file": "integration-report-1772853027870.json",
-          "timestamp": "2026-03-07T03:10:27.842Z",
+          "file": "integration-report-1773036682133.json",
+          "timestamp": "2026-03-09T06:11:22.118Z",
           "score": 100,
           "status": "healthy",
           "lifecycle": "production"
         },
         {
-          "file": "integration-report-1773018058771.json",
-          "timestamp": "2026-03-09T01:00:58.742Z",
+          "file": "integration-report-1773037105324.json",
+          "timestamp": "2026-03-09T06:18:25.308Z",
           "score": 100,
           "status": "healthy",
           "lifecycle": "production"
         },
         {
-          "file": "integration-report-1773018683653.json",
-          "timestamp": "2026-03-09T01:11:23.630Z",
+          "file": "integration-report-1773037575558.json",
+          "timestamp": "2026-03-09T06:26:15.544Z",
           "score": 100,
           "status": "healthy",
           "lifecycle": "production"
         },
         {
-          "file": "integration-report-1773019461810.json",
-          "timestamp": "2026-03-09T01:24:21.792Z",
+          "file": "integration-report-1773038008240.json",
+          "timestamp": "2026-03-09T06:33:28.223Z",
           "score": 100,
           "status": "healthy",
           "lifecycle": "production"
         },
         {
-          "file": "integration-report-1773020018477.json",
-          "timestamp": "2026-03-09T01:33:38.458Z",
+          "file": "integration-report-1773038429746.json",
+          "timestamp": "2026-03-09T06:40:29.727Z",
           "score": 100,
           "status": "healthy",
           "lifecycle": "production"
         },
         {
-          "file": "integration-report-1773020717135.json",
-          "timestamp": "2026-03-09T01:45:17.076Z",
+          "file": "integration-report-1773038855340.json",
+          "timestamp": "2026-03-09T06:47:35.324Z",
           "score": 100,
           "status": "healthy",
           "lifecycle": "production"
         },
         {
-          "file": "integration-report-1773022249699.json",
-          "timestamp": "2026-03-09T02:10:49.675Z",
+          "file": "integration-report-1773039232043.json",
+          "timestamp": "2026-03-09T06:53:52.029Z",
           "score": 100,
           "status": "healthy",
           "lifecycle": "production"
         },
         {
-          "file": "integration-report-1773023128341.json",
-          "timestamp": "2026-03-09T02:25:28.316Z",
+          "file": "integration-report-1773039647636.json",
+          "timestamp": "2026-03-09T07:00:47.623Z",
           "score": 100,
           "status": "healthy",
           "lifecycle": "production"
@@ -198,79 +198,79 @@
       "recentMaxScore": 100,
       "trend": "stable-or-improving",
       "latestReport": {
-        "file": "uiux-report-1773023128910.json",
-        "timestamp": "2026-03-09T02:25:28.512Z",
+        "file": "uiux-report-1773039647826.json",
+        "timestamp": "2026-03-09T07:00:47.699Z",
         "score": 100,
         "status": "healthy",
         "lifecycle": "production"
       },
       "entries": [
         {
-          "file": "uiux-report-1772851669516.json",
-          "timestamp": "2026-03-07T02:47:49.310Z",
+          "file": "uiux-report-1773035687098.json",
+          "timestamp": "2026-03-09T05:54:46.980Z",
           "score": 100,
           "status": "healthy",
           "lifecycle": "production"
         },
         {
-          "file": "uiux-report-1772852340404.json",
-          "timestamp": "2026-03-07T02:58:59.862Z",
+          "file": "uiux-report-1773036237182.json",
+          "timestamp": "2026-03-09T06:03:57.006Z",
           "score": 100,
           "status": "healthy",
           "lifecycle": "production"
         },
         {
-          "file": "uiux-report-1772853028430.json",
-          "timestamp": "2026-03-07T03:10:28.012Z",
+          "file": "uiux-report-1773036682345.json",
+          "timestamp": "2026-03-09T06:11:22.200Z",
           "score": 100,
           "status": "healthy",
           "lifecycle": "production"
         },
         {
-          "file": "uiux-report-1773018059457.json",
-          "timestamp": "2026-03-09T01:00:58.845Z",
+          "file": "uiux-report-1773037105526.json",
+          "timestamp": "2026-03-09T06:18:25.390Z",
           "score": 100,
           "status": "healthy",
           "lifecycle": "production"
         },
         {
-          "file": "uiux-report-1773018684616.json",
-          "timestamp": "2026-03-09T01:11:23.842Z",
+          "file": "uiux-report-1773037575885.json",
+          "timestamp": "2026-03-09T06:26:15.616Z",
           "score": 100,
           "status": "healthy",
           "lifecycle": "production"
         },
         {
-          "file": "uiux-report-1773019462109.json",
-          "timestamp": "2026-03-09T01:24:21.925Z",
+          "file": "uiux-report-1773038008431.json",
+          "timestamp": "2026-03-09T06:33:28.305Z",
           "score": 100,
           "status": "healthy",
           "lifecycle": "production"
         },
         {
-          "file": "uiux-report-1773020018748.json",
-          "timestamp": "2026-03-09T01:33:38.560Z",
+          "file": "uiux-report-1773038429937.json",
+          "timestamp": "2026-03-09T06:40:29.805Z",
           "score": 100,
           "status": "healthy",
           "lifecycle": "production"
         },
         {
-          "file": "uiux-report-1773020717526.json",
-          "timestamp": "2026-03-09T01:45:17.251Z",
+          "file": "uiux-report-1773038855524.json",
+          "timestamp": "2026-03-09T06:47:35.402Z",
           "score": 100,
           "status": "healthy",
           "lifecycle": "production"
         },
         {
-          "file": "uiux-report-1773022267683.json",
-          "timestamp": "2026-03-09T02:10:53.807Z",
+          "file": "uiux-report-1773039232253.json",
+          "timestamp": "2026-03-09T06:53:52.107Z",
           "score": 100,
           "status": "healthy",
           "lifecycle": "production"
         },
         {
-          "file": "uiux-report-1773023128910.json",
-          "timestamp": "2026-03-09T02:25:28.512Z",
+          "file": "uiux-report-1773039647826.json",
+          "timestamp": "2026-03-09T07:00:47.699Z",
           "score": 100,
           "status": "healthy",
           "lifecycle": "production"

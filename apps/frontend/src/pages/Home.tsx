@@ -1065,7 +1065,7 @@ export default function HomePage() {
               </div>
               <div className="flex flex-wrap items-center gap-4">
                 <a
-                  href="/api/docs"
+                  href="/docs"
                   className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-400 border border-blue-500/30 rounded-lg hover:bg-blue-500/10 transition-colors"
                   rel="api-docs"
                 >

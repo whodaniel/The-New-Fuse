@@ -325,7 +325,7 @@ export default function LandingPage() {
               <ul className="space-y-2">
                 <li>
                   <a
-                    href="/privacy"
+                    href="/legal/privacy"
                     className="text-base text-muted-foreground hover:text-foreground transition-colors min-h-touch inline-block"
                   >
                     Privacy
@@ -333,7 +333,7 @@ export default function LandingPage() {
                 </li>
                 <li>
                   <a
-                    href="/terms"
+                    href="/legal/terms"
                     className="text-base text-muted-foreground hover:text-foreground transition-colors min-h-touch inline-block"
                   >
                     Terms

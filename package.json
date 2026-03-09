@@ -199,6 +199,7 @@
     "verify": "bash ./scripts/verify-features.sh",
     "verify:features": "bash ./scripts/verify-features.sh",
     "audit:routes": "node scripts/route-audit.js",
+    "audit:keyword-mentions:map": "node scripts/keyword-mentions-map.mjs",
     "audit:doc-hygiene": "bash scripts/audit-doc-hygiene.sh",
     "audit:security": "pnpm audit",
     "audit:circular": "pnpm dlx madge --circular apps/api/src",

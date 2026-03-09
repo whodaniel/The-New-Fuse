@@ -103,7 +103,7 @@ export const Login: React.FC = () => {
 
               <div className="text-sm">
                 <Link
-                  to="/forgot-password"
+                  to="/auth/forgot-password"
                   className="font-medium text-blue-600 hover:text-blue-500"
                 >
                   Forgot your password?

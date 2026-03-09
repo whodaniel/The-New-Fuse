@@ -1,0 +1,113 @@
+docs/reference/SITEMAP.md:1:# The New Fuse - Application Sitemap
+docs/reference/SITEMAP.md:3:This document provides a comprehensive sitemap of The New Fuse application, showing the hierarchical structure of all pages and their relationships.
+docs/reference/visual-sitemap.md:1:# The New Fuse Platform Visual Sitemap
+docs/_archive/2024-consolidation-phase/CONSOLIDATION_PLAN.md:821:| `PRODUCTION_READY_SITEMAP.md` | `/docs/project/sitemap.md` | Move |
+docs/archive/electron-browser-hub/browser-hub-static-html/legacy/enhanced-browser-hub.html:6233:                                            <i class="fas fa-sitemap"></i> Parallel
+docs/development-and-troubleshooting/CRITICAL-FRONTEND-ANALYSIS.md:106:- [ ] Sitemap
+docs/development-and-troubleshooting/PRODUCTION_READY_SITEMAP.md:1:# 🗺️ The New Fuse - Complete Sitemap & Navigation Guide
+packages/extension-system/src/agents/pydantic/technical_seo_auditor_agent.py:25:    sitemap_status: str = Field(..., description="Confirmation of XML sitemap generation and submission to search engines.")
+apps/casin8-games/design/stitch/SITE.md:20:## 4) Sitemap
+apps/skideancer-ide/static/browser-hub/extensions/claude/1.0.40_0/assets/index-B1WmHw2Q.js:11136:                /\b(?:address|all_country_option_tags|article|block|blog|cart|checkout|collection|color|country|country_option_tags|currency|current_page|current_tags|customer|customer_address|date|discount_allocation|discount_application|external_video|filter|filter_value|font|forloop|fulfillment|generic_file|gift_card|group|handle|image|line_item|link|linklist|localization|location|measurement|media|metafield|model|model_source|order|page|page_description|page_image|page_title|part|policy|product|product_option|recommendations|request|robots|routes|rule|script|search|selling_plan|selling_plan_allocation|selling_plan_group|shipping_method|shop|shop_locale|sitemap|store_availability|tax_line|template|theme|transaction|unit_price_measurement|user_agent|variant|video|video_source)\b/,
+apps/openclaw/skills/openclaw-universal-knowledge/SKILL.md:21:- Use `{baseDir}/references/openclaw-sitemap.xml` for full coverage
+apps/openclaw/skills/openclaw-universal-knowledge/references/openclaw-docs-map.md:6:- https://docs.openclaw.ai/sitemap.xml
+apps/openclaw/skills/openclaw-universal-knowledge/references/openclaw-sitemap.xml:2:<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+apps/picoclaw-overseer/workspace/skills/openclaw-universal-knowledge/SKILL.md:12:- Use `{baseDir}/references/openclaw-sitemap.xml` for full coverage
+data/agent-registry/agent_tags.json:22924:    "tagName": "sitemap",
+data/agent-registry/agents.json:5415:    "description": "MUST BE USED to perform periodic technical SEO audits of a website. It checks site speed, mobile-friendliness, and crawlability, and manages XML sitemap submission.",
+data/agent-registry/agents.json:5444:      "sitemap",
+data/agent-registry/agents.json:5451:    "systemPrompt": "You are a diligent and thorough technical SEO analyst. Your responsibility is to ensure the website's foundation is sound, allowing search engines to crawl and index it efficiently. You catch technical issues before they become ranking problems.\n\nYour operational workflow is as follows:\n\n1.  **Parse Input:** Receive and parse the `TechnicalSEO_AuditorInput`.\n2.  **Perform Audits:**\n    * Use the `SiteSpeedCheckerAPI` to test the website's loading performance and identify bottlenecks.\n    * Use the `MobileFriendlyTestAPI` to ensure the website is fully responsive and provides a good user experience on mobile devices.\n    * Perform a crawl of the website to check for broken links, redirect chains, and other crawlability issues.\n3.  **Manage Sitemap:**\n    * Use the `SitemapGeneratorAPI` to generate an up-to-date XML sitemap of the blog.\n    * Use the `SearchConsoleAPI` to submit the newly generated sitemap to Google Search Console and Bing Webmaster Tools to ensure all pages are properly indexed.\n4.  **Compile Findings:** For each check performed, create an `AuditFinding` record with the result and a detailed explanation.\n5.  **Generate Report:** Assemble all findings and the sitemap submission status into the `TechnicalAuditReport` Pydantic model. The output must be a single, valid JSON object.",
+apps/picoclaw-overseer/workspace/skills/openclaw-universal-knowledge/references/openclaw-docs-map.md:6:- https://docs.openclaw.ai/sitemap.xml
+apps/picoclaw-overseer/workspace/skills/openclaw-universal-knowledge/references/openclaw-sitemap.xml:2:<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+apps/frontend/scripts/production-server.mjs:35:  '/sitemap.html',
+apps/frontend/scripts/audit-static-links.mjs:12:  { label: 'public/sitemap.html', path: join(ROOT, 'public/sitemap.html') },
+apps/frontend/public/observatory/agents.index.json:1078:            "snippet": "# 🗺️ The New Fuse - Complete Sitemap & Navigation Guide ## 🎯 Production Status: **FULLY FUNCTIONAL** ### All 48+ pages are live and accessible with comprehensive navigation system ## 🏠 Main Landing Page - **Home**: <http://localhost:3000> - Main landing page with navigation to all sections ## 🎯 Core Application Rou"
+apps/frontend/public/observatory/agents.index.json:3715:            "snippet": "# 🗺️ The New Fuse - Complete Sitemap & Navigation Guide ## 🎯 Production Status: **FULLY FUNCTIONAL** ### All 48+ pages are live and accessible with comprehensive navigation system ## 🏠 Main Landing Page - **Home**: <http://localhost:3000> - Main landing page with navigation to all sections ## 🎯 Core Application Rou"
+apps/frontend/public/observatory/agents.index.json:4320:            "snippet": "# 🗺️ The New Fuse - Complete Sitemap & Navigation Guide ## 🎯 Production Status: **FULLY FUNCTIONAL** ### All 48+ pages are live and accessible with comprehensive navigation system ## 🏠 Main Landing Page - **Home**: <http://localhost:3000> - Main landing page with navigation to all sections ## 🎯 Core Application Rou"
+apps/frontend/public/observatory/agents.index.json:9498:            "snippet": "# 🗺️ The New Fuse - Complete Sitemap & Navigation Guide ## 🎯 Production Status: **FULLY FUNCTIONAL** ### All 48+ pages are live and accessible with comprehensive navigation system ## 🏠 Main Landing Page - **Home**: <http://localhost:3000> - Main landing page with navigation to all sections ## 🎯 Core Application Rou"
+apps/frontend/public/observatory/agents.index.json:11767:            "snippet": "# 🗺️ The New Fuse - Complete Sitemap & Navigation Guide ## 🎯 Production Status: **FULLY FUNCTIONAL** ### All 48+ pages are live and accessible with comprehensive navigation system ## 🏠 Main Landing Page - **Home**: <http://localhost:3000> - Main landing page with navigation to all sections ## 🎯 Core Application Rou"
+apps/frontend/public/observatory/agents.index.json:12059:      "description": "MUST BE USED to perform periodic technical SEO audits of a website. It checks site speed, mobile-friendliness, and crawlability, and manages XML sitemap submission.",
+apps/frontend/public/observatory/agents.index.json:12105:            "concept": "sitemap",
+apps/frontend/public/observatory/agents.index.json:12174:      "bodyMarkdown": "You are a diligent and thorough technical SEO analyst. Your responsibility is to ensure the website's foundation is sound, allowing search engines to crawl and index it efficiently. You catch technical issues before they become ranking problems.\n\nYour operational workflow is as follows:\n\n1.  **Parse Input:** Receive and parse the `TechnicalSEO_AuditorInput`.\n2.  **Perform Audits:**\n    * Use the `SiteSpeedCheckerAPI` to test the website's loading performance and identify bottlenecks.\n    * Use the `MobileFriendlyTestAPI` to ensure the website is fully responsive and provides a good user experience on mobile devices.\n    * Perform a crawl of the website to check for broken links, redirect chains, and other crawlability issues.\n3.  **Manage Sitemap:**\n    * Use the `SitemapGeneratorAPI` to generate an up-to-date XML sitemap of the blog.\n    * Use the `SearchConsoleAPI` to submit the newly generated sitemap to Google Search Console and Bing Webmaster Tools to ensure all pages are properly indexed.\n4.  **Compile Findings:** For each check performed, create an `AuditFinding` record with the result and a detailed explanation.\n5.  **Generate Report:** Assemble all findings and the sitemap submission status into the `TechnicalAuditReport` Pydantic model. The output must be a single, valid JSON object.",
+apps/frontend/public/observatory/agents.index.json:12268:            "snippet": "# 🗺️ The New Fuse - Complete Sitemap & Navigation Guide ## 🎯 Production Status: **FULLY FUNCTIONAL** ### All 48+ pages are live and accessible with comprehensive navigation system ## 🏠 Main Landing Page - **Home**: <http://localhost:3000> - Main landing page with navigation to all sections ## 🎯 Core Application Rou"
+apps/frontend/docs/audits/static-link-audit.json:12:        "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:88:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:93:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:98:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:103:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:108:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:113:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:118:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:123:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:128:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:133:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:138:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:143:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:148:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:153:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:158:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:163:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:168:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:173:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:178:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:183:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:188:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:193:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:198:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:203:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:208:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:213:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:218:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:223:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:228:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:233:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:238:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:243:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:248:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:253:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:258:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:263:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.json:268:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1781:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1787:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1793:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1799:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1805:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1811:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1817:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1823:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1829:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1835:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1841:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1847:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1853:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1859:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1865:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1871:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1877:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1883:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1889:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1895:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1901:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1907:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1913:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1919:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1925:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1931:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1937:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1943:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1949:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1955:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1961:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1967:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1973:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1979:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1985:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1991:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:1997:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/all-links-audit.json:2003:      "source": "public/sitemap.html",
+apps/frontend/docs/audits/static-link-audit.md:13:- public/sitemap.html: 0
+apps/frontend/src/config/sitemap.ts:2: * Application Sitemap Configuration
+apps/frontend/src/config/sitemap.ts:8: * - SEO sitemap generation
+apps/frontend/src/config/sitemap.ts:22:export const sitemap: SiteMapNode[] = [
+apps/frontend/src/config/sitemap.ts:206:export function getAllRoutes(nodes: SiteMapNode[] = sitemap): string[] {
+apps/frontend/src/config/sitemap.ts:224:  nodes: SiteMapNode[] = sitemap

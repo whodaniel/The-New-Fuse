@@ -1,0 +1,56 @@
+{
+  "timestamp": "2026-03-09T06:50:55.627Z",
+  "frontend": {
+    "passed": 3,
+    "failed": 2,
+    "errors": [
+      {
+        "test": "type-check",
+        "error": "Command failed: pnpm exec tsc --noEmit"
+      },
+      {
+        "test": "build",
+        "error": "✗ Build failed in 18.98s\nerror during build:\n[vite:build-html] EISDIR: illegal operation on a directory, read\nfile: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/app.html\n    at async readFileHandle (node:internal/fs/promises:558:24)\n    at async fileToBuiltUrl (file:///Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/vite/dist/node/chunks/config.js:8777:18)\n    at async processAssetUrl (file:///Users/<owner>/Desktop/A1-Inter-LLM-Com/The-"
+      },
+      {
+        "test": "critical-files",
+        "error": "Missing required groups: Vite HTML entry"
+      }
+    ]
+  },
+  "backend": {
+    "passed": 5,
+    "failed": 0,
+    "errors": [
+      {
+        "test": "type-check",
+        "error": "Command failed: pnpm exec tsc --noEmit"
+      }
+    ]
+  },
+  "integration": {
+    "passed": 5,
+    "failed": 0,
+    "errors": []
+  },
+  "overall": {
+    "status": "healthy",
+    "score": 87
+  },
+  "_metadata": {
+    "reportType": "test-report",
+    "domain": "Observe",
+    "lifecycle": "production",
+    "owner": "website-testing-agent",
+    "description": "Frontend/backend build, lint, type-check, and unit test results",
+    "canonicalJourney": "Detect -> Triage -> Execute",
+    "phaseRelevance": [
+      "Phase 1: Product Metadata Foundation",
+      "Phase 4: System Integrity"
+    ],
+    "generatedAt": "2026-03-09T06:53:51.960Z",
+    "cycleNumber": null,
+    "version": "1.0.0",
+    "schema": "tnf-report-lifecycle-v1"
+  }
+}

@@ -1,0 +1,6 @@
+apps/frontend/src/routes/RouterProtection.test.tsx:23:vi.mock('@/pages/AllPages', () => ({ default: () => <div>All Pages</div> }));
+apps/frontend/src/pages/AllPages.tsx:55:            🚀 The New Fuse - All Pages
+apps/frontend/src/config/routeCatalog.ts:270:  { name: 'All Pages List', path: '/all-pages', description: 'Page Directory (Current Page)' },
+apps/api/src/agents/brand-consistency-agent.service.ts:5: * across all pages and networked components of The New Fuse platform.
+apps/frontend/src/styles/design-system.css:3: * This file establishes a cohesive design system for all pages and components
+apps/frontend/src/components/SmartNavigation.tsx:285:                📂 All Pages

@@ -1,0 +1,2466 @@
+{
+  "summary": {
+    "generatedAt": "2026-03-09T06:23:34.711Z",
+    "scannedFiles": 1168,
+    "totalLinks": 409,
+    "brokenLinks": 0,
+    "byReason": {}
+  },
+  "rows": [
+    {
+      "source": "src/ComprehensiveRouter.tsx",
+      "link": "/",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/ComprehensiveRouter.tsx",
+      "link": "/dashboard",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/ComprehensiveRouter.tsx",
+      "link": "/product-map",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/ComprehensiveRouter.tsx",
+      "link": "/brand",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/_archive/Features.tsx",
+      "link": "/auth/register",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/_archive/Features.tsx",
+      "link": "/",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/_archive/Features.tsx",
+      "link": "/auth/login",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/_archive/Features.tsx",
+      "link": "/pricing",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/_archive/Features.tsx",
+      "link": "/legal/privacy",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/_archive/Features.tsx",
+      "link": "/legal/terms",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/_archive/LandingRevolution.tsx",
+      "link": "/auth/register",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/_archive/LandingRevolution.tsx",
+      "link": "/workflows/builder",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/_archive/LandingRevolution.tsx",
+      "link": "/all-pages",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/_archive/Pricing.tsx",
+      "link": "/dashboard",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/_archive/Pricing.tsx",
+      "link": "/",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/_archive/Pricing.tsx",
+      "link": "/auth/login",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/_archive/Pricing.tsx",
+      "link": "/auth/register",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/Dashboard.tsx",
+      "link": "/tasks/new",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/Dashboard.tsx",
+      "link": "/agents/new",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/ErrorBoundary.tsx",
+      "link": "/",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/MobileNav.tsx",
+      "link": "/",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/MobileNav.tsx",
+      "link": "/login",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/Navigation/PremiumHeader.tsx",
+      "link": "/user/profile",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/Navigation/PremiumHeader.tsx",
+      "link": "/settings",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/Navigation/PremiumHeader.tsx",
+      "link": "/pricing",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/Navigation/PremiumHeader.tsx",
+      "link": "/workspace/members",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/Navigation/PremiumHeader.tsx",
+      "link": "/workspace/settings",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/Navigation/PremiumHeader.tsx",
+      "link": "/login",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/SiteFooter.tsx",
+      "link": "https://x.com/TheNewFuseAI",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "src/components/SiteFooter.tsx",
+      "link": "https://github.com/whodaniel/The-New-Fuse",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "src/components/SiteFooter.tsx",
+      "link": "/",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/SiteFooter.tsx",
+      "link": "/pricing",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/SiteFooter.tsx",
+      "link": "/community",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/SiteFooter.tsx",
+      "link": "/docs",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/SiteFooter.tsx",
+      "link": "/legal/privacy",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/SiteFooter.tsx",
+      "link": "/legal/terms",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/SmartNavigation.tsx",
+      "link": "/",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/SmartNavigation.tsx",
+      "link": "/agents",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/SmartNavigation.tsx",
+      "link": "/workflows",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/SmartNavigation.tsx",
+      "link": "/marketplace",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/SmartNavigation.tsx",
+      "link": "/pricing",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/SmartNavigation.tsx",
+      "link": "/all-pages",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/SmartNavigation.tsx",
+      "link": "/login",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/SmartNavigation.tsx",
+      "link": "/register",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/SmartNavigation.tsx",
+      "link": "/dashboard",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/SmartNavigation.tsx",
+      "link": "/admin/control-panel",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/SmartNavigation.tsx",
+      "link": "/admin/dashboard",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/SmartNavigation.tsx",
+      "link": "/admin/users",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/SmartNavigation.tsx",
+      "link": "/profile",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/SmartNavigation.tsx",
+      "link": "/settings",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/auth/RequireMembership.tsx",
+      "link": "/auth/login",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/core/ProtectedRoute.tsx",
+      "link": "/auth/login",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/guards/ProtectedRoute.tsx",
+      "link": "/login",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/landing/README.md",
+      "link": "/login",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/landing/README.md",
+      "link": "#features",
+      "status": "anchor",
+      "reason": "anchor"
+    },
+    {
+      "source": "src/components/layout/Footer/index.tsx",
+      "link": "/legal/privacy",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/Footer/index.tsx",
+      "link": "/legal/terms",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/Footer.tsx",
+      "link": "/legal/privacy",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/Footer.tsx",
+      "link": "/legal/terms",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/Header/index.tsx",
+      "link": "/",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/Header.tsx",
+      "link": "/",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/Header.tsx",
+      "link": "/profile",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/Header.tsx",
+      "link": "/settings",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/Header.tsx",
+      "link": "/auth/login",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/Header.tsx",
+      "link": "/auth/register",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/Header.tsx",
+      "link": "/login",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/LandingFooter.tsx",
+      "link": "/features",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/LandingFooter.tsx",
+      "link": "/pricing",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/LandingFooter.tsx",
+      "link": "/connect",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/LandingFooter.tsx",
+      "link": "/docs",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/LandingFooter.tsx",
+      "link": "/blog",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/LandingFooter.tsx",
+      "link": "/support",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/LandingFooter.tsx",
+      "link": "/legal/privacy",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/LandingFooter.tsx",
+      "link": "/legal/terms",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/LandingHeader.tsx",
+      "link": "/",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/LandingHeader.tsx",
+      "link": "/auth/login",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/LandingHeader.tsx",
+      "link": "/auth/register",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/PremiumLayout.tsx",
+      "link": "/dashboard",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/PremiumLayout.tsx",
+      "link": "/agents",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/PremiumLayout.tsx",
+      "link": "/multi-agent-chat",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/PremiumLayout.tsx",
+      "link": "/workflows",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/PremiumLayout.tsx",
+      "link": "/workflows/builder",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/PremiumLayout.tsx",
+      "link": "/live-view",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/PremiumLayout.tsx",
+      "link": "/observatory",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/layout/PremiumLayout.tsx",
+      "link": "/admin/system-health",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/components/nft/AgentNFTMarketplace.tsx",
+      "link": "/agents/new",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/hooks/useApi.ts",
+      "link": "/auth/login",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/layouts/HelpLayout.tsx",
+      "link": "/dashboard",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/layouts/HelpLayout.tsx",
+      "link": "/support",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/layouts/PremiumLayout.tsx",
+      "link": "#main-content",
+      "status": "anchor",
+      "reason": "anchor"
+    },
+    {
+      "source": "src/pages/AIAgentDashboard.tsx",
+      "link": "/agents/new",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/AIAgentPortal/index.tsx",
+      "link": "/docs/ai-agents/getting-started",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/AIAgentPortal/index.tsx",
+      "link": "/docs/ai-agents/api-reference",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Admin/ComprehensiveAdminDashboard.tsx",
+      "link": "/admin/audit-logs",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Admin/ComprehensiveAdminDashboard.tsx",
+      "link": "/admin/system-health",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Admin/SuperAdminControlPanel.tsx",
+      "link": "/",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Admin/SuperAdminControlPanel.tsx",
+      "link": "/nexus",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Admin/SuperAdminControlPanel.tsx",
+      "link": "/admin/agent-management",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Agency/AgencyDashboard.tsx",
+      "link": "/agency/onboard",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Agency/AgencyOnboarding.tsx",
+      "link": "/agency/dashboard",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Agents/AgentsPage.tsx",
+      "link": "/agents/new",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Agents/AgentsPage.tsx",
+      "link": "/dashboard/agents",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Agents/Detail.tsx",
+      "link": "/agents",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Agents/NFTMarketplacePage.tsx",
+      "link": "/agents/create",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Agents/New.tsx",
+      "link": "/agents",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Agents/Onboard.tsx",
+      "link": "/agents",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Agents/Onboard.tsx",
+      "link": "/dashboard",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Agents/RevenueDashboardPage.tsx",
+      "link": "/agents",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Agents/RevenueDashboardPage.tsx",
+      "link": "/agents/nft-marketplace",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Agents/UnifiedAgentCreator.tsx",
+      "link": "/agents",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Agents/index.tsx",
+      "link": "/agents/new",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/AgentsListPage.tsx",
+      "link": "/agents/new",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/AgentsListPage.tsx",
+      "link": "/dashboard/agents",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/AgentsListPage.tsx",
+      "link": "/multi-agent-chat",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/AgentsRevolution.tsx",
+      "link": "/agents/new",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Blog.tsx",
+      "link": "/auth/register",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/ComponentsNav.tsx",
+      "link": "/components",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/ComponentsNav.tsx",
+      "link": "/layout-example",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/ComponentsNav.tsx",
+      "link": "/",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/ConnectExtension.tsx",
+      "link": "#features",
+      "status": "anchor",
+      "reason": "anchor"
+    },
+    {
+      "source": "src/pages/ConnectExtension.tsx",
+      "link": "#platforms",
+      "status": "anchor",
+      "reason": "anchor"
+    },
+    {
+      "source": "src/pages/ConnectExtension.tsx",
+      "link": "#how-it-works",
+      "status": "anchor",
+      "reason": "anchor"
+    },
+    {
+      "source": "src/pages/ConnectExtension.tsx",
+      "link": "#pricing",
+      "status": "anchor",
+      "reason": "anchor"
+    },
+    {
+      "source": "src/pages/ConnectExtension.tsx",
+      "link": "https://thenewfuse.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "src/pages/ConnectExtension.tsx",
+      "link": "https://thenewfuse.com/auth/login",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "src/pages/ConnectExtension.tsx",
+      "link": "https://chrome.google.com/webstore/detail/fuse-connect/fkbcklmcikdhpggaimfhomgncneppkbj",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "src/pages/ConnectExtension.tsx",
+      "link": "https://github.com/whodaniel/fuse",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "src/pages/ConnectExtension.tsx",
+      "link": "https://thenewfuse.com/pricing",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "src/pages/ConnectExtension.tsx",
+      "link": "https://thenewfuse.com/privacy",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "src/pages/ConnectExtension.tsx",
+      "link": "https://thenewfuse.com/terms",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "src/pages/ConnectExtension.tsx",
+      "link": "https://thenewfuse.com/support",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "src/pages/Docs.tsx",
+      "link": "/docs/getting-started",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Docs.tsx",
+      "link": "/docs/api",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Docs.tsx",
+      "link": "/docs/tutorials",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Docs.tsx",
+      "link": "#",
+      "status": "anchor",
+      "reason": "anchor"
+    },
+    {
+      "source": "src/pages/Docs.tsx",
+      "link": "/community",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Goals/Detail.tsx",
+      "link": "/goals",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Goals/Detail.tsx",
+      "link": "/timeline",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Goals/index.tsx",
+      "link": "/tasks",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Goals/index.tsx",
+      "link": "/plans",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "https://x.com/TheNewFuseAI",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "https://github.com/whodaniel/The-New-Fuse",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "#",
+      "status": "anchor",
+      "reason": "anchor"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/docs",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/docs/ai-orientation",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/auth/register",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/workflows/builder",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/workflows/templates",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/dashboard",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/agents",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/workflows",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/agents/nft-marketplace",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/analytics",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/hub",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/community",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/settings/api",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/legal/privacy",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/legal/terms",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Home.tsx",
+      "link": "/onboarding/ai-agent",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Hub/ModernHub.tsx",
+      "link": "/workflows/builder",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Hub/ModernHub.tsx",
+      "link": "/workflows/templates",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Hub/SophisticatedTNFHub.tsx",
+      "link": "/agents/nft-marketplace",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Hub/SophisticatedTNFHub.tsx",
+      "link": "/command-center",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Hub/SophisticatedTNFHub.tsx",
+      "link": "/workflows",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Hub/SophisticatedTNFHub.tsx",
+      "link": "/analytics",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Hub/SophisticatedTNFHub.tsx",
+      "link": "/workflows/new",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Hub/SophisticatedTNFHub.tsx",
+      "link": "/agents/new",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Hub/SophisticatedTNFHub.tsx",
+      "link": "/workflows/builder",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Integrations.tsx",
+      "link": "/auth/register",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Integrations.tsx",
+      "link": "/",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Integrations.tsx",
+      "link": "/pricing",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Integrations.tsx",
+      "link": "/legal/privacy",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Integrations.tsx",
+      "link": "/legal/terms",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Landing/index.tsx",
+      "link": "#features",
+      "status": "anchor",
+      "reason": "anchor"
+    },
+    {
+      "source": "src/pages/Landing/index.tsx",
+      "link": "#pricing",
+      "status": "anchor",
+      "reason": "anchor"
+    },
+    {
+      "source": "src/pages/Landing/index.tsx",
+      "link": "#about",
+      "status": "anchor",
+      "reason": "anchor"
+    },
+    {
+      "source": "src/pages/Landing/index.tsx",
+      "link": "#contact",
+      "status": "anchor",
+      "reason": "anchor"
+    },
+    {
+      "source": "src/pages/Landing/index.tsx",
+      "link": "/legal/privacy",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Landing/index.tsx",
+      "link": "/legal/terms",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Landing/index.tsx",
+      "link": "/login",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Layout/LayoutExamples.tsx",
+      "link": "#",
+      "status": "anchor",
+      "reason": "anchor"
+    },
+    {
+      "source": "src/pages/LayoutExample.tsx",
+      "link": "#",
+      "status": "anchor",
+      "reason": "anchor"
+    },
+    {
+      "source": "src/pages/Login.tsx",
+      "link": "/register",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Login.tsx",
+      "link": "/auth/forgot-password",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Login.tsx",
+      "link": "/dashboard",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Marketplace/MarketplaceDashboard.tsx",
+      "link": "https://ai-arcade.xyz",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "src/pages/Marketplace/MarketplaceDashboard.tsx",
+      "link": "/resources",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Membership.tsx",
+      "link": "mailto:support@thenewfuse.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "src/pages/Membership.tsx",
+      "link": "/support",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/NotFound.tsx",
+      "link": "/",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/OnboardingFlow/index.tsx",
+      "link": "/ai-portal",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/OnboardingFlow/index.tsx",
+      "link": "/dashboard",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Plans/Detail.tsx",
+      "link": "/plans",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Plans/Detail.tsx",
+      "link": "/timeline",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Plans/index.tsx",
+      "link": "/tasks",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Plans/index.tsx",
+      "link": "/goals",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Suggestions/Detail.tsx",
+      "link": "/suggestions",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Suggestions/New.tsx",
+      "link": "/suggestions",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Suggestions/index.tsx",
+      "link": "/suggestions/new",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Support.tsx",
+      "link": "/auth/register",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/TNFCommandCenter.tsx",
+      "link": "/observatory",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/TNFCommandCenter.tsx",
+      "link": "/admin",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/TNFCommandCenter.tsx",
+      "link": "/a2a-control",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/TNFCommandCenter.tsx",
+      "link": "/admin/system-metrics",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/TNFCommandCenter.tsx",
+      "link": "/agents/new",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/TNFCommandCenter.tsx",
+      "link": "/docs",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Tasks/Detail.tsx",
+      "link": "/tasks",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Tasks/New.tsx",
+      "link": "/tasks",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Tasks/TasksPage.tsx",
+      "link": "/tasks/new",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Tasks/index.tsx",
+      "link": "/tasks/new",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Unauthorized.tsx",
+      "link": "/dashboard",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Unauthorized.tsx",
+      "link": "/auth/login",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/Workflows.tsx",
+      "link": "/workflows/builder",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/auth/ForgotPassword.tsx",
+      "link": "/auth/login",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/auth/GitHubCallback.tsx",
+      "link": "/dashboard",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/auth/GitHubCallback.tsx",
+      "link": "/login",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/auth/GoogleCallback.tsx",
+      "link": "/auth/login",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/auth/GoogleCallback.tsx",
+      "link": "/dashboard",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/auth/Login.tsx",
+      "link": "/auth/register",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/auth/Login.tsx",
+      "link": "/dashboard",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/auth/OAuthCallback.tsx",
+      "link": "/auth/login",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/auth/OAuthCallback.tsx",
+      "link": "/dashboard",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/auth/Register.tsx",
+      "link": "/auth/login",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/auth/Register.tsx",
+      "link": "/dashboard",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/auth/RegisterSimple.tsx",
+      "link": "/auth/login",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/auth/RegisterSimple.tsx",
+      "link": "/dashboard",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/auth/ResetPassword.tsx",
+      "link": "/auth/login",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/auth/index.tsx",
+      "link": "/",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/auth/index.tsx",
+      "link": "/login",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/chat/ChatPage.tsx",
+      "link": "/agents",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/chat/ChatPage.tsx",
+      "link": "/agents/new",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/chat/ChatPage.tsx",
+      "link": "/tasks/new",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/dashboard/AgentDashboard.tsx",
+      "link": "/dashboard/agents/new",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/dashboard/Agents.tsx",
+      "link": "/dashboard/agents/new",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/dashboard/CreateAgent.tsx",
+      "link": "/dashboard/agents",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+      "link": "/workflows",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+      "link": "/agents",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+      "link": "/mcp-hub",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+      "link": "/admin/audit-logs",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+      "link": "/workflows/executions",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+      "link": "/timeline",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+      "link": "/settings/general",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+      "link": "/settings/security",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+      "link": "/settings/api",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+      "link": "/admin",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+      "link": "/admin/configuration",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+      "link": "/dashboard/architecture",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+      "link": "/dashboard/logs",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+      "link": "/observatory",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+      "link": "/analytics",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/dashboard/TNFConsoleDashboard.tsx",
+      "link": "/admin/system-health",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/dashboard/agents/new.tsx",
+      "link": "/dashboard/agents",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/dashboard/index.tsx",
+      "link": "/dashboard/agents/new",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/dashboard/index.tsx",
+      "link": "/dashboard/agents",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/dashboard/index.tsx",
+      "link": "/tasks/new",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/dashboard/index.tsx",
+      "link": "/dashboard/analytics",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/dashboard/index.tsx",
+      "link": "/workflows",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/dashboard/index.tsx",
+      "link": "/dashboard/settings",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/workflow-pages/Builder.tsx",
+      "link": "/workflows",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/workflow-pages/Detail.tsx",
+      "link": "/workflows",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/workflow-pages/Execution.tsx",
+      "link": "/workflows",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/workflow-pages/Templates.tsx",
+      "link": "/workflows/builder",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/workflow-pages/Templates.tsx",
+      "link": "/workflows",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/workspace/Settings.tsx",
+      "link": "/workspace/overview",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/workspace/WorkspaceAnalytics.tsx",
+      "link": "/workspace/overview",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/workspace/WorkspaceAnalytics.tsx",
+      "link": "/tasks",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/pages/workspace/index.tsx",
+      "link": "overview",
+      "status": "ok",
+      "reason": "relative-route-segment"
+    },
+    {
+      "source": "src/routes/core.routes.tsx",
+      "link": "/marketplace",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/routes/core.routes.tsx",
+      "link": "/",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/routes/core.routes.tsx",
+      "link": "/dashboard",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/routes/core.routes.tsx",
+      "link": "/brand",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "src/services/api/fetcher.ts",
+      "link": "/login",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/index.html",
+      "link": "/favicon-32x32.png",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/index.html",
+      "link": "/favicon-16x16.png",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/index.html",
+      "link": "/apple-touch-icon.png",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/index.html",
+      "link": "https://fonts.googleapis.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/index.html",
+      "link": "https://fonts.gstatic.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/index.html",
+      "link": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/index.html",
+      "link": "/",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/index.html",
+      "link": "#features",
+      "status": "anchor",
+      "reason": "anchor"
+    },
+    {
+      "source": "public/index.html",
+      "link": "#product",
+      "status": "anchor",
+      "reason": "anchor"
+    },
+    {
+      "source": "public/index.html",
+      "link": "#pricing",
+      "status": "anchor",
+      "reason": "anchor"
+    },
+    {
+      "source": "public/index.html",
+      "link": "/visualizations/dashboard.html",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/index.html",
+      "link": "https://thenewfuse.com/auth/login",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/index.html",
+      "link": "https://thenewfuse.com/auth/register",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/index.html",
+      "link": "/workflows/builder",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/index.html",
+      "link": "mailto:sales@thenewfuse.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/index.html",
+      "link": "https://github.com/whodaniel/fuse",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/index.html",
+      "link": "/dashboard",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/index.html",
+      "link": "/docs",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/index.html",
+      "link": "/agents",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/index.html",
+      "link": "/about",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/index.html",
+      "link": "/blog",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/index.html",
+      "link": "/legal/privacy",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/index.html",
+      "link": "/legal/terms",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/home",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/marketplace",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/product-map",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/capabilities",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/pricing",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/community",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/docs",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/blog",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/support",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/membership",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/connect",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/components",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/layout-example",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/test",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/debug",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/auth/login",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/auth/register",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/auth/forgot-password",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/auth/reset-password",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/auth/sso",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/legal/privacy",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/legal/terms",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/timeline-demo",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/graph-demo",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/dashboard",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/analytics",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/ai-portal",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/onboarding",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/admin",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/admin/users",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/admin/workspaces",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/admin/system-health",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/admin/settings",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/workspace/overview",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/workspace/members",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/workspace/analytics",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/sitemap.html",
+      "link": "/workspace/settings",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/test-page.html",
+      "link": "/",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/visualizations/AG-UI-INTEGRATION-ANALYSIS.html",
+      "link": "https://fonts.googleapis.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/AG-UI-INTEGRATION-ANALYSIS.html",
+      "link": "https://fonts.gstatic.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/AG-UI-INTEGRATION-ANALYSIS.html",
+      "link": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/AG-UI-INTEGRATION-ANALYSIS.html",
+      "link": "dashboard.html",
+      "status": "ok",
+      "reason": "relative-file"
+    },
+    {
+      "source": "public/visualizations/AG-UI-INTEGRATION-ANALYSIS.html",
+      "link": "https://docs.ag-ui.com/",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/AG-UI-INTEGRATION-ANALYSIS.html",
+      "link": "https://learn.microsoft.com/en-us/agent-framework/",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/AG-UI-INTEGRATION-GUIDE.html",
+      "link": "https://fonts.googleapis.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/AG-UI-INTEGRATION-GUIDE.html",
+      "link": "https://fonts.gstatic.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/AG-UI-INTEGRATION-GUIDE.html",
+      "link": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/AG-UI-INTEGRATION-GUIDE.html",
+      "link": "dashboard.html",
+      "status": "ok",
+      "reason": "relative-file"
+    },
+    {
+      "source": "public/visualizations/AG-UI-INTEGRATION-GUIDE.html",
+      "link": "https://docs.ag-ui.com/",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/AG-UI-INTEGRATION-GUIDE.html",
+      "link": "https://learn.microsoft.com/en-us/agent-framework/",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/CAPABILITY-PACKAGING-COMPLETE.html",
+      "link": "https://fonts.googleapis.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/CAPABILITY-PACKAGING-COMPLETE.html",
+      "link": "https://fonts.gstatic.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/CAPABILITY-PACKAGING-COMPLETE.html",
+      "link": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/CAPABILITY-PACKAGING-COMPLETE.html",
+      "link": "dashboard.html",
+      "status": "ok",
+      "reason": "relative-file"
+    },
+    {
+      "source": "public/visualizations/CLAUDE-CODE-AT-SCALE.html",
+      "link": "https://fonts.googleapis.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/CLAUDE-CODE-AT-SCALE.html",
+      "link": "https://fonts.gstatic.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/CLAUDE-CODE-AT-SCALE.html",
+      "link": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/CLAUDE-CODE-AT-SCALE.html",
+      "link": "dashboard.html",
+      "status": "ok",
+      "reason": "relative-file"
+    },
+    {
+      "source": "public/visualizations/CLAUDE-CODE-AT-SCALE.html",
+      "link": "https://www.youtube.com/watch?v=6qJsw0n0GGw",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/GEMINI-CODE-ASSIST-DEEP-DIVE-INCORRECT.html",
+      "link": "https://fonts.googleapis.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/GEMINI-CODE-ASSIST-DEEP-DIVE-INCORRECT.html",
+      "link": "https://fonts.gstatic.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/GEMINI-CODE-ASSIST-DEEP-DIVE-INCORRECT.html",
+      "link": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/GEMINI-CODE-ASSIST-DEEP-DIVE-INCORRECT.html",
+      "link": "dashboard.html",
+      "status": "ok",
+      "reason": "relative-file"
+    },
+    {
+      "source": "public/visualizations/GEMINI-CODE-ASSIST-DEEP-DIVE-INCORRECT.html",
+      "link": "https://www.youtube.com/watch?v=6qJsw0n0GGw",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/GEMINI-CODE-ASSIST-INTEGRATION.html",
+      "link": "https://fonts.googleapis.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/GEMINI-CODE-ASSIST-INTEGRATION.html",
+      "link": "https://fonts.gstatic.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/GEMINI-CODE-ASSIST-INTEGRATION.html",
+      "link": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/GEMINI-CODE-ASSIST-INTEGRATION.html",
+      "link": "dashboard.html",
+      "status": "ok",
+      "reason": "relative-file"
+    },
+    {
+      "source": "public/visualizations/GEMINI-CODE-ASSIST-INTEGRATION.html",
+      "link": "https://www.youtube.com/watch?v=6qJsw0n0GGw",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/NINE-MULTIPLIER-HACKS.html",
+      "link": "https://fonts.googleapis.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/NINE-MULTIPLIER-HACKS.html",
+      "link": "https://fonts.gstatic.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/NINE-MULTIPLIER-HACKS.html",
+      "link": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/NINE-MULTIPLIER-HACKS.html",
+      "link": "dashboard.html",
+      "status": "ok",
+      "reason": "relative-file"
+    },
+    {
+      "source": "public/visualizations/PROJECT-SUMMARY.html",
+      "link": "https://fonts.googleapis.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/PROJECT-SUMMARY.html",
+      "link": "https://fonts.gstatic.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/PROJECT-SUMMARY.html",
+      "link": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/PROJECT-SUMMARY.html",
+      "link": "dashboard.html",
+      "status": "ok",
+      "reason": "relative-file"
+    },
+    {
+      "source": "public/visualizations/PROJECT_SUMMARY.html",
+      "link": "https://fonts.googleapis.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/PROJECT_SUMMARY.html",
+      "link": "https://fonts.gstatic.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/PROJECT_SUMMARY.html",
+      "link": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/PROJECT_SUMMARY.html",
+      "link": "dashboard.html",
+      "status": "ok",
+      "reason": "relative-file"
+    },
+    {
+      "source": "public/visualizations/PROJECT_SUMMARY.html",
+      "link": "https://d3js.org/",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/PROJECT_SUMMARY.html",
+      "link": "https://preactjs.com/",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/PROJECT_SUMMARY.html",
+      "link": "https://github.com/btd/rollup-plugin-visualizer",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/QUICKSTART.html",
+      "link": "https://fonts.googleapis.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/QUICKSTART.html",
+      "link": "https://fonts.gstatic.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/QUICKSTART.html",
+      "link": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/QUICKSTART.html",
+      "link": "dashboard.html",
+      "status": "ok",
+      "reason": "relative-file"
+    },
+    {
+      "source": "public/visualizations/QUICKSTART.html",
+      "link": "README.md",
+      "status": "ok",
+      "reason": "relative-file"
+    },
+    {
+      "source": "public/visualizations/QUICKSTART.html",
+      "link": "templates/visualization-template.html",
+      "status": "ok",
+      "reason": "relative-file"
+    },
+    {
+      "source": "public/visualizations/QUICKSTART.html",
+      "link": "examples/minimal-example.html",
+      "status": "ok",
+      "reason": "relative-file"
+    },
+    {
+      "source": "public/visualizations/README.html",
+      "link": "https://fonts.googleapis.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/README.html",
+      "link": "https://fonts.gstatic.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/README.html",
+      "link": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/README.html",
+      "link": "dashboard.html",
+      "status": "ok",
+      "reason": "relative-file"
+    },
+    {
+      "source": "public/visualizations/README.html",
+      "link": "https://preactjs.com/",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/README.html",
+      "link": "https://d3js.org/",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/README.html",
+      "link": "https://plotly.com/javascript/",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/README.html",
+      "link": "https://www.chartjs.org/",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/README.html",
+      "link": "https://visjs.org/",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/README.html",
+      "link": "https://github.com/btd/rollup-plugin-visualizer",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/README.html",
+      "link": "https://github.com/webpack-contrib/webpack-bundle-analyzer",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/VISUAL-DEMO.html",
+      "link": "https://fonts.googleapis.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/VISUAL-DEMO.html",
+      "link": "https://fonts.gstatic.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/VISUAL-DEMO.html",
+      "link": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/VISUAL-DEMO.html",
+      "link": "dashboard.html",
+      "status": "ok",
+      "reason": "relative-file"
+    },
+    {
+      "source": "public/visualizations/dashboard.html",
+      "link": "https://fonts.googleapis.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/dashboard.html",
+      "link": "https://fonts.gstatic.com",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/dashboard.html",
+      "link": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      "status": "external",
+      "reason": "external"
+    },
+    {
+      "source": "public/visualizations/dashboard.html",
+      "link": "/",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/visualizations/dashboard.html",
+      "link": "#graphs",
+      "status": "anchor",
+      "reason": "anchor"
+    },
+    {
+      "source": "public/visualizations/dashboard.html",
+      "link": "#system",
+      "status": "anchor",
+      "reason": "anchor"
+    },
+    {
+      "source": "public/visualizations/dashboard.html",
+      "link": "#docs",
+      "status": "anchor",
+      "reason": "anchor"
+    }
+  ],
+  "broken": []
+}

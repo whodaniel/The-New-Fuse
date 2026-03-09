@@ -352,7 +352,7 @@ export const SophisticatedTNFHub: React.FC = () => {
         navigate('/agents/nft-marketplace');
         break;
       case 'Theia IDE':
-        navigate('/ide');
+        navigate('/command-center');
         break;
       case 'Workflow Engine':
         navigate('/workflows');

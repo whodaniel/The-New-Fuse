@@ -1,0 +1,5 @@
+apps/frontend/src/config/sitemap.ts:2: * Application Sitemap Configuration
+apps/frontend/src/config/sitemap.ts:8: * - SEO sitemap generation
+apps/frontend/src/config/sitemap.ts:22:export const sitemap: SiteMapNode[] = [
+apps/frontend/src/config/sitemap.ts:206:export function getAllRoutes(nodes: SiteMapNode[] = sitemap): string[] {
+apps/frontend/src/config/sitemap.ts:224:  nodes: SiteMapNode[] = sitemap
