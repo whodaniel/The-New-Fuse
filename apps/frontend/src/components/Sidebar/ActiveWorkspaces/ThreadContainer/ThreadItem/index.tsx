@@ -220,6 +220,8 @@ function OptionsMenu({ containerRef, workspace, thread, onRemove, close }) {
         onClick={renameThread}
         type="button"
         className={`${STYLES.menuButton} ${STYLES.renameButton}`}
+        aria-label="Rename thread"
+        title="Rename thread"
       >
         <PencilSimple size={18} />
         <p className="text-sm">Rename</p>
@@ -228,6 +230,8 @@ function OptionsMenu({ containerRef, workspace, thread, onRemove, close }) {
         onClick={handleDelete}
         type="button"
         className={`${STYLES.menuButton} ${STYLES.deleteButton}`}
+        aria-label="Delete thread"
+        title="Delete thread"
       >
         <Trash size={18} />
         <p className="text-sm">Delete Thread</p>
