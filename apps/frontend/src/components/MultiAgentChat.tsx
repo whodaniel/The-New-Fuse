@@ -118,6 +118,58 @@ const extractAssistantText = (
   };
 };
 
+// ⚡ Bolt: Wrapped MessageItem in React.memo to prevent O(n) re-renders
+// of the entire message list on every keystroke in the chat input.
+// This significantly improves typing performance in long chat rooms by
+// ensuring that only new messages cause a render of their respective item.
+const MessageItem = React.memo<{ msg: Message }>(({ msg }) => (
+  <div
+    className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'} animate-in slide-in-from-bottom-2 duration-300`}
+  >
+    <div
+      className={`max-w-[80%] flex gap-4 ${msg.type === 'user' ? 'flex-row-reverse' : ''}`}
+    >
+      <div
+        className={`w-10 h-10 rounded-xl shrink-0 flex items-center justify-center border ${
+          msg.type === 'user'
+            ? 'bg-blue-600 text-white border-blue-400'
+            : 'bg-white/5 text-blue-400 border-white/10'
+        }`}
+      >
+        {msg.type === 'user' ? (
+          <Users className="w-5 h-5" />
+        ) : (
+          <Bot className="w-5 h-5" />
+        )}
+      </div>
+      <div className={`space-y-1 ${msg.type === 'user' ? 'text-right' : 'text-left'}`}>
+        <div className="flex items-center gap-2 mb-1 justify-inherit">
+          <span className="text-xs font-black uppercase text-gray-500 tracking-tighter">
+            {msg.sender}
+          </span>
+          <span className="text-[10px] text-gray-700 font-mono">
+            {new Date(msg.timestamp).toLocaleTimeString([], {
+              hour12: false,
+              hour: '2-digit',
+              minute: '2-digit',
+            })}
+          </span>
+        </div>
+        <div
+          className={`p-4 rounded-2xl text-sm leading-relaxed shadow-2xl ${
+            msg.type === 'user'
+              ? 'bg-blue-600 text-white rounded-tr-none'
+              : 'bg-white/10 text-gray-200 border border-white/10 rounded-tl-none'
+          }`}
+        >
+          {msg.text}
+        </div>
+      </div>
+    </div>
+  </div>
+));
+MessageItem.displayName = 'MessageItem';
+
 export const MultiAgentChat: React.FC = () => {
   const { api, agentService } = useApi();
   const { toast } = useToast();
