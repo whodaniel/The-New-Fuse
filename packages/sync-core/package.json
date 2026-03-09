@@ -54,6 +54,6 @@
     "rimraf": "^5.0.10",
     "ts-jest": "^29.4.6",
     "tsx": "^4.20.3",
-    "typescript": "^5.3.0"
+    "typescript": "^5.9.3"
   }
 }

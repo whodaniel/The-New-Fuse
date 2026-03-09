@@ -833,7 +833,7 @@
     "esbuild": "^0.27.2",
     "eslint": "^9.13.0",
     "markdown-it": "^14.1.1",
-    "typescript": "^5.5.3",
+    "typescript": "^5.9.3",
     "typescript-eslint": "^0.0.1-alpha.0",
     "vitest": "^4.0.18"
   },
