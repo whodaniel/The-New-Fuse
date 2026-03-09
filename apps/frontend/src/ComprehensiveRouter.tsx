@@ -310,8 +310,8 @@ export default function ComprehensiveRouter() {
             <Routes>
               {/* Core Routes - Root switches based on hostname (marketplace vs main landing) */}
               <Route path="/" element={<MarketplaceRootRoute />} />
-              <Route path="/app.html" element={<MarketplaceRootRoute />} />
-              <Route path="/home" element={<AllPages />} />
+              <Route path="/app.html" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/home" element={<RedirectToStatic to="/" />} />
               {LEGACY_REDIRECTS.map((redirect) => (
                 <Route
                   key={`legacy-redirect:${redirect.from}`}
@@ -1024,6 +1024,7 @@ export default function ComprehensiveRouter() {
 
               {/* Enhanced Landing Routes */}
               <Route path="/landing" element={<RedirectToStatic to="/" />} />
+              <Route path="/about" element={<Navigate to="/brand" replace />} />
               <Route path="/features" element={<RedirectToStatic to="/#features" />} />
               <Route path="/pricing" element={<RedirectToStatic to="/#pricing" />} />
               <Route path="/community" element={<CommunityHubPage />} />

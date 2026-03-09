@@ -25,25 +25,15 @@
     (function routeStaticHostingToSpa() {
       var AUTH_LOGIN_URL = 'https://thenewfuse.com/auth/login';
       var AUTH_REGISTER_URL = 'https://thenewfuse.com/auth/register';
-      var host = window.location.hostname;
-      var pathname = window.location.pathname || '/';
-      var isMarketplaceHost = host === 'marketplace.thenewfuse.com';
-      var isRootPath = pathname === '/' || pathname === '';
 
-      // Railway static hosting serves only concrete files at root.
-      // Hand off to SPA entry and normalize back to "/" (no /app.html# in final URL).
-      if (isMarketplaceHost && isRootPath) {
-        window.location.replace('/app.html#/');
-        return;
-      }
-
-      // Rewrite app links from static landing into SPA entrypoint routes.
+      // Keep auth links canonical while leaving app links as clean path-based routes.
+      // The frontend server handles SPA fallback to app.html.
       document.addEventListener('DOMContentLoaded', function () {
         var links = document.querySelectorAll('a[href^="/"]');
         links.forEach(function (link) {
           var href = link.getAttribute('href');
           if (!href) return;
-          if (href === '/' || href.startsWith('/#')) return;
+          if (href === '/' || href.startsWith('/#') || href.startsWith('/visualizations/')) return;
           if (href === '/auth/login' || href === '/login') {
             link.setAttribute('href', AUTH_LOGIN_URL);
             return;
@@ -52,12 +42,6 @@
             link.setAttribute('href', AUTH_REGISTER_URL);
             return;
           }
-          if (href.startsWith('/app.html')) return;
-          if (href.startsWith('/visualizations/')) return;
-          if (href.startsWith('/api/')) return;
-          if (href.endsWith('.html')) return;
-
-          link.setAttribute('href', '/app.html#' + href);
         });
       });
     })();

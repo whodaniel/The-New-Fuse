@@ -8,8 +8,7 @@
  */
 
 import { lazy, type ReactElement } from 'react';
-import { Route } from 'react-router-dom';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Route } from 'react-router-dom';
 import { LEGACY_REDIRECTS } from '../config/legacyRedirects';
 
 // Core Components
@@ -49,8 +48,8 @@ const MarketplaceRootRoute = () => {
 export const coreRoutes: ReactElement[] = [
   // Root and Home
   <Route key="root" path="/" element={<MarketplaceRootRoute />} />,
-  <Route key="app-html" path="/app.html" element={<MarketplaceRootRoute />} />,
-  <Route key="home" path="/home" element={<AllPages />} />,
+  <Route key="app-html" path="/app.html" element={<Navigate to="/dashboard" replace />} />,
+  <Route key="home" path="/home" element={<RedirectToStatic to="/" />} />,
 
   // Legacy Redirects
   ...LEGACY_REDIRECTS.map((redirect) => (
@@ -88,6 +87,7 @@ export const coreRoutes: ReactElement[] = [
 
   // Redirects
   <Route key="landing-redirect" path="/landing" element={<RedirectToStatic to="/" />} />,
+  <Route key="about-redirect" path="/about" element={<Navigate to="/brand" replace />} />,
   <Route key="features-redirect" path="/features" element={<RedirectToStatic to="/#features" />} />,
   <Route key="pricing-redirect" path="/pricing" element={<RedirectToStatic to="/#pricing" />} />,
 
