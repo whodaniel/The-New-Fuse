@@ -26,6 +26,7 @@
     "audit:live-links": "node scripts/audit-live-links.mjs",
     "audit:all-routes-semantic": "node scripts/audit-all-routes-semantic.mjs",
     "audit:auth-paths": "node scripts/audit-auth-paths.mjs",
+    "audit:self-improvement-scorecard": "node ../../scripts/ci/generate-self-improvement-scorecard.mjs",
     "audit:experience-architecture": "node scripts/audit-experience-architecture.mjs",
     "audit:sidebar-health": "node scripts/audit-sidebar-page-health.mjs",
     "audit:route-guards": "node scripts/audit-route-guards.mjs",

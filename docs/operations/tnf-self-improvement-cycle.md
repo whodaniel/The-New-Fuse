@@ -2,53 +2,67 @@
 
 ## Purpose
 
-Run a continuous reliability loop that catches broken links, route regressions,
-and auth-path failures before users do.
+Operate TNF as a continuously verified full-stack system, not a one-time
+deployment. The loop ensures navigation, semantic route integrity, auth
+pathways, and architecture visibility stay synchronized over time.
 
 ## What We Learned
 
-- Link checks alone are insufficient; semantic route validation is required to
-  catch alias pages and wrong-content routing.
-- Auth regressions can hide behind compatibility paths (`/api/auth/*`,
-  `/api/v1/*`) and must be audited separately.
-- Compatibility bridges in frontend nginx are critical while mixed path
-  conventions (`/api/*` and `/v1/*`) coexist.
-- CI artifacts are required for accountability and diff-based triage over time.
+- Link existence checks are insufficient. Semantic route fingerprint checks are
+  required to detect pages incorrectly rendering shared landing content.
+- Auth failures can be routing compatibility failures. `/api/auth/*` and
+  `/api/v1/*` compatibility handling must be explicitly validated.
+- CI has to produce evidence artifacts for every run. Logs and JSON/Markdown
+  reports make drift visible and auditable.
+- Reliability requires mixed checks. Build status, route correctness, auth
+  endpoint behavior, and architecture mapping must run as one routine.
 
-## Current Loop
+## Construct and Verify the Stack
 
 1. Build frontend in production mode.
-2. Crawl live links to depth 5.
-3. Audit semantic route correctness across route catalog.
-4. Audit auth compatibility and canonical endpoints.
-5. Publish machine-readable and markdown artifacts.
+2. Run depth-5 link crawl.
+3. Run semantic route audit.
+4. Run auth path audit.
+5. Generate consolidated scorecard.
+6. Generate architecture map (`Mermaid`).
+7. Publish artifacts to CI for review and trend tracking.
 
-## CI/CD Integration
+## Outputs
 
-- Workflow: `.github/workflows/live-link-monitor.yml`
-- Cadence: hourly scheduled run + manual trigger.
-- Artifacts:
-  - `apps/frontend/docs/audits/live-link-crawl.json`
-  - `apps/frontend/docs/audits/all-routes-semantic-audit.json`
-  - `apps/frontend/docs/audits/auth-path-audit.json`
+- `apps/frontend/docs/audits/live-link-crawl.json`
+- `apps/frontend/docs/audits/all-routes-semantic-audit.json`
+- `apps/frontend/docs/audits/auth-path-audit.json`
+- `apps/frontend/docs/audits/self-improvement-scorecard.json`
+- `docs/architecture/tnf-master-framework.mmd`
 
-## Architecture Visualization
+## Specialist Agent Audit Coverage
 
-- Mermaid source: `docs/architecture/tnf-master-framework.mmd`
-- Renderable markdown: `docs/architecture/tnf-master-framework.md`
+- `frontend-debugger-agent`: runtime route and page-state regressions.
+- `codebase-pathway-tracer`: route-to-handler-to-data path tracing.
+- `graph-writer`: architecture/pathway graph output.
+- `agent-relationship-grapher`: inter-agent topology and drift.
+- `tnf-task-production-pipeline`: execution lifecycle reliability.
+- `tnf-execution-audit-trail`: execution log integrity and timeline
+  observability.
 
-## Specialist Agent Coverage
+## CI/CD Enhancements Implemented
 
-- Frontend runtime and route behavior: `frontend-debugger-agent`
-- Pathway tracing and dependency mapping: `codebase-pathway-tracer`
-- Graph generation and diagram outputs: `graph-writer`
-- Agent-system topology and drift: `agent-relationship-grapher`
-- Production task execution reliability: `tnf-task-production-pipeline`
-- Execution visibility and logs: `tnf-execution-audit-trail`
+- Added auth-path audit enforcement.
+- Added self-improvement scorecard generation.
+- Added automated architecture map generation from repository structure.
+- Extended artifact upload set for long-term evidence retention.
 
-## Next Iteration (Master Clock Sync)
+## Refinement Protocol for Subsequent Runs
 
-1. Trigger the same audit script from TNF master clock cron jobs.
-2. Persist scorecards daily to a dedicated audit history dataset.
-3. Auto-open remediation tickets when auth or semantic route checks fail twice
-   consecutively.
+1. Compare latest scorecard with previous run artifacts.
+2. Identify which audit class regressed.
+3. Patch only affected surfaces first.
+4. Re-run local audits before push.
+5. Update skill/reference docs when recurring new failure pattern appears.
+6. Commit with explicit evidence references.
+
+## Master Clock Sync (Next Phase)
+
+Planned next step is wiring this same loop into TNF master clock cron
+orchestration so cadence, escalation, and ticketing are managed by TNF protocols
+instead of only GitHub schedule.

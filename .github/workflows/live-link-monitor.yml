@@ -58,6 +58,18 @@ jobs:
           FAIL_ON_AUTH_ISSUES: "1"
         run: pnpm run audit:auth-paths
 
+      - name: Generate self-improvement scorecard
+        working-directory: apps/frontend
+        env:
+          FAIL_ON_SCORECARD: "1"
+        run: pnpm run audit:self-improvement-scorecard
+
+      - name: Generate TNF master architecture map
+        run: |
+          python3 scripts/architecture/generate_tnf_master_mermaid.py \
+            --repo . \
+            --out docs/architecture/tnf-master-framework.mmd
+
       - name: Upload audit artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -70,3 +82,7 @@ jobs:
             apps/frontend/docs/audits/all-routes-semantic-audit.md
             apps/frontend/docs/audits/auth-path-audit.json
             apps/frontend/docs/audits/auth-path-audit.md
+            apps/frontend/docs/audits/self-improvement-scorecard.json
+            apps/frontend/docs/audits/self-improvement-scorecard.md
+            docs/architecture/tnf-master-framework.mmd
+            docs/architecture/tnf-master-framework.md
