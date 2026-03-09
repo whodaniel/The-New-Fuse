@@ -43,6 +43,13 @@ jobs:
           FAIL_ON_BROKEN: "1"
         run: pnpm run audit:live-links
 
+      - name: Run full route semantic audit
+        working-directory: apps/frontend
+        env:
+          SEMANTIC_AUDIT_BASE_URL: "https://thenewfuse.com"
+          FAIL_ON_SEMANTIC_ISSUES: "1"
+        run: pnpm run audit:all-routes-semantic
+
       - name: Upload audit artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -51,3 +58,5 @@ jobs:
           path: |
             apps/frontend/docs/audits/live-link-crawl.json
             apps/frontend/docs/audits/live-link-crawl.md
+            apps/frontend/docs/audits/all-routes-semantic-audit.json
+            apps/frontend/docs/audits/all-routes-semantic-audit.md

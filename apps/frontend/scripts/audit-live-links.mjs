@@ -155,6 +155,11 @@ const crawlDomain = async (browser, seed) => {
         timeout: NAV_TIMEOUT_MS,
       });
       pageStatus = response?.status() ?? null;
+      try {
+        await page.waitForLoadState('networkidle', { timeout: 6000 });
+      } catch {
+        // Some apps keep open network activity; fallback to fixed settle delay.
+      }
       await page.waitForTimeout(1100);
       links = await extractLinksFromPage(page, current.url);
       fingerprint = await extractPageFingerprint(page);
@@ -234,6 +239,7 @@ const crawlDomain = async (browser, seed) => {
   const byUrl = new Map(internalChecks.map((check) => [normalizeUrl(check.url), check]));
   const seedCheck = byUrl.get(normalizedSeed);
   const semanticBroken = [];
+  const semanticTargetSeen = new Set();
   if (seedCheck?.fingerprintHash) {
     for (const link of seedInternalLinks) {
       const target = byUrl.get(normalizeUrl(link.url));
@@ -244,6 +250,8 @@ const crawlDomain = async (browser, seed) => {
       if (seedPath === targetPath) continue;
 
       if (target.fingerprintHash === seedCheck.fingerprintHash) {
+        if (semanticTargetSeen.has(target.url)) continue;
+        semanticTargetSeen.add(target.url);
         target.semanticIssue = 'same_content_as_seed';
         target.semanticLinkText = link.text || '';
         target.broken = true;
