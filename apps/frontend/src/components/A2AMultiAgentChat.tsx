@@ -1,4 +1,4 @@
-import { A2AMessageType, A2APriority, AgentType } from '@the-new-fuse/a2a-core';
+import { A2AMessageType, A2APriority, AgentType, AgentConfig } from '@the-new-fuse/a2a-core';
 import {
   A2AMessage,
   A2AProvider,
@@ -8,13 +8,48 @@ import {
   useA2AMessages,
 } from '@the-new-fuse/a2a-react';
 import { AlertCircle, Send } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 // Icons (same as before)
 const SystemIcon = () => <AlertCircle className="h-4 w-4" />;
 const cn = (...classes: Array<string | false | null | undefined>) =>
   classes.filter(Boolean).join(' ');
+
+// Enhanced message bubble
+// ⚡ Bolt: Extracted MessageBubble out of the main component scope and wrapped
+// in React.memo to prevent O(n) re-renders during frequent A2A message updates.
+const MessageBubble = React.memo(({ msg, agents }: { msg: A2AMessage; agents: AgentConfig[] }) => {
+  const isUser = msg.payload?.sender === 'User';
+  const isSystem = msg.type === A2AMessageType.NOTIFICATION && msg.payload?.type === 'system';
+  const bubbleClass = cn(
+    'p-4 rounded-xl shadow-md max-w-lg',
+    isUser && 'bg-blue-500 text-white ml-auto',
+    isSystem && 'bg-gray-500 text-white text-center text-xs italic mx-auto',
+    !isUser && !isSystem && 'bg-white dark:bg-gray-700 mr-auto'
+  );
+
+  const senderName = isUser
+    ? 'You'
+    : agents.find((a) => a.agentId === msg.fromAgent)?.name || msg.fromAgent;
+
+  return (
+    <div className={cn('flex w-full', isUser ? 'justify-end' : 'justify-start')}>
+      <div className={bubbleClass}>
+        {!isUser && !isSystem && (
+          <div className="font-bold mb-1 text-sm opacity-75">{senderName}</div>
+        )}
+        <p className="whitespace-pre-wrap break-words">
+          {msg.payload?.text || JSON.stringify(msg.payload, null, 2)}
+        </p>
+        <div className="text-xs opacity-50 mt-1">
+          {new Date(msg.timestamp).toLocaleTimeString()}
+        </div>
+      </div>
+    </div>
+  );
+});
+MessageBubble.displayName = 'MessageBubble';
 
 // A2A Configuration
 const A2A_CONFIG = {
@@ -247,38 +282,6 @@ function EnhancedMultiAgentChatUI() {
     </div>
   );
 
-  // Enhanced message bubble
-  const MessageBubble = ({ msg }: { msg: A2AMessage }) => {
-    const isUser = msg.payload?.sender === 'User';
-    const isSystem = msg.type === A2AMessageType.NOTIFICATION && msg.payload?.type === 'system';
-    const bubbleClass = cn(
-      'p-4 rounded-xl shadow-md max-w-lg',
-      isUser && 'bg-blue-500 text-white ml-auto',
-      isSystem && 'bg-gray-500 text-white text-center text-xs italic mx-auto',
-      !isUser && !isSystem && 'bg-white dark:bg-gray-700 mr-auto'
-    );
-
-    const senderName = isUser
-      ? 'You'
-      : agents.find((a) => a.agentId === msg.fromAgent)?.name || msg.fromAgent;
-
-    return (
-      <div className={cn('flex w-full', isUser ? 'justify-end' : 'justify-start')}>
-        <div className={bubbleClass}>
-          {!isUser && !isSystem && (
-            <div className="font-bold mb-1 text-sm opacity-75">{senderName}</div>
-          )}
-          <p className="whitespace-pre-wrap break-words">
-            {msg.payload?.text || JSON.stringify(msg.payload, null, 2)}
-          </p>
-          <div className="text-xs opacity-50 mt-1">
-            {new Date(msg.timestamp).toLocaleTimeString()}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   if (connectionError) {
     return (
       <div className="flex h-screen w-full flex-col items-center justify-center bg-gray-900 text-white">
@@ -428,7 +431,7 @@ function EnhancedMultiAgentChatUI() {
 
       <main className="p-4 overflow-y-auto flex flex-col space-y-4">
         {messages.map((msg) => (
-          <MessageBubble key={msg.id} msg={msg} />
+          <MessageBubble key={msg.id} msg={msg} agents={agents} />
         ))}
         {messages.length === 0 && connectionState.authenticated && (
           <div className="text-center text-gray-500 mt-8">
