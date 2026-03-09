@@ -70,7 +70,7 @@
     "dagre": "^0.8.5",
     "dagre-d3": "^0.6.4",
     "date-fns": "^4.1.0",
-    "dompurify": "^3.3.0",
+    "dompurify": "^3.3.2",
     "ethers": "^6.15.0",
     "file-saver": "^2.0.5",
     "framer-motion": "^12.27.0",
