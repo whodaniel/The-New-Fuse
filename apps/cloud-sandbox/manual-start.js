@@ -8,8 +8,9 @@ console.log('!!! MANUAL START - VERSION 9 - ROBUST INSTALL !!!');
 try {
   console.log('📦 checking/installing Playwright browsers...');
 
-  // Set writable paths
-  const localBrowsersPath = path.join(process.cwd(), 'pw-browsers');
+  // Set writable paths and deterministic working directory.
+  const serviceRoot = path.resolve(__dirname, '..');
+  const localBrowsersPath = '/tmp/pw-browsers';
   const npmCachePath = '/tmp/npm-cache';
 
   console.log(`📂 Configuration:
@@ -32,7 +33,8 @@ try {
   console.log('Running npx playwright install (ASYNC)...');
   const { exec } = require('child_process');
 
-  const installProcess = exec('npx playwright install chromium --with-deps', {
+  const installProcess = exec('npx playwright install chromium', {
+    cwd: serviceRoot,
     env: {
       ...process.env,
       NPM_CONFIG_CACHE: npmCachePath,

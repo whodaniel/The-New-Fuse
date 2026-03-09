@@ -62,7 +62,27 @@ else
   fi
 
   # Try to find the main entry point in various possible locations
-  if [ -f "dist/main.js" ]; then
+  if [ "$SERVICE_PATH" = "cloud-sandbox" ] && [ -f "dist/server.js" ]; then
+    echo "Found dist/server.js in current directory (cloud-sandbox preferred entrypoint)"
+    # For cloud-sandbox, install Playwright browsers at runtime
+    if [ "$SERVICE_PATH" = "cloud-sandbox" ]; then
+      echo "📦 Installing Playwright browsers for cloud-sandbox..."
+
+      # Force a writable runtime path inside Railway containers.
+      export PLAYWRIGHT_BROWSERS_PATH="/tmp/pw-browsers"
+      mkdir -p "$PLAYWRIGHT_BROWSERS_PATH" 2>/dev/null || true
+      chmod 777 "$PLAYWRIGHT_BROWSERS_PATH" 2>/dev/null || true
+
+      echo "📂 Installing to: $PLAYWRIGHT_BROWSERS_PATH"
+
+      # Runtime install only; system deps should be baked in image layers.
+      npx playwright install chromium 2>&1 || echo "Warning: Browser installation may have failed"
+
+      echo "✅ Playwright installation complete"
+      ls -la "$PLAYWRIGHT_BROWSERS_PATH" || echo "Browser directory check failed"
+    fi
+    exec node dist/server.js
+  elif [ -f "dist/main.js" ]; then
     echo "Found dist/main.js in current directory"
     exec node dist/main.js
   elif [ -f "dist/server.js" ]; then
