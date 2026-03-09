@@ -8,7 +8,8 @@ import {
   useA2AMessages,
 } from '@the-new-fuse/a2a-react';
 import { AlertCircle, Send } from 'lucide-react';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 // Icons (same as before)
@@ -59,7 +60,7 @@ const A2A_CONFIG = {
 
 // ⚡ Bolt: Extracted MessageBubble and wrapped in React.memo to prevent O(n) re-renders
 // of the entire message list on every keystroke in the chat input.
-const MessageBubble = React.memo(({ msg, agents }: { msg: A2AMessage; agents: any[] }) => {
+const MessageBubble = React.memo<{ msg: A2AMessage; agents: any[] }>(({ msg, agents }) => {
   const isUser = msg.payload?.sender === 'User';
   const isSystem = msg.type === A2AMessageType.NOTIFICATION && msg.payload?.type === 'system';
   const bubbleClass = cn(
