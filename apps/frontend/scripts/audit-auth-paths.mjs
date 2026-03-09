@@ -29,9 +29,9 @@ const checks = [
     body: { email: 'invalid@example.com', password: 'bad-password' },
   },
   {
-    name: 'Public /api/health route',
+    name: 'Public /health route',
     method: 'GET',
-    url: `${PUBLIC_BASE_URL}/api/health`,
+    url: `${PUBLIC_BASE_URL}/health`,
     expectedStatus: [200],
   },
 ];
