@@ -57,6 +57,40 @@ const A2A_CONFIG = {
   agentId: uuidv4(), // Generate unique agent ID for this session
 };
 
+// ⚡ Bolt: Extracted MessageBubble and wrapped in React.memo to prevent O(n) re-renders
+// of the entire message list on every keystroke in the chat input.
+const MessageBubble = React.memo(({ msg, agents }: { msg: A2AMessage; agents: any[] }) => {
+  const isUser = msg.payload?.sender === 'User';
+  const isSystem = msg.type === A2AMessageType.NOTIFICATION && msg.payload?.type === 'system';
+  const bubbleClass = cn(
+    'p-4 rounded-xl shadow-md max-w-lg',
+    isUser && 'bg-blue-500 text-white ml-auto',
+    isSystem && 'bg-gray-500 text-white text-center text-xs italic mx-auto',
+    !isUser && !isSystem && 'bg-white dark:bg-gray-700 mr-auto'
+  );
+
+  const senderName = isUser
+    ? 'You'
+    : agents.find((a) => a.agentId === msg.fromAgent)?.name || msg.fromAgent;
+
+  return (
+    <div className={cn('flex w-full', isUser ? 'justify-end' : 'justify-start')}>
+      <div className={bubbleClass}>
+        {!isUser && !isSystem && (
+          <div className="font-bold mb-1 text-sm opacity-75">{senderName}</div>
+        )}
+        <p className="whitespace-pre-wrap break-words">
+          {msg.payload?.text || JSON.stringify(msg.payload, null, 2)}
+        </p>
+        <div className="text-xs opacity-50 mt-1">
+          {new Date(msg.timestamp).toLocaleTimeString()}
+        </div>
+      </div>
+    </div>
+  );
+});
+MessageBubble.displayName = 'MessageBubble';
+
 // Enhanced MultiAgentChat with A2A integration
 export default function MultiAgentChat() {
   return (
@@ -79,9 +113,7 @@ export default function MultiAgentChat() {
 }
 
 function EnhancedMultiAgentChatUI() {
-  const a2aContext = useA2AContext() as ReturnType<typeof useA2AContext> & { error?: Error };
-  const { connectionState, connect } = a2aContext;
-  const connectionError = a2aContext.error;
+  const { connectionState, connect, error: connectionError } = useA2AContext();
   const { agents, refreshAgents } = useA2AAgents();
   const { messages, sendMessage, broadcast } = useA2AMessages();
   const { conversations, joinConversation } = useA2AConversations();
