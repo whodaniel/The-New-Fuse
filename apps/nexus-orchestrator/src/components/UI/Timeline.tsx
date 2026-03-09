@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import DOMPurify from 'dompurify';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useStore } from '../../store/useStore';
@@ -42,7 +43,8 @@ export const Timeline: React.FC = () => {
             return (
               <div key={log.id} className={colorClass}>
                 <span className="text-slate-500">[{log.timestamp}]</span>{' '}
-                <span dangerouslySetInnerHTML={{ __html: log.message }} />
+                {/* SECURITY: Sanitize the final HTML to prevent XSS attacks */}
+                <span dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(log.message) }} />
               </div>
             );
           })}
