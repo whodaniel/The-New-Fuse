@@ -12,27 +12,35 @@ import { Route } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
 import { LEGACY_REDIRECTS } from '../config/legacyRedirects';
 
-// Lazy load components - using type-safe lazy import pattern
-const LazyComponent = <T extends React.ComponentType<unknown>>(loader: () => Promise<{ default: T }>) =>
-  lazy(loader);
-
 // Core Components
-const MarketplaceRootRoute = LazyComponent(() => import('../pages/MarketplaceRootRoute'));
-const AllPages = LazyComponent(() => import('../pages/AllPages'));
-const CommunityHubPage = LazyComponent(() => import('../pages/community/CommunityHubPage'));
-const MembershipPage = LazyComponent(() => import('../pages/MembershipPage'));
-const SupportPage = LazyComponent(() => import('../pages/SupportPage'));
-const OnboardingFlowPage = LazyComponent(() => import('../pages/OnboardingFlowPage'));
-const DocsPage = LazyComponent(() => import('../pages/DocsPage'));
-const ConnectExtensionPage = LazyComponent(() => import('../pages/ConnectExtensionPage'));
-const PrivacyPolicyPage = LazyComponent(() => import('../pages/legal/PrivacyPolicyPage'));
-const TermsOfServicePage = LazyComponent(() => import('../pages/legal/TermsOfServicePage'));
-const BrandIdentityPage = LazyComponent(() => import('../pages/BrandIdentityPage'));
-const BlogPage = LazyComponent(() => import('../pages/BlogPage'));
-const OnboardingPreviewPage = LazyComponent(() => import('../pages/OnboardingPreviewPage'));
-const NotFound = LazyComponent(() => import('../pages/NotFound'));
-const UnauthorizedPage = LazyComponent(() => import('../pages/UnauthorizedPage'));
-const RedirectToStatic = LazyComponent(() => import('../components/RedirectToStatic'));
+const AllPages = lazy(() => import('../pages/AllPages'));
+const CommunityHubPage = lazy(() => import('../pages/Community/CommunityHub'));
+const MembershipPage = lazy(() => import('../pages/Membership'));
+const SupportPage = lazy(() => import('../pages/Support'));
+const OnboardingFlowPage = lazy(() => import('../pages/OnboardingFlow'));
+const DocsPage = lazy(() => import('../pages/Docs'));
+const ConnectExtensionPage = lazy(() => import('../pages/ConnectExtension'));
+const PrivacyPolicyPage = lazy(() => import('../pages/legal/PrivacyPolicy'));
+const TermsOfServicePage = lazy(() => import('../pages/legal/TermsOfService'));
+const BrandIdentityPage = lazy(() => import('../pages/BrandIdentity'));
+const BlogPage = lazy(() => import('../pages/Blog').then((module) => ({ default: module.Blog })));
+const OnboardingPreviewPage = lazy(() => import('../pages/preview/OnboardingPreview'));
+const NotFound = lazy(() => import('../pages/NotFound'));
+const UnauthorizedPage = lazy(() => import('../pages/Unauthorized'));
+
+const RedirectToStatic = ({ to }: { to: string }) => {
+  if (typeof window !== 'undefined') {
+    window.location.href = to;
+  }
+  return null;
+};
+
+const MarketplaceRootRoute = () => {
+  if (typeof window !== 'undefined' && window.location.hostname === 'marketplace.thenewfuse.com') {
+    return <Navigate to="/marketplace" replace />;
+  }
+  return <RedirectToStatic to="/" />;
+};
 
 /**
  * Core route definitions

@@ -104,14 +104,10 @@ const AuditLogViewer = lazy(() => import('./pages/Admin/AuditLogViewer'));
 const BackupRestore = lazy(() => import('./pages/Admin/BackupRestore'));
 const OpenClawSecurity = lazy(() => import('./pages/Admin/OpenClawSecurity'));
 const SuperAdminControlPanel = lazy(() => import('./pages/Admin/SuperAdminControlPanel'));
-const NexusVisualizer = lazy(() =>
-  import('@the-new-fuse/nexus-orchestrator/src/App').then((module) => ({
-    default: module.NexusApp,
-  }))
-);
+const NexusVisualizer = lazy(() => import('./pages/SystemObservatory'));
 
 // Auth components
-const AuthIndexPage = lazy(() => import('./pages/auth'));
+const AuthIndexPage = lazy(() => import('./pages/auth/index'));
 const ForgotPasswordPage = lazy(() => import('./pages/auth/ForgotPassword'));
 const ResetPasswordPage = lazy(() => import('./pages/auth/ResetPassword'));
 const SSOPage = lazy(() => import('./pages/auth/SSO'));

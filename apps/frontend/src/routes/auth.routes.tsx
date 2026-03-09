@@ -10,18 +10,14 @@
 import { lazy, type ReactElement } from 'react';
 import { Route } from 'react-router-dom';
 
-// Lazy load components
-const LazyComponent = <T extends React.ComponentType<unknown>>(loader: () => Promise<{ default: T }>) =>
-  lazy(loader);
-
-const LoginPage = LazyComponent(() => import('../pages/auth/Login'));
-const RegisterPage = LazyComponent(() => import('../pages/auth/Register'));
-const AuthIndexPage = LazyComponent(() => import('../pages/auth/Index'));
-const ForgotPasswordPage = LazyComponent(() => import('../pages/auth/ForgotPassword'));
-const ResetPasswordPage = LazyComponent(() => import('../pages/auth/ResetPassword'));
-const SSOPage = LazyComponent(() => import('../pages/auth/SSO'));
-const GoogleCallbackPage = LazyComponent(() => import('../pages/auth/GoogleCallback'));
-const OAuthCallbackPage = LazyComponent(() => import('../pages/auth/OAuthCallback'));
+const LoginPage = lazy(() => import('../pages/auth/Login'));
+const RegisterPage = lazy(() => import('../pages/auth/Register'));
+const AuthIndexPage = lazy(() => import('../pages/auth/index'));
+const ForgotPasswordPage = lazy(() => import('../pages/auth/ForgotPassword'));
+const ResetPasswordPage = lazy(() => import('../pages/auth/ResetPassword'));
+const SSOPage = lazy(() => import('../pages/auth/SSO'));
+const GoogleCallbackPage = lazy(() => import('../pages/auth/GoogleCallback'));
+const OAuthCallbackPage = lazy(() => import('../pages/auth/OAuthCallback'));
 
 /**
  * Auth route definitions

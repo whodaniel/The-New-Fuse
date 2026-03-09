@@ -43,12 +43,14 @@ const FairtableDashboard: React.FC = () => {
       // Use actual API service to load workspace data
       const workspaceService = new WorkspaceApiService();
       const response = await workspaceService.getCurrentWorkspace();
+      const responseError =
+        typeof response.error === 'string' ? response.error : response.error?.message;
 
       if (response.success && response.data) {
         const actualTables: Table[] = (response.data as any)?.tables || [];
         setTables(actualTables);
       } else {
-        throw new Error(response.error || 'Failed to load workspace data');
+        throw new Error(responseError || 'Failed to load workspace data');
       }
     } catch (error) {
       console.error('Error loading tables', error);

@@ -33,9 +33,13 @@ export const useWorkspace = (): UseWorkspaceResult => {
         workspaceService.getWorkspaces(),
         workspaceService.getCurrentWorkspace(),
       ]);
+      const workspacesError =
+        typeof workspacesResponse.error === 'string'
+          ? workspacesResponse.error
+          : workspacesResponse.error?.message;
 
       if (!workspacesResponse.success) {
-        throw new Error(workspacesResponse.error || 'Failed to load workspaces');
+        throw new Error(workspacesError || 'Failed to load workspaces');
       }
 
       const nextWorkspaces = workspacesResponse.data?.workspaces || [];
@@ -79,8 +83,10 @@ export const useWorkspace = (): UseWorkspaceResult => {
       setState((prev) => ({ ...prev, loading: true, error: null }));
       try {
         const response = await workspaceService.getWorkspace(workspaceId);
+        const responseError =
+          typeof response.error === 'string' ? response.error : response.error?.message;
         if (!response.success || !response.data) {
-          throw new Error(response.error || 'Failed to select workspace');
+          throw new Error(responseError || 'Failed to select workspace');
         }
 
         setState((prev) => {
@@ -124,8 +130,10 @@ export const useWorkspace = (): UseWorkspaceResult => {
     setState((prev) => ({ ...prev, loading: true, error: null }));
     try {
       const response = await workspaceService.createWorkspace({ name });
+      const responseError =
+        typeof response.error === 'string' ? response.error : response.error?.message;
       if (!response.success || !response.data) {
-        throw new Error(response.error || 'Failed to create workspace');
+        throw new Error(responseError || 'Failed to create workspace');
       }
 
       const created = response.data;

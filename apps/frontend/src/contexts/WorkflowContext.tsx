@@ -250,11 +250,13 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
       };
 
       const response = await workflowService.saveWorkflow(workflowData);
+      const responseError =
+        typeof response.error === 'string' ? response.error : response.error?.message;
 
       if (response.success && response.data) {
         return response.data.id;
       } else {
-        throw new Error(response.error || 'Failed to save workflow');
+        throw new Error(responseError || 'Failed to save workflow');
       }
     } catch (error) {
       console.error('Failed to save workflow:', error);
@@ -268,6 +270,8 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
         // Use actual API service to load workflow from server
         const workflowService = new WorkflowApiService();
         const response = await workflowService.getWorkflow(id);
+        const responseError =
+          typeof response.error === 'string' ? response.error : response.error?.message;
 
         if (response.success && response.data) {
           const workflow = response.data;
@@ -294,7 +298,7 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
           setNodes(loadedNodes);
           setEdges(loadedEdges);
         } else {
-          throw new Error(response.error || 'Failed to load workflow');
+          throw new Error(responseError || 'Failed to load workflow');
         }
       } catch (error) {
         console.error('Failed to load workflow:', error);

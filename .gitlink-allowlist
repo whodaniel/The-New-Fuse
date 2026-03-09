@@ -1,0 +1,6 @@
+# Paths tracked as gitlinks (mode 160000) that are currently allowed.
+# Keep this list explicit; CI will fail on any gitlink not listed here.
+.agent/skills/notebooklm
+apps/casin8-games/AI-ARCADE.XYZ---POKER-ROOM
+apps/skideancer-ide
+packages/ap2-protocol/ap2
