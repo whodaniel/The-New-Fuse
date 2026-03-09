@@ -6,16 +6,11 @@ interface ValidationResult {
 }
 
 export const generateVerificationCode = (length: number = 6): string => {
-    const codes: string[] = [];
-    while (codes.length < 1) {
-        const code = Math.floor(Math.random() * Math.pow(10, length))
-            .toString()
-            .padStart(length, '0');
-        if (!codes.includes(code)) {
-            codes.push(code);
-        }
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += crypto.randomInt(0, 10).toString();
     }
-    return codes[0];
+    return result;
 };
 
 export const validatePassword = (password: string): ValidationResult => {

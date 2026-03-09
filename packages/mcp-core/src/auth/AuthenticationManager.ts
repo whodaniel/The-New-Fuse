@@ -7,6 +7,7 @@
  */
 
 import { EventEmitter } from 'events';
+import * as crypto from 'crypto';
 import { AuthConfig } from '../interfaces/IMCPConnection';
 import { MCPErrorClass, MCPErrorCode } from '../types/error';
 
@@ -687,7 +688,7 @@ export class AuthenticationManager extends EventEmitter {
    * Generate random token
    */
   private generateToken(): string {
-    return `mcp_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+    return `mcp_${Date.now()}_${crypto.randomBytes(8).toString('hex')}`;
   }
 
   /**
