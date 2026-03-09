@@ -1,7 +1,4 @@
 import { DynamicModule, Module } from '@nestjs/common';
-import { OpenAIEmbeddingProvider } from './drivers/openai-embedding.provider';
-import { PgVectorDriver } from './drivers/pgvector.driver';
-import { QdrantDriver } from './drivers/qdrant.driver';
 import { VectorStoreGrpcController } from './grpc/vector-store-grpc.controller';
 import { HealthController } from './health.controller';
 import { EmbeddingConfig, VectorDatabaseConfig } from './interface/vector-database.interface';
@@ -34,11 +31,8 @@ export class VectorDatabaseModule {
           },
           inject: ['VECTOR_DB_CONFIG', 'EMBEDDING_CONFIG'],
         },
-        PgVectorDriver,
-        QdrantDriver,
-        OpenAIEmbeddingProvider,
       ],
-      exports: [VectorDatabaseService, PgVectorDriver, QdrantDriver, OpenAIEmbeddingProvider],
+      exports: [VectorDatabaseService],
       global: true,
     };
   }
@@ -68,11 +62,8 @@ export class VectorDatabaseModule {
           },
           inject: ['VECTOR_DB_MODULE_OPTIONS'],
         },
-        PgVectorDriver,
-        QdrantDriver,
-        OpenAIEmbeddingProvider,
       ],
-      exports: [VectorDatabaseService, PgVectorDriver, QdrantDriver, OpenAIEmbeddingProvider],
+      exports: [VectorDatabaseService],
       global: true,
     };
   }

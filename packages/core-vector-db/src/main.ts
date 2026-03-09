@@ -6,12 +6,12 @@ import { VectorDatabaseModule } from './vector-database.module';
 
 async function bootstrap() {
   const logger = new Logger('VectorDBMicroservice');
+  const provider = (process.env.VECTOR_DB_TYPE || 'pgvector') as 'pgvector' | 'qdrant';
 
   // Configuration from environment variables
   const grpcUrl = process.env.GRPC_URL || '0.0.0.0:50051';
   const protoPath =
-    process.env.PROTO_PATH ||
-    join(__dirname, '../../../proto-definitions/proto/vector_store.proto');
+    process.env.PROTO_PATH || join(__dirname, '../../proto-definitions/proto/vector_store.proto');
   const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
   logger.log(`Starting Vector Database service`);
@@ -21,20 +21,23 @@ async function bootstrap() {
   const app = await NestFactory.create(
     VectorDatabaseModule.forRoot({
       vectorDbConfig: {
-        provider: (process.env.VECTOR_DB_TYPE as any) || 'qdrant',
+        provider,
         apiKey: process.env.VECTOR_DB_API_KEY || process.env.QDRANT_API_KEY,
         connectionString: process.env.DATABASE_URL,
         host:
-          process.env.VECTOR_DB_HOST ||
-          process.env.VECTOR_DB_URL ||
-          process.env.QDRANT_URL ||
-          process.env.PGHOST ||
-          'http://localhost:6333',
+          provider === 'qdrant'
+            ? process.env.VECTOR_DB_HOST ||
+              process.env.VECTOR_DB_URL ||
+              process.env.QDRANT_URL ||
+              'http://localhost:6333'
+            : process.env.VECTOR_DB_HOST || process.env.PGHOST || 'localhost',
         port: process.env.VECTOR_DB_PORT
           ? parseInt(process.env.VECTOR_DB_PORT)
           : process.env.PGPORT
             ? parseInt(process.env.PGPORT)
-            : undefined,
+            : provider === 'qdrant'
+              ? 6333
+              : 5432,
         database: process.env.VECTOR_DB_DATABASE || process.env.PGDATABASE,
         ssl: process.env.VECTOR_DB_SSL === 'true',
         poolSize: process.env.VECTOR_DB_POOL_SIZE ? parseInt(process.env.VECTOR_DB_POOL_SIZE) : 10,

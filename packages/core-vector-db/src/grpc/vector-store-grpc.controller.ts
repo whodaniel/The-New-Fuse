@@ -1,14 +1,13 @@
+import type { Metadata, ServerUnaryCall } from '@grpc/grpc-js';
 import { Controller, Logger } from '@nestjs/common';
 import { GrpcMethod, GrpcService } from '@nestjs/microservices';
 import { VectorDatabaseService } from '../vector-database.service';
-import { OpenAIEmbeddingProvider } from '../drivers/openai-embedding.provider';
-import type { Metadata, ServerUnaryCall } from '@grpc/grpc-js';
 
 // Proto message interfaces (will be generated)
 interface CreateCollectionRequest {
   name: string;
   dimension: number;
-  metric: "cosine" | "euclidean" | "dot_product";
+  metric: 'cosine' | 'euclidean' | 'dot_product';
   config: { [key: string]: string };
 }
 
@@ -86,24 +85,21 @@ interface GetStatsResponse {
 export class VectorStoreGrpcController {
   private readonly logger = new Logger(VectorStoreGrpcController.name);
 
-  constructor(
-    private readonly vectorService: VectorDatabaseService,
-    private readonly embeddingProvider: OpenAIEmbeddingProvider,
-  ) {}
+  constructor(private readonly vectorService: VectorDatabaseService) {}
 
   @GrpcMethod('VectorStoreService', 'CreateCollection')
   async createCollection(
     request: CreateCollectionRequest,
     _metadata: Metadata,
-    _call: ServerUnaryCall<CreateCollectionRequest, CreateCollectionResponse>,
+    _call: ServerUnaryCall<CreateCollectionRequest, CreateCollectionResponse>
   ): Promise<CreateCollectionResponse> {
     try {
       this.logger.log(`Creating collection: ${request.name}`);
-      
+
       await this.vectorService.createCollection({
         name: request.name,
         dimension: request.dimension,
-        metric: (request.metric as "cosine" | "euclidean" | "dot_product") || 'cosine',
+        metric: (request.metric as 'cosine' | 'euclidean' | 'dot_product') || 'cosine',
         // config: request.config || {}, // Removed, not in CollectionConfig type
       });
 
@@ -132,11 +128,13 @@ export class VectorStoreGrpcController {
   async upsertDocuments(
     request: UpsertDocumentsRequest,
     _metadata: Metadata,
-    _call: ServerUnaryCall<UpsertDocumentsRequest, UpsertDocumentsResponse>,
+    _call: ServerUnaryCall<UpsertDocumentsRequest, UpsertDocumentsResponse>
   ): Promise<UpsertDocumentsResponse> {
     try {
-      this.logger.log(`Upserting ${request.documents.length} documents to collection: ${request.collection}`);
-      
+      this.logger.log(
+        `Upserting ${request.documents.length} documents to collection: ${request.collection}`
+      );
+
       let documents = request.documents;
 
       // Generate embeddings if requested and not provided
@@ -144,11 +142,11 @@ export class VectorStoreGrpcController {
         documents = await Promise.all(
           request.documents.map(async (doc) => {
             if (!doc.embedding || doc.embedding.length === 0) {
-              const embedding = await this.embeddingProvider.generateEmbedding(doc.content);
+              const embedding = await this.vectorService.generateEmbedding(doc.content);
               return { ...doc, embedding };
             }
             return doc;
-          }),
+          })
         );
       }
 
@@ -182,11 +180,11 @@ export class VectorStoreGrpcController {
   async getDocument(
     request: GetDocumentRequest,
     _metadata: Metadata,
-    _call: ServerUnaryCall<GetDocumentRequest, GetDocumentResponse>,
+    _call: ServerUnaryCall<GetDocumentRequest, GetDocumentResponse>
   ): Promise<GetDocumentResponse> {
     try {
       const document = await this.vectorService.getDocument(request.collection, request.id);
-      
+
       if (document) {
         return {
           document: {
@@ -219,29 +217,25 @@ export class VectorStoreGrpcController {
   async similaritySearch(
     request: SimilaritySearchRequest,
     _metadata: Metadata,
-    _call: ServerUnaryCall<SimilaritySearchRequest, SimilaritySearchResponse>,
+    _call: ServerUnaryCall<SimilaritySearchRequest, SimilaritySearchResponse>
   ): Promise<SimilaritySearchResponse> {
     try {
       let embedding = request.embedding;
 
       // Generate embedding from text if provided
       if (request.text && (!embedding || embedding.length === 0)) {
-        embedding = await this.embeddingProvider.generateEmbedding(request.text);
+        embedding = await this.vectorService.generateEmbedding(request.text);
       }
 
       if (!embedding || embedding.length === 0) {
         throw new Error('Either embedding or text must be provided for similarity search');
       }
 
-      const results = await this.vectorService.searchByEmbedding(
-        request.collection,
-        embedding,
-        {
-          limit: request.limit || 10,
-          threshold: request.threshold || 0.0,
-          metadata_filter: request.metadataFilter,
-        }
-      );
+      const results = await this.vectorService.searchByEmbedding(request.collection, embedding, {
+        limit: request.limit || 10,
+        threshold: request.threshold || 0.0,
+        metadata_filter: request.metadataFilter,
+      });
 
       return {
         results: results.map((result: any) => ({
@@ -268,7 +262,7 @@ export class VectorStoreGrpcController {
   async healthCheck(): Promise<HealthCheckResponse> {
     try {
       const isHealthy = await this.vectorService.isHealthy();
-      
+
       return {
         healthy: isHealthy,
         status: isHealthy ? 'healthy' : 'unhealthy',
@@ -306,11 +300,11 @@ export class VectorStoreGrpcController {
   async getStats(
     request: GetStatsRequest,
     _metadata: Metadata,
-    _call: ServerUnaryCall<GetStatsRequest, GetStatsResponse>,
+    _call: ServerUnaryCall<GetStatsRequest, GetStatsResponse>
   ): Promise<GetStatsResponse> {
     try {
       const stats = await this.vectorService.getStats(request.collection);
-      
+
       return {
         stats,
       };
@@ -349,9 +343,9 @@ export class VectorStoreGrpcController {
   }
 
   @GrpcMethod('VectorStoreService', 'DeleteCollection')
-  async deleteCollection(
-    request: { name: string },
-  ): Promise<{ success: boolean; message: string }> {
+  async deleteCollection(request: {
+    name: string;
+  }): Promise<{ success: boolean; message: string }> {
     try {
       await this.vectorService.deleteCollection(request.name);
       return {

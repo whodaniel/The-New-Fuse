@@ -57,7 +57,7 @@ export interface IVectorDatabase {
   // Vector Operations
   similaritySearch(collection: string, query: VectorQuery): Promise<VectorSearchResult[]>;
   hybridSearch(collection: string, query: VectorQuery): Promise<VectorSearchResult[]>;
-  
+
   // Batch Operations
   batchAdd(collection: string, documents: VectorDocument[]): Promise<void>;
   batchDelete(collection: string, ids: string[]): Promise<void>;
@@ -71,7 +71,7 @@ export interface IVectorDatabase {
  * Vector Database Provider Configuration
  */
 export interface VectorDatabaseConfig {
-  provider: 'chroma' | 'pgvector' | 'weaviate' | 'pinecone';
+  provider: 'chroma' | 'pgvector' | 'qdrant' | 'weaviate' | 'pinecone';
   host?: string;
   port?: number;
   database?: string;
