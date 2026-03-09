@@ -71,16 +71,15 @@ else
     if [ "$SERVICE_PATH" = "cloud-sandbox" ]; then
       echo "📦 Installing Playwright browsers for cloud-sandbox..."
 
-      # Define a local writable path for browsers
-      export PLAYWRIGHT_BROWSERS_PATH="$(pwd)/pw-browsers"
-
-      # Create directory
-      mkdir -p "$PLAYWRIGHT_BROWSERS_PATH"
+      # Force a writable runtime path inside Railway containers.
+      export PLAYWRIGHT_BROWSERS_PATH="/tmp/pw-browsers"
+      mkdir -p "$PLAYWRIGHT_BROWSERS_PATH" 2>/dev/null || true
+      chmod 777 "$PLAYWRIGHT_BROWSERS_PATH" 2>/dev/null || true
 
       echo "📂 Installing to: $PLAYWRIGHT_BROWSERS_PATH"
 
-      # Install
-      npx playwright install chromium --with-deps 2>&1 || echo "Warning: Browser installation may have failed"
+      # Runtime install only; system deps should be baked in image layers.
+      npx playwright install chromium 2>&1 || echo "Warning: Browser installation may have failed"
 
       echo "✅ Playwright installation complete"
       ls -la "$PLAYWRIGHT_BROWSERS_PATH" || echo "Browser directory check failed"
