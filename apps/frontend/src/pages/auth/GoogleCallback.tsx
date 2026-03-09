@@ -1,6 +1,6 @@
+import { useAuth } from '@/hooks/useAuth';
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-// import { useAuth } from '@/hooks/useAuth';
 
 /**
  * Basic JWT structure validation (does NOT verify signature - that's done server-side)
@@ -32,34 +32,50 @@ const isValidJwtFormat = (token: string): boolean => {
 const GoogleCallback = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  // const { signInWithGoogle } = useAuth();
+  const { login, handleSSOCallback } = useAuth();
 
   useEffect(() => {
-    const token = searchParams.get('token');
+    const run = async () => {
+      const token = searchParams.get('token');
+      if (token) {
+        // Validate token format before using token auth flow.
+        if (!isValidJwtFormat(token)) {
+          console.error('Invalid token format received');
+          navigate('/auth/login?error=invalid_token_format', { replace: true });
+          return;
+        }
 
-    if (token) {
-      // Validate token format before storing
-      if (!isValidJwtFormat(token)) {
-        console.error('Invalid token format received');
-        navigate('/auth/login?error=invalid_token_format');
+        if (token.includes('<script') || token.includes('javascript:')) {
+          console.error('Token contains suspicious content');
+          navigate('/auth/login?error=invalid_token', { replace: true });
+          return;
+        }
+
+        await login(token);
+        navigate('/dashboard', { replace: true });
         return;
       }
 
-      // Additional check: ensure token doesn't contain obvious XSS attempts
-      if (token.includes('<script') || token.includes('javascript:')) {
-        console.error('Token contains suspicious content');
-        navigate('/auth/login?error=invalid_token');
+      const searchError = searchParams.get('error') || searchParams.get('error_description');
+      const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+      const hashError = hashParams.get('error') || hashParams.get('error_description');
+      const authError = searchError || hashError;
+
+      if (authError) {
+        console.error('Authentication error:', authError);
+        navigate('/auth/login?error=' + encodeURIComponent(authError), { replace: true });
         return;
       }
 
-      localStorage.setItem('auth_token', token);
-      navigate('/dashboard');
-    } else {
-      const error = searchParams.get('error');
-      console.error('Authentication error:', error);
-      navigate('/auth/login?error=' + (error || 'auth_failed'));
-    }
-  }, [searchParams, navigate]);
+      await handleSSOCallback('supabase', '');
+      navigate('/dashboard', { replace: true });
+    };
+
+    run().catch((error) => {
+      console.error('Google callback handling failed:', error);
+      navigate('/auth/login?error=auth_failed', { replace: true });
+    });
+  }, [searchParams, navigate, login, handleSSOCallback]);
 
   return (
     <div className="flex items-center justify-center min-h-screen">

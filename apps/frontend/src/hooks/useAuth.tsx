@@ -67,6 +67,17 @@ const extractErrorMessage = (payload: any): string | null => {
 const sanitizeApiBaseUrl = (rawUrl: string) => {
   const trimmed = rawUrl.replace(/\/$/, '');
   if (!trimmed) return '';
+  if (trimmed.startsWith('//')) return `https:${trimmed}`;
+  if (
+    !trimmed.startsWith('http://') &&
+    !trimmed.startsWith('https://') &&
+    !trimmed.startsWith('/')
+  ) {
+    const looksLikeDomain = /^[a-z0-9.-]+\.[a-z]{2,}(:\d+)?$/i.test(trimmed);
+    if (looksLikeDomain) {
+      return `https://${trimmed}`;
+    }
+  }
   const normalized = trimmed.toLowerCase();
   if (normalized === '/api' || normalized === '/v1') return '';
   return trimmed;

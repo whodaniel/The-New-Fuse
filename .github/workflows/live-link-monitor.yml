@@ -50,6 +50,14 @@ jobs:
           FAIL_ON_SEMANTIC_ISSUES: "1"
         run: pnpm run audit:all-routes-semantic
 
+      - name: Run auth path audit
+        working-directory: apps/frontend
+        env:
+          AUTH_AUDIT_PUBLIC_BASE_URL: "https://thenewfuse.com"
+          AUTH_AUDIT_API_BASE_URL: "https://api.thenewfuse.com"
+          FAIL_ON_AUTH_ISSUES: "1"
+        run: pnpm run audit:auth-paths
+
       - name: Upload audit artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -60,3 +68,5 @@ jobs:
             apps/frontend/docs/audits/live-link-crawl.md
             apps/frontend/docs/audits/all-routes-semantic-audit.json
             apps/frontend/docs/audits/all-routes-semantic-audit.md
+            apps/frontend/docs/audits/auth-path-audit.json
+            apps/frontend/docs/audits/auth-path-audit.md

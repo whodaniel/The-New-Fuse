@@ -37,12 +37,16 @@ const Register: React.FC = () => {
   useEffect(() => {
     let ignore = false;
     const checkInvitePolicy = async () => {
+      const endpoints = ['/api/auth/invite-policy', '/v1/auth/invite-policy'];
       try {
-        const res = await fetch('/api/auth/invite-policy');
-        if (!res.ok) return;
-        const payload = await res.json();
-        if (!ignore && typeof payload?.inviteOnly === 'boolean') {
-          setInviteOnly(payload.inviteOnly);
+        for (const endpoint of endpoints) {
+          const res = await fetch(endpoint);
+          if (!res.ok) continue;
+          const payload = await res.json();
+          if (!ignore && typeof payload?.inviteOnly === 'boolean') {
+            setInviteOnly(payload.inviteOnly);
+            return;
+          }
         }
       } catch {
         // Keep env fallback value.
