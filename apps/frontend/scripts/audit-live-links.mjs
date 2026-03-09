@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { mkdirSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { join, resolve } from 'node:path';
 import { chromium } from 'playwright';
 
@@ -54,6 +55,9 @@ const withTimeout = async (promiseFactory, ms, label) => {
   }
 };
 
+const normalizeText = (value) => String(value || '').replace(/\s+/g, ' ').trim().toLowerCase();
+const textHash = (value) => createHash('sha1').update(normalizeText(value)).digest('hex');
+
 const checkHttp = async (url) => {
   try {
     const response = await withTimeout(
@@ -106,13 +110,28 @@ const extractLinksFromPage = async (page, pageUrl) => {
   return out;
 };
 
+const extractPageFingerprint = async (page) =>
+  page.evaluate(() => {
+    const title = document.title || '';
+    const h1 = document.querySelector('h1')?.textContent || '';
+    const main = document.querySelector('main') || document.body;
+    const bodyText = (main?.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 20000);
+    return {
+      title,
+      h1,
+      bodyText,
+    };
+  });
+
 const crawlDomain = async (browser, seed) => {
   const domain = new URL(seed).host;
+  const normalizedSeed = normalizeUrl(seed);
   const queue = [{ url: normalizeUrl(seed), depth: 0, from: null }];
   const queued = new Set([normalizeUrl(seed)]);
   const visited = new Map();
   const externalSeen = new Map();
   const pageErrors = [];
+  let seedInternalLinks = [];
 
   while (queue.length > 0) {
     const current = queue.shift();
@@ -125,6 +144,11 @@ const crawlDomain = async (browser, seed) => {
     let pageStatus = null;
     let pageError = null;
     let links = [];
+    let fingerprint = {
+      title: '',
+      h1: '',
+      bodyText: '',
+    };
     try {
       const response = await page.goto(current.url, {
         waitUntil: 'domcontentloaded',
@@ -133,6 +157,16 @@ const crawlDomain = async (browser, seed) => {
       pageStatus = response?.status() ?? null;
       await page.waitForTimeout(1100);
       links = await extractLinksFromPage(page, current.url);
+      fingerprint = await extractPageFingerprint(page);
+      if (current.url === normalizedSeed) {
+        seedInternalLinks = links.filter((link) => {
+          try {
+            return new URL(link.url).host === domain;
+          } catch {
+            return false;
+          }
+        });
+      }
     } catch (error) {
       pageError = error instanceof Error ? error.message : String(error);
       pageErrors.push({ url: current.url, depth: current.depth, error: pageError });
@@ -147,6 +181,9 @@ const crawlDomain = async (browser, seed) => {
       pageStatus,
       pageError,
       discoveredLinks: links.length,
+      title: fingerprint.title,
+      h1: fingerprint.h1,
+      fingerprintHash: textHash(`${fingerprint.title}|${fingerprint.h1}|${fingerprint.bodyText}`),
     });
 
     for (const link of links) {
@@ -182,12 +219,42 @@ const crawlDomain = async (browser, seed) => {
       url: item.url,
       pageStatus: item.pageStatus,
       pageError: item.pageError,
+      title: item.title,
+      h1: item.h1,
+      fingerprintHash: item.fingerprintHash,
       ...http,
       broken:
         !http.ok ||
         (typeof http.status === 'number' && http.status >= 400) ||
         (item.pageError && !item.pageStatus),
+      semanticIssue: null,
     });
+  }
+
+  const byUrl = new Map(internalChecks.map((check) => [normalizeUrl(check.url), check]));
+  const seedCheck = byUrl.get(normalizedSeed);
+  const semanticBroken = [];
+  if (seedCheck?.fingerprintHash) {
+    for (const link of seedInternalLinks) {
+      const target = byUrl.get(normalizeUrl(link.url));
+      if (!target) continue;
+
+      const seedPath = new URL(seedCheck.url).pathname;
+      const targetPath = new URL(target.url).pathname;
+      if (seedPath === targetPath) continue;
+
+      if (target.fingerprintHash === seedCheck.fingerprintHash) {
+        target.semanticIssue = 'same_content_as_seed';
+        target.semanticLinkText = link.text || '';
+        target.broken = true;
+        semanticBroken.push({
+          from: seedCheck.url,
+          to: target.url,
+          text: link.text || '',
+          issue: 'same_content_as_seed',
+        });
+      }
+    }
   }
 
   const externalChecks = [];
@@ -214,6 +281,7 @@ const crawlDomain = async (browser, seed) => {
     queuedRemaining: queue.length,
     maxDepthReached: Math.max(0, ...[...visited.values()].map((item) => item.depth)),
     pageErrors,
+    semanticBroken,
     checks,
   };
 };
@@ -255,6 +323,7 @@ const main = async () => {
     totalBroken: broken.length,
     internalBroken: broken.filter((item) => item.type === 'internal').length,
     externalBroken: broken.filter((item) => item.type === 'external').length,
+    semanticBroken: broken.filter((item) => item.semanticIssue).length,
     perSeed: results.map((result) => {
       const seedRows = rows.filter((row) => row.seed === result.seed);
       return {
@@ -264,6 +333,7 @@ const main = async () => {
         maxDepthReached: result.maxDepthReached,
         checked: seedRows.length,
         broken: seedRows.filter((row) => row.broken).length,
+        semanticBroken: seedRows.filter((row) => row.semanticIssue).length,
         pageErrors: result.pageErrors.length,
       };
     }),
@@ -299,12 +369,21 @@ const main = async () => {
     `- broken links: ${summary.totalBroken}`,
     `- internal broken: ${summary.internalBroken}`,
     `- external broken: ${summary.externalBroken}`,
+    `- semantic broken: ${summary.semanticBroken}`,
     '',
     '## Per Seed',
     ...summary.perSeed.map(
       (seed) =>
-        `- ${seed.seed} | pages=${seed.crawledPages} | maxDepth=${seed.maxDepthReached} | checked=${seed.checked} | broken=${seed.broken} | pageErrors=${seed.pageErrors}`
+        `- ${seed.seed} | pages=${seed.crawledPages} | maxDepth=${seed.maxDepthReached} | checked=${seed.checked} | broken=${seed.broken} | semanticBroken=${seed.semanticBroken} | pageErrors=${seed.pageErrors}`
     ),
+    '',
+    '## Semantic Broken Links',
+    ...results.flatMap((result) =>
+      (result.semanticBroken || []).map(
+        (item) => `- seed=${result.seed} | from=${item.from} | to=${item.to} | text=${item.text || 'n/a'} | issue=${item.issue}`
+      )
+    ),
+    ...(results.every((result) => !result.semanticBroken?.length) ? ['- none'] : []),
     '',
     '## Broken Links',
     ...(broken.length
