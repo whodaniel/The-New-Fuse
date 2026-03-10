@@ -13,7 +13,6 @@ import './MarketplacePublicPage.css';
 const sectionDelay = (index: number) => ({ duration: 0.36, delay: 0.08 * index });
 const AUTH_LOGIN_URL = 'https://thenewfuse.com/auth/login';
 const AUTH_REGISTER_URL = 'https://thenewfuse.com/auth/register';
-const RESEARCH_BASELINE = { categories: 0, sources: 0, sourceLinks: 0, prompts: 0, artifacts: 0 };
 
 const KIND_LABELS: Record<MarketplaceKind, string> = {
   agent: 'Complete Agents',
@@ -220,19 +219,9 @@ export default function MarketplacePublicPage() {
     queryFn: () => marketplaceService.getCatalog({ status: 'published', limit: 200, offset: 0 }),
     staleTime: 60_000,
   });
-  const { data: researchCounts } = useQuery({
-    queryKey: ['marketplace-research-counts'],
-    queryFn: () => marketplaceService.getResearchCounts(),
-    staleTime: 60_000,
-  });
   const { data: researchSources, isLoading: researchSourcesLoading } = useQuery({
     queryKey: ['marketplace-research-sources'],
     queryFn: () => marketplaceService.getResearchSources(8),
-    staleTime: 60_000,
-  });
-  const { data: researchSkillCounts } = useQuery({
-    queryKey: ['marketplace-research-skill-counts'],
-    queryFn: () => marketplaceService.getResearchSkillCounts(),
     staleTime: 60_000,
   });
   const { data: researchSkillFiles, isLoading: researchSkillFilesLoading } = useQuery({
@@ -242,13 +231,6 @@ export default function MarketplacePublicPage() {
   });
 
   const items = data?.items && data.items.length > 0 ? data.items : FALLBACK_MARKETPLACE_ITEMS;
-  const corpusCounts = researchCounts?.counts || RESEARCH_BASELINE;
-  const skillCounts = researchSkillCounts?.counts || {
-    categories: 0,
-    sources: 0,
-    sourceLinks: 0,
-    files: 0,
-  };
   const sourceGroups = researchSources?.categories || [];
   const skillFileItems = researchSkillFiles?.items || [];
 
@@ -368,47 +350,6 @@ export default function MarketplacePublicPage() {
               Create account
             </a>
           </div>
-        </motion.div>
-
-        <motion.div
-          className="mp-status-card"
-          initial={{ opacity: 0, scale: 0.97 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={sectionDelay(1)}
-        >
-          <div className="mp-status-top mp-status-top-solid">
-            <span className="mp-dot" />
-            <span>Live research corpus integrated</span>
-          </div>
-          <div className="mp-stat-grid">
-            <article>
-              <h3>{corpusCounts.categories}</h3>
-              <p>prompt categories</p>
-            </article>
-            <article>
-              <h3>{corpusCounts.sources}</h3>
-              <p>prompt sources</p>
-            </article>
-            <article>
-              <h3>{corpusCounts.sourceLinks.toLocaleString()}</h3>
-              <p>prompt links</p>
-            </article>
-            <article>
-              <h3>{corpusCounts.prompts.toLocaleString()}</h3>
-              <p>prompt records</p>
-            </article>
-            <article>
-              <h3>{skillCounts.sources.toLocaleString()}</h3>
-              <p>skill sources</p>
-            </article>
-            <article>
-              <h3>{skillCounts.files.toLocaleString()}</h3>
-              <p>skill files</p>
-            </article>
-          </div>
-          <p className="mp-status-note">
-            Live from TNF corpus storage with Crawl4AI ingestion and ongoing refresh support.
-          </p>
         </motion.div>
       </section>
 

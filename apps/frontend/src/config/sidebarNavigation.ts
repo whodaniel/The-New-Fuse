@@ -95,7 +95,7 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
   // NEXUS: Ecosystem & Knowledge
   { name: 'TNF Hub', href: '/hub', icon: Globe, section: 'nexus', access: 'authenticated' },
   {
-    name: 'Platform',
+    name: 'Marketplace',
     href: '/marketplace',
     icon: Package,
     section: 'nexus',

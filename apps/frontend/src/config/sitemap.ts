@@ -101,8 +101,8 @@ export const sitemap: SiteMapNode[] = [
   },
   {
     path: '/marketplace',
-    title: 'Platform Overview',
-    description: 'Public orientation page for product surfaces and navigation',
+    title: 'Marketplace',
+    description: 'Resource marketplace and library',
     requiresAuth: false,
   },
   {
