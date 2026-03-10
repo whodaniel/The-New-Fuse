@@ -20,3 +20,7 @@ have both `aria-label` and `title` attributes implemented (e.g.,
 ## 2024-03-05 - Missing ARIA Labels on List Creation Operations
 **Learning:** Core operations inside dynamically updating sections (like thread creation buttons within a list of threads) are critical targets for `aria-label` additions. Without them, screen readers may fail to distinctly identify the action or state of dynamic button components with icons. Additionally, when a creation action is happening (like creating a thread), disabling the button prevents unwanted duplicate form submissions while providing immediate UI feedback.
 **Action:** Ensure dynamic buttons in list controls, especially creation and multi-deletion actions, explicitly contain `aria-label`, `title`, and handle disabled loading states correctly.
+
+## 2025-03-10 - ARIA Labels on Historical Message Action Buttons
+**Learning:** Icon-only action buttons in chat history interactions (e.g., Edit, Save Changes, Cancel, and Play TTS) often lack descriptive `aria-label` or `title` attributes, making them confusing for screen reader users and those relying on native tooltips.
+**Action:** When working on chat interfaces or action bars with icon-only buttons, ensure that every action clearly states what it does using `aria-label` and `title` attributes. Dynamic buttons, like TTS, should also update their `aria-label` based on state (e.g., 'Play text-to-speech' vs 'Stop text-to-speech').

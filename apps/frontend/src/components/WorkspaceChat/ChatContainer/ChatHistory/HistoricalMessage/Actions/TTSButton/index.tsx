@@ -51,6 +51,7 @@ export default function TTSMessage({ slug, chatId, message }: TTSMessageProps): 
         data-tooltip-id="tooltip-tts"
         data-tooltip-content={isPlaying ? 'Stop text-to-speech' : 'Play text-to-speech'}
         className="text-white/40 hover:text-white/80"
+        aria-label={isPlaying ? 'Stop text-to-speech' : 'Play text-to-speech'}
       >
         {isPlaying ? <SpeakerX className="w-4 h-4" /> : <SpeakerHigh className="w-4 h-4" />}
       </button>

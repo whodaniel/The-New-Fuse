@@ -83,6 +83,8 @@ export function EditMessageForm({
         <button
           type="submit"
           className="px-2 py-1 text-xs text-white bg-primary-button rounded-md hover:bg-primary-button-hover"
+          aria-label="Save changes"
+          title="Save changes"
         >
           Save Changes
         </button>
@@ -90,6 +92,8 @@ export function EditMessageForm({
           type="reset"
           className="px-2 py-1 text-xs text-white/60 hover:text-white"
           onClick={() => setEditedMessage(message)}
+          aria-label="Cancel editing"
+          title="Cancel editing"
         >
           Cancel
         </button>
