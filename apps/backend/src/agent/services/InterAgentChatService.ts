@@ -1,6 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import * as crypto from 'crypto';
 import { RedisService } from '../../services/redis.service';
 import { AlertService } from './AlertService';
 import { MonitoringService } from './MonitoringService';
@@ -141,7 +142,8 @@ export class InterAgentChatService implements OnModuleInit {
    * Generate a unique message ID
    */
   private generateMessageId(): string {
-    return `msg_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    // SECURITY: Use cryptographically secure random values instead of Math.random()
+    return `msg_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
   }
 
   /**
