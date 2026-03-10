@@ -1,0 +1,38 @@
+{
+  "timestamp": "2026-03-09T13:24:13.989Z",
+  "api": {
+    "passed": 3,
+    "failed": 0,
+    "errors": []
+  },
+  "database": {
+    "passed": 4,
+    "failed": 0,
+    "errors": []
+  },
+  "services": {
+    "passed": 4,
+    "failed": 0,
+    "errors": []
+  },
+  "overall": {
+    "score": 100,
+    "status": "healthy"
+  },
+  "_metadata": {
+    "reportType": "integration-report",
+    "domain": "Observe",
+    "lifecycle": "production",
+    "owner": "integration-test-agent",
+    "description": "API endpoint, database, and cross-service health checks",
+    "canonicalJourney": "Incident -> Root Cause -> Mitigation -> Verification",
+    "phaseRelevance": [
+      "Phase 1: Product Metadata Foundation",
+      "Phase 4: System Integrity"
+    ],
+    "generatedAt": "2026-03-09T13:24:14.011Z",
+    "cycleNumber": null,
+    "version": "1.0.0",
+    "schema": "tnf-report-lifecycle-v1"
+  }
+}

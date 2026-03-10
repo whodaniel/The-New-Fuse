@@ -1,6 +1,6 @@
 # AI Landscape Report - 3/9/2026
 
-_Generated at: 2026-03-09T10:45:24.902Z_
+_Generated at: 2026-03-09T15:46:26.712Z_
 
 ## 🚀 Latest Verified Trends
 
@@ -20,37 +20,6 @@ _Generated at: 2026-03-09T10:45:24.902Z_
 BoClaw is an AI collaboration platform for developers an...
 
 - **Link**: [View Source](https://ift.tt/qR25Wax)
-
-### Alibaba Released Qwen3.5 for Free: 397 Billion Parameters and Context Up to 1 Million Tokens
-
-- **Source**: abit.ee
-- **Impact**: High
-- **Details**: Alibaba Released Qwen3.5 for Free: 397 Billion Parameters and
-  Context Up to 1 Million Tokens
-
-Search
-
-Alibaba added two powerful next-generation models to the Qwen Chat chatbot and
-mobile application — Qwen3.5-Plus and Qwen3.5-397B-A17B. Both are available for
-free and support text, images, and vide...
-
-- **Link**:
-  [View Source](https://abit.ee/en/artificial-intelligence/qwen35-alibaba-language-models-ai-moe-artificial-intelligence-chatbot-multimodal-machine-learning-en)
-
-### A research team from Tokyo University of Science has released AIs 'GPT-OSS Swallow' and 'Qwen3 Swallow' with enhanced Japanese language capabilities. - GIGAZINE
-
-- **Source**: gigazine.net
-- **Impact**: High
-- **Details**: A research team from Tokyo University of Science has released AIs
-  'GPT-OSS Swallow' and 'Qwen3 Swallow' with enhanced Japanese language
-  capabilities. - GIGAZINE
-
-Feb 24, 2026 21:00:00
-
-# A research team from Tokyo University of Science has released AIs 'GPT-OSS Swallow' and 'Qwen3 Swallow' with enha...
-
-- **Link**:
-  [View Source](https://gigazine.net/gsc_news/en/20260224-gptoss-qwen3-swallow-japanese-ai/)
 
 ### Steerling-8B: The First Inherently Interpretable Language Model
 
@@ -74,34 +43,138 @@ token it generates to i...
 - **Link**:
   [View Source](https://www.guidelabs.ai/post/steerling-8b-base-model-release/)
 
-### Tech 42 launches open-source AI Agent Starter Pack in AWS Marketplace, reducing production deployment time to minutes - Akron Beacon Journal - Press Releases
+### Google Launches TensorFlow 2.21 And LiteRT: Faster GPU Performance, New NPU Acceleration, And Seamless PyTorch Edge Deployment Upgrades - MarkTechPost
 
-- **Source**: beaconjournal.com
+- **Source**: marktechpost.com
 - **Impact**: High
-- **Details**: Tech 42 launches open-source AI Agent Starter Pack in AWS
-  Marketplace, reducing production deployment time to minutes - Akron Beacon
-  Journal - Press Releases
+- **Details**: Google Launches TensorFlow 2.21 And LiteRT: Faster GPU
+  Performance, New NPU Acceleration, And Seamless PyTorch Edge Deployment
+  Upgrades - MarkTechPost
 
-| This page contains press release content distributed by XPR Media. Members of
-the editorial and news staff of the USA TODAY Network were no...
+Discord Linkedin Reddit X
+
+- Sponsorship
+- AINews.sh
+- Voice AI
+- Tutorials
+- AI Agents
+- Open Source/Weights
+- Home
+
+Search
+
+NewsHub
+
+NewsHub
+
+Prem...
 
 - **Link**:
-  [View Source](https://www.beaconjournal.com/press-release/story/149027/tech-42-launches-open-source-ai-agent-starter-pack-in-aws-marketplace-reducing-production-deployment-time-to-minutes/)
+  [View Source](https://www.marktechpost.com/2026/03/06/google-launches-tensorflow-2-21-and-litert-faster-gpu-performance-new-npu-acceleration-and-seamless-pytorch-edge-deployment-upgrades/)
 
-### OpenAI Launches Operator: New API for Custom AI Agents
+### Use the new Gemma 3 on Vertex AI
 
-- **Source**: themunicheye.com
-- **Impact**: High
-- **Details**: OpenAI Launches Operator: New API for Custom AI Agents
+- **Source**: cloud.google.com
+- **Impact**: Medium
+- **Details**: Use the new Gemma 3 on Vertex AI | Google Cloud Blog
 
-Wed 12th Mar, 2025
+AI & Machine Learning
 
-OpenAI has unveiled a new API designed for developers to create and integrate
-their own AI agents, similar to the company's existing offerings such as the
-general-purpose Operator and the research-focused Deep Research agent...
+# Announcing Gemma 3 on Vertex AI
+
+March 12, 2025
+
+- Transform with Google Cloud
+
+##### Ivan Nardini
+
+Developer Relations Engineer
+
+##### Erwin Huizenga
+
+AI engineering and evangelism manager
+
+##### Try Nano Banana 2
+
+State...
 
 - **Link**:
-  [View Source](https://themunicheye.com/openai-launches-api-for-custom-ai-agent-development-12970)
+  [View Source](https://cloud.google.com/blog/products/ai-machine-learning/announcing-gemma-3-on-vertex-ai)
+
+### NVIDIA Unveils New Open Models, Data and Tools to Advance AI Across Every Industry | NVIDIA Blog
+
+- **Source**: blogs.nvidia.com
+- **Impact**: High
+- **Details**: NVIDIA Unveils New Open Models, Data and Tools to Advance AI
+  Across Every Industry | NVIDIA Blog
+
+Expanding the open model universe, NVIDIA today released new open models, data
+and tools to advance AI across every industry.
+
+These models — spanning the NVIDIA Nemotron family for agentic AI, the NVID...
+
+- **Link**:
+  [View Source](https://blogs.nvidia.com/blog/open-models-data-tools-accelerate-ai/)
+
+### 15 Free LLM APIs You Can Use in 2026
+
+- **Source**: analyticsvidhya.com
+- **Impact**: High
+- **Details**: -- 15 Free LLM APIs You Can Use in 2026
+
+Master Generative AI with 10+ Real-world Projects in 2025! -- d : h : m : s
+Download Projects --
+
+Interview Prep
+
+Career
+
+GenAI
+
+Prompt Engg
+
+ChatGPT
+
+LLM
+
+Langchain
+
+RAG
+
+AI Agents
+
+Machine Learning
+
+Deep Learning
+
+GenAI Tools
+
+LLMOps
+
+Python
+
+NLP
+
+SQL
+
+AIML...
+
+- **Link**:
+  [View Source](https://www.analyticsvidhya.com/blog/2026/01/top-free-llm-apis/)
+
+### Phi-4-reasoning-vision and the lessons of training a multimodal reasoning model - Microsoft Research
+
+- **Source**: microsoft.com
+- **Impact**: Medium
+- **Details**: Phi-4-reasoning-vision and the lessons of training a multimodal
+  reasoning model - Microsoft Research
+
+We use optional cookies to improve your experience on our websites, such as
+through social media connections, and to display personalized advertising based
+on your online activity. If you reject opt...
+
+- **Link**:
+  [View Source](https://www.microsoft.com/en-us/research/blog/phi-4-reasoning-vision-and-the-lessons-of-training-a-multimodal-reasoning-model/)
 
 ### Top 50+ Large Language Models (LLMs) in 2026
 
@@ -141,154 +214,183 @@ faceb...
 
 - **Link**: [View Source](https://explodingtopics.com/blog/list-of-llms)
 
-### The Best Open-Source LLMs in 2026
+### 10 Best Open-Source LLM Models (2025 Updated): Llama 4, Qwen 3 and DeepSeek R1
 
-- **Source**: bentoml.com
+- **Source**: huggingface.co
 - **Impact**: High
-- **Details**: The Best Open-Source LLMs in 2026
+- **Details**: 10 Best Open-Source LLM Models (2025 Updated): Llama 4, Qwen 3
+  and DeepSeek R1
 
-ModelsModels
+Back to Articles
 
-# The Best Open-Source LLMs in 2026
+# 10 Best Open-Source LLM Models (2025 Updated): Llama 4, Qwen 3 and DeepSeek R1
 
-Explore the best open-source LLMs and find answers to common FAQs about
-performance, inference optimization, and self-hosted deployment.
+Community Article Published November 13, 2025
 
-### Authors
+Upvote 11
 
-Sherlock Xu
+- +5
 
-### Last Updated
+Daya Shankar daya-shankar Follow
 
-March 4, 2026
-
-### Share
-
-The ra...
+The world of open sour...
 
 - **Link**:
-  [View Source](https://www.bentoml.com/blog/navigating-the-world-of-open-source-large-language-models)
+  [View Source](https://huggingface.co/blog/daya-shankar/open-source-llms)
 
-### 9 Top Open-Source LLMs for 2026 and Their Uses
+### Jamba2: Open Source LLMs for Enterprise Reliability
 
-- **Source**: datacamp.com
+- **Source**: ai21.com
 - **Impact**: High
-- **Details**: 9 Top Open-Source LLMs for 2026 and Their Uses | DataCamp
+- **Details**: Jamba2: Open Source LLMs for Enterprise Reliability
 
-Skip to main content
+- Skip to Footer
+- Skip to Main Content
+- Skip to Main Menu
 
-The current generative AI revolution wouldn’t be possible without the so-called
-large language models (LLMs). Based on transformers, a powerful neural
-architecture, LLMs are AI systems used to model and process human la...
+Back to Blog --
 
-- **Link**: [View Source](https://www.datacamp.com/blog/top-open-source-llms)
+Back to Blog
 
-### Tilde AI Releases TildeOpen LLM: An Open-Source Large Language Model with Over 30 Billion Parameters and Support Most European Languages - MarkTechPost
+Today, we are introducing Jamba2, an open source family of language models built
+for maximum reliability and steerability in the enterprise.
 
-- **Source**: marktechpost.com
+Built on our...
+
+- **Link**: [View Source](https://www.ai21.com/blog/introducing-jamba2/)
+
+### Z.ai Open-Sources GLM-4.7, a New Generation Large Language Model Built for Real Development Workflows
+
+- **Source**: businesswire.com
 - **Impact**: High
-- **Details**: Tilde AI Releases TildeOpen LLM: An Open-Source Large Language
-  Model with Over 30 Billion Parameters and Support Most European Languages -
-  MarkTechPost
+- **Details**: Z.ai Open-Sources GLM-4.7, a New Generation Large Language Model
+  Built for Real Development Workflows
 
-Home Technology AI Shorts Tilde AI Releases TildeOpen LLM: An Open-Source Large
-Language Model with Over...
+Dec 24, 2025 11:56 AM Eastern Standard Time
 
-- Staff
-- Python
-- Tech News
-- Open So...
+# Z.ai Open-Sources GLM-4.7, a New Generation Large Language Model Built for Real Development Workflows
+
+Share
+
+---
+
+GLM-4.7 ranks #6 in WebDev and is t...
+
 - **Link**:
-  [View Source](https://www.marktechpost.com/2025/09/06/tilde-ai-releases-tildeopen-llm-an-open-source-large-language-model-with-over-30-billion-parameters-and-support-most-european-languages/?amp=)
-
-### Open LLM Leaderboard 2025
-
-- **Source**: vellum.ai
-- **Impact**: High
-- **Details**: Open LLM Leaderboard 2025
-
-x
-
-# Vibe-code your agents with Vellum
-
-Go to agent builder
-
-Thank you! Your submission has been received!
-
-Oops! Something went wrong while submitting the form.
-
-Main Leaderboard Compare models
-
-Try Vellum
-
-updated
-
-19 Nov 2025
-
-# Open LLM Leaderboard
-
-This LLM leaderboar...
-
-- **Link**: [View Source](https://www.vellum.ai/open-llm-leaderboard)
+  [View Source](https://www.businesswire.com/news/home/20251223393714/en/Z.ai-Open-Sources-GLM-4.7-a-New-Generation-Large-Language-Model-Built-for-Real-Development-Workflows)
 
 ### Free AI API Models in 2026: Complete Guide to Zero-Cost AI Access - DEV Community
 
 - **Source**: dev.to
 - **Impact**: High
 - **Details**: Free AI API Models in 2026: Complete Guide to Zero-Cost AI
-  Access - DEV Community
+  Access - DEV Community Skip to content Navigation menu
 
-# Free AI API Models in 2026: Complete Guide to Zero-Cost AI Access
+DEV Community
 
-You don't need a credit card to start building with AI APIs. Between free tiers,
-open-source models, and signup credits, there are enough zero-cost...
+Search
+
+Powered by Algolia Search
+
+Log in
+
+Create account
+
+## DEV Community
+
+Close
+
+Add reaction
+
+Like
+
+Unicorn
+
+Exploding Head
+
+Raised Hands
+
+Fire Jump to Comments Save...
 
 - **Link**:
   [View Source](https://dev.to/lemondata_dev/free-ai-api-models-in-2026-complete-guide-to-zero-cost-ai-access-2nja)
 
-### Every Free AI API in 2026: The Complete Guide to Zero-Cost Inference | Awesome Agents
+### 15 Free LLM APIs You Can Use in 2026 - Analytics Vidhya
 
-- **Source**: awesomeagents.ai
+- **Source**: analyticsvidhya.com
 - **Impact**: High
-- **Details**: Every Free AI API in 2026: The Complete Guide to Zero-Cost
-  Inference | Awesome Agents
+- **Details**: 15 Free LLM APIs You Can Use in 2026
 
-You don't need to spend a dollar to run frontier AI models. That isn't a pitch
-or a caveat-laden promise. In 2026, multiple providers offer truly free API
-access to models that would have cost hundreds of dollars...
+Master Generative AI with 10+ Real-world Projects in 2025!
+
+- ######
+  d :
+- ######
+  h :
+- ######
+  m :
+- ######
+  s Download Projects
+
+Interview Prep Career GenAI Prompt Engg ChatGPT LLM Langchain RAG AI Agents
+Machine Learning Deep Learning GenAI Tools LLMOps Python N...
 
 - **Link**:
-  [View Source](https://awesomeagents.ai/tools/free-ai-inference-providers-2026/)
+  [View Source](https://www.analyticsvidhya.com/blog/2026/01/top-free-llm-apis/)
 
-### Top Free LLM Models You Can Use Without Token Caps - LinkedIn
+### National Supercomputing Internet Platform QwQ-32B API Interface Service is Online, Providing 1 Million Tokens for Free - AI-Artificial Intelligence-1ai.net
 
-- **Source**: linkedin.com
+- **Source**: 1ai.net
 - **Impact**: High
-- **Details**: Top Free LLM Models You Can Use Without Token Caps
+- **Details**: - productrecommend
+- News
+- Information
+- Headlines
+- Activity
+- Encyclopedia
+- Featured
+- AI Navigation
+- en_USEnglish
+- zh_CN简体中文
 
-AI is no longer just a futuristic concept, it’s part of our daily digital lives.
-Whether you’re a developer, student, content creator, or entrepreneur, large
-language models (LLMs) are powering everything from chatbots and summarizers to
-creative t...
+Article
+
+Article News Website navigation
+
+## {{userData.name}}Verify
+
+Article
+
+Comment
+
+Follow
+
+Follower
+
+_￥_{{role.user\_data.money}}
+
+{{role.user\_data.credit}}...
+
+- **Link**: [View Source](https://www.1ai.net/en/30340.html)
+
+### Free and Budget Models - Kilo
+
+- **Source**: kilo.ai
+- **Impact**: High
+- **Details**: Free and Budget Models
+
+Kilo CodeDOCS
+
+🌙GitHubSign in Contributing Help We&#x27;re replatforming our extensions on the
+new Kilo CLI. Contribute to the new CLI and pre-release extensions at
+Kilo-Org/kilocode.
+
+# Free and Budget Models
+
+**Why this matters:** AI model costs can add up quickly during dev...
 
 - **Link**:
-  [View Source](https://www.linkedin.com/pulse/top-free-llm-models-you-can-use-without-token-caps-ritesh-sharma-fs8lf)
-
-### Free AI Models on OpenRouter
-
-- **Source**: openrouter.ai
-- **Impact**: High
-- **Details**: Free AI Models on OpenRouter | OpenRouter
-
-Free AI Models on OpenRouter | OpenRouter
-
-# Free AI Models on OpenRouter
-
-Model rankings updated March 2026 based on real usage data. At OpenRouter, we
-believe that free models play a crucial role in democratizing access to AI.
-These models allow hundreds of...
-
-- **Link**: [View Source](https://openrouter.ai/collections/free-models)
+  [View Source](https://kilo.ai/docs/code-with-ai/agents/free-and-budget-models)
 
 ### Inference free trial--ModelArk-Byteplus
 
@@ -326,20 +428,36 @@ Model...
 
 - **Link**: [View Source](https://docs.byteplus.com/en/docs/ModelArk/1399514)
 
-### 4 Free Methods to use LLM APIs in Development | Leonardo Montini
+### Free AI Models on OpenRouter
 
-- **Source**: leonardomontini.dev
+- **Source**: openrouter.ai
 - **Impact**: High
-- **Details**: 4 Free Methods to use LLM APIs in Development | Leonardo Montini
-  --
+- **Details**: Free AI Models on OpenRouter | OpenRouter
 
-You might be in the situation I was the other day: I wanted to develop a small
-AI feature for learning purposes on my side project, but I didn’t want to pay
-for an api key.
+Free AI Models on OpenRouter | OpenRouter
 
-So I did some research: let me show you 4 different ways...
+# Free AI Models on OpenRouter
 
-- **Link**: [View Source](https://leonardomontini.dev/free-llm-api/)
+Model rankings updated March 2026 based on real usage data. At OpenRouter, we
+believe that free models play a crucial role in democratizing access to AI.
+These models allow hundreds of...
+
+- **Link**: [View Source](https://openrouter.ai/collections/free-models)
+
+### Qwen3.5-9B: Alibaba's New 9B Multimodal Model | TPS
+
+- **Source**: tpsreport.news
+- **Impact**: High
+- **Details**: model release
+
+# Alibaba releases Qwen3.5-9B, a multimodal 9B parameter model
+
+Alibaba has released Qwen3.5-9B, a 9-billion parameter multimodal language model
+capable of processing both images and text. The model is available under Apache
+2.0 license on Hugging Face with transformer-compatible arch...
+
+- **Link**:
+  [View Source](https://tpsreport.news/news/qwen-3-5-9b-alibaba-multimodal)
 
 ### Qwen 3.5 Models Now Live on Hugging Face: Breakthroughs in Multimodal AI | AI News
 
@@ -348,105 +466,104 @@ So I did some research: let me show you 4 different ways...
 - **Details**: Qwen 3.5 Models Now Live on Hugging Face: Breakthroughs in
   Multimodal AI | AI News
 
-AI Haberleri Logo AI Haberleri
+YAPAY ZEKA SPİKERİ
 
-AI Haberleri Logo
+### Qwen 3.5 Models Now Live on Hugging Face: Breakthroughs in Multimodal AI
 
-Menu Search news...searchSubscribeTRToggle theme Yapay Zeka
-Modellerivisibility10 views
+0:000:00
 
-# Qwen 3.5 Models Now Live on Hugging Face: Breakthroughs in Multimodal AI
+## summarize3-Point Summary
 
-Al...
-
+- 3The flagship Qwen3.5-35B-A3B model, now available for download and local
+  dep...
 - **Link**:
   [View Source](https://aihaberleri.org/en/news/qwen-35-models-now-live-on-hugging-face-breakthroughs-in-multimodal-ai)
 
-### Alibaba just released Qwen 3.5 Small models: a family of 0.8B to 9B parameters built for on-device applications - MarkTechPost
+### Multiverse Computing Opens Full Access to HyperNova 60B 2602 on Hugging Face
 
-- **Source**: marktechpost.com
+- **Source**: markets.financialcontent.com
 - **Impact**: High
-- **Details**: Alibaba just released Qwen 3.5 Small models: a family of 0.8B to
-  9B parameters built for on-device applications - MarkTechPost
+- **Details**: Multiverse Computing Opens Full Access to HyperNova 60B 2602 on
+  Hugging Face
 
-\*\* Discord
+Recent Quotes
 
-\*\* Linkedin
+View Full List
 
-\*\* Reddit
+My Watchlist
 
-\*\* X
+Create Watchlist
 
-\*\*
+Indicators
 
-- Home
-- Open Source/Weights
-- AI Agents
-- Tutorials
-- Voice AI
-- AINews.sh
-- Sponsorship ** Search LogoNewsHub **
+DJI
 
-\*\* LogoN...
+Nasdaq Composite
+
+SPX
+
+Gold
+
+Crude Oil
+
+Local Stocks
+
+WRALTechWire 30
+
+WRALTechWire 30
+
+Markets
+
+Stocks
+
+ETFs
+
+Tools
+
+Markets:
+
+Overview
+
+News...
 
 - **Link**:
-  [View Source](https://www.marktechpost.com/2026/03/02/alibaba-just-released-qwen-3-5-small-models-a-family-of-0-8b-to-9b-parameters-built-for-on-device-applications/)
-
-### Qwen3.5-9B: Alibaba's New 9B Multimodal Model | TPS
-
-- **Source**: tpsreport.news
-- **Impact**: High
-- **Details**: Qwen3.5-9B: Alibaba&#x27;s New 9B Multimodal Model | TPS
-
-TPSTokens Per Second
-
-model release
-
-# Alibaba releases Qwen3.5-9B, a multimodal 9B parameter model
-
-Alibaba has released Qwen3.5-9B, a 9-billion parameter multimodal language model
-capable of processing both images and text. The model is avail...
-
-- **Link**:
-  [View Source](https://tpsreport.news/news/qwen-3-5-9b-alibaba-multimodal)
+  [View Source](https://markets.financialcontent.com/wral/article/gnwcq-2026-2-24-multiverse-computing-opens-full-access-to-hypernova-60b-2602-on-hugging-face)
 
 ## 🎯 Swarm Action Items
 
 - [ ] **PRIORITY**: Assimilation: BoCloud Technology Releases BoClaw, the
       Extremely Easy-to-Install Personal AI Assistant | Digital More
-- [ ] **PRIORITY**: Assimilation: Alibaba Released Qwen3.5 for Free: 397 Billion
-      Parameters and Context Up to 1 Million Tokens
-- [ ] **PRIORITY**: Assimilation: A research team from Tokyo University of
-      Science has released AIs 'GPT-OSS Swallow' and 'Qwen3 Swallow' with
-      enhanced Japanese language capabilities. - GIGAZINE
 - [ ] **PRIORITY**: Assimilation: Steerling-8B: The First Inherently
       Interpretable Language Model
-- [ ] **PRIORITY**: Assimilation: Tech 42 launches open-source AI Agent Starter
-      Pack in AWS Marketplace, reducing production deployment time to minutes -
-      Akron Beacon Journal - Press Releases
-- [ ] **PRIORITY**: Assimilation: OpenAI Launches Operator: New API for Custom
-      AI Agents
+- [ ] **PRIORITY**: Assimilation: Google Launches TensorFlow 2.21 And LiteRT:
+      Faster GPU Performance, New NPU Acceleration, And Seamless PyTorch Edge
+      Deployment Upgrades - MarkTechPost
+- [ ] **PRIORITY**: Assimilation: Use the new Gemma 3 on Vertex AI
+- [ ] **PRIORITY**: Assimilation: NVIDIA Unveils New Open Models, Data and Tools
+      to Advance AI Across Every Industry | NVIDIA Blog
+- [ ] **PRIORITY**: Assimilation: 15 Free LLM APIs You Can Use in 2026
+- [ ] **PRIORITY**: Assimilation: Phi-4-reasoning-vision and the lessons of
+      training a multimodal reasoning model - Microsoft Research
 - [ ] **PRIORITY**: Assimilation: Top 50+ Large Language Models (LLMs) in 2026
-- [ ] **PRIORITY**: Assimilation: The Best Open-Source LLMs in 2026
-- [ ] **PRIORITY**: Assimilation: 9 Top Open-Source LLMs for 2026 and Their Uses
-- [ ] **PRIORITY**: Assimilation: Tilde AI Releases TildeOpen LLM: An
-      Open-Source Large Language Model with Over 30 Billion Parameters and
-      Support Most European Languages - MarkTechPost
-- [ ] **PRIORITY**: Assimilation: Open LLM Leaderboard 2025
+- [ ] **PRIORITY**: Assimilation: 10 Best Open-Source LLM Models (2025 Updated):
+      Llama 4, Qwen 3 and DeepSeek R1
+- [ ] **PRIORITY**: Assimilation: Jamba2: Open Source LLMs for Enterprise
+      Reliability
+- [ ] **PRIORITY**: Assimilation: Z.ai Open-Sources GLM-4.7, a New Generation
+      Large Language Model Built for Real Development Workflows
 - [ ] **PRIORITY**: Assimilation: Free AI API Models in 2026: Complete Guide to
       Zero-Cost AI Access - DEV Community
-- [ ] **PRIORITY**: Assimilation: Every Free AI API in 2026: The Complete Guide
-      to Zero-Cost Inference | Awesome Agents
-- [ ] **PRIORITY**: Assimilation: Top Free LLM Models You Can Use Without Token
-      Caps - LinkedIn
-- [ ] **PRIORITY**: Assimilation: Free AI Models on OpenRouter
+- [ ] **PRIORITY**: Assimilation: 15 Free LLM APIs You Can Use in 2026 -
+      Analytics Vidhya
+- [ ] **PRIORITY**: Assimilation: National Supercomputing Internet Platform
+      QwQ-32B API Interface Service is Online, Providing 1 Million Tokens for
+      Free - AI-Artificial Intelligence-1ai.net
+- [ ] **PRIORITY**: Assimilation: Free and Budget Models - Kilo
 - [ ] **PRIORITY**: Assimilation: Inference free trial--ModelArk-Byteplus
-- [ ] **PRIORITY**: Assimilation: 4 Free Methods to use LLM APIs in Development
-      | Leonardo Montini
-- [ ] **PRIORITY**: Assimilation: Qwen 3.5 Models Now Live on Hugging Face:
-      Breakthroughs in Multimodal AI | AI News
-- [ ] **PRIORITY**: Assimilation: Alibaba just released Qwen 3.5 Small models: a
-      family of 0.8B to 9B parameters built for on-device applications -
-      MarkTechPost
+- [ ] **PRIORITY**: Assimilation: Free AI Models on OpenRouter
 - [ ] **PRIORITY**: Assimilation: Qwen3.5-9B: Alibaba's New 9B Multimodal Model
       | TPS
+- [ ] **PRIORITY**: Assimilation: Qwen 3.5 Models Now Live on Hugging Face:
+      Breakthroughs in Multimodal AI | AI News
+- [ ] **PRIORITY**: Assimilation: Multiverse Computing Opens Full Access to
+      HyperNova 60B 2602 on Hugging Face

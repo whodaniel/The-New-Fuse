@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-/* eslint-disable no-console */
-const fs = require("node:fs");
-const path = require("node:path");
-const dotenv = require("dotenv");
-const postgres = require("postgres");
+
+const fs = require('node:fs');
+const path = require('node:path');
+const dotenv = require('dotenv');
+const postgres = require('postgres');
 
 const ROOT = process.cwd();
 
@@ -13,7 +13,7 @@ function exists(relPath) {
 
 function readJson(relPath) {
   try {
-    return JSON.parse(fs.readFileSync(path.join(ROOT, relPath), "utf8"));
+    return JSON.parse(fs.readFileSync(path.join(ROOT, relPath), 'utf8'));
   } catch {
     return null;
   }
@@ -22,7 +22,7 @@ function readJson(relPath) {
 function listFiles(relDir, matcher) {
   const out = [];
 
-  function walk(absDir, relPrefix = "") {
+  function walk(absDir, relPrefix = '') {
     if (!fs.existsSync(absDir)) return;
     const entries = fs.readdirSync(absDir, { withFileTypes: true });
     for (const entry of entries) {
@@ -55,9 +55,9 @@ function printMcpConfig(relPath) {
   console.log(`- ${relPath}: ${names.length} servers`);
   for (const name of names) {
     const def = json.mcpServers[name] || {};
-    const cmd = def.command || "<none>";
-    const args = Array.isArray(def.args) ? def.args.join(" ") : "";
-    console.log(`  - ${name}: ${cmd}${args ? ` ${args}` : ""}`);
+    const cmd = def.command || '<none>';
+    const args = Array.isArray(def.args) ? def.args.join(' ') : '';
+    console.log(`  - ${name}: ${cmd}${args ? ` ${args}` : ''}`);
   }
 }
 
@@ -65,22 +65,22 @@ function isLocalDatabaseUrl(url) {
   if (!url) return true;
   const lower = String(url).toLowerCase();
   return (
-    lower.includes("localhost") ||
-    lower.includes("127.0.0.1") ||
-    lower.includes("::1") ||
-    lower.startsWith("sqlite:")
+    lower.includes('localhost') ||
+    lower.includes('127.0.0.1') ||
+    lower.includes('::1') ||
+    lower.startsWith('sqlite:')
   );
 }
 
 function printUsage() {
-  console.log("Usage: node scripts/tnf-onboard.cjs [options]");
-  console.log("");
-  console.log("Options:");
-  console.log("  -h, --help                Show this help");
-  console.log("      --allow-local-db      Set TNF_ALLOW_LOCAL_DB=1 for this run");
-  console.log("      --require-cloud-db    Set TNF_REQUIRE_CLOUD_DB=1 for this run");
-  console.log("      --no-require-cloud-db Set TNF_REQUIRE_CLOUD_DB=0 for this run");
-  console.log("      --database-url <url>  Override DATABASE_URL for this run");
+  console.log('Usage: node scripts/tnf-onboard.cjs [options]');
+  console.log('');
+  console.log('Options:');
+  console.log('  -h, --help                Show this help');
+  console.log('      --allow-local-db      Set TNF_ALLOW_LOCAL_DB=1 for this run');
+  console.log('      --require-cloud-db    Set TNF_REQUIRE_CLOUD_DB=1 for this run');
+  console.log('      --no-require-cloud-db Set TNF_REQUIRE_CLOUD_DB=0 for this run');
+  console.log('      --database-url <url>  Override DATABASE_URL for this run');
 }
 
 function parseArgs(argv) {
@@ -89,41 +89,41 @@ function parseArgs(argv) {
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
 
-    if (arg === "--") {
+    if (arg === '--') {
       continue;
     }
 
-    if (arg === "-h" || arg === "--help") {
+    if (arg === '-h' || arg === '--help') {
       return { help: true, envOverrides };
     }
 
-    if (arg === "--allow-local-db") {
-      envOverrides.TNF_ALLOW_LOCAL_DB = "1";
+    if (arg === '--allow-local-db') {
+      envOverrides.TNF_ALLOW_LOCAL_DB = '1';
       continue;
     }
 
-    if (arg === "--require-cloud-db") {
-      envOverrides.TNF_REQUIRE_CLOUD_DB = "1";
+    if (arg === '--require-cloud-db') {
+      envOverrides.TNF_REQUIRE_CLOUD_DB = '1';
       continue;
     }
 
-    if (arg === "--no-require-cloud-db") {
-      envOverrides.TNF_REQUIRE_CLOUD_DB = "0";
+    if (arg === '--no-require-cloud-db') {
+      envOverrides.TNF_REQUIRE_CLOUD_DB = '0';
       continue;
     }
 
-    if (arg === "--database-url") {
+    if (arg === '--database-url') {
       const next = argv[i + 1];
       if (!next) {
-        throw new Error("Missing value for --database-url");
+        throw new Error('Missing value for --database-url');
       }
       envOverrides.DATABASE_URL = next;
       i += 1;
       continue;
     }
 
-    if (arg.startsWith("--database-url=")) {
-      envOverrides.DATABASE_URL = arg.slice("--database-url=".length);
+    if (arg.startsWith('--database-url=')) {
+      envOverrides.DATABASE_URL = arg.slice('--database-url='.length);
       continue;
     }
 
@@ -134,15 +134,15 @@ function parseArgs(argv) {
 }
 
 function resolveDatabaseConfig() {
-  const databaseUrl = process.env.DATABASE_URL || "";
-  const allowLocal = process.env.TNF_ALLOW_LOCAL_DB === "1";
-  const cloudRequired = process.env.TNF_REQUIRE_CLOUD_DB !== "0";
+  const databaseUrl = process.env.DATABASE_URL || '';
+  const allowLocal = process.env.TNF_ALLOW_LOCAL_DB === '1';
+  const cloudRequired = process.env.TNF_REQUIRE_CLOUD_DB !== '0';
 
   if (!databaseUrl) {
     return {
       ok: false,
-      reason: "DATABASE_URL is not set",
-      databaseUrl: "",
+      reason: 'DATABASE_URL is not set',
+      databaseUrl: '',
       cloudRequired,
     };
   }
@@ -150,7 +150,7 @@ function resolveDatabaseConfig() {
   if (cloudRequired && !allowLocal && isLocalDatabaseUrl(databaseUrl)) {
     return {
       ok: false,
-      reason: "DATABASE_URL points to local DB but cloud-rooted mode is required",
+      reason: 'DATABASE_URL points to local DB but cloud-rooted mode is required',
       databaseUrl,
       cloudRequired,
     };
@@ -160,14 +160,14 @@ function resolveDatabaseConfig() {
 }
 
 async function writeRuntimeStateSnapshot() {
-  dotenv.config({ path: path.join(ROOT, ".env.local") });
-  dotenv.config({ path: path.join(ROOT, ".env") });
+  dotenv.config({ path: path.join(ROOT, '.env.local') });
+  dotenv.config({ path: path.join(ROOT, '.env') });
 
   const dbConfig = resolveDatabaseConfig();
   if (!dbConfig.ok) {
     console.log(`- .agent/runtime-state.json: skipped (${dbConfig.reason})`);
     if (dbConfig.cloudRequired) {
-      console.log("- Hint: set cloud DATABASE_URL or override with TNF_ALLOW_LOCAL_DB=1");
+      console.log('- Hint: set cloud DATABASE_URL or override with TNF_ALLOW_LOCAL_DB=1');
     }
     return;
   }
@@ -209,7 +209,7 @@ async function writeRuntimeStateSnapshot() {
     ]);
 
     const snapshot = {
-      source: "tnf_v2",
+      source: 'tnf_v2',
       generatedAt: new Date().toISOString(),
       workspace: ROOT,
       counts: {
@@ -226,7 +226,7 @@ async function writeRuntimeStateSnapshot() {
       sessions,
     };
 
-    const outPath = path.join(ROOT, ".agent", "runtime-state.json");
+    const outPath = path.join(ROOT, '.agent', 'runtime-state.json');
     fs.writeFileSync(outPath, JSON.stringify(snapshot, null, 2));
 
     console.log(
@@ -234,7 +234,7 @@ async function writeRuntimeStateSnapshot() {
     );
   } catch (error) {
     console.log(
-      `- .agent/runtime-state.json: skipped (DB unavailable: ${error?.message || "unknown error"})`
+      `- .agent/runtime-state.json: skipped (DB unavailable: ${error?.message || 'unknown error'})`
     );
   } finally {
     await sql.end({ timeout: 1 });
@@ -258,69 +258,70 @@ async function main() {
 
   Object.assign(process.env, parsed.envOverrides);
 
-  if (!exists(".agent")) {
-    console.error("This command must run from TNF repo root (missing .agent/).");
+  if (!exists('.agent')) {
+    console.error('This command must run from TNF repo root (missing .agent/).');
     process.exit(1);
   }
 
-  console.log("TNF Session Bootstrap");
-  console.log(`Workspace: ${ROOT}`);
+  console.log('TNF Session Bootstrap');
+  console.log('Workspace: /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse');
 
-  printHeader("Frontload Checklist");
+  printHeader('Frontload Checklist');
   [
-    ".agent/SYSTEM_PROMPT.md",
-    ".agent/context/resource-map.md",
-    ".agent/context/agent-onboarding.md",
-    ".agent/workflows/frontload.md",
-    ".agent/handoff_notes.txt",
-  ].forEach((p) => console.log(`- ${p}: ${exists(p) ? "present" : "missing"}`));
+    '.agent/SYSTEM_PROMPT.md',
+    '.agent/context/resource-map.md',
+    '.agent/context/agent-onboarding.md',
+    '.agent/workflows/frontload.md',
+    '.agent/handoff_notes.txt',
+  ].forEach((p) => console.log(`- ${p}: ${exists(p) ? 'present' : 'missing'}`));
 
-  printHeader("Specialized Agent Files");
-  const tnfAgents = listFiles(".agent/agents", (f) => f.endsWith(".md"));
-  const claudeAgents = listFiles(".claude/agents", (f) => f.endsWith(".md"));
+  printHeader('Specialized Agent Files');
+  const tnfAgents = listFiles('.agent/agents', (f) => f.endsWith('.md'));
+  const claudeAgents = listFiles('.claude/agents', (f) => f.endsWith('.md'));
   console.log(`- .agent/agents: ${tnfAgents.length}`);
   console.log(`- .claude/agents: ${claudeAgents.length}`);
-  console.log(`- .claude/commands: ${listFiles(".claude/commands", (f) => f.endsWith(".md")).length}`);
-  console.log(`- .gemini files: ${listFiles(".gemini", () => true).length}`);
+  console.log(
+    `- .claude/commands: ${listFiles('.claude/commands', (f) => f.endsWith('.md')).length}`
+  );
+  console.log(`- .gemini files: ${listFiles('.gemini', () => true).length}`);
 
-  printHeader("Skills");
-  const tnfSkills = listFiles(".agent/skills", (f) => path.basename(f) === "SKILL.md");
-  const claudeSkills = listFiles(".claude/skills", (f) => f.endsWith(".md"));
+  printHeader('Skills');
+  const tnfSkills = listFiles('.agent/skills', (f) => path.basename(f) === 'SKILL.md');
+  const claudeSkills = listFiles('.claude/skills', (f) => f.endsWith('.md'));
   console.log(`- .agent/skills SKILL.md count: ${tnfSkills.length}`);
   console.log(`- .claude/skills count: ${claudeSkills.length}`);
-  console.log("- Sample TNF skills:");
+  console.log('- Sample TNF skills:');
   tnfSkills.slice(0, 15).forEach((p) => console.log(`  - ${path.dirname(p)}`));
 
-  printHeader("MCP Config Inventory");
+  printHeader('MCP Config Inventory');
   [
-    "data/mcp_config.json",
-    "tools/config-files/mcp_config.json",
-    "tools/config-files/enhanced_mcp_config.json",
-    "packages/jules-skill/mcp-config.example.json",
+    'tools/config-files/mcp_config.json',
+    'tools/config-files/enhanced_mcp_config.json',
+    'packages/jules-skill/mcp-config.example.json',
   ].forEach(printMcpConfig);
 
-  printHeader("MCP Server Code Paths");
+  printHeader('MCP Server Code Paths');
   [
-    "src/mcp/server.ts",
-    "src/mcp/enhanced-tnf-mcp-server.ts",
-    "src/mcp/complete-api-mcp-server.ts",
-    "tools/relay-mcp-server/index.js",
-    "apps/backend/src/modules/mcp/mcp-server.service.ts",
-    "apps/mcp-servers/tnf-network-mcp/src/index.ts",
-    "apps/mcp-servers/devops-bridge/src/index.ts",
-  ].forEach((p) => console.log(`- ${p}: ${exists(p) ? "present" : "missing"}`));
+    'src/mcp/server.ts',
+    'src/mcp/enhanced-tnf-mcp-server.ts',
+    'src/mcp/complete-api-mcp-server.ts',
+    'tools/relay-mcp-server/index.js',
+    'apps/backend/src/modules/mcp/mcp-server.service.ts',
+    'apps/mcp-servers/tnf-network-mcp/src/index.ts',
+    'apps/mcp-servers/devops-bridge/src/index.ts',
+  ].forEach((p) => console.log(`- ${p}: ${exists(p) ? 'present' : 'missing'}`));
 
-  printHeader("Runtime Snapshot");
+  printHeader('Runtime Snapshot');
   await writeRuntimeStateSnapshot();
 
-  printHeader("How To Start New Sessions");
-  console.log("- Run: ./tnf onboard");
-  console.log("- Alt: pnpm run tnf -- onboard");
-  console.log("- Read: AGENTS.md");
-  console.log("- Optional shell auto-bootstrap: docs/TNF_SESSION_ONBOARDING.md");
+  printHeader('How To Start New Sessions');
+  console.log('- Run: ./tnf onboard');
+  console.log('- Alt: pnpm run tnf -- onboard');
+  console.log('- Read: AGENTS.md');
+  console.log('- Optional shell auto-bootstrap: docs/TNF_SESSION_ONBOARDING.md');
 }
 
 main().catch((error) => {
-  console.error(`Bootstrap failed: ${error?.message || "unknown error"}`);
+  console.error(`Bootstrap failed: ${error?.message || 'unknown error'}`);
   process.exit(1);
 });
