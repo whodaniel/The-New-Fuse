@@ -1,8 +1,8 @@
 {
   "summary": {
-    "generatedAt": "2026-03-09T06:23:34.711Z",
-    "scannedFiles": 1168,
-    "totalLinks": 409,
+    "generatedAt": "2026-03-10T11:27:43.116Z",
+    "scannedFiles": 1170,
+    "totalLinks": 411,
     "brokenLinks": 0,
     "byReason": {}
   },
@@ -1329,13 +1329,13 @@
     },
     {
       "source": "src/pages/auth/OAuthCallback.tsx",
-      "link": "/auth/login",
+      "link": "/dashboard",
       "status": "ok",
       "reason": "internal"
     },
     {
       "source": "src/pages/auth/OAuthCallback.tsx",
-      "link": "/dashboard",
+      "link": "/auth/login",
       "status": "ok",
       "reason": "internal"
     },
@@ -2319,15 +2319,15 @@
     },
     {
       "source": "public/visualizations/QUICKSTART.html",
-      "link": "templates/visualization-template.html",
+      "link": "templates/",
       "status": "ok",
-      "reason": "relative-file"
+      "reason": "relative-directory-index"
     },
     {
       "source": "public/visualizations/QUICKSTART.html",
-      "link": "examples/minimal-example.html",
+      "link": "examples/",
       "status": "ok",
-      "reason": "relative-file"
+      "reason": "relative-directory-index"
     },
     {
       "source": "public/visualizations/README.html",
@@ -2460,6 +2460,18 @@
       "link": "#docs",
       "status": "anchor",
       "reason": "anchor"
+    },
+    {
+      "source": "public/visualizations/examples/index.html",
+      "link": "/visualizations/QUICKSTART.html",
+      "status": "ok",
+      "reason": "internal"
+    },
+    {
+      "source": "public/visualizations/templates/index.html",
+      "link": "/visualizations/QUICKSTART.html",
+      "status": "ok",
+      "reason": "internal"
     }
   ],
   "broken": []
