@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui/premium';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useEffect, useState } from 'react';
+import React from 'react';
 import { webSocketService } from '../services/websocket';
 
 interface ChatMessage {
@@ -11,7 +12,23 @@ interface ChatMessage {
   content: string;
 }
 
-export function ChatRoom({ roomId, agents }: { roomId: string; agents: any[] }) {
+
+// ⚡ Bolt: Extract message item and wrap in React.memo to prevent O(n) re-renders
+// during frequent state updates like typing in the message input.
+const MessageItem = React.memo<{ msg: ChatMessage }>(({ msg }) => (
+  <div className="flex items-start space-x-2 mb-4">
+    <Avatar>
+      <AvatarImage src={msg.agent.avatar} alt={msg.agent.name} />
+      <AvatarFallback>{msg.agent.name[0]}</AvatarFallback>
+    </Avatar>
+    <div>
+      <p className="font-semibold">{msg.agent.name}</p>
+      <p>{msg.content}</p>
+    </div>
+  </div>
+));
+
+export function ChatRoom({ roomId, agents: _agents }: { roomId: string; agents: any[] }) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
 
@@ -36,16 +53,7 @@ export function ChatRoom({ roomId, agents }: { roomId: string; agents: any[] }) 
       <div className="flex-grow flex flex-col">
         <ScrollArea className="flex-grow mb-4">
           {messages.map((msg, index) => (
-            <div key={index} className="flex items-start space-x-2 mb-4">
-              <Avatar>
-                <AvatarImage src={msg.agent.avatar} alt={msg.agent.name} />
-                <AvatarFallback>{msg.agent.name[0]}</AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="font-semibold">{msg.agent.name}</p>
-                <p>{msg.content}</p>
-              </div>
-            </div>
+            <MessageItem key={index} msg={msg} />
           ))}
         </ScrollArea>
         <div className="flex space-x-2">
