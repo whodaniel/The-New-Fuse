@@ -1,7 +1,7 @@
 import { OnQueueActive, OnQueueCompleted, OnQueueFailed, Process, Processor } from '@nestjs/bull';
 import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService } from '@the-new-fuse/database';
-import { agents, transactions, wallets, users } from '@the-new-fuse/database/drizzle/schema';
+import { agents, transactions, users, wallets } from '@the-new-fuse/database/drizzle/schema';
 import { Job } from 'bull';
 import { and, count, eq, gte, inArray, isNull, sql } from 'drizzle-orm';
 import { SystemMetricsService } from '../../modules/system-metrics/system-metrics.service';
@@ -177,7 +177,7 @@ export class ReportGenerationProcessor {
     this.logger.debug(`Generating agent performance report for user ${userId}`);
 
     try {
-        const result = await this.databaseService.client.execute(sql`
+      const result = await this.db.client.execute(sql`
             SELECT
                 COUNT(DISTINCT a.id)::int as "totalAgents",
                 COALESCE(AVG(EXTRACT(EPOCH FROM (we.completed_at - we.started_at)) * 1000), 0)::float as "averageExecutionTime",
@@ -196,26 +196,29 @@ export class ReportGenerationProcessor {
             WHERE a.user_id = ${userId} AND a.deleted_at IS NULL
         `);
 
-        const stats = result[0] || {
-            totalAgents: 0,
-            averageExecutionTime: 0,
-            successRate: 0,
-            failureRate: 0,
-            totalExecutions: 0
-        };
+      const stats = result[0] || {
+        totalAgents: 0,
+        averageExecutionTime: 0,
+        successRate: 0,
+        failureRate: 0,
+        totalExecutions: 0,
+      };
 
-        return {
-          recordCount: stats.totalAgents,
-          data: {
-            totalAgents: stats.totalAgents,
-            averageExecutionTime: Math.round(stats.averageExecutionTime),
-            successRate: parseFloat(Number(stats.successRate).toFixed(2)),
-            failureRate: parseFloat(Number(stats.failureRate).toFixed(2)),
-          },
-        };
+      return {
+        recordCount: stats.totalAgents,
+        data: {
+          totalAgents: stats.totalAgents,
+          averageExecutionTime: Math.round(Number(stats.averageExecutionTime || 0)),
+          successRate: parseFloat(Number(stats.successRate).toFixed(2)),
+          failureRate: parseFloat(Number(stats.failureRate).toFixed(2)),
+        },
+      };
     } catch (error) {
-        this.logger.error(`Failed to generate agent performance report: ${error.message}`, error.stack);
-        throw error;
+      this.logger.error(
+        `Failed to generate agent performance report: ${(error as Error).message}`,
+        (error as Error).stack
+      );
+      throw error;
     }
   }
 

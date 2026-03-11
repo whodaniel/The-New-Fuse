@@ -1,19 +1,18 @@
-import { Controller, Post, Get, Body, Param, Query, UseGuards } from '@nestjs/common';
-import { 
-  MassOptimizationConfig, 
-  TopologyOptimizationConfig,
+import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import {
+  MassOptimizationConfig,
   OptimizationJob,
-  WorkflowTopology 
+  TopologyOptimizationConfig,
 } from '@the-new-fuse/types';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { AggregateService } from './building-blocks/aggregate.service';
+import { DebateService } from './building-blocks/debate.service';
+import { ReflectService } from './building-blocks/reflect.service';
 import { MassOrchestrationService } from './mass-orchestration.service';
 import { PromptOptimizerService } from './prompt-optimizer.service';
 import { TopologyOptimizerService } from './topology-optimizer.service';
 import { WorkflowPromptOptimizerService } from './workflow-prompt-optimizer.service';
-import { AggregateService } from './building-blocks/aggregate.service';
-import { ReflectService } from './building-blocks/reflect.service';
-import { DebateService } from './building-blocks/debate.service';
-import { AuthGuard } from '@nestjs/passport';
-import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 
 @Controller('mass')
 @UseGuards(AuthGuard('jwt'))
@@ -59,7 +58,10 @@ export class MassController {
     @CurrentUser() user: any
   ): Promise<{ job: OptimizationJob }> {
     const optimizationConfig = { ...config, userId: user.id };
-    const job = await this.massOrchestration.optimizeWorkflowPrompts(topologyId, optimizationConfig);
+    const job = await this.massOrchestration.optimizeWorkflowPrompts(
+      topologyId,
+      optimizationConfig
+    );
     return { job };
   }
 
@@ -86,9 +88,7 @@ export class MassController {
 
   // Get optimization job status
   @Get('jobs/:jobId')
-  async getOptimizationJob(
-    @Param('jobId') jobId: string
-  ): Promise<OptimizationJob> {
+  async getOptimizationJob(@Param('jobId') jobId: string): Promise<OptimizationJob> {
     return this.massOrchestration.getOptimizationJob(jobId);
   }
 
@@ -118,7 +118,8 @@ export class MassController {
   // Execute MASS building blocks
   @Post('execute/aggregate')
   async executeAggregate(
-    @Body() request: {
+    @Body()
+    request: {
       agentIds: string[];
       input: any;
       aggregationStrategy: 'majority_vote' | 'weighted_average' | 'consensus';
@@ -126,20 +127,24 @@ export class MassController {
     },
     @CurrentUser() user: any
   ): Promise<{ result: any; executionMetrics: any }> {
-    return this.aggregateService.execute(
-      request.agentIds,
-      request.input,
-      {
-        aggregationStrategy: request.aggregationStrategy,
-        parallelExecution: request.parallelExecution || true,
-        userId: user.id
-      }
-    );
+    const aggregationMethod =
+      request.aggregationStrategy === 'majority_vote'
+        ? 'majority'
+        : request.aggregationStrategy === 'weighted_average'
+          ? 'weighted'
+          : 'consensus';
+    const agentId = request.agentIds[0];
+    const inputs = Array.isArray(request.input) ? request.input : [request.input];
+    return this.aggregateService.execute(agentId, inputs, {
+      aggregationMethod,
+      userId: user.id,
+    });
   }
 
   @Post('execute/reflect')
   async executeReflect(
-    @Body() request: {
+    @Body()
+    request: {
       predictorAgentId: string;
       reflectorAgentId: string;
       input: any;
@@ -149,17 +154,19 @@ export class MassController {
   ): Promise<{ result: any; executionMetrics: any }> {
     return this.reflectService.execute(
       request.predictorAgentId,
+      request.reflectorAgentId,
       request.input,
       {
         maxRounds: request.maxRounds || 3,
-        userId: user.id
+        userId: user.id,
       }
     );
   }
 
   @Post('execute/debate')
   async executeDebate(
-    @Body() request: {
+    @Body()
+    request: {
       debaterAgentIds: string[];
       input: any;
       debateRounds?: number;
@@ -167,21 +174,18 @@ export class MassController {
     },
     @CurrentUser() user: any
   ): Promise<{ result: any; executionMetrics: any }> {
-    return this.debateService.execute(
-      request.debaterAgentIds,
-      request.input,
-      {
-        debateRounds: request.debateRounds || 3,
-        votingStrategy: request.votingStrategy || 'majority',
-        userId: user.id
-      }
-    );
+    return this.debateService.execute(request.debaterAgentIds, request.input, {
+      debateRounds: request.debateRounds || 3,
+      votingStrategy: request.votingStrategy || 'majority',
+      userId: user.id,
+    });
   }
 
   // Validation and testing endpoints
   @Post('validate/dataset')
   async createValidationDataset(
-    @Body() request: {
+    @Body()
+    request: {
       name: string;
       description?: string;
       items: Array<{ input: any; expectedOutput: any }>;
@@ -193,9 +197,7 @@ export class MassController {
   }
 
   @Get('validate/datasets')
-  async getUserValidationDatasets(
-    @CurrentUser() user: any
-  ): Promise<{ datasets: any[] }> {
+  async getUserValidationDatasets(@CurrentUser() user: any): Promise<{ datasets: any[] }> {
     // Implementation would return user's validation datasets
     return { datasets: [] };
   }
@@ -215,7 +217,7 @@ export class MassController {
     return {
       performanceHistory: [],
       improvementTrend: 0,
-      averageMetrics: {}
+      averageMetrics: {},
     };
   }
 
@@ -232,7 +234,7 @@ export class MassController {
     return {
       nodePerformance: {},
       bottlenecks: [],
-      optimizationSuggestions: []
+      optimizationSuggestions: [],
     };
   }
 

@@ -54,7 +54,7 @@ export class RequestLoggerMiddleware implements NestMiddleware {
             ip: ip || req.socket.remoteAddress || '',
             userAgent,
             userId,
-          })
+          } as any)
           .catch((err) => {
             this.logger.error(`Failed to log request to DB: ${err.message}`);
           });

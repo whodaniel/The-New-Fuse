@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Delete, Body, Param, UseGuards, Logger } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Logger, Param, Post, UseGuards } from '@nestjs/common';
+import { AdminGuard } from '../../auth/admin.guard';
+import { MCPA2ABridge } from './mcp-a2a-bridge.service';
 import { MCPServerService } from './mcp-server.service';
 import { MCPToolRegistry } from './mcp-tool-registry.service';
-import { MCPA2ABridge } from './mcp-a2a-bridge.service';
-import { AdminGuard } from '../../auth/admin.guard';
 
 interface McpServerConfig {
   name: string;
@@ -30,7 +30,7 @@ interface McpClientConfig {
 @UseGuards(AdminGuard)
 export class AdminMCPController {
   private readonly logger = new Logger(AdminMCPController.name);
-  
+
   // In-memory storage for servers/clients (would be database in production)
   private servers: Map<string, McpServerConfig & { id: string; status: string }> = new Map();
   private clients: Map<string, McpClientConfig & { id: string; status: string }> = new Map();
@@ -38,7 +38,7 @@ export class AdminMCPController {
   constructor(
     private readonly mcpServer: MCPServerService,
     private readonly toolRegistry: MCPToolRegistry,
-    private readonly bridge: MCPA2ABridge,
+    private readonly bridge: MCPA2ABridge
   ) {}
 
   // ==================== SERVER MANAGEMENT ====================
@@ -50,8 +50,10 @@ export class AdminMCPController {
   async listServers() {
     const servers = Array.from(this.servers.values());
     const status: Record<string, string> = {};
-    servers.forEach(s => { status[s.id] = s.status; });
-    
+    servers.forEach((s) => {
+      status[s.id] = s.status;
+    });
+
     return { servers, status };
   }
 
@@ -104,11 +106,11 @@ export class AdminMCPController {
     if (!server) {
       return { error: 'Server not found', id };
     }
-    
+
     if (server.status === 'running') {
       await this.stopServer(id);
     }
-    
+
     this.servers.delete(id);
     this.logger.log(`Deleted MCP server: ${id}`);
     return { success: true, id };
@@ -123,7 +125,7 @@ export class AdminMCPController {
     if (!server) {
       return { error: 'Server not found', id };
     }
-    
+
     server.status = 'running';
     this.servers.set(id, server);
     this.logger.log(`Started MCP server: ${id}`);
@@ -139,7 +141,7 @@ export class AdminMCPController {
     if (!server) {
       return { error: 'Server not found', id };
     }
-    
+
     server.status = 'stopped';
     this.servers.set(id, server);
     this.logger.log(`Stopped MCP server: ${id}`);
@@ -155,15 +157,16 @@ export class AdminMCPController {
     if (!server) {
       return { error: 'Server not found', id };
     }
-    
+
     // Register tool in the tool registry
-    this.toolRegistry.registerTool({
+    const toolDefinition: any = {
       name: tool.name,
       description: tool.description,
-      parameters: tool.parameters,
-      handler: async () => ({ result: 'Tool executed' }),
-    });
-    
+      parameters: tool.parameters ?? tool.inputSchema ?? {},
+      handler: async (params: any) => ({ result: 'Tool executed', params }),
+    };
+    this.toolRegistry.registerTool(toolDefinition);
+
     this.logger.log(`Registered tool ${tool.name} on server ${id}`);
     return { success: true, tool };
   }
@@ -177,7 +180,7 @@ export class AdminMCPController {
     if (!server) {
       return { error: 'Server not found', id };
     }
-    
+
     this.logger.log(`Registered resource ${resource.uri} on server ${id}`);
     return { success: true, resource };
   }
@@ -191,7 +194,7 @@ export class AdminMCPController {
     if (!server) {
       return { error: 'Server not found', id };
     }
-    
+
     this.logger.log(`Registered prompt ${prompt.name} on server ${id}`);
     return { success: true, prompt };
   }
@@ -205,8 +208,10 @@ export class AdminMCPController {
   async listClients() {
     const clients = Array.from(this.clients.values());
     const status: Record<string, string> = {};
-    clients.forEach(c => { status[c.id] = c.status; });
-    
+    clients.forEach((c) => {
+      status[c.id] = c.status;
+    });
+
     return { clients, status };
   }
 
@@ -259,11 +264,11 @@ export class AdminMCPController {
     if (!client) {
       return { error: 'Client not found', id };
     }
-    
+
     if (client.status === 'connected') {
       await this.disconnectClient(id);
     }
-    
+
     this.clients.delete(id);
     this.logger.log(`Deleted MCP client: ${id}`);
     return { success: true, id };
@@ -278,7 +283,7 @@ export class AdminMCPController {
     if (!client) {
       return { error: 'Client not found', id };
     }
-    
+
     client.status = 'connected';
     this.clients.set(id, client);
     this.logger.log(`Connected MCP client: ${id}`);
@@ -294,7 +299,7 @@ export class AdminMCPController {
     if (!client) {
       return { error: 'Client not found', id };
     }
-    
+
     client.status = 'disconnected';
     this.clients.set(id, client);
     this.logger.log(`Disconnected MCP client: ${id}`);
@@ -310,10 +315,10 @@ export class AdminMCPController {
     if (!client) {
       return { error: 'Client not found', id };
     }
-    
+
     // Return capabilities from the tool registry
     const tools = this.toolRegistry.getAllTools();
-    
+
     return {
       server: {
         id: client.id,
@@ -321,7 +326,7 @@ export class AdminMCPController {
         version: '1.0.0',
         description: 'MCP Client',
       },
-      capabilities: tools.map(t => ({
+      capabilities: tools.map((t: any) => ({
         name: t.name,
         description: t.description,
         parameters: t.parameters,
@@ -336,20 +341,21 @@ export class AdminMCPController {
   async callTool(
     @Param('id') id: string,
     @Param('toolName') toolName: string,
-    @Body() params: any,
+    @Body() params: any
   ) {
     const client = this.clients.get(id);
     if (!client) {
       return { error: 'Client not found', id };
     }
-    
+
     const tool = this.toolRegistry.getTool(toolName);
     if (!tool) {
       return { error: 'Tool not found', toolName };
     }
-    
+
     try {
-      const result = await tool.handler(params);
+      const handler = (tool as any).handler as (input: any) => Promise<any> | any;
+      const result = await handler(params);
       return { success: true, result };
     } catch (error) {
       return { error: error.message };
@@ -360,15 +366,12 @@ export class AdminMCPController {
    * Get a resource from a client
    */
   @Get('clients/:id/resources/:uri')
-  async getResource(
-    @Param('id') id: string,
-    @Param('uri') uri: string,
-  ) {
+  async getResource(@Param('id') id: string, @Param('uri') uri: string) {
     const client = this.clients.get(id);
     if (!client) {
       return { error: 'Client not found', id };
     }
-    
+
     // Placeholder for resource retrieval
     return {
       uri,
@@ -384,13 +387,13 @@ export class AdminMCPController {
   async getPrompt(
     @Param('id') id: string,
     @Param('promptName') promptName: string,
-    @Body() params: any,
+    @Body() params: any
   ) {
     const client = this.clients.get(id);
     if (!client) {
       return { error: 'Client not found', id };
     }
-    
+
     // Placeholder for prompt generation
     return {
       name: promptName,

@@ -109,7 +109,7 @@ export class RelayController {
   }
 
   @Get('agents/:id')
-  async getAgent(@Param('id') id: string) {
+  async getAgent(@Param('id') id: string): Promise<any> {
     const agent = await this.relayService.getAgent(id);
     if (!agent) {
       return {
@@ -122,7 +122,7 @@ export class RelayController {
 
   @Post('agents')
   @HttpCode(HttpStatus.CREATED)
-  async registerAgent(@Body() dto: RegisterAgentDto) {
+  async registerAgent(@Body() dto: RegisterAgentDto): Promise<any> {
     this.logger.log(`Registering agent: ${dto.id}`);
 
     const agent = await this.relayService.registerAgent({

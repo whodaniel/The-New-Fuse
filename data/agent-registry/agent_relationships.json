@@ -1,41 +1,41 @@
 [
   {
-    "id": "9ffca003-0240-4831-92d0-84a7b6a8bdd2",
+    "id": "ae02805b-4733-4e14-a70b-f15cdb5e355e",
     "agentId": "agent-search-engine",
     "relatedAgentId": "agent-tagger",
     "relationshipType": "similar",
     "strengthScore": 0.25
   },
   {
-    "id": "5f242976-0d45-412a-a798-5531000a3e94",
+    "id": "23965789-90ff-404d-adac-dbf7a7c480f1",
     "agentId": "digital-product-creator-agent",
     "relatedAgentId": "digital-product-factory-agent",
     "relationshipType": "similar",
     "strengthScore": 0.37
   },
   {
-    "id": "2cbffd5a-1ffc-467e-8633-e3559441734a",
+    "id": "f53dc741-2bad-4bbf-a3b6-dd8cbb99351e",
     "agentId": "equipment-recommendation-agent",
     "relatedAgentId": "podcast-equipment-agent",
     "relationshipType": "similar",
     "strengthScore": 0.26
   },
   {
-    "id": "c09ab476-c234-466b-a7fe-623f17ad3810",
+    "id": "f9a3d849-a6fb-4716-b108-d71605aa3345",
     "agentId": "monetization-strategy-agent",
     "relatedAgentId": "podcast-monetization-strategy-agent",
     "relationshipType": "similar",
     "strengthScore": 0.34
   },
   {
-    "id": "45d9d12e-443c-4e90-871a-d4efa9bede72",
+    "id": "5e9fd844-056b-489b-9d4f-cbb40f6a977f",
     "agentId": "orchestrator-agent-copy",
     "relatedAgentId": "orchestrator-agent",
     "relationshipType": "similar",
     "strengthScore": 0.96
   },
   {
-    "id": "b765d5ee-cdcf-4bd6-ae3a-b03d8087b29d",
+    "id": "14022aad-c361-4b02-8a8d-090cf9a64eb7",
     "agentId": "claude-code-cli",
     "relatedAgentId": "gemini-cli",
     "relationshipType": "similar",

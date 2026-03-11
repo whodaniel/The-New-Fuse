@@ -42,7 +42,7 @@ export class AgentOnboardingService {
         onboardingStatus: 'WELCOME_SENT',
         onboardingProgress: 10,
         updatedAt: new Date(),
-      })
+      } as any)
       .where(eq(agentRegistrations.id, registrationId));
 
     // Create welcome event
@@ -93,7 +93,7 @@ export class AgentOnboardingService {
         .set({
           verificationStatus: testResult.passed ? 'VERIFIED' : 'FAILED',
           updatedAt: new Date(),
-        })
+        } as any)
         .where(eq(agentCapabilityRegistry.id, capability.id));
 
       // Create event
@@ -114,7 +114,7 @@ export class AgentOnboardingService {
         onboardingProgress: 30,
         verificationStatus: allPassed ? 'VERIFIED' : 'FAILED',
         updatedAt: new Date(),
-      })
+      } as any)
       .where(eq(agentRegistrations.id, registrationId));
 
     return results;
@@ -173,14 +173,14 @@ export class AgentOnboardingService {
         onboardingProgress: progress,
         onboardingStatus,
         updatedAt: new Date(),
-      })
+      } as any)
       .where(eq(agentRegistrations.id, registrationId));
 
     // Update agent status if ready
     if (stepId === 'ready') {
       await db
         .update(agents)
-        .set({ status: 'READY' as any, updatedAt: new Date() })
+        .set({ status: 'READY' as any, updatedAt: new Date() } as any)
         .where(eq(agents.id, registration.agentId));
     }
 

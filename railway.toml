@@ -36,6 +36,12 @@ watchPatterns = ["apps/backend/**", "packages/**"]
 healthcheckPath = "/health"
 # Redis service is linked - REDIS_URL will be automatically provided by Railway
 
+[[services.backend.cron]]
+name = "agent-registry-import"
+schedule = "30 2 * * *"
+path = "/api/agent-registry/import/snapshot?token=${AGENT_REGISTRY_IMPORT_TOKEN}"
+method = "POST"
+
 # Frontend Service (uses root Dockerfile)
 # IMPORTANT: Make sure "Root Directory" is NOT set in Railway UI
 # This service MUST use Docker to properly build and serve production files

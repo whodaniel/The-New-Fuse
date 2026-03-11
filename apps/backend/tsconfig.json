@@ -31,8 +31,12 @@
         "../../packages/database/dist/drizzle"
       ],
       "@the-new-fuse/types": ["../../packages/types/dist"],
+      "@the-new-fuse/mcp-core": ["../../packages/mcp-core/dist"],
+      "@the-new-fuse/mcp-core/*": ["../../packages/mcp-core/dist/*"],
       "@the-new-fuse/a2a-core": ["../../packages/a2a-core/dist"],
-      "@the-new-fuse/a2a-react": ["../../packages/a2a-react/dist"]
+      "@the-new-fuse/a2a-react": ["../../packages/a2a-react/dist"],
+      "ox": ["../../node_modules/ox/_types/index.d.ts"],
+      "ox/*": ["../../node_modules/ox/_types/*"]
     }
   },
   "include": ["src/**/*"],

@@ -133,10 +133,14 @@ export class AgentAuthGuard implements CanActivate {
         throw new UnauthorizedException('Agent not found');
       }
 
-      // Check if agent is active (optional, but recommended based on task description)
-      // We allow 'ACTIVE' and potentially other non-disabled statuses.
-      // For now, if the agent exists and has a registration, we consider it valid unless suspended.
-      if (agent.status === 'SUSPENDED' || agent.status === 'ARCHIVED') {
+      const inactiveStatuses = new Set([
+        'INACTIVE',
+        'TERMINATED',
+        'OFFLINE',
+        'ERROR',
+        'INITIALIZING',
+      ]);
+      if (inactiveStatuses.has(agent.status)) {
         throw new UnauthorizedException('Agent is not active');
       }
 

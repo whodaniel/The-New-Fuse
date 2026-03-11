@@ -103,7 +103,7 @@ export class WorkflowController {
         triggers: dto.triggers,
         creatorId: req.user.id,
         status: 'DRAFT',
-      })
+      } as any)
       .returning();
 
     return workflow;
@@ -122,7 +122,7 @@ export class WorkflowController {
       .set({
         ...dto,
         updatedAt: new Date(),
-      })
+      } as any)
       .where(eq(workflows.id, id))
       .returning();
 
@@ -134,7 +134,10 @@ export class WorkflowController {
   async deleteWorkflow(@Param('id', ParseUUIDPipe) id: string, @Req() req: any) {
     this.logger.log(`Deleting workflow ${id} for user ${req.user?.id}`);
 
-    await db.update(workflows).set({ deletedAt: new Date() }).where(eq(workflows.id, id));
+    await db
+      .update(workflows)
+      .set({ deletedAt: new Date() } as any)
+      .where(eq(workflows.id, id));
   }
 
   // ==================== STEP MANAGEMENT ====================
@@ -152,7 +155,7 @@ export class WorkflowController {
       .values({
         ...dto,
         workflowId,
-      })
+      } as any)
       .returning();
 
     return step;
@@ -172,7 +175,7 @@ export class WorkflowController {
       .set({
         ...dto,
         updatedAt: new Date(),
-      })
+      } as any)
       .where(eq(workflowSteps.id, stepId))
       .returning();
 
@@ -209,7 +212,7 @@ export class WorkflowController {
       .set({
         status: 'PUBLISHED',
         updatedAt: new Date(),
-      })
+      } as any)
       .where(eq(workflows.id, id))
       .returning();
 

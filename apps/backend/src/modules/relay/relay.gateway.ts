@@ -84,7 +84,7 @@ export class RelayGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       capabilities: string[];
       metadata?: Record<string, unknown>;
     }
-  ) {
+  ): Promise<any> {
     this.logger.log(`Agent registration: ${data.id} from socket ${client.id}`);
 
     try {
@@ -226,7 +226,7 @@ export class RelayGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   // ========================================
 
   @SubscribeMessage('status:get')
-  async handleStatusRequest() {
+  async handleStatusRequest(): Promise<any> {
     return {
       status: this.relayService.getStatus(),
       agents: await this.relayService.getAllAgents(),

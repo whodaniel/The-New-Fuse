@@ -30,15 +30,14 @@ export class AdminDatabaseController {
       const start = Date.now();
       const result = await db.execute(sql.raw(query));
       const duration = Date.now() - start;
+      const rows = Array.isArray(result) ? result : (result as any).rows || [];
+      const rowCount = (result as any).rowCount ?? rows.length;
 
       return {
-        rows: result.rows, // For Postgres, it's usually rows (array of arrays or objects depending on driver)
-        // pg driver 'result' structure: { rows: [...], rowCount: n, command: 'SELECT', ... }
-        // Drizzle execute returns the driver result directly
-        rowCount: result.rowCount,
+        rows,
+        rowCount,
         executionTime: duration,
-        // We might need to extract columns if rows are objects
-        columns: result.rows.length > 0 ? Object.keys(result.rows[0]) : [],
+        columns: rows.length > 0 ? Object.keys(rows[0] as Record<string, any>) : [],
       };
     } catch (error) {
       throw new HttpException(

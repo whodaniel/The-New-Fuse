@@ -1,30 +1,29 @@
 import {
-  Controller,
-  Post,
-  Get,
-  Put,
   Body,
-  Param,
-  Query,
-  UseGuards,
+  Controller,
+  Get,
   Headers,
-  UnauthorizedException,
   Logger,
+  Param,
+  Post,
+  Query,
+  UnauthorizedException,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiHeader } from '@nestjs/swagger';
+import { ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import {
-  AgentRegistrationService,
+  AgentDirectoryResponseDto,
+  AgentRegistrationResponseDto,
+  RegisterAgentDto,
+  SearchAgentsDto,
+} from './dto';
+import {
+  AgentDirectoryService,
   AgentOnboardingService,
   AgentOrientationService,
-  AgentDirectoryService,
+  AgentRegistrationService,
+  AgentRegistryImportService,
 } from './services';
-import {
-  RegisterAgentDto,
-  AgentRegistrationResponseDto,
-  SearchAgentsDto,
-  AgentDirectoryResponseDto,
-} from './dto';
-import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 
 @ApiTags('Agent Registry')
 @Controller('api/agent-registry')
@@ -36,6 +35,7 @@ export class AgentRegistryController {
     private readonly onboardingService: AgentOnboardingService,
     private readonly orientationService: AgentOrientationService,
     private readonly directoryService: AgentDirectoryService,
+    private readonly importService: AgentRegistryImportService
   ) {}
 
   // ============================================================================
@@ -52,7 +52,7 @@ export class AgentRegistryController {
   @ApiResponse({ status: 400, description: 'Bad request' })
   async registerAgent(
     @Body() data: RegisterAgentDto,
-    @CurrentUser() user: any,
+    @CurrentUser() user: any
   ): Promise<AgentRegistrationResponseDto> {
     this.logger.log(`Agent registration request: ${data.name}`);
     return this.registrationService.registerAgent(data, user?.id || 'system');
@@ -61,10 +61,7 @@ export class AgentRegistryController {
   @Get('registration/:id')
   @ApiOperation({ summary: 'Get registration details' })
   @ApiHeader({ name: 'X-Agent-Token', description: 'Agent authentication token' })
-  async getRegistration(
-    @Param('id') id: string,
-    @Headers('x-agent-token') token: string,
-  ) {
+  async getRegistration(@Param('id') id: string, @Headers('x-agent-token') token: string) {
     await this.verifyAgentToken(token);
     return this.registrationService.getRegistration(id);
   }
@@ -87,7 +84,7 @@ export class AgentRegistryController {
   @ApiHeader({ name: 'X-Agent-Token', description: 'Agent authentication token' })
   async startOnboarding(
     @Param('registrationId') registrationId: string,
-    @Headers('x-agent-token') token: string,
+    @Headers('x-agent-token') token: string
   ) {
     await this.verifyAgentToken(token);
     return this.onboardingService.startOnboarding(registrationId);
@@ -98,7 +95,7 @@ export class AgentRegistryController {
   @ApiHeader({ name: 'X-Agent-Token', description: 'Agent authentication token' })
   async testCapabilities(
     @Param('registrationId') registrationId: string,
-    @Headers('x-agent-token') token: string,
+    @Headers('x-agent-token') token: string
   ) {
     await this.verifyAgentToken(token);
     return this.onboardingService.testCapabilities(registrationId);
@@ -110,7 +107,7 @@ export class AgentRegistryController {
   async completeOnboardingStep(
     @Param('registrationId') registrationId: string,
     @Body() body: { stepId: string; data?: any },
-    @Headers('x-agent-token') token: string,
+    @Headers('x-agent-token') token: string
   ) {
     await this.verifyAgentToken(token);
     return this.onboardingService.completeStep(registrationId, body.stepId, body.data);
@@ -121,7 +118,7 @@ export class AgentRegistryController {
   @ApiHeader({ name: 'X-Agent-Token', description: 'Agent authentication token' })
   async getOnboardingProgress(
     @Param('registrationId') registrationId: string,
-    @Headers('x-agent-token') token: string,
+    @Headers('x-agent-token') token: string
   ) {
     await this.verifyAgentToken(token);
     return this.onboardingService.getOnboardingProgress(registrationId);
@@ -197,7 +194,7 @@ export class AgentRegistryController {
   @ApiHeader({ name: 'X-Agent-Token', description: 'Agent authentication token' })
   async recordMetric(
     @Headers('x-agent-token') token: string,
-    @Body() body: { type: string; value: number; unit?: string; tags?: any },
+    @Body() body: { type: string; value: number; unit?: string; tags?: any }
   ) {
     const { registrationId } = await this.verifyAgentToken(token);
     await this.directoryService.recordMetric(registrationId, body);
@@ -212,15 +209,44 @@ export class AgentRegistryController {
     @Headers('x-agent-token') token: string,
     @Query('type') metricType?: string,
     @Query('startDate') startDate?: string,
-    @Query('endDate') endDate?: string,
+    @Query('endDate') endDate?: string
   ) {
     await this.verifyAgentToken(token);
     return this.directoryService.getAgentMetrics(
       registrationId,
       metricType,
       startDate ? new Date(startDate) : undefined,
-      endDate ? new Date(endDate) : undefined,
+      endDate ? new Date(endDate) : undefined
     );
+  }
+
+  // ============================================================================
+  // REGISTRY IMPORT ENDPOINTS
+  // ============================================================================
+
+  @Post('import/snapshot')
+  @ApiOperation({ summary: 'Import agent registry snapshot' })
+  @ApiHeader({ name: 'X-Admin-Token', required: false, description: 'Import token' })
+  async importSnapshot(
+    @Body() body: { snapshotPath?: string; onlyType?: string },
+    @Headers('x-admin-token') token: string,
+    @Query('token') tokenQuery?: string
+  ) {
+    this.verifyImportToken(token || tokenQuery);
+    return this.importService.importSnapshot(body?.snapshotPath, body?.onlyType);
+  }
+
+  @Get('import/snapshot')
+  @ApiOperation({ summary: 'Import agent registry snapshot (cron-friendly)' })
+  @ApiHeader({ name: 'X-Admin-Token', required: false, description: 'Import token' })
+  async importSnapshotCron(
+    @Query('snapshotPath') snapshotPath?: string,
+    @Query('onlyType') onlyType?: string,
+    @Headers('x-admin-token') token?: string,
+    @Query('token') tokenQuery?: string
+  ) {
+    this.verifyImportToken(token || tokenQuery);
+    return this.importService.importSnapshot(snapshotPath, onlyType);
   }
 
   // ============================================================================
@@ -232,5 +258,13 @@ export class AgentRegistryController {
       throw new UnauthorizedException('Agent token required');
     }
     return this.registrationService.verifyAuthToken(token);
+  }
+
+  private verifyImportToken(token?: string) {
+    const expected = process.env.AGENT_REGISTRY_IMPORT_TOKEN;
+    if (!expected) return;
+    if (!token || token !== expected) {
+      throw new UnauthorizedException('Invalid import token');
+    }
   }
 }

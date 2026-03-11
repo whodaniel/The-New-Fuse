@@ -36,7 +36,7 @@ export class GoogleAuthService {
       // Note: picture field is not currently in schema, ignoring
       user = await drizzleUserRepository.update(user.id, {
         name: payload.name,
-      });
+      } as any);
       // Also ensure email verified
       if (!user.emailVerified) {
         await drizzleUserRepository.verifyEmail(user.id);
@@ -51,7 +51,7 @@ export class GoogleAuthService {
         emailVerified: true,
         role: 'USER',
         isActive: true,
-      });
+      } as any);
     }
 
     // Generate JWT

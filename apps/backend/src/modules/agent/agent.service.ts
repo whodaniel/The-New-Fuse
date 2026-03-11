@@ -10,6 +10,7 @@ import {
   Agent,
   AgentCapability,
   AgentStatus,
+  AgentTrustLevel,
   AgentType,
   CreateAgentDto,
   UpdateAgentDto,
@@ -27,6 +28,7 @@ export class AgentService {
       systemPrompt: agent.systemPrompt || undefined,
       capabilities: ((agent.capabilities as string[]) || []).map((cap) => cap as AgentCapability),
       status: agent.status as AgentStatus,
+      trustLevel: (agent.trustLevel as AgentTrustLevel) || AgentTrustLevel.EPHEMERAL,
       configuration: agent.config as any,
       createdAt: agent.createdAt,
       updatedAt: agent.updatedAt,
@@ -51,10 +53,11 @@ export class AgentService {
         systemPrompt: data.systemPrompt,
         capabilities: data.capabilities || [],
         status: AgentStatus.INACTIVE,
+        trustLevel: data.trustLevel || AgentTrustLevel.EPHEMERAL,
         config: data.configuration as any,
         provider: data.provider || 'default',
         userId,
-      });
+      } as any);
 
       this.logger.log(`Created agent: ${agent.id} (${agent.name})`);
       return this.transformAgent(agent);
@@ -124,7 +127,7 @@ export class AgentService {
       const agent = await drizzleAgentRepository.update(id, {
         ...updates,
         updatedAt: new Date(),
-      });
+      } as any);
 
       if (!agent) {
         throw new InternalServerErrorException(`Failed to update agent ${id}`);

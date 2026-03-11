@@ -23,7 +23,7 @@ export class CacheWarmingService implements OnModuleInit {
 
   constructor(
     private readonly cacheManager: AdvancedCacheManager,
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService
   ) {}
 
   async onModuleInit() {
@@ -43,7 +43,7 @@ export class CacheWarmingService implements OnModuleInit {
     this.warmupTasks.set(task.name, {
       ...task,
       priority: task.priority || 0,
-      enabled: task.enabled !== false,
+      enabled: task.enabled ?? true,
     });
 
     this.logger.debug(`Registered warmup task: ${task.name}`);
@@ -182,7 +182,7 @@ export class CacheWarmingService implements OnModuleInit {
       ttl?: number;
       prefix?: string;
       tags?: string[];
-    } = {},
+    } = {}
   ): Promise<void> {
     const exists = await this.cacheManager.exists(key, { prefix: options.prefix });
 
@@ -209,7 +209,7 @@ export class CacheWarmingService implements OnModuleInit {
       ttl?: number;
       prefix?: string;
       tags?: string[];
-    }>,
+    }>
   ): Promise<void> {
     this.logger.log(`Warming ${entries.length} cache entries`);
 
@@ -226,7 +226,7 @@ export class CacheWarmingService implements OnModuleInit {
         } catch (error) {
           this.logger.error(`Failed to warm cache for key ${entry.key}:`, error);
         }
-      }),
+      })
     );
 
     this.logger.log('Multiple cache warming completed');
@@ -243,7 +243,7 @@ export class CacheWarmingService implements OnModuleInit {
       prefix?: string;
       tags?: string[];
       refreshThreshold?: number; // Refresh when TTL < this value (seconds)
-    } = {},
+    } = {}
   ): Promise<void> {
     const ttl = await this.cacheManager.getTTL(key, { prefix: options.prefix });
     const threshold = options.refreshThreshold || 300; // Default 5 minutes
@@ -291,14 +291,12 @@ export class CacheWarmingService implements OnModuleInit {
   /**
    * Example: Register common warmup tasks
    */
-  registerCommonTasks(
-    tasks: {
-      popularUsers?: () => Promise<any>;
-      popularProducts?: () => Promise<any>;
-      siteConfig?: () => Promise<any>;
-      navigationMenu?: () => Promise<any>;
-    },
-  ): void {
+  registerCommonTasks(tasks: {
+    popularUsers?: () => Promise<any>;
+    popularProducts?: () => Promise<any>;
+    siteConfig?: () => Promise<any>;
+    navigationMenu?: () => Promise<any>;
+  }): void {
     if (tasks.popularUsers) {
       this.registerTask({
         name: 'popular-users',

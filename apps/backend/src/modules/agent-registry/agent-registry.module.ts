@@ -7,6 +7,7 @@ import {
   AgentOnboardingService,
   AgentOrientationService,
   AgentRegistrationService,
+  AgentRegistryImportService,
 } from './services';
 
 @Module({
@@ -17,12 +18,14 @@ import {
     AgentOnboardingService,
     AgentOrientationService,
     AgentDirectoryService,
+    AgentRegistryImportService,
   ],
   exports: [
     AgentRegistrationService,
     AgentOnboardingService,
     AgentOrientationService,
     AgentDirectoryService,
+    AgentRegistryImportService,
   ],
 })
 export class AgentRegistryModule {}

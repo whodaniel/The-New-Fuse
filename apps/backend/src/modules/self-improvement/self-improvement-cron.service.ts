@@ -11,16 +11,7 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import {
-  and,
-  db,
-  desc,
-  drizzleSchema,
-  eq,
-  lt,
-  sql,
-  type DrizzleTask as Task,
-} from '@the-new-fuse/database';
+import { and, db, desc, drizzleSchema, eq, lt, sql, type Task } from '@the-new-fuse/database';
 
 const { agents, tasks, agentRegistrations } = drizzleSchema;
 
@@ -85,13 +76,13 @@ export class SelfImprovementCronService {
           // Mark as offline
           await db
             .update(agentRegistrations)
-            .set({ isOnline: false, updatedAt: new Date() })
+            .set({ isOnline: false, updatedAt: new Date() } as any)
             .where(eq(agentRegistrations.id, reg.id));
 
           // Also update parent agent status if needed
           await db
             .update(agents)
-            .set({ status: 'OFFLINE', updatedAt: new Date() })
+            .set({ status: 'OFFLINE', updatedAt: new Date() } as any)
             .where(eq(agents.id, reg.agentId));
 
           this.logger.log(`[Health] Marked agent ${reg.agentId} as OFFLINE due to stale heartbeat`);

@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { drizzleConfigurationRepository } from '@the-new-fuse/database';
+import { drizzleConfigurationRepository } from '@the-new-fuse/database/drizzle';
 
 @Injectable()
 export class ConfigurationService {

@@ -275,10 +275,12 @@ export class CostOptimizedRouter {
       throw new Error('All capable agents busy');
     }
 
+    const budgetValue = typeof budget === 'number' ? budget : Number(budget ?? 0);
+
     // 4. Calculate cost-effectiveness score for each
     const scored = availableAgents.map((agent) => ({
       agent,
-      score: this.calculateCostEffectiveness(agent, requiredIntelligence, budget),
+      score: this.calculateCostEffectiveness(agent, requiredIntelligence, budgetValue),
     }));
 
     // 5. Sort by score (higher is better)

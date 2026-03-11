@@ -199,7 +199,7 @@ export class TopologyOptimizerService {
     // Generate random combinations based on influence weights
     for (let i = 0; i < 3; i++) {
       try {
-        const randomTopology = this.generateRandomTopology(agents, influenceScores, config);
+        const randomTopology = await this.generateRandomTopology(agents, influenceScores, config);
         candidates.push(randomTopology);
       } catch (error) {
         this.logger.warn(`Failed to generate random topology ${i}:`, error);
@@ -500,11 +500,11 @@ export class TopologyOptimizerService {
     };
   }
 
-  private generateRandomTopology(
+  private async generateRandomTopology(
     agents: any[],
     influenceScores: Record<string, number>,
     config: TopologyOptimizationConfig
-  ): WorkflowTopology {
+  ): Promise<WorkflowTopology> {
     // Create weighted random selection based on influence scores
     const totalInfluence = Object.values(influenceScores).reduce((sum, score) => sum + score, 0);
     const selectedAgents = this.weightedRandomSelection(
@@ -602,7 +602,7 @@ export class TopologyOptimizerService {
       performanceMetrics: metrics as any,
       massOptimized: true,
       userId,
-    });
+    } as any);
 
     return {
       ...topology,

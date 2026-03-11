@@ -38,7 +38,7 @@ export class AgentRegistrationService {
           author: data.author,
           ...data.metadata,
         },
-      });
+      } as any);
 
       // Generate authentication token
       const authToken = this.generateAuthToken();
@@ -54,7 +54,7 @@ export class AgentRegistrationService {
         heartbeatInterval: data.heartbeatInterval || 60000,
         isOnline: true,
         metadata: data.metadata || {},
-      });
+      } as any);
 
       // Register capabilities
       if (data.capabilities && data.capabilities.length > 0) {
@@ -68,7 +68,7 @@ export class AgentRegistrationService {
               description: cap.description,
               parameters: cap.parameters || {},
               verificationStatus: 'PENDING',
-            })
+            } as any)
           )
         );
       }
@@ -82,7 +82,7 @@ export class AgentRegistrationService {
           agentName: data.name,
           capabilities: data.capabilities.map((c) => c.name),
         },
-      });
+      } as any);
 
       // Create directory entry
       await drizzleAgentRepository.createDirectoryEntry({
@@ -96,7 +96,7 @@ export class AgentRegistrationService {
         rating: 0,
         usageCount: 0,
         searchableData: `${data.name} ${data.description || ''} ${data.capabilities.map((c) => c.name).join(' ')}`,
-      });
+      } as any);
 
       this.logger.log(`Agent registered successfully: ${agent.id}`);
 
@@ -148,7 +148,7 @@ export class AgentRegistrationService {
    * Get registration details
    */
   async getRegistration(registrationId: string) {
-    return drizzleAgentRepository.findRegistrationWithDetails(registrationId);
+    return (drizzleAgentRepository as any).findRegistrationWithDetails(registrationId);
   }
 
   /**

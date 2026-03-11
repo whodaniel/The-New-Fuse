@@ -153,6 +153,11 @@ export class WorkflowExecutionService implements OnModuleInit {
       throw new Error('Workflow has no steps to execute');
     }
 
+    const workflowVariables =
+      workflow.variables && typeof workflow.variables === 'object' ? workflow.variables : {};
+    const optionVariables =
+      options.variables && typeof options.variables === 'object' ? options.variables : {};
+
     // Create execution record
     const [execution] = await db
       .insert(workflowExecutions)
@@ -163,12 +168,12 @@ export class WorkflowExecutionService implements OnModuleInit {
         startedAt: new Date(),
         projectId: options.projectId,
         context: {
-          variables: { ...workflow.variables, ...options.variables },
+          variables: { ...workflowVariables, ...optionVariables },
           userId: options.userId,
         },
         nodeExecutions: [],
         logs: [],
-      })
+      } as any)
       .returning();
 
     const executionId = execution.id;
@@ -178,7 +183,7 @@ export class WorkflowExecutionService implements OnModuleInit {
       executionId,
       workflowId,
       input,
-      variables: { ...(workflow.variables || {}), ...(options.variables || {}) },
+      variables: { ...workflowVariables, ...optionVariables },
       stepResults: new Map(),
       logs: [],
       startTime: new Date(),
@@ -738,7 +743,7 @@ export class WorkflowExecutionService implements OnModuleInit {
   private async updateExecutionStatus(executionId: string, status: ExecutionStatus): Promise<void> {
     await db
       .update(workflowExecutions)
-      .set({ status, updatedAt: new Date() })
+      .set({ status, updatedAt: new Date() } as any)
       .where(eq(workflowExecutions.id, executionId));
 
     // Update active execution tracking
@@ -777,7 +782,7 @@ export class WorkflowExecutionService implements OnModuleInit {
           failedSteps: stepResults.filter((s) => s.status === 'failed').length,
           duration,
         },
-      })
+      } as any)
       .where(eq(workflowExecutions.id, executionId));
 
     // Update workflow stats
@@ -786,7 +791,7 @@ export class WorkflowExecutionService implements OnModuleInit {
       .set({
         lastExecutedAt: completedAt,
         executionCount: sql`${workflows.executionCount} + 1`,
-      })
+      } as any)
       .where(eq(workflows.id, context.workflowId));
 
     activeExecutions.delete(executionId);
@@ -811,7 +816,7 @@ export class WorkflowExecutionService implements OnModuleInit {
         error: error.message,
         completedAt: new Date(),
         logs: context.logs,
-      })
+      } as any)
       .where(eq(workflowExecutions.id, executionId));
 
     activeExecutions.delete(executionId);
@@ -862,7 +867,7 @@ export class WorkflowExecutionService implements OnModuleInit {
         status: 'CANCELLED',
         error: reason || 'Cancelled by user',
         completedAt: new Date(),
-      })
+      } as any)
       .where(eq(workflowExecutions.id, executionId));
 
     activeExecutions.delete(executionId);
@@ -883,7 +888,7 @@ export class WorkflowExecutionService implements OnModuleInit {
         error: 'Execution aborted',
         completedAt: new Date(),
         logs: context.logs,
-      })
+      } as any)
       .where(eq(workflowExecutions.id, executionId));
 
     activeExecutions.delete(executionId);

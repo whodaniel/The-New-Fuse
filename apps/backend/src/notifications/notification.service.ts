@@ -98,7 +98,7 @@ export class NotificationService {
   async markAsRead(userId: string, notificationId: string) {
     const [updated] = await db
       .update(notifications)
-      .set({ read: true, updatedAt: new Date() })
+      .set({ read: true, updatedAt: new Date() } as any)
       .where(eq(notifications.id, notificationId))
       .returning();
 

@@ -73,12 +73,13 @@ interaction for the terminal.
 - **Legacy Path**: Whisper-cpp + Sox (only if hardware is very old).
 - **Advanced Path**: Phi-4-Multimodal (for high-end GPUs).
 
-### Troubleshooting Voice Links
+### Hybrid Interaction Pattern (Text-then-Voice)
 
-- **Compilation Latency**: On older macOS (e.g., Monterey), dependencies like
-  Python 3.10 and PortAudio may require source builds. Warn the user about 10-20
-  minute setup times.
-- **Microphone Permissions**: Terminal apps require explicit TCC approval in
-  macOS Settings > Security & Privacy > Microphone.
-- **Audio Stuttering**: On Intel Macs, recommend smaller models (Mini-Omni) or
-  increasing the silence detection pause.
+To prevent cognitive overload, follow the "Elite Hybrid" response pattern:
+
+1.  **Data First**: Deliver all text, code, and status updates immediately in
+    the terminal.
+2.  **Voice Second**: Always trigger a text-to-speech overview (e.g.,
+    `say -v Daniel "..."`) as the final tool call of the turn.
+3.  **Content**: The audio should provide expert nuance and a high-level summary
+    of the work performed, rather than just reading the text verbatim.

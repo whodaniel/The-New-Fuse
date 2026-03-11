@@ -516,6 +516,6 @@ Return as JSON array of strings.
       exemplars: prompt.exemplars as any, // Cast for jsonb compatibility
       performanceMetrics: metrics as any,
       massStage,
-    }) as any as AgentPromptVersion;
+    } as any) as any as AgentPromptVersion;
   }
 }

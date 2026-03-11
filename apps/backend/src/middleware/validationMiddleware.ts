@@ -90,11 +90,14 @@ export class ValidationMiddleware implements NestMiddleware {
 
         next();
       } catch (error) {
-        this.logger.error('Request validation failed', {
-          path: req.path,
-          method: req.method,
-          error: error as Error,
-        });
+        this.logger.error(
+          'Request validation failed',
+          JSON.stringify({
+            path: req.path,
+            method: req.method,
+            error: (error as Error).message,
+          })
+        );
 
         if (error instanceof BadRequestException) {
           throw error;
