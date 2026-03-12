@@ -33,18 +33,21 @@ function ethersBrowserResolve(): Plugin {
 }
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '');
+  const env = loadEnv(mode, process.cwd(), 'VITE_');
   const isDev = mode === 'development';
   const isProduction = mode === 'production';
   const enableBuildCompression = isProduction && env.VITE_BUILD_COMPRESS !== 'false';
+  const publicEnv = Object.fromEntries(
+    Object.entries(env).filter(([key]) => key.startsWith('VITE_'))
+  );
 
   // Smart host detection for HMR
   const getHMRConfig = () => {
     // In development, try to detect the actual host
     if (isDev) {
-      const host = env.VITE_HOST || env.HOST || 'localhost';
+      const host = env.VITE_HOST || process.env.HOST || 'localhost';
       // HMR should use the same port as the dev server (3000), not a separate port
-      const port = parseInt(env.VITE_PORT || env.PORT || '3000');
+      const port = parseInt(env.VITE_PORT || process.env.PORT || '3000');
 
       return {
         host,
@@ -175,7 +178,7 @@ export default defineConfig(({ mode }) => {
       // Fix "process is not defined" error in browser
       'process.env': JSON.stringify({
         NODE_ENV: mode,
-        ...env,
+        ...publicEnv,
       }),
     },
     base: env.VITE_BASE_PATH || '/',

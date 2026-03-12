@@ -17,7 +17,7 @@ UNWIND [
 MERGE (a:Agent {id: row.id})
 SET a.kind = row.kind,
     a.cluster = row.cluster,
-    a.updatedAt = datetime('2026-03-03T00:00:00Z');
+    a.updatedAt = datetime('2026-03-12T14:01:56Z');
 
 UNWIND [
   {s:"orchestrator-agent",t:"task-agent-router",rel:"DELEGATES",strength:0.98,risk:""},
@@ -35,5 +35,4 @@ MATCH (a:Agent {id: r.s})
 MATCH (b:Agent {id: r.t})
 MERGE (a)-[rel:RELATED {relationType: r.rel}]->(b)
 SET rel.strength = r.strength,
-    rel.risk = r.risk,
-    rel.updatedAt = datetime('2026-03-03T00:00:00Z');
+    rel.risk = r.risk;

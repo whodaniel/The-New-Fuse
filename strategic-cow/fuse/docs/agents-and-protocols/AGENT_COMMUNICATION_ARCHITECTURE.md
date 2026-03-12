@@ -181,7 +181,7 @@ communication
 
 ```typescript
 CORS: Enabled for all origins (*)
-Redis URL: process.env.REDIS_URL || 'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570'
+Redis URL: process.env.REDIS_URL || 'redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>'
 ```
 
 **Status**: ✅ Operational with Redis integration
@@ -331,8 +331,7 @@ interface AgentMessage {
 ### 2. Redis Pub/Sub Protocol
 
 **Connection**:
-`redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570`
-(default)
+`redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>` (default)
 
 **Use Case**: Scalable message broadcasting and queueing
 
@@ -848,7 +847,7 @@ API_URL=http://localhost:3000/api
 MCP_REGISTRY_API_KEY=your-api-key
 
 # Redis Configuration
-REDIS_URL=redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570
+REDIS_URL=redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>
 
 # Authentication
 AUTH_SECRET_KEY=your-secret-key

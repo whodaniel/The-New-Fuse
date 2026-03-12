@@ -2,14 +2,16 @@
 
 ## Overview
 
-A comprehensive GraphQL API layer has been successfully added to The New Fuse backend, providing flexible and efficient data querying capabilities alongside the existing REST APIs.
+A comprehensive GraphQL API layer has been successfully added to The New Fuse
+backend, providing flexible and efficient data querying capabilities alongside
+the existing REST APIs.
 
 ## Architecture
 
 ### Directory Structure
 
 ```
-/home/user/fuse/apps/api/src/graphql/
+<repo-root>/apps/api/src/graphql/
 ├── types/                      # GraphQL object types and input types
 │   ├── user.type.ts           # User object type with relations
 │   ├── agent.type.ts          # Agent object type with status enum
@@ -34,6 +36,7 @@ A comprehensive GraphQL API layer has been successfully added to The New Fuse ba
 ## GraphQL Types Created
 
 ### 1. UserType
+
 ```graphql
 type User {
   id: ID!
@@ -41,20 +44,21 @@ type User {
   email: String!
   firstName: String
   lastName: String
-  fullName: String          # Computed field
+  fullName: String # Computed field
   roles: [String!]!
   isActive: Boolean!
   lastLoginAt: DateTime
-  agents: [Agent!]          # Relation resolved via DataLoader
-  workflows: [Workflow!]    # Relation resolved via DataLoader
+  agents: [Agent!] # Relation resolved via DataLoader
+  workflows: [Workflow!] # Relation resolved via DataLoader
   createdAt: DateTime!
   updatedAt: DateTime!
-  preferences: String       # JSON as string
-  metadata: String          # JSON as string
+  preferences: String # JSON as string
+  metadata: String # JSON as string
 }
 ```
 
 ### 2. AgentType
+
 ```graphql
 enum AgentStatus {
   ACTIVE
@@ -70,18 +74,19 @@ type Agent {
   description: String
   instanceId: String
   isActive: Boolean!
-  status: AgentStatus!      # Computed field
+  status: AgentStatus! # Computed field
   capabilities: [String!]
-  owner: User               # Relation resolved via DataLoader
+  owner: User # Relation resolved via DataLoader
   createdAt: DateTime!
   updatedAt: DateTime!
   lastActiveAt: DateTime
-  config: String            # JSON as string
-  metadata: String          # JSON as string
+  config: String # JSON as string
+  metadata: String # JSON as string
 }
 ```
 
 ### 3. WorkflowType
+
 ```graphql
 enum WorkflowStatus {
   IDLE
@@ -101,22 +106,23 @@ type Workflow {
   id: ID!
   name: String!
   description: String
-  creator: User             # Relation resolved via DataLoader
-  steps: [WorkflowStep!]    # Relation resolved via DataLoader
+  creator: User # Relation resolved via DataLoader
+  steps: [WorkflowStep!] # Relation resolved via DataLoader
   isActive: Boolean!
-  status: WorkflowStatus!   # Computed field
+  status: WorkflowStatus! # Computed field
   createdAt: DateTime!
   updatedAt: DateTime!
   lastExecutedAt: DateTime
   executionCount: Int!
   statistics: WorkflowStatistics
-  variables: String         # JSON as string
-  triggers: String          # JSON as string
-  metadata: String          # JSON as string
+  variables: String # JSON as string
+  triggers: String # JSON as string
+  metadata: String # JSON as string
 }
 ```
 
 ### 4. WorkflowStepType
+
 ```graphql
 type WorkflowStepStatistics {
   averageExecutionTime: Float
@@ -129,21 +135,22 @@ type WorkflowStep {
   id: ID!
   name: String!
   type: String!
-  agent: Agent              # Relation resolved via DataLoader
+  agent: Agent # Relation resolved via DataLoader
   nextSteps: [String!]!
   isActive: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
   lastExecutedAt: DateTime
   statistics: WorkflowStepStatistics
-  config: String            # JSON as string
-  conditions: String        # JSON as string
-  transformations: String   # JSON as string
-  metadata: String          # JSON as string
+  config: String # JSON as string
+  conditions: String # JSON as string
+  transformations: String # JSON as string
+  metadata: String # JSON as string
 }
 ```
 
 ### 5. Input Types
+
 ```graphql
 input CreateAgentInput {
   name: String!
@@ -180,11 +187,13 @@ input ExecuteWorkflowInput {
 ### User Resolver
 
 #### Queries
+
 - `user(id: ID!): User` - Get user by ID
 - `me: User` - Get current authenticated user
 - `users: [User!]!` - Get all users (paginated, limit 100)
 
 #### Field Resolvers
+
 - `agents` - Load user's agents using DataLoader
 - `workflows` - Load user's workflows using DataLoader
 - `fullName` - Compute full name from firstName and lastName
@@ -194,14 +203,17 @@ input ExecuteWorkflowInput {
 ### Agent Resolver
 
 #### Queries
+
 - `agent(id: ID!): Agent` - Get agent by ID
 - `agents(userId: ID): [Agent!]!` - Get all agents, optionally filtered by user
 
 #### Mutations
+
 - `createAgent(input: CreateAgentInput!): Agent!` - Create new agent
 - `updateAgent(input: UpdateAgentInput!): Agent!` - Update existing agent
 
 #### Field Resolvers
+
 - `owner` - Load agent's owner using DataLoader
 - `status` - Compute agent status based on isActive and lastActiveAt
 - `config` - Serialize JSON config to string
@@ -210,14 +222,18 @@ input ExecuteWorkflowInput {
 ### Workflow Resolver
 
 #### Queries
+
 - `workflow(id: ID!): Workflow` - Get workflow by ID
-- `workflows(userId: ID): [Workflow!]!` - Get all workflows, optionally filtered by user
+- `workflows(userId: ID): [Workflow!]!` - Get all workflows, optionally filtered
+  by user
 
 #### Mutations
+
 - `createWorkflow(input: CreateWorkflowInput!): Workflow!` - Create new workflow
 - `executeWorkflow(input: ExecuteWorkflowInput!): Workflow!` - Execute workflow
 
 #### Field Resolvers
+
 - `creator` - Load workflow's creator using DataLoader
 - `steps` - Load workflow's steps using DataLoader
 - `status` - Compute workflow status from statistics
@@ -249,6 +265,7 @@ DataLoaders batch and cache database queries to prevent N+1 query problems:
 ### Performance Benefits
 
 Without DataLoader:
+
 ```
 Query for 10 users with their agents:
   1 query for users
@@ -257,6 +274,7 @@ Query for 10 users with their agents:
 ```
 
 With DataLoader:
+
 ```
 Query for 10 users with their agents:
   1 query for users
@@ -288,7 +306,8 @@ async me(@Context() context: any): Promise<User | null> {
 
 ### Apollo Server Settings
 
-- **Auto-generated Schema**: Schema is automatically generated from TypeScript types
+- **Auto-generated Schema**: Schema is automatically generated from TypeScript
+  types
 - **GraphQL Playground**: Enabled in non-production environments
 - **Introspection**: Enabled in non-production environments
 - **CORS**: Configured with credentials support
@@ -298,6 +317,7 @@ async me(@Context() context: any): Promise<User | null> {
 ### Environment Variables
 
 Uses existing environment variables:
+
 - `JWT_SECRET` - JWT token verification
 - `NODE_ENV` - Environment detection
 - `CORS_ORIGIN` - CORS configuration
@@ -318,6 +338,7 @@ The GraphQL API works seamlessly alongside existing REST APIs:
 ## Example Usage
 
 ### Simple Query
+
 ```graphql
 query {
   me {
@@ -330,6 +351,7 @@ query {
 ```
 
 ### Complex Nested Query
+
 ```graphql
 query {
   user(id: "user-123") {
@@ -356,14 +378,17 @@ query {
 ```
 
 ### Create Agent Mutation
+
 ```graphql
 mutation {
-  createAgent(input: {
-    name: "Assistant Agent"
-    type: "ASSISTANT"
-    description: "AI assistant"
-    capabilities: ["chat", "tasks"]
-  }) {
+  createAgent(
+    input: {
+      name: "Assistant Agent"
+      type: "ASSISTANT"
+      description: "AI assistant"
+      capabilities: ["chat", "tasks"]
+    }
+  ) {
     id
     name
     status
@@ -372,13 +397,16 @@ mutation {
 ```
 
 ### Execute Workflow Mutation
+
 ```graphql
 mutation {
-  executeWorkflow(input: {
-    workflowId: "workflow-123"
-    variables: "{\"input\": \"data\"}"
-    async: true
-  }) {
+  executeWorkflow(
+    input: {
+      workflowId: "workflow-123"
+      variables: "{\"input\": \"data\"}"
+      async: true
+    }
+  ) {
     id
     status
     lastExecutedAt
@@ -396,6 +424,7 @@ http://localhost:3000/graphql
 ```
 
 Features:
+
 - Interactive query builder
 - Schema documentation browser
 - Auto-completion
@@ -404,35 +433,40 @@ Features:
 
 ## Files Modified
 
-1. `/home/user/fuse/apps/api/package.json` - Added GraphQL dependencies
-2. `/home/user/fuse/apps/api/src/app.module.ts` - Registered GraphQL module
+1. `<repo-root>/apps/api/package.json` - Added GraphQL dependencies
+2. `<repo-root>/apps/api/src/app.module.ts` - Registered GraphQL module
 
 ## Files Created
 
 ### Types (5 files)
-1. `/home/user/fuse/apps/api/src/graphql/types/user.type.ts`
-2. `/home/user/fuse/apps/api/src/graphql/types/agent.type.ts`
-3. `/home/user/fuse/apps/api/src/graphql/types/workflow.type.ts`
-4. `/home/user/fuse/apps/api/src/graphql/types/workflow-step.type.ts`
-5. `/home/user/fuse/apps/api/src/graphql/types/input.types.ts`
+
+1. `<repo-root>/apps/api/src/graphql/types/user.type.ts`
+2. `<repo-root>/apps/api/src/graphql/types/agent.type.ts`
+3. `<repo-root>/apps/api/src/graphql/types/workflow.type.ts`
+4. `<repo-root>/apps/api/src/graphql/types/workflow-step.type.ts`
+5. `<repo-root>/apps/api/src/graphql/types/input.types.ts`
 
 ### Resolvers (3 files)
-6. `/home/user/fuse/apps/api/src/graphql/resolvers/user.resolver.ts`
-7. `/home/user/fuse/apps/api/src/graphql/resolvers/agent.resolver.ts`
-8. `/home/user/fuse/apps/api/src/graphql/resolvers/workflow.resolver.ts`
+
+6. `<repo-root>/apps/api/src/graphql/resolvers/user.resolver.ts`
+7. `<repo-root>/apps/api/src/graphql/resolvers/agent.resolver.ts`
+8. `<repo-root>/apps/api/src/graphql/resolvers/workflow.resolver.ts`
 
 ### Loaders (3 files)
-9. `/home/user/fuse/apps/api/src/graphql/loaders/user.loader.ts`
-10. `/home/user/fuse/apps/api/src/graphql/loaders/agent.loader.ts`
-11. `/home/user/fuse/apps/api/src/graphql/loaders/workflow.loader.ts`
+
+9. `<repo-root>/apps/api/src/graphql/loaders/user.loader.ts`
+10. `<repo-root>/apps/api/src/graphql/loaders/agent.loader.ts`
+11. `<repo-root>/apps/api/src/graphql/loaders/workflow.loader.ts`
 
 ### Guards (1 file)
-12. `/home/user/fuse/apps/api/src/graphql/guards/gql-auth.guard.ts`
+
+12. `<repo-root>/apps/api/src/graphql/guards/gql-auth.guard.ts`
 
 ### Configuration & Documentation (3 files)
-13. `/home/user/fuse/apps/api/src/graphql/graphql.module.ts`
-14. `/home/user/fuse/apps/api/src/graphql/GRAPHQL_EXAMPLES.md`
-15. `/home/user/fuse/apps/api/src/graphql/README.md`
+
+13. `<repo-root>/apps/api/src/graphql/graphql.module.ts`
+14. `<repo-root>/apps/api/src/graphql/GRAPHQL_EXAMPLES.md`
+15. `<repo-root>/apps/api/src/graphql/README.md`
 
 ## Total: 17 files (15 created, 2 modified)
 
@@ -441,18 +475,20 @@ Features:
 To start using the GraphQL API:
 
 1. **Install dependencies** (if not already installed):
+
    ```bash
    pnpm install
    ```
 
 2. **Start the server**:
+
    ```bash
    cd apps/api
    pnpm dev
    ```
 
-3. **Access GraphQL Playground**:
-   Open http://localhost:3000/graphql in your browser
+3. **Access GraphQL Playground**: Open http://localhost:3000/graphql in your
+   browser
 
 4. **Authenticate**:
    - Get a JWT token from the REST API login endpoint
@@ -463,8 +499,8 @@ To start using the GraphQL API:
      }
      ```
 
-5. **Run queries**:
-   Use the examples in `GRAPHQL_EXAMPLES.md` or explore the schema in the Playground
+5. **Run queries**: Use the examples in `GRAPHQL_EXAMPLES.md` or explore the
+   schema in the Playground
 
 ## Benefits
 

@@ -244,7 +244,7 @@ class MyCustomAgent implements Agent {
    AGENT_ID=my-custom-agent
    AGENT_NAME="My Custom Agent"
    FUSE_API_BASE_URL=https://api.newfuse.dev
-   REDIS_URL=redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570
+   REDIS_URL=redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>
    ```
 
 ### Agent Lifecycle Management

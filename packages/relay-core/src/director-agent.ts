@@ -30,7 +30,7 @@ const CONFIG = {
     process.env.LIVE_REDIS_URL ||
     process.env.REDIS_PRIVATE_URL ||
     process.env.REDIS_TLS_URL ||
-    'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
+    'redis://localhost:6379',
   LEDGER_API_BASE:
     process.env.LEDGER_API_BASE ||
     process.env.RAILWAY_API_URL ||

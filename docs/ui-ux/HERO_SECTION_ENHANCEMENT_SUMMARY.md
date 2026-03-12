@@ -8,7 +8,7 @@ accessibility features.
 
 ## Files Modified
 
-### 1. `/home/user/fuse/apps/frontend/src/pages/Home.tsx`
+### 1. `<repo-root>/apps/frontend/src/pages/Home.tsx`
 
 **Primary landing page component with enhanced hero section**
 
@@ -300,7 +300,7 @@ accessibility features.
 
 ```bash
 # Development server
-cd /home/user/fuse/apps/frontend
+cd <repo-root>/apps/frontend
 npm run dev
 
 # Production build

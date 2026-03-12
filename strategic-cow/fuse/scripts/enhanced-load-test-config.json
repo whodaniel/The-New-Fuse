@@ -279,7 +279,7 @@
         "monitoring": true
       },
       "redis": {
-        "connectionString": "redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570",
+        "connectionString": "redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>",
         "maxConnections": 10000,
         "monitoring": true
       }

@@ -34,7 +34,7 @@ TypeScript files **Status:** ✅ Analysis Complete + Top 5 Quick Wins Implemente
 
 ### 1. Comprehensive Analysis Report
 
-**File:** `/home/user/fuse/REFACTORING_OPPORTUNITIES.md` (36 KB)
+**File:** `<repo-root>/REFACTORING_OPPORTUNITIES.md` (36 KB)
 
 Contains:
 
@@ -61,7 +61,7 @@ Contains:
 ### 2. Implemented Quick Wins
 
 **Package:** `@the-new-fuse/shared` (657 lines) **Documentation:**
-`/home/user/fuse/packages/shared/REFACTORING_QUICK_WINS.md` (14 KB)
+`<repo-root>/packages/shared/REFACTORING_QUICK_WINS.md` (14 KB)
 
 #### Implemented Modules:
 

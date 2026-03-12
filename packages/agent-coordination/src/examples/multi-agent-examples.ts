@@ -25,7 +25,7 @@ import type { AgentInfo } from '../core/types';
 export async function example1_MapReduceDataProcessing() {
   console.log('=== Example 1: Map-Reduce Data Processing ===\n');
 
-  const redisUrl = 'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
+  const redisUrl = 'redis://localhost:6379';
 
   // Initialize components
   const agentPool = new AgentPool({
@@ -126,7 +126,7 @@ export async function example1_MapReduceDataProcessing() {
 export async function example2_PipelineDataTransformation() {
   console.log('\n=== Example 2: Pipeline Data Transformation ===\n');
 
-  const redisUrl = 'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
+  const redisUrl = 'redis://localhost:6379';
 
   const agentPool = new AgentPool({
     minAgents: 5,
@@ -291,7 +291,7 @@ export async function example2_PipelineDataTransformation() {
 export async function example3_ConsensusDecisionMaking() {
   console.log('\n=== Example 3: Consensus Decision Making ===\n');
 
-  const redisUrl = 'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
+  const redisUrl = 'redis://localhost:6379';
 
   const agentPool = new AgentPool({
     minAgents: 5,
@@ -382,7 +382,7 @@ export async function example3_ConsensusDecisionMaking() {
 export async function example4_SwarmOptimization() {
   console.log('\n=== Example 4: Swarm Intelligence Optimization ===\n');
 
-  const redisUrl = 'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
+  const redisUrl = 'redis://localhost:6379';
 
   const agentPool = new AgentPool({
     minAgents: 5,
@@ -460,7 +460,7 @@ export async function example4_SwarmOptimization() {
 export async function example5_ComplexWorkflow() {
   console.log('\n=== Example 5: Complex Multi-Pattern Workflow ===\n');
 
-  const redisUrl = 'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
+  const redisUrl = 'redis://localhost:6379';
 
   const agentPool = new AgentPool({
     minAgents: 5,

@@ -27,9 +27,7 @@ class DatabaseConfig extends events_1.EventEmitter {
   }
   async initializeRedis() {
     try {
-      const redisUrl =
-        process.env.REDIS_URL ||
-        'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
+      const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
       this.redisClient = (0, redis_1.createClient)({
         url: redisUrl,
         socket: {

@@ -41,11 +41,9 @@ execution, enabling attackers to:
 
 #### Affected Files
 
-1. `/home/user/fuse/packages/core/src/workflow/WorkflowEngine.ts` (Line 405)
-2. `/home/user/fuse/packages/core/src/workflow/WorkflowExecutor.ts` (Lines
-   264, 274)
-3. `/home/user/fuse/cloudflare-worker/code-execution.ts` (Lines 406, 407,
-   419, 472)
+1. `<repo-root>/packages/core/src/workflow/WorkflowEngine.ts` (Line 405)
+2. `<repo-root>/packages/core/src/workflow/WorkflowExecutor.ts` (Lines 264, 274)
+3. `<repo-root>/cloudflare-worker/code-execution.ts` (Lines 406, 407, 419, 472)
 
 #### Fix Applied
 
@@ -103,10 +101,10 @@ making them predictable and vulnerable to:
 
 #### Affected Files
 
-1. `/home/user/fuse/packages/core/src/workflow/WorkflowEngine.ts` (Line 115)
-2. `/home/user/fuse/packages/workflow-engine/src/engine/WorkflowEngine.ts`
-   (Lines 199, 369)
-3. `/home/user/fuse/packages/workflow-engine/src/executor/WorkflowExecutor.ts`
+1. `<repo-root>/packages/core/src/workflow/WorkflowEngine.ts` (Line 115)
+2. `<repo-root>/packages/workflow-engine/src/engine/WorkflowEngine.ts` (Lines
+   199, 369)
+3. `<repo-root>/packages/workflow-engine/src/executor/WorkflowExecutor.ts`
    (Line 614)
 
 #### Fix Applied
@@ -158,9 +156,9 @@ attacks through:
 
 #### Affected Files
 
-1. `/home/user/fuse/apps/frontend/src/components/WorkspaceChat/ChatContainer/ChatHistory/PromptReply/index.tsx`
+1. `<repo-root>/apps/frontend/src/components/WorkspaceChat/ChatContainer/ChatHistory/PromptReply/index.tsx`
    (Line 81)
-2. `/home/user/fuse/apps/frontend/src/utils/chat/markdown.tsx` (Lines 76, 12-32)
+2. `<repo-root>/apps/frontend/src/utils/chat/markdown.tsx` (Lines 76, 12-32)
 
 #### Fix Applied
 
@@ -245,9 +243,9 @@ String concatenation in SQL queries allowed SQL injection attacks that could:
 
 #### Affected Files
 
-1. `/home/user/fuse/packages/core-vector-db/src/drivers/pgvector.driver.ts`
-   (Lines 47-76, 90, 233)
-2. `/home/user/fuse/packages/mcp-core/docs/EXAMPLES.md` (Lines 476, 488, 603)
+1. `<repo-root>/packages/core-vector-db/src/drivers/pgvector.driver.ts` (Lines
+   47-76, 90, 233)
+2. `<repo-root>/packages/mcp-core/docs/EXAMPLES.md` (Lines 476, 488, 603)
 
 #### Fix Applied
 
@@ -297,7 +295,7 @@ Hardcoded secrets in configuration files posed risks of:
 
 #### Affected Files
 
-1. `/home/user/fuse/config/config.js` (Line 43)
+1. `<repo-root>/config/config.js` (Line 43)
 
 #### Fix Applied
 
@@ -370,26 +368,25 @@ error logging
 
 ### Core Workflow Engine Files (5 files)
 
-1. ✅ `/home/user/fuse/packages/core/src/workflow/WorkflowEngine.ts`
-2. ✅ `/home/user/fuse/packages/core/src/workflow/WorkflowExecutor.ts`
-3. ✅ `/home/user/fuse/packages/workflow-engine/src/engine/WorkflowEngine.ts`
-4. ✅
-   `/home/user/fuse/packages/workflow-engine/src/executor/WorkflowExecutor.ts`
-5. ✅ `/home/user/fuse/cloudflare-worker/code-execution.ts`
+1. ✅ `<repo-root>/packages/core/src/workflow/WorkflowEngine.ts`
+2. ✅ `<repo-root>/packages/core/src/workflow/WorkflowExecutor.ts`
+3. ✅ `<repo-root>/packages/workflow-engine/src/engine/WorkflowEngine.ts`
+4. ✅ `<repo-root>/packages/workflow-engine/src/executor/WorkflowExecutor.ts`
+5. ✅ `<repo-root>/cloudflare-worker/code-execution.ts`
 
 ### Frontend Security Files (2 files)
 
-6. ✅ `/home/user/fuse/apps/frontend/src/utils/chat/markdown.tsx`
+6. ✅ `<repo-root>/apps/frontend/src/utils/chat/markdown.tsx`
 7. ✅
-   `/home/user/fuse/apps/frontend/src/components/WorkspaceChat/ChatContainer/ChatHistory/PromptReply/index.tsx`
+   `<repo-root>/apps/frontend/src/components/WorkspaceChat/ChatContainer/ChatHistory/PromptReply/index.tsx`
 
 ### Database Security Files (1 file)
 
-8. ✅ `/home/user/fuse/packages/core-vector-db/src/drivers/pgvector.driver.ts`
+8. ✅ `<repo-root>/packages/core-vector-db/src/drivers/pgvector.driver.ts`
 
 ### Configuration Files (1 file)
 
-9. ✅ `/home/user/fuse/config/config.js`
+9. ✅ `<repo-root>/config/config.js`
 
 **Total Files Modified:** 9
 

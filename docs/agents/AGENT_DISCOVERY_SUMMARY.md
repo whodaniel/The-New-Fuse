@@ -423,14 +423,14 @@ docker run -d -p 6379:6379 redis:latest
 Terminal 1:
 
 ```bash
-cd /home/user/fuse/examples/agent-discovery
+cd <repo-root>/examples/agent-discovery
 ts-node code-review-agent.ts
 ```
 
 Terminal 2:
 
 ```bash
-cd /home/user/fuse/examples/agent-discovery
+cd <repo-root>/examples/agent-discovery
 ts-node data-analysis-agent.ts
 ```
 
@@ -439,7 +439,7 @@ ts-node data-analysis-agent.ts
 Terminal 3:
 
 ```bash
-cd /home/user/fuse/examples/agent-discovery
+cd <repo-root>/examples/agent-discovery
 ts-node discovery-client-example.ts
 ```
 

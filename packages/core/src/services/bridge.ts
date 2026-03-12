@@ -11,9 +11,7 @@ export class RedisBridge {
   private redisSubscriber: RedisClientType;
   private redisPublisher: RedisClientType;
 
-  constructor(
-    redisHost: string = 'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
-  ) {
+  constructor(redisHost: string = 'redis://localhost:6379') {
     this.redisSubscriber = createClient({ url: redisHost });
     this.redisPublisher = this.redisSubscriber.duplicate();
 

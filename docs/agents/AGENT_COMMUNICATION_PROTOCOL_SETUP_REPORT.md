@@ -28,7 +28,7 @@ Detailed guides and API references
 
 ### 1. MCP (Model Context Protocol) Setup ✅
 
-**Location**: `/home/user/fuse/packages/core/src/mcp/MCPAgentServer.ts`
+**Location**: `<repo-root>/packages/core/src/mcp/MCPAgentServer.ts`
 
 **Status**: Production Ready
 
@@ -58,8 +58,7 @@ implementation.
 
 ### 2. Agent Registry & Discovery ✅
 
-**Location**:
-`/home/user/fuse/packages/api/src/modules/mcp/mcp-registry.service.ts`
+**Location**: `<repo-root>/packages/api/src/modules/mcp/mcp-registry.service.ts`
 
 **Status**: Production Ready
 
@@ -101,7 +100,7 @@ capabilities.
 **WebSocket Gateway** ✅
 
 - **Location**:
-  `/home/user/fuse/apps/backend/src/gateways/agent-communication.gateway.ts`
+  `<repo-root>/apps/backend/src/gateways/agent-communication.gateway.ts`
 - **Port**: Default (configurable)
 - **Features**: Real-time bidirectional communication, auto-reconnection, CORS
   support
@@ -110,8 +109,7 @@ capabilities.
 
 **Redis Pub/Sub** ✅
 
-- **URL**:
-  `redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570`
+- **URL**: `redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>`
   (configurable)
 - **Channels**:
   - `agent:{agentId}` - Direct messaging
@@ -150,7 +148,7 @@ capabilities.
 **Inter-Agent Chat Service** ✅
 
 - **Location**:
-  `/home/user/fuse/apps/backend/src/agent/services/InterAgentChatService.ts`
+  `<repo-root>/apps/backend/src/agent/services/InterAgentChatService.ts`
 - **Features**: Direct messaging, broadcasts, event emission
 - **Channels**: Redis pub/sub based
 - **Monitoring**: Health checks, metrics tracking
@@ -158,14 +156,14 @@ capabilities.
 **MCP Broker Service** ✅
 
 - **Location**:
-  `/home/user/fuse/packages/api/src/mcp/services/mcp-broker.service.ts`
+  `<repo-root>/packages/api/src/mcp/services/mcp-broker.service.ts`
 - **Features**: Server registration, capability management, tool execution
 - **Mock Servers**: Development servers pre-configured
 - **Directives**: Action execution with context
 
 **Workflow Integration** ✅
 
-- **Location**: `/home/user/fuse/test-suite/integration/agent-workflow.test.ts`
+- **Location**: `<repo-root>/test-suite/integration/agent-workflow.test.ts`
 - **Features**: Multi-agent workflows, conditional routing, error handling
 - **Test Coverage**: End-to-end workflow execution scenarios
 
@@ -178,7 +176,7 @@ patterns.
 
 **Agent Auth Guard** ✅
 
-- **Location**: `/home/user/fuse/apps/backend/src/auth/agent.auth.guard.ts`
+- **Location**: `<repo-root>/apps/backend/src/auth/agent.auth.guard.ts`
 
 **Authentication Methods**:
 
@@ -220,13 +218,13 @@ patterns.
 
 1. **Agent Communication Architecture** ✅
    - **Location**:
-     `/home/user/fuse/docs/agents-and-protocols/AGENT_COMMUNICATION_ARCHITECTURE.md`
+     `<repo-root>/docs/agents-and-protocols/AGENT_COMMUNICATION_ARCHITECTURE.md`
    - **Coverage**: Complete system overview, all components, API reference
    - **Length**: 1000+ lines of comprehensive documentation
 
 2. **Agent Development Guide** ✅
    - **Location**:
-     `/home/user/fuse/docs/agents-and-protocols/AGENT_DEVELOPMENT_GUIDE.md`
+     `<repo-root>/docs/agents-and-protocols/AGENT_DEVELOPMENT_GUIDE.md`
    - **Coverage**: Step-by-step agent creation, examples, best practices
    - **Length**: 800+ lines with code examples
 
@@ -234,20 +232,20 @@ patterns.
 
 3. **Complete Agent Communication Guide** ✅
    - **Location**:
-     `/home/user/fuse/docs/guides/COMPLETE-AGENT-COMMUNICATION-GUIDE.md`
+     `<repo-root>/docs/guides/COMPLETE-AGENT-COMMUNICATION-GUIDE.md`
    - **Coverage**: Protocols, workflows, collaboration features
 
 4. **Agent Framework Protocols** ✅
    - **Location**:
-     `/home/user/fuse/docs/agents-and-protocols/AGENT_FRAMEWORK_PROTOCOLS.md`
+     `<repo-root>/docs/agents-and-protocols/AGENT_FRAMEWORK_PROTOCOLS.md`
    - **Coverage**: Handoff procedures, startup checklists, best practices
 
 5. **Available Agents Registry** ✅
-   - **Location**: `/home/user/fuse/docs/AVAILABLE_AGENTS_REGISTRY.md`
+   - **Location**: `<repo-root>/docs/AVAILABLE_AGENTS_REGISTRY.md`
    - **Coverage**: Current agent inventory, capabilities, coordination
 
 6. **MCP Complete Guide** ✅
-   - **Location**: `/home/user/fuse/docs/protocols/MCP-COMPLETE-GUIDE.md`
+   - **Location**: `<repo-root>/docs/protocols/MCP-COMPLETE-GUIDE.md`
    - **Coverage**: MCP implementation details
 
 **Assessment**: Exceptional documentation coverage with both technical and
@@ -261,7 +259,7 @@ practical guides.
 
 **1. Agent Workflow Integration Tests** ✅
 
-- **Location**: `/home/user/fuse/test-suite/integration/agent-workflow.test.ts`
+- **Location**: `<repo-root>/test-suite/integration/agent-workflow.test.ts`
 - **Lines**: 963 lines of comprehensive tests
 - **Coverage**:
   - ✅ End-to-end workflow execution
@@ -273,7 +271,7 @@ practical guides.
 
 **2. Agent Registry Tests** ✅
 
-- **Location**: `/home/user/fuse/src/tests/AgentRegistry.test.ts`
+- **Location**: `<repo-root>/src/tests/AgentRegistry.test.ts`
 - **Lines**: 269 lines of unit tests
 - **Coverage**:
   - ✅ Agent registration
@@ -284,8 +282,7 @@ practical guides.
 
 **3. Agent Communication Tests** ✅ (NEW)
 
-- **Location**:
-  `/home/user/fuse/test-suite/integration/agent-communication.test.ts`
+- **Location**: `<repo-root>/test-suite/integration/agent-communication.test.ts`
 - **Lines**: 600+ lines of integration tests
 - **Coverage**:
   - ✅ Agent registration and discovery
@@ -361,34 +358,34 @@ practical guides.
 
 ### Core Implementation Files
 
-| Component                   | Location                                                                   | Status |
-| --------------------------- | -------------------------------------------------------------------------- | ------ |
-| MCP Agent Server            | `/home/user/fuse/packages/core/src/mcp/MCPAgentServer.ts`                  | ✅     |
-| MCP Registry Service        | `/home/user/fuse/packages/api/src/modules/mcp/mcp-registry.service.ts`     | ✅     |
-| Agent Communication Gateway | `/home/user/fuse/apps/backend/src/gateways/agent-communication.gateway.ts` | ✅     |
-| Inter-Agent Chat Service    | `/home/user/fuse/apps/backend/src/agent/services/InterAgentChatService.ts` | ✅     |
-| MCP Broker Service          | `/home/user/fuse/packages/api/src/mcp/services/mcp-broker.service.ts`      | ✅     |
-| Agent Auth Guard            | `/home/user/fuse/apps/backend/src/auth/agent.auth.guard.ts`                | ✅     |
-| MCP Types                   | `/home/user/fuse/packages/types/src/mcp.ts`                                | ✅     |
+| Component                   | Location                                                               | Status |
+| --------------------------- | ---------------------------------------------------------------------- | ------ |
+| MCP Agent Server            | `<repo-root>/packages/core/src/mcp/MCPAgentServer.ts`                  | ✅     |
+| MCP Registry Service        | `<repo-root>/packages/api/src/modules/mcp/mcp-registry.service.ts`     | ✅     |
+| Agent Communication Gateway | `<repo-root>/apps/backend/src/gateways/agent-communication.gateway.ts` | ✅     |
+| Inter-Agent Chat Service    | `<repo-root>/apps/backend/src/agent/services/InterAgentChatService.ts` | ✅     |
+| MCP Broker Service          | `<repo-root>/packages/api/src/mcp/services/mcp-broker.service.ts`      | ✅     |
+| Agent Auth Guard            | `<repo-root>/apps/backend/src/auth/agent.auth.guard.ts`                | ✅     |
+| MCP Types                   | `<repo-root>/packages/types/src/mcp.ts`                                | ✅     |
 
 ### Documentation Files
 
-| Document                           | Location                                                                        | Status |
-| ---------------------------------- | ------------------------------------------------------------------------------- | ------ |
-| Agent Communication Architecture   | `/home/user/fuse/docs/agents-and-protocols/AGENT_COMMUNICATION_ARCHITECTURE.md` | ✅ NEW |
-| Agent Development Guide            | `/home/user/fuse/docs/agents-and-protocols/AGENT_DEVELOPMENT_GUIDE.md`          | ✅ NEW |
-| Complete Agent Communication Guide | `/home/user/fuse/docs/guides/COMPLETE-AGENT-COMMUNICATION-GUIDE.md`             | ✅     |
-| Agent Framework Protocols          | `/home/user/fuse/docs/agents-and-protocols/AGENT_FRAMEWORK_PROTOCOLS.md`        | ✅     |
-| Available Agents Registry          | `/home/user/fuse/docs/AVAILABLE_AGENTS_REGISTRY.md`                             | ✅     |
-| MCP Complete Guide                 | `/home/user/fuse/docs/protocols/MCP-COMPLETE-GUIDE.md`                          | ✅     |
+| Document                           | Location                                                                    | Status |
+| ---------------------------------- | --------------------------------------------------------------------------- | ------ |
+| Agent Communication Architecture   | `<repo-root>/docs/agents-and-protocols/AGENT_COMMUNICATION_ARCHITECTURE.md` | ✅ NEW |
+| Agent Development Guide            | `<repo-root>/docs/agents-and-protocols/AGENT_DEVELOPMENT_GUIDE.md`          | ✅ NEW |
+| Complete Agent Communication Guide | `<repo-root>/docs/guides/COMPLETE-AGENT-COMMUNICATION-GUIDE.md`             | ✅     |
+| Agent Framework Protocols          | `<repo-root>/docs/agents-and-protocols/AGENT_FRAMEWORK_PROTOCOLS.md`        | ✅     |
+| Available Agents Registry          | `<repo-root>/docs/AVAILABLE_AGENTS_REGISTRY.md`                             | ✅     |
+| MCP Complete Guide                 | `<repo-root>/docs/protocols/MCP-COMPLETE-GUIDE.md`                          | ✅     |
 
 ### Test Files
 
-| Test Suite                | Location                                                             | Status |
-| ------------------------- | -------------------------------------------------------------------- | ------ |
-| Agent Workflow Tests      | `/home/user/fuse/test-suite/integration/agent-workflow.test.ts`      | ✅     |
-| Agent Registry Tests      | `/home/user/fuse/src/tests/AgentRegistry.test.ts`                    | ✅     |
-| Agent Communication Tests | `/home/user/fuse/test-suite/integration/agent-communication.test.ts` | ✅ NEW |
+| Test Suite                | Location                                                         | Status |
+| ------------------------- | ---------------------------------------------------------------- | ------ |
+| Agent Workflow Tests      | `<repo-root>/test-suite/integration/agent-workflow.test.ts`      | ✅     |
+| Agent Registry Tests      | `<repo-root>/src/tests/AgentRegistry.test.ts`                    | ✅     |
+| Agent Communication Tests | `<repo-root>/test-suite/integration/agent-communication.test.ts` | ✅ NEW |
 
 ---
 
@@ -433,7 +430,7 @@ API_URL=http://localhost:3000/api
 MCP_REGISTRY_API_KEY=your-api-key-here
 
 # Redis Configuration
-REDIS_URL=redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570
+REDIS_URL=redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>
 
 # Agent Configuration
 AGENT_ID=your-agent-id
@@ -476,10 +473,9 @@ curl http://localhost:3000/api/health
 
 **1. Review Documentation**:
 
-- Start with:
-  `/home/user/fuse/docs/agents-and-protocols/AGENT_DEVELOPMENT_GUIDE.md`
+- Start with: `<repo-root>/docs/agents-and-protocols/AGENT_DEVELOPMENT_GUIDE.md`
 - Reference:
-  `/home/user/fuse/docs/agents-and-protocols/AGENT_COMMUNICATION_ARCHITECTURE.md`
+  `<repo-root>/docs/agents-and-protocols/AGENT_COMMUNICATION_ARCHITECTURE.md`
 
 **2. Register Your Agent**:
 
@@ -557,7 +553,7 @@ integration.
 
 - **Impact**: Medium
 - **Priority**: Medium
-- **Location**: `/home/user/fuse/apps/backend/src/auth/agent.auth.guard.ts`
+- **Location**: `<repo-root>/apps/backend/src/auth/agent.auth.guard.ts`
 - **Fix**: Implement database lookup for API key validation
 
 ### Minor Issues
@@ -687,9 +683,9 @@ documentation.
 
 ## Support Resources
 
-- **Documentation**: `/home/user/fuse/docs/`
-- **Examples**: `/home/user/fuse/examples/`
-- **Tests**: `/home/user/fuse/test-suite/`
+- **Documentation**: `<repo-root>/docs/`
+- **Examples**: `<repo-root>/examples/`
+- **Tests**: `<repo-root>/test-suite/`
 - **GitHub Issues**: https://github.com/whodaniel/fuse/issues
 
 ---

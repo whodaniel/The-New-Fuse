@@ -22,9 +22,7 @@ export class A2ACoreModule {
           useFactory: (configService: ConfigService): A2AConfig => {
             const defaultConfig: A2AConfig = {
               redis: {
-                url:
-                  configService.get<string>('REDIS_URL') ||
-                  'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
+                url: configService.get<string>('REDIS_URL') || 'redis://localhost:6379',
                 keyPrefix: 'a2a:',
                 ttl: 3600,
               },

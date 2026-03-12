@@ -10,7 +10,7 @@ redis-cli ping  # Should return "PONG"
 redis-cli info  # Verify Redis is running on default port 6379
 
 # Verify environment
-echo $REDIS_URL  # Should show "redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570"
+echo $REDIS_URL  # Should show "redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>"
 ```
 
 ## 2. Agent Registration

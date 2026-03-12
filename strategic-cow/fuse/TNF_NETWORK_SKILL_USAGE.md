@@ -89,7 +89,7 @@ node dist/index.js
   "command": "node",
   "args": ["/absolute/path/to/apps/mcp-servers/tnf-network-mcp/dist/index.js"],
   "env": {
-    "REDIS_URL": "redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570"
+    "REDIS_URL": "redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>"
   }
 }
 ```

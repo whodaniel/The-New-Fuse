@@ -43,10 +43,7 @@ export class RedisAgentRegistry {
 
   constructor(config: Partial<AgentRegistryConfig> = {}) {
     this.config = {
-      redisUrl:
-        config.redisUrl ||
-        process.env.REDIS_URL ||
-        'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
+      redisUrl: config.redisUrl || process.env.REDIS_URL || 'redis://localhost:6379',
       prefix: config.prefix || 'tnf:registry:agents',
       ttl: config.ttl || 60,
     };

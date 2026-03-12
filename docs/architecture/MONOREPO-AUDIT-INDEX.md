@@ -421,15 +421,15 @@ QUICK-START-FIXES.md
 
 ### Generated Files
 
-- `/home/user/fuse/analyze-monorepo.js` - Analysis script
-- `/home/user/fuse/scripts/fix-package-exports.js` - Fix automation script
+- `<repo-root>/analyze-monorepo.js` - Analysis script
+- `<repo-root>/scripts/fix-package-exports.js` - Fix automation script
 
 ### Root Configuration Files
 
-- `/home/user/fuse/package.json` - Root package config
-- `/home/user/fuse/pnpm-workspace.yaml` - Workspace definition
-- `/home/user/fuse/turbo.json` - Build pipeline config
-- `/home/user/fuse/packages/tsconfig.base.json` - TypeScript base config
+- `<repo-root>/package.json` - Root package config
+- `<repo-root>/pnpm-workspace.yaml` - Workspace definition
+- `<repo-root>/turbo.json` - Build pipeline config
+- `<repo-root>/packages/tsconfig.base.json` - TypeScript base config
 
 ### Documentation
 

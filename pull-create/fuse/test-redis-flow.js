@@ -10,7 +10,7 @@ async function test() {
 
   // 1. Setup Redis listener
   const redisSubscriber = createClient({
-    url: 'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
+    url: 'redis://localhost:6379',
   });
   await redisSubscriber.connect();
 

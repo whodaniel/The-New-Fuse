@@ -18,8 +18,7 @@ describe('AppConfigService', () => {
                 NODE_ENV: 'test',
                 JWT_SECRET: 'a'.repeat(32), // Valid 32-char secret
                 DATABASE_URL: 'postgresql://test:test@localhost:5432/test',
-                REDIS_URL:
-                  'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
+                REDIS_URL: 'redis://localhost:6379',
               }),
             ],
           }),
@@ -51,9 +50,7 @@ describe('AppConfigService', () => {
 
     it('should return Redis URL', async () => {
       await service.onModuleInit();
-      expect(service.redisUrl).toBe(
-        'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570'
-      );
+      expect(service.redisUrl).toBe('redis://localhost:6379');
     });
 
     it('should identify test environment', async () => {
@@ -88,8 +85,7 @@ describe('AppConfigService', () => {
               () => ({
                 NODE_ENV: 'test',
                 DATABASE_URL: 'postgresql://test:test@localhost:5432/test',
-                REDIS_URL:
-                  'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
+                REDIS_URL: 'redis://localhost:6379',
               }),
             ],
           }),
@@ -115,8 +111,7 @@ describe('AppConfigService', () => {
                 NODE_ENV: 'test',
                 JWT_SECRET: 'too-short',
                 DATABASE_URL: 'postgresql://test:test@localhost:5432/test',
-                REDIS_URL:
-                  'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
+                REDIS_URL: 'redis://localhost:6379',
               }),
             ],
           }),
@@ -142,8 +137,7 @@ describe('AppConfigService', () => {
                 NODE_ENV: 'test',
                 JWT_SECRET: 'your-secret-key-that-is-very-long-but-still-bad',
                 DATABASE_URL: 'postgresql://test:test@localhost:5432/test',
-                REDIS_URL:
-                  'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
+                REDIS_URL: 'redis://localhost:6379',
               }),
             ],
           }),
@@ -168,8 +162,7 @@ describe('AppConfigService', () => {
               () => ({
                 NODE_ENV: 'test',
                 JWT_SECRET: 'a'.repeat(32),
-                REDIS_URL:
-                  'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
+                REDIS_URL: 'redis://localhost:6379',
               }),
             ],
           }),
@@ -220,8 +213,7 @@ describe('AppConfigService', () => {
                 NODE_ENV: 'production',
                 JWT_SECRET: 'a'.repeat(32),
                 DATABASE_URL: 'postgresql://test:test@localhost:5432/test',
-                REDIS_URL:
-                  'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
+                REDIS_URL: 'redis://localhost:6379',
               }),
             ],
           }),
@@ -245,8 +237,7 @@ describe('AppConfigService', () => {
                 NODE_ENV: 'production',
                 JWT_SECRET: 'a'.repeat(32),
                 DATABASE_URL: 'postgresql://test:test@localhost:5432/test',
-                REDIS_URL:
-                  'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
+                REDIS_URL: 'redis://localhost:6379',
                 FRONTEND_URL: 'https://example.com',
               }),
             ],
@@ -271,8 +262,7 @@ describe('AppConfigService', () => {
                 NODE_ENV: 'production',
                 JWT_SECRET: 'a'.repeat(32),
                 DATABASE_URL: 'postgresql://test:test@localhost:5432/test',
-                REDIS_URL:
-                  'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
+                REDIS_URL: 'redis://localhost:6379',
                 FRONTEND_URL: 'https://example.com',
                 ANTHROPIC_API_KEY: 'test-api-key',
                 CORS_ORIGINS: 'https://example.com',
@@ -304,8 +294,7 @@ describe('AppConfigService', () => {
                 NODE_ENV: 'test',
                 JWT_SECRET: 'a'.repeat(32),
                 DATABASE_URL: 'postgresql://test:test@localhost:5432/test',
-                REDIS_URL:
-                  'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
+                REDIS_URL: 'redis://localhost:6379',
                 CUSTOM_KEY: 'custom-value',
               }),
             ],

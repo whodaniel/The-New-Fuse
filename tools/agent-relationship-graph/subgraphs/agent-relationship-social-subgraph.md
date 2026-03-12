@@ -1,7 +1,6 @@
 # Social Subgraph
 
-Generated: 2026-03-03
-Source: `agent-relationship-graph.json`
+Generated: 2026-03-12 Source: `agent-relationship-graph.json`
 
 ```mermaid
 graph TD

@@ -178,7 +178,7 @@ const agentPool = new AgentPool({
 
 // Initialize coordinator
 const coordinator = new Coordinator(
-  'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
+  'redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>',
   agentPool,
   {
     maxConcurrentTasks: 20,
@@ -230,7 +230,7 @@ import {
 
 async function processLargeDataset() {
   const redisUrl =
-    'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
+    'redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>';
 
   // Setup
   const agentPool = new AgentPool({

@@ -33,7 +33,7 @@ Should return "PONG"
 4. Verify Project Redis Configuration:
 
 - Check REDIS_URL in environment (should be
-  "redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570")
+  "redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>")
 - Verify Redis channels are accessible:
 
 ```bash

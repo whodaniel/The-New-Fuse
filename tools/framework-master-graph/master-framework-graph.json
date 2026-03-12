@@ -1,12 +1,12 @@
 {
   "generatedAt": "2026-03-09T06:56:50.490Z",
   "sourceFiles": {
-    "agentGraph": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/tools/agent-relationship-graph/agent-relationship-graph.json",
-    "routeAudit": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/docs/audits/navigation-route-audit.json",
-    "linkAudit": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/docs/audits/all-links-audit.json",
-    "liveCrawl": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/docs/audits/live-link-crawl.json",
-    "railway": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/railway_list.json",
-    "keywordMentions": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/reports/keyword-mentions/mentions-map.json"
+    "agentGraph": "tools/agent-relationship-graph/agent-relationship-graph.json",
+    "routeAudit": "apps/frontend/docs/audits/navigation-route-audit.json",
+    "linkAudit": "apps/frontend/docs/audits/all-links-audit.json",
+    "liveCrawl": "apps/frontend/docs/audits/live-link-crawl.json",
+    "railway": "railway_list.json",
+    "keywordMentions": "reports/keyword-mentions/mentions-map.json"
   },
   "nodes": [
     {

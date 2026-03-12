@@ -15,7 +15,7 @@ Created five new production-ready node types:
 #### Agent Task Node (`agentTask`)
 
 - **Location**:
-  `/home/user/fuse/apps/frontend/src/components/workflow/EnhancedNodeTypes.tsx`
+  `<repo-root>/apps/frontend/src/components/workflow/EnhancedNodeTypes.tsx`
 - **Features**:
   - Integration with Master Agent Registry
   - Real-time status indicators (idle, running, completed, error, waiting)
@@ -61,7 +61,7 @@ Created five new production-ready node types:
 ### 2. Enhanced Workflow Builder UI
 
 **Location**:
-`/home/user/fuse/apps/frontend/src/pages/Workflows/EnhancedWorkflowBuilder.tsx`
+`<repo-root>/apps/frontend/src/pages/Workflows/EnhancedWorkflowBuilder.tsx`
 
 **New Features**:
 
@@ -91,7 +91,7 @@ Created five new production-ready node types:
 
 ### 3. Workflow Templates Library
 
-**Location**: `/home/user/fuse/apps/frontend/src/data/workflowTemplates.ts`
+**Location**: `<repo-root>/apps/frontend/src/data/workflowTemplates.ts`
 
 Created 5 production-ready workflow templates:
 
@@ -113,7 +113,7 @@ Created 5 production-ready workflow templates:
 ### 4. Backend WebSocket Gateway
 
 **Location**:
-`/home/user/fuse/apps/backend/src/workflow/workflow-execution.gateway.ts`
+`<repo-root>/apps/backend/src/workflow/workflow-execution.gateway.ts`
 
 **Features**:
 
@@ -138,7 +138,7 @@ Created 5 production-ready workflow templates:
 ### 5. Comprehensive Testing Suite
 
 **Location**:
-`/home/user/fuse/apps/frontend/src/__tests__/EnhancedWorkflowBuilder.test.tsx`
+`<repo-root>/apps/frontend/src/__tests__/EnhancedWorkflowBuilder.test.tsx`
 
 **Test Coverage**:
 
@@ -155,7 +155,7 @@ Created 5 production-ready workflow templates:
 
 ### 6. Complete Documentation
 
-**Location**: `/home/user/fuse/docs/WORKFLOW_BUILDER_GUIDE.md`
+**Location**: `<repo-root>/docs/WORKFLOW_BUILDER_GUIDE.md`
 
 **Documentation Includes**:
 
@@ -440,32 +440,32 @@ socket.on('execution_update', (update) => {
 ### New Files Created
 
 1. **Frontend Components**:
-   - `/home/user/fuse/apps/frontend/src/components/workflow/EnhancedNodeTypes.tsx`
-   - `/home/user/fuse/apps/frontend/src/pages/Workflows/EnhancedWorkflowBuilder.tsx`
-   - `/home/user/fuse/apps/frontend/src/data/workflowTemplates.ts`
+   - `<repo-root>/apps/frontend/src/components/workflow/EnhancedNodeTypes.tsx`
+   - `<repo-root>/apps/frontend/src/pages/Workflows/EnhancedWorkflowBuilder.tsx`
+   - `<repo-root>/apps/frontend/src/data/workflowTemplates.ts`
 
 2. **Backend Services**:
-   - `/home/user/fuse/apps/backend/src/workflow/workflow-execution.gateway.ts`
+   - `<repo-root>/apps/backend/src/workflow/workflow-execution.gateway.ts`
 
 3. **Tests**:
-   - `/home/user/fuse/apps/frontend/src/__tests__/EnhancedWorkflowBuilder.test.tsx`
+   - `<repo-root>/apps/frontend/src/__tests__/EnhancedWorkflowBuilder.test.tsx`
 
 4. **Documentation**:
-   - `/home/user/fuse/docs/WORKFLOW_BUILDER_GUIDE.md`
-   - `/home/user/fuse/WORKFLOW_BUILDER_ENHANCEMENTS.md` (this file)
+   - `<repo-root>/docs/WORKFLOW_BUILDER_GUIDE.md`
+   - `<repo-root>/WORKFLOW_BUILDER_ENHANCEMENTS.md` (this file)
 
 ### Existing Files Referenced
 
 1. **Workflow Engine**:
-   `/home/user/fuse/packages/workflow-engine/src/engine/WorkflowEngine.ts`
+   `<repo-root>/packages/workflow-engine/src/engine/WorkflowEngine.ts`
 2. **Agent Registry**:
-   `/home/user/fuse/packages/relay-core/src/services/MasterAgentRegistry.ts`
+   `<repo-root>/packages/relay-core/src/services/MasterAgentRegistry.ts`
 3. **Workflow Types**:
-   `/home/user/fuse/packages/workflow-engine/src/types/WorkflowTypes.ts`
+   `<repo-root>/packages/workflow-engine/src/types/WorkflowTypes.ts`
 4. **Workflow Service**:
-   `/home/user/fuse/packages/api/src/modules/services/workflow.service.ts`
+   `<repo-root>/packages/api/src/modules/services/workflow.service.ts`
 5. **Execution Service**:
-   `/home/user/fuse/apps/frontend/src/services/WorkflowExecutionService.ts`
+   `<repo-root>/apps/frontend/src/services/WorkflowExecutionService.ts`
 
 ---
 

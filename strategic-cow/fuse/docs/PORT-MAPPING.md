@@ -2,16 +2,16 @@
 
 ## Current Port Allocation (Post-Conflict Resolution)
 
-| Port     | Service             | URL                                                                             | Purpose                     | Status       |
-| -------- | ------------------- | ------------------------------------------------------------------------------- | --------------------------- | ------------ |
-| **3000** | Frontend Dev Server | `http://localhost:3000`                                                         | React/Vite development      | ✅ Active    |
-| **8080** | API Gateway         | `http://localhost:8080`                                                         | **Unified API Entry Point** | 🆕 **NEW**   |
-| **3001** | Backend API         | `http://localhost:3001`                                                         | Core business logic         | ✅ Active    |
-| **3002** | Webhooks Service    | `http://localhost:3002`                                                         | Event ingestion             | 📍 **Moved** |
-| **5173** | Vite Preview        | `http://localhost:5173`                                                         | Production preview          | 🔒 Reserved  |
-| **5555** | Database UI         | `http://localhost:5555`                                                         | Drizzle Studio              | 🔒 Reserved  |
-| **6379** | Redis               | `redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570` | Cache/Sessions              | 🔒 Reserved  |
-| **5432** | PostgreSQL          | `postgresql://localhost:5432`                                                   | Database                    | 🔒 Reserved  |
+| Port     | Service             | URL                                                               | Purpose                     | Status       |
+| -------- | ------------------- | ----------------------------------------------------------------- | --------------------------- | ------------ |
+| **3000** | Frontend Dev Server | `http://localhost:3000`                                           | React/Vite development      | ✅ Active    |
+| **8080** | API Gateway         | `http://localhost:8080`                                           | **Unified API Entry Point** | 🆕 **NEW**   |
+| **3001** | Backend API         | `http://localhost:3001`                                           | Core business logic         | ✅ Active    |
+| **3002** | Webhooks Service    | `http://localhost:3002`                                           | Event ingestion             | 📍 **Moved** |
+| **5173** | Vite Preview        | `http://localhost:5173`                                           | Production preview          | 🔒 Reserved  |
+| **5555** | Database UI         | `http://localhost:5555`                                           | Drizzle Studio              | 🔒 Reserved  |
+| **6379** | Redis               | `redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>` | Cache/Sessions              | 🔒 Reserved  |
+| **5432** | PostgreSQL          | `postgresql://localhost:5432`                                     | Database                    | 🔒 Reserved  |
 
 ## Development Workflow
 

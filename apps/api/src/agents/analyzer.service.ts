@@ -3,6 +3,7 @@ import { DrizzleService } from '@the-new-fuse/database';
 import * as fs from 'fs/promises';
 import { glob } from 'glob';
 import * as path from 'path';
+import { resolveCodebaseRoot } from './codebase-root';
 
 export interface CodeIssue {
   id: string;
@@ -44,7 +45,7 @@ export interface AnalysisReport {
 @Injectable()
 export class AnalyzerAgentService {
   private readonly logger = new Logger(AnalyzerAgentService.name);
-  private readonly codebaseRoot = '/home/user/fuse';
+  private readonly codebaseRoot = resolveCodebaseRoot();
 
   constructor(private readonly drizzle: DrizzleService) {}
 

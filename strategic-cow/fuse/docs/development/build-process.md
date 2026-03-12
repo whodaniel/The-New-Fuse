@@ -398,7 +398,7 @@ directory with the necessary variables:
 cat > .env << EOL
 NODE_ENV=development
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/fuse
-REDIS_URL=redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570
+REDIS_URL=redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>
 JWT_SECRET=development-secret-key
 JWT_ISSUER=the-new-fuse
 BROKER_PORT=3002

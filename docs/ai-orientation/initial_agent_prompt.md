@@ -8,7 +8,7 @@ and join their collaborative AI network.
 
 1. First, verify your local environment:
    - Check Redis connection at
-     redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570
+     redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>
    - Ensure PostgreSQL is accessible
    - Verify API endpoint availability at port 3001
 

@@ -11,7 +11,7 @@ monitoring, and debugging capabilities.
 ### 1. Custom Error Classes ✅
 
 **Location**:
-`/home/user/fuse/packages/core-error-handling/src/errors/CustomErrors.ts`
+`<repo-root>/packages/core-error-handling/src/errors/CustomErrors.ts`
 
 - **50+ specialized error classes** organized by category:
   - Network errors (1000-1999): `NetworkError`, `TimeoutError`, `HttpError`
@@ -39,7 +39,7 @@ monitoring, and debugging capabilities.
 ### 2. Error Factory ✅
 
 **Location**:
-`/home/user/fuse/packages/core-error-handling/src/utils/ErrorFactory.ts`
+`<repo-root>/packages/core-error-handling/src/utils/ErrorFactory.ts`
 
 **Capabilities**:
 
@@ -57,8 +57,7 @@ const error = ErrorFactory.fromHttpResponse(404, { message: 'User not found' });
 
 ### 3. Retry Logic with Circuit Breaker ✅
 
-**Location**:
-`/home/user/fuse/packages/core-error-handling/src/utils/RetryLogic.ts`
+**Location**: `<repo-root>/packages/core-error-handling/src/utils/RetryLogic.ts`
 
 **Features**:
 
@@ -81,7 +80,7 @@ const error = ErrorFactory.fromHttpResponse(404, { message: 'User not found' });
 ### 4. Recovery Strategies ✅
 
 **Location**:
-`/home/user/fuse/packages/core-error-handling/src/recovery/RecoveryStrategies.ts`
+`<repo-root>/packages/core-error-handling/src/recovery/RecoveryStrategies.ts`
 
 **Implemented Strategies**:
 
@@ -97,7 +96,7 @@ const error = ErrorFactory.fromHttpResponse(404, { message: 'User not found' });
 ### 5. User-Friendly Error Messages ✅
 
 **Location**:
-`/home/user/fuse/packages/core-error-handling/src/utils/ErrorMessages.ts`
+`<repo-root>/packages/core-error-handling/src/utils/ErrorMessages.ts`
 
 **Features**:
 
@@ -120,7 +119,7 @@ const message = getUserFriendlyMessage(error, 'en');
 
 ### 6. React Error Boundaries ✅
 
-**Location**: `/home/user/fuse/apps/frontend/src/components/ErrorBoundary.tsx`
+**Location**: `<repo-root>/apps/frontend/src/components/ErrorBoundary.tsx`
 
 **Features**:
 
@@ -141,7 +140,7 @@ const message = getUserFriendlyMessage(error, 'en');
 ### 7. Error Monitoring Dashboard ✅
 
 **Location**:
-`/home/user/fuse/apps/frontend/src/components/ErrorMonitoringDashboard.tsx`
+`<repo-root>/apps/frontend/src/components/ErrorMonitoringDashboard.tsx`
 
 **Features**:
 
@@ -158,7 +157,7 @@ const message = getUserFriendlyMessage(error, 'en');
 ### 8. Error Reproduction Tools ✅
 
 **Location**:
-`/home/user/fuse/packages/core-error-handling/src/utils/ErrorReproduction.ts`
+`<repo-root>/packages/core-error-handling/src/utils/ErrorReproduction.ts`
 
 **Features**:
 
@@ -178,7 +177,7 @@ const message = getUserFriendlyMessage(error, 'en');
 ### 9. Centralized Error Logging ✅
 
 **Already Exists**:
-`/home/user/fuse/packages/core-error-handling/src/utils/Logger.ts`
+`<repo-root>/packages/core-error-handling/src/utils/Logger.ts`
 
 Enhanced with the new error handling system through integration with
 `BaseErrorHandler`.
@@ -186,7 +185,7 @@ Enhanced with the new error handling system through integration with
 ### 10. Sentry Integration ✅
 
 **Already Exists**:
-`/home/user/fuse/apps/frontend/src/services/error-tracking.service.tsx`
+`<repo-root>/apps/frontend/src/services/error-tracking.service.tsx`
 
 **Features**:
 
@@ -200,7 +199,7 @@ Enhanced with the new error handling system through integration with
 ## 📂 File Structure
 
 ```
-/home/user/fuse/
+<repo-root>/
 ├── packages/core-error-handling/
 │   ├── src/
 │   │   ├── errors/
@@ -336,13 +335,13 @@ VITE_APP_VERSION=1.0.0
 
 ### Comprehensive Guides
 
-1. **[Error Handling Guide](/home/user/fuse/docs/ERROR_HANDLING_GUIDE.md)**
+1. **[Error Handling Guide](<repo-root>/docs/ERROR_HANDLING_GUIDE.md)**
    - Complete documentation
    - Architecture overview
    - API reference
    - Best practices
 
-2. **[Error Handling Examples](/home/user/fuse/docs/ERROR_HANDLING_EXAMPLES.md)**
+2. **[Error Handling Examples](<repo-root>/docs/ERROR_HANDLING_EXAMPLES.md)**
    - 16+ real-world examples
    - Quick start guides
    - Testing examples
@@ -526,5 +525,5 @@ the entire application stack.
 
 **For detailed usage instructions, see**:
 
-- [Error Handling Guide](/home/user/fuse/docs/ERROR_HANDLING_GUIDE.md)
-- [Error Handling Examples](/home/user/fuse/docs/ERROR_HANDLING_EXAMPLES.md)
+- [Error Handling Guide](<repo-root>/docs/ERROR_HANDLING_GUIDE.md)
+- [Error Handling Examples](<repo-root>/docs/ERROR_HANDLING_EXAMPLES.md)

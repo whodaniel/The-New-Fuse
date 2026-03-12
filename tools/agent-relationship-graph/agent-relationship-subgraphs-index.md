@@ -1,16 +1,16 @@
 # Agent Relationship Subgraphs Index
 
-Generated: 2026-03-03 10:22:51Z
+Generated: 2026-03-12 14:01:57Z
 
-| Domain | Nodes | Edges | JSON | Mermaid | Cypher (no APOC) | Interactive HTML |
-|---|---:|---:|---|---|---|---|
-| podcast | 9 | 7 | [agent-relationship-podcast-subgraph.json](./agent-relationship-podcast-subgraph.json) | [agent-relationship-podcast-subgraph.md](./agent-relationship-podcast-subgraph.md) | [agent-relationship-podcast-subgraph.noapoc.cypher](./agent-relationship-podcast-subgraph.noapoc.cypher) | [agent-relationship-podcast-subgraph.html](./agent-relationship-podcast-subgraph.html) |
-| seo | 9 | 13 | [agent-relationship-seo-subgraph.json](./agent-relationship-seo-subgraph.json) | [agent-relationship-seo-subgraph.md](./agent-relationship-seo-subgraph.md) | [agent-relationship-seo-subgraph.noapoc.cypher](./agent-relationship-seo-subgraph.noapoc.cypher) | [agent-relationship-seo-subgraph.html](./agent-relationship-seo-subgraph.html) |
-| brand | 10 | 8 | [agent-relationship-brand-subgraph.json](./agent-relationship-brand-subgraph.json) | [agent-relationship-brand-subgraph.md](./agent-relationship-brand-subgraph.md) | [agent-relationship-brand-subgraph.noapoc.cypher](./agent-relationship-brand-subgraph.noapoc.cypher) | [agent-relationship-brand-subgraph.html](./agent-relationship-brand-subgraph.html) |
-| funnel | 8 | 6 | [agent-relationship-funnel-subgraph.json](./agent-relationship-funnel-subgraph.json) | [agent-relationship-funnel-subgraph.md](./agent-relationship-funnel-subgraph.md) | [agent-relationship-funnel-subgraph.noapoc.cypher](./agent-relationship-funnel-subgraph.noapoc.cypher) | [agent-relationship-funnel-subgraph.html](./agent-relationship-funnel-subgraph.html) |
-| social | 8 | 2 | [agent-relationship-social-subgraph.json](./agent-relationship-social-subgraph.json) | [agent-relationship-social-subgraph.md](./agent-relationship-social-subgraph.md) | [agent-relationship-social-subgraph.noapoc.cypher](./agent-relationship-social-subgraph.noapoc.cypher) | [agent-relationship-social-subgraph.html](./agent-relationship-social-subgraph.html) |
-| ops | 11 | 5 | [agent-relationship-ops-subgraph.json](./agent-relationship-ops-subgraph.json) | [agent-relationship-ops-subgraph.md](./agent-relationship-ops-subgraph.md) | [agent-relationship-ops-subgraph.noapoc.cypher](./agent-relationship-ops-subgraph.noapoc.cypher) | [agent-relationship-ops-subgraph.html](./agent-relationship-ops-subgraph.html) |
-| content | 9 | 10 | [agent-relationship-content-subgraph.json](./agent-relationship-content-subgraph.json) | [agent-relationship-content-subgraph.md](./agent-relationship-content-subgraph.md) | [agent-relationship-content-subgraph.noapoc.cypher](./agent-relationship-content-subgraph.noapoc.cypher) | [agent-relationship-content-subgraph.html](./agent-relationship-content-subgraph.html) |
+| Domain  | Nodes | Edges | JSON                                                                                   | Mermaid                                                                            | Cypher (no APOC)                                                                                         | Interactive HTML                                                                       |
+| ------- | ----: | ----: | -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| podcast |     9 |     7 | [agent-relationship-podcast-subgraph.json](./agent-relationship-podcast-subgraph.json) | [agent-relationship-podcast-subgraph.md](./agent-relationship-podcast-subgraph.md) | [agent-relationship-podcast-subgraph.noapoc.cypher](./agent-relationship-podcast-subgraph.noapoc.cypher) | [agent-relationship-podcast-subgraph.html](./agent-relationship-podcast-subgraph.html) |
+| seo     |     9 |    13 | [agent-relationship-seo-subgraph.json](./agent-relationship-seo-subgraph.json)         | [agent-relationship-seo-subgraph.md](./agent-relationship-seo-subgraph.md)         | [agent-relationship-seo-subgraph.noapoc.cypher](./agent-relationship-seo-subgraph.noapoc.cypher)         | [agent-relationship-seo-subgraph.html](./agent-relationship-seo-subgraph.html)         |
+| brand   |    10 |     8 | [agent-relationship-brand-subgraph.json](./agent-relationship-brand-subgraph.json)     | [agent-relationship-brand-subgraph.md](./agent-relationship-brand-subgraph.md)     | [agent-relationship-brand-subgraph.noapoc.cypher](./agent-relationship-brand-subgraph.noapoc.cypher)     | [agent-relationship-brand-subgraph.html](./agent-relationship-brand-subgraph.html)     |
+| funnel  |     8 |     6 | [agent-relationship-funnel-subgraph.json](./agent-relationship-funnel-subgraph.json)   | [agent-relationship-funnel-subgraph.md](./agent-relationship-funnel-subgraph.md)   | [agent-relationship-funnel-subgraph.noapoc.cypher](./agent-relationship-funnel-subgraph.noapoc.cypher)   | [agent-relationship-funnel-subgraph.html](./agent-relationship-funnel-subgraph.html)   |
+| social  |     8 |     2 | [agent-relationship-social-subgraph.json](./agent-relationship-social-subgraph.json)   | [agent-relationship-social-subgraph.md](./agent-relationship-social-subgraph.md)   | [agent-relationship-social-subgraph.noapoc.cypher](./agent-relationship-social-subgraph.noapoc.cypher)   | [agent-relationship-social-subgraph.html](./agent-relationship-social-subgraph.html)   |
+| ops     |    11 |     5 | [agent-relationship-ops-subgraph.json](./agent-relationship-ops-subgraph.json)         | [agent-relationship-ops-subgraph.md](./agent-relationship-ops-subgraph.md)         | [agent-relationship-ops-subgraph.noapoc.cypher](./agent-relationship-ops-subgraph.noapoc.cypher)         | [agent-relationship-ops-subgraph.html](./agent-relationship-ops-subgraph.html)         |
+| content |     9 |    10 | [agent-relationship-content-subgraph.json](./agent-relationship-content-subgraph.json) | [agent-relationship-content-subgraph.md](./agent-relationship-content-subgraph.md) | [agent-relationship-content-subgraph.noapoc.cypher](./agent-relationship-content-subgraph.noapoc.cypher) | [agent-relationship-content-subgraph.html](./agent-relationship-content-subgraph.html) |
 
 ## Quick Preview
 
@@ -20,7 +20,8 @@ Run a local static server from `/path/to`:
 python3 -m http.server 8080
 ```
 
-Then open `http://localhost:8080/agent-relationship-subgraphs-index.md` and any HTML file directly.
+Then open `http://localhost:8080/agent-relationship-subgraphs-index.md` and any
+HTML file directly.
 
 ## Analysis Artifacts
 

@@ -19,7 +19,7 @@ describe('RedisLockService', () => {
           useValue: {
             get: jest.fn((key: string) => {
               if (key === 'REDIS_URL') {
-                return 'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
+                return 'redis://localhost:6379';
               }
               return null;
             }),

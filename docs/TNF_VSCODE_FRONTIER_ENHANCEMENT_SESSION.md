@@ -733,7 +733,7 @@ async getWorkspaceStructure(forceRefresh: boolean = false): Promise<FileTree | n
 ```json
 {
   "name": "The-New-Fuse",
-  "path": "/Users/.../The-New-Fuse",
+  "path": "<repo-root>/",
   "type": "directory",
   "children": [
     {
@@ -2173,8 +2173,7 @@ capabilities.
 
 ## References
 
-- **Plan File:**
-  `/path/to/.claude/plans/tranquil-juggling-token.md`
+- **Plan File:** `/path/to/.claude/plans/tranquil-juggling-token.md`
 - **VSCode Extension Root:**
   `/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/vscode-extension/`
 - **Implementation Branch:** `main`

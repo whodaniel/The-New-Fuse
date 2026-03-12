@@ -174,7 +174,7 @@ Create a `.env` file in the project root with the following variables:
 ```env
 # Database Configuration
 DATABASE_URL="postgresql://username:password@localhost:5432/fuse_dev"
-REDIS_URL="redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570"
+REDIS_URL="redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>"
 
 # API Configuration
 API_PORT=3000

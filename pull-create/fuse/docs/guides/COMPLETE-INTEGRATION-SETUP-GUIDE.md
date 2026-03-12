@@ -179,7 +179,7 @@ nvm use 18
    ```bash
    # .env file
    NODE_ENV=development
-   REDIS_URL=redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570
+   REDIS_URL=redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>
    WEBSOCKET_PORT=3711
    API_PORT=3000
    LOG_LEVEL=debug
@@ -243,6 +243,7 @@ pnpm run build:agents
    ```
 
 2. **Custom configuration:**
+
    ```yaml
    # compose.yaml
    version: '3.8'
@@ -320,7 +321,7 @@ docker-compose logs -f the-new-fuse
          "command": "node",
          "args": ["dist/mcp-server.js"],
          "env": {
-           "REDIS_URL": "redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570"
+           "REDIS_URL": "redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>"
          }
        }
      }

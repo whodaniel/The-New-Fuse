@@ -41,13 +41,13 @@ npx drizzle migrate dev --name add_performance_indexes
 
 **Files Modified**:
 
-1. `/home/user/fuse/apps/api/src/services/agent.service.ts`
+1. `<repo-root>/apps/api/src/services/agent.service.ts`
    - ✓ `findAllAgents()` - Now supports pagination (default: page=1, limit=50)
    - ✓ `findAgentsByType()` - Added pagination support
    - ✓ `findAgentsByUserId()` - Added pagination support
    - ✓ `searchAgents()` - Added pagination support
 
-2. `/home/user/fuse/apps/api/src/services/chat.service.ts`
+2. `<repo-root>/apps/api/src/services/chat.service.ts`
    - ✓ `getRooms()` - Now returns paginated results (default: page=1, limit=50)
    - ✓ `getRoom()` - Optimized to conditionally load messages
 
@@ -78,7 +78,7 @@ async findAllAgents(
 
 **Files Modified**:
 
-- `/home/user/fuse/apps/backend/src/modules/agent/agent.service.ts`
+- `<repo-root>/apps/backend/src/modules/agent/agent.service.ts`
   - ✓ `getAgentsByCapability()` - Now excludes heavy fields (systemPrompt,
     config)
   - ✓ `getActiveAgents()` - Optimized field selection for list views
@@ -116,24 +116,24 @@ select: {
 
 **Files Modified**:
 
-1. `/home/user/fuse/config/config.ts`
+1. `<repo-root>/config/config.ts`
    - ✓ Changed `import * as dotenv` → `import { config as dotenvConfig }`
    - ✓ Changed `import * as crypto` → `import { randomBytes }`
 
-2. `/home/user/fuse/config/logging_config.ts`
+2. `<repo-root>/config/logging_config.ts`
    - ✓ Changed `import * as winston` →
      `import { createLogger, format, transports }`
    - ✓ Changed `import * as fs` → `import { existsSync, mkdirSync }`
    - ✓ Changed `import * as path` → `import { join, dirname }`
 
-3. `/home/user/fuse/config/config_manager.ts`
+3. `<repo-root>/config/config_manager.ts`
    - ✓ Changed `import * as path` → `import { join, resolve }`
    - ✓ Changed `import * as fs` → `import { readFileSync, existsSync }`
    - ✓ Changed `import * as dotenv` → `import { config as dotenvConfig }`
    - ✓ Changed `import * as winston` →
      `import { createLogger, format, transports }`
 
-4. `/home/user/fuse/config/base_config.ts`
+4. `<repo-root>/config/base_config.ts`
    - ✓ Changed `import * as path` → `import { resolve, join }`
    - ✓ Changed `import * as crypto` → `import { randomBytes }`
 
@@ -182,7 +182,7 @@ async getAgents() {
 
 | Optimization     | Impact    | Files Changed                   | Status   | Expected Gain           |
 | ---------------- | --------- | ------------------------------- | -------- | ----------------------- |
-| Database Indexes | 🔴 HIGH   | 1 (schema.drizzle)               | ✅ DONE  | 70-90% faster queries   |
+| Database Indexes | 🔴 HIGH   | 1 (schema.drizzle)              | ✅ DONE  | 70-90% faster queries   |
 | Pagination       | 🔴 HIGH   | 2 (agent.service, chat.service) | ✅ DONE  | 60-80% memory reduction |
 | Field Selection  | 🟡 MEDIUM | 1 (agent.service)               | ✅ DONE  | 40% smaller payloads    |
 | Wildcard Imports | 🟡 MEDIUM | 4 (config files)                | ✅ DONE  | 15-25% bundle reduction |

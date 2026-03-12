@@ -25,12 +25,12 @@ that should be cleaned up.
 
 ### 1.1 Active Applications (4)
 
-| App Name                     | Path                               | Status    | Dependencies         |
-| ---------------------------- | ---------------------------------- | --------- | -------------------- |
-| `@the-new-fuse/api-server`   | `/home/user/fuse/apps/api`         | ✅ Active | 10 internal packages |
-| `@the-new-fuse/api-gateway`  | `/home/user/fuse/apps/api-gateway` | ✅ Active | 2 internal packages  |
-| `@the-new-fuse/backend-app`  | `/home/user/fuse/apps/backend`     | ✅ Active | 4 internal packages  |
-| `@the-new-fuse/frontend-app` | `/home/user/fuse/apps/frontend`    | ✅ Active | 8 internal packages  |
+| App Name                     | Path                           | Status    | Dependencies         |
+| ---------------------------- | ------------------------------ | --------- | -------------------- |
+| `@the-new-fuse/api-server`   | `<repo-root>/apps/api`         | ✅ Active | 10 internal packages |
+| `@the-new-fuse/api-gateway`  | `<repo-root>/apps/api-gateway` | ✅ Active | 2 internal packages  |
+| `@the-new-fuse/backend-app`  | `<repo-root>/apps/backend`     | ✅ Active | 4 internal packages  |
+| `@the-new-fuse/frontend-app` | `<repo-root>/apps/frontend`    | ✅ Active | 8 internal packages  |
 
 ### 1.2 Inactive/Legacy App Directories (4)
 

@@ -20,8 +20,8 @@ code coverage reporting, and CI/CD integration.
 
 #### Package-Specific Setup
 
-- Updated frontend setup: `/home/user/fuse/apps/frontend/src/test/setup.ts`
-- Created backend setup: `/home/user/fuse/apps/api-gateway/test/setup.ts`
+- Updated frontend setup: `<repo-root>/apps/frontend/src/test/setup.ts`
+- Created backend setup: `<repo-root>/apps/api-gateway/test/setup.ts`
 
 ### 2. Testing Utilities (`packages/testing`)
 
@@ -100,7 +100,7 @@ The existing `.github/workflows/test.yml` already includes:
 
 #### Root-Level Scripts (package.json)
 
-Already configured in `/home/user/fuse/package.json`:
+Already configured in `<repo-root>/package.json`:
 
 ```bash
 pnpm test              # Run all tests

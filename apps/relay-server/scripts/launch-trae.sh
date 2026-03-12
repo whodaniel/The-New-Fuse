@@ -35,7 +35,7 @@ for i in $(seq 1 $max_attempts); do
 done
 
 # Verify Redis URL
-export REDIS_URL="redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570"
+export REDIS_URL="redis://localhost:6379"
 echo "📝 Using Redis URL: $REDIS_URL"
 
 # Test Redis connection explicitly

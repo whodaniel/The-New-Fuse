@@ -291,7 +291,7 @@ Implemented through:
 ## 📁 File Structure
 
 ```
-/home/user/fuse/
+<repo-root>/
 ├── scripts/deployment/
 │   ├── orchestrate-deployment.sh      # Master deployment orchestrator
 │   ├── blue-green-deploy.sh           # Blue-green deployment

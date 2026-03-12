@@ -80,7 +80,7 @@ Set correct environment variables on API service:
 
 - `REDIS_HOST=redis`
 - `REDIS_PORT=6379`
-- `REDIS_PASSWORD=mDNmtwseaVHcQsCHaIoZapjlWrvAjtot`
+- `REDIS_PASSWORD=<YOUR_REDIS_PASSWORD>`
 
 ### Status
 

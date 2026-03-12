@@ -40,7 +40,7 @@ pnpm format:check
 
 ## Root Scripts
 
-Run these from the monorepo root (`/home/user/fuse`):
+Run these from the monorepo root (`<repo-root>`):
 
 ### Development
 
@@ -113,11 +113,11 @@ Run these from the monorepo root (`/home/user/fuse`):
 
 ### Database
 
-| Script             | Description            | Usage                |
-| ------------------ | ---------------------- | -------------------- |
+| Script             | Description             | Usage                |
+| ------------------ | ----------------------- | -------------------- |
 | `pnpm db:generate` | Generate Drizzle client | After schema changes |
-| `pnpm db:migrate`  | Run migrations         | Database updates     |
-| `pnpm db:reset`    | Reset database         | Development reset    |
+| `pnpm db:migrate`  | Run migrations          | Database updates     |
+| `pnpm db:reset`    | Reset database          | Development reset    |
 | `pnpm db:studio`   | Open Drizzle Studio     | Database UI          |
 
 ### Docker

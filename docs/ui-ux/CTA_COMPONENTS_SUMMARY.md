@@ -10,7 +10,7 @@ CSS.
 
 ### 1. **HeroCTA** (`HeroCTA.tsx`)
 
-**Location:** `/home/user/fuse/apps/frontend/src/components/landing/HeroCTA.tsx`
+**Location:** `<repo-root>/apps/frontend/src/components/landing/HeroCTA.tsx`
 
 **Features:**
 
@@ -31,7 +31,7 @@ CSS.
 ### 2. **SecondaryCTA** (`SecondaryCTA.tsx`)
 
 **Location:**
-`/home/user/fuse/apps/frontend/src/components/landing/SecondaryCTA.tsx`
+`<repo-root>/apps/frontend/src/components/landing/SecondaryCTA.tsx`
 
 **Features:**
 
@@ -51,7 +51,7 @@ CSS.
 ### 3. **EmailSignupForm** (`EmailSignupForm.tsx`)
 
 **Location:**
-`/home/user/fuse/apps/frontend/src/components/landing/EmailSignupForm.tsx`
+`<repo-root>/apps/frontend/src/components/landing/EmailSignupForm.tsx`
 
 **Features:**
 
@@ -82,7 +82,7 @@ CSS.
 ### 4. **DemoRequestModal** (`DemoRequestModal.tsx`)
 
 **Location:**
-`/home/user/fuse/apps/frontend/src/components/landing/DemoRequestModal.tsx`
+`<repo-root>/apps/frontend/src/components/landing/DemoRequestModal.tsx`
 
 **Features:**
 
@@ -112,8 +112,7 @@ CSS.
 
 ### 5. **SocialProof** (`SocialProof.tsx`)
 
-**Location:**
-`/home/user/fuse/apps/frontend/src/components/landing/SocialProof.tsx`
+**Location:** `<repo-root>/apps/frontend/src/components/landing/SocialProof.tsx`
 
 **Components Included:**
 
@@ -167,7 +166,7 @@ defaultTrustBadges = [
 
 ### 6. **Analytics Hook** (`useAnalytics.ts`)
 
-**Location:** `/home/user/fuse/apps/frontend/src/hooks/useAnalytics.ts`
+**Location:** `<repo-root>/apps/frontend/src/hooks/useAnalytics.ts`
 
 **Features:**
 

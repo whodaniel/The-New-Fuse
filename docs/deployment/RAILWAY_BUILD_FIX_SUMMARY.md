@@ -44,10 +44,10 @@ COPY packages ./packages
 
 **Files Fixed:**
 
-- `/home/user/fuse/apps/api-gateway/Dockerfile.railway`
-- `/home/user/fuse/apps/api/Dockerfile.railway`
-- `/home/user/fuse/apps/backend/Dockerfile.railway`
-- `/home/user/fuse/apps/frontend/Dockerfile.railway`
+- `<repo-root>/apps/api-gateway/Dockerfile.railway`
+- `<repo-root>/apps/api/Dockerfile.railway`
+- `<repo-root>/apps/backend/Dockerfile.railway`
+- `<repo-root>/apps/frontend/Dockerfile.railway`
 
 ---
 
@@ -64,7 +64,7 @@ This mismatch caused runtime import failures because:
 2. Node.js looks for `index.js` (at package root)
 3. File not found!
 
-**Fix Applied:** Updated `/home/user/fuse/packages/types/package.json`:
+**Fix Applied:** Updated `<repo-root>/packages/types/package.json`:
 
 ```json
 {
@@ -150,14 +150,14 @@ Now matches the tsconfig output directory.
 
 ### API Gateway Dependencies
 
-From `/home/user/fuse/apps/api-gateway/package.json`:
+From `<repo-root>/apps/api-gateway/package.json`:
 
 - `@the-new-fuse/core` (workspace:\*)
 - `@the-new-fuse/types` (workspace:\*)
 
 ### API Server Dependencies
 
-From `/home/user/fuse/apps/api/package.json`:
+From `<repo-root>/apps/api/package.json`:
 
 - `@the-new-fuse/a2a-core` (workspace:\*)
 - `@the-new-fuse/api-types` (workspace:\*)
@@ -172,7 +172,7 @@ From `/home/user/fuse/apps/api/package.json`:
 
 ### TypeScript Project References
 
-From `/home/user/fuse/apps/api/tsconfig.json`:
+From `<repo-root>/apps/api/tsconfig.json`:
 
 - `packages/types`
 - `packages/core`
@@ -185,20 +185,20 @@ From `/home/user/fuse/apps/api/tsconfig.json`:
 
 ### Core Package Dependencies
 
-From `/home/user/fuse/packages/core/package.json`:
+From `<repo-root>/packages/core/package.json`:
 
 - `@the-new-fuse/database` (workspace:\*)
 - `@the-new-fuse/infrastructure` (workspace:\*)
 
 ### Database Package Dependencies
 
-From `/home/user/fuse/packages/database/package.json`:
+From `<repo-root>/packages/database/package.json`:
 
 - `@the-new-fuse/types` (workspace:\*)
 
 ### Shared Package Dependencies
 
-From `/home/user/fuse/packages/shared/package.json`:
+From `<repo-root>/packages/shared/package.json`:
 
 - `@the-new-fuse/core` (workspace:\*)
 - `@the-new-fuse/types` (workspace:\*)
@@ -206,14 +206,14 @@ From `/home/user/fuse/packages/shared/package.json`:
 
 ### Security Package Dependencies
 
-From `/home/user/fuse/packages/security/package.json`:
+From `<repo-root>/packages/security/package.json`:
 
 - `@the-new-fuse/database` (workspace:\*)
 - `@the-new-fuse/core` (workspace:\*)
 
 ### Types Package Dependencies
 
-From `/home/user/fuse/packages/types/package.json`:
+From `<repo-root>/packages/types/package.json`:
 
 - `@the-new-fuse/prompt-templating` (workspace:\*)
 
@@ -365,11 +365,11 @@ After deploying, verify:
 
 ## Files Modified in This Fix
 
-1. `/home/user/fuse/apps/api-gateway/Dockerfile.railway` - Fixed COPY command
-2. `/home/user/fuse/apps/api/Dockerfile.railway` - Fixed COPY command
-3. `/home/user/fuse/apps/backend/Dockerfile.railway` - Fixed COPY command
-4. `/home/user/fuse/apps/frontend/Dockerfile.railway` - Fixed COPY command
-5. `/home/user/fuse/packages/types/package.json` - Fixed main field
+1. `<repo-root>/apps/api-gateway/Dockerfile.railway` - Fixed COPY command
+2. `<repo-root>/apps/api/Dockerfile.railway` - Fixed COPY command
+3. `<repo-root>/apps/backend/Dockerfile.railway` - Fixed COPY command
+4. `<repo-root>/apps/frontend/Dockerfile.railway` - Fixed COPY command
+5. `<repo-root>/packages/types/package.json` - Fixed main field
 
 ---
 

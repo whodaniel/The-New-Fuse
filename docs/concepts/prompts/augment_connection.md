@@ -58,5 +58,5 @@ const isValidMessage = (msg: any): boolean => {
 
 ```env
 AI_COMM_SECRET=your_shared_secret_from_security_config
-REDIS_URL=redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570
+REDIS_URL=redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>
 ```

@@ -28,7 +28,7 @@ run on.
 ### 1. Analyzer Agent
 
 **Role:** Scans codebase for issues and bottlenecks **Location:**
-`/home/user/fuse/apps/api/src/agents/analyzer.service.ts`
+`<repo-root>/apps/api/src/agents/analyzer.service.ts`
 
 **Capabilities:**
 
@@ -50,7 +50,7 @@ run on.
 ### 2. Architect Agent
 
 **Role:** Reviews architecture and suggests improvements **Location:**
-`/home/user/fuse/apps/api/src/agents/architect.service.ts`
+`<repo-root>/apps/api/src/agents/architect.service.ts`
 
 **Capabilities:**
 
@@ -72,7 +72,7 @@ run on.
 ### 3. Implementer Agent
 
 **Role:** Writes code improvements and creates tests **Location:**
-`/home/user/fuse/apps/api/src/agents/implementer.service.ts`
+`<repo-root>/apps/api/src/agents/implementer.service.ts`
 
 **Capabilities:**
 
@@ -93,7 +93,7 @@ run on.
 ### 4. Reviewer Agent
 
 **Role:** Reviews code for bugs and security issues **Location:**
-`/home/user/fuse/apps/api/src/agents/reviewer.service.ts`
+`<repo-root>/apps/api/src/agents/reviewer.service.ts`
 
 **Capabilities:**
 
@@ -122,7 +122,7 @@ run on.
 ### 5. Coordinator Agent
 
 **Role:** Orchestrates the improvement workflow **Location:**
-`/home/user/fuse/apps/api/src/agents/coordinator.service.ts`
+`<repo-root>/apps/api/src/agents/coordinator.service.ts`
 
 **Capabilities:**
 
@@ -151,7 +151,7 @@ run on.
 
 **Implementation:**
 
-- File: `/home/user/fuse/apps/api/src/middleware/validation.middleware.ts`
+- File: `<repo-root>/apps/api/src/middleware/validation.middleware.ts`
 - Features:
   - SQL injection prevention
   - XSS attack detection
@@ -184,7 +184,7 @@ run on.
 
 **Implementation:**
 
-- File: `/home/user/fuse/apps/api/src/middleware/query-optimizer.interceptor.ts`
+- File: `<repo-root>/apps/api/src/middleware/query-optimizer.interceptor.ts`
 - Features:
   - Query count monitoring
   - N+1 pattern detection
@@ -248,20 +248,20 @@ the improvement cycle:
 
 ### New Files Created by Agents:
 
-1. `/home/user/fuse/apps/api/src/agents/analyzer.service.ts` (10,430 bytes)
-2. `/home/user/fuse/apps/api/src/agents/architect.service.ts` (10,858 bytes)
-3. `/home/user/fuse/apps/api/src/agents/implementer.service.ts` (11,283 bytes)
-4. `/home/user/fuse/apps/api/src/agents/reviewer.service.ts` (15,749 bytes)
-5. `/home/user/fuse/apps/api/src/agents/coordinator.service.ts` (13,254 bytes)
-6. `/home/user/fuse/apps/api/src/controllers/self-improvement.controller.ts`
-7. `/home/user/fuse/apps/api/src/middleware/validation.middleware.ts`
-8. `/home/user/fuse/apps/api/src/middleware/query-optimizer.interceptor.ts`
-9. `/home/user/fuse/demo-self-improvement.ts` (demonstration script)
+1. `<repo-root>/apps/api/src/agents/analyzer.service.ts` (10,430 bytes)
+2. `<repo-root>/apps/api/src/agents/architect.service.ts` (10,858 bytes)
+3. `<repo-root>/apps/api/src/agents/implementer.service.ts` (11,283 bytes)
+4. `<repo-root>/apps/api/src/agents/reviewer.service.ts` (15,749 bytes)
+5. `<repo-root>/apps/api/src/agents/coordinator.service.ts` (13,254 bytes)
+6. `<repo-root>/apps/api/src/controllers/self-improvement.controller.ts`
+7. `<repo-root>/apps/api/src/middleware/validation.middleware.ts`
+8. `<repo-root>/apps/api/src/middleware/query-optimizer.interceptor.ts`
+9. `<repo-root>/demo-self-improvement.ts` (demonstration script)
 
 ### Files Modified:
 
-1. `/home/user/fuse/apps/api/src/agents/agents.module.ts` (updated to include
-   new agents)
+1. `<repo-root>/apps/api/src/agents/agents.module.ts` (updated to include new
+   agents)
 
 ---
 

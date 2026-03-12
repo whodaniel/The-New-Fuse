@@ -23,9 +23,7 @@ const path = require('path');
 const TEST_CONFIG = {
   BASE_URL: process.env.TEST_BASE_URL || 'http://localhost:3000',
   API_URL: process.env.TEST_API_URL || 'http://localhost:3001',
-  REDIS_URL:
-    process.env.REDIS_URL ||
-    'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
+  REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6379',
   TEST_TIMEOUT: 30000,
   AGENCY_NAME: 'TestAgency_' + Date.now(),
   SUBDOMAIN: 'test' + Date.now(),

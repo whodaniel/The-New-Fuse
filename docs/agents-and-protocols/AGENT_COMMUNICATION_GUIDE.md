@@ -754,7 +754,7 @@ property relayConfig : {
     -- Protocol settings
     enabledProtocols: {"websocket", "redis", "file", "mcp"},
     websocketPort: 3711,
-    redisConnection: "redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570",
+    redisConnection: "redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>",
 
     -- Security settings
     enableAuthentication: false,

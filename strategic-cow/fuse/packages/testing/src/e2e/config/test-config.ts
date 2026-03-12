@@ -27,8 +27,6 @@ export const config = {
     password: process.env.DB_PASSWORD || 'postgres',
   },
   redis: {
-    url:
-      process.env.REDIS_URL ||
-      'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
+    url: process.env.REDIS_URL || 'redis://localhost:6379',
   },
 };

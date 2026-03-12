@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 
 # Paths
-BASE_DIR = Path("/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse")
+BASE_DIR = Path(__file__).resolve().parents[1]
 GRAPH_JSON = BASE_DIR / "tools/agent-relationship-graph/agent-relationship-graph.json"
 MASTER_USER_AGENTS = BASE_DIR / "data/agent-registry/master_user_agents.json"
 OUTPUT_JSON = BASE_DIR / "tools/agent-relationship-graph/agent-relationship-graph-v2.json"

@@ -30,9 +30,7 @@ class TraeAgent {
   private readonly apiEndpoint = 'http://localhost:3001/api/v1/agents/register';
 
   constructor() {
-    const redisUrl =
-      process.env.REDIS_URL ||
-      'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
+    const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
     this.redis = new (Redis as any)(redisUrl);
     this.pubClient = new (Redis as any)(redisUrl);
     this.subClient = new (Redis as any)(redisUrl);
@@ -88,9 +86,7 @@ class TraeAgent {
       }
 
       // Verify environment
-      const redisUrl =
-        process.env.REDIS_URL ||
-        'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
+      const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
       this.logger.log(`Using Redis URL: ${redisUrl}`);
 
       this.logger.log('System requirements verified');

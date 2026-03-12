@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { DrizzleService } from '@the-new-fuse/database';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { resolveCodebaseRoot } from './codebase-root';
 
 interface CodeReview {
   implementationId: string;
@@ -46,7 +47,7 @@ interface SecurityIssue {
 @Injectable()
 export class ReviewerAgentService {
   private readonly logger = new Logger(ReviewerAgentService.name);
-  private readonly codebaseRoot = '/home/user/fuse';
+  private readonly codebaseRoot = resolveCodebaseRoot();
 
   constructor(private readonly drizzle: DrizzleService) {}
 

@@ -138,6 +138,6 @@ If you need help:
 2. Run: node analyze-monorepo.js
 3. Review: monorepo-audit-report.md
 
-All documentation files are in: /home/user/fuse/
+All documentation files are in: <repo-root>/
 
 ================================================================================

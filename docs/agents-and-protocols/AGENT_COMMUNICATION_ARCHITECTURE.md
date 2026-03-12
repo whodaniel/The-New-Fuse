@@ -85,7 +85,7 @@ implementation details, and integration patterns.
 
 ### 1. MCP Agent Server
 
-**Location**: `/home/user/fuse/packages/core/src/mcp/MCPAgentServer.ts`
+**Location**: `<repo-root>/packages/core/src/mcp/MCPAgentServer.ts`
 
 **Purpose**: Implements Model Context Protocol for standardized AI agent
 communication
@@ -118,8 +118,7 @@ communication
 
 ### 2. MCP Registry Service
 
-**Location**:
-`/home/user/fuse/packages/api/src/modules/mcp/mcp-registry.service.ts`
+**Location**: `<repo-root>/packages/api/src/modules/mcp/mcp-registry.service.ts`
 
 **Purpose**: Central registry for agent management and discovery
 
@@ -154,7 +153,7 @@ communication
 ### 3. Agent Communication Gateway
 
 **Location**:
-`/home/user/fuse/apps/backend/src/gateways/agent-communication.gateway.ts`
+`<repo-root>/apps/backend/src/gateways/agent-communication.gateway.ts`
 
 **Purpose**: WebSocket gateway for real-time agent communication
 
@@ -181,7 +180,7 @@ communication
 
 ```typescript
 CORS: Enabled for all origins (*)
-Redis URL: process.env.REDIS_URL || 'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570'
+Redis URL: process.env.REDIS_URL || 'redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>'
 ```
 
 **Status**: ✅ Operational with Redis integration
@@ -191,7 +190,7 @@ Redis URL: process.env.REDIS_URL || 'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrv
 ### 4. Inter-Agent Chat Service
 
 **Location**:
-`/home/user/fuse/apps/backend/src/agent/services/InterAgentChatService.ts`
+`<repo-root>/apps/backend/src/agent/services/InterAgentChatService.ts`
 
 **Purpose**: Dedicated service for agent-to-agent messaging
 
@@ -219,8 +218,7 @@ checkHealth(): Promise<{ status: string; details?: any }>
 
 ### 5. MCP Broker Service
 
-**Location**:
-`/home/user/fuse/packages/api/src/mcp/services/mcp-broker.service.ts`
+**Location**: `<repo-root>/packages/api/src/mcp/services/mcp-broker.service.ts`
 
 **Purpose**: Broker for MCP server-client communication
 
@@ -253,7 +251,7 @@ getServerStatus(): Promise<Record<string, any>>
 
 ### 6. Agent Authentication Guard
 
-**Location**: `/home/user/fuse/apps/backend/src/auth/agent.auth.guard.ts`
+**Location**: `<repo-root>/apps/backend/src/auth/agent.auth.guard.ts`
 
 **Purpose**: Secure agent authentication for protected routes
 
@@ -331,8 +329,7 @@ interface AgentMessage {
 ### 2. Redis Pub/Sub Protocol
 
 **Connection**:
-`redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570`
-(default)
+`redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>` (default)
 
 **Use Case**: Scalable message broadcasting and queueing
 
@@ -778,7 +775,7 @@ Response:
 ### Existing Tests
 
 **1. Agent Workflow Integration Tests** **Location**:
-`/home/user/fuse/test-suite/integration/agent-workflow.test.ts`
+`<repo-root>/test-suite/integration/agent-workflow.test.ts`
 
 **Coverage**:
 
@@ -800,7 +797,7 @@ Response:
 - Execution timeouts
 
 **2. Agent Registry Tests** **Location**:
-`/home/user/fuse/src/tests/AgentRegistry.test.ts`
+`<repo-root>/src/tests/AgentRegistry.test.ts`
 
 **Coverage**:
 
@@ -848,7 +845,7 @@ API_URL=http://localhost:3000/api
 MCP_REGISTRY_API_KEY=your-api-key
 
 # Redis Configuration
-REDIS_URL=redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570
+REDIS_URL=redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>
 
 # Authentication
 AUTH_SECRET_KEY=your-secret-key
@@ -1100,10 +1097,12 @@ production-ready and designed for extensibility.
 
 ### Resources
 
-- [Agent Framework Protocols](/home/user/fuse/docs/agents-and-protocols/AGENT_FRAMEWORK_PROTOCOLS.md)
-- [Complete Agent Communication Guide](/home/user/fuse/docs/guides/COMPLETE-AGENT-COMMUNICATION-GUIDE.md)
-- [Available Agents Registry](/home/user/fuse/docs/AVAILABLE_AGENTS_REGISTRY.md)
-- [MCP Complete Guide](/home/user/fuse/docs/protocols/MCP-COMPLETE-GUIDE.md)
+- [Agent Framework
+  Protocols](<repo-root>/docs/agents-and-protocols/AGENT_FRAMEWORK_PROTOCOLS.md)
+- [Complete Agent Communication
+  Guide](<repo-root>/docs/guides/COMPLETE-AGENT-COMMUNICATION-GUIDE.md)
+- [Available Agents Registry](<repo-root>/docs/AVAILABLE_AGENTS_REGISTRY.md)
+- [MCP Complete Guide](<repo-root>/docs/protocols/MCP-COMPLETE-GUIDE.md)
 
 ---
 

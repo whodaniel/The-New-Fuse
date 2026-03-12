@@ -8,10 +8,7 @@ export class SharedCache extends EventEmitter {
   private redis: Redis;
   private readonly prefix: string;
 
-  constructor(
-    redisUrl: string = 'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
-    prefix: string = 'cache'
-  ) {
+  constructor(redisUrl: string = 'redis://localhost:6379', prefix: string = 'cache') {
     super();
     this.redis = new Redis(redisUrl);
     this.prefix = prefix;

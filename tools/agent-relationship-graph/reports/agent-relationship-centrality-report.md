@@ -1,6 +1,6 @@
 # Agent Relationship Centrality Report
 
-Generated: 2026-03-05
+Generated: 2026-03-12
 
 ## full (agent-relationship-graph.json)
 
@@ -145,4 +145,3 @@ Generated: 2026-03-05
   - content-writer-agent: 0.035714
   - keyword-research-agent: 0.035714
   - content-calendar-orchestrator-agent: 0.0
-

@@ -77,9 +77,8 @@ return password === process.env.VSCODE_EXTENSION_ADMIN_PASSWORD;
 
 - PostgreSQL: `postgresql://postgres:postgres@localhost:5432/fuse` →
   `${DATABASE_URL}`
-- Redis:
-  `redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570`
-  → `redis://${REDIS_HOST}:${REDIS_PORT}`
+- Redis: `redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>` →
+  `redis://${REDIS_HOST}:${REDIS_PORT}`
 - JWT Secret: `"your-secure-jwt-secret-key-change-in-production"` →
   `"${JWT_SECRET}"`
 

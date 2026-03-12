@@ -8,7 +8,7 @@ Quick guide to enable all performance optimizations for the Fuse backend API.
 
 ```bash
 # Navigate to database package
-cd /home/user/fuse/packages/database
+cd <repo-root>/packages/database
 
 # Apply performance indexes
 psql $DATABASE_URL -f drizzle/migrations/add_performance_indexes.sql
@@ -223,6 +223,7 @@ http://localhost:9090
 ```
 
 Query examples:
+
 ```promql
 # Average request duration
 rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m])
@@ -251,30 +252,35 @@ docker run -d -p 3000:3000 grafana/grafana
 ## Verification Checklist
 
 ### Database
+
 - [ ] All indexes applied and verified
 - [ ] Connection pooling configured
 - [ ] Slow query logging enabled
 - [ ] Query performance acceptable (< 100ms for indexed queries)
 
 ### Redis
+
 - [ ] Redis connection successful
 - [ ] Auto-pipelining enabled
 - [ ] Connection pool working
 - [ ] Cache hit ratio > 70%
 
 ### API
+
 - [ ] Compression working (check response headers)
 - [ ] ETag support working (304 responses)
 - [ ] Pagination working on all list endpoints
 - [ ] Metrics endpoint accessible
 
 ### Monitoring
+
 - [ ] Prometheus scraping metrics
 - [ ] Slow requests being logged
 - [ ] Performance metrics being recorded
 - [ ] Error tracking working
 
 ### Load Testing
+
 - [ ] k6 installed and working
 - [ ] Load tests passing (p95 < 500ms)
 - [ ] Error rate < 1%
@@ -285,22 +291,27 @@ docker run -d -p 3000:3000 grafana/grafana
 After setup, you should see:
 
 ### Response Times
+
 - **p50 (median)**: < 150ms
 - **p95**: < 500ms
 - **p99**: < 1000ms
 
 ### Throughput
+
 - **Minimum**: 500 requests/second
 - **Target**: 1000+ requests/second
 
 ### Error Rate
+
 - **Maximum**: < 1%
 
 ### Cache Performance
+
 - **Hit Ratio**: > 70%
 - **Cache Response Time**: < 10ms
 
 ### Database
+
 - **Query Time (indexed)**: < 50ms
 - **Query Time (complex)**: < 200ms
 - **Connection Pool Usage**: < 80%
@@ -370,6 +381,7 @@ psql $DATABASE_URL -c "SELECT count(*) FROM pg_stat_activity WHERE state = 'acti
 ## Support
 
 For issues or questions:
+
 - Check the main [PERFORMANCE_OPTIMIZATION.md](./PERFORMANCE_OPTIMIZATION.md)
 - Review load test results in `/tests/load/`
 - Check monitoring metrics at `/metrics`
@@ -378,6 +390,7 @@ For issues or questions:
 ## Advanced Configuration
 
 See [PERFORMANCE_OPTIMIZATION.md](./PERFORMANCE_OPTIMIZATION.md) for:
+
 - Advanced caching strategies
 - Database read replica setup
 - Horizontal scaling configuration

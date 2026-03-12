@@ -12,7 +12,7 @@ documentation, and detailed usage guides.
 
 ### 1. OpenAPI Specification File
 
-**Location**: `/home/user/fuse/openapi.yaml`
+**Location**: `<repo-root>/openapi.yaml`
 
 A complete OpenAPI 3.1 specification documenting all API endpoints:
 
@@ -33,7 +33,7 @@ A complete OpenAPI 3.1 specification documenting all API endpoints:
 
 ### 2. Swagger UI Integration
 
-**Location**: `/home/user/fuse/apps/api/src/main.ts`
+**Location**: `<repo-root>/apps/api/src/main.ts`
 
 Interactive API documentation available at:
 
@@ -50,7 +50,7 @@ Interactive API documentation available at:
 
 ### 3. API Usage Guide
 
-**Location**: `/home/user/fuse/docs/API_USAGE_GUIDE.md`
+**Location**: `<repo-root>/docs/API_USAGE_GUIDE.md`
 
 Comprehensive developer guide covering:
 
@@ -65,7 +65,7 @@ Comprehensive developer guide covering:
 
 ### 4. Documentation README
 
-**Location**: `/home/user/fuse/docs/API_DOCUMENTATION_README.md`
+**Location**: `<repo-root>/docs/API_DOCUMENTATION_README.md`
 
 Quick reference guide with:
 
@@ -78,7 +78,7 @@ Quick reference guide with:
 
 ### 5. Updated Dependencies
 
-**Location**: `/home/user/fuse/apps/api/package.json`
+**Location**: `<repo-root>/apps/api/package.json`
 
 Added packages:
 
@@ -174,7 +174,7 @@ Added packages:
 ### 1. Install Dependencies
 
 ```bash
-cd /home/user/fuse/apps/api
+cd <repo-root>/apps/api
 pnpm install
 ```
 
@@ -183,7 +183,7 @@ This will install the new dependencies (`js-yaml` and `@types/js-yaml`).
 ### 2. Start the API Server
 
 ```bash
-cd /home/user/fuse/apps/api
+cd <repo-root>/apps/api
 pnpm dev
 ```
 
@@ -223,7 +223,7 @@ curl -X GET http://localhost:3001/api/agents \
 
 #### Option C: Using the provided code examples
 
-See the code examples in `/home/user/fuse/docs/API_USAGE_GUIDE.md` for:
+See the code examples in `<repo-root>/docs/API_USAGE_GUIDE.md` for:
 
 - JavaScript/TypeScript client implementation
 - Python client implementation
@@ -507,7 +507,7 @@ async function testAPI() {
 ## File Structure
 
 ```
-/home/user/fuse/
+<repo-root>/
 ├── openapi.yaml                          # OpenAPI 3.1 specification
 ├── apps/api/
 │   ├── src/
@@ -525,8 +525,8 @@ async function testAPI() {
 For questions or issues:
 
 - **Swagger UI**: http://localhost:3001/api-docs
-- **Usage Guide**: `/home/user/fuse/docs/API_USAGE_GUIDE.md`
-- **OpenAPI Spec**: `/home/user/fuse/openapi.yaml`
+- **Usage Guide**: `<repo-root>/docs/API_USAGE_GUIDE.md`
+- **OpenAPI Spec**: `<repo-root>/openapi.yaml`
 - **GitHub Issues**: https://github.com/whodaniel/fuse/issues
 
 ---

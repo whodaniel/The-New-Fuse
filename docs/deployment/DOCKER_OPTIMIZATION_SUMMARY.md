@@ -31,11 +31,11 @@ All Dockerfile.railway files have been completely rewritten with best practices:
 
 **Updated Files**:
 
-- `/home/user/fuse/Dockerfile.railway` (root - API Gateway)
-- `/home/user/fuse/apps/api-gateway/Dockerfile.railway`
-- `/home/user/fuse/apps/api/Dockerfile.railway`
-- `/home/user/fuse/apps/backend/Dockerfile.railway`
-- `/home/user/fuse/apps/frontend/Dockerfile.railway`
+- `<repo-root>/Dockerfile.railway` (root - API Gateway)
+- `<repo-root>/apps/api-gateway/Dockerfile.railway`
+- `<repo-root>/apps/api/Dockerfile.railway`
+- `<repo-root>/apps/backend/Dockerfile.railway`
+- `<repo-root>/apps/frontend/Dockerfile.railway`
 
 ### 2. Enhanced .dockerignore
 
@@ -50,7 +50,7 @@ Created comprehensive .dockerignore that excludes:
 
 **Result**: Build context reduced from 2.5 GB to 50-100 MB (25x smaller)
 
-**Updated File**: `/home/user/fuse/.dockerignore`
+**Updated File**: `<repo-root>/.dockerignore`
 
 ### 3. Docker Compose for Local Development
 
@@ -63,7 +63,7 @@ Created `docker-compose.local.yml` with:
 - Volume management
 - Environment variable configuration
 
-**New File**: `/home/user/fuse/docker-compose.local.yml`
+**New File**: `<repo-root>/docker-compose.local.yml`
 
 ### 4. Comprehensive Documentation
 
@@ -92,9 +92,9 @@ Created three detailed documentation files:
 
 **New Files**:
 
-- `/home/user/fuse/docs/DOCKER.md`
-- `/home/user/fuse/docs/DOCKER_BEST_PRACTICES.md`
-- `/home/user/fuse/docs/DOCKER_OPTIMIZATION.md`
+- `<repo-root>/docs/DOCKER.md`
+- `<repo-root>/docs/DOCKER_BEST_PRACTICES.md`
+- `<repo-root>/docs/DOCKER_OPTIMIZATION.md`
 
 ## Key Optimizations
 
@@ -291,7 +291,7 @@ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
 
 ## Documentation
 
-All documentation is in the `/home/user/fuse/docs/` directory:
+All documentation is in the `<repo-root>/docs/` directory:
 
 1. **DOCKER.md** - Main Docker guide
    - Quick start
@@ -315,7 +315,7 @@ All documentation is in the `/home/user/fuse/docs/` directory:
 
 For questions or issues:
 
-1. Check the documentation in `/home/user/fuse/docs/`
+1. Check the documentation in `<repo-root>/docs/`
 2. Review the optimization report for metrics
 3. Test locally with Docker Compose
 4. Refer to best practices guide for guidelines

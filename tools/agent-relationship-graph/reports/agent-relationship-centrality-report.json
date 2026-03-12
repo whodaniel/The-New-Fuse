@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-05",
+  "generated_at": "2026-03-12",
   "reports": [
     {
       "graph_file": "agent-relationship-graph.json",
@@ -168,107 +168,77 @@
         {
           "community_id": 7,
           "size": 1,
-          "members": [
-            "audience-growth-agent"
-          ]
+          "members": ["audience-growth-agent"]
         },
         {
           "community_id": 8,
           "size": 1,
-          "members": [
-            "brand-identity-agent"
-          ]
+          "members": ["brand-identity-agent"]
         },
         {
           "community_id": 9,
           "size": 1,
-          "members": [
-            "content-refresh-agent"
-          ]
+          "members": ["content-refresh-agent"]
         },
         {
           "community_id": 10,
           "size": 1,
-          "members": [
-            "content-repurposing-agent"
-          ]
+          "members": ["content-repurposing-agent"]
         },
         {
           "community_id": 11,
           "size": 1,
-          "members": [
-            "facebook-strategy-agent"
-          ]
+          "members": ["facebook-strategy-agent"]
         },
         {
           "community_id": 12,
           "size": 1,
-          "members": [
-            "financial-manager-agent"
-          ]
+          "members": ["financial-manager-agent"]
         },
         {
           "community_id": 13,
           "size": 1,
-          "members": [
-            "instagram-strategy-agent"
-          ]
+          "members": ["instagram-strategy-agent"]
         },
         {
           "community_id": 14,
           "size": 1,
-          "members": [
-            "link-building-agent"
-          ]
+          "members": ["link-building-agent"]
         },
         {
           "community_id": 15,
           "size": 1,
-          "members": [
-            "productivity-and-burnout-prevention-agent"
-          ]
+          "members": ["productivity-and-burnout-prevention-agent"]
         },
         {
           "community_id": 16,
           "size": 1,
-          "members": [
-            "reputation-management-agent"
-          ]
+          "members": ["reputation-management-agent"]
         },
         {
           "community_id": 17,
           "size": 1,
-          "members": [
-            "sales-funnel-architect-agent"
-          ]
+          "members": ["sales-funnel-architect-agent"]
         },
         {
           "community_id": 18,
           "size": 1,
-          "members": [
-            "tax-compliance-agent"
-          ]
+          "members": ["tax-compliance-agent"]
         },
         {
           "community_id": 19,
           "size": 1,
-          "members": [
-            "tiktok-strategy-agent"
-          ]
+          "members": ["tiktok-strategy-agent"]
         },
         {
           "community_id": 20,
           "size": 1,
-          "members": [
-            "value-ladder-architect-agent"
-          ]
+          "members": ["value-ladder-architect-agent"]
         },
         {
           "community_id": 21,
           "size": 1,
-          "members": [
-            "x-strategy-agent"
-          ]
+          "members": ["x-strategy-agent"]
         }
       ],
       "degree_detail": {
@@ -630,9 +600,7 @@
         {
           "community_id": 2,
           "size": 1,
-          "members": [
-            "analytics-and-reporting-agent"
-          ]
+          "members": ["analytics-and-reporting-agent"]
         }
       ],
       "degree_detail": {
@@ -794,9 +762,7 @@
         {
           "community_id": 2,
           "size": 1,
-          "members": [
-            "link-building-agent"
-          ]
+          "members": ["link-building-agent"]
         }
       ],
       "degree_detail": {
@@ -965,9 +931,7 @@
         {
           "community_id": 3,
           "size": 1,
-          "members": [
-            "brand-identity-agent"
-          ]
+          "members": ["brand-identity-agent"]
         }
       ],
       "degree_detail": {
@@ -1132,16 +1096,12 @@
         {
           "community_id": 2,
           "size": 1,
-          "members": [
-            "sales-funnel-architect-agent"
-          ]
+          "members": ["sales-funnel-architect-agent"]
         },
         {
           "community_id": 3,
           "size": 1,
-          "members": [
-            "value-ladder-architect-agent"
-          ]
+          "members": ["value-ladder-architect-agent"]
         }
       ],
       "degree_detail": {
@@ -1293,37 +1253,27 @@
         {
           "community_id": 2,
           "size": 1,
-          "members": [
-            "audience-growth-agent"
-          ]
+          "members": ["audience-growth-agent"]
         },
         {
           "community_id": 3,
           "size": 1,
-          "members": [
-            "facebook-strategy-agent"
-          ]
+          "members": ["facebook-strategy-agent"]
         },
         {
           "community_id": 4,
           "size": 1,
-          "members": [
-            "instagram-strategy-agent"
-          ]
+          "members": ["instagram-strategy-agent"]
         },
         {
           "community_id": 5,
           "size": 1,
-          "members": [
-            "tiktok-strategy-agent"
-          ]
+          "members": ["tiktok-strategy-agent"]
         },
         {
           "community_id": 6,
           "size": 1,
-          "members": [
-            "x-strategy-agent"
-          ]
+          "members": ["x-strategy-agent"]
         }
       ],
       "degree_detail": {
@@ -1478,37 +1428,27 @@
         {
           "community_id": 2,
           "size": 1,
-          "members": [
-            "analytics-and-reporting-agent"
-          ]
+          "members": ["analytics-and-reporting-agent"]
         },
         {
           "community_id": 3,
           "size": 1,
-          "members": [
-            "financial-manager-agent"
-          ]
+          "members": ["financial-manager-agent"]
         },
         {
           "community_id": 4,
           "size": 1,
-          "members": [
-            "productivity-and-burnout-prevention-agent"
-          ]
+          "members": ["productivity-and-burnout-prevention-agent"]
         },
         {
           "community_id": 5,
           "size": 1,
-          "members": [
-            "reputation-management-agent"
-          ]
+          "members": ["reputation-management-agent"]
         },
         {
           "community_id": 6,
           "size": 1,
-          "members": [
-            "tax-compliance-agent"
-          ]
+          "members": ["tax-compliance-agent"]
         }
       ],
       "degree_detail": {
@@ -1679,16 +1619,12 @@
         {
           "community_id": 2,
           "size": 1,
-          "members": [
-            "content-refresh-agent"
-          ]
+          "members": ["content-refresh-agent"]
         },
         {
           "community_id": 3,
           "size": 1,
-          "members": [
-            "content-repurposing-agent"
-          ]
+          "members": ["content-repurposing-agent"]
         }
       ],
       "degree_detail": {

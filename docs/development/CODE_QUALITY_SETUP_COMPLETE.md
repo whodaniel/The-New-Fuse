@@ -9,7 +9,7 @@ quality tooling configured for The New Fuse monorepo
 
 ### 1. ESLint Configuration ✅
 
-**File**: `/home/user/fuse/.eslintrc.json`
+**File**: `<repo-root>/.eslintrc.json`
 
 Configured comprehensive ESLint setup with:
 
@@ -39,8 +39,8 @@ Configured comprehensive ESLint setup with:
 
 **Files**:
 
-- `/home/user/fuse/.prettierrc`
-- `/home/user/fuse/.prettierignore`
+- `<repo-root>/.prettierrc`
+- `<repo-root>/.prettierignore`
 
 Configured Prettier with:
 
@@ -61,7 +61,7 @@ Configured Prettier with:
 
 ### 3. lint-staged Configuration ✅
 
-**File**: `/home/user/fuse/.lintstagedrc.js`
+**File**: `<repo-root>/.lintstagedrc.js`
 
 Configured to run on staged files:
 
@@ -76,7 +76,7 @@ Configured to run on staged files:
 
 ### 4. Husky Git Hooks ✅
 
-**File**: `/home/user/fuse/.husky/pre-commit`
+**File**: `<repo-root>/.husky/pre-commit`
 
 Configured pre-commit hook to:
 
@@ -93,7 +93,7 @@ Configured pre-commit hook to:
 
 ### 5. EditorConfig ✅
 
-**File**: `/home/user/fuse/.editorconfig`
+**File**: `<repo-root>/.editorconfig`
 
 Enhanced with comprehensive settings:
 
@@ -113,8 +113,8 @@ Enhanced with comprehensive settings:
 
 **Files**:
 
-- `/home/user/fuse/.vscode/settings.json`
-- `/home/user/fuse/.vscode/extensions.json`
+- `<repo-root>/.vscode/settings.json`
+- `<repo-root>/.vscode/extensions.json`
 
 Configured VSCode for optimal development:
 
@@ -172,7 +172,7 @@ Configured automatic import organization:
 
 ### 8. Package Scripts ✅
 
-**Root Package** (`/home/user/fuse/package.json`):
+**Root Package** (`<repo-root>/package.json`):
 
 - `lint`: Run lint across all packages
 - `lint:fix`: Auto-fix lint issues
@@ -194,7 +194,7 @@ Added to every package in `apps/`, `packages/`, and `tools/`:
 
 ### 9. Auto-fix Script ✅
 
-**File**: `/home/user/fuse/scripts/format-codebase.sh`
+**File**: `<repo-root>/scripts/format-codebase.sh`
 
 Created comprehensive formatting script:
 
@@ -214,7 +214,7 @@ Created comprehensive formatting script:
 
 Created comprehensive documentation:
 
-**Main Guide** (`/home/user/fuse/docs/CODE_QUALITY.md`):
+**Main Guide** (`<repo-root>/docs/CODE_QUALITY.md`):
 
 - Complete tooling overview
 - Configuration details
@@ -225,7 +225,7 @@ Created comprehensive documentation:
 - Running quality checks
 - Troubleshooting guide
 
-**Quick Reference** (`/home/user/fuse/docs/CODE_STYLE_QUICK_REFERENCE.md`):
+**Quick Reference** (`<repo-root>/docs/CODE_STYLE_QUICK_REFERENCE.md`):
 
 - File naming conventions
 - Import order examples
@@ -265,7 +265,7 @@ Created comprehensive documentation:
 ## File Structure
 
 ```
-/home/user/fuse/
+<repo-root>/
 ├── .eslintrc.json              # ESLint configuration
 ├── .eslintignore               # ESLint ignore patterns
 ├── .prettierrc                 # Prettier configuration
@@ -448,8 +448,8 @@ pnpm husky install
 ### Getting Help
 
 1. Check documentation:
-   - `/home/user/fuse/docs/CODE_QUALITY.md`
-   - `/home/user/fuse/docs/CODE_STYLE_QUICK_REFERENCE.md`
+   - `<repo-root>/docs/CODE_QUALITY.md`
+   - `<repo-root>/docs/CODE_STYLE_QUICK_REFERENCE.md`
 2. Check tool documentation:
    - [ESLint Docs](https://eslint.org/docs/latest/)
    - [Prettier Docs](https://prettier.io/docs/en/)
@@ -496,11 +496,11 @@ pnpm husky install
 
 **Onboarding checklist**:
 
-1. Read `/home/user/fuse/docs/CODE_QUALITY.md`
+1. Read `<repo-root>/docs/CODE_QUALITY.md`
 2. Install recommended VSCode extensions
 3. Test auto-formatting works
 4. Make a test commit to verify hooks
-5. Review `/home/user/fuse/docs/CODE_STYLE_QUICK_REFERENCE.md`
+5. Review `<repo-root>/docs/CODE_STYLE_QUICK_REFERENCE.md`
 
 ### Continuous Improvement
 
@@ -550,5 +550,4 @@ the tools maintain code quality automatically!
 
 ---
 
-**Questions?** See `/home/user/fuse/docs/CODE_QUALITY.md` for detailed
-information.
+**Questions?** See `<repo-root>/docs/CODE_QUALITY.md` for detailed information.

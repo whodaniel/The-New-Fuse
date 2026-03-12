@@ -10,4 +10,4 @@ redis-docker-start
 redis-cli ping
 
 # Verify Redis URL
-echo $REDIS_URL  # Should show redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570
+echo $REDIS_URL  # Should show redis://localhost:6379

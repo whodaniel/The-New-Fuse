@@ -18,9 +18,7 @@ const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 const API_BASE_URL = process.env.API_URL || 'http://localhost:3001';
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3004';
 const WS_URL = process.env.WS_URL || 'ws://localhost:3004';
-const REDIS_URL =
-  process.env.REDIS_URL ||
-  'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
+const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 const GRAPHQL_URL = process.env.GRAPHQL_URL || 'http://localhost:3001/graphql';
 
 test.describe('Full Stack Integration Tests', () => {

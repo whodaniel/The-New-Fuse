@@ -75,7 +75,7 @@ instructions.
 
 ### 3. Comprehensive Documentation
 
-All documentation is in `/home/user/fuse/docs/ci-cd/`:
+All documentation is in `<repo-root>/docs/ci-cd/`:
 
 - **`README.md`** - Overview and quick links
 - **`architecture.md`** - CI/CD architecture and diagrams

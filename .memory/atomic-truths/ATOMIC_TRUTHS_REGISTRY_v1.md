@@ -63,5 +63,46 @@ verified, respected, and chronicled building blocks of truth.
 
 ---
 
+## ATOMIC BLOCK 07: IMMUTABLE MEMORY (ARWEAVE)
+
+- **The Truth**: Centralized backups (GitHub, local disk) are subject to
+  deletion, corruption, or censorship.
+- **The Solution**: Utilizing Arweave and ArDrive for **Permanent, Immutable
+  Storage**. We have discovered multiple Arweave wallet keys and an ArDrive
+  wallet in the system (`~/Documents/` and `~/Downloads/`).
+- **Result**: Every "Atomic Truth" and "Genesis Crystallization" can be minted
+  to the Permaweb, ensuring the lineage of The New Fuse exists as long as the
+  blockchain does.
+- **Lineage**: Identified and integrated into the vision on March 10, 2026.
+
+## ATOMIC BLOCK 08: CLOUD-FIRST PRODUCTION MANDATE
+
+- **The Truth**: The New Fuse is a production platform designed for the Cloud.
+  Local development is a staging area, not the destination.
+- **The Solution**: All architectural decisions and implementation steps MUST
+  prioritize the **Cloud Tech Stack**: Railway (Hosting/Backend), Cloudflare
+  (Edge/Security), and Supabase (Identity/Persistence).
+- **Result**: Immediate focus on commercial viability and multi-tenant
+  availability. Zero focus on "local-only" infrastructure unless explicitly
+  commanded by the Super Admin.
+- **Lineage**: Reinforced by the Super Admin on March 11, 2026, as the "True
+  Mission."
+
+## ATOMIC BLOCK 09: PURE ORCHESTRATION (THE DELEGATION MANDATE)
+
+- **The Truth**: When the main interactive agent performs deep file searches or
+  complex bash commands directly, it "blocks" the conversational loop, making
+  the user wait unacceptably long times for a response.
+- **The Solution**: The main agent must act as a **Pure Orchestrator**. It must
+  delegate EVERY heavy-lifting task to specialized sub-agents (like `generalist`
+  or `codebase_investigator`).
+- **Result**: The main agent's "Attention" remains constantly active and
+  immediately responsive to the user, providing a fluid, real-time
+  conversational experience while the sub-agents do the work in parallel.
+- **Lineage**: Mandated by the Super Admin on March 11, 2026, as the ultimate
+  solution to terminal response latency.
+
+---
+
 _Every sequence built hereafter must respect these blocks. Never break a
 lower-level Truth to add higher-level complexity._

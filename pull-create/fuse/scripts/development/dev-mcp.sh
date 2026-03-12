@@ -10,7 +10,7 @@ cd "$(dirname "$0")"
 # Set environment variables
 export NODE_ENV=development
 export DATABASE_URL=postgresql://postgres:postgres@localhost:5432/fuse
-export REDIS_URL=redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570
+export REDIS_URL=redis://localhost:6379
 export LOG_LEVEL=debug
 
 # Install nodemon if not present

@@ -28,7 +28,7 @@ database queries, frontend components, API endpoints, and memory usage patterns.
 
 #### 1.1 Missing Pagination (HIGH IMPACT)
 
-**Location**: `/home/user/fuse/apps/api/src/services/agent.service.ts`
+**Location**: `<repo-root>/apps/api/src/services/agent.service.ts`
 
 ```typescript
 // Line 43-61: findAllAgents() - NO PAGINATION
@@ -97,9 +97,9 @@ const agents = await this.drizzle.agent.findMany({
 
 **Files Affected**:
 
-- `/home/user/fuse/apps/api/src/services/agent.service.ts` (Lines 50, 266)
-- `/home/user/fuse/apps/backend/src/modules/agent/agent.service.ts` (Lines
-  214-224, 234-242)
+- `<repo-root>/apps/api/src/services/agent.service.ts` (Lines 50, 266)
+- `<repo-root>/apps/backend/src/modules/agent/agent.service.ts` (Lines 214-224,
+  234-242)
 
 **Expected Gain**: 40% reduction in response size, 25% faster response time
 
@@ -107,7 +107,7 @@ const agents = await this.drizzle.agent.findMany({
 
 #### 1.3 Missing Indexes (HIGH IMPACT)
 
-**Location**: `/home/user/fuse/drizzle/schema.drizzle`
+**Location**: `<repo-root>/drizzle/schema.drizzle`
 
 **Missing Indexes**:
 
@@ -216,10 +216,10 @@ const filteredAgents = useMemo(
 
 **Files Needing Memoization**:
 
-- `/home/user/fuse/apps/frontend/src/pages/Agents/UnifiedAgentCreator.tsx`
-- `/home/user/fuse/apps/frontend/src/pages/Home.tsx`
-- `/home/user/fuse/apps/frontend/src/components/ErrorMonitoringDashboard.tsx`
-- `/home/user/fuse/apps/frontend/src/pages/Workflows/EnhancedWorkflowBuilder.tsx`
+- `<repo-root>/apps/frontend/src/pages/Agents/UnifiedAgentCreator.tsx`
+- `<repo-root>/apps/frontend/src/pages/Home.tsx`
+- `<repo-root>/apps/frontend/src/components/ErrorMonitoringDashboard.tsx`
+- `<repo-root>/apps/frontend/src/pages/Workflows/EnhancedWorkflowBuilder.tsx`
 
 **Expected Gain**: 30-50% reduction in unnecessary re-renders
 
@@ -247,9 +247,9 @@ import { readFile, writeFile } from 'fs/promises';
 
 **Files Affected**:
 
-- `/home/user/fuse/config/config.ts`
-- `/home/user/fuse/config/config_manager.ts`
-- `/home/user/fuse/config/logging_config.ts`
+- `<repo-root>/config/config.ts`
+- `<repo-root>/config/config_manager.ts`
+- `<repo-root>/config/logging_config.ts`
 - 40+ more files in `/config`, `/tools`, `/scripts`
 
 **Impact**: 🟡 MEDIUM
@@ -322,10 +322,10 @@ async getSystemStats() { }
 
 **Problem Files** (80+ instances):
 
-- `/home/user/fuse/contracts/scripts/deploy.ts` (Lines 2, 84, 102)
-- `/home/user/fuse/scripts/analyze.tsx` (Multiple instances)
-- `/home/user/fuse/tools/utilities/navigation-validator.ts`
-- `/home/user/fuse/packages/testing/src/artifacts/artifact-manager.tsx`
+- `<repo-root>/contracts/scripts/deploy.ts` (Lines 2, 84, 102)
+- `<repo-root>/scripts/analyze.tsx` (Multiple instances)
+- `<repo-root>/tools/utilities/navigation-validator.ts`
+- `<repo-root>/packages/testing/src/artifacts/artifact-manager.tsx`
 
 **Issue**:
 
@@ -353,7 +353,7 @@ await fs.promises.writeFile(outputPath, data);
 
 #### 4.1 Large Data Loading (MEDIUM IMPACT)
 
-**Location**: `/home/user/fuse/apps/api/src/services/chat.service.ts`
+**Location**: `<repo-root>/apps/api/src/services/chat.service.ts`
 
 ```typescript
 // Line 19-21: Loads ALL chat rooms

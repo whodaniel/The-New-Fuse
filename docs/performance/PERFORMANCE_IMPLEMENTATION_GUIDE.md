@@ -7,7 +7,7 @@ identified in the Performance Optimization Report.
 
 ### 1. Database Indexes Added ✅
 
-**File**: `/home/user/fuse/drizzle/schema.drizzle`
+**File**: `<repo-root>/drizzle/schema.drizzle`
 
 Added performance indexes to key models:
 
@@ -58,8 +58,8 @@ npx drizzle migrate dev --name add_performance_indexes
 
 **Files Updated**:
 
-- `/home/user/fuse/apps/api/src/services/agent.service.ts`
-- `/home/user/fuse/apps/api/src/services/chat.service.ts`
+- `<repo-root>/apps/api/src/services/agent.service.ts`
+- `<repo-root>/apps/api/src/services/chat.service.ts`
 
 **Changes**:
 
@@ -97,7 +97,7 @@ async getRooms(
 
 ### 3. Field Selection Added ✅
 
-**File**: `/home/user/fuse/apps/backend/src/modules/agent/agent.service.ts`
+**File**: `<repo-root>/apps/backend/src/modules/agent/agent.service.ts`
 
 Added selective field fetching to reduce data transfer:
 
@@ -128,10 +128,10 @@ select: {
 
 **Files Updated**:
 
-- `/home/user/fuse/config/config.ts`
-- `/home/user/fuse/config/logging_config.ts`
-- `/home/user/fuse/config/config_manager.ts`
-- `/home/user/fuse/config/base_config.ts`
+- `<repo-root>/config/config.ts`
+- `<repo-root>/config/logging_config.ts`
+- `<repo-root>/config/config_manager.ts`
+- `<repo-root>/config/base_config.ts`
 
 **Changes**:
 
@@ -309,9 +309,9 @@ await fs.promises.writeFile(outputPath, data);
 
 **High-Priority Files**:
 
-- `/home/user/fuse/scripts/analyze.tsx`
-- `/home/user/fuse/tools/utilities/navigation-validator.ts`
-- `/home/user/fuse/packages/testing/src/artifacts/artifact-manager.tsx`
+- `<repo-root>/scripts/analyze.tsx`
+- `<repo-root>/tools/utilities/navigation-validator.ts`
+- `<repo-root>/packages/testing/src/artifacts/artifact-manager.tsx`
 
 ---
 

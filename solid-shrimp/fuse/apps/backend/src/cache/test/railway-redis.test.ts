@@ -86,15 +86,12 @@ describe('Railway Redis Configuration', () => {
     });
 
     it('should handle non-Railway Redis URLs normally', () => {
-      process.env.REDIS_URL =
-        'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
+      process.env.REDIS_URL = 'redis://localhost:6379';
       process.env.REDIS_DB = '3';
 
       const config = cacheConfig();
       expect(config.redis.db).toBe(3);
-      expect(config.redis.url).toBe(
-        'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570'
-      );
+      expect(config.redis.url).toBe('redis://localhost:6379');
 
       // Clean up
       delete process.env.REDIS_URL;

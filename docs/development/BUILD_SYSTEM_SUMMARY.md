@@ -298,7 +298,7 @@ pnpm run build:verify || exit 1
 ## File Structure
 
 ```
-/home/user/fuse/
+<repo-root>/
 ├── scripts/
 │   ├── build-production.cjs      # Comprehensive build orchestrator
 │   ├── build-railway.cjs          # Railway-optimized build

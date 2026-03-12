@@ -19,7 +19,7 @@ POSTGRES_USER=tnf_user
 POSTGRES_PASSWORD=secure_password
 
 # Redis Configuration
-REDIS_URL=redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570
+REDIS_URL=redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>
 REDIS_PASSWORD=redis_secure_password
 
 # JWT Authentication
@@ -106,7 +106,7 @@ MIXPANEL_TOKEN=your_mixpanel_token
 NODE_ENV=development
 API_PORT=3000
 DATABASE_URL=postgresql://dev_user:dev_password@localhost:5432/tnf_dev
-REDIS_URL=redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570
+REDIS_URL=redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>
 LOGGING_LEVEL=debug
 METRICS_ENABLED=false
 SSL_ENABLED=false

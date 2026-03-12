@@ -156,7 +156,7 @@ class TNFRelayServer extends events_1.EventEmitter {
             this.activityRedis = (0, redis_1.createClient)({
                 url: process.env.ACTIVITY_REDIS_URL ||
                     process.env.REDIS_URL ||
-                    'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
+                    'redis://localhost:6379',
             });
             this.activityRedis.on('error', (err) => {
                 console.error('[Relay] Activity Redis client error:', err.message);

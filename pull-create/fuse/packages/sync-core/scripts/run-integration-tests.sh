@@ -82,7 +82,7 @@ success "All prerequisites met"
 # Set environment variables
 export NODE_ENV=test
 export TEST_DATABASE_URL="postgresql://postgres:postgres@localhost:5432/$TEST_DB_NAME"
-export TEST_REDIS_URL="redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570/$TEST_REDIS_DB"
+export TEST_REDIS_URL="redis://localhost:6379/$TEST_REDIS_DB"
 export TEST_ARTIFACTS_DIR="$PWD/$ARTIFACTS_DIR"
 
 log "🔧 Environment configuration:"

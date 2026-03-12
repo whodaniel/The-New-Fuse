@@ -43,7 +43,7 @@ const rl = readline.createInterface({
 });
 
 /**
- * Expand tilde in file paths (e.g. ~/file.json -> /Users/username/file.json)
+ * Expand tilde in file paths (e.g. ~/file.json -> $HOME/file.json)
  */
 function expandPath(filePath) {
   if (filePath.startsWith('~/')) {

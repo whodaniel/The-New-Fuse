@@ -677,7 +677,7 @@ DATABASE_URL=postgresql://user:pass@host:5432/db
 
 # Optional
 JWT_EXPIRES_IN=1h
-REDIS_URL=redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570
+REDIS_URL=redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>
 ```
 
 ## Testing

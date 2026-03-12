@@ -34,10 +34,7 @@ class NoopJulesWebhookHandler {
     {
       provide: 'REDIS_CLIENT',
       useFactory: () => {
-        return new Redis(
-          process.env.REDIS_URL ||
-            'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570'
-        );
+        return new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
       },
     },
     {

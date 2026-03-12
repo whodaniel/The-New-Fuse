@@ -14,7 +14,7 @@ const DEFAULTS = {
         process.env.LIVE_REDIS_URL ||
         process.env.REDIS_PRIVATE_URL ||
         process.env.REDIS_TLS_URL ||
-        'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
+        'redis://localhost:6379',
     ingress: process.env.TNF_INGRESS_CHANNEL || 'tnf:bus:ingress',
     selfPromptKey: process.env.TNF_SELF_PROMPT_KEY || 'tnf:master:self-prompts',
     processId: process.env.SUPER_CYCLE_PROCESS_ID || '',

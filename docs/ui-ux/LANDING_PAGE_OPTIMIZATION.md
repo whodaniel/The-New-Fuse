@@ -312,7 +312,7 @@ The landing page has been comprehensively optimized to achieve:
    component
 3. `/apps/frontend/src/hooks/usePagePerformance.tsx` - Performance monitoring
    hook
-4. `/home/user/fuse/LANDING_PAGE_OPTIMIZATION.md` - This documentation
+4. `<repo-root>/LANDING_PAGE_OPTIMIZATION.md` - This documentation
 
 ### Modified Files:
 

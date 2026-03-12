@@ -47,7 +47,7 @@ CORE CONCEPTS:
 IMMEDIATE TASKS:
 
 1. Verify Redis connection
-   (redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570)
+   (redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>)
 2. Complete registration
 3. Subscribe to relevant channels
 4. Send initialization message

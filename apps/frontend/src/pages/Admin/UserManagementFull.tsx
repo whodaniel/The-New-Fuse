@@ -1,7 +1,5 @@
-// @ts-nocheck
 import {
   Check,
-  Download,
   Edit,
   Eye,
   Lock,
@@ -11,7 +9,6 @@ import {
   Shield,
   Trash2,
   Unlock,
-  Upload,
   Users,
   UserX,
 } from 'lucide-react';
@@ -53,8 +50,11 @@ export default function UserManagementFull() {
   const [selectedRole, setSelectedRole] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
+  // eslint-disable-next-line no-unused-vars
   const [showCreateModal, setShowCreateModal] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [showEditModal, setShowEditModal] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   useEffect(() => {
@@ -499,39 +499,25 @@ export default function UserManagementFull() {
 
         {/* Pagination */}
         <div className="bg-gray-50 px-6 py-4 flex items-center justify-between border-t border-gray-200">
-          <div className="text-sm text-gray-700">
-            Showing <span className="font-medium">{filteredUsers.length}</span> of{' '}
-            <span className="font-medium">{users.length}</span> users
-          </div>
-          <div className="flex items-center space-x-2">
-            <button className="px-3 py-1 border border-gray-300 rounded hover:bg-gray-100 text-sm">
+          <span className="text-sm text-gray-500">
+            Showing {filteredUsers.length} of {users.length} users
+          </span>
+          <div className="flex space-x-2">
+            <button
+              onClick={() => {}}
+              disabled
+              className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+            >
               Previous
             </button>
-            <button className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
-              1
-            </button>
-            <button className="px-3 py-1 border border-gray-300 rounded hover:bg-gray-100 text-sm">
-              2
-            </button>
-            <button className="px-3 py-1 border border-gray-300 rounded hover:bg-gray-100 text-sm">
+            <button
+              onClick={() => {}}
+              disabled
+              className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+            >
               Next
             </button>
           </div>
-        </div>
-      </div>
-
-      {/* Export/Import */}
-      <div className="mt-6 flex items-center justify-between">
-        <div className="text-sm text-gray-600">Last updated: {new Date().toLocaleString()}</div>
-        <div className="flex items-center space-x-3">
-          <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center text-sm">
-            <Download className="h-4 w-4 mr-2" />
-            Export CSV
-          </button>
-          <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center text-sm">
-            <Upload className="h-4 w-4 mr-2" />
-            Import Users
-          </button>
         </div>
       </div>
     </div>

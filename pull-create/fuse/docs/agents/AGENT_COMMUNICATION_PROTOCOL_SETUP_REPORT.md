@@ -110,8 +110,7 @@ capabilities.
 
 **Redis Pub/Sub** ✅
 
-- **URL**:
-  `redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570`
+- **URL**: `redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>`
   (configurable)
 - **Channels**:
   - `agent:{agentId}` - Direct messaging
@@ -433,7 +432,7 @@ API_URL=http://localhost:3000/api
 MCP_REGISTRY_API_KEY=your-api-key-here
 
 # Redis Configuration
-REDIS_URL=redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570
+REDIS_URL=redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>
 
 # Agent Configuration
 AGENT_ID=your-agent-id

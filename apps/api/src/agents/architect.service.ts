@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DrizzleService } from '@the-new-fuse/database';
+import { resolveCodebaseRoot } from './codebase-root';
 
 export interface ArchitectureDecision {
   id: string;
@@ -43,7 +44,7 @@ export interface ArchitectureReview {
 @Injectable()
 export class ArchitectAgentService {
   private readonly logger = new Logger(ArchitectAgentService.name);
-  private readonly codebaseRoot = '/home/user/fuse';
+  private readonly codebaseRoot = resolveCodebaseRoot();
 
   constructor(private readonly drizzle: DrizzleService) {}
 

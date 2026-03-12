@@ -377,7 +377,7 @@ In GraphQL Playground:
 ## File Structure
 
 ```
-/home/user/fuse/apps/api/src/graphql/
+<repo-root>/apps/api/src/graphql/
 ├── types/
 │   ├── user.type.ts
 │   ├── agent.type.ts
@@ -486,6 +486,6 @@ Controlled by `NODE_ENV` environment variable.
 
 For more examples and documentation:
 
-- See `/home/user/fuse/apps/api/src/graphql/GRAPHQL_EXAMPLES.md`
-- See `/home/user/fuse/apps/api/src/graphql/README.md`
+- See `<repo-root>/apps/api/src/graphql/GRAPHQL_EXAMPLES.md`
+- See `<repo-root>/apps/api/src/graphql/README.md`
 - Use GraphQL Playground schema explorer (Docs tab)

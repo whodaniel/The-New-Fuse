@@ -53,13 +53,13 @@ jobs:
         run: pnpm test
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/test_db
-          REDIS_URL: redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570
+          REDIS_URL: ${{ secrets.REDIS_URL }}
 
       - name: Run E2E Tests
         run: pnpm run test:e2e
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/test_db
-          REDIS_URL: redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570
+          REDIS_URL: ${{ secrets.REDIS_URL }}
 
   build:
     needs: test

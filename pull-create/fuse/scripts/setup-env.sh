@@ -7,7 +7,7 @@ echo "Setting up environment configurations..."
 cat > .env.development << EOL
 VITE_API_URL=http://localhost:3001
 POSTGRES_DB=the_new_fuse_dev
-REDIS_URL=redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570
+REDIS_URL=redis://localhost:6379
 EOL
 
 # Production environment

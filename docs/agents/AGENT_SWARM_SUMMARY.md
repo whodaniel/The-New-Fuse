@@ -12,7 +12,7 @@ AI agents enhance the platform they run on.**
 
 ### 1. **Analyzer Agent** 🔍
 
-- **Location:** `/home/user/fuse/apps/api/src/agents/analyzer.service.ts`
+- **Location:** `<repo-root>/apps/api/src/agents/analyzer.service.ts`
 - **Lines of Code:** 316
 - **Purpose:** Scans codebase for issues, bottlenecks, and anti-patterns
 - **Capabilities:**
@@ -24,7 +24,7 @@ AI agents enhance the platform they run on.**
 
 ### 2. **Architect Agent** 🏗️
 
-- **Location:** `/home/user/fuse/apps/api/src/agents/architect.service.ts`
+- **Location:** `<repo-root>/apps/api/src/agents/architect.service.ts`
 - **Lines of Code:** 335
 - **Purpose:** Reviews architecture and proposes strategic improvements
 - **Capabilities:**
@@ -36,7 +36,7 @@ AI agents enhance the platform they run on.**
 
 ### 3. **Implementer Agent** 💻
 
-- **Location:** `/home/user/fuse/apps/api/src/agents/implementer.service.ts`
+- **Location:** `<repo-root>/apps/api/src/agents/implementer.service.ts`
 - **Lines of Code:** 380
 - **Purpose:** Writes code improvements and creates tests
 - **Capabilities:**
@@ -48,7 +48,7 @@ AI agents enhance the platform they run on.**
 
 ### 4. **Reviewer Agent** ✅
 
-- **Location:** `/home/user/fuse/apps/api/src/agents/reviewer.service.ts`
+- **Location:** `<repo-root>/apps/api/src/agents/reviewer.service.ts`
 - **Lines of Code:** 483
 - **Purpose:** Reviews code for quality, security, and bugs
 - **Capabilities:**
@@ -60,7 +60,7 @@ AI agents enhance the platform they run on.**
 
 ### 5. **Coordinator Agent** 🎭
 
-- **Location:** `/home/user/fuse/apps/api/src/agents/coordinator.service.ts`
+- **Location:** `<repo-root>/apps/api/src/agents/coordinator.service.ts`
 - **Lines of Code:** 406
 - **Purpose:** Orchestrates the entire improvement workflow
 - **Capabilities:**
@@ -111,7 +111,7 @@ Result: Framework continuously improves itself!
 ### Agent Services (5 files)
 
 ```
-/home/user/fuse/apps/api/src/agents/
+<repo-root>/apps/api/src/agents/
 ├── analyzer.service.ts       (10,430 bytes)
 ├── architect.service.ts      (10,858 bytes)
 ├── implementer.service.ts    (11,283 bytes)
@@ -122,7 +122,7 @@ Result: Framework continuously improves itself!
 ### Controller & Module (2 files)
 
 ```
-/home/user/fuse/apps/api/src/
+<repo-root>/apps/api/src/
 ├── controllers/
 │   └── self-improvement.controller.ts
 └── agents/
@@ -132,7 +132,7 @@ Result: Framework continuously improves itself!
 ### Improvements Implemented (2 files)
 
 ```
-/home/user/fuse/apps/api/src/middleware/
+<repo-root>/apps/api/src/middleware/
 ├── validation.middleware.ts          (Security improvement)
 └── query-optimizer.interceptor.ts    (Performance improvement)
 ```
@@ -140,7 +140,7 @@ Result: Framework continuously improves itself!
 ### Demo & Documentation (3 files)
 
 ```
-/home/user/fuse/
+<repo-root>/
 ├── demo-self-improvement.ts          (Live demonstration)
 ├── SELF_IMPROVEMENT_REPORT.md        (Detailed report)
 └── AGENT_SWARM_SUMMARY.md           (This file)
@@ -217,7 +217,7 @@ coordinate their work:
 
 ### 1. Input Validation Middleware ✅
 
-**File:** `/home/user/fuse/apps/api/src/middleware/validation.middleware.ts`
+**File:** `<repo-root>/apps/api/src/middleware/validation.middleware.ts`
 
 **What it does:**
 
@@ -249,8 +249,7 @@ export class ValidationMiddleware implements NestMiddleware {
 
 ### 2. Query Optimization Interceptor ✅
 
-**File:**
-`/home/user/fuse/apps/api/src/middleware/query-optimizer.interceptor.ts`
+**File:** `<repo-root>/apps/api/src/middleware/query-optimizer.interceptor.ts`
 
 **What it does:**
 
@@ -508,7 +507,7 @@ better! 🚀
 ---
 
 **Status:** ✅ Fully Operational **Location:**
-`/home/user/fuse/apps/api/src/agents/` **API:**
+`<repo-root>/apps/api/src/agents/` **API:**
 `http://localhost:3001/self-improvement/` **Demo:**
 `npx ts-node demo-self-improvement.ts`
 

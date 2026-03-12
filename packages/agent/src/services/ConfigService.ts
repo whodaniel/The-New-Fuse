@@ -13,9 +13,7 @@ export class ConfigService {
   constructor(initialConfig: ConfigOptions = {}) {
     this.config = {
       // Default configuration values
-      REDIS_URL:
-        process.env.REDIS_URL ||
-        'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570/0',
+      REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6379/0',
       REDIS_TTL: parseInt(process.env.REDIS_TTL || '3600', 10),
       AGENT_TIMEOUT: parseInt(process.env.AGENT_TIMEOUT || '30000', 10),
       LOG_LEVEL: process.env.LOG_LEVEL || 'info',

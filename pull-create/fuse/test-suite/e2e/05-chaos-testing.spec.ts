@@ -22,9 +22,7 @@ const execAsync = promisify(exec);
 const API_BASE_URL = process.env.API_URL || 'http://localhost:3001';
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3004';
 const WS_URL = process.env.WS_URL || 'ws://localhost:3004';
-const REDIS_URL =
-  process.env.REDIS_URL ||
-  'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
+const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 
 test.describe('Chaos Testing - Agent Failures', () => {
   let authToken: string;

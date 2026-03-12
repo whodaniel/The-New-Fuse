@@ -631,7 +631,7 @@ groups:
 - `/apps/backend/PERFORMANCE_OPTIMIZATION.md`
 - `/apps/backend/PERFORMANCE_SETUP.md`
 - `/apps/backend/.env.performance`
-- `/home/user/fuse/BACKEND_PERFORMANCE_OPTIMIZATION_SUMMARY.md`
+- `<repo-root>/BACKEND_PERFORMANCE_OPTIMIZATION_SUMMARY.md`
 
 ### Modified Files
 

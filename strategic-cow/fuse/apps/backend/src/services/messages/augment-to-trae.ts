@@ -16,9 +16,7 @@ const initializationMessage = {
   try {
     // Create a Redis client
     const redisClient = createClient({
-      url:
-        process.env.REDIS_URL ||
-        'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
+      url: process.env.REDIS_URL || 'redis://localhost:6379',
     });
 
     // Connect to Redis

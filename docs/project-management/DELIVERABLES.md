@@ -344,7 +344,7 @@ test-suite/e2e/
 ### Documentation Files (3 files, ~70 KB)
 
 ```
-/home/user/fuse/
+<repo-root>/
 ├── PRODUCTION_READINESS_REPORT.md (50+ KB) - Main assessment report
 ├── E2E_TEST_SUMMARY.md (15 KB) - Executive summary
 └── DELIVERABLES.md (5 KB) - This file
@@ -392,20 +392,20 @@ test-suite/e2e/
 
 ```bash
 # Main production readiness report
-cat /home/user/fuse/PRODUCTION_READINESS_REPORT.md
+cat <repo-root>/PRODUCTION_READINESS_REPORT.md
 
 # Quick summary
-cat /home/user/fuse/E2E_TEST_SUMMARY.md
+cat <repo-root>/E2E_TEST_SUMMARY.md
 
 # This deliverables checklist
-cat /home/user/fuse/DELIVERABLES.md
+cat <repo-root>/DELIVERABLES.md
 ```
 
 ### 2. Run the Tests
 
 ```bash
 # Navigate to test directory
-cd /home/user/fuse/test-suite/e2e
+cd <repo-root>/test-suite/e2e
 
 # Ensure services are running
 docker-compose -f ../../docker-compose.local.yml up -d
@@ -421,10 +421,10 @@ pnpm exec playwright test 01-agent-lifecycle.spec.ts
 
 ```bash
 # Check generated reports
-ls -lah /home/user/fuse/reports/e2e/
+ls -lah <repo-root>/reports/e2e/
 
 # Open HTML report in browser
-open /home/user/fuse/reports/e2e/test-report-*.html
+open <repo-root>/reports/e2e/test-report-*.html
 ```
 
 ### 4. Address Critical Issues

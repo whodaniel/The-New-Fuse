@@ -148,22 +148,22 @@ Cache Layer
 
 ### Test Suites
 
-- `/home/user/fuse/test-suite/e2e/01-agent-lifecycle.spec.ts` (15 KB)
-- `/home/user/fuse/test-suite/e2e/02-multi-agent-collaboration.spec.ts` (17 KB)
-- `/home/user/fuse/test-suite/e2e/03-load-testing.spec.ts` (21 KB)
-- `/home/user/fuse/test-suite/e2e/04-integration-testing.spec.ts` (17 KB)
-- `/home/user/fuse/test-suite/e2e/05-chaos-testing.spec.ts` (16 KB)
-- `/home/user/fuse/test-suite/e2e/06-real-world-scenarios.spec.ts` (21 KB)
+- `<repo-root>/test-suite/e2e/01-agent-lifecycle.spec.ts` (15 KB)
+- `<repo-root>/test-suite/e2e/02-multi-agent-collaboration.spec.ts` (17 KB)
+- `<repo-root>/test-suite/e2e/03-load-testing.spec.ts` (21 KB)
+- `<repo-root>/test-suite/e2e/04-integration-testing.spec.ts` (17 KB)
+- `<repo-root>/test-suite/e2e/05-chaos-testing.spec.ts` (16 KB)
+- `<repo-root>/test-suite/e2e/06-real-world-scenarios.spec.ts` (21 KB)
 
 ### Supporting Files
 
-- `/home/user/fuse/test-suite/e2e/run-e2e-tests.sh` (15 KB)
-- `/home/user/fuse/test-suite/e2e/README.md` (9 KB)
+- `<repo-root>/test-suite/e2e/run-e2e-tests.sh` (15 KB)
+- `<repo-root>/test-suite/e2e/README.md` (9 KB)
 
 ### Reports
 
-- `/home/user/fuse/PRODUCTION_READINESS_REPORT.md` (50+ KB)
-- `/home/user/fuse/E2E_TEST_SUMMARY.md` (This file)
+- `<repo-root>/PRODUCTION_READINESS_REPORT.md` (50+ KB)
+- `<repo-root>/E2E_TEST_SUMMARY.md` (This file)
 
 **Total**: 8 files, ~170 KB
 
@@ -175,7 +175,7 @@ Cache Layer
 
 ```bash
 # Navigate to test directory
-cd /home/user/fuse/test-suite/e2e
+cd <repo-root>/test-suite/e2e
 
 # Make test runner executable (already done)
 chmod +x run-e2e-tests.sh
@@ -189,7 +189,7 @@ chmod +x run-e2e-tests.sh
 1. **Start Services**:
 
    ```bash
-   cd /home/user/fuse
+   cd <repo-root>
    pnpm run docker:start
    # OR
    docker-compose -f docker-compose.local.yml up -d
@@ -404,9 +404,9 @@ throughput optimization needed ⚠️ Graceful degradation not fully implemented
 
 All documentation is located in:
 
-- **Main Report**: `/home/user/fuse/PRODUCTION_READINESS_REPORT.md`
-- **Test Suite README**: `/home/user/fuse/test-suite/e2e/README.md`
-- **This Summary**: `/home/user/fuse/E2E_TEST_SUMMARY.md`
+- **Main Report**: `<repo-root>/PRODUCTION_READINESS_REPORT.md`
+- **Test Suite README**: `<repo-root>/test-suite/e2e/README.md`
+- **This Summary**: `<repo-root>/E2E_TEST_SUMMARY.md`
 
 ---
 
@@ -452,12 +452,12 @@ implemented before handling production traffic at scale.
 ## 🚀 Next Steps
 
 1. **Review Report**: Read the complete
-   [PRODUCTION_READINESS_REPORT.md](/home/user/fuse/PRODUCTION_READINESS_REPORT.md)
+   [PRODUCTION_READINESS_REPORT.md](<repo-root>/PRODUCTION_READINESS_REPORT.md)
 
 2. **Run Tests**: Execute the test suite to validate your environment
 
    ```bash
-   cd /home/user/fuse/test-suite/e2e
+   cd <repo-root>/test-suite/e2e
    ./run-e2e-tests.sh
    ```
 

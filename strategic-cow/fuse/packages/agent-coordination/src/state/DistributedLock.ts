@@ -8,9 +8,7 @@ export class DistributedLock extends EventEmitter {
   private redis: Redis;
   private locks: Map<string, { token: string; expiresAt: number }> = new Map();
 
-  constructor(
-    redisUrl: string = 'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570'
-  ) {
+  constructor(redisUrl: string = 'redis://localhost:6379') {
     super();
     this.redis = new Redis(redisUrl);
   }

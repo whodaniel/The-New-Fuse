@@ -9,9 +9,7 @@ export class TaskQueue extends EventEmitter {
   private queues: Map<TaskPriority, Queue<Task>>;
   private redisConfig: Bull.QueueOptions;
 
-  constructor(
-    redisUrl: string = 'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570'
-  ) {
+  constructor(redisUrl: string = 'redis://localhost:6379') {
     super();
 
     this.redisConfig = {

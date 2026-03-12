@@ -240,9 +240,7 @@ export class OrchestratorService implements OnModuleInit, OnModuleDestroy {
     private readonly redisLockService: RedisLockService
   ) {
     // NEW: Initialize Redis client
-    const redisUrl =
-      this.configService.get('REDIS_URL') ||
-      'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
+    const redisUrl = this.configService.get('REDIS_URL') || 'redis://localhost:6379';
     this.redis = new Redis(redisUrl);
   }
 

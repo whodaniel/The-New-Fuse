@@ -43,7 +43,7 @@ describe('CacheService', () => {
   });
 
   it('should handle standard redis url', () => {
-    const url = 'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
+    const url = 'redis://localhost:6379';
     mockConfigService.get.mockReturnValue(url);
 
     service = new CacheService(configService);
@@ -52,15 +52,12 @@ describe('CacheService', () => {
   });
 
   it('should handle duplicated redis url', () => {
-    const url =
-      'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
+    const url = 'redis://localhost:6379redis://localhost:6379';
     mockConfigService.get.mockReturnValue(url);
 
     service = new CacheService(configService);
 
-    expect(Redis).toHaveBeenCalledWith(
-      'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570'
-    );
+    expect(Redis).toHaveBeenCalledWith('redis://localhost:6379');
   });
 
   it('should handle railway style duplication', () => {

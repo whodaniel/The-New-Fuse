@@ -1,0 +1,99 @@
+{
+  "town_name": "The New Fuse Metropolis",
+  "version": "1.0",
+  "districts": [
+    {
+      "id": "silicon-valley-spires",
+      "name": "Silicon Valley Spires",
+      "type": "Infrastructure & Core Services",
+      "description": "The foundation of the metropolis, housing the API, Backend, and Orchestration engines.",
+      "buildings": [
+        {
+          "id": "api-gateway",
+          "name": "API Gateway Tower",
+          "status": "active"
+        },
+        { "id": "relay-server", "name": "Relay Hub", "status": "active" },
+        {
+          "id": "nexus-orchestrator",
+          "name": "Orchestrator Spire",
+          "status": "active"
+        },
+        {
+          "id": "skideancer-ide",
+          "name": "The Forge (IDE)",
+          "status": "active"
+        },
+        {
+          "id": "vocal-dispatcher-hub",
+          "name": "Vocal Dispatcher Hub",
+          "status": "active"
+        },
+        { "id": "mcp-servers", "name": "Protocol Park", "status": "active" }
+      ]
+    },
+    {
+      "id": "digital-manhattan",
+      "name": "Digital Manhattan",
+      "type": "Frontend & Entertainment",
+      "description": "The vibrant heart of the city, where user-facing apps and games reside.",
+      "buildings": [
+        { "id": "ai-arcade", "name": "AI Arcade Arena", "status": "active" },
+        { "id": "casin8-games", "name": "Casin8 Plaza", "status": "active" },
+        { "id": "frontend-app", "name": "Main Dashboard", "status": "active" },
+        {
+          "id": "visualization-hub",
+          "name": "The Observatory",
+          "status": "active"
+        }
+      ]
+    },
+    {
+      "id": "future-expansion",
+      "name": "The Horizon District",
+      "type": "Roadmap & Bucket List",
+      "description": "The construction zone for all planned features and strategic goals extracted from the ROADMAP.",
+      "buildings": [
+        {
+          "id": "agentverse",
+          "name": "The Agentverse Core",
+          "status": "planned"
+        },
+        {
+          "id": "algorithmic-core",
+          "name": "Algorithmic Pathways",
+          "status": "planned"
+        },
+        {
+          "id": "federation-hub",
+          "name": "Federation Hub",
+          "status": "proposed"
+        },
+        {
+          "id": "autonomous-zone",
+          "name": "The Autonomous Zone",
+          "status": "proposed"
+        },
+        {
+          "id": "mcp-gateway",
+          "name": "Interoperability Gateway",
+          "status": "proposed"
+        },
+        {
+          "id": "skill-bank",
+          "name": "The Grand Skill Bank",
+          "status": "planned"
+        }
+      ]
+    }
+  ],
+  "characters": {
+    "total_registered": 115,
+    "source": "data/agent-registry/master_user_agents.json",
+    "primary_characters": [
+      { "id": "agent-registry-manager", "role": "City Registrar" },
+      { "id": "ab-testing-optimizer-agent", "role": "Performance Auditor" }
+    ]
+  },
+  "roadmap_pulse": "THE-NEW-FUSE-ENHANCEMENT-PLAN.md"
+}

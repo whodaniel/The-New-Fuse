@@ -31,7 +31,7 @@ export class TNFRouter {
         process.env.LIVE_REDIS_URL ||
         process.env.REDIS_PRIVATE_URL ||
         process.env.REDIS_TLS_URL ||
-        'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
+        'redis://localhost:6379',
       ingressChannel: config.ingressChannel || 'tnf:bus:ingress',
       egressChannelPrefix: config.egressChannelPrefix || 'tnf:bus:egress',
       enableInboxRouting: config.enableInboxRouting ?? true, // Default: enabled

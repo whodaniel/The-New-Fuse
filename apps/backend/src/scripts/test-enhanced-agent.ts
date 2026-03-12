@@ -1,9 +1,7 @@
 import { EnhancedAgent } from '../services/agent/enhanced-agent';
 
 async function testAgent(): Promise<void> {
-  const redisUrl =
-    process.env.REDIS_URL ||
-    'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
+  const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
   const agent = new EnhancedAgent('TestAgent', redisUrl);
 
   agent.on('message', ({ channel, message }) => {});

@@ -191,7 +191,7 @@ WS_URL=ws://localhost:3004
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/thenewfuse_test
 
 # Redis
-REDIS_URL=redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570
+REDIS_URL=redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>
 
 # GraphQL
 GRAPHQL_URL=http://localhost:3001/graphql

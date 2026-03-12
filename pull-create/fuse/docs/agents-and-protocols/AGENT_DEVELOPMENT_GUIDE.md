@@ -381,7 +381,7 @@ class RedisPubSubAgent {
 
   constructor(
     agentId: string,
-    redisUrl: string = 'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570'
+    redisUrl: string = 'redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>'
   ) {
     this.agentId = agentId;
     this.publisher = new Redis(redisUrl);

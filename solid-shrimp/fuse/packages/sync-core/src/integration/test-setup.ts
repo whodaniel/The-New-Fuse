@@ -15,8 +15,7 @@ export async function setupIntegrationTests() {
   }
 
   if (!process.env.TEST_REDIS_URL) {
-    process.env.TEST_REDIS_URL =
-      'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570/15';
+    process.env.TEST_REDIS_URL = 'redis://localhost:6379/15';
   }
 
   // Set test environment

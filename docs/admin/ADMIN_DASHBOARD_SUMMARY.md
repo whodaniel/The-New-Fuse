@@ -10,7 +10,7 @@ monitoring, agent control, database administration, and more.
 
 ### Frontend Components (React + TypeScript + Tailwind CSS)
 
-All components are located in `/home/user/fuse/apps/frontend/src/pages/Admin/`
+All components are located in `<repo-root>/apps/frontend/src/pages/Admin/`
 
 1. **ComprehensiveAdminDashboard.tsx** - Main admin dashboard with overview
    - Real-time system metrics
@@ -90,7 +90,7 @@ All components are located in `/home/user/fuse/apps/frontend/src/pages/Admin/`
 
 ### Backend API (NestJS + TypeScript)
 
-All backend code is located in `/home/user/fuse/apps/backend/src/modules/admin/`
+All backend code is located in `<repo-root>/apps/backend/src/modules/admin/`
 
 1. **admin.module.ts** - Admin module configuration
 2. **admin.controller.ts** - RESTful API endpoints for all admin features
@@ -157,7 +157,7 @@ All backend code is located in `/home/user/fuse/apps/backend/src/modules/admin/`
 
 ### Documentation
 
-Located in `/home/user/fuse/docs/admin/`
+Located in `<repo-root>/docs/admin/`
 
 1. **ADMIN_DASHBOARD_GUIDE.md** - Complete feature documentation
    - Detailed feature descriptions
@@ -291,7 +291,7 @@ Located in `/home/user/fuse/docs/admin/`
 ## File Structure
 
 ```
-/home/user/fuse/
+<repo-root>/
 ├── apps/
 │   ├── frontend/
 │   │   └── src/

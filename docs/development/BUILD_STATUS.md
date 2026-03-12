@@ -247,7 +247,7 @@ Error: Failed to fetch the engine file at https://binaries.drizzle.sh/all_commit
 **Commands**:
 
 ```bash
-cd /home/user/fuse/packages/sync-core
+cd <repo-root>/packages/sync-core
 # Fix imports and exports
 pnpm build  # Should succeed after fixes
 ```
@@ -261,7 +261,7 @@ pnpm build  # Should succeed after fixes
 **Option A: Docker-based Generation** (Recommended)
 
 ```bash
-cd /home/user/fuse/packages/database
+cd <repo-root>/packages/database
 docker run --rm -v $(pwd):/app -w /app node:20 \
   sh -c "npm install -g pnpm@10.22.0 && pnpm install && npx drizzle generate"
 ```
@@ -359,7 +359,7 @@ node scripts/pre-build-check.cjs
 | Milestone         | Current       | Target             | Timeline |
 | ----------------- | ------------- | ------------------ | -------- |
 | Packages Building | 32/37 (86.5%) | 37/37 (100%)       | Week 1   |
-| Drizzle Status     | Placeholder   | Real Client        | Week 1   |
+| Drizzle Status    | Placeholder   | Real Client        | Week 1   |
 | Deployment        | Not Live      | Railway Live       | Week 2   |
 | Public Access     | No            | www.thenewfuse.com | Week 2   |
 | Beta Users        | 0             | 10+                | Week 3   |

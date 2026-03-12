@@ -140,7 +140,7 @@ charges possible
 **DO NOT run this until ALL keys are rotated!**
 
 ```bash
-cd /home/user/fuse
+cd <repo-root>
 
 # Make backup
 git clone . ../fuse-backup
@@ -195,7 +195,7 @@ brew install git-secrets  # macOS
 sudo apt-get install git-secrets  # Linux
 
 # Configure for repository
-cd /home/user/fuse
+cd <repo-root>
 git secrets --install
 git secrets --register-aws
 git secrets --add 'STRIPE_(SECRET|API)_KEY='  # Stripe

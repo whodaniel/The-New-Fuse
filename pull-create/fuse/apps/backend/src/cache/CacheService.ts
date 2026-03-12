@@ -12,10 +12,7 @@ export class CacheService {
   private readonly logger: Logger;
   private readonly defaultTTL: number = 3600; // 1 hour
 
-  constructor(
-    redisUrl: string = process.env.REDIS_URL ||
-      'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570'
-  ) {
+  constructor(redisUrl: string = process.env.REDIS_URL || 'redis://localhost:6379') {
     this.redis = new (Redis as any)(redisUrl);
     this.logger = new Logger(CacheService.name);
 

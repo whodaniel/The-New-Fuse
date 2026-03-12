@@ -6,7 +6,7 @@
       "env": {
         "NODE_ENV": "development",
         "DATABASE_URL": "postgresql://postgres:postgres@localhost:5432/fuse",
-        "REDIS_URL": "redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570",
+        "REDIS_URL": "redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>",
         "LOG_LEVEL": "info"
       },
       "description": "Main The New Fuse MCP Server - Full platform capabilities"

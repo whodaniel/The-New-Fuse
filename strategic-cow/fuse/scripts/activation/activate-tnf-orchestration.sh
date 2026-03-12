@@ -25,7 +25,7 @@ NC='\033[0m' # No Color
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 RELAY_PORT=${RELAY_PORT:-3001}
 REDIS_LOCAL_URL="redis://localhost:6380"
-REDIS_CLOUD_URL="${REDIS_URL:-redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570}"
+REDIS_CLOUD_URL="${REDIS_URL:-redis://localhost:6379}"
 
 # Log file
 LOG_DIR="$PROJECT_ROOT/.agent/orchestration-logs"

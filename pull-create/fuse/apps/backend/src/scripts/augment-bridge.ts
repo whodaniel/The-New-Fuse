@@ -42,9 +42,7 @@ async function shareAnalysisResults(_analysis: any): Promise<void> {
 export async function runAugmentBridgeSetup(): Promise<void> {
   const logger = createLogger('augment-bridge');
   const requestId = uuidv4();
-  const redisUrl =
-    process.env.REDIS_URL ||
-    'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570';
+  const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
   let redis: Redis | null = null;
 
   logger.info('Starting augment bridge setup', { requestId, redisUrl });

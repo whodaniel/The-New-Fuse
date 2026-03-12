@@ -37,8 +37,8 @@ direct dependency updates and pnpm override configurations.
 
 ### 1. Updated pnpm Overrides Configuration
 
-Added comprehensive security overrides in `/home/user/fuse/package.json` to
-ensure vulnerable transitive dependencies are forced to secure versions:
+Added comprehensive security overrides in `<repo-root>/package.json` to ensure
+vulnerable transitive dependencies are forced to secure versions:
 
 ```json
 {
@@ -64,21 +64,21 @@ ensure vulnerable transitive dependencies are forced to secure versions:
 
 #### Critical Security Packages - Current Versions
 
-| Package            | Version         | Status    | Notes                                              |
-| ------------------ | --------------- | --------- | -------------------------------------------------- |
-| **express**        | 5.1.0           | ✅ Secure | Latest major version with security improvements    |
-| **axios**          | 1.13.2          | ✅ Secure | Latest version, all known CVEs patched             |
-| **jsonwebtoken**   | 9.0.2           | ✅ Secure | Latest version with HS256 algorithm security fixes |
-| **bcrypt**         | 6.0.0           | ✅ Secure | Latest version with timing attack mitigations      |
-| **helmet**         | 8.1.0           | ✅ Secure | Latest security middleware for Express             |
-| **passport**       | 0.7.0           | ✅ Secure | Latest authentication middleware                   |
-| **dompurify**      | 3.3.0           | ✅ Secure | XSS protection library, all CVEs patched           |
-| **ws**             | 8.18.3          | ✅ Secure | WebSocket library with DoS fixes                   |
-| **socket.io**      | 4.8.1           | ✅ Secure | Real-time communication library                    |
-| **mongoose**       | 8.20.0          | ✅ Secure | MongoDB ODM with query injection fixes             |
-| **typeorm**        | 0.3.27          | ✅ Secure | Latest stable version                              |
+| Package             | Version         | Status    | Notes                                              |
+| ------------------- | --------------- | --------- | -------------------------------------------------- |
+| **express**         | 5.1.0           | ✅ Secure | Latest major version with security improvements    |
+| **axios**           | 1.13.2          | ✅ Secure | Latest version, all known CVEs patched             |
+| **jsonwebtoken**    | 9.0.2           | ✅ Secure | Latest version with HS256 algorithm security fixes |
+| **bcrypt**          | 6.0.0           | ✅ Secure | Latest version with timing attack mitigations      |
+| **helmet**          | 8.1.0           | ✅ Secure | Latest security middleware for Express             |
+| **passport**        | 0.7.0           | ✅ Secure | Latest authentication middleware                   |
+| **dompurify**       | 3.3.0           | ✅ Secure | XSS protection library, all CVEs patched           |
+| **ws**              | 8.18.3          | ✅ Secure | WebSocket library with DoS fixes                   |
+| **socket.io**       | 4.8.1           | ✅ Secure | Real-time communication library                    |
+| **mongoose**        | 8.20.0          | ✅ Secure | MongoDB ODM with query injection fixes             |
+| **typeorm**         | 0.3.27          | ✅ Secure | Latest stable version                              |
 | **@drizzle/client** | 6.11.0 / 6.17.1 | ✅ Secure | Database client with SQL injection protections     |
-| **node-fetch**     | 3.3.2           | ✅ Secure | HTTP client with redirect vulnerability fixes      |
+| **node-fetch**      | 3.3.2           | ✅ Secure | HTTP client with redirect vulnerability fixes      |
 
 #### Transitive Dependency Overrides - Verified Versions
 
@@ -145,12 +145,12 @@ dependencies to version 11.1.0 or higher
 
 ### Database & ORM
 
-| Package        | Version         | Security Features                               |
-| -------------- | --------------- | ----------------------------------------------- |
+| Package         | Version         | Security Features                               |
+| --------------- | --------------- | ----------------------------------------------- |
 | @drizzle/client | 6.11.0 - 6.17.1 | Parameterized queries, SQL injection protection |
-| mongoose       | 8.20.0          | Query injection protection                      |
-| typeorm        | 0.3.27          | SQL injection protection                        |
-| ioredis        | 5.8.1           | Redis client with connection security           |
+| mongoose        | 8.20.0          | Query injection protection                      |
+| typeorm         | 0.3.27          | SQL injection protection                        |
+| ioredis         | 5.8.1           | Redis client with connection security           |
 
 **Security Status:** ✅ All packages at secure versions
 
@@ -357,9 +357,9 @@ updates did not introduce any new build errors.
 
 ## Files Modified
 
-1. `/home/user/fuse/package.json` - Updated pnpm overrides
-2. `/home/user/fuse/pnpm-lock.yaml` - Regenerated with new package resolutions
-3. `/home/user/fuse/node_modules/` - Updated 134 packages
+1. `<repo-root>/package.json` - Updated pnpm overrides
+2. `<repo-root>/pnpm-lock.yaml` - Regenerated with new package resolutions
+3. `<repo-root>/node_modules/` - Updated 134 packages
 
 ---
 

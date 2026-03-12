@@ -186,7 +186,7 @@ console.log('Dependents:', relationships.dependents);
 
 ```bash
 # Redis Configuration
-REDIS_URL=redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570
+REDIS_URL=redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>
 REDIS_CLUSTER_ENABLED=false
 
 # WebSocket Configuration

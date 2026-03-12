@@ -381,7 +381,7 @@ class RedisPubSubAgent {
 
   constructor(
     agentId: string,
-    redisUrl: string = 'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570'
+    redisUrl: string = 'redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>'
   ) {
     this.agentId = agentId;
     this.publisher = new Redis(redisUrl);
@@ -892,8 +892,7 @@ services:
 
 ## Example Implementations
 
-See the `/home/user/fuse/examples/` directory for complete example
-implementations:
+See the `<repo-root>/examples/` directory for complete example implementations:
 
 - `code-execution-agent/` - Agent for executing code snippets
 - `agent-workflow/` - Multi-agent workflow orchestration
@@ -903,10 +902,12 @@ implementations:
 
 ## Additional Resources
 
-- [Agent Communication Architecture](/home/user/fuse/docs/agents-and-protocols/AGENT_COMMUNICATION_ARCHITECTURE.md)
-- [Agent Framework Protocols](/home/user/fuse/docs/agents-and-protocols/AGENT_FRAMEWORK_PROTOCOLS.md)
-- [MCP Complete Guide](/home/user/fuse/docs/protocols/MCP-COMPLETE-GUIDE.md)
-- [API Documentation](/home/user/fuse/docs/api/)
+- [Agent Communication
+  Architecture](<repo-root>/docs/agents-and-protocols/AGENT_COMMUNICATION_ARCHITECTURE.md)
+- [Agent Framework
+  Protocols](<repo-root>/docs/agents-and-protocols/AGENT_FRAMEWORK_PROTOCOLS.md)
+- [MCP Complete Guide](<repo-root>/docs/protocols/MCP-COMPLETE-GUIDE.md)
+- [API Documentation](<repo-root>/docs/api/)
 
 ---
 
@@ -915,7 +916,7 @@ implementations:
 For questions and support:
 
 - GitHub Issues: https://github.com/whodaniel/fuse/issues
-- Documentation: /home/user/fuse/docs/
+- Documentation: <repo-root>/docs/
 - Community: Join our Discord/Slack
 
 ---
