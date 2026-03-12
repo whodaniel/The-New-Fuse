@@ -50,12 +50,9 @@ export default function UserManagementFull() {
   const [selectedRole, setSelectedRole] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
-  // eslint-disable-next-line no-unused-vars
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  // eslint-disable-next-line no-unused-vars
-  const [showEditModal, setShowEditModal] = useState(false);
-  // eslint-disable-next-line no-unused-vars
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [, setShowCreateModal] = useState(false);
+  const [, setShowEditModal] = useState(false);
+  const [, setSelectedUser] = useState<User | null>(null);
 
   useEffect(() => {
     loadUsers();
