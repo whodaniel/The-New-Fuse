@@ -16,7 +16,7 @@ import { NodeProps } from 'reactflow';
 import { BaseNode } from './base-node';
 
 const MCPToolNode: React.FC<NodeProps> = memo(({ id, data }) => {
-  const { servers, tools, loading } = useMcpTools();
+  const { servers, loading, source, setSource, resetSource } = useMcpTools();
   const [selectedServer, setSelectedServer] = useState<MCPServer | null>(null);
   const [selectedTool, setSelectedTool] = useState<MCPTool | null>(null);
   const [paramValues, setParamValues] = useState<Record<string, any>>({});
@@ -212,6 +212,41 @@ const MCPToolNode: React.FC<NodeProps> = memo(({ id, data }) => {
   const renderContent = () => (
     <div className="space-y-3">
       <div>
+        <div className="flex justify-between items-center mb-2">
+          <Label className="text-xs font-medium text-slate-200">Server Source</Label>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              resetSource();
+            }}
+            className="text-[11px] text-slate-400 hover:text-slate-200 transition-colors"
+          >
+            Reset to TNF
+          </button>
+        </div>
+        <div className="flex space-x-2 mb-3">
+          <button
+            title="Internal Database of Curated TNF MCP Servers"
+            className={`px-2 py-1 flex-1 text-xs rounded transition-colors ${source === 'tnf' ? 'bg-blue-600 text-white' : 'bg-slate-700/50 hover:bg-slate-700 text-slate-300 border border-slate-600'}`}
+            onClick={(e) => {
+              e.preventDefault();
+              setSource('tnf');
+            }}
+          >
+            TNF Curated
+          </button>
+          <button
+            title="Official MCP Registry (read-only directory)"
+            className={`px-2 py-1 flex-1 text-xs rounded transition-colors ${source === 'registry' ? 'bg-blue-600 text-white' : 'bg-slate-700/50 hover:bg-slate-700 text-slate-300 border border-slate-600'}`}
+            onClick={(e) => {
+              e.preventDefault();
+              setSource('registry');
+            }}
+          >
+            Official Registry
+          </button>
+        </div>
         <Label htmlFor={`server-${id}`} className="text-xs font-medium text-slate-200">
           MCP Server
         </Label>
@@ -255,7 +290,14 @@ const MCPToolNode: React.FC<NodeProps> = memo(({ id, data }) => {
         </div>
       )}
 
-      {selectedServer && (
+      {selectedServer && (!selectedServer.tools || selectedServer.tools.length === 0) && (
+        <div className="text-xs text-amber-200 bg-amber-500/10 p-2 rounded border border-amber-500/30">
+          This server does not expose tools in the registry listing yet. Install or connect it to
+          load tools.
+        </div>
+      )}
+
+      {selectedServer && selectedServer.tools?.length > 0 && (
         <div>
           <Label htmlFor={`tool-${id}`} className="text-xs font-medium text-slate-200">
             Tool

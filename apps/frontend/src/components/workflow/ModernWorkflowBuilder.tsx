@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { useMcpTools } from '@/hooks/useMcpTools';
 import React, { useCallback, useRef, useState } from 'react';
 import ReactFlow, {
   addEdge,
@@ -51,35 +52,100 @@ const AgentNode = ({ data }: { data: any }) => (
   </div>
 );
 
-const MCPToolNode = ({ data }: { data: any }) => (
-  <div className="mcp-node relative">
-    <StatusDecorator status={data.status} />
-    <div className="node-header">
-      <div className="node-icon">🔧</div>
-      <div className="node-title">{data.label}</div>
-    </div>
-    <div className="node-content">
-      <div className="node-field">
-        <label>Tool:</label>
-        <select value={data.tool || ''} onChange={(e) => data.onChange?.('tool', e.target.value)}>
-          <option value="">Select a tool...</option>
-          <option value="screenshot">Take Screenshot</option>
-          <option value="browser">Browser Automation</option>
-          <option value="file-system">File System</option>
-          <option value="database">Database Query</option>
-        </select>
+const MCPToolNode = ({ data }: { data: any }) => {
+  const { servers, loading, source, setSource, resetSource } = useMcpTools();
+  const selectedServer = servers.find((server) => server.name === data.mcpServer);
+  const tools = selectedServer?.tools || [];
+
+  return (
+    <div className="mcp-node relative">
+      <StatusDecorator status={data.status} />
+      <div className="node-header">
+        <div className="node-icon">🔧</div>
+        <div className="node-title">{data.label}</div>
       </div>
-      <div className="node-field">
-        <label>Parameters:</label>
-        <textarea
-          value={data.parameters || ''}
-          onChange={(e) => data.onChange?.('parameters', e.target.value)}
-          placeholder="Enter parameters as JSON..."
-        />
+      <div className="node-content">
+        <div className="node-field">
+          <label className="flex items-center justify-between">
+            Server Source
+            <button
+              type="button"
+              onClick={() => resetSource()}
+              className="text-[10px] text-slate-400 hover:text-slate-200 transition-colors"
+            >
+              Reset
+            </button>
+          </label>
+          <div className="flex gap-2 mt-1">
+            <button
+              type="button"
+              className={`flex-1 px-2 py-1 text-xs rounded ${source === 'tnf' ? 'bg-blue-600 text-white' : 'bg-slate-700/50 text-slate-300 border border-slate-600'}`}
+              onClick={() => setSource('tnf' as any)}
+              disabled={loading}
+            >
+              TNF Curated
+            </button>
+            <button
+              type="button"
+              className={`flex-1 px-2 py-1 text-xs rounded ${source === 'registry' ? 'bg-blue-600 text-white' : 'bg-slate-700/50 text-slate-300 border border-slate-600'}`}
+              onClick={() => setSource('registry' as any)}
+              disabled={loading}
+            >
+              Official Registry
+            </button>
+          </div>
+        </div>
+
+        <div className="node-field">
+          <label>MCP Server:</label>
+          <select
+            value={data.mcpServer || ''}
+            onChange={(e) => data.onChange?.('mcpServer', e.target.value)}
+            disabled={loading}
+          >
+            <option value="">Select a server...</option>
+            {servers.map((server) => (
+              <option key={server.id} value={server.name}>
+                {server.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {selectedServer && tools.length === 0 && (
+          <div className="text-[11px] text-amber-200 bg-amber-500/10 p-2 rounded border border-amber-500/30">
+            This server does not expose tools in the registry listing yet.
+          </div>
+        )}
+
+        <div className="node-field">
+          <label>Tool:</label>
+          <select
+            value={data.tool || ''}
+            onChange={(e) => data.onChange?.('tool', e.target.value)}
+            disabled={loading || !selectedServer}
+          >
+            <option value="">Select a tool...</option>
+            {tools.map((tool) => (
+              <option key={tool.id || tool.name} value={tool.name}>
+                {tool.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="node-field">
+          <label>Parameters:</label>
+          <textarea
+            value={data.parameters || ''}
+            onChange={(e) => data.onChange?.('parameters', e.target.value)}
+            placeholder="Enter parameters as JSON..."
+          />
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const FlowControlNode = ({ data }: { data: any }) => (
   <div className="flow-node">

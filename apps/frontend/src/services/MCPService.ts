@@ -82,7 +82,11 @@ class MCPService {
   }
 
   async getServers(): Promise<MCPServer[]> {
-    return this.request<MCPServer[]>('/mcp/servers');
+    const response = await this.request<any>(`/mcp/servers`);
+    if (response && Array.isArray(response.servers)) {
+      return response.servers;
+    }
+    return Array.isArray(response) ? response : [];
   }
 
   async getServer(serverId: string): Promise<MCPServer> {

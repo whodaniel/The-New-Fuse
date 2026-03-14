@@ -1,5 +1,38 @@
-import { useState, useEffect, useCallback } from 'react';
-import { mcpService, MCPServer, MCPTool } from '@/services/MCPService';
+import { MCPMarketplaceServer, MCPMarketplaceService } from '@/services/MCPMarketplaceService';
+import { MCPServer, mcpService, MCPTool } from '@/services/MCPService';
+import { useCallback, useEffect, useState } from 'react';
+
+const SOURCE_STORAGE_KEY = 'tnf_mcp_source';
+const DEFAULT_SOURCE: McpSource = 'tnf';
+
+type McpSource = 'tnf' | 'registry';
+
+const marketplaceService = new MCPMarketplaceService();
+
+const getStoredSource = (): McpSource => {
+  if (typeof window === 'undefined') return DEFAULT_SOURCE;
+  const stored = window.localStorage.getItem(SOURCE_STORAGE_KEY);
+  return stored === 'registry' ? 'registry' : DEFAULT_SOURCE;
+};
+
+const storeSource = (source: McpSource) => {
+  if (typeof window === 'undefined') return;
+  window.localStorage.setItem(SOURCE_STORAGE_KEY, source);
+};
+
+const mapMarketplaceServer = (server: MCPMarketplaceServer): MCPServer => ({
+  id: server.id,
+  name: server.name,
+  url: server.installCommand || '',
+  status: 'offline',
+  tools: [],
+  metadata: {
+    source: 'registry',
+    publisher: server.publisher,
+    category: server.category,
+    version: server.version,
+  },
+});
 
 export const useMcpTools = () => {
   const [servers, setServers] = useState<MCPServer[]>([]);
@@ -7,24 +40,46 @@ export const useMcpTools = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
+  const [source, setSourceState] = useState<McpSource>(getStoredSource);
+
   // Load MCP servers from API
-  const loadServers = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  const loadServers = useCallback(
+    async (currentSource: McpSource = source) => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      const fetchedServers = await mcpService.getServers();
-      setServers(fetchedServers);
+      try {
+        let fetchedServers: MCPServer[] = [];
 
-      // Flatten tools from all servers
-      const allTools = fetchedServers.flatMap(server => server.tools);
-      setTools(allTools);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to load MCP servers'));
-    } finally {
-      setLoading(false);
-    }
+        if (currentSource === 'registry') {
+          const marketplaceServers = await marketplaceService.getServers();
+          fetchedServers = marketplaceServers.map(mapMarketplaceServer);
+        } else {
+          fetchedServers = await mcpService.getServers();
+        }
+
+        setServers(fetchedServers);
+
+        // Flatten tools from all servers
+        const allTools = fetchedServers.flatMap((server) => server.tools || []);
+        setTools(allTools);
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to load MCP servers'));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [source]
+  );
+
+  const setSource = useCallback((nextSource: McpSource) => {
+    setSourceState(nextSource);
+    storeSource(nextSource);
   }, []);
+
+  const resetSource = useCallback(() => {
+    setSource(DEFAULT_SOURCE);
+  }, [setSource]);
 
   // Load servers on mount
   useEffect(() => {
@@ -32,35 +87,38 @@ export const useMcpTools = () => {
   }, [loadServers]);
 
   // Execute a tool on an MCP server
-  const executeTool = useCallback(async (
-    toolId: string,
-    parameters: Record<string, any>
-  ) => {
-    setLoading(true);
-    setError(null);
+  const executeTool = useCallback(
+    async (toolId: string, parameters: Record<string, any>) => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      // Find the server that contains the tool
-      const server = servers.find(s => s.tools.some(t => t.id === toolId));
-      const serverId = server?.id;
+      try {
+        // Find the server that contains the tool
+        const server = servers.find((s) => s.tools.some((t) => t.id === toolId));
+        const serverId = server?.id;
 
-      const result = await mcpService.executeTool(toolId, parameters, serverId);
-      return result;
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to execute tool'));
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [servers]);
+        const result = await mcpService.executeTool(toolId, parameters, serverId);
+        return result;
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to execute tool'));
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [servers]
+  );
 
   return {
     servers,
     tools,
     loading,
     error,
+    source,
+    setSource,
+    resetSource,
     loadServers,
-    executeTool
+    executeTool,
   };
 };
 

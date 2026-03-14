@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Param, Query, Logger } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Param, Post, Query } from '@nestjs/common';
+import { db, sql } from '@the-new-fuse/database';
+import { MCPA2ABridge } from './mcp-a2a-bridge.service';
 import { MCPServerService } from './mcp-server.service';
 import { MCPToolRegistry } from './mcp-tool-registry.service';
-import { MCPA2ABridge } from './mcp-a2a-bridge.service';
 
 /**
  * MCP Controller
@@ -15,7 +16,7 @@ export class MCPController {
   constructor(
     private readonly mcpServer: MCPServerService,
     private readonly toolRegistry: MCPToolRegistry,
-    private readonly bridge: MCPA2ABridge,
+    private readonly bridge: MCPA2ABridge
   ) {}
 
   /**
@@ -24,6 +25,76 @@ export class MCPController {
   @Get('status')
   async getStatus() {
     return this.mcpServer.getServerStatus();
+  }
+
+  /**
+   * Get all available MCP servers including TNF internal and TNF database entities
+   */
+  @Get('servers')
+  async getServers() {
+    this.logger.log('Fetching MCP servers list...');
+
+    // 1. Fetch TNF curated servers from database
+    const result = await db.execute(sql`
+      SELECT
+        id, tnf_id, name, description, protocol,
+        command, args, env, endpoint_url, tools, resources,
+        status, scope, version, created_at, updated_at
+      FROM tnf_mcp_servers
+      ORDER BY name ASC
+    `);
+
+    let dbServers = [];
+    if (Array.isArray(result)) {
+      dbServers = result as any[];
+    } else if (result?.rows && Array.isArray(result.rows)) {
+      dbServers = result.rows as any[];
+    }
+
+    // Map DB rows to standard format
+    const curatedServers = dbServers.map((row) => ({
+      id: row.id,
+      tnfId: row.tnf_id,
+      name: row.name,
+      description: row.description,
+      protocol: row.protocol,
+      command: row.command,
+      args: row.args || [],
+      env: row.env || {},
+      endpointUrl: row.endpoint_url,
+      tools: row.tools || [],
+      resources: row.resources || [],
+      status: row.status,
+      scope: row.scope,
+      version: row.version,
+      source: 'tnf-curated',
+      isInternal: false,
+    }));
+
+    // 2. Add the dynamic TNF Internal MCP server mapping MCPToolRegistry tools
+    const internalTools = this.toolRegistry.getAllTools().map((tool) => ({
+      name: tool.name,
+      description: tool.description,
+      inputSchema: tool.schema || { type: 'object', properties: {} },
+    }));
+
+    const tnfInternalServer = {
+      id: 'tnf-internal-mcp',
+      tnfId: 'sys-mcp-tnf-internal',
+      name: 'TNF Internal Tools',
+      description: 'Built-in tools provided directly by the TNF platform.',
+      protocol: 'internal',
+      status: 'active',
+      scope: 'sys',
+      source: 'tnf-internal',
+      isInternal: true,
+      tools: internalTools,
+    };
+
+    return {
+      servers: [tnfInternalServer, ...curatedServers],
+      total: curatedServers.length + 1,
+    };
   }
 
   /**
