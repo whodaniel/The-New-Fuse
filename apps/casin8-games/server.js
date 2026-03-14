@@ -6058,11 +6058,11 @@ function serveStatic(req, res) {
   let reqPath = req.url.split('?')[0];
   let isBackend = false;
 
-  if (reqPath === '/backend' || reqPath === '/backend/') {
+  if (reqPath === '/console' || reqPath === '/console/') {
     reqPath = '/index.html';
     isBackend = true;
-  } else if (reqPath.startsWith('/backend/')) {
-    reqPath = reqPath.replace('/backend', '');
+  } else if (reqPath.startsWith('/console/')) {
+    reqPath = reqPath.replace('/console', '');
     isBackend = true;
   }
 
