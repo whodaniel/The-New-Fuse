@@ -47,5 +47,10 @@
     `/auth/login` (auth required).
   - `npx` is broken in this environment; used `pnpm dlx @playwright/cli` as a
     workaround.
+  - Began MCP Tool fix: added official-registry source selection + reset in MCP
+    Tool nodes and modern builder.
+  - Added backend `api/mcp` controller to expose TNF curated MCP servers and
+    official registry listings.
+  - Added API gateway passthrough for MCP marketplace server listings.
 - Files updated:
   - `findings.md`

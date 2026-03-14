@@ -110,3 +110,5 @@
   arrays/placeholders for MCP servers/tools.
 - Modern builder MCP tool uses a hardcoded tool list (no server selection), so
   it also needs wiring to live MCP servers.
+- TNF curated MCP servers are seeded into `tnf_mcp_servers` via
+  `packages/database/scripts/register-tnf-entities-v2.ts`.
