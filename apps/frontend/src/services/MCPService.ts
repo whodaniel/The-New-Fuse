@@ -81,8 +81,9 @@ class MCPService {
     }
   }
 
-  async getServers(): Promise<MCPServer[]> {
-    const response = await this.request<any>(`/mcp/servers`);
+  async getServers(source: 'tnf' | 'registry' = 'tnf'): Promise<MCPServer[]> {
+    const query = source ? `?source=${source}` : '';
+    const response = await this.request<any>(`/mcp/servers${query}`);
     if (response && Array.isArray(response.servers)) {
       return response.servers;
     }

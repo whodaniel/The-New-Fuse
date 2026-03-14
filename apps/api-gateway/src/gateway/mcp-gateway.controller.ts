@@ -13,6 +13,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Res,
   Version,
 } from '@nestjs/common';
@@ -29,13 +30,19 @@ export class McpGatewayController {
   @Version('1')
   @ApiOperation({ summary: 'Get MCP server configurations' })
   @ApiResponse({ status: 200, description: 'MCP servers retrieved successfully' })
-  async getMcpServers(@Headers() headers: Record<string, string>, @Res() res: Response) {
+  async getMcpServers(
+    @Query() query: Record<string, string>,
+    @Headers() headers: Record<string, string>,
+    @Res() res: Response
+  ) {
     try {
       const response = await this.proxyService.proxyRequest(
         'backend',
         '/api/mcp/servers',
         'GET',
-        headers
+        headers,
+        undefined,
+        query
       );
       return res.status(response.status).json(response.data);
     } catch (error) {
@@ -51,13 +58,19 @@ export class McpGatewayController {
   @Version('1')
   @ApiOperation({ summary: 'Get MCP marketplace server listings' })
   @ApiResponse({ status: 200, description: 'MCP marketplace servers retrieved successfully' })
-  async getMcpMarketplaceServers(@Headers() headers: Record<string, string>, @Res() res: Response) {
+  async getMcpMarketplaceServers(
+    @Query() query: Record<string, string>,
+    @Headers() headers: Record<string, string>,
+    @Res() res: Response
+  ) {
     try {
       const response = await this.proxyService.proxyRequest(
         'backend',
         '/api/mcp/marketplace/servers',
         'GET',
-        headers
+        headers,
+        undefined,
+        query
       );
       return res.status(response.status).json(response.data);
     } catch (error) {

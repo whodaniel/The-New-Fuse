@@ -1,4 +1,3 @@
-import { MCPMarketplaceServer, MCPMarketplaceService } from '@/services/MCPMarketplaceService';
 import { MCPServer, mcpService, MCPTool } from '@/services/MCPService';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -6,8 +5,6 @@ const SOURCE_STORAGE_KEY = 'tnf_mcp_source';
 const DEFAULT_SOURCE: McpSource = 'tnf';
 
 type McpSource = 'tnf' | 'registry';
-
-const marketplaceService = new MCPMarketplaceService();
 
 const getStoredSource = (): McpSource => {
   if (typeof window === 'undefined') return DEFAULT_SOURCE;
@@ -19,20 +16,6 @@ const storeSource = (source: McpSource) => {
   if (typeof window === 'undefined') return;
   window.localStorage.setItem(SOURCE_STORAGE_KEY, source);
 };
-
-const mapMarketplaceServer = (server: MCPMarketplaceServer): MCPServer => ({
-  id: server.id,
-  name: server.name,
-  url: server.installCommand || '',
-  status: 'offline',
-  tools: [],
-  metadata: {
-    source: 'registry',
-    publisher: server.publisher,
-    category: server.category,
-    version: server.version,
-  },
-});
 
 export const useMcpTools = () => {
   const [servers, setServers] = useState<MCPServer[]>([]);
@@ -49,15 +32,7 @@ export const useMcpTools = () => {
       setError(null);
 
       try {
-        let fetchedServers: MCPServer[] = [];
-
-        if (currentSource === 'registry') {
-          const marketplaceServers = await marketplaceService.getServers();
-          fetchedServers = marketplaceServers.map(mapMarketplaceServer);
-        } else {
-          fetchedServers = await mcpService.getServers();
-        }
-
+        const fetchedServers = await mcpService.getServers(currentSource);
         setServers(fetchedServers);
 
         // Flatten tools from all servers

@@ -20,6 +20,38 @@ const MCPToolNode: React.FC<NodeProps> = memo(({ id, data }) => {
   const [selectedServer, setSelectedServer] = useState<MCPServer | null>(null);
   const [selectedTool, setSelectedTool] = useState<MCPTool | null>(null);
   const [paramValues, setParamValues] = useState<Record<string, any>>({});
+  const [serverConfigValues, setServerConfigValues] = useState<Record<string, any>>({});
+
+  const buildConfigDefaults = (schema: any, existing: Record<string, any>) => {
+    const properties = schema?.properties || {};
+    const defaults: Record<string, any> = { ...existing };
+
+    Object.entries(properties).forEach(([key, config]: [string, any]) => {
+      if (defaults[key] !== undefined) return;
+      if (config?.default !== undefined) {
+        defaults[key] = config.default;
+        return;
+      }
+      switch (config?.type) {
+        case 'number':
+          defaults[key] = 0;
+          break;
+        case 'boolean':
+          defaults[key] = false;
+          break;
+        case 'object':
+          defaults[key] = {};
+          break;
+        case 'array':
+          defaults[key] = [];
+          break;
+        default:
+          defaults[key] = '';
+      }
+    });
+
+    return defaults;
+  };
 
   // Load selected server and tool
   useEffect(() => {
@@ -27,6 +59,13 @@ const MCPToolNode: React.FC<NodeProps> = memo(({ id, data }) => {
       const server = servers.find((s) => s.name === data.config.mcpServer);
       if (server) {
         setSelectedServer(server);
+        const serverSchema = server?.metadata?.configurationSchema;
+        if (serverSchema?.properties) {
+          const defaults = buildConfigDefaults(serverSchema, data.config?.serverConfig || {});
+          setServerConfigValues(defaults);
+        } else {
+          setServerConfigValues(data.config?.serverConfig || {});
+        }
 
         if (data.config?.mcpTool) {
           const tool = server.tools.find((t) => t.name === data.config.mcpTool);
@@ -45,6 +84,9 @@ const MCPToolNode: React.FC<NodeProps> = memo(({ id, data }) => {
     setSelectedServer(server || null);
     setSelectedTool(null);
     setParamValues({});
+    const serverSchema = server?.metadata?.configurationSchema;
+    const nextServerConfig = serverSchema?.properties ? buildConfigDefaults(serverSchema, {}) : {};
+    setServerConfigValues(nextServerConfig);
 
     if (data.onUpdate) {
       data.onUpdate({
@@ -54,6 +96,7 @@ const MCPToolNode: React.FC<NodeProps> = memo(({ id, data }) => {
           mcpServer: serverName,
           mcpTool: '',
           parameters: {},
+          serverConfig: nextServerConfig,
         },
       });
     }
@@ -127,6 +170,112 @@ const MCPToolNode: React.FC<NodeProps> = memo(({ id, data }) => {
           parameters: updatedParams,
         },
       });
+    }
+  };
+
+  const handleServerConfigChange = (paramName: string, value: any) => {
+    const updatedConfig = {
+      ...serverConfigValues,
+      [paramName]: value,
+    };
+
+    setServerConfigValues(updatedConfig);
+
+    if (data.onUpdate) {
+      data.onUpdate({
+        config: {
+          ...data.config,
+          serverConfig: updatedConfig,
+        },
+      });
+    }
+  };
+
+  const renderConfigInput = (paramName: string, paramConfig: any) => {
+    const value = serverConfigValues[paramName];
+    const isSecret = Boolean(paramConfig?.['x-secret']);
+    const isEnum = Array.isArray(paramConfig?.enum) && paramConfig.enum.length > 0;
+
+    if (isEnum) {
+      return (
+        <Select
+          value={value ?? ''}
+          onValueChange={(nextValue) => handleServerConfigChange(paramName, nextValue)}
+        >
+          <SelectTrigger className="h-9 text-xs mt-1.5 bg-slate-700 border-slate-600 text-white hover:bg-slate-600">
+            <SelectValue placeholder={paramConfig.description || paramName} />
+          </SelectTrigger>
+          <SelectContent className="bg-slate-800 border-slate-600">
+            {paramConfig.enum.map((option: string) => (
+              <SelectItem
+                key={option}
+                value={option}
+                className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+              >
+                {option}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      );
+    }
+
+    switch (paramConfig?.type) {
+      case 'number':
+        return (
+          <Input
+            id={`server-param-${id}-${paramName}`}
+            type="number"
+            value={value}
+            onChange={(e: any) => handleServerConfigChange(paramName, parseFloat(e.target.value))}
+            placeholder={paramConfig.description || paramName}
+            className="h-9 text-xs bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
+          />
+        );
+      case 'boolean':
+        return (
+          <div className="flex items-center space-x-2">
+            <input
+              id={`server-param-${id}-${paramName}`}
+              type="checkbox"
+              checked={Boolean(value)}
+              onChange={(e: any) => handleServerConfigChange(paramName, e.target.checked)}
+              className="h-4 w-4 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-2 focus:ring-blue-500"
+            />
+            <label htmlFor={`server-param-${id}-${paramName}`} className="text-xs text-slate-200">
+              {paramConfig.description || paramName}
+            </label>
+          </div>
+        );
+      case 'object':
+      case 'array':
+        return (
+          <Textarea
+            id={`server-param-${id}-${paramName}`}
+            value={typeof value === 'string' ? value : JSON.stringify(value, null, 2)}
+            onChange={(e: any) => {
+              try {
+                const parsed = JSON.parse(e.target.value);
+                handleServerConfigChange(paramName, parsed);
+              } catch {
+                handleServerConfigChange(paramName, e.target.value);
+              }
+            }}
+            placeholder={paramConfig.description || paramName}
+            className="h-24 text-xs bg-slate-700 border-slate-600 text-white placeholder:text-slate-400 font-mono resize-none"
+          />
+        );
+      default:
+        return (
+          <Input
+            id={`server-param-${id}-${paramName}`}
+            type={isSecret ? 'password' : 'text'}
+            value={value || ''}
+            onChange={(e: any) => handleServerConfigChange(paramName, e.target.value)}
+            placeholder={paramConfig.description || paramName}
+            className="h-9 text-xs bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
+          />
+        );
     }
   };
 
@@ -273,6 +422,12 @@ const MCPToolNode: React.FC<NodeProps> = memo(({ id, data }) => {
             ))}
           </SelectContent>
         </Select>
+
+        {selectedServer?.metadata?.source === 'registry' && (
+          <div className="mt-2 inline-flex items-center gap-1 rounded-full border border-blue-500/40 bg-blue-500/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-blue-200">
+            Official Registry
+          </div>
+        )}
       </div>
 
       {/* Empty state when no servers available */}
@@ -296,6 +451,38 @@ const MCPToolNode: React.FC<NodeProps> = memo(({ id, data }) => {
           load tools.
         </div>
       )}
+
+      {selectedServer?.metadata?.configurationSchema?.properties &&
+        Object.keys(selectedServer.metadata.configurationSchema.properties).length > 0 && (
+          <div className="space-y-2">
+            <Label className="text-xs font-medium text-slate-200">Server Configuration</Label>
+            {Object.entries(selectedServer.metadata.configurationSchema.properties).map(
+              ([paramName, paramConfig]: [string, any]) => {
+                const isRequired =
+                  selectedServer.metadata.configurationSchema?.required?.includes(paramName);
+                return (
+                  <div key={paramName} className="space-y-1">
+                    <Label
+                      htmlFor={`server-param-${id}-${paramName}`}
+                      className="text-xs text-slate-200"
+                    >
+                      {paramName} {isRequired && <span className="text-red-400">*</span>}
+                    </Label>
+                    {renderConfigInput(paramName, paramConfig)}
+                    {isRequired &&
+                      (serverConfigValues[paramName] === undefined ||
+                        serverConfigValues[paramName] === '' ||
+                        serverConfigValues[paramName] === null) && (
+                        <div className="text-[10px] text-amber-400 mt-0.5">
+                          ⚠️ Required configuration missing
+                        </div>
+                      )}
+                  </div>
+                );
+              }
+            )}
+          </div>
+        )}
 
       {selectedServer && selectedServer.tools?.length > 0 && (
         <div>

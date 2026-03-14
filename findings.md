@@ -112,3 +112,5 @@
   it also needs wiring to live MCP servers.
 - TNF curated MCP servers are seeded into `tnf_mcp_servers` via
   `packages/database/scripts/register-tnf-entities-v2.ts`.
+- MCP server source switching now targets `/api/mcp/servers?source=registry` for
+  Official MCP Registry listings.

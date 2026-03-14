@@ -56,6 +56,62 @@ const MCPToolNode = ({ data }: { data: any }) => {
   const { servers, loading, source, setSource, resetSource } = useMcpTools();
   const selectedServer = servers.find((server) => server.name === data.mcpServer);
   const tools = selectedServer?.tools || [];
+  const registryBadge = selectedServer?.metadata?.source === 'registry';
+  const serverSchema = selectedServer?.metadata?.configurationSchema;
+  const serverConfigProperties = serverSchema?.properties || {};
+
+  const parseServerConfig = () => {
+    if (!data?.serverConfig) return {};
+    if (typeof data.serverConfig === 'string') {
+      try {
+        return JSON.parse(data.serverConfig);
+      } catch {
+        return {};
+      }
+    }
+    return data.serverConfig;
+  };
+
+  const serverConfigValues = parseServerConfig();
+
+  const buildConfigDefaults = (schema: any, existing: Record<string, any>) => {
+    const properties = schema?.properties || {};
+    const defaults: Record<string, any> = { ...existing };
+
+    Object.entries(properties).forEach(([key, config]: [string, any]) => {
+      if (defaults[key] !== undefined) return;
+      if (config?.default !== undefined) {
+        defaults[key] = config.default;
+        return;
+      }
+      switch (config?.type) {
+        case 'number':
+          defaults[key] = 0;
+          break;
+        case 'boolean':
+          defaults[key] = false;
+          break;
+        case 'object':
+          defaults[key] = {};
+          break;
+        case 'array':
+          defaults[key] = [];
+          break;
+        default:
+          defaults[key] = '';
+      }
+    });
+
+    return defaults;
+  };
+
+  const handleServerConfigChange = (paramName: string, value: any) => {
+    const nextConfig = {
+      ...serverConfigValues,
+      [paramName]: value,
+    };
+    data.onChange?.('serverConfig', nextConfig as any);
+  };
 
   return (
     <div className="mcp-node relative">
@@ -100,7 +156,14 @@ const MCPToolNode = ({ data }: { data: any }) => {
           <label>MCP Server:</label>
           <select
             value={data.mcpServer || ''}
-            onChange={(e) => data.onChange?.('mcpServer', e.target.value)}
+            onChange={(e) => {
+              const nextServer = e.target.value;
+              data.onChange?.('mcpServer', nextServer);
+              const nextSchema = servers.find((server) => server.name === nextServer)?.metadata
+                ?.configurationSchema;
+              const defaults = nextSchema?.properties ? buildConfigDefaults(nextSchema, {}) : {};
+              data.onChange?.('serverConfig', defaults as any);
+            }}
             disabled={loading}
           >
             <option value="">Select a server...</option>
@@ -110,11 +173,129 @@ const MCPToolNode = ({ data }: { data: any }) => {
               </option>
             ))}
           </select>
+          {registryBadge && (
+            <div className="mt-2 inline-flex items-center gap-1 rounded-full border border-blue-500/40 bg-blue-500/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-blue-200">
+              Official Registry
+            </div>
+          )}
         </div>
 
         {selectedServer && tools.length === 0 && (
           <div className="text-[11px] text-amber-200 bg-amber-500/10 p-2 rounded border border-amber-500/30">
             This server does not expose tools in the registry listing yet.
+          </div>
+        )}
+
+        {Object.keys(serverConfigProperties).length > 0 && (
+          <div className="node-field">
+            <label>Server Configuration:</label>
+            <div className="space-y-2 mt-2">
+              {Object.entries(serverConfigProperties).map(
+                ([paramName, paramConfig]: [string, any]) => {
+                  const isRequired = serverSchema?.required?.includes(paramName);
+                  const isSecret = Boolean(paramConfig?.['x-secret']);
+                  const isEnum = Array.isArray(paramConfig?.enum) && paramConfig.enum.length > 0;
+                  const value = serverConfigValues[paramName];
+                  const isEmpty = value === undefined || value === '' || value === null;
+
+                  if (isEnum) {
+                    return (
+                      <label key={paramName} className="block text-xs text-slate-300">
+                        {paramName} {isRequired && <span className="text-red-400">*</span>}
+                        <select
+                          className="mt-1 w-full"
+                          value={serverConfigValues[paramName] ?? ''}
+                          onChange={(e) => handleServerConfigChange(paramName, e.target.value)}
+                        >
+                          <option value="">Select...</option>
+                          {paramConfig.enum.map((option: string) => (
+                            <option key={option} value={option}>
+                              {option}
+                            </option>
+                          ))}
+                        </select>
+                        {isRequired && isEmpty && (
+                          <div className="text-[10px] text-amber-400 mt-1">
+                            ⚠️ Required configuration
+                          </div>
+                        )}
+                      </label>
+                    );
+                  }
+
+                  if (paramConfig?.type === 'boolean') {
+                    return (
+                      <label
+                        key={paramName}
+                        className="flex items-center gap-2 text-xs text-slate-300"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={Boolean(serverConfigValues[paramName])}
+                          onChange={(e) => handleServerConfigChange(paramName, e.target.checked)}
+                        />
+                        {paramName} {isRequired && <span className="text-red-400">*</span>}
+                      </label>
+                    );
+                  }
+
+                  if (paramConfig?.type === 'object' || paramConfig?.type === 'array') {
+                    return (
+                      <label key={paramName} className="block text-xs text-slate-300">
+                        {paramName} {isRequired && <span className="text-red-400">*</span>}
+                        <textarea
+                          className="mt-1 w-full"
+                          rows={3}
+                          value={
+                            typeof serverConfigValues[paramName] === 'string'
+                              ? serverConfigValues[paramName]
+                              : JSON.stringify(serverConfigValues[paramName] ?? '', null, 2)
+                          }
+                          onChange={(e) => {
+                            try {
+                              handleServerConfigChange(paramName, JSON.parse(e.target.value));
+                            } catch {
+                              handleServerConfigChange(paramName, e.target.value);
+                            }
+                          }}
+                          placeholder={paramConfig?.description || paramName}
+                        />
+                        {isRequired && isEmpty && (
+                          <div className="text-[10px] text-amber-400 mt-1">
+                            ⚠️ Required configuration
+                          </div>
+                        )}
+                      </label>
+                    );
+                  }
+
+                  return (
+                    <label key={paramName} className="block text-xs text-slate-300">
+                      {paramName} {isRequired && <span className="text-red-400">*</span>}
+                      <input
+                        className="mt-1 w-full"
+                        type={
+                          isSecret ? 'password' : paramConfig?.type === 'number' ? 'number' : 'text'
+                        }
+                        value={serverConfigValues[paramName] ?? ''}
+                        onChange={(e) =>
+                          handleServerConfigChange(
+                            paramName,
+                            paramConfig?.type === 'number' ? Number(e.target.value) : e.target.value
+                          )
+                        }
+                        placeholder={paramConfig?.description || paramName}
+                      />
+                      {isRequired && isEmpty && (
+                        <div className="text-[10px] text-amber-400 mt-1">
+                          ⚠️ Required configuration
+                        </div>
+                      )}
+                    </label>
+                  );
+                }
+              )}
+            </div>
           </div>
         )}
 
@@ -316,7 +497,7 @@ const WorkflowBuilderContent = () => {
         position,
         data: {
           label: `${type.charAt(0).toUpperCase() + type.slice(1)} Node`,
-          onChange: (field: string, value: string) => {
+          onChange: (field: string, value: any) => {
             setNodes((nds) =>
               nds.map((node) =>
                 node.id === newNode.id ? { ...node, data: { ...node.data, [field]: value } } : node
@@ -534,7 +715,7 @@ const WorkflowBuilderContent = () => {
           ...node,
           data: {
             ...node.data,
-            onChange: (field: string, value: string) => {
+            onChange: (field: string, value: any) => {
               setNodes((nds) =>
                 nds.map((n) =>
                   n.id === node.id ? { ...n, data: { ...n.data, [field]: value } } : n

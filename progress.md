@@ -52,5 +52,14 @@
   - Added backend `api/mcp` controller to expose TNF curated MCP servers and
     official registry listings.
   - Added API gateway passthrough for MCP marketplace server listings.
+  - Wired MCP server source selection to `/api/mcp/servers?source=registry`
+    (Official MCP Registry) or `source=tnf` (curated list).
 - Files updated:
   - `findings.md`
+
+## 2026-01-12
+
+- Added MCP Tool node support for registry configuration schema inputs +
+  Official Registry badge in both ReactFlow node and ModernWorkflowBuilder.
+- Adjusted ModernWorkflowBuilder node onChange to accept non-string config
+  payloads.
