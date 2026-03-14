@@ -86,7 +86,7 @@ const GoalDetailPage = lazy(() => import('./pages/Goals/Detail'));
 const PlansPage = lazy(() => import('./pages/Plans'));
 const PlanDetailPage = lazy(() => import('./pages/Plans/Detail'));
 const TimelinePage = lazy(() => import('./pages/Timeline'));
-const MacroTimelinePage = lazy(() => import('./pages/timeline/MacroTimelinePage'));
+const MacroTimelinePage = lazy(() => import('./pages/Timeline/MacroTimelinePage'));
 
 // Additional Admin components
 const AdminUserManagement = lazy(() => import('./pages/Admin/UserManagement'));
