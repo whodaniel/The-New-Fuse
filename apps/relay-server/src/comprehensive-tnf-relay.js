@@ -322,10 +322,30 @@ class ComprehensiveTNFRelay {
       case 'REGISTER':
         await this.handleRegistration(ws, message);
         break;
+      case 'BROADCAST':
+        await this.handleBroadcast(ws, message);
+        break;
       case 'API_INTERCEPT_NOTIFICATION':
         // Handle notification
         break;
     }
+  }
+
+  async handleBroadcast(senderWs, message) {
+    const { payload } = message;
+    const broadcastMessage = JSON.stringify({
+      type: 'BROADCAST_EVENT',
+      source: senderWs.clientId,
+      payload: payload,
+      timestamp: new Date().toISOString(),
+    });
+
+    // Send to all other connected clients
+    [...this.agents.values(), ...this.chromeExtensions.values()].forEach((client) => {
+      if (client.id !== senderWs.clientId) {
+        client.ws.send(broadcastMessage);
+      }
+    });
   }
 
   async handleRegistration(ws, message) {

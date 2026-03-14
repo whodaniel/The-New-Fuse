@@ -1,0 +1,123 @@
+{
+  "runId": "2026-02-23T10-07-00-974Z",
+  "createdAt": "2026-02-23T10:10:27.351Z",
+  "extensionPath": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/dist-v7",
+  "totals": {
+    "pass": 12,
+    "fail": 1,
+    "blocked": 0,
+    "total": 13
+  },
+  "checks": [
+    {
+      "id": "panel_open_only_qwen_baseline",
+      "status": "PASS",
+      "details": {
+        "qwenPanel": {
+          "usedInjection": true,
+          "injected": {
+            "success": true
+          },
+          "show": {
+            "success": true
+          }
+        },
+        "geminiPanelVisibleBefore": false
+      }
+    },
+    {
+      "id": "qwen_send_works",
+      "status": "PASS",
+      "details": {
+        "panelSend": {
+          "success": true
+        },
+        "qwenPromptVisible": true
+      }
+    },
+    {
+      "id": "qwen_response_captured",
+      "status": "PASS",
+      "details": {
+        "lastResponsePreview": "By logging in, you agree to our Terms of Service and Privacy Policy."
+      }
+    },
+    {
+      "id": "green_broadcast_qwen_inject",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_GREEN_A_1771841339546"
+      }
+    },
+    {
+      "id": "no_cross_tab_injection_when_gemini_panel_hidden",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_GREEN_A_1771841339546",
+        "geminiPanelHidden": true
+      }
+    },
+    {
+      "id": "gemini_injection_when_panel_open",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_GREEN_B_1771841345355"
+      }
+    },
+    {
+      "id": "channel_isolation_green_vs_red",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_GREEN_WHILE_RED_1771841350759"
+      }
+    },
+    {
+      "id": "pause_green_blocks_injection",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_GREEN_PAUSED_1771841353862"
+      }
+    },
+    {
+      "id": "resume_green_restores_injection",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_GREEN_RESUMED_1771841357036"
+      }
+    },
+    {
+      "id": "pause_red_blocks_injection",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_RED_PAUSED_1771841362391"
+      }
+    },
+    {
+      "id": "resume_red_restores_injection",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_RED_RESUMED_1771841365490"
+      }
+    },
+    {
+      "id": "pause_state_sync_after_refresh",
+      "status": "PASS",
+      "details": {
+        "pausedAfterReload": ["Red"]
+      }
+    },
+    {
+      "id": "extension_reload_recovery_no_phantom_injection",
+      "status": "FAIL",
+      "details": {
+        "beforeReloadConnection": "connected",
+        "extensionReloaded": false,
+        "postReloadNoPhantom": true
+      }
+    }
+  ],
+  "failures": [
+    "Fatal runner error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'sendMessage')\n    at eval (eval at evaluate (:290:30), <anonymous>:6:28)\n    at new Promise (<anonymous>)\n    at eval (eval at evaluate (:290:30), <anonymous>:2:11)\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at runtimeMessage (/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/scripts/system-qa-loop.cjs:109:17)\n    at getEventLogs (/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/scripts/system-qa-loop.cjs:199:30)\n    at main (/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/scripts/system-qa-loop.cjs:592:35)",
+    "extension_reload_recovery_no_phantom_injection: {\"beforeReloadConnection\":\"connected\",\"extensionReloaded\":false,\"postReloadNoPhantom\":true}"
+  ]
+}

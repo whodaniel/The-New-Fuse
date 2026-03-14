@@ -1,0 +1,13 @@
+{
+  "startedAt": "2026-02-22T22:54:27.995Z",
+  "extensionPath": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/dist-v7",
+  "popup": {},
+  "channelTests": {},
+  "supportedSiteChecks": [],
+  "experimentalSiteChecks": [],
+  "tabChannelIsolation": {},
+  "errors": [
+    "browserContext.waitForEvent: Timeout 20000ms exceeded while waiting for event \"serviceworker\"\n    at main (/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/scripts/component-smoke.cjs:56:37)"
+  ],
+  "finishedAt": "2026-02-22T22:54:49.546Z"
+}

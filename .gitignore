@@ -157,6 +157,7 @@ env/
 ENV/
 **/venv/
 **/.venv/
+.venv_crawler/
 
 # Python cache
 __pycache__/

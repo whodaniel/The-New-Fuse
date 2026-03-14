@@ -1,0 +1,22 @@
+{
+  "startedAt": "2026-02-22T22:55:02.552Z",
+  "extensionPath": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/dist-v7",
+  "popup": {
+    "#connect-btn": true,
+    "#open-panel-btn": true,
+    "#save-settings": true,
+    "#relay-url": true,
+    "#debug-mode": true,
+    "#auto-reconnect": true,
+    "settingsToggleAttempted": true
+  },
+  "channelTests": {},
+  "supportedSiteChecks": [],
+  "experimentalSiteChecks": [],
+  "tabChannelIsolation": {},
+  "errors": [
+    "worker.evaluate: Target page, context or browser has been closed\n    at runtimeMessage (/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/scripts/component-smoke.cjs:63:21)\n    at main (/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/scripts/component-smoke.cjs:138:31)"
+  ],
+  "extensionId": "fkbcklmcikdhpggaimfhomgncneppkbj",
+  "finishedAt": "2026-02-22T22:56:12.704Z"
+}

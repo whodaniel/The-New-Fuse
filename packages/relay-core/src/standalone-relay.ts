@@ -426,8 +426,42 @@ export class TNFRelayServer extends EventEmitter {
     if (this.bridge && currentAgentId && message.type !== 'PING') {
       void this.bridge.handleRelayMessage(message, currentAgentId);
     }
-    const { type, payload, source, channel } = message;
+    let { type, payload, source, channel } = message;
     const agentId = source || currentAgentId;
+
+    // Back-compat: map legacy REGISTER to AGENT_REGISTER
+    if (type === 'REGISTER') {
+      const regPayload = (payload || {}) as Record<string, unknown>;
+      const regName =
+        (regPayload.name as string) ||
+        (regPayload.clientType as string) ||
+        (regPayload.type as string) ||
+        'Unknown Agent';
+      const regId =
+        (regPayload.id as string) ||
+        (regPayload.instanceId as string) ||
+        regName.replace(/\s+/g, '-').toLowerCase() ||
+        `agent-${Date.now()}`;
+
+      const converted: ProtocolMessage = {
+        ...message,
+        type: 'AGENT_REGISTER',
+        source: regId,
+        payload: {
+          agent: {
+            id: regId,
+            name: regName,
+            platform: (regPayload.type as string) || (regPayload.clientType as string) || 'unknown',
+            status: 'active',
+            capabilities: (regPayload.capabilities as string[]) || [],
+            channels: (regPayload.channels as string[]) || [],
+            metadata: (regPayload.metadata as Record<string, unknown>) || {},
+          },
+        },
+      };
+
+      return this.handleMessage(ws, converted, currentAgentId);
+    }
 
     fmt.protocolMessage(type, agentId || null);
 

@@ -1,0 +1,5 @@
+2026/02/23-06:42:05.063 c3eb0 Creating DB /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Local Storage/leveldb since it was missing.
+2026/02/23-06:42:05.117 c3eb0 Reusing MANIFEST /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/test_runs/2026-02-23T11-42-03-757Z/pw-profile/Default/Local Storage/leveldb/MANIFEST-000001
+2026/02/23-06:43:05.123 c3eb3 Level-0 table #5: started
+2026/02/23-06:43:05.139 c3eb3 Level-0 table #5: 138144 bytes OK
+2026/02/23-06:43:05.164 c3eb3 Delete type=0 #3

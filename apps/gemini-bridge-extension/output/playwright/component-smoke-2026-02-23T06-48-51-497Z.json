@@ -1,0 +1,366 @@
+{
+  "startedAt": "2026-02-23T06:48:51.499Z",
+  "extensionPath": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/dist-v7",
+  "buildRuntime": {
+    "extensionId": "fkbcklmcikdhpggaimfhomgncneppkbj",
+    "serviceWorkerUrl": "chrome-extension://fkbcklmcikdhpggaimfhomgncneppkbj/background/index.js",
+    "serviceWorkerActive": true,
+    "headless": false
+  },
+  "popup": {
+    "#connect-btn": true,
+    "#open-panel-btn": true,
+    "#save-settings": true,
+    "#relay-url": true,
+    "#debug-mode": true,
+    "#auto-reconnect": true,
+    "settingsToggleAttempted": true
+  },
+  "popupUiTests": {
+    "popupLoadsWithoutFatalConsoleErrors": true,
+    "popupConsoleErrors": [],
+    "settingsPersistence": {
+      "expected": {
+        "relayUrl": "ws://localhost:3000/ws?smoke=1771829340650",
+        "autoReconnect": false,
+        "autoMonitor": false,
+        "autoMasterClock": false,
+        "autoWakePing": false,
+        "showPanel": false,
+        "debugMode": true
+      },
+      "stored": {
+        "relayUrl": "ws://localhost:3000/ws?smoke=1771829340650",
+        "autoReconnect": true,
+        "autoMonitor": true,
+        "autoMasterClock": true,
+        "autoWakePing": true,
+        "showPanel": true,
+        "debugMode": false
+      },
+      "reloadedUi": {
+        "relayUrl": "ws://localhost:3000/ws?smoke=1771829340650",
+        "autoReconnect": true,
+        "autoMonitor": true,
+        "autoMasterClock": true,
+        "autoWakePing": true,
+        "showPanel": true,
+        "debugMode": false
+      }
+    },
+    "managedSites": {
+      "addedSite": "qa-smoke-1771829350330.example",
+      "storedAfterAdd": ["qa-smoke-1771829350330.example"],
+      "storedAfterRemove": []
+    },
+    "exportLogs": {
+      "createObjectUrlCalls": 1,
+      "anchorClicks": 1
+    },
+    "nativeHostIndicator": {
+      "text": "🔴 Not Installed",
+      "color": "rgb(255, 51, 102)"
+    },
+    "connectDisconnectControls": {
+      "afterConnectClick": "Disconnected",
+      "afterDisconnectClick": "Connected"
+    }
+  },
+  "channelTests": {
+    "firstCreate": {
+      "success": true,
+      "channel": {
+        "id": "local-1771829351772",
+        "name": "TNF-Autotest-1771829351767",
+        "description": "",
+        "isPrivate": false,
+        "createdAt": 1771829351772,
+        "createdBy": "browser-1771829334985-73t0n4qd4",
+        "members": ["browser-1771829334985-73t0n4qd4"]
+      }
+    },
+    "thirdCreate": {
+      "success": true,
+      "channel": {
+        "id": "local-1771829351806",
+        "name": "TNF-Autotest-1771829351767-B",
+        "description": "",
+        "isPrivate": false,
+        "createdAt": 1771829351806,
+        "createdBy": "browser-1771829334985-73t0n4qd4",
+        "members": ["browser-1771829334985-73t0n4qd4"]
+      }
+    },
+    "secondCreate": {
+      "success": false,
+      "alreadyExists": true,
+      "error": "Channel \"TNF-Autotest-1771829351767\" already exists",
+      "channel": {
+        "id": "channel-1771829351778",
+        "name": "TNF-Autotest-1771829351767",
+        "description": "",
+        "createdBy": "browser-1771829334985-73t0n4qd4",
+        "createdAt": 1771829351778,
+        "isPrivate": false,
+        "members": ["browser-1771829334985-73t0n4qd4"]
+      }
+    },
+    "channelCount": 46,
+    "duplicateNameKeys": []
+  },
+  "popupControlTests": {
+    "tabVisits": [
+      {
+        "tabId": "connect",
+        "active": true
+      },
+      {
+        "tabId": "network",
+        "active": true
+      },
+      {
+        "tabId": "services",
+        "active": true
+      },
+      {
+        "tabId": "settings",
+        "active": true
+      },
+      {
+        "tabId": "connect",
+        "active": true
+      }
+    ],
+    "centralSelectors": {
+      "#central-channel-select": true,
+      "#central-new-channel": true,
+      "#central-create-channel": true,
+      "#central-chat-stream": true,
+      "#central-chat-input": true,
+      "#central-send-message": true
+    },
+    "centralSendFlow": {
+      "attempted": true,
+      "optionsCount": 46,
+      "subtitleText": "No channel selected"
+    },
+    "emptyStateBehavior": {
+      "selectedChannelLabel": "General",
+      "streamText": "\n        \n          Select a channel to view stream\n        \n      "
+    }
+  },
+  "backgroundMessagingTests": {
+    "broadcastMessage": {
+      "success": true
+    },
+    "sendToAgent": {
+      "success": true
+    }
+  },
+  "servicesTests": {
+    "autonomyStatus": {
+      "success": true,
+      "settings": {
+        "autoMonitor": true,
+        "autoMasterClock": true,
+        "autoWakePing": true
+      },
+      "monitor": null,
+      "masterClock": null,
+      "relay": null
+    },
+    "startAutonomy": {
+      "success": true
+    },
+    "aiVideoStats": {
+      "processed": 0,
+      "total": 0,
+      "cost": 0,
+      "account": "None"
+    },
+    "aiVideoExport": {
+      "content": ""
+    }
+  },
+  "supportedSiteChecks": [
+    {
+      "url": "https://chatgpt.com",
+      "loaded": true,
+      "finalUrl": "https://chatgpt.com/",
+      "panelToggleMessage": {
+        "path": "direct",
+        "initial": {
+          "ready": true,
+          "response": {
+            "visible": false,
+            "exists": false
+          }
+        },
+        "show": {
+          "success": true
+        }
+      },
+      "panelVisible": true,
+      "tabId": 1111163590,
+      "panelTabControlChecks": [
+        {
+          "id": "chat",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "agents",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "channels",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "notifications",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "settings",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "services",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "tasks",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        }
+      ],
+      "keyboardToggle": {
+        "wasVisible": true,
+        "hiddenAfterToggle": false,
+        "visibleAfterSecondToggle": true
+      },
+      "panelChannelOps": {
+        "attempted": false,
+        "reason": "missing-new-channel-input"
+      }
+    }
+  ],
+  "experimentalSiteChecks": [
+    {
+      "url": "https://poe.com",
+      "loaded": true,
+      "finalUrl": "https://poe.com/login?redirect_url=%2F",
+      "panelToggleMessage": null,
+      "panelVisible": false,
+      "tabId": null
+    }
+  ],
+  "unsupportedSiteCheck": {
+    "url": "https://example.com",
+    "loaded": true,
+    "finalUrl": "https://example.com/",
+    "panelToggleMessage": {
+      "path": "inject-then-show",
+      "initial": {
+        "ready": false,
+        "error": "Could not establish connection. Receiving end does not exist."
+      },
+      "injection": {
+        "success": true
+      },
+      "afterInject": {
+        "ready": true,
+        "response": {
+          "visible": false,
+          "exists": false
+        }
+      },
+      "show": {
+        "success": true
+      }
+    },
+    "panelVisible": true,
+    "tabId": 1111163593,
+    "panelTabControlChecks": [
+      {
+        "id": "chat",
+        "found": true,
+        "clicked": true,
+        "activeAfter": true
+      },
+      {
+        "id": "agents",
+        "found": true,
+        "clicked": true,
+        "activeAfter": true
+      },
+      {
+        "id": "channels",
+        "found": true,
+        "clicked": true,
+        "activeAfter": true
+      },
+      {
+        "id": "notifications",
+        "found": true,
+        "clicked": true,
+        "activeAfter": true
+      },
+      {
+        "id": "settings",
+        "found": true,
+        "clicked": true,
+        "activeAfter": true
+      },
+      {
+        "id": "services",
+        "found": true,
+        "clicked": true,
+        "activeAfter": true
+      },
+      {
+        "id": "tasks",
+        "found": true,
+        "clicked": true,
+        "activeAfter": true
+      }
+    ],
+    "keyboardToggle": {
+      "wasVisible": true,
+      "hiddenAfterToggle": false,
+      "visibleAfterSecondToggle": true
+    },
+    "panelChannelOps": {
+      "attempted": false,
+      "reason": "missing-new-channel-input"
+    }
+  },
+  "panelFeatureChecks": {
+    "injectMessageToChat": {
+      "success": false
+    },
+    "panelStatusAfterInject": {
+      "visible": true,
+      "exists": true
+    }
+  },
+  "tabChannelIsolation": {
+    "skipped": true,
+    "reason": "Need two supported pages with visible panel and at least two channels"
+  },
+  "errors": [],
+  "extensionId": "fkbcklmcikdhpggaimfhomgncneppkbj",
+  "finishedAt": "2026-02-23T06:49:47.770Z"
+}

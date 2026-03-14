@@ -333,8 +333,39 @@ class TNFRelayServer extends events_1.EventEmitter {
         if (this.bridge && currentAgentId && message.type !== 'PING') {
             void this.bridge.handleRelayMessage(message, currentAgentId);
         }
-        const { type, payload, source, channel } = message;
+        let { type, payload, source, channel } = message;
         const agentId = source || currentAgentId;
+        // Back-compat: map legacy REGISTER to AGENT_REGISTER
+        if (type === 'REGISTER') {
+            const regPayload = payload || {};
+            const regName = regPayload.name ||
+                regPayload.clientType ||
+                regPayload.type ||
+                'Unknown Agent';
+            const regId = regPayload.id ||
+                regPayload.instanceId ||
+                regName.replace(/\s+/g, '-').toLowerCase() ||
+                `agent-${Date.now()}`;
+            const converted = {
+                ...message,
+                type: 'AGENT_REGISTER',
+                source: regId,
+                payload: {
+                    agent: {
+                        id: regId,
+                        name: regName,
+                        platform: regPayload.type ||
+                            regPayload.clientType ||
+                            'unknown',
+                        status: 'active',
+                        capabilities: regPayload.capabilities || [],
+                        channels: regPayload.channels || [],
+                        metadata: regPayload.metadata || {},
+                    },
+                },
+            };
+            return this.handleMessage(ws, converted, currentAgentId);
+        }
         TerminalFormatter_1.relay.protocolMessage(type, agentId || null);
         switch (type) {
             case 'AGENT_REGISTER': {

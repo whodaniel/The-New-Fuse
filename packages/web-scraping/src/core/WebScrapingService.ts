@@ -151,6 +151,71 @@ export class WebScrapingService {
   }
 
   /**
+   * Scrape a webpage using Crawl4AI (high-quality markdown for AI)
+   */
+  async scrapeCrawl4AI(
+    url: string,
+    config: WebScrapingConfig = {},
+    extractionOptions: ContentExtractionOptions = {}
+  ): Promise<ScrapingResult> {
+    const startTime = Date.now();
+    const finalConfig = { ...this.defaultConfig, ...config };
+    const crawlerUrl = process.env.CRAWL4AI_SERVICE_URL || 'http://localhost:8000/scrape';
+    let safeUrl = url;
+
+    try {
+      safeUrl = await this.validateUrl(url);
+      this.monitoring.recordMetric('web_scraping_request', 1, { method: 'crawl4ai', url });
+
+      const response = await axios.post(
+        crawlerUrl,
+        {
+          url: safeUrl,
+          max_chars: extractionOptions.maxTextLength || 5000,
+          timeout_ms: finalConfig.timeout || 30000,
+          main_content_only: extractionOptions.mainContentOnly !== false,
+        },
+        { timeout: (finalConfig.timeout || 30000) + 5000 }
+      );
+
+      const data = response.data;
+
+      if (!data.success) {
+        throw new Error(data.error || 'Crawl4AI failed');
+      }
+
+      const result: ScrapingResult = {
+        success: true,
+        url: safeUrl,
+        finalUrl: data.url || safeUrl,
+        statusCode: 200,
+        title: data.title,
+        text: data.text,
+        markdown: data.markdown,
+        metadata: {
+          executionTime: Date.now() - startTime,
+          timestamp: new Date(),
+          method: 'crawl4ai',
+          customExtractions: {},
+        },
+      };
+
+      this.monitoring.recordMetric('web_scraping_success', 1, { method: 'crawl4ai' });
+      return result;
+    } catch (error) {
+      this.monitoring.recordMetric('web_scraping_error', 1, { method: 'crawl4ai' });
+
+      // FALLBACK: If Crawl4AI fails or service is down, use standard puppeteer scrapeFull
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[WebScraping] Crawl4AI failed, falling back to Puppeteer: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+
+      return this.scrapeFull(url, config, extractionOptions);
+    }
+  }
+
+  /**
    * Scrape a webpage using headless browser (full JS support)
    */
   async scrapeFull(

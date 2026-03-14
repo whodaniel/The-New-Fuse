@@ -1,0 +1,645 @@
+{
+  "startedAt": "2026-02-22T23:43:06.039Z",
+  "extensionPath": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/dist-v7",
+  "popup": {
+    "#connect-btn": true,
+    "#open-panel-btn": true,
+    "#save-settings": true,
+    "#relay-url": true,
+    "#debug-mode": true,
+    "#auto-reconnect": true,
+    "settingsToggleAttempted": true
+  },
+  "channelTests": {
+    "firstCreate": {
+      "success": true,
+      "channel": {
+        "id": "local-1771803880362",
+        "name": "TNF-Autotest-1771803880360",
+        "description": "",
+        "isPrivate": false,
+        "createdAt": 1771803880362,
+        "createdBy": "browser-1771803788513-igpk0wsg1",
+        "members": ["browser-1771803788513-igpk0wsg1"]
+      }
+    },
+    "thirdCreate": {
+      "success": true,
+      "channel": {
+        "id": "local-1771803880384",
+        "name": "TNF-Autotest-1771803880360-B",
+        "description": "",
+        "isPrivate": false,
+        "createdAt": 1771803880384,
+        "createdBy": "browser-1771803788513-igpk0wsg1",
+        "members": ["browser-1771803788513-igpk0wsg1"]
+      }
+    },
+    "secondCreate": {
+      "success": false,
+      "alreadyExists": true,
+      "error": "Channel \"TNF-Autotest-1771803880360\" already exists",
+      "channel": {
+        "id": "local-1771803880362",
+        "name": "TNF-Autotest-1771803880360",
+        "description": "",
+        "isPrivate": false,
+        "createdAt": 1771803880362,
+        "createdBy": "browser-1771803788513-igpk0wsg1",
+        "members": ["browser-1771803788513-igpk0wsg1"]
+      }
+    },
+    "channelCount": 20,
+    "duplicateNameKeys": []
+  },
+  "popupControlTests": {
+    "tabVisits": [
+      {
+        "tabId": "connect",
+        "active": true
+      },
+      {
+        "tabId": "network",
+        "active": true
+      },
+      {
+        "tabId": "services",
+        "active": true
+      },
+      {
+        "tabId": "settings",
+        "active": true
+      },
+      {
+        "tabId": "connect",
+        "active": true
+      }
+    ],
+    "centralSelectors": {
+      "#central-channel-select": true,
+      "#central-new-channel": true,
+      "#central-create-channel": true,
+      "#central-chat-stream": true,
+      "#central-chat-input": true,
+      "#central-send-message": true
+    },
+    "centralSendFlow": {
+      "attempted": true,
+      "optionsCount": 24,
+      "subtitleText": "Channel: Fuse Activity Log"
+    }
+  },
+  "supportedSiteChecks": [
+    {
+      "url": "https://chatgpt.com",
+      "loaded": true,
+      "finalUrl": "https://chatgpt.com/",
+      "panelToggleMessage": {
+        "path": "direct",
+        "initial": {
+          "ready": true,
+          "response": {
+            "visible": false,
+            "exists": false
+          }
+        },
+        "show": {
+          "success": true
+        }
+      },
+      "panelVisible": true,
+      "tabId": 1323056783,
+      "panelTabControlChecks": [
+        {
+          "id": "chat",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "agents",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "channels",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "notifications",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "settings",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        }
+      ]
+    },
+    {
+      "url": "https://gemini.google.com",
+      "loaded": true,
+      "finalUrl": "https://gemini.google.com/",
+      "panelToggleMessage": {
+        "path": "direct",
+        "initial": {
+          "ready": true,
+          "response": {
+            "visible": false,
+            "exists": false
+          }
+        },
+        "show": {
+          "success": true
+        }
+      },
+      "panelVisible": true,
+      "tabId": 1323056784,
+      "panelTabControlChecks": [
+        {
+          "id": "chat",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "agents",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "channels",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "notifications",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "settings",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        }
+      ]
+    },
+    {
+      "url": "https://www.perplexity.ai",
+      "loaded": true,
+      "finalUrl": "https://www.perplexity.ai/",
+      "panelToggleMessage": {
+        "path": "direct",
+        "initial": {
+          "ready": true,
+          "response": {
+            "visible": false,
+            "exists": false
+          }
+        },
+        "show": {
+          "success": true
+        }
+      },
+      "panelVisible": true,
+      "tabId": 1323056785,
+      "panelTabControlChecks": [
+        {
+          "id": "chat",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "agents",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "channels",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "notifications",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "settings",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        }
+      ]
+    },
+    {
+      "url": "https://chat.groq.com",
+      "loaded": true,
+      "finalUrl": "https://chat.groq.com/",
+      "panelToggleMessage": {
+        "path": "inject-then-show",
+        "initial": {
+          "ready": false,
+          "error": "Could not establish connection. Receiving end does not exist."
+        },
+        "injection": {
+          "success": true
+        },
+        "afterInject": {
+          "ready": true,
+          "response": {
+            "visible": false,
+            "exists": false
+          }
+        },
+        "show": {
+          "success": true
+        }
+      },
+      "panelVisible": true,
+      "tabId": 1323056786,
+      "panelTabControlChecks": [
+        {
+          "id": "chat",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "agents",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "channels",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "notifications",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "settings",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        }
+      ]
+    },
+    {
+      "url": "https://chat.mistral.ai",
+      "loaded": true,
+      "finalUrl": "https://chat.mistral.ai/chat",
+      "panelToggleMessage": {
+        "path": "inject-then-show",
+        "initial": {
+          "ready": false,
+          "error": "Could not establish connection. Receiving end does not exist."
+        },
+        "injection": {
+          "success": true
+        },
+        "afterInject": {
+          "ready": true,
+          "response": {
+            "visible": false,
+            "exists": false
+          }
+        },
+        "show": {
+          "success": true
+        }
+      },
+      "panelVisible": true,
+      "tabId": 1323056787,
+      "panelTabControlChecks": [
+        {
+          "id": "chat",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "agents",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "channels",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "notifications",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "settings",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        }
+      ]
+    },
+    {
+      "url": "https://chat.qwen.ai",
+      "loaded": true,
+      "finalUrl": "https://chat.qwen.ai/",
+      "panelToggleMessage": {
+        "path": "inject-then-show",
+        "initial": {
+          "ready": false,
+          "error": "Could not establish connection. Receiving end does not exist."
+        },
+        "injection": {
+          "success": true
+        },
+        "afterInject": {
+          "ready": true,
+          "response": {
+            "visible": false,
+            "exists": false
+          }
+        },
+        "show": {
+          "success": true
+        }
+      },
+      "panelVisible": true,
+      "tabId": 1323056788,
+      "panelTabControlChecks": [
+        {
+          "id": "chat",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "agents",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "channels",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "notifications",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "settings",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        }
+      ]
+    },
+    {
+      "url": "https://duck.ai",
+      "loaded": true,
+      "finalUrl": "https://duck.ai/",
+      "panelToggleMessage": {
+        "path": "inject-then-show",
+        "initial": {
+          "ready": false,
+          "error": "Could not establish connection. Receiving end does not exist."
+        },
+        "injection": {
+          "success": true
+        },
+        "afterInject": {
+          "ready": true,
+          "response": {
+            "visible": false,
+            "exists": false
+          }
+        },
+        "show": {
+          "success": true
+        }
+      },
+      "panelVisible": true,
+      "tabId": 1323056789,
+      "panelTabControlChecks": [
+        {
+          "id": "chat",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "agents",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "channels",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "notifications",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "settings",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        }
+      ]
+    },
+    {
+      "url": "https://aiarena.io",
+      "loaded": true,
+      "finalUrl": "https://www.aiarena.io/",
+      "panelToggleMessage": {
+        "path": "inject-then-show",
+        "initial": {
+          "ready": false,
+          "error": "Could not establish connection. Receiving end does not exist."
+        },
+        "injection": {
+          "success": true
+        },
+        "afterInject": {
+          "ready": true,
+          "response": {
+            "visible": false,
+            "exists": false
+          }
+        },
+        "show": {
+          "success": true
+        }
+      },
+      "panelVisible": true,
+      "tabId": 1323056790,
+      "panelTabControlChecks": [
+        {
+          "id": "chat",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "agents",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "channels",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "notifications",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "settings",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        }
+      ]
+    },
+    {
+      "url": "https://agentarena.ai",
+      "loaded": true,
+      "finalUrl": "https://www.designarena.ai/?arena=agents&harness=standard",
+      "panelToggleMessage": {
+        "path": "inject-then-show",
+        "initial": {
+          "ready": false,
+          "error": "Could not establish connection. Receiving end does not exist."
+        },
+        "injection": {
+          "success": true
+        },
+        "afterInject": {
+          "ready": true,
+          "response": {
+            "visible": false,
+            "exists": false
+          }
+        },
+        "show": {
+          "success": true
+        }
+      },
+      "panelVisible": true,
+      "tabId": 1323056791,
+      "panelTabControlChecks": [
+        {
+          "id": "chat",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "agents",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "channels",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "notifications",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "settings",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        }
+      ]
+    }
+  ],
+  "experimentalSiteChecks": [
+    {
+      "url": "https://poe.com",
+      "loaded": true,
+      "finalUrl": "https://poe.com/login?redirect_url=%2F",
+      "panelToggleMessage": null,
+      "panelVisible": false,
+      "tabId": null
+    },
+    {
+      "url": "https://claude.ai",
+      "loaded": true,
+      "finalUrl": "https://claude.ai/login",
+      "panelToggleMessage": null,
+      "panelVisible": false,
+      "tabId": null
+    },
+    {
+      "url": "https://huggingface.co/chat",
+      "loaded": true,
+      "finalUrl": "https://huggingface.co/chat/",
+      "panelToggleMessage": null,
+      "panelVisible": false,
+      "tabId": null
+    }
+  ],
+  "tabChannelIsolation": {
+    "firstTabId": 1323056783,
+    "secondTabId": 1323056784,
+    "firstChannelId": "fuse-activity-log",
+    "secondChannelId": "Red",
+    "firstSelectApplied": true,
+    "secondSelectApplied": true,
+    "persisted": {
+      "1323056783": "fuse-activity-log",
+      "1323056784": "Red"
+    }
+  },
+  "errors": [],
+  "extensionId": "fkbcklmcikdhpggaimfhomgncneppkbj",
+  "finishedAt": "2026-02-22T23:48:30.199Z"
+}

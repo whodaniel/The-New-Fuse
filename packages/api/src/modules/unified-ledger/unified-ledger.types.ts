@@ -79,6 +79,12 @@ export interface UnifiedTaskRecord {
   priority: UnifiedRecordPriority;
   owner: string;
   assignee?: string;
+  startTime?: string;
+  endTime?: string;
+  color?: string;
+  parentTaskId?: string;
+  boardId?: string;
+  columnId?: string;
   tags: string[];
   votes: UnifiedVotes;
   traits: TraitSlots;

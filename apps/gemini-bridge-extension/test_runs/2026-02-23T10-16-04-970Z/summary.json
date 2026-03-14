@@ -1,0 +1,161 @@
+{
+  "runId": "2026-02-23T10-16-04-970Z",
+  "createdAt": "2026-02-23T10:19:58.064Z",
+  "extensionPath": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/dist-v7",
+  "totals": {
+    "pass": 13,
+    "fail": 3,
+    "blocked": 1,
+    "total": 17
+  },
+  "checks": [
+    {
+      "id": "panel_open_only_qwen_baseline",
+      "status": "PASS",
+      "details": {
+        "qwenPanel": {
+          "usedInjection": true,
+          "injected": {
+            "success": true
+          },
+          "show": {
+            "success": true
+          }
+        },
+        "geminiPanelVisibleBefore": false
+      }
+    },
+    {
+      "id": "qwen_send_works",
+      "status": "PASS",
+      "details": {
+        "panelSend": {
+          "success": true
+        },
+        "qwenPromptVisible": true
+      }
+    },
+    {
+      "id": "qwen_response_captured",
+      "status": "PASS",
+      "details": {
+        "lastResponsePreview": "By logging in, you agree to our Terms of Service and Privacy Policy."
+      }
+    },
+    {
+      "id": "green_broadcast_qwen_inject",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_GREEN_A_1771841880968"
+      }
+    },
+    {
+      "id": "no_cross_tab_injection_when_gemini_panel_hidden",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_GREEN_A_1771841880968",
+        "geminiPanelHidden": true
+      }
+    },
+    {
+      "id": "gemini_injection_when_panel_open",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_GREEN_B_1771841886628"
+      }
+    },
+    {
+      "id": "channel_isolation_green_vs_red",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_GREEN_WHILE_RED_1771841892123"
+      }
+    },
+    {
+      "id": "pause_green_blocks_injection",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_GREEN_PAUSED_1771841895630"
+      }
+    },
+    {
+      "id": "resume_green_restores_injection",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_GREEN_RESUMED_1771841898663"
+      }
+    },
+    {
+      "id": "pause_red_blocks_injection",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_RED_PAUSED_1771841904402"
+      }
+    },
+    {
+      "id": "resume_red_restores_injection",
+      "status": "PASS",
+      "details": {
+        "token": "TNF_RED_RESUMED_1771841907797"
+      }
+    },
+    {
+      "id": "pause_state_sync_after_refresh",
+      "status": "PASS",
+      "details": {
+        "pausedAfterReload": ["Red"]
+      }
+    },
+    {
+      "id": "extension_reload_recovery_no_phantom_injection",
+      "status": "FAIL",
+      "details": {
+        "beforeReloadConnection": "connected",
+        "extensionReloaded": false,
+        "postReloadNoPhantom": true
+      }
+    },
+    {
+      "id": "event_logs_retrieve_and_clear",
+      "status": "FAIL",
+      "details": {
+        "before": 0,
+        "after": 0,
+        "hasUsefulCategories": false
+      }
+    },
+    {
+      "id": "no_wake_ping_starts_idle_channel",
+      "status": "PASS",
+      "details": {
+        "autoWakePing": false,
+        "wakePingEvents": 0
+      }
+    },
+    {
+      "id": "relay_connected_state",
+      "status": "BLOCKED",
+      "reason": "Local relay not reachable in environment",
+      "details": {
+        "connectResp": {
+          "error": "service_worker_unavailable"
+        }
+      }
+    },
+    {
+      "id": "relay_disconnected_state",
+      "status": "FAIL",
+      "details": {
+        "disconnectResp": {
+          "error": "service_worker_unavailable"
+        }
+      }
+    }
+  ],
+  "failures": [
+    "extension_reload_recovery_no_phantom_injection: {\"beforeReloadConnection\":\"connected\",\"extensionReloaded\":false,\"postReloadNoPhantom\":true}",
+    "event_logs_retrieve_and_clear: {\"before\":0,\"after\":0,\"hasUsefulCategories\":false}",
+    "relay_disconnected_state: {\"disconnectResp\":{\"error\":\"service_worker_unavailable\"}}",
+    "relay_connected_state: BLOCKED - Local relay not reachable in environment"
+  ]
+}

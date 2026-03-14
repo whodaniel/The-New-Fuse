@@ -60,6 +60,11 @@ export class UnifiedLedgerController {
     return this.ledger.getGrid();
   }
 
+  @Get('timeline/macro')
+  async macro() {
+    return this.ledger.getMacroView();
+  }
+
   @Get('timeline/events')
   async timeline(
     @Query('recordId') recordId?: string,
@@ -70,7 +75,15 @@ export class UnifiedLedgerController {
     @Query('dateFrom') dateFrom?: string,
     @Query('dateTo') dateTo?: string
   ) {
-    return this.ledger.listTimelineEvents({ recordId, goalId, planId, eventType, actor, dateFrom, dateTo });
+    return this.ledger.listTimelineEvents({
+      recordId,
+      goalId,
+      planId,
+      eventType,
+      actor,
+      dateFrom,
+      dateTo,
+    });
   }
 
   @Get('timeline/events/:id')

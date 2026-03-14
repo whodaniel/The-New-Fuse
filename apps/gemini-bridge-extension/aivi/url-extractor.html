@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video URL Extractor</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    }
+
+    h1 {
+      color: #667eea;
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    p {
+      color: #666;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .section {
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      color: #333;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 200px;
+      padding: 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-family: 'Monaco', 'Courier New', monospace;
+      font-size: 13px;
+      resize: vertical;
+      transition: border-color 0.3s ease;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .btn {
+      padding: 12px 30px;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      color: white;
+    }
+
+    .info-box {
+      background: #f0f7ff;
+      border-left: 4px solid #667eea;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .info-box p {
+      margin: 0;
+      color: #555;
+      font-size: 14px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎬 Video URL Extractor</h1>
+    <p>Extract YouTube URLs from your ai_video_library.html file and format them for the Chrome Extension</p>
+
+    <div class="section">
+      <h2>Step 1: Paste HTML Content</h2>
+      <div class="info-box">
+        <p>Open your <code>ai_video_library.html</code> file and paste its entire content below</p>
+      </div>
+      <textarea id="htmlInput" placeholder="Paste your HTML content here..."></textarea>
+      <button class="btn btn-primary" onclick="extractURLs()">Extract URLs</button>
+    </div>
+
+    <div class="section" id="outputSection" style="display: none;">
+      <h2>Step 2: Copy Formatted URLs</h2>
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-number" id="totalVideos">0</div>
+          <div class="stat-label">Total Videos</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="firstId">-</div>
+          <div class="stat-label">First ID</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="lastId">-</div>
+          <div class="stat-label">Last ID</div>
+        </div>
+      </div>
+      <textarea id="urlOutput" readonly style="margin-top: 20px;"></textarea>
+      <button class="btn btn-success" onclick="copyToClipboard()">Copy to Clipboard</button>
+      <button class="btn btn-primary" onclick="syncToExtension()" style="margin-left: 10px;">🚀 Sync to Queue</button>
+    </div>
+  </div>
+
+  <script>
+    let extractedVideos = [];
+
+    function extractURLs() {
+      const htmlContent = document.getElementById('htmlInput').value;
+      
+      if (!htmlContent.trim()) {
+        alert('Please paste HTML content first');
+        return;
+      }
+
+      // Create a temporary DOM to parse the HTML
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(htmlContent, 'text/html');
+      
+      // Find all table rows
+      const rows = doc.querySelectorAll('tr');
+      const videos = [];
+      
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 2) {
+          const id = cells[0].textContent.trim();
+          const link = cells[1].querySelector('a');
+          
+          if (link && link.href) {
+            videos.push({
+              id: id,
+              url: link.href
+            });
+          }
+        }
+      });
+
+      if (videos.length === 0) {
+        alert('No videos found in the HTML. Make sure you pasted the correct content.');
+        return;
+      }
+
+      // Sort by ID (descending for reverse order)
+      videos.sort((a, b) => parseInt(b.id) - parseInt(a.id));
+
+      // Store globally for sync function
+      extractedVideos = videos;
+
+      // Format output
+      const output = videos.map(v => `${v.id},${v.url}`).join('\n');
+      
+      // Update UI
+      document.getElementById('urlOutput').value = output;
+      document.getElementById('totalVideos').textContent = videos.length;
+      document.getElementById('firstId').textContent = videos[0].id;
+      document.getElementById('lastId').textContent = videos[videos.length - 1].id;
+      document.getElementById('outputSection').style.display = 'block';
+
+      // Scroll to output
+      document.getElementById('outputSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function copyToClipboard() {
+      const output = document.getElementById('urlOutput');
+      output.select();
+      document.execCommand('copy');
+      
+      // Visual feedback
+      const btn = event.target;
+      const originalText = btn.textContent;
+      btn.textContent = '✓ Copied!';
+      btn.style.background = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
+      
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.background = '';
+      }, 2000);
+    }
+
+    async function syncToExtension() {
+      if (extractedVideos.length === 0) {
+        alert('Please extract URLs first!');
+        return;
+      }
+
+      try {
+        // Check if chrome.storage is available (extension context)
+        if (typeof chrome !== 'undefined' && chrome.storage) {
+          // Direct extension storage access
+          await chrome.storage.local.set({
+            videoQueue: extractedVideos,
+            reverseOrder: true,
+            segmentDuration: 45
+          });
+
+          // Visual feedback
+          const btn = event.target;
+          const originalText = btn.textContent;
+          btn.textContent = '✓ Synced to Extension!';
+          btn.style.background = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
+
+          setTimeout(() => {
+            btn.textContent = originalText;
+            btn.style.background = '';
+          }, 2000);
+
+          // Auto-open AI Studio in a new tab
+          const confirmOpen = confirm(
+            `Successfully synced ${extractedVideos.length} videos to the extension!\n\n` +
+            `Would you like to open Google AI Studio now to start automation?`
+          );
+
+          if (confirmOpen) {
+            window.open('https://aistudio.google.com/app/prompts/new_chat', '_blank');
+          }
+
+        } else {
+          // Fallback: Use postMessage for cross-origin communication
+          window.postMessage({
+            type: 'SYNC_TO_EXTENSION',
+            data: {
+              videoQueue: extractedVideos,
+              reverseOrder: true,
+              segmentDuration: 45
+            }
+          }, '*');
+
+          alert(
+            `Queue prepared with ${extractedVideos.length} videos!\n\n` +
+            `Next steps:\n` +
+            `1. Open the Chrome Extension popup\n` +
+            `2. The queue should auto-load\n` +
+            `3. Navigate to AI Studio and click "Start Automation"`
+          );
+        }
+
+      } catch (error) {
+        console.error('Sync error:', error);
+        alert(
+          `Could not sync directly to extension.\n\n` +
+          `Please use "Copy to Clipboard" and paste into the extension manually.`
+        );
+      }
+    }
+  </script>
+</body>
+</html>

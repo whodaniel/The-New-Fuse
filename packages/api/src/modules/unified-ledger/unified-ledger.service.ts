@@ -1,6 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import * as WebSocket from 'ws';
 import {
   FeedbackIteration,
   FunctionalLink,
@@ -23,9 +24,47 @@ export class UnifiedLedgerService implements OnModuleInit {
   private readonly storePath = path.join(process.cwd(), 'data', 'unified-task-ledger.json');
   private store: UnifiedLedgerStore = { records: [], timelineEvents: [], goals: [], plans: [] };
   private initialized = false;
+  private ws: WebSocket | null = null;
 
   async onModuleInit(): Promise<void> {
     await this.ensureLoaded();
+    this.initRelayConnection();
+  }
+
+  private initRelayConnection() {
+    const relayUrl = process.env.RELAY_WS_URL || 'ws://localhost:3000';
+    try {
+      this.ws = new WebSocket(relayUrl);
+      this.ws.on('open', () => {
+        this.logger.log('Connected to TNF Relay for event broadcasting');
+        this.ws?.send(
+          JSON.stringify({
+            type: 'REGISTER',
+            payload: { type: 'api_service', name: 'unified-ledger' },
+          })
+        );
+      });
+      this.ws.on('error', (err) => {
+        this.logger.warn(`Relay connection error: ${err.message}`);
+      });
+      this.ws.on('close', () => {
+        this.logger.warn('Relay connection closed. Retrying in 10s...');
+        setTimeout(() => this.initRelayConnection(), 10000);
+      });
+    } catch (e) {
+      this.logger.error('Failed to init relay connection', e);
+    }
+  }
+
+  private broadcast(type: string, payload: any) {
+    if (this.ws?.readyState === WebSocket.OPEN) {
+      this.ws.send(
+        JSON.stringify({
+          type: 'BROADCAST',
+          payload: { event: type, data: payload },
+        })
+      );
+    }
   }
 
   async listRecords(filters?: {
@@ -72,6 +111,12 @@ export class UnifiedLedgerService implements OnModuleInit {
       priority: input.priority || 'medium',
       owner: input.owner || 'system',
       assignee: input.assignee,
+      startTime: input.startTime,
+      endTime: input.endTime,
+      color: input.color,
+      parentTaskId: input.parentTaskId,
+      boardId: input.boardId,
+      columnId: input.columnId,
       tags: input.tags || [],
       votes: input.votes || { up: 0, down: 0 },
       traits: {
@@ -108,6 +153,7 @@ export class UnifiedLedgerService implements OnModuleInit {
     };
 
     this.store.records.push(record);
+    this.broadcast('record_created', record);
     this.pushEvent({
       recordId: record.id,
       eventType: 'record_created',
@@ -142,6 +188,7 @@ export class UnifiedLedgerService implements OnModuleInit {
     };
 
     this.store.records[index] = updated;
+    this.broadcast('record_updated', updated);
     this.pushEvent({
       recordId: updated.id,
       eventType: 'record_updated',
@@ -314,7 +361,9 @@ export class UnifiedLedgerService implements OnModuleInit {
   }): Promise<TimelineEvent> {
     await this.ensureLoaded();
     this.validateTimelineRefs(input);
-    const timestamp = input.timestamp ? this.normalizeTimestamp(input.timestamp) : new Date().toISOString();
+    const timestamp = input.timestamp
+      ? this.normalizeTimestamp(input.timestamp)
+      : new Date().toISOString();
     const eventType = this.validateEventType(input.eventType);
     const deduped = this.findDuplicateTimelineEvent({
       recordId: input.recordId,
@@ -624,6 +673,24 @@ export class UnifiedLedgerService implements OnModuleInit {
     });
     await this.persist();
     return updated;
+  }
+
+  async getMacroView(): Promise<any> {
+    await this.ensureLoaded();
+    const plansWithRecords = await Promise.all(
+      this.store.plans.map(async (plan) => {
+        const records = await Promise.all(plan.linkedRecordIds.map((id) => this.getRecord(id)));
+        return {
+          ...plan,
+          records: records.filter(Boolean),
+        };
+      })
+    );
+    return {
+      plans: plansWithRecords,
+      totalRecords: this.store.records.length,
+      globalEvents: this.store.timelineEvents.slice(0, 100),
+    };
   }
 
   private async ensureLoaded(): Promise<void> {

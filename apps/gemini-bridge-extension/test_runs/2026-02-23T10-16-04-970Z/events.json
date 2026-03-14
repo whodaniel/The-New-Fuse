@@ -1,0 +1,70 @@
+{
+  "startedAt": "2026-02-23T10:16:04.974Z",
+  "runId": "2026-02-23T10-16-04-970Z",
+  "urls": {
+    "qwen": "https://chat.qwen.ai/c/guest",
+    "gemini": "https://gemini.google.com/"
+  },
+  "steps": [
+    "browser_launched",
+    "service_worker_ready",
+    "popup_loaded",
+    "event_logs_reset",
+    "popup_reload_failed:page.goto: net::ERR_BLOCKED_BY_CLIENT at chrome-extension://fkbcklmcikdhpggaimfhomgncneppkbj/popup/index.html\nCall log:\n\u001b[2m  - navigating to \"chrome-extension://fkbcklmcikdhpggaimfhomgncneppkbj/popup/index.html\", waiting until \"domcontentloaded\"\u001b[22m\n\n    at openPopup (/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/scripts/system-qa-loop.cjs:100:23)\n    at async main (/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/scripts/system-qa-loop.cjs:718:7)"
+  ],
+  "logs": {
+    "popupConsoleErrors": [],
+    "eventLogSample": []
+  },
+  "extensionId": "fkbcklmcikdhpggaimfhomgncneppkbj",
+  "tabIds": {
+    "qwen": 284098891,
+    "gemini": 284098892
+  },
+  "channels": {
+    "green": {
+      "id": "channel-1771831493425",
+      "name": "Green",
+      "description": "",
+      "createdBy": "browser-1771829938039-q94h6o1zn",
+      "createdAt": 1771831493425,
+      "isPrivate": false,
+      "members": [
+        "page-agent-791089304-pmq50",
+        "browser-1771840502097-gjxf8iild",
+        "browser-1771840784146-j4trpcz5q",
+        "browser-1771841007505-auf2zumed",
+        "browser-1771841224560-89f7st66y",
+        "browser-1771829938039-q94h6o1zn",
+        "browser-1771841475253-aep9mqflz"
+      ]
+    },
+    "red": {
+      "id": "Red",
+      "name": "Red",
+      "description": "Auto-synced channel",
+      "createdBy": "system",
+      "createdAt": 1771797656442,
+      "isPrivate": false,
+      "members": [
+        "browser-1771803788513-igpk0wsg1",
+        "browser-1771810226070-8xez8gvi0",
+        "browser-1771810386944-eda7v502i",
+        "browser-1771809743566-dan9zpas0",
+        "browser-1771809916749-ybr9v2gvs",
+        "page-agent-791089304-pmq50",
+        "browser-1771840502097-gjxf8iild",
+        "browser-1771840784146-j4trpcz5q",
+        "browser-1771841007505-auf2zumed",
+        "browser-1771841224560-89f7st66y",
+        "browser-1771829938039-q94h6o1zn",
+        "browser-1771841475253-aep9mqflz"
+      ]
+    }
+  },
+  "joinGreenQwen": {
+    "success": true
+  },
+  "extensionIdAfterReload": "fkbcklmcikdhpggaimfhomgncneppkbj",
+  "pingAfterReload": null
+}

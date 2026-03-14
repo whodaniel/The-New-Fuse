@@ -1,0 +1,245 @@
+{
+  "startedAt": "2026-02-23T01:25:13.938Z",
+  "extensionPath": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/dist-v7",
+  "buildRuntime": {
+    "extensionId": "fkbcklmcikdhpggaimfhomgncneppkbj",
+    "serviceWorkerUrl": "chrome-extension://fkbcklmcikdhpggaimfhomgncneppkbj/background/index.js",
+    "serviceWorkerActive": true,
+    "headless": false
+  },
+  "popup": {
+    "#connect-btn": true,
+    "#open-panel-btn": true,
+    "#save-settings": true,
+    "#relay-url": true,
+    "#debug-mode": true,
+    "#auto-reconnect": true,
+    "settingsToggleAttempted": true
+  },
+  "popupUiTests": {
+    "popupLoadsWithoutFatalConsoleErrors": true,
+    "popupConsoleErrors": [],
+    "settingsPersistence": {
+      "expected": {
+        "relayUrl": "ws://localhost:3000/ws?smoke=1771810009572",
+        "autoReconnect": false,
+        "autoMonitor": false,
+        "autoMasterClock": false,
+        "autoWakePing": false,
+        "showPanel": false,
+        "debugMode": true
+      },
+      "stored": {
+        "relayUrl": "ws://localhost:3000/ws?smoke=1771810009572",
+        "autoReconnect": true,
+        "autoMonitor": true,
+        "autoMasterClock": true,
+        "autoWakePing": true,
+        "showPanel": true,
+        "debugMode": false
+      },
+      "reloadedUi": {
+        "relayUrl": "ws://localhost:3000/ws?smoke=1771810009572",
+        "autoReconnect": true,
+        "autoMonitor": true,
+        "autoMasterClock": true,
+        "autoWakePing": true,
+        "showPanel": true,
+        "debugMode": false
+      }
+    },
+    "managedSites": {
+      "addedSite": "qa-smoke-1771810190385.example",
+      "storedAfterAdd": ["qa-smoke-1771810190385.example"],
+      "storedAfterRemove": []
+    },
+    "exportLogs": {
+      "createObjectUrlCalls": 1,
+      "anchorClicks": 1
+    },
+    "nativeHostIndicator": {
+      "text": "🔴 Not Installed",
+      "color": "rgb(255, 51, 102)"
+    }
+  },
+  "channelTests": {
+    "firstCreate": {
+      "success": true,
+      "channel": {
+        "id": "local-1771810194496",
+        "name": "TNF-Autotest-1771810194396",
+        "description": "",
+        "isPrivate": false,
+        "createdAt": 1771810194496,
+        "createdBy": "browser-1771809916749-ybr9v2gvs",
+        "members": ["browser-1771809916749-ybr9v2gvs"]
+      }
+    },
+    "thirdCreate": {
+      "success": true,
+      "channel": {
+        "id": "local-1771810194612",
+        "name": "TNF-Autotest-1771810194396-B",
+        "description": "",
+        "isPrivate": false,
+        "createdAt": 1771810194612,
+        "createdBy": "browser-1771809916749-ybr9v2gvs",
+        "members": ["browser-1771809916749-ybr9v2gvs"]
+      }
+    },
+    "secondCreate": {
+      "success": false,
+      "alreadyExists": true,
+      "error": "Channel \"TNF-Autotest-1771810194396\" already exists",
+      "channel": {
+        "id": "local-1771810194496",
+        "name": "TNF-Autotest-1771810194396",
+        "description": "",
+        "isPrivate": false,
+        "createdAt": 1771810194496,
+        "createdBy": "browser-1771809916749-ybr9v2gvs",
+        "members": ["browser-1771809916749-ybr9v2gvs"]
+      }
+    },
+    "channelCount": 34,
+    "duplicateNameKeys": []
+  },
+  "popupControlTests": {
+    "tabVisits": [
+      {
+        "tabId": "connect",
+        "active": true
+      },
+      {
+        "tabId": "network",
+        "active": true
+      },
+      {
+        "tabId": "services",
+        "active": true
+      },
+      {
+        "tabId": "settings",
+        "active": true
+      },
+      {
+        "tabId": "connect",
+        "active": true
+      }
+    ],
+    "centralSelectors": {
+      "#central-channel-select": true,
+      "#central-new-channel": true,
+      "#central-create-channel": true,
+      "#central-chat-stream": true,
+      "#central-chat-input": true,
+      "#central-send-message": true
+    }
+  },
+  "backgroundMessagingTests": {},
+  "servicesTests": {},
+  "supportedSiteChecks": [
+    {
+      "url": "https://chatgpt.com",
+      "loaded": true,
+      "finalUrl": "https://chatgpt.com/",
+      "panelToggleMessage": {
+        "path": "direct",
+        "initial": {
+          "ready": true,
+          "response": {
+            "visible": false,
+            "exists": false
+          }
+        },
+        "show": {
+          "success": true
+        }
+      },
+      "panelVisible": true,
+      "tabId": 1158102253,
+      "panelTabControlChecks": [
+        {
+          "id": "chat",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "agents",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "channels",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "notifications",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "settings",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "services",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        },
+        {
+          "id": "tasks",
+          "found": true,
+          "clicked": true,
+          "activeAfter": true
+        }
+      ],
+      "keyboardToggle": {
+        "wasVisible": true,
+        "hiddenAfterToggle": false,
+        "visibleAfterSecondToggle": true
+      },
+      "panelChannelOps": {
+        "attempted": false,
+        "reason": "missing-new-channel-input"
+      }
+    },
+    {
+      "url": "https://gemini.google.com",
+      "loaded": true,
+      "finalUrl": "https://gemini.google.com/",
+      "panelToggleMessage": {
+        "path": "direct",
+        "initial": {
+          "ready": true,
+          "response": {
+            "visible": false,
+            "exists": false
+          }
+        },
+        "show": {
+          "success": true
+        }
+      },
+      "panelVisible": false,
+      "tabId": 1158102254
+    }
+  ],
+  "experimentalSiteChecks": [],
+  "unsupportedSiteCheck": null,
+  "panelFeatureChecks": {},
+  "tabChannelIsolation": {},
+  "errors": [
+    "browserContext.newPage: Target page, context or browser has been closed\n    at openAndCheckSite (/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/scripts/component-smoke.cjs:417:34)\n    at main (/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/scripts/component-smoke.cjs:550:25)"
+  ],
+  "extensionId": "fkbcklmcikdhpggaimfhomgncneppkbj",
+  "finishedAt": "2026-02-23T05:35:09.229Z"
+}

@@ -41,12 +41,85 @@ export class WebScrapingMCPTools {
     handler: SimpleToolHandler;
   }> {
     return [
+      this.getCrawl4AIScrapeTool(),
       this.getSimpleScrapeTool(),
       this.getFullScrapeTool(),
       this.getAutoScrapeTool(),
       this.getProxyTool(),
       this.getWebsiteAnalysisTool(),
     ];
+  }
+
+  /**
+   * Crawl4AI web scraping tool (highest quality for AI)
+   */
+  private getCrawl4AIScrapeTool() {
+    return {
+      name: 'scrape_website_crawl4ai',
+      description:
+        'Scrape a website using Crawl4AI for high-quality, LLM-optimized markdown content.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          url: {
+            type: 'string',
+            description: 'The URL to scrape',
+          },
+          maxTextLength: {
+            type: 'number',
+            description: 'Maximum text length to return (default 5000)',
+          },
+          timeout: {
+            type: 'number',
+            description: 'Timeout in milliseconds',
+          },
+        },
+        required: ['url'],
+      },
+      handler: {
+        execute: async (params: {
+          url: string;
+          maxTextLength?: number;
+          timeout?: number;
+        }): Promise<ToolResult> => {
+          try {
+            const result = await this.webScrapingService.scrapeCrawl4AI(
+              params.url,
+              { timeout: params.timeout },
+              { maxTextLength: params.maxTextLength, mainContentOnly: true }
+            );
+
+            return {
+              success: true,
+              result: {
+                url: result.url,
+                title: result.title,
+                text: result.text,
+                markdown: result.markdown,
+                method: result.metadata?.method,
+                executionTime: result.metadata?.executionTime,
+              },
+              metadata: {
+                executionId: `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                toolName: 'scrape_website_crawl4ai',
+                timestamp: new Date().toISOString(),
+                success: result.success,
+              },
+            };
+          } catch (error) {
+            return {
+              success: false,
+              error: error instanceof Error ? error.message : 'Crawl4AI scraping failed',
+              metadata: {
+                executionId: `exec_${Date.now()}_...`,
+                toolName: 'scrape_website_crawl4ai',
+                timestamp: new Date().toISOString(),
+              },
+            };
+          }
+        },
+      },
+    };
   }
 
   /**
