@@ -3704,6 +3704,23 @@ async function handleMttState(req, res, urlObj) {
   writeJson(res, 200, { ok: true, mtt: mod.getMttSnapshot(mtt) });
 }
 
+async function handleV2HoldemTablesList(req, res) {
+  const tables = [];
+  for (const [id, snapshot] of swarmState.tableSnapshots.entries()) {
+    tables.push({
+      id,
+      name: snapshot.name || `Table ${id}`,
+      type: snapshot.variant || "NL Hold'em",
+      stakes: `$${snapshot.smallBlind || 50}/$${snapshot.bigBlind || 100}`,
+      players: (snapshot.seats || []).length,
+      maxPlayers: snapshot.maxSeats || 9,
+      avgPot: snapshot.pot || 0,
+      status: snapshot.terminal ? 'terminal' : 'active',
+    });
+  }
+  writeJson(res, 200, { ok: true, tables });
+}
+
 async function handleV2HoldemTableCreate(req, res) {
   const body = await readBodyJson(req);
   const mod = await holdemEnginePromise;
@@ -6038,16 +6055,32 @@ function handleTableStream(req, res, urlObj) {
 }
 
 function serveStatic(req, res) {
-  const reqPath = req.url === '/' ? '/index.html' : req.url.split('?')[0];
+  let reqPath = req.url.split('?')[0];
+  let isBackend = false;
+
+  if (reqPath === '/backend' || reqPath === '/backend/') {
+    reqPath = '/index.html';
+    isBackend = true;
+  } else if (reqPath.startsWith('/backend/')) {
+    reqPath = reqPath.replace('/backend', '');
+    isBackend = true;
+  }
+
+  if (reqPath === '/') {
+    reqPath = '/index.html';
+  }
+
   const normalized = path.normalize(reqPath).replace(/^(\.\.[/\\])+/, '');
   const safePath = normalized.replace(/^[/\\]+/, '');
-  const filePath = path.join(root, safePath || 'index.html');
+
+  const targetRoot = isBackend ? root : path.join(root, 'AI-ARCADE.XYZ---POKER-ROOM', 'dist');
+  const filePath = path.join(targetRoot, safePath || 'index.html');
 
   fs.readFile(filePath, (err, content) => {
     if (err) {
       if (err.code === 'ENOENT') {
         if (!path.extname(filePath)) {
-          const fallback = path.join(root, 'index.html');
+          const fallback = path.join(targetRoot, 'index.html');
           fs.readFile(fallback, (fallbackErr, fallbackContent) => {
             if (fallbackErr) {
               res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
@@ -6314,6 +6347,7 @@ const API_ROUTES = new Map([
   ['GET /api/realtime/snapshot/read', endpointWithQuery(handleRealtimeSnapshotRead)],
   ['GET /api/realtime/feed', endpointWithQuery(handleRealtimeFeed)],
 
+  ['GET /api/v2/holdem/tables', endpoint(handleV2HoldemTablesList)],
   ['POST /api/v2/holdem/tables', endpoint(handleV2HoldemTableCreate)],
   ['POST /api/v2/holdem/seat', endpoint(handleV2HoldemSeat)],
   ['POST /api/v2/holdem/seat-change', endpoint(handleV2HoldemSeatChange)],
@@ -6420,6 +6454,40 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
+async function seedInitialTables() {
+  const engineCore = await engineCorePromise;
+  if (!engineCore || engineCore.__missingModule) return;
+
+  const initialTables = [
+    { id: 'lobby-1', name: 'CYBER-NODE #1', maxSeats: 6, sb: 50, bb: 100 },
+    { id: 'neon-grind', name: 'NEON GRIND', maxSeats: 9, sb: 500, bb: 1000 },
+    { id: 'high-roller', name: 'HIGH ROLLER', maxSeats: 2, sb: 5000, bb: 10000 },
+  ];
+
+  for (const t of initialTables) {
+    if (!swarmState.tableSnapshots.has(t.id)) {
+      console.log(`[casin8] Seeding initial table: ${t.name} (${t.id})`);
+      const snapshot = engineCore.createTableSnapshot({
+        tableId: t.id,
+        handId: `seed-hand-${Date.now()}`,
+        actingSeat: 0,
+        seats: Array.from({ length: 2 }, (_, i) => ({
+          seat: i,
+          playerId: `bot-${i}`,
+          stack: 50000,
+          autoPostBlinds: true,
+        })),
+        pot: 0,
+      });
+      snapshot.name = t.name;
+      snapshot.smallBlind = t.sb;
+      snapshot.bigBlind = t.bb;
+      swarmState.tableSnapshots.set(t.id, snapshot);
+    }
+  }
+}
+
 server.listen(PORT, () => {
   console.log(`Casin8 games listening on :${PORT}`);
+  seedInitialTables().catch((err) => console.error('[casin8] Failed to seed tables:', err));
 });
