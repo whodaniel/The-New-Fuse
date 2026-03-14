@@ -6054,14 +6054,46 @@ function handleTableStream(req, res, urlObj) {
   });
 }
 
+let currentServerSeed = randomSeedHex(32);
+let lastSeedRotation = Date.now();
+
+function rotateServerSeed() {
+  currentServerSeed = randomSeedHex(32);
+  lastSeedRotation = Date.now();
+  console.log(
+    `[casin8] House seed automatically rotated at ${new Date(lastSeedRotation).toISOString()}`
+  );
+}
+
+// Auto-rotate every hour
+setInterval(rotateServerSeed, 3600000);
+
+function isSuperAdmin(req) {
+  // Simple check for now - can be expanded to full JWT or header validation
+  const authHeader = req.headers['authorization'] || '';
+  return (
+    authHeader.includes('super_admin_secret_key') || req.headers['x-tnf-role'] === 'super_admin'
+  );
+}
+
 function serveStatic(req, res) {
   let reqPath = req.url.split('?')[0];
   let isBackend = false;
 
   if (reqPath === '/console' || reqPath === '/console/') {
+    if (!isSuperAdmin(req)) {
+      res.writeHead(403, { 'Content-Type': 'text/plain' });
+      res.end('Access Denied: Super Admin role required for Operator Console.');
+      return;
+    }
     reqPath = '/index.html';
     isBackend = true;
   } else if (reqPath.startsWith('/console/')) {
+    if (!isSuperAdmin(req)) {
+      res.writeHead(403, { 'Content-Type': 'text/plain' });
+      res.end('Access Denied.');
+      return;
+    }
     reqPath = reqPath.replace('/console', '');
     isBackend = true;
   }
