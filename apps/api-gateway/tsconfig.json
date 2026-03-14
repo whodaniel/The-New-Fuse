@@ -17,7 +17,7 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "moduleResolution": "node",
-    "types": ["node", "uuid"],
+    "types": ["node"],
     "strictNullChecks": false,
     "noImplicitAny": false,
     "strictBindCallApply": false,
