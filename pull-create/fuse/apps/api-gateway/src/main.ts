@@ -48,6 +48,9 @@ async function bootstrap() {
   // Global interceptors
   app.useGlobalInterceptors(new LoggingInterceptor(), new ResponseInterceptor());
 
+  // Global prefix for ALL routes
+  app.setGlobalPrefix('api');
+
   // API versioning - use URI versioning with prefix
   app.enableVersioning({
     type: VersioningType.URI,

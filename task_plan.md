@@ -1,216 +1,145 @@
-# Task Plan: TNF 11-Hour Production Sprint
+# Task Plan: Workflow Builder Module Audit + Completion
 
 ## Goal
 
-Ship a production-trustworthy TNF web/app surface in 11 hours by eliminating
-user-visible mocks/stubs in priority workflows, wiring unsurfaced backend
-capabilities, and passing release gates.
+Audit every module in the drag-and-drop workflow builders (modern + legacy +
+enhanced), identify missing or partially wired features (UI → backend →
+execution), complete the wiring, and fix UI layout/overlap issues so controls
+and information remain usable across responsive sizes. Run QA against
+production.
 
 ## Current Phase
 
-Phase 4 (Implementation) - in progress
+Phase 1 (Requirements & Discovery) - in progress
 
 ## Project Type (TNF-Specific)
 
-| Type          | Value                                               |
-| ------------- | --------------------------------------------------- |
-| Category      | WEB + BACKEND + INTEGRATION                         |
-| Primary Agent | orchestrator + frontend-specialist + api-specialist |
-| Tech Stack    | React/Vite + NestJS + Drizzle + Redis/Railway       |
-
-## 11-Hour Command Window
-
-| Window  | Focus                            | Exit Criteria                                                        |
-| ------- | -------------------------------- | -------------------------------------------------------------------- |
-| H00-H01 | Baseline + queue setup           | Current failures reproduced, lanes assigned, branch strategy set     |
-| H01-H04 | Backend endpoint surfacing       | P0 missing/placeholder API surfaces implemented with tests           |
-| H04-H07 | Frontend de-mock wiring          | P0 screens no longer use fallback/mock data                          |
-| H07-H09 | Integration + E2E hardening      | Critical user journeys green in local smoke/E2E                      |
-| H09-H11 | Release gates + deploy checklist | Build, typecheck, lint, smoke pass; handoff + rollback notes written |
-
-## Swarm Lanes (Parallel)
-
-| Lane   | Owner Profile         | Scope                                                                    | Allowed Paths                                                                                     |
-| ------ | --------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
-| Lane A | API Surface Agent     | Missing admin/analytics/system endpoints, remove placeholder controllers | `apps/api/src/controllers`, `apps/api/src/modules/**`, `apps/api/src/services/**`                 |
-| Lane B | Data Integrity Agent  | Replace mock metric/service responses with real probes                   | `apps/api/src/controllers/system.controller.ts`, related services                                 |
-| Lane C | Workflow/A2A Agent    | Remove workflow/A2A frontend mock fallbacks and connect to live APIs     | `apps/frontend/src/services/WorkflowService.ts`, `apps/frontend/src/hooks/useA2ACommunication.ts` |
-| Lane D | Admin UI Wiring Agent | Remove mock fallback usage in admin pages/services                       | `apps/frontend/src/pages/Admin/**`, `apps/frontend/src/services/**`                               |
-| Lane E | QA/Verification Agent | Tests, regression scans, release gate evidence                           | `apps/*/src/**/*.test*`, `e2e/**`, CI scripts                                                     |
+| Type          | Value                                          |
+| ------------- | ---------------------------------------------- |
+| Category      | WEB + BACKEND + INTEGRATION + UX               |
+| Primary Agent | orchestrator                                   |
+| Tech Stack    | React/Vite + NestJS + Railway + Postgres/Redis |
 
 ## Phases
 
 ### Phase 1: Requirements & Discovery (ANALYSIS)
 
-- [x] Confirm objective: production-ready core surfaces in 11 hours
-- [x] Read TNF context and handoff (`resource-map`, `handoff_notes`)
-- [x] Inventory mock/stub hotspots in frontend/backend
-- [x] Capture findings in `findings.md`
-- **Status:** complete
-- **Code Allowed:** NO
+- [ ] Confirm workflow builder scope and entry points (modern + legacy +
+      enhanced routes/components).
+- [ ] Identify all builder modules + their UI controls.
+- [ ] Map each module to backend endpoints/data models/execution paths.
+- [ ] Capture layout issues and missing wiring in `findings.md`.
+- [ ] Capture MCP Tool server-list gap and marketplace integration requirement.
+- **Status:** in_progress
+- **Code Allowed:** ❌ NO
 
 ### Phase 2: Planning & Structure (PLANNING)
 
-- [x] Define swarm lanes and file ownership boundaries
-- [x] Define 11-hour timeline with hard checkpoints
-- [x] Define priority order based on user-visible impact
-- [x] Define merge/review gate policy
-- **Status:** in_progress
-- **Code Allowed:** NO
+- [ ] Build a module inventory matrix with features/controls per module.
+- [ ] Define audit checklist (UI behavior, persistence, execution, errors).
+- [ ] Create `docs/PLAN-workflow-builder-audit.md` with per-module tasks.
+- [ ] Define QA scenarios + acceptance criteria for each module.
+- **Status:** pending
+- **Code Allowed:** ❌ NO
 
 ### Phase 3: Solutioning (DESIGN)
 
-- [x] Finalize API contracts for each frontend mock replacement
-- [x] Produce lane-specific acceptance checks
-- [x] Freeze P0 feature list (must-ship vs defer)
-- **Status:** complete
-- **Code Allowed:** NO
+- [ ] Decide instrumentation and tracing approach for end-to-end flows.
+- [ ] Define UI layout fixes (grid, container constraints, overflow rules).
+- [ ] Specify backend contract updates and migrations (if needed).
+- [ ] Get user approval on scope and priorities before implementation.
+- **Status:** pending
+- **Code Allowed:** ❌ NO
 
 ### Phase 4: Implementation
 
-- [ ] Lane A/B backend changes with tests
-- [ ] Lane C/D frontend changes with integration checks
-- [ ] Remove or isolate unused placeholder controllers
-- [ ] Keep commits small and lane-scoped
-- **Status:** in_progress
-- **Code Allowed:** YES
+- [ ] Complete backend wiring for missing module features.
+- [ ] Fix UI layout/overlap issues and responsive behavior.
+- [ ] Add/update tests or smoke checks for modules touched.
+- [ ] Update `progress.md` after each module pass.
+- **Status:** pending
+- **Code Allowed:** ✅ YES
 
 ### Phase X: Verification
 
-- [ ] Run lint/typecheck/build on changed packages
-- [ ] Execute smoke tests for P0 flows
-- [ ] Validate no user-facing mock fallbacks remain in P0 scope
-- [ ] Update `.agent/handoff_notes.txt` with exact deployment/runbook status
+- [ ] Run lint/type checks and build for affected packages.
+- [ ] Run targeted E2E or smoke flows for workflow builder.
+- [ ] Verify each module's features behave end-to-end.
+- [ ] Update `.agent/handoff_notes.txt` with final status.
 - **Status:** pending
-- **Code Allowed:** Scripts/tests only
-
-## P0 Targets (Must Ship)
-
-1. Workflow services/UI no longer return mock workflows on API failure path.
-2. A2A communication hook no longer seeds hardcoded agents.
-3. Admin/system observability endpoints return real health/metrics signals.
-4. Placeholder/legacy API controller paths are either wired to real service or
-   explicitly removed from runtime routing.
-5. Core admin and agent management UI paths use backend truth, not local demo
-   data.
-
-## Priority Backlog (File Anchors)
-
-| Priority | Item                                     | Files                                                                                         |
-| -------- | ---------------------------------------- | --------------------------------------------------------------------------------------------- |
-| P0       | Workflow mock fallback removal           | `apps/frontend/src/services/WorkflowService.ts`                                               |
-| P0       | A2A mock agent list removal              | `apps/frontend/src/hooks/useA2ACommunication.ts`                                              |
-| P0       | Placeholder API controller audit/removal | `apps/api/src/controllers/AgentController.ts`, `apps/api/src/controllers/agent.controller.ts` |
-| P0       | System mock response replacement         | `apps/api/src/controllers/system.controller.ts`                                               |
-| P1       | Admin/user fallback mock cleanup         | `apps/frontend/src/pages/Admin/UserManagement.tsx` and related admin pages                    |
-| P1       | Chat mock response path replacement      | `apps/api/src/modules/chat/chat.service.ts`                                                   |
-| P2       | Non-critical demo pages/features cleanup | community/NFT/task demo surfaces                                                              |
+- **Code Allowed:** ✅ Scripts only
 
 ## Key Questions
 
-1. Which exact UI routes are release-blocking in this 11-hour window (P0 only)?
-2. For unavailable external providers, should we hard-fail with clear UX
-   messaging or soft-degrade with explicit "unavailable" states?
+1. Which workflow builder variant is authoritative (Modern vs Enhanced vs
+   legacy)?
+2. What is the complete list of builder modules and their expected behaviors?
+3. Which backend services are considered the source of truth for workflow
+   execution and saving?
+4. What production environment should be used for QA verification (production
+   confirmed)?
+5. Which MCP marketplace directory should be offered as the optional external
+   source, and what should be the default/reset behavior?
 
 ## Decisions Made
 
-| Decision                                              | Rationale                                             |
-| ----------------------------------------------------- | ----------------------------------------------------- |
-| Optimize for P0 user-visible truth over broad cleanup | Maximizes production readiness impact per hour        |
-| Assign strict lane file boundaries                    | Prevents merge contention across many agents          |
-| Use hard checkpoints each 2-3 hours                   | Avoids late-stage integration collapse                |
-| Do not touch unrelated dirty files                    | Preserves active ongoing work not part of this sprint |
+| Decision                                                     | Rationale                                                 |
+| ------------------------------------------------------------ | --------------------------------------------------------- |
+| Audit per-module with an explicit UI→API→execution checklist | Ensures end-to-end completeness and avoids partial wiring |
+| Include modern + legacy + enhanced builders in audit scope   | Matches production reality and avoids missing regressions |
+| QA against production                                        | Confirms live behavior and data wiring                    |
+| Separate discovery/planning from implementation              | Prevents rework and captures scope before coding          |
 
 ## Errors Encountered
 
-| Error                                             | Attempt | Resolution                                                              |
-| ------------------------------------------------- | ------- | ----------------------------------------------------------------------- |
-| Missing expected `system-metrics.service.ts` path | 1       | Pivoted to direct `system.controller.ts` scan and targeted file anchors |
+| Error | Attempt | Resolution |
+| ----- | ------- | ---------- |
+|       | 1       |            |
 
 ## TNF Integration Points
 
 ### Skills Used
 
-| Skill                   | Purpose                            | Location                                                               |
-| ----------------------- | ---------------------------------- | ---------------------------------------------------------------------- |
-| framework-consciousness | System-wide orchestration strategy | `/path/to/.codex/skills/framework-consciousness/SKILL.md` |
-| context-frontloader     | Session context bootstrapping      | `/path/to/.codex/skills/context-frontloader/SKILL.md`     |
+| Skill               | Purpose                              | Location                                                                         |
+| ------------------- | ------------------------------------ | -------------------------------------------------------------------------------- |
+| planning-with-files | Persistent planning + phase tracking | `.agent/skills/planning-with-files/`                                             |
+| orchestrator-agent  | High-level plan + coordination       | `/Users/<owner>/.codex/skills/imported-claude-agents/orchestrator-agent/` |
 
 ### Agents Involved
 
-| Agent               | Role                     | Status |
-| ------------------- | ------------------------ | ------ |
-| orchestrator        | Own timeline/checkpoints | active |
-| api-specialist      | Lane A/B                 | queued |
-| frontend-specialist | Lane C/D                 | queued |
-| qa-verifier         | Lane E                   | queued |
+| Agent | Role | Status |
+| ----- | ---- | ------ |
+|       |      |        |
 
 ### Jules Tasks (if delegated)
 
-| Task ID | Description                            | Status     |
-| ------- | -------------------------------------- | ---------- |
-| pending | Create per-lane implementation tickets | to enqueue |
+| Task ID | Description | Status |
+| ------- | ----------- | ------ |
+|         |             |        |
 
 ## Dependencies
 
-| Dependency                     | Status  | Notes                                            |
-| ------------------------------ | ------- | ------------------------------------------------ |
-| Railway API reachability       | at-risk | Previous handoff notes mention DNS flakiness     |
-| Redis/relay local availability | at-risk | Required for live orchestration queue operations |
-| Auth tokens/env alignment      | pending | Needed for end-to-end admin route verification   |
+| Dependency        | Status   | Notes                                                                  |
+| ----------------- | -------- | ---------------------------------------------------------------------- |
+| Local repo access | resolved | `/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse`          |
+| Runtime env vars  | pending  | Need Railway/prod or local env configuration for end-to-end validation |
+| UI access         | pending  | Need confirmation of target builder route(s) and module scope          |
 
 ## Files Created/Modified
 
-- `task_plan.md` (rewritten to executable 11-hour map)
-
-<!--
-  WHAT: Track all files created or modified during this task.
-  WHY: Helps with review and rollback if needed.
--->
-
 | File         | Action  | Phase |
 | ------------ | ------- | ----- |
-| task_plan.md | created | 1     |
-| findings.md  | created | 1     |
-| progress.md  | created | 1     |
-|              |         |       |
+| task_plan.md | updated | 1     |
+| findings.md  | pending | 1     |
+| progress.md  | pending | 1     |
 
 ## Notes
 
-<!--
-  REMINDERS:
-  - Update phase status as you progress: pending → in_progress → complete
-  - Re-read this plan before major decisions (attention manipulation)
-  - Log ALL errors - they help avoid repetition
-  - Never repeat a failed action - mutate your approach instead
-  - Read .agent/context/ for available TNF skills
-  - Use 2-Action Rule: Save findings after every 2 view/browser operations
--->
-
 - Update phase status as you progress: pending → in_progress → complete
-- Re-read this plan before major decisions (attention manipulation)
-- Log ALL errors - they help avoid repetition
-- **TNF:** Check `.agent/context/resource-map.md` for available skills
-- **TNF:** Update `.agent/handoff_notes.txt` before session end
-
----
-
-## ✅ PHASE X COMPLETION MARKER
-
-<!--
-  Add this section when ALL verification checks pass.
-  DO NOT mark complete until scripts have actually run.
--->
-<!--
-## ✅ PHASE X COMPLETE
-
-- Lint: ✅/❌ [Result]
-- Type Check: ✅/❌ [Result]
-- Security: ✅/❌ [Result]
-- Build: ✅/❌ [Result]
-- Date: [Current Date]
-- Handoff: ✅ .agent/handoff_notes.txt updated
--->
+- Re-read this plan before major decisions
+- Log ALL errors
+- Use 2-Action Rule: Save findings after every 2 view/browser operations
+- Update `.agent/handoff_notes.txt` before session end
 
 ---
 
