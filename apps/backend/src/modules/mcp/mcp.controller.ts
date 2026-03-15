@@ -47,8 +47,13 @@ export class MCPController {
     let dbServers = [];
     if (Array.isArray(result)) {
       dbServers = result as any[];
-    } else if (result?.rows && Array.isArray(result.rows)) {
-      dbServers = result.rows as any[];
+    } else if (
+      result &&
+      typeof result === 'object' &&
+      'rows' in result &&
+      Array.isArray((result as any).rows)
+    ) {
+      dbServers = (result as any).rows as any[];
     }
 
     // Map DB rows to standard format
@@ -75,7 +80,7 @@ export class MCPController {
     const internalTools = this.toolRegistry.getAllTools().map((tool) => ({
       name: tool.name,
       description: tool.description,
-      inputSchema: tool.schema || { type: 'object', properties: {} },
+      inputSchema: tool.inputSchema || { type: 'object', properties: {} },
     }));
 
     const tnfInternalServer = {

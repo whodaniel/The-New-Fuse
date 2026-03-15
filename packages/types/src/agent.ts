@@ -17,6 +17,7 @@ export enum AgentType {
   IDE_EXTENSION = 'IDE_EXTENSION',
   API = 'API',
   GITHUB_JULES = 'GITHUB_JULES',
+  DOMAIN_GAMING = 'DOMAIN_GAMING',
 }
 
 // Changed from interface to class that implements BaseEntity
@@ -108,11 +109,11 @@ export class CreateAgentDto {
   @IsOptional()
   provider?: string;
 
-  @ApiProperty({ 
-    required: false, 
-    enum: AgentTrustLevel, 
+  @ApiProperty({
+    required: false,
+    enum: AgentTrustLevel,
     description: 'The trust level of the agent (default: EPHEMERAL)',
-    default: AgentTrustLevel.EPHEMERAL 
+    default: AgentTrustLevel.EPHEMERAL,
   })
   @IsEnum(AgentTrustLevel)
   @IsOptional()
@@ -192,7 +193,11 @@ export class UpdateAgentDto {
   @IsOptional()
   role?: AgentRole;
 
-  @ApiProperty({ required: false, enum: AgentTrustLevel, description: 'The trust level of the agent' })
+  @ApiProperty({
+    required: false,
+    enum: AgentTrustLevel,
+    description: 'The trust level of the agent',
+  })
   @IsEnum(AgentTrustLevel)
   @IsOptional()
   trustLevel?: AgentTrustLevel;
@@ -258,28 +263,28 @@ export class AgentProfileDto {
   @IsOptional()
   personality?: string;
 
-  @ApiProperty({ required: false, description: "Avatar URL or image path" })
+  @ApiProperty({ required: false, description: 'Avatar URL or image path' })
   @IsString()
   @IsOptional()
   avatar?: string;
 
-  @ApiProperty({ required: false, description: "Signature emoji" })
+  @ApiProperty({ required: false, description: 'Signature emoji' })
   @IsString()
   @IsOptional()
   emoji?: string;
 
-  @ApiProperty({ required: false, description: "Tags for discovery" })
+  @ApiProperty({ required: false, description: 'Tags for discovery' })
   @IsArray()
   @IsOptional()
   @IsString({ each: true })
   tags?: string[];
 
-  @ApiProperty({ required: false, description: "Creator or owner name" })
+  @ApiProperty({ required: false, description: 'Creator or owner name' })
   @IsString()
   @IsOptional()
   creator?: string;
 
-  @ApiProperty({ required: false, description: "Agent version" })
+  @ApiProperty({ required: false, description: 'Agent version' })
   @IsString()
   @IsOptional()
   version?: string;

@@ -37,10 +37,8 @@ interface ApiUserResponse {
   createdAt: string;
   lastLogin?: string;
   emailVerified?: boolean;
-  _count?: {
-    workspaces?: number;
-    agents?: number;
-  };
+  workspaceCount: number;
+  agentCount: number;
 }
 
 export default function UserManagementFull() {
@@ -84,11 +82,8 @@ export default function UserManagementFull() {
         createdAt: new Date(apiUser.createdAt),
         lastLogin: apiUser.lastLogin ? new Date(apiUser.lastLogin) : new Date(apiUser.createdAt),
         emailVerified: apiUser.emailVerified || false,
-        // TODO: Fetch workspace count from /api/users/:id/workspaces endpoint
-        // Current API doesn't include this data in the user list response
-        workspaces: apiUser._count?.workspaces ?? 0,
-        // TODO: Fetch agent count from /api/users/:id/agents endpoint
-        agents: apiUser._count?.agents ?? 0,
+        workspaces: apiUser.workspaceCount ?? 0,
+        agents: apiUser.agentCount ?? 0,
       }));
 
       setUsers(transformedUsers);

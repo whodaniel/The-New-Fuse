@@ -13,7 +13,9 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
+import { agents } from './agents';
 import { userRoleEnum } from './enums';
+import { workspaces } from './workspace';
 
 // =============================================================================
 // USER
@@ -109,6 +111,8 @@ export const usersRelations = relations(users, ({ many }) => ({
   loginAttempts: many(loginAttempts),
   authEvents: many(authEvents),
   createdInviteCodes: many(registrationInviteCodes),
+  agents: many(agents),
+  workspaces: many(workspaces),
 }));
 
 export const registrationInviteCodesRelations = relations(registrationInviteCodes, ({ one }) => ({

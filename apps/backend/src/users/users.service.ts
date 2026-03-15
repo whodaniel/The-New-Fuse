@@ -33,11 +33,25 @@ export class UsersService {
   async findAll(page: number = 1, limit: number = 50) {
     const skip = (page - 1) * limit;
 
-    // Use Drizzle to fetch users with pagination
+    // Use Drizzle to fetch users with pagination and counts
+    // For performance and to avoid cross-product issues with multiple joins,
+    // we use subqueries or separate count queries.
     const allUsers = await db.query.users.findMany({
       limit: limit,
       offset: skip,
       orderBy: [desc(users.createdAt)],
+      with: {
+        agents: {
+          columns: {
+            id: true,
+          },
+        },
+        workspaces: {
+          columns: {
+            id: true,
+          },
+        },
+      },
       columns: {
         id: true,
         email: true,
@@ -47,13 +61,23 @@ export class UsersService {
         createdAt: true,
         updatedAt: true,
         emailVerified: true,
+        isActive: true,
       },
     });
 
     const total = await drizzleUserRepository.count();
 
+    const data = allUsers.map((user) => ({
+      ...user,
+      agentCount: user.agents?.length || 0,
+      workspaceCount: user.workspaces?.length || 0,
+      // Remove the full arrays to keep response payload small
+      agents: undefined,
+      workspaces: undefined,
+    }));
+
     return {
-      data: allUsers,
+      data,
       pagination: {
         page,
         limit,

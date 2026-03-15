@@ -22,6 +22,7 @@ import { FilesModule } from './modules/files/files.module';
 import { MassModule } from './modules/mass/mass.module';
 import { MCPModule } from './modules/mcp/mcp.module';
 import { OrchestratorModule } from './modules/orchestrator';
+import { UserBotsModule } from './modules/poker-bots/user-bots.module';
 import { RelayModule } from './modules/relay/relay.module';
 import { SelfImprovementModule } from './modules/self-improvement/self-improvement.module';
 import { SharedStateModule } from './modules/shared-state/shared-state.module';
@@ -111,6 +112,7 @@ import { UsersModule } from './users/users.module';
     SelfImprovementModule, // Autonomous improvement loop
     SharedStateModule, // Cloudflare SharedState Integration
     AGUIModule, // AG-UI Protocol - Real-time agent visualization pipeline
+    UserBotsModule,
   ],
   controllers: [AppController, CacheController],
   providers: [
