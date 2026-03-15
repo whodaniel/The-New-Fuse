@@ -3,6 +3,7 @@
  * Example of migrating from Drizzle to Drizzle using the Repository Pattern
  */
 import * as crypto from 'crypto';
+import { randomUUID } from 'crypto';
 import { and, desc, eq, inArray, isNull, like, or, sql } from 'drizzle-orm';
 import { db } from '../client';
 import {
@@ -39,8 +40,12 @@ export class DrizzleAgentRepository {
   /**
    * Create a new agent
    */
-  async create(data: NewAgent): Promise<Agent> {
-    const [agent] = await db.insert(agents).values(data).returning();
+  async create(data: Omit<NewAgent, 'id'> & { id?: string }): Promise<Agent> {
+    const id = data.id || `agent_${randomUUID().replace(/-/g, '').slice(0, 16)}`;
+    const [agent] = await db
+      .insert(agents)
+      .values({ ...data, id } as NewAgent)
+      .returning();
     return agent;
   }
 
@@ -51,7 +56,13 @@ export class DrizzleAgentRepository {
     const [agent] = await db
       .select()
       .from(agents)
-      .where(and(eq(agents.id, id), userId ? eq(agents.userId, userId) : undefined, isNull(agents.deletedAt)));
+      .where(
+        and(
+          eq(agents.id, id),
+          userId ? eq(agents.userId, userId) : undefined,
+          isNull(agents.deletedAt)
+        )
+      );
 
     return agent ?? null;
   }
@@ -167,7 +178,11 @@ export class DrizzleAgentRepository {
   /**
    * Update an agent
    */
-  async update(id: string, userIdOrData: string | Partial<NewAgent>, dataArg?: Partial<NewAgent>): Promise<Agent | null> {
+  async update(
+    id: string,
+    userIdOrData: string | Partial<NewAgent>,
+    dataArg?: Partial<NewAgent>
+  ): Promise<Agent | null> {
     const hasScopedUser = typeof userIdOrData === 'string';
     const userId = hasScopedUser ? userIdOrData : undefined;
     const data = (hasScopedUser ? dataArg : userIdOrData) as Partial<NewAgent>;
@@ -292,7 +307,7 @@ export class DrizzleAgentRepository {
   }) {
     // Hash auth token before storage (deterministic for lookup)
     const hashedToken = hashToken(data.authToken);
-    
+
     const insertData = {
       agentId: data.agentId,
       encryptedAuthToken: hashedToken, // Using hash for lookup consistency
@@ -305,7 +320,10 @@ export class DrizzleAgentRepository {
       metadata: data.metadata,
     };
 
-    const [registration] = await db.insert(agentRegistrations).values(insertData as any).returning();
+    const [registration] = await db
+      .insert(agentRegistrations)
+      .values(insertData as any)
+      .returning();
 
     // Return the original plain token so the caller can see it once
     return {
@@ -476,7 +494,11 @@ export class DrizzleAgentRepository {
       .select()
       .from(agents)
       .where(
-        and(eq(agents.status, status as any), userId ? eq(agents.userId, userId) : undefined, isNull(agents.deletedAt))
+        and(
+          eq(agents.status, status as any),
+          userId ? eq(agents.userId, userId) : undefined,
+          isNull(agents.deletedAt)
+        )
       )
       .orderBy(desc(agents.createdAt));
   }
@@ -519,7 +541,11 @@ export class DrizzleAgentRepository {
       .select()
       .from(agents)
       .where(
-        and(eq(agents.userId, userId), like(agents.capabilities as any, searchPattern), isNull(agents.deletedAt))
+        and(
+          eq(agents.userId, userId),
+          like(agents.capabilities as any, searchPattern),
+          isNull(agents.deletedAt)
+        )
       )
       .orderBy(desc(agents.createdAt));
   }
@@ -529,7 +555,11 @@ export class DrizzleAgentRepository {
   }
 
   async updateStatus(id: string, status: string, userId?: string): Promise<Agent | null> {
-    return this.update(id, userId ?? { status: status as any }, userId ? { status: status as any } : undefined);
+    return this.update(
+      id,
+      userId ?? { status: status as any },
+      userId ? { status: status as any } : undefined
+    );
   }
 
   async searchAgents(

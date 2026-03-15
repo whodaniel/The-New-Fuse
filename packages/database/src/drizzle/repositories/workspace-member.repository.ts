@@ -1,18 +1,28 @@
+import { randomUUID } from 'crypto';
 import { and, eq, inArray } from 'drizzle-orm';
 import { db } from '../client';
 import { users, workspaceMembers, workspaces } from '../schema';
 import type { NewWorkspaceMember, WorkspaceMember } from '../types';
 
 export class DrizzleWorkspaceMemberRepository {
-  async addMember(data: NewWorkspaceMember): Promise<WorkspaceMember> {
-    const [member] = await db.insert(workspaceMembers).values(data).returning();
+  async addMember(
+    data: Omit<NewWorkspaceMember, 'id'> & { id?: string }
+  ): Promise<WorkspaceMember> {
+    const id = data.id || `wm_${randomUUID().replace(/-/g, '').slice(0, 16)}`;
+    const [member] = await db
+      .insert(workspaceMembers)
+      .values({ ...data, id } as NewWorkspaceMember)
+      .returning();
     return member;
   }
 
-  async upsertMember(data: NewWorkspaceMember): Promise<WorkspaceMember> {
+  async upsertMember(
+    data: Omit<NewWorkspaceMember, 'id'> & { id?: string }
+  ): Promise<WorkspaceMember> {
+    const id = data.id || `wm_${randomUUID().replace(/-/g, '').slice(0, 16)}`;
     const [member] = await db
       .insert(workspaceMembers)
-      .values(data)
+      .values({ ...data, id } as NewWorkspaceMember)
       .onConflictDoUpdate({
         target: [workspaceMembers.workspaceId, workspaceMembers.userId],
         set: {
@@ -29,20 +39,19 @@ export class DrizzleWorkspaceMemberRepository {
     const [member] = await db
       .select()
       .from(workspaceMembers)
-      .where(and(eq(workspaceMembers.workspaceId, workspaceId), eq(workspaceMembers.userId, userId)));
+      .where(
+        and(eq(workspaceMembers.workspaceId, workspaceId), eq(workspaceMembers.userId, userId))
+      );
     return member ?? null;
   }
 
   async listByWorkspace(workspaceId: string): Promise<WorkspaceMember[]> {
-    return db
-      .select()
-      .from(workspaceMembers)
-      .where(eq(workspaceMembers.workspaceId, workspaceId));
+    return db.select().from(workspaceMembers).where(eq(workspaceMembers.workspaceId, workspaceId));
   }
 
-  async listByWorkspaceWithUsers(workspaceId: string): Promise<
-    Array<WorkspaceMember & { userEmail: string | null }>
-  > {
+  async listByWorkspaceWithUsers(
+    workspaceId: string
+  ): Promise<Array<WorkspaceMember & { userEmail: string | null }>> {
     const rows = await db
       .select({
         member: workspaceMembers,
@@ -65,7 +74,9 @@ export class DrizzleWorkspaceMemberRepository {
   async removeMember(workspaceId: string, userId: string): Promise<boolean> {
     const rows = await db
       .delete(workspaceMembers)
-      .where(and(eq(workspaceMembers.workspaceId, workspaceId), eq(workspaceMembers.userId, userId)))
+      .where(
+        and(eq(workspaceMembers.workspaceId, workspaceId), eq(workspaceMembers.userId, userId))
+      )
       .returning();
     return rows.length > 0;
   }
@@ -78,7 +89,9 @@ export class DrizzleWorkspaceMemberRepository {
     const [member] = await db
       .update(workspaceMembers)
       .set({ role, updatedAt: new Date() })
-      .where(and(eq(workspaceMembers.workspaceId, workspaceId), eq(workspaceMembers.userId, userId)))
+      .where(
+        and(eq(workspaceMembers.workspaceId, workspaceId), eq(workspaceMembers.userId, userId))
+      )
       .returning();
     return member ?? null;
   }
@@ -98,7 +111,9 @@ export class DrizzleWorkspaceMemberRepository {
       .where(eq(workspaceMembers.userId, userId));
   }
 
-  async listWorkspacesForUsers(userIds: string[]): Promise<Array<{ workspaceId: string; userId: string }>> {
+  async listWorkspacesForUsers(
+    userIds: string[]
+  ): Promise<Array<{ workspaceId: string; userId: string }>> {
     const ids = userIds.filter((id) => typeof id === 'string' && id.trim().length > 0);
     if (ids.length === 0) return [];
     return db
@@ -107,9 +122,9 @@ export class DrizzleWorkspaceMemberRepository {
       .where(inArray(workspaceMembers.userId, ids));
   }
 
-  async listWorkspacesWithOwnerForUser(userId: string): Promise<
-    Array<{ workspace: typeof workspaces.$inferSelect; ownerEmail: string | null }>
-  > {
+  async listWorkspacesWithOwnerForUser(
+    userId: string
+  ): Promise<Array<{ workspace: typeof workspaces.$inferSelect; ownerEmail: string | null }>> {
     const rows = await db
       .select({
         workspace: workspaces,

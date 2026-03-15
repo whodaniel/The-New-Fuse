@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import { and, desc, eq, inArray, isNull, or } from 'drizzle-orm';
 import { db } from '../client';
 import { authSessions, users } from '../schema';
@@ -10,8 +11,12 @@ export class DrizzleUserRepository {
   /**
    * Create a new user
    */
-  async create(data: NewUser): Promise<User> {
-    const [user] = await db.insert(users).values(data).returning();
+  async create(data: Omit<NewUser, 'id'> & { id?: string }): Promise<User> {
+    const id = data.id || `usr_${randomUUID().replace(/-/g, '').slice(0, 16)}`;
+    const [user] = await db
+      .insert(users)
+      .values({ ...data, id } as NewUser)
+      .returning();
     return user;
   }
 

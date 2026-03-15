@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import { desc, eq, inArray, InferInsertModel, InferSelectModel, sql } from 'drizzle-orm';
 import { db } from '../client';
 import { projects, users, workspaces } from '../schema';
@@ -12,8 +13,12 @@ export class DrizzleWorkspaceRepository {
   /**
    * Create a new workspace
    */
-  async create(data: NewWorkspace): Promise<Workspace> {
-    const [workspace] = await db.insert(workspaces).values(data).returning();
+  async create(data: Omit<NewWorkspace, 'id'> & { id?: string }): Promise<Workspace> {
+    const id = data.id || `ws_${randomUUID().replace(/-/g, '').slice(0, 16)}`;
+    const [workspace] = await db
+      .insert(workspaces)
+      .values({ ...data, id } as NewWorkspace)
+      .returning();
     return workspace;
   }
 
