@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { DatabaseModule } from '@the-new-fuse/database';
 import { AgentBankController } from '../controllers/agent-bank.controller';
+import { AgentCraftingController } from '../controllers/agent-crafting.controller';
 import { AgentController } from '../controllers/agent.controller';
 import { SecurityLoggingService } from '../security/security-logging.service';
 import { AgentBankService } from '../services/agent-bank.service';
@@ -11,7 +12,7 @@ import { BillingModule } from './billing/billing.module';
 
 @Module({
   imports: [DatabaseModule, JwtModule, ConfigModule, BillingModule],
-  controllers: [AgentController, AgentBankController],
+  controllers: [AgentController, AgentBankController, AgentCraftingController],
   providers: [AgentService, AgentBankService, SecurityLoggingService],
   exports: [AgentService, AgentBankService],
 })

@@ -333,6 +333,28 @@ export const agentApi = {
   },
 };
 
+// --- Agent Crafting APIs (Workspace-Aware) ---
+export const agentCraftingApi = {
+  async getTemplates() {
+    return api('/api/agent-crafting/templates');
+  },
+  async craft(
+    workspaceId: string,
+    data: { name: string; temperament: string; description?: string }
+  ) {
+    return api(`/api/agent-crafting/craft/${workspaceId}`, {
+      method: 'POST',
+      body: data,
+    });
+  },
+  async initNurture(agentId: string, workspaceId: string) {
+    return api(`/api/agent-crafting/nurture/${agentId}`, {
+      method: 'POST',
+      body: { workspaceId },
+    });
+  },
+};
+
 /**
  * User Bots API — CRUD for custom player bots (persisted on server)
  */

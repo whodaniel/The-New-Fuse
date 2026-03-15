@@ -20,10 +20,10 @@ import { users } from './users';
 // =============================================================================
 
 export const workspaces = pgTable('workspaces', {
-  id: uuid('id').primaryKey().defaultRandom(),
+  id: text('id').primaryKey(),
   name: varchar('name', { length: 255 }).notNull(),
   description: text('description'),
-  ownerId: uuid('owner_id')
+  ownerId: text('owner_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -40,15 +40,15 @@ export const workspaceMemberRoleEnum = pgEnum('WorkspaceMemberRole', [
 export const workspaceMembers = pgTable(
   'workspace_members',
   {
-    id: uuid('id').primaryKey().defaultRandom(),
-    workspaceId: uuid('workspace_id')
+    id: text('id').primaryKey(),
+    workspaceId: text('workspace_id')
       .notNull()
       .references(() => workspaces.id, { onDelete: 'cascade' }),
-    userId: uuid('user_id')
+    userId: text('user_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
     role: workspaceMemberRoleEnum('role').default('member').notNull(),
-    addedByUserId: uuid('added_by_user_id').references(() => users.id, { onDelete: 'set null' }),
+    addedByUserId: text('added_by_user_id').references(() => users.id, { onDelete: 'set null' }),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
   },
@@ -62,10 +62,10 @@ export const workspaceMembers = pgTable(
 // =============================================================================
 
 export const projects = pgTable('projects', {
-  id: uuid('id').primaryKey().defaultRandom(),
+  id: text('id').primaryKey(),
   name: varchar('name', { length: 255 }).notNull(),
   description: text('description'),
-  workspaceId: uuid('workspace_id')
+  workspaceId: text('workspace_id')
     .notNull()
     .references(() => workspaces.id, { onDelete: 'cascade' }),
 
