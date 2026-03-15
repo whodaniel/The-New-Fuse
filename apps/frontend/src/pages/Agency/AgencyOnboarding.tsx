@@ -57,7 +57,7 @@ const AgencyOnboarding: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-950 p-4 font-sans text-white">
-      <div className="max-w-2xl w-full bg-slate-900 p-10 rounded-2xl border border-slate-800 shadow-2xl">
+      <div className="max-w-2xl w-full bg-slate-900 p-10 rounded-md border border-slate-800 shadow-none">
         <h1 className="text-4xl font-bold bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-4">
           Become a Sovereign Agency
         </h1>
@@ -92,7 +92,7 @@ const AgencyOnboarding: React.FC = () => {
             )}
           </div>
 
-          <div className="bg-slate-800/50 p-6 rounded-xl border border-slate-700">
+          <div className="bg-slate-800/50 p-4 rounded-md border border-slate-700">
             <div className="flex justify-between items-center mb-4">
               <span className="text-slate-300">License Fee (Lifetime)</span>
               <span className="text-2xl font-bold text-white">2,500 MATIC</span>
@@ -107,15 +107,15 @@ const AgencyOnboarding: React.FC = () => {
             </div>
           </div>
 
-          {error && <div className="bg-red-900/50 text-red-200 p-4 rounded-lg">{error}</div>}
+          {error && <div className="bg-red-900/50 text-red-200 p-4 rounded-md">{error}</div>}
 
           <button
             onClick={handlePurchase}
             disabled={loading || !agencyName}
-            className={`w-full py-4 rounded-xl font-bold text-xl transition-all ${
+            className={`w-full py-2 rounded-md font-bold text-xl transition-all ${
               loading || !agencyName
                 ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/20'
+                : 'bg-blue-600 hover:bg-blue-500 text-white shadow-none shadow-blue-500/20'
             }`}
           >
             {loading ? 'Confirming Transaction...' : 'Mint License & Launch'}

@@ -49,8 +49,8 @@ export const Settings: React.FC = () => {
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="p-4 space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* System Settings */}
         <Card title="System Settings" icon={SettingsIcon}>
           <div className="space-y-4">
@@ -109,17 +109,17 @@ export const Settings: React.FC = () => {
 
         {/* LLM Configuration placeholder */}
         <Card title="LLM Configuration">
-          <p className="text-gray-500">LLM selector component will be rendered here</p>
+          <p className="text-muted-foreground">LLM selector component will be rendered here</p>
         </Card>
 
         {/* GPU Management placeholder */}
         <Card title="GPU Management" gradient="cyan">
-          <p className="text-gray-500">GPU manager component will be rendered here</p>
+          <p className="text-muted-foreground">GPU manager component will be rendered here</p>
         </Card>
 
         {/* Webhook Management placeholder */}
         <Card title="Webhook Management" className="md:col-span-2" gradient="green">
-          <p className="text-gray-500">Webhook manager component will be rendered here</p>
+          <p className="text-muted-foreground">Webhook manager component will be rendered here</p>
         </Card>
       </div>
     </div>

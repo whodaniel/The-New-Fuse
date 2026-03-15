@@ -81,10 +81,10 @@ export const CompletionStep: React.FC = () => {
       <div className="space-y-8">
         <div className="text-center">
           <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-          <h2 className="text-3xl font-bold mb-2">
+          <h2 className="text-2xl font-bold mb-2">
             {isAIAgent ? 'Integration Complete!' : 'Setup Complete!'}
           </h2>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-muted-foreground">
             {isAIAgent
               ? `Your agent "${userName}" has been successfully integrated with The New Fuse platform.`
               : `Congratulations, ${userName}! You're all set to start using The New Fuse.`}
@@ -95,7 +95,7 @@ export const CompletionStep: React.FC = () => {
           <h3 className="text-lg font-semibold mb-4">Next Steps</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {nextSteps.map((step, index) => (
-              <div key={index} className="border border-gray-200 rounded-lg">
+              <div key={index} className="border border-gray-200 rounded-md">
                 <div className="p-4 pb-0">
                   <div className="flex items-center space-x-2">
                     <step.icon className="text-blue-500" />

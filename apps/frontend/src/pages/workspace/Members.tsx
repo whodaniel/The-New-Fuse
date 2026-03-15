@@ -86,7 +86,7 @@ export default function WorkspaceMembers() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Team Members</h1>
+          <h1 className="text-2xl font-bold">Team Members</h1>
           <p className="text-muted-foreground mt-2">
             Manage your workspace members and their roles
           </p>
@@ -160,7 +160,7 @@ export default function WorkspaceMembers() {
             <DialogDescription>Invite a new member to join your workspace.</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleInvite}>
-            <div className="space-y-4 py-4">
+            <div className="space-y-4 py-2">
               <div className="space-y-2">
                 <label htmlFor="email" className="text-sm font-medium">
                   Email Address

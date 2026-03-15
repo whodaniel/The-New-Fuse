@@ -173,7 +173,7 @@ export default function Settings() {
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" />
       </div>
 
-      <div className="relative z-10 p-8 max-w-6xl mx-auto">
+      <div className="relative z-10 p-4 max-w-6xl mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -190,7 +190,7 @@ export default function Settings() {
           </p>
         </motion.div>
 
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4">
           {/* Top Navigation Tabs */}
           <motion.div
             variants={containerVariants}
@@ -207,24 +207,24 @@ export default function Settings() {
                       key={item.id}
                       variants={itemVariants}
                       onClick={() => setActiveTab(item.id)}
-                      className={`min-w-[200px] text-left px-4 py-3 rounded-xl flex items-center gap-3 transition-all duration-200 flex-shrink-0 ${
+                      className={`min-w-[200px] text-left px-4 py-2 rounded-md flex items-center gap-3 transition-all duration-200 flex-shrink-0 ${
                         activeTab === item.id
                           ? 'bg-gradient-to-r from-purple-500/30 to-blue-500/30 border border-purple-500/30 text-white'
-                          : 'hover:bg-white/5 text-gray-400 hover:text-white'
+                          : 'hover:bg-transparent/5 text-gray-400 hover:text-white'
                       }`}
                     >
                       <div
-                        className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                        className={`w-10 h-10 rounded-md flex items-center justify-center ${
                           activeTab === item.id
                             ? 'bg-gradient-to-br from-purple-500 to-blue-500'
-                            : 'bg-white/5'
+                            : 'bg-transparent/5'
                         }`}
                       >
                         <Icon className="w-5 h-5" />
                       </div>
                       <div className="flex-1">
                         <p className="font-medium">{item.label}</p>
-                        <p className="text-xs text-gray-500">{item.description}</p>
+                        <p className="text-xs text-muted-foreground">{item.description}</p>
                       </div>
                     </motion.button>
                   );
@@ -285,7 +285,7 @@ export default function Settings() {
                         />
                       </div>
 
-                      <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+                      <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/5">
                         <div>
                           <p className="font-medium text-white">Enable Auto-save</p>
                           <p className="text-sm text-gray-400">
@@ -330,9 +330,9 @@ export default function Settings() {
                   >
                     <div className="space-y-6 mt-6">
                       {/* Profile Section */}
-                      <div className="flex items-center gap-4 p-4 bg-black/20 rounded-xl border border-white/5">
-                        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-500/30 to-blue-500/30 flex items-center justify-center border border-white/10">
-                          <span className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
+                      <div className="flex items-center gap-4 p-4 bg-black/20 rounded-md border border-white/5">
+                        <div className="w-20 h-20 rounded-md bg-gradient-to-br from-purple-500/30 to-blue-500/30 flex items-center justify-center border border-white/10">
+                          <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
                             {user?.displayName?.[0] || 'U'}
                           </span>
                         </div>
@@ -409,14 +409,14 @@ export default function Settings() {
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => setTheme('light')}
-                            className={`p-6 rounded-xl cursor-pointer transition-all border-2 ${
+                            className={`p-4 rounded-md cursor-pointer transition-all border-2 ${
                               theme === 'light'
-                                ? 'border-purple-500 bg-white/10'
-                                : 'border-white/10 bg-black/20 hover:bg-white/5'
+                                ? 'border-purple-500 bg-transparent/10'
+                                : 'border-white/10 bg-black/20 hover:bg-transparent/5'
                             }`}
                           >
                             <div className="flex flex-col items-center gap-3">
-                              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
+                              <div className="w-12 h-12 rounded-md bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
                                 <Sun className="w-6 h-6 text-white" />
                               </div>
                               <span className="text-white font-medium">Light</span>
@@ -427,14 +427,14 @@ export default function Settings() {
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => setTheme('dark')}
-                            className={`p-6 rounded-xl cursor-pointer transition-all border-2 ${
+                            className={`p-4 rounded-md cursor-pointer transition-all border-2 ${
                               theme === 'dark'
-                                ? 'border-purple-500 bg-white/10'
-                                : 'border-white/10 bg-black/20 hover:bg-white/5'
+                                ? 'border-purple-500 bg-transparent/10'
+                                : 'border-white/10 bg-black/20 hover:bg-transparent/5'
                             }`}
                           >
                             <div className="flex flex-col items-center gap-3">
-                              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 to-blue-700 flex items-center justify-center">
+                              <div className="w-12 h-12 rounded-md bg-gradient-to-br from-purple-600 to-blue-700 flex items-center justify-center">
                                 <Moon className="w-6 h-6 text-white" />
                               </div>
                               <span className="text-white font-medium">Dark</span>
@@ -451,10 +451,10 @@ export default function Settings() {
                                 : 'light';
                               setTheme(systemTheme);
                             }}
-                            className="p-6 rounded-xl border-2 border-white/10 bg-black/20 cursor-pointer hover:bg-white/5 transition-all"
+                            className="p-4 rounded-md border-2 border-white/10 bg-black/20 cursor-pointer hover:bg-transparent/5 transition-all"
                           >
                             <div className="flex flex-col items-center gap-3">
-                              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center">
+                              <div className="w-12 h-12 rounded-md bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center">
                                 <Settings2 className="w-6 h-6 text-white" />
                               </div>
                               <span className="text-white font-medium">System</span>
@@ -505,7 +505,7 @@ export default function Settings() {
                     gradient="green"
                   >
                     <div className="space-y-4 mt-6">
-                      <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+                      <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/5">
                         <div>
                           <p className="font-medium text-white">Email Notifications</p>
                           <p className="text-sm text-gray-400">
@@ -515,7 +515,7 @@ export default function Settings() {
                         <ToggleSwitch checked={emailNotif} onChange={setEmailNotif} />
                       </div>
 
-                      <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+                      <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/5">
                         <div>
                           <p className="font-medium text-white">Push Notifications</p>
                           <p className="text-sm text-gray-400">
@@ -525,7 +525,7 @@ export default function Settings() {
                         <ToggleSwitch checked={pushNotif} onChange={setPushNotif} />
                       </div>
 
-                      <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+                      <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/5">
                         <div>
                           <p className="font-medium text-white">Agent Activity Alerts</p>
                           <p className="text-sm text-gray-400">
@@ -560,7 +560,7 @@ export default function Settings() {
                     gradient="cyan"
                   >
                     <div className="mt-6">
-                      <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4 mb-6 flex items-start gap-3">
+                      <div className="bg-blue-500/10 border border-blue-500/20 rounded-md p-4 mb-6 flex items-start gap-3">
                         <Shield className="w-5 h-5 text-blue-400 mt-0.5" />
                         <div>
                           <h4 className="font-medium text-blue-400 mb-1">Secure Storage</h4>
@@ -578,7 +578,7 @@ export default function Settings() {
 
                       <div className="mt-8 pt-6 border-t border-white/10">
                         <h3 className="text-lg font-medium text-white mb-4">Legacy Settings</h3>
-                        <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+                        <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/5">
                           <div>
                             <p className="font-medium text-white">API Access</p>
                             <p className="text-sm text-gray-400">

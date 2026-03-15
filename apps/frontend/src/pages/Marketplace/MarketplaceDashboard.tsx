@@ -245,7 +245,7 @@ export default function MarketplaceDashboard() {
       >
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-cyan-300 to-blue-400 bg-clip-text text-transparent">
+            <h1 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-cyan-300 to-blue-400 bg-clip-text text-transparent">
               TNF Marketplace
             </h1>
             <p className="text-slate-400 mt-2">
@@ -335,7 +335,7 @@ export default function MarketplaceDashboard() {
               reviewQueue.map((item) => (
                 <div
                   key={item.id}
-                  className="rounded-lg border border-white/10 bg-slate-900/50 p-3"
+                  className="rounded-md border border-white/10 bg-slate-900/50 p-3"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
@@ -377,7 +377,7 @@ export default function MarketplaceDashboard() {
           <input
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            className="w-full rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-400"
+            className="w-full rounded-md border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-400"
             placeholder="Search catalog by name, description, tags..."
           />
           <select
@@ -387,7 +387,7 @@ export default function MarketplaceDashboard() {
                 event.target.value as 'all' | 'draft' | 'review' | 'published' | 'archived'
               )
             }
-            className="w-full rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
+            className="w-full rounded-md border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
             disabled={!isAdmin}
           >
             {isAdmin ? (
@@ -430,7 +430,7 @@ export default function MarketplaceDashboard() {
           ].map((item) => (
             <button
               key={item.id}
-              className={`px-3 py-2 rounded-lg text-sm border transition-colors ${
+              className={`px-3 py-2 rounded-md text-sm border transition-colors ${
                 surface === item.id
                   ? 'bg-blue-500/20 border-blue-400 text-blue-200'
                   : 'bg-slate-900/50 border-white/10 text-slate-300 hover:bg-slate-800/70'
@@ -450,7 +450,7 @@ export default function MarketplaceDashboard() {
             return (
               <button
                 key={item.id}
-                className={`px-3 py-2 rounded-lg text-sm border transition-colors ${
+                className={`px-3 py-2 rounded-md text-sm border transition-colors ${
                   tab === item.id
                     ? 'bg-cyan-500/20 border-cyan-400 text-cyan-200'
                     : 'bg-slate-900/50 border-white/10 text-slate-300 hover:bg-slate-800/70'
@@ -474,7 +474,7 @@ export default function MarketplaceDashboard() {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {filteredItems.map((item: MarketplaceCatalogItem) => (
-              <div key={item.id} className="rounded-xl border border-white/10 bg-slate-900/40 p-4">
+              <div key={item.id} className="rounded-md border border-white/10 bg-slate-900/40 p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3">
                     {isAdmin && (
@@ -502,7 +502,7 @@ export default function MarketplaceDashboard() {
                   {item.tags.slice(0, 4).map((tag) => (
                     <span
                       key={tag}
-                      className="text-xs px-2 py-1 rounded bg-white/5 border border-white/10 text-slate-300"
+                      className="text-xs px-2 py-1 rounded bg-transparent/5 border border-white/10 text-slate-300"
                     >
                       {tag}
                     </span>
@@ -566,7 +566,7 @@ export default function MarketplaceDashboard() {
               onChange={(event) =>
                 setNewExperience((prev) => ({ ...prev, name: event.target.value }))
               }
-              className="w-full rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
+              className="w-full rounded-md border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
               placeholder="Experience name"
             />
             <textarea
@@ -574,7 +574,7 @@ export default function MarketplaceDashboard() {
               onChange={(event) =>
                 setNewExperience((prev) => ({ ...prev, description: event.target.value }))
               }
-              className="w-full rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
+              className="w-full rounded-md border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
               rows={3}
               placeholder="Describe the gameplay or interaction..."
             />
@@ -584,7 +584,7 @@ export default function MarketplaceDashboard() {
                 onChange={(event) =>
                   setNewExperience((prev) => ({ ...prev, category: event.target.value }))
                 }
-                className="w-full rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
+                className="w-full rounded-md border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
               >
                 {ARCADE_EXPERIENCE_CATEGORIES.map((category) => (
                   <option key={category} value={category}>
@@ -597,7 +597,7 @@ export default function MarketplaceDashboard() {
                 onChange={(event) =>
                   setNewExperience((prev) => ({ ...prev, launchUrl: event.target.value }))
                 }
-                className="w-full rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
+                className="w-full rounded-md border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
                 placeholder="Launch URL (optional)"
               />
             </div>
@@ -606,7 +606,7 @@ export default function MarketplaceDashboard() {
               onChange={(event) =>
                 setNewExperience((prev) => ({ ...prev, tags: event.target.value }))
               }
-              className="w-full rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
+              className="w-full rounded-md border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
               placeholder="Tags comma-separated (optional)"
             />
             <div className="flex items-center gap-2">
@@ -658,7 +658,7 @@ export default function MarketplaceDashboard() {
                     kind: event.target.value as MarketplaceKind,
                   }))
                 }
-                className="w-full rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
+                className="w-full rounded-md border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
               >
                 {PRIMITIVE_KINDS.map((kind) => (
                   <option key={kind} value={kind}>
@@ -671,7 +671,7 @@ export default function MarketplaceDashboard() {
                 onChange={(event) =>
                   setNewPrimitive((prev) => ({ ...prev, category: event.target.value }))
                 }
-                className="w-full rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
+                className="w-full rounded-md border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
                 placeholder="Category"
               />
             </div>
@@ -680,7 +680,7 @@ export default function MarketplaceDashboard() {
               onChange={(event) =>
                 setNewPrimitive((prev) => ({ ...prev, name: event.target.value }))
               }
-              className="w-full rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
+              className="w-full rounded-md border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
               placeholder="Primitive name"
             />
             <textarea
@@ -688,7 +688,7 @@ export default function MarketplaceDashboard() {
               onChange={(event) =>
                 setNewPrimitive((prev) => ({ ...prev, description: event.target.value }))
               }
-              className="w-full rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
+              className="w-full rounded-md border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
               rows={3}
               placeholder="Describe the primitive..."
             />
@@ -698,7 +698,7 @@ export default function MarketplaceDashboard() {
                 onChange={(event) =>
                   setNewPrimitive((prev) => ({ ...prev, launchUrl: event.target.value }))
                 }
-                className="w-full rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
+                className="w-full rounded-md border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
                 placeholder="Docs / endpoint URL (optional)"
               />
               <input
@@ -706,7 +706,7 @@ export default function MarketplaceDashboard() {
                 onChange={(event) =>
                   setNewPrimitive((prev) => ({ ...prev, tags: event.target.value }))
                 }
-                className="w-full rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
+                className="w-full rounded-md border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
                 placeholder="Tags comma-separated (optional)"
               />
             </div>
@@ -715,7 +715,7 @@ export default function MarketplaceDashboard() {
               onChange={(event) =>
                 setNewPrimitive((prev) => ({ ...prev, capabilities: event.target.value }))
               }
-              className="w-full rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
+              className="w-full rounded-md border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
               placeholder="Capabilities comma-separated (optional)"
             />
             <div className="flex items-center gap-2">

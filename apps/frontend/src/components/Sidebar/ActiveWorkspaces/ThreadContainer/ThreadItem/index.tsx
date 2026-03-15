@@ -7,7 +7,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import truncate from 'truncate';
 const STYLES = {
-  container: 'w-full relative flex h-[38px] items-center border-none rounded-lg',
+  container: 'w-full relative flex h-[38px] items-center border-none rounded-md',
   curvedLine: (isActive) =>
     `${
       isActive
@@ -32,7 +32,7 @@ const STYLES = {
   optionsButton:
     'text-zinc-300 light:text-theme-text-secondary hover:text-white hover:light:text-theme-text-primary',
   optionsMenu:
-    'absolute w-fit z-[20] top-[25px] right-[10px] bg-zinc-900 light:bg-theme-bg-sidebar light:border-[1px] light:border-theme-sidebar-border rounded-lg p-1',
+    'absolute w-fit z-[20] top-[25px] right-[10px] bg-zinc-900 light:bg-theme-bg-sidebar light:border-[1px] light:border-theme-sidebar-border rounded-md p-1',
   menuButton: 'w-full rounded-md flex items-center p-2 gap-x-2',
   renameButton: 'hover:bg-slate-500/20 text-slate-300 light:text-theme-text-primary',
   deleteButton:

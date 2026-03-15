@@ -1,5 +1,5 @@
-import React, { useRef, useState, useEffect } from 'react';
 import { Mic, MicOff, Video, VideoOff } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const VideoChat: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -35,22 +35,22 @@ const VideoChat: React.FC = () => {
       }
     };
     updateMediaStream();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCameraOn, isAudioOn]);
 
   return (
-    <div className="w-full max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+    <div className="w-full max-w-2xl mx-auto bg-transparent dark:bg-transparent rounded-md shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
+      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-transparent dark:bg-gray-900">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Video Chat</h3>
         <div className="flex space-x-2">
           <button
             onClick={() => setIsAudioOn(!isAudioOn)}
             className={`p-2 rounded-full transition-colors ${
               isAudioOn
-                ? 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                ? 'bg-gray-200 dark:bg-gray-700 text-foreground dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                 : 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50'
             }`}
-            title={isAudioOn ? "Mute Microphone" : "Unmute Microphone"}
+            title={isAudioOn ? 'Mute Microphone' : 'Unmute Microphone'}
           >
             {isAudioOn ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
           </button>
@@ -59,10 +59,10 @@ const VideoChat: React.FC = () => {
             onClick={() => setIsCameraOn(!isCameraOn)}
             className={`p-2 rounded-full transition-colors ${
               isCameraOn
-                ? 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                ? 'bg-gray-200 dark:bg-gray-700 text-foreground dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                 : 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50'
             }`}
-             title={isCameraOn ? "Turn Off Camera" : "Turn On Camera"}
+            title={isCameraOn ? 'Turn Off Camera' : 'Turn On Camera'}
           >
             {isCameraOn ? <Video className="w-5 h-5" /> : <VideoOff className="w-5 h-5" />}
           </button>
@@ -71,11 +71,11 @@ const VideoChat: React.FC = () => {
 
       <div className="p-4">
         {error ? (
-          <div className="p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg border border-red-200 dark:border-red-800">
+          <div className="p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-md border border-red-200 dark:border-red-800">
             {error}
           </div>
         ) : (
-          <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+          <div className="relative aspect-video rounded-md overflow-hidden bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
             {isCameraOn || isAudioOn ? (
               <video
                 ref={videoRef}
@@ -85,7 +85,7 @@ const VideoChat: React.FC = () => {
                 className="absolute inset-0 w-full h-full object-cover"
               />
             ) : (
-              <div className="absolute inset-0 flex items-center justify-center flex-col gap-2 text-gray-500 dark:text-gray-400">
+              <div className="absolute inset-0 flex items-center justify-center flex-col gap-2 text-muted-foreground dark:text-muted-foreground">
                 <VideoOff className="w-12 h-12 opacity-50" />
                 <p>Turn on camera or microphone to start</p>
               </div>
@@ -93,9 +93,13 @@ const VideoChat: React.FC = () => {
 
             {/* Status indicators overlaid */}
             {(isCameraOn || isAudioOn) && (
-                 <div className="absolute bottom-4 right-4 flex gap-2">
-                    {!isAudioOn && <div className="bg-red-600 text-white p-1.5 rounded-full"><MicOff className="w-4 h-4" /></div>}
-                 </div>
+              <div className="absolute bottom-4 right-4 flex gap-2">
+                {!isAudioOn && (
+                  <div className="bg-red-600 text-white p-1.5 rounded-full">
+                    <MicOff className="w-4 h-4" />
+                  </div>
+                )}
+              </div>
             )}
           </div>
         )}

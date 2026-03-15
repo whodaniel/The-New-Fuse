@@ -44,7 +44,7 @@ export default function OpenAiOptions({ settings }: OpenAiOptionsProps) {
         <div className="flex justify-start">
           <button
             onClick={() => setShowAdvanced(!showAdvanced)}
-            className="flex items-center text-sm text-gray-600 hover:text-gray-800"
+            className="flex items-center text-sm text-muted-foreground hover:text-gray-800"
           >
             {showAdvanced ? (
               <ChevronUp className="mr-2 h-4 w-4" />

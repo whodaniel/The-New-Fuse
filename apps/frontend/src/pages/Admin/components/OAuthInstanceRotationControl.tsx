@@ -313,7 +313,7 @@ export function OAuthInstanceRotationControl() {
   }, []);
 
   return (
-    <section className="rounded-2xl border border-emerald-500/20 bg-slate-900/60 p-6 space-y-5">
+    <section className="rounded-md border border-emerald-500/20 bg-slate-900/60 p-4 space-y-5">
       <div className="flex items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-semibold text-emerald-300">OAuth Account Rotation</h2>
@@ -324,7 +324,7 @@ export function OAuthInstanceRotationControl() {
         </div>
       </div>
 
-      <div className="rounded-lg border border-white/15 bg-black/30 p-3 space-y-3">
+      <div className="rounded-md border border-white/15 bg-black/30 p-3 space-y-3">
         <h3 className="text-sm font-semibold text-slate-200">
           Secret Inputs (for encrypted binding save)
         </h3>
@@ -334,7 +334,7 @@ export function OAuthInstanceRotationControl() {
             type="password"
             value={accessToken}
             onChange={(e) => setAccessToken(e.target.value)}
-            className="mt-1 w-full rounded-lg bg-slate-950 border border-white/15 px-3 py-2 text-sm text-slate-100"
+            className="mt-1 w-full rounded-md bg-slate-950 border border-white/15 px-3 py-2 text-sm text-slate-100"
           />
         </label>
         <label className="text-sm text-slate-300 block">
@@ -343,7 +343,7 @@ export function OAuthInstanceRotationControl() {
             type="password"
             value={refreshToken}
             onChange={(e) => setRefreshToken(e.target.value)}
-            className="mt-1 w-full rounded-lg bg-slate-950 border border-white/15 px-3 py-2 text-sm text-slate-100"
+            className="mt-1 w-full rounded-md bg-slate-950 border border-white/15 px-3 py-2 text-sm text-slate-100"
           />
         </label>
         {provider === 'openai-codex' && (
@@ -352,7 +352,7 @@ export function OAuthInstanceRotationControl() {
             <input
               value={accountId}
               onChange={(e) => setAccountId(e.target.value)}
-              className="mt-1 w-full rounded-lg bg-slate-950 border border-white/15 px-3 py-2 text-sm text-slate-100"
+              className="mt-1 w-full rounded-md bg-slate-950 border border-white/15 px-3 py-2 text-sm text-slate-100"
             />
           </label>
         )}
@@ -363,7 +363,7 @@ export function OAuthInstanceRotationControl() {
               <input
                 value={googleEmail}
                 onChange={(e) => setGoogleEmail(e.target.value)}
-                className="mt-1 w-full rounded-lg bg-slate-950 border border-white/15 px-3 py-2 text-sm text-slate-100"
+                className="mt-1 w-full rounded-md bg-slate-950 border border-white/15 px-3 py-2 text-sm text-slate-100"
               />
             </label>
             <label className="text-sm text-slate-300 block">
@@ -371,7 +371,7 @@ export function OAuthInstanceRotationControl() {
               <input
                 value={googleProjectId}
                 onChange={(e) => setGoogleProjectId(e.target.value)}
-                className="mt-1 w-full rounded-lg bg-slate-950 border border-white/15 px-3 py-2 text-sm text-slate-100"
+                className="mt-1 w-full rounded-md bg-slate-950 border border-white/15 px-3 py-2 text-sm text-slate-100"
               />
             </label>
           </>
@@ -384,7 +384,7 @@ export function OAuthInstanceRotationControl() {
           <input
             value={tenantId}
             onChange={(e) => setTenantId(e.target.value)}
-            className="mt-1 w-full rounded-lg bg-slate-950 border border-white/15 px-3 py-2 text-sm text-slate-100"
+            className="mt-1 w-full rounded-md bg-slate-950 border border-white/15 px-3 py-2 text-sm text-slate-100"
           />
         </label>
         <label className="text-sm text-slate-300">
@@ -392,7 +392,7 @@ export function OAuthInstanceRotationControl() {
           <input
             value={service}
             onChange={(e) => setService(e.target.value)}
-            className="mt-1 w-full rounded-lg bg-slate-950 border border-white/15 px-3 py-2 text-sm text-slate-100"
+            className="mt-1 w-full rounded-md bg-slate-950 border border-white/15 px-3 py-2 text-sm text-slate-100"
           />
         </label>
         <label className="text-sm text-slate-300">
@@ -400,7 +400,7 @@ export function OAuthInstanceRotationControl() {
           <select
             value={provider}
             onChange={(e) => applyProviderDefaults(e.target.value as ProviderKey)}
-            className="mt-1 w-full rounded-lg bg-slate-950 border border-white/15 px-3 py-2 text-sm text-slate-100"
+            className="mt-1 w-full rounded-md bg-slate-950 border border-white/15 px-3 py-2 text-sm text-slate-100"
           >
             <option value="openai-codex">openai-codex</option>
             <option value="anthropic">anthropic</option>
@@ -413,7 +413,7 @@ export function OAuthInstanceRotationControl() {
           <input
             value={authFile}
             onChange={(e) => setAuthFile(e.target.value)}
-            className="mt-1 w-full rounded-lg bg-slate-950 border border-white/15 px-3 py-2 text-sm text-slate-100"
+            className="mt-1 w-full rounded-md bg-slate-950 border border-white/15 px-3 py-2 text-sm text-slate-100"
           />
         </label>
         <label className="text-sm text-slate-300">
@@ -421,7 +421,7 @@ export function OAuthInstanceRotationControl() {
           <input
             value={primaryModel}
             onChange={(e) => setPrimaryModel(e.target.value)}
-            className="mt-1 w-full rounded-lg bg-slate-950 border border-white/15 px-3 py-2 text-sm text-slate-100"
+            className="mt-1 w-full rounded-md bg-slate-950 border border-white/15 px-3 py-2 text-sm text-slate-100"
           />
         </label>
         <label className="text-sm text-slate-300">
@@ -429,7 +429,7 @@ export function OAuthInstanceRotationControl() {
           <input
             value={fallbackModels}
             onChange={(e) => setFallbackModels(e.target.value)}
-            className="mt-1 w-full rounded-lg bg-slate-950 border border-white/15 px-3 py-2 text-sm text-slate-100"
+            className="mt-1 w-full rounded-md bg-slate-950 border border-white/15 px-3 py-2 text-sm text-slate-100"
           />
         </label>
         <label className="text-sm text-slate-300">
@@ -437,7 +437,7 @@ export function OAuthInstanceRotationControl() {
           <input
             value={accessPath}
             onChange={(e) => setAccessPath(e.target.value)}
-            className="mt-1 w-full rounded-lg bg-slate-950 border border-white/15 px-3 py-2 text-sm text-slate-100"
+            className="mt-1 w-full rounded-md bg-slate-950 border border-white/15 px-3 py-2 text-sm text-slate-100"
           />
         </label>
         <label className="text-sm text-slate-300">
@@ -445,7 +445,7 @@ export function OAuthInstanceRotationControl() {
           <input
             value={refreshPath}
             onChange={(e) => setRefreshPath(e.target.value)}
-            className="mt-1 w-full rounded-lg bg-slate-950 border border-white/15 px-3 py-2 text-sm text-slate-100"
+            className="mt-1 w-full rounded-md bg-slate-950 border border-white/15 px-3 py-2 text-sm text-slate-100"
           />
         </label>
         <label className="text-sm text-slate-300 md:col-span-2">
@@ -453,7 +453,7 @@ export function OAuthInstanceRotationControl() {
           <input
             value={accountPath}
             onChange={(e) => setAccountPath(e.target.value)}
-            className="mt-1 w-full rounded-lg bg-slate-950 border border-white/15 px-3 py-2 text-sm text-slate-100"
+            className="mt-1 w-full rounded-md bg-slate-950 border border-white/15 px-3 py-2 text-sm text-slate-100"
           />
         </label>
       </div>
@@ -461,7 +461,7 @@ export function OAuthInstanceRotationControl() {
       <div className="flex flex-wrap gap-2">
         <button
           onClick={loadBindings}
-          className="rounded-md border border-white/20 px-3 py-2 text-xs text-slate-100 hover:bg-white/10"
+          className="rounded-md border border-white/20 px-3 py-2 text-xs text-slate-100 hover:bg-transparent/10"
         >
           Load Stored Bindings
         </button>
@@ -482,13 +482,13 @@ export function OAuthInstanceRotationControl() {
       </div>
 
       {apiMessage && (
-        <div className="rounded-lg border border-amber-400/30 bg-amber-500/10 p-3 text-xs text-amber-200 whitespace-pre-wrap">
+        <div className="rounded-md border border-amber-400/30 bg-amber-500/10 p-3 text-xs text-amber-200 whitespace-pre-wrap">
           {apiMessage}
         </div>
       )}
 
       {bindings.length > 0 && (
-        <div className="rounded-lg border border-white/15 bg-black/30 p-3">
+        <div className="rounded-md border border-white/15 bg-black/30 p-3">
           <h3 className="text-sm font-semibold text-slate-200 mb-2">Stored Bindings</h3>
           <div className="space-y-1 text-xs text-slate-300">
             {bindings.map((binding) => (
@@ -501,7 +501,7 @@ export function OAuthInstanceRotationControl() {
         </div>
       )}
 
-      <div className="rounded-lg border border-white/15 bg-black/30 p-3 space-y-3">
+      <div className="rounded-md border border-white/15 bg-black/30 p-3 space-y-3">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-semibold text-slate-200">Live Rotation Activity</h3>
           <span className="text-[11px] text-slate-400">
@@ -576,7 +576,7 @@ export function OAuthInstanceRotationControl() {
         )}
       </div>
 
-      <div className="rounded-lg border border-white/15 bg-black/30 p-3 space-y-2">
+      <div className="rounded-md border border-white/15 bg-black/30 p-3 space-y-2">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-semibold text-slate-200">One-shot command</h3>
           <button
@@ -591,7 +591,7 @@ export function OAuthInstanceRotationControl() {
         </pre>
       </div>
 
-      <div className="rounded-lg border border-white/15 bg-black/30 p-3 space-y-2">
+      <div className="rounded-md border border-white/15 bg-black/30 p-3 space-y-2">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-semibold text-slate-200">Config snippet</h3>
           <button
@@ -604,7 +604,7 @@ export function OAuthInstanceRotationControl() {
         <pre className="text-xs text-cyan-100 whitespace-pre-wrap">{configSnippet}</pre>
       </div>
 
-      <div className="rounded-lg border border-white/15 bg-black/30 p-3 space-y-2">
+      <div className="rounded-md border border-white/15 bg-black/30 p-3 space-y-2">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-semibold text-slate-200">Verification command</h3>
           <button

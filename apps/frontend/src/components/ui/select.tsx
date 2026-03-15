@@ -29,8 +29,8 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
       return (
         <select
           className={cn(
-            'flex h-10 w-full rounded-md border border-gray-300 bg-background px-3 py-2 text-sm',
-            'ring-offset-background focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
+            'flex h-9 w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm',
+            'ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
             'disabled:cursor-not-allowed disabled:opacity-50',
             className
           )}
@@ -117,7 +117,7 @@ const SelectTrigger: React.FC<SelectTriggerProps> = ({ className = '', children 
       ref={ref}
       type="button"
       className={cn(
-        'flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm',
+        'flex h-9 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-1.5 text-sm',
         'ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
         'disabled:cursor-not-allowed disabled:opacity-50',
         className
@@ -182,7 +182,7 @@ const SelectContent: React.FC<SelectContentProps> = ({ className = '', children 
     <div
       ref={ref}
       className={cn(
-        'absolute z-50 min-w-[8rem] overflow-hidden rounded-md border border-gray-200 bg-background p-1 text-foreground shadow-lg',
+        'absolute z-50 min-w-[8rem] overflow-hidden rounded-md border border-input bg-background p-1 text-foreground shadow-none',
         'animate-in fade-in-0 zoom-in-95',
         className
       )}

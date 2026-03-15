@@ -124,7 +124,7 @@ export default function LocalAiOptions({ settings }: LocalAiOptionsProps) {
         <div className="flex justify-start">
           <button
             type="button"
-            className="flex items-center text-sm font-medium text-gray-600 hover:text-gray-800"
+            className="flex items-center text-sm font-medium text-muted-foreground hover:text-gray-800"
             onClick={() => setShowAdvanced(!showAdvanced)}
           >
             {showAdvanced ? (

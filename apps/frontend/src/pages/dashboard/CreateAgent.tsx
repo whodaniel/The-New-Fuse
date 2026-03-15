@@ -371,7 +371,7 @@ const CreateAgent: React.FC = () => {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => setConfig({ ...config, type: type.id })}
-                      className={`relative p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
+                      className={`relative p-4 rounded-md border-2 cursor-pointer transition-all duration-200 ${
                         isSelected
                           ? 'border-purple-500 bg-purple-500/10'
                           : 'border-white/10 bg-black/20 hover:border-white/20'
@@ -379,7 +379,7 @@ const CreateAgent: React.FC = () => {
                     >
                       <div className="flex items-start gap-3">
                         <div
-                          className={`p-3 rounded-xl bg-gradient-to-br ${type.gradient} bg-opacity-20`}
+                          className={`p-3 rounded-md bg-gradient-to-br ${type.gradient} bg-opacity-20`}
                         >
                           <Icon className="w-6 h-6 text-white" />
                         </div>
@@ -423,7 +423,7 @@ const CreateAgent: React.FC = () => {
                       whileHover={{ scale: 1.01 }}
                       whileTap={{ scale: 0.99 }}
                       onClick={() => setConfig({ ...config, model: model.id })}
-                      className={`p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
+                      className={`p-4 rounded-md border-2 cursor-pointer transition-all duration-200 ${
                         isSelected
                           ? 'border-blue-500 bg-blue-500/10'
                           : 'border-white/10 bg-black/20 hover:border-white/20'
@@ -468,7 +468,7 @@ const CreateAgent: React.FC = () => {
                       onClick={() =>
                         setConfig({ ...config, deployment: id as 'cloud' | 'local' | 'hybrid' })
                       }
-                      className={`p-4 rounded-xl border-2 cursor-pointer transition-all text-center ${
+                      className={`p-4 rounded-md border-2 cursor-pointer transition-all text-center ${
                         isSelected
                           ? 'border-purple-500 bg-purple-500/10'
                           : 'border-white/10 bg-black/20 hover:border-white/20'
@@ -524,7 +524,7 @@ const CreateAgent: React.FC = () => {
                       key={capability}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className={`flex items-center gap-2 p-3 rounded-xl border cursor-pointer transition-all ${
+                      className={`flex items-center gap-2 p-3 rounded-md border cursor-pointer transition-all ${
                         isSelected
                           ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400'
                           : 'border-white/10 bg-black/20 hover:border-white/20 text-gray-300'
@@ -593,7 +593,7 @@ const CreateAgent: React.FC = () => {
             animate="visible"
             className="space-y-6"
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <motion.div variants={itemVariants}>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
                   Temperature: <span className="text-purple-400">{config.temperature}</span>
@@ -607,9 +607,9 @@ const CreateAgent: React.FC = () => {
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setConfig({ ...config, temperature: parseFloat(e.target.value) })
                   }
-                  className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500"
+                  className="w-full h-2 bg-transparent/10 rounded-md appearance-none cursor-pointer accent-purple-500"
                 />
-                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                <div className="flex justify-between text-xs text-muted-foreground mt-1">
                   <span>Focused</span>
                   <span>Creative</span>
                 </div>
@@ -641,7 +641,7 @@ const CreateAgent: React.FC = () => {
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setConfig({ ...config, topP: parseFloat(e.target.value) })
                   }
-                  className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500"
+                  className="w-full h-2 bg-transparent/10 rounded-md appearance-none cursor-pointer accent-purple-500"
                 />
               </motion.div>
 
@@ -662,7 +662,7 @@ const CreateAgent: React.FC = () => {
             </div>
 
             <motion.div variants={itemVariants} className="space-y-4 pt-4">
-              <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+              <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/5">
                 <div>
                   <p className="font-medium text-white">Make this agent publicly available</p>
                   <p className="text-sm text-gray-400">Others can discover and use this agent</p>
@@ -673,7 +673,7 @@ const CreateAgent: React.FC = () => {
                 />
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+              <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/5">
                 <div>
                   <p className="font-medium text-white">Enable conversation logging</p>
                   <p className="text-sm text-gray-400">Store conversation history for analysis</p>
@@ -684,7 +684,7 @@ const CreateAgent: React.FC = () => {
                 />
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+              <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/5">
                 <div>
                   <p className="font-medium text-white">Enable performance metrics</p>
                   <p className="text-sm text-gray-400">Track response times and usage stats</p>
@@ -713,24 +713,24 @@ const CreateAgent: React.FC = () => {
                   Agent Summary
                 </h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <h4 className="font-medium text-gray-300 mb-3">Basic Information</h4>
                     <dl className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <dt className="text-gray-500">Name:</dt>
+                        <dt className="text-muted-foreground">Name:</dt>
                         <dd className="text-white font-medium">{config.name || '-'}</dd>
                       </div>
                       <div className="flex justify-between">
-                        <dt className="text-gray-500">Type:</dt>
+                        <dt className="text-muted-foreground">Type:</dt>
                         <dd className="text-white capitalize">{config.type.replace('-', ' ')}</dd>
                       </div>
                       <div className="flex justify-between">
-                        <dt className="text-gray-500">Model:</dt>
+                        <dt className="text-muted-foreground">Model:</dt>
                         <dd className="text-white">{config.model}</dd>
                       </div>
                       <div className="flex justify-between">
-                        <dt className="text-gray-500">Deployment:</dt>
+                        <dt className="text-muted-foreground">Deployment:</dt>
                         <dd className="text-white capitalize">{config.deployment}</dd>
                       </div>
                     </dl>
@@ -740,19 +740,19 @@ const CreateAgent: React.FC = () => {
                     <h4 className="font-medium text-gray-300 mb-3">Configuration</h4>
                     <dl className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <dt className="text-gray-500">Temperature:</dt>
+                        <dt className="text-muted-foreground">Temperature:</dt>
                         <dd className="text-white">{config.temperature}</dd>
                       </div>
                       <div className="flex justify-between">
-                        <dt className="text-gray-500">Max Tokens:</dt>
+                        <dt className="text-muted-foreground">Max Tokens:</dt>
                         <dd className="text-white">{config.maxTokens}</dd>
                       </div>
                       <div className="flex justify-between">
-                        <dt className="text-gray-500">Rate Limit:</dt>
+                        <dt className="text-muted-foreground">Rate Limit:</dt>
                         <dd className="text-white">{config.rateLimitPerMinute}/min</dd>
                       </div>
                       <div className="flex justify-between">
-                        <dt className="text-gray-500">Public:</dt>
+                        <dt className="text-muted-foreground">Public:</dt>
                         <dd className="text-white">{config.isPublic ? 'Yes' : 'No'}</dd>
                       </div>
                     </dl>
@@ -808,7 +808,7 @@ const CreateAgent: React.FC = () => {
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" />
       </div>
 
-      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-3 lg:px-8 py-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -819,12 +819,12 @@ const CreateAgent: React.FC = () => {
           <div className="flex items-center gap-4 mb-6">
             <Link
               to="/dashboard/agents"
-              className="p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/10"
+              className="p-2 text-gray-400 hover:text-white transition-colors rounded-md hover:bg-transparent/10"
             >
               <ArrowLeft className="w-5 h-5" />
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 flex items-center gap-2">
+              <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 flex items-center gap-2">
                 <Bot className="w-8 h-8 text-purple-400" />
                 Create New Agent
               </h1>
@@ -855,14 +855,14 @@ const CreateAgent: React.FC = () => {
                           ? 'bg-emerald-500 border-emerald-500 text-white'
                           : isCurrent
                             ? 'bg-purple-500 border-purple-500 text-white'
-                            : 'bg-black/20 border-white/20 text-gray-500'
+                            : 'bg-black/20 border-white/20 text-muted-foreground'
                       }`}
                     >
                       {isCompleted ? <Check className="w-5 h-5" /> : <Icon className="w-5 h-5" />}
                     </div>
                     <span
                       className={`text-sm font-medium whitespace-nowrap ${
-                        isCurrent || isCompleted ? 'text-white' : 'text-gray-500'
+                        isCurrent || isCompleted ? 'text-white' : 'text-muted-foreground'
                       }`}
                     >
                       {step.name}
@@ -870,7 +870,7 @@ const CreateAgent: React.FC = () => {
                   </motion.div>
                   {index < steps.length - 1 && (
                     <div
-                      className={`w-8 h-0.5 ${isCompleted ? 'bg-emerald-500' : 'bg-white/10'}`}
+                      className={`w-8 h-0.5 ${isCompleted ? 'bg-emerald-500' : 'bg-transparent/10'}`}
                     />
                   )}
                 </React.Fragment>
@@ -881,7 +881,7 @@ const CreateAgent: React.FC = () => {
 
         {/* Step Content */}
         <GlassCard className="mb-8">
-          <div className="p-6">
+          <div className="p-4">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentStep}

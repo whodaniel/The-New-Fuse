@@ -109,8 +109,8 @@ export default function WorkspaceChat({ loading, workspace }: WorkspaceChatProps
       <>
         {loading === false && !workspace && (
           <ModalWrapper isOpen={true}>
-            <div className="relative w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border">
-              <div className="flex flex-col gap-y-4 w-full p-6 text-center">
+            <div className="relative w-full max-w-2xl bg-theme-bg-secondary rounded-md shadow border-2 border-theme-modal-border">
+              <div className="flex flex-col gap-y-4 w-full p-4 text-center">
                 <p className="font-semibold text-red-500 text-xl">Workspace not found!</p>
                 <p className="text-sm mt-4 text-white">
                   It looks like a workspace by this name is not available.
@@ -119,7 +119,7 @@ export default function WorkspaceChat({ loading, workspace }: WorkspaceChatProps
                 <div className="flex w-full justify-center items-center mt-4">
                   <a
                     href={paths.home()}
-                    className="transition-all duration-300 bg-white text-black hover:opacity-60 px-4 py-2 rounded-lg text-sm flex items-center gap-x-2"
+                    className="transition-all duration-300 bg-transparent text-black hover:opacity-60 px-4 py-2 rounded-md text-sm flex items-center gap-x-2"
                   >
                     Go back to homepage
                   </a>

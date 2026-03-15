@@ -13,7 +13,7 @@ export default function MainLayout() {
       <Header />
       <div className="flex h-[calc(100vh-4rem)]">
         <Sidebar className={layout.sidebarOpen ? 'w-64' : 'w-16'} />
-        <main className="flex-1 overflow-auto p-6">
+        <main className="flex-1 overflow-auto p-4">
           <Outlet />
         </main>
       </div>

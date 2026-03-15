@@ -67,7 +67,7 @@ export default function WorkflowBrowser() {
       case 'complex':
         return 'bg-red-500/10 text-red-400 border-red-500/20';
       default:
-        return 'bg-gray-500/10 text-gray-400 border-gray-500/20';
+        return 'bg-transparent0/10 text-gray-400 border-gray-500/20';
     }
   };
 
@@ -107,7 +107,7 @@ export default function WorkflowBrowser() {
     onAction: (item: N8NWorkflow, action: string) => void
   ) => (
     <GlassCard
-      className="h-full cursor-pointer group relative overflow-hidden flex flex-col p-5"
+      className="h-full cursor-pointer group relative overflow-hidden flex flex-col p-4"
       onClick={() => onAction(workflow, 'view-details')}
     >
       {workflow.featured && (
@@ -117,7 +117,7 @@ export default function WorkflowBrowser() {
       )}
 
       <div className="flex items-start justify-between mb-4">
-        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center border border-green-500/30">
+        <div className="w-10 h-10 rounded-md bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center border border-green-500/30">
           <Workflow className="w-5 h-5 text-green-400" />
         </div>
         <div className="flex items-center space-x-1 text-yellow-500 bg-yellow-500/10 px-2 py-1 rounded-full border border-yellow-500/20">
@@ -138,13 +138,13 @@ export default function WorkflowBrowser() {
             <Badge
               key={tag}
               variant="outline"
-              className="text-xs bg-white/5 border-white/10 hover:bg-white/10"
+              className="text-xs bg-transparent/5 border-white/10 hover:bg-transparent/10"
             >
               {tag}
             </Badge>
           ))}
           {workflow.tags.length > 3 && (
-            <Badge variant="outline" className="text-xs bg-white/5 border-white/10">
+            <Badge variant="outline" className="text-xs bg-transparent/5 border-white/10">
               +{workflow.tags.length - 3}
             </Badge>
           )}
@@ -156,7 +156,7 @@ export default function WorkflowBrowser() {
           >
             {workflow.complexity}
           </span>
-          <div className="flex items-center text-gray-500 text-xs">
+          <div className="flex items-center text-muted-foreground text-xs">
             <GitBranch className="w-3 h-3 mr-1" />
             {workflow.nodes} nodes
           </div>
@@ -242,18 +242,18 @@ export default function WorkflowBrowser() {
                 </button>
               </div>
 
-              <div className="p-8 pb-0">
-                <div className="flex items-start gap-5 mb-6">
-                  <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center border border-green-500/30 flex-shrink-0">
+              <div className="p-4 pb-0">
+                <div className="flex items-start gap-4 mb-6">
+                  <div className="w-16 h-16 rounded-md bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center border border-green-500/30 flex-shrink-0">
                     <Workflow className="w-8 h-8 text-green-400" />
                   </div>
                   <div>
-                    <h2 className="text-3xl font-bold text-white mb-2">{selectedWorkflow.name}</h2>
+                    <h2 className="text-2xl font-bold text-white mb-2">{selectedWorkflow.name}</h2>
                     <div className="flex items-center gap-3 text-sm text-gray-400">
                       <span>
                         by <span className="text-white">{selectedWorkflow.author}</span>
                       </span>
-                      <span className="w-1 h-1 rounded-full bg-gray-500"></span>
+                      <span className="w-1 h-1 rounded-full bg-transparent0"></span>
                       <span>v{selectedWorkflow.version}</span>
                     </div>
                   </div>
@@ -266,16 +266,16 @@ export default function WorkflowBrowser() {
 
               <div className="px-8 pb-8 space-y-8">
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-white/5 p-4 rounded-lg border border-white/5">
-                    <p className="text-sm text-gray-500 mb-1">Complexity</p>
+                  <div className="bg-transparent/5 p-4 rounded-md border border-white/5">
+                    <p className="text-sm text-muted-foreground mb-1">Complexity</p>
                     <span
                       className={`inline-block px-3 py-1 text-sm font-medium rounded-full border ${getComplexityColor(selectedWorkflow.complexity)}`}
                     >
                       {selectedWorkflow.complexity}
                     </span>
                   </div>
-                  <div className="bg-white/5 p-4 rounded-lg border border-white/5">
-                    <p className="text-sm text-gray-500 mb-1">Nodes</p>
+                  <div className="bg-transparent/5 p-4 rounded-md border border-white/5">
+                    <p className="text-sm text-muted-foreground mb-1">Nodes</p>
                     <p className="text-lg font-semibold text-white flex items-center gap-2">
                       <GitBranch className="w-4 h-4 text-green-400" /> {selectedWorkflow.nodes}
                     </p>
@@ -290,7 +290,7 @@ export default function WorkflowBrowser() {
                     {selectedWorkflow.triggers.map((trigger, i) => (
                       <div
                         key={i}
-                        className="flex items-center gap-2 text-sm text-gray-300 bg-white/5 p-2 px-3 rounded-lg border border-white/5"
+                        className="flex items-center gap-2 text-sm text-gray-300 bg-transparent/5 p-2 px-3 rounded-md border border-white/5"
                       >
                         {trigger}
                       </div>
@@ -306,7 +306,7 @@ export default function WorkflowBrowser() {
                     {selectedWorkflow.actions.map((action, i) => (
                       <div
                         key={i}
-                        className="flex items-center gap-2 text-sm text-gray-300 bg-white/5 p-2 px-3 rounded-lg border border-white/5"
+                        className="flex items-center gap-2 text-sm text-gray-300 bg-transparent/5 p-2 px-3 rounded-md border border-white/5"
                       >
                         {action}
                       </div>

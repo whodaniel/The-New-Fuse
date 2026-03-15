@@ -101,27 +101,29 @@ const FairtableDashboard: React.FC = () => {
       <div className="flex justify-center items-center h-[50vh]">
         <div className="flex flex-col items-center gap-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading Fairtable Dashboard...</p>
+          <p className="text-muted-foreground dark:text-muted-foreground">
+            Loading Fairtable Dashboard...
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="p-4 max-w-7xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
             Fairtable Dashboard
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-muted-foreground dark:text-muted-foreground">
             Manage your databases, tables, and collaborative workspaces
           </p>
         </div>
 
         <button
           onClick={createNewTable}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
         >
           <Plus className="w-4 h-4" />
           Create Table
@@ -129,7 +131,7 @@ const FairtableDashboard: React.FC = () => {
       </div>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {[
           {
             icon: Database,
@@ -162,14 +164,16 @@ const FairtableDashboard: React.FC = () => {
         ].map((stat, idx) => (
           <div
             key={idx}
-            className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 flex items-center gap-4"
+            className="bg-transparent dark:bg-transparent p-4 rounded-md shadow-none border border-gray-200 dark:border-gray-700 flex items-center gap-4"
           >
-            <div className={`p-3 rounded-lg ${stat.bg} ${stat.color} dark:bg-opacity-20`}>
+            <div className={`p-3 rounded-md ${stat.bg} ${stat.color} dark:bg-opacity-20`}>
               <stat.icon className="w-6 h-6" />
             </div>
             <div>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">{stat.label}</p>
+              <p className="text-sm text-muted-foreground dark:text-muted-foreground">
+                {stat.label}
+              </p>
             </div>
           </div>
         ))}
@@ -180,8 +184,10 @@ const FairtableDashboard: React.FC = () => {
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Your Tables</h2>
           <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-500 dark:text-gray-400">View as:</span>
-            <div className="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+            <span className="text-sm text-muted-foreground dark:text-muted-foreground">
+              View as:
+            </span>
+            <div className="flex bg-gray-100 dark:bg-transparent rounded-md p-1">
               {[
                 { id: 'grid', icon: Grid },
                 { id: 'kanban', icon: Columns },
@@ -192,8 +198,8 @@ const FairtableDashboard: React.FC = () => {
                   onClick={() => setSelectedView(view.id as any)}
                   className={`p-1.5 rounded-md transition-all ${
                     selectedView === view.id
-                      ? 'bg-white dark:bg-gray-600 text-blue-600 shadow-sm'
-                      : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                      ? 'bg-transparent dark:bg-gray-600 text-blue-600 shadow-none'
+                      : 'text-muted-foreground hover:text-foreground dark:text-muted-foreground dark:hover:text-gray-200'
                   }`}
                   aria-label={`${view.id} view`}
                 >
@@ -204,12 +210,12 @@ const FairtableDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {tables.map((table) => (
             <div
               key={table.id}
               onClick={() => openTable(table)}
-              className="group bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-md transition-all cursor-pointer p-5 flex flex-col gap-4"
+              className="group bg-transparent dark:bg-transparent rounded-md shadow-none border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-md transition-all cursor-pointer p-4 flex flex-col gap-4"
             >
               <div className="flex justify-between items-start">
                 <div className="flex flex-col gap-1 flex-1">
@@ -223,13 +229,13 @@ const FairtableDashboard: React.FC = () => {
                       {table.status}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                  <p className="text-sm text-muted-foreground dark:text-muted-foreground line-clamp-2">
                     {table.description}
                   </p>
                 </div>
 
                 <button
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1 rounded hover:bg-gray-50 dark:hover:bg-gray-700"
+                  className="text-gray-400 hover:text-muted-foreground dark:hover:text-gray-300 p-1 rounded hover:bg-muted/20 dark:hover:bg-gray-700"
                   onClick={(e) => {
                     e.stopPropagation();
                     console.log('More options clicked');
@@ -245,17 +251,17 @@ const FairtableDashboard: React.FC = () => {
                     {getViewIcon(table.viewType)}
                     <span className="capitalize">{table.viewType} View</span>
                   </div>
-                  <span className="text-gray-500 dark:text-gray-400">
+                  <span className="text-muted-foreground dark:text-muted-foreground">
                     {table.recordCount} records
                   </span>
                 </div>
 
                 <div className="flex justify-between items-center text-sm">
-                  <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                  <div className="flex items-center gap-2 text-muted-foreground dark:text-muted-foreground">
                     <Users className="w-3.5 h-3.5" />
                     <span>{table.collaborators} collaborators</span>
                   </div>
-                  <span className="text-gray-500 dark:text-gray-400">
+                  <span className="text-muted-foreground dark:text-muted-foreground">
                     Updated {table.lastModified}
                   </span>
                 </div>
@@ -266,14 +272,14 @@ const FairtableDashboard: React.FC = () => {
       </div>
 
       {tables.length === 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-12 flex flex-col items-center justify-center text-center">
-          <Database className="w-16 h-16 text-gray-300 dark:text-gray-600 mb-4" />
-          <p className="text-gray-500 dark:text-gray-400 mb-6">
+        <div className="bg-transparent dark:bg-transparent rounded-md shadow-none border border-gray-200 dark:border-gray-700 p-12 flex flex-col items-center justify-center text-center">
+          <Database className="w-16 h-16 text-gray-300 dark:text-muted-foreground mb-4" />
+          <p className="text-muted-foreground dark:text-muted-foreground mb-6">
             No tables found. Create your first table to get started.
           </p>
           <button
             onClick={createNewTable}
-            className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium"
           >
             <Plus className="w-5 h-5" />
             Create Your First Table

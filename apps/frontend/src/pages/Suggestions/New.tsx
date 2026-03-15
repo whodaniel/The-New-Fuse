@@ -50,13 +50,13 @@ const NewSuggestion: React.FC = () => {
           Back
         </Button>
         <div>
-          <h1 className="text-3xl font-bold">Submit Suggestion</h1>
+          <h1 className="text-2xl font-bold">Submit Suggestion</h1>
           <p className="text-muted-foreground">Feeds the unified task/suggestion ledger</p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
-        <Card className="p-6 space-y-4">
+        <Card className="p-4 space-y-4">
           <div>
             <Label htmlFor="title">Title</Label>
             <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} required />

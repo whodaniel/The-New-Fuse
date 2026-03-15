@@ -184,7 +184,7 @@ export const ToolsSelectionStep: React.FC = () => {
     <div className="space-y-6">
       <h2 className="text-lg font-semibold text-gray-900 mb-4">Tools & Integrations</h2>
 
-      <p className="text-gray-600 mb-6">
+      <p className="text-muted-foreground mb-6">
         Select the tools and integrations you want to enable for your AI assistants.
       </p>
 
@@ -200,7 +200,7 @@ export const ToolsSelectionStep: React.FC = () => {
                 Select All
               </button>
               <button
-                className="px-2 py-1 text-xs border border-gray-300 text-gray-700 rounded hover:bg-gray-50"
+                className="px-2 py-1 text-xs border border-gray-300 text-foreground rounded hover:bg-muted/20"
                 onClick={() => handleClearAll('tools')}
               >
                 Clear All
@@ -210,8 +210,8 @@ export const ToolsSelectionStep: React.FC = () => {
 
           <div className="space-y-2">
             {toolCategories.map((category, idx) => (
-              <details key={idx} className="bg-gray-50 rounded-md" open={idx === 0}>
-                <summary className="p-3 cursor-pointer flex items-center justify-between hover:bg-gray-100 rounded-md">
+              <details key={idx} className="bg-transparent rounded-md" open={idx === 0}>
+                <summary className="p-3 cursor-pointer flex items-center justify-between hover:bg-muted/30 rounded-md">
                   <div className="flex items-center space-x-2">
                     <category.icon className="w-4 h-4" />
                     <span className="font-medium">{category.name}</span>
@@ -237,7 +237,7 @@ export const ToolsSelectionStep: React.FC = () => {
                         />
                         <div>
                           <div className="font-medium text-gray-900">{tool.label}</div>
-                          <div className="text-sm text-gray-600">{tool.description}</div>
+                          <div className="text-sm text-muted-foreground">{tool.description}</div>
                         </div>
                       </label>
                     ))}
@@ -261,7 +261,7 @@ export const ToolsSelectionStep: React.FC = () => {
                 Select All
               </button>
               <button
-                className="px-2 py-1 text-xs border border-gray-300 text-gray-700 rounded hover:bg-gray-50"
+                className="px-2 py-1 text-xs border border-gray-300 text-foreground rounded hover:bg-muted/20"
                 onClick={() => handleClearAll('integrations')}
               >
                 Clear All
@@ -271,8 +271,8 @@ export const ToolsSelectionStep: React.FC = () => {
 
           <div className="space-y-2">
             {integrationCategories.map((category, idx) => (
-              <details key={idx} className="bg-gray-50 rounded-md" open={idx === 0}>
-                <summary className="p-3 cursor-pointer flex items-center justify-between hover:bg-gray-100 rounded-md">
+              <details key={idx} className="bg-transparent rounded-md" open={idx === 0}>
+                <summary className="p-3 cursor-pointer flex items-center justify-between hover:bg-muted/30 rounded-md">
                   <div className="flex items-center space-x-2">
                     <category.icon className="w-4 h-4" />
                     <span className="font-medium">{category.name}</span>
@@ -303,7 +303,9 @@ export const ToolsSelectionStep: React.FC = () => {
                         />
                         <div>
                           <div className="font-medium text-gray-900">{integration.label}</div>
-                          <div className="text-sm text-gray-600">{integration.description}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {integration.description}
+                          </div>
                         </div>
                       </label>
                     ))}

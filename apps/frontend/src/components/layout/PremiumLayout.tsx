@@ -28,7 +28,7 @@ export const PremiumLayout: React.FC<PremiumLayoutProps> = ({
   breadcrumbs,
   showSidebar = true,
   showHeader = true,
-  containerClass = 'max-w-7xl mx-auto',
+  containerClass = 'max-w-6xl mx-auto',
 }) => {
   const { user, logout } = useAuth();
   const { layout, toggleSidebar } = useLayout();
@@ -47,19 +47,13 @@ export const PremiumLayout: React.FC<PremiumLayoutProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 relative overflow-hidden">
-      {/* Decorative Floating Orbs */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-[-5%] left-[-5%] w-[35%] h-[35%] bg-blue-600/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-5%] right-[-5%] w-[35%] h-[35%] bg-purple-600/10 rounded-full blur-[120px]" />
-      </div>
-
-      <div className="flex flex-1 relative z-10 pt-16">
+    <div className="min-h-screen bg-slate-950 text-slate-100 relative">
+      <div className="flex flex-1 relative pt-16">
         {/* Glassmorphic Sidebar */}
         {showSidebar && layout.sidebarOpen && (
-          <aside className="hidden md:block w-64 fixed left-0 top-16 bottom-0 backdrop-blur-3xl bg-slate-900/50 border-r border-white/5 shadow-2xl overflow-y-auto">
-            <nav className="p-4 space-y-1">
-              <div className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-4 px-3">
+          <aside className="hidden md:block w-60 fixed left-0 top-16 bottom-0 bg-slate-900 border-r border-slate-800 overflow-y-auto">
+            <nav className="p-3 space-y-1">
+              <div className="text-[10px] font-semibold text-slate-500 uppercase tracking-[0.18em] mb-3 px-2">
                 Main Fleet
               </div>
               <SidebarLink
@@ -74,7 +68,7 @@ export const PremiumLayout: React.FC<PremiumLayoutProps> = ({
                 label="Swarms"
               />
 
-              <div className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mt-8 mb-4 px-3">
+              <div className="text-[10px] font-semibold text-slate-500 uppercase tracking-[0.18em] mt-6 mb-3 px-2">
                 Engineering
               </div>
               <SidebarLink
@@ -88,7 +82,7 @@ export const PremiumLayout: React.FC<PremiumLayoutProps> = ({
                 label="Pipeline Editor"
               />
 
-              <div className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mt-8 mb-4 px-3">
+              <div className="text-[10px] font-semibold text-slate-500 uppercase tracking-[0.18em] mt-6 mb-3 px-2">
                 Monitoring
               </div>
               <SidebarLink
@@ -112,16 +106,16 @@ export const PremiumLayout: React.FC<PremiumLayoutProps> = ({
 
         {/* Main Content */}
         <main
-          className={`flex-1 ${showSidebar && layout.sidebarOpen ? 'md:ml-64' : ''} min-h-screen`}
+          className={`flex-1 ${showSidebar && layout.sidebarOpen ? 'md:ml-60' : ''} min-h-screen`}
         >
-          <div className="p-4 sm:p-8 lg:p-12">
+          <div className="p-4 sm:p-4 lg:p-4">
             {/* Breadcrumbs */}
             {breadcrumbs && breadcrumbs.length > 0 && (
               <nav className="mb-6" aria-label="Breadcrumb">
                 <ol className="flex items-center space-x-2 text-sm">
                   {breadcrumbs.map((crumb, index) => (
                     <li key={crumb.path} className="flex items-center">
-                      {index > 0 && <ChevronRight className="w-4 h-4 mx-2 text-gray-500" />}
+                      {index > 0 && <ChevronRight className="w-4 h-4 mx-2 text-muted-foreground" />}
                       <Link
                         to={crumb.path}
                         className={`${
@@ -141,12 +135,8 @@ export const PremiumLayout: React.FC<PremiumLayoutProps> = ({
             {/* Page Header */}
             {(title || subtitle) && (
               <div className="mb-8">
-                {title && (
-                  <h1 className="text-3xl font-bold text-white mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                    {title}
-                  </h1>
-                )}
-                {subtitle && <p className="text-gray-400">{subtitle}</p>}
+                {title && <h1 className="text-2xl font-semibold text-slate-100 mb-2">{title}</h1>}
+                {subtitle && <p className="text-slate-400">{subtitle}</p>}
               </div>
             )}
 
@@ -175,22 +165,14 @@ const SidebarLink: React.FC<SidebarLinkProps> = ({ to, icon, label }) => {
   return (
     <Link
       to={to}
-      className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group ${
+      className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors duration-150 group ${
         isActive
-          ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 text-white shadow-lg'
-          : 'text-gray-300 hover:bg-white/10 hover:text-white'
+          ? 'bg-slate-800 text-white border border-slate-700'
+          : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
       }`}
     >
-      <div
-        className={`${
-          isActive
-            ? 'bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg'
-            : 'bg-white/10 group-hover:bg-white/20'
-        } p-2 rounded-lg transition-all duration-200`}
-      >
-        {icon}
-      </div>
-      <span className="font-medium">{label}</span>
+      <div className="text-slate-400 group-hover:text-slate-200">{icon}</div>
+      <span className="font-medium text-sm">{label}</span>
     </Link>
   );
 };

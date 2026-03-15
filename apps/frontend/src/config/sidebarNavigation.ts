@@ -13,6 +13,7 @@ import {
   Library,
   Lightbulb,
   MessageSquare,
+  Network,
   Package,
   ScrollText,
   Settings,
@@ -27,37 +28,64 @@ export interface SidebarNavItem {
   name: string;
   href: string;
   icon: ComponentType<{ className?: string }>;
-  section: 'grid' | 'forge' | 'nexus' | 'apex' | 'advanced';
+  section: 'dashboard' | 'workspace' | 'forge' | 'nexus' | 'apex' | 'advanced';
   access?: 'public' | 'authenticated';
   requiredRoles?: string[];
 }
 
 // Canonical sidebar source of truth for PremiumLayout surfaces.
-// Consolidated IA: Grid (Ops), Forge (AI/Creation), Nexus (Ecosystem), Apex (Control).
+// IA: Dashboard (overview), Workspace (day-to-day), Forge (build/AI), Nexus (ecosystem), Apex (governance).
 export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
-  // GRID: Operational Day-to-Day
+  // DASHBOARD: Overview & Trends
   {
     name: 'Dashboard',
     href: '/dashboard',
     icon: LayoutDashboard,
-    section: 'grid',
+    section: 'dashboard',
     access: 'authenticated',
   },
-  { name: 'Chat', href: '/chat', icon: MessageSquare, section: 'grid', access: 'authenticated' },
   {
-    name: 'Workspace',
-    href: '/workspace/overview',
-    icon: Users,
-    section: 'grid',
+    name: 'Timeline',
+    href: '/timeline',
+    icon: Activity,
+    section: 'dashboard',
     access: 'authenticated',
   },
-  { name: 'Tasks', href: '/tasks', icon: ClipboardList, section: 'grid', access: 'authenticated' },
-  { name: 'Timeline', href: '/timeline', icon: Activity, section: 'grid', access: 'authenticated' },
   {
     name: 'Analytics',
     href: '/analytics',
     icon: BarChart3,
-    section: 'grid',
+    section: 'dashboard',
+    access: 'authenticated',
+  },
+
+  // WORKSPACE: Daily Operations
+  {
+    name: 'Chat',
+    href: '/chat',
+    icon: MessageSquare,
+    section: 'workspace',
+    access: 'authenticated',
+  },
+  {
+    name: 'Workspace',
+    href: '/workspace/overview',
+    icon: Users,
+    section: 'workspace',
+    access: 'authenticated',
+  },
+  {
+    name: 'Tasks',
+    href: '/tasks',
+    icon: ClipboardList,
+    section: 'workspace',
+    access: 'authenticated',
+  },
+  {
+    name: 'Suggestions',
+    href: '/suggestions',
+    icon: Lightbulb,
+    section: 'workspace',
     access: 'authenticated',
   },
 
@@ -84,15 +112,9 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
     section: 'forge',
     access: 'authenticated',
   },
-  {
-    name: 'Suggestions',
-    href: '/suggestions',
-    icon: Lightbulb,
-    section: 'forge',
-    access: 'authenticated',
-  },
 
   // NEXUS: Ecosystem & Knowledge
+  { name: 'Nexus', href: '/nexus', icon: Network, section: 'nexus', access: 'authenticated' },
   { name: 'TNF Hub', href: '/hub', icon: Globe, section: 'nexus', access: 'authenticated' },
   {
     name: 'Marketplace',

@@ -190,21 +190,21 @@ export function DataTable<T extends { id: string | number }>({
   return (
     <div className={cn('w-full', className)}>
       {/* Toolbar */}
-      <div className="flex items-center justify-between p-4 border-b border-neutral-200 dark:border-neutral-700">
-        <div className="text-lg font-semibold">
+      <div className="flex items-center justify-between p-3 border-b border-border/60">
+        <div className="text-base font-semibold">
           {selectedRows.length > 0 ? `${selectedRows.length} selected` : 'Data Table'}
         </div>
 
         <div className="flex items-center gap-2">
           {searchable && (
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
               <input
                 type="text"
                 placeholder="Search..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md bg-white dark:bg-neutral-800 text-sm"
+                className="pl-9 pr-3 py-1.5 border border-input rounded-md bg-background text-sm"
               />
             </div>
           )}
@@ -213,7 +213,7 @@ export function DataTable<T extends { id: string | number }>({
             <Tooltip label="Add">
               <button
                 onClick={() => onAction?.('add', selectedRows)}
-                className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded"
+                className="p-1.5 hover:bg-muted/30 rounded-md"
               >
                 <Plus className="h-4 w-4" />
               </button>
@@ -224,7 +224,7 @@ export function DataTable<T extends { id: string | number }>({
             <Tooltip label="Edit">
               <button
                 onClick={() => onAction?.('edit', selectedRows)}
-                className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded"
+                className="p-1.5 hover:bg-muted/30 rounded-md"
               >
                 <Edit className="h-4 w-4" />
               </button>
@@ -235,7 +235,7 @@ export function DataTable<T extends { id: string | number }>({
             <Tooltip label="Delete">
               <button
                 onClick={() => onAction?.('delete', selectedRows)}
-                className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded text-danger-600"
+                className="p-1.5 hover:bg-muted/30 rounded-md text-danger-600"
               >
                 <Trash2 className="h-4 w-4" />
               </button>
@@ -246,7 +246,7 @@ export function DataTable<T extends { id: string | number }>({
             <Tooltip label="Refresh">
               <button
                 onClick={() => onAction?.('refresh', selectedRows)}
-                className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded"
+                className="p-1.5 hover:bg-muted/30 rounded-md"
               >
                 <RefreshCw className="h-4 w-4" />
               </button>
@@ -255,10 +255,7 @@ export function DataTable<T extends { id: string | number }>({
 
           {actions.export && (
             <Tooltip label="Export">
-              <button
-                onClick={handleExport}
-                className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded"
-              >
+              <button onClick={handleExport} className="p-1.5 hover:bg-muted/30 rounded-md">
                 <Download className="h-4 w-4" />
               </button>
             </Tooltip>
@@ -268,13 +265,13 @@ export function DataTable<T extends { id: string | number }>({
 
       {/* Table */}
       <div className={cn('overflow-x-auto', stickyHeader && 'max-h-[440px] overflow-y-auto')}>
-        <table className="min-w-full divide-y divide-neutral-200 dark:divide-neutral-700">
+        <table className="min-w-full divide-y divide-border/50">
           <thead
-            className={cn('bg-neutral-50 dark:bg-neutral-900', stickyHeader && 'sticky top-0 z-10')}
+            className={cn('bg-background/80 backdrop-blur', stickyHeader && 'sticky top-0 z-10')}
           >
             <tr>
               {selectable && (
-                <th className="px-6 py-3 text-left">
+                <th className="px-3 py-2 text-left">
                   <input
                     type="checkbox"
                     checked={
@@ -291,11 +288,10 @@ export function DataTable<T extends { id: string | number }>({
                   <th
                     key={column.id}
                     className={cn(
-                      'px-6 py-3 text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider',
+                      'px-3 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground/80',
                       column.align === 'right' && 'text-right',
                       column.align === 'center' && 'text-center',
-                      column.sortable !== false &&
-                        'cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'
+                      column.sortable !== false && 'cursor-pointer hover:bg-muted/30'
                     )}
                     style={{ width: column.width }}
                     onClick={() => column.sortable !== false && handleSort(column.id)}
@@ -313,12 +309,12 @@ export function DataTable<T extends { id: string | number }>({
                 ))}
             </tr>
           </thead>
-          <tbody className="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
+          <tbody className="bg-transparent divide-y divide-border/40">
             {isLoading ? (
               <tr>
                 <td
                   colSpan={columns.length + (selectable ? 1 : 0)}
-                  className="px-6 py-8 text-center text-neutral-500"
+                  className="px-3 py-6 text-center text-muted-foreground"
                 >
                   {loadingMessage}
                 </td>
@@ -327,7 +323,7 @@ export function DataTable<T extends { id: string | number }>({
               <tr>
                 <td
                   colSpan={columns.length + (selectable ? 1 : 0)}
-                  className="px-6 py-8 text-center text-danger-600"
+                  className="px-3 py-6 text-center text-danger-600"
                 >
                   {errorMessage || 'An error occurred'}
                 </td>
@@ -336,7 +332,7 @@ export function DataTable<T extends { id: string | number }>({
               <tr>
                 <td
                   colSpan={columns.length + (selectable ? 1 : 0)}
-                  className="px-6 py-8 text-center text-neutral-500"
+                  className="px-3 py-6 text-center text-muted-foreground"
                 >
                   No data available
                 </td>
@@ -347,14 +343,13 @@ export function DataTable<T extends { id: string | number }>({
                   key={row.id}
                   onClick={() => onRowClick?.(row)}
                   className={cn(
-                    'hover:bg-neutral-50 dark:hover:bg-neutral-700',
+                    'hover:bg-muted/20',
                     onRowClick && 'cursor-pointer',
-                    selectedRows.some((r) => r.id === row.id) &&
-                      'bg-primary-50 dark:bg-primary-900/20'
+                    selectedRows.some((r) => r.id === row.id) && 'bg-primary/10'
                   )}
                 >
                   {selectable && (
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-2">
                       <input
                         type="checkbox"
                         checked={selectedRows.some((r) => r.id === row.id)}
@@ -370,8 +365,8 @@ export function DataTable<T extends { id: string | number }>({
                       <td
                         key={column.id}
                         className={cn(
-                          dense ? 'px-4 py-2' : 'px-6 py-4',
-                          'text-sm text-neutral-900 dark:text-neutral-100',
+                          dense ? 'px-3 py-1.5' : 'px-3 py-2.5',
+                          'text-sm text-foreground',
                           column.align === 'right' && 'text-right',
                           column.align === 'center' && 'text-center'
                         )}
@@ -389,8 +384,8 @@ export function DataTable<T extends { id: string | number }>({
       </div>
 
       {/* Pagination */}
-      <div className="flex items-center justify-between p-4 border-t border-neutral-200 dark:border-neutral-700">
-        <div className="text-sm text-neutral-600 dark:text-neutral-400">
+      <div className="flex items-center justify-between p-3 border-t border-border/60">
+        <div className="text-xs text-muted-foreground">
           Showing {page * rowsPerPage + 1} to{' '}
           {Math.min((page + 1) * rowsPerPage, processedData.length)} of {processedData.length}{' '}
           results
@@ -402,7 +397,7 @@ export function DataTable<T extends { id: string | number }>({
               setRowsPerPage(Number(e.target.value));
               setPage(0);
             }}
-            className="px-3 py-1 border border-neutral-300 dark:border-neutral-600 rounded-md bg-white dark:bg-neutral-800 text-sm"
+            className="px-2 py-1 border border-input rounded-md bg-background text-xs"
           >
             {rowsPerPageOptions.map((option) => (
               <option key={option} value={option}>

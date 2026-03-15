@@ -186,7 +186,7 @@ export const PromptWorkbench: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+      <div className="bg-transparent rounded-md shadow-none border border-gray-200">
         <div className="p-4">
           <Tabs tabs={tabs} />
         </div>

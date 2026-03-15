@@ -43,7 +43,7 @@ export const TypingIndicator: React.FC<TypingIndicatorProps> = ({
           />
         ))}
       </div>
-      {showLabel && <span className="text-sm text-gray-500 animate-pulse">{label}</span>}
+      {showLabel && <span className="text-sm text-muted-foreground animate-pulse">{label}</span>}
     </div>
   );
 };
@@ -54,7 +54,7 @@ export const TypingIndicatorExample: React.FC<{}> = () => {
     <div className="space-y-4">
       <TypingIndicator size="sm" color="bg-blue-400" />
       <TypingIndicator size="md" color="bg-green-400" showLabel label="Agent is thinking..." />
-      <TypingIndicator size="lg" color="bg-purple-400" className="p-4 bg-gray-100 rounded-lg" />
+      <TypingIndicator size="lg" color="bg-purple-400" className="p-4 bg-gray-100 rounded-md" />
     </div>
   );
 };

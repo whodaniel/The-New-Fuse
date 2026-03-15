@@ -76,7 +76,7 @@ export const NewAgentPage = () => {
     <div className="flex h-screen bg-background">
       <Sidebar />
 
-      <main className="flex-1 p-6 overflow-auto">
+      <main className="flex-1 p-4 overflow-auto">
         <div className="max-w-3xl mx-auto">
           <PremiumButton
             variant="ghost"
@@ -87,9 +87,9 @@ export const NewAgentPage = () => {
             Back to Agents
           </PremiumButton>
 
-          <GlassCard className="p-6">
+          <GlassCard className="p-4">
             <div className="mb-6">
-              <h1 className="text-3xl font-bold">Create New Agent</h1>
+              <h1 className="text-2xl font-bold">Create New Agent</h1>
               <p className="text-muted-foreground">Configure your new AI agent</p>
             </div>
 

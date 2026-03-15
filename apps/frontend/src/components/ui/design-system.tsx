@@ -13,13 +13,12 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary:
-          'btn-primary shadow-[0_0_15px_rgba(59,130,246,0.3)] hover:shadow-[0_0_25px_rgba(59,130,246,0.5)]',
+        primary: 'btn-primary',
         secondary: 'btn-secondary',
-        outline: 'btn-outline border-white/10 hover:bg-white/5 hover:text-white',
-        success: 'btn-success shadow-[0_0_15px_rgba(34,197,94,0.3)]',
-        danger: 'btn-danger shadow-[0_0_15px_rgba(239,68,68,0.3)]',
-        ghost: 'bg-transparent hover:bg-white/5 text-slate-300 hover:text-white',
+        outline: 'btn-outline border-white/10 hover:bg-transparent/5 hover:text-white',
+        success: 'btn-success',
+        danger: 'btn-danger',
+        ghost: 'bg-transparent hover:bg-transparent/5 text-slate-300 hover:text-white',
         link: 'bg-transparent underline-offset-4 hover:underline text-blue-400',
       },
       size: {
@@ -37,8 +36,7 @@ const buttonVariants = cva(
 );
 
 interface ButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+  extends ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }
 
@@ -56,16 +54,16 @@ Button.displayName = 'Button';
 const cardVariants = cva('card', {
   variants: {
     variant: {
-      default: 'bg-white dark:bg-neutral-800',
+      default: '',
       glass: 'glass-effect',
       gradient: 'gradient-primary',
     },
     shadow: {
       none: 'shadow-none',
-      sm: 'shadow-sm',
+      sm: 'shadow-none',
       md: 'shadow-md',
-      lg: 'shadow-lg',
-      xl: 'shadow-xl',
+      lg: 'shadow-none',
+      xl: 'shadow-none',
     },
   },
   defaultVariants: {
@@ -92,7 +90,7 @@ Card.displayName = 'Card';
 // Card Header
 const CardHeader = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => {
-    return <div ref={ref} className={cn('flex flex-col space-y-1.5 p-6', className)} {...props} />;
+    return <div ref={ref} className={cn('flex flex-col space-y-1.5 p-4', className)} {...props} />;
   }
 );
 CardHeader.displayName = 'CardHeader';
@@ -103,7 +101,7 @@ const CardTitle = forwardRef<HTMLParagraphElement, HTMLAttributes<HTMLHeadingEle
     return (
       <h3
         ref={ref}
-        className={cn('text-2xl font-semibold leading-none tracking-tight', className)}
+        className={cn('text-lg font-semibold leading-none tracking-tight', className)}
         {...props}
       />
     );
@@ -122,7 +120,7 @@ CardDescription.displayName = 'CardDescription';
 // Card Content
 const CardContent = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => {
-    return <div ref={ref} className={cn('p-6 pt-0', className)} {...props} />;
+    return <div ref={ref} className={cn('p-4 pt-0', className)} {...props} />;
   }
 );
 CardContent.displayName = 'CardContent';
@@ -130,7 +128,7 @@ CardContent.displayName = 'CardContent';
 // Card Footer
 const CardFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => {
-    return <div ref={ref} className={cn('flex items-center p-6 pt-0', className)} {...props} />;
+    return <div ref={ref} className={cn('flex items-center p-4 pt-0', className)} {...props} />;
   }
 );
 CardFooter.displayName = 'CardFooter';
@@ -171,7 +169,7 @@ Badge.displayName = 'Badge';
 
 // Alert Component
 const alertVariants = cva(
-  'relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground',
+  'relative w-full rounded-md border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground',
   {
     variants: {
       variant: {
@@ -233,20 +231,20 @@ interface StatCardProps extends HTMLAttributes<HTMLDivElement> {
 const StatCard = forwardRef<HTMLDivElement, StatCardProps>(
   ({ className, title, value, change, icon, color = 'primary', ...props }, ref) => {
     const colorClasses = {
-      primary: 'bg-primary-50 border-primary-200',
-      secondary: 'bg-secondary-50 border-secondary-200',
-      success: 'bg-success-50 border-success-200',
-      warning: 'bg-warning-50 border-warning-200',
-      danger: 'bg-danger-50 border-danger-200',
+      primary: 'bg-primary/10 border-primary/30',
+      secondary: 'bg-secondary/10 border-secondary/30',
+      success: 'bg-success/10 border-success/30',
+      warning: 'bg-warning/10 border-warning/30',
+      danger: 'bg-danger/10 border-danger/30',
     };
 
     return (
-      <Card ref={ref} className={cn('p-6 border', colorClasses[color], className)} {...props}>
+      <Card ref={ref} className={cn('p-4 border', colorClasses[color], className)} {...props}>
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-muted-foreground">{title}</p>
             <p
-              className={`text-3xl font-bold mt-1 ${
+              className={`text-2xl font-bold mt-1 ${
                 color === 'primary'
                   ? 'text-primary'
                   : color === 'secondary'
@@ -306,13 +304,13 @@ const AnimatedCard = forwardRef<HTMLDivElement, AnimatedCardProps>(
         ref={ref}
         className={cn(
           'transition-all duration-300 ease-in-out',
-          gradient || 'bg-white dark:bg-neutral-800',
-          hoverEffect && 'hover:shadow-lg hover:-translate-y-1',
+          gradient || 'bg-transparent dark:bg-transparent',
+          hoverEffect && 'hover:bg-muted/20',
           className
         )}
         {...props}
       >
-        <div className="p-6">{children}</div>
+        <div className="p-4">{children}</div>
       </Card>
     );
   }
@@ -332,13 +330,13 @@ const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
         ref={ref}
         variant="glass"
         className={cn(
-          'backdrop-blur-xl bg-white/[0.03] dark:bg-slate-900/[0.4] border border-white/[0.08] shadow-[0_8px_32px_0_rgba(0,0,0,0.36)]',
+          'backdrop-blur-md bg-transparent/[0.03] dark:bg-slate-900/[0.35] border border-white/[0.08]',
           gradient,
           className
         )}
         {...props}
       >
-        <div className="p-6">{children}</div>
+        <div className="p-4">{children}</div>
       </Card>
     );
   }
@@ -359,14 +357,14 @@ const FeatureCard = forwardRef<HTMLDivElement, FeatureCardProps>(
       <AnimatedCard ref={ref} className={cn('group', className)} gradient={gradient} {...props}>
         <div className="relative">
           <div
-            className={`w-14 h-14 rounded-2xl ${gradient || 'bg-gradient-to-br from-primary to-secondary'} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}
+            className={`w-14 h-14 rounded-md ${gradient || 'bg-gradient-to-br from-primary to-secondary'} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-none`}
           >
             {icon}
           </div>
           <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-primary transition-colors">
             {title}
           </h3>
-          <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{description}</p>
+          <p className="text-muted-foreground dark:text-gray-300 leading-relaxed">{description}</p>
         </div>
       </AnimatedCard>
     );
@@ -435,7 +433,7 @@ const Toast = ({ message, type = 'info', onClose }: ToastProps) => {
   return (
     <div
       className={cn(
-        'p-4 rounded-lg border shadow-lg transition-all duration-300',
+        'p-4 rounded-md border shadow-none transition-all duration-300',
         typeClasses[type]
       )}
     >
@@ -497,21 +495,21 @@ const Modal = ({ isOpen, onClose, children, title, size = 'md' }: ModalProps) =>
       <div className="flex min-h-full items-center justify-center p-4 text-center">
         <div
           className={cn(
-            'relative w-full transform overflow-hidden rounded-2xl bg-white dark:bg-neutral-800 text-left shadow-xl transition-all',
+            'relative w-full transform overflow-hidden rounded-md bg-transparent dark:bg-transparent text-left shadow-none transition-all',
             sizeClasses[size]
           )}
         >
           {title && (
-            <div className="border-b border-neutral-200 dark:border-neutral-700 px-6 py-4">
+            <div className="border-b border-neutral-200 dark:border-neutral-700 px-3 py-2">
               <h3 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
                 {title}
               </h3>
             </div>
           )}
 
-          <div className="px-6 py-4">{children}</div>
+          <div className="px-3 py-2">{children}</div>
 
-          <div className="border-t border-neutral-200 dark:border-neutral-700 px-6 py-4">
+          <div className="border-t border-neutral-200 dark:border-neutral-700 px-3 py-2">
             <button onClick={onClose} className="btn btn-outline btn-sm">
               Close
             </button>
@@ -555,7 +553,7 @@ const ModalContent = forwardRef<
     <div
       ref={ref}
       className={cn(
-        'relative w-full transform overflow-hidden rounded-2xl bg-white dark:bg-neutral-800 text-left shadow-xl transition-all',
+        'relative w-full transform overflow-hidden rounded-md bg-transparent dark:bg-transparent text-left shadow-none transition-all',
         sizeClasses[size],
         className
       )}
@@ -569,7 +567,7 @@ const ModalHeader = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn('border-b border-neutral-200 dark:border-neutral-700 px-6 py-4', className)}
+      className={cn('border-b border-neutral-200 dark:border-neutral-700 px-3 py-2', className)}
       {...props}
     />
   )
@@ -578,7 +576,7 @@ ModalHeader.displayName = 'ModalHeader';
 
 const ModalBody = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn('px-6 py-4', className)} {...props} />
+    <div ref={ref} className={cn('px-3 py-2', className)} {...props} />
   )
 );
 ModalBody.displayName = 'ModalBody';
@@ -588,7 +586,7 @@ const ModalFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
     <div
       ref={ref}
       className={cn(
-        'border-t border-neutral-200 dark:border-neutral-700 px-6 py-4 flex gap-2 justify-end',
+        'border-t border-neutral-200 dark:border-neutral-700 px-3 py-2 flex gap-2 justify-end',
         className
       )}
       {...props}
@@ -603,7 +601,7 @@ const ModalCloseButton = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTML
       ref={ref}
       aria-label="Close"
       className={cn(
-        'absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors',
+        'absolute top-4 right-4 text-gray-400 hover:text-muted-foreground transition-colors',
         className
       )}
       {...props}
@@ -653,7 +651,7 @@ const Tabs = ({ tabs, activeTab, onTabChange }: TabsProps) => {
               'px-4 py-2 text-sm font-medium transition-colors',
               active === tab.id
                 ? 'border-b-2 border-primary text-primary'
-                : 'text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200'
+                : 'text-muted-foreground hover:text-neutral-700 dark:text-muted-foreground dark:hover:text-neutral-200'
             )}
           >
             {tab.title}

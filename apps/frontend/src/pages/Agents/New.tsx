@@ -256,7 +256,7 @@ const NewAgent: React.FC = () => {
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" />
       </div>
 
-      <div className="relative z-10 p-6 max-w-4xl mx-auto">
+      <div className="relative z-10 p-4 max-w-4xl mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -273,11 +273,11 @@ const NewAgent: React.FC = () => {
           </Link>
 
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/30 to-blue-500/30 flex items-center justify-center border border-white/10">
+            <div className="w-14 h-14 rounded-md bg-gradient-to-br from-purple-500/30 to-blue-500/30 flex items-center justify-center border border-white/10">
               <Bot className="w-7 h-7 text-purple-400" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
+              <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
                 Create New Agent
               </h1>
               <p className="text-gray-400">Configure and deploy a new AI agent</p>
@@ -292,31 +292,31 @@ const NewAgent: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              <TabsList className="bg-white/5 backdrop-blur-md border border-white/10 p-1 rounded-xl">
+              <TabsList className="bg-transparent/5 backdrop-blur-md border border-white/10 p-1 rounded-md">
                 <TabsTrigger
                   value="basic"
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-lg px-4 py-2 text-gray-400 transition-all"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-md px-4 py-2 text-gray-400 transition-all"
                 >
                   <Bot className="w-4 h-4 mr-2" />
                   Basic Info
                 </TabsTrigger>
                 <TabsTrigger
                   value="capabilities"
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-lg px-4 py-2 text-gray-400 transition-all"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-md px-4 py-2 text-gray-400 transition-all"
                 >
                   <Code className="w-4 h-4 mr-2" />
                   Capabilities
                 </TabsTrigger>
                 <TabsTrigger
                   value="configuration"
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-lg px-4 py-2 text-gray-400 transition-all"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-md px-4 py-2 text-gray-400 transition-all"
                 >
                   <Sliders className="w-4 h-4 mr-2" />
                   Configuration
                 </TabsTrigger>
                 <TabsTrigger
                   value="permissions"
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-lg px-4 py-2 text-gray-400 transition-all"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-md px-4 py-2 text-gray-400 transition-all"
                 >
                   <Shield className="w-4 h-4 mr-2" />
                   Permissions
@@ -398,16 +398,16 @@ const NewAgent: React.FC = () => {
                         <motion.div
                           key={item.id}
                           variants={itemVariants}
-                          className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5"
+                          className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/5"
                         >
                           <div className="flex items-center gap-3">
                             {formData.capabilities[item.id] ? (
-                              <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+                              <div className="w-8 h-8 rounded-md bg-emerald-500/20 flex items-center justify-center">
                                 <Check className="w-4 h-4 text-emerald-400" />
                               </div>
                             ) : (
-                              <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-                                <Zap className="w-4 h-4 text-gray-500" />
+                              <div className="w-8 h-8 rounded-md bg-transparent/5 flex items-center justify-center">
+                                <Zap className="w-4 h-4 text-muted-foreground" />
                               </div>
                             )}
                             <div>
@@ -469,9 +469,9 @@ const NewAgent: React.FC = () => {
                           step="0.1"
                           value={formData.temperature}
                           onChange={handleInputChange}
-                          className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500"
+                          className="w-full h-2 bg-transparent/10 rounded-md appearance-none cursor-pointer accent-purple-500"
                         />
-                        <div className="flex justify-between text-xs text-gray-500 mt-1">
+                        <div className="flex justify-between text-xs text-muted-foreground mt-1">
                           <span>Deterministic</span>
                           <span>Creative</span>
                         </div>
@@ -489,7 +489,7 @@ const NewAgent: React.FC = () => {
                           value={formData.maxTokens}
                           onChange={handleInputChange}
                         />
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-muted-foreground mt-1">
                           Maximum tokens the model can generate in a response
                         </p>
                       </div>
@@ -512,11 +512,11 @@ const NewAgent: React.FC = () => {
                         <motion.div
                           key={item.id}
                           variants={itemVariants}
-                          className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5"
+                          className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/5"
                         >
                           <div className="flex items-center gap-3">
                             <div
-                              className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                              className={`w-8 h-8 rounded-md flex items-center justify-center ${
                                 item.level === 'high'
                                   ? 'bg-red-500/20'
                                   : item.level === 'medium'

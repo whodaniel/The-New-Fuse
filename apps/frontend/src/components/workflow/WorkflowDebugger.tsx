@@ -104,7 +104,7 @@ export const WorkflowDebugger: React.FC<WorkflowDebuggerProps> = ({ workflowId }
 
       {/* Debug panel */}
       {isOpen && (
-        <Card className="absolute bottom-14 left-4 w-80 shadow-lg">
+        <Card className="absolute bottom-14 left-4 w-80 shadow-none">
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
             <div>
               <CardTitle className="text-sm">Workflow Debugger</CardTitle>

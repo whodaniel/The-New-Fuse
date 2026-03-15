@@ -10,7 +10,7 @@ export default function Card({ children, className, gradient = false, ...props }
   return (
     <div
       className={cn(
-        'relative rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-md transition-all duration-500 hover:border-white/20 hover:bg-white/10 group overflow-hidden',
+        'relative rounded-3xl border border-white/10 bg-transparent/5 p-4 backdrop-blur-md transition-all duration-500 hover:border-white/20 hover:bg-transparent/10 group overflow-hidden',
         className
       )}
       {...props}

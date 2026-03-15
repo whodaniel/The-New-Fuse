@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
+import { formatEther, parseEther, ZeroAddress } from 'ethers';
+import {
+  ArrowDownToLine,
+  DollarSign,
+  ExternalLink,
+  Plus,
+  RefreshCw,
+  TrendingUp,
+  Users,
+} from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Input } from '../ui/input';
 import { Progress } from '../ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { 
-  TrendingUp, 
-  DollarSign, 
-  Users, 
-  ArrowDownToLine,
-  Plus,
-  ExternalLink,
-  RefreshCw
-} from 'lucide-react';
-import { formatEther, parseEther, ZeroAddress } from 'ethers';
 
 interface RevenueStream {
   id: string;
@@ -73,7 +73,7 @@ export const AgentNFTRevenueDashboard: React.FC<AgentNFTRevenueDashboardProps> =
   userAddress,
   onCreateStream,
   onDistributeRevenue,
-  onAddRevenue
+  onAddRevenue,
 }) => {
   const [revenueStreams, setRevenueStreams] = useState<RevenueStream[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -82,7 +82,7 @@ export const AgentNFTRevenueDashboard: React.FC<AgentNFTRevenueDashboardProps> =
     streamName: '',
     description: '',
     tokenAddress: ZeroAddress, // ETH
-    distributionThreshold: '0.1'
+    distributionThreshold: '0.1',
   });
   const [revenueAmounts, setRevenueAmounts] = useState<Record<string, string>>({});
   const [activeTab, setActiveTab] = useState('streams');
@@ -100,12 +100,12 @@ export const AgentNFTRevenueDashboard: React.FC<AgentNFTRevenueDashboardProps> =
       } else if (userAddress) {
         url += `?userAddress=${userAddress}`;
       }
-      
+
       const response = await fetch(url);
       const data = await response.json();
       setRevenueStreams(data);
     } catch (error) {
-      console.error("Failed to load revenue streams:", error);
+      console.error('Failed to load revenue streams:', error);
     } finally {
       setIsLoading(false);
     }
@@ -113,28 +113,28 @@ export const AgentNFTRevenueDashboard: React.FC<AgentNFTRevenueDashboardProps> =
 
   const handleCreateStream = async () => {
     if (!onCreateStream || !agentNftId) return;
-    
-    setIsSubmitting(prev => ({ ...prev, create: true }));
+
+    setIsSubmitting((prev) => ({ ...prev, create: true }));
     try {
       await onCreateStream({
         agentNftId,
         ...newStreamData,
-        distributionThreshold: parseEther(newStreamData.distributionThreshold).toString()
+        distributionThreshold: parseEther(newStreamData.distributionThreshold).toString(),
       });
-      
+
       setNewStreamData({
         streamName: '',
         description: '',
         tokenAddress: ZeroAddress,
-        distributionThreshold: '0.1'
+        distributionThreshold: '0.1',
       });
-      
+
       await loadRevenueStreams();
       setActiveTab('streams');
     } catch (error) {
-      console.error("Failed to create stream:", error);
+      console.error('Failed to create stream:', error);
     } finally {
-      setIsSubmitting(prev => ({ ...prev, create: false }));
+      setIsSubmitting((prev) => ({ ...prev, create: false }));
     }
   };
 
@@ -142,43 +142,45 @@ export const AgentNFTRevenueDashboard: React.FC<AgentNFTRevenueDashboardProps> =
     const amount = revenueAmounts[streamId];
     if (!onAddRevenue || !amount) return;
 
-    setIsSubmitting(prev => ({ ...prev, [`add-${streamId}`]: true }));
+    setIsSubmitting((prev) => ({ ...prev, [`add-${streamId}`]: true }));
     try {
       // Convert amount from ETH string to wei string for the contract
       await onAddRevenue(streamId, parseEther(amount).toString());
-      setRevenueAmounts(prev => ({ ...prev, [streamId]: '' }));
+      setRevenueAmounts((prev) => ({ ...prev, [streamId]: '' }));
       await loadRevenueStreams();
     } catch (error) {
-      console.error("Failed to add revenue:", error);
+      console.error('Failed to add revenue:', error);
     } finally {
-      setIsSubmitting(prev => ({ ...prev, [`add-${streamId}`]: false }));
+      setIsSubmitting((prev) => ({ ...prev, [`add-${streamId}`]: false }));
     }
   };
 
   const handleDistribute = async (streamId: string) => {
     if (!onDistributeRevenue) return;
-    
-    setIsSubmitting(prev => ({ ...prev, [`distribute-${streamId}`]: true }));
+
+    setIsSubmitting((prev) => ({ ...prev, [`distribute-${streamId}`]: true }));
     try {
       await onDistributeRevenue(streamId);
       await loadRevenueStreams();
     } catch (error) {
-      console.error("Failed to distribute revenue:", error);
+      console.error('Failed to distribute revenue:', error);
     } finally {
-      setIsSubmitting(prev => ({ ...prev, [`distribute-${streamId}`]: false }));
+      setIsSubmitting((prev) => ({ ...prev, [`distribute-${streamId}`]: false }));
     }
   };
 
   const calculateUserRevenue = (stream: RevenueStream): number => {
     if (!userAddress || !stream.agentNFT.isFractionalized) return 0;
-    
+
     const userShares = stream.agentNFT.fractionalShares
-      .filter(share => share.ownerAddress.toLowerCase() === userAddress?.toLowerCase())
+      .filter((share) => share.ownerAddress.toLowerCase() === userAddress?.toLowerCase())
       .reduce((total, share) => total + share.shareAmount, 0);
-    
-    const totalShares = stream.agentNFT.fractionalShares
-      .reduce((total, share) => total + share.shareAmount, 0);
-    
+
+    const totalShares = stream.agentNFT.fractionalShares.reduce(
+      (total, share) => total + share.shareAmount,
+      0
+    );
+
     if (totalShares === 0) return 0;
 
     const totalRevenue = parseFloat(formatEther(stream.distributedRevenue || '0'));
@@ -187,17 +189,20 @@ export const AgentNFTRevenueDashboard: React.FC<AgentNFTRevenueDashboardProps> =
 
   const RevenueOverview = () => {
     const totalRevenue = revenueStreams.reduce(
-      (sum, stream) => sum + parseFloat(formatEther(stream.totalRevenue || '0')), 0
+      (sum, stream) => sum + parseFloat(formatEther(stream.totalRevenue || '0')),
+      0
     );
-    
+
     const totalDistributed = revenueStreams.reduce(
-      (sum, stream) => sum + parseFloat(formatEther(stream.distributedRevenue || '0')), 0
+      (sum, stream) => sum + parseFloat(formatEther(stream.distributedRevenue || '0')),
+      0
     );
-    
+
     const pendingDistribution = totalRevenue - totalDistributed;
-    
+
     const userTotalRevenue = revenueStreams.reduce(
-      (sum, stream) => sum + calculateUserRevenue(stream), 0
+      (sum, stream) => sum + calculateUserRevenue(stream),
+      0
     );
 
     return (
@@ -213,7 +218,7 @@ export const AgentNFTRevenueDashboard: React.FC<AgentNFTRevenueDashboardProps> =
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
@@ -225,7 +230,7 @@ export const AgentNFTRevenueDashboard: React.FC<AgentNFTRevenueDashboardProps> =
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
@@ -237,7 +242,7 @@ export const AgentNFTRevenueDashboard: React.FC<AgentNFTRevenueDashboardProps> =
             </div>
           </CardContent>
         </Card>
-        
+
         {userAddress && (
           <Card>
             <CardContent className="p-4">
@@ -259,16 +264,12 @@ export const AgentNFTRevenueDashboard: React.FC<AgentNFTRevenueDashboardProps> =
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold">Revenue Management</h1>
+          <h1 className="text-2xl font-bold">Revenue Management</h1>
           <p className="text-muted-foreground">
             Track and distribute agent NFT revenue to shareholders
           </p>
         </div>
-        <Button 
-          onClick={loadRevenueStreams}
-          disabled={isLoading}
-          variant="outline"
-        >
+        <Button onClick={loadRevenueStreams} disabled={isLoading} variant="outline">
           <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
           Refresh
         </Button>
@@ -289,7 +290,9 @@ export const AgentNFTRevenueDashboard: React.FC<AgentNFTRevenueDashboardProps> =
               const totalRevenue = parseFloat(formatEther(stream.totalRevenue || '0'));
               const distributedRevenue = parseFloat(formatEther(stream.distributedRevenue || '0'));
               const pendingRevenue = totalRevenue - distributedRevenue;
-              const distributionThreshold = parseFloat(formatEther(stream.distributionThreshold || '0'));
+              const distributionThreshold = parseFloat(
+                formatEther(stream.distributionThreshold || '0')
+              );
               const canDistribute = pendingRevenue >= distributionThreshold;
 
               return (
@@ -309,9 +312,7 @@ export const AgentNFTRevenueDashboard: React.FC<AgentNFTRevenueDashboardProps> =
                           {stream.agentNFT.agent.name} • Token #{stream.agentNFT.tokenId}
                         </p>
                         {stream.description && (
-                          <p className="text-sm text-muted-foreground mt-1">
-                            {stream.description}
-                          </p>
+                          <p className="text-sm text-muted-foreground mt-1">{stream.description}</p>
                         )}
                       </div>
                       <div className="text-right">
@@ -320,7 +321,7 @@ export const AgentNFTRevenueDashboard: React.FC<AgentNFTRevenueDashboardProps> =
                       </div>
                     </div>
                   </CardHeader>
-                  
+
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
@@ -348,8 +349,8 @@ export const AgentNFTRevenueDashboard: React.FC<AgentNFTRevenueDashboardProps> =
                         <span>Distribution Progress</span>
                         <span>{((pendingRevenue / distributionThreshold) * 100).toFixed(1)}%</span>
                       </div>
-                      <Progress 
-                        value={Math.min((pendingRevenue / distributionThreshold) * 100, 100)} 
+                      <Progress
+                        value={Math.min((pendingRevenue / distributionThreshold) * 100, 100)}
                         className="h-2"
                       />
                     </div>
@@ -359,23 +360,31 @@ export const AgentNFTRevenueDashboard: React.FC<AgentNFTRevenueDashboardProps> =
                         <Input
                           placeholder="Amount (ETH)"
                           value={revenueAmounts[stream.id] || ''}
-                          onChange={(e) => setRevenueAmounts(prev => ({ ...prev, [stream.id]: e.target.value }))}
+                          onChange={(e) =>
+                            setRevenueAmounts((prev) => ({ ...prev, [stream.id]: e.target.value }))
+                          }
                           type="number"
                           step="0.001"
                         />
-                        <Button 
+                        <Button
                           onClick={() => handleAddRevenue(stream.id)}
-                          disabled={!revenueAmounts[stream.id] || parseFloat(revenueAmounts[stream.id]) <= 0 || isSubmitting[`add-${stream.id}`]}
+                          disabled={
+                            !revenueAmounts[stream.id] ||
+                            parseFloat(revenueAmounts[stream.id]) <= 0 ||
+                            isSubmitting[`add-${stream.id}`]
+                          }
                         >
-                          {isSubmitting[`add-${stream.id}`] && <RefreshCw className="w-4 h-4 mr-2 animate-spin" />}
+                          {isSubmitting[`add-${stream.id}`] && (
+                            <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                          )}
                           Add Revenue
                         </Button>
                       </div>
-                      
-                      <Button 
+
+                      <Button
                         onClick={() => handleDistribute(stream.id)}
                         disabled={!canDistribute || isSubmitting[`distribute-${stream.id}`]}
-                        variant={canDistribute ? "default" : "secondary"}
+                        variant={canDistribute ? 'default' : 'secondary'}
                       >
                         <ArrowDownToLine className="w-4 h-4 mr-2" />
                         {isSubmitting[`distribute-${stream.id}`] ? 'Distributing...' : 'Distribute'}
@@ -383,7 +392,7 @@ export const AgentNFTRevenueDashboard: React.FC<AgentNFTRevenueDashboardProps> =
                     </div>
 
                     {userAddress && (
-                      <div className="bg-blue-50 p-3 rounded-lg">
+                      <div className="bg-blue-50 p-3 rounded-md">
                         <p className="text-sm font-medium">Your Expected Revenue</p>
                         <p className="text-lg font-bold text-blue-600">
                           {calculateUserRevenue(stream).toFixed(4)} ETH
@@ -395,7 +404,7 @@ export const AgentNFTRevenueDashboard: React.FC<AgentNFTRevenueDashboardProps> =
               );
             })}
           </div>
-          
+
           {revenueStreams.length === 0 && !isLoading && (
             <div className="text-center py-12">
               <p className="text-muted-foreground">No revenue streams found.</p>
@@ -408,8 +417,8 @@ export const AgentNFTRevenueDashboard: React.FC<AgentNFTRevenueDashboardProps> =
 
         <TabsContent value="distributions" className="space-y-6">
           <div className="grid gap-4">
-            {revenueStreams.flatMap(stream => 
-              stream.distributions.map(distribution => (
+            {revenueStreams.flatMap((stream) =>
+              stream.distributions.map((distribution) => (
                 <Card key={distribution.id}>
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
@@ -419,7 +428,7 @@ export const AgentNFTRevenueDashboard: React.FC<AgentNFTRevenueDashboardProps> =
                           {new Date(distribution.createdAt).toLocaleDateString()}
                         </p>
                       </div>
-                      
+
                       <div className="text-right">
                         <p className="text-lg font-bold">
                           {formatEther(distribution.totalAmount)} ETH
@@ -428,11 +437,13 @@ export const AgentNFTRevenueDashboard: React.FC<AgentNFTRevenueDashboardProps> =
                           {distribution.distributedTo.length} recipients
                         </p>
                       </div>
-                      
-                      <Button 
-                        variant="ghost" 
+
+                      <Button
+                        variant="ghost"
                         size="sm"
-                        onClick={() => window.open(`https://etherscan.io/tx/${distribution.txHash}`, '_blank')}
+                        onClick={() =>
+                          window.open(`https://etherscan.io/tx/${distribution.txHash}`, '_blank')
+                        }
                       >
                         <ExternalLink className="w-4 h-4" />
                       </Button>
@@ -456,19 +467,23 @@ export const AgentNFTRevenueDashboard: React.FC<AgentNFTRevenueDashboardProps> =
                   <Input
                     placeholder="e.g., Task Completion Rewards"
                     value={newStreamData.streamName}
-                    onChange={(e) => setNewStreamData(prev => ({ ...prev, streamName: e.target.value }))}
+                    onChange={(e) =>
+                      setNewStreamData((prev) => ({ ...prev, streamName: e.target.value }))
+                    }
                   />
                 </div>
-                
+
                 <div>
                   <label className="text-sm font-medium">Description (Optional)</label>
                   <Input
                     placeholder="Describe this revenue stream..."
                     value={newStreamData.description}
-                    onChange={(e) => setNewStreamData(prev => ({ ...prev, description: e.target.value }))}
+                    onChange={(e) =>
+                      setNewStreamData((prev) => ({ ...prev, description: e.target.value }))
+                    }
                   />
                 </div>
-                
+
                 <div>
                   <label className="text-sm font-medium">Distribution Threshold (ETH)</label>
                   <Input
@@ -476,16 +491,25 @@ export const AgentNFTRevenueDashboard: React.FC<AgentNFTRevenueDashboardProps> =
                     step="0.001"
                     placeholder="0.1"
                     value={newStreamData.distributionThreshold}
-                    onChange={(e) => setNewStreamData(prev => ({ ...prev, distributionThreshold: e.target.value }))}
+                    onChange={(e) =>
+                      setNewStreamData((prev) => ({
+                        ...prev,
+                        distributionThreshold: e.target.value,
+                      }))
+                    }
                   />
                   <p className="text-xs text-muted-foreground mt-1">
                     Minimum amount before automatic distribution
                   </p>
                 </div>
-                
-                <Button 
+
+                <Button
                   onClick={handleCreateStream}
-                  disabled={!newStreamData.streamName || !newStreamData.distributionThreshold || isSubmitting['create']}
+                  disabled={
+                    !newStreamData.streamName ||
+                    !newStreamData.distributionThreshold ||
+                    isSubmitting['create']
+                  }
                   className="w-full"
                 >
                   <Plus className="w-4 h-4 mr-2" />

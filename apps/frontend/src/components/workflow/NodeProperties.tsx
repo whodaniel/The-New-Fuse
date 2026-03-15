@@ -224,7 +224,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
               }
             }}
             rows={5}
-            className="bg-slate-800/50 border-white/10 text-white placeholder:text-gray-500 font-mono text-sm"
+            className="bg-slate-800/50 border-white/10 text-white placeholder:text-muted-foreground font-mono text-sm"
           />
           <p className="text-xs text-gray-400 mt-1">Define how data is mapped between nodes.</p>
         </div>
@@ -245,7 +245,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
         return renderInputOutputProperties();
       default:
         return (
-          <div className="text-center py-4 text-gray-400">
+          <div className="text-center py-2 text-gray-400">
             No specific properties for this node type.
           </div>
         );

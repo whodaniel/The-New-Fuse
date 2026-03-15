@@ -80,7 +80,7 @@ export const VersionHistory: React.FC<VersionHistoryProps> = ({ templateId }) =>
   if (!templateId) {
     return (
       <div className="text-center py-10">
-        <p className="text-neutral-500">Please select a template to view version history.</p>
+        <p className="text-muted-foreground">Please select a template to view version history.</p>
       </div>
     );
   }
@@ -104,55 +104,55 @@ export const VersionHistory: React.FC<VersionHistoryProps> = ({ templateId }) =>
 
       {versions.length === 0 ? (
         <div className="text-center py-8 border border-dashed border-neutral-300 dark:border-neutral-600 rounded-md">
-          <p className="text-neutral-500">No version history available.</p>
+          <p className="text-muted-foreground">No version history available.</p>
           <p className="text-sm text-neutral-400 mt-2">
             Version history will be created when you update this template.
           </p>
         </div>
       ) : (
-        <div className="overflow-x-auto bg-white dark:bg-neutral-800 rounded-lg shadow-sm">
-          <table className="min-w-full divide-y divide-neutral-200 dark:divide-neutral-700">
-            <thead className="bg-neutral-50 dark:bg-neutral-900">
+        <div className="overflow-x-auto bg-transparent dark:bg-transparent rounded-md shadow-none">
+          <table className="min-w-full divide-y divide-border/50 dark:divide-border/40">
+            <thead className="bg-transparent dark:bg-neutral-900">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground dark:text-muted-foreground uppercase">
                   Version
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground dark:text-muted-foreground uppercase">
                   Created
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground dark:text-muted-foreground uppercase">
                   By
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground dark:text-muted-foreground uppercase">
                   Comment
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground dark:text-muted-foreground uppercase">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
+            <tbody className="bg-transparent dark:bg-transparent divide-y divide-border/50 dark:divide-border/40">
               {versions.map((version, index) => (
-                <tr key={version.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700">
-                  <td className="px-6 py-4 whitespace-nowrap">
+                <tr key={version.id} className="hover:bg-transparent dark:hover:bg-muted/20">
+                  <td className="px-3 py-2 whitespace-nowrap">
                     {index === 0 ? (
                       <Badge variant="success">Latest</Badge>
                     ) : (
                       <span className="text-sm">v{versions.length - index}</span>
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <td className="px-3 py-2 whitespace-nowrap text-sm">
                     {format(new Date(version.createdAt), 'MMM d, yyyy h:mm a')}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">{version.createdBy}</td>
-                  <td className="px-6 py-4 text-sm">
+                  <td className="px-3 py-2 whitespace-nowrap text-sm">{version.createdBy}</td>
+                  <td className="px-3 py-2 text-sm">
                     <div className="max-w-xs truncate">
                       {version.comment || (
-                        <span className="italic text-neutral-500">No comment</span>
+                        <span className="italic text-muted-foreground">No comment</span>
                       )}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <td className="px-3 py-2 whitespace-nowrap text-sm">
                     <div className="flex gap-2">
                       <Button
                         size="xs"
@@ -198,7 +198,7 @@ export const VersionHistory: React.FC<VersionHistoryProps> = ({ templateId }) =>
                 <hr className="border-neutral-200 dark:border-neutral-700" />
                 <div>
                   <p className="font-bold mb-2">Template Content:</p>
-                  <div className="p-3 border border-neutral-200 dark:border-neutral-700 rounded-md font-mono text-sm whitespace-pre-wrap bg-neutral-50 dark:bg-neutral-900 max-h-[300px] overflow-y-auto">
+                  <div className="p-3 border border-neutral-200 dark:border-neutral-700 rounded-md font-mono text-sm whitespace-pre-wrap bg-transparent dark:bg-neutral-900 max-h-[300px] overflow-y-auto">
                     {selectedVersion.content}
                   </div>
                 </div>
@@ -223,7 +223,7 @@ export const VersionHistory: React.FC<VersionHistoryProps> = ({ templateId }) =>
                       ))}
                       {Object.keys(selectedVersion.variables).length === 0 && (
                         <tr>
-                          <td colSpan={2} className="text-center py-2 text-neutral-500">
+                          <td colSpan={2} className="text-center py-2 text-muted-foreground">
                             No variables defined
                           </td>
                         </tr>

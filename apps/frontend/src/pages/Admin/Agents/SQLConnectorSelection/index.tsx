@@ -18,7 +18,10 @@ const AgentSQLConnectorSelection: React.FC<SQLConnectorSelectionProps> = ({ onSe
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {sqlProviders.map((provider) => (
-          <Card key={provider.id} className="cursor-pointer hover:shadow-md transition-shadow">
+          <Card
+            key={provider.id}
+            className="cursor-pointer hover:shadow-none-md transition-shadow-none"
+          >
             <CardHeader>
               <CardTitle className="text-sm">{provider.name}</CardTitle>
               <CardDescription className="text-xs">{provider.description}</CardDescription>

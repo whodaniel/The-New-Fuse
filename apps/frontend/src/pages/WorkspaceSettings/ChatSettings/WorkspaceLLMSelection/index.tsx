@@ -18,8 +18,8 @@ export default function WorkspaceLLMSelectionPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">Chat Model Selection</h1>
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <h1 className="text-2xl font-bold mb-6">Chat Model Selection</h1>
+        <div className="bg-transparent rounded-md shadow-md p-4">
           <ChatModelSelection
             provider={provider}
             workspace={workspace}

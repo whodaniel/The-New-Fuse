@@ -218,7 +218,7 @@ export function WebhookConfigurationForm({
           <div className="space-y-2">
             <label className="text-sm font-medium">Webhook URL</label>
             <div className="relative">
-              <Input value={generateWebhookUrl()} readOnly className="bg-gray-50 pr-16" />
+              <Input value={generateWebhookUrl()} readOnly className="bg-transparent pr-16" />
               <Badge className="absolute right-2 top-2 text-xs">Auto-generated</Badge>
             </div>
             <p className="text-xs text-muted-foreground">

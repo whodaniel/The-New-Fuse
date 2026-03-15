@@ -329,7 +329,7 @@ export const SophisticatedTNFHub: React.FC = () => {
       case 'error':
         return 'bg-red-500';
       default:
-        return 'bg-gray-500';
+        return 'bg-transparent0';
     }
   };
 
@@ -380,11 +380,11 @@ export const SophisticatedTNFHub: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
       {/* Header */}
       <header className="bg-black/20 backdrop-blur-xl border-b border-white/10 sticky top-0 z-50">
-        <div className="container mx-auto px-6 py-4">
+        <div className="container mx-auto px-3 py-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-md flex items-center justify-center">
                   <Sparkles className="w-6 h-6" />
                 </div>
                 <div>
@@ -414,7 +414,7 @@ export const SophisticatedTNFHub: React.FC = () => {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-6 py-8">
+      <main className="container mx-auto px-3 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-5 bg-black/20 backdrop-blur-sm">
             <TabsTrigger value="dashboard" className="data-[state=active]:bg-purple-600">
@@ -443,14 +443,14 @@ export const SophisticatedTNFHub: React.FC = () => {
           <TabsContent value="dashboard" className="space-y-6">
             {/* Welcome Banner */}
             <Card className="bg-gradient-to-r from-purple-600 to-blue-600 border-0 text-white">
-              <CardContent className="p-8 text-center">
-                <h2 className="text-3xl font-bold mb-2">Welcome to The New Fuse</h2>
+              <CardContent className="p-4 text-center">
+                <h2 className="text-2xl font-bold mb-2">Welcome to The New Fuse</h2>
                 <p className="text-lg opacity-90 mb-6">
                   Advanced AI-Powered Development & Automation Platform
                 </p>
                 <div className="flex justify-center space-x-4">
                   <Button
-                    className="bg-white text-purple-600 hover:bg-gray-100"
+                    className="bg-transparent text-purple-600 hover:bg-muted/30"
                     onClick={() => navigate('/workflows/new')}
                   >
                     <Plus className="w-4 h-4 mr-2" />
@@ -458,7 +458,7 @@ export const SophisticatedTNFHub: React.FC = () => {
                   </Button>
                   <Button
                     variant="outline"
-                    className="border-white text-white hover:bg-white/10"
+                    className="border-white text-white hover:bg-transparent/10"
                     onClick={() => navigate('/agents/new')}
                   >
                     <Bot className="w-4 h-4 mr-2" />
@@ -469,9 +469,9 @@ export const SophisticatedTNFHub: React.FC = () => {
             </Card>
 
             {/* System Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <Card className="bg-black/20 backdrop-blur-sm border-white/10">
-                <CardContent className="p-6">
+                <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-gray-400">Active Workflows</p>
@@ -483,7 +483,7 @@ export const SophisticatedTNFHub: React.FC = () => {
               </Card>
 
               <Card className="bg-black/20 backdrop-blur-sm border-white/10">
-                <CardContent className="p-6">
+                <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-gray-400">Completed Tasks</p>
@@ -497,7 +497,7 @@ export const SophisticatedTNFHub: React.FC = () => {
               </Card>
 
               <Card className="bg-black/20 backdrop-blur-sm border-white/10">
-                <CardContent className="p-6">
+                <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-gray-400">Active Agents</p>
@@ -509,7 +509,7 @@ export const SophisticatedTNFHub: React.FC = () => {
               </Card>
 
               <Card className="bg-black/20 backdrop-blur-sm border-white/10">
-                <CardContent className="p-6">
+                <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-gray-400">Total Revenue</p>
@@ -524,7 +524,7 @@ export const SophisticatedTNFHub: React.FC = () => {
             </div>
 
             {/* System Performance */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <Card className="bg-black/20 backdrop-blur-sm border-white/10">
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
@@ -589,7 +589,7 @@ export const SophisticatedTNFHub: React.FC = () => {
                               ? 'bg-yellow-500'
                               : status === 'error'
                                 ? 'bg-red-500'
-                                : 'bg-gray-500';
+                                : 'bg-transparent0';
                         return (
                           <div key={execution.id} className="flex items-center space-x-3">
                             <div className={`w-2 h-2 rounded-full ${dotClass}`}></div>
@@ -600,7 +600,7 @@ export const SophisticatedTNFHub: React.FC = () => {
                                 execution.id.slice(0, 8)}{' '}
                               {String(execution.status || 'unknown').toLowerCase()}
                             </span>
-                            <span className="text-xs text-gray-500 ml-auto">
+                            <span className="text-xs text-muted-foreground ml-auto">
                               {formatRelativeTime(execution.updatedAt || execution.createdAt)}
                             </span>
                           </div>
@@ -619,7 +619,7 @@ export const SophisticatedTNFHub: React.FC = () => {
 
           {/* Services Tab */}
           <TabsContent value="services" className="space-y-6">
-            <div className="grid gap-6">
+            <div className="grid gap-4">
               {Object.entries(services).map(([category, categoryServices]) => (
                 <Card key={category} className="bg-black/20 backdrop-blur-sm border-white/10">
                   <CardHeader>
@@ -653,7 +653,7 @@ export const SophisticatedTNFHub: React.FC = () => {
                       {categoryServices.map((service) => (
                         <div
                           key={service.name}
-                          className="p-4 bg-gray-800/50 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors cursor-pointer"
+                          className="p-4 bg-gray-800/50 rounded-md border border-gray-700 hover:border-gray-600 transition-colors cursor-pointer"
                           onClick={() => navigateToService(service.name)}
                         >
                           <div className="flex items-center justify-between mb-2">
@@ -693,7 +693,7 @@ export const SophisticatedTNFHub: React.FC = () => {
 
           {/* Analytics Tab */}
           <TabsContent value="analytics" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <Card className="bg-black/20 backdrop-blur-sm border-white/10">
                 <CardHeader>
                   <CardTitle>Workflow Performance</CardTitle>
@@ -738,18 +738,18 @@ export const SophisticatedTNFHub: React.FC = () => {
 
             {hubDataUnavailable ? (
               <Card className="bg-amber-500/10 border-amber-500/30">
-                <CardContent className="p-6 text-amber-200 text-sm">
+                <CardContent className="p-4 text-amber-200 text-sm">
                   Agent registry is currently unavailable.
                 </CardContent>
               </Card>
             ) : agentsData.length === 0 ? (
               <Card className="bg-black/20 backdrop-blur-sm border-white/10">
-                <CardContent className="p-6 text-sm text-gray-400">
+                <CardContent className="p-4 text-sm text-gray-400">
                   No agents registered yet.
                 </CardContent>
               </Card>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {agentsData.slice(0, 6).map((agent, index) => {
                   const normalized = normalizeStatus(agent.status);
                   const badgeClass =
@@ -759,13 +759,13 @@ export const SophisticatedTNFHub: React.FC = () => {
                         ? 'bg-yellow-500/20 text-yellow-400'
                         : normalized === 'error'
                           ? 'bg-red-500/20 text-red-400'
-                          : 'bg-gray-500/20 text-gray-300';
+                          : 'bg-transparent0/20 text-gray-300';
                   return (
                     <Card
                       key={agent.id}
                       className="bg-black/20 backdrop-blur-sm border-white/10 hover:border-purple-500/50 transition-colors cursor-pointer"
                     >
-                      <CardContent className="p-6">
+                      <CardContent className="p-4">
                         <div className="flex items-center justify-between mb-4">
                           <Bot
                             className={`w-8 h-8 ${index % 2 === 0 ? 'text-purple-400' : 'text-blue-400'}`}
@@ -800,7 +800,7 @@ export const SophisticatedTNFHub: React.FC = () => {
               </Button>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <Card className="bg-black/20 backdrop-blur-sm border-white/10">
                 <CardHeader>
                   <CardTitle>Active Workflows</CardTitle>
@@ -812,7 +812,7 @@ export const SophisticatedTNFHub: React.FC = () => {
                     activeWorkflows.slice(0, 6).map((workflow) => (
                       <div
                         key={workflow.id}
-                        className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg"
+                        className="flex items-center justify-between p-3 bg-gray-800/50 rounded-md"
                       >
                         <div className="flex items-center space-x-3">
                           <Play className="w-4 h-4 text-green-400" />
@@ -840,7 +840,7 @@ export const SophisticatedTNFHub: React.FC = () => {
                     workflowTemplatesData.slice(0, 6).map((template) => (
                       <div
                         key={template.id}
-                        className="p-3 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-colors cursor-pointer"
+                        className="p-3 bg-gray-800/50 rounded-md hover:bg-gray-700/50 transition-colors cursor-pointer"
                         onClick={() => navigate(`/workflows/builder?template=${template.id}`)}
                       >
                         <div className="flex items-center justify-between">

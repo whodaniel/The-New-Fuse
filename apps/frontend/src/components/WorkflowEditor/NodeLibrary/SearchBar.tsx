@@ -5,9 +5,9 @@ interface SearchBarProps {
   placeholder?: string;
 }
 
-export const SearchBar: React.FC<SearchBarProps> = ({ 
-  onSearch, 
-  placeholder = "Search nodes..." 
+export const SearchBar: React.FC<SearchBarProps> = ({
+  onSearch,
+  placeholder = 'Search nodes...',
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -32,7 +32,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           placeholder={placeholder}
           className="w-full px-3 py-2 pr-8 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
         />
-        
+
         {/* Search Icon */}
         <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
           <svg
@@ -54,14 +54,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         {searchTerm && (
           <button
             onClick={handleClear}
-            className="absolute inset-y-0 right-6 flex items-center pr-1 text-gray-400 hover:text-gray-600"
+            className="absolute inset-y-0 right-6 flex items-center pr-1 text-gray-400 hover:text-muted-foreground"
           >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"

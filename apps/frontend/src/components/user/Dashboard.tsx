@@ -16,25 +16,25 @@ export default function Dashboard() {
   }, [setPageTitle]);
 
   return (
-    <div className="grid gap-6">
-      <Card className="p-6">
+    <div className="grid gap-4">
+      <Card className="p-4">
         <AgentCollaborationDashboard />
       </Card>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card className="p-6">
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card className="p-4">
           <SystemMetrics />
         </Card>
-        <Card className="p-6">
+        <Card className="p-4">
           <PerformanceMetrics />
         </Card>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3">
-        <Card className="p-6 md:col-span-2">
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card className="p-4 md:col-span-2">
           <TaskBoard />
         </Card>
-        <Card className="p-6">
+        <Card className="p-4">
           <AgentNetwork agents={[]} tasks={[]} onNodeClick={() => {}} />
         </Card>
       </div>

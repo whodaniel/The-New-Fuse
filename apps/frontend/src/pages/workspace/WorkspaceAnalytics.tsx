@@ -244,7 +244,7 @@ export default function WorkspaceAnalytics() {
 
   if (loading) {
     return (
-      <div className="p-8 max-w-7xl mx-auto">
+      <div className="p-4 max-w-7xl mx-auto">
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
@@ -253,24 +253,24 @@ export default function WorkspaceAnalytics() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="p-4 max-w-7xl mx-auto">
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Workspace Analytics</h1>
-            <p className="text-gray-600">Live workspace metrics and project status</p>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Workspace Analytics</h1>
+            <p className="text-muted-foreground">Live workspace metrics and project status</p>
           </div>
           <div className="flex space-x-3">
             <Link
               to="/workspace/overview"
-              className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+              className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"
             >
               Back to Overview
             </Link>
             <select
               value={timeRange}
               onChange={(e) => setTimeRange(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="7d">Last 7 days</option>
               <option value="30d">Last 30 days</option>
@@ -281,14 +281,14 @@ export default function WorkspaceAnalytics() {
       </div>
 
       {loadError && (
-        <div className="mb-6 rounded-lg border border-amber-300 bg-amber-100/80 px-4 py-3 text-sm text-amber-900">
+        <div className="mb-6 rounded-md border border-amber-300 bg-amber-100/80 px-4 py-2 text-sm text-amber-900">
           {loadError}
         </div>
       )}
 
       {metrics && (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <Metric
               label="Active Members"
               value={metrics.activeMembers}
@@ -311,11 +311,11 @@ export default function WorkspaceAnalytics() {
             />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            <div className="bg-white rounded-lg shadow-lg p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+            <div className="bg-transparent rounded-md shadow-none p-4">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">Communication Activity</h2>
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+                <div className="flex items-center justify-between p-4 bg-blue-50 rounded-md">
                   <div>
                     <p className="text-lg font-bold text-blue-900">
                       {metrics.messagesThisWeek.toLocaleString()}
@@ -329,30 +329,32 @@ export default function WorkspaceAnalytics() {
                       {parseFloat(messageGrowth) >= 0 ? '+' : ''}
                       {messageGrowth}%
                     </p>
-                    <p className="text-xs text-gray-500">vs last week</p>
+                    <p className="text-xs text-muted-foreground">vs last week</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-lg p-6">
+            <div className="bg-transparent rounded-md shadow-none p-4">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">Storage Usage</h2>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 Storage instrumentation is not currently exposed by backend endpoints.
               </p>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+          <div className="bg-transparent rounded-md shadow-none p-4 mb-8">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">Daily Message Activity</h2>
             {activityData.length === 0 && (
-              <p className="text-sm text-gray-500">No activity data is currently available.</p>
+              <p className="text-sm text-muted-foreground">
+                No activity data is currently available.
+              </p>
             )}
             {activityData.length > 0 && (
               <div className="grid grid-cols-7 gap-2">
                 {activityData.slice(-7).map((day) => (
                   <div key={day.date} className="text-center">
-                    <div className="text-xs text-gray-500 mb-1">
+                    <div className="text-xs text-muted-foreground mb-1">
                       {new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' })}
                     </div>
                     <div
@@ -366,7 +368,7 @@ export default function WorkspaceAnalytics() {
             )}
           </div>
 
-          <div className="bg-white rounded-lg shadow-lg p-6">
+          <div className="bg-transparent rounded-md shadow-none p-4">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-gray-900">Project Status</h2>
               <Link to="/tasks" className="text-blue-600 hover:text-blue-700 text-sm font-medium">
@@ -375,55 +377,55 @@ export default function WorkspaceAnalytics() {
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-transparent border-b border-gray-200">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Project
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Priority
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Progress
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Members
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Due Date
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-transparent divide-y divide-border/50">
                   {projects.map((project) => (
-                    <tr key={project.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <tr key={project.id} className="hover:bg-muted/20">
+                      <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
                         {project.name}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-3 py-2 whitespace-nowrap">
                         <span
                           className={`px-2 py-1 text-xs font-medium rounded-full border ${getStatusBadge(project.status)}`}
                         >
                           {project.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-3 py-2 whitespace-nowrap">
                         <span
                           className={`px-2 py-1 text-xs font-medium rounded-full border ${getPriorityBadge(project.priority)}`}
                         >
                           {project.priority}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                      <td className="px-3 py-2 whitespace-nowrap text-sm text-muted-foreground">
                         {project.progress}%
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
                         {project.members}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-3 py-2 whitespace-nowrap text-sm text-muted-foreground">
                         {project.dueDate ? new Date(project.dueDate).toLocaleDateString() : 'n/a'}
                       </td>
                     </tr>
@@ -431,7 +433,7 @@ export default function WorkspaceAnalytics() {
                 </tbody>
               </table>
               {projects.length === 0 && (
-                <p className="mt-4 text-sm text-gray-500">
+                <p className="mt-4 text-sm text-muted-foreground">
                   No workspace projects are currently available.
                 </p>
               )}
@@ -444,9 +446,9 @@ export default function WorkspaceAnalytics() {
 }
 
 const Metric: React.FC<{ label: string; value: number; sub: string }> = ({ label, value, sub }) => (
-  <div className="bg-white rounded-lg shadow-lg p-6">
+  <div className="bg-transparent rounded-md shadow-none p-4">
     <p className="text-2xl font-bold text-gray-900">{value.toLocaleString()}</p>
-    <p className="text-sm text-gray-600">{label}</p>
-    <p className="text-xs text-gray-500">{sub}</p>
+    <p className="text-sm text-muted-foreground">{label}</p>
+    <p className="text-xs text-muted-foreground">{sub}</p>
   </div>
 );

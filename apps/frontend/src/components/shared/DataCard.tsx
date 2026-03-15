@@ -61,12 +61,14 @@ export function DataCard<T = any>({
               </h3>
               {tooltip && (
                 <Tooltip label={tooltip}>
-                  <Info className="h-4 w-4 text-neutral-500" />
+                  <Info className="h-4 w-4 text-muted-foreground" />
                 </Tooltip>
               )}
             </div>
             {subtitle && (
-              <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">{subtitle}</p>
+              <p className="text-sm text-muted-foreground dark:text-muted-foreground mt-1">
+                {subtitle}
+              </p>
             )}
           </div>
         </div>
@@ -76,7 +78,7 @@ export function DataCard<T = any>({
             <Tooltip label="Refresh">
               <button
                 onClick={onRefresh}
-                className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded transition-colors"
+                className="p-2 hover:bg-neutral-100 dark:hover:bg-muted/20 rounded transition-colors"
                 aria-label="Refresh"
               >
                 <RefreshCw className="h-4 w-4" />
@@ -87,7 +89,7 @@ export function DataCard<T = any>({
             <Tooltip label={expanded ? 'Collapse' : 'Expand'}>
               <button
                 onClick={handleExpandClick}
-                className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded transition-colors"
+                className="p-2 hover:bg-neutral-100 dark:hover:bg-muted/20 rounded transition-colors"
                 aria-label={expanded ? 'Collapse' : 'Expand'}
               >
                 {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
@@ -101,9 +103,9 @@ export function DataCard<T = any>({
       {(!expandable || expanded) && (
         <div className="p-4">
           {isLoading ? (
-            <div className="flex items-center justify-center p-8">
+            <div className="flex items-center justify-center p-4">
               <LoadingSpinner />
-              <span className="ml-3 text-sm text-neutral-600 dark:text-neutral-400">
+              <span className="ml-3 text-sm text-neutral-600 dark:text-muted-foreground">
                 {loadingMessage}
               </span>
             </div>
@@ -114,7 +116,7 @@ export function DataCard<T = any>({
           ) : data ? (
             renderContent(data)
           ) : (
-            <p className="text-center text-neutral-500 dark:text-neutral-400 py-8">
+            <p className="text-center text-muted-foreground dark:text-muted-foreground py-8">
               No data available
             </p>
           )}

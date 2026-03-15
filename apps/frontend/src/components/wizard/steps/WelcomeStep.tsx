@@ -16,10 +16,10 @@ export const WelcomeStep: React.FC = () => {
           alt="The New Fuse Logo"
           className="max-h-24 mx-auto mb-4"
         />
-        <h1 className="text-3xl font-bold mb-2">
+        <h1 className="text-2xl font-bold mb-2">
           {isAIAgent ? 'Welcome to The New Fuse Agent Network' : 'Welcome to The New Fuse'}
         </h1>
-        <p className="text-lg text-gray-600">
+        <p className="text-lg text-muted-foreground">
           {isAIAgent
             ? 'This wizard will guide you through the process of integrating with our AI agent network.'
             : 'This wizard will guide you through the setup process to get you started quickly.'}

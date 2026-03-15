@@ -72,7 +72,7 @@ export default function SkillsBrowser() {
     onAction: (item: ClaudeSkill, action: string) => void
   ) => (
     <GlassCard
-      className="h-full cursor-pointer group relative overflow-hidden flex flex-col p-5"
+      className="h-full cursor-pointer group relative overflow-hidden flex flex-col p-4"
       onClick={() => onAction(skill, 'view-details')}
     >
       {skill.featured && (
@@ -82,7 +82,7 @@ export default function SkillsBrowser() {
       )}
 
       <div className="flex items-start justify-between mb-4">
-        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center border border-blue-500/30">
+        <div className="w-10 h-10 rounded-md bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center border border-blue-500/30">
           <Zap className="w-5 h-5 text-blue-400" />
         </div>
         <div className="flex items-center space-x-1 text-yellow-500 bg-yellow-500/10 px-2 py-1 rounded-full border border-yellow-500/20">
@@ -103,13 +103,13 @@ export default function SkillsBrowser() {
             <Badge
               key={tag}
               variant="outline"
-              className="text-xs bg-white/5 border-white/10 hover:bg-white/10"
+              className="text-xs bg-transparent/5 border-white/10 hover:bg-transparent/10"
             >
               {tag}
             </Badge>
           ))}
           {skill.tags.length > 3 && (
-            <Badge variant="outline" className="text-xs bg-white/5 border-white/10">
+            <Badge variant="outline" className="text-xs bg-transparent/5 border-white/10">
               +{skill.tags.length - 3}
             </Badge>
           )}
@@ -195,18 +195,18 @@ export default function SkillsBrowser() {
                 </button>
               </div>
 
-              <div className="p-8 pb-0">
-                <div className="flex items-start gap-5 mb-6">
-                  <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center border border-blue-500/30 flex-shrink-0">
+              <div className="p-4 pb-0">
+                <div className="flex items-start gap-4 mb-6">
+                  <div className="w-16 h-16 rounded-md bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center border border-blue-500/30 flex-shrink-0">
                     <Zap className="w-8 h-8 text-blue-400" />
                   </div>
                   <div>
-                    <h2 className="text-3xl font-bold text-white mb-2">{selectedSkill.name}</h2>
+                    <h2 className="text-2xl font-bold text-white mb-2">{selectedSkill.name}</h2>
                     <div className="flex items-center gap-3 text-sm text-gray-400">
                       <span>
                         by <span className="text-white">{selectedSkill.author}</span>
                       </span>
-                      <span className="w-1 h-1 rounded-full bg-gray-500"></span>
+                      <span className="w-1 h-1 rounded-full bg-transparent0"></span>
                       <span>v{selectedSkill.version}</span>
                     </div>
                   </div>
@@ -226,7 +226,7 @@ export default function SkillsBrowser() {
                     {selectedSkill.capabilities.map((cap: string, i: number) => (
                       <div
                         key={i}
-                        className="flex items-center gap-2 text-sm text-gray-300 bg-white/5 p-3 rounded-lg border border-white/5"
+                        className="flex items-center gap-2 text-sm text-gray-300 bg-transparent/5 p-3 rounded-md border border-white/5"
                       >
                         <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
                         {cap}
@@ -242,15 +242,17 @@ export default function SkillsBrowser() {
                     </h3>
                     <div className="space-y-4">
                       {selectedSkill.examples.map((example: SkillExample, i: number) => (
-                        <div key={i} className="bg-black/40 rounded-lg p-4 border border-white/5">
+                        <div key={i} className="bg-black/40 rounded-md p-4 border border-white/5">
                           <h4 className="text-sm font-medium text-white mb-1">{example.title}</h4>
-                          <p className="text-xs text-gray-500 mb-3">{example.description}</p>
+                          <p className="text-xs text-muted-foreground mb-3">
+                            {example.description}
+                          </p>
                           <div className="space-y-2 font-mono text-xs">
-                            <div className="bg-white/5 p-2 rounded text-gray-300">
+                            <div className="bg-transparent/5 p-2 rounded text-gray-300">
                               <span className="text-blue-400 font-bold mr-2">Input:</span>
                               {example.input}
                             </div>
-                            <div className="bg-white/5 p-2 rounded text-gray-300">
+                            <div className="bg-transparent/5 p-2 rounded text-gray-300">
                               <span className="text-green-400 font-bold mr-2">Output:</span>
                               {example.output}
                             </div>

@@ -156,7 +156,7 @@ export const AgentToolsForm: React.FC<AgentToolsFormProps> = ({ selectedTools, o
           <div key={idx} className="border border-gray-200 rounded-md">
             <button
               onClick={() => toggleCategory(idx)}
-              className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+              className="w-full flex items-center justify-between p-4 hover:bg-muted/20 transition-colors"
             >
               <span className="font-medium">{category.name}</span>
               <FaChevronDown
@@ -176,7 +176,7 @@ export const AgentToolsForm: React.FC<AgentToolsFormProps> = ({ selectedTools, o
                     />
                     <div>
                       <p className="font-medium">{tool.label}</p>
-                      <p className="text-sm text-gray-600">{tool.description}</p>
+                      <p className="text-sm text-muted-foreground">{tool.description}</p>
                     </div>
                   </label>
                 ))}

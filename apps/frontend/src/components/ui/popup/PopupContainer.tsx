@@ -26,7 +26,7 @@ export const PopupContainer: React.FC<PopupContainerProps> = ({
   return (
     <div
       className={`w-full h-full p-4 ${
-        darkMode ? 'bg-neutral-800 text-white' : 'bg-white text-neutral-800'
+        darkMode ? 'bg-neutral-800 text-white' : 'bg-transparent text-neutral-800'
       }`}
       style={containerStyle}
     >

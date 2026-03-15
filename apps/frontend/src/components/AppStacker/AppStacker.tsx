@@ -1,10 +1,10 @@
 'use client';
-import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import React, { useState } from 'react';
 
 interface App {
   id: number;
@@ -29,7 +29,7 @@ const VirtualDevice: React.FC<VirtualDeviceProps> = ({ app, onClose }) => (
     exit={{ opacity: 0, scale: 0.9 }}
     className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
   >
-    <div className="relative bg-white rounded-2xl shadow-2xl overflow-hidden max-w-2xl w-full max-h-[80vh]">
+    <div className="relative bg-transparent rounded-md shadow-none overflow-hidden max-w-2xl w-full max-h-[80vh]">
       <div className="bg-gray-800 p-2 flex items-center justify-between">
         <div className="flex items-center space-x-1.5">
           <div className="w-3 h-3 rounded-full bg-red-500"></div>
@@ -41,9 +41,9 @@ const VirtualDevice: React.FC<VirtualDeviceProps> = ({ app, onClose }) => (
           Close
         </button>
       </div>
-      <div className="p-6 overflow-y-auto">
+      <div className="p-4 overflow-y-auto">
         <h2 className="text-2xl font-bold mb-2">{app.name}</h2>
-        <p className="text-gray-600 mb-4">{app.description}</p>
+        <p className="text-muted-foreground mb-4">{app.description}</p>
         <div className="space-y-4">
           {app.modules && (
             <div>
@@ -60,7 +60,7 @@ const VirtualDevice: React.FC<VirtualDeviceProps> = ({ app, onClose }) => (
               <h3 className="font-semibold">Media</h3>
               <div className="grid grid-cols-2 gap-4">
                 {app.mediaAssets.map((asset) => (
-                  <img key={asset} src={asset} alt="Media asset" className="rounded-lg" />
+                  <img key={asset} src={asset} alt="Media asset" className="rounded-md" />
                 ))}
               </div>
             </div>
@@ -71,7 +71,12 @@ const VirtualDevice: React.FC<VirtualDeviceProps> = ({ app, onClose }) => (
               <ul>
                 {app.socialLinks.map((link) => (
                   <li key={link.name}>
-                    <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                    <a
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:underline"
+                    >
                       {link.name}
                     </a>
                   </li>
@@ -94,11 +99,23 @@ interface DraggableAppProps {
   droppableId: string;
 }
 
-const DraggableApp: React.FC<DraggableAppProps> = ({ app, index, isExpanded, toggleExpand, openVirtualDevice, droppableId }) => (
+const DraggableApp: React.FC<DraggableAppProps> = ({
+  app,
+  index,
+  isExpanded,
+  toggleExpand,
+  openVirtualDevice,
+  droppableId,
+}) => (
   <Draggable draggableId={`${droppableId}-${app.id}`} index={index}>
     {(provided) => (
-      <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} className="mb-4">
-        <Card className="hover:shadow-lg transition-shadow">
+      <div
+        ref={provided.innerRef}
+        {...provided.draggableProps}
+        {...provided.dragHandleProps}
+        className="mb-4"
+      >
+        <Card className="hover:shadow-none transition-shadow">
           <CardHeader>
             <CardTitle className="flex justify-between items-center">
               {app.name}
@@ -110,7 +127,11 @@ const DraggableApp: React.FC<DraggableAppProps> = ({ app, index, isExpanded, tog
           </CardHeader>
           <AnimatePresence>
             {isExpanded && (
-              <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}>
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+              >
                 <CardContent>
                   <p>{app.description}</p>
                   <Button className="mt-4" onClick={() => openVirtualDevice(app)}>
@@ -190,31 +211,56 @@ export function AppStacker() {
   return (
     <div className="container mx-auto p-4">
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div>
             <h2 className="text-2xl font-bold mb-4">Available Apps</h2>
             <Droppable droppableId="available">
-              {(provided) => (<div ref={provided.innerRef} {...provided.droppableProps}>
-                  {availableApps.map((app, index) => (<DraggableApp key={app.id} app={app} index={index} isExpanded={expandedAppId === app.id} toggleExpand={toggleExpand} openVirtualDevice={openVirtualDevice} droppableId="available"/>))}
+              {(provided) => (
+                <div ref={provided.innerRef} {...provided.droppableProps}>
+                  {availableApps.map((app, index) => (
+                    <DraggableApp
+                      key={app.id}
+                      app={app}
+                      index={index}
+                      isExpanded={expandedAppId === app.id}
+                      toggleExpand={toggleExpand}
+                      openVirtualDevice={openVirtualDevice}
+                      droppableId="available"
+                    />
+                  ))}
                   {provided.placeholder}
-                </div>)}
+                </div>
+              )}
             </Droppable>
           </div>
 
           <div>
             <h2 className="text-2xl font-bold mb-4">Stacked Apps</h2>
             <Droppable droppableId="stacked">
-              {(provided) => (<div ref={provided.innerRef} {...provided.droppableProps}>
-                  {stackedApps.map((app, index) => (<DraggableApp key={app.id} app={app} index={index} isExpanded={expandedAppId === app.id} toggleExpand={toggleExpand} openVirtualDevice={openVirtualDevice} droppableId="stacked"/>))}
+              {(provided) => (
+                <div ref={provided.innerRef} {...provided.droppableProps}>
+                  {stackedApps.map((app, index) => (
+                    <DraggableApp
+                      key={app.id}
+                      app={app}
+                      index={index}
+                      isExpanded={expandedAppId === app.id}
+                      toggleExpand={toggleExpand}
+                      openVirtualDevice={openVirtualDevice}
+                      droppableId="stacked"
+                    />
+                  ))}
                   {provided.placeholder}
-                </div>)}
+                </div>
+              )}
             </Droppable>
           </div>
         </div>
       </DragDropContext>
 
       <AnimatePresence>
-        {virtualDeviceApp && (<VirtualDevice app={virtualDeviceApp} onClose={closeVirtualDevice}/>)}
+        {virtualDeviceApp && <VirtualDevice app={virtualDeviceApp} onClose={closeVirtualDevice} />}
       </AnimatePresence>
-    </div>);
+    </div>
+  );
 }

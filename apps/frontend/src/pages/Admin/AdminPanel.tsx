@@ -121,7 +121,7 @@ export default function AdminPanel() {
       case 'critical':
         return <AlertCircle className="h-5 w-5 text-red-500" />;
       default:
-        return <Circle className="h-5 w-5 text-gray-500" />;
+        return <Circle className="h-5 w-5 text-muted-foreground" />;
     }
   };
 
@@ -189,7 +189,7 @@ export default function AdminPanel() {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2 flex items-center">
+          <h1 className="text-2xl font-bold text-white mb-2 flex items-center">
             <User className="h-8 w-8 mr-2" /> Admin Panel
           </h1>
           <p className="text-gray-400">System administration and management dashboard</p>
@@ -205,7 +205,7 @@ export default function AdminPanel() {
       </div>
 
       {loadError && (
-        <div className="rounded-lg border border-amber-300 bg-amber-100/80 px-4 py-3 text-sm text-amber-900">
+        <div className="rounded-md border border-amber-300 bg-amber-100/80 px-4 py-2 text-sm text-amber-900">
           {loadError}
         </div>
       )}
@@ -214,7 +214,7 @@ export default function AdminPanel() {
       {metrics && (
         <>
           {/* Status Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <GlassCard gradient="blue" className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -256,15 +256,17 @@ export default function AdminPanel() {
                     {getHealthIcon(metrics.serverHealth)}
                     {getHealthBadge(metrics.serverHealth)}
                   </div>
-                  <p className="text-xs text-gray-500 mt-2">Uptime: {metrics.systemUptime}</p>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Uptime: {metrics.systemUptime}
+                  </p>
                 </div>
               </div>
             </GlassCard>
           </div>
 
           {/* Resource Usage */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <GlassCard className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <GlassCard className="p-4">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-white">Memory Usage</h3>
                 <Cpu className="h-5 w-5 text-gray-400" />
@@ -273,7 +275,7 @@ export default function AdminPanel() {
                 <span className="text-sm text-gray-400">Used</span>
                 <span className="text-sm font-medium text-white">{metrics.memoryUsage}%</span>
               </div>
-              <div className="w-full bg-white/10 rounded-full h-2">
+              <div className="w-full bg-transparent/10 rounded-full h-2">
                 <div
                   className={`h-2 rounded-full transition-all duration-300 ${getUsageColor(metrics.memoryUsage)}`}
                   style={{ width: `${metrics.memoryUsage}%` }}
@@ -281,7 +283,7 @@ export default function AdminPanel() {
               </div>
             </GlassCard>
 
-            <GlassCard className="p-6">
+            <GlassCard className="p-4">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-white">CPU Usage</h3>
                 <Activity className="h-5 w-5 text-gray-400" />
@@ -290,7 +292,7 @@ export default function AdminPanel() {
                 <span className="text-sm text-gray-400">Used</span>
                 <span className="text-sm font-medium text-white">{metrics.cpuUsage}%</span>
               </div>
-              <div className="w-full bg-white/10 rounded-full h-2">
+              <div className="w-full bg-transparent/10 rounded-full h-2">
                 <div
                   className={`h-2 rounded-full transition-all duration-300 ${getUsageColor(metrics.cpuUsage)}`}
                   style={{ width: `${metrics.cpuUsage}%` }}
@@ -360,17 +362,19 @@ export default function AdminPanel() {
       {/* Admin Sections */}
       <div>
         <h2 className="text-xl font-semibold text-white mb-4">Administration</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {adminSections.map((section, index) => (
             <Link key={index} to={section.link}>
               <GlassCard className="h-full group cursor-pointer transition-all hover:border-white/20">
                 <div className="flex items-center justify-between mb-4">
                   <div
-                    className={`p-3 rounded-lg bg-${section.gradient}-500/10 text-${section.gradient}-400 group-hover:bg-${section.gradient}-500/20 transition-all`}
+                    className={`p-3 rounded-md bg-${section.gradient}-500/10 text-${section.gradient}-400 group-hover:bg-${section.gradient}-500/20 transition-all`}
                   >
                     {section.icon}
                   </div>
-                  <div className="text-gray-500 group-hover:text-white transition-colors">→</div>
+                  <div className="text-muted-foreground group-hover:text-white transition-colors">
+                    →
+                  </div>
                 </div>
                 <h3 className="text-lg font-semibold text-white mb-2">{section.title}</h3>
                 <p className="text-sm text-gray-400">{section.description}</p>
@@ -381,7 +385,7 @@ export default function AdminPanel() {
       </div>
 
       {/* Recent Activity */}
-      <GlassCard className="p-6">
+      <GlassCard className="p-4">
         <h2 className="text-xl font-semibold text-white mb-4">Recent Activity</h2>
         <div className="space-y-4">
           {[
@@ -407,7 +411,7 @@ export default function AdminPanel() {
           ].map((activity, i) => (
             <div
               key={i}
-              className="flex items-center space-x-4 p-3 bg-white/5 rounded-lg border border-white/5 hover:bg-white/10 transition-colors"
+              className="flex items-center space-x-4 p-3 bg-transparent/5 rounded-md border border-white/5 hover:bg-transparent/10 transition-colors"
             >
               <div className="text-2xl">{activity.icon}</div>
               <div className="flex-1">

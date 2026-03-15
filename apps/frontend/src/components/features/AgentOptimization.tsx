@@ -73,7 +73,7 @@ export const AgentOptimization = ({ agentId }) => {
     ];
   };
   return (
-    <Card_1.Card className="p-6">
+    <Card_1.Card className="p-4">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold">Agent Optimization</h2>
         <Button_1.Button onClick={handleStartOptimization} disabled={optimizeMutation.isPending}>
@@ -81,7 +81,7 @@ export const AgentOptimization = ({ agentId }) => {
         </Button_1.Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1">Optimization Target</label>
@@ -252,8 +252,8 @@ export const AgentOptimization = ({ agentId }) => {
               )}
             </>
           ) : (
-            <div className="flex items-center justify-center h-64 border-2 border-dashed rounded-lg">
-              <p className="text-gray-500">No metrics available</p>
+            <div className="flex items-center justify-center h-64 border-2 border-dashed rounded-md">
+              <p className="text-muted-foreground">No metrics available</p>
             </div>
           )}
         </div>

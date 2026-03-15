@@ -98,7 +98,7 @@ const HistoricalMessage = ({
         <div className="py-8 px-4 w-full flex gap-x-5 md:max-w-[80%] flex-col">
           <div className="flex gap-x-5">
             <ProfileImage role={role} workspace={workspace} />
-            <div className="p-2 rounded-lg bg-red-50 text-red-500">
+            <div className="p-2 rounded-md bg-red-50 text-red-500">
               <span className="inline-block">
                 <Warning className="h-4 w-4 mb-1 inline-block" /> Could not respond to message.
               </span>
@@ -191,7 +191,7 @@ function ProfileImage({ role, workspace }: ProfileImageProps): ReactElement {
         <img
           src={workspace.pfpUrl}
           alt="Workspace profile picture"
-          className="absolute top-0 left-0 w-full h-full object-cover rounded-full bg-white"
+          className="absolute top-0 left-0 w-full h-full object-cover rounded-full bg-transparent"
         />
       </div>
     );

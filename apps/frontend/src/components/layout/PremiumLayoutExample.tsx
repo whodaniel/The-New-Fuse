@@ -23,7 +23,7 @@ export const PremiumLayoutExample: React.FC = () => {
       showHeader={true}
     >
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <StatsCard
           label="Total Agents"
           value="24"
@@ -61,7 +61,7 @@ export const PremiumLayoutExample: React.FC = () => {
       {/* Quick Actions */}
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-white mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <ActionCard
             title="Create New Agent"
             description="Deploy a new AI agent with custom capabilities and configurations."
@@ -132,12 +132,12 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ title, description, time, s
   };
 
   return (
-    <div className="flex items-start gap-4 p-4 bg-white/5 rounded-lg hover:bg-white/10 transition-all duration-200">
+    <div className="flex items-start gap-4 p-4 bg-transparent/5 rounded-md hover:bg-transparent/10 transition-all duration-200">
       <div className={`w-2 h-2 rounded-full mt-2 ${statusColors[status]}`} />
       <div className="flex-1">
         <h4 className="text-white font-medium mb-1">{title}</h4>
         <p className="text-sm text-gray-400">{description}</p>
-        <p className="text-xs text-gray-500 mt-1">{time}</p>
+        <p className="text-xs text-muted-foreground mt-1">{time}</p>
       </div>
     </div>
   );

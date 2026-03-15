@@ -32,7 +32,7 @@ export const ResultsViewer: React.FC<ResultsViewerProps> = ({ results }) => {
   if (results.length === 0) {
     return (
       <div className="text-center py-10 border border-dashed border-gray-300 rounded-md">
-        <p className="text-gray-500">No results to display. Run a generation first.</p>
+        <p className="text-muted-foreground">No results to display. Run a generation first.</p>
       </div>
     );
   }
@@ -52,7 +52,7 @@ export const ResultsViewer: React.FC<ResultsViewerProps> = ({ results }) => {
               className={`px-4 py-2 font-medium transition-colors ${
                 activeTab === index
                   ? 'border-b-2 border-blue-500 text-blue-600'
-                  : 'text-gray-600 hover:text-gray-900'
+                  : 'text-muted-foreground hover:text-gray-900'
               }`}
             >
               {tab}
@@ -78,7 +78,7 @@ export const ResultsViewer: React.FC<ResultsViewerProps> = ({ results }) => {
 
               <div className="mb-4">
                 <p className="font-medium mb-1">Generated at</p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-muted-foreground">
                   {new Date(currentResult.timestamp).toLocaleString()}
                 </p>
               </div>
@@ -127,10 +127,18 @@ const ResultPanel: React.FC<{ title: string; content: string }> = ({ title, cont
       <div className="flex justify-between items-center mb-2">
         <p className="font-medium">{title}</p>
         <Button onClick={onCopy} className="text-xs flex items-center gap-1">
-          {hasCopied ? <><FaCheck /> Copied</> : <><FaCopy /> Copy</>}
+          {hasCopied ? (
+            <>
+              <FaCheck /> Copied
+            </>
+          ) : (
+            <>
+              <FaCopy /> Copy
+            </>
+          )}
         </Button>
       </div>
-      <div className="p-3 border border-gray-200 rounded-md font-mono text-sm whitespace-pre-wrap max-h-[300px] overflow-y-auto bg-gray-50">
+      <div className="p-3 border border-gray-200 rounded-md font-mono text-sm whitespace-pre-wrap max-h-[300px] overflow-y-auto bg-transparent">
         {content}
       </div>
     </div>
@@ -140,8 +148,8 @@ const ResultPanel: React.FC<{ title: string; content: string }> = ({ title, cont
 const ComparisonView: React.FC<{ results: Result[] }> = ({ results }) => {
   if (results.length <= 1) {
     return (
-      <div className="text-center py-4">
-        <p className="text-gray-500">Need at least two results to compare.</p>
+      <div className="text-center py-2">
+        <p className="text-muted-foreground">Need at least two results to compare.</p>
       </div>
     );
   }
@@ -198,16 +206,16 @@ const AnalyticsView: React.FC<{ results: Result[] }> = ({ results }) => {
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       <div>
         <p className="font-medium mb-3">Completion Statistics</p>
-        <div className="flex gap-6">
+        <div className="flex gap-4">
           <div className="p-4 border border-gray-200 rounded-md flex-1">
-            <p className="text-sm text-gray-600">Average Length</p>
+            <p className="text-sm text-muted-foreground">Average Length</p>
             <p className="text-2xl font-bold">{getAverageLength()} chars</p>
           </div>
           <div className="p-4 border border-gray-200 rounded-md flex-1">
-            <p className="text-sm text-gray-600">Total Completions</p>
+            <p className="text-sm text-muted-foreground">Total Completions</p>
             <p className="text-2xl font-bold">{results.length}</p>
           </div>
         </div>

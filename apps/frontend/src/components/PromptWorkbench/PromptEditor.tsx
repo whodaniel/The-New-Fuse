@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
 import MonacoEditor from '@monaco-editor/react';
+import React, { useState } from 'react';
 import { FaCode, FaMarkdown, FaQuestionCircle } from 'react-icons/fa';
 
 interface PromptEditorProps {
@@ -28,16 +28,14 @@ export const PromptEditor: React.FC<PromptEditorProps> = ({ prompt, onChange }) 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">
-          Prompt Template
-        </h3>
+        <h3 className="text-lg font-medium text-gray-900">Prompt Template</h3>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setEditorMode('plain')}
             className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
               editorMode === 'plain'
                 ? 'bg-gray-800 text-white'
-                : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                : 'bg-transparent border border-gray-300 text-foreground hover:bg-muted/20'
             }`}
             title="Plain Text"
           >
@@ -49,7 +47,7 @@ export const PromptEditor: React.FC<PromptEditorProps> = ({ prompt, onChange }) 
             className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
               editorMode === 'markdown'
                 ? 'bg-gray-800 text-white'
-                : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                : 'bg-transparent border border-gray-300 text-foreground hover:bg-muted/20'
             }`}
             title="Markdown"
           >
@@ -61,7 +59,7 @@ export const PromptEditor: React.FC<PromptEditorProps> = ({ prompt, onChange }) 
             className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
               editorMode === 'json'
                 ? 'bg-gray-800 text-white'
-                : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                : 'bg-transparent border border-gray-300 text-foreground hover:bg-muted/20'
             }`}
             title="JSON"
           >
@@ -70,45 +68,49 @@ export const PromptEditor: React.FC<PromptEditorProps> = ({ prompt, onChange }) 
 
           <div className="relative group">
             <button
-              className="p-1.5 text-gray-400 hover:text-gray-600 transition-colors"
+              className="p-1.5 text-gray-400 hover:text-muted-foreground transition-colors"
               aria-label="Help"
             >
               <FaQuestionCircle size={18} />
             </button>
 
-            <div className="absolute right-0 top-full mt-2 w-72 p-4 bg-white border border-gray-200 rounded-lg shadow-xl z-10 hidden group-hover:block text-sm">
-               <div className="space-y-4">
-                 <div>
-                   <p className="font-bold mb-1">Template Variables</p>
-                   <p className="text-gray-600 mb-2">Use <code>{'{{variable_name}}'}</code> syntax for variables.</p>
-                   <div className="bg-gray-50 p-2 rounded text-xs border border-gray-100 font-mono">
-                     Hello, my name is {'{{ name }}'} and I am {'{{ age }}'} years old.
-                   </div>
-                 </div>
+            <div className="absolute right-0 top-full mt-2 w-72 p-4 bg-transparent border border-gray-200 rounded-md shadow-none z-10 hidden group-hover:block text-sm">
+              <div className="space-y-4">
+                <div>
+                  <p className="font-bold mb-1">Template Variables</p>
+                  <p className="text-muted-foreground mb-2">
+                    Use <code>{'{{variable_name}}'}</code> syntax for variables.
+                  </p>
+                  <div className="bg-transparent p-2 rounded text-xs border border-gray-100 font-mono">
+                    Hello, my name is {'{{ name }}'} and I am {'{{ age }}'} years old.
+                  </div>
+                </div>
 
-                 <div>
-                   <p className="font-bold mb-1">System Instructions</p>
-                   <p className="text-gray-600 mb-2">Start with clear system instructions:</p>
-                   <div className="bg-gray-50 p-2 rounded text-xs border border-gray-100 font-mono">
-                     You are a helpful assistant that provides concise answers.
-                   </div>
-                 </div>
+                <div>
+                  <p className="font-bold mb-1">System Instructions</p>
+                  <p className="text-muted-foreground mb-2">
+                    Start with clear system instructions:
+                  </p>
+                  <div className="bg-transparent p-2 rounded text-xs border border-gray-100 font-mono">
+                    You are a helpful assistant that provides concise answers.
+                  </div>
+                </div>
 
-                 <div>
-                    <p className="font-bold mb-1">Formatting Tips</p>
-                    <ul className="text-gray-600 list-disc list-inside">
-                      <li>Use triple backticks for code blocks</li>
-                      <li>Use bullet points for lists</li>
-                      <li>Separate instructions clearly</li>
-                    </ul>
-                 </div>
-               </div>
+                <div>
+                  <p className="font-bold mb-1">Formatting Tips</p>
+                  <ul className="text-muted-foreground list-disc list-inside">
+                    <li>Use triple backticks for code blocks</li>
+                    <li>Use bullet points for lists</li>
+                    <li>Separate instructions clearly</li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="h-[60vh] border border-gray-200 rounded-md overflow-hidden bg-white">
+      <div className="h-[60vh] border border-gray-200 rounded-md overflow-hidden bg-transparent">
         <MonacoEditor
           height="100%"
           language={getLanguage()}

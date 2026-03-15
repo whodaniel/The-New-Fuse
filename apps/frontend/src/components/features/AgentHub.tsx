@@ -76,15 +76,15 @@ export const AgentHub: React.FC = () => {
       case 'error':
         return 'text-red-600';
       case 'offline':
-        return 'text-gray-500';
+        return 'text-muted-foreground';
       default:
-        return 'text-gray-500';
+        return 'text-muted-foreground';
     }
   };
 
   return (
-    <div className="p-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="p-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Agent List */}
         <div>
           <Card>
@@ -97,9 +97,11 @@ export const AgentHub: React.FC = () => {
                   {loadError}
                 </div>
               )}
-              {loading && <div className="text-sm text-gray-500">Loading agents...</div>}
+              {loading && <div className="text-sm text-muted-foreground">Loading agents...</div>}
               {!loading && !loadError && agents.length === 0 && (
-                <div className="text-sm text-gray-500">No agents are currently available.</div>
+                <div className="text-sm text-muted-foreground">
+                  No agents are currently available.
+                </div>
               )}
               <div className="space-y-2">
                 {agents.map((agent) => (
@@ -108,7 +110,7 @@ export const AgentHub: React.FC = () => {
                     className={`p-3 rounded-md cursor-pointer border transition-colors ${
                       selectedAgent?.id === agent.id
                         ? 'bg-blue-50 border-blue-500'
-                        : 'bg-gray-50 hover:bg-gray-100 border-transparent'
+                        : 'bg-transparent hover:bg-muted/30 border-transparent'
                     }`}
                     onClick={() => setSelectedAgent(agent)}
                   >
@@ -170,7 +172,9 @@ export const AgentHub: React.FC = () => {
                 </Tabs>
               ) : (
                 <div className="text-center py-8">
-                  <p className="text-gray-500 mb-4">Select an agent or create a new one to begin</p>
+                  <p className="text-muted-foreground mb-4">
+                    Select an agent or create a new one to begin
+                  </p>
                 </div>
               )}
             </CardContent>

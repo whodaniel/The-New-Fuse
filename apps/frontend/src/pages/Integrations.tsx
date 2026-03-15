@@ -24,8 +24,8 @@ const IntegrationCard = ({
   title: string;
   description: string;
 }) => (
-  <GlassCard hover className="p-6">
-    <div className="w-12 h-12 rounded-lg bg-linear-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+  <GlassCard hover className="p-4">
+    <div className="w-12 h-12 rounded-md bg-linear-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
       <Icon className="h-6 w-6 text-white" />
     </div>
     <h3 className="text-lg font-semibold mb-2 text-white">{title}</h3>
@@ -37,7 +37,7 @@ export const Integrations = () => {
   return (
     <div className="min-h-screen flex flex-col bg-linear-to-br from-gray-900 via-slate-900 to-gray-900 text-white">
       <main className="grow">
-        <section className="py-20 lg:py-32 bg-linear-to-br from-indigo-600 via-purple-700 to-blue-800 text-white text-center">
+        <section className="py-20 lg:py-22 bg-linear-to-br from-indigo-600 via-purple-700 to-blue-800 text-white text-center">
           <div className="container mx-auto px-4">
             <Badge className="mb-6 bg-slate-800/50 text-white border-white/20">
               <Puzzle className="w-4 h-4 mr-2" />
@@ -52,7 +52,7 @@ export const Integrations = () => {
             <PremiumButton
               asChild
               size="lg"
-              className="bg-white/90 text-slate-900 hover:bg-white px-8 py-4 text-lg font-semibold"
+              className="bg-transparent/90 text-slate-900 hover:bg-transparent px-8 py-2 text-lg font-semibold"
             >
               <Link to="/auth/register">
                 <Rocket className="mr-2 h-5 w-5" />
@@ -63,18 +63,18 @@ export const Integrations = () => {
           </div>
         </section>
 
-        <section className="py-20 bg-gray-50">
+        <section className="py-20 bg-transparent">
           <div className="container mx-auto px-4">
             <div className="text-center mb-16">
               <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
                 Our Integration Ecosystem
               </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
                 Connect with your existing tools and platforms
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <IntegrationCard
                 icon={Github}
                 title="GitHub Integration"
@@ -112,13 +112,13 @@ export const Integrations = () => {
         <section className="py-20 bg-slate-900/60 backdrop-blur-md text-center">
           <div className="container mx-auto px-4">
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">Ready to Connect?</h2>
-            <p className="text-xl text-gray-600 mb-10 max-w-3xl mx-auto">
+            <p className="text-xl text-muted-foreground mb-10 max-w-3xl mx-auto">
               Start integrating The New Fuse with your existing tools today.
             </p>
             <PremiumButton
               asChild
               size="lg"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg font-semibold"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2 text-lg font-semibold"
             >
               <Link to="/auth/register">Get Started Free</Link>
             </PremiumButton>
@@ -127,19 +127,19 @@ export const Integrations = () => {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 py-12 px-6">
+      <footer className="border-t border-white/10 py-12 px-3">
         <div className="max-w-7xl mx-auto text-center">
           <Link
             to="/"
             className="inline-flex items-center justify-center gap-3 mb-4 hover:opacity-80 transition-opacity"
           >
-            <div className="w-10 h-10 rounded-xl bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-md bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center">
               <Rocket className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl font-bold">The New Fuse</span>
           </Link>
           <p className="text-gray-400 text-sm mb-4">AI Agent Orchestration Platform</p>
-          <div className="flex justify-center gap-6 text-sm text-gray-400">
+          <div className="flex justify-center gap-4 text-sm text-gray-400">
             <Link to="/" className="hover:text-white transition-colors">
               Home
             </Link>
@@ -153,7 +153,7 @@ export const Integrations = () => {
               Terms
             </Link>
           </div>
-          <p className="text-xs text-gray-500 mt-4">
+          <p className="text-xs text-muted-foreground mt-4">
             © {new Date().getFullYear()} The New Fuse. All rights reserved.
           </p>
         </div>

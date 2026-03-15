@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 export function Footer() {
   return (
-    <footer className="border-t bg-card py-4 px-6">
+    <footer className="border-t bg-card py-2 px-3">
       <div className="flex justify-between items-center">
         <p className="text-sm text-muted-foreground">
           © {new Date().getFullYear()} The New Fuse. All rights reserved.

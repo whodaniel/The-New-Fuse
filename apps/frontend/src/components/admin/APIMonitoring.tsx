@@ -14,7 +14,7 @@ export const APIMonitoring: React.FC = () => {
     updateSettings,
     resetProvider,
     clearCache,
-    loading
+    loading,
   } = useAPIMonitoring();
 
   const [selectedTimeframe, setSelectedTimeframe] = useState('24h');
@@ -22,22 +22,28 @@ export const APIMonitoring: React.FC = () => {
   const [activeTab, setActiveTab] = useState('Overview');
 
   if (loading) {
-    return <div className="p-4"><div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700"><div className="bg-blue-600 h-2.5 rounded-full" style={{width: "45%"}}></div></div></div>;
+    return (
+      <div className="p-4">
+        <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+          <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: '45%' }}></div>
+        </div>
+      </div>
+    );
   }
 
   const renderTabs = () => {
     const tabs = ['Overview', 'Providers', 'Cost Analysis', 'Cache Management', 'Settings'];
     return (
       <div className="border-b border-gray-200 dark:border-gray-700">
-        <ul className="flex flex-wrap -mb-px text-sm font-medium text-center text-gray-500 dark:text-gray-400">
-          {tabs.map(tab => (
+        <ul className="flex flex-wrap -mb-px text-sm font-medium text-center text-muted-foreground dark:text-muted-foreground">
+          {tabs.map((tab) => (
             <li className="mr-2" key={tab}>
               <button
                 onClick={() => setActiveTab(tab)}
                 className={`inline-block p-4 rounded-t-lg border-b-2 ${
                   activeTab === tab
                     ? 'text-blue-600 border-blue-600 active dark:text-blue-500 dark:border-blue-500'
-                    : 'border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300'
+                    : 'border-transparent hover:text-muted-foreground hover:border-gray-300 dark:hover:text-gray-300'
                 }`}
               >
                 {tab}
@@ -54,59 +60,93 @@ export const APIMonitoring: React.FC = () => {
       case 'Overview':
         return (
           <div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-6">
-              <div className="p-4 bg-white rounded-lg shadow dark:bg-gray-800">
-                <div className="text-sm font-medium text-gray-500 truncate dark:text-gray-400">Total Requests (24h)</div>
-                <div className="mt-1 text-3xl font-semibold text-gray-900 dark:text-white">{stats.totalRequests.toLocaleString()}</div>
-                <div className={`text-sm font-medium ${stats.requestDelta > 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
+              <div className="p-4 bg-transparent rounded-md shadow-none dark:bg-transparent">
+                <div className="text-sm font-medium text-muted-foreground truncate dark:text-muted-foreground">
+                  Total Requests (24h)
+                </div>
+                <div className="mt-1 text-2xl font-semibold text-gray-900 dark:text-white">
+                  {stats.totalRequests.toLocaleString()}
+                </div>
+                <div
+                  className={`text-sm font-medium ${stats.requestDelta > 0 ? 'text-green-600' : 'text-red-600'}`}
+                >
                   {stats.requestDelta > 0 ? `↑` : `↓`} {Math.abs(stats.requestDelta)}%
                 </div>
               </div>
-              <div className="p-4 bg-white rounded-lg shadow dark:bg-gray-800">
-                <div className="text-sm font-medium text-gray-500 truncate dark:text-gray-400">Success Rate</div>
-                <div className="mt-1 text-3xl font-semibold text-gray-900 dark:text-white">{stats.successRate.toFixed(1)}%</div>
-                <div className={`text-sm font-medium ${stats.successDelta > 0 ? 'text-green-600' : 'text-red-600'}`}>
+              <div className="p-4 bg-transparent rounded-md shadow-none dark:bg-transparent">
+                <div className="text-sm font-medium text-muted-foreground truncate dark:text-muted-foreground">
+                  Success Rate
+                </div>
+                <div className="mt-1 text-2xl font-semibold text-gray-900 dark:text-white">
+                  {stats.successRate.toFixed(1)}%
+                </div>
+                <div
+                  className={`text-sm font-medium ${stats.successDelta > 0 ? 'text-green-600' : 'text-red-600'}`}
+                >
                   {stats.successDelta > 0 ? `↑` : `↓`} {Math.abs(stats.successDelta)}%
                 </div>
               </div>
-              <div className="p-4 bg-white rounded-lg shadow dark:bg-gray-800">
-                <div className="text-sm font-medium text-gray-500 truncate dark:text-gray-400">Avg. Response Time</div>
-                <div className="mt-1 text-3xl font-semibold text-gray-900 dark:text-white">{stats.avgResponseTime.toFixed(0)}ms</div>
-                <div className={`text-sm font-medium ${stats.responseDelta > 0 ? 'text-green-600' : 'text-red-600'}`}>
+              <div className="p-4 bg-transparent rounded-md shadow-none dark:bg-transparent">
+                <div className="text-sm font-medium text-muted-foreground truncate dark:text-muted-foreground">
+                  Avg. Response Time
+                </div>
+                <div className="mt-1 text-2xl font-semibold text-gray-900 dark:text-white">
+                  {stats.avgResponseTime.toFixed(0)}ms
+                </div>
+                <div
+                  className={`text-sm font-medium ${stats.responseDelta > 0 ? 'text-green-600' : 'text-red-600'}`}
+                >
                   {stats.responseDelta > 0 ? `↑` : `↓`} {Math.abs(stats.responseDelta)}%
                 </div>
               </div>
-              <div className="p-4 bg-white rounded-lg shadow dark:bg-gray-800">
-                <div className="text-sm font-medium text-gray-500 truncate dark:text-gray-400">Total API Cost (24h)</div>
-                <div className="mt-1 text-3xl font-semibold text-gray-900 dark:text-white">${stats.totalCost.toFixed(2)}</div>
-                <div className={`text-sm font-medium ${stats.costDelta > 0 ? 'text-green-600' : 'text-red-600'}`}>
+              <div className="p-4 bg-transparent rounded-md shadow-none dark:bg-transparent">
+                <div className="text-sm font-medium text-muted-foreground truncate dark:text-muted-foreground">
+                  Total API Cost (24h)
+                </div>
+                <div className="mt-1 text-2xl font-semibold text-gray-900 dark:text-white">
+                  ${stats.totalCost.toFixed(2)}
+                </div>
+                <div
+                  className={`text-sm font-medium ${stats.costDelta > 0 ? 'text-green-600' : 'text-red-600'}`}
+                >
                   {stats.costDelta > 0 ? `↑` : `↓`} {Math.abs(stats.costDelta)}%
                 </div>
               </div>
-              <div className="p-4 bg-white rounded-lg shadow dark:bg-gray-800">
-                <div className="text-sm font-medium text-gray-500 truncate dark:text-gray-400">Cache Hit Rate</div>
-                <div className="mt-1 text-3xl font-semibold text-gray-900 dark:text-white">{stats.cacheHitRate.toFixed(1)}%</div>
-                <div className="text-sm font-medium text-gray-500 dark:text-gray-400">Saved ~${stats.cacheSavings.toFixed(2)}</div>
+              <div className="p-4 bg-transparent rounded-md shadow-none dark:bg-transparent">
+                <div className="text-sm font-medium text-muted-foreground truncate dark:text-muted-foreground">
+                  Cache Hit Rate
+                </div>
+                <div className="mt-1 text-2xl font-semibold text-gray-900 dark:text-white">
+                  {stats.cacheHitRate.toFixed(1)}%
+                </div>
+                <div className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
+                  Saved ~${stats.cacheSavings.toFixed(2)}
+                </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div className="bg-white rounded-lg shadow dark:bg-gray-800">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div className="bg-transparent rounded-md shadow-none dark:bg-transparent">
                 <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Request Volume</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Request Volume
+                  </h3>
                 </div>
                 <div className="p-4">
-                  <div style={{height: '200px'}}>
+                  <div style={{ height: '200px' }}>
                     <LineChart data={requestRate} xKey="timestamp" yKey="count" height={200} />
                   </div>
                 </div>
               </div>
-              <div className="bg-white rounded-lg shadow dark:bg-gray-800">
+              <div className="bg-transparent rounded-md shadow-none dark:bg-transparent">
                 <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Error Rate</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Error Rate
+                  </h3>
                 </div>
                 <div className="p-4">
-                  <div style={{height: '200px'}}>
+                  <div style={{ height: '200px' }}>
                     <LineChart data={errorRate} xKey="timestamp" yKey="rate" height={200} />
                   </div>
                 </div>
@@ -133,46 +173,82 @@ export const APIMonitoring: React.FC = () => {
             </div>
 
             <div className="overflow-x-auto">
-              <table className="min-w-full bg-white dark:bg-gray-800">
-                <thead className="bg-gray-50 dark:bg-gray-700">
+              <table className="min-w-full bg-transparent dark:bg-transparent">
+                <thead className="bg-transparent dark:bg-gray-700">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">Provider</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">Success Rate</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">Avg. Latency</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">Request Count</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">Rate Limit</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">Total Cost</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">Actions</th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider dark:text-gray-300">
+                      Provider
+                    </th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider dark:text-gray-300">
+                      Status
+                    </th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider dark:text-gray-300">
+                      Success Rate
+                    </th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider dark:text-gray-300">
+                      Avg. Latency
+                    </th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider dark:text-gray-300">
+                      Request Count
+                    </th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider dark:text-gray-300">
+                      Rate Limit
+                    </th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider dark:text-gray-300">
+                      Total Cost
+                    </th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider dark:text-gray-300">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                <tbody className="divide-y divide-border/50 dark:divide-border/40">
                   {providers
                     .filter((p: any) => !selectedProvider || p.id === selectedProvider)
                     .map((provider: any) => (
                       <tr key={provider.id}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{provider.name}</td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${provider.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                        <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                          {provider.name}
+                        </td>
+                        <td className="px-3 py-2 whitespace-nowrap">
+                          <span
+                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${provider.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
+                          >
                             {provider.active ? 'Active' : 'Inactive'}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{provider.successRate.toFixed(1)}%</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{provider.avgLatency.toFixed(0)}ms</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{provider.requestCount.toLocaleString()}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                        <td className="px-3 py-2 whitespace-nowrap text-sm text-muted-foreground dark:text-gray-300">
+                          {provider.successRate.toFixed(1)}%
+                        </td>
+                        <td className="px-3 py-2 whitespace-nowrap text-sm text-muted-foreground dark:text-gray-300">
+                          {provider.avgLatency.toFixed(0)}ms
+                        </td>
+                        <td className="px-3 py-2 whitespace-nowrap text-sm text-muted-foreground dark:text-gray-300">
+                          {provider.requestCount.toLocaleString()}
+                        </td>
+                        <td className="px-3 py-2 whitespace-nowrap text-sm text-muted-foreground dark:text-gray-300">
                           <div className="relative group">
                             <div className="w-24 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                              <div className="bg-blue-600 h-2.5 rounded-full" style={{width: `${(provider.currentRate / provider.maxRate) * 100}%`}}></div>
+                              <div
+                                className="bg-blue-600 h-2.5 rounded-full"
+                                style={{
+                                  width: `${(provider.currentRate / provider.maxRate) * 100}%`,
+                                }}
+                              ></div>
                             </div>
                             <div className="absolute bottom-full mb-2 hidden group-hover:block w-max bg-gray-900 text-white text-xs rounded py-1 px-2">
                               {`${provider.currentRate}/${provider.maxRate} per minute`}
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">${provider.totalCost.toFixed(2)}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <button onClick={() => resetProvider(provider.id)} className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">
+                        <td className="px-3 py-2 whitespace-nowrap text-sm text-muted-foreground dark:text-gray-300">
+                          ${provider.totalCost.toFixed(2)}
+                        </td>
+                        <td className="px-3 py-2 whitespace-nowrap text-sm font-medium">
+                          <button
+                            onClick={() => resetProvider(provider.id)}
+                            className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300"
+                          >
                             Reset
                           </button>
                         </td>
@@ -199,10 +275,12 @@ export const APIMonitoring: React.FC = () => {
               </select>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white rounded-lg shadow dark:bg-gray-800">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-transparent rounded-md shadow-none dark:bg-transparent">
                 <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Cost by Provider</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Cost by Provider
+                  </h3>
                 </div>
                 <div className="p-4">
                   <table className="min-w-full text-sm">
@@ -226,18 +304,15 @@ export const APIMonitoring: React.FC = () => {
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow dark:bg-gray-800">
+              <div className="bg-transparent rounded-md shadow-none dark:bg-transparent">
                 <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Daily Usage</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Daily Usage
+                  </h3>
                 </div>
                 <div className="p-4">
-                  <div style={{height: '200px'}}>
-                    <LineChart
-                      data={dailyUsage}
-                      xKey="date"
-                      yKey="cost"
-                      height={200}
-                    />
+                  <div style={{ height: '200px' }}>
+                    <LineChart data={dailyUsage} xKey="date" yKey="cost" height={200} />
                   </div>
                 </div>
               </div>
@@ -248,7 +323,9 @@ export const APIMonitoring: React.FC = () => {
         return (
           <div>
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Cache Management</h2>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                Cache Management
+              </h2>
               <button
                 onClick={clearCache}
                 className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600"
@@ -257,37 +334,55 @@ export const APIMonitoring: React.FC = () => {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div className="bg-white rounded-lg shadow dark:bg-gray-800">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div className="bg-transparent rounded-md shadow-none dark:bg-transparent">
                 <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Cache Statistics</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Cache Statistics
+                  </h3>
                 </div>
                 <div className="p-4">
                   <div className="grid grid-cols-3 gap-4">
                     <div>
-                      <div className="text-sm font-medium text-gray-500 dark:text-gray-400">Hit Rate</div>
-                      <div className="text-2xl font-bold text-gray-900 dark:text-white">{stats.cacheHitRate.toFixed(1)}%</div>
+                      <div className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
+                        Hit Rate
+                      </div>
+                      <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                        {stats.cacheHitRate.toFixed(1)}%
+                      </div>
                     </div>
                     <div>
-                      <div className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Hits</div>
-                      <div className="text-2xl font-bold text-gray-900 dark:text-white">{stats.cacheHits.toLocaleString()}</div>
+                      <div className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
+                        Total Hits
+                      </div>
+                      <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                        {stats.cacheHits.toLocaleString()}
+                      </div>
                     </div>
                     <div>
-                      <div className="text-sm font-medium text-gray-500 dark:text-gray-400">Estimated Savings</div>
-                      <div className="text-2xl font-bold text-gray-900 dark:text-white">${stats.cacheSavings.toFixed(2)}</div>
+                      <div className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
+                        Estimated Savings
+                      </div>
+                      <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                        ${stats.cacheSavings.toFixed(2)}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow dark:bg-gray-800">
+              <div className="bg-transparent rounded-md shadow-none dark:bg-transparent">
                 <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Cache Settings</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Cache Settings
+                  </h3>
                 </div>
                 <div className="p-4">
                   <div className="grid grid-cols-1 gap-4">
                     <div className="flex items-center justify-between">
-                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Enable Caching</label>
+                      <label className="text-sm font-medium text-foreground dark:text-gray-300">
+                        Enable Caching
+                      </label>
                       <input
                         type="checkbox"
                         checked={settings.cacheEnabled}
@@ -296,7 +391,9 @@ export const APIMonitoring: React.FC = () => {
                       />
                     </div>
                     <div className="flex items-center justify-between">
-                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Enable Semantic Caching</label>
+                      <label className="text-sm font-medium text-foreground dark:text-gray-300">
+                        Enable Semantic Caching
+                      </label>
                       <input
                         type="checkbox"
                         checked={settings.semanticCacheEnabled}
@@ -305,7 +402,9 @@ export const APIMonitoring: React.FC = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Cache TTL (seconds)</label>
+                      <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
+                        Cache TTL (seconds)
+                      </label>
                       <input
                         type="number"
                         value={settings.cacheTTL}
@@ -322,17 +421,23 @@ export const APIMonitoring: React.FC = () => {
       case 'Settings':
         return (
           <div>
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">API Gateway Settings</h2>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+              API Gateway Settings
+            </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white rounded-lg shadow dark:bg-gray-800">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-transparent rounded-md shadow-none dark:bg-transparent">
                 <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">General Settings</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    General Settings
+                  </h3>
                 </div>
                 <div className="p-4">
                   <div className="grid grid-cols-1 gap-4">
                     <div className="flex items-center justify-between">
-                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Enable Cost Tracking</label>
+                      <label className="text-sm font-medium text-foreground dark:text-gray-300">
+                        Enable Cost Tracking
+                      </label>
                       <input
                         type="checkbox"
                         checked={settings.costTrackingEnabled}
@@ -341,7 +446,9 @@ export const APIMonitoring: React.FC = () => {
                       />
                     </div>
                     <div className="flex items-center justify-between">
-                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Enable Provider Failover</label>
+                      <label className="text-sm font-medium text-foreground dark:text-gray-300">
+                        Enable Provider Failover
+                      </label>
                       <input
                         type="checkbox"
                         checked={settings.failoverEnabled}
@@ -353,14 +460,17 @@ export const APIMonitoring: React.FC = () => {
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow dark:bg-gray-800">
+              <div className="bg-transparent rounded-md shadow-none dark:bg-transparent">
                 <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Provider Management</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Provider Management
+                  </h3>
                 </div>
                 <div className="p-4">
                   <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4">
                     <p className="text-sm text-blue-800 dark:text-blue-200">
-                      Provider API keys and priority settings can be configured in the Provider Management section.
+                      Provider API keys and priority settings can be configured in the Provider
+                      Management section.
                     </p>
                   </div>
                   <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600">
@@ -377,11 +487,9 @@ export const APIMonitoring: React.FC = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-4">
       {renderTabs()}
-      <div className="mt-6">
-        {renderPanel()}
-      </div>
+      <div className="mt-6">{renderPanel()}</div>
     </div>
   );
 };

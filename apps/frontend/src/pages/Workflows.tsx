@@ -148,7 +148,7 @@ export default function Workflows() {
 
       {/* Active Workflows Grid */}
       {workflows.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 animate-slide-in-up">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-4 animate-slide-in-up">
           {workflows.map((workflow, index) => (
             <ActionCard
               key={workflow.id}
@@ -173,10 +173,10 @@ export default function Workflows() {
 
                 {/* Node/Step Count */}
                 <div className="flex items-center gap-2 text-xs text-slate-400">
-                  <div className="px-2 py-1 bg-white/5 rounded">
+                  <div className="px-2 py-1 bg-transparent/5 rounded">
                     {workflow.nodes?.length || 0} Steps
                   </div>
-                  <div className="px-2 py-1 bg-white/5 rounded">v{workflow.version}</div>
+                  <div className="px-2 py-1 bg-transparent/5 rounded">v{workflow.version}</div>
                 </div>
 
                 {/* Action Buttons */}
@@ -230,12 +230,12 @@ export default function Workflows() {
       <div className="animate-slide-in-up" style={{ animationDelay: '0.1s' }}>
         <GlassCard>
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-lg bg-linear-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-md bg-linear-to-r from-purple-500 to-pink-500 flex items-center justify-center">
               <Activity className="w-5 h-5 text-white" />
             </div>
             <h2 className="text-2xl font-bold text-white">Workflow Builder</h2>
           </div>
-          <div className="h-96 bg-slate-900/50 rounded-lg border border-slate-700/50 flex items-center justify-center backdrop-blur-sm">
+          <div className="h-96 bg-slate-900/50 rounded-md border border-slate-700/50 flex items-center justify-center backdrop-blur-sm">
             <p className="text-slate-400">Select a workflow to visualize or create a new one.</p>
           </div>
           <div className="mt-4 flex justify-end">
@@ -253,7 +253,7 @@ export default function Workflows() {
       <div className="animate-slide-in-up" style={{ animationDelay: '0.2s' }}>
         <GlassCard>
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-lg bg-linear-to-r from-blue-500 to-cyan-500 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-md bg-linear-to-r from-blue-500 to-cyan-500 flex items-center justify-center">
               <TrendingUp className="w-5 h-5 text-white" />
             </div>
             <h2 className="text-2xl font-bold text-white">Recent Executions</h2>
@@ -263,38 +263,38 @@ export default function Workflows() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-slate-700/50">
-                    <th className="text-left py-3 font-medium text-slate-300">Execution ID</th>
-                    <th className="text-left py-3 font-medium text-slate-300">Status</th>
-                    <th className="text-left py-3 font-medium text-slate-300">Started</th>
-                    <th className="text-left py-3 font-medium text-slate-300">Duration</th>
-                    <th className="text-left py-3 font-medium text-slate-300">Actions</th>
+                    <th className="text-left py-2 font-medium text-slate-300">Execution ID</th>
+                    <th className="text-left py-2 font-medium text-slate-300">Status</th>
+                    <th className="text-left py-2 font-medium text-slate-300">Started</th>
+                    <th className="text-left py-2 font-medium text-slate-300">Duration</th>
+                    <th className="text-left py-2 font-medium text-slate-300">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {executions.slice(0, 10).map((execution) => (
                     <tr
                       key={execution.id}
-                      className="border-b border-slate-700/30 last:border-0 hover:bg-white/5 transition-colors"
+                      className="border-b border-slate-700/30 last:border-0 hover:bg-transparent/5 transition-colors"
                     >
-                      <td className="py-4 text-white font-medium font-mono text-xs">
+                      <td className="py-2 text-white font-medium font-mono text-xs">
                         {execution.id.substring(0, 8)}...
                       </td>
-                      <td className="py-4">
+                      <td className="py-2">
                         <span
                           className={`px-3 py-1 text-xs font-medium rounded-full uppercase ${getStatusColor(execution.status)}`}
                         >
                           {execution.status}
                         </span>
                       </td>
-                      <td className="py-4 text-slate-400">
+                      <td className="py-2 text-slate-400">
                         {formatDistanceToNow(new Date(execution.startTime), { addSuffix: true })}
                       </td>
-                      <td className="py-4 text-slate-400">
+                      <td className="py-2 text-slate-400">
                         {execution.endTime
                           ? `${Math.round((new Date(execution.endTime).getTime() - new Date(execution.startTime).getTime()) / 1000)}s`
                           : 'Running...'}
                       </td>
-                      <td className="py-4">
+                      <td className="py-2">
                         <PremiumButton size="sm" variant="ghost">
                           View Logs
                         </PremiumButton>

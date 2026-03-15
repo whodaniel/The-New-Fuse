@@ -103,55 +103,57 @@ export const ExecutionConsole: React.FC = () => {
       </div>
 
       <GlassCard className="overflow-hidden">
-        <div className="p-4 border-b border-white/10 flex items-center justify-between bg-white/5">
+        <div className="p-4 border-b border-white/10 flex items-center justify-between bg-transparent/5">
           <div className="flex items-center gap-2">
             <PlayCircle className="w-5 h-5 text-blue-400" />
             <h2 className="text-lg font-bold text-white">Live Runtimes</h2>
           </div>
           <div className="relative w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               type="text"
               placeholder="Search by ID or workflow..."
-              className="w-full bg-black/40 border border-white/10 rounded-lg pl-10 pr-4 py-1.5 text-xs text-white"
+              className="w-full bg-black/40 border border-white/10 rounded-md pl-10 pr-4 py-1.5 text-xs text-white"
             />
           </div>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-white/5 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-white/10">
+            <thead className="bg-transparent/5 text-left text-[10px] font-bold text-muted-foreground uppercase tracking-widest border-b border-white/10">
               <tr>
-                <th className="px-6 py-4">Runtime Identity</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Runtime Progress</th>
-                <th className="px-6 py-4">Duration</th>
-                <th className="px-6 py-4">System Actions</th>
+                <th className="px-3 py-2">Runtime Identity</th>
+                <th className="px-3 py-2">Status</th>
+                <th className="px-3 py-2">Runtime Progress</th>
+                <th className="px-3 py-2">Duration</th>
+                <th className="px-3 py-2">System Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
               {loading ? (
                 <tr>
-                  <td className="px-6 py-8 text-sm text-gray-400" colSpan={5}>
+                  <td className="px-3 py-8 text-sm text-gray-400" colSpan={5}>
                     Loading live execution telemetry...
                   </td>
                 </tr>
               ) : executions.length === 0 ? (
                 <tr>
-                  <td className="px-6 py-8 text-sm text-gray-400" colSpan={5}>
+                  <td className="px-3 py-8 text-sm text-gray-400" colSpan={5}>
                     No live workflow executions available.
                   </td>
                 </tr>
               ) : (
                 executions.map((exec) => (
-                  <tr key={exec.id} className="hover:bg-white/5 transition-colors group">
-                    <td className="px-6 py-4">
+                  <tr key={exec.id} className="hover:bg-transparent/5 transition-colors group">
+                    <td className="px-3 py-2">
                       <div className="flex flex-col">
                         <span className="text-sm font-bold text-white">{exec.workflowName}</span>
-                        <span className="text-[10px] font-mono text-gray-500">{exec.id}</span>
+                        <span className="text-[10px] font-mono text-muted-foreground">
+                          {exec.id}
+                        </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-2">
                       <div
                         className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[10px] font-bold uppercase ${
                           exec.status === 'running'
@@ -160,7 +162,7 @@ export const ExecutionConsole: React.FC = () => {
                               ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
                               : exec.status === 'failed'
                                 ? 'bg-rose-500/10 border-rose-500/50 text-rose-400'
-                                : 'bg-gray-500/10 border-gray-500/50 text-gray-400'
+                                : 'bg-transparent0/10 border-gray-500/50 text-gray-400'
                         }`}
                       >
                         {exec.status === 'running' && (
@@ -169,9 +171,9 @@ export const ExecutionConsole: React.FC = () => {
                         {exec.status}
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-2">
                       <div className="w-48 space-y-1.5">
-                        <div className="flex justify-between text-[10px] text-gray-500">
+                        <div className="flex justify-between text-[10px] text-muted-foreground">
                           <span>Step Progress</span>
                           <span>{exec.progress}%</span>
                         </div>
@@ -183,19 +185,19 @@ export const ExecutionConsole: React.FC = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-2">
                       <div className="flex items-center gap-2 text-xs text-gray-400">
                         <Clock className="w-3.5 h-3.5" />
                         {exec.duration}
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-2">
                       <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-white transition-all">
+                        <button className="p-2 rounded-md bg-transparent/5 hover:bg-transparent/10 text-white transition-all">
                           <History className="w-4 h-4" />
                         </button>
                         {exec.status === 'running' && (
-                          <button className="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-all">
+                          <button className="p-2 rounded-md bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-all">
                             <StopCircle className="w-4 h-4" />
                           </button>
                         )}
@@ -219,10 +221,12 @@ const StatusSummary: React.FC<{ label: string; value: string; color: string }> =
 }) => (
   <GlassCard className="p-4 flex items-center justify-between border-white/5">
     <div>
-      <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{label}</div>
+      <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+        {label}
+      </div>
       <div className={`text-2xl font-bold text-${color}-400`}>{value}</div>
     </div>
-    <div className={`p-2 rounded-lg bg-${color}-500/10 text-${color}-400`}>
+    <div className={`p-2 rounded-md bg-${color}-500/10 text-${color}-400`}>
       {label === 'Running' ? (
         <Activity className="w-5 h-5 animate-pulse" />
       ) : label === 'Completed' ? (

@@ -83,7 +83,7 @@ export function AgentChatRoom({}: AgentChatRoomProps) {
   }, [currentAgent.id]);
 
   return (
-    <Card className="w-full max-w-4xl h-[600px] flex flex-col bg-white shadow-lg rounded-lg">
+    <Card className="w-full max-w-4xl h-[600px] flex flex-col bg-transparent shadow-none rounded-md">
       <CardHeader className="border-b">
         <CardTitle className="text-xl font-bold">Agent Communication Room</CardTitle>
       </CardHeader>

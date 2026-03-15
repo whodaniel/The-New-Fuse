@@ -130,7 +130,7 @@ const PerformanceDashboard = () => {
 
   if (error) {
     return (
-      <div className="p-4 bg-red-50 border border-red-200 rounded-lg mb-2 flex items-center">
+      <div className="p-4 bg-red-50 border border-red-200 rounded-md mb-2 flex items-center">
         <div className="shrink-0 w-5 h-5 text-red-600 mr-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -172,7 +172,7 @@ const PerformanceDashboard = () => {
         return (
           <div
             key={key}
-            className={`p-4 bg-${alertColor}-50 border border-${alertColor}-200 rounded-lg mb-2 flex items-center`}
+            className={`p-4 bg-${alertColor}-50 border border-${alertColor}-200 rounded-md mb-2 flex items-center`}
           >
             <div className={`shrink-0 w-5 h-5 text-${alertColor}-600 mr-2`}>
               <svg

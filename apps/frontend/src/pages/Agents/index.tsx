@@ -120,7 +120,7 @@ const Agents: React.FC = () => {
         );
       case 'Inactive':
         return (
-          <Badge className="bg-gray-500/10 text-gray-400 border-gray-500/20 hover:bg-gray-500/20">
+          <Badge className="bg-transparent0/10 text-gray-400 border-gray-500/20 hover:bg-muted/200/20">
             <Clock className="w-3 h-3 mr-1" />
             {status}
           </Badge>
@@ -191,7 +191,7 @@ const Agents: React.FC = () => {
             <Search className="absolute left-lg top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
             <PremiumInput
               placeholder="Search agents by name or description..."
-              className="h-14 pl-14 text-base bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+              className="h-14 pl-14 text-base bg-transparent/5 border-white/10 text-white placeholder:text-muted-foreground focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
               value={searchQuery}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
             />
@@ -199,7 +199,7 @@ const Agents: React.FC = () => {
           <div className="flex gap-md">
             <div className="relative min-w-[140px]">
               <select
-                className="h-14 w-full px-lg py-md rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm text-base text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none cursor-pointer hover:bg-white/10 transition-all"
+                className="h-14 w-full px-lg py-md rounded-md border border-white/10 bg-transparent/5 backdrop-blur-sm text-base text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none cursor-pointer hover:bg-transparent/10 transition-all"
                 value={filterType}
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                   setFilterType(e.target.value)
@@ -215,7 +215,7 @@ const Agents: React.FC = () => {
             </div>
             <div className="relative min-w-[140px]">
               <select
-                className="h-14 w-full px-lg py-md rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm text-base text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none cursor-pointer hover:bg-white/10 transition-all"
+                className="h-14 w-full px-lg py-md rounded-md border border-white/10 bg-transparent/5 backdrop-blur-sm text-base text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none cursor-pointer hover:bg-transparent/10 transition-all"
                 value={filterStatus}
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                   setFilterStatus(e.target.value)
@@ -249,13 +249,13 @@ const Agents: React.FC = () => {
             >
               <div>
                 <div className="flex justify-between items-start mb-4">
-                  <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 group-hover:from-blue-500/20 group-hover:to-purple-500/20 transition-all">
+                  <div className="p-3 rounded-md bg-gradient-to-br from-blue-500/10 to-purple-500/10 group-hover:from-blue-500/20 group-hover:to-purple-500/20 transition-all">
                     <Bot className="h-6 w-6 text-blue-400 group-hover:text-blue-300 transition-colors" />
                   </div>
                   <div className="flex items-center">
                     {getStatusBadge(agent.status)}
                     <button
-                      className="ml-2 p-1 text-gray-500 hover:text-white transition-colors rounded-full hover:bg-white/10"
+                      className="ml-2 p-1 text-muted-foreground hover:text-white transition-colors rounded-full hover:bg-transparent/10"
                       title="More options"
                       onClick={(e: React.MouseEvent) => {
                         e.stopPropagation();
@@ -276,19 +276,19 @@ const Agents: React.FC = () => {
 
                 <div className="grid grid-cols-3 gap-lg py-lg border-t border-white/10 mb-md">
                   <div className="text-center">
-                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-sm font-semibold">
+                    <p className="text-xs text-muted-foreground uppercase tracking-widest mb-sm font-semibold">
                       Type
                     </p>
                     <p className="text-base font-semibold text-gray-200">{agent.type}</p>
                   </div>
                   <div className="text-center border-l border-white/10">
-                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-sm font-semibold">
+                    <p className="text-xs text-muted-foreground uppercase tracking-widest mb-sm font-semibold">
                       Tasks
                     </p>
                     <p className="text-base font-semibold text-gray-200">{agent.tasks}</p>
                   </div>
                   <div className="text-center border-l border-white/10">
-                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-sm font-semibold">
+                    <p className="text-xs text-muted-foreground uppercase tracking-widest mb-sm font-semibold">
                       Success
                     </p>
                     <p className="text-base font-semibold text-green-400">{agent.successRate}</p>
@@ -296,7 +296,7 @@ const Agents: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex justify-between items-center text-sm text-gray-500 mt-lg pt-lg border-t border-white/10">
+              <div className="flex justify-between items-center text-sm text-muted-foreground mt-lg pt-lg border-t border-white/10">
                 <span className="flex items-center">
                   <Clock className="w-4 h-4 mr-sm" />
                   Last active: {agent.lastActive}
@@ -313,7 +313,7 @@ const Agents: React.FC = () => {
       {/* Empty state */}
       {filteredAgents.length === 0 && (
         <GlassCard className="text-center py-16">
-          <Bot className="mx-auto h-16 w-16 text-gray-600 mb-4" />
+          <Bot className="mx-auto h-16 w-16 text-muted-foreground mb-4" />
           <h3 className="text-xl font-bold text-white mb-2">No agents found</h3>
           <p className="text-gray-400 mb-6 max-w-md mx-auto">
             {searchQuery || filterType !== 'All' || filterStatus !== 'All'

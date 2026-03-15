@@ -36,7 +36,7 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#020617] relative overflow-hidden p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen flex items-center justify-center bg-[#020617] relative overflow-hidden p-4 sm:p-4 lg:p-4">
       {/* Decorative Background Elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[120px]" />
@@ -44,7 +44,7 @@ const ForgotPassword = () => {
       </div>
 
       <div className="max-w-md w-full z-10">
-        <GlassCard className="p-6 sm:p-8 lg:p-10 space-y-6 lg:space-y-8">
+        <GlassCard className="p-4 sm:p-4 lg:p-10 space-y-6 lg:space-y-8">
           {isEmailSent ? (
             <div className="space-y-6 text-center">
               <div className="flex justify-center">
@@ -73,7 +73,7 @@ const ForgotPassword = () => {
           ) : (
             <>
               <div className="text-center">
-                <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                <h2 className="text-2xl sm:text-2xl font-bold text-white tracking-tight">
                   Forgot your password?
                 </h2>
                 <p className="mt-2 text-sm text-gray-400">
@@ -83,7 +83,7 @@ const ForgotPassword = () => {
 
               {error && (
                 <div
-                  className="bg-red-500/10 border border-red-500/20 text-red-200 px-4 py-3 rounded-lg text-sm"
+                  className="bg-red-500/10 border border-red-500/20 text-red-200 px-4 py-2 rounded-md text-sm"
                   role="alert"
                 >
                   {error}

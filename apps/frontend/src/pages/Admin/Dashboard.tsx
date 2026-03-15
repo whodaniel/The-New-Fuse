@@ -49,7 +49,7 @@ const Dashboard = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <h1 className="text-2xl font-bold">Dashboard</h1>
         <p className="text-muted-foreground mt-2">System overview and key metrics</p>
       </div>
 
@@ -77,7 +77,7 @@ const Dashboard = () => {
             <CardDescription>CPU, Memory, and Network utilization</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="h-[350px] flex items-center justify-center border rounded-lg">
+            <div className="h-[350px] flex items-center justify-center border rounded-md">
               Chart: System Load
             </div>
           </CardContent>
@@ -89,7 +89,7 @@ const Dashboard = () => {
             <CardDescription>Active networks and processing load</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="h-[350px] flex items-center justify-center border rounded-lg">
+            <div className="h-[350px] flex items-center justify-center border rounded-md">
               Chart: Neural Network Activity
             </div>
           </CardContent>
@@ -102,7 +102,7 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="h-[200px] flex items-center justify-center border rounded-lg">
+              <div className="h-[200px] flex items-center justify-center border rounded-md">
                 Event List
               </div>
             </div>

@@ -35,7 +35,7 @@ export const Analytics: React.FC = () => {
   ];
 
   return (
-    <div className="p-6">
+    <div className="p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Analytics Dashboard</h1>
         <select
@@ -64,7 +64,7 @@ export const Analytics: React.FC = () => {
             <div>
               <div className="h-80 bg-gray-100 rounded-md p-4 flex items-center justify-center">
                 <div className="text-center">
-                  <p className="text-gray-500 mb-4">Performance chart visualization</p>
+                  <p className="text-muted-foreground mb-4">Performance chart visualization</p>
                   <div className="text-sm space-y-1">
                     {performanceData.map((point, idx) => (
                       <div key={idx}>
@@ -84,14 +84,14 @@ export const Analytics: React.FC = () => {
             <div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 {resourceUsage.map((resource) => (
-                  <div key={resource.name} className="p-4 bg-gray-50 rounded-md text-center">
+                  <div key={resource.name} className="p-4 bg-transparent rounded-md text-center">
                     <div className="font-medium">{resource.name}</div>
                     <div className="text-2xl font-bold text-blue-600">{resource.usage}%</div>
                   </div>
                 ))}
               </div>
               <div className="h-72 bg-gray-100 rounded-md p-4 flex items-center justify-center">
-                <p className="text-gray-500">Resource usage chart visualization</p>
+                <p className="text-muted-foreground">Resource usage chart visualization</p>
               </div>
             </div>
           </GlassCard>
@@ -101,7 +101,7 @@ export const Analytics: React.FC = () => {
         <TabsContent value="knowledge">
           <GlassCard title="Knowledge Graph Analysis">
             <div className="h-96 bg-gray-100 rounded-md p-4 flex items-center justify-center">
-              <p className="text-gray-500">Knowledge graph visualization</p>
+              <p className="text-muted-foreground">Knowledge graph visualization</p>
             </div>
           </GlassCard>
         </TabsContent>
@@ -110,7 +110,7 @@ export const Analytics: React.FC = () => {
         <TabsContent value="tasks">
           <GlassCard title="Task Allocation Analysis">
             <div className="h-96 bg-gray-100 rounded-md p-4 flex items-center justify-center">
-              <p className="text-gray-500">Task allocation visualization</p>
+              <p className="text-muted-foreground">Task allocation visualization</p>
             </div>
           </GlassCard>
         </TabsContent>

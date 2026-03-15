@@ -122,7 +122,7 @@ export default function GeneralSettings() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4">
       <div className="max-w-5xl mx-auto space-y-6 animate-fade-in">
         <div className="flex items-center justify-between animate-slide-in-down">
           <div>
@@ -140,7 +140,7 @@ export default function GeneralSettings() {
         {/* Appearance */}
         <GlassCard className="animate-slide-in-up">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-md bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
               <Palette className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -200,7 +200,7 @@ export default function GeneralSettings() {
         {/* Notifications */}
         <GlassCard className="animate-slide-in-up" style={{ animationDelay: '0.1s' }}>
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-md bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center">
               <Bell className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -209,7 +209,7 @@ export default function GeneralSettings() {
             </div>
           </div>
           <div className="space-y-6">
-            <div className="flex items-center justify-between p-4 rounded-lg bg-white/5 border border-white/10">
+            <div className="flex items-center justify-between p-4 rounded-md bg-transparent/5 border border-white/10">
               <div>
                 <label htmlFor="email-notifications" className="text-sm font-medium text-white">
                   Email Notifications
@@ -223,7 +223,7 @@ export default function GeneralSettings() {
               />
             </div>
 
-            <div className="flex items-center justify-between p-4 rounded-lg bg-white/5 border border-white/10">
+            <div className="flex items-center justify-between p-4 rounded-md bg-transparent/5 border border-white/10">
               <div>
                 <label htmlFor="push-notifications" className="text-sm font-medium text-white">
                   Push Notifications
@@ -237,7 +237,7 @@ export default function GeneralSettings() {
               />
             </div>
 
-            <div className="flex items-center justify-between p-4 rounded-lg bg-white/5 border border-white/10">
+            <div className="flex items-center justify-between p-4 rounded-md bg-transparent/5 border border-white/10">
               <div>
                 <label htmlFor="desktop-notifications" className="text-sm font-medium text-white">
                   Desktop Notifications
@@ -256,7 +256,7 @@ export default function GeneralSettings() {
         {/* Privacy */}
         <GlassCard className="animate-slide-in-up" style={{ animationDelay: '0.2s' }}>
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-md bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center">
               <Shield className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -265,7 +265,7 @@ export default function GeneralSettings() {
             </div>
           </div>
           <div className="space-y-6">
-            <div className="flex items-center justify-between p-4 rounded-lg bg-white/5 border border-white/10">
+            <div className="flex items-center justify-between p-4 rounded-md bg-transparent/5 border border-white/10">
               <div>
                 <label htmlFor="analytics-privacy" className="text-sm font-medium text-white">
                   Analytics
@@ -281,7 +281,7 @@ export default function GeneralSettings() {
               />
             </div>
 
-            <div className="flex items-center justify-between p-4 rounded-lg bg-white/5 border border-white/10">
+            <div className="flex items-center justify-between p-4 rounded-md bg-transparent/5 border border-white/10">
               <div>
                 <label htmlFor="crash-reports" className="text-sm font-medium text-white">
                   Crash Reports
@@ -297,7 +297,7 @@ export default function GeneralSettings() {
               />
             </div>
 
-            <div className="flex items-center justify-between p-4 rounded-lg bg-white/5 border border-white/10">
+            <div className="flex items-center justify-between p-4 rounded-md bg-transparent/5 border border-white/10">
               <div>
                 <label htmlFor="usage-data" className="text-sm font-medium text-white">
                   Usage Data
@@ -318,7 +318,7 @@ export default function GeneralSettings() {
         {/* Performance */}
         <GlassCard className="animate-slide-in-up" style={{ animationDelay: '0.3s' }}>
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-orange-500 to-red-500 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-md bg-gradient-to-r from-orange-500 to-red-500 flex items-center justify-center">
               <Zap className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -327,7 +327,7 @@ export default function GeneralSettings() {
             </div>
           </div>
           <div className="space-y-6">
-            <div className="flex items-center justify-between p-4 rounded-lg bg-white/5 border border-white/10">
+            <div className="flex items-center justify-between p-4 rounded-md bg-transparent/5 border border-white/10">
               <div>
                 <label htmlFor="auto-save" className="text-sm font-medium text-white">
                   Auto Save

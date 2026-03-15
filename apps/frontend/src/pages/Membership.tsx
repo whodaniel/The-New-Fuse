@@ -31,8 +31,8 @@ export default function Membership() {
     <div className="min-h-screen bg-slate-950 text-white">
       <div className="relative overflow-hidden pt-16 pb-24">
         <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-cyan-500/20 to-transparent" />
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+        <div className="mx-auto max-w-6xl px-3">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="space-y-6">
               <p className="text-xs uppercase tracking-[0.6em] text-cyan-400">Membership Billing</p>
               <h1 className="text-4xl font-black leading-tight sm:text-5xl xl:text-6xl">
@@ -54,7 +54,7 @@ export default function Membership() {
                 </span>
               </div>
             </div>
-            <div className="w-full max-w-md rounded-[32px] border border-white/10 bg-white/5 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.4)] backdrop-blur-xl">
+            <div className="w-full max-w-md rounded-[32px] border border-white/10 bg-transparent/5 p-4 shadow-[0_20px_60px_rgba(0,0,0,0.4)] backdrop-blur-xl">
               <p className="text-xs uppercase tracking-[0.4em] text-slate-400">Active Membership</p>
               <h2 className="mt-4 text-2xl font-black text-white">Join the Protocol</h2>
               <p className="mt-3 text-sm text-slate-300">
@@ -69,7 +69,7 @@ export default function Membership() {
                   href={stripeMembershipCheckoutUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-4 inline-flex w-full items-center justify-center rounded-md border border-white/20 bg-white/10 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/15"
+                  className="mt-4 inline-flex w-full items-center justify-center rounded-md border border-white/20 bg-transparent/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-transparent/15"
                 >
                   Checkout with Stripe
                 </a>
@@ -79,14 +79,14 @@ export default function Membership() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-6xl px-6 pb-24">
-        <div className="grid gap-6 sm:grid-cols-3">
+      <div className="mx-auto max-w-6xl px-3 pb-24">
+        <div className="grid gap-4 sm:grid-cols-3">
           {benefits.map((benefit) => (
             <div
               key={benefit.title}
-              className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 p-6 text-sm text-slate-200"
+              className="flex flex-col gap-3 rounded-md border border-white/10 bg-transparent/5 p-4 text-sm text-slate-200"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900/80">
+              <div className="flex h-12 w-12 items-center justify-center rounded-md bg-slate-900/80">
                 {benefit.icon}
               </div>
               <h3 className="text-base font-black text-white">{benefit.title}</h3>
@@ -95,8 +95,8 @@ export default function Membership() {
           ))}
         </div>
 
-        <div className="mt-12 grid gap-6 lg:grid-cols-2">
-          <div className="rounded-2xl border border-cyan-500/40 bg-cyan-500/5 p-6">
+        <div className="mt-12 grid gap-4 lg:grid-cols-2">
+          <div className="rounded-md border border-cyan-500/40 bg-cyan-500/5 p-4">
             <p className="text-xs uppercase tracking-[0.4em] text-cyan-100">How it works</p>
             <ol className="mt-4 space-y-4 text-sm text-slate-200">
               <li className="flex items-start gap-3">
@@ -121,7 +121,7 @@ export default function Membership() {
               </li>
             </ol>
           </div>
-          <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
+          <div className="rounded-md border border-white/10 bg-slate-900/70 p-4">
             <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Need help?</p>
             <p className="mt-4 text-sm text-slate-200">
               Membership questions? Reach our concierge by emailing{' '}

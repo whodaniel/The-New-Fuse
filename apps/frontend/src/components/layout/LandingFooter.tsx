@@ -6,7 +6,7 @@ export const LandingFooter = () => {
   return (
     <footer className="bg-muted text-muted-foreground py-8 mt-12" role="contentinfo">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           {/* Company Info */}
           <div>
             <h3 className="font-semibold text-foreground mb-4">The New Fuse</h3>

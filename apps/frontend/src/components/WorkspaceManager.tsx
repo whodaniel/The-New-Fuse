@@ -117,7 +117,7 @@ export function WorkspaceManager({ workspace, user }) {
                   type="text"
                   value={message}
                   onChange={(e: any) => setMessage(e.target.value)}
-                  className="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 p-2"
+                  className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 p-2"
                   placeholder="Type your message..."
                 />
                 <ui_1.Button onClick={handleSendMessage}>Send</ui_1.Button>
@@ -126,9 +126,9 @@ export function WorkspaceManager({ workspace, user }) {
           </>
         ) : (
           <div className="flex-1 flex items-center justify-center">
-            <ui_1.Card className="p-6">
+            <ui_1.Card className="p-4">
               <h3 className="text-lg font-semibold mb-2">Select a Thread</h3>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-muted-foreground dark:text-muted-foreground">
                 Choose a thread from the sidebar to start chatting
               </p>
             </ui_1.Card>

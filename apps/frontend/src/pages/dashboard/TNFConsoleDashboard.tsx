@@ -189,11 +189,11 @@ export const TNFConsoleDashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <GlassCard className="p-6">
+      <GlassCard className="p-4">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <p className="text-xs uppercase tracking-[0.18em] text-blue-300">TNF Control Plane</p>
-            <h1 className="text-3xl font-bold text-white mt-2">Production Operations Console</h1>
+            <h1 className="text-2xl font-bold text-white mt-2">Production Operations Console</h1>
             <p className="text-slate-300 mt-2">
               Unified surface for architecture, observability, logs, and governance.
             </p>
@@ -218,7 +218,7 @@ export const TNFConsoleDashboard: React.FC = () => {
               <Link
                 key={item.id}
                 to={sectionLink(item.id)}
-                className={`rounded-xl border px-3 py-3 text-sm transition ${
+                className={`rounded-md border px-3 py-2 text-sm transition ${
                   active
                     ? 'border-blue-400/40 bg-blue-500/15 text-blue-200'
                     : 'border-white/10 bg-black/20 text-slate-300 hover:border-white/25 hover:text-white'
@@ -303,7 +303,7 @@ export const TNFConsoleDashboard: React.FC = () => {
           {section === 'architecture' && (
             <div className="grid gap-4 lg:grid-cols-2">
               <GlassCard
-                className="p-6"
+                className="p-4"
                 title="Runtime Topology"
                 icon={CircuitBoard}
                 gradient="blue"
@@ -325,23 +325,23 @@ export const TNFConsoleDashboard: React.FC = () => {
                   </p>
                 </div>
               </GlassCard>
-              <GlassCard className="p-6" title="Control Surface" icon={Wrench} gradient="purple">
+              <GlassCard className="p-4" title="Control Surface" icon={Wrench} gradient="purple">
                 <div className="grid gap-2">
                   <Link
                     to="/workflows"
-                    className="rounded-lg border border-white/10 px-3 py-2 text-sm hover:border-white/25"
+                    className="rounded-md border border-white/10 px-3 py-2 text-sm hover:border-white/25"
                   >
                     Workflow Orchestration
                   </Link>
                   <Link
                     to="/agents"
-                    className="rounded-lg border border-white/10 px-3 py-2 text-sm hover:border-white/25"
+                    className="rounded-md border border-white/10 px-3 py-2 text-sm hover:border-white/25"
                   >
                     Agent Fleet Management
                   </Link>
                   <Link
                     to="/mcp-hub"
-                    className="rounded-lg border border-white/10 px-3 py-2 text-sm hover:border-white/25"
+                    className="rounded-md border border-white/10 px-3 py-2 text-sm hover:border-white/25"
                   >
                     MCP Integration Hub
                   </Link>
@@ -378,7 +378,7 @@ export const TNFConsoleDashboard: React.FC = () => {
 
           {section === 'logs' && (
             <div className="grid gap-4 lg:grid-cols-2">
-              <GlassCard className="p-6" title="Log Channels" icon={FileText} gradient="orange">
+              <GlassCard className="p-4" title="Log Channels" icon={FileText} gradient="orange">
                 <div className="space-y-3 text-sm text-slate-300">
                   <p>
                     Audit source: <span className="text-white">{dataSources.audits}</span>
@@ -393,23 +393,23 @@ export const TNFConsoleDashboard: React.FC = () => {
                   </p>
                 </div>
               </GlassCard>
-              <GlassCard className="p-6" title="Access Paths" icon={Clock3} gradient="pink">
+              <GlassCard className="p-4" title="Access Paths" icon={Clock3} gradient="pink">
                 <div className="grid gap-2">
                   <Link
                     to="/admin/audit-logs"
-                    className="rounded-lg border border-white/10 px-3 py-2 text-sm hover:border-white/25"
+                    className="rounded-md border border-white/10 px-3 py-2 text-sm hover:border-white/25"
                   >
                     Open Full Audit Logs
                   </Link>
                   <Link
                     to="/workflows/executions"
-                    className="rounded-lg border border-white/10 px-3 py-2 text-sm hover:border-white/25"
+                    className="rounded-md border border-white/10 px-3 py-2 text-sm hover:border-white/25"
                   >
                     Workflow Execution History
                   </Link>
                   <Link
                     to="/timeline"
-                    className="rounded-lg border border-white/10 px-3 py-2 text-sm hover:border-white/25"
+                    className="rounded-md border border-white/10 px-3 py-2 text-sm hover:border-white/25"
                   >
                     Timeline Activity Stream
                   </Link>
@@ -421,7 +421,7 @@ export const TNFConsoleDashboard: React.FC = () => {
           {section === 'settings' && (
             <div className="grid gap-4 lg:grid-cols-2">
               <GlassCard
-                className="p-6"
+                className="p-4"
                 title="Governance Settings"
                 icon={Settings}
                 gradient="purple"
@@ -429,36 +429,36 @@ export const TNFConsoleDashboard: React.FC = () => {
                 <div className="grid gap-2">
                   <Link
                     to="/settings/general"
-                    className="rounded-lg border border-white/10 px-3 py-2 text-sm hover:border-white/25"
+                    className="rounded-md border border-white/10 px-3 py-2 text-sm hover:border-white/25"
                   >
                     General Configuration
                   </Link>
                   <Link
                     to="/settings/security"
-                    className="rounded-lg border border-white/10 px-3 py-2 text-sm hover:border-white/25"
+                    className="rounded-md border border-white/10 px-3 py-2 text-sm hover:border-white/25"
                   >
                     Security Controls
                   </Link>
                   <Link
                     to="/settings/api"
-                    className="rounded-lg border border-white/10 px-3 py-2 text-sm hover:border-white/25"
+                    className="rounded-md border border-white/10 px-3 py-2 text-sm hover:border-white/25"
                   >
                     API & Integrations
                   </Link>
                 </div>
               </GlassCard>
-              <GlassCard className="p-6" title="Privileged Controls" icon={Shield} gradient="blue">
+              <GlassCard className="p-4" title="Privileged Controls" icon={Shield} gradient="blue">
                 {hasRole(['SUPER_ADMIN']) ? (
                   <div className="grid gap-2">
                     <Link
                       to="/admin"
-                      className="rounded-lg border border-white/10 px-3 py-2 text-sm hover:border-white/25"
+                      className="rounded-md border border-white/10 px-3 py-2 text-sm hover:border-white/25"
                     >
                       Admin Command Deck
                     </Link>
                     <Link
                       to="/admin/configuration"
-                      className="rounded-lg border border-white/10 px-3 py-2 text-sm hover:border-white/25"
+                      className="rounded-md border border-white/10 px-3 py-2 text-sm hover:border-white/25"
                     >
                       Infrastructure Configuration
                     </Link>

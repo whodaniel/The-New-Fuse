@@ -288,12 +288,12 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
       </div>
 
       <div className="flex items-center mb-4 gap-2">
-        <p className="text-gray-600">
+        <p className="text-muted-foreground">
           Configure the steps in your onboarding wizard. Drag and drop to reorder steps.
         </p>
         <div className="relative group">
           <Info className="text-gray-400 cursor-help" />
-          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
+          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
             Each step represents a screen in the onboarding wizard. Steps can be customized for
             different user types.
           </div>
@@ -303,7 +303,7 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
       {isLoading && (
         <div className="text-center py-10">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading onboarding steps...</p>
+          <p className="text-muted-foreground">Loading onboarding steps...</p>
         </div>
       )}
 
@@ -331,7 +331,7 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
-                      className={`border border-gray-200 bg-white shadow-sm rounded-md ${
+                      className={`border border-gray-200 bg-transparent shadow-none-none-none rounded-md ${
                         step.enabled ? 'opacity-100' : 'opacity-60'
                       }`}
                     >
@@ -358,7 +358,7 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
                             <button
                               onClick={() => handleMoveStep(step.id, 'up')}
                               disabled={index === 0}
-                              className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="p-1 text-gray-400 hover:text-muted-foreground disabled:opacity-50 disabled:cursor-not-allowed"
                               aria-label="Move step up"
                             >
                               <ArrowUp />
@@ -366,7 +366,7 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
                             <button
                               onClick={() => handleMoveStep(step.id, 'down')}
                               disabled={index === steps.length - 1}
-                              className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="p-1 text-gray-400 hover:text-muted-foreground disabled:opacity-50 disabled:cursor-not-allowed"
                               aria-label="Move step down"
                             >
                               <ArrowDown />
@@ -382,7 +382,7 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
                             </button>
                             <button
                               onClick={() => handleEditStep(step)}
-                              className="p-1 text-gray-400 hover:text-gray-600"
+                              className="p-1 text-gray-400 hover:text-muted-foreground"
                               aria-label="Edit step"
                             >
                               <Edit2 />
@@ -398,7 +398,7 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
                         </div>
                       </div>
                       <div className="px-4 pb-4">
-                        <p className="text-sm text-gray-600 mb-2">{step.description}</p>
+                        <p className="text-sm text-muted-foreground mb-2">{step.description}</p>
                         <div className="flex flex-wrap gap-1">
                           {step.userTypes.map((userType) => (
                             <span
@@ -437,18 +437,18 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
       {/* Step Edit Modal */}
       {isOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center p-6 border-b">
+          <div className="bg-transparent rounded-md shadow-none-none-none max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center p-4 border-b">
               <h2 className="text-lg font-semibold">{isEditing ? 'Edit Step' : 'Add New Step'}</h2>
-              <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+              <button onClick={onClose} className="text-gray-400 hover:text-muted-foreground">
                 ×
               </button>
             </div>
-            <div className="p-6">
+            <div className="p-4">
               {currentStep && (
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-foreground mb-1">
                       Step Type
                       <span className="ml-1 text-gray-400">
                         <Info className="inline w-3 h-3" />
@@ -474,7 +474,7 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                    <label className="block text-sm font-medium text-foreground mb-1">Title</label>
                     <input
                       type="text"
                       name="title"
@@ -487,7 +487,7 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-foreground mb-1">
                       Description
                     </label>
                     <textarea
@@ -510,7 +510,7 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
                         onChange={(e) => handleSwitchChange('enabled', e.target.checked)}
                         className="mr-2"
                       />
-                      <label htmlFor="enabled" className="text-sm font-medium text-gray-700">
+                      <label htmlFor="enabled" className="text-sm font-medium text-foreground">
                         Enabled
                       </label>
                     </div>
@@ -523,14 +523,14 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
                         onChange={(e) => handleSwitchChange('required', e.target.checked)}
                         className="mr-2"
                       />
-                      <label htmlFor="required" className="text-sm font-medium text-gray-700">
+                      <label htmlFor="required" className="text-sm font-medium text-foreground">
                         Required
                       </label>
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-foreground mb-1">
                       User Types
                       <span className="ml-1 text-gray-400">
                         <Info className="inline w-3 h-3" />
@@ -546,7 +546,7 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
                             onChange={() => handleUserTypeToggle(userType)}
                             className="mr-2"
                           />
-                          <label htmlFor={userType} className="text-sm text-gray-700">
+                          <label htmlFor={userType} className="text-sm text-foreground">
                             {userType === 'ai_agent' ? 'AI Agent' : 'Human'}
                           </label>
                         </div>
@@ -556,7 +556,7 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
                 </div>
               )}
             </div>
-            <div className="flex justify-end gap-3 p-6 border-t">
+            <div className="flex justify-end gap-3 p-4 border-t">
               <Button onClick={onClose} variant="outline">
                 Cancel
               </Button>

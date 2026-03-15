@@ -2,7 +2,7 @@ import Button from '../ui/Button';
 
 export default function FinalCTA() {
   return (
-    <section className="py-32 relative overflow-hidden">
+    <section className="py-22 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-t from-purple-900/20 to-transparent" />
 
       <div className="container px-4 mx-auto text-center relative z-10">

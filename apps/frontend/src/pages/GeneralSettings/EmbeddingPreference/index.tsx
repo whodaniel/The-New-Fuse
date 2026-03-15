@@ -47,11 +47,11 @@ const STYLES = {
   description: 'text-xs leading-[18px] font-base text-white text-opacity-60',
   searchOverlay: 'fixed top-0 left-0 w-full h-full bg-black bg-opacity-70 backdrop-blur-sm z-10',
   searchContainer:
-    'absolute top-0 left-0 w-full max-w-[640px] max-h-[310px] overflow-auto white-scrollbar min-h-[64px] bg-theme-settings-input-bg rounded-lg flex flex-col justify-between cursor-pointer border-2 border-primary-button z-20',
+    'absolute top-0 left-0 w-full max-w-[640px] max-h-[310px] overflow-auto white-scrollbar min-h-[64px] bg-theme-settings-input-bg rounded-md flex flex-col justify-between cursor-pointer border-2 border-primary-button z-20',
   searchInput:
     'border-none -ml-4 my-2 bg-transparent z-20 pl-12 h-[38px] w-full px-4 py-1 text-sm outline-none text-theme-text-primary placeholder:text-theme-text-primary placeholder:font-medium',
   embedderButton:
-    'w-full max-w-[640px] h-[64px] bg-theme-settings-input-bg rounded-lg flex items-center p-[14px] justify-between cursor-pointer border-2 border-transparent hover:border-primary-button transition-all duration-300',
+    'w-full max-w-[640px] h-[64px] bg-theme-settings-input-bg rounded-md flex items-center p-[14px] justify-between cursor-pointer border-2 border-transparent hover:border-primary-button transition-all duration-300',
   embedderLogo: 'w-10 h-10 rounded-md',
 };
 const EMBEDDERS = [

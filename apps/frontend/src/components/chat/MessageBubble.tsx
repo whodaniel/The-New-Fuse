@@ -46,7 +46,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, className
 
       <div
         className={cn(
-          'max-w-md rounded-lg p-4',
+          'max-w-md rounded-md p-4',
           isAgent ? 'bg-gray-100 text-gray-900' : 'bg-blue-600 text-white ml-auto'
         )}
       >

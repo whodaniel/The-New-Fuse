@@ -117,7 +117,7 @@ const WorkflowsPage: React.FC = () => {
                   </DialogDescription>
                 </DialogHeader>
 
-                <div className="space-y-4 py-4">
+                <div className="space-y-4 py-2">
                   <div className="space-y-2">
                     <Label htmlFor="name" className="text-white">
                       Name
@@ -175,7 +175,7 @@ const WorkflowsPage: React.FC = () => {
             </GlassCard>
           ) : error ? (
             <GlassCard className="bg-red-500/10 border-red-500/30">
-              <div className="text-red-300 px-4 py-3">{error.message}</div>
+              <div className="text-red-300 px-4 py-2">{error.message}</div>
             </GlassCard>
           ) : filteredWorkflows.length === 0 ? (
             <GlassCard className="flex flex-col items-center justify-center h-64 text-center">
@@ -190,7 +190,7 @@ const WorkflowsPage: React.FC = () => {
               )}
             </GlassCard>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-slide-in-up">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-slide-in-up">
               {filteredWorkflows.map((workflow) => (
                 <ActionCard
                   key={workflow.id}

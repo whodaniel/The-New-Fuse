@@ -144,7 +144,7 @@ export const NewAgentForm = ({ form, onSubmit }: any) => {
         </Card>
 
         <Card title="Skill Development" gradient="purple">
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="metadata.skillDevelopment.currentLevel"

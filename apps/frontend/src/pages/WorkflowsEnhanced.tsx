@@ -185,7 +185,7 @@ export const WorkflowsPage: React.FC = () => {
         <div className="absolute top-[50%] left-[50%] w-[30%] h-[30%] bg-cyan-600/10 rounded-full blur-[100px] animate-pulse" />
       </div>
 
-      <div className="relative z-10 p-6 h-screen flex flex-col">
+      <div className="relative z-10 p-4 h-screen flex flex-col">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -193,7 +193,7 @@ export const WorkflowsPage: React.FC = () => {
           transition={{ duration: 0.5 }}
           className="mb-6"
         >
-          <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 flex items-center gap-3 mb-2">
+          <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 flex items-center gap-3 mb-2">
             <Layers className="w-8 h-8 text-purple-400" />
             Workflow Builder
           </h1>
@@ -211,7 +211,7 @@ export const WorkflowsPage: React.FC = () => {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="mb-4"
           >
-            <div className="flex gap-2 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-1 w-fit">
+            <div className="flex gap-2 bg-transparent/5 backdrop-blur-md border border-white/10 rounded-md p-1 w-fit">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeTab === tab.id;
@@ -219,10 +219,10 @@ export const WorkflowsPage: React.FC = () => {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all duration-200 ${
+                    className={`px-4 py-2 rounded-md flex items-center gap-2 transition-all duration-200 ${
                       isActive
                         ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white'
-                        : 'text-gray-400 hover:text-white hover:bg-white/5'
+                        : 'text-gray-400 hover:text-white hover:bg-transparent/5'
                     }`}
                   >
                     <Icon className="w-4 h-4" />
@@ -275,7 +275,7 @@ export const WorkflowsPage: React.FC = () => {
                 </GlassCard>
 
                 {/* Workflow Canvas */}
-                <div className="flex-1 bg-black/20 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden">
+                <div className="flex-1 bg-black/20 backdrop-blur-sm border border-white/10 rounded-md overflow-hidden">
                   <WorkflowCanvas />
                 </div>
               </motion.div>
@@ -339,9 +339,9 @@ export const WorkflowsPage: React.FC = () => {
                     variants={itemVariants}
                     className="p-4 grid grid-cols-1 md:grid-cols-3 gap-4"
                   >
-                    <div className="bg-blue-500/10 border border-blue-500/20 p-4 rounded-xl">
+                    <div className="bg-blue-500/10 border border-blue-500/20 p-4 rounded-md">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-md bg-blue-500/20 flex items-center justify-center">
                           <Zap className="w-5 h-5 text-blue-400" />
                         </div>
                         <div>
@@ -352,9 +352,9 @@ export const WorkflowsPage: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-xl">
+                    <div className="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-md">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-md bg-emerald-500/20 flex items-center justify-center">
                           <Check className="w-5 h-5 text-emerald-400" />
                         </div>
                         <div>
@@ -365,9 +365,9 @@ export const WorkflowsPage: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="bg-purple-500/10 border border-purple-500/20 p-4 rounded-xl">
+                    <div className="bg-purple-500/10 border border-purple-500/20 p-4 rounded-md">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-md bg-purple-500/20 flex items-center justify-center">
                           <Clock className="w-5 h-5 text-purple-400" />
                         </div>
                         <div>
@@ -476,7 +476,7 @@ export const WorkflowsPage: React.FC = () => {
                   gradient="purple"
                 >
                   <motion.div variants={itemVariants} className="p-4 space-y-4">
-                    <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+                    <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/5">
                       <div>
                         <p className="font-medium text-white">Enable version tracking</p>
                         <p className="text-sm text-gray-400">
@@ -490,7 +490,7 @@ export const WorkflowsPage: React.FC = () => {
                         }
                       />
                     </div>
-                    <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+                    <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/5">
                       <div>
                         <p className="font-medium text-white">Auto-save templates</p>
                         <p className="text-sm text-gray-400">
@@ -504,7 +504,7 @@ export const WorkflowsPage: React.FC = () => {
                         }
                       />
                     </div>
-                    <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+                    <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/5">
                       <div>
                         <p className="font-medium text-white">Show usage analytics</p>
                         <p className="text-sm text-gray-400">
@@ -549,20 +549,20 @@ export const WorkflowsPage: React.FC = () => {
               className="relative max-w-[90vw] max-h-[90vh] w-full mx-4"
             >
               <GlassCard className="overflow-hidden">
-                <div className="flex items-center justify-between p-6 border-b border-white/10">
+                <div className="flex items-center justify-between p-4 border-b border-white/10">
                   <h2 className="text-xl font-semibold text-white flex items-center gap-2">
                     <Sparkles className="w-5 h-5 text-purple-400" />
                     Prompt Template Editor
                   </h2>
                   <button
                     onClick={handleCloseModal}
-                    className="p-2 text-gray-400 hover:text-white rounded-lg hover:bg-white/10 transition-colors"
+                    className="p-2 text-gray-400 hover:text-white rounded-md hover:bg-transparent/10 transition-colors"
                     aria-label="Close modal"
                   >
                     <X className="w-5 h-5" />
                   </button>
                 </div>
-                <div className="p-6 h-[70vh] overflow-auto">
+                <div className="p-4 h-[70vh] overflow-auto">
                   <div className="text-gray-400">
                     <p>
                       Prompt template editor UI will be integrated once the

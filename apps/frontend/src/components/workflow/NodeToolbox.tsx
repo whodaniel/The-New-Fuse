@@ -137,7 +137,7 @@ export const NodeToolbox: React.FC = () => {
             .map((node: any) => (
               <div
                 key={node.type}
-                className="flex items-center p-2 border border-dashed border-white/20 rounded-md cursor-grab hover:bg-slate-800 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-200"
+                className="flex items-center p-2 border border-dashed border-white/20 rounded-md cursor-grab hover:bg-slate-800 hover:border-blue-500/50 hover:shadow-none hover:shadow-blue-500/10 transition-all duration-200"
                 draggable
                 onDragStart={(e) =>
                   onDragStart(e, node.type, {
@@ -165,7 +165,7 @@ export const NodeToolbox: React.FC = () => {
             .map((node: any) => (
               <div
                 key={node.type}
-                className="flex items-center p-2 border border-dashed border-white/20 rounded-md cursor-grab hover:bg-slate-800 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-200"
+                className="flex items-center p-2 border border-dashed border-white/20 rounded-md cursor-grab hover:bg-slate-800 hover:border-blue-500/50 hover:shadow-none hover:shadow-blue-500/10 transition-all duration-200"
                 draggable
                 onDragStart={(e) =>
                   onDragStart(e, node.type, {
@@ -193,7 +193,7 @@ export const NodeToolbox: React.FC = () => {
             .map((node: any) => (
               <div
                 key={node.type}
-                className="flex items-center p-2 border border-dashed border-white/20 rounded-md cursor-grab hover:bg-slate-800 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-200"
+                className="flex items-center p-2 border border-dashed border-white/20 rounded-md cursor-grab hover:bg-slate-800 hover:border-blue-500/50 hover:shadow-none hover:shadow-blue-500/10 transition-all duration-200"
                 draggable
                 onDragStart={(e) =>
                   onDragStart(e, node.type, {

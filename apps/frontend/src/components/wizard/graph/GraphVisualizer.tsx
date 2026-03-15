@@ -260,7 +260,7 @@ export function GraphVisualizer({
         data={{ nodes, edges }}
         isLoading={false}
         renderContent={() => (
-          <div className="h-[600px] border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden relative">
+          <div className="h-[600px] border border-gray-200 dark:border-gray-700 rounded-md overflow-hidden relative">
             <ReactFlow
               nodes={nodes}
               edges={edges}
@@ -277,24 +277,24 @@ export function GraphVisualizer({
               {/* Top Left Toolbar */}
               <Panel
                 position="top-left"
-                className="bg-white dark:bg-gray-800 p-1.5 rounded-md shadow-md border border-gray-200 dark:border-gray-600 flex gap-1"
+                className="bg-transparent dark:bg-transparent p-1.5 rounded-md shadow-md border border-gray-200 dark:border-gray-600 flex gap-1"
               >
                 <button
-                  className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-700 dark:text-gray-200"
+                  className="p-1.5 hover:bg-muted/30 dark:hover:bg-gray-700 rounded text-foreground dark:text-gray-200"
                   onClick={() => zoomIn()}
                   title="Zoom In"
                 >
                   <ZoomIn className="w-4 h-4" />
                 </button>
                 <button
-                  className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-700 dark:text-gray-200"
+                  className="p-1.5 hover:bg-muted/30 dark:hover:bg-gray-700 rounded text-foreground dark:text-gray-200"
                   onClick={() => zoomOut()}
                   title="Zoom Out"
                 >
                   <ZoomOut className="w-4 h-4" />
                 </button>
                 <button
-                  className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-700 dark:text-gray-200"
+                  className="p-1.5 hover:bg-muted/30 dark:hover:bg-gray-700 rounded text-foreground dark:text-gray-200"
                   onClick={() => fitView()}
                   title="Fit View"
                 >
@@ -303,7 +303,7 @@ export function GraphVisualizer({
 
                 <div className="relative">
                   <button
-                    className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-700 dark:text-gray-200"
+                    className="p-1.5 hover:bg-muted/30 dark:hover:bg-gray-700 rounded text-foreground dark:text-gray-200"
                     onClick={() => setShowLayoutMenu(!showLayoutMenu)}
                     title="Layout Options"
                   >
@@ -311,7 +311,7 @@ export function GraphVisualizer({
                   </button>
 
                   {showLayoutMenu && (
-                    <div className="absolute top-full left-0 mt-1 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50">
+                    <div className="absolute top-full left-0 mt-1 w-48 bg-transparent dark:bg-transparent rounded-md shadow-none border border-gray-200 dark:border-gray-700 py-1 z-50">
                       {[
                         { id: 'force', label: 'Force Layout' },
                         { id: 'dagre', label: 'Hierarchical Layout' },
@@ -319,7 +319,7 @@ export function GraphVisualizer({
                       ].map((opt) => (
                         <button
                           key={opt.id}
-                          className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                          className="w-full text-left px-4 py-2 text-sm text-foreground dark:text-gray-200 hover:bg-muted/30 dark:hover:bg-gray-700"
                           onClick={() => {
                             applyLayout(opt.id, nodes, edges);
                             setShowLayoutMenu(false);
@@ -333,7 +333,7 @@ export function GraphVisualizer({
                 </div>
 
                 <button
-                  className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-700 dark:text-gray-200"
+                  className="p-1.5 hover:bg-muted/30 dark:hover:bg-gray-700 rounded text-foreground dark:text-gray-200"
                   onClick={() => setShowSettings(true)}
                   title="Settings"
                 >
@@ -344,7 +344,7 @@ export function GraphVisualizer({
               {/* Top Right Search */}
               <Panel
                 position="top-right"
-                className="bg-white dark:bg-gray-800 p-1 rounded-md shadow-md border border-gray-200 dark:border-gray-600"
+                className="bg-transparent dark:bg-transparent p-1 rounded-md shadow-md border border-gray-200 dark:border-gray-600"
               >
                 <div className="flex items-center">
                   <input
@@ -356,7 +356,7 @@ export function GraphVisualizer({
                     onKeyUp={(e) => e.key === 'Enter' && handleSearch()}
                   />
                   <button
-                    className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400"
+                    className="p-1 text-muted-foreground hover:text-foreground dark:text-muted-foreground"
                     onClick={handleSearch}
                   >
                     <Search className="w-4 h-4" />
@@ -367,11 +367,11 @@ export function GraphVisualizer({
               {/* Bottom Left Controls */}
               <Panel position="bottom-left" className="flex gap-2">
                 <button
-                  className={`px-3 py-1.5 text-sm font-medium rounded-md shadow-sm border transaction-colors flex items-center gap-1.5
+                  className={`px-3 py-1.5 text-sm font-medium rounded-md shadow-none border transaction-colors flex items-center gap-1.5
                         ${
                           pathfindingMode
                             ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700'
-                            : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                            : 'bg-transparent dark:bg-transparent text-foreground dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-muted/20 dark:hover:bg-gray-700'
                         }`}
                   onClick={() => setPathfindingMode(!pathfindingMode)}
                 >
@@ -379,11 +379,11 @@ export function GraphVisualizer({
                   Path Finding
                 </button>
                 <button
-                  className={`px-3 py-1.5 text-sm font-medium rounded-md shadow-sm border transaction-colors flex items-center gap-1.5
+                  className={`px-3 py-1.5 text-sm font-medium rounded-md shadow-none border transaction-colors flex items-center gap-1.5
                         ${
                           clusteringEnabled
                             ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700'
-                            : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                            : 'bg-transparent dark:bg-transparent text-foreground dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-muted/20 dark:hover:bg-gray-700'
                         }`}
                   onClick={() => {
                     setClusteringEnabled(!clusteringEnabled);
@@ -404,20 +404,20 @@ export function GraphVisualizer({
       {/* Settings Modal */}
       {showSettings && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
+          <div className="bg-transparent dark:bg-transparent rounded-md shadow-none w-full max-w-md mx-4 overflow-hidden">
             <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                 Graph Settings
               </h3>
               <button
                 onClick={() => setShowSettings(false)}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                className="text-gray-400 hover:text-muted-foreground dark:hover:text-gray-300"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="p-6 space-y-6 max-h-[80vh] overflow-y-auto">
+            <div className="p-4 space-y-6 max-h-[80vh] overflow-y-auto">
               {/* Physics */}
               <div className="space-y-4">
                 <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider">
@@ -446,7 +446,7 @@ export function GraphVisualizer({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
                     Repulsion Force: {config.physics.repulsion}
                   </label>
                   <input
@@ -461,12 +461,12 @@ export function GraphVisualizer({
                         physics: { ...prev.physics, repulsion: Number(e.target.value) },
                       }))
                     }
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                    className="w-full h-2 bg-gray-200 rounded-md appearance-none cursor-pointer dark:bg-gray-700"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
                     Spring Length: {config.physics.springLength}
                   </label>
                   <input
@@ -481,7 +481,7 @@ export function GraphVisualizer({
                         physics: { ...prev.physics, springLength: Number(e.target.value) },
                       }))
                     }
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                    className="w-full h-2 bg-gray-200 rounded-md appearance-none cursor-pointer dark:bg-gray-700"
                   />
                 </div>
               </div>
@@ -491,7 +491,7 @@ export function GraphVisualizer({
                   Clustering
                 </h4>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
                     Algorithm
                   </label>
                   <select
@@ -506,10 +506,10 @@ export function GraphVisualizer({
               </div>
             </div>
 
-            <div className="bg-gray-50 dark:bg-gray-900 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t border-gray-200 dark:border-gray-700">
+            <div className="bg-transparent dark:bg-gray-900 px-4 py-2 sm:px-3 sm:flex sm:flex-row-reverse border-t border-gray-200 dark:border-gray-700">
               <button
                 type="button"
-                className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
+                className="w-full inline-flex justify-center rounded-md border border-transparent shadow-none px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
                 onClick={() => {
                   onConfigChange?.(config);
                   setShowSettings(false);
@@ -519,7 +519,7 @@ export function GraphVisualizer({
               </button>
               <button
                 type="button"
-                className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
+                className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-none px-4 py-2 bg-transparent text-base font-medium text-foreground hover:bg-muted/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm dark:bg-transparent dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
                 onClick={() => setShowSettings(false)}
               >
                 Cancel

@@ -186,7 +186,7 @@ const AgentDetail: React.FC = () => {
         );
       case 'Inactive':
         return (
-          <Badge className="bg-gray-500/20 text-gray-400 border-gray-500/30">
+          <Badge className="bg-transparent0/20 text-gray-400 border-gray-500/30">
             <Clock className="w-3 h-3 mr-1" />
             {status}
           </Badge>
@@ -215,7 +215,9 @@ const AgentDetail: React.FC = () => {
       case 'In Progress':
         return <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30">{status}</Badge>;
       default:
-        return <Badge className="bg-gray-500/20 text-gray-400 border-gray-500/30">{status}</Badge>;
+        return (
+          <Badge className="bg-transparent0/20 text-gray-400 border-gray-500/30">{status}</Badge>
+        );
     }
   };
 
@@ -345,7 +347,7 @@ const AgentDetail: React.FC = () => {
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" />
       </div>
 
-      <div className="relative z-10 p-6 max-w-6xl mx-auto">
+      <div className="relative z-10 p-4 max-w-6xl mx-auto">
         {/* Back Button & Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -363,12 +365,12 @@ const AgentDetail: React.FC = () => {
 
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/30 to-blue-500/30 flex items-center justify-center border border-white/10">
+              <div className="w-16 h-16 rounded-md bg-gradient-to-br from-purple-500/30 to-blue-500/30 flex items-center justify-center border border-white/10">
                 <Bot className="w-8 h-8 text-purple-400" />
               </div>
               <div>
                 <div className="flex items-center gap-3 mb-1">
-                  <h1 className="text-3xl font-bold text-white">{agent.name}</h1>
+                  <h1 className="text-2xl font-bold text-white">{agent.name}</h1>
                   {getStatusBadge(agent.status)}
                 </div>
                 <p className="text-gray-400">{agent.description}</p>
@@ -462,38 +464,38 @@ const AgentDetail: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <TabsList className="bg-white/5 backdrop-blur-md border border-white/10 p-1 rounded-xl">
+            <TabsList className="bg-transparent/5 backdrop-blur-md border border-white/10 p-1 rounded-md">
               <TabsTrigger
                 value="overview"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-lg px-4 py-2 text-gray-400 transition-all"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-md px-4 py-2 text-gray-400 transition-all"
               >
                 <Bot className="w-4 h-4 mr-2" />
                 Overview
               </TabsTrigger>
               <TabsTrigger
                 value="tasks"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-lg px-4 py-2 text-gray-400 transition-all"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-md px-4 py-2 text-gray-400 transition-all"
               >
                 <List className="w-4 h-4 mr-2" />
                 Tasks
               </TabsTrigger>
               <TabsTrigger
                 value="logs"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-lg px-4 py-2 text-gray-400 transition-all"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-md px-4 py-2 text-gray-400 transition-all"
               >
                 <Activity className="w-4 h-4 mr-2" />
                 Logs
               </TabsTrigger>
               <TabsTrigger
                 value="settings"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-lg px-4 py-2 text-gray-400 transition-all"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-md px-4 py-2 text-gray-400 transition-all"
               >
                 <Settings className="w-4 h-4 mr-2" />
                 Settings
               </TabsTrigger>
               <TabsTrigger
                 value="identity"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-lg px-4 py-2 text-gray-400 transition-all"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-md px-4 py-2 text-gray-400 transition-all"
               >
                 <Fingerprint className="w-4 h-4 mr-2" />
                 Identity
@@ -552,7 +554,7 @@ const AgentDetail: React.FC = () => {
                       <motion.div
                         key={task.id}
                         whileHover={{ scale: 1.01 }}
-                        className="flex justify-between items-center p-4 bg-black/20 rounded-xl border border-white/5"
+                        className="flex justify-between items-center p-4 bg-black/20 rounded-md border border-white/5"
                       >
                         <div>
                           <div className="font-medium text-white">{task.title}</div>
@@ -598,7 +600,7 @@ const AgentDetail: React.FC = () => {
                       {agent.recentTasks.map((task: Task) => (
                         <div
                           key={task.id}
-                          className="flex justify-between items-center p-4 bg-black/20 rounded-xl border border-white/5"
+                          className="flex justify-between items-center p-4 bg-black/20 rounded-md border border-white/5"
                         >
                           <div>
                             <div className="font-medium text-white">{task.title}</div>
@@ -645,9 +647,9 @@ const AgentDetail: React.FC = () => {
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: index * 0.05 }}
-                          className="flex items-start gap-4 p-3 bg-black/20 rounded-lg border-b border-white/5 last:border-0"
+                          className="flex items-start gap-4 p-3 bg-black/20 rounded-md border-b border-white/5 last:border-0"
                         >
-                          <div className="w-32 shrink-0 text-xs text-gray-500">
+                          <div className="w-32 shrink-0 text-xs text-muted-foreground">
                             {formatTimestamp(log.timestamp)}
                           </div>
                           <div className="w-20 shrink-0">{getLogLevelBadge(log.level)}</div>
@@ -678,7 +680,7 @@ const AgentDetail: React.FC = () => {
                       ([key, value]: [string, string | number]) => (
                         <div
                           key={key}
-                          className="flex justify-between items-center p-4 bg-black/20 rounded-xl border border-white/5"
+                          className="flex justify-between items-center p-4 bg-black/20 rounded-md border border-white/5"
                         >
                           <div className="font-medium text-gray-300 capitalize">
                             {key.replace(/([A-Z])/g, ' $1').trim()}
@@ -723,7 +725,7 @@ const AgentDetail: React.FC = () => {
             {/* Identity Tab Redirect Placeholder or Inline? Let's use inline link for now as it is a separate page in router */}
             <TabsContent value="identity">
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <GlassCard className="p-8 text-center border-blue-500/20">
+                <GlassCard className="p-4 text-center border-blue-500/20">
                   <Fingerprint className="w-16 h-16 text-blue-400 mx-auto mb-4" />
                   <h3 className="text-xl font-bold text-white mb-2">
                     Sovereign Entity Certificate

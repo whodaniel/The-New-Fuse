@@ -144,7 +144,7 @@ const AgentNode: React.FC<NodeProps> = memo(({ id, data }) => {
 
             {/* Show message if no agents found */}
             {agents.length === 0 && !loading && (
-              <div className="px-3 py-4 text-center text-xs text-slate-400">
+              <div className="px-3 py-2 text-center text-xs text-slate-400">
                 No agents match your search.
               </div>
             )}
@@ -156,7 +156,7 @@ const AgentNode: React.FC<NodeProps> = memo(({ id, data }) => {
       {selectedAgent && (
         <div className="space-y-2">
           {/* Agent Info Card */}
-          <div className="text-xs bg-slate-700/50 p-3 rounded-lg border border-slate-600">
+          <div className="text-xs bg-slate-700/50 p-3 rounded-md border border-slate-600">
             <div className="flex items-start justify-between gap-2 mb-2">
               <div className="flex items-center gap-2">
                 <Badge className={`${getCategoryColor(selectedAgent.category)} text-white text-xs`}>

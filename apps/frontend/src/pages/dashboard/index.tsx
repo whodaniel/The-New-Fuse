@@ -355,7 +355,7 @@ const Dashboard = () => {
 
       <Sidebar />
 
-      <main className="flex-1 p-6 overflow-auto relative z-10">
+      <main className="flex-1 p-4 overflow-auto relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-wrap justify-between items-start gap-4 mb-8 fade-in">
             <div>
@@ -399,7 +399,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
             <div className="fade-in" style={{ animationDelay: '0ms' }}>
               <StatsCard
                 label="Active Agents"
@@ -469,7 +469,7 @@ const Dashboard = () => {
 
           <div className="mb-8 fade-in" style={{ animationDelay: '600ms' }}>
             <h2 className="text-2xl font-bold text-white mb-6">Do Next</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {quickActions.map((action, index) => (
                 <div
                   key={action.title}
@@ -492,7 +492,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-6 mb-6">
+          <div className="grid lg:grid-cols-2 gap-4 mb-6">
             <div className="fade-in" style={{ animationDelay: '1300ms' }}>
               <GlassCard
                 icon={AlertTriangle}
@@ -511,7 +511,7 @@ const Dashboard = () => {
                     return (
                       <div
                         key={item.id}
-                        className={`p-4 rounded-lg border ${levelStyles[item.level]} transition-all duration-200`}
+                        className={`p-4 rounded-md border ${levelStyles[item.level]} transition-all duration-200`}
                       >
                         <div className="flex items-start justify-between gap-4">
                           <div>
@@ -542,7 +542,7 @@ const Dashboard = () => {
                       <button
                         key={activity.agentId}
                         type="button"
-                        className="w-full text-left flex items-center justify-between p-4 bg-black/20 border border-white/10 rounded-lg backdrop-blur-sm hover:bg-white/10 transition-all duration-200"
+                        className="w-full text-left flex items-center justify-between p-4 bg-black/20 border border-white/10 rounded-md backdrop-blur-sm hover:bg-transparent/10 transition-all duration-200"
                         onClick={() => navigate(`/dashboard/agents/${activity.agentId}`)}
                       >
                         <div>
@@ -555,7 +555,7 @@ const Dashboard = () => {
                           >
                             {activity.status}
                           </span>
-                          <p className="text-xs text-gray-500 mt-2">{activity.timestamp}</p>
+                          <p className="text-xs text-muted-foreground mt-2">{activity.timestamp}</p>
                         </div>
                       </button>
                     ))
@@ -570,7 +570,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-6">
+          <div className="grid lg:grid-cols-2 gap-4">
             <div className="fade-in" style={{ animationDelay: '1500ms' }}>
               <GlassCard
                 icon={Cpu}
@@ -579,7 +579,7 @@ const Dashboard = () => {
                 gradient="green"
               >
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 rounded-lg bg-black/20 border border-white/10">
+                  <div className="flex items-center justify-between p-3 rounded-md bg-black/20 border border-white/10">
                     <div className="flex items-center gap-3">
                       <CheckCircle2 className="w-5 h-5 text-green-400" />
                       <span className="text-white font-medium">Agent Capacity</span>
@@ -588,21 +588,21 @@ const Dashboard = () => {
                       {statusCounts.active > 0 ? 'Ready' : 'No active agents'}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between p-3 rounded-lg bg-black/20 border border-white/10">
+                  <div className="flex items-center justify-between p-3 rounded-md bg-black/20 border border-white/10">
                     <div className="flex items-center gap-3">
                       <Gauge className="w-5 h-5 text-cyan-400" />
                       <span className="text-white font-medium">Load Pressure</span>
                     </div>
                     <span className="text-sm text-gray-300">{stats.systemLoad.toFixed(1)}%</span>
                   </div>
-                  <div className="flex items-center justify-between p-3 rounded-lg bg-black/20 border border-white/10">
+                  <div className="flex items-center justify-between p-3 rounded-md bg-black/20 border border-white/10">
                     <div className="flex items-center gap-3">
                       <TrendingUp className="w-5 h-5 text-purple-400" />
                       <span className="text-white font-medium">Success Rate</span>
                     </div>
                     <span className="text-sm text-gray-300">{stats.successRate.toFixed(1)}%</span>
                   </div>
-                  <div className="flex items-center justify-between p-3 rounded-lg bg-black/20 border border-white/10">
+                  <div className="flex items-center justify-between p-3 rounded-md bg-black/20 border border-white/10">
                     <div className="flex items-center gap-3">
                       <Clock className="w-5 h-5 text-blue-400" />
                       <span className="text-white font-medium">Runtime Uptime</span>
@@ -644,7 +644,7 @@ const Dashboard = () => {
                             {item.value} ({percent}%)
                           </span>
                         </div>
-                        <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
+                        <div className="w-full h-2 rounded-full bg-transparent/10 overflow-hidden">
                           <div
                             className={`${item.color} h-full rounded-full`}
                             style={{ width: `${percent}%` }}

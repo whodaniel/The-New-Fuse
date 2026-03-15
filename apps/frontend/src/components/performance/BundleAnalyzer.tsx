@@ -220,17 +220,17 @@ const BundleAnalyzer: React.FC = () => {
 
   if (isAnalyzing) {
     return (
-      <div className="p-8 text-center">
+      <div className="p-4 text-center">
         <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <p className="mt-4 text-gray-600">Analyzing bundle sizes...</p>
+        <p className="mt-4 text-muted-foreground">Analyzing bundle sizes...</p>
       </div>
     );
   }
 
   if (!analysis) {
     return (
-      <div className="p-8 text-center">
-        <p className="text-gray-600 mb-4">No bundle analysis data available.</p>
+      <div className="p-4 text-center">
+        <p className="text-muted-foreground mb-4">No bundle analysis data available.</p>
         <button
           onClick={analyzeBundles}
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
@@ -242,47 +242,51 @@ const BundleAnalyzer: React.FC = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="max-w-6xl mx-auto p-4">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Bundle Analysis</h1>
-        <p className="text-gray-600">Performance insights and optimization recommendations</p>
+        <h1 className="text-2xl font-bold mb-2">Bundle Analysis</h1>
+        <p className="text-muted-foreground">
+          Performance insights and optimization recommendations
+        </p>
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow border">
-          <h3 className="text-sm font-medium text-gray-500 mb-2">Total Size</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="bg-transparent p-4 rounded-md shadow border">
+          <h3 className="text-sm font-medium text-muted-foreground mb-2">Total Size</h3>
           <p className="text-2xl font-bold text-gray-900">{formatBytes(analysis.totalSize)}</p>
-          <p className="text-sm text-gray-500">{formatBytes(analysis.totalGzipSize)} gzipped</p>
+          <p className="text-sm text-muted-foreground">
+            {formatBytes(analysis.totalGzipSize)} gzipped
+          </p>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
-          <h3 className="text-sm font-medium text-gray-500 mb-2">Average Load Time</h3>
+        <div className="bg-transparent p-4 rounded-md shadow border">
+          <h3 className="text-sm font-medium text-muted-foreground mb-2">Average Load Time</h3>
           <p className="text-2xl font-bold text-gray-900">
             {formatTime(analysis.loadingPerformance.averageLoadTime)}
           </p>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
-          <h3 className="text-sm font-medium text-gray-500 mb-2">Slowest Loading</h3>
+        <div className="bg-transparent p-4 rounded-md shadow border">
+          <h3 className="text-sm font-medium text-muted-foreground mb-2">Slowest Loading</h3>
           <p className="text-lg font-bold text-gray-900">
             {analysis.loadingPerformance.slowestLoading?.name}
           </p>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-muted-foreground">
             {formatTime(analysis.loadingPerformance.slowestLoading?.loadingTime || 0)}
           </p>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
-          <h3 className="text-sm font-medium text-gray-500 mb-2">Total Chunks</h3>
+        <div className="bg-transparent p-4 rounded-md shadow border">
+          <h3 className="text-sm font-medium text-muted-foreground mb-2">Total Chunks</h3>
           <p className="text-2xl font-bold text-gray-900">{analysis.chunks.length}</p>
-          <p className="text-sm text-gray-500">Code split bundles</p>
+          <p className="text-sm text-muted-foreground">Code split bundles</p>
         </div>
       </div>
 
       {/* Recommendations */}
       {analysis.recommendations.length > 0 && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
+        <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-8">
           <h3 className="text-lg font-semibold text-yellow-800 mb-4">💡 Recommendations</h3>
           <ul className="space-y-2">
             {analysis.recommendations.map((rec, index) => (
@@ -295,10 +299,10 @@ const BundleAnalyzer: React.FC = () => {
       )}
 
       {/* Filters and Controls */}
-      <div className="bg-white rounded-lg shadow border p-6 mb-6">
+      <div className="bg-transparent rounded-md shadow border p-4 mb-6">
         <div className="flex flex-wrap gap-4 items-center">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Filter by Type</label>
+            <label className="block text-sm font-medium text-foreground mb-1">Filter by Type</label>
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value as any)}
@@ -313,7 +317,7 @@ const BundleAnalyzer: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Sort by</label>
+            <label className="block text-sm font-medium text-foreground mb-1">Sort by</label>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
@@ -335,41 +339,41 @@ const BundleAnalyzer: React.FC = () => {
       </div>
 
       {/* Bundle Details Table */}
-      <div className="bg-white rounded-lg shadow border overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
+      <div className="bg-transparent rounded-md shadow border overflow-hidden">
+        <div className="px-3 py-2 border-b border-gray-200">
           <h3 className="text-lg font-semibold">Bundle Details</h3>
         </div>
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-border/50">
+            <thead className="bg-transparent">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Bundle Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Type
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Size
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Gzipped
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Load Time
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Dependencies
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-transparent divide-y divide-border/50">
               {getFilteredAndSortedChunks().map((chunk, index) => (
-                <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                <tr key={index} className={index % 2 === 0 ? 'bg-transparent' : 'bg-transparent'}>
+                  <td className="px-3 py-2 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">{chunk.name}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 py-2 whitespace-nowrap">
                     <span
                       className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                         chunk.chunkType === 'vendor'
@@ -384,16 +388,16 @@ const BundleAnalyzer: React.FC = () => {
                       {chunk.chunkType}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
                     {formatBytes(chunk.size)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
                     {chunk.gzipSize ? formatBytes(chunk.gzipSize) : 'N/A'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
                     {formatTime(chunk.loadingTime)}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
+                  <td className="px-3 py-2 text-sm text-muted-foreground">
                     {chunk.dependencies.slice(0, 2).join(', ')}
                     {chunk.dependencies.length > 2 && ` +${chunk.dependencies.length - 2} more`}
                   </td>

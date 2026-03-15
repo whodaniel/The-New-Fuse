@@ -16,10 +16,10 @@ export default function Pricing() {
           <span className={cn('text-sm', !isAnnual ? 'text-white' : 'text-white/40')}>Monthly</span>
           <button
             onClick={() => setIsAnnual(!isAnnual)}
-            className="w-14 h-8 rounded-full bg-white/10 relative px-1 transition-colors hover:bg-white/20"
+            className="w-14 h-8 rounded-full bg-transparent/10 relative px-1 transition-colors hover:bg-transparent/20"
           >
             <motion.div
-              className="w-6 h-6 rounded-full bg-white"
+              className="w-6 h-6 rounded-full bg-transparent"
               animate={{ x: isAnnual ? 24 : 0 }}
             />
           </button>
@@ -29,7 +29,7 @@ export default function Pricing() {
         </div>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      <div className="grid md:grid-cols-3 gap-4 max-w-6xl mx-auto">
         {[
           {
             name: 'Starter',

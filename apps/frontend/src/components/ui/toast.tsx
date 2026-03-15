@@ -101,7 +101,7 @@ export const Toaster = () => {
       {toasts.map((toast) => (
         <div
           key={toast.id}
-          className={`rounded-md px-6 py-4 text-white shadow-lg transform transition-all duration-300 ease-in-out ${
+          className={`rounded-md px-3 py-2 text-white shadow-none transform transition-all duration-300 ease-in-out ${
             toast.variant === 'success'
               ? 'bg-green-500'
               : toast.variant === 'destructive'

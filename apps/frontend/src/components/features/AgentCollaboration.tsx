@@ -95,7 +95,7 @@ export const AgentCollaboration = () => {
     }
   };
   return (
-    <Card_1.Card className="p-6">
+    <Card_1.Card className="p-4">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold">Agent Collaboration</h2>
         {isCollaborating ? (
@@ -135,7 +135,7 @@ export const AgentCollaboration = () => {
               </option>
             ))}
           </Select_1.Select>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Select at least 2 agents to start collaboration
           </p>
         </div>
@@ -150,7 +150,7 @@ export const AgentCollaboration = () => {
                 <div className="flex justify-between items-start">
                   <div>
                     <h4 className="font-medium">{agent.name}</h4>
-                    <p className="text-sm text-gray-500">{agent.type}</p>
+                    <p className="text-sm text-muted-foreground">{agent.type}</p>
                   </div>
                   <span
                     className={`px-2 py-1 rounded-full text-xs ${

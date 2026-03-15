@@ -21,8 +21,8 @@ const StatsSection: React.FC = () => {
       className="bg-linear-to-r from-blue-600 to-indigo-600 py-16 sm:py-20"
       aria-label="Platform statistics"
     >
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+      <div className="mx-auto max-w-7xl px-3 lg:px-8">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {stats.map((stat, index) => (
             <motion.div
               key={index}
@@ -32,7 +32,7 @@ const StatsSection: React.FC = () => {
               transition={{ duration: 0.6, delay: stat.delay, ease: 'easeOut' }}
             >
               <motion.div
-                className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white"
+                className="text-2xl sm:text-4xl lg:text-5xl font-bold text-white"
                 initial={{ scale: 0.5, opacity: 0 }}
                 animate={isStatsInView ? { scale: 1, opacity: 1 } : {}}
                 transition={{
@@ -136,10 +136,10 @@ const FeaturesSection: React.FC = () => {
   return (
     <section
       ref={featuresRef}
-      className="py-20 sm:py-24 lg:py-32 bg-white"
+      className="py-20 sm:py-24 lg:py-22 bg-transparent"
       aria-labelledby="features-heading"
     >
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-3 lg:px-8">
         {/* Section Header */}
         <motion.div
           className="mx-auto max-w-2xl text-center"
@@ -157,7 +157,7 @@ const FeaturesSection: React.FC = () => {
           </motion.h2>
           <motion.p
             id="features-heading"
-            className="mt-2 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900"
+            className="mt-2 text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900"
             initial={{ opacity: 0, y: 20 }}
             animate={isFeaturesInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.3 }}
@@ -165,7 +165,7 @@ const FeaturesSection: React.FC = () => {
             Everything You Need to Orchestrate AI at Scale
           </motion.p>
           <motion.p
-            className="mt-6 text-lg leading-8 text-gray-600"
+            className="mt-6 text-lg leading-8 text-muted-foreground"
             initial={{ opacity: 0 }}
             animate={isFeaturesInView ? { opacity: 1 } : {}}
             transition={{ duration: 0.6, delay: 0.4 }}
@@ -177,11 +177,11 @@ const FeaturesSection: React.FC = () => {
 
         {/* Features Grid */}
         <div className="mx-auto mt-16 sm:mt-20 lg:mt-24 max-w-2xl lg:max-w-none">
-          <dl className="grid max-w-xl grid-cols-1 gap-8 lg:max-w-none lg:grid-cols-3">
+          <dl className="grid max-w-xl grid-cols-1 gap-4 lg:max-w-none lg:grid-cols-3">
             {features.map((feature, index) => (
               <motion.div
                 key={index}
-                className={`flex flex-col ${feature.bgColor} p-6 sm:p-8 rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 group`}
+                className={`flex flex-col ${feature.bgColor} p-4 sm:p-4 rounded-md shadow-md hover:shadow-none transition-all duration-300 group`}
                 initial={{ opacity: 0, y: 40 }}
                 animate={isFeaturesInView ? { opacity: 1, y: 0 } : {}}
                 transition={{
@@ -193,7 +193,7 @@ const FeaturesSection: React.FC = () => {
               >
                 <dt className="flex items-center gap-x-3 text-lg font-semibold leading-7 text-gray-900">
                   <motion.div
-                    className={`h-10 w-10 sm:h-12 sm:w-12 flex items-center justify-center rounded-lg ${feature.iconBg} text-2xl sm:text-3xl shadow-md`}
+                    className={`h-10 w-10 sm:h-12 sm:w-12 flex items-center justify-center rounded-md ${feature.iconBg} text-2xl sm:text-2xl shadow-md`}
                     whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
                     transition={{ duration: 0.5 }}
                   >
@@ -201,7 +201,7 @@ const FeaturesSection: React.FC = () => {
                   </motion.div>
                   <span>{feature.title}</span>
                 </dt>
-                <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-600">
+                <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-muted-foreground">
                   <p className="flex-auto">{feature.description}</p>
                   <p className="mt-6">
                     <Link
@@ -237,7 +237,7 @@ export default function HomePage() {
   const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
 
   return (
-    <div className="bg-white">
+    <div className="bg-transparent">
       {/* Hero Section with Modern Gradient Background and Animations */}
       <section
         ref={heroRef}
@@ -286,7 +286,7 @@ export default function HomePage() {
           />
         </div>
 
-        <div className="relative mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8">
+        <div className="relative mx-auto max-w-7xl px-3 py-24 sm:py-22 lg:px-8">
           <div className="mx-auto max-w-4xl text-center">
             {/* Badge with animation */}
             <motion.div
@@ -295,7 +295,7 @@ export default function HomePage() {
               animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, ease: 'easeOut' }}
             >
-              <span className="inline-flex items-center gap-2 rounded-full bg-linear-to-r from-blue-600 to-indigo-600 px-6 py-2 text-sm font-semibold text-white shadow-lg backdrop-blur-sm hover:shadow-xl transition-shadow duration-300">
+              <span className="inline-flex items-center gap-2 rounded-full bg-linear-to-r from-blue-600 to-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-none backdrop-blur-sm hover:shadow-none transition-shadow duration-300">
                 <motion.span
                   animate={{ rotate: [0, 15, -15, 0] }}
                   transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
@@ -327,7 +327,7 @@ export default function HomePage() {
 
             {/* Subtitle with fade-in */}
             <motion.p
-              className="mt-8 text-lg sm:text-xl lg:text-2xl leading-8 text-gray-600 max-w-3xl mx-auto"
+              className="mt-8 text-lg sm:text-xl lg:text-2xl leading-8 text-muted-foreground max-w-3xl mx-auto"
               initial={{ opacity: 0, y: 20 }}
               animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.8, delay: 0.6, ease: 'easeOut' }}
@@ -351,7 +351,7 @@ export default function HomePage() {
               >
                 <Link
                   to="/auth/register"
-                  className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 px-8 py-4 text-base font-semibold text-white shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden"
+                  className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-md bg-linear-to-r from-blue-600 to-indigo-600 px-8 py-2 text-base font-semibold text-white shadow-none hover:shadow-none transition-all duration-300 overflow-hidden"
                 >
                   <span className="relative z-10">Get Started</span>
                   <motion.svg
@@ -380,7 +380,7 @@ export default function HomePage() {
               >
                 <Link
                   to="/workflows/builder"
-                  className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-4 text-base font-semibold text-gray-900 shadow-lg ring-2 ring-gray-200 hover:ring-blue-600 hover:text-blue-600 hover:shadow-xl transition-all duration-300"
+                  className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-md bg-transparent px-8 py-2 text-base font-semibold text-gray-900 shadow-none ring-2 ring-gray-200 hover:ring-blue-600 hover:text-blue-600 hover:shadow-none transition-all duration-300"
                 >
                   <span>View Demo</span>
                   <svg
@@ -408,7 +408,7 @@ export default function HomePage() {
 
             {/* Trust Indicators with fade-in */}
             <motion.div
-              className="mt-12 flex flex-wrap items-center justify-center gap-6 sm:gap-8 text-sm text-gray-600"
+              className="mt-12 flex flex-wrap items-center justify-center gap-4 sm:gap-4 text-sm text-muted-foreground"
               initial={{ opacity: 0 }}
               animate={isHeroInView ? { opacity: 1 } : {}}
               transition={{ duration: 0.8, delay: 1, ease: 'easeOut' }}
@@ -480,8 +480,8 @@ export default function HomePage() {
       <FeaturesSection />
 
       {/* Use Cases Section */}
-      <div className="bg-gray-50 py-24">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+      <div className="bg-transparent py-24">
+        <div className="mx-auto max-w-7xl px-3 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-base font-semibold leading-7 text-blue-600">USE CASES</h2>
             <p className="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
@@ -489,15 +489,15 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 lg:max-w-none lg:grid-cols-3">
+          <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-4 lg:max-w-none lg:grid-cols-3">
             {/* Enterprises */}
-            <div className="flex flex-col overflow-hidden rounded-2xl bg-white shadow-lg">
-              <div className="bg-blue-600 px-6 py-8 text-center">
+            <div className="flex flex-col overflow-hidden rounded-md bg-transparent shadow-none">
+              <div className="bg-blue-600 px-3 py-8 text-center">
                 <div className="text-5xl mb-4">🏢</div>
                 <h3 className="text-2xl font-bold text-white">Enterprise Teams</h3>
               </div>
-              <div className="flex-1 px-6 py-8">
-                <ul className="space-y-4 text-gray-600">
+              <div className="flex-1 px-3 py-8">
+                <ul className="space-y-4 text-muted-foreground">
                   <li className="flex items-start">
                     <svg
                       className="h-6 w-6 text-green-500 mr-2 shrink-0"
@@ -573,14 +573,14 @@ export default function HomePage() {
             </div>
 
             {/* Developers */}
-            <div className="flex flex-col overflow-hidden rounded-2xl bg-white shadow-lg ring-2 ring-blue-600">
-              <div className="bg-green-600 px-6 py-8 text-center">
+            <div className="flex flex-col overflow-hidden rounded-md bg-transparent shadow-none ring-2 ring-blue-600">
+              <div className="bg-green-600 px-3 py-8 text-center">
                 <div className="text-5xl mb-4">💻</div>
                 <h3 className="text-2xl font-bold text-white">Developers</h3>
                 <div className="mt-2 text-sm text-green-100">Most Popular</div>
               </div>
-              <div className="flex-1 px-6 py-8">
-                <ul className="space-y-4 text-gray-600">
+              <div className="flex-1 px-3 py-8">
+                <ul className="space-y-4 text-muted-foreground">
                   <li className="flex items-start">
                     <svg
                       className="h-6 w-6 text-green-500 mr-2 shrink-0"
@@ -656,13 +656,13 @@ export default function HomePage() {
             </div>
 
             {/* AI Traders */}
-            <div className="flex flex-col overflow-hidden rounded-2xl bg-white shadow-lg">
-              <div className="bg-purple-600 px-6 py-8 text-center">
+            <div className="flex flex-col overflow-hidden rounded-md bg-transparent shadow-none">
+              <div className="bg-purple-600 px-3 py-8 text-center">
                 <div className="text-5xl mb-4">💎</div>
                 <h3 className="text-2xl font-bold text-white">AI Traders</h3>
               </div>
-              <div className="flex-1 px-6 py-8">
-                <ul className="space-y-4 text-gray-600">
+              <div className="flex-1 px-3 py-8">
+                <ul className="space-y-4 text-muted-foreground">
                   <li className="flex items-start">
                     <svg
                       className="h-6 w-6 text-green-500 mr-2 shrink-0"
@@ -741,44 +741,44 @@ export default function HomePage() {
       </div>
 
       {/* Supported LLMs Section */}
-      <div className="py-24 bg-white">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+      <div className="py-24 bg-transparent">
+        <div className="mx-auto max-w-7xl px-3 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-base font-semibold leading-7 text-blue-600">INTEGRATIONS</h2>
             <p className="mt-2 text-4xl font-bold tracking-tight text-gray-900">
               Works with Your Favorite AI Models
             </p>
-            <p className="mt-6 text-lg leading-8 text-gray-600">
+            <p className="mt-6 text-lg leading-8 text-muted-foreground">
               Model-agnostic architecture supports all major LLM providers. Choose the best AI for
               each task.
             </p>
           </div>
 
-          <div className="mx-auto mt-16 grid max-w-lg gap-8 lg:max-w-none lg:grid-cols-5">
-            <div className="flex flex-col items-center justify-center p-6 bg-gray-50 rounded-lg">
+          <div className="mx-auto mt-16 grid max-w-lg gap-4 lg:max-w-none lg:grid-cols-5">
+            <div className="flex flex-col items-center justify-center p-4 bg-transparent rounded-md">
               <div className="text-4xl mb-2">🤖</div>
               <div className="text-sm font-semibold text-gray-900">GPT-4</div>
-              <div className="text-xs text-gray-500">OpenAI</div>
+              <div className="text-xs text-muted-foreground">OpenAI</div>
             </div>
-            <div className="flex flex-col items-center justify-center p-6 bg-gray-50 rounded-lg">
+            <div className="flex flex-col items-center justify-center p-4 bg-transparent rounded-md">
               <div className="text-4xl mb-2">🧠</div>
               <div className="text-sm font-semibold text-gray-900">Claude</div>
-              <div className="text-xs text-gray-500">Anthropic</div>
+              <div className="text-xs text-muted-foreground">Anthropic</div>
             </div>
-            <div className="flex flex-col items-center justify-center p-6 bg-gray-50 rounded-lg">
+            <div className="flex flex-col items-center justify-center p-4 bg-transparent rounded-md">
               <div className="text-4xl mb-2">✨</div>
               <div className="text-sm font-semibold text-gray-900">Gemini</div>
-              <div className="text-xs text-gray-500">Google</div>
+              <div className="text-xs text-muted-foreground">Google</div>
             </div>
-            <div className="flex flex-col items-center justify-center p-6 bg-gray-50 rounded-lg">
+            <div className="flex flex-col items-center justify-center p-4 bg-transparent rounded-md">
               <div className="text-4xl mb-2">🦙</div>
               <div className="text-sm font-semibold text-gray-900">Llama 2</div>
-              <div className="text-xs text-gray-500">Meta</div>
+              <div className="text-xs text-muted-foreground">Meta</div>
             </div>
-            <div className="flex flex-col items-center justify-center p-6 bg-gray-50 rounded-lg">
+            <div className="flex flex-col items-center justify-center p-4 bg-transparent rounded-md">
               <div className="text-4xl mb-2">🔍</div>
               <div className="text-sm font-semibold text-gray-900">Perplexity</div>
-              <div className="text-xs text-gray-500">Perplexity AI</div>
+              <div className="text-xs text-muted-foreground">Perplexity AI</div>
             </div>
           </div>
         </div>
@@ -786,7 +786,7 @@ export default function HomePage() {
 
       {/* Final CTA Section */}
       <div className="relative overflow-hidden bg-blue-600 py-24">
-        <div className="relative mx-auto max-w-4xl px-6 text-center lg:px-8">
+        <div className="relative mx-auto max-w-4xl px-3 text-center lg:px-8">
           <h2 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
             Ready to Orchestrate AI at Scale?
           </h2>
@@ -797,20 +797,20 @@ export default function HomePage() {
           <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               to="/auth/register"
-              className="w-full sm:w-auto rounded-lg bg-white px-10 py-4 text-lg font-semibold text-blue-600 shadow-2xl hover:bg-gray-50 transition-all duration-300 transform hover:-translate-y-1"
+              className="w-full sm:w-auto rounded-md bg-transparent px-10 py-2 text-lg font-semibold text-blue-600 shadow-none hover:bg-muted/20 transition-all duration-300 transform hover:-translate-y-1"
             >
               Start Free Trial →
             </Link>
             <Link
               to="/workflows/templates"
-              className="w-full sm:w-auto rounded-lg border-2 border-white px-10 py-4 text-lg font-semibold text-white hover:bg-white/10 transition-all duration-300"
+              className="w-full sm:w-auto rounded-md border-2 border-white px-10 py-2 text-lg font-semibold text-white hover:bg-transparent/10 transition-all duration-300"
             >
               Browse Templates
             </Link>
           </div>
 
           {/* Trust badges */}
-          <div className="mt-12 flex items-center justify-center gap-8 text-sm text-blue-100">
+          <div className="mt-12 flex items-center justify-center gap-4 text-sm text-blue-100">
             <div className="flex items-center gap-2">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path
@@ -850,11 +850,11 @@ export default function HomePage() {
         <h2 id="footer-heading" className="sr-only">
           Footer
         </h2>
-        <div className="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
-          <div className="xl:grid xl:grid-cols-3 xl:gap-8">
+        <div className="mx-auto max-w-7xl px-3 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
+          <div className="xl:grid xl:grid-cols-3 xl:gap-4">
             <div className="space-y-8">
               <div className="flex items-center">
-                <div className="h-10 w-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                <div className="h-10 w-10 bg-blue-600 rounded-md flex items-center justify-center">
                   <span className="text-white font-bold text-lg">🚀</span>
                 </div>
                 <span className="ml-3 text-2xl font-bold text-white">The New Fuse</span>
@@ -898,8 +898,8 @@ export default function HomePage() {
                 </a>
               </div>
             </div>
-            <div className="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
-              <div className="md:grid md:grid-cols-2 md:gap-8">
+            <div className="mt-16 grid grid-cols-2 gap-4 xl:col-span-2 xl:mt-0">
+              <div className="md:grid md:grid-cols-2 md:gap-4">
                 <div>
                   <h3 className="text-sm font-semibold leading-6 text-white">Product</h3>
                   <ul role="list" className="mt-6 space-y-4">
@@ -995,7 +995,7 @@ export default function HomePage() {
                   </ul>
                 </div>
               </div>
-              <div className="md:grid md:grid-cols-2 md:gap-8">
+              <div className="md:grid md:grid-cols-2 md:gap-4">
                 <div>
                   <h3 className="text-sm font-semibold leading-6 text-white">Company</h3>
                   <ul role="list" className="mt-6 space-y-4">
@@ -1053,7 +1053,7 @@ export default function HomePage() {
 
           {/* AI Agent Section - Critical for dual audience (ULTIMATE_UX_DESIGNER_BRIEF) */}
           <div className="mt-12 pt-8 border-t border-white/10">
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
               <div>
                 <h3 className="text-sm font-semibold leading-6 text-white flex items-center gap-2">
                   <span className="text-lg">🤖</span> For AI Agents
@@ -1066,7 +1066,7 @@ export default function HomePage() {
               <div className="flex flex-wrap items-center gap-4">
                 <a
                   href="/docs"
-                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-400 border border-blue-500/30 rounded-lg hover:bg-blue-500/10 transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-400 border border-blue-500/30 rounded-md hover:bg-blue-500/10 transition-colors"
                   rel="api-docs"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1081,7 +1081,7 @@ export default function HomePage() {
                 </a>
                 <Link
                   to="/onboarding/ai-agent"
-                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-green-400 border border-green-500/30 rounded-lg hover:bg-green-500/10 transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-green-400 border border-green-500/30 rounded-md hover:bg-green-500/10 transition-colors"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path
@@ -1095,7 +1095,7 @@ export default function HomePage() {
                 </Link>
                 <a
                   href="/docs/ai-orientation"
-                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-purple-400 border border-purple-500/30 rounded-lg hover:bg-purple-500/10 transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-purple-400 border border-purple-500/30 rounded-md hover:bg-purple-500/10 transition-colors"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path

@@ -165,7 +165,7 @@ const WorkflowBuilder: React.FC = () => {
                         value={workflowDescription}
                         onChange={(e) => setWorkflowDescription(e.target.value)}
                         placeholder="Describe the workflow..."
-                        className="bg-slate-800/50 border-white/10 text-white placeholder:text-gray-500 h-8 text-sm"
+                        className="bg-slate-800/50 border-white/10 text-white placeholder:text-muted-foreground h-8 text-sm"
                       />
                     </div>
                     <div>

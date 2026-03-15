@@ -59,7 +59,7 @@ export default function Actions({
     <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
       <button
         onClick={copyMessage}
-        className="p-1 rounded hover:bg-white/10 text-white/60 hover:text-white"
+        className="p-1 rounded hover:bg-transparent/10 text-white/60 hover:text-white"
         title="Copy message"
         aria-label="Copy message"
       >
@@ -68,7 +68,7 @@ export default function Actions({
 
       {role === 'user' && (
         <button
-          className="p-1 rounded hover:bg-white/10 text-white/60 hover:text-white"
+          className="p-1 rounded hover:bg-transparent/10 text-white/60 hover:text-white"
           title="Edit message"
           aria-label="Edit message"
         >
@@ -79,7 +79,7 @@ export default function Actions({
       {role === 'assistant' && isLastMessage && regenerateMessage && (
         <button
           onClick={handleRegenerate}
-          className="p-1 rounded hover:bg-white/10 text-white/60 hover:text-white"
+          className="p-1 rounded hover:bg-transparent/10 text-white/60 hover:text-white"
           title="Regenerate response"
           aria-label="Regenerate response"
         >
@@ -90,7 +90,7 @@ export default function Actions({
       {chatId && forkThread && (
         <button
           onClick={handleFork}
-          className="p-1 rounded hover:bg-white/10 text-white/60 hover:text-white"
+          className="p-1 rounded hover:bg-transparent/10 text-white/60 hover:text-white"
           title="Fork thread"
           aria-label="Fork thread"
         >
@@ -99,7 +99,7 @@ export default function Actions({
       )}
 
       <button
-        className="p-1 rounded hover:bg-white/10 text-white/60 hover:text-white"
+        className="p-1 rounded hover:bg-transparent/10 text-white/60 hover:text-white"
         title="Delete message"
         aria-label="Delete message"
       >

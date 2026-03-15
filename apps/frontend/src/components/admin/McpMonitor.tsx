@@ -11,7 +11,9 @@ const TabButton: React.FC<TabButtonProps> = ({ children, onClick, isActive }) =>
   <button
     onClick={onClick}
     className={`px-4 py-2 text-sm font-medium ${
-      isActive ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500 hover:text-gray-700'
+      isActive
+        ? 'border-b-2 border-blue-500 text-blue-600'
+        : 'text-muted-foreground hover:text-foreground'
     }`}
   >
     {children}
@@ -58,7 +60,7 @@ export const McpMonitor: React.FC = () => {
         {activeTab === 'servers' && (
           <div className="space-y-4">
             <h2 className="text-xl font-semibold">MCP Servers</h2>
-            <table className="min-w-full bg-white">
+            <table className="min-w-full bg-transparent">
               <thead>
                 <tr>
                   <th className="py-2 px-4 border-b">ID</th>
@@ -99,7 +101,7 @@ export const McpMonitor: React.FC = () => {
                           </button>
                         )}
                         <button
-                          className="px-2 py-1 text-xs text-gray-700 bg-gray-200 rounded hover:bg-gray-300"
+                          className="px-2 py-1 text-xs text-foreground bg-gray-200 rounded hover:bg-gray-300"
                           onClick={() => setSelectedServer(server.id)}
                         >
                           Details
@@ -122,14 +124,14 @@ export const McpMonitor: React.FC = () => {
 
             <h3 className="text-xl font-semibold mb-2">Add New Server</h3>
             {/* New server form placeholder */}
-            <div className="text-gray-500 italic">Coming soon...</div>
+            <div className="text-muted-foreground italic">Coming soon...</div>
           </div>
         )}
 
         {activeTab === 'clients' && (
           <div className="space-y-4">
             <h2 className="text-xl font-semibold">MCP Clients</h2>
-            <table className="min-w-full bg-white">
+            <table className="min-w-full bg-transparent">
               <thead>
                 <tr>
                   <th className="py-2 px-4 border-b">ID</th>
@@ -170,7 +172,7 @@ export const McpMonitor: React.FC = () => {
                           </button>
                         )}
                         <button
-                          className="px-2 py-1 text-xs text-gray-700 bg-gray-200 rounded hover:bg-gray-300"
+                          className="px-2 py-1 text-xs text-foreground bg-gray-200 rounded hover:bg-gray-300"
                           onClick={() => setSelectedClient(client.id)}
                         >
                           Details
@@ -201,7 +203,7 @@ export const McpMonitor: React.FC = () => {
 
             <h3 className="text-xl font-semibold mb-2">Add New Client</h3>
             {/* New client form placeholder */}
-            <div className="text-gray-500 italic">Coming soon...</div>
+            <div className="text-muted-foreground italic">Coming soon...</div>
           </div>
         )}
 
@@ -209,7 +211,7 @@ export const McpMonitor: React.FC = () => {
           <div className="space-y-4">
             <h2 className="text-xl font-semibold">Test Tool Calls</h2>
             {/* Tool testing UI */}
-            <div className="text-gray-500 italic">Coming soon...</div>
+            <div className="text-muted-foreground italic">Coming soon...</div>
           </div>
         )}
 
@@ -217,7 +219,7 @@ export const McpMonitor: React.FC = () => {
           <div className="space-y-4">
             <h2 className="text-xl font-semibold">MCP Logs</h2>
             {/* Log viewer */}
-            <div className="text-gray-500 italic">Coming soon...</div>
+            <div className="text-muted-foreground italic">Coming soon...</div>
           </div>
         )}
       </div>

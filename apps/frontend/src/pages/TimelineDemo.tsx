@@ -23,15 +23,19 @@ const EnhancedTimelineView = ({
       {events.map((event, index) => (
         <div
           key={event.id || index}
-          className="p-4 border rounded-lg cursor-pointer hover:bg-gray-50"
+          className="p-4 border rounded-md cursor-pointer hover:bg-muted/20"
           onClick={() => onEventClick?.(event)}
         >
           <div className="flex justify-between items-start">
             <div>
               <h4 className="font-medium">{event.data?.title || `Event ${index + 1}`}</h4>
-              <p className="text-sm text-gray-600">{event.data?.description || 'No description'}</p>
+              <p className="text-sm text-muted-foreground">
+                {event.data?.description || 'No description'}
+              </p>
             </div>
-            <span className="text-xs text-gray-500">{event.timestamp?.toLocaleDateString()}</span>
+            <span className="text-xs text-muted-foreground">
+              {event.timestamp?.toLocaleDateString()}
+            </span>
           </div>
           <div className="mt-2">
             <span
@@ -176,10 +180,10 @@ const TimelineDemo: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-transparent p-4">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Timeline Demo</h1>
-        <div className="bg-white rounded-xl shadow-xl p-6">
+        <h1 className="text-2xl font-bold text-gray-900 mb-8">Timeline Demo</h1>
+        <div className="bg-transparent rounded-md shadow-none p-4">
           <EnhancedTimelineView
             events={sampleEvents}
             branches={sampleBranches}

@@ -95,8 +95,8 @@ export const AgentCollaborationDashboard = () => {
     setSelectedAgent(agent);
   };
   return (
-    <div className="p-6">
-      <div className="grid gap-6">
+    <div className="p-4">
+      <div className="grid gap-4">
         <Tabs defaultValue="network" className="w-full">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="network">Network View</TabsTrigger>
@@ -149,7 +149,7 @@ export const AgentCollaborationDashboard = () => {
                           <div className="flex justify-between items-center">
                             <div>
                               <h3 className="font-medium">{task.title}</h3>
-                              <p className="text-sm text-gray-500">
+                              <p className="text-sm text-muted-foreground">
                                 Assigned to: {assignedAgent?.name}
                               </p>
                             </div>

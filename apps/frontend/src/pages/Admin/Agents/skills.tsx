@@ -12,15 +12,15 @@ export default function AgentSkillsPage() {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-8">
+    <div className="p-4 max-w-7xl mx-auto space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-white mb-2">Agent Skills</h1>
+        <h1 className="text-2xl font-bold text-white mb-2">Agent Skills</h1>
         <p className="text-gray-400">Configure capabilities and integrations for your agents.</p>
       </div>
 
       <section>
         <h2 className="text-xl font-semibold mb-4 text-gray-300">Core Capabilities</h2>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {Object.entries(defaultSkills).map(([key, skill]) => {
             const Component = skill.component;
             return (
@@ -38,7 +38,7 @@ export default function AgentSkillsPage() {
 
       <section>
         <h2 className="text-xl font-semibold mb-4 text-gray-300">Integrations & Tools</h2>
-        <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
           {Object.entries(configurableSkills).map(([key, skill]) => {
             const Component = skill.component;
 

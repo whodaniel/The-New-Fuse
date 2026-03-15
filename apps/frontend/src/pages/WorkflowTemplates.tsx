@@ -103,7 +103,7 @@ export default function WorkflowTemplates() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4">
       <div className="max-w-7xl mx-auto space-y-6 animate-fade-in">
         {/* Header Section */}
         <div className="flex items-center justify-between animate-slide-in-down">
@@ -160,7 +160,7 @@ export default function WorkflowTemplates() {
               <Sparkles className="w-6 h-6 text-yellow-400" />
               Popular Templates
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {templates
                 .filter((t) => t.isPopular)
                 .map((template) => (
@@ -180,7 +180,7 @@ export default function WorkflowTemplates() {
           <h2 className="text-2xl font-bold text-white">
             {selectedCategory === 'all' ? 'All Templates' : `${selectedCategory} Templates`}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredTemplates.map((template) => (
               <TemplateCard key={template.id} template={template} onUse={handleUseTemplate} />
             ))}
@@ -233,7 +233,7 @@ function TemplateCard({ template, onUse, isPopular = false }: TemplateCardProps)
           {template.tags.map((tag) => (
             <span
               key={tag}
-              className="px-2 py-1 text-xs bg-white/10 text-slate-300 rounded border border-white/20"
+              className="px-2 py-1 text-xs bg-transparent/10 text-slate-300 rounded border border-white/20"
             >
               {tag}
             </span>

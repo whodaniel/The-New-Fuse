@@ -48,16 +48,16 @@ const AllPages: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-8">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-4">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
             🚀 The New Fuse - All Pages
           </h1>
-          <p className="text-lg text-gray-700 dark:text-gray-300 mb-4">
+          <p className="text-lg text-foreground dark:text-gray-300 mb-4">
             Complete directory of {totalPages} cataloged pages in The New Fuse application
           </p>
-          <div className="bg-blue-100 dark:bg-blue-900 border border-blue-400 text-blue-700 dark:text-blue-300 px-4 py-3 rounded-lg inline-block">
+          <div className="bg-blue-100 dark:bg-blue-900 border border-blue-400 text-blue-700 dark:text-blue-300 px-4 py-2 rounded-md inline-block">
             Catalog-driven route inventory
           </div>
         </div>
@@ -69,14 +69,14 @@ const AllPages: React.FC = () => {
               placeholder="Search pages by name, path, or description..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-transparent dark:bg-transparent text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-transparent dark:bg-transparent text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="All">All Categories</option>
               {ALL_PAGE_CATEGORIES.map((category) => (
@@ -96,11 +96,11 @@ const AllPages: React.FC = () => {
               </span>
               {category.name}
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {category.pages.map((page) => (
                 <div
                   key={`${category.name}:${page.path}`}
-                  className="p-6 border rounded-lg bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105"
+                  className="p-4 border rounded-md bg-transparent dark:bg-transparent shadow-none hover:shadow-md transition-all duration-200 hover:scale-105"
                 >
                   {(() => {
                     const architecture = architectureMap.get(page.path);
@@ -121,7 +121,7 @@ const AllPages: React.FC = () => {
                     {page.name}
                   </h3>
                   {page.description && (
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                    <p className="text-sm text-muted-foreground dark:text-muted-foreground mb-3">
                       {page.description}
                     </p>
                   )}
@@ -142,7 +142,7 @@ const AllPages: React.FC = () => {
                         const fullUrl = `${window.location.origin}${page.path}`;
                         navigator.clipboard.writeText(fullUrl);
                       }}
-                      className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm"
+                      className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-foreground dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm"
                       title="Copy URL to clipboard"
                     >
                       Copy URL
@@ -156,13 +156,13 @@ const AllPages: React.FC = () => {
 
         {filteredCategories.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500 dark:text-gray-400 text-lg">
+            <p className="text-muted-foreground dark:text-muted-foreground text-lg">
               No pages found matching your search criteria.
             </p>
           </div>
         )}
 
-        <div className="mt-12 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
+        <div className="mt-12 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-md border border-blue-200 dark:border-blue-700">
           <h3 className="text-lg font-bold text-blue-800 dark:text-blue-300 mb-2">
             📊 Application Summary
           </h3>

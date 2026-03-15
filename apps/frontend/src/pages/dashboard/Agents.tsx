@@ -101,14 +101,14 @@ const Agents = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 flex items-center justify-center">
         <Loader2 className="w-7 h-7 animate-spin text-purple-400" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 relative overflow-hidden">
       <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
 
@@ -129,7 +129,7 @@ const Agents = () => {
           </PremiumButton>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-slide-up">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 animate-slide-up">
           <StatsCard
             label="Total Champions"
             value={agents.length}
@@ -156,7 +156,7 @@ const Agents = () => {
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {agents.map((agent, index) => (
             <div
               key={agent.id}
@@ -170,7 +170,7 @@ const Agents = () => {
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-lg">
+                    <div className="w-12 h-12 rounded-md bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-none">
                       <Bot className="w-6 h-6 text-white" />
                     </div>
                     <div>

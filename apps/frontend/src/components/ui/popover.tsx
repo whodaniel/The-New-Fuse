@@ -110,7 +110,7 @@ export const Popover = ({
           <div
             ref={popoverRef}
             className={cn(
-              'fixed rounded-lg shadow-2xl border',
+              'fixed rounded-md shadow-none border',
               'bg-slate-900 border-slate-600 text-white',
               'animate-in fade-in-0 zoom-in-95 duration-200',
               className
@@ -183,7 +183,7 @@ export const PopoverCloseButton = ({
   <button
     onClick={onClick}
     className={cn(
-      'absolute top-2 right-2 text-gray-400 hover:text-gray-600 transition-colors',
+      'absolute top-2 right-2 text-gray-400 hover:text-muted-foreground transition-colors',
       className
     )}
   >

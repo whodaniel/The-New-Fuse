@@ -168,14 +168,14 @@ const NewTask: React.FC = () => {
           Back
         </Button>
         <div>
-          <h1 className="text-3xl font-bold">Create New Task</h1>
+          <h1 className="text-2xl font-bold">Create New Task</h1>
           <p className="text-muted-foreground">Create a new task for an agent</p>
         </div>
       </div>
 
       <form onSubmit={handleSubmit}>
         <Card className="mb-6">
-          <div className="p-6">
+          <div className="p-4">
             <h3 className="text-lg font-semibold mb-4">Task Details</h3>
             <div className="space-y-4">
               <div>
@@ -356,7 +356,7 @@ const NewTask: React.FC = () => {
                         {tag}
                         <button
                           type="button"
-                          className="ml-1 text-gray-500 hover:text-gray-700"
+                          className="ml-1 text-muted-foreground hover:text-foreground"
                           onClick={() => removeTag(tag)}
                         >
                           <X className="h-3 w-3" />

@@ -119,7 +119,7 @@ export default function LiveViewPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-6">
+    <div className="min-h-screen bg-gray-900 text-white p-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <header className="flex justify-between items-center mb-6 pb-4 border-b border-gray-700">
@@ -136,10 +136,10 @@ export default function LiveViewPage() {
         </header>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* Browser View */}
           <div className="lg:col-span-2">
-            <div className="bg-gray-800 rounded-xl overflow-hidden shadow-2xl border border-gray-700">
+            <div className="bg-gray-800 rounded-md overflow-hidden shadow-none border border-gray-700">
               <div className="bg-gray-700 px-4 py-2 flex items-center gap-2">
                 <div className="flex gap-1.5">
                   <div className="w-3 h-3 rounded-full bg-red-500" />
@@ -156,7 +156,7 @@ export default function LiveViewPage() {
                     className="w-full h-full object-contain"
                   />
                 ) : (
-                  <div className="text-center text-gray-500">
+                  <div className="text-center text-muted-foreground">
                     <svg
                       className="w-16 h-16 mx-auto mb-4 opacity-50"
                       fill="none"
@@ -171,7 +171,7 @@ export default function LiveViewPage() {
                       />
                     </svg>
                     <p>Waiting for AI agent activity...</p>
-                    <p className="text-sm mt-2 text-gray-600">
+                    <p className="text-sm mt-2 text-muted-foreground">
                       Screenshots will appear here when an AI interacts with the browser
                     </p>
                   </div>
@@ -182,17 +182,17 @@ export default function LiveViewPage() {
 
           {/* Activity Log */}
           <div className="lg:col-span-1">
-            <div className="bg-gray-800 rounded-xl border border-gray-700 h-full flex flex-col">
-              <div className="px-4 py-3 border-b border-gray-700">
+            <div className="bg-gray-800 rounded-md border border-gray-700 h-full flex flex-col">
+              <div className="px-4 py-2 border-b border-gray-700">
                 <h2 className="font-semibold">Activity Log</h2>
               </div>
               <div className="flex-1 overflow-y-auto p-4 space-y-2 max-h-[500px] font-mono text-sm">
                 {logs.length === 0 ? (
-                  <p className="text-gray-500 text-center py-4">No activity yet</p>
+                  <p className="text-muted-foreground text-center py-2">No activity yet</p>
                 ) : (
                   logs.map((log, i) => (
                     <div key={i} className="border-b border-gray-700/50 pb-2">
-                      <span className="text-gray-500">{log.time}</span>
+                      <span className="text-muted-foreground">{log.time}</span>
                       <span className="text-blue-400 ml-2 font-bold">{log.action}</span>
                       {log.details && <span className="text-gray-400 ml-2">{log.details}</span>}
                     </div>
@@ -204,7 +204,7 @@ export default function LiveViewPage() {
         </div>
 
         {/* Info Section */}
-        <div className="mt-6 bg-gray-800/50 rounded-xl p-4 border border-gray-700">
+        <div className="mt-6 bg-gray-800/50 rounded-md p-4 border border-gray-700">
           <h3 className="font-semibold mb-2">About Live View</h3>
           <p className="text-gray-400 text-sm">
             This page shows real-time screenshots of AI agents interacting with web browsers in the

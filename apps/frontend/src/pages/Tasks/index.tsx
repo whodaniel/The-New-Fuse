@@ -137,7 +137,7 @@ const Tasks: React.FC = () => {
       Completed: { bg: 'bg-emerald-500/20', text: 'text-emerald-400', icon: CheckCircle },
       'In Progress': { bg: 'bg-blue-500/20', text: 'text-blue-400', icon: Clock },
       'Pending Review': { bg: 'bg-purple-500/20', text: 'text-purple-400', icon: Clock },
-      'Not Started': { bg: 'bg-gray-500/20', text: 'text-gray-400', icon: Clock },
+      'Not Started': { bg: 'bg-transparent0/20', text: 'text-gray-400', icon: Clock },
     };
     const { bg, text, icon: Icon } = config[status] || config['Not Started'];
     return (
@@ -212,7 +212,7 @@ const Tasks: React.FC = () => {
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" />
       </div>
 
-      <div className="relative z-10 p-6 max-w-7xl mx-auto">
+      <div className="relative z-10 p-4 max-w-7xl mx-auto">
         {loadError && (
           <GlassCard className="p-4 mb-6 border border-amber-500/40 bg-amber-500/10">
             <p className="text-sm text-amber-200">{loadError}. No synthetic tasks are shown.</p>
@@ -366,10 +366,10 @@ const Tasks: React.FC = () => {
                 transition={{ delay: index * 0.05 }}
               >
                 <GlassCard className="hover:border-purple-500/30 transition-all duration-300">
-                  <div className="p-6">
+                  <div className="p-4">
                     <div className="flex justify-between items-start mb-4">
                       <h3 className="text-xl font-semibold text-white">{task.title}</h3>
-                      <button className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+                      <button className="p-2 text-gray-400 hover:text-white hover:bg-transparent/10 rounded-md transition-colors">
                         <MoreVertical className="w-4 h-4" />
                       </button>
                     </div>
@@ -377,36 +377,36 @@ const Tasks: React.FC = () => {
                     <div className="flex flex-wrap gap-2 mb-4">
                       {getStatusBadge(task.status)}
                       {getPriorityBadge(task.priority)}
-                      <Badge className="bg-white/10 text-gray-300 border-white/10">
+                      <Badge className="bg-transparent/10 text-gray-300 border-white/10">
                         {task.category}
                       </Badge>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                       <div>
-                        <p className="text-gray-500 mb-1">Assigned To</p>
+                        <p className="text-muted-foreground mb-1">Assigned To</p>
                         <p className="text-white flex items-center">
                           <Bot className="w-4 h-4 mr-1 text-purple-400" />
                           {task.assignedTo}
                         </p>
                       </div>
                       <div>
-                        <p className="text-gray-500 mb-1">Created</p>
+                        <p className="text-muted-foreground mb-1">Created</p>
                         <p className="text-white">{formatDate(task.createdAt)}</p>
                       </div>
                       <div>
-                        <p className="text-gray-500 mb-1">Due Date</p>
+                        <p className="text-muted-foreground mb-1">Due Date</p>
                         <p className="text-white flex items-center">
                           <Calendar className="w-4 h-4 mr-1 text-blue-400" />
                           {formatDate(task.dueDate)}
                         </p>
                       </div>
                       <div>
-                        <p className="text-gray-500 mb-1">Time Remaining</p>
+                        <p className="text-muted-foreground mb-1">Time Remaining</p>
                         <p>{getDaysRemaining(task.dueDate)}</p>
                       </div>
                     </div>
                   </div>
-                  <div className="px-6 py-4 border-t border-white/10 flex justify-end gap-2">
+                  <div className="px-3 py-2 border-t border-white/10 flex justify-end gap-2">
                     <PremiumButton
                       variant="secondary"
                       size="sm"
@@ -435,8 +435,8 @@ const Tasks: React.FC = () => {
             animate={{ opacity: 1 }}
             className="text-center py-16"
           >
-            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
-              <Clock className="w-10 h-10 text-gray-500" />
+            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-transparent/5 flex items-center justify-center border border-white/10">
+              <Clock className="w-10 h-10 text-muted-foreground" />
             </div>
             <h3 className="text-xl font-semibold text-white mb-2">No tasks found</h3>
             <p className="text-gray-400 mb-6">

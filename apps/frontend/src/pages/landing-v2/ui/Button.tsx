@@ -30,16 +30,18 @@ export default function Button({
   };
 
   const variants = {
-    primary: 'bg-white text-black hover:bg-gray-100 shadow-[0_0_20px_-5px_rgba(255,255,255,0.5)]',
-    secondary: 'bg-white/10 text-white border border-white/10 hover:bg-white/20 backdrop-blur-md',
-    ghost: 'text-white/70 hover:text-white hover:bg-white/5',
+    primary:
+      'bg-transparent text-black hover:bg-muted/30 shadow-[0_0_20px_-5px_rgba(255,255,255,0.5)]',
+    secondary:
+      'bg-transparent/10 text-white border border-white/10 hover:bg-transparent/20 backdrop-blur-md',
+    ghost: 'text-white/70 hover:text-white hover:bg-transparent/5',
   };
 
   return (
     <motion.button
       ref={ref}
       className={cn(
-        'relative px-8 py-4 rounded-full font-medium text-sm tracking-wide transition-colors overflow-hidden group',
+        'relative px-8 py-2 rounded-full font-medium text-sm tracking-wide transition-colors overflow-hidden group',
         variants[variant],
         className
       )}

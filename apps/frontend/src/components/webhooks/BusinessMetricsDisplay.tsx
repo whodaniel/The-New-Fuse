@@ -67,10 +67,10 @@ export function BusinessMetricsDisplay({
   if (loading) {
     return (
       <div className={`space-y-6 ${className}`}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
             <Card key={i} className="animate-pulse">
-              <CardContent className="p-6">
+              <CardContent className="p-4">
                 <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
                 <div className="h-8 bg-gray-200 rounded w-1/2 mb-2"></div>
                 <div className="h-3 bg-gray-200 rounded w-full"></div>
@@ -85,10 +85,10 @@ export function BusinessMetricsDisplay({
   if (!metrics) {
     return (
       <Card className={className}>
-        <CardContent className="p-8 text-center">
+        <CardContent className="p-4 text-center">
           <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">No Metrics Available</h3>
-          <p className="text-gray-500">
+          <p className="text-muted-foreground">
             Business metrics will appear here once webhook events are processed
           </p>
         </CardContent>
@@ -117,7 +117,7 @@ export function BusinessMetricsDisplay({
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Key Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
@@ -185,7 +185,7 @@ export function BusinessMetricsDisplay({
       {!compact && (
         <>
           {/* Performance Metrics */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <Card>
               <CardHeader>
                 <CardTitle>Performance Metrics</CardTitle>
@@ -280,7 +280,7 @@ export function BusinessMetricsDisplay({
           </div>
 
           {/* Event Type Distribution */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <Card>
               <CardHeader>
                 <CardTitle>Top Event Types</CardTitle>
@@ -349,7 +349,7 @@ export function BusinessMetricsDisplay({
               <CardTitle>Customer Analytics</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-blue-600">
                     {formatNumber(metrics.customerMetrics.activeCustomers)}

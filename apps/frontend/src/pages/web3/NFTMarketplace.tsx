@@ -197,34 +197,36 @@ const NFTMarketplace: React.FC = () => {
       <div className="flex justify-center items-center h-[50vh]">
         <div className="flex flex-col items-center gap-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading NFT Marketplace...</p>
+          <p className="text-muted-foreground dark:text-muted-foreground">
+            Loading NFT Marketplace...
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="p-6 max-w-[1600px] mx-auto">
+    <div className="p-4 max-w-[1600px] mx-auto">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">NFT Marketplace</h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-muted-foreground dark:text-muted-foreground">
             Discover, collect, and trade AI agents and platform assets
           </p>
         </div>
 
-        <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium">
+        <button className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors font-medium">
           Create NFT
         </button>
       </div>
       {loadError && (
-        <div className="mb-6 rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3">
+        <div className="mb-6 rounded-md border border-amber-500/40 bg-amber-500/10 px-4 py-2">
           <p className="text-sm text-amber-200">{loadError}. No synthetic NFTs are shown.</p>
         </div>
       )}
 
       {/* Marketplace Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {[
           {
             label: 'Total Volume',
@@ -237,29 +239,31 @@ const NFTMarketplace: React.FC = () => {
             label: 'Floor Price',
             value: '0.8 ETH',
             help: 'Lowest available',
-            helpColor: 'text-gray-500',
+            helpColor: 'text-muted-foreground',
             icon: null,
           },
           {
             label: 'Active Listings',
             value: nfts.filter((nft) => nft.isForSale).length,
             help: 'Currently for sale',
-            helpColor: 'text-gray-500',
+            helpColor: 'text-muted-foreground',
             icon: null,
           },
           {
             label: 'Unique Owners',
             value: '3,456',
             help: 'Community members',
-            helpColor: 'text-gray-500',
+            helpColor: 'text-muted-foreground',
             icon: null,
           },
         ].map((stat, idx) => (
           <div
             key={idx}
-            className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
+            className="bg-transparent dark:bg-transparent p-4 rounded-md shadow-none border border-gray-200 dark:border-gray-700"
           >
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{stat.label}</p>
+            <p className="text-sm text-muted-foreground dark:text-muted-foreground mb-1">
+              {stat.label}
+            </p>
             <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{stat.value}</p>
             <div className="flex items-center gap-1 text-sm">
               {stat.icon && <stat.icon className={`w-4 h-4 ${stat.helpColor}`} />}
@@ -270,7 +274,7 @@ const NFTMarketplace: React.FC = () => {
       </div>
 
       {/* Search and Filters */}
-      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
+      <div className="bg-transparent dark:bg-transparent p-4 rounded-md shadow-none border border-gray-200 dark:border-gray-700 mb-6">
         <div className="flex gap-4 flex-wrap">
           <div className="flex-1 min-w-[200px] relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -279,14 +283,14 @@ const NFTMarketplace: React.FC = () => {
               placeholder="Search NFTs..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-transparent dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
             />
           </div>
 
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none cursor-pointer"
+            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-transparent dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none cursor-pointer"
           >
             <option value="all">All Categories</option>
             <option value="AI Agents">AI Agents</option>
@@ -298,9 +302,9 @@ const NFTMarketplace: React.FC = () => {
       </div>
 
       {/* NFT Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {filteredNFTs.length === 0 ? (
-          <div className="col-span-full rounded-lg border border-gray-700 bg-gray-900/40 p-8 text-center text-sm text-gray-300">
+          <div className="col-span-full rounded-md border border-gray-700 bg-gray-900/40 p-4 text-center text-sm text-gray-300">
             No live NFT listings available.
           </div>
         ) : (
@@ -308,7 +312,7 @@ const NFTMarketplace: React.FC = () => {
             <div
               key={nft.id}
               onClick={() => openNFTDetail(nft)}
-              className="group bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer hover:-translate-y-1 hover:shadow-lg hover:border-purple-300 dark:hover:border-purple-600 transition-all duration-300"
+              className="group bg-transparent dark:bg-transparent rounded-md shadow-none border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer hover:-translate-y-1 hover:shadow-none hover:border-purple-300 dark:hover:border-purple-600 transition-all duration-300"
             >
               <div className="relative h-[250px] overflow-hidden">
                 {nft.image ? (
@@ -338,7 +342,7 @@ const NFTMarketplace: React.FC = () => {
                     {nft.name}
                   </h3>
                   <p
-                    className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2"
+                    className="text-sm text-muted-foreground dark:text-muted-foreground line-clamp-2"
                     title={nft.description}
                   >
                     {nft.description}
@@ -347,13 +351,15 @@ const NFTMarketplace: React.FC = () => {
 
                 <div className="flex justify-between items-end">
                   <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Price</p>
+                    <p className="text-xs text-muted-foreground dark:text-muted-foreground">
+                      Price
+                    </p>
                     <p className="font-bold text-purple-600 dark:text-purple-400">
                       {nft.price} {nft.currency}
                     </p>
                   </div>
 
-                  <div className="flex gap-3 text-sm text-gray-500 dark:text-gray-400">
+                  <div className="flex gap-3 text-sm text-muted-foreground dark:text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Heart className="w-3.5 h-3.5" />
                       <span>{nft.likes}</span>
@@ -368,7 +374,7 @@ const NFTMarketplace: React.FC = () => {
                 <div className="h-px bg-gray-100 dark:bg-gray-700 my-1"></div>
 
                 <div className="flex justify-between items-center text-xs">
-                  <span className="text-gray-500 dark:text-gray-400 truncate max-w-[120px]">
+                  <span className="text-muted-foreground dark:text-muted-foreground truncate max-w-[120px]">
                     Creator: {nft.creator.slice(0, 6)}...{nft.creator.slice(-4)}
                   </span>
                   <span className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 px-1.5 py-0.5 rounded">
@@ -389,21 +395,21 @@ const NFTMarketplace: React.FC = () => {
             if (e.target === e.currentTarget) closeModal();
           }}
         >
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in duration-200">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center sticky top-0 bg-white dark:bg-gray-800 z-10">
+          <div className="bg-transparent dark:bg-transparent rounded-md shadow-none max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in duration-200">
+            <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center sticky top-0 bg-transparent dark:bg-transparent z-10">
               <h2 className="text-xl font-bold text-gray-900 dark:text-white truncate pr-4">
                 {selectedNFT.name}
               </h2>
               <button
                 onClick={closeModal}
-                className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500"
+                className="p-1 rounded-full hover:bg-muted/30 dark:hover:bg-gray-700 text-muted-foreground"
               >
                 <X className="w-6 h-6" />
               </button>
             </div>
 
-            <div className="p-6 space-y-6">
-              <div className="aspect-video w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-900">
+            <div className="p-4 space-y-6">
+              <div className="aspect-video w-full overflow-hidden rounded-md bg-gray-100 dark:bg-gray-900">
                 <img
                   src={selectedNFT.image}
                   alt={selectedNFT.name}
@@ -412,11 +418,13 @@ const NFTMarketplace: React.FC = () => {
               </div>
 
               <div className="space-y-4">
-                <p className="text-gray-700 dark:text-gray-300">{selectedNFT.description}</p>
+                <p className="text-foreground dark:text-gray-300">{selectedNFT.description}</p>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Creator</p>
+                    <p className="text-sm text-muted-foreground dark:text-muted-foreground">
+                      Creator
+                    </p>
                     <p
                       className="font-mono text-sm text-gray-900 dark:text-white truncate"
                       title={selectedNFT.creator}
@@ -425,7 +433,9 @@ const NFTMarketplace: React.FC = () => {
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Owner</p>
+                    <p className="text-sm text-muted-foreground dark:text-muted-foreground">
+                      Owner
+                    </p>
                     <p
                       className="font-mono text-sm text-gray-900 dark:text-white truncate"
                       title={selectedNFT.owner}
@@ -434,13 +444,17 @@ const NFTMarketplace: React.FC = () => {
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Blockchain</p>
+                    <p className="text-sm text-muted-foreground dark:text-muted-foreground">
+                      Blockchain
+                    </p>
                     <span className="inline-block mt-1 px-2 py-0.5 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 rounded text-xs font-semibold">
                       {selectedNFT.blockchain}
                     </span>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Rarity</p>
+                    <p className="text-sm text-muted-foreground dark:text-muted-foreground">
+                      Rarity
+                    </p>
                     <span
                       className={`inline-block mt-1 px-2 py-0.5 rounded text-xs font-semibold ${getRarityColor(selectedNFT.rarity)}`}
                     >
@@ -453,8 +467,10 @@ const NFTMarketplace: React.FC = () => {
 
                 <div className="flex justify-between items-center pt-2">
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Current Price</p>
-                    <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">
+                    <p className="text-sm text-muted-foreground dark:text-muted-foreground">
+                      Current Price
+                    </p>
+                    <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
                       {selectedNFT.price} {selectedNFT.currency}
                     </p>
                   </div>
@@ -462,7 +478,7 @@ const NFTMarketplace: React.FC = () => {
                   <button
                     onClick={() => purchaseNFT(selectedNFT)}
                     disabled={!selectedNFT.isForSale}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-lg font-bold text-white transition-colors ${
+                    className={`flex items-center gap-2 px-3 py-2 rounded-md font-bold text-white transition-colors ${
                       selectedNFT.isForSale
                         ? 'bg-purple-600 hover:bg-purple-700'
                         : 'bg-gray-400 cursor-not-allowed'

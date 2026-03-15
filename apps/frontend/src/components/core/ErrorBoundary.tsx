@@ -114,7 +114,7 @@ class ErrorBoundary extends Component<Props, State> {
       const isDevelopment = import.meta.env.DEV;
 
       return (
-        <div className="error-boundary min-h-[200px] p-8 bg-red-50 border border-red-200 rounded-lg">
+        <div className="error-boundary min-h-[200px] p-4 bg-red-50 border border-red-200 rounded-md">
           <div className="text-center">
             <div className="text-red-600 mb-4">
               <svg className="w-12 h-12 mx-auto mb-4" fill="currentColor" viewBox="0 0 20 20">

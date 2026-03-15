@@ -147,7 +147,7 @@ export const SystemHealth: React.FC = () => {
         </div>
         <div className="flex items-center gap-4">
           <div className="text-right hidden md:block">
-            <div className="text-[10px] font-bold text-gray-500 uppercase">Last Sync</div>
+            <div className="text-[10px] font-bold text-muted-foreground uppercase">Last Sync</div>
             <div className="text-xs text-gray-300 font-mono">
               {lastRefresh.toLocaleTimeString()}
             </div>
@@ -164,7 +164,7 @@ export const SystemHealth: React.FC = () => {
       )}
 
       {/* Real-time Hardware Gauges */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <GaugeItem
           label="CPU Allocation"
           value={stats?.cpu || 0}
@@ -185,7 +185,7 @@ export const SystemHealth: React.FC = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Core Infrastructure Nodes */}
         <div className="lg:col-span-2 space-y-4">
           <h2 className="text-xl font-bold text-white flex items-center gap-2">
@@ -204,7 +204,7 @@ export const SystemHealth: React.FC = () => {
                 className="p-5 border-white/5 hover:border-white/20 transition-all group"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <div className="p-2 rounded-lg bg-white/5 border border-white/10 text-gray-400 group-hover:text-white transition-colors">
+                  <div className="p-2 rounded-md bg-transparent/5 border border-white/10 text-gray-400 group-hover:text-white transition-colors">
                     <Database className="w-5 h-5" />
                   </div>
                   <div
@@ -220,17 +220,17 @@ export const SystemHealth: React.FC = () => {
                 <div>
                   <h3 className="text-lg font-bold text-white">{service.name}</h3>
                   <div className="flex items-center justify-between mt-2">
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-muted-foreground">
                       Latency: <span className="text-gray-300 font-mono">{service.latency}</span>
                     </div>
-                    <div className="text-xs text-gray-500">v{service.version}</div>
+                    <div className="text-xs text-muted-foreground">v{service.version}</div>
                   </div>
                 </div>
               </GlassCard>
             ))}
           </div>
 
-          <GlassCard className="p-6 mt-8">
+          <GlassCard className="p-4 mt-8">
             <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
               <Activity className="w-5 h-5 text-rose-400" />
               Performance Trajectory
@@ -247,7 +247,7 @@ export const SystemHealth: React.FC = () => {
                 );
               })}
             </div>
-            <div className="flex justify-between mt-4 text-[10px] text-gray-500 font-bold uppercase tracking-widest">
+            <div className="flex justify-between mt-4 text-[10px] text-muted-foreground font-bold uppercase tracking-widest">
               <span>Start Session</span>
               <span>Active Orchestration</span>
               <span>Current Real-time</span>
@@ -282,7 +282,7 @@ export const SystemHealth: React.FC = () => {
             />
           </div>
 
-          <GlassCard className="p-6 bg-gradient-to-br from-blue-600/10 to-transparent">
+          <GlassCard className="p-4 bg-gradient-to-br from-blue-600/10 to-transparent">
             <h3 className="text-lg font-bold text-white mb-1">Global Health Index</h3>
             <div className="text-4xl font-bold text-white">99.8%</div>
             <div className="text-xs text-emerald-400 font-bold flex items-center mt-1">
@@ -307,25 +307,25 @@ const GaugeItem: React.FC<{
   icon: React.ReactNode;
   color: string;
 }> = ({ label, value, icon, color }) => (
-  <GlassCard className="p-6">
+  <GlassCard className="p-4">
     <div className="flex items-center gap-4 mb-4">
-      <div className={`p-2 rounded-lg bg-${color}-500/10 border border-${color}-500/20`}>
+      <div className={`p-2 rounded-md bg-${color}-500/10 border border-${color}-500/20`}>
         {icon}
       </div>
       <div className="text-sm font-bold text-gray-400 uppercase tracking-widest">{label}</div>
     </div>
-    <div className="relative h-2 bg-white/5 border border-white/10 rounded-full overflow-hidden">
+    <div className="relative h-2 bg-transparent/5 border border-white/10 rounded-full overflow-hidden">
       <div
         className={`absolute inset-y-0 left-0 bg-gradient-to-r from-${color}-600 to-${color}-400 transition-all duration-1000`}
         style={{ width: `${value}%` }}
       />
     </div>
     <div className="mt-3 flex justify-between items-end">
-      <div className="text-3xl font-bold text-white">
+      <div className="text-2xl font-bold text-white">
         {value}
-        <span className="text-base text-gray-500 font-normal">%</span>
+        <span className="text-base text-muted-foreground font-normal">%</span>
       </div>
-      <div className="text-[10px] font-bold text-gray-500 flex items-center">
+      <div className="text-[10px] font-bold text-muted-foreground flex items-center">
         {value > 80 ? (
           <AlertTriangle className="w-3 h-3 mr-1 text-amber-500" />
         ) : (
@@ -343,7 +343,7 @@ const AlertItem: React.FC<{
   desc: string;
   time: string;
 }> = ({ type, title, desc, time }) => (
-  <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex gap-3 group hover:bg-white/10 transition-colors">
+  <div className="p-4 rounded-md bg-transparent/5 border border-white/10 flex gap-3 group hover:bg-transparent/10 transition-colors">
     <div
       className={`mt-1 h-2 w-2 rounded-full shrink-0 ${
         type === 'warning' ? 'bg-amber-500' : type === 'success' ? 'bg-emerald-500' : 'bg-blue-500'
@@ -352,7 +352,7 @@ const AlertItem: React.FC<{
     <div className="flex-1">
       <div className="flex justify-between items-start">
         <h4 className="text-sm font-bold text-white">{title}</h4>
-        <span className="text-[10px] text-gray-500 font-mono">{time}</span>
+        <span className="text-[10px] text-muted-foreground font-mono">{time}</span>
       </div>
       <p className="text-xs text-gray-400 mt-1 leading-relaxed">{desc}</p>
     </div>

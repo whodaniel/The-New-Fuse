@@ -149,10 +149,10 @@ const WorkspaceManagement: React.FC = () => {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="p-4 max-w-7xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white">Workspace Management</h1>
+          <h1 className="text-2xl font-bold text-white">Workspace Management</h1>
           <p className="text-gray-400 mt-2">Manage and monitor all workspaces in the system</p>
         </div>
         <Button variant="primary" onClick={() => setShowCreateDialog(true)}>
@@ -162,7 +162,7 @@ const WorkspaceManagement: React.FC = () => {
       </div>
 
       {loadError && (
-        <div className="rounded-lg border border-amber-300 bg-amber-100/80 px-4 py-3 text-sm text-amber-900">
+        <div className="rounded-md border border-amber-300 bg-amber-100/80 px-4 py-2 text-sm text-amber-900">
           {loadError}
         </div>
       )}
@@ -205,16 +205,16 @@ const WorkspaceManagement: React.FC = () => {
       </Card>
 
       {/* Workspace Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {loading
           ? Array.from({ length: 6 }).map((_, i) => (
-              <Card key={i} className="animate-pulse p-6">
-                <div className="h-4 bg-white/10 rounded mb-4"></div>
-                <div className="h-3 bg-white/10 rounded mb-2"></div>
-                <div className="h-3 bg-white/10 rounded mb-4"></div>
+              <Card key={i} className="animate-pulse p-4">
+                <div className="h-4 bg-transparent/10 rounded mb-4"></div>
+                <div className="h-3 bg-transparent/10 rounded mb-2"></div>
+                <div className="h-3 bg-transparent/10 rounded mb-4"></div>
                 <div className="flex justify-between">
-                  <div className="h-6 bg-white/10 rounded w-16"></div>
-                  <div className="h-6 bg-white/10 rounded w-12"></div>
+                  <div className="h-6 bg-transparent/10 rounded w-16"></div>
+                  <div className="h-6 bg-transparent/10 rounded w-12"></div>
                 </div>
               </Card>
             ))
@@ -265,9 +265,9 @@ const WorkspaceManagement: React.FC = () => {
                         {formatStorage(workspace.storage.used, workspace.storage.limit)}
                       </span>
                     </div>
-                    <div className="w-full bg-white/10 rounded-full h-2">
+                    <div className="w-full bg-transparent/10 rounded-full h-2">
                       <div
-                        className="bg-blue-500 h-2 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+                        className="bg-blue-500 h-2 rounded-full shadow-none-[0_0_10px_rgba(59,130,246,0.5)]"
                         style={{
                           width: `${Math.min(getStoragePercentage(workspace.storage.used, workspace.storage.limit), 100)}%`,
                         }}
@@ -384,9 +384,9 @@ const WorkspaceManagement: React.FC = () => {
                             )}
                           </span>
                         </div>
-                        <div className="w-full bg-white/10 rounded-full h-2">
+                        <div className="w-full bg-transparent/10 rounded-full h-2">
                           <div
-                            className="bg-blue-500 h-2 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+                            className="bg-blue-500 h-2 rounded-full shadow-none-[0_0_10px_rgba(59,130,246,0.5)]"
                             style={{
                               width: `${Math.min(getStoragePercentage(selectedWorkspace.storage.used, selectedWorkspace.storage.limit), 100)}%`,
                             }}

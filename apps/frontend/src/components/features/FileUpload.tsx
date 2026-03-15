@@ -49,7 +49,7 @@ export const FileUpload = ({ onUploadComplete, disabled }) => {
     <div
       {...getRootProps()}
       className={`
-        border-2 border-dashed rounded-lg p-4 text-center cursor-pointer
+        border-2 border-dashed rounded-md p-4 text-center cursor-pointer
         transition-colors duration-200 ease-in-out
         ${isDragActive ? 'border-primary bg-primary/5' : 'border-gray-300'}
         ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:border-primary hover:bg-primary/5'}
@@ -57,14 +57,14 @@ export const FileUpload = ({ onUploadComplete, disabled }) => {
     >
       <input {...getInputProps()} />
       <div className="space-y-2">
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-muted-foreground">
           {isDragActive ? (
             <p>Drop the files here ...</p>
           ) : (
             <p>Drag & drop files here, or click to select files</p>
           )}
         </div>
-        <div className="text-xs text-gray-500">
+        <div className="text-xs text-muted-foreground">
           Supported files: Images, PDF, Text, JSON (Max 10MB)
         </div>
         <Button_1.Button

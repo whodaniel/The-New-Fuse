@@ -104,7 +104,7 @@ export default function ResourceSearch() {
       case 'integration':
         return 'bg-pink-500/10 text-pink-400 border-pink-500/20';
       default:
-        return 'bg-white/5 text-gray-400 border-white/10';
+        return 'bg-transparent/5 text-gray-400 border-white/10';
     }
   };
 
@@ -151,31 +151,31 @@ export default function ResourceSearch() {
   return (
     <div className="space-y-6">
       {/* Advanced Search Bar */}
-      <GlassCard className="p-6">
+      <GlassCard className="p-4">
         <div className="flex items-center mb-4">
           <Search className="text-2xl text-primary mr-3" />
           <h3 className="text-lg font-semibold text-white">Search All Resources</h3>
         </div>
 
         <div className="relative mb-4">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
           <Input
             type="text"
             placeholder="Search across all resources by name, description, tags, or author..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 h-12 text-base bg-black/40 border-white/10 text-white placeholder:text-gray-500"
+            className="pl-10 h-12 text-base bg-black/40 border-white/10 text-white placeholder:text-muted-foreground"
           />
         </div>
 
         {/* Filters */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
           <div className="relative">
-            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value as any)}
-              className="w-full pl-10 px-4 py-2 bg-black/40 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-gray-300 appearance-none cursor-pointer hover:bg-black/60 transition-colors"
+              className="w-full pl-10 px-4 py-2 bg-black/40 border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-gray-300 appearance-none cursor-pointer hover:bg-black/60 transition-colors"
             >
               <option value="all">All Types</option>
               <option value="skill">Skills</option>
@@ -189,7 +189,7 @@ export default function ResourceSearch() {
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value as any)}
-            className="px-4 py-2 bg-black/40 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-gray-300 appearance-none cursor-pointer hover:bg-black/60 transition-colors"
+            className="px-4 py-2 bg-black/40 border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-gray-300 appearance-none cursor-pointer hover:bg-black/60 transition-colors"
           >
             <option value="all">All Categories</option>
             <option value="development">Development</option>
@@ -204,7 +204,7 @@ export default function ResourceSearch() {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as any)}
-            className="px-4 py-2 bg-black/40 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-gray-300 appearance-none cursor-pointer hover:bg-black/60 transition-colors"
+            className="px-4 py-2 bg-black/40 border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-gray-300 appearance-none cursor-pointer hover:bg-black/60 transition-colors"
           >
             <option value="popular">Most Popular</option>
             <option value="recent">Recently Updated</option>
@@ -232,13 +232,13 @@ export default function ResourceSearch() {
           Found <span className="font-semibold text-white">{filteredResources.length}</span>{' '}
           resources
         </div>
-        <div className="flex items-center space-x-2 bg-black/40 p-1 rounded-lg border border-white/5">
+        <div className="flex items-center space-x-2 bg-black/40 p-1 rounded-md border border-white/5">
           <button
             onClick={() => setViewMode('grid')}
             className={`p-2 rounded-md transition-all ${
               viewMode === 'grid'
-                ? 'bg-primary text-white shadow-lg shadow-primary/25'
-                : 'text-gray-400 hover:text-white hover:bg-white/5'
+                ? 'bg-primary text-white shadow-none shadow-primary/25'
+                : 'text-gray-400 hover:text-white hover:bg-transparent/5'
             }`}
           >
             <Grid className="w-4 h-4" />
@@ -247,8 +247,8 @@ export default function ResourceSearch() {
             onClick={() => setViewMode('list')}
             className={`p-2 rounded-md transition-all ${
               viewMode === 'list'
-                ? 'bg-primary text-white shadow-lg shadow-primary/25'
-                : 'text-gray-400 hover:text-white hover:bg-white/5'
+                ? 'bg-primary text-white shadow-none shadow-primary/25'
+                : 'text-gray-400 hover:text-white hover:bg-transparent/5'
             }`}
           >
             <List className="w-4 h-4" />
@@ -258,7 +258,7 @@ export default function ResourceSearch() {
 
       {/* Resources Grid/List */}
       <div
-        className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}
+        className={`grid gap-4 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}
       >
         <AnimatePresence mode="popLayout">
           {filteredResources.map((resource: Resource, index: number) => (
@@ -270,7 +270,7 @@ export default function ResourceSearch() {
               transition={{ delay: index * 0.03, duration: 0.3 }}
               layout
             >
-              <GlassCard className="h-full hover:shadow-xl hover:shadow-primary/5 transition-all cursor-pointer group relative overflow-hidden flex flex-col p-5">
+              <GlassCard className="h-full hover:shadow-none hover:shadow-primary/5 transition-all cursor-pointer group relative overflow-hidden flex flex-col p-4">
                 {resource.featured && (
                   <div className="absolute top-0 right-0 bg-gradient-to-l from-yellow-500/20 to-yellow-600/20 text-yellow-400 px-3 py-1 text-xs font-bold rounded-bl-lg border-l border-b border-yellow-500/20">
                     Featured
@@ -279,7 +279,7 @@ export default function ResourceSearch() {
 
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center border border-white/10">
+                    <div className="w-10 h-10 rounded-md bg-transparent/5 flex items-center justify-center border border-white/10">
                       {getResourceIcon(resource.type)}
                     </div>
                     {viewMode === 'list' && (
@@ -287,7 +287,7 @@ export default function ResourceSearch() {
                         <h3 className="text-lg font-bold text-white group-hover:text-primary transition-colors">
                           {resource.name}
                         </h3>
-                        <p className="text-xs text-gray-500">by {resource.author}</p>
+                        <p className="text-xs text-muted-foreground">by {resource.author}</p>
                       </div>
                     )}
                   </div>
@@ -319,13 +319,13 @@ export default function ResourceSearch() {
                       <Badge
                         key={tag}
                         variant="outline"
-                        className="text-xs bg-white/5 border-white/10 hover:bg-white/10"
+                        className="text-xs bg-transparent/5 border-white/10 hover:bg-transparent/10"
                       >
                         {tag}
                       </Badge>
                     ))}
                     {resource.tags.length > 3 && (
-                      <Badge variant="outline" className="text-xs bg-white/5 border-white/10">
+                      <Badge variant="outline" className="text-xs bg-transparent/5 border-white/10">
                         +{resource.tags.length - 3}
                       </Badge>
                     )}
@@ -343,7 +343,7 @@ export default function ResourceSearch() {
                   </div>
 
                   {viewMode === 'list' && (
-                    <div className="flex items-center justify-between text-xs text-gray-500 pt-2">
+                    <div className="flex items-center justify-between text-xs text-muted-foreground pt-2">
                       <div className="flex items-center gap-4">
                         <span className="flex items-center gap-1">
                           <Package className="w-3 h-3" /> v{resource.version}
@@ -403,8 +403,8 @@ export default function ResourceSearch() {
       {/* No Results */}
       {filteredResources.length === 0 && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-white/5 mb-6 border border-white/10">
-            <Search className="w-10 h-10 text-gray-500" />
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-transparent/5 mb-6 border border-white/10">
+            <Search className="w-10 h-10 text-muted-foreground" />
           </div>
           <h3 className="text-xl font-semibold text-white mb-2">No resources found</h3>
           <p className="text-gray-400 mb-6 max-w-md mx-auto">

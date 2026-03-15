@@ -75,7 +75,7 @@ const Suggestions: React.FC = () => {
     <div className="max-w-6xl mx-auto">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold">Feature Suggestions</h1>
+          <h1 className="text-2xl font-bold">Feature Suggestions</h1>
           <p className="text-muted-foreground">Unified board with voting and tracking</p>
         </div>
         <Button onClick={() => navigate('/suggestions/new')}>
@@ -182,7 +182,7 @@ const Suggestions: React.FC = () => {
       ) : (
         <div className="space-y-4">
           {filtered.map((s) => (
-            <Card key={s.id} className="p-6">
+            <Card key={s.id} className="p-4">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <h3 className="text-xl font-semibold">{s.title}</h3>

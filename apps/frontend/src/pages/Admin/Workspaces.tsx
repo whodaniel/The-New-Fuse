@@ -25,7 +25,7 @@ const Workspaces = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Workspaces</h1>
+        <h1 className="text-2xl font-bold">Workspaces</h1>
         <p className="text-muted-foreground mt-2">Monitor and manage all workspaces</p>
       </div>
 
@@ -47,7 +47,7 @@ const Workspaces = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="border rounded-lg">
+          <div className="border rounded-md">
             <div className="grid grid-cols-7 gap-4 p-4 text-sm font-medium text-muted-foreground">
               <div>Name</div>
               <div>Owner</div>
@@ -111,7 +111,7 @@ const Workspaces = () => {
             <CardTitle>Resource Usage</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-[350px] flex items-center justify-center border rounded-lg">
+            <div className="h-[350px] flex items-center justify-center border rounded-md">
               Chart: Resource Usage by Workspace
             </div>
           </CardContent>
@@ -122,7 +122,7 @@ const Workspaces = () => {
             <CardTitle>Activity Overview</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-[350px] flex items-center justify-center border rounded-lg">
+            <div className="h-[350px] flex items-center justify-center border rounded-md">
               Chart: Workspace Activity
             </div>
           </CardContent>

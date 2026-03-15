@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 
 export function Header() {
   return (
-    <header className="h-16 border-b bg-card px-6">
+    <header className="h-16 border-b bg-card px-3">
       <div className="flex h-full items-center justify-between">
         <Link to="/" className="text-xl font-semibold">
           The New Fuse

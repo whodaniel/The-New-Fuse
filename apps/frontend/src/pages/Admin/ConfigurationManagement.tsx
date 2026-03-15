@@ -138,30 +138,32 @@ export default function ConfigurationManagement() {
   };
 
   return (
-    <div className="p-8 max-w-[1600px] mx-auto bg-gray-50 min-h-screen">
+    <div className="p-4 max-w-[1600px] mx-auto bg-transparent min-h-screen">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2 flex items-center">
               <Settings className="h-8 w-8 mr-3 text-blue-600" />
               Configuration Management
             </h1>
-            <p className="text-gray-600">Manage system configuration and environment variables</p>
+            <p className="text-muted-foreground">
+              Manage system configuration and environment variables
+            </p>
           </div>
           <div className="flex items-center space-x-3">
-            <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center">
+            <button className="px-4 py-2 border border-gray-300 rounded-md hover:bg-muted/20 flex items-center">
               <Download className="h-4 w-4 mr-2" />
               Export
             </button>
-            <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center">
+            <button className="px-4 py-2 border border-gray-300 rounded-md hover:bg-muted/20 flex items-center">
               <Upload className="h-4 w-4 mr-2" />
               Import
             </button>
             {hasChanges && (
               <button
                 onClick={saveAllChanges}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center"
+                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center"
               >
                 <Save className="h-4 w-4 mr-2" />
                 Save All Changes
@@ -186,29 +188,29 @@ export default function ConfigurationManagement() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="text-sm text-gray-600">Total Configurations</div>
-          <div className="text-3xl font-bold text-gray-900">{configs.length}</div>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="bg-transparent rounded-md shadow-none p-4">
+          <div className="text-sm text-muted-foreground">Total Configurations</div>
+          <div className="text-2xl font-bold text-gray-900">{configs.length}</div>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="text-sm text-gray-600">Categories</div>
-          <div className="text-3xl font-bold text-gray-900">{categories.length - 1}</div>
+        <div className="bg-transparent rounded-md shadow-none p-4">
+          <div className="text-sm text-muted-foreground">Categories</div>
+          <div className="text-2xl font-bold text-gray-900">{categories.length - 1}</div>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="text-sm text-gray-600">Sensitive Values</div>
-          <div className="text-3xl font-bold text-gray-900">
+        <div className="bg-transparent rounded-md shadow-none p-4">
+          <div className="text-sm text-muted-foreground">Sensitive Values</div>
+          <div className="text-2xl font-bold text-gray-900">
             {configs.filter((c) => c.sensitive).length}
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="text-sm text-gray-600">Pending Changes</div>
-          <div className="text-3xl font-bold text-gray-900">{hasChanges ? 1 : 0}</div>
+        <div className="bg-transparent rounded-md shadow-none p-4">
+          <div className="text-sm text-muted-foreground">Pending Changes</div>
+          <div className="text-2xl font-bold text-gray-900">{hasChanges ? 1 : 0}</div>
         </div>
       </div>
 
       {/* Search and Filters */}
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
+      <div className="bg-transparent rounded-md shadow-none p-4 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="md:col-span-2">
             <div className="relative">
@@ -218,7 +220,7 @@ export default function ConfigurationManagement() {
                 placeholder="Search configurations..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -226,7 +228,7 @@ export default function ConfigurationManagement() {
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
             >
               {categories.map((cat) => (
                 <option key={cat} value={cat}>
@@ -239,35 +241,35 @@ export default function ConfigurationManagement() {
       </div>
 
       {/* Configuration Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-transparent rounded-md shadow-none overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-border/50">
+            <thead className="bg-transparent">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Key
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Value
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Category
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Description
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Last Updated
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-transparent divide-y divide-border/50">
               {filteredConfigs.map((config) => (
-                <tr key={config.key} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
+                <tr key={config.key} className="hover:bg-muted/20">
+                  <td className="px-3 py-2 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="text-sm font-medium text-gray-900 font-mono">
                         {config.key}
@@ -279,7 +281,7 @@ export default function ConfigurationManagement() {
                       )}
                     </div>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-3 py-2">
                     {editingKey === config.key ? (
                       <input
                         type="text"
@@ -297,7 +299,7 @@ export default function ConfigurationManagement() {
                         {config.sensitive && (
                           <button
                             onClick={() => toggleSensitiveVisibility(config.key)}
-                            className="ml-2 text-gray-400 hover:text-gray-600"
+                            className="ml-2 text-gray-400 hover:text-muted-foreground"
                           >
                             {showSensitive.has(config.key) ? (
                               <EyeOff className="h-4 w-4" />
@@ -309,21 +311,21 @@ export default function ConfigurationManagement() {
                       </div>
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 py-2 whitespace-nowrap">
                     <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
                       {config.category}
                     </span>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm text-gray-600">{config.description}</div>
+                  <td className="px-3 py-2">
+                    <div className="text-sm text-muted-foreground">{config.description}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 py-2 whitespace-nowrap">
                     <div className="text-sm text-gray-900">
                       {config.updatedAt.toLocaleDateString()}
                     </div>
-                    <div className="text-xs text-gray-500">{config.updatedBy}</div>
+                    <div className="text-xs text-muted-foreground">{config.updatedBy}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <td className="px-3 py-2 whitespace-nowrap text-right text-sm font-medium">
                     {editingKey === config.key ? (
                       <div className="flex items-center justify-end space-x-2">
                         <button
@@ -354,7 +356,7 @@ export default function ConfigurationManagement() {
 
       {/* Add New Configuration */}
       <div className="mt-6">
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center">
+        <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center">
           <Plus className="h-4 w-4 mr-2" />
           Add Configuration
         </button>

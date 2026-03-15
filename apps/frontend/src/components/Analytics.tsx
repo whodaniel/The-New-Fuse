@@ -85,8 +85,8 @@ const Analytics: React.FC = () => {
       id: 'performance',
       title: 'Performance',
       content: (
-        <div className="grid grid-cols-1 gap-6">
-          <div className="p-4 bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="grid grid-cols-1 gap-4">
+          <div className="p-4 bg-transparent rounded-md shadow-none border border-gray-200">
             <h2 className="text-xl font-bold mb-4">System Performance</h2>
             <PerformanceMetrics />
             <div className="mt-4 h-80">
@@ -103,8 +103,8 @@ const Analytics: React.FC = () => {
       id: 'resources',
       title: 'Resources',
       content: (
-        <div className="grid grid-cols-1 gap-6">
-          <div className="p-4 bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="grid grid-cols-1 gap-4">
+          <div className="p-4 bg-transparent rounded-md shadow-none border border-gray-200">
             <h2 className="text-xl font-bold mb-4">Resource Usage</h2>
             <SystemMetrics />
             <div className="mt-4 h-80">
@@ -121,8 +121,8 @@ const Analytics: React.FC = () => {
       id: 'knowledge-graph',
       title: 'Knowledge Graph',
       content: (
-        <div className="grid grid-cols-1 gap-6">
-          <div className="p-4 bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="grid grid-cols-1 gap-4">
+          <div className="p-4 bg-transparent rounded-md shadow-none border border-gray-200">
             <h2 className="text-xl font-bold mb-4">Knowledge Graph Analysis</h2>
             <DynamicKnowledgeGraph />
           </div>
@@ -133,8 +133,8 @@ const Analytics: React.FC = () => {
       id: 'task-analysis',
       title: 'Task Analysis',
       content: (
-        <div className="grid grid-cols-1 gap-6">
-          <div className="p-4 bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="grid grid-cols-1 gap-4">
+          <div className="p-4 bg-transparent rounded-md shadow-none border border-gray-200">
             <h2 className="text-xl font-bold mb-4">Task Allocation Analysis</h2>
             <PredictiveTaskAllocator />
           </div>
@@ -144,10 +144,10 @@ const Analytics: React.FC = () => {
   ];
 
   return (
-    <div className="p-6">
+    <div className="p-4">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Analytics Dashboard</h1>
-        <p className="text-gray-600">Monitor system performance and resource usage</p>
+        <p className="text-muted-foreground">Monitor system performance and resource usage</p>
       </div>
 
       <Tabs tabs={tabs} onTabChange={setActiveTab} />

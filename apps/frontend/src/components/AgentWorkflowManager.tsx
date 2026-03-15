@@ -163,7 +163,7 @@ export function AgentWorkflowManager() {
       <CardContent>
         <div className="space-y-4">
           {filteredWorkflows.map((workflow) => (
-            <div key={workflow.id} className="border rounded-lg p-4">
+            <div key={workflow.id} className="border rounded-md p-4">
               <div className="flex justify-between items-center mb-4">
                 <div className="flex items-center space-x-4">
                   <input
@@ -222,15 +222,15 @@ export function AgentWorkflowManager() {
                 <div className="grid grid-cols-3 gap-4 mt-4">
                   <div className="text-center">
                     <div className="text-2xl font-bold">{workflow.metrics.tasksCompleted}</div>
-                    <div className="text-sm text-gray-600">Completed</div>
+                    <div className="text-sm text-muted-foreground">Completed</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold">{workflow.metrics.tasksRemaining}</div>
-                    <div className="text-sm text-gray-600">Remaining</div>
+                    <div className="text-sm text-muted-foreground">Remaining</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold">{workflow.metrics.errorRate}%</div>
-                    <div className="text-sm text-gray-600">Error Rate</div>
+                    <div className="text-sm text-muted-foreground">Error Rate</div>
                   </div>
                 </div>
               </div>
@@ -248,7 +248,7 @@ export function AgentWorkflowManager() {
           <DialogHeader>
             <DialogTitle>Create New Workflow</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-4">
+          <div className="space-y-4 py-2">
             <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a template" />
@@ -262,7 +262,7 @@ export function AgentWorkflowManager() {
               </SelectContent>
             </Select>
             {selectedTemplate && (
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-muted-foreground">
                 {templates.find((t) => t.name === selectedTemplate)?.description}
               </div>
             )}

@@ -17,7 +17,7 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({ node, onUpdate }) 
     <div className="node-inspector w-80 border-l bg-secondary">
       <div className="p-4 border-b">
         <h3 className="font-semibold">{node.data.label}</h3>
-        <p className="text-sm text-gray-500">{node.type}</p>
+        <p className="text-sm text-muted-foreground">{node.type}</p>
       </div>
 
       <Tab.Group>

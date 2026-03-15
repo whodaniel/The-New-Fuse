@@ -50,7 +50,7 @@ export function AIAssistant() {
               {messages.map((msg, index) => (
                 <div
                   key={index}
-                  className={`p-2 rounded-lg ${msg.type === 'user' ? 'bg-blue-500 text-white self-end' : 'bg-gray-200 text-black self-start'}`}
+                  className={`p-2 rounded-md ${msg.type === 'user' ? 'bg-blue-500 text-white self-end' : 'bg-gray-200 text-black self-start'}`}
                 >
                   {msg.content}
                 </div>

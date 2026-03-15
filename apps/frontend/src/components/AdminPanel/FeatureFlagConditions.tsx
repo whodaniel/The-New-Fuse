@@ -255,7 +255,7 @@ export function FeatureFlagConditionsEditor({
             <p className="text-sm text-gray-400">
               Define complex targeting rules using JSON logic or custom predicates.
             </p>
-            <div className="p-4 rounded-lg bg-black/40 border border-white/10">
+            <div className="p-4 rounded-md bg-black/40 border border-white/10">
               <pre className="text-xs text-cyan-400">
                 {JSON.stringify(conditions.customRules || {}, null, 2)}
               </pre>

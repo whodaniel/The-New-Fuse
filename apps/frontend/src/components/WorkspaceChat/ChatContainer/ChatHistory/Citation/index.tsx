@@ -162,8 +162,8 @@ function CitationDetailModal({
 
   return (
     <ModalWrapper isOpen={true}>
-      <div className="w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border overflow-hidden">
-        <div className="relative p-6 border-b rounded-t border-theme-modal-border">
+      <div className="w-full max-w-2xl bg-theme-bg-secondary rounded-md shadow border-2 border-theme-modal-border overflow-hidden">
+        <div className="relative p-4 border-b rounded-t border-theme-modal-border">
           <div className="w-full flex gap-x-2 items-center">
             {isUrl && linkTo ? (
               <a
@@ -189,7 +189,7 @@ function CitationDetailModal({
           <button
             onClick={onClose}
             type="button"
-            className="absolute top-4 right-4 transition-all duration-300 bg-transparent rounded-lg text-sm p-1 inline-flex items-center hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
+            className="absolute top-4 right-4 transition-all duration-300 bg-transparent rounded-md text-sm p-1 inline-flex items-center hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
           >
             <XCircle size={24} weight="bold" className="text-white" />
           </button>

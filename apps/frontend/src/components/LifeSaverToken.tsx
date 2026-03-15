@@ -40,10 +40,10 @@ export function LifeSaverToken({ position, onTransfer, color = '#FF6B6B' }) {
       >
         <div className="relative w-8 h-8 group">
           <div
-            className="absolute inset-0 rounded-full shadow-lg transition-shadow duration-200 group-hover:shadow-xl"
+            className="absolute inset-0 rounded-full shadow-none transition-shadow duration-200 group-hover:shadow-none"
             style={{ backgroundColor: color }}
           />
-          <div className="absolute inset-2 bg-white rounded-full shadow-inner">
+          <div className="absolute inset-2 bg-transparent rounded-full shadow-inner">
             <div className="absolute inset-1 rounded-full" style={{ backgroundColor: color }} />
           </div>
 
@@ -77,7 +77,7 @@ export function LifeSaverToken({ position, onTransfer, color = '#FF6B6B' }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="absolute right-10 top-1/2 transform -translate-y-1/2 bg-green-500 text-white px-2 py-0.5 rounded-full text-xs whitespace-nowrap shadow-lg"
+            className="absolute right-10 top-1/2 transform -translate-y-1/2 bg-green-500 text-white px-2 py-0.5 rounded-full text-xs whitespace-nowrap shadow-none"
           >
             Token transferred!
           </framer_motion_1.motion.div>
@@ -100,7 +100,7 @@ export function LifeSaverTokenContainer({ tokens, onTransfer }) {
     '#F6C6EA',
   ];
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-sm border-t py-2 px-4 flex justify-center">
+    <div className="fixed bottom-0 left-0 right-0 bg-transparent/80 backdrop-blur-sm border-t py-2 px-4 flex justify-center">
       <div className="token-container relative h-8">
         <framer_motion_1.AnimatePresence>
           {Array.from({ length: tokens }).map((_, index) => (

@@ -59,7 +59,7 @@ export function Sidebar({ className = '' }: SidebarProps) {
 
   return (
     <aside
-      className={`backdrop-blur-xl bg-white/5 border-r border-white/10 shadow-2xl transition-all duration-300 ${className}`}
+      className={`backdrop-blur-xl bg-transparent/5 border-r border-white/10 shadow-none transition-all duration-300 ${className}`}
     >
       <nav className="p-4">
         <ul className="space-y-2">
@@ -72,18 +72,18 @@ export function Sidebar({ className = '' }: SidebarProps) {
               <li key={item.path}>
                 <Link
                   to={item.path}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group ${
+                  className={`flex items-center gap-3 px-4 py-2 rounded-md transition-all duration-200 group ${
                     isActive
-                      ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 text-white shadow-lg'
-                      : 'text-gray-300 hover:bg-white/10 hover:text-white hover:shadow-md'
+                      ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 text-white shadow-none'
+                      : 'text-gray-300 hover:bg-transparent/10 hover:text-white hover:shadow-md'
                   }`}
                 >
                   <div
                     className={`${
                       isActive
-                        ? `bg-gradient-to-br ${gradientClasses[item.gradient || 'blue']} shadow-lg`
-                        : 'bg-white/10 group-hover:bg-white/20'
-                    } p-2 rounded-lg transition-all duration-200`}
+                        ? `bg-gradient-to-br ${gradientClasses[item.gradient || 'blue']} shadow-none`
+                        : 'bg-transparent/10 group-hover:bg-transparent/20'
+                    } p-2 rounded-md transition-all duration-200`}
                   >
                     {item.icon}
                   </div>

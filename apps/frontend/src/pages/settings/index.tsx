@@ -40,11 +40,11 @@ const SettingsHome = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">Settings</h2>
+        <h2 className="text-2xl font-bold tracking-tight">Settings</h2>
         <p className="text-muted-foreground">Manage your account settings and preferences.</p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {settingsSections.map((section) => (
           <Link key={section.path} to={section.path}>
             <Card hover clickable className="h-full">

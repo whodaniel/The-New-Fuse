@@ -486,7 +486,7 @@ const WorkflowBuilderContent: React.FC = () => {
                 <div className="flex gap-4">
                   <div className="flex flex-col gap-0">
                     <h3 className="text-lg font-bold">{workflowName}</h3>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-muted-foreground">
                       {nodes.length} nodes, {edges.length} connections
                     </p>
                   </div>
@@ -534,7 +534,7 @@ const WorkflowBuilderContent: React.FC = () => {
 
       {/* Node Library Sidebar - Toggles inside the layout */}
       {isNodePanelOpen && (
-        <div className="w-80 bg-background border-l border-border p-4 overflow-y-auto h-full shadow-xl z-20">
+        <div className="w-80 bg-background border-l border-border p-4 overflow-y-auto h-full shadow-none z-20">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-bold text-lg">Nodes Library</h3>
             <Button variant="ghost" size="sm" onClick={() => setIsNodePanelOpen(false)}>
@@ -543,7 +543,9 @@ const WorkflowBuilderContent: React.FC = () => {
           </div>
 
           <div className="flex flex-col gap-4">
-            <p className="text-sm text-gray-600 mb-2">Drag and drop nodes onto the canvas</p>
+            <p className="text-sm text-muted-foreground mb-2">
+              Drag and drop nodes onto the canvas
+            </p>
 
             {/* Group nodes by category */}
             {['Triggers', 'AI', 'Data', 'Communication', 'Logic', 'Human'].map((category) => {
@@ -552,7 +554,7 @@ const WorkflowBuilderContent: React.FC = () => {
 
               return (
                 <div key={category} className="flex flex-col gap-2">
-                  <h4 className="font-bold text-gray-700 text-xs uppercase tracking-wider">
+                  <h4 className="font-bold text-foreground text-xs uppercase tracking-wider">
                     {category}
                   </h4>
 
@@ -592,18 +594,18 @@ const WorkflowBuilderContent: React.FC = () => {
           />
 
           <div className="flex min-h-full items-center justify-center p-4 text-center">
-            <div className="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-slate-900/95 border border-white/10 backdrop-blur-xl text-left shadow-2xl transition-all">
-              <div className="border-b border-neutral-200 dark:border-neutral-700 px-6 py-4">
+            <div className="relative w-full max-w-lg transform overflow-hidden rounded-md bg-slate-900/95 border border-white/10 backdrop-blur-xl text-left shadow-none transition-all">
+              <div className="border-b border-neutral-200 dark:border-neutral-700 px-3 py-2">
                 <h3 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
                   Node Settings
                 </h3>
               </div>
 
-              <div className="px-6 py-4">
+              <div className="px-3 py-2">
                 {selectedNode && (
                   <div className="flex flex-col gap-4">
                     <h4 className="text-lg font-bold">{selectedNode.data.label}</h4>
-                    <p className="text-gray-600">{selectedNode.data.description}</p>
+                    <p className="text-muted-foreground">{selectedNode.data.description}</p>
 
                     <div className="flex flex-col gap-2">
                       <FormLabel>Node Name</FormLabel>
@@ -624,7 +626,7 @@ const WorkflowBuilderContent: React.FC = () => {
                 )}
               </div>
 
-              <div className="border-t border-neutral-200 dark:border-neutral-700 px-6 py-4">
+              <div className="border-t border-neutral-200 dark:border-neutral-700 px-3 py-2">
                 <button onClick={() => setIsSettingsOpen(false)} className="btn btn-outline btn-sm">
                   Close
                 </button>
@@ -643,14 +645,14 @@ const WorkflowBuilderContent: React.FC = () => {
           />
 
           <div className="flex min-h-full items-center justify-center p-4 text-center">
-            <div className="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-slate-900/95 border border-white/10 backdrop-blur-xl text-left shadow-2xl transition-all">
-              <div className="border-b border-neutral-200 dark:border-neutral-700 px-6 py-4">
+            <div className="relative w-full max-w-md transform overflow-hidden rounded-md bg-slate-900/95 border border-white/10 backdrop-blur-xl text-left shadow-none transition-all">
+              <div className="border-b border-neutral-200 dark:border-neutral-700 px-3 py-2">
                 <h3 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
                   Save Workflow
                 </h3>
               </div>
 
-              <div className="px-6 py-4">
+              <div className="px-3 py-2">
                 <div className="flex flex-col gap-4">
                   <div className="flex flex-col gap-2">
                     <FormLabel>Workflow Name</FormLabel>

@@ -182,12 +182,12 @@ const TaskDetail: React.FC = () => {
           Back
         </Button>
         <div>
-          <h1 className="text-3xl font-bold">Task Detail</h1>
+          <h1 className="text-2xl font-bold">Task Detail</h1>
           <p className="text-muted-foreground">Unified record {row.id}</p>
         </div>
       </div>
 
-      <Card className="p-6 mb-6">
+      <Card className="p-4 mb-6">
         <h2 className="text-2xl font-bold">{row.title}</h2>
         <p className="mt-2 text-muted-foreground whitespace-pre-line">{row.description}</p>
         <div className="flex gap-2 mt-4">
@@ -207,7 +207,7 @@ const TaskDetail: React.FC = () => {
         </div>
       </Card>
 
-      <Card className="p-6 mb-6">
+      <Card className="p-4 mb-6">
         <h3 className="text-lg font-semibold mb-3">Task Notes</h3>
         <Textarea
           value={note}
@@ -240,7 +240,7 @@ const TaskDetail: React.FC = () => {
         </div>
       </Card>
 
-      <Card className="p-6 mt-6">
+      <Card className="p-4 mt-6">
         <h3 className="text-lg font-semibold mb-3">Goals and Project Plans</h3>
         <div className="grid md:grid-cols-2 gap-4 mb-4">
           <div>
@@ -341,7 +341,7 @@ const TaskDetail: React.FC = () => {
         </div>
       </Card>
 
-      <Card className="p-6 mt-6">
+      <Card className="p-4 mt-6">
         <h3 className="text-lg font-semibold mb-3">Timeline</h3>
         <div className="space-y-2 max-h-80 overflow-auto">
           {timeline.length === 0 ? (

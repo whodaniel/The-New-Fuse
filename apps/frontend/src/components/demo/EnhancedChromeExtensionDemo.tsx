@@ -13,8 +13,8 @@ const EnhancedChromeExtensionDemo: React.FC = () => {
   return (
     <div className="max-w-[1200px] mx-auto p-4 flex flex-col gap-4">
       {/* Header */}
-      <div className="bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white rounded-lg shadow-md overflow-hidden">
-        <div className="p-6">
+      <div className="bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white rounded-md shadow-md overflow-hidden">
+        <div className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Extension size={32} />
@@ -25,7 +25,7 @@ const EnhancedChromeExtensionDemo: React.FC = () => {
             </div>
             <Button
               variant="outline"
-              className="text-white border-white/50 hover:bg-white/10 flex items-center gap-2"
+              className="text-white border-white/50 hover:bg-transparent/10 flex items-center gap-2"
               onClick={() => setShowPopup(!showPopup)}
             >
               <ExternalLink size={16} /> Launch Extension
@@ -35,8 +35,8 @@ const EnhancedChromeExtensionDemo: React.FC = () => {
       </div>
 
       {/* Feature Tabs */}
-      <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
-        <div className="p-6">
+      <div className="bg-transparent border border-gray-200 rounded-md shadow-none">
+        <div className="p-4">
           <div className="border-b border-gray-200 mb-6">
             <div className="flex gap-1">
               {tabs.map((tab, index) => (
@@ -45,7 +45,7 @@ const EnhancedChromeExtensionDemo: React.FC = () => {
                   className={`px-4 py-2 font-medium text-sm transition-colors border-b-2 ${
                     activeTab === index
                       ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
+                      : 'border-transparent text-muted-foreground hover:text-gray-900 hover:border-gray-300'
                   }`}
                   onClick={() => setActiveTab(index)}
                 >
@@ -59,26 +59,26 @@ const EnhancedChromeExtensionDemo: React.FC = () => {
             {activeTab === 0 && (
               <div>
                 <p className="text-lg font-semibold mb-3">Extension Interface</p>
-                <p className="text-gray-600 mb-4">
+                <p className="text-muted-foreground mb-4">
                   The extension provides a streamlined interface for Chrome browser integration with
                   real-time communication and feature management.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="border border-gray-200 rounded-md p-4 bg-white shadow-sm">
+                  <div className="border border-gray-200 rounded-md p-4 bg-transparent shadow-none">
                     <div className="flex items-center gap-2 mb-2">
                       <Extension size={20} className="text-blue-500" />
                       <p className="font-medium">Core Features</p>
                     </div>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-muted-foreground">
                       Element selection, DOM manipulation, and browser state management.
                     </p>
                   </div>
-                  <div className="border border-gray-200 rounded-md p-4 bg-white shadow-sm">
+                  <div className="border border-gray-200 rounded-md p-4 bg-transparent shadow-none">
                     <div className="flex items-center gap-2 mb-2">
                       <CodeIcon size={20} className="text-purple-500" />
                       <p className="font-medium">Developer Tools</p>
                     </div>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-muted-foreground">
                       Advanced debugging and development features for power users.
                     </p>
                   </div>
@@ -89,7 +89,7 @@ const EnhancedChromeExtensionDemo: React.FC = () => {
             {activeTab === 1 && (
               <div>
                 <p className="text-lg font-semibold mb-3">Code Integration</p>
-                <p className="text-gray-600 mb-4">
+                <p className="text-muted-foreground mb-4">
                   Seamless integration with your development workflow and codebase.
                 </p>
                 <div className="mb-4">
@@ -114,14 +114,14 @@ const EnhancedChromeExtensionDemo: React.FC = () => {
             {activeTab === 2 && (
               <div>
                 <p className="text-lg font-semibold mb-3">Data Flow Management</p>
-                <p className="text-gray-600 mb-4">
+                <p className="text-muted-foreground mb-4">
                   Real-time data synchronization and state management across components.
                 </p>
-                <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-md border border-gray-100">
+                <div className="flex items-center gap-4 p-4 bg-transparent rounded-md border border-gray-100">
                   <ArrowRightLeft size={24} className="text-blue-500" />
                   <div>
                     <p className="font-medium">Connected Services</p>
-                    <p className="text-sm text-gray-600">4 active integrations</p>
+                    <p className="text-sm text-muted-foreground">4 active integrations</p>
                   </div>
                 </div>
               </div>
@@ -130,7 +130,9 @@ const EnhancedChromeExtensionDemo: React.FC = () => {
             {activeTab === 3 && (
               <div>
                 <p className="text-lg font-semibold mb-3">Settings & Configuration</p>
-                <p className="text-gray-600 mb-4">Customize extension behavior and preferences.</p>
+                <p className="text-muted-foreground mb-4">
+                  Customize extension behavior and preferences.
+                </p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
                     <p className="text-sm font-medium mb-2">Theme</p>

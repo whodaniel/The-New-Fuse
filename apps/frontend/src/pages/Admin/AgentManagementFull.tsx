@@ -181,26 +181,28 @@ export default function AgentManagementFull() {
   };
 
   return (
-    <div className="p-8 max-w-[1600px] mx-auto bg-gray-50 min-h-screen">
+    <div className="p-4 max-w-[1600px] mx-auto bg-transparent min-h-screen">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2 flex items-center">
               <Bot className="h-8 w-8 mr-3 text-blue-600" />
               Agent Management
             </h1>
-            <p className="text-gray-600">Monitor and control AI agents across the platform</p>
+            <p className="text-muted-foreground">
+              Monitor and control AI agents across the platform
+            </p>
           </div>
           <div className="flex items-center space-x-3">
             <button
               onClick={loadAgents}
-              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center"
+              className="px-4 py-2 border border-gray-300 rounded-md hover:bg-muted/20 flex items-center"
             >
               <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
               Refresh
             </button>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center">
+            <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center">
               <Plus className="h-4 w-4 mr-2" />
               Deploy Agent
             </button>
@@ -209,45 +211,45 @@ export default function AgentManagementFull() {
       </div>
 
       {loadError && (
-        <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        <div className="mb-6 rounded-md border border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-800">
           {loadError}
         </div>
       )}
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow p-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="bg-transparent rounded-md shadow-none p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Total Agents</p>
-              <p className="text-3xl font-bold text-gray-900">{stats.total}</p>
+              <p className="text-sm text-muted-foreground">Total Agents</p>
+              <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
             </div>
             <Bot className="h-12 w-12 text-blue-500 opacity-20" />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-transparent rounded-md shadow-none p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Running</p>
-              <p className="text-3xl font-bold text-green-600">{stats.running}</p>
+              <p className="text-sm text-muted-foreground">Running</p>
+              <p className="text-2xl font-bold text-green-600">{stats.running}</p>
             </div>
             <Play className="h-12 w-12 text-green-500 opacity-20" />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-transparent rounded-md shadow-none p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">With Errors</p>
-              <p className="text-3xl font-bold text-red-600">{stats.error}</p>
+              <p className="text-sm text-muted-foreground">With Errors</p>
+              <p className="text-2xl font-bold text-red-600">{stats.error}</p>
             </div>
             <AlertCircle className="h-12 w-12 text-red-500 opacity-20" />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-transparent rounded-md shadow-none p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Total Requests</p>
-              <p className="text-3xl font-bold text-purple-600">
+              <p className="text-sm text-muted-foreground">Total Requests</p>
+              <p className="text-2xl font-bold text-purple-600">
                 {agents.reduce((sum, a) => sum + a.requestsHandled, 0).toLocaleString()}
               </p>
             </div>
@@ -257,62 +259,62 @@ export default function AgentManagementFull() {
       </div>
 
       {/* Agent List */}
-      <div className="bg-white rounded-lg shadow overflow-hidden mb-8">
+      <div className="bg-transparent rounded-md shadow-none overflow-hidden mb-8">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-border/50">
+            <thead className="bg-transparent">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Agent
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Type
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Uptime
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Requests
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Response Time
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Resources
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-transparent divide-y divide-border/50">
               {agents.map((agent) => {
                 const statusBadge = getStatusBadge(agent.status);
                 const StatusIcon = statusBadge.icon;
                 return (
-                  <tr key={agent.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
+                  <tr key={agent.id} className="hover:bg-muted/20">
+                    <td className="px-3 py-2 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <div className="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-md flex items-center justify-center">
                           <Bot className="h-6 w-6 text-blue-600" />
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">{agent.name}</div>
-                          <div className="text-xs text-gray-500">ID: {agent.id}</div>
+                          <div className="text-xs text-muted-foreground">ID: {agent.id}</div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 py-2 whitespace-nowrap">
                       <span
                         className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getTypeBadge(agent.type)}`}
                       >
                         {agent.type}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 py-2 whitespace-nowrap">
                       <span
                         className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${statusBadge.bg} ${statusBadge.text}`}
                       >
@@ -320,23 +322,23 @@ export default function AgentManagementFull() {
                         {agent.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-3 py-2 whitespace-nowrap text-sm text-muted-foreground">
                       {agent.uptime}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
                       {agent.requestsHandled.toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 py-2 whitespace-nowrap">
                       <div className="text-sm text-gray-900">{agent.avgResponseTime}ms</div>
-                      <div className="text-xs text-gray-500">Error: {agent.errorRate}%</div>
+                      <div className="text-xs text-muted-foreground">Error: {agent.errorRate}%</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-xs text-gray-600">
+                    <td className="px-3 py-2 whitespace-nowrap">
+                      <div className="text-xs text-muted-foreground">
                         <div>CPU: {agent.cpuUsage}%</div>
                         <div>Mem: {agent.memoryUsage}MB</div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <td className="px-3 py-2 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex items-center justify-end space-x-2">
                         {agent.status === 'running' ? (
                           <button
@@ -362,7 +364,10 @@ export default function AgentManagementFull() {
                         >
                           <RefreshCw className="h-4 w-4" />
                         </button>
-                        <button className="text-gray-600 hover:text-gray-900" title="Settings">
+                        <button
+                          className="text-muted-foreground hover:text-gray-900"
+                          title="Settings"
+                        >
                           <Settings className="h-4 w-4" />
                         </button>
                         <button
@@ -383,11 +388,11 @@ export default function AgentManagementFull() {
       </div>
 
       {/* Performance Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="bg-transparent rounded-md shadow-none-none p-4">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Request Volume</h3>
           {performanceData.length === 0 && (
-            <div className="pb-4 text-sm text-gray-500">
+            <div className="pb-4 text-sm text-muted-foreground">
               No live metrics yet. Refresh after agents report activity.
             </div>
           )}
@@ -403,10 +408,10 @@ export default function AgentManagementFull() {
           </ResponsiveContainer>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-6">
+        <div className="bg-transparent rounded-md shadow-none-none p-4">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Response Time & Errors</h3>
           {performanceData.length === 0 && (
-            <div className="pb-4 text-sm text-gray-500">
+            <div className="pb-4 text-sm text-muted-foreground">
               No live metrics yet. Refresh after agents report activity.
             </div>
           )}

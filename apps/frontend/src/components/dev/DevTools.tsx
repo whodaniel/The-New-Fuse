@@ -10,7 +10,7 @@ export const DevTools: React.FC<DevToolsProps> = () => {
   if (!isDevelopment) return null;
 
   return (
-    <div className="dev-tools-panel fixed bottom-4 right-4 p-4 bg-background border rounded-lg shadow-lg">
+    <div className="dev-tools-panel fixed bottom-4 right-4 p-4 bg-background border rounded-md shadow-none">
       <PerformanceMonitor />
       <div className="dev-tools-controls space-y-2">
         <h3 className="font-semibold">Development Tools</h3>

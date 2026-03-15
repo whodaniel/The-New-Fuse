@@ -46,7 +46,7 @@ export function BrowserFilters({
           key={field.key}
           value={filters[field.key]}
           onChange={(e) => onFilterChange(field.key, e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="all">{field.label}</option>
           {field.options.map((option) => (
@@ -61,7 +61,7 @@ export function BrowserFilters({
       <select
         value={sortBy}
         onChange={(e) => onSortChange(e.target.value)}
-        className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
         {sortOptions.map((option) => (
           <option key={option.value} value={option.value}>

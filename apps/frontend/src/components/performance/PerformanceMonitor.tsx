@@ -123,9 +123,9 @@ const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
 
       {/* Full Monitor */}
       {(isExpanded || !compact) && (
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg overflow-hidden">
+        <div className="bg-transparent dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md shadow-none overflow-hidden">
           {/* Header */}
-          <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+          <div className="px-4 py-2 bg-transparent dark:bg-transparent border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <div
@@ -141,7 +141,7 @@ const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
                   Performance Monitor
                 </h3>
                 {updateCount > 0 && (
-                  <span className="text-xs text-gray-500">({updateCount} updates)</span>
+                  <span className="text-xs text-muted-foreground">({updateCount} updates)</span>
                 )}
               </div>
               <div className="flex items-center space-x-2">
@@ -151,7 +151,7 @@ const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
                 {compact && (
                   <button
                     onClick={() => setIsExpanded(false)}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="text-gray-400 hover:text-muted-foreground"
                   >
                     ×
                   </button>
@@ -162,10 +162,10 @@ const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
 
           <div className="max-h-96 overflow-y-auto">
             {/* Performance Score Details */}
-            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+            <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
               <div className="grid grid-cols-3 gap-2 text-xs">
                 <div className="text-center">
-                  <div className="text-gray-500">Load</div>
+                  <div className="text-muted-foreground">Load</div>
                   <div className="font-bold">
                     {Math.max(
                       0,
@@ -177,13 +177,13 @@ const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-gray-500">Memory</div>
+                  <div className="text-muted-foreground">Memory</div>
                   <div className="font-bold">
                     {Math.max(0, 100 - data.memoryUsage / 1024 / 1024 / 100)}
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-gray-500">Bundle</div>
+                  <div className="text-muted-foreground">Bundle</div>
                   <div className="font-bold">
                     {Math.max(
                       0,
@@ -200,7 +200,9 @@ const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
             {/* Memory Usage */}
             <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
               <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-600 dark:text-gray-400">Memory Usage</span>
+                <span className="text-muted-foreground dark:text-muted-foreground">
+                  Memory Usage
+                </span>
                 <span className="font-medium">{formatBytes(data.memoryUsage)}</span>
               </div>
               <div className="mt-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
@@ -230,7 +232,7 @@ const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
                     .slice(-3)
                     .map(([name, time]) => (
                       <div key={name} className="flex justify-between text-xs">
-                        <span className="text-gray-600 dark:text-gray-400 truncate">
+                        <span className="text-muted-foreground dark:text-muted-foreground truncate">
                           {name.replace('Route: ', '')}
                         </span>
                         <span
@@ -261,7 +263,9 @@ const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
                     .slice(-3)
                     .map(([name, size]) => (
                       <div key={name} className="flex justify-between text-xs">
-                        <span className="text-gray-600 dark:text-gray-400 truncate">{name}</span>
+                        <span className="text-muted-foreground dark:text-muted-foreground truncate">
+                          {name}
+                        </span>
                         <span
                           className={`font-medium ${
                             size < 100 * 1024
@@ -292,7 +296,7 @@ const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
                     </div>
                   ))}
                   {data.recommendations.length > 2 && (
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-muted-foreground">
                       +{data.recommendations.length - 2} more...
                     </div>
                   )}
@@ -302,7 +306,7 @@ const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
           </div>
 
           {/* Footer Actions */}
-          <div className="px-4 py-2 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+          <div className="px-4 py-2 bg-transparent dark:bg-transparent border-t border-gray-200 dark:border-gray-700">
             <div className="flex justify-between items-center">
               <button
                 onClick={() => {
@@ -324,7 +328,7 @@ const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
                     recommendations: [],
                   });
                 }}
-                className="text-xs text-gray-500 hover:text-gray-700"
+                className="text-xs text-muted-foreground hover:text-foreground"
               >
                 Clear Cache
               </button>

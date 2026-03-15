@@ -33,7 +33,7 @@ export const NodeCategory: React.FC<NodeCategoryProps> = ({ category, onDragStar
               </div>
               <div>
                 <div className="font-medium">{node.label}</div>
-                <div className="text-sm text-gray-500">{node.description}</div>
+                <div className="text-sm text-muted-foreground">{node.description}</div>
               </div>
             </div>
           ))}

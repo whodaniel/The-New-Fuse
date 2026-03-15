@@ -104,7 +104,7 @@ export const TestCaseManager: React.FC<TestCaseManagerProps> = ({ testCases, onC
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       <div className="p-4 border border-gray-200 rounded-md">
         <div className="flex flex-col gap-4">
           <p className="font-bold text-lg">{isEditing ? 'Edit Test Case' : 'New Test Case'}</p>
@@ -173,7 +173,7 @@ export const TestCaseManager: React.FC<TestCaseManagerProps> = ({ testCases, onC
                 ))}
                 {Object.keys(newTestCase.variables).length === 0 && (
                   <tr>
-                    <td colSpan={3} className="text-center py-2 text-sm text-gray-500">
+                    <td colSpan={3} className="text-center py-2 text-sm text-muted-foreground">
                       No variables added
                     </td>
                   </tr>
@@ -196,7 +196,7 @@ export const TestCaseManager: React.FC<TestCaseManagerProps> = ({ testCases, onC
             <div key={testCase.id} className="border border-gray-200 rounded-md">
               <button
                 onClick={() => toggleExpanded(testCase.id)}
-                className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+                className="w-full flex items-center justify-between p-4 hover:bg-muted/20 transition-colors"
               >
                 <div className="flex items-center gap-3">
                   <span className="font-medium">{testCase.name}</span>
@@ -212,7 +212,7 @@ export const TestCaseManager: React.FC<TestCaseManagerProps> = ({ testCases, onC
               {expandedItems.has(testCase.id) && (
                 <div className="p-4 border-t border-gray-200 flex flex-col gap-3">
                   {testCase.description && (
-                    <p className="text-sm text-gray-600">{testCase.description}</p>
+                    <p className="text-sm text-muted-foreground">{testCase.description}</p>
                   )}
 
                   <div>
@@ -259,7 +259,7 @@ export const TestCaseManager: React.FC<TestCaseManagerProps> = ({ testCases, onC
 
         {testCases.length === 0 && (
           <div className="text-center py-6 border border-dashed border-gray-300 rounded-md">
-            <p className="text-gray-500">No test cases added yet</p>
+            <p className="text-muted-foreground">No test cases added yet</p>
           </div>
         )}
       </div>

@@ -1,4 +1,3 @@
-import React from 'react';
 import { assertSnapshot } from '@/test/helpers/snapshot';
 import { Input } from '../Input';
 
@@ -45,12 +44,14 @@ describe('Input Snapshots', () => {
     assertSnapshot(
       <>
         <div className="relative">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
           <Input className="pl-7" placeholder="Amount" type="number" />
         </div>
         <div className="relative">
           <Input className="pr-12" placeholder="Weight" type="number" />
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">kg</span>
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+            kg
+          </span>
         </div>
       </>
     );

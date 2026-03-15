@@ -13,35 +13,41 @@ const DebugPage: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Debug Information</h1>
-      
-      <div className="bg-white shadow rounded-lg p-6 mb-6">
+      <h1 className="text-2xl font-bold mb-6">Debug Information</h1>
+
+      <div className="bg-transparent shadow rounded-md p-4 mb-6">
         <h2 className="text-xl font-semibold mb-4">System Information</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {Object.entries(debugInfo).map(([key, value]) => (
             <div key={key} className="border-b pb-2">
-              <span className="font-medium text-gray-700">{key}: </span>
-              <span className="text-gray-600">{value}</span>
+              <span className="font-medium text-foreground">{key}: </span>
+              <span className="text-muted-foreground">{value}</span>
             </div>
           ))}
         </div>
       </div>
-      
-      <div className="bg-white shadow rounded-lg p-6 mb-6">
+
+      <div className="bg-transparent shadow rounded-md p-4 mb-6">
         <h2 className="text-xl font-semibold mb-4">Local Storage</h2>
         <div className="overflow-auto max-h-60">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-border/50">
+            <thead className="bg-transparent">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Key</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Value</th>
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Key
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Value
+                </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {Object.keys(localStorage).map(key => (
+            <tbody className="bg-transparent divide-y divide-border/50">
+              {Object.keys(localStorage).map((key) => (
                 <tr key={key}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{key}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {key}
+                  </td>
+                  <td className="px-3 py-2 whitespace-nowrap text-sm text-muted-foreground">
                     {localStorage.getItem(key)}
                   </td>
                 </tr>
@@ -50,9 +56,9 @@ const DebugPage: React.FC = () => {
           </table>
         </div>
       </div>
-      
+
       <div className="flex justify-end">
-        <button 
+        <button
           onClick={() => window.history.back()}
           className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
         >

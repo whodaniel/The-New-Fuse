@@ -72,10 +72,10 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = () => {
   };
 
   return (
-    <div className="container mx-auto p-6 max-w-4xl">
+    <div className="container mx-auto p-4 max-w-4xl">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
+          <h1 className="text-2xl font-bold flex items-center gap-2">
             <Settings className="h-8 w-8" />
             Dashboard Settings
           </h1>
@@ -335,14 +335,14 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = () => {
               <div className="space-y-4">
                 <h4 className="text-sm font-medium">Performance Status</h4>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center justify-between p-3 border rounded-lg">
+                  <div className="flex items-center justify-between p-3 border rounded-md">
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4 text-muted-foreground" />
                       <span className="text-sm">Load Time</span>
                     </div>
                     <Badge variant="secondary">1.2s</Badge>
                   </div>
-                  <div className="flex items-center justify-between p-3 border rounded-lg">
+                  <div className="flex items-center justify-between p-3 border rounded-md">
                     <div className="flex items-center gap-2">
                       <Users className="h-4 w-4 text-muted-foreground" />
                       <span className="text-sm">Active Users</span>

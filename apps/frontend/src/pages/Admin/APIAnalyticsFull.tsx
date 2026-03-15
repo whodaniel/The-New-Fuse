@@ -142,16 +142,16 @@ export default function APIAnalyticsFull() {
   };
 
   return (
-    <div className="p-8 max-w-[1600px] mx-auto bg-gray-50 min-h-screen">
+    <div className="p-4 max-w-[1600px] mx-auto bg-transparent min-h-screen">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2 flex items-center">
               <Activity className="h-8 w-8 mr-3 text-blue-600" />
               API Analytics
             </h1>
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               Monitor API usage, performance, and health (Real-Time Data)
             </p>
           </div>
@@ -159,7 +159,7 @@ export default function APIAnalyticsFull() {
             <select
               value={timeRange}
               onChange={(e) => setTimeRange(e.target.value as any)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
             >
               <option value="1h">Last Hour</option>
               <option value="24h">Last 24 Hours</option>
@@ -168,12 +168,12 @@ export default function APIAnalyticsFull() {
             </select>
             <button
               onClick={loadMetrics}
-              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center"
+              className="px-4 py-2 border border-gray-300 rounded-md hover:bg-muted/20 flex items-center"
             >
               <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
               Refresh
             </button>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center">
+            <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center">
               <Download className="h-4 w-4 mr-2" />
               Export Report
             </button>
@@ -183,50 +183,50 @@ export default function APIAnalyticsFull() {
 
       {/* Key Metrics */}
       {metrics && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-blue-500">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="bg-transparent rounded-md shadow-none-none p-4 border-l-4 border-blue-500">
             <div className="flex items-center justify-between mb-2">
               <Globe className="h-8 w-8 text-blue-500" />
               <TrendingUp className="h-5 w-5 text-green-500" />
             </div>
-            <div className="text-3xl font-bold text-gray-900">
+            <div className="text-2xl font-bold text-gray-900">
               {metrics.totalRequests.toLocaleString()}
             </div>
-            <div className="text-sm text-gray-600">Total Requests</div>
+            <div className="text-sm text-muted-foreground">Total Requests</div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-green-500">
+          <div className="bg-transparent rounded-md shadow-none-none p-4 border-l-4 border-green-500">
             <div className="flex items-center justify-between mb-2">
               <Zap className="h-8 w-8 text-green-500" />
             </div>
-            <div className="text-3xl font-bold text-gray-900">{metrics.avgResponseTime}</div>
-            <div className="text-sm text-gray-600">Avg Response Time (ms)</div>
+            <div className="text-2xl font-bold text-gray-900">{metrics.avgResponseTime}</div>
+            <div className="text-sm text-muted-foreground">Avg Response Time (ms)</div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-red-500">
+          <div className="bg-transparent rounded-md shadow-none-none p-4 border-l-4 border-red-500">
             <div className="flex items-center justify-between mb-2">
               <AlertTriangle className="h-8 w-8 text-red-500" />
             </div>
-            <div className="text-3xl font-bold text-gray-900">{metrics.errorRate}%</div>
-            <div className="text-sm text-gray-600">Error Rate</div>
+            <div className="text-2xl font-bold text-gray-900">{metrics.errorRate}%</div>
+            <div className="text-sm text-muted-foreground">Error Rate</div>
             <div className="mt-2 text-xs text-red-600">
               {metrics.failedRequests.toLocaleString()} failed requests
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-purple-500">
+          <div className="bg-transparent rounded-md shadow-none-none p-4 border-l-4 border-purple-500">
             <div className="flex items-center justify-between mb-2">
               <Clock className="h-8 w-8 text-purple-500" />
             </div>
-            <div className="text-3xl font-bold text-gray-900">Active</div>
-            <div className="text-sm text-gray-600">System Status</div>
+            <div className="text-2xl font-bold text-gray-900">Active</div>
+            <div className="text-sm text-muted-foreground">System Status</div>
           </div>
         </div>
       )}
 
       {/* Request Volume Chart */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+        <div className="bg-transparent rounded-md shadow-none-none p-4">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Request Volume Over Time</h3>
           {requestData.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
@@ -253,7 +253,7 @@ export default function APIAnalyticsFull() {
           )}
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-6">
+        <div className="bg-transparent rounded-md shadow-none-none p-4">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Response Time & Errors</h3>
           {requestData.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
@@ -291,8 +291,8 @@ export default function APIAnalyticsFull() {
       </div>
 
       {/* Status Codes and Methods */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+        <div className="bg-transparent rounded-md shadow-none-none p-4">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">HTTP Status Codes</h3>
           {statusCodeData.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
@@ -321,7 +321,7 @@ export default function APIAnalyticsFull() {
           )}
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-6">
+        <div className="bg-transparent rounded-md shadow-none-none p-4">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">HTTP Methods</h3>
           {methodData.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
@@ -342,50 +342,50 @@ export default function APIAnalyticsFull() {
       </div>
 
       {/* Top Endpoints */}
-      <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="bg-transparent rounded-md shadow-none-none p-4">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Top API Endpoints</h3>
         <div className="overflow-x-auto">
           {endpointData.length > 0 ? (
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-border/50">
+              <thead className="bg-transparent">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Endpoint
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Requests
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Avg Response Time
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Errors
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Error Rate
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-transparent divide-y divide-border/50">
                 {endpointData.map((endpoint, index) => (
-                  <tr key={index} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
+                  <tr key={index} className="hover:bg-muted/20">
+                    <td className="px-3 py-2 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900 font-mono">
                         {endpoint.endpoint}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 py-2 whitespace-nowrap">
                       <div className="text-sm text-gray-900">
                         {endpoint.requests.toLocaleString()}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 py-2 whitespace-nowrap">
                       <div className="text-sm text-gray-900">{endpoint.avgTime.toFixed(1)}ms</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 py-2 whitespace-nowrap">
                       <div className="text-sm text-red-600">{endpoint.errors}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 py-2 whitespace-nowrap">
                       <div className="text-sm text-gray-900">
                         {(endpoint.requests > 0
                           ? (endpoint.errors / endpoint.requests) * 100

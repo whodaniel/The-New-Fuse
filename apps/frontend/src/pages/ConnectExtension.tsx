@@ -28,7 +28,7 @@ import { useEffect, useRef, useState } from 'react';
 /* ────────────────────────────────────────────── DESIGN TOKENS ── */
 const gradientText = 'bg-clip-text text-transparent bg-gradient-to-r';
 const glassCard =
-  'relative rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-md transition-all duration-300';
+  'relative rounded-md border border-white/[0.08] bg-transparent/[0.03] backdrop-blur-md transition-all duration-300';
 const accentCyan = 'from-cyan-400 to-blue-500';
 const accentPurple = 'from-purple-400 to-indigo-500';
 const accentMixed = 'from-cyan-400 via-purple-400 to-pink-500';
@@ -56,10 +56,10 @@ const FeatureCard = ({
       initial={{ opacity: 0, y: 28 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.55, delay, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className={`${glassCard} group p-7 hover:border-white/[0.15] hover:bg-white/[0.05] hover:shadow-[0_0_40px_rgba(0,200,255,0.06)]`}
+      className={`${glassCard} group p-7 hover:border-white/[0.15] hover:bg-transparent/[0.05] hover:shadow-[0_0_40px_rgba(0,200,255,0.06)]`}
     >
       <div
-        className={`mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${accent} shadow-lg`}
+        className={`mb-5 inline-flex h-12 w-12 items-center justify-center rounded-md bg-gradient-to-br ${accent} shadow-none`}
       >
         <Icon className="h-6 w-6 text-white" />
       </div>
@@ -80,7 +80,7 @@ const PlatformBadge = ({ name, delay }: { name: string; delay: number }) => {
       initial={{ opacity: 0, scale: 0.85 }}
       animate={isInView ? { opacity: 1, scale: 1 } : {}}
       transition={{ duration: 0.4, delay }}
-      className="flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.04] px-5 py-2.5 text-sm font-medium text-slate-300 backdrop-blur-sm transition-all hover:border-cyan-500/30 hover:bg-white/[0.07]"
+      className="flex items-center gap-2 rounded-full border border-white/[0.08] bg-transparent/[0.04] px-5 py-2.5 text-sm font-medium text-slate-300 backdrop-blur-sm transition-all hover:border-cyan-500/30 hover:bg-transparent/[0.07]"
     >
       <div className="h-2 w-2 rounded-full bg-green-400 shadow-[0_0_6px_rgba(74,222,128,0.6)]" />
       {name}
@@ -114,10 +114,10 @@ const StepCard = ({
       className="relative flex flex-col items-center text-center"
     >
       <div className="relative mb-5">
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-white/[0.1]">
+        <div className="flex h-16 w-16 items-center justify-center rounded-md bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-white/[0.1]">
           <Icon className="h-7 w-7 text-cyan-400" />
         </div>
-        <div className="absolute -top-2 -right-2 flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-purple-500 text-xs font-bold text-white shadow-lg">
+        <div className="absolute -top-2 -right-2 flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-purple-500 text-xs font-bold text-white shadow-none">
           {step}
         </div>
       </div>
@@ -158,14 +158,14 @@ const PricingCard = ({
       initial={{ opacity: 0, y: 30 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.5, delay }}
-      className={`relative flex flex-col rounded-2xl border p-8 ${
+      className={`relative flex flex-col rounded-md border p-4 ${
         highlighted
           ? 'border-cyan-500/40 bg-gradient-to-b from-cyan-500/[0.08] to-transparent shadow-[0_0_60px_rgba(0,200,255,0.1)]'
-          : 'border-white/[0.08] bg-white/[0.03]'
+          : 'border-white/[0.08] bg-transparent/[0.03]'
       }`}
     >
       {badge && (
-        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-cyan-400 to-purple-500 px-4 py-1 text-xs font-bold uppercase tracking-wider text-white shadow-lg">
+        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-cyan-400 to-purple-500 px-4 py-1 text-xs font-bold uppercase tracking-wider text-white shadow-none">
           {badge}
         </div>
       )}
@@ -191,10 +191,10 @@ const PricingCard = ({
         href={href}
         target="_blank"
         rel="noreferrer"
-        className={`inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-sm font-bold transition-all duration-200 ${
+        className={`inline-flex items-center justify-center gap-2 rounded-md px-3 py-2.5 text-sm font-bold transition-all duration-200 ${
           highlighted
-            ? 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white shadow-lg hover:shadow-cyan-500/30 hover:scale-[1.02] active:scale-[0.98]'
-            : 'border border-white/[0.12] bg-white/[0.05] text-white hover:bg-white/[0.1] active:scale-[0.98]'
+            ? 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white shadow-none hover:shadow-cyan-500/30 hover:scale-[1.02] active:scale-[0.98]'
+            : 'border border-white/[0.12] bg-transparent/[0.05] text-white hover:bg-transparent/[0.1] active:scale-[0.98]'
         }`}
       >
         {cta}
@@ -379,9 +379,9 @@ export default function ConnectExtensionPage() {
 
       {/* ═══════════════════════ NAVBAR ═══════════════════════ */}
       <nav className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#07070a]/80 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-3 py-2">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-400 to-purple-500 shadow-lg shadow-cyan-500/20">
+            <div className="flex h-9 w-9 items-center justify-center rounded-md bg-gradient-to-br from-cyan-400 to-purple-500 shadow-none shadow-cyan-500/20">
               <Sparkles className="h-5 w-5 text-white" />
             </div>
             <span className="text-lg font-bold tracking-tight">
@@ -389,11 +389,11 @@ export default function ConnectExtensionPage() {
                 Fuse Connect
               </span>
             </span>
-            <span className="ml-2 rounded-md bg-white/[0.06] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+            <span className="ml-2 rounded-md bg-transparent/[0.06] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-slate-500">
               v8.0
             </span>
           </div>
-          <div className="hidden md:flex items-center gap-6 text-sm text-slate-400">
+          <div className="hidden md:flex items-center gap-4 text-sm text-slate-400">
             <a href="#features" className="hover:text-white transition-colors">
               Features
             </a>
@@ -428,7 +428,7 @@ export default function ConnectExtensionPage() {
         {/* ═══════════════════════ HERO ═══════════════════════ */}
         <section
           ref={heroRef}
-          className="relative mx-auto max-w-7xl px-6 pt-24 pb-32 lg:px-8 text-center"
+          className="relative mx-auto max-w-7xl px-3 pt-24 pb-32 lg:px-8 text-center"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.92 }}
@@ -474,7 +474,7 @@ export default function ConnectExtensionPage() {
               href="https://chrome.google.com/webstore/detail/fuse-connect/fkbcklmcikdhpggaimfhomgncneppkbj"
               target="_blank"
               rel="noreferrer"
-              className="group relative inline-flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-500 px-8 py-4 text-base font-bold text-white shadow-xl shadow-cyan-500/20 transition-all duration-200 hover:shadow-cyan-500/30 hover:scale-[1.03] active:scale-[0.97]"
+              className="group relative inline-flex items-center gap-2.5 rounded-md bg-gradient-to-r from-cyan-500 to-purple-500 px-8 py-2 text-base font-bold text-white shadow-none shadow-cyan-500/20 transition-all duration-200 hover:shadow-cyan-500/30 hover:scale-[1.03] active:scale-[0.97]"
             >
               <Chrome className="h-5 w-5" />
               Add to Chrome — Free
@@ -483,7 +483,7 @@ export default function ConnectExtensionPage() {
               href="https://github.com/whodaniel/fuse"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2.5 rounded-xl border border-white/[0.12] bg-white/[0.04] px-8 py-4 text-base font-bold text-white backdrop-blur-sm transition-all hover:bg-white/[0.08] active:scale-[0.97]"
+              className="inline-flex items-center gap-2.5 rounded-md border border-white/[0.12] bg-transparent/[0.04] px-8 py-2 text-base font-bold text-white backdrop-blur-sm transition-all hover:bg-transparent/[0.08] active:scale-[0.97]"
             >
               <Code2 className="h-5 w-5" />
               View on GitHub
@@ -495,7 +495,7 @@ export default function ConnectExtensionPage() {
             initial={{ opacity: 0 }}
             animate={isHeroInView ? { opacity: 1 } : {}}
             transition={{ duration: 0.6, delay: 0.7 }}
-            className="mt-10 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-500"
+            className="mt-10 flex flex-wrap items-center justify-center gap-4 text-xs text-slate-500"
           >
             {[
               { icon: ShieldCheck, label: 'Manifest V3 Compliant' },
@@ -511,7 +511,7 @@ export default function ConnectExtensionPage() {
         </section>
 
         {/* ═══════════════════════ FEATURES GRID ═══════════════════════ */}
-        <section id="features" className="relative mx-auto max-w-7xl px-6 py-24 lg:px-8">
+        <section id="features" className="relative mx-auto max-w-7xl px-3 py-24 lg:px-8">
           <div className="mb-16 text-center">
             <motion.div
               initial={{ opacity: 0, y: 16 }}
@@ -522,7 +522,7 @@ export default function ConnectExtensionPage() {
               <span className="mb-4 inline-block rounded-full bg-purple-500/[0.08] border border-purple-500/20 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-purple-400">
                 Capabilities
               </span>
-              <h2 className="mt-4 text-3xl font-extrabold sm:text-5xl">
+              <h2 className="mt-4 text-2xl font-extrabold sm:text-5xl">
                 Features that give your Agents{' '}
                 <span className={`${gradientText} bg-gradient-to-r ${accentPurple}`}>
                   Superpowers
@@ -535,7 +535,7 @@ export default function ConnectExtensionPage() {
             </motion.div>
           </div>
 
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {features.map((feature, i) => (
               <FeatureCard key={i} {...feature} delay={i * 0.07} />
             ))}
@@ -543,7 +543,7 @@ export default function ConnectExtensionPage() {
         </section>
 
         {/* ═══════════════════════ PLATFORMS ═══════════════════════ */}
-        <section id="platforms" className="relative mx-auto max-w-7xl px-6 py-24 lg:px-8">
+        <section id="platforms" className="relative mx-auto max-w-7xl px-3 py-24 lg:px-8">
           <div className="text-center mb-12">
             <motion.div
               initial={{ opacity: 0, y: 16 }}
@@ -551,7 +551,7 @@ export default function ConnectExtensionPage() {
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
             >
-              <h2 className="text-3xl font-extrabold sm:text-4xl">
+              <h2 className="text-2xl font-extrabold sm:text-4xl">
                 Works on{' '}
                 <span className={`${gradientText} bg-gradient-to-r ${accentCyan}`}>
                   Every AI Platform
@@ -571,7 +571,7 @@ export default function ConnectExtensionPage() {
         </section>
 
         {/* ═══════════════════════ LIVE TERMINAL ═══════════════════════ */}
-        <section className="relative mx-auto max-w-7xl px-6 py-24 lg:px-8">
+        <section className="relative mx-auto max-w-7xl px-3 py-24 lg:px-8">
           <div className="grid gap-12 lg:grid-cols-2 items-center">
             {/* Left copy */}
             <motion.div
@@ -583,7 +583,7 @@ export default function ConnectExtensionPage() {
               <span className="mb-4 inline-block rounded-full bg-cyan-500/[0.08] border border-cyan-500/20 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-cyan-400">
                 Agentic Framework Integration
               </span>
-              <h2 className="mt-4 text-3xl font-extrabold sm:text-4xl">
+              <h2 className="mt-4 text-2xl font-extrabold sm:text-4xl">
                 Deep{' '}
                 <span className={`${gradientText} bg-gradient-to-r ${accentMixed}`}>
                   TNF Ecosystem
@@ -639,9 +639,9 @@ export default function ConnectExtensionPage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.15 }}
-              className="rounded-2xl border border-white/[0.08] bg-[#0c0c12] p-1 shadow-2xl"
+              className="rounded-md border border-white/[0.08] bg-[#0c0c12] p-1 shadow-none"
             >
-              <div className="flex items-center justify-between rounded-t-xl border-b border-white/[0.06] bg-white/[0.02] px-4 py-3">
+              <div className="flex items-center justify-between rounded-t-xl border-b border-white/[0.06] bg-transparent/[0.02] px-4 py-2">
                 <div className="flex items-center gap-2">
                   <div className="h-3 w-3 rounded-full bg-red-500/60" />
                   <div className="h-3 w-3 rounded-full bg-yellow-500/60" />
@@ -652,7 +652,7 @@ export default function ConnectExtensionPage() {
                 </span>
                 <div />
               </div>
-              <div className="p-5 font-mono text-xs leading-6 min-h-[280px]">
+              <div className="p-4 font-mono text-xs leading-6 min-h-[280px]">
                 {terminalLines.slice(0, visibleLines).map((line, i) => (
                   <motion.div
                     key={i}
@@ -673,7 +673,7 @@ export default function ConnectExtensionPage() {
         </section>
 
         {/* ═══════════════════════ HOW IT WORKS ═══════════════════════ */}
-        <section id="how-it-works" className="relative mx-auto max-w-7xl px-6 py-24 lg:px-8">
+        <section id="how-it-works" className="relative mx-auto max-w-7xl px-3 py-24 lg:px-8">
           <div className="mb-16 text-center">
             <motion.div
               initial={{ opacity: 0, y: 16 }}
@@ -681,7 +681,7 @@ export default function ConnectExtensionPage() {
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
             >
-              <h2 className="text-3xl font-extrabold sm:text-4xl">
+              <h2 className="text-2xl font-extrabold sm:text-4xl">
                 Up and Running in{' '}
                 <span className={`${gradientText} bg-gradient-to-r ${accentCyan}`}>60 Seconds</span>
               </h2>
@@ -715,7 +715,7 @@ export default function ConnectExtensionPage() {
         </section>
 
         {/* ═══════════════════════ PRICING ═══════════════════════ */}
-        <section id="pricing" className="relative mx-auto max-w-7xl px-6 py-24 lg:px-8">
+        <section id="pricing" className="relative mx-auto max-w-7xl px-3 py-24 lg:px-8">
           <div className="mb-16 text-center">
             <motion.div
               initial={{ opacity: 0, y: 16 }}
@@ -723,7 +723,7 @@ export default function ConnectExtensionPage() {
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
             >
-              <h2 className="text-3xl font-extrabold sm:text-4xl">
+              <h2 className="text-2xl font-extrabold sm:text-4xl">
                 Simple, Transparent{' '}
                 <span className={`${gradientText} bg-gradient-to-r ${accentPurple}`}>Pricing</span>
               </h2>
@@ -731,7 +731,7 @@ export default function ConnectExtensionPage() {
             </motion.div>
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-3 max-w-5xl mx-auto">
+          <div className="grid gap-4 lg:grid-cols-3 max-w-5xl mx-auto">
             <PricingCard
               title="Free"
               price="$0"
@@ -793,7 +793,7 @@ export default function ConnectExtensionPage() {
         </section>
 
         {/* ═══════════════════════ CTA BANNER ═══════════════════════ */}
-        <section className="relative mx-auto max-w-7xl px-6 py-24 lg:px-8">
+        <section className="relative mx-auto max-w-7xl px-3 py-24 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -804,7 +804,7 @@ export default function ConnectExtensionPage() {
             <div className="absolute -top-20 -right-20 h-64 w-64 rounded-full bg-cyan-500/10 blur-[80px]" />
             <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-purple-500/10 blur-[80px]" />
             <div className="relative z-10">
-              <h2 className="text-3xl font-extrabold sm:text-4xl lg:text-5xl mb-4">
+              <h2 className="text-2xl font-extrabold sm:text-4xl lg:text-5xl mb-4">
                 Ready to Bridge Your Browser to the{' '}
                 <span className={`${gradientText} bg-gradient-to-r ${accentMixed}`}>
                   AI Network?
@@ -818,7 +818,7 @@ export default function ConnectExtensionPage() {
                 href="https://chrome.google.com/webstore/detail/fuse-connect/fkbcklmcikdhpggaimfhomgncneppkbj"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-500 px-8 py-4 text-base font-bold text-white shadow-xl shadow-cyan-500/20 transition-all duration-200 hover:shadow-cyan-500/30 hover:scale-[1.03] active:scale-[0.97]"
+                className="inline-flex items-center gap-2.5 rounded-md bg-gradient-to-r from-cyan-500 to-purple-500 px-8 py-2 text-base font-bold text-white shadow-none shadow-cyan-500/20 transition-all duration-200 hover:shadow-cyan-500/30 hover:scale-[1.03] active:scale-[0.97]"
               >
                 <Chrome className="h-5 w-5" />
                 Add to Chrome — It's Free
@@ -828,7 +828,7 @@ export default function ConnectExtensionPage() {
         </section>
 
         {/* ═══════════════════════ QUICK LINKS ═══════════════════════ */}
-        <section className="mx-auto max-w-7xl px-6 pb-12 lg:px-8">
+        <section className="mx-auto max-w-7xl px-3 pb-12 lg:px-8">
           <div className="flex flex-wrap justify-center gap-4">
             {[
               { label: 'TNF Platform', href: 'https://thenewfuse.com', icon: Rocket },
@@ -842,7 +842,7 @@ export default function ConnectExtensionPage() {
                 href={link.href}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-2.5 rounded-xl border border-white/[0.06] bg-white/[0.02] px-5 py-2.5 text-sm font-medium text-slate-400 transition-all hover:border-white/[0.12] hover:bg-white/[0.05] hover:text-white"
+                className="flex items-center gap-2.5 rounded-md border border-white/[0.06] bg-transparent/[0.02] px-5 py-2.5 text-sm font-medium text-slate-400 transition-all hover:border-white/[0.12] hover:bg-transparent/[0.05] hover:text-white"
               >
                 <link.icon className="h-4 w-4" />
                 {link.label}
@@ -854,15 +854,15 @@ export default function ConnectExtensionPage() {
 
       {/* ═══════════════════════ FOOTER ═══════════════════════ */}
       <footer className="border-t border-white/[0.04] bg-[#050508] py-12">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-between">
+        <div className="mx-auto max-w-7xl px-3 lg:px-8">
+          <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
             <div className="flex items-center gap-2.5 text-sm text-slate-500">
               <div className="flex h-6 w-6 items-center justify-center rounded-md bg-gradient-to-br from-cyan-400 to-purple-500">
                 <Sparkles className="h-3.5 w-3.5 text-white" />
               </div>
               <span>&copy; {new Date().getFullYear()} The New Fuse. All rights reserved.</span>
             </div>
-            <div className="flex gap-6 text-sm text-slate-600">
+            <div className="flex gap-4 text-sm text-slate-600">
               <a
                 href="https://thenewfuse.com/privacy"
                 className="hover:text-slate-400 transition-colors"

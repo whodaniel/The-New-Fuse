@@ -288,7 +288,7 @@ export default function AgentOnboarding(): React.ReactElement {
               <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 mb-6">
                 <Rocket className="w-12 h-12 text-blue-400" />
               </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+              <h2 className="text-2xl md:text-2xl font-bold text-white mb-4">
                 Welcome to The New Fuse
               </h2>
               <p className="text-gray-400 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
@@ -303,17 +303,17 @@ export default function AgentOnboarding(): React.ReactElement {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              <GlassCard className="p-5 text-center">
+              <GlassCard className="p-4 text-center">
                 <Bot className="w-10 h-10 text-blue-400 mx-auto mb-3" />
                 <h3 className="font-semibold text-white text-lg mb-1">AI Agent?</h3>
                 <p className="text-sm text-gray-400">Register yourself and join the network</p>
               </GlassCard>
-              <GlassCard className="p-5 text-center">
+              <GlassCard className="p-4 text-center">
                 <Users className="w-10 h-10 text-purple-400 mx-auto mb-3" />
                 <h3 className="font-semibold text-white text-lg mb-1">Human User?</h3>
                 <p className="text-sm text-gray-400">Create and manage your agent fleet</p>
               </GlassCard>
-              <GlassCard className="p-5 text-center sm:col-span-2 md:col-span-1">
+              <GlassCard className="p-4 text-center sm:col-span-2 md:col-span-1">
                 <Network className="w-10 h-10 text-green-400 mx-auto mb-3" />
                 <h3 className="font-semibold text-white text-lg mb-1">{existingAgents}+ Agents</h3>
                 <p className="text-sm text-gray-400">Already in the network</p>
@@ -338,15 +338,15 @@ export default function AgentOnboarding(): React.ReactElement {
             className="space-y-8"
           >
             <div className="text-center">
-              <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">Who are you?</h2>
+              <h2 className="text-2xl md:text-2xl font-bold text-white mb-4">Who are you?</h2>
               <p className="text-gray-400 text-base md:text-lg">
                 This helps us customize your onboarding experience
               </p>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-6 justify-center items-stretch">
+            <div className="flex flex-col md:flex-row gap-4 justify-center items-stretch">
               <GlassCard
-                className="p-6 md:p-8 cursor-pointer hover:border-blue-500/50 transition-all flex-1 max-w-md"
+                className="p-4 md:p-4 cursor-pointer hover:border-blue-500/50 transition-all flex-1 max-w-md"
                 onClick={() => setIsAIAgent(true)}
                 hover
               >
@@ -366,7 +366,7 @@ export default function AgentOnboarding(): React.ReactElement {
               </GlassCard>
 
               <GlassCard
-                className="p-6 md:p-8 cursor-pointer hover:border-purple-500/50 transition-all flex-1 max-w-md"
+                className="p-4 md:p-4 cursor-pointer hover:border-purple-500/50 transition-all flex-1 max-w-md"
                 onClick={() => setIsAIAgent(false)}
                 hover
               >
@@ -398,7 +398,7 @@ export default function AgentOnboarding(): React.ReactElement {
             className="space-y-6"
           >
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-white mb-4">
+              <h2 className="text-2xl font-bold text-white mb-4">
                 {state.isAIAgent
                   ? 'What type of agent are you?'
                   : 'What type of agent are you creating?'}
@@ -427,7 +427,7 @@ export default function AgentOnboarding(): React.ReactElement {
                     {category.examples.map((example) => (
                       <Badge
                         key={example}
-                        className="bg-white/5 text-gray-300 border-white/10 text-xs"
+                        className="bg-transparent/5 text-gray-300 border-white/10 text-xs"
                       >
                         {example}
                       </Badge>
@@ -449,7 +449,7 @@ export default function AgentOnboarding(): React.ReactElement {
             className="space-y-6"
           >
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-white mb-4">Create Your Profile</h2>
+              <h2 className="text-2xl font-bold text-white mb-4">Create Your Profile</h2>
               <p className="text-gray-400 text-lg">
                 Define {state.isAIAgent ? 'your' : "your agent's"} capabilities and skills
               </p>
@@ -503,7 +503,7 @@ export default function AgentOnboarding(): React.ReactElement {
                       className={`cursor-pointer transition-all ${
                         state.profile.capabilities.includes(cap)
                           ? 'bg-blue-500/30 text-blue-300 border-blue-500/50'
-                          : 'bg-white/5 text-gray-400 border-white/10 hover:bg-white/10'
+                          : 'bg-transparent/5 text-gray-400 border-white/10 hover:bg-transparent/10'
                       }`}
                       onClick={() => toggleCapability(cap)}
                     >
@@ -517,7 +517,7 @@ export default function AgentOnboarding(): React.ReactElement {
               </div>
 
               {state.error && (
-                <div className="flex items-center gap-2 text-red-400 bg-red-500/10 p-3 rounded-lg">
+                <div className="flex items-center gap-2 text-red-400 bg-red-500/10 p-3 rounded-md">
                   <AlertCircle className="w-5 h-5" />
                   {state.error}
                 </div>
@@ -561,7 +561,7 @@ export default function AgentOnboarding(): React.ReactElement {
               <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-green-500/20 to-blue-500/20 mb-4">
                 <CheckCircle2 className="w-10 h-10 text-green-400" />
               </div>
-              <h2 className="text-3xl font-bold text-white mb-4">Registration Complete!</h2>
+              <h2 className="text-2xl font-bold text-white mb-4">Registration Complete!</h2>
               <p className="text-gray-400 text-lg">
                 {state.isAIAgent
                   ? 'You are now registered in The New Fuse network'
@@ -645,7 +645,7 @@ export default function AgentOnboarding(): React.ReactElement {
                       ? 'bg-green-500 text-white'
                       : index === state.currentStep
                         ? 'bg-blue-500 text-white'
-                        : 'bg-white/10 text-gray-400'
+                        : 'bg-transparent/10 text-gray-400'
                   }`}
                 >
                   {index < state.currentStep ? (
@@ -661,7 +661,7 @@ export default function AgentOnboarding(): React.ReactElement {
               {index < ONBOARDING_STEPS.length - 2 && (
                 <div
                   className={`flex-1 h-0.5 mx-2 ${
-                    index < state.currentStep ? 'bg-green-500' : 'bg-white/10'
+                    index < state.currentStep ? 'bg-green-500' : 'bg-transparent/10'
                   }`}
                 />
               )}

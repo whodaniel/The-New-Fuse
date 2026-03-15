@@ -39,7 +39,7 @@ const EmbeddingPreference = () => {
                 <Switch id="cache-embeddings" />
                 <div className="text-sm font-medium text-white">Cache Embeddings</div>
               </div>
-              <p className="text-xs text-gray-500 pl-14">
+              <p className="text-xs text-muted-foreground pl-14">
                 Store embeddings in cache to improve performance for frequently accessed content
               </p>
             </div>
@@ -49,7 +49,7 @@ const EmbeddingPreference = () => {
                 <Switch id="normalize-embeddings" />
                 <div className="text-sm font-medium text-white">Normalize Embeddings</div>
               </div>
-              <p className="text-xs text-gray-500 pl-14">
+              <p className="text-xs text-muted-foreground pl-14">
                 L2 normalize embedding vectors before storing
               </p>
             </div>

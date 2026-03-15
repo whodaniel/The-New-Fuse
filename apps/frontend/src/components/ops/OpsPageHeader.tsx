@@ -23,7 +23,7 @@ export default function OpsPageHeader({
             {eyebrow}
           </p>
         ) : null}
-        <h1 className="text-3xl md:text-4xl font-bold text-white">{title}</h1>
+        <h1 className="text-2xl md:text-4xl font-bold text-white">{title}</h1>
         <p className="text-slate-300 mt-2">{subtitle}</p>
         {meta ? <div className="mt-3">{meta}</div> : null}
       </div>

@@ -29,7 +29,7 @@ const SponsorBidPanel: React.FC<SponsorBidPanelProps> = ({
   };
 
   return (
-    <div className="bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-lg">
+    <div className="bg-slate-900 p-4 rounded-md border border-slate-800 shadow-none">
       <h3 className="text-xl font-bold text-white mb-2">Sponsor Slot #1</h3>
       <p className="text-slate-400 text-sm mb-6">
         Highest Bidder gets their link pinned to this Agent's profile for 30 days.
@@ -47,17 +47,17 @@ const SponsorBidPanel: React.FC<SponsorBidPanelProps> = ({
             value={bidAmount}
             onChange={(e) => setBidAmount(e.target.value)}
             placeholder={`Min. ${(currentBid * 1.05).toFixed(2)}`}
-            className="w-full bg-slate-800 text-white rounded-lg p-3 border border-slate-700 focus:border-blue-500 outline-none transition-colors"
+            className="w-full bg-slate-800 text-white rounded-md p-3 border border-slate-700 focus:border-blue-500 outline-none transition-colors"
           />
         </div>
 
         <button
           onClick={handleBid}
           disabled={loading || !bidAmount || parseFloat(bidAmount) <= currentBid}
-          className={`w-full py-3 rounded-lg font-bold text-lg transition-all ${
+          className={`w-full py-2 rounded-md font-bold text-lg transition-all ${
             loading || !bidAmount || parseFloat(bidAmount) <= currentBid
               ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
-              : 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-500/20 shadow-lg'
+              : 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-500/20 shadow-none'
           }`}
         >
           {loading ? 'Processing...' : 'Place Bid'}

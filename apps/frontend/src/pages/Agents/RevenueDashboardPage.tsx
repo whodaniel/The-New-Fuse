@@ -162,7 +162,7 @@ export const RevenueDashboardPage: React.FC<RevenueDashboardPageProps> = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-green-900 to-slate-900">
       {isLoading && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
-          <div className="bg-slate-900/60 backdrop-blur-md border border-white/10 rounded-lg p-6 flex items-center gap-4">
+          <div className="bg-slate-900/60 backdrop-blur-md border border-white/10 rounded-md p-4 flex items-center gap-4">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
             <span className="text-lg font-medium">Processing transaction...</span>
           </div>
@@ -171,7 +171,7 @@ export const RevenueDashboardPage: React.FC<RevenueDashboardPageProps> = () => {
 
       {/* Header with navigation */}
       <div className="bg-black/20 backdrop-blur-sm border-b border-white/10">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-4 py-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button
@@ -185,7 +185,7 @@ export const RevenueDashboardPage: React.FC<RevenueDashboardPageProps> = () => {
             <div className="flex items-center gap-4">
               <button
                 onClick={() => navigate('/agents/nft-marketplace')}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors"
               >
                 💎 Go to Marketplace
               </button>

@@ -187,14 +187,14 @@ export const MemoryVisualizer: React.FC<MemoryVisualizerProps> = ({
   }, [clusters, width, height]);
 
   return (
-    <div className="relative w-full h-full bg-slate-950/20 rounded-2xl border border-white/5 overflow-hidden backdrop-blur-sm group">
+    <div className="relative w-full h-full bg-slate-950/20 rounded-md border border-white/5 overflow-hidden backdrop-blur-sm group">
       <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
-        <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20">
+        <div className="p-2 rounded-md bg-blue-500/10 border border-blue-500/20">
           <Database className="w-5 h-5 text-blue-400" />
         </div>
         <div>
           <h3 className="text-sm font-bold text-white uppercase tracking-wider">Semantic Space</h3>
-          <p className="text-[10px] text-gray-500 uppercase tracking-widest font-mono">
+          <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-mono">
             Knowledge Topology
           </p>
         </div>
@@ -214,7 +214,7 @@ export const MemoryVisualizer: React.FC<MemoryVisualizerProps> = ({
         <LegendItem color="#a855f7" label="Semantic Units" />
       </div>
 
-      <div className="absolute bottom-4 right-4 z-10 text-[10px] text-gray-600 font-mono">
+      <div className="absolute bottom-4 right-4 z-10 text-[10px] text-muted-foreground font-mono">
         ENGINE: TNF-D3-RELAY-V2
       </div>
     </div>
@@ -222,7 +222,7 @@ export const MemoryVisualizer: React.FC<MemoryVisualizerProps> = ({
 };
 
 const VisualizerAction: React.FC<{ icon: React.ReactNode }> = ({ icon }) => (
-  <button className="p-2 rounded-lg bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 transition-all">
+  <button className="p-2 rounded-md bg-transparent/5 border border-white/10 text-gray-400 hover:text-white hover:bg-transparent/10 transition-all">
     {icon}
   </button>
 );
@@ -230,7 +230,9 @@ const VisualizerAction: React.FC<{ icon: React.ReactNode }> = ({ icon }) => (
 const LegendItem: React.FC<{ color: string; label: string }> = ({ color, label }) => (
   <div className="flex items-center gap-2">
     <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
-    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{label}</span>
+    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+      {label}
+    </span>
   </div>
 );
 

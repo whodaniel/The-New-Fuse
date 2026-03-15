@@ -73,7 +73,7 @@ export function WizardInterface() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-6">
+      <div className="bg-transparent dark:bg-transparent rounded-md shadow-md border border-gray-200 dark:border-gray-700 p-4">
         <h4 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">FUSE AI Wizard</h4>
 
         {/* Stepper */}
@@ -93,13 +93,13 @@ export function WizardInterface() {
                                 ${
                                   isCompleted || isCurrent
                                     ? 'bg-blue-600 border-blue-600 text-white'
-                                    : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-500'
+                                    : 'bg-transparent dark:bg-transparent border-gray-300 dark:border-gray-600 text-muted-foreground'
                                 }`}
                   >
                     {isCompleted ? <Check className="w-5 h-5" /> : <span>{index + 1}</span>}
                   </div>
                   <span
-                    className={`mt-2 text-xs font-medium ${isCurrent ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500'}`}
+                    className={`mt-2 text-xs font-medium ${isCurrent ? 'text-blue-600 dark:text-blue-400' : 'text-muted-foreground'}`}
                   >
                     {step.label}
                   </span>
@@ -113,7 +113,7 @@ export function WizardInterface() {
           <h5 className="text-lg font-medium text-gray-900 dark:text-white mb-1">
             {steps[state.currentStep]?.label}
           </h5>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-muted-foreground dark:text-muted-foreground">
             {steps[state.currentStep]?.description}
           </p>
         </div>
@@ -132,8 +132,8 @@ function InitializeStep() {
         <h6 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
           Session Information
         </h6>
-        <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-md border border-gray-200 dark:border-gray-700">
-          <p className="text-sm text-gray-600 dark:text-gray-300">
+        <div className="p-4 bg-transparent dark:bg-gray-900 rounded-md border border-gray-200 dark:border-gray-700">
+          <p className="text-sm text-muted-foreground dark:text-gray-300">
             <span className="font-semibold text-gray-900 dark:text-white">Project Path:</span>{' '}
             {state.session?.data?.project_path || 'N/A'}
           </p>
@@ -160,7 +160,7 @@ function AgentConfigStep() {
       <h6 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
         Agent Configuration
       </h6>
-      <div className="p-8 text-center text-gray-500 border-2 border-dashed border-gray-300 rounded-md">
+      <div className="p-4 text-center text-muted-foreground border-2 border-dashed border-gray-300 rounded-md">
         Agent configuration options will appear here.
       </div>
     </div>
@@ -182,7 +182,7 @@ function KnowledgeStep() {
       <h6 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
         Knowledge Graph Integration
       </h6>
-      <div className="p-8 text-center text-gray-500 border-2 border-dashed border-gray-300 rounded-md">
+      <div className="p-4 text-center text-muted-foreground border-2 border-dashed border-gray-300 rounded-md">
         Knowledge graph visualization will appear here.
       </div>
     </div>
@@ -196,7 +196,7 @@ function OptimizationStep() {
       <h6 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
         System Optimization
       </h6>
-      <div className="p-8 text-center text-gray-500 border-2 border-dashed border-gray-300 rounded-md">
+      <div className="p-4 text-center text-muted-foreground border-2 border-dashed border-gray-300 rounded-md">
         Optimization settings will appear here.
       </div>
     </div>

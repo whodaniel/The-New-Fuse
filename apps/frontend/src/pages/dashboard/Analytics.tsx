@@ -133,7 +133,7 @@ const CustomTooltip = ({
 }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-slate-800/90 backdrop-blur-md border border-white/10 rounded-lg p-3 shadow-xl">
+      <div className="bg-slate-800/90 backdrop-blur-md border border-white/10 rounded-md p-3 shadow-none">
         <p className="text-gray-300 text-sm font-medium mb-2">{label}</p>
         {payload.map((entry: { name: string; value: number; color: string }, index: number) => (
           <p key={index} className="text-sm" style={{ color: entry.color }}>
@@ -357,10 +357,10 @@ const Analytics = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
         <GlassCard className="max-w-md">
-          <div className="p-8 text-center">
+          <div className="p-4 text-center">
             <Zap className="w-12 h-12 text-red-400 mx-auto mb-4" />
             <p className="text-gray-300 font-medium">Unable to load analytics</p>
-            <p className="text-gray-500 text-sm mt-2">{errorMessage}</p>
+            <p className="text-muted-foreground text-sm mt-2">{errorMessage}</p>
             <PremiumButton onClick={handleRefresh} className="mt-4" icon={RefreshCw}>
               Retry
             </PremiumButton>
@@ -381,7 +381,7 @@ const Analytics = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
         <GlassCard className="max-w-md">
-          <div className="p-8 text-center">
+          <div className="p-4 text-center">
             <Zap className="w-12 h-12 text-red-400 mx-auto mb-4" />
             <p className="text-gray-400">Failed to load analytics data</p>
             <PremiumButton onClick={handleRefresh} className="mt-4" icon={RefreshCw}>
@@ -415,7 +415,7 @@ const Analytics = () => {
         <div className="absolute top-[50%] left-[30%] w-[30%] h-[30%] bg-cyan-600/10 rounded-full blur-[100px] animate-pulse" />
       </div>
 
-      <div className="relative z-10 p-8 max-w-7xl mx-auto">
+      <div className="relative z-10 p-4 max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -466,38 +466,38 @@ const Analytics = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <TabsList className="bg-white/5 backdrop-blur-md border border-white/10 p-1 rounded-xl">
+            <TabsList className="bg-transparent/5 backdrop-blur-md border border-white/10 p-1 rounded-md">
               <TabsTrigger
                 value="overview"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-lg px-4 py-2 text-gray-400 transition-all"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-md px-4 py-2 text-gray-400 transition-all"
               >
                 <Activity className="w-4 h-4 mr-2" />
                 Overview
               </TabsTrigger>
               <TabsTrigger
                 value="performance"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-lg px-4 py-2 text-gray-400 transition-all"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-md px-4 py-2 text-gray-400 transition-all"
               >
                 <TrendingUp className="w-4 h-4 mr-2" />
                 Performance
               </TabsTrigger>
               <TabsTrigger
                 value="agents"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-lg px-4 py-2 text-gray-400 transition-all"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-md px-4 py-2 text-gray-400 transition-all"
               >
                 <Bot className="w-4 h-4 mr-2" />
                 Agents
               </TabsTrigger>
               <TabsTrigger
                 value="quality"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-lg px-4 py-2 text-gray-400 transition-all"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-md px-4 py-2 text-gray-400 transition-all"
               >
                 <Target className="w-4 h-4 mr-2" />
                 Quality
               </TabsTrigger>
               <TabsTrigger
                 value="costs"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-lg px-4 py-2 text-gray-400 transition-all"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-md px-4 py-2 text-gray-400 transition-all"
               >
                 <DollarSign className="w-4 h-4 mr-2" />
                 Costs
@@ -512,7 +512,7 @@ const Analytics = () => {
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
-                className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+                className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
               >
                 <motion.div variants={itemVariants}>
                   <StatsCard
@@ -699,11 +699,11 @@ const Analytics = () => {
                               initial={{ opacity: 0, x: -20 }}
                               animate={{ opacity: 1, x: 0 }}
                               transition={{ delay: index * 0.1 }}
-                              className="hover:bg-white/5 transition-colors"
+                              className="hover:bg-transparent/5 transition-colors"
                             >
                               <td className="p-4">
                                 <div className="flex items-center gap-3">
-                                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center border border-white/10">
+                                  <div className="w-10 h-10 rounded-md bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center border border-white/10">
                                     <Bot className="w-5 h-5 text-purple-400" />
                                   </div>
                                   <span className="text-white font-medium">{agent.agentName}</span>
@@ -714,7 +714,7 @@ const Analytics = () => {
                               </td>
                               <td className="p-4">
                                 <div className="flex items-center gap-2">
-                                  <div className="w-16 bg-white/10 rounded-full h-2">
+                                  <div className="w-16 bg-transparent/10 rounded-full h-2">
                                     <div
                                       className="bg-gradient-to-r from-emerald-500 to-emerald-400 h-2 rounded-full"
                                       style={{ width: `${agent.successRate}%` }}
@@ -746,7 +746,7 @@ const Analytics = () => {
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
-                className="grid gap-6 md:grid-cols-2"
+                className="grid gap-4 md:grid-cols-2"
               >
                 <motion.div variants={itemVariants}>
                   <GlassCard
@@ -833,7 +833,7 @@ const Analytics = () => {
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
-                className="grid gap-6 md:grid-cols-2"
+                className="grid gap-4 md:grid-cols-2"
               >
                 <motion.div variants={itemVariants}>
                   <GlassCard
@@ -914,7 +914,7 @@ const Analytics = () => {
                         ${data.costAnalysis.totalCost.toLocaleString()}
                       </div>
                     </div>
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center border border-green-500/20">
+                    <div className="w-16 h-16 rounded-md bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center border border-green-500/20">
                       <DollarSign className="w-8 h-8 text-green-400" />
                     </div>
                   </div>

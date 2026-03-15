@@ -74,7 +74,7 @@ export function Dialog({ open, onOpenChange, children }: DialogProps) {
         aria-hidden="true"
       />
       <div
-        className="relative bg-white rounded-lg shadow-lg max-w-md w-full mx-4"
+        className="relative bg-transparent rounded-md shadow-none max-w-md w-full mx-4"
         role="dialog"
         aria-modal="true"
       >
@@ -85,7 +85,7 @@ export function Dialog({ open, onOpenChange, children }: DialogProps) {
 }
 
 export function DialogContent({ className = '', children }: DialogContentProps) {
-  return <div className={`p-6 ${className}`}>{children}</div>;
+  return <div className={`p-4 ${className}`}>{children}</div>;
 }
 
 export function DialogHeader({ children }: DialogHeaderProps) {
@@ -97,7 +97,7 @@ export function DialogTitle({ children, className = '' }: DialogTitleProps) {
 }
 
 export function DialogDescription({ children }: DialogDescriptionProps) {
-  return <p className="text-sm text-gray-600 mt-2">{children}</p>;
+  return <p className="text-sm text-muted-foreground mt-2">{children}</p>;
 }
 
 export function DialogFooter({ children, className = '' }: DialogFooterProps) {

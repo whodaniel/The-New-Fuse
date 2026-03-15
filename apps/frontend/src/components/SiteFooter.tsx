@@ -3,16 +3,16 @@ import { Link } from 'react-router-dom';
 
 export const SiteFooter = () => {
   return (
-    <footer className="border-t border-white/10 py-10 sm:py-12 lg:py-16 px-4 sm:px-6 bg-gray-900/50 backdrop-blur-xl">
+    <footer className="border-t border-white/10 py-10 sm:py-12 lg:py-16 px-4 sm:px-3 bg-gray-900/50 backdrop-blur-xl">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 sm:gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-4">
           {/* Brand */}
           <div className="col-span-2 md:col-span-4 lg:col-span-1">
             <Link
               to="/"
               className="flex items-center gap-3 mb-6 hover:opacity-80 transition-opacity"
             >
-              <div className="w-10 h-10 rounded-xl bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-md bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center">
                 <Rocket className="w-5 h-5 text-white" />
               </div>
               <span className="text-xl font-bold text-white">The New Fuse</span>
@@ -115,7 +115,7 @@ export const SiteFooter = () => {
 
         {/* Copyright */}
         <div className="mt-8 pt-8 border-t border-white/10 text-center">
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-muted-foreground">
             © {new Date().getFullYear()} The New Fuse. All rights reserved. Built for AI agent
             orchestration.
           </p>

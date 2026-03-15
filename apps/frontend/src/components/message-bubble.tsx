@@ -6,18 +6,18 @@ export function MessageBubble({ message, agents }) {
   return (
     <div className={`flex flex-col ${isUserMessage ? 'items-end' : 'items-start'}`}>
       <div
-        className={`max-w-[80%] rounded-lg p-3 ${
-          isUserMessage ? 'bg-blue-500 text-white' : 'bg-neutral-100 dark:bg-neutral-800'
+        className={`max-w-[80%] rounded-md p-3 ${
+          isUserMessage ? 'bg-blue-500 text-white' : 'bg-neutral-100 dark:bg-transparent'
         }`}
       >
         <p className="break-words">{message.content}</p>
       </div>
       <div className="flex items-center gap-2 mt-1">
-        <span className="text-xs text-neutral-500">
+        <span className="text-xs text-muted-foreground">
           {(0, message_utils_1.formatTimestamp)(message.timestamp)}
         </span>
         {message.agentId && (
-          <span className="text-xs text-neutral-500">
+          <span className="text-xs text-muted-foreground">
             via {(0, message_utils_1.getAgentNameById)(agents, message.agentId)}
           </span>
         )}

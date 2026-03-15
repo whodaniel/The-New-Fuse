@@ -66,7 +66,7 @@ export const AgentTaskNode: React.FC<BaseNodeProps> = ({ data, selected }) => {
 
   return (
     <div
-      className={`bg-purple-50 border-2 rounded-md shadow-md min-w-[200px] max-w-[300px] ${selected ? 'border-purple-500 shadow-lg' : 'border-purple-200'}`}
+      className={`bg-purple-50 border-2 rounded-md shadow-md min-w-[200px] max-w-[300px] ${selected ? 'border-purple-500 shadow-none' : 'border-purple-200'}`}
     >
       <Handle type="target" position={Position.Top} style={{ background: '#805AD5' }} />
 
@@ -92,14 +92,14 @@ export const AgentTaskNode: React.FC<BaseNodeProps> = ({ data, selected }) => {
           </div>
 
           {data.description && (
-            <div className="text-xs text-gray-600 line-clamp-2">{data.description}</div>
+            <div className="text-xs text-muted-foreground line-clamp-2">{data.description}</div>
           )}
 
           {data.status === 'running' && data.progress !== undefined && (
             <div>
               <div className="flex justify-between mb-1">
-                <div className="text-xs text-gray-600">Progress</div>
-                <div className="text-xs text-gray-600">{data.progress}%</div>
+                <div className="text-xs text-muted-foreground">Progress</div>
+                <div className="text-xs text-muted-foreground">{data.progress}%</div>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-1">
                 <div
@@ -112,8 +112,8 @@ export const AgentTaskNode: React.FC<BaseNodeProps> = ({ data, selected }) => {
 
           {data.estimatedTime && (
             <div className="flex items-center gap-1">
-              <FiClock className="w-3 h-3 text-gray-500" />
-              <div className="text-xs text-gray-600">~{data.estimatedTime}min</div>
+              <FiClock className="w-3 h-3 text-muted-foreground" />
+              <div className="text-xs text-muted-foreground">~{data.estimatedTime}min</div>
             </div>
           )}
         </div>
@@ -128,7 +128,7 @@ export const AgentTaskNode: React.FC<BaseNodeProps> = ({ data, selected }) => {
 export const ConditionalNode: React.FC<BaseNodeProps> = ({ data, selected }) => {
   return (
     <div
-      className={`bg-orange-50 border-2 rounded-md shadow-md min-w-[180px] ${selected ? 'border-orange-500 shadow-lg' : 'border-orange-200'} relative`}
+      className={`bg-orange-50 border-2 rounded-md shadow-md min-w-[180px] ${selected ? 'border-orange-500 shadow-none' : 'border-orange-200'} relative`}
     >
       <Handle type="target" position={Position.Top} style={{ background: '#DD6B20' }} />
 
@@ -142,7 +142,9 @@ export const ConditionalNode: React.FC<BaseNodeProps> = ({ data, selected }) => 
             </Badge>
           )}
           {data.description && (
-            <div className="text-xs text-gray-600 text-center line-clamp-2">{data.description}</div>
+            <div className="text-xs text-muted-foreground text-center line-clamp-2">
+              {data.description}
+            </div>
           )}
         </div>
       </div>
@@ -171,7 +173,7 @@ export const ConditionalNode: React.FC<BaseNodeProps> = ({ data, selected }) => 
 export const ParallelNode: React.FC<BaseNodeProps> = ({ data, selected }) => {
   return (
     <div
-      className={`bg-cyan-50 border-2 rounded-md shadow-md min-w-[200px] ${selected ? 'border-cyan-500 shadow-lg' : 'border-cyan-200'}`}
+      className={`bg-cyan-50 border-2 rounded-md shadow-md min-w-[200px] ${selected ? 'border-cyan-500 shadow-none' : 'border-cyan-200'}`}
     >
       <Handle type="target" position={Position.Top} style={{ background: '#0BC5EA' }} />
 
@@ -185,7 +187,9 @@ export const ParallelNode: React.FC<BaseNodeProps> = ({ data, selected }) => {
             </Badge>
           )}
           {data.description && (
-            <div className="text-xs text-gray-600 text-center line-clamp-2">{data.description}</div>
+            <div className="text-xs text-muted-foreground text-center line-clamp-2">
+              {data.description}
+            </div>
           )}
           {data.status === 'running' && (
             <div className="flex items-center gap-1">
@@ -223,7 +227,7 @@ export const ParallelNode: React.FC<BaseNodeProps> = ({ data, selected }) => {
 export const HumanApprovalNode: React.FC<BaseNodeProps> = ({ data, selected }) => {
   return (
     <div
-      className={`bg-pink-50 border-2 rounded-md shadow-md min-w-[200px] ${selected ? 'border-pink-500 shadow-lg' : 'border-pink-200'}`}
+      className={`bg-pink-50 border-2 rounded-md shadow-md min-w-[200px] ${selected ? 'border-pink-500 shadow-none' : 'border-pink-200'}`}
     >
       <Handle type="target" position={Position.Top} style={{ background: '#D53F8C' }} />
 
@@ -248,7 +252,9 @@ export const HumanApprovalNode: React.FC<BaseNodeProps> = ({ data, selected }) =
             </Badge>
           )}
           {data.description && (
-            <div className="text-xs text-gray-600 text-center line-clamp-2">{data.description}</div>
+            <div className="text-xs text-muted-foreground text-center line-clamp-2">
+              {data.description}
+            </div>
           )}
         </div>
       </div>
@@ -262,7 +268,7 @@ export const HumanApprovalNode: React.FC<BaseNodeProps> = ({ data, selected }) =
 export const MultiAgentNode: React.FC<BaseNodeProps> = ({ data, selected }) => {
   return (
     <div
-      className={`bg-teal-50 border-2 rounded-md shadow-md min-w-[220px] ${selected ? 'border-teal-500 shadow-lg' : 'border-teal-200'}`}
+      className={`bg-teal-50 border-2 rounded-md shadow-md min-w-[220px] ${selected ? 'border-teal-500 shadow-none' : 'border-teal-200'}`}
     >
       <Handle type="target" position={Position.Top} style={{ background: '#319795' }} />
 
@@ -285,7 +291,9 @@ export const MultiAgentNode: React.FC<BaseNodeProps> = ({ data, selected }) => {
             </div>
           )}
           {data.description && (
-            <div className="text-xs text-gray-600 text-center line-clamp-2">{data.description}</div>
+            <div className="text-xs text-muted-foreground text-center line-clamp-2">
+              {data.description}
+            </div>
           )}
           {data.status === 'running' && data.activeAgent && (
             <div className="text-xs text-teal-600">Active: {data.activeAgent}</div>

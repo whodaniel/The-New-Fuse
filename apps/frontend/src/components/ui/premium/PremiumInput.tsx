@@ -45,7 +45,7 @@ export const PremiumInput: React.FC<PremiumInputProps> = ({
 
         <input
           id={id}
-          className={`w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 transition-all duration-200 backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed ${
+          className={`w-full px-4 py-2 bg-black/20 border border-white/10 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 transition-all duration-200 backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed ${
             IconComponent && iconPosition === 'left' ? 'pl-10' : ''
           } ${IconComponent && iconPosition === 'right' ? 'pr-10' : ''} ${error ? 'border-red-500/50' : ''} ${className}`}
           {...props}
@@ -59,7 +59,7 @@ export const PremiumInput: React.FC<PremiumInputProps> = ({
       </div>
 
       {error && <p className="text-sm text-red-400">{error}</p>}
-      {hint && !error && <p className="text-sm text-gray-500">{hint}</p>}
+      {hint && !error && <p className="text-sm text-muted-foreground">{hint}</p>}
     </div>
   );
 };
@@ -89,12 +89,12 @@ export const PremiumTextarea: React.FC<PremiumTextareaProps> = ({
       )}
 
       <textarea
-        className={`w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 transition-all duration-200 backdrop-blur-sm resize-none disabled:opacity-50 disabled:cursor-not-allowed ${error ? 'border-red-500/50' : ''} ${className}`}
+        className={`w-full px-4 py-2 bg-black/20 border border-white/10 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 transition-all duration-200 backdrop-blur-sm resize-none disabled:opacity-50 disabled:cursor-not-allowed ${error ? 'border-red-500/50' : ''} ${className}`}
         {...props}
       />
 
       {error && <p className="text-sm text-red-400">{error}</p>}
-      {hint && !error && <p className="text-sm text-gray-500">{hint}</p>}
+      {hint && !error && <p className="text-sm text-muted-foreground">{hint}</p>}
     </div>
   );
 };
@@ -127,7 +127,7 @@ export const PremiumSelect: React.FC<PremiumSelectProps> = ({
       )}
 
       <select
-        className={`w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 transition-all duration-200 backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed ${error ? 'border-red-500/50' : ''} ${className}`}
+        className={`w-full px-4 py-2 bg-black/20 border border-white/10 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 transition-all duration-200 backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed ${error ? 'border-red-500/50' : ''} ${className}`}
         {...props}
       >
         {children}
@@ -139,7 +139,7 @@ export const PremiumSelect: React.FC<PremiumSelectProps> = ({
       </select>
 
       {error && <p className="text-sm text-red-400">{error}</p>}
-      {hint && !error && <p className="text-sm text-gray-500">{hint}</p>}
+      {hint && !error && <p className="text-sm text-muted-foreground">{hint}</p>}
     </div>
   );
 };
@@ -163,7 +163,7 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
   disabled = false,
 }) => {
   return (
-    <div className="flex items-center justify-between p-4 bg-black/20 border border-white/10 rounded-lg backdrop-blur-sm">
+    <div className="flex items-center justify-between p-4 bg-black/20 border border-white/10 rounded-md backdrop-blur-sm">
       <div className="flex-1">
         {label && <p className="text-sm font-medium text-white">{label}</p>}
         {description && <p className="text-xs text-gray-400 mt-1">{description}</p>}
@@ -180,7 +180,7 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
         }`}
       >
         <span
-          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+          className={`inline-block h-4 w-4 transform rounded-full bg-transparent transition-transform ${
             checked ? 'translate-x-6' : 'translate-x-1'
           }`}
         />

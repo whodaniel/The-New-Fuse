@@ -1,6 +1,5 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../Card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../Card';
 
 describe('Card', () => {
   it('renders correctly', () => {
@@ -47,22 +46,19 @@ describe('Card', () => {
     expect(screen.getByText('Outline Card').parentElement).toHaveClass('border');
   });
 
-  it('renders with different paddings', () => {
-    const { rerender } = render(<Card padding="default">Default Padding</Card>);
-    expect(screen.getByText('Default Padding').parentElement).toHaveClass('p-6');
+  it('renders with different sizes', () => {
+    const { rerender } = render(<Card size="default">Default Size</Card>);
+    expect(screen.getByText('Default Size').parentElement).toHaveClass('p-4');
 
-    rerender(<Card padding="sm">Small Padding</Card>);
-    expect(screen.getByText('Small Padding').parentElement).toHaveClass('p-4');
+    rerender(<Card size="sm">Small Size</Card>);
+    expect(screen.getByText('Small Size').parentElement).toHaveClass('p-3');
 
-    rerender(<Card padding="lg">Large Padding</Card>);
-    expect(screen.getByText('Large Padding').parentElement).toHaveClass('p-8');
-
-    rerender(<Card padding="none">No Padding</Card>);
-    expect(screen.getByText('No Padding').parentElement).toHaveClass('p-0');
+    rerender(<Card size="lg">Large Size</Card>);
+    expect(screen.getByText('Large Size').parentElement).toHaveClass('p-6');
   });
 
-  it('renders with hover effect', () => {
-    render(<Card hover>Hover Card</Card>);
-    expect(screen.getByText('Hover Card').parentElement).toHaveClass('hover:shadow-md');
+  it('renders with hoverable effect', () => {
+    render(<Card hoverable>Hover Card</Card>);
+    expect(screen.getByText('Hover Card').parentElement).toHaveClass('hover:bg-muted/30');
   });
 });

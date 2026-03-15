@@ -13,7 +13,7 @@ const MacroTimelinePage: React.FC = () => {
         Loading Global Timeline...
       </div>
     );
-  if (error) return <div className="p-8 text-red-500">Error loading timeline: {error.message}</div>;
+  if (error) return <div className="p-4 text-red-500">Error loading timeline: {error.message}</div>;
 
   const allRecords = data?.plans?.flatMap((p: any) => p.records) || [];
   const tasks = allRecords.filter((r: any) => r.kind === 'task');
@@ -31,7 +31,7 @@ const MacroTimelinePage: React.FC = () => {
 
   return (
     <div className="flex h-screen bg-[#0a0c14] overflow-hidden">
-      <div className="flex-grow flex flex-col p-6 space-y-6 overflow-hidden">
+      <div className="flex-grow flex flex-col p-4 space-y-6 overflow-hidden">
         <header className="flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold text-white tracking-tight">Macro Workspace</h1>
@@ -70,11 +70,11 @@ const MacroTimelinePage: React.FC = () => {
               onRecordUpdate={(id, patch) => updateRecord(id, patch)}
             />
           ) : (
-            <div className="grid grid-cols-4 gap-6 h-full overflow-auto pb-10">
+            <div className="grid grid-cols-4 gap-4 h-full overflow-auto pb-10">
               {['submitted', 'in_progress', 'under_review', 'completed'].map((status) => (
                 <div
                   key={status}
-                  className="flex flex-col space-y-4 bg-slate-900/20 p-4 rounded-lg border border-slate-800/50"
+                  className="flex flex-col space-y-4 bg-slate-900/20 p-4 rounded-md border border-slate-800/50"
                 >
                   <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter flex justify-between">
                     {status.replace('_', ' ')}
@@ -87,7 +87,7 @@ const MacroTimelinePage: React.FC = () => {
                         <div
                           key={task.id}
                           onClick={() => setSelectedRecord(task)}
-                          className="p-3 bg-[#161922] border border-slate-800 rounded shadow-sm hover:border-sky-500/50 cursor-pointer transition-all group"
+                          className="p-3 bg-[#161922] border border-slate-800 rounded shadow-none hover:border-sky-500/50 cursor-pointer transition-all group"
                         >
                           <div className="text-xs font-medium text-slate-200 mb-2">
                             {task.title}
@@ -120,7 +120,7 @@ const MacroTimelinePage: React.FC = () => {
 
       {/* Right Sidebar: Task Intel / Conversion */}
       {selectedRecord && (
-        <div className="w-96 bg-[#161922] border-l border-slate-800 p-6 flex flex-col space-y-6 overflow-y-auto">
+        <div className="w-96 bg-[#161922] border-l border-slate-800 p-4 flex flex-col space-y-6 overflow-y-auto">
           <div className="flex justify-between items-start">
             <div className="flex flex-col">
               <span
@@ -143,7 +143,7 @@ const MacroTimelinePage: React.FC = () => {
           </div>
 
           {selectedRecord.kind === 'suggestion' && (
-            <div className="bg-amber-500/10 border border-amber-500/20 p-4 rounded-lg space-y-3">
+            <div className="bg-amber-500/10 border border-amber-500/20 p-4 rounded-md space-y-3">
               <p className="text-xs text-amber-200/70 italic">
                 This is currently a suggestion from the community.
               </p>

@@ -1,7 +1,7 @@
-import React from 'react';
-import { Button, Badge } from '@/components/ui/design-system';
-import { useUsers } from '../../hooks/useUsers';
+import { Badge, Button } from '@/components/ui/design-system';
 import { useToast } from '@/hooks/useToast';
+import React from 'react';
+import { useUsers } from '../../hooks/useUsers';
 
 export const UserManagement: React.FC = () => {
   const { users, updateUserStatus, loading } = useUsers();
@@ -17,43 +17,43 @@ export const UserManagement: React.FC = () => {
   };
 
   return (
-    <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-sm overflow-hidden">
-      <table className="min-w-full divide-y divide-neutral-200 dark:divide-neutral-700">
-        <thead className="bg-neutral-50 dark:bg-neutral-900">
+    <div className="bg-transparent dark:bg-transparent rounded-md shadow-none-none overflow-hidden">
+      <table className="min-w-full divide-y divide-border/50 dark:divide-border/40">
+        <thead className="bg-transparent dark:bg-neutral-900">
           <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+            <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground dark:text-muted-foreground uppercase tracking-wider">
               User
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+            <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground dark:text-muted-foreground uppercase tracking-wider">
               Email
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+            <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground dark:text-muted-foreground uppercase tracking-wider">
               Role
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+            <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground dark:text-muted-foreground uppercase tracking-wider">
               Status
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+            <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground dark:text-muted-foreground uppercase tracking-wider">
               Actions
             </th>
           </tr>
         </thead>
-        <tbody className="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
+        <tbody className="bg-transparent dark:bg-transparent divide-y divide-border/50 dark:divide-border/40">
           {users.map((user) => (
-            <tr key={user.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700">
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900 dark:text-neutral-100">
+            <tr key={user.id} className="hover:bg-transparent dark:hover:bg-muted/20">
+              <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-neutral-900 dark:text-neutral-100">
                 {user.name}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500 dark:text-neutral-400">
+              <td className="px-3 py-2 whitespace-nowrap text-sm text-muted-foreground dark:text-muted-foreground">
                 {user.email}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">
+              <td className="px-3 py-2 whitespace-nowrap">
                 <Badge variant="secondary">{user.role}</Badge>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500 dark:text-neutral-400">
+              <td className="px-3 py-2 whitespace-nowrap text-sm text-muted-foreground dark:text-muted-foreground">
                 {user.status}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">
+              <td className="px-3 py-2 whitespace-nowrap">
                 <Button
                   size="sm"
                   variant="outline"

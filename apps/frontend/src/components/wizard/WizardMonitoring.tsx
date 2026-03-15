@@ -78,8 +78,8 @@ export function WizardMonitoring() {
   const renderMetrics = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       {/* CPU Usage */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700">
-        <div className="flex items-center gap-2 mb-2 text-gray-700 dark:text-gray-300">
+      <div className="bg-transparent dark:bg-transparent rounded-md shadow p-4 border border-gray-200 dark:border-gray-700">
+        <div className="flex items-center gap-2 mb-2 text-foreground dark:text-gray-300">
           <Cpu className="w-5 h-5" />
           <h6 className="font-semibold">CPU Usage</h6>
         </div>
@@ -97,8 +97,8 @@ export function WizardMonitoring() {
       </div>
 
       {/* Memory Usage */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700">
-        <div className="flex items-center gap-2 mb-2 text-gray-700 dark:text-gray-300">
+      <div className="bg-transparent dark:bg-transparent rounded-md shadow p-4 border border-gray-200 dark:border-gray-700">
+        <div className="flex items-center gap-2 mb-2 text-foreground dark:text-gray-300">
           <Gauge className="w-5 h-5" />
           <h6 className="font-semibold">Memory</h6>
         </div>
@@ -116,8 +116,8 @@ export function WizardMonitoring() {
       </div>
 
       {/* Active Tasks */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700">
-        <div className="flex items-center gap-2 mb-2 text-gray-700 dark:text-gray-300">
+      <div className="bg-transparent dark:bg-transparent rounded-md shadow p-4 border border-gray-200 dark:border-gray-700">
+        <div className="flex items-center gap-2 mb-2 text-foreground dark:text-gray-300">
           <Activity className="w-5 h-5" />
           <h6 className="font-semibold">Active Tasks</h6>
         </div>
@@ -132,8 +132,8 @@ export function WizardMonitoring() {
       </div>
 
       {/* Error Rate */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700">
-        <div className="flex items-center gap-2 mb-2 text-gray-700 dark:text-gray-300">
+      <div className="bg-transparent dark:bg-transparent rounded-md shadow p-4 border border-gray-200 dark:border-gray-700">
+        <div className="flex items-center gap-2 mb-2 text-foreground dark:text-gray-300">
           <AlertTriangle className="w-5 h-5" />
           <h6 className="font-semibold">Error Rate</h6>
         </div>
@@ -149,7 +149,7 @@ export function WizardMonitoring() {
   );
 
   const renderAlerts = () => (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 overflow-hidden h-full">
+    <div className="bg-transparent dark:bg-transparent rounded-md shadow border border-gray-200 dark:border-gray-700 overflow-hidden h-full">
       <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
         <h6 className="font-semibold text-gray-900 dark:text-white">System Alerts</h6>
         <div className="relative">
@@ -159,9 +159,9 @@ export function WizardMonitoring() {
           </div>
         </div>
       </div>
-      <div className="divide-y divide-gray-200 dark:divide-gray-700 max-h-[400px] overflow-y-auto">
+      <div className="divide-y divide-border/50 dark:divide-border/40 max-h-[400px] overflow-y-auto">
         {alerts.length === 0 ? (
-          <div className="p-4 text-center text-gray-500 text-sm">No alerts</div>
+          <div className="p-4 text-center text-muted-foreground text-sm">No alerts</div>
         ) : (
           alerts.slice(0, 20).map((alert) => (
             <div key={alert.id} className="p-4 flex items-start gap-3">
@@ -175,19 +175,19 @@ export function WizardMonitoring() {
               <div className="flex-1 min-w-0">
                 <p
                   className={`text-sm font-medium text-gray-900 dark:text-white ${
-                    alert.resolved ? 'line-through text-gray-400 dark:text-gray-500' : ''
+                    alert.resolved ? 'line-through text-gray-400 dark:text-muted-foreground' : ''
                   }`}
                 >
                   {alert.message}
                 </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-0.5">
                   {new Date(alert.timestamp).toLocaleString()}
                 </p>
               </div>
               {!alert.resolved && (
                 <button
                   onClick={() => resolveAlert(alert.id)}
-                  className="text-xs bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 px-2 py-1 rounded transition-colors"
+                  className="text-xs bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-foreground dark:text-gray-300 px-2 py-1 rounded transition-colors"
                 >
                   Resolve
                 </button>
@@ -200,26 +200,26 @@ export function WizardMonitoring() {
   );
 
   const renderPerformanceLogs = () => (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 overflow-hidden h-full">
+    <div className="bg-transparent dark:bg-transparent rounded-md shadow border border-gray-200 dark:border-gray-700 overflow-hidden h-full">
       <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
         <h6 className="font-semibold text-gray-900 dark:text-white">Performance Logs</h6>
         <button
           onClick={() => sendMessage('refresh_logs', {})}
-          className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          className="text-muted-foreground hover:text-foreground dark:text-muted-foreground dark:hover:text-gray-200"
         >
           <RefreshCw className="w-4 h-4" />
         </button>
       </div>
-      <div className="divide-y divide-gray-200 dark:divide-gray-700 max-h-[400px] overflow-y-auto">
+      <div className="divide-y divide-border/50 dark:divide-border/40 max-h-[400px] overflow-y-auto">
         {logs.length === 0 ? (
-          <div className="p-4 text-center text-gray-500 text-sm">No logs</div>
+          <div className="p-4 text-center text-muted-foreground text-sm">No logs</div>
         ) : (
           logs.slice(0, 20).map((log, index) => (
             <div key={index} className="p-4">
               <p className="text-sm font-medium text-gray-900 dark:text-white mb-0.5">
                 {log.operation}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 flex flex-wrap gap-2">
+              <p className="text-xs text-muted-foreground dark:text-muted-foreground flex flex-wrap gap-2">
                 <span>{new Date(log.timestamp).toLocaleString()}</span>
                 <span>•</span>
                 <span>Duration: {formatDuration(log.duration)}</span>
@@ -239,7 +239,7 @@ export function WizardMonitoring() {
         <h5 className="text-xl font-bold text-gray-900 dark:text-white">System Monitoring</h5>
         <button
           onClick={() => setShowSettings(true)}
-          className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          className="p-2 text-muted-foreground hover:text-foreground dark:text-muted-foreground dark:hover:text-gray-200 rounded-full hover:bg-muted/30 dark:hover:bg-muted/20 transition-colors"
           title="Monitoring Settings"
         >
           <Settings className="w-5 h-5" />
@@ -248,7 +248,7 @@ export function WizardMonitoring() {
 
       <div>{renderMetrics()}</div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>{renderAlerts()}</div>
         <div>{renderPerformanceLogs()}</div>
       </div>
@@ -256,26 +256,26 @@ export function WizardMonitoring() {
       {/* Settings Modal */}
       {showSettings && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
+          <div className="bg-transparent dark:bg-transparent rounded-md shadow-none w-full max-w-md mx-4 overflow-hidden">
             <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                 Monitoring Settings
               </h3>
               <button
                 onClick={() => setShowSettings(false)}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                className="text-gray-400 hover:text-muted-foreground dark:hover:text-gray-300"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <div className="p-6 space-y-4">
+            <div className="p-4 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
                   Alert Threshold (%)
                 </label>
                 <input
                   type="number"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-transparent dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={settings.alertThreshold}
                   onChange={(e) =>
                     setSettings((prev) => ({
@@ -286,12 +286,12 @@ export function WizardMonitoring() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
                   Log Retention (days)
                 </label>
                 <input
                   type="number"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-transparent dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={settings.logRetentionDays}
                   onChange={(e) =>
                     setSettings((prev) => ({
@@ -302,12 +302,12 @@ export function WizardMonitoring() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
                   Metrics Interval (ms)
                 </label>
                 <input
                   type="number"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-transparent dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={settings.metricsInterval}
                   onChange={(e) =>
                     setSettings((prev) => ({
@@ -318,10 +318,10 @@ export function WizardMonitoring() {
                 />
               </div>
             </div>
-            <div className="bg-gray-50 dark:bg-gray-900 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t border-gray-200 dark:border-gray-700">
+            <div className="bg-transparent dark:bg-gray-900 px-4 py-2 sm:px-3 sm:flex sm:flex-row-reverse border-t border-gray-200 dark:border-gray-700">
               <button
                 type="button"
-                className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
+                className="w-full inline-flex justify-center rounded-md border border-transparent shadow-none px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
                 onClick={() => setShowSettings(false)}
               >
                 Done

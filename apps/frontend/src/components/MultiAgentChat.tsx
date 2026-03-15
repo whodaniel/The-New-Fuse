@@ -53,28 +53,22 @@ const MessageItem = React.memo<{ msg: Message }>(({ msg }) => {
     <div
       className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'} animate-in slide-in-from-bottom-2 duration-300`}
     >
-      <div
-        className={`max-w-[80%] flex gap-4 ${msg.type === 'user' ? 'flex-row-reverse' : ''}`}
-      >
+      <div className={`max-w-[80%] flex gap-4 ${msg.type === 'user' ? 'flex-row-reverse' : ''}`}>
         <div
-          className={`w-10 h-10 rounded-xl shrink-0 flex items-center justify-center border ${
+          className={`w-10 h-10 rounded-md shrink-0 flex items-center justify-center border ${
             msg.type === 'user'
               ? 'bg-blue-600 text-white border-blue-400'
-              : 'bg-white/5 text-blue-400 border-white/10'
+              : 'bg-transparent/5 text-blue-400 border-white/10'
           }`}
         >
-          {msg.type === 'user' ? (
-            <Users className="w-5 h-5" />
-          ) : (
-            <Bot className="w-5 h-5" />
-          )}
+          {msg.type === 'user' ? <Users className="w-5 h-5" /> : <Bot className="w-5 h-5" />}
         </div>
         <div className={`space-y-1 ${msg.type === 'user' ? 'text-right' : 'text-left'}`}>
           <div className="flex items-center gap-2 mb-1 justify-inherit">
-            <span className="text-xs font-black uppercase text-gray-500 tracking-tighter">
+            <span className="text-xs font-black uppercase text-muted-foreground tracking-tighter">
               {msg.sender}
             </span>
-            <span className="text-[10px] text-gray-700 font-mono">
+            <span className="text-[10px] text-foreground font-mono">
               {new Date(msg.timestamp).toLocaleTimeString([], {
                 hour12: false,
                 hour: '2-digit',
@@ -83,10 +77,10 @@ const MessageItem = React.memo<{ msg: Message }>(({ msg }) => {
             </span>
           </div>
           <div
-            className={`p-4 rounded-2xl text-sm leading-relaxed shadow-2xl ${
+            className={`p-4 rounded-md text-sm leading-relaxed shadow-none ${
               msg.type === 'user'
                 ? 'bg-blue-600 text-white rounded-tr-none'
-                : 'bg-white/10 text-gray-200 border border-white/10 rounded-tl-none'
+                : 'bg-transparent/10 text-gray-200 border border-white/10 rounded-tl-none'
             }`}
           >
             {msg.text}
@@ -213,10 +207,10 @@ export const MultiAgentChat: React.FC = () => {
   };
 
   return (
-    <div className="flex h-[calc(100vh-100px)] gap-6 p-4 animate-in fade-in duration-1000">
+    <div className="flex h-[calc(100vh-100px)] gap-4 p-4 animate-in fade-in duration-1000">
       {/* Left Sidebar: Swarm Identity */}
-      <div className="hidden lg:flex flex-col w-80 gap-6 overflow-y-auto">
-        <GlassCard className="p-6 border-blue-500/20">
+      <div className="hidden lg:flex flex-col w-80 gap-4 overflow-y-auto">
+        <GlassCard className="p-4 border-blue-500/20">
           <h2 className="text-xl font-extrabold text-white flex items-center gap-2 mb-4">
             <Users className="w-6 h-6 text-blue-400" />
             Swarm Collective
@@ -230,7 +224,7 @@ export const MultiAgentChat: React.FC = () => {
           )}
 
           {agentsError && (
-            <div className="mb-4 p-3 rounded-lg border border-red-500/30 bg-red-500/10 text-red-300 text-xs">
+            <div className="mb-4 p-3 rounded-md border border-red-500/30 bg-red-500/10 text-red-300 text-xs">
               {agentsError}
             </div>
           )}
@@ -239,10 +233,10 @@ export const MultiAgentChat: React.FC = () => {
             {activeAgents.map((agent) => (
               <div
                 key={agent.id}
-                className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 hover:border-blue-500/30 transition-all cursor-pointer group"
+                className="flex items-center gap-3 p-3 rounded-md bg-transparent/5 border border-white/10 hover:border-blue-500/30 transition-all cursor-pointer group"
               >
                 <div className="relative">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-600/20 to-indigo-600/20 flex items-center justify-center border border-white/10">
+                  <div className="w-10 h-10 rounded-md bg-gradient-to-br from-blue-600/20 to-indigo-600/20 flex items-center justify-center border border-white/10">
                     <Bot className="w-5 h-5 text-blue-400 group-hover:scale-110 transition-transform" />
                   </div>
                   <div
@@ -251,13 +245,13 @@ export const MultiAgentChat: React.FC = () => {
                         ? 'bg-emerald-500'
                         : agent.status === 'busy'
                           ? 'bg-amber-500'
-                          : 'bg-gray-500'
+                          : 'bg-transparent0'
                     }`}
                   />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-bold text-white truncate">{agent.name}</div>
-                  <div className="text-[10px] text-gray-500 font-mono uppercase tracking-widest">
+                  <div className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest">
                     {agent.role}
                   </div>
                 </div>
@@ -273,7 +267,7 @@ export const MultiAgentChat: React.FC = () => {
           </PremiumButton>
         </GlassCard>
 
-        <GlassCard className="p-6 bg-gradient-to-br from-indigo-600/5 to-transparent flex-1">
+        <GlassCard className="p-4 bg-gradient-to-br from-indigo-600/5 to-transparent flex-1">
           <h3 className="text-lg font-bold text-white mb-4">Orchestration Parameters</h3>
           <div className="space-y-4">
             <ParamSlider label="Collective Temperature" value={0.7} />
@@ -285,7 +279,7 @@ export const MultiAgentChat: React.FC = () => {
               <span>Protocol Mode</span>
               <Sparkles className="w-3 h-3 text-amber-400" />
             </div>
-            <div className="p-3 rounded-lg bg-black/40 border border-white/5 text-[10px] text-gray-400 leading-relaxed italic">
+            <div className="p-3 rounded-md bg-black/40 border border-white/5 text-[10px] text-gray-400 leading-relaxed italic">
               "Agents are operating in Consensus Mode. All responses require cross-verification
               through the Relay Broker."
             </div>
@@ -296,7 +290,7 @@ export const MultiAgentChat: React.FC = () => {
       {/* Main Area: Coordination Arena */}
       <div className="flex-1 flex flex-col min-w-0 gap-4">
         <GlassCard className="flex-1 flex flex-col overflow-hidden">
-          <div className="p-4 border-b border-white/10 flex justify-between items-center bg-white/5">
+          <div className="p-4 border-b border-white/10 flex justify-between items-center bg-transparent/5">
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <h2 className="font-bold text-white tracking-wide uppercase text-sm">
@@ -304,27 +298,27 @@ export const MultiAgentChat: React.FC = () => {
               </h2>
             </div>
             <div className="flex gap-2">
-              <button className="p-2 text-gray-500 hover:text-white transition-colors">
+              <button className="p-2 text-muted-foreground hover:text-white transition-colors">
                 <Search className="w-4 h-4" />
               </button>
-              <button className="p-2 text-gray-500 hover:text-white transition-colors">
+              <button className="p-2 text-muted-foreground hover:text-white transition-colors">
                 <Settings className="w-4 h-4" />
               </button>
             </div>
           </div>
 
           {sendError && (
-            <div className="mx-6 mt-4 p-3 rounded-lg border border-red-500/30 bg-red-500/10 text-red-300 text-xs">
+            <div className="mx-6 mt-4 p-3 rounded-md border border-red-500/30 bg-red-500/10 text-red-300 text-xs">
               {sendError}
             </div>
           )}
 
           <div
             ref={scrollRef}
-            className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin scrollbar-thumb-white/10"
+            className="flex-1 overflow-y-auto p-4 space-y-6 scrollbar-thin scrollbar-thumb-white/10"
           >
             {messages.length === 0 && !isTyping && (
-              <div className="text-sm text-gray-500 border border-white/10 rounded-xl p-4 bg-white/5">
+              <div className="text-sm text-muted-foreground border border-white/10 rounded-md p-4 bg-transparent/5">
                 No conversation yet. Send a command to the orchestration broker.
               </div>
             )}
@@ -335,7 +329,7 @@ export const MultiAgentChat: React.FC = () => {
 
             {isTyping && (
               <div className="flex justify-start animate-in fade-in duration-300">
-                <div className="bg-white/5 border border-white/10 px-4 py-2 rounded-full flex gap-1 items-center">
+                <div className="bg-transparent/5 border border-white/10 px-4 py-2 rounded-full flex gap-1 items-center">
                   <div className="w-1 h-1 bg-blue-400 rounded-full animate-bounce" />
                   <div className="w-1 h-1 bg-blue-400 rounded-full animate-bounce [animation-delay:-0.15s]" />
                   <div className="w-1 h-1 bg-blue-400 rounded-full animate-bounce [animation-delay:-0.3s]" />
@@ -345,10 +339,10 @@ export const MultiAgentChat: React.FC = () => {
           </div>
 
           {/* Input Arena */}
-          <div className="p-6 border-t border-white/10 bg-black/20">
+          <div className="p-4 border-t border-white/10 bg-black/20">
             <div className="relative group">
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur opacity-20 group-focus-within:opacity-40 transition duration-1000" />
-              <div className="relative flex items-center bg-[#0d1117] border border-white/10 rounded-2xl overflow-hidden px-4 py-2">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-md blur opacity-20 group-focus-within:opacity-40 transition duration-1000" />
+              <div className="relative flex items-center bg-[#0d1117] border border-white/10 rounded-md overflow-hidden px-4 py-2">
                 <textarea
                   rows={1}
                   placeholder="Distribute command to the collective..."
@@ -364,7 +358,7 @@ export const MultiAgentChat: React.FC = () => {
                 />
                 <div className="flex items-center gap-2 ml-4">
                   <button
-                    className="p-2 text-gray-500 hover:text-white transition-colors"
+                    className="p-2 text-muted-foreground hover:text-white transition-colors"
                     title="Attach Context"
                   >
                     <Zap className="w-4 h-4" />
@@ -372,7 +366,7 @@ export const MultiAgentChat: React.FC = () => {
                   <button
                     onClick={() => void handleSend()}
                     disabled={!inputValue.trim() || isTyping}
-                    className="p-2 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-800 disabled:text-gray-600 text-white rounded-xl transition-all"
+                    className="p-2 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-800 disabled:text-muted-foreground text-white rounded-md transition-all"
                   >
                     <Send className="w-4 h-4" />
                   </button>
@@ -388,11 +382,11 @@ export const MultiAgentChat: React.FC = () => {
 
 const ParamSlider: React.FC<{ label: string; value: number }> = ({ label, value }) => (
   <div className="space-y-2">
-    <div className="flex justify-between text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+    <div className="flex justify-between text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
       <span>{label}</span>
       <span className="text-white">{value}</span>
     </div>
-    <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+    <div className="h-1 w-full bg-transparent/5 rounded-full overflow-hidden border border-white/5">
       <div className="h-full bg-blue-600 rounded-full" style={{ width: `${value * 100}%` }} />
     </div>
   </div>

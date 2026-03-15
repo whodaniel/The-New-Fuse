@@ -268,10 +268,10 @@ const AdminSettings: React.FC = () => {
   const [activeTab, setActiveTab] = useState('system');
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
+    <div className="p-4 max-w-6xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white">Admin Settings</h1>
+          <h1 className="text-2xl font-bold text-white">Admin Settings</h1>
           <p className="text-gray-400 mt-2">
             Manage system-wide configuration and security settings
           </p>
@@ -325,7 +325,7 @@ const AdminSettings: React.FC = () => {
         <TabsContent value="system" className="space-y-6">
           <Card title="System Configuration" gradient="blue">
             <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="maintenance-mode" className="text-gray-300">
                     Maintenance Mode
@@ -423,7 +423,7 @@ const AdminSettings: React.FC = () => {
         <TabsContent value="security" className="space-y-6">
           <Card title="Security Settings" gradient="purple">
             <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="enforce-ssl" className="text-gray-300">
                     Enforce SSL
@@ -515,7 +515,7 @@ const AdminSettings: React.FC = () => {
         <TabsContent value="database" className="space-y-6">
           <Card title="Database Configuration" gradient="orange">
             <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Input
                     label="Connection Pool Size"
@@ -583,7 +583,7 @@ const AdminSettings: React.FC = () => {
         <TabsContent value="notifications" className="space-y-6">
           <Card title="Notification Settings" gradient="green">
             <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="email-notifications" className="text-gray-300">
                     Email Notifications
@@ -676,7 +676,7 @@ const AdminSettings: React.FC = () => {
                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                   Gemini (Google)
                 </h3>
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-2 gap-4">
                   <Input
                     label="Client ID"
                     value={settings.oauth?.gemini?.clientId || ''}
@@ -709,7 +709,7 @@ const AdminSettings: React.FC = () => {
                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                   GitHub Copilot
                 </h3>
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-2 gap-4">
                   <Input
                     label="Client ID"
                     value={settings.oauth?.github?.clientId || ''}
@@ -731,7 +731,7 @@ const AdminSettings: React.FC = () => {
                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                   OpenCode
                 </h3>
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-2 gap-4">
                   <Input
                     label="API URL"
                     value={settings.oauth?.opencode?.baseUrl || 'http://localhost:4096'}
@@ -767,7 +767,7 @@ const AdminSettings: React.FC = () => {
                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                   Anthropic
                 </h3>
-                <div className="grid grid-cols-1 gap-6">
+                <div className="grid grid-cols-1 gap-4">
                   <Input
                     label="API Key"
                     type="password"

@@ -48,7 +48,7 @@ const WorkspaceSettings = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Workspace Settings</h1>
+        <h1 className="text-2xl font-bold">Workspace Settings</h1>
         <p className="text-muted-foreground mt-2">Manage your workspace settings and preferences</p>
       </div>
 
@@ -108,7 +108,7 @@ const WorkspaceSettings = () => {
             </Dialog.Description>
           </Dialog.Header>
 
-          <div className="space-y-4 py-4">
+          <div className="space-y-4 py-2">
             <div className="flex items-center space-x-2">
               <AlertTriangle className="h-5 w-5 text-destructive" />
               <p className="text-sm text-muted-foreground">

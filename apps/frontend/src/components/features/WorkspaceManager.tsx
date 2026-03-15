@@ -26,7 +26,7 @@ export const WorkspaceManager = () => {
     setShowCreateForm(false);
   };
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Workspaces</h1>
         <Button_1.Button onClick={() => setShowCreateForm(true)}>Create Workspace</Button_1.Button>
@@ -77,7 +77,7 @@ export const WorkspaceManager = () => {
               <Card_1.CardTitle>{workspace.name}</Card_1.CardTitle>
             </Card_1.CardHeader>
             <Card_1.CardContent>
-              <p className="text-sm text-gray-500">{workspace.description}</p>
+              <p className="text-sm text-muted-foreground">{workspace.description}</p>
               <div className="mt-4 space-y-2">
                 <div className="flex justify-between text-sm">
                   <span>Agents:</span>

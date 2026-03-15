@@ -69,16 +69,16 @@ export const AgentConfig: React.FC<AgentConfigProps> = ({ onUpdate }) => {
       case AgentState.ACTIVE:
         return 'text-green-600 bg-green-100';
       case AgentState.IDLE:
-        return 'text-gray-600 bg-gray-100';
+        return 'text-muted-foreground bg-gray-100';
       case AgentState.ERROR:
         return 'text-red-600 bg-red-100';
       default:
-        return 'text-gray-600 bg-gray-100';
+        return 'text-muted-foreground bg-gray-100';
     }
   };
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-4">
       {/* Add New Agent Section */}
       <div>
         <h3 className="text-lg font-semibold mb-3">Add New Agent</h3>
@@ -126,7 +126,7 @@ export const AgentConfig: React.FC<AgentConfigProps> = ({ onUpdate }) => {
           {Array.from(agents.values()).map((agent) => (
             <div
               key={agent.id}
-              className="border border-gray-200 rounded-lg shadow-sm p-4 bg-white"
+              className="border border-gray-200 rounded-md shadow-none p-4 bg-transparent"
             >
               <div className="flex justify-between items-center mb-4">
                 <h4 className="font-semibold text-lg">{agent.name}</h4>
@@ -159,20 +159,20 @@ export const AgentConfig: React.FC<AgentConfigProps> = ({ onUpdate }) => {
                 </div>
               </div>
 
-              <div className="text-sm text-gray-600 mb-4">Type: {agent.type}</div>
+              <div className="text-sm text-muted-foreground mb-4">Type: {agent.type}</div>
 
               <div>
                 <h5 className="text-sm font-medium mb-2">Performance Metrics</h5>
                 <div className="space-y-1">
-                  <div className="flex justify-between text-xs text-gray-600">
+                  <div className="flex justify-between text-xs text-muted-foreground">
                     <span>CPU Usage</span>
                     <span>{agent.performance.cpu_usage}%</span>
                   </div>
-                  <div className="flex justify-between text-xs text-gray-600">
+                  <div className="flex justify-between text-xs text-muted-foreground">
                     <span>Memory</span>
                     <span>{agent.performance.memory_usage}MB</span>
                   </div>
-                  <div className="flex justify-between text-xs text-gray-600">
+                  <div className="flex justify-between text-xs text-muted-foreground">
                     <span>Tasks</span>
                     <span>{agent.tasks.length}</span>
                   </div>
@@ -182,7 +182,7 @@ export const AgentConfig: React.FC<AgentConfigProps> = ({ onUpdate }) => {
           ))}
 
           {agents.size === 0 && (
-            <div className="col-span-full text-center py-8 text-gray-500 border border-dashed border-gray-200 rounded-lg">
+            <div className="col-span-full text-center py-8 text-muted-foreground border border-dashed border-gray-200 rounded-md">
               No active agents. Add one above.
             </div>
           )}

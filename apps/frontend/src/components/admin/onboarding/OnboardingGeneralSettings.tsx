@@ -40,10 +40,10 @@ const CustomSwitch: React.FC<CustomSwitchProps> = ({ id, isChecked, onChange, la
         className={`block w-14 h-8 rounded-full ${isChecked ? 'bg-blue-500' : 'bg-gray-300'}`}
       ></div>
       <div
-        className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform ${isChecked ? 'transform translate-x-6' : ''}`}
+        className={`dot absolute left-1 top-1 bg-transparent w-6 h-6 rounded-full transition-transform ${isChecked ? 'transform translate-x-6' : ''}`}
       ></div>
     </div>
-    <div className="ml-3 text-gray-700 font-medium">{label}</div>
+    <div className="ml-3 text-foreground font-medium">{label}</div>
   </label>
 );
 
@@ -181,13 +181,13 @@ export const OnboardingGeneralSettings: React.FC<OnboardingGeneralSettingsProps>
 
       {error && !isLoading && (
         <div
-          className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
+          className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded relative mb-4"
           role="alert"
         >
           <strong className="font-bold">Error Loading Settings. </strong>
           <span className="block sm:inline">{error}</span>
           <button
-            className="absolute top-0 bottom-0 right-0 px-4 py-3"
+            className="absolute top-0 bottom-0 right-0 px-4 py-2"
             onClick={() => window.location.reload()}
           >
             Retry
@@ -197,13 +197,13 @@ export const OnboardingGeneralSettings: React.FC<OnboardingGeneralSettingsProps>
 
       {!isLoading && !error && (
         <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* General Settings */}
-            <div className="bg-white shadow rounded-lg">
-              <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
+            <div className="bg-transparent shadow-none-none rounded-md">
+              <div className="px-4 py-5 sm:px-3 border-b border-gray-200">
                 <h3 className="text-lg leading-6 font-medium text-gray-900">General Settings</h3>
               </div>
-              <div className="p-6">
+              <div className="p-4">
                 <div className="space-y-4">
                   <CustomSwitch
                     id="onboarding-enabled"
@@ -234,14 +234,14 @@ export const OnboardingGeneralSettings: React.FC<OnboardingGeneralSettingsProps>
             </div>
 
             {/* Appearance */}
-            <div className="bg-white shadow rounded-lg">
-              <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
+            <div className="bg-transparent shadow-none-none rounded-md">
+              <div className="px-4 py-5 sm:px-3 border-b border-gray-200">
                 <h3 className="text-lg leading-6 font-medium text-gray-900">Appearance</h3>
               </div>
-              <div className="p-6">
+              <div className="p-4">
                 <div className="space-y-4">
                   <div>
-                    <label htmlFor="logoUrl" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="logoUrl" className="block text-sm font-medium text-foreground">
                       Logo URL
                     </label>
                     <input
@@ -251,7 +251,7 @@ export const OnboardingGeneralSettings: React.FC<OnboardingGeneralSettingsProps>
                       value={settings.logoUrl}
                       onChange={handleChange}
                       placeholder="URL to your logo"
-                      className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full px-3 py-2 bg-transparent border border-gray-300 rounded-md shadow-none-none-none placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     />
                   </div>
 
@@ -259,7 +259,7 @@ export const OnboardingGeneralSettings: React.FC<OnboardingGeneralSettingsProps>
                     <div>
                       <label
                         htmlFor="primaryColor"
-                        className="block text-sm font-medium text-gray-700"
+                        className="block text-sm font-medium text-foreground"
                       >
                         Primary Color
                       </label>
@@ -271,7 +271,7 @@ export const OnboardingGeneralSettings: React.FC<OnboardingGeneralSettingsProps>
                           value={settings.primaryColor}
                           onChange={handleChange}
                           placeholder="#3182CE"
-                          className="block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                          className="block w-full px-3 py-2 bg-transparent border border-gray-300 rounded-md shadow-none-none-none placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                         />
                         <div
                           className="w-9 h-9 rounded-md border border-gray-200"
@@ -283,7 +283,7 @@ export const OnboardingGeneralSettings: React.FC<OnboardingGeneralSettingsProps>
                     <div>
                       <label
                         htmlFor="secondaryColor"
-                        className="block text-sm font-medium text-gray-700"
+                        className="block text-sm font-medium text-foreground"
                       >
                         Secondary Color
                       </label>
@@ -295,7 +295,7 @@ export const OnboardingGeneralSettings: React.FC<OnboardingGeneralSettingsProps>
                           value={settings.secondaryColor}
                           onChange={handleChange}
                           placeholder="#4FD1C5"
-                          className="block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                          className="block w-full px-3 py-2 bg-transparent border border-gray-300 rounded-md shadow-none-none-none placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                         />
                         <div
                           className="w-9 h-9 rounded-md border border-gray-200"
@@ -308,7 +308,7 @@ export const OnboardingGeneralSettings: React.FC<OnboardingGeneralSettingsProps>
                   <div>
                     <label
                       htmlFor="backgroundImage"
-                      className="block text-sm font-medium text-gray-700"
+                      className="block text-sm font-medium text-foreground"
                     >
                       Background Image URL (optional)
                     </label>
@@ -319,7 +319,7 @@ export const OnboardingGeneralSettings: React.FC<OnboardingGeneralSettingsProps>
                       value={settings.backgroundImage}
                       onChange={handleChange}
                       placeholder="URL to background image"
-                      className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full px-3 py-2 bg-transparent border border-gray-300 rounded-md shadow-none-none-none placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     />
                   </div>
                 </div>
@@ -328,14 +328,17 @@ export const OnboardingGeneralSettings: React.FC<OnboardingGeneralSettingsProps>
           </div>
 
           {/* Content */}
-          <div className="bg-white shadow rounded-lg">
-            <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
+          <div className="bg-transparent shadow-none-none rounded-md">
+            <div className="px-4 py-5 sm:px-3 border-b border-gray-200">
               <h3 className="text-lg leading-6 font-medium text-gray-900">Content</h3>
             </div>
-            <div className="p-6">
+            <div className="p-4">
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="welcomeTitle" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="welcomeTitle"
+                    className="block text-sm font-medium text-foreground"
+                  >
                     Welcome Title
                   </label>
                   <input
@@ -345,14 +348,14 @@ export const OnboardingGeneralSettings: React.FC<OnboardingGeneralSettingsProps>
                     value={settings.welcomeTitle}
                     onChange={handleChange}
                     placeholder="Welcome to The New Fuse"
-                    className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    className="mt-1 block w-full px-3 py-2 bg-transparent border border-gray-300 rounded-md shadow-none-none-none placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   />
                 </div>
 
                 <div>
                   <label
                     htmlFor="welcomeMessage"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-foreground"
                   >
                     Welcome Message
                   </label>
@@ -363,25 +366,25 @@ export const OnboardingGeneralSettings: React.FC<OnboardingGeneralSettingsProps>
                     onChange={handleChange}
                     placeholder="Enter welcome message"
                     rows={3}
-                    className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    className="mt-1 block w-full px-3 py-2 bg-transparent border border-gray-300 rounded-md shadow-none-none-none placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   />
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Behavior */}
-            <div className="bg-white shadow rounded-lg">
-              <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
+            <div className="bg-transparent shadow-none-none rounded-md">
+              <div className="px-4 py-5 sm:px-3 border-b border-gray-200">
                 <h3 className="text-lg leading-6 font-medium text-gray-900">Behavior</h3>
               </div>
-              <div className="p-6">
+              <div className="p-4">
                 <div className="space-y-4">
                   <div>
                     <label
                       htmlFor="timeoutMinutes"
-                      className="block text-sm font-medium text-gray-700"
+                      className="block text-sm font-medium text-foreground"
                     >
                       Session Timeout (minutes)
                     </label>
@@ -393,7 +396,7 @@ export const OnboardingGeneralSettings: React.FC<OnboardingGeneralSettingsProps>
                       max="120"
                       value={settings.timeoutMinutes}
                       onChange={(e) => handleNumberChange('timeoutMinutes', e.target.value)}
-                      className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full px-3 py-2 bg-transparent border border-gray-300 rounded-md shadow-none-none-none placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     />
                   </div>
 
@@ -407,7 +410,7 @@ export const OnboardingGeneralSettings: React.FC<OnboardingGeneralSettingsProps>
                   <div>
                     <label
                       htmlFor="redirectAfterCompletion"
-                      className="block text-sm font-medium text-gray-700"
+                      className="block text-sm font-medium text-foreground"
                     >
                       Redirect After Completion
                     </label>
@@ -418,7 +421,7 @@ export const OnboardingGeneralSettings: React.FC<OnboardingGeneralSettingsProps>
                       value={settings.redirectAfterCompletion}
                       onChange={handleChange}
                       placeholder="/dashboard"
-                      className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border--blue-500 sm:text-sm"
+                      className="mt-1 block w-full px-3 py-2 bg-transparent border border-gray-300 rounded-md shadow-none-none-none placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border--blue-500 sm:text-sm"
                     />
                   </div>
                 </div>
@@ -426,11 +429,11 @@ export const OnboardingGeneralSettings: React.FC<OnboardingGeneralSettingsProps>
             </div>
 
             {/* Analytics */}
-            <div className="bg-white shadow rounded-lg">
-              <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
+            <div className="bg-transparent shadow-none-none rounded-md">
+              <div className="px-4 py-5 sm:px-3 border-b border-gray-200">
                 <h3 className="text-lg leading-6 font-medium text-gray-900">Analytics</h3>
               </div>
-              <div className="p-6">
+              <div className="p-4">
                 <div className="space-y-4">
                   <CustomSwitch
                     id="track-analytics"
@@ -456,7 +459,7 @@ export const OnboardingGeneralSettings: React.FC<OnboardingGeneralSettingsProps>
               type="button"
               onClick={handleSave}
               disabled={!_hasUnsavedChanges}
-              className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex justify-center py-2 px-4 border border-transparent shadow-none-none-none text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Save Changes
             </button>

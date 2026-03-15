@@ -82,7 +82,7 @@ export function ConnectionManager() {
       case 'disconnected':
         return 'bg-red-500';
       default:
-        return 'bg-gray-500';
+        return 'bg-transparent0';
     }
   };
 
@@ -155,7 +155,7 @@ export function ConnectionManager() {
           {filteredConnections.map((connection) => (
             <div
               key={connection.id}
-              className={`p-4 border rounded-lg ${selectedConnection === connection.id ? 'border-blue-500' : ''} ${selectedConnections.has(connection.id) ? 'bg-blue-50' : ''}`}
+              className={`p-4 border rounded-md ${selectedConnection === connection.id ? 'border-blue-500' : ''} ${selectedConnections.has(connection.id) ? 'bg-blue-50' : ''}`}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
@@ -171,7 +171,7 @@ export function ConnectionManager() {
                     <span className="font-medium">{connection.type}</span>
                     <div className="flex items-center space-x-2 mt-1">
                       <Badge variant="secondary">{connection.status}</Badge>
-                      <span className="text-sm text-gray-500">
+                      <span className="text-sm text-muted-foreground">
                         Last activity: {format(new Date(connection.lastActivity), 'PPpp')}
                       </span>
                     </div>
@@ -215,7 +215,7 @@ export function ConnectionManager() {
               </div>
 
               {selectedConnection === connection.id && (
-                <div className="mt-4 bg-gray-50 p-4 rounded">
+                <div className="mt-4 bg-transparent p-4 rounded">
                   <pre className="text-xs overflow-x-auto">
                     {JSON.stringify(connection.metadata, null, 2)}
                   </pre>
@@ -225,7 +225,7 @@ export function ConnectionManager() {
           ))}
 
           {filteredConnections.length === 0 && (
-            <div className="text-center text-gray-500 py-8">
+            <div className="text-center text-muted-foreground py-8">
               {connections.length === 0
                 ? 'No active connections'
                 : 'No connections match the current filters'}

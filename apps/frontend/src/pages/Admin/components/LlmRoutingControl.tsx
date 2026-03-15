@@ -213,14 +213,14 @@ export function LlmRoutingControl() {
 
   if (loading) {
     return (
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+      <div className="rounded-md border border-white/10 bg-transparent/5 p-4">
         <div className="text-sm text-slate-300">Loading centralized LLM routing...</div>
       </div>
     );
   }
 
   return (
-    <section className="rounded-2xl border border-cyan-500/20 bg-slate-900/60 p-6 space-y-6">
+    <section className="rounded-md border border-cyan-500/20 bg-slate-900/60 p-4 space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h2 className="text-xl font-semibold text-cyan-300">Centralized LLM Routing</h2>
@@ -231,14 +231,14 @@ export function LlmRoutingControl() {
         <div className="flex items-center gap-2">
           <button
             onClick={load}
-            className="px-3 py-2 rounded-lg border border-white/15 text-slate-200 hover:bg-white/5 text-sm"
+            className="px-3 py-2 rounded-md border border-white/15 text-slate-200 hover:bg-transparent/5 text-sm"
           >
             Reload
           </button>
           <button
             onClick={save}
             disabled={saving}
-            className="px-4 py-2 rounded-lg bg-cyan-500/20 border border-cyan-400/30 text-cyan-200 hover:bg-cyan-500/30 text-sm disabled:opacity-60"
+            className="px-4 py-2 rounded-md bg-cyan-500/20 border border-cyan-400/30 text-cyan-200 hover:bg-cyan-500/30 text-sm disabled:opacity-60"
           >
             {saving ? 'Saving...' : 'Save Routing'}
           </button>
@@ -246,7 +246,7 @@ export function LlmRoutingControl() {
       </div>
 
       {error && (
-        <div className="rounded-lg bg-red-500/10 border border-red-500/30 p-3 text-red-300 text-sm">
+        <div className="rounded-md bg-red-500/10 border border-red-500/30 p-3 text-red-300 text-sm">
           {error}
         </div>
       )}
@@ -277,11 +277,11 @@ export function LlmRoutingControl() {
             value={newTarget}
             onChange={(e) => setNewTarget(e.target.value)}
             placeholder="Add service or agent target"
-            className="flex-1 px-3 py-2 rounded-lg bg-slate-950 border border-white/15 text-slate-100"
+            className="flex-1 px-3 py-2 rounded-md bg-slate-950 border border-white/15 text-slate-100"
           />
           <button
             onClick={addTarget}
-            className="px-3 py-2 rounded-lg border border-white/15 text-slate-200 hover:bg-white/5"
+            className="px-3 py-2 rounded-md border border-white/15 text-slate-200 hover:bg-transparent/5"
           >
             Add Target
           </button>
@@ -298,7 +298,7 @@ export function LlmRoutingControl() {
             return (
               <div
                 key={target}
-                className="rounded-xl border border-white/10 bg-slate-950/60 p-3 space-y-3"
+                className="rounded-md border border-white/10 bg-slate-950/60 p-3 space-y-3"
               >
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                   <div className="text-sm font-medium text-slate-100">{target}</div>
@@ -315,7 +315,7 @@ export function LlmRoutingControl() {
                     </label>
                     <button
                       onClick={() => removeTarget(target)}
-                      className="text-xs px-2 py-1 rounded border border-white/15 text-slate-300 hover:bg-white/5"
+                      className="text-xs px-2 py-1 rounded border border-white/15 text-slate-300 hover:bg-transparent/5"
                     >
                       Remove
                     </button>
@@ -369,7 +369,7 @@ function RoutingSelector({
   onModelChange: (model: string) => void;
 }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-slate-950/40 p-3">
+    <div className="rounded-md border border-white/10 bg-slate-950/40 p-3">
       <div className="text-xs uppercase tracking-widest text-slate-400 mb-2">{title}</div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         <select

@@ -65,7 +65,7 @@ export function AppCreator() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-4xl mx-auto p-4">
       <form onSubmit={handleSubmit} className="space-y-6">
         <Card>
           <CardHeader>
@@ -107,7 +107,7 @@ export function AppCreator() {
               <Label>Select Modules</Label>
               {availableModules.map((category) => (
                 <div key={category.category} className="space-y-2">
-                  <h3 className="font-medium text-gray-700">{category.category}</h3>
+                  <h3 className="font-medium text-foreground">{category.category}</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {category.modules.map((module) => (
                       <Card
@@ -115,13 +115,13 @@ export function AppCreator() {
                         className={`cursor-pointer transition-all ${
                           selectedModules.includes(module.name)
                             ? 'bg-blue-100 border-blue-500'
-                            : 'bg-white'
+                            : 'bg-transparent'
                         }`}
                         onClick={() => handleModuleToggle(module.name)}
                       >
                         <CardContent className="p-4">
                           <h4 className="font-medium">{module.name}</h4>
-                          <p className="text-sm text-gray-600">{module.description}</p>
+                          <p className="text-sm text-muted-foreground">{module.description}</p>
                         </CardContent>
                       </Card>
                     ))}
@@ -141,7 +141,7 @@ export function AppCreator() {
                     onChange={(e) =>
                       setCustomizationOptions((prev) => ({ ...prev, theme: e.target.value }))
                     }
-                    className="w-full mt-1 px-3 py-2 border rounded-lg"
+                    className="w-full mt-1 px-3 py-2 border rounded-md"
                   >
                     <option value="light">Light</option>
                     <option value="dark">Dark</option>
@@ -175,9 +175,9 @@ export function AppCreator() {
           </Button>
         </div>
 
-        {error && <div className="p-4 bg-red-50 text-red-600 rounded-lg">{error}</div>}
+        {error && <div className="p-4 bg-red-50 text-red-600 rounded-md">{error}</div>}
         {successMessage && (
-          <div className="p-4 bg-green-50 text-green-600 rounded-lg">{successMessage}</div>
+          <div className="p-4 bg-green-50 text-green-600 rounded-md">{successMessage}</div>
         )}
       </form>
     </div>

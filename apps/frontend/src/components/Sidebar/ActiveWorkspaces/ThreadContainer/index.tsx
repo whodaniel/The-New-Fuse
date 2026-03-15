@@ -12,13 +12,14 @@ const STYLES = {
   loadingText: 'text-xs text-white animate-pulse',
   container: 'flex flex-col',
   newThreadButton:
-    'w-full relative flex h-[40px] items-center border-none hover:bg-[var(--theme-sidebar-thread-selected)] hover:light:bg-theme-sidebar-subitem-hover rounded-lg',
+    'w-full relative flex h-[40px] items-center border-none hover:bg-[var(--theme-sidebar-thread-selected)] hover:light:bg-theme-sidebar-subitem-hover rounded-md',
   buttonContent: 'flex w-full gap-x-2 items-center pl-4',
-  iconContainer: 'bg-white/20 p-2 rounded-lg h-[24px] w-[24px] flex items-center justify-center',
+  iconContainer:
+    'bg-transparent/20 p-2 rounded-md h-[24px] w-[24px] flex items-center justify-center',
   icon: 'shrink-0 text-white light:text-theme-text-primary',
   buttonText: 'text-left text-white light:text-theme-text-primary text-sm',
   deleteButton:
-    'w-full relative flex h-[40px] items-center border-none hover:bg-red-400/20 rounded-lg group',
+    'w-full relative flex h-[40px] items-center border-none hover:bg-red-400/20 rounded-md group',
   deleteIcon: 'shrink-0 text-white light:text-red-500/50 group-hover:text-red-400',
   deleteText:
     'text-white light:text-theme-text-secondary text-left text-sm group-hover:text-red-400',
@@ -151,18 +152,25 @@ export default function ThreadContainer({ workspace }) {
   );
 }
 function NewThreadButton({ workspace }) {
-    const [loading, setLoading] = useState(false);
-    const onClick = async () => {
-        setLoading(true);
-        const { thread, error } = await Workspace.threads.new(workspace.slug);
-        if (!!error) {
-            showToast(`Could not create thread - ${error}`, "error", { clear: true });
-            setLoading(false);
-            return;
-        }
-        window.location.replace(paths.workspace.thread(workspace.slug, thread.slug));
-    };
-    return (<button onClick={onClick} disabled={loading} aria-label="New Thread" title="New Thread" className={STYLES.newThreadButton}>
+  const [loading, setLoading] = useState(false);
+  const onClick = async () => {
+    setLoading(true);
+    const { thread, error } = await Workspace.threads.new(workspace.slug);
+    if (!!error) {
+      showToast(`Could not create thread - ${error}`, 'error', { clear: true });
+      setLoading(false);
+      return;
+    }
+    window.location.replace(paths.workspace.thread(workspace.slug, thread.slug));
+  };
+  return (
+    <button
+      onClick={onClick}
+      disabled={loading}
+      aria-label="New Thread"
+      title="New Thread"
+      className={STYLES.newThreadButton}
+    >
       <div className={STYLES.buttonContent}>
         <div className={STYLES.iconContainer}>
           {loading ? (
@@ -178,11 +186,17 @@ function NewThreadButton({ workspace }) {
   );
 }
 function DeleteAllThreadButton({ ctrlPressed, threads, onDelete }) {
-    if (!ctrlPressed || threads.filter((t) => t.deleted).length === 0)
-        return null;
-    return (<button type="button" onClick={onDelete} aria-label="Delete Selected Threads" title="Delete Selected Threads" className={STYLES.deleteButton}>
+  if (!ctrlPressed || threads.filter((t) => t.deleted).length === 0) return null;
+  return (
+    <button
+      type="button"
+      onClick={onDelete}
+      aria-label="Delete Selected Threads"
+      title="Delete Selected Threads"
+      className={STYLES.deleteButton}
+    >
       <div className={STYLES.buttonContent}>
-        <div className="bg-transparent p-2 rounded-lg h-[24px] w-[24px] flex items-center justify-center">
+        <div className="bg-transparent p-2 rounded-md h-[24px] w-[24px] flex items-center justify-center">
           <Trash weight="bold" size={14} className={STYLES.deleteIcon} />
         </div>
         <p className={STYLES.deleteText}>Delete Selected</p>

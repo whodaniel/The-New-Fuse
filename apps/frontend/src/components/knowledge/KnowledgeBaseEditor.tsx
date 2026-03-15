@@ -38,7 +38,9 @@ export const KnowledgeBaseEditor: React.FC = () => {
         {selectedNode ? (
           <Editor value={selectedNode.content} onChange={handleSave} supportMarkdown autoSave />
         ) : (
-          <div className="text-center text-gray-500">Select a knowledge base entry to edit</div>
+          <div className="text-center text-muted-foreground">
+            Select a knowledge base entry to edit
+          </div>
         )}
       </div>
     </div>

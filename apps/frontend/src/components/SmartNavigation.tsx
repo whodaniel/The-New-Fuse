@@ -231,14 +231,14 @@ function SmartNavigation() {
         ref={navRef}
         className="fixed top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-md border-b border-white/10 transition-all duration-300"
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-3 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center">
               <Link to="/" className="shrink-0 flex items-center group">
                 <img
                   src="/assets/brand/logo-monogram-neon.png"
                   alt="The New Fuse Logo"
-                  className="h-10 w-10 rounded-xl shadow-lg group-hover:scale-105 transition-transform object-cover"
+                  className="h-10 w-10 rounded-md shadow-none group-hover:scale-105 transition-transform object-cover"
                 />
                 <h1 className="ml-3 text-xl font-bold text-white tracking-tight group-hover:opacity-90 transition-opacity">
                   The New Fuse
@@ -296,7 +296,7 @@ function SmartNavigation() {
               </Link>
               <Link
                 to="/register"
-                className="bg-white text-gray-900 hover:bg-gray-100 px-5 py-2 rounded-full font-bold text-sm transition-all transform hover:scale-105 shadow-glow-sm"
+                className="bg-transparent text-gray-900 hover:bg-muted/30 px-5 py-2 rounded-full font-bold text-sm transition-all transform hover:scale-105 shadow-glow-sm"
               >
                 Get Started
               </Link>
@@ -315,9 +315,9 @@ function SmartNavigation() {
     >
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between h-16 items-center">
-          <div className="flex items-center gap-8">
+          <div className="flex items-center gap-4">
             <Link to="/dashboard" className="flex items-center group">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-md flex items-center justify-center shadow-none group-hover:scale-110 transition-transform">
                 <Zap className="w-5 h-5 text-white" />
               </div>
               <span className="ml-3 text-lg font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
@@ -328,10 +328,10 @@ function SmartNavigation() {
             <div className="hidden lg:flex items-center gap-1">
               <Link
                 to="/dashboard"
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   location.pathname === '/dashboard'
-                    ? 'bg-white/10 text-white'
-                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                    ? 'bg-transparent/10 text-white'
+                    : 'text-slate-400 hover:text-white hover:bg-transparent/5'
                 }`}
               >
                 Dashboard
@@ -347,10 +347,10 @@ function SmartNavigation() {
                   <div key={menu.key} className="relative">
                     <button
                       onClick={() => toggleDropdown(menu.key)}
-                      className={`px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${
+                      className={`px-3 py-2 rounded-md text-sm font-medium flex items-center gap-2 transition-colors ${
                         isActive
                           ? menu.activeClassName
-                          : 'text-slate-400 hover:text-white hover:bg-white/5'
+                          : 'text-slate-400 hover:text-white hover:bg-transparent/5'
                       }`}
                     >
                       <Icon className="w-4 h-4" />
@@ -360,7 +360,7 @@ function SmartNavigation() {
                       />
                     </button>
                     {activeDropdown === menu.key && (
-                      <div className="absolute top-full left-0 mt-2 w-72 bg-slate-900 border border-white/10 rounded-xl shadow-2xl p-2 z-50">
+                      <div className="absolute top-full left-0 mt-2 w-72 bg-slate-900 border border-white/10 rounded-md shadow-none p-2 z-50">
                         {menu.items.map((item) => {
                           const ItemIcon = item.icon;
                           const lifecycle = lifecycleByPath.get(item.to);
@@ -369,7 +369,7 @@ function SmartNavigation() {
                             <Link
                               key={item.to}
                               to={item.to}
-                              className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg group"
+                              className="flex items-center gap-3 px-3 py-2 hover:bg-transparent/5 rounded-md group"
                             >
                               <ItemIcon className="w-4 h-4 text-slate-300 group-hover:text-white" />
                               <div className="min-w-0">
@@ -401,19 +401,19 @@ function SmartNavigation() {
               <div className="relative">
                 <button
                   onClick={() => toggleDropdown('admin')}
-                  className="w-10 h-10 flex items-center justify-center rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors border border-red-500/20"
+                  className="w-10 h-10 flex items-center justify-center rounded-md bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors border border-red-500/20"
                 >
                   <Shield className="w-5 h-5" />
                 </button>
                 {activeDropdown === 'admin' && (
-                  <div className="absolute top-full right-0 mt-2 w-64 bg-slate-900 border border-white/10 rounded-xl shadow-2xl p-2 z-50">
+                  <div className="absolute top-full right-0 mt-2 w-64 bg-slate-900 border border-white/10 rounded-md shadow-none p-2 z-50">
                     <div className="px-3 py-2 text-[10px] font-bold text-red-500 uppercase tracking-widest">
                       System Administration
                     </div>
                     {isSuperAdmin && (
                       <Link
                         to="/admin/control-panel"
-                        className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg text-red-400 font-bold border-b border-white/5 mb-1"
+                        className="flex items-center gap-3 px-3 py-2 hover:bg-transparent/5 rounded-md text-red-400 font-bold border-b border-white/5 mb-1"
                       >
                         <Zap className="w-4 h-4" />
                         MASTER CONTROL
@@ -421,14 +421,14 @@ function SmartNavigation() {
                     )}
                     <Link
                       to="/admin/dashboard"
-                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
+                      className="flex items-center gap-3 px-3 py-2 hover:bg-transparent/5 rounded-md"
                     >
                       <BarChart3 className="w-4 h-4 text-slate-400" />
                       <span className="text-sm">Admin Analytics</span>
                     </Link>
                     <Link
                       to="/admin/users"
-                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
+                      className="flex items-center gap-3 px-3 py-2 hover:bg-transparent/5 rounded-md"
                     >
                       <User className="w-4 h-4 text-slate-400" />
                       <span className="text-sm">Identity Management</span>
@@ -441,15 +441,15 @@ function SmartNavigation() {
             <div className="relative">
               <button
                 onClick={() => toggleDropdown('user')}
-                className="flex items-center gap-2 p-1.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+                className="flex items-center gap-2 p-1.5 rounded-md bg-transparent/5 border border-white/10 hover:bg-transparent/10 transition-colors"
               >
-                <div className="w-7 h-7 bg-blue-500 rounded-lg flex items-center justify-center text-[10px] font-bold">
+                <div className="w-7 h-7 bg-blue-500 rounded-md flex items-center justify-center text-[10px] font-bold">
                   {user?.name?.substring(0, 2).toUpperCase() || 'BS'}
                 </div>
                 <ChevronDown className="w-3 h-3 text-slate-500" />
               </button>
               {activeDropdown === 'user' && (
-                <div className="absolute top-full right-0 mt-2 w-56 bg-slate-900 border border-white/10 rounded-xl shadow-2xl p-2 z-50">
+                <div className="absolute top-full right-0 mt-2 w-56 bg-slate-900 border border-white/10 rounded-md shadow-none p-2 z-50">
                   <div className="px-3 py-2">
                     <div className="text-sm font-medium text-white">{user?.name}</div>
                     <div className="text-[10px] text-slate-500 truncate">{user?.email}</div>
@@ -457,14 +457,14 @@ function SmartNavigation() {
                   <div className="my-1 border-t border-white/10" />
                   <Link
                     to="/profile"
-                    className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
+                    className="flex items-center gap-3 px-3 py-2 hover:bg-transparent/5 rounded-md"
                   >
                     <User className="w-4 h-4 text-slate-400" />
                     <span className="text-sm">Profile</span>
                   </Link>
                   <Link
                     to="/settings"
-                    className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg"
+                    className="flex items-center gap-3 px-3 py-2 hover:bg-transparent/5 rounded-md"
                   >
                     <Settings className="w-4 h-4 text-slate-400" />
                     <span className="text-sm">Account Settings</span>
@@ -472,7 +472,7 @@ function SmartNavigation() {
                   <div className="my-1 border-t border-white/10" />
                   <button
                     onClick={() => logout()}
-                    className="w-full flex items-center gap-3 px-3 py-2 hover:bg-red-500/10 rounded-lg text-red-400 transition-colors"
+                    className="w-full flex items-center gap-3 px-3 py-2 hover:bg-red-500/10 rounded-md text-red-400 transition-colors"
                   >
                     <LogOut className="w-4 h-4" />
                     <span className="text-sm">Sign Out</span>
@@ -481,7 +481,7 @@ function SmartNavigation() {
               )}
             </div>
 
-            <button className="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 text-slate-400 hover:text-white transition-colors">
+            <button className="lg:hidden w-10 h-10 flex items-center justify-center rounded-md bg-transparent/5 text-slate-400 hover:text-white transition-colors">
               <Menu className="w-6 h-6" />
             </button>
           </div>

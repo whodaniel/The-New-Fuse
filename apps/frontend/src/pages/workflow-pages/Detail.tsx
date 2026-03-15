@@ -48,7 +48,7 @@ const WorkflowDetail: React.FC = () => {
   if (error) {
     return (
       <div className="container mx-auto py-6">
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-md">
           {error.message}
         </div>
       </div>
@@ -58,7 +58,7 @@ const WorkflowDetail: React.FC = () => {
   if (!workflow) {
     return (
       <div className="container mx-auto py-6">
-        <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded-md">
+        <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-2 rounded-md">
           Workflow not found. The workflow may have been deleted or you may not have access to it.
         </div>
         <div className="mt-4">
@@ -80,7 +80,7 @@ const WorkflowDetail: React.FC = () => {
             Back
           </Button>
           <div>
-            <h1 className="text-3xl font-bold">{workflow.name}</h1>
+            <h1 className="text-2xl font-bold">{workflow.name}</h1>
             <p className="text-muted-foreground">
               Created {formatDate(workflow.createdAt)} • Updated {formatDate(workflow.updatedAt)}
             </p>
@@ -110,7 +110,7 @@ const WorkflowDetail: React.FC = () => {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <GlassCard title="Nodes" gradient="blue">
               <div className="text-2xl font-bold text-white">{workflow.nodes.length}</div>
             </GlassCard>
@@ -131,7 +131,7 @@ const WorkflowDetail: React.FC = () => {
           <GlassCard title="Workflow Diagram" gradient="orange">
             <div className="h-64 flex items-center justify-center bg-black/20 rounded-md">
               <div className="text-center">
-                <GitBranch className="h-12 w-12 text-gray-500 mx-auto mb-2" />
+                <GitBranch className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
                 <p className="text-gray-400">
                   Open the workflow builder to view and edit the workflow diagram.
                 </p>
@@ -152,7 +152,7 @@ const WorkflowDetail: React.FC = () => {
             gradient="blue"
           >
             <div className="text-center py-8">
-              <Clock className="h-12 w-12 text-gray-500 mx-auto mb-2" />
+              <Clock className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
               <p className="text-gray-400">
                 No executions yet. Execute the workflow to see results here.
               </p>

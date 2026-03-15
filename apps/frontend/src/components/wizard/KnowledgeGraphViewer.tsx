@@ -139,12 +139,12 @@ export function KnowledgeGraphViewer() {
   }
 
   return (
-    <div className="h-[600px] relative border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm bg-gray-50 dark:bg-gray-900 overflow-hidden">
+    <div className="h-[600px] relative border border-gray-200 dark:border-gray-700 rounded-md shadow-none bg-transparent dark:bg-gray-900 overflow-hidden">
       <div className="absolute top-4 left-4 z-[5] flex gap-2 items-center">
         <div className="relative">
           <input
             type="text"
-            className="pl-3 pr-8 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 w-48"
+            className="pl-3 pr-8 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-transparent dark:bg-transparent text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 w-48"
             placeholder="Search nodes..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -152,7 +152,7 @@ export function KnowledgeGraphViewer() {
           />
           <button
             onClick={handleSearch}
-            className="absolute right-2 top-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            className="absolute right-2 top-1.5 text-gray-400 hover:text-muted-foreground dark:hover:text-gray-300"
           >
             <Search className="w-4 h-4" />
           </button>
@@ -164,8 +164,8 @@ export function KnowledgeGraphViewer() {
           <Plus className="w-4 h-4 mr-1" />
           Add Node
         </button>
-        <div className="flex items-center bg-white dark:bg-gray-800 px-2 py-1.5 rounded-md border border-gray-300 dark:border-gray-600">
-          <label className="flex items-center text-sm text-gray-700 dark:text-gray-300 cursor-pointer select-none">
+        <div className="flex items-center bg-transparent dark:bg-transparent px-2 py-1.5 rounded-md border border-gray-300 dark:border-gray-600">
+          <label className="flex items-center text-sm text-foreground dark:text-gray-300 cursor-pointer select-none">
             <input
               type="checkbox"
               checked={autoLayout}
@@ -211,11 +211,11 @@ export function KnowledgeGraphViewer() {
 
 function ConceptNode({ data }: { data: any }) {
   return (
-    <div className="bg-white dark:bg-gray-800 border-2 border-blue-500 rounded-md p-2 min-w-[150px] shadow-sm">
+    <div className="bg-transparent dark:bg-transparent border-2 border-blue-500 rounded-md p-2 min-w-[150px] shadow-none">
       <div className="font-bold text-sm text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-1 mb-1">
         {data.label}
       </div>
-      <div className="text-xs text-gray-600 dark:text-gray-400">
+      <div className="text-xs text-muted-foreground dark:text-muted-foreground">
         {data.description || 'Concept'}
       </div>
     </div>
@@ -224,11 +224,11 @@ function ConceptNode({ data }: { data: any }) {
 
 function RelationNode({ data }: { data: any }) {
   return (
-    <div className="bg-white dark:bg-gray-800 border-2 border-green-500 rounded-full px-4 py-2 min-w-[100px] shadow-sm">
+    <div className="bg-transparent dark:bg-transparent border-2 border-green-500 rounded-full px-4 py-2 min-w-[100px] shadow-none">
       <div className="font-bold text-sm text-center text-gray-900 dark:text-white">
         {data.label}
       </div>
-      <div className="text-xs text-center text-gray-600 dark:text-gray-400">
+      <div className="text-xs text-center text-muted-foreground dark:text-muted-foreground">
         {data.relationType}
       </div>
     </div>
@@ -237,7 +237,7 @@ function RelationNode({ data }: { data: any }) {
 
 function EntityNode({ data }: { data: any }) {
   return (
-    <div className="bg-white dark:bg-gray-800 border-2 border-purple-500 rounded-md p-2 min-w-[150px] shadow-sm">
+    <div className="bg-transparent dark:bg-transparent border-2 border-purple-500 rounded-md p-2 min-w-[150px] shadow-none">
       <div className="font-bold text-sm text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-1 mb-1">
         {data.label}
       </div>
@@ -245,7 +245,7 @@ function EntityNode({ data }: { data: any }) {
         {Object.entries(data.properties || {}).map(([key, value]) => (
           <div
             key={key}
-            className="text-gray-600 dark:text-gray-400 overflow-hidden text-ellipsis whitespace-nowrap"
+            className="text-muted-foreground dark:text-muted-foreground overflow-hidden text-ellipsis whitespace-nowrap"
           >
             <span className="font-semibold">{key}:</span> {String(value)}
           </div>
@@ -267,12 +267,12 @@ function NodeDetailsPanel({
   const [editData, setEditData] = useState(node.data);
 
   return (
-    <div className="absolute right-4 top-4 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-4 z-10">
+    <div className="absolute right-4 top-4 w-80 bg-transparent dark:bg-transparent rounded-md shadow-none border border-gray-200 dark:border-gray-700 p-4 z-10">
       <div className="flex justify-between items-center mb-4">
         <h6 className="text-lg font-semibold text-gray-900 dark:text-white">Node Details</h6>
         <button
           onClick={onClose}
-          className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+          className="text-gray-400 hover:text-muted-foreground dark:hover:text-gray-300"
         >
           <X className="w-5 h-5" />
         </button>
@@ -280,23 +280,23 @@ function NodeDetailsPanel({
 
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
             Label
           </label>
           <input
             type="text"
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-transparent dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
             value={editData.label}
             onChange={(e) => setEditData({ ...editData, label: e.target.value })}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
             Description
           </label>
           <textarea
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-transparent dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
             rows={3}
             value={editData.description || ''}
             onChange={(e) => setEditData({ ...editData, description: e.target.value })}
@@ -306,7 +306,7 @@ function NodeDetailsPanel({
         <div className="flex justify-end gap-2 pt-2">
           <button
             onClick={onClose}
-            className="px-3 py-1.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
+            className="px-3 py-1.5 text-sm text-foreground dark:text-gray-300 hover:bg-muted/30 dark:hover:bg-gray-700 rounded-md transition-colors"
           >
             Cancel
           </button>

@@ -104,13 +104,13 @@ const AgentDashboard: React.FC = () => {
       case 'active':
         return <CheckCircle className="w-5 h-5 text-green-500" />;
       case 'inactive':
-        return <Pause className="w-5 h-5 text-gray-500" />;
+        return <Pause className="w-5 h-5 text-muted-foreground" />;
       case 'error':
         return <XCircle className="w-5 h-5 text-red-500" />;
       case 'training':
         return <Clock className="w-5 h-5 text-yellow-500" />;
       default:
-        return <AlertTriangle className="w-5 h-5 text-gray-500" />;
+        return <AlertTriangle className="w-5 h-5 text-muted-foreground" />;
     }
   };
 
@@ -207,7 +207,7 @@ const AgentDashboard: React.FC = () => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading agent dashboard...</p>
+          <p className="text-muted-foreground">Loading agent dashboard...</p>
         </div>
       </div>
     );
@@ -220,10 +220,10 @@ const AgentDashboard: React.FC = () => {
       variants={containerVariants}
       className="min-h-screen bg-slate-950 text-slate-100 selection:bg-cyan-500/30 font-sans"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-3 lg:px-8 py-10">
         {/* Header */}
         <motion.div variants={itemVariants} className="mb-10">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="relative">
               <div className="absolute -left-4 top-0 bottom-0 w-1 bg-cyan-500 rounded-full shadow-[0_0_15px_rgba(6,182,212,0.5)]" />
               <h1 className="text-4xl font-black tracking-tight text-white flex items-center gap-3">
@@ -248,7 +248,7 @@ const AgentDashboard: React.FC = () => {
         </motion.div>
 
         {/* Stats Overview */}
-        <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+        <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
           <StatsCard
             label="Total Agents"
             value={agents.length}
@@ -286,9 +286,9 @@ const AgentDashboard: React.FC = () => {
         {/* Filters and Search */}
         <motion.div
           variants={itemVariants}
-          className="bg-white/5 backdrop-blur-3xl border border-white/10 rounded-2xl shadow-2xl p-6 mb-8 hover:border-white/20 transition-all group"
+          className="bg-transparent/5 backdrop-blur-3xl border border-white/10 rounded-md shadow-none p-4 mb-8 hover:border-white/20 transition-all group"
         >
-          <div className="flex flex-col lg:flex-row gap-6">
+          <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1">
               <div className="relative group/search">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within/search:text-cyan-400 transition-colors" />
@@ -297,7 +297,7 @@ const AgentDashboard: React.FC = () => {
                   placeholder="Search agent signature or tags..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 bg-slate-900/50 border border-white/5 rounded-xl focus:ring-2 focus:ring-cyan-500/50 focus:border-transparent text-white placeholder-slate-500 transition-all font-mono text-sm"
+                  className="w-full pl-12 pr-4 py-2 bg-slate-900/50 border border-white/5 rounded-md focus:ring-2 focus:ring-cyan-500/50 focus:border-transparent text-white placeholder-slate-500 transition-all font-mono text-sm"
                 />
               </div>
             </div>
@@ -307,7 +307,7 @@ const AgentDashboard: React.FC = () => {
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="px-4 py-2 bg-slate-900/50 border border-white/10 rounded-xl text-slate-300 focus:ring-2 focus:ring-cyan-500/50 text-sm font-bold tracking-widest uppercase appearance-none cursor-pointer"
+                  className="px-4 py-2 bg-slate-900/50 border border-white/10 rounded-md text-slate-300 focus:ring-2 focus:ring-cyan-500/50 text-sm font-bold tracking-widest uppercase appearance-none cursor-pointer"
                   title="Filter by status"
                 >
                   <option value="all">Any Status</option>
@@ -320,7 +320,7 @@ const AgentDashboard: React.FC = () => {
                 <select
                   value={typeFilter}
                   onChange={(e) => setTypeFilter(e.target.value)}
-                  className="px-4 py-2 bg-slate-900/50 border border-white/10 rounded-xl text-slate-300 focus:ring-2 focus:ring-cyan-500/50 text-sm font-bold tracking-widest uppercase appearance-none cursor-pointer"
+                  className="px-4 py-2 bg-slate-900/50 border border-white/10 rounded-md text-slate-300 focus:ring-2 focus:ring-cyan-500/50 text-sm font-bold tracking-widest uppercase appearance-none cursor-pointer"
                   title="Filter by type"
                 >
                   <option value="all">Any Type</option>
@@ -331,11 +331,11 @@ const AgentDashboard: React.FC = () => {
                 </select>
               </div>
 
-              <div className="h-full w-px bg-white/10 mx-2 hidden lg:block" />
+              <div className="h-full w-px bg-transparent/10 mx-2 hidden lg:block" />
 
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className={`p-3 rounded-xl border transition-all ${showFilters ? 'bg-cyan-500 border-cyan-400 text-white shadow-[0_0_20px_rgba(6,182,212,0.4)]' : 'bg-white/5 border-white/10 text-slate-400 hover:border-white/20'}`}
+                className={`p-3 rounded-md border transition-all ${showFilters ? 'bg-cyan-500 border-cyan-400 text-white shadow-[0_0_20px_rgba(6,182,212,0.4)]' : 'bg-transparent/5 border-white/10 text-slate-400 hover:border-white/20'}`}
                 title="Advanced Controls"
               >
                 <Filter className="w-5 h-5" />
@@ -347,7 +347,7 @@ const AgentDashboard: React.FC = () => {
         {/* Agents Grid */}
         <motion.div
           variants={itemVariants}
-          className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8"
+          className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4"
         >
           <AnimatePresence mode="popLayout">
             {sortedAgents.map((agent) => (
@@ -371,11 +371,11 @@ const AgentDashboard: React.FC = () => {
                     }`}
                   />
 
-                  <div className="p-6">
+                  <div className="p-4">
                     {/* Header */}
                     <div className="flex items-start justify-between mb-6">
                       <div className="flex items-center space-x-4">
-                        <div className="p-3 bg-slate-900 border border-white/5 rounded-2xl group-hover/card:border-cyan-500/50 group-hover/card:bg-slate-800 transition-all duration-500">
+                        <div className="p-3 bg-slate-900 border border-white/5 rounded-md group-hover/card:border-cyan-500/50 group-hover/card:bg-slate-800 transition-all duration-500">
                           {getTypeIcon(agent.type)}
                         </div>
                         <div>
@@ -401,17 +401,17 @@ const AgentDashboard: React.FC = () => {
 
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button className="p-2 hover:bg-white/10 rounded-xl transition-colors text-slate-500 hover:text-white">
+                          <button className="p-2 hover:bg-transparent/10 rounded-md transition-colors text-slate-500 hover:text-white">
                             <MoreVertical className="w-5 h-5" />
                           </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent
                           align="end"
-                          className="bg-slate-900 border-white/10 text-white rounded-xl shadow-2xl backdrop-blur-xl"
+                          className="bg-slate-900 border-white/10 text-white rounded-md shadow-none backdrop-blur-xl"
                         >
                           <DropdownMenuItem
                             onClick={() => handleAgentAction(agent.id, 'edit')}
-                            className="hover:bg-white/10 cursor-pointer p-3"
+                            className="hover:bg-transparent/10 cursor-pointer p-3"
                           >
                             <Pencil className="w-4 h-4 mr-3 text-cyan-400" />
                             Signature Edit
@@ -423,7 +423,7 @@ const AgentDashboard: React.FC = () => {
                                 agent.status === 'active' ? 'pause' : 'start'
                               )
                             }
-                            className="hover:bg-white/10 cursor-pointer p-3"
+                            className="hover:bg-transparent/10 cursor-pointer p-3"
                           >
                             {agent.status === 'active' ? (
                               <>
@@ -439,7 +439,7 @@ const AgentDashboard: React.FC = () => {
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => navigate(`/dashboard/agents/${agent.id}`)}
-                            className="hover:bg-white/10 cursor-pointer p-3"
+                            className="hover:bg-transparent/10 cursor-pointer p-3"
                           >
                             <BarChart className="w-4 h-4 mr-3 text-purple-400" />
                             Deep Analytics
@@ -455,7 +455,7 @@ const AgentDashboard: React.FC = () => {
 
                     {/* Metrics Grid */}
                     <div className="grid grid-cols-2 gap-4 mb-8">
-                      <div className="bg-white/2 p-3 rounded-xl border border-white/5">
+                      <div className="bg-transparent/2 p-3 rounded-md border border-white/5">
                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-1">
                           Success
                         </p>
@@ -463,7 +463,7 @@ const AgentDashboard: React.FC = () => {
                           {agent.successRate}%
                         </p>
                       </div>
-                      <div className="bg-white/2 p-3 rounded-xl border border-white/5">
+                      <div className="bg-transparent/2 p-3 rounded-md border border-white/5">
                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-1">
                           Total Load
                         </p>
@@ -514,9 +514,9 @@ const AgentDashboard: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center py-32"
+            className="text-center py-22"
           >
-            <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-8 border border-white/10 shadow-[0_0_40px_rgba(255,255,255,0.05)]">
+            <div className="w-24 h-24 bg-transparent/5 rounded-full flex items-center justify-center mx-auto mb-8 border border-white/10 shadow-[0_0_40px_rgba(255,255,255,0.05)]">
               <Cpu className="w-10 h-10 text-slate-600 animate-pulse" />
             </div>
             <h3 className="text-2xl font-bold text-white mb-3">No entities detected in sector</h3>

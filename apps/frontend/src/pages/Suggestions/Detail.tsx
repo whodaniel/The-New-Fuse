@@ -154,12 +154,12 @@ const SuggestionDetail: React.FC = () => {
           Back
         </Button>
         <div>
-          <h1 className="text-3xl font-bold">Suggestion Detail</h1>
+          <h1 className="text-2xl font-bold">Suggestion Detail</h1>
           <p className="text-muted-foreground">Unified ledger record {row.id}</p>
         </div>
       </div>
 
-      <Card className="p-6 mb-6">
+      <Card className="p-4 mb-6">
         <div className="flex justify-between items-start gap-4">
           <div>
             <h2 className="text-2xl font-bold">{row.title}</h2>
@@ -186,7 +186,7 @@ const SuggestionDetail: React.FC = () => {
         </div>
       </Card>
 
-      <Card className="p-6">
+      <Card className="p-4">
         <h3 className="text-lg font-semibold mb-3">Discussion</h3>
         <p className="text-sm text-muted-foreground mb-3">
           Comment capture can be persisted as iterative feedback entries.
@@ -222,7 +222,7 @@ const SuggestionDetail: React.FC = () => {
         </div>
       </Card>
 
-      <Card className="p-6 mt-6">
+      <Card className="p-4 mt-6">
         <h3 className="text-lg font-semibold mb-3">Goals and Project Plans</h3>
         <div className="grid md:grid-cols-2 gap-4 mb-4">
           <div>
@@ -323,7 +323,7 @@ const SuggestionDetail: React.FC = () => {
         </div>
       </Card>
 
-      <Card className="p-6 mt-6">
+      <Card className="p-4 mt-6">
         <h3 className="text-lg font-semibold mb-3">Timeline</h3>
         <div className="space-y-2 max-h-80 overflow-auto">
           {timeline.length === 0 ? (

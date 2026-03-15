@@ -81,7 +81,7 @@ export const AIPreferencesStep: React.FC = () => {
           {isAIAgent ? 'Agent Capabilities' : 'AI Preferences'}
         </h2>
 
-        <p className="text-gray-600 dark:text-gray-400 mb-6">
+        <p className="text-muted-foreground dark:text-muted-foreground mb-6">
           {isAIAgent
             ? 'Define the capabilities and protocols your agent supports for integration with The New Fuse.'
             : 'Configure your preferences for AI models and behavior.'}
@@ -162,7 +162,7 @@ export const AIPreferencesStep: React.FC = () => {
 
             <div>
               <label className="block text-sm font-medium mb-3">Agent Capabilities</label>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+              <p className="text-sm text-muted-foreground dark:text-muted-foreground mb-3">
                 Select the capabilities your agent provides:
               </p>
 
@@ -427,13 +427,13 @@ export const AIPreferencesStep: React.FC = () => {
                 step={0.1}
                 value={formData.temperature}
                 onChange={(e) => handleSliderChange('temperature', parseFloat(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                className="w-full h-2 bg-gray-200 rounded-md appearance-none cursor-pointer dark:bg-gray-700"
                 title="Temperature slider"
                 aria-label="Temperature slider"
               />
               <div className="flex justify-between mt-1">
-                <span className="text-xs text-gray-500">More Deterministic</span>
-                <span className="text-xs text-gray-500">More Creative</span>
+                <span className="text-xs text-muted-foreground">More Deterministic</span>
+                <span className="text-xs text-muted-foreground">More Creative</span>
               </div>
             </div>
 
@@ -449,13 +449,13 @@ export const AIPreferencesStep: React.FC = () => {
                 step={1000}
                 value={formData.maxTokens}
                 onChange={(e) => handleSliderChange('maxTokens', parseInt(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                className="w-full h-2 bg-gray-200 rounded-md appearance-none cursor-pointer dark:bg-gray-700"
                 title="Max tokens slider"
                 aria-label="Max tokens slider"
               />
               <div className="flex justify-between mt-1">
-                <span className="text-xs text-gray-500">Shorter</span>
-                <span className="text-xs text-gray-500">Longer</span>
+                <span className="text-xs text-muted-foreground">Shorter</span>
+                <span className="text-xs text-muted-foreground">Longer</span>
               </div>
             </div>
           </>

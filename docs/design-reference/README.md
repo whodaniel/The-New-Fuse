@@ -164,6 +164,19 @@ background: rgba(255, 255, 255, 0.05);
 /* + glow effect */
 ```
 
+### Lean UI Density (Current)
+
+The admin and operator surfaces prioritize clarity and density over decorative
+effects. Use the following guidance to keep interfaces lean, readable, and
+efficient:
+
+- **Radius**: default to small/medium (6–8px). Avoid oversized rounding.
+- **Shadows**: avoid heavy shadows; prefer `shadow-none` or subtle borders.
+- **Padding**: prefer `p-3`/`p-4` for cards and panels, `px-3 py-2` for tables.
+- **Tables**: use compact headers (`text-xs`, uppercase, muted), minimal row
+  hover.
+- **Forms**: use `h-9` inputs with concise helper text (`text-xs`).
+
 ---
 
 ## Color Palette

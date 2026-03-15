@@ -64,7 +64,7 @@ export function ChatInterface() {
     }
   };
   return (
-    <card_1.Card className="w-full min-h-[600px] max-h-screen flex flex-col bg-white dark:bg-neutral-900 shadow-lg">
+    <card_1.Card className="w-full min-h-[600px] max-h-screen flex flex-col bg-transparent dark:bg-neutral-900 shadow-none">
       <card_1.CardHeader className="border-b border-neutral-200 dark:border-neutral-800">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -77,7 +77,7 @@ export function ChatInterface() {
               <div
                 className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}
               />
-              <span className="text-sm text-neutral-600 dark:text-neutral-400">
+              <span className="text-sm text-neutral-600 dark:text-muted-foreground">
                 {isConnected ? 'Connected' : 'Disconnected'}
               </span>
             </div>
@@ -148,7 +148,7 @@ export function ChatInterface() {
             disabled={
               !(0, message_utils_1.validateMessage)(input) || !isConnected || !selectedAgent
             }
-            className="px-6"
+            className="px-3"
           >
             Send
           </button_1.Button>

@@ -48,12 +48,12 @@ export const MessageThread: React.FC<MessageThreadProps> = ({
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+    <div className="w-full max-w-2xl mx-auto bg-transparent dark:bg-transparent rounded-md shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
+      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-transparent dark:bg-gray-900">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Thread</h3>
         <button
           onClick={onClose}
-          className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+          className="p-1 text-muted-foreground hover:text-foreground dark:text-muted-foreground dark:hover:text-gray-200 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
@@ -61,7 +61,7 @@ export const MessageThread: React.FC<MessageThreadProps> = ({
 
       <div className="p-4">
         {/* Parent Message */}
-        <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800">
+        <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-md border border-blue-100 dark:border-blue-800">
           <div className="flex items-start space-x-3">
             <div className="flex-shrink-0">
               <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-800 flex items-center justify-center">
@@ -75,7 +75,7 @@ export const MessageThread: React.FC<MessageThreadProps> = ({
                 <span className="font-medium text-gray-900 dark:text-gray-100">
                   {parentMessage.sender}
                 </span>
-                <span className="text-sm text-gray-500 dark:text-gray-400">
+                <span className="text-sm text-muted-foreground dark:text-muted-foreground">
                   {format(new Date(parentMessage.timestamp), 'MMM d, h:mm a')}
                 </span>
               </div>
@@ -92,12 +92,12 @@ export const MessageThread: React.FC<MessageThreadProps> = ({
           {replies.map((reply) => (
             <div
               key={reply.id}
-              className="p-4 border border-gray-100 dark:border-gray-700 rounded-lg hover:border-gray-200 dark:hover:border-gray-600 transition-colors bg-white dark:bg-gray-800"
+              className="p-4 border border-gray-100 dark:border-gray-700 rounded-md hover:border-gray-200 dark:hover:border-gray-600 transition-colors bg-transparent dark:bg-transparent"
             >
               <div className="flex items-start space-x-3">
                 <div className="flex-shrink-0">
                   <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                    <span className="text-gray-600 dark:text-gray-300 font-medium">
+                    <span className="text-muted-foreground dark:text-gray-300 font-medium">
                       {reply.sender.charAt(0).toUpperCase()}
                     </span>
                   </div>
@@ -107,7 +107,7 @@ export const MessageThread: React.FC<MessageThreadProps> = ({
                     <span className="font-medium text-gray-900 dark:text-gray-100">
                       {reply.sender}
                     </span>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                    <span className="text-sm text-muted-foreground dark:text-muted-foreground">
                       {format(new Date(reply.timestamp), 'MMM d, h:mm a')}
                     </span>
                   </div>
@@ -128,14 +128,14 @@ export const MessageThread: React.FC<MessageThreadProps> = ({
               value={replyContent}
               onChange={(e) => setReplyContent(e.target.value)}
               placeholder="Write your reply..."
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-h-[100px] resize-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-h-[100px] resize-none bg-transparent dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               disabled={isSubmitting}
             />
             <div className="flex justify-end">
               <button
                 onClick={handleSubmitReply}
                 disabled={isSubmitting || !replyContent.trim()}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-colors font-medium"
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-colors font-medium"
               >
                 {isSubmitting ? (
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />

@@ -21,7 +21,7 @@ import { PremiumButton } from './ui/premium/PremiumButton';
 // Skeleton component for StatsCard
 function StatsCardSkeleton() {
   return (
-    <div className="bg-white/10 p-6 rounded-2xl animate-pulse">
+    <div className="bg-transparent/10 p-4 rounded-md animate-pulse">
       <div className="h-4 bg-slate-700/50 rounded w-3/4 mb-4"></div>
       <div className="h-8 bg-slate-700/50 rounded w-1/2 mb-4"></div>
       <div className="h-3 bg-slate-700/50 rounded w-1/4"></div>
@@ -177,7 +177,7 @@ export function Dashboard() {
                 Mesh: {isRealtimeConnected ? 'Connected' : 'Degraded'}
               </span>
               {lastRealtimeSignal && (
-                <span className="px-2 py-1 rounded-full bg-white/5 border border-white/10 text-slate-300">
+                <span className="px-2 py-1 rounded-full bg-transparent/5 border border-white/10 text-slate-300">
                   Last signal {new Date(lastRealtimeSignal).toLocaleTimeString()}
                 </span>
               )}
@@ -211,7 +211,7 @@ export function Dashboard() {
       />
 
       {/* Quick Stats Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {loading && !metrics ? (
           <>
             <StatsCardSkeleton />
@@ -220,7 +220,7 @@ export function Dashboard() {
             <StatsCardSkeleton />
           </>
         ) : error ? (
-          <div className="md:col-span-2 lg:col-span-4 bg-red-500/10 border border-red-500/30 text-red-200 p-6 rounded-2xl flex flex-col items-center justify-center text-center">
+          <div className="md:col-span-2 lg:col-span-4 bg-red-500/10 border border-red-500/30 text-red-200 p-4 rounded-md flex flex-col items-center justify-center text-center">
             <AlertTriangle className="w-12 h-12 text-red-400 mb-4" />
             <h3 className="text-xl font-bold mb-2">Error Loading Data</h3>
             <p className="text-red-300/80 mb-6 max-w-md">{error}</p>
@@ -276,32 +276,32 @@ export function Dashboard() {
       </div>
 
       {/* Main Content Area */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Agent Collaboration (Wide) */}
         <GlassCard
           className="lg:col-span-2 min-h-[400px]"
           title="Agent Collaboration Network"
           gradient="blue"
         >
-          <div className="h-full min-h-[300px] border border-dashed border-white/10 rounded-xl bg-white/5 p-6">
+          <div className="h-full min-h-[300px] border border-dashed border-white/10 rounded-md bg-transparent/5 p-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="rounded-xl bg-black/25 border border-white/10 p-4">
+              <div className="rounded-md bg-black/25 border border-white/10 p-4">
                 <p className="text-xs uppercase tracking-wide text-slate-400">Connected Agents</p>
-                <p className="text-3xl font-bold text-white mt-1">
+                <p className="text-2xl font-bold text-white mt-1">
                   {metrics?.activeAgents.value ?? 0}
                 </p>
               </div>
-              <div className="rounded-xl bg-black/25 border border-white/10 p-4">
+              <div className="rounded-md bg-black/25 border border-white/10 p-4">
                 <p className="text-xs uppercase tracking-wide text-slate-400">
                   Workflow Throughput
                 </p>
-                <p className="text-3xl font-bold text-white mt-1">
+                <p className="text-2xl font-bold text-white mt-1">
                   {metrics?.tasksCompleted.value ?? 0}
                 </p>
               </div>
-              <div className="rounded-xl bg-black/25 border border-white/10 p-4">
+              <div className="rounded-md bg-black/25 border border-white/10 p-4">
                 <p className="text-xs uppercase tracking-wide text-slate-400">Success Rate</p>
-                <p className="text-3xl font-bold text-white mt-1">
+                <p className="text-2xl font-bold text-white mt-1">
                   {metrics?.systemLoad.value
                     ? 100 - Math.min(40, Math.round(metrics.systemLoad.value / 3))
                     : 100}
@@ -309,7 +309,7 @@ export function Dashboard() {
                 </p>
               </div>
             </div>
-            <div className="mt-6 rounded-xl bg-black/25 border border-white/10 p-4">
+            <div className="mt-6 rounded-md bg-black/25 border border-white/10 p-4">
               <p className="text-sm text-slate-300">
                 Collaboration lanes are syncing via websocket when available, with 30-second polling
                 fallback. Use <span className="text-blue-300">Task Operations</span> to drill into
@@ -327,7 +327,7 @@ export function Dashboard() {
                 <span className="text-gray-400">CPU Usage</span>
                 <span className="text-white font-bold">{healthSnapshot.cpu}%</span>
               </div>
-              <div className="w-full bg-white/10 rounded-full h-2">
+              <div className="w-full bg-transparent/10 rounded-full h-2">
                 <div
                   className="bg-green-500 h-2 rounded-full"
                   style={{ width: `${healthSnapshot.cpu}%` }}
@@ -338,7 +338,7 @@ export function Dashboard() {
                 <span className="text-gray-400">Memory</span>
                 <span className="text-white font-bold">{healthSnapshot.memory}%</span>
               </div>
-              <div className="w-full bg-white/10 rounded-full h-2">
+              <div className="w-full bg-transparent/10 rounded-full h-2">
                 <div
                   className="bg-blue-500 h-2 rounded-full"
                   style={{ width: `${healthSnapshot.memory}%` }}
@@ -349,7 +349,7 @@ export function Dashboard() {
                 <span className="text-gray-400">Storage</span>
                 <span className="text-white font-bold">{healthSnapshot.storage}%</span>
               </div>
-              <div className="w-full bg-white/10 rounded-full h-2">
+              <div className="w-full bg-transparent/10 rounded-full h-2">
                 <div
                   className="bg-purple-500 h-2 rounded-full"
                   style={{ width: `${healthSnapshot.storage}%` }}
@@ -363,7 +363,7 @@ export function Dashboard() {
               {focusItems.map((item, idx) => (
                 <div
                   key={`${item.title}-${idx}`}
-                  className={`flex items-start gap-3 p-3 rounded-lg border ${
+                  className={`flex items-start gap-3 p-3 rounded-md border ${
                     item.level === 'critical'
                       ? 'bg-red-500/10 border-red-500/20'
                       : item.level === 'warning'
@@ -392,16 +392,16 @@ export function Dashboard() {
       </div>
 
       {/* Task Board and Network */}
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-2">
         <GlassCard className="min-h-[300px]" title="Active Tasks" gradient="purple">
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="flex items-center justify-between p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors cursor-pointer group"
+                className="flex items-center justify-between p-3 rounded-md bg-transparent/5 hover:bg-transparent/10 transition-colors cursor-pointer group"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold text-xs">
+                  <div className="w-8 h-8 rounded-md bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold text-xs">
                     T-{i}0{i}
                   </div>
                   <div>
@@ -411,7 +411,7 @@ export function Dashboard() {
                     <p className="text-xs text-gray-400">Assigned to: Analyst Bot</p>
                   </div>
                 </div>
-                <div className="text-xs text-gray-500">2m ago</div>
+                <div className="text-xs text-muted-foreground">2m ago</div>
               </div>
             ))}
           </div>
@@ -431,7 +431,7 @@ export function Dashboard() {
               </div>
             ))}
           </div>
-          <div className="flex justify-between mt-2 text-xs text-gray-500 px-2">
+          <div className="flex justify-between mt-2 text-xs text-muted-foreground px-2">
             <span>Mon</span>
             <span>Tue</span>
             <span>Wed</span>

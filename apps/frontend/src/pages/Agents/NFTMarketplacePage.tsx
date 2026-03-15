@@ -375,16 +375,16 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
 
       {isLoading && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
-          <div className="bg-slate-900/60 backdrop-blur-md border border-white/10 rounded-lg p-6 flex items-center gap-4">
+          <div className="bg-slate-900/60 backdrop-blur-md border border-white/10 rounded-md p-4 flex items-center gap-4">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             <span className="text-lg font-medium">Processing transaction...</span>
           </div>
         </div>
       )}
 
-      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="relative container mx-auto px-4 sm:px-3 lg:px-8 py-8">
         {statsError && (
-          <div className="mb-6 rounded border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          <div className="mb-6 rounded border border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-800">
             {statsError}
           </div>
         )}
@@ -393,7 +393,7 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
         <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-12 pb-6 border-b border-slate-700/50">
           <div>
             <h1 className="text-4xl font-black text-white flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-md flex items-center justify-center">
                 <Coins className="w-6 h-6 text-white" />
               </div>
               Agent NFT Marketplace
@@ -404,7 +404,7 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
           </div>
           <Button
             onClick={() => navigate('/agents/create')}
-            className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-3 px-6 rounded-xl flex items-center gap-3 transition-all mt-6 sm:mt-0 shadow-lg hover:shadow-xl hover:scale-105"
+            className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-2 px-3 rounded-md flex items-center gap-3 transition-all mt-6 sm:mt-0 shadow-none hover:shadow-none hover:scale-105"
           >
             <Plus className="w-5 h-5" />
             Create Agent
@@ -412,16 +412,16 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
         </header>
 
         {/* Stats Dashboard */}
-        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
           <Card className="bg-slate-800/80 backdrop-blur-sm border-slate-700/50 relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-blue-500 to-transparent"></div>
-            <CardContent className="p-6 flex items-center gap-4">
-              <div className="bg-blue-500/20 p-4 rounded-xl">
+            <CardContent className="p-4 flex items-center gap-4">
+              <div className="bg-blue-500/20 p-4 rounded-md">
                 <DollarSign className="w-7 h-7 text-blue-400" />
               </div>
               <div>
                 <p className="text-sm text-slate-400 font-medium">Total NFTs</p>
-                <p className="text-3xl font-bold text-white">{stats.totalNFTs.toLocaleString()}</p>
+                <p className="text-2xl font-bold text-white">{stats.totalNFTs.toLocaleString()}</p>
                 <p className="text-xs text-green-400">↗ +{stats.weeklyGrowth.nfts}% this week</p>
               </div>
             </CardContent>
@@ -429,13 +429,13 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
 
           <Card className="bg-slate-800/80 backdrop-blur-sm border-slate-700/50 relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-purple-500 to-transparent"></div>
-            <CardContent className="p-6 flex items-center gap-4">
-              <div className="bg-purple-500/20 p-4 rounded-xl">
+            <CardContent className="p-4 flex items-center gap-4">
+              <div className="bg-purple-500/20 p-4 rounded-md">
                 <Activity className="w-7 h-7 text-purple-400" />
               </div>
               <div>
                 <p className="text-sm text-slate-400 font-medium">Fractionalized</p>
-                <p className="text-3xl font-bold text-white">
+                <p className="text-2xl font-bold text-white">
                   {stats.fractionalized.toLocaleString()}
                 </p>
                 <p className="text-xs text-green-400">
@@ -447,13 +447,13 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
 
           <Card className="bg-slate-800/80 backdrop-blur-sm border-slate-700/50 relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-green-500 to-transparent"></div>
-            <CardContent className="p-6 flex items-center gap-4">
-              <div className="bg-green-500/20 p-4 rounded-xl">
+            <CardContent className="p-4 flex items-center gap-4">
+              <div className="bg-green-500/20 p-4 rounded-md">
                 <TrendingUp className="w-7 h-7 text-green-400" />
               </div>
               <div>
                 <p className="text-sm text-slate-400 font-medium">Active Listings</p>
-                <p className="text-3xl font-bold text-white">{stats.activeListings}</p>
+                <p className="text-2xl font-bold text-white">{stats.activeListings}</p>
                 <p className="text-xs text-blue-400">→ 24h volume: {stats.totalVolume} ETH</p>
               </div>
             </CardContent>
@@ -461,13 +461,13 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
 
           <Card className="bg-slate-800/80 backdrop-blur-sm border-slate-700/50 relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-amber-500 to-transparent"></div>
-            <CardContent className="p-6 flex items-center gap-4">
-              <div className="bg-amber-500/20 p-4 rounded-xl">
+            <CardContent className="p-4 flex items-center gap-4">
+              <div className="bg-amber-500/20 p-4 rounded-md">
                 <Wallet className="w-7 h-7 text-amber-400" />
               </div>
               <div>
                 <p className="text-sm text-slate-400 font-medium">Your Holdings</p>
-                <p className="text-3xl font-bold text-white">{stats.userHoldings} Agents</p>
+                <p className="text-2xl font-bold text-white">{stats.userHoldings} Agents</p>
                 <p className="text-xs text-green-400 animate-pulse">
                   💰 {stats.pendingRevenue} ETH pending
                 </p>

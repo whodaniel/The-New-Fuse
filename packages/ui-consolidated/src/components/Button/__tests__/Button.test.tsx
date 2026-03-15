@@ -1,5 +1,4 @@
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { Button } from '../Button';
 
 describe('Button', () => {
@@ -31,13 +30,13 @@ describe('Button', () => {
 
   it('renders with different sizes', () => {
     const { rerender } = render(<Button size="default">Default</Button>);
-    expect(screen.getByRole('button')).toHaveClass('h-10');
-
-    rerender(<Button size="sm">Small</Button>);
     expect(screen.getByRole('button')).toHaveClass('h-9');
 
+    rerender(<Button size="sm">Small</Button>);
+    expect(screen.getByRole('button')).toHaveClass('h-8');
+
     rerender(<Button size="lg">Large</Button>);
-    expect(screen.getByRole('button')).toHaveClass('h-11');
+    expect(screen.getByRole('button')).toHaveClass('h-10');
   });
 
   it('renders as disabled', () => {

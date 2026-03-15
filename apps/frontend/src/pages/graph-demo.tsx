@@ -87,40 +87,40 @@ export function GraphDemo() {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="p-4 max-w-7xl mx-auto space-y-6">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">
           Interactive Graph Visualization Demo
         </h1>
-        <p className="text-lg text-gray-600">
+        <p className="text-lg text-muted-foreground">
           Add nodes and edges to create a dynamic graph visualization
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+        <div className="bg-transparent rounded-md shadow-none p-4">
           <h2 className="text-xl font-semibold mb-4">Add Node</h2>
           <form onSubmit={handleAddNode} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-foreground">
                 Node ID
                 <input
                   type="text"
                   value={nodeId}
                   onChange={(e) => setNodeId(e.target.value)}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-none focus:border-blue-500 focus:ring-blue-500"
                   placeholder="Enter unique node ID"
                 />
               </label>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-foreground">
                 Node Data
                 <input
                   type="text"
                   value={nodeData}
                   onChange={(e) => setNodeData(e.target.value)}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-none focus:border-blue-500 focus:ring-blue-500"
                   placeholder="Enter node label/data"
                 />
               </label>
@@ -134,41 +134,41 @@ export function GraphDemo() {
           </form>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-6">
+        <div className="bg-transparent rounded-md shadow-none p-4">
           <h2 className="text-xl font-semibold mb-4">Add Edge</h2>
           <form onSubmit={handleAddEdge} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-foreground">
                 Source Node ID
                 <input
                   type="text"
                   value={edgeSource}
                   onChange={(e) => setEdgeSource(e.target.value)}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-none focus:border-blue-500 focus:ring-blue-500"
                   placeholder="Source node ID"
                 />
               </label>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-foreground">
                 Target Node ID
                 <input
                   type="text"
                   value={edgeTarget}
                   onChange={(e) => setEdgeTarget(e.target.value)}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-none focus:border-blue-500 focus:ring-blue-500"
                   placeholder="Target node ID"
                 />
               </label>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-foreground">
                 Edge Weight
                 <input
                   type="number"
                   value={edgeWeight}
                   onChange={(e) => setEdgeWeight(e.target.value)}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-none focus:border-blue-500 focus:ring-blue-500"
                 />
               </label>
             </div>
@@ -182,7 +182,7 @@ export function GraphDemo() {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-lg p-6" style={{ height: '600px' }}>
+      <div className="bg-transparent rounded-md shadow-none p-4" style={{ height: '600px' }}>
         <GraphVisualization
           websocketUrl={import.meta.env.VITE_WS_URL || '/ws'}
           showMiniMap

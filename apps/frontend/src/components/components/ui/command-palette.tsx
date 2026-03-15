@@ -93,15 +93,15 @@ export const CommandPalette: React.FC = () => {
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="min-h-screen px-4 text-center">
         <div
-          className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+          className="fixed inset-0 bg-transparent0 bg-opacity-75 transition-opacity"
           onClick={() => setIsOpen(false)}
         />
 
-        <div className="inline-block w-full max-w-2xl my-8 text-left align-middle transition-all transform bg-white dark:bg-gray-800 shadow-xl rounded-xl">
+        <div className="inline-block w-full max-w-2xl my-8 text-left align-middle transition-all transform bg-transparent dark:bg-transparent shadow-none rounded-md">
           <div className="p-4">
             <input
               type="text"
-              className="w-full px-4 py-2 text-sm text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-700 border-0 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 text-sm text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-700 border-0 rounded-md focus:ring-2 focus:ring-blue-500"
               placeholder="Search commands... (ESC to close)"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -113,7 +113,7 @@ export const CommandPalette: React.FC = () => {
             {filteredCommands.map((command) => (
               <button
                 key={command.id}
-                className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-between"
+                className="w-full px-4 py-2 text-left hover:bg-muted/30 dark:hover:bg-gray-700 flex items-center justify-between"
                 onClick={() => {
                   command.action();
                   setIsOpen(false);
@@ -121,10 +121,10 @@ export const CommandPalette: React.FC = () => {
               >
                 <div>
                   <span className="text-gray-900 dark:text-white">{command.name}</span>
-                  <span className="ml-2 text-sm text-gray-500">{command.category}</span>
+                  <span className="ml-2 text-sm text-muted-foreground">{command.category}</span>
                 </div>
                 {command.shortcut && (
-                  <span className="text-sm text-gray-500">{command.shortcut}</span>
+                  <span className="text-sm text-muted-foreground">{command.shortcut}</span>
                 )}
               </button>
             ))}

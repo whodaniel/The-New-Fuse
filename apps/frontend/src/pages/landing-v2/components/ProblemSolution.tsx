@@ -4,7 +4,7 @@ import Card from '../ui/Card';
 
 export default function ProblemSolution() {
   return (
-    <section className="py-24 md:py-32 relative container px-4 md:px-6 mx-auto">
+    <section className="py-24 md:py-22 relative container px-4 md:px-3 mx-auto">
       <div className="flex flex-col items-center text-center mb-16">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -20,7 +20,7 @@ export default function ProblemSolution() {
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-8">
+      <div className="grid md:grid-cols-2 gap-4">
         <Card className="border-red-500/10 bg-red-500/5 hover:border-red-500/20 hover:bg-red-500/10">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center text-red-400">

@@ -150,7 +150,7 @@ export const GreeterAgent: React.FC<GreeterAgentProps> = ({
   };
 
   return (
-    <div className="rounded-lg overflow-hidden bg-gray-50 shadow-md h-[500px] flex flex-col">
+    <div className="rounded-md overflow-hidden bg-transparent shadow-md h-[500px] flex flex-col">
       {/* Chat header */}
       <div className="p-4 bg-blue-600 text-white">
         <div className="flex items-center space-x-2">
@@ -171,7 +171,7 @@ export const GreeterAgent: React.FC<GreeterAgentProps> = ({
               className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className={`max-w-[80%] p-3 rounded-lg ${
+                className={`max-w-[80%] p-3 rounded-md ${
                   message.role === 'user' ? 'bg-blue-50 text-gray-900' : 'bg-gray-100 text-gray-900'
                 }`}
               >
@@ -184,7 +184,7 @@ export const GreeterAgent: React.FC<GreeterAgentProps> = ({
                   </div>
                 )}
                 <p>{message.content}</p>
-                <p className="text-xs text-gray-500 text-right mt-1">
+                <p className="text-xs text-muted-foreground text-right mt-1">
                   {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </p>
               </div>
@@ -193,7 +193,7 @@ export const GreeterAgent: React.FC<GreeterAgentProps> = ({
 
         {isTyping && (
           <div className="flex justify-start">
-            <div className="bg-gray-100 p-3 rounded-lg">
+            <div className="bg-gray-100 p-3 rounded-md">
               <div className="flex items-center space-x-2">
                 <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center text-xs text-white font-semibold">
                   {agentName.charAt(0)}

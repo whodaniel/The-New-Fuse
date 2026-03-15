@@ -108,7 +108,7 @@ export function SingleUserAuth() {
             </p>
           </DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleLogin} className="space-y-4 py-4">
+        <form onSubmit={handleLogin} className="space-y-4 py-2">
           <div className="space-y-2">
             <Input
               name="password"

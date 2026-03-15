@@ -42,7 +42,7 @@ const ActivityItem = React.memo(
 
     return (
       <div
-        className={`flex flex-col p-3 hover:bg-gray-50 rounded-md transition-colors ${!read ? 'border-l-2 border-blue-500' : ''}`}
+        className={`flex flex-col p-3 hover:bg-muted/20 rounded-md transition-colors ${!read ? 'border-l-2 border-blue-500' : ''}`}
       >
         <div className="flex items-start space-x-4 w-full">
           <Badge className={variants[type]}>{type.charAt(0).toUpperCase() + type.slice(1)}</Badge>
@@ -53,7 +53,7 @@ const ActivityItem = React.memo(
               {onToggleExpand && (
                 <button
                   onClick={() => onToggleExpand(id)}
-                  className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100"
+                  className="text-muted-foreground hover:text-foreground p-1 rounded-full hover:bg-muted/30"
                 >
                   {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                 </button>
@@ -62,16 +62,16 @@ const ActivityItem = React.memo(
 
             <div className="flex items-center space-x-2 mt-1">
               {category && (
-                <span className="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-600">
+                <span className="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-muted-foreground">
                   {category}
                 </span>
               )}
               {source && (
-                <span className="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-600">
+                <span className="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-muted-foreground">
                   {source}
                 </span>
               )}
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-muted-foreground">
                 {formatDistanceToNow(new Date(timestamp), { addSuffix: true })}
               </p>
             </div>
@@ -79,12 +79,14 @@ const ActivityItem = React.memo(
         </div>
 
         {expanded && metadata && (
-          <div className="mt-2 ml-10 p-3 bg-gray-50 rounded-md border border-gray-100">
-            <p className="text-xs text-gray-500 mb-1">Details:</p>
-            <pre className="text-xs text-gray-700 overflow-x-auto">
+          <div className="mt-2 ml-10 p-3 bg-transparent rounded-md border border-gray-100">
+            <p className="text-xs text-muted-foreground mb-1">Details:</p>
+            <pre className="text-xs text-foreground overflow-x-auto">
               {JSON.stringify(metadata, null, 2)}
             </pre>
-            <p className="text-xs text-gray-500 mt-2">{format(new Date(timestamp), 'PPpp')}</p>
+            <p className="text-xs text-muted-foreground mt-2">
+              {format(new Date(timestamp), 'PPpp')}
+            </p>
           </div>
         )}
       </div>
@@ -291,7 +293,7 @@ export function ActivityFeed() {
           <TabsContent value="list">
             <ScrollArea className="h-[400px]">
               {filteredActivities.length === 0 ? (
-                <div className="text-center text-gray-500 py-8">No activity to display</div>
+                <div className="text-center text-muted-foreground py-8">No activity to display</div>
               ) : (
                 <div className="space-y-1">
                   {filteredActivities.map((activity) => (
@@ -311,7 +313,7 @@ export function ActivityFeed() {
           <TabsContent value="grouped">
             <ScrollArea className="h-[400px]">
               {Object.keys(groupedActivities).length === 0 ? (
-                <div className="text-center text-gray-500 py-8">No activity to display</div>
+                <div className="text-center text-muted-foreground py-8">No activity to display</div>
               ) : (
                 <div className="space-y-4">
                   {Object.entries(groupedActivities).map(([date, dateActivities]) => (

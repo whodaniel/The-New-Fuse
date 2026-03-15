@@ -7,20 +7,20 @@ const Unauthorized = () => {
   const { userRoles } = useAuthorization();
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-transparent py-12 px-4 sm:px-3 lg:px-8">
       <div className="max-w-md w-full text-center">
         <h1 className="text-7xl font-bold text-red-600">401</h1>
-        <h2 className="mt-2 text-3xl font-bold text-gray-900">Unauthorized Access</h2>
-        <p className="mt-2 text-gray-600">You don't have permission to access this page.</p>
+        <h2 className="mt-2 text-2xl font-bold text-gray-900">Unauthorized Access</h2>
+        <p className="mt-2 text-muted-foreground">You don't have permission to access this page.</p>
 
         {user && (
-          <div className="mt-4 p-4 bg-gray-100 rounded-lg text-left text-sm">
+          <div className="mt-4 p-4 bg-gray-100 rounded-md text-left text-sm">
             <p className="font-semibold">Current Identity:</p>
             <p>
-              Email: <span className="font-mono text-gray-700">{user.email}</span>
+              Email: <span className="font-mono text-foreground">{user.email}</span>
             </p>
             <p>
-              ID: <span className="font-mono text-gray-500 text-xs">{user.id}</span>
+              ID: <span className="font-mono text-muted-foreground text-xs">{user.id}</span>
             </p>
             <p className="mt-2 font-semibold">Assigned Roles:</p>
             <div className="flex flex-wrap gap-1 mt-1">
@@ -34,7 +34,7 @@ const Unauthorized = () => {
                   </span>
                 ))
               ) : (
-                <span className="text-gray-500 italic">No roles assigned</span>
+                <span className="text-muted-foreground italic">No roles assigned</span>
               )}
             </div>
           </div>
@@ -49,7 +49,7 @@ const Unauthorized = () => {
           </Link>
           <Link
             to="/auth/login"
-            className="text-sm text-gray-500 hover:text-gray-700"
+            className="text-sm text-muted-foreground hover:text-foreground"
             onClick={() => {
               // Optional: Clear auth on click if needed, but the link will just go to login
             }}

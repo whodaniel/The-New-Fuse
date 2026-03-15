@@ -170,15 +170,15 @@ const AgentCard = ({
   <button
     type="button"
     onClick={onSelect}
-    className={`w-full text-left rounded-2xl border p-5 backdrop-blur-md transition-all ${
+    className={`w-full text-left rounded-md border p-4 backdrop-blur-md transition-all ${
       selected
         ? 'border-cyan-400/40 bg-cyan-500/10 shadow-[0_0_30px_rgba(6,182,212,0.2)]'
-        : 'border-white/10 bg-black/30 hover:bg-white/5 hover:border-white/20'
+        : 'border-white/10 bg-black/30 hover:bg-transparent/5 hover:border-white/20'
     }`}
   >
     <div className="flex items-start justify-between gap-3">
       <div className="flex items-center gap-3">
-        <div className="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center text-xl">
+        <div className="w-11 h-11 rounded-md bg-transparent/10 flex items-center justify-center text-xl">
           {agent.pfp}
         </div>
         <div>
@@ -210,7 +210,7 @@ const AgentCard = ({
       {agent.capabilities.map((capability) => (
         <span
           key={`${agent.id}-${capability}`}
-          className="px-2 py-1 text-xs rounded-lg border border-white/10 bg-white/5 text-slate-300"
+          className="px-2 py-1 text-xs rounded-md border border-white/10 bg-transparent/5 text-slate-300"
         >
           {capability}
         </span>
@@ -324,7 +324,7 @@ const AICommandCenter: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
       <header className="sticky top-0 z-50 backdrop-blur-xl bg-black/30 border-b border-white/10">
-        <div className="max-w-[1600px] mx-auto px-4 py-3 flex items-center justify-between gap-4">
+        <div className="max-w-[1600px] mx-auto px-4 py-2 flex items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
               AI Command Center
@@ -354,7 +354,7 @@ const AICommandCenter: React.FC = () => {
               Mesh: {isRealtimeConnected ? 'Connected' : 'Disconnected'}
             </span>
             {lastRealtimeUpdate && (
-              <span className="px-2 py-1 rounded-full text-xs border border-white/10 bg-white/5 text-slate-300">
+              <span className="px-2 py-1 rounded-full text-xs border border-white/10 bg-transparent/5 text-slate-300">
                 Last update: {new Date(lastRealtimeUpdate).toLocaleTimeString()}
               </span>
             )}
@@ -366,7 +366,7 @@ const AICommandCenter: React.FC = () => {
                 className={`px-3 py-1.5 rounded-md text-sm transition-all ${
                   layout === mode
                     ? 'bg-purple-500 text-white'
-                    : 'bg-white/5 text-gray-300 hover:bg-white/10'
+                    : 'bg-transparent/5 text-gray-300 hover:bg-transparent/10'
                 }`}
               >
                 {mode[0].toUpperCase() + mode.slice(1)}
@@ -415,10 +415,10 @@ const AICommandCenter: React.FC = () => {
                   key={agent.id}
                   type="button"
                   onClick={() => setActiveId(agent.id)}
-                  className={`px-4 py-2 rounded-lg whitespace-nowrap text-sm ${
+                  className={`px-4 py-2 rounded-md whitespace-nowrap text-sm ${
                     activeId === agent.id
                       ? 'bg-purple-500 text-white'
-                      : 'bg-white/5 text-gray-300 hover:bg-white/10'
+                      : 'bg-transparent/5 text-gray-300 hover:bg-transparent/10'
                   }`}
                 >
                   {agent.pfp} {agent.name}
@@ -437,10 +437,10 @@ const AICommandCenter: React.FC = () => {
                   key={agent.id}
                   type="button"
                   onClick={() => setActiveId(agent.id)}
-                  className={`w-full text-left px-4 py-3 rounded-xl transition-all ${
+                  className={`w-full text-left px-4 py-2 rounded-md transition-all ${
                     activeId === agent.id
                       ? 'bg-gradient-to-r from-purple-500 to-cyan-500 text-white'
-                      : 'bg-white/5 text-gray-300 hover:bg-white/10'
+                      : 'bg-transparent/5 text-gray-300 hover:bg-transparent/10'
                   }`}
                 >
                   <div className="font-medium">
@@ -452,21 +452,21 @@ const AICommandCenter: React.FC = () => {
             </aside>
             <section className="flex-1">
               {activeCard && (
-                <div className="rounded-2xl border border-white/10 bg-black/30 p-6">
+                <div className="rounded-md border border-white/10 bg-black/30 p-4">
                   <AgentCard agent={activeCard} selected onSelect={() => undefined} />
                   <div className="mt-4 flex gap-3">
                     <a
                       href={activeCard.endpoint}
                       target="_blank"
                       rel="noreferrer"
-                      className="px-4 py-2 rounded-lg bg-cyan-500/20 border border-cyan-400/30 text-cyan-200 hover:bg-cyan-500/30 text-sm"
+                      className="px-4 py-2 rounded-md bg-cyan-500/20 border border-cyan-400/30 text-cyan-200 hover:bg-cyan-500/30 text-sm"
                     >
                       Open Agent Endpoint
                     </a>
                     <button
                       type="button"
                       onClick={() => navigator.clipboard.writeText(activeCard.endpoint)}
-                      className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 text-sm"
+                      className="px-4 py-2 rounded-md bg-transparent/5 border border-white/10 hover:bg-transparent/10 text-sm"
                     >
                       Copy Endpoint URL
                     </button>

@@ -1,7 +1,7 @@
-import React from 'react';
 import { Button } from '@/components/ui/design-system';
-import { useSocket } from '../../hooks/useSocket';
 import { useToast } from '@/hooks/useToast';
+import React from 'react';
+import { useSocket } from '../../hooks/useSocket';
 
 const AVAILABLE_SCRIPTS = {
   dev: 'Start Development',
@@ -66,7 +66,7 @@ export const ScriptRunner: React.FC = () => {
             id="script-select"
             value={selectedScript}
             onChange={(e) => setSelectedScript(e.target.value)}
-            className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md bg-white dark:bg-neutral-800"
+            className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md bg-transparent dark:bg-transparent"
             aria-label="Select a script to run"
             title="Choose a script from the list to execute"
             required
@@ -91,4 +91,3 @@ export const ScriptRunner: React.FC = () => {
     </div>
   );
 };
-

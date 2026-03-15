@@ -252,8 +252,8 @@ export default function PromptInput({
         onSubmit={handleSubmit}
         className="flex flex-col gap-y-1 rounded-t-lg md:w-3/4 w-full mx-auto max-w-xl items-center"
       >
-        <div className="flex items-center rounded-lg md:mb-4">
-          <div className="w-[95vw] md:w-[635px] bg-theme-bg-chat-input light:bg-white light:border-solid light:border-[1px] light:border-theme-chat-input-border shadow-sm rounded-2xl flex flex-col px-4 overflow-hidden">
+        <div className="flex items-center rounded-md md:mb-4">
+          <div className="w-[95vw] md:w-[635px] bg-theme-bg-chat-input light:bg-transparent light:border-solid light:border-[1px] light:border-theme-chat-input-border shadow-none rounded-md flex flex-col px-4 overflow-hidden">
             <AttachmentManager attachments={attachments} />
             <div className="flex items-center w-full border-b-2 border-theme-chat-input-border">
               <textarea
@@ -282,7 +282,7 @@ export default function PromptInput({
                   <button
                     ref={formRef}
                     type="submit"
-                    className="border-none inline-flex justify-center rounded-2xl cursor-pointer opacity-60 hover:opacity-100 light:opacity-100 light:hover:opacity-60 ml-4"
+                    className="border-none inline-flex justify-center rounded-md cursor-pointer opacity-60 hover:opacity-100 light:opacity-100 light:hover:opacity-60 ml-4"
                     data-tooltip-id="send-prompt"
                     data-tooltip-content="Send prompt message to workspace"
                     aria-label="Send prompt message to workspace"
@@ -303,7 +303,7 @@ export default function PromptInput({
                 </>
               )}
             </div>
-            <div className="flex justify-between py-3.5">
+            <div className="flex justify-between py-2.5">
               <div className="flex gap-x-2">
                 <AttachItem />
                 <SlashCommandsButton

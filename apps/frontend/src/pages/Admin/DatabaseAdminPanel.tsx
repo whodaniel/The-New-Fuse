@@ -104,23 +104,23 @@ export default function DatabaseAdminPanel() {
   };
 
   return (
-    <div className="p-8 max-w-[1600px] mx-auto bg-gray-50 min-h-screen">
+    <div className="p-4 max-w-[1600px] mx-auto bg-transparent min-h-screen">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2 flex items-center">
               <Database className="h-8 w-8 mr-3 text-blue-600" />
               Database Admin Panel
             </h1>
-            <p className="text-gray-600">Query and manage database directly</p>
+            <p className="text-muted-foreground">Query and manage database directly</p>
           </div>
           <div className="flex items-center space-x-3">
-            <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center">
+            <button className="px-4 py-2 border border-gray-300 rounded-md hover:bg-muted/20 flex items-center">
               <Download className="h-4 w-4 mr-2" />
               Export
             </button>
-            <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center">
+            <button className="px-4 py-2 border border-gray-300 rounded-md hover:bg-muted/20 flex items-center">
               <Upload className="h-4 w-4 mr-2" />
               Import
             </button>
@@ -129,18 +129,18 @@ export default function DatabaseAdminPanel() {
       </div>
 
       {/* Database Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
         {dbStats.map((stat, index) => (
-          <div key={index} className="bg-white rounded-lg shadow p-6">
-            <div className="text-sm text-gray-600">{stat.metric}</div>
-            <div className="text-3xl font-bold text-gray-900">{stat.value}</div>
+          <div key={index} className="bg-transparent rounded-md shadow-none p-4">
+            <div className="text-sm text-muted-foreground">{stat.metric}</div>
+            <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
         {/* Tables List */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-transparent rounded-md shadow-none p-4">
           <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
             <Table className="h-5 w-5 mr-2" />
             Tables
@@ -150,18 +150,20 @@ export default function DatabaseAdminPanel() {
               <button
                 key={table.name}
                 onClick={() => setSelectedTable(table.name)}
-                className={`w-full text-left p-3 rounded-lg transition-colors ${
+                className={`w-full text-left p-3 rounded-md transition-colors ${
                   selectedTable === table.name
                     ? 'bg-blue-50 border-2 border-blue-500'
-                    : 'bg-gray-50 hover:bg-gray-100 border-2 border-transparent'
+                    : 'bg-transparent hover:bg-muted/30 border-2 border-transparent'
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="text-sm font-medium text-gray-900">{table.name}</div>
-                    <div className="text-xs text-gray-500">{table.rows.toLocaleString()} rows</div>
+                    <div className="text-xs text-muted-foreground">
+                      {table.rows.toLocaleString()} rows
+                    </div>
                   </div>
-                  <div className="text-xs text-gray-500">{table.size}</div>
+                  <div className="text-xs text-muted-foreground">{table.size}</div>
                 </div>
               </button>
             ))}
@@ -169,13 +171,13 @@ export default function DatabaseAdminPanel() {
         </div>
 
         {/* Query Editor */}
-        <div className="lg:col-span-2 bg-white rounded-lg shadow p-6">
+        <div className="lg:col-span-2 bg-transparent rounded-md shadow-none p-4">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Query Editor</h3>
           <div className="mb-4">
             <textarea
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="w-full h-32 px-4 py-2 border border-gray-300 rounded-lg font-mono text-sm focus:ring-2 focus:ring-blue-500"
+              className="w-full h-32 px-4 py-2 border border-gray-300 rounded-md font-mono text-sm focus:ring-2 focus:ring-blue-500"
               placeholder="Enter SQL query..."
             />
           </div>
@@ -183,18 +185,18 @@ export default function DatabaseAdminPanel() {
             <button
               onClick={executeQuery}
               disabled={loading}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center disabled:opacity-50"
+              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center disabled:opacity-50"
             >
               <Play className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
               {loading ? 'Executing...' : 'Execute Query'}
             </button>
-            <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+            <button className="px-4 py-2 border border-gray-300 rounded-md hover:bg-muted/20">
               Clear
             </button>
           </div>
 
           {error && (
-            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start">
+            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-md flex items-start">
               <AlertCircle className="h-5 w-5 text-red-500 mr-2 mt-0.5" />
               <div className="text-sm text-red-700">{error}</div>
             </div>
@@ -203,7 +205,7 @@ export default function DatabaseAdminPanel() {
           {queryResult && (
             <div className="mt-6">
               <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center space-x-4 text-sm text-gray-600">
+                <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                   <div className="flex items-center">
                     <CheckCircle className="h-4 w-4 text-green-500 mr-1" />
                     {queryResult.rowCount} rows returned
@@ -218,25 +220,25 @@ export default function DatabaseAdminPanel() {
                   Export Results
                 </button>
               </div>
-              <div className="overflow-x-auto border border-gray-200 rounded-lg">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+              <div className="overflow-x-auto border border-gray-200 rounded-md">
+                <table className="min-w-full divide-y divide-border/50">
+                  <thead className="bg-transparent">
                     <tr>
                       {queryResult.columns.map((col, i) => (
                         <th
                           key={i}
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                          className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase"
                         >
                           {col}
                         </th>
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-transparent divide-y divide-border/50">
                     {queryResult.rows.map((row, i) => (
-                      <tr key={i} className="hover:bg-gray-50">
+                      <tr key={i} className="hover:bg-muted/20">
                         {row.map((cell, j) => (
-                          <td key={j} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          <td key={j} className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
                             {cell}
                           </td>
                         ))}
@@ -251,17 +253,17 @@ export default function DatabaseAdminPanel() {
       </div>
 
       {/* Query History */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow p-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+        <div className="bg-transparent rounded-md shadow-none p-4">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Query History</h3>
           <div className="space-y-3">
             {queryHistory.map((item, index) => (
               <div
                 key={index}
-                className="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer"
+                className="p-3 bg-transparent rounded-md hover:bg-muted/30 cursor-pointer"
               >
                 <div className="text-sm font-mono text-gray-900 mb-1">{item.query}</div>
-                <div className="flex items-center justify-between text-xs text-gray-500">
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
                   <span>{item.time}</span>
                   <span>
                     {item.rows} rows • {item.duration}ms
@@ -272,7 +274,7 @@ export default function DatabaseAdminPanel() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-transparent rounded-md shadow-none p-4">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Query Performance</h3>
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={performanceData}>
@@ -289,12 +291,12 @@ export default function DatabaseAdminPanel() {
       </div>
 
       {/* Database Health */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-transparent rounded-md shadow-none p-4">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Database Health</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-600">Connection Pool</span>
+              <span className="text-sm text-muted-foreground">Connection Pool</span>
               <span className="text-sm font-bold">45%</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
@@ -303,7 +305,7 @@ export default function DatabaseAdminPanel() {
           </div>
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-600">Cache Hit Rate</span>
+              <span className="text-sm text-muted-foreground">Cache Hit Rate</span>
               <span className="text-sm font-bold">94.2%</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
@@ -312,7 +314,7 @@ export default function DatabaseAdminPanel() {
           </div>
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-600">Replication Lag</span>
+              <span className="text-sm text-muted-foreground">Replication Lag</span>
               <span className="text-sm font-bold">12ms</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">

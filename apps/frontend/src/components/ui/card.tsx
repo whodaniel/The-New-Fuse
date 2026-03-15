@@ -2,7 +2,10 @@ import React from 'react';
 
 export function Card({ children, className = '', ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={`rounded-lg shadow bg-card text-card-foreground ${className}`} {...props}>
+    <div
+      className={`rounded-md border border-border/60 bg-card text-card-foreground ${className}`}
+      {...props}
+    >
       {children}
     </div>
   );
@@ -14,7 +17,7 @@ export function CardHeader({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={`p-4 border-b border-border ${className}`} {...props}>
+    <div className={`p-3 border-b border-border/60 ${className}`} {...props}>
       {children}
     </div>
   );
@@ -26,7 +29,7 @@ export function CardTitle({
   ...props
 }: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
-    <h3 className={`text-lg font-semibold ${className}`} {...props}>
+    <h3 className={`text-base font-semibold ${className}`} {...props}>
       {children}
     </h3>
   );
@@ -50,7 +53,7 @@ export function CardContent({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={`p-4 ${className}`} {...props}>
+    <div className={`p-3 ${className}`} {...props}>
       {children}
     </div>
   );
@@ -62,7 +65,7 @@ export function CardFooter({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={`p-4 border-t border-border ${className}`} {...props}>
+    <div className={`p-3 border-t border-border/60 ${className}`} {...props}>
       {children}
     </div>
   );

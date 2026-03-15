@@ -272,7 +272,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
 
       <h2 className="text-xl font-semibold text-gray-900 mb-6">AI Settings for Onboarding</h2>
 
-      <p className="text-gray-600 mb-6">
+      <p className="text-muted-foreground mb-6">
         Configure the AI capabilities used during the onboarding process, including RAG settings,
         LLM configuration, and the Greeter Agent behavior.
       </p>
@@ -280,7 +280,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
       {isLoading && (
         <div className="text-center py-10">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"></div>
-          <p className="text-gray-600">Loading AI settings...</p>
+          <p className="text-muted-foreground">Loading AI settings...</p>
         </div>
       )}
 
@@ -324,7 +324,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                   className={`py-2 px-1 border-b-2 font-medium text-sm ${
                     activeTab === tab.id
                       ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      : 'border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300'
                   }`}
                 >
                   {tab.label}
@@ -337,15 +337,15 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
           <div className="mt-6">
             {/* RAG Settings Tab */}
             {activeTab === 'rag' && (
-              <div className="bg-white border border-gray-200 rounded-lg shadow-sm mb-4">
-                <div className="px-6 py-4 border-b border-gray-200">
+              <div className="bg-transparent border border-gray-200 rounded-md shadow-none-none-none mb-4">
+                <div className="px-3 py-2 border-b border-gray-200">
                   <h3 className="text-lg font-medium text-gray-900">
                     Retrieval Augmented Generation (RAG)
                   </h3>
                 </div>
-                <div className="px-6 py-4">
+                <div className="px-3 py-2">
                   <div className="flex items-center justify-between mb-4">
-                    <label className="text-sm font-medium text-gray-700">Enable RAG</label>
+                    <label className="text-sm font-medium text-foreground">Enable RAG</label>
                     <button
                       type="button"
                       onClick={() => handleSwitchChange('ragEnabled', !settings.ragEnabled)}
@@ -353,7 +353,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                       aria-label="Enable RAG"
                     >
                       <span
-                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${settings.ragEnabled ? 'translate-x-5' : 'translate-x-0'}`}
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-transparent shadow-none-none ring-0 transition duration-200 ease-in-out ${settings.ragEnabled ? 'translate-x-5' : 'translate-x-0'}`}
                       />
                     </button>
                   </div>
@@ -361,7 +361,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                   <div className="mb-4">
                     <label
                       htmlFor="embeddingModel"
-                      className="block text-sm font-medium text-gray-700 mb-2"
+                      className="block text-sm font-medium text-foreground mb-2"
                     >
                       Embedding Model
                     </label>
@@ -370,7 +370,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                       name="defaultEmbeddingModel"
                       value={settings.defaultEmbeddingModel}
                       onChange={handleInputChange}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-none-none-none focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     >
                       <option value="text-embedding-ada-002">Ada v2 (OpenAI)</option>
                       <option value="text-embedding-3-large">Embedding 3 Large (OpenAI)</option>
@@ -381,7 +381,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                   <div className="mb-4">
                     <label
                       htmlFor="vectorDatabase"
-                      className="block text-sm font-medium text-gray-700 mb-2"
+                      className="block text-sm font-medium text-foreground mb-2"
                     >
                       Vector Database
                     </label>
@@ -390,7 +390,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                       name="vectorDatabaseType"
                       value={settings.vectorDatabaseType}
                       onChange={handleInputChange}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-none-none-none focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     >
                       <option value="pinecone">Pinecone</option>
                       <option value="weaviate">Weaviate</option>
@@ -417,7 +417,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                         {settings.vectorDatabaseType === 'pinecone' && (
                           <>
                             <div className="mb-4">
-                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                              <label className="block text-sm font-medium text-foreground mb-2">
                                 Pinecone API Key
                               </label>
                               <input
@@ -426,11 +426,11 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                                 onChange={handleInputChange}
                                 type="password"
                                 placeholder="Enter your Pinecone API key"
-                                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-none-none-none focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                               />
                             </div>
                             <div className="mb-4">
-                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                              <label className="block text-sm font-medium text-foreground mb-2">
                                 Pinecone Environment
                               </label>
                               <input
@@ -438,11 +438,11 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                                 value={settings.vectorDatabaseConfig.pineconeEnvironment}
                                 onChange={handleInputChange}
                                 placeholder="e.g., us-west1-gcp"
-                                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-none-none-none focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                               />
                             </div>
                             <div className="mb-4">
-                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                              <label className="block text-sm font-medium text-foreground mb-2">
                                 Pinecone Index
                               </label>
                               <input
@@ -450,14 +450,14 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                                 value={settings.vectorDatabaseConfig.pineconeIndex}
                                 onChange={handleInputChange}
                                 placeholder="e.g., onboarding-knowledge"
-                                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-none-none-none focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                               />
                             </div>
                           </>
                         )}
 
                         {settings.vectorDatabaseType !== 'pinecone' && (
-                          <p className="text-gray-500">
+                          <p className="text-muted-foreground">
                             Configuration for {settings.vectorDatabaseType} will be available in a
                             future update.
                           </p>
@@ -471,15 +471,15 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
 
             {/* LLM Settings Tab */}
             {activeTab === 'llm' && (
-              <div className="bg-white border border-gray-200 rounded-lg shadow-sm mb-4">
-                <div className="px-6 py-4 border-b border-gray-200">
+              <div className="bg-transparent border border-gray-200 rounded-md shadow-none-none-none mb-4">
+                <div className="px-3 py-2 border-b border-gray-200">
                   <h3 className="text-lg font-medium text-gray-900">Language Model Settings</h3>
                 </div>
-                <div className="px-6 py-4">
+                <div className="px-3 py-2">
                   <div className="mb-4">
                     <label
                       htmlFor="defaultLLMProvider"
-                      className="block text-sm font-medium text-gray-700 mb-2"
+                      className="block text-sm font-medium text-foreground mb-2"
                     >
                       Default LLM Provider
                     </label>
@@ -488,7 +488,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                       name="defaultLLMProvider"
                       value={settings.defaultLLMProvider}
                       onChange={handleInputChange}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-none-none-none focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     >
                       <option value="openai">OpenAI</option>
                       <option value="anthropic">Anthropic</option>
@@ -496,7 +496,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                       <option value="azure">Azure OpenAI</option>
                       <option value="mistral">Mistral AI</option>
                     </select>
-                    <p className="mt-1 text-sm text-gray-500">
+                    <p className="mt-1 text-sm text-muted-foreground">
                       The default provider for language models
                     </p>
                   </div>
@@ -504,7 +504,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                   <div className="mb-4">
                     <label
                       htmlFor="defaultLLMModel"
-                      className="block text-sm font-medium text-gray-700 mb-2"
+                      className="block text-sm font-medium text-foreground mb-2"
                     >
                       Default Model
                     </label>
@@ -513,7 +513,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                       name="defaultLLMModel"
                       value={settings.defaultLLMModel}
                       onChange={handleInputChange}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-none-none-none focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     >
                       {settings.defaultLLMProvider === 'openai' && (
                         <>
@@ -553,13 +553,15 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                         </>
                       )}
                     </select>
-                    <p className="mt-1 text-sm text-gray-500">The default language model to use</p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      The default language model to use
+                    </p>
                   </div>
 
                   <div className="mb-4">
                     <label
                       htmlFor="defaultTemperature"
-                      className="block text-sm font-medium text-gray-700 mb-2"
+                      className="block text-sm font-medium text-foreground mb-2"
                     >
                       Default Temperature
                     </label>
@@ -574,7 +576,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                         step="0.1"
                         min="0"
                         max="1"
-                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                        className="w-full h-2 bg-gray-200 rounded-md appearance-none cursor-pointer"
                         aria-label="Default Temperature"
                       />
                       <input
@@ -590,7 +592,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                         aria-label="Default Temperature Value"
                       />
                     </div>
-                    <p className="mt-1 text-sm text-gray-500">
+                    <p className="mt-1 text-sm text-muted-foreground">
                       Controls randomness: 0 is deterministic, 1 is more creative
                     </p>
                   </div>
@@ -598,7 +600,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                   <div className="mb-4">
                     <label
                       htmlFor="defaultMaxTokens"
-                      className="block text-sm font-medium text-gray-700 mb-2"
+                      className="block text-sm font-medium text-foreground mb-2"
                     >
                       Default Max Tokens
                     </label>
@@ -612,9 +614,9 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                       min="100"
                       max="8000"
                       step="100"
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-none-none-none focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     />
-                    <p className="mt-1 text-sm text-gray-500">
+                    <p className="mt-1 text-sm text-muted-foreground">
                       Maximum number of tokens to generate in responses
                     </p>
                   </div>
@@ -624,15 +626,15 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
 
             {/* Greeter Agent Tab */}
             {activeTab === 'greeter' && (
-              <div className="bg-white border border-gray-200 rounded-lg shadow-sm mb-4">
-                <div className="px-6 py-4 border-b border-gray-200">
+              <div className="bg-transparent border border-gray-200 rounded-md shadow-none-none-none mb-4">
+                <div className="px-3 py-2 border-b border-gray-200">
                   <h3 className="text-lg font-medium text-gray-900">Greeter Agent Configuration</h3>
                 </div>
-                <div className="px-6 py-4">
+                <div className="px-3 py-2">
                   <div className="flex items-center justify-between mb-4">
                     <label
                       htmlFor="greeterAgentEnabled"
-                      className="text-sm font-medium text-gray-700"
+                      className="text-sm font-medium text-foreground"
                     >
                       Enable Greeter Agent
                     </label>
@@ -646,7 +648,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                       aria-label="Enable Greeter Agent"
                     >
                       <span
-                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${settings.greeterAgentEnabled ? 'translate-x-5' : 'translate-x-0'}`}
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-transparent shadow-none-none ring-0 transition duration-200 ease-in-out ${settings.greeterAgentEnabled ? 'translate-x-5' : 'translate-x-0'}`}
                       />
                     </button>
                   </div>
@@ -654,7 +656,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                   <div className="mb-4">
                     <label
                       htmlFor="greeterAgentName"
-                      className="block text-sm font-medium text-gray-700 mb-2"
+                      className="block text-sm font-medium text-foreground mb-2"
                     >
                       Agent Name
                     </label>
@@ -663,14 +665,14 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                       id="greeterAgentName"
                       value={settings.greeterAgentName}
                       onChange={handleInputChange}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-none-none-none focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     />
                   </div>
 
                   <div className="mb-4">
                     <label
                       htmlFor="greeterAgentAvatar"
-                      className="block text-sm font-medium text-gray-700 mb-2"
+                      className="block text-sm font-medium text-foreground mb-2"
                     >
                       Agent Avatar URL
                     </label>
@@ -679,14 +681,14 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                       id="greeterAgentAvatar"
                       value={settings.greeterAgentAvatar}
                       onChange={handleInputChange}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-none-none-none focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     />
                   </div>
 
                   <div className="mb-4">
                     <label
                       htmlFor="greeterAgentPrompt"
-                      className="block text-sm font-medium text-gray-700 mb-2"
+                      className="block text-sm font-medium text-foreground mb-2"
                     >
                       System Prompt
                     </label>
@@ -696,15 +698,15 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                       value={settings.greeterAgentPrompt}
                       onChange={handleInputChange}
                       rows={5}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-none-none-none focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     />
-                    <p className="mt-1 text-sm text-gray-500">
+                    <p className="mt-1 text-sm text-muted-foreground">
                       The system prompt that defines the greeter agent's behavior and personality
                     </p>
                   </div>
 
                   <h4 className="text-sm font-medium text-gray-900 mb-2">Knowledge Base</h4>
-                  <p className="text-sm text-gray-500 mb-2">
+                  <p className="text-sm text-muted-foreground mb-2">
                     Select the knowledge bases that the greeter agent can access
                   </p>
 
@@ -716,7 +718,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                       >
                         <div>
                           <div className="font-medium text-gray-900">{kb.name}</div>
-                          <div className="text-sm text-gray-500">{kb.description}</div>
+                          <div className="text-sm text-muted-foreground">{kb.description}</div>
                         </div>
                         <button
                           type="button"
@@ -725,7 +727,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                           aria-label={`Enable ${kb.name} Knowledge Base`}
                         >
                           <span
-                            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${kb.enabled ? 'translate-x-5' : 'translate-x-0'}`}
+                            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-transparent shadow-none-none ring-0 transition duration-200 ease-in-out ${kb.enabled ? 'translate-x-5' : 'translate-x-0'}`}
                           />
                         </button>
                       </div>
@@ -737,15 +739,15 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
 
             {/* Multimodal Tab */}
             {activeTab === 'multimodal' && (
-              <div className="bg-white border border-gray-200 rounded-lg shadow-sm mb-4">
-                <div className="px-6 py-4 border-b border-gray-200">
+              <div className="bg-transparent border border-gray-200 rounded-md shadow-none-none-none mb-4">
+                <div className="px-3 py-2 border-b border-gray-200">
                   <h3 className="text-lg font-medium text-gray-900">Multimodal Settings</h3>
                 </div>
-                <div className="px-6 py-4">
+                <div className="px-3 py-2">
                   <div className="flex items-center justify-between mb-4">
                     <label
                       htmlFor="multimodalEnabled"
-                      className="text-sm font-medium text-gray-700"
+                      className="text-sm font-medium text-foreground"
                     >
                       Enable Multimodal Support
                     </label>
@@ -759,13 +761,13 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                       aria-label="Enable Multimodal Support"
                     >
                       <span
-                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${settings.multimodalEnabled ? 'translate-x-5' : 'translate-x-0'}`}
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-transparent shadow-none-none ring-0 transition duration-200 ease-in-out ${settings.multimodalEnabled ? 'translate-x-5' : 'translate-x-0'}`}
                       />
                     </button>
                   </div>
 
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-foreground mb-2">
                       Supported Modalities
                     </label>
                     <div className="flex flex-wrap gap-2">
@@ -788,7 +790,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                           className={`px-3 py-1 text-sm font-medium rounded-md border ${
                             settings.supportedModalities.includes(modality)
                               ? 'bg-blue-100 border-blue-300 text-blue-800'
-                              : 'bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200'
+                              : 'bg-gray-100 border-gray-300 text-foreground hover:bg-gray-200'
                           }`}
                           aria-label={`Enable ${modality} modality`}
                         >
@@ -801,7 +803,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                   <div className="mb-4">
                     <label
                       htmlFor="imageAnalysisModel"
-                      className="block text-sm font-medium text-gray-700 mb-2"
+                      className="block text-sm font-medium text-foreground mb-2"
                     >
                       Image Analysis Model
                     </label>
@@ -811,7 +813,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                       value={settings.imageAnalysisModel}
                       onChange={handleInputChange}
                       disabled={!settings.supportedModalities.includes('image')}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm disabled:bg-gray-100 disabled:text-gray-500"
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-none-none-none focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm disabled:bg-gray-100 disabled:text-muted-foreground"
                     >
                       <option value="gpt-4-vision">GPT-4 Vision</option>
                       <option value="claude-3-opus">Claude 3 Opus</option>
@@ -822,7 +824,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                   <div className="mb-4">
                     <label
                       htmlFor="audioTranscriptionModel"
-                      className="block text-sm font-medium text-gray-700 mb-2"
+                      className="block text-sm font-medium text-foreground mb-2"
                     >
                       Audio Transcription Model
                     </label>
@@ -832,7 +834,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                       value={settings.audioTranscriptionModel}
                       onChange={handleInputChange}
                       disabled={!settings.supportedModalities.includes('audio')}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm disabled:bg-gray-100 disabled:text-gray-500"
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-none-none-none focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm disabled:bg-gray-100 disabled:text-muted-foreground"
                     >
                       <option value="whisper-large-v3">Whisper Large v3</option>
                       <option value="whisper-medium">Whisper Medium</option>
@@ -845,13 +847,16 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
 
             {/* Advanced Tab */}
             {activeTab === 'advanced' && (
-              <div className="bg-white border border-gray-200 rounded-lg shadow-sm mb-4">
-                <div className="px-6 py-4 border-b border-gray-200">
+              <div className="bg-transparent border border-gray-200 rounded-md shadow-none-none-none mb-4">
+                <div className="px-3 py-2 border-b border-gray-200">
                   <h3 className="text-lg font-medium text-gray-900">Advanced Settings</h3>
                 </div>
-                <div className="px-6 py-4">
+                <div className="px-3 py-2">
                   <div className="flex items-center justify-between mb-4">
-                    <label htmlFor="enableDebugMode" className="text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor="enableDebugMode"
+                      className="text-sm font-medium text-foreground"
+                    >
                       Enable Debug Mode
                     </label>
                     <button
@@ -864,7 +869,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                       aria-label="Enable Debug Mode"
                     >
                       <span
-                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${settings.enableDebugMode ? 'translate-x-5' : 'translate-x-0'}`}
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-transparent shadow-none-none ring-0 transition duration-200 ease-in-out ${settings.enableDebugMode ? 'translate-x-5' : 'translate-x-0'}`}
                       />
                     </button>
                   </div>
@@ -872,7 +877,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                   <div className="flex items-center justify-between mb-4">
                     <label
                       htmlFor="logUserInteractions"
-                      className="text-sm font-medium text-gray-700"
+                      className="text-sm font-medium text-foreground"
                     >
                       Log User Interactions
                     </label>
@@ -886,7 +891,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                       aria-label="Log User Interactions"
                     >
                       <span
-                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${settings.logUserInteractions ? 'translate-x-5' : 'translate-x-0'}`}
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-transparent shadow-none-none ring-0 transition duration-200 ease-in-out ${settings.logUserInteractions ? 'translate-x-5' : 'translate-x-0'}`}
                       />
                     </button>
                   </div>
@@ -894,7 +899,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                   <div className="mb-4">
                     <label
                       htmlFor="maxConcurrentRequests"
-                      className="block text-sm font-medium text-gray-700 mb-2"
+                      className="block text-sm font-medium text-foreground mb-2"
                     >
                       Max Concurrent Requests
                     </label>
@@ -907,14 +912,14 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                       }
                       min="1"
                       max="20"
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-none-none-none focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     />
                   </div>
 
                   <div className="mb-4">
                     <label
                       htmlFor="requestTimeout"
-                      className="block text-sm font-medium text-gray-700 mb-2"
+                      className="block text-sm font-medium text-foreground mb-2"
                     >
                       Request Timeout (seconds)
                     </label>
@@ -927,14 +932,14 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                       }
                       min="5"
                       max="120"
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-none-none-none focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     />
                   </div>
 
                   <div className="mb-4">
                     <label
                       htmlFor="fallbackBehavior"
-                      className="block text-sm font-medium text-gray-700 mb-2"
+                      className="block text-sm font-medium text-foreground mb-2"
                     >
                       Fallback Behavior
                     </label>
@@ -943,13 +948,13 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                       id="fallbackBehavior"
                       value={settings.fallbackBehavior}
                       onChange={handleInputChange}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-none-none-none focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     >
                       <option value="graceful-degradation">Graceful Degradation</option>
                       <option value="retry">Retry</option>
                       <option value="error">Show Error</option>
                     </select>
-                    <p className="mt-1 text-sm text-gray-500">
+                    <p className="mt-1 text-sm text-muted-foreground">
                       How the system should behave when AI services are unavailable
                     </p>
                   </div>

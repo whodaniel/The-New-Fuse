@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/design-system';
 import {
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
   ModalBody,
-  ModalFooter,
   ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
 } from '@/components/ui/modal';
+import React, { useEffect, useState } from 'react';
 import { PromptTemplate } from '../../hooks/usePromptTemplates';
 
 interface PromptSaveModalProps {
@@ -63,7 +63,7 @@ export const PromptSaveModal: React.FC<PromptSaveModalProps> = ({
                 placeholder="Enter a name for this template"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md bg-white dark:bg-neutral-800"
+                className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md bg-transparent dark:bg-transparent"
                 required
               />
             </div>
@@ -75,7 +75,7 @@ export const PromptSaveModal: React.FC<PromptSaveModalProps> = ({
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md bg-white dark:bg-neutral-800"
+                className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md bg-transparent dark:bg-transparent"
               />
             </div>
 
@@ -87,7 +87,7 @@ export const PromptSaveModal: React.FC<PromptSaveModalProps> = ({
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                   rows={2}
-                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md bg-white dark:bg-neutral-800"
+                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md bg-transparent dark:bg-transparent"
                 />
               </div>
             )}

@@ -248,7 +248,7 @@ export const AgentNFTMarketplace: React.FC<AgentNFTMarketplaceProps> = ({
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold">Agent NFT Marketplace</h1>
+          <h1 className="text-2xl font-bold">Agent NFT Marketplace</h1>
           <p className="text-muted-foreground">Discover, trade, and invest in AI Agent NFTs</p>
         </div>
         <Button onClick={() => (window.location.href = '/agents/new')}>
@@ -269,7 +269,7 @@ export const AgentNFTMarketplace: React.FC<AgentNFTMarketplaceProps> = ({
         <TabsContent value="marketplace" className="space-y-6">
           <SearchAndFilters />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {filteredAndSortedNFTs.map((agentNft) => (
               <AgentNFTCard
                 key={agentNft.id}
@@ -291,7 +291,7 @@ export const AgentNFTMarketplace: React.FC<AgentNFTMarketplaceProps> = ({
         </TabsContent>
 
         <TabsContent value="portfolio" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {userShares.map((agentNft) => (
               <AgentNFTCard
                 key={agentNft.id}
@@ -319,7 +319,7 @@ export const AgentNFTMarketplace: React.FC<AgentNFTMarketplaceProps> = ({
           <div className="grid gap-4">
             {marketplaceListings.map((listing) => (
               <Card key={listing.id}>
-                <CardContent className="p-6">
+                <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <div>

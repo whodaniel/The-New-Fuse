@@ -159,7 +159,7 @@ export default function ChatHistory({
     return (
       <div className="flex flex-col h-full md:mt-0 pb-44 md:pb-40 w-full justify-end items-center">
         <div className="flex flex-col items-center md:items-start md:max-w-[600px] w-full px-4">
-          <p className="text-white/60 text-lg font-base py-4">Welcome to your new workspace.</p>
+          <p className="text-white/60 text-lg font-base py-2">Welcome to your new workspace.</p>
           {!user || user.role !== 'default' ? (
             <p className="w-full items-center text-white/60 text-lg font-base flex flex-col md:flex-row gap-x-1">
               To get started either{' '}
@@ -241,7 +241,7 @@ export default function ChatHistory({
         <div className="fixed bottom-40 right-10 md:right-20 z-50 cursor-pointer animate-pulse">
           <div className="flex flex-col items-center">
             <div
-              className="p-1 rounded-full border border-white/10 bg-white/10 hover:bg-white/20 hover:text-white"
+              className="p-1 rounded-full border border-white/10 bg-transparent/10 hover:bg-transparent/20 hover:text-white"
               onClick={() => {
                 scrollToBottom(true);
                 setIsUserScrolling(false);
@@ -262,7 +262,7 @@ function StatusResponse({ props }: StatusResponseProps): JSX.Element {
       <div className="py-2 px-4 w-full flex gap-x-5 md:max-w-[80%] flex-col">
         <div className="flex gap-x-5">
           <span
-            className={`text-xs inline-block p-2 rounded-lg text-white/60 font-mono whitespace-pre-line`}
+            className={`text-xs inline-block p-2 rounded-md text-white/60 font-mono whitespace-pre-line`}
           >
             {props.content}
           </span>
@@ -282,7 +282,7 @@ function WorkspaceChatSuggestions({
       {suggestions.map((suggestion, index) => (
         <button
           key={index}
-          className="text-left p-2.5 rounded-xl bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover border border-theme-border"
+          className="text-left p-2.5 rounded-md bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover border border-theme-border"
           onClick={() => sendSuggestion(suggestion.heading, suggestion.message)}
         >
           <p className="font-semibold">{suggestion.heading}</p>

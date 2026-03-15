@@ -16,14 +16,14 @@ interface DataTableProps {
 function DataTable({ data, columns, className = '', onRowClick }: DataTableProps): JSX.Element {
   return (
     <div className={`overflow-x-auto ${className}`}>
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
+      <table className="min-w-full divide-y divide-border/50">
+        <thead className="bg-transparent">
           <tr>
             {columns.map((column, idx) => (
               <th
                 key={idx}
                 scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground/80"
                 style={{ width: column.width }}
               >
                 {column.header}
@@ -31,15 +31,18 @@ function DataTable({ data, columns, className = '', onRowClick }: DataTableProps
             ))}
           </tr>
         </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
+        <tbody className="bg-transparent divide-y divide-border/40">
           {data.map((item, rowIdx) => (
             <tr
               key={rowIdx}
               onClick={() => onRowClick?.(item)}
-              className={onRowClick ? 'cursor-pointer hover:bg-gray-50' : ''}
+              className={onRowClick ? 'cursor-pointer hover:bg-muted/30' : ''}
             >
               {columns.map((column, colIdx) => (
-                <td key={colIdx} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td
+                  key={colIdx}
+                  className="px-3 py-2 whitespace-nowrap text-sm text-muted-foreground"
+                >
                   {typeof column.accessor === 'function'
                     ? column.accessor(item)
                     : String(item[column.accessor as keyof typeof item] || '')}
@@ -53,5 +56,4 @@ function DataTable({ data, columns, className = '', onRowClick }: DataTableProps
   );
 }
 
-export { DataTable };
-export { DataTable as Table };
+export { DataTable, DataTable as Table };

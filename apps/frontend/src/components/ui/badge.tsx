@@ -7,13 +7,14 @@ interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export function Badge({ children, variant = 'default', className = '' }: BadgeProps) {
-  const baseStyles = 'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium';
+  const baseStyles =
+    'inline-flex items-center rounded-full px-2 py-0.5 text-[0.7rem] font-medium border border-transparent';
 
   const appliedStyles = {
-    default: 'bg-blue-500 text-white hover:bg-blue-600',
-    secondary: 'bg-gray-500 text-white hover:bg-gray-600',
-    destructive: 'bg-red-500 text-white hover:bg-red-600',
-    outline: 'border border-gray-300 text-gray-700 bg-white hover:bg-gray-50',
+    default: 'bg-transparent/5 text-slate-100 border-white/10',
+    secondary: 'bg-slate-800 text-slate-200 border-slate-700',
+    destructive: 'bg-red-500/15 text-red-300 border-red-500/30',
+    outline: 'border border-slate-600 text-slate-200 bg-transparent',
   };
 
   return <div className={`${baseStyles} ${appliedStyles[variant]} ${className}`}>{children}</div>;

@@ -43,7 +43,7 @@ export const BaseNode: React.FC<BaseNodeProps> = memo(
               transform: 'translate(-100%, -50%)',
             }}
           >
-            <div className="bg-blue-600 text-white text-xs font-medium px-2 py-1 rounded shadow-lg whitespace-nowrap border border-blue-400">
+            <div className="bg-blue-600 text-white text-xs font-medium px-2 py-1 rounded shadow-none whitespace-nowrap border border-blue-400">
               {handle.label}
             </div>
           </div>
@@ -60,17 +60,17 @@ export const BaseNode: React.FC<BaseNodeProps> = memo(
               transform: 'translate(100%, -50%)',
             }}
           >
-            <div className="bg-green-600 text-white text-xs font-medium px-2 py-1 rounded shadow-lg whitespace-nowrap border border-green-400">
+            <div className="bg-green-600 text-white text-xs font-medium px-2 py-1 rounded shadow-none whitespace-nowrap border border-green-400">
               {handle.label}
             </div>
           </div>
         ))}
 
         <div
-          className={`node-container ${hasError ? 'ring-2 ring-red-500 rounded-lg shadow-[0_0_15px_rgba(239,68,68,0.5)]' : ''}`}
+          className={`node-container ${hasError ? 'ring-2 ring-red-500 rounded-md shadow-[0_0_15px_rgba(239,68,68,0.5)]' : ''}`}
         >
           <Card
-            className={`w-full shadow-2xl bg-slate-800 text-white ${hasError ? 'border-red-500' : 'border-slate-600'}`}
+            className={`w-full shadow-none bg-slate-800 text-white ${hasError ? 'border-red-500' : 'border-slate-600'}`}
           >
             <CardHeader className="p-4 pb-3 flex flex-row items-center justify-between bg-linear-to-r from-slate-800 to-slate-750 border-b border-slate-600 relative">
               <div className="flex-1 min-w-0">
@@ -133,7 +133,7 @@ export const BaseNode: React.FC<BaseNodeProps> = memo(
                 id={handle.id}
                 type="target"
                 position={Position.Left}
-                className="w-4 h-4 rounded-full bg-blue-500 border-3 border-white hover:bg-blue-400 hover:scale-125 transition-all shadow-xl cursor-crosshair"
+                className="w-4 h-4 rounded-full bg-blue-500 border-3 border-white hover:bg-blue-400 hover:scale-125 transition-all shadow-none cursor-crosshair"
                 style={{
                   left: -8,
                   top: `${((1 + index) / (inputHandles.length + 1)) * 100}%`,
@@ -149,7 +149,7 @@ export const BaseNode: React.FC<BaseNodeProps> = memo(
                 id={handle.id}
                 type="source"
                 position={Position.Right}
-                className="w-4 h-4 rounded-full bg-green-500 border-3 border-white hover:bg-green-400 hover:scale-125 transition-all shadow-xl cursor-crosshair"
+                className="w-4 h-4 rounded-full bg-green-500 border-3 border-white hover:bg-green-400 hover:scale-125 transition-all shadow-none cursor-crosshair"
                 style={{
                   right: -8,
                   top: `${((1 + index) / (outputHandles.length + 1)) * 100}%`,

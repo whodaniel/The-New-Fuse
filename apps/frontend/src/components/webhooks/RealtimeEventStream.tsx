@@ -324,7 +324,7 @@ export function RealtimeEventStream({
         <CardContent className="p-0">
           <div className="max-h-96 overflow-y-auto">
             {filteredEvents.length === 0 ? (
-              <div className="p-8 text-center text-muted-foreground">
+              <div className="p-4 text-center text-muted-foreground">
                 <Clock className="w-8 h-8 mx-auto mb-2" />
                 <p>No events to display</p>
                 <p className="text-sm">Events will appear here as they are received</p>
@@ -334,7 +334,7 @@ export function RealtimeEventStream({
                 {filteredEvents.map((event, index) => (
                   <div
                     key={`${event.timestamp}-${index}`}
-                    className="p-3 border-b hover:bg-gray-50 transition-colors"
+                    className="p-3 border-b hover:bg-muted/20 transition-colors"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">

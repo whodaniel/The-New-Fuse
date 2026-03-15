@@ -25,7 +25,7 @@ export default function UserIcon({
     large: 'w-12 h-12',
   };
 
-  const baseClasses = `${sizeClasses[size]} rounded-full flex items-center justify-center bg-white/10 ${className}`;
+  const baseClasses = `${sizeClasses[size]} rounded-full flex items-center justify-center bg-transparent/10 ${className}`;
 
   if (user?.profilePicture) {
     return (
@@ -70,8 +70,8 @@ export default function UserIcon({
 
   if (role === 'system') {
     return (
-      <div className={`${baseClasses} bg-gray-500`}>
-        <div className="w-2 h-2 bg-white rounded-full"></div>
+      <div className={`${baseClasses} bg-transparent0`}>
+        <div className="w-2 h-2 bg-transparent rounded-full"></div>
       </div>
     );
   }

@@ -97,8 +97,8 @@ export const FlowPage = ({
             <Maximize2 className="h-4 w-4" />
           </Button>
         </Panel>
-        <Controls className="bg-card border rounded-lg shadow-sm" />
-        <MiniMap className="bg-card border rounded-lg shadow-sm" />
+        <Controls className="bg-card border rounded-md shadow-none" />
+        <MiniMap className="bg-card border rounded-md shadow-none" />
         <Background className="bg-muted" />
       </ReactFlow>
     </div>

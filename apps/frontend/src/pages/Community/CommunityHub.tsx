@@ -213,31 +213,31 @@ const CommunityHub: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-transparent dark:bg-gray-900 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-transparent dark:bg-gray-900">
+      <div className="max-w-7xl mx-auto px-4 sm:px-3 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Community Hub</h1>
-              <p className="text-gray-600 dark:text-gray-300 mt-2">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Community Hub</h1>
+              <p className="text-muted-foreground dark:text-gray-300 mt-2">
                 Connect, share, and learn with the AI community
               </p>
             </div>
-            <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+            <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
               <PlusIcon className="w-5 h-5" />
               <span>New Post</span>
             </button>
           </div>
           {loadError && (
-            <GlassCard className="rounded-lg p-4 mb-6 border border-amber-500/40 bg-amber-500/10">
+            <GlassCard className="rounded-md p-4 mb-6 border border-amber-500/40 bg-amber-500/10">
               <p className="text-sm text-amber-200">
                 {loadError}. No synthetic community posts are shown.
               </p>
@@ -247,33 +247,33 @@ const CommunityHub: React.FC = () => {
           {/* Community Stats */}
           {stats && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-              <GlassCard className="rounded-lg p-4 text-center border-white/10 bg-white/5">
+              <GlassCard className="rounded-md p-4 text-center border-white/10 bg-transparent/5">
                 <UserGroupIcon className="w-8 h-8 text-blue-600 mx-auto mb-2" />
                 <div className="text-2xl font-bold text-gray-900 dark:text-white">
                   {stats.totalMembers.toLocaleString()}
                 </div>
-                <div className="text-sm text-gray-600 dark:text-gray-300">Members</div>
+                <div className="text-sm text-muted-foreground dark:text-gray-300">Members</div>
               </GlassCard>
-              <GlassCard className="rounded-lg p-4 text-center border-white/10 bg-white/5">
+              <GlassCard className="rounded-md p-4 text-center border-white/10 bg-transparent/5">
                 <FireIcon className="w-8 h-8 text-green-600 mx-auto mb-2" />
                 <div className="text-2xl font-bold text-gray-900 dark:text-white">
                   {stats.activeToday.toLocaleString()}
                 </div>
-                <div className="text-sm text-gray-600 dark:text-gray-300">Active Today</div>
+                <div className="text-sm text-muted-foreground dark:text-gray-300">Active Today</div>
               </GlassCard>
-              <GlassCard className="rounded-lg p-4 text-center border-white/10 bg-white/5">
+              <GlassCard className="rounded-md p-4 text-center border-white/10 bg-transparent/5">
                 <ChatBubbleLeftRightIcon className="w-8 h-8 text-purple-600 mx-auto mb-2" />
                 <div className="text-2xl font-bold text-gray-900 dark:text-white">
                   {stats.totalPosts.toLocaleString()}
                 </div>
-                <div className="text-sm text-gray-600 dark:text-gray-300">Posts</div>
+                <div className="text-sm text-muted-foreground dark:text-gray-300">Posts</div>
               </GlassCard>
-              <GlassCard className="rounded-lg p-4 text-center border-white/10 bg-white/5">
+              <GlassCard className="rounded-md p-4 text-center border-white/10 bg-transparent/5">
                 <ChatBubbleOvalLeftIcon className="w-8 h-8 text-orange-600 mx-auto mb-2" />
                 <div className="text-2xl font-bold text-gray-900 dark:text-white">
                   {stats.totalComments.toLocaleString()}
                 </div>
-                <div className="text-sm text-gray-600 dark:text-gray-300">Comments</div>
+                <div className="text-sm text-muted-foreground dark:text-gray-300">Comments</div>
               </GlassCard>
             </div>
           )}
@@ -287,12 +287,12 @@ const CommunityHub: React.FC = () => {
                 placeholder="Search posts..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
               />
             </div>
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center space-x-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-muted/20 dark:hover:bg-gray-700 transition-colors"
             >
               <FunnelIcon className="w-5 h-5" />
               <span>Filters</span>
@@ -301,16 +301,16 @@ const CommunityHub: React.FC = () => {
 
           {/* Filters Panel */}
           {showFilters && (
-            <div className="bg-slate-900/60 backdrop-blur-md border border-white/10 rounded-lg p-4 mb-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-slate-900/60 backdrop-blur-md border border-white/10 rounded-md p-4 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-2">
                     Category
                   </label>
                   <select
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                     title="Select category"
                   >
                     {categories.map((category) => (
@@ -321,13 +321,13 @@ const CommunityHub: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-2">
                     Sort By
                   </label>
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                     title="Sort posts by"
                   >
                     {sortOptions.map((option) => (
@@ -345,14 +345,14 @@ const CommunityHub: React.FC = () => {
         {/* Posts List */}
         <div className="space-y-4">
           {posts.length === 0 && (
-            <GlassCard className="rounded-lg p-6 border-white/10 bg-white/5 text-sm text-gray-300">
+            <GlassCard className="rounded-md p-4 border-white/10 bg-transparent/5 text-sm text-gray-300">
               No live community posts available.
             </GlassCard>
           )}
           {posts.map((post) => (
             <div
               key={post.id}
-              className={`bg-slate-900/60 backdrop-blur-md rounded-lg shadow-sm border border-white/10 p-6 hover:shadow-md transition-shadow ${
+              className={`bg-slate-900/60 backdrop-blur-md rounded-md shadow-none border border-white/10 p-4 hover:shadow-md transition-shadow ${
                 post.isPinned ? 'border-l-4 border-l-blue-500' : ''
               }`}
             >
@@ -361,7 +361,7 @@ const CommunityHub: React.FC = () => {
                 <div className="flex flex-col items-center space-y-1 min-w-0">
                   <button
                     onClick={() => handleVote(post.id, 'up')}
-                    className={`p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
+                    className={`p-1 rounded hover:bg-muted/30 dark:hover:bg-gray-700 transition-colors ${
                       post.votes.userVote === 'up' ? 'text-green-600' : 'text-gray-400'
                     }`}
                     title="Upvote"
@@ -373,7 +373,7 @@ const CommunityHub: React.FC = () => {
                   </span>
                   <button
                     onClick={() => handleVote(post.id, 'down')}
-                    className={`p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
+                    className={`p-1 rounded hover:bg-muted/30 dark:hover:bg-gray-700 transition-colors ${
                       post.votes.userVote === 'down' ? 'text-red-600' : 'text-gray-400'
                     }`}
                     title="Downvote"
@@ -407,7 +407,7 @@ const CommunityHub: React.FC = () => {
                     {post.title}
                   </h3>
 
-                  <p className="text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">
+                  <p className="text-muted-foreground dark:text-gray-300 mb-3 line-clamp-2">
                     {post.content}
                   </p>
 
@@ -417,7 +417,7 @@ const CommunityHub: React.FC = () => {
                       {(post.tags || []).map((tag) => (
                         <span
                           key={tag}
-                          className="inline-flex items-center px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer"
+                          className="inline-flex items-center px-2 py-1 bg-gray-100 dark:bg-gray-700 text-foreground dark:text-gray-300 text-xs rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer"
                         >
                           <TagIcon className="w-3 h-3 mr-1" />
                           {tag}
@@ -431,14 +431,14 @@ const CommunityHub: React.FC = () => {
                     <div className="flex items-center space-x-3">
                       <div className="flex items-center space-x-2">
                         <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center">
-                          <UserIcon className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+                          <UserIcon className="w-4 h-4 text-muted-foreground dark:text-gray-300" />
                         </div>
                         <div>
                           <div className="flex items-center space-x-2">
                             <span className="text-sm font-medium text-gray-900 dark:text-white">
                               {post.author.name}
                             </span>
-                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                            <span className="text-xs text-muted-foreground dark:text-muted-foreground">
                               {post.author.reputation} rep
                             </span>
                           </div>
@@ -454,18 +454,18 @@ const CommunityHub: React.FC = () => {
                           </div>
                         </div>
                       </div>
-                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                      <span className="text-sm text-muted-foreground dark:text-muted-foreground">
                         {formatTimeAgo(post.createdAt)}
                       </span>
                     </div>
 
                     {/* Action Buttons */}
                     <div className="flex items-center space-x-4">
-                      <div className="flex items-center space-x-1 text-gray-500 dark:text-gray-400">
+                      <div className="flex items-center space-x-1 text-muted-foreground dark:text-muted-foreground">
                         <EyeIcon className="w-4 h-4" />
                         <span className="text-sm">{post.views}</span>
                       </div>
-                      <div className="flex items-center space-x-1 text-gray-500 dark:text-gray-400">
+                      <div className="flex items-center space-x-1 text-muted-foreground dark:text-muted-foreground">
                         <ChatBubbleOvalLeftIcon className="w-4 h-4" />
                         <span className="text-sm">{post.comments}</span>
                       </div>
@@ -474,7 +474,7 @@ const CommunityHub: React.FC = () => {
                         className={`flex items-center space-x-1 transition-colors ${
                           post.isLiked
                             ? 'text-red-600'
-                            : 'text-gray-500 dark:text-gray-400 hover:text-red-600'
+                            : 'text-muted-foreground dark:text-muted-foreground hover:text-red-600'
                         }`}
                         title="Like post"
                       >
@@ -489,7 +489,7 @@ const CommunityHub: React.FC = () => {
                         className={`flex items-center space-x-1 transition-colors ${
                           post.isBookmarked
                             ? 'text-yellow-600'
-                            : 'text-gray-500 dark:text-gray-400 hover:text-yellow-600'
+                            : 'text-muted-foreground dark:text-muted-foreground hover:text-yellow-600'
                         }`}
                         title="Bookmark post"
                       >
@@ -501,7 +501,7 @@ const CommunityHub: React.FC = () => {
                         <span className="text-sm">{post.bookmarks}</span>
                       </button>
                       <button
-                        className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+                        className="text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-gray-300 transition-colors"
                         title="Share post"
                       >
                         <ShareIcon className="w-4 h-4" />
@@ -516,7 +516,7 @@ const CommunityHub: React.FC = () => {
 
         {/* Load More */}
         <div className="text-center mt-8">
-          <button className="px-6 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+          <button className="px-3 py-2 border border-gray-300 dark:border-gray-600 text-foreground dark:text-gray-300 rounded-md hover:bg-muted/20 dark:hover:bg-gray-700 transition-colors">
             Load More Posts
           </button>
         </div>

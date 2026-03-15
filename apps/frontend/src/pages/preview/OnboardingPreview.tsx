@@ -37,14 +37,14 @@ const OnboardingPreview: React.FC = () => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading onboarding preview...</p>
+          <p className="text-muted-foreground">Loading onboarding preview...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-transparent py-8">
       <OnboardingWizard userType={userType as 'human' | 'ai_agent'} onComplete={handleComplete} />
     </div>
   );

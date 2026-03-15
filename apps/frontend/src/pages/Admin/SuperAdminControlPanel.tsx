@@ -625,7 +625,7 @@ export default function SuperAdminControlPanel() {
   if (!isSuperAdmin) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <GlassCard className="p-8 text-center max-w-md">
+        <GlassCard className="p-4 text-center max-w-md">
           <Shield className="w-16 h-16 text-red-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold mb-2">Access Denied</h2>
           <p className="text-gray-400">
@@ -645,17 +645,17 @@ export default function SuperAdminControlPanel() {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="p-6 lg:p-10 space-y-8 bg-slate-950 min-h-screen text-slate-100 font-sans selection:bg-cyan-500/30"
+      className="p-4 lg:p-10 space-y-8 bg-slate-950 min-h-screen text-slate-100 font-sans selection:bg-cyan-500/30"
     >
       {/* Header Area */}
       <motion.header
         variants={itemVariants}
-        className="flex flex-col md:flex-row md:items-center justify-between gap-6"
+        className="flex flex-col md:flex-row md:items-center justify-between gap-4"
       >
         <div className="relative">
-          <div className="absolute -left-4 top-0 bottom-0 w-1 bg-cyan-500 rounded-full shadow-[0_0_15px_rgba(6,182,212,0.5)]" />
+          <div className="absolute -left-4 top-0 bottom-0 w-1 bg-cyan-500 rounded-full shadow-none-[0_0_15px_rgba(6,182,212,0.5)]" />
           <h1 className="text-4xl font-extrabold tracking-tight flex items-center gap-3">
-            <span className="p-2 bg-cyan-500/10 rounded-xl border border-cyan-500/20 backdrop-blur-md">
+            <span className="p-2 bg-cyan-500/10 rounded-md border border-cyan-500/20 backdrop-blur-md">
               <Network className="w-10 h-10 text-cyan-400" />
             </span>
             <span>
@@ -673,10 +673,10 @@ export default function SuperAdminControlPanel() {
 
         <div className="flex items-center gap-3 flex-wrap">
           <div
-            className={`px-4 py-2 rounded-full border flex items-center gap-2 text-xs font-bold tracking-widest uppercase transition-all duration-500 ${connected ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.1)]' : 'bg-red-500/10 border-red-500/20 text-red-400'}`}
+            className={`px-4 py-2 rounded-full border flex items-center gap-2 text-xs font-bold tracking-widest uppercase transition-all duration-500 ${connected ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 shadow-none-[0_0_20px_rgba(16,185,129,0.1)]' : 'bg-red-500/10 border-red-500/20 text-red-400'}`}
           >
             <div
-              className={`w-2 h-2 rounded-full ${connected ? 'bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]' : 'bg-red-500'}`}
+              className={`w-2 h-2 rounded-full ${connected ? 'bg-emerald-500 animate-pulse shadow-none-[0_0_8px_#10b981]' : 'bg-red-500'}`}
             />
             {connected ? 'Relay Active' : 'Relay Offline'}
           </div>
@@ -693,7 +693,7 @@ export default function SuperAdminControlPanel() {
               <PremiumButton
                 variant="primary"
                 size="sm"
-                className="bg-indigo-600 hover:bg-indigo-500 shadow-[0_0_20px_rgba(79,70,229,0.4)]"
+                className="bg-indigo-600 hover:bg-indigo-500 shadow-none-[0_0_20px_rgba(79,70,229,0.4)]"
               >
                 <Search className="w-4 h-4 mr-2" />
                 Launch Nexus 3D
@@ -705,7 +705,7 @@ export default function SuperAdminControlPanel() {
 
       <motion.div
         variants={itemVariants}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
       >
         <StatsCard
           label="Active Agents"
@@ -758,19 +758,19 @@ export default function SuperAdminControlPanel() {
             <span className="text-[10px] text-slate-500">Window: last 5 minutes</span>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-            <div className="rounded-lg border border-white/10 bg-white/5 p-3">
+            <div className="rounded-md border border-white/10 bg-transparent/5 p-3">
               <div className="text-slate-500 uppercase tracking-wide mb-1">Events / Min</div>
               <div className="text-xl font-bold text-cyan-300">{realtimeTrends.eventsPerMin}</div>
             </div>
-            <div className="rounded-lg border border-white/10 bg-white/5 p-3">
+            <div className="rounded-md border border-white/10 bg-transparent/5 p-3">
               <div className="text-slate-500 uppercase tracking-wide mb-1">Queued / Min</div>
               <div className="text-xl font-bold text-indigo-300">{realtimeTrends.queuePerMin}</div>
             </div>
-            <div className="rounded-lg border border-white/10 bg-white/5 p-3">
+            <div className="rounded-md border border-white/10 bg-transparent/5 p-3">
               <div className="text-slate-500 uppercase tracking-wide mb-1">Avg Score</div>
               <div className="text-xl font-bold text-emerald-300">{realtimeTrends.avgScore}</div>
             </div>
-            <div className="rounded-lg border border-white/10 bg-white/5 p-3">
+            <div className="rounded-md border border-white/10 bg-transparent/5 p-3">
               <div className="text-slate-500 uppercase tracking-wide mb-1">Vote Pressure</div>
               <div
                 className={`text-xl font-bold ${realtimeTrends.votePressure >= 0 ? 'text-amber-300' : 'text-rose-300'}`}
@@ -796,7 +796,7 @@ export default function SuperAdminControlPanel() {
               Master Clock → Source → Event Type → Lane → Horizon → Task
             </span>
           </div>
-          <div className="rounded-lg border border-white/10 bg-black/20 p-2">
+          <div className="rounded-md border border-white/10 bg-black/20 p-2">
             <GraphVisualizerWrapper
               nodes={orchestrationHierarchyGraph.nodes}
               edges={orchestrationHierarchyGraph.edges}
@@ -804,7 +804,7 @@ export default function SuperAdminControlPanel() {
               onNodeClick={handleGraphNodeClick}
             />
           </div>
-          <div className="mt-3 rounded-lg border border-white/10 bg-white/5 p-3 text-xs">
+          <div className="mt-3 rounded-md border border-white/10 bg-transparent/5 p-3 text-xs">
             <div className="flex items-center justify-between">
               <div className="text-slate-300">
                 Selected node:{' '}
@@ -852,7 +852,7 @@ export default function SuperAdminControlPanel() {
                 Open Task Detail
               </button>
               <button
-                className="rounded border border-white/20 px-2 py-1 text-slate-300 hover:bg-white/10"
+                className="rounded border border-white/20 px-2 py-1 text-slate-300 hover:bg-transparent/10"
                 onClick={() => {
                   setStreamFilter(null);
                   setSelectedTaskDetail(null);
@@ -875,11 +875,11 @@ export default function SuperAdminControlPanel() {
         </GlassCard>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Live Interaction Feed */}
         <motion.div variants={itemVariants} className="lg:col-span-2 space-y-6">
           <GlassCard className="flex flex-col h-[650px] overflow-hidden group">
-            <div className="p-6 border-b border-white/5 bg-white/2 flex items-center justify-between">
+            <div className="p-4 border-b border-white/5 bg-transparent/2 flex items-center justify-between">
               <h3 className="text-xl font-semibold flex items-center gap-2">
                 <Zap className="w-5 h-5 text-yellow-400 animate-pulse" />
                 Live Interaction Stream
@@ -913,7 +913,7 @@ export default function SuperAdminControlPanel() {
                       initial={{ x: -20, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className="p-4 rounded-xl bg-white/2 border border-white/5 hover:border-white/10 hover:bg-white/5 transition-all group/item"
+                      className="p-4 rounded-md bg-transparent/2 border border-white/5 hover:border-white/10 hover:bg-transparent/5 transition-all group/item"
                     >
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-3">
@@ -949,7 +949,7 @@ export default function SuperAdminControlPanel() {
                           {Object.entries(activity.metadata)
                             .slice(0, 4)
                             .map(([k, v]: [string, unknown]) => (
-                              <div key={k} className="truncate bg-white/2 px-2 py-1 rounded">
+                              <div key={k} className="truncate bg-transparent/2 px-2 py-1 rounded">
                                 <span className="text-slate-600 uppercase mr-1">{k}:</span>{' '}
                                 {String(v)}
                               </div>
@@ -967,7 +967,7 @@ export default function SuperAdminControlPanel() {
 
         {/* Sidebar Status Panels */}
         <motion.div variants={itemVariants} className="space-y-8">
-          <GlassCard className="p-6 transition-transform hover:scale-[1.02]">
+          <GlassCard className="p-4 transition-transform hover:scale-[1.02]">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold flex items-center gap-2">
                 <Activity className="w-5 h-5 text-indigo-400" />
@@ -984,7 +984,7 @@ export default function SuperAdminControlPanel() {
                 {orchestrationSignals.slice(0, 6).map((signal) => (
                   <div
                     key={signal.id}
-                    className="rounded-lg border border-white/10 bg-white/5 p-3 text-xs"
+                    className="rounded-md border border-white/10 bg-transparent/5 p-3 text-xs"
                   >
                     <div className="flex items-center justify-between mb-1">
                       <span className="font-semibold text-indigo-300 uppercase tracking-wide">
@@ -1016,7 +1016,7 @@ export default function SuperAdminControlPanel() {
 
           {/* Online Agents List */}
           <div ref={agentHubRef}>
-            <GlassCard className="p-6 transition-transform hover:scale-[1.02]">
+            <GlassCard className="p-4 transition-transform hover:scale-[1.02]">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-semibold flex items-center gap-2">
                   <Bot className="w-5 h-5 text-cyan-400" />
@@ -1029,7 +1029,7 @@ export default function SuperAdminControlPanel() {
               <div className="space-y-2">
                 {agents.length === 0 ? (
                   <div className="text-center py-8">
-                    <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <div className="w-12 h-12 bg-transparent/5 rounded-full flex items-center justify-center mx-auto mb-3">
                       <Bot className="w-6 h-6 text-slate-600" />
                     </div>
                     <p className="text-slate-500 text-xs">No active nodes detected</p>
@@ -1038,7 +1038,7 @@ export default function SuperAdminControlPanel() {
                   agents.slice(0, 6).map((agent) => (
                     <div
                       key={agent.id}
-                      className={`flex items-center justify-between p-3 rounded-xl hover:bg-white/5 border transition-all group ${
+                      className={`flex items-center justify-between p-3 rounded-md hover:bg-transparent/5 border transition-all group ${
                         highlightedAgentId === agent.id
                           ? 'border-cyan-400/60 bg-cyan-500/10'
                           : 'border-transparent hover:border-white/5'
@@ -1046,10 +1046,10 @@ export default function SuperAdminControlPanel() {
                     >
                       <div className="flex items-center gap-3">
                         <div className="relative">
-                          <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center border border-white/10 group-hover:border-cyan-500/50 transition-colors">
+                          <div className="w-10 h-10 rounded-md bg-slate-900 flex items-center justify-center border border-white/10 group-hover:border-cyan-500/50 transition-colors">
                             <Bot className="w-5 h-5 text-slate-400 group-hover:text-cyan-400 transition-colors" />
                           </div>
-                          <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-slate-950 shadow-[0_0_8px_#10b981]" />
+                          <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-slate-950 shadow-none-[0_0_8px_#10b981]" />
                         </div>
                         <div>
                           <div className="text-sm font-semibold">{agent.name}</div>
@@ -1068,7 +1068,7 @@ export default function SuperAdminControlPanel() {
 
               <Link
                 to="/admin/agent-management"
-                className="group mt-6 flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white/5 border border-white/10 text-xs text-slate-400 hover:text-white transition-all font-bold tracking-widest uppercase"
+                className="group mt-6 flex items-center justify-center gap-2 w-full py-2 rounded-md bg-transparent/5 border border-white/10 text-xs text-slate-400 hover:text-white transition-all font-bold tracking-widest uppercase"
               >
                 Full Agent Fleet
                 <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
@@ -1077,21 +1077,21 @@ export default function SuperAdminControlPanel() {
           </div>
 
           {/* Quick Orchestration */}
-          <GlassCard className="p-6 relative overflow-hidden group">
+          <GlassCard className="p-4 relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-br from-red-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
             <h3 className="text-lg font-semibold mb-6 flex items-center gap-2 relative">
-              <Zap className="w-5 h-5 text-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
+              <Zap className="w-5 h-5 text-red-500 shadow-none-[0_0_10px_rgba(239,68,68,0.5)]" />
               Emergency Core
             </h3>
             <div className="grid grid-cols-2 gap-3 relative">
               <button
                 onClick={handleHaltAgents}
-                className="p-4 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-xl text-red-400 text-[10px] font-black tracking-widest uppercase transition-all flex flex-col items-center gap-3 hover:shadow-[0_0_20px_rgba(239,68,68,0.2)] active:scale-95"
+                className="p-4 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-md text-red-400 text-[10px] font-black tracking-widest uppercase transition-all flex flex-col items-center gap-3 hover:shadow-none-[0_0_20px_rgba(239,68,68,0.2)] active:scale-95"
               >
                 <StopCircle className="w-6 h-6" />
                 HALT FLEET
               </button>
-              <button className="p-4 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 rounded-xl text-blue-400 text-[10px] font-black tracking-widest uppercase transition-all flex flex-col items-center gap-3 active:scale-95">
+              <button className="p-4 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 rounded-md text-blue-400 text-[10px] font-black tracking-widest uppercase transition-all flex flex-col items-center gap-3 active:scale-95">
                 <RefreshCw className="w-6 h-6" />
                 RESET MESH
               </button>
@@ -1102,7 +1102,7 @@ export default function SuperAdminControlPanel() {
           </GlassCard>
 
           {/* System Health */}
-          <GlassCard className="p-6 bg-slate-900/50">
+          <GlassCard className="p-4 bg-slate-900/50">
             <h3 className="text-lg font-semibold mb-6 flex items-center gap-2">
               <Server className="w-5 h-5 text-emerald-400" />
               Mesh Integrity
@@ -1125,7 +1125,7 @@ export default function SuperAdminControlPanel() {
                       </span>
                       <div className="relative">
                         <div
-                          className={`w-2 h-2 rounded-full ${s.status === 'Healthy' ? 'bg-emerald-500 shadow-[0_0_8px_#10b981]' : 'bg-red-500 shadow-[0_0_8px_#ef4444]'}`}
+                          className={`w-2 h-2 rounded-full ${s.status === 'Healthy' ? 'bg-emerald-500 shadow-none-[0_0_8px_#10b981]' : 'bg-red-500 shadow-none-[0_0_8px_#ef4444]'}`}
                         />
                         {s.status === 'Healthy' && (
                           <div className="absolute inset-0 bg-emerald-500 rounded-full animate-ping opacity-20" />

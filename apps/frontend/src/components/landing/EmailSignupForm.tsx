@@ -1,8 +1,8 @@
+import { AlertCircle, ArrowRight, CheckCircle2, Mail } from 'lucide-react';
 import React, { useState } from 'react';
-import { Mail, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
-import { Input } from '../ui/input';
-import { Button } from '../ui/button';
 import { useAnalytics } from '../../hooks/useAnalytics';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
 
 export interface EmailSignupFormProps {
   title?: string;
@@ -60,11 +60,11 @@ export const EmailSignupForm: React.FC<EmailSignupFormProps> = ({
     e.preventDefault();
 
     // Reset error state
-    setFormState(prev => ({ ...prev, error: null }));
+    setFormState((prev) => ({ ...prev, error: null }));
 
     // Validate email
     if (!formState.email) {
-      setFormState(prev => ({
+      setFormState((prev) => ({
         ...prev,
         error: 'Email is required',
         status: 'error',
@@ -77,7 +77,7 @@ export const EmailSignupForm: React.FC<EmailSignupFormProps> = ({
     }
 
     if (!validateEmail(formState.email)) {
-      setFormState(prev => ({
+      setFormState((prev) => ({
         ...prev,
         error: 'Please enter a valid email address',
         status: 'error',
@@ -90,7 +90,7 @@ export const EmailSignupForm: React.FC<EmailSignupFormProps> = ({
     }
 
     // Set loading state
-    setFormState(prev => ({ ...prev, status: 'loading' }));
+    setFormState((prev) => ({ ...prev, status: 'loading' }));
 
     try {
       // Call the onSubmit callback if provided
@@ -99,7 +99,7 @@ export const EmailSignupForm: React.FC<EmailSignupFormProps> = ({
       }
 
       // Success state
-      setFormState(prev => ({
+      setFormState((prev) => ({
         ...prev,
         status: 'success',
       }));
@@ -118,7 +118,7 @@ export const EmailSignupForm: React.FC<EmailSignupFormProps> = ({
         });
       }, 3000);
     } catch (error) {
-      setFormState(prev => ({
+      setFormState((prev) => ({
         ...prev,
         status: 'error',
         error: error instanceof Error ? error.message : 'Something went wrong. Please try again.',
@@ -132,7 +132,7 @@ export const EmailSignupForm: React.FC<EmailSignupFormProps> = ({
   };
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormState(prev => ({
+    setFormState((prev) => ({
       ...prev,
       email: e.target.value,
       status: 'idle',
@@ -149,7 +149,7 @@ export const EmailSignupForm: React.FC<EmailSignupFormProps> = ({
         </h3>
       )}
       {description && (
-        <p className="text-gray-600 dark:text-gray-400 mb-6 text-center">
+        <p className="text-muted-foreground dark:text-muted-foreground mb-6 text-center">
           {description}
         </p>
       )}
@@ -169,8 +169,8 @@ export const EmailSignupForm: React.FC<EmailSignupFormProps> = ({
                 formState.error
                   ? 'border-red-500 focus-visible:ring-red-500'
                   : formState.status === 'success'
-                  ? 'border-green-500 focus-visible:ring-green-500'
-                  : ''
+                    ? 'border-green-500 focus-visible:ring-green-500'
+                    : ''
               }`}
               aria-label="Email address"
               aria-invalid={!!formState.error}
@@ -218,7 +218,7 @@ export const EmailSignupForm: React.FC<EmailSignupFormProps> = ({
 
       {/* Privacy note */}
       {showPrivacyNote && (
-        <p className="mt-4 text-xs text-center text-gray-500 dark:text-gray-400">
+        <p className="mt-4 text-xs text-center text-muted-foreground dark:text-muted-foreground">
           We respect your privacy. Unsubscribe at any time.
         </p>
       )}
@@ -255,7 +255,7 @@ export const InlineEmailSignup: React.FC<Omit<EmailSignupFormProps, 'title' | 'd
     e.preventDefault();
 
     if (!validateEmail(formState.email)) {
-      setFormState(prev => ({
+      setFormState((prev) => ({
         ...prev,
         error: 'Invalid email',
         status: 'error',
@@ -263,7 +263,7 @@ export const InlineEmailSignup: React.FC<Omit<EmailSignupFormProps, 'title' | 'd
       return;
     }
 
-    setFormState(prev => ({ ...prev, status: 'loading' }));
+    setFormState((prev) => ({ ...prev, status: 'loading' }));
 
     try {
       if (onSubmit) {
@@ -280,7 +280,7 @@ export const InlineEmailSignup: React.FC<Omit<EmailSignupFormProps, 'title' | 'd
         setFormState({ email: '', status: 'idle', error: null });
       }, 2000);
     } catch (error) {
-      setFormState(prev => ({
+      setFormState((prev) => ({
         ...prev,
         status: 'error',
         error: 'Failed to subscribe',
@@ -299,9 +299,7 @@ export const InlineEmailSignup: React.FC<Omit<EmailSignupFormProps, 'title' | 'd
           disabled={formState.status === 'loading' || formState.status === 'success'}
           className={formState.error ? 'border-red-500' : ''}
         />
-        {formState.error && (
-          <span className="text-xs text-red-600 mt-1">{formState.error}</span>
-        )}
+        {formState.error && <span className="text-xs text-red-600 mt-1">{formState.error}</span>}
       </div>
       <Button
         type="submit"

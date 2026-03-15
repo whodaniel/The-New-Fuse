@@ -79,9 +79,9 @@ export const Slider = ({
         className={cn(
           'w-full appearance-none bg-transparent cursor-pointer',
           '[&::-webkit-slider-track]:rounded-full [&::-webkit-slider-track]:bg-neutral-200 dark:[&::-webkit-slider-track]:bg-neutral-700',
-          '[&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:shadow-md',
+          '[&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-transparent [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:shadow-md',
           '[&::-moz-range-track]:rounded-full [&::-moz-range-track]:bg-neutral-200 dark:[&::-moz-range-track]:bg-neutral-700',
-          '[&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:shadow-md',
+          '[&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-transparent [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:shadow-md',
           colorClasses[colorScheme],
           sizeClasses[size],
           isDisabled && 'opacity-50 cursor-not-allowed'

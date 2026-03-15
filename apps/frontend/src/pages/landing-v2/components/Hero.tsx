@@ -11,14 +11,14 @@ export default function Hero() {
       <Scene />
 
       {/* Content */}
-      <div className="relative z-10 container px-4 md:px-6 flex flex-col items-center text-center">
+      <div className="relative z-10 container px-4 md:px-3 flex flex-col items-center text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
           className="mb-8"
         >
-          <span className="px-3 py-1 rounded-full border border-white/10 bg-white/5 text-xs font-medium text-white/50 backdrop-blur-sm">
+          <span className="px-3 py-1 rounded-full border border-white/10 bg-transparent/5 text-xs font-medium text-white/50 backdrop-blur-sm">
             Announcing The New Fuse 2.0
           </span>
         </motion.div>

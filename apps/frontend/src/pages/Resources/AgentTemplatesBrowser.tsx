@@ -88,7 +88,7 @@ export default function AgentTemplatesBrowser() {
       case 'automation':
         return 'bg-green-500/10 text-green-400 border-green-500/20';
       default:
-        return 'bg-white/5 text-gray-400 border-white/10';
+        return 'bg-transparent/5 text-gray-400 border-white/10';
     }
   };
 
@@ -129,7 +129,7 @@ export default function AgentTemplatesBrowser() {
     onAction: (item: AgentTemplate, action: string) => void
   ) => (
     <GlassCard
-      className="h-full cursor-pointer group relative overflow-hidden flex flex-col p-5"
+      className="h-full cursor-pointer group relative overflow-hidden flex flex-col p-4"
       onClick={() => onAction(template, 'view-details')}
     >
       {template.featured && (
@@ -139,7 +139,7 @@ export default function AgentTemplatesBrowser() {
       )}
 
       <div className="flex items-start justify-between mb-4">
-        <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center border border-white/10">
+        <div className="w-10 h-10 rounded-md bg-transparent/5 flex items-center justify-center border border-white/10">
           {getTypeIcon(template.templateType)}
         </div>
         <div className="flex items-center space-x-1 text-orange-500 bg-orange-500/10 px-2 py-1 rounded-full border border-orange-500/20">
@@ -160,13 +160,13 @@ export default function AgentTemplatesBrowser() {
             <Badge
               key={tag}
               variant="outline"
-              className="text-xs bg-white/5 border-white/10 hover:bg-white/10"
+              className="text-xs bg-transparent/5 border-white/10 hover:bg-transparent/10"
             >
               {tag}
             </Badge>
           ))}
           {template.tags.length > 3 && (
-            <Badge variant="outline" className="text-xs bg-white/5 border-white/10">
+            <Badge variant="outline" className="text-xs bg-transparent/5 border-white/10">
               +{template.tags.length - 3}
             </Badge>
           )}
@@ -184,8 +184,8 @@ export default function AgentTemplatesBrowser() {
           </div>
         </div>
 
-        <div className="space-y-1 bg-white/5 p-2 rounded-lg border border-white/5">
-          <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">
+        <div className="space-y-1 bg-transparent/5 p-2 rounded-md border border-white/5">
+          <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
             Key Capabilities
           </p>
           {template.capabilities.slice(0, 2).map((cap: string, i: number) => (
@@ -195,7 +195,7 @@ export default function AgentTemplatesBrowser() {
             </div>
           ))}
           {template.capabilities.length > 2 && (
-            <div className="text-[10px] text-gray-500 pl-3">
+            <div className="text-[10px] text-muted-foreground pl-3">
               +{template.capabilities.length - 2} more
             </div>
           )}
@@ -281,20 +281,20 @@ export default function AgentTemplatesBrowser() {
                 </button>
               </div>
 
-              <div className="p-8 pb-0">
-                <div className="flex items-start gap-5 mb-6">
-                  <div className="w-16 h-16 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 flex-shrink-0">
+              <div className="p-4 pb-0">
+                <div className="flex items-start gap-4 mb-6">
+                  <div className="w-16 h-16 rounded-md bg-transparent/5 flex items-center justify-center border border-white/10 flex-shrink-0">
                     {getTypeIcon(selectedTemplate.templateType)}
                   </div>
                   <div>
-                    <h2 className="text-3xl font-bold text-white mb-2">{selectedTemplate.name}</h2>
+                    <h2 className="text-2xl font-bold text-white mb-2">{selectedTemplate.name}</h2>
                     <div className="flex items-center gap-3 text-sm text-gray-400">
                       <span>
                         by <span className="text-white">{selectedTemplate.author}</span>
                       </span>
-                      <span className="w-1 h-1 rounded-full bg-gray-500"></span>
+                      <span className="w-1 h-1 rounded-full bg-transparent0"></span>
                       <span>v{selectedTemplate.version}</span>
-                      <span className="w-1 h-1 rounded-full bg-gray-500"></span>
+                      <span className="w-1 h-1 rounded-full bg-transparent0"></span>
                       <span
                         className={`px-2 py-0.5 rounded-full border ${getTypeColor(selectedTemplate.templateType)} text-xs`}
                       >
@@ -311,14 +311,18 @@ export default function AgentTemplatesBrowser() {
 
               <div className="px-8 pb-8 space-y-8">
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-white/5 p-4 rounded-xl border border-white/5">
-                    <div className="text-xs text-gray-500 font-bold uppercase mb-1">Model</div>
+                  <div className="bg-transparent/5 p-4 rounded-md border border-white/5">
+                    <div className="text-xs text-muted-foreground font-bold uppercase mb-1">
+                      Model
+                    </div>
                     <div className="text-white flex items-center gap-2">
                       <Cpu className="w-4 h-4 text-blue-400" /> {selectedTemplate.model}
                     </div>
                   </div>
-                  <div className="bg-white/5 p-4 rounded-xl border border-white/5">
-                    <div className="text-xs text-gray-500 font-bold uppercase mb-1">Users</div>
+                  <div className="bg-transparent/5 p-4 rounded-md border border-white/5">
+                    <div className="text-xs text-muted-foreground font-bold uppercase mb-1">
+                      Users
+                    </div>
                     <div className="text-white flex items-center gap-2">
                       <Users className="w-4 h-4 text-green-400" />{' '}
                       {selectedTemplate.downloads.toLocaleString()}
@@ -334,7 +338,7 @@ export default function AgentTemplatesBrowser() {
                     {selectedTemplate.capabilities.map((cap: string, i: number) => (
                       <div
                         key={i}
-                        className="flex items-center gap-2 text-sm text-gray-300 bg-white/5 p-3 rounded-lg border border-white/5"
+                        className="flex items-center gap-2 text-sm text-gray-300 bg-transparent/5 p-3 rounded-md border border-white/5"
                       >
                         <div className="w-1.5 h-1.5 rounded-full bg-orange-500"></div>
                         {cap}
@@ -365,7 +369,7 @@ export default function AgentTemplatesBrowser() {
                   <h3 className="text-white font-semibold flex items-center gap-2 mb-4">
                     <Bot className="w-4 h-4 text-purple-400" /> System Prompt Preview
                   </h3>
-                  <div className="bg-black/40 p-4 rounded-lg border border-white/5 font-mono text-xs text-gray-400 overflow-x-auto">
+                  <div className="bg-black/40 p-4 rounded-md border border-white/5 font-mono text-xs text-gray-400 overflow-x-auto">
                     {selectedTemplate.systemPrompt}
                   </div>
                 </div>

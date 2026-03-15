@@ -90,14 +90,14 @@ export function StatusMonitor() {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="text-center p-4 bg-gray-100 rounded-lg">
+            <div className="text-center p-4 bg-gray-100 rounded-md">
               <div className="text-2xl font-bold">{systemStatus.activeConnections}</div>
-              <div className="text-sm text-gray-600">Active Connections</div>
+              <div className="text-sm text-muted-foreground">Active Connections</div>
             </div>
 
-            <div className="text-center p-4 bg-gray-100 rounded-lg">
+            <div className="text-center p-4 bg-gray-100 rounded-md">
               <div className="text-2xl font-bold">{systemStatus.queueSize}</div>
-              <div className="text-sm text-gray-600">Queue Size</div>
+              <div className="text-sm text-muted-foreground">Queue Size</div>
             </div>
           </div>
         </div>

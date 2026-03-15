@@ -69,10 +69,10 @@ export function ProviderApiKeyList() {
   };
 
   return (
-    <Card className="overflow-hidden border-2 border-primary/10 shadow-lg">
+    <Card className="overflow-hidden border-2 border-primary/10 shadow-none">
       <CardHeader className="bg-muted/30 pb-6 border-b">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-primary/10 rounded-lg">
+          <div className="p-2 bg-primary/10 rounded-md">
             <Key className="w-6 h-6 text-primary" />
           </div>
           <div>
@@ -84,7 +84,7 @@ export function ProviderApiKeyList() {
         </div>
       </CardHeader>
       <CardContent className="pt-6 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-7 gap-4 items-end bg-muted/20 p-4 rounded-xl border border-dashed">
+        <div className="grid grid-cols-1 md:grid-cols-7 gap-4 items-end bg-muted/20 p-4 rounded-md border border-dashed">
           <div className="md:col-span-2">
             <Label
               htmlFor="provider"
@@ -97,7 +97,7 @@ export function ProviderApiKeyList() {
               placeholder="e.g. OpenAI, Anthropic"
               value={provider}
               onChange={(e) => setProvider(e.target.value)}
-              className="bg-background shadow-sm"
+              className="bg-background shadow-none"
             />
           </div>
           <div className="md:col-span-4">
@@ -113,14 +113,14 @@ export function ProviderApiKeyList() {
               placeholder="sk-..."
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
-              className="bg-background shadow-sm font-mono"
+              className="bg-background shadow-none font-mono"
             />
           </div>
           <div className="md:col-span-1">
             <Button
               onClick={handleSaveApiKey}
               disabled={loading.save}
-              className="w-full shadow-md hover:shadow-lg transition-all"
+              className="w-full shadow-md hover:shadow-none transition-all"
             >
               {loading.save ? (
                 '...'
@@ -139,9 +139,9 @@ export function ProviderApiKeyList() {
             Configured Providers
           </h4>
 
-          <div className="rounded-xl border bg-card overflow-hidden">
+          <div className="rounded-md border bg-card overflow-hidden">
             {loading.list ? (
-              <div className="p-8 flex items-center justify-center text-muted-foreground animate-pulse">
+              <div className="p-4 flex items-center justify-center text-muted-foreground animate-pulse">
                 Loading encrypted vault...
               </div>
             ) : apiKeys.length === 0 ? (

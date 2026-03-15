@@ -100,7 +100,7 @@ export const AgencyDashboard: React.FC = () => {
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       {/* Hero Section */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-5xl font-extrabold text-white tracking-tight">
             Agency{' '}
@@ -125,13 +125,13 @@ export const AgencyDashboard: React.FC = () => {
       </div>
 
       {loadError && (
-        <div className="rounded-lg border border-amber-300 bg-amber-100/80 px-4 py-3 text-sm text-amber-900">
+        <div className="rounded-md border border-amber-300 bg-amber-100/80 px-4 py-2 text-sm text-amber-900">
           {loadError}
         </div>
       )}
 
       {/* High-Level Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricBox
           icon={<Bot className="text-blue-400" />}
           label="Provisioned Agents"
@@ -158,7 +158,7 @@ export const AgencyDashboard: React.FC = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Main Feed: Tenant Management */}
         <div className="lg:col-span-2 space-y-6">
           <div className="flex items-center justify-between">
@@ -173,32 +173,32 @@ export const AgencyDashboard: React.FC = () => {
             {recentAgencies.map((agency) => (
               <GlassCard
                 key={agency.id}
-                className="p-5 border-white/5 hover:border-blue-500/30 transition-all cursor-pointer group"
+                className="p-4 border-white/5 hover:border-blue-500/30 transition-all cursor-pointer group"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600/20 to-indigo-600/20 flex items-center justify-center border border-white/10 group-hover:scale-105 transition-transform">
+                    <div className="w-12 h-12 rounded-md bg-gradient-to-br from-blue-600/20 to-indigo-600/20 flex items-center justify-center border border-white/10 group-hover:scale-105 transition-transform">
                       <Shield className="w-6 h-6 text-blue-400" />
                     </div>
                     <div>
                       <div className="text-lg font-bold text-white">{agency.name}</div>
-                      <div className="text-xs text-gray-500 font-mono">{agency.domain}</div>
+                      <div className="text-xs text-muted-foreground font-mono">{agency.domain}</div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-8">
+                  <div className="flex items-center gap-4">
                     <div className="hidden md:block text-right">
-                      <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">
+                      <div className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">
                         Active Agents
                       </div>
                       <div className="text-lg font-bold text-white">{agency.agents}</div>
                     </div>
                     <div className="hidden md:block text-right">
-                      <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">
+                      <div className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">
                         Revenue Split
                       </div>
                       <div className="text-lg font-bold text-emerald-400">{agency.split}</div>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-gray-700 group-hover:text-blue-500 transition-colors" />
+                    <ChevronRight className="w-5 h-5 text-foreground group-hover:text-blue-500 transition-colors" />
                   </div>
                 </div>
               </GlassCard>
@@ -213,7 +213,7 @@ export const AgencyDashboard: React.FC = () => {
             Security Logic
           </h2>
 
-          <GlassCard className="p-6 space-y-4 bg-gradient-to-br from-emerald-600/5 to-transparent">
+          <GlassCard className="p-4 space-y-4 bg-gradient-to-br from-emerald-600/5 to-transparent">
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-300">Auth Propagation</span>
               <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-extrabold uppercase ring-1 ring-emerald-500/50">
@@ -238,7 +238,7 @@ export const AgencyDashboard: React.FC = () => {
             </PremiumButton>
           </GlassCard>
 
-          <GlassCard className="p-6 border-indigo-500/20 relative overflow-hidden group">
+          <GlassCard className="p-4 border-indigo-500/20 relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent pointer-events-none" />
             <h3 className="text-lg font-bold text-white mb-2">Build Ecosystem</h3>
             <p className="text-sm text-gray-400 mb-6">
@@ -263,14 +263,16 @@ const MetricBox: React.FC<{ icon: React.ReactNode; label: string; value: string;
   value,
   sub,
 }) => (
-  <GlassCard className="p-6 border-white/5 hover:border-white/10 transition-all">
+  <GlassCard className="p-4 border-white/5 hover:border-white/10 transition-all">
     <div className="flex justify-between items-start mb-4">
-      <div className="p-2 rounded-lg bg-white/5 border border-white/10">{icon}</div>
-      <ArrowUpRight className="w-4 h-4 text-gray-700" />
+      <div className="p-2 rounded-md bg-transparent/5 border border-white/10">{icon}</div>
+      <ArrowUpRight className="w-4 h-4 text-foreground" />
     </div>
     <div>
-      <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{label}</div>
-      <div className="text-3xl font-bold text-white mt-1">{value}</div>
+      <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+        {label}
+      </div>
+      <div className="text-2xl font-bold text-white mt-1">{value}</div>
       <div className="text-xs text-gray-400 mt-2 flex items-center gap-1">
         <span className="text-emerald-400 font-bold shrink-0">{sub}</span>
       </div>
@@ -279,7 +281,7 @@ const MetricBox: React.FC<{ icon: React.ReactNode; label: string; value: string;
 );
 
 const ActionSmall: React.FC<{ icon: React.ReactNode; label: string }> = ({ icon, label }) => (
-  <button className="flex flex-col items-center justify-center p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors text-gray-400 hover:text-white">
+  <button className="flex flex-col items-center justify-center p-3 rounded-md bg-transparent/5 border border-white/10 hover:bg-transparent/10 transition-colors text-gray-400 hover:text-white">
     <div className="w-6 h-6 mb-1">{icon}</div>
     <span className="text-[10px] font-bold uppercase tracking-wider">{label}</span>
   </button>

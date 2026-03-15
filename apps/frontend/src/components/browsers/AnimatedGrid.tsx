@@ -24,13 +24,13 @@ export function AnimatedGrid<T>({
     `grid-cols-${columns.default || 1}`,
     columns.md && `md:grid-cols-${columns.md}`,
     columns.lg && `lg:grid-cols-${columns.lg}`,
-    'gap-6',
+    'gap-4',
   ]
     .filter(Boolean)
     .join(' ');
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <AnimatePresence mode="popLayout">
         {items.map((item, index) => (
           <motion.div

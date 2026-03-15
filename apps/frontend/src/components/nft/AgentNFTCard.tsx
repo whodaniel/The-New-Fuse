@@ -1,19 +1,10 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../ui/card';
-import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
-import { Progress } from '../ui/progress';
-import { 
-  Coins, 
-  Share, 
-  TrendingUp, 
-  Users, 
-  ExternalLink,
-  Wallet,
-  Settings,
-  Eye
-} from 'lucide-react';
 import { formatEther } from 'ethers';
+import { Coins, ExternalLink, Eye, Settings, Share, TrendingUp, Users, Wallet } from 'lucide-react';
+import React, { useState } from 'react';
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../ui/card';
+import { Progress } from '../ui/progress';
 
 export interface AgentNFT {
   id: string;
@@ -76,29 +67,32 @@ export const AgentNFTCard: React.FC<AgentNFTCardProps> = ({
   onFractionalize,
   onViewDetails,
   onBuyShares,
-  onManageRevenue
+  onManageRevenue,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Calculate user's ownership percentage
   const userShares = agentNft.fractionalShares
-    .filter(share => share.ownerAddress.toLowerCase() === userAddress?.toLowerCase())
+    .filter((share) => share.ownerAddress.toLowerCase() === userAddress?.toLowerCase())
     .reduce((total, share) => total + share.shareAmount, 0);
-  
-  const ownershipPercentage = agentNft.isFractionalized 
-    ? (userShares / agentNft.totalShares) * 100 
+
+  const ownershipPercentage = agentNft.isFractionalized
+    ? (userShares / agentNft.totalShares) * 100
     : 0;
 
   // Calculate total revenue
-  const totalRevenue = agentNft.revenueStreams
-    .reduce((total, stream) => total + parseFloat(formatEther(stream.totalRevenue || '0')), 0);
+  const totalRevenue = agentNft.revenueStreams.reduce(
+    (total, stream) => total + parseFloat(formatEther(stream.totalRevenue || '0')),
+    0
+  );
 
   // Find active listings
-  const activeListings = agentNft.marketplaceListings
-    .filter(listing => listing.status === 'ACTIVE');
+  const activeListings = agentNft.marketplaceListings.filter(
+    (listing) => listing.status === 'ACTIVE'
+  );
 
   return (
-    <Card className="w-full max-w-md hover:shadow-lg transition-shadow duration-200">
+    <Card className="w-full max-w-md hover:shadow-none transition-shadow duration-200">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1">
@@ -120,26 +114,20 @@ export const AgentNFTCard: React.FC<AgentNFTCardProps> = ({
               </Badge>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsExpanded(!isExpanded)}
-          >
+          <Button variant="ghost" size="sm" onClick={() => setIsExpanded(!isExpanded)}>
             <Eye className="w-4 h-4" />
           </Button>
         </div>
-        
+
         {agentNft.agent.description && (
-          <p className="text-sm text-muted-foreground mt-2">
-            {agentNft.agent.description}
-          </p>
+          <p className="text-sm text-muted-foreground mt-2">{agentNft.agent.description}</p>
         )}
       </CardHeader>
 
       <CardContent className="space-y-4">
         {/* Ownership Info */}
         {agentNft.isFractionalized && userAddress && (
-          <div className="bg-blue-50 p-3 rounded-lg">
+          <div className="bg-blue-50 p-3 rounded-md">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium">Your Ownership</span>
               <span className="text-sm font-bold">{ownershipPercentage.toFixed(2)}%</span>
@@ -153,7 +141,7 @@ export const AgentNFTCard: React.FC<AgentNFTCardProps> = ({
 
         {/* Revenue Info */}
         {agentNft.revenueStreams.length > 0 && (
-          <div className="bg-green-50 p-3 rounded-lg">
+          <div className="bg-green-50 p-3 rounded-md">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-green-600" />
@@ -171,7 +159,7 @@ export const AgentNFTCard: React.FC<AgentNFTCardProps> = ({
 
         {/* Marketplace Info */}
         {activeListings.length > 0 && (
-          <div className="bg-purple-50 p-3 rounded-lg">
+          <div className="bg-purple-50 p-3 rounded-md">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Coins className="w-4 h-4 text-purple-600" />
@@ -217,7 +205,7 @@ export const AgentNFTCard: React.FC<AgentNFTCardProps> = ({
 
       <CardFooter className="flex flex-wrap gap-2">
         {agentNft && !agentNft.isFractionalized && onFractionalize && (
-          <Button 
+          <Button
             onClick={() => onFractionalize(agentNft.id)}
             size="sm"
             variant="outline"
@@ -229,7 +217,7 @@ export const AgentNFTCard: React.FC<AgentNFTCardProps> = ({
         )}
 
         {activeListings.length > 0 && onBuyShares && (
-          <Button 
+          <Button
             onClick={() => onBuyShares(activeListings[0].id)}
             size="sm"
             variant="outline"
@@ -241,22 +229,14 @@ export const AgentNFTCard: React.FC<AgentNFTCardProps> = ({
         )}
 
         {agentNft.revenueStreams.length > 0 && onManageRevenue && (
-          <Button 
-            onClick={() => onManageRevenue(agentNft.id)}
-            size="sm"
-            variant="outline"
-          >
+          <Button onClick={() => onManageRevenue(agentNft.id)} size="sm" variant="outline">
             <Settings className="w-4 h-4 mr-2" />
             Manage
           </Button>
         )}
 
         {onViewDetails && (
-          <Button 
-            onClick={() => onViewDetails(agentNft)}
-            size="sm"
-            variant="ghost"
-          >
+          <Button onClick={() => onViewDetails(agentNft)} size="sm" variant="ghost">
             <ExternalLink className="w-4 h-4 mr-2" />
             Details
           </Button>

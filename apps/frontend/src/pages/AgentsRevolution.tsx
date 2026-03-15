@@ -189,7 +189,7 @@ const AgentCard = memo(({ agent }: { agent: UIAgent }) => {
         {/* Header */}
         <div className="flex justify-between items-start">
           <div
-            className={`w-20 h-20 rounded-2xl bg-linear-to-br ${agent.gradient} flex items-center justify-center shadow-2xl group-hover:scale-110 transform transition-transform overflow-hidden`}
+            className={`w-20 h-20 rounded-md bg-linear-to-br ${agent.gradient} flex items-center justify-center shadow-none group-hover:scale-110 transform transition-transform overflow-hidden`}
           >
             {agent.pfpUrl ? (
               <img
@@ -217,9 +217,9 @@ const AgentCard = memo(({ agent }: { agent: UIAgent }) => {
         </div>
 
         {/* Metrics */}
-        <div className="grid grid-cols-3 gap-6 pt-6 border-t border-white/10">
+        <div className="grid grid-cols-3 gap-4 pt-6 border-t border-white/10">
           <div>
-            <p className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-2">
+            <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mb-2">
               Tasks
             </p>
             <p className="text-2xl font-bold text-white">
@@ -227,13 +227,13 @@ const AgentCard = memo(({ agent }: { agent: UIAgent }) => {
             </p>
           </div>
           <div>
-            <p className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-2">
+            <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mb-2">
               Success
             </p>
             <p className="text-2xl font-bold text-green-400">{agent.metrics.successRate}%</p>
           </div>
           <div>
-            <p className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-2">
+            <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mb-2">
               Speed
             </p>
             <p className="text-2xl font-bold text-blue-400">{agent.metrics.avgResponseTime}</p>
@@ -242,7 +242,7 @@ const AgentCard = memo(({ agent }: { agent: UIAgent }) => {
 
         {/* CTA */}
         <div className="flex items-center justify-between pt-6 border-t border-white/10">
-          <span className="text-sm text-gray-500 font-medium">{agent.category}</span>
+          <span className="text-sm text-muted-foreground font-medium">{agent.category}</span>
           <span className="flex items-center gap-2 text-blue-400 font-bold group-hover:gap-4 transition-all">
             View Details
             <ArrowRight className="w-5 h-5" />
@@ -338,11 +338,11 @@ export const AgentsRevolution = () => {
   if (error) {
     return (
       <div className="min-h-screen bg-transparent flex items-center justify-center">
-        <div className="text-center p-8">
+        <div className="text-center p-4">
           <div className="inline-flex rounded-full bg-red-500/10 p-4">
             <Bot className="w-16 h-16 text-red-400" />
           </div>
-          <h2 className="mt-6 text-3xl font-bold text-white">Oops! Something went wrong.</h2>
+          <h2 className="mt-6 text-2xl font-bold text-white">Oops! Something went wrong.</h2>
           <p className="mt-4 text-lg text-gray-400">{error}</p>
           <PremiumButton onClick={fetchData} variant="gradient" className="mt-8">
             <ArrowRight className="mr-2 h-5 w-5" />
@@ -354,7 +354,7 @@ export const AgentsRevolution = () => {
   }
 
   return (
-    <div className="min-h-screen bg-transparent px-6 py-16">
+    <div className="min-h-screen bg-transparent px-3 py-16">
       <div className="max-w-7xl mx-auto space-y-16">
         <OpsPageHeader
           eyebrow="Fleet"
@@ -387,13 +387,13 @@ export const AgentsRevolution = () => {
         />
 
         {/* SEARCH & FILTERS - PREMIUM */}
-        <GlassCard className="p-8 rounded-3xl backdrop-blur-2xl shadow-2xl">
-          <div className="flex flex-col lg:flex-row gap-6">
+        <GlassCard className="p-4 rounded-3xl backdrop-blur-2xl shadow-none">
+          <div className="flex flex-col lg:flex-row gap-4">
             {/* Search Bar */}
             <div className="relative flex-1">
               <PremiumInput
                 placeholder="Search by name, capability, or use case..."
-                className="h-16 text-lg rounded-2xl"
+                className="h-16 text-lg rounded-md"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 icon={Search}
@@ -408,7 +408,7 @@ export const AgentsRevolution = () => {
                   options={categories}
                   value={filterCategory}
                   onChange={(e) => setFilterCategory(e.target.value)}
-                  className="h-16 rounded-2xl text-lg appearance-none"
+                  className="h-16 rounded-md text-lg appearance-none"
                 />
               </div>
               <div className="relative min-w-[160px]">
@@ -416,7 +416,7 @@ export const AgentsRevolution = () => {
                   options={statuses}
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
-                  className="h-16 rounded-2xl text-lg appearance-none"
+                  className="h-16 rounded-md text-lg appearance-none"
                 />
               </div>
             </div>
@@ -424,9 +424,9 @@ export const AgentsRevolution = () => {
         </GlassCard>
 
         {/* SWARM INTELLIGENCE & HUMAN HANDOFF */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* Live Activity Feed */}
-          <GlassCard className="lg:col-span-2 p-8 rounded-3xl space-y-6">
+          <GlassCard className="lg:col-span-2 p-4 rounded-3xl space-y-6">
             <div className="flex justify-between items-center">
               <h3 className="text-2xl font-bold text-white flex items-center gap-3">
                 <TrendingUp className="text-blue-400" />
@@ -444,7 +444,7 @@ export const AgentsRevolution = () => {
             </div>
             {swarmCapabilityStatus &&
               Object.keys(swarmCapabilityStatus.unavailable || {}).length > 0 && (
-                <div className="p-4 rounded-2xl border border-amber-500/30 bg-amber-500/10 text-sm text-amber-200">
+                <div className="p-4 rounded-md border border-amber-500/30 bg-amber-500/10 text-sm text-amber-200">
                   Some swarm execution/message APIs are not deployed yet. Live activity feed remains
                   available.
                 </div>
@@ -453,10 +453,10 @@ export const AgentsRevolution = () => {
               {activities.map((act) => (
                 <div
                   key={act.id}
-                  className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors"
+                  className="flex items-center gap-4 p-4 rounded-md bg-transparent/5 border border-white/5 hover:border-white/10 transition-colors"
                 >
                   <div
-                    className={`p-3 rounded-xl bg-linear-to-br ${
+                    className={`p-3 rounded-md bg-linear-to-br ${
                       act.type === 'auction'
                         ? 'from-amber-500 to-orange-600'
                         : act.type === 'award'
@@ -474,7 +474,7 @@ export const AgentsRevolution = () => {
                   </div>
                   <div className="flex-1">
                     <p className="font-bold text-white">{act.title}</p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-muted-foreground">
                       Initiated by <span className="text-blue-400 font-medium">{act.agent}</span> •{' '}
                       {new Date(act.timestamp).toLocaleTimeString()}
                     </p>
@@ -491,7 +491,7 @@ export const AgentsRevolution = () => {
           </GlassCard>
 
           {/* Human Connection Points */}
-          <GlassCard className="p-8 rounded-3xl space-y-6">
+          <GlassCard className="p-4 rounded-3xl space-y-6">
             <h3 className="text-2xl font-bold text-white flex items-center gap-3">
               <Users className="text-purple-400" />
               Human Relay
@@ -506,10 +506,10 @@ export const AgentsRevolution = () => {
                   href={opt.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-white/20 transition-all group"
+                  className="flex items-center justify-between p-4 rounded-md bg-transparent/5 border border-white/5 hover:border-white/20 transition-all group"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-white/5">
+                    <div className="p-2 rounded-md bg-transparent/5">
                       {opt.icon === 'Send' ? (
                         <Send className="w-5 h-5 text-blue-400" />
                       ) : (
@@ -520,10 +520,10 @@ export const AgentsRevolution = () => {
                       <p className="font-bold text-white group-hover:text-blue-400 transition-colors">
                         {opt.name}
                       </p>
-                      <p className="text-xs text-gray-500">{opt.description}</p>
+                      <p className="text-xs text-muted-foreground">{opt.description}</p>
                     </div>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-gray-600 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
                 </a>
               ))}
             </div>
@@ -531,7 +531,7 @@ export const AgentsRevolution = () => {
         </div>
 
         {/* AGENTS GRID - BOLD CARDS */}
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-4">
           {filteredAgents.map((agent) => (
             <AgentCard key={agent.id} agent={agent} />
           ))}
@@ -539,8 +539,8 @@ export const AgentsRevolution = () => {
 
         {/* Empty State */}
         {filteredAgents.length === 0 && (
-          <div className="text-center py-32">
-            <Bot className="mx-auto h-24 w-24 text-gray-700 mb-8" />
+          <div className="text-center py-22">
+            <Bot className="mx-auto h-24 w-24 text-foreground mb-8" />
             <h3 className="text-4xl font-bold text-white mb-4">No Agents Found</h3>
             <p className="text-xl text-gray-400 mb-10 max-w-xl mx-auto">
               {searchQuery || filterCategory !== 'All' || filterStatus !== 'All'
@@ -560,15 +560,15 @@ export const AgentsRevolution = () => {
         )}
 
         {/* Stats Footer */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-16">
-          <GlassCard className="p-8 rounded-2xl backdrop-blur-xl text-center">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-16">
+          <GlassCard className="p-4 rounded-md backdrop-blur-xl text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-500/20 mb-4">
               <Command className="w-8 h-8 text-blue-400" />
             </div>
             <p className="text-5xl font-black text-white mb-2">{agents.length}</p>
             <p className="text-lg text-gray-400">Agents Deployed</p>
           </GlassCard>
-          <GlassCard className="p-8 rounded-2xl backdrop-blur-xl text-center">
+          <GlassCard className="p-4 rounded-md backdrop-blur-xl text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-500/20 mb-4">
               <TrendingUp className="w-8 h-8 text-green-400" />
             </div>
@@ -582,7 +582,7 @@ export const AgentsRevolution = () => {
             </p>
             <p className="text-lg text-gray-400">Avg Success Rate</p>
           </GlassCard>
-          <GlassCard className="p-8 rounded-2xl backdrop-blur-xl text-center">
+          <GlassCard className="p-4 rounded-md backdrop-blur-xl text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-purple-500/20 mb-4">
               <Zap className="w-8 h-8 text-purple-400" />
             </div>

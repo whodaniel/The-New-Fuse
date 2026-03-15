@@ -1,12 +1,6 @@
+import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowRight, CheckCircle2, Cpu, MessageSquare, Sparkles } from 'lucide-react';
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  MessageSquare,
-  Cpu,
-  CheckCircle2,
-  ArrowRight,
-  Sparkles,
-} from 'lucide-react';
 
 interface DemoStep {
   id: string;
@@ -64,7 +58,7 @@ export const InteractiveDemo: React.FC = () => {
 
   return (
     <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-white to-blue-50 dark:from-gray-800 dark:to-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-3 lg:px-8">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -73,15 +67,15 @@ export const InteractiveDemo: React.FC = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-12 sm:mb-16"
         >
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
             See It In Action
           </h2>
-          <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          <p className="text-lg sm:text-xl text-muted-foreground dark:text-gray-300 max-w-3xl mx-auto">
             Watch how The New Fuse transforms your ideas into reality
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-4 lg:gap-12 items-center">
           {/* Interactive Steps */}
           <div className="space-y-4">
             {demoSteps.map((step, index) => {
@@ -97,13 +91,13 @@ export const InteractiveDemo: React.FC = () => {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   onClick={() => handleStepClick(index)}
                   className={`
-                    relative p-6 rounded-xl border-2 cursor-pointer transition-all duration-300
+                    relative p-4 rounded-md border-2 cursor-pointer transition-all duration-300
                     ${
                       isActive
-                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-lg'
+                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-none'
                         : isCompleted
-                        ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
-                        : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-300'
+                          ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+                          : 'border-gray-200 dark:border-gray-700 bg-transparent dark:bg-transparent hover:border-blue-300'
                     }
                   `}
                 >
@@ -111,13 +105,13 @@ export const InteractiveDemo: React.FC = () => {
                     {/* Step Number/Icon */}
                     <div
                       className={`
-                      flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center
+                      flex-shrink-0 w-12 h-12 rounded-md flex items-center justify-center
                       ${
                         isActive
                           ? 'bg-blue-500 text-white'
                           : isCompleted
-                          ? 'bg-green-500 text-white'
-                          : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
+                            ? 'bg-green-500 text-white'
+                            : 'bg-gray-100 dark:bg-gray-700 text-muted-foreground dark:text-gray-300'
                       }
                     `}
                     >
@@ -129,7 +123,7 @@ export const InteractiveDemo: React.FC = () => {
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
                         {step.title}
                       </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">
+                      <p className="text-sm text-muted-foreground dark:text-gray-300">
                         {step.description}
                       </p>
                     </div>
@@ -166,7 +160,7 @@ export const InteractiveDemo: React.FC = () => {
                 animate={{ opacity: 1 }}
                 onClick={handleNext}
                 disabled={isAnimating}
-                className="w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full py-2 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 Next Step
                 <ArrowRight className="w-5 h-5" />
@@ -177,28 +171,28 @@ export const InteractiveDemo: React.FC = () => {
           {/* Visual Preview */}
           <div className="relative">
             <motion.div
-              className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden"
+              className="relative bg-transparent dark:bg-transparent rounded-md shadow-none border border-gray-200 dark:border-gray-700 overflow-hidden"
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
               {/* Browser Chrome */}
-              <div className="bg-gray-100 dark:bg-gray-700 px-4 py-3 border-b border-gray-200 dark:border-gray-600">
+              <div className="bg-gray-100 dark:bg-gray-700 px-4 py-2 border-b border-gray-200 dark:border-gray-600">
                 <div className="flex items-center gap-2">
                   <div className="flex gap-2">
                     <div className="w-3 h-3 rounded-full bg-red-500" />
                     <div className="w-3 h-3 rounded-full bg-yellow-500" />
                     <div className="w-3 h-3 rounded-full bg-green-500" />
                   </div>
-                  <div className="flex-1 bg-white dark:bg-gray-600 rounded px-3 py-1 text-xs text-gray-600 dark:text-gray-300">
+                  <div className="flex-1 bg-transparent dark:bg-gray-600 rounded px-3 py-1 text-xs text-muted-foreground dark:text-gray-300">
                     app.thenewfuse.com
                   </div>
                 </div>
               </div>
 
               {/* Content Area */}
-              <div className="p-8 min-h-[400px]">
+              <div className="p-4 min-h-[400px]">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeStep}
@@ -220,7 +214,7 @@ export const InteractiveDemo: React.FC = () => {
                         <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
                           {demoSteps[activeStep].title}
                         </h3>
-                        <p className="text-gray-600 dark:text-gray-300 max-w-md">
+                        <p className="text-muted-foreground dark:text-gray-300 max-w-md">
                           {demoSteps[activeStep].description}
                         </p>
                       </div>
@@ -233,9 +227,9 @@ export const InteractiveDemo: React.FC = () => {
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           transition={{ delay: 0.4 }}
-                          className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4"
+                          className="bg-transparent dark:bg-gray-700/50 rounded-md p-4"
                         >
-                          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground dark:text-gray-300">
                             <MessageSquare className="w-4 h-4" />
                             <span className="typing-animation">
                               Create a data pipeline to process user analytics...
@@ -257,10 +251,12 @@ export const InteractiveDemo: React.FC = () => {
                               initial={{ x: -20, opacity: 0 }}
                               animate={{ x: 0, opacity: 1 }}
                               transition={{ delay: 0.5 + i * 0.1 }}
-                              className="flex items-center gap-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3"
+                              className="flex items-center gap-3 bg-purple-50 dark:bg-purple-900/20 rounded-md p-3"
                             >
                               <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
-                              <span className="text-sm text-gray-700 dark:text-gray-300">{agent}</span>
+                              <span className="text-sm text-foreground dark:text-gray-300">
+                                {agent}
+                              </span>
                             </motion.div>
                           ))}
                         </motion.div>
@@ -271,15 +267,15 @@ export const InteractiveDemo: React.FC = () => {
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           transition={{ delay: 0.4 }}
-                          className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4"
+                          className="bg-green-50 dark:bg-green-900/20 rounded-md p-4"
                         >
                           <div className="flex items-center gap-2">
                             <div className="w-4 h-4 rounded-full bg-green-500 animate-pulse" />
-                            <span className="text-sm text-gray-700 dark:text-gray-300">
+                            <span className="text-sm text-foreground dark:text-gray-300">
                               Workflow executing...
                             </span>
                           </div>
-                          <div className="mt-3 bg-white dark:bg-gray-800 rounded h-2 overflow-hidden">
+                          <div className="mt-3 bg-transparent dark:bg-transparent rounded h-2 overflow-hidden">
                             <motion.div
                               initial={{ width: 0 }}
                               animate={{ width: '75%' }}
@@ -297,7 +293,7 @@ export const InteractiveDemo: React.FC = () => {
                           transition={{ delay: 0.4, type: 'spring' }}
                           className="text-center"
                         >
-                          <div className="inline-flex items-center gap-2 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full px-6 py-3">
+                          <div className="inline-flex items-center gap-2 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full px-3 py-2">
                             <CheckCircle2 className="w-5 h-5" />
                             <span className="font-medium">Pipeline Created Successfully!</span>
                           </div>

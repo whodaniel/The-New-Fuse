@@ -20,13 +20,13 @@ const ChromeExtensionDemo: React.FC<ChromeExtensionDemoProps> = ({ defaultOpen =
 
   if (!isOpen) {
     return (
-      <div className="m-2 max-w-[400px] border border-gray-200 rounded-lg shadow-sm bg-white overflow-hidden">
-        <div className="p-5">
+      <div className="m-2 max-w-[400px] border border-gray-200 rounded-md shadow-none bg-transparent overflow-hidden">
+        <div className="p-4">
           <div className="flex items-center gap-2 mb-2">
             <Extension className="text-blue-500" />
             <p className="text-xl font-bold">Chrome Extension UI Demo</p>
           </div>
-          <p className="text-gray-600 mb-4">
+          <p className="text-muted-foreground mb-4">
             Experience the recovered Chrome extension interface integrated into the main
             application.
           </p>
@@ -40,7 +40,7 @@ const ChromeExtensionDemo: React.FC<ChromeExtensionDemoProps> = ({ defaultOpen =
 
   return (
     <div
-      className={`fixed top-5 right-5 z-[9999] shadow-2xl rounded-lg overflow-hidden bg-white transition-opacity duration-200 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+      className={`fixed top-4 right-5 z-[9999] shadow-none rounded-md overflow-hidden bg-transparent transition-opacity duration-200 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
     >
       {/* Close Button */}
       <div className="absolute top-2 right-2 z-[10000]">

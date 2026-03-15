@@ -61,7 +61,7 @@ export default function ManageWorkspace({ hideModal }: ManageWorkspaceProps) {
           </TabsList>
           <TabsContent value="upload">
             <div className="space-y-4 p-4">
-              <div className="flex h-64 w-full items-center justify-center rounded-lg border-2 border-dashed border-border bg-muted">
+              <div className="flex h-64 w-full items-center justify-center rounded-md border-2 border-dashed border-border bg-muted">
                 <div className="text-center">
                   <Upload className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
                   <p className="mb-2 text-muted-foreground">Drop files here or click to browse</p>

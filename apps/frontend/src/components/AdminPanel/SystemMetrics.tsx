@@ -1,5 +1,5 @@
+import { LoadingSpinner, StatCard } from '@/components/ui/design-system';
 import React from 'react';
-import { StatCard, LoadingSpinner } from '@/components/ui/design-system';
 import { useSystemMetrics } from '../../hooks/useSystemMetrics';
 
 export const SystemMetrics: React.FC = () => {
@@ -9,7 +9,7 @@ export const SystemMetrics: React.FC = () => {
   if (error) return <div className="text-danger-600">Error loading metrics</div>;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       <StatCard
         title="CPU Usage"
         value={`${metrics.cpuUsage.value}%`}

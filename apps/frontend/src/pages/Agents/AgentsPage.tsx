@@ -327,7 +327,7 @@ export default function AgentsPage() {
         <div className="absolute top-[30%] right-[20%] w-[30%] h-[30%] bg-pink-600/10 rounded-full blur-[100px] animate-pulse" />
       </div>
 
-      <div className="relative z-10 p-8 max-w-7xl mx-auto">
+      <div className="relative z-10 p-4 max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -373,7 +373,7 @@ export default function AgentsPage() {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8"
+          className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8"
         >
           <motion.div variants={itemVariants}>
             <StatsCard
@@ -511,7 +511,7 @@ export default function AgentsPage() {
               initial="hidden"
               animate="visible"
               exit={{ opacity: 0 }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
             >
               {sortedAgents.map((agent: Agent) => {
                 const statusConfig = getStatusConfig(agent.status);
@@ -522,16 +522,16 @@ export default function AgentsPage() {
                 return (
                   <motion.div key={agent.id} variants={itemVariants}>
                     <GlassCard hoverEffect className="h-full">
-                      <div className="p-6">
+                      <div className="p-4">
                         {/* Header */}
                         <div className="flex items-center justify-between mb-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center border border-white/10">
+                            <div className="w-12 h-12 rounded-md bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center border border-white/10">
                               <TypeIcon className={`w-6 h-6 ${typeConfig.textClass}`} />
                             </div>
                             <div>
                               <h3 className="text-lg font-semibold text-white">{agent.name}</h3>
-                              <p className="text-xs text-gray-500">v{agent.version}</p>
+                              <p className="text-xs text-muted-foreground">v{agent.version}</p>
                             </div>
                           </div>
                           <div className="flex flex-col gap-2">
@@ -551,14 +551,14 @@ export default function AgentsPage() {
 
                         {/* Model & Owner */}
                         <div className="grid grid-cols-2 gap-4 mb-4">
-                          <div className="bg-black/20 rounded-lg p-3 border border-white/5">
-                            <p className="text-xs text-gray-500 mb-1 flex items-center gap-1">
+                          <div className="bg-black/20 rounded-md p-3 border border-white/5">
+                            <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
                               <Brain className="w-3 h-3" /> Model
                             </p>
                             <p className="text-sm font-medium text-white">{agent.model}</p>
                           </div>
-                          <div className="bg-black/20 rounded-lg p-3 border border-white/5">
-                            <p className="text-xs text-gray-500 mb-1 flex items-center gap-1">
+                          <div className="bg-black/20 rounded-md p-3 border border-white/5">
+                            <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
                               <Users className="w-3 h-3" /> Owner
                             </p>
                             <p className="text-sm font-medium text-white truncate">{agent.owner}</p>
@@ -567,20 +567,20 @@ export default function AgentsPage() {
 
                         {/* Capabilities */}
                         <div className="mb-4">
-                          <p className="text-xs text-gray-500 mb-2">Capabilities</p>
+                          <p className="text-xs text-muted-foreground mb-2">Capabilities</p>
                           <div className="flex flex-wrap gap-1">
                             {agent.capabilities
                               .slice(0, 3)
                               .map((capability: string, index: number) => (
                                 <span
                                   key={index}
-                                  className="px-2 py-1 text-xs bg-white/5 text-gray-300 rounded-lg border border-white/10"
+                                  className="px-2 py-1 text-xs bg-transparent/5 text-gray-300 rounded-md border border-white/10"
                                 >
                                   {capability}
                                 </span>
                               ))}
                             {agent.capabilities.length > 3 && (
-                              <span className="px-2 py-1 text-xs bg-purple-500/10 text-purple-400 rounded-lg border border-purple-500/20">
+                              <span className="px-2 py-1 text-xs bg-purple-500/10 text-purple-400 rounded-md border border-purple-500/20">
                                 +{agent.capabilities.length - 3} more
                               </span>
                             )}
@@ -589,20 +589,20 @@ export default function AgentsPage() {
 
                         {/* Metrics */}
                         <div className="grid grid-cols-3 gap-2 mb-4">
-                          <div className="text-center bg-black/20 rounded-lg p-2 border border-white/5">
-                            <p className="text-xs text-gray-500">Messages</p>
+                          <div className="text-center bg-black/20 rounded-md p-2 border border-white/5">
+                            <p className="text-xs text-muted-foreground">Messages</p>
                             <p className="text-sm font-bold text-blue-400">
                               {agent.messagesCount.toLocaleString()}
                             </p>
                           </div>
-                          <div className="text-center bg-black/20 rounded-lg p-2 border border-white/5">
-                            <p className="text-xs text-gray-500">Success</p>
+                          <div className="text-center bg-black/20 rounded-md p-2 border border-white/5">
+                            <p className="text-xs text-muted-foreground">Success</p>
                             <p className="text-sm font-bold text-emerald-400">
                               {agent.successRate}%
                             </p>
                           </div>
-                          <div className="text-center bg-black/20 rounded-lg p-2 border border-white/5">
-                            <p className="text-xs text-gray-500">Response</p>
+                          <div className="text-center bg-black/20 rounded-md p-2 border border-white/5">
+                            <p className="text-xs text-muted-foreground">Response</p>
                             <p className="text-sm font-bold text-purple-400">
                               {agent.avgResponseTime}s
                             </p>
@@ -653,28 +653,28 @@ export default function AgentsPage() {
                   <table className="w-full">
                     <thead className="border-b border-white/10">
                       <tr>
-                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                           Agent
                         </th>
-                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                           Type
                         </th>
-                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                           Status
                         </th>
-                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                           Model
                         </th>
-                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                           Messages
                         </th>
-                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                           Success Rate
                         </th>
-                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                           Last Active
                         </th>
-                        <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        <th className="px-3 py-2 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">
                           Actions
                         </th>
                       </tr>
@@ -691,29 +691,29 @@ export default function AgentsPage() {
                             key={agent.id}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            className="hover:bg-white/5 transition-colors"
+                            className="hover:bg-transparent/5 transition-colors"
                           >
-                            <td className="px-6 py-4">
+                            <td className="px-3 py-2">
                               <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center border border-white/10">
+                                <div className="w-10 h-10 rounded-md bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center border border-white/10">
                                   <TypeIcon className={`w-5 h-5 ${typeConfig.textClass}`} />
                                 </div>
                                 <div>
                                   <div className="text-sm font-medium text-white">{agent.name}</div>
-                                  <div className="text-xs text-gray-500 line-clamp-1 max-w-[200px]">
+                                  <div className="text-xs text-muted-foreground line-clamp-1 max-w-[200px]">
                                     {agent.description}
                                   </div>
                                 </div>
                               </div>
                             </td>
-                            <td className="px-6 py-4">
+                            <td className="px-3 py-2">
                               <Badge
                                 className={`${typeConfig.bgClass} ${typeConfig.textClass} border ${typeConfig.borderClass}`}
                               >
                                 {typeConfig.label}
                               </Badge>
                             </td>
-                            <td className="px-6 py-4">
+                            <td className="px-3 py-2">
                               <Badge
                                 className={`${statusConfig.bgClass} ${statusConfig.textClass} border ${statusConfig.borderClass}`}
                               >
@@ -721,13 +721,13 @@ export default function AgentsPage() {
                                 {statusConfig.label}
                               </Badge>
                             </td>
-                            <td className="px-6 py-4 text-sm text-gray-300">{agent.model}</td>
-                            <td className="px-6 py-4 text-sm text-gray-300">
+                            <td className="px-3 py-2 text-sm text-gray-300">{agent.model}</td>
+                            <td className="px-3 py-2 text-sm text-gray-300">
                               {agent.messagesCount.toLocaleString()}
                             </td>
-                            <td className="px-6 py-4">
+                            <td className="px-3 py-2">
                               <div className="flex items-center gap-2">
-                                <div className="w-16 bg-white/10 rounded-full h-2">
+                                <div className="w-16 bg-transparent/10 rounded-full h-2">
                                   <div
                                     className="bg-gradient-to-r from-emerald-500 to-emerald-400 h-2 rounded-full"
                                     style={{ width: `${agent.successRate}%` }}
@@ -738,11 +738,11 @@ export default function AgentsPage() {
                                 </span>
                               </div>
                             </td>
-                            <td className="px-6 py-4 text-sm text-gray-400 flex items-center gap-1">
+                            <td className="px-3 py-2 text-sm text-gray-400 flex items-center gap-1">
                               <Clock className="w-4 h-4" />
                               {new Date(agent.lastActive).toLocaleDateString()}
                             </td>
-                            <td className="px-6 py-4">
+                            <td className="px-3 py-2">
                               <div className="flex justify-end gap-2">
                                 <Link to={`/agents/${agent.id}`}>
                                   <PremiumButton
@@ -793,8 +793,8 @@ export default function AgentsPage() {
             className="text-center py-16"
           >
             <GlassCard className="max-w-md mx-auto">
-              <div className="p-8">
-                <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center border border-white/10">
+              <div className="p-4">
+                <div className="w-20 h-20 mx-auto mb-6 rounded-md bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center border border-white/10">
                   <Bot className="w-10 h-10 text-purple-400" />
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-2">No agents found</h3>

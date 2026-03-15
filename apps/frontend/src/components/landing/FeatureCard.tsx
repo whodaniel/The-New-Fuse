@@ -1,6 +1,6 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { LucideIcon } from 'lucide-react';
+import React from 'react';
 
 export interface FeatureCardProps {
   icon: LucideIcon;
@@ -66,11 +66,11 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
     >
       <div
         className={`
-          relative h-full overflow-hidden rounded-2xl border ${colors.border}
-          bg-white dark:bg-gray-900
-          shadow-lg ${colors.hover}
+          relative h-full overflow-hidden rounded-md border ${colors.border}
+          bg-transparent dark:bg-gray-900
+          shadow-none ${colors.hover}
           transition-all duration-300
-          hover:scale-[1.02] hover:shadow-2xl
+          hover:scale-[1.02] hover:shadow-none
         `}
       >
         {/* Background Gradient */}
@@ -83,7 +83,7 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
         />
 
         {/* Content */}
-        <div className="relative p-6 sm:p-8">
+        <div className="relative p-4 sm:p-4">
           {/* Icon Container */}
           <motion.div
             whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
@@ -91,7 +91,7 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
             className={`
               inline-flex items-center justify-center
               w-14 h-14 sm:w-16 sm:h-16
-              rounded-xl bg-gradient-to-br ${colors.bg}
+              rounded-md bg-gradient-to-br ${colors.bg}
               mb-4 sm:mb-6
             `}
           >
@@ -104,7 +104,7 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
           </h3>
 
           {/* Description */}
-          <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
+          <p className="text-muted-foreground dark:text-gray-300 mb-6 leading-relaxed">
             {description}
           </p>
 
@@ -113,13 +113,9 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
             <motion.div
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.3 }}
-              className="relative overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700"
+              className="relative overflow-hidden rounded-md border border-gray-200 dark:border-gray-700"
             >
-              <img
-                src={imageSrc}
-                alt={imageAlt || title}
-                className="w-full h-auto object-cover"
-              />
+              <img src={imageSrc} alt={imageAlt || title} className="w-full h-auto object-cover" />
               {/* Overlay on hover */}
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
             </motion.div>

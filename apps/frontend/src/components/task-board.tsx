@@ -53,7 +53,7 @@ export function TaskBoard() {
       </div>
       <div className="flex-grow flex space-x-4">
         {['todo', 'inProgress', 'done'].map((status) => (
-          <div key={status} className="flex-1 bg-gray-100 p-4 rounded-lg">
+          <div key={status} className="flex-1 bg-gray-100 p-4 rounded-md">
             <h3 className="text-lg font-semibold mb-2">
               {status === 'todo' ? 'To Do' : status === 'inProgress' ? 'In Progress' : 'Done'}
             </h3>

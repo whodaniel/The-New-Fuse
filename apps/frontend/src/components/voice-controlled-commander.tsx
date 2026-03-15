@@ -70,13 +70,13 @@ export function VoiceControlledCommander() {
           {isListening ? 'Listening for commands...' : 'Click to start voice command'}
         </p>
         {transcript && (
-          <div className="w-full p-4 rounded-lg bg-black/40 border border-white/10">
+          <div className="w-full p-4 rounded-md bg-black/40 border border-white/10">
             <p className="text-sm text-gray-400">You said:</p>
             <p className="text-white">{transcript}</p>
           </div>
         )}
         {response && (
-          <div className="w-full p-4 rounded-lg bg-black/40 border border-white/10">
+          <div className="w-full p-4 rounded-md bg-black/40 border border-white/10">
             <p className="text-sm text-gray-400">Response:</p>
             <p className="text-white">{response}</p>
           </div>

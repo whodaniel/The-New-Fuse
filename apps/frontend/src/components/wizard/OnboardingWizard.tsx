@@ -109,8 +109,8 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ userType, on
 
   return (
     <div className="max-w-4xl mx-auto py-8">
-      <GlassCard className="p-8" gradient="blue">
-        <h4 className="text-3xl font-bold mb-8 text-center text-white">
+      <GlassCard className="p-4" gradient="blue">
+        <h4 className="text-2xl font-bold mb-8 text-center text-white">
           {userType === 'ai_agent' ? 'AI Agent Onboarding' : 'Welcome to The New Fuse'}
         </h4>
 
@@ -118,7 +118,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ userType, on
         <div className="mb-10 px-4">
           <div className="flex items-center justify-between relative">
             {/* Connecting Lines Layer */}
-            <div className="absolute top-1/2 left-0 w-full h-0.5 -translate-y-1/2 -z-10 px-6">
+            <div className="absolute top-1/2 left-0 w-full h-0.5 -translate-y-1/2 -z-10 px-3">
               <div className="w-full h-full bg-gray-800 rounded-full" />
             </div>
 
@@ -130,7 +130,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ userType, on
                       ? 'bg-blue-600 border-blue-500 text-white shadow-[0_0_15px_rgba(37,99,235,0.5)]'
                       : index === activeStep
                         ? 'bg-gray-900 border-blue-400 text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.5)] scale-110'
-                        : 'bg-gray-900 border-gray-700 text-gray-500'
+                        : 'bg-gray-900 border-gray-700 text-muted-foreground'
                   }`}
                 >
                   {index < activeStep ? (
@@ -154,7 +154,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ userType, on
                   className={`absolute top-12 whitespace-nowrap px-3 py-1 rounded-full text-xs font-medium transition-all duration-300 ${
                     index === activeStep
                       ? 'text-white bg-blue-500/10 border border-blue-500/20 opacity-100 translate-y-0'
-                      : 'text-gray-500 opacity-0 -translate-y-2 group-hover:opacity-100 group-hover:translate-y-0'
+                      : 'text-muted-foreground opacity-0 -translate-y-2 group-hover:opacity-100 group-hover:translate-y-0'
                   }`}
                 >
                   {step.label}

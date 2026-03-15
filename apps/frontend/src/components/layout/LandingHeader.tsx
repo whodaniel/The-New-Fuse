@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 
 export const LandingHeader = () => {
   return (
-    <header className="bg-background shadow-sm sticky top-0 z-50" role="banner">
+    <header className="bg-background shadow-none sticky top-0 z-50" role="banner">
       <nav
-        className="container mx-auto px-4 py-3 flex justify-between items-center"
+        className="container mx-auto px-4 py-2 flex justify-between items-center"
         role="navigation"
         aria-label="Main navigation"
       >

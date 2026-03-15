@@ -73,7 +73,7 @@ export function VoiceControl() {
           {isListening ? 'Listening...' : 'Click to start voice command'}
         </p>
         {transcript && (
-          <div className="w-full p-4 rounded-lg bg-black/40 border border-white/10">
+          <div className="w-full p-4 rounded-md bg-black/40 border border-white/10">
             <p className="text-white">{transcript}</p>
           </div>
         )}

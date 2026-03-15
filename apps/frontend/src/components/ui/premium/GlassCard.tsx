@@ -36,17 +36,17 @@ export const GlassCard: React.FC<GlassCardProps> = ({
   onClick,
 }) => {
   const hoverClasses = hover
-    ? 'hover:bg-white/5 hover:shadow-[0_0_40px_rgba(0,0,0,0.3)] hover:border-white/20 hover:scale-[1.01] transition-all duration-300'
+    ? 'hover:bg-transparent/5 hover:shadow-[0_0_40px_rgba(0,0,0,0.3)] hover:border-white/20 hover:scale-[1.01] transition-all duration-300'
     : '';
 
   const cursorClass = onClick ? 'cursor-pointer' : '';
 
   // Add default padding only when icon/title is used (backwards compat), otherwise caller must provide
-  const defaultPadding = Icon || title ? 'p-6' : '';
+  const defaultPadding = Icon || title ? 'p-4' : '';
 
   return (
     <div
-      className={`backdrop-blur-2xl bg-white/2 border border-white/8 rounded-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] ${defaultPadding} ${hoverClasses} ${cursorClass} ${className}`}
+      className={`backdrop-blur-2xl bg-transparent/2 border border-white/8 rounded-md shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] ${defaultPadding} ${hoverClasses} ${cursorClass} ${className}`}
       onClick={onClick}
       role="region"
       aria-labelledby={title ? `${title}-heading` : undefined}
@@ -55,7 +55,7 @@ export const GlassCard: React.FC<GlassCardProps> = ({
         <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
           {Icon && (
             <div
-              className={`w-10 h-10 rounded-lg bg-linear-to-br ${gradientClasses[gradient]} flex items-center justify-center`}
+              className={`w-10 h-10 rounded-md bg-linear-to-br ${gradientClasses[gradient]} flex items-center justify-center`}
             >
               <Icon className="w-5 h-5 text-white" />
             </div>
@@ -100,7 +100,7 @@ export const StatsCard: React.FC<StatsCardProps> = ({
   }[changeType];
 
   return (
-    <GlassCard gradient={gradient} className="relative overflow-hidden p-6">
+    <GlassCard gradient={gradient} className="relative overflow-hidden p-4">
       {/* Gradient overlay */}
       <div
         className={`absolute top-0 right-0 w-24 h-24 bg-linear-to-br ${gradientClasses[gradient]} opacity-10 rounded-full blur-2xl pointer-events-none`}
@@ -111,13 +111,13 @@ export const StatsCard: React.FC<StatsCardProps> = ({
           <p className="text-sm font-medium text-gray-400">{label}</p>
           {Icon && (
             <div
-              className={`w-10 h-10 rounded-lg bg-linear-to-br ${gradientClasses[gradient]} flex items-center justify-center shrink-0`}
+              className={`w-10 h-10 rounded-md bg-linear-to-br ${gradientClasses[gradient]} flex items-center justify-center shrink-0`}
             >
               <Icon className="w-5 h-5 text-white" />
             </div>
           )}
         </div>
-        <p className="text-3xl sm:text-4xl font-bold text-white mb-2">{value}</p>
+        <p className="text-2xl sm:text-4xl font-bold text-white mb-2">{value}</p>
         {change && <p className={`text-sm ${changeColorClass}`}>{change}</p>}
       </div>
     </GlassCard>
@@ -154,13 +154,13 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 
   return (
     <div
-      className={`backdrop-blur-2xl bg-white/2 border border-white/8 rounded-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] p-6 hover:bg-white/5 hover:shadow-[0_0_40px_rgba(0,0,0,0.3)] hover:border-white/20 hover:scale-[1.01] transition-all duration-300 ${onClick ? 'cursor-pointer' : ''}`}
+      className={`backdrop-blur-2xl bg-transparent/2 border border-white/8 rounded-md shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] p-4 hover:bg-transparent/5 hover:shadow-[0_0_40px_rgba(0,0,0,0.3)] hover:border-white/20 hover:scale-[1.01] transition-all duration-300 ${onClick ? 'cursor-pointer' : ''}`}
       onClick={onClick}
     >
       <div className="flex items-center gap-3 mb-4">
         {(IconComponent || iconElement) && (
           <div
-            className={`w-10 h-10 rounded-lg bg-linear-to-br ${isCustomGradient ? gradient : gradientClasses[gradient as keyof typeof gradientClasses]} flex items-center justify-center`}
+            className={`w-10 h-10 rounded-md bg-linear-to-br ${isCustomGradient ? gradient : gradientClasses[gradient as keyof typeof gradientClasses]} flex items-center justify-center`}
           >
             {IconComponent ? <IconComponent className="w-5 h-5 text-white" /> : iconElement}
           </div>

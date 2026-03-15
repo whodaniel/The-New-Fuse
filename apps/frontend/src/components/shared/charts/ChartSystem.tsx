@@ -302,11 +302,11 @@ export const ChartSystem: React.FC<ChartSystemProps> = ({
 
   return (
     <div
-      className={`p-4 border border-gray-200 rounded-lg bg-white ${className || ''}`}
+      className={`p-4 border border-gray-200 rounded-md bg-transparent ${className || ''}`}
       style={{ height: height, width: width }}
     >
       {title && <h3 className="text-lg font-medium mb-2">{title}</h3>}
-      {description && <p className="text-sm text-gray-500 mb-4">{description}</p>}
+      {description && <p className="text-sm text-muted-foreground mb-4">{description}</p>}
       <div style={{ width: '100%', height: title || description ? 'calc(100% - 3em)' : '100%' }}>
         <ResponsiveContainer width="100%" height="100%">
           {chartMap[config.type]()}

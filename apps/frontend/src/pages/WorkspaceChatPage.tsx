@@ -347,7 +347,7 @@ const WorkspaceChat: React.FC = () => {
           )}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/30 to-blue-500/30 flex items-center justify-center border border-white/10">
+              <div className="w-10 h-10 rounded-md bg-gradient-to-br from-purple-500/30 to-blue-500/30 flex items-center justify-center border border-white/10">
                 {workspace?.type === 'private' ? (
                   <Lock className="w-5 h-5 text-purple-400" />
                 ) : (
@@ -361,7 +361,7 @@ const WorkspaceChat: React.FC = () => {
             </div>
             <button
               onClick={() => toast('Workspace Settings coming soon!', { icon: '⚙️' })}
-              className="p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/10"
+              className="p-2 text-gray-400 hover:text-white transition-colors rounded-md hover:bg-transparent/10"
             >
               <Settings className="w-4 h-4" />
             </button>
@@ -395,7 +395,7 @@ const WorkspaceChat: React.FC = () => {
                 <motion.div
                   key={member.id}
                   whileHover={{ x: 4 }}
-                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors cursor-pointer"
+                  className="flex items-center gap-3 p-2 rounded-md hover:bg-transparent/5 transition-colors cursor-pointer"
                 >
                   <div className="relative">
                     <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
@@ -407,7 +407,7 @@ const WorkspaceChat: React.FC = () => {
                           ? 'bg-emerald-500'
                           : member.status === 'away'
                             ? 'bg-amber-500'
-                            : 'bg-gray-500'
+                            : 'bg-transparent0'
                       }`}
                     />
                   </div>
@@ -432,10 +432,10 @@ const WorkspaceChat: React.FC = () => {
                   key={agent.id}
                   whileHover={{ x: 4 }}
                   onClick={() => setSelectedAgent(selectedAgent === agent.id ? null : agent.id)}
-                  className={`flex items-center gap-3 p-2 rounded-xl cursor-pointer transition-all ${
+                  className={`flex items-center gap-3 p-2 rounded-md cursor-pointer transition-all ${
                     selectedAgent === agent.id
                       ? 'bg-purple-500/20 border border-purple-500/30'
-                      : 'hover:bg-white/5'
+                      : 'hover:bg-transparent/5'
                   }`}
                 >
                   <div className="relative">
@@ -444,7 +444,7 @@ const WorkspaceChat: React.FC = () => {
                     </div>
                     <div
                       className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-slate-900 ${
-                        agent.status === 'active' ? 'bg-emerald-500' : 'bg-gray-500'
+                        agent.status === 'active' ? 'bg-emerald-500' : 'bg-transparent0'
                       }`}
                     />
                   </div>
@@ -485,14 +485,14 @@ const WorkspaceChat: React.FC = () => {
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/10">
+                <button className="p-2 text-gray-400 hover:text-white transition-colors rounded-md hover:bg-transparent/10">
                   <MoreVertical className="w-4 h-4" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="bg-slate-900 border-white/10 text-white">
                 <DropdownMenuItem
                   onClick={() => toast('Channel info', { icon: 'ℹ️' })}
-                  className="hover:bg-white/10 cursor-pointer"
+                  className="hover:bg-transparent/10 cursor-pointer"
                 >
                   <Info className="w-4 h-4 mr-2" />
                   Channel Info
@@ -502,14 +502,14 @@ const WorkspaceChat: React.FC = () => {
                     setMessages([]);
                     toast.success('Chat history cleared');
                   }}
-                  className="hover:bg-white/10 cursor-pointer text-red-400 focus:text-red-400"
+                  className="hover:bg-transparent/10 cursor-pointer text-red-400 focus:text-red-400"
                 >
                   <Trash2 className="w-4 h-4 mr-2" />
                   Clear History
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => toast.error('User blocked')}
-                  className="hover:bg-white/10 cursor-pointer text-red-400 focus:text-red-400"
+                  className="hover:bg-transparent/10 cursor-pointer text-red-400 focus:text-red-400"
                 >
                   <Ban className="w-4 h-4 mr-2" />
                   Block User
@@ -536,12 +536,12 @@ const WorkspaceChat: React.FC = () => {
                   className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-xs lg:max-w-md rounded-2xl p-4 ${
+                    className={`max-w-xs lg:max-w-md rounded-md p-4 ${
                       isOwnMessage
                         ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white'
                         : isAgent
                           ? 'bg-purple-500/20 border border-purple-500/30 text-white'
-                          : 'bg-white/10 backdrop-blur-sm border border-white/10 text-white'
+                          : 'bg-transparent/10 backdrop-blur-sm border border-white/10 text-white'
                     }`}
                   >
                     {!isOwnMessage && (
@@ -568,7 +568,7 @@ const WorkspaceChat: React.FC = () => {
                         {message.attachments.map((attachment) => (
                           <div
                             key={attachment.id}
-                            className="flex items-center gap-2 p-2 bg-black/20 rounded-lg"
+                            className="flex items-center gap-2 p-2 bg-black/20 rounded-md"
                           >
                             <Paperclip className="w-4 h-4" />
                             <span className="text-sm">{attachment.name}</span>
@@ -594,7 +594,7 @@ const WorkspaceChat: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               className="flex justify-start"
             >
-              <div className="bg-purple-500/20 border border-purple-500/30 rounded-2xl p-4">
+              <div className="bg-purple-500/20 border border-purple-500/30 rounded-md p-4">
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
                     <Bot className="w-3 h-3 text-white" />
@@ -630,7 +630,7 @@ const WorkspaceChat: React.FC = () => {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-3 p-3 bg-purple-500/10 border border-purple-500/20 rounded-xl"
+              className="mb-3 p-3 bg-purple-500/10 border border-purple-500/20 rounded-md"
             >
               <div className="flex items-center justify-between">
                 <p className="text-sm text-purple-300 flex items-center gap-2">
@@ -654,20 +654,20 @@ const WorkspaceChat: React.FC = () => {
                 onChange={(e) => setNewMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Type a message..."
-                className="w-full p-4 pr-20 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 resize-none"
+                className="w-full p-4 pr-20 bg-transparent/5 border border-white/10 rounded-md text-white placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 resize-none"
                 rows={1}
                 style={{ minHeight: '56px', maxHeight: '120px' }}
               />
               <div className="absolute right-3 bottom-3 flex items-center gap-1">
                 <button
                   onClick={handleFileUpload}
-                  className="p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/10"
+                  className="p-2 text-gray-400 hover:text-white transition-colors rounded-md hover:bg-transparent/10"
                 >
                   <Paperclip className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => toast('Emoji picker coming soon!', { icon: '😃' })}
-                  className="p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/10"
+                  className="p-2 text-gray-400 hover:text-white transition-colors rounded-md hover:bg-transparent/10"
                 >
                   <Smile className="w-4 h-4" />
                 </button>

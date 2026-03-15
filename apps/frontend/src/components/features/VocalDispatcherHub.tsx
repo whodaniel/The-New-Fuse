@@ -43,7 +43,7 @@ const VocalDispatcherHub: React.FC = () => {
           {destinations.map((dest) => (
             <div
               key={dest.id}
-              className={`p-3 rounded-lg border flex items-center justify-between transition-all cursor-pointer ${
+              className={`p-3 rounded-md border flex items-center justify-between transition-all cursor-pointer ${
                 activeDest === dest.id
                   ? 'bg-orange-500/10 border-orange-500/50'
                   : 'bg-zinc-800/20 border-zinc-800 hover:border-zinc-700'

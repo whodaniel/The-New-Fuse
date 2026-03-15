@@ -30,7 +30,7 @@ const StandardLayout = ({
   showSidebar = true,
   showHeader = true,
   showFooter = true,
-  containerClass = 'max-w-7xl mx-auto',
+  containerClass = 'max-w-6xl mx-auto',
 }: StandardLayoutProps) => {
   // Safely get theme, defaulting to 'light' if ThemeProvider is not available
   let themeMode: 'light' | 'dark' | 'system' = 'light';
@@ -49,14 +49,14 @@ const StandardLayout = ({
       <div className="flex flex-1">
         {/* Sidebar */}
         {showSidebar && (
-          <div className="hidden md:block w-64 flex-shrink-0">
+          <div className="hidden md:block w-56 flex-shrink-0">
             <Sidebar />
           </div>
         )}
 
         {/* Main Content */}
-        <main className={`flex-1 overflow-auto ${showSidebar ? 'md:ml-64' : ''}`}>
-          <div className="p-6">
+        <main className={`flex-1 overflow-auto ${showSidebar ? 'md:ml-56' : ''}`}>
+          <div className="p-4 sm:p-4 lg:p-4">
             {/* Breadcrumb Navigation */}
             {breadcrumbs && breadcrumbs.length > 0 && (
               <div className="mb-6">
@@ -66,7 +66,7 @@ const StandardLayout = ({
 
             {/* Page Header */}
             {(title || subtitle) && (
-              <div className="mb-8">
+              <div className="mb-6">
                 <PageHeader title={title} subtitle={subtitle} />
               </div>
             )}
@@ -214,7 +214,7 @@ const ResponsiveGrid = ({ children, cols = [1, 2, 3, 4], _gap = 6, className }: 
     ? `grid-cols-1 sm:grid-cols-${cols[1]} md:grid-cols-${cols[2]} lg:grid-cols-${cols[3]}`
     : `grid-cols-1 sm:grid-cols-${cols} md:grid-cols-${cols} lg:grid-cols-${cols}`;
 
-  return <div className={cn('grid gap-6', gridClasses, className)}>{children}</div>;
+  return <div className={cn('grid gap-4', gridClasses, className)}>{children}</div>;
 };
 
 // Empty State Component

@@ -87,7 +87,7 @@ export const Tooltip = ({
         <div
           ref={tooltipRef}
           className={cn(
-            'fixed z-[1060] px-3 py-2 text-sm text-white bg-gray-900 dark:bg-gray-700 rounded-lg shadow-lg',
+            'fixed z-[1060] px-3 py-2 text-sm text-white bg-gray-900 dark:bg-gray-700 rounded-md shadow-none',
             'animate-in fade-in-0 zoom-in-95 duration-200',
             className
           )}

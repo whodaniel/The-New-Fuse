@@ -512,7 +512,7 @@ function ChatPage() {
 
   if (loading) {
     return (
-      <div className="p-8 max-w-7xl mx-auto min-h-screen bg-background text-foreground">
+      <div className="p-4 max-w-7xl mx-auto min-h-screen bg-background text-foreground">
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
         </div>
@@ -521,38 +521,38 @@ function ChatPage() {
   }
 
   return (
-    <div className="h-[calc(100vh-64px)] w-full p-6 bg-background text-foreground flex flex-col">
+    <div className="h-[calc(100vh-64px)] w-full p-4 bg-background text-foreground flex flex-col">
       {/* Header */}
       <div className="mb-6 flex-none">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">💬 Chat Center</h1>
+            <h1 className="text-2xl font-bold text-foreground mb-2">💬 Chat Center</h1>
             <p className="text-muted-foreground">Communicate with AI agents and get instant help</p>
           </div>
           <div className="flex flex-wrap gap-3">
             <button
               onClick={() => setIsAgentModalOpen(true)}
-              className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors flex items-center shadow-sm"
+              className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors flex items-center shadow-none"
             >
               <Users size={16} className="mr-2" />
               Agents ({agents?.length || 0})
             </button>
             <button
               onClick={() => setIsGoalModalOpen(true)}
-              className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors flex items-center shadow-sm"
+              className="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition-colors flex items-center shadow-none"
             >
               <Lightbulb size={16} className="mr-2" />
               Set Goal
             </button>
             <button
               onClick={() => setIsRuleModalOpen(true)}
-              className="bg-yellow-500 text-black px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors flex items-center shadow-sm"
+              className="bg-yellow-500 text-black px-4 py-2 rounded-md hover:bg-yellow-600 transition-colors flex items-center shadow-none"
             >
               <Copy size={16} className="mr-2" />
               Rules
             </button>
             <button
-              className="bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 transition-colors flex items-center shadow-sm"
+              className="bg-cyan-600 text-white px-4 py-2 rounded-md hover:bg-cyan-700 transition-colors flex items-center shadow-none"
               disabled={isSynthesizing}
             >
               <Sparkles size={16} className="mr-2" />
@@ -562,17 +562,17 @@ function ChatPage() {
         </div>
       </div>
 
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6 overflow-hidden">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-4 overflow-hidden">
         {/* Agent Selection Sidebar */}
-        <div className="flex flex-col gap-6 overflow-hidden h-full">
-          <div className="bg-card text-card-foreground rounded-lg border border-border shadow-sm p-4 flex flex-col h-full overflow-hidden">
+        <div className="flex flex-col gap-4 overflow-hidden h-full">
+          <div className="bg-card text-card-foreground rounded-md border border-border shadow-none p-4 flex flex-col h-full overflow-hidden">
             <h2 className="text-lg font-semibold mb-4 flex-none">Available Agents</h2>
             <div className="space-y-3 flex-1 overflow-y-auto pr-2">
               {agents.map((agent) => (
                 <button
                   key={agent.id}
                   onClick={() => setSelectedAgent(agent.id)}
-                  className={`w-full text-left p-3 rounded-lg transition-all border ${
+                  className={`w-full text-left p-3 rounded-md transition-all border ${
                     selectedAgent === agent.id
                       ? 'bg-accent text-accent-foreground border-primary'
                       : 'bg-card hover:bg-accent/50 border-border'
@@ -666,7 +666,7 @@ function ChatPage() {
 
         {/* Chat Interface */}
         <div className="lg:col-span-1 h-full overflow-hidden">
-          <div className="bg-card text-card-foreground rounded-lg border border-border shadow-sm flex flex-col h-full">
+          <div className="bg-card text-card-foreground rounded-md border border-border shadow-none flex flex-col h-full">
             {/* Chat Header */}
             <div className="p-4 border-b border-border flex-none">
               <div className="flex items-center justify-between">
@@ -708,7 +708,7 @@ function ChatPage() {
 
               {isGenerating && (
                 <div className="flex justify-start">
-                  <div className="bg-secondary text-secondary-foreground max-w-xs lg:max-w-md px-4 py-2 rounded-lg shadow-sm">
+                  <div className="bg-secondary text-secondary-foreground max-w-xs lg:max-w-md px-4 py-2 rounded-md shadow-none">
                     <div className="flex items-center space-x-2 mb-1">
                       <span className="text-lg">🤖</span>
                       <span className="text-xs font-medium opacity-75">Agent thinking...</span>
@@ -740,7 +740,7 @@ function ChatPage() {
                   <select
                     value={senderId}
                     onChange={(e) => setSenderId(e.target.value)}
-                    className="flex-1 p-2 border rounded-lg bg-secondary text-secondary-foreground border-input text-sm focus:ring-2 focus:ring-ring focus:outline-none"
+                    className="flex-1 p-2 border rounded-md bg-secondary text-secondary-foreground border-input text-sm focus:ring-2 focus:ring-ring focus:outline-none"
                   >
                     <option value="You">You</option>
                     {agents?.map((a) => (
@@ -758,7 +758,7 @@ function ChatPage() {
                   <select
                     value={recipientAgentId}
                     onChange={(e) => setRecipientAgentId(e.target.value)}
-                    className="flex-1 p-2 border rounded-lg bg-secondary text-secondary-foreground border-input text-sm focus:ring-2 focus:ring-ring focus:outline-none"
+                    className="flex-1 p-2 border rounded-md bg-secondary text-secondary-foreground border-input text-sm focus:ring-2 focus:ring-ring focus:outline-none"
                   >
                     <option value="">Select Agent</option>
                     {agents?.map((a) => (
@@ -777,7 +777,7 @@ function ChatPage() {
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                   placeholder={isGenerating ? 'Thinking...' : 'Type a message...'}
-                  className="flex-1 px-4 py-2 border border-input bg-secondary text-foreground rounded-lg focus:outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"
+                  className="flex-1 px-4 py-2 border border-input bg-secondary text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"
                   disabled={isGenerating || !agents || agents.length === 0}
                 />
                 <button
@@ -789,7 +789,7 @@ function ChatPage() {
                     agents.length === 0 ||
                     !recipientAgentId
                   }
-                  className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                  className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                 >
                   <Send size={18} />
                   <span className="sr-only">Send</span>

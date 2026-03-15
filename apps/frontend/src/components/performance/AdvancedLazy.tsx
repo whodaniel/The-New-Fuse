@@ -24,7 +24,7 @@ const AdvancedLoadingFallback = ({
 
   return (
     <div
-      className="flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900"
+      className="flex flex-col items-center justify-center bg-transparent dark:bg-gray-900"
       style={{ height }}
     >
       {/* Skeleton UI */}
@@ -36,8 +36,8 @@ const AdvancedLoadingFallback = ({
       </div>
 
       <div className="text-center space-y-2">
-        <p className="text-lg font-medium text-gray-700 dark:text-gray-300">{name}</p>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
+        <p className="text-lg font-medium text-foreground dark:text-gray-300">{name}</p>
+        <p className="text-sm text-muted-foreground dark:text-muted-foreground">
           Loading high-performance components...
         </p>
 
@@ -134,9 +134,9 @@ class LazyErrorBoundary extends React.Component<
   render() {
     if (this.state.hasError) {
       return (
-        <div className="p-8 text-center">
+        <div className="p-4 text-center">
           <h2 className="text-xl font-bold text-red-600 mb-2">Component Loading Error</h2>
-          <p className="text-gray-600 mb-4">
+          <p className="text-muted-foreground mb-4">
             Failed to load {this.props.fallbackName}. Please refresh the page.
           </p>
           <button

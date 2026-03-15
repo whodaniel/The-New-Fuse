@@ -123,7 +123,7 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({ onNodeSelect }) 
         }}
       >
         <Background color="#334155" gap={16} size={1} />
-        <Controls className="bg-slate-800! border-slate-600! shadow-lg! [&>button]:bg-slate-700! [&>button]:border-slate-600! [&>button]:fill-white! [&>button:hover]:bg-slate-600!" />
+        <Controls className="bg-slate-800! border-slate-600! shadow-none! [&>button]:bg-slate-700! [&>button]:border-slate-600! [&>button]:fill-white! [&>button:hover]:bg-slate-600!" />
         <MiniMap
           className="bg-slate-800! border-slate-600!"
           nodeColor="#1e40af"

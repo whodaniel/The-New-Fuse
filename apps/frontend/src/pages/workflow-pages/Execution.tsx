@@ -64,7 +64,7 @@ const WorkflowExecution: React.FC = () => {
       case 'pending':
         return 'text-yellow-500';
       default:
-        return 'text-gray-500';
+        return 'text-muted-foreground';
     }
   };
 
@@ -143,7 +143,7 @@ const WorkflowExecution: React.FC = () => {
   if (!workflow) {
     return (
       <div className="container mx-auto py-6">
-        <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded-md">
+        <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-2 rounded-md">
           Workflow not found.
         </div>
         <Button variant="outline" onClick={() => navigate('/workflows')} className="mt-4">
@@ -167,7 +167,7 @@ const WorkflowExecution: React.FC = () => {
             Back to Workflow
           </Button>
           <div>
-            <h1 className="text-3xl font-bold">{workflow.name}</h1>
+            <h1 className="text-2xl font-bold">{workflow.name}</h1>
             <p className="text-muted-foreground">Workflow Execution</p>
           </div>
         </div>
@@ -192,7 +192,7 @@ const WorkflowExecution: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <GlassCard title="Status" gradient="blue">
           <div className="flex items-center">
             {currentExecution ? (
@@ -205,7 +205,7 @@ const WorkflowExecution: React.FC = () => {
                 {currentExecution.status}
               </span>
             ) : (
-              <span className="text-gray-500 font-medium">Idle</span>
+              <span className="text-muted-foreground font-medium">Idle</span>
             )}
           </div>
         </GlassCard>
@@ -228,7 +228,7 @@ const WorkflowExecution: React.FC = () => {
       >
         {executionLogs.length === 0 ? (
           <div className="text-center py-8">
-            <AlertCircle className="h-12 w-12 text-gray-500 mx-auto mb-2" />
+            <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
             <p className="text-gray-400">No logs yet. Execute the workflow to see logs here.</p>
           </div>
         ) : (
@@ -254,14 +254,14 @@ const WorkflowExecution: React.FC = () => {
                 className="flex items-center justify-between p-3 border border-white/10 rounded-md bg-black/20"
               >
                 <div className="flex items-center">
-                  <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center mr-3 font-mono text-xs text-white">
+                  <div className="w-8 h-8 rounded-full bg-transparent/5 flex items-center justify-center mr-3 font-mono text-xs text-white">
                     {index + 1}
                   </div>
                   <div>
                     <div className="font-medium text-white">
                       {node.data?.name || node.id || 'Unnamed Node'}
                     </div>
-                    <div className="text-xs text-gray-500 capitalize">{node.type}</div>
+                    <div className="text-xs text-muted-foreground capitalize">{node.type}</div>
                   </div>
                 </div>
                 <div>
@@ -273,7 +273,7 @@ const WorkflowExecution: React.FC = () => {
                           ? 'bg-red-500/20 text-red-400'
                           : status === 'running'
                             ? 'bg-blue-500/20 text-blue-400'
-                            : 'bg-white/5 text-gray-400'
+                            : 'bg-transparent/5 text-gray-400'
                     }`}
                   >
                     {status}

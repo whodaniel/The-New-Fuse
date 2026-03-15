@@ -27,7 +27,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           aria-invalid={!!error}
           aria-describedby={helperTextId}
           className={cn(
-            'flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm text-foreground',
+            'flex h-9 w-full rounded-md border bg-background px-3 py-1.5 text-sm text-foreground',
             'ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium',
             'placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2',
             'focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed',
@@ -41,7 +41,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {helperText && (
           <p
             id={helperTextId}
-            className={cn('mt-1 text-sm', error ? 'text-red-500' : 'text-muted-foreground')}
+            className={cn('mt-1 text-xs', error ? 'text-red-500' : 'text-muted-foreground')}
           >
             {helperText}
           </p>

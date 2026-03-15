@@ -49,7 +49,7 @@ export const LLMMonitor: React.FC = () => {
             <div key={index} className="border-b py-2">
               <p>Status: {interaction.status}</p>
               <p>Duration: {interaction.duration}ms</p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-muted-foreground">
                 {new Date(interaction.timestamp).toLocaleTimeString()}
               </p>
             </div>

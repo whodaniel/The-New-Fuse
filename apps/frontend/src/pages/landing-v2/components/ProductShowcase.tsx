@@ -35,7 +35,7 @@ export default function ProductShowcase() {
   ];
 
   return (
-    <section className="py-24 relative container px-4 md:px-6 mx-auto">
+    <section className="py-24 relative container px-4 md:px-3 mx-auto">
       <div className="flex flex-col items-center text-center mb-16">
         <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
           Everything you need to <br /> build{' '}
@@ -45,7 +45,7 @@ export default function ProductShowcase() {
         </h2>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {features.map((feature, i) => (
           <motion.div
             key={i}
@@ -58,7 +58,7 @@ export default function ProductShowcase() {
             <Card
               className={`h-full hover:scale-[1.02] transition-transform ${feature.bg} border-white/5`}
             >
-              <div className="p-2 w-12 h-12 rounded-lg bg-white/10 flex items-center justify-center mb-6 backdrop-blur-md">
+              <div className="p-2 w-12 h-12 rounded-md bg-transparent/10 flex items-center justify-center mb-6 backdrop-blur-md">
                 {feature.icon}
               </div>
               <h3 className="text-2xl font-semibold text-white mb-2">{feature.title}</h3>

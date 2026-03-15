@@ -92,20 +92,20 @@ export const UserTypeDetection: React.FC<UserTypeDetectionProps> = ({ onDetectio
   const progressValue = (completedSteps / detectionSteps.length) * 100;
 
   return (
-    <GlassCard className="max-w-2xl mx-auto p-8 text-center" gradient="blue">
+    <GlassCard className="max-w-2xl mx-auto p-4 text-center" gradient="blue">
       <div className="flex justify-center mb-6">
         <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center animate-pulse">
           <Bot className="w-8 h-8 text-white" />
         </div>
       </div>
 
-      <h1 className="text-3xl font-bold mb-2 text-white">Identity Verification</h1>
+      <h1 className="text-2xl font-bold mb-2 text-white">Identity Verification</h1>
       <p className="text-gray-400 mb-8">
         Please wait while we establish your secure session context.
       </p>
 
       {error && (
-        <div className="bg-red-500/10 border border-red-500/20 text-red-200 px-4 py-3 rounded-xl mb-6 flex items-center gap-3 text-left">
+        <div className="bg-red-500/10 border border-red-500/20 text-red-200 px-4 py-2 rounded-md mb-6 flex items-center gap-3 text-left">
           <AlertCircle className="w-5 h-5 flex-shrink-0" />
           <p>{error}</p>
         </div>
@@ -118,7 +118,7 @@ export const UserTypeDetection: React.FC<UserTypeDetectionProps> = ({ onDetectio
         />
       </div>
 
-      <div className="space-y-4 text-left mb-6 bg-white/5 rounded-xl p-6 border border-white/5">
+      <div className="space-y-4 text-left mb-6 bg-transparent/5 rounded-md p-4 border border-white/5">
         {detectionSteps.map((step, index) => (
           <div key={index} className="flex items-center gap-3">
             {step.complete ? (
@@ -131,7 +131,7 @@ export const UserTypeDetection: React.FC<UserTypeDetectionProps> = ({ onDetectio
               <div className="w-6 h-6 rounded-full border-2 border-gray-700" />
             )}
             <span
-              className={`text-sm font-medium ${step.complete ? 'text-green-400' : index === detectionSteps.findIndex((s) => !s.complete) ? 'text-blue-400' : 'text-gray-600'}`}
+              className={`text-sm font-medium ${step.complete ? 'text-green-400' : index === detectionSteps.findIndex((s) => !s.complete) ? 'text-blue-400' : 'text-muted-foreground'}`}
             >
               {step.name}
             </span>
@@ -139,7 +139,7 @@ export const UserTypeDetection: React.FC<UserTypeDetectionProps> = ({ onDetectio
         ))}
       </div>
 
-      <p className="text-sm text-gray-500 bg-white/5 py-2 px-4 rounded-full inline-block">
+      <p className="text-sm text-muted-foreground bg-transparent/5 py-2 px-4 rounded-full inline-block">
         {loading ? (
           <span className="flex items-center gap-2">
             <Loader2 className="w-3 h-3 animate-spin" />

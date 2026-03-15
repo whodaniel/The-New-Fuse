@@ -219,7 +219,7 @@ export default function TimelinePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-100 p-6 lg:p-10">
+    <div className="min-h-screen bg-[#020617] text-slate-100 p-4 lg:p-10">
       <div className="max-w-7xl mx-auto space-y-8">
         <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
@@ -243,7 +243,7 @@ export default function TimelinePage() {
 
         <Card
           data-testid="timeline-rail-card"
-          className="bg-slate-900/50 border-slate-800 p-6 rounded-2xl space-y-5"
+          className="bg-slate-900/50 border-slate-800 p-4 rounded-md space-y-5"
         >
           <div className="flex items-center gap-2 text-slate-300 text-sm">
             <Calendar className="w-4 h-4" />
@@ -283,7 +283,7 @@ export default function TimelinePage() {
           {selectedEvent ? (
             <div
               data-testid="timeline-selected-card"
-              className="rounded-xl border border-slate-700 bg-slate-950/60 p-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between"
+              className="rounded-md border border-slate-700 bg-slate-950/60 p-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between"
             >
               <div>
                 <h2 data-testid="timeline-selected-title" className="text-lg font-semibold">
@@ -325,10 +325,10 @@ export default function TimelinePage() {
           )}
         </Card>
 
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
           <Card
             data-testid="timeline-create-card"
-            className="bg-slate-900/50 border-slate-800 p-6 rounded-2xl space-y-4"
+            className="bg-slate-900/50 border-slate-800 p-4 rounded-md space-y-4"
           >
             <h3 className="text-xl font-bold">Add Timeline Point</h3>
             <div className="space-y-2">
@@ -386,7 +386,7 @@ export default function TimelinePage() {
 
           <Card
             data-testid="timeline-edit-card"
-            className="bg-slate-900/50 border-slate-800 p-6 rounded-2xl space-y-4"
+            className="bg-slate-900/50 border-slate-800 p-4 rounded-md space-y-4"
           >
             <h3 className="text-xl font-bold">Edit Selected Point</h3>
             {!editingId ? (

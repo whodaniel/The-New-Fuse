@@ -1,7 +1,7 @@
-import React from 'react';
 import { ArrowRight, Sparkles } from 'lucide-react';
-import { Button } from '../ui/button';
+import React from 'react';
 import { useAnalytics } from '../../hooks/useAnalytics';
+import { Button } from '../ui/button';
 
 export interface HeroCTAProps {
   onGetStarted?: () => void;
@@ -19,11 +19,7 @@ export interface HeroCTAProps {
  * - Analytics tracking built-in
  * - Responsive layout
  */
-export const HeroCTA: React.FC<HeroCTAProps> = ({
-  onGetStarted,
-  onWatchDemo,
-  className = '',
-}) => {
+export const HeroCTA: React.FC<HeroCTAProps> = ({ onGetStarted, onWatchDemo, className = '' }) => {
   const { trackEvent } = useAnalytics();
 
   const handleGetStarted = () => {
@@ -50,7 +46,7 @@ export const HeroCTA: React.FC<HeroCTAProps> = ({
       <Button
         size="lg"
         onClick={handleGetStarted}
-        className="group relative overflow-hidden bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 text-base px-8 py-6 h-auto"
+        className="group relative overflow-hidden bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-none hover:shadow-none transition-all duration-300 text-base px-8 py-6 h-auto"
       >
         <span className="relative z-10 flex items-center gap-2">
           <Sparkles className="w-5 h-5" />
@@ -88,19 +84,22 @@ export const HeroCTA: React.FC<HeroCTAProps> = ({
  *
  * Enhanced version with social proof elements
  */
-export const HeroCTAWithTrust: React.FC<HeroCTAProps & { stats?: { users?: string; rating?: string } }> = ({
-  stats = { users: '10,000+', rating: '4.9/5' },
-  ...props
-}) => {
+export const HeroCTAWithTrust: React.FC<
+  HeroCTAProps & { stats?: { users?: string; rating?: string } }
+> = ({ stats = { users: '10,000+', rating: '4.9/5' }, ...props }) => {
   return (
-    <div className="flex flex-col items-center gap-6">
+    <div className="flex flex-col items-center gap-4">
       <HeroCTA {...props} />
 
       {/* Trust indicators */}
-      <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-600 dark:text-gray-400">
+      <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground dark:text-muted-foreground">
         <div className="flex items-center gap-2">
           <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            <path
+              fillRule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+              clipRule="evenodd"
+            />
           </svg>
           <span className="font-medium">No credit card required</span>
         </div>

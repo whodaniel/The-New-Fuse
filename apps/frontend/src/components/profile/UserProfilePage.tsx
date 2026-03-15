@@ -290,7 +290,7 @@ const UserProfilePage: React.FC = () => {
   if (isLoading && !profile) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-2xl p-8">
+        <div className="backdrop-blur-xl bg-transparent/5 border border-white/10 rounded-md shadow-none p-4">
           <div className="flex items-center gap-3">
             <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
             <p className="text-white text-lg">Loading your profile...</p>
@@ -303,7 +303,7 @@ const UserProfilePage: React.FC = () => {
   if (error && !profile) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-2xl p-8 max-w-md">
+        <div className="backdrop-blur-xl bg-transparent/5 border border-white/10 rounded-md shadow-none p-4 max-w-md">
           <div className="text-center">
             <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <Shield className="w-8 h-8 text-red-400" />
@@ -327,8 +327,8 @@ const UserProfilePage: React.FC = () => {
 
       <div className="max-w-4xl mx-auto z-10 relative">
         {/* Profile Header Card */}
-        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-2xl p-8 mb-6 slide-in">
-          <div className="flex flex-col md:flex-row items-center gap-6">
+        <div className="backdrop-blur-xl bg-transparent/5 border border-white/10 rounded-md shadow-none p-4 mb-6 slide-in">
+          <div className="flex flex-col md:flex-row items-center gap-4">
             {/* Avatar */}
             <div className="relative group">
               <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 p-1">
@@ -336,14 +336,14 @@ const UserProfilePage: React.FC = () => {
                   {user?.name?.charAt(0) || user?.email?.charAt(0) || 'U'}
                 </div>
               </div>
-              <button className="absolute bottom-0 right-0 w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-500 transition-all duration-200 opacity-0 group-hover:opacity-100 shadow-lg">
+              <button className="absolute bottom-0 right-0 w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-500 transition-all duration-200 opacity-0 group-hover:opacity-100 shadow-none">
                 <Camera className="w-5 h-5 text-white" />
               </button>
             </div>
 
             {/* User Info */}
             <div className="flex-1 text-center md:text-left">
-              <h1 className="text-3xl font-bold text-white mb-1">{user?.name || 'User'}</h1>
+              <h1 className="text-2xl font-bold text-white mb-1">{user?.name || 'User'}</h1>
               <p className="text-gray-300 flex items-center gap-2 justify-center md:justify-start">
                 <Mail className="w-4 h-4" />
                 {user?.email || profile?.email}
@@ -368,10 +368,10 @@ const UserProfilePage: React.FC = () => {
         </div>
 
         {/* Sovereign Context Section */}
-        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-2xl p-8 mb-6 fade-in scale-in">
+        <div className="backdrop-blur-xl bg-transparent/5 border border-white/10 rounded-md shadow-none p-4 mb-6 fade-in scale-in">
           <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-md bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center">
                 <Globe className="w-5 h-5 text-white" />
               </div>
               <div>
@@ -382,7 +382,7 @@ const UserProfilePage: React.FC = () => {
               </div>
             </div>
             <div className="text-right">
-              <span className="text-[10px] uppercase font-black text-gray-500 tracking-widest block">
+              <span className="text-[10px] uppercase font-black text-muted-foreground tracking-widest block">
                 System Privilege
               </span>
               <span className="text-lg font-extrabold text-blue-400">{userRole || 'USER'}</span>
@@ -391,9 +391,11 @@ const UserProfilePage: React.FC = () => {
 
           <div className="grid grid-cols-1 gap-4">
             {/* Dynamic Agency / Context Info */}
-            <div className="p-4 rounded-xl bg-black/40 border border-white/5">
+            <div className="p-4 rounded-md bg-black/40 border border-white/5">
               <div className="flex justify-between items-start mb-2">
-                <span className="text-xs font-bold text-gray-500 uppercase">Current Scope</span>
+                <span className="text-xs font-bold text-muted-foreground uppercase">
+                  Current Scope
+                </span>
                 <Zap className="w-3 h-3 text-amber-400" />
               </div>
               <div className="text-white font-bold">
@@ -403,7 +405,7 @@ const UserProfilePage: React.FC = () => {
                     ? 'Agency Environment'
                     : 'Personal Workspace'}
               </div>
-              <div className="text-[10px] text-gray-500 mt-1">
+              <div className="text-[10px] text-muted-foreground mt-1">
                 {(user as any)?.agencyId
                   ? `Agency ID: ${(user as any).agencyId}`
                   : (user as any)?.tenantId
@@ -416,7 +418,7 @@ const UserProfilePage: React.FC = () => {
           </div>
 
           {isAdmin && (
-            <div className="mt-6 p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20 text-emerald-300 text-xs leading-relaxed">
+            <div className="mt-6 p-4 rounded-md bg-emerald-500/5 border border-emerald-500/20 text-emerald-300 text-xs leading-relaxed">
               <strong>Global Admin Note:</strong> You have absolute observability across all
               provisioned agencies. Tenancy isolation is bypassed for administrative operations.
             </div>
@@ -425,14 +427,14 @@ const UserProfilePage: React.FC = () => {
 
         {/* Messages */}
         {error && (
-          <div className="backdrop-blur-xl bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-3 mb-6 slide-in text-red-200 flex items-center gap-2">
+          <div className="backdrop-blur-xl bg-red-500/10 border border-red-500/20 rounded-md px-4 py-2 mb-6 slide-in text-red-200 flex items-center gap-2">
             <Shield className="w-5 h-5" />
             {error}
           </div>
         )}
 
         {successMessage && (
-          <div className="backdrop-blur-xl bg-green-500/10 border border-green-500/20 rounded-lg px-4 py-3 mb-6 scale-in text-green-200 flex items-center gap-2">
+          <div className="backdrop-blur-xl bg-green-500/10 border border-green-500/20 rounded-md px-4 py-2 mb-6 scale-in text-green-200 flex items-center gap-2">
             <Save className="w-5 h-5" />
             {successMessage}
           </div>
@@ -441,9 +443,9 @@ const UserProfilePage: React.FC = () => {
         {/* Profile Settings Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Personal Information Section */}
-          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-2xl p-8 fade-in">
+          <div className="backdrop-blur-xl bg-transparent/5 border border-white/10 rounded-md shadow-none p-4 fade-in">
             <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-md bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
                 <User className="w-5 h-5 text-white" />
               </div>
               <div>
@@ -466,7 +468,7 @@ const UserProfilePage: React.FC = () => {
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                   disabled={isLoading}
-                  className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 transition-all duration-200 backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full px-4 py-2 bg-black/20 border border-white/10 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 transition-all duration-200 backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="Enter your display name"
                 />
               </div>
@@ -481,7 +483,7 @@ const UserProfilePage: React.FC = () => {
                   onChange={(e) => setBio(e.target.value)}
                   disabled={isLoading}
                   rows={4}
-                  className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 transition-all duration-200 backdrop-blur-sm resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full px-4 py-2 bg-black/20 border border-white/10 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 transition-all duration-200 backdrop-blur-sm resize-none disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="Tell us about yourself..."
                 />
               </div>
@@ -489,9 +491,9 @@ const UserProfilePage: React.FC = () => {
           </div>
 
           {/* Preferences Section */}
-          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-2xl p-8 fade-in animation-delay-100">
+          <div className="backdrop-blur-xl bg-transparent/5 border border-white/10 rounded-md shadow-none p-4 fade-in animation-delay-100">
             <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-md bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center">
                 <Palette className="w-5 h-5 text-white" />
               </div>
               <div>
@@ -510,7 +512,7 @@ const UserProfilePage: React.FC = () => {
                   value={theme}
                   onChange={(e) => setTheme(e.target.value as 'light' | 'dark' | 'system')}
                   disabled={isLoading}
-                  className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 transition-all duration-200 backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full px-4 py-2 bg-black/20 border border-white/10 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 transition-all duration-200 backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <option value="light" className="bg-slate-800">
                     Light
@@ -524,9 +526,9 @@ const UserProfilePage: React.FC = () => {
                 </select>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-black/20 border border-white/10 rounded-lg backdrop-blur-sm">
+              <div className="flex items-center justify-between p-4 bg-black/20 border border-white/10 rounded-md backdrop-blur-sm">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-md bg-blue-500/20 flex items-center justify-center">
                     <Bell className="w-5 h-5 text-blue-400" />
                   </div>
                   <div>
@@ -545,16 +547,16 @@ const UserProfilePage: React.FC = () => {
                     disabled={isLoading}
                     className="sr-only peer"
                   />
-                  <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                  <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-transparent after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Security Section */}
-          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-2xl p-8 fade-in animation-delay-200">
+          <div className="backdrop-blur-xl bg-transparent/5 border border-white/10 rounded-md shadow-none p-4 fade-in animation-delay-200">
             <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-md bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center">
                 <Lock className="w-5 h-5 text-white" />
               </div>
               <div>
@@ -565,7 +567,7 @@ const UserProfilePage: React.FC = () => {
 
             <div className="space-y-4">
               {/* Change Password UI */}
-              <div className="p-4 bg-black/20 border border-white/10 rounded-lg backdrop-blur-sm">
+              <div className="p-4 bg-black/20 border border-white/10 rounded-md backdrop-blur-sm">
                 {!showPasswordForm ? (
                   <button
                     type="button"
@@ -640,10 +642,10 @@ const UserProfilePage: React.FC = () => {
                 )}
               </div>
 
-              <div className="w-full flex items-center justify-between p-4 bg-black/20 border border-white/10 rounded-lg backdrop-blur-sm opacity-75">
+              <div className="w-full flex items-center justify-between p-4 bg-black/20 border border-white/10 rounded-md backdrop-blur-sm opacity-75">
                 <div className="flex flex-col">
                   <span className="text-white font-medium">Two-Factor Authentication</span>
-                  <span className="text-[10px] text-gray-500">
+                  <span className="text-[10px] text-muted-foreground">
                     Enhanced security via authenticator app
                   </span>
                 </div>
@@ -666,7 +668,7 @@ const UserProfilePage: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className={`flex-1 flex justify-center items-center gap-2 py-3 px-6 border border-transparent rounded-lg shadow-lg text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+              className={`flex-1 flex justify-center items-center gap-2 py-2 px-3 border border-transparent rounded-md shadow-none text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
               {isLoading ? (
                 <>
@@ -700,7 +702,7 @@ const UserProfilePage: React.FC = () => {
                 setTimeout(() => setSuccessMessage(null), 2500);
               }}
               disabled={isLoading}
-              className="px-6 py-3 border border-white/10 rounded-lg shadow-sm bg-white/5 text-sm font-medium text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-3 py-2 border border-white/10 rounded-md shadow-none bg-transparent/5 text-sm font-medium text-white hover:bg-transparent/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Reset
             </button>

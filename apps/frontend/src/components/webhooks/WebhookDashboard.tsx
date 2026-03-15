@@ -90,7 +90,7 @@ export function WebhookDashboard({ className }: WebhookDashboardProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Webhook Dashboard</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Webhook Dashboard</h1>
           <p className="text-muted-foreground">
             Monitor and manage your business integrations and real-time events
           </p>
@@ -117,7 +117,7 @@ export function WebhookDashboard({ className }: WebhookDashboardProps) {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active Integrations</CardTitle>
@@ -192,7 +192,7 @@ export function WebhookDashboard({ className }: WebhookDashboardProps) {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <Card>
               <CardHeader>
                 <CardTitle>Integration Status</CardTitle>
@@ -259,7 +259,7 @@ export function WebhookDashboard({ className }: WebhookDashboardProps) {
       {/* New Webhook Form Modal */}
       {showNewWebhookForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-transparent rounded-md shadow-none max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <WebhookConfigurationForm
               onSuccess={() => setShowNewWebhookForm(false)}
               onCancel={() => setShowNewWebhookForm(false)}

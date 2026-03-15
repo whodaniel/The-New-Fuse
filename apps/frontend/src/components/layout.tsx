@@ -11,7 +11,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-transparent">
       <main className="min-h-screen pb-16">{children}</main>
       <LifeSaverTokenContainer tokens={5} onTransfer={handleTokenTransfer} />
     </div>
@@ -21,7 +21,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
 // Standard layout without the token container
 export function StandardLayout({ children }: RootLayoutProps) {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-transparent">
       <main className="min-h-screen">{children}</main>
     </div>
   );

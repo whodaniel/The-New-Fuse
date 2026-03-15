@@ -381,12 +381,16 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
         </SelectTrigger>
         <SelectContent>
           {providers.length === 0 && loading ? (
-            <div className="p-2 text-center text-sm text-gray-500">Loading providers...</div>
+            <div className="p-2 text-center text-sm text-muted-foreground">
+              Loading providers...
+            </div>
           ) : providers.length === 0 ? (
-            <div className="p-2 text-center text-sm text-gray-500">No providers available</div>
+            <div className="p-2 text-center text-sm text-muted-foreground">
+              No providers available
+            </div>
           ) : (
             <>
-              <div className="p-2 text-xs font-medium text-gray-500">Default Providers</div>
+              <div className="p-2 text-xs font-medium text-muted-foreground">Default Providers</div>
               {providers
                 .filter((p) => !p.isCustom)
                 .map((provider) => (
@@ -402,7 +406,9 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
 
               {providers.some((p) => p.isCustom) && (
                 <>
-                  <div className="mt-2 p-2 text-xs font-medium text-gray-500">Custom Providers</div>
+                  <div className="mt-2 p-2 text-xs font-medium text-muted-foreground">
+                    Custom Providers
+                  </div>
                   {providers
                     .filter((p) => p.isCustom)
                     .map((provider) => (
@@ -431,13 +437,13 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
       </Select>
 
       {selectedProvider && (
-        <div className="text-xs text-gray-500 flex items-center mt-1">
+        <div className="text-xs text-muted-foreground flex items-center mt-1">
           <span className="mr-1 text-gray-400">{selectedProvider.provider}:</span>
           <span>{selectedProvider.modelName}</span>
         </div>
       )}
 
-      {description && <p className="text-xs text-gray-500 mt-1">{description}</p>}
+      {description && <p className="text-xs text-muted-foreground mt-1">{description}</p>}
     </div>
   );
 };

@@ -89,7 +89,7 @@ export function MultiModalInteraction() {
         </div>
 
         {isCameraOn && (
-          <div className="rounded-lg overflow-hidden border border-white/10">
+          <div className="rounded-md overflow-hidden border border-white/10">
             <video ref={videoRef} className="w-full" autoPlay playsInline />
           </div>
         )}

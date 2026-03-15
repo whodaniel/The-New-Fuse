@@ -185,13 +185,13 @@ export function BaseBrowser<T extends Resource>({
 
       {/* Items Grid or Empty State */}
       {filteredItems.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredItems.map((item, index) => (
             <React.Fragment key={item.id}>{renderCard(item, index, handleAction)}</React.Fragment>
           ))}
         </div>
       ) : (
-        <div className="text-center py-20 bg-white/5 rounded-2xl border border-white/5">
+        <div className="text-center py-20 bg-transparent/5 rounded-md border border-white/5">
           <div className="text-6xl mb-4 opacity-50">{emptyStateIcon}</div>
           <h3 className="text-xl font-semibold text-white mb-2">{emptyStateMessage}</h3>
           <p className="text-gray-400">Try adjusting your search or filter criteria</p>

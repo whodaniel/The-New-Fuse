@@ -146,26 +146,28 @@ export default function AuditLogViewer() {
   };
 
   return (
-    <div className="p-8 max-w-[1600px] mx-auto bg-gray-50 min-h-screen">
+    <div className="p-4 max-w-[1600px] mx-auto bg-transparent min-h-screen">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2 flex items-center">
               <FileText className="h-8 w-8 mr-3 text-blue-600" />
               Audit Log Viewer
             </h1>
-            <p className="text-gray-600">Track and monitor system activity and user actions</p>
+            <p className="text-muted-foreground">
+              Track and monitor system activity and user actions
+            </p>
           </div>
           <div className="flex items-center space-x-3">
             <button
               onClick={loadLogs}
-              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center"
+              className="px-4 py-2 border border-gray-300 rounded-md hover:bg-muted/20 flex items-center"
             >
               <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
               Refresh
             </button>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center">
+            <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center">
               <Download className="h-4 w-4 mr-2" />
               Export Logs
             </button>
@@ -174,33 +176,33 @@ export default function AuditLogViewer() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="text-sm text-gray-600">Total Events</div>
-          <div className="text-3xl font-bold text-gray-900">{logs.length}</div>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="bg-transparent rounded-md shadow-none p-4">
+          <div className="text-sm text-muted-foreground">Total Events</div>
+          <div className="text-2xl font-bold text-gray-900">{logs.length}</div>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="text-sm text-gray-600">Security Events</div>
-          <div className="text-3xl font-bold text-red-600">
+        <div className="bg-transparent rounded-md shadow-none p-4">
+          <div className="text-sm text-muted-foreground">Security Events</div>
+          <div className="text-2xl font-bold text-red-600">
             {logs.filter((l) => l.type === 'security').length}
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="text-sm text-gray-600">Admin Actions</div>
-          <div className="text-3xl font-bold text-purple-600">
+        <div className="bg-transparent rounded-md shadow-none p-4">
+          <div className="text-sm text-muted-foreground">Admin Actions</div>
+          <div className="text-2xl font-bold text-purple-600">
             {logs.filter((l) => l.type === 'admin').length}
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="text-sm text-gray-600">Errors</div>
-          <div className="text-3xl font-bold text-red-600">
+        <div className="bg-transparent rounded-md shadow-none p-4">
+          <div className="text-sm text-muted-foreground">Errors</div>
+          <div className="text-2xl font-bold text-red-600">
             {logs.filter((l) => l.status === 'error').length}
           </div>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
+      <div className="bg-transparent rounded-md shadow-none p-4 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="md:col-span-2">
             <div className="relative">
@@ -210,7 +212,7 @@ export default function AuditLogViewer() {
                 placeholder="Search logs..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -218,7 +220,7 @@ export default function AuditLogViewer() {
             <select
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">All Types</option>
               <option value="user">User</option>
@@ -231,7 +233,7 @@ export default function AuditLogViewer() {
             <select
               value={dateRange}
               onChange={(e) => setDateRange(e.target.value as any)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
             >
               <option value="today">Today</option>
               <option value="week">This Week</option>
@@ -243,50 +245,50 @@ export default function AuditLogViewer() {
       </div>
 
       {/* Logs Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-transparent rounded-md shadow-none overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-border/50">
+            <thead className="bg-transparent">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Timestamp
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Type
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Action
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   User
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   IP Address
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Resource
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-transparent divide-y divide-border/50">
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="px-6 py-12 text-center">
+                  <td colSpan={8} className="px-3 py-12 text-center">
                     <RefreshCw className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-2" />
-                    <p className="text-gray-600">Loading logs...</p>
+                    <p className="text-muted-foreground">Loading logs...</p>
                   </td>
                 </tr>
               ) : filteredLogs.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-6 py-12 text-center">
+                  <td colSpan={8} className="px-3 py-12 text-center">
                     <FileText className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-                    <p className="text-gray-600">No logs found</p>
+                    <p className="text-muted-foreground">No logs found</p>
                   </td>
                 </tr>
               ) : (
@@ -294,11 +296,11 @@ export default function AuditLogViewer() {
                   const typeBadge = getTypeBadge(log.type);
                   const TypeIcon = typeBadge.icon;
                   return (
-                    <tr key={log.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <tr key={log.id} className="hover:bg-muted/20">
+                      <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
                         {formatTimestamp(log.timestamp)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-3 py-2 whitespace-nowrap">
                         <span
                           className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${typeBadge.bg} ${typeBadge.text}`}
                         >
@@ -306,20 +308,20 @@ export default function AuditLogViewer() {
                           {log.type}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
                         {log.action}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
                         {log.user}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
+                      <td className="px-3 py-2 whitespace-nowrap text-sm text-muted-foreground font-mono">
                         {log.ipAddress}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
+                      <td className="px-3 py-2 whitespace-nowrap text-sm text-muted-foreground font-mono">
                         {log.resource}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">{getStatusIcon(log.status)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <td className="px-3 py-2 whitespace-nowrap">{getStatusIcon(log.status)}</td>
+                      <td className="px-3 py-2 whitespace-nowrap text-right text-sm font-medium">
                         <button
                           onClick={() => setSelectedLog(log)}
                           className="text-blue-600 hover:text-blue-900"
@@ -336,18 +338,18 @@ export default function AuditLogViewer() {
         </div>
 
         {/* Pagination */}
-        <div className="bg-gray-50 px-6 py-4 flex items-center justify-between border-t border-gray-200">
-          <div className="text-sm text-gray-700">
+        <div className="bg-transparent px-3 py-2 flex items-center justify-between border-t border-gray-200">
+          <div className="text-sm text-foreground">
             Showing {filteredLogs.length} of {logs.length} logs
           </div>
           <div className="flex items-center space-x-2">
-            <button className="px-3 py-1 border border-gray-300 rounded hover:bg-gray-100 text-sm">
+            <button className="px-3 py-1 border border-gray-300 rounded hover:bg-muted/30 text-sm">
               Previous
             </button>
             <button className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
               1
             </button>
-            <button className="px-3 py-1 border border-gray-300 rounded hover:bg-gray-100 text-sm">
+            <button className="px-3 py-1 border border-gray-300 rounded hover:bg-muted/30 text-sm">
               Next
             </button>
           </div>
@@ -357,32 +359,32 @@ export default function AuditLogViewer() {
       {/* Log Details Modal */}
       {selectedLog && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-8 max-w-2xl w-full mx-4">
+          <div className="bg-transparent rounded-md p-4 max-w-2xl w-full mx-4">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Log Details</h2>
             <div className="space-y-4">
               <div>
-                <div className="text-sm text-gray-600">Timestamp</div>
+                <div className="text-sm text-muted-foreground">Timestamp</div>
                 <div className="text-lg font-medium">{selectedLog.timestamp.toLocaleString()}</div>
               </div>
               <div>
-                <div className="text-sm text-gray-600">Action</div>
+                <div className="text-sm text-muted-foreground">Action</div>
                 <div className="text-lg font-medium">{selectedLog.action}</div>
               </div>
               <div>
-                <div className="text-sm text-gray-600">User</div>
+                <div className="text-sm text-muted-foreground">User</div>
                 <div className="text-lg font-medium">{selectedLog.user}</div>
               </div>
               <div>
-                <div className="text-sm text-gray-600">IP Address</div>
+                <div className="text-sm text-muted-foreground">IP Address</div>
                 <div className="text-lg font-mono">{selectedLog.ipAddress}</div>
               </div>
               <div>
-                <div className="text-sm text-gray-600">Resource</div>
+                <div className="text-sm text-muted-foreground">Resource</div>
                 <div className="text-lg font-mono">{selectedLog.resource}</div>
               </div>
               <div>
-                <div className="text-sm text-gray-600">Details</div>
-                <div className="text-sm text-gray-900 bg-gray-50 p-4 rounded-lg">
+                <div className="text-sm text-muted-foreground">Details</div>
+                <div className="text-sm text-gray-900 bg-transparent p-4 rounded-md">
                   {selectedLog.details}
                 </div>
               </div>
@@ -390,7 +392,7 @@ export default function AuditLogViewer() {
             <div className="mt-6 flex justify-end">
               <button
                 onClick={() => setSelectedLog(null)}
-                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+                className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
               >
                 Close
               </button>

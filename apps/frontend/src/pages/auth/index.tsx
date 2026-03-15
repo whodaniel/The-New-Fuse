@@ -13,7 +13,7 @@ const SSO = React.lazy(() => import('./SSO'));
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
-      <GlassCard title="Welcome to The New Fuse" className="w-full max-w-lg p-6">
+      <GlassCard title="Welcome to The New Fuse" className="w-full max-w-lg p-4">
         {children}
       </GlassCard>
     </div>

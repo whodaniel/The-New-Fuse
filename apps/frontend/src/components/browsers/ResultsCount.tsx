@@ -12,7 +12,7 @@ export function ResultsCount({
   pluralLabel = 'results',
 }: ResultsCountProps) {
   return (
-    <div className="text-sm text-gray-600 dark:text-gray-400">
+    <div className="text-sm text-muted-foreground dark:text-muted-foreground">
       Showing {count} {count === 1 ? singularLabel : pluralLabel}
     </div>
   );

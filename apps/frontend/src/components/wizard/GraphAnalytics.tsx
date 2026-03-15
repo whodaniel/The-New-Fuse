@@ -64,11 +64,11 @@ export function GraphAnalytics() {
   };
 
   const renderMetricsOverview = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 border border-gray-200 dark:border-gray-700">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="bg-transparent dark:bg-transparent rounded-md shadow p-4 border border-gray-200 dark:border-gray-700">
         <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Graph Overview</h3>
         {metrics && (
-          <div className="space-y-2 text-gray-700 dark:text-gray-300">
+          <div className="space-y-2 text-foreground dark:text-gray-300">
             <p>
               Nodes:{' '}
               <span className="font-medium text-gray-900 dark:text-white">{metrics.nodeCount}</span>
@@ -115,7 +115,7 @@ export function GraphAnalytics() {
         )}
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 border border-gray-200 dark:border-gray-700">
+      <div className="bg-transparent dark:bg-transparent rounded-md shadow p-4 border border-gray-200 dark:border-gray-700">
         <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
           Node Distribution
         </h3>
@@ -145,7 +145,7 @@ export function GraphAnalytics() {
   );
 
   const renderEdgeAnalytics = () => (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 border border-gray-200 dark:border-gray-700">
+    <div className="bg-transparent dark:bg-transparent rounded-md shadow p-4 border border-gray-200 dark:border-gray-700">
       <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Edge Analytics</h3>
       <div className="h-[400px] w-full">
         <ResponsiveContainer width="100%" height="100%">
@@ -165,18 +165,20 @@ export function GraphAnalytics() {
   );
 
   const renderTimeseries = () => (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 border border-gray-200 dark:border-gray-700">
+    <div className="bg-transparent dark:bg-transparent rounded-md shadow p-4 border border-gray-200 dark:border-gray-700">
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
           Time Series Analysis
         </h3>
         <div className="flex gap-4">
           <div className="flex flex-col">
-            <label className="text-xs text-gray-500 dark:text-gray-400 mb-1">Time Range</label>
+            <label className="text-xs text-muted-foreground dark:text-muted-foreground mb-1">
+              Time Range
+            </label>
             <select
               value={selectedTimeRange}
               onChange={(e) => handleTimeRangeChange(e.target.value)}
-              className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-transparent dark:bg-transparent text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="1h">Last Hour</option>
               <option value="24h">Last 24 Hours</option>
@@ -185,11 +187,13 @@ export function GraphAnalytics() {
             </select>
           </div>
           <div className="flex flex-col">
-            <label className="text-xs text-gray-500 dark:text-gray-400 mb-1">Metric</label>
+            <label className="text-xs text-muted-foreground dark:text-muted-foreground mb-1">
+              Metric
+            </label>
             <select
               value={selectedMetric}
               onChange={(e) => setSelectedMetric(e.target.value)}
-              className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-transparent dark:bg-transparent text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="nodeCount">Node Count</option>
               <option value="edgeCount">Edge Count</option>
@@ -235,30 +239,30 @@ export function GraphAnalytics() {
       <div className="mb-6">
         <div className="flex border-b border-gray-200 dark:border-gray-700 w-full">
           <button
-            className={`flex-1 py-3 px-4 text-center border-b-2 font-medium text-sm transition-colors ${
+            className={`flex-1 py-2 px-4 text-center border-b-2 font-medium text-sm transition-colors ${
               selectedTab === 0
                 ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300 dark:text-muted-foreground dark:hover:text-gray-300'
             }`}
             onClick={() => setSelectedTab(0)}
           >
             Overview
           </button>
           <button
-            className={`flex-1 py-3 px-4 text-center border-b-2 font-medium text-sm transition-colors ${
+            className={`flex-1 py-2 px-4 text-center border-b-2 font-medium text-sm transition-colors ${
               selectedTab === 1
                 ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300 dark:text-muted-foreground dark:hover:text-gray-300'
             }`}
             onClick={() => setSelectedTab(1)}
           >
             Edge Analytics
           </button>
           <button
-            className={`flex-1 py-3 px-4 text-center border-b-2 font-medium text-sm transition-colors ${
+            className={`flex-1 py-2 px-4 text-center border-b-2 font-medium text-sm transition-colors ${
               selectedTab === 2
                 ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300 dark:text-muted-foreground dark:hover:text-gray-300'
             }`}
             onClick={() => setSelectedTab(2)}
           >

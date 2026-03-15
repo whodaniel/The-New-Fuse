@@ -197,7 +197,7 @@ export const AIAgentOnboarding: React.FC<AIAgentOnboardingProps> = ({ agentId, o
   };
 
   return (
-    <div className="max-w-[800px] mx-auto p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+    <div className="max-w-[800px] mx-auto p-4 bg-transparent border border-gray-200 rounded-md shadow-none">
       <h2 className="text-2xl font-bold mb-6 !text-slate-900">AI Agent Onboarding</h2>
 
       <div className="mb-8">
@@ -227,8 +227,8 @@ export const AIAgentOnboarding: React.FC<AIAgentOnboardingProps> = ({ agentId, o
       {step === 'detection' && (
         <div>
           <h3 className="text-lg font-bold mb-4 !text-slate-900">Detecting Agent Type</h3>
-          <p className="mb-4 text-gray-600">Analyzing connection patterns and headers...</p>
-          <div className="flex justify-center py-4">
+          <p className="mb-4 text-muted-foreground">Analyzing connection patterns and headers...</p>
+          <div className="flex justify-center py-2">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
           </div>
         </div>
@@ -237,7 +237,9 @@ export const AIAgentOnboarding: React.FC<AIAgentOnboardingProps> = ({ agentId, o
       {step === 'registration' && (
         <div>
           <h3 className="text-lg font-bold mb-4 !text-slate-900">Agent Registration</h3>
-          <p className="mb-4 text-gray-600">Register your AI agent with The New Fuse platform.</p>
+          <p className="mb-4 text-muted-foreground">
+            Register your AI agent with The New Fuse platform.
+          </p>
 
           <div className="flex flex-col gap-4 mb-6">
             <div>
@@ -277,7 +279,7 @@ X-Agent-Type: ai_agent`}
       {step === 'capabilities' && (
         <div>
           <h3 className="text-lg font-bold mb-4 !text-slate-900">Capability Assessment</h3>
-          <p className="mb-4 text-gray-600">
+          <p className="mb-4 text-muted-foreground">
             Let's test your agent's capabilities to determine what tools it can use.
           </p>
 
@@ -285,7 +287,7 @@ X-Agent-Type: ai_agent`}
             {capabilityTests.map((test, index) => (
               <div
                 key={index}
-                className="flex justify-between items-center w-full p-2 bg-gray-50 rounded border border-gray-100"
+                className="flex justify-between items-center w-full p-2 bg-transparent rounded border border-gray-100"
               >
                 <span className="font-medium">{test.name}</span>
                 <div className="flex items-center gap-2">
@@ -321,7 +323,7 @@ X-Agent-Type: ai_agent`}
       {step === 'communication' && (
         <div>
           <h3 className="text-lg font-bold mb-4 !text-slate-900">Communication Setup</h3>
-          <p className="mb-4 text-gray-600">
+          <p className="mb-4 text-muted-foreground">
             Set up communication channels between your agent and The New Fuse platform.
           </p>
 
@@ -346,7 +348,7 @@ Event Stream: /api/agents/${agentData.id}/events`}
 
             <div>
               <p className="font-bold text-slate-900">Authentication</p>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-sm text-muted-foreground mt-1">
                 Use the agent token provided during registration for all communications.
               </p>
             </div>
@@ -365,7 +367,7 @@ Event Stream: /api/agents/${agentData.id}/events`}
       {step === 'complete' && (
         <div>
           <h3 className="text-lg font-bold mb-4 !text-slate-900">Onboarding Complete</h3>
-          <p className="mb-4 text-gray-600">
+          <p className="mb-4 text-muted-foreground">
             Your AI agent has been successfully onboarded to The New Fuse platform.
           </p>
 

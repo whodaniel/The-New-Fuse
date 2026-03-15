@@ -4,19 +4,19 @@
  * Real-time agent discovery and capability browsing interface
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
 import {
-  Search,
-  Filter,
   Activity,
-  Cpu,
   CheckCircle,
+  Clock,
+  Cpu,
+  DollarSign,
+  Filter,
+  Search,
+  TrendingUp,
   XCircle,
   Zap,
-  TrendingUp,
-  Clock,
-  DollarSign,
 } from 'lucide-react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 interface AgentCapability {
   name: string;
@@ -134,7 +134,7 @@ export const AgentBrowser: React.FC = () => {
       case 'error':
         return 'bg-red-500';
       default:
-        return 'bg-gray-500';
+        return 'bg-transparent0';
     }
   };
 
@@ -167,9 +167,9 @@ export const AgentBrowser: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-transparent">
       {/* Sidebar - Agent List */}
-      <div className="w-1/3 bg-white border-r border-gray-200 flex flex-col">
+      <div className="w-1/3 bg-transparent border-r border-gray-200 flex flex-col">
         {/* Search Bar */}
         <div className="p-4 border-b border-gray-200">
           <div className="relative">
@@ -179,26 +179,26 @@ export const AgentBrowser: React.FC = () => {
               placeholder="Search capabilities (e.g., 'review Python code')..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 
           <div className="flex items-center justify-between mt-3">
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-gray-900"
             >
               <Filter className="w-4 h-4" />
               Filters
             </button>
-            <span className="text-sm text-gray-500">{agents.length} agents</span>
+            <span className="text-sm text-muted-foreground">{agents.length} agents</span>
           </div>
 
           {/* Filter Panel */}
           {showFilters && (
-            <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-3">
+            <div className="mt-4 p-4 bg-transparent rounded-md space-y-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Max CPU Usage
                 </label>
                 <input
@@ -215,7 +215,7 @@ export const AgentBrowser: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Min Success Rate
                 </label>
                 <input
@@ -233,9 +233,7 @@ export const AgentBrowser: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Sort By
-                </label>
+                <label className="block text-sm font-medium text-foreground mb-1">Sort By</label>
                 <select
                   value={filters.sortBy}
                   onChange={(e) =>
@@ -264,12 +262,12 @@ export const AgentBrowser: React.FC = () => {
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
             </div>
           ) : (
-            <div className="divide-y divide-gray-200">
+            <div className="divide-y divide-border/50">
               {agents.map((agent) => (
                 <div
                   key={agent.registration.agentId}
                   onClick={() => setSelectedAgent(agent)}
-                  className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors ${
+                  className={`p-4 cursor-pointer hover:bg-muted/20 transition-colors ${
                     selectedAgent?.registration.agentId === agent.registration.agentId
                       ? 'bg-blue-50 border-l-4 border-blue-500'
                       : ''
@@ -281,11 +279,9 @@ export const AgentBrowser: React.FC = () => {
                         <h3 className="text-sm font-semibold text-gray-900 truncate">
                           {agent.registration.name}
                         </h3>
-                        <span
-                          className={`w-2 h-2 rounded-full ${getStatusColor(agent.status)}`}
-                        />
+                        <span className={`w-2 h-2 rounded-full ${getStatusColor(agent.status)}`} />
                       </div>
-                      <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
                         {agent.registration.description || 'No description'}
                       </p>
                     </div>
@@ -297,11 +293,11 @@ export const AgentBrowser: React.FC = () => {
                   </div>
 
                   <div className="flex items-center gap-4 mt-2">
-                    <div className="flex items-center gap-1 text-xs text-gray-500">
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
                       <Activity className="w-3 h-3" />
                       {(agent.load * 100).toFixed(0)}%
                     </div>
-                    <div className="flex items-center gap-1 text-xs text-gray-500">
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
                       <TrendingUp className="w-3 h-3" />
                       {(agent.metrics.successRate * 100).toFixed(0)}%
                     </div>
@@ -318,7 +314,7 @@ export const AgentBrowser: React.FC = () => {
                       </span>
                     ))}
                     {agent.registration.capabilities.length > 3 && (
-                      <span className="px-2 py-0.5 text-xs bg-gray-100 text-gray-600 rounded">
+                      <span className="px-2 py-0.5 text-xs bg-gray-100 text-muted-foreground rounded">
                         +{agent.registration.capabilities.length - 3}
                       </span>
                     )}
@@ -333,19 +329,19 @@ export const AgentBrowser: React.FC = () => {
       {/* Main Panel - Agent Details */}
       <div className="flex-1 overflow-y-auto">
         {selectedAgent ? (
-          <div className="p-6">
+          <div className="p-4">
             {/* Agent Header */}
-            <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <div className="bg-transparent rounded-md shadow-none p-4 mb-6">
               <div className="flex items-start justify-between">
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900">
                     {selectedAgent.registration.name}
                   </h1>
-                  <p className="text-sm text-gray-500 mt-1">
+                  <p className="text-sm text-muted-foreground mt-1">
                     {selectedAgent.registration.agentId}
                   </p>
                   {selectedAgent.registration.description && (
-                    <p className="text-gray-700 mt-3">{selectedAgent.registration.description}</p>
+                    <p className="text-foreground mt-3">{selectedAgent.registration.description}</p>
                   )}
                 </div>
                 <div className="flex flex-col items-end gap-2">
@@ -354,38 +350,39 @@ export const AgentBrowser: React.FC = () => {
                       selectedAgent.status === 'online'
                         ? 'bg-green-100 text-green-800'
                         : selectedAgent.status === 'busy'
-                        ? 'bg-yellow-100 text-yellow-800'
-                        : 'bg-gray-100 text-gray-800'
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : 'bg-gray-100 text-gray-800'
                     }`}
                   >
                     {selectedAgent.status.toUpperCase()}
                   </span>
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-muted-foreground">
                     v{selectedAgent.registration.version}
                   </span>
                 </div>
               </div>
 
-              {selectedAgent.registration.groups && selectedAgent.registration.groups.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-4">
-                  {selectedAgent.registration.groups.map((group, idx) => (
-                    <span
-                      key={idx}
-                      className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium"
-                    >
-                      {group}
-                    </span>
-                  ))}
-                </div>
-              )}
+              {selectedAgent.registration.groups &&
+                selectedAgent.registration.groups.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-4">
+                    {selectedAgent.registration.groups.map((group, idx) => (
+                      <span
+                        key={idx}
+                        className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium"
+                      >
+                        {group}
+                      </span>
+                    ))}
+                  </div>
+                )}
             </div>
 
             {/* Health Metrics */}
-            <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <div className="bg-transparent rounded-md shadow-none p-4 mb-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Health Metrics</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="flex items-center gap-2 text-gray-600 mb-1">
+                <div className="bg-transparent rounded-md p-4">
+                  <div className="flex items-center gap-2 text-muted-foreground mb-1">
                     <Cpu className="w-4 h-4" />
                     <span className="text-xs font-medium">CPU Usage</span>
                   </div>
@@ -394,8 +391,8 @@ export const AgentBrowser: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="flex items-center gap-2 text-gray-600 mb-1">
+                <div className="bg-transparent rounded-md p-4">
+                  <div className="flex items-center gap-2 text-muted-foreground mb-1">
                     <Activity className="w-4 h-4" />
                     <span className="text-xs font-medium">Load</span>
                   </div>
@@ -404,8 +401,8 @@ export const AgentBrowser: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="flex items-center gap-2 text-gray-600 mb-1">
+                <div className="bg-transparent rounded-md p-4">
+                  <div className="flex items-center gap-2 text-muted-foreground mb-1">
                     <TrendingUp className="w-4 h-4" />
                     <span className="text-xs font-medium">Success Rate</span>
                   </div>
@@ -414,8 +411,8 @@ export const AgentBrowser: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="flex items-center gap-2 text-gray-600 mb-1">
+                <div className="bg-transparent rounded-md p-4">
+                  <div className="flex items-center gap-2 text-muted-foreground mb-1">
                     <Clock className="w-4 h-4" />
                     <span className="text-xs font-medium">Avg Response</span>
                   </div>
@@ -424,8 +421,8 @@ export const AgentBrowser: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="flex items-center gap-2 text-gray-600 mb-1">
+                <div className="bg-transparent rounded-md p-4">
+                  <div className="flex items-center gap-2 text-muted-foreground mb-1">
                     <Zap className="w-4 h-4" />
                     <span className="text-xs font-medium">Active Tasks</span>
                   </div>
@@ -434,8 +431,8 @@ export const AgentBrowser: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="flex items-center gap-2 text-gray-600 mb-1">
+                <div className="bg-transparent rounded-md p-4">
+                  <div className="flex items-center gap-2 text-muted-foreground mb-1">
                     <CheckCircle className="w-4 h-4" />
                     <span className="text-xs font-medium">Total Tasks</span>
                   </div>
@@ -444,8 +441,8 @@ export const AgentBrowser: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="flex items-center gap-2 text-gray-600 mb-1">
+                <div className="bg-transparent rounded-md p-4">
+                  <div className="flex items-center gap-2 text-muted-foreground mb-1">
                     <XCircle className="w-4 h-4" />
                     <span className="text-xs font-medium">Failed Tasks</span>
                   </div>
@@ -454,8 +451,8 @@ export const AgentBrowser: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="flex items-center gap-2 text-gray-600 mb-1">
+                <div className="bg-transparent rounded-md p-4">
+                  <div className="flex items-center gap-2 text-muted-foreground mb-1">
                     <Clock className="w-4 h-4" />
                     <span className="text-xs font-medium">Uptime</span>
                   </div>
@@ -467,15 +464,17 @@ export const AgentBrowser: React.FC = () => {
             </div>
 
             {/* Capabilities */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="bg-transparent rounded-md shadow-none p-4">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Capabilities</h2>
               <div className="space-y-4">
                 {selectedAgent.registration.capabilities.map((capability, idx) => (
-                  <div key={idx} className="border border-gray-200 rounded-lg p-4">
+                  <div key={idx} className="border border-gray-200 rounded-md p-4">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <h3 className="font-semibold text-gray-900">{capability.name}</h3>
-                        <p className="text-sm text-gray-600 mt-1">{capability.description}</p>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {capability.description}
+                        </p>
 
                         {(capability.languages || capability.frameworks) && (
                           <div className="flex flex-wrap gap-2 mt-3">
@@ -503,16 +502,18 @@ export const AgentBrowser: React.FC = () => {
                         <div className="text-sm font-semibold text-gray-900">
                           {(capability.confidence * 100).toFixed(0)}%
                         </div>
-                        <div className="text-xs text-gray-500">confidence</div>
+                        <div className="text-xs text-muted-foreground">confidence</div>
 
                         {capability.pricing && (
-                          <div className="mt-2 flex items-center gap-1 text-sm text-gray-700">
+                          <div className="mt-2 flex items-center gap-1 text-sm text-foreground">
                             <DollarSign className="w-3 h-3" />
                             {formatCost(capability.pricing)}
                           </div>
                         )}
 
-                        <div className="text-xs text-gray-500 mt-1">v{capability.version}</div>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          v{capability.version}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -521,7 +522,7 @@ export const AgentBrowser: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className="flex items-center justify-center h-full text-gray-500">
+          <div className="flex items-center justify-center h-full text-muted-foreground">
             <div className="text-center">
               <Search className="w-16 h-16 mx-auto mb-4 text-gray-400" />
               <p className="text-lg">Select an agent to view details</p>

@@ -27,11 +27,11 @@ export default function AgentsPage() {
   };
   const handleMetricsUpdate = (metrics) => {};
   return (
-    <BaseLayout className="p-6" showSidebar={true} showHeader={true}>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <BaseLayout className="p-4" showSidebar={true} showHeader={true}>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="md:col-span-2">
-          <GlassCard className="p-6">
-            <div className="p-6">
+          <GlassCard className="p-4">
+            <div className="p-4">
               <h2 className="text-2xl font-bold mb-4">Create New Agent</h2>
               <AgentForm
                 onSubmit={handleAgentSubmit}
@@ -47,8 +47,8 @@ export default function AgentsPage() {
           </GlassCard>
 
           {selectedAgentId && (
-            <GlassCard className="mt-6 p-6">
-              <div className="p-6">
+            <GlassCard className="mt-6 p-4">
+              <div className="p-4">
                 <h2 className="text-2xl font-bold mb-4">Agent Metrics</h2>
                 <AgentMetricsDisplay
                   agentId={selectedAgentId}

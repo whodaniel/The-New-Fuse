@@ -596,9 +596,9 @@ export const SystemObservatory: React.FC = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-1000">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center border border-indigo-500/20 shadow-2xl">
+          <div className="w-16 h-16 rounded-md bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center border border-indigo-500/20 shadow-none">
             <Globe className="w-8 h-8 text-indigo-400" />
           </div>
           <div>
@@ -608,7 +608,7 @@ export const SystemObservatory: React.FC = () => {
                 Observatory
               </span>
             </h1>
-            <p className="text-gray-500 font-mono text-sm uppercase tracking-widest">
+            <p className="text-muted-foreground font-mono text-sm uppercase tracking-widest">
               Global Fleet Intelligence & Node Topology
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
@@ -632,7 +632,7 @@ export const SystemObservatory: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex gap-2 bg-white/5 p-1 rounded-xl border border-white/10 backdrop-blur-md">
+        <div className="flex gap-2 bg-transparent/5 p-1 rounded-md border border-white/10 backdrop-blur-md">
           <TabButton
             active={activeLayer === 'topology'}
             icon={<Network className="w-4 h-4" />}
@@ -655,12 +655,12 @@ export const SystemObservatory: React.FC = () => {
       </div>
 
       {/* Main Visualizer Area */}
-      <div className="grid grid-cols-1 xl:grid-cols-4 gap-8 h-[700px]">
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-4 h-[700px]">
         <div className="xl:col-span-3 h-full">
           {activeLayer === 'topology' && (
             <div className="h-full">
               {topologyLoading ? (
-                <div className="h-full rounded-xl border border-white/10 bg-black/30 flex items-center justify-center text-gray-400 text-sm">
+                <div className="h-full rounded-md border border-white/10 bg-black/30 flex items-center justify-center text-gray-400 text-sm">
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   Loading live topology...
                 </div>
@@ -670,7 +670,7 @@ export const SystemObservatory: React.FC = () => {
                   edges={topologyGraph.edges as any}
                 />
               ) : (
-                <div className="h-full rounded-xl border border-white/10 bg-black/30 flex flex-col items-center justify-center text-gray-400 text-sm px-6 text-center">
+                <div className="h-full rounded-md border border-white/10 bg-black/30 flex flex-col items-center justify-center text-gray-400 text-sm px-3 text-center">
                   <AlertTriangle className="w-5 h-5 mb-2 text-amber-400" />
                   <div>{topologyError ?? 'No topology data available from backend.'}</div>
                 </div>
@@ -683,14 +683,14 @@ export const SystemObservatory: React.FC = () => {
               <GlassCard className="p-4 border-white/5 bg-black/40 lg:col-span-1 h-full overflow-hidden flex flex-col">
                 <div className="flex items-center justify-between gap-3 mb-3">
                   <div className="flex items-center gap-2">
-                    <div className="p-2 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
+                    <div className="p-2 rounded-md bg-indigo-500/10 border border-indigo-500/20">
                       <Tags className="w-4 h-4 text-indigo-300" />
                     </div>
                     <div>
                       <div className="text-xs font-black text-gray-400 uppercase tracking-widest">
                         Agents
                       </div>
-                      <div className="text-[10px] text-gray-600 font-mono">
+                      <div className="text-[10px] text-muted-foreground font-mono">
                         {agentIndexLoading
                           ? 'Loading…'
                           : agentIndex
@@ -706,9 +706,9 @@ export const SystemObservatory: React.FC = () => {
                     value={agentSearch}
                     onChange={(e) => setAgentSearch(e.target.value)}
                     placeholder="Search agents, tools, traits…"
-                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-gray-600 outline-none focus:ring-2 focus:ring-indigo-600/40"
+                    className="w-full bg-transparent/5 border border-white/10 rounded-md px-3 py-2 text-sm text-white placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-indigo-600/40"
                   />
-                  <div className="absolute right-2 top-2.5 text-gray-600">
+                  <div className="absolute right-2 top-2.5 text-muted-foreground">
                     <Search className="w-4 h-4" />
                   </div>
                 </div>
@@ -722,13 +722,15 @@ export const SystemObservatory: React.FC = () => {
                   {agentsByCategory.map(([category, agents]) => (
                     <details
                       key={category}
-                      className="group rounded-lg border border-white/10 bg-white/5"
+                      className="group rounded-md border border-white/10 bg-transparent/5"
                     >
                       <summary className="cursor-pointer select-none list-none px-3 py-2 flex items-center justify-between">
                         <span className="text-xs font-bold text-gray-300 uppercase tracking-widest">
                           {category}
                         </span>
-                        <span className="text-[10px] text-gray-600 font-mono">{agents.length}</span>
+                        <span className="text-[10px] text-muted-foreground font-mono">
+                          {agents.length}
+                        </span>
                       </summary>
                       <div className="px-3 pb-2 space-y-1">
                         {agents.slice(0, 60).map((a) => (
@@ -738,12 +740,12 @@ export const SystemObservatory: React.FC = () => {
                             className={`w-full text-left text-sm px-2 py-1.5 rounded-md transition-all border ${
                               selectedAgentId === a.id
                                 ? 'bg-indigo-600/20 border-indigo-500/30 text-white'
-                                : 'bg-black/20 border-transparent text-gray-300 hover:bg-white/5 hover:text-white'
+                                : 'bg-black/20 border-transparent text-gray-300 hover:bg-transparent/5 hover:text-white'
                             }`}
                           >
                             <div className="font-semibold leading-tight">{a.name}</div>
                             {a.description && (
-                              <div className="text-[10px] text-gray-600 line-clamp-2">
+                              <div className="text-[10px] text-muted-foreground line-clamp-2">
                                 {a.description}
                               </div>
                             )}
@@ -757,7 +759,7 @@ export const SystemObservatory: React.FC = () => {
 
               {/* Semantic graph */}
               <div className="lg:col-span-2 h-full space-y-3">
-                <div className="flex flex-wrap gap-2 text-[10px] font-mono text-gray-600">
+                <div className="flex flex-wrap gap-2 text-[10px] font-mono text-muted-foreground">
                   <span className="px-2 py-1 rounded-full border border-indigo-500/20 bg-indigo-500/10 text-gray-300">
                     Category
                   </span>
@@ -844,11 +846,11 @@ export const SystemObservatory: React.FC = () => {
 
         {/* Info Sidebar */}
         <div className="space-y-6">
-          <h2 className="text-sm font-black text-gray-500 uppercase tracking-[0.2em] mb-4">
+          <h2 className="text-sm font-black text-muted-foreground uppercase tracking-[0.2em] mb-4">
             Live Context
           </h2>
 
-          <GlassCard className="p-6 border-white/5 space-y-6">
+          <GlassCard className="p-4 border-white/5 space-y-6">
             <SidebarStat
               label="Active Nodes"
               value={metrics.activeNodes !== null ? String(metrics.activeNodes) : 'N/A'}
@@ -878,17 +880,17 @@ export const SystemObservatory: React.FC = () => {
           </GlassCard>
 
           {activeLayer === 'semantic' && (
-            <GlassCard className="p-6 border-white/5 bg-black/40">
+            <GlassCard className="p-4 border-white/5 bg-black/40">
               <div className="flex items-center justify-between gap-3 mb-3">
                 <div className="flex items-center gap-2">
-                  <div className="p-2 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                  <div className="p-2 rounded-md bg-purple-500/10 border border-purple-500/20">
                     <Brain className="w-4 h-4 text-purple-300" />
                   </div>
                   <div>
                     <div className="text-xs font-black text-gray-400 uppercase tracking-widest">
                       Selected Agent
                     </div>
-                    <div className="text-[10px] text-gray-600 font-mono">
+                    <div className="text-[10px] text-muted-foreground font-mono">
                       {selectedAgent ? selectedAgent.id : 'None'}
                     </div>
                   </div>
@@ -896,7 +898,7 @@ export const SystemObservatory: React.FC = () => {
               </div>
 
               {!selectedAgent && (
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-muted-foreground">
                   Pick an agent from the list (or click a node in the semantic graph) to view its
                   full profile.
                 </div>
@@ -952,25 +954,25 @@ export const SystemObservatory: React.FC = () => {
                       {selectedAgent.name}
                     </div>
                     {selectedAgent.description && (
-                      <div className="text-xs text-gray-500 mt-1 leading-relaxed">
+                      <div className="text-xs text-muted-foreground mt-1 leading-relaxed">
                         {selectedAgent.description}
                       </div>
                     )}
                   </div>
 
-                  <details className="rounded-lg border border-white/10 bg-white/5">
+                  <details className="rounded-md border border-white/10 bg-transparent/5">
                     <summary className="cursor-pointer select-none list-none px-3 py-2 flex items-center gap-2">
                       <Wrench className="w-4 h-4 text-indigo-300" />
                       <span className="text-xs font-bold text-gray-300 uppercase tracking-widest">
                         Tools
                       </span>
-                      <span className="ml-auto text-[10px] text-gray-600 font-mono">
+                      <span className="ml-auto text-[10px] text-muted-foreground font-mono">
                         {(selectedAgent.tools ?? []).length}
                       </span>
                     </summary>
                     <div className="px-3 pb-3 pt-1 space-y-1">
                       {(selectedAgent.tools ?? []).length === 0 && (
-                        <div className="text-xs text-gray-600">
+                        <div className="text-xs text-muted-foreground">
                           No tools listed in front matter.
                         </div>
                       )}
@@ -985,7 +987,7 @@ export const SystemObservatory: React.FC = () => {
                   {(selectedAgent.traits?.length ||
                     selectedAgent.abilities?.length ||
                     selectedAgent.overlayTools?.length) && (
-                    <details className="rounded-lg border border-white/10 bg-white/5">
+                    <details className="rounded-md border border-white/10 bg-transparent/5">
                       <summary className="cursor-pointer select-none list-none px-3 py-2 flex items-center gap-2">
                         <Tags className="w-4 h-4 text-purple-300" />
                         <span className="text-xs font-bold text-gray-300 uppercase tracking-widest">
@@ -995,7 +997,7 @@ export const SystemObservatory: React.FC = () => {
                       <div className="px-3 pb-3 pt-1 space-y-2">
                         {!!selectedAgent.traits?.length && (
                           <div>
-                            <div className="text-[10px] text-gray-600 uppercase tracking-widest mb-1">
+                            <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">
                               Traits
                             </div>
                             <div className="text-xs text-gray-400 font-mono">
@@ -1005,7 +1007,7 @@ export const SystemObservatory: React.FC = () => {
                         )}
                         {!!selectedAgent.abilities?.length && (
                           <div>
-                            <div className="text-[10px] text-gray-600 uppercase tracking-widest mb-1">
+                            <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">
                               Abilities
                             </div>
                             <div className="text-xs text-gray-400 font-mono">
@@ -1015,7 +1017,7 @@ export const SystemObservatory: React.FC = () => {
                         )}
                         {!!selectedAgent.overlayTools?.length && (
                           <div>
-                            <div className="text-[10px] text-gray-600 uppercase tracking-widest mb-1">
+                            <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">
                               Overlay Tools
                             </div>
                             <div className="text-xs text-gray-400 font-mono">
@@ -1029,7 +1031,7 @@ export const SystemObservatory: React.FC = () => {
 
                   {(selectedAgent.semantic?.relatedConcepts?.length ||
                     selectedAgent.semantic?.definingDocs?.length) && (
-                    <details className="rounded-lg border border-white/10 bg-white/5" open>
+                    <details className="rounded-md border border-white/10 bg-transparent/5" open>
                       <summary className="cursor-pointer select-none list-none px-3 py-2 flex items-center gap-2">
                         <Database className="w-4 h-4 text-rose-300" />
                         <span className="text-xs font-bold text-gray-300 uppercase tracking-widest">
@@ -1039,7 +1041,7 @@ export const SystemObservatory: React.FC = () => {
                       <div className="px-3 pb-3 pt-1 space-y-3">
                         {!!selectedAgent.semantic?.relatedConcepts?.length && (
                           <div>
-                            <div className="text-[10px] text-gray-600 uppercase tracking-widest mb-1">
+                            <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">
                               Related concepts
                             </div>
                             <div className="space-y-1">
@@ -1049,7 +1051,7 @@ export const SystemObservatory: React.FC = () => {
                                   className="flex items-center justify-between gap-3 text-[10px] text-gray-400 font-mono"
                                 >
                                   <span>{c.concept}</span>
-                                  <span className="text-gray-600">{c.score}</span>
+                                  <span className="text-muted-foreground">{c.score}</span>
                                 </div>
                               ))}
                             </div>
@@ -1058,7 +1060,7 @@ export const SystemObservatory: React.FC = () => {
 
                         {!!selectedAgent.semantic?.definingDocs?.length && (
                           <div>
-                            <div className="text-[10px] text-gray-600 uppercase tracking-widest mb-1">
+                            <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">
                               Defining docs (click to preview)
                             </div>
                             <div className="space-y-1">
@@ -1068,19 +1070,19 @@ export const SystemObservatory: React.FC = () => {
                                   onClick={() => setSelectedDocPath(d.path)}
                                   className={`w-full flex items-center justify-between gap-3 text-[10px] font-mono px-2 py-1 rounded border transition-all ${
                                     selectedDocPath === d.path
-                                      ? 'bg-white/10 border-white/10 text-white'
-                                      : 'bg-black/20 border-transparent text-gray-400 hover:bg-white/5 hover:text-white'
+                                      ? 'bg-transparent/10 border-white/10 text-white'
+                                      : 'bg-black/20 border-transparent text-gray-400 hover:bg-transparent/5 hover:text-white'
                                   }`}
                                 >
                                   <span className="truncate text-left">{d.path}</span>
-                                  <span className="text-gray-600">{d.score}</span>
+                                  <span className="text-muted-foreground">{d.score}</span>
                                 </button>
                               ))}
                             </div>
 
                             {selectedDoc && (
-                              <div className="mt-3 rounded-lg bg-black/30 border border-white/5 p-2">
-                                <div className="text-[10px] text-gray-600 font-mono mb-1">
+                              <div className="mt-3 rounded-md bg-black/30 border border-white/5 p-2">
+                                <div className="text-[10px] text-muted-foreground font-mono mb-1">
                                   Preview: {selectedDoc.path}
                                 </div>
                                 <div className="text-[10px] leading-relaxed text-gray-400 whitespace-pre-wrap font-mono">
@@ -1094,7 +1096,7 @@ export const SystemObservatory: React.FC = () => {
                     </details>
                   )}
 
-                  <details className="rounded-lg border border-white/10 bg-white/5">
+                  <details className="rounded-md border border-white/10 bg-transparent/5">
                     <summary className="cursor-pointer select-none list-none px-3 py-2 flex items-center gap-2">
                       <FileText className="w-4 h-4 text-gray-300" />
                       <span className="text-xs font-bold text-gray-300 uppercase tracking-widest">
@@ -1102,20 +1104,22 @@ export const SystemObservatory: React.FC = () => {
                       </span>
                     </summary>
                     <div className="px-3 pb-3 pt-1 space-y-2">
-                      <div className="text-[10px] text-gray-600 font-mono">
+                      <div className="text-[10px] text-muted-foreground font-mono">
                         Source: {selectedAgent.sources.definitionPath}
                       </div>
                       {selectedAgent.sources.overlayPaths?.length ? (
-                        <div className="text-[10px] text-gray-600 font-mono">
+                        <div className="text-[10px] text-muted-foreground font-mono">
                           Overlay: {selectedAgent.sources.overlayPaths.join(', ')}
                         </div>
                       ) : null}
                       {selectedAgent.bodyMarkdown ? (
-                        <pre className="text-[10px] leading-relaxed text-gray-400 whitespace-pre-wrap font-mono max-h-56 overflow-auto rounded-lg bg-black/30 border border-white/5 p-2">
+                        <pre className="text-[10px] leading-relaxed text-gray-400 whitespace-pre-wrap font-mono max-h-56 overflow-auto rounded-md bg-black/30 border border-white/5 p-2">
                           {selectedAgent.bodyMarkdown}
                         </pre>
                       ) : (
-                        <div className="text-xs text-gray-600">No body markdown captured.</div>
+                        <div className="text-xs text-muted-foreground">
+                          No body markdown captured.
+                        </div>
                       )}
                     </div>
                   </details>
@@ -1124,7 +1128,7 @@ export const SystemObservatory: React.FC = () => {
             </GlassCard>
           )}
 
-          <GlassCard className="p-6 bg-indigo-600/5 border-indigo-500/20">
+          <GlassCard className="p-4 bg-indigo-600/5 border-indigo-500/20">
             <h3 className="text-white font-bold mb-2 flex items-center gap-2">
               <RefreshCcw className="w-4 h-4 text-indigo-400 animate-spin-slow" />
               Auto-Discovery
@@ -1141,8 +1145,8 @@ export const SystemObservatory: React.FC = () => {
             </PremiumButton>
           </GlassCard>
 
-          <div className="p-4 rounded-xl border border-white/5 bg-black/40">
-            <div className="text-[10px] font-bold text-gray-500 uppercase mb-2">
+          <div className="p-4 rounded-md border border-white/5 bg-black/40">
+            <div className="text-[10px] font-bold text-muted-foreground uppercase mb-2">
               Observatory Command
             </div>
             <div className="flex gap-2">
@@ -1181,10 +1185,10 @@ const TabButton: React.FC<{
 }> = ({ active, icon, label, onClick }) => (
   <button
     onClick={onClick}
-    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+    className={`flex items-center gap-2 px-4 py-2 rounded-md transition-all ${
       active
         ? 'bg-indigo-600 text-white shadow-[0_0_20px_rgba(79,70,229,0.4)]'
-        : 'text-gray-400 hover:text-white hover:bg-white/5'
+        : 'text-gray-400 hover:text-white hover:bg-transparent/5'
     }`}
   >
     {icon}
@@ -1199,7 +1203,7 @@ const SidebarStat: React.FC<{ label: string; value: string; icon: React.ReactNod
 }) => (
   <div className="flex items-center justify-between">
     <div className="flex items-center gap-3">
-      <div className="p-2 rounded-lg bg-white/5 border border-white/5">{icon}</div>
+      <div className="p-2 rounded-md bg-transparent/5 border border-white/5">{icon}</div>
       <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{label}</span>
     </div>
     <span className="text-sm font-black text-white">{value}</span>
@@ -1220,14 +1224,14 @@ const MetricsCard: React.FC<{
   };
   return (
     <GlassCard
-      className={`p-6 ${colors[color]} relative flex flex-col justify-end overflow-hidden`}
+      className={`p-4 ${colors[color]} relative flex flex-col justify-end overflow-hidden`}
     >
       <div className="absolute top-0 right-0 p-4 opacity-10">
         <Activity className="w-24 h-24" />
       </div>
       <div className="text-[10px] font-black uppercase tracking-[0.2em] mb-1">{title}</div>
       <div className="text-2xl font-bold text-white">{value}</div>
-      <div className="mt-4 h-1 w-full bg-white/5 rounded-full overflow-hidden">
+      <div className="mt-4 h-1 w-full bg-transparent/5 rounded-full overflow-hidden">
         <div
           className="h-full bg-current"
           style={{ width: `${Math.max(0, Math.min(progress, 100))}%` }}
@@ -1238,7 +1242,7 @@ const MetricsCard: React.FC<{
 };
 
 const SmallAction: React.FC<{ icon: React.ReactNode }> = ({ icon }) => (
-  <button className="p-2 rounded-lg bg-white/5 border border-white/10 text-gray-500 hover:text-white hover:bg-white/10 transition-all">
+  <button className="p-2 rounded-md bg-transparent/5 border border-white/10 text-muted-foreground hover:text-white hover:bg-transparent/10 transition-all">
     {React.cloneElement(icon as React.ReactElement, { className: 'w-4 h-4' })}
   </button>
 );

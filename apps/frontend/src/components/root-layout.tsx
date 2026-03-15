@@ -9,7 +9,7 @@ export function RootLayout() {
   const { pageTitle } = useRoute();
 
   return (
-    <div className="flex h-screen bg-white dark:bg-neutral-950">
+    <div className="flex h-screen bg-transparent dark:bg-neutral-950">
       <aside className="w-64 border-r border-neutral-200 dark:border-neutral-800">
         <div className="flex h-16 items-center justify-between px-4 border-b border-neutral-200 dark:border-neutral-800">
           <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">
@@ -30,7 +30,7 @@ export function RootLayout() {
             {pageTitle}
           </h1>
         </div>
-        <div className="flex-1 overflow-auto p-8">
+        <div className="flex-1 overflow-auto p-4">
           <Outlet />
         </div>
       </main>

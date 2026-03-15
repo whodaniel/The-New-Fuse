@@ -202,7 +202,7 @@ export function WebhookDeliveryLogs({ webhookConfigId, className }: WebhookDeliv
     if (status >= 300 && status < 400) return 'text-blue-600';
     if (status >= 400 && status < 500) return 'text-orange-600';
     if (status >= 500) return 'text-red-600';
-    return 'text-gray-600';
+    return 'text-muted-foreground';
   };
 
   return (
@@ -287,7 +287,7 @@ export function WebhookDeliveryLogs({ webhookConfigId, className }: WebhookDeliv
         </CardHeader>
         <CardContent className="p-0">
           {filteredLogs.length === 0 ? (
-            <div className="p-8 text-center text-muted-foreground">
+            <div className="p-4 text-center text-muted-foreground">
               <Clock className="w-8 h-8 mx-auto mb-2" />
               <p>No delivery logs found</p>
               <p className="text-sm">Logs will appear here as webhooks are delivered</p>
@@ -295,44 +295,44 @@ export function WebhookDeliveryLogs({ webhookConfigId, className }: WebhookDeliv
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b">
+                <thead className="bg-transparent border-b">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Event
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Response
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Timing
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Attempts
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-transparent divide-y divide-border/50">
                   {filteredLogs.map((log) => (
-                    <tr key={log.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
+                    <tr key={log.id} className="hover:bg-muted/20">
+                      <td className="px-3 py-2 whitespace-nowrap">
                         <div>
                           <div className="text-sm font-medium text-gray-900">{log.event_type}</div>
-                          <div className="text-sm text-gray-500">{log.source}</div>
+                          <div className="text-sm text-muted-foreground">{log.source}</div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-3 py-2 whitespace-nowrap">
                         <Badge className={STATUS_COLORS[log.status]}>
                           {STATUS_ICONS[log.status]}
                           <span className="ml-1">{getStatusText(log.status)}</span>
                         </Badge>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-3 py-2 whitespace-nowrap">
                         <div>
                           <div
                             className={`text-sm font-medium ${getHttpStatusColor(log.http_status)}`}
@@ -346,23 +346,25 @@ export function WebhookDeliveryLogs({ webhookConfigId, className }: WebhookDeliv
                           )}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-3 py-2 whitespace-nowrap">
                         <div>
                           <div className="text-sm text-gray-900">{log.response_time_ms}ms</div>
-                          <div className="text-sm text-gray-500">{formatDate(log.created_at)}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {formatDate(log.created_at)}
+                          </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-3 py-2 whitespace-nowrap">
                         <div className="text-sm text-gray-900">
                           {log.attempt_number}
                           {log.next_retry_at && (
-                            <div className="text-xs text-gray-500">
+                            <div className="text-xs text-muted-foreground">
                               Next: {formatDate(log.next_retry_at)}
                             </div>
                           )}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <td className="px-3 py-2 whitespace-nowrap text-sm font-medium">
                         <div className="flex items-center space-x-2">
                           <Button
                             variant="ghost"
@@ -405,7 +407,7 @@ export function WebhookDeliveryLogs({ webhookConfigId, className }: WebhookDeliv
       {/* Log Details Modal */}
       {showDetails && selectedLog && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-transparent rounded-md shadow-none max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <Card className="border-0">
               <CardHeader className="border-b">
                 <div className="flex items-center justify-between">
@@ -415,7 +417,7 @@ export function WebhookDeliveryLogs({ webhookConfigId, className }: WebhookDeliv
                   </Button>
                 </div>
               </CardHeader>
-              <CardContent className="p-6 space-y-6">
+              <CardContent className="p-4 space-y-6">
                 {/* Summary */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>

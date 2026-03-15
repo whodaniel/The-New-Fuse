@@ -118,7 +118,7 @@ const AIAgentPortal: React.FC = () => {
   const getStatusBadge = (status: string) => {
     const config: Record<string, { bg: string; text: string; label: string }> = {
       active: { bg: 'bg-emerald-500/20', text: 'text-emerald-400', label: 'Active' },
-      inactive: { bg: 'bg-gray-500/20', text: 'text-gray-400', label: 'Inactive' },
+      inactive: { bg: 'bg-transparent0/20', text: 'text-gray-400', label: 'Inactive' },
       training: { bg: 'bg-amber-500/20', text: 'text-amber-400', label: 'Training' },
     };
     const { bg, text, label } = config[status] || config.inactive;
@@ -135,10 +135,10 @@ const AIAgentPortal: React.FC = () => {
   const AgentCard = ({ agent, index }: { agent: Agent; index: number }) => (
     <motion.div variants={itemVariants}>
       <GlassCard className="h-full group hover:border-purple-500/30 transition-all duration-300">
-        <div className="p-6">
+        <div className="p-4">
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/30 to-blue-500/30 flex items-center justify-center border border-white/10 group-hover:scale-110 transition-transform duration-300">
+              <div className="w-12 h-12 rounded-md bg-gradient-to-br from-purple-500/30 to-blue-500/30 flex items-center justify-center border border-white/10 group-hover:scale-110 transition-transform duration-300">
                 <Bot className="w-6 h-6 text-purple-400" />
               </div>
               <div>
@@ -150,7 +150,7 @@ const AIAgentPortal: React.FC = () => {
             </div>
             <Link
               to={`/agents/${agent.id}`}
-              className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+              className="p-2 text-gray-400 hover:text-white hover:bg-transparent/10 rounded-md transition-colors"
             >
               <Settings className="w-4 h-4" />
             </Link>
@@ -161,10 +161,10 @@ const AIAgentPortal: React.FC = () => {
           {/* Performance Bar */}
           <div className="mb-4">
             <div className="flex items-center justify-between text-sm mb-2">
-              <span className="text-gray-500">Performance</span>
+              <span className="text-muted-foreground">Performance</span>
               <span className="text-white font-medium">{agent.performance}%</span>
             </div>
-            <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+            <div className="h-2 bg-transparent/10 rounded-full overflow-hidden">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${agent.performance}%` }}
@@ -189,12 +189,12 @@ const AIAgentPortal: React.FC = () => {
           {/* Capabilities */}
           <div className="flex flex-wrap gap-2">
             {agent.capabilities.slice(0, 2).map((capability, idx) => (
-              <Badge key={idx} className="bg-white/5 text-gray-300 border-white/10 text-xs">
+              <Badge key={idx} className="bg-transparent/5 text-gray-300 border-white/10 text-xs">
                 {capability}
               </Badge>
             ))}
             {agent.capabilities.length > 2 && (
-              <Badge className="bg-white/5 text-gray-400 border-white/10 text-xs">
+              <Badge className="bg-transparent/5 text-gray-400 border-white/10 text-xs">
                 +{agent.capabilities.length - 2}
               </Badge>
             )}
@@ -227,7 +227,7 @@ const AIAgentPortal: React.FC = () => {
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[120px] animate-pulse" />
       </div>
 
-      <div className="relative z-10 p-6 max-w-7xl mx-auto">
+      <div className="relative z-10 p-4 max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -237,7 +237,7 @@ const AIAgentPortal: React.FC = () => {
         >
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500/30 to-blue-500/30 flex items-center justify-center border border-white/10">
+              <div className="w-14 h-14 rounded-md bg-gradient-to-br from-purple-500/30 to-blue-500/30 flex items-center justify-center border border-white/10">
                 <Brain className="w-7 h-7 text-purple-400" />
               </div>
               <div>
@@ -254,7 +254,7 @@ const AIAgentPortal: React.FC = () => {
             </Link>
           </div>
           {localAIStatus && localAIStatus.enabled === false && (
-            <div className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-amber-200 text-sm">
+            <div className="mt-4 rounded-md border border-amber-500/30 bg-amber-500/10 px-4 py-2 text-amber-200 text-sm">
               Local AI integration is not deployed in this environment.
             </div>
           )}
@@ -339,13 +339,13 @@ const AIAgentPortal: React.FC = () => {
                   </PremiumSelect>
                 </div>
               </div>
-              <div className="flex items-center gap-2 bg-white/5 p-1 rounded-lg border border-white/10">
+              <div className="flex items-center gap-2 bg-transparent/5 p-1 rounded-md border border-white/10">
                 <button
                   onClick={() => setViewMode('grid')}
                   className={`p-2 rounded-md transition-all ${
                     viewMode === 'grid'
                       ? 'bg-purple-500/30 text-purple-300'
-                      : 'text-gray-400 hover:text-white hover:bg-white/5'
+                      : 'text-gray-400 hover:text-white hover:bg-transparent/5'
                   }`}
                 >
                   <Grid className="w-4 h-4" />
@@ -355,7 +355,7 @@ const AIAgentPortal: React.FC = () => {
                   className={`p-2 rounded-md transition-all ${
                     viewMode === 'list'
                       ? 'bg-purple-500/30 text-purple-300'
-                      : 'text-gray-400 hover:text-white hover:bg-white/5'
+                      : 'text-gray-400 hover:text-white hover:bg-transparent/5'
                   }`}
                 >
                   <List className="w-4 h-4" />
@@ -373,8 +373,8 @@ const AIAgentPortal: React.FC = () => {
               animate={{ opacity: 1 }}
               className="text-center py-16"
             >
-              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
-                <Bot className="w-10 h-10 text-gray-500" />
+              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-transparent/5 flex items-center justify-center border border-white/10">
+                <Bot className="w-10 h-10 text-muted-foreground" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">No agents found</h3>
               <p className="text-gray-400 mb-6">
@@ -397,7 +397,7 @@ const AIAgentPortal: React.FC = () => {
               animate="visible"
               className={
                 viewMode === 'grid'
-                  ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+                  ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'
                   : 'space-y-4'
               }
             >

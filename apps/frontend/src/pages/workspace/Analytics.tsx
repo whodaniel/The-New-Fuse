@@ -81,7 +81,7 @@ const WorkspaceAnalytics = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Analytics</h1>
+          <h1 className="text-2xl font-bold">Analytics</h1>
           <p className="text-muted-foreground mt-2">Monitor your workspace performance and usage</p>
         </div>
         <div className="flex items-center space-x-2">

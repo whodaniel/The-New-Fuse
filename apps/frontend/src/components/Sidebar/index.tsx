@@ -24,12 +24,12 @@ const STYLES = {
   workspaceArea: 'flex flex-col gap-y-2 pb-[60px] overflow-y-scroll no-scroll',
   workspaceHeader: 'flex gap-x-2 items-center justify-between',
   newWorkspaceButton:
-    'light:bg-[#C2E7FE] light:hover:bg-[#7CD4FD] flex flex-grow w-[75%] h-[44px] gap-x-2 py-[5px] px-2.5 mb-2 bg-white rounded-[8px] text-sidebar justify-center items-center hover:bg-opacity-80 transition-all duration-300',
+    'light:bg-[#C2E7FE] light:hover:bg-[#7CD4FD] flex flex-grow w-[75%] h-[44px] gap-x-2 py-[5px] px-2.5 mb-2 bg-transparent rounded-[8px] text-sidebar justify-center items-center hover:bg-opacity-80 transition-all duration-300',
   footer:
     'absolute bottom-0 left-0 right-0 pt-4 pb-3 rounded-b-[16px] bg-theme-bg-sidebar bg-opacity-80 backdrop-filter backdrop-blur-md z-10',
   // Mobile styles
   mobileHeader:
-    'fixed top-0 left-0 right-0 z-10 flex justify-between items-center px-4 py-2 bg-theme-bg-sidebar light:bg-white text-slate-200 shadow-lg h-16',
+    'fixed top-0 left-0 right-0 z-10 flex justify-between items-center px-4 py-2 bg-theme-bg-sidebar light:bg-transparent text-slate-200 shadow-none h-16',
   mobileMenuButton: 'rounded-md p-2 flex items-center justify-center text-theme-text-secondary',
   mobileLogo: 'block mx-auto h-6 w-auto',
   mobileSidebar: 'z-99 fixed top-0 left-0 transition-all duration-500 w-[100vw] h-[100vh]',
@@ -71,7 +71,7 @@ export default function Sidebar() {
             <div className={STYLES.scrollArea}>
               <div className={STYLES.workspaceArea}>
                 <div className={STYLES.workspaceHeader}>
-                  {(!user || user?.role !== "default") && (
+                  {(!user || user?.role !== 'default') && (
                     <button
                       onClick={showNewWsModal}
                       aria-label="New Workspace"
@@ -182,7 +182,7 @@ export function SidebarMobileHeader() {
                         onClick={showNewWsModal}
                         aria-label="New Workspace"
                         title="New Workspace"
-                        className="flex flex-grow w-[75%] h-[44px] gap-x-2 py-[5px] px-4 bg-white rounded-lg text-sidebar justify-center items-center hover:bg-opacity-80 transition-all duration-300"
+                        className="flex flex-grow w-[75%] h-[44px] gap-x-2 py-[5px] px-4 bg-transparent rounded-md text-sidebar justify-center items-center hover:bg-opacity-80 transition-all duration-300"
                       >
                         <Plus className="h-5 w-5" />
                         <p className="text-sidebar text-sm font-semibold">

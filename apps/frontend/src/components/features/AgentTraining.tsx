@@ -99,7 +99,7 @@ export const AgentTraining = ({ agentId }) => {
     }));
   };
   return (
-    <Card_1.Card className="p-6">
+    <Card_1.Card className="p-4">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold">
           Training Configuration - {agent === null || agent === void 0 ? void 0 : agent.name}
@@ -118,7 +118,7 @@ export const AgentTraining = ({ agentId }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1">Model</label>
@@ -209,7 +209,7 @@ export const AgentTraining = ({ agentId }) => {
               onUploadComplete={(file) => setCustomData(file)}
               disabled={trainMutation.isPending}
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               Upload JSON file containing training or test data
             </p>
           </div>
@@ -294,8 +294,8 @@ export const AgentTraining = ({ agentId }) => {
               </div>
             </div>
           ) : (
-            <div className="flex items-center justify-center h-64 border-2 border-dashed rounded-lg">
-              <p className="text-gray-500">No training history available</p>
+            <div className="flex items-center justify-center h-64 border-2 border-dashed rounded-md">
+              <p className="text-muted-foreground">No training history available</p>
             </div>
           )}
         </div>

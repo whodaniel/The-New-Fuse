@@ -161,14 +161,14 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white dark:bg-gray-900 rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="bg-transparent dark:bg-gray-900 rounded-md shadow-none max-w-2xl w-full max-h-[90vh] overflow-y-auto">
           {/* Header */}
-          <div className="sticky top-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-6 flex items-center justify-between">
+          <div className="sticky top-0 bg-transparent dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-4 flex items-center justify-between">
             <div>
               <DialogTitle className="text-2xl font-bold text-gray-900 dark:text-white">
                 Request a Demo
               </DialogTitle>
-              <DialogDescription className="mt-2 text-gray-600 dark:text-gray-400">
+              <DialogDescription className="mt-2 text-muted-foreground dark:text-muted-foreground">
                 See how The New Fuse can transform your workflow. We'll schedule a personalized demo
                 for your team.
               </DialogDescription>
@@ -176,7 +176,7 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
             <button
               onClick={handleClose}
               disabled={isSubmitting}
-              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+              className="text-gray-400 hover:text-muted-foreground dark:hover:text-gray-200 transition-colors"
               aria-label="Close modal"
             >
               <X className="w-6 h-6" />
@@ -185,25 +185,25 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
 
           {/* Success State */}
           {isSuccess ? (
-            <div className="p-8 text-center">
+            <div className="p-4 text-center">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Calendar className="w-8 h-8 text-green-600" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
                 Request Received!
               </h3>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-muted-foreground dark:text-muted-foreground">
                 Thank you for your interest. We'll reach out within 24 hours to schedule your demo.
               </p>
             </div>
           ) : (
             /* Form */
-            <form onSubmit={handleSubmit} className="p-6 space-y-6">
+            <form onSubmit={handleSubmit} className="p-4 space-y-6">
               {/* Name */}
               <div>
                 <label
                   htmlFor="name"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  className="block text-sm font-medium text-foreground dark:text-gray-300 mb-2"
                 >
                   Full Name *
                 </label>
@@ -228,7 +228,7 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
                 <div>
                   <label
                     htmlFor="email"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                    className="block text-sm font-medium text-foreground dark:text-gray-300 mb-2"
                   >
                     Work Email *
                   </label>
@@ -251,7 +251,7 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
                 <div>
                   <label
                     htmlFor="company"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                    className="block text-sm font-medium text-foreground dark:text-gray-300 mb-2"
                   >
                     Company *
                   </label>
@@ -277,7 +277,7 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
                 <div>
                   <label
                     htmlFor="phone"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                    className="block text-sm font-medium text-foreground dark:text-gray-300 mb-2"
                   >
                     Phone Number
                   </label>
@@ -300,7 +300,7 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
                 <div>
                   <label
                     htmlFor="teamSize"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                    className="block text-sm font-medium text-foreground dark:text-gray-300 mb-2"
                   >
                     Team Size
                   </label>
@@ -308,7 +308,7 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
                     id="teamSize"
                     value={formData.teamSize}
                     onChange={handleChange('teamSize')}
-                    className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                    className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-transparent dark:border-gray-600 dark:text-white"
                     disabled={isSubmitting}
                   >
                     <option value="">Select size</option>
@@ -325,7 +325,7 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
               <div>
                 <label
                   htmlFor="message"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  className="block text-sm font-medium text-foreground dark:text-gray-300 mb-2"
                 >
                   What are you looking to achieve? (Optional)
                 </label>
@@ -335,7 +335,7 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
                   onChange={handleChange('message')}
                   placeholder="Tell us about your use case..."
                   rows={4}
-                  className="flex w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                  className="flex w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-transparent dark:border-gray-600 dark:text-white"
                   disabled={isSubmitting}
                 />
               </div>
@@ -368,7 +368,7 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
                 </Button>
               </div>
 
-              <p className="text-xs text-center text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-center text-muted-foreground dark:text-muted-foreground">
                 By submitting this form, you agree to our privacy policy and terms of service.
               </p>
             </form>

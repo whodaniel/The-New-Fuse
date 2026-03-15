@@ -57,7 +57,7 @@ export default function MobileNav({
         scrolled ? 'bg-background/95 backdrop-blur-md shadow-md' : 'bg-transparent'
       }`}
     >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-4 sm:px-3 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 z-50" onClick={closeMenu}>
@@ -77,7 +77,7 @@ export default function MobileNav({
             ))}
             <Link
               to="/login"
-              className="inline-flex items-center justify-center min-h-touch min-w-[120px] rounded-md px-6 py-3 text-base font-medium bg-primary text-primary-foreground hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200"
+              className="inline-flex items-center justify-center min-h-touch min-w-[120px] rounded-md px-3 py-2 text-base font-medium bg-primary text-primary-foreground hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200"
             >
               Sign In
             </Link>
@@ -139,7 +139,7 @@ export default function MobileNav({
           <Link
             to="/login"
             onClick={closeMenu}
-            className={`inline-flex items-center justify-center min-h-touch w-full max-w-xs rounded-md px-6 py-3 text-lg font-medium bg-primary text-primary-foreground hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200 ${
+            className={`inline-flex items-center justify-center min-h-touch w-full max-w-xs rounded-md px-3 py-2 text-lg font-medium bg-primary text-primary-foreground hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200 ${
               isOpen ? 'animate-scale-in' : ''
             }`}
             style={{ animationDelay: `${links.length * 0.1}s` }}

@@ -61,7 +61,7 @@ const AgentMessage = React.memo<AgentMessageProps>(({ agent, message, isCurrentU
       <div className="flex-1">
         <div className="flex items-center gap-2 mb-1">
           <span className="font-medium text-sm">{agent.name}</span>
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-muted-foreground">
             {new Date(message.timestamp).toLocaleTimeString()}
           </span>
         </div>

@@ -139,7 +139,7 @@ export default function API() {
         </AlertDescription>
       </Alert>
 
-      <div className="grid gap-6">
+      <div className="grid gap-4">
         {/* Provider API Keys - Self-contained Card */}
         <ProviderApiKeyList />
         <AgentGrantList />

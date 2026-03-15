@@ -208,7 +208,7 @@ export function AgentGrantList() {
               New Grant Token (shown once, copy now)
             </Label>
             <div className="flex gap-2">
-              <Input readOnly value={newToken} className="font-mono bg-white dark:bg-black" />
+              <Input readOnly value={newToken} className="font-mono bg-transparent dark:bg-black" />
               <Button variant="outline" onClick={copyToken}>
                 Copy
               </Button>

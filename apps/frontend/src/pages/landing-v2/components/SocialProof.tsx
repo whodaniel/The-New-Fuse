@@ -14,7 +14,7 @@ const COMPANIES = [
 
 export default function SocialProof() {
   return (
-    <section className="py-12 border-y border-white/5 bg-white/[0.02] overflow-hidden">
+    <section className="py-12 border-y border-white/5 bg-transparent/[0.02] overflow-hidden">
       <div className="container mx-auto px-4 mb-8 text-center">
         <p className="text-sm font-medium text-white/40 uppercase tracking-widest">
           Trusted by engineering teams at

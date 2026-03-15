@@ -15,10 +15,10 @@ export const WorkflowToolbar: React.FC<WorkflowToolbarProps> = ({
   onSave,
   onExecute,
   isSaving,
-  isExecuting
+  isExecuting,
 }) => {
   return (
-    <div className="absolute top-2.5 left-2.5 right-2.5 z-10 bg-white p-3 rounded-md shadow-md border border-gray-200">
+    <div className="absolute top-2.5 left-2.5 right-2.5 z-10 bg-transparent p-3 rounded-md shadow-md border border-gray-200">
       <div className="flex items-center justify-between space-x-4">
         <div className="flex items-center space-x-2">
           <span className="text-sm font-medium">Workflow:</span>
@@ -30,7 +30,7 @@ export const WorkflowToolbar: React.FC<WorkflowToolbarProps> = ({
             placeholder="Enter workflow name"
           />
         </div>
-        
+
         <div className="flex items-center space-x-2">
           <button
             onClick={onSave}

@@ -18,31 +18,36 @@ const AgentCard: React.FC<AgentCardProps> = ({ agent }) => {
         return 'bg-red-500';
       case AgentStatus.OFFLINE:
       default:
-        return 'bg-gray-500';
+        return 'bg-transparent0';
     }
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 flex flex-col justify-between">
+    <div className="bg-transparent dark:bg-transparent shadow-none rounded-md p-4 flex flex-col justify-between">
       <div>
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">{agent.name}</h3>
           <div className="flex items-center">
             <span className={`w-3 h-3 rounded-full mr-2 ${getStatusColor(agent.status)}`}></span>
-            <span className="text-sm text-gray-600 dark:text-gray-400">{agent.status}</span>
+            <span className="text-sm text-muted-foreground dark:text-muted-foreground">
+              {agent.status}
+            </span>
           </div>
         </div>
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Type: {agent.type}</p>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          Last Heartbeat: {new Date(agent.lastHeartbeat).toLocaleDateString()} {new Date(agent.lastHeartbeat).toLocaleTimeString()}
+        <p className="text-sm text-muted-foreground dark:text-muted-foreground mb-1">
+          Type: {agent.type}
+        </p>
+        <p className="text-sm text-muted-foreground dark:text-muted-foreground">
+          Last Heartbeat: {new Date(agent.lastHeartbeat).toLocaleDateString()}{' '}
+          {new Date(agent.lastHeartbeat).toLocaleTimeString()}
         </p>
       </div>
       <div className="mt-4">
         <details>
-          <summary className="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer">
+          <summary className="text-sm font-medium text-foreground dark:text-gray-300 cursor-pointer">
             Details
           </summary>
-          <div className="mt-2 text-xs text-gray-600 dark:text-gray-400">
+          <div className="mt-2 text-xs text-muted-foreground dark:text-muted-foreground">
             <p className="font-bold">Capabilities:</p>
             <ul className="list-disc list-inside">
               {agent.capabilities.map((capability) => (

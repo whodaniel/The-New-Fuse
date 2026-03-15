@@ -166,7 +166,7 @@ const MeshHealthPanel: React.FC<{
         {instances.map((instance) => (
           <div
             key={instance.id}
-            className="flex items-center justify-between p-3 rounded-lg bg-black/20 border border-white/10"
+            className="flex items-center justify-between p-3 rounded-md bg-black/20 border border-white/10"
           >
             <div className="flex items-center gap-3">
               {getStatusIcon(instance.status)}
@@ -179,9 +179,13 @@ const MeshHealthPanel: React.FC<{
               <div className={getStatusColor(instance.status)}>
                 {instance.latency ? `${instance.latency}ms` : instance.status}
               </div>
-              {instance.model && <div className="text-xs text-gray-500">{instance.model}</div>}
+              {instance.model && (
+                <div className="text-xs text-muted-foreground">{instance.model}</div>
+              )}
               {instance.activeSessions !== undefined && (
-                <div className="text-xs text-gray-500">{instance.activeSessions} sessions</div>
+                <div className="text-xs text-muted-foreground">
+                  {instance.activeSessions} sessions
+                </div>
               )}
             </div>
           </div>
@@ -199,7 +203,7 @@ const AgentActivityPanel: React.FC<{ activities: AgentActivity[] }> = ({ activit
   const getStatusColor = (status: AgentActivity['status']) => {
     switch (status) {
       case 'idle':
-        return 'bg-gray-500';
+        return 'bg-transparent0';
       case 'thinking':
         return 'bg-purple-500 animate-pulse';
       case 'working':
@@ -222,7 +226,7 @@ const AgentActivityPanel: React.FC<{ activities: AgentActivity[] }> = ({ activit
         </h3>
         <div className="flex items-center gap-2">
           <div
-            className={`w-2 h-2 rounded-full ${activeCount > 0 ? 'bg-cyan-500 animate-pulse' : 'bg-gray-500'}`}
+            className={`w-2 h-2 rounded-full ${activeCount > 0 ? 'bg-cyan-500 animate-pulse' : 'bg-transparent0'}`}
           />
           <span className="text-sm text-gray-400">{activeCount} active</span>
         </div>
@@ -230,7 +234,7 @@ const AgentActivityPanel: React.FC<{ activities: AgentActivity[] }> = ({ activit
 
       <div className="space-y-2 max-h-64 overflow-y-auto">
         {activities.length === 0 ? (
-          <div className="text-center text-gray-500 py-4">No active agents</div>
+          <div className="text-center text-muted-foreground py-2">No active agents</div>
         ) : (
           activities.map((activity) => (
             <div
@@ -246,7 +250,7 @@ const AgentActivityPanel: React.FC<{ activities: AgentActivity[] }> = ({ activit
                   <div className="text-xs text-gray-400">Tool: {activity.currentTool}</div>
                 )}
               </div>
-              <div className="text-xs text-gray-500">{activity.status}</div>
+              <div className="text-xs text-muted-foreground">{activity.status}</div>
             </div>
           ))
         )}
@@ -268,21 +272,21 @@ const MetricsPanel: React.FC<{ metrics: SystemMetrics }> = ({ metrics }) => {
       </h3>
 
       <div className="grid grid-cols-2 gap-4">
-        <div className="text-center p-3 rounded-lg bg-black/20">
+        <div className="text-center p-3 rounded-md bg-black/20">
           <div className="text-2xl font-bold text-cyan-400">{metrics.totalSessions}</div>
           <div className="text-xs text-gray-400">Sessions</div>
         </div>
-        <div className="text-center p-3 rounded-lg bg-black/20">
+        <div className="text-center p-3 rounded-md bg-black/20">
           <div className="text-2xl font-bold text-purple-400">{metrics.activeAgents}</div>
           <div className="text-xs text-gray-400">Active Agents</div>
         </div>
-        <div className="text-center p-3 rounded-lg bg-black/20">
+        <div className="text-center p-3 rounded-md bg-black/20">
           <div className="text-2xl font-bold text-green-400">
             {metrics.messagesProcessed.toLocaleString()}
           </div>
           <div className="text-xs text-gray-400">Messages</div>
         </div>
-        <div className="text-center p-3 rounded-lg bg-black/20">
+        <div className="text-center p-3 rounded-md bg-black/20">
           <div className="text-2xl font-bold text-yellow-400">{metrics.avgLatency}ms</div>
           <div className="text-xs text-gray-400">Avg Latency</div>
         </div>
@@ -318,7 +322,7 @@ const TaskQueuePanel: React.FC<{
       case 'medium':
         return 'border-l-yellow-500 bg-yellow-500/10';
       case 'low':
-        return 'border-l-gray-500 bg-gray-500/10';
+        return 'border-l-gray-500 bg-transparent0/10';
     }
   };
 
@@ -344,11 +348,11 @@ const TaskQueuePanel: React.FC<{
 
       <div className="space-y-2 max-h-64 overflow-y-auto">
         {loading ? (
-          <div className="text-center text-gray-500 py-4">Loading task queue...</div>
+          <div className="text-center text-muted-foreground py-2">Loading task queue...</div>
         ) : error ? (
-          <div className="text-center text-red-400 py-4">{error}</div>
+          <div className="text-center text-red-400 py-2">{error}</div>
         ) : tasks.length === 0 ? (
-          <div className="text-center text-gray-500 py-4">No pending tasks</div>
+          <div className="text-center text-muted-foreground py-2">No pending tasks</div>
         ) : (
           tasks.slice(0, 10).map((task) => (
             <div
@@ -388,7 +392,7 @@ const LogsPanel: React.FC<{
       case 'info':
         return 'text-blue-400';
       case 'debug':
-        return 'text-gray-500';
+        return 'text-muted-foreground';
     }
   };
 
@@ -401,15 +405,17 @@ const LogsPanel: React.FC<{
 
       <div className="space-y-1 max-h-64 overflow-y-auto font-mono text-xs">
         {loading ? (
-          <div className="text-center text-gray-500 py-4">Loading logs...</div>
+          <div className="text-center text-muted-foreground py-2">Loading logs...</div>
         ) : error ? (
-          <div className="text-center text-red-400 py-4">{error}</div>
+          <div className="text-center text-red-400 py-2">{error}</div>
         ) : logs.length === 0 ? (
-          <div className="text-center text-gray-500 py-4">No recent logs</div>
+          <div className="text-center text-muted-foreground py-2">No recent logs</div>
         ) : (
           logs.slice(0, 20).map((log, i) => (
             <div key={i} className="flex gap-2">
-              <span className="text-gray-500">{new Date(log.timestamp).toLocaleTimeString()}</span>
+              <span className="text-muted-foreground">
+                {new Date(log.timestamp).toLocaleTimeString()}
+              </span>
               <span className={getLevelColor(log.level)}>[{log.level.toUpperCase()}]</span>
               <span className="text-gray-400">[{log.source}]</span>
               <span className="text-gray-200 truncate">{log.message}</span>
@@ -453,7 +459,7 @@ const QuickActionsPanel: React.FC<{
               onClick={() => onAction(action.id)}
               disabled={!availability.enabled}
               title={availability.enabled ? action.label : availability.reason || 'Unavailable'}
-              className={`flex items-center gap-2 p-3 rounded-lg border transition-all text-left ${
+              className={`flex items-center gap-2 p-3 rounded-md border transition-all text-left ${
                 availability.enabled
                   ? 'bg-black/20 hover:bg-black/40 border-white/10 hover:border-white/20'
                   : 'bg-black/10 border-white/5 opacity-50 cursor-not-allowed'
@@ -854,11 +860,11 @@ export const TNFCommandCenter: React.FC = () => {
   }, [fetchMeshHealth, fetchAgentActivities, fetchTasks]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 p-4">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
             TNF Command Center
           </h1>
           <p className="text-gray-400 text-sm mt-1">
@@ -884,7 +890,7 @@ export const TNFCommandCenter: React.FC = () => {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-muted-foreground">
             Last refresh: {lastRefresh ? new Date(lastRefresh).toLocaleTimeString() : 'Never'}
           </div>
           <PremiumButton
@@ -902,7 +908,7 @@ export const TNFCommandCenter: React.FC = () => {
       </div>
 
       {/* Main Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Left Column */}
         <div className="space-y-6">
           <MeshHealthPanel

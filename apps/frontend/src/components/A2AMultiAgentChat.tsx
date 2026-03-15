@@ -1,4 +1,4 @@
-import { A2AMessageType, A2APriority, AgentType, AgentConfig } from '@the-new-fuse/a2a-core';
+import { A2AMessageType, A2APriority, AgentConfig, AgentType } from '@the-new-fuse/a2a-core';
 import {
   A2AMessage,
   A2AProvider,
@@ -8,8 +8,7 @@ import {
   useA2AMessages,
 } from '@the-new-fuse/a2a-react';
 import { AlertCircle, Send } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 // Icons (same as before)
@@ -24,10 +23,10 @@ const MessageBubble = React.memo(({ msg, agents }: { msg: A2AMessage; agents: Ag
   const isUser = msg.payload?.sender === 'User';
   const isSystem = msg.type === A2AMessageType.NOTIFICATION && msg.payload?.type === 'system';
   const bubbleClass = cn(
-    'p-4 rounded-xl shadow-md max-w-lg',
+    'p-4 rounded-md shadow-md max-w-lg',
     isUser && 'bg-blue-500 text-white ml-auto',
-    isSystem && 'bg-gray-500 text-white text-center text-xs italic mx-auto',
-    !isUser && !isSystem && 'bg-white dark:bg-gray-700 mr-auto'
+    isSystem && 'bg-transparent0 text-white text-center text-xs italic mx-auto',
+    !isUser && !isSystem && 'bg-transparent dark:bg-gray-700 mr-auto'
   );
 
   const senderName = isUser
@@ -64,10 +63,10 @@ const MessageBubble = React.memo<{ msg: A2AMessage; agents: any[] }>(({ msg, age
   const isUser = msg.payload?.sender === 'User';
   const isSystem = msg.type === A2AMessageType.NOTIFICATION && msg.payload?.type === 'system';
   const bubbleClass = cn(
-    'p-4 rounded-xl shadow-md max-w-lg',
+    'p-4 rounded-md shadow-md max-w-lg',
     isUser && 'bg-blue-500 text-white ml-auto',
-    isSystem && 'bg-gray-500 text-white text-center text-xs italic mx-auto',
-    !isUser && !isSystem && 'bg-white dark:bg-gray-700 mr-auto'
+    isSystem && 'bg-transparent0 text-white text-center text-xs italic mx-auto',
+    !isUser && !isSystem && 'bg-transparent dark:bg-gray-700 mr-auto'
   );
 
   const senderName = isUser
@@ -319,9 +318,9 @@ function EnhancedMultiAgentChatUI() {
     return (
       <div className="flex h-screen w-full flex-col items-center justify-center bg-gray-900 text-white">
         <AlertCircle className="h-16 w-16 text-red-500 mb-4" />
-        <h1 className="text-3xl font-bold mb-2">Connection Error</h1>
+        <h1 className="text-2xl font-bold mb-2">Connection Error</h1>
         <p className="text-gray-400 mb-4">Could not connect to the WebSocket server.</p>
-        <p className="text-gray-500 text-sm mb-6">{connectionError.message}</p>
+        <p className="text-muted-foreground text-sm mb-6">{connectionError.message}</p>
         <button
           onClick={connect}
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -336,7 +335,7 @@ function EnhancedMultiAgentChatUI() {
     return (
       <div className="flex h-screen w-full flex-col items-center justify-center bg-gray-900 text-white">
         <div className="w-20 h-20 border-8 border-dashed rounded-full animate-spin border-blue-500 mb-6"></div>
-        <h1 className="text-3xl font-bold mb-2">A2A Multi-Agent Chat</h1>
+        <h1 className="text-2xl font-bold mb-2">A2A Multi-Agent Chat</h1>
         <p className="text-gray-400 mb-4">Connecting to A2A protocol...</p>
         <button
           onClick={connect}
@@ -357,25 +356,40 @@ function EnhancedMultiAgentChatUI() {
         </div>
       )}
 
-      <header className="bg-white dark:bg-gray-800 shadow-sm p-3 z-10">
+      <header className="bg-transparent dark:bg-transparent shadow-none p-3 z-10">
         <div className="flex items-center gap-4 pb-2 flex-wrap">
           <ConnectionStatus />
 
           <button
             onClick={handleAutomateAgentCreation}
             disabled={isAutomating || !connectionState.authenticated}
-            className="px-3 py-2 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-700 disabled:bg-purple-400 flex items-center justify-center gap-2"
-            title={!connectionState.authenticated ? "Requires active connection to setup agents" : "Automatically setup agents"}
+            className="px-3 py-2 bg-purple-600 text-white rounded-md text-sm hover:bg-purple-700 disabled:bg-purple-400 flex items-center justify-center gap-2"
+            title={
+              !connectionState.authenticated
+                ? 'Requires active connection to setup agents'
+                : 'Automatically setup agents'
+            }
             aria-label="Auto-Setup A2A Agents"
           >
-            {isAutomating ? <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span> Setting up...</> : "🚀 Auto-Setup A2A"}
+            {isAutomating ? (
+              <>
+                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>{' '}
+                Setting up...
+              </>
+            ) : (
+              '🚀 Auto-Setup A2A'
+            )}
           </button>
 
           <button
             onClick={handleCreateConversation}
             disabled={agents.length < 2}
-            className="px-3 py-2 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600 disabled:bg-green-400"
-            title={agents.length < 2 ? "Requires at least 2 connected agents" : "Start a new conversation"}
+            className="px-3 py-2 bg-green-500 text-white rounded-md text-sm hover:bg-green-600 disabled:bg-green-400"
+            title={
+              agents.length < 2
+                ? 'Requires at least 2 connected agents'
+                : 'Start a new conversation'
+            }
             aria-label="Start Conversation"
           >
             Start Conversation
@@ -421,7 +435,7 @@ function EnhancedMultiAgentChatUI() {
           {agents.map((agent) => (
             <div
               key={agent.agentId}
-              className="flex items-center gap-2 bg-gray-200 dark:bg-gray-700 rounded-lg px-2 py-1"
+              className="flex items-center gap-2 bg-gray-200 dark:bg-gray-700 rounded-md px-2 py-1"
             >
               <span className="text-sm">{agent.name}</span>
               <span className="text-xs opacity-75">({agent.type})</span>
@@ -467,7 +481,7 @@ function EnhancedMultiAgentChatUI() {
           <MessageBubble key={msg.id} msg={msg} agents={agents} />
         ))}
         {messages.length === 0 && connectionState.authenticated && (
-          <div className="text-center text-gray-500 mt-8">
+          <div className="text-center text-muted-foreground mt-8">
             <SystemIcon />
             <p className="mt-2">Welcome to A2A Multi-Agent Chat!</p>
             <p className="text-sm">Connect agents and start communicating.</p>
@@ -476,7 +490,7 @@ function EnhancedMultiAgentChatUI() {
         <div ref={messagesEndRef} />
       </main>
 
-      <footer className="bg-white dark:bg-gray-800 shadow-inner p-2">
+      <footer className="bg-transparent dark:bg-transparent shadow-inner p-2">
         <div className="flex items-center space-x-2">
           <div className="flex-1 relative">
             <input

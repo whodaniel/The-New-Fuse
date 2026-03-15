@@ -12,7 +12,7 @@ export const MarketplaceCard = ({ item, onPurchase, onPreview }) => {
     }).format(price);
   };
   return (
-    <Card_1.Card className="hover:shadow-lg transition-shadow duration-200">
+    <Card_1.Card className="hover:shadow-none transition-shadow duration-200">
       <Card_1.CardHeader>
         <div className="flex justify-between items-start">
           <div>
@@ -40,15 +40,17 @@ export const MarketplaceCard = ({ item, onPurchase, onPreview }) => {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="text-center p-2 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <div className="text-sm text-gray-500 dark:text-gray-400">Downloads</div>
+            <div className="text-center p-2 bg-transparent dark:bg-transparent rounded-md">
+              <div className="text-sm text-muted-foreground dark:text-muted-foreground">
+                Downloads
+              </div>
               <div className="mt-1 font-semibold flex items-center justify-center">
                 <lucide_react_1.Download className="w-4 h-4 mr-1" />
                 {item.downloads.toLocaleString()}
               </div>
             </div>
-            <div className="text-center p-2 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <div className="text-sm text-gray-500 dark:text-gray-400">Price</div>
+            <div className="text-center p-2 bg-transparent dark:bg-transparent rounded-md">
+              <div className="text-sm text-muted-foreground dark:text-muted-foreground">Price</div>
               <div className="mt-1 font-semibold">{formatPrice(item.price)}</div>
             </div>
           </div>
@@ -59,7 +61,7 @@ export const MarketplaceCard = ({ item, onPurchase, onPreview }) => {
             </div>
             <div>
               <div className="text-sm font-medium">{item.author.name}</div>
-              <div className="text-xs text-gray-500 dark:text-gray-400">Author</div>
+              <div className="text-xs text-muted-foreground dark:text-muted-foreground">Author</div>
             </div>
           </div>
         </div>

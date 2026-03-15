@@ -84,11 +84,11 @@ const AgentCreationStudio: React.FC<AgentCreationStudioProps> = ({ onSubmit }) =
               <div key={trait} className="w-full">
                 <div className="flex justify-between mb-2">
                   <p className="font-medium capitalize">{trait}</p>
-                  <span className="text-sm text-gray-500">{value}</span>
+                  <span className="text-sm text-muted-foreground">{value}</span>
                 </div>
                 <input
                   type="range"
-                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                  className="w-full h-2 bg-gray-200 rounded-md appearance-none cursor-pointer accent-blue-600"
                   value={value}
                   onChange={(e) => handleTraitChange(trait, parseFloat(e.target.value))}
                   min={0}
@@ -105,7 +105,7 @@ const AgentCreationStudio: React.FC<AgentCreationStudioProps> = ({ onSubmit }) =
             {agentData.skills?.map((skill, index) => (
               <div
                 key={index}
-                className="flex justify-between items-center w-full p-2 bg-gray-50 rounded border border-gray-200"
+                className="flex justify-between items-center w-full p-2 bg-transparent rounded border border-gray-200"
               >
                 <span className="font-medium">{skill}</span>
                 <Button
@@ -136,7 +136,7 @@ const AgentCreationStudio: React.FC<AgentCreationStudioProps> = ({ onSubmit }) =
   };
 
   return (
-    <div className="p-4 border border-gray-200 rounded-lg bg-white shadow-sm">
+    <div className="p-4 border border-gray-200 rounded-md bg-transparent shadow-none">
       <form onSubmit={handleSubmit}>
         {renderStep(currentStep)}
         <div className="flex gap-4 mt-6">

@@ -47,7 +47,7 @@ export function FormTextField({
 
   const inputClasses = cn(
     'w-full px-3 py-2 border rounded-md transition-colors',
-    'bg-white dark:bg-neutral-800',
+    'bg-transparent dark:bg-transparent',
     'text-neutral-900 dark:text-neutral-100',
     error
       ? 'border-danger-500 focus:border-danger-600 focus:ring-danger-500'
@@ -93,7 +93,7 @@ export function FormTextField({
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-neutral-700"
           >
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
@@ -101,7 +101,7 @@ export function FormTextField({
       </div>
 
       {helperText && (
-        <p className={cn('text-sm mt-1', error ? 'text-danger-600' : 'text-neutral-500')}>
+        <p className={cn('text-sm mt-1', error ? 'text-danger-600' : 'text-muted-foreground')}>
           {helperText}
         </p>
       )}
@@ -160,7 +160,7 @@ export function FormSelectField({
         required={required}
         className={cn(
           'w-full px-3 py-2 border rounded-md transition-colors',
-          'bg-white dark:bg-neutral-800',
+          'bg-transparent dark:bg-transparent',
           'text-neutral-900 dark:text-neutral-100',
           error
             ? 'border-danger-500 focus:border-danger-600'
@@ -177,7 +177,7 @@ export function FormSelectField({
       </select>
 
       {helperText && (
-        <p className={cn('text-sm mt-1', error ? 'text-danger-600' : 'text-neutral-500')}>
+        <p className={cn('text-sm mt-1', error ? 'text-danger-600' : 'text-muted-foreground')}>
           {helperText}
         </p>
       )}
@@ -231,7 +231,7 @@ export function FormCheckboxField({
           {required && <span className="text-danger-500 ml-1">*</span>}
         </label>
         {helperText && (
-          <p className={cn('text-sm mt-1', error ? 'text-danger-600' : 'text-neutral-500')}>
+          <p className={cn('text-sm mt-1', error ? 'text-danger-600' : 'text-muted-foreground')}>
             {helperText}
           </p>
         )}
@@ -272,7 +272,7 @@ export function FormSwitchField({
           {required && <span className="text-danger-500 ml-1">*</span>}
         </label>
         {helperText && (
-          <p className={cn('text-sm mt-1', error ? 'text-danger-600' : 'text-neutral-500')}>
+          <p className={cn('text-sm mt-1', error ? 'text-danger-600' : 'text-muted-foreground')}>
             {helperText}
           </p>
         )}
@@ -290,7 +290,7 @@ export function FormSwitchField({
       >
         <span
           className={cn(
-            'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
+            'inline-block h-4 w-4 transform rounded-full bg-transparent transition-transform',
             value ? 'translate-x-6' : 'translate-x-1'
           )}
         />
@@ -336,7 +336,7 @@ export function FormSliderField({
           {label}
           {required && <span className="text-danger-500 ml-1">*</span>}
         </label>
-        <span className="text-sm text-neutral-600 dark:text-neutral-400">{value}</span>
+        <span className="text-sm text-neutral-600 dark:text-muted-foreground">{value}</span>
       </div>
 
       <Slider
@@ -350,7 +350,7 @@ export function FormSliderField({
       />
 
       {helperText && (
-        <p className={cn('text-sm mt-1', error ? 'text-danger-600' : 'text-neutral-500')}>
+        <p className={cn('text-sm mt-1', error ? 'text-danger-600' : 'text-muted-foreground')}>
           {helperText}
         </p>
       )}
@@ -423,7 +423,7 @@ export function FormArrayField<T = any>({
           type="button"
           onClick={handleAdd}
           disabled={disabled}
-          className="flex items-center gap-2 px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md hover:bg-transparent dark:hover:bg-neutral-800 transition-colors"
         >
           <Plus className="h-4 w-4" />
           {addLabel}
@@ -431,7 +431,7 @@ export function FormArrayField<T = any>({
       </div>
 
       {helperText && (
-        <p className={cn('text-sm mt-1', error ? 'text-danger-600' : 'text-neutral-500')}>
+        <p className={cn('text-sm mt-1', error ? 'text-danger-600' : 'text-muted-foreground')}>
           {helperText}
         </p>
       )}

@@ -149,9 +149,12 @@ export default function SystemMetricsDashboard() {
     trendValue?: string;
     color: string;
   }) => (
-    <div className="bg-white rounded-lg shadow-lg p-6 border-l-4" style={{ borderColor: color }}>
+    <div
+      className="bg-transparent rounded-md shadow-none-none p-4 border-l-4"
+      style={{ borderColor: color }}
+    >
       <div className="flex items-center justify-between mb-4">
-        <div className={`p-3 rounded-lg bg-opacity-10`} style={{ backgroundColor: color + '20' }}>
+        <div className={`p-3 rounded-md bg-opacity-10`} style={{ backgroundColor: color + '20' }}>
           <Icon className="h-6 w-6" style={{ color }} />
         </div>
         {trend && (
@@ -168,11 +171,11 @@ export default function SystemMetricsDashboard() {
         )}
       </div>
       <div className="mb-2">
-        <div className={`text-3xl font-bold ${getUsageColor(value)}`}>
+        <div className={`text-2xl font-bold ${getUsageColor(value)}`}>
           {value.toFixed(1)}
-          <span className="text-sm text-gray-500 ml-1">{unit}</span>
+          <span className="text-sm text-muted-foreground ml-1">{unit}</span>
         </div>
-        <div className="text-sm text-gray-600">{title}</div>
+        <div className="text-sm text-muted-foreground">{title}</div>
       </div>
       <div className="w-full bg-gray-200 rounded-full h-2">
         <div
@@ -184,16 +187,16 @@ export default function SystemMetricsDashboard() {
   );
 
   return (
-    <div className="p-8 max-w-[1600px] mx-auto bg-gray-50 min-h-screen">
+    <div className="p-4 max-w-[1600px] mx-auto bg-transparent min-h-screen">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2 flex items-center">
               <Activity className="h-8 w-8 mr-3 text-blue-600" />
               System Metrics Dashboard
             </h1>
-            <p className="text-gray-600">Real-time performance monitoring and analytics</p>
+            <p className="text-muted-foreground">Real-time performance monitoring and analytics</p>
           </div>
           <div className="flex items-center space-x-3">
             <label className="flex items-center space-x-2 text-sm">
@@ -208,7 +211,7 @@ export default function SystemMetricsDashboard() {
             <select
               value={timeRange}
               onChange={(e) => setTimeRange(e.target.value as any)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
             >
               <option value="1h">Last Hour</option>
               <option value="6h">Last 6 Hours</option>
@@ -217,7 +220,7 @@ export default function SystemMetricsDashboard() {
             </select>
             <button
               onClick={loadMetrics}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center"
+              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center"
             >
               <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
               Refresh
@@ -227,7 +230,7 @@ export default function SystemMetricsDashboard() {
       </div>
 
       {/* Real-time Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <MetricCard
           title="CPU Usage"
           value={metrics.cpu}
@@ -267,72 +270,76 @@ export default function SystemMetricsDashboard() {
       </div>
 
       {/* Additional Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="bg-transparent rounded-md shadow-none-none p-4">
           <div className="flex items-center justify-between mb-2">
             <Zap className="h-6 w-6 text-yellow-500" />
             <TrendingUp className="h-5 w-5 text-green-500" />
           </div>
-          <div className="text-3xl font-bold text-gray-900">{metrics.requestsPerSecond}</div>
-          <div className="text-sm text-gray-600">Requests/Second</div>
+          <div className="text-2xl font-bold text-gray-900">{metrics.requestsPerSecond}</div>
+          <div className="text-sm text-muted-foreground">Requests/Second</div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-6">
+        <div className="bg-transparent rounded-md shadow-none-none p-4">
           <div className="flex items-center justify-between mb-2">
             <Activity className="h-6 w-6 text-blue-500" />
             <TrendingDown className="h-5 w-5 text-green-500" />
           </div>
-          <div className="text-3xl font-bold text-gray-900">{metrics.avgResponseTime}</div>
-          <div className="text-sm text-gray-600">Avg Response Time (ms)</div>
+          <div className="text-2xl font-bold text-gray-900">{metrics.avgResponseTime}</div>
+          <div className="text-sm text-muted-foreground">Avg Response Time (ms)</div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-6">
+        <div className="bg-transparent rounded-md shadow-none-none p-4">
           <div className="flex items-center justify-between mb-2">
             <Database className="h-6 w-6 text-green-500" />
             <Activity className="h-5 w-5 text-blue-500" />
           </div>
-          <div className="text-3xl font-bold text-gray-900">{metrics.activeConnections}</div>
-          <div className="text-sm text-gray-600">Active Connections</div>
+          <div className="text-2xl font-bold text-gray-900">{metrics.activeConnections}</div>
+          <div className="text-sm text-muted-foreground">Active Connections</div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-6">
+        <div className="bg-transparent rounded-md shadow-none-none p-4">
           <div className="flex items-center justify-between mb-2">
             <AlertCircle className="h-6 w-6 text-red-500" />
             <TrendingDown className="h-5 w-5 text-green-500" />
           </div>
-          <div className="text-3xl font-bold text-gray-900">{metrics.errorRate.toFixed(2)}</div>
-          <div className="text-sm text-gray-600">Error Rate (%)</div>
+          <div className="text-2xl font-bold text-gray-900">{metrics.errorRate.toFixed(2)}</div>
+          <div className="text-sm text-muted-foreground">Error Rate (%)</div>
         </div>
       </div>
 
       {/* Performance Charts - Historical Data */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center justify-center min-h-[300px] opacity-75">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+        <div className="bg-transparent rounded-md shadow-none-none p-4 flex flex-col items-center justify-center min-h-[300px] opacity-75">
           <Activity className="h-16 w-16 text-gray-300 mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Resource Utilization History</h3>
-          <p className="text-gray-500 text-center">
+          <p className="text-muted-foreground text-center">
             Historical metrics retention is not currently enabled.
           </p>
           <p className="text-sm text-gray-400 mt-1">Real-time monitoring is active.</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center justify-center min-h-[300px] opacity-75">
+        <div className="bg-transparent rounded-md shadow-none-none p-4 flex flex-col items-center justify-center min-h-[300px] opacity-75">
           <Zap className="h-16 w-16 text-gray-300 mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Request Volume History</h3>
-          <p className="text-gray-500 text-center">Traffic history data is not available.</p>
+          <p className="text-muted-foreground text-center">
+            Traffic history data is not available.
+          </p>
           <p className="text-sm text-gray-400 mt-1">Real-time stats are shown above.</p>
         </div>
       </div>
 
       {/* Error Rate & Radar */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center justify-center min-h-[300px] opacity-75">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+        <div className="bg-transparent rounded-md shadow-none-none p-4 flex flex-col items-center justify-center min-h-[300px] opacity-75">
           <AlertCircle className="h-16 w-16 text-gray-300 mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Error Rate Trend</h3>
-          <p className="text-gray-500 text-center">Historical error tracking is not available.</p>
+          <p className="text-muted-foreground text-center">
+            Historical error tracking is not available.
+          </p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-6">
+        <div className="bg-transparent rounded-md shadow-none-none p-4">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
             System Health Radar (Real-time)
           </h3>
@@ -355,39 +362,39 @@ export default function SystemMetricsDashboard() {
       </div>
 
       {/* System Information */}
-      <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="bg-transparent rounded-md shadow-none-none p-4">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">System Information</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
-            <div className="text-sm text-gray-600">Operating System</div>
+            <div className="text-sm text-muted-foreground">Operating System</div>
             <div className="text-lg font-semibold text-gray-900">Linux Ubuntu 22.04</div>
           </div>
           <div>
-            <div className="text-sm text-gray-600">Kernel Version</div>
+            <div className="text-sm text-muted-foreground">Kernel Version</div>
             <div className="text-lg font-semibold text-gray-900">5.15.0-91-generic</div>
           </div>
           <div>
-            <div className="text-sm text-gray-600">Total Memory</div>
+            <div className="text-sm text-muted-foreground">Total Memory</div>
             <div className="text-lg font-semibold text-gray-900">64 GB</div>
           </div>
           <div>
-            <div className="text-sm text-gray-600">Total Disk Space</div>
+            <div className="text-sm text-muted-foreground">Total Disk Space</div>
             <div className="text-lg font-semibold text-gray-900">1 TB SSD</div>
           </div>
           <div>
-            <div className="text-sm text-gray-600">CPU Cores</div>
+            <div className="text-sm text-muted-foreground">CPU Cores</div>
             <div className="text-lg font-semibold text-gray-900">16 cores (32 threads)</div>
           </div>
           <div>
-            <div className="text-sm text-gray-600">Architecture</div>
+            <div className="text-sm text-muted-foreground">Architecture</div>
             <div className="text-lg font-semibold text-gray-900">x86_64</div>
           </div>
           <div>
-            <div className="text-sm text-gray-600">Uptime</div>
+            <div className="text-sm text-muted-foreground">Uptime</div>
             <div className="text-lg font-semibold text-gray-900">45 days, 12 hours</div>
           </div>
           <div>
-            <div className="text-sm text-gray-600">Load Average</div>
+            <div className="text-sm text-muted-foreground">Load Average</div>
             <div className="text-lg font-semibold text-gray-900">2.14, 1.98, 1.82</div>
           </div>
         </div>
@@ -395,7 +402,7 @@ export default function SystemMetricsDashboard() {
 
       {/* Export Data */}
       <div className="mt-6 flex justify-end">
-        <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center text-sm">
+        <button className="px-4 py-2 border border-gray-300 rounded-md hover:bg-muted/20 flex items-center text-sm">
           <Download className="h-4 w-4 mr-2" />
           Export Metrics Data
         </button>

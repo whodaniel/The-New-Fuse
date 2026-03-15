@@ -195,30 +195,30 @@ export default function UserManagementFull() {
   };
 
   return (
-    <div className="p-8 max-w-[1600px] mx-auto bg-gray-50 min-h-screen">
+    <div className="p-4 max-w-[1600px] mx-auto bg-transparent min-h-screen">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2 flex items-center">
               <Users className="h-8 w-8 mr-3 text-blue-600" />
               User Management
             </h1>
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               Manage users, roles, and permissions across the platform
             </p>
           </div>
           <div className="flex items-center space-x-3">
             <button
               onClick={loadUsers}
-              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center"
+              className="px-4 py-2 border border-gray-300 rounded-md hover:bg-muted/20 flex items-center"
             >
               <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
               Refresh
             </button>
             <button
               onClick={() => setShowCreateModal(true)}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center"
+              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center"
             >
               <Plus className="h-4 w-4 mr-2" />
               Add User
@@ -228,43 +228,43 @@ export default function UserManagementFull() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow p-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="bg-transparent rounded-md shadow-none p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Total Users</p>
-              <p className="text-3xl font-bold text-gray-900">{users.length}</p>
+              <p className="text-sm text-muted-foreground">Total Users</p>
+              <p className="text-2xl font-bold text-gray-900">{users.length}</p>
             </div>
             <Users className="h-12 w-12 text-blue-500 opacity-20" />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-transparent rounded-md shadow-none p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Active Users</p>
-              <p className="text-3xl font-bold text-green-600">
+              <p className="text-sm text-muted-foreground">Active Users</p>
+              <p className="text-2xl font-bold text-green-600">
                 {users.filter((u) => u.status === 'active').length}
               </p>
             </div>
             <Check className="h-12 w-12 text-green-500 opacity-20" />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-transparent rounded-md shadow-none p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Admins</p>
-              <p className="text-3xl font-bold text-purple-600">
+              <p className="text-sm text-muted-foreground">Admins</p>
+              <p className="text-2xl font-bold text-purple-600">
                 {users.filter((u) => u.role === 'admin').length}
               </p>
             </div>
             <Shield className="h-12 w-12 text-purple-500 opacity-20" />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-transparent rounded-md shadow-none p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Suspended</p>
-              <p className="text-3xl font-bold text-red-600">
+              <p className="text-sm text-muted-foreground">Suspended</p>
+              <p className="text-2xl font-bold text-red-600">
                 {users.filter((u) => u.status === 'suspended').length}
               </p>
             </div>
@@ -274,7 +274,7 @@ export default function UserManagementFull() {
       </div>
 
       {/* Filters and Search */}
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
+      <div className="bg-transparent rounded-md shadow-none p-4 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="md:col-span-2">
             <div className="relative">
@@ -284,7 +284,7 @@ export default function UserManagementFull() {
                 placeholder="Search users by name or email..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
           </div>
@@ -292,7 +292,7 @@ export default function UserManagementFull() {
             <select
               value={selectedRole}
               onChange={(e) => setSelectedRole(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">All Roles</option>
               <option value="admin">Admin</option>
@@ -305,7 +305,7 @@ export default function UserManagementFull() {
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">All Status</option>
               <option value="active">Active</option>
@@ -317,9 +317,9 @@ export default function UserManagementFull() {
 
         {/* Bulk Actions */}
         {selectedUsers.size > 0 && (
-          <div className="mt-4 p-4 bg-blue-50 rounded-lg flex items-center justify-between">
+          <div className="mt-4 p-4 bg-blue-50 rounded-md flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <span className="text-sm font-medium text-gray-700">
+              <span className="text-sm font-medium text-foreground">
                 {selectedUsers.size} user(s) selected
               </span>
               <button
@@ -346,7 +346,7 @@ export default function UserManagementFull() {
             </div>
             <button
               onClick={() => setSelectedUsers(new Set())}
-              className="text-sm text-gray-600 hover:text-gray-800"
+              className="text-sm text-muted-foreground hover:text-gray-800"
             >
               Clear Selection
             </button>
@@ -355,12 +355,12 @@ export default function UserManagementFull() {
       </div>
 
       {/* Users Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-transparent rounded-md shadow-none overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-border/50">
+            <thead className="bg-transparent">
               <tr>
-                <th className="px-6 py-3 text-left">
+                <th className="px-3 py-2 text-left">
                   <input
                     type="checkbox"
                     checked={
@@ -370,48 +370,48 @@ export default function UserManagementFull() {
                     className="h-4 w-4 text-blue-600 rounded"
                   />
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   User
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Role
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Workspaces/Agents
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Last Login
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Created
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-transparent divide-y divide-border/50">
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="px-6 py-12 text-center">
+                  <td colSpan={8} className="px-3 py-12 text-center">
                     <RefreshCw className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-2" />
-                    <p className="text-gray-600">Loading users...</p>
+                    <p className="text-muted-foreground">Loading users...</p>
                   </td>
                 </tr>
               ) : filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-6 py-12 text-center">
+                  <td colSpan={8} className="px-3 py-12 text-center">
                     <Users className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-                    <p className="text-gray-600">No users found</p>
+                    <p className="text-muted-foreground">No users found</p>
                   </td>
                 </tr>
               ) : (
                 filteredUsers.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
+                  <tr key={user.id} className="hover:bg-muted/20">
+                    <td className="px-3 py-2 whitespace-nowrap">
                       <input
                         type="checkbox"
                         checked={selectedUsers.has(user.id)}
@@ -419,7 +419,7 @@ export default function UserManagementFull() {
                         className="h-4 w-4 text-blue-600 rounded"
                       />
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 py-2 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
                           <span className="text-blue-600 font-semibold">
@@ -433,34 +433,34 @@ export default function UserManagementFull() {
                               <Check className="h-4 w-4 text-green-500 ml-1" />
                             )}
                           </div>
-                          <div className="text-sm text-gray-500">{user.email}</div>
+                          <div className="text-sm text-muted-foreground">{user.email}</div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 py-2 whitespace-nowrap">
                       <span
                         className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getRoleBadge(user.role)}`}
                       >
                         {user.role}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 py-2 whitespace-nowrap">
                       <span
                         className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(user.status)}`}
                       >
                         {user.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-3 py-2 whitespace-nowrap text-sm text-muted-foreground">
                       {user.workspaces} / {user.agents}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-3 py-2 whitespace-nowrap text-sm text-muted-foreground">
                       {formatLastLogin(user.lastLogin)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-3 py-2 whitespace-nowrap text-sm text-muted-foreground">
                       {formatDate(user.createdAt)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <td className="px-3 py-2 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex items-center justify-end space-x-2">
                         <button
                           onClick={() => {
@@ -495,8 +495,8 @@ export default function UserManagementFull() {
         </div>
 
         {/* Pagination */}
-        <div className="bg-gray-50 px-6 py-4 flex items-center justify-between border-t border-gray-200">
-          <span className="text-sm text-gray-500">
+        <div className="bg-transparent px-3 py-2 flex items-center justify-between border-t border-gray-200">
+          <span className="text-sm text-muted-foreground">
             Showing {filteredUsers.length} of {users.length} users
           </span>
           <div className="flex space-x-2">

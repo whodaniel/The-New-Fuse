@@ -223,7 +223,7 @@ export const MassBlockExecutor: React.FC<MassBlockExecutorProps> = ({
 
       default:
         return (
-          <div className="p-3 bg-gray-50 text-gray-600 rounded-md text-sm border border-gray-200">
+          <div className="p-3 bg-transparent text-muted-foreground rounded-md text-sm border border-gray-200">
             Configuration for {selectedBlock} block coming soon...
           </div>
         );
@@ -233,7 +233,7 @@ export const MassBlockExecutor: React.FC<MassBlockExecutorProps> = ({
   const selectedBlockInfo = blockTypes.find((bt) => bt.type === selectedBlock);
 
   return (
-    <div className="border border-gray-200 rounded-lg shadow-sm bg-white">
+    <div className="border border-gray-200 rounded-md shadow-none bg-transparent">
       <div className="p-4 border-b border-gray-200 flex items-center gap-2">
         <FiZap className="text-purple-500" />
         <h2 className="text-lg font-semibold">MASS Block Executor</h2>
@@ -242,7 +242,7 @@ export const MassBlockExecutor: React.FC<MassBlockExecutorProps> = ({
         </span>
       </div>
 
-      <div className="p-6 flex flex-col gap-6">
+      <div className="p-4 flex flex-col gap-4">
         {/* Block Type Selection */}
         <div className="w-full">
           <p className="text-sm font-medium mb-3">Select MASS Building Block</p>
@@ -253,7 +253,7 @@ export const MassBlockExecutor: React.FC<MassBlockExecutorProps> = ({
                 className={`w-full p-3 border-2 rounded-md cursor-pointer transition-all flex items-center justify-between ${
                   selectedBlock === blockType.type
                     ? blockType.color
-                    : 'border-gray-200 bg-white hover:border-gray-300'
+                    : 'border-gray-200 bg-transparent hover:border-gray-300'
                 }`}
                 onClick={() => {
                   setSelectedBlock(blockType.type);
@@ -271,7 +271,7 @@ export const MassBlockExecutor: React.FC<MassBlockExecutorProps> = ({
                   </div>
                 </div>
                 {selectedBlock === blockType.type && (
-                  <span className="text-xs font-bold uppercase tracking-wider px-2 py-1 rounded bg-white/20">
+                  <span className="text-xs font-bold uppercase tracking-wider px-2 py-1 rounded bg-transparent/20">
                     Selected
                   </span>
                 )}
@@ -296,7 +296,7 @@ export const MassBlockExecutor: React.FC<MassBlockExecutorProps> = ({
                   className={`w-full p-3 border rounded-md cursor-pointer transition-colors flex items-center justify-between ${
                     isSelected
                       ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 bg-white hover:bg-gray-50'
+                      : 'border-gray-200 bg-transparent hover:bg-muted/20'
                   }`}
                   onClick={() => {
                     if (isSelected) {
@@ -308,7 +308,7 @@ export const MassBlockExecutor: React.FC<MassBlockExecutorProps> = ({
                 >
                   <div>
                     <p className="font-medium">{agent.name}</p>
-                    <p className="text-sm text-gray-600">{agent.type}</p>
+                    <p className="text-sm text-muted-foreground">{agent.type}</p>
                   </div>
                   {isSelected && (
                     <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded">
@@ -327,7 +327,7 @@ export const MassBlockExecutor: React.FC<MassBlockExecutorProps> = ({
         {selectedBlockInfo && (
           <div className="w-full">
             <div className="flex items-center gap-2 mb-3">
-              <selectedBlockInfo.icon className="text-gray-500" />
+              <selectedBlockInfo.icon className="text-muted-foreground" />
               <p className="text-sm font-medium">{selectedBlockInfo.name} Configuration</p>
             </div>
             {renderBlockConfiguration()}
@@ -352,7 +352,7 @@ export const MassBlockExecutor: React.FC<MassBlockExecutorProps> = ({
         <Button
           onClick={handleExecute}
           disabled={loading || !input.trim() || selectedAgents.length === 0}
-          className={`w-full flex items-center justify-center gap-2 py-3 ${selectedBlockInfo?.color.split(' ')[0].replace('text-', 'bg-').replace('500', '600')} text-white hover:opacity-90`}
+          className={`w-full flex items-center justify-center gap-2 py-2 ${selectedBlockInfo?.color.split(' ')[0].replace('text-', 'bg-').replace('500', '600')} text-white hover:opacity-90`}
         >
           {loading ? (
             'Executing...'
@@ -374,7 +374,7 @@ export const MassBlockExecutor: React.FC<MassBlockExecutorProps> = ({
               <div className="border border-gray-200 rounded-md overflow-hidden">
                 <button
                   onClick={() => toggleConfig('finalResult')}
-                  className="w-full p-4 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors"
+                  className="w-full p-4 flex items-center justify-between bg-transparent hover:bg-muted/30 transition-colors"
                 >
                   <div className="flex items-center gap-2">
                     <FiZap className="text-green-500" />
@@ -386,8 +386,8 @@ export const MassBlockExecutor: React.FC<MassBlockExecutorProps> = ({
                   {openConfig.finalResult ? <FiChevronDown /> : <FiChevronRight />}
                 </button>
                 {openConfig.finalResult && (
-                  <div className="p-4 bg-white border-t border-gray-200">
-                    <div className="p-3 bg-gray-50 rounded-md border border-gray-200 overflow-x-auto">
+                  <div className="p-4 bg-transparent border-t border-gray-200">
+                    <div className="p-3 bg-transparent rounded-md border border-gray-200 overflow-x-auto">
                       <pre className="text-sm whitespace-pre-wrap font-mono">
                         {typeof executionResult.result === 'string'
                           ? executionResult.result
@@ -403,7 +403,7 @@ export const MassBlockExecutor: React.FC<MassBlockExecutorProps> = ({
                 <div className="border border-gray-200 rounded-md overflow-hidden">
                   <button
                     onClick={() => toggleConfig('reflectionHistory')}
-                    className="w-full p-4 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors"
+                    className="w-full p-4 flex items-center justify-between bg-transparent hover:bg-muted/30 transition-colors"
                   >
                     <div className="flex items-center gap-2">
                       <FiRefreshCw className="text-blue-500" />
@@ -415,14 +415,14 @@ export const MassBlockExecutor: React.FC<MassBlockExecutorProps> = ({
                     {openConfig.reflectionHistory ? <FiChevronDown /> : <FiChevronRight />}
                   </button>
                   {openConfig.reflectionHistory && (
-                    <div className="p-4 bg-white border-t border-gray-200 flex flex-col gap-3">
+                    <div className="p-4 bg-transparent border-t border-gray-200 flex flex-col gap-3">
                       {executionResult.reflectionHistory.map((round: any, index: number) => (
                         <div
                           key={index}
                           className="p-3 bg-blue-50 rounded-md border border-blue-100"
                         >
                           <p className="text-sm font-medium mb-2">Round {index + 1}</p>
-                          <pre className="text-sm whitespace-pre-wrap font-mono bg-white p-2 rounded border border-blue-100">
+                          <pre className="text-sm whitespace-pre-wrap font-mono bg-transparent p-2 rounded border border-blue-100">
                             {JSON.stringify(round, null, 2)}
                           </pre>
                         </div>
@@ -437,7 +437,7 @@ export const MassBlockExecutor: React.FC<MassBlockExecutorProps> = ({
                 <div className="border border-gray-200 rounded-md overflow-hidden">
                   <button
                     onClick={() => toggleConfig('debateHistory')}
-                    className="w-full p-4 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors"
+                    className="w-full p-4 flex items-center justify-between bg-transparent hover:bg-muted/30 transition-colors"
                   >
                     <div className="flex items-center gap-2">
                       <FiMessageSquare className="text-purple-500" />
@@ -449,14 +449,14 @@ export const MassBlockExecutor: React.FC<MassBlockExecutorProps> = ({
                     {openConfig.debateHistory ? <FiChevronDown /> : <FiChevronRight />}
                   </button>
                   {openConfig.debateHistory && (
-                    <div className="p-4 bg-white border-t border-gray-200 flex flex-col gap-3">
+                    <div className="p-4 bg-transparent border-t border-gray-200 flex flex-col gap-3">
                       {executionResult.debateHistory.map((round: any, index: number) => (
                         <div
                           key={index}
                           className="p-3 bg-purple-50 rounded-md border border-purple-100"
                         >
                           <p className="text-sm font-medium mb-2">Debate Round {index + 1}</p>
-                          <pre className="text-sm whitespace-pre-wrap font-mono bg-white p-2 rounded border border-purple-100">
+                          <pre className="text-sm whitespace-pre-wrap font-mono bg-transparent p-2 rounded border border-purple-100">
                             {JSON.stringify(round, null, 2)}
                           </pre>
                         </div>
@@ -470,7 +470,7 @@ export const MassBlockExecutor: React.FC<MassBlockExecutorProps> = ({
               <div className="border border-gray-200 rounded-md overflow-hidden">
                 <button
                   onClick={() => toggleConfig('metrics')}
-                  className="w-full p-4 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors"
+                  className="w-full p-4 flex items-center justify-between bg-transparent hover:bg-muted/30 transition-colors"
                 >
                   <div className="flex items-center gap-2">
                     <FiTool className="text-orange-500" />
@@ -479,13 +479,13 @@ export const MassBlockExecutor: React.FC<MassBlockExecutorProps> = ({
                   {openConfig.metrics ? <FiChevronDown /> : <FiChevronRight />}
                 </button>
                 {openConfig.metrics && (
-                  <div className="p-4 bg-white border-t border-gray-200">
+                  <div className="p-4 bg-transparent border-t border-gray-200">
                     <div className="p-3 bg-orange-50 rounded-md border border-orange-100 flex flex-col gap-2">
                       {executionResult.executionMetrics &&
                         Object.entries(executionResult.executionMetrics).map(([key, value]) => (
                           <div key={key} className="flex justify-between text-sm">
-                            <span className="font-medium text-gray-700">{key}:</span>
-                            <span className="font-mono bg-white px-1 rounded border border-orange-100">
+                            <span className="font-medium text-foreground">{key}:</span>
+                            <span className="font-mono bg-transparent px-1 rounded border border-orange-100">
                               {String(value)}
                             </span>
                           </div>

@@ -85,7 +85,7 @@ const WorkflowTemplates: React.FC = () => {
             Back
           </Button>
           <div>
-            <h1 className="text-3xl font-bold">Workflow Templates</h1>
+            <h1 className="text-2xl font-bold">Workflow Templates</h1>
             <p className="text-muted-foreground">Start with a pre-built workflow template</p>
           </div>
         </div>
@@ -103,7 +103,7 @@ const WorkflowTemplates: React.FC = () => {
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : (
-        <div className="flex flex-col md:flex-row gap-6">
+        <div className="flex flex-col md:flex-row gap-4">
           <div className="md:w-64 space-y-6">
             <GlassCard title="Filters" gradient="blue">
               <div className="space-y-4">
@@ -200,18 +200,18 @@ const WorkflowTemplates: React.FC = () => {
             </div>
 
             {filteredTemplates.length === 0 ? (
-              <div className="bg-muted/50 border border-border rounded-md p-6 text-center">
+              <div className="bg-muted/50 border border-border rounded-md p-4 text-center">
                 <p className="text-muted-foreground">No templates match your search criteria.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredTemplates.map((template) => (
                   <GlassCard
                     key={template.id}
                     title={template.name}
                     subtitle={template.description}
                     gradient="blue"
-                    className="overflow-hidden flex flex-col h-full hover:shadow-lg transition-shadow"
+                    className="overflow-hidden flex flex-col h-full hover:shadow-none transition-shadow"
                   >
                     <div className="grow space-y-4">
                       <div className="flex justify-between items-start mb-2">

@@ -420,7 +420,7 @@ export default function ChatContainer({
               <DialogHeader>
                 <DialogTitle>Choose AI Model</DialogTitle>
               </DialogHeader>
-              <div className="py-4">
+              <div className="py-2">
                 <LLMSelector
                   selectedProviderId={selectedLLMProviderId}
                   onChange={handleLLMProviderChange}

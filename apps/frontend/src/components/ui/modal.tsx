@@ -65,7 +65,7 @@ export const ModalContent = forwardRef<
     <div
       ref={ref}
       className={cn(
-        'relative w-full transform overflow-hidden rounded-2xl bg-white dark:bg-neutral-800 text-left shadow-xl transition-all',
+        'relative w-full transform overflow-hidden rounded-md bg-transparent dark:bg-transparent text-left shadow-none transition-all',
         sizeClasses[size],
         className
       )}
@@ -80,7 +80,7 @@ export const ModalHeader = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElem
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn('border-b border-neutral-200 dark:border-neutral-700 px-6 py-4', className)}
+      className={cn('border-b border-neutral-200 dark:border-neutral-700 px-3 py-2', className)}
       {...props}
     />
   )
@@ -90,7 +90,7 @@ ModalHeader.displayName = 'ModalHeader';
 // Modal Body
 export const ModalBody = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn('px-6 py-4', className)} {...props} />
+    <div ref={ref} className={cn('px-3 py-2', className)} {...props} />
   )
 );
 ModalBody.displayName = 'ModalBody';
@@ -101,7 +101,7 @@ export const ModalFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElem
     <div
       ref={ref}
       className={cn(
-        'border-t border-neutral-200 dark:border-neutral-700 px-6 py-4 flex gap-2 justify-end',
+        'border-t border-neutral-200 dark:border-neutral-700 px-3 py-2 flex gap-2 justify-end',
         className
       )}
       {...props}
@@ -120,7 +120,7 @@ export const ModalCloseButton = forwardRef<
     type="button"
     aria-label="Close"
     className={cn(
-      'absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors',
+      'absolute top-4 right-4 text-gray-400 hover:text-muted-foreground dark:hover:text-gray-300 transition-colors',
       className
     )}
     {...props}

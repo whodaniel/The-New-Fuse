@@ -30,8 +30,8 @@ const AgentDetails = () => {
     return <div>Error loading agent details</div>;
   }
   return (
-    <div className="container mx-auto p-6">
-      <GlassCard title={agent.name} className="p-6">
+    <div className="container mx-auto p-4">
+      <GlassCard title={agent.name} className="p-4">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -45,19 +45,19 @@ const AgentDetails = () => {
               <GlassCard title="Agent Information">
                 <dl className="grid grid-cols-2 gap-4">
                   <div>
-                    <dt className="text-sm font-medium text-gray-500">Type</dt>
+                    <dt className="text-sm font-medium text-muted-foreground">Type</dt>
                     <dd className="text-lg">{agent.type}</dd>
                   </div>
                   <div>
-                    <dt className="text-sm font-medium text-gray-500">Created</dt>
+                    <dt className="text-sm font-medium text-muted-foreground">Created</dt>
                     <dd className="text-lg">{new Date(agent.createdAt).toLocaleDateString()}</dd>
                   </div>
                   <div>
-                    <dt className="text-sm font-medium text-gray-500">Last Active</dt>
+                    <dt className="text-sm font-medium text-muted-foreground">Last Active</dt>
                     <dd className="text-lg">{new Date(agent.lastActiveAt).toLocaleDateString()}</dd>
                   </div>
                   <div>
-                    <dt className="text-sm font-medium text-gray-500">Tasks Completed</dt>
+                    <dt className="text-sm font-medium text-muted-foreground">Tasks Completed</dt>
                     <dd className="text-lg">{agent.tasksCompleted}</dd>
                   </div>
                 </dl>

@@ -37,7 +37,7 @@ export function Switch({
     >
       <span
         className={`
-          inline-block h-4 w-4 transform rounded-full bg-white transition-transform
+          inline-block h-4 w-4 transform rounded-full bg-transparent transition-transform
           ${checked ? 'translate-x-6' : 'translate-x-1'}
         `}
       />

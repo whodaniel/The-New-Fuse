@@ -37,7 +37,7 @@ const Users = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Users</h1>
+          <h1 className="text-2xl font-bold">Users</h1>
           <p className="text-muted-foreground mt-2">Manage system users and their permissions</p>
         </div>
         <Button onClick={() => setShowCreateDialog(true)}>
@@ -65,7 +65,7 @@ const Users = () => {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="border rounded-lg">
+            <div className="border rounded-md">
               <div className="grid grid-cols-6 gap-4 p-4 text-sm font-medium text-muted-foreground">
                 <div>Name</div>
                 <div>Email</div>

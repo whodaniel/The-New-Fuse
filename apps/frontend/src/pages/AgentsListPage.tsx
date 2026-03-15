@@ -111,7 +111,7 @@ export default function AgentsPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-in slide-in-from-bottom-4 duration-500 delay-100">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-in slide-in-from-bottom-4 duration-500 delay-100">
         <StatsCard
           label="Total Champions"
           value={agents.length}
@@ -150,7 +150,7 @@ export default function AgentsPage() {
       </div>
 
       {/* Agents List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {agents.map((agent, index) => (
           <div
             key={agent.id}
@@ -161,7 +161,7 @@ export default function AgentsPage() {
               {/* Agent Header */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-12 h-12 rounded-md bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-none group-hover:scale-110 transition-transform duration-300">
                     <Bot className="w-6 h-6 text-white" />
                   </div>
                   <div>
@@ -175,7 +175,7 @@ export default function AgentsPage() {
               </div>
 
               {/* Last Active */}
-              <div className="flex items-center gap-2 mb-4 text-sm text-gray-400 bg-white/5 p-2 rounded-lg">
+              <div className="flex items-center gap-2 mb-4 text-sm text-gray-400 bg-transparent/5 p-2 rounded-md">
                 <TrendingUp className="w-4 h-4 text-purple-400" />
                 <span>{agent.lastActive}</span>
               </div>
@@ -185,7 +185,7 @@ export default function AgentsPage() {
 
               {/* Capabilities */}
               <div className="mb-6">
-                <p className="text-xs font-bold text-gray-500 mb-3 uppercase tracking-wider">
+                <p className="text-xs font-bold text-muted-foreground mb-3 uppercase tracking-wider">
                   Core Abilities
                 </p>
                 <div className="flex flex-wrap gap-2">
@@ -227,7 +227,7 @@ export default function AgentsPage() {
           <Sparkles className="w-6 h-6 text-purple-400" />
           Command Operations
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Link to="/agents/new">
             <ActionCard
               title="Forge New Champion"

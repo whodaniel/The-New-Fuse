@@ -152,7 +152,7 @@ export function MCPMarketplace() {
   return (
     <div className="container mx-auto py-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">MCP Server Marketplace</h1>
+        <h1 className="text-2xl font-bold">MCP Server Marketplace</h1>
         <PremiumButton variant="outline" onClick={fetchServers} disabled={loading}>
           {loading ? (
             <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
@@ -195,7 +195,7 @@ export function MCPMarketplace() {
           </Select>
         </div>
         {loadError && (
-          <div className="mb-4 rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3">
+          <div className="mb-4 rounded-md border border-amber-500/40 bg-amber-500/10 px-4 py-2">
             <p className="text-sm text-amber-200">{loadError}. Showing no fallback catalog.</p>
           </div>
         )}
@@ -210,7 +210,7 @@ export function MCPMarketplace() {
               <p className="text-muted-foreground">No servers found matching your criteria</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredServers.map((server) => (
                 <ServerCard
                   key={server.id}
@@ -230,7 +230,7 @@ export function MCPMarketplace() {
               <Icons.spinner className="h-8 w-8 animate-spin" />
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredServers
                 .sort((a, b) => b.downloads - a.downloads)
                 .slice(0, 6)
@@ -253,7 +253,7 @@ export function MCPMarketplace() {
               <Icons.spinner className="h-8 w-8 animate-spin" />
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredServers
                 .sort(
                   (a, b) => new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime()
@@ -353,7 +353,7 @@ function ServerCard({
   isInstalled: boolean;
 }) {
   return (
-    <GlassCard className="p-6">
+    <GlassCard className="p-4">
       <div className="flex justify-between items-start mb-2">
         <h3 className="text-xl font-semibold text-white">{server.name}</h3>
         <Badge variant="outline">{server.category}</Badge>
@@ -428,7 +428,7 @@ function ServerDetailsDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="md:col-span-2">
             <h3 className="text-lg font-semibold mb-2">Description</h3>
             <p className="text-muted-foreground mb-4">{server.description}</p>
@@ -619,7 +619,7 @@ function ServerInstallDialog({
                 )}
               </div>
             ) : (
-              <div className="py-4 text-center">
+              <div className="py-2 text-center">
                 <p>No additional configuration required.</p>
                 <p className="text-sm text-muted-foreground mt-1">
                   Click install to add this server to your configuration.

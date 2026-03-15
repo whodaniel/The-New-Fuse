@@ -93,7 +93,7 @@ export default function FeatureFlagsAdmin() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-white">Feature Flags</h1>
         <Button
@@ -113,7 +113,7 @@ export default function FeatureFlagsAdmin() {
         </Button>
       </div>
 
-      <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
         <Card title="Feature List" gradient="blue">
           <div className="space-y-4">
             {features.map((feature: any) => (
@@ -153,7 +153,7 @@ export default function FeatureFlagsAdmin() {
 
         {selectedFeature && (
           <Card title={selectedFeature.id ? 'Edit Feature' : 'New Feature'} gradient="orange">
-            <div className="absolute top-6 right-6">
+            <div className="absolute top-4 right-6">
               {selectedFeature.id && (
                 <Button
                   variant="danger"
@@ -294,7 +294,7 @@ export default function FeatureFlagsAdmin() {
                         </div>
                       </Card>
                     </div>
-                    <div className="p-4 rounded-xl bg-black/20 border border-white/5">
+                    <div className="p-4 rounded-md bg-black/20 border border-white/5">
                       <h4 className="font-medium text-gray-400 mb-1">Last Used</h4>
                       <div className="text-white">
                         {selectedFeature.metadata?.metrics?.lastUsed

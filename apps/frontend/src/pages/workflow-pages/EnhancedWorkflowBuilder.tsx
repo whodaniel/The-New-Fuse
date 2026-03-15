@@ -771,7 +771,7 @@ const EnhancedWorkflowBuilder: React.FC = () => {
   }, []);
 
   return (
-    <div className="h-screen w-full relative bg-gray-50">
+    <div className="h-screen w-full relative bg-transparent">
       <ReactFlowProvider>
         <ReactFlow
           nodes={nodes}
@@ -800,7 +800,7 @@ const EnhancedWorkflowBuilder: React.FC = () => {
                   <div className="flex items-center gap-4">
                     <div className="flex flex-col items-start gap-0">
                       <h3 className="text-lg font-bold">{workflowName}</h3>
-                      <p className="text-xs text-gray-600">
+                      <p className="text-xs text-muted-foreground">
                         {nodes.length} nodes, {edges.length} connections
                       </p>
                     </div>
@@ -1003,7 +1003,7 @@ const EnhancedWorkflowBuilder: React.FC = () => {
                         <CardContent className="p-3">
                           <div className="flex flex-col items-start gap-1">
                             <h4 className="text-sm font-bold">{template.label}</h4>
-                            <p className="text-xs text-gray-600">{template.description}</p>
+                            <p className="text-xs text-muted-foreground">{template.description}</p>
                             <Badge variant="primary" size="sm">
                               {template.type}
                             </Badge>
@@ -1187,7 +1187,7 @@ const EnhancedWorkflowBuilder: React.FC = () => {
                 </Alert>
               ))}
               {executionState.logs.length === 0 && (
-                <p className="text-gray-500 text-center py-8">
+                <p className="text-muted-foreground text-center py-8">
                   No execution logs yet. Run a workflow to see logs.
                 </p>
               )}

@@ -111,8 +111,8 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-950 p-6">
-      <div className="w-full max-w-md rounded-xl border border-slate-800 bg-slate-900 p-8">
+    <div className="min-h-screen flex items-center justify-center bg-slate-950 p-4">
+      <div className="w-full max-w-md rounded-md border border-slate-800 bg-slate-900 p-4">
         <h1 className="text-2xl font-semibold text-white">Create account</h1>
         <p className="mt-2 text-sm text-slate-400">Fresh register flow for Cloudflare auth</p>
 
@@ -226,7 +226,7 @@ const Register: React.FC = () => {
             type="button"
             onClick={handleGoogleSignUp}
             disabled={isLoading}
-            className="w-full rounded-md border border-slate-700 bg-white px-4 py-2 font-medium text-slate-900 hover:bg-slate-100 disabled:opacity-50"
+            className="w-full rounded-md border border-slate-700 bg-transparent px-4 py-2 font-medium text-slate-900 hover:bg-slate-100 disabled:opacity-50"
           >
             Continue with Google
           </button>

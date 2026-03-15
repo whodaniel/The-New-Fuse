@@ -75,7 +75,7 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ variables, onC
 
       <div className="border border-gray-200 rounded-md overflow-hidden">
         <table className="w-full">
-          <thead className="bg-gray-50">
+          <thead className="bg-transparent">
             <tr className="border-b border-gray-200">
               <th className="text-left py-2 px-3 font-medium">Variable</th>
               <th className="text-left py-2 px-3 font-medium">Value</th>
@@ -109,7 +109,7 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ variables, onC
             ))}
             {Object.keys(variables).length === 0 && (
               <tr>
-                <td colSpan={3} className="text-center py-4 text-gray-500">
+                <td colSpan={3} className="text-center py-2 text-muted-foreground">
                   No variables defined
                 </td>
               </tr>

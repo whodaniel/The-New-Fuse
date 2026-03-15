@@ -127,10 +127,10 @@ export function AdvancedAgentConfig(): React.ReactElement {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-4">
       <h2 className="text-xl font-bold mb-4">Advanced Agent Configuration</h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <Label htmlFor="agent-select">Select Agent</Label>
           <select
@@ -289,7 +289,7 @@ export function AdvancedAgentConfig(): React.ReactElement {
           <DialogHeader>
             <DialogTitle>Neural Network Configuration</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-4">
+          <div className="space-y-4 py-2">
             <div>
               <Label>Input Dimension: {settings.neuralConfig.inputDim}</Label>
               <input

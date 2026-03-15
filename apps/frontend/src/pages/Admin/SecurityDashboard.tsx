@@ -1,22 +1,20 @@
+import { Badge, Card, StatCard } from '@/components/ui/design-system';
 import React from 'react';
 import { FiAlertTriangle, FiCheckCircle, FiLock, FiShield } from 'react-icons/fi';
-import { Badge, Card, StatCard } from '@/components/ui/design-system';
 
 /**
  * Security Dashboard - Displays security status and metrics
  */
 const SecurityDashboard: React.FC = () => {
   return (
-    <div className="p-6">
-      <div className="flex flex-col gap-6">
+    <div className="p-4">
+      <div className="flex flex-col gap-4">
         <div>
-          <h1 className="text-2xl font-bold mb-2">
-            Security Dashboard
-          </h1>
-          <p className="text-gray-600">Monitor and manage platform security</p>
+          <h1 className="text-2xl font-bold mb-2">Security Dashboard</h1>
+          <p className="text-muted-foreground">Monitor and manage platform security</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
           <StatCard
             title="System Status"
             value="Secure"
@@ -46,10 +44,10 @@ const SecurityDashboard: React.FC = () => {
           />
         </div>
 
-        <Card className="w-full p-6">
+        <Card className="w-full p-4">
           <div className="flex flex-col gap-4">
             <h2 className="text-xl font-semibold">Security Overview</h2>
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               All systems are operating normally. No security incidents detected in the last 24
               hours.
             </p>

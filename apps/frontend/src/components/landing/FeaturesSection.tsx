@@ -1,5 +1,5 @@
-import React from 'react';
 import { motion } from 'framer-motion';
+import React from 'react';
 
 export interface FeaturesSectionProps {
   title: string;
@@ -25,7 +25,7 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
 }) => {
   return (
     <section id={id} className="py-16 sm:py-20 lg:py-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-3 lg:px-8">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -34,20 +34,18 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
           transition={{ duration: 0.6 }}
           className="text-center mb-12 sm:mb-16"
         >
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
             {title}
           </h2>
           {subtitle && (
-            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl text-muted-foreground dark:text-gray-300 max-w-3xl mx-auto">
               {subtitle}
             </p>
           )}
         </motion.div>
 
         {/* Features Grid */}
-        <div className={`grid ${columnClasses[columns]} gap-6 lg:gap-8`}>
-          {children}
-        </div>
+        <div className={`grid ${columnClasses[columns]} gap-4 lg:gap-4`}>{children}</div>
       </div>
     </section>
   );

@@ -4,19 +4,19 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const LayoutExample = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-transparent">
+      <header className="bg-transparent shadow-none border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-3 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <h1 className="text-xl font-semibold">Layout Example</h1>
             <nav className="space-x-4">
               <a href="#" className="text-blue-600 hover:text-blue-800">
                 Home
               </a>
-              <a href="#" className="text-gray-600 hover:text-gray-800">
+              <a href="#" className="text-muted-foreground hover:text-gray-800">
                 Dashboard
               </a>
-              <a href="#" className="text-gray-600 hover:text-gray-800">
+              <a href="#" className="text-muted-foreground hover:text-gray-800">
                 Settings
               </a>
             </nav>
@@ -24,8 +24,8 @@ const LayoutExample = () => {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <main className="max-w-7xl mx-auto py-8 px-4 sm:px-3 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <aside className="md:col-span-1">
             <Card>
               <CardHeader>
@@ -36,13 +36,13 @@ const LayoutExample = () => {
                   <a href="#" className="block py-2 px-3 rounded bg-blue-100 text-blue-700">
                     Dashboard
                   </a>
-                  <a href="#" className="block py-2 px-3 rounded hover:bg-gray-100">
+                  <a href="#" className="block py-2 px-3 rounded hover:bg-muted/30">
                     Projects
                   </a>
-                  <a href="#" className="block py-2 px-3 rounded hover:bg-gray-100">
+                  <a href="#" className="block py-2 px-3 rounded hover:bg-muted/30">
                     Tasks
                   </a>
-                  <a href="#" className="block py-2 px-3 rounded hover:bg-gray-100">
+                  <a href="#" className="block py-2 px-3 rounded hover:bg-muted/30">
                     Settings
                   </a>
                 </nav>

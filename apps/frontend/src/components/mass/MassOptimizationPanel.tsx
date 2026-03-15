@@ -194,7 +194,7 @@ export const MassOptimizationPanel: React.FC<MassOptimizationPanelProps> = ({
   const isOptimizing = optimizationStage !== 'idle' && optimizationStage !== 'complete';
 
   return (
-    <div className="border border-gray-200 rounded-lg shadow-sm bg-white">
+    <div className="border border-gray-200 rounded-md shadow-none bg-transparent">
       <div className="p-4 border-b border-gray-200 flex justify-between items-center">
         <div className="flex items-center gap-2">
           <FiZap className="text-orange-500" />
@@ -213,11 +213,11 @@ export const MassOptimizationPanel: React.FC<MassOptimizationPanelProps> = ({
         </Button>
       </div>
 
-      <div className="p-6 flex flex-col gap-6">
+      <div className="p-4 flex flex-col gap-4">
         {/* Progress Section */}
         <div className="w-full">
           <div className="flex justify-between mb-2">
-            <span className="text-sm text-gray-600">{getStageDescription()}</span>
+            <span className="text-sm text-muted-foreground">{getStageDescription()}</span>
             <span className="text-sm font-medium">{getStageProgress()}%</span>
           </div>
           <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
@@ -247,7 +247,7 @@ export const MassOptimizationPanel: React.FC<MassOptimizationPanelProps> = ({
                       ? 'bg-orange-500 text-white'
                       : isCompleted
                         ? 'bg-green-500 text-white'
-                        : 'bg-gray-200 text-gray-500'
+                        : 'bg-gray-200 text-muted-foreground'
                   }`}
                   title={label}
                 >
@@ -259,7 +259,9 @@ export const MassOptimizationPanel: React.FC<MassOptimizationPanelProps> = ({
                     <IconComp size={16} />
                   )}
                 </div>
-                <span className="text-xs text-center text-gray-600">{label.split(':')[0]}</span>
+                <span className="text-xs text-center text-muted-foreground">
+                  {label.split(':')[0]}
+                </span>
 
                 {/* Tooltip */}
                 <div className="absolute bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10">
@@ -345,14 +347,14 @@ export const MassOptimizationPanel: React.FC<MassOptimizationPanelProps> = ({
               {currentJobs.map((job) => (
                 <div
                   key={job.id}
-                  className="w-full p-3 bg-gray-50 rounded-md border border-gray-100"
+                  className="w-full p-3 bg-transparent rounded-md border border-gray-100"
                 >
                   <div className="flex justify-between items-center">
                     <div>
                       <p className="text-sm font-medium">
                         {job.type.replace('_', ' ').toUpperCase()}
                       </p>
-                      <p className="text-xs text-gray-600">ID: {job.id.slice(0, 8)}...</p>
+                      <p className="text-xs text-muted-foreground">ID: {job.id.slice(0, 8)}...</p>
                     </div>
                     <span
                       className={`px-2 py-0.5 rounded text-xs font-medium border ${
@@ -362,7 +364,7 @@ export const MassOptimizationPanel: React.FC<MassOptimizationPanelProps> = ({
                             ? 'bg-red-100 text-red-700 border-red-200'
                             : job.status === 'running'
                               ? 'bg-orange-100 text-orange-700 border-orange-200'
-                              : 'bg-gray-100 text-gray-700 border-gray-200'
+                              : 'bg-gray-100 text-foreground border-gray-200'
                       }`}
                     >
                       {job.status}
@@ -388,15 +390,18 @@ export const MassOptimizationPanel: React.FC<MassOptimizationPanelProps> = ({
       {/* Configuration Modal */}
       {isConfigOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-transparent rounded-md shadow-none max-w-lg w-full max-h-[90vh] overflow-y-auto">
             <div className="p-4 border-b border-gray-200 flex justify-between items-center">
               <h3 className="text-lg font-semibold">MASS Optimization Configuration</h3>
-              <button onClick={onConfigClose} className="text-gray-500 hover:text-gray-700">
+              <button
+                onClick={onConfigClose}
+                className="text-muted-foreground hover:text-foreground"
+              >
                 <FiX size={20} />
               </button>
             </div>
 
-            <div className="p-6 flex flex-col gap-4">
+            <div className="p-4 flex flex-col gap-4">
               <div className="w-full">
                 <label className="block mb-2 text-sm font-medium">Validation Dataset</label>
                 <select

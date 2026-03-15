@@ -41,21 +41,21 @@ const FeatureFlags = () => {
 
   if (loading) {
     return (
-      <div className="p-8 flex justify-center">
+      <div className="p-4 flex justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="p-4 max-w-7xl mx-auto space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
             <Flag className="h-6 w-6 text-blue-600" />
             Feature Flags
           </h1>
-          <p className="text-gray-500">Manage feature rollouts and experiments</p>
+          <p className="text-muted-foreground">Manage feature rollouts and experiments</p>
         </div>
       </div>
       {loadError && (
@@ -65,37 +65,37 @@ const FeatureFlags = () => {
       )}
 
       <Card className="overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+        <table className="min-w-full divide-y divide-border/50">
+          <thead className="bg-transparent">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 Feature
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 Key
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 Rollout
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 py-2 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 Status
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-transparent divide-y divide-border/50">
             {flags.map((flag) => (
               <tr key={flag.id}>
-                <td className="px-6 py-4">
+                <td className="px-3 py-2">
                   <div className="text-sm font-medium text-gray-900">{flag.name}</div>
-                  <div className="text-sm text-gray-500">{flag.description}</div>
+                  <div className="text-sm text-muted-foreground">{flag.description}</div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-500">
+                <td className="px-3 py-2 whitespace-nowrap text-sm font-mono text-muted-foreground">
                   {flag.id}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-3 py-2 whitespace-nowrap text-sm text-muted-foreground">
                   {flag.rolloutPercentage}%
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <td className="px-3 py-2 whitespace-nowrap text-right text-sm font-medium">
                   <div className="flex justify-end">
                     {/* Using standard HTML switch for simplicity if shadcn Switch is tricky to setup without imports */}
                     <button
@@ -105,7 +105,7 @@ const FeatureFlags = () => {
                       <span className="sr-only">Use setting</span>
                       <span
                         aria-hidden="true"
-                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${flag.enabled ? 'translate-x-5' : 'translate-x-0'}`}
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-transparent shadow-none ring-0 transition duration-200 ease-in-out ${flag.enabled ? 'translate-x-5' : 'translate-x-0'}`}
                       />
                     </button>
                   </div>

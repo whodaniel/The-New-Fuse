@@ -40,7 +40,7 @@ const RegisterSimple: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-950 px-4">
       <div className="max-w-md w-full">
-        <div className="bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-2xl p-8 space-y-6">
+        <div className="bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-md p-4 space-y-6">
           <div className="text-center">
             <h1 className="text-5xl font-bold text-white mb-4">Launch Your AI Command Center</h1>
             <p className="text-lg text-slate-300">
@@ -49,7 +49,7 @@ const RegisterSimple: React.FC = () => {
           </div>
 
           {error && (
-            <div className="bg-red-500/10 border border-red-500/30 text-red-200 px-4 py-3 rounded-lg">
+            <div className="bg-red-500/10 border border-red-500/30 text-red-200 px-4 py-2 rounded-md">
               {error}
             </div>
           )}
@@ -62,7 +62,7 @@ const RegisterSimple: React.FC = () => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 bg-black/20 border border-white/10 rounded-md text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Enter your full name"
               />
             </div>
@@ -74,7 +74,7 @@ const RegisterSimple: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 bg-black/20 border border-white/10 rounded-md text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="you@company.com"
               />
             </div>
@@ -86,7 +86,7 @@ const RegisterSimple: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 bg-black/20 border border-white/10 rounded-md text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Create a strong password"
               />
             </div>
@@ -100,7 +100,7 @@ const RegisterSimple: React.FC = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 bg-black/20 border border-white/10 rounded-md text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Re-enter your password"
               />
             </div>
@@ -108,7 +108,7 @@ const RegisterSimple: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white text-lg font-semibold rounded-lg shadow-lg transition-all"
+              className="w-full py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white text-lg font-semibold rounded-md shadow-none transition-all"
             >
               {isLoading ? 'Creating Account...' : 'Start Building Free'}
             </button>

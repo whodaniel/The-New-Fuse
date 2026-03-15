@@ -221,7 +221,7 @@ const InputNode: React.FC<NodeProps> = memo((props) => {
       {/* Existing inputs list */}
       <div className="space-y-2">
         {Object.keys(inputMapping).length === 0 ? (
-          <div className="text-center py-8 px-4 border-2 border-dashed border-slate-600/50 rounded-lg bg-slate-800/30">
+          <div className="text-center py-8 px-4 border-2 border-dashed border-slate-600/50 rounded-md bg-slate-800/30">
             <div className="flex flex-col items-center gap-2">
               <div className="text-slate-500 text-sm font-medium">No inputs defined yet</div>
               <div className="text-xs text-slate-400 max-w-[200px]">
@@ -234,14 +234,14 @@ const InputNode: React.FC<NodeProps> = memo((props) => {
             {Object.entries(inputMapping).map(([key, input]) => (
               <div
                 key={key}
-                className="bg-slate-700/50 rounded-lg px-3 py-2.5 border border-slate-600/50 hover:border-slate-500 hover:bg-slate-700/70 transition-all"
+                className="bg-slate-700/50 rounded-md px-3 py-2.5 border border-slate-600/50 hover:border-slate-500 hover:bg-slate-700/70 transition-all"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <Tooltip label={`Type: ${input.type}`}>
                         <div
-                          className={`${getTypeBadgeColor(input.type)} text-white text-xs font-bold px-2 py-0.5 rounded-md flex items-center justify-center shadow-sm`}
+                          className={`${getTypeBadgeColor(input.type)} text-white text-xs font-bold px-2 py-0.5 rounded-md flex items-center justify-center shadow-none`}
                           style={{ minWidth: '28px' }}
                         >
                           {getTypeIcon(input.type)}
@@ -440,7 +440,7 @@ const InputNode: React.FC<NodeProps> = memo((props) => {
           <Button
             variant="default"
             size="sm"
-            className="h-9 w-full bg-blue-600 hover:bg-blue-500 text-white font-medium shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-9 w-full bg-blue-600 hover:bg-blue-500 text-white font-medium shadow-md hover:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handleAddInput}
             disabled={!newInputName.trim() || newInputName.length < 2}
           >

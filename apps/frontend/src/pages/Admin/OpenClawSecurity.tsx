@@ -72,7 +72,7 @@ unset ${p.env}`;
   };
 
   return (
-    <div className="p-8 max-w-[1200px] mx-auto min-h-screen">
+    <div className="p-4 max-w-[1200px] mx-auto min-h-screen">
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-white mb-2 flex items-center">
           <Shield className="h-10 w-10 mr-3 text-emerald-500" />
@@ -83,7 +83,7 @@ unset ${p.env}`;
         </p>
       </div>
 
-      <GlassCard className="p-8 border-emerald-500/20">
+      <GlassCard className="p-4 border-emerald-500/20">
         <div className="mb-6">
           <p className="text-gray-300 mb-4">
             This page does not save keys. It generates commands that prompt for a key at runtime and
@@ -91,13 +91,13 @@ unset ${p.env}`;
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <div>
             <label className="block text-sm font-bold text-gray-300 mb-2">Provider</label>
             <select
               value={provider}
               onChange={(e) => setProvider(e.target.value)}
-              className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+              className="w-full bg-slate-900 border border-slate-700 rounded-md p-3 text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
             >
               <option value="openrouter">OpenRouter</option>
               <option value="perplexity">Perplexity</option>
@@ -114,7 +114,7 @@ unset ${p.env}`;
               type="text"
               readOnly
               value={map[provider].env}
-              className="w-full bg-slate-900/50 border border-slate-700 rounded-lg p-3 text-gray-400"
+              className="w-full bg-slate-900/50 border border-slate-700 rounded-md p-3 text-gray-400"
             />
           </div>
         </div>
@@ -129,7 +129,7 @@ unset ${p.env}`;
             ].map((item) => (
               <label
                 key={item.val}
-                className="flex items-center space-x-3 p-3 border border-slate-700 rounded-lg bg-slate-900/30 cursor-pointer hover:bg-slate-900/50 transition-colors"
+                className="flex items-center space-x-3 p-3 border border-slate-700 rounded-md bg-slate-900/30 cursor-pointer hover:bg-slate-900/50 transition-colors"
               >
                 <input
                   type="checkbox"
@@ -149,7 +149,7 @@ unset ${p.env}`;
             <textarea
               readOnly
               value={cmd}
-              className="w-full h-48 bg-slate-950 border border-slate-700 rounded-lg p-4 font-mono text-sm text-emerald-400 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50"
+              className="w-full h-48 bg-slate-950 border border-slate-700 rounded-md p-4 font-mono text-sm text-emerald-400 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50"
             />
           </div>
         </div>

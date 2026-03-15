@@ -1,7 +1,7 @@
-import React from 'react';
 import { Button } from '@/components/ui/design-system';
-import { useSystemConfig } from '../../hooks/useSystemConfig';
 import { useToast } from '@/hooks/useToast';
+import React from 'react';
+import { useSystemConfig } from '../../hooks/useSystemConfig';
 
 export const SystemConfig: React.FC = () => {
   const { config, updateConfig, loading } = useSystemConfig();
@@ -31,7 +31,7 @@ export const SystemConfig: React.FC = () => {
           <label className="block text-sm font-medium mb-2">Log Level</label>
           <select
             defaultValue={config.logLevel}
-            className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md bg-white dark:bg-neutral-800"
+            className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md bg-transparent dark:bg-transparent"
           >
             <option value="debug">Debug</option>
             <option value="info">Info</option>
@@ -45,7 +45,7 @@ export const SystemConfig: React.FC = () => {
           <input
             type="number"
             defaultValue={config.cacheTTL}
-            className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md bg-white dark:bg-neutral-800"
+            className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md bg-transparent dark:bg-transparent"
           />
         </div>
 
@@ -54,7 +54,7 @@ export const SystemConfig: React.FC = () => {
           <input
             type="number"
             defaultValue={config.rateLimit}
-            className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md bg-white dark:bg-neutral-800"
+            className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md bg-transparent dark:bg-transparent"
           />
         </div>
 

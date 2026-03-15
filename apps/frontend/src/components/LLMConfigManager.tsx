@@ -37,7 +37,7 @@ export function LLMConfigManager({ currentConfig, onConfigUpdate }) {
     }
   }, [config, onConfigUpdate]);
   return (
-    <ui_1.Card className="p-6 space-y-6">
+    <ui_1.Card className="p-4 space-y-6">
       <h2 className="text-xl font-semibold mb-4">LLM Provider Configuration</h2>
 
       <div className="space-y-4">
