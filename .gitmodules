@@ -1,3 +1,3 @@
-[submodule "packages/ap2-protocol/ap2"]
-	path = packages/ap2-protocol/ap2
-	url = https://github.com/google-agentic-commerce/AP2
+[submodule "apps/casin8-games/AI-ARCADE.XYZ---POKER-ROOM"]
+	path = apps/casin8-games/AI-ARCADE.XYZ---POKER-ROOM
+	url = https://github.com/whodaniel/AI-ARCADE.XYZ---POKER-ROOM
