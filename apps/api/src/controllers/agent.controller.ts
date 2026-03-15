@@ -21,8 +21,8 @@ import {
   UpdateAgentDto,
 } from '@the-new-fuse/types';
 import { AgentProfileDto } from '../agents/dto/agent.dto';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { isPrivilegedUser } from '../auth/auth-policy';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import {
   JwtAuth,
   RateLimitTier,
@@ -70,11 +70,6 @@ import { AgentService } from '../services/agent.service';
  * // Get agent statistics
  * GET /agents/agent123/stats
  */
-@ApiTags('Agents')
-@Controller('agents')
-@UseGuards(SecureAuthGuard)
-@JwtAuth()
-@SetRateLimitTier(RateLimitTier.API)
 type AuthUser = User & {
   tenantId?: string;
   agencyId?: string;
@@ -82,6 +77,11 @@ type AuthUser = User & {
   permissions?: string[];
 };
 
+@ApiTags('Agents')
+@Controller('agents')
+@UseGuards(SecureAuthGuard)
+@JwtAuth()
+@SetRateLimitTier(RateLimitTier.API)
 export class AgentController {
   /**
    * Constructor for AgentController
@@ -949,7 +949,10 @@ export class AgentController {
     const userId = typeof metadata.userId === 'string' ? metadata.userId.trim() : undefined;
 
     if (userId && user?.id && userId !== user.id && !privileged) {
-      throw new HttpException('metadata.userId mismatch for authenticated user', HttpStatus.FORBIDDEN);
+      throw new HttpException(
+        'metadata.userId mismatch for authenticated user',
+        HttpStatus.FORBIDDEN
+      );
     }
 
     if (tenantId) {

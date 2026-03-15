@@ -58,9 +58,7 @@ export class WorkspaceController {
     const owned = await this.db.workspaces.findByOwnerWithOwner(user.id);
     const memberRows = await this.db.workspaceMembers.listByUser(user.id);
     const ownedIds = new Set(owned.map((workspace) => workspace.id));
-    const memberIds = memberRows
-      .map((row) => row.workspaceId)
-      .filter((id) => !ownedIds.has(id));
+    const memberIds = memberRows.map((row) => row.workspaceId).filter((id) => !ownedIds.has(id));
     const memberWorkspaces = await this.db.workspaces.findByIdsWithOwner(memberIds);
 
     const roleByWorkspace = new Map(memberRows.map((row) => [row.workspaceId, row.role]));
@@ -228,7 +226,7 @@ export class WorkspaceController {
     if (!hasOwner) {
       formatted.unshift({
         userId: workspace.ownerId,
-        email: workspace.owner?.email,
+        email: workspace.owner?.email ?? null,
         role: 'owner',
         joinedAt: workspace.createdAt,
       });

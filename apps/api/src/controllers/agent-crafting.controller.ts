@@ -97,7 +97,7 @@ export class AgentCraftingController {
     });
 
     // Explicitly link to workspace via metadata
-    await this.db.agentMetadata.upsertMetadata(agent.id, {
+    await this.db.agents.upsertMetadata(agent.id, {
       workspaceId,
       tenantId: user.tenantId,
       craftedAt: new Date().toISOString(),
