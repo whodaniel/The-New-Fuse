@@ -96,12 +96,14 @@ export class AgentCraftingController {
       status: 'INACTIVE' as any,
     });
 
-    // Explicitly link to workspace via metadata
+    // Explicitly link to workspace via metadata JSONB field
     await this.db.agents.upsertMetadata(agent.id, {
-      workspaceId,
-      tenantId: user.tenantId,
-      craftedAt: new Date().toISOString(),
-      craftedBy: user.id,
+      metadata: {
+        workspaceId,
+        tenantId: user.tenantId,
+        craftedAt: new Date().toISOString(),
+        craftedBy: user.id,
+      },
     });
 
     return agent;
