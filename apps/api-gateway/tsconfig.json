@@ -32,11 +32,9 @@
   "exclude": [
     "node_modules",
     "dist",
-    "**/__tests__/**",
+    "test",
+    "src/controllers/__tests__",
     "**/*.spec.ts",
-    "**/*.test.ts",
-    "src/**/__tests__/**",
-    "src/**/*.spec.ts",
-    "src/**/*.test.ts"
+    "**/*.test.ts"
   ]
 }
