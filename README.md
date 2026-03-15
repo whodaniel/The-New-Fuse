@@ -100,6 +100,9 @@ PicoClaw Fleet (cloud) <── Lightweight edge agents
   Firebase auth
 - **[apps/api-gateway/](apps/api-gateway/)** — NestJS gateway: request proxy,
   JWT auth, API versioning
+- **[apps/poker-room/](apps/poker-room/)** — High-performance Poker Arcade with
+  autonomous agent participation, deterministic engine, and workspace-scoped
+  agent crafting.
 - **[apps/backend/](apps/backend/)** — Secondary NestJS service: AG-UI protocol,
   Bull job queues, Prometheus metrics
 - **[apps/relay-server/](apps/relay-server/)** — WebSocket relay hub for

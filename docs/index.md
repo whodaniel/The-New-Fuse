@@ -32,6 +32,12 @@ understand and utilize our advanced AI-powered workflow automation system.
 
 - [Cleanup Guide](CLEANUP_GUIDE.md) - Project maintenance and cleanup guides
 
+### 🏁 Milestones & Sprint Summaries
+
+- [Workspace & Poker Realignment (March 2026)](milestones/2026-03-15-WORKSPACE-POKER-REALIGNMENT.md) -
+  Full integration of poker ecosystem with the platform's multi-tenant
+  architecture and visual overhaul.
+
 ## 🛠️ Development Tools
 
 ### VS Code Tasks

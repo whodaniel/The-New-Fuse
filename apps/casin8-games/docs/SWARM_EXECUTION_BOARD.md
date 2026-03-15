@@ -86,3 +86,17 @@ Each subagent must submit:
 - Sponsorship settlement complete
 - Replay + fairness verifications complete
 - QA soak thresholds passed
+
+## Governance: Separation of Authority
+
+As of March 2026, the ecosystem enforces a strict boundary between **The
+Authority (Core Logic)** and **The Participants (Swarm)**.
+
+1. **Deterministic Rule**: No module within the `swarm/` directory has the
+   authority to mutate the Ledger, Cashier, or Engine state independently.
+2. **Intent Pattern**: Agents (Participants) emit `Intents`. The Engine
+   (Authority) validates these against hard-coded rules and applies the mutation
+   only if valid.
+3. **Tenancy Lock**: Agent data (Strategy & Nurture) is strictly bound to the
+   User's Workspace. Platform-wide "House Bots" are the only agents with
+   cross-table visibility, managed solely by Super Admins.
