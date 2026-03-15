@@ -6217,7 +6217,10 @@ async function handleGeminiImages(req, res) {
 const API_ROUTES = new Map([
   [
     'GET /api/health',
-    async (_req, res) => writeJson(res, 200, { ok: true, status: 'ok', at: nowIso() }),
+    async (_req, res) => {
+      console.log(`[casin8] Health check at ${new Date().toISOString()} - V2 routes active`);
+      return writeJson(res, 200, { ok: true, status: 'ok', at: nowIso(), v2: true });
+    },
   ],
   [
     'GET /api/chain-config',
