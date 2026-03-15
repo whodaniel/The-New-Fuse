@@ -6,7 +6,7 @@ import {
   validateActionIntent,
   applyAction,
   buildSettlementArtifacts,
-} from './engine-core/index.mjs';
+} from '../core-logic/engine-core/index.mjs';
 import {
   openPosition,
   fundPosition,
@@ -15,7 +15,7 @@ import {
   claimSponsor,
   getPositionView,
 } from './sponsorship-ledger/index.mjs';
-import { RealtimeTableBus } from './realtime-platform/index.mjs';
+import { RealtimeTableBus } from '../core-logic/realtime-platform/index.mjs';
 
 test('engine-core validates turn order and applies action', () => {
   const snapshot = createTableSnapshot({

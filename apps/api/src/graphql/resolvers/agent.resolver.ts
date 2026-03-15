@@ -2,7 +2,7 @@
  * Agent Resolver - Migrated to Drizzle ORM
  * GraphQL resolver for Agent type queries and mutations
  */
-import { UseGuards } from '@nestjs/common';
+import { ForbiddenException, UseGuards } from '@nestjs/common';
 import {
   Args,
   Context,
@@ -20,6 +20,7 @@ import { UserLoader } from '../loaders/user.loader';
 import { AgentStatus, AgentType } from '../types/agent.type';
 import { CreateAgentInput, UpdateAgentInput } from '../types/input.types';
 import { UserType } from '../types/user.type';
+import { isPrivilegedUser } from '../../auth/auth-policy';
 
 @Resolver(() => AgentType)
 export class AgentResolver {
@@ -44,8 +45,12 @@ export class AgentResolver {
     @Args('userId', { type: () => ID, nullable: true }) userIdArg?: string,
     @Context() context?: any
   ): Promise<Agent[]> {
-    const userId = userIdArg || context?.req?.user?.id;
+    const currentUser = context?.req?.user;
+    const userId = userIdArg || currentUser?.id;
     if (userId) {
+      if (userIdArg && userIdArg !== currentUser?.id && !isPrivilegedUser(currentUser || {})) {
+        throw new ForbiddenException('Not authorized to query agents for another user');
+      }
       return this.db.agents.findByUserId(userId);
     }
     // If no userId provided and no user in context, we still need a userId for findAll

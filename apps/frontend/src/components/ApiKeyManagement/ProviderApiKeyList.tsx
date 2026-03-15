@@ -2,9 +2,20 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import Switch from '@/components/ui/switch';
+import { getProviderById, getProvidersByCategory } from '@/data/llmProviders';
 import { apiService } from '@/services/api';
 import { CheckCircle2, Key, PlusCircle, Shield, Trash2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 interface ApiKey {
@@ -15,8 +26,21 @@ interface ApiKey {
 export function ProviderApiKeyList() {
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
   const [provider, setProvider] = useState('');
+  const [customProvider, setCustomProvider] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [loading, setLoading] = useState({ save: false, list: true });
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
+  const providerGroups = useMemo(() => getProvidersByCategory(showAdvanced), [showAdvanced]);
+  const selectedProviderMeta = useMemo(() => {
+    if (provider === 'custom') {
+      return {
+        name: 'Custom Provider',
+        description: 'Use a provider that is not listed (OpenAI-compatible APIs).',
+      };
+    }
+    return getProviderById(provider);
+  }, [provider]);
 
   useEffect(() => {
     fetchApiKeys();
@@ -35,17 +59,19 @@ export function ProviderApiKeyList() {
   };
 
   const handleSaveApiKey = async () => {
-    if (!provider || !apiKey) {
+    const resolvedProvider = provider === 'custom' ? customProvider.trim() : provider.trim();
+    if (!resolvedProvider || !apiKey) {
       toast.error('Provider and API Key are required.');
       return;
     }
     setLoading((prev) => ({ ...prev, save: true }));
     try {
-      const newKey = await apiService.saveProviderApiKey(provider, apiKey);
+      const newKey = await apiService.saveProviderApiKey(resolvedProvider, apiKey);
       setApiKeys([...apiKeys, newKey]);
       setProvider('');
+      setCustomProvider('');
       setApiKey('');
-      toast.success(`API key for ${provider} saved successfully`, {
+      toast.success(`API key for ${resolvedProvider} saved successfully`, {
         icon: <CheckCircle2 className="w-4 h-4 text-green-500" />,
       });
     } catch (error: any) {
@@ -78,29 +104,67 @@ export function ProviderApiKeyList() {
           <div>
             <CardTitle className="text-xl">Provider API Keys</CardTitle>
             <CardDescription>
-              Securely store your LLM provider keys. They are encrypted at rest.
+              Securely store your LLM provider keys. They are encrypted at rest and used only for
+              requests you authorize.
             </CardDescription>
           </div>
         </div>
       </CardHeader>
       <CardContent className="pt-6 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-7 gap-4 items-end bg-muted/20 p-4 rounded-md border border-dashed">
-          <div className="md:col-span-2">
-            <Label
-              htmlFor="provider"
-              className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1 block"
-            >
-              Provider Name
-            </Label>
-            <Input
-              id="provider"
-              placeholder="e.g. OpenAI, Anthropic"
-              value={provider}
-              onChange={(e) => setProvider(e.target.value)}
-              className="bg-background shadow-none"
-            />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-end bg-muted/20 p-4 rounded-md border border-dashed">
+          <div className="lg:col-span-4 space-y-2">
+            <div className="flex items-center justify-between">
+              <Label
+                htmlFor="provider"
+                className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+              >
+                Provider
+              </Label>
+              <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                <span>Advanced</span>
+                <Switch checked={showAdvanced} onCheckedChange={setShowAdvanced} />
+              </div>
+            </div>
+            <Select value={provider} onValueChange={setProvider}>
+              <SelectTrigger className="bg-background shadow-none">
+                <SelectValue placeholder="Select provider" />
+              </SelectTrigger>
+              <SelectContent>
+                {providerGroups.map((group) => (
+                  <SelectGroup key={group.category}>
+                    <SelectLabel>{group.category}</SelectLabel>
+                    {group.providers.map((item) => (
+                      <SelectItem key={item.id} value={item.id}>
+                        {item.name}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                ))}
+                <SelectGroup>
+                  <SelectLabel>Custom</SelectLabel>
+                  <SelectItem value="custom">Custom / Other</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            {selectedProviderMeta?.description && (
+              <p className="text-xs text-muted-foreground">{selectedProviderMeta.description}</p>
+            )}
+            {provider === 'custom' && (
+              <div className="space-y-1">
+                <Label htmlFor="custom-provider" className="text-xs text-muted-foreground">
+                  Custom Provider ID
+                </Label>
+                <Input
+                  id="custom-provider"
+                  placeholder="e.g. internal-gateway"
+                  value={customProvider}
+                  onChange={(e) => setCustomProvider(e.target.value)}
+                  className="bg-background shadow-none"
+                />
+              </div>
+            )}
           </div>
-          <div className="md:col-span-4">
+          <div className="lg:col-span-6">
             <Label
               htmlFor="api-key-provider"
               className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1 block"
@@ -116,7 +180,7 @@ export function ProviderApiKeyList() {
               className="bg-background shadow-none font-mono"
             />
           </div>
-          <div className="md:col-span-1">
+          <div className="md:col-span-1 lg:col-span-2">
             <Button
               onClick={handleSaveApiKey}
               disabled={loading.save}
@@ -150,17 +214,25 @@ export function ProviderApiKeyList() {
               </div>
             ) : (
               <ul className="divide-y">
-                {apiKeys.map(({ id, provider }) => (
+                {apiKeys.map(({ id, provider }) => {
+                  const meta = getProviderById(provider);
+                  const providerLabel = meta?.name || provider;
+                  return (
                   <li
                     key={id}
                     className="flex items-center justify-between p-4 hover:bg-muted/30 transition-colors group"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center font-bold text-xs">
-                        {provider.charAt(0).toUpperCase()}
+                        {providerLabel.charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <span className="font-semibold block">{provider}</span>
+                        <span className="font-semibold block">{providerLabel}</span>
+                        {meta?.description && (
+                          <span className="text-[10px] text-muted-foreground block">
+                            {meta.description}
+                          </span>
+                        )}
                         <span className="text-[10px] text-green-600 dark:text-green-400 flex items-center gap-1">
                           <CheckCircle2 className="w-3 h-3" /> Encrypted & Active
                         </span>
@@ -175,7 +247,8 @@ export function ProviderApiKeyList() {
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </li>
-                ))}
+                );
+                })}
               </ul>
             )}
           </div>

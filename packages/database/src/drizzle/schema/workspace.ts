@@ -5,6 +5,7 @@ import { relations } from 'drizzle-orm';
 import {
   integer,
   jsonb,
+  pgEnum,
   pgTable,
   text,
   timestamp,
@@ -28,6 +29,33 @@ export const workspaces = pgTable('workspaces', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
+
+export const workspaceMemberRoleEnum = pgEnum('WorkspaceMemberRole', [
+  'owner',
+  'admin',
+  'member',
+  'viewer',
+]);
+
+export const workspaceMembers = pgTable(
+  'workspace_members',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    workspaceId: uuid('workspace_id')
+      .notNull()
+      .references(() => workspaces.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    role: workspaceMemberRoleEnum('role').default('member').notNull(),
+    addedByUserId: uuid('added_by_user_id').references(() => users.id, { onDelete: 'set null' }),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  },
+  (table) => ({
+    uniqueMember: unique().on(table.workspaceId, table.userId),
+  })
+);
 
 // =============================================================================
 // PROJECT
@@ -192,6 +220,22 @@ export const workspacesRelations = relations(workspaces, ({ one, many }) => ({
     references: [users.id],
   }),
   projects: many(projects),
+  members: many(workspaceMembers),
+}));
+
+export const workspaceMembersRelations = relations(workspaceMembers, ({ one }) => ({
+  workspace: one(workspaces, {
+    fields: [workspaceMembers.workspaceId],
+    references: [workspaces.id],
+  }),
+  user: one(users, {
+    fields: [workspaceMembers.userId],
+    references: [users.id],
+  }),
+  addedBy: one(users, {
+    fields: [workspaceMembers.addedByUserId],
+    references: [users.id],
+  }),
 }));
 
 export const projectsRelations = relations(projects, ({ one, many }) => ({

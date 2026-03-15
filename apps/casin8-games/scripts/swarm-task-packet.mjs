@@ -14,15 +14,15 @@ const docsDir = path.join(appRoot, 'docs');
 const gapPath = path.join(docsDir, 'SWARM_GAP_REPORT.json');
 
 const REQUIRED_STREAMS = [
-  { stream: 'engine-core', domain: 'swarm-engine', evidence: ['swarm/engine-core/index.mjs'] },
-  { stream: 'engine-sim', domain: 'swarm-engine-sim', evidence: ['swarm/engine-sim/index.mjs'] },
+  { stream: 'engine-core', domain: 'swarm-engine', evidence: ['core-logic/engine-core/index.mjs'] },
+  { stream: 'engine-sim', domain: 'swarm-engine-sim', evidence: ['core-logic/engine-sim/index.mjs'] },
   { stream: 'agent-runtime', domain: 'swarm-agent-runtime', evidence: ['swarm/agent-runtime/index.mjs'] },
   { stream: 'agent-strategy', domain: 'swarm-agent-strategy', evidence: ['swarm/agent-strategy/index.mjs'] },
   { stream: 'sponsorship-ledger', domain: 'swarm-sponsorship', evidence: ['swarm/sponsorship-ledger/index.mjs'] },
   { stream: 'tournaments', domain: 'swarm-tournament', evidence: ['swarm/tournament/index.mjs'] },
-  { stream: 'cashier-token', domain: 'swarm-cashier', evidence: ['swarm/cashier-token/index.mjs'] },
-  { stream: 'fairness-security', domain: 'swarm-fairness', evidence: ['swarm/fairness-security/index.mjs'] },
-  { stream: 'realtime-platform', domain: 'swarm-realtime', evidence: ['swarm/realtime-platform/index.mjs'] },
+  { stream: 'cashier-token', domain: 'swarm-cashier', evidence: ['core-logic/cashier-token/index.mjs'] },
+  { stream: 'fairness-security', domain: 'swarm-fairness', evidence: ['core-logic/fairness-security/index.mjs'] },
+  { stream: 'realtime-platform', domain: 'swarm-realtime', evidence: ['core-logic/realtime-platform/index.mjs'] },
   { stream: 'orchestrator', domain: 'swarm-orchestrator', evidence: ['swarm/orchestrator/index.mjs'] },
   { stream: 'graphics-assets', domain: 'graphics-assets', evidence: ['swarm/graphics-assets/index.mjs'] },
   { stream: 'ux-poker-room', domain: 'ui-poker-room', evidence: ['index.html', 'script.js', 'styles.css'] },
@@ -89,7 +89,7 @@ function taskTemplate(domain) {
   const specifics = {
     'swarm-engine-sim': {
       objective: 'Build simulation/equity service with deterministic seed control for agent training and evaluation.',
-      deliverables: ['swarm/engine-sim/index.mjs', 'swarm/day6-sim.test.mjs'],
+      deliverables: ['core-logic/engine-sim/index.mjs', 'swarm/day6-sim.test.mjs'],
     },
     'swarm-agent-strategy': {
       objective: 'Implement temperament/style policy adapter with bounded risk profile outputs.',

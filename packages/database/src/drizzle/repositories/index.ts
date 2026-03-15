@@ -40,3 +40,7 @@ export { DrizzleWalletRepository, drizzleWalletRepository } from './wallet.repos
 export { DrizzleWebhookRepository, drizzleWebhookRepository } from './webhook.repository';
 export { DrizzleWorkflowRepository, drizzleWorkflowRepository } from './workflow.repository';
 export { DrizzleWorkspaceRepository, drizzleWorkspaceRepository } from './workspace.repository';
+export {
+  DrizzleWorkspaceMemberRepository,
+  drizzleWorkspaceMemberRepository,
+} from './workspace-member.repository';

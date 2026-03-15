@@ -1,6 +1,10 @@
 /**
  * Agent Service - Updated for Drizzle ORM compatibility
- * Manages AI agent lifecycle and operations
+ * Manages AI agent lifecycle and operations.
+ * 
+ * Note: This service integrates with the 'Agent Swarm' modules in apps/casin8-games/swarm
+ * to provide agent crafting (strategy profiles) and nurturing (performance tracking)
+ * scoped to the user's Workspace context.
  */
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from '@the-new-fuse/database';
@@ -27,6 +31,8 @@ export class AgentService {
         throw new BadRequestException('userId is required to create an agent');
       }
 
+      const metadataInput = this.normalizeMetadataInput(createAgentDto.metadata);
+
       const agentData: any = {
         name: createAgentDto.name,
         type: createAgentDto.type as any,
@@ -40,7 +46,10 @@ export class AgentService {
       };
 
       const agent = await this.agentRepository.create(agentData);
-      return this.mapAgentToResponse(agent);
+      if (metadataInput) {
+        await this.agentRepository.upsertMetadata(agent.id, { metadata: metadataInput });
+      }
+      return this.mapAgentToResponse({ ...agent, metadata: metadataInput });
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       throw new BadRequestException(`Failed to create agent: ${errorMessage}`);
@@ -58,8 +67,9 @@ export class AgentService {
 
       if (userId) {
         const result = await this.agentRepository.findWithPagination(userId, page, limit);
+        const enriched = await this.attachMetadata(result.data);
         return {
-          data: result.data.map((agent: any) => this.mapAgentToResponse(agent)),
+          data: enriched.map((agent: any) => this.mapAgentToResponse(agent)),
           total: result.total,
           page,
           limit,
@@ -76,12 +86,15 @@ export class AgentService {
 
   async findAgentById(id: string, userId: string): Promise<AgentResponseDto> {
     try {
-      const agent = await this.agentRepository.findById(id, userId);
+      const agent = await this.agentRepository.findByIdWithMetadata(id, userId);
       if (!agent) {
         throw new NotFoundException(`Agent with ID ${id} not found`);
       }
 
-      return this.mapAgentToResponse(agent);
+      return this.mapAgentToResponse({
+        ...agent,
+        metadata: this.extractMetadataValue(agent.metadata),
+      });
     } catch (error: unknown) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -97,7 +110,7 @@ export class AgentService {
     userId: string
   ): Promise<AgentResponseDto> {
     try {
-      const existingAgent = await this.agentRepository.findById(id, userId);
+      const existingAgent = await this.agentRepository.findByIdWithMetadata(id, userId);
       if (!existingAgent) {
         throw new NotFoundException(`Agent with ID ${id} not found`);
       }
@@ -119,7 +132,17 @@ export class AgentService {
       if (!agent) {
         throw new NotFoundException(`Agent with ID ${id} not found`);
       }
-      return this.mapAgentToResponse(agent);
+      const metadataInput = this.normalizeMetadataInput(updateAgentDto.metadata);
+      const existingMetadata = this.extractMetadataValue(existingAgent.metadata);
+      const mergedMetadata = metadataInput
+        ? { ...(existingMetadata || {}), ...metadataInput }
+        : existingMetadata;
+      if (metadataInput) {
+        await this.agentRepository.upsertMetadata(id, {
+          metadata: mergedMetadata,
+        });
+      }
+      return this.mapAgentToResponse({ ...agent, metadata: mergedMetadata });
     } catch (error: unknown) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -155,7 +178,8 @@ export class AgentService {
     try {
       // Use search to filter by type since there's no direct findByType
       const agents = await this.agentRepository.findAll(userId, 100);
-      const filteredAgents = agents.filter((a: any) => a.type === type);
+      const enriched = await this.attachMetadata(agents);
+      const filteredAgents = enriched.filter((a: any) => a.type === type);
 
       return {
         data: filteredAgents.map((agent: any) => this.mapAgentToResponse(agent)),
@@ -171,7 +195,8 @@ export class AgentService {
     try {
       // Filter by status from all agents
       const agents = await this.agentRepository.findAll(userId, 100);
-      const filteredAgents = agents.filter((a: any) => a.status === status);
+      const enriched = await this.attachMetadata(agents);
+      const filteredAgents = enriched.filter((a: any) => a.status === status);
 
       return filteredAgents.map((agent: any) => this.mapAgentToResponse(agent));
     } catch (error: unknown) {
@@ -187,9 +212,10 @@ export class AgentService {
   ): Promise<{ data: AgentResponseDto[]; total: number }> {
     try {
       const result = await this.agentRepository.findWithPagination(userId, page, limit);
+      const enriched = await this.attachMetadata(result.data);
 
       return {
-        data: result.data.map((agent: any) => this.mapAgentToResponse(agent)),
+        data: enriched.map((agent: any) => this.mapAgentToResponse(agent)),
         total: result.total,
       };
     } catch (error: unknown) {
@@ -225,7 +251,8 @@ export class AgentService {
 
   async getActiveAgents(userId: string): Promise<AgentResponseDto[]> {
     const agents = await this.agentRepository.findActive(userId);
-    return agents.map((agent: any) => this.mapAgentToResponse(agent));
+    const enriched = await this.attachMetadata(agents);
+    return enriched.map((agent: any) => this.mapAgentToResponse(agent));
   }
 
   async getAgentStats(id: string, userId: string): Promise<any> {
@@ -323,10 +350,11 @@ export class AgentService {
   ): Promise<{ data: AgentResponseDto[]; total: number }> {
     try {
       const agents = await this.agentRepository.search(query, userId);
+      const enriched = await this.attachMetadata(agents);
 
       return {
-        data: agents.map((agent: any) => this.mapAgentToResponse(agent)),
-        total: agents.length,
+        data: enriched.map((agent: any) => this.mapAgentToResponse(agent)),
+        total: enriched.length,
       };
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -371,6 +399,7 @@ export class AgentService {
   }
 
   private mapAgentToResponse(agent: any): AgentResponseDto {
+    const metadata = this.extractMetadataValue(agent?.metadata);
     return {
       ...agent,
       type: agent.type as AgentType,
@@ -379,6 +408,45 @@ export class AgentService {
         ? agent.capabilities.map((cap: any) => cap as AgentCapability)
         : [],
       lastActive: agent.lastActiveAt || new Date(),
+      metadata,
     } as AgentResponseDto;
+  }
+
+  private normalizeMetadataInput(value: unknown): Record<string, unknown> | null {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) {
+      return null;
+    }
+    return value as Record<string, unknown>;
+  }
+
+  private extractMetadataValue(value: any): Record<string, unknown> | undefined {
+    if (!value) return undefined;
+    if (typeof value === 'object' && 'metadata' in value) {
+      const candidate = (value as { metadata?: unknown }).metadata;
+      if (candidate && typeof candidate === 'object' && !Array.isArray(candidate)) {
+        return candidate as Record<string, unknown>;
+      }
+    }
+    if (typeof value === 'object' && !Array.isArray(value)) {
+      return value as Record<string, unknown>;
+    }
+    return undefined;
+  }
+
+  private async attachMetadata(agents: any[]): Promise<any[]> {
+    if (!agents.length) return agents;
+    const agentIds = agents.map((agent) => agent.id).filter(Boolean);
+    if (!agentIds.length) return agents;
+    const metadataRows = await this.agentRepository.findMetadataByAgentIds(agentIds);
+    const metadataById = new Map(metadataRows.map((row: any) => [row.agentId, row.metadata]));
+
+    return agents.map((agent) => {
+      const existing = this.extractMetadataValue(agent?.metadata);
+      const metadata = existing ?? metadataById.get(agent.id);
+      return {
+        ...agent,
+        metadata,
+      };
+    });
   }
 }

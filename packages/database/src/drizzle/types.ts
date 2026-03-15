@@ -59,6 +59,7 @@ import {
   workflowSteps,
   workflowTemplates,
   workspaces,
+  workspaceMembers,
 } from './schema';
 
 // =============================================================================
@@ -252,6 +253,8 @@ export type NewAgentApiGrantUsage = InferInsertModel<typeof agentApiGrantUsage>;
 
 export type Workspace = InferSelectModel<typeof workspaces>;
 export type NewWorkspace = InferInsertModel<typeof workspaces>;
+export type WorkspaceMember = InferSelectModel<typeof workspaceMembers>;
+export type NewWorkspaceMember = InferInsertModel<typeof workspaceMembers>;
 
 export type Project = InferSelectModel<typeof projects>;
 export type NewProject = InferInsertModel<typeof projects>;

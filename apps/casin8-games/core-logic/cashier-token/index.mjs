@@ -1,4 +1,4 @@
-import { assertString } from '../shared/contracts.mjs';
+import { assertString } from '../../shared/contracts.mjs';
 
 function toBigInt(value, field) {
   if (typeof value === 'bigint') return value;

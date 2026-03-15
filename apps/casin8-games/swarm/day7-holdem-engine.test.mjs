@@ -13,7 +13,7 @@ import {
   markMissedBlind,
   configureRiskCap,
   requestStraddle,
-} from './holdem-engine/index.mjs';
+} from '../core-logic/holdem-engine/index.mjs';
 
 function sum(values) {
   return values.reduce((acc, n) => acc + Number(n || 0), 0);

@@ -12,7 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { User } from '@the-new-fuse/database';
+import { DatabaseService, User } from '@the-new-fuse/database';
 import {
   AgentResponseDto,
   AgentStatus,
@@ -22,6 +22,7 @@ import {
 } from '@the-new-fuse/types';
 import { AgentProfileDto } from '../agents/dto/agent.dto';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { isPrivilegedUser } from '../auth/auth-policy';
 import {
   JwtAuth,
   RateLimitTier,
@@ -74,6 +75,13 @@ import { AgentService } from '../services/agent.service';
 @UseGuards(SecureAuthGuard)
 @JwtAuth()
 @SetRateLimitTier(RateLimitTier.API)
+type AuthUser = User & {
+  tenantId?: string;
+  agencyId?: string;
+  roles?: string[];
+  permissions?: string[];
+};
+
 export class AgentController {
   /**
    * Constructor for AgentController
@@ -83,7 +91,10 @@ export class AgentController {
    * @example
    * const controller = new AgentController(agentService);
    */
-  constructor(private readonly agentService: AgentService) {}
+  constructor(
+    private readonly agentService: AgentService,
+    private readonly db: DatabaseService
+  ) {}
 
   @Post(':id/deploy')
   @ApiOperation({ summary: 'Deploy agent to orchestrator target' })
@@ -183,6 +194,8 @@ export class AgentController {
     @CurrentUser() user: User
   ): Promise<AgentResponseDto> {
     try {
+      const metadata = this.normalizeMetadata(createAgentDto.metadata);
+      await this.assertMetadataScope(metadata, user);
       // Add userId from authenticated user
       const agentData = {
         ...createAgentDto,
@@ -566,6 +579,8 @@ export class AgentController {
     @CurrentUser() user: User
   ): Promise<AgentResponseDto> {
     try {
+      const metadata = this.normalizeMetadata(updateAgentDto.metadata);
+      await this.assertMetadataScope(metadata, user);
       return await this.agentService.updateAgent(id, updateAgentDto, user.id);
     } catch (error) {
       if (error instanceof HttpException) {
@@ -913,6 +928,73 @@ export class AgentController {
         (error as Error).message || 'Failed to delete agent',
         HttpStatus.INTERNAL_SERVER_ERROR
       );
+    }
+  }
+
+  private normalizeMetadata(input: unknown): Record<string, unknown> | null {
+    if (!input || typeof input !== 'object' || Array.isArray(input)) {
+      return null;
+    }
+    return input as Record<string, unknown>;
+  }
+
+  private async assertMetadataScope(metadata: Record<string, unknown> | null, user: AuthUser) {
+    if (!metadata) return;
+
+    const privileged = isPrivilegedUser(user || {});
+    const tenantId = typeof metadata.tenantId === 'string' ? metadata.tenantId.trim() : undefined;
+    const agencyId = typeof metadata.agencyId === 'string' ? metadata.agencyId.trim() : undefined;
+    const workspaceId =
+      typeof metadata.workspaceId === 'string' ? metadata.workspaceId.trim() : undefined;
+    const userId = typeof metadata.userId === 'string' ? metadata.userId.trim() : undefined;
+
+    if (userId && user?.id && userId !== user.id && !privileged) {
+      throw new HttpException('metadata.userId mismatch for authenticated user', HttpStatus.FORBIDDEN);
+    }
+
+    if (tenantId) {
+      if (user?.tenantId && tenantId !== user.tenantId && !privileged) {
+        throw new HttpException(
+          'metadata.tenantId mismatch for authenticated user',
+          HttpStatus.FORBIDDEN
+        );
+      }
+      if (!user?.tenantId && !privileged) {
+        throw new HttpException(
+          'metadata.tenantId requires a tenant-scoped user',
+          HttpStatus.FORBIDDEN
+        );
+      }
+    }
+
+    if (agencyId) {
+      if (user?.agencyId && agencyId !== user.agencyId && !privileged) {
+        throw new HttpException(
+          'metadata.agencyId mismatch for authenticated user',
+          HttpStatus.FORBIDDEN
+        );
+      }
+      if (!user?.agencyId && !privileged) {
+        throw new HttpException(
+          'metadata.agencyId requires an agency-scoped user',
+          HttpStatus.FORBIDDEN
+        );
+      }
+    }
+
+    if (workspaceId) {
+      const workspace = await this.db.workspaces.findByIdWithOwner(workspaceId);
+      if (!workspace) {
+        throw new HttpException('Workspace not found', HttpStatus.NOT_FOUND);
+      }
+      if (!privileged && workspace.ownerId !== user?.id) {
+        const membership = user?.id
+          ? await this.db.workspaceMembers.findMembership(workspaceId, user.id)
+          : null;
+        if (!membership) {
+          throw new HttpException('Workspace access denied', HttpStatus.FORBIDDEN);
+        }
+      }
     }
   }
 }

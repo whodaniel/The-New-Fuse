@@ -59,19 +59,19 @@ No uncovered domains detected in current scan window.
 - swarm-sponsorship
   - apps/casin8-games/swarm/sponsorship-ledger/index.mjs
 - swarm-realtime
-  - apps/casin8-games/swarm/realtime-platform/index.mjs
+  - apps/casin8-games/core-logic/realtime-platform/index.mjs
 - swarm-orchestrator
   - apps/casin8-games/swarm/orchestrator/index.mjs
 - graphics-assets
   - apps/casin8-games/swarm/graphics-assets/index.mjs
 - swarm-fairness
-  - apps/casin8-games/swarm/fairness-security/index.mjs
+  - apps/casin8-games/core-logic/fairness-security/index.mjs
 - swarm-engine-sim
-  - apps/casin8-games/swarm/engine-sim/index.mjs
+  - apps/casin8-games/core-logic/engine-sim/index.mjs
 - swarm-engine
-  - apps/casin8-games/swarm/engine-core/index.mjs
+  - apps/casin8-games/core-logic/engine-core/index.mjs
 - swarm-cashier
-  - apps/casin8-games/swarm/cashier-token/index.mjs
+  - apps/casin8-games/core-logic/cashier-token/index.mjs
 - swarm-agent-strategy
   - apps/casin8-games/swarm/agent-strategy/index.mjs
 - swarm-agent-runtime

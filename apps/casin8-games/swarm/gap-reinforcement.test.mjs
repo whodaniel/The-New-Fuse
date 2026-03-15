@@ -10,13 +10,13 @@ import {
   eliminatePlayer,
   currentBlinds,
 } from './tournament/index.mjs';
-import { CashierTokenLedger } from './cashier-token/index.mjs';
+import { CashierTokenLedger } from '../core-logic/cashier-token/index.mjs';
 import {
   createCommit,
   fairReceipt,
   verifyReceipt,
   scoreCollusionSignals,
-} from './fairness-security/index.mjs';
+} from '../core-logic/fairness-security/index.mjs';
 
 test('tournament module handles registration/start/rebalance/elimination', () => {
   const t = createTournament({

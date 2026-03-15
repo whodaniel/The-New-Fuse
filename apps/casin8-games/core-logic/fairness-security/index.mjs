@@ -1,5 +1,5 @@
 import { createHash, randomBytes } from 'node:crypto';
-import { assertInteger, assertString } from '../shared/contracts.mjs';
+import { assertInteger, assertString } from '../../shared/contracts.mjs';
 
 function sha256Hex(value) {
   return createHash('sha256').update(String(value)).digest('hex');

@@ -46,6 +46,8 @@ import {
   DrizzleWorkflowRepository,
   drizzleWorkspaceRepository,
   DrizzleWorkspaceRepository,
+  drizzleWorkspaceMemberRepository,
+  DrizzleWorkspaceMemberRepository,
 } from './repositories';
 
 @Injectable()
@@ -170,6 +172,13 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
    */
   get workspaces(): DrizzleWorkspaceRepository {
     return drizzleWorkspaceRepository;
+  }
+
+  /**
+   * Workspace members repository for workspace membership management
+   */
+  get workspaceMembers(): DrizzleWorkspaceMemberRepository {
+    return drizzleWorkspaceMemberRepository;
   }
 
   /**

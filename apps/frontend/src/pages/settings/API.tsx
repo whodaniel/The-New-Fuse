@@ -1,13 +1,17 @@
 import { AgentGrantList } from '@/components/ApiKeyManagement/AgentGrantList';
 import { ProviderApiKeyList } from '@/components/ApiKeyManagement/ProviderApiKeyList';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import Switch from '@/components/ui/switch';
+import { getProvidersByCategory } from '@/data/llmProviders';
 import { apiService } from '@/services/api';
 import { Key, Shield, Webhook } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 const URL_REGEX = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
@@ -18,6 +22,20 @@ export default function API() {
   const [webhookUrl, setWebhookUrl] = useState('');
   const [webhookUrlError, setWebhookUrlError] = useState('');
   const [webhookLoading, setWebhookLoading] = useState({ save: false, test: false, get: true });
+  const [showAdvancedProviders, setShowAdvancedProviders] = useState(false);
+  const [activeProviderTab, setActiveProviderTab] = useState('');
+
+  const providerGroups = useMemo(
+    () => getProvidersByCategory(showAdvancedProviders),
+    [showAdvancedProviders]
+  );
+
+  useEffect(() => {
+    if (providerGroups.length === 0) return;
+    if (!activeProviderTab || !providerGroups.some((group) => group.category === activeProviderTab)) {
+      setActiveProviderTab(providerGroups[0].category);
+    }
+  }, [providerGroups, activeProviderTab]);
 
   useEffect(() => {
     fetchTokens();
@@ -140,6 +158,76 @@ export default function API() {
       </Alert>
 
       <div className="grid gap-4">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">LLM Provider Catalog</CardTitle>
+            <CardDescription>
+              Pick the providers you want to connect. We surface recommended options first, with
+              enterprise and experimental providers available on demand.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 rounded-md border bg-muted/30 p-4">
+              <div>
+                <p className="text-sm font-semibold">Show Advanced Providers</p>
+                <p className="text-xs text-muted-foreground">
+                  Enable enterprise, local, and experimental endpoints.
+                </p>
+              </div>
+              <Switch checked={showAdvancedProviders} onCheckedChange={setShowAdvancedProviders} />
+            </div>
+
+            {providerGroups.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No providers available.</p>
+            ) : (
+              <Tabs value={activeProviderTab} onValueChange={setActiveProviderTab}>
+                <TabsList className="flex flex-wrap">
+                  {providerGroups.map((group) => (
+                    <TabsTrigger key={group.category} value={group.category}>
+                      {group.category}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+                {providerGroups.map((group) => (
+                  <TabsContent key={group.category} value={group.category} className="mt-4">
+                    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                      {group.providers.map((provider) => (
+                        <div
+                          key={provider.id}
+                          className="rounded-lg border bg-background/80 p-4 shadow-none"
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <h4 className="text-sm font-semibold">{provider.name}</h4>
+                              <p className="text-xs text-muted-foreground">
+                                {provider.description}
+                              </p>
+                            </div>
+                            {provider.requiresGateway && (
+                              <Badge variant="secondary" className="text-[10px]">
+                                Gateway
+                              </Badge>
+                            )}
+                          </div>
+                          {provider.exampleModels?.length ? (
+                            <div className="mt-3 flex flex-wrap gap-2">
+                              {provider.exampleModels.map((model) => (
+                                <Badge key={model} variant="outline" className="text-[10px]">
+                                  {model}
+                                </Badge>
+                              ))}
+                            </div>
+                          ) : null}
+                        </div>
+                      ))}
+                    </div>
+                  </TabsContent>
+                ))}
+              </Tabs>
+            )}
+          </CardContent>
+        </Card>
+
         {/* Provider API Keys - Self-contained Card */}
         <ProviderApiKeyList />
         <AgentGrantList />

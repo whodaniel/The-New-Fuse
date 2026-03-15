@@ -2,8 +2,19 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import Switch from '@/components/ui/switch';
+import { getProviderById, getProvidersByCategory } from '@/data/llmProviders';
 import { apiService } from '@/services/api';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 type AgentGrant = {
@@ -22,6 +33,7 @@ export function AgentGrantList() {
   const [grants, setGrants] = useState<AgentGrant[]>([]);
   const [agentId, setAgentId] = useState('');
   const [provider, setProvider] = useState('');
+  const [customProvider, setCustomProvider] = useState('');
   const [allowedModels, setAllowedModels] = useState('');
   const [expiresAt, setExpiresAt] = useState('');
 
@@ -32,6 +44,18 @@ export function AgentGrantList() {
 
   const [loading, setLoading] = useState({ list: true, create: false });
   const [newToken, setNewToken] = useState('');
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
+  const providerGroups = useMemo(() => getProvidersByCategory(showAdvanced), [showAdvanced]);
+  const selectedProviderMeta = useMemo(() => {
+    if (provider === 'custom') {
+      return {
+        name: 'Custom Provider',
+        description: 'Use a provider that is not listed (OpenAI-compatible APIs).',
+      };
+    }
+    return getProviderById(provider);
+  }, [provider]);
 
   useEffect(() => {
     fetchGrants();
@@ -49,7 +73,8 @@ export function AgentGrantList() {
   };
 
   const handleCreate = async () => {
-    if (!agentId.trim() || !provider.trim() || !expiresAt) {
+    const resolvedProvider = provider === 'custom' ? customProvider.trim() : provider.trim();
+    if (!agentId.trim() || !resolvedProvider || !expiresAt) {
       toast.error('Agent ID, provider, and expiry are required');
       return;
     }
@@ -58,7 +83,7 @@ export function AgentGrantList() {
       setLoading((prev) => ({ ...prev, create: true }));
       const created = await apiService.createAgentApiGrant({
         agentId: agentId.trim(),
-        provider: provider.trim().toLowerCase(),
+        provider: resolvedProvider.toLowerCase(),
         allowedModels: allowedModels
           .split(',')
           .map((s) => s.trim())
@@ -71,6 +96,7 @@ export function AgentGrantList() {
       setNewToken(created.accessToken || '');
       setAgentId('');
       setProvider('');
+      setCustomProvider('');
       setAllowedModels('');
       setExpiresAt('');
       // Reset defaults
@@ -135,14 +161,51 @@ export function AgentGrantList() {
                 onChange={(e) => setAgentId(e.target.value)}
               />
             </div>
-            <div>
-              <Label htmlFor="grant-provider">Provider</Label>
-              <Input
-                id="grant-provider"
-                placeholder="openai, anthropic"
-                value={provider}
-                onChange={(e) => setProvider(e.target.value)}
-              />
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="grant-provider">Provider</Label>
+                <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                  <span>Advanced</span>
+                  <Switch checked={showAdvanced} onCheckedChange={setShowAdvanced} />
+                </div>
+              </div>
+              <Select value={provider} onValueChange={setProvider}>
+                <SelectTrigger className="bg-background shadow-none">
+                  <SelectValue placeholder="Select provider" />
+                </SelectTrigger>
+                <SelectContent>
+                  {providerGroups.map((group) => (
+                    <SelectGroup key={group.category}>
+                      <SelectLabel>{group.category}</SelectLabel>
+                      {group.providers.map((item) => (
+                        <SelectItem key={item.id} value={item.id}>
+                          {item.name}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  ))}
+                  <SelectGroup>
+                    <SelectLabel>Custom</SelectLabel>
+                    <SelectItem value="custom">Custom / Other</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              {selectedProviderMeta?.description && (
+                <p className="text-xs text-muted-foreground">{selectedProviderMeta.description}</p>
+              )}
+              {provider === 'custom' && (
+                <div className="space-y-1">
+                  <Label htmlFor="custom-grant-provider" className="text-xs text-muted-foreground">
+                    Custom Provider ID
+                  </Label>
+                  <Input
+                    id="custom-grant-provider"
+                    placeholder="e.g. internal-gateway"
+                    value={customProvider}
+                    onChange={(e) => setCustomProvider(e.target.value)}
+                  />
+                </div>
+              )}
             </div>
           </div>
 
@@ -226,7 +289,10 @@ export function AgentGrantList() {
             <p className="p-4 text-sm text-muted-foreground">No grants issued yet.</p>
           ) : (
             <ul className="divide-y max-h-[400px] overflow-y-auto">
-              {grants.map((grant) => (
+              {grants.map((grant) => {
+                const providerMeta = getProviderById(grant.provider);
+                const providerLabel = providerMeta?.name || grant.provider;
+                return (
                 <li key={grant.id} className="p-4 hover:bg-muted/50 transition-colors">
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="space-y-1">
@@ -234,7 +300,7 @@ export function AgentGrantList() {
                         <span className="font-semibold text-lg">{grant.agentId}</span>
                         <span className="text-muted-foreground">→</span>
                         <span className="font-medium badge bg-secondary px-2 py-0.5 rounded text-sm">
-                          {grant.provider}
+                          {providerLabel}
                         </span>
                         {grant.revoked && (
                           <span className="bg-red-100 text-red-800 text-xs px-2 py-0.5 rounded">
@@ -242,6 +308,11 @@ export function AgentGrantList() {
                           </span>
                         )}
                       </div>
+                      {providerMeta?.description && (
+                        <div className="text-xs text-muted-foreground">
+                          {providerMeta.description}
+                        </div>
+                      )}
 
                       <div className="text-sm grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-1 text-muted-foreground">
                         <span>Limit: {grant.maxRequestsPerMinute} req/min</span>
@@ -277,7 +348,8 @@ export function AgentGrantList() {
                     </div>
                   </div>
                 </li>
-              ))}
+              );
+              })}
             </ul>
           )}
         </div>

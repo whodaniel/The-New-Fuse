@@ -1,4 +1,4 @@
-import { assertBigInt, assertBps, assertString, prorate } from '../shared/contracts.mjs';
+import { assertBigInt, assertBps, assertString, prorate } from '../../shared/contracts.mjs';
 
 const DEFAULTS = Object.freeze({
   platformMarkupFeeBps: 250, // 2.5% on markup revenue

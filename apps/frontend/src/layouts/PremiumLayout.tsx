@@ -3,6 +3,7 @@ import { Toaster } from 'react-hot-toast'; // Added Toaster import
 import { Outlet } from 'react-router-dom';
 import { PremiumHeader } from '../components/Navigation/PremiumHeader';
 import { PremiumSidebar } from '../components/Sidebar/PremiumSidebar';
+import FeatureAIAssistDock from '../components/ai/FeatureAIAssistDock';
 import { PremiumBackground } from '../components/ui/premium/PremiumBackground';
 
 interface PremiumLayoutProps {
@@ -63,6 +64,10 @@ export const PremiumLayout: React.FC<PremiumLayoutProps> = ({ children }) => {
             {children || <Outlet />}
           </div>
         </main>
+
+        <div className="fixed right-6 bottom-6 z-40 hidden xl:block">
+          <FeatureAIAssistDock variant="dock" />
+        </div>
       </div>
     </div>
   );

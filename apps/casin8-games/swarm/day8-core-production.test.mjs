@@ -14,7 +14,7 @@ import {
   verifyReplayLog,
   recoverySnapshot as holdemRecoverySnapshot,
   restoreFromRecovery,
-} from './holdem-engine/index.mjs';
+} from '../core-logic/holdem-engine/index.mjs';
 import {
   createTournament,
   registerPlayer,
@@ -25,7 +25,7 @@ import {
   recoverySnapshot,
   restoreTournament,
   snapshotTournament,
-} from './holdem-tournaments/index.mjs';
+} from '../core-logic/holdem-tournaments/index.mjs';
 
 test('cash edge-cases: straddle + queued seat change + disconnect fold path', () => {
   const e = createHoldemTable({

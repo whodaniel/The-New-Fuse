@@ -4,7 +4,7 @@ import {
   assertInteger,
   assertString,
   buildCursor,
-} from '../shared/contracts.mjs';
+} from '../../shared/contracts.mjs';
 
 function clone(value) {
   return JSON.parse(JSON.stringify(value));

@@ -8,8 +8,8 @@ import {
   eliminateMttPlayer,
   getMttSnapshot,
   MTT_STATUS,
-} from './tournaments-mtt/index.mjs';
-import { CashierTokenLedger } from './cashier-token/index.mjs';
+} from '../core-logic/tournaments-mtt/index.mjs';
+import { CashierTokenLedger } from '../core-logic/cashier-token/index.mjs';
 
 test('tournaments-mtt registers players, starts, rebalances, completes', () => {
   const mtt = createMtt({

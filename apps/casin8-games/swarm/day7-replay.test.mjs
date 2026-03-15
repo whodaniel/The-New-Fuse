@@ -12,7 +12,7 @@ import {
   tableSnapshot,
   recoverySnapshot,
   restoreFromRecovery,
-} from './holdem-engine/index.mjs';
+} from '../core-logic/holdem-engine/index.mjs';
 
 function fingerprint(snapshot) {
   return JSON.stringify({

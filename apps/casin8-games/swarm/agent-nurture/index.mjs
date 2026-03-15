@@ -1,4 +1,4 @@
-import { assertInteger, assertString } from '../shared/contracts.mjs';
+import { assertInteger, assertString } from '../../shared/contracts.mjs';
 
 function nowIso() {
   return new Date().toISOString();

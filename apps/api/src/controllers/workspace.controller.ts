@@ -55,8 +55,23 @@ export class WorkspaceController {
   @ApiOperation({ summary: 'Get all workspaces for the current user' })
   @ApiResponse({ status: 200, description: 'List of workspaces' })
   async getAllWorkspaces(@CurrentUser() user: { id: string }) {
-    const workspaces = await this.db.workspaces.findByOwnerWithOwner(user.id);
-    return workspaces;
+    const owned = await this.db.workspaces.findByOwnerWithOwner(user.id);
+    const memberRows = await this.db.workspaceMembers.listByUser(user.id);
+    const ownedIds = new Set(owned.map((workspace) => workspace.id));
+    const memberIds = memberRows
+      .map((row) => row.workspaceId)
+      .filter((id) => !ownedIds.has(id));
+    const memberWorkspaces = await this.db.workspaces.findByIdsWithOwner(memberIds);
+
+    const roleByWorkspace = new Map(memberRows.map((row) => [row.workspaceId, row.role]));
+
+    return [
+      ...owned.map((workspace) => ({ ...workspace, membershipRole: 'owner' })),
+      ...memberWorkspaces.map((workspace) => ({
+        ...workspace,
+        membershipRole: roleByWorkspace.get(workspace.id) || 'member',
+      })),
+    ];
   }
 
   /**
@@ -75,8 +90,8 @@ export class WorkspaceController {
       throw new NotFoundException('Workspace not found');
     }
 
-    // Only allow owner to access
-    if (workspace.ownerId !== user.id) {
+    const membership = await this.db.workspaceMembers.findMembership(id, user.id);
+    if (workspace.ownerId !== user.id && !membership) {
       throw new ForbiddenException('You do not have access to this workspace');
     }
 
@@ -99,6 +114,15 @@ export class WorkspaceController {
       name: workspaceData.name,
       description: workspaceData.description,
       ownerId: user.id,
+    });
+
+    await this.db.workspaceMembers.upsertMember({
+      workspaceId: workspace.id,
+      userId: user.id,
+      role: 'owner',
+      addedByUserId: user.id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
 
     return workspace;
@@ -125,7 +149,11 @@ export class WorkspaceController {
       throw new NotFoundException('Workspace not found');
     }
 
-    if (existingWorkspace.ownerId !== user.id) {
+    const membership = await this.db.workspaceMembers.findMembership(id, user.id);
+    const isOwner = existingWorkspace.ownerId === user.id;
+    const isAdmin = membership?.role === 'admin' || membership?.role === 'owner';
+
+    if (!isOwner && !isAdmin) {
       throw new ForbiddenException('You do not have permission to update this workspace');
     }
 
@@ -169,20 +197,6 @@ export class WorkspaceController {
 
   /**
    * Get workspace members
-   * NOTE: This requires a workspace_members table which does not exist yet.
-   * Currently returns the owner as the only member.
-   *
-   * TODO: Implement proper workspace membership system:
-   * 1. Create workspace_members table in schema:
-   *    - id: uuid (PK)
-   *    - workspaceId: uuid (FK -> workspaces.id)
-   *    - userId: uuid (FK -> users.id)
-   *    - role: enum ('owner', 'admin', 'member', 'viewer')
-   *    - addedAt: timestamp
-   *    - addedBy: uuid (FK -> users.id)
-   * 2. Create DrizzleWorkspaceMemberRepository
-   * 3. Add workspaceMembers accessor to DatabaseService
-   * 4. Implement full member management
    */
   @Get(':id/members')
   @ApiOperation({ summary: 'Get workspace members' })
@@ -196,26 +210,35 @@ export class WorkspaceController {
       throw new NotFoundException('Workspace not found');
     }
 
-    if (workspace.ownerId !== user.id) {
+    const membership = await this.db.workspaceMembers.findMembership(id, user.id);
+    if (workspace.ownerId !== user.id && !membership) {
       throw new ForbiddenException('You do not have access to this workspace');
     }
 
-    // Return owner as the only member until membership table is created
-    return [
-      {
+    const members = await this.db.workspaceMembers.listByWorkspaceWithUsers(id);
+    const hasOwner = members.some((member) => member.userId === workspace.ownerId);
+
+    const formatted = members.map((member) => ({
+      userId: member.userId,
+      email: member.userEmail,
+      role: member.role,
+      joinedAt: member.createdAt,
+    }));
+
+    if (!hasOwner) {
+      formatted.unshift({
         userId: workspace.ownerId,
         email: workspace.owner?.email,
         role: 'owner',
         joinedAt: workspace.createdAt,
-      },
-    ];
+      });
+    }
+
+    return formatted;
   }
 
   /**
    * Add member to workspace
-   * NOTE: This requires a workspace_members table which does not exist yet.
-   *
-   * TODO: Implement after creating workspace_members table (see getWorkspaceMembers TODO)
    */
   @Post(':id/members')
   @ApiOperation({ summary: 'Add member to workspace' })
@@ -235,25 +258,37 @@ export class WorkspaceController {
       throw new NotFoundException('Workspace not found');
     }
 
-    if (workspace.ownerId !== user.id) {
-      throw new ForbiddenException('Only the workspace owner can add members');
+    const membership = await this.db.workspaceMembers.findMembership(id, user.id);
+    const isOwner = workspace.ownerId === user.id;
+    const isAdmin = membership?.role === 'admin' || membership?.role === 'owner';
+
+    if (!isOwner && !isAdmin) {
+      throw new ForbiddenException('Only workspace owners or admins can add members');
     }
 
-    // TODO: Implement when workspace_members table exists
-    // For now, return a message indicating the feature is not yet implemented
+    const targetUser = await this.db.users.findById(memberData.userId);
+    if (!targetUser) {
+      throw new NotFoundException('User not found');
+    }
+
+    const role = memberData.role || 'member';
+    const member = await this.db.workspaceMembers.upsertMember({
+      workspaceId: id,
+      userId: memberData.userId,
+      role,
+      addedByUserId: user.id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
     return {
-      message: 'Workspace member management is not yet implemented',
-      note: 'A workspace_members table needs to be created in the database schema. See controller source for TODO details.',
-      requestedMember: memberData.userId,
-      requestedRole: memberData.role || 'member',
+      message: 'Workspace member added',
+      member,
     };
   }
 
   /**
    * Remove member from workspace
-   * NOTE: This requires a workspace_members table which does not exist yet.
-   *
-   * TODO: Implement after creating workspace_members table (see getWorkspaceMembers TODO)
    */
   @Delete(':id/members/:userId')
   @ApiOperation({ summary: 'Remove member from workspace' })
@@ -272,8 +307,12 @@ export class WorkspaceController {
       throw new NotFoundException('Workspace not found');
     }
 
-    if (workspace.ownerId !== userId) {
-      throw new ForbiddenException('Only the workspace owner can remove members');
+    const membership = await this.db.workspaceMembers.findMembership(id, userId);
+    const isOwner = workspace.ownerId === userId;
+    const isAdmin = membership?.role === 'admin' || membership?.role === 'owner';
+
+    if (!isOwner && !isAdmin) {
+      throw new ForbiddenException('Only workspace owners or admins can remove members');
     }
 
     // Cannot remove the owner
@@ -281,11 +320,14 @@ export class WorkspaceController {
       throw new ForbiddenException('Cannot remove the workspace owner. Transfer ownership first.');
     }
 
-    // TODO: Implement when workspace_members table exists
+    const removed = await this.db.workspaceMembers.removeMember(id, memberUserId);
+    if (!removed) {
+      throw new NotFoundException('Workspace member not found');
+    }
+
     return {
-      message: 'Workspace member management is not yet implemented',
-      note: 'A workspace_members table needs to be created in the database schema. See controller source for TODO details.',
-      requestedRemoval: memberUserId,
+      message: 'Workspace member removed',
+      memberId: memberUserId,
     };
   }
 
@@ -305,7 +347,8 @@ export class WorkspaceController {
       throw new NotFoundException('Workspace not found');
     }
 
-    if (workspace.ownerId !== userId) {
+    const membership = await this.db.workspaceMembers.findMembership(id, userId);
+    if (workspace.ownerId !== userId && !membership) {
       throw new ForbiddenException('You do not have access to this workspace');
     }
 

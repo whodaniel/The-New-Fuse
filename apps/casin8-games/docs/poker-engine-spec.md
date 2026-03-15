@@ -12,7 +12,7 @@ This V2 lane is additive and does not remove existing V1 APIs.
 
 ## Core Modules
 
-- `swarm/holdem-engine/index.mjs`
+- `core-logic/holdem-engine/index.mjs`
   - Hand lifecycle orchestration
   - Blinds/antes posting
   - Missed/dead blind handling
@@ -22,7 +22,7 @@ This V2 lane is additive and does not remove existing V1 APIs.
   - Crash recovery snapshots
   - Deterministic replay logs
   - Agent-first state payloads (`legalActions`, `helper` EV/risk fields)
-- `swarm/holdem-tournaments/index.mjs`
+- `core-logic/holdem-tournaments/index.mjs`
   - MTT + SNG lifecycle
   - Late registration windows
   - Rebuy/add-on controls

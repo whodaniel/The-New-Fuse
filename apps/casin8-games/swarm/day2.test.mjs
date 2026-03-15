@@ -9,7 +9,7 @@ import {
   eliminatePlayer,
   computePayouts,
   SNG_STATUS,
-} from './tournaments-sng/index.mjs';
+} from '../core-logic/tournaments-sng/index.mjs';
 
 test('agent-runtime enforces advisory tier and risk caps', () => {
   const registry = new AgentRegistry();

@@ -1,84 +1,27 @@
-# Swarm Modules
+# Agent Swarm (Crafting & Orchestration)
 
-This folder contains parallel workstream scaffolding for:
+This directory contains the tools and modules for Users and Admins to **design, nurture, and manage autonomous participants** in the poker ecosystem.
 
-- `engine-core`
-- `sponsorship-ledger`
-- `realtime-platform`
-- `agent-runtime`
-- `tournaments-sng`
-- `tournaments-mtt`
-- `cashier-token`
-- `fairness-security`
-- `orchestrator`
-- `graphics-assets`
-- `engine-sim`
-- `agent-strategy`
+Unlike the "Platform Core Logic," which enforces the rules, the Swarm represents the **participants** who must follow those rules.
 
-Legacy reinforcement modules may also exist (`tournament`, `gap-reinforcement`)
-and are still checked by the run script when present.
+## Modules
 
-## Files
+- `agent-strategy`: Decision-making engines for bots. Includes temperament-based action policies (TAG, LAG, etc.) and risk-cap enforcement.
+- `agent-nurture`: The reinforcement learning "Coach" loop. Monitors win rates (bb/100), exploitability, and manages agent stage promotion.
+- `agent-runtime`: The sandbox where agents are executed and registered.
+- `orchestrator`: Management tools for Admins to assign bot rosters to "House" tables or specialized liquidity lanes.
+- `sponsorship-ledger`: The agent economy. Handles how users can back/fund agents and defines the deterministic payout waterfall for sponsors.
+- `graphics-assets`: Visual pipeline for generating agent avatars and UI skins.
 
-- `shared/contracts.mjs`: interface constants and validation helpers.
-- `engine-core/index.mjs`: table snapshot, action validation, and action
-  application.
-- `sponsorship-ledger/index.mjs`: backing position funding and settlement
-  waterfall math.
-- `realtime-platform/index.mjs`: sequenced event bus, idempotency protection,
-  snapshot recovery.
-- `agent-runtime/index.mjs`: agent registry, temperament presets, autonomy
-  tiers, risk guardrails.
-- `agent-nurture/index.mjs`: PokerRL-inspired coaching loop (training profile,
-  episode metrics, stage promotion, curriculum recommendations).
-- `tournaments-sng/index.mjs`: SNG registration/start/blind
-  progression/elimination/payouts.
-- `tournaments-mtt/index.mjs`: MTT registration, table seeding, rebalancing,
-  completion lifecycle.
-- `holdem-engine/index.mjs`: V2 No-Limit Hold'em cash-table lifecycle, side
-  pots, idempotent replayable settlement.
-- `holdem-tournaments/index.mjs`: V2 tournament director for MTT/SNG late reg,
-  rebuys/add-ons, breaks, balancing, payouts.
-- `cashier-token/index.mjs`: token ledger with idempotent cashier actions and
-  reconciliation.
-- `fairness-security/index.mjs`: commit/reveal helpers, receipt verification,
-  collusion scoring.
-- `orchestrator/index.mjs`: swarm lane assignment, collision checks, and
-  execution board generation.
-- `graphics-assets/index.mjs`: poker-only visual backlog, reference ranking, and
-  prompt pack generation.
-- `engine-sim/index.mjs`: deterministic simulation and lightweight equity
-  estimation APIs.
-- `agent-strategy/index.mjs`: temperament-based action policy and risk-cap
-  enforcement.
+## Agent Lifecycle
 
-## Tests
+1. **Crafting**: A User (or Admin) initializes an agent profile using `agent-strategy`.
+2. **Nurturing**: The agent plays in training environments (or live), and its performance is tracked via `agent-nurture`.
+3. **Execution**: The agent is registered in `agent-runtime` and joins a table managed by the `core-logic/engine-core`.
+4. **Economic Settlement**: If sponsored, the `sponsorship-ledger` distributes any winnings to backers.
 
-- `day1.test.mjs`: engine/sponsorship/realtime.
-- `day2.test.mjs`: agent-runtime + SNG.
-- `day3.test.mjs`: MTT + cashier-token.
-- `day4.test.mjs`: fairness-security.
-- `day5.test.mjs`: orchestrator + graphics-assets.
-- `day6-sim.test.mjs`: engine-sim.
-- `day6-strategy.test.mjs`: agent-strategy.
-- Optional legacy: `gap-reinforcement.test.mjs`.
+## Key Principles
 
-## Run
-
-```bash
-./scripts/day1-swarm-check.sh
-```
-
-## Integration Contract (Current)
-
-1. Engine output should be published into realtime bus with `eventType` values
-   from `shared/contracts.mjs`.
-2. Sponsorship settlement should consume engine payout directives and emit
-   claim-ready rows.
-3. Realtime cursor values (`tableId:seq`) are the recovery boundary for
-   reconnect/resume.
-4. Fairness receipts should be attached to every settled hand.
-5. Cashier mutations must use idempotency keys.
-6. Orchestrator lane assignment should avoid overlap with existing ownership
-   maps.
-7. Graphics pipeline should stay poker-only and exclude video poker motifs.
+1. **Agents as Residents**: Agents are players, not landlords. They interact with the game via the same API/Socket channels as human players.
+2. **Tenancy-Bound**: Agent memory and nurture data are scoped to the User's Workspace.
+3. **Subject to Authority**: Agents never "run" the game or the cashier; they are strictly clients of the `core-logic`.

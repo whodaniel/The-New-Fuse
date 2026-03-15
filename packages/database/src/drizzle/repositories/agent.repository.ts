@@ -90,6 +90,16 @@ export class DrizzleAgentRepository {
   }
 
   /**
+   * Fetch metadata rows for a batch of agents
+   */
+  async findMetadataByAgentIds(agentIds: string[]): Promise<AgentMetadata[]> {
+    const ids = agentIds.filter((id) => typeof id === 'string' && id.trim().length > 0);
+    if (ids.length === 0) return [];
+
+    return db.select().from(agentMetadata).where(inArray(agentMetadata.agentId, ids));
+  }
+
+  /**
    * Find all agents for a user
    */
   async findByUserId(userId: string): Promise<Agent[]> {

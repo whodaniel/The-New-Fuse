@@ -1,4 +1,4 @@
-import { assertInteger, assertString } from '../shared/contracts.mjs';
+import { assertInteger, assertString } from '../../shared/contracts.mjs';
 import { createHash } from 'node:crypto';
 
 const STREETS = ['preflop', 'flop', 'turn', 'river'];

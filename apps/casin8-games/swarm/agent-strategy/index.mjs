@@ -1,4 +1,4 @@
-import { assertString } from '../shared/contracts.mjs';
+import { assertString } from '../../shared/contracts.mjs';
 
 export const TEMPERAMENTS = Object.freeze({
   TIGHT_AGGRESSIVE: 'tight_aggressive',

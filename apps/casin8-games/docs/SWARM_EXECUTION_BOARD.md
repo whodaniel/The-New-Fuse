@@ -9,23 +9,23 @@
 ## Day 1 Status
 
 - Completed:
-  - Shared contracts: `swarm/shared/contracts.mjs`
-  - Engine-core stub: `swarm/engine-core/index.mjs`
+  - Shared contracts: `shared/contracts.mjs`
+  - Engine-core stub: `core-logic/engine-core/index.mjs`
   - Sponsorship-ledger stub: `swarm/sponsorship-ledger/index.mjs`
-  - Realtime-platform stub: `swarm/realtime-platform/index.mjs`
+  - Realtime-platform stub: `core-logic/realtime-platform/index.mjs`
   - Validation suite: `swarm/day1.test.mjs`
   - Run script: `scripts/day1-swarm-check.sh`
   - Agent runtime scaffold: `swarm/agent-runtime/index.mjs`
-  - SNG scaffold: `swarm/tournaments-sng/index.mjs`
+  - SNG scaffold: `core-logic/tournaments-sng/index.mjs`
   - Day 2 tests: `swarm/day2.test.mjs`
-  - MTT scaffold: `swarm/tournaments-mtt/index.mjs`
-  - Cashier/token scaffold: `swarm/cashier-token/index.mjs`
+  - MTT scaffold: `core-logic/tournaments-mtt/index.mjs`
+  - Cashier/token scaffold: `core-logic/cashier-token/index.mjs`
   - Day 3 tests: `swarm/day3.test.mjs`
-  - Fairness/security scaffold: `swarm/fairness-security/index.mjs`
+  - Fairness/security scaffold: `core-logic/fairness-security/index.mjs`
   - Day 4 tests: `swarm/day4.test.mjs`
   - Swarm orchestrator lane: `swarm/orchestrator/index.mjs`
   - Graphics/assets lane: `swarm/graphics-assets/index.mjs`
-  - Engine simulation lane: `swarm/engine-sim/index.mjs`
+  - Engine simulation lane: `core-logic/engine-sim/index.mjs`
   - Agent strategy lane: `swarm/agent-strategy/index.mjs`
   - Day 5 tests: `swarm/day5.test.mjs`
   - Day 6 tests: `swarm/day6-sim.test.mjs`, `swarm/day6-strategy.test.mjs`

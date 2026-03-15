@@ -5,7 +5,7 @@ import {
   evaluateBoardStrength,
   runMonteCarloEquity,
   compareAgents,
-} from './engine-sim/index.mjs';
+} from '../core-logic/engine-sim/index.mjs';
 
 test('engine-sim computes deterministic equity from seed', () => {
   const out1 = runMonteCarloEquity({

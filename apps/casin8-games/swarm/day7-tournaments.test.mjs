@@ -13,7 +13,7 @@ import {
   eliminatePlayer,
   computePayouts,
   snapshotTournament,
-} from './holdem-tournaments/index.mjs';
+} from '../core-logic/holdem-tournaments/index.mjs';
 
 test('MTT supports late reg, rebuy/add-on windows, balancing, final-table merge, payouts', () => {
   const t = createTournament({

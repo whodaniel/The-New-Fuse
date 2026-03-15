@@ -26,6 +26,7 @@ import { MCPController } from './controllers/mcp.controller';
 import { ModelsController } from './controllers/models.controller';
 import { N8nWorkflowsController } from './controllers/n8n-workflows.controller';
 import { OnboardingController } from './controllers/onboarding.controller';
+import { OrchestrationController } from './controllers/orchestration.controller';
 import { ProviderKeysController } from './controllers/provider-keys.controller';
 import { SystemController } from './controllers/system.controller';
 import { UserManagementController } from './controllers/user-management.controller';
@@ -158,6 +159,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     WorkflowController,
     WorkspaceController, // Multi-workspace support
     ProviderKeysController, // Per-user provider API key management
+    OrchestrationController, // Tenant-aware orchestration chat endpoint
     AdminOpenClawOAuthController,
     N8nWorkflowsController,
     OnboardingController,

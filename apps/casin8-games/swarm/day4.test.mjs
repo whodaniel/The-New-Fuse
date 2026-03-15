@@ -7,7 +7,7 @@ import {
   fairReceipt,
   verifyReceipt,
   scoreCollusionSignals,
-} from './fairness-security/index.mjs';
+} from '../core-logic/fairness-security/index.mjs';
 
 test('fairness-security creates deterministic receipts and verification', () => {
   const commit = createCommit({ sessionId: 'sess-1', serverSeed: 'seed-abc' });

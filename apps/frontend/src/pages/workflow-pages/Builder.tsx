@@ -1,6 +1,7 @@
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverBody } from '@/components/ui/popover';
 import { PremiumButton as Button, PremiumInput as Input } from '@/components/ui/premium';
+import WorkflowAIAssistantPanel from '@/components/workflow/WorkflowAIAssistantPanel';
 import { NodeProperties, NodeToolbox, WorkflowCanvas } from '@/components/workflow';
 import { WorkflowProvider } from '@/contexts/WorkflowContext';
 import { useWorkflow } from '@/hooks';
@@ -14,6 +15,7 @@ import {
   Redo,
   Save,
   Settings2,
+  Sparkles,
   Undo,
   Upload,
   X,
@@ -42,6 +44,7 @@ const WorkflowBuilder: React.FC = () => {
   const [isExecuting, setIsExecuting] = useState(false);
   const [showLeftPanel, setShowLeftPanel] = useState(true);
   const [showRightPanel, setShowRightPanel] = useState(false);
+  const [showAiPanel, setShowAiPanel] = useState(true);
 
   // Update workflow name and description when currentWorkflow changes
   useEffect(() => {
@@ -213,6 +216,16 @@ const WorkflowBuilder: React.FC = () => {
                   <Upload className="h-3.5 w-3.5 mr-1" />
                   Import
                 </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowAiPanel((prev) => !prev)}
+                  title="Toggle AI Builder"
+                  className={`h-8 text-xs ${showAiPanel ? 'border-blue-500/40 text-blue-300' : ''}`}
+                >
+                  <Sparkles className="h-3.5 w-3.5 mr-1" />
+                  AI Builder
+                </Button>
               </div>
               <div className="hidden md:flex items-center gap-1 border-l border-white/10 pl-1 ml-1">
                 <Button
@@ -264,62 +277,75 @@ const WorkflowBuilder: React.FC = () => {
 
         {/* Main content */}
         <ReactFlowProvider>
-          <div className="flex-1 flex overflow-hidden relative">
-            {/* Left sidebar - Node toolbox - Collapses to LEFT */}
-            <div
-              className={`${
-                showLeftPanel ? 'w-56' : 'w-0'
-              } relative z-20 h-full border-r border-white/10 bg-slate-900/95 backdrop-blur-md overflow-hidden transition-all duration-300 ease-in-out`}
-            >
-              <div className="w-56 p-3 h-full overflow-y-auto">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-semibold text-white">Nodes</h3>
-                </div>
-                <NodeToolbox />
-              </div>
-            </div>
-
-            {/* Collapsed left panel indicator */}
-            {!showLeftPanel && (
-              <button
-                onClick={() => setShowLeftPanel(true)}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-30 bg-slate-800 border border-white/10 rounded-r-lg p-1 hover:bg-slate-700 transition-colors"
-                title="Show nodes panel"
+          <WorkflowProvider>
+            <div className="flex-1 flex overflow-hidden relative">
+              {/* Left sidebar - Node toolbox - Collapses to LEFT */}
+              <div
+                className={`${
+                  showLeftPanel ? 'w-56' : 'w-0'
+                } relative z-20 h-full border-r border-white/10 bg-slate-900/95 backdrop-blur-md overflow-hidden transition-all duration-300 ease-in-out`}
               >
-                <ChevronRight className="h-4 w-4 text-gray-400" />
-              </button>
-            )}
-
-            {/* Center - Workflow canvas */}
-            <div className="flex-1 overflow-hidden">
-              <WorkflowProvider>
-                <WorkflowCanvas onNodeSelect={setSelectedNode} />
-              </WorkflowProvider>
-            </div>
-
-            {/* Right sidebar - Node properties - Only shows when node is selected */}
-            {showRightPanel && selectedNode && (
-              <div className="w-72 relative z-20 h-full border-l border-white/10 bg-slate-900/95 backdrop-blur-md overflow-hidden">
-                <div className="p-3 h-full overflow-y-auto">
+                <div className="w-56 p-3 h-full overflow-y-auto">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-semibold text-white">Node Properties</h3>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setShowRightPanel(false);
-                        setSelectedNode(null);
-                      }}
-                      className="h-6 w-6 p-0 text-gray-400 hover:text-white"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
+                    <h3 className="text-sm font-semibold text-white">Nodes</h3>
                   </div>
-                  <NodeProperties node={selectedNode} />
+                  <NodeToolbox />
                 </div>
               </div>
-            )}
-          </div>
+
+              {/* Collapsed left panel indicator */}
+              {!showLeftPanel && (
+                <button
+                  onClick={() => setShowLeftPanel(true)}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 z-30 bg-slate-800 border border-white/10 rounded-r-lg p-1 hover:bg-slate-700 transition-colors"
+                  title="Show nodes panel"
+                >
+                  <ChevronRight className="h-4 w-4 text-gray-400" />
+                </button>
+              )}
+
+              {/* Center - Workflow canvas */}
+              <div className="flex-1 overflow-hidden">
+                <WorkflowCanvas onNodeSelect={setSelectedNode} />
+              </div>
+
+              {/* Right sidebar - Node properties + AI Builder */}
+              {(showRightPanel || showAiPanel) && (
+                <div className="w-80 relative z-20 h-full border-l border-white/10 bg-slate-900/95 backdrop-blur-md overflow-hidden">
+                  <div className="p-3 h-full overflow-y-auto space-y-3">
+                    {showRightPanel && selectedNode && (
+                      <div className="rounded-md border border-white/10 bg-slate-950/70 p-3">
+                        <div className="flex items-center justify-between mb-3">
+                          <h3 className="text-sm font-semibold text-white">Node Properties</h3>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setShowRightPanel(false);
+                              setSelectedNode(null);
+                            }}
+                            className="h-6 w-6 p-0 text-gray-400 hover:text-white"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        <NodeProperties node={selectedNode} />
+                      </div>
+                    )}
+
+                    {showAiPanel && (
+                      <WorkflowAIAssistantPanel
+                        onApplyMeta={(name, description) => {
+                          if (name) setWorkflowName(name);
+                          if (description) setWorkflowDescription(description);
+                        }}
+                      />
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </WorkflowProvider>
         </ReactFlowProvider>
       </main>
     </div>

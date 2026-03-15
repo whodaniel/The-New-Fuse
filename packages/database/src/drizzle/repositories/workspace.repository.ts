@@ -1,4 +1,4 @@
-import { desc, eq, InferInsertModel, InferSelectModel, sql } from 'drizzle-orm';
+import { desc, eq, inArray, InferInsertModel, InferSelectModel, sql } from 'drizzle-orm';
 import { db } from '../client';
 import { projects, users, workspaces } from '../schema';
 
@@ -77,6 +77,19 @@ export class DrizzleWorkspaceRepository {
    */
   async findAll(): Promise<Workspace[]> {
     return db.select().from(workspaces).orderBy(desc(workspaces.createdAt));
+  }
+
+  /**
+   * Find workspaces by IDs
+   */
+  async findByIds(ids: string[]): Promise<Workspace[]> {
+    const workspaceIds = ids.filter((id) => typeof id === 'string' && id.trim().length > 0);
+    if (workspaceIds.length === 0) return [];
+    return db
+      .select()
+      .from(workspaces)
+      .where(inArray(workspaces.id, workspaceIds))
+      .orderBy(desc(workspaces.createdAt));
   }
 
   /**
@@ -207,6 +220,37 @@ export class DrizzleWorkspaceRepository {
     const ownerMap = new Map(owners.map((o) => [o.id, { email: o.email }]));
 
     return allWorkspaces.map((w) => ({
+      ...w,
+      owner: ownerMap.get(w.ownerId) || null,
+    }));
+  }
+
+  /**
+   * Find workspaces by IDs with owner details
+   */
+  async findByIdsWithOwner(
+    ids: string[]
+  ): Promise<(Workspace & { owner: { email: string | null } | null })[]> {
+    const workspaceIds = ids.filter((id) => typeof id === 'string' && id.trim().length > 0);
+    if (workspaceIds.length === 0) return [];
+
+    const selected = await db
+      .select()
+      .from(workspaces)
+      .where(inArray(workspaces.id, workspaceIds))
+      .orderBy(desc(workspaces.createdAt));
+
+    if (selected.length === 0) return [];
+
+    const ownerIds = [...new Set(selected.map((w) => w.ownerId))];
+    const owners = await db
+      .select({ id: users.id, email: users.email })
+      .from(users)
+      .where(sql`${users.id} IN ${ownerIds}`);
+
+    const ownerMap = new Map(owners.map((o) => [o.id, { email: o.email }]));
+
+    return selected.map((w) => ({
       ...w,
       owner: ownerMap.get(w.ownerId) || null,
     }));

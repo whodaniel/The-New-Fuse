@@ -77,23 +77,23 @@ async function importOptionalModule(modulePath) {
 }
 
 const enginePromise = import(pathToFileURL(path.join(root, 'engine.mjs')).href);
-const engineCorePromise = importOptionalModule('swarm/engine-core/index.mjs');
+const engineCorePromise = importOptionalModule('core-logic/engine-core/index.mjs');
 const sponsorshipPromise = importOptionalModule('swarm/sponsorship-ledger/index.mjs');
-const realtimePromise = importOptionalModule('swarm/realtime-platform/index.mjs');
+const realtimePromise = importOptionalModule('core-logic/realtime-platform/index.mjs');
 const agentRuntimePromise = importOptionalModule('swarm/agent-runtime/index.mjs');
-const sngPromise = importOptionalModule('swarm/tournaments-sng/index.mjs');
-const mttPromise = importOptionalModule('swarm/tournaments-mtt/index.mjs');
-const cashierPromise = importOptionalModule('swarm/cashier-token/index.mjs');
-const fairnessPromise = importOptionalModule('swarm/fairness-security/index.mjs');
-const engineSimPromise = importOptionalModule('swarm/engine-sim/index.mjs');
+const sngPromise = importOptionalModule('core-logic/tournaments-sng/index.mjs');
+const mttPromise = importOptionalModule('core-logic/tournaments-mtt/index.mjs');
+const cashierPromise = importOptionalModule('core-logic/cashier-token/index.mjs');
+const fairnessPromise = importOptionalModule('core-logic/fairness-security/index.mjs');
+const engineSimPromise = importOptionalModule('core-logic/engine-sim/index.mjs');
 const agentStrategyPromise = importOptionalModule('swarm/agent-strategy/index.mjs');
 const agentNurturePromise = importOptionalModule('swarm/agent-nurture/index.mjs');
 const traitProvidersPromise = importOptionalModule('swarm/agent-strategy/trait-providers.mjs');
 const traitPayloadSchemaPromise = importOptionalModule(
   'swarm/agent-strategy/trait-payload-schema.mjs'
 );
-const holdemEnginePromise = importOptionalModule('swarm/holdem-engine/index.mjs');
-const holdemTournamentsPromise = importOptionalModule('swarm/holdem-tournaments/index.mjs');
+const holdemEnginePromise = importOptionalModule('core-logic/holdem-engine/index.mjs');
+const holdemTournamentsPromise = importOptionalModule('core-logic/holdem-tournaments/index.mjs');
 const fraudCollusionPromise = importOptionalModule('swarm/fraud-collusion/index.mjs');
 
 const sseClients = new Map();

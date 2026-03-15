@@ -3,18 +3,18 @@ set -euo pipefail
 
 ROOT="/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games"
 
-node --check "$ROOT/swarm/shared/contracts.mjs"
-node --check "$ROOT/swarm/engine-core/index.mjs"
+node --check "$ROOT/shared/contracts.mjs"
+node --check "$ROOT/core-logic/engine-core/index.mjs"
 node --check "$ROOT/swarm/sponsorship-ledger/index.mjs"
-node --check "$ROOT/swarm/realtime-platform/index.mjs"
+node --check "$ROOT/core-logic/realtime-platform/index.mjs"
 node --check "$ROOT/swarm/agent-runtime/index.mjs"
-node --check "$ROOT/swarm/tournaments-sng/index.mjs"
-node --check "$ROOT/swarm/tournaments-mtt/index.mjs"
-node --check "$ROOT/swarm/cashier-token/index.mjs"
-node --check "$ROOT/swarm/fairness-security/index.mjs"
+node --check "$ROOT/core-logic/tournaments-sng/index.mjs"
+node --check "$ROOT/core-logic/tournaments-mtt/index.mjs"
+node --check "$ROOT/core-logic/cashier-token/index.mjs"
+node --check "$ROOT/core-logic/fairness-security/index.mjs"
 node --check "$ROOT/swarm/orchestrator/index.mjs"
 node --check "$ROOT/swarm/graphics-assets/index.mjs"
-node --check "$ROOT/swarm/engine-sim/index.mjs"
+node --check "$ROOT/core-logic/engine-sim/index.mjs"
 node --check "$ROOT/swarm/agent-strategy/index.mjs"
 
 # Existing reinforcement checks retained.

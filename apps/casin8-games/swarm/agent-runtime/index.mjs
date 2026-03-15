@@ -1,4 +1,4 @@
-import { assertBps, assertInteger, assertString } from '../shared/contracts.mjs';
+import { assertBps, assertInteger, assertString } from '../../shared/contracts.mjs';
 
 export const AUTONOMY_TIERS = Object.freeze({
   ADVISORY: 'A',
