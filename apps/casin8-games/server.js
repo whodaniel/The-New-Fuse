@@ -20,6 +20,15 @@ const maxTableEvents = 200;
 const maxLedgerEntries = 200;
 const rateLimitWindowMs = 60_000;
 const rateLimitMax = 240;
+const holdemLobbyTables = [
+  { id: 'lobby-1', name: 'CYBER-NODE #1', maxSeats: 6, smallBlind: 1, bigBlind: 2, bots: 4 },
+  { id: 'neon-grind', name: 'NEON GRIND', maxSeats: 9, smallBlind: 5, bigBlind: 10, bots: 6 },
+  { id: 'arc-lite', name: 'ARC-LITE', maxSeats: 6, smallBlind: 25, bigBlind: 50, bots: 4 },
+  { id: 'high-roller', name: 'HIGH ROLLER', maxSeats: 2, smallBlind: 100, bigBlind: 200, bots: 2 },
+];
+const holdemBotStack = 20000;
+const holdemBotLoopIntervalMs = 2500;
+const holdemLobbyNameById = new Map(holdemLobbyTables.map((t) => [t.id, t.name]));
 
 const mime = {
   '.html': 'text/html; charset=utf-8',
@@ -138,6 +147,9 @@ const swarmState = {
   },
 };
 const riskDb = createRiskDb(riskDbPath);
+let holdemLobbySeededAt = 0;
+let holdemBotLoopTimer = null;
+let holdemBotLoopRunning = false;
 hydrateFromRiskDb();
 hydrateTreasuryPolicies();
 hydrateReserveAttestations();
@@ -835,6 +847,58 @@ function requiresPokerAuth(method, pathname) {
 
 function nowIso() {
   return new Date().toISOString();
+}
+
+function holdemTableType(maxSeats) {
+  if (maxSeats <= 2) return 'Heads-Up';
+  if (maxSeats <= 6) return '6-Max';
+  return '9-Max';
+}
+
+function holdemStakeLabel(sb, bb) {
+  return `$${sb}/${bb}`;
+}
+
+function isBotPlayerId(playerId) {
+  return String(playerId || '').startsWith('bot-') || String(playerId || '').startsWith('agent-');
+}
+
+function pickWeighted(items) {
+  const total = items.reduce((sum, item) => sum + item.weight, 0);
+  const target = Math.random() * total;
+  let cursor = 0;
+  for (const item of items) {
+    cursor += item.weight;
+    if (target <= cursor) return item;
+  }
+  return items[items.length - 1];
+}
+
+function chooseBotAction(legalActions) {
+  if (!Array.isArray(legalActions) || legalActions.length === 0) return null;
+  const weights = {
+    fold: 1,
+    call: 4,
+    check: 5,
+    bet: 3,
+    raise: 2,
+    allin: 1,
+  };
+  const weighted = legalActions.map((action) => ({
+    action,
+    weight: weights[action.action] ?? 1,
+  }));
+  const chosen = pickWeighted(weighted).action;
+  let amount = 0;
+  if (chosen.action === 'bet' || chosen.action === 'raise') {
+    const min = Number.isFinite(chosen.min) ? Number(chosen.min) : 0;
+    const max = Number.isFinite(chosen.max) ? Number(chosen.max) : min;
+    const target = min + Math.floor(Math.random() * Math.max(1, max - min + 1));
+    amount = Math.max(min, Math.min(max, target));
+  } else if (chosen.action === 'allin' || chosen.action === 'call') {
+    amount = Number.isFinite(chosen.max) ? Number(chosen.max) : 0;
+  }
+  return { action: chosen.action, amount };
 }
 
 function sha256Hex(value) {
@@ -3706,8 +3770,44 @@ async function handleMttState(req, res, urlObj) {
 }
 
 async function handleV2HoldemTablesList(req, res) {
+  await ensureHoldemLobbySeeded();
   const tables = [];
+  const seen = new Set();
+  const holdemEngine = await holdemEnginePromise;
+
+  if (holdemEngine && !holdemEngine.__missingModule) {
+    for (const [id, table] of swarmState.holdemTables.entries()) {
+      try {
+        const snapshot = holdemEngine.tableSnapshot(table);
+        const maxPlayers = Array.isArray(snapshot.seats)
+          ? snapshot.seats.length
+          : table.seats.length;
+        const players = Array.isArray(snapshot.seats)
+          ? snapshot.seats.filter((seat) => seat && seat.playerId).length
+          : 0;
+        const hand = snapshot.hand || {};
+        tables.push({
+          id,
+          name: holdemLobbyNameById.get(id) || `Table ${id}`,
+          type: holdemTableType(maxPlayers),
+          stakes: holdemStakeLabel(
+            snapshot.blinds?.smallBlind || 1,
+            snapshot.blinds?.bigBlind || 2
+          ),
+          players,
+          maxPlayers,
+          avgPot: hand.pot || 0,
+          status: hand && !hand.settled ? 'active' : 'idle',
+        });
+        seen.add(id);
+      } catch (err) {
+        console.error('[casin8] Failed to snapshot holdem table:', err);
+      }
+    }
+  }
+
   for (const [id, snapshot] of swarmState.tableSnapshots.entries()) {
+    if (seen.has(id)) continue;
     tables.push({
       id,
       name: snapshot.name || `Table ${id}`,
@@ -3719,6 +3819,22 @@ async function handleV2HoldemTablesList(req, res) {
       status: snapshot.terminal ? 'terminal' : 'active',
     });
   }
+
+  if (tables.length === 0) {
+    for (const cfg of holdemLobbyTables) {
+      tables.push({
+        id: cfg.id,
+        name: cfg.name,
+        type: holdemTableType(cfg.maxSeats),
+        stakes: holdemStakeLabel(cfg.smallBlind, cfg.bigBlind),
+        players: Math.max(1, Math.min(cfg.bots, cfg.maxSeats - 1)),
+        maxPlayers: cfg.maxSeats,
+        avgPot: 0,
+        status: 'active',
+      });
+    }
+  }
+
   writeJson(res, 200, { ok: true, tables });
 }
 
@@ -6490,15 +6606,155 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
+async function ensureHoldemLobbySeeded({ force = false } = {}) {
+  const holdemEngine = await holdemEnginePromise;
+  if (!holdemEngine || holdemEngine.__missingModule) return false;
+
+  const now = Date.now();
+  if (!force && now - holdemLobbySeededAt < 30_000) return true;
+  holdemLobbySeededAt = now;
+
+  for (const cfg of holdemLobbyTables) {
+    try {
+      const table = await getOrCreateHoldemTable(cfg.id, {
+        mode: 'cash',
+        maxSeats: cfg.maxSeats,
+        smallBlind: cfg.smallBlind,
+        bigBlind: cfg.bigBlind,
+      });
+      let seatedBots = 0;
+      for (const seatRow of table.seats) {
+        if (seatRow && isBotPlayerId(seatRow.playerId)) seatedBots += 1;
+      }
+      for (let seat = 0; seat < cfg.maxSeats && seatedBots < cfg.bots; seat += 1) {
+        if (table.seats[seat]) continue;
+        const playerId = `bot-${cfg.id}-${seat}`;
+        try {
+          holdemEngine.seatPlayer(table, {
+            playerId,
+            seat,
+            stack: holdemBotStack,
+            autoPostBlinds: true,
+          });
+          seatedBots += 1;
+        } catch {
+          // Ignore seat collisions or duplicates.
+        }
+      }
+      await persistV2HoldemTable(table);
+    } catch (err) {
+      console.error('[casin8] Failed to seed holdem table:', err);
+    }
+  }
+  return true;
+}
+
+async function runHoldemBotLoop() {
+  if (holdemBotLoopRunning) return;
+  holdemBotLoopRunning = true;
+  try {
+    const holdemEngine = await holdemEnginePromise;
+    if (!holdemEngine || holdemEngine.__missingModule) return;
+    await ensureHoldemLobbySeeded();
+
+    for (const cfg of holdemLobbyTables) {
+      const table = await getOrCreateHoldemTable(cfg.id, {
+        mode: 'cash',
+        maxSeats: cfg.maxSeats,
+        smallBlind: cfg.smallBlind,
+        bigBlind: cfg.bigBlind,
+      });
+      const seats = Array.isArray(table.seats) ? table.seats.filter(Boolean) : [];
+      for (const seat of seats) {
+        if (isBotPlayerId(seat.playerId) && Number(seat.stack || 0) <= 0) {
+          seat.stack = holdemBotStack;
+        }
+      }
+      if (seats.length < 2) {
+        await ensureHoldemLobbySeeded({ force: true });
+      }
+
+      if (!table.hand || table.hand.status === 'settled') {
+        try {
+          holdemEngine.startHand(table, {
+            handId: `bot-hand-${Date.now()}`,
+            idempotencyKey: `bot-start-${crypto.randomUUID()}`,
+          });
+          await persistV2HoldemTable(table);
+        } catch {
+          // Cannot start without enough players.
+        }
+        continue;
+      }
+
+      const hand = table.hand;
+      if (hand.readyForSettlement) {
+        const contenders = seats.filter((seat) => !hand.foldedSeats.includes(seat.seat));
+        const rankingBySeat = {};
+        if (contenders.length > 0) {
+          const winner = contenders[Math.floor(Math.random() * contenders.length)];
+          rankingBySeat[String(winner.seat)] = 1;
+        }
+        holdemEngine.settleHand(table, {
+          rankingBySeat,
+          settlementKey: `bot-settle-${crypto.randomUUID()}`,
+        });
+        await persistV2HoldemTable(table);
+        continue;
+      }
+
+      if (hand.actingSeat == null) continue;
+      const actingSeat = Number(hand.actingSeat);
+      const seatRow = table.seats[actingSeat];
+      if (!seatRow || !isBotPlayerId(seatRow.playerId)) continue;
+
+      let legalActions = [];
+      try {
+        const agent = holdemEngine.agentState(table, { seat: actingSeat });
+        legalActions = agent?.legalActions || [];
+      } catch {
+        continue;
+      }
+      const choice = chooseBotAction(legalActions);
+      if (!choice) continue;
+
+      try {
+        holdemEngine.applyAction(table, {
+          playerId: seatRow.playerId,
+          action: choice.action,
+          amount: choice.amount,
+          idempotencyKey: `bot-act-${crypto.randomUUID()}`,
+        });
+        await persistV2HoldemTable(table);
+      } catch {
+        // Skip invalid bot actions; next tick will retry.
+      }
+    }
+  } catch (err) {
+    console.error('[casin8] holdem bot loop error:', err);
+  } finally {
+    holdemBotLoopRunning = false;
+  }
+}
+
+function startHoldemBotLoop() {
+  if (holdemBotLoopTimer) return;
+  holdemBotLoopTimer = setInterval(() => {
+    runHoldemBotLoop().catch((err) => console.error('[casin8] holdem bot loop failed:', err));
+  }, holdemBotLoopIntervalMs);
+}
+
 async function seedInitialTables() {
   const engineCore = await engineCorePromise;
   if (!engineCore || engineCore.__missingModule) return;
 
-  const initialTables = [
-    { id: 'lobby-1', name: 'CYBER-NODE #1', maxSeats: 6, sb: 50, bb: 100 },
-    { id: 'neon-grind', name: 'NEON GRIND', maxSeats: 9, sb: 500, bb: 1000 },
-    { id: 'high-roller', name: 'HIGH ROLLER', maxSeats: 2, sb: 5000, bb: 10000 },
-  ];
+  const initialTables = holdemLobbyTables.map((table) => ({
+    id: table.id,
+    name: table.name,
+    maxSeats: table.maxSeats,
+    sb: table.smallBlind,
+    bb: table.bigBlind,
+  }));
 
   for (const t of initialTables) {
     if (!swarmState.tableSnapshots.has(t.id)) {
@@ -6526,4 +6782,8 @@ async function seedInitialTables() {
 server.listen(PORT, () => {
   console.log(`Casin8 games listening on :${PORT}`);
   seedInitialTables().catch((err) => console.error('[casin8] Failed to seed tables:', err));
+  ensureHoldemLobbySeeded({ force: true }).catch((err) =>
+    console.error('[casin8] Failed to seed holdem lobby:', err)
+  );
+  startHoldemBotLoop();
 });

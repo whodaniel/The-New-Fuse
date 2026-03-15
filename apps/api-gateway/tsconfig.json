@@ -34,6 +34,9 @@
     "dist",
     "src/**/__tests__/**",
     "src/**/*.spec.ts",
-    "src/**/*.test.ts"
+    "src/**/*.test.ts",
+    "**/__tests__/**",
+    "**/*.spec.ts",
+    "**/*.test.ts"
   ]
 }

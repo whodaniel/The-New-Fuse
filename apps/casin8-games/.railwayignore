@@ -1,12 +1,8 @@
 node_modules
 .git
-.data
+AI-ARCADE.XYZ---POKER-ROOM
+dist
 .data-tests
-.genkit
-server.log
-AI-ARCADE.XYZ---POKER-ROOM/node_modules
-AI-ARCADE.XYZ---POKER-ROOM/ai_arcade_poker_assets_cards
-AI-ARCADE.XYZ---POKER-ROOM/src
-AI-ARCADE.XYZ---POKER-ROOM/public
-AI-ARCADE.XYZ---POKER-ROOM/.git
-AI-ARCADE.XYZ---POKER-ROOM/.wrangler
+assets/poker/incoming
+design
+docs/archive
