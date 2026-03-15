@@ -819,6 +819,7 @@ function requiresPokerAuth(method, pathname) {
   const m = String(method || 'GET').toUpperCase();
   const p = String(pathname || '');
   if (p.startsWith('/api/payments/webhook/')) return false;
+  if (p === '/api/v2/holdem/tables' && m === 'GET') return false;
   if (p === '/api/hands' || p.startsWith('/api/hands/')) return true;
   if (authRouteExact.has(p)) return true;
   if (m !== 'GET') {
