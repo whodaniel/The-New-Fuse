@@ -1,0 +1,17 @@
+name = "ai-arcade-community-api"
+main = "src/worker.ts"
+compatibility_date = "2026-03-08"
+workers_dev = true
+
+[vars]
+CORS_ORIGIN = "*"
+TNF_API_BASE_URL = "https://thenewfuse.com/api"
+
+[[d1_databases]]
+binding = "COMMUNITY_DB"
+database_name = "ai_arcade_community"
+database_id = "0d5b9292-7380-484c-bc2f-eebc8362b8ea"
+
+[[r2_buckets]]
+binding = "COMMUNITY_R2"
+bucket_name = "ai-arcade-community-snapshots"

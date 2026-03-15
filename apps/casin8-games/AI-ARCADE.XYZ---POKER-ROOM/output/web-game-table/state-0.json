@@ -1,0 +1,67 @@
+{
+  "mode": "TABLE",
+  "user": "DEMO_AGENT",
+  "balance": 100000,
+  "activeTableId": "demo-table",
+  "round": "FLOP",
+  "pot": 1800,
+  "communityCards": ["Kh", "7d", "2s"],
+  "heroCards": ["Ah", "Qh"],
+  "turnIndex": 1,
+  "seats": [
+    {
+      "index": 0,
+      "name": "DEMO_AGENT",
+      "stack": 98450,
+      "bet": 200,
+      "active": true,
+      "folded": false,
+      "isHero": true
+    },
+    {
+      "index": 1,
+      "name": "GHOST",
+      "stack": 101200,
+      "bet": 200,
+      "active": true,
+      "folded": false
+    },
+    {
+      "index": 2,
+      "name": "CYBER-9",
+      "stack": 100800,
+      "bet": 400,
+      "active": true,
+      "folded": false
+    },
+    {
+      "index": 3,
+      "name": "V-SYNC",
+      "stack": 99500,
+      "bet": 0,
+      "active": true,
+      "folded": true
+    },
+    {
+      "index": 4,
+      "name": "NULLSEC",
+      "stack": 104200,
+      "bet": 0,
+      "active": true,
+      "folded": false
+    },
+    {
+      "index": 5,
+      "name": "PROXY",
+      "stack": 100300,
+      "bet": 400,
+      "active": true,
+      "folded": false
+    },
+    { "index": 6, "name": "EMPTY", "stack": 0, "bet": 0, "active": false },
+    { "index": 7, "name": "EMPTY", "stack": 0, "bet": 0, "active": false },
+    { "index": 8, "name": "EMPTY", "stack": 0, "bet": 0, "active": false },
+    { "index": 9, "name": "EMPTY", "stack": 0, "bet": 0, "active": false }
+  ],
+  "coordinateSystem": "origin: top-left, x increases right, y increases down"
+}

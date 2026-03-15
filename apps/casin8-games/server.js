@@ -6523,9 +6523,42 @@ const API_ROUTES = new Map([
   ['POST /api/v2/tournaments/rebuy', endpoint(handleV2TournamentRebuy)],
   ['POST /api/v2/tournaments/addon', endpoint(handleV2TournamentAddon)],
   ['POST /api/v2/tournaments/eliminate', endpoint(handleV2TournamentEliminate)],
+  ['GET /api/v2/tournaments', endpoint(handleV2TournamentList)],
   ['GET /api/v2/tournaments/state', endpointWithQuery(handleV2TournamentState)],
   ['GET /api/v2/tournaments/payouts', endpointWithQuery(handleV2TournamentPayouts)],
 ]);
+
+async function handleV2TournamentList(req, res) {
+  const mod = await holdemTournamentsPromise;
+  if (!mod || mod.__missingModule) {
+    return writeJson(res, 200, { ok: true, tournaments: [] });
+  }
+  const tournaments = [];
+  for (const [id, t] of swarmState.holdemTournaments.entries()) {
+    try {
+      const snapshot = mod.snapshotTournament(t);
+      // Determine a friendly start time/status
+      let start = 'Live';
+      if (snapshot.status === 'scheduled') start = 'Starting Soon';
+
+      tournaments.push({
+        id: snapshot.tournamentId,
+        name: snapshot.name || (snapshot.type === 'sng' ? 'Cyber SNG' : 'Neon MTT'),
+        type: snapshot.type, // 'sng' or 'mtt'
+        status: snapshot.status, // 'scheduled', 'running', 'completed'
+        buyIn: `$${snapshot.buyInUnits || 1000}`,
+        registered: Array.isArray(snapshot.players) ? snapshot.players.length : 0,
+        max: snapshot.maxPlayers || 9,
+        prize: `$${snapshot.totalPrizePool || snapshot.buyInUnits * (snapshot.players?.length || 0)}`,
+        format: snapshot.type === 'sng' ? 'Sit & Go' : 'Multi-Table',
+        blindLevel: `Level ${snapshot.currentLevel || 1}`,
+      });
+    } catch (err) {
+      console.error('[casin8] failed to snapshot tournament:', id, err);
+    }
+  }
+  writeJson(res, 200, { ok: true, tournaments });
+}
 
 async function handleApi(req, res, urlObj) {
   metrics.apiRequestsTotal += 1;
@@ -6779,9 +6812,50 @@ async function seedInitialTables() {
   }
 }
 
+async function seedInitialTournaments() {
+  const mod = await holdemTournamentsPromise;
+  if (!mod || mod.__missingModule) return;
+
+  if (swarmState.holdemTournaments.size === 0) {
+    console.log('[casin8] Seeding initial tournaments...');
+    try {
+      // Create a Sit & Go
+      const sng = mod.createTournament({
+        tournamentId: 'sng-alpha',
+        name: 'CYBER-PUNK SNG',
+        type: 'sng',
+        maxPlayers: 6,
+        tableSize: 6,
+        buyInUnits: 1000,
+        startStack: 10000,
+      });
+      swarmState.holdemTournaments.set(sng.tournamentId, sng);
+      await persistV2Tournament(sng);
+
+      // Create an MTT
+      const mtt = mod.createTournament({
+        tournamentId: 'mtt-omega',
+        name: 'ARCADE OPEN $10K GTD',
+        type: 'mtt',
+        maxPlayers: 180,
+        tableSize: 9,
+        buyInUnits: 5000,
+        startStack: 20000,
+      });
+      swarmState.holdemTournaments.set(mtt.tournamentId, mtt);
+      await persistV2Tournament(mtt);
+    } catch (err) {
+      console.error('[casin8] Failed to seed initial tournaments:', err);
+    }
+  }
+}
+
 server.listen(PORT, () => {
   console.log(`Casin8 games listening on :${PORT}`);
   seedInitialTables().catch((err) => console.error('[casin8] Failed to seed tables:', err));
+  seedInitialTournaments().catch((err) =>
+    console.error('[casin8] Failed to seed tournaments:', err)
+  );
   ensureHoldemLobbySeeded({ force: true }).catch((err) =>
     console.error('[casin8] Failed to seed holdem lobby:', err)
   );

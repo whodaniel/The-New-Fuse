@@ -1,0 +1,75 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-cyber-cyan: #00f2ff;
+  --color-cyber-purple: #bc13fe;
+  --color-cyber-red: #ff003c;
+  --color-cyber-green: #00ff9f;
+
+  --font-display: 'Space Grotesk', sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-[#020308] text-slate-300;
+  }
+}
+
+@layer components {
+  .cyber-button {
+    @apply relative overflow-hidden transition-all duration-300 border-2 active:translate-y-0.5;
+  }
+
+  .cyber-button-glass {
+    @apply bg-white/5 backdrop-blur-md border-white/10 hover:bg-white/10 hover:border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.05)];
+  }
+
+  .cyber-button-cyan {
+    @apply border-cyber-cyan/30 text-cyber-cyan hover:bg-cyber-cyan/10 hover:border-cyber-cyan/60 shadow-[0_0_15px_rgba(0,242,255,0.1)];
+  }
+
+  .cyber-button-red {
+    @apply border-cyber-red/30 text-cyber-red hover:bg-cyber-red/10 hover:border-cyber-red/60 shadow-[0_0_15px_rgba(255,0,60,0.1)];
+  }
+
+  .cyber-panel {
+    @apply bg-[#0a0c1a]/80 backdrop-blur-xl border border-white/5 rounded-3xl shadow-2xl;
+  }
+
+  .neon-text-cyan {
+    @apply text-cyber-cyan drop-shadow-[0_0_8px_rgba(0,242,255,0.8)];
+  }
+
+  .neon-border-cyan {
+    @apply border-cyber-cyan shadow-[0_0_10px_rgba(0,242,255,0.5)];
+  }
+}
+
+.circuit-pattern {
+  background-image: radial-gradient(circle at 2px 2px, rgba(0, 242, 255, 0.05) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
+.table-glow {
+  box-shadow:
+    inset 0 0 100px rgba(0, 242, 255, 0.1),
+    0 0 50px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.scanline::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent, rgba(0, 242, 255, 0.05), transparent);
+  animation: scanline 8s linear infinite;
+  pointer-events: none;
+}

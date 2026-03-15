@@ -1,0 +1,13 @@
+{
+  "mode": "LOBBY",
+  "user": "DEMO_AGENT",
+  "balance": 100000,
+  "activeTableId": "demo-table",
+  "round": null,
+  "pot": 0,
+  "communityCards": [],
+  "heroCards": [],
+  "turnIndex": null,
+  "seats": [],
+  "coordinateSystem": "origin: top-left, x increases right, y increases down"
+}
