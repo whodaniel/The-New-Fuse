@@ -28,15 +28,15 @@
     "noImplicitThis": false,
     "noImplicitReturns": false
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*.ts"],
   "exclude": [
     "node_modules",
     "dist",
-    "src/**/__tests__/**",
-    "src/**/*.spec.ts",
-    "src/**/*.test.ts",
     "**/__tests__/**",
     "**/*.spec.ts",
-    "**/*.test.ts"
+    "**/*.test.ts",
+    "src/**/__tests__/**",
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts"
   ]
 }

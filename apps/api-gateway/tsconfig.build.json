@@ -3,30 +3,15 @@
   "compilerOptions": {
     "types": ["node", "jest"]
   },
-  "include": [
-    "src/main.ts",
-    "src/**/*.module.ts",
-    "src/**/*.controller.ts",
-    "src/**/*.service.ts",
-    "src/**/*.dto.ts",
-    "src/**/*.entity.ts",
-    "src/**/*.middleware.ts",
-    "src/**/*.guard.ts",
-    "src/**/*.decorator.ts",
-    "src/**/*.pipe.ts",
-    "src/**/*.interface.ts",
-    "src/**/*.constants.ts",
-    "src/**/*.utils.ts",
-    "src/**/*.config.ts"
-  ],
+  "include": ["src/**/*.ts"],
   "exclude": [
     "node_modules",
     "dist",
-    "src/**/__tests__/**",
-    "src/**/*.spec.ts",
-    "src/**/*.test.ts",
     "**/__tests__/**",
     "**/*.spec.ts",
-    "**/*.test.ts"
+    "**/*.test.ts",
+    "src/**/__tests__/**",
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts"
   ]
 }

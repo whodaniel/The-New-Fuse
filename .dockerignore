@@ -272,12 +272,32 @@ examples
 # ============================================================================
 # Miscellaneous
 # ============================================================================
+*~
 .history
 .ionide
+.tmp
+.tmp-agent-home
+agent-communication/
+analysis/
+component-inventory/
+component-templates/
+improvements/
+pull-create/
+solid-shrimp/
+strategic-cow/
+~/
 *.bak
 *.old
 *.orig
-*~
+*.png
+*.log
+*.txt
+task_plan.md
+findings.md
+progress.md
+typecheck_output.txt
+prs.json
+deployments.txt
 
 # Keep certain files even if they match other patterns (use ! to negate)
 # Example: !important.md

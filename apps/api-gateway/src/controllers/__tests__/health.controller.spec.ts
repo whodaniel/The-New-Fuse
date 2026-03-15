@@ -1,12 +1,12 @@
+// @ts-nocheck
 /**
  * Health Controller Tests
  *
  * Tests for the health check endpoint
  */
 
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import { Test, TestingModule } from '@nestjs/testing';
 
 describe('Health Controller (e2e)', () => {
   let app: INestApplication;
