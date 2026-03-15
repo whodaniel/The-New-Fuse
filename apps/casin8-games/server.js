@@ -874,31 +874,56 @@ function pickWeighted(items) {
   return items[items.length - 1];
 }
 
-function chooseBotAction(legalActions) {
+async function chooseBotAction(legalActions, context = {}) {
   if (!Array.isArray(legalActions) || legalActions.length === 0) return null;
-  const weights = {
-    fold: 1,
-    call: 4,
-    check: 5,
-    bet: 3,
-    raise: 2,
-    allin: 1,
+
+  const { agentId, handId, pot = 0, toCall = 0, bankroll = 0 } = context;
+  const mod = await agentStrategyPromise;
+  const registry = await getAgentRegistry();
+
+  // Try to find a registered agent profile for temperament/risk
+  const agentProfile = registry.agents.get(agentId);
+  const temperament = agentProfile?.style || 'balanced';
+  const maxRiskBps = agentProfile?.risk?.maxLossPerSessionUnits ? 1000 : 800; // Simplified risk factor
+
+  // Generate a stable hand strength for this bot in this hand
+  // In a real system, this would come from a hand evaluator
+  const seed = `${agentId}-${handId}`;
+  const hash = crypto.createHash('md5').update(seed).digest('hex');
+  const handStrength = parseInt(hash.slice(0, 8), 16) / 0xffffffff;
+
+  // Build a strategy profile for the decision engine
+  const strategyProfile = mod.buildStrategyProfile({
+    agentId: agentId || 'bot-anonymous',
+    temperament,
+    maxRiskBps,
+  });
+
+  // Get decision from smart engine
+  const decision = mod.chooseAction({
+    profile: strategyProfile,
+    legalActions: legalActions.map((a) => a.action),
+    handStrength,
+    potUnits: pot,
+    toCallUnits: toCall,
+  });
+
+  // Enforce risk caps
+  const capped = mod.enforceRiskCap({
+    actionDecision: decision,
+    bankrollUnits: bankroll,
+    maxRiskBps: strategyProfile.maxRiskBps,
+  });
+
+  return {
+    action: capped.action,
+    amount: capped.amountUnits,
+    metadata: {
+      temperament,
+      handStrength: handStrength.toFixed(3),
+      rationale: decision.rationale,
+    },
   };
-  const weighted = legalActions.map((action) => ({
-    action,
-    weight: weights[action.action] ?? 1,
-  }));
-  const chosen = pickWeighted(weighted).action;
-  let amount = 0;
-  if (chosen.action === 'bet' || chosen.action === 'raise') {
-    const min = Number.isFinite(chosen.min) ? Number(chosen.min) : 0;
-    const max = Number.isFinite(chosen.max) ? Number(chosen.max) : min;
-    const target = min + Math.floor(Math.random() * Math.max(1, max - min + 1));
-    amount = Math.max(min, Math.min(max, target));
-  } else if (chosen.action === 'allin' || chosen.action === 'call') {
-    amount = Number.isFinite(chosen.max) ? Number(chosen.max) : 0;
-  }
-  return { action: chosen.action, amount };
 }
 
 function sha256Hex(value) {
@@ -6742,16 +6767,26 @@ async function runHoldemBotLoop() {
       if (!seatRow || !isBotPlayerId(seatRow.playerId)) continue;
 
       let legalActions = [];
+      let agentData = null;
       try {
-        const agent = holdemEngine.agentState(table, { seat: actingSeat });
-        legalActions = agent?.legalActions || [];
+        agentData = holdemEngine.agentState(table, { seat: actingSeat });
+        legalActions = agentData?.legalActions || [];
       } catch {
         continue;
       }
-      const choice = chooseBotAction(legalActions);
+      const choice = await chooseBotAction(legalActions, {
+        agentId: seatRow.playerId,
+        handId: hand.handId,
+        pot: hand.pot,
+        toCall: agentData?.helper?.toCall || 0,
+        bankroll: agentData?.helper?.seatStack || 0,
+      });
       if (!choice) continue;
 
       try {
+        console.log(
+          `[casin8] Bot ${seatRow.playerId} (${choice.metadata.temperament}) at ${table.tableId}: ${choice.action} ${choice.amount || ''} [strength: ${choice.metadata.handStrength}]`
+        );
         holdemEngine.applyAction(table, {
           playerId: seatRow.playerId,
           action: choice.action,
@@ -6759,7 +6794,8 @@ async function runHoldemBotLoop() {
           idempotencyKey: `bot-act-${crypto.randomUUID()}`,
         });
         await persistV2HoldemTable(table);
-      } catch {
+      } catch (err) {
+        console.warn(`[casin8] bot action failed: ${err.message}`);
         // Skip invalid bot actions; next tick will retry.
       }
     }

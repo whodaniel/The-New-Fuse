@@ -66,6 +66,11 @@ export class UsersService {
     });
 
     const total = await drizzleUserRepository.count();
+    const activeCount = await drizzleUserRepository.count({ isActive: true } as any);
+    // Count all admin-related roles
+    const adminCount =
+      (await drizzleUserRepository.count({ role: 'ADMIN' } as any)) +
+      (await drizzleUserRepository.count({ role: 'SUPER_ADMIN' } as any));
 
     const data = allUsers.map((user) => ({
       ...user,
@@ -83,6 +88,12 @@ export class UsersService {
         limit,
         total,
         totalPages: Math.ceil(total / limit),
+      },
+      stats: {
+        total,
+        active: activeCount,
+        inactive: total - activeCount,
+        admins: adminCount,
       },
     };
   }

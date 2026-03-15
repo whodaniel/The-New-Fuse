@@ -11,6 +11,7 @@ import {
   Unlock,
   Users,
   UserX,
+  X,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -48,9 +49,14 @@ export default function UserManagementFull() {
   const [selectedRole, setSelectedRole] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
-  const [, setShowCreateModal] = useState(false);
-  const [, setShowEditModal] = useState(false);
-  const [, setSelectedUser] = useState<User | null>(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [page, setPage] = useState(1);
+  const [limit] = useState(20);
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [stats, setStats] = useState({ active: 0, inactive: 0, admins: 0 });
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     loadUsers();
@@ -59,7 +65,7 @@ export default function UserManagementFull() {
   const loadUsers = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/admin/users', {
+      const response = await fetch(`/api/admin/users?page=${page}&limit=${limit}`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -87,14 +93,21 @@ export default function UserManagementFull() {
       }));
 
       setUsers(transformedUsers);
+      setTotalUsers(data.pagination?.total || transformedUsers.length);
+      if (data.stats) {
+        setStats(data.stats);
+      }
     } catch (error) {
       console.error('Error loading users:', error);
-      // Fallback to empty array on error
       setUsers([]);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadUsers();
+  }, [page, limit]);
 
   const filteredUsers = users.filter((user) => {
     const matchesSearch =
@@ -183,10 +196,96 @@ export default function UserManagementFull() {
     }
   };
 
-  const handleBulkAction = (action: string) => {
-    console.log(`Performing ${action} on users:`, Array.from(selectedUsers));
-    // Implement bulk actions
-    setSelectedUsers(new Set());
+  const handleBulkAction = async (action: string) => {
+    if (selectedUsers.size === 0) return;
+    setIsProcessing(true);
+    try {
+      const ids = Array.from(selectedUsers);
+      let response;
+
+      if (action === 'delete') {
+        if (!confirm(`Are you sure you want to delete ${ids.length} users?`)) return;
+        response = await fetch('/api/admin/users/bulk-delete', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+          body: JSON.stringify({ ids }),
+        });
+      } else if (action === 'activate' || action === 'suspend') {
+        const isActive = action === 'activate';
+        response = await fetch('/api/admin/users/bulk-status', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+          body: JSON.stringify({ ids, isActive }),
+        });
+      }
+
+      if (response && response.ok) {
+        await loadUsers();
+        setSelectedUsers(new Set());
+      } else {
+        throw new Error('Bulk action failed');
+      }
+    } catch (error) {
+      console.error('Error performing bulk action:', error);
+      alert('Failed to perform action. Please try again.');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleCreateUser = async (userData: any) => {
+    setIsProcessing(true);
+    try {
+      const response = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (!response.ok) throw new Error('Failed to create user');
+
+      setShowCreateModal(false);
+      await loadUsers();
+    } catch (error) {
+      console.error('Error creating user:', error);
+      alert('Failed to create user.');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleUpdateUser = async (userId: string, userData: any) => {
+    setIsProcessing(true);
+    try {
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (!response.ok) throw new Error('Failed to update user');
+
+      setShowEditModal(false);
+      setSelectedUser(null);
+      await loadUsers();
+    } catch (error) {
+      console.error('Error updating user:', error);
+      alert('Failed to update user.');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -223,47 +322,57 @@ export default function UserManagementFull() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-transparent rounded-md shadow-none p-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="bg-white/40 backdrop-blur-md border border-white/20 rounded-2xl shadow-sm p-6 transition-all hover:shadow-md hover:translate-y-[-2px]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Total Users</p>
-              <p className="text-2xl font-bold text-gray-900">{users.length}</p>
+              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">
+                Total Users
+              </p>
+              <p className="text-3xl font-extrabold text-slate-900 mt-1">{totalUsers}</p>
             </div>
-            <Users className="h-12 w-12 text-blue-500 opacity-20" />
+            <div className="h-14 w-14 bg-blue-500/10 rounded-2xl flex items-center justify-center">
+              <Users className="h-8 w-8 text-blue-600" />
+            </div>
           </div>
         </div>
-        <div className="bg-transparent rounded-md shadow-none p-4">
+        <div className="bg-white/40 backdrop-blur-md border border-white/20 rounded-2xl shadow-sm p-6 transition-all hover:shadow-md hover:translate-y-[-2px]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Active Users</p>
-              <p className="text-2xl font-bold text-green-600">
-                {users.filter((u) => u.status === 'active').length}
+              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">
+                Active
               </p>
+              <p className="text-3xl font-extrabold text-emerald-600 mt-1">{stats.active}</p>
             </div>
-            <Check className="h-12 w-12 text-green-500 opacity-20" />
+            <div className="h-14 w-14 bg-emerald-500/10 rounded-2xl flex items-center justify-center">
+              <Check className="h-8 w-8 text-emerald-600" />
+            </div>
           </div>
         </div>
-        <div className="bg-transparent rounded-md shadow-none p-4">
+        <div className="bg-white/40 backdrop-blur-md border border-white/20 rounded-2xl shadow-sm p-6 transition-all hover:shadow-md hover:translate-y-[-2px]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Admins</p>
-              <p className="text-2xl font-bold text-purple-600">
-                {users.filter((u) => u.role === 'admin').length}
+              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">
+                Admins
               </p>
+              <p className="text-3xl font-extrabold text-violet-600 mt-1">{stats.admins}</p>
             </div>
-            <Shield className="h-12 w-12 text-purple-500 opacity-20" />
+            <div className="h-14 w-14 bg-violet-500/10 rounded-2xl flex items-center justify-center">
+              <Shield className="h-8 w-8 text-violet-600" />
+            </div>
           </div>
         </div>
-        <div className="bg-transparent rounded-md shadow-none p-4">
+        <div className="bg-white/40 backdrop-blur-md border border-white/20 rounded-2xl shadow-sm p-6 transition-all hover:shadow-md hover:translate-y-[-2px]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Suspended</p>
-              <p className="text-2xl font-bold text-red-600">
-                {users.filter((u) => u.status === 'suspended').length}
+              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">
+                Inactive
               </p>
+              <p className="text-3xl font-extrabold text-amber-600 mt-1">{stats.inactive}</p>
             </div>
-            <UserX className="h-12 w-12 text-red-500 opacity-20" />
+            <div className="h-14 w-14 bg-amber-500/10 rounded-2xl flex items-center justify-center">
+              <UserX className="h-8 w-8 text-amber-600" />
+            </div>
           </div>
         </div>
       </div>
@@ -490,27 +599,183 @@ export default function UserManagementFull() {
         </div>
 
         {/* Pagination */}
-        <div className="bg-transparent px-3 py-2 flex items-center justify-between border-t border-gray-200">
-          <span className="text-sm text-muted-foreground">
-            Showing {filteredUsers.length} of {users.length} users
+        <div className="bg-transparent px-6 py-4 flex items-center justify-between border-t border-gray-100">
+          <span className="text-sm text-muted-foreground font-medium">
+            Showing <span className="text-foreground font-bold">{filteredUsers.length}</span> of{' '}
+            <span className="text-foreground font-bold">{totalUsers}</span> users
           </span>
-          <div className="flex space-x-2">
+          <div className="flex items-center space-x-2">
             <button
-              onClick={() => {}}
-              disabled
-              className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className="px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
               Previous
             </button>
+            <div className="flex items-center space-x-1">
+              {[...Array(Math.min(5, Math.ceil(totalUsers / limit)))].map((_, i) => {
+                const pageNum = i + 1;
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => setPage(pageNum)}
+                    className={`px-3.5 py-2 text-sm font-bold rounded-lg transition-all ${
+                      page === pageNum
+                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
+                        : 'text-gray-600 hover:bg-gray-100'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+            </div>
             <button
-              onClick={() => {}}
-              disabled
-              className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+              onClick={() => setPage((p) => p + 1)}
+              disabled={page >= Math.ceil(totalUsers / limit)}
+              className="px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
               Next
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Create User Modal */}
+      {showCreateModal && (
+        <UserModal
+          title="Create New User"
+          isProcessing={isProcessing}
+          onClose={() => setShowCreateModal(false)}
+          onSave={handleCreateUser}
+        />
+      )}
+
+      {/* Edit User Modal */}
+      {showEditModal && selectedUser && (
+        <UserModal
+          title="Edit User"
+          user={selectedUser}
+          isProcessing={isProcessing}
+          onClose={() => {
+            setShowEditModal(false);
+            setSelectedUser(null);
+          }}
+          onSave={(data) => handleUpdateUser(selectedUser.id, data)}
+        />
+      )}
+    </div>
+  );
+}
+
+interface UserModalProps {
+  title: string;
+  user?: User;
+  onClose: () => void;
+  onSave: (data: any) => void;
+  isProcessing: boolean;
+}
+
+function UserModal({ title, user, onClose, onSave, isProcessing }: UserModalProps) {
+  const [formData, setFormData] = useState({
+    name: user?.name || '',
+    email: user?.email || '',
+    role: user?.role || 'user',
+    password: '',
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSave(formData);
+  };
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200">
+        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+          <h2 className="text-xl font-bold text-gray-900">{title}</h2>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+          >
+            <X className="h-5 w-5 text-gray-500" />
+          </button>
+        </div>
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-1 uppercase tracking-wider">
+              Full Name
+            </label>
+            <input
+              type="text"
+              required
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+              placeholder="John Doe"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-1 uppercase tracking-wider">
+              Email Address
+            </label>
+            <input
+              type="email"
+              required
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+              placeholder="john@example.com"
+            />
+          </div>
+          {!user && (
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-1 uppercase tracking-wider">
+                Initial Password
+              </label>
+              <input
+                type="password"
+                required
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                placeholder="••••••••"
+              />
+            </div>
+          )}
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-1 uppercase tracking-wider">
+              System Role
+            </label>
+            <select
+              value={formData.role}
+              onChange={(e) => setFormData({ ...formData, role: e.target.value as any })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+            >
+              <option value="admin">Admin</option>
+              <option value="moderator">Moderator</option>
+              <option value="user">User</option>
+              <option value="viewer">Viewer</option>
+            </select>
+          </div>
+          <div className="pt-4 flex items-center justify-end space-x-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-6 py-2 border border-gray-300 rounded-lg text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isProcessing}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 disabled:opacity-50 flex items-center"
+            >
+              {isProcessing && <RefreshCw className="h-4 w-4 mr-2 animate-spin" />}
+              {user ? 'Save Changes' : 'Create User'}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

@@ -198,11 +198,11 @@ const Card: React.FC<{ val?: string; hidden?: boolean; index?: number }> = ({
     )}
     {!hidden && val ? (
       <span
-        className={`text-xl sm:text-3xl ${val.includes('h') || val.includes('d') ? 'text-[#FF0055]' : 'text-slate-900'}`}
+        className={`text-xl sm:text-3xl ${val.endsWith('h') || val.endsWith('d') ? 'text-[#FF0055]' : 'text-slate-900'}`}
       >
-        {val[0]}
+        {val.slice(0, -1)}
         <span className="text-sm sm:text-lg">
-          {val[1] === 'h' ? '♥' : val[1] === 'd' ? '♦' : val[1] === 'c' ? '♣' : '♠'}
+          {val.endsWith('h') ? '♥' : val.endsWith('d') ? '♦' : val.endsWith('c') ? '♣' : '♠'}
         </span>
       </span>
     ) : null}
@@ -713,13 +713,14 @@ function AppContent() {
 
     // Register bots with distinct personalities
     for (const bot of botSeats) {
-      await agentApi.register(bot.playerId, bot.temperament, bot.maxRiskBps);
+      const botAgentId = `bot-${bot.playerId}`;
+      await agentApi.register(botAgentId, bot.temperament, bot.maxRiskBps);
     }
 
     // Init a new hand
     const seats = [
       { playerId: user.username, stack: 100000, temperament: 'balanced', maxRiskBps: 700 },
-      ...botSeats,
+      ...botSeats.map((b) => ({ ...b, playerId: `bot-${b.playerId}` })),
     ];
     const handId = 'hand-' + Date.now();
     await pokerApi.initTableState(tid, handId, seats, 0, 0).catch(() => {});
@@ -810,14 +811,14 @@ function AppContent() {
       gameState.round !== 'SHOWDOWN';
 
     const getSeatPos = (i: number) => {
-      const offset = mySeatIdx !== -1 ? (i - mySeatIdx + 4 + 9) % 9 : i;
+      const offset = mySeatIdx !== -1 ? (i - mySeatIdx + 9) % 9 : i;
       const a = (offset / 9) * 2 * Math.PI + Math.PI / 2;
-      return { left: `${50 + 46 * Math.cos(a)}%`, top: `${50 + 41 * Math.sin(a)}%` };
+      return { left: `${50 + 40 * Math.cos(a)}%`, top: `${50 + 38 * Math.sin(a)}%` };
     };
 
     return (
-      <div className="absolute inset-0 flex flex-col overflow-hidden">
-        {/* Audio Controls for Table View */}
+      <div className="absolute inset-0 flex flex-col overflow-hidden bg-[#020308]">
+        {/* Top Overlay: Audio & Tape */}
         <div className="absolute top-4 right-4 z-50 flex items-center gap-2">
           <button
             onClick={toggleBgm}
@@ -833,6 +834,28 @@ function AppContent() {
           </button>
         </div>
 
+        <div className="absolute top-4 left-4 z-40 w-[240px] max-h-[30%] rounded-xl border border-cyan-500/30 bg-black/70 backdrop-blur-sm p-3 overflow-hidden shadow-2xl hidden lg:block">
+          <p className="text-[10px] text-cyan-300 uppercase tracking-[0.2em] font-black mb-2">
+            Action Tape
+          </p>
+          <div className="space-y-1 overflow-y-auto max-h-[calc(100%-24px)] pr-1 custom-scrollbar">
+            {actionTape.feed.length === 0 && (
+              <p className="text-[10px] text-slate-500 italic">Awaiting tactical data...</p>
+            )}
+            {actionTape.feed.map((entry) => (
+              <motion.div
+                key={entry.id}
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="text-[10px] font-mono text-slate-300 rounded bg-white/5 px-2 py-1 border border-white/5"
+              >
+                {entry.text}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* Main Table Content */}
         <div className="flex-1 relative flex items-center justify-center p-4 sm:p-10 z-10">
           <div
             className={`relative w-full max-w-6xl aspect-[2.2/1] sm:aspect-[2.4/1] ${THEME.metal} rounded-[200px] border-4 border-[#1a1c23] shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex items-center justify-center`}
@@ -871,47 +894,12 @@ function AppContent() {
                     />
                   ))}
                 </div>
-
-                <div className="absolute top-5 left-5 z-30 w-[220px] max-h-[42%] rounded-xl border border-cyan-500/30 bg-black/70 backdrop-blur-sm p-3 overflow-hidden">
-                  <p className="text-[10px] text-cyan-300 uppercase tracking-[0.2em] font-black">
-                    Action Tape
-                  </p>
-                  {botTournament?.enabled && (
-                    <div className="mt-2 mb-2 text-[10px] text-slate-300 space-y-1">
-                      <p>
-                        Hand {botTournament.handNumber} | Remaining:{' '}
-                        {BOT_PROFILES.filter((b) => (botTournament.stacks[b.id] || 0) > 0).length}
-                      </p>
-                      {botTournament.championId && (
-                        <p className="text-emerald-300 font-bold">
-                          Champion:{' '}
-                          {BOT_PROFILES.find((b) => b.id === botTournament.championId)?.name ||
-                            botTournament.championId}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                  <div className="space-y-1 overflow-y-auto max-h-[calc(100%-48px)] pr-1">
-                    {actionTape.feed.length === 0 && (
-                      <p className="text-[10px] text-slate-500">Waiting for actions...</p>
-                    )}
-                    {actionTape.feed.map((entry) => (
-                      <motion.div
-                        key={entry.id}
-                        initial={{ opacity: 0, x: -8 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="text-[10px] font-mono text-slate-200 rounded bg-white/5 px-2 py-1 border border-white/10"
-                      >
-                        {entry.text}
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
               </div>
             </div>
 
+            {/* Seats Positioned on the Table Ring */}
             {gameState.seats.map((seat: any, i: number) => {
-              const isTurn =
+              const isSeatTurn =
                 gameState.turnIndex === i &&
                 gameState.round !== 'WAITING' &&
                 gameState.round !== 'SHOWDOWN';
@@ -945,7 +933,7 @@ function AppContent() {
                       )}
 
                       <div
-                        className={`relative w-14 h-14 sm:w-20 sm:h-20 rounded-full border-4 ${isTurn ? 'border-cyan-400 shadow-[0_0_20px_rgba(0,242,255,0.6)] scale-110' : seat.folded ? 'border-slate-800 opacity-50' : 'border-slate-700'} transition-all duration-300 overflow-hidden bg-[#0a0c1a]`}
+                        className={`relative w-14 h-14 sm:w-20 sm:h-20 rounded-full border-4 ${isSeatTurn ? 'border-cyan-400 shadow-[0_0_20px_rgba(0,242,255,0.6)] scale-110' : seat.folded ? 'border-slate-800 opacity-50' : 'border-slate-700'} transition-all duration-300 overflow-hidden bg-[#0a0c1a]`}
                       >
                         <img
                           src={seat.avatar}
@@ -962,10 +950,10 @@ function AppContent() {
                       </div>
 
                       <div
-                        className={`px-3 py-1 sm:px-4 sm:py-1.5 rounded-md border-2 text-center min-w-[90px] sm:min-w-[120px] ${isTurn ? 'bg-cyan-900/30 border-cyan-400' : 'bg-[#0a0c1a]/90 border-slate-800'} backdrop-blur-sm shadow-xl`}
+                        className={`px-3 py-1 sm:px-4 sm:py-1.5 rounded-md border-2 text-center min-w-[90px] sm:min-w-[120px] ${isSeatTurn ? 'bg-cyan-900/30 border-cyan-400' : 'bg-[#0a0c1a]/90 border-slate-800'} backdrop-blur-sm shadow-xl`}
                       >
                         <p
-                          className={`text-[9px] sm:text-[11px] font-black uppercase truncate ${isTurn ? 'text-cyan-400' : 'text-slate-400'}`}
+                          className={`text-[9px] sm:text-[11px] font-black uppercase truncate ${isSeatTurn ? 'text-cyan-400' : 'text-slate-400'}`}
                         >
                           {seat.name}
                         </p>
@@ -991,6 +979,7 @@ function AppContent() {
           </div>
         </div>
 
+        {/* AI Insight Overlay */}
         <AnimatePresence>
           {aiInsight && (
             <motion.div
@@ -1003,7 +992,7 @@ function AppContent() {
                 <BrainCircuit className="w-6 h-6 text-cyan-400 mt-1 animate-pulse" />
                 <div className="flex-1">
                   <p className="text-[10px] font-black text-cyan-400 uppercase tracking-widest mb-1">
-                    ✨ Tactical Node Advice
+                    ✨ Tactical Advice
                   </p>
                   <p className="text-sm text-slate-200 leading-relaxed font-mono">{aiInsight}</p>
                 </div>
@@ -1015,6 +1004,7 @@ function AppContent() {
           )}
         </AnimatePresence>
 
+        {/* Action Bar */}
         <div className="h-auto sm:h-32 bg-[#0a0c1a] border-t-2 border-slate-800 p-4 sm:px-10 flex flex-col sm:flex-row items-center justify-between z-50 gap-4 sm:gap-0">
           <div className="flex items-center gap-4 sm:gap-8 w-full sm:w-auto justify-between sm:justify-start">
             <div className="flex gap-2">
@@ -1023,7 +1013,7 @@ function AppContent() {
               ))}
             </div>
             <div className="text-right sm:text-left">
-              <p className="text-[10px] text-slate-500 uppercase tracking-widest">Protocol Phase</p>
+              <p className="text-[10px] text-slate-500 uppercase tracking-widest">Table Round</p>
               <p className="text-lg sm:text-2xl font-black text-cyan-400 uppercase tracking-tighter">
                 {gameState.round?.replace('_', ' ') || 'WAITING'}
               </p>
@@ -1052,25 +1042,6 @@ function AppContent() {
                     : `Call $${gameState.currentBet - mySeat.bet}`}
                 </button>
               </div>
-              <div className="flex gap-2 w-full">
-                {!botTournament?.enabled ? (
-                  <button
-                    onClick={startBotTournament}
-                    onMouseEnter={playHover}
-                    className="w-full py-2 rounded-lg bg-emerald-900/30 border border-emerald-500/50 text-[10px] font-black text-emerald-300 uppercase tracking-widest hover:bg-emerald-900/50 transition-all"
-                  >
-                    Run Full Bot Tournament
-                  </button>
-                ) : (
-                  <button
-                    onClick={stopBotTournament}
-                    onMouseEnter={playHover}
-                    className="w-full py-2 rounded-lg bg-rose-900/30 border border-rose-500/50 text-[10px] font-black text-rose-300 uppercase tracking-widest hover:bg-rose-900/50 transition-all"
-                  >
-                    Stop Bot Tournament
-                  </button>
-                )}
-              </div>
               <button
                 onClick={getAIInsight}
                 onMouseEnter={playHover}
@@ -1082,7 +1053,7 @@ function AppContent() {
                 ) : (
                   <Sparkles className="w-3 h-3" />
                 )}{' '}
-                Request AI Insight
+                AI Strategy
               </button>
             </div>
 
@@ -1194,7 +1165,7 @@ function AppContent() {
     <>
       {/* Global Audio Controls for non-table views */}
       {view !== 'TABLE' && (
-        <div className="fixed bottom-4 right-4 z-[999] flex items-center gap-2">
+        <div className="fixed bottom-4 right-4 z-999 flex items-center gap-2">
           <button
             onClick={toggleBgm}
             className={`p-3 rounded-full transition-colors shadow-lg ${bgmEnabled ? 'text-cyan-400 bg-cyan-900/50 border border-cyan-500/50' : 'text-slate-500 bg-black/60 border border-slate-800 hover:text-white'}`}
