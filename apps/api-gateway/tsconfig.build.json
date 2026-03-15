@@ -1,6 +1,24 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["src/**/*.ts"],
+  "compilerOptions": {
+    "types": ["node"]
+  },
+  "include": [
+    "src/main.ts",
+    "src/**/*.module.ts",
+    "src/**/*.controller.ts",
+    "src/**/*.service.ts",
+    "src/**/*.dto.ts",
+    "src/**/*.entity.ts",
+    "src/**/*.middleware.ts",
+    "src/**/*.guard.ts",
+    "src/**/*.decorator.ts",
+    "src/**/*.pipe.ts",
+    "src/**/*.interface.ts",
+    "src/**/*.constants.ts",
+    "src/**/*.utils.ts",
+    "src/**/*.config.ts"
+  ],
   "exclude": [
     "node_modules",
     "dist",
