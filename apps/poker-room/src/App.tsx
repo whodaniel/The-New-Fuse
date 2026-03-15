@@ -191,7 +191,7 @@ const Card: React.FC<{ val?: string; hidden?: boolean; index?: number }> = ({
     initial={{ opacity: 0, y: -20, rotateY: 180 }}
     animate={{ opacity: 1, y: 0, rotateY: 0 }}
     transition={{ duration: 0.4, delay: index * 0.1, type: 'spring' }}
-    className={`w-14 h-20 sm:w-20 sm:h-28 rounded-lg border-2 ${hidden ? 'bg-[url("https://www.transparenttextures.com/patterns/carbon-fibre.png")] bg-[#0a0c1a] border-cyan-500/50' : 'bg-white border-slate-200'} flex items-center justify-center font-black shadow-[0_0_15px_rgba(0,0,0,0.5)] relative overflow-hidden`}
+    className={`w-14 h-20 sm:w-20 sm:h-28 rounded-lg border-2 ${hidden ? 'bg-[url("https://www.transparenttextures.com/patterns/carbon-fibre.png")] bg-[#0a0c1a] border-cyan-500/50 shadow-[0_0_20px_rgba(0,242,255,0.2)]' : 'bg-white border-slate-200 shadow-xl'} flex items-center justify-center font-black relative overflow-hidden z-10`}
   >
     {hidden && (
       <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/10 to-transparent" />
@@ -881,7 +881,7 @@ function AppContent() {
                   </p>
                 </div>
 
-                <div className="flex gap-2 sm:gap-4 z-20">
+                <div className="flex gap-2 sm:gap-4 z-[150] bg-black/40 p-2 sm:p-4 rounded-xl border border-white/10 backdrop-blur-xl shadow-2xl shadow-black/80">
                   <AnimatePresence>
                     {(gameState.communityCards || []).map((c: string, i: number) => (
                       <Card key={`comm-${i}-${c}`} val={c} index={i} />
@@ -904,12 +904,14 @@ function AppContent() {
                 gameState.round !== 'WAITING' &&
                 gameState.round !== 'SHOWDOWN';
               const isDealer = gameState.dealerIndex === i;
+              const pos = getSeatPos(i);
+              const zIndex = 40 + Math.floor(parseFloat(String(pos.top)));
 
               return (
                 <div
                   key={seat.id}
-                  className="absolute transform -translate-x-1/2 -translate-y-1/2 z-40 transition-all duration-500"
-                  style={getSeatPos(i)}
+                  className="absolute transform -translate-x-1/2 -translate-y-1/2 transition-all duration-500"
+                  style={{ ...pos, zIndex }}
                 >
                   {seat.active ? (
                     <div className="flex flex-col items-center gap-2 relative group">
@@ -920,7 +922,7 @@ function AppContent() {
                       )}
 
                       {seat.cards.length > 0 && !seat.folded && (
-                        <div className="absolute -top-12 sm:-top-14 flex gap-1.5 transform scale-90">
+                        <div className="absolute -top-24 sm:-top-32 flex gap-1.5 transform scale-100 bg-[#0a0c1a]/80 p-1.5 rounded-xl border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-md z-[60]">
                           <Card
                             val={seat.cards[0] !== 'hidden' ? seat.cards[0] : undefined}
                             hidden={seat.cards[0] === 'hidden'}
