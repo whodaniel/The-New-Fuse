@@ -118,3 +118,14 @@ export class GenerateInviteCodeDto {
   @IsOptional()
   expiresAt?: string;
 }
+
+export class SupabaseAuthDto {
+  @ApiProperty()
+  @IsString()
+  accessToken: string = '';
+
+  @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
+  refreshToken?: string;
+}

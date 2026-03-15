@@ -12,7 +12,7 @@ import {
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { hasAuthorizationLevel } from '../auth/auth-policy';
-import { GenerateInviteCodeDto, LoginDto, RegisterDto } from '../dtos/auth.dto';
+import { GenerateInviteCodeDto, LoginDto, RegisterDto, SupabaseAuthDto } from '../dtos/auth.dto';
 import { AuthGuard } from '../guards/auth.guard';
 import { AuthService } from '../services/auth.service';
 
@@ -35,6 +35,14 @@ export class AuthController {
   async register(@Body() registerDto: RegisterDto, @Req() req?: Request) {
     const ipAddress = req?.ip || req?.socket?.remoteAddress;
     return this.authService.register(registerDto, { ipAddress });
+  }
+
+  @Post('supabase')
+  @ApiOperation({ summary: 'Exchange Supabase token for platform JWT' })
+  @ApiResponse({ status: 200, description: 'Exchange successful' })
+  @ApiResponse({ status: 401, description: 'Invalid token' })
+  async supabaseExchange(@Body() dto: SupabaseAuthDto) {
+    return this.authService.supabaseExchange(dto);
   }
 
   @Get('invite-policy')

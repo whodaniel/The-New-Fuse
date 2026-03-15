@@ -1,9 +1,16 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { DatabaseService, sql, User } from '@the-new-fuse/database';
 import { compare, hash } from 'bcrypt';
-import { GenerateInviteCodeDto, LoginDto, RegisterDto, TokenDto } from '../dtos/auth.dto';
+import {
+  GenerateInviteCodeDto,
+  LoginDto,
+  RegisterDto,
+  SupabaseAuthDto,
+  TokenDto,
+} from '../dtos/auth.dto';
 
 type AuthResponse = TokenDto & {
   access_token: string;
@@ -73,11 +80,71 @@ const isTruthy = (value: unknown): boolean => {
 
 @Injectable()
 export class AuthService {
+  private supabase: SupabaseClient | null = null;
+
   constructor(
     private readonly db: DatabaseService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService
-  ) {}
+  ) {
+    const supabaseUrl = this.configService.get('SUPABASE_URL');
+    const supabaseKey = this.configService.get('SUPABASE_ANON_KEY');
+    if (supabaseUrl && supabaseKey) {
+      this.supabase = createClient(supabaseUrl, supabaseKey);
+    }
+  }
+
+  async supabaseExchange(dto: SupabaseAuthDto): Promise<AuthResponse> {
+    if (!this.supabase) {
+      throw new UnauthorizedException('Supabase auth is not configured on this server');
+    }
+
+    const { data, error } = await this.supabase.auth.getUser(dto.accessToken);
+    if (error || !data.user) {
+      throw new UnauthorizedException('Invalid Supabase token');
+    }
+
+    const supabaseUser = data.user;
+    const email = supabaseUser.email;
+    if (!email) {
+      throw new UnauthorizedException('Supabase user must have an email');
+    }
+
+    let user = await this.db.users.findByEmail(email);
+
+    if (!user) {
+      // Auto-register Supabase user if they don't exist
+      const usernameBase = this.sanitizeUsername(
+        supabaseUser.user_metadata?.full_name ||
+          supabaseUser.user_metadata?.name ||
+          email.split('@')[0]
+      );
+
+      const username = await this.makeUsernameUnique(usernameBase);
+
+      user = await this.db.users.create({
+        email,
+        username,
+        name: supabaseUser.user_metadata?.full_name || supabaseUser.user_metadata?.name || null,
+        role: 'USER',
+        roles: ['USER'],
+        isActive: true,
+        emailVerified: true,
+      } as any);
+    }
+
+    if (!user.isActive) {
+      throw new UnauthorizedException('Account is inactive');
+    }
+
+    return this.generateTokens(user);
+  }
+
+  private async makeUsernameUnique(base: string): Promise<string> {
+    const existing = await this.db.users.findByUsername(base);
+    if (!existing) return base;
+    return `${base}_${Math.random().toString(36).slice(2, 7)}`;
+  }
 
   async validateToken(token: string): Promise<User> {
     try {
