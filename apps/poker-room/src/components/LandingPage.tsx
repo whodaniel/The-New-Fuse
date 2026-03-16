@@ -23,7 +23,7 @@ export default function LandingPage({ onEnter }: LandingPageProps) {
           transition={{ duration: 0.8, ease: 'easeOut' }}
           className="text-center mb-16"
         >
-          <div className="flex items-center justify-center gap-4 mb-6">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
             <div className="w-16 h-16 bg-cyan-400 rounded-2xl flex items-center justify-center shadow-[0_0_40px_rgba(0,242,255,0.6)] animate-pulse">
               <Shield className="w-10 h-10 text-black fill-current" />
             </div>
