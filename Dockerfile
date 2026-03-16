@@ -83,9 +83,13 @@ ENV VITE_FIREBASE_APP_ID=$VITE_FIREBASE_APP_ID
 ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL
 ENV VITE_SUPABASE_ANON_KEY=$VITE_SUPABASE_ANON_KEY
 
-# Build the specific frontend application using pnpm filter
-# Force cache invalidation: 2026-03-16T15:15:00Z
-RUN pnpm --filter ${PACKAGE_NAME} build
+# Build the specific frontend application
+# Handle both workspace packages and standalone apps
+RUN if [ "${SERVICE_PATH}" = "apps/nexus-orchestrator" ]; then \
+      cd apps/nexus-orchestrator && pnpm build; \
+    else \
+      pnpm --filter ${PACKAGE_NAME} build; \
+    fi
 
 #------------------------------------------------------------------------------
 # Runner stage - Production image
