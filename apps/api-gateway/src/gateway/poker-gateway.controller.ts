@@ -8,7 +8,7 @@ import { ProxyService } from '../proxy/proxy.service';
 export class PokerGatewayController {
   constructor(private readonly proxyService: ProxyService) {}
 
-  @All('**')
+  @All('*')
   @Version('1')
   @ApiOperation({ summary: 'Proxy all poker and casino game requests' })
   async proxyPokerRequest(
@@ -17,7 +17,12 @@ export class PokerGatewayController {
     @Body() body: any,
     @Query() query: any
   ) {
-    const path = req.path.replace(/^\/api\/v1\/poker/, '') || '/';
+    const baseUrl = req.baseUrl || '';
+    const originalUrl = req.originalUrl || req.url || '';
+    const withoutQuery = originalUrl.split('?')[0] || '';
+    let path = withoutQuery.startsWith(baseUrl) ? withoutQuery.slice(baseUrl.length) : req.path;
+    if (!path) path = '/';
+    if (!path.startsWith('/')) path = `/${path}`;
 
     try {
       const response = await this.proxyService.proxyRequest(
