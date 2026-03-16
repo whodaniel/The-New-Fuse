@@ -118,28 +118,19 @@ export class AuthService {
 
       if (!user) {
         this.logger.log(`Creating new platform account for ${email}`);
-        // Auto-register Supabase user if they don't exist
-        const usernameBase = this.sanitizeUsername(
-          supabaseUser.user_metadata?.full_name ||
-            supabaseUser.user_metadata?.name ||
-            email.split('@')[0]
-        );
 
-        const username = await this.makeUsernameUnique(usernameBase);
+        const syntheticPasswordHash = await hash(randomUUID().toString(), 10);
 
         user = await this.db.users.create({
           email,
-          username,
-          name: supabaseUser.user_metadata?.full_name || supabaseUser.user_metadata?.name || null,
+          name:
+            supabaseUser.user_metadata?.full_name ||
+            supabaseUser.user_metadata?.name ||
+            email.split('@')[0],
+          passwordHash: syntheticPasswordHash,
           role: 'USER',
           roles: ['USER'],
-          isActive: true,
-          emailVerified: true,
         } as any);
-      }
-
-      if (!user.isActive) {
-        throw new UnauthorizedException('Account is inactive');
       }
 
       this.logger.log(`Exchange successful for user: ${user.id}`);

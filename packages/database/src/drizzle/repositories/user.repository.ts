@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto';
-import { and, desc, eq, inArray, isNull, or } from 'drizzle-orm';
+import { desc, eq, inArray, or } from 'drizzle-orm';
 import { db } from '../client';
 import { authSessions, users } from '../schema';
 import type { NewUser, User } from '../types';
@@ -24,10 +24,7 @@ export class DrizzleUserRepository {
    * Find user by ID
    */
   async findById(id: string): Promise<User | null> {
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(and(eq(users.id, id), isNull(users.deletedAt)));
+    const [user] = await db.select().from(users).where(eq(users.id, id));
 
     return user ?? null;
   }
@@ -36,10 +33,7 @@ export class DrizzleUserRepository {
    * Find user by email
    */
   async findByEmail(email: string): Promise<User | null> {
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(and(eq(users.email, email), isNull(users.deletedAt)));
+    const [user] = await db.select().from(users).where(eq(users.email, email));
 
     return user ?? null;
   }
@@ -48,10 +42,7 @@ export class DrizzleUserRepository {
    * Find user by wallet address
    */
   async findByWalletAddress(walletAddress: string): Promise<User | null> {
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(and(eq(users.walletAddress, walletAddress), isNull(users.deletedAt)));
+    const [user] = await db.select().from(users).where(eq(users.walletAddress, walletAddress));
 
     return user ?? null;
   }
@@ -60,10 +51,7 @@ export class DrizzleUserRepository {
    * Find user by verification token
    */
   async findByVerificationToken(token: string): Promise<User | null> {
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(and(eq(users.verificationToken, token), isNull(users.deletedAt)));
+    const [user] = await db.select().from(users).where(eq(users.verificationToken, token));
 
     return user ?? null;
   }
@@ -72,10 +60,7 @@ export class DrizzleUserRepository {
    * Find user by username
    */
   async findByUsername(username: string): Promise<User | null> {
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(and(eq(users.username, username), isNull(users.deletedAt)));
+    const [user] = await db.select().from(users).where(eq(users.username, username));
 
     return user ?? null;
   }
@@ -87,12 +72,7 @@ export class DrizzleUserRepository {
     const [user] = await db
       .select()
       .from(users)
-      .where(
-        and(
-          or(eq(users.email, emailOrUsername), eq(users.username, emailOrUsername)),
-          isNull(users.deletedAt)
-        )
-      );
+      .where(or(eq(users.email, emailOrUsername), eq(users.username, emailOrUsername)));
 
     return user ?? null;
   }
@@ -101,11 +81,7 @@ export class DrizzleUserRepository {
    * Find all active users
    */
   async findActive(): Promise<User[]> {
-    return db
-      .select()
-      .from(users)
-      .where(and(eq(users.isActive, true), isNull(users.deletedAt)))
-      .orderBy(desc(users.createdAt));
+    return db.select().from(users).where(eq(users.isActive, true)).orderBy(desc(users.createdAt));
   }
 
   /**
@@ -115,7 +91,7 @@ export class DrizzleUserRepository {
     return db
       .select()
       .from(users)
-      .where(and(eq(users.role, role as any), isNull(users.deletedAt)))
+      .where(eq(users.role, role as any))
       .orderBy(desc(users.createdAt));
   }
 
@@ -234,11 +210,7 @@ export class DrizzleUserRepository {
    * Find all users with optional pagination
    */
   async findAll(limit?: number, offset?: number): Promise<User[]> {
-    let query = db
-      .select()
-      .from(users)
-      .where(isNull(users.deletedAt))
-      .orderBy(desc(users.createdAt));
+    let query = db.select().from(users).orderBy(desc(users.createdAt));
 
     if (limit !== undefined) {
       query = query.limit(limit) as any;
@@ -256,10 +228,7 @@ export class DrizzleUserRepository {
   async findUsersByIds(ids: string[]): Promise<User[]> {
     if (ids.length === 0) return [];
 
-    return db
-      .select()
-      .from(users)
-      .where(and(inArray(users.id, ids), isNull(users.deletedAt)));
+    return db.select().from(users).where(inArray(users.id, ids));
   }
 
   /**
@@ -274,10 +243,7 @@ export class DrizzleUserRepository {
    * Count total users
    */
   async count(): Promise<number> {
-    const result = await db
-      .select({ count: db.$count(users) })
-      .from(users)
-      .where(isNull(users.deletedAt));
+    const result = await db.select({ count: db.$count(users) }).from(users);
 
     return result[0]?.count ?? 0;
   }
