@@ -660,6 +660,37 @@ function AppContent() {
   });
   const [lastObservedState, setLastObservedState] = useState<any>(null);
 
+  const viewPathMap: Partial<Record<PokerView, string>> = {
+    LOBBY: '/',
+    TABLE: '/table',
+    'CONTROL CENTER': '/console',
+  };
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const path = window.location.pathname || '/';
+    if (path === '/console' || path === '/control-center') {
+      setView('CONTROL CENTER');
+      return;
+    }
+    if (path === '/table') {
+      setView('TABLE');
+      return;
+    }
+    if (path === '/' || path === '/lobby') {
+      setView('LOBBY');
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const targetPath = viewPathMap[view];
+    if (!targetPath) return;
+    if (window.location.pathname !== targetPath) {
+      window.history.replaceState({}, '', targetPath);
+    }
+  }, [view]);
+
   // --- Poll table state from Railway backend ---
   useEffect(() => {
     if (view !== 'TABLE' || !user) return;
