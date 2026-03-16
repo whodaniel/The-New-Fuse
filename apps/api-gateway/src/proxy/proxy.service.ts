@@ -70,6 +70,17 @@ export class ProxyService {
       retries: 3,
     });
 
+    this.registerService({
+      name: 'casin8',
+      baseUrl: this.configService.get(
+        'CASIN8_SERVICE_URL',
+        'https://casin8-games-production-b06e.up.railway.app'
+      ),
+      healthPath: '/health',
+      timeout: 30000,
+      retries: 3,
+    });
+
     this.logger.log(`Registered ${this.services.size} backend services`);
   }
 

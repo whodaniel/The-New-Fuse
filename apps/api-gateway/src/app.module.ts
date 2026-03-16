@@ -11,6 +11,7 @@ import { ChatGatewayModule } from './gateway/chat-gateway.module';
 import { IdeGatewayModule } from './gateway/ide-gateway.module';
 import { MarketplaceGatewayModule } from './gateway/marketplace-gateway.module';
 import { McpGatewayModule } from './gateway/mcp-gateway.module';
+import { PokerGatewayModule } from './gateway/poker-gateway.module';
 import { WebhookGatewayModule } from './gateway/webhook-gateway.module';
 import { ProxyModule } from './proxy/proxy.module';
 
@@ -34,6 +35,7 @@ import { ProxyModule } from './proxy/proxy.module';
     McpGatewayModule,
     MarketplaceGatewayModule,
     IdeGatewayModule,
+    PokerGatewayModule,
   ],
 })
 export class AppModule {}

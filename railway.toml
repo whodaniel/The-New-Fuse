@@ -20,7 +20,7 @@ dockerfilePath = "Dockerfile.railway"
 dockerBuildArgs = { SERVICE_PATH = "api", SERVICE_NAME = "@the-new-fuse/api-server" }
 watchPatterns = ["apps/api/**", "packages/**"]
 [services.api.deploy]
-healthcheckPath = "/health"
+healthcheckPath = "/api/health"
 startCommand = "/bin/sh ./run-service.sh"
 restartPolicyType = "ON_FAILURE"
 # Redis service is linked - REDIS_URL will be automatically provided by Railway

@@ -9,7 +9,7 @@ import {
   Volume2,
   VolumeX,
 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { api, communityApi, CommunityMembership, mttApi, pokerApi, sngApi } from './api';
 
 // Import Contexts & Components
@@ -89,6 +89,8 @@ const BOT_PROFILES = [
     avatar: '/avatars/bot_5.png',
   },
 ];
+
+const BOT_PROFILE_BY_ID = new Map(BOT_PROFILES.map((bot) => [bot.id, bot]));
 
 const THEME = {
   felt: 'bg-[radial-gradient(circle_at_center,_#1a472a_0%,_#0d2b1a_100%)]',
@@ -571,20 +573,69 @@ function AppContent() {
     feed: [],
   });
 
+  const decorateSnapshot = useCallback(
+    (snapshot: any) => {
+      if (!snapshot || !Array.isArray(snapshot.seats)) return snapshot;
+      const heroId = user?.username || 'hero';
+      const heroName = user?.username || 'Neural_Knight';
+      const heroAvatar = user?.avatar || '/avatars/bot_1.png';
+      const holeCards =
+        snapshot.holeCards && typeof snapshot.holeCards === 'object' ? snapshot.holeCards : {};
+
+      const seats = snapshot.seats.map((seat: any, idx: number) => {
+        const seatIndex = Number.isInteger(seat?.seat) ? seat.seat : idx;
+        const bot =
+          BOT_PROFILE_BY_ID.get(String(seat?.playerId || '')) ||
+          BOT_PROFILE_BY_ID.get(String(seat?.agentId || ''));
+        const isHero =
+          String(seat?.playerId || '') === heroId || String(seat?.agentId || '') === heroId;
+        const name =
+          seat?.name ||
+          (isHero ? heroName : bot?.name || seat?.playerId || `Player ${seatIndex + 1}`);
+        const avatar = seat?.avatar || (isHero ? heroAvatar : bot?.avatar || '/avatars/bot_1.png');
+
+        let cards: any[] = [];
+        if (Array.isArray(seat?.cards) && seat.cards.length) {
+          cards = seat.cards;
+        } else {
+          const dealt = holeCards[String(seatIndex)];
+          if (Array.isArray(dealt) && dealt.length) {
+            cards = isHero ? dealt : ['hidden', 'hidden'];
+          }
+        }
+
+        return {
+          ...seat,
+          seat: seatIndex,
+          id: seat?.id || seat?.playerId || `seat-${seatIndex}`,
+          name,
+          avatar,
+          isHero,
+          active: seat?.active ?? Boolean(seat?.playerId),
+          cards,
+        };
+      });
+
+      return { ...snapshot, seats };
+    },
+    [user]
+  );
+
   // Polling for game state
   useEffect(() => {
     if (!activeTableId || view !== 'TABLE') return;
 
     const interval = setInterval(async () => {
       try {
-        const out = await pokerApi.getTable(activeTableId);
-        setGameState(out.snapshot);
+        const out = await pokerApi.getState(activeTableId);
+        const snapshot = decorateSnapshot(out.snapshot);
+        setGameState(snapshot);
 
         // Simple action tape simulation
-        if (out.snapshot.lastAction) {
+        if (snapshot.lastAction) {
           const entry = {
             id: `${Date.now()}`,
-            text: `[${out.snapshot.round}] ${out.snapshot.lastAction}`,
+            text: `[${snapshot.round}] ${snapshot.lastAction}`,
           };
           setActionTape((prev) => ({
             feed: [entry, ...prev.feed].slice(0, 50),
@@ -596,7 +647,7 @@ function AppContent() {
     }, 1500);
 
     return () => clearInterval(interval);
-  }, [activeTableId, view]);
+  }, [activeTableId, view, decorateSnapshot]);
 
   const handleLogin = async (username: string, avatar: string, email?: string) => {
     playClick();
@@ -629,32 +680,26 @@ function AppContent() {
     playClick();
     try {
       const tableId = `bot-tourney-${Date.now()}`;
-      await pokerApi.createTable({
-        id: tableId,
-        name: 'Neural Sprint #42',
-        blinds: [100, 200],
-        maxPlayers: 9,
-      });
+      const seats = [] as any[];
 
-      // Fill with bots
       for (let i = 0; i < 8; i++) {
         const bot = BOT_PROFILES[i % BOT_PROFILES.length];
-        await pokerApi.joinTable(tableId, {
-          id: bot.id,
-          name: bot.name,
-          avatar: bot.avatar,
+        seats.push({
+          seat: i,
+          playerId: bot.id,
           stack: 10000,
+          temperament: bot.temperament,
         });
       }
 
-      // Join as hero
-      await pokerApi.joinTable(tableId, {
-        id: user?.username || 'hero',
-        name: user?.username || 'Neural_Knight',
-        avatar: user?.avatar || '/avatars/bot_1.png',
+      seats.push({
+        seat: 8,
+        playerId: user?.username || 'hero',
         stack: 10000,
-        isHero: true,
+        temperament: 'balanced',
       });
+
+      await pokerApi.initTableState(tableId, `hand-${Date.now()}`, seats, 0, 0);
 
       handleJoinTable(tableId);
     } catch (err) {

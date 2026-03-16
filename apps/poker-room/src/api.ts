@@ -7,7 +7,7 @@ const BASE_URL =
   import.meta.env.VITE_API_URL ||
   (typeof window !== 'undefined' && window.location.hostname === 'localhost'
     ? 'http://localhost:3000'
-    : 'https://poker.ai-arcade.xyz');
+    : 'https://api.thenewfuse.com/api/v1/poker');
 
 const COMMUNITY_BASE_URL =
   import.meta.env.VITE_COMMUNITY_API_URL || 'https://ai-arcade-community-api.bizsynth.workers.dev';
