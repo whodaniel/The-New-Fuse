@@ -8,7 +8,7 @@ import { ProxyService } from '../proxy/proxy.service';
 export class PokerGatewayController {
   constructor(private readonly proxyService: ProxyService) {}
 
-  @All('*')
+  @All(':path(*)')
   @Version('1')
   @ApiOperation({ summary: 'Proxy all poker and casino game requests' })
   async proxyPokerRequest(
