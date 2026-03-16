@@ -124,7 +124,7 @@ class SimpleChatBridge {
    */
   private loadCustomSites(): void {
     if (typeof chrome !== 'undefined' && chrome.storage) {
-      chrome.storage.local.get(['fuse_settings'], (result) => {
+      chrome.storage.local.get(['gemini_bridge_settings'], (result) => {
         if (result.fuse_settings && result.fuse_settings.allowedSites) {
           this.customSites = result.fuse_settings.allowedSites;
           if ((window as any).__FUSE_DEBUG_SELECTORS) {

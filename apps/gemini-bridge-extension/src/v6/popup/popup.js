@@ -4,7 +4,7 @@
 
 const NATIVE_HOST_NAME = 'com.thenewfuse.native_host';
 
-class FuseConnectPopup {
+class GeminiBridgePopup {
   constructor() {
     this.state = {
       connectionStatus: 'disconnected',
@@ -705,7 +705,7 @@ class FuseConnectPopup {
             this.showToast(`Cannot open panel: ${errMsg}`);
             console.error('Fuse Panel Open Error:', errMsg, err);
           } else if (response?.success) {
-            this.showToast('Panel opened! (Ctrl+Shift+F to toggle)');
+            this.showToast('Panel opened! (Ctrl+Shift+G to toggle)');
             // Close popup after opening panel
             window.close();
           }
@@ -1777,7 +1777,7 @@ class FuseConnectPopup {
 
   async loadSettings() {
     return new Promise((resolve) => {
-      chrome.storage.local.get(['fuse_settings'], (result) => {
+      chrome.storage.local.get(['gemini_bridge_settings'], (result) => {
         if (result.fuse_settings) {
           this.state.settings = { ...this.state.settings, ...result.fuse_settings };
 
@@ -2394,7 +2394,7 @@ class FuseConnectPopup {
 
   async exportLogs() {
     // Get logs from storage
-    const result = await chrome.storage.local.get(['fuse_logs']);
+    const result = await chrome.storage.local.get(['gemini_bridge_logs']);
     const logs = result.fuse_logs || [];
 
     // Create download
@@ -2465,5 +2465,5 @@ class FuseConnectPopup {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-  new FuseConnectPopup();
+  new GeminiBridgePopup();
 });

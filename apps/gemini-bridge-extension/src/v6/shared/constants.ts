@@ -1,5 +1,8 @@
 /**
- * Fuse Connect v7 - Constants and Configuration
+ * Gemini Bridge v7 - Constants and Configuration
+ *
+ * Note: This extension is designed to work alongside Fuse Connect
+ * without conflict. All storage keys use 'gemini_bridge_' prefix.
  */
 
 import type { ChatDetectionConfig, ExtensionSettings, NotificationSettings } from './types';
@@ -8,9 +11,9 @@ import type { ChatDetectionConfig, ExtensionSettings, NotificationSettings } fro
 // EXTENSION METADATA
 // ============================================
 
-export const EXTENSION_NAME = 'Fuse Connect';
-export const EXTENSION_VERSION = '7.0.0';
-export const EXTENSION_ID = 'fuse-connect-v7';
+export const EXTENSION_NAME = 'Gemini Bridge';
+export const EXTENSION_VERSION = '7.2.0';
+export const EXTENSION_ID = 'gemini-bridge-v7';
 
 // ============================================
 // NODE ENDPOINTS
@@ -128,7 +131,7 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
     recordNetworkTraffic: false,
   },
   shortcuts: {
-    togglePanel: 'Ctrl+Shift+F',
+    togglePanel: 'Ctrl+Shift+G',
     quickMessage: 'Ctrl+Shift+M',
     focusInput: 'Ctrl+Shift+I',
   },
@@ -137,16 +140,18 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
 // ============================================
 // STORAGE KEYS
 // ============================================
+// IMPORTANT: These keys use 'gemini_bridge_' prefix to avoid
+// conflicts with Fuse Connect extension storage
 
 export const STORAGE_KEYS = {
-  settings: 'fuse_settings',
-  agentId: 'fuse_agent_id',
-  panelState: 'fuse_panel_state',
-  channels: 'fuse_channels',
-  joinedChannels: 'fuse_joined_channels',
-  notifications: 'fuse_notifications',
-  knownNodes: 'fuse_known_nodes',
-  recentMessages: 'fuse_recent_messages',
+  settings: 'gemini_bridge_settings',
+  agentId: 'gemini_bridge_agent_id',
+  panelState: 'gemini_bridge_panel_state',
+  channels: 'gemini_bridge_channels',
+  joinedChannels: 'gemini_bridge_joined_channels',
+  notifications: 'gemini_bridge_notifications',
+  knownNodes: 'gemini_bridge_known_nodes',
+  recentMessages: 'gemini_bridge_recent_messages',
 };
 
 // ============================================
@@ -178,55 +183,7 @@ export const TIMINGS = {
   retryInterval: 1000,
   heartbeatInterval: 30000,
   healthCheckInterval: 10000,
-  reconnectDelay: 5000,
-  streamingTimeout: 2000,
-  responsePollingInterval: 500,
-  maxResponseWait: 60000,
+  reconnectBaseDelay: 1000,
+  reconnectMaxDelay: 30000,
+  messageDedupWindow: 5000,
 };
-
-// ============================================
-// MESSAGE TYPES
-// ============================================
-
-export const MESSAGE_TYPES = {
-  // Agent lifecycle
-  AGENT_REGISTER: 'AGENT_REGISTER',
-  AGENT_UNREGISTER: 'AGENT_UNREGISTER',
-  AGENT_LIST: 'AGENT_LIST',
-  AGENT_STATUS: 'AGENT_STATUS',
-  AGENT_HEARTBEAT: 'AGENT_HEARTBEAT',
-
-  // Messaging
-  MESSAGE_SEND: 'MESSAGE_SEND',
-  MESSAGE_RECEIVE: 'MESSAGE_RECEIVE',
-  BROADCAST_MESSAGE: 'BROADCAST_MESSAGE',
-
-  // Streaming
-  MESSAGE_STREAM_START: 'MESSAGE_STREAM_START',
-  MESSAGE_STREAM_CHUNK: 'MESSAGE_STREAM_CHUNK',
-  MESSAGE_STREAM_END: 'MESSAGE_STREAM_END',
-
-  // Channels
-  CHANNEL_CREATE: 'CHANNEL_CREATE',
-  CHANNEL_JOIN: 'CHANNEL_JOIN',
-  CHANNEL_LEAVE: 'CHANNEL_LEAVE',
-  CHANNEL_LIST: 'CHANNEL_LIST',
-  CHANNEL_MESSAGE: 'CHANNEL_MESSAGE',
-
-  // Chat injection
-  INJECT_MESSAGE: 'INJECT_MESSAGE',
-  INJECT_RESULT: 'INJECT_RESULT',
-  CHAT_DETECTED: 'CHAT_DETECTED',
-  RESPONSE_DETECTED: 'RESPONSE_DETECTED',
-  RESPONSE_COMPLETE: 'RESPONSE_COMPLETE',
-  STREAMING_UPDATE: 'STREAMING_UPDATE',
-
-  // System
-  HEARTBEAT: 'HEARTBEAT',
-  WELCOME: 'WELCOME',
-  ERROR: 'ERROR',
-  CONNECTION_STATUS: 'CONNECTION_STATUS',
-  CONTENT_SCRIPT_READY: 'CONTENT_SCRIPT_READY',
-  TOGGLE_PANEL: 'TOGGLE_PANEL',
-  REQUEST_SYNC: 'REQUEST_SYNC',
-} as const;

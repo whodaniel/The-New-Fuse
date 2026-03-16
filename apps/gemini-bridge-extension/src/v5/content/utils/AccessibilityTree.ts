@@ -382,7 +382,7 @@ export class AccessibilityTreeGenerator {
     }
 
     // Create new ref
-    const refId = `fuse_ref_${++this.refCounter}`;
+    const refId = `gemini_bridge_ref_${++this.refCounter}`;
     this.elementMap.set(refId, {
       ref: new WeakRef(element),
       role: this.getRole(element),

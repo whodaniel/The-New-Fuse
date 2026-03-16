@@ -21,12 +21,12 @@ import { simpleHash } from '../shared/utils';
 
 // Storage keys
 const STORAGE_KEYS = {
-  settings: 'fuse_settings',
-  agentId: 'fuse_agent_id',
-  channels: 'fuse_channels',
-  joinedChannels: 'fuse_joined_channels',
-  knownNodes: 'fuse_known_nodes',
-  autoConnect: 'fuse_auto_connect',
+  settings: 'gemini_bridge_settings',
+  agentId: 'gemini_bridge_agent_id',
+  channels: 'gemini_bridge_channels',
+  joinedChannels: 'gemini_bridge_joined_channels',
+  knownNodes: 'gemini_bridge_known_nodes',
+  autoConnect: 'gemini_bridge_auto_connect',
 };
 
 // Default node configuration
@@ -899,7 +899,7 @@ class BackgroundService {
               !err.message?.includes('Receiving end does not exist') &&
               !err.message?.includes('Could not establish connection')
             ) {
-              console.warn(`[FuseConnect v6] Failed to broadcast to tab ${tab.id}:`, err);
+              console.debug(`[FuseConnect v6] Failed to broadcast to tab ${tab.id}:`, err);
             }
           });
         } catch (e) {

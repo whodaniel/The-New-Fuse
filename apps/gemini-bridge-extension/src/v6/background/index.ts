@@ -1,5 +1,5 @@
 /**
- * Fuse Connect v7 - Background Service Worker
+ * Gemini Bridge v7 - Background Service Worker
  * Multi-node connection, federation channels, notifications
  *
  * This version handles connection failures gracefully and allows
@@ -22,18 +22,18 @@ import { simpleHash } from '../shared/utils';
 
 // Storage keys
 const STORAGE_KEYS = {
-  settings: 'fuse_settings',
-  agentId: 'fuse_agent_id',
-  channels: 'fuse_channels',
-  joinedChannels: 'fuse_joined_channels',
-  tabActiveChannels: 'fuse_tab_active_channels',
-  tabPausedChannels: 'fuse_tab_paused_channels',
-  knownNodes: 'fuse_known_nodes',
-  autoConnect: 'fuse_auto_connect',
-  autoMonitor: 'fuse_auto_monitor',
-  autoMasterClock: 'fuse_auto_master_clock',
-  autoWakePing: 'fuse_auto_wake_ping',
-  eventLog: 'fuse_event_log',
+  settings: 'gemini_bridge_settings',
+  agentId: 'gemini_bridge_agent_id',
+  channels: 'gemini_bridge_channels',
+  joinedChannels: 'gemini_bridge_joined_channels',
+  tabActiveChannels: 'gemini_bridge_tab_active_channels',
+  tabPausedChannels: 'gemini_bridge_tab_paused_channels',
+  knownNodes: 'gemini_bridge_known_nodes',
+  autoConnect: 'gemini_bridge_auto_connect',
+  autoMonitor: 'gemini_bridge_auto_monitor',
+  autoMasterClock: 'gemini_bridge_auto_master_clock',
+  autoWakePing: 'gemini_bridge_auto_wake_ping',
+  eventLog: 'gemini_bridge_event_log',
 };
 
 // Default node configuration
@@ -140,7 +140,7 @@ class BackgroundService {
   }
 
   private async init(): Promise<void> {
-    console.log('[FuseConnect v7] Background service initializing...');
+    console.log('[GeminiBridge v7] Background service initializing...');
 
     // CRITICAL: Setup handlers SYNCHRONOUSLY before any awaits
     // This prevents "Receiving end does not exist" errors in the popup
@@ -177,7 +177,7 @@ class BackgroundService {
       this.updateNodeStatus('relay', DEFAULT_NODES.relay, 'disconnected');
     }
 
-    console.log('[FuseConnect v7] Background service ready');
+    console.log('[GeminiBridge v7] Background service ready');
     this.logEvent('extension', 'background_ready', {
       autoConnect: this.autoConnect,
       autoMonitor: this.autoMonitor,
@@ -204,7 +204,7 @@ class BackgroundService {
       }
 
       if (cleaned > 0) {
-        console.log(`[FuseConnect v7] Cleaned up ${cleaned} stale message hashes`);
+        console.log(`[GeminiBridge v7] Cleaned up ${cleaned} stale message hashes`);
       }
     }, 30000) as unknown as number;
   }
@@ -219,7 +219,7 @@ class BackgroundService {
     if (isAvailable) {
       this.connectToNode('relay', DEFAULT_NODES.relay);
     } else {
-      console.log('[FuseConnect v7] Relay not available - attempting autonomous startup');
+      console.log('[GeminiBridge v7] Relay not available - attempting autonomous startup');
       this.updateNodeStatus('relay', DEFAULT_NODES.relay, 'disconnected');
       this.sendNativeMessage({ action: 'start', service: 'relay' }).then((nativeResp) => {
         if (nativeResp?.error) {
@@ -350,7 +350,7 @@ class BackgroundService {
     if (this.connections.has(nodeType)) {
       const existing = this.connections.get(nodeType);
       if (existing?.readyState === WebSocket.OPEN) {
-        console.log(`[FuseConnect v7] Already connected to ${nodeType}`);
+        console.log(`[GeminiBridge v7] Already connected to ${nodeType}`);
         return;
       }
       // Close stale connection
@@ -358,14 +358,14 @@ class BackgroundService {
       this.connections.delete(nodeType);
     }
 
-    console.log(`[FuseConnect v7] Connecting to ${nodeType} at ${url}...`);
+    console.log(`[GeminiBridge v7] Connecting to ${nodeType} at ${url}...`);
     this.updateNodeStatus(nodeType, url, 'connecting');
 
     try {
       const ws = new WebSocket(url);
 
       ws.onopen = () => {
-        console.log(`[FuseConnect v7] Connected to ${nodeType}`);
+        console.log(`[GeminiBridge v7] Connected to ${nodeType}`);
         this.connections.set(nodeType, ws);
         this.updateNodeStatus(nodeType, url, 'connected');
         this.connectionAttempts = 0; // Reset on success
@@ -400,12 +400,12 @@ class BackgroundService {
           const message = JSON.parse(event.data);
           this.handleRelayMessage(message, nodeType);
         } catch (e) {
-          console.error('[FuseConnect v7] Failed to parse message:', e);
+          console.error('[GeminiBridge v7] Failed to parse message:', e);
         }
       };
 
       ws.onclose = () => {
-        console.log(`[FuseConnect v7] Disconnected from ${nodeType}`);
+        console.log(`[GeminiBridge v7] Disconnected from ${nodeType}`);
         this.connections.delete(nodeType);
         this.updateNodeStatus(nodeType, url, 'disconnected');
 
@@ -440,7 +440,7 @@ class BackgroundService {
         }
       };
     } catch (error) {
-      console.log(`[FuseConnect v7] Unable to connect to ${nodeType} - relay may not be running`);
+      console.log(`[GeminiBridge v7] Unable to connect to ${nodeType} - relay may not be running`);
       this.updateNodeStatus(nodeType, url, 'disconnected');
     }
   }
@@ -500,7 +500,7 @@ class BackgroundService {
 
     // Exponential backoff
     const delay = Math.min(5000 * Math.pow(2, this.connectionAttempts), 30000);
-    console.log(`[FuseConnect v7] Will retry ${nodeType} in ${delay}ms...`);
+    console.log(`[GeminiBridge v7] Will retry ${nodeType} in ${delay}ms...`);
 
     const timer = setTimeout(() => {
       this.connectToNode(nodeType, url);
@@ -585,7 +585,7 @@ class BackgroundService {
         },
       };
       this.primaryConnection.send(JSON.stringify(regMessage));
-      console.log(`[FuseConnect v7] Registered Page Agent: ${name} (${id})`);
+      console.log(`[GeminiBridge v7] Registered Page Agent: ${name} (${id})`);
 
       // AUTO-JOIN: Join any channels the main browser agent is in
       // This ensures the new tab immediately is part of the conversation
@@ -600,14 +600,14 @@ class BackgroundService {
           },
         };
         this.primaryConnection.send(JSON.stringify(joinMessage));
-        console.log(`[FuseConnect v7] Auto-joined Page Agent ${id} to channel ${channelId}`);
+        console.log(`[GeminiBridge v7] Auto-joined Page Agent ${id} to channel ${channelId}`);
 
         // Update local agent object
         agent.channels.push(channelId);
       }
     } else {
       // NOT CONNECTED: Queue for registration when connection is established
-      console.log(`[FuseConnect v7] Queued Page Agent for later registration: ${name} (${id})`);
+      console.log(`[GeminiBridge v7] Queued Page Agent for later registration: ${name} (${id})`);
       this.pendingPageAgents.push(agent);
     }
 
@@ -672,10 +672,10 @@ class BackgroundService {
 
     if (connection?.readyState === WebSocket.OPEN) {
       connection.send(JSON.stringify(message));
-      console.log('[FuseConnect v7] Sent to relay:', message.type, message.channel);
+      console.log('[GeminiBridge v7] Sent to relay:', message.type, message.channel);
     } else {
       this.messageQueue.push(message);
-      console.log('[FuseConnect v7] Queued message (not connected):', message.type);
+      console.log('[GeminiBridge v7] Queued message (not connected):', message.type);
     }
   }
 
@@ -699,7 +699,7 @@ class BackgroundService {
     if (this.primaryConnection?.readyState !== WebSocket.OPEN) return;
 
     console.log(
-      `[FuseConnect v7] Flushing ${this.pendingPageAgents.length} pending page agent registrations`
+      `[GeminiBridge v7] Flushing ${this.pendingPageAgents.length} pending page agent registrations`
     );
 
     while (this.pendingPageAgents.length > 0) {
@@ -714,7 +714,7 @@ class BackgroundService {
           payload: { agent },
         };
         this.primaryConnection.send(JSON.stringify(regMessage));
-        console.log(`[FuseConnect v7] Registered queued Page Agent: ${agent.name} (${agent.id})`);
+        console.log(`[GeminiBridge v7] Registered queued Page Agent: ${agent.name} (${agent.id})`);
 
         // Auto-join channels
         for (const channelId of this.joinedChannels) {
@@ -739,7 +739,7 @@ class BackgroundService {
     if (ws.readyState !== WebSocket.OPEN) return;
 
     console.log(
-      `[FuseConnect v7] Re-registering ${this.agents.size} existing agents on new connection`
+      `[GeminiBridge v7] Re-registering ${this.agents.size} existing agents on new connection`
     );
 
     for (const [agentId, agent] of this.agents) {
@@ -756,7 +756,7 @@ class BackgroundService {
       };
 
       ws.send(JSON.stringify(regMessage));
-      console.log(`[FuseConnect v7] Re-announced Page Agent: ${agent.name} (${agentId})`);
+      console.log(`[GeminiBridge v7] Re-announced Page Agent: ${agent.name} (${agentId})`);
 
       // Re-join channels for this agent
       // Note: agent.channels should already contain the channels it was in
@@ -797,7 +797,7 @@ class BackgroundService {
             chrome.tabs.get(tabId, (tab) => {
               if (chrome.runtime.lastError || !tab) {
                 console.log(
-                  `[FuseConnect v7] Tab ${tabId} for agent ${agentId} is gone. Removing.`
+                  `[GeminiBridge v7] Tab ${tabId} for agent ${agentId} is gone. Removing.`
                 );
                 this.agents.delete(agentId);
 
@@ -853,7 +853,7 @@ class BackgroundService {
    * Handle messages from relay
    */
   private handleRelayMessage(message: ProtocolMessage, nodeType: string): void {
-    console.log(`[FuseConnect v7] Received from ${nodeType}:`, message.type);
+    console.log(`[GeminiBridge v7] Received from ${nodeType}:`, message.type);
     this.logEvent('relay', 'message_in', {
       nodeType,
       type: message.type,
@@ -863,7 +863,7 @@ class BackgroundService {
 
     switch (message.type) {
       case 'WELCOME':
-        console.log('[FuseConnect v7] Welcome received');
+        console.log('[GeminiBridge v7] Welcome received');
         break;
 
       case 'AGENT_LIST': {
@@ -884,7 +884,7 @@ class BackgroundService {
             agent.status === 'disconnected' ||
             agent.status === 'unregistered'
           ) {
-            console.log(`[FuseConnect v7] Agent ${agent.id} went offline/removed`);
+            console.log(`[GeminiBridge v7] Agent ${agent.id} went offline/removed`);
             this.agents.delete(agent.id);
           } else {
             // Keep local metadata (like tabId) if we're just updating status
@@ -913,7 +913,7 @@ class BackgroundService {
       case 'AGENT_UNREGISTER': {
         const unregId = (message.payload as any).agentId;
         if (unregId) {
-          console.log(`[FuseConnect v7] UNREGISTER received for ${unregId}`);
+          console.log(`[GeminiBridge v7] UNREGISTER received for ${unregId}`);
           this.agents.delete(unregId);
           this.broadcastToTabs({
             type: 'AGENTS_UPDATE',
@@ -1003,7 +1003,7 @@ class BackgroundService {
         break;
 
       case 'ERROR':
-        console.error('[FuseConnect v7] Relay error:', message.payload);
+        console.error('[GeminiBridge v7] Relay error:', message.payload);
         this.createNotification(
           'error',
           'Error',
@@ -1117,7 +1117,7 @@ class BackgroundService {
 
       if (rec.n > 5) {
         guard.mutedUntil.set(from, now + 60000);
-        console.warn('[FuseConnect v7] Loop guard muted source for 60s:', from);
+        console.debug('[GeminiBridge v7] Loop guard muted source for 60s:', from);
         return;
       }
     } catch {
@@ -1133,7 +1133,7 @@ class BackgroundService {
 
     if (message.from === this.agentId || message.from === 'Browser Agent') {
       if (!message.channel) {
-        console.log('[FuseConnect v7] Skipping direct self-message echo');
+        console.log('[GeminiBridge v7] Skipping direct self-message echo');
         return;
       }
 
@@ -1142,7 +1142,7 @@ class BackgroundService {
         `${message.from}:${message.content}:${Math.floor(message.timestamp / 1000)}`
       );
       if (this.recentMessageHashes.has(msgHash)) {
-        console.log('[FuseConnect v7] Skipping duplicate self-message on channel');
+        console.log('[GeminiBridge v7] Skipping duplicate self-message on channel');
         return;
       }
 
@@ -1157,7 +1157,7 @@ class BackgroundService {
     const now = Date.now();
 
     if (this.recentMessageHashes.has(msgHash)) {
-      console.log('[FuseConnect v7] Skipping duplicate message');
+      console.log('[GeminiBridge v7] Skipping duplicate message');
       return;
     }
 
@@ -1340,7 +1340,7 @@ class BackgroundService {
               !err.message?.includes('Receiving end does not exist') &&
               !err.message?.includes('Could not establish connection')
             ) {
-              console.warn(`[FuseConnect v7] Failed to broadcast to tab ${tab.id}:`, err);
+              console.debug(`[GeminiBridge v7] Failed to broadcast to tab ${tab.id}:`, err);
             }
           });
         } catch (e) {
@@ -2281,12 +2281,12 @@ class BackgroundService {
               this.nativeHostUnavailable = true;
               if (!this.nativeHostMissingLogged) {
                 this.nativeHostMissingLogged = true;
-                console.warn(
+                console.debug(
                   '[NativeMessaging] Native host not installed; native service controls disabled'
                 );
               }
             } else {
-              console.error('[NativeMessaging] Error:', errMsg);
+              // Silent - native messaging not available in dev mode
             }
 
             resolve({ error: errMsg, unavailable: hostMissing });
@@ -2442,7 +2442,7 @@ class BackgroundService {
 
       switch (message.type) {
         case 'TEST_PING':
-          console.log('[FuseConnect v7] Received TEST_PING');
+          console.log('[GeminiBridge v7] Received TEST_PING');
           sendResponse({
             success: true,
             status: 'online',
@@ -2617,7 +2617,7 @@ class BackgroundService {
         case 'AI_STUDIO_AUTH':
         case 'YOUTUBE_AUTHENTICATE':
           // Handle AI Studio OAuth2 authentication.
-          console.log('[FuseConnect v7] Starting YouTube auth flow', this.getOAuthDiagnostics());
+          console.log('[GeminiBridge v7] Starting YouTube auth flow', this.getOAuthDiagnostics());
           this.authenticateYouTubeSafe()
             .then(({ token, primaryProfile, accountSwitched }) => {
               const tokenExpiry = Date.now() + 50 * 60 * 1000;
@@ -3665,7 +3665,7 @@ Format as JSON array:
                     target: { tabId: tabs[0].id },
                     files: ['content/index.js'],
                   });
-                  console.log(`[FuseConnect v7] Content script injected into tab ${tabs[0].id}`);
+                  console.log(`[GeminiBridge v7] Content script injected into tab ${tabs[0].id}`);
 
                   // Wait a moment for initialization, then show panel
                   setTimeout(() => {
@@ -3677,7 +3677,7 @@ Format as JSON array:
                   sendResponse({ success: true, injected: true });
                 }
               } catch (error: any) {
-                console.error('[FuseConnect v7] Failed to activate on tab:', error);
+                console.error('[GeminiBridge v7] Failed to activate on tab:', error);
                 sendResponse({ success: false, error: error.message });
               }
             } else {
@@ -3727,7 +3727,7 @@ Format as JSON array:
               sendResponse({ success: true });
             })
             .catch((error) => {
-              console.error('[FuseConnect v7] Error injecting message:', error);
+              console.error('[GeminiBridge v7] Error injecting message:', error);
               sendResponse({ success: false, error: error.message });
             });
           return true; // Async response
@@ -3819,7 +3819,7 @@ Format as JSON array:
               // Fallback: construct from tab ID if not provided
               if (!senderId && sender.tab?.id) {
                 senderId = `page-agent-${sender.tab.id}`;
-                console.log('[FuseConnect v7] Using tab-based senderId:', senderId);
+                console.log('[GeminiBridge v7] Using tab-based senderId:', senderId);
               }
 
               // FIXED: Don't drop messages without senderId - use a safe fallback instead
@@ -3830,7 +3830,7 @@ Format as JSON array:
               const normalizedSenderId = normalizeId(senderId);
               const normalizedMyId = normalizeId(this.agentId);
 
-              console.log('[FuseConnect v7] AI Response from agent:', {
+              console.log('[GeminiBridge v7] AI Response from agent:', {
                 senderId,
                 normalizedSenderId,
                 normalizedMyId,
@@ -3846,7 +3846,7 @@ Format as JSON array:
                 } else if (this.joinedChannels.size > 0) {
                   // Fallback to first joined channel if no specific channel provided
                   channel = Array.from(this.joinedChannels)[0];
-                  console.log('[FuseConnect v7] Using fallback channel:', channel);
+                  console.log('[GeminiBridge v7] Using fallback channel:', channel);
                 }
               }
 
@@ -3877,7 +3877,7 @@ Format as JSON array:
                   responseMetadata.taskId = message.metadata.taskId;
                   responseMetadata.inResponseTo = message.metadata.inResponseTo;
                   console.log(
-                    '[FuseConnect v7] 🔗 Including correlation in broadcast:',
+                    '[GeminiBridge v7] 🔗 Including correlation in broadcast:',
                     message.metadata.correlationId
                   );
                 }
@@ -3890,7 +3890,7 @@ Format as JSON array:
                   messageType: 'ai-response',
                   metadata: responseMetadata,
                 });
-                console.log('[FuseConnect v7] AI response broadcast to channel:', {
+                console.log('[GeminiBridge v7] AI response broadcast to channel:', {
                   channel,
                   senderId,
                   platform: platformName,
@@ -3899,7 +3899,7 @@ Format as JSON array:
                 });
               }
             } else {
-              console.log('[FuseConnect v7] Skipping duplicate AI response broadcast');
+              console.log('[GeminiBridge v7] Skipping duplicate AI response broadcast');
             }
           }
           sendResponse({ success: true });
@@ -3984,7 +3984,7 @@ Format as JSON array:
         });
         console.log('[GeminiBridge] Successfully registered 5 WebMCP tools');
       } catch (e) {
-        console.warn('[GeminiBridge] WebMCP registration failed (feature may be disabled)', e);
+        console.debug('[GeminiBridge] WebMCP registration failed (feature may be disabled)', e);
       }
     }
   }

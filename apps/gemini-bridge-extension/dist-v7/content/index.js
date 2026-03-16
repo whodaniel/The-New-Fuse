@@ -9,15 +9,15 @@
       const t = `${this.workerUrl}/transcript/latest?sessionKey=${encodeURIComponent(this.sessionKey)}&limit=${e}`,
         n = await fetch(t, { method: 'GET' });
       if (!n.ok) throw new Error(`transcript.latest failed: ${n.status}`);
-      const s = await n.json();
-      return { lastSeq: s.lastSeq || 0, entries: s.entries || [] };
+      const i = await n.json();
+      return { lastSeq: i.lastSeq || 0, entries: i.entries || [] };
     }
     async since(e, t = 200) {
       const n = `${this.workerUrl}/transcript/since?sessionKey=${encodeURIComponent(this.sessionKey)}&afterSeq=${e}&limit=${t}`,
-        s = await fetch(n, { method: 'GET' });
-      if (!s.ok) throw new Error(`transcript.since failed: ${s.status}`);
-      const a = await s.json();
-      return { lastSeq: a.lastSeq || 0, entries: a.entries || [] };
+        i = await fetch(n, { method: 'GET' });
+      if (!i.ok) throw new Error(`transcript.since failed: ${i.status}`);
+      const s = await i.json();
+      return { lastSeq: s.lastSeq || 0, entries: s.entries || [] };
     }
     async append(e) {
       const t = `${this.workerUrl}/transcript/append?sessionKey=${encodeURIComponent(this.sessionKey)}`,
@@ -27,8 +27,8 @@
           body: JSON.stringify({ entries: e }),
         });
       if (!n.ok) throw new Error(`transcript.append failed: ${n.status}`);
-      const s = await n.json();
-      return { lastSeq: s.lastSeq || 0, added: s.added || [] };
+      const i = await n.json();
+      return { lastSeq: i.lastSeq || 0, added: i.added || [] };
     }
   }
   const n = new (class {
@@ -98,7 +98,7 @@
     loadCustomSites() {
       'undefined' != typeof chrome &&
         chrome.storage &&
-        chrome.storage.local.get(['fuse_settings'], (e) => {
+        chrome.storage.local.get(['gemini_bridge_settings'], (e) => {
           e.fuse_settings &&
             e.fuse_settings.allowedSites &&
             ((this.customSites = e.fuse_settings.allowedSites),
@@ -112,7 +112,7 @@
     enableTranscriptPolling(e, n) {
       if (this.transcriptPollTimer) return;
       this.transcriptClient = new t(e, n);
-      const s = async () => {
+      const i = async () => {
         if (this.transcriptClient)
           try {
             if (0 === this.transcriptLastSeq) {
@@ -149,17 +149,17 @@
             this.callbacks.onError?.(String(e?.message || e));
           }
       };
-      (s(), (this.transcriptPollTimer = window.setInterval(s, 1500)));
+      (i(), (this.transcriptPollTimer = window.setInterval(i, 1500)));
     }
     findElements() {
       const e = Date.now();
       if (this.cachedElements?.isReady && e < this.cacheValidUntil) return this.cachedElements;
       const t = window.__FUSE_DEBUG_SELECTORS || !1,
         n = this.isSupportedPlatform(),
-        s = window.location.hostname.toLowerCase(),
-        a = 'chat.qwen.ai' === s || s.endsWith('.qwen.ai'),
-        i = [
-          ...(a
+        i = window.location.hostname.toLowerCase(),
+        s = 'chat.qwen.ai' === i || i.endsWith('.qwen.ai'),
+        a = [
+          ...(s
             ? [
                 'textarea[data-testid*="chat" i]',
                 'textarea[data-testid*="input" i]',
@@ -221,7 +221,7 @@
           'div.textarea[contenteditable="true"]',
         ],
         o = [
-          ...(a
+          ...(s
             ? [
                 'button[data-testid*="send" i]',
                 'button[aria-label*="Send" i]',
@@ -276,7 +276,7 @@
           }));
       }
       let r = null;
-      for (const e of i)
+      for (const e of a)
         try {
           const t = this.queryAllIncludingShadow(e);
           for (const e of t)
@@ -287,12 +287,12 @@
           if (r) break;
         } catch (e) {}
       if (!r)
-        for (const e of i)
+        for (const e of a)
           try {
             const n = this.queryAllIncludingShadow(e);
-            for (const s of n)
-              if (!this.isExtensionUiElement(s)) {
-                ((r = s),
+            for (const i of n)
+              if (!this.isExtensionUiElement(i)) {
+                ((r = i),
                   t &&
                     console.log(
                       '[SimpleChatBridge] Using fallback input (no visibility check):',
@@ -317,9 +317,9 @@
         for (const e of o)
           try {
             const n = this.queryAllIncludingShadow(e);
-            for (const s of n)
-              if (!this.isExtensionUiElement(s)) {
-                ((c = s),
+            for (const i of n)
+              if (!this.isExtensionUiElement(i)) {
+                ((c = i),
                   t &&
                     console.log(
                       '[SimpleChatBridge] Using fallback button (no visibility check):',
@@ -392,7 +392,7 @@
           timestamp: new Date().toISOString(),
         };
         if (r)
-          for (const t of i)
+          for (const t of a)
             try {
               if (document.querySelector(t) === r) {
                 e.matchedInputSelector = t;
@@ -435,14 +435,14 @@
     queryAllIncludingShadow(e) {
       const t = [],
         n = new Set(),
-        s = (a) => {
-          const i = a.querySelectorAll(e);
-          for (const e of i) n.has(e) || (n.add(e), e instanceof HTMLElement && t.push(e));
-          const o = a.querySelectorAll('*');
-          for (const e of o) e instanceof HTMLElement && e.shadowRoot && s(e.shadowRoot);
+        i = (s) => {
+          const a = s.querySelectorAll(e);
+          for (const e of a) n.has(e) || (n.add(e), e instanceof HTMLElement && t.push(e));
+          const o = s.querySelectorAll('*');
+          for (const e of o) e instanceof HTMLElement && e.shadowRoot && i(e.shadowRoot);
         };
       try {
-        s(document);
+        i(document);
       } catch {}
       return t;
     }
@@ -487,8 +487,8 @@
       if (e.length > 0) {
         const t = e[e.length - 1],
           n = t.querySelector('.markdown, .message-content, side-panel-chat-message'),
-          s = this.extractCleanText(n || t);
-        if (s) return s;
+          i = this.extractCleanText(n || t);
+        if (i) return i;
       }
       if (this.isQwenHost()) {
         const e = this.getLatestQwenResponse(!1);
@@ -502,16 +502,16 @@
         for (let t = e.length - 1; t >= 0; t--) {
           const n = this.extractCleanText(e[t]);
           if (!n) continue;
-          const s = n.toLowerCase();
+          const i = n.toLowerCase();
           if (
-            !s.includes('disconnected from gateway') &&
-            'openclaw' !== s &&
-            '🦞' !== s &&
+            !i.includes('disconnected from gateway') &&
+            'openclaw' !== i &&
+            '🦞' !== i &&
             !(
-              s.startsWith('u ') ||
-              s.startsWith('you ') ||
-              s.includes(' you ') ||
-              (s.startsWith('u') && s.length < 5)
+              i.startsWith('u ') ||
+              i.startsWith('you ') ||
+              i.includes(' you ') ||
+              (i.startsWith('u') && i.length < 5)
             )
           )
             return n;
@@ -525,9 +525,9 @@
           t = this.extractCleanText(e);
         if (t) return t;
       }
-      const s = this.getGenericAssistantResponseNodes(!0);
-      for (let e = s.length - 1; e >= 0; e--) {
-        const t = this.extractCleanText(s[e]);
+      const i = this.getGenericAssistantResponseNodes(!0);
+      for (let e = i.length - 1; e >= 0; e--) {
+        const t = this.extractCleanText(i[e]);
         if (t && (!this.lastSentText || t.trim() !== this.lastSentText.trim())) return t;
       }
       return null;
@@ -573,8 +573,8 @@
       if (!t.input) {
         const e = 4e3,
           n = 250,
-          s = Date.now();
-        for (; !t.input && Date.now() - s < e; ) (await this.delay(n), (t = this.findElements()));
+          i = Date.now();
+        for (; !t.input && Date.now() - i < e; ) (await this.delay(n), (t = this.findElements()));
       }
       if (!t.input)
         return (
@@ -613,9 +613,9 @@
                   Object.getOwnPropertyDescriptor(e, 'value') ||
                   Object.getOwnPropertyDescriptor(Object.getPrototypeOf(e), 'value') ||
                   {},
-                s = Object.getPrototypeOf(e),
-                a = Object.getOwnPropertyDescriptor(s, 'value')?.set;
-              (a && n !== a ? a.call(e, t) : n ? n.call(e, t) : (e.value = t),
+                i = Object.getPrototypeOf(e),
+                s = Object.getOwnPropertyDescriptor(i, 'value')?.set;
+              (s && n !== s ? s.call(e, t) : n ? n.call(e, t) : (e.value = t),
                 e.dispatchEvent(new Event('input', { bubbles: !0 })));
             })(n, e),
             n.dispatchEvent(
@@ -628,30 +628,30 @@
             ),
             n.dispatchEvent(new Event('change', { bubbles: !0 }))),
           await this.delay(300));
-        let s = this.findElements().sendButton;
+        let i = this.findElements().sendButton;
         if (
-          (s ||
+          (i ||
             (console.warn('[SimpleChatBridge] Send button not found after text input, retrying...'),
             await this.delay(200),
-            (s = this.findElements().sendButton)),
-          s)
+            (i = this.findElements().sendButton)),
+          i)
         ) {
           let e = 0;
           for (
             ;
-            s.hasAttribute('disabled') &&
+            i.hasAttribute('disabled') &&
             e < 10 &&
-            (await this.delay(100), (s = this.findElements().sendButton), s);
+            (await this.delay(100), (i = this.findElements().sendButton), i);
           )
             e++;
         } else
           console.warn(
             '[SimpleChatBridge] Send button not found; attempting Enter-only submission'
           );
-        const a = this.countModelResponses();
-        (console.log('[SimpleChatBridge] Responses before send:', a),
+        const s = this.countModelResponses();
+        (console.log('[SimpleChatBridge] Responses before send:', s),
           console.log('[SimpleChatBridge] Sending message...'));
-        const i = () =>
+        const a = () =>
             n.isContentEditable || 'true' === n.getAttribute('contenteditable')
               ? !n.textContent || 0 === n.textContent.trim().length
               : !n.value || 0 === n.value.trim().length,
@@ -669,38 +669,38 @@
             console.log('[SimpleChatBridge] Dispatched form submit fallback'));
         }
         await this.delay(500);
-        const r = i(),
+        const r = a(),
           c = this.isStreaming();
         return r || c
           ? (console.log('[SimpleChatBridge] Message sent via Enter key', {
               wasCleared: r,
               isNowStreaming: c,
             }),
-            this.startWatchingForResponse(a),
+            this.startWatchingForResponse(s),
             !0)
-          : s &&
-              (s.click(),
+          : i &&
+              (i.click(),
               console.log('[SimpleChatBridge] Clicked send button directly'),
               await this.delay(500),
-              i() || this.isStreaming())
+              a() || this.isStreaming())
             ? (console.log('[SimpleChatBridge] Message sent via button click'),
-              this.startWatchingForResponse(a),
+              this.startWatchingForResponse(s),
               !0)
-            : s &&
-                (s.dispatchEvent(
+            : i &&
+                (i.dispatchEvent(
                   new MouseEvent('click', { bubbles: !0, cancelable: !0, view: window })
                 ),
                 console.log('[SimpleChatBridge] Dispatched MouseEvent click on button'),
                 await this.delay(150),
-                i())
+                a())
               ? (console.log('[SimpleChatBridge] Message sent via MouseEvent'),
-                this.startWatchingForResponse(a),
+                this.startWatchingForResponse(s),
                 !0)
               : (console.warn(
                   '[SimpleChatBridge] All send methods attempted, input may not have cleared'
                 ),
                 console.log('[SimpleChatBridge] Message sent:', e.substring(0, 50)),
-                this.startWatchingForResponse(a),
+                this.startWatchingForResponse(s),
                 !0);
       } catch (e) {
         return (
@@ -717,36 +717,36 @@
       (this.stopWatching(), (this.isWaitingForResponse = !0));
       let t = 0,
         n = '',
-        s = Date.now();
-      const a = Date.now(),
-        i = this.getLatestResponse() || '',
+        i = Date.now();
+      const s = Date.now(),
+        a = this.getLatestResponse() || '',
         o = 6e5;
       ((this.responseCheckInterval = window.setInterval(() => {
-        const a = this.countModelResponses();
+        const s = this.countModelResponses();
         let o = this.getLatestResponse();
         if (
-          (!o && this.isQwenHost() && (o = this.getLatestQwenResponse(!0)), a > e || (o && o !== i))
+          (!o && this.isQwenHost() && (o = this.getLatestQwenResponse(!0)), s > e || (o && o !== a))
         ) {
           const e = this.isStreaming(),
-            i = this.checkForMediaContent();
+            a = this.checkForMediaContent();
           if (
             (console.log('[SimpleChatBridge] Checking response...', {
               newContent: !!o,
               streaming: e,
               contentLength: o?.length || 0,
-              hasMedia: i,
-              responseCount: a,
+              hasMedia: a,
+              responseCount: s,
             }),
-            o || i)
+            o || a)
           ) {
-            const a = `${o || ''}-${i}`;
-            if (a !== n) ((t = 0), (n = a), (s = Date.now()));
+            const s = `${o || ''}-${a}`;
+            if (s !== n) ((t = 0), (n = s), (i = Date.now()));
             else {
               t++;
-              const n = e && Date.now() - s > 12e3;
+              const n = e && Date.now() - i > 12e3;
               if (t >= 3 && (!e || n)) {
                 this.stopWatching();
-                const e = o || (i ? '[AI generated media content]' : null);
+                const e = o || (a ? '[AI generated media content]' : null);
                 e &&
                   e !== this.lastResponseText &&
                   ((this.lastResponseText = e),
@@ -759,22 +759,22 @@
       }, 1e3)),
         (this.responseTimeoutTimer = window.setInterval(() => {
           if (this.isWaitingForResponse) {
-            const e = Date.now() - a,
-              t = Date.now() - s;
+            const e = Date.now() - s,
+              t = Date.now() - i;
             if (e < o && t < 18e4) return;
             const n =
               e >= o
                 ? `hard timeout after ${Math.round(e / 1e3)}s`
                 : `inactivity timeout after ${Math.round(t / 1e3)}s`;
             (console.warn(`[SimpleChatBridge] Response timeout (${n})`), this.stopWatching());
-            const i = this.getLatestResponse() || this.getLatestQwenResponse(!0);
-            i && i !== this.lastResponseText
+            const a = this.getLatestResponse() || this.getLatestQwenResponse(!0);
+            a && a !== this.lastResponseText
               ? (console.log(
                   '[SimpleChatBridge] Captured response on timeout:',
-                  i.substring(0, 100)
+                  a.substring(0, 100)
                 ),
-                (this.lastResponseText = i),
-                this.callbacks.onResponse?.(i))
+                (this.lastResponseText = a),
+                this.callbacks.onResponse?.(a))
               : this.callbacks.onError?.('Response timeout');
           }
         }, 1e3)));
@@ -788,14 +788,14 @@
       }
       if (!t) return !1;
       const n = null !== t.querySelector('img'),
-        s = null !== t.querySelector('video'),
-        a = null !== t.querySelector('canvas'),
-        i = null !== t.querySelector('iframe'),
+        i = null !== t.querySelector('video'),
+        s = null !== t.querySelector('canvas'),
+        a = null !== t.querySelector('iframe'),
         o =
           null !== t.querySelector('[data-generated-image]') ||
           null !== t.querySelector('.generated-image') ||
           null !== t.querySelector('[class*="image-output"]');
-      return n || s || a || i || o;
+      return n || i || s || a || o;
     }
     stopWatching() {
       ((this.isWaitingForResponse = !1),
@@ -847,19 +847,19 @@
               'main p',
             ]
           : t,
-        s = [],
-        a = new Set();
+        i = [],
+        s = new Set();
       for (const e of n)
-        for (const t of this.queryAllIncludingShadow(e)) a.has(t) || (a.add(t), s.push(t));
-      const i = [];
-      for (const e of s)
+        for (const t of this.queryAllIncludingShadow(e)) s.has(t) || (s.add(t), i.push(t));
+      const a = [];
+      for (const e of i)
         this.isExtensionUiElement(e) ||
           (this.isVisible(e) &&
             (this.isLikelyUserMessageNode(e) ||
               this.isLikelyNonConversationNode(e) ||
-              (this.extractCleanText(e) && i.push(e))));
+              (this.extractCleanText(e) && a.push(e))));
       const o = new Map();
-      for (const e of i) {
+      for (const e of a) {
         const t = this.extractCleanText(e) || '',
           n = `${t.slice(0, 240)}|${t.length}`;
         o.set(n, e);
@@ -891,13 +891,13 @@
               'main p',
             ]
           : t,
-        s = [],
-        a = new Set();
+        i = [],
+        s = new Set();
       for (const e of n)
-        for (const t of this.queryAllIncludingShadow(e)) a.has(t) || (a.add(t), s.push(t));
-      const i = [],
+        for (const t of this.queryAllIncludingShadow(e)) s.has(t) || (s.add(t), i.push(t));
+      const a = [],
         o = new Map();
-      for (const e of s) {
+      for (const e of i) {
         if (this.isExtensionUiElement(e)) continue;
         if (!this.isVisible(e)) continue;
         if (this.isLikelyUserMessageNode(e)) continue;
@@ -907,9 +907,9 @@
             null !==
             e.querySelector('img, video, canvas, iframe, [data-generated-image], .generated-image');
         if (!t && !n) continue;
-        i.push(e);
-        const s = t ? `${t.slice(0, 240)}|${t.length}` : `media:${i.length}`;
-        o.set(s, e);
+        a.push(e);
+        const i = t ? `${t.slice(0, 240)}|${t.length}` : `media:${a.length}`;
+        o.set(i, e);
       }
       return Array.from(o.values());
     }
@@ -996,7 +996,7 @@
         globalThis.customElements.define &&
         !globalThis.customElements.define.__isSafeGuarded
       ) {
-        ((globalThis.customElements.define = function (t, n, s) {
+        ((globalThis.customElements.define = function (t, n, i) {
           if (
             !(
               ('mce-autosize-textarea' === t && globalThis.customElements.get(t)) ||
@@ -1004,7 +1004,7 @@
             )
           )
             try {
-              e.call(this, t, n, s);
+              e.call(this, t, n, i);
             } catch (e) {
               if (e.message && e.message.includes('already been defined')) return;
               throw e;
@@ -1021,9 +1021,9 @@
         } catch (e) {}
       }
     } catch (e) {}
-  const s = 300,
-    a = 200;
-  class i {
+  const i = 300,
+    s = 200;
+  class a {
     constructor(e = {}) {
       ((this.container = null),
         (this.dragState = { isDragging: !1, startX: 0, startY: 0, startPosX: 0, startPosY: 0 }),
@@ -1096,7 +1096,7 @@
           isPinned: !1,
           opacity: 1,
         }),
-        console.log(`[FuseConnect] Panel initialized with ID: ${this.panelId}`),
+        console.log(`[GeminiBridge] Panel initialized with ID: ${this.panelId}`),
         this.loadState(),
         this.inject(),
         this.setupListeners(),
@@ -1127,7 +1127,7 @@
     }
     async loadState() {
       try {
-        const e = await chrome.storage.local.get(['fuse_panel_state']);
+        const e = await chrome.storage.local.get(['gemini_bridge_panel_state']);
         e.fuse_panel_state && (this.state = { ...this.state, ...e.fuse_panel_state });
       } catch (e) {}
     }
@@ -1159,25 +1159,25 @@
       if (!this.container) return;
       const { position: e, mode: t } = this.state,
         n = {
-          width: Math.min(this.getMaxPanelWidth(), Math.max(s, this.state.size.width)),
-          height: Math.min(this.getMaxPanelHeight(), Math.max(a, this.state.size.height)),
+          width: Math.min(this.getMaxPanelWidth(), Math.max(i, this.state.size.width)),
+          height: Math.min(this.getMaxPanelHeight(), Math.max(s, this.state.size.height)),
         };
       this.state.size = n;
-      const i = 'collapsed' === t;
+      const a = 'collapsed' === t;
       if ('minimized' === t) {
         ((this.container.style.width = ''), (this.container.style.height = ''));
         const t = window.innerWidth - 48,
           n = window.innerHeight - 48,
-          s = Math.min(Math.max(0, e.x), t),
-          a = Math.min(Math.max(0, e.y), n);
-        return ((this.container.style.left = `${s}px`), void (this.container.style.top = `${a}px`));
+          i = Math.min(Math.max(0, e.x), t),
+          s = Math.min(Math.max(0, e.y), n);
+        return ((this.container.style.left = `${i}px`), void (this.container.style.top = `${s}px`));
       }
-      i
+      a
         ? ((this.container.style.height = '48px'), (this.container.style.width = `${n.width}px`))
         : ((this.container.style.height = `${n.height}px`),
           (this.container.style.width = `${n.width}px`));
       const o = window.innerWidth - n.width,
-        r = window.innerHeight - (i ? 48 : n.height),
+        r = window.innerHeight - (a ? 48 : n.height),
         c = Math.min(Math.max(0, e.x), o),
         l = Math.min(Math.max(0, e.y), r);
       ((this.container.style.left = `${c}px`), (this.container.style.top = `${l}px`));
@@ -1211,9 +1211,9 @@
             const e = n.dataset.action || '';
             return void this.handleAction(e, n);
           }
-          const s = t.closest('[data-tab]');
-          if (s) {
-            const e = s.dataset.tab;
+          const i = t.closest('[data-tab]');
+          if (i) {
+            const e = i.dataset.tab;
             return void this.switchTab(e);
           }
           if ('poker-activate-tech' === t.id) {
@@ -1273,7 +1273,7 @@
             const t = e.fuse_channels.newValue;
             t &&
               Array.isArray(t) &&
-              (console.log('[FuseConnect] Syncing channels list from storage:', t.length),
+              (console.log('[GeminiBridge] Syncing channels list from storage:', t.length),
               (this.channels = t),
               this.update());
           }
@@ -1327,13 +1327,13 @@
         edge: t,
       };
       let n = null;
-      const i = (e) => {
+      const a = (e) => {
           if (!this.resizeState.isResizing || !this.container) return;
-          const i = e.clientX,
+          const a = e.clientX,
             o = e.clientY;
           n ||
             (n = requestAnimationFrame(() => {
-              const e = i - this.resizeState.startX,
+              const e = a - this.resizeState.startX,
                 r = o - this.resizeState.startY,
                 c = this.getMaxPanelWidth(),
                 l = this.getMaxPanelHeight();
@@ -1347,19 +1347,19 @@
                 b = t.includes('bottom') || t.includes('sw') || t.includes('se');
               if (m) {
                 const t = this.resizeState.startWidth - e;
-                ((d = Math.min(c, Math.max(s, t))),
+                ((d = Math.min(c, Math.max(i, t))),
                   (h = this.resizeState.startPosX + (this.resizeState.startWidth - d)));
               } else if (g) {
                 const t = this.resizeState.startWidth + e;
-                d = Math.min(c, Math.max(s, t));
+                d = Math.min(c, Math.max(i, t));
               }
               if (f) {
                 const e = this.resizeState.startHeight - r;
-                ((p = Math.min(l, Math.max(a, e))),
+                ((p = Math.min(l, Math.max(s, e))),
                   (u = this.resizeState.startPosY + (this.resizeState.startHeight - p)));
               } else if (b) {
                 const e = this.resizeState.startHeight + r;
-                p = Math.min(l, Math.max(a, e));
+                p = Math.min(l, Math.max(s, e));
               }
               ((h = Math.max(0, Math.min(window.innerWidth - d, h))),
                 (u = Math.max(0, Math.min(window.innerHeight - p, u))),
@@ -1374,17 +1374,17 @@
         o = () => {
           ((this.resizeState.isResizing = !1),
             n && (cancelAnimationFrame(n), (n = null)),
-            document.removeEventListener('mousemove', i),
+            document.removeEventListener('mousemove', a),
             document.removeEventListener('mouseup', o),
             this.saveState());
         };
-      (document.addEventListener('mousemove', i), document.addEventListener('mouseup', o));
+      (document.addEventListener('mousemove', a), document.addEventListener('mouseup', o));
     }
     getMaxPanelWidth() {
-      return Math.max(s, Math.min(1200, window.innerWidth - 16));
+      return Math.max(i, Math.min(1200, window.innerWidth - 16));
     }
     getMaxPanelHeight() {
-      return Math.max(a, Math.min(1e3, window.innerHeight - 16));
+      return Math.max(s, Math.min(1e3, window.innerHeight - 16));
     }
     renderInputArea() {
       return '\n      <div class="fcp6-input-area">\n        <div class="fcp6-input-row">\n          <div class="fcp6-input-shell">\n            <textarea\n              class="fcp6-input"\n              data-input="message"\n              placeholder="Message the channel..."\n              rows="1"\n            ></textarea>\n          </div>\n          <button class="fcp6-send-btn" data-action="send" title="Send">\n            ➤\n          </button>\n        </div>\n        <div class="fcp6-input-hint">\n          <button class="fcp6-btn fcp6-input-action" data-action="inject-to-chat" title="Inject only to the page chat">\n            Inject to Page\n          </button>\n          <span class="fcp6-shortcut-hint">\n            <span class="fcp6-shortcut-key">Enter</span>\n            <span>to send</span>\n          </span>\n        </div>\n      </div>\n    ';
@@ -1455,7 +1455,7 @@
               .map((e) => {
                 let t = e.from,
                   n = e.from,
-                  s = !1;
+                  i = !1;
                 if (
                   'You' === e.from ||
                   'You (Fuse)' === e.from ||
@@ -1463,14 +1463,14 @@
                 )
                   ((t = 'You'), (n = this.myAgentId || 'unknown-id'), !0);
                 else {
-                  const s = this.agents.find((t) => t.id === e.from);
-                  s && ((t = s.name), (n = s.id));
+                  const i = this.agents.find((t) => t.id === e.from);
+                  i && ((t = i.name), (n = i.id));
                 }
                 if (e.metadata?.isSystemMessage)
                   return `\n                  <div class="fcp6-system-message" style="text-align: center; margin: 8px 0; font-size: 11px; color: rgba(255, 255, 255, 0.5); font-style: italic;">\n                    <span style="background: rgba(255, 255, 255, 0.05); padding: 2px 8px; border-radius: 10px;">\n                      ${this.escapeHtml(e.content)}\n                    </span>\n                  </div>\n                 `;
                 e.metadata && 'string' == typeof e.metadata.senderId && (n = e.metadata.senderId);
-                const a = n.length > 8 ? n.substring(0, 6) + '...' : n;
-                return `\n            <div class="fcp6-chat-card" data-msg-id="${e.id}">\n            <div class="fcp6-chat-header">\n              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">\n                <span class="fcp6-chat-from" title="Agent ID: ${this.escapeHtml(n)}">\n                  ${this.escapeHtml(t)}\n                </span>\n                <div style="display: flex; align-items: center; gap: 4px;">\n                  <span style="font-size: 9px; font-family: monospace; background: rgba(255,255,255,0.1); padding: 1px 6px; border-radius: 4px; color: rgba(255,255,255,0.6); user-select: text; -webkit-user-select: text;" title="Click copy to get full ID: ${this.escapeHtml(n)}">\n                    #${this.escapeHtml(a)}\n                  </span>\n                  <button class="fcp6-btn" data-action="copy-to-clipboard" data-value="${this.escapeHtml(n)}" title="Copy Agent ID" style="width: 18px; height: 18px; font-size: 8px; padding: 0; background: rgba(0,217,255,0.1); color: #00D9FF; border: 1px solid rgba(0,217,255,0.2);">\n                    📋\n                  </button>\n                </div>\n              </div>\n              <span class="fcp6-chat-time">${this.formatTime(e.timestamp)}</span>\n            </div>\n            <div class="fcp6-chat-content" style="user-select: text; -webkit-user-select: text; cursor: text;">${this.escapeHtml(e.content)}</div>\n          </div>\n        `;
+                const s = n.length > 8 ? n.substring(0, 6) + '...' : n;
+                return `\n            <div class="fcp6-chat-card" data-msg-id="${e.id}">\n            <div class="fcp6-chat-header">\n              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">\n                <span class="fcp6-chat-from" title="Agent ID: ${this.escapeHtml(n)}">\n                  ${this.escapeHtml(t)}\n                </span>\n                <div style="display: flex; align-items: center; gap: 4px;">\n                  <span style="font-size: 9px; font-family: monospace; background: rgba(255,255,255,0.1); padding: 1px 6px; border-radius: 4px; color: rgba(255,255,255,0.6); user-select: text; -webkit-user-select: text;" title="Click copy to get full ID: ${this.escapeHtml(n)}">\n                    #${this.escapeHtml(s)}\n                  </span>\n                  <button class="fcp6-btn" data-action="copy-to-clipboard" data-value="${this.escapeHtml(n)}" title="Copy Agent ID" style="width: 18px; height: 18px; font-size: 8px; padding: 0; background: rgba(0,217,255,0.1); color: #00D9FF; border: 1px solid rgba(0,217,255,0.2);">\n                    📋\n                  </button>\n                </div>\n              </div>\n              <span class="fcp6-chat-time">${this.formatTime(e.timestamp)}</span>\n            </div>\n            <div class="fcp6-chat-content" style="user-select: text; -webkit-user-select: text; cursor: text;">${this.escapeHtml(e.content)}</div>\n          </div>\n        `;
               })
               .join('')
           : '<div class="fcp6-empty"><div class="fcp6-empty-icon">💬</div><p>No messages yet</p><p style="font-size: 11px; opacity: 0.6;">Send a message to start chatting</p></div>'
@@ -1510,7 +1510,7 @@
         metadata: n,
       }),
         this.safeSendMessage({ type: 'INJECT_MESSAGE', content: t, metadata: n }, (e) => {
-          e?.success || console.warn('[FuseConnect] Failed to inject message to page:', e?.error);
+          e?.success || console.warn('[GeminiBridge] Failed to inject message to page:', e?.error);
         }),
         this.messages.push({
           id: Date.now().toString(),
@@ -1541,7 +1541,7 @@
               metadata: n,
             }),
             this.update())
-          : console.warn('[FuseConnect] Failed to inject message:', e?.error);
+          : console.warn('[GeminiBridge] Failed to inject message:', e?.error);
       });
     }
     sendUnifiedMessage() {
@@ -1550,22 +1550,22 @@
       const t = e.value.trim();
       if (((e.value = ''), !this.myAgentId || !this.myAgentId.startsWith('page-agent-')))
         return (
-          console.error('[FuseConnect] Cannot send message: myAgentId is not set correctly!', {
+          console.error('[GeminiBridge] Cannot send message: myAgentId is not set correctly!', {
             myAgentId: this.myAgentId,
             expected: 'page-agent-XXXXX',
           }),
           alert('Connection not ready. Please wait a moment and try again.'),
           void (e.value = t)
         );
-      console.log('[FuseConnect] Sending unified message:', {
+      console.log('[GeminiBridge] Sending unified message:', {
         content: t.substring(0, 50),
         myAgentId: this.myAgentId,
       });
       const n = { senderId: this.myAgentId, source: 'floating-panel-unified' },
-        s = `user-${Date.now()}`;
+        i = `user-${Date.now()}`;
       if (
         (this.messages.push({
-          id: s,
+          id: i,
           from: this.myAgentId,
           to: 'AI',
           content: t,
@@ -1577,8 +1577,8 @@
         'connected' === this.connectionStatus && this.currentChannel)
       ) {
         const e = `user:${t}`,
-          s = this.recentBroadcasts.get(e);
-        if (!s || Date.now() - s > 3e3) {
+          i = this.recentBroadcasts.get(e);
+        if (!i || Date.now() - i > 3e3) {
           this.recentBroadcasts.set(e, Date.now());
           for (const [e, t] of this.recentBroadcasts.entries())
             Date.now() - t > 1e4 && this.recentBroadcasts.delete(e);
@@ -1588,11 +1588,11 @@
             channel: this.currentChannel,
             metadata: n,
           });
-        } else console.log('[FuseConnect] Skipping duplicate user message broadcast');
+        } else console.log('[GeminiBridge] Skipping duplicate user message broadcast');
       }
       this.safeSendMessage({ type: 'INJECT_MESSAGE', content: t, metadata: n }, (e) => {
         if (!e?.success) {
-          console.warn('[FuseConnect] Failed to inject message:', e?.error);
+          console.warn('[GeminiBridge] Failed to inject message:', e?.error);
           const n = this.messages.find((e) => e.content === t);
           n && ((n.content = `❌ ${t} (failed to send)`), this.update());
         }
@@ -1606,7 +1606,7 @@
     selectChannel(e) {
       const t = this.currentChannel;
       ((this.currentChannel = e),
-        console.log(`[FuseConnect] Panel ${this.panelId} switching channel: ${t} → ${e}`),
+        console.log(`[GeminiBridge] Panel ${this.panelId} switching channel: ${t} → ${e}`),
         e
           ? this.safeSendMessage({ type: 'CHANNEL_JOIN', channelId: e, panelId: this.panelId })
           : this.safeSendMessage({ type: 'CHANNEL_LEAVE', channelId: t, panelId: this.panelId }),
@@ -1620,30 +1620,30 @@
       const e = this.container?.querySelector('#fuse-new-channel-name');
       if (
         (console.log(
-          '[FuseConnect] submitCreateChannel called. Input found:',
+          '[GeminiBridge] submitCreateChannel called. Input found:',
           !!e,
           'Value:',
           e?.value
         ),
         !e || !e.value.trim())
       )
-        return void console.warn('[FuseConnect] No channel name entered');
+        return void console.warn('[GeminiBridge] No channel name entered');
       const t = e.value.trim().replace(/\s+/g, ' '),
         n = this.channels.find(
           (e) => e.name.trim().replace(/\s+/g, ' ').toLowerCase() === t.toLowerCase()
         );
       if (n)
         return (
-          console.warn('[FuseConnect] Duplicate channel name blocked:', t),
+          console.warn('[GeminiBridge] Duplicate channel name blocked:', t),
           (e.value = ''),
           void this.selectChannel(n.id)
         );
-      const s = t;
+      const i = t;
       ((e.value = ''),
-        console.log('[FuseConnect] Creating channel:', s),
-        this.safeSendMessage({ type: 'CHANNEL_CREATE', name: s }, (e) => {
+        console.log('[GeminiBridge] Creating channel:', i),
+        this.safeSendMessage({ type: 'CHANNEL_CREATE', name: i }, (e) => {
           e?.success || e?.channelId
-            ? console.log('[FuseConnect] Channel created successfully:', e.channelId)
+            ? console.log('[GeminiBridge] Channel created successfully:', e.channelId)
             : e?.alreadyExists && e?.channel?.id && this.selectChannel(e.channel.id);
         }));
     }
@@ -1652,10 +1652,10 @@
       const t = this.channels.find((t) => t.id === e),
         n = t ? t.name : e;
       confirm(`Are you sure you want to delete the channel "${n}"?`) &&
-        (console.log('[FuseConnect] Deleting channel:', e),
+        (console.log('[GeminiBridge] Deleting channel:', e),
         this.safeSendMessage({ type: 'CHANNEL_DELETE', channelId: e }, (t) => {
           t?.success &&
-            (console.log('[FuseConnect] Channel delete request sent'),
+            (console.log('[GeminiBridge] Channel delete request sent'),
             (this.channels = this.channels.filter((t) => t.id !== e)),
             this.currentChannel === e && (this.currentChannel = null),
             this.update());
@@ -1674,13 +1674,13 @@
           }
         })
         .catch((e) => {
-          console.error('[FuseConnect] Failed to copy:', e);
+          console.error('[GeminiBridge] Failed to copy:', e);
         });
     }
     safeSendMessage(e, t) {
       if (!this.isContextValid)
         return (
-          console.warn('[FuseConnect] Extension context is invalid, cannot send message'),
+          console.warn('[GeminiBridge] Extension context is invalid, cannot send message'),
           void this.showContextInvalidatedWarning()
         );
       try {
@@ -1692,16 +1692,16 @@
               e.includes('Receiving end does not exist')
             )
               return (
-                console.error('[FuseConnect] Extension context invalidated:', e),
+                console.error('[GeminiBridge] Extension context invalidated:', e),
                 (this.isContextValid = !1),
                 void this.showContextInvalidatedWarning()
               );
-            console.warn('[FuseConnect] Chrome runtime error:', e);
+            console.warn('[GeminiBridge] Chrome runtime error:', e);
           }
           t && t(e);
         });
       } catch (e) {
-        (console.error('[FuseConnect] Failed to send message:', e),
+        (console.error('[GeminiBridge] Failed to send message:', e),
           (this.isContextValid = !1),
           this.showContextInvalidatedWarning());
       }
@@ -1718,13 +1718,13 @@
       const t = this.container?.querySelector(`[data-action="${e}"]`),
         n = t?.getAttribute('data-service');
       if (!n) return;
-      const s = e.replace('-service', '').toUpperCase();
-      this.safeSendMessage({ type: 'SERVICE_CONTROL', action: s, serviceId: n }, (e) => {
+      const i = e.replace('-service', '').toUpperCase();
+      this.safeSendMessage({ type: 'SERVICE_CONTROL', action: i, serviceId: n }, (e) => {
         (e?.success &&
           this.addNotification({
             id: Date.now().toString(),
-            title: 'Service ' + s.toLowerCase() + 'ed',
-            message: `${n} service ${s.toLowerCase()}ed successfully`,
+            title: 'Service ' + i.toLowerCase() + 'ed',
+            message: `${n} service ${i.toLowerCase()}ed successfully`,
             type: 'success',
             priority: 'normal',
             timestamp: Date.now(),
@@ -1767,19 +1767,19 @@
       const e = this.container?.querySelector('[data-setting="relayUrl"]'),
         t = this.container?.querySelector('[data-setting="autoReconnect"]'),
         n = this.container?.querySelector('[data-setting="opacity"]'),
-        s = this.container?.querySelector('[data-setting="alwaysOnTop"]'),
-        a = this.container?.querySelector('[data-setting="debugMode"]'),
-        i = {
+        i = this.container?.querySelector('[data-setting="alwaysOnTop"]'),
+        s = this.container?.querySelector('[data-setting="debugMode"]'),
+        a = {
           relayUrl: e?.value || 'ws://localhost:3000/ws',
           autoReconnect: t?.checked ?? !0,
           opacity: parseFloat(n?.value || '1'),
-          alwaysOnTop: s?.checked ?? !1,
-          debugMode: a?.checked ?? !1,
+          alwaysOnTop: i?.checked ?? !1,
+          debugMode: s?.checked ?? !1,
         };
-      ((this.state.opacity = i.opacity),
-        (this.state.isPinned = i.alwaysOnTop),
-        this.container && (this.container.style.opacity = String(i.opacity)),
-        chrome.storage.local.set({ fuse_settings: i }, () => {
+      ((this.state.opacity = a.opacity),
+        (this.state.isPinned = a.alwaysOnTop),
+        this.container && (this.container.style.opacity = String(a.opacity)),
+        chrome.storage.local.set({ fuse_settings: a }, () => {
           (this.addNotification({
             id: Date.now().toString(),
             title: 'Settings Saved',
@@ -1791,7 +1791,7 @@
           }),
             this.update());
         }),
-        this.safeSendMessage({ type: 'UPDATE_SETTINGS', settings: i }),
+        this.safeSendMessage({ type: 'UPDATE_SETTINGS', settings: a }),
         this.saveState());
     }
     resetSettings() {
@@ -1835,14 +1835,14 @@
           if (e.message) {
             const t = e.message,
               n = t.metadata?.senderId,
-              s =
+              i =
                 n === this.myAgentId ||
                 t.from === this.myAgentId ||
                 n === this.browserAgentId ||
                 t.from === this.browserAgentId,
-              a = 'You' === t.from || 'You (Fuse)' === t.from,
-              i = s || a;
-            i && console.log('[FuseConnect] Identified self-message');
+              s = 'You' === t.from || 'You (Fuse)' === t.from,
+              a = i || s;
+            a && console.log('[GeminiBridge] Identified self-message');
             const o = (e) =>
                 String(e || '')
                   .replace(/\s+/g, ' ')
@@ -1856,50 +1856,50 @@
                 if (t.id && e.id === t.id) return !0;
                 const n = o(e.content);
                 if (!n || n !== r) return !1;
-                const s =
+                const i =
                   (e.metadata?.senderId || e.from || '').toString().trim().toLowerCase() ||
                   'unknown';
                 if (
-                  s !== l &&
-                  (!i ||
+                  i !== l &&
+                  (!a ||
                     ('You' !== e.from &&
                       'You (Fuse)' !== e.from &&
                       e.from !== this.myAgentId &&
-                      s !== (this.myAgentId || '').toLowerCase()))
+                      i !== (this.myAgentId || '').toLowerCase()))
                 )
                   return !1;
-                const a = 'number' == typeof e.timestamp ? e.timestamp : 0;
-                return Math.abs(a - c) < 15e3 || Date.now() - a < 15e3;
+                const s = 'number' == typeof e.timestamp ? e.timestamp : 0;
+                return Math.abs(s - c) < 15e3 || Date.now() - s < 15e3;
               })
             ) {
-              console.log('[FuseConnect] Deduped message (already shown):', t.id || 'local');
+              console.log('[GeminiBridge] Deduped message (already shown):', t.id || 'local');
               break;
             }
             (this.messages.push(t),
               this.messages.length > 50 && this.messages.shift(),
               this.update(),
-              console.log('[FuseConnect] NEW_MESSAGE processing:', {
+              console.log('[GeminiBridge] NEW_MESSAGE processing:', {
                 from: t.from,
-                isOwnMessage: i,
+                isOwnMessage: a,
                 senderId: t.metadata?.senderId,
                 myAgentId: this.myAgentId,
                 messageType: t.messageType,
                 contentPreview: t.content?.substring(0, 50),
               }),
-              !i && t.content
+              !a && t.content
                 ? console.log(
-                    '[FuseConnect] External message received (display only):',
+                    '[GeminiBridge] External message received (display only):',
                     t.from,
                     t.metadata?.platform
                   )
-                : i && console.log('[FuseConnect] Not injecting own message (self-detection)'));
+                : a && console.log('[GeminiBridge] Not injecting own message (self-detection)'));
           }
           break;
         case 'CHANNELS_UPDATE':
           ((this.channels = e.channels || []), this.update());
           break;
         case 'JOINED_CHANNELS_UPDATE':
-          (console.log('[FuseConnect] Joined channels updated:', e.joinedChannels), this.update());
+          (console.log('[GeminiBridge] Joined channels updated:', e.joinedChannels), this.update());
           break;
         case 'CHANNEL_SELECTED':
           ((this.currentChannel = e.channelId || null), this.update());
@@ -1957,14 +1957,14 @@
           break;
         case 'RESPONSE_COMPLETE':
           if (
-            (console.log('[FuseConnect] RESPONSE_COMPLETE received:', {
+            (console.log('[GeminiBridge] RESPONSE_COMPLETE received:', {
               hasContent: !!e.content,
               connectionStatus: this.connectionStatus,
               currentChannel: this.currentChannel,
             }),
             'connected' === this.connectionStatus && this.currentChannel)
           ) {
-            console.log('[FuseConnect] Skipping local RESPONSE_COMPLETE append (relay-connected)');
+            console.log('[GeminiBridge] Skipping local RESPONSE_COMPLETE append (relay-connected)');
             break;
           }
           if (e.content) {
@@ -1983,13 +1983,13 @@
                 t.includes('[AI → User]') ||
                 t.includes('[AI Response]'))
             ) {
-              console.log('[FuseConnect] Skipping response with embedded prefixes');
+              console.log('[GeminiBridge] Skipping response with embedded prefixes');
               break;
             }
             this.messages.some(
               (e) => 'AI (Page)' === e.from && e.content === t && Date.now() - e.timestamp < 5e3
             )
-              ? console.log('[FuseConnect] Skipping duplicate response')
+              ? console.log('[GeminiBridge] Skipping duplicate response')
               : (this.messages.push({
                   id: `ai-${Date.now()}`,
                   from: 'AI (Page)',
@@ -2036,14 +2036,14 @@
       const t = this.container.querySelector('#fuse-chat-scroll');
       t && (e = t.scrollTop);
       const n = this.container.querySelector('[data-input="message"]'),
-        s = n ? n.value : '',
-        a = this.container.querySelector('#fuse-new-channel-name'),
-        i = a ? a.value : '';
+        i = n ? n.value : '',
+        s = this.container.querySelector('#fuse-new-channel-name'),
+        a = s ? s.value : '';
       this.container.innerHTML = this.render();
       const o = this.container.querySelector('[data-input="message"]');
-      o && s && (o.value = s);
+      o && i && (o.value = i);
       const r = this.container.querySelector('#fuse-new-channel-name');
-      (r && i && (r.value = i), this.applyPositionAndSize(), this.setupListeners());
+      (r && a && (r.value = a), this.applyPositionAndSize(), this.setupListeners());
       const c = this.container.querySelector('#fuse-chat-scroll');
       if (c) {
         const n = t && t.scrollHeight - t.scrollTop - t.clientHeight < 50;
@@ -2078,7 +2078,7 @@
       ((this.chatElements = e), this.update());
     }
     setAgentId(e) {
-      (console.log('[FuseConnect] Panel assigned Agent ID:', e),
+      (console.log('[GeminiBridge] Panel assigned Agent ID:', e),
         (this.myAgentId = e),
         this.update());
     }
@@ -2216,12 +2216,12 @@
       const e = this.currentChannel,
         t = this.pausedChannels.has(e);
       this.safeSendMessage({ type: t ? 'CHANNEL_RESUME' : 'CHANNEL_PAUSE', channelId: e }, (e) => {
-        e?.success || console.warn('[FuseConnect] Failed to toggle channel pause:', e?.error);
+        e?.success || console.warn('[GeminiBridge] Failed to toggle channel pause:', e?.error);
       });
     }
     copyEventLogs() {
       this.safeSendMessage({ type: 'GET_EVENT_LOGS', limit: 1e3 }, async (e) => {
-        if (!e?.success) return void console.warn('[FuseConnect] Failed to fetch event logs');
+        if (!e?.success) return void console.warn('[GeminiBridge] Failed to fetch event logs');
         const t = JSON.stringify(e.logs || [], null, 2);
         try {
           (await navigator.clipboard.writeText(t),
@@ -2235,7 +2235,7 @@
               read: !1,
             }));
         } catch (e) {
-          console.error('[FuseConnect] Failed to copy event logs:', e);
+          console.error('[GeminiBridge] Failed to copy event logs:', e);
         }
       });
     }
@@ -2251,7 +2251,7 @@
               timestamp: Date.now(),
               read: !1,
             })
-          : console.warn('[FuseConnect] Failed to clear event logs:', e?.error);
+          : console.warn('[GeminiBridge] Failed to clear event logs:', e?.error);
       });
     }
     togglePin() {
@@ -2327,34 +2327,34 @@
           (this.refCounter = window.__fuseRefCounter));
       }
       generateTree(e = {}) {
-        const { filter: t = 'all', maxDepth: n = 15, refId: s } = e,
-          a = [],
-          i = [];
+        const { filter: t = 'all', maxDepth: n = 15, refId: i } = e,
+          s = [],
+          a = [];
         try {
-          if (s) {
-            const e = this.elementMap.get(s);
+          if (i) {
+            const e = this.elementMap.get(i);
             if (!e)
               return {
                 tree: '',
                 nodes: [],
                 viewport: this.getViewport(),
-                error: `Element with ref_id '${s}' not found. It may have been removed from the page.`,
+                error: `Element with ref_id '${i}' not found. It may have been removed from the page.`,
               };
             const o = e.ref.deref();
             if (!o)
               return (
-                this.elementMap.delete(s),
+                this.elementMap.delete(i),
                 {
                   tree: '',
                   nodes: [],
                   viewport: this.getViewport(),
-                  error: `Element with ref_id '${s}' no longer exists in the DOM.`,
+                  error: `Element with ref_id '${i}' no longer exists in the DOM.`,
                 }
               );
-            this.processElement(o, 0, n, t, void 0 !== s, a, i);
-          } else document.body && this.processElement(document.body, 0, n, t, !1, a, i);
+            this.processElement(o, 0, n, t, void 0 !== i, s, a);
+          } else document.body && this.processElement(document.body, 0, n, t, !1, s, a);
           (this.cleanupRefs(), (window.__fuseRefCounter = this.refCounter));
-          const e = a.join('\n');
+          const e = s.join('\n');
           return e.length > 5e4
             ? {
                 tree: '',
@@ -2362,7 +2362,7 @@
                 viewport: this.getViewport(),
                 error: `Output exceeds 50000 character limit (${e.length} characters). Try using a smaller depth or focusing on a specific element.`,
               }
-            : { tree: e, nodes: i, viewport: this.getViewport() };
+            : { tree: e, nodes: a, viewport: this.getViewport() };
         } catch (e) {
           return {
             tree: '',
@@ -2372,27 +2372,27 @@
           };
         }
       }
-      processElement(e, t, n, s, a, i, o) {
+      processElement(e, t, n, i, s, a, o) {
         if (t > n) return;
         if (!e || !e.tagName) return;
         const c = e.tagName.toLowerCase();
         if (r.includes(c)) return;
-        const l = this.shouldIncludeElement(e, s, a);
+        const l = this.shouldIncludeElement(e, i, s);
         if (l) {
           const n = this.getRole(e),
-            s = this.getLabel(e),
-            a = this.getOrCreateRefId(e);
+            i = this.getLabel(e),
+            s = this.getOrCreateRefId(e);
           let r = '  '.repeat(t) + n;
-          (s && (r += ` "${s.replace(/\s+/g, ' ').substring(0, 100).replace(/"/g, '\\"')}"`),
-            (r += ` [${a}]`));
+          (i && (r += ` "${i.replace(/\s+/g, ' ').substring(0, 100).replace(/"/g, '\\"')}"`),
+            (r += ` [${s}]`));
           const c = this.getImportantAttributes(e);
           for (const [e, t] of Object.entries(c)) r += ` ${e}="${t}"`;
-          (i.push(r), o.push({ role: n, label: s, refId: a, depth: t, attributes: c }));
+          (a.push(r), o.push({ role: n, label: i, refId: s, depth: t, attributes: c }));
         }
         if (e.children && t < n)
           for (let r = 0; r < e.children.length; r++) {
             const c = e.children[r];
-            this.processElement(c, l ? t + 1 : t, n, s, a, i, o);
+            this.processElement(c, l ? t + 1 : t, n, i, s, a, o);
           }
       }
       shouldIncludeElement(e, t, n) {
@@ -2405,22 +2405,22 @@
         if (this.isInteractive(e)) return !0;
         if (this.isLandmark(e)) return !0;
         if (this.getLabel(e).length > 0) return !0;
-        const s = this.getRole(e);
-        return 'generic' !== s && 'image' !== s;
+        const i = this.getRole(e);
+        return 'generic' !== i && 'image' !== i;
       }
       getRole(e) {
         const t = e.getAttribute('role');
         if (t) return t;
         const n = e.tagName.toLowerCase(),
-          s = e.getAttribute('type');
+          i = e.getAttribute('type');
         return 'input' === n
-          ? 'submit' === s || 'button' === s
+          ? 'submit' === i || 'button' === i
             ? 'button'
-            : 'checkbox' === s
+            : 'checkbox' === i
               ? 'checkbox'
-              : 'radio' === s
+              : 'radio' === i
                 ? 'radio'
-                : 'file' === s
+                : 'file' === i
                   ? 'button'
                   : 'textbox'
           : o[n] || 'generic';
@@ -2434,12 +2434,12 @@
         }
         const n = e.getAttribute('aria-label');
         if (n?.trim()) return n.trim();
-        const s = e.getAttribute('placeholder');
-        if (s?.trim()) return s.trim();
-        const a = e.getAttribute('title');
-        if (a?.trim()) return a.trim();
-        const i = e.getAttribute('alt');
+        const i = e.getAttribute('placeholder');
         if (i?.trim()) return i.trim();
+        const s = e.getAttribute('title');
+        if (s?.trim()) return s.trim();
+        const a = e.getAttribute('alt');
+        if (a?.trim()) return a.trim();
         if (e.id) {
           const t = document.querySelector(`label[for="${e.id}"]`);
           if (t?.textContent?.trim()) return t.textContent.trim();
@@ -2447,15 +2447,15 @@
         if ('input' === t) {
           const t = e,
             n = e.getAttribute('type') || '',
-            s = e.getAttribute('value');
-          if ('submit' === n && s?.trim()) return s.trim();
+            i = e.getAttribute('value');
+          if ('submit' === n && i?.trim()) return i.trim();
           if (t.value && t.value.length < 50 && t.value.trim()) return t.value.trim();
         }
         if (['button', 'a', 'summary'].includes(t)) {
           let t = '';
           for (let n = 0; n < e.childNodes.length; n++) {
-            const s = e.childNodes[n];
-            s.nodeType === Node.TEXT_NODE && (t += s.textContent || '');
+            const i = e.childNodes[n];
+            i.nodeType === Node.TEXT_NODE && (t += i.textContent || '');
           }
           if (t.trim()) return t.trim();
         }
@@ -2476,7 +2476,7 @@
       }
       getOrCreateRefId(e) {
         for (const [t, n] of this.elementMap.entries()) if (n.ref.deref() === e) return t;
-        const t = 'fuse_ref_' + ++this.refCounter;
+        const t = 'gemini_bridge_ref_' + ++this.refCounter;
         return (
           this.elementMap.set(t, {
             ref: new WeakRef(e),
@@ -2495,11 +2495,11 @@
         const t = {},
           n = e.getAttribute('href');
         n && (t.href = n);
-        const s = e.getAttribute('type');
-        s && (t.type = s);
-        const a = e.getAttribute('placeholder');
+        const i = e.getAttribute('type');
+        i && (t.type = i);
+        const s = e.getAttribute('placeholder');
         return (
-          a && (t.placeholder = a),
+          s && (t.placeholder = s),
           e.hasAttribute('disabled') && (t.disabled = 'true'),
           e.checked && (t.checked = 'true'),
           t
@@ -2552,20 +2552,20 @@
         }
       }
       async typeIntoElement(e, t, n = {}) {
-        const s = this.getElementByRefId(e);
-        if (!s) return !1;
+        const i = this.getElementByRefId(e);
+        if (!i) return !1;
         try {
           return (
-            s.focus(),
-            s instanceof HTMLInputElement || s instanceof HTMLTextAreaElement
-              ? (n.clear && (s.value = ''),
-                (s.value += t),
-                s.dispatchEvent(new InputEvent('input', { bubbles: !0, data: t })),
-                s.dispatchEvent(new Event('change', { bubbles: !0 })))
-              : 'true' === s.getAttribute('contenteditable') &&
-                (n.clear && (s.innerHTML = ''),
-                (s.textContent = (s.textContent || '') + t),
-                s.dispatchEvent(new InputEvent('input', { bubbles: !0 }))),
+            i.focus(),
+            i instanceof HTMLInputElement || i instanceof HTMLTextAreaElement
+              ? (n.clear && (i.value = ''),
+                (i.value += t),
+                i.dispatchEvent(new InputEvent('input', { bubbles: !0, data: t })),
+                i.dispatchEvent(new Event('change', { bubbles: !0 })))
+              : 'true' === i.getAttribute('contenteditable') &&
+                (n.clear && (i.innerHTML = ''),
+                (i.textContent = (i.textContent || '') + t),
+                i.dispatchEvent(new InputEvent('input', { bubbles: !0 }))),
             !0
           );
         } catch {
@@ -2598,36 +2598,36 @@
       }
       async moveMouse(e, t) {
         const n = t?.duration ?? this.randomBetween(200, 500),
-          s = t?.steps ?? Math.max(10, Math.floor(n / 16)),
-          a = { ...this.lastMousePosition },
-          i = this.generateBezierControlPoints(a, e);
+          i = t?.steps ?? Math.max(10, Math.floor(n / 16)),
+          s = { ...this.lastMousePosition },
+          a = this.generateBezierControlPoints(s, e);
         this.isMoving = !0;
-        for (let t = 0; t <= s; t++) {
-          const o = t / s,
-            r = this.bezierPoint(o, a, i[0], i[1], e),
+        for (let t = 0; t <= i; t++) {
+          const o = t / i,
+            r = this.bezierPoint(o, s, a[0], a[1], e),
             c = this.randomBetween(-2, 2),
             l = { x: r.x + c, y: r.y + c };
           (this.dispatchMouseEvent('mousemove', l),
             (this.lastMousePosition = l),
-            await this.sleep(n / s));
+            await this.sleep(n / i));
         }
         this.isMoving = !1;
       }
       async moveToElement(e) {
         const t = e.getBoundingClientRect(),
           n = t.left + this.randomBetween(0.2 * t.width, 0.8 * t.width),
-          s = t.top + this.randomBetween(0.2 * t.height, 0.8 * t.height);
-        await this.moveMouse({ x: n, y: s });
+          i = t.top + this.randomBetween(0.2 * t.height, 0.8 * t.height);
+        await this.moveMouse({ x: n, y: i });
       }
       async humanClick(e, t = {}) {
         const {
           moveFirst: n = !0,
-          prePauseMin: s = 50,
-          prePauseMax: a = 150,
-          postPauseMin: i = 50,
+          prePauseMin: i = 50,
+          prePauseMax: s = 150,
+          postPauseMin: a = 50,
           postPauseMax: o = 200,
         } = t;
-        n && (await this.moveToElement(e), await this.randomDelay(s, a));
+        n && (await this.moveToElement(e), await this.randomDelay(i, s));
         const r = e.getBoundingClientRect(),
           c = r.left + r.width / 2,
           l = r.top + r.height / 2;
@@ -2635,7 +2635,7 @@
           await this.sleep(this.randomBetween(50, 120)),
           this.dispatchMouseEvent('mouseup', { x: c, y: l }, e),
           this.dispatchMouseEvent('click', { x: c, y: l }, e),
-          await this.randomDelay(i, o));
+          await this.randomDelay(a, o));
       }
       async humanDoubleClick(e) {
         (await this.humanClick(e, { postPauseMin: 50, postPauseMax: 150 }),
@@ -2644,9 +2644,9 @@
       }
       async humanType(e, t, n = {}) {
         const {
-          minDelay: s = 50,
-          maxDelay: a = 150,
-          typoChance: i = 0.02,
+          minDelay: i = 50,
+          maxDelay: s = 150,
+          typoChance: a = 0.02,
           correctTypos: o = !0,
           pauseOnPunctuation: r = !0,
         } = n;
@@ -2654,7 +2654,7 @@
         const c = ['.', ',', '!', '?', ';', ':'];
         for (let n = 0; n < t.length; n++) {
           const l = t[n];
-          if (i > 0 && Math.random() < i && o) {
+          if (a > 0 && Math.random() < a && o) {
             const t = this.getNearbyKeys(l);
             if (t.length > 0) {
               const n = t[Math.floor(Math.random() * t.length)];
@@ -2665,7 +2665,7 @@
             }
           }
           await this.typeCharacter(e, l);
-          let d = this.randomBetween(s, a);
+          let d = this.randomBetween(i, s);
           (r && c.includes(l) && (d += this.randomBetween(100, 400)),
             Math.random() < 0.05 && (d += this.randomBetween(200, 600)),
             await this.sleep(d));
@@ -2735,22 +2735,22 @@
           ));
       }
       async humanScroll(e, t = {}) {
-        const { duration: n = 800, easing: s = 'human', addNoise: a = !0 } = t,
-          i = window.scrollY;
+        const { duration: n = 800, easing: i = 'human', addNoise: s = !0 } = t,
+          a = window.scrollY;
         let o;
         if ('number' == typeof e) o = e;
         else {
           const t = e.getBoundingClientRect();
-          o = i + t.top - window.innerHeight / 3;
+          o = a + t.top - window.innerHeight / 3;
         }
-        const r = o - i,
+        const r = o - a,
           c = performance.now();
         return new Promise((e) => {
           const t = () => {
             const o = performance.now() - c,
               l = Math.min(o / n, 1);
             let d;
-            switch (s) {
+            switch (i) {
               case 'linear':
                 d = l;
                 break;
@@ -2760,8 +2760,8 @@
               default:
                 d = this.humanEasing(l);
             }
-            let p = i + r * d;
-            (a && l < 1 && (p += this.randomBetween(-3, 3)),
+            let p = a + r * d;
+            (s && l < 1 && (p += this.randomBetween(-3, 3)),
               window.scrollTo(0, p),
               l < 1 ? requestAnimationFrame(t) : setTimeout(e, this.randomBetween(100, 300)));
           };
@@ -2770,12 +2770,12 @@
       }
       async readingScroll(e = 300, t = 1e3) {
         const n = document.documentElement.scrollHeight,
-          s = window.innerHeight;
-        let a = window.scrollY;
-        for (; a + s < n; ) {
+          i = window.innerHeight;
+        let s = window.scrollY;
+        for (; s + i < n; ) {
           const n = e + this.randomBetween(-50, 100);
-          (await this.humanScroll(a + n),
-            (a = window.scrollY),
+          (await this.humanScroll(s + n),
+            (s = window.scrollY),
             await this.randomDelay(0.5 * t, 1.5 * t));
         }
       }
@@ -2815,43 +2815,43 @@
       }
       gaussianRandom(e, t) {
         const n = Math.random(),
-          s = Math.random();
-        return Math.sqrt(-2 * Math.log(n)) * Math.cos(2 * Math.PI * s) * t + e;
+          i = Math.random();
+        return Math.sqrt(-2 * Math.log(n)) * Math.cos(2 * Math.PI * i) * t + e;
       }
       generateBezierControlPoints(e, t) {
         const n = t.x - e.x,
-          s = t.y - e.y;
+          i = t.y - e.y;
         return [
           {
             x: e.x + 0.3 * n + this.randomBetween(-30, 30),
-            y: e.y + 0.1 * s + this.randomBetween(-30, 30),
+            y: e.y + 0.1 * i + this.randomBetween(-30, 30),
           },
           {
             x: e.x + 0.7 * n + this.randomBetween(-30, 30),
-            y: e.y + 0.9 * s + this.randomBetween(-30, 30),
+            y: e.y + 0.9 * i + this.randomBetween(-30, 30),
           },
         ];
       }
-      bezierPoint(e, t, n, s, a) {
-        const i = e * e,
-          o = i * e,
+      bezierPoint(e, t, n, i, s) {
+        const a = e * e,
+          o = a * e,
           r = 1 - e,
           c = r * r,
           l = c * r;
         return {
-          x: l * t.x + 3 * c * e * n.x + 3 * r * i * s.x + o * a.x,
-          y: l * t.y + 3 * c * e * n.y + 3 * r * i * s.y + o * a.y,
+          x: l * t.x + 3 * c * e * n.x + 3 * r * a * i.x + o * s.x,
+          y: l * t.y + 3 * c * e * n.y + 3 * r * a * i.y + o * s.y,
         };
       }
       dispatchMouseEvent(e, t, n) {
-        const s = new MouseEvent(e, {
+        const i = new MouseEvent(e, {
           bubbles: !0,
           cancelable: !0,
           clientX: t.x,
           clientY: t.y,
           view: window,
         });
-        (n || document.elementFromPoint(t.x, t.y) || document.body).dispatchEvent(s);
+        (n || document.elementFromPoint(t.x, t.y) || document.body).dispatchEvent(i);
       }
       easeInOutCubic(e) {
         return e < 0.5 ? 4 * e * e * e : 1 - Math.pow(-2 * e + 2, 3) / 2;
@@ -2904,13 +2904,13 @@
         if (t.detected) return ((this.lastDetection = t), t);
         const n = this.detectHCaptcha();
         if (n.detected) return ((this.lastDetection = n), n);
-        const s = this.detectCloudflareTurnstile();
+        const i = this.detectCloudflareTurnstile();
+        if (i.detected) return ((this.lastDetection = i), i);
+        const s = this.detectCloudflareChallenge();
         if (s.detected) return ((this.lastDetection = s), s);
-        const a = this.detectCloudflareChallenge();
-        if (a.detected) return ((this.lastDetection = a), a);
-        const i = this.detectGenericVerification();
-        return i.detected
-          ? ((this.lastDetection = i), i)
+        const a = this.detectGenericVerification();
+        return a.detected
+          ? ((this.lastDetection = a), a)
           : { detected: !1, type: null, element: null, iframe: null, confidence: 0 };
       }
       async attemptBypass() {
@@ -3255,10 +3255,10 @@
       )
     );
   })()
-    ? console.log('[FuseConnect v7] Skipping content script on auth/challenge/IDE page')
-    : window.__FUSE_CONNECT_INITIALIZED__
-      ? console.log('[FuseConnect v7] Content script already initialized, skipping duplicate')
-      : ((window.__FUSE_CONNECT_INITIALIZED__ = !0),
+    ? console.log('[GeminiBridge v7] Skipping content script on auth/challenge/IDE page')
+    : window.__GEMINI_BRIDGE_INITIALIZED__
+      ? console.log('[GeminiBridge v7] Content script already initialized, skipping duplicate')
+      : ((window.__GEMINI_BRIDGE_INITIALIZED__ = !0),
         new (class {
           constructor() {
             ((this.panel = null),
@@ -3283,31 +3283,31 @@
             this.isInitialized ||
               ((this.isInitialized = !0),
               console.debug(
-                '[FuseConnect v7] Content script initialized (panel AUTO-OPEN disabled)'
+                '[GeminiBridge v7] Content script initialized (panel AUTO-OPEN disabled)'
               ),
               n.init({
                 onResponse: (e) => {
-                  (console.log('[FuseConnect v7] AI Response received, length:', e.length),
+                  (console.log('[GeminiBridge v7] AI Response received, length:', e.length),
                     this.panel &&
                       this.panel.handleMessage({ type: 'RESPONSE_COMPLETE', content: e }));
                   const t = this.getOldestPendingRequest();
                   this.pageAgentId ||
                     console.warn(
-                      '[FuseConnect v7] ⚠️ Page Agent ID missing during response! This may cause message drop.'
+                      '[GeminiBridge v7] ⚠️ Page Agent ID missing during response! This may cause message drop.'
                     );
                   const n = this.panel?.getCurrentChannel() || null,
-                    s = {
+                    i = {
                       agentId: this.pageAgentId,
                       responseType: 'ai-response',
                       timestamp: Date.now(),
                       channel: n,
                     };
                   (t &&
-                    ((s.correlationId = t.correlationId),
-                    (s.taskId = t.taskId),
-                    (s.inResponseTo = t.from),
+                    ((i.correlationId = t.correlationId),
+                    (i.taskId = t.taskId),
+                    (i.inResponseTo = t.from),
                     console.log(
-                      '[FuseConnect v7] 🔗 Correlating response to request:',
+                      '[GeminiBridge v7] 🔗 Correlating response to request:',
                       t.correlationId
                     ),
                     this.pendingRequests.delete(t.correlationId)),
@@ -3315,7 +3315,7 @@
                       type: 'RESPONSE_COMPLETE',
                       content: e.length > 5e4 ? e.substring(0, 5e4) : e,
                       channel: n,
-                      metadata: s,
+                      metadata: i,
                     }),
                     this.processInjectionQueue());
                 },
@@ -3325,7 +3325,7 @@
                       this.panel.handleMessage({ type: 'TRANSCRIPT_UPDATE', entry: e }));
                 },
                 onError: (e) => {
-                  console.error('[FuseConnect v7] Chat bridge error:', e);
+                  console.error('[GeminiBridge v7] Chat bridge error:', e);
                 },
               }),
               this.startChatDetection(),
@@ -3347,7 +3347,7 @@
               e.isReady &&
                 !this.chatReady &&
                 ((this.chatReady = !0),
-                console.log('[FuseConnect v7] Chat is ready!'),
+                console.log('[GeminiBridge v7] Chat is ready!'),
                 this.safeSendMessage(
                   {
                     type: 'CHAT_DETECTED',
@@ -3361,7 +3361,7 @@
                   (e) => {
                     e?.agentId &&
                       ((this.pageAgentId = e.agentId),
-                      console.log('[FuseConnect v7] Assigned Page Agent ID:', this.pageAgentId));
+                      console.log('[GeminiBridge v7] Assigned Page Agent ID:', this.pageAgentId));
                   }
                 ),
                 this.panel &&
@@ -3379,36 +3379,38 @@
             (e(), setInterval(e, 2e3));
           }
           setupDebugUtils() {
-            ((window.__FUSE_DEBUG = {
+            ((window.__GEMINI_BRIDGE_DEBUG = {
               getLastResponse: () => {
                 const e = n.getLastResponse();
-                return (console.log('[FuseConnect Debug] Last response:', e), e);
+                return (console.log('[GeminiBridge Debug] Last response:', e), e);
               },
               sendTestMessage: (e) => {
-                (console.log('[FuseConnect Debug] Sending test message:', e), n.sendMessage(e));
+                (console.log('[GeminiBridge Debug] Sending test message:', e), n.sendMessage(e));
               },
               checkExtensionContext: () => {
                 try {
                   const e = !!chrome.runtime?.id;
-                  return (console.log('[FuseConnect Debug] Extension context valid:', e), e);
+                  return (console.log('[GeminiBridge Debug] Extension context valid:', e), e);
                 } catch (e) {
                   return (
-                    console.error('[FuseConnect Debug] Extension context check failed:', e),
+                    console.error('[GeminiBridge Debug] Extension context check failed:', e),
                     !1
                   );
                 }
               },
               findElements: () => {
                 const e = n.findElements();
-                return (console.log('[FuseConnect Debug] Found elements:', e), e);
+                return (console.log('[GeminiBridge Debug] Found elements:', e), e);
               },
             }),
-              console.debug('[FuseConnect v7] Debug utils available at window.__FUSE_DEBUG'));
+              console.debug(
+                '[GeminiBridge v7] Debug utils available at window.__GEMINI_BRIDGE_DEBUG'
+              ));
           }
           showPanel() {
             if (window.self === window.top) {
               if (!this.panel) {
-                this.panel = new i(void 0);
+                this.panel = new a(void 0);
                 const e = n.findElements();
                 (e.isReady &&
                   this.panel.updateChatElements({
@@ -3424,61 +3426,61 @@
               }
               (this.panel.show(),
                 (this.panelVisible = !0),
-                console.log('[FuseConnect v7] Panel shown'));
+                console.log('[GeminiBridge v7] Panel shown'));
             }
           }
           hidePanel() {
             this.panel &&
               (this.panel.hide(),
               (this.panelVisible = !1),
-              console.log('[FuseConnect v7] Panel hidden'));
+              console.log('[GeminiBridge v7] Panel hidden'));
           }
           togglePanel() {
             this.panelVisible ? this.hidePanel() : this.showPanel();
           }
           setupMessageHandlers() {
-            chrome.runtime.onMessage.addListener((e, t, s) => {
+            chrome.runtime.onMessage.addListener((e, t, i) => {
               if (!chrome.runtime?.id) return !1;
-              const a = (e) => {
+              const s = (e) => {
                 try {
-                  chrome.runtime?.id && s(e);
+                  chrome.runtime?.id && i(e);
                 } catch (e) {
-                  console.debug('[FuseConnect] Context invalidated during response sending');
+                  console.debug('[GeminiBridge] Context invalidated during response sending');
                 }
               };
               try {
                 switch (e.type) {
                   case 'PING':
-                    return (a({ pong: !0, initialized: this.isInitialized }), !0);
+                    return (s({ pong: !0, initialized: this.isInitialized }), !0);
                   case 'TOGGLE_PANEL':
-                    return (this.togglePanel(), a({ success: !0, visible: this.panelVisible }), !0);
+                    return (this.togglePanel(), s({ success: !0, visible: this.panelVisible }), !0);
                   case 'SHOW_PANEL':
                     try {
-                      (this.showPanel(), a({ success: !0 }));
+                      (this.showPanel(), s({ success: !0 }));
                     } catch (e) {
-                      (console.error('[FuseConnect] Failed to show panel:', e),
-                        a({ success: !1, error: e.message }));
+                      (console.error('[GeminiBridge] Failed to show panel:', e),
+                        s({ success: !1, error: e.message }));
                     }
                     return !0;
                   case 'HIDE_PANEL':
-                    return (this.hidePanel(), a({ success: !0 }), !0);
+                    return (this.hidePanel(), s({ success: !0 }), !0);
                   case 'GET_PANEL_STATUS':
-                    return (a({ visible: this.panelVisible, exists: !!this.panel }), !0);
+                    return (s({ visible: this.panelVisible, exists: !!this.panel }), !0);
                   case 'INJECT_MESSAGE':
                     return (
                       this.injectMessage(e.content).then((e) => {
-                        a({ success: e });
+                        s({ success: e });
                       }),
                       !0
                     );
                   case 'GET_LAST_RESPONSE': {
                     const e = n.getLastResponse();
-                    return (a({ response: e }), !0);
+                    return (s({ response: e }), !0);
                   }
                   case 'GET_CHAT_STATUS': {
                     const e = n.findElements();
                     return (
-                      a({ detected: e.isReady, confidence: e.isReady ? 1 : 0, isStreaming: !1 }),
+                      s({ detected: e.isReady, confidence: e.isReady ? 1 : 0, isStreaming: !1 }),
                       !0
                     );
                   }
@@ -3488,26 +3490,26 @@
                       maxDepth: e.maxDepth,
                       refId: e.refId,
                     });
-                    return (a(t), !0);
+                    return (s(t), !0);
                   }
                   case 'CLICK_ELEMENT':
                     return (
                       d.clickElement(e.refId).then((e) => {
-                        a({ success: e });
+                        s({ success: e });
                       }),
                       !0
                     );
                   case 'TYPE_INTO_ELEMENT':
                     return (
                       d.typeIntoElement(e.refId, e.text, { clear: e.clear }).then((e) => {
-                        a({ success: e });
+                        s({ success: e });
                       }),
                       !0
                     );
                   case 'GET_ELEMENT_BY_REF': {
                     const t = d.getElementByRefId(e.refId);
                     return (
-                      a({
+                      s({
                         found: !!t,
                         tagName: t?.tagName,
                         textContent: t?.textContent?.substring(0, 200),
@@ -3517,17 +3519,17 @@
                   }
                   case 'HUMAN_TYPE': {
                     const t = n.findElements(),
-                      s = e.refId ? d.getElementByRefId(e.refId) : t.input;
+                      i = e.refId ? d.getElementByRefId(e.refId) : t.input;
                     return (
-                      s
+                      i
                         ? p
-                            .humanType(s, e.text, {
+                            .humanType(i, e.text, {
                               minDelay: e.minDelay || 50,
                               maxDelay: e.maxDelay || 150,
                               typoChance: e.typoChance || 0.02,
                             })
-                            .then(() => a({ success: !0 }))
-                        : a({ success: !1, error: 'No target element' }),
+                            .then(() => s({ success: !0 }))
+                        : s({ success: !1, error: 'No target element' }),
                       !0
                     );
                   }
@@ -3535,33 +3537,33 @@
                     const t = e.refId ? d.getElementByRefId(e.refId) : null;
                     return (
                       t
-                        ? p.humanClick(t).then(() => a({ success: !0 }))
-                        : a({ success: !1, error: 'No target element' }),
+                        ? p.humanClick(t).then(() => s({ success: !0 }))
+                        : s({ success: !1, error: 'No target element' }),
                       !0
                     );
                   }
                   case 'HUMAN_SCROLL':
                     return (
                       p.humanScroll(e.target || e.y || 500).then(() => {
-                        a({ success: !0 });
+                        s({ success: !0 });
                       }),
                       !0
                     );
                   case 'DETECT_CAPTCHA': {
                     const e = h.detectCaptcha();
-                    return (a(e), !0);
+                    return (s(e), !0);
                   }
                   case 'BYPASS_CAPTCHA':
                     return (
                       h.attemptBypass().then((e) => {
-                        a(e);
+                        s(e);
                       }),
                       !0
                     );
                   case 'WAIT_FOR_CAPTCHA':
                     return (
                       h.waitForCaptchaSolved(e.timeout || 6e4).then((e) => {
-                        a({ solved: e });
+                        s({ solved: e });
                       }),
                       !0
                     );
@@ -3582,15 +3584,15 @@
                         : [];
                       this.pausedChannels = new Set(t);
                     }
-                    return (this.panel && this.panel.handleMessage(e), a({ success: !0 }), !0);
+                    return (this.panel && this.panel.handleMessage(e), s({ success: !0 }), !0);
                   case 'NEW_MESSAGE':
                     if (e.message) {
                       const t = e.message;
                       if (t.id && this.processedMessageIds.has(t.id))
-                        return (a({ success: !0, reason: 'deduped' }), !0);
+                        return (s({ success: !0, reason: 'deduped' }), !0);
                       t.id && this.processedMessageIds.add(t.id);
-                      const s = this.panel?.getCurrentChannel(),
-                        i = s || this.currentChannel,
+                      const i = this.panel?.getCurrentChannel(),
+                        a = i || this.currentChannel,
                         o = t.channel || t.metadata?.channel,
                         r = o ? String(o) : '';
                       if (
@@ -3600,24 +3602,24 @@
                         !0 !== t.metadata?.forceInject
                       )
                         return (
-                          console.log('[FuseConnect v7] ⏸️ Skipping paused-channel message', {
+                          console.log('[GeminiBridge v7] ⏸️ Skipping paused-channel message', {
                             messageChannel: r,
                             pausedChannels: Array.from(this.pausedChannels),
                           }),
-                          a({ success: !0, reason: 'paused_channel' }),
+                          s({ success: !0, reason: 'paused_channel' }),
                           !0
                         );
-                      if ('broadcast' === t.to && o && i && o !== i)
+                      if ('broadcast' === t.to && o && a && o !== a)
                         return (
                           console.log(
-                            '[FuseConnect v7] ⏭️ Skipping message for different channel:',
+                            '[GeminiBridge v7] ⏭️ Skipping message for different channel:',
                             {
                               messageChannel: o,
-                              myChannel: i,
+                              myChannel: a,
                               contentPreview: t.content?.substring(0, 30),
                             }
                           ),
-                          a({ success: !0 }),
+                          s({ success: !0 }),
                           !0
                         );
                       if (
@@ -3627,50 +3629,50 @@
                         if (!this.canAutoInjectRelayMessage(t))
                           return (
                             console.log(
-                              '[FuseConnect v7] ⏭️ Skipping targeted auto-injection (panel hidden on this tab)'
+                              '[GeminiBridge v7] ⏭️ Skipping targeted auto-injection (panel hidden on this tab)'
                             ),
-                            a({ success: !0, reason: 'panel_hidden' }),
+                            s({ success: !0, reason: 'panel_hidden' }),
                             !0
                           );
                         if (!this.shouldInjectRelayMessage(t))
                           return (
                             console.log(
-                              '[FuseConnect v7] ⏭️ Skipping non-conversational targeted message',
+                              '[GeminiBridge v7] ⏭️ Skipping non-conversational targeted message',
                               t.metadata?.eventType || t.messageType || 'unknown'
                             ),
-                            a({ success: !0, reason: 'filtered_system_message' }),
+                            s({ success: !0, reason: 'filtered_system_message' }),
                             !0
                           );
-                        (console.log('[FuseConnect v7] Injecting targeted message:', t.content),
+                        (console.log('[GeminiBridge v7] Injecting targeted message:', t.content),
                           this.injectMessage(t.content).then((e) => {
                             e
-                              ? console.log('[FuseConnect v7] Injection successful')
-                              : console.warn('[FuseConnect v7] Injection failed');
+                              ? console.log('[GeminiBridge v7] Injection successful')
+                              : console.warn('[GeminiBridge v7] Injection failed');
                           }));
                       } else if ('broadcast' === t.to && t.content && t.from) {
                         if (!this.canAutoInjectRelayMessage(t))
                           return (
                             console.log(
-                              '[FuseConnect v7] ⏭️ Skipping broadcast auto-injection (panel hidden on this tab)'
+                              '[GeminiBridge v7] ⏭️ Skipping broadcast auto-injection (panel hidden on this tab)'
                             ),
-                            a({ success: !0, reason: 'panel_hidden' }),
+                            s({ success: !0, reason: 'panel_hidden' }),
                             !0
                           );
                         if (!this.shouldInjectRelayMessage(t))
                           return (
                             console.log(
-                              '[FuseConnect v7] ⏭️ Skipping non-conversational broadcast message',
+                              '[GeminiBridge v7] ⏭️ Skipping non-conversational broadcast message',
                               t.metadata?.eventType || t.messageType || 'unknown'
                             ),
-                            a({ success: !0, reason: 'filtered_system_message' }),
+                            s({ success: !0, reason: 'filtered_system_message' }),
                             !0
                           );
                         const e = t.metadata?.senderId,
-                          s = n.isStreaming(),
-                          i = (e) => (e ? e.replace(/^(page-agent-|browser-|agent-)/, '') : ''),
-                          r = i(this.pageAgentId || ''),
-                          c = i(t.from || ''),
-                          l = i(e || ''),
+                          i = n.isStreaming(),
+                          a = (e) => (e ? e.replace(/^(page-agent-|browser-|agent-)/, '') : ''),
+                          r = a(this.pageAgentId || ''),
+                          c = a(t.from || ''),
+                          l = a(e || ''),
                           d =
                             (r && c && r.startsWith(c) && c.length > 5) ||
                             (r && l && r.startsWith(l) && l.length > 5) ||
@@ -3678,7 +3680,7 @@
                           p = 'You' === t.from,
                           h = !d;
                         if (
-                          (console.log('[FuseConnect v7] 📨 Message received:', {
+                          (console.log('[GeminiBridge v7] 📨 Message received:', {
                             from: t.from,
                             senderId: e,
                             myAgentId: this.pageAgentId,
@@ -3689,16 +3691,16 @@
                           }),
                           h)
                         ) {
-                          if (s)
+                          if (i)
                             return (
                               console.log(
-                                '[FuseConnect v7] ⏳ AI is streaming, QUEUING message for later injection:',
+                                '[GeminiBridge v7] ⏳ AI is streaming, QUEUING message for later injection:',
                                 t.content.substring(0, 50)
                               ),
                               void this.queueMessage(t.content, t.metadata)
                             );
                           (console.log(
-                            '[FuseConnect v7] ✅ Injecting message from external agent:',
+                            '[GeminiBridge v7] ✅ Injecting message from external agent:',
                             {
                               from: t.from,
                               isAIResponse:
@@ -3711,7 +3713,7 @@
                               t.metadata?.taskId ||
                               t.metadata?.requiresResponse) &&
                               (console.log(
-                                '[FuseConnect v7] 🎯 Orchestrator task detected:',
+                                '[GeminiBridge v7] 🎯 Orchestrator task detected:',
                                 t.metadata?.taskId
                               ),
                               this.trackPendingRequest({
@@ -3722,11 +3724,11 @@
                               })),
                             this.injectMessage(t.content).then((e) => {
                               e
-                                ? console.log('[FuseConnect v7] ✅ Injection successful')
-                                : console.warn('[FuseConnect v7] ⚠️ Injection failed');
+                                ? console.log('[GeminiBridge v7] ✅ Injection successful')
+                                : console.warn('[GeminiBridge v7] ⚠️ Injection failed');
                             }));
                         } else
-                          console.log('[FuseConnect v7] ⏭️ Skipping message:', {
+                          console.log('[GeminiBridge v7] ⏭️ Skipping message:', {
                             from: t.from,
                             senderId: e,
                             myAgentId: this.pageAgentId,
@@ -3734,12 +3736,12 @@
                           });
                       }
                     }
-                    return (a({ success: !0 }), !0);
+                    return (s({ success: !0 }), !0);
                 }
               } catch (e) {
-                console.error('[FuseConnect] Content script message handler error:', e);
+                console.error('[GeminiBridge] Content script message handler error:', e);
                 try {
-                  a({ success: !1, error: e.message || 'Unknown error' });
+                  s({ success: !1, error: e.message || 'Unknown error' });
                 } catch (e) {}
               }
             });
@@ -3757,7 +3759,7 @@
             document.addEventListener('keydown', (e) => {
               ((e.ctrlKey || e.metaKey) &&
                 e.shiftKey &&
-                'F' === e.key &&
+                'G' === e.key &&
                 (e.preventDefault(), this.togglePanel()),
                 (e.ctrlKey || e.metaKey) &&
                   e.shiftKey &&
@@ -3772,8 +3774,8 @@
             const t = String(e?.content || '').trim();
             if (!t) return !1;
             const n = String(e?.messageType || '').toLowerCase(),
-              s = String(e?.metadata?.eventType || '').toLowerCase(),
-              a = t.toLowerCase();
+              i = String(e?.metadata?.eventType || '').toLowerCase(),
+              s = t.toLowerCase();
             return (
               'event' !== n &&
               !new Set([
@@ -3784,27 +3786,27 @@
                 'page_agent_registered',
                 'agent_registered',
                 'heartbeat',
-              ]).has(s) &&
+              ]).has(i) &&
               !(
-                a.startsWith('[activity]') ||
-                a.startsWith('[wake_ping') ||
-                a.startsWith('[wake_ack')
+                s.startsWith('[activity]') ||
+                s.startsWith('[wake_ping') ||
+                s.startsWith('[wake_ack')
               )
             );
           }
           async injectMessage(e, t) {
-            console.log('[FuseConnect v7] Injecting message:', e.substring(0, 50));
-            const s = await n.sendMessage(e);
+            console.log('[GeminiBridge v7] Injecting message:', e.substring(0, 50));
+            const i = await n.sendMessage(e);
             return (
-              s
-                ? console.log('[FuseConnect v7] Message sent successfully')
-                : console.error('[FuseConnect v7] Message send failed'),
-              s
+              i
+                ? console.log('[GeminiBridge v7] Message sent successfully')
+                : console.error('[GeminiBridge v7] Message send failed'),
+              i
             );
           }
           trackPendingRequest(e) {
             (this.pendingRequests.set(e.correlationId, { ...e, timestamp: Date.now() }),
-              console.log('[FuseConnect v7] 📝 Tracking pending request:', e.correlationId));
+              console.log('[GeminiBridge v7] 📝 Tracking pending request:', e.correlationId));
             const t = Date.now();
             for (const [e, n] of this.pendingRequests)
               t - n.timestamp > 3e5 && this.pendingRequests.delete(e);
@@ -3819,7 +3821,7 @@
             const e = h.detectCaptcha();
             e.detected &&
               (console.log(
-                `[FuseConnect v7] CAPTCHA detected: ${e.type} (confidence: ${e.confidence})`
+                `[GeminiBridge v7] CAPTCHA detected: ${e.type} (confidence: ${e.confidence})`
               ),
               this.safeSendMessage({
                 type: 'CAPTCHA_DETECTED',
@@ -3844,13 +3846,13 @@
               if (0 === this.injectionQueue.length) return void (this.isProcessingQueue = !1);
               if (n.isStreaming())
                 return (
-                  console.debug('[FuseConnect v7] Queue paused (AI streaming)...'),
+                  console.debug('[GeminiBridge v7] Queue paused (AI streaming)...'),
                   void setTimeout(e, 1e3)
                 );
               const t = this.injectionQueue.shift();
               t
                 ? (console.log(
-                    '[FuseConnect v7] 🚀 Processing queued message:',
+                    '[GeminiBridge v7] 🚀 Processing queued message:',
                     t.content.substring(0, 30)
                   ),
                   ('orchestrator' === t.metadata?.source ||

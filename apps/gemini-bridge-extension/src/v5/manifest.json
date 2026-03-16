@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "Fuse Connect",
-  "version": "6.0.0",
-  "description": "The ultimate AI agent bridge - Universal chat detection, federation channels, multi-node connectivity, streaming detection. Part of The New Fuse agent network.",
+  "name": "TNF Gemini Sidebar Bridge",
+  "version": "7.2.0",
+  "description": "Bridge to connect the Gemini Sidebar - Universal chat detection, federation channels, multi-node connectivity, streaming detection. Part of The New Fuse agent network.",
 
-  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr+lzRXCbTyLBs8ZsIkNMTKRCgy/AHKEdZM8bR0QyEFhFnFlgLjd89/cTG6EN6uNeEkI2vbIklajpqtlus5r373a5yX4AgIRDyeQCStXp1GxQqn7xIEuF3fQIO5amjAQ5dnSpOhxJKrhdRFSUb2IWbOxLGWCjGfzolxMUjQFsvwRGA0MagKk/FSQeBdO3zGEmu6G+1LW7CTmEWlqW6bPHbov+M7ruLCYAHpG0ggtnDT+hphbH3Y9ayycCfUvBxv/gOBW2p/h11+LrHqQz2Y3Ze6KNXPbpVdy1TEcNV9/HfJW/l9aLM4eA6yJXgLEvzFPV9RcSOQ2LszGkvFpNybSH/QIDAQAB",
+  "key": "MIIBCgKCAQEAxhfUfSzmsn3yCEEJ2Z0lmTasqSARJUov0byaSmgaYxPl0UaLCgC40P0B4LIGnbWJSwkyQLdh3DqQIrJSe3iSfcJk8snhPbOmEEmUR+56lEqkehKIB6z8wEbLYvKvvXRLogYyXjfE3YLBoaMSxcLdWQbccMQLiDnn0gRmFoWhMCwYnrNogenSHDJBh7wgYf/dNfeEtYoEZ57Za6+oDYRDQbC5NBid+F9e7m79bKd+G7DGi/oDPEF5pGLLqMXlzLqEXUwi+RUjEj9jVagPKz1qAh1iuTlAhLpiHLhPZn39q5CZlmMHvFxROpfhPuGRQPBcZRc9Xlnt/r2sLutxBXU/xwIDAQAB",
 
   "icons": {
     "16": "icons/icon16.png",
@@ -19,7 +19,7 @@
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
     },
-    "default_title": "Fuse Connect"
+    "default_title": "TNF Gemini Bridge"
   },
 
   "background": {
@@ -115,7 +115,7 @@
   "commands": {
     "toggle-panel": {
       "suggested_key": {
-        "default": "Ctrl+Shift+F",
+        "default": "Ctrl+Shift+G",
         "mac": "Command+Shift+F"
       },
       "description": "Toggle the Fuse Connect floating panel"

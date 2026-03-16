@@ -50,18 +50,18 @@
         );
       if (n && !this.accessToken)
         throw new Error('Write operations require Google Sign-In (OAuth)');
-      const o = new URL(`${this.baseUrl}/${e}`);
-      (a && o.searchParams.append('key', a),
+      const i = new URL(`${this.baseUrl}/${e}`);
+      (a && i.searchParams.append('key', a),
         Object.keys(t).forEach((e) => {
-          'method' !== e && 'body' !== e && o.searchParams.append(e, t[e]);
+          'method' !== e && 'body' !== e && i.searchParams.append(e, t[e]);
         }));
-      const i = { Accept: 'application/json' };
-      this.accessToken && (i.Authorization = `Bearer ${this.accessToken}`);
-      const r = { method: t.method || 'GET', headers: i };
+      const o = { Accept: 'application/json' };
+      this.accessToken && (o.Authorization = `Bearer ${this.accessToken}`);
+      const r = { method: t.method || 'GET', headers: o };
       t.body &&
         ((r.body = 'string' == typeof t.body ? t.body : JSON.stringify(t.body)),
-        (i['Content-Type'] = 'application/json'));
-      const c = await fetch(o.toString(), r);
+        (o['Content-Type'] = 'application/json'));
+      const c = await fetch(i.toString(), r);
       if (!c.ok) {
         if (!this.accessToken && 403 === c.status)
           throw new Error('API Key Quota Exceeded or Invalid. Please sign in with Google.');
@@ -95,8 +95,8 @@
         do {
           const n = { part: 'snippet,contentDetails', playlistId: e, maxResults: t };
           a && (n.pageToken = a);
-          const o = await this.makeRequest('playlistItems', n),
-            i = o.items.map((e) => ({
+          const i = await this.makeRequest('playlistItems', n),
+            o = i.items.map((e) => ({
               id: e.snippet.resourceId.videoId,
               playlistItemId: e.id,
               title: e.snippet.title,
@@ -106,7 +106,7 @@
               publishedAt: e.snippet.publishedAt,
               position: e.snippet.position,
             }));
-          ((s = s.concat(i)), (a = o.nextPageToken));
+          ((s = s.concat(o)), (a = i.nextPageToken));
         } while (a);
         return s;
       } catch (e) {
@@ -247,19 +247,19 @@
     for (let s = 0; s < e.length; s++) ((t = (t << 5) - t + e.charCodeAt(s)), (t &= t));
     return t.toString(36);
   }
-  const s = 'fuse_settings',
-    a = 'fuse_agent_id',
-    n = 'fuse_channels',
-    o = 'fuse_joined_channels',
-    i = 'fuse_tab_active_channels',
-    r = 'fuse_tab_paused_channels',
-    c = 'fuse_auto_connect',
-    l = 'fuse_auto_monitor',
-    d = 'fuse_auto_master_clock',
-    u = 'fuse_auto_wake_ping',
-    h = 'fuse_event_log',
+  const s = 'gemini_bridge_settings',
+    a = 'gemini_bridge_agent_id',
+    n = 'gemini_bridge_channels',
+    i = 'gemini_bridge_joined_channels',
+    o = 'gemini_bridge_tab_active_channels',
+    r = 'gemini_bridge_tab_paused_channels',
+    c = 'gemini_bridge_auto_connect',
+    l = 'gemini_bridge_auto_monitor',
+    d = 'gemini_bridge_auto_master_clock',
+    h = 'gemini_bridge_auto_wake_ping',
+    u = 'gemini_bridge_event_log',
     g = 'ws://localhost:3000/ws',
-    p = 'ai_video_process_tick';
+    m = 'ai_video_process_tick';
   new (class {
     constructor() {
       ((this.connections = new Map()),
@@ -301,7 +301,7 @@
         this.init());
     }
     async init() {
-      (console.log('[FuseConnect v7] Background service initializing...'),
+      (console.log('[GeminiBridge v7] Background service initializing...'),
         this.setupMessageHandlers(),
         this.setupCommands(),
         this.setupTabLifecycleHandlers(),
@@ -319,7 +319,7 @@
         this.autoConnect
           ? this.tryInitialConnection()
           : this.updateNodeStatus('relay', g, 'disconnected'),
-        console.log('[FuseConnect v7] Background service ready'),
+        console.log('[GeminiBridge v7] Background service ready'),
         this.logEvent('extension', 'background_ready', {
           autoConnect: this.autoConnect,
           autoMonitor: this.autoMonitor,
@@ -333,13 +333,13 @@
         let t = 0;
         for (const [s, a] of this.recentMessageHashes.entries())
           e - a > this.MESSAGE_DEDUP_WINDOW_MS && (this.recentMessageHashes.delete(s), t++);
-        t > 0 && console.log(`[FuseConnect v7] Cleaned up ${t} stale message hashes`);
+        t > 0 && console.log(`[GeminiBridge v7] Cleaned up ${t} stale message hashes`);
       }, 3e4);
     }
     async tryInitialConnection() {
       (await this.checkRelayHealth())
         ? this.connectToNode('relay', g)
-        : (console.log('[FuseConnect v7] Relay not available - attempting autonomous startup'),
+        : (console.log('[GeminiBridge v7] Relay not available - attempting autonomous startup'),
           this.updateNodeStatus('relay', g, 'disconnected'),
           this.sendNativeMessage({ action: 'start', service: 'relay' }).then((e) => {
             e?.error ||
@@ -371,16 +371,28 @@
       );
     }
     async loadSavedState() {
-      const e = await chrome.storage.local.get([n, o, i, 'fuse_known_nodes', c, l, d, u, r, h, s]);
+      const e = await chrome.storage.local.get([
+        n,
+        i,
+        o,
+        'gemini_bridge_known_nodes',
+        c,
+        l,
+        d,
+        h,
+        r,
+        u,
+        s,
+      ]);
       if (
         (e[n] &&
           e[n].forEach((e) => {
             this.channels.set(e.id, e);
           }),
-        e[o] && (this.joinedChannels = new Set(e[o])),
-        e[i])
+        e[i] && (this.joinedChannels = new Set(e[i])),
+        e[o])
       ) {
-        const t = e[i];
+        const t = e[o];
         for (const [e, s] of Object.entries(t)) {
           const t = Number(e);
           Number.isFinite(t) && s && this.tabActiveChannels.set(t, s);
@@ -395,15 +407,15 @@
           a.size > 0 && this.tabPausedChannels.set(t, a);
         }
       }
-      if (Array.isArray(e[h])) {
-        const t = e[h];
+      if (Array.isArray(e[u])) {
+        const t = e[u];
         this.extensionEventLog = t.slice(-this.EVENT_LOG_LIMIT);
       }
       (this.joinedChannels.add('green'),
         (this.autoConnect = e[c] ?? !0),
         (this.autoMonitor = e[l] ?? !0),
         (this.autoMasterClock = e[d] ?? !0),
-        (this.autoWakePing = e[u] ?? !1),
+        (this.autoWakePing = e[h] ?? !1),
         void 0 !== e[s]?.autoReconnect && (this.autoConnect = e[s].autoReconnect),
         void 0 !== e[s]?.autoMonitor && (this.autoMonitor = !!e[s].autoMonitor),
         void 0 !== e[s]?.autoMasterClock && (this.autoMasterClock = !!e[s].autoMasterClock),
@@ -413,15 +425,15 @@
       if (this.connections.has(e)) {
         const t = this.connections.get(e);
         if (t?.readyState === WebSocket.OPEN)
-          return void console.log(`[FuseConnect v7] Already connected to ${e}`);
+          return void console.log(`[GeminiBridge v7] Already connected to ${e}`);
         (t?.close(), this.connections.delete(e));
       }
-      (console.log(`[FuseConnect v7] Connecting to ${e} at ${t}...`),
+      (console.log(`[GeminiBridge v7] Connecting to ${e} at ${t}...`),
         this.updateNodeStatus(e, t, 'connecting'));
       try {
         const s = new WebSocket(t);
         ((s.onopen = () => {
-          (console.log(`[FuseConnect v7] Connected to ${e}`),
+          (console.log(`[GeminiBridge v7] Connected to ${e}`),
             this.connections.set(e, s),
             this.updateNodeStatus(e, t, 'connected'),
             (this.connectionAttempts = 0),
@@ -439,12 +451,12 @@
               const s = JSON.parse(t.data);
               this.handleRelayMessage(s, e);
             } catch (e) {
-              console.error('[FuseConnect v7] Failed to parse message:', e);
+              console.error('[GeminiBridge v7] Failed to parse message:', e);
             }
           }),
           (s.onclose = () => {
             if (
-              (console.log(`[FuseConnect v7] Disconnected from ${e}`),
+              (console.log(`[GeminiBridge v7] Disconnected from ${e}`),
               this.connections.delete(e),
               this.updateNodeStatus(e, t, 'disconnected'),
               this.primaryConnection === s)
@@ -465,7 +477,7 @@
               this.autoConnect && this.connectionAttempts < 3 && this.scheduleReconnect(e, t));
           }));
       } catch (s) {
-        (console.log(`[FuseConnect v7] Unable to connect to ${e} - relay may not be running`),
+        (console.log(`[GeminiBridge v7] Unable to connect to ${e} - relay may not be running`),
           this.updateNodeStatus(e, t, 'disconnected'));
       }
     }
@@ -500,7 +512,7 @@
       const s = this.reconnectTimers.get(e);
       s && clearTimeout(s);
       const a = Math.min(5e3 * Math.pow(2, this.connectionAttempts), 3e4);
-      console.log(`[FuseConnect v7] Will retry ${e} in ${a}ms...`);
+      console.log(`[GeminiBridge v7] Will retry ${e} in ${a}ms...`);
       const n = setTimeout(() => {
         this.connectToNode(e, t);
       }, a);
@@ -559,7 +571,7 @@
           payload: { agent: n },
         };
         (this.primaryConnection.send(JSON.stringify(s)),
-          console.log(`[FuseConnect v7] Registered Page Agent: ${t} (${e})`));
+          console.log(`[GeminiBridge v7] Registered Page Agent: ${t} (${e})`));
         for (const t of this.joinedChannels) {
           const s = {
             id: crypto.randomUUID(),
@@ -569,11 +581,11 @@
             payload: { channelId: t },
           };
           (this.primaryConnection.send(JSON.stringify(s)),
-            console.log(`[FuseConnect v7] Auto-joined Page Agent ${e} to channel ${t}`),
+            console.log(`[GeminiBridge v7] Auto-joined Page Agent ${e} to channel ${t}`),
             n.channels.push(t));
         }
       } else
-        (console.log(`[FuseConnect v7] Queued Page Agent for later registration: ${t} (${e})`),
+        (console.log(`[GeminiBridge v7] Queued Page Agent for later registration: ${t} (${e})`),
           this.pendingPageAgents.push(n));
       (this.broadcastToTabs({ type: 'AGENTS_UPDATE', agents: Array.from(this.agents.values()) }),
         this.frontloadPageAgentContext(n),
@@ -615,9 +627,9 @@
             }),
         s?.readyState === WebSocket.OPEN
           ? (s.send(JSON.stringify(a)),
-            console.log('[FuseConnect v7] Sent to relay:', a.type, a.channel))
+            console.log('[GeminiBridge v7] Sent to relay:', a.type, a.channel))
           : (this.messageQueue.push(a),
-            console.log('[FuseConnect v7] Queued message (not connected):', a.type)));
+            console.log('[GeminiBridge v7] Queued message (not connected):', a.type)));
     }
     flushMessageQueue() {
       for (
@@ -632,7 +644,7 @@
       if (this.primaryConnection?.readyState === WebSocket.OPEN)
         for (
           console.log(
-            `[FuseConnect v7] Flushing ${this.pendingPageAgents.length} pending page agent registrations`
+            `[GeminiBridge v7] Flushing ${this.pendingPageAgents.length} pending page agent registrations`
           );
           this.pendingPageAgents.length > 0;
         ) {
@@ -646,7 +658,7 @@
               payload: { agent: e },
             };
             (this.primaryConnection.send(JSON.stringify(t)),
-              console.log(`[FuseConnect v7] Registered queued Page Agent: ${e.name} (${e.id})`));
+              console.log(`[GeminiBridge v7] Registered queued Page Agent: ${e.name} (${e.id})`));
             for (const t of this.joinedChannels) {
               const s = {
                 id: crypto.randomUUID(),
@@ -663,7 +675,7 @@
     reRegisterAllAgents(e) {
       if (e.readyState === WebSocket.OPEN) {
         console.log(
-          `[FuseConnect v7] Re-registering ${this.agents.size} existing agents on new connection`
+          `[GeminiBridge v7] Re-registering ${this.agents.size} existing agents on new connection`
         );
         for (const [t, s] of this.agents) {
           if (t === this.agentId) continue;
@@ -676,7 +688,7 @@
           };
           if (
             (e.send(JSON.stringify(a)),
-            console.log(`[FuseConnect v7] Re-announced Page Agent: ${s.name} (${t})`),
+            console.log(`[GeminiBridge v7] Re-announced Page Agent: ${s.name} (${t})`),
             s.channels && s.channels.length > 0)
           )
             for (const a of s.channels) {
@@ -703,7 +715,7 @@
                 chrome.tabs.get(s, (t) => {
                   if (chrome.runtime.lastError || !t)
                     return (
-                      console.log(`[FuseConnect v7] Tab ${s} for agent ${e} is gone. Removing.`),
+                      console.log(`[GeminiBridge v7] Tab ${s} for agent ${e} is gone. Removing.`),
                       this.agents.delete(e),
                       this.send({ type: 'AGENT_UNREGISTER', agentId: e }),
                       void this.broadcastToTabs({
@@ -737,7 +749,7 @@
     }
     handleRelayMessage(e, t) {
       switch (
-        (console.log(`[FuseConnect v7] Received from ${t}:`, e.type),
+        (console.log(`[GeminiBridge v7] Received from ${t}:`, e.type),
         this.logEvent('relay', 'message_in', {
           nodeType: t,
           type: e.type,
@@ -747,7 +759,7 @@
         e.type)
       ) {
         case 'WELCOME':
-          console.log('[FuseConnect v7] Welcome received');
+          console.log('[GeminiBridge v7] Welcome received');
           break;
         case 'AGENT_LIST': {
           const t = e.payload.agents || [];
@@ -765,7 +777,7 @@
               'disconnected' === t.status ||
               'unregistered' === t.status
             )
-              (console.log(`[FuseConnect v7] Agent ${t.id} went offline/removed`),
+              (console.log(`[GeminiBridge v7] Agent ${t.id} went offline/removed`),
                 this.agents.delete(t.id));
             else {
               const e = this.agents.get(t.id);
@@ -792,7 +804,7 @@
         case 'AGENT_UNREGISTER': {
           const t = e.payload.agentId;
           t &&
-            (console.log(`[FuseConnect v7] UNREGISTER received for ${t}`),
+            (console.log(`[GeminiBridge v7] UNREGISTER received for ${t}`),
             this.agents.delete(t),
             this.broadcastToTabs({
               type: 'AGENTS_UPDATE',
@@ -855,7 +867,7 @@
           this.broadcastToTabs({ type: 'STREAMING_END', messageId: e.payload.messageId });
           break;
         case 'ERROR':
-          (console.error('[FuseConnect v7] Relay error:', e.payload),
+          (console.error('[GeminiBridge v7] Relay error:', e.payload),
             this.createNotification('error', 'Error', e.payload.message || 'Unknown error'));
           break;
         case 'TASK_ASSIGN':
@@ -880,7 +892,7 @@
         )
       )
         return;
-      const o =
+      const i =
           'system' === e.type
             ? 'system'
             : 'response' === e.type
@@ -888,11 +900,11 @@
               : 'command' === e.type
                 ? 'tool'
                 : 'user',
-        i = 'relay:NFT Alpha 1',
+        o = 'relay:NFT Alpha 1',
         r = {
-          id: t(`${i}|${e.id}|${e.from}|${e.to}|${e.timestamp}|${s}`),
+          id: t(`${o}|${e.id}|${e.from}|${e.to}|${e.timestamp}|${s}`),
           ts: e.timestamp || Date.now(),
-          role: o,
+          role: i,
           content: e.content || '',
           meta: {
             source: 'tnf-relay',
@@ -906,10 +918,10 @@
         };
       if (r.content)
         try {
-          const e = `https://tnf-agent-orchestration.bizsynth.workers.dev/transcript/append?sessionKey=${encodeURIComponent(i)}`;
+          const e = `https://tnf-agent-orchestration.bizsynth.workers.dev/transcript/append?sessionKey=${encodeURIComponent(o)}`;
           await fetch(e, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-Session-Key': i },
+            headers: { 'Content-Type': 'application/json', 'X-Session-Key': o },
             body: JSON.stringify({ entries: [r] }),
           });
         } catch (e) {}
@@ -921,10 +933,10 @@
         this.__loopGuard = s;
         const a = e.from || '',
           n = e.channel || '',
-          o = e.content || '',
-          i = s.mutedUntil.get(a) || 0;
-        if (i && t < i) return;
-        const r = `${a}:${n}:${o.slice(0, 280)}`,
+          i = e.content || '',
+          o = s.mutedUntil.get(a) || 0;
+        if (o && t < o) return;
+        const r = `${a}:${n}:${i.slice(0, 280)}`,
           c = s.counts.get(r) || { firstTs: t, n: 0 };
         if (
           (t - c.firstTs > 1e4 && ((c.firstTs = t), (c.n = 0)),
@@ -934,20 +946,20 @@
         )
           return (
             s.mutedUntil.set(a, t + 6e4),
-            void console.warn('[FuseConnect v7] Loop guard muted source for 60s:', a)
+            void console.debug('[GeminiBridge v7] Loop guard muted source for 60s:', a)
           );
       } catch {}
       if (e.from === this.agentId || 'Browser Agent' === e.from) {
         if (!e.channel)
-          return void console.log('[FuseConnect v7] Skipping direct self-message echo');
+          return void console.log('[GeminiBridge v7] Skipping direct self-message echo');
         const s = t(`${e.from}:${e.content}:${Math.floor(e.timestamp / 1e3)}`);
         if (this.recentMessageHashes.has(s))
-          return void console.log('[FuseConnect v7] Skipping duplicate self-message on channel');
+          return void console.log('[GeminiBridge v7] Skipping duplicate self-message on channel');
       }
       const s = t(`${e.from}:${e.content}:${Math.floor(e.timestamp / 1e3)}`),
         a = Date.now();
       if (this.recentMessageHashes.has(s))
-        console.log('[FuseConnect v7] Skipping duplicate message');
+        console.log('[GeminiBridge v7] Skipping duplicate message');
       else {
         this.recentMessageHashes.set(s, a);
         for (const [e, t] of this.recentMessageHashes.entries())
@@ -1053,7 +1065,7 @@
               !e ||
                 e.message?.includes('Receiving end does not exist') ||
                 e.message?.includes('Could not establish connection') ||
-                console.warn(`[FuseConnect v7] Failed to broadcast to tab ${s.id}:`, e);
+                console.debug(`[GeminiBridge v7] Failed to broadcast to tab ${s.id}:`, e);
             });
           } catch (e) {}
     }
@@ -1067,13 +1079,13 @@
     async saveChannels() {
       await chrome.storage.local.set({
         [n]: Array.from(this.channels.values()),
-        [o]: Array.from(this.joinedChannels),
+        [i]: Array.from(this.joinedChannels),
       });
     }
     async saveTabActiveChannels() {
       const e = {};
       for (const [t, s] of this.tabActiveChannels.entries()) s && (e[String(t)] = s);
-      await chrome.storage.local.set({ [i]: e });
+      await chrome.storage.local.set({ [o]: e });
     }
     async saveTabPausedChannels() {
       const e = {};
@@ -1134,7 +1146,7 @@
     }
     setupAlarmHandlers() {
       chrome.alarms.onAlarm.addListener((e) => {
-        e.name === p && this.processAIVideoTick();
+        e.name === m && this.processAIVideoTick();
       });
     }
     async getYouTubeAuthToken() {
@@ -1232,13 +1244,13 @@
             try {
               const a = new URL(s),
                 n = a.hash.startsWith('#') ? a.hash.slice(1) : a.hash,
-                o = new URLSearchParams(n),
-                i = String(o.get('access_token') || '').trim();
-              if (!i) {
-                const e = String(o.get('error') || 'oauth_error').trim();
+                i = new URLSearchParams(n),
+                o = String(i.get('access_token') || '').trim();
+              if (!o) {
+                const e = String(i.get('error') || 'oauth_error').trim();
                 return void t(new Error(`OAuth failed: ${e}`));
               }
-              e(i);
+              e(o);
             } catch (e) {
               t(new Error(e?.message || 'OAuth redirect parse failed'));
             }
@@ -1268,18 +1280,18 @@
         n = String(a.lastAuthAccount || '')
           .trim()
           .toLowerCase(),
-        o = String(s.email || '')
+        i = String(s.email || '')
           .trim()
           .toLowerCase(),
-        i = !!n && !!o && n !== o;
+        o = !!n && !!i && n !== i;
       return (
-        i &&
+        o &&
           (await chrome.storage.local.remove([
             'ai_studio_channel_id',
             'cachedPlaylists',
             'cachedVideos',
           ])),
-        { token: t, primaryProfile: s, accountSwitched: i }
+        { token: t, primaryProfile: s, accountSwitched: o }
       );
     }
     normalizeOAuthError(e) {
@@ -1389,7 +1401,7 @@
       };
     }
     async processAIVideoTick() {
-      chrome.alarms.clear(p);
+      chrome.alarms.clear(m);
     }
     async createNewAIStudioTab() {
       console.log('🆕 Creating new AI Studio tab...');
@@ -1438,19 +1450,19 @@
       const n = 60 * s;
       for (let s = 0; s < e.length && this.automationRunning; s++) {
         for (; this.automationPaused; ) await new Promise((e) => setTimeout(e, 1e3));
-        const o = e[s],
-          i = String(o.id || ''),
-          r = String(o.title || 'Untitled'),
-          c = String(o.url || ''),
-          l = { ...t, currentIndex: s, currentVideo: o, lastUpdated: Date.now() };
+        const i = e[s],
+          o = String(i.id || ''),
+          r = String(i.title || 'Untitled'),
+          c = String(i.url || ''),
+          l = { ...t, currentIndex: s, currentVideo: i, lastUpdated: Date.now() };
         (await chrome.storage.local.set({ processingState: l }),
           this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: l }));
         try {
           if ('ai_studio' !== a) {
-            const e = await this.buildLightweightReport(o, a),
+            const e = await this.buildLightweightReport(i, a),
               t = {
-                id: `report-${Date.now()}-${i}`,
-                videoId: i,
+                id: `report-${Date.now()}-${o}`,
+                videoId: o,
                 title: r,
                 url: c,
                 processedAt: Date.now(),
@@ -1469,11 +1481,11 @@
               await new Promise((e) => setTimeout(e, 400)));
             continue;
           }
-          let e = o.duration || 0;
-          if (!e && o.url) {
+          let e = i.duration || 0;
+          if (!e && i.url) {
             const t = await this.createNewAIStudioTab();
             if (t.id) {
-              const s = await this.sendTaskAndWait(t.id, { type: 'GET_DURATION', url: o.url }, 6e4);
+              const s = await this.sendTaskAndWait(t.id, { type: 'GET_DURATION', url: i.url }, 6e4);
               (await this.closeTab(t.id), s.duration && (e = s.duration));
             }
           }
@@ -1482,8 +1494,8 @@
             let s = 0,
               a = 0;
             for (; s < e; ) {
-              const o = Math.min(s + n, e);
-              (t.push({ index: a++, startTime: s, endTime: o }), (s = o));
+              const i = Math.min(s + n, e);
+              (t.push({ index: a++, startTime: s, endTime: i }), (s = i));
             }
           } else t.push({ index: 0, startTime: 0, endTime: null });
           for (const e of t) {
@@ -1493,17 +1505,17 @@
             if (t.id) {
               const s = await this.sendTaskAndWait(t.id, {
                 type: 'PROCESS_SEGMENT',
-                url: o.url,
-                title: o.title,
-                videoId: o.id,
+                url: i.url,
+                title: i.title,
+                videoId: i.id,
                 startTime: e.startTime,
                 endTime: e.endTime,
                 segmentIndex: e.index,
               });
               if ((await this.closeTab(t.id), s.success && s.reportContent)) {
                 const t = {
-                    id: `report-${Date.now()}-${i}`,
-                    videoId: i,
+                    id: `report-${Date.now()}-${o}`,
+                    videoId: o,
                     title: r,
                     url: c,
                     processedAt: Date.now(),
@@ -1513,8 +1525,8 @@
                     segmentIndex: e.index,
                   },
                   n = await chrome.storage.local.get('ai_video_reports'),
-                  o = Array.isArray(n.ai_video_reports) ? n.ai_video_reports : [];
-                await chrome.storage.local.set({ ai_video_reports: [t, ...o].slice(0, 500) });
+                  i = Array.isArray(n.ai_video_reports) ? n.ai_video_reports : [];
+                await chrome.storage.local.set({ ai_video_reports: [t, ...i].slice(0, 500) });
                 const l = await chrome.storage.local.get('ai_video_processed_count');
                 await chrome.storage.local.set({
                   ai_video_processed_count: (l.ai_video_processed_count || 0) + 1,
@@ -1529,7 +1541,7 @@
         await new Promise((e) => setTimeout(e, 3e3));
       }
       this.automationRunning = !1;
-      const o = {
+      const i = {
         isProcessing: !1,
         isPaused: !1,
         currentIndex: e.length,
@@ -1537,8 +1549,8 @@
         currentVideo: null,
         lastUpdated: Date.now(),
       };
-      (await chrome.storage.local.set({ processingState: o }),
-        this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: o }),
+      (await chrome.storage.local.set({ processingState: i }),
+        this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: i }),
         this.logEvent('ai-video', 'processing_completed', { totalCount: e.length }));
     }
     extractYouTubeVideoId(e) {
@@ -1592,8 +1604,8 @@
       const s = this.extractYouTubeVideoId(String(e?.id || e?.url || '')),
         a = s ? await this.fetchVideoDetails([s]).catch(() => []) : [],
         n = Array.isArray(a) && a.length > 0 ? a[0] : null,
-        o = await this.fetchVideoTranscript(s),
-        i = [
+        i = await this.fetchVideoTranscript(s),
+        o = [
           `# ${String(e?.title || n?.title || 'Untitled Video')}`,
           '',
           `- URL: ${String(e?.url || (s ? `https://www.youtube.com/watch?v=${s}` : ''))}`,
@@ -1602,13 +1614,13 @@
           '',
         ];
       if ('transcript' === t)
-        return `${i.join('\n')}## Transcript\n\n${o || 'Transcript unavailable.'}\n`;
+        return `${o.join('\n')}## Transcript\n\n${i || 'Transcript unavailable.'}\n`;
       if ('flash' === t) {
-        const e = this.buildSentenceSummary(o, 6);
-        return `${i.join('\n')}## Quick Summary\n\n${e || 'Transcript unavailable for summary.'}\n\n## Transcript Excerpt\n\n${String(o || '').slice(0, 4e3)}\n`;
+        const e = this.buildSentenceSummary(i, 6);
+        return `${o.join('\n')}## Quick Summary\n\n${e || 'Transcript unavailable for summary.'}\n\n## Transcript Excerpt\n\n${String(i || '').slice(0, 4e3)}\n`;
       }
-      const r = this.buildSentenceSummary(o, 14);
-      return `${i.join('\n')}## Extended Summary\n\n${r || 'Transcript unavailable for summary.'}\n\n## Key Details\n\n- Duration ISO: ${String(n?.durationISO || 'Unknown')}\n- Views: ${Number(n?.viewCount || 0).toLocaleString()}\n\n## Transcript Excerpt\n\n${String(o || '').slice(0, 8e3)}\n`;
+      const r = this.buildSentenceSummary(i, 14);
+      return `${o.join('\n')}## Extended Summary\n\n${r || 'Transcript unavailable for summary.'}\n\n## Key Details\n\n- Duration ISO: ${String(n?.durationISO || 'Unknown')}\n- Views: ${Number(n?.viewCount || 0).toLocaleString()}\n\n## Transcript Excerpt\n\n${String(i || '').slice(0, 8e3)}\n`;
     }
     findChannelByName(e) {
       const t = this.normalizeChannelName(e);
@@ -1675,7 +1687,7 @@
           )),
         this.eventLogFlushTimer && clearTimeout(this.eventLogFlushTimer),
         (this.eventLogFlushTimer = setTimeout(() => {
-          (chrome.storage.local.set({ [h]: this.extensionEventLog }),
+          (chrome.storage.local.set({ [u]: this.extensionEventLog }),
             (this.eventLogFlushTimer = null));
         }, 750)));
     }
@@ -1691,14 +1703,13 @@
                     s =
                       e.includes('Specified native messaging host not found') ||
                       e.includes('No such native application');
-                  (s
-                    ? ((this.nativeHostUnavailable = !0),
-                      this.nativeHostMissingLogged ||
-                        ((this.nativeHostMissingLogged = !0),
-                        console.warn(
-                          '[NativeMessaging] Native host not installed; native service controls disabled'
-                        )))
-                    : console.error('[NativeMessaging] Error:', e),
+                  (s &&
+                    ((this.nativeHostUnavailable = !0),
+                    this.nativeHostMissingLogged ||
+                      ((this.nativeHostMissingLogged = !0),
+                      console.debug(
+                        '[NativeMessaging] Native host not installed; native service controls disabled'
+                      ))),
                     t({ error: e, unavailable: s }));
                 } else t(e || {});
               });
@@ -1806,7 +1817,7 @@
           e.type)
         ) {
           case 'TEST_PING':
-            (console.log('[FuseConnect v7] Received TEST_PING'),
+            (console.log('[GeminiBridge v7] Received TEST_PING'),
               a({ success: !0, status: 'online', version: '7.0.0', timestamp: Date.now() }));
             break;
           case 'PING':
@@ -1853,15 +1864,15 @@
             const t = Math.max(1, Math.min(5e3, Number(e.limit || 500))),
               s = e.category ? String(e.category) : null,
               n = e.level ? String(e.level) : null,
-              o = this.extensionEventLog.filter(
+              i = this.extensionEventLog.filter(
                 (e) => !((s && e.category !== s) || (n && e.level !== n))
               );
-            a({ success: !0, total: o.length, logs: o.slice(-t) });
+            a({ success: !0, total: i.length, logs: i.slice(-t) });
             break;
           }
           case 'CLEAR_EVENT_LOGS':
             ((this.extensionEventLog = []),
-              chrome.storage.local.set({ [h]: [] }),
+              chrome.storage.local.set({ [u]: [] }),
               a({ success: !0 }));
             break;
           case 'SET_EVENT_LOGGING':
@@ -1883,7 +1894,7 @@
               chrome.storage.local.set({
                 [l]: this.autoMonitor,
                 [d]: this.autoMasterClock,
-                [u]: this.autoWakePing,
+                [h]: this.autoWakePing,
               }),
               this.autoWakePing ? this.startStallWatchdog() : this.stopStallWatchdog(),
               a({ success: !0 }));
@@ -1950,7 +1961,7 @@
           case 'YOUTUBE_AUTHENTICATE':
             return (
               console.log(
-                '[FuseConnect v7] Starting YouTube auth flow',
+                '[GeminiBridge v7] Starting YouTube auth flow',
                 this.getOAuthDiagnostics()
               ),
               this.authenticateYouTubeSafe()
@@ -2142,7 +2153,7 @@
               chrome.storage.local.get(['processingState', 'ai_video_processed_count'], (t) => {
                 const s = t.processingState || this.getDefaultProcessingState(),
                   n = Math.max(1, Number(e.data?.processedCount || 1)),
-                  o = {
+                  i = {
                     ...s,
                     isProcessing: !1,
                     isPaused: !1,
@@ -2152,11 +2163,11 @@
                   };
                 chrome.storage.local.set(
                   {
-                    processingState: o,
+                    processingState: i,
                     ai_video_processed_count: Number(t.ai_video_processed_count || 0) + n,
                   },
                   () => {
-                    (this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: o }),
+                    (this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: i }),
                       a({ success: !0, data: { completed: !0 } }));
                   }
                 );
@@ -2218,7 +2229,7 @@
                     chrome.storage.local.set(
                       { processingState: s, ai_video_total_count: t.length },
                       () => {
-                        (chrome.alarms.create(p, { periodInMinutes: 0.1 }),
+                        (chrome.alarms.create(m, { periodInMinutes: 0.1 }),
                           this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: s }),
                           a({ success: !0, data: { started: !0 }, state: s }));
                       }
@@ -2237,7 +2248,7 @@
                   lastUpdated: Date.now(),
                 };
                 chrome.storage.local.set({ processingState: t }, () => {
-                  (chrome.alarms.clear(p),
+                  (chrome.alarms.clear(m),
                     this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: t }),
                     a({ success: !0, data: { paused: !0 }, state: t }));
                 });
@@ -2254,7 +2265,7 @@
                   lastUpdated: Date.now(),
                 };
                 chrome.storage.local.set({ processingState: t }, () => {
-                  (chrome.alarms.create(p, { periodInMinutes: 0.1 }),
+                  (chrome.alarms.create(m, { periodInMinutes: 0.1 }),
                     this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: t }),
                     a({ success: !0, data: { resumed: !0 }, state: t }));
                 });
@@ -2272,7 +2283,7 @@
                   lastUpdated: Date.now(),
                 };
                 chrome.storage.local.set({ processingState: t }, () => {
-                  (chrome.alarms.clear(p),
+                  (chrome.alarms.clear(m),
                     this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: t }),
                     a({ success: !0, data: { stopped: !0 }, state: t }));
                 });
@@ -2869,13 +2880,15 @@
                           target: { tabId: e[0].id },
                           files: ['content/index.js'],
                         }),
-                        console.log(`[FuseConnect v7] Content script injected into tab ${e[0].id}`),
+                        console.log(
+                          `[GeminiBridge v7] Content script injected into tab ${e[0].id}`
+                        ),
                         setTimeout(() => {
                           e[0]?.id && this.safeSendMessage(e[0].id, { type: 'SHOW_PANEL' });
                         }, 500),
                         a({ success: !0, injected: !0 }));
                   } catch (e) {
-                    (console.error('[FuseConnect v7] Failed to activate on tab:', e),
+                    (console.error('[GeminiBridge v7] Failed to activate on tab:', e),
                       a({ success: !1, error: e.message }));
                   }
                 else a({ success: !1, error: 'No active tab found' });
@@ -2913,7 +2926,7 @@
                     a({ success: !0 }));
                 })
                 .catch((e) => {
-                  (console.error('[FuseConnect v7] Error injecting message:', e),
+                  (console.error('[GeminiBridge v7] Error injecting message:', e),
                     a({ success: !1, error: e.message }));
                 }),
               !0
@@ -2944,8 +2957,8 @@
                     ? (n = 'Claude')
                     : t.includes('perplexity.ai') && (n = 'Perplexity'),
                 this.registerPageAgent(e, `AI Chat (${n})`, t, s.tab.id));
-              const o = { type: 'AGENT_STATUS', agent: this.agents.get(e) };
-              (this.broadcastToTabs(o), a({ success: !0, agentId: e }));
+              const i = { type: 'AGENT_STATUS', agent: this.agents.get(e) };
+              (this.broadcastToTabs(i), a({ success: !0, agentId: e }));
             } else a({ success: !0 });
             break;
           case 'STREAMING_UPDATE':
@@ -2958,21 +2971,21 @@
               const a = t(`ai:${e.content.substring(0, 500)}`),
                 n = Date.now();
               if (this.recentMessageHashes.has(a))
-                console.log('[FuseConnect v7] Skipping duplicate AI response broadcast');
+                console.log('[GeminiBridge v7] Skipping duplicate AI response broadcast');
               else {
                 this.recentMessageHashes.set(a, n);
                 let t = e.metadata?.senderId || e.senderId;
-                const o = (e) => (e ? e.replace(/^(page-agent-|browser-|agent-)/, '') : '');
+                const i = (e) => (e ? e.replace(/^(page-agent-|browser-|agent-)/, '') : '');
                 (!t &&
                   s.tab?.id &&
                   ((t = `page-agent-${s.tab.id}`),
-                  console.log('[FuseConnect v7] Using tab-based senderId:', t)),
+                  console.log('[GeminiBridge v7] Using tab-based senderId:', t)),
                   t || (t = `ai-response-${Date.now()}`));
-                const i = o(t),
-                  r = o(this.agentId);
-                console.log('[FuseConnect v7] AI Response from agent:', {
+                const o = i(t),
+                  r = i(this.agentId);
+                console.log('[GeminiBridge v7] AI Response from agent:', {
                   senderId: t,
-                  normalizedSenderId: i,
+                  normalizedSenderId: o,
                   normalizedMyId: r,
                 });
                 let c = e.channel || e.metadata?.channel;
@@ -2982,7 +2995,7 @@
                       ? (c = 'green')
                       : this.joinedChannels.size > 0 &&
                         ((c = Array.from(this.joinedChannels)[0]),
-                        console.log('[FuseConnect v7] Using fallback channel:', c))),
+                        console.log('[GeminiBridge v7] Using fallback channel:', c))),
                   c)
                 ) {
                   const a = s.tab?.url || '';
@@ -2995,7 +3008,7 @@
                         : a.includes('claude.ai')
                           ? (n = 'Claude')
                           : a.includes('copilot') && (n = 'Copilot'));
-                  const o = {
+                  const i = {
                     senderId: t,
                     senderType: 'ai-agent',
                     platform: n,
@@ -3003,11 +3016,11 @@
                     timestamp: Date.now(),
                   };
                   (e.metadata?.correlationId &&
-                    ((o.correlationId = e.metadata.correlationId),
-                    (o.taskId = e.metadata.taskId),
-                    (o.inResponseTo = e.metadata.inResponseTo),
+                    ((i.correlationId = e.metadata.correlationId),
+                    (i.taskId = e.metadata.taskId),
+                    (i.inResponseTo = e.metadata.inResponseTo),
                     console.log(
-                      '[FuseConnect v7] 🔗 Including correlation in broadcast:',
+                      '[GeminiBridge v7] 🔗 Including correlation in broadcast:',
                       e.metadata.correlationId
                     )),
                     this.send({
@@ -3016,9 +3029,9 @@
                       channel: c,
                       content: e.content,
                       messageType: 'ai-response',
-                      metadata: o,
+                      metadata: i,
                     }),
-                    console.log('[FuseConnect v7] AI response broadcast to channel:', {
+                    console.log('[GeminiBridge v7] AI response broadcast to channel:', {
                       channel: c,
                       senderId: t,
                       platform: n,
@@ -3087,7 +3100,7 @@
           (await chrome.ai.registerTools(e, (e, t) => this.handleToolInvocation(e, t)),
             console.log('[GeminiBridge] Successfully registered 5 WebMCP tools'));
         } catch (e) {
-          console.warn('[GeminiBridge] WebMCP registration failed (feature may be disabled)', e);
+          console.debug('[GeminiBridge] WebMCP registration failed (feature may be disabled)', e);
         }
       }
     }

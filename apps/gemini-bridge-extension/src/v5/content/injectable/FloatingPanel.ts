@@ -107,7 +107,7 @@ export class EnhancedFloatingPanel {
       opacity: 1,
     };
 
-    console.log(`[FuseConnect] Panel initialized with ID: ${this.panelId}`);
+    console.log(`[GeminiBridge] Panel initialized with ID: ${this.panelId}`);
 
     this.loadState();
     this.inject();
@@ -155,7 +155,7 @@ export class EnhancedFloatingPanel {
   private requestConnectionState(): void {
     chrome.runtime.sendMessage({ type: 'GET_STATE' }, (response) => {
       if (response) {
-        console.log('[FuseConnect] Received state from background:', response);
+        console.log('[GeminiBridge] Received state from background:', response);
         this.connectionStatus = response.connectionStatus || 'disconnected';
         this.agents = response.agents || [];
         this.channels = response.channels || [];
@@ -170,7 +170,7 @@ export class EnhancedFloatingPanel {
 
         // Restore current channel if we have one stored (tab-specific)
         // Use panel-specific key to prevent cross-tab sync
-        const channelKey = `fuse_channel_${this.panelId}`;
+        const channelKey = `gemini_bridge_channel_${this.panelId}`;
         chrome.storage.local.get([channelKey], (result) => {
           if (result[channelKey]) {
             this.currentChannel = result[channelKey];
@@ -186,7 +186,7 @@ export class EnhancedFloatingPanel {
    */
   private async loadState(): Promise<void> {
     try {
-      const result = await chrome.storage.local.get(['fuse_panel_state']);
+      const result = await chrome.storage.local.get(['gemini_bridge_panel_state']);
       if (result.fuse_panel_state) {
         this.state = { ...this.state, ...result.fuse_panel_state };
       }
@@ -831,7 +831,7 @@ export class EnhancedFloatingPanel {
         if (changes.fuse_channels) {
           const newChannels = changes.fuse_channels.newValue;
           if (newChannels && Array.isArray(newChannels)) {
-            console.log('[FuseConnect] Syncing channels list from storage:', newChannels.length);
+            console.log('[GeminiBridge] Syncing channels list from storage:', newChannels.length);
             this.channels = newChannels;
             this.update();
           }
@@ -1673,7 +1673,7 @@ export class EnhancedFloatingPanel {
       },
       (response) => {
         if (!response?.success) {
-          console.warn('[FuseConnect] Failed to inject message to page:', response?.error);
+          console.warn('[GeminiBridge] Failed to inject message to page:', response?.error);
         }
       }
     );
@@ -1727,7 +1727,7 @@ export class EnhancedFloatingPanel {
           });
           this.update();
         } else {
-          console.warn('[FuseConnect] Failed to inject message:', response?.error);
+          console.warn('[GeminiBridge] Failed to inject message:', response?.error);
         }
       }
     );
@@ -1746,7 +1746,7 @@ export class EnhancedFloatingPanel {
     // CRITICAL: Ensure we have a valid page agent ID before sending
     // Without this, the message will have wrong senderId and cause self-injection loops
     if (!this.myAgentId || !this.myAgentId.startsWith('page-agent-')) {
-      console.error('[FuseConnect] Cannot send message: myAgentId is not set correctly!', {
+      console.error('[GeminiBridge] Cannot send message: myAgentId is not set correctly!', {
         myAgentId: this.myAgentId,
         expected: 'page-agent-XXXXX',
       });
@@ -1756,7 +1756,7 @@ export class EnhancedFloatingPanel {
       return;
     }
 
-    console.log('[FuseConnect] Sending unified message:', {
+    console.log('[GeminiBridge] Sending unified message:', {
       content: content.substring(0, 50),
       myAgentId: this.myAgentId,
     });
@@ -1802,7 +1802,7 @@ export class EnhancedFloatingPanel {
           metadata,
         });
       } else {
-        console.log('[FuseConnect] Skipping duplicate user message broadcast');
+        console.log('[GeminiBridge] Skipping duplicate user message broadcast');
       }
     }
 
@@ -1815,7 +1815,7 @@ export class EnhancedFloatingPanel {
       },
       (response) => {
         if (!response?.success) {
-          console.warn('[FuseConnect] Failed to inject message:', response?.error);
+          console.warn('[GeminiBridge] Failed to inject message:', response?.error);
           // Update message to show error
           const msg = this.messages.find((m) => m.content === content);
           if (msg) {
@@ -1835,7 +1835,7 @@ export class EnhancedFloatingPanel {
   private joinChannel(channelId: string): void {
     this.currentChannel = channelId;
     // Persist channel selection for background script access (tab-specific)
-    const channelKey = `fuse_channel_${this.panelId}`;
+    const channelKey = `gemini_bridge_channel_${this.panelId}`;
     chrome.storage.local.set({ [channelKey]: channelId });
     this.safeSendMessage({
       type: 'CHANNEL_JOIN',
@@ -1852,12 +1852,12 @@ export class EnhancedFloatingPanel {
     this.currentChannel = channelId;
 
     console.log(
-      `[FuseConnect] Panel ${this.panelId} switching channel: ${previousChannel} → ${channelId}`
+      `[GeminiBridge] Panel ${this.panelId} switching channel: ${previousChannel} → ${channelId}`
     );
 
     // Persist channel selection for background script access (tab-specific)
     // Each tab maintains its own channel selection independently
-    const channelKey = `fuse_channel_${this.panelId}`;
+    const channelKey = `gemini_bridge_channel_${this.panelId}`;
     chrome.storage.local.set({ [channelKey]: channelId });
 
     if (channelId) {
@@ -1896,21 +1896,21 @@ export class EnhancedFloatingPanel {
   private submitCreateChannel(): void {
     const input = this.container?.querySelector('#fuse-new-channel-name') as HTMLInputElement;
     console.log(
-      '[FuseConnect] submitCreateChannel called. Input found:',
+      '[GeminiBridge] submitCreateChannel called. Input found:',
       !!input,
       'Value:',
       input?.value
     );
 
     if (!input || !input.value.trim()) {
-      console.warn('[FuseConnect] No channel name entered');
+      console.warn('[GeminiBridge] No channel name entered');
       return;
     }
 
     const name = input.value.trim();
     input.value = ''; // Clear input
 
-    console.log('[FuseConnect] Creating channel:', name);
+    console.log('[GeminiBridge] Creating channel:', name);
 
     // Use safe send with error handling
     this.safeSendMessage(
@@ -1920,7 +1920,7 @@ export class EnhancedFloatingPanel {
       },
       (response) => {
         if (response?.success || response?.channelId) {
-          console.log('[FuseConnect] Channel created successfully:', response.channelId);
+          console.log('[GeminiBridge] Channel created successfully:', response.channelId);
           // The channels will be updated via CHANNELS_UPDATE message
         }
       }
@@ -1944,7 +1944,7 @@ export class EnhancedFloatingPanel {
    */
   private safeSendMessage(message: any, callback?: (response: any) => void): void {
     if (!this.isContextValid) {
-      console.warn('[FuseConnect] Extension context is invalid, cannot send message');
+      console.warn('[GeminiBridge] Extension context is invalid, cannot send message');
       this.showContextInvalidatedWarning();
       return;
     }
@@ -1958,19 +1958,19 @@ export class EnhancedFloatingPanel {
             errorMessage.includes('Extension context invalidated') ||
             errorMessage.includes('Receiving end does not exist')
           ) {
-            console.error('[FuseConnect] Extension context invalidated:', errorMessage);
+            console.error('[GeminiBridge] Extension context invalidated:', errorMessage);
             this.isContextValid = false;
             this.showContextInvalidatedWarning();
             return;
           }
-          console.warn('[FuseConnect] Chrome runtime error:', errorMessage);
+          console.warn('[GeminiBridge] Chrome runtime error:', errorMessage);
         }
         if (callback) {
           callback(response);
         }
       });
     } catch (error) {
-      console.error('[FuseConnect] Failed to send message:', error);
+      console.error('[GeminiBridge] Failed to send message:', error);
       this.isContextValid = false;
       this.showContextInvalidatedWarning();
     }
@@ -2263,7 +2263,7 @@ export class EnhancedFloatingPanel {
           );
 
           if (isDuplicate) {
-            console.log('[FuseConnect] Skipping duplicate message');
+            console.log('[GeminiBridge] Skipping duplicate message');
             break;
           }
 
@@ -2279,7 +2279,7 @@ export class EnhancedFloatingPanel {
           // The key distinction: isOwnMessage means this message originated from THIS tab.
           // If it's from another tab/agent, we want our AI to see it and potentially respond.
 
-          console.log('[FuseConnect] NEW_MESSAGE processing:', {
+          console.log('[GeminiBridge] NEW_MESSAGE processing:', {
             from: msg.from,
             isOwnMessage,
             senderId: msg.metadata?.senderId,
@@ -2302,12 +2302,12 @@ export class EnhancedFloatingPanel {
             // and often results in the message getting "stuck" in the input field.
 
             console.log(
-              '[FuseConnect] External message received (display only):',
+              '[GeminiBridge] External message received (display only):',
               msg.from,
               msg.metadata?.platform
             );
           } else if (isOwnMessage) {
-            console.log('[FuseConnect] Not injecting own message (self-detection)');
+            console.log('[GeminiBridge] Not injecting own message (self-detection)');
           }
         }
         break;
@@ -2318,7 +2318,7 @@ export class EnhancedFloatingPanel {
       case 'JOINED_CHANNELS_UPDATE':
         // Update any local state tracking joined channels if necessary
         // For now, we mainly rely on currentChannel, but this ensures we have the data
-        console.log('[FuseConnect] Joined channels updated:', message.joinedChannels);
+        console.log('[GeminiBridge] Joined channels updated:', message.joinedChannels);
         this.update();
         break;
       case 'NOTIFICATION':
@@ -2334,7 +2334,7 @@ export class EnhancedFloatingPanel {
         break;
       case 'RESPONSE_COMPLETE':
         // RESTORED FROM BACKUP: Only add to local UI, do NOT broadcast
-        console.log('[FuseConnect] RESPONSE_COMPLETE received:', {
+        console.log('[GeminiBridge] RESPONSE_COMPLETE received:', {
           hasContent: !!message.content,
           connectionStatus: this.connectionStatus,
           currentChannel: this.currentChannel,
@@ -2360,7 +2360,7 @@ export class EnhancedFloatingPanel {
             responseContent.includes('[AI → User]') ||
             responseContent.includes('[AI Response]')
           ) {
-            console.log('[FuseConnect] Skipping response with embedded prefixes');
+            console.log('[GeminiBridge] Skipping response with embedded prefixes');
             break;
           }
 
@@ -2383,7 +2383,7 @@ export class EnhancedFloatingPanel {
             });
             this.update();
           } else {
-            console.log('[FuseConnect] Skipping duplicate response');
+            console.log('[GeminiBridge] Skipping duplicate response');
           }
 
           // NOTE: We do NOT broadcast AI responses automatically.
@@ -2537,7 +2537,7 @@ export class EnhancedFloatingPanel {
    * Set the Page Agent ID for this panel
    */
   setAgentId(id: string): void {
-    console.log('[FuseConnect] Panel assigned Agent ID:', id);
+    console.log('[GeminiBridge] Panel assigned Agent ID:', id);
     this.myAgentId = id;
     this.update(); // Update UI if needed (e.g. to show ID)
   }

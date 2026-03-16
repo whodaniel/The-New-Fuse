@@ -136,14 +136,14 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
 // ============================================
 
 export const STORAGE_KEYS = {
-  settings: 'fuse_settings',
-  agentId: 'fuse_agent_id',
-  panelState: 'fuse_panel_state',
-  channels: 'fuse_channels',
-  joinedChannels: 'fuse_joined_channels',
-  notifications: 'fuse_notifications',
-  knownNodes: 'fuse_known_nodes',
-  recentMessages: 'fuse_recent_messages',
+  settings: 'gemini_bridge_settings',
+  agentId: 'gemini_bridge_agent_id',
+  panelState: 'gemini_bridge_panel_state',
+  channels: 'gemini_bridge_channels',
+  joinedChannels: 'gemini_bridge_joined_channels',
+  notifications: 'gemini_bridge_notifications',
+  knownNodes: 'gemini_bridge_known_nodes',
+  recentMessages: 'gemini_bridge_recent_messages',
 };
 
 // ============================================

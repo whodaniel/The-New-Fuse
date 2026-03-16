@@ -25,6 +25,7 @@ const BrandIdentityPage = lazy(() => import('../pages/BrandIdentity'));
 const BlogPage = lazy(() => import('../pages/Blog').then((module) => ({ default: module.Blog })));
 const OnboardingPreviewPage = lazy(() => import('../pages/preview/OnboardingPreview'));
 const NotFound = lazy(() => import('../pages/NotFound'));
+const VisualizationsPage = lazy(() => import('../pages/Visualizations'));
 const UnauthorizedPage = lazy(() => import('../pages/Unauthorized'));
 
 const RedirectToStatic = ({ to }: { to: string }) => {
@@ -78,6 +79,9 @@ export const coreRoutes: ReactElement[] = [
   <Route key="docs" path="/docs" element={<DocsPage />} />,
   <Route key="docs-wildcard" path="/docs/*" element={<DocsPage />} />,
 
+  // Visualizations
+  <Route key="visualizations" path="/visualizations" element={<VisualizationsPage />} />,
+
   // Connect/Extension
   <Route key="connect" path="/connect" element={<ConnectExtensionPage />} />,
 
@@ -113,6 +117,7 @@ export const PUBLIC_ROUTES = [
   '/brand',
   '/blog',
   '/marketplace',
+  '/visualizations',
   '/product-map',
   '/capabilities',
   '/design-system',

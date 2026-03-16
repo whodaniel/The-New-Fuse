@@ -432,7 +432,7 @@
                   console.error('Fuse Panel Open Error:', t, e));
               } else
                 e?.success &&
-                  (this.showToast('Panel opened! (Ctrl+Shift+F to toggle)'), window.close());
+                  (this.showToast('Panel opened! (Ctrl+Shift+G to toggle)'), window.close());
             }));
         } catch (e) {
           (this.showToast(`Cannot open panel: ${e.message}`),
@@ -1233,7 +1233,7 @@
     }
     async loadSettings() {
       return new Promise((e) => {
-        chrome.storage.local.get(['fuse_settings'], (t) => {
+        chrome.storage.local.get(['gemini_bridge_settings'], (t) => {
           if (t.fuse_settings) {
             this.state.settings = { ...this.state.settings, ...t.fuse_settings };
             const e = document.getElementById('relay-url');
@@ -1624,7 +1624,7 @@
       s && chrome.runtime.sendMessage({ type: 'SEND_TO_AGENT', agentId: e, content: s });
     }
     async exportLogs() {
-      const e = (await chrome.storage.local.get(['fuse_logs'])).fuse_logs || [],
+      const e = (await chrome.storage.local.get(['gemini_bridge_logs'])).fuse_logs || [],
         t = new Blob([JSON.stringify(e, null, 2)], { type: 'application/json' }),
         s = URL.createObjectURL(t),
         n = document.createElement('a');

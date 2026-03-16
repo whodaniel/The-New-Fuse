@@ -1,11 +1,11 @@
 /**
- * Fuse Connect v7 - Content Script Entry Point
+ * Gemini Bridge v7 - Content Script Entry Point
  *
  * SIMPLIFIED VERSION - Uses SimpleChatBridge for direct Gemini interaction.
  *
  * The floating panel is NOT auto-injected. It only appears when:
  * 1. User clicks "Open Panel" button in popup
- * 2. User presses Ctrl+Shift+F keyboard shortcut
+ * 2. User presses Ctrl+Shift+G keyboard shortcut
  */
 
 import { simpleChatBridge } from './adapters/SimpleChatBridge';
@@ -38,8 +38,8 @@ const shouldSkipForPage = (): boolean => {
 // Guard against multiple initialization (can happen in iframes or with hot reload)
 declare global {
   interface Window {
-    __FUSE_CONNECT_INITIALIZED__?: boolean;
-    __FUSE_DEBUG?: {
+    __GEMINI_BRIDGE_INITIALIZED__?: boolean;
+    __GEMINI_BRIDGE_DEBUG?: {
       getLastResponse: () => string | null;
       sendTestMessage: (msg: string) => void;
       checkExtensionContext: () => boolean;
@@ -48,7 +48,7 @@ declare global {
   }
 }
 
-class FuseConnectContentScript {
+class GeminiBridgeContentScript {
   private panel: EnhancedFloatingPanel | null = null;
   private isInitialized = false;
   private panelVisible = false;
@@ -98,19 +98,19 @@ class FuseConnectContentScript {
     if (this.isInitialized) return;
     this.isInitialized = true;
 
-    console.debug('[FuseConnect v7] Content script initialized (panel AUTO-OPEN disabled)');
+    console.debug('[GeminiBridge v7] Content script initialized (panel AUTO-OPEN disabled)');
 
     // Auto-open panel disabled by default per user request
     // try {
     //   this.showPanel();
     // } catch (e) {
-    //   console.error('[FuseConnect v7] Failed to auto-open panel:', e);
+    //   console.error('[GeminiBridge v7] Failed to auto-open panel:', e);
     // }
 
     // Initialize the simple chat bridge with callbacks
     simpleChatBridge.init({
       onResponse: (content) => {
-        console.log('[FuseConnect v7] AI Response received, length:', content.length);
+        console.log('[GeminiBridge v7] AI Response received, length:', content.length);
 
         // Forward to panel
         if (this.panel) {
@@ -124,7 +124,7 @@ class FuseConnectContentScript {
         const pendingRequest = this.getOldestPendingRequest();
         if (!this.pageAgentId) {
           console.warn(
-            '[FuseConnect v7] ⚠️ Page Agent ID missing during response! This may cause message drop.'
+            '[GeminiBridge v7] ⚠️ Page Agent ID missing during response! This may cause message drop.'
           );
         }
 
@@ -144,7 +144,7 @@ class FuseConnectContentScript {
           responseMetadata.taskId = pendingRequest.taskId;
           responseMetadata.inResponseTo = pendingRequest.from;
           console.log(
-            '[FuseConnect v7] 🔗 Correlating response to request:',
+            '[GeminiBridge v7] 🔗 Correlating response to request:',
             pendingRequest.correlationId
           );
           this.pendingRequests.delete(pendingRequest.correlationId);
@@ -174,7 +174,7 @@ class FuseConnectContentScript {
         }
       },
       onError: (error) => {
-        console.error('[FuseConnect v7] Chat bridge error:', error);
+        console.error('[GeminiBridge v7] Chat bridge error:', error);
       },
     });
 
@@ -212,7 +212,7 @@ class FuseConnectContentScript {
 
       if (elements.isReady && !this.chatReady) {
         this.chatReady = true;
-        console.log('[FuseConnect v7] Chat is ready!');
+        console.log('[GeminiBridge v7] Chat is ready!');
 
         // Notify background
         this.safeSendMessage(
@@ -228,7 +228,7 @@ class FuseConnectContentScript {
           (response) => {
             if (response?.agentId) {
               this.pageAgentId = response.agentId;
-              console.log('[FuseConnect v7] Assigned Page Agent ID:', this.pageAgentId);
+              console.log('[GeminiBridge v7] Assigned Page Agent ID:', this.pageAgentId);
             }
           }
         );
@@ -262,37 +262,37 @@ class FuseConnectContentScript {
    * Setup debug utilities accessible from browser console
    */
   private setupDebugUtils(): void {
-    window.__FUSE_DEBUG = {
+    window.__GEMINI_BRIDGE_DEBUG = {
       getLastResponse: () => {
         const response = simpleChatBridge.getLastResponse();
-        console.log('[FuseConnect Debug] Last response:', response);
+        console.log('[GeminiBridge Debug] Last response:', response);
         return response;
       },
 
       sendTestMessage: (msg: string) => {
-        console.log('[FuseConnect Debug] Sending test message:', msg);
+        console.log('[GeminiBridge Debug] Sending test message:', msg);
         simpleChatBridge.sendMessage(msg);
       },
 
       checkExtensionContext: () => {
         try {
           const isValid = !!chrome.runtime?.id;
-          console.log('[FuseConnect Debug] Extension context valid:', isValid);
+          console.log('[GeminiBridge Debug] Extension context valid:', isValid);
           return isValid;
         } catch (e) {
-          console.error('[FuseConnect Debug] Extension context check failed:', e);
+          console.error('[GeminiBridge Debug] Extension context check failed:', e);
           return false;
         }
       },
 
       findElements: () => {
         const elements = simpleChatBridge.findElements();
-        console.log('[FuseConnect Debug] Found elements:', elements);
+        console.log('[GeminiBridge Debug] Found elements:', elements);
         return elements;
       },
     };
 
-    console.debug('[FuseConnect v7] Debug utils available at window.__FUSE_DEBUG');
+    console.debug('[GeminiBridge v7] Debug utils available at window.__GEMINI_BRIDGE_DEBUG');
   }
 
   /**
@@ -329,7 +329,7 @@ class FuseConnectContentScript {
 
     this.panel.show();
     this.panelVisible = true;
-    console.log('[FuseConnect v7] Panel shown');
+    console.log('[GeminiBridge v7] Panel shown');
   }
 
   /**
@@ -339,7 +339,7 @@ class FuseConnectContentScript {
     if (this.panel) {
       this.panel.hide();
       this.panelVisible = false;
-      console.log('[FuseConnect v7] Panel hidden');
+      console.log('[GeminiBridge v7] Panel hidden');
     }
   }
 
@@ -369,7 +369,7 @@ class FuseConnectContentScript {
           }
         } catch (e) {
           // Ignore context invalidation errors - expected during reloads
-          console.debug('[FuseConnect] Context invalidated during response sending');
+          console.debug('[GeminiBridge] Context invalidated during response sending');
         }
       };
 
@@ -390,7 +390,7 @@ class FuseConnectContentScript {
               this.showPanel();
               safeSendResponse({ success: true });
             } catch (e: any) {
-              console.error('[FuseConnect] Failed to show panel:', e);
+              console.error('[GeminiBridge] Failed to show panel:', e);
               safeSendResponse({ success: false, error: e.message });
             }
             return true;
@@ -571,7 +571,7 @@ class FuseConnectContentScript {
                 this.isChannelPaused(messageChannelId) &&
                 msg.metadata?.forceInject !== true
               ) {
-                console.log('[FuseConnect v7] ⏸️ Skipping paused-channel message', {
+                console.log('[GeminiBridge v7] ⏸️ Skipping paused-channel message', {
                   messageChannel: messageChannelId,
                   pausedChannels: Array.from(this.pausedChannels),
                 });
@@ -590,7 +590,7 @@ class FuseConnectContentScript {
                 messageChannel === effectiveChannel;
 
               if (!isForMyChannel) {
-                console.log('[FuseConnect v7] ⏭️ Skipping message for different channel:', {
+                console.log('[GeminiBridge v7] ⏭️ Skipping message for different channel:', {
                   messageChannel,
                   myChannel: effectiveChannel,
                   contentPreview: msg.content?.substring(0, 30),
@@ -609,37 +609,37 @@ class FuseConnectContentScript {
               if (this.pageAgentId && msg.to === this.pageAgentId && msg.content) {
                 if (!this.canAutoInjectRelayMessage(msg)) {
                   console.log(
-                    '[FuseConnect v7] ⏭️ Skipping targeted auto-injection (panel hidden on this tab)'
+                    '[GeminiBridge v7] ⏭️ Skipping targeted auto-injection (panel hidden on this tab)'
                   );
                   safeSendResponse({ success: true, reason: 'panel_hidden' });
                   return true;
                 }
                 if (!this.shouldInjectRelayMessage(msg)) {
                   console.log(
-                    '[FuseConnect v7] ⏭️ Skipping non-conversational targeted message',
+                    '[GeminiBridge v7] ⏭️ Skipping non-conversational targeted message',
                     msg.metadata?.eventType || msg.messageType || 'unknown'
                   );
                   safeSendResponse({ success: true, reason: 'filtered_system_message' });
                   return true;
                 }
-                console.log('[FuseConnect v7] Injecting targeted message:', msg.content);
+                console.log('[GeminiBridge v7] Injecting targeted message:', msg.content);
                 this.injectMessage(msg.content).then((success) => {
-                  if (success) console.log('[FuseConnect v7] Injection successful');
-                  else console.warn('[FuseConnect v7] Injection failed');
+                  if (success) console.log('[GeminiBridge v7] Injection successful');
+                  else console.warn('[GeminiBridge v7] Injection failed');
                 });
               }
               // CHANNEL BROADCAST INJECTION: If from external agent on same channel
               else if (msg.to === 'broadcast' && msg.content && msg.from) {
                 if (!this.canAutoInjectRelayMessage(msg)) {
                   console.log(
-                    '[FuseConnect v7] ⏭️ Skipping broadcast auto-injection (panel hidden on this tab)'
+                    '[GeminiBridge v7] ⏭️ Skipping broadcast auto-injection (panel hidden on this tab)'
                   );
                   safeSendResponse({ success: true, reason: 'panel_hidden' });
                   return true;
                 }
                 if (!this.shouldInjectRelayMessage(msg)) {
                   console.log(
-                    '[FuseConnect v7] ⏭️ Skipping non-conversational broadcast message',
+                    '[GeminiBridge v7] ⏭️ Skipping non-conversational broadcast message',
                     msg.metadata?.eventType || msg.messageType || 'unknown'
                   );
                   safeSendResponse({ success: true, reason: 'filtered_system_message' });
@@ -676,7 +676,7 @@ class FuseConnectContentScript {
                 const isExternalAgent = !isFromSelf;
 
                 // Debug logging to trace agent identification
-                console.log('[FuseConnect v7] 📨 Message received:', {
+                console.log('[GeminiBridge v7] 📨 Message received:', {
                   from: msg.from,
                   senderId: senderFromMetadata,
                   myAgentId: this.pageAgentId,
@@ -691,7 +691,7 @@ class FuseConnectContentScript {
                 // - AI responses from OTHER agents SHOULD be injected so our AI can see/respond to them
                 // - This enables true multi-AI conversation
                 if (!isExternalAgent) {
-                  console.log('[FuseConnect v7] ⏭️ Skipping message:', {
+                  console.log('[GeminiBridge v7] ⏭️ Skipping message:', {
                     from: msg.from,
                     senderId: senderFromMetadata,
                     myAgentId: this.pageAgentId,
@@ -702,7 +702,7 @@ class FuseConnectContentScript {
                   // Instead, add to queue.
                   if (isStreaming) {
                     console.log(
-                      '[FuseConnect v7] ⏳ AI is streaming, QUEUING message for later injection:',
+                      '[GeminiBridge v7] ⏳ AI is streaming, QUEUING message for later injection:',
                       msg.content.substring(0, 50)
                     );
                     this.queueMessage(msg.content, msg.metadata);
@@ -711,7 +711,7 @@ class FuseConnectContentScript {
 
                   // This is from an external agent - inject it!
                   // (Even if it's an AI response - we WANT to inject other AIs' responses)
-                  console.log('[FuseConnect v7] ✅ Injecting message from external agent:', {
+                  console.log('[GeminiBridge v7] ✅ Injecting message from external agent:', {
                     from: msg.from,
                     isAIResponse: msg.messageType === 'ai-response' || msg.metadata?.isAIResponse,
                     contentPreview: msg.content.substring(0, 50),
@@ -726,7 +726,7 @@ class FuseConnectContentScript {
 
                   if (isOrchestratorTask) {
                     console.log(
-                      '[FuseConnect v7] 🎯 Orchestrator task detected:',
+                      '[GeminiBridge v7] 🎯 Orchestrator task detected:',
                       msg.metadata?.taskId
                     );
                     // Register this as a pending request so we can correlate the AI response
@@ -738,8 +738,8 @@ class FuseConnectContentScript {
                   }
 
                   this.injectMessage(msg.content).then((success) => {
-                    if (success) console.log('[FuseConnect v7] ✅ Injection successful');
-                    else console.warn('[FuseConnect v7] ⚠️ Injection failed');
+                    if (success) console.log('[GeminiBridge v7] ✅ Injection successful');
+                    else console.warn('[GeminiBridge v7] ⚠️ Injection failed');
                   });
                 }
               }
@@ -750,7 +750,7 @@ class FuseConnectContentScript {
           }
         }
       } catch (e: any) {
-        console.error('[FuseConnect] Content script message handler error:', e);
+        console.error('[GeminiBridge] Content script message handler error:', e);
         // Don't call sendResponse here for async cases as it might be too late,
         // but for sync cases it prevents the "closed prematurely" error.
         try {
@@ -783,7 +783,7 @@ class FuseConnectContentScript {
   private setupKeyboardShortcuts(): void {
     document.addEventListener('keydown', (e) => {
       // Ctrl/Cmd + Shift + F to toggle panel
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'F') {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'G') {
         e.preventDefault();
         this.togglePanel();
       }
@@ -835,14 +835,14 @@ class FuseConnectContentScript {
   }
 
   private async injectMessage(content: string, metadata?: any): Promise<boolean> {
-    console.log('[FuseConnect v7] Injecting message:', content.substring(0, 50));
+    console.log('[GeminiBridge v7] Injecting message:', content.substring(0, 50));
 
     const success = await simpleChatBridge.sendMessage(content);
 
     if (success) {
-      console.log('[FuseConnect v7] Message sent successfully');
+      console.log('[GeminiBridge v7] Message sent successfully');
     } else {
-      console.error('[FuseConnect v7] Message send failed');
+      console.error('[GeminiBridge v7] Message send failed');
     }
 
     return success;
@@ -860,7 +860,7 @@ class FuseConnectContentScript {
       ...request,
       timestamp: Date.now(),
     });
-    console.log('[FuseConnect v7] 📝 Tracking pending request:', request.correlationId);
+    console.log('[GeminiBridge v7] 📝 Tracking pending request:', request.correlationId);
 
     // Clean up old requests (older than 5 minutes)
     const now = Date.now();
@@ -900,7 +900,7 @@ class FuseConnectContentScript {
 
     if (detection.detected) {
       console.log(
-        `[FuseConnect v7] CAPTCHA detected: ${detection.type} (confidence: ${detection.confidence})`
+        `[GeminiBridge v7] CAPTCHA detected: ${detection.type} (confidence: ${detection.confidence})`
       );
 
       this.safeSendMessage({
@@ -950,7 +950,7 @@ class FuseConnectContentScript {
 
       if (simpleChatBridge.isStreaming()) {
         // Still streaming, wait and retry
-        console.debug('[FuseConnect v7] Queue paused (AI streaming)...');
+        console.debug('[GeminiBridge v7] Queue paused (AI streaming)...');
         setTimeout(process, 1000);
         return;
       }
@@ -959,7 +959,7 @@ class FuseConnectContentScript {
       const item = this.injectionQueue.shift();
       if (item) {
         console.log(
-          '[FuseConnect v7] 🚀 Processing queued message:',
+          '[GeminiBridge v7] 🚀 Processing queued message:',
           item.content.substring(0, 30)
         );
 
@@ -1015,10 +1015,10 @@ class FuseConnectContentScript {
 
 // Initialize with guard to prevent multiple instances
 if (shouldSkipForPage()) {
-  console.log('[FuseConnect v7] Skipping content script on auth/challenge/IDE page');
-} else if (!window.__FUSE_CONNECT_INITIALIZED__) {
-  window.__FUSE_CONNECT_INITIALIZED__ = true;
-  new FuseConnectContentScript();
+  console.log('[GeminiBridge v7] Skipping content script on auth/challenge/IDE page');
+} else if (!window.__GEMINI_BRIDGE_INITIALIZED__) {
+  window.__GEMINI_BRIDGE_INITIALIZED__ = true;
+  new GeminiBridgeContentScript();
 } else {
-  console.log('[FuseConnect v7] Content script already initialized, skipping duplicate');
+  console.log('[GeminiBridge v7] Content script already initialized, skipping duplicate');
 }
