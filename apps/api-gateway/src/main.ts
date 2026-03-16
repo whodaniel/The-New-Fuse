@@ -19,10 +19,22 @@ async function bootstrap() {
 
   // Enable CORS
   // In dev: always allow, including file:// and electron origins (no Origin header)
+  const prodAllowedOrigins = new Set([
+    'https://thenewfuse.com',
+    'https://app.thenewfuse.com',
+    'https://poker.ai-arcade.xyz',
+  ]);
+
   app.enableCors({
     origin:
       process.env.NODE_ENV === 'production'
-        ? ['https://thenewfuse.com', 'https://app.thenewfuse.com']
+        ? (origin, callback) => {
+            if (!origin) return callback(null, true);
+            if (prodAllowedOrigins.has(origin) || origin.endsWith('.ai-arcade.xyz')) {
+              return callback(null, true);
+            }
+            return callback(new Error('CORS origin not allowed'));
+          }
         : (origin, callback) => callback(null, true),
     credentials: true,
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
