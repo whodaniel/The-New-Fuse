@@ -9,8 +9,17 @@ import {
   Volume2,
   VolumeX,
 } from 'lucide-react';
-import React, { useCallback, useEffect, useState } from 'react';
-import { api, communityApi, CommunityMembership, mttApi, pokerApi, sngApi } from './api';
+import React, { useEffect, useState } from 'react';
+import {
+  agentApi,
+  api,
+  communityApi,
+  CommunityMembership,
+  mttApi,
+  pokerApi,
+  sngApi,
+  userBotsApi,
+} from './api';
 
 // Import Contexts & Components
 import { BotOrchestration } from './components/BotOrchestration';
@@ -96,6 +105,63 @@ const THEME = {
   felt: 'bg-[radial-gradient(circle_at_center,_#1a472a_0%,_#0d2b1a_100%)]',
   metal: 'bg-gradient-to-b from-slate-800 to-slate-900',
   wood: 'bg-[#3d1f1f]',
+};
+
+const BOT_TOURNAMENT_STARTING_STACK = 3000;
+const BOT_TOURNAMENT_TABLE_ID_PREFIX = 'bot-table';
+const ACTION_TAPE_INTERVAL_MS = 650;
+const USER_BOT_STORAGE_KEY = 'aiArcadeUserBots';
+const SYSTEM_BOT_STORAGE_KEY = 'aiArcadeSystemBots';
+
+type UserBotProfile = {
+  name: string;
+  temperament: string;
+  riskBps: number;
+  aiAssist?: boolean;
+};
+
+const loadUserBots = (): UserBotProfile[] => {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = window.localStorage.getItem(USER_BOT_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed
+      .filter((bot) => bot && typeof bot.name === 'string')
+      .map((bot) => ({
+        name:
+          String(bot.name || '')
+            .trim()
+            .slice(0, 18) || 'CUSTOM',
+        temperament: String(bot.temperament || 'balanced'),
+        riskBps: Math.max(100, Math.min(2000, Number(bot.riskBps || 800))),
+        aiAssist: Boolean(bot.aiAssist),
+      }));
+  } catch {
+    return [];
+  }
+};
+
+const loadSystemBots = (): any[] => {
+  if (typeof window === 'undefined') return BOT_PROFILES;
+  try {
+    const raw = window.localStorage.getItem(SYSTEM_BOT_STORAGE_KEY);
+    if (!raw) return BOT_PROFILES;
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : BOT_PROFILES;
+  } catch {
+    return BOT_PROFILES;
+  }
+};
+
+const formatBotId = (name: string, index: number) => {
+  const base = name.trim() || `CUSTOM_${index + 1}`;
+  const slug = base
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, '_')
+    .slice(0, 16);
+  return slug || `CUSTOM_${index + 1}`;
 };
 
 type PokerView = PokerRouteView;
@@ -560,160 +626,465 @@ function AppContent() {
   } = useGameAudio();
 
   const [view, setView] = useState<PokerView>('LANDING');
-  const [user, setUser] = useState<SessionUser | null>(null);
-  const [membership, setMembership] = useState<CommunityMembership | null>(null);
-  const [activeTableId, setActiveTableId] = useState<string | null>(null);
   const [gameState, setGameState] = useState<any>(null);
+  const [aiInsight, setAiInsight] = useState('');
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [activeTableId, setActiveTableId] = useState('lobby-1');
+
   const [showSngCreator, setShowSngCreator] = useState(false);
   const [showMttCreator, setShowMttCreator] = useState(false);
   const [replayHandId, setReplayHandId] = useState<string | null>(null);
-  const [aiInsight, setAiInsight] = useState('');
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [actionTape, setActionTape] = useState<{ feed: { id: string; text: string }[] }>({
+
+  const [user, setUser] = useState<SessionUser | null>(null);
+  const [membership, setMembership] = useState<CommunityMembership | null>(null);
+  const [botTournament, setBotTournament] = useState<{
+    enabled: boolean;
+    running: boolean;
+    tableId: string;
+    handNumber: number;
+    stacks: Record<string, number>;
+    eliminated: string[];
+    championId: string | null;
+    lastProcessedHandId: string | null;
+  } | null>(null);
+  const [actionTape, setActionTape] = useState<{
+    handId: string;
+    events: any[];
+    played: number;
+    feed: Array<{ id: string; text: string }>;
+  }>({
+    handId: '',
+    events: [],
+    played: 0,
     feed: [],
   });
+  const [lastObservedState, setLastObservedState] = useState<any>(null);
 
-  const decorateSnapshot = useCallback(
-    (snapshot: any) => {
-      if (!snapshot || !Array.isArray(snapshot.seats)) return snapshot;
-      const heroId = user?.username || 'hero';
-      const heroName = user?.username || 'Neural_Knight';
-      const heroAvatar = user?.avatar || '/avatars/bot_1.png';
-      const holeCards =
-        snapshot.holeCards && typeof snapshot.holeCards === 'object' ? snapshot.holeCards : {};
-
-      const seats = snapshot.seats.map((seat: any, idx: number) => {
-        const seatIndex = Number.isInteger(seat?.seat) ? seat.seat : idx;
-        const bot =
-          BOT_PROFILE_BY_ID.get(String(seat?.playerId || '')) ||
-          BOT_PROFILE_BY_ID.get(String(seat?.agentId || ''));
-        const isHero =
-          String(seat?.playerId || '') === heroId || String(seat?.agentId || '') === heroId;
-        const name =
-          seat?.name ||
-          (isHero ? heroName : bot?.name || seat?.playerId || `Player ${seatIndex + 1}`);
-        const avatar = seat?.avatar || (isHero ? heroAvatar : bot?.avatar || '/avatars/bot_1.png');
-
-        let cards: any[] = [];
-        if (Array.isArray(seat?.cards) && seat.cards.length) {
-          cards = seat.cards;
-        } else {
-          const dealt = holeCards[String(seatIndex)];
-          if (Array.isArray(dealt) && dealt.length) {
-            cards = isHero ? dealt : ['hidden', 'hidden'];
+  // --- Poll table state from Railway backend ---
+  useEffect(() => {
+    if (view !== 'TABLE' || !user) return;
+    let active = true;
+    const poll = async () => {
+      try {
+        const res = await pokerApi.getState(activeTableId);
+        if (active && res.ok && res.snapshot) {
+          setGameState((prev: any) => {
+            if (
+              prev &&
+              res.snapshot.communityCards &&
+              prev.communityCards &&
+              res.snapshot.communityCards.length > prev.communityCards.length
+            )
+              playDeal();
+            if (res.snapshot.terminal && (!prev || !prev.terminal)) playWin();
+            return {
+              ...res.snapshot,
+              seats: (res.snapshot.seats || []).map((s: any, i: number) => ({
+                id: s.playerId || `seat-${i}`,
+                name:
+                  s.playerId === user.username
+                    ? user.username
+                    : BOT_PROFILES.find((b) => b.id === s.playerId)?.name || s.playerId || 'EMPTY',
+                avatar:
+                  s.playerId === user.username
+                    ? user.avatar
+                    : BOT_PROFILES.find((b) => b.id === s.playerId)?.avatar ||
+                      BOT_PROFILES[i % BOT_PROFILES.length]?.avatar ||
+                      '',
+                style: BOT_PROFILES.find((b) => b.id === s.playerId)?.style || '',
+                stack: s.stack || 0,
+                bet: res.snapshot.streetBets?.[String(i)] || 0,
+                cards:
+                  res.snapshot.holeCards?.[String(i)] ||
+                  (s.playerId && s.playerId !== user.username && res.snapshot.street
+                    ? ['hidden', 'hidden']
+                    : []),
+                active: !!s.playerId,
+                folded: (res.snapshot.actedSeats || [])[i] === 'fold' || s.folded || false,
+                isAllIn: s.stack === 0 && (res.snapshot.streetBets?.[String(i)] || 0) > 0,
+                isHero: s.playerId === user.username,
+              })),
+              round: res.snapshot.street
+                ? res.snapshot.street.toUpperCase()
+                : res.snapshot.terminal
+                  ? 'SHOWDOWN'
+                  : 'WAITING',
+              communityCards: res.snapshot.boardCards || res.snapshot.communityCards || [],
+              turnIndex: res.snapshot.actingSeat || 0,
+              currentBet: res.snapshot.currentBet || 0,
+              blinds: [
+                res.snapshot.blinds?.smallBlind || 100,
+                res.snapshot.blinds?.bigBlind || 200,
+              ],
+              timeline: Array.isArray(res.snapshot.timeline)
+                ? res.snapshot.timeline
+                : Array.isArray(res.snapshot.actionTimeline)
+                  ? res.snapshot.actionTimeline
+                  : [],
+            };
+          });
+          // Auto-trigger bot actions
+          const snap = res.snapshot;
+          const activeSeat = snap.seats?.[snap.actingSeat];
+          if (
+            !snap.terminal &&
+            snap.street &&
+            (!activeSeat || activeSeat.playerId !== user.username)
+          ) {
+            await pokerApi.autoRound(activeTableId, snap.handId, snap.seats, 12).catch(() => {});
           }
         }
-
-        return {
-          ...seat,
-          seat: seatIndex,
-          id: seat?.id || seat?.playerId || `seat-${seatIndex}`,
-          name,
-          avatar,
-          isHero,
-          active: seat?.active ?? Boolean(seat?.playerId),
-          cards,
-        };
-      });
-
-      return { ...snapshot, seats };
-    },
-    [user]
-  );
-
-  // Polling for game state
-  useEffect(() => {
-    if (!activeTableId || view !== 'TABLE') return;
-
-    const interval = setInterval(async () => {
-      try {
-        const out = await pokerApi.getState(activeTableId);
-        const snapshot = decorateSnapshot(out.snapshot);
-        setGameState(snapshot);
-
-        // Simple action tape simulation
-        if (snapshot.lastAction) {
-          const entry = {
-            id: `${Date.now()}`,
-            text: `[${snapshot.round}] ${snapshot.lastAction}`,
-          };
-          setActionTape((prev) => ({
-            feed: [entry, ...prev.feed].slice(0, 50),
-          }));
-        }
-      } catch (err) {
-        console.error('State sync error', err);
+      } catch (e) {
+        console.warn('Table poll failed', e);
       }
-    }, 1500);
+    };
+    poll();
+    const t = setInterval(poll, 1500);
+    return () => {
+      active = false;
+      clearInterval(t);
+    };
+  }, [view, activeTableId, user, playDeal, playWin]);
 
-    return () => clearInterval(interval);
-  }, [activeTableId, view, decorateSnapshot]);
-
-  const handleLogin = async (username: string, avatar: string, email?: string) => {
-    playClick();
-    setUser({ username, avatar, balance: 10000, email });
-    setView('LOBBY');
-
-    try {
-      const m = await communityApi.membership(username);
-      setMembership(m);
-    } catch {
-      setMembership(null);
-    }
+  const toActionLine = (evt: any, idx: number, handId: string) => {
+    const actor = evt?.agentId || evt?.playerId || `Seat ${evt?.seat ?? '?'}`;
+    const decision = (evt?.action || evt?.decision || evt?.type || 'act').toString().toUpperCase();
+    const amount = Number(evt?.amount ?? evt?.bet ?? 0);
+    const street = evt?.street ? ` [${String(evt.street).toUpperCase()}]` : '';
+    const amountChunk = amount > 0 ? ` $${amount}` : '';
+    return {
+      id: `${handId}-${idx}-${actor}-${decision}`,
+      text: `${actor} ${decision}${amountChunk}${street}`,
+    };
   };
 
-  const handleJoinTable = (tableId: string) => {
+  useEffect(() => {
+    if (view !== 'TABLE' || !gameState) return;
+    const events = Array.isArray(gameState.timeline) ? gameState.timeline : [];
+    setActionTape((prev) => {
+      const handId = String(gameState.handId || '');
+      if (!handId) return prev;
+      if (prev.handId !== handId) {
+        return { handId, events, played: 0, feed: [] };
+      }
+      if (events.length !== prev.events.length) {
+        return { ...prev, events };
+      }
+      return prev;
+    });
+  }, [view, gameState]);
+
+  useEffect(() => {
+    if (view !== 'TABLE') return;
+    if (!actionTape.events.length || actionTape.played >= actionTape.events.length) return;
+    const timer = setTimeout(() => {
+      setActionTape((prev) => {
+        if (prev.played >= prev.events.length) return prev;
+        const line = toActionLine(prev.events[prev.played], prev.played, prev.handId);
+        return {
+          ...prev,
+          played: prev.played + 1,
+          feed: [...prev.feed.slice(-59), line],
+        };
+      });
+      playChip();
+    }, ACTION_TAPE_INTERVAL_MS);
+    return () => clearTimeout(timer);
+  }, [view, actionTape.played, actionTape.events.length, playChip]);
+
+  useEffect(() => {
+    if (view !== 'TABLE' || !gameState) return;
+    if (Array.isArray(gameState.timeline) && gameState.timeline.length > 0) {
+      setLastObservedState(gameState);
+      return;
+    }
+    if (!lastObservedState || lastObservedState.handId !== gameState.handId) {
+      setLastObservedState(gameState);
+      return;
+    }
+
+    const deltaLines: Array<{ id: string; text: string }> = [];
+    const prevById = new Map((lastObservedState.seats || []).map((s: any) => [s.id, s]));
+    for (const seat of gameState.seats || []) {
+      const prev = prevById.get(seat.id);
+      if (!prev) continue;
+      if (!!seat.folded && !prev.folded) {
+        deltaLines.push({
+          id: `${gameState.handId}-${seat.id}-fold-${Date.now()}`,
+          text: `${seat.name || seat.id} FOLD`,
+        });
+      }
+      if (Number(seat.bet || 0) > Number(prev.bet || 0)) {
+        const delta = Number(seat.bet || 0) - Number(prev.bet || 0);
+        deltaLines.push({
+          id: `${gameState.handId}-${seat.id}-bet-${Date.now()}`,
+          text: `${seat.name || seat.id} BET $${delta}`,
+        });
+      }
+      if (Number(seat.stack || 0) === 0 && Number(prev.stack || 0) > 0) {
+        deltaLines.push({
+          id: `${gameState.handId}-${seat.id}-allin-${Date.now()}`,
+          text: `${seat.name || seat.id} ALL-IN`,
+        });
+      }
+    }
+    if (gameState.round && gameState.round !== lastObservedState.round) {
+      deltaLines.push({
+        id: `${gameState.handId}-street-${Date.now()}`,
+        text: `STREET ${String(gameState.round).toUpperCase()}`,
+      });
+    }
+
+    if (deltaLines.length > 0) {
+      setActionTape((prev) => ({
+        ...prev,
+        feed: [...prev.feed.slice(-59), ...deltaLines].slice(-60),
+      }));
+    }
+    setLastObservedState(gameState);
+  }, [view, gameState, lastObservedState]);
+
+  useEffect(() => {
+    if (
+      !botTournament?.enabled ||
+      !botTournament.running ||
+      !gameState?.terminal ||
+      !gameState?.handId
+    ) {
+      return;
+    }
+    if (gameState.handId === botTournament.lastProcessedHandId) return;
+
+    const observedStacks = { ...botTournament.stacks };
+    for (const seat of gameState.seats || []) {
+      if (seat?.id) {
+        observedStacks[seat.id] = Number(seat.stack || 0);
+      }
+    }
+
+    const newlyEliminated = BOT_PROFILES.filter(
+      (b) => observedStacks[b.id] === 0 && !botTournament.eliminated.includes(b.id)
+    ).map((b) => b.id);
+
+    const nextState = {
+      ...botTournament,
+      stacks: observedStacks,
+      eliminated: [...botTournament.eliminated, ...newlyEliminated],
+      lastProcessedHandId: gameState.handId,
+    };
+
+    setBotTournament(nextState);
+
+    const remaining = BOT_PROFILES.filter((b) => (observedStacks[b.id] || 0) > 0);
+    if (remaining.length <= 1) {
+      const champion = remaining[0]?.id || null;
+      setBotTournament((prev) =>
+        prev
+          ? {
+              ...prev,
+              running: false,
+              championId: champion,
+            }
+          : prev
+      );
+      if (champion) {
+        const champName = BOT_PROFILES.find((b) => b.id === champion)?.name || champion;
+        notify('SUCCESS', 'Tournament Complete', `${champName} won the all-bot tournament.`);
+      } else {
+        notify('SYSTEM', 'Tournament Complete', 'No remaining players in bot tournament.');
+      }
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      launchBotTournamentHand(nextState).catch(() => {});
+    }, 1700);
+    return () => clearTimeout(timer);
+  }, [botTournament, gameState, notify]);
+
+  const handleLogin = async (username: string, avatar: string, email?: string) => {
+    setUser({ username, avatar, balance: 100000, ...(email ? { email } : {}) });
+
+    let resolvedMembership: CommunityMembership | null = null;
+    try {
+      const byUsername = await communityApi.membership(username);
+      if (byUsername?.exists && byUsername.membership) {
+        resolvedMembership = byUsername.membership as CommunityMembership;
+      } else if (email) {
+        const byEmail = await communityApi.membership(email);
+        if (byEmail?.exists && byEmail.membership) {
+          resolvedMembership = byEmail.membership as CommunityMembership;
+        }
+      }
+    } catch {
+      resolvedMembership = null;
+    }
+
+    setMembership(resolvedMembership);
+    playWin();
+    notify('SUCCESS', 'Authentication Successful', `Welcome to the Neural Network, ${username}.`);
+    setView('LOBBY');
+  };
+
+  const handleJoinTable = async (tableId?: string) => {
+    if (!user) return;
     playClick();
-    setActiveTableId(tableId);
+    const tid = tableId || 'lobby-1';
+    setActiveTableId(tid);
+    notify('SYSTEM', 'Connecting to Node', 'Establishing secure connection to table...');
+    const userBotsRes = await userBotsApi.list();
+    const userBots = userBotsRes.ok ? userBotsRes.data : [];
+    const sysBots = loadSystemBots();
+    const maxBots = 5;
+    const customBots = userBots.slice(0, maxBots).map((bot, idx) => ({
+      playerId: formatBotId(bot.name, idx),
+      agentId: formatBotId(bot.name, idx),
+      stack: 100000,
+      temperament: bot.temperament,
+      maxRiskBps: bot.riskBps,
+      aiAssist: bot.aiAssist,
+    }));
+    const fallbackBots = sysBots
+      .filter((b) => !customBots.find((c) => c.playerId === b.id))
+      .slice(0, Math.max(0, maxBots - customBots.length))
+      .map((b) => ({
+        playerId: b.id,
+        agentId: b.id,
+        stack: 100000,
+        temperament: b.temperament,
+        maxRiskBps: b.riskBps,
+      }));
+    const botSeats = [...customBots, ...fallbackBots];
+
+    // Register bots with distinct personalities
+    for (const bot of botSeats) {
+      await agentApi.register(bot.playerId, bot.temperament, bot.maxRiskBps);
+    }
+
+    // Init a new hand
+    const seats = [
+      { playerId: user.username, stack: 100000, temperament: 'balanced', maxRiskBps: 700 },
+      ...botSeats,
+    ];
+    const handId = 'hand-' + Date.now();
+    await pokerApi.initTableState(tid, handId, seats, 0, 0).catch(() => {});
+    await pokerApi.autoRound(tid, handId, seats).catch(() => {});
     setView('TABLE');
-    playDeal();
   };
 
   const handleLeaveTable = () => {
     playClick();
-    setActiveTableId(null);
     setGameState(null);
     setView('LOBBY');
   };
 
-  const startBotTournament = async () => {
-    playClick();
-    try {
-      const tableId = `bot-tourney-${Date.now()}`;
-      const seats = [] as any[];
-
-      for (let i = 0; i < 8; i++) {
-        const bot = BOT_PROFILES[i % BOT_PROFILES.length];
-        seats.push({
-          seat: i,
-          playerId: bot.id,
-          stack: 10000,
-          temperament: bot.temperament,
-        });
+  const launchBotTournamentHand = async (state: {
+    enabled: boolean;
+    running: boolean;
+    tableId: string;
+    handNumber: number;
+    stacks: Record<string, number>;
+    eliminated: string[];
+    championId: string | null;
+    lastProcessedHandId: string | null;
+  }) => {
+    const activeBots = BOT_PROFILES.filter((b) => (state.stacks[b.id] || 0) > 0);
+    if (activeBots.length <= 1) {
+      const champion = activeBots[0]?.id || null;
+      setBotTournament((prev) =>
+        prev
+          ? {
+              ...prev,
+              running: false,
+              championId: champion,
+            }
+          : prev
+      );
+      if (champion) {
+        const champName = BOT_PROFILES.find((b) => b.id === champion)?.name || champion;
+        notify('SUCCESS', 'Tournament Complete', `${champName} won the all-bot tournament.`);
+      } else {
+        notify('SYSTEM', 'Tournament Complete', 'No remaining players in bot tournament.');
       }
+      return;
+    }
 
-      seats.push({
-        seat: 8,
-        playerId: user?.username || 'hero',
-        stack: 10000,
-        temperament: 'balanced',
-      });
+    const nextHandNumber = state.handNumber + 1;
+    const handId = `bot-hand-${Date.now()}-${nextHandNumber}`;
+    const seats = activeBots.map((b) => ({
+      playerId: b.id,
+      agentId: b.id,
+      stack: state.stacks[b.id],
+      temperament: b.temperament,
+      maxRiskBps: b.riskBps,
+    }));
+    await pokerApi.initTableState(state.tableId, handId, seats, 0, 0).catch(() => {});
+    setBotTournament((prev) =>
+      prev
+        ? {
+            ...prev,
+            running: true,
+            handNumber: nextHandNumber,
+          }
+        : prev
+    );
+    await pokerApi.autoRound(state.tableId, handId, seats, 1).catch(() => {});
+    // Further action progression is driven by table polling to avoid rate-limit bursts.
+  };
 
-      await pokerApi.initTableState(tableId, `hand-${Date.now()}`, seats, 0, 0);
+  const startBotTournament = async () => {
+    const tableId = `${BOT_TOURNAMENT_TABLE_ID_PREFIX}-${Date.now()}`;
+    const initialStacks = Object.fromEntries(
+      BOT_PROFILES.map((b) => [b.id, BOT_TOURNAMENT_STARTING_STACK])
+    ) as Record<string, number>;
 
-      handleJoinTable(tableId);
+    const initialState = {
+      enabled: true,
+      running: true,
+      tableId,
+      handNumber: 0,
+      stacks: initialStacks,
+      eliminated: [],
+      championId: null,
+      lastProcessedHandId: null,
+    };
+
+    setActionTape({ handId: '', events: [], played: 0, feed: [] });
+    setGameState(null);
+    setActiveTableId(tableId);
+    setBotTournament(initialState);
+    notify('SYSTEM', 'Tournament Boot', 'Launching full all-bot tournament.');
+    setView('TABLE');
+    try {
+      await launchBotTournamentHand(initialState);
     } catch (err) {
-      notify('ERROR', 'Tournament Failed', 'Could not initialize bot environment.');
+      setBotTournament((prev) => (prev ? { ...prev, running: false, enabled: false } : prev));
+      setView('LOBBY');
+      notify('ERROR', 'Tournament Error', String((err as Error)?.message || 'Failed to boot'));
     }
   };
 
-  const handleAction = async (action: string, amount: number = 0) => {
+  const stopBotTournament = () => {
+    setBotTournament((prev) => (prev ? { ...prev, running: false, enabled: false } : prev));
+    notify('SYSTEM', 'Tournament Halted', 'Bot tournament stopped.');
+  };
+
+  const handleAction = async (type: string, amount: number = 0) => {
+    if (!gameState || !user) return;
     const mySeatIdx = gameState.seats.findIndex((s: any) => s.isHero);
-    if (action === 'FOLD') playClick();
+    if (mySeatIdx === -1) return;
+    const actionMap: Record<string, string> = {
+      FOLD: 'fold',
+      CALL: 'call',
+      RAISE: 'raise',
+      CHECK: 'check',
+    };
+    const action = actionMap[type] || type.toLowerCase();
+    if (action === 'fold') playClick();
     else playChip();
-    await pokerApi.playerAction(activeTableId!, mySeatIdx, action, amount).catch(console.error);
+    await pokerApi.playerAction(activeTableId, mySeatIdx, action, amount).catch(console.error);
     setTimeout(() => {
-      pokerApi.autoRound(activeTableId!, gameState.handId || '', gameState.seats).catch(() => {});
+      pokerApi.autoRound(activeTableId, gameState.handId || '', gameState.seats).catch(() => {});
     }, 500);
   };
 
