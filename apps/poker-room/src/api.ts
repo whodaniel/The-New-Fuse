@@ -3,14 +3,16 @@
  * All poker game state, tournaments, cashier, agents, etc. go through here.
  */
 
+const isArcadeHost =
+  typeof window !== 'undefined' &&
+  (window.location.hostname === 'poker.ai-arcade.xyz' ||
+    window.location.hostname.endsWith('.ai-arcade.xyz'));
 const BASE_URL =
   import.meta.env.VITE_API_URL ||
-  (typeof window !== 'undefined' && window.location.hostname === 'localhost'
-    ? 'http://localhost:3000'
-    : typeof window !== 'undefined' &&
-        (window.location.hostname === 'poker.ai-arcade.xyz' ||
-          window.location.hostname.endsWith('.ai-arcade.xyz'))
-      ? window.location.origin
+  (isArcadeHost
+    ? window.location.origin
+    : typeof window !== 'undefined' && window.location.hostname === 'localhost'
+      ? 'http://localhost:3000'
       : 'https://api.thenewfuse.com/api/v1/poker');
 
 const COMMUNITY_BASE_URL =

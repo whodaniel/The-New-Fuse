@@ -22,5 +22,15 @@ export default defineConfig(({ mode }) => {
       // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',
     },
+    preview: {
+      host: true,
+      allowedHosts: [
+        'poker.ai-arcade.xyz',
+        'blackjack.ai-arcade.xyz',
+        'slots.ai-arcade.xyz',
+        'roulette.ai-arcade.xyz',
+        'casin8-games-production-b06e.up.railway.app',
+      ],
+    },
   };
 });

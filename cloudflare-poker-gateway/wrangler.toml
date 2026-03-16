@@ -4,6 +4,7 @@ compatibility_date = "2026-03-14"
 
 account_id = "db1d3832768b2bbad4c5c5d9dbc63f8b"
 workers_dev = true
+routes = ["poker.ai-arcade.xyz/*"]
 
 [vars]
 FRONTEND_URL = "https://ai-arcade-poker.pages.dev"

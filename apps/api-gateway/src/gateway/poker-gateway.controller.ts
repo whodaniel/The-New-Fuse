@@ -17,19 +17,33 @@ export class PokerGatewayController {
     @Body() body: any,
     @Query() query: any
   ) {
-    const baseUrl = req.baseUrl || '';
     const originalUrl = req.originalUrl || req.url || '';
     const withoutQuery = originalUrl.split('?')[0] || '';
-    let path = withoutQuery.startsWith(baseUrl) ? withoutQuery.slice(baseUrl.length) : req.path;
+    // Extract the portion of the path after /api/v1/poker
+    const match = withoutQuery.match(/^\/api\/v\d+\/poker(.*)$/);
+    let path = match ? match[1] : withoutQuery;
+
     if (!path) path = '/';
     if (!path.startsWith('/')) path = `/${path}`;
+
+    // Reduce forwarded headers to avoid oversized header errors.
+    const forwardedHeaders: Record<string, string> = {
+      Accept: (req.headers.accept as string) || 'application/json',
+      'Content-Type': (req.headers['content-type'] as string) || 'application/json',
+    };
+    if (req.headers.authorization) {
+      forwardedHeaders.Authorization = req.headers.authorization as string;
+    }
+    if (req.headers['x-api-key']) {
+      forwardedHeaders['x-api-key'] = req.headers['x-api-key'] as string;
+    }
 
     try {
       const response = await this.proxyService.proxyRequest(
         'casin8',
         path,
         req.method,
-        req.headers as Record<string, string>,
+        forwardedHeaders,
         body,
         query
       );

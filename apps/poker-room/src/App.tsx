@@ -269,7 +269,7 @@ const PokerTable: React.FC<PokerTableProps> = ({
   const getSeatPos = (i: number) => {
     const offset = mySeatIdx !== -1 ? (i - mySeatIdx + 9) % 9 : i;
     const a = (offset / 9) * 2 * Math.PI + Math.PI / 2;
-    return { left: `${50 + 40 * Math.cos(a)}%`, top: `${50 + 38 * Math.sin(a)}%` };
+    return { left: `${50 + 42 * Math.cos(a)}%`, top: `${50 + 39 * Math.sin(a)}%` };
   };
 
   return (
@@ -681,9 +681,12 @@ function AppContent() {
       setPostLoginView('TABLE');
       return;
     }
-    if (path === '/' || path === '/lobby') {
+    if (path === '/lobby') {
       setView('LOBBY');
+      return;
     }
+    // Default to LANDING for root or unknown paths
+    setView('LANDING');
   }, []);
 
   useEffect(() => {
@@ -1232,6 +1235,19 @@ function AppContent() {
   const lobbyOperatorViews = getAllowedLobbyViews(access, 'operator');
 
   useEffect(() => {
+    if (view === 'CONTROL CENTER') {
+      if (!user) {
+        if (typeof window !== 'undefined') {
+          window.location.href = 'https://thenewfuse.com/auth/login';
+        }
+        return;
+      }
+      if (!canAccessView(view)) {
+        notify('SYSTEM', 'Route Restricted', 'Operator access is required for the console.');
+        setView('LOBBY');
+      }
+      return;
+    }
     if (canAccessView(view)) return;
     if (!user) {
       setView('LOGIN');

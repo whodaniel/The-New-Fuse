@@ -11,7 +11,7 @@ import { fileURLToPath } from 'url';
 import { SkillsMCPServer } from './SkillsMCPServer.js';
 
 async function main() {
-  const server = new SkillsMCPServer();
+  const server = new SkillsMCPServer(process.env.SKILLS_BASE_PATH);
   await server.start();
 }
 

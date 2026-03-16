@@ -237,3 +237,13 @@ dockerfilePath = "apps/relay-server/Dockerfile"
 watchPatterns = ["apps/relay-server/**", "packages/**"]
 [services.relay-server.deploy]
 healthcheckPath = "/health"
+
+# Nexus Orchestrator UI (3D Swarm Visualization)
+[services.nexus-orchestrator]
+builder = "DOCKERFILE"
+[services.nexus-orchestrator.build]
+dockerfilePath = "Dockerfile.frontend"
+dockerBuildArgs = { SERVICE_PATH = "apps/nexus-orchestrator", VITE_API_URL = "${{VITE_API_URL}}", VITE_API_GATEWAY_URL = "${{VITE_API_GATEWAY_URL}}", VITE_WS_URL = "${{VITE_WS_URL}}", GEMINI_API_KEY = "${{GEMINI_API_KEY}}" }
+watchPatterns = ["apps/nexus-orchestrator/**", "packages/**"]
+[services.nexus-orchestrator.deploy]
+healthcheckPath = "/"

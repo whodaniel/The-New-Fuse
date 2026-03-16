@@ -52,18 +52,17 @@ function createMissingModuleStub(modulePath, err) {
   const throwMissing = () => {
     throw new Error(message);
   };
-  let stub = null;
-  stub = new Proxy(throwMissing, {
-    get(_target, prop) {
-      if (prop === '__missingModule') return true;
-      if (prop === '__modulePath') return modulePath;
-      return stub;
-    },
-    apply() {
-      throwMissing();
+  const stubTarget = {
+    __missingModule: true,
+    __modulePath: modulePath,
+  };
+  return new Proxy(stubTarget, {
+    get(target, prop) {
+      if (prop === '__missingModule' || prop === '__modulePath') return target[prop];
+      if (prop === 'then') return undefined; // avoid thenable/await traps
+      return throwMissing;
     },
   });
-  return stub;
 }
 
 async function importOptionalModule(modulePath) {
@@ -4095,9 +4094,19 @@ async function handleV2HoldemReplay(req, res, urlObj) {
   });
 }
 
+async function getHoldemTournamentsModule(res) {
+  const mod = await holdemTournamentsPromise;
+  if (!mod || mod.__missingModule) {
+    writeJson(res, 503, { ok: false, error: 'Holdem tournaments module unavailable' });
+    return null;
+  }
+  return mod;
+}
+
 async function handleV2TournamentCreate(req, res) {
   const body = await readBodyJson(req);
-  const mod = await holdemTournamentsPromise;
+  const mod = await getHoldemTournamentsModule(res);
+  if (!mod) return;
   const tournament = mod.createTournament({
     tournamentId: String(body.tournamentId || crypto.randomUUID()).trim(),
     type: String(body.type || 'mtt'),
@@ -4120,7 +4129,8 @@ async function handleV2TournamentCreate(req, res) {
 
 async function handleV2TournamentRegister(req, res) {
   const body = await readBodyJson(req);
-  const mod = await holdemTournamentsPromise;
+  const mod = await getHoldemTournamentsModule(res);
+  if (!mod) return;
   const t = await getHoldemTournamentOrRestore(String(body.tournamentId || '').trim());
   if (!t) return badRequest(res, 'Unknown tournamentId');
   const out = mod.registerPlayer(t, { playerId: String(body.playerId || '').trim() });
@@ -4130,7 +4140,8 @@ async function handleV2TournamentRegister(req, res) {
 
 async function handleV2TournamentStart(req, res) {
   const body = await readBodyJson(req);
-  const mod = await holdemTournamentsPromise;
+  const mod = await getHoldemTournamentsModule(res);
+  if (!mod) return;
   const t = await getHoldemTournamentOrRestore(String(body.tournamentId || '').trim());
   if (!t) return badRequest(res, 'Unknown tournamentId');
   const out = mod.startTournament(t);
@@ -4140,7 +4151,8 @@ async function handleV2TournamentStart(req, res) {
 
 async function handleV2TournamentClock(req, res) {
   const body = await readBodyJson(req);
-  const mod = await holdemTournamentsPromise;
+  const mod = await getHoldemTournamentsModule(res);
+  if (!mod) return;
   const t = await getHoldemTournamentOrRestore(String(body.tournamentId || '').trim());
   if (!t) return badRequest(res, 'Unknown tournamentId');
   const clock = mod.advanceTournamentClock(t, Number(body.seconds ?? 60));
@@ -4150,7 +4162,8 @@ async function handleV2TournamentClock(req, res) {
 
 async function handleV2TournamentPause(req, res) {
   const body = await readBodyJson(req);
-  const mod = await holdemTournamentsPromise;
+  const mod = await getHoldemTournamentsModule(res);
+  if (!mod) return;
   const t = await getHoldemTournamentOrRestore(String(body.tournamentId || '').trim());
   if (!t) return badRequest(res, 'Unknown tournamentId');
   const out = mod.pauseTournament(t, { reason: String(body.reason || 'manual') });
@@ -4160,7 +4173,8 @@ async function handleV2TournamentPause(req, res) {
 
 async function handleV2TournamentResume(req, res) {
   const body = await readBodyJson(req);
-  const mod = await holdemTournamentsPromise;
+  const mod = await getHoldemTournamentsModule(res);
+  if (!mod) return;
   const t = await getHoldemTournamentOrRestore(String(body.tournamentId || '').trim());
   if (!t) return badRequest(res, 'Unknown tournamentId');
   const out = mod.resumeTournament(t, { reason: String(body.reason || 'manual') });
@@ -4169,7 +4183,8 @@ async function handleV2TournamentResume(req, res) {
 }
 
 async function handleV2TournamentRecoveryExport(req, res, urlObj) {
-  const mod = await holdemTournamentsPromise;
+  const mod = await getHoldemTournamentsModule(res);
+  if (!mod) return;
   const t = await getHoldemTournamentOrRestore(
     String(urlObj.searchParams.get('tournamentId') || '').trim()
   );
@@ -4183,7 +4198,8 @@ async function handleV2TournamentRecoveryExport(req, res, urlObj) {
 
 async function handleV2TournamentRecoveryImport(req, res) {
   const body = await readBodyJson(req);
-  const mod = await holdemTournamentsPromise;
+  const mod = await getHoldemTournamentsModule(res);
+  if (!mod) return;
   const snapshot = body.recovery && typeof body.recovery === 'object' ? body.recovery : null;
   if (!snapshot) return badRequest(res, 'recovery object is required');
   const restored = mod.restoreTournament(snapshot);
@@ -4194,7 +4210,8 @@ async function handleV2TournamentRecoveryImport(req, res) {
 
 async function handleV2TournamentRebuy(req, res) {
   const body = await readBodyJson(req);
-  const mod = await holdemTournamentsPromise;
+  const mod = await getHoldemTournamentsModule(res);
+  if (!mod) return;
   const t = await getHoldemTournamentOrRestore(String(body.tournamentId || '').trim());
   if (!t) return badRequest(res, 'Unknown tournamentId');
   const out = mod.rebuyPlayer(t, { playerId: String(body.playerId || '').trim() });
@@ -4204,7 +4221,8 @@ async function handleV2TournamentRebuy(req, res) {
 
 async function handleV2TournamentAddon(req, res) {
   const body = await readBodyJson(req);
-  const mod = await holdemTournamentsPromise;
+  const mod = await getHoldemTournamentsModule(res);
+  if (!mod) return;
   const t = await getHoldemTournamentOrRestore(String(body.tournamentId || '').trim());
   if (!t) return badRequest(res, 'Unknown tournamentId');
   const out = mod.addOnPlayer(t, { playerId: String(body.playerId || '').trim() });
@@ -4214,7 +4232,8 @@ async function handleV2TournamentAddon(req, res) {
 
 async function handleV2TournamentEliminate(req, res) {
   const body = await readBodyJson(req);
-  const mod = await holdemTournamentsPromise;
+  const mod = await getHoldemTournamentsModule(res);
+  if (!mod) return;
   const t = await getHoldemTournamentOrRestore(String(body.tournamentId || '').trim());
   if (!t) return badRequest(res, 'Unknown tournamentId');
   let out;
@@ -4231,7 +4250,8 @@ async function handleV2TournamentEliminate(req, res) {
 }
 
 async function handleV2TournamentPayouts(req, res, urlObj) {
-  const mod = await holdemTournamentsPromise;
+  const mod = await getHoldemTournamentsModule(res);
+  if (!mod) return;
   const t = await getHoldemTournamentOrRestore(
     String(urlObj.searchParams.get('tournamentId') || '').trim()
   );
@@ -4244,7 +4264,8 @@ async function handleV2TournamentPayouts(req, res, urlObj) {
 }
 
 async function handleV2TournamentState(req, res, urlObj) {
-  const mod = await holdemTournamentsPromise;
+  const mod = await getHoldemTournamentsModule(res);
+  if (!mod) return;
   const t = await getHoldemTournamentOrRestore(
     String(urlObj.searchParams.get('tournamentId') || '').trim()
   );

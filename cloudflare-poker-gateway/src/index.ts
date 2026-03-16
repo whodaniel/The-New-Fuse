@@ -8,8 +8,8 @@ export default {
     const url = new URL(request.url);
     const path = url.pathname;
 
-    // Route to Railway Backend for API and Console
-    if (path.startsWith('/api/') || path.startsWith('/console')) {
+    // Route to Railway Backend for API requests
+    if (path.startsWith('/api/')) {
       console.log(`[Gateway] Routing to Backend: ${path}`);
       const backendUrl = new URL(env.BACKEND_URL);
       url.hostname = backendUrl.hostname;

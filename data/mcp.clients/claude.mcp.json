@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/mcp-config.json",
   "generatedBy": "scripts/tnf-generate-mcp-clients.cjs",
-  "generatedAt": "2026-03-12T13:38:45.569Z",
+  "generatedAt": "2026-03-16T20:35:42.782Z",
   "source": "data/mcp_config.json",
   "client": "claude",
   "mcpServers": {
@@ -55,7 +55,7 @@
     },
     "tnf-mcp-config-manager": {
       "command": "node",
-      "args": ["--import", "tsx", "./src/mcp/tnf-mcp-config-manager.ts"],
+      "args": ["./scripts/mcp-config-manager-server.cjs"],
       "env": {
         "TNF_CORE_PATH": "./data",
         "LOG_LEVEL": "info"
@@ -85,7 +85,7 @@
       "args": [
         "-y",
         "@modelcontextprotocol/server-filesystem",
-        "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
       ],
       "description": "Official Anthropic filesystem server - secure file operations with configurable access controls",
       "priority": 8,
@@ -97,7 +97,7 @@
         "-y",
         "@modelcontextprotocol/server-git",
         "--repository",
-        "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
       ],
       "description": "Official Anthropic Git server - tools to read, search, and manipulate Git repositories",
       "priority": 8,
@@ -233,7 +233,9 @@
     },
     "context7-server": {
       "command": "node",
-      "args": ["/path/to/Documents/Cline/MCP/context7-server/build/index.js"],
+      "args": [
+        "/Users/<owner>/Documents/Cline/MCP/context7-server/build/index.js"
+      ],
       "description": "Context7 server - context management and agent routing",
       "priority": 3,
       "tags": ["context", "routing", "agents"]

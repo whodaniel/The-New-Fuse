@@ -11,7 +11,7 @@
     "start": "DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/thenewfuse} nest start",
     "start:dev": "DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/thenewfuse} nest start --watch",
     "start:debug": "DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/thenewfuse} nest start --debug --watch",
-    "start:prod": "DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/thenewfuse} node dist/main",
+    "start:prod": "DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/thenewfuse} node --max-http-header-size=65536 dist/main",
     "test": "jest --passWithNoTests",
     "test:unit": "jest --testPathPatterns=unit --passWithNoTests",
     "test:integration": "jest --testPathPatterns=integration --passWithNoTests",
