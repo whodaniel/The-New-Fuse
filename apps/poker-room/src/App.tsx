@@ -1190,9 +1190,13 @@ function AppContent() {
 
   useEffect(() => {
     if (canAccessView(view)) return;
+    if (!user) {
+      setView('LOGIN');
+      return;
+    }
     notify('SYSTEM', 'Route Restricted', 'That surface is not enabled for this session.');
     setView('LOBBY');
-  }, [view, access.isAdmin, access.isMember, access.isCreator, access.isProgrammaticAgent]);
+  }, [view, access.isAdmin, access.isMember, access.isCreator, access.isProgrammaticAgent, user]);
 
   return (
     <>
