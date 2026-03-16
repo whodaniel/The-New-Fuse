@@ -34,7 +34,7 @@ const OAuthCallback = () => {
         return;
       }
       // Supabase OAuth callback flow
-      await handleSSOCallback('supabase', '');
+      await handleSSOCallback('supabase', params.get('code') || '');
       navigate('/dashboard', { replace: true });
     };
     run().catch(() => navigate('/auth/login?error=auth_failed', { replace: true }));

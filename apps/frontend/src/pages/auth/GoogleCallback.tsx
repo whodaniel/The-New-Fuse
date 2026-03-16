@@ -67,7 +67,7 @@ const GoogleCallback = () => {
         return;
       }
 
-      await handleSSOCallback('supabase', '');
+      await handleSSOCallback('supabase', searchParams.get('code') || '');
       navigate('/dashboard', { replace: true });
     };
 

@@ -549,19 +549,71 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error('Supabase is not configured');
       }
 
-      // Supabase may need a brief moment to parse URL hash and persist session.
-      const maxAttempts = 10;
-      for (let attempt = 0; attempt < maxAttempts; attempt++) {
-        const { data, error: sessionError } = await supabase.auth.getSession();
-        if (!sessionError && data?.session?.access_token) {
-          return await exchangeSupabaseToken(data.session.access_token);
+      const url = typeof window !== 'undefined' ? new URL(window.location.href) : null;
+      const code = url?.searchParams.get('code') || _code || '';
+      let accessToken = '';
+
+      if (code) {
+        const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+        if (error) {
+          throw new Error(error.message || 'Failed to exchange OAuth code');
         }
-        await new Promise((resolve) => setTimeout(resolve, 250));
+        accessToken = data?.session?.access_token || '';
+      } else if (url) {
+        const { data, error } = await supabase.auth.getSessionFromUrl({ storeSession: true });
+        if (error) {
+          throw new Error(error.message || 'Failed to parse OAuth callback');
+        }
+        accessToken = data?.session?.access_token || '';
       }
-      throw new Error('No Supabase session after OAuth callback');
+
+      if (!accessToken) {
+        // Supabase may need a brief moment to persist the session.
+        const maxAttempts = 10;
+        for (let attempt = 0; attempt < maxAttempts; attempt++) {
+          const { data, error: sessionError } = await supabase.auth.getSession();
+          if (!sessionError && data?.session?.access_token) {
+            accessToken = data.session.access_token;
+            break;
+          }
+          await new Promise((resolve) => setTimeout(resolve, 250));
+        }
+      }
+
+      if (!accessToken) {
+        throw new Error('No Supabase session after OAuth callback');
+      }
+
+      return await exchangeSupabaseToken(accessToken);
     },
     [exchangeSupabaseToken]
   );
+
+  const signInWithMagicLink = useCallback(async (email: string) => {
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      if (!hasSupabaseConfig || !supabase) {
+        throw new Error('Supabase is not configured');
+      }
+
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+
+      if (error) {
+        throw new Error(error.message || 'Failed to send magic link');
+      }
+
+      return { success: true };
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   const logout = useCallback(async () => {
     setIsLoading(true);
@@ -582,6 +634,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         register,
         signInWithGoogle,
+        signInWithMagicLink,
         forgotPassword,
         resetPassword,
         handleSSOCallback,
