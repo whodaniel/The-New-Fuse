@@ -1,5 +1,5 @@
+import { motion } from 'framer-motion';
 import { ArrowDownLeft, ArrowUpRight, CheckCircle, Clock, Send, Shield } from 'lucide-react';
-import { motion } from 'motion/react';
 import { useState } from 'react';
 
 interface CashierPageProps {

@@ -1,5 +1,5 @@
+import { motion } from 'framer-motion';
 import { BrainCircuit, Coins, Shield, Trophy } from 'lucide-react';
-import { motion } from 'motion/react';
 
 interface LandingPageProps {
   onEnter: () => void;

@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import {
   Activity,
   BrainCircuit,
@@ -12,7 +13,6 @@ import {
   Trophy,
   Users,
 } from 'lucide-react';
-import { motion } from 'motion/react';
 
 interface LobbyPageProps {
   user: { username: string; balance: number; avatar: string };

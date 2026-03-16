@@ -1,5 +1,5 @@
+import { AnimatePresence, motion } from 'framer-motion';
 import { AlertTriangle, Bell, CheckCircle, Clock, Info, Trophy, X, XCircle } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react';
 import { useGameAudio } from './GameAudioContext';
 

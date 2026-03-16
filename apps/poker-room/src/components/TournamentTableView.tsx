@@ -1,5 +1,5 @@
+import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle, Clock, LogOut, Menu, Trophy, Users, X } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
 import React, { useState } from 'react';
 
 interface TournamentTableViewProps {

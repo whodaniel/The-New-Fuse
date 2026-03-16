@@ -1,5 +1,5 @@
+import { motion } from 'framer-motion';
 import { Loader2, Rocket, Send } from 'lucide-react';
-import { motion } from 'motion/react';
 import { useEffect, useMemo, useState } from 'react';
 import {
   CloudflareBuildOption,

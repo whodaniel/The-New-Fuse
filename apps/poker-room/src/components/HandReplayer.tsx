@@ -1,5 +1,5 @@
+import { motion } from 'framer-motion';
 import { FastForward, Info, Pause, Play, Rewind, SkipBack, SkipForward, X } from 'lucide-react';
-import { motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 
 interface HandReplayerProps {

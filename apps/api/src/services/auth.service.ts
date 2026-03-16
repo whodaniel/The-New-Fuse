@@ -95,49 +95,59 @@ export class AuthService {
   }
 
   async supabaseExchange(dto: SupabaseAuthDto): Promise<AuthResponse> {
+    this.logger.log(`Initiating Supabase token exchange. Configured: ${!!this.supabase}`);
     if (!this.supabase) {
       throw new UnauthorizedException('Supabase auth is not configured on this server');
     }
 
-    const { data, error } = await this.supabase.auth.getUser(dto.accessToken);
-    if (error || !data.user) {
-      throw new UnauthorizedException('Invalid Supabase token');
+    try {
+      const { data, error } = await this.supabase.auth.getUser(dto.accessToken);
+      if (error || !data.user) {
+        this.logger.error(`Supabase getUser failed: ${error?.message || 'No user data'}`);
+        throw new UnauthorizedException('Invalid Supabase token');
+      }
+
+      const supabaseUser = data.user;
+      const email = supabaseUser.email;
+      if (!email) {
+        throw new UnauthorizedException('Supabase user must have an email');
+      }
+
+      this.logger.log(`Verified Supabase email: ${email}`);
+      let user = await this.db.users.findByEmail(email);
+
+      if (!user) {
+        this.logger.log(`Creating new platform account for ${email}`);
+        // Auto-register Supabase user if they don't exist
+        const usernameBase = this.sanitizeUsername(
+          supabaseUser.user_metadata?.full_name ||
+            supabaseUser.user_metadata?.name ||
+            email.split('@')[0]
+        );
+
+        const username = await this.makeUsernameUnique(usernameBase);
+
+        user = await this.db.users.create({
+          email,
+          username,
+          name: supabaseUser.user_metadata?.full_name || supabaseUser.user_metadata?.name || null,
+          role: 'USER',
+          roles: ['USER'],
+          isActive: true,
+          emailVerified: true,
+        } as any);
+      }
+
+      if (!user.isActive) {
+        throw new UnauthorizedException('Account is inactive');
+      }
+
+      this.logger.log(`Exchange successful for user: ${user.id}`);
+      return this.generateTokens(user);
+    } catch (err: any) {
+      this.logger.error(`Supabase exchange crash: ${err.message}`, err.stack);
+      throw err;
     }
-
-    const supabaseUser = data.user;
-    const email = supabaseUser.email;
-    if (!email) {
-      throw new UnauthorizedException('Supabase user must have an email');
-    }
-
-    let user = await this.db.users.findByEmail(email);
-
-    if (!user) {
-      // Auto-register Supabase user if they don't exist
-      const usernameBase = this.sanitizeUsername(
-        supabaseUser.user_metadata?.full_name ||
-          supabaseUser.user_metadata?.name ||
-          email.split('@')[0]
-      );
-
-      const username = await this.makeUsernameUnique(usernameBase);
-
-      user = await this.db.users.create({
-        email,
-        username,
-        name: supabaseUser.user_metadata?.full_name || supabaseUser.user_metadata?.name || null,
-        role: 'USER',
-        roles: ['USER'],
-        isActive: true,
-        emailVerified: true,
-      } as any);
-    }
-
-    if (!user.isActive) {
-      throw new UnauthorizedException('Account is inactive');
-    }
-
-    return this.generateTokens(user);
   }
 
   private async makeUsernameUnique(base: string): Promise<string> {

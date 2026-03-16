@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   BrainCircuit,
   Loader2,
@@ -8,7 +9,6 @@ import {
   Volume2,
   VolumeX,
 } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
 import React, { useEffect, useState } from 'react';
 import { api, communityApi, CommunityMembership, mttApi, pokerApi, sngApi } from './api';
 

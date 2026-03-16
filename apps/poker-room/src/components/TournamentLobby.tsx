@@ -1,5 +1,5 @@
+import { motion } from 'framer-motion';
 import { ArrowRight, Clock, Plus, Shield, Trophy } from 'lucide-react';
-import { motion } from 'motion/react';
 import React, { useState } from 'react';
 
 interface TournamentLobbyProps {

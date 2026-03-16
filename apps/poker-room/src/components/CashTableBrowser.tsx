@@ -1,5 +1,5 @@
+import { motion } from 'framer-motion';
 import { ArrowRight, Loader2, Plus, Users } from 'lucide-react';
-import { motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { api } from '../api';
 

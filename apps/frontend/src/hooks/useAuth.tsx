@@ -103,7 +103,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const apiBaseUrl = sanitizeApiBaseUrl(import.meta.env.VITE_API_URL || '');
   const gatewayBaseUrl = sanitizeApiBaseUrl(import.meta.env.VITE_API_GATEWAY_URL || '');
-  const gatewayPrefix = import.meta.env.PROD ? '/v1' : '/api';
+  const gatewayPrefix = import.meta.env.PROD ? '/api/v1' : '/api';
 
   const inviteOnlyMode = ['1', 'true', 'yes', 'on', 'enabled'].includes(
     String(import.meta.env.VITE_AUTH_INVITE_ONLY || '')

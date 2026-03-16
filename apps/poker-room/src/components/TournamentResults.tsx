@@ -1,5 +1,5 @@
+import { motion } from 'framer-motion';
 import { ArrowLeft, Award, History, Medal, Share2, Trophy } from 'lucide-react';
-import { motion } from 'motion/react';
 
 interface TournamentResultsProps {
   onBack: () => void;

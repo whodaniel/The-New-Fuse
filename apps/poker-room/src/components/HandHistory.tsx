@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   ChevronDown,
   ChevronUp,
@@ -8,7 +9,6 @@ import {
   Search,
   Shield,
 } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
 import React, { useState } from 'react';
 
 interface HandHistoryProps {

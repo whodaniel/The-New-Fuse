@@ -1,5 +1,5 @@
+import { motion } from 'framer-motion';
 import { Settings2, Trophy, X } from 'lucide-react';
-import { motion } from 'motion/react';
 import React, { useState } from 'react';
 
 interface MttCreatorModalProps {
