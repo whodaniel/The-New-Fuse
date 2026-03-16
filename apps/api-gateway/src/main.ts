@@ -44,6 +44,14 @@ async function bootstrap() {
     optionsSuccessStatus: 204,
   });
 
+  // Back-compat: some clients still call /v1/* without the global /api prefix.
+  app.use((req, _res, next) => {
+    if (req.url.startsWith('/v1/') || req.url === '/v1') {
+      req.url = `/api${req.url}`;
+    }
+    next();
+  });
+
   // Global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
