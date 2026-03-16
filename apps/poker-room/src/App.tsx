@@ -9,7 +9,7 @@ import {
   Volume2,
   VolumeX,
 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   agentApi,
   api,
@@ -337,7 +337,7 @@ const PokerTable: React.FC<PokerTableProps> = ({
                 </p>
               </div>
 
-              <div className="flex gap-2 sm:gap-4 z-[150] bg-black/40 p-2 sm:p-4 rounded-xl border border-white/10 backdrop-blur-xl shadow-2xl shadow-black/80">
+              <div className="flex gap-2 sm:gap-4 z-[30] bg-black/40 p-2 sm:p-4 rounded-xl border border-white/10 backdrop-blur-xl shadow-2xl shadow-black/80">
                 <AnimatePresence>
                   {(gameState.communityCards || []).map((c: string, i: number) => (
                     <Card key={`comm-${i}-${c}`} val={c} index={i} />
@@ -630,6 +630,7 @@ function AppContent() {
   const [aiInsight, setAiInsight] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [activeTableId, setActiveTableId] = useState('lobby-1');
+  const [postLoginView, setPostLoginView] = useState<PokerView | null>(null);
 
   const [showSngCreator, setShowSngCreator] = useState(false);
   const [showMttCreator, setShowMttCreator] = useState(false);
@@ -659,6 +660,7 @@ function AppContent() {
     feed: [],
   });
   const [lastObservedState, setLastObservedState] = useState<any>(null);
+  const lastInitAttemptRef = useRef(0);
 
   const viewPathMap: Partial<Record<PokerView, string>> = {
     LOBBY: '/',
@@ -671,10 +673,12 @@ function AppContent() {
     const path = window.location.pathname || '/';
     if (path === '/console' || path === '/control-center') {
       setView('CONTROL CENTER');
+      setPostLoginView('CONTROL CENTER');
       return;
     }
     if (path === '/table') {
       setView('TABLE');
+      setPostLoginView('TABLE');
       return;
     }
     if (path === '/' || path === '/lobby') {
@@ -691,6 +695,68 @@ function AppContent() {
     }
   }, [view]);
 
+  const applySnapshot = (snapshot: any, prevState?: any) => {
+    if (!snapshot) return prevState || null;
+    if (
+      prevState &&
+      snapshot.communityCards &&
+      prevState.communityCards &&
+      snapshot.communityCards.length > prevState.communityCards.length
+    ) {
+      playDeal();
+    }
+    if (snapshot.terminal && (!prevState || !prevState.terminal)) playWin();
+
+    return {
+      ...snapshot,
+      seats: (snapshot.seats || []).map((s: any, i: number) => ({
+        id: s.playerId || `seat-${i}`,
+        name:
+          s.playerId === user?.username
+            ? user.username
+            : BOT_PROFILES.find((b) => b.id === s.playerId)?.name || s.playerId || 'EMPTY',
+        avatar:
+          s.playerId === user?.username
+            ? user.avatar
+            : BOT_PROFILES.find((b) => b.id === s.playerId)?.avatar ||
+              BOT_PROFILES[i % BOT_PROFILES.length]?.avatar ||
+              '',
+        style: BOT_PROFILES.find((b) => b.id === s.playerId)?.style || '',
+        stack: s.stack || 0,
+        bet: snapshot.streetBets?.[String(i)] || 0,
+        cards:
+          snapshot.holeCards?.[String(i)] ||
+          (s.playerId && s.playerId !== user?.username && snapshot.street
+            ? ['hidden', 'hidden']
+            : []),
+        active: !!s.playerId,
+        folded: (snapshot.actedSeats || [])[i] === 'fold' || s.folded || false,
+        isAllIn: s.stack === 0 && (snapshot.streetBets?.[String(i)] || 0) > 0,
+        isHero: s.playerId === user?.username,
+      })),
+      round: snapshot.street
+        ? snapshot.street.toUpperCase()
+        : snapshot.terminal
+          ? 'SHOWDOWN'
+          : 'WAITING',
+      communityCards: snapshot.boardCards || snapshot.communityCards || [],
+      turnIndex: snapshot.actingSeat || 0,
+      currentBet: snapshot.currentBet || 0,
+      blinds: [snapshot.blinds?.smallBlind || 100, snapshot.blinds?.bigBlind || 200],
+      timeline: Array.isArray(snapshot.timeline)
+        ? snapshot.timeline
+        : Array.isArray(snapshot.actionTimeline)
+          ? snapshot.actionTimeline
+          : [],
+      streetBets: snapshot.streetBets || {},
+      handId: snapshot.handId,
+      dealerIndex: snapshot.buttonSeat ?? 0,
+      pot: snapshot.pot ?? 0,
+      terminal: snapshot.terminal ?? false,
+      lastAction: snapshot.lastAction || null,
+    };
+  };
+
   // --- Poll table state from Railway backend ---
   useEffect(() => {
     if (view !== 'TABLE' || !user) return;
@@ -699,61 +765,7 @@ function AppContent() {
       try {
         const res = await pokerApi.getState(activeTableId);
         if (active && res.ok && res.snapshot) {
-          setGameState((prev: any) => {
-            if (
-              prev &&
-              res.snapshot.communityCards &&
-              prev.communityCards &&
-              res.snapshot.communityCards.length > prev.communityCards.length
-            )
-              playDeal();
-            if (res.snapshot.terminal && (!prev || !prev.terminal)) playWin();
-            return {
-              ...res.snapshot,
-              seats: (res.snapshot.seats || []).map((s: any, i: number) => ({
-                id: s.playerId || `seat-${i}`,
-                name:
-                  s.playerId === user.username
-                    ? user.username
-                    : BOT_PROFILES.find((b) => b.id === s.playerId)?.name || s.playerId || 'EMPTY',
-                avatar:
-                  s.playerId === user.username
-                    ? user.avatar
-                    : BOT_PROFILES.find((b) => b.id === s.playerId)?.avatar ||
-                      BOT_PROFILES[i % BOT_PROFILES.length]?.avatar ||
-                      '',
-                style: BOT_PROFILES.find((b) => b.id === s.playerId)?.style || '',
-                stack: s.stack || 0,
-                bet: res.snapshot.streetBets?.[String(i)] || 0,
-                cards:
-                  res.snapshot.holeCards?.[String(i)] ||
-                  (s.playerId && s.playerId !== user.username && res.snapshot.street
-                    ? ['hidden', 'hidden']
-                    : []),
-                active: !!s.playerId,
-                folded: (res.snapshot.actedSeats || [])[i] === 'fold' || s.folded || false,
-                isAllIn: s.stack === 0 && (res.snapshot.streetBets?.[String(i)] || 0) > 0,
-                isHero: s.playerId === user.username,
-              })),
-              round: res.snapshot.street
-                ? res.snapshot.street.toUpperCase()
-                : res.snapshot.terminal
-                  ? 'SHOWDOWN'
-                  : 'WAITING',
-              communityCards: res.snapshot.boardCards || res.snapshot.communityCards || [],
-              turnIndex: res.snapshot.actingSeat || 0,
-              currentBet: res.snapshot.currentBet || 0,
-              blinds: [
-                res.snapshot.blinds?.smallBlind || 100,
-                res.snapshot.blinds?.bigBlind || 200,
-              ],
-              timeline: Array.isArray(res.snapshot.timeline)
-                ? res.snapshot.timeline
-                : Array.isArray(res.snapshot.actionTimeline)
-                  ? res.snapshot.actionTimeline
-                  : [],
-            };
-          });
+          setGameState((prev: any) => applySnapshot(res.snapshot, prev));
           // Auto-trigger bot actions
           const snap = res.snapshot;
           const activeSeat = snap.seats?.[snap.actingSeat];
@@ -767,6 +779,15 @@ function AppContent() {
         }
       } catch (e) {
         console.warn('Table poll failed', e);
+        const message = (e as Error)?.message || '';
+        if (
+          message.toLowerCase().includes('no table snapshot') &&
+          botTournament?.running &&
+          Date.now() - lastInitAttemptRef.current > 2500
+        ) {
+          lastInitAttemptRef.current = Date.now();
+          launchBotTournamentHand(botTournament).catch(() => {});
+        }
       }
     };
     poll();
@@ -954,7 +975,12 @@ function AppContent() {
     setMembership(resolvedMembership);
     playWin();
     notify('SUCCESS', 'Authentication Successful', `Welcome to the Neural Network, ${username}.`);
-    setView('LOBBY');
+    if (postLoginView) {
+      setView(postLoginView);
+      setPostLoginView(null);
+    } else {
+      setView('LOBBY');
+    }
   };
 
   const handleJoinTable = async (tableId?: string) => {
@@ -998,8 +1024,16 @@ function AppContent() {
       ...botSeats,
     ];
     const handId = 'hand-' + Date.now();
-    await pokerApi.initTableState(tid, handId, seats, 0, 0).catch(() => {});
-    await pokerApi.autoRound(tid, handId, seats).catch(() => {});
+    try {
+      const initRes = await pokerApi.initTableState(tid, handId, seats, 0, 0);
+      if (initRes?.ok && initRes.snapshot) {
+        setGameState((prev: any) => applySnapshot(initRes.snapshot, prev));
+      }
+      await pokerApi.autoRound(tid, handId, seats).catch(() => {});
+    } catch {
+      notify('ERROR', 'Table Init Failed', 'Poker engine did not accept the table payload.');
+      return;
+    }
     setView('TABLE');
   };
 
@@ -1049,7 +1083,16 @@ function AppContent() {
       temperament: b.temperament,
       maxRiskBps: b.riskBps,
     }));
-    await pokerApi.initTableState(state.tableId, handId, seats, 0, 0).catch(() => {});
+    try {
+      const initRes = await pokerApi.initTableState(state.tableId, handId, seats, 0, 0);
+      if (initRes?.ok && initRes.snapshot) {
+        setGameState((prev: any) => applySnapshot(initRes.snapshot, prev));
+      }
+    } catch (err) {
+      notify('ERROR', 'Tournament Error', 'Poker engine rejected the tournament hand.');
+      setBotTournament((prev) => (prev ? { ...prev, running: false } : prev));
+      return;
+    }
     setBotTournament((prev) =>
       prev
         ? {
@@ -1059,7 +1102,7 @@ function AppContent() {
           }
         : prev
     );
-    await pokerApi.autoRound(state.tableId, handId, seats, 1).catch(() => {});
+    await pokerApi.autoRound(state.tableId, handId, seats, 12).catch(() => {});
     // Further action progression is driven by table polling to avoid rate-limit bursts.
   };
 
