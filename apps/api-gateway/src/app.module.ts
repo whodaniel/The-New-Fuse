@@ -7,6 +7,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { AgentGatewayModule } from './gateway/agent-gateway.module';
+import { AnalyticsGatewayModule } from './gateway/analytics-gateway.module';
 import { ChatGatewayModule } from './gateway/chat-gateway.module';
 import { IdeGatewayModule } from './gateway/ide-gateway.module';
 import { MarketplaceGatewayModule } from './gateway/marketplace-gateway.module';
@@ -30,6 +31,7 @@ import { ProxyModule } from './proxy/proxy.module';
 
     // Gateway modules for each service area
     AgentGatewayModule,
+    AnalyticsGatewayModule,
     WebhookGatewayModule,
     ChatGatewayModule,
     McpGatewayModule,

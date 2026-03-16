@@ -1,4 +1,4 @@
-# Dockerfile.frontend - Frontend build for Railway deployments
+# Dockerfile.frontend - Generic Frontend build for Railway deployments
 # This file should be used from the monorepo root with NO root directory set in Railway
 
 ARG NODE_VERSION=22
@@ -8,8 +8,15 @@ ARG NODE_VERSION=22
 #------------------------------------------------------------------------------
 FROM node:${NODE_VERSION}-alpine AS builder
 
+ARG SERVICE_PATH=apps/frontend
+ARG PACKAGE_NAME=@the-new-fuse/frontend
+ARG VITE_API_URL
+ARG VITE_BACKEND_URL
+ARG VITE_API_GATEWAY_URL
+ARG VITE_WS_URL
+ARG GEMINI_API_KEY
+
 # Accept Firebase environment variables as build args
-# These must be declared AFTER FROM to be available in this stage
 ARG VITE_FIREBASE_API_KEY
 ARG VITE_FIREBASE_AUTH_DOMAIN
 ARG VITE_FIREBASE_PROJECT_ID
@@ -19,7 +26,7 @@ ARG VITE_FIREBASE_APP_ID
 ARG VITE_SUPABASE_URL
 ARG VITE_SUPABASE_ANON_KEY
 
-# Install build dependencies for canvas
+# Install build dependencies for canvas/native modules
 RUN apk add --no-cache \
     python3 \
     make \
@@ -32,7 +39,7 @@ RUN apk add --no-cache \
     giflib-dev
 
 # Install pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@10.22.0 --activate
 
 WORKDIR /app
 
@@ -44,32 +51,29 @@ COPY tsconfig.json ./
 COPY tsconfig.base.json ./
 COPY tsconfig.standard.json ./
 COPY scripts ./scripts
+COPY turbo.json ./
 
 # Copy all necessary workspace packages
 COPY packages ./packages
-COPY apps/frontend ./apps/frontend
+COPY apps ./apps
 
-# Install all dependencies (including workspace dependencies)
+# Install all dependencies
 RUN pnpm install --frozen-lockfile || pnpm install --no-frozen-lockfile
 
-# Build required workspace packages that frontend depends on
+# Build foundational types first
 RUN pnpm --filter @the-new-fuse/types build || echo "Types built"
-RUN pnpm --filter @the-new-fuse/a2a-core build || echo "A2A Core built"
-RUN pnpm --filter @the-new-fuse/a2a-react build || echo "A2A React built"
-RUN pnpm --filter @the-new-fuse/feature-suggestions build || echo "Feature Suggestions built"
-RUN pnpm --filter @the-new-fuse/features build || echo "Features built"
-RUN pnpm --filter @the-new-fuse/port-management build || echo "Port Management built"
-RUN pnpm --filter @the-new-fuse/prompt-templating build || echo "Prompt Templating built"
-RUN pnpm --filter @the-new-fuse/ui-consolidated build || echo "UI Consolidated built"
 
-# Build the frontend application
-WORKDIR /app/apps/frontend
+# Build dependencies based on the target service
+RUN pnpm --filter "@the-new-fuse/*" build || echo "Packages built"
+
+# Set ENV for the build process (Vite inlines these)
 ENV NODE_ENV=production
-ENV VITE_API_URL=https://api.thenewfuse.com
-ENV VITE_BACKEND_URL=https://backend.thenewfuse.com
+ENV VITE_API_URL=$VITE_API_URL
+ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
+ENV VITE_API_GATEWAY_URL=$VITE_API_GATEWAY_URL
+ENV VITE_WS_URL=$VITE_WS_URL
+ENV GEMINI_API_KEY=$GEMINI_API_KEY
 
-# Firebase config - passed as Docker build args from Railway environment variables
-# These MUST be set as ENV so Vite can inline them at build time via import.meta.env.*
 ENV VITE_FIREBASE_API_KEY=$VITE_FIREBASE_API_KEY
 ENV VITE_FIREBASE_AUTH_DOMAIN=$VITE_FIREBASE_AUTH_DOMAIN
 ENV VITE_FIREBASE_PROJECT_ID=$VITE_FIREBASE_PROJECT_ID
@@ -79,8 +83,9 @@ ENV VITE_FIREBASE_APP_ID=$VITE_FIREBASE_APP_ID
 ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL
 ENV VITE_SUPABASE_ANON_KEY=$VITE_SUPABASE_ANON_KEY
 
-# Force cache invalidation: 2026-02-11T07:25:00Z
-RUN echo "Building with NODE_ENV=$NODE_ENV FIREBASE_PROJECT=$VITE_FIREBASE_PROJECT_ID" && pnpm run build -- --mode production
+# Build the specific frontend application using pnpm filter
+# Force cache invalidation: 2026-03-16T15:15:00Z
+RUN pnpm --filter ${PACKAGE_NAME} build
 
 #------------------------------------------------------------------------------
 # Runner stage - Production image
@@ -92,8 +97,10 @@ RUN npm install -g serve
 
 WORKDIR /app
 
+# Re-declare ARG in runner stage to use it here
+ARG SERVICE_PATH=apps/frontend
 # Copy built files from builder stage
-COPY --from=builder /app/apps/frontend/dist ./dist
+COPY --from=builder /app/${SERVICE_PATH}/dist ./dist
 
 # Expose port (Railway will inject PORT env var)
 EXPOSE ${PORT:-3000}
@@ -103,7 +110,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:${PORT:-3000}/ || exit 1
 
 # Start command - serve the built static files
-# -s enables SPA mode (serves index.html for all routes)
-# -n disables clipboard notifications
 CMD ["sh", "-c", "serve ./dist -p ${PORT:-3000} -s -n"]
-# Force rebuild Thu Jan 23 06:30:00 EST 2026

@@ -120,6 +120,64 @@ export const pokerApi = {
   },
 };
 
+// --- V2 Hold'em Cash Table APIs ---
+export const holdemV2Api = {
+  async tables() {
+    return api('/api/v2/holdem/tables');
+  },
+  async createTable(config: any) {
+    return api('/api/v2/holdem/tables', { method: 'POST', body: config });
+  },
+  async seat(payload: any) {
+    return api('/api/v2/holdem/seat', { method: 'POST', body: payload });
+  },
+  async setConnection(tableId: string, playerId: string, connected = true) {
+    return api('/api/v2/holdem/connection', {
+      method: 'POST',
+      body: { tableId, playerId, connected },
+    });
+  },
+  async resume(tableId: string, playerId: string) {
+    return api('/api/v2/holdem/resume', { method: 'POST', body: { tableId, playerId } });
+  },
+  async startHand(tableId: string, handId?: string) {
+    return api('/api/v2/holdem/hands/start', {
+      method: 'POST',
+      body: {
+        tableId,
+        handId: handId || `hand-${Date.now()}`,
+        idempotencyKey: crypto.randomUUID(),
+      },
+    });
+  },
+  async action(payload: {
+    tableId: string;
+    playerId: string;
+    action: string;
+    amount?: number;
+    resumeToken: string;
+    expectedReplayCursor?: number;
+  }) {
+    return api('/api/v2/holdem/actions', {
+      method: 'POST',
+      body: {
+        tableId: payload.tableId,
+        playerId: payload.playerId,
+        action: payload.action,
+        amount: payload.amount ?? 0,
+        resumeToken: payload.resumeToken,
+        expectedReplayCursor: payload.expectedReplayCursor,
+        idempotencyKey: crypto.randomUUID(),
+      },
+    });
+  },
+  async state(tableId: string, playerId?: string) {
+    const params = new URLSearchParams({ tableId });
+    if (playerId) params.set('playerId', playerId);
+    return api(`/api/v2/holdem/state?${params.toString()}`);
+  },
+};
+
 // --- SNG Tournament APIs ---
 export const sngApi = {
   async create(config: any) {

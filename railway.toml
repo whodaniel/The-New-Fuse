@@ -91,6 +91,15 @@ dockerfilePath = "Dockerfile"
 watchPatterns = ["apps/frontend/**", "packages/**", "scripts/**"]
 dockerBuildArgs = { VITE_FIREBASE_API_KEY = "${{VITE_FIREBASE_API_KEY}}", VITE_FIREBASE_AUTH_DOMAIN = "${{VITE_FIREBASE_AUTH_DOMAIN}}", VITE_FIREBASE_PROJECT_ID = "${{VITE_FIREBASE_PROJECT_ID}}", VITE_FIREBASE_STORAGE_BUCKET = "${{VITE_FIREBASE_STORAGE_BUCKET}}", VITE_FIREBASE_MESSAGING_SENDER_ID = "${{VITE_FIREBASE_MESSAGING_SENDER_ID}}", VITE_FIREBASE_APP_ID = "${{VITE_FIREBASE_APP_ID}}", VITE_TURNSTILE_SITE_KEY = "${{VITE_TURNSTILE_SITE_KEY}}", VITE_AUTH_REQUIRE_TURNSTILE = "${{VITE_AUTH_REQUIRE_TURNSTILE}}", VITE_API_GATEWAY_URL = "${{VITE_API_GATEWAY_URL}}", VITE_SUPABASE_URL = "${{VITE_SUPABASE_URL}}", VITE_SUPABASE_ANON_KEY = "${{VITE_SUPABASE_ANON_KEY}}" }
 
+# Casin8 Games Backend (Poker engine / game server)
+[services.casin8-games-backend]
+builder = "DOCKERFILE"
+[services.casin8-games-backend.build]
+dockerfilePath = "apps/casin8-games/Dockerfile"
+watchPatterns = ["apps/casin8-games/**"]
+[services.casin8-games-backend.deploy]
+healthcheckPath = "/api/health"
+
 
 # TNF Cloud Sandbox (MCP Server for Tauri bridge)
 # Uses shared Dockerfile.railway from repository root
@@ -224,10 +233,11 @@ restartPolicyMaxRetries = 3
 [services.casin8-games]
 builder = "DOCKERFILE"
 [services.casin8-games.build]
-dockerfilePath = "apps/casin8-games/Dockerfile"
-watchPatterns = ["apps/casin8-games/**"]
+dockerfilePath = "Dockerfile"
+dockerBuildArgs = { SERVICE_PATH = "apps/poker-room", PACKAGE_NAME = "@the-new-fuse/poker-room", VITE_API_URL = "${{VITE_API_URL}}", VITE_API_GATEWAY_URL = "${{VITE_API_GATEWAY_URL}}", VITE_WS_URL = "${{VITE_WS_URL}}", GEMINI_API_KEY = "${{GEMINI_API_KEY}}" }
+watchPatterns = ["apps/poker-room/**", "packages/**"]
 [services.casin8-games.deploy]
-healthcheckPath = "/api/health"
+healthcheckPath = "/"
 
 # Relay Server Service (agent relay + networking health)
 [services.relay-server]
@@ -242,8 +252,8 @@ healthcheckPath = "/health"
 [services.nexus-orchestrator]
 builder = "DOCKERFILE"
 [services.nexus-orchestrator.build]
-dockerfilePath = "Dockerfile.frontend"
-dockerBuildArgs = { SERVICE_PATH = "apps/nexus-orchestrator", VITE_API_URL = "${{VITE_API_URL}}", VITE_API_GATEWAY_URL = "${{VITE_API_GATEWAY_URL}}", VITE_WS_URL = "${{VITE_WS_URL}}", GEMINI_API_KEY = "${{GEMINI_API_KEY}}" }
+dockerfilePath = "Dockerfile"
+dockerBuildArgs = { SERVICE_PATH = "apps/nexus-orchestrator", PACKAGE_NAME = "@the-new-fuse/nexus-orchestrator", VITE_API_URL = "${{VITE_API_URL}}", VITE_API_GATEWAY_URL = "${{VITE_API_GATEWAY_URL}}", VITE_WS_URL = "${{VITE_WS_URL}}", GEMINI_API_KEY = "${{GEMINI_API_KEY}}" }
 watchPatterns = ["apps/nexus-orchestrator/**", "packages/**"]
 [services.nexus-orchestrator.deploy]
 healthcheckPath = "/"

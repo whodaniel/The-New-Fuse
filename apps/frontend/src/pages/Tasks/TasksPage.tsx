@@ -48,6 +48,7 @@ export default function TasksPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [priorityFilter, setPriorityFilter] = useState('all');
+  const [assigneeFilter, setAssigneeFilter] = useState('all');
   const [sortBy, setSortBy] = useState('dueDate');
 
   useEffect(() => {
@@ -131,7 +132,8 @@ export default function TasksPage() {
       task.assignee.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || task.status === statusFilter;
     const matchesPriority = priorityFilter === 'all' || task.priority === priorityFilter;
-    return matchesSearch && matchesStatus && matchesPriority;
+    const matchesAssignee = assigneeFilter === 'all' || task.assignee === assigneeFilter;
+    return matchesSearch && matchesStatus && matchesPriority && matchesAssignee;
   });
 
   const sortedTasks = [...filteredTasks].sort((a, b) => {
@@ -149,6 +151,8 @@ export default function TasksPage() {
         return 0;
     }
   });
+
+  const uniqueAssignees = Array.from(new Set(tasks.map((t) => t.assignee))).sort();
 
   const completedCount = tasks.filter((task) => task.status === 'completed').length;
   const inProgressCount = tasks.filter((task) => task.status === 'in-progress').length;
@@ -247,13 +251,24 @@ export default function TasksPage() {
 
             <div className="min-w-[140px]">
               <PremiumSelect
+                value={assigneeFilter}
+                onChange={(e) => setAssigneeFilter(e.target.value)}
+                options={[
+                  { value: 'all', label: 'All Assignees' },
+                  ...uniqueAssignees.map((a) => ({ value: a, label: a })),
+                ]}
+              />
+            </div>
+
+            <div className="min-w-[140px]">
+              <PremiumSelect
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
                 options={[
-                  { value: 'dueDate', label: 'Due Date' },
-                  { value: 'priority', label: 'Priority' },
-                  { value: 'progress', label: 'Progress' },
-                  { value: 'title', label: 'Title' },
+                  { value: 'dueDate', label: 'Sort: Due Date' },
+                  { value: 'priority', label: 'Sort: Priority' },
+                  { value: 'progress', label: 'Sort: Progress' },
+                  { value: 'title', label: 'Sort: Title' },
                 ]}
               />
             </div>
