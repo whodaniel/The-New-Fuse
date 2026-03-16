@@ -160,6 +160,20 @@ async function bootstrap() {
     customfavIcon: '/favicon.ico',
   });
 
+  const healthPayload = () => ({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    memory: process.memoryUsage(),
+    version: process.env.npm_package_version || '1.0.0',
+    services: {
+      agents: 'active',
+      webhooks: 'active',
+      sse: 'active',
+      mcp: 'active',
+    },
+  });
+
   // Root endpoint for health checks and basic info
   const rootHandler = (req, res) => {
     res.json({
@@ -182,19 +196,14 @@ async function bootstrap() {
 
   // Health check endpoint
   app.getHttpAdapter().get('/health', (req, res) => {
-    res.json({
-      status: 'healthy',
-      timestamp: new Date().toISOString(),
-      uptime: process.uptime(),
-      memory: process.memoryUsage(),
-      version: process.env.npm_package_version || '1.0.0',
-      services: {
-        agents: 'active',
-        webhooks: 'active',
-        sse: 'active',
-        mcp: 'active',
-      },
-    });
+    res.json(healthPayload());
+  });
+  // Compatibility health endpoints (some infra checks hit /api/health)
+  app.getHttpAdapter().get('/api/health', (req, res) => {
+    res.json(healthPayload());
+  });
+  app.getHttpAdapter().get('/api/v1/health', (req, res) => {
+    res.json(healthPayload());
   });
 
   // Listen on provided API_GATEWAY_PORT, default to PORT provided by Railway, fallback to 8080
