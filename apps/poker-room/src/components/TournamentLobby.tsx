@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, Clock, Plus, Shield, Trophy } from 'lucide-react';
+import { ArrowRight, Clock, Loader2, Plus, Shield, Trophy } from 'lucide-react';
 import React, { useState } from 'react';
+import { api } from '../api';
 
 interface TournamentLobbyProps {
   onJoin: (id: string) => void;
