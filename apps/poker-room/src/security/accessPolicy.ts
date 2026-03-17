@@ -9,6 +9,8 @@ export interface PokerAccessContext {
   isAdmin: boolean;
   isCreator: boolean;
   isMember: boolean;
+  isGuest: boolean;
+  canPlayPoker: boolean;
   isProgrammaticAgent: boolean;
   canCreateTournaments: boolean;
   canCreateTables: boolean;
@@ -21,6 +23,7 @@ export interface PokerAccessContext {
 
 export type PokerSurfaceGroup =
   | 'public_entry'
+  | 'player_guest'
   | 'player_core'
   | 'player_hud'
   | 'member_social'
@@ -58,6 +61,8 @@ export const derivePokerAccess = ({
   email?: string;
   membership?: CommunityMembership | null;
 }): PokerAccessContext => {
+  const allowGuestPlay =
+    String(import.meta.env.VITE_ALLOW_GUEST_PLAY || 'true').toLowerCase() !== 'false';
   const normalizedRole = normalizeMembershipRole(membership?.role);
   const activeMembership = (membership?.status || '').toLowerCase() === 'active';
   const normalizedEmail = (email || '').trim().toLowerCase();
@@ -72,12 +77,16 @@ export const derivePokerAccess = ({
   const isCreator = isAdmin || normalizedRole === 'creator';
   const isMember =
     isCreator || activeMembership || normalizedRole === 'member' || isProgrammaticAgent;
+  const isGuest = allowGuestPlay && !isMember && Boolean(normalizedUsername);
+  const canPlayPoker = isMember || isGuest;
 
   return {
     isSuperAdmin,
     isAdmin,
     isCreator,
     isMember,
+    isGuest,
+    canPlayPoker,
     isProgrammaticAgent,
     canCreateTournaments: isCreator,
     canCreateTables: isCreator,
@@ -96,9 +105,12 @@ export const canAccessPokerSurface = (
   switch (surface) {
     case 'public_entry':
       return true;
+    case 'player_guest':
+      return ctx.canPlayPoker;
     case 'player_core':
-    case 'player_hud':
       return ctx.isMember;
+    case 'player_hud':
+      return ctx.canPlayPoker;
     case 'member_social':
       return ctx.canReadCommunityApps;
     case 'creator_studio':

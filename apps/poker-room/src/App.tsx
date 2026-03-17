@@ -736,7 +736,7 @@ function AppContent() {
       email: user?.email,
       membership,
     });
-    if (!accessCheck.isMember) {
+    if (!accessCheck.canPlayPoker) {
       notify(
         'SYSTEM',
         'Members Only',
@@ -2030,7 +2030,7 @@ function AppContent() {
       setView('LOGIN');
       return;
     }
-    if (!access.isMember) {
+    if (!access.canPlayPoker) {
       notify(
         'SYSTEM',
         'Members Only',
@@ -2041,7 +2041,15 @@ function AppContent() {
     }
     notify('SYSTEM', 'Route Restricted', 'That surface is not enabled for this session.');
     setView('LOBBY');
-  }, [view, access.isAdmin, access.isMember, access.isCreator, access.isProgrammaticAgent, user]);
+  }, [
+    view,
+    access.isAdmin,
+    access.isMember,
+    access.isCreator,
+    access.isProgrammaticAgent,
+    access.canPlayPoker,
+    user,
+  ]);
 
   const isCashTable = tableProtocol === 'v2';
   const tableHeaderTitle = isCashTable ? activeTableMeta?.name || 'CASH TABLE' : undefined;

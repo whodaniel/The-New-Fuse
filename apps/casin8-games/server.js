@@ -1649,6 +1649,7 @@ function applySecurityHeaders(res) {
     'Access-Control-Allow-Headers',
     'X-Requested-With, Content-Type, Authorization, x-api-key, x-tnf-identity, x-player-id, x-username, x-tnf-role, x-agent-api-key'
   );
+  res.setHeader('Access-Control-Expose-Headers', 'x-tnf-identity');
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
