@@ -1,13 +1,8 @@
 import { motion } from 'framer-motion';
 import { Shield } from 'lucide-react';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { PLAYER_AVATARS } from '../data/avatars';
-import {
-  findProfileByName,
-  loadProfiles,
-  type PlayerControlMode,
-  type PlayerProfile,
-} from '../utils/playerProfiles';
+import { type PlayerControlMode } from '../utils/playerProfiles';
 
 interface SessionLoginProps {
   onLogin: (
@@ -23,18 +18,7 @@ const AVATARS = PLAYER_AVATARS;
 export default function SessionLogin({ onLogin }: SessionLoginProps) {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
-  const [profiles, setProfiles] = useState<PlayerProfile[]>([]);
   const [error, setError] = useState('');
-
-  useEffect(() => {
-    const loaded = loadProfiles();
-    setProfiles(loaded);
-  }, []);
-
-  const matchedProfile = useMemo(() => {
-    if (!username) return null;
-    return findProfileByName(profiles, username);
-  }, [profiles, username]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,8 +27,8 @@ export default function SessionLogin({ onLogin }: SessionLoginProps) {
       return;
     }
     setError('');
-    const avatar = matchedProfile?.avatar || AVATARS[0];
-    const controlMode: PlayerControlMode = matchedProfile?.controlMode || 'human';
+    const avatar = AVATARS[0];
+    const controlMode: PlayerControlMode = 'human';
     onLogin(username.trim(), avatar, email.trim() || undefined, controlMode);
   };
 
@@ -83,33 +67,6 @@ export default function SessionLogin({ onLogin }: SessionLoginProps) {
             <span className="text-[10px] font-black text-slate-600">OR ANONYMOUS ACCESS</span>
             <div className="h-px flex-1 bg-white/5" />
           </div>
-
-          {profiles.length > 0 && (
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">
-                Saved Callsigns
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {profiles.map((profile) => (
-                  <button
-                    key={profile.id}
-                    type="button"
-                    onClick={() => {
-                      setUsername(profile.name);
-                    }}
-                    className="flex items-center gap-2 px-3 py-2 rounded-xl border border-white/10 bg-black/40 hover:bg-black/60 text-xs font-black uppercase tracking-widest text-slate-300"
-                  >
-                    <img
-                      src={profile.avatar}
-                      alt={profile.name}
-                      className="w-6 h-6 rounded-full border border-slate-700"
-                    />
-                    {profile.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
 
           <div>
             <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">
