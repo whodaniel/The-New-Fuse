@@ -24,11 +24,11 @@ ENV NODE_ENV=production
 
 # Build based on SERVICE_PATH
 RUN if [ "$SERVICE_PATH" = "apps/nexus-orchestrator" ]; then \
-        cd /app/apps/nexus-orchestrator && pnpm build; \
+        pnpm --filter @the-new-fuse/nexus-orchestrator build; \
     elif [ "$SERVICE_PATH" = "apps/frontend" ]; then \
         pnpm --filter @the-new-fuse/frontend build; \
     else \
-        echo "Unknown SERVICE_PATH: $SERVICE_PATH" && exit 1; \
+        echo "Building all packages..." && pnpm --filter "@the-new-fuse/*" build; \
     fi
 
 FROM node:${NODE_VERSION}-alpine AS runner
