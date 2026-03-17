@@ -88,7 +88,7 @@ export default function LandingPage({ onEnter }: LandingPageProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
-          className="absolute bottom-8 text-[10px] font-mono text-slate-600 uppercase tracking-widest"
+          className="absolute bottom-8 text-[10px] font-mono text-slate-600 uppercase tracking-widest pointer-events-none"
         >
           Powered by Neural Synthesis Engine v2.0
         </motion.p>

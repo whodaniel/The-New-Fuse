@@ -1333,7 +1333,8 @@ function AppContent() {
       ...(email ? { email } : {}),
     });
     if (typeof window !== 'undefined') {
-      window.localStorage.setItem('tnf_identity', username);
+      const identity = email?.trim() ? email.trim() : username;
+      window.localStorage.setItem('tnf_identity', identity);
       if (email) window.localStorage.setItem('tnf_email', email);
     }
 
