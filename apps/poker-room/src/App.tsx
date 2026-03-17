@@ -16,7 +16,9 @@ import {
   communityApi,
   CommunityMembership,
   holdemV2Api,
+  mttApi,
   pokerApi,
+  sngApi,
   tournamentApi,
   userBotsApi,
 } from './api';
@@ -1870,10 +1872,11 @@ function AppContent() {
   const handleCreateSng = async (config: any) => {
     playClick();
     setShowSngCreator(false);
+    const tournamentId = `sng-${Date.now()}`;
     try {
       const maxPlayers = config.format === 'Heads-Up' ? 2 : config.format === '9-Max' ? 9 : 6;
       await tournamentApi.create({
-        tournamentId: `sng-${Date.now()}`,
+        tournamentId,
         type: 'sng',
         maxPlayers,
         tableSize: maxPlayers,
@@ -1886,8 +1889,29 @@ function AppContent() {
         'Tournament Created',
         `${config.name || 'SNG'} is now open for registration.`
       );
-    } catch {
-      notify('ERROR', 'Creation Failed', 'Could not create tournament.');
+    } catch (err) {
+      let message = String((err as Error)?.message || 'Could not create tournament.');
+      try {
+        const legacy = await sngApi.create({
+          tournamentId,
+          maxPlayers: config.format === 'Heads-Up' ? 2 : config.format === '9-Max' ? 9 : 6,
+          buyInUnits: Number(config.buyIn || 100),
+          startChips: Number(config.stack || 5000),
+        });
+        if (legacy?.ok !== false) {
+          notify(
+            'SUCCESS',
+            'Tournament Created',
+            `${config.name || 'SNG'} is now open for registration.`
+          );
+          return;
+        }
+        if (legacy?.error) message = String(legacy.error);
+      } catch (legacyErr) {
+        const legacyMsg = String((legacyErr as Error)?.message || '');
+        if (legacyMsg) message = legacyMsg;
+      }
+      notify('ERROR', 'Creation Failed', message);
     }
   };
 
@@ -1895,13 +1919,14 @@ function AppContent() {
     playClick();
     setShowMttCreator(false);
     try {
+      const tournamentId = `mtt-${Date.now()}`;
       const tableSize = config.format === '6-Max' ? 6 : 9;
       const maxPlayers =
         String(config.maxEntries || '').toLowerCase() === 'unlimited'
           ? 180
           : Number(config.maxEntries || 180);
       await tournamentApi.create({
-        tournamentId: `mtt-${Date.now()}`,
+        tournamentId,
         type: 'mtt',
         maxPlayers,
         tableSize,
@@ -1914,8 +1939,36 @@ function AppContent() {
         'Tournament Created',
         `${config.name || 'MTT'} is now open for registration.`
       );
-    } catch {
-      notify('ERROR', 'Creation Failed', 'Could not create tournament.');
+    } catch (err) {
+      let message = String((err as Error)?.message || 'Could not create tournament.');
+      try {
+        const tournamentId = `mtt-${Date.now()}`;
+        const tableMaxSeats = config.format === '6-Max' ? 6 : 9;
+        const maxPlayers =
+          String(config.maxEntries || '').toLowerCase() === 'unlimited'
+            ? 180
+            : Number(config.maxEntries || 180);
+        const legacy = await mttApi.create({
+          tournamentId,
+          maxPlayers,
+          tableMaxSeats,
+          buyInUnits: Number(config.buyIn || 200),
+          lateRegMinutes: Number(config.lateRegMinutes || 30),
+        });
+        if (legacy?.ok !== false) {
+          notify(
+            'SUCCESS',
+            'Tournament Created',
+            `${config.name || 'MTT'} is now open for registration.`
+          );
+          return;
+        }
+        if (legacy?.error) message = String(legacy.error);
+      } catch (legacyErr) {
+        const legacyMsg = String((legacyErr as Error)?.message || '');
+        if (legacyMsg) message = legacyMsg;
+      }
+      notify('ERROR', 'Creation Failed', message);
     }
   };
 
