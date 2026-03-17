@@ -74,3 +74,11 @@
   tournament bootstrap (`Poker engine rejected the tournament hand`).
 - Login form simplified to remove saved callsign/profile UI; advanced profile
   management remains in Settings.
+
+## 2026-03-17 Casin8 CORS Fix
+
+- Added TNF identity headers (x-tnf-identity, x-player-id, x-username,
+  x-tnf-role, x-agent-api-key) to Access-Control-Allow-Headers in
+  `apps/casin8-games/server.js`.
+- Intended to unblock browser membership-gated calls for holdem v2 tables and v1
+  table init when using custom identity headers.
