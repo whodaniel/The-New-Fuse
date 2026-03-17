@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { api } from '../api';
 
 interface CashTableBrowserProps {
-  onJoinTable: (tableId: string) => void;
+  onJoinTable: (tableId: string, tableMeta?: any) => void;
   onBack: () => void;
   canCreateTable?: boolean;
 }
@@ -209,7 +209,7 @@ export default function CashTableBrowser({
                     </button>
                   ) : (
                     <button
-                      onClick={() => onJoinTable(table.id)}
+                      onClick={() => onJoinTable(table.id, table)}
                       className="px-8 py-3 bg-cyan-600 text-white rounded-xl font-black uppercase tracking-widest border-b-4 border-cyan-800 hover:brightness-125 active:border-b-0 active:translate-y-1 transition-all flex items-center gap-2"
                     >
                       Join <ArrowRight className="w-4 h-4" />
@@ -231,7 +231,12 @@ export default function CashTableBrowser({
                 live table and fill remaining seats with bots until other players join.
               </p>
               <button
-                onClick={() => onJoinTable(`bot-table-${Date.now()}`)}
+                onClick={() =>
+                  onJoinTable(`bot-table-${Date.now()}`, {
+                    maxPlayers: 6,
+                    stakes: '$25/$50',
+                  })
+                }
                 className="px-8 py-4 bg-cyan-600 text-white rounded-2xl font-black uppercase tracking-widest border-b-4 border-cyan-800 hover:brightness-125 active:border-b-0 active:translate-y-1 transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(0,242,255,0.2)]"
               >
                 <Plus className="w-5 h-5" /> Start Bot-Filled Table

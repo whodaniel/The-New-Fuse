@@ -16,6 +16,15 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { userBotsApi } from '../api';
+import { PLAYER_AVATARS } from '../data/avatars';
+import {
+  createProfileId,
+  loadProfiles,
+  removeProfile,
+  saveProfiles,
+  type PlayerControlMode,
+  type PlayerProfile,
+} from '../utils/playerProfiles';
 
 interface SettingsPageProps {
   onBack?: () => void;
@@ -45,6 +54,12 @@ export default function SettingsPage({ onBack, onSave }: SettingsPageProps) {
     riskBps: 800,
     aiAssist: false,
   });
+  const [playerProfiles, setPlayerProfiles] = useState<PlayerProfile[]>([]);
+  const [profileForm, setProfileForm] = useState<{
+    name: string;
+    avatar: string;
+    controlMode: PlayerControlMode;
+  }>({ name: '', avatar: PLAYER_AVATARS[0], controlMode: 'human' });
 
   // Settings State
   const [settings, setSettings] = useState({
@@ -96,6 +111,12 @@ export default function SettingsPage({ onBack, onSave }: SettingsPageProps) {
     }
   }, [activeTab]);
 
+  useEffect(() => {
+    if (activeTab === 'ACCOUNT') {
+      setPlayerProfiles(loadProfiles());
+    }
+  }, [activeTab]);
+
   const loadBots = async () => {
     setLoadingBots(true);
     try {
@@ -124,6 +145,41 @@ export default function SettingsPage({ onBack, onSave }: SettingsPageProps) {
     } catch (err) {
       console.error('Failed to create bot', err);
     }
+  };
+
+  const savePlayerProfiles = (next: PlayerProfile[]) => {
+    setPlayerProfiles(next);
+    saveProfiles(next);
+  };
+
+  const addPlayerProfile = () => {
+    const name = profileForm.name.trim();
+    if (name.length < 3 || name.length > 16) return;
+    const exists = playerProfiles.some((p) => p.name.trim().toLowerCase() === name.toLowerCase());
+    if (exists) return;
+    const next = [
+      ...playerProfiles,
+      {
+        id: createProfileId(name),
+        name,
+        avatar: profileForm.avatar,
+        controlMode: profileForm.controlMode,
+        createdAt: new Date().toISOString(),
+      },
+    ];
+    savePlayerProfiles(next);
+    setProfileForm({ name: '', avatar: PLAYER_AVATARS[0], controlMode: 'human' });
+  };
+
+  const updatePlayerProfile = (index: number, patch: Partial<PlayerProfile>) => {
+    const next = playerProfiles.map((profile, i) =>
+      i === index ? { ...profile, ...patch } : profile
+    );
+    savePlayerProfiles(next);
+  };
+
+  const deletePlayerProfile = (name: string) => {
+    savePlayerProfiles(removeProfile(playerProfiles, name));
   };
 
   const updateBotOnServer = async (index: number) => {
@@ -648,6 +704,134 @@ export default function SettingsPage({ onBack, onSave }: SettingsPageProps) {
                     Change Avatar
                   </span>
                 </button>
+              </div>
+
+              <div className="h-px bg-white/10" />
+
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-1">
+                    Player Primitives
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Create and persist unique player identities. Each player can be human, hybrid,
+                    or fully agentic.
+                  </p>
+                </div>
+
+                <div className="bg-black/30 border border-white/10 rounded-xl p-4 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <input
+                      type="text"
+                      value={profileForm.name}
+                      onChange={(e) =>
+                        setProfileForm((prev) => ({ ...prev, name: e.target.value }))
+                      }
+                      placeholder="New callsign"
+                      className="bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white font-mono text-sm focus:outline-none focus:border-cyan-400"
+                    />
+                    <div className="flex items-center gap-2">
+                      {PLAYER_AVATARS.map((avatar) => (
+                        <button
+                          key={avatar}
+                          type="button"
+                          onClick={() => setProfileForm((prev) => ({ ...prev, avatar }))}
+                          className={`w-10 h-10 rounded-full border-2 overflow-hidden transition-all ${
+                            profileForm.avatar === avatar
+                              ? 'border-cyan-400 shadow-[0_0_10px_rgba(0,242,255,0.4)]'
+                              : 'border-slate-800 opacity-60 hover:opacity-100'
+                          }`}
+                        >
+                          <img src={avatar} alt="avatar" className="w-full h-full" />
+                        </button>
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {(['human', 'hybrid', 'agent'] as PlayerControlMode[]).map((mode) => (
+                        <button
+                          key={mode}
+                          type="button"
+                          onClick={() => setProfileForm((prev) => ({ ...prev, controlMode: mode }))}
+                          className={`px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-all ${
+                            profileForm.controlMode === mode
+                              ? 'bg-cyan-600 text-white border-cyan-400'
+                              : 'bg-black/40 text-slate-400 border-slate-800 hover:border-slate-600'
+                          }`}
+                        >
+                          {mode}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={addPlayerProfile}
+                    className="w-full md:w-auto px-6 py-3 bg-cyan-600 text-white rounded-xl font-black uppercase tracking-widest border-b-4 border-cyan-800 hover:brightness-125 active:border-b-0 active:translate-y-1 transition-all"
+                  >
+                    Create Player
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  {playerProfiles.length === 0 && (
+                    <div className="text-xs text-slate-500 bg-black/30 border border-white/10 rounded-xl p-4">
+                      No saved player primitives yet.
+                    </div>
+                  )}
+                  {playerProfiles.map((profile, idx) => (
+                    <div
+                      key={profile.id}
+                      className="bg-black/40 border border-white/10 rounded-xl p-4 flex flex-col gap-3"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-xs text-slate-500 uppercase tracking-wider">
+                            Callsign
+                          </p>
+                          <p className="text-sm font-mono text-white">{profile.name}</p>
+                        </div>
+                        <button
+                          onClick={() => deletePlayerProfile(profile.name)}
+                          className="text-xs text-rose-400 uppercase tracking-wider hover:text-rose-300"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        {PLAYER_AVATARS.map((avatar) => (
+                          <button
+                            key={`${profile.id}-${avatar}`}
+                            type="button"
+                            onClick={() => updatePlayerProfile(idx, { avatar })}
+                            className={`w-9 h-9 rounded-full border-2 overflow-hidden transition-all ${
+                              profile.avatar === avatar
+                                ? 'border-cyan-400 shadow-[0_0_10px_rgba(0,242,255,0.4)]'
+                                : 'border-slate-800 opacity-60 hover:opacity-100'
+                            }`}
+                          >
+                            <img src={avatar} alt="avatar" className="w-full h-full" />
+                          </button>
+                        ))}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {(['human', 'hybrid', 'agent'] as PlayerControlMode[]).map((mode) => (
+                          <button
+                            key={`${profile.id}-${mode}`}
+                            type="button"
+                            onClick={() => updatePlayerProfile(idx, { controlMode: mode })}
+                            className={`px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-all ${
+                              profile.controlMode === mode
+                                ? 'bg-cyan-600 text-white border-cyan-400'
+                                : 'bg-black/40 text-slate-400 border-slate-800 hover:border-slate-600'
+                            }`}
+                          >
+                            {mode}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <div className="h-px bg-white/10" />

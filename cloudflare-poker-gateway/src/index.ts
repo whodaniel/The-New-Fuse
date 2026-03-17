@@ -8,6 +8,9 @@ export default {
     const url = new URL(request.url);
     const path = url.pathname;
 
+    const isAssetRequest =
+      path.startsWith('/assets/') || /\.[a-z0-9]+$/i.test(path) || path.startsWith('/static/');
+
     // Route to Railway Backend for API requests
     if (path.startsWith('/api/')) {
       console.log(`[Gateway] Routing to Backend: ${path}`);
@@ -17,7 +20,12 @@ export default {
       url.port = backendUrl.port;
 
       const newRequest = new Request(url.toString(), request);
-      return fetch(newRequest);
+      const res = await fetch(newRequest, {
+        cf: { cacheTtl: 0, cacheEverything: false },
+      });
+      const headers = new Headers(res.headers);
+      headers.set('Cache-Control', 'no-store');
+      return new Response(res.body, { status: res.status, headers });
     }
 
     // Route to Cloudflare Pages for Frontend
@@ -28,6 +36,16 @@ export default {
     url.port = frontendUrl.port;
 
     const newRequest = new Request(url.toString(), request);
-    return fetch(newRequest);
+    const res = await fetch(newRequest, {
+      cf: isAssetRequest
+        ? { cacheEverything: true, cacheTtl: 60 * 60 * 24 }
+        : { cacheEverything: false },
+    });
+    if (!isAssetRequest) {
+      const headers = new Headers(res.headers);
+      headers.set('Cache-Control', 'no-cache');
+      return new Response(res.body, { status: res.status, headers });
+    }
+    return res;
   },
 };

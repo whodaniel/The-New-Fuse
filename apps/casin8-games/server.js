@@ -784,6 +784,181 @@ function extractApiToken(req) {
   return String(req.headers['x-api-key'] || '').trim();
 }
 
+function extractBearerJwt(req) {
+  const auth = String(req.headers.authorization || '');
+  if (!auth.toLowerCase().startsWith('bearer ')) return '';
+  const token = auth.slice(7).trim();
+  const parts = token.split('.');
+  if (parts.length !== 3) return '';
+  if (!parts[0] || !parts[1] || !parts[2]) return '';
+  return token;
+}
+
+const MEMBERSHIP_REQUIRED =
+  String(process.env.CASIN8_REQUIRE_MEMBERSHIP || 'true').toLowerCase() !== 'false';
+const MEMBERSHIP_CACHE_TTL_MS = 90_000;
+const MEMBERSHIP_API_BASE = String(
+  process.env.CASIN8_TNF_API_BASE_URL ||
+    process.env.TNF_API_BASE_URL ||
+    'https://thenewfuse.com/api'
+).replace(/\/$/, '');
+const COMMUNITY_API_BASE = String(
+  process.env.CASIN8_COMMUNITY_API_BASE ||
+    process.env.COMMUNITY_API_BASE_URL ||
+    'https://ai-arcade-community-api.bizsynth.workers.dev'
+).replace(/\/$/, '');
+const MEMBERSHIP_API_KEY =
+  process.env.CASIN8_COMMUNITY_API_KEY ||
+  process.env.TNF_COMMUNITY_API_KEY ||
+  process.env.COMMUNITY_API_KEY ||
+  '';
+const membershipCache = new Map();
+
+function extractMembershipIdentity(req, urlObj) {
+  const headerIdentity =
+    String(req.headers['x-tnf-identity'] || req.headers['x-player-id'] || '').trim() ||
+    String(req.headers['x-username'] || '').trim();
+  if (headerIdentity) return headerIdentity;
+  const url = urlObj instanceof URL ? urlObj : null;
+  const queryIdentity =
+    (url && (url.searchParams.get('identity') || url.searchParams.get('playerId'))) || '';
+  if (queryIdentity) return queryIdentity;
+  if (req.body && typeof req.body === 'object') {
+    const bodyIdentity = String(
+      req.body.playerId || req.body.identity || req.body.username || req.body.email || ''
+    );
+    if (bodyIdentity.trim()) return bodyIdentity.trim();
+  }
+  return '';
+}
+
+async function fetchMembership(identity, req) {
+  const normalized = String(identity || '').trim();
+  if (!normalized) return { ok: false, active: false, reason: 'missing_identity' };
+  const cacheKey = normalized.toLowerCase();
+  const cached = membershipCache.get(cacheKey);
+  if (cached && cached.expiresAt > Date.now()) {
+    return cached.value;
+  }
+
+  try {
+    const jwtToken = extractBearerJwt(req || {});
+    if (jwtToken) {
+      const jwtRes = await fetch(`${MEMBERSHIP_API_BASE}/billing/membership/me`, {
+        method: 'GET',
+        headers: { authorization: `Bearer ${jwtToken}` },
+      });
+      if (jwtRes.ok) {
+        const jwtJson = await jwtRes.json().catch(() => null);
+        const active = !!jwtJson?.active;
+        const value = {
+          ok: true,
+          active,
+          tier: jwtJson?.tier || 'STARTER',
+          user: jwtJson?.userId ? { id: jwtJson.userId } : null,
+        };
+        membershipCache.set(cacheKey, {
+          expiresAt: Date.now() + MEMBERSHIP_CACHE_TTL_MS,
+          value,
+        });
+        return value;
+      }
+    }
+
+    if (MEMBERSHIP_API_KEY) {
+      const res = await fetch(
+        `${MEMBERSHIP_API_BASE}/billing/membership/${encodeURIComponent(normalized)}`,
+        {
+          method: 'GET',
+          headers: { 'x-community-api-key': String(MEMBERSHIP_API_KEY).trim() },
+        }
+      );
+      if (res.ok) {
+        const json = await res.json().catch(() => null);
+        const active = !!json?.active;
+        const value = {
+          ok: true,
+          active,
+          tier: json?.tier || 'STARTER',
+          user: json?.user || null,
+        };
+        membershipCache.set(cacheKey, {
+          expiresAt: Date.now() + MEMBERSHIP_CACHE_TTL_MS,
+          value,
+        });
+        return value;
+      }
+    }
+
+    const res = await fetch(
+      `${COMMUNITY_API_BASE}/api/community/membership/${encodeURIComponent(normalized)}`,
+      { method: 'GET' }
+    );
+    if (!res.ok) {
+      const value = { ok: false, active: false, reason: `http_${res.status}` };
+      membershipCache.set(cacheKey, {
+        expiresAt: Date.now() + MEMBERSHIP_CACHE_TTL_MS,
+        value,
+      });
+      return value;
+    }
+    const json = await res.json().catch(() => null);
+    const active =
+      !!json?.membership?.status && String(json.membership.status).toLowerCase() === 'active';
+    const value = {
+      ok: true,
+      active,
+      tier: json?.membership?.tier || 'STARTER',
+      user: json?.membership || null,
+    };
+    membershipCache.set(cacheKey, {
+      expiresAt: Date.now() + MEMBERSHIP_CACHE_TTL_MS,
+      value,
+    });
+    return value;
+  } catch (err) {
+    const value = { ok: false, active: false, reason: 'network_error' };
+    membershipCache.set(cacheKey, {
+      expiresAt: Date.now() + MEMBERSHIP_CACHE_TTL_MS,
+      value,
+    });
+    return value;
+  }
+}
+
+async function requireMembership(req, res, urlObj) {
+  if (process.env.ALLOW_CONSOLE_ANON === 'true') return { ok: true, bypass: true };
+  if (!MEMBERSHIP_REQUIRED) return { ok: true, bypass: true };
+  const identity = extractMembershipIdentity(req, urlObj);
+  if (!identity) {
+    writeJson(res, 401, { ok: false, error: 'Membership identity required' });
+    return { ok: false };
+  }
+  if (isBotPlayerId(identity)) return { ok: true, bypass: true, identity };
+  const membership = await fetchMembership(identity, req);
+  if (!membership.ok || !membership.active) {
+    writeJson(res, 403, {
+      ok: false,
+      error: 'Active TNF membership required',
+      identity,
+      reason: membership.reason || 'inactive_membership',
+    });
+    return { ok: false };
+  }
+  return { ok: true, identity, membership };
+}
+
+function requiresMembershipGate(method, pathname) {
+  const m = String(method || 'GET').toUpperCase();
+  const p = String(pathname || '');
+  if (p.startsWith('/api/v2/holdem')) return true;
+  if (p.startsWith('/api/v2/tournaments')) return true;
+  if (p.startsWith('/api/table/')) return true;
+  if (p.startsWith('/api/sng/')) return true;
+  if (p.startsWith('/api/mtt/')) return true;
+  return false;
+}
+
 function requireRoles(req, res, requiredRoles) {
   const configured = apiTokenRoles;
   if (configured.size === 0) {
@@ -862,6 +1037,41 @@ function isBotPlayerId(playerId) {
   return String(playerId || '').startsWith('bot-') || String(playerId || '').startsWith('agent-');
 }
 
+function normalizeControlMode(value, fallback = 'human') {
+  const mode = String(value || '')
+    .trim()
+    .toLowerCase();
+  if (mode === 'human' || mode === 'hybrid' || mode === 'agent') return mode;
+  const safe = String(fallback || '')
+    .trim()
+    .toLowerCase();
+  if (safe === 'human' || safe === 'hybrid' || safe === 'agent') return safe;
+  return 'human';
+}
+
+function redactHoldemSnapshot(snapshot, playerId) {
+  if (!snapshot || !snapshot.hand || !snapshot.hand.holeCards) return snapshot;
+  const safe = cloneJsonSafe(snapshot);
+  const holeCards = safe?.hand?.holeCards || {};
+  let seatNo = null;
+  if (playerId && Array.isArray(safe.seats)) {
+    const seatRow = safe.seats.find((row) => row && row.playerId === playerId);
+    if (seatRow && Number.isInteger(seatRow.seat)) seatNo = seatRow.seat;
+  }
+  const masked = {};
+  for (const [seat, cards] of Object.entries(holeCards)) {
+    if (seatNo != null && String(seat) === String(seatNo)) {
+      masked[seat] = cards;
+    } else if (Array.isArray(cards)) {
+      masked[seat] = cards.map(() => 'hidden');
+    } else {
+      masked[seat] = ['hidden', 'hidden'];
+    }
+  }
+  safe.hand.holeCards = masked;
+  return safe;
+}
+
 function pickWeighted(items) {
   const total = items.reduce((sum, item) => sum + item.weight, 0);
   const target = Math.random() * total;
@@ -876,7 +1086,7 @@ function pickWeighted(items) {
 async function chooseBotAction(legalActions, context = {}) {
   if (!Array.isArray(legalActions) || legalActions.length === 0) return null;
 
-  const { agentId, handId, pot = 0, toCall = 0, bankroll = 0 } = context;
+  const { agentId, handId, pot = 0, toCall = 0, bankroll = 0, decisionIndex = 0 } = context;
   const mod = await agentStrategyPromise;
   const registry = await getAgentRegistry();
 
@@ -899,9 +1109,13 @@ async function chooseBotAction(legalActions, context = {}) {
   });
 
   // Get decision from smart engine
+  const legal = legalActions
+    .map((a) => (typeof a === 'string' ? a : a?.action))
+    .filter((a) => typeof a === 'string' && a.length > 0);
+
   const decision = mod.chooseAction({
     profile: strategyProfile,
-    legalActions: legalActions.map((a) => a.action),
+    legalActions: legal,
     handStrength,
     potUnits: pot,
     toCallUnits: toCall,
@@ -914,9 +1128,49 @@ async function chooseBotAction(legalActions, context = {}) {
     maxRiskBps: strategyProfile.maxRiskBps,
   });
 
+  const pressure = pot > 0 ? toCall / pot : 0;
+  const actionSeed = `${agentId}-${handId}-${decisionIndex}-${pot}-${toCall}`;
+  const actionRand =
+    parseInt(crypto.createHash('md5').update(actionSeed).digest('hex').slice(0, 8), 16) /
+    0xffffffff;
+
+  let adjustedAction = capped.action;
+  let adjustedAmount = capped.amountUnits;
+
+  const legalHas = (name) => Array.isArray(legal) && legal.includes(name);
+
+  if (adjustedAction === 'raise') {
+    if ((pressure > 0.35 && actionRand < 0.6) || actionRand < 0.2) {
+      if (legalHas('call')) {
+        adjustedAction = 'call';
+        adjustedAmount = toCall;
+      } else if (legalHas('check')) {
+        adjustedAction = 'check';
+        adjustedAmount = 0;
+      } else if (legalHas('fold')) {
+        adjustedAction = 'fold';
+        adjustedAmount = 0;
+      }
+    }
+  }
+
+  if (adjustedAction === 'bet' && actionRand < 0.2) {
+    if (legalHas('check')) {
+      adjustedAction = 'check';
+      adjustedAmount = 0;
+    }
+  }
+
+  if (adjustedAction === 'call' && pressure > 0.6 && actionRand < 0.25) {
+    if (legalHas('fold')) {
+      adjustedAction = 'fold';
+      adjustedAmount = 0;
+    }
+  }
+
   return {
-    action: capped.action,
-    amount: capped.amountUnits,
+    action: adjustedAction,
+    amount: adjustedAmount,
     metadata: {
       temperament,
       handStrength: handStrength.toFixed(3),
@@ -3803,13 +4057,18 @@ async function handleV2HoldemTablesList(req, res) {
     for (const [id, table] of swarmState.holdemTables.entries()) {
       try {
         const snapshot = holdemEngine.tableSnapshot(table);
-        const maxPlayers = Array.isArray(snapshot.seats)
-          ? snapshot.seats.length
-          : table.seats.length;
-        const players = Array.isArray(snapshot.seats)
-          ? snapshot.seats.filter((seat) => seat && seat.playerId).length
+        const safeSnapshot = redactHoldemSnapshot(snapshot, null);
+        const maxSeats = Array.isArray(table.seats)
+          ? table.seats.length
+          : Array.isArray(safeSnapshot.seats)
+            ? safeSnapshot.seats.length
+            : 0;
+        const maxPlayers =
+          maxSeats || (Array.isArray(safeSnapshot.seats) ? safeSnapshot.seats.length : 0);
+        const players = Array.isArray(safeSnapshot.seats)
+          ? safeSnapshot.seats.filter((seat) => seat && seat.playerId).length
           : 0;
-        const hand = snapshot.hand || {};
+        const hand = safeSnapshot.hand || {};
         tables.push({
           id,
           name: holdemLobbyNameById.get(id) || `Table ${id}`,
@@ -3820,8 +4079,10 @@ async function handleV2HoldemTablesList(req, res) {
           ),
           players,
           maxPlayers,
+          maxSeats,
           avgPot: hand.pot || 0,
           status: hand && !hand.settled ? 'active' : 'idle',
+          engine: 'v2',
         });
         seen.add(id);
       } catch (err) {
@@ -3841,6 +4102,7 @@ async function handleV2HoldemTablesList(req, res) {
       maxPlayers: snapshot.maxSeats || 9,
       avgPot: snapshot.pot || 0,
       status: snapshot.terminal ? 'terminal' : 'active',
+      engine: 'v1',
     });
   }
 
@@ -3879,11 +4141,16 @@ async function handleV2HoldemTableCreate(req, res) {
     for (const row of body.seats) {
       if (!row) continue;
       try {
+        const seededPlayerId = String(row.playerId || '').trim();
         mod.seatPlayer(table, {
-          playerId: String(row.playerId || '').trim(),
+          playerId: seededPlayerId,
           seat: Number(row.seat ?? 0),
           stack: Number(row.stack ?? 0),
           autoPostBlinds: row.autoPostBlinds !== false,
+          controlMode: normalizeControlMode(
+            row.controlMode,
+            isBotPlayerId(seededPlayerId) ? 'agent' : 'human'
+          ),
         });
       } catch {
         // Keep endpoint idempotent for repeated seat bootstrap calls.
@@ -3899,11 +4166,16 @@ async function handleV2HoldemSeat(req, res) {
   const body = await readBodyJson(req);
   const mod = await holdemEnginePromise;
   const table = await getOrCreateHoldemTable(String(body.tableId || '').trim());
+  const playerId = String(body.playerId || '').trim();
   const out = mod.seatPlayer(table, {
-    playerId: String(body.playerId || '').trim(),
+    playerId,
     seat: Number(body.seat ?? 0),
     stack: Number(body.stack ?? 0),
     autoPostBlinds: body.autoPostBlinds !== false,
+    controlMode: normalizeControlMode(
+      body.controlMode,
+      isBotPlayerId(playerId) ? 'agent' : 'human'
+    ),
   });
   await persistV2HoldemTable(table);
   writeJson(res, 201, { ok: true, seat: out, table: mod.tableSnapshot(table) });
@@ -3972,7 +4244,12 @@ async function handleV2HoldemAction(req, res) {
     return badRequest(res, msg || 'Invalid action');
   }
   await persistV2HoldemTable(table);
-  writeJson(res, 200, { ok: true, result: out, table: mod.tableSnapshot(table) });
+  const snapshot = mod.tableSnapshot(table);
+  writeJson(res, 200, {
+    ok: true,
+    result: out,
+    table: redactHoldemSnapshot(snapshot, playerId),
+  });
 }
 
 async function handleV2HoldemResume(req, res) {
@@ -3994,6 +4271,7 @@ async function handleV2HoldemResume(req, res) {
     replayCursor: Number(table.seq || 0),
   });
   const agent = table.hand ? mod.agentState(table, { seat: seat.seat }) : null;
+  const snapshot = mod.tableSnapshot(table);
   writeJson(res, 200, {
     ok: true,
     resume: {
@@ -4004,7 +4282,7 @@ async function handleV2HoldemResume(req, res) {
       seat: seat.seat,
       replayCursor: Number(table.seq || 0),
     },
-    state: mod.tableSnapshot(table),
+    state: redactHoldemSnapshot(snapshot, playerId),
     agent,
   });
 }
@@ -4018,7 +4296,12 @@ async function handleV2HoldemSetConnection(req, res) {
     connected: body.connected !== false,
   });
   await persistV2HoldemTable(table);
-  writeJson(res, 200, { ok: true, seat: out, table: mod.tableSnapshot(table) });
+  const snapshot = mod.tableSnapshot(table);
+  writeJson(res, 200, {
+    ok: true,
+    seat: out,
+    table: redactHoldemSnapshot(snapshot, body.playerId),
+  });
 }
 
 async function handleV2HoldemSeatChange(req, res) {
@@ -4031,7 +4314,12 @@ async function handleV2HoldemSeatChange(req, res) {
     reason: String(body.reason || 'manual').trim(),
   });
   await persistV2HoldemTable(table);
-  writeJson(res, 200, { ok: true, seatChange: out, table: mod.tableSnapshot(table) });
+  const snapshot = mod.tableSnapshot(table);
+  writeJson(res, 200, {
+    ok: true,
+    seatChange: out,
+    table: redactHoldemSnapshot(snapshot, body.playerId),
+  });
 }
 
 async function handleV2HoldemStraddle(req, res) {
@@ -4048,7 +4336,12 @@ async function handleV2HoldemStraddle(req, res) {
     return badRequest(res, String(err?.message || 'Invalid straddle request'));
   }
   await persistV2HoldemTable(table);
-  writeJson(res, 200, { ok: true, straddleAmount: amount, table: mod.tableSnapshot(table) });
+  const snapshot = mod.tableSnapshot(table);
+  writeJson(res, 200, {
+    ok: true,
+    straddleAmount: amount,
+    table: redactHoldemSnapshot(snapshot, body.playerId),
+  });
 }
 
 async function handleV2HoldemSettle(req, res) {
@@ -4064,15 +4357,51 @@ async function handleV2HoldemSettle(req, res) {
   writeJson(res, 200, { ok: true, table: out });
 }
 
+async function handleV2HoldemControl(req, res) {
+  const body = await readBodyJson(req);
+  const mod = await holdemEnginePromise;
+  const table = await getOrCreateHoldemTable(String(body.tableId || '').trim());
+  if (!table) return badRequest(res, 'Unknown tableId');
+  const playerId = String(body.playerId || '').trim();
+  if (!playerId) return badRequest(res, 'playerId is required');
+
+  const urlObj = new URL(req.url, 'http://localhost');
+  const identity = extractMembershipIdentity(req, urlObj);
+  if (identity && identity !== playerId) {
+    return writeJson(res, 403, { ok: false, error: 'Identity mismatch' });
+  }
+
+  const seatRow = Array.isArray(table.seats)
+    ? table.seats.find((row) => row && String(row.playerId || '').trim() === playerId)
+    : null;
+  if (!seatRow) return badRequest(res, 'Player not seated');
+
+  seatRow.controlMode = normalizeControlMode(body.controlMode, seatRow.controlMode || 'human');
+  await persistV2HoldemTable(table);
+  writeJson(res, 200, { ok: true, seat: seatRow, table: mod.tableSnapshot(table) });
+}
+
 async function handleV2HoldemState(req, res, urlObj) {
   const mod = await holdemEnginePromise;
   const table = await getOrCreateHoldemTable(
     String(urlObj.searchParams.get('tableId') || '').trim()
   );
   if (!table) return badRequest(res, 'Unknown tableId');
+  const playerId = String(urlObj.searchParams.get('playerId') || '').trim();
+  const snapshot = mod.tableSnapshot(table);
   writeJson(res, 200, {
     ok: true,
-    table: mod.tableSnapshot(table),
+    table: redactHoldemSnapshot(
+      {
+        ...snapshot,
+        maxSeats: Array.isArray(table.seats)
+          ? table.seats.length
+          : Array.isArray(snapshot.seats)
+            ? snapshot.seats.length
+            : 0,
+      },
+      playerId || null
+    ),
     recovery: mod.recoverySnapshot(table),
   });
 }
@@ -4107,6 +4436,7 @@ async function handleV2TournamentCreate(req, res) {
   const body = await readBodyJson(req);
   const mod = await getHoldemTournamentsModule(res);
   if (!mod) return;
+  const policy = body && typeof body.policy === 'object' ? body.policy : undefined;
   const tournament = mod.createTournament({
     tournamentId: String(body.tournamentId || crypto.randomUUID()).trim(),
     type: String(body.type || 'mtt'),
@@ -4121,6 +4451,7 @@ async function handleV2TournamentCreate(req, res) {
     rebuy: body.rebuy && typeof body.rebuy === 'object' ? body.rebuy : undefined,
     addon: body.addon && typeof body.addon === 'object' ? body.addon : undefined,
     payoutBps: Array.isArray(body.payoutBps) ? body.payoutBps : undefined,
+    policy,
   });
   swarmState.holdemTournaments.set(tournament.tournamentId, tournament);
   await persistV2Tournament(tournament);
@@ -4133,7 +4464,22 @@ async function handleV2TournamentRegister(req, res) {
   if (!mod) return;
   const t = await getHoldemTournamentOrRestore(String(body.tournamentId || '').trim());
   if (!t) return badRequest(res, 'Unknown tournamentId');
-  const out = mod.registerPlayer(t, { playerId: String(body.playerId || '').trim() });
+  const playerId = String(body.playerId || '').trim();
+  const controlMode = String(body.controlMode || '')
+    .trim()
+    .toLowerCase();
+  const policy = t.policy || {};
+  const isBot = isBotPlayerId(playerId);
+  if (policy.mode === 'bots-only' && !isBot) {
+    return writeJson(res, 403, { ok: false, error: 'Tournament is bots-only' });
+  }
+  if (policy.allowHumanJoin === false && !isBot) {
+    return writeJson(res, 403, { ok: false, error: 'Human players not allowed' });
+  }
+  if (policy.allowAgentJoin === false && isBot) {
+    return writeJson(res, 403, { ok: false, error: 'Agent players not allowed' });
+  }
+  const out = mod.registerPlayer(t, { playerId, controlMode });
   await persistV2Tournament(t);
   writeJson(res, 200, { ok: true, tournament: out });
 }
@@ -4178,6 +4524,40 @@ async function handleV2TournamentResume(req, res) {
   const t = await getHoldemTournamentOrRestore(String(body.tournamentId || '').trim());
   if (!t) return badRequest(res, 'Unknown tournamentId');
   const out = mod.resumeTournament(t, { reason: String(body.reason || 'manual') });
+  await persistV2Tournament(t);
+  writeJson(res, 200, { ok: true, tournament: out });
+}
+
+async function handleV2TournamentControl(req, res) {
+  const body = await readBodyJson(req);
+  const mod = await getHoldemTournamentsModule(res);
+  if (!mod) return;
+  const t = await getHoldemTournamentOrRestore(String(body.tournamentId || '').trim());
+  if (!t) return badRequest(res, 'Unknown tournamentId');
+  const playerId = String(body.playerId || '').trim();
+  if (!playerId) return badRequest(res, 'playerId is required');
+
+  const urlObj = new URL(req.url, 'http://localhost');
+  const identity = extractMembershipIdentity(req, urlObj);
+  if (!isBotPlayerId(playerId) && identity && identity !== playerId) {
+    return writeJson(res, 403, { ok: false, error: 'Identity mismatch' });
+  }
+
+  const requestedMode = normalizeControlMode(body.controlMode, 'human');
+  const policy = t.policy || {};
+  if (requestedMode === 'human') {
+    if (policy.mode === 'bots-only' || policy.allowHumanTakeover === false) {
+      return writeJson(res, 403, { ok: false, error: 'Human takeover not permitted' });
+    }
+  } else if (policy.allowAgentJoin === false) {
+    return writeJson(res, 403, { ok: false, error: 'Agent control not permitted' });
+  }
+
+  const out = mod.setControlMode(t, {
+    playerId,
+    controlMode: requestedMode,
+    requestedBy: identity || body.requestedBy || '',
+  });
   await persistV2Tournament(t);
   writeJson(res, 200, { ok: true, tournament: out });
 }
@@ -5867,6 +6247,49 @@ async function handleTableRoundAuto(req, res) {
       }
     }
 
+    const legalActions = Array.isArray(stateDecision.legalActions)
+      ? stateDecision.legalActions
+      : [];
+    const toCallUnits = Math.max(0, Number(stateDecision.toCallUnits || 0));
+    const stackUnits = Math.max(0, Number(stateDecision.stackUnits || 0));
+    const minRaiseUnits = Math.max(
+      1,
+      Number(snapshot?.minRaise || snapshot?.blinds?.bigBlind || 1)
+    );
+
+    if (action === 'raise') {
+      const minSpend = Math.max(1, toCallUnits + minRaiseUnits);
+      if (amount < minSpend || amount > stackUnits) {
+        if (toCallUnits > 0 && legalActions.includes('call') && stackUnits >= toCallUnits) {
+          action = 'call';
+          amount = Math.min(stackUnits, toCallUnits);
+        } else if (toCallUnits <= 0 && legalActions.includes('check')) {
+          action = 'check';
+          amount = 0;
+        } else if (legalActions.includes('fold')) {
+          action = 'fold';
+          amount = 0;
+        }
+      }
+    }
+
+    if (action === 'bet') {
+      const minBet = Math.max(1, minRaiseUnits);
+      if (amount < minBet || amount > stackUnits) {
+        if (legalActions.includes('check')) {
+          action = 'check';
+          amount = 0;
+        } else if (legalActions.includes('fold')) {
+          action = 'fold';
+          amount = 0;
+        }
+      }
+    }
+
+    if (action === 'call' && amount < toCallUnits) {
+      amount = Math.min(stackUnits, toCallUnits);
+    }
+
     const streetBeforeAction = String(snapshot.street || 'preflop');
     const currentBetBeforeAction = Number(snapshot.currentBet || 0);
     const bettingRoundBeforeAction = Number(snapshot.bettingRoundId || 1);
@@ -6233,6 +6656,7 @@ setInterval(rotateServerSeed, 3600000);
 
 function isSuperAdmin(req) {
   // Simple check for now - can be expanded to full JWT or header validation
+  if (process.env.ALLOW_CONSOLE_ANON === 'true') return true;
   const authHeader = req.headers['authorization'] || '';
   return (
     authHeader.includes('super_admin_secret_key') || req.headers['x-tnf-role'] === 'super_admin'
@@ -6243,6 +6667,12 @@ function serveStatic(req, res) {
   let reqPath = req.url.split('?')[0];
   let isBackend = false;
 
+  if (reqPath === '/ws' || reqPath === '/ws/') {
+    res.writeHead(204);
+    res.end();
+    return;
+  }
+
   if (reqPath === '/console' || reqPath === '/console/') {
     if (!isSuperAdmin(req)) {
       res.writeHead(403, { 'Content-Type': 'text/plain' });
@@ -6250,6 +6680,9 @@ function serveStatic(req, res) {
       return;
     }
     reqPath = '/index.html';
+    isBackend = true;
+  } else if (reqPath === '/favicon.ico') {
+    reqPath = '/favicon.ico';
     isBackend = true;
   } else if (reqPath.startsWith('/console/')) {
     if (!isSuperAdmin(req)) {
@@ -6274,6 +6707,9 @@ function serveStatic(req, res) {
   fs.readFile(filePath, (err, content) => {
     if (err) {
       if (err.code === 'ENOENT') {
+        if (process.env.LOG_404 === 'true') {
+          console.warn(`[casin8] 404 ${reqPath} -> ${filePath}`);
+        }
         if (!path.extname(filePath)) {
           const fallback = path.join(targetRoot, 'index.html');
           fs.readFile(fallback, (fallbackErr, fallbackContent) => {
@@ -6551,6 +6987,7 @@ const API_ROUTES = new Map([
   ['POST /api/v2/holdem/seat-change', endpoint(handleV2HoldemSeatChange)],
   ['POST /api/v2/holdem/straddle', endpoint(handleV2HoldemStraddle)],
   ['POST /api/v2/holdem/connection', endpoint(handleV2HoldemSetConnection)],
+  ['POST /api/v2/holdem/control', endpoint(handleV2HoldemControl)],
   ['POST /api/v2/holdem/resume', endpoint(handleV2HoldemResume)],
   ['POST /api/v2/holdem/hands/start', endpoint(handleV2HoldemStart)],
   ['POST /api/v2/holdem/actions', endpoint(handleV2HoldemAction)],
@@ -6564,6 +7001,7 @@ const API_ROUTES = new Map([
   ['POST /api/v2/tournaments/clock', endpoint(handleV2TournamentClock)],
   ['POST /api/v2/tournaments/pause', endpoint(handleV2TournamentPause)],
   ['POST /api/v2/tournaments/resume', endpoint(handleV2TournamentResume)],
+  ['POST /api/v2/tournaments/control', endpoint(handleV2TournamentControl)],
   ['GET /api/v2/tournaments/recovery/export', endpointWithQuery(handleV2TournamentRecoveryExport)],
   ['POST /api/v2/tournaments/recovery/import', endpoint(handleV2TournamentRecoveryImport)],
   ['POST /api/v2/tournaments/rebuy', endpoint(handleV2TournamentRebuy)],
@@ -6630,6 +7068,10 @@ async function handleApi(req, res, urlObj) {
   const key = `${req.method} ${urlObj.pathname}`;
   const route = API_ROUTES.get(key);
   if (!route) return notFound(res);
+  if (requiresMembershipGate(req.method, urlObj.pathname)) {
+    const membership = await requireMembership(req, res, urlObj);
+    if (!membership.ok) return;
+  }
   if (requiresPokerAuth(req.method, urlObj.pathname)) {
     const auth = requireRoles(req, res, ['poker']);
     if (!auth.ok) return;
@@ -6714,6 +7156,7 @@ async function ensureHoldemLobbySeeded({ force = false } = {}) {
             seat,
             stack: holdemBotStack,
             autoPostBlinds: true,
+            controlMode: 'agent',
           });
           seatedBots += 1;
         } catch {
@@ -6785,7 +7228,14 @@ async function runHoldemBotLoop() {
       if (hand.actingSeat == null) continue;
       const actingSeat = Number(hand.actingSeat);
       const seatRow = table.seats[actingSeat];
-      if (!seatRow || !isBotPlayerId(seatRow.playerId)) continue;
+      if (!seatRow) continue;
+      const seatControl = normalizeControlMode(
+        seatRow.controlMode,
+        isBotPlayerId(seatRow.playerId) ? 'agent' : 'human'
+      );
+      const botEligible =
+        isBotPlayerId(seatRow.playerId) || seatControl === 'agent' || seatControl === 'hybrid';
+      if (!botEligible || seatControl === 'human') continue;
 
       let legalActions = [];
       let agentData = null;
@@ -6801,17 +7251,133 @@ async function runHoldemBotLoop() {
         pot: hand.pot,
         toCall: agentData?.helper?.toCall || 0,
         bankroll: agentData?.helper?.seatStack || 0,
+        decisionIndex: Array.isArray(hand.actionLog) ? hand.actionLog.length : 0,
       });
       if (!choice) continue;
 
+      const legalMap = new Map();
+      for (const actionSpec of legalActions || []) {
+        const name =
+          typeof actionSpec === 'string' ? actionSpec : String(actionSpec?.action || '').trim();
+        if (name) legalMap.set(name.toLowerCase(), actionSpec);
+      }
+
+      const hasLegal = (name) => legalMap.has(String(name).toLowerCase());
+      const helper = agentData?.helper || {};
+      const committed = Math.max(
+        0,
+        Number(helper.committedBySeat || hand?.committedBySeat?.[String(actingSeat)] || 0)
+      );
+      const currentBet = Math.max(0, Number(hand?.currentBet ?? helper.currentBet ?? 0));
+      const lastAggressiveDelta = Math.max(
+        1,
+        Number(hand?.lastAggressiveDelta ?? helper.lastAggressiveDelta ?? helper.minRaiseDelta ?? 0)
+      );
+      const minRaiseTo = Math.max(
+        currentBet + lastAggressiveDelta,
+        Number(helper.minRaiseTo || 0),
+        1
+      );
+      const toCall = Math.max(0, Number(helper.toCall || Math.max(0, currentBet - committed)));
+      const stack = Math.max(0, Number(helper.seatStack ?? seatRow.stack ?? 0));
+      const maxReach = Math.max(0, committed + stack);
+
+      let action = String(choice.action || '').toLowerCase();
+      let amount = Math.max(0, Number(choice.amount || 0));
+
+      if (action === 'raise') {
+        const limits = legalMap.get('raise') || {};
+        const minTarget = Math.max(minRaiseTo, Number(limits.min ?? minRaiseTo));
+        const maxTarget = Math.min(maxReach, Number(limits.max ?? maxReach));
+        if (amount < minTarget) amount = minTarget;
+        if (amount > maxTarget) amount = maxTarget;
+        if (amount <= currentBet) {
+          if (toCall > 0 && hasLegal('call')) {
+            action = 'call';
+            amount = Math.min(stack, toCall);
+          } else if (hasLegal('check')) {
+            action = 'check';
+            amount = 0;
+          } else if (hasLegal('fold')) {
+            action = 'fold';
+            amount = 0;
+          }
+        }
+      }
+
+      if (action === 'bet') {
+        const limits = legalMap.get('bet') || {};
+        const minTarget = Math.max(1, Number(limits.min ?? minRaiseTo));
+        const maxTarget = Math.min(maxReach, Number(limits.max ?? maxReach));
+        if (amount < minTarget) amount = minTarget;
+        if (amount > maxTarget) amount = maxTarget;
+        if (amount <= 0) {
+          if (hasLegal('check')) {
+            action = 'check';
+            amount = 0;
+          } else if (hasLegal('fold')) {
+            action = 'fold';
+            amount = 0;
+          }
+        }
+      }
+
+      if (action === 'call') {
+        if (toCall <= 0) {
+          if (hasLegal('check')) {
+            action = 'check';
+            amount = 0;
+          } else if (hasLegal('fold')) {
+            action = 'fold';
+            amount = 0;
+          }
+        } else {
+          amount = Math.min(stack, toCall);
+        }
+      }
+
+      if (action === 'check' && toCall > 0) {
+        if (hasLegal('call')) {
+          action = 'call';
+          amount = Math.min(stack, toCall);
+        } else if (hasLegal('fold')) {
+          action = 'fold';
+          amount = 0;
+        }
+      }
+
+      if (!hasLegal(action)) {
+        if (hasLegal('check')) action = 'check';
+        else if (hasLegal('call')) action = 'call';
+        else if (hasLegal('fold')) action = 'fold';
+        amount = action === 'call' ? Math.min(stack, toCall) : 0;
+      }
+
+      const recentActions = Array.isArray(hand?.actionLog) ? hand.actionLog.slice(-4) : [];
+      const recentAggressive = recentActions.filter((row) =>
+        ['raise', 'bet', 'allin'].includes(String(row?.action || '').toLowerCase())
+      ).length;
+      if (recentAggressive >= 3 && (action === 'raise' || action === 'bet')) {
+        if (toCall > 0 && hasLegal('call')) {
+          action = 'call';
+          amount = Math.min(stack, toCall);
+        } else if (hasLegal('check')) {
+          action = 'check';
+          amount = 0;
+        } else if (hasLegal('fold')) {
+          action = 'fold';
+          amount = 0;
+        }
+      }
+
       try {
         console.log(
-          `[casin8] Bot ${seatRow.playerId} (${choice.metadata.temperament}) at ${table.tableId}: ${choice.action} ${choice.amount || ''} [strength: ${choice.metadata.handStrength}]`
+          `[casin8] Bot ${seatRow.playerId} (${choice.metadata.temperament}) at ${table.tableId}: ${action} ${amount || ''} [strength: ${choice.metadata.handStrength}]`
         );
         holdemEngine.applyAction(table, {
           playerId: seatRow.playerId,
-          action: choice.action,
-          amount: choice.amount,
+          action,
+          amount,
           idempotencyKey: `bot-act-${crypto.randomUUID()}`,
         });
         await persistV2HoldemTable(table);

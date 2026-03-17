@@ -1,0 +1,17 @@
+{
+  "mode": "console",
+  "sessionId": "aef57d43-d219-4132-afcb-52f16ad35da5",
+  "playerName": "Player",
+  "tableId": "lobby-1",
+  "bankroll": 1000,
+  "rounds": 0,
+  "wins": 0,
+  "losses": 0,
+  "live": null,
+  "tableEvents": [
+    { "id": null, "type": "round", "detail": null },
+    { "id": null, "type": "join", "detail": null },
+    { "id": null, "type": "join", "detail": null }
+  ],
+  "note": "origin: DOM stats; axes: N/A"
+}

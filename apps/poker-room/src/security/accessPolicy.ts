@@ -98,7 +98,7 @@ export const canAccessPokerSurface = (
       return true;
     case 'player_core':
     case 'player_hud':
-      return true;
+      return ctx.isMember;
     case 'member_social':
       return ctx.canReadCommunityApps;
     case 'creator_studio':

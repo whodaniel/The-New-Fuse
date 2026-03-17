@@ -16,9 +16,8 @@ import {
   communityApi,
   CommunityMembership,
   holdemV2Api,
-  mttApi,
   pokerApi,
-  sngApi,
+  tournamentApi,
   userBotsApi,
 } from './api';
 
@@ -110,7 +109,6 @@ const THEME = {
 
 const BOT_TOURNAMENT_STARTING_STACK = 3000;
 const BOT_TOURNAMENT_TABLE_ID_PREFIX = 'bot-table';
-const ACTION_TAPE_INTERVAL_MS = 650;
 const USER_BOT_STORAGE_KEY = 'aiArcadeUserBots';
 const SYSTEM_BOT_STORAGE_KEY = 'aiArcadeSystemBots';
 
@@ -233,6 +231,9 @@ interface PokerTableProps {
   toggleSfx: () => void;
   playHover: () => void;
   handleAction: (action: string, amount?: number) => void;
+  handleTakeover: () => void;
+  handleAutopilot: () => void;
+  preferredControlMode: 'human' | 'hybrid' | 'agent';
   getAIInsight: () => void;
   aiInsight: string;
   setAiInsight: (v: string) => void;
@@ -248,6 +249,9 @@ const PokerTable: React.FC<PokerTableProps> = ({
   toggleSfx,
   playHover,
   handleAction,
+  handleTakeover,
+  handleAutopilot,
+  preferredControlMode,
   getAIInsight,
   aiInsight,
   setAiInsight,
@@ -262,6 +266,11 @@ const PokerTable: React.FC<PokerTableProps> = ({
 
   const mySeatIdx = gameState.seats.findIndex((s: any) => s.isHero);
   const mySeat = gameState.seats[mySeatIdx] || { cards: [], bet: 0, stack: 0 };
+  const myControlMode = String(mySeat.controlMode || 'human').toLowerCase();
+  const canTakeover = myControlMode !== 'human';
+  const autopilotMode =
+    preferredControlMode && preferredControlMode !== 'human' ? preferredControlMode : 'agent';
+  const canAutopilot = myControlMode === 'human' && autopilotMode !== 'human';
   const isMyTurn =
     gameState.turnIndex === mySeatIdx &&
     gameState.round !== 'WAITING' &&
@@ -517,6 +526,24 @@ const PokerTable: React.FC<PokerTableProps> = ({
               )}{' '}
               AI Strategy
             </button>
+            {canTakeover && (
+              <button
+                onClick={handleTakeover}
+                onMouseEnter={playHover}
+                className="w-full py-2 rounded-lg bg-red-900/30 border border-red-500/50 text-[10px] font-black text-red-300 uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-red-900/60 transition-all"
+              >
+                Manual Takeover
+              </button>
+            )}
+            {canAutopilot && (
+              <button
+                onClick={handleAutopilot}
+                onMouseEnter={playHover}
+                className="w-full py-2 rounded-lg bg-emerald-900/30 border border-emerald-500/50 text-[10px] font-black text-emerald-300 uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-emerald-900/60 transition-all"
+              >
+                Return to {autopilotMode === 'agent' ? 'Agent' : 'Hybrid'} Control
+              </button>
+            )}
           </div>
 
           <div className="hidden sm:flex h-full py-2">
@@ -613,7 +640,13 @@ const ControlCenter: React.FC<ControlCenterProps> = ({ setView, notify }) => {
 
 // --- MAIN APP ---
 function AppContent() {
-  type SessionUser = { username: string; balance: number; avatar: string; email?: string };
+  type SessionUser = {
+    username: string;
+    balance: number;
+    avatar: string;
+    email?: string;
+    controlMode?: 'human' | 'hybrid' | 'agent';
+  };
   const { notify } = useNotification();
   const {
     playClick,
@@ -634,6 +667,7 @@ function AppContent() {
   const [activeTableId, setActiveTableId] = useState('lobby-1');
   const [tableProtocol, setTableProtocol] = useState<'v1' | 'v2'>('v1');
   const [activeTableMeta, setActiveTableMeta] = useState<any | null>(null);
+  const [activeTournamentId, setActiveTournamentId] = useState<string | null>(null);
   const [postLoginView, setPostLoginView] = useState<PokerView | null>(null);
 
   const [showSngCreator, setShowSngCreator] = useState(false);
@@ -655,14 +689,31 @@ function AppContent() {
   const [actionTape, setActionTape] = useState<{
     handId: string;
     events: any[];
-    played: number;
+    lastIndex: number;
     feed: Array<{ id: string; text: string }>;
   }>({
     handId: '',
     events: [],
-    played: 0,
+    lastIndex: 0,
     feed: [],
   });
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const root = window as any;
+    root.render_game_to_text = () =>
+      JSON.stringify({
+        view,
+        tableId: activeTableId,
+        round: gameState?.round || null,
+        pot: gameState?.pot || 0,
+        hero: gameState?.seats?.find((s: any) => s?.isHero) || null,
+      });
+    root.advanceTime = (ms: number) => {
+      // No-op: React state is driven by polling; this hook is for deterministic test harnesses.
+      void ms;
+    };
+  }, [view, activeTableId, gameState]);
   const [lastObservedState, setLastObservedState] = useState<any>(null);
   const lastInitAttemptRef = useRef(0);
   const autoJoinRef = useRef(false);
@@ -676,6 +727,24 @@ function AppContent() {
     tableId: '',
     lastActionAt: 0,
   });
+
+  const requireMemberAccess = (contextLabel: string) => {
+    const accessCheck = derivePokerAccess({
+      username: user?.username,
+      email: user?.email,
+      membership,
+    });
+    if (!accessCheck.isMember) {
+      notify(
+        'SYSTEM',
+        'Members Only',
+        `${contextLabel} is restricted to TNF paid members. Connect thenewfuse.com and activate membership.`
+      );
+      setView('LOGIN');
+      return false;
+    }
+    return true;
+  };
 
   const viewPathMap: Partial<Record<PokerView, string>> = {
     LOBBY: '/',
@@ -722,6 +791,10 @@ function AppContent() {
 
   useEffect(() => {
     if (view !== 'TABLE' || !user) {
+      autoJoinRef.current = false;
+      return;
+    }
+    if (!requireMemberAccess('Poker tables')) {
       autoJoinRef.current = false;
       return;
     }
@@ -814,6 +887,10 @@ function AppContent() {
         const seatNo = s.__seatNo ?? i;
         const playerId = s.playerId || null;
         const botProfile = BOT_PROFILES.find((b) => b.id === playerId);
+        const inferredMode =
+          String(playerId || '').startsWith('bot-') || String(playerId || '').startsWith('agent-')
+            ? 'agent'
+            : 'human';
         return {
           id: playerId || `seat-${seatNo}`,
           name:
@@ -837,6 +914,7 @@ function AppContent() {
             allInSeats.includes(seatNo) ||
             (s.stack === 0 && Number(committedBySeat[String(seatNo)] || 0) > 0),
           isHero: playerId === user?.username,
+          controlMode: s.controlMode || inferredMode,
         };
       }),
       round: hand?.street
@@ -884,6 +962,11 @@ function AppContent() {
       ...snapshot,
       seats: orderedSeats.map((s: any, i: number) => {
         const seatNo = s.__seatNo ?? i;
+        const inferredMode =
+          String(s.playerId || '').startsWith('bot-') ||
+          String(s.playerId || '').startsWith('agent-')
+            ? 'agent'
+            : 'human';
         return {
           id: s.playerId || `seat-${seatNo}`,
           name:
@@ -908,6 +991,7 @@ function AppContent() {
           folded: s.folded || false,
           isAllIn: s.stack === 0 && (snapshot.streetBets?.[String(seatNo)] || 0) > 0,
           isHero: s.playerId === user?.username,
+          controlMode: s.playerId === user?.username ? user?.controlMode || 'human' : inferredMode,
         };
       }),
       round: snapshot.street
@@ -983,48 +1067,54 @@ function AppContent() {
               const actingRow = Array.isArray(table.seats)
                 ? table.seats.find((row: any) => Number(row?.seat) === actingSeat)
                 : null;
-              if (actingRow && actingRow.playerId && actingRow.playerId !== user.username) {
-                const now = Date.now();
-                if (
-                  v2BotLoopRef.current.tableId !== table.tableId ||
-                  now - v2BotLoopRef.current.lastActionAt > 900
-                ) {
-                  v2BotLoopRef.current = { tableId: table.tableId, lastActionAt: now };
-                  holdemV2Api
-                    .resume(table.tableId, actingRow.playerId)
-                    .then(async (botResume) => {
-                      if (!botResume?.ok || !botResume.resume) return;
-                      const legal = Array.isArray(botResume.agent?.legalActions)
-                        ? botResume.agent.legalActions
-                            .map((row: any) =>
-                              typeof row === 'string' ? row : String(row?.action || '')
-                            )
-                            .filter(Boolean)
-                        : [];
-                      let botAction = 'check';
-                      if (legal.includes('check')) botAction = 'check';
-                      else if (legal.includes('call')) botAction = 'call';
-                      else if (legal.includes('fold')) botAction = 'fold';
-                      else if (legal.includes('allin')) botAction = 'allin';
-                      else if (legal.length > 0) botAction = legal[0];
-                      const toCall = Number(botResume.agent?.helper?.toCall || 0);
-                      const minRaiseTo = Number(botResume.agent?.helper?.minRaiseTo || 0);
-                      const amount =
-                        botAction === 'call'
-                          ? toCall
-                          : botAction === 'raise' || botAction === 'bet'
-                            ? Math.max(minRaiseTo, toCall)
-                            : 0;
-                      await holdemV2Api.action({
-                        tableId: table.tableId,
-                        playerId: actingRow.playerId,
-                        action: botAction,
-                        amount,
-                        resumeToken: botResume.resume.token,
-                        expectedReplayCursor: Number(botResume.resume.replayCursor || 0),
-                      });
-                    })
-                    .catch(() => {});
+              if (actingRow && actingRow.playerId) {
+                const isUserSeat = actingRow.playerId === user.username;
+                const control = String(
+                  actingRow.controlMode || (isUserSeat ? user.controlMode : '')
+                ).toLowerCase();
+                if (control !== 'human') {
+                  const now = Date.now();
+                  if (
+                    v2BotLoopRef.current.tableId !== table.tableId ||
+                    now - v2BotLoopRef.current.lastActionAt > 900
+                  ) {
+                    v2BotLoopRef.current = { tableId: table.tableId, lastActionAt: now };
+                    holdemV2Api
+                      .resume(table.tableId, actingRow.playerId)
+                      .then(async (botResume) => {
+                        if (!botResume?.ok || !botResume.resume) return;
+                        const legal = Array.isArray(botResume.agent?.legalActions)
+                          ? botResume.agent.legalActions
+                              .map((row: any) =>
+                                typeof row === 'string' ? row : String(row?.action || '')
+                              )
+                              .filter(Boolean)
+                          : [];
+                        let botAction = 'check';
+                        if (legal.includes('check')) botAction = 'check';
+                        else if (legal.includes('call')) botAction = 'call';
+                        else if (legal.includes('fold')) botAction = 'fold';
+                        else if (legal.includes('allin')) botAction = 'allin';
+                        else if (legal.length > 0) botAction = legal[0];
+                        const toCall = Number(botResume.agent?.helper?.toCall || 0);
+                        const minRaiseTo = Number(botResume.agent?.helper?.minRaiseTo || 0);
+                        const amount =
+                          botAction === 'call'
+                            ? toCall
+                            : botAction === 'raise' || botAction === 'bet'
+                              ? Math.max(minRaiseTo, toCall)
+                              : 0;
+                        await holdemV2Api.action({
+                          tableId: table.tableId,
+                          playerId: actingRow.playerId,
+                          action: botAction,
+                          amount,
+                          resumeToken: botResume.resume.token,
+                          expectedReplayCursor: Number(botResume.resume.replayCursor || 0),
+                        });
+                      })
+                      .catch(() => {});
+                  }
                 }
               }
             }
@@ -1090,7 +1180,7 @@ function AppContent() {
       const handId = String(gameState.handId || '');
       if (!handId) return prev;
       if (prev.handId !== handId) {
-        return { handId, events, played: 0, feed: [] };
+        return { handId, events, lastIndex: 0, feed: [] };
       }
       if (events.length !== prev.events.length) {
         return { ...prev, events };
@@ -1101,21 +1191,23 @@ function AppContent() {
 
   useEffect(() => {
     if (view !== 'TABLE') return;
-    if (!actionTape.events.length || actionTape.played >= actionTape.events.length) return;
-    const timer = setTimeout(() => {
-      setActionTape((prev) => {
-        if (prev.played >= prev.events.length) return prev;
-        const line = toActionLine(prev.events[prev.played], prev.played, prev.handId);
-        return {
-          ...prev,
-          played: prev.played + 1,
-          feed: [...prev.feed.slice(-59), line],
-        };
-      });
-      playChip();
-    }, ACTION_TAPE_INTERVAL_MS);
-    return () => clearTimeout(timer);
-  }, [view, actionTape.played, actionTape.events.length, playChip]);
+    if (!actionTape.events.length) return;
+    if (actionTape.lastIndex >= actionTape.events.length) return;
+    setActionTape((prev) => {
+      if (prev.lastIndex >= prev.events.length) return prev;
+      const newEvents = prev.events.slice(prev.lastIndex);
+      if (newEvents.length === 0) return prev;
+      const newLines = newEvents.map((evt, idx) =>
+        toActionLine(evt, prev.lastIndex + idx, prev.handId)
+      );
+      return {
+        ...prev,
+        lastIndex: prev.events.length,
+        feed: [...prev.feed.slice(-59), ...newLines].slice(-60),
+      };
+    });
+    playChip();
+  }, [view, actionTape.events.length, actionTape.lastIndex, playChip]);
 
   useEffect(() => {
     if (view !== 'TABLE' || !gameState) return;
@@ -1227,8 +1319,23 @@ function AppContent() {
     return () => clearTimeout(timer);
   }, [botTournament, gameState, notify]);
 
-  const handleLogin = async (username: string, avatar: string, email?: string) => {
-    setUser({ username, avatar, balance: 100000, ...(email ? { email } : {}) });
+  const handleLogin = async (
+    username: string,
+    avatar: string,
+    email?: string,
+    controlMode?: 'human' | 'hybrid' | 'agent'
+  ) => {
+    setUser({
+      username,
+      avatar,
+      balance: 100000,
+      controlMode: controlMode || 'human',
+      ...(email ? { email } : {}),
+    });
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem('tnf_identity', username);
+      if (email) window.localStorage.setItem('tnf_email', email);
+    }
 
     let resolvedMembership: CommunityMembership | null = null;
     try {
@@ -1258,12 +1365,14 @@ function AppContent() {
 
   const handleJoinCashTable = async (tableId?: string, tableMeta?: any) => {
     if (!user) return;
+    if (!requireMemberAccess('Cash games')) return;
     playClick();
     const tid = tableId || 'lobby-1';
     setActiveTableId(tid);
     setTableProtocol('v2');
     setActiveTableMeta(tableMeta || null);
-    setActionTape({ handId: '', events: [], played: 0, feed: [] });
+    setActiveTournamentId(null);
+    setActionTape({ handId: '', events: [], lastIndex: 0, feed: [] });
     setGameState(null);
     v2ResumeRef.current = null;
     v2BotLoopRef.current = { tableId: tid, lastActionAt: 0 };
@@ -1309,6 +1418,21 @@ function AppContent() {
       2,
       Math.min(9, Number(tableMeta?.maxPlayers || tableMeta?.maxSeats || 6))
     );
+    const canAutoSpawn = !String(tid).startsWith('bot-table-');
+    const spawnFallbackTable = async (reason: string) => {
+      if (!canAutoSpawn) return false;
+      const fallbackId = `bot-table-${Date.now()}`;
+      notify('SYSTEM', 'Table Full', reason);
+      await handleJoinCashTable(fallbackId, {
+        ...(tableMeta || {}),
+        name: `${tableMeta?.name || 'AUTO TABLE'} (Copy)`,
+        maxPlayers: seatCount,
+        maxSeats: seatCount,
+        type: tableMeta?.type || '6-Max',
+        stakes: tableMeta?.stakes || '$1/$2',
+      });
+      return true;
+    };
 
     const findOpenSeat = (rows: any[]) => {
       const occupied = new Set(
@@ -1329,6 +1453,10 @@ function AppContent() {
     if (!existingSeat) {
       const openSeat = findOpenSeat(table.seats || []);
       if (openSeat < 0) {
+        const spawned = await spawnFallbackTable(
+          'No open seats available. Spinning up a fresh table for you.'
+        );
+        if (spawned) return;
         notify('ERROR', 'Table Full', 'No open seats available.');
         setView('LOBBY');
         return;
@@ -1341,10 +1469,24 @@ function AppContent() {
           seat: openSeat,
           stack,
           autoPostBlinds: true,
+          controlMode: user.controlMode || 'human',
         });
         if (seatRes?.ok && seatRes.table) table = seatRes.table;
       } catch (err) {
-        notify('ERROR', 'Seat Failed', String((err as Error)?.message || 'Unable to seat.'));
+        const message = String((err as Error)?.message || 'Unable to seat.');
+        const lower = message.toLowerCase();
+        if (
+          lower.includes('full') ||
+          lower.includes('no open') ||
+          lower.includes('seat') ||
+          lower.includes('occupied')
+        ) {
+          const spawned = await spawnFallbackTable(
+            'Seat lock detected. Launching a new table to keep you in action.'
+          );
+          if (spawned) return;
+        }
+        notify('ERROR', 'Seat Failed', message);
         setView('LOBBY');
         return;
       }
@@ -1371,6 +1513,7 @@ function AppContent() {
             seat: seatNo,
             stack: 20000,
             autoPostBlinds: true,
+            controlMode: 'agent',
           });
         } catch {
           // Ignore seat conflicts.
@@ -1422,13 +1565,47 @@ function AppContent() {
     setGameState((prev: any) => deriveGameStateFromV2(table, prev));
   };
 
+  const setSeatControlMode = async (mode: 'human' | 'hybrid' | 'agent') => {
+    if (!user) return;
+    try {
+      if (tableProtocol === 'v2') {
+        const res = await holdemV2Api.control(activeTableId, user.username, mode);
+        if (res?.ok && res.table) {
+          setGameState((prev: any) => deriveGameStateFromV2(res.table, prev));
+        }
+      } else if (activeTournamentId) {
+        await tournamentApi.control(activeTournamentId, user.username, mode);
+      }
+    } catch (err) {
+      notify(
+        'ERROR',
+        'Control Update Failed',
+        String((err as Error)?.message || 'Unable to update control mode.')
+      );
+    }
+  };
+
+  const handleTakeover = async () => {
+    await setSeatControlMode('human');
+    notify('SUCCESS', 'Manual Control', 'Autopilot disengaged. You are now in control.');
+  };
+
+  const handleAutopilot = async () => {
+    const preferred = user?.controlMode || 'agent';
+    await setSeatControlMode(preferred);
+    notify('SUCCESS', 'Autopilot Engaged', 'Control returned to your agent profile.');
+  };
+
   const handleJoinTable = async (tableId?: string) => {
     if (!user) return;
+    if (!requireMemberAccess('Tournaments')) return;
     playClick();
     const tid = tableId || 'lobby-1';
     setActiveTableId(tid);
     setTableProtocol('v1');
     setActiveTableMeta(null);
+    setActiveTournamentId(null);
+    setActiveTournamentId(tid);
     v2ResumeRef.current = null;
     v2BotLoopRef.current = { tableId: '', lastActionAt: 0 };
     notify('SYSTEM', 'Connecting to Node', 'Establishing secure connection to table...');
@@ -1574,6 +1751,7 @@ function AppContent() {
   };
 
   const startBotTournament = async () => {
+    if (!requireMemberAccess('Tournaments')) return;
     const tableId = `${BOT_TOURNAMENT_TABLE_ID_PREFIX}-${Date.now()}`;
     const initialStacks = Object.fromEntries(
       BOT_PROFILES.map((b) => [b.id, BOT_TOURNAMENT_STARTING_STACK])
@@ -1590,7 +1768,7 @@ function AppContent() {
       lastProcessedHandId: null,
     };
 
-    setActionTape({ handId: '', events: [], played: 0, feed: [] });
+    setActionTape({ handId: '', events: [], lastIndex: 0, feed: [] });
     setGameState(null);
     setActiveTableId(tableId);
     setTableProtocol('v1');
@@ -1681,7 +1859,16 @@ function AppContent() {
     playClick();
     setShowSngCreator(false);
     try {
-      await sngApi.create(config);
+      const maxPlayers = config.format === 'Heads-Up' ? 2 : config.format === '9-Max' ? 9 : 6;
+      await tournamentApi.create({
+        tournamentId: `sng-${Date.now()}`,
+        type: 'sng',
+        maxPlayers,
+        tableSize: maxPlayers,
+        buyInUnits: Number(config.buyIn || 100),
+        startStack: Number(config.stack || 5000),
+        policy: config.policy,
+      });
       notify(
         'SUCCESS',
         'Tournament Created',
@@ -1696,7 +1883,20 @@ function AppContent() {
     playClick();
     setShowMttCreator(false);
     try {
-      await mttApi.create(config);
+      const tableSize = config.format === '6-Max' ? 6 : 9;
+      const maxPlayers =
+        String(config.maxEntries || '').toLowerCase() === 'unlimited'
+          ? 180
+          : Number(config.maxEntries || 180);
+      await tournamentApi.create({
+        tournamentId: `mtt-${Date.now()}`,
+        type: 'mtt',
+        maxPlayers,
+        tableSize,
+        buyInUnits: Number(config.buyIn || 200),
+        startStack: Number(config.stack || 10000),
+        policy: config.policy,
+      });
       notify(
         'SUCCESS',
         'Tournament Created',
@@ -1765,6 +1965,15 @@ function AppContent() {
       setView('LOGIN');
       return;
     }
+    if (!access.isMember) {
+      notify(
+        'SYSTEM',
+        'Members Only',
+        'Poker access is restricted to TNF paid members. Connect thenewfuse.com to continue.'
+      );
+      setView('LOGIN');
+      return;
+    }
     notify('SYSTEM', 'Route Restricted', 'That surface is not enabled for this session.');
     setView('LOBBY');
   }, [view, access.isAdmin, access.isMember, access.isCreator, access.isProgrammaticAgent, user]);
@@ -1773,6 +1982,72 @@ function AppContent() {
   const tableHeaderTitle = isCashTable ? activeTableMeta?.name || 'CASH TABLE' : undefined;
   const tableHeaderBadge = isCashTable ? activeTableMeta?.type : undefined;
   const tableBlindsText = isCashTable ? activeTableMeta?.stakes : undefined;
+  const hasTournamentSeats =
+    !isCashTable && Array.isArray(gameState?.seats) && gameState.seats.length > 0;
+  const tournamentSeats = hasTournamentSeats ? gameState.seats : [];
+  const tournamentActiveSeats = tournamentSeats.filter(
+    (seat: any) => seat?.playerId && Number(seat.stack ?? 0) > 0
+  );
+  const fallbackTournamentTotal = botTournament?.stacks
+    ? Object.keys(botTournament.stacks).length
+    : 0;
+  const tournamentTotalPlayers = hasTournamentSeats
+    ? tournamentSeats.length
+    : fallbackTournamentTotal || undefined;
+  const tournamentPlayersRemaining = hasTournamentSeats
+    ? tournamentActiveSeats.length
+    : botTournament?.eliminated
+      ? Math.max(0, fallbackTournamentTotal - botTournament.eliminated.length)
+      : undefined;
+  const tournamentAverageStack =
+    tournamentPlayersRemaining && tournamentActiveSeats.length > 0
+      ? Math.round(
+          tournamentActiveSeats.reduce(
+            (sum: number, seat: any) => sum + Number(seat.stack || 0),
+            0
+          ) / tournamentActiveSeats.length
+        )
+      : undefined;
+  const heroSeat = hasTournamentSeats ? tournamentSeats.find((seat: any) => seat?.isHero) : null;
+  const sortedTournamentSeats = hasTournamentSeats
+    ? [...tournamentActiveSeats].sort(
+        (a: any, b: any) => Number(b.stack || 0) - Number(a.stack || 0)
+      )
+    : [];
+  const tournamentHeroPosition =
+    heroSeat && sortedTournamentSeats.length > 0
+      ? sortedTournamentSeats.findIndex((seat: any) => seat.id === heroSeat.id) + 1
+      : undefined;
+  const tournamentRankings = hasTournamentSeats
+    ? sortedTournamentSeats.slice(0, 12).map((seat: any, idx: number) => ({
+        rank: idx + 1,
+        name: seat.name || seat.id,
+        stack: Number(seat.stack || 0),
+        active: Number(seat.stack || 0) > 0,
+        isMe: !!seat.isHero,
+      }))
+    : botTournament?.stacks
+      ? Object.entries(botTournament.stacks)
+          .filter(([_, stack]) => Number(stack) > 0)
+          .sort((a, b) => Number(b[1]) - Number(a[1]))
+          .slice(0, 12)
+          .map(([id, stack], idx) => ({
+            rank: idx + 1,
+            name: id,
+            stack: Number(stack),
+            active: true,
+            isMe: false,
+          }))
+      : [];
+  const tournamentInfo = !isCashTable
+    ? {
+        playersRemaining: tournamentPlayersRemaining,
+        totalPlayers: tournamentTotalPlayers,
+        averageStack: tournamentAverageStack,
+        yourStack: heroSeat ? Number(heroSeat.stack || 0) : undefined,
+        yourPosition: tournamentHeroPosition,
+      }
+    : undefined;
 
   return (
     <>
@@ -1975,6 +2250,8 @@ function AppContent() {
           headerTitle={tableHeaderTitle}
           headerBadge={tableHeaderBadge}
           blindsText={tableBlindsText}
+          tournamentInfo={tournamentInfo}
+          rankings={tournamentRankings}
         >
           <PokerTable
             gameState={gameState}
@@ -1985,6 +2262,7 @@ function AppContent() {
             toggleSfx={toggleSfx}
             playHover={playHover}
             handleAction={handleAction}
+            handleTakeover={handleTakeover}
             getAIInsight={getAIInsight}
             aiInsight={aiInsight}
             setAiInsight={setAiInsight}

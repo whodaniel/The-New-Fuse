@@ -38,6 +38,33 @@ function defaultPayoutBps(fieldSize) {
   return [2500, 1700, 1200, 900, 700, 550, 450, 350, 300, 250, 200, 200];
 }
 
+function normalizePolicy(input = {}) {
+  const mode = String(input.mode || 'open').toLowerCase();
+  const safeMode = ['open', 'bots-only', 'hybrid'].includes(mode) ? mode : 'open';
+  const allowHumanJoin =
+    typeof input.allowHumanJoin === 'boolean' ? input.allowHumanJoin : safeMode !== 'bots-only';
+  const allowAgentJoin =
+    typeof input.allowAgentJoin === 'boolean' ? input.allowAgentJoin : true;
+  const allowHumanTakeover =
+    typeof input.allowHumanTakeover === 'boolean'
+      ? input.allowHumanTakeover
+      : safeMode !== 'bots-only';
+  return {
+    mode: safeMode,
+    allowHumanJoin,
+    allowAgentJoin,
+    allowHumanTakeover,
+  };
+}
+
+function normalizeControlMode(value, fallback = 'human') {
+  const mode = String(value || '').trim().toLowerCase();
+  if (mode === 'human' || mode === 'hybrid' || mode === 'agent') return mode;
+  const safe = String(fallback || '').trim().toLowerCase();
+  if (safe === 'human' || safe === 'hybrid' || safe === 'agent') return safe;
+  return 'human';
+}
+
 function currentLevelRow(t) {
   return t.blindSchedule[Math.min(t.levelIndex, t.blindSchedule.length - 1)];
 }
@@ -154,6 +181,7 @@ export function createTournament(config) {
       chips: toInt(config.addon?.chips ?? Math.floor(startStack * 1.5), 'addonChips', 100),
     },
     payoutBps: cloneJson(config.payoutBps || defaultPayoutBps(maxPlayers)),
+    policy: normalizePolicy(config.policy),
     players: new Map(),
     eliminationOrder: [],
     prizePoolUnits: 0,
@@ -168,7 +196,7 @@ export function createTournament(config) {
   return t;
 }
 
-export function registerPlayer(t, { playerId }) {
+export function registerPlayer(t, { playerId, controlMode }) {
   assertString(playerId, 'playerId');
   const canRegister =
     t.status === 'registration' || (t.status === 'running' && t.lateReg.open);
@@ -188,6 +216,8 @@ export function registerPlayer(t, { playerId }) {
     tableId: null,
     seat: null,
     finishPosition: null,
+    controlMode: normalizeControlMode(controlMode, 'human'),
+    controlUpdatedAt: nowIso(),
   });
   t.prizePoolUnits += t.buyInUnits;
   t.eventLog.push({ type: 'player.registered', ts: nowIso(), payload: { playerId } });
@@ -223,6 +253,25 @@ export function resumeTournament(t, { reason = 'manual' } = {}) {
   t.status = 'running';
   t.eventLog.push({ type: 'tournament.resumed', ts: nowIso(), payload: { reason: String(reason || 'manual') } });
   t.pausedReason = '';
+  return snapshotTournament(t);
+}
+
+export function setControlMode(t, { playerId, controlMode, requestedBy } = {}) {
+  assertString(playerId, 'playerId');
+  const player = t.players.get(playerId);
+  if (!player) throw new Error('Unknown player');
+  const nextMode = normalizeControlMode(controlMode, player.controlMode || 'human');
+  player.controlMode = nextMode;
+  player.controlUpdatedAt = nowIso();
+  t.eventLog.push({
+    type: 'player.control_mode_changed',
+    ts: nowIso(),
+    payload: {
+      playerId,
+      controlMode: nextMode,
+      requestedBy: requestedBy ? String(requestedBy) : '',
+    },
+  });
   return snapshotTournament(t);
 }
 
@@ -395,6 +444,7 @@ export function snapshotTournament(t) {
     tableSize: t.tableSize,
     buyInUnits: t.buyInUnits,
     startStack: t.startStack,
+    policy: cloneJson(t.policy || {}),
     levelIndex: t.levelIndex,
     level: cloneJson(currentLevelRow(t)),
     onBreak: t.onBreak,
@@ -421,6 +471,7 @@ export function recoverySnapshot(t) {
     tableSize: t.tableSize,
     buyInUnits: t.buyInUnits,
     startStack: t.startStack,
+    policy: cloneJson(t.policy || {}),
     blindSchedule: cloneJson(t.blindSchedule),
     levelIndex: t.levelIndex,
     levelElapsedSec: t.levelElapsedSec,
@@ -454,6 +505,7 @@ export function restoreTournament(snapshot) {
     tableSize: snapshot.tableSize,
     buyInUnits: snapshot.buyInUnits,
     startStack: snapshot.startStack,
+    policy: snapshot.policy,
     blindSchedule: snapshot.blindSchedule,
     breakConfig: snapshot.breakConfig,
     lateReg: snapshot.lateReg,

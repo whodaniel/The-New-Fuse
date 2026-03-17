@@ -17,10 +17,26 @@ export default function SngCreatorModal({ onClose, onCreate }: SngCreatorModalPr
   const [bb, setBb] = useState(50);
   const [payout, setPayout] = useState('Top 2');
   const [speed, setSpeed] = useState('Regular');
+  const [policyMode, setPolicyMode] = useState<'open' | 'bots-only' | 'hybrid'>('open');
+  const [allowTakeover, setAllowTakeover] = useState(true);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onCreate({ name, format, buyIn, stack, blinds, sb, bb, payout, speed });
+    onCreate({
+      name,
+      format,
+      buyIn,
+      stack,
+      blinds,
+      sb,
+      bb,
+      payout,
+      speed,
+      policy: {
+        mode: policyMode,
+        allowHumanTakeover: allowTakeover,
+      },
+    });
   };
 
   const players = format === '6-Max' ? 6 : format === '9-Max' ? 9 : 2;
@@ -181,6 +197,53 @@ export default function SngCreatorModal({ onClose, onCreate }: SngCreatorModalPr
                     {s}
                   </button>
                 ))}
+              </div>
+            </div>
+
+            <div className="sm:col-span-2">
+              <label className="block text-[10px] font-black uppercase tracking-widest text-cyan-400 mb-2">
+                Tournament Policy
+              </label>
+              <div className="flex gap-2 bg-black/60 p-1 rounded-xl border border-slate-800">
+                {[
+                  { id: 'open', label: 'Open' },
+                  { id: 'bots-only', label: 'Bots Only' },
+                  { id: 'hybrid', label: 'Hybrid' },
+                ].map((mode) => (
+                  <button
+                    key={mode.id}
+                    type="button"
+                    onClick={() => setPolicyMode(mode.id as 'open' | 'bots-only' | 'hybrid')}
+                    className={`flex-1 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${
+                      policyMode === mode.id
+                        ? 'bg-cyan-600 text-white shadow-[0_0_10px_rgba(0,242,255,0.3)]'
+                        : 'text-slate-500 hover:text-slate-300'
+                    }`}
+                  >
+                    {mode.label}
+                  </button>
+                ))}
+              </div>
+              <div className="flex items-center justify-between mt-3">
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                    Allow Human Takeover
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    Permit humans to take control of agent seats mid-tourney.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setAllowTakeover((v) => !v)}
+                  className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest border ${
+                    allowTakeover
+                      ? 'bg-cyan-600 text-white border-cyan-400'
+                      : 'bg-black/40 text-slate-400 border-slate-800'
+                  }`}
+                >
+                  {allowTakeover ? 'Enabled' : 'Locked'}
+                </button>
               </div>
             </div>
           </div>

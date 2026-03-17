@@ -1,0 +1,13 @@
+{
+  "mode": "console",
+  "sessionId": "",
+  "playerName": "Player",
+  "tableId": "lobby-1",
+  "bankroll": 1000,
+  "rounds": 0,
+  "wins": 0,
+  "losses": 0,
+  "live": null,
+  "tableEvents": [],
+  "note": "origin: DOM stats; axes: N/A"
+}

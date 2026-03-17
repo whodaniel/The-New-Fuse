@@ -1,25 +1,40 @@
 import { motion } from 'framer-motion';
-import { Shield, Sparkles } from 'lucide-react';
-import React, { useState } from 'react';
+import { Shield } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { PLAYER_AVATARS } from '../data/avatars';
+import {
+  findProfileByName,
+  loadProfiles,
+  type PlayerControlMode,
+  type PlayerProfile,
+} from '../utils/playerProfiles';
 
 interface SessionLoginProps {
-  onLogin: (username: string, avatarUrl: string, email?: string) => void;
+  onLogin: (
+    username: string,
+    avatarUrl: string,
+    email?: string,
+    controlMode?: PlayerControlMode
+  ) => void;
 }
 
-const AVATARS = [
-  'https://api.dicebear.com/7.x/bottts/svg?seed=cypher1',
-  'https://api.dicebear.com/7.x/bottts/svg?seed=cypher2',
-  'https://api.dicebear.com/7.x/bottts/svg?seed=cypher3',
-  'https://api.dicebear.com/7.x/bottts/svg?seed=cypher4',
-  'https://api.dicebear.com/7.x/bottts/svg?seed=cypher5',
-  'https://api.dicebear.com/7.x/bottts/svg?seed=cypher6',
-];
+const AVATARS = PLAYER_AVATARS;
 
 export default function SessionLogin({ onLogin }: SessionLoginProps) {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
-  const [selectedAvatar, setSelectedAvatar] = useState(AVATARS[0]);
+  const [profiles, setProfiles] = useState<PlayerProfile[]>([]);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    const loaded = loadProfiles();
+    setProfiles(loaded);
+  }, []);
+
+  const matchedProfile = useMemo(() => {
+    if (!username) return null;
+    return findProfileByName(profiles, username);
+  }, [profiles, username]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,7 +43,9 @@ export default function SessionLogin({ onLogin }: SessionLoginProps) {
       return;
     }
     setError('');
-    onLogin(username, selectedAvatar, email.trim() || undefined);
+    const avatar = matchedProfile?.avatar || AVATARS[0];
+    const controlMode: PlayerControlMode = matchedProfile?.controlMode || 'human';
+    onLogin(username.trim(), avatar, email.trim() || undefined, controlMode);
   };
 
   return (
@@ -67,6 +84,33 @@ export default function SessionLogin({ onLogin }: SessionLoginProps) {
             <div className="h-px flex-1 bg-white/5" />
           </div>
 
+          {profiles.length > 0 && (
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">
+                Saved Callsigns
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {profiles.map((profile) => (
+                  <button
+                    key={profile.id}
+                    type="button"
+                    onClick={() => {
+                      setUsername(profile.name);
+                    }}
+                    className="flex items-center gap-2 px-3 py-2 rounded-xl border border-white/10 bg-black/40 hover:bg-black/60 text-xs font-black uppercase tracking-widest text-slate-300"
+                  >
+                    <img
+                      src={profile.avatar}
+                      alt={profile.name}
+                      className="w-6 h-6 rounded-full border border-slate-700"
+                    />
+                    {profile.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div>
             <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">
               Agent Callsign
@@ -94,29 +138,9 @@ export default function SessionLogin({ onLogin }: SessionLoginProps) {
             />
           </div>
 
-          <div>
-            <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">
-              Neural Identity
-            </label>
-            <div className="grid grid-cols-3 gap-3 mb-4">
-              {AVATARS.map((avatar) => (
-                <div
-                  key={avatar}
-                  onClick={() => setSelectedAvatar(avatar)}
-                  className={`cursor-pointer rounded-full overflow-hidden border-2 transition-all ${selectedAvatar === avatar ? 'border-cyan-400 shadow-[0_0_15px_rgba(0,242,255,0.4)] scale-105' : 'border-slate-800 opacity-50 hover:opacity-100'}`}
-                >
-                  <img src={avatar} alt="Avatar" className="w-full h-auto" />
-                </div>
-              ))}
-            </div>
-            <button
-              type="button"
-              disabled
-              className="w-full py-2 bg-slate-900/50 border border-slate-800 rounded-lg text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center justify-center gap-2 opacity-50 cursor-not-allowed"
-            >
-              <Sparkles className="w-3 h-3" /> Generate AI Avatar
-            </button>
-          </div>
+          <p className="text-[10px] text-slate-500 font-mono text-center">
+            Create or edit player profiles after sign-in in Settings → Account.
+          </p>
 
           <div className="text-center py-4 border-t border-slate-800">
             <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">

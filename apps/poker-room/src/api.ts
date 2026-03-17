@@ -22,6 +22,13 @@ export async function api(path: string, options: any = {}) {
   const attempts = options.retry === false ? 1 : 2;
   const fullPath = path.startsWith('http') ? path : `${BASE_URL}${path}`;
   let lastErr = null;
+  const storedIdentity =
+    typeof window !== 'undefined' ? window.localStorage.getItem('tnf_identity') : null;
+  const storedToken =
+    typeof window !== 'undefined'
+      ? window.localStorage.getItem('tnf_access_token') || window.localStorage.getItem('tnf_jwt')
+      : null;
+  const identity = options.identity || storedIdentity || undefined;
   for (let i = 0; i < attempts; i += 1) {
     let timeout: any;
     try {
@@ -29,7 +36,14 @@ export async function api(path: string, options: any = {}) {
       timeout = setTimeout(() => ctl.abort('timeout'), options.timeoutMs || 12000);
       const res = await fetch(fullPath, {
         method: options.method || 'GET',
-        headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(options.headers || {}),
+          ...(identity ? { 'x-tnf-identity': String(identity) } : {}),
+          ...(!options.headers?.authorization && storedToken
+            ? { Authorization: `Bearer ${storedToken}` }
+            : {}),
+        },
         body: options.body ? JSON.stringify(options.body) : undefined,
         signal: ctl.signal,
       });
@@ -122,8 +136,9 @@ export const pokerApi = {
 
 // --- V2 Hold'em Cash Table APIs ---
 export const holdemV2Api = {
-  async tables() {
-    return api('/api/v2/holdem/tables');
+  async tables(identity?: string) {
+    const suffix = identity ? `?identity=${encodeURIComponent(identity)}` : '';
+    return api(`/api/v2/holdem/tables${suffix}`, { identity });
   },
   async createTable(config: any) {
     return api('/api/v2/holdem/tables', { method: 'POST', body: config });
@@ -135,6 +150,12 @@ export const holdemV2Api = {
     return api('/api/v2/holdem/connection', {
       method: 'POST',
       body: { tableId, playerId, connected },
+    });
+  },
+  async control(tableId: string, playerId: string, controlMode: string) {
+    return api('/api/v2/holdem/control', {
+      method: 'POST',
+      body: { tableId, playerId, controlMode },
     });
   },
   async resume(tableId: string, playerId: string) {
@@ -222,7 +243,7 @@ export const mttApi = {
 // --- V2 Tournament APIs ---
 export const tournamentApi = {
   async create(config: any) {
-    return api('/api/v2/tournaments/create', { method: 'POST', body: config });
+    return api('/api/v2/tournaments', { method: 'POST', body: config });
   },
   async register(tournamentId: string, playerId: string) {
     return api('/api/v2/tournaments/register', {
@@ -233,8 +254,8 @@ export const tournamentApi = {
   async start(tournamentId: string) {
     return api('/api/v2/tournaments/start', { method: 'POST', body: { tournamentId } });
   },
-  async clock(tournamentId: string) {
-    return api(`/api/v2/tournaments/clock?tournamentId=${encodeURIComponent(tournamentId)}`);
+  async clock(tournamentId: string, seconds = 60) {
+    return api('/api/v2/tournaments/clock', { method: 'POST', body: { tournamentId, seconds } });
   },
   async rebuy(tournamentId: string, playerId: string) {
     return api('/api/v2/tournaments/rebuy', { method: 'POST', body: { tournamentId, playerId } });
@@ -249,7 +270,13 @@ export const tournamentApi = {
     });
   },
   async payouts(tournamentId: string) {
-    return api('/api/v2/tournaments/payouts', { method: 'POST', body: { tournamentId } });
+    return api(`/api/v2/tournaments/payouts?tournamentId=${encodeURIComponent(tournamentId)}`);
+  },
+  async control(tournamentId: string, playerId: string, controlMode: string) {
+    return api('/api/v2/tournaments/control', {
+      method: 'POST',
+      body: { tournamentId, playerId, controlMode },
+    });
   },
 };
 
