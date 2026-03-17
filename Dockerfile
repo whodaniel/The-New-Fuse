@@ -37,3 +37,4 @@ WORKDIR /app
 COPY --from=builder /app/${SERVICE_PATH}/dist ./dist
 EXPOSE ${PORT:-3000}
 CMD ["sh", "-c", "serve ./dist -p ${PORT:-3000} -s -n"]
+# Force rebuild Mon Mar 16 21:29:34 EDT 2026
