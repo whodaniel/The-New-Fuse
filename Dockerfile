@@ -8,6 +8,7 @@ ARG NODE_VERSION=22
 #------------------------------------------------------------------------------
 FROM node:${NODE_VERSION}-alpine AS builder
 
+# Build arguments
 ARG SERVICE_PATH=apps/frontend
 ARG PACKAGE_NAME=@the-new-fuse/frontend
 ARG VITE_API_URL
@@ -58,7 +59,7 @@ COPY packages ./packages
 COPY apps ./apps
 
 # Install all dependencies
-RUN pnpm install --frozen-lockfile || pnpm install --no-frozen-lockfile
+RUN pnpm install --no-frozen-lockfile
 
 # Build foundational types first
 RUN pnpm --filter @the-new-fuse/types build || echo "Types built"
@@ -84,11 +85,14 @@ ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL
 ENV VITE_SUPABASE_ANON_KEY=$VITE_SUPABASE_ANON_KEY
 
 # Build the specific frontend application
-# Handle both workspace packages and standalone apps
-RUN if [ "${SERVICE_PATH}" = "apps/nexus-orchestrator" ]; then \
-      cd apps/nexus-orchestrator && pnpm build; \
+# Extract just the app name from SERVICE_PATH (e.g., "nexus-orchestrator" from "apps/nexus-orchestrator")
+RUN SERVICE_NAME=$(echo "${SERVICE_PATH}" | sed 's|apps/||') && \
+    if [ -d "apps/${SERVICE_NAME}" ]; then \
+        echo "Building standalone app: ${SERVICE_NAME}"; \
+        cd apps/${SERVICE_NAME} && pnpm build; \
     else \
-      pnpm --filter ${PACKAGE_NAME} build; \
+        echo "Building workspace package: ${PACKAGE_NAME}"; \
+        pnpm --filter ${PACKAGE_NAME} build; \
     fi
 
 #------------------------------------------------------------------------------
@@ -103,7 +107,8 @@ WORKDIR /app
 
 # Re-declare ARG in runner stage to use it here
 ARG SERVICE_PATH=apps/frontend
-# Copy built files from builder stage
+
+# Copy built files from builder stage - handle both standalone and workspace apps
 COPY --from=builder /app/${SERVICE_PATH}/dist ./dist
 
 # Expose port (Railway will inject PORT env var)
