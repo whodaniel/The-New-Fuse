@@ -2,5 +2,6 @@ packages:
   - "apps/*"
   - "apps/mcp-servers/*"
   - "!apps/skideancer-ide"
+  - "!apps/mcp-servers/devops-bridge.bak"
   - "packages/*"
   - "tools/*"
