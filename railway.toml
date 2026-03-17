@@ -248,7 +248,7 @@ watchPatterns = ["apps/relay-server/**", "packages/**"]
 [services.relay-server.deploy]
 healthcheckPath = "/health"
 
-# Nexus Orchestrator UI (3D Swarm Visualization)
+# Nexus Orchestrator UI (3D Swarm Visualization) - Updated Mar 17 2026
 [services.nexus-orchestrator]
 builder = "DOCKERFILE"
 [services.nexus-orchestrator.build]
