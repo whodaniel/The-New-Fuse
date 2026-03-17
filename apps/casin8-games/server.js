@@ -1647,7 +1647,7 @@ function applySecurityHeaders(res) {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
   res.setHeader(
     'Access-Control-Allow-Headers',
-    'X-Requested-With, Content-Type, Authorization, x-api-key'
+    'X-Requested-With, Content-Type, Authorization, x-api-key, x-tnf-identity, x-player-id, x-username, x-tnf-role, x-agent-api-key'
   );
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
