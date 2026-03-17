@@ -253,7 +253,7 @@ healthcheckPath = "/health"
 builder = "DOCKERFILE"
 [services.nexus-orchestrator.build]
 dockerfilePath = "Dockerfile.railway"
-dockerBuildArgs = { SERVICE_PATH = "nexus-orchestrator", SERVICE_NAME = "@the-new-fuse/nexus-orchestrator" }
+dockerBuildArgs = { SERVICE_PATH = "apps/nexus-orchestrator", SERVICE_NAME = "@the-new-fuse/nexus-orchestrator" }
 watchPatterns = ["apps/nexus-orchestrator/**", "packages/**"]
 [services.nexus-orchestrator.deploy]
 healthcheckPath = "/"
