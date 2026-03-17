@@ -24,13 +24,7 @@ RUN pnpm --filter "@the-new-fuse/*" build || true
 ENV NODE_ENV=production
 
 # Build based on SERVICE_PATH
-RUN if [ "$SERVICE_PATH" = "apps/nexus-orchestrator" ]; then \
-        pnpm --filter @the-new-fuse/nexus-orchestrator build; \
-    elif [ "$SERVICE_PATH" = "apps/frontend" ]; then \
-        pnpm --filter @the-new-fuse/frontend build; \
-    else \
-        echo "Building all packages..." && pnpm --filter "@the-new-fuse/*" build; \
-    fi
+RUN echo "Building nexus-orchestrator..." && pnpm --filter @the-new-fuse/nexus-orchestrator build
 
 FROM node:${NODE_VERSION}-alpine AS runner
 RUN npm install -g serve
