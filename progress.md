@@ -63,3 +63,14 @@
   Official Registry badge in both ReactFlow node and ModernWorkflowBuilder.
 - Adjusted ModernWorkflowBuilder node onChange to accept non-string config
   payloads.
+
+## 2026-03-17 Poker Room QA
+
+- Ran Playwright-based poker room walkthrough (local dev server on :5173) to
+  exercise lobby, cash games, tournaments, community, provably fair, control
+  center, and bot tournament flows.
+- Captured QA screenshots in `output/playwright/qa-*.png` (not committed).
+- Observed backend errors during cash table join (`Table Unavailable`) and bot
+  tournament bootstrap (`Poker engine rejected the tournament hand`).
+- Login form simplified to remove saved callsign/profile UI; advanced profile
+  management remains in Settings.
