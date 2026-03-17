@@ -1,3 +1,4 @@
+# Force rebuild Mon Mar 17 2026
 # Dockerfile for TNF monorepo - handles both workspace packages and standalone apps
 
 ARG NODE_VERSION=22
