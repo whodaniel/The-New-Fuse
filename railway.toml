@@ -252,8 +252,8 @@ healthcheckPath = "/health"
 [services.nexus-orchestrator]
 builder = "DOCKERFILE"
 [services.nexus-orchestrator.build]
-dockerfilePath = "Dockerfile"
-dockerBuildArgs = { SERVICE_PATH = "apps/nexus-orchestrator", PACKAGE_NAME = "@the-new-fuse/nexus-orchestrator", VITE_API_URL = "${{VITE_API_URL}}", VITE_API_GATEWAY_URL = "${{VITE_API_GATEWAY_URL}}", VITE_WS_URL = "${{VITE_WS_URL}}", GEMINI_API_KEY = "${{GEMINI_API_KEY}}" }
+dockerfilePath = "Dockerfile.railway"
+dockerBuildArgs = { SERVICE_PATH = "nexus-orchestrator", SERVICE_NAME = "@the-new-fuse/nexus-orchestrator" }
 watchPatterns = ["apps/nexus-orchestrator/**", "packages/**"]
 [services.nexus-orchestrator.deploy]
 healthcheckPath = "/"
