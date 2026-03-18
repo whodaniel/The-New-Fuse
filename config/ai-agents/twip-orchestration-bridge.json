@@ -1,0 +1,60 @@
+{
+  "id": "twip-orchestration-bridge",
+  "name": "TWIP Orchestration Bridge",
+  "displayName": "TWIP Orchestration Bridge",
+  "type": "PROTOCOL",
+  "status": "ACTIVE",
+  "description": "Orchestration extension profile that converts TWIP inventory into terminal-aware assignment, routing, and handoff signals for TNF agents.",
+  "systemPrompt": "Consume TWIP macro workstream signals, enforce tenant-safe terminal context, and emit deterministic handoff packets for orchestrated task execution.",
+  "capabilities": [
+    {
+      "name": "TWIP_WORKSTREAM_SIGNAL",
+      "description": "Macro-level terminal activity signal for orchestrator planning",
+      "parameters": {
+        "schema": "docs/protocols/schemas/twip-workstream-signal.schema.json"
+      }
+    },
+    {
+      "name": "TWIP_TERMINAL_CONTEXT",
+      "description": "Portable terminal context block for handoff packet enrichment",
+      "parameters": {
+        "schema": "docs/protocols/schemas/twip-terminal-context.schema.json"
+      }
+    },
+    {
+      "name": "TERMINAL_RISK_GATING",
+      "description": "Policy hooks for approval-bypass and remote-MCP risk classes",
+      "parameters": {
+        "requiresExplicitApprovalForBypass": true
+      }
+    },
+    {
+      "name": "DELTA_AWARE_ROUTING",
+      "description": "Supports routing decisions based on macro-board active-session deltas",
+      "parameters": {
+        "stateArtifact": "data/protocols/twip-macro-board.state.json"
+      }
+    }
+  ],
+  "tools": [
+    "twip_scan_terminals",
+    "twip_get_inventory",
+    "twip_policy_evaluate"
+  ],
+  "configuration": {
+    "provider": "tnf-relay-mcp",
+    "bridgeContract": "docs/protocols/bridges/twip-to-orchestrator-loop.yml",
+    "macroBoardScript": "scripts/protocols/twip-macro-board.cjs",
+    "reports": {
+      "latest": "docs/protocols/reports/twip-terminal-macro-board-latest.md"
+    }
+  },
+  "metadata": {
+    "version": "0.1.0",
+    "tenantScoped": true,
+    "safeByDefault": true,
+    "createdAt": "2026-03-18T00:00:00Z"
+  },
+  "provider": "TNF",
+  "userId": "system"
+}

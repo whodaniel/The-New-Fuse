@@ -1,0 +1,22 @@
+name: twip-to-orchestrator-loop
+from:
+  - skill: interoperability-protocol-agent
+    output: tnf://twip/inventory
+  - skill: inter-agentic-workflow-definer
+    output: standardized terminal-aware workflow task templates
+to:
+  - skill: orchestrator-agent
+    input: ORCH.WORKSTREAM.SIGNAL + TWIP_TERMINAL_CONTEXT
+  - skill: tnf-task-production-pipeline
+    input: terminal-aware assignment and execution metadata
+validate:
+  - workstream signal validates against docs/protocols/schemas/twip-workstream-signal.schema.json
+  - handoff context validates against docs/protocols/schemas/twip-terminal-context.schema.json
+  - tenant_id is identical across signal, handoff scope, and target execution packet
+  - terminal-bound tasks include explicit twid and target agentIds
+fail:
+  - deny assignment on tenant mismatch with code TENANT_SCOPE_MISMATCH
+  - deny assignment when twid missing for terminal-bound work with code TWID_REQUIRED
+  - require elevated orchestrator approval when approval_bypass=true
+log:
+  - docs/protocols/bridges/reports/twip-to-orchestrator-loop.md

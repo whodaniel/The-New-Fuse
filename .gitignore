@@ -180,6 +180,7 @@ apps/electron-desktop/out/
 data/video-reports/
 data/video-transcripts/
 data/protocols/*.snapshot.json
+data/protocols/twip-macro-board.state.json
 data/*-state.json
 data/AI_Knowledge_Base.md
 data/IMPLEMENTATION-PLAN.md
@@ -188,6 +189,8 @@ ai_video_library.html
 *.md.backup
 *-state.json
 packages/testing/performance-reports/
+docs/protocols/reports/twip-terminal-macro-board-*.md
+apps/frontend/public/visualizations/terminals/data/
 
 # Credential and secret files
 **/service-account-key.json

@@ -124,3 +124,26 @@ capability catalog alignment
    - `/api/terminals/graph`
    - `/api/v1/terminals/graph`
 4. Wired `TerminalsGatewayModule` into `apps/api-gateway/src/app.module.ts`.
+
+## 11) Rolling Macro Board Added
+
+1. Added rolling macro-board generator:
+   - `scripts/protocols/twip-macro-board.cjs`
+2. Added report and state artifacts:
+   - `docs/protocols/reports/twip-terminal-macro-board-latest.md`
+   - `data/protocols/twip-macro-board.state.json`
+3. Added operations guide:
+   - `docs/protocols/twip-terminal-macro-board.md`
+
+## 12) Orchestration Extension Package Added
+
+1. Added orchestration extension guide:
+   - `docs/protocols/twip-orchestration-extension-v0.1.md`
+2. Added bridge contract and report:
+   - `docs/protocols/bridges/twip-to-orchestrator-loop.yml`
+   - `docs/protocols/bridges/reports/twip-to-orchestrator-loop.md`
+3. Added extension schemas:
+   - `docs/protocols/schemas/twip-workstream-signal.schema.json`
+   - `docs/protocols/schemas/twip-terminal-context.schema.json`
+4. Added registry capability profile:
+   - `config/ai-agents/twip-orchestration-bridge.json`
