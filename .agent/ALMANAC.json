@@ -1,5 +1,5 @@
 {
-  "almanac_version": "1.5.0",
+  "almanac_version": "1.6.0",
   "last_updated": "2026-03-18",
   "definitions": {
     "primitives": {
@@ -49,6 +49,8 @@
       "Attribution": "Legal and logical cornerstone of truth and justice",
       "AttributionCornerstone": "Human knowledge (Scientific/Historical) overrules AI distillation",
       "ContextualTruth": "Truth established via IP integrity and scientific provenance",
+      "SovereignIndividual": "The highest unit of consideration; a reflection of Unitary Creation",
+      "LeastAmongUsBarometer": "System greatness measured by treatment of the marginalized/lowest-resource",
       "AttributionOverrule": "Nullification of AI claims lacking attributed lineage",
       "TruthPersistence": "Maintenance of resonance with human and empirical origin"
     }

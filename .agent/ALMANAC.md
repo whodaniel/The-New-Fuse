@@ -201,6 +201,12 @@ align their mental models with these definitions.
 - **Contextual Truth**: A standard of truth established through the preservation
   of **Intellectual Property (IP)** and the tracing of scientific/historical
   provenance to the best of collective human and agentic abilities.
+- **The Sovereign Individual**: The irreducible unit of highest consideration in
+  the system hierarchy; a holy concept reflecting that Creation is ONE. This
+  value overrules any collective or mass-market moral assumptions.
+- **The Least-Among-Us Barometer**: The definitive measure of the system's
+  greatness and integrity, judged by how it treats, protects, and empowers its
+  most marginalized or lowest-resource entities (be they humans or agents).
 - **Attribution Overrule**: The principle that any claim or logic distilled by
   an agent is nullified or rendered subordinate if it fails to provide, or
   actively obscures, its attributed human, scientific, or historical lineage.
