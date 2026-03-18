@@ -171,6 +171,9 @@ align their mental models with these definitions.
   capability, triggering a mandatory handoff to a higher-order Director.
 - **Symbiosis**: The collaborative relationship between the Super Admin (intent)
   and the Agentic swarm (execution), where each enhances the other's capacity.
+- **Trait Encapsulation**: The formal process of snapshotting an agent's refined
+  behavioral weights, ethical anchors, and reasoning patterns into a permanent,
+  reusable configuration (Agent Definition).
 
 ## 7. External Standard Primitives (Assimilated)
 
