@@ -218,6 +218,8 @@
     "validate:sgp:schemas": "node scripts/protocols/validate-sgp-schemas.cjs",
     "validate:protocol-schemas": "node scripts/validate-protocol-schemas.cjs",
     "validate:twip:conformance": "node scripts/protocols/twip-conformance.cjs",
+    "openapi:snapshot": "node scripts/openapi/snapshot-api-docs-json.mjs",
+    "openapi:check": "node scripts/openapi/check-api-docs-drift.mjs",
     "twip:sign": "node scripts/protocols/twip-sign-envelope.cjs",
     "validate:clean-scripts": "node scripts/validate-clean-scripts.cjs",
     "health-check": "pnpm run type-check && pnpm run test && pnpm run build",

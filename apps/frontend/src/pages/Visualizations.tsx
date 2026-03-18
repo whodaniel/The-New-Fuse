@@ -4,13 +4,13 @@ import {
   Clock3,
   Cpu,
   Gauge,
+  Grip,
   Orbit,
-  Play,
+  TerminalSquare,
   ToggleLeft,
   ToggleRight,
-  Zap,
 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 type ChronJob = {
@@ -35,14 +35,26 @@ type TelemetryProcess = {
   status: string;
   stale: boolean;
   heartbeatCount: number;
+  intendedIntervalMs?: number | null;
+  intervalSource?: 'producer' | 'metadata' | 'inferred' | 'contract';
+  intervalExact?: boolean;
   expectedIntervalMs: number;
-  cadenceSource: 'metadata' | 'inferred';
+  cadenceSource: 'producer' | 'metadata' | 'inferred';
   lastHeartbeat: string | null;
   heartbeatAgeMs: number | null;
   lastRunAt: string | null;
   lastRunAgeMs: number | null;
+  nextExpectedAt?: string | null;
+  nextFireInMs?: number | null;
   lastResult: string | null;
   metadata?: Record<string, unknown>;
+};
+
+type TelemetryLog = {
+  timestamp: string | null;
+  eventType: string;
+  content: string;
+  metadata: Record<string, unknown>;
 };
 
 type MasterClockTelemetry = {
@@ -71,6 +83,7 @@ type MasterClockTelemetry = {
   superCycle: {
     lastUpdated: string | null;
     staleThresholdMs: number;
+    projectionMode?: 'live' | 'contract-fallback';
     stats: {
       total: number;
       healthy: number;
@@ -78,12 +91,7 @@ type MasterClockTelemetry = {
     };
     processes: TelemetryProcess[];
   };
-  recentActivity: Array<{
-    timestamp: string | null;
-    eventType: string;
-    content: string;
-    metadata: Record<string, unknown>;
-  }>;
+  recentActivity: TelemetryLog[];
 };
 
 type DisplayChronJob = ChronJob & {
@@ -93,13 +101,34 @@ type DisplayChronJob = ChronJob & {
   owner?: string;
   heartbeatAgeMs?: number | null;
   lastRunAgeMs?: number | null;
-  cadenceSource?: 'metadata' | 'inferred';
+  cadenceSource?: 'producer' | 'metadata' | 'inferred';
+  intervalSource?: 'producer' | 'metadata' | 'inferred' | 'contract';
+  intendedIntervalMs?: number | null;
+  intervalExact?: boolean;
+  nextExpectedAt?: string | null;
+  nextFireInMs?: number | null;
   lastResult?: string | null;
   metadata?: Record<string, unknown>;
+  lastActivityEvent?: string | null;
+  lastActivityAt?: string | null;
+  lastActivityContent?: string | null;
+};
+
+type MeshSocket = {
+  id: string;
+  index: number;
+  x: number;
+  y: number;
+};
+
+type DragState = {
+  jobId: string;
+  pointerId: number;
 };
 
 const CONCEPT_MASTER_CADENCE_SECONDS = 60;
 const MASTER_GEAR_SIZE = 210;
+const SNAP_DISTANCE_PERCENT = 15;
 
 const CONCEPT_CHRON_JOBS: DisplayChronJob[] = [
   {
@@ -174,6 +203,17 @@ const CONCEPT_CHRON_JOBS: DisplayChronJob[] = [
   },
 ];
 
+const LIVE_GEAR_STYLE = [
+  { color: '#fb7185', accent: 'rgba(251, 113, 133, 0.28)' },
+  { color: '#38bdf8', accent: 'rgba(56, 189, 248, 0.22)' },
+  { color: '#f59e0b', accent: 'rgba(245, 158, 11, 0.2)' },
+  { color: '#34d399', accent: 'rgba(52, 211, 153, 0.2)' },
+  { color: '#a78bfa', accent: 'rgba(167, 139, 250, 0.2)' },
+  { color: '#f97316', accent: 'rgba(249, 115, 22, 0.2)' },
+  { color: '#22d3ee', accent: 'rgba(34, 211, 238, 0.22)' },
+  { color: '#eab308', accent: 'rgba(234, 179, 8, 0.22)' },
+];
+
 const INITIAL_LOCKED_IDS = ['heartbeat', 'broker', 'director'];
 const TIME_SCALES = [0.5, 1, 2, 4];
 
@@ -181,7 +221,6 @@ function describeCadence(cadenceSeconds: number) {
   if (cadenceSeconds < 60) {
     return `Every ${cadenceSeconds}s`;
   }
-
   const minutes = cadenceSeconds / 60;
   return minutes === 1 ? 'Every minute' : `Every ${minutes.toFixed(1)}m`;
 }
@@ -197,6 +236,24 @@ function formatAge(ageMs?: number | null) {
   if (minutes < 60) return `${minutes}m ago`;
   const hours = Math.floor(minutes / 60);
   return `${hours}h ago`;
+}
+
+function formatCountdown(ageMs?: number | null) {
+  if (ageMs === null || ageMs === undefined || !Number.isFinite(ageMs)) {
+    return 'n/a';
+  }
+  const seconds = Math.round(ageMs / 1000);
+  if (seconds >= 0) {
+    if (seconds < 60) return `${seconds}s`;
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes}m`;
+    const hours = Math.floor(minutes / 60);
+    return `${hours}h`;
+  }
+  const lagSeconds = Math.abs(seconds);
+  if (lagSeconds < 60) return `${lagSeconds}s late`;
+  const lagMinutes = Math.floor(lagSeconds / 60);
+  return `${lagMinutes}m late`;
 }
 
 function inferLiveRole(process: TelemetryProcess) {
@@ -215,15 +272,89 @@ function inferLiveRole(process: TelemetryProcess) {
     : `Owned by ${process.owner} and reporting into the live super-cycle`;
 }
 
-function mapTelemetryToJobs(processes: TelemetryProcess[]): DisplayChronJob[] {
-  return processes.slice(0, CONCEPT_CHRON_JOBS.length).map((process, index) => {
-    const socket = CONCEPT_CHRON_JOBS[index % CONCEPT_CHRON_JOBS.length];
+function parseProcessIdFromLog(log: TelemetryLog): string | null {
+  const candidate =
+    String(log.metadata?.processId || '').trim() ||
+    String(log.metadata?.targetProcessId || '').trim() ||
+    String(log.metadata?.process || '').trim();
+  return candidate || null;
+}
+
+function mapRecentActivityByProcess(logs: TelemetryLog[]) {
+  const byProcess = new Map<string, TelemetryLog>();
+  for (const log of logs) {
+    const processId = parseProcessIdFromLog(log);
+    if (!processId || byProcess.has(processId)) continue;
+    byProcess.set(processId, log);
+  }
+  return byProcess;
+}
+
+function buildLiveSocket(index: number, total: number): DisplayChronJob {
+  if (total <= CONCEPT_CHRON_JOBS.length) {
+    return CONCEPT_CHRON_JOBS[index % CONCEPT_CHRON_JOBS.length];
+  }
+
+  let ring = 0;
+  let slot = index;
+  let ringCapacity = 8;
+
+  while (slot >= ringCapacity) {
+    slot -= ringCapacity;
+    ring += 1;
+    ringCapacity = 8 + ring * 6;
+  }
+
+  const radius = Math.min(45, 23 + ring * 8);
+  const angle = (Math.PI * 2 * slot) / ringCapacity + (ring % 2 ? Math.PI / ringCapacity : 0);
+  const size = Math.max(88, 144 - ring * 12);
+  const style = LIVE_GEAR_STYLE[index % LIVE_GEAR_STYLE.length];
+
+  return {
+    id: `live-socket-${index}`,
+    label: `Live Job ${index + 1}`,
+    role: 'Live scheduled process',
+    cadenceSeconds: 60,
+    teeth: 16 + ((index + ring) % 8) * 2,
+    size,
+    x: 50 + Math.cos(angle) * radius,
+    y: 50 + Math.sin(angle) * radius,
+    color: style.color,
+    accent: style.accent,
+    direction: index % 2 === 0 ? 1 : -1,
+    live: false,
+  };
+}
+
+function buildMeshSockets(jobCount: number): MeshSocket[] {
+  const targetSocketCount = Math.max(12, jobCount + 4);
+  return Array.from({ length: targetSocketCount }, (_, index) => {
+    const template = buildLiveSocket(index, targetSocketCount);
+    return {
+      id: `mesh-socket-${index}`,
+      index,
+      x: template.x,
+      y: template.y,
+    };
+  });
+}
+
+function mapTelemetryToJobs(
+  processes: TelemetryProcess[],
+  activityLogs: TelemetryLog[]
+): DisplayChronJob[] {
+  const activityByProcess = mapRecentActivityByProcess(activityLogs);
+  return processes.map((process, index) => {
+    const socket = buildLiveSocket(index, processes.length);
+    const cadenceMs = process.intendedIntervalMs || process.expectedIntervalMs;
+    const cadenceSeconds = Math.max(1, Math.round(cadenceMs / 1000));
+    const processLog = activityByProcess.get(process.processId);
     return {
       ...socket,
       id: process.processId,
       label: process.name,
       role: inferLiveRole(process),
-      cadenceSeconds: Math.max(1, Math.round(process.expectedIntervalMs / 1000)),
+      cadenceSeconds,
       live: true,
       processId: process.processId,
       status: process.status,
@@ -231,10 +362,34 @@ function mapTelemetryToJobs(processes: TelemetryProcess[]): DisplayChronJob[] {
       heartbeatAgeMs: process.heartbeatAgeMs,
       lastRunAgeMs: process.lastRunAgeMs,
       cadenceSource: process.cadenceSource,
+      intervalSource: process.intervalSource,
+      intendedIntervalMs: process.intendedIntervalMs || null,
+      intervalExact: process.intervalExact,
+      nextExpectedAt: process.nextExpectedAt || null,
+      nextFireInMs: process.nextFireInMs ?? null,
       lastResult: process.lastResult,
       metadata: process.metadata,
+      lastActivityEvent: processLog?.eventType || null,
+      lastActivityAt: processLog?.timestamp || null,
+      lastActivityContent: processLog?.content || null,
     };
   });
+}
+
+function resolveCadenceSourceLabel(source?: 'producer' | 'metadata' | 'inferred') {
+  if (source === 'producer') return 'Producer contract';
+  if (source === 'metadata') return 'Metadata contract';
+  return 'Inferred cadence';
+}
+
+function resolveIntervalSourceLabel(
+  source?: 'producer' | 'metadata' | 'inferred' | 'contract',
+  exact?: boolean
+) {
+  if (source === 'producer') return exact ? 'Producer contract (exact)' : 'Producer contract';
+  if (source === 'metadata') return exact ? 'Metadata contract (exact)' : 'Metadata contract';
+  if (source === 'contract') return 'Fallback contract';
+  return 'Inferred interval';
 }
 
 function buildGearPath(teeth: number, innerRadius: number, outerRadius: number) {
@@ -315,10 +470,16 @@ const Visualizations: React.FC = () => {
   const [timeScale, setTimeScale] = useState<number>(1);
   const [tick, setTick] = useState<number>(0);
   const [heartbeatFlash, setHeartbeatFlash] = useState<boolean>(false);
+  const [socketAssignments, setSocketAssignments] = useState<Record<string, number>>({});
+  const [dragState, setDragState] = useState<DragState | null>(null);
+  const [dragPosition, setDragPosition] = useState<{ jobId: string; x: number; y: number } | null>(
+    null
+  );
+  const meshRef = useRef<HTMLDivElement | null>(null);
 
   const displayJobs =
     telemetry?.superCycle?.processes?.length && telemetry.status === 'ok'
-      ? mapTelemetryToJobs(telemetry.superCycle.processes)
+      ? mapTelemetryToJobs(telemetry.superCycle.processes, telemetry.recentActivity || [])
       : CONCEPT_CHRON_JOBS;
   const masterCadenceSeconds = Math.max(
     1,
@@ -326,12 +487,14 @@ const Visualizations: React.FC = () => {
       (telemetry?.orchestrator?.heartbeatIntervalMs || CONCEPT_MASTER_CADENCE_SECONDS * 1000) / 1000
     )
   );
+  const projectionMode = telemetry?.superCycle?.projectionMode || 'live';
+  const projectedMode = projectionMode === 'contract-fallback';
+  const meshSockets = buildMeshSockets(displayJobs.length);
 
   useEffect(() => {
     const animationTimer = window.setInterval(() => {
       setTick((current) => current + 1);
     }, 80);
-
     return () => window.clearInterval(animationTimer);
   }, []);
 
@@ -405,10 +568,19 @@ const Visualizations: React.FC = () => {
         const shouldLockByDefault = job.live
           ? job.status !== 'stalled' && job.status !== 'offline'
           : INITIAL_LOCKED_IDS.includes(job.id);
-
         if (current.has(job.id) || (!hasBootstrappedLocks && shouldLockByDefault)) {
           next.add(job.id);
         }
+      }
+      if (current.size === next.size) {
+        let unchanged = true;
+        for (const value of current) {
+          if (!next.has(value)) {
+            unchanged = false;
+            break;
+          }
+        }
+        if (unchanged) return current;
       }
       return next;
     });
@@ -422,8 +594,160 @@ const Visualizations: React.FC = () => {
     );
   }, [displayJobs, hasBootstrappedLocks]);
 
+  useEffect(() => {
+    setSocketAssignments((current) => {
+      const next: Record<string, number> = {};
+      const used = new Set<number>();
+
+      for (const job of displayJobs) {
+        const assigned = current[job.id];
+        if (
+          Number.isInteger(assigned) &&
+          (assigned as number) >= 0 &&
+          (assigned as number) < meshSockets.length &&
+          !used.has(assigned as number)
+        ) {
+          next[job.id] = assigned as number;
+          used.add(assigned as number);
+        }
+      }
+
+      let cursor = 0;
+      for (const job of displayJobs) {
+        if (Number.isInteger(next[job.id])) continue;
+        while (used.has(cursor) && cursor < meshSockets.length) {
+          cursor += 1;
+        }
+        const assigned = cursor < meshSockets.length ? cursor : used.size;
+        next[job.id] = assigned;
+        used.add(assigned);
+      }
+
+      const currentKeys = Object.keys(current);
+      const nextKeys = Object.keys(next);
+      if (currentKeys.length !== nextKeys.length) {
+        return next;
+      }
+      for (const key of nextKeys) {
+        if (current[key] !== next[key]) return next;
+      }
+      return current;
+    });
+  }, [displayJobs, meshSockets.length]);
+
+  useEffect(() => {
+    if (!dragState) return;
+
+    const toBoardPoint = (clientX: number, clientY: number) => {
+      const rect = meshRef.current?.getBoundingClientRect();
+      if (!rect || rect.width <= 0 || rect.height <= 0) {
+        return null;
+      }
+      const rawX = ((clientX - rect.left) / rect.width) * 100;
+      const rawY = ((clientY - rect.top) / rect.height) * 100;
+      return {
+        x: Math.max(4, Math.min(96, rawX)),
+        y: Math.max(4, Math.min(96, rawY)),
+      };
+    };
+
+    const onPointerMove = (event: PointerEvent) => {
+      if (event.pointerId !== dragState.pointerId) return;
+      const point = toBoardPoint(event.clientX, event.clientY);
+      if (!point) return;
+      setDragPosition({ jobId: dragState.jobId, x: point.x, y: point.y });
+    };
+
+    const onPointerUp = (event: PointerEvent) => {
+      if (event.pointerId !== dragState.pointerId) return;
+      const point =
+        toBoardPoint(event.clientX, event.clientY) ||
+        (dragPosition?.jobId === dragState.jobId ? { x: dragPosition.x, y: dragPosition.y } : null);
+
+      if (point) {
+        setSocketAssignments((current) => {
+          const currentSocket = current[dragState.jobId];
+          const occupied = new Set<number>();
+          for (const job of displayJobs) {
+            if (job.id === dragState.jobId) continue;
+            const assigned = current[job.id];
+            if (Number.isInteger(assigned)) {
+              occupied.add(assigned as number);
+            }
+          }
+
+          let nearest: { index: number; distance: number } | null = null;
+          for (const socket of meshSockets) {
+            if (occupied.has(socket.index) && socket.index !== currentSocket) continue;
+            const dx = socket.x - point.x;
+            const dy = socket.y - point.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            if (!nearest || distance < nearest.distance) {
+              nearest = { index: socket.index, distance };
+            }
+          }
+
+          if (!nearest || nearest.distance > SNAP_DISTANCE_PERCENT) {
+            return current;
+          }
+
+          if (current[dragState.jobId] === nearest.index) {
+            return current;
+          }
+          return { ...current, [dragState.jobId]: nearest.index };
+        });
+      }
+
+      setDragState(null);
+      setDragPosition(null);
+    };
+
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('pointercancel', onPointerUp);
+    return () => {
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+      window.removeEventListener('pointercancel', onPointerUp);
+    };
+  }, [displayJobs, dragPosition, dragState, meshSockets]);
+
+  const occupiedSockets = new Map<number, string>();
+  displayJobs.forEach((job, index) => {
+    const assigned = socketAssignments[job.id];
+    const fallback = Math.min(index, meshSockets.length - 1);
+    const socketIndex =
+      Number.isInteger(assigned) &&
+      (assigned as number) >= 0 &&
+      (assigned as number) < meshSockets.length
+        ? (assigned as number)
+        : fallback;
+    if (!occupiedSockets.has(socketIndex)) {
+      occupiedSockets.set(socketIndex, job.id);
+    }
+  });
+
+  const dragTargetSocketIndex =
+    dragState && dragPosition?.jobId === dragState.jobId
+      ? (() => {
+          let nearest: { index: number; distance: number } | null = null;
+          for (const socket of meshSockets) {
+            const occupant = occupiedSockets.get(socket.index);
+            if (occupant && occupant !== dragState.jobId) continue;
+            const dx = socket.x - dragPosition.x;
+            const dy = socket.y - dragPosition.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            if (!nearest || distance < nearest.distance) {
+              nearest = { index: socket.index, distance };
+            }
+          }
+          return nearest && nearest.distance <= SNAP_DISTANCE_PERCENT ? nearest.index : null;
+        })()
+      : null;
+
   const selectedJob = displayJobs.find((job) => job.id === selectedJobId) ?? displayJobs[0];
   const lockedCount = displayJobs.filter((job) => lockedJobs.has(job.id)).length;
+  const openSockets = Math.max(0, meshSockets.length - displayJobs.length);
 
   const toggleJob = (jobId: string) => {
     setLockedJobs((current) => {
@@ -435,8 +759,41 @@ const Visualizations: React.FC = () => {
       }
       return next;
     });
-
     setSelectedJobId(jobId);
+  };
+
+  const getSocketForJob = (job: DisplayChronJob, index: number) => {
+    const assigned = socketAssignments[job.id];
+    const fallback = Math.min(index, meshSockets.length - 1);
+    const socketIndex =
+      Number.isInteger(assigned) &&
+      (assigned as number) >= 0 &&
+      (assigned as number) < meshSockets.length
+        ? (assigned as number)
+        : fallback;
+    return (
+      meshSockets[socketIndex] || {
+        id: `fallback-${job.id}`,
+        index: socketIndex,
+        x: job.x,
+        y: job.y,
+      }
+    );
+  };
+
+  const startDrag = (event: React.PointerEvent<HTMLButtonElement>, jobId: string) => {
+    const rect = meshRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    event.preventDefault();
+    const x = ((event.clientX - rect.left) / rect.width) * 100;
+    const y = ((event.clientY - rect.top) / rect.height) * 100;
+    setSelectedJobId(jobId);
+    setDragState({ jobId, pointerId: event.pointerId });
+    setDragPosition({
+      jobId,
+      x: Math.max(4, Math.min(96, x)),
+      y: Math.max(4, Math.min(96, y)),
+    });
   };
 
   return (
@@ -453,22 +810,34 @@ const Visualizations: React.FC = () => {
             </Link>
             <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs uppercase tracking-[0.28em] text-cyan-200">
               <Clock3 className="h-3.5 w-3.5" />
-              Master Clock Visualization Concept
+              Master Clock Visualization
             </div>
             <h1 className="mt-4 max-w-4xl font-serif text-4xl leading-tight text-white sm:text-5xl lg:text-6xl">
               Turn TNF chron jobs into a living watch movement.
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300 sm:text-lg">
-              The central heartbeat drives each sub-routine as a meshed gear. Pull jobs in, lock
-              them onto the train, and read their relative cadence at a glance instead of scanning
-              flat cron tables.
+              Drag gears into open mesh sockets, keep them coupled to the heartbeat, and inspect
+              exact producer intervals with last-run and next-fire telemetry in one board.
             </p>
+            <Link
+              to="/visualizations/terminals"
+              className="mt-4 inline-flex items-center gap-2 rounded-full border border-cyan-300/35 bg-cyan-500/10 px-4 py-2 text-sm text-cyan-100 transition hover:border-cyan-200 hover:bg-cyan-500/20"
+            >
+              <TerminalSquare className="h-4 w-4" />
+              Open Terminal Graph View
+            </Link>
           </div>
 
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur">
               <div className="text-xs uppercase tracking-[0.24em] text-slate-400">Locked Jobs</div>
-              <div className="mt-2 text-2xl font-semibold text-white">{lockedCount}/5</div>
+              <div className="mt-2 text-2xl font-semibold text-white">
+                {lockedCount}/{displayJobs.length}
+              </div>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur">
+              <div className="text-xs uppercase tracking-[0.24em] text-slate-400">Open Sockets</div>
+              <div className="mt-2 text-2xl font-semibold text-cyan-200">{openSockets}</div>
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur">
               <div className="text-xs uppercase tracking-[0.24em] text-slate-400">Pulse</div>
@@ -477,12 +846,10 @@ const Visualizations: React.FC = () => {
               </div>
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur">
-              <div className="text-xs uppercase tracking-[0.24em] text-slate-400">Time Scale</div>
-              <div className="mt-2 text-2xl font-semibold text-cyan-200">{timeScale}x</div>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur">
-              <div className="text-xs uppercase tracking-[0.24em] text-slate-400">Surface</div>
-              <div className="mt-2 text-2xl font-semibold text-emerald-300">Watchboard</div>
+              <div className="text-xs uppercase tracking-[0.24em] text-slate-400">Coherence</div>
+              <div className="mt-2 text-2xl font-semibold text-emerald-300">
+                {projectedMode ? 'Projected' : 'Direct'}
+              </div>
             </div>
           </div>
         </div>
@@ -500,7 +867,9 @@ const Visualizations: React.FC = () => {
             />
             <span>
               {liveMode
-                ? `Live Railway/Redis Master Clock state • heartbeat ${describeCadence(masterCadenceSeconds)}`
+                ? projectedMode
+                  ? `Live heartbeat with projected super-cycle contract • pulse ${describeCadence(masterCadenceSeconds)}`
+                  : `Live Railway/Redis Master Clock state • heartbeat ${describeCadence(masterCadenceSeconds)}`
                 : 'Fallback concept mode • production telemetry unavailable on this client right now'}
             </span>
           </div>
@@ -520,9 +889,8 @@ const Visualizations: React.FC = () => {
                   Relative Frequency Train
                 </div>
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
-                  Meshed gears rotate by cadence ratio from the live Master Clock heartbeat. Faster
-                  jobs spin harder, slower jobs absorb torque. Unlocked jobs stay visible but
-                  decouple from the train.
+                  Mesh sockets stay visible as open docking points. Drag any gear, snap it into an
+                  open socket, and keep audit overlays attached to each process.
                 </p>
               </div>
 
@@ -545,13 +913,32 @@ const Visualizations: React.FC = () => {
             </div>
 
             <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_260px]">
-              <div className="relative min-h-[560px] overflow-hidden rounded-[1.6rem] border border-white/10 bg-[radial-gradient(circle_at_center,_rgba(34,211,238,0.1),_transparent_46%),linear-gradient(180deg,_rgba(15,23,42,0.78),_rgba(2,6,23,0.92))]">
+              <div
+                ref={meshRef}
+                className="relative min-h-[560px] overflow-hidden rounded-[1.6rem] border border-white/10 bg-[radial-gradient(circle_at_center,_rgba(34,211,238,0.1),_transparent_46%),linear-gradient(180deg,_rgba(15,23,42,0.78),_rgba(2,6,23,0.92))]"
+              >
                 <div className="absolute inset-0 opacity-50">
                   <div className="absolute inset-[8%] rounded-full border border-dashed border-cyan-400/15" />
                   <div className="absolute inset-[20%] rounded-full border border-dashed border-slate-500/20" />
                   <div className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-gradient-to-b from-transparent via-cyan-300/15 to-transparent" />
                   <div className="absolute left-0 top-1/2 h-px w-full -translate-y-1/2 bg-gradient-to-r from-transparent via-cyan-300/15 to-transparent" />
                 </div>
+
+                {meshSockets.map((socket) => {
+                  const occupiedBy = occupiedSockets.get(socket.index);
+                  const isDropTarget = dragTargetSocketIndex === socket.index;
+                  return (
+                    <div
+                      key={socket.id}
+                      className={`pointer-events-none absolute z-0 h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full border ${
+                        occupiedBy
+                          ? 'border-transparent bg-cyan-300/8'
+                          : 'border-cyan-300/35 bg-cyan-400/10'
+                      } ${isDropTarget ? 'border-emerald-300 bg-emerald-300/20 shadow-[0_0_18px_rgba(110,231,183,0.55)]' : ''}`}
+                      style={{ left: `${socket.x}%`, top: `${socket.y}%` }}
+                    />
+                  );
+                })}
 
                 <div className="pointer-events-none absolute left-1/2 top-1/2 z-10 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center text-center">
                   <div
@@ -590,31 +977,40 @@ const Visualizations: React.FC = () => {
                   <GearGlyph teeth={36} color="#e2e8f0" accent="rgba(148, 163, 184, 0.18)" />
                 </div>
 
-                {displayJobs.map((job) => {
+                {displayJobs.map((job, index) => {
                   const locked = lockedJobs.has(job.id);
                   const relativeRate = masterCadenceSeconds / job.cadenceSeconds;
                   const rotationFactor = Math.max(0.18, relativeRate);
                   const rotation = locked
                     ? tick * timeScale * rotationFactor * 0.75 * job.direction
                     : job.direction * 14;
+                  const socket = getSocketForJob(job, index);
+                  const isDragging = dragPosition?.jobId === job.id;
+                  const renderX = isDragging ? dragPosition.x : socket.x;
+                  const renderY = isDragging ? dragPosition.y : socket.y;
 
                   return (
                     <button
                       key={job.id}
                       type="button"
                       onClick={() => setSelectedJobId(job.id)}
+                      onPointerDown={(event) => startDrag(event, job.id)}
                       className={`absolute z-30 rounded-full transition ${
                         selectedJobId === job.id
                           ? 'ring-4 ring-white/20'
                           : 'ring-1 ring-transparent hover:ring-white/10'
-                      } ${locked ? 'opacity-100' : 'opacity-40 saturate-50'}`}
+                      } ${locked ? 'opacity-100' : 'opacity-40 saturate-50'} ${
+                        isDragging ? 'cursor-grabbing' : 'cursor-grab'
+                      }`}
                       style={{
-                        left: `${job.x}%`,
-                        top: `${job.y}%`,
+                        left: `${renderX}%`,
+                        top: `${renderY}%`,
                         width: `${job.size}px`,
                         height: `${job.size}px`,
                         transform: `translate(-50%, -50%) rotate(${rotation}deg)`,
-                        transition: 'transform 80ms linear, opacity 200ms ease, filter 200ms ease',
+                        transition: isDragging
+                          ? 'opacity 120ms ease'
+                          : 'transform 80ms linear, opacity 200ms ease, filter 200ms ease',
                       }}
                       aria-label={`Select ${job.label}`}
                     >
@@ -629,6 +1025,16 @@ const Visualizations: React.FC = () => {
                             {job.cadenceSeconds}s
                           </div>
                           <div className="mt-1 text-xs font-semibold text-white">{job.label}</div>
+                          {job.live ? (
+                            <>
+                              <div className="mt-1 text-[10px] uppercase tracking-[0.18em] text-cyan-200/90">
+                                run {formatAge(job.lastRunAgeMs)}
+                              </div>
+                              <div className="text-[10px] uppercase tracking-[0.18em] text-emerald-200/90">
+                                next {formatCountdown(job.nextFireInMs)}
+                              </div>
+                            </>
+                          ) : null}
                         </div>
                       </div>
                     </button>
@@ -689,7 +1095,8 @@ const Visualizations: React.FC = () => {
                       </div>
                       {job.live ? (
                         <div className="mt-2 text-xs uppercase tracking-[0.18em] text-slate-500">
-                          {job.status || 'running'} • last heartbeat {formatAge(job.heartbeatAgeMs)}
+                          {job.status || 'running'} • run {formatAge(job.lastRunAgeMs)} • next{' '}
+                          {formatCountdown(job.nextFireInMs)}
                         </div>
                       ) : null}
                     </button>
@@ -737,21 +1144,45 @@ const Visualizations: React.FC = () => {
                   <>
                     <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
                       <div className="text-xs uppercase tracking-[0.24em] text-slate-500">
-                        Live Status
+                        Interval Contract
                       </div>
                       <div className="mt-2 text-lg font-semibold text-white">
-                        {selectedJob.status || 'running'} • heartbeat{' '}
-                        {formatAge(selectedJob.heartbeatAgeMs)}
+                        {selectedJob.intendedIntervalMs
+                          ? `${Math.round(selectedJob.intendedIntervalMs / 1000)}s`
+                          : 'Unavailable'}
+                      </div>
+                      <div className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-400">
+                        {resolveIntervalSourceLabel(
+                          selectedJob.intervalSource,
+                          selectedJob.intervalExact
+                        )}{' '}
+                        • {resolveCadenceSourceLabel(selectedJob.cadenceSource)}
                       </div>
                     </div>
                     <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
                       <div className="text-xs uppercase tracking-[0.24em] text-slate-500">
-                        Cadence Source
+                        Execution Window
                       </div>
                       <div className="mt-2 text-lg font-semibold text-white">
-                        {selectedJob.cadenceSource === 'metadata'
-                          ? 'Reported by process metadata'
-                          : 'Inferred from TNF process type'}
+                        Last run {formatAge(selectedJob.lastRunAgeMs)} • next{' '}
+                        {formatCountdown(selectedJob.nextFireInMs)}
+                      </div>
+                      <div className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-400">
+                        {selectedJob.nextExpectedAt
+                          ? `Next fire ${new Date(selectedJob.nextExpectedAt).toLocaleTimeString()}`
+                          : 'Next fire pending'}
+                      </div>
+                    </div>
+                    <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
+                      <div className="text-xs uppercase tracking-[0.24em] text-slate-500">
+                        Latest Timeline Event
+                      </div>
+                      <div className="mt-2 text-lg font-semibold text-white">
+                        {selectedJob.lastActivityEvent || 'No process-tagged event yet'}
+                      </div>
+                      <div className="mt-1 text-sm text-slate-400">
+                        {selectedJob.lastActivityContent ||
+                          'Timeline activity will appear here as process logs stream in.'}
                       </div>
                     </div>
                   </>
@@ -770,7 +1201,6 @@ const Visualizations: React.FC = () => {
                   .sort((left, right) => left.cadenceSeconds - right.cadenceSeconds)
                   .map((job) => {
                     const locked = lockedJobs.has(job.id);
-
                     return (
                       <div key={job.id} className="flex items-start gap-3">
                         <div className="mt-1 flex flex-col items-center">
@@ -789,7 +1219,7 @@ const Visualizations: React.FC = () => {
                           </div>
                           <div className="mt-2 text-sm text-slate-400">
                             {job.live
-                              ? `${locked ? 'Coupled to the live watchboard.' : 'Visible but detached.'} Last heartbeat ${formatAge(job.heartbeatAgeMs)}.`
+                              ? `${locked ? 'Coupled to the live watchboard.' : 'Visible but detached.'} Last run ${formatAge(job.lastRunAgeMs)}; next fire ${formatCountdown(job.nextFireInMs)}.`
                               : locked
                                 ? 'Coupled to the watchboard and actively transmitting torque.'
                                 : 'Visible on the board but paused for manual staging.'}
@@ -829,25 +1259,24 @@ const Visualizations: React.FC = () => {
             <section className="rounded-[2rem] border border-cyan-300/20 bg-cyan-400/10 p-6">
               <div className="flex items-center gap-2 text-xs uppercase tracking-[0.24em] text-cyan-100">
                 <Orbit className="h-4 w-4" />
-                Where this can go
+                Mesh Interaction
               </div>
-              <ul className="mt-4 space-y-3 text-sm leading-6 text-cyan-50/90">
-                <li className="flex gap-3">
-                  <Play className="mt-1 h-4 w-4 shrink-0 text-cyan-200" />
-                  Expand process metadata so every super-cycle producer reports its exact intended
-                  interval, not just inferred cadence.
-                </li>
-                <li className="flex gap-3">
-                  <Zap className="mt-1 h-4 w-4 shrink-0 text-cyan-200" />
-                  Add drag-to-mesh placement so new chron jobs can be snapped into open sockets like
-                  a toy gear wall.
-                </li>
-                <li className="flex gap-3">
+              <div className="mt-4 space-y-3 text-sm leading-6 text-cyan-50/90">
+                <div className="flex gap-3">
+                  <Grip className="mt-1 h-4 w-4 shrink-0 text-cyan-200" />
+                  Drag any gear into open sockets. Drop highlights appear when a free socket is
+                  within snap range.
+                </div>
+                <div className="flex gap-3">
                   <Gauge className="mt-1 h-4 w-4 shrink-0 text-cyan-200" />
-                  Blend this with audit and timeline telemetry so each gear emits last-run and
-                  next-fire overlays.
-                </li>
-              </ul>
+                  Every live gear now shows exact interval contract data, last-run age, and
+                  next-fire countdown.
+                </div>
+                <div className="flex gap-3">
+                  <Activity className="mt-1 h-4 w-4 shrink-0 text-cyan-200" />
+                  Process-tagged timeline events are merged into each gear’s telemetry card.
+                </div>
+              </div>
             </section>
           </aside>
         </div>

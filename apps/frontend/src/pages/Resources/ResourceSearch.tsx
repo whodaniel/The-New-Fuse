@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { GlassCard, PremiumButton } from '@/components/ui/premium';
@@ -22,16 +21,52 @@ import {
   Workflow,
   Zap,
 } from 'lucide-react';
-import React, { useState } from 'react';
+import { useEffect, useState, type MouseEvent } from 'react';
 import toast from 'react-hot-toast';
 
+const TYPE_FILTERS: Array<ResourceType | 'all'> = [
+  'all',
+  'skill',
+  'workflow',
+  'template',
+  'tool',
+  'integration',
+];
+
+const CATEGORY_FILTERS: Array<ResourceCategory | 'all'> = [
+  'all',
+  'development',
+  'productivity',
+  'communication',
+  'data',
+  'automation',
+  'ai',
+  'other',
+];
+
+const SORT_OPTIONS: Array<'popular' | 'recent' | 'rating' | 'name'> = [
+  'popular',
+  'recent',
+  'rating',
+  'name',
+];
+
 export default function ResourceSearch() {
+  const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState<ResourceType | 'all'>('all');
   const [categoryFilter, setCategoryFilter] = useState<ResourceCategory | 'all'>('all');
   const [featuredOnly, setFeaturedOnly] = useState(false);
+  const [useTraitScreen, setUseTraitScreen] = useState(true);
   const [sortBy, setSortBy] = useState<'popular' | 'recent' | 'rating' | 'name'>('popular');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      setSearchTerm(searchInput);
+    }, 250);
+    return () => window.clearTimeout(timeout);
+  }, [searchInput]);
 
   const searchFilter = {
     search: searchTerm,
@@ -40,6 +75,7 @@ export default function ResourceSearch() {
     tags: [],
     featured: featuredOnly,
     sortBy,
+    traitScreen: useTraitScreen,
     includeTraitMeta: true,
   };
 
@@ -49,6 +85,13 @@ export default function ResourceSearch() {
     queryFn: () => resourcesService.searchResources(searchFilter),
   });
   const traitMeta = resourcesService.getLastTraitSearchMeta();
+  const hasMeaningfulTraitDetails = Boolean(
+    traitMeta &&
+    (traitMeta.requiredAgentIds.length > 0 ||
+      traitMeta.traitFilters.length > 0 ||
+      traitMeta.beforeTraitCount !== traitMeta.afterTraitCount ||
+      !traitMeta.fallbackToBroadSearch)
+  );
 
   const getResourceIcon = (type: ResourceType) => {
     switch (type) {
@@ -138,8 +181,8 @@ export default function ResourceSearch() {
           <Input
             type="text"
             placeholder="Search across all resources by name, description, tags, or author..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
             className="pl-10 h-12 text-base bg-black/40 border-white/10 text-white placeholder:text-muted-foreground"
           />
         </div>
@@ -150,7 +193,12 @@ export default function ResourceSearch() {
             <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <select
               value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value as any)}
+              onChange={(e) => {
+                const next = e.target.value;
+                if (TYPE_FILTERS.includes(next as ResourceType | 'all')) {
+                  setTypeFilter(next as ResourceType | 'all');
+                }
+              }}
               className="w-full pl-10 px-4 py-2 bg-black/40 border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-gray-300 appearance-none cursor-pointer hover:bg-black/60 transition-colors"
             >
               <option value="all">All Types</option>
@@ -164,7 +212,12 @@ export default function ResourceSearch() {
 
           <select
             value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value as any)}
+            onChange={(e) => {
+              const next = e.target.value;
+              if (CATEGORY_FILTERS.includes(next as ResourceCategory | 'all')) {
+                setCategoryFilter(next as ResourceCategory | 'all');
+              }
+            }}
             className="px-4 py-2 bg-black/40 border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-gray-300 appearance-none cursor-pointer hover:bg-black/60 transition-colors"
           >
             <option value="all">All Categories</option>
@@ -179,7 +232,12 @@ export default function ResourceSearch() {
 
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
+            onChange={(e) => {
+              const next = e.target.value;
+              if (SORT_OPTIONS.includes(next as 'popular' | 'recent' | 'rating' | 'name')) {
+                setSortBy(next as 'popular' | 'recent' | 'rating' | 'name');
+              }
+            }}
             className="px-4 py-2 bg-black/40 border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-gray-300 appearance-none cursor-pointer hover:bg-black/60 transition-colors"
           >
             <option value="popular">Most Popular</option>
@@ -188,7 +246,7 @@ export default function ResourceSearch() {
             <option value="name">Name (A-Z)</option>
           </select>
 
-          <div className="flex items-center space-x-4 h-full">
+          <div className="flex items-center space-x-4 h-full flex-wrap">
             <label className="flex items-center space-x-2 cursor-pointer select-none">
               <input
                 type="checkbox"
@@ -197,6 +255,15 @@ export default function ResourceSearch() {
                 className="rounded border-gray-600 bg-black/40 text-primary focus:ring-primary"
               />
               <span className="text-sm font-medium text-gray-300">Featured Only</span>
+            </label>
+            <label className="flex items-center space-x-2 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={useTraitScreen}
+                onChange={(e) => setUseTraitScreen(e.target.checked)}
+                className="rounded border-gray-600 bg-black/40 text-primary focus:ring-primary"
+              />
+              <span className="text-sm font-medium text-gray-300">Use Trait Screening</span>
             </label>
           </div>
         </div>
@@ -226,6 +293,23 @@ export default function ResourceSearch() {
                 <span>Filters: {traitMeta.traitFilters.join(', ')}</span>
               )}
             </div>
+          )}
+          {hasMeaningfulTraitDetails && traitMeta && (
+            <details className="text-xs text-gray-400">
+              <summary className="cursor-pointer hover:text-gray-300">Why these results</summary>
+              <div className="mt-2 space-y-1 pl-2 border-l border-white/10">
+                {traitMeta.requiredAgentIds.length > 0 && (
+                  <div>Required agents: {traitMeta.requiredAgentIds.join(', ')}</div>
+                )}
+                <div>
+                  Broad-search fallback: {traitMeta.fallbackToBroadSearch ? 'enabled' : 'disabled'}
+                </div>
+                <div>
+                  Trait screen outcome:{' '}
+                  {traitMeta.used ? 'influenced ranking/filtering' : 'not used'}
+                </div>
+              </div>
+            </details>
           )}
         </div>
         <div className="flex items-center space-x-2 bg-black/40 p-1 rounded-md border border-white/5">
@@ -354,7 +438,7 @@ export default function ResourceSearch() {
                       size="sm"
                       variant="gradient"
                       className="flex-1"
-                      onClick={(e: React.MouseEvent) => {
+                      onClick={(e: MouseEvent) => {
                         e.stopPropagation();
                         handleAction(resource);
                       }}
@@ -369,7 +453,7 @@ export default function ResourceSearch() {
                         size="icon"
                         variant="glass"
                         className="h-9 w-9"
-                        onClick={(e: React.MouseEvent) => {
+                        onClick={(e: MouseEvent) => {
                           e.stopPropagation();
                           handleFavorite(resource);
                         }}
@@ -380,7 +464,7 @@ export default function ResourceSearch() {
                         size="icon"
                         variant="glass"
                         className="h-9 w-9"
-                        onClick={(e: React.MouseEvent) => {
+                        onClick={(e: MouseEvent) => {
                           e.stopPropagation();
                           handleShare(resource);
                         }}
@@ -409,10 +493,12 @@ export default function ResourceSearch() {
           <PremiumButton
             variant="secondary"
             onClick={() => {
+              setSearchInput('');
               setSearchTerm('');
               setTypeFilter('all');
               setCategoryFilter('all');
               setFeaturedOnly(false);
+              setUseTraitScreen(true);
             }}
           >
             Clear Filters

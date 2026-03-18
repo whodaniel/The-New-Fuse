@@ -1,5 +1,53 @@
 # 🚂 Railway Deployment - Current Status & Action Plan
 
+## ✅ Live Production Validation (2026-03-18)
+
+This section reflects the current live state for `thenewfuse.com` and Railway
+production services after the master-clock coherence and visualization updates.
+
+### Production Services (Railway)
+
+- `TheNewFuse` deployment: `17102f55-945f-4047-9396-f9797e57d215` (`SUCCESS`)
+- `api` deployment: `52298d52-c9f4-4147-b384-9ca3804bc492` (`SUCCESS`)
+- `api-gateway` deployment: `2ee761a4-cae4-467b-95e8-aee69023bd68` (`SUCCESS`)
+
+### Verified Live Endpoints
+
+- `https://thenewfuse.com/visualizations` -> HTTP `200`
+- `https://thenewfuse.com/api/system/master-clock` -> status `ok`,
+  `projectionMode: contract-fallback`, `processCount: 5`
+- `https://api.thenewfuse.com/api/system/master-clock` -> status `ok`,
+  `projectionMode: contract-fallback`, `processCount: 5`
+
+### Visualization and Animation Status
+
+- The visualizations page is live and animated.
+- Browser verification confirmed gear rotation updates over time (transform
+  values changed between samples).
+- Coherence mode now renders as `Projected` when master-clock telemetry is using
+  the contract fallback super-cycle.
+- Drag-to-mesh placement is active: gears can be repositioned and snapped into
+  open sockets on the board.
+- Gear overlays now surface `last-run` and `next-fire` timing from live
+  telemetry.
+- Super-cycle metadata now supports explicit interval contracts per process
+  (`intendedIntervalMs`, `intervalSource`, `intervalExact`).
+
+### Operational Meaning of `contract-fallback`
+
+`projectionMode: contract-fallback` means heartbeat telemetry is live but
+super-cycle process detail is currently provided by the contract projection
+layer. This keeps UX and API contracts coherent while preserving uptime.
+
+### Quick Verification Commands
+
+```bash
+curl -s https://thenewfuse.com/api/system/master-clock | jq '{status, projectionMode: .superCycle.projectionMode, processCount: (.superCycle.processes|length), healthy: .superCycle.stats.healthy, stale: .superCycle.stats.stale}'
+curl -s https://api.thenewfuse.com/api/system/master-clock | jq '{status, projectionMode: .superCycle.projectionMode, processCount: (.superCycle.processes|length), healthy: .superCycle.stats.healthy, stale: .superCycle.stats.stale}'
+curl -s https://thenewfuse.com/api/system/master-clock | jq '.superCycle.processes[] | {processId, intendedIntervalMs, intervalSource, intervalExact, lastRunAt, nextExpectedAt}'
+curl -s -o /dev/null -w "%{http_code}\n" https://thenewfuse.com/visualizations
+```
+
 ## ✅ COMPLETED
 
 ### Repository Setup

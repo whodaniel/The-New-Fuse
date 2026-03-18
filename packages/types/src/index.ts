@@ -151,6 +151,8 @@ export * from './export';
 export * from './llm';
 export * from './marketplace';
 export * from './metrics';
+export * from './resource-search';
+export * from './resource-search-protocol';
 export * from './security';
 export type { SecurityScheme } from './security';
 export * from './session';

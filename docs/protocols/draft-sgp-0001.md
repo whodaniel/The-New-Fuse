@@ -150,6 +150,18 @@ Error payload shape:
 6. Phase 5 (2 weeks): add lineage, drift checks, and governance auditing.
 7. Phase 6 (1-2 weeks): publish SDKs (TypeScript, Python) and CLI examples.
 
+## 12. Implementation Profile: TNF Resources Bridge
+
+The TNF API includes an implementation profile that applies this envelope style
+to resource discovery/search:
+
+- Canonical endpoint: `POST /resources/search`
+- Protocol bridge endpoint: `POST /resources/search/protocol`
+
+Profile details and request/response examples are documented in:
+
+- `docs/protocols/resource-search-protocol-bridge.md`
+
 ## Appendix A: Normative JSON Schemas
 
 Normative schema files:

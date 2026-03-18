@@ -1,4 +1,12 @@
 // Resource types for the Resources Dashboard
+import type {
+  ResourceCatalogItem as SharedResourceCatalogItem,
+  ResourceSearchEnvelope as SharedResourceSearchEnvelope,
+  ResourceSearchProtocolRequestEnvelope as SharedResourceSearchProtocolRequestEnvelope,
+  ResourceSearchProtocolResponseEnvelope as SharedResourceSearchProtocolResponseEnvelope,
+  ResourceSearchRequest as SharedResourceSearchRequest,
+  ResourceSearchMeta as SharedResourceTraitScreenMeta,
+} from '@the-new-fuse/types';
 
 export type ResourceType = 'skill' | 'workflow' | 'template' | 'tool' | 'integration';
 export type ResourceCategory =
@@ -10,7 +18,7 @@ export type ResourceCategory =
   | 'ai'
   | 'other';
 
-export interface Resource {
+export interface Resource extends SharedResourceCatalogItem {
   id: string;
   name: string;
   description: string;
@@ -71,33 +79,24 @@ export interface AgentTemplate extends Resource {
 }
 
 export interface ResourceFilter {
-  search: string;
-  type: ResourceType | 'all';
-  category: ResourceCategory | 'all';
-  tags: string[];
-  featured: boolean;
-  sortBy: 'popular' | 'recent' | 'rating' | 'name';
+  search: NonNullable<SharedResourceSearchRequest['search']>;
+  type: NonNullable<SharedResourceSearchRequest['type']>;
+  category: NonNullable<SharedResourceSearchRequest['category']>;
+  tags: NonNullable<SharedResourceSearchRequest['tags']>;
+  featured: NonNullable<SharedResourceSearchRequest['featured']>;
+  sortBy: NonNullable<SharedResourceSearchRequest['sortBy']>;
   traitScreen?: boolean;
   traitLimit?: number;
   traitThreshold?: number;
   includeTraitMeta?: boolean;
 }
 
-export interface ResourceTraitScreenMeta {
-  enabled: boolean;
-  used: boolean;
-  confidence: 'high' | 'medium' | 'low' | null;
-  traitFilters: string[];
-  requiredAgentIds: string[];
-  fallbackToBroadSearch: boolean;
-  beforeTraitCount: number;
-  afterTraitCount: number;
-}
+export type ResourceTraitScreenMeta = SharedResourceTraitScreenMeta;
 
-export interface ResourceSearchEnvelope {
-  items: Resource[];
-  traitScreen?: ResourceTraitScreenMeta;
-}
+export type ResourceSearchEnvelope = SharedResourceSearchEnvelope<Resource>;
+export type ResourceSearchProtocolRequestEnvelope = SharedResourceSearchProtocolRequestEnvelope;
+export type ResourceSearchProtocolResponseEnvelope =
+  SharedResourceSearchProtocolResponseEnvelope<Resource>;
 
 export interface ResourceStats {
   totalResources: number;

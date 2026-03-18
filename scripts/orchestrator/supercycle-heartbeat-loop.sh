@@ -21,7 +21,8 @@ pnpm --filter @the-new-fuse/relay-core run super-cycle:event -- \
   --kind "${KIND}" \
   --owner "${OWNER}" \
   --status running \
-  --metadata "{\"channel\":\"General\",\"component\":\"self-improvement\",\"mode\":\"loop\",\"intervalSeconds\":${INTERVAL_SECONDS},\"cadenceSeconds\":${INTERVAL_SECONDS}}" >/dev/null
+  --interval-seconds "${INTERVAL_SECONDS}" \
+  --metadata "{\"channel\":\"General\",\"component\":\"self-improvement\",\"mode\":\"loop\",\"intendedIntervalSeconds\":${INTERVAL_SECONDS},\"intervalSeconds\":${INTERVAL_SECONDS},\"cadenceSeconds\":${INTERVAL_SECONDS}}" >/dev/null
 
 while true; do
   tick="$(date +%s)"
@@ -30,6 +31,7 @@ while true; do
     --process-id "${PROCESS_ID}" \
     --status running \
     --result success \
-    --metadata "{\"tick\":\"${tick}\",\"channel\":\"General\",\"intervalSeconds\":${INTERVAL_SECONDS},\"cadenceSeconds\":${INTERVAL_SECONDS}}" >/dev/null || true
+    --interval-seconds "${INTERVAL_SECONDS}" \
+    --metadata "{\"tick\":\"${tick}\",\"channel\":\"General\",\"intendedIntervalSeconds\":${INTERVAL_SECONDS},\"intervalSeconds\":${INTERVAL_SECONDS},\"cadenceSeconds\":${INTERVAL_SECONDS}}" >/dev/null || true
   sleep "${INTERVAL_SECONDS}"
 done

@@ -342,6 +342,10 @@ interface ScheduledProcess {
   lastHeartbeat: number;
   lastRunAt?: number;
   lastResult?: string;
+  intendedIntervalMs?: number;
+  intervalSource?: 'producer' | 'metadata' | 'inferred';
+  intervalExact?: boolean;
+  nextExpectedAt?: number;
   metadata: Record<string, any>;
   stale: boolean;
   heartbeatCount: number;
@@ -1125,6 +1129,16 @@ class MasterClock {
 
     const existing = this.scheduledProcesses.get(processId);
     const now = Date.now();
+    const metadata = { ...(existing?.metadata || {}), ...(payload.metadata || {}) };
+    const lastHeartbeat = this.parseTimestampMs(payload.lastHeartbeat) || now;
+    const lastRunAt = this.parseTimestampMs(payload.lastRunAt) || existing?.lastRunAt;
+    const interval = this.resolveScheduledProcessInterval(payload, metadata, existing);
+    const nextExpectedAt =
+      this.resolveNextExpectedAt(
+        payload,
+        lastRunAt || lastHeartbeat,
+        interval.intendedIntervalMs
+      ) || existing?.nextExpectedAt;
     const next: ScheduledProcess = {
       processId,
       name: payload.name || existing?.name || processId,
@@ -1132,10 +1146,14 @@ class MasterClock {
       owner: payload.owner || existing?.owner || 'unknown',
       status: payload.status || existing?.status || 'registered',
       registeredAt: existing?.registeredAt || now,
-      lastHeartbeat: now,
-      lastRunAt: payload.lastRunAt || existing?.lastRunAt,
+      lastHeartbeat,
+      lastRunAt,
       lastResult: payload.lastResult || existing?.lastResult,
-      metadata: { ...(existing?.metadata || {}), ...(payload.metadata || {}) },
+      intendedIntervalMs: interval.intendedIntervalMs,
+      intervalSource: interval.intervalSource,
+      intervalExact: interval.intervalExact,
+      nextExpectedAt,
+      metadata,
       stale: false,
       heartbeatCount: (existing?.heartbeatCount || 0) + 1,
     };
@@ -1146,6 +1164,21 @@ class MasterClock {
       kind: next.kind,
       owner: next.owner,
     });
+    void this.emitActivityEvent(
+      'super_cycle_process_registered',
+      `Registered scheduled process ${processId}`,
+      {
+        processId,
+        status: next.status,
+        kind: next.kind,
+        owner: next.owner,
+        intendedIntervalMs: next.intendedIntervalMs || null,
+        intervalSource: next.intervalSource || 'inferred',
+        intervalExact: Boolean(next.intervalExact),
+        lastRunAt: next.lastRunAt ? new Date(next.lastRunAt).toISOString() : null,
+        nextExpectedAt: next.nextExpectedAt ? new Date(next.nextExpectedAt).toISOString() : null,
+      }
+    );
   }
 
   handleSuperCycleHeartbeat(msg: any) {
@@ -1162,13 +1195,42 @@ class MasterClock {
       return;
     }
 
-    existing.lastHeartbeat = Date.now();
+    const metadata = { ...existing.metadata, ...(payload.metadata || {}) };
+    const interval = this.resolveScheduledProcessInterval(payload, metadata, existing);
+    const heartbeatTimestamp = this.parseTimestampMs(payload.lastHeartbeat) || Date.now();
+    const lastRunAt = this.parseTimestampMs(payload.lastRunAt) || existing.lastRunAt;
+    const nextExpectedAt =
+      this.resolveNextExpectedAt(
+        payload,
+        lastRunAt || heartbeatTimestamp,
+        interval.intendedIntervalMs || existing.intendedIntervalMs
+      ) || existing.nextExpectedAt;
+
+    existing.lastHeartbeat = heartbeatTimestamp;
     existing.status = payload.status || existing.status || 'running';
-    existing.lastRunAt = payload.lastRunAt || existing.lastRunAt;
+    existing.lastRunAt = lastRunAt;
     existing.lastResult = payload.lastResult || existing.lastResult;
-    existing.metadata = { ...existing.metadata, ...(payload.metadata || {}) };
+    existing.intendedIntervalMs = interval.intendedIntervalMs || existing.intendedIntervalMs;
+    existing.intervalSource = interval.intervalSource;
+    existing.intervalExact = interval.intervalExact;
+    existing.nextExpectedAt = nextExpectedAt;
+    existing.metadata = metadata;
     existing.stale = false;
     existing.heartbeatCount += 1;
+
+    void this.emitActivityEvent('super_cycle_process_heartbeat', `Heartbeat for ${processId}`, {
+      processId,
+      status: existing.status,
+      heartbeatCount: existing.heartbeatCount,
+      intendedIntervalMs: existing.intendedIntervalMs || null,
+      intervalSource: existing.intervalSource || 'inferred',
+      intervalExact: Boolean(existing.intervalExact),
+      lastRunAt: existing.lastRunAt ? new Date(existing.lastRunAt).toISOString() : null,
+      nextExpectedAt: existing.nextExpectedAt
+        ? new Date(existing.nextExpectedAt).toISOString()
+        : null,
+      lastResult: existing.lastResult || null,
+    });
   }
 
   handleSuperCycleUnregister(msg: any) {
@@ -1176,8 +1238,24 @@ class MasterClock {
     const processId = payload.processId || payload.name || msg.source;
     if (!processId) return;
 
+    const existing = this.scheduledProcesses.get(processId);
     if (this.scheduledProcesses.delete(processId)) {
       log('info', 'SUPER-CYCLE', `Unregistered process ${processId}`, { processId });
+      void this.emitActivityEvent(
+        'super_cycle_process_unregistered',
+        `Unregistered scheduled process ${processId}`,
+        {
+          processId,
+          intendedIntervalMs: existing?.intendedIntervalMs || null,
+          intervalSource: existing?.intervalSource || 'inferred',
+          intervalExact: Boolean(existing?.intervalExact),
+          lastRunAt: existing?.lastRunAt ? new Date(existing.lastRunAt).toISOString() : null,
+          nextExpectedAt: existing?.nextExpectedAt
+            ? new Date(existing.nextExpectedAt).toISOString()
+            : null,
+          finalStatus: existing?.status || payload.status || 'unknown',
+        }
+      );
     }
   }
 
@@ -1366,6 +1444,22 @@ Acknowledge by sending: [${agentId}] Ready for duty!
           processId,
           ageMs: now - process.lastHeartbeat,
         });
+        void this.emitActivityEvent(
+          'super_cycle_process_stale',
+          `Scheduled process ${processId} marked stale`,
+          {
+            processId,
+            ageMs: now - process.lastHeartbeat,
+            staleThresholdMs: CONFIG.SUPER_CYCLE_STALE_THRESHOLD,
+            intendedIntervalMs: process.intendedIntervalMs || null,
+            intervalSource: process.intervalSource || 'inferred',
+            intervalExact: Boolean(process.intervalExact),
+            lastRunAt: process.lastRunAt ? new Date(process.lastRunAt).toISOString() : null,
+            nextExpectedAt: process.nextExpectedAt
+              ? new Date(process.nextExpectedAt).toISOString()
+              : null,
+          }
+        );
 
         const processChannel = process.metadata?.channel || 'General';
         const prompt = `⏱️ [SELF-PROMPT] Scheduled process ${processId} is stale. Resume heartbeat and continue next actionable step immediately.`;
@@ -1536,6 +1630,92 @@ Acknowledge by sending: [${agentId}] Ready for duty!
     if (Object.keys(processState).length > 0) {
       await this.redis.hSet(CONFIG.REDIS_KEYS.SUPER_CYCLE, processState);
     }
+  }
+
+  private parseTimestampMs(value: unknown): number | undefined {
+    if (typeof value === 'number' && Number.isFinite(value) && value > 0) {
+      return value;
+    }
+    if (typeof value === 'string') {
+      const isoValue = Date.parse(value);
+      if (Number.isFinite(isoValue) && isoValue > 0) return isoValue;
+      const numericValue = Number.parseInt(value, 10);
+      if (Number.isFinite(numericValue) && numericValue > 0) return numericValue;
+    }
+    return undefined;
+  }
+
+  private readCadenceMs(source: Record<string, any> | undefined): number | undefined {
+    if (!source || typeof source !== 'object') return undefined;
+    const valueMs = Number(
+      source.intendedIntervalMs ||
+        source.expectedIntervalMs ||
+        source.intervalMs ||
+        source.heartbeatIntervalMs ||
+        0
+    );
+    if (Number.isFinite(valueMs) && valueMs > 0) return valueMs;
+
+    const valueSeconds = Number(
+      source.intendedIntervalSeconds ||
+        source.intervalSeconds ||
+        source.heartbeatIntervalSeconds ||
+        source.cadenceSeconds ||
+        0
+    );
+    if (Number.isFinite(valueSeconds) && valueSeconds > 0) return valueSeconds * 1000;
+    return undefined;
+  }
+
+  private resolveScheduledProcessInterval(
+    payload: Record<string, any>,
+    metadata: Record<string, any>,
+    existing: ScheduledProcess | undefined
+  ) {
+    const producerInterval = this.readCadenceMs(payload);
+    if (producerInterval) {
+      return {
+        intendedIntervalMs: producerInterval,
+        intervalSource: 'producer' as const,
+        intervalExact: true,
+      };
+    }
+
+    const metadataInterval = this.readCadenceMs(metadata);
+    if (metadataInterval) {
+      return {
+        intendedIntervalMs: metadataInterval,
+        intervalSource: 'metadata' as const,
+        intervalExact: true,
+      };
+    }
+
+    if (existing?.intendedIntervalMs) {
+      return {
+        intendedIntervalMs: existing.intendedIntervalMs,
+        intervalSource: existing.intervalSource || ('inferred' as const),
+        intervalExact: Boolean(existing.intervalExact),
+      };
+    }
+
+    return {
+      intendedIntervalMs: undefined,
+      intervalSource: 'inferred' as const,
+      intervalExact: false,
+    };
+  }
+
+  private resolveNextExpectedAt(
+    payload: Record<string, any>,
+    anchorMs: number | undefined,
+    intervalMs: number | undefined
+  ): number | undefined {
+    const explicit = this.parseTimestampMs(payload.nextExpectedAt);
+    if (explicit) return explicit;
+    if (anchorMs && intervalMs && intervalMs > 0) {
+      return anchorMs + intervalMs;
+    }
+    return undefined;
   }
 
   // --------------------------------------------------------------------------

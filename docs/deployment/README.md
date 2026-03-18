@@ -6,6 +6,8 @@ Welcome to The New Fuse deployment documentation.
 
 - **[Deployment Guide](./DEPLOYMENT_GUIDE.md)** - Complete deployment
   instructions
+- **[Current Production Status](./DEPLOYMENT_STATUS.md)** - Live Railway status,
+  domains, and verification commands
 - **[Deployment Checklist](./DEPLOYMENT_CHECKLIST.md)** - Pre/post deployment
   checklist
 - **[Rollback Procedures](./ROLLBACK_PROCEDURES.md)** - How to rollback failed
@@ -26,6 +28,20 @@ Welcome to The New Fuse deployment documentation.
 # 3. Verify
 ./scripts/deployment/smoke-tests.sh
 ```
+
+## Live Master Clock Visualization
+
+Production route:
+
+- `https://thenewfuse.com/visualizations`
+
+What is live there now:
+
+- Gear animation driven by live master-clock heartbeat telemetry
+- Drag-to-mesh socket snapping for chron-job placement
+- Per-gear overlays for last-run and next-fire timing
+- Exact interval contract sourcing (`producer` / `metadata` / `inferred`) when
+  available
 
 ## Available Scripts
 
@@ -70,4 +86,4 @@ For issues:
 
 ---
 
-**Last Updated:** 2024-11-18
+**Last Updated:** 2026-03-18

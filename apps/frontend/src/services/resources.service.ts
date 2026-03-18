@@ -6,6 +6,8 @@ import {
   Resource,
   ResourceFilter,
   ResourceSearchEnvelope,
+  ResourceSearchProtocolRequestEnvelope,
+  ResourceSearchProtocolResponseEnvelope,
   ResourceShare,
   ResourceStats,
   ResourceTraitScreenMeta,
@@ -13,9 +15,53 @@ import {
 import { marketplaceService, type MarketplaceCatalogItem } from './marketplace.service';
 
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
+const SEARCH_CACHE_TTL_MS = 60_000;
+const SEARCH_CACHE_MAX_ENTRIES = 100;
 
-class ResourcesService {
+type CachedSearchEntry = {
+  items: Resource[];
+  traitScreen: ResourceTraitScreenMeta | null;
+  expiresAt: number;
+};
+
+export class ResourcesService {
   private lastTraitSearchMeta: ResourceTraitScreenMeta | null = null;
+  private searchCache = new Map<string, CachedSearchEntry>();
+
+  private buildProtocolRequestEnvelope(
+    filter: Partial<ResourceFilter>,
+    envelope: Partial<ResourceSearchProtocolRequestEnvelope> = {}
+  ): ResourceSearchProtocolRequestEnvelope {
+    const messageId = this.createMessageId();
+    const sentAt = new Date().toISOString();
+    const payload = {
+      ...filter,
+      includeTraitMeta: filter.includeTraitMeta ?? true,
+    };
+
+    return {
+      id: envelope.id || messageId,
+      spec: envelope.spec || 'sgp/0.1',
+      type: 'RESOURCE.SEARCH.REQUEST',
+      tenant: envelope.tenant || 'default',
+      resource: envelope.resource || 'sgp://default/resources/search',
+      sent_at: envelope.sent_at || sentAt,
+      actor: envelope.actor,
+      trace: envelope.trace || {
+        correlation_id: messageId,
+        causation_id: null,
+      },
+      payload,
+    };
+  }
+
+  private createMessageId(): string {
+    if (typeof globalThis.crypto?.randomUUID === 'function') {
+      return globalThis.crypto.randomUUID();
+    }
+
+    return `msg_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+  }
 
   private mapCategory(category: string): Resource['category'] {
     const value = (category || '').toLowerCase();
@@ -273,6 +319,55 @@ class ResourcesService {
     };
   }
 
+  private buildSearchCacheKey(filter: Partial<ResourceFilter>): string {
+    const tags = Array.isArray(filter.tags) ? [...filter.tags].sort() : [];
+    const normalized = {
+      search: (filter.search || '').trim().toLowerCase(),
+      type: filter.type || 'all',
+      category: filter.category || 'all',
+      tags,
+      featured: Boolean(filter.featured),
+      sortBy: filter.sortBy || 'popular',
+      traitScreen: filter.traitScreen ?? true,
+      traitLimit: filter.traitLimit ?? null,
+      traitThreshold: filter.traitThreshold ?? null,
+      includeTraitMeta: filter.includeTraitMeta ?? true,
+    };
+    return JSON.stringify(normalized);
+  }
+
+  private getCachedSearch(key: string): CachedSearchEntry | null {
+    const entry = this.searchCache.get(key);
+    if (!entry) return null;
+    if (entry.expiresAt <= Date.now()) {
+      this.searchCache.delete(key);
+      return null;
+    }
+    return entry;
+  }
+
+  private setCachedSearch(key: string, entry: Omit<CachedSearchEntry, 'expiresAt'>): void {
+    const record: CachedSearchEntry = {
+      ...entry,
+      expiresAt: Date.now() + SEARCH_CACHE_TTL_MS,
+    };
+    this.searchCache.set(key, record);
+
+    if (this.searchCache.size <= SEARCH_CACHE_MAX_ENTRIES) return;
+
+    // Opportunistically delete expired entries first, then oldest remainder.
+    for (const [cacheKey, cacheValue] of this.searchCache.entries()) {
+      if (cacheValue.expiresAt <= Date.now()) {
+        this.searchCache.delete(cacheKey);
+      }
+    }
+    while (this.searchCache.size > SEARCH_CACHE_MAX_ENTRIES) {
+      const firstKey = this.searchCache.keys().next().value;
+      if (!firstKey) break;
+      this.searchCache.delete(firstKey);
+    }
+  }
+
   // Fetch all resources
   async getAllResources(): Promise<Resource[]> {
     const legacy = await this.getLegacyArray<Resource>('/resources');
@@ -336,6 +431,12 @@ class ResourcesService {
   // Search resources
   async searchResources(filter: Partial<ResourceFilter>): Promise<Resource[]> {
     this.lastTraitSearchMeta = null;
+    const cacheKey = this.buildSearchCacheKey(filter);
+    const cached = this.getCachedSearch(cacheKey);
+    if (cached) {
+      this.lastTraitSearchMeta = cached.traitScreen;
+      return cached.items;
+    }
 
     try {
       const response = await axios.post(`${API_BASE}/resources/search`, {
@@ -346,6 +447,10 @@ class ResourcesService {
       const parsed = this.parseSearchResponse(response.data);
       if (parsed) {
         this.lastTraitSearchMeta = parsed.traitScreen;
+        this.setCachedSearch(cacheKey, {
+          items: parsed.items,
+          traitScreen: parsed.traitScreen,
+        });
         return parsed.items;
       }
     } catch {
@@ -353,7 +458,24 @@ class ResourcesService {
     }
 
     const resources = await this.getAllResources();
-    return this.filterAndSortResources(resources, filter);
+    const fallbackItems = this.filterAndSortResources(resources, filter);
+    this.setCachedSearch(cacheKey, {
+      items: fallbackItems,
+      traitScreen: null,
+    });
+    return fallbackItems;
+  }
+
+  async searchResourcesProtocol(
+    filter: Partial<ResourceFilter>,
+    envelope: Partial<ResourceSearchProtocolRequestEnvelope> = {}
+  ): Promise<ResourceSearchProtocolResponseEnvelope> {
+    const requestEnvelope = this.buildProtocolRequestEnvelope(filter, envelope);
+    const response = await axios.post(`${API_BASE}/resources/search/protocol`, requestEnvelope);
+    const responseEnvelope = response.data as ResourceSearchProtocolResponseEnvelope;
+    const parsedPayload = this.parseSearchResponse(responseEnvelope?.payload);
+    this.lastTraitSearchMeta = parsedPayload?.traitScreen || null;
+    return responseEnvelope;
   }
 
   getLastTraitSearchMeta(): ResourceTraitScreenMeta | null {

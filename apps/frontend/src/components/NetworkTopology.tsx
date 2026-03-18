@@ -4,11 +4,9 @@ import { GlassCard } from './ui/premium/GlassCard';
 
 export const NetworkTopology: React.FC = () => {
   // Point to the dedicated visualization hub app
-  // In production, this would be a relative path or dedicated subdomain
   const vizUrl =
-    window.location.hostname === 'localhost'
-      ? 'http://localhost:5173' // Vite default port for visualization-hub
-      : '/visualizations/hub';
+    (import.meta.env.VITE_VIZ_HUB_URL as string) ||
+    (window.location.hostname === 'localhost' ? 'http://localhost:5173' : '/visualizations/hub');
 
   return (
     <GlassCard className="p-0 overflow-hidden">

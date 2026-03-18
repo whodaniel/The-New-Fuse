@@ -62,6 +62,22 @@ export class ProxyService {
       retries: 3,
     });
 
+    // Explicit API service alias so controllers can fail over from specialized
+    // agent endpoints to the core API service without assuming backend parity.
+    this.registerService({
+      name: 'api',
+      baseUrl: this.configService.get(
+        'API_SERVICE_URL',
+        this.configService.get(
+          'API_URL',
+          this.configService.get('AGENTS_SERVICE_URL', 'http://localhost:3001')
+        )
+      ),
+      healthPath: '/health',
+      timeout: 30000,
+      retries: 3,
+    });
+
     this.registerService({
       name: 'theia-ide',
       baseUrl: this.configService.get('THEIA_IDE_URL', 'http://localhost:3007'),
