@@ -25,6 +25,10 @@
           "type": "string",
           "minLength": 1
         },
+        "cron_namespace": {
+          "type": ["string", "null"],
+          "description": "Optional scheduler namespace for cron-governed flows."
+        },
         "session_key": {
           "type": ["string", "null"]
         },
@@ -64,6 +68,14 @@
         },
         "task_id": {
           "type": ["string", "null"]
+        },
+        "schedule_id": {
+          "type": ["string", "null"],
+          "description": "Stable schedule identifier when event is cron-governed."
+        },
+        "schedule_run_id": {
+          "type": ["string", "null"],
+          "description": "Execution instance identifier for a specific schedule run."
         }
       }
     },

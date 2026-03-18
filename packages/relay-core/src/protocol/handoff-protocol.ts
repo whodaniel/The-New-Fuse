@@ -21,6 +21,7 @@ export const MasterCumulativeId = z.object({
   id: z.string().uuid(),
   scope: z.object({
     tenant_id: z.string().min(1),
+    cron_namespace: z.string().nullable().optional(),
     session_key: z.string().nullable().optional(),
     workflow_id: z.string().nullable().optional(),
     channel_id: z.string().nullable().optional(),
@@ -32,6 +33,8 @@ export const MasterCumulativeId = z.object({
     handoff_packet_id: z.string().uuid().nullable().optional(),
     twid: z.string().uuid().nullable().optional(),
     task_id: z.string().nullable().optional(),
+    schedule_id: z.string().nullable().optional(),
+    schedule_run_id: z.string().nullable().optional(),
   }),
   federation: z
     .object({
