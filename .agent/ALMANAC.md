@@ -11,6 +11,15 @@ align their mental models with these definitions.
   combined in various configurations to create new, complex functionality.
 - **Decomposable**: The capability of complex logic or systems to be broken down
   into their constituent primitives for analysis, repair, or refactoring.
+- **Encapsulation**: The standard of hiding internal logic and state, exposing
+  only a formal interface to prevent unauthorized cross-contamination or
+  "spaghetti logic."
+- **Interface**: A formal contract defining how components or agents interact,
+  decoupling "what" is done from "how" it is done.
+- **Invariant**: A logical condition or truth that must always remain true
+  during the lifetime of a component or system to ensure stability.
+- **Aggregate**: A cluster of associated objects or logic primitives treated as
+  a single unit for data changes and consistency.
 - **Index**: A searchable registry mapping identifiers to their locations,
   metadata, or addresses.
 - **Library**: A curated collection of reusable assets, skills, logic modules,
@@ -72,6 +81,9 @@ align their mental models with these definitions.
   based on capability.
 - **Worker**: Specialized agent focused on specific task execution (e.g., Coder,
   Tester, Researcher).
+- **Knowledge Scout**: Specialized research sub-task focused on identifying
+  external architectural standards, primitives, and best practices for
+  assimilation.
 - **Participant**: Any entity (human or AI) interacting with the mesh via a
   frontend or CLI.
 - **Super Admin**: The ultimate human authority (you) whose directives override
@@ -159,3 +171,20 @@ align their mental models with these definitions.
   capability, triggering a mandatory handoff to a higher-order Director.
 - **Symbiosis**: The collaborative relationship between the Super Admin (intent)
   and the Agentic swarm (execution), where each enhances the other's capacity.
+
+## 7. External Standard Primitives (Assimilated)
+
+- **Ontology**: A formal representation of knowledge as a set of concepts within
+  a domain and the relationships between those concepts (The Almanac is the TNF
+  Ontology).
+- **Communicative Act**: The fundamental unit of inter-agent communication
+  defining the intent of a message (derived from FIPA-ACL).
+- **Linked Data**: A method of publishing structured data so that it can be
+  interlinked and become more useful through semantic queries.
+- **Metadata Standard**: A structured set of rules for defining data about data
+  (e.g., Schema.org or Dublin Core), used by TNF to index its own resources.
+- **Performative**: The specific "verb" of a communicative act (e.g., Propose,
+  Accept, Reject, Inform) that signals how the recipient should process the
+  envelope.
+- **Bounded Context**: A central pattern in DDD that defines the boundaries
+  within which a particular model or primitive is defined and applicable.

@@ -1,11 +1,15 @@
 {
-  "almanac_version": "1.2.0",
+  "almanac_version": "1.3.0",
   "last_updated": "2026-03-18",
   "definitions": {
     "primitives": {
       "Primitives": "Irreducible building blocks of system logic/data",
       "Composable": "Ability to combine discrete parts into new functionality",
       "Decomposable": "Ability to break complex systems into atomic parts",
+      "Encapsulation": "Hiding internal logic/state behind formal interfaces",
+      "Interface": "Contract defining interaction between decoupled units",
+      "Invariant": "Logical condition that must always remain true",
+      "Aggregate": "Cluster of objects treated as a unit for consistency",
       "Index": "Searchable registry of identifiers and locations",
       "Library": "Collection of reusable assets and logic modules",
       "ContextuallyRelative": "Significance dependent on environment/session",
@@ -37,6 +41,7 @@
       "Orchestrator": "Workflow designer and handoff manager",
       "Broker": "Task distribution specialist",
       "Worker": "Specialized execution node",
+      "KnowledgeScout": "Specialist in external standard assimilation",
       "Participant": "Interaction entity (Human/AI)",
       "SuperAdmin": "Ultimate human authority"
     },
@@ -57,11 +62,19 @@
       "Horizon": "Reasoning limit triggering mandatory handoff",
       "Symbiosis": "Collaborative human-swarm relationship"
     },
-    "protocols": {
-      "A2A": "Agent-to-Agent communication standard",
-      "Envelope_V2": "Standardized JSON message wrapper",
-      "SGP": "Secure Gateway Protocol for Node/Gateway integrity",
-      "TWIP": "Web Interoperability Protocol for cross-platform sync"
+    "assimilated_standards": {
+      "Ontology": "Formal map of concepts and relationships",
+      "CommunicativeAct": "Fundamental unit of inter-agent intent",
+      "LinkedData": "Method for semantically interlinking mesh data",
+      "MetadataStandard": "Rules for defining data about data",
+      "Performative": "Specific verb of a communicative act",
+      "BoundedContext": "Boundary of model/primitive applicability"
     }
+  },
+  "provenance": {
+    "FIPA-ACL": ["CommunicativeAct", "Performative"],
+    "SemanticWeb": ["Ontology", "LinkedData"],
+    "DDD": ["Aggregate", "Bounded Context"],
+    "DublinCore": ["MetadataStandard"]
   }
 }
