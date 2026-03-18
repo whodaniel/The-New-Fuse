@@ -114,7 +114,14 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
   },
 
   // NEXUS: Ecosystem & Knowledge
-  { name: 'Nexus', href: '/nexus', icon: Network, section: 'nexus', access: 'authenticated' },
+  { name: 'Nexus 3D', href: '/nexus', icon: Network, section: 'nexus', access: 'authenticated' },
+  {
+    name: 'Viz Hub',
+    href: '/visualizations',
+    icon: Activity,
+    section: 'nexus',
+    access: 'authenticated',
+  },
   { name: 'TNF Hub', href: '/hub', icon: Globe, section: 'nexus', access: 'authenticated' },
   {
     name: 'Marketplace',
@@ -134,6 +141,14 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
   { name: 'Docs', href: '/docs', icon: Library, section: 'nexus', access: 'public' },
 
   // APEX: Governance & Control
+  {
+    name: 'TNF Control',
+    href: '/command-center',
+    icon: Zap,
+    section: 'apex',
+    access: 'authenticated',
+    requiredRoles: ['SUPER_ADMIN'],
+  },
   {
     name: 'Observatory',
     href: '/observatory',
