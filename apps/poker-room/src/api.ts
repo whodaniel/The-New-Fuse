@@ -557,6 +557,75 @@ export interface CommunityMembershipResponse {
   membership?: CommunityMembership;
 }
 
+export interface CommunityAccessNextAction {
+  code: string;
+  label: string;
+  description: string;
+  href?: string;
+}
+
+export interface CommunityAccessResolution {
+  ok: boolean;
+  gameId: string;
+  actor: {
+    kind: 'anonymous' | 'user' | 'agent';
+    agentId: string | null;
+    isProgrammaticAgent: boolean;
+    isAdmin: boolean;
+    isSuperAdmin: boolean;
+    primaryRole: string;
+  };
+  subject: {
+    userId: string | null;
+    username: string | null;
+    email: string | null;
+    walletAddress: string | null;
+  };
+  invite: {
+    enabled: boolean;
+    required: boolean;
+    satisfied: boolean;
+    source: 'db' | 'env' | null;
+  };
+  membership: {
+    found: boolean;
+    active: boolean;
+    tier: 'STARTER' | 'PRO' | 'ENTERPRISE';
+    overrideActive: boolean;
+    overrideTier: 'STARTER' | 'PRO' | 'ENTERPRISE' | null;
+  };
+  wallet: {
+    linked: boolean;
+    address: string | null;
+  };
+  game: {
+    id: string;
+    label: string;
+    description: string | null;
+    requiresMembership: boolean;
+    requiredTier: 'STARTER' | 'PRO' | 'ENTERPRISE';
+    nftRequired: boolean;
+    nft: null | {
+      contractAddress: string | null;
+      chainId: number | null;
+      tokenId: string | null;
+      traits: unknown;
+      ownershipVerified: boolean;
+    };
+    entitlement: null | {
+      source: string;
+      tierGranted: 'STARTER' | 'PRO' | 'ENTERPRISE';
+      expiresAt: string | Date | null;
+    };
+  };
+  access: {
+    canRegister: boolean;
+    canPlay: boolean;
+  };
+  nextActions: CommunityAccessNextAction[];
+  pathSummary: string;
+}
+
 export const communityApi = {
   async list(status: 'published' | 'pending' | 'all' = 'published', limit = 24) {
     return communityApiRequest(
@@ -619,5 +688,19 @@ export const communityApi = {
   },
   async membership(username: string) {
     return communityApiRequest(`/api/community/membership/${encodeURIComponent(username)}`);
+  },
+  async resolveAccess(input: {
+    username?: string;
+    email?: string;
+    userId?: string;
+    walletAddress?: string;
+    inviteCode?: string;
+    gameId?: string;
+    agentId?: string;
+  }) {
+    return communityApiRequest('/api/community/access/resolve', {
+      method: 'POST',
+      body: input,
+    }) as Promise<CommunityAccessResolution>;
   },
 };

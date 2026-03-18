@@ -10,7 +10,7 @@ interface SessionLoginProps {
     avatarUrl: string,
     email?: string,
     controlMode?: PlayerControlMode
-  ) => void;
+  ) => Promise<void> | void;
 }
 
 const AVATARS = PLAYER_AVATARS;
@@ -20,16 +20,20 @@ export default function SessionLogin({ onLogin }: SessionLoginProps) {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (username.length < 3 || username.length > 16) {
       setError('Callsign must be 3-16 characters.');
       return;
     }
-    setError('');
-    const avatar = AVATARS[0];
-    const controlMode: PlayerControlMode = 'human';
-    onLogin(username.trim(), avatar, email.trim() || undefined, controlMode);
+    try {
+      setError('');
+      const avatar = AVATARS[0];
+      const controlMode: PlayerControlMode = 'human';
+      await onLogin(username.trim(), avatar, email.trim() || undefined, controlMode);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unable to initialize protocol.');
+    }
   };
 
   return (
@@ -79,7 +83,9 @@ export default function SessionLogin({ onLogin }: SessionLoginProps) {
               placeholder="Enter your callsign..."
               className="w-full bg-black/60 border border-slate-800 focus:border-cyan-500 rounded-xl px-4 py-3 text-white font-mono outline-none transition-colors"
             />
-            {error && <p className="text-red-400 text-xs mt-2 font-mono">{error}</p>}
+            {error && (
+              <p className="text-red-400 text-xs mt-2 font-mono whitespace-pre-line">{error}</p>
+            )}
           </div>
 
           <div>

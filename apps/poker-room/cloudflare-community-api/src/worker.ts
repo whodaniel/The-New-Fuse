@@ -296,6 +296,44 @@ const handler = async (request: Request, env: Env) => {
     return json({ ok: true, status: 'ok', runtime: 'cloudflare-workers' }, 200, corsOrigin);
   }
 
+  if (path === '/api/community/access/resolve' && method === 'POST') {
+    const baseUrl = (env.TNF_API_BASE_URL || 'https://thenewfuse.com/api').replace(/\/$/, '');
+    const apiKey = env.COMMUNITY_API_KEY ? env.COMMUNITY_API_KEY.trim() : '';
+    const body = await request.text();
+
+    try {
+      const upstream = await fetch(`${baseUrl}/access/resolve`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          ...(apiKey ? { 'x-community-api-key': apiKey } : {}),
+        },
+        body: body || '{}',
+      });
+
+      const payload = await upstream.text();
+      return new Response(payload, {
+        status: upstream.status,
+        headers: {
+          'content-type': 'application/json; charset=utf-8',
+          'access-control-allow-origin': corsOrigin,
+          'access-control-allow-methods': 'GET,POST,OPTIONS',
+          'access-control-allow-headers': 'content-type, authorization, x-community-api-key',
+        },
+      });
+    } catch (error) {
+      return json(
+        {
+          ok: false,
+          error: 'access_resolver_unavailable',
+          message: String(error || 'Failed to reach TNF access resolver'),
+        },
+        502,
+        corsOrigin
+      );
+    }
+  }
+
   if (path === '/api/community/apps' && method === 'GET') {
     const status = (url.searchParams.get('status') || 'published').toLowerCase();
     const limit = Math.max(1, Math.min(100, Number(url.searchParams.get('limit') || '24') || 24));

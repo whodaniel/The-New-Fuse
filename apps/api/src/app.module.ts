@@ -37,6 +37,7 @@ import { GraphqlModule } from './graphql/graphql.module';
 import { LLMProviderController } from './llm/llm-provider.controller';
 import { LLMProviderService, LLM_REGISTRY, MockLLMRegistry } from './llm/llm-provider.service';
 import { TNFMCPModule } from './mcp/TNFMCPModule';
+import { AccessModule } from './modules/access/access.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { AgencyHubModule } from './modules/agency-hub/agency-hub.module';
 import { AgentModule } from './modules/agent.module';
@@ -109,6 +110,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
         limit: 10,
       },
     ]) as any,
+    AccessModule,
     AuthModule,
     AgentModule, // Add our new agent module
     AgentsModule, // Self-Improvement Agents Module

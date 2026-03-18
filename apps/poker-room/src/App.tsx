@@ -1327,6 +1327,37 @@ function AppContent() {
     email?: string,
     controlMode?: 'human' | 'hybrid' | 'agent'
   ) => {
+    let resolvedMembership: CommunityMembership | null = null;
+    let accessResolution: Awaited<ReturnType<typeof communityApi.resolveAccess>> | null = null;
+
+    try {
+      accessResolution = await communityApi.resolveAccess({
+        username,
+        email,
+        gameId: 'ai-arcade-poker',
+      });
+    } catch {
+      accessResolution = null;
+    }
+
+    if (accessResolution) {
+      if (!accessResolution.access?.canPlay) {
+        const steps = Array.isArray(accessResolution.nextActions)
+          ? accessResolution.nextActions
+              .slice(0, 4)
+              .map((action, index) => `${index + 1}. ${action.label}`)
+          : [];
+        throw new Error([accessResolution.pathSummary, ...steps].filter(Boolean).join('\n'));
+      }
+
+      resolvedMembership = {
+        username: accessResolution.subject.username || username.trim(),
+        status: 'active',
+        role: accessResolution.actor.primaryRole || 'member',
+        addedAt: new Date().toISOString(),
+      };
+    }
+
     setUser({
       username,
       avatar,
@@ -1340,19 +1371,20 @@ function AppContent() {
       if (email) window.localStorage.setItem('tnf_email', email);
     }
 
-    let resolvedMembership: CommunityMembership | null = null;
-    try {
-      const byUsername = await communityApi.membership(username);
-      if (byUsername?.exists && byUsername.membership) {
-        resolvedMembership = byUsername.membership as CommunityMembership;
-      } else if (email) {
-        const byEmail = await communityApi.membership(email);
-        if (byEmail?.exists && byEmail.membership) {
-          resolvedMembership = byEmail.membership as CommunityMembership;
+    if (!resolvedMembership) {
+      try {
+        const byUsername = await communityApi.membership(username);
+        if (byUsername?.exists && byUsername.membership) {
+          resolvedMembership = byUsername.membership as CommunityMembership;
+        } else if (email) {
+          const byEmail = await communityApi.membership(email);
+          if (byEmail?.exists && byEmail.membership) {
+            resolvedMembership = byEmail.membership as CommunityMembership;
+          }
         }
+      } catch {
+        resolvedMembership = null;
       }
-    } catch {
-      resolvedMembership = null;
     }
 
     if (!resolvedMembership && email) {
