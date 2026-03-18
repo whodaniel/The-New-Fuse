@@ -1,5 +1,5 @@
 {
-  "almanac_version": "1.4.0",
+  "almanac_version": "1.5.0",
   "last_updated": "2026-03-18",
   "definitions": {
     "primitives": {
@@ -47,9 +47,10 @@
     },
     "philosophical_anchors": {
       "Attribution": "Legal and logical cornerstone of truth and justice",
-      "AttributionCornerstone": "Human knowledge legally overrules AI distillation",
-      "AttributionOverrule": "Nullification of AI claims that obscure human lineage",
-      "TruthPersistence": "Maintenance of resonance with human origin"
+      "AttributionCornerstone": "Human knowledge (Scientific/Historical) overrules AI distillation",
+      "ContextualTruth": "Truth established via IP integrity and scientific provenance",
+      "AttributionOverrule": "Nullification of AI claims lacking attributed lineage",
+      "TruthPersistence": "Maintenance of resonance with human and empirical origin"
     }
   }
 }
