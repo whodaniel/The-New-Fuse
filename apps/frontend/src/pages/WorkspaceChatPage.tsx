@@ -29,7 +29,7 @@ import {
   Users,
   X,
 } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 
 interface Message {
@@ -74,6 +74,72 @@ interface Workspace {
   members: Member[];
   agents: Agent[];
 }
+
+// ⚡ Bolt: Wrapped MessageItem in React.memo to prevent O(n) re-renders
+// of the entire message list on every keystroke in the chat input.
+// This significantly improves typing performance in long chat rooms.
+const MessageItem = React.memo<{ message: Message; index: number; formatTime: (date: Date) => string; getStatusIcon: (status: string) => React.ReactNode }>(({ message, index, formatTime, getStatusIcon }) => {
+  const isOwnMessage = message.sender.type === "user" && message.sender.id === "current-user";
+  const isAgent = message.sender.type === "agent";
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05 }}
+      className={`flex ${isOwnMessage ? "justify-end" : "justify-start"}`}
+    >
+      <div
+        className={`max-w-xs lg:max-w-md rounded-2xl p-4 ${
+          isOwnMessage
+            ? "bg-gradient-to-r from-purple-500 to-blue-500 text-white"
+            : isAgent
+              ? "bg-purple-500/20 border border-purple-500/30 text-white"
+              : "bg-white/10 backdrop-blur-sm border border-white/10 text-white"
+        }`}
+      >
+        {!isOwnMessage && (
+          <div className="flex items-center gap-2 mb-2">
+            <div
+              className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                isAgent ? "bg-purple-500" : "bg-blue-500"
+              }`}
+            >
+              {isAgent ? (
+                <Bot className="w-3 h-3 text-white" />
+              ) : (
+                <User className="w-3 h-3 text-white" />
+              )}
+            </div>
+            <span className="text-sm font-medium">{message.sender.name}</span>
+          </div>
+        )}
+
+        <p className="text-sm">{message.content}</p>
+
+        {message.attachments && message.attachments.length > 0 && (
+          <div className="mt-2 space-y-1">
+            {message.attachments.map((attachment) => (
+              <div
+                key={attachment.id}
+                className="flex items-center gap-2 p-2 bg-black/20 rounded-lg"
+              >
+                <Paperclip className="w-4 h-4" />
+                <span className="text-sm">{attachment.name}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="flex items-center justify-between mt-2">
+          <span className="text-xs opacity-70">{formatTime(message.timestamp)}</span>
+          {isOwnMessage && getStatusIcon(message.status)}
+        </div>
+      </div>
+    </motion.div>
+  );
+});
+MessageItem.displayName = "MessageItem";
 
 const WorkspaceChat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -292,11 +358,11 @@ const WorkspaceChat: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const formatTime = (date: Date) => {
+  const formatTime = useCallback((date: Date) => {
     return new Intl.DateTimeFormat('en-US', { hour: '2-digit', minute: '2-digit' }).format(date);
-  };
+  }, []);
 
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = useCallback((status: string) => {
     switch (status) {
       case 'sending':
         return <Clock className="w-3 h-3 text-gray-400" />;
@@ -313,7 +379,7 @@ const WorkspaceChat: React.FC = () => {
       default:
         return null;
     }
-  };
+  }, []);
 
   if (loading) {
     return (
@@ -522,69 +588,15 @@ const WorkspaceChat: React.FC = () => {
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           <AnimatePresence>
-            {messages.map((message: Message, index: number) => {
-              const isOwnMessage =
-                message.sender.type === 'user' && message.sender.id === 'current-user';
-              const isAgent = message.sender.type === 'agent';
-
-              return (
-                <motion.div
-                  key={message.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-xs lg:max-w-md rounded-md p-4 ${
-                      isOwnMessage
-                        ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white'
-                        : isAgent
-                          ? 'bg-purple-500/20 border border-purple-500/30 text-white'
-                          : 'bg-transparent/10 backdrop-blur-sm border border-white/10 text-white'
-                    }`}
-                  >
-                    {!isOwnMessage && (
-                      <div className="flex items-center gap-2 mb-2">
-                        <div
-                          className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                            isAgent ? 'bg-purple-500' : 'bg-blue-500'
-                          }`}
-                        >
-                          {isAgent ? (
-                            <Bot className="w-3 h-3 text-white" />
-                          ) : (
-                            <User className="w-3 h-3 text-white" />
-                          )}
-                        </div>
-                        <span className="text-sm font-medium">{message.sender.name}</span>
-                      </div>
-                    )}
-
-                    <p className="text-sm">{message.content}</p>
-
-                    {message.attachments && message.attachments.length > 0 && (
-                      <div className="mt-2 space-y-1">
-                        {message.attachments.map((attachment) => (
-                          <div
-                            key={attachment.id}
-                            className="flex items-center gap-2 p-2 bg-black/20 rounded-md"
-                          >
-                            <Paperclip className="w-4 h-4" />
-                            <span className="text-sm">{attachment.name}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    <div className="flex items-center justify-between mt-2">
-                      <span className="text-xs opacity-70">{formatTime(message.timestamp)}</span>
-                      {isOwnMessage && getStatusIcon(message.status)}
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
+            {messages.map((message: Message, index: number) => (
+              <MessageItem
+                key={message.id}
+                message={message}
+                index={index}
+                formatTime={formatTime}
+                getStatusIcon={getStatusIcon}
+              />
+            ))}
           </AnimatePresence>
 
           {/* Typing indicator */}

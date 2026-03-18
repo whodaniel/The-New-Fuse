@@ -11,3 +11,7 @@
 ## 2024-03-09 - React.memo Shallow Comparison vs Reference Props
 **Learning:** Extracting an item inside a list map to `React.memo` effectively limits re-renders, but the shallow comparison will still fail if new references (like dynamically evaluated props) are passed. For example, passing `slug` from `useParams()` just to compute `workspace.slug === slug` down in the child meant `slug` still changed when the user routed anywhere, invalidating the memo cache for every list item.
 **Action:** When extracting components to prevent list O(n) re-renders, pre-compute primitive comparisons in the map loop (like passing a boolean `isActive={workspace.slug === slug}`) rather than passing down unstable values like route path strings or complex object references.
+
+## 2024-05-17 - O(n) Re-renders in WorkspaceChatPage
+**Learning:** Found an inline message array map inside a React functional component `WorkspaceChatPage.tsx` where child functions/components weren't properly extracted or memoized, causing the entire message list to re-render repeatedly upon simple keystroke input state changes.
+**Action:** Always extract message list items out of the chat view component's body, wrap them in `React.memo`, and use `useCallback` on any props passed down to them that might get regenerated on every render.
