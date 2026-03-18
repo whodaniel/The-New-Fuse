@@ -1,0 +1,51 @@
+{
+  "protocol": "TNF / OpenClaw Unified Agent Mesh",
+  "version": "2026.03.18",
+  "identity_standards": {
+    "id_format": "agent_${Name}_${Timestamp}",
+    "registry_key": "tnf:agent-registry",
+    "roles": ["orchestrator", "broker", "worker", "participant"],
+    "platforms": ["antigravity", "gemini", "openclaw", "vscode"]
+  },
+  "communication": {
+    "type": "A2A Envelope V2",
+    "transport": ["WebSocket", "Redis Pub/Sub"],
+    "message_structure": {
+      "header": ["id", "type", "source", "target", "priority"],
+      "body": ["content", "metadata"],
+      "types": [
+        "TASK_REQUEST",
+        "QUERY",
+        "RESPONSE",
+        "NOTIFICATION",
+        "ERROR",
+        "HEARTBEAT"
+      ]
+    }
+  },
+  "command_surface": {
+    "primary_tool": "openclaw",
+    "orchestration": "tnf",
+    "key_commands": {
+      "routing": "openclaw agents bind",
+      "scheduling": "openclaw cron add",
+      "isolation": "openclaw sandbox run",
+      "control_plane": "openclaw gateway",
+      "workflow_trigger": "tnf orchestrate"
+    }
+  },
+  "data_hubs": {
+    "api_gateway": "http://localhost:3005",
+    "registry_endpoint": "/api/agents",
+    "activity_endpoint": "/api/orchestrator/agents",
+    "visualizer": "thenewfuse.com/command-center"
+  },
+  "advanced_capabilities": {
+    "semantic_memory": "workers-bridge-v2:semantic_memory_search",
+    "heartbeat_interval": "30s",
+    "self_improvement_loops": [
+      "flywheel:production:loop",
+      "swarm:supercycle:live"
+    ]
+  }
+}
