@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -8,10 +9,14 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { DatabaseService } from '@the-new-fuse/database/drizzle';
 import { drizzleUserRepository } from '@the-new-fuse/database/drizzle/repositories';
+import { membershipOverrides } from '@the-new-fuse/database/drizzle/schema';
+import { sql } from 'drizzle-orm';
 import { AdminGuard } from '../guards/admin.guard';
 import { SecureAuthGuard } from '../guards/secure-auth.guard';
 import { AuditService } from '../services/audit.service';
@@ -33,7 +38,10 @@ import { AuditService } from '../services/audit.service';
 export class AdminUsersController {
   private readonly userRepository = drizzleUserRepository;
 
-  constructor(private readonly auditService: AuditService) {}
+  constructor(
+    private readonly auditService: AuditService,
+    private readonly db: DatabaseService
+  ) {}
 
   /**
    * Get all users with pagination and filtering
@@ -121,6 +129,157 @@ export class AdminUsersController {
     });
 
     return this.sanitizeUser(updatedUser);
+  }
+
+  /**
+   * Set membership override (server-side only).
+   * This bypasses payment processors and marks a user as PRO/ENTERPRISE.
+   */
+  @Post(':id/membership-override')
+  @ApiOperation({ summary: 'Set membership override (admin only)' })
+  @ApiResponse({ status: 200, description: 'Membership override created' })
+  async setMembershipOverride(
+    @Param('id') id: string,
+    @Body()
+    payload: {
+      tier?: 'STARTER' | 'PRO' | 'ENTERPRISE' | string;
+      reason?: string;
+      expiresAt?: string;
+      attachRole?: boolean;
+    },
+    @Req() req: any
+  ) {
+    const user = await this.userRepository.findById(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const tierRaw = String(payload?.tier || 'PRO')
+      .trim()
+      .toUpperCase();
+    if (!['STARTER', 'PRO', 'ENTERPRISE'].includes(tierRaw)) {
+      throw new BadRequestException('Invalid tier');
+    }
+
+    const expiresAt = payload?.expiresAt ? new Date(payload.expiresAt) : null;
+    if (expiresAt && Number.isNaN(expiresAt.getTime())) {
+      throw new BadRequestException('Invalid expiresAt timestamp');
+    }
+
+    // Revoke any existing active overrides for this user
+    await this.db.client.execute(sql`
+      UPDATE membership_overrides
+      SET status = 'REVOKED',
+          revoked_at = now(),
+          revoked_by_user_id = ${req?.user?.id || null},
+          updated_at = now()
+      WHERE user_id = ${id}
+        AND status = 'ACTIVE'
+    `);
+
+    const [override] = await this.db.client
+      .insert(membershipOverrides)
+      .values({
+        userId: id,
+        tier: tierRaw as any,
+        status: 'ACTIVE',
+        reason: payload?.reason,
+        createdByUserId: req?.user?.id,
+        expiresAt: expiresAt || null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning();
+
+    if (payload?.attachRole !== false) {
+      const roles = Array.isArray(user.roles) ? [...user.roles] : [];
+      if (!roles.includes('MEMBERSHIP_OVERRIDE')) {
+        roles.push('MEMBERSHIP_OVERRIDE');
+        await this.userRepository.update(id, { roles });
+      }
+    }
+
+    await this.auditService.log('user.membership_override_set', {
+      resourceType: 'user',
+      resourceId: id,
+      details: {
+        tier: tierRaw,
+        expiresAt: expiresAt ? expiresAt.toISOString() : null,
+        reason: payload?.reason || null,
+      },
+      status: 'success',
+    });
+
+    return override;
+  }
+
+  /**
+   * Revoke membership override for a user.
+   */
+  @Post(':id/membership-override/revoke')
+  @ApiOperation({ summary: 'Revoke membership override (admin only)' })
+  @ApiResponse({ status: 200, description: 'Membership override revoked' })
+  async revokeMembershipOverride(@Param('id') id: string, @Req() req: any) {
+    const user = await this.userRepository.findById(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    await this.db.client.execute(sql`
+      UPDATE membership_overrides
+      SET status = 'REVOKED',
+          revoked_at = now(),
+          revoked_by_user_id = ${req?.user?.id || null},
+          updated_at = now()
+      WHERE user_id = ${id}
+        AND status = 'ACTIVE'
+    `);
+
+    const activeCount = await this.db.client.execute(
+      sql`SELECT count(*)::int AS count
+          FROM membership_overrides
+          WHERE user_id = ${id}
+            AND status = 'ACTIVE'
+            AND (expires_at IS NULL OR expires_at > now())`
+    );
+    const active = Number((activeCount as any)?.[0]?.count || 0);
+    if (active === 0) {
+      const roles = Array.isArray(user.roles)
+        ? user.roles.filter((r) => r !== 'MEMBERSHIP_OVERRIDE')
+        : [];
+      await this.userRepository.update(id, { roles });
+    }
+
+    await this.auditService.log('user.membership_override_revoked', {
+      resourceType: 'user',
+      resourceId: id,
+      details: {},
+      status: 'success',
+    });
+
+    return { success: true };
+  }
+
+  /**
+   * List membership overrides for a user.
+   */
+  @Get(':id/membership-override')
+  @ApiOperation({ summary: 'List membership overrides for user (admin only)' })
+  @ApiResponse({ status: 200, description: 'Membership overrides list' })
+  async listMembershipOverrides(@Param('id') id: string) {
+    const user = await this.userRepository.findById(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const overrides = await this.db.client.execute(
+      sql`SELECT *
+          FROM membership_overrides
+          WHERE user_id = ${id}
+          ORDER BY created_at DESC
+          LIMIT 25`
+    );
+    return overrides;
   }
 
   /**

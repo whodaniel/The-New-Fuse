@@ -16,6 +16,7 @@ export * from './billing';
 export * from './chat';
 export * from './code-execution';
 export * from './configuration';
+export * from './entitlements';
 export * from './jules';
 export * from './marketplace';
 export * from './mass';

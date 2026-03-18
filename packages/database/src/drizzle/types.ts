@@ -27,6 +27,8 @@ import {
   codeExecutionUsage,
   errorLogs,
   fractionalShares,
+  gameAccessRules,
+  gameEntitlements,
   julesConfigs,
   julesSessions,
   julesUsageLogs,
@@ -34,6 +36,7 @@ import {
   loginAttempts,
   marketplaceListings,
   marketplaceOffers,
+  membershipOverrides,
   messages,
   pipelines,
   projects,
@@ -58,8 +61,8 @@ import {
   workflows,
   workflowSteps,
   workflowTemplates,
-  workspaces,
   workspaceMembers,
+  workspaces,
 } from './schema';
 
 // =============================================================================
@@ -77,6 +80,19 @@ export type NewLoginAttempt = InferInsertModel<typeof loginAttempts>;
 
 export type AuthEvent = InferSelectModel<typeof authEvents>;
 export type NewAuthEvent = InferInsertModel<typeof authEvents>;
+
+// =============================================================================
+// MEMBERSHIP OVERRIDES & GAME ENTITLEMENTS
+// =============================================================================
+
+export type MembershipOverride = InferSelectModel<typeof membershipOverrides>;
+export type NewMembershipOverride = InferInsertModel<typeof membershipOverrides>;
+
+export type GameAccessRule = InferSelectModel<typeof gameAccessRules>;
+export type NewGameAccessRule = InferInsertModel<typeof gameAccessRules>;
+
+export type GameEntitlement = InferSelectModel<typeof gameEntitlements>;
+export type NewGameEntitlement = InferInsertModel<typeof gameEntitlements>;
 
 // =============================================================================
 // AGENT TYPES

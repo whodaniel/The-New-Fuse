@@ -119,6 +119,7 @@ export class AuthService {
       let user = await this.db.users.findByEmail(email);
 
       if (!user) {
+        const validatedInvite = await this.verifyInviteCodeIfEnabled(dto.inviteCode);
         this.logger.log(`Creating new platform account for ${email}`);
 
         const syntheticPasswordHash = await hash(randomUUID().toString(), 10);
@@ -129,10 +130,14 @@ export class AuthService {
             supabaseUser.user_metadata?.full_name ||
             supabaseUser.user_metadata?.name ||
             email.split('@')[0],
-          passwordHash: syntheticPasswordHash,
+          hashedPassword: syntheticPasswordHash,
           role: 'USER',
           roles: ['USER'],
         } as any);
+
+        if (validatedInvite?.source === 'db' && validatedInvite.inviteId) {
+          await this.consumeDbInviteCode(validatedInvite.inviteId);
+        }
       }
 
       this.logger.log(`Exchange successful for user: ${user.id}`);

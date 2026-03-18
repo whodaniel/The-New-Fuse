@@ -124,6 +124,14 @@ export class SupabaseAuthDto {
   @IsString()
   accessToken: string = '';
 
+  @ApiProperty({
+    required: false,
+    description: 'Required when invite-only registration is enabled',
+  })
+  @IsString()
+  @IsOptional()
+  inviteCode?: string;
+
   @ApiProperty({ required: false })
   @IsString()
   @IsOptional()

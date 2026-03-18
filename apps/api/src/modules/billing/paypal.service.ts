@@ -182,6 +182,52 @@ export class PayPalService {
     return rank[a] >= rank[b] ? a : b;
   }
 
+  private normalizeTier(value?: string | null): 'STARTER' | 'PRO' | 'ENTERPRISE' | null {
+    const normalized = String(value || '')
+      .trim()
+      .toUpperCase();
+    if (normalized === 'PRO' || normalized === 'STARTER' || normalized === 'ENTERPRISE') {
+      return normalized;
+    }
+    return null;
+  }
+
+  private async getActiveMembershipOverride(
+    userId: string
+  ): Promise<{ tier: 'STARTER' | 'PRO' | 'ENTERPRISE' } | null> {
+    try {
+      const rows = await this.db.executeRaw<
+        Array<{ id: string; tier: string; status: string; expires_at: string | null }>
+      >(
+        `SELECT id, tier, status, expires_at
+         FROM membership_overrides
+         WHERE user_id = '${String(userId).replace(/'/g, "''")}'
+           AND status = 'ACTIVE'
+         ORDER BY created_at DESC
+         LIMIT 1`
+      );
+      const override = rows?.[0];
+      if (!override) return null;
+
+      const expiresAt = override.expires_at ? new Date(override.expires_at).getTime() : null;
+      if (expiresAt && expiresAt <= Date.now()) {
+        await this.db.executeRaw(
+          `UPDATE membership_overrides
+           SET status = 'EXPIRED', updated_at = now()
+           WHERE id = '${String(override.id).replace(/'/g, "''")}'`
+        );
+        return null;
+      }
+
+      const tier = this.normalizeTier(override.tier);
+      if (!tier) return null;
+      return { tier };
+    } catch (error) {
+      this.logger.warn(`Membership override lookup failed for user ${userId}: ${String(error)}`);
+      return null;
+    }
+  }
+
   private async getPayPalTier(userId: string): Promise<'STARTER' | 'PRO' | 'ENTERPRISE'> {
     try {
       const client = this.db.client as any;
@@ -292,6 +338,7 @@ export class PayPalService {
     if (!user) return empty;
 
     const tier = await this.getUserTier(user.id);
+    const override = await this.getActiveMembershipOverride(user.id);
     const configuredMasters = (this.configService.get<string>('MASTER_SUPER_ADMIN_EMAILS') || '')
       .split(',')
       .map((email) => email.trim().toLowerCase())
@@ -310,6 +357,9 @@ export class PayPalService {
       effectiveTier = 'ENTERPRISE';
     } else if (hasOverrideRole && effectiveTier === 'STARTER') {
       effectiveTier = 'PRO';
+    }
+    if (override?.tier) {
+      effectiveTier = this.maxTier(effectiveTier, override.tier);
     }
 
     return {
@@ -335,6 +385,7 @@ export class PayPalService {
     userId: string;
   }> {
     const tier = await this.getUserTier(userId);
+    const override = await this.getActiveMembershipOverride(userId);
     let effectiveTier: 'STARTER' | 'PRO' | 'ENTERPRISE' = tier;
     try {
       const user = await this.db.client.query.users.findFirst({
@@ -364,6 +415,9 @@ export class PayPalService {
       }
     } catch (error) {
       this.logger.warn(`Membership override lookup unavailable for user ${userId}: ${error}`);
+    }
+    if (override?.tier) {
+      effectiveTier = this.maxTier(effectiveTier, override.tier);
     }
     return {
       found: true,
