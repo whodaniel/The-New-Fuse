@@ -5,14 +5,18 @@ import {
   N8NWorkflow,
   Resource,
   ResourceFilter,
+  ResourceSearchEnvelope,
   ResourceShare,
   ResourceStats,
+  ResourceTraitScreenMeta,
 } from '../types/resources';
 import { marketplaceService, type MarketplaceCatalogItem } from './marketplace.service';
 
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 class ResourcesService {
+  private lastTraitSearchMeta: ResourceTraitScreenMeta | null = null;
+
   private mapCategory(category: string): Resource['category'] {
     const value = (category || '').toLowerCase();
     if (['development', 'developer-tools', 'code'].includes(value)) return 'development';
@@ -215,6 +219,60 @@ class ResourcesService {
     };
   }
 
+  private asObject(value: unknown): Record<string, unknown> | null {
+    return typeof value === 'object' && value !== null && !Array.isArray(value)
+      ? (value as Record<string, unknown>)
+      : null;
+  }
+
+  private asStringArray(value: unknown): string[] {
+    return Array.isArray(value)
+      ? value.filter((entry): entry is string => typeof entry === 'string')
+      : [];
+  }
+
+  private parseTraitMeta(value: unknown): ResourceTraitScreenMeta | null {
+    const input = this.asObject(value);
+    if (!input) {
+      return null;
+    }
+
+    const confidenceValue = input.confidence;
+    const confidence =
+      confidenceValue === 'high' || confidenceValue === 'medium' || confidenceValue === 'low'
+        ? confidenceValue
+        : null;
+
+    return {
+      enabled: Boolean(input.enabled),
+      used: Boolean(input.used),
+      confidence,
+      traitFilters: this.asStringArray(input.traitFilters),
+      requiredAgentIds: this.asStringArray(input.requiredAgentIds),
+      fallbackToBroadSearch: Boolean(input.fallbackToBroadSearch),
+      beforeTraitCount: Number(input.beforeTraitCount || 0),
+      afterTraitCount: Number(input.afterTraitCount || 0),
+    };
+  }
+
+  private parseSearchResponse(
+    data: unknown
+  ): { items: Resource[]; traitScreen: ResourceTraitScreenMeta | null } | null {
+    if (Array.isArray(data)) {
+      return { items: data as Resource[], traitScreen: null };
+    }
+
+    const envelope = this.asObject(data) as ResourceSearchEnvelope | null;
+    if (!envelope || !Array.isArray(envelope.items)) {
+      return null;
+    }
+
+    return {
+      items: envelope.items,
+      traitScreen: this.parseTraitMeta(envelope.traitScreen),
+    };
+  }
+
   // Fetch all resources
   async getAllResources(): Promise<Resource[]> {
     const legacy = await this.getLegacyArray<Resource>('/resources');
@@ -277,10 +335,18 @@ class ResourcesService {
 
   // Search resources
   async searchResources(filter: Partial<ResourceFilter>): Promise<Resource[]> {
+    this.lastTraitSearchMeta = null;
+
     try {
-      const response = await axios.post(`${API_BASE}/resources/search`, filter);
-      if (Array.isArray(response.data) && response.data.length > 0) {
-        return response.data;
+      const response = await axios.post(`${API_BASE}/resources/search`, {
+        ...filter,
+        includeTraitMeta: filter.includeTraitMeta ?? true,
+      });
+
+      const parsed = this.parseSearchResponse(response.data);
+      if (parsed) {
+        this.lastTraitSearchMeta = parsed.traitScreen;
+        return parsed.items;
       }
     } catch {
       // Fallback to marketplace-backed local filtering.
@@ -288,6 +354,10 @@ class ResourcesService {
 
     const resources = await this.getAllResources();
     return this.filterAndSortResources(resources, filter);
+  }
+
+  getLastTraitSearchMeta(): ResourceTraitScreenMeta | null {
+    return this.lastTraitSearchMeta;
   }
 
   // Get resource stats

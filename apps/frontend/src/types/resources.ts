@@ -1,7 +1,14 @@
 // Resource types for the Resources Dashboard
 
 export type ResourceType = 'skill' | 'workflow' | 'template' | 'tool' | 'integration';
-export type ResourceCategory = 'development' | 'productivity' | 'communication' | 'data' | 'automation' | 'ai' | 'other';
+export type ResourceCategory =
+  | 'development'
+  | 'productivity'
+  | 'communication'
+  | 'data'
+  | 'automation'
+  | 'ai'
+  | 'other';
 
 export interface Resource {
   id: string;
@@ -70,6 +77,26 @@ export interface ResourceFilter {
   tags: string[];
   featured: boolean;
   sortBy: 'popular' | 'recent' | 'rating' | 'name';
+  traitScreen?: boolean;
+  traitLimit?: number;
+  traitThreshold?: number;
+  includeTraitMeta?: boolean;
+}
+
+export interface ResourceTraitScreenMeta {
+  enabled: boolean;
+  used: boolean;
+  confidence: 'high' | 'medium' | 'low' | null;
+  traitFilters: string[];
+  requiredAgentIds: string[];
+  fallbackToBroadSearch: boolean;
+  beforeTraitCount: number;
+  afterTraitCount: number;
+}
+
+export interface ResourceSearchEnvelope {
+  items: Resource[];
+  traitScreen?: ResourceTraitScreenMeta;
 }
 
 export interface ResourceStats {

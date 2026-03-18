@@ -9,7 +9,7 @@ const addFormats = require('ajv-formats');
 const repoRoot = path.resolve(__dirname, '..', '..');
 const schemaDir = path.join(repoRoot, 'docs', 'protocols', 'schemas');
 const fixturesDir = path.join(schemaDir, 'fixtures', 'twip');
-const relayServerPath = path.join(repoRoot, 'apps', 'relay-server', 'src', 'mcp-server.js');
+const relayServerPath = path.join(repoRoot, 'apps', 'relay-server', 'src', 'mcp-server.mjs');
 
 const envelopeSchemaPath = path.join(schemaDir, 'twip-envelope.schema.json');
 const identitySchemaPath = path.join(schemaDir, 'twip-identity.schema.json');

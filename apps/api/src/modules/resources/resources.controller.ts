@@ -1,10 +1,176 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Param, Post } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import axios from 'axios';
 import { MarketplaceService } from '../marketplace/marketplace.service';
 import { MarketplaceCatalogItem } from '../marketplace/marketplace.types';
 
+type TraitScreenResponse = {
+  resourceQueryPlan?: {
+    requiredAgentIds?: string[];
+    traitFilters?: string[];
+    confidence?: 'high' | 'medium' | 'low';
+    fallbackToBroadSearch?: boolean;
+  };
+};
+
+type TraitScreenPlan = {
+  requiredAgentIds: string[];
+  traitFilters: string[];
+  confidence: 'high' | 'medium' | 'low';
+  fallbackToBroadSearch: boolean;
+};
+
+type ResourceSearchMeta = {
+  enabled: boolean;
+  used: boolean;
+  confidence: 'high' | 'medium' | 'low' | null;
+  traitFilters: string[];
+  requiredAgentIds: string[];
+  fallbackToBroadSearch: boolean;
+  beforeTraitCount: number;
+  afterTraitCount: number;
+};
+
 @Controller('resources')
 export class ResourcesController {
-  constructor(private readonly marketplaceService: MarketplaceService) {}
+  private readonly logger = new Logger(ResourcesController.name);
+
+  constructor(
+    private readonly marketplaceService: MarketplaceService,
+    private readonly configService: ConfigService
+  ) {}
+
+  private normalizeTerm(value: unknown): string {
+    return String(value || '')
+      .toLowerCase()
+      .replace(/[_/]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  private toUniqueTerms(values: unknown[]): string[] {
+    return Array.from(
+      new Set(values.map((value) => this.normalizeTerm(value)).filter((value) => value.length >= 2))
+    );
+  }
+
+  private isTraitScreenEnabled(filter: any): boolean {
+    if (filter?.traitScreen === false) return false;
+    const configured = this.normalizeTerm(
+      this.configService.get<string>('RESOURCE_TRAIT_SCREENING_ENABLED')
+    );
+    if (!configured) return true;
+    return !['0', 'false', 'off', 'no'].includes(configured);
+  }
+
+  private getTraitScreenUrls(): string[] {
+    const explicitEndpoint = this.configService.get<string>('RESOURCE_TRAIT_SCREEN_URL');
+    if (explicitEndpoint?.trim()) {
+      return [explicitEndpoint.trim()];
+    }
+
+    const configuredBase = this.configService.get<string>('AGENT_REGISTRY_API_BASE_URL');
+    const urls = [
+      configuredBase?.trim() ? `${configuredBase.trim().replace(/\/+$/, '')}/traits/screen` : '',
+      'http://localhost:3002/api/agent-registry/traits/screen',
+      'http://localhost:3001/api/agent-registry/traits/screen',
+    ];
+
+    return Array.from(new Set(urls.filter(Boolean)));
+  }
+
+  private async fetchTraitScreenPlan(
+    inquiry: string,
+    filter: any
+  ): Promise<TraitScreenPlan | null> {
+    const text = this.normalizeTerm(inquiry);
+    if (!text || !this.isTraitScreenEnabled(filter)) return null;
+
+    const payload = {
+      inquiry,
+      limit: Number(filter?.traitLimit || 8),
+      threshold: Number(filter?.traitThreshold ?? 0.42),
+      includeChunks: false,
+      onlySystem: false,
+    };
+
+    for (const endpoint of this.getTraitScreenUrls()) {
+      try {
+        const response = await axios.post<TraitScreenResponse>(endpoint, payload, {
+          timeout: 2500,
+        });
+
+        const plan = response.data?.resourceQueryPlan;
+        if (!plan) continue;
+
+        return {
+          requiredAgentIds: this.toUniqueTerms(plan.requiredAgentIds || []),
+          traitFilters: this.toUniqueTerms(plan.traitFilters || []),
+          confidence: plan.confidence || 'low',
+          fallbackToBroadSearch: Boolean(plan.fallbackToBroadSearch),
+        };
+      } catch (error) {
+        this.logger.debug(
+          `Trait screen endpoint unavailable (${endpoint}): ${
+            error instanceof Error ? error.message : String(error)
+          }`
+        );
+      }
+    }
+
+    return null;
+  }
+
+  private extractResourceTraitTerms(item: any): string[] {
+    const textTokens = this.normalizeTerm(`${item.name || ''} ${item.description || ''}`)
+      .split(/\W+/)
+      .filter((token) => token.length >= 3)
+      .slice(0, 40);
+
+    return this.toUniqueTerms([
+      ...(item.tags || []),
+      ...(item.capabilities || []),
+      ...(item.actions || []),
+      ...(item.triggers || []),
+      ...(item.integrations || []),
+      ...(item.requiredSkills || []),
+      ...(item.optionalSkills || []),
+      item.category,
+      item.type,
+      ...textTokens,
+    ]);
+  }
+
+  private scoreByTraitPlan(item: any, plan: TraitScreenPlan): number {
+    const resourceTerms = this.extractResourceTraitTerms(item);
+    if (resourceTerms.length === 0) return 0;
+
+    const termSet = new Set(resourceTerms);
+    let overlap = 0;
+    for (const trait of plan.traitFilters) {
+      if (termSet.has(trait)) {
+        overlap += 1;
+        continue;
+      }
+      if (resourceTerms.some((term) => term.includes(trait) || trait.includes(term))) {
+        overlap += 1;
+      }
+    }
+
+    const maxTraits = Math.max(1, Math.min(plan.traitFilters.length, 16));
+    const overlapScore = overlap / maxTraits;
+
+    const haystack = this.normalizeTerm(
+      [item.id, item.name, item.description, ...(item.tags || [])].join(' ')
+    );
+    const idBoost =
+      plan.requiredAgentIds.length > 0 &&
+      plan.requiredAgentIds.some((requiredId) => requiredId && haystack.includes(requiredId))
+        ? 0.15
+        : 0;
+
+    return Number((overlapScore + idBoost).toFixed(6));
+  }
 
   private mapCategory(
     category: string
@@ -191,6 +357,19 @@ export class ResourcesController {
       : [];
     const featured = Boolean(filter?.featured);
     const sortBy = String(filter?.sortBy || 'popular');
+    const includeTraitMeta = Boolean(filter?.includeTraitMeta);
+    const traitScreenEnabled = this.isTraitScreenEnabled(filter);
+    const traitPlan = await this.fetchTraitScreenPlan(search, filter);
+    const meta: ResourceSearchMeta = {
+      enabled: traitScreenEnabled,
+      used: Boolean(traitPlan),
+      confidence: traitPlan?.confidence || null,
+      traitFilters: traitPlan?.traitFilters || [],
+      requiredAgentIds: traitPlan?.requiredAgentIds || [],
+      fallbackToBroadSearch: traitPlan?.fallbackToBroadSearch ?? true,
+      beforeTraitCount: 0,
+      afterTraitCount: 0,
+    };
 
     let filtered = resources.filter((item) => {
       if (search) {
@@ -212,8 +391,30 @@ export class ResourcesController {
 
       return true;
     });
+    meta.beforeTraitCount = filtered.length;
+
+    const traitScores = new Map<string, number>();
+    if (traitPlan && traitPlan.traitFilters.length > 0) {
+      const scored = filtered.map((item) => ({
+        item,
+        score: this.scoreByTraitPlan(item, traitPlan),
+      }));
+      const narrowed = scored.filter((entry) => entry.score > 0);
+
+      if (narrowed.length > 0) {
+        filtered = narrowed.map((entry) => entry.item);
+        for (const entry of narrowed) {
+          traitScores.set(entry.item.id, entry.score);
+        }
+      } else if (!traitPlan.fallbackToBroadSearch) {
+        filtered = [];
+      }
+    }
+    meta.afterTraitCount = filtered.length;
 
     filtered = filtered.sort((a, b) => {
+      const traitDelta = (traitScores.get(b.id) || 0) - (traitScores.get(a.id) || 0);
+      if (traitDelta !== 0) return traitDelta;
       if (sortBy === 'name') return a.name.localeCompare(b.name);
       if (sortBy === 'rating') return (b.rating || 0) - (a.rating || 0);
       if (sortBy === 'recent') {
@@ -222,16 +423,23 @@ export class ResourcesController {
       return (b.downloads || 0) - (a.downloads || 0);
     });
 
+    if (includeTraitMeta) {
+      return {
+        items: filtered,
+        traitScreen: meta,
+      };
+    }
+
     return filtered;
   }
 
   @Post(':id/favorite')
-  toggleFavorite(@Param('id') id: string, @Body() body: { userId: string }) {
+  toggleFavorite(@Param('id') _id: string, @Body() _body: { userId: string }) {
     return { success: true };
   }
 
   @Post('share')
-  shareResource(@Body() share: any) {
+  shareResource(@Body() _share: any) {
     return { success: true };
   }
 }

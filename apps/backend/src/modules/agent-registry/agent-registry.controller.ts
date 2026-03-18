@@ -16,11 +16,13 @@ import {
   AgentRegistrationResponseDto,
   RegisterAgentDto,
   SearchAgentsDto,
+  TraitScreenRequestDto,
 } from './dto';
 import {
   AgentDirectoryService,
   AgentOnboardingService,
   AgentOrientationService,
+  AgentProfileVectorService,
   AgentRegistrationService,
   AgentRegistryImportService,
 } from './services';
@@ -35,6 +37,7 @@ export class AgentRegistryController {
     private readonly onboardingService: AgentOnboardingService,
     private readonly orientationService: AgentOrientationService,
     private readonly directoryService: AgentDirectoryService,
+    private readonly traitVectorService: AgentProfileVectorService,
     private readonly importService: AgentRegistryImportService
   ) {}
 
@@ -247,6 +250,38 @@ export class AgentRegistryController {
   ) {
     this.verifyImportToken(token || tokenQuery);
     return this.importService.importSnapshot(snapshotPath, onlyType);
+  }
+
+  // ============================================================================
+  // TRAIT-RAG SCREENING ENDPOINTS
+  // ============================================================================
+
+  @Post('traits/reindex')
+  @ApiOperation({
+    summary:
+      'Rebuild agent profile vectors from tnf_agent_definitions (all rows or provided tnfIds)',
+  })
+  async reindexTraitProfiles(@Body() body?: { tnfIds?: string[] }) {
+    const requestedIds = Array.isArray(body?.tnfIds) ? body?.tnfIds : [];
+    if (requestedIds.length > 0) {
+      return this.traitVectorService.reindexByTnfIds(requestedIds);
+    }
+    return this.traitVectorService.reindexAllAgentProfiles();
+  }
+
+  @Post('traits/screen')
+  @ApiOperation({
+    summary:
+      'Run inquiry through trait/profile vector screen before downstream resource or asset retrieval',
+  })
+  async screenInquiryByTraits(@Body() body: TraitScreenRequestDto) {
+    return this.traitVectorService.screenInquiry(body);
+  }
+
+  @Get('traits/stats')
+  @ApiOperation({ summary: 'Get trait/profile vector index statistics' })
+  async getTraitVectorStats() {
+    return this.traitVectorService.getStats();
   }
 
   // ============================================================================

@@ -6,6 +6,7 @@ import {
   AgentDirectoryService,
   AgentOnboardingService,
   AgentOrientationService,
+  AgentProfileVectorService,
   AgentRegistrationService,
   AgentRegistryImportService,
 } from './services';
@@ -18,6 +19,7 @@ import {
     AgentOnboardingService,
     AgentOrientationService,
     AgentDirectoryService,
+    AgentProfileVectorService,
     AgentRegistryImportService,
   ],
   exports: [
@@ -25,6 +27,7 @@ import {
     AgentOnboardingService,
     AgentOrientationService,
     AgentDirectoryService,
+    AgentProfileVectorService,
     AgentRegistryImportService,
   ],
 })

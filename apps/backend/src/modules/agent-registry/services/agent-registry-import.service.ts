@@ -3,6 +3,7 @@ import { db } from '@the-new-fuse/database';
 import { tnfAgentDefinitions } from '@the-new-fuse/database/drizzle/schema';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { AgentProfileVectorService } from './agent-profile-vector.service';
 
 type SnapshotEntry = {
   id?: string;
@@ -30,6 +31,8 @@ type SnapshotEntry = {
 @Injectable()
 export class AgentRegistryImportService {
   private readonly logger = new Logger(AgentRegistryImportService.name);
+
+  constructor(private readonly agentProfileVectorService: AgentProfileVectorService) {}
 
   private getRepoRoot() {
     return process.env.AGENT_REGISTRY_REPO_ROOT || path.resolve(process.cwd(), '../../..');
@@ -89,8 +92,10 @@ export class AgentRegistryImportService {
       total: entries.length,
       imported: 0,
       skipped: 0,
+      vectorReindex: null as unknown,
       errors: [] as { id: string; error: string }[],
     };
+    const importedTnfIds: string[] = [];
 
     for (const entry of entries) {
       const tnfId = entry.id || entry.tnfId || entry.name;
@@ -188,10 +193,22 @@ export class AgentRegistryImportService {
         });
 
         result.imported += 1;
+        importedTnfIds.push(tnfId);
       } catch (error: any) {
         result.ok = false;
         result.errors.push({ id: tnfId, error: error?.message || String(error) });
         this.logger.error(`Failed to upsert ${tnfId}: ${error?.message || error}`);
+      }
+    }
+
+    if (importedTnfIds.length > 0) {
+      try {
+        result.vectorReindex = await this.agentProfileVectorService.reindexByTnfIds(importedTnfIds);
+      } catch (error: any) {
+        result.ok = false;
+        const message = error?.message || String(error);
+        result.errors.push({ id: 'vector-reindex', error: message });
+        this.logger.error(`Vector reindex failed after snapshot import: ${message}`);
       }
     }
 

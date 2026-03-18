@@ -56,15 +56,15 @@ RUN pnpm --filter @the-new-fuse/types build || true
 RUN pnpm --filter @the-new-fuse/database build || true
 RUN pnpm --filter @the-new-fuse/core-vector-db build || true
 RUN pnpm --filter @the-new-fuse/core build || true
+RUN pnpm --filter @the-new-fuse/ui-consolidated build
 
 # Clear Turbo cache and run the full build
 # TURBO_FORCE=true tells Turbo to ignore cache
 RUN rm -rf .turbo node_modules/.cache/turbo
 ENV TURBO_FORCE=true
 
-# Build frontend with exclusions for packages that aren't needed and have issues
-# Explicitly exclude ai-arcade so TheNewFuse production is decoupled from Arcade failures
-RUN pnpm run build:frontend
+# Build only the frontend app to avoid unrelated workspace package failures.
+RUN pnpm --filter @the-new-fuse/frontend-app build
 
 # Normalize dist directory location
 # If running from monorepo root, build output is in apps/frontend/dist

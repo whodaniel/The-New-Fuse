@@ -22,7 +22,7 @@ import {
   Workflow,
   Zap,
 } from 'lucide-react';
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 
 export default function ResourceSearch() {
@@ -33,46 +33,22 @@ export default function ResourceSearch() {
   const [sortBy, setSortBy] = useState<'popular' | 'recent' | 'rating' | 'name'>('popular');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
-  // Fetch all resources
-  const { data: allResources = [], isLoading } = useQuery({
-    queryKey: ['all-resources'],
-    queryFn: () => resourcesService.getAllResources(),
+  const searchFilter = {
+    search: searchTerm,
+    type: typeFilter,
+    category: categoryFilter,
+    tags: [],
+    featured: featuredOnly,
+    sortBy,
+    includeTraitMeta: true,
+  };
+
+  // Search resources via API (supports trait-screen metadata)
+  const { data: filteredResources = [], isLoading } = useQuery({
+    queryKey: ['resource-search', searchFilter],
+    queryFn: () => resourcesService.searchResources(searchFilter),
   });
-
-  // Filter and sort resources
-  const filteredResources = useMemo(() => {
-    return allResources
-      .filter((resource: Resource) => {
-        const matchesSearch =
-          searchTerm === '' ||
-          resource.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          resource.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          resource.tags.some((tag: string) =>
-            tag.toLowerCase().includes(searchTerm.toLowerCase())
-          ) ||
-          resource.author.toLowerCase().includes(searchTerm.toLowerCase());
-
-        const matchesType = typeFilter === 'all' || resource.type === typeFilter;
-        const matchesCategory = categoryFilter === 'all' || resource.category === categoryFilter;
-        const matchesFeatured = !featuredOnly || resource.featured;
-
-        return matchesSearch && matchesType && matchesCategory && matchesFeatured;
-      })
-      .sort((a: Resource, b: Resource) => {
-        switch (sortBy) {
-          case 'popular':
-            return b.downloads - a.downloads;
-          case 'recent':
-            return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
-          case 'rating':
-            return b.rating - a.rating;
-          case 'name':
-            return a.name.localeCompare(b.name);
-          default:
-            return 0;
-        }
-      });
-  }, [allResources, searchTerm, typeFilter, categoryFilter, featuredOnly, sortBy]);
+  const traitMeta = resourcesService.getLastTraitSearchMeta();
 
   const getResourceIcon = (type: ResourceType) => {
     switch (type) {
@@ -228,9 +204,29 @@ export default function ResourceSearch() {
 
       {/* Results Header */}
       <div className="flex items-center justify-between">
-        <div className="text-sm text-gray-400">
-          Found <span className="font-semibold text-white">{filteredResources.length}</span>{' '}
-          resources
+        <div className="space-y-1">
+          <div className="text-sm text-gray-400">
+            Found <span className="font-semibold text-white">{filteredResources.length}</span>{' '}
+            resources
+          </div>
+          {traitMeta?.enabled && (
+            <div className="text-xs text-gray-400 flex flex-wrap items-center gap-2">
+              <span className="px-2 py-0.5 rounded-full border border-cyan-500/30 text-cyan-300 bg-cyan-500/10">
+                Trait Screen {traitMeta.used ? 'Applied' : 'Bypassed'}
+              </span>
+              {traitMeta.confidence && (
+                <span className="px-2 py-0.5 rounded-full border border-purple-500/30 text-purple-300 bg-purple-500/10">
+                  Confidence: {traitMeta.confidence}
+                </span>
+              )}
+              <span>
+                Narrowed {traitMeta.beforeTraitCount} {'->'} {traitMeta.afterTraitCount}
+              </span>
+              {traitMeta.traitFilters.length > 0 && (
+                <span>Filters: {traitMeta.traitFilters.join(', ')}</span>
+              )}
+            </div>
+          )}
         </div>
         <div className="flex items-center space-x-2 bg-black/40 p-1 rounded-md border border-white/5">
           <button
