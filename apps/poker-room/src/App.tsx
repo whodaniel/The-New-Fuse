@@ -21,6 +21,7 @@ import {
   sngApi,
   tournamentApi,
   userBotsApi,
+  type CommunityAccessResolution,
 } from './api';
 
 // Import Contexts & Components
@@ -729,23 +730,92 @@ function AppContent() {
     tableId: '',
     lastActionAt: 0,
   });
+  const accessResolutionCacheRef = useRef<Record<string, CommunityAccessResolution>>({});
 
-  const requireMemberAccess = (contextLabel: string) => {
+  useEffect(() => {
+    accessResolutionCacheRef.current = {};
+  }, [user?.username, user?.email]);
+
+  const requireMemberAccess = (contextLabel: string, silent = false) => {
     const accessCheck = derivePokerAccess({
       username: user?.username,
       email: user?.email,
       membership,
     });
     if (!accessCheck.isMember) {
-      notify(
-        'SYSTEM',
-        'Members Only',
-        `${contextLabel} is restricted to TNF paid members. Connect thenewfuse.com and activate membership.`
-      );
+      if (!silent) {
+        notify(
+          'SYSTEM',
+          'Members Only',
+          `${contextLabel} is restricted to TNF paid members. Connect thenewfuse.com and activate membership.`
+        );
+      }
       setView('LOGIN');
       return false;
     }
     return true;
+  };
+
+  const formatAccessMessage = (resolution: CommunityAccessResolution, contextLabel: string) => {
+    const actions = Array.isArray(resolution.nextActions)
+      ? resolution.nextActions.slice(0, 3).map((action) => action.label)
+      : [];
+    const suffix = actions.length ? ` Next: ${actions.join(' · ')}` : '';
+    return `${contextLabel}: ${resolution.pathSummary}${suffix}`;
+  };
+
+  const resolveGameAccess = async (gameId: string) => {
+    if (!user) return null;
+    const cacheKey = `${gameId}:${user.username || ''}:${user.email || ''}`;
+    const cached = accessResolutionCacheRef.current[cacheKey];
+    if (cached) return cached;
+
+    try {
+      const resolved = await communityApi.resolveAccess({
+        username: user.username,
+        email: user.email,
+        gameId,
+      });
+      accessResolutionCacheRef.current[cacheKey] = resolved;
+      return resolved;
+    } catch {
+      return null;
+    }
+  };
+
+  const ensureGameAccess = async (
+    gameId: string,
+    contextLabel: string,
+    options?: {
+      silent?: boolean;
+      postLoginView?: PokerView;
+    }
+  ) => {
+    if (!user) {
+      if (options?.postLoginView) setPostLoginView(options.postLoginView);
+      if (!options?.silent) {
+        notify(
+          'SYSTEM',
+          'Authentication Required',
+          `Connect thenewfuse.com before accessing ${contextLabel.toLowerCase()}.`
+        );
+      }
+      setView('LOGIN');
+      return false;
+    }
+
+    const resolved = await resolveGameAccess(gameId);
+    if (resolved) {
+      if (resolved.access?.canPlay) return true;
+      if (options?.postLoginView) setPostLoginView(options.postLoginView);
+      if (!options?.silent) {
+        notify('SYSTEM', 'Access Required', formatAccessMessage(resolved, contextLabel));
+      }
+      setView('LOGIN');
+      return false;
+    }
+
+    return requireMemberAccess(contextLabel, options?.silent);
   };
 
   const viewPathMap: Partial<Record<PokerView, string>> = {
@@ -796,14 +866,18 @@ function AppContent() {
       autoJoinRef.current = false;
       return;
     }
-    if (!requireMemberAccess('Poker tables')) {
-      autoJoinRef.current = false;
-      return;
-    }
     if (tableProtocol === 'v2' && gameState) return;
     if (autoJoinRef.current) return;
     autoJoinRef.current = true;
     (async () => {
+      const allowed = await ensureGameAccess('ai-arcade-poker-cash', 'Poker tables', {
+        silent: true,
+        postLoginView: 'TABLE',
+      });
+      if (!allowed) {
+        autoJoinRef.current = false;
+        return;
+      }
       try {
         const res = await holdemV2Api.tables();
         const first = Array.isArray(res?.tables) ? res.tables[0] : null;
@@ -1399,6 +1473,11 @@ function AppContent() {
       }
     }
     setMembership(resolvedMembership);
+    if (accessResolution) {
+      accessResolutionCacheRef.current = {
+        [`ai-arcade-poker:${username}:${email || ''}`]: accessResolution,
+      };
+    }
     playWin();
     notify('SUCCESS', 'Authentication Successful', `Welcome to the Neural Network, ${username}.`);
     if (postLoginView) {
@@ -1411,7 +1490,8 @@ function AppContent() {
 
   const handleJoinCashTable = async (tableId?: string, tableMeta?: any) => {
     if (!user) return;
-    if (!requireMemberAccess('Cash games')) return;
+    if (!(await ensureGameAccess('ai-arcade-poker-cash', 'Cash games', { postLoginView: 'TABLE' })))
+      return;
     playClick();
     const tid = tableId || 'lobby-1';
     setActiveTableId(tid);
@@ -1698,6 +1778,19 @@ function AppContent() {
     const botSeats = [...customBots, ...fallbackBots];
 
     // Register bots with distinct personalities
+    if (
+      !(await ensureGameAccess('ai-arcade-poker-agents', 'Poker agent registration', {
+        silent: true,
+        postLoginView: 'TABLE',
+      }))
+    ) {
+      notify(
+        'SYSTEM',
+        'Agent Access Required',
+        'Bot registration follows TNF access policy. Reconnect after membership verification.'
+      );
+      return;
+    }
     for (const bot of botSeats) {
       await agentApi.register(bot.playerId, bot.temperament, bot.maxRiskBps);
     }
@@ -1902,6 +1995,7 @@ function AppContent() {
   };
 
   const handleCreateSng = async (config: any) => {
+    if (!(await ensureGameAccess('ai-arcade-poker-sng', 'Sit & Go creation'))) return;
     playClick();
     setShowSngCreator(false);
     const tournamentId = `sng-${Date.now()}`;
@@ -1948,6 +2042,7 @@ function AppContent() {
   };
 
   const handleCreateMtt = async (config: any) => {
+    if (!(await ensureGameAccess('ai-arcade-poker-mtt', 'Tournament creation'))) return;
     playClick();
     setShowMttCreator(false);
     try {
