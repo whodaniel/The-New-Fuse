@@ -4,6 +4,8 @@ import * as crypto from 'crypto';
 import { createPublicClient, createWalletClient, http, namehash } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { polygon } from 'viem/chains';
+import { ConfigService } from '@nestjs/config';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class IdentityService {
@@ -42,7 +44,7 @@ export class IdentityService {
    */
   generateMachineLabel(isAgent = false): string {
     const prefix = isAgent ? 'agent' : 'usr';
-    // SECURITY: Use cryptographically secure random bytes instead of Math.random() for Machine IDs
+    // SECURITY: Use cryptographically secure random values instead of Math.random()
     const randomSuffix = crypto.randomBytes(4).toString('hex').substring(0, 6);
     return `${prefix}_${randomSuffix}`;
   }
