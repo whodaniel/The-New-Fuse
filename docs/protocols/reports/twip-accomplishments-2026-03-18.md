@@ -113,3 +113,14 @@ capability catalog alignment
    - `/terminals`
 4. Added these paths to `isPublicRoute` handling so public rendering/navigation
    behavior matches `/visualizations`.
+
+## 10) API Gateway Routing Hardening (Railway)
+
+1. Confirmed frontend route renders in production, but graph data fetch on
+   `/api/terminals/graph` returned 404 at the gateway edge.
+2. Added `TerminalsGatewayController` and `TerminalsGatewayModule` in
+   `apps/api-gateway` to proxy terminal graph requests to upstream services.
+3. Added both legacy and versioned gateway compatibility:
+   - `/api/terminals/graph`
+   - `/api/v1/terminals/graph`
+4. Wired `TerminalsGatewayModule` into `apps/api-gateway/src/app.module.ts`.

@@ -15,6 +15,7 @@ import { McpGatewayModule } from './gateway/mcp-gateway.module';
 import { PokerGatewayModule } from './gateway/poker-gateway.module';
 import { SgpGatewayModule } from './gateway/sgp-gateway.module';
 import { SystemGatewayModule } from './gateway/system-gateway.module';
+import { TerminalsGatewayModule } from './gateway/terminals-gateway.module';
 import { WebhookGatewayModule } from './gateway/webhook-gateway.module';
 import { ProxyModule } from './proxy/proxy.module';
 
@@ -42,6 +43,7 @@ import { ProxyModule } from './proxy/proxy.module';
     PokerGatewayModule,
     SgpGatewayModule,
     SystemGatewayModule,
+    TerminalsGatewayModule,
   ],
 })
 export class AppModule {}
