@@ -4,14 +4,8 @@ import { JwtService } from '@nestjs/jwt';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { DatabaseService, sql, User } from '@the-new-fuse/database';
 import { compare, hash } from 'bcrypt';
-import { randomUUID } from 'crypto';
-import {
-  GenerateInviteCodeDto,
-  LoginDto,
-  RegisterDto,
-  SupabaseAuthDto,
-  TokenDto,
-} from '../dtos/auth.dto';
+import * as crypto from 'crypto';
+import { GenerateInviteCodeDto, LoginDto, RegisterDto, TokenDto } from '../dtos/auth.dto';
 
 type AuthResponse = TokenDto & {
   access_token: string;
@@ -566,7 +560,7 @@ export class AuthService {
       .replace(/[^a-z0-9]+/gi, '')
       .slice(0, 6)
       .toUpperCase();
-    const randomBlock = Math.random().toString(36).slice(2, 8).toUpperCase();
+    const randomBlock = crypto.randomBytes(3).toString('hex').toUpperCase();
     const timeBlock = Date.now().toString(36).slice(-4).toUpperCase();
     return `TNF-${prefix || 'CORE'}-${randomBlock}${timeBlock}`;
   }
