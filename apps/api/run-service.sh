@@ -33,12 +33,15 @@ else
 
     if [ -n "$DB_PKG_PATH" ]; then
       echo "Found database package at $DB_PKG_PATH"
+      echo "DATABASE_URL is: $DATABASE_URL"
       CURRENT_DIR=$(pwd)
       cd "$DB_PKG_PATH"
+      pwd
 
       echo "Executing Drizzle migrations..."
       # Force use of pnpm to run migrations with proper environment
-      pnpm run drizzle:migrate
+      # Use push instead of migrate for simpler schema deployment
+      pnpm run drizzle:push
 
       MIGRATE_EXIT_CODE=$?
       cd "$CURRENT_DIR"
