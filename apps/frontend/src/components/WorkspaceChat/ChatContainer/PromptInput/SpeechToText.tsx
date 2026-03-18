@@ -69,6 +69,7 @@ const SpeechToText: React.FC<SpeechToTextProps> = ({
         className
       )}
       title={isListening ? "Stop listening" : "Start voice input"}
+      aria-label={isListening ? "Stop listening" : "Start voice input"}
     >
       {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
     </button>
