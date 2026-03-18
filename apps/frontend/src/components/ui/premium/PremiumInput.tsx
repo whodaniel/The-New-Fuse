@@ -162,17 +162,23 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
   onChange,
   disabled = false,
 }) => {
+  const id = React.useId();
+  const labelId = `${id}-label`;
+  const descId = `${id}-desc`;
+
   return (
     <div className="flex items-center justify-between p-4 bg-black/20 border border-white/10 rounded-md backdrop-blur-sm">
       <div className="flex-1">
-        {label && <p className="text-sm font-medium text-white">{label}</p>}
-        {description && <p className="text-xs text-gray-400 mt-1">{description}</p>}
+        {label && <p id={labelId} className="text-sm font-medium text-white">{label}</p>}
+        {description && <p id={descId} className="text-xs text-gray-400 mt-1">{description}</p>}
       </div>
 
       <button
         type="button"
         role="switch"
         aria-checked={checked}
+        aria-labelledby={label ? labelId : undefined}
+        aria-describedby={description ? descId : undefined}
         disabled={disabled}
         onClick={() => onChange(!checked)}
         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
