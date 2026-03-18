@@ -29,14 +29,16 @@ interface MessageGroupProps {
   onForkThread?: (chatId: string) => void;
 }
 
-export default function MessageGroup({
+// ⚡ Bolt: Wrapped MessageGroup in React.memo to prevent O(n) re-renders
+// when the parent ChatContainer updates state on every keystroke
+const MessageGroup = ({
   messages,
   workspace,
   chatId,
   onEditMessage,
   onRegenerateMessage,
   onForkThread
-}: MessageGroupProps): React.ReactElement | null {
+}: MessageGroupProps): React.ReactElement | null => {
   if (messages.length === 0) return null;
 
   // Get timestamp of first message in group
@@ -80,4 +82,6 @@ export default function MessageGroup({
       ))}
     </div>
   );
-}
+};
+
+export default React.memo(MessageGroup);

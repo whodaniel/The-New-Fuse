@@ -386,7 +386,9 @@ export default function ChatContainer({
       .map(([_, groupMessages]) => groupMessages);
   };
 
-  const messageGroups = groupMessagesByDate(messages);
+  // ⚡ Bolt: Memoize the grouped messages so we don't recalculate O(n) message parsing
+  // on every keystroke when typing in the PromptInput
+  const messageGroups = React.useMemo(() => groupMessagesByDate(messages), [messages]);
 
   return (
     <div
