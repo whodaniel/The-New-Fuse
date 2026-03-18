@@ -12,6 +12,7 @@ import {
 
 interface CommunityAppsPageProps {
   username: string;
+  email?: string;
   onBack: () => void;
 }
 
@@ -56,7 +57,7 @@ const FALLBACK_APPS: CommunityArcadeApp[] = [
   },
 ];
 
-export default function CommunityAppsPage({ username, onBack }: CommunityAppsPageProps) {
+export default function CommunityAppsPage({ username, email, onBack }: CommunityAppsPageProps) {
   const [apps, setApps] = useState<CommunityArcadeApp[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -130,7 +131,8 @@ export default function CommunityAppsPage({ username, onBack }: CommunityAppsPag
   }, [selectedAppId]);
 
   useEffect(() => {
-    if (!username) {
+    const identity = email?.trim() ? email.trim() : username;
+    if (!identity) {
       setMembership(null);
       setMembershipError('');
       setMembershipLoading(false);
@@ -142,14 +144,26 @@ export default function CommunityAppsPage({ username, onBack }: CommunityAppsPag
     setMembershipError('');
 
     communityApi
-      .membership(username)
-      .then((res) => {
+      .membership(identity)
+      .then(async (res) => {
         if (!alive) return;
         if (res.exists && res.membership) {
           setMembership(res.membership);
-        } else {
-          setMembership(null);
+          return;
         }
+        if (email && username && identity !== username) {
+          try {
+            const fallback = await communityApi.membership(username);
+            if (!alive) return;
+            if (fallback.exists && fallback.membership) {
+              setMembership(fallback.membership);
+              return;
+            }
+          } catch {
+            // ignore
+          }
+        }
+        setMembership(null);
       })
       .catch(() => {
         if (!alive) return;
@@ -164,7 +178,7 @@ export default function CommunityAppsPage({ username, onBack }: CommunityAppsPag
     return () => {
       alive = false;
     };
-  }, [username]);
+  }, [username, email]);
 
   const topApps = useMemo(() => {
     return [...apps].sort((a, b) => (b.votes || 0) - (a.votes || 0));

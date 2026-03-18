@@ -2280,6 +2280,7 @@ function AppContent() {
       {view === 'COMMUNITY APPS' && user && (
         <CommunityAppsPage
           username={user.username}
+          email={user.email}
           onBack={() => {
             playClick();
             setView('LOBBY');
