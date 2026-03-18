@@ -610,7 +610,7 @@ export class UnifiedWorkflowEngine extends EventEmitter {
   async updateExecutionState(executionId: string, context: any): Promise<void> {
     const execution = this.activeExecutions.get(executionId);
     if (execution) {
-      execution.variables = { ...execution.variables, ...context.variables };
+      (execution.context as any).variables = { ...execution.variables, ...context.variables };
     }
   }
 

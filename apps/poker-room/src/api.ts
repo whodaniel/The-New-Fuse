@@ -245,6 +245,9 @@ export const tournamentApi = {
   async create(config: any) {
     return api('/api/v2/tournaments', { method: 'POST', body: config });
   },
+  async list() {
+    return api('/api/v2/tournaments');
+  },
   async register(tournamentId: string, playerId: string) {
     return api('/api/v2/tournaments/register', {
       method: 'POST',
@@ -271,6 +274,9 @@ export const tournamentApi = {
   },
   async payouts(tournamentId: string) {
     return api(`/api/v2/tournaments/payouts?tournamentId=${encodeURIComponent(tournamentId)}`);
+  },
+  async state(tournamentId: string) {
+    return api(`/api/v2/tournaments/state?tournamentId=${encodeURIComponent(tournamentId)}`);
   },
   async control(tournamentId: string, playerId: string, controlMode: string) {
     return api('/api/v2/tournaments/control', {

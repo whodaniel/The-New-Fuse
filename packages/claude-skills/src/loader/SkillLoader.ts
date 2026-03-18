@@ -309,7 +309,7 @@ export class SkillLoader {
               result.failed++;
               result.errors.push({
                 skillName: entry.name,
-                error: _error instanceof Error ? _error.message : String(_error),
+                error: error instanceof Error ? error.message : String(error),
               });
             }
           }
