@@ -220,7 +220,12 @@ const MonitoringDashboard: React.FC = () => {
     );
   }
 
-  const chartData = prepareChartData(dashboardData.historicalData.dataPoints);
+  // ⚡ Bolt: Wrapped chartData computation in React.useMemo to prevent O(n) recalculation on every render,
+  // improving dashboard rendering performance during frequent auto-refreshes.
+  const chartData = React.useMemo(
+    () => prepareChartData(dashboardData.historicalData.dataPoints),
+    [dashboardData.historicalData.dataPoints]
+  );
   const activeAlerts = dashboardData.alerts.filter((alert) => !alert.resolved);
 
   return (
