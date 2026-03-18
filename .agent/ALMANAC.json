@@ -1,0 +1,31 @@
+{
+  "almanac_version": "1.0.0",
+  "last_updated": "2026-03-18",
+  "definitions": {
+    "roles": {
+      "Director": "Autonomous strategy and integrity governor",
+      "Orchestrator": "Workflow designer and handoff manager",
+      "Broker": "Task distribution specialist",
+      "Worker": "Specialized execution node",
+      "Participant": "Interaction entity (Human/AI)",
+      "SuperAdmin": "Ultimate human authority"
+    },
+    "protocols": {
+      "A2A": "Agent-to-Agent communication standard",
+      "Envelope_V2": "Standardized JSON message wrapper",
+      "SGP": "Secure Gateway Protocol for Node/Gateway integrity",
+      "TWIP": "Web Interoperability Protocol for cross-platform sync"
+    },
+    "mechanisms": {
+      "Frontloading": "Mandatory pre-task context injection",
+      "Flywheel": "Perpetual autonomous improvement loop",
+      "Supercycle": "Coordinated multi-agent architectural session",
+      "Heartbeat": "30s presence signal"
+    },
+    "standards": {
+      "ID_Format": "agent_${Name}_${Timestamp}",
+      "Registry": "Redis-backed tnf:agent-registry",
+      "Efficiency": "Surgical tool use to preserve context window"
+    }
+  }
+}
