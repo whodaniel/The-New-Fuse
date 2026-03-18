@@ -7,8 +7,7 @@
     "declaration": true,
     "composite": true,
     "paths": {
-      "@the-new-fuse/types": ["../../packages/types/src"],
-      "types": []
+      "@the-new-fuse/types": ["../../packages/types/src"]
     }
   },
   "include": ["src/**/*"],

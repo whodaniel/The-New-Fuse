@@ -46,6 +46,8 @@ export interface ScrapingResult {
   html?: string;
   /** Extracted text content */
   text?: string;
+  /** Markdown content */
+  markdown?: string;
   /** Page title */
   title?: string;
   /** Meta description */
@@ -70,7 +72,7 @@ export interface ScrapingResult {
   metadata?: {
     executionTime: number;
     timestamp: Date;
-    method: 'fetch' | 'puppeteer';
+    method: 'fetch' | 'puppeteer' | 'crawl4ai';
     resourcesLoaded?: number;
     jsErrors?: string[];
     customExtractions?: Record<string, any>;
