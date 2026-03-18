@@ -1,5 +1,5 @@
 {
-  "almanac_version": "1.3.0",
+  "almanac_version": "1.4.0",
   "last_updated": "2026-03-18",
   "definitions": {
     "primitives": {
@@ -45,36 +45,11 @@
       "Participant": "Interaction entity (Human/AI)",
       "SuperAdmin": "Ultimate human authority"
     },
-    "behaviors": {
-      "Agentic": "Autonomy to reason, plan, and pursue goals",
-      "Autonomic": "Self-managing and self-healing logic",
-      "Assimilation": "Converting external code to internal standards",
-      "Mimic": "Replicating existing workspace patterns and styles",
-      "Emergence": "Complex behaviors arising from node interaction",
-      "Fractal": "Consistent logic patterns at every scale",
-      "Consensus": "Multi-agent agreement for high-impact changes",
-      "Heuristic": "Experience-based practical decision making",
-      "Telemetry": "Real-time auditing stream of agent reasoning",
-      "Provenance": "Documented lineage and history of logic changes",
-      "Entropy": "System decay reversed by autonomous loops",
-      "Resonance": "Alignment of disparate agent outputs",
-      "Anchor": "Fixed ground-truth logical constraint",
-      "Horizon": "Reasoning limit triggering mandatory handoff",
-      "Symbiosis": "Collaborative human-swarm relationship"
-    },
-    "assimilated_standards": {
-      "Ontology": "Formal map of concepts and relationships",
-      "CommunicativeAct": "Fundamental unit of inter-agent intent",
-      "LinkedData": "Method for semantically interlinking mesh data",
-      "MetadataStandard": "Rules for defining data about data",
-      "Performative": "Specific verb of a communicative act",
-      "BoundedContext": "Boundary of model/primitive applicability"
+    "philosophical_anchors": {
+      "Attribution": "Legal and logical cornerstone of truth and justice",
+      "AttributionCornerstone": "Human knowledge legally overrules AI distillation",
+      "AttributionOverrule": "Nullification of AI claims that obscure human lineage",
+      "TruthPersistence": "Maintenance of resonance with human origin"
     }
-  },
-  "provenance": {
-    "FIPA-ACL": ["CommunicativeAct", "Performative"],
-    "SemanticWeb": ["Ontology", "LinkedData"],
-    "DDD": ["Aggregate", "Bounded Context"],
-    "DublinCore": ["MetadataStandard"]
   }
 }
