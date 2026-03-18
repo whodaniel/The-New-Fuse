@@ -7,8 +7,6 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   LineChart,
   Line,
-  AreaChart,
-  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -16,8 +14,6 @@ import {
   ResponsiveContainer,
   BarChart,
   Bar,
-  ScatterChart,
-  Scatter,
 } from 'recharts';
 
 // Interfaces matching backend
@@ -107,6 +103,93 @@ interface DebugFilter {
   enabled: boolean;
 }
 
+
+// ⚡ Bolt: Wrapped MessageTraceRow in React.memo to prevent O(n) re-renders
+// of the entire message list on every new message in the event stream.
+const MessageTraceRow = React.memo<{
+  message: A2ADebugMessage;
+  getStatusIcon: (status: string) => React.ReactNode;
+  getStatusColor: (status: string) => string;
+  formatTimestamp: (timestamp: number) => string;
+  formatLatency: (latency?: number) => string;
+  analyzeMessage: (messageId: string) => void;
+  setSelectedMessage: (message: A2ADebugMessage) => void;
+}>(({ message, getStatusIcon, getStatusColor, formatTimestamp, formatLatency, analyzeMessage, setSelectedMessage }) => {
+  return (
+    <Tr hover>
+      <Td>
+        <Tag
+          icon={getStatusIcon(message.status)}
+          label={message.status}
+          color={getStatusColor(message.status) as any}
+          size="small"
+        />
+      </Td>
+      <Td>{formatTimestamp(message.timestamp)}</Td>
+      <Td>{message.fromAgent}</Td>
+      <Td>{message.toAgent}</Td>
+      <Td>{message.messageType}</Td>
+      <Td>{formatLatency(message.performanceMetrics.totalLatency)}</Td>
+      <Td>
+        <Tag
+          label={message.priority}
+          color={message.priority <= 2 ? 'error' : message.priority <= 3 ? 'warning' : 'default'}
+          size="small"
+        />
+      </Td>
+      <Td>
+        <Tooltip title="Analyze Message">
+          <IconButton
+            size="small"
+            onClick={() => analyzeMessage(message.messageId)}
+          >
+            <BugReportIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="View Details">
+          <IconButton
+            size="small"
+            onClick={() => setSelectedMessage(message)}
+          >
+            <InfoIcon />
+          </IconButton>
+        </Tooltip>
+      </Td>
+    </Tr>
+  );
+});
+MessageTraceRow.displayName = 'MessageTraceRow';
+
+// Utility functions hoisted out of component to maintain stable references for React.memo
+const getStatusIcon = (status: string) => {
+  switch (status) {
+    case 'processed': return <CheckCircleIcon color="success" />;
+    case 'failed': return <ErrorIcon color="error" />;
+    case 'timeout': return <WarningIcon color="warning" />;
+    case 'sent': return <MessageIcon color="info" />;
+    default: return <InfoIcon />;
+  }
+};
+
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case 'processed': return 'success';
+    case 'failed': return 'error';
+    case 'timeout': return 'warning';
+    case 'sent': return 'info';
+    default: return 'default';
+  }
+};
+
+const formatLatency = (latency?: number) => {
+  if (!latency) return 'N/A';
+  return latency < 1000 ? `${latency}ms` : `${(latency / 1000).toFixed(2)}s`;
+};
+
+const formatTimestamp = (timestamp: number) => {
+  return new Date(timestamp).toLocaleTimeString();
+};
+
 const A2ADebugger: React.FC = () => {
   // State management
   const [activeTab, setActiveTab] = useState(0);
@@ -115,10 +198,12 @@ const A2ADebugger: React.FC = () => {
   const [capturedMessages, setCapturedMessages] = useState<A2ADebugMessage[]>([]);
   const [conversations, setConversations] = useState<ConversationTrace[]>([]);
   const [agents, setAgents] = useState<AgentDebugInfo[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [filters, setFilters] = useState<DebugFilter[]>([]);
   const [isCapturing, setIsCapturing] = useState(false);
   const [selectedMessage, setSelectedMessage] = useState<A2ADebugMessage | null>(null);
   const [createSessionDialog, setCreateSessionDialog] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [filtersDialog, setFiltersDialog] = useState(false);
   const [realTimeUpdates, setRealTimeUpdates] = useState(true);
 
@@ -314,7 +399,7 @@ const A2ADebugger: React.FC = () => {
     }
   };
 
-  const analyzeMessage = async (messageId: string) => {
+  const analyzeMessage = useCallback(async (messageId: string) => {
     try {
       const response = await fetch(`/api/debugging/messages/${messageId}/analyze`, {
         method: 'POST',
@@ -328,37 +413,9 @@ const A2ADebugger: React.FC = () => {
     } catch (error) {
       console.error('Error analyzing message:', error);
     }
-  };
+  }, []);
 
-  // Utility functions
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'processed': return <CheckCircleIcon color="success" />;
-      case 'failed': return <ErrorIcon color="error" />;
-      case 'timeout': return <WarningIcon color="warning" />;
-      case 'sent': return <MessageIcon color="info" />;
-      default: return <InfoIcon />;
-    }
-  };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'processed': return 'success';
-      case 'failed': return 'error';
-      case 'timeout': return 'warning';
-      case 'sent': return 'info';
-      default: return 'default';
-    }
-  };
-
-  const formatLatency = (latency?: number) => {
-    if (!latency) return 'N/A';
-    return latency < 1000 ? `${latency}ms` : `${(latency / 1000).toFixed(2)}s`;
-  };
-
-  const formatTimestamp = (timestamp: number) => {
-    return new Date(timestamp).toLocaleTimeString();
-  };
 
   // Chart data preparation
   const prepareLatencyChart = () => {
@@ -560,46 +617,16 @@ const A2ADebugger: React.FC = () => {
                   </Thead>
                   <Tbody>
                     {capturedMessages.map((message) => (
-                      <Tr key={message.id} hover>
-                        <Td>
-                          <Tag
-                            icon={getStatusIcon(message.status)}
-                            label={message.status}
-                            color={getStatusColor(message.status) as any}
-                            size="small"
-                          />
-                        </Td>
-                        <Td>{formatTimestamp(message.timestamp)}</Td>
-                        <Td>{message.fromAgent}</Td>
-                        <Td>{message.toAgent}</Td>
-                        <Td>{message.messageType}</Td>
-                        <Td>{formatLatency(message.performanceMetrics.totalLatency)}</Td>
-                        <Td>
-                          <Tag
-                            label={message.priority}
-                            color={message.priority <= 2 ? 'error' : message.priority <= 3 ? 'warning' : 'default'}
-                            size="small"
-                          />
-                        </Td>
-                        <Td>
-                          <Tooltip title="Analyze Message">
-                            <IconButton
-                              size="small"
-                              onClick={() => analyzeMessage(message.messageId)}
-                            >
-                              <BugReportIcon />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip title="View Details">
-                            <IconButton
-                              size="small"
-                              onClick={() => setSelectedMessage(message)}
-                            >
-                              <InfoIcon />
-                            </IconButton>
-                          </Tooltip>
-                        </Td>
-                      </Tr>
+                      <MessageTraceRow
+                        key={message.id}
+                        message={message}
+                        getStatusIcon={getStatusIcon}
+                        getStatusColor={getStatusColor}
+                        formatTimestamp={formatTimestamp}
+                        formatLatency={formatLatency}
+                        analyzeMessage={analyzeMessage}
+                        setSelectedMessage={setSelectedMessage}
+                      />
                     ))}
                   </Tbody>
                 </Table>

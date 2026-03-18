@@ -9,7 +9,7 @@ const ragService = {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     return `Hello! I'm here to help you get started. You asked: "${query}". I can assist you with setting up your workspace, navigating features, or answering questions about the platform.`;
   },
-  generateResponse: async (query: string, context?: any) => {
+  generateResponse: async (query: string, _context?: any) => {
     // Mock response generation
     await new Promise((resolve) => setTimeout(resolve, 1000));
     return {
@@ -37,10 +37,41 @@ interface GreeterAgentProps {
   agentAvatar?: string;
 }
 
+// ⚡ Bolt: Wrapped GreeterMessageItem in React.memo to prevent O(n) re-renders
+// of the entire message list on every keystroke in the input field.
+const GreeterMessageItem = React.memo<{
+  message: Message;
+  agentName: string;
+}>(({ message, agentName }) => {
+  return (
+    <div className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+      <div
+        className={`max-w-[80%] p-3 rounded-md ${
+          message.role === 'user' ? 'bg-blue-50 text-gray-900' : 'bg-gray-100 text-gray-900'
+        }`}
+      >
+        {message.role === 'assistant' && (
+          <div className="flex items-center space-x-1 mb-1">
+            <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center text-xs text-white font-semibold">
+              {agentName.charAt(0)}
+            </div>
+            <span className="font-bold text-sm">{agentName}</span>
+          </div>
+        )}
+        <p>{message.content}</p>
+        <p className="text-xs text-muted-foreground text-right mt-1">
+          {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        </p>
+      </div>
+    </div>
+  );
+});
+GreeterMessageItem.displayName = 'GreeterMessageItem';
+
 export const GreeterAgent: React.FC<GreeterAgentProps> = ({
   initialMessage = "Hello! I'm your AI assistant for The New Fuse platform. I can help you get started and answer any questions you might have. What would you like to know?",
   agentName = 'Fuse Assistant',
-  agentAvatar = '/assets/images/assistant-avatar.png',
+  _agentAvatar = '/assets/images/assistant-avatar.png',
 }) => {
   const { addConversation } = useWizard();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -166,29 +197,7 @@ export const GreeterAgent: React.FC<GreeterAgentProps> = ({
         {messages
           .filter((m) => m.role !== 'system')
           .map((message) => (
-            <div
-              key={message.id}
-              className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
-              <div
-                className={`max-w-[80%] p-3 rounded-md ${
-                  message.role === 'user' ? 'bg-blue-50 text-gray-900' : 'bg-gray-100 text-gray-900'
-                }`}
-              >
-                {message.role === 'assistant' && (
-                  <div className="flex items-center space-x-1 mb-1">
-                    <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center text-xs text-white font-semibold">
-                      {agentName.charAt(0)}
-                    </div>
-                    <span className="font-bold text-sm">{agentName}</span>
-                  </div>
-                )}
-                <p>{message.content}</p>
-                <p className="text-xs text-muted-foreground text-right mt-1">
-                  {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </p>
-              </div>
-            </div>
+            <GreeterMessageItem key={message.id} message={message} agentName={agentName} />
           ))}
 
         {isTyping && (
