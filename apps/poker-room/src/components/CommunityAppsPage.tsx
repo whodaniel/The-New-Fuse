@@ -13,6 +13,7 @@ import {
 interface CommunityAppsPageProps {
   username: string;
   email?: string;
+  membershipOverride?: CommunityMembership | null;
   onBack: () => void;
 }
 
@@ -57,7 +58,12 @@ const FALLBACK_APPS: CommunityArcadeApp[] = [
   },
 ];
 
-export default function CommunityAppsPage({ username, email, onBack }: CommunityAppsPageProps) {
+export default function CommunityAppsPage({
+  username,
+  email,
+  membershipOverride,
+  onBack,
+}: CommunityAppsPageProps) {
   const [apps, setApps] = useState<CommunityArcadeApp[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -131,6 +137,12 @@ export default function CommunityAppsPage({ username, email, onBack }: Community
   }, [selectedAppId]);
 
   useEffect(() => {
+    if (membershipOverride) {
+      setMembership(membershipOverride);
+      setMembershipError('');
+      setMembershipLoading(false);
+      return;
+    }
     const identity = email?.trim() ? email.trim() : username;
     if (!identity) {
       setMembership(null);
@@ -178,7 +190,7 @@ export default function CommunityAppsPage({ username, email, onBack }: Community
     return () => {
       alive = false;
     };
-  }, [username, email]);
+  }, [username, email, membershipOverride]);
 
   const topApps = useMemo(() => {
     return [...apps].sort((a, b) => (b.votes || 0) - (a.votes || 0));

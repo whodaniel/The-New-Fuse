@@ -2281,6 +2281,7 @@ function AppContent() {
         <CommunityAppsPage
           username={user.username}
           email={user.email}
+          membershipOverride={membership}
           onBack={() => {
             playClick();
             setView('LOBBY');
