@@ -3,6 +3,61 @@
 This is the definitive glossary for "The New Fuse" ecosystem. All agents MUST
 align their mental models with these definitions.
 
+## 0. Primitives (The Building Blocks)
+
+- **Primitives**: The irreducible building blocks of the system (logic, data, or
+  tools) from which all complex behaviors are derived.
+- **Index**: A searchable registry mapping identifiers to their locations,
+  metadata, or addresses.
+- **Library**: A curated collection of reusable assets, skills, logic modules,
+  or subfiles.
+- **Contextually Relative**: The principle that the significance, priority, or
+  meaning of data and logic is dependent on the surrounding environment or
+  active session.
+- **Hierarchy**: The structured ordering of entities, where higher levels
+  govern, abstract, or constrain lower levels.
+- **Hierarchy of Logic**: The layered arrangement of decision-making rules, from
+  core mandates down to transient task instructions.
+- **Logical**: Consistent with the system's established rules, structures, and
+  constraints.
+- **Constraints**: Operational limits (resource, temporal, or security) that
+  define the boundaries of permissible action.
+- **Logical Constraints**: Fixed, non-negotiable rules within the hierarchy of
+  logic that prevent system drift or corruption.
+- **Runtime**: The active execution state of an agent, session, or
+  infrastructure component.
+- **Address**: The unique identifier or URI used to locate, route to, or target
+  an entity in the mesh.
+- **Component**: A discrete, functional unit of software, UI, or configuration.
+- **Modular**: The architectural standard of building systems from independent,
+  swappable, and self-contained components.
+- **Destination**: The target endpoint, intended state, or final objective of a
+  communication or workflow.
+- **Infrastructure**: The underlying hardware and services (Redis, Relay, Cloud,
+  OS) that support the agent mesh.
+- **Embedded**: Integrated directly and natively into a host environment or
+  parent component.
+- **Abstraction**: A simplified representation of complex logic that exposes
+  only the necessary interface to the layer above.
+- **Project**: The aggregate collection of files, logic, state, and goals
+  defining "The New Fuse".
+- **Personal**: Data, state, or preferences scoped exclusively to an individual
+  user or private agent instance.
+- **Subfiles**: Auxiliary files containing granular logic or data partitioned
+  from a main structural module to maintain modularity.
+- **Scaffolding**: Temporary or foundational structure used to bootstrap and
+  support the development of new features or agents.
+- **Prompts**: Natural language inputs that guide LLM reasoning, persona, and
+  behavioral boundaries.
+- **Instructions**: Explicit, procedural, and mandated steps provided to an
+  agent for immediate execution.
+- **Structure**: The formal organization and defined relationship between all
+  components and primitives in the ecosystem.
+- **Define**: To establish the immutable boundaries, identity, rules, and
+  purpose of an entity or term.
+- **Encyclopedia**: The comprehensive, cross-referenced sum of all system
+  knowledge and history (The Almanac).
+
 ## 1. Agent Roles & Personas
 
 - **Director**: High-level autonomous governor responsible for multi-session
