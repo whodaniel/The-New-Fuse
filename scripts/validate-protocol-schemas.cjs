@@ -11,6 +11,8 @@ const requiredFiles = [
   'twip-identity.schema.json',
   'sgp-envelope.schema.json',
   'sgp-payloads.schema.json',
+  'tnf-master-cumulative-id.schema.json',
+  'tnf-agent-self-edit.schema.json',
 ];
 
 function fail(message) {
@@ -75,6 +77,53 @@ function validateTwipIdentity(schema) {
   });
 }
 
+function validateMasterCumulativeId(schema) {
+  if (!schema) return;
+  const required = new Set(schema.required || []);
+  ['spec', 'id', 'scope', 'lineage'].forEach((key) => {
+    assert(required.has(key), `tnf-master-cumulative-id.schema.json: required must include ${key}`);
+  });
+  assert(
+    schema?.properties?.spec?.const === 'tnf/mcid/0.1',
+    'tnf-master-cumulative-id.schema.json: spec const must be tnf/mcid/0.1'
+  );
+}
+
+function validateAgentSelfEdit(schema) {
+  if (!schema) return;
+  const required = new Set(schema.required || []);
+  [
+    'spec',
+    'action_id',
+    'tenant_id',
+    'agent',
+    'target',
+    'operation',
+    'cumulative_id',
+    'gate_decisions',
+    'created_at',
+  ].forEach((key) => {
+    assert(required.has(key), `tnf-agent-self-edit.schema.json: required must include ${key}`);
+  });
+
+  assert(
+    schema?.properties?.spec?.const === 'tnf/agent-self-edit/0.1',
+    'tnf-agent-self-edit.schema.json: spec const must be tnf/agent-self-edit/0.1'
+  );
+
+  const gateEnum = schema?.properties?.gate_decisions?.items?.properties?.gate?.enum || [];
+  [
+    'TENANT_SCOPE_GATE',
+    'TRACE_CONTINUITY_GATE',
+    'CHANNEL_MEMBERSHIP_GATE',
+    'OWNERSHIP_GATE',
+    'PATH_SCOPE_GATE',
+    'CONTENT_POLICY_GATE',
+  ].forEach((gate) => {
+    assert(gateEnum.includes(gate), `tnf-agent-self-edit.schema.json: gate enum missing ${gate}`);
+  });
+}
+
 function main() {
   if (!fs.existsSync(schemaDir)) {
     fail(`Missing schema directory: ${schemaDir}`);
@@ -99,6 +148,8 @@ function main() {
 
   validateTwipEnvelope(parsed['twip-envelope.schema.json']);
   validateTwipIdentity(parsed['twip-identity.schema.json']);
+  validateMasterCumulativeId(parsed['tnf-master-cumulative-id.schema.json']);
+  validateAgentSelfEdit(parsed['tnf-agent-self-edit.schema.json']);
 
   if (process.exitCode) {
     process.exit(process.exitCode);

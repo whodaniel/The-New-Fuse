@@ -1,0 +1,19 @@
+{
+  "spec": "tnf/agent-owned-docs-registry/0.1",
+  "generated_at": "2026-03-18T00:00:00Z",
+  "owners": [
+    {
+      "owner_agent_id": "codex",
+      "allowed_paths": ["SOUL.md", ".agent/**", "docs/ai-orientation/**"],
+      "approval_required_paths": ["docs/protocols/**", "config/**"]
+    },
+    {
+      "owner_agent_id": "picoclaw-overseer",
+      "allowed_paths": [
+        "apps/picoclaw-overseer/workspace/SOUL.md",
+        "apps/picoclaw-overseer/workspace/**"
+      ],
+      "approval_required_paths": ["apps/picoclaw-overseer/pkg/**"]
+    }
+  ]
+}

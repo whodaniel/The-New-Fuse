@@ -66,3 +66,13 @@ pathways, and architecture visibility stay synchronized over time.
 Planned next step is wiring this same loop into TNF master clock cron
 orchestration so cadence, escalation, and ticketing are managed by TNF protocols
 instead of only GitHub schedule.
+
+## Self-Prompt and Self-Edit Safety
+
+1. Self-prompts now carry cumulative lineage metadata for downstream
+   correlation.
+2. Agent-owned doc edits must use:
+   - `docs/protocols/schemas/tnf-agent-self-edit.schema.json`
+   - `docs/protocols/bridges/agent-self-edit-federation-gates.yml`
+3. Ownership/path gate checks run via:
+   - `node scripts/protocols/agent-self-edit-gate.cjs --request <request.json>`

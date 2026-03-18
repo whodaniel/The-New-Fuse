@@ -100,13 +100,39 @@ export const HandoffPacketInput = z.object({
 });
 export type HandoffPacketInput = z.infer<typeof HandoffPacketInput>;
 
-export const HandoffPacket = HandoffPacketInput.extend({
-  id: z.string().uuid(),
-  version: z.literal('1.0'),
-  createdAt: isoDateTime,
-  expiresAt: isoDateTime,
-  status: HandoffStatus.default('pending'),
-});
+export const HandoffPacketVersion = z.enum(['1.0', '1.1']);
+export type HandoffPacketVersion = z.infer<typeof HandoffPacketVersion>;
+
+export const HandoffPacket = HandoffPacketInput.partial({
+  cumulativeId: true,
+  gateDecisions: true,
+})
+  .extend({
+    id: z.string().uuid(),
+    version: HandoffPacketVersion.default('1.0'),
+    createdAt: isoDateTime,
+    expiresAt: isoDateTime,
+    status: HandoffStatus.default('pending'),
+  })
+  .superRefine((packet, ctx) => {
+    if (packet.version === '1.1') {
+      if (!packet.cumulativeId) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['cumulativeId'],
+          message: 'cumulativeId is required for handoff packet version 1.1',
+        });
+      }
+
+      if (!Array.isArray(packet.gateDecisions) || packet.gateDecisions.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['gateDecisions'],
+          message: 'gateDecisions is required for handoff packet version 1.1',
+        });
+      }
+    }
+  });
 export type HandoffPacket = z.infer<typeof HandoffPacket>;
 
 export const HandoffAckInput = z.object({

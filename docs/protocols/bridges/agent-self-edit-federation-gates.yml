@@ -1,0 +1,42 @@
+name: agent-self-edit-federation-gates
+from:
+  - skill: tnf-stack-self-improvement-loop
+    output: self-prompt and improvement actions
+  - skill: inter-agentic-workflow-definer
+    output: standardized self-edit task packets
+  - skill: interoperability-protocol-agent
+    output: capability profile synchronization
+to:
+  - skill: tnf-execution-audit-trail
+    input: self-edit lifecycle events and gate outcomes
+  - skill: tnf-task-production-pipeline
+    input: approved self-edit actions
+validate:
+  - request validates against docs/protocols/schemas/tnf-agent-self-edit.schema.json
+  - cumulative_id.scope.tenant_id matches tenant_id and target ownership scope
+  - target.path matches owner allowlist in data/protocols/agent-owned-docs.registry.json
+  - gate_decisions include complete required allow chain
+gates:
+  - name: TENANT_SCOPE_GATE
+    deny_code: TENANT_SCOPE_MISMATCH
+  - name: TRACE_CONTINUITY_GATE
+    deny_code: TRACE_BREAK
+  - name: CHANNEL_MEMBERSHIP_GATE
+    deny_code: CHANNEL_NOT_AUTHORIZED
+  - name: OWNERSHIP_GATE
+    deny_code: OWNER_MISMATCH
+  - name: PATH_SCOPE_GATE
+    deny_code: PATH_NOT_ALLOWED
+  - name: CONTENT_POLICY_GATE
+    deny_code: CONTENT_POLICY_DENY
+  - name: WRITE_RATE_LIMIT_GATE
+    deny_code: WRITE_RATE_LIMIT_EXCEEDED
+  - name: APPROVAL_GATE
+    condition: path requires approval or gate chain marks high risk
+    action: require_manual_approval
+fail:
+  - deny request and emit POLICY.DECISION with cumulative_id attached
+  - append denial event to unified timeline with category agent_self_edit_gate
+  - route to orchestrator remediation queue
+log:
+  - docs/protocols/bridges/reports/agent-self-edit-federation-gates.md

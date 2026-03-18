@@ -48,6 +48,15 @@
       "parameters": {
         "schema": "docs/protocols/schemas/tnf-master-cumulative-id.schema.json"
       }
+    },
+    {
+      "name": "AGENT_SELF_EDIT_GATING",
+      "description": "Gates agent-owned documentation self-edits with ownership and path-scoped controls",
+      "parameters": {
+        "schema": "docs/protocols/schemas/tnf-agent-self-edit.schema.json",
+        "registry": "data/protocols/agent-owned-docs.registry.json",
+        "bridge": "docs/protocols/bridges/agent-self-edit-federation-gates.yml"
+      }
     }
   ],
   "tools": [
@@ -59,12 +68,15 @@
     "provider": "tnf-relay-mcp",
     "bridgeContract": "docs/protocols/bridges/twip-to-orchestrator-loop.yml",
     "federationBridgeContract": "docs/protocols/bridges/twip-federation-orchestration-gates.yml",
+    "selfEditBridgeContract": "docs/protocols/bridges/agent-self-edit-federation-gates.yml",
     "macroBoardScript": "scripts/protocols/twip-macro-board.cjs",
+    "selfEditGateScript": "scripts/protocols/agent-self-edit-gate.cjs",
     "reports": {
       "latest": "docs/protocols/reports/twip-terminal-macro-board-latest.md"
     },
     "schemas": {
-      "masterCumulativeId": "docs/protocols/schemas/tnf-master-cumulative-id.schema.json"
+      "masterCumulativeId": "docs/protocols/schemas/tnf-master-cumulative-id.schema.json",
+      "agentSelfEdit": "docs/protocols/schemas/tnf-agent-self-edit.schema.json"
     }
   },
   "metadata": {

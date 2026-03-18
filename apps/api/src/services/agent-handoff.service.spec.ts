@@ -53,7 +53,7 @@ describe('AgentHandoffService lifecycle audit logging', () => {
     const { service, unifiedLedgerService } = createService();
     const packet = {
       id: '8f6c8be6-1f83-4c08-a5a2-f6457ebdbf6d',
-      version: '1.0',
+      version: '1.1',
       createdAt: new Date().toISOString(),
       expiresAt: new Date(Date.now() + 60_000).toISOString(),
       status: 'pending',
@@ -115,6 +115,8 @@ describe('AgentHandoffService lifecycle audit logging', () => {
       id: packetId,
       scope: { tenantId: 'tnf-prod' },
       cumulativeId: buildCumulativeId(),
+      version: '1.1',
+      gateDecisions: baseGateDecisions,
     };
     const ack = {
       packetId,
@@ -154,8 +156,10 @@ describe('AgentHandoffService lifecycle audit logging', () => {
           category: 'handoff_ack',
           tenantId: 'tnf-prod',
           packetId,
+          packetVersion: '1.1',
           agentId: 'agent-beta',
           status: 'received',
+          packetGateDecisions: expect.any(Array),
         }),
       })
     );
@@ -186,6 +190,52 @@ describe('AgentHandoffService lifecycle audit logging', () => {
         'tnf-prod'
       )
     ).rejects.toThrow('Missing required federation gate decision');
+  });
+
+  it('rejects publish when gate decisions diverge from cumulative federation lineage', async () => {
+    const { service } = createService();
+    (service as any).store = {
+      publish: jest.fn(),
+    };
+
+    await expect(
+      service.publishForTenant(
+        {
+          fromAgentId: 'agent-alpha',
+          targets: { agentIds: ['agent-beta'] },
+          scope: { tenantId: 'tnf-prod' },
+          payload: {
+            title: 'Task handoff',
+            summary: 'Send context to next agent',
+            prompt: 'Handle next stage',
+          },
+          cumulativeId: buildCumulativeId({
+            federation: {
+              domain: 'tnf-local',
+              route: ['orchestrator', 'handoff-service'],
+              hop_count: 1,
+              gate_decisions: [
+                ...baseGateDecisions,
+                {
+                  gate: 'APPROVAL_GATE',
+                  decision: 'deny' as const,
+                  at: new Date().toISOString(),
+                },
+              ],
+            },
+          }),
+          gateDecisions: [
+            ...baseGateDecisions,
+            {
+              gate: 'APPROVAL_GATE',
+              decision: 'allow' as const,
+              at: new Date().toISOString(),
+            },
+          ],
+        },
+        'tnf-prod'
+      )
+    ).rejects.toThrow('Gate decision mismatch for APPROVAL_GATE');
   });
 
   it('rejects ack when cumulative lineage breaks correlation continuity', async () => {

@@ -79,7 +79,7 @@ export class HandoffStoreService {
     const packet = HandoffPacket.parse({
       ...input,
       id: crypto.randomUUID(),
-      version: '1.0',
+      version: '1.1',
       createdAt: now.toISOString(),
       expiresAt,
       status: 'pending',
@@ -121,7 +121,10 @@ export class HandoffStoreService {
     return this.parsePacket(raw);
   }
 
-  async listForAgent(agentId: string, options: ListForAgentOptions = {}): Promise<AgentHandoffView[]> {
+  async listForAgent(
+    agentId: string,
+    options: ListForAgentOptions = {}
+  ): Promise<AgentHandoffView[]> {
     await this.connect();
 
     const limit = Math.max(options.limit ?? 20, 1);
@@ -175,9 +178,7 @@ export class HandoffStoreService {
     }
 
     if (!packet.targets.agentIds.includes(ack.agentId)) {
-      throw new Error(
-        `Agent ${ack.agentId} is not a target for packet ${ack.packetId}`
-      );
+      throw new Error(`Agent ${ack.agentId} is not a target for packet ${ack.packetId}`);
     }
 
     const ackKey = this.ackKey(ack.packetId);
@@ -190,7 +191,11 @@ export class HandoffStoreService {
   async listBySession(sessionKey: string, limit = 50): Promise<HandoffPacketType[]> {
     await this.connect();
 
-    const ids = await this.client.lRange(this.sessionIndexKey(sessionKey), 0, Math.max(limit, 1) - 1);
+    const ids = await this.client.lRange(
+      this.sessionIndexKey(sessionKey),
+      0,
+      Math.max(limit, 1) - 1
+    );
     const packets: HandoffPacketType[] = [];
 
     for (const id of ids) {
@@ -246,7 +251,10 @@ export class HandoffStoreService {
 
   private parsePacket(raw: string): HandoffPacketType | null {
     try {
-      const parsed: unknown = JSON.parse(raw);
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object' && !('version' in parsed)) {
+        parsed.version = '1.0';
+      }
       return HandoffPacket.parse(parsed);
     } catch {
       return null;
@@ -267,7 +275,9 @@ export class HandoffStoreService {
   }
 
   private computeTtlSeconds(expiresAt: string): number {
-    const remainingSeconds = Math.ceil((new Date(expiresAt).getTime() - this.now().getTime()) / 1000);
+    const remainingSeconds = Math.ceil(
+      (new Date(expiresAt).getTime() - this.now().getTime()) / 1000
+    );
     return Math.max(remainingSeconds, 1);
   }
 }

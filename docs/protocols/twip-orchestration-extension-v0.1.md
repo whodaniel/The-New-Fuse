@@ -46,6 +46,18 @@ Flow:
 3. Inter-agent workflow templates -> terminal-aware subtasks.
 4. Orchestrator assignment -> handoff packet with TWIP context.
 
+## 4) Agent-Owned Doc Self-Edit Contract
+
+Schema: `docs/protocols/schemas/tnf-agent-self-edit.schema.json`  
+Bridge: `docs/protocols/bridges/agent-self-edit-federation-gates.yml`  
+Registry: `data/protocols/agent-owned-docs.registry.json`
+
+Purpose:
+
+1. Allow safe self-edit updates to agent-owned docs (`SOUL.md`, memory docs).
+2. Enforce owner/path scope before writes.
+3. Reuse MCID lineage and federation gate chain for every write decision.
+
 ## Reference Packet Fragments
 
 Workstream signal fragment:
@@ -121,11 +133,12 @@ Purpose:
    - Canonical terminal identity (`twid`) and scope enforcement.
    - TWIP envelope trace block (`correlation_id`, `causation_id`).
    - Terminal macro-board for active/risk telemetry.
+   - Agent self-edit protocol with ownership/path gate controls.
 2. Partial:
-   - Handoff packet protocol currently uses
-     `tenantId/sessionKey/workflowId/channelId` but does not natively require a
-     full cumulative lineage object.
-   - Gate outcomes are not yet serialized in one shared cross-protocol record.
+   - Legacy `HandoffPacket` v1.0 data may exist without full MCID lineage
+     fields.
+   - Gate outcomes are logged in lifecycle events but still need dedicated UI
+     views in the task/audit surface.
 3. Integration priority:
    - enforce MCID at assignment publish + handoff ack boundaries.
    - mirror gate decisions into execution audit trail views.

@@ -58,6 +58,7 @@
  * - LOG_LEVEL: debug|info|warn|error (default: info)
  */
 
+import { randomUUID } from 'crypto';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { createClient } from 'redis';
@@ -1501,6 +1502,37 @@ Acknowledge by sending: [${agentId}] Ready for duty!
       return;
     }
     this.selfPromptCooldowns.set(cooldownKey, now);
+    const issuedAtIso = new Date(now).toISOString();
+    const tenantId = process.env.TENANT_ID || 'tnf-local';
+    const cumulativeId = {
+      spec: 'tnf/mcid/0.1',
+      id: randomUUID(),
+      scope: {
+        tenant_id: tenantId,
+        session_key: this.sessionId,
+        workflow_id: null,
+        channel_id: params.channel,
+      },
+      lineage: {
+        trace_id: null,
+        correlation_id: randomUUID(),
+        causation_id: null,
+        handoff_packet_id: null,
+        twid: null,
+        task_id: null,
+      },
+      federation: {
+        domain: tenantId,
+        route: ['master-clock', 'self-prompt'],
+        hop_count: 1,
+        gate_decisions: [
+          { gate: 'TENANT_SCOPE_GATE', decision: 'allow', at: issuedAtIso },
+          { gate: 'TRACE_CONTINUITY_GATE', decision: 'allow', at: issuedAtIso },
+          { gate: 'CHANNEL_MEMBERSHIP_GATE', decision: 'allow', at: issuedAtIso },
+        ],
+      },
+      issued_at: issuedAtIso,
+    };
 
     const originalMessage = {
       type: 'CHANNEL_MESSAGE',
@@ -1526,6 +1558,7 @@ Acknowledge by sending: [${agentId}] Ready for duty!
         eventType: 'SELF_PROMPT',
         data: {
           ...params,
+          cumulativeId,
           issuedAt: now,
         },
         originalMessage,
@@ -1543,6 +1576,7 @@ Acknowledge by sending: [${agentId}] Ready for duty!
         JSON.stringify({
           sessionId: this.sessionId,
           ...params,
+          cumulativeId,
           issuedAt: now,
         })
       );
@@ -1562,6 +1596,7 @@ Acknowledge by sending: [${agentId}] Ready for duty!
             prompt: params.prompt,
             reason: params.reason,
             channel: params.channel,
+            cumulativeId,
             ...(params.metadata || {}),
           },
           priority: 'high',

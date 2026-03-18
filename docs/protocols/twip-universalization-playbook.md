@@ -55,6 +55,10 @@ Use the same TWIP payload with thin transport wrappers:
 5. Federation Profile Carry master cumulative lineage object:
    `docs/protocols/schemas/tnf-master-cumulative-id.schema.json`
 
+6. Agent Self-Edit Profile Carry owner/path scoped doc-write packets:
+   `docs/protocols/schemas/tnf-agent-self-edit.schema.json` Gate bridge:
+   `docs/protocols/bridges/agent-self-edit-federation-gates.yml`
+
 ## 4) Translation Rules
 
 When moving between runtimes:
@@ -94,6 +98,7 @@ Required controls:
 3. GUI/title metadata redacted by default.
 4. Replay resistance using envelope nonce + created timestamp checks.
 5. Capability registration separated from identity mutation permissions.
+6. Agent self-edit writes must pass owner allowlist checks before execution.
 
 ## 7) TNF Operational Pattern
 

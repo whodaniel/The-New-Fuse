@@ -6,15 +6,13 @@ import {
   OnModuleDestroy,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import type {
-  HandoffAck,
-  HandoffPacket,
-} from '@the-new-fuse/relay-core/dist/protocol/handoff-protocol.js';
 import {
   HandoffAckInput,
   HandoffPacketInput,
-} from '@the-new-fuse/relay-core/dist/protocol/handoff-protocol.js';
-import { HandoffStoreService } from '@the-new-fuse/relay-core/dist/services/HandoffStoreService.js';
+  HandoffStoreService,
+  type HandoffAck,
+  type HandoffPacket,
+} from '@the-new-fuse/relay-core';
 import { UnifiedLedgerService } from '../modules/unified-ledger/unified-ledger.service';
 
 const REQUIRED_GATE_CHAIN = [
@@ -24,6 +22,8 @@ const REQUIRED_GATE_CHAIN = [
   'HIGH_RISK_RUNTIME_GATE',
   'CHANNEL_MEMBERSHIP_GATE',
 ] as const;
+
+type GateDecision = { gate: string; decision: 'allow' | 'deny' | 'quarantine' };
 
 @Injectable()
 export class AgentHandoffService implements OnModuleDestroy {
@@ -47,11 +47,21 @@ export class AgentHandoffService implements OnModuleDestroy {
     }
     this.assertPublishLineage(parsed, tenantId);
     this.assertGateChain(parsed.gateDecisions);
+    const lineageGateDecisions = parsed.cumulativeId.federation?.gate_decisions || [];
+    if (lineageGateDecisions.length > 0) {
+      this.assertGateChain(lineageGateDecisions);
+      this.assertGateConsistency(
+        parsed.gateDecisions,
+        lineageGateDecisions,
+        'cumulativeId.federation.gate_decisions'
+      );
+    }
     this.assertTerminalBinding(parsed);
     const packet = await this.store.publish(parsed);
     await this.emitLifecycleEvent('handoff_publish', {
       tenantId,
       packetId: packet.id,
+      packetVersion: packet.version,
       correlationId: packet.cumulativeId?.lineage?.correlation_id ?? null,
       fromAgentId: packet.fromAgentId,
       targetAgentIds: packet.targets.agentIds,
@@ -87,10 +97,21 @@ export class AgentHandoffService implements OnModuleDestroy {
       throw new BadRequestException('Packet tenant scope does not match tenantId');
     }
     this.assertAckLineage(parsed, packet, tenantId);
+    const ackGateDecisions = parsed.cumulativeId.federation?.gate_decisions || [];
+    if (ackGateDecisions.length > 0) {
+      this.assertGateChain(ackGateDecisions);
+      this.assertGateConsistency(
+        packet.gateDecisions || [],
+        ackGateDecisions,
+        'ack cumulativeId.federation.gate_decisions',
+        { allowMissingExpected: true }
+      );
+    }
     const ack = await this.store.acknowledge(parsed);
     await this.emitLifecycleEvent('handoff_ack', {
       tenantId,
       packetId: parsed.packetId,
+      packetVersion: packet.version,
       correlationId: parsed.cumulativeId?.lineage?.correlation_id ?? null,
       agentId: parsed.agentId,
       status: parsed.status,
@@ -98,6 +119,8 @@ export class AgentHandoffService implements OnModuleDestroy {
       ackedAt: ack.ackedAt,
       workflowId: packet.scope.workflowId,
       sessionKey: packet.scope.sessionKey,
+      packetGateDecisions: packet.gateDecisions || [],
+      ackGateDecisions,
     });
     return ack;
   }
@@ -176,9 +199,7 @@ export class AgentHandoffService implements OnModuleDestroy {
     }
   }
 
-  private assertGateChain(
-    gateDecisions: Array<{ gate: string; decision: 'allow' | 'deny' | 'quarantine' }>
-  ) {
+  private assertGateChain(gateDecisions: GateDecision[]) {
     const byGate = new Map(gateDecisions.map((entry) => [entry.gate, entry]));
     for (const requiredGate of REQUIRED_GATE_CHAIN) {
       const gate = byGate.get(requiredGate);
@@ -188,6 +209,37 @@ export class AgentHandoffService implements OnModuleDestroy {
       if (gate.decision !== 'allow') {
         throw new BadRequestException(
           `Federation gate ${requiredGate} is not allow (decision=${gate.decision})`
+        );
+      }
+    }
+  }
+
+  private assertGateConsistency(
+    expectedGateDecisions: GateDecision[],
+    candidateGateDecisions: GateDecision[],
+    candidateLabel: string,
+    options?: { allowMissingExpected?: boolean }
+  ) {
+    if (expectedGateDecisions.length === 0 || candidateGateDecisions.length === 0) {
+      return;
+    }
+
+    const allowMissingExpected = options?.allowMissingExpected ?? false;
+    const candidateByGate = new Map(candidateGateDecisions.map((entry) => [entry.gate, entry]));
+    for (const expected of expectedGateDecisions) {
+      const candidate = candidateByGate.get(expected.gate);
+      if (!candidate) {
+        if (allowMissingExpected) {
+          continue;
+        }
+        throw new BadRequestException(
+          `Missing gate ${expected.gate} in ${candidateLabel} while validating gate continuity`
+        );
+      }
+
+      if (candidate.decision !== expected.decision) {
+        throw new BadRequestException(
+          `Gate decision mismatch for ${expected.gate}: packet=${expected.decision}, ${candidateLabel}=${candidate.decision}`
         );
       }
     }

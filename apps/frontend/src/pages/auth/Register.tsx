@@ -123,6 +123,18 @@ const Register: React.FC = () => {
         )}
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          <div className="p-3 bg-blue-500/5 border border-blue-500/20 rounded-md mb-4">
+            <label className="block text-[10px] uppercase tracking-widest text-blue-400 font-bold mb-1">
+              Canonical Identity (Exacting Tracking)
+            </label>
+            <div className="font-mono text-xs text-blue-200/70 break-all">
+              user_{name.toLowerCase().replace(/[^a-z0-9]/g, '') || '...'}_[TIMESTAMP]
+            </div>
+            <p className="text-[9px] text-gray-500 mt-1">
+              Your unique protocol identifier for strict attribution and mesh sovereignty.
+            </p>
+          </div>
+
           <div>
             <label htmlFor="name" className="block text-sm text-slate-300">
               Name
