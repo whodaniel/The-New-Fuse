@@ -1,3 +1,5 @@
+import { fetchTerminalGraph } from '@/services/terminalGraph.service';
+import type { TerminalGraphResponse } from '@/types/terminal-graph';
 import {
   AlertCircle,
   ArrowLeft,
@@ -10,8 +12,6 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchTerminalGraph } from '@/services/terminalGraph.service';
-import type { TerminalGraphResponse } from '@/types/terminal-graph';
 
 const DEFAULT_LIMIT = 200;
 const NODE_COLUMN_ORDER = ['tenant', 'host', 'terminal', 'pane', 'process', 'runtime'] as const;
@@ -176,9 +176,7 @@ const TerminalGraphPage: React.FC = () => {
           </div>
           <div className="rounded-xl border border-cyan-400/25 bg-cyan-500/10 px-4 py-3 text-xs text-cyan-100">
             <div className="font-semibold uppercase tracking-[0.2em]">Safety Default</div>
-            <div className="mt-1">
-              Commands remain redacted unless explicitly requested.
-            </div>
+            <div className="mt-1">Commands remain redacted unless explicitly requested.</div>
           </div>
         </div>
 
@@ -253,7 +251,9 @@ const TerminalGraphPage: React.FC = () => {
           {summaryItems.map((item) => (
             <div key={item.id} className="rounded-xl border border-white/10 bg-slate-900/60 p-4">
               <div className="flex items-center justify-between">
-                <span className="text-xs uppercase tracking-[0.2em] text-slate-400">{item.label}</span>
+                <span className="text-xs uppercase tracking-[0.2em] text-slate-400">
+                  {item.label}
+                </span>
                 <item.icon className="h-4 w-4 text-cyan-200" />
               </div>
               <div className="mt-2 text-2xl font-semibold text-white">{item.value}</div>
@@ -265,19 +265,29 @@ const TerminalGraphPage: React.FC = () => {
           <div className="grid gap-4 md:grid-cols-2">
             <div>
               <div className="text-xs uppercase tracking-[0.2em] text-slate-400">Generated</div>
-              <div className="mt-1 text-sm text-slate-200">{formatTimestamp(data?.generatedAt)}</div>
+              <div className="mt-1 text-sm text-slate-200">
+                {formatTimestamp(data?.generatedAt)}
+              </div>
             </div>
             <div>
               <div className="text-xs uppercase tracking-[0.2em] text-slate-400">Snapshot Path</div>
-              <div className="mt-1 break-all text-sm text-slate-200">{data?.source.snapshotPath || 'n/a'}</div>
+              <div className="mt-1 break-all text-sm text-slate-200">
+                {data?.source.snapshotPath || 'n/a'}
+              </div>
             </div>
             <div>
               <div className="text-xs uppercase tracking-[0.2em] text-slate-400">Mirrored At</div>
-              <div className="mt-1 text-sm text-slate-200">{formatTimestamp(data?.source.mirroredAt)}</div>
+              <div className="mt-1 text-sm text-slate-200">
+                {formatTimestamp(data?.source.mirroredAt)}
+              </div>
             </div>
             <div>
-              <div className="text-xs uppercase tracking-[0.2em] text-slate-400">Registry Agents Indexed</div>
-              <div className="mt-1 text-sm text-slate-200">{data?.registryContext.indexedAgents ?? 0}</div>
+              <div className="text-xs uppercase tracking-[0.2em] text-slate-400">
+                Registry Agents Indexed
+              </div>
+              <div className="mt-1 text-sm text-slate-200">
+                {data?.registryContext.indexedAgents ?? 0}
+              </div>
             </div>
           </div>
         </section>
@@ -286,7 +296,7 @@ const TerminalGraphPage: React.FC = () => {
           <div className="mb-3 flex items-center justify-between gap-3">
             <div className="text-sm text-slate-300">Topology Canvas</div>
             <div className="text-xs text-slate-500">
-              Column layout: tenant -> host -> terminal -> pane/process/runtime
+              Column layout: tenant to host to terminal to pane/process/runtime
             </div>
           </div>
           <div className="overflow-x-auto rounded-xl border border-white/10 bg-slate-950 p-2">
@@ -358,7 +368,9 @@ const TerminalGraphPage: React.FC = () => {
                     <td className="px-3 py-2 font-mono text-xs text-cyan-100">
                       {String(terminal.twid || 'n/a')}
                     </td>
-                    <td className="px-3 py-2 text-slate-200">{terminal.scope?.tenant_id || 'n/a'}</td>
+                    <td className="px-3 py-2 text-slate-200">
+                      {terminal.scope?.tenant_id || 'n/a'}
+                    </td>
                     <td className="px-3 py-2 font-mono text-xs text-slate-200">
                       {terminal.scope?.host_id || 'n/a'}
                     </td>
