@@ -101,3 +101,15 @@ capability catalog alignment
    - `/visualizations/terminals`
    - `/terminals`
 4. Added frontend service/types for reusable terminal graph consumption.
+
+## 9) Production Route Wiring Fix (Post-Deploy)
+
+1. Identified runtime 404 on `https://thenewfuse.com/visualizations/terminals`
+   despite feature code existing.
+2. Root cause: `ComprehensiveRouter` (active production router) did not include
+   terminal graph routes, even though `core.routes.tsx` did.
+3. Added terminal graph routes to `ComprehensiveRouter`:
+   - `/visualizations/terminals`
+   - `/terminals`
+4. Added these paths to `isPublicRoute` handling so public rendering/navigation
+   behavior matches `/visualizations`.
