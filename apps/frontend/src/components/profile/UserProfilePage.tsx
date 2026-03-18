@@ -336,7 +336,11 @@ const UserProfilePage: React.FC = () => {
                   {user?.name?.charAt(0) || user?.email?.charAt(0) || 'U'}
                 </div>
               </div>
-              <button className="absolute bottom-0 right-0 w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-500 transition-all duration-200 opacity-0 group-hover:opacity-100 shadow-none">
+              <button
+                aria-label="Upload avatar"
+                title="Upload avatar"
+                className="absolute bottom-0 right-0 w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-500 transition-all duration-200 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 focus-visible:ring-blue-500"
+              >
                 <Camera className="w-5 h-5 text-white" />
               </button>
             </div>

@@ -24,3 +24,6 @@ have both `aria-label` and `title` attributes implemented (e.g.,
 ## 2025-03-10 - ARIA Labels on Historical Message Action Buttons
 **Learning:** Icon-only action buttons in chat history interactions (e.g., Edit, Save Changes, Cancel, and Play TTS) often lack descriptive `aria-label` or `title` attributes, making them confusing for screen reader users and those relying on native tooltips.
 **Action:** When working on chat interfaces or action bars with icon-only buttons, ensure that every action clearly states what it does using `aria-label` and `title` attributes. Dynamic buttons, like TTS, should also update their `aria-label` based on state (e.g., 'Play text-to-speech' vs 'Stop text-to-speech').
+## 2024-03-14 - Keyboard Visibility on Hover Elements
+**Learning:** When adding `focus-visible` ring styling to interactive elements (like icon buttons) that are hidden by default using Tailwind's `opacity-0` and revealed on hover (e.g., `group-hover:opacity-100`), the focus ring and button will remain invisible during keyboard navigation unless the opacity is also explicitly overridden.
+**Action:** Always include `focus-visible:opacity-100` alongside `focus-visible:ring-*` classes when making hidden-on-hover elements keyboard accessible.
