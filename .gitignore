@@ -179,6 +179,7 @@ apps/electron-desktop/out/
 # AI-generated content and temporary data
 data/video-reports/
 data/video-transcripts/
+data/protocols/*.snapshot.json
 data/*-state.json
 data/AI_Knowledge_Base.md
 data/IMPLEMENTATION-PLAN.md

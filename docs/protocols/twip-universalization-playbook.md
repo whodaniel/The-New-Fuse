@@ -44,6 +44,7 @@ Use the same TWIP payload with thin transport wrappers:
 
 2. HTTP/OpenAPI Profile `POST /v0/identity:publish|resolve|revoke`
    `POST /v0/policy:evaluate`
+   Graph Projection: `GET /api/terminals/graph` for read-only topology views.
 
 3. Event Bus Profile Envelope body on topic `twip.identity.events` with
    immutable `trace` block.

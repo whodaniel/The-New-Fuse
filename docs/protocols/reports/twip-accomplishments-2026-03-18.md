@@ -89,3 +89,15 @@ capability catalog alignment
    operations.
 4. Relay ESM runtime blocker fixed (`__dirname` initialization and main-module
    guard).
+
+## 8) Terminal Graph Surface Completed
+
+1. Added API endpoint for holistic graph projection:
+   - `GET /api/terminals/graph`
+2. Added authorization guardrail:
+   - authenticated users can access redacted graph
+   - `includeCommands=true` requires admin/system level
+3. Added frontend visualization routes:
+   - `/visualizations/terminals`
+   - `/terminals`
+4. Added frontend service/types for reusable terminal graph consumption.

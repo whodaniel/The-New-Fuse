@@ -101,14 +101,40 @@ Security:
 5. `envelope_expired`
 6. `sent_at_in_future`
 
-## 7) CI/Conformance Commands
+## 7) Terminal Graph API and UI
+
+Backend API:
+
+1. Endpoint: `GET /api/terminals/graph`
+2. Query params:
+   - `tenantId` (optional tenant filter)
+   - `limit` (default `200`, max `1000`)
+   - `includeProcessNodes` (default `true`)
+   - `includeCommands` (default `false`)
+3. Auth:
+   - endpoint requires authenticated `user` level
+   - `includeCommands=true` requires `admin` or `system` authorization level
+
+UI entry points:
+
+1. `/visualizations/terminals`
+2. `/terminals`
+3. API contract reference: `docs/protocols/twip-terminal-graph-api.md`
+
+Safety behavior:
+
+1. Command samples are redacted by default.
+2. Tenant filter is explicit and reflected in response `safety.tenantScopedFilter`.
+3. Graph projection is read-only and generated from snapshot + registry metadata.
+
+## 8) CI/Conformance Commands
 
 ```bash
 node scripts/validate-protocol-schemas.cjs
 node scripts/protocols/twip-conformance.cjs
 ```
 
-## 8) Troubleshooting
+## 9) Troubleshooting
 
 1. Symptom: inventory returns zero terminals on macOS. Action: verify relay
    includes `sess` fallback in `ps` parsing (already implemented).

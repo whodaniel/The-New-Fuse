@@ -1740,7 +1740,7 @@ class TNFRelayMCPServer {
       processes.find((p) => p.pid === p.sid) ||
       processes[0];
 
-    const sid = shellProc?.sid || processes[0]?.sid || 0;
+    const sid = shellProc?.sid ?? processes[0]?.sid ?? 0;
     const twid = this.hashToUuidV5(`${hostId}|${tenantId}|${tty}|${sid}`);
     const multiplexer = tmuxInfo || null;
     const scopePaneId =
@@ -1763,9 +1763,9 @@ class TNFRelayMCPServer {
         session_key: `tty:${tty}`,
       },
       process: {
-        shell_pid: shellProc?.pid || null,
-        pgid: shellProc?.pgid || null,
-        sid: shellProc?.sid || null,
+        shell_pid: shellProc?.pid ?? null,
+        pgid: shellProc?.pgid ?? null,
+        sid: shellProc?.sid ?? null,
         process_count: processes.length,
       },
       pty: {
@@ -1783,16 +1783,16 @@ class TNFRelayMCPServer {
         },
         {
           key: 'shell_pid',
-          value: shellProc?.pid || null,
+          value: shellProc?.pid ?? null,
           source: 'process',
-          confidence: shellProc?.pid ? 1.0 : 0.6,
+          confidence: Number.isFinite(shellProc?.pid) ? 1.0 : 0.6,
           observed_at: observedAt,
         },
         {
           key: 'sid',
-          value: shellProc?.sid || null,
+          value: shellProc?.sid ?? null,
           source: 'process',
-          confidence: shellProc?.sid ? 1.0 : 0.6,
+          confidence: Number.isFinite(shellProc?.sid) ? 1.0 : 0.6,
           observed_at: observedAt,
         },
         {

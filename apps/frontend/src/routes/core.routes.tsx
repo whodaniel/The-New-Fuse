@@ -12,7 +12,6 @@ import { Navigate, Route } from 'react-router-dom';
 import { LEGACY_REDIRECTS } from '../config/legacyRedirects';
 
 // Core Components
-const AllPages = lazy(() => import('../pages/AllPages'));
 const CommunityHubPage = lazy(() => import('../pages/Community/CommunityHub'));
 const MembershipPage = lazy(() => import('../pages/Membership'));
 const SupportPage = lazy(() => import('../pages/Support'));
@@ -26,6 +25,7 @@ const BlogPage = lazy(() => import('../pages/Blog').then((module) => ({ default:
 const OnboardingPreviewPage = lazy(() => import('../pages/preview/OnboardingPreview'));
 const NotFound = lazy(() => import('../pages/NotFound'));
 const VisualizationsPage = lazy(() => import('../pages/Visualizations'));
+const TerminalGraphPage = lazy(() => import('../pages/TerminalGraph'));
 const UnauthorizedPage = lazy(() => import('../pages/Unauthorized'));
 
 const RedirectToStatic = ({ to }: { to: string }) => {
@@ -81,6 +81,12 @@ export const coreRoutes: ReactElement[] = [
 
   // Visualizations
   <Route key="visualizations" path="/visualizations" element={<VisualizationsPage />} />,
+  <Route
+    key="terminal-graph-visualization"
+    path="/visualizations/terminals"
+    element={<TerminalGraphPage />}
+  />,
+  <Route key="terminal-graph" path="/terminals" element={<TerminalGraphPage />} />,
 
   // Connect/Extension
   <Route key="connect" path="/connect" element={<ConnectExtensionPage />} />,
@@ -118,6 +124,8 @@ export const PUBLIC_ROUTES = [
   '/blog',
   '/marketplace',
   '/visualizations',
+  '/visualizations/terminals',
+  '/terminals',
   '/product-map',
   '/capabilities',
   '/design-system',
