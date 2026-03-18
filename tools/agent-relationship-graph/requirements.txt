@@ -183,7 +183,7 @@ protobuf==5.29.6
 psutil==6.0.0
 ptyprocess==0.7.0
 pyarrow==17.0.0
-pyasn1==0.6.2
+pyasn1==0.6.3
 pyasn1_modules==0.4.1
 pybrowsers==0.6.0
 pycodestyle==2.12.1
