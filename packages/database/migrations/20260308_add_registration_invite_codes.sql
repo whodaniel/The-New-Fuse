@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS "registration_invite_codes" (
   "used_count" integer NOT NULL DEFAULT 0,
   "expires_at" timestamp,
   "last_used_at" timestamp,
-  "created_by_user_id" text REFERENCES "users"("id") ON DELETE SET NULL,
+  "created_by_user_id" uuid REFERENCES "users"("id") ON DELETE SET NULL,
   "metadata" jsonb,
   "created_at" timestamp NOT NULL DEFAULT now(),
   "updated_at" timestamp NOT NULL DEFAULT now()

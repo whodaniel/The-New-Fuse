@@ -1416,12 +1416,11 @@ function AppContent() {
 
     if (accessResolution) {
       if (!accessResolution.access?.canPlay) {
-        const steps = Array.isArray(accessResolution.nextActions)
-          ? accessResolution.nextActions
-              .slice(0, 4)
-              .map((action, index) => `${index + 1}. ${action.label}`)
-          : [];
-        throw new Error([accessResolution.pathSummary, ...steps].filter(Boolean).join('\n'));
+        const error = new Error(accessResolution.pathSummary) as Error & {
+          accessResolution?: CommunityAccessResolution;
+        };
+        error.accessResolution = accessResolution;
+        throw error;
       }
 
       resolvedMembership = {

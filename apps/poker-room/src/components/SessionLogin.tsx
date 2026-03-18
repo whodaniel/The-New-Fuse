@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
-import { Shield } from 'lucide-react';
+import { ArrowUpRight, CheckCircle2, Shield } from 'lucide-react';
 import React, { useState } from 'react';
+import { type CommunityAccessResolution } from '../api';
 import { PLAYER_AVATARS } from '../data/avatars';
 import { type PlayerControlMode } from '../utils/playerProfiles';
 
@@ -19,20 +20,33 @@ export default function SessionLogin({ onLogin }: SessionLoginProps) {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
+  const [accessResolution, setAccessResolution] = useState<CommunityAccessResolution | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (username.length < 3 || username.length > 16) {
       setError('Callsign must be 3-16 characters.');
+      setAccessResolution(null);
       return;
     }
     try {
       setError('');
+      setAccessResolution(null);
       const avatar = AVATARS[0];
       const controlMode: PlayerControlMode = 'human';
       await onLogin(username.trim(), avatar, email.trim() || undefined, controlMode);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unable to initialize protocol.');
+      const message = err instanceof Error ? err.message : 'Unable to initialize protocol.';
+      const resolved =
+        err &&
+        typeof err === 'object' &&
+        'accessResolution' in err &&
+        err.accessResolution &&
+        typeof err.accessResolution === 'object'
+          ? (err.accessResolution as CommunityAccessResolution)
+          : null;
+      setAccessResolution(resolved);
+      setError(message);
     }
   };
 
@@ -71,6 +85,48 @@ export default function SessionLogin({ onLogin }: SessionLoginProps) {
             <span className="text-[10px] font-black text-slate-600">OR ANONYMOUS ACCESS</span>
             <div className="h-px flex-1 bg-white/5" />
           </div>
+
+          {accessResolution && !accessResolution.access.canPlay ? (
+            <div className="rounded-2xl border border-cyan-500/20 bg-cyan-950/20 p-4 space-y-3">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-cyan-400">
+                    Path To Play
+                  </p>
+                  <p className="mt-1 text-sm text-slate-200">{accessResolution.pathSummary}</p>
+                </div>
+                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-cyan-400" />
+              </div>
+
+              <div className="space-y-2">
+                {accessResolution.nextActions.slice(0, 4).map((action, index) => (
+                  <div
+                    key={`${action.code}-${index}`}
+                    className="rounded-xl border border-white/5 bg-black/30 px-3 py-3"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-xs font-black uppercase tracking-wider text-white">
+                          {index + 1}. {action.label}
+                        </p>
+                        <p className="mt-1 text-xs text-slate-400">{action.description}</p>
+                      </div>
+                      {action.href ? (
+                        <button
+                          type="button"
+                          onClick={() => window.open(action.href, '_blank', 'noopener,noreferrer')}
+                          className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-cyan-500/40 px-2 py-1 text-[10px] font-black uppercase tracking-wider text-cyan-300 hover:bg-cyan-500/10"
+                        >
+                          Open
+                          <ArrowUpRight className="h-3 w-3" />
+                        </button>
+                      ) : null}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
 
           <div>
             <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">
