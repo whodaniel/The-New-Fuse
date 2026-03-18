@@ -42,11 +42,42 @@ type SearchPolicyResult<T extends SearchableResource> = {
   meta: ResourceSearchMeta;
 };
 
+type CachedTraitPlanEntry = {
+  expiresAt: number;
+  plan: TraitScreenPlan | null;
+};
+
+type TraitEndpointCircuitState = {
+  failureCount: number;
+  openUntil: number;
+};
+
 @Injectable()
 export class ResourceSearchPolicyService {
   private readonly logger = new Logger(ResourceSearchPolicyService.name);
+  private readonly traitPlanCache = new Map<string, CachedTraitPlanEntry>();
+  private readonly traitEndpointCircuit = new Map<string, TraitEndpointCircuitState>();
+  private readonly traitPlanCacheTtlMs: number;
+  private readonly traitCircuitFailureThreshold: number;
+  private readonly traitCircuitCooldownMs: number;
 
-  constructor(private readonly configService: ConfigService) {}
+  constructor(private readonly configService: ConfigService) {
+    this.traitPlanCacheTtlMs = this.readPositiveInt(
+      'RESOURCE_TRAIT_PLAN_CACHE_TTL_MS',
+      30_000,
+      500
+    );
+    this.traitCircuitFailureThreshold = this.readPositiveInt(
+      'RESOURCE_TRAIT_CIRCUIT_BREAKER_THRESHOLD',
+      3,
+      1
+    );
+    this.traitCircuitCooldownMs = this.readPositiveInt(
+      'RESOURCE_TRAIT_CIRCUIT_BREAKER_COOLDOWN_MS',
+      30_000,
+      1_000
+    );
+  }
 
   async applySearchPolicy<T extends SearchableResource>(
     resources: T[],
@@ -180,6 +211,71 @@ export class ResourceSearchPolicyService {
     return Array.from(new Set(urls.filter(Boolean)));
   }
 
+  private readPositiveInt(key: string, fallback: number, min: number): number {
+    const rawValue = this.configService.get<string>(key);
+    const parsed = Number(rawValue);
+    if (!Number.isFinite(parsed) || parsed < min) {
+      return fallback;
+    }
+    return Math.floor(parsed);
+  }
+
+  private buildTraitPlanCacheKey(inquiry: string, limit: number, threshold: number): string {
+    return JSON.stringify({
+      inquiry: this.normalizeTerm(inquiry),
+      limit: Number(limit || 0),
+      threshold: Number(threshold || 0),
+    });
+  }
+
+  private getCachedTraitPlan(cacheKey: string): TraitScreenPlan | null | undefined {
+    const cached = this.traitPlanCache.get(cacheKey);
+    if (!cached) return undefined;
+    if (cached.expiresAt <= Date.now()) {
+      this.traitPlanCache.delete(cacheKey);
+      return undefined;
+    }
+    return cached.plan;
+  }
+
+  private setCachedTraitPlan(cacheKey: string, plan: TraitScreenPlan | null): void {
+    this.traitPlanCache.set(cacheKey, {
+      plan,
+      expiresAt: Date.now() + this.traitPlanCacheTtlMs,
+    });
+  }
+
+  private isTraitEndpointCircuitOpen(endpoint: string): boolean {
+    const state = this.traitEndpointCircuit.get(endpoint);
+    if (!state) return false;
+    if (state.openUntil <= Date.now()) {
+      this.traitEndpointCircuit.delete(endpoint);
+      return false;
+    }
+    return true;
+  }
+
+  private registerTraitEndpointSuccess(endpoint: string): void {
+    this.traitEndpointCircuit.delete(endpoint);
+  }
+
+  private registerTraitEndpointFailure(endpoint: string): boolean {
+    const state = this.traitEndpointCircuit.get(endpoint) || {
+      failureCount: 0,
+      openUntil: 0,
+    };
+    state.failureCount += 1;
+
+    const shouldOpenCircuit = state.failureCount >= this.traitCircuitFailureThreshold;
+    if (shouldOpenCircuit) {
+      state.openUntil = Date.now() + this.traitCircuitCooldownMs;
+      state.failureCount = 0;
+    }
+
+    this.traitEndpointCircuit.set(endpoint, state);
+    return shouldOpenCircuit;
+  }
+
   private async fetchTraitScreenPlan(
     inquiry: string,
     filter: ResourceSearchRequest
@@ -194,31 +290,46 @@ export class ResourceSearchPolicyService {
       includeChunks: false,
       onlySystem: false,
     };
+    const cacheKey = this.buildTraitPlanCacheKey(inquiry, payload.limit, payload.threshold);
+    const cachedPlan = this.getCachedTraitPlan(cacheKey);
+    if (cachedPlan !== undefined) {
+      return cachedPlan;
+    }
 
     for (const endpoint of this.getTraitScreenUrls()) {
+      if (this.isTraitEndpointCircuitOpen(endpoint)) {
+        this.logger.debug(`Trait screen endpoint circuit open (${endpoint}); skipping`);
+        continue;
+      }
+
       try {
         const response = await axios.post<TraitScreenResponse>(endpoint, payload, {
           timeout: 2500,
         });
+        this.registerTraitEndpointSuccess(endpoint);
 
         const plan = response.data?.resourceQueryPlan;
         if (!plan) continue;
 
-        return {
+        const normalizedPlan: TraitScreenPlan = {
           requiredAgentIds: this.toUniqueTerms(plan.requiredAgentIds || []),
           traitFilters: this.toUniqueTerms(plan.traitFilters || []),
           confidence: plan.confidence || 'low',
-          fallbackToBroadSearch: Boolean(plan.fallbackToBroadSearch),
+          fallbackToBroadSearch: plan.fallbackToBroadSearch !== false,
         };
+        this.setCachedTraitPlan(cacheKey, normalizedPlan);
+        return normalizedPlan;
       } catch (error) {
+        const openedCircuit = this.registerTraitEndpointFailure(endpoint);
         this.logger.debug(
           `Trait screen endpoint unavailable (${endpoint}): ${
             error instanceof Error ? error.message : String(error)
-          }`
+          }${openedCircuit ? ' [circuit opened]' : ''}`
         );
       }
     }
 
+    this.setCachedTraitPlan(cacheKey, null);
     return null;
   }
 

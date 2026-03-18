@@ -8,6 +8,7 @@ import {
   ResourceSearchEnvelope,
   ResourceSearchProtocolRequestEnvelope,
   ResourceSearchProtocolResponseEnvelope,
+  ResourceSearchResult,
   ResourceShare,
   ResourceStats,
   ResourceTraitScreenMeta,
@@ -25,6 +26,7 @@ type CachedSearchEntry = {
 };
 
 export class ResourcesService {
+  // Backward-compatibility field for callers that still read last trait metadata.
   private lastTraitSearchMeta: ResourceTraitScreenMeta | null = null;
   private searchCache = new Map<string, CachedSearchEntry>();
 
@@ -61,6 +63,16 @@ export class ResourcesService {
     }
 
     return `msg_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+  }
+
+  private getAuthHeaders(): Record<string, string> {
+    if (typeof window === 'undefined') return {};
+    const token =
+      window.localStorage.getItem('auth_token') ||
+      window.localStorage.getItem('authToken') ||
+      window.localStorage.getItem('token');
+
+    return token ? { Authorization: `Bearer ${token}` } : {};
   }
 
   private mapCategory(category: string): Resource['category'] {
@@ -301,9 +313,7 @@ export class ResourcesService {
     };
   }
 
-  private parseSearchResponse(
-    data: unknown
-  ): { items: Resource[]; traitScreen: ResourceTraitScreenMeta | null } | null {
+  private parseSearchResponse(data: unknown): ResourceSearchResult | null {
     if (Array.isArray(data)) {
       return { items: data as Resource[], traitScreen: null };
     }
@@ -428,14 +438,17 @@ export class ResourcesService {
       .map((item) => this.toTemplate(item));
   }
 
-  // Search resources
-  async searchResources(filter: Partial<ResourceFilter>): Promise<Resource[]> {
+  // Search resources and return items + trait metadata together.
+  async searchResourcesWithMeta(filter: Partial<ResourceFilter>): Promise<ResourceSearchResult> {
     this.lastTraitSearchMeta = null;
     const cacheKey = this.buildSearchCacheKey(filter);
     const cached = this.getCachedSearch(cacheKey);
     if (cached) {
       this.lastTraitSearchMeta = cached.traitScreen;
-      return cached.items;
+      return {
+        items: cached.items,
+        traitScreen: cached.traitScreen,
+      };
     }
 
     try {
@@ -451,7 +464,7 @@ export class ResourcesService {
           items: parsed.items,
           traitScreen: parsed.traitScreen,
         });
-        return parsed.items;
+        return parsed;
       }
     } catch {
       // Fallback to marketplace-backed local filtering.
@@ -463,7 +476,17 @@ export class ResourcesService {
       items: fallbackItems,
       traitScreen: null,
     });
-    return fallbackItems;
+    this.lastTraitSearchMeta = null;
+    return {
+      items: fallbackItems,
+      traitScreen: null,
+    };
+  }
+
+  // Backward-compatible resources-only search result.
+  async searchResources(filter: Partial<ResourceFilter>): Promise<Resource[]> {
+    const result = await this.searchResourcesWithMeta(filter);
+    return result.items;
   }
 
   async searchResourcesProtocol(
@@ -506,13 +529,33 @@ export class ResourcesService {
   }
 
   // Toggle favorite
-  async toggleFavorite(resourceId: string, userId: string): Promise<void> {
-    await axios.post(`${API_BASE}/resources/${resourceId}/favorite`, { userId });
+  async toggleFavorite(
+    resourceId: string,
+    userId?: string
+  ): Promise<{ success: boolean; resourceId: string; userId: string; favorite: boolean }> {
+    const response = await axios.post(
+      `${API_BASE}/resources/${resourceId}/favorite`,
+      userId ? { userId } : {},
+      {
+        headers: this.getAuthHeaders(),
+      }
+    );
+    return response.data as {
+      success: boolean;
+      resourceId: string;
+      userId: string;
+      favorite: boolean;
+    };
   }
 
   // Share resource with agent
-  async shareResource(share: Omit<ResourceShare, 'sharedAt'>): Promise<void> {
-    await axios.post(`${API_BASE}/resources/share`, share);
+  async shareResource(
+    share: Omit<ResourceShare, 'sharedAt'>
+  ): Promise<{ success: boolean; share: ResourceShare & { id: string } }> {
+    const response = await axios.post(`${API_BASE}/resources/share`, share, {
+      headers: this.getAuthHeaders(),
+    });
+    return response.data as { success: boolean; share: ResourceShare & { id: string } };
   }
 
   // Execute/Install skill

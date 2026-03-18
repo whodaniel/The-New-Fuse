@@ -1,6 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { GlassCard, PremiumButton } from '@/components/ui/premium';
+import { useAuth } from '@/providers/AuthProvider';
 import { resourcesService } from '@/services/resources.service';
 import { Resource, ResourceCategory, ResourceType } from '@/types/resources';
 import { useQuery } from '@tanstack/react-query';
@@ -52,6 +53,7 @@ const SORT_OPTIONS: Array<'popular' | 'recent' | 'rating' | 'name'> = [
 ];
 
 export default function ResourceSearch() {
+  const { user } = useAuth();
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState<ResourceType | 'all'>('all');
@@ -80,11 +82,12 @@ export default function ResourceSearch() {
   };
 
   // Search resources via API (supports trait-screen metadata)
-  const { data: filteredResources = [], isLoading } = useQuery({
+  const { data: searchResult, isLoading } = useQuery({
     queryKey: ['resource-search', searchFilter],
-    queryFn: () => resourcesService.searchResources(searchFilter),
+    queryFn: () => resourcesService.searchResourcesWithMeta(searchFilter),
   });
-  const traitMeta = resourcesService.getLastTraitSearchMeta();
+  const filteredResources = searchResult?.items || [];
+  const traitMeta = searchResult?.traitScreen || null;
   const hasMeaningfulTraitDetails = Boolean(
     traitMeta &&
     (traitMeta.requiredAgentIds.length > 0 ||
@@ -145,8 +148,8 @@ export default function ResourceSearch() {
 
   const handleFavorite = async (resource: Resource) => {
     try {
-      await resourcesService.toggleFavorite(resource.id, 'current-user-id');
-      toast.success('Added to favorites!');
+      const result = await resourcesService.toggleFavorite(resource.id, user?.id);
+      toast.success(result.favorite ? 'Added to favorites!' : 'Removed from favorites');
     } catch {
       toast.error('Failed to add to favorites');
     }
@@ -450,8 +453,8 @@ export default function ResourceSearch() {
                     </PremiumButton>
                     <div className="flex gap-1">
                       <PremiumButton
-                        size="icon"
-                        variant="glass"
+                        size="sm"
+                        variant="ghost"
                         className="h-9 w-9"
                         onClick={(e: MouseEvent) => {
                           e.stopPropagation();
@@ -461,8 +464,8 @@ export default function ResourceSearch() {
                         <Heart className="w-4 h-4 text-gray-400 hover:text-red-500 hover:fill-current transition-colors" />
                       </PremiumButton>
                       <PremiumButton
-                        size="icon"
-                        variant="glass"
+                        size="sm"
+                        variant="ghost"
                         className="h-9 w-9"
                         onClick={(e: MouseEvent) => {
                           e.stopPropagation();

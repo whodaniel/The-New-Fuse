@@ -29,7 +29,7 @@ describe('ResourcesService.searchResources', () => {
     const service = new ResourcesService();
     mockedAxios.post.mockResolvedValueOnce({ data: [] });
 
-    const result = await service.searchResources({
+    const result = await service.searchResourcesWithMeta({
       search: 'none',
       type: 'all',
       category: 'all',
@@ -38,8 +38,9 @@ describe('ResourcesService.searchResources', () => {
       sortBy: 'popular',
     });
 
-    expect(Array.isArray(result)).toBe(true);
-    expect(result).toEqual([]);
+    expect(Array.isArray(result.items)).toBe(true);
+    expect(result.items).toEqual([]);
+    expect(result.traitScreen).toBeNull();
     expect(service.getLastTraitSearchMeta()).toBeNull();
   });
 
@@ -78,7 +79,7 @@ describe('ResourcesService.searchResources', () => {
       },
     });
 
-    const result = await service.searchResources({
+    const result = await service.searchResourcesWithMeta({
       search: 'alpha',
       type: 'all',
       category: 'all',
@@ -87,7 +88,15 @@ describe('ResourcesService.searchResources', () => {
       sortBy: 'popular',
     });
 
-    expect(result).toHaveLength(1);
+    expect(result.items).toHaveLength(1);
+    expect(result.traitScreen).toMatchObject({
+      enabled: true,
+      used: true,
+      confidence: 'high',
+      traitFilters: ['alpha'],
+      beforeTraitCount: 10,
+      afterTraitCount: 1,
+    });
     expect(service.getLastTraitSearchMeta()).toMatchObject({
       enabled: true,
       used: true,
@@ -130,12 +139,50 @@ describe('ResourcesService.searchResources', () => {
       sortBy: 'popular' as const,
     };
 
-    const first = await service.searchResources(filter);
-    const second = await service.searchResources(filter);
+    const first = await service.searchResourcesWithMeta(filter);
+    const second = await service.searchResourcesWithMeta(filter);
 
-    expect(first).toHaveLength(1);
-    expect(second).toHaveLength(1);
+    expect(first.items).toHaveLength(1);
+    expect(second.items).toHaveLength(1);
     expect(mockedAxios.post).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps legacy items-only return contract via searchResources()', async () => {
+    const service = new ResourcesService();
+    mockedAxios.post.mockResolvedValueOnce({
+      data: {
+        items: [
+          {
+            id: 'res-legacy',
+            name: 'Legacy Resource',
+            description: 'desc',
+            type: 'skill',
+            category: 'ai',
+            tags: ['alpha'],
+            author: 'tester',
+            version: '1.0.0',
+            downloads: 1,
+            rating: 4.5,
+            reviews: 1,
+            featured: false,
+            createdAt: '2026-03-18T00:00:00Z',
+            updatedAt: '2026-03-18T00:00:00Z',
+          },
+        ],
+      },
+    });
+
+    const result = await service.searchResources({
+      search: 'legacy',
+      type: 'all',
+      category: 'all',
+      tags: [],
+      featured: false,
+      sortBy: 'popular',
+    });
+
+    expect(result).toHaveLength(1);
+    expect(result[0]?.id).toBe('res-legacy');
   });
 
   it('supports protocol envelope search and captures trait metadata from payload', async () => {

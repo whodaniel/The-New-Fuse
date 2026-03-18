@@ -2,6 +2,7 @@
 import { BaseBrowser, FilterField, SortOption } from '@/components/browsers';
 import { Badge } from '@/components/ui/badge';
 import { GlassCard, PremiumButton } from '@/components/ui/premium';
+import { useAuth } from '@/providers/AuthProvider';
 import { resourcesService } from '@/services/resources.service';
 import { ClaudeSkill, SkillExample } from '@/types/resources';
 import { useQuery } from '@tanstack/react-query';
@@ -11,6 +12,7 @@ import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 
 export default function SkillsBrowser() {
+  const { user } = useAuth();
   const [selectedSkill, setSelectedSkill] = useState<ClaudeSkill | null>(null);
 
   const { data: skills = [], isLoading } = useQuery({
@@ -51,8 +53,8 @@ export default function SkillsBrowser() {
         break;
       case 'favorite':
         try {
-          await resourcesService.toggleFavorite(skill.id, 'current-user-id');
-          toast.success('Added to favorites!');
+          const result = await resourcesService.toggleFavorite(skill.id, user?.id);
+          toast.success(result.favorite ? 'Added to favorites!' : 'Removed from favorites');
         } catch {
           toast.error('Failed to add to favorites');
         }

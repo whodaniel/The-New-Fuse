@@ -98,6 +98,11 @@ export type ResourceSearchProtocolRequestEnvelope = SharedResourceSearchProtocol
 export type ResourceSearchProtocolResponseEnvelope =
   SharedResourceSearchProtocolResponseEnvelope<Resource>;
 
+export interface ResourceSearchResult {
+  items: Resource[];
+  traitScreen: ResourceTraitScreenMeta | null;
+}
+
 export interface ResourceStats {
   totalResources: number;
   totalSkills: number;
@@ -115,7 +120,7 @@ export interface FavoriteResource {
 
 export interface ResourceShare {
   resourceId: string;
-  fromUserId: string;
+  fromUserId?: string;
   toAgentId: string;
   sharedAt: string;
   notes?: string;

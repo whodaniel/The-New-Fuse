@@ -33,5 +33,8 @@ reference:
 
 - Canonical search endpoint: `POST /resources/search`
 - Protocol bridge endpoint: `POST /resources/search/protocol`
+- Authenticated interaction endpoints:
+  - `POST /resources/:id/favorite`
+  - `POST /resources/share`
 - Protocol and translation behavior:
   [../protocols/resource-search-protocol-bridge.md](../protocols/resource-search-protocol-bridge.md)

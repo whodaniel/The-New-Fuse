@@ -1,4 +1,5 @@
 import { MarketplaceService } from '../marketplace/marketplace.service';
+import { ResourceInteractionService } from './resource-interaction.service';
 import { ResourceSearchPolicyService } from './resource-search-policy.service';
 import { ResourceSearchProtocolService } from './resource-search-protocol.service';
 import { ResourcesController } from './resources.controller';
@@ -23,17 +24,23 @@ describe('ResourcesController /resources/search contract', () => {
       decodeRequest: jest.fn(),
       encodeResponse: jest.fn(),
     };
+    const resourceInteractionService = {
+      toggleFavorite: jest.fn(),
+      shareResource: jest.fn(),
+    };
 
     const controller = new ResourcesController(
       { getCatalog: jest.fn() } as unknown as MarketplaceService,
       searchPolicyService as unknown as ResourceSearchPolicyService,
-      searchProtocolService as unknown as ResourceSearchProtocolService
+      searchProtocolService as unknown as ResourceSearchProtocolService,
+      resourceInteractionService as unknown as ResourceInteractionService
     );
 
     return {
       controller,
       searchPolicyService,
       searchProtocolService,
+      resourceInteractionService,
     };
   };
 
@@ -181,6 +188,68 @@ describe('ResourcesController /resources/search contract', () => {
     expect(searchProtocolService.encodeResponse).toHaveBeenCalledTimes(1);
     expect(result).toMatchObject({
       type: 'RESOURCE.SEARCH.RESPONSE',
+    });
+  });
+
+  it('persists favorite toggles with authenticated user identity', async () => {
+    const { controller, resourceInteractionService } = buildController();
+    resourceInteractionService.toggleFavorite.mockResolvedValue({ favorite: true });
+
+    const result = (await controller.toggleFavorite('agent-alpha', {}, {
+      user: { id: 'user-1' },
+    } as any)) as {
+      success: boolean;
+      resourceId: string;
+      userId: string;
+      favorite: boolean;
+    };
+
+    expect(resourceInteractionService.toggleFavorite).toHaveBeenCalledWith('agent-alpha', 'user-1');
+    expect(result).toMatchObject({
+      success: true,
+      resourceId: 'agent-alpha',
+      userId: 'user-1',
+      favorite: true,
+    });
+  });
+
+  it('persists shares with authenticated user identity', async () => {
+    const { controller, resourceInteractionService } = buildController();
+    resourceInteractionService.shareResource.mockResolvedValue({
+      id: 'shr-1',
+      resourceId: 'agent-alpha',
+      fromUserId: 'user-1',
+      toAgentId: 'agent-beta',
+      notes: 'please review',
+      sharedAt: '2026-03-18T21:00:00Z',
+    });
+
+    const result = (await controller.shareResource(
+      {
+        resourceId: 'agent-alpha',
+        toAgentId: 'agent-beta',
+        notes: 'please review',
+      },
+      { user: { id: 'user-1' } } as any
+    )) as {
+      success: boolean;
+      share: { id: string; resourceId: string; fromUserId: string; toAgentId: string };
+    };
+
+    expect(resourceInteractionService.shareResource).toHaveBeenCalledWith({
+      resourceId: 'agent-alpha',
+      fromUserId: 'user-1',
+      toAgentId: 'agent-beta',
+      notes: 'please review',
+    });
+    expect(result).toMatchObject({
+      success: true,
+      share: {
+        id: 'shr-1',
+        resourceId: 'agent-alpha',
+        fromUserId: 'user-1',
+        toAgentId: 'agent-beta',
+      },
     });
   });
 });

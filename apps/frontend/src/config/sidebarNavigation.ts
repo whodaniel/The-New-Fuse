@@ -91,13 +91,6 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
 
   // FORGE: Intelligence & Building
   {
-    name: 'Command Center',
-    href: '/ai-command-center',
-    icon: Zap,
-    section: 'forge',
-    access: 'authenticated',
-  },
-  {
     name: 'AI Portal',
     href: '/ai-portal',
     icon: Cpu,
@@ -142,7 +135,7 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
 
   // APEX: Governance & Control
   {
-    name: 'TNF Control',
+    name: 'Command Core',
     href: '/command-center',
     icon: Zap,
     section: 'apex',

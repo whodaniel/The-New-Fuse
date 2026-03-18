@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBody,
@@ -12,6 +21,8 @@ import type {
   ResourceSearchProtocolResponseEnvelope,
   ResourceSearchResponse,
 } from '@the-new-fuse/types';
+import type { Request } from 'express';
+import { JwtAuth, SecureAuthGuard } from '../../guards/secure-auth.guard';
 import { MarketplaceService } from '../marketplace/marketplace.service';
 import { MarketplaceCatalogItem } from '../marketplace/marketplace.types';
 import {
@@ -24,6 +35,7 @@ import {
   ResourceSearchMetaDto,
   ResourceSearchRequestDto,
 } from './dto/resource-search.dto';
+import { ResourceInteractionService } from './resource-interaction.service';
 import { ResourceSearchPolicyService } from './resource-search-policy.service';
 import { ResourceSearchProtocolService } from './resource-search-protocol.service';
 
@@ -33,8 +45,21 @@ export class ResourcesController {
   constructor(
     private readonly marketplaceService: MarketplaceService,
     private readonly resourceSearchPolicyService: ResourceSearchPolicyService,
-    private readonly resourceSearchProtocolService: ResourceSearchProtocolService
+    private readonly resourceSearchProtocolService: ResourceSearchProtocolService,
+    private readonly resourceInteractionService: ResourceInteractionService
   ) {}
+
+  private resolveUserId(req: Request, fallbackUserId?: string): string {
+    const requestUserId =
+      typeof (req as Request & { user?: { id?: unknown } }).user?.id === 'string'
+        ? ((req as Request & { user?: { id?: string } }).user?.id as string)
+        : '';
+    const userId = requestUserId || String(fallbackUserId || '').trim();
+    if (!userId) {
+      throw new BadRequestException('Authenticated user id is required');
+    }
+    return userId;
+  }
 
   private mapCategory(
     category: string
@@ -299,12 +324,50 @@ export class ResourcesController {
   }
 
   @Post(':id/favorite')
-  toggleFavorite(@Param('id') _id: string, @Body() _body: { userId: string }) {
-    return { success: true };
+  @UseGuards(SecureAuthGuard)
+  @JwtAuth()
+  async toggleFavorite(
+    @Param('id') resourceId: string,
+    @Body() body: { userId?: string },
+    @Req() req: Request
+  ) {
+    const userId = this.resolveUserId(req, body?.userId);
+    const result = await this.resourceInteractionService.toggleFavorite(resourceId, userId);
+    return {
+      success: true,
+      resourceId,
+      userId,
+      favorite: result.favorite,
+    };
   }
 
   @Post('share')
-  shareResource(@Body() _share: unknown) {
-    return { success: true };
+  @UseGuards(SecureAuthGuard)
+  @JwtAuth()
+  async shareResource(
+    @Body() share: { resourceId?: string; fromUserId?: string; toAgentId?: string; notes?: string },
+    @Req() req: Request
+  ) {
+    const resourceId = String(share?.resourceId || '').trim();
+    const toAgentId = String(share?.toAgentId || '').trim();
+    if (!resourceId) {
+      throw new BadRequestException('resourceId is required');
+    }
+    if (!toAgentId) {
+      throw new BadRequestException('toAgentId is required');
+    }
+
+    const fromUserId = this.resolveUserId(req, share?.fromUserId);
+    const saved = await this.resourceInteractionService.shareResource({
+      resourceId,
+      fromUserId,
+      toAgentId,
+      notes: share?.notes,
+    });
+
+    return {
+      success: true,
+      share: saved,
+    };
   }
 }

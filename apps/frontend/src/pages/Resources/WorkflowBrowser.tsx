@@ -2,6 +2,7 @@
 import { BaseBrowser, FilterField, SortOption } from '@/components/browsers';
 import { Badge } from '@/components/ui/badge';
 import { GlassCard, PremiumButton } from '@/components/ui/premium';
+import { useAuth } from '@/providers/AuthProvider';
 import { resourcesService } from '@/services/resources.service';
 import { N8NWorkflow } from '@/types/resources';
 import { useQuery } from '@tanstack/react-query';
@@ -23,6 +24,7 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 
 export default function WorkflowBrowser() {
+  const { user } = useAuth();
   const [selectedWorkflow, setSelectedWorkflow] = useState<N8NWorkflow | null>(null);
 
   const { data: workflows = [], isLoading } = useQuery({
@@ -83,8 +85,8 @@ export default function WorkflowBrowser() {
         break;
       case 'favorite':
         try {
-          await resourcesService.toggleFavorite(workflow.id, 'current-user-id');
-          toast.success('Added to favorites!');
+          const result = await resourcesService.toggleFavorite(workflow.id, user?.id);
+          toast.success(result.favorite ? 'Added to favorites!' : 'Removed from favorites');
         } catch {
           toast.error('Failed to add to favorites');
         }

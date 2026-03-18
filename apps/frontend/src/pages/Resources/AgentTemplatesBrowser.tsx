@@ -2,6 +2,7 @@
 import { BaseBrowser, FilterField, SortOption } from '@/components/browsers';
 import { Badge } from '@/components/ui/badge';
 import { GlassCard, PremiumButton } from '@/components/ui/premium';
+import { useAuth } from '@/providers/AuthProvider';
 import { resourcesService } from '@/services/resources.service';
 import { AgentTemplate } from '@/types/resources';
 import { useQuery } from '@tanstack/react-query';
@@ -25,6 +26,7 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
 export default function AgentTemplatesBrowser() {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [selectedTemplate, setSelectedTemplate] = useState<AgentTemplate | null>(null);
 
@@ -105,8 +107,8 @@ export default function AgentTemplatesBrowser() {
         break;
       case 'favorite':
         try {
-          await resourcesService.toggleFavorite(template.id, 'current-user-id');
-          toast.success('Added to favorites!');
+          const result = await resourcesService.toggleFavorite(template.id, user?.id);
+          toast.success(result.favorite ? 'Added to favorites!' : 'Removed from favorites');
         } catch {
           toast.error('Failed to add to favorites');
         }

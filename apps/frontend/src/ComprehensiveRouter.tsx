@@ -33,6 +33,7 @@ const ExecutionConsole = lazy(() => import('./pages/workflow-pages/ExecutionCons
 const AgentIdentity = lazy(() => import('./pages/Agents/AgentIdentity'));
 const SystemObservatory = lazy(() => import('./pages/SystemObservatory'));
 const TNFCommandCenter = lazy(() => import('./pages/TNFCommandCenter'));
+const CommandCore = lazy(() => import('./pages/CommandCore'));
 const SystemHealth = lazy(() => import('./pages/Admin/SystemHealth'));
 const AgentsPage = lazy(() => import('./pages/AgentsRevolution')); // REVOLUTIONARY NEW DESIGN
 const AgentDetail = lazy(() => import('./pages/Agents/Detail'));
@@ -505,7 +506,7 @@ export default function ComprehensiveRouter() {
                 path="/command-center"
                 element={
                   <RequirePermission roles={['SUPER_ADMIN']}>
-                    <TNFCommandCenter />
+                    <CommandCore />
                   </RequirePermission>
                 }
               />

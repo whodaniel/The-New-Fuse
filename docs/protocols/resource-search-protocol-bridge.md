@@ -64,6 +64,30 @@ Response always returns:
 
 - `ResourceSearchProtocolResponseEnvelope` (`type=RESOURCE.SEARCH.RESPONSE`)
 
+### POST /resources/:id/favorite
+
+Authenticated toggle endpoint for resource favorites.
+
+- Requires bearer auth (`SecureAuthGuard` + `JwtAuth`).
+- Uses authenticated user identity by default.
+- Compatibility fallback: accepts `userId` in body when needed.
+
+Response:
+
+- `{ success, resourceId, userId, favorite }`
+
+### POST /resources/share
+
+Authenticated endpoint for sharing a resource to an agent.
+
+- Requires bearer auth (`SecureAuthGuard` + `JwtAuth`).
+- `fromUserId` derived from authenticated user (with compatibility fallback).
+- Required body fields: `resourceId`, `toAgentId`.
+
+Response:
+
+- `{ success, share }`
+
 ## Validation Rules for Protocol Envelope
 
 When protocol mode is used, request MUST include:
@@ -96,11 +120,26 @@ Invalid envelopes return HTTP 400 with:
 - If `includeTraitMeta=true`, payload is `{ items, traitScreen }`.
 - Otherwise payload is legacy `items[]` array.
 
+## Trait-Screen Resilience
+
+Trait-screen execution includes:
+
+- in-memory plan cache (query + params keyed)
+- endpoint circuit-breaker (failure threshold + cooldown)
+
+Configuration:
+
+- `RESOURCE_TRAIT_PLAN_CACHE_TTL_MS` (default: `30000`)
+- `RESOURCE_TRAIT_CIRCUIT_BREAKER_THRESHOLD` (default: `3`)
+- `RESOURCE_TRAIT_CIRCUIT_BREAKER_COOLDOWN_MS` (default: `30000`)
+
 ## Frontend Usage
 
 The frontend service now supports both modes:
 
 - `searchResources(filter)` for canonical endpoint
+- `searchResourcesWithMeta(filter)` for canonical endpoint with direct
+  `{ items, traitScreen }`
 - `searchResourcesProtocol(filter, envelope?)` for protocol endpoint
 
 Files:
