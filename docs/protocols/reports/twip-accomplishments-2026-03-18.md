@@ -147,3 +147,15 @@ capability catalog alignment
    - `docs/protocols/schemas/twip-terminal-context.schema.json`
 4. Added registry capability profile:
    - `config/ai-agents/twip-orchestration-bridge.json`
+
+## 13) Federation Gates + Master Cumulative ID Package
+
+1. Added federation channel bridge contract:
+   - `docs/protocols/bridges/twip-federation-orchestration-gates.yml`
+2. Added bridge status report:
+   - `docs/protocols/bridges/reports/twip-federation-orchestration-gates.md`
+3. Added cumulative lineage schema:
+   - `docs/protocols/schemas/tnf-master-cumulative-id.schema.json`
+4. Updated TWIP extension and universalization docs with:
+   - network-wide gate chain requirements
+   - deterministic cross-protocol ID normalization rules

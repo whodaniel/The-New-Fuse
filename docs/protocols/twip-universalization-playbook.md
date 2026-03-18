@@ -43,14 +43,17 @@ Use the same TWIP payload with thin transport wrappers:
    `twip_revoke_identity` `resource`: `tnf://twip/*`, `fuse://twip/*`
 
 2. HTTP/OpenAPI Profile `POST /v0/identity:publish|resolve|revoke`
-   `POST /v0/policy:evaluate`
-   Graph Projection: `GET /api/terminals/graph` for read-only topology views.
+   `POST /v0/policy:evaluate` Graph Projection: `GET /api/terminals/graph` for
+   read-only topology views.
 
 3. Event Bus Profile Envelope body on topic `twip.identity.events` with
    immutable `trace` block.
 
 4. Handoff Profile Embed `twip_ref` (`twid`, integrity hash, correlation id) in
    agent handoff payload.
+
+5. Federation Profile Carry master cumulative lineage object:
+   `docs/protocols/schemas/tnf-master-cumulative-id.schema.json`
 
 ## 4) Translation Rules
 
@@ -61,6 +64,18 @@ When moving between runtimes:
    `x_tmux`).
 3. Never overwrite stronger provenance with weaker provenance.
 4. If identity confidence drops below threshold, emit `POLICY.DECISION` deny.
+
+ID normalization rules (must be deterministic):
+
+1. `tnf-envelope.traceId` -> `mcid.lineage.trace_id`
+2. `twip-envelope.trace.correlation_id` -> `mcid.lineage.correlation_id`
+3. `twip-envelope.trace.causation_id` -> `mcid.lineage.causation_id`
+4. `handoff.scope.tenantId` -> `mcid.scope.tenant_id`
+5. `handoff.scope.sessionKey` -> `mcid.scope.session_key`
+6. `handoff.scope.workflowId` -> `mcid.scope.workflow_id`
+7. `handoff.scope.channelId` -> `mcid.scope.channel_id`
+8. `handoff.id` -> `mcid.lineage.handoff_packet_id`
+9. `twip_ref.twid` -> `mcid.lineage.twid`
 
 ## 5) Wrappability Rules
 

@@ -72,3 +72,5 @@ Use this macro output to feed:
 1. `docs/protocols/schemas/twip-workstream-signal.schema.json`
 2. `docs/protocols/schemas/twip-terminal-context.schema.json`
 3. `docs/protocols/bridges/twip-to-orchestrator-loop.yml`
+4. `docs/protocols/bridges/twip-federation-orchestration-gates.yml`
+5. `docs/protocols/schemas/tnf-master-cumulative-id.schema.json`

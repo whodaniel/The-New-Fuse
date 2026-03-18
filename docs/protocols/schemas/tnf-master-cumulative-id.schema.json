@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thenewfuse.com/schemas/tnf-master-cumulative-id.schema.json",
+  "title": "TNF Master Cumulative ID",
+  "description": "Cross-protocol lineage envelope used to correlate TWIP, handoff, relay, and workflow events across federated channels.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["spec", "id", "scope", "lineage"],
+  "properties": {
+    "spec": {
+      "type": "string",
+      "const": "tnf/mcid/0.1"
+    },
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Primary cumulative event id."
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tenant_id"],
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "session_key": {
+          "type": ["string", "null"]
+        },
+        "workflow_id": {
+          "type": ["string", "null"]
+        },
+        "channel_id": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["correlation_id", "causation_id"],
+      "properties": {
+        "trace_id": {
+          "type": ["string", "null"],
+          "format": "uuid",
+          "description": "Relay envelope trace id."
+        },
+        "correlation_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "causation_id": {
+          "type": ["string", "null"],
+          "format": "uuid"
+        },
+        "handoff_packet_id": {
+          "type": ["string", "null"],
+          "format": "uuid"
+        },
+        "twid": {
+          "type": ["string", "null"],
+          "format": "uuid"
+        },
+        "task_id": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "federation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["domain", "route", "hop_count"],
+      "properties": {
+        "domain": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Federation boundary identifier (cluster/org/runtime)."
+        },
+        "route": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "Ordered channel/service hops."
+        },
+        "hop_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "gate_decisions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["gate", "decision", "at"],
+            "properties": {
+              "gate": {
+                "type": "string",
+                "minLength": 1
+              },
+              "decision": {
+                "type": "string",
+                "enum": ["allow", "deny", "quarantine"]
+              },
+              "reason": {
+                "type": ["string", "null"]
+              },
+              "at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "default": []
+        }
+      }
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

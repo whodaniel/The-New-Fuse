@@ -35,6 +35,13 @@
       "parameters": {
         "resource": "tnf://twip/audit"
       }
+    },
+    {
+      "name": "MASTER_CUMULATIVE_ID_COMPAT",
+      "description": "Provides deterministic mapping from TWIP trace/scope fields to cumulative lineage schema.",
+      "parameters": {
+        "schema": "docs/protocols/schemas/tnf-master-cumulative-id.schema.json"
+      }
     }
   ],
   "tools": [

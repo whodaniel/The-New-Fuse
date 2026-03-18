@@ -1,0 +1,36 @@
+name: twip-federation-orchestration-gates
+from:
+  - skill: interoperability-protocol-agent
+    output: docs/protocols/schemas/twip-envelope.schema.json
+  - skill: inter-agentic-workflow-definer
+    output: docs/protocols/schemas/twip-terminal-context.schema.json
+  - skill: orchestrator-agent
+    output: network-wide assignment decisions
+to:
+  - skill: tnf-task-production-pipeline
+    input: cumulative lineage + gate decisions
+  - skill: agent-registry-manager
+    input: protocol capability profile updates
+validate:
+  - tenant scope must remain stable across all federation hops
+  - every terminal-bound task includes twid and target agentIds
+  - cumulative lineage validates against docs/protocols/schemas/tnf-master-cumulative-id.schema.json
+  - channel handoff packets include explicit channelId and workflow/session context where available
+gates:
+  - name: TENANT_SCOPE_GATE
+    deny_code: TENANT_SCOPE_MISMATCH
+  - name: TRACE_CONTINUITY_GATE
+    deny_code: TRACE_BREAK
+  - name: TERMINAL_BINDING_GATE
+    deny_code: TWID_REQUIRED
+  - name: HIGH_RISK_RUNTIME_GATE
+    condition: approval_bypass=true OR remote_mcp=true
+    action: require_orchestrator_approval
+  - name: CHANNEL_MEMBERSHIP_GATE
+    deny_code: CHANNEL_NOT_AUTHORIZED
+fail:
+  - quarantine packet when gate chain is incomplete
+  - emit POLICY.DECISION deny with cumulative id attached
+  - route to manual orchestrator remediation queue
+log:
+  - docs/protocols/bridges/reports/twip-federation-orchestration-gates.md

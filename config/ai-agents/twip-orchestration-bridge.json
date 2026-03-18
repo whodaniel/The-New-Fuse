@@ -34,6 +34,20 @@
       "parameters": {
         "stateArtifact": "data/protocols/twip-macro-board.state.json"
       }
+    },
+    {
+      "name": "FEDERATION_CHANNEL_GATING",
+      "description": "Applies network-wide orchestration gates for federated channel hops",
+      "parameters": {
+        "bridge": "docs/protocols/bridges/twip-federation-orchestration-gates.yml"
+      }
+    },
+    {
+      "name": "MASTER_CUMULATIVE_ID",
+      "description": "Normalizes cross-protocol lineage ids for auditability and deterministic routing",
+      "parameters": {
+        "schema": "docs/protocols/schemas/tnf-master-cumulative-id.schema.json"
+      }
     }
   ],
   "tools": [
@@ -44,9 +58,13 @@
   "configuration": {
     "provider": "tnf-relay-mcp",
     "bridgeContract": "docs/protocols/bridges/twip-to-orchestrator-loop.yml",
+    "federationBridgeContract": "docs/protocols/bridges/twip-federation-orchestration-gates.yml",
     "macroBoardScript": "scripts/protocols/twip-macro-board.cjs",
     "reports": {
       "latest": "docs/protocols/reports/twip-terminal-macro-board-latest.md"
+    },
+    "schemas": {
+      "masterCumulativeId": "docs/protocols/schemas/tnf-master-cumulative-id.schema.json"
     }
   },
   "metadata": {

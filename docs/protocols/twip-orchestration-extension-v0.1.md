@@ -86,6 +86,52 @@ Handoff context fragment:
 3. Require explicit agent target list (no broadcast by default).
 4. If `approval_bypass=true`, only allow orchestrator-approved task classes.
 
+## Federation Channels + Network-Wide Gates
+
+Bridge definition:
+`docs/protocols/bridges/twip-federation-orchestration-gates.yml`
+
+Required gate chain per federated hop:
+
+1. `TENANT_SCOPE_GATE`
+2. `TRACE_CONTINUITY_GATE`
+3. `TERMINAL_BINDING_GATE`
+4. `HIGH_RISK_RUNTIME_GATE`
+5. `CHANNEL_MEMBERSHIP_GATE`
+
+If any gate fails, packet must be quarantined and escalated instead of silently
+falling through to execution.
+
+## Master Cumulative ID Protocol (MCID)
+
+Schema: `docs/protocols/schemas/tnf-master-cumulative-id.schema.json`
+
+Purpose:
+
+1. Keep one cumulative lineage object across TWIP, relay envelopes, handoff
+   packets, and workflow events.
+2. Normalize ID field drift (`traceId`, `correlation_id`, `packetId`,
+   `workflowId`, `sessionKey`, `channelId`, `twid`) into one transport-safe
+   contract.
+3. Attach gate decisions to the same lineage chain for auditable federation.
+
+## Current State (2026-03-18)
+
+1. Strong:
+   - Canonical terminal identity (`twid`) and scope enforcement.
+   - TWIP envelope trace block (`correlation_id`, `causation_id`).
+   - Terminal macro-board for active/risk telemetry.
+2. Partial:
+   - Handoff packet protocol currently uses
+     `tenantId/sessionKey/workflowId/channelId` but does not natively require a
+     full cumulative lineage object.
+   - Gate outcomes are not yet serialized in one shared cross-protocol record.
+3. Integration priority:
+   - enforce MCID at assignment publish + handoff ack boundaries.
+   - mirror gate decisions into execution audit trail views.
+
+Detailed assessment: `docs/protocols/twip-federation-state-2026-03-18.md`
+
 ## Capability Registration
 
 Profile: `config/ai-agents/twip-orchestration-bridge.json`
