@@ -8,6 +8,7 @@ import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/commo
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import Redis from 'ioredis';
+import * as crypto from 'crypto';
 
 export interface StreamMessage {
   id: string;
@@ -532,7 +533,8 @@ export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
    * Generate a unique message ID
    */
   private generateMessageId(): string {
-    return `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    // SECURITY: Use cryptographically secure random values instead of Math.random()
+    return `msg-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
   }
 
   /**
