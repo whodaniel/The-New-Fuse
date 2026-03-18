@@ -154,9 +154,7 @@ class TNFRelayServer extends events_1.EventEmitter {
         }
         if (this.activityPersistenceEnabled) {
             this.activityRedis = (0, redis_1.createClient)({
-                url: process.env.ACTIVITY_REDIS_URL ||
-                    process.env.REDIS_URL ||
-                    'redis://localhost:6379',
+                url: process.env.ACTIVITY_REDIS_URL || process.env.REDIS_URL || 'redis://localhost:6379',
             });
             this.activityRedis.on('error', (err) => {
                 console.error('[Relay] Activity Redis client error:', err.message);
@@ -337,7 +335,7 @@ class TNFRelayServer extends events_1.EventEmitter {
         const agentId = source || currentAgentId;
         // Back-compat: map legacy REGISTER to AGENT_REGISTER
         if (type === 'REGISTER') {
-            const regPayload = payload || {};
+            const regPayload = (payload || {});
             const regName = regPayload.name ||
                 regPayload.clientType ||
                 regPayload.type ||
@@ -354,9 +352,7 @@ class TNFRelayServer extends events_1.EventEmitter {
                     agent: {
                         id: regId,
                         name: regName,
-                        platform: regPayload.type ||
-                            regPayload.clientType ||
-                            'unknown',
+                        platform: regPayload.type || regPayload.clientType || 'unknown',
                         status: 'active',
                         capabilities: regPayload.capabilities || [],
                         channels: regPayload.channels || [],

@@ -148,9 +148,9 @@ export declare const TaskPayload: z.ZodObject<{
     timeout: z.ZodOptional<z.ZodNumber>;
     priority: z.ZodDefault<z.ZodEnum<{
         low: "low";
+        normal: "normal";
         high: "high";
         critical: "critical";
-        normal: "normal";
     }>>;
 }, z.core.$strip>;
 export type TaskPayload = z.infer<typeof TaskPayload>;
@@ -165,8 +165,8 @@ export declare const StateSyncPayload: z.ZodObject<{
     stateValue: z.ZodUnknown;
     version: z.ZodNumber;
     operation: z.ZodEnum<{
-        get: "get";
         set: "set";
+        get: "get";
         delete: "delete";
         update: "update";
     }>;
@@ -188,9 +188,9 @@ export declare const AuctionPayload: z.ZodObject<{
     requirements: z.ZodArray<z.ZodString>;
     priority: z.ZodDefault<z.ZodEnum<{
         low: "low";
+        normal: "normal";
         high: "high";
         critical: "critical";
-        normal: "normal";
     }>>;
     expiresAt: z.ZodNumber;
     metadata: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;

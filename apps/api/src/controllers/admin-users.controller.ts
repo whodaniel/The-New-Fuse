@@ -16,7 +16,6 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DatabaseService } from '@the-new-fuse/database/drizzle';
 import { drizzleUserRepository } from '@the-new-fuse/database/drizzle/repositories';
 import { membershipOverrides } from '@the-new-fuse/database/drizzle/schema';
-import { sql } from 'drizzle-orm';
 import { AdminGuard } from '../guards/admin.guard';
 import { SecureAuthGuard } from '../guards/secure-auth.guard';
 import { AuditService } from '../services/audit.service';
@@ -166,16 +165,23 @@ export class AdminUsersController {
       throw new BadRequestException('Invalid expiresAt timestamp');
     }
 
+    const escapeSqlLiteral = (value: string) => value.replace(/'/g, "''");
+    const safeUserId = escapeSqlLiteral(id);
+    const requesterSql =
+      req?.user?.id !== undefined && req?.user?.id !== null
+        ? `'${escapeSqlLiteral(String(req.user.id))}'`
+        : 'NULL';
+
     // Revoke any existing active overrides for this user
-    await this.db.client.execute(sql`
-      UPDATE membership_overrides
-      SET status = 'REVOKED',
-          revoked_at = now(),
-          revoked_by_user_id = ${req?.user?.id || null},
-          updated_at = now()
-      WHERE user_id = ${id}
-        AND status = 'ACTIVE'
-    `);
+    await this.db.executeRaw(
+      `UPDATE membership_overrides
+       SET status = 'REVOKED',
+           revoked_at = now(),
+           revoked_by_user_id = ${requesterSql},
+           updated_at = now()
+       WHERE user_id = '${safeUserId}'
+         AND status = 'ACTIVE'`
+    );
 
     const [override] = await this.db.client
       .insert(membershipOverrides)
@@ -225,24 +231,31 @@ export class AdminUsersController {
       throw new NotFoundException('User not found');
     }
 
-    await this.db.client.execute(sql`
-      UPDATE membership_overrides
-      SET status = 'REVOKED',
-          revoked_at = now(),
-          revoked_by_user_id = ${req?.user?.id || null},
-          updated_at = now()
-      WHERE user_id = ${id}
-        AND status = 'ACTIVE'
-    `);
+    const escapeSqlLiteral = (value: string) => value.replace(/'/g, "''");
+    const safeUserId = escapeSqlLiteral(id);
+    const requesterSql =
+      req?.user?.id !== undefined && req?.user?.id !== null
+        ? `'${escapeSqlLiteral(String(req.user.id))}'`
+        : 'NULL';
 
-    const activeCount = await this.db.client.execute(
-      sql`SELECT count(*)::int AS count
-          FROM membership_overrides
-          WHERE user_id = ${id}
-            AND status = 'ACTIVE'
-            AND (expires_at IS NULL OR expires_at > now())`
+    await this.db.executeRaw(
+      `UPDATE membership_overrides
+       SET status = 'REVOKED',
+           revoked_at = now(),
+           revoked_by_user_id = ${requesterSql},
+           updated_at = now()
+       WHERE user_id = '${safeUserId}'
+         AND status = 'ACTIVE'`
     );
-    const active = Number((activeCount as any)?.[0]?.count || 0);
+
+    const activeRows = await this.db.executeRaw<{ count?: number | string }>(
+      `SELECT count(*)::int AS count
+       FROM membership_overrides
+       WHERE user_id = '${safeUserId}'
+         AND status = 'ACTIVE'
+         AND (expires_at IS NULL OR expires_at > now())`
+    );
+    const active = Number(activeRows?.[0]?.count || 0);
     if (active === 0) {
       const roles = Array.isArray(user.roles)
         ? user.roles.filter((r) => r !== 'MEMBERSHIP_OVERRIDE')
@@ -272,12 +285,14 @@ export class AdminUsersController {
       throw new NotFoundException('User not found');
     }
 
-    const overrides = await this.db.client.execute(
-      sql`SELECT *
-          FROM membership_overrides
-          WHERE user_id = ${id}
-          ORDER BY created_at DESC
-          LIMIT 25`
+    const escapeSqlLiteral = (value: string) => value.replace(/'/g, "''");
+    const safeUserId = escapeSqlLiteral(id);
+    const overrides = await this.db.executeRaw<Record<string, unknown>>(
+      `SELECT *
+       FROM membership_overrides
+       WHERE user_id = '${safeUserId}'
+       ORDER BY created_at DESC
+       LIMIT 25`
     );
     return overrides;
   }
@@ -408,7 +423,7 @@ export class AdminUsersController {
    */
   private sanitizeUser(user: any) {
     if (!user) return null;
-    const { hashedPassword, refreshToken, ...rest } = user;
+    const { hashedPassword: _hashedPassword, refreshToken: _refreshToken, ...rest } = user;
     return rest;
   }
 }

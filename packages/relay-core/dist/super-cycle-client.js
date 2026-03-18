@@ -37,6 +37,13 @@ function parseArgs(argv) {
     const kind = getValue('--kind') || DEFAULTS.kind;
     const owner = getValue('--owner') || DEFAULTS.owner;
     const lastResult = getValue('--result') || undefined;
+    const lastRunAt = parseTimestampMs(getValue('--last-run-at')) || undefined;
+    const nextExpectedAt = parseTimestampMs(getValue('--next-expected-at')) || undefined;
+    const intendedIntervalMs = parsePositiveNumber(getValue('--interval-ms')) ||
+        toMilliseconds(parsePositiveNumber(getValue('--interval-seconds'))) ||
+        parsePositiveNumber(process.env.SUPER_CYCLE_INTENDED_INTERVAL_MS || '') ||
+        toMilliseconds(parsePositiveNumber(process.env.SUPER_CYCLE_INTERVAL_SECONDS || '')) ||
+        undefined;
     const metadataRaw = getValue('--metadata');
     let metadata = {};
     if (metadataRaw) {
@@ -58,6 +65,9 @@ function parseArgs(argv) {
         kind,
         owner,
         lastResult,
+        lastRunAt,
+        nextExpectedAt,
+        intendedIntervalMs,
         metadata,
     };
 }
@@ -107,6 +117,18 @@ async function main() {
             return;
         }
         const now = Date.now();
+        const lastRunAt = args.lastRunAt || now;
+        const metadataCadenceMs = readCadenceMs(args.metadata);
+        const intendedIntervalMs = args.intendedIntervalMs || metadataCadenceMs;
+        const intervalSource = args.intendedIntervalMs
+            ? 'producer'
+            : metadataCadenceMs
+                ? 'metadata'
+                : 'inferred';
+        const nextExpectedAt = args.nextExpectedAt || (intendedIntervalMs ? lastRunAt + intendedIntervalMs : undefined);
+        const metadata = intendedIntervalMs && !args.metadata.intendedIntervalMs
+            ? { ...args.metadata, intendedIntervalMs }
+            : args.metadata;
         const event = {
             type: mapActionToType(args.action),
             source: `super-cycle-client:${args.processId}`,
@@ -117,9 +139,13 @@ async function main() {
                 kind: args.kind,
                 owner: args.owner,
                 status: args.status,
-                lastRunAt: now,
+                lastRunAt,
+                intendedIntervalMs,
+                intervalSource,
+                intervalExact: Boolean(intendedIntervalMs),
+                nextExpectedAt,
                 lastResult: args.lastResult,
-                metadata: args.metadata,
+                metadata,
             },
         };
         await redis.publish(DEFAULTS.ingress, JSON.stringify(event));
@@ -128,6 +154,45 @@ async function main() {
     finally {
         await redis.quit();
     }
+}
+function parsePositiveNumber(value) {
+    const parsed = Number(value);
+    if (Number.isFinite(parsed) && parsed > 0)
+        return parsed;
+    return undefined;
+}
+function parseTimestampMs(value) {
+    if (!value)
+        return undefined;
+    const numeric = Number(value);
+    if (Number.isFinite(numeric) && numeric > 0)
+        return numeric;
+    const parsed = Date.parse(value);
+    if (Number.isFinite(parsed) && parsed > 0)
+        return parsed;
+    return undefined;
+}
+function toMilliseconds(seconds) {
+    if (!seconds || !Number.isFinite(seconds) || seconds <= 0)
+        return undefined;
+    return seconds * 1000;
+}
+function readCadenceMs(metadata) {
+    const intervalMs = Number(metadata.intendedIntervalMs ||
+        metadata.expectedIntervalMs ||
+        metadata.intervalMs ||
+        metadata.heartbeatIntervalMs ||
+        0);
+    if (Number.isFinite(intervalMs) && intervalMs > 0)
+        return intervalMs;
+    const intervalSeconds = Number(metadata.intendedIntervalSeconds ||
+        metadata.intervalSeconds ||
+        metadata.heartbeatIntervalSeconds ||
+        metadata.cadenceSeconds ||
+        0);
+    if (Number.isFinite(intervalSeconds) && intervalSeconds > 0)
+        return intervalSeconds * 1000;
+    return undefined;
 }
 main().catch((error) => {
     const message = error?.message || String(error);

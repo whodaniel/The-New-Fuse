@@ -22,8 +22,8 @@ class JWTAuthService {
         this.secret = config.secret;
         this.expiresIn = config.expiresIn || '24h';
         this.algorithm = config.algorithm || 'HS256';
-        if (!this.secret || this.secret === 'dev-secret-change-in-production') {
-            console.warn('[JWTAuth] ⚠️  WARNING: Using default JWT secret. Set JWT_SECRET in production!');
+        if (!this.secret || this.secret === 'dev-secret-change-in-production' || this.secret.length < 32) {
+            throw new Error('[JWTAuth] 🛑 CRITICAL SECURITY ERROR: Invalid or missing JWT secret. Must provide a strong JWT_SECRET environment variable (at least 32 characters).');
         }
     }
     /**
@@ -116,7 +116,10 @@ exports.JWTAuthService = JWTAuthService;
  * Create a singleton instance for use across the relay
  */
 function createAuthService(config) {
-    const secret = config?.secret || process.env.JWT_SECRET || 'dev-secret-change-in-production';
+    const secret = config?.secret || process.env.JWT_SECRET;
+    if (!secret) {
+        throw new Error('[JWTAuth] 🛑 CRITICAL SECURITY ERROR: JWT secret is required. Must provide a strong JWT_SECRET environment variable.');
+    }
     return new JWTAuthService({
         secret,
         expiresIn: config?.expiresIn || '24h',

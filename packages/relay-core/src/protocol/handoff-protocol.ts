@@ -8,6 +8,43 @@ export type HandoffPriority = z.infer<typeof HandoffPriority>;
 export const HandoffStatus = z.enum(['pending', 'received', 'claimed', 'completed', 'rejected']);
 export type HandoffStatus = z.infer<typeof HandoffStatus>;
 
+export const FederationGateDecision = z.object({
+  gate: z.string().min(1),
+  decision: z.enum(['allow', 'deny', 'quarantine']),
+  reason: z.string().optional(),
+  at: isoDateTime,
+});
+export type FederationGateDecision = z.infer<typeof FederationGateDecision>;
+
+export const MasterCumulativeId = z.object({
+  spec: z.literal('tnf/mcid/0.1'),
+  id: z.string().uuid(),
+  scope: z.object({
+    tenant_id: z.string().min(1),
+    session_key: z.string().nullable().optional(),
+    workflow_id: z.string().nullable().optional(),
+    channel_id: z.string().nullable().optional(),
+  }),
+  lineage: z.object({
+    trace_id: z.string().uuid().nullable().optional(),
+    correlation_id: z.string().uuid(),
+    causation_id: z.string().uuid().nullable(),
+    handoff_packet_id: z.string().uuid().nullable().optional(),
+    twid: z.string().uuid().nullable().optional(),
+    task_id: z.string().nullable().optional(),
+  }),
+  federation: z
+    .object({
+      domain: z.string().min(1),
+      route: z.array(z.string().min(1)).min(1),
+      hop_count: z.number().int().nonnegative(),
+      gate_decisions: z.array(FederationGateDecision).default([]),
+    })
+    .optional(),
+  issued_at: isoDateTime.optional(),
+});
+export type MasterCumulativeId = z.infer<typeof MasterCumulativeId>;
+
 export const HandoffPayload = z.object({
   title: z.string().min(3),
   summary: z.string().min(10),
@@ -15,6 +52,13 @@ export const HandoffPayload = z.object({
   acceptanceCriteria: z.array(z.string()).default([]),
   nextActions: z.array(z.string()).default([]),
   artifacts: z.array(z.string()).default([]),
+  twipRef: z
+    .object({
+      twid: z.string().uuid(),
+      correlationId: z.string().uuid().optional(),
+      integrityHash: z.string().optional(),
+    })
+    .optional(),
 });
 export type HandoffPayload = z.infer<typeof HandoffPayload>;
 
@@ -48,6 +92,8 @@ export const HandoffPacketInput = z.object({
   targets: HandoffTargets,
   scope: HandoffScope,
   payload: HandoffPayload,
+  cumulativeId: MasterCumulativeId,
+  gateDecisions: z.array(FederationGateDecision).min(1),
   priority: HandoffPriority.default('normal'),
   expiresAt: isoDateTime.optional(),
   tags: z.array(z.string()).default([]),
@@ -68,6 +114,7 @@ export const HandoffAckInput = z.object({
   agentId: z.string().min(1),
   status: z.enum(['received', 'claimed', 'completed', 'rejected']),
   note: z.string().optional(),
+  cumulativeId: MasterCumulativeId,
 });
 export type HandoffAckInput = z.infer<typeof HandoffAckInput>;
 

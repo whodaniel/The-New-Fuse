@@ -119,3 +119,16 @@ Snapshot workflow:
 
 - `pnpm openapi:snapshot`
 - `pnpm openapi:check`
+
+## Unit Tests
+
+Protocol translation and validation behavior is covered in:
+
+- `apps/api/src/modules/resources/resource-search-protocol.service.spec.ts`
+
+Coverage focus:
+
+- plain-filter to envelope synthesis
+- valid envelope decoding
+- malformed envelope 400 validation path
+- response envelope trace causation/correlation correctness

@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DatabaseService } from '@the-new-fuse/database/drizzle';
-import { payPalSubscriptions, users } from '@the-new-fuse/database/drizzle/schema';
+import { payPalSubscriptions } from '@the-new-fuse/database/drizzle/schema';
 import { eq } from 'drizzle-orm';
 import fetch from 'node-fetch'; // Standard fetch might be available in Node 18+
 
@@ -192,16 +192,23 @@ export class PayPalService {
     return null;
   }
 
+  private escapeSqlLiteral(value: string): string {
+    return String(value).replace(/'/g, "''");
+  }
+
   private async getActiveMembershipOverride(
     userId: string
   ): Promise<{ tier: 'STARTER' | 'PRO' | 'ENTERPRISE' } | null> {
     try {
-      const rows = await this.db.executeRaw<
-        Array<{ id: string; tier: string; status: string; expires_at: string | null }>
-      >(
+      const rows = await this.db.executeRaw<{
+        id: string;
+        tier: string;
+        status: string;
+        expires_at: string | null;
+      }>(
         `SELECT id, tier, status, expires_at
          FROM membership_overrides
-         WHERE user_id = '${String(userId).replace(/'/g, "''")}'
+         WHERE user_id = '${this.escapeSqlLiteral(userId)}'
            AND status = 'ACTIVE'
          ORDER BY created_at DESC
          LIMIT 1`
@@ -214,7 +221,7 @@ export class PayPalService {
         await this.db.executeRaw(
           `UPDATE membership_overrides
            SET status = 'EXPIRED', updated_at = now()
-           WHERE id = '${String(override.id).replace(/'/g, "''")}'`
+           WHERE id = '${this.escapeSqlLiteral(override.id)}'`
         );
         return null;
       }
@@ -248,21 +255,17 @@ export class PayPalService {
 
   private async getStripeTier(userId: string): Promise<'STARTER' | 'PRO' | 'ENTERPRISE'> {
     try {
-      const rows = await this.db.executeRaw<
-        Array<{
-          tier: 'STARTER' | 'PRO' | 'ENTERPRISE';
-          status: string;
-        }>
-      >(
+      const rows = await this.db.executeRaw<{
+        tier: 'STARTER' | 'PRO' | 'ENTERPRISE';
+        status: string;
+      }>(
         `SELECT tier, status
          FROM stripe_subscriptions
-         WHERE user_id = '${String(userId).replace(/'/g, "''")}'
+         WHERE user_id = '${this.escapeSqlLiteral(userId)}'
          ORDER BY updated_at DESC
          LIMIT 1`
       );
-      const sub = (
-        rows as unknown as Array<{ tier: 'STARTER' | 'PRO' | 'ENTERPRISE'; status: string }>
-      )[0];
+      const sub = rows[0];
       if (!sub || sub.status !== 'ACTIVE') {
         return 'STARTER';
       }
@@ -302,18 +305,15 @@ export class PayPalService {
 
     const lowered = normalized.toLowerCase();
     const matchByEmail = lowered.includes('@');
-    const escapeSqlLiteral = (value: string) => value.replace(/'/g, "''");
-    const emailLiteral = escapeSqlLiteral(lowered);
-    const usernameLiteral = escapeSqlLiteral(normalized);
-    const rows = await this.db.executeRaw<
-      Array<{
-        id: string;
-        email: string;
-        username: string | null;
-        role: string;
-        roles: string[] | null;
-      }>
-    >(
+    const emailLiteral = this.escapeSqlLiteral(lowered);
+    const usernameLiteral = this.escapeSqlLiteral(normalized);
+    const rows = await this.db.executeRaw<{
+      id: string;
+      email: string;
+      username: string | null;
+      role: string;
+      roles: string[] | null;
+    }>(
       matchByEmail
         ? `SELECT id, email, username, role, roles
            FROM users
@@ -326,15 +326,7 @@ export class PayPalService {
              AND deleted_at IS NULL
            LIMIT 1`
     );
-    const user = (
-      rows as unknown as Array<{
-        id: string;
-        email: string;
-        username: string | null;
-        role: string;
-        roles: string[] | null;
-      }>
-    )[0];
+    const user = rows[0];
     if (!user) return empty;
 
     const tier = await this.getUserTier(user.id);
@@ -388,9 +380,18 @@ export class PayPalService {
     const override = await this.getActiveMembershipOverride(userId);
     let effectiveTier: 'STARTER' | 'PRO' | 'ENTERPRISE' = tier;
     try {
-      const user = await this.db.client.query.users.findFirst({
-        where: eq(users.id, userId),
-      });
+      const userRows = await this.db.executeRaw<{
+        email: string;
+        role: string;
+        roles: string[] | null;
+      }>(
+        `SELECT email, role, roles
+         FROM users
+         WHERE id = '${this.escapeSqlLiteral(userId)}'
+           AND deleted_at IS NULL
+         LIMIT 1`
+      );
+      const user = userRows[0];
       if (user) {
         const normalizedRoles = Array.from(
           new Set([...(Array.isArray(user.roles) ? user.roles : []), user.role].filter(Boolean))

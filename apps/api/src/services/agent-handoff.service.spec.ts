@@ -2,6 +2,38 @@ import { describe, expect, it, jest } from '@jest/globals';
 import { AgentHandoffService } from './agent-handoff.service';
 
 describe('AgentHandoffService lifecycle audit logging', () => {
+  const baseGateDecisions = [
+    { gate: 'TENANT_SCOPE_GATE', decision: 'allow', at: new Date().toISOString() },
+    { gate: 'TRACE_CONTINUITY_GATE', decision: 'allow', at: new Date().toISOString() },
+    { gate: 'TERMINAL_BINDING_GATE', decision: 'allow', at: new Date().toISOString() },
+    { gate: 'HIGH_RISK_RUNTIME_GATE', decision: 'allow', at: new Date().toISOString() },
+    { gate: 'CHANNEL_MEMBERSHIP_GATE', decision: 'allow', at: new Date().toISOString() },
+  ] as const;
+
+  const buildCumulativeId = (overrides: Record<string, unknown> = {}) => ({
+    spec: 'tnf/mcid/0.1',
+    id: '4f406f02-8b9c-4fdf-8819-95528f6af92b',
+    scope: {
+      tenant_id: 'tnf-prod',
+      session_key: null,
+      workflow_id: null,
+      channel_id: null,
+    },
+    lineage: {
+      correlation_id: 'eb8ba106-52e8-4438-ad0a-c78f8c7f3154',
+      causation_id: null,
+      handoff_packet_id: null,
+      twid: null,
+    },
+    federation: {
+      domain: 'tnf-local',
+      route: ['orchestrator', 'handoff-service'],
+      hop_count: 1,
+      gate_decisions: baseGateDecisions,
+    },
+    ...overrides,
+  });
+
   const createService = () => {
     const configService = {
       get: jest.fn((key: string) => {
@@ -36,6 +68,8 @@ describe('AgentHandoffService lifecycle audit logging', () => {
         nextActions: [],
         artifacts: [],
       },
+      cumulativeId: buildCumulativeId(),
+      gateDecisions: baseGateDecisions,
       priority: 'normal',
       tags: ['triage'],
     } as any;
@@ -54,6 +88,8 @@ describe('AgentHandoffService lifecycle audit logging', () => {
           summary: 'Send context to next agent',
           prompt: 'Handle next stage',
         },
+        cumulativeId: buildCumulativeId(),
+        gateDecisions: baseGateDecisions,
       },
       'tnf-prod'
     );
@@ -78,6 +114,7 @@ describe('AgentHandoffService lifecycle audit logging', () => {
     const packet = {
       id: packetId,
       scope: { tenantId: 'tnf-prod' },
+      cumulativeId: buildCumulativeId(),
     };
     const ack = {
       packetId,
@@ -96,6 +133,14 @@ describe('AgentHandoffService lifecycle audit logging', () => {
         packetId,
         agentId: 'agent-beta',
         status: 'received',
+        cumulativeId: buildCumulativeId({
+          lineage: {
+            correlation_id: 'eb8ba106-52e8-4438-ad0a-c78f8c7f3154',
+            causation_id: null,
+            handoff_packet_id: packetId,
+            twid: null,
+          },
+        }),
       },
       'tnf-prod'
     );
@@ -114,5 +159,64 @@ describe('AgentHandoffService lifecycle audit logging', () => {
         }),
       })
     );
+  });
+
+  it('rejects publish when required federation gate is missing', async () => {
+    const { service } = createService();
+    (service as any).store = {
+      publish: jest.fn(),
+    };
+
+    await expect(
+      service.publishForTenant(
+        {
+          fromAgentId: 'agent-alpha',
+          targets: { agentIds: ['agent-beta'] },
+          scope: { tenantId: 'tnf-prod' },
+          payload: {
+            title: 'Task handoff',
+            summary: 'Send context to next agent',
+            prompt: 'Handle next stage',
+          },
+          cumulativeId: buildCumulativeId(),
+          gateDecisions: baseGateDecisions.filter(
+            (gate) => gate.gate !== 'CHANNEL_MEMBERSHIP_GATE'
+          ),
+        },
+        'tnf-prod'
+      )
+    ).rejects.toThrow('Missing required federation gate decision');
+  });
+
+  it('rejects ack when cumulative lineage breaks correlation continuity', async () => {
+    const { service } = createService();
+    const packetId = '1ce0e5f1-e954-4d86-bd5e-5e18df3fcd6f';
+    (service as any).store = {
+      getPacket: jest.fn().mockResolvedValue({
+        id: packetId,
+        scope: { tenantId: 'tnf-prod' },
+        cumulativeId: buildCumulativeId(),
+      }),
+      acknowledge: jest.fn(),
+    };
+
+    await expect(
+      service.acknowledgeForTenant(
+        {
+          packetId,
+          agentId: 'agent-beta',
+          status: 'received',
+          cumulativeId: buildCumulativeId({
+            lineage: {
+              correlation_id: '2d0642a4-5249-4d28-92a8-62aee530a2e8',
+              causation_id: null,
+              handoff_packet_id: packetId,
+              twid: null,
+            },
+          }),
+        },
+        'tnf-prod'
+      )
+    ).rejects.toThrow('Ack cumulativeId.lineage.correlation_id must match');
   });
 });

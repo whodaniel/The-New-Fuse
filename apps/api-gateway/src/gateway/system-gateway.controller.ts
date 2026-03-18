@@ -158,6 +158,15 @@ export class SystemGatewayController {
     });
   }
 
+  // Mesh Health
+  @Get('mesh-health')
+  @Version(VERSION_NEUTRAL)
+  @ApiOperation({ summary: 'Get health status of all registered microservices' })
+  @ApiResponse({ status: 200, description: 'Mesh health retrieved successfully' })
+  async getMeshHealth() {
+    return await this.proxyService.getAllServicesHealth();
+  }
+
   // Legacy path: /api/system/master-clock
   @Get('master-clock')
   @Version(VERSION_NEUTRAL)

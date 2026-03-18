@@ -5,7 +5,13 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { DatabaseService, sql, User } from '@the-new-fuse/database';
 import { compare, hash } from 'bcrypt';
 import * as crypto from 'crypto';
-import { GenerateInviteCodeDto, LoginDto, RegisterDto, TokenDto } from '../dtos/auth.dto';
+import {
+  GenerateInviteCodeDto,
+  LoginDto,
+  RegisterDto,
+  SupabaseAuthDto,
+  TokenDto,
+} from '../dtos/auth.dto';
 
 type AuthResponse = TokenDto & {
   access_token: string;
@@ -116,7 +122,7 @@ export class AuthService {
         const validatedInvite = await this.verifyInviteCodeIfEnabled(dto.inviteCode);
         this.logger.log(`Creating new platform account for ${email}`);
 
-        const syntheticPasswordHash = await hash(randomUUID().toString(), 10);
+        const syntheticPasswordHash = await hash(crypto.randomUUID(), 10);
 
         user = await this.db.users.create({
           email,
