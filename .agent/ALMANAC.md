@@ -7,6 +7,10 @@ align their mental models with these definitions.
 
 - **Primitives**: The irreducible building blocks of the system (logic, data, or
   tools) from which all complex behaviors are derived.
+- **Composable**: The capability of discrete primitives or components to be
+  combined in various configurations to create new, complex functionality.
+- **Decomposable**: The capability of complex logic or systems to be broken down
+  into their constituent primitives for analysis, repair, or refactoring.
 - **Index**: A searchable registry mapping identifiers to their locations,
   metadata, or addresses.
 - **Library**: A curated collection of reusable assets, skills, logic modules,
@@ -121,3 +125,37 @@ align their mental models with these definitions.
   reads and parallel searches.
 - **Semantic Memory**: Swarm-wide interaction history searchable via vector
   embeddings.
+
+## 6. Systemic Behaviors (The Living Network)
+
+- **Agentic**: Characterizing a system or entity that possesses the autonomy to
+  reason, plan, and act toward a goal without constant external intervention.
+- **Autonomic**: Self-managing, self-healing, and self-optimizing logic that
+  operates independently of human triggers.
+- **Assimilation**: The process of absorbing external, non-standard code or data
+  and converting it into the rigid TNF/OpenClaw protocol and architectural
+  standard.
+- **Mimic**: The ability of an agent to observe and replicate existing patterns,
+  styles, and conventions within a workspace to ensure seamless integration.
+- **Emergence**: Sophisticated global behaviors that arise from the collective
+  interactions of simpler agentic nodes.
+- **Fractal**: A structural standard where the same logical patterns (e.g.,
+  Plan-Act-Validate) are applied consistently at every scale of the system.
+- **Consensus**: A multi-agent agreement state required for high-impact
+  decisions, ensuring cross-domain validation (e.g., Security + UX).
+- **Heuristic**: Practical, experience-based decision-making logic used when
+  exhaustive data is unavailable or inefficient to process.
+- **Telemetry**: The real-time stream of internal reasoning, state changes, and
+  tool outputs used for swarm auditing.
+- **Provenance**: The documented origin and history of a logic change, providing
+  a clear "who, how, and why" for every edit.
+- **Entropy**: The measure of disorder or decay in system logic and
+  documentation; the state which autonomous Flywheels are tasked to reverse.
+- **Resonance**: The alignment of disparate agent outputs that reinforces a
+  single conclusion or architectural direction.
+- **Anchor**: A fixed, non-negotiable logical constraint or mandate that serves
+  as the "ground truth" for the entire ecosystem.
+- **Horizon**: The operational limit of an agent's reasoning or prediction
+  capability, triggering a mandatory handoff to a higher-order Director.
+- **Symbiosis**: The collaborative relationship between the Super Admin (intent)
+  and the Agentic swarm (execution), where each enhances the other's capacity.

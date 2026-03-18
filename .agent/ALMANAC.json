@@ -1,9 +1,11 @@
 {
-  "almanac_version": "1.1.0",
+  "almanac_version": "1.2.0",
   "last_updated": "2026-03-18",
   "definitions": {
     "primitives": {
       "Primitives": "Irreducible building blocks of system logic/data",
+      "Composable": "Ability to combine discrete parts into new functionality",
+      "Decomposable": "Ability to break complex systems into atomic parts",
       "Index": "Searchable registry of identifiers and locations",
       "Library": "Collection of reusable assets and logic modules",
       "ContextuallyRelative": "Significance dependent on environment/session",
@@ -38,22 +40,28 @@
       "Participant": "Interaction entity (Human/AI)",
       "SuperAdmin": "Ultimate human authority"
     },
+    "behaviors": {
+      "Agentic": "Autonomy to reason, plan, and pursue goals",
+      "Autonomic": "Self-managing and self-healing logic",
+      "Assimilation": "Converting external code to internal standards",
+      "Mimic": "Replicating existing workspace patterns and styles",
+      "Emergence": "Complex behaviors arising from node interaction",
+      "Fractal": "Consistent logic patterns at every scale",
+      "Consensus": "Multi-agent agreement for high-impact changes",
+      "Heuristic": "Experience-based practical decision making",
+      "Telemetry": "Real-time auditing stream of agent reasoning",
+      "Provenance": "Documented lineage and history of logic changes",
+      "Entropy": "System decay reversed by autonomous loops",
+      "Resonance": "Alignment of disparate agent outputs",
+      "Anchor": "Fixed ground-truth logical constraint",
+      "Horizon": "Reasoning limit triggering mandatory handoff",
+      "Symbiosis": "Collaborative human-swarm relationship"
+    },
     "protocols": {
       "A2A": "Agent-to-Agent communication standard",
       "Envelope_V2": "Standardized JSON message wrapper",
       "SGP": "Secure Gateway Protocol for Node/Gateway integrity",
       "TWIP": "Web Interoperability Protocol for cross-platform sync"
-    },
-    "mechanisms": {
-      "Frontloading": "Mandatory pre-task context injection",
-      "Flywheel": "Perpetual autonomous improvement loop",
-      "Supercycle": "Coordinated multi-agent architectural session",
-      "Heartbeat": "30s presence signal"
-    },
-    "standards": {
-      "ID_Format": "agent_${Name}_${Timestamp}",
-      "Registry": "Redis-backed tnf:agent-registry",
-      "Efficiency": "Surgical tool use to preserve context window"
     }
   }
 }
