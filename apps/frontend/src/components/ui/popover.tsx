@@ -182,12 +182,19 @@ export const PopoverCloseButton = ({
 }) => (
   <button
     onClick={onClick}
+    aria-label="Close popover"
     className={cn(
-      'absolute top-2 right-2 text-gray-400 hover:text-muted-foreground transition-colors',
+      'absolute top-2 right-2 text-gray-400 hover:text-muted-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm ring-offset-background',
       className
     )}
   >
-    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      aria-hidden="true"
+    >
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
     </svg>
   </button>
