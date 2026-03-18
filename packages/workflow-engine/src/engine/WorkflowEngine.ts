@@ -1,27 +1,25 @@
 /**
  * Unified Workflow Engine for The New Fuse Framework
- * 
+ *
  * This engine consolidates all workflow execution capabilities from various scattered implementations.
  * It integrates with the Master Agent Registry, Relay System, and Orchestration Services to provide a cohesive workflow experience.
  */
 
-import { EventEmitter } from 'events';
 import { Logger } from '@the-new-fuse/relay-core';
+import { EventEmitter } from 'events';
 // import { DrizzleClient } from '@drizzle/client';
+import { WorkflowExecutor } from '../executor/WorkflowExecutor';
 import { WorkflowQueue } from '../queue/WorkflowQueue';
 import { telemetry } from '../telemetry/TelemetryService';
-import { WorkflowExecutor } from '../executor/WorkflowExecutor';
 import {
-  UnifiedWorkflow,
-  WorkflowExecution,
-  NodeExecution,
-  WorkflowEventType,
-  WorkflowEvent,
   ExecutionContext,
-  NodeExecutionStatus,
+  NodeExecution,
+  UnifiedWorkflow,
+  WorkflowEvent,
+  WorkflowEventType,
+  WorkflowExecution,
   WorkflowExecutionStatus,
   WorkflowNode,
-  WorkflowNodeType,
 } from '../types/WorkflowTypes';
 import { getErrorMessage } from '../utils/errorUtils';
 
@@ -52,17 +50,17 @@ export class UnifiedWorkflowEngine extends EventEmitter {
   private workflowQueue?: WorkflowQueue;
   private executor: WorkflowExecutor;
   private isRunning: boolean = true;
-  
+
   // Execution tracking
   private activeExecutions: Map<string, WorkflowExecution> = new Map();
-  
+
   // Performance metrics
   private metrics = {
     totalExecutions: 0,
     successfulExecutions: 0,
     failedExecutions: 0,
     averageExecutionTime: 0,
-    activeExecutionCount: 0
+    activeExecutionCount: 0,
   };
 
   constructor(
@@ -82,15 +80,15 @@ export class UnifiedWorkflowEngine extends EventEmitter {
     this.logger = logger;
 
     this.executor = new WorkflowExecutor(
-        {
-            maxParallelNodes: 1,
-            nodeTimeoutMs: config.defaultTimeoutMs,
-            retryDelayMs: 1000,
-            maxRetries: 3,
-            enableDebugLogging: config.debug
-        },
-        agentRegistry,
-        logger
+      {
+        maxParallelNodes: 1,
+        nodeTimeoutMs: config.defaultTimeoutMs,
+        retryDelayMs: 1000,
+        maxRetries: 3,
+        enableDebugLogging: config.debug,
+      },
+      agentRegistry,
+      logger
     );
 
     this.recoverInterruptedExecutions();
@@ -105,7 +103,7 @@ export class UnifiedWorkflowEngine extends EventEmitter {
       executionId: context.executionId,
       variables: context.variables,
       temporaryData: context.temporaryData,
-      userContext: context.userContext
+      userContext: context.userContext,
     };
   }
 
@@ -120,7 +118,7 @@ export class UnifiedWorkflowEngine extends EventEmitter {
       temporaryData: data.temporaryData || {},
       userContext: data.userContext,
       agentRegistry: this.agentRegistry,
-      relayConnection: null
+      relayConnection: null,
     };
   }
 
@@ -133,8 +131,8 @@ export class UnifiedWorkflowEngine extends EventEmitter {
 
       const interruptedExecutions = await this.drizzle.workflowExecution.findMany({
         where: {
-          status: WorkflowExecutionStatus.RUNNING
-        }
+          status: WorkflowExecutionStatus.RUNNING,
+        },
       });
 
       if (interruptedExecutions.length === 0) {
@@ -142,21 +140,27 @@ export class UnifiedWorkflowEngine extends EventEmitter {
         return;
       }
 
-      this.logger.info(`⚠️ Found ${interruptedExecutions.length} interrupted executions. Attempting recovery...`);
+      this.logger.info(
+        `⚠️ Found ${interruptedExecutions.length} interrupted executions. Attempting recovery...`
+      );
 
       for (const dbExecution of interruptedExecutions) {
         try {
-            if (this.workflowQueue) {
-                await this.workflowQueue.addStartWorkflowJob({
-                    executionId: dbExecution.id,
-                    workflowId: dbExecution.workflowId
-                });
-                this.logger.info(`🔄 Re-queued interrupted execution: ${dbExecution.id}`);
-            } else {
-                this.logger.warn(`Cannot recover execution ${dbExecution.id}: WorkflowQueue not initialized.`);
-            }
+          if (this.workflowQueue) {
+            await this.workflowQueue.addStartWorkflowJob({
+              executionId: dbExecution.id,
+              workflowId: dbExecution.workflowId,
+            });
+            this.logger.info(`🔄 Re-queued interrupted execution: ${dbExecution.id}`);
+          } else {
+            this.logger.warn(
+              `Cannot recover execution ${dbExecution.id}: WorkflowQueue not initialized.`
+            );
+          }
         } catch (err) {
-            this.logger.error(`❌ Failed to recover execution ${dbExecution.id}: ${getErrorMessage(err)}`);
+          this.logger.error(
+            `❌ Failed to recover execution ${dbExecution.id}: ${getErrorMessage(err)}`
+          );
         }
       }
     } catch (error) {
@@ -227,12 +231,12 @@ export class UnifiedWorkflowEngine extends EventEmitter {
       message: reason,
       timestamp: new Date(),
       recoverable: false,
-      metadata: {}
+      metadata: {},
     };
 
     await this.finalizeExecution(execution);
     this.logger.info(`🛑 Workflow execution cancelled: ${executionId} - ${reason}`);
-    
+
     return true;
   }
 
@@ -242,8 +246,8 @@ export class UnifiedWorkflowEngine extends EventEmitter {
         where: { id: workflowId },
         include: {
           steps: { orderBy: { order: 'asc' } },
-          agent: true
-        }
+          agent: true,
+        },
       });
 
       if (!dbWorkflow) return null;
@@ -277,7 +281,7 @@ export class UnifiedWorkflowEngine extends EventEmitter {
         variables: { ...input, ...this.extractWorkflowVariables(workflow) },
         temporaryData: {},
         agentRegistry: this.agentRegistry,
-        relayConnection: null
+        relayConnection: null,
       },
       statistics: {
         totalNodes: workflow.definition.nodes.length,
@@ -285,13 +289,13 @@ export class UnifiedWorkflowEngine extends EventEmitter {
         failedNodes: 0,
         skippedNodes: 0,
         totalDuration: 0,
-        averageNodeDuration: 0
+        averageNodeDuration: 0,
       },
       logs: [],
       metadata: {
         workflowVersion: workflow.version,
-        engineVersion: '1.0.0'
-      }
+        engineVersion: '1.0.0',
+      },
     };
 
     await this.drizzle.workflowExecution.create({
@@ -305,8 +309,8 @@ export class UnifiedWorkflowEngine extends EventEmitter {
         context: this.serializeContext(execution.context),
         statistics: execution.statistics,
         logs: [],
-        metadata: execution.metadata
-      }
+        metadata: execution.metadata,
+      },
     });
 
     return execution;
@@ -318,19 +322,19 @@ export class UnifiedWorkflowEngine extends EventEmitter {
     if (this.workflowQueue) {
       await this.workflowQueue.addStartWorkflowJob({
         executionId: execution.id,
-        workflowId: execution.workflowId
+        workflowId: execution.workflowId,
       });
     } else {
       this.logger.warn('WorkflowQueue not initialized. Execution will not start automatically.');
     }
-    
+
     this.emitWorkflowEvent({
       id: `event_${Date.now()}`,
       type: WorkflowEventType.WORKFLOW_STARTED,
       workflowId: execution.workflowId,
       executionId: execution.id,
       timestamp: new Date(),
-      data: { triggeredBy: execution.triggeredBy }
+      data: { triggeredBy: execution.triggeredBy },
     });
 
     if (this.config.enableHeartbeatMonitoring) {
@@ -344,20 +348,20 @@ export class UnifiedWorkflowEngine extends EventEmitter {
 
   public async executeNode(node: WorkflowNode, context: ExecutionContext): Promise<any> {
     return telemetry.startActiveSpan('executeNode', async (span) => {
-        span.setAttribute('nodeId', node.id);
-        span.setAttribute('nodeType', node.type);
-        span.setAttribute('executionId', context.executionId);
+      span.setAttribute('nodeId', node.id);
+      span.setAttribute('nodeType', node.type);
+      span.setAttribute('executionId', context.executionId);
 
-        let execution = this.activeExecutions.get(context.executionId);
-        if (!execution) {
-            execution = await this.loadExecution(context.executionId) || undefined;
-        }
+      let execution = this.activeExecutions.get(context.executionId);
+      if (!execution) {
+        execution = (await this.loadExecution(context.executionId)) || undefined;
+      }
 
-        if (!execution) {
-            throw new Error(`Execution ${context.executionId} not found`);
-        }
+      if (!execution) {
+        throw new Error(`Execution ${context.executionId} not found`);
+      }
 
-        return await this.executor.executeStep(node, context, execution);
+      return await this.executor.executeStep(node, context, execution);
     });
   }
 
@@ -370,7 +374,7 @@ export class UnifiedWorkflowEngine extends EventEmitter {
       Number,
       Boolean,
       Array,
-      Object
+      Object,
     };
 
     try {
@@ -387,7 +391,7 @@ export class UnifiedWorkflowEngine extends EventEmitter {
     context: ExecutionContext
   ): WorkflowNode[] {
     const connections = workflow.definition.connections.filter(
-      c => c.sourceNodeId === currentNode.id
+      (c) => c.sourceNodeId === currentNode.id
     );
 
     const nextNodes: WorkflowNode[] = [];
@@ -403,7 +407,7 @@ export class UnifiedWorkflowEngine extends EventEmitter {
         }
       }
 
-      const nextNode = workflow.definition.nodes.find(n => n.id === connection.targetNodeId);
+      const nextNode = workflow.definition.nodes.find((n) => n.id === connection.targetNodeId);
       if (nextNode) {
         nextNodes.push(nextNode);
       }
@@ -424,17 +428,18 @@ export class UnifiedWorkflowEngine extends EventEmitter {
         context: this.serializeContext(execution.context),
         statistics: execution.statistics,
         logs: execution.logs,
-        metadata: execution.metadata
-      }
+        metadata: execution.metadata,
+      },
     });
 
     this.activeExecutions.delete(execution.id);
 
-    const eventType = execution.status === WorkflowExecutionStatus.COMPLETED
-      ? WorkflowEventType.WORKFLOW_COMPLETED
-      : execution.status === WorkflowExecutionStatus.FAILED
-      ? WorkflowEventType.WORKFLOW_FAILED
-      : WorkflowEventType.WORKFLOW_CANCELLED;
+    const eventType =
+      execution.status === WorkflowExecutionStatus.COMPLETED
+        ? WorkflowEventType.WORKFLOW_COMPLETED
+        : execution.status === WorkflowExecutionStatus.FAILED
+          ? WorkflowEventType.WORKFLOW_FAILED
+          : WorkflowEventType.WORKFLOW_CANCELLED;
 
     this.emitWorkflowEvent({
       id: `event_${Date.now()}`,
@@ -445,8 +450,8 @@ export class UnifiedWorkflowEngine extends EventEmitter {
       data: {
         duration: execution.duration,
         completedNodes: execution.statistics.completedNodes,
-        failedNodes: execution.statistics.failedNodes
-      }
+        failedNodes: execution.statistics.failedNodes,
+      },
     });
 
     this.updateMetrics(execution);
@@ -454,7 +459,7 @@ export class UnifiedWorkflowEngine extends EventEmitter {
 
   private emitWorkflowEvent(event: WorkflowEvent): void {
     this.emit('workflowEvent', event);
-    
+
     if (this.config.debug) {
       this.logger.debug(`Workflow event: ${event.type} - ${event.workflowId}`);
     }
@@ -462,7 +467,8 @@ export class UnifiedWorkflowEngine extends EventEmitter {
 
   private updateMetrics(execution: WorkflowExecution): void {
     if (execution.duration) {
-      const totalTime = this.metrics.averageExecutionTime * (this.metrics.totalExecutions - 1) + execution.duration;
+      const totalTime =
+        this.metrics.averageExecutionTime * (this.metrics.totalExecutions - 1) + execution.duration;
       this.metrics.averageExecutionTime = totalTime / this.metrics.totalExecutions;
     }
     this.metrics.activeExecutionCount = this.activeExecutions.size;
@@ -491,11 +497,23 @@ export class UnifiedWorkflowEngine extends EventEmitter {
           parallel: false,
           maxConcurrentExecutions: 1,
           timeoutMs: 300000,
-          retryPolicy: { enabled: false, maxAttempts: 3, delayMs: 1000, backoffMultiplier: 2, maxDelayMs: 30000 },
+          retryPolicy: {
+            enabled: false,
+            maxAttempts: 3,
+            delayMs: 1000,
+            backoffMultiplier: 2,
+            maxDelayMs: 30000,
+          },
           errorHandling: { onError: 'stop', captureErrors: true, notifyOnError: true },
-          logging: { level: 'info', includeInputs: true, includeOutputs: true, includeTiming: true, retentionDays: 30 },
-          notifications: { onStart: false, onComplete: true, onError: true, channels: [] }
-        }
+          logging: {
+            level: 'info',
+            includeInputs: true,
+            includeOutputs: true,
+            includeTiming: true,
+            retentionDays: 30,
+          },
+          notifications: { onStart: false, onComplete: true, onError: true, channels: [] },
+        },
       },
       status: dbWorkflow.status,
       agentId: dbWorkflow.agentId,
@@ -518,8 +536,8 @@ export class UnifiedWorkflowEngine extends EventEmitter {
           averageMemoryUsage: 0,
           peakMemoryUsage: 0,
           throughput: 0,
-          bottleneckNodes: []
-        }
+          bottleneckNodes: [],
+        },
       },
       metadata: {
         category: 'general',
@@ -527,15 +545,15 @@ export class UnifiedWorkflowEngine extends EventEmitter {
         author: 'system',
         dependencies: [],
         integrations: [],
-        customProperties: {}
-      }
+        customProperties: {},
+      },
     };
   }
 
   private async loadExecution(executionId: string): Promise<WorkflowExecution | null> {
     try {
       const dbExecution = await this.drizzle.workflowExecution.findUnique({
-        where: { id: executionId }
+        where: { id: executionId },
       });
 
       if (!dbExecution) return null;
@@ -565,10 +583,10 @@ export class UnifiedWorkflowEngine extends EventEmitter {
           failedNodes: 0,
           skippedNodes: 0,
           totalDuration: 0,
-          averageNodeDuration: 0
+          averageNodeDuration: 0,
         },
         logs: (dbExecution.logs as any) || [],
-        metadata: (dbExecution.metadata as any) || {}
+        metadata: (dbExecution.metadata as any) || {},
       };
     } catch (error) {
       this.logger.error(`Failed to load execution ${executionId}: ${getErrorMessage(error)}`);
@@ -589,7 +607,17 @@ export class UnifiedWorkflowEngine extends EventEmitter {
     return Array.from(this.activeExecutions.values());
   }
 
-  async getWorkflowExecutions(workflowId: string, _limit: number = 10): Promise<WorkflowExecution[]> {
+  async updateExecutionState(executionId: string, context: any): Promise<void> {
+    const execution = this.activeExecutions.get(executionId);
+    if (execution) {
+      execution.variables = { ...execution.variables, ...context.variables };
+    }
+  }
+
+  async getWorkflowExecutions(
+    workflowId: string,
+    _limit: number = 10
+  ): Promise<WorkflowExecution[]> {
     return [];
   }
 }

@@ -223,6 +223,11 @@ export class WorkflowExecutor extends EventEmitter {
 
     // Create agent task
     const taskData = {
+      id: `todo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      status: 'pending',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      dependencies: [],
       content: `[WORKFLOW] ${config.task}`,
       priority: config.priority || 'medium',
       category: 'task' as const,
@@ -649,6 +654,11 @@ export class WorkflowExecutor extends EventEmitter {
     }
 
     const taskData = {
+      id: `todo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      status: 'pending',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      dependencies: [],
       content: `[SANDBOX] Execute ${config.language} code`,
       priority: 'high',
       category: 'task',
