@@ -37,8 +37,8 @@
     "@types/mime-types": "^2.1.4",
     "@types/node": "^24.0.13",
     "@types/url-parse": "^1.4.11",
-    "eslint": "^10.0.3",
-    "jest": "^30.2.0",
+    "eslint": "^8.57.1",
+    "jest": "^30.3.0",
     "ts-jest": "^29.4.6",
     "typescript": "^5.9.3"
   },

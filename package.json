@@ -309,7 +309,7 @@
     "terser-webpack-plugin": "^5.3.16",
     "tsx": "^4.20.3",
     "url-parse": "^1.5.10",
-    "vitest": "^4.0.17",
+    "vitest": "^4.1.0",
     "ws": "^8.18.3"
   },
   "workspaces": [
