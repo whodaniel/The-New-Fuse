@@ -4,6 +4,7 @@ export interface Env {
   COMMUNITY_API_KEY?: string;
   CORS_ORIGIN?: string;
   TNF_API_BASE_URL?: string;
+  REQUIRE_INVITE_CODE?: string;
 }
 
 type BuildOption =
@@ -63,12 +64,55 @@ type MembershipRecord = {
   tier?: string;
 };
 
+type AccessRuleRecord = {
+  game_id: string;
+  label: string | null;
+  description: string | null;
+  required_tier: string;
+  requires_membership: number;
+  required_nft_contract: string | null;
+  required_nft_chain_id: number | null;
+  required_nft_token_id: string | null;
+  required_nft_traits_json: string | null;
+};
+
+type EntitlementRecord = {
+  source: string;
+  tier_granted: string;
+  expires_at: string | null;
+};
+
+type InviteRecord = {
+  code: string;
+  status: string;
+  max_uses: number;
+  used_count: number;
+  expires_at: string | null;
+};
+
+const MASTER_SUPER_ADMIN_EMAIL = 'owner@example.com';
+const DEFAULT_GAME_ID = 'ai-arcade-poker';
+const TIER_RANK: Record<string, number> = {
+  STARTER: 0,
+  PRO: 1,
+  ENTERPRISE: 2,
+};
+
 const membershipCache = new Map<string, { expiresAt: number; record: MembershipRecord | null }>();
 const MEMBERSHIP_CACHE_TTL_MS = 90 * 1000;
 
 const findMember = async (env: Env, identity: string) => {
   const normalized = String(identity || '').trim();
   if (!normalized) return null;
+  if (normalized.toLowerCase() === MASTER_SUPER_ADMIN_EMAIL) {
+    return {
+      username: normalized,
+      status: 'active',
+      role: 'super_admin',
+      source: 'local' as const,
+      tier: 'ENTERPRISE',
+    };
+  }
   const cacheKey = normalized.toLowerCase();
   const cached = membershipCache.get(cacheKey);
   if (cached && cached.expiresAt > Date.now()) {
@@ -137,6 +181,369 @@ const findMember = async (env: Env, identity: string) => {
 
   membershipCache.set(cacheKey, { expiresAt: Date.now() + MEMBERSHIP_CACHE_TTL_MS, record: null });
   return null;
+};
+
+const parseJsonSafe = <T>(value: string | null | undefined, fallback: T): T => {
+  if (!value) return fallback;
+  try {
+    return JSON.parse(value) as T;
+  } catch {
+    return fallback;
+  }
+};
+
+const isTruthy = (value: string | undefined) =>
+  ['1', 'true', 'yes', 'on'].includes(
+    String(value || '')
+      .trim()
+      .toLowerCase()
+  );
+
+const tierMeets = (actual: string, required: string) =>
+  (TIER_RANK[String(actual || 'STARTER').toUpperCase()] ?? 0) >=
+  (TIER_RANK[String(required || 'STARTER').toUpperCase()] ?? 0);
+
+const normalizeSubjectKey = (body: Record<string, any>) => {
+  const email = String(body.email || '')
+    .trim()
+    .toLowerCase();
+  const username = String(body.username || '')
+    .trim()
+    .toLowerCase();
+  const userId = String(body.userId || '')
+    .trim()
+    .toLowerCase();
+  const walletAddress = String(body.walletAddress || '')
+    .trim()
+    .toLowerCase();
+  const agentId = String(body.agentId || '')
+    .trim()
+    .toLowerCase();
+  return email || username || userId || walletAddress || agentId || '';
+};
+
+const resolveMembershipTier = (member: MembershipRecord | null) => {
+  if (!member || member.status !== 'active') return 'STARTER';
+  const role = String(member.role || '').toLowerCase();
+  if (['super_admin', 'admin', 'system'].includes(role)) return 'ENTERPRISE';
+  if (['founding', 'producer', 'member', 'paid', 'pro'].includes(role)) return 'PRO';
+  return String(member.tier || 'STARTER').toUpperCase();
+};
+
+const buildPathSummary = (input: {
+  canRegister: boolean;
+  canPlay: boolean;
+  inviteRequired: boolean;
+  inviteSatisfied: boolean;
+  membershipActive: boolean;
+  nftRequired: boolean;
+  nftSatisfied: boolean;
+}) => {
+  if (input.canPlay) return 'Access approved. You can enter play immediately.';
+  if (input.inviteRequired && !input.inviteSatisfied) {
+    return 'Invite-only registration is active. Secure an invite code before continuing.';
+  }
+  if (!input.membershipActive) {
+    return 'Paid TNF membership or a server-side membership override is required before registration and play.';
+  }
+  if (input.nftRequired && !input.nftSatisfied) {
+    return 'Your account is eligible, but this game also requires the configured access NFT.';
+  }
+  if (!input.canRegister) {
+    return 'Your account is not yet eligible for AI Arcade registration.';
+  }
+  return 'Your account is registered, but the current game access rule is still blocking entry.';
+};
+
+const buildNextActions = (input: {
+  userFound: boolean;
+  inviteRequired: boolean;
+  inviteSatisfied: boolean;
+  membershipActive: boolean;
+  walletLinked: boolean;
+  nftRequired: boolean;
+  nftSatisfied: boolean;
+  gameId: string;
+}) => {
+  const actions: Array<{ code: string; label: string; description: string; href?: string }> = [];
+
+  if (!input.userFound) {
+    actions.push({
+      code: 'connect_thenewfuse',
+      label: 'Connect thenewfuse.com',
+      description: 'Sign in or create your TNF account before entering AI Arcade.',
+      href: 'https://thenewfuse.com/auth/login',
+    });
+  }
+
+  if (input.inviteRequired && !input.inviteSatisfied) {
+    actions.push({
+      code: 'get_invite_code',
+      label: 'Get an invite code',
+      description:
+        'Registration is invite-only right now. Use a founder invite or a super-admin override.',
+      href: 'https://thenewfuse.com',
+    });
+  }
+
+  if (!input.membershipActive) {
+    actions.push({
+      code: 'activate_membership',
+      label: 'Activate paid membership',
+      description:
+        'Poker access is reserved for paid TNF members, founder members, or admin-approved overrides.',
+      href: 'https://thenewfuse.com',
+    });
+  }
+
+  if (input.nftRequired && !input.walletLinked) {
+    actions.push({
+      code: 'connect_wallet',
+      label: 'Connect your wallet',
+      description:
+        'This game requires an NFT. Link your wallet or provision a TNF smart wallet first.',
+    });
+  }
+
+  if (input.nftRequired && input.walletLinked && !input.nftSatisfied) {
+    actions.push({
+      code: 'acquire_required_nft',
+      label: 'Acquire the required NFT',
+      description: `Hold the required access NFT for ${input.gameId}. This can come from membership issuance or the secondary market.`,
+      href: 'https://thenewfuse.com',
+    });
+  }
+
+  if (actions.length === 0) {
+    actions.push({
+      code: 'enter_game',
+      label: 'Enter AI Arcade',
+      description: 'Your account satisfies the current access policy.',
+    });
+  }
+
+  return actions;
+};
+
+const getGameRule = async (env: Env, gameId: string) => {
+  const persisted = await env.COMMUNITY_DB.prepare(
+    `SELECT game_id, label, description, required_tier, requires_membership,
+            required_nft_contract, required_nft_chain_id, required_nft_token_id, required_nft_traits_json
+     FROM game_access_rules
+     WHERE game_id = ? AND is_active = 1
+     LIMIT 1`
+  )
+    .bind(gameId)
+    .first<AccessRuleRecord>();
+
+  if (persisted) {
+    return {
+      gameId: persisted.game_id,
+      label: persisted.label || gameId,
+      description: persisted.description,
+      requiredTier: String(persisted.required_tier || 'STARTER').toUpperCase(),
+      requiresMembership: Boolean(persisted.requires_membership),
+      requiredNftContract: persisted.required_nft_contract,
+      requiredNftChainId: persisted.required_nft_chain_id,
+      requiredNftTokenId: persisted.required_nft_token_id,
+      requiredNftTraits: parseJsonSafe(persisted.required_nft_traits_json, null),
+    };
+  }
+
+  if (gameId.includes('poker')) {
+    return {
+      gameId,
+      label: 'AI Arcade Poker',
+      description:
+        'Paid TNF membership is required for poker play. NFT access can be layered on top.',
+      requiredTier: 'PRO',
+      requiresMembership: true,
+      requiredNftContract: null,
+      requiredNftChainId: null,
+      requiredNftTokenId: null,
+      requiredNftTraits: null,
+    };
+  }
+
+  return {
+    gameId,
+    label: gameId,
+    description: 'No explicit game rule configured yet.',
+    requiredTier: 'STARTER',
+    requiresMembership: false,
+    requiredNftContract: null,
+    requiredNftChainId: null,
+    requiredNftTokenId: null,
+    requiredNftTraits: null,
+  };
+};
+
+const getEntitlement = async (env: Env, subjectKey: string, gameId: string) => {
+  if (!subjectKey) return null;
+  const entitlement = await env.COMMUNITY_DB.prepare(
+    `SELECT source, tier_granted, expires_at
+     FROM game_entitlements
+     WHERE subject_key = ? AND game_id = ?
+     ORDER BY created_at DESC
+     LIMIT 1`
+  )
+    .bind(subjectKey, gameId)
+    .first<EntitlementRecord>();
+
+  if (!entitlement) return null;
+  if (entitlement.expires_at && Date.parse(entitlement.expires_at) <= Date.now()) return null;
+  return {
+    source: entitlement.source,
+    tierGranted: String(entitlement.tier_granted || 'STARTER').toUpperCase(),
+    expiresAt: entitlement.expires_at,
+  };
+};
+
+const validateInviteCode = async (env: Env, inviteCode: string | undefined) => {
+  const code = String(inviteCode || '').trim();
+  if (!code) return { valid: false, source: null as 'd1' | null };
+  const record = await env.COMMUNITY_DB.prepare(
+    `SELECT code, status, max_uses, used_count, expires_at
+     FROM registration_invite_codes
+     WHERE lower(code) = lower(?)
+     LIMIT 1`
+  )
+    .bind(code)
+    .first<InviteRecord>();
+  if (!record) return { valid: false, source: null as 'd1' | null };
+  const active = String(record.status || '').toUpperCase() === 'ACTIVE';
+  const notExpired = !record.expires_at || Date.parse(record.expires_at) > Date.now();
+  const underUseLimit = Number(record.used_count || 0) < Number(record.max_uses || 0);
+  return { valid: active && notExpired && underUseLimit, source: 'd1' as const };
+};
+
+const resolveAccess = async (env: Env, body: Record<string, any>) => {
+  const gameId = String(body.gameId || DEFAULT_GAME_ID).trim() || DEFAULT_GAME_ID;
+  const username = String(body.username || '').trim() || null;
+  const email =
+    String(body.email || '')
+      .trim()
+      .toLowerCase() || null;
+  const walletAddress = String(body.walletAddress || '').trim() || null;
+  const userId = String(body.userId || '').trim() || null;
+  const agentId = String(body.agentId || '').trim() || null;
+  const subjectKey = normalizeSubjectKey(body);
+
+  const member =
+    (username ? await findMember(env, username) : null) ||
+    (email ? await findMember(env, email) : null) ||
+    null;
+  const membershipActive = !!member && member.status === 'active';
+  const membershipTier = resolveMembershipTier(member);
+  const isSuperAdmin = !!member && String(member.role || '').toLowerCase() === 'super_admin';
+  const isAdmin =
+    isSuperAdmin || ['admin', 'system'].includes(String(member?.role || '').toLowerCase());
+
+  const rule = await getGameRule(env, gameId);
+  const entitlement = await getEntitlement(env, subjectKey, gameId);
+  const inviteRequired = isTruthy(env.REQUIRE_INVITE_CODE) && !membershipActive;
+  const inviteValidation = await validateInviteCode(env, body.inviteCode);
+  const inviteSatisfied = !inviteRequired || inviteValidation.valid || isAdmin;
+
+  const hasRequiredTier = tierMeets(membershipTier, rule.requiredTier);
+  const hasEntitlementTier = entitlement
+    ? tierMeets(entitlement.tierGranted, rule.requiredTier)
+    : false;
+  const nftRequired = !!rule.requiredNftContract;
+  const nftSatisfied = isAdmin || (!!entitlement && entitlement.source === 'nft');
+  const canRegister = isAdmin || (inviteSatisfied && membershipActive);
+  const canPlay =
+    inviteSatisfied &&
+    (isAdmin ||
+      (membershipActive &&
+        (hasRequiredTier || hasEntitlementTier) &&
+        (!rule.requiresMembership || membershipActive) &&
+        (!nftRequired || nftSatisfied)));
+
+  const nextActions = buildNextActions({
+    userFound: !!member,
+    inviteRequired,
+    inviteSatisfied,
+    membershipActive,
+    walletLinked: !!walletAddress,
+    nftRequired,
+    nftSatisfied,
+    gameId,
+  });
+
+  return {
+    ok: true,
+    gameId,
+    actor: {
+      kind: agentId ? 'agent' : member ? 'user' : 'anonymous',
+      agentId,
+      isProgrammaticAgent: !!agentId,
+      isAdmin,
+      isSuperAdmin,
+      primaryRole: isSuperAdmin ? 'super_admin' : member?.role || 'guest',
+    },
+    subject: {
+      userId,
+      username: member?.username || username,
+      email,
+      walletAddress,
+    },
+    invite: {
+      enabled: isTruthy(env.REQUIRE_INVITE_CODE),
+      required: inviteRequired,
+      satisfied: inviteSatisfied,
+      source: inviteValidation.source,
+    },
+    membership: {
+      found: !!member,
+      active: membershipActive,
+      tier: membershipTier,
+      overrideActive: false,
+      overrideTier: null,
+    },
+    wallet: {
+      linked: !!walletAddress,
+      address: walletAddress,
+    },
+    game: {
+      id: gameId,
+      label: rule.label,
+      description: rule.description,
+      requiresMembership: rule.requiresMembership,
+      requiredTier: rule.requiredTier,
+      nftRequired,
+      nft: nftRequired
+        ? {
+            contractAddress: rule.requiredNftContract,
+            chainId: rule.requiredNftChainId,
+            tokenId: rule.requiredNftTokenId,
+            traits: rule.requiredNftTraits,
+            ownershipVerified: nftSatisfied,
+          }
+        : null,
+      entitlement: entitlement
+        ? {
+            source: entitlement.source,
+            tierGranted: entitlement.tierGranted,
+            expiresAt: entitlement.expiresAt,
+          }
+        : null,
+    },
+    access: {
+      canRegister,
+      canPlay,
+    },
+    nextActions,
+    pathSummary: buildPathSummary({
+      canRegister,
+      canPlay,
+      inviteRequired,
+      inviteSatisfied,
+      membershipActive,
+      nftRequired,
+      nftSatisfied,
+    }),
+  };
 };
 
 const trendFromEvents = (
@@ -249,36 +656,144 @@ const snapshotToR2 = async (env: Env) => {
 const ensureSeed = async (env: Env) => {
   const countRow = await env.COMMUNITY_DB.prepare(
     'SELECT COUNT(*) as count FROM community_apps'
-  ).first<{
-    count: number;
-  }>();
-  if ((countRow?.count || 0) > 0) return;
-  await env.COMMUNITY_DB.prepare(
-    `INSERT INTO community_apps (
+  ).first<{ count: number }>();
+  if ((countRow?.count || 0) === 0) {
+    await env.COMMUNITY_DB.prepare(
+      `INSERT INTO community_apps (
       id, name, summary, creator, category, tags_json, status, featured, votes,
       total_views, total_launches, total_submissions, cloudflare_option,
       cloudflare_project_name, cloudflare_deployment_url, created_at
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-  )
-    .bind(
-      'seed-poker-room',
-      'AI Arcade Poker Room',
-      'Live poker tables, tournaments, and AI strategy helpers.',
-      'tnf-core',
-      'cards',
-      JSON.stringify(['poker', 'multiplayer', 'ai']),
-      'published',
-      1,
-      320,
-      1890,
-      522,
-      1,
-      'workers',
-      'ai-arcade-poker-room',
-      'https://community-module.ai-arcade-poker.pages.dev',
-      new Date().toISOString()
     )
-    .run();
+      .bind(
+        'seed-poker-room',
+        'AI Arcade Poker Room',
+        'Live poker tables, tournaments, and AI strategy helpers.',
+        'tnf-core',
+        'cards',
+        JSON.stringify(['poker', 'multiplayer', 'ai']),
+        'published',
+        1,
+        320,
+        1890,
+        522,
+        1,
+        'workers',
+        'ai-arcade-poker-room',
+        'https://community-module.ai-arcade-poker.pages.dev',
+        new Date().toISOString()
+      )
+      .run();
+  }
+
+  await env.COMMUNITY_DB.batch([
+    env.COMMUNITY_DB.prepare(
+      'INSERT OR IGNORE INTO community_members (username, status, role, added_at) VALUES (?, ?, ?, ?)'
+    ).bind('bizsynth', 'active', 'super_admin', new Date().toISOString()),
+    env.COMMUNITY_DB.prepare(
+      'INSERT OR IGNORE INTO community_members (username, status, role, added_at) VALUES (?, ?, ?, ?)'
+    ).bind(MASTER_SUPER_ADMIN_EMAIL, 'active', 'super_admin', new Date().toISOString()),
+    env.COMMUNITY_DB.prepare(
+      `INSERT OR IGNORE INTO game_access_rules (
+        game_id, label, description, required_tier, requires_membership,
+        required_nft_contract, required_nft_chain_id, required_nft_token_id,
+        required_nft_traits_json, is_active, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    ).bind(
+      'ai-arcade-poker',
+      'AI Arcade Poker',
+      'Core access policy for AI Arcade poker.',
+      'PRO',
+      1,
+      null,
+      null,
+      null,
+      null,
+      1,
+      new Date().toISOString(),
+      new Date().toISOString()
+    ),
+    env.COMMUNITY_DB.prepare(
+      `INSERT OR IGNORE INTO game_access_rules (
+        game_id, label, description, required_tier, requires_membership,
+        required_nft_contract, required_nft_chain_id, required_nft_token_id,
+        required_nft_traits_json, is_active, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    ).bind(
+      'ai-arcade-poker-cash',
+      'Poker Cash Games',
+      'Cash game access policy.',
+      'PRO',
+      1,
+      null,
+      null,
+      null,
+      null,
+      1,
+      new Date().toISOString(),
+      new Date().toISOString()
+    ),
+    env.COMMUNITY_DB.prepare(
+      `INSERT OR IGNORE INTO game_access_rules (
+        game_id, label, description, required_tier, requires_membership,
+        required_nft_contract, required_nft_chain_id, required_nft_token_id,
+        required_nft_traits_json, is_active, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    ).bind(
+      'ai-arcade-poker-sng',
+      'Poker Sit & Go',
+      'SNG access policy.',
+      'PRO',
+      1,
+      null,
+      null,
+      null,
+      null,
+      1,
+      new Date().toISOString(),
+      new Date().toISOString()
+    ),
+    env.COMMUNITY_DB.prepare(
+      `INSERT OR IGNORE INTO game_access_rules (
+        game_id, label, description, required_tier, requires_membership,
+        required_nft_contract, required_nft_chain_id, required_nft_token_id,
+        required_nft_traits_json, is_active, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    ).bind(
+      'ai-arcade-poker-mtt',
+      'Poker Multi-Table Tournaments',
+      'MTT access policy.',
+      'PRO',
+      1,
+      null,
+      null,
+      null,
+      null,
+      1,
+      new Date().toISOString(),
+      new Date().toISOString()
+    ),
+    env.COMMUNITY_DB.prepare(
+      `INSERT OR IGNORE INTO game_access_rules (
+        game_id, label, description, required_tier, requires_membership,
+        required_nft_contract, required_nft_chain_id, required_nft_token_id,
+        required_nft_traits_json, is_active, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    ).bind(
+      'ai-arcade-poker-agents',
+      'Poker Agent Registration',
+      'Agent registration policy for AI Arcade poker.',
+      'PRO',
+      1,
+      null,
+      null,
+      null,
+      null,
+      1,
+      new Date().toISOString(),
+      new Date().toISOString()
+    ),
+  ]);
   await snapshotToR2(env);
 };
 
@@ -297,41 +812,8 @@ const handler = async (request: Request, env: Env) => {
   }
 
   if (path === '/api/community/access/resolve' && method === 'POST') {
-    const baseUrl = (env.TNF_API_BASE_URL || 'https://thenewfuse.com/api').replace(/\/$/, '');
-    const apiKey = env.COMMUNITY_API_KEY ? env.COMMUNITY_API_KEY.trim() : '';
-    const body = await request.text();
-
-    try {
-      const upstream = await fetch(`${baseUrl}/access/resolve`, {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/json',
-          ...(apiKey ? { 'x-community-api-key': apiKey } : {}),
-        },
-        body: body || '{}',
-      });
-
-      const payload = await upstream.text();
-      return new Response(payload, {
-        status: upstream.status,
-        headers: {
-          'content-type': 'application/json; charset=utf-8',
-          'access-control-allow-origin': corsOrigin,
-          'access-control-allow-methods': 'GET,POST,OPTIONS',
-          'access-control-allow-headers': 'content-type, authorization, x-community-api-key',
-        },
-      });
-    } catch (error) {
-      return json(
-        {
-          ok: false,
-          error: 'access_resolver_unavailable',
-          message: String(error || 'Failed to reach TNF access resolver'),
-        },
-        502,
-        corsOrigin
-      );
-    }
+    const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+    return json(await resolveAccess(env, body), 200, corsOrigin);
   }
 
   if (path === '/api/community/apps' && method === 'GET') {
