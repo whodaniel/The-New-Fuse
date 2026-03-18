@@ -37,8 +37,8 @@ else
       cd "$DB_PKG_PATH"
 
       echo "Executing Drizzle migrations..."
-      # Force use of npm run to avoid pnpm executable issues
-      npm run drizzle:migrate
+      # Force use of pnpm to run migrations with proper environment
+      pnpm run drizzle:migrate
 
       MIGRATE_EXIT_CODE=$?
       cd "$CURRENT_DIR"
