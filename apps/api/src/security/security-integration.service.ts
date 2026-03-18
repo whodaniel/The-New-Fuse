@@ -110,10 +110,15 @@ export class SecurityIntegrationService {
     const token = authHeader.substring(7);
 
     try {
+      const secret = process.env.JWT_SECRET;
+      if (!secret || secret.length < 32) {
+        throw new Error('JWT_SECRET must be provided and be at least 32 characters long');
+      }
+
       // Import JWT service dynamically to avoid circular dependencies
       const { JwtService } = await import('@nestjs/jwt');
       const jwtService = new JwtService({
-        secret: process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production',
+        secret: secret,
       });
 
       const payload = await jwtService.verifyAsync(token);
