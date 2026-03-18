@@ -909,7 +909,31 @@ export const TNFCommandCenter: React.FC = () => {
 
       {/* Network Topology Visualization */}
       <div className="mb-6">
-        <NetworkTopology />
+        <GlassCard className="p-4">
+          <div className="flex items-center justify-between gap-4 mb-4">
+            <h3 className="text-lg font-semibold flex items-center gap-2">
+              <Layers className="w-5 h-5" />
+              Mesh Topology
+            </h3>
+            <span className="text-xs text-muted-foreground">Live snapshot</span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="rounded-md bg-black/20 border border-white/10 p-3">
+              <div className="text-xs text-muted-foreground">Nodes</div>
+              <div className="text-xl font-semibold">{meshInstances.length}</div>
+            </div>
+            <div className="rounded-md bg-black/20 border border-white/10 p-3">
+              <div className="text-xs text-muted-foreground">Online</div>
+              <div className="text-xl font-semibold">
+                {meshInstances.filter((instance) => instance.status === 'online').length}
+              </div>
+            </div>
+            <div className="rounded-md bg-black/20 border border-white/10 p-3">
+              <div className="text-xs text-muted-foreground">Active Agents</div>
+              <div className="text-xl font-semibold">{metrics.activeAgents}</div>
+            </div>
+          </div>
+        </GlassCard>
       </div>
 
       {/* Main Grid */}

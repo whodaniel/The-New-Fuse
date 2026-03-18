@@ -1,4 +1,4 @@
-import { A2AMessageType, A2APriority, AgentConfig, AgentType } from '@the-new-fuse/a2a-core';
+import { A2AMessageType, A2APriority, AgentType } from '@the-new-fuse/a2a-core';
 import {
   A2AMessage,
   A2AProvider,
@@ -16,40 +16,11 @@ const SystemIcon = () => <AlertCircle className="h-4 w-4" />;
 const cn = (...classes: Array<string | false | null | undefined>) =>
   classes.filter(Boolean).join(' ');
 
-// Enhanced message bubble
-// ⚡ Bolt: Extracted MessageBubble out of the main component scope and wrapped
-// in React.memo to prevent O(n) re-renders during frequent A2A message updates.
-const MessageBubble = React.memo(({ msg, agents }: { msg: A2AMessage; agents: AgentConfig[] }) => {
-  const isUser = msg.payload?.sender === 'User';
-  const isSystem = msg.type === A2AMessageType.NOTIFICATION && msg.payload?.type === 'system';
-  const bubbleClass = cn(
-    'p-4 rounded-md shadow-md max-w-lg',
-    isUser && 'bg-blue-500 text-white ml-auto',
-    isSystem && 'bg-transparent0 text-white text-center text-xs italic mx-auto',
-    !isUser && !isSystem && 'bg-transparent dark:bg-gray-700 mr-auto'
-  );
-
-  const senderName = isUser
-    ? 'You'
-    : agents.find((a) => a.agentId === msg.fromAgent)?.name || msg.fromAgent;
-
-  return (
-    <div className={cn('flex w-full', isUser ? 'justify-end' : 'justify-start')}>
-      <div className={bubbleClass}>
-        {!isUser && !isSystem && (
-          <div className="font-bold mb-1 text-sm opacity-75">{senderName}</div>
-        )}
-        <p className="whitespace-pre-wrap break-words">
-          {msg.payload?.text || JSON.stringify(msg.payload, null, 2)}
-        </p>
-        <div className="text-xs opacity-50 mt-1">
-          {new Date(msg.timestamp).toLocaleTimeString()}
-        </div>
-      </div>
-    </div>
-  );
-});
-MessageBubble.displayName = 'MessageBubble';
+type AgentSummary = {
+  agentId: string;
+  name?: string;
+  type?: string;
+};
 
 // A2A Configuration
 const A2A_CONFIG = {
@@ -59,7 +30,7 @@ const A2A_CONFIG = {
 
 // ⚡ Bolt: Extracted MessageBubble and wrapped in React.memo to prevent O(n) re-renders
 // of the entire message list on every keystroke in the chat input.
-const MessageBubble = React.memo<{ msg: A2AMessage; agents: any[] }>(({ msg, agents }) => {
+const MessageBubble = React.memo<{ msg: A2AMessage; agents: AgentSummary[] }>(({ msg, agents }) => {
   const isUser = msg.payload?.sender === 'User';
   const isSystem = msg.type === A2AMessageType.NOTIFICATION && msg.payload?.type === 'system';
   const bubbleClass = cn(
@@ -113,7 +84,8 @@ export default function MultiAgentChat() {
 }
 
 function EnhancedMultiAgentChatUI() {
-  const { connectionState, connect, error: connectionError } = useA2AContext();
+  const { connectionState, connect } = useA2AContext();
+  const connectionError = connectionState.error ? new Error(connectionState.error) : null;
   const { agents, refreshAgents } = useA2AAgents();
   const { messages, sendMessage, broadcast } = useA2AMessages();
   const { conversations, joinConversation } = useA2AConversations();

@@ -677,6 +677,7 @@ export default function ComprehensiveAdminDashboard() {
       ],
     },
   ];
+  const adminSections = adminGroups.flatMap((group) => group.items);
 
   if (loading && !metrics) {
     return (
@@ -1262,15 +1263,15 @@ export default function ComprehensiveAdminDashboard() {
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Admin Tools</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          {adminSections.map((section, index) => (
+          {adminSections.map((section) => (
             <Link
-              key={index}
+              key={section.link}
               to={section.link}
               className="bg-transparent rounded-md shadow-none-none p-4 hover:shadow-none-none transition-all group hover:-translate-y-1"
             >
               <div className="flex items-center justify-between mb-3">
                 <div className={`p-3 rounded-md ${section.color} text-white`}>{section.icon}</div>
-                {section.count && (
+                {section.count !== undefined && section.count !== null && (
                   <div className="text-2xl font-bold text-foreground">{section.count}</div>
                 )}
               </div>

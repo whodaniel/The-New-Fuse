@@ -560,11 +560,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         accessToken = data?.session?.access_token || '';
       } else if (url) {
-        const { data, error } = await supabase.auth.getSessionFromUrl({ storeSession: true });
-        if (error) {
-          throw new Error(error.message || 'Failed to parse OAuth callback');
-        }
-        accessToken = data?.session?.access_token || '';
+        const hashParams = new URLSearchParams(
+          url.hash.startsWith('#') ? url.hash.slice(1) : url.hash
+        );
+        accessToken = hashParams.get('access_token') || '';
       }
 
       if (!accessToken) {

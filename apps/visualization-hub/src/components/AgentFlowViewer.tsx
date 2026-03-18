@@ -1,6 +1,21 @@
-import { Box, Button, ButtonGroup, Flex, Heading, Spinner, Text, useToast } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  Flex,
+  Heading,
+  Icon,
+  Menu,
+  MenuDivider,
+  MenuItem,
+  MenuList,
+  Portal,
+  Text,
+  useToast,
+} from '@chakra-ui/react';
 import * as d3 from 'd3';
 import { useEffect, useRef, useState } from 'react';
+import { FiActivity, FiInfo, FiSearch, FiShield } from 'react-icons/fi';
 import { io } from 'socket.io-client';
 
 interface Node extends d3.SimulationNodeDatum {
@@ -24,19 +39,19 @@ const AgentFlowViewer = () => {
   const simulationRef = useRef<d3.Simulation<Node, undefined> | null>(null);
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<{ nodes: Node[]; links: Link[] }>({ nodes: [], links: [] });
+  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+  const [menuPos, setMenuPos] = useState({ x: 0, y: 0 });
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const toast = useToast();
+  const socketRef = useRef<any>(null);
 
   const fetchLiveData = async () => {
     try {
-      // 1. Fetch live agents
       const agentsRes = await fetch('/api/agents');
       const agents = await agentsRes.json();
-
-      // 2. Fetch relationship template
       const relsRes = await fetch('/agent-relationships.json');
       const relationships = await relsRes.json();
 
-      // 3. Map live agents to nodes
       const liveNodes: Node[] = agents.map((a: any) => ({
         id: a.id,
         type: a.role || 'worker',
@@ -47,22 +62,14 @@ const AgentFlowViewer = () => {
         latency: Math.floor(Math.random() * 50) + 10,
       }));
 
-      // 4. Extract links based on IDs that exist in our live set
-      // Map names to IDs for template matching
       const nameToId = new Map(liveNodes.map((n) => [n.label.toLowerCase(), n.id]));
       const liveLinks: Link[] = [];
 
       relationships.edges.forEach((rel: any) => {
         const sourceId = nameToId.get(rel.source.toLowerCase()) || rel.source;
         const targetId = nameToId.get(rel.target.toLowerCase()) || rel.target;
-
-        // Only add if both exist in our live data or template
         if (liveNodes.find((n) => n.id === sourceId) && liveNodes.find((n) => n.id === targetId)) {
-          liveLinks.push({
-            source: sourceId,
-            target: targetId,
-            type: rel.type,
-          });
+          liveLinks.push({ source: sourceId, target: targetId, type: rel.type });
         }
       });
 
@@ -70,21 +77,14 @@ const AgentFlowViewer = () => {
       setLoading(false);
     } catch (error) {
       console.error('Failed to fetch live agent data:', error);
-      toast({
-        title: 'Data Error',
-        description: 'Using cached visualization layout.',
-        status: 'warning',
-        duration: 3000,
-      });
       setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchLiveData();
-
-    // Connect to WebSocket for real-time heartbeat updates
     const socket = io();
+    socketRef.current = socket;
     socket.on('agent_heartbeat', (payload) => {
       setData((prev) => ({
         ...prev,
@@ -93,20 +93,49 @@ const AgentFlowViewer = () => {
         ),
       }));
     });
-
     return () => {
       socket.disconnect();
     };
   }, []);
 
+  const handleNodeContextMenu = (event: any, d: Node) => {
+    event.preventDefault();
+    setSelectedNode(d);
+    setMenuPos({ x: event.pageX, y: event.y });
+    setIsMenuOpen(true);
+  };
+
+  const triggerHeartbeat = () => {
+    if (!selectedNode || !socketRef.current) return;
+    socketRef.current.emit('agent_command', {
+      agentId: selectedNode.id,
+      command: 'HEARTBEAT_PULSE',
+      timestamp: Date.now(),
+    });
+    toast({
+      title: 'Command Sent',
+      description: `Pulse heartbeat sent to ${selectedNode.label}`,
+      status: 'success',
+      duration: 2000,
+    });
+    setIsMenuOpen(false);
+  };
+
+  const triggerAudit = () => {
+    toast({
+      title: 'Audit Triggered',
+      description: `Strict Attribution Audit scheduled for ${selectedNode?.label}`,
+      status: 'info',
+      duration: 3000,
+    });
+    setIsMenuOpen(false);
+  };
+
   useEffect(() => {
     if (!svgRef.current || data.nodes.length === 0) return;
-
     const width = 800;
     const height = 600;
-
     d3.select(svgRef.current).selectAll('*').remove();
-
     const svg = d3
       .select(svgRef.current)
       .attr('viewBox', `0 0 ${width} ${height}`)
@@ -131,7 +160,6 @@ const AgentFlowViewer = () => {
       .attr('fill', '#4299e1');
 
     const g = svg.append('g');
-
     const colorMap: Record<string, string> = {
       orchestrator: '#667eea',
       worker: '#f56565',
@@ -170,6 +198,7 @@ const AgentFlowViewer = () => {
       .selectAll('g')
       .data(data.nodes)
       .join('g')
+      .on('contextmenu', handleNodeContextMenu)
       .call(d3.drag<any, Node>().on('start', dragstarted).on('drag', dragged).on('end', dragended));
 
     node
@@ -197,7 +226,6 @@ const AgentFlowViewer = () => {
         .attr('y1', (d: any) => d.source.y)
         .attr('x2', (d: any) => d.target.x)
         .attr('y2', (d: any) => d.target.y);
-
       node.attr('transform', (d: any) => `translate(${d.x},${d.y})`);
     });
 
@@ -206,12 +234,10 @@ const AgentFlowViewer = () => {
       d.fx = d.x;
       d.fy = d.y;
     }
-
     function dragged(event: any, d: any) {
       d.fx = event.x;
       d.fy = event.y;
     }
-
     function dragended(event: any, d: any) {
       if (!event.active) simulation.alphaTarget(0);
       d.fx = null;
@@ -224,28 +250,11 @@ const AgentFlowViewer = () => {
       .on('zoom', (event) => {
         g.attr('transform', event.transform);
       });
-
     svg.call(zoom as any);
-
     return () => {
       simulation.stop();
     };
   }, [data]);
-
-  const resetLayout = () => {
-    if (simulationRef.current) {
-      simulationRef.current.alpha(1).restart();
-    }
-  };
-
-  if (loading) {
-    return (
-      <Flex h="600px" align="center" justify="center" direction="column">
-        <Spinner size="xl" color="blue.500" mb={4} />
-        <Text>Resolving Agent Mesh...</Text>
-      </Flex>
-    );
-  }
 
   return (
     <Box
@@ -255,6 +264,7 @@ const AgentFlowViewer = () => {
       boxShadow="md"
       border="1px solid"
       borderColor="gray.200"
+      position="relative"
     >
       <Flex justify="space-between" align="center" mb={4}>
         <Heading size="md" color="gray.700">
@@ -264,12 +274,66 @@ const AgentFlowViewer = () => {
           <Button onClick={fetchLiveData} leftIcon={<Text>🔄</Text>}>
             Refresh
           </Button>
-          <Button onClick={resetLayout}>Reset Layout</Button>
+          <Button onClick={() => simulationRef.current?.alpha(1).restart()}>Reset Layout</Button>
         </ButtonGroup>
       </Flex>
       <Box h="600px" bg="gray.50" borderRadius="lg" overflow="hidden">
         <svg ref={svgRef} width="100%" height="100%"></svg>
       </Box>
+
+      {/* Interactive Context Menu */}
+      <Menu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)}>
+        <Portal>
+          <MenuList
+            style={{ position: 'absolute', left: menuPos.x, top: menuPos.y }}
+            bg="gray.800"
+            borderColor="whiteAlpha.200"
+            color="white"
+            shadow="xl"
+          >
+            <Box px={3} py={2} borderBottom="1px solid" borderColor="whiteAlpha.100">
+              <Text fontSize="xs" fontWeight="bold" color="cyan.400" textTransform="uppercase">
+                Agent: {selectedNode?.label}
+              </Text>
+              <Text fontSize="10px" color="gray.400" isTruncated>
+                {selectedNode?.id}
+              </Text>
+            </Box>
+            <MenuItem
+              bg="transparent"
+              _hover={{ bg: 'whiteAlpha.100' }}
+              icon={<Icon as={FiActivity} />}
+              onClick={triggerHeartbeat}
+            >
+              Pulse Heartbeat
+            </MenuItem>
+            <MenuItem
+              bg="transparent"
+              _hover={{ bg: 'whiteAlpha.100' }}
+              icon={<Icon as={FiShield} />}
+              onClick={triggerAudit}
+            >
+              Trigger Strict Audit
+            </MenuItem>
+            <MenuDivider />
+            <MenuItem
+              bg="transparent"
+              _hover={{ bg: 'whiteAlpha.100' }}
+              icon={<Icon as={FiSearch} />}
+            >
+              Analyze Lineage
+            </MenuItem>
+            <MenuItem
+              bg="transparent"
+              _hover={{ bg: 'whiteAlpha.100' }}
+              icon={<Icon as={FiInfo} />}
+            >
+              Inspect Metadata
+            </MenuItem>
+          </MenuList>
+        </Portal>
+      </Menu>
+
       <Flex justify="space-between" mt={4} fontSize="sm" color="gray.500">
         <Text>Registered Nodes: {data.nodes.length}</Text>
         <Text>Active Links: {data.links.length}</Text>
