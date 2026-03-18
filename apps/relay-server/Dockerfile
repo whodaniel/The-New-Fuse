@@ -1,27 +1,17 @@
-FROM node:20-alpine AS builder
+FROM node:20-alpine
 
 WORKDIR /app
 
-# Install dependencies for UI
-COPY ui/package.json ./ui/
-RUN npm install -g pnpm && cd ui && pnpm install
-
-# Build UI
-COPY ui ./ui
-RUN cd ui && pnpm run build
-
-# Server setup
-WORKDIR /app
+# Copy only server-related files
 COPY package.json ./
-RUN pnpm install
+RUN npm install --legacy-peer-deps
 
 # Copy Server Source
 COPY src ./src
 
-# Expose Main Port (3000 by default, overridable by Railway)
+# Expose Main Port
 ENV PORT=3000
 EXPOSE 3000
-EXPOSE 8888
 
 # Start the consolidated server
 CMD ["node", "src/comprehensive-tnf-relay.js"]

@@ -102,12 +102,31 @@ export class ProxyService {
       throw new BadGatewayException(`Service '${serviceName}' not found`);
     }
 
+    // Prevent edge/domain routing loops by removing inbound host/hop-by-hop headers.
+    // We always let axios/node compute the correct Host for the target URL.
+    const sanitizedHeaders = Object.fromEntries(
+      Object.entries(headers || {}).filter(([key]) => {
+        const normalized = key.toLowerCase();
+        return ![
+          'host',
+          'connection',
+          'content-length',
+          'transfer-encoding',
+          'keep-alive',
+          'proxy-connection',
+          'upgrade',
+          'te',
+          'trailer',
+        ].includes(normalized);
+      })
+    );
+
     const url = `${service.baseUrl}${path}`;
     const config: AxiosRequestConfig = {
       method: method as any,
       url,
       headers: {
-        ...headers,
+        ...sanitizedHeaders,
         // Add gateway identification
         'X-Gateway': 'the-new-fuse-api-gateway',
         'X-Forwarded-By': 'api-gateway',

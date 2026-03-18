@@ -17,6 +17,16 @@ import { WorkflowTemplatesService } from '../workflow-templates/workflow-templat
 export class MCPToolRegistry {
   private readonly logger = new Logger(MCPToolRegistry.name);
   private tools = new Map<string, MCPTool>();
+  private readonly twipCapabilityCard = {
+    name: 'twip-identity',
+    version: '0.1',
+    status: 'draft',
+    schemas: {
+      envelope: 'docs/protocols/schemas/twip-envelope.schema.json',
+      identity: 'docs/protocols/schemas/twip-identity.schema.json',
+    },
+    safetyFlags: ['tenant_scoped', 'ttl_enforced', 'provenance_required'],
+  };
 
   constructor(private readonly workflowService: WorkflowTemplatesService) {
     this.registerAllTools();
@@ -41,10 +51,111 @@ export class MCPToolRegistry {
     // Communication tools
     this.registerCommunicationTools();
 
+    // Protocol tools
+    this.registerProtocolTools();
+
     // System tools
     this.registerSystemTools();
 
     this.logger.log(`Registered ${this.tools.size} MCP tools`);
+  }
+
+  /**
+   * Register protocol interoperability tools
+   */
+  private registerProtocolTools(): void {
+    this.registerTool({
+      name: 'protocol.twip.register_capability',
+      description: 'Register TWIP capability metadata for registry and interoperability flows',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          tenantId: {
+            type: 'string',
+            description: 'Tenant identifier for scoped capability registration',
+          },
+          source: {
+            type: 'string',
+            description: 'Registration source (relay, orchestrator, manual)',
+          },
+        },
+      },
+      handler: {
+        execute: async (params: any) => {
+          return {
+            success: true,
+            result: {
+              capability: this.twipCapabilityCard,
+              registration: {
+                tenantId: params.tenantId || null,
+                source: params.source || 'unknown',
+                registeredAt: new Date().toISOString(),
+              },
+            },
+          };
+        },
+      },
+    });
+
+    this.registerTool({
+      name: 'protocol.twip.policy_evaluate',
+      description: 'Evaluate TWIP safety policy for envelope-level compliance checks',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          tenantId: {
+            type: 'string',
+            description: 'Tenant identifier',
+          },
+          ttlSeconds: {
+            type: 'number',
+            description: 'Requested TTL in seconds',
+          },
+          allowRemotePropagation: {
+            type: 'boolean',
+            description: 'Whether remote propagation is requested',
+          },
+        },
+        required: ['tenantId'],
+      },
+      handler: {
+        execute: async (params: any) => {
+          const ttl = Number(params.ttlSeconds || 300);
+          const decision = {
+            allow: Boolean(params.tenantId) && Number.isFinite(ttl) && ttl > 0 && ttl <= 3600,
+            reason: 'allow',
+            checks: {
+              tenantScoped: Boolean(params.tenantId),
+              ttlBounded: Number.isFinite(ttl) && ttl > 0 && ttl <= 3600,
+              remotePropagationDisabled: params.allowRemotePropagation !== true,
+            },
+            evaluatedAt: new Date().toISOString(),
+          };
+          if (!decision.checks.tenantScoped) {
+            decision.allow = false;
+            decision.reason = 'missing_tenant';
+          } else if (!decision.checks.ttlBounded) {
+            decision.allow = false;
+            decision.reason = 'ttl_out_of_bounds';
+          } else if (!decision.checks.remotePropagationDisabled) {
+            decision.allow = false;
+            decision.reason = 'remote_propagation_not_allowed';
+          }
+
+          return {
+            success: decision.allow,
+            result: {
+              policy: {
+                tenantId: params.tenantId,
+                ttlSeconds: Number.isFinite(ttl) ? ttl : 300,
+                allowRemotePropagation: params.allowRemotePropagation === true,
+              },
+              decision,
+            },
+          };
+        },
+      },
+    });
   }
 
   /**
@@ -749,5 +860,12 @@ export class MCPToolRegistry {
         capabilities: ['api_calls', 'http_requests', 'data_fetching'],
       },
     ];
+  }
+
+  /**
+   * TWIP capability metadata
+   */
+  getTwipCapabilityCard(): Record<string, unknown> {
+    return this.twipCapabilityCard;
   }
 }

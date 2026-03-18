@@ -1,0 +1,16 @@
+{
+  "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+  "spec": "twip/0.1",
+  "type": "IDENTITY.PUBLISH",
+  "sent_at": "2026-03-18T00:00:00.000Z",
+  "scope": {
+    "session_key": "tty:ttys001"
+  },
+  "trace": {
+    "correlation_id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+    "causation_id": "cccccccc-cccc-4ccc-8ccc-cccccccccccc"
+  },
+  "payload": {
+    "twid": "dddddddd-dddd-4ddd-8ddd-dddddddddddd"
+  }
+}

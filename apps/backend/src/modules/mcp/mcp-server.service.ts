@@ -1,6 +1,8 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { MCPServer, MCPServerConfig } from '@the-new-fuse/mcp-core';
 import { EventEmitter } from 'events';
+import * as fs from 'fs/promises';
+import * as path from 'path';
 import { MCPToolRegistry } from './mcp-tool-registry.service';
 
 /**
@@ -142,6 +144,111 @@ export class MCPServerService implements OnModuleInit, OnModuleDestroy {
             mimeType: 'application/json',
             content: JSON.stringify(await this.getServerStatus()),
           };
+        },
+      },
+    });
+
+    // Register TWIP spec resource
+    await this.server.registerResource({
+      uri: 'fuse://twip/spec',
+      name: 'twip-spec',
+      description: 'TWIP protocol metadata and schema references',
+      handler: {
+        read: async () => {
+          return {
+            uri: 'fuse://twip/spec',
+            mimeType: 'application/json',
+            content: JSON.stringify({
+              spec: 'twip/0.1',
+              draft: 'draft-twip-0001',
+              schemas: {
+                envelope: 'docs/protocols/schemas/twip-envelope.schema.json',
+                identity: 'docs/protocols/schemas/twip-identity.schema.json',
+              },
+              openapi: 'docs/protocols/openapi/twip-v0.1-stub.yaml',
+            }),
+          };
+        },
+      },
+    });
+
+    // Register TWIP capability resource
+    await this.server.registerResource({
+      uri: 'fuse://twip/capability',
+      name: 'twip-capability',
+      description: 'TWIP capability card for registry and interoperability import',
+      handler: {
+        read: async () => {
+          return {
+            uri: 'fuse://twip/capability',
+            mimeType: 'application/json',
+            content: JSON.stringify(this.toolRegistry.getTwipCapabilityCard()),
+          };
+        },
+      },
+    });
+
+    // Register TWIP safety policy defaults
+    await this.server.registerResource({
+      uri: 'fuse://twip/policy',
+      name: 'twip-policy',
+      description: 'TWIP default safety policy profile',
+      handler: {
+        read: async () => {
+          return {
+            uri: 'fuse://twip/policy',
+            mimeType: 'application/json',
+            content: JSON.stringify({
+              tenantScoped: true,
+              ttlSecondsMax: 3600,
+              redactGuiFieldsDefault: true,
+              allowRemotePropagationDefault: false,
+            }),
+          };
+        },
+      },
+    });
+
+    // Register TWIP inventory mirror resource
+    await this.server.registerResource({
+      uri: 'fuse://twip/inventory',
+      name: 'twip-inventory',
+      description: 'Mirrored TWIP terminal inventory snapshot from relay scans',
+      handler: {
+        read: async () => {
+          const snapshotPath = path.join(
+            process.cwd(),
+            'data',
+            'protocols',
+            'twip-inventory.snapshot.json'
+          );
+          try {
+            const raw = await fs.readFile(snapshotPath, 'utf8');
+            const parsed = JSON.parse(raw);
+            return {
+              uri: 'fuse://twip/inventory',
+              mimeType: 'application/json',
+              content: JSON.stringify({
+                mirrorSource: 'tnf://twip/inventory',
+                snapshotPath,
+                available: true,
+                ...parsed,
+              }),
+            };
+          } catch (error: any) {
+            return {
+              uri: 'fuse://twip/inventory',
+              mimeType: 'application/json',
+              content: JSON.stringify({
+                mirrorSource: 'tnf://twip/inventory',
+                snapshotPath,
+                available: false,
+                message:
+                  'TWIP inventory snapshot not found. Run twip_scan_terminals in relay MCP first.',
+                error: error?.message || 'unknown_error',
+              }),
+            };
+          }
         },
       },
     });

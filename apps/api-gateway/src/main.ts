@@ -110,6 +110,7 @@ async function bootstrap() {
     .addTag('webhooks', 'Webhook management and ingestion')
     .addTag('sse', 'Server-Sent Events streaming')
     .addTag('mcp', 'Model Context Protocol servers')
+    .addTag('sgp', 'Spreadsheet Graph Protocol translation bridge')
     .addTag('health', 'Health checks and monitoring')
     .addBearerAuth(
       {

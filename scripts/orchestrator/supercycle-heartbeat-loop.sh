@@ -21,7 +21,7 @@ pnpm --filter @the-new-fuse/relay-core run super-cycle:event -- \
   --kind "${KIND}" \
   --owner "${OWNER}" \
   --status running \
-  --metadata "{\"channel\":\"General\",\"component\":\"self-improvement\",\"mode\":\"loop\"}" >/dev/null
+  --metadata "{\"channel\":\"General\",\"component\":\"self-improvement\",\"mode\":\"loop\",\"intervalSeconds\":${INTERVAL_SECONDS},\"cadenceSeconds\":${INTERVAL_SECONDS}}" >/dev/null
 
 while true; do
   tick="$(date +%s)"
@@ -30,6 +30,6 @@ while true; do
     --process-id "${PROCESS_ID}" \
     --status running \
     --result success \
-    --metadata "{\"tick\":\"${tick}\",\"channel\":\"General\"}" >/dev/null || true
+    --metadata "{\"tick\":\"${tick}\",\"channel\":\"General\",\"intervalSeconds\":${INTERVAL_SECONDS},\"cadenceSeconds\":${INTERVAL_SECONDS}}" >/dev/null || true
   sleep "${INTERVAL_SECONDS}"
 done

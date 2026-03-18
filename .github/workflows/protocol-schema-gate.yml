@@ -1,0 +1,39 @@
+name: Protocol Schema Gate
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "docs/protocols/**"
+      - "scripts/validate-protocol-schemas.cjs"
+      - "scripts/protocols/twip-conformance.cjs"
+      - ".github/workflows/protocol-schema-gate.yml"
+      - "package.json"
+  push:
+    branches: [main, develop]
+    paths:
+      - "docs/protocols/**"
+      - "scripts/validate-protocol-schemas.cjs"
+      - "scripts/protocols/twip-conformance.cjs"
+      - ".github/workflows/protocol-schema-gate.yml"
+      - "package.json"
+  workflow_dispatch:
+
+jobs:
+  validate-protocol-schemas:
+    name: Validate Protocol Schemas
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Validate protocol schemas
+        run: node scripts/validate-protocol-schemas.cjs
+
+      - name: Run TWIP conformance suite
+        run: node scripts/protocols/twip-conformance.cjs

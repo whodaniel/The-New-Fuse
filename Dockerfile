@@ -25,6 +25,12 @@ ENV NODE_ENV=production
 
 # Build based on SERVICE_PATH
 RUN echo "Building nexus-orchestrator..." && pnpm --filter @the-new-fuse/nexus-orchestrator build
+RUN if [ "${SERVICE_PATH}" = "apps/frontend" ]; then \
+      echo "Building frontend application for production..."; \
+      pnpm --filter @the-new-fuse/frontend-app build; \
+    else \
+      echo "Skipping explicit frontend build for SERVICE_PATH=${SERVICE_PATH}"; \
+    fi
 
 FROM node:${NODE_VERSION}-alpine AS runner
 RUN npm install -g serve

@@ -1,0 +1,238 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tnf.local/spec/sgp/0.1/envelope.schema.json",
+  "title": "SGP Message Envelope",
+  "type": "object",
+  "required": [
+    "id",
+    "spec",
+    "type",
+    "tenant",
+    "resource",
+    "sent_at",
+    "actor",
+    "trace",
+    "payload"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "spec": {
+      "const": "sgp/0.1"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "DISCOVER.REQUEST",
+        "DISCOVER.RESPONSE",
+        "MANIFEST.PUBLISH",
+        "SCHEMA.PUBLISH",
+        "QUERY.REQUEST",
+        "QUERY.RESPONSE",
+        "SUBSCRIBE.REQUEST",
+        "CHANGE.EVENT",
+        "ERROR"
+      ]
+    },
+    "tenant": {
+      "type": "string",
+      "minLength": 1
+    },
+    "resource": {
+      "type": "string",
+      "pattern": "^sgp://[^/]+/[^/]+/[^/]+/[^/]+$"
+    },
+    "sent_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "actor": {
+      "type": "object",
+      "required": ["id", "roles"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "trace": {
+      "type": "object",
+      "required": ["correlation_id", "causation_id"],
+      "properties": {
+        "correlation_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "causation_id": {
+          "type": ["string", "null"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "payload": {
+      "type": "object"
+    },
+    "sig": {
+      "type": "string"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "DISCOVER.REQUEST"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "https://tnf.local/spec/sgp/0.1/payloads.schema.json#/$defs/discoverRequest"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "DISCOVER.RESPONSE"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "https://tnf.local/spec/sgp/0.1/payloads.schema.json#/$defs/discoverResponse"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "MANIFEST.PUBLISH"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "https://tnf.local/spec/sgp/0.1/payloads.schema.json#/$defs/manifestPublish"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "SCHEMA.PUBLISH"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "https://tnf.local/spec/sgp/0.1/payloads.schema.json#/$defs/schemaPublish"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "QUERY.REQUEST"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "https://tnf.local/spec/sgp/0.1/payloads.schema.json#/$defs/queryRequest"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "QUERY.RESPONSE"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "https://tnf.local/spec/sgp/0.1/payloads.schema.json#/$defs/queryResponse"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "SUBSCRIBE.REQUEST"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "https://tnf.local/spec/sgp/0.1/payloads.schema.json#/$defs/subscribeRequest"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "CHANGE.EVENT"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "https://tnf.local/spec/sgp/0.1/payloads.schema.json#/$defs/changeEvent"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "ERROR"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "https://tnf.local/spec/sgp/0.1/payloads.schema.json#/$defs/errorPayload"
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

@@ -2,6 +2,7 @@ ARG NODE_VERSION=22
 ARG PNPM_VERSION=10.22.0
 ARG SERVICE_PATH
 ARG SERVICE_ROOT=apps
+ARG SERVICE_NAME
 
 # Cache bust: 2026-02-24-v3
 #------------------------------------------------------------------------------
@@ -10,6 +11,7 @@ ARG SERVICE_ROOT=apps
 FROM node:${NODE_VERSION}-alpine AS builder
 ARG SERVICE_PATH
 ARG SERVICE_ROOT=apps
+ARG SERVICE_NAME
 ARG PNPM_VERSION=10.22.0
 RUN apk add --no-cache python3 make g++ cairo-dev pango-dev jpeg-dev giflib-dev
 RUN npm i -g pnpm@${PNPM_VERSION}
@@ -55,8 +57,18 @@ RUN pnpm --filter @the-new-fuse/prompt-templating build
 RUN pnpm --filter @the-new-fuse/core build
 RUN pnpm --filter @the-new-fuse/shared build
 
-# Build nexus-orchestrator specifically (skip problematic packages)
-RUN pnpm --filter @the-new-fuse/nexus-orchestrator build
+# Build the target service package so runtime entrypoints exist (e.g. dist/main.js).
+RUN if [ -n "${SERVICE_NAME}" ]; then \
+      echo "Building target service ${SERVICE_NAME}"; \
+      pnpm --filter "${SERVICE_NAME}" build || \
+        (echo "WARN: Service package build failed for ${SERVICE_NAME}" && exit 1); \
+    elif [ "${SERVICE_ROOT}" = "apps" ] && [ "${SERVICE_PATH}" = "frontend" ]; then \
+      echo "SERVICE_NAME not set; building frontend app via fallback package filter"; \
+      pnpm --filter @the-new-fuse/frontend-app build || \
+        (echo "WARN: Frontend fallback build failed" && exit 1); \
+    else \
+      echo "No SERVICE_NAME provided and no known fallback for ${SERVICE_ROOT}/${SERVICE_PATH}"; \
+    fi
 
 # Verify critical package builds (warn-only to avoid blocking service deploy on optional artifacts)
 RUN echo "Verifying n8n-workflows build..." && ls -la packages/n8n-workflows/dist/index.js || echo "WARN: n8n-workflows dist not found; continuing"

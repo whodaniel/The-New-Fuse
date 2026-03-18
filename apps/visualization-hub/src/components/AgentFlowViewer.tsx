@@ -1,91 +1,110 @@
-import { Box, Button, ButtonGroup, Flex, Heading, Select, Text } from '@chakra-ui/react';
+import { Box, Button, ButtonGroup, Flex, Heading, Spinner, Text, useToast } from '@chakra-ui/react';
 import * as d3 from 'd3';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { io } from 'socket.io-client';
 
-const agentData = {
-  nodes: [
-    {
-      id: 'orchestrator-agent',
-      type: 'orchestrator',
-      label: 'Orchestrator',
-      connections: 8,
-      latency: 12,
-    },
-    {
-      id: 'nestjs-endpoint-generator',
-      type: 'task',
-      label: 'NestJS Endpoint',
-      connections: 3,
-      latency: 45,
-    },
-    {
-      id: 'agent-flow-analyzer',
-      type: 'task',
-      label: 'Flow Analyzer',
-      connections: 5,
-      latency: 78,
-    },
-    {
-      id: 'mcp-server-integrator',
-      type: 'task',
-      label: 'MCP Integrator',
-      connections: 4,
-      latency: 34,
-    },
-    { id: 'database-service', type: 'service', label: 'Database', connections: 6, latency: 15 },
-    { id: 'redis-cache', type: 'service', label: 'Redis Cache', connections: 7, latency: 8 },
-    {
-      id: 'workflow-coordinator',
-      type: 'coordinator',
-      label: 'Workflow',
-      connections: 4,
-      latency: 23,
-    },
-    {
-      id: 'content-writer-agent',
-      type: 'task',
-      label: 'Content Writer',
-      connections: 2,
-      latency: 120,
-    },
-    { id: 'seo-optimizer', type: 'task', label: 'SEO Optimizer', connections: 3, latency: 89 },
-    { id: 'api-gateway', type: 'service', label: 'API Gateway', connections: 9, latency: 11 },
-    {
-      id: 'task-scheduler',
-      type: 'coordinator',
-      label: 'Task Scheduler',
-      connections: 5,
-      latency: 19,
-    },
-  ],
-  links: [
-    { source: 'orchestrator-agent', target: 'nestjs-endpoint-generator', type: 'request' },
-    { source: 'orchestrator-agent', target: 'agent-flow-analyzer', type: 'request' },
-    { source: 'orchestrator-agent', target: 'mcp-server-integrator', type: 'request' },
-    { source: 'orchestrator-agent', target: 'workflow-coordinator', type: 'request' },
-    { source: 'nestjs-endpoint-generator', target: 'database-service', type: 'request' },
-    { source: 'agent-flow-analyzer', target: 'redis-cache', type: 'request' },
-    { source: 'mcp-server-integrator', target: 'api-gateway', type: 'request' },
-    { source: 'workflow-coordinator', target: 'task-scheduler', type: 'request' },
-    { source: 'task-scheduler', target: 'content-writer-agent', type: 'request' },
-    { source: 'task-scheduler', target: 'seo-optimizer', type: 'request' },
-    { source: 'content-writer-agent', target: 'seo-optimizer', type: 'response' },
-    { source: 'database-service', target: 'redis-cache', type: 'response' },
-    { source: 'api-gateway', target: 'orchestrator-agent', type: 'response' },
-  ],
-};
+interface Node extends d3.SimulationNodeDatum {
+  id: string;
+  type: string;
+  label: string;
+  connections: number;
+  latency: number;
+  status?: string;
+  platform?: string;
+}
+
+interface Link extends d3.SimulationLinkDatum<Node> {
+  source: string | Node;
+  target: string | Node;
+  type: string;
+}
 
 const AgentFlowViewer = () => {
   const svgRef = useRef<SVGSVGElement>(null);
-  const simulationRef = useRef<d3.Simulation<d3.SimulationNodeDatum, undefined> | null>(null);
+  const simulationRef = useRef<d3.Simulation<Node, undefined> | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<{ nodes: Node[]; links: Link[] }>({ nodes: [], links: [] });
+  const toast = useToast();
+
+  const fetchLiveData = async () => {
+    try {
+      // 1. Fetch live agents
+      const agentsRes = await fetch('/api/agents');
+      const agents = await agentsRes.json();
+
+      // 2. Fetch relationship template
+      const relsRes = await fetch('/agent-relationships.json');
+      const relationships = await relsRes.json();
+
+      // 3. Map live agents to nodes
+      const liveNodes: Node[] = agents.map((a: any) => ({
+        id: a.id,
+        type: a.role || 'worker',
+        label: a.name,
+        platform: a.platform,
+        status: a.isOnline ? 'active' : 'offline',
+        connections: 0,
+        latency: Math.floor(Math.random() * 50) + 10,
+      }));
+
+      // 4. Extract links based on IDs that exist in our live set
+      // Map names to IDs for template matching
+      const nameToId = new Map(liveNodes.map((n) => [n.label.toLowerCase(), n.id]));
+      const liveLinks: Link[] = [];
+
+      relationships.edges.forEach((rel: any) => {
+        const sourceId = nameToId.get(rel.source.toLowerCase()) || rel.source;
+        const targetId = nameToId.get(rel.target.toLowerCase()) || rel.target;
+
+        // Only add if both exist in our live data or template
+        if (liveNodes.find((n) => n.id === sourceId) && liveNodes.find((n) => n.id === targetId)) {
+          liveLinks.push({
+            source: sourceId,
+            target: targetId,
+            type: rel.type,
+          });
+        }
+      });
+
+      setData({ nodes: liveNodes, links: liveLinks });
+      setLoading(false);
+    } catch (error) {
+      console.error('Failed to fetch live agent data:', error);
+      toast({
+        title: 'Data Error',
+        description: 'Using cached visualization layout.',
+        status: 'warning',
+        duration: 3000,
+      });
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    if (!svgRef.current) return;
+    fetchLiveData();
 
-    const width = 800; // Fixed width for component, or use ResizeObserver
+    // Connect to WebSocket for real-time heartbeat updates
+    const socket = io();
+    socket.on('agent_heartbeat', (payload) => {
+      setData((prev) => ({
+        ...prev,
+        nodes: prev.nodes.map((n) =>
+          n.id === payload.agentId ? { ...n, status: 'active', lastSeen: Date.now() } : n
+        ),
+      }));
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!svgRef.current || data.nodes.length === 0) return;
+
+    const width = 800;
     const height = 600;
 
-    // Clear previous render
     d3.select(svgRef.current).selectAll('*').remove();
 
     const svg = d3
@@ -94,11 +113,10 @@ const AgentFlowViewer = () => {
       .style('max-width', '100%')
       .style('height', 'auto');
 
-    // Define arrow markers
     svg
       .append('defs')
       .selectAll('marker')
-      .data(['request', 'response'])
+      .data(['delegates', 'routes_to', 'handoff', 'feeds', 'governs'])
       .enter()
       .append('marker')
       .attr('id', (d) => d)
@@ -110,30 +128,25 @@ const AgentFlowViewer = () => {
       .attr('orient', 'auto')
       .append('path')
       .attr('d', 'M0,-5L10,0L0,5')
-      .attr('fill', (d) => (d === 'request' ? '#4299e1' : '#9f7aea'));
+      .attr('fill', '#4299e1');
 
     const g = svg.append('g');
 
-    // Color mapping
     const colorMap: Record<string, string> = {
       orchestrator: '#667eea',
-      task: '#f56565',
-      service: '#48bb78',
-      coordinator: '#ed8936',
+      worker: '#f56565',
+      broker: '#48bb78',
+      participant: '#ed8936',
+      offline: '#a0aec0',
     };
 
-    // Prepare data (deep copy to avoid mutation issues with React StrictMode)
-    const nodes = agentData.nodes.map((d) => ({ ...d }));
-    const links = agentData.links.map((d) => ({ ...d }));
-
-    // Force Simulation
     const simulation = d3
-      .forceSimulation(nodes as any)
+      .forceSimulation<Node>(data.nodes)
       .force(
         'link',
         d3
-          .forceLink(links)
-          .id((d: any) => d.id)
+          .forceLink<Node, Link>(data.links)
+          .id((d) => d.id)
           .distance(150)
       )
       .force('charge', d3.forceManyBody().strength(-300))
@@ -142,44 +155,41 @@ const AgentFlowViewer = () => {
 
     simulationRef.current = simulation;
 
-    // Draw Links
     const link = g
       .append('g')
       .selectAll('line')
-      .data(links)
+      .data(data.links)
       .join('line')
-      .attr('class', 'link')
-      .attr('stroke', (d) => (d.type === 'request' ? '#4299e1' : '#9f7aea'))
-      .attr('stroke-width', 2)
+      .attr('stroke', '#4299e1')
+      .attr('stroke-width', 1.5)
+      .attr('stroke-opacity', 0.6)
       .attr('marker-end', (d) => `url(#${d.type})`);
 
-    // Draw Nodes
     const node = g
       .append('g')
       .selectAll('g')
-      .data(nodes)
+      .data(data.nodes)
       .join('g')
-      .call(d3.drag().on('start', dragstarted).on('drag', dragged).on('end', dragended) as any);
+      .call(d3.drag<any, Node>().on('start', dragstarted).on('drag', dragged).on('end', dragended));
 
     node
       .append('circle')
-      .attr('r', (d) => 15 + d.connections * 1.5)
-      .attr('fill', (d) => colorMap[d.type])
+      .attr('r', 18)
+      .attr('fill', (d) =>
+        d.status === 'offline' ? colorMap.offline : colorMap[d.type] || colorMap.worker
+      )
       .attr('stroke', '#fff')
-      .attr('stroke-width', 2)
-      .style('cursor', 'pointer');
+      .attr('stroke-width', 2);
 
     node
       .append('text')
       .text((d) => d.label)
-      .attr('dy', (d) => 25 + d.connections * 1.5)
+      .attr('dy', 30)
       .attr('text-anchor', 'middle')
       .style('font-family', 'sans-serif')
-      .style('font-size', '12px')
+      .style('font-size', '10px')
       .style('fill', '#4a5568')
-      .style('font-weight', 'bold')
-      .style('pointer-events', 'none')
-      .style('text-shadow', '1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff');
+      .style('font-weight', 'bold');
 
     simulation.on('tick', () => {
       link
@@ -208,7 +218,6 @@ const AgentFlowViewer = () => {
       d.fy = null;
     }
 
-    // Zoom
     const zoom = d3
       .zoom()
       .scaleExtent([0.1, 4])
@@ -221,13 +230,22 @@ const AgentFlowViewer = () => {
     return () => {
       simulation.stop();
     };
-  }, []);
+  }, [data]);
 
   const resetLayout = () => {
     if (simulationRef.current) {
       simulationRef.current.alpha(1).restart();
     }
   };
+
+  if (loading) {
+    return (
+      <Flex h="600px" align="center" justify="center" direction="column">
+        <Spinner size="xl" color="blue.500" mb={4} />
+        <Text>Resolving Agent Mesh...</Text>
+      </Flex>
+    );
+  }
 
   return (
     <Box
@@ -240,23 +258,21 @@ const AgentFlowViewer = () => {
     >
       <Flex justify="space-between" align="center" mb={4}>
         <Heading size="md" color="gray.700">
-          Live Agent Communications
+          Live Agent Swarm Graph
         </Heading>
         <ButtonGroup size="sm" isAttached variant="outline">
+          <Button onClick={fetchLiveData} leftIcon={<Text>🔄</Text>}>
+            Refresh
+          </Button>
           <Button onClick={resetLayout}>Reset Layout</Button>
-          <Select placeholder="Filter View" w="150px" size="sm" ml={2} borderRadius="md">
-            <option value="all">All Agents</option>
-            <option value="orchestrator">Orchestrator Only</option>
-            <option value="critical">Critical Path</option>
-          </Select>
         </ButtonGroup>
       </Flex>
       <Box h="600px" bg="gray.50" borderRadius="lg" overflow="hidden">
         <svg ref={svgRef} width="100%" height="100%"></svg>
       </Box>
       <Flex justify="space-between" mt={4} fontSize="sm" color="gray.500">
-        <Text>Active Agents: {agentData.nodes.length}</Text>
-        <Text>Total Messages/sec: 142</Text>
+        <Text>Registered Nodes: {data.nodes.length}</Text>
+        <Text>Active Links: {data.links.length}</Text>
       </Flex>
     </Box>
   );

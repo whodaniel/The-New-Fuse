@@ -1,0 +1,63 @@
+{
+  "id": "twip-protocol-bridge",
+  "name": "TWIP Protocol Bridge",
+  "displayName": "TWIP Protocol Bridge",
+  "type": "PROTOCOL",
+  "status": "ACTIVE",
+  "description": "Terminal Window Identity Protocol capability profile for TNF interoperability, transfer-safe handoffs, and policy-gated identity workflows.",
+  "systemPrompt": "Provide TWIP identity normalization, envelope validation, tenant-safe transfer, and policy evaluation for terminal runtime identity in TNF.",
+  "capabilities": [
+    {
+      "name": "TWIP_IDENTITY",
+      "description": "Canonical terminal identity modeling (twid, scope, provenance)",
+      "parameters": {
+        "spec": "twip/0.1"
+      }
+    },
+    {
+      "name": "TWIP_ENVELOPE",
+      "description": "Envelope-based transport with trace, policy, and tenant scope",
+      "parameters": {
+        "schema": "docs/protocols/schemas/twip-envelope.schema.json"
+      }
+    },
+    {
+      "name": "TWIP_POLICY_GATE",
+      "description": "Tenant-scoped policy checks with TTL and redaction controls",
+      "parameters": {
+        "ttlMaxSeconds": 3600,
+        "defaultRedaction": true
+      }
+    },
+    {
+      "name": "TWIP_AUDIT_TRAIL",
+      "description": "Identity publish/resolve/revoke audit event tracking",
+      "parameters": {
+        "resource": "tnf://twip/audit"
+      }
+    }
+  ],
+  "tools": [
+    "twip_publish_identity",
+    "twip_resolve_identity",
+    "twip_revoke_identity",
+    "twip_policy_evaluate",
+    "twip_register_capability"
+  ],
+  "configuration": {
+    "provider": "tnf-relay-mcp",
+    "schemas": {
+      "identity": "docs/protocols/schemas/twip-identity.schema.json",
+      "envelope": "docs/protocols/schemas/twip-envelope.schema.json"
+    },
+    "openapiStub": "docs/protocols/openapi/twip-v0.1-stub.yaml"
+  },
+  "metadata": {
+    "version": "0.1.0",
+    "tenantScoped": true,
+    "safeByDefault": true,
+    "createdAt": "2026-03-18T00:00:00Z"
+  },
+  "provider": "TNF",
+  "userId": "system"
+}

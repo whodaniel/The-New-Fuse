@@ -1,0 +1,21 @@
+name: twip-to-agent-handoff
+from:
+  - skill: interoperability-protocol-agent
+    output: docs/protocols/schemas/twip-envelope.schema.json
+  - skill: tnf-skill-bridging
+    output: docs/protocols/schemas/twip-identity.schema.json
+to:
+  - skill: inter-agentic-workflow-definer
+    input: docs/protocols/AGENT_TARGETED_HANDOFF_V1.md
+  - skill: tnf-task-production-pipeline
+    input: payload.twip_ref
+validate:
+  - envelope includes scope.tenant_id, trace.correlation_id, and payload.identity.twid
+  - twip_ref integrity hash matches canonical identity serialization
+  - handoff packet includes expiresAt and explicit targets.agentIds
+fail:
+  - reject publish with ERROR code INVALID_REQUEST if tenant_id or twid missing
+  - quarantine packet and emit POLICY.DECISION=deny when redaction policy fails
+  - escalate to orchestrator with correlation_id for manual remediation
+log:
+  - docs/protocols/bridges/reports/twip-to-agent-handoff.md

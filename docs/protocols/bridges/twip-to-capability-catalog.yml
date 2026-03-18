@@ -1,0 +1,21 @@
+name: twip-to-capability-catalog
+from:
+  - skill: interoperability-protocol-agent
+    output: capability card + twip schemas
+  - skill: tnf-skill-bridging
+    output: standardized twip capability payload
+to:
+  - skill: agent-registry-manager
+    input: registry snapshot import payload
+  - skill: agent-search-engine
+    input: capability tags and semantic description
+validate:
+  - capability entry has name=twip-identity version=0.1 status=draft
+  - input_schema and output_schema paths resolve and parse as JSON Schema Draft 2020-12
+  - capabilities include safety flags: tenant_scoped, ttl_enforced, provenance_required
+fail:
+  - block catalog registration when schema validation fails
+  - emit ERROR code SCHEMA_MISMATCH and capture failing field path
+  - rollback partial registry writes for atomicity
+log:
+  - docs/protocols/bridges/reports/twip-to-capability-catalog.md

@@ -1,0 +1,387 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tnf.local/spec/sgp/0.1/payloads.schema.json",
+  "title": "SGP Payloads by Message Type",
+  "$defs": {
+    "discoverRequest": {
+      "type": "object",
+      "properties": {
+        "filter": {
+          "type": "object",
+          "properties": {
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "owner": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500
+        },
+        "cursor": {
+          "type": ["string", "null"]
+        }
+      },
+      "required": ["limit"],
+      "additionalProperties": false
+    },
+    "discoverResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "resource",
+              "kind",
+              "title",
+              "updated_at",
+              "capabilities"
+            ],
+            "properties": {
+              "resource": {
+                "type": "string",
+                "pattern": "^sgp://[^/]+/[^/]+/[^/]+/[^/]+$"
+              },
+              "kind": {
+                "type": "string",
+                "enum": ["workbook", "sheet", "table", "column"]
+              },
+              "title": {
+                "type": "string"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "capabilities": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "next_cursor": {
+          "type": ["string", "null"]
+        }
+      },
+      "required": ["items", "next_cursor"],
+      "additionalProperties": false
+    },
+    "manifestPublish": {
+      "type": "object",
+      "required": ["manifest_version", "owner", "timezone", "entry_tables"],
+      "properties": {
+        "manifest_version": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "timezone": {
+          "type": "string"
+        },
+        "entry_tables": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^sgp://[^/]+/[^/]+/[^/]+/[^/]+$"
+          },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "schemaPublish": {
+      "type": "object",
+      "required": ["schema_version", "columns", "compatibility"],
+      "properties": {
+        "schema_version": {
+          "type": "string"
+        },
+        "primary_key": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "columns": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["name", "type", "nullable"],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "nullable": {
+                "type": "boolean"
+              },
+              "unit": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "compatibility": {
+          "type": "string",
+          "enum": ["backward", "forward", "full", "none"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "queryRequest": {
+      "type": "object",
+      "required": ["select", "from"],
+      "properties": {
+        "select": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "from": {
+          "type": "string",
+          "pattern": "^sgp://[^/]+/[^/]+/[^/]+/[^/]+$"
+        },
+        "where": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["col", "op", "value"],
+            "properties": {
+              "col": {
+                "type": "string"
+              },
+              "op": {
+                "type": "string",
+                "enum": ["=", "!=", ">", ">=", "<", "<=", "in", "contains"]
+              },
+              "value": {}
+            },
+            "additionalProperties": false
+          }
+        },
+        "order_by": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["col", "dir"],
+            "properties": {
+              "col": {
+                "type": "string"
+              },
+              "dir": {
+                "type": "string",
+                "enum": ["asc", "desc"]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50000
+        },
+        "cursor": {
+          "type": ["string", "null"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "queryResponse": {
+      "type": "object",
+      "required": ["schema", "rows", "next_cursor", "stats"],
+      "properties": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "type"],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "array"
+          }
+        },
+        "next_cursor": {
+          "type": ["string", "null"]
+        },
+        "stats": {
+          "type": "object",
+          "required": ["rows_scanned", "rows_returned", "latency_ms"],
+          "properties": {
+            "rows_scanned": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "rows_returned": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "latency_ms": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "subscribeRequest": {
+      "type": "object",
+      "required": ["resource", "from_offset"],
+      "properties": {
+        "resource": {
+          "type": "string",
+          "pattern": "^sgp://[^/]+/[^/]+/[^/]+/[^/]+$"
+        },
+        "from_offset": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "changeEvent": {
+      "type": "object",
+      "required": ["offset", "op", "pk", "changed_at", "source"],
+      "properties": {
+        "offset": {
+          "type": "string"
+        },
+        "op": {
+          "type": "string",
+          "enum": ["insert", "update", "delete", "upsert"]
+        },
+        "pk": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "before": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "after": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "changed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "source": {
+          "type": "string"
+        },
+        "lineage": {
+          "type": "object",
+          "properties": {
+            "upstream": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "errorPayload": {
+      "type": "object",
+      "required": ["code", "message", "retryable"],
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": [
+            "UNAUTHORIZED",
+            "FORBIDDEN",
+            "NOT_FOUND",
+            "INVALID_REQUEST",
+            "SCHEMA_MISMATCH",
+            "CONFLICT",
+            "RATE_LIMITED",
+            "INTERNAL"
+          ]
+        },
+        "message": {
+          "type": "string"
+        },
+        "retryable": {
+          "type": "boolean"
+        },
+        "details": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/discoverRequest"
+    },
+    {
+      "$ref": "#/$defs/discoverResponse"
+    },
+    {
+      "$ref": "#/$defs/manifestPublish"
+    },
+    {
+      "$ref": "#/$defs/schemaPublish"
+    },
+    {
+      "$ref": "#/$defs/queryRequest"
+    },
+    {
+      "$ref": "#/$defs/queryResponse"
+    },
+    {
+      "$ref": "#/$defs/subscribeRequest"
+    },
+    {
+      "$ref": "#/$defs/changeEvent"
+    },
+    {
+      "$ref": "#/$defs/errorPayload"
+    }
+  ]
+}

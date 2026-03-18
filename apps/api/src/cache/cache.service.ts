@@ -123,4 +123,19 @@ export class CacheService {
     if (!this.enabled || !this.client) return 0;
     return this.client.scard(key);
   }
+
+  async hget(key: string, field: string): Promise<string | null> {
+    if (!this.enabled || !this.client) return null;
+    return this.client.hget(key, field);
+  }
+
+  async hgetall(key: string): Promise<Record<string, string>> {
+    if (!this.enabled || !this.client) return {};
+    return this.client.hgetall(key);
+  }
+
+  async lrange(key: string, start: number, stop: number): Promise<string[]> {
+    if (!this.enabled || !this.client) return [];
+    return this.client.lrange(key, start, stop);
+  }
 }

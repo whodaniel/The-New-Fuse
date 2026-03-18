@@ -48,6 +48,13 @@ import { Request, Response } from 'express';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
+import { CacheService } from '../cache/cache.service';
+import {
+  AuthLevel,
+  RateLimitTier,
+  RequireAuthLevel,
+  SetRateLimitTier,
+} from '../guards/secure-auth.guard';
 import {
   A2AMessageBrokerService,
   A2AMessageType,
@@ -60,12 +67,115 @@ import { PromptTemplatesService } from '../services/prompt-templates.service';
 export class SystemController {
   /** Logger instance for system controller operations */
   private logger = new Logger(SystemController.name);
+  private readonly masterClockStateKey = 'tnf:master:state';
 
   constructor(
     private readonly swarmService: AgentSwarmOrchestrationService,
     private readonly brokerService: A2AMessageBrokerService,
-    private readonly promptService: PromptTemplatesService
+    private readonly promptService: PromptTemplatesService,
+    private readonly cacheService: CacheService
   ) {}
+
+  @Get('master-clock')
+  @RequireAuthLevel(AuthLevel.PUBLIC)
+  @SetRateLimitTier(RateLimitTier.HEALTH)
+  async getMasterClockTelemetry() {
+    const now = Date.now();
+
+    try {
+      const [orchestratorRaw, superCycleRaw, recentLogs] = await Promise.all([
+        this.cacheService.hget(this.masterClockStateKey, 'orchestrator'),
+        this.cacheService.hget(this.masterClockStateKey, 'superCycle'),
+        this.cacheService.lrange('tnf:master:logs', 0, 14),
+      ]);
+
+      const orchestratorState = this.safeParse<Record<string, any>>(orchestratorRaw);
+      const superCycleState = this.safeParse<Record<string, any>>(superCycleRaw);
+
+      const heartbeatIntervalMs = this.parsePositiveInt(process.env.HEARTBEAT_INTERVAL, 3000);
+      const stallThresholdMs = this.parsePositiveInt(process.env.STALL_THRESHOLD, 5000);
+      const superCycleStaleThresholdMs = this.parsePositiveInt(
+        process.env.SUPER_CYCLE_STALE_THRESHOLD,
+        90000
+      );
+
+      const processes = Array.isArray(superCycleState?.processes)
+        ? superCycleState.processes
+            .map((process: any) => this.normalizeScheduledProcess(process, now))
+            .sort((left, right) => left.expectedIntervalMs - right.expectedIntervalMs)
+        : [];
+
+      const logs = recentLogs
+        .map((entry) => this.safeParse<Record<string, any>>(entry))
+        .filter(Boolean)
+        .map((entry) => ({
+          timestamp: entry?.timestamp || null,
+          eventType: entry?.eventType || 'unknown',
+          content: entry?.content || '',
+          metadata: entry?.metadata || {},
+        }));
+
+      const lastHeartbeat = Number(orchestratorState?.lastHeartbeat || 0);
+      const orchestratorAgeMs = lastHeartbeat > 0 ? Math.max(0, now - lastHeartbeat) : null;
+
+      return {
+        status: orchestratorState || superCycleState ? 'ok' : 'degraded',
+        timestamp: new Date(now).toISOString(),
+        source: 'redis-master-clock-state',
+        orchestrator: {
+          sessionId: orchestratorState?.sessionId || null,
+          isActive: Boolean(orchestratorState?.isActive),
+          lastHeartbeat:
+            lastHeartbeat > 0
+              ? new Date(lastHeartbeat).toISOString()
+              : orchestratorState?.lastHeartbeat || null,
+          ageMs: orchestratorAgeMs,
+          heartbeatIntervalMs,
+          stallThresholdMs,
+          stats: orchestratorState?.stats || {
+            total: 0,
+            active: 0,
+            stalled: 0,
+            offline: 0,
+          },
+          superCycleSummary: orchestratorState?.superCycle || {
+            total: processes.length,
+            healthy: processes.filter((process) => !process.stale).length,
+            stale: processes.filter((process) => process.stale).length,
+          },
+        },
+        superCycle: {
+          lastUpdated: superCycleState?.lastUpdated
+            ? new Date(Number(superCycleState.lastUpdated)).toISOString()
+            : null,
+          staleThresholdMs: superCycleState?.staleThresholdMs || superCycleStaleThresholdMs,
+          stats: superCycleState?.stats || {
+            total: processes.length,
+            healthy: processes.filter((process) => !process.stale).length,
+            stale: processes.filter((process) => process.stale).length,
+          },
+          processes,
+        },
+        recentActivity: logs,
+      };
+    } catch (error) {
+      this.logger.error('Failed to read master clock telemetry', error);
+      return {
+        status: 'degraded',
+        timestamp: new Date(now).toISOString(),
+        source: 'redis-master-clock-state',
+        error: 'Master Clock telemetry unavailable',
+        orchestrator: null,
+        superCycle: {
+          lastUpdated: null,
+          staleThresholdMs: this.parsePositiveInt(process.env.SUPER_CYCLE_STALE_THRESHOLD, 90000),
+          stats: { total: 0, healthy: 0, stale: 0 },
+          processes: [],
+        },
+        recentActivity: [],
+      };
+    }
+  }
 
   /**
    * Verify Self-Improvement Loop
@@ -399,6 +509,105 @@ export class SystemController {
         error: 'Health check failed',
       });
     }
+  }
+
+  private safeParse<T>(value: string | null): T | null {
+    if (!value) return null;
+    try {
+      return JSON.parse(value) as T;
+    } catch {
+      return null;
+    }
+  }
+
+  private parsePositiveInt(value: string | undefined, fallback: number): number {
+    const parsed = Number.parseInt(String(value || ''), 10);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+  }
+
+  private normalizeScheduledProcess(process: Record<string, any>, now: number) {
+    const metadata =
+      process?.metadata && typeof process.metadata === 'object' ? process.metadata : {};
+    const lastHeartbeatMs = Number(process?.lastHeartbeat || 0);
+    const lastRunAtMs = Number(process?.lastRunAt || 0);
+    const expectedIntervalMs = this.inferProcessCadenceMs(process);
+
+    return {
+      processId: String(process?.processId || 'unknown-process'),
+      name: String(process?.name || process?.processId || 'Unnamed process'),
+      kind: String(process?.kind || 'scheduled-job'),
+      owner: String(process?.owner || 'unknown'),
+      status: String(process?.status || 'unknown'),
+      stale: Boolean(process?.stale),
+      heartbeatCount: Number(process?.heartbeatCount || 0),
+      expectedIntervalMs,
+      cadenceSource: this.resolveCadenceSource(metadata),
+      lastHeartbeat: lastHeartbeatMs > 0 ? new Date(lastHeartbeatMs).toISOString() : null,
+      heartbeatAgeMs: lastHeartbeatMs > 0 ? Math.max(0, now - lastHeartbeatMs) : null,
+      lastRunAt: lastRunAtMs > 0 ? new Date(lastRunAtMs).toISOString() : null,
+      lastRunAgeMs: lastRunAtMs > 0 ? Math.max(0, now - lastRunAtMs) : null,
+      lastResult: process?.lastResult || null,
+      metadata,
+    };
+  }
+
+  private resolveCadenceSource(metadata: Record<string, any>) {
+    return this.readCadenceMsFromMetadata(metadata) ? 'metadata' : 'inferred';
+  }
+
+  private inferProcessCadenceMs(process: Record<string, any>): number {
+    const metadata =
+      process?.metadata && typeof process.metadata === 'object' ? process.metadata : {};
+    const metadataCadence = this.readCadenceMsFromMetadata(metadata);
+    if (metadataCadence) {
+      return metadataCadence;
+    }
+
+    const processId = String(process?.processId || '').toLowerCase();
+    const name = String(process?.name || '').toLowerCase();
+    const kind = String(process?.kind || '').toLowerCase();
+    const component = String(metadata?.component || '').toLowerCase();
+
+    if (
+      component === 'self-improvement' ||
+      processId.includes('self-improvement') ||
+      name.includes('self-improvement')
+    ) {
+      return 25000;
+    }
+
+    if (kind === 'continuous-loop' || kind === 'continuous') {
+      return 25000;
+    }
+
+    if (kind === 'cron') {
+      return 60000;
+    }
+
+    if (processId.includes('recovery') || name.includes('recovery')) {
+      return 30000;
+    }
+
+    return 30000;
+  }
+
+  private readCadenceMsFromMetadata(metadata: Record<string, any>): number | null {
+    const intervalMs = Number(metadata?.intervalMs || metadata?.heartbeatIntervalMs || 0);
+    if (Number.isFinite(intervalMs) && intervalMs > 0) {
+      return intervalMs;
+    }
+
+    const secondsValue = Number(
+      metadata?.intervalSeconds ||
+        metadata?.heartbeatIntervalSeconds ||
+        metadata?.cadenceSeconds ||
+        0
+    );
+    if (Number.isFinite(secondsValue) && secondsValue > 0) {
+      return secondsValue * 1000;
+    }
+
+    return null;
   }
 
   /**

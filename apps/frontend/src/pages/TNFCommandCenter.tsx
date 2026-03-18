@@ -907,6 +907,11 @@ export const TNFCommandCenter: React.FC = () => {
         </div>
       </div>
 
+      {/* Network Topology Visualization */}
+      <div className="mb-6">
+        <NetworkTopology />
+      </div>
+
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Left Column */}

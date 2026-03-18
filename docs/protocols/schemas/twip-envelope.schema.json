@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tnf.local/spec/twip/0.1/twip-envelope.schema.json",
+  "title": "TWIP Envelope",
+  "type": "object",
+  "required": ["id", "spec", "type", "sent_at", "scope", "trace", "payload"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "spec": {
+      "const": "twip/0.1"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "IDENTITY.PUBLISH",
+        "IDENTITY.RESOLVE",
+        "IDENTITY.RESOLVE.RESULT",
+        "IDENTITY.REVOKE",
+        "CAPABILITY.REGISTER",
+        "POLICY.DECISION",
+        "ERROR"
+      ]
+    },
+    "sent_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "scope": {
+      "type": "object",
+      "required": ["tenant_id"],
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "session_key": {
+          "type": ["string", "null"]
+        },
+        "workflow_id": {
+          "type": ["string", "null"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "trace": {
+      "type": "object",
+      "required": ["correlation_id", "causation_id"],
+      "properties": {
+        "correlation_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "causation_id": {
+          "type": ["string", "null"],
+          "format": "uuid"
+        }
+      },
+      "additionalProperties": false
+    },
+    "policy": {
+      "type": "object",
+      "properties": {
+        "ttl_seconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3600
+        },
+        "allow_remote_propagation": {
+          "type": "boolean",
+          "default": false
+        },
+        "redact_gui_fields": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "payload": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["identity"],
+          "properties": {
+            "identity": {
+              "$ref": "./twip-identity.schema.json"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["twid"],
+          "properties": {
+            "twid": { "type": "string", "format": "uuid" }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["code", "message"],
+          "properties": {
+            "code": { "type": "string" },
+            "message": { "type": "string" },
+            "retryable": { "type": "boolean", "default": false }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "sig": {
+      "type": "string",
+      "description": "Optional JWS/JWT style signature"
+    }
+  },
+  "additionalProperties": false
+}
