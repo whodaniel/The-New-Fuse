@@ -824,6 +824,16 @@ const MASTER_SUPER_ADMIN_EMAILS = (
       .toLowerCase()
   )
   .filter(Boolean);
+const MASTER_SUPER_ADMIN_IDENTITIES = new Set(
+  MASTER_SUPER_ADMIN_EMAILS.flatMap((value) => {
+    const normalized = String(value || '')
+      .trim()
+      .toLowerCase();
+    if (!normalized) return [];
+    const handle = normalized.split('@')[0];
+    return handle && handle !== normalized ? [normalized, handle] : [normalized];
+  })
+);
 const membershipCache = new Map();
 
 function extractMembershipIdentity(req, urlObj) {
@@ -848,7 +858,7 @@ async function fetchMembership(identity, req) {
   const normalized = String(identity || '').trim();
   if (!normalized) return { ok: false, active: false, reason: 'missing_identity' };
   const cacheKey = normalized.toLowerCase();
-  if (MASTER_SUPER_ADMIN_EMAILS.includes(cacheKey)) {
+  if (MASTER_SUPER_ADMIN_IDENTITIES.has(cacheKey)) {
     return {
       ok: true,
       active: true,
@@ -956,7 +966,7 @@ async function requireMembership(req, res, urlObj) {
     return { ok: false };
   }
   const normalizedIdentity = String(identity).trim().toLowerCase();
-  if (MASTER_SUPER_ADMIN_EMAILS.includes(normalizedIdentity)) {
+  if (MASTER_SUPER_ADMIN_IDENTITIES.has(normalizedIdentity)) {
     return {
       ok: true,
       bypass: true,
