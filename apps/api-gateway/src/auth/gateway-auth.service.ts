@@ -159,6 +159,20 @@ export class GatewayAuthService implements OnModuleDestroy {
     return this.toAuthUser(user);
   }
 
+  async validateToken(token: string): Promise<AuthUser | null> {
+    try {
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret:
+          this.configService.get<string>('JWT_SECRET') ||
+          process.env.JWT_SECRET ||
+          'dev-secret-key-123',
+      });
+      return this.me(payload.sub);
+    } catch {
+      return null;
+    }
+  }
+
   async googleAuth(idToken: string): Promise<AuthResponse> {
     const tokenInfo = await this.verifyGoogleIdToken(idToken);
     const email = (tokenInfo.email || '').trim().toLowerCase();

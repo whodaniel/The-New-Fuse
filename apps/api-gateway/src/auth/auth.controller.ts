@@ -153,4 +153,33 @@ export class AuthController {
     }
     return this.authService.supabaseAuth(body.accessToken);
   }
+
+  @Get('session')
+  @Version('1')
+  @ApiOperation({ summary: 'Get lightweight auth session status' })
+  @ApiResponse({ status: 200, description: 'Session payload' })
+  async session(@Req() req: any) {
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith('Bearer ')) {
+      return { authenticated: false, user: null };
+    }
+
+    const token = authHeader.slice(7);
+    try {
+      const user = await this.authService.validateToken(token);
+      return {
+        authenticated: true,
+        user: {
+          id: user.id,
+          email: user.email,
+          username: user.username,
+          name: user.name,
+          role: user.role,
+          roles: user.roles,
+        },
+      };
+    } catch {
+      return { authenticated: false, user: null };
+    }
+  }
 }
