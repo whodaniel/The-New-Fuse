@@ -335,11 +335,16 @@ async function api(path, options = {}) {
       const ctl = new AbortController();
       const timeoutMs = options.timeoutMs || 12000;
       timeout = setTimeout(() => ctl.abort('timeout'), timeoutMs);
+      const identity =
+        String(options.identity || '').trim() ||
+        String(state.playerName || '').trim() ||
+        String(agentOwnerIdInput?.value || '').trim();
       const res = await fetch(url, {
         method: options.method || 'GET',
         headers: {
           'Content-Type': 'application/json',
           ...(state.apiToken ? { Authorization: `Bearer ${state.apiToken}` } : {}),
+          ...(identity ? { 'x-tnf-identity': identity } : {}),
           ...(options.headers || {}),
         },
         body: options.body ? JSON.stringify(options.body) : undefined,

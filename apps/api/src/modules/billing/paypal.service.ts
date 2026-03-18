@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DatabaseService } from '@the-new-fuse/database/drizzle';
-import { payPalSubscriptions } from '@the-new-fuse/database/drizzle/schema';
+import { payPalSubscriptions, users } from '@the-new-fuse/database/drizzle/schema';
 import { eq } from 'drizzle-orm';
 import fetch from 'node-fetch'; // Standard fetch might be available in Node 18+
 
@@ -11,6 +11,11 @@ export class PayPalService {
   private readonly apiUrl: string;
   private accessToken: string | null = null;
   private tokenExpiry: number = 0;
+  private readonly membershipOverrideRoles = new Set([
+    'MEMBERSHIP_OVERRIDE',
+    'PAID_OVERRIDE',
+    'PRO_OVERRIDE',
+  ]);
 
   constructor(
     private readonly configService: ConfigService,
@@ -297,13 +302,21 @@ export class PayPalService {
     const normalizedRoles = Array.from(
       new Set([...(Array.isArray(user.roles) ? user.roles : []), user.role].filter(Boolean))
     ).map((r: string) => r.toUpperCase());
-    const isElevated = isMasterSuperAdmin || normalizedRoles.includes('SUPER_ADMIN');
+    const hasOverrideRole = normalizedRoles.some((role) => this.membershipOverrideRoles.has(role));
+    const isElevated =
+      isMasterSuperAdmin || normalizedRoles.includes('SUPER_ADMIN') || hasOverrideRole;
+    let effectiveTier: 'STARTER' | 'PRO' | 'ENTERPRISE' = tier;
+    if (isMasterSuperAdmin || normalizedRoles.includes('SUPER_ADMIN')) {
+      effectiveTier = 'ENTERPRISE';
+    } else if (hasOverrideRole && effectiveTier === 'STARTER') {
+      effectiveTier = 'PRO';
+    }
 
     return {
       identity: normalized,
       found: true,
-      active: tier !== 'STARTER' || isElevated,
-      tier,
+      active: effectiveTier !== 'STARTER' || isElevated,
+      tier: effectiveTier,
       user: {
         id: user.id,
         email: user.email,
@@ -322,10 +335,40 @@ export class PayPalService {
     userId: string;
   }> {
     const tier = await this.getUserTier(userId);
+    let effectiveTier: 'STARTER' | 'PRO' | 'ENTERPRISE' = tier;
+    try {
+      const user = await this.db.client.query.users.findFirst({
+        where: eq(users.id, userId),
+      });
+      if (user) {
+        const normalizedRoles = Array.from(
+          new Set([...(Array.isArray(user.roles) ? user.roles : []), user.role].filter(Boolean))
+        ).map((r: string) => r.toUpperCase());
+        const configuredMasters = (
+          this.configService.get<string>('MASTER_SUPER_ADMIN_EMAILS') || ''
+        )
+          .split(',')
+          .map((email) => email.trim().toLowerCase())
+          .filter(Boolean);
+        const isMasterSuperAdmin =
+          configuredMasters.includes((user.email || '').toLowerCase()) ||
+          (user.email || '').toLowerCase() === 'owner@example.com';
+        const hasOverrideRole = normalizedRoles.some((role) =>
+          this.membershipOverrideRoles.has(role)
+        );
+        if (isMasterSuperAdmin || normalizedRoles.includes('SUPER_ADMIN')) {
+          effectiveTier = 'ENTERPRISE';
+        } else if (hasOverrideRole && effectiveTier === 'STARTER') {
+          effectiveTier = 'PRO';
+        }
+      }
+    } catch (error) {
+      this.logger.warn(`Membership override lookup unavailable for user ${userId}: ${error}`);
+    }
     return {
       found: true,
-      active: tier !== 'STARTER',
-      tier,
+      active: effectiveTier !== 'STARTER',
+      tier: effectiveTier,
       userId,
     };
   }

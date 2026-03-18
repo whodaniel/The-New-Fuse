@@ -841,15 +841,26 @@ function extractMembershipIdentity(req, urlObj) {
     String(req.headers['x-tnf-identity'] || req.headers['x-player-id'] || '').trim() ||
     String(req.headers['x-username'] || '').trim();
   if (headerIdentity) return headerIdentity;
+  const headerOwner = String(
+    req.headers['x-tnf-owner'] || req.headers['x-agent-owner'] || ''
+  ).trim();
+  if (headerOwner) return headerOwner;
   const url = urlObj instanceof URL ? urlObj : null;
   const queryIdentity =
     (url && (url.searchParams.get('identity') || url.searchParams.get('playerId'))) || '';
   if (queryIdentity) return queryIdentity;
   if (req.body && typeof req.body === 'object') {
-    const bodyIdentity = String(
-      req.body.playerId || req.body.identity || req.body.username || req.body.email || ''
-    );
-    if (bodyIdentity.trim()) return bodyIdentity.trim();
+    const bodyIdentity =
+      String(
+        req.body.ownerId ||
+          req.body.ownerIdentity ||
+          req.body.membershipIdentity ||
+          req.body.identity ||
+          req.body.username ||
+          req.body.email ||
+          ''
+      ).trim() || String(req.body.playerId || '').trim();
+    if (bodyIdentity) return bodyIdentity;
   }
   return '';
 }
@@ -982,7 +993,6 @@ async function requireMembership(req, res, urlObj) {
       membership: { ok: true, active: true, tier: 'ENTERPRISE' },
     };
   }
-  if (isBotPlayerId(identity)) return { ok: true, bypass: true, identity };
   const membership = await fetchMembership(identity, req);
   if (!membership.ok || !membership.active) {
     writeJson(res, 403, {
