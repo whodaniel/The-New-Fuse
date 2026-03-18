@@ -98,6 +98,7 @@ export const BaseNode: React.FC<BaseNodeProps> = memo(
                   size="icon"
                   className="h-7 w-7 text-slate-200 hover:text-white hover:bg-slate-700/70"
                   onClick={() => setExpanded(!expanded)}
+                  aria-label={expanded ? 'Collapse node content' : 'Expand node content'}
                 >
                   {expanded ? (
                     <ChevronUp className="h-4 w-4" />
@@ -112,6 +113,7 @@ export const BaseNode: React.FC<BaseNodeProps> = memo(
                     size="icon"
                     className="h-7 w-7 text-red-400 hover:text-red-300 hover:bg-red-900/40"
                     onClick={data.onDelete}
+                    aria-label="Delete node"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
