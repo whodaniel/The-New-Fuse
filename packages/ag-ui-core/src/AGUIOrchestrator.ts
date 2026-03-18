@@ -12,6 +12,7 @@
  */
 
 import { EventEmitter } from 'events';
+import * as crypto from 'crypto';
 
 import { WebSocketServer } from 'ws';
 
@@ -346,14 +347,16 @@ export class AGUIOrchestrator extends EventEmitter {
    * Generate unique session ID
    */
   private generateSessionId(): string {
-    return `session-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+    // SECURITY: Use cryptographically secure random values instead of Math.random()
+    return `session-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
   }
 
   /**
    * Generate unique message ID
    */
   private generateMessageId(): string {
-    return `msg-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+    // SECURITY: Use cryptographically secure random values instead of Math.random()
+    return `msg-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
   }
 }
 
