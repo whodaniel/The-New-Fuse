@@ -1,5 +1,5 @@
 {
-  "almanac_version": "1.6.0",
+  "almanac_version": "1.7.0",
   "last_updated": "2026-03-18",
   "definitions": {
     "primitives": {
@@ -44,6 +44,11 @@
       "KnowledgeScout": "Specialist in external standard assimilation",
       "Participant": "Interaction entity (Human/AI)",
       "SuperAdmin": "Ultimate human authority"
+    },
+    "disciplines": {
+      "StrictAttribution": "Rigorous discipline of citing sources; non-negotiable operational constraint",
+      "EvidentiaryPrecision": "Providing high-fidelity verifiable evidence for all claims",
+      "Auditability": "Traceability of decisions to attributed sources and reasoning"
     },
     "philosophical_anchors": {
       "Attribution": "Legal and logical cornerstone of truth and justice",

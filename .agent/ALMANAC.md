@@ -213,3 +213,14 @@ align their mental models with these definitions.
 - **Truth Persistence**: The requirement that an agent's output must maintain
   resonance with its attributed human origin and empirical reality to remain
   valid within the mesh.
+
+## 9. Core Disciplines (Operational Standards)
+
+- **Strict Attribution**: The rigorous, non-negotiable discipline of citing the
+  specific human, scientific, or historical source for every piece of
+  information or logic distilled by an agent. It is the strictest of disciplines
+  within the mesh.
+- **Evidentiary Precision**: The standard of providing high-fidelity, verifiable
+  evidence for all proposed system changes or knowledge distillations.
+- **Auditability**: The operational state where every agentic decision can be
+  traced through telemetry to its specific attributed source and reasoning path.
