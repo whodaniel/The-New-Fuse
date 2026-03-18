@@ -33,17 +33,17 @@ export class AnalyticsGatewayController {
     const targetPath = path.startsWith('/analytics') ? path : `/analytics${path}`;
 
     try {
+      const headers = {
+        'X-Gateway': 'the-new-fuse-api-gateway',
+        'X-Forwarded-By': 'api-gateway',
+      };
       return await this.proxyService.proxyRequest(
-        'casin8', // Routing to Agency Hub (reusing casin8 for now or adding agency-hub)
-        req.method,
+        'casin8',
         targetPath,
+        req.method,
+        headers,
         body,
-        query,
-        res,
-        {
-          'X-Gateway': 'the-new-fuse-api-gateway',
-          'X-Forwarded-By': 'api-gateway',
-        }
+        query
       );
     } catch (error: any) {
       const status = error.response?.status || HttpStatus.BAD_GATEWAY;
