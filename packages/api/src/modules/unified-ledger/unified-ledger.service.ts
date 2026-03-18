@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import * as WebSocket from 'ws';
+import WebSocket from 'ws';
 import {
   FeedbackIteration,
   FunctionalLink,

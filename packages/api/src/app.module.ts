@@ -54,8 +54,12 @@ import { HealthService } from './services/health.service';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
+        const secret = configService.get<string>('JWT_SECRET') || process.env.JWT_SECRET;
+        if (!secret) {
+          throw new Error('CRITICAL: JWT_SECRET must be configured');
+        }
         return {
-          secret: configService.get<string>('JWT_SECRET', 'dev-secret-key'),
+          secret,
           signOptions: {
             expiresIn: 604800, // 7 days in seconds
           },

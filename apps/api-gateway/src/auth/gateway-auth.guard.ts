@@ -17,12 +17,14 @@ export class GatewayAuthGuard implements CanActivate {
       throw new UnauthorizedException('No authentication token provided');
     }
 
+    const secret = this.configService.get<string>('JWT_SECRET') || process.env.JWT_SECRET;
+    if (!secret) {
+      throw new Error('CRITICAL: JWT_SECRET must be configured');
+    }
+
     try {
       const payload = await this.jwtService.verifyAsync(token, {
-        secret:
-          this.configService.get<string>('JWT_SECRET') ||
-          process.env.JWT_SECRET ||
-          'dev-secret-key-123',
+        secret,
       });
       (request as any).user = { id: payload.sub, email: payload.email, roles: payload.roles };
       return true;

@@ -14,11 +14,16 @@ import { GatewayAuthService } from './gateway-auth.service';
   imports: [
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        secret:
-          configService.get<string>('JWT_SECRET') || process.env.JWT_SECRET || 'dev-secret-key-123',
-        signOptions: { expiresIn: '15m' },
-      }),
+      useFactory: (configService: ConfigService) => {
+        const secret = configService.get<string>('JWT_SECRET') || process.env.JWT_SECRET;
+        if (!secret) {
+          throw new Error('CRITICAL: JWT_SECRET must be configured');
+        }
+        return {
+          secret,
+          signOptions: { expiresIn: '15m' },
+        };
+      },
       inject: [ConfigService],
     }),
   ],

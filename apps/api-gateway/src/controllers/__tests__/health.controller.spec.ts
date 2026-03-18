@@ -6,7 +6,6 @@
  */
 
 import { INestApplication } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
 
 describe('Health Controller (e2e)', () => {
   let app: INestApplication;

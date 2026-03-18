@@ -488,16 +488,15 @@ export class GatewayAuthService implements OnModuleDestroy {
   }
 
   private getAccessSecret(): string {
-    return (
-      this.configService.get<string>('JWT_SECRET') || process.env.JWT_SECRET || 'dev-secret-key-123'
-    );
+    const secret = this.configService.get<string>('JWT_SECRET') || process.env.JWT_SECRET;
+    if (!secret) {
+      throw new Error('CRITICAL: JWT_SECRET must be configured');
+    }
+    return secret;
   }
 
   private getRefreshSecret(): string {
-    return (
-      this.configService.get<string>('JWT_REFRESH_SECRET') ||
-      process.env.JWT_REFRESH_SECRET ||
-      this.getAccessSecret()
-    );
+    const refreshSecret = this.configService.get<string>('JWT_REFRESH_SECRET') || process.env.JWT_REFRESH_SECRET;
+    return refreshSecret || this.getAccessSecret();
   }
 }

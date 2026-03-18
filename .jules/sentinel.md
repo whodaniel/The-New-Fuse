@@ -10,3 +10,8 @@
 **Vulnerability:** Weak random number generation using Math.random() in apps/backend/src/agent/services/InterAgentChatService.ts to generate message IDs.
 **Learning:** Math.random() is predictable and should not be used in contexts where random strings are used for tokens, IDs, or security-related contexts, as this could allow an attacker to predict generated message IDs.
 **Prevention:** Always use cryptographically secure random number generators (e.g., Node's native crypto module, crypto.randomBytes) when generating IDs or tokens.
+
+## 2023-10-27 - Remove Hardcoded JWT Secret Fallbacks
+**Vulnerability:** The codebase contained hardcoded fallback secrets (`dev-secret-key-123`, `dev-secret-key`) for JWT tokens in multiple locations across `apps/api-gateway` and `packages/api`. If the environment variable `JWT_SECRET` was missing or improperly loaded, the system would quietly fall back to using these well-known secrets.
+**Learning:** Fallback secrets present a critical security vulnerability. An attacker could use these hardcoded default secrets to forge valid JWT tokens, gaining full administrative access and control over the application without valid credentials. This effectively bypasses authentication if the configuration error goes unnoticed.
+**Prevention:** Never use hardcoded secrets or fallbacks in production logic, even for convenience during development. Security-critical values must fail explicitly and loudly. Use `throw new Error(...)` to ensure the application fails to start or process requests if critical secrets like `JWT_SECRET` are not configured properly.

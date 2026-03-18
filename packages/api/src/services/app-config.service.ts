@@ -75,8 +75,12 @@ export class AppConfigService {
    * @returns JWT configuration
    */
   get jwt() {
+    const secret = this.configService.get<string>('JWT_SECRET') || process.env.JWT_SECRET;
+    if (!secret) {
+      throw new Error('CRITICAL: JWT_SECRET must be configured');
+    }
     return {
-      secret: this.get<string>('JWT_SECRET', 'dev-secret-key'),
+      secret,
       expiresIn: this.get<string>('JWT_EXPIRES_IN', '7d'),
     };
   }
