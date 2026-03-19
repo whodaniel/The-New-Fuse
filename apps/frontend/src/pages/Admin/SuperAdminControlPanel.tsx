@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { GlassCard, StatsCard } from '@/components/ui/premium/GlassCard';
 import { PremiumButton } from '@/components/ui/premium/PremiumButton';
 import GraphVisualizerWrapper from '@/components/wizard/graph/GraphVisualizer';
@@ -8,16 +7,19 @@ import {
   Activity,
   ArrowRight,
   Bot,
+  Clock3,
   MessageSquare,
   Network,
+  Play,
   RefreshCw,
+  Save,
   Search,
   Server,
   Shield,
   StopCircle,
   Zap,
 } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent } from 'react';
 import { Link } from 'react-router-dom';
 import type { Edge, Node } from 'reactflow';
 import { LlmRoutingControl } from './components/LlmRoutingControl';
@@ -52,6 +54,92 @@ interface Agent {
   status?: string;
 }
 
+interface VoteCounts {
+  up?: number;
+  down?: number;
+}
+
+interface ActivityMetadata {
+  eventType?: string;
+  lane?: string;
+  horizon?: string;
+  taskId?: string;
+  title?: string;
+  score?: number;
+  top?: Array<{
+    id?: string;
+    title?: string;
+    score?: number;
+    votes?: VoteCounts;
+  }>;
+  votes?: VoteCounts;
+  itinerary?: {
+    lane?: string;
+    horizon?: string;
+  };
+  [key: string]: unknown;
+}
+
+interface ProcessRunHistory {
+  runId: string;
+  actorId: string;
+  startedAt: string;
+  finishedAt: string;
+  durationMs: number;
+  status: string;
+  exitCode: number;
+  error?: string | null;
+  outputPreview?: string | null;
+}
+
+interface ChronologicalProcess {
+  id: string;
+  title: string;
+  description?: string;
+  canonical: {
+    layer: string;
+    scope: string;
+    category: string;
+    categoryDescription?: string | null;
+    ownerAgentId?: string | null;
+    ownerUserId?: string | null;
+    locked?: boolean;
+    requiresApproval?: boolean;
+  };
+  procedural: {
+    layer: string;
+    enabled: boolean;
+    cadence: string;
+    timezone: string;
+    nextRunAt?: string | null;
+    nextRunHint?: string;
+    runNowCommand?: {
+      command: string;
+      args: string[];
+      timeoutMs: number;
+    } | null;
+  };
+  runtime: {
+    status: string;
+    lastRunAt?: string | null;
+    lastDurationMs?: number | null;
+    lastExitCode?: number | null;
+    lastError?: string | null;
+    lastOutputPreview?: string | null;
+    recentRuns?: ProcessRunHistory[];
+  };
+  controls: {
+    canEdit: boolean;
+    canRunNow: boolean;
+    editDeniedReason?: string | null;
+    runDeniedReason?: string | null;
+  };
+  docs?: {
+    protocol?: string | null;
+    runbook?: string | null;
+  };
+}
+
 interface GraphSelectionContext {
   kind: 'root' | 'source' | 'event' | 'task';
   source?: string;
@@ -61,22 +149,51 @@ interface GraphSelectionContext {
   horizon?: string;
 }
 
-const mapRawActivityEvent = (e: Record<string, any>): ActivityEvent => ({
-  id: e.id || e.streamId || `evt-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-  type: e.type || e.eventType || 'message',
-  source: e.source || 'system',
-  content: e.content || '',
-  timestamp: new Date(e.relayTimestamp || e.originalTimestamp || Date.now()),
-  status: e.content?.toLowerCase().includes('error') ? 'error' : 'success',
-  channelId: e.channel,
-  metadata: e.metadata,
-});
+interface ChronologicalProcessHistoryPayload {
+  process: {
+    id: string;
+    title: string;
+  };
+  total: number;
+  runs: ProcessRunHistory[];
+}
 
-const DASHBOARD_THEME = {
-  primary: 'cyan',
-  secondary: 'indigo',
-  background: 'slate-950',
-};
+type ChronologicalStatusFilter =
+  | 'all'
+  | 'healthy'
+  | 'error'
+  | 'running'
+  | 'paused'
+  | 'scheduled'
+  | 'manual';
+type ChronologicalScopeFilter = 'all' | 'system_framework' | 'tenant';
+type ChronologicalSortOption =
+  | 'title_asc'
+  | 'status_asc'
+  | 'next_run_asc'
+  | 'next_run_desc'
+  | 'last_run_desc';
+
+const asMetadata = (value: unknown): ActivityMetadata | undefined =>
+  value && typeof value === 'object' ? (value as ActivityMetadata) : undefined;
+
+const getActivityMetadata = (activity: ActivityEvent): ActivityMetadata =>
+  asMetadata(activity.metadata) || {};
+
+const mapRawActivityEvent = (e: Record<string, unknown>): ActivityEvent => ({
+  id: String(e.id || e.streamId || `evt-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`),
+  type: String(e.type || e.eventType || 'message'),
+  source: String(e.source || 'system'),
+  content: String(e.content || ''),
+  timestamp: new Date(String(e.relayTimestamp || e.originalTimestamp || Date.now())),
+  status: String(e.content || '')
+    .toLowerCase()
+    .includes('error')
+    ? 'error'
+    : 'success',
+  channelId: e.channel ? String(e.channel) : undefined,
+  metadata: asMetadata(e.metadata),
+});
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -97,7 +214,7 @@ const itemVariants: Variants = {
 };
 
 export default function SuperAdminControlPanel() {
-  const { isSuperAdmin, isBizSynthMasterAdmin, userRole } = useAuthorization();
+  const { isSuperAdmin, isBizSynthMasterAdmin } = useAuthorization();
 
   // Relay URLs
   const relayHttpBase = useMemo(
@@ -146,18 +263,44 @@ export default function SuperAdminControlPanel() {
   } | null>(null);
   const [selectedTaskDetail, setSelectedTaskDetail] = useState<ActivityEvent | null>(null);
   const [highlightedAgentId, setHighlightedAgentId] = useState<string | null>(null);
+  const [chronologicalProcesses, setChronologicalProcesses] = useState<ChronologicalProcess[]>([]);
+  const [chronologicalSummary, setChronologicalSummary] = useState<{
+    total: number;
+    enabled: number;
+    disabled: number;
+    locked: number;
+    healthy: number;
+    errored: number;
+  } | null>(null);
+  const [chronologicalError, setChronologicalError] = useState<string | null>(null);
+  const [chronologicalLoading, setChronologicalLoading] = useState(false);
+  const [processDrafts, setProcessDrafts] = useState<
+    Record<string, { enabled: boolean; cadence: string; timezone: string; notes: string }>
+  >({});
+  const [busyProcessMap, setBusyProcessMap] = useState<Record<string, boolean>>({});
+  const [chronologicalQuery, setChronologicalQuery] = useState('');
+  const [chronologicalStatusFilter, setChronologicalStatusFilter] =
+    useState<ChronologicalStatusFilter>('all');
+  const [chronologicalScopeFilter, setChronologicalScopeFilter] =
+    useState<ChronologicalScopeFilter>('all');
+  const [chronologicalSort, setChronologicalSort] =
+    useState<ChronologicalSortOption>('next_run_asc');
+  const [historyModalProcess, setHistoryModalProcess] = useState<ChronologicalProcess | null>(null);
+  const [historyModalData, setHistoryModalData] =
+    useState<ChronologicalProcessHistoryPayload | null>(null);
+  const [historyModalLoading, setHistoryModalLoading] = useState(false);
+  const [historyModalError, setHistoryModalError] = useState<string | null>(null);
 
   const orchestrationSignals = useMemo(() => {
     return activities
       .filter((activity) => {
-        const eventType = String(
-          activity?.metadata?.eventType || activity.type || ''
-        ).toLowerCase();
+        const metadata = getActivityMetadata(activity);
+        const eventType = String(metadata.eventType || activity.type || '').toLowerCase();
         return eventType === 'task_poll_ranked' || eventType === 'task_queued_from_votes';
       })
       .slice(0, 12)
       .map((activity) => {
-        const metadata: any = activity.metadata || {};
+        const metadata = getActivityMetadata(activity);
         const eventType = String(metadata.eventType || activity.type || '');
         const top = Array.isArray(metadata.top) ? metadata.top : [];
         const lead = top[0] || null;
@@ -174,8 +317,8 @@ export default function SuperAdminControlPanel() {
           votes:
             votes && typeof votes === 'object'
               ? {
-                  up: Number((votes as any).up || 0),
-                  down: Number((votes as any).down || 0),
+                  up: Number(votes.up || 0),
+                  down: Number(votes.down || 0),
                 }
               : null,
           taskId: taskId ? String(taskId) : null,
@@ -214,7 +357,7 @@ export default function SuperAdminControlPanel() {
   }, [activities, orchestrationSignals]);
 
   const extractTaskRouting = useCallback((activity: ActivityEvent) => {
-    const metadata: any = activity.metadata || {};
+    const metadata = getActivityMetadata(activity);
     const lane = String(metadata.lane || metadata.itinerary?.lane || '').trim();
     const horizon = String(metadata.horizon || metadata.itinerary?.horizon || '').trim();
     return { lane, horizon };
@@ -284,7 +427,7 @@ export default function SuperAdminControlPanel() {
         edgeSet.add(eventEdgeId);
       }
 
-      const taskId = String((activity.metadata as any)?.taskId || '').trim();
+      const taskId = String(getActivityMetadata(activity).taskId || '').trim();
       if (!taskId || taskNodesUsed >= taskNodeBudget) continue;
 
       const { lane, horizon } = extractTaskRouting(activity);
@@ -366,7 +509,7 @@ export default function SuperAdminControlPanel() {
   const filteredActivities = useMemo(() => {
     if (!streamFilter) return activities;
     return activities.filter((activity) => {
-      const metadata: any = activity.metadata || {};
+      const metadata = getActivityMetadata(activity);
       const sourceMatch = streamFilter.source ? activity.source === streamFilter.source : true;
       const eventType = String(metadata.eventType || activity.type || '');
       const eventMatch = streamFilter.eventType ? eventType === streamFilter.eventType : true;
@@ -396,11 +539,11 @@ export default function SuperAdminControlPanel() {
   );
 
   const handleGraphNodeClick = useCallback(
-    (_event: React.MouseEvent, node: Node) => {
+    (_event: MouseEvent, node: Node) => {
       const nodeId = String(node.id || '');
       const label =
         typeof node.data === 'object' && node.data && 'label' in node.data
-          ? String((node.data as any).label || nodeId)
+          ? String((node.data as { label?: unknown }).label || nodeId)
           : nodeId;
 
       let context: GraphSelectionContext = { kind: 'root' };
@@ -428,7 +571,7 @@ export default function SuperAdminControlPanel() {
         const taskId = nodeId.slice('task:'.length);
         const taskEvent =
           activities.find(
-            (activity) => String((activity.metadata as any)?.taskId || '') === taskId
+            (activity) => String(getActivityMetadata(activity).taskId || '') === taskId
           ) || null;
         const { lane, horizon } = taskEvent
           ? extractTaskRouting(taskEvent)
@@ -471,6 +614,234 @@ export default function SuperAdminControlPanel() {
       // silent: realtime visualizer sync should not hard-fail UI
     }
   }, [relayHttpBase]);
+
+  const adminAuthHeaders = useCallback(() => {
+    const token = localStorage.getItem('token');
+    const headers: Record<string, string> = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
+    return headers;
+  }, []);
+
+  const loadChronologicalProcesses = useCallback(async () => {
+    setChronologicalLoading(true);
+    setChronologicalError(null);
+    try {
+      const res = await fetch('/api/admin/metrics/chronological-processes', {
+        headers: {
+          ...adminAuthHeaders(),
+        },
+      });
+      if (!res.ok) {
+        throw new Error(`Failed to load chronological control plane (${res.status})`);
+      }
+
+      const payload = await res.json();
+      const items: ChronologicalProcess[] = Array.isArray(payload?.processes)
+        ? payload.processes
+        : [];
+      setChronologicalProcesses(items);
+      setChronologicalSummary(payload?.summary || null);
+
+      setProcessDrafts((prev) => {
+        const next = { ...prev };
+        for (const process of items) {
+          if (!next[process.id]) {
+            next[process.id] = {
+              enabled: Boolean(process.procedural?.enabled),
+              cadence: String(process.procedural?.cadence || ''),
+              timezone: String(process.procedural?.timezone || 'UTC'),
+              notes: '',
+            };
+          }
+        }
+        return next;
+      });
+    } catch (err) {
+      console.error('Failed to load chronological processes', err);
+      setChronologicalError('Unable to load chronological control plane data.');
+    } finally {
+      setChronologicalLoading(false);
+    }
+  }, [adminAuthHeaders]);
+
+  const updateProcessDraft = useCallback(
+    (
+      processId: string,
+      patch: Partial<{ enabled: boolean; cadence: string; timezone: string; notes: string }>
+    ) => {
+      setProcessDrafts((prev) => ({
+        ...prev,
+        [processId]: {
+          enabled: prev[processId]?.enabled ?? true,
+          cadence: prev[processId]?.cadence ?? '',
+          timezone: prev[processId]?.timezone ?? 'UTC',
+          notes: prev[processId]?.notes ?? '',
+          ...patch,
+        },
+      }));
+    },
+    []
+  );
+
+  const saveChronologicalProcess = useCallback(
+    async (process: ChronologicalProcess) => {
+      const draft = processDrafts[process.id];
+      if (!draft) return;
+      setBusyProcessMap((prev) => ({ ...prev, [process.id]: true }));
+      setChronologicalError(null);
+      try {
+        const res = await fetch(`/api/admin/metrics/chronological-processes/${process.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            ...adminAuthHeaders(),
+          },
+          body: JSON.stringify({
+            enabled: draft.enabled,
+            cadence: draft.cadence,
+            timezone: draft.timezone,
+            notes: draft.notes,
+          }),
+        });
+
+        if (!res.ok) {
+          const errorText = await res.text();
+          throw new Error(errorText || `Save failed (${res.status})`);
+        }
+
+        await loadChronologicalProcesses();
+      } catch (err) {
+        console.error(`Failed to save process ${process.id}`, err);
+        setChronologicalError(`Failed to save ${process.title}.`);
+      } finally {
+        setBusyProcessMap((prev) => ({ ...prev, [process.id]: false }));
+      }
+    },
+    [adminAuthHeaders, loadChronologicalProcesses, processDrafts]
+  );
+
+  const runChronologicalProcessNow = useCallback(
+    async (process: ChronologicalProcess) => {
+      setBusyProcessMap((prev) => ({ ...prev, [process.id]: true }));
+      setChronologicalError(null);
+      try {
+        const res = await fetch(`/api/admin/metrics/chronological-processes/${process.id}/run`, {
+          method: 'POST',
+          headers: {
+            ...adminAuthHeaders(),
+          },
+        });
+        if (!res.ok) {
+          const errorText = await res.text();
+          throw new Error(errorText || `Run failed (${res.status})`);
+        }
+
+        await loadChronologicalProcesses();
+      } catch (err) {
+        console.error(`Failed to run process ${process.id}`, err);
+        setChronologicalError(`Run-now failed for ${process.title}.`);
+      } finally {
+        setBusyProcessMap((prev) => ({ ...prev, [process.id]: false }));
+      }
+    },
+    [adminAuthHeaders, loadChronologicalProcesses]
+  );
+
+  const openProcessHistoryModal = useCallback(
+    async (process: ChronologicalProcess) => {
+      setHistoryModalProcess(process);
+      setHistoryModalLoading(true);
+      setHistoryModalError(null);
+      setHistoryModalData(null);
+      try {
+        const res = await fetch(
+          `/api/admin/metrics/chronological-processes/${process.id}/history?limit=200`,
+          {
+            headers: {
+              ...adminAuthHeaders(),
+            },
+          }
+        );
+        if (!res.ok) {
+          const errorText = await res.text();
+          throw new Error(errorText || `History failed (${res.status})`);
+        }
+        const payload = (await res.json()) as ChronologicalProcessHistoryPayload;
+        setHistoryModalData(payload);
+      } catch (err) {
+        console.error(`Failed to load process history ${process.id}`, err);
+        setHistoryModalError(`Unable to load history for ${process.title}.`);
+      } finally {
+        setHistoryModalLoading(false);
+      }
+    },
+    [adminAuthHeaders]
+  );
+
+  const closeProcessHistoryModal = useCallback(() => {
+    setHistoryModalProcess(null);
+    setHistoryModalData(null);
+    setHistoryModalError(null);
+    setHistoryModalLoading(false);
+  }, []);
+
+  const chronologicalFilteredProcesses = useMemo(() => {
+    const query = chronologicalQuery.trim().toLowerCase();
+    const filtered = chronologicalProcesses.filter((process) => {
+      if (
+        query &&
+        !`${process.title} ${process.id} ${process.canonical.category} ${process.canonical.scope}`
+          .toLowerCase()
+          .includes(query)
+      ) {
+        return false;
+      }
+      if (
+        chronologicalStatusFilter !== 'all' &&
+        process.runtime.status !== chronologicalStatusFilter
+      ) {
+        return false;
+      }
+      if (
+        chronologicalScopeFilter !== 'all' &&
+        process.canonical.scope !== chronologicalScopeFilter
+      ) {
+        return false;
+      }
+      return true;
+    });
+
+    const nextRunValue = (process: ChronologicalProcess): number =>
+      process.procedural.nextRunAt
+        ? new Date(process.procedural.nextRunAt).getTime()
+        : Number.MAX_SAFE_INTEGER;
+    const lastRunValue = (process: ChronologicalProcess): number =>
+      process.runtime.lastRunAt ? new Date(process.runtime.lastRunAt).getTime() : 0;
+
+    filtered.sort((a, b) => {
+      switch (chronologicalSort) {
+        case 'title_asc':
+          return a.title.localeCompare(b.title);
+        case 'status_asc':
+          return a.runtime.status.localeCompare(b.runtime.status) || a.title.localeCompare(b.title);
+        case 'next_run_desc':
+          return nextRunValue(b) - nextRunValue(a);
+        case 'last_run_desc':
+          return lastRunValue(b) - lastRunValue(a);
+        case 'next_run_asc':
+        default:
+          return nextRunValue(a) - nextRunValue(b);
+      }
+    });
+
+    return filtered;
+  }, [
+    chronologicalProcesses,
+    chronologicalQuery,
+    chronologicalStatusFilter,
+    chronologicalScopeFilter,
+    chronologicalSort,
+  ]);
 
   // Load Initial Data
   const loadInitialData = useCallback(async () => {
@@ -590,6 +961,7 @@ export default function SuperAdminControlPanel() {
 
   useEffect(() => {
     loadInitialData();
+    loadChronologicalProcesses();
     connectSocket();
 
     const interval = setInterval(loadInitialData, 30000);
@@ -599,7 +971,7 @@ export default function SuperAdminControlPanel() {
       clearInterval(activityInterval);
       wsRef.current?.close();
     };
-  }, [loadInitialData, connectSocket, syncRecentActivity]);
+  }, [loadInitialData, loadChronologicalProcesses, connectSocket, syncRecentActivity]);
 
   // Actions
   const handleHaltAgents = async () => {
@@ -681,7 +1053,7 @@ export default function SuperAdminControlPanel() {
             {connected ? 'Relay Active' : 'Relay Offline'}
           </div>
 
-          <PremiumButton variant="glass" size="sm" onClick={loadInitialData} className="group">
+          <PremiumButton variant="secondary" size="sm" onClick={loadInitialData} className="group">
             <RefreshCw
               className={`w-4 h-4 mr-2 group-hover:rotate-180 transition-transform duration-500 ${loading ? 'animate-spin' : ''}`}
             />
@@ -719,7 +1091,7 @@ export default function SuperAdminControlPanel() {
           label="Cloud Nodes"
           value={stats.nodes}
           icon={Server}
-          gradient="indigo"
+          gradient="blue"
           change="Mesh deployment"
           changeType="neutral"
         />
@@ -739,6 +1111,14 @@ export default function SuperAdminControlPanel() {
           change="System telemetry"
           changeType="neutral"
         />
+      </motion.div>
+
+      <motion.div variants={itemVariants}>
+        {error && (
+          <div className="mb-4 rounded-md border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-xs text-rose-200">
+            {error}
+          </div>
+        )}
       </motion.div>
 
       <motion.div variants={itemVariants}>
@@ -844,7 +1224,7 @@ export default function SuperAdminControlPanel() {
                   if (!taskId) return;
                   const event =
                     activities.find(
-                      (activity) => String((activity.metadata as any)?.taskId || '') === taskId
+                      (activity) => String(getActivityMetadata(activity).taskId || '') === taskId
                     ) || null;
                   setSelectedTaskDetail(event);
                 }}
@@ -866,7 +1246,7 @@ export default function SuperAdminControlPanel() {
               <div className="mt-3 rounded border border-white/10 bg-black/20 p-2">
                 <div className="text-slate-400">Task Detail</div>
                 <div className="text-slate-200 font-semibold">
-                  {String((selectedTaskDetail.metadata as any)?.taskId || 'unknown')}
+                  {String(getActivityMetadata(selectedTaskDetail).taskId || 'unknown')}
                 </div>
                 <div className="text-slate-300 truncate">{selectedTaskDetail.content}</div>
               </div>
@@ -1075,6 +1455,327 @@ export default function SuperAdminControlPanel() {
               </Link>
             </GlassCard>
           </div>
+
+          <GlassCard className="p-4 transition-transform hover:scale-[1.01]">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                <Clock3 className="w-5 h-5 text-amber-300" />
+                Chronological Control Plane
+              </h3>
+              <button
+                onClick={loadChronologicalProcesses}
+                className="text-[10px] px-2 py-1 rounded border border-amber-300/30 text-amber-200 hover:bg-amber-400/10"
+              >
+                Refresh
+              </button>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 mb-3 text-[10px]">
+              <div className="rounded border border-white/10 px-2 py-1 text-slate-300">
+                Total: <span className="font-bold">{chronologicalSummary?.total ?? 0}</span>
+              </div>
+              <div className="rounded border border-emerald-500/20 px-2 py-1 text-emerald-300">
+                Enabled: <span className="font-bold">{chronologicalSummary?.enabled ?? 0}</span>
+              </div>
+              <div className="rounded border border-rose-500/20 px-2 py-1 text-rose-300">
+                Disabled: <span className="font-bold">{chronologicalSummary?.disabled ?? 0}</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-2 mb-3 text-[10px]">
+              <input
+                value={chronologicalQuery}
+                onChange={(event) => setChronologicalQuery(event.target.value)}
+                className="w-full bg-slate-900 border border-white/10 rounded px-2 py-1 text-slate-200"
+                placeholder="Filter by title, id, category, scope"
+              />
+              <div className="grid grid-cols-3 gap-2">
+                <select
+                  value={chronologicalStatusFilter}
+                  onChange={(event) =>
+                    setChronologicalStatusFilter(event.target.value as ChronologicalStatusFilter)
+                  }
+                  className="bg-slate-900 border border-white/10 rounded px-2 py-1 text-slate-200"
+                >
+                  <option value="all">Status: all</option>
+                  <option value="healthy">Healthy</option>
+                  <option value="error">Error</option>
+                  <option value="running">Running</option>
+                  <option value="paused">Paused</option>
+                  <option value="scheduled">Scheduled</option>
+                  <option value="manual">Manual</option>
+                </select>
+                <select
+                  value={chronologicalScopeFilter}
+                  onChange={(event) =>
+                    setChronologicalScopeFilter(event.target.value as ChronologicalScopeFilter)
+                  }
+                  className="bg-slate-900 border border-white/10 rounded px-2 py-1 text-slate-200"
+                >
+                  <option value="all">Scope: all</option>
+                  <option value="system_framework">System Framework</option>
+                  <option value="tenant">Tenant</option>
+                </select>
+                <select
+                  value={chronologicalSort}
+                  onChange={(event) =>
+                    setChronologicalSort(event.target.value as ChronologicalSortOption)
+                  }
+                  className="bg-slate-900 border border-white/10 rounded px-2 py-1 text-slate-200"
+                >
+                  <option value="next_run_asc">Sort: Next Run ↑</option>
+                  <option value="next_run_desc">Sort: Next Run ↓</option>
+                  <option value="last_run_desc">Sort: Last Run ↓</option>
+                  <option value="status_asc">Sort: Status</option>
+                  <option value="title_asc">Sort: Title</option>
+                </select>
+              </div>
+              <div className="text-slate-500">
+                Showing {chronologicalFilteredProcesses.length}/{chronologicalProcesses.length}
+              </div>
+            </div>
+
+            {chronologicalError && (
+              <div className="mb-3 text-[10px] text-rose-300 border border-rose-500/30 rounded px-2 py-1">
+                {chronologicalError}
+              </div>
+            )}
+
+            {chronologicalLoading && chronologicalProcesses.length === 0 ? (
+              <div className="text-[10px] text-slate-500">Loading schedules...</div>
+            ) : (
+              <div className="space-y-3 max-h-[380px] overflow-y-auto pr-1">
+                {chronologicalFilteredProcesses.length === 0 ? (
+                  <div className="text-[10px] text-slate-500">
+                    No chronological processes match the current filters.
+                  </div>
+                ) : (
+                  chronologicalFilteredProcesses.map((process) => {
+                    const draft = processDrafts[process.id] || {
+                      enabled: process.procedural.enabled,
+                      cadence: process.procedural.cadence,
+                      timezone: process.procedural.timezone,
+                      notes: '',
+                    };
+                    const busy = Boolean(busyProcessMap[process.id]);
+                    return (
+                      <div
+                        key={process.id}
+                        className="rounded-md border border-white/10 bg-black/20 p-3 text-[10px]"
+                      >
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <div>
+                            <div className="text-slate-100 font-semibold leading-tight">
+                              {process.title}
+                            </div>
+                            <div className="text-slate-500 font-mono">{process.id}</div>
+                          </div>
+                          <div
+                            className={`uppercase px-2 py-0.5 rounded border ${
+                              process.runtime.status === 'error'
+                                ? 'border-rose-500/30 text-rose-300'
+                                : process.runtime.status === 'healthy'
+                                  ? 'border-emerald-500/30 text-emerald-300'
+                                  : process.runtime.status === 'running'
+                                    ? 'border-cyan-500/30 text-cyan-300'
+                                    : 'border-white/20 text-slate-300'
+                            }`}
+                          >
+                            {process.runtime.status}
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 mb-2">
+                          <div className="text-slate-400">
+                            Canonical: {process.canonical.scope} / {process.canonical.category}
+                          </div>
+                          <div className="text-slate-400 text-right">
+                            {process.canonical.locked ? 'Locked' : 'Mutable'}
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-2 mb-2">
+                          <label className="flex items-center gap-2 text-slate-300">
+                            <input
+                              type="checkbox"
+                              className="accent-cyan-400"
+                              checked={draft.enabled}
+                              disabled={!process.controls.canEdit || busy}
+                              onChange={(event) =>
+                                updateProcessDraft(process.id, { enabled: event.target.checked })
+                              }
+                            />
+                            Enabled
+                          </label>
+
+                          <input
+                            value={draft.cadence}
+                            disabled={!process.controls.canEdit || busy}
+                            onChange={(event) =>
+                              updateProcessDraft(process.id, { cadence: event.target.value })
+                            }
+                            className="w-full bg-slate-900 border border-white/10 rounded px-2 py-1 text-slate-200"
+                            placeholder="*/15 * * * *"
+                          />
+                          <input
+                            value={draft.timezone}
+                            disabled={!process.controls.canEdit || busy}
+                            onChange={(event) =>
+                              updateProcessDraft(process.id, { timezone: event.target.value })
+                            }
+                            className="w-full bg-slate-900 border border-white/10 rounded px-2 py-1 text-slate-200"
+                            placeholder="UTC"
+                          />
+                        </div>
+
+                        <div className="flex items-center gap-2 mb-2">
+                          <button
+                            onClick={() => saveChronologicalProcess(process)}
+                            disabled={!process.controls.canEdit || busy}
+                            className="flex items-center gap-1 px-2 py-1 rounded border border-cyan-500/30 text-cyan-300 disabled:opacity-50"
+                          >
+                            <Save className="w-3 h-3" />
+                            Save
+                          </button>
+                          <button
+                            onClick={() => runChronologicalProcessNow(process)}
+                            disabled={!process.controls.canRunNow || busy}
+                            className="flex items-center gap-1 px-2 py-1 rounded border border-indigo-500/30 text-indigo-300 disabled:opacity-50"
+                          >
+                            <Play className="w-3 h-3" />
+                            Run Now
+                          </button>
+                          <button
+                            onClick={() => openProcessHistoryModal(process)}
+                            disabled={busy}
+                            className="flex items-center gap-1 px-2 py-1 rounded border border-amber-500/30 text-amber-300 disabled:opacity-50"
+                          >
+                            <Clock3 className="w-3 h-3" />
+                            History
+                          </button>
+                        </div>
+
+                        <div className="text-slate-500 leading-relaxed">
+                          <div>Next: {process.procedural.nextRunHint || '-'}</div>
+                          <div>
+                            Next At:{' '}
+                            {process.procedural.nextRunAt
+                              ? new Date(process.procedural.nextRunAt).toLocaleString()
+                              : 'unresolved'}
+                          </div>
+                          <div>Last: {process.runtime.lastRunAt || 'never'}</div>
+                          {process.runtime.lastError && (
+                            <div className="text-rose-300 truncate">
+                              Error: {process.runtime.lastError}
+                            </div>
+                          )}
+                        </div>
+
+                        {Array.isArray(process.runtime.recentRuns) &&
+                          process.runtime.recentRuns.length > 0 && (
+                            <div className="mt-2 border-t border-white/10 pt-2">
+                              <div className="text-slate-400 mb-1">Recent Runs</div>
+                              <div className="space-y-1">
+                                {process.runtime.recentRuns.slice(0, 3).map((run) => (
+                                  <div
+                                    key={run.runId}
+                                    className="rounded border border-white/10 px-2 py-1 text-slate-400"
+                                  >
+                                    <div className="flex items-center justify-between">
+                                      <span className="font-mono">{run.status}</span>
+                                      <span>{run.durationMs}ms</span>
+                                    </div>
+                                    <div className="text-slate-500">
+                                      {new Date(run.finishedAt).toLocaleString()} · exit{' '}
+                                      {run.exitCode}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            )}
+          </GlassCard>
+
+          {historyModalProcess && (
+            <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/70 p-4">
+              <div className="w-full max-w-3xl rounded-lg border border-white/15 bg-slate-950 shadow-2xl">
+                <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+                  <div>
+                    <div className="text-sm font-semibold text-slate-100">
+                      {historyModalProcess.title} Run History
+                    </div>
+                    <div className="text-[10px] text-slate-500 font-mono">
+                      {historyModalProcess.id}
+                    </div>
+                  </div>
+                  <button
+                    onClick={closeProcessHistoryModal}
+                    className="rounded border border-white/20 px-2 py-1 text-[10px] text-slate-300 hover:bg-white/10"
+                  >
+                    Close
+                  </button>
+                </div>
+                <div className="max-h-[65vh] overflow-y-auto p-4 text-[11px]">
+                  {historyModalLoading && (
+                    <div className="text-slate-500">Loading execution history...</div>
+                  )}
+                  {historyModalError && (
+                    <div className="rounded border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-rose-200">
+                      {historyModalError}
+                    </div>
+                  )}
+                  {!historyModalLoading && !historyModalError && historyModalData && (
+                    <div className="space-y-2">
+                      <div className="text-slate-400">
+                        Showing {historyModalData.runs.length} of {historyModalData.total} runs
+                      </div>
+                      {historyModalData.runs.length === 0 ? (
+                        <div className="text-slate-500">No runs recorded yet.</div>
+                      ) : (
+                        historyModalData.runs.map((run) => (
+                          <div
+                            key={run.runId}
+                            className="rounded border border-white/10 bg-black/20 px-3 py-2"
+                          >
+                            <div className="flex flex-wrap items-center justify-between gap-2">
+                              <div className="font-mono text-slate-300">{run.runId}</div>
+                              <div
+                                className={`px-2 py-0.5 rounded border uppercase ${
+                                  run.status === 'error'
+                                    ? 'border-rose-500/30 text-rose-300'
+                                    : run.status === 'healthy'
+                                      ? 'border-emerald-500/30 text-emerald-300'
+                                      : 'border-white/20 text-slate-300'
+                                }`}
+                              >
+                                {run.status}
+                              </div>
+                            </div>
+                            <div className="mt-1 text-slate-400">
+                              {new Date(run.finishedAt).toLocaleString()} · {run.durationMs}ms ·
+                              exit {run.exitCode} · actor {run.actorId}
+                            </div>
+                            {run.error && <div className="mt-1 text-rose-300">{run.error}</div>}
+                            {run.outputPreview && (
+                              <div className="mt-1 text-slate-500 break-all">
+                                {run.outputPreview}
+                              </div>
+                            )}
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Quick Orchestration */}
           <GlassCard className="p-4 relative overflow-hidden group">

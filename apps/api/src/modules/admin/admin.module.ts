@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
+import { CacheService } from '../../cache/cache.service';
 import { AdminConfigController } from '../../controllers/admin-config.controller';
 import { AdminMetricsController } from '../../controllers/admin-metrics.controller';
 import { AdminUsersController } from '../../controllers/admin-users.controller';
@@ -9,6 +10,8 @@ import { AuditService } from '../../services/audit.service';
 import { MetricsService } from '../../services/metrics.service';
 import { RoleService } from '../../services/role.service';
 import { AuthModule } from '../auth/auth.module';
+import { UnifiedLedgerModule } from '../unified-ledger/unified-ledger.module';
+import { ChronologicalProcessesService } from './chronological-processes.service';
 
 /**
  * Admin Module
@@ -26,14 +29,21 @@ import { AuthModule } from '../auth/auth.module';
  * - Configuration management
  */
 @Module({
-  imports: [JwtModule, AuthModule],
+  imports: [JwtModule, AuthModule, UnifiedLedgerModule],
   controllers: [
     AdminController,
     AdminUsersController,
     AdminMetricsController,
     AdminConfigController,
   ],
-  providers: [RoleService, AuditService, MetricsService, SecurityLoggingService],
+  providers: [
+    RoleService,
+    AuditService,
+    MetricsService,
+    SecurityLoggingService,
+    CacheService,
+    ChronologicalProcessesService,
+  ],
   exports: [RoleService, AuditService, MetricsService],
 })
 export class AdminModule {}
