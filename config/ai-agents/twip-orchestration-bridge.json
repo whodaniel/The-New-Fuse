@@ -57,6 +57,16 @@
         "registry": "data/protocols/agent-owned-docs.registry.json",
         "bridge": "docs/protocols/bridges/agent-self-edit-federation-gates.yml"
       }
+    },
+    {
+      "name": "CRON_GOVERNANCE_GATING",
+      "description": "Gates cron mutations by scope/category RBAC and ownership, protecting framework schedules while allowing tenant-owned automation",
+      "parameters": {
+        "schema": "docs/protocols/schemas/tnf-cron-governance.schema.json",
+        "registry": "data/protocols/cron-jobs.registry.json",
+        "bridge": "docs/protocols/bridges/tnf-cron-federation-gates.yml",
+        "gateScript": "scripts/protocols/cron-governance-gate.cjs"
+      }
     }
   ],
   "tools": [
@@ -69,18 +79,21 @@
     "bridgeContract": "docs/protocols/bridges/twip-to-orchestrator-loop.yml",
     "federationBridgeContract": "docs/protocols/bridges/twip-federation-orchestration-gates.yml",
     "selfEditBridgeContract": "docs/protocols/bridges/agent-self-edit-federation-gates.yml",
+    "cronGovernanceBridgeContract": "docs/protocols/bridges/tnf-cron-federation-gates.yml",
     "macroBoardScript": "scripts/protocols/twip-macro-board.cjs",
     "selfEditGateScript": "scripts/protocols/agent-self-edit-gate.cjs",
+    "cronGovernanceGateScript": "scripts/protocols/cron-governance-gate.cjs",
     "reports": {
       "latest": "docs/protocols/reports/twip-terminal-macro-board-latest.md"
     },
     "schemas": {
       "masterCumulativeId": "docs/protocols/schemas/tnf-master-cumulative-id.schema.json",
-      "agentSelfEdit": "docs/protocols/schemas/tnf-agent-self-edit.schema.json"
+      "agentSelfEdit": "docs/protocols/schemas/tnf-agent-self-edit.schema.json",
+      "cronGovernance": "docs/protocols/schemas/tnf-cron-governance.schema.json"
     }
   },
   "metadata": {
-    "version": "0.1.0",
+    "version": "0.2.0",
     "tenantScoped": true,
     "safeByDefault": true,
     "createdAt": "2026-03-18T00:00:00Z"

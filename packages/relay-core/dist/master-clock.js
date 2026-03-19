@@ -62,11 +62,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const crypto_1 = require("crypto");
+const node_child_process_1 = require("node:child_process");
 const fs_1 = require("fs");
 const path_1 = __importDefault(require("path"));
 const redis_1 = require("redis");
+const util_1 = require("util");
 const ws_1 = __importDefault(require("ws"));
 const tnf_envelope_1 = require("./protocol/tnf-envelope");
+const execFileAsync = (0, util_1.promisify)(node_child_process_1.execFile);
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
@@ -83,6 +87,7 @@ const CONFIG = {
     TASK_POLL_INTERVAL_MS: parseInt(process.env.TASK_POLL_INTERVAL_MS || '') || 15000, // 15 seconds
     TASK_QUEUE_COOLDOWN_MS: parseInt(process.env.TASK_QUEUE_COOLDOWN_MS || '') || 120000, // 2 minutes
     TASK_QUEUE_BATCH_SIZE: parseInt(process.env.TASK_QUEUE_BATCH_SIZE || '') || 5,
+    CHRONOLOGICAL_POLL_INTERVAL_MS: parseInt(process.env.CHRONOLOGICAL_POLL_INTERVAL_MS || '') || 30000, // 30 seconds
     // Connections
     RELAY_URL: process.env.RELAY_URL || 'ws://localhost:3000/ws',
     REDIS_URL: process.env.REDIS_URL,
@@ -268,9 +273,12 @@ class MasterClock {
     metrics;
     reconnectTimer = null;
     taskPollingInterval = null;
+    chronologicalPollingInterval = null;
     recentQueuedTasks;
     selfPromptCooldowns;
     taskPollFailureCount;
+    repoRoot;
+    dtfCache;
     constructor() {
         this.sessionId = `ORCHESTRATOR-${Date.now()}`;
         this.registry = new AgentRegistry();
@@ -295,6 +303,8 @@ class MasterClock {
         this.recentQueuedTasks = new Map();
         this.selfPromptCooldowns = new Map();
         this.taskPollFailureCount = 0;
+        this.repoRoot = this.resolveRepoRoot();
+        this.dtfCache = new Map();
     }
     // --------------------------------------------------------------------------
     // INITIALIZATION
@@ -319,6 +329,7 @@ class MasterClock {
             // Start stall detection
             this.startStallDetection();
             this.startTaskPolling();
+            this.startChronologicalPolling();
             this.isRunning = true;
             log('info', 'MASTER', '✅ MASTER CLOCK IS NOW THE BATON HOLDER');
         }
@@ -723,6 +734,411 @@ class MasterClock {
         catch {
             // non-fatal
         }
+    }
+    startChronologicalPolling() {
+        if (this.chronologicalPollingInterval)
+            return;
+        log('info', 'CHRONO', `Starting chronological scheduler poller (every ${CONFIG.CHRONOLOGICAL_POLL_INTERVAL_MS}ms)`);
+        const run = () => {
+            void this.pollAndRunChronologicalProcesses().catch((error) => {
+                log('warn', 'CHRONO', `Chronological scheduler poll failed: ${error.message || String(error)}`);
+            });
+        };
+        this.chronologicalPollingInterval = setInterval(run, CONFIG.CHRONOLOGICAL_POLL_INTERVAL_MS);
+        run();
+    }
+    async pollAndRunChronologicalProcesses() {
+        const snapshots = await this.loadChronologicalProcessSnapshots();
+        const now = new Date();
+        for (const snapshot of snapshots) {
+            this.handleSuperCycleHeartbeat({
+                payload: {
+                    processId: snapshot.processId,
+                    name: snapshot.title,
+                    kind: 'chronological-job',
+                    owner: snapshot.owner,
+                    status: snapshot.enabled ? 'scheduled' : 'paused',
+                    lastHeartbeat: now.toISOString(),
+                    lastRunAt: snapshot.runtime?.lastRunAt || null,
+                    nextExpectedAt: snapshot.enabled
+                        ? this.getNextRunAt(snapshot.cadence, snapshot.timezone, now)
+                        : null,
+                    metadata: {
+                        ...snapshot.metadata,
+                        cadence: snapshot.cadence,
+                        timezone: snapshot.timezone,
+                        scope: snapshot.scope,
+                        category: snapshot.category,
+                        governanceSource: 'chronological-registry',
+                        intendedIntervalMs: this.deriveCadenceIntervalMs(snapshot.cadence),
+                    },
+                },
+            });
+        }
+        const due = snapshots.filter((snapshot) => this.shouldRunChronologicalProcess(snapshot, now));
+        for (const snapshot of due) {
+            await this.executeChronologicalProcess(snapshot);
+        }
+    }
+    async loadChronologicalProcessSnapshots() {
+        const registryPath = path_1.default.join(this.repoRoot, 'data', 'protocols', 'cron-jobs.registry.json');
+        const statePath = path_1.default.join(this.repoRoot, 'data', 'protocols', 'cron-jobs.control-plane-state.json');
+        const catalogPath = path_1.default.join(this.repoRoot, 'data', 'protocols', 'chronological-process-catalog.json');
+        const registryRaw = await fs_1.promises
+            .readFile(registryPath, 'utf8')
+            .then((value) => JSON.parse(value))
+            .catch(() => ({ jobs: [] }));
+        const stateRaw = await fs_1.promises
+            .readFile(statePath, 'utf8')
+            .then((value) => JSON.parse(value))
+            .catch(() => ({ overrides: {}, runtime: {} }));
+        const catalogRaw = await fs_1.promises
+            .readFile(catalogPath, 'utf8')
+            .then((value) => JSON.parse(value))
+            .catch(() => ({ entries: {} }));
+        const jobs = Array.isArray(registryRaw.jobs) ? registryRaw.jobs : [];
+        const overrides = stateRaw.overrides || {};
+        const runtime = stateRaw.runtime || {};
+        const entries = catalogRaw.entries || {};
+        return jobs
+            .map((job) => {
+            const catalogEntry = entries[job.schedule_id];
+            if (!catalogEntry)
+                return null;
+            const override = overrides[job.schedule_id] || {};
+            return {
+                processId: job.schedule_id,
+                title: catalogEntry.title,
+                cadence: override.cadence || catalogEntry.cadence,
+                timezone: override.timezone || catalogEntry.timezone || 'UTC',
+                enabled: override.enabled ?? true,
+                runNow: catalogEntry.runNow,
+                owner: job.owner_agent_id || 'unknown',
+                scope: job.scope || 'tenant',
+                category: job.category || 'tenant_automation',
+                runtime: runtime[job.schedule_id] || {},
+                metadata: catalogEntry.metadata || {},
+            };
+        })
+            .filter(Boolean);
+    }
+    shouldRunChronologicalProcess(snapshot, now) {
+        if (!snapshot.enabled || !snapshot.runNow)
+            return false;
+        const normalizedCadence = this.normalizeCronExpression(snapshot.cadence);
+        if (!normalizedCadence || normalizedCadence === 'manual')
+            return false;
+        const lastRunAtMs = this.parseTimestampMs(snapshot.runtime?.lastRunAt);
+        if (snapshot.runtime?.status === 'running' && lastRunAtMs) {
+            const lockWindowMs = Math.max(Number(snapshot.runNow.timeoutMs || 30000) * 2, CONFIG.CHRONOLOGICAL_POLL_INTERVAL_MS * 2);
+            if (Date.now() - lastRunAtMs < lockWindowMs) {
+                return false;
+            }
+        }
+        const currentSlot = this.getScheduleSlot(now, normalizedCadence, snapshot.timezone);
+        if (!currentSlot.matches || !currentSlot.key)
+            return false;
+        if (!lastRunAtMs)
+            return true;
+        const lastRunSlot = this.getScheduleSlot(new Date(lastRunAtMs), normalizedCadence, snapshot.timezone);
+        return currentSlot.key !== lastRunSlot.key;
+    }
+    async executeChronologicalProcess(snapshot) {
+        const runnerPath = path_1.default.join(this.repoRoot, 'scripts', 'protocols', 'run-chronological-process.cjs');
+        const startedAt = new Date().toISOString();
+        let status = 'healthy';
+        let lastResult = 'ok';
+        try {
+            const result = await execFileAsync('node', [runnerPath, '--process-id', snapshot.processId, '--actor-id', 'tnf-master-clock'], {
+                cwd: this.repoRoot,
+                timeout: Number(snapshot.runNow?.timeoutMs || 30000) + 5000,
+                maxBuffer: 1024 * 1024 * 2,
+                env: process.env,
+            });
+            const parsed = this.parseJsonOutput(result.stdout);
+            if (parsed?.run?.status) {
+                status = parsed.run.status;
+                lastResult = status;
+            }
+            await this.emitActivityEvent('chronological_process_executed', `Executed chronological process ${snapshot.processId}`, {
+                processId: snapshot.processId,
+                title: snapshot.title,
+                status,
+            });
+        }
+        catch (error) {
+            status = 'error';
+            lastResult = error.message || 'execution_failed';
+            log('warn', 'CHRONO', `Chronological execution failed for ${snapshot.processId}: ${lastResult}`);
+            await this.emitActivityEvent('chronological_process_error', `Chronological process ${snapshot.processId} failed`, {
+                processId: snapshot.processId,
+                title: snapshot.title,
+                error: lastResult,
+            });
+        }
+        this.handleSuperCycleHeartbeat({
+            payload: {
+                processId: snapshot.processId,
+                name: snapshot.title,
+                kind: 'chronological-job',
+                owner: snapshot.owner,
+                status,
+                lastHeartbeat: new Date().toISOString(),
+                lastRunAt: startedAt,
+                lastResult,
+                nextExpectedAt: this.getNextRunAt(snapshot.cadence, snapshot.timezone, new Date()),
+                metadata: {
+                    ...snapshot.metadata,
+                    cadence: snapshot.cadence,
+                    timezone: snapshot.timezone,
+                    scope: snapshot.scope,
+                    category: snapshot.category,
+                    governanceSource: 'chronological-registry',
+                    intendedIntervalMs: this.deriveCadenceIntervalMs(snapshot.cadence),
+                },
+            },
+        });
+    }
+    parseJsonOutput(stdout) {
+        try {
+            return stdout ? JSON.parse(stdout) : null;
+        }
+        catch {
+            return null;
+        }
+    }
+    deriveCadenceIntervalMs(cadence) {
+        const normalized = this.normalizeCronExpression(cadence);
+        if (!normalized || normalized === 'manual')
+            return undefined;
+        if (normalized === '0 * * * *')
+            return 60 * 60 * 1000;
+        if (normalized === '*/10 * * * *')
+            return 10 * 60 * 1000;
+        if (normalized === '*/15 * * * *')
+            return 15 * 60 * 1000;
+        if (normalized === '*/30 * * * *')
+            return 30 * 60 * 1000;
+        if (normalized === '0 */2 * * *')
+            return 2 * 60 * 60 * 1000;
+        if (normalized === '0 */4 * * *')
+            return 4 * 60 * 60 * 1000;
+        if (normalized === '0 */6 * * *')
+            return 6 * 60 * 60 * 1000;
+        if (normalized === '0 0 * * *')
+            return 24 * 60 * 60 * 1000;
+        return undefined;
+    }
+    getScheduleSlot(date, cadence, timezone) {
+        const normalized = this.normalizeCronExpression(cadence);
+        if (!normalized || normalized === 'manual') {
+            return { matches: false, key: null };
+        }
+        const fields = normalized.split(/\s+/).filter(Boolean);
+        if (fields.length !== 5) {
+            return { matches: false, key: null };
+        }
+        const [minuteExpr, hourExpr, dayExpr, monthExpr, weekdayExpr] = fields;
+        const parts = this.getZonedDateParts(date, timezone);
+        const minuteMatch = this.matchesCronField(parts.minute, minuteExpr, 0, 59);
+        const hourMatch = this.matchesCronField(parts.hour, hourExpr, 0, 23);
+        const monthMatch = this.matchesCronField(parts.month, monthExpr, 1, 12, this.monthNameMap());
+        const dayMatch = this.matchesCronField(parts.day, dayExpr, 1, 31);
+        const weekdayMatch = this.matchesCronField(parts.weekday, weekdayExpr, 0, 7, this.weekdayNameMap(), true);
+        const dayIsWildcard = dayExpr.trim() === '*';
+        const weekdayIsWildcard = weekdayExpr.trim() === '*';
+        const dayConstraintMatch = dayIsWildcard || weekdayIsWildcard ? dayMatch && weekdayMatch : dayMatch || weekdayMatch;
+        const matches = minuteMatch && hourMatch && monthMatch && dayConstraintMatch;
+        return {
+            matches,
+            key: matches
+                ? `${this.safeTimezone(timezone)}:${parts.year}-${String(parts.month).padStart(2, '0')}-${String(parts.day).padStart(2, '0')}:${String(parts.hour).padStart(2, '0')}:${String(parts.minute).padStart(2, '0')}`
+                : null,
+        };
+    }
+    getNextRunAt(cadence, timezone, fromDate = new Date()) {
+        const normalized = this.normalizeCronExpression(cadence);
+        if (!normalized || normalized === 'manual')
+            return null;
+        const probe = new Date(fromDate.getTime());
+        probe.setSeconds(0, 0);
+        probe.setMinutes(probe.getMinutes() + 1);
+        const maxIterations = 60 * 24 * 31;
+        for (let i = 0; i < maxIterations; i += 1) {
+            const slot = this.getScheduleSlot(probe, normalized, timezone);
+            if (slot.matches) {
+                return probe.toISOString();
+            }
+            probe.setMinutes(probe.getMinutes() + 1);
+        }
+        return null;
+    }
+    normalizeCronExpression(cadence) {
+        const raw = String(cadence || '').trim();
+        if (!raw)
+            return null;
+        if (raw.toLowerCase() === 'manual')
+            return 'manual';
+        const preset = raw.toLowerCase();
+        const presetMap = {
+            '@yearly': '0 0 1 1 *',
+            '@annually': '0 0 1 1 *',
+            '@monthly': '0 0 1 * *',
+            '@weekly': '0 0 * * 0',
+            '@daily': '0 0 * * *',
+            '@hourly': '0 * * * *',
+            '@reboot': 'manual',
+        };
+        if (presetMap[preset])
+            return presetMap[preset];
+        const tokens = raw.split(/\s+/).filter(Boolean);
+        if (tokens.length === 5)
+            return tokens.join(' ');
+        if (tokens.length === 6)
+            return tokens.slice(1).join(' ');
+        if (tokens.length === 7)
+            return tokens.slice(1, 6).join(' ');
+        return null;
+    }
+    getZonedDateParts(date, timezone) {
+        const resolvedTimezone = this.safeTimezone(timezone);
+        const cacheKey = `tz:${resolvedTimezone}`;
+        let formatter = this.dtfCache.get(cacheKey);
+        if (!formatter) {
+            formatter = new Intl.DateTimeFormat('en-US', {
+                timeZone: resolvedTimezone,
+                hour12: false,
+                year: 'numeric',
+                month: 'numeric',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                weekday: 'short',
+            });
+            this.dtfCache.set(cacheKey, formatter);
+        }
+        const parts = formatter.formatToParts(date);
+        const getNumber = (type) => {
+            const part = parts.find((entry) => entry.type === type)?.value || '0';
+            const parsed = Number.parseInt(part, 10);
+            return Number.isFinite(parsed) ? parsed : 0;
+        };
+        const weekdayName = (parts.find((entry) => entry.type === 'weekday')?.value || 'Sun')
+            .slice(0, 3)
+            .toLowerCase();
+        return {
+            year: getNumber('year'),
+            month: getNumber('month'),
+            day: getNumber('day'),
+            hour: getNumber('hour'),
+            minute: getNumber('minute'),
+            weekday: this.weekdayNameMap()[weekdayName] ?? 0,
+        };
+    }
+    safeTimezone(input) {
+        try {
+            const normalized = String(input || '').trim() || 'UTC';
+            Intl.DateTimeFormat('en-US', { timeZone: normalized });
+            return normalized;
+        }
+        catch {
+            return 'UTC';
+        }
+    }
+    monthNameMap() {
+        return {
+            jan: 1,
+            feb: 2,
+            mar: 3,
+            apr: 4,
+            may: 5,
+            jun: 6,
+            jul: 7,
+            aug: 8,
+            sep: 9,
+            oct: 10,
+            nov: 11,
+            dec: 12,
+        };
+    }
+    weekdayNameMap() {
+        return {
+            sun: 0,
+            mon: 1,
+            tue: 2,
+            wed: 3,
+            thu: 4,
+            fri: 5,
+            sat: 6,
+        };
+    }
+    matchesCronField(value, expression, min, max, names, normalizeSevenToZero = false) {
+        const raw = String(expression || '')
+            .trim()
+            .toLowerCase();
+        if (!raw || raw === '*')
+            return true;
+        const parts = raw.split(',');
+        for (const part of parts) {
+            if (this.matchesCronSegment(value, part.trim(), min, max, names, normalizeSevenToZero)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    matchesCronSegment(value, segment, min, max, names, normalizeSevenToZero = false) {
+        if (!segment)
+            return false;
+        const [rangeToken, stepToken] = segment.split('/');
+        const step = stepToken ? Number.parseInt(stepToken, 10) : 1;
+        if (!Number.isFinite(step) || step <= 0)
+            return false;
+        if (rangeToken === '*') {
+            return (value - min) % step === 0;
+        }
+        if (rangeToken.includes('-')) {
+            const [startToken, endToken] = rangeToken.split('-');
+            const start = this.parseCronToken(startToken, names, normalizeSevenToZero);
+            const end = this.parseCronToken(endToken, names, normalizeSevenToZero);
+            if (start === null || end === null || start > end)
+                return false;
+            if (start < min || end > max || value < start || value > end)
+                return false;
+            return (value - start) % step === 0;
+        }
+        const single = this.parseCronToken(rangeToken, names, normalizeSevenToZero);
+        if (single === null || single < min || single > max)
+            return false;
+        return value === single;
+    }
+    parseCronToken(token, names, normalizeSevenToZero = false) {
+        const cleaned = String(token || '')
+            .trim()
+            .toLowerCase();
+        if (!cleaned)
+            return null;
+        if (names && cleaned in names)
+            return names[cleaned];
+        const parsed = Number.parseInt(cleaned, 10);
+        if (!Number.isFinite(parsed))
+            return null;
+        if (normalizeSevenToZero && parsed === 7)
+            return 0;
+        return parsed;
+    }
+    resolveRepoRoot() {
+        const marker = path_1.default.join('data', 'protocols', 'chronological-process-catalog.json');
+        let current = process.cwd();
+        for (let i = 0; i < 8; i += 1) {
+            if ((0, fs_1.existsSync)(path_1.default.join(current, marker))) {
+                return current;
+            }
+            const next = path_1.default.dirname(current);
+            if (next === current)
+                break;
+            current = next;
+        }
+        return process.cwd();
     }
     checkForStalls() {
         const staleAgents = this.registry.getStaleAgents(CONFIG.STALL_THRESHOLD);
@@ -1232,6 +1648,37 @@ Acknowledge by sending: [${agentId}] Ready for duty!
             return;
         }
         this.selfPromptCooldowns.set(cooldownKey, now);
+        const issuedAtIso = new Date(now).toISOString();
+        const tenantId = process.env.TENANT_ID || 'tnf-local';
+        const cumulativeId = {
+            spec: 'tnf/mcid/0.1',
+            id: (0, crypto_1.randomUUID)(),
+            scope: {
+                tenant_id: tenantId,
+                session_key: this.sessionId,
+                workflow_id: null,
+                channel_id: params.channel,
+            },
+            lineage: {
+                trace_id: null,
+                correlation_id: (0, crypto_1.randomUUID)(),
+                causation_id: null,
+                handoff_packet_id: null,
+                twid: null,
+                task_id: null,
+            },
+            federation: {
+                domain: tenantId,
+                route: ['master-clock', 'self-prompt'],
+                hop_count: 1,
+                gate_decisions: [
+                    { gate: 'TENANT_SCOPE_GATE', decision: 'allow', at: issuedAtIso },
+                    { gate: 'TRACE_CONTINUITY_GATE', decision: 'allow', at: issuedAtIso },
+                    { gate: 'CHANNEL_MEMBERSHIP_GATE', decision: 'allow', at: issuedAtIso },
+                ],
+            },
+            issued_at: issuedAtIso,
+        };
         const originalMessage = {
             type: 'CHANNEL_MESSAGE',
             channel: params.channel,
@@ -1251,6 +1698,7 @@ Acknowledge by sending: [${agentId}] Ready for duty!
             eventType: 'SELF_PROMPT',
             data: {
                 ...params,
+                cumulativeId,
                 issuedAt: now,
             },
             originalMessage,
@@ -1263,6 +1711,7 @@ Acknowledge by sending: [${agentId}] Ready for duty!
             await this.redis.lPush(CONFIG.REDIS_KEYS.SELF_PROMPTS, JSON.stringify({
                 sessionId: this.sessionId,
                 ...params,
+                cumulativeId,
                 issuedAt: now,
             }));
             await this.redis.lTrim(CONFIG.REDIS_KEYS.SELF_PROMPTS, 0, 499);
@@ -1277,6 +1726,7 @@ Acknowledge by sending: [${agentId}] Ready for duty!
                     prompt: params.prompt,
                     reason: params.reason,
                     channel: params.channel,
+                    cumulativeId,
                     ...(params.metadata || {}),
                 },
                 priority: 'high',
@@ -1411,6 +1861,9 @@ Acknowledge by sending: [${agentId}] Ready for duty!
         }
         if (this.taskPollingInterval) {
             clearInterval(this.taskPollingInterval);
+        }
+        if (this.chronologicalPollingInterval) {
+            clearInterval(this.chronologicalPollingInterval);
         }
         // Broadcast shutdown
         for (const channel of CONFIG.CHANNELS) {

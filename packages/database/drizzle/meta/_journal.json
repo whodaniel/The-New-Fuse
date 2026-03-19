@@ -43,6 +43,13 @@
       "when": 1772956800000,
       "tag": "0007_add_mcp_and_skill_marketplace_tables",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1773855000000,
+      "tag": "0008_add_resource_interactions",
+      "breakpoints": true
     }
   ]
 }

@@ -59,11 +59,15 @@
  */
 
 import { randomUUID } from 'crypto';
-import { promises as fs } from 'fs';
+import { existsSync, promises as fs } from 'fs';
+import { execFile } from 'node:child_process';
 import path from 'path';
 import { createClient } from 'redis';
+import { promisify } from 'util';
 import WebSocket from 'ws';
 import { createTNFEnvelope } from './protocol/tnf-envelope';
+
+const execFileAsync = promisify(execFile);
 
 // ============================================================================
 // CONFIGURATION
@@ -82,6 +86,8 @@ const CONFIG = {
   TASK_POLL_INTERVAL_MS: parseInt(process.env.TASK_POLL_INTERVAL_MS || '') || 15000, // 15 seconds
   TASK_QUEUE_COOLDOWN_MS: parseInt(process.env.TASK_QUEUE_COOLDOWN_MS || '') || 120000, // 2 minutes
   TASK_QUEUE_BATCH_SIZE: parseInt(process.env.TASK_QUEUE_BATCH_SIZE || '') || 5,
+  CHRONOLOGICAL_POLL_INTERVAL_MS:
+    parseInt(process.env.CHRONOLOGICAL_POLL_INTERVAL_MS || '') || 30000, // 30 seconds
 
   // Connections
   RELAY_URL: process.env.RELAY_URL || 'ws://localhost:3000/ws',
@@ -352,6 +358,37 @@ interface ScheduledProcess {
   heartbeatCount: number;
 }
 
+interface ChronologicalCatalogEntry {
+  title: string;
+  cadence: string;
+  timezone: string;
+  description: string;
+  runNow: {
+    command: string;
+    args: string[];
+    timeoutMs: number;
+  } | null;
+  docs?: {
+    protocol?: string;
+    runbook?: string;
+  };
+  metadata?: Record<string, any>;
+}
+
+interface ChronologicalProcessSnapshot {
+  processId: string;
+  title: string;
+  cadence: string;
+  timezone: string;
+  enabled: boolean;
+  runNow: ChronologicalCatalogEntry['runNow'];
+  owner: string;
+  scope: string;
+  category: string;
+  runtime: Record<string, any>;
+  metadata: Record<string, any>;
+}
+
 class MasterClock {
   sessionId: string;
   registry: AgentRegistry;
@@ -367,9 +404,12 @@ class MasterClock {
   metrics: Metrics;
   reconnectTimer: NodeJS.Timeout | null = null;
   taskPollingInterval: NodeJS.Timeout | null = null;
+  chronologicalPollingInterval: NodeJS.Timeout | null = null;
   recentQueuedTasks: Map<string, number>;
   selfPromptCooldowns: Map<string, number>;
   taskPollFailureCount: number;
+  repoRoot: string;
+  dtfCache: Map<string, Intl.DateTimeFormat>;
 
   constructor() {
     this.sessionId = `ORCHESTRATOR-${Date.now()}`;
@@ -395,6 +435,8 @@ class MasterClock {
     this.recentQueuedTasks = new Map();
     this.selfPromptCooldowns = new Map();
     this.taskPollFailureCount = 0;
+    this.repoRoot = this.resolveRepoRoot();
+    this.dtfCache = new Map();
   }
 
   // --------------------------------------------------------------------------
@@ -425,6 +467,7 @@ class MasterClock {
       // Start stall detection
       this.startStallDetection();
       this.startTaskPolling();
+      this.startChronologicalPolling();
 
       this.isRunning = true;
       log('info', 'MASTER', '✅ MASTER CLOCK IS NOW THE BATON HOLDER');
@@ -896,6 +939,496 @@ class MasterClock {
     } catch {
       // non-fatal
     }
+  }
+
+  startChronologicalPolling() {
+    if (this.chronologicalPollingInterval) return;
+
+    log(
+      'info',
+      'CHRONO',
+      `Starting chronological scheduler poller (every ${CONFIG.CHRONOLOGICAL_POLL_INTERVAL_MS}ms)`
+    );
+
+    const run = () => {
+      void this.pollAndRunChronologicalProcesses().catch((error: any) => {
+        log(
+          'warn',
+          'CHRONO',
+          `Chronological scheduler poll failed: ${error.message || String(error)}`
+        );
+      });
+    };
+
+    this.chronologicalPollingInterval = setInterval(run, CONFIG.CHRONOLOGICAL_POLL_INTERVAL_MS);
+    run();
+  }
+
+  private async pollAndRunChronologicalProcesses(): Promise<void> {
+    const snapshots = await this.loadChronologicalProcessSnapshots();
+    const now = new Date();
+
+    for (const snapshot of snapshots) {
+      this.handleSuperCycleHeartbeat({
+        payload: {
+          processId: snapshot.processId,
+          name: snapshot.title,
+          kind: 'chronological-job',
+          owner: snapshot.owner,
+          status: snapshot.enabled ? 'scheduled' : 'paused',
+          lastHeartbeat: now.toISOString(),
+          lastRunAt: snapshot.runtime?.lastRunAt || null,
+          nextExpectedAt: snapshot.enabled
+            ? this.getNextRunAt(snapshot.cadence, snapshot.timezone, now)
+            : null,
+          metadata: {
+            ...snapshot.metadata,
+            cadence: snapshot.cadence,
+            timezone: snapshot.timezone,
+            scope: snapshot.scope,
+            category: snapshot.category,
+            governanceSource: 'chronological-registry',
+            intendedIntervalMs: this.deriveCadenceIntervalMs(snapshot.cadence),
+          },
+        },
+      });
+    }
+
+    const due = snapshots.filter((snapshot) => this.shouldRunChronologicalProcess(snapshot, now));
+    for (const snapshot of due) {
+      await this.executeChronologicalProcess(snapshot);
+    }
+  }
+
+  private async loadChronologicalProcessSnapshots(): Promise<ChronologicalProcessSnapshot[]> {
+    const registryPath = path.join(this.repoRoot, 'data', 'protocols', 'cron-jobs.registry.json');
+    const statePath = path.join(
+      this.repoRoot,
+      'data',
+      'protocols',
+      'cron-jobs.control-plane-state.json'
+    );
+    const catalogPath = path.join(
+      this.repoRoot,
+      'data',
+      'protocols',
+      'chronological-process-catalog.json'
+    );
+
+    const registryRaw = await fs
+      .readFile(registryPath, 'utf8')
+      .then((value) => JSON.parse(value))
+      .catch(() => ({ jobs: [] }));
+    const stateRaw = await fs
+      .readFile(statePath, 'utf8')
+      .then((value) => JSON.parse(value))
+      .catch(() => ({ overrides: {}, runtime: {} }));
+    const catalogRaw = await fs
+      .readFile(catalogPath, 'utf8')
+      .then((value) => JSON.parse(value))
+      .catch(() => ({ entries: {} }));
+
+    const jobs = Array.isArray(registryRaw.jobs) ? registryRaw.jobs : [];
+    const overrides = stateRaw.overrides || {};
+    const runtime = stateRaw.runtime || {};
+    const entries = catalogRaw.entries || {};
+
+    return jobs
+      .map((job: any) => {
+        const catalogEntry = entries[job.schedule_id] as ChronologicalCatalogEntry | undefined;
+        if (!catalogEntry) return null;
+        const override = overrides[job.schedule_id] || {};
+        return {
+          processId: job.schedule_id,
+          title: catalogEntry.title,
+          cadence: override.cadence || catalogEntry.cadence,
+          timezone: override.timezone || catalogEntry.timezone || 'UTC',
+          enabled: override.enabled ?? true,
+          runNow: catalogEntry.runNow,
+          owner: job.owner_agent_id || 'unknown',
+          scope: job.scope || 'tenant',
+          category: job.category || 'tenant_automation',
+          runtime: runtime[job.schedule_id] || {},
+          metadata: catalogEntry.metadata || {},
+        } satisfies ChronologicalProcessSnapshot;
+      })
+      .filter(Boolean) as ChronologicalProcessSnapshot[];
+  }
+
+  private shouldRunChronologicalProcess(
+    snapshot: ChronologicalProcessSnapshot,
+    now: Date
+  ): boolean {
+    if (!snapshot.enabled || !snapshot.runNow) return false;
+
+    const normalizedCadence = this.normalizeCronExpression(snapshot.cadence);
+    if (!normalizedCadence || normalizedCadence === 'manual') return false;
+
+    const lastRunAtMs = this.parseTimestampMs(snapshot.runtime?.lastRunAt);
+    if (snapshot.runtime?.status === 'running' && lastRunAtMs) {
+      const lockWindowMs = Math.max(
+        Number(snapshot.runNow.timeoutMs || 30000) * 2,
+        CONFIG.CHRONOLOGICAL_POLL_INTERVAL_MS * 2
+      );
+      if (Date.now() - lastRunAtMs < lockWindowMs) {
+        return false;
+      }
+    }
+
+    const currentSlot = this.getScheduleSlot(now, normalizedCadence, snapshot.timezone);
+    if (!currentSlot.matches || !currentSlot.key) return false;
+
+    if (!lastRunAtMs) return true;
+    const lastRunSlot = this.getScheduleSlot(
+      new Date(lastRunAtMs),
+      normalizedCadence,
+      snapshot.timezone
+    );
+    return currentSlot.key !== lastRunSlot.key;
+  }
+
+  private async executeChronologicalProcess(snapshot: ChronologicalProcessSnapshot): Promise<void> {
+    const runnerPath = path.join(
+      this.repoRoot,
+      'scripts',
+      'protocols',
+      'run-chronological-process.cjs'
+    );
+    const startedAt = new Date().toISOString();
+    let status = 'healthy';
+    let lastResult = 'ok';
+
+    try {
+      const result = await execFileAsync(
+        'node',
+        [runnerPath, '--process-id', snapshot.processId, '--actor-id', 'tnf-master-clock'],
+        {
+          cwd: this.repoRoot,
+          timeout: Number(snapshot.runNow?.timeoutMs || 30000) + 5000,
+          maxBuffer: 1024 * 1024 * 2,
+          env: process.env,
+        }
+      );
+      const parsed = this.parseJsonOutput(result.stdout);
+      if (parsed?.run?.status) {
+        status = parsed.run.status;
+        lastResult = status;
+      }
+      await this.emitActivityEvent(
+        'chronological_process_executed',
+        `Executed chronological process ${snapshot.processId}`,
+        {
+          processId: snapshot.processId,
+          title: snapshot.title,
+          status,
+        }
+      );
+    } catch (error: any) {
+      status = 'error';
+      lastResult = error.message || 'execution_failed';
+      log(
+        'warn',
+        'CHRONO',
+        `Chronological execution failed for ${snapshot.processId}: ${lastResult}`
+      );
+      await this.emitActivityEvent(
+        'chronological_process_error',
+        `Chronological process ${snapshot.processId} failed`,
+        {
+          processId: snapshot.processId,
+          title: snapshot.title,
+          error: lastResult,
+        }
+      );
+    }
+
+    this.handleSuperCycleHeartbeat({
+      payload: {
+        processId: snapshot.processId,
+        name: snapshot.title,
+        kind: 'chronological-job',
+        owner: snapshot.owner,
+        status,
+        lastHeartbeat: new Date().toISOString(),
+        lastRunAt: startedAt,
+        lastResult,
+        nextExpectedAt: this.getNextRunAt(snapshot.cadence, snapshot.timezone, new Date()),
+        metadata: {
+          ...snapshot.metadata,
+          cadence: snapshot.cadence,
+          timezone: snapshot.timezone,
+          scope: snapshot.scope,
+          category: snapshot.category,
+          governanceSource: 'chronological-registry',
+          intendedIntervalMs: this.deriveCadenceIntervalMs(snapshot.cadence),
+        },
+      },
+    });
+  }
+
+  private parseJsonOutput(stdout: string | undefined): Record<string, any> | null {
+    try {
+      return stdout ? JSON.parse(stdout) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private deriveCadenceIntervalMs(cadence: string): number | undefined {
+    const normalized = this.normalizeCronExpression(cadence);
+    if (!normalized || normalized === 'manual') return undefined;
+    if (normalized === '0 * * * *') return 60 * 60 * 1000;
+    if (normalized === '*/10 * * * *') return 10 * 60 * 1000;
+    if (normalized === '*/15 * * * *') return 15 * 60 * 1000;
+    if (normalized === '*/30 * * * *') return 30 * 60 * 1000;
+    if (normalized === '0 */2 * * *') return 2 * 60 * 60 * 1000;
+    if (normalized === '0 */4 * * *') return 4 * 60 * 60 * 1000;
+    if (normalized === '0 */6 * * *') return 6 * 60 * 60 * 1000;
+    if (normalized === '0 0 * * *') return 24 * 60 * 60 * 1000;
+    return undefined;
+  }
+
+  private getScheduleSlot(date: Date, cadence: string, timezone: string) {
+    const normalized = this.normalizeCronExpression(cadence);
+    if (!normalized || normalized === 'manual') {
+      return { matches: false, key: null };
+    }
+
+    const fields = normalized.split(/\s+/).filter(Boolean);
+    if (fields.length !== 5) {
+      return { matches: false, key: null };
+    }
+
+    const [minuteExpr, hourExpr, dayExpr, monthExpr, weekdayExpr] = fields;
+    const parts = this.getZonedDateParts(date, timezone);
+    const minuteMatch = this.matchesCronField(parts.minute, minuteExpr, 0, 59);
+    const hourMatch = this.matchesCronField(parts.hour, hourExpr, 0, 23);
+    const monthMatch = this.matchesCronField(parts.month, monthExpr, 1, 12, this.monthNameMap());
+    const dayMatch = this.matchesCronField(parts.day, dayExpr, 1, 31);
+    const weekdayMatch = this.matchesCronField(
+      parts.weekday,
+      weekdayExpr,
+      0,
+      7,
+      this.weekdayNameMap(),
+      true
+    );
+
+    const dayIsWildcard = dayExpr.trim() === '*';
+    const weekdayIsWildcard = weekdayExpr.trim() === '*';
+    const dayConstraintMatch =
+      dayIsWildcard || weekdayIsWildcard ? dayMatch && weekdayMatch : dayMatch || weekdayMatch;
+
+    const matches = minuteMatch && hourMatch && monthMatch && dayConstraintMatch;
+    return {
+      matches,
+      key: matches
+        ? `${this.safeTimezone(timezone)}:${parts.year}-${String(parts.month).padStart(2, '0')}-${String(parts.day).padStart(2, '0')}:${String(parts.hour).padStart(2, '0')}:${String(parts.minute).padStart(2, '0')}`
+        : null,
+    };
+  }
+
+  private getNextRunAt(cadence: string, timezone: string, fromDate = new Date()): string | null {
+    const normalized = this.normalizeCronExpression(cadence);
+    if (!normalized || normalized === 'manual') return null;
+
+    const probe = new Date(fromDate.getTime());
+    probe.setSeconds(0, 0);
+    probe.setMinutes(probe.getMinutes() + 1);
+    const maxIterations = 60 * 24 * 31;
+    for (let i = 0; i < maxIterations; i += 1) {
+      const slot = this.getScheduleSlot(probe, normalized, timezone);
+      if (slot.matches) {
+        return probe.toISOString();
+      }
+      probe.setMinutes(probe.getMinutes() + 1);
+    }
+    return null;
+  }
+
+  private normalizeCronExpression(cadence: string): string | null {
+    const raw = String(cadence || '').trim();
+    if (!raw) return null;
+    if (raw.toLowerCase() === 'manual') return 'manual';
+
+    const preset = raw.toLowerCase();
+    const presetMap: Record<string, string> = {
+      '@yearly': '0 0 1 1 *',
+      '@annually': '0 0 1 1 *',
+      '@monthly': '0 0 1 * *',
+      '@weekly': '0 0 * * 0',
+      '@daily': '0 0 * * *',
+      '@hourly': '0 * * * *',
+      '@reboot': 'manual',
+    };
+    if (presetMap[preset]) return presetMap[preset];
+
+    const tokens = raw.split(/\s+/).filter(Boolean);
+    if (tokens.length === 5) return tokens.join(' ');
+    if (tokens.length === 6) return tokens.slice(1).join(' ');
+    if (tokens.length === 7) return tokens.slice(1, 6).join(' ');
+    return null;
+  }
+
+  private getZonedDateParts(date: Date, timezone: string) {
+    const resolvedTimezone = this.safeTimezone(timezone);
+    const cacheKey = `tz:${resolvedTimezone}`;
+    let formatter = this.dtfCache.get(cacheKey);
+    if (!formatter) {
+      formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: resolvedTimezone,
+        hour12: false,
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        weekday: 'short',
+      });
+      this.dtfCache.set(cacheKey, formatter);
+    }
+
+    const parts = formatter.formatToParts(date);
+    const getNumber = (type: string): number => {
+      const part = parts.find((entry) => entry.type === type)?.value || '0';
+      const parsed = Number.parseInt(part, 10);
+      return Number.isFinite(parsed) ? parsed : 0;
+    };
+    const weekdayName = (parts.find((entry) => entry.type === 'weekday')?.value || 'Sun')
+      .slice(0, 3)
+      .toLowerCase();
+
+    return {
+      year: getNumber('year'),
+      month: getNumber('month'),
+      day: getNumber('day'),
+      hour: getNumber('hour'),
+      minute: getNumber('minute'),
+      weekday: this.weekdayNameMap()[weekdayName] ?? 0,
+    };
+  }
+
+  private safeTimezone(input: string): string {
+    try {
+      const normalized = String(input || '').trim() || 'UTC';
+      Intl.DateTimeFormat('en-US', { timeZone: normalized });
+      return normalized;
+    } catch {
+      return 'UTC';
+    }
+  }
+
+  private monthNameMap(): Record<string, number> {
+    return {
+      jan: 1,
+      feb: 2,
+      mar: 3,
+      apr: 4,
+      may: 5,
+      jun: 6,
+      jul: 7,
+      aug: 8,
+      sep: 9,
+      oct: 10,
+      nov: 11,
+      dec: 12,
+    };
+  }
+
+  private weekdayNameMap(): Record<string, number> {
+    return {
+      sun: 0,
+      mon: 1,
+      tue: 2,
+      wed: 3,
+      thu: 4,
+      fri: 5,
+      sat: 6,
+    };
+  }
+
+  private matchesCronField(
+    value: number,
+    expression: string,
+    min: number,
+    max: number,
+    names?: Record<string, number>,
+    normalizeSevenToZero = false
+  ): boolean {
+    const raw = String(expression || '')
+      .trim()
+      .toLowerCase();
+    if (!raw || raw === '*') return true;
+
+    const parts = raw.split(',');
+    for (const part of parts) {
+      if (this.matchesCronSegment(value, part.trim(), min, max, names, normalizeSevenToZero)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private matchesCronSegment(
+    value: number,
+    segment: string,
+    min: number,
+    max: number,
+    names?: Record<string, number>,
+    normalizeSevenToZero = false
+  ): boolean {
+    if (!segment) return false;
+
+    const [rangeToken, stepToken] = segment.split('/');
+    const step = stepToken ? Number.parseInt(stepToken, 10) : 1;
+    if (!Number.isFinite(step) || step <= 0) return false;
+
+    if (rangeToken === '*') {
+      return (value - min) % step === 0;
+    }
+
+    if (rangeToken.includes('-')) {
+      const [startToken, endToken] = rangeToken.split('-');
+      const start = this.parseCronToken(startToken, names, normalizeSevenToZero);
+      const end = this.parseCronToken(endToken, names, normalizeSevenToZero);
+      if (start === null || end === null || start > end) return false;
+      if (start < min || end > max || value < start || value > end) return false;
+      return (value - start) % step === 0;
+    }
+
+    const single = this.parseCronToken(rangeToken, names, normalizeSevenToZero);
+    if (single === null || single < min || single > max) return false;
+    return value === single;
+  }
+
+  private parseCronToken(
+    token: string,
+    names?: Record<string, number>,
+    normalizeSevenToZero = false
+  ): number | null {
+    const cleaned = String(token || '')
+      .trim()
+      .toLowerCase();
+    if (!cleaned) return null;
+    if (names && cleaned in names) return names[cleaned];
+    const parsed = Number.parseInt(cleaned, 10);
+    if (!Number.isFinite(parsed)) return null;
+    if (normalizeSevenToZero && parsed === 7) return 0;
+    return parsed;
+  }
+
+  private resolveRepoRoot(): string {
+    const marker = path.join('data', 'protocols', 'chronological-process-catalog.json');
+    let current = process.cwd();
+    for (let i = 0; i < 8; i += 1) {
+      if (existsSync(path.join(current, marker))) {
+        return current;
+      }
+      const next = path.dirname(current);
+      if (next === current) break;
+      current = next;
+    }
+    return process.cwd();
   }
 
   checkForStalls() {
@@ -1771,6 +2304,9 @@ Acknowledge by sending: [${agentId}] Ready for duty!
     }
     if (this.taskPollingInterval) {
       clearInterval(this.taskPollingInterval);
+    }
+    if (this.chronologicalPollingInterval) {
+      clearInterval(this.chronologicalPollingInterval);
     }
 
     // Broadcast shutdown

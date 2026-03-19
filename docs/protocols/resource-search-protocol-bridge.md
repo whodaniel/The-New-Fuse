@@ -83,6 +83,7 @@ Authenticated endpoint for sharing a resource to an agent.
 - Requires bearer auth (`SecureAuthGuard` + `JwtAuth`).
 - `fromUserId` derived from authenticated user (with compatibility fallback).
 - Required body fields: `resourceId`, `toAgentId`.
+- Optional body field: `notes`.
 
 Response:
 
@@ -146,6 +147,30 @@ Files:
 
 - `apps/frontend/src/services/resources.service.ts`
 - `apps/frontend/src/types/resources.ts`
+
+Resource page UX now performs authenticated interaction actions:
+
+- Favorite toggles call `POST /resources/:id/favorite`.
+- Share actions open a lightweight prompt flow for `toAgentId` and optional
+  `notes`, then call `POST /resources/share`.
+- Implemented in:
+  - `apps/frontend/src/pages/Resources/ResourceSearch.tsx`
+  - `apps/frontend/src/pages/Resources/SkillsBrowser.tsx`
+  - `apps/frontend/src/pages/Resources/WorkflowBrowser.tsx`
+  - `apps/frontend/src/pages/Resources/AgentTemplatesBrowser.tsx`
+
+## Persistence Model
+
+Resource interaction persistence is migration-managed and typed via Drizzle:
+
+- `resource_favorites` (`resourceId`, `userId`, unique pair)
+- `resource_shares` (`resourceId`, `fromUserId`, `toAgentId`, `notes`,
+  `sharedAt`)
+
+Artifacts:
+
+- schema: `packages/database/src/drizzle/schema/resource-interactions.ts`
+- migration: `packages/database/drizzle/0008_add_resource_interactions.sql`
 
 ## OpenAPI and Snapshot
 

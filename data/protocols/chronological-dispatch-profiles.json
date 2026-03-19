@@ -1,0 +1,132 @@
+{
+  "spec": "tnf/chronological-dispatch-profiles/0.1",
+  "generated_at": "2026-03-19T10:00:00.000Z",
+  "entries": {
+    "tenant-daily-priority-plan": {
+      "kind": "agent-turn",
+      "title": "Daily Priority Plan",
+      "priority": "high",
+      "targetQueue": "tnf:master:tasks:planning",
+      "instruction": "Create the daily priority plan from PROJECTS.md: top 3 priorities, top blocker, and first executable step. Keep output concise and actionable. Enforce privacy gates for private projects.",
+      "itinerary": {
+        "lane": "directive",
+        "horizon": "short_term",
+        "coordinationMode": "brokered",
+        "signalSources": ["redis", "master-clock"],
+        "clockSource": "master-clock"
+      }
+    },
+    "tenant-nightly-maintenance": {
+      "kind": "agent-turn",
+      "title": "Nightly Maintenance",
+      "priority": "medium",
+      "targetQueue": "tnf:master:tasks:planning",
+      "instruction": "Run nightly maintenance: prune stale transient notes, refresh memory indexes and state files, run docs-consistency validation, and write a brief maintenance note. If validation finds inconsistencies, log them with evidence and recommendations.",
+      "itinerary": {
+        "lane": "directive",
+        "horizon": "medium_term",
+        "coordinationMode": "brokered",
+        "signalSources": ["redis", "master-clock"],
+        "clockSource": "master-clock"
+      }
+    },
+    "tenant-orchestrator-pulse": {
+      "kind": "agent-turn",
+      "title": "Orchestrator Pulse",
+      "priority": "high",
+      "targetQueue": "tnf:master:tasks:planning",
+      "instruction": "Run a portfolio orchestration pulse. Read AGENTS.md, USER.md, PROJECTS.md, HEARTBEAT.md and latest memory notes. Identify the highest-impact unblocked next action across active projects. If action is user-facing, send one concise proactive nudge with project, why now, and recommended next action. Enforce privacy defaults.",
+      "itinerary": {
+        "lane": "directive",
+        "horizon": "realtime",
+        "coordinationMode": "brokered",
+        "signalSources": ["redis", "master-clock"],
+        "clockSource": "master-clock"
+      }
+    },
+    "tenant-self-improvement-loop": {
+      "kind": "agent-turn",
+      "title": "Self Improvement Loop",
+      "priority": "medium",
+      "targetQueue": "tnf:master:tasks:planning",
+      "instruction": "Run the self-improvement cycle. Review latest handoff notes, recent failures and blockers, and MEMORY.md. Propose one concrete process improvement. If safe and clearly beneficial, update MEMORY.md or AGENTS.md with the improvement. Respect privacy defaults.",
+      "itinerary": {
+        "lane": "directive",
+        "horizon": "short_term",
+        "coordinationMode": "brokered",
+        "signalSources": ["redis", "master-clock"],
+        "clockSource": "master-clock"
+      }
+    },
+    "tenant-continuous-qa-loop": {
+      "kind": "agent-turn",
+      "title": "Continuous QA Loop",
+      "priority": "high",
+      "targetQueue": "tnf:master:tasks:realtime",
+      "instruction": "Run the continuous QA loop. Probe the current TNF user-facing surfaces, identify regressions, and create or update concrete remediation tasks with evidence. Favor deterministic verification and privacy-safe reporting.",
+      "itinerary": {
+        "lane": "realtime_broker_routing",
+        "horizon": "realtime",
+        "coordinationMode": "brokered",
+        "signalSources": ["redis", "master-clock"],
+        "clockSource": "master-clock"
+      }
+    },
+    "tenant-hourly-attribution-audit": {
+      "kind": "agent-turn",
+      "title": "Hourly Attribution Audit",
+      "priority": "medium",
+      "targetQueue": "tnf:master:tasks:planning",
+      "instruction": "Run the hourly attribution audit. Check active campaign and funnel attribution signals, identify missing tags or broken reporting paths, and emit concise remediation findings with evidence.",
+      "itinerary": {
+        "lane": "directive",
+        "horizon": "short_term",
+        "coordinationMode": "brokered",
+        "signalSources": ["redis", "master-clock"],
+        "clockSource": "master-clock"
+      }
+    },
+    "tenant-knowledge-scout-sprint": {
+      "kind": "agent-turn",
+      "title": "Knowledge Scout Sprint",
+      "priority": "medium",
+      "targetQueue": "tnf:master:tasks:planning",
+      "instruction": "Run the knowledge scout sprint. Gather high-signal updates, summarize what changed, and create actionable follow-up tasks or notes for TNF decision-makers without leaking private material.",
+      "itinerary": {
+        "lane": "directive",
+        "horizon": "medium_term",
+        "coordinationMode": "brokered",
+        "signalSources": ["redis", "master-clock"],
+        "clockSource": "master-clock"
+      }
+    },
+    "tenant-loop-watchdog": {
+      "kind": "agent-turn",
+      "title": "Loop Watchdog",
+      "priority": "high",
+      "targetQueue": "tnf:master:tasks:realtime",
+      "instruction": "Run the loop watchdog. Verify that critical TNF recurring loops, schedulers, and heartbeats are live. If degradation is detected, emit a concise escalation packet with evidence and recommended next action.",
+      "itinerary": {
+        "lane": "realtime_broker_routing",
+        "horizon": "realtime",
+        "coordinationMode": "brokered",
+        "signalSources": ["redis", "master-clock"],
+        "clockSource": "master-clock"
+      }
+    },
+    "tenant-launch-validation": {
+      "kind": "agent-turn",
+      "title": "Launch Validation",
+      "priority": "high",
+      "targetQueue": "tnf:master:tasks:planning",
+      "instruction": "Run a launch validation scenario for TNF. Validate handoff, sync, and recovery paths end-to-end, then identify remaining launch blockers and produce a prioritized readiness checklist.",
+      "itinerary": {
+        "lane": "directive",
+        "horizon": "short_term",
+        "coordinationMode": "brokered",
+        "signalSources": ["redis", "master-clock"],
+        "clockSource": "master-clock"
+      }
+    }
+  }
+}

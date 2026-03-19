@@ -1,0 +1,2061 @@
+[
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2024-12-29T00:00:00.000Z",
+    "payload": {
+      "category": "qa",
+      "label": "AUDIT_REPORT_2024-12-29.md",
+      "summary": "Relevant project artifact discovered at AUDIT_REPORT_2024-12-29.md",
+      "confidence": "strong",
+      "evidenceRefs": ["AUDIT_REPORT_2024-12-29.md"],
+      "sourceEventId": "artifact:audit-report-2024-12-29-md",
+      "metadata": {
+        "path": "AUDIT_REPORT_2024-12-29.md",
+        "dateSource": "filename"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-05-20T14:11:42-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "Clean repository with proper .gitignore to exclude large files",
+      "summary": "Early git milestone commit: Clean repository with proper .gitignore to exclude large files",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "fddd7556409bc64501cd70769810f80f7f519330",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:fddd7556409bc64501cd70769810f80f7f519330",
+      "metadata": {
+        "hash": "fddd7556409bc64501cd70769810f80f7f519330",
+        "subject": "Clean repository with proper .gitignore to exclude large files"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-05-20T14:16:42-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "Add note about repository cleanup",
+      "summary": "Early git milestone commit: Add note about repository cleanup",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "a9633d89b38f168adbf1c95c83fcbb4e2e0626ed",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:a9633d89b38f168adbf1c95c83fcbb4e2e0626ed",
+      "metadata": {
+        "hash": "a9633d89b38f168adbf1c95c83fcbb4e2e0626ed",
+        "subject": "Add note about repository cleanup"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-05-20T14:21:33-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "Fix syntax in pre-commit hook by properly indenting the yarn lint-staged command",
+      "summary": "Early git milestone commit: Fix syntax in pre-commit hook by properly indenting the yarn lint-staged command",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "a97ede43e86879d5b654b9e6f1c5aaefa57ccffe",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:a97ede43e86879d5b654b9e6f1c5aaefa57ccffe",
+      "metadata": {
+        "hash": "a97ede43e86879d5b654b9e6f1c5aaefa57ccffe",
+        "subject": "Fix syntax in pre-commit hook by properly indenting the yarn lint-staged command"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-05-20T16:12:31-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "Add VSIX file",
+      "summary": "Early git milestone commit: Add VSIX file",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "132627814f0400a7209c7967da8262286df4a7a6",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:132627814f0400a7209c7967da8262286df4a7a6",
+      "metadata": {
+        "hash": "132627814f0400a7209c7967da8262286df4a7a6",
+        "subject": "Add VSIX file"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-05-27T10:34:50-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "Initial commit",
+      "summary": "Early git milestone commit: Initial commit",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "91f1ec77e6e52650ab87280f9796012066398514",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:91f1ec77e6e52650ab87280f9796012066398514",
+      "metadata": {
+        "hash": "91f1ec77e6e52650ab87280f9796012066398514",
+        "subject": "Initial commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-05-27T10:53:56-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "Update .gitignore to exclude large files",
+      "summary": "Early git milestone commit: Update .gitignore to exclude large files",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "cc5100ffece6694c34eccba02c897c9381de5139",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:cc5100ffece6694c34eccba02c897c9381de5139",
+      "metadata": {
+        "hash": "cc5100ffece6694c34eccba02c897c9381de5139",
+        "subject": "Update .gitignore to exclude large files"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-05-27T11:26:34-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "Update yarn.lock file",
+      "summary": "Early git milestone commit: Update yarn.lock file",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "943ae75f0e2cbe75bd38134c33c6d5e53565961c",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:943ae75f0e2cbe75bd38134c33c6d5e53565961c",
+      "metadata": {
+        "hash": "943ae75f0e2cbe75bd38134c33c6d5e53565961c",
+        "subject": "Update yarn.lock file"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-05-27T11:41:41-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "Fix: Update PostgreSQL config in CI workflow",
+      "summary": "Early git milestone commit: Fix: Update PostgreSQL config in CI workflow",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "160498de68737d59b29e984e0c3bfd426302685e",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:160498de68737d59b29e984e0c3bfd426302685e",
+      "metadata": {
+        "hash": "160498de68737d59b29e984e0c3bfd426302685e",
+        "subject": "Fix: Update PostgreSQL config in CI workflow"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-05-27T11:50:28-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "Add lint scripts and eslint dependency",
+      "summary": "Early git milestone commit: Add lint scripts and eslint dependency",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "f239da30d60cf919e359347b2f96f98af94d9924",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:f239da30d60cf919e359347b2f96f98af94d9924",
+      "metadata": {
+        "hash": "f239da30d60cf919e359347b2f96f98af94d9924",
+        "subject": "Add lint scripts and eslint dependency"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-05-27T11:51:26-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "Fix: Update postgres credentials in e2e-tests.yml",
+      "summary": "Early git milestone commit: Fix: Update postgres credentials in e2e-tests.yml",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "1f1ad59ce887ad9b3db424e3876b3b9ea975d84a",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:1f1ad59ce887ad9b3db424e3876b3b9ea975d84a",
+      "metadata": {
+        "hash": "1f1ad59ce887ad9b3db424e3876b3b9ea975d84a",
+        "subject": "Fix: Update postgres credentials in e2e-tests.yml"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-05-29T07:07:01-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: Complete Agency Hub Implementation",
+      "summary": "Early git milestone commit: feat: Complete Agency Hub Implementation",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "39467ca7dad03d6c63a68b5f148466e110ca7342",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:39467ca7dad03d6c63a68b5f148466e110ca7342",
+      "metadata": {
+        "hash": "39467ca7dad03d6c63a68b5f148466e110ca7342",
+        "subject": "feat: Complete Agency Hub Implementation"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-05-31T03:03:52-04:00",
+    "payload": {
+      "category": "migration",
+      "label": "MIGRATION_PLAN.md",
+      "summary": "Relevant project artifact discovered at docs/migration/MIGRATION_PLAN.md",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "docs/migration/MIGRATION_PLAN.md",
+        "003175eaf35c95e7402c1477b2aa01a5e239963d"
+      ],
+      "sourceEventId": "artifact:docs-migration-migration-plan-md",
+      "metadata": {
+        "path": "docs/migration/MIGRATION_PLAN.md",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-05-31T03:03:52-04:00",
+    "payload": {
+      "category": "migration",
+      "label": "VSCODE-EXTENSION.md",
+      "summary": "Relevant project artifact discovered at docs/migration/VSCODE-EXTENSION.md",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "docs/migration/VSCODE-EXTENSION.md",
+        "003175eaf35c95e7402c1477b2aa01a5e239963d"
+      ],
+      "sourceEventId": "artifact:docs-migration-vscode-extension-md",
+      "metadata": {
+        "path": "docs/migration/VSCODE-EXTENSION.md",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-05-31T03:03:52-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "Complete codebase update: Major reorganization and enhancement",
+      "summary": "Early git milestone commit: Complete codebase update: Major reorganization and enhancement",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "003175eaf35c95e7402c1477b2aa01a5e239963d",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:003175eaf35c95e7402c1477b2aa01a5e239963d",
+      "metadata": {
+        "hash": "003175eaf35c95e7402c1477b2aa01a5e239963d",
+        "subject": "Complete codebase update: Major reorganization and enhancement"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-05-31T03:09:32-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "Remove large Node.js runtime directory and update .gitignore",
+      "summary": "Early git milestone commit: Remove large Node.js runtime directory and update .gitignore",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "52b12618e614fb9a9e70aa3b7a4aee6acf344935",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:52b12618e614fb9a9e70aa3b7a4aee6acf344935",
+      "metadata": {
+        "hash": "52b12618e614fb9a9e70aa3b7a4aee6acf344935",
+        "subject": "Remove large Node.js runtime directory and update .gitignore"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-06-01T23:46:15-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: Comprehensive codebase update with Chrome extension enhancements",
+      "summary": "Early git milestone commit: feat: Comprehensive codebase update with Chrome extension enhancements",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "b1ae5a9bd40bc1bd651d89f12ca26b8a90f165cf",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:b1ae5a9bd40bc1bd651d89f12ca26b8a90f165cf",
+      "metadata": {
+        "hash": "b1ae5a9bd40bc1bd651d89f12ca26b8a90f165cf",
+        "subject": "feat: Comprehensive codebase update with Chrome extension enhancements"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-06-02T00:14:07-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "Merge branch 'feature/improve-ext-stability-and-config'",
+      "summary": "Early git milestone commit: Merge branch 'feature/improve-ext-stability-and-config'",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "ad62dae53406d96a0f43fa80062339ba12e017e9",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:ad62dae53406d96a0f43fa80062339ba12e017e9",
+      "metadata": {
+        "hash": "ad62dae53406d96a0f43fa80062339ba12e017e9",
+        "subject": "Merge branch 'feature/improve-ext-stability-and-config'"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-06-02T00:35:04-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "Merge branch 'issue-solver/multi-point-refactor-1'",
+      "summary": "Early git milestone commit: Merge branch 'issue-solver/multi-point-refactor-1'",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "60292111b68f0d302eac1591ce220917b92ab1bd",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:60292111b68f0d302eac1591ce220917b92ab1bd",
+      "metadata": {
+        "hash": "60292111b68f0d302eac1591ce220917b92ab1bd",
+        "subject": "Merge branch 'issue-solver/multi-point-refactor-1'"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-06-02T01:31:10+00:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "Refactor: Address multiple issues from audit report",
+      "summary": "Early git milestone commit: Refactor: Address multiple issues from audit report",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "e2b3f2f62a23dc6a7b91d2b23e5f076e7ed76863",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:e2b3f2f62a23dc6a7b91d2b23e5f076e7ed76863",
+      "metadata": {
+        "hash": "e2b3f2f62a23dc6a7b91d2b23e5f076e7ed76863",
+        "subject": "Refactor: Address multiple issues from audit report"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-06-02T03:20:59+00:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "Refactor: Coordinate loggers and remove unused files",
+      "summary": "Early git milestone commit: Refactor: Coordinate loggers and remove unused files",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "b18dd26abc84b2f0e277355960fa76fc69e9720d",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:b18dd26abc84b2f0e277355960fa76fc69e9720d",
+      "metadata": {
+        "hash": "b18dd26abc84b2f0e277355960fa76fc69e9720d",
+        "subject": "Refactor: Coordinate loggers and remove unused files"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-06-02T03:30:22+00:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "Refactor Chrome Extension for Improved Stability and Maintainability",
+      "summary": "Early git milestone commit: Refactor Chrome Extension for Improved Stability and Maintainability",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "d8e064aed83f8f761b11c0838635a8e65ae8538f",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:d8e064aed83f8f761b11c0838635a8e65ae8538f",
+      "metadata": {
+        "hash": "d8e064aed83f8f761b11c0838635a8e65ae8538f",
+        "subject": "Refactor Chrome Extension for Improved Stability and Maintainability"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-06-02T08:53:23-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: Sync all current code changes",
+      "summary": "Early git milestone commit: feat: Sync all current code changes",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "569c33842b3f9b669901bfd8011f069af2366829",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:569c33842b3f9b669901bfd8011f069af2366829",
+      "metadata": {
+        "hash": "569c33842b3f9b669901bfd8011f069af2366829",
+        "subject": "feat: Sync all current code changes"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-06-02T09:04:21-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "Update project files - comprehensive sync to main branch",
+      "summary": "Early git milestone commit: Update project files - comprehensive sync to main branch",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "291bd091508be8c6d73fd7126c4b18c89f04423d",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:291bd091508be8c6d73fd7126c4b18c89f04423d",
+      "metadata": {
+        "hash": "291bd091508be8c6d73fd7126c4b18c89f04423d",
+        "subject": "Update project files - comprehensive sync to main branch"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-06-02T18:24:07-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "Merge VS Code extension back into main repository",
+      "summary": "Early git milestone commit: Merge VS Code extension back into main repository",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "c0604ca9d9ba3591c40d823037f9d63e9f477c4c",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:c0604ca9d9ba3591c40d823037f9d63e9f477c4c",
+      "metadata": {
+        "hash": "c0604ca9d9ba3591c40d823037f9d63e9f477c4c",
+        "subject": "Merge VS Code extension back into main repository"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-06-03T01:14:07-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: Complete Chrome Extension Testing Status Report and Handoff Process",
+      "summary": "Early git milestone commit: feat: Complete Chrome Extension Testing Status Report and Handoff Process",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "a07a3bd95af75e7a4439f1892891f6811d49c536",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:a07a3bd95af75e7a4439f1892891f6811d49c536",
+      "metadata": {
+        "hash": "a07a3bd95af75e7a4439f1892891f6811d49c536",
+        "subject": "feat: Complete Chrome Extension Testing Status Report and Handoff Process"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-06-03T08:58:27+00:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: Add environment variable validation script and documentation",
+      "summary": "Early git milestone commit: feat: Add environment variable validation script and documentation",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "f485a17dbdd43f22f0fb32f430c1e47f8baaf873",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:f485a17dbdd43f22f0fb32f430c1e47f8baaf873",
+      "metadata": {
+        "hash": "f485a17dbdd43f22f0fb32f430c1e47f8baaf873",
+        "subject": "feat: Add environment variable validation script and documentation"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-06-04T01:33:48-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "BACKUP: Complete local state before reconciliation",
+      "summary": "Early git milestone commit: BACKUP: Complete local state before reconciliation",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "e6d23021846a52b409dc341d15af94c2f18b6dc8",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:e6d23021846a52b409dc341d15af94c2f18b6dc8",
+      "metadata": {
+        "hash": "e6d23021846a52b409dc341d15af94c2f18b6dc8",
+        "subject": "BACKUP: Complete local state before reconciliation"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-06-04T01:45:02-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: Integrate env-validation-script feature",
+      "summary": "Early git milestone commit: feat: Integrate env-validation-script feature",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "f448b5adbd065cecf72222f29e54d8fa8276c3d9",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:f448b5adbd065cecf72222f29e54d8fa8276c3d9",
+      "metadata": {
+        "hash": "f448b5adbd065cecf72222f29e54d8fa8276c3d9",
+        "subject": "feat: Integrate env-validation-script feature"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-06-04T02:27:21-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "docs: Add Git reconciliation completion report",
+      "summary": "Early git milestone commit: docs: Add Git reconciliation completion report",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "e58050f0046964ad0e6c1a78b62784bb78ce7c79",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:e58050f0046964ad0e6c1a78b62784bb78ce7c79",
+      "metadata": {
+        "hash": "e58050f0046964ad0e6c1a78b62784bb78ce7c79",
+        "subject": "docs: Add Git reconciliation completion report"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-06-04T02:34:58-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: Complete environment variable configuration",
+      "summary": "Early git milestone commit: feat: Complete environment variable configuration",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "1798613ad83c8fc3b7591368dcde7199d3f0200a",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:1798613ad83c8fc3b7591368dcde7199d3f0200a",
+      "metadata": {
+        "hash": "1798613ad83c8fc3b7591368dcde7199d3f0200a",
+        "subject": "feat: Complete environment variable configuration"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-06-06T11:32:13-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "Pre-migration commit: Save current state before Bun migration",
+      "summary": "Early git milestone commit: Pre-migration commit: Save current state before Bun migration",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "df606c57754e987d187c7c70352ba99c09a7248f",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:df606c57754e987d187c7c70352ba99c09a7248f",
+      "metadata": {
+        "hash": "df606c57754e987d187c7c70352ba99c09a7248f",
+        "subject": "Pre-migration commit: Save current state before Bun migration"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-06-06T11:56:17-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: migrate from Yarn to Bun package manager",
+      "summary": "Early git milestone commit: feat: migrate from Yarn to Bun package manager",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "34151e04fb7312580c5752108008d0828e174815",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:34151e04fb7312580c5752108008d0828e174815",
+      "metadata": {
+        "hash": "34151e04fb7312580c5752108008d0828e174815",
+        "subject": "feat: migrate from Yarn to Bun package manager"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-06-06T12:31:19-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: implement core vector database service",
+      "summary": "Early git milestone commit: feat: implement core vector database service",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "a5656ec24c83ef2bb5cc432b87a974791835d054",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:a5656ec24c83ef2bb5cc432b87a974791835d054",
+      "metadata": {
+        "hash": "a5656ec24c83ef2bb5cc432b87a974791835d054",
+        "subject": "feat: implement core vector database service"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-06-06T14:12:20-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: harmonize vector database implementations",
+      "summary": "Early git milestone commit: feat: harmonize vector database implementations",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "266fa4a41b187cc272391a7859502bfb0b3e0adf",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:266fa4a41b187cc272391a7859502bfb0b3e0adf",
+      "metadata": {
+        "hash": "266fa4a41b187cc272391a7859502bfb0b3e0adf",
+        "subject": "feat: harmonize vector database implementations"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-06-06T14:24:42-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: complete Phase 1 implementation - Bun migration and core vector database",
+      "summary": "Early git milestone commit: feat: complete Phase 1 implementation - Bun migration and core vector database",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "9f9c7f95074f55993407da01019266f3f960dc84",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:9f9c7f95074f55993407da01019266f3f960dc84",
+      "metadata": {
+        "hash": "9f9c7f95074f55993407da01019266f3f960dc84",
+        "subject": "feat: complete Phase 1 implementation - Bun migration and core vector database"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-06-06T15:13:54-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: complete Task 1.3 - gRPC implementation for vector database service",
+      "summary": "Early git milestone commit: feat: complete Task 1.3 - gRPC implementation for vector database service",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "850b8e62ae945c9bb51dc0b68005b9e5c9c49879",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:850b8e62ae945c9bb51dc0b68005b9e5c9c49879",
+      "metadata": {
+        "hash": "850b8e62ae945c9bb51dc0b68005b9e5c9c49879",
+        "subject": "feat: complete Task 1.3 - gRPC implementation for vector database service"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-06-12T17:58:11-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: comprehensive feature additions and improvements",
+      "summary": "Early git milestone commit: feat: comprehensive feature additions and improvements",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "2ef9e9671d796e3b4545244c1a5964bb7d36136a",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:2ef9e9671d796e3b4545244c1a5964bb7d36136a",
+      "metadata": {
+        "hash": "2ef9e9671d796e3b4545244c1a5964bb7d36136a",
+        "subject": "feat: comprehensive feature additions and improvements"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-07-06T23:05:56-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: systematic dependency tracing and comprehensive monorepo fixes",
+      "summary": "Early git milestone commit: feat: systematic dependency tracing and comprehensive monorepo fixes",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "d83e127f8a12bf2740c115d6e3ed989b4bd1624b",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:d83e127f8a12bf2740c115d6e3ed989b4bd1624b",
+      "metadata": {
+        "hash": "d83e127f8a12bf2740c115d6e3ed989b4bd1624b",
+        "subject": "feat: systematic dependency tracing and comprehensive monorepo fixes"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-07-12T17:28:08-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "Pre-cleanup backup: Prisma schema sync complete",
+      "summary": "Early git milestone commit: Pre-cleanup backup: Prisma schema sync complete",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "1a9a8a77f6a76688e666cf1f81706eaec68f1732",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:1a9a8a77f6a76688e666cf1f81706eaec68f1732",
+      "metadata": {
+        "hash": "1a9a8a77f6a76688e666cf1f81706eaec68f1732",
+        "subject": "Pre-cleanup backup: Prisma schema sync complete"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-07-15T01:55:29-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: comprehensive reorganization and enhancement of The New Fuse platform",
+      "summary": "Early git milestone commit: feat: comprehensive reorganization and enhancement of The New Fuse platform",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "4d0fbc58d72a05163d251c7932eb4f8dfa8f784e",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:4d0fbc58d72a05163d251c7932eb4f8dfa8f784e",
+      "metadata": {
+        "hash": "4d0fbc58d72a05163d251c7932eb4f8dfa8f784e",
+        "subject": "feat: comprehensive reorganization and enhancement of The New Fuse platform"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-08-04T00:06:59-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: Update .gitignore to exclude generated files",
+      "summary": "Early git milestone commit: feat: Update .gitignore to exclude generated files",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "da2188aa064ba7d32d3bfb04cd28e9bb07f0765b",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:da2188aa064ba7d32d3bfb04cd28e9bb07f0765b",
+      "metadata": {
+        "hash": "da2188aa064ba7d32d3bfb04cd28e9bb07f0765b",
+        "subject": "feat: Update .gitignore to exclude generated files"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-08-04T00:12:20-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: Update .gitignore and add api-gateway package",
+      "summary": "Early git milestone commit: feat: Update .gitignore and add api-gateway package",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "938ff4f63591e2d017c8a399604d52eec94abaf8",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:938ff4f63591e2d017c8a399604d52eec94abaf8",
+      "metadata": {
+        "hash": "938ff4f63591e2d017c8a399604d52eec94abaf8",
+        "subject": "feat: Update .gitignore and add api-gateway package"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-08-04T00:15:24-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: Add Chakra UI dependency to ui-components package",
+      "summary": "Early git milestone commit: feat: Add Chakra UI dependency to ui-components package",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "b3a02e2811b4e1f404264ffabd67ce8acbf803da",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:b3a02e2811b4e1f404264ffabd67ce8acbf803da",
+      "metadata": {
+        "hash": "b3a02e2811b4e1f404264ffabd67ce8acbf803da",
+        "subject": "feat: Add Chakra UI dependency to ui-components package"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-08-04T01:57:52-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "fix: Complete development environment setup and build error fixes",
+      "summary": "Early git milestone commit: fix: Complete development environment setup and build error fixes",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "00f8fc9748fd9273231f2751bc2844504558ae22",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:00f8fc9748fd9273231f2751bc2844504558ae22",
+      "metadata": {
+        "hash": "00f8fc9748fd9273231f2751bc2844504558ae22",
+        "subject": "fix: Complete development environment setup and build error fixes"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-08-11T10:33:13-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: Clean up repository by removing generated JavaScript and TypeScript declaration files",
+      "summary": "Early git milestone commit: feat: Clean up repository by removing generated JavaScript and TypeScript declaration files",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "9b5a211c6963552cde76df84f1c88e03fd203b44",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:9b5a211c6963552cde76df84f1c88e03fd203b44",
+      "metadata": {
+        "hash": "9b5a211c6963552cde76df84f1c88e03fd203b44",
+        "subject": "feat: Clean up repository by removing generated JavaScript and TypeScript declaration files"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-08-11T11:21:54-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: Add comprehensive MCP core system with TypeScript error fixes",
+      "summary": "Early git milestone commit: feat: Add comprehensive MCP core system with TypeScript error fixes",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "7b3e6547316f6b58a9210899fd6a1c06b91b3a02",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:7b3e6547316f6b58a9210899fd6a1c06b91b3a02",
+      "metadata": {
+        "hash": "7b3e6547316f6b58a9210899fd6a1c06b91b3a02",
+        "subject": "feat: Add comprehensive MCP core system with TypeScript error fixes"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-08-11T12:05:41-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: Comprehensive Reorganization and Feature Expansion",
+      "summary": "Early git milestone commit: feat: Comprehensive Reorganization and Feature Expansion",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "6e3f49c2cd716bc4135def88a09cd04920f1f38f",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:6e3f49c2cd716bc4135def88a09cd04920f1f38f",
+      "metadata": {
+        "hash": "6e3f49c2cd716bc4135def88a09cd04920f1f38f",
+        "subject": "feat: Comprehensive Reorganization and Feature Expansion"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-08-12T12:21:45-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "refactor: massive refactoring of the entire codebase",
+      "summary": "Early git milestone commit: refactor: massive refactoring of the entire codebase",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "ff2ab570b005881b5a1bb11301500513ea0362d3",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:ff2ab570b005881b5a1bb11301500513ea0362d3",
+      "metadata": {
+        "hash": "ff2ab570b005881b5a1bb11301500513ea0362d3",
+        "subject": "refactor: massive refactoring of the entire codebase"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-08-18T15:42:26-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: Major codebase consolidation and system improvements",
+      "summary": "Early git milestone commit: feat: Major codebase consolidation and system improvements",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "5565325a4e25e9f20d9c909c2ef078c59eb21f9f",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:5565325a4e25e9f20d9c909c2ef078c59eb21f9f",
+      "metadata": {
+        "hash": "5565325a4e25e9f20d9c909c2ef078c59eb21f9f",
+        "subject": "feat: Major codebase consolidation and system improvements"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-08-21T04:42:32-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: Comprehensive Browser Hub iframe loading fixes and system enhancements",
+      "summary": "Early git milestone commit: feat: Comprehensive Browser Hub iframe loading fixes and system enhancements",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "f547fcfb9f56801c531eab750e454e02824d7123",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:f547fcfb9f56801c531eab750e454e02824d7123",
+      "metadata": {
+        "hash": "f547fcfb9f56801c531eab750e454e02824d7123",
+        "subject": "feat: Comprehensive Browser Hub iframe loading fixes and system enhancements"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-08-21T21:59:36-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: Integrate native modules solution into build process",
+      "summary": "Early git milestone commit: feat: Integrate native modules solution into build process",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "5bbcd4273025360e44b5a62110246f99321ccd4d",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:5bbcd4273025360e44b5a62110246f99321ccd4d",
+      "metadata": {
+        "hash": "5bbcd4273025360e44b5a62110246f99321ccd4d",
+        "subject": "feat: Integrate native modules solution into build process"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-08-21T23:56:43-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "Merge pull request: Fix test and build failures across the monorepo",
+      "summary": "Early git milestone commit: Merge pull request: Fix test and build failures across the monorepo",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "67cbb7e38ebdd240eb165c2ffbf6f9c5b3bd00d4",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:67cbb7e38ebdd240eb165c2ffbf6f9c5b3bd00d4",
+      "metadata": {
+        "hash": "67cbb7e38ebdd240eb165c2ffbf6f9c5b3bd00d4",
+        "subject": "Merge pull request: Fix test and build failures across the monorepo"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-08-22T00:01:27-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: Add comprehensive web scraping infrastructure and complete merge integration",
+      "summary": "Early git milestone commit: feat: Add comprehensive web scraping infrastructure and complete merge integration",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "02f0b1401727560ddbc9268c332f7eb6e0b1fae6",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:02f0b1401727560ddbc9268c332f7eb6e0b1fae6",
+      "metadata": {
+        "hash": "02f0b1401727560ddbc9268c332f7eb6e0b1fae6",
+        "subject": "feat: Add comprehensive web scraping infrastructure and complete merge integration"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-08-22T03:14:09+00:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "fix: Resolve test and build failures across the monorepo",
+      "summary": "Early git milestone commit: fix: Resolve test and build failures across the monorepo",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "3c6389fcf44b619de575061422101b749b77c9d8",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:3c6389fcf44b619de575061422101b749b77c9d8",
+      "metadata": {
+        "hash": "3c6389fcf44b619de575061422101b749b77c9d8",
+        "subject": "fix: Resolve test and build failures across the monorepo"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-08-22T20:05:10-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: Add development cleanup tools and update web scraping infrastructure",
+      "summary": "Early git milestone commit: feat: Add development cleanup tools and update web scraping infrastructure",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "69347ad15981a7e8cc753ddfbe8baad03c29cd36",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:69347ad15981a7e8cc753ddfbe8baad03c29cd36",
+      "metadata": {
+        "hash": "69347ad15981a7e8cc753ddfbe8baad03c29cd36",
+        "subject": "feat: Add development cleanup tools and update web scraping infrastructure"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-08-22T20:09:10-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: Add development cleanup tools and update web scraping infrastructure",
+      "summary": "Early git milestone commit: feat: Add development cleanup tools and update web scraping infrastructure",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "75705180904941fc63473aaa412100ce50fa3cce",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:75705180904941fc63473aaa412100ce50fa3cce",
+      "metadata": {
+        "hash": "75705180904941fc63473aaa412100ce50fa3cce",
+        "subject": "feat: Add development cleanup tools and update web scraping infrastructure"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-08-25T22:57:59-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: Complete Browser Hub integration and prepare for state-of-the-art UX transformation",
+      "summary": "Early git milestone commit: feat: Complete Browser Hub integration and prepare for state-of-the-art UX transformation",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "8bf74c1ce470136cec51fb1745f5013f1d1ad49f",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:8bf74c1ce470136cec51fb1745f5013f1d1ad49f",
+      "metadata": {
+        "hash": "8bf74c1ce470136cec51fb1745f5013f1d1ad49f",
+        "subject": "feat: Complete Browser Hub integration and prepare for state-of-the-art UX transformation"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-08-30T23:38:16-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: Add safe documentation and core A2A workflow system",
+      "summary": "Early git milestone commit: feat: Add safe documentation and core A2A workflow system",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "cb4bc19aac76198e1ff4e2080a0b0e41efe4c5b3",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:cb4bc19aac76198e1ff4e2080a0b0e41efe4c5b3",
+      "metadata": {
+        "hash": "cb4bc19aac76198e1ff4e2080a0b0e41efe4c5b3",
+        "subject": "feat: Add safe documentation and core A2A workflow system"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-08-31T00:00:11-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "fix: Restore working workflow engine with proper TypeScript syntax",
+      "summary": "Early git milestone commit: fix: Restore working workflow engine with proper TypeScript syntax",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "b7356f7911e1180b520157d4028f29d0bd24facc",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:b7356f7911e1180b520157d4028f29d0bd24facc",
+      "metadata": {
+        "hash": "b7356f7911e1180b520157d4028f29d0bd24facc",
+        "subject": "fix: Restore working workflow engine with proper TypeScript syntax"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-08-31T00:05:36-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "feat: Complete safe changes extraction with success report",
+      "summary": "Early git milestone commit: feat: Complete safe changes extraction with success report",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "6f752e9e0c2a797f5c99d9c5b236d6663a25d48f",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:6f752e9e0c2a797f5c99d9c5b236d6663a25d48f",
+      "metadata": {
+        "hash": "6f752e9e0c2a797f5c99d9c5b236d6663a25d48f",
+        "subject": "feat: Complete safe changes extraction with success report"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-08-31T00:42:25-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "fix(core): repair corrupted workflow executor and types",
+      "summary": "Early git milestone commit: fix(core): repair corrupted workflow executor and types",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "d4e7639ee7636ebb7e70d72aa9819f405ca6e7a5",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:d4e7639ee7636ebb7e70d72aa9819f405ca6e7a5",
+      "metadata": {
+        "hash": "d4e7639ee7636ebb7e70d72aa9819f405ca6e7a5",
+        "subject": "fix(core): repair corrupted workflow executor and types"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-08-31T00:56:14-04:00",
+    "payload": {
+      "category": "commit_milestone",
+      "label": "fix(core): repair analysis visualizer and component analyzer",
+      "summary": "Early git milestone commit: fix(core): repair analysis visualizer and component analyzer",
+      "confidence": "hard",
+      "evidenceRefs": [
+        "e3f1a9546157eebfa2e3c339b10eb540a034de0d",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "sourceEventId": "git-commit:e3f1a9546157eebfa2e3c339b10eb540a034de0d",
+      "metadata": {
+        "hash": "e3f1a9546157eebfa2e3c339b10eb540a034de0d",
+        "subject": "fix(core): repair analysis visualizer and component analyzer"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-11-07T13:29:13-05:00",
+    "payload": {
+      "category": "migration",
+      "label": "CODEBASE_ANALYSIS_COMPREHENSIVE.md",
+      "summary": "Relevant project artifact discovered at docs/_archives/2024-migration/CODEBASE_ANALYSIS_COMPREHENSIVE.md",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "docs/_archives/2024-migration/CODEBASE_ANALYSIS_COMPREHENSIVE.md",
+        "573bd31e46873590a04df0586fbd3510abc192d9"
+      ],
+      "sourceEventId": "artifact:docs-archives-2024-migration-codebase-analysis-comprehensive-md",
+      "metadata": {
+        "path": "docs/_archives/2024-migration/CODEBASE_ANALYSIS_COMPREHENSIVE.md",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-11-07T13:29:13-05:00",
+    "payload": {
+      "category": "migration",
+      "label": "FIXES_COMPLETED.md",
+      "summary": "Relevant project artifact discovered at docs/_archives/2024-migration/FIXES_COMPLETED.md",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "docs/_archives/2024-migration/FIXES_COMPLETED.md",
+        "573bd31e46873590a04df0586fbd3510abc192d9"
+      ],
+      "sourceEventId": "artifact:docs-archives-2024-migration-fixes-completed-md",
+      "metadata": {
+        "path": "docs/_archives/2024-migration/FIXES_COMPLETED.md",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2025-12-23T04:30:03-05:00",
+    "payload": {
+      "category": "strategy_doc",
+      "label": "FINAL-SESSION-SUMMARY.md",
+      "summary": "Relevant project artifact discovered at FINAL-SESSION-SUMMARY.md",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "FINAL-SESSION-SUMMARY.md",
+        "bdf24d08f0eeb10500bec03da11ed935a0aeec39"
+      ],
+      "sourceEventId": "artifact:final-session-summary-md",
+      "metadata": {
+        "path": "FINAL-SESSION-SUMMARY.md",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-01-11T00:00:00.000Z",
+    "payload": {
+      "category": "qa",
+      "label": "QA_BUG_REPORT_2026-01-11.md",
+      "summary": "Relevant project artifact discovered at QA_BUG_REPORT_2026-01-11.md",
+      "confidence": "strong",
+      "evidenceRefs": ["QA_BUG_REPORT_2026-01-11.md"],
+      "sourceEventId": "artifact:qa-bug-report-2026-01-11-md",
+      "metadata": {
+        "path": "QA_BUG_REPORT_2026-01-11.md",
+        "dateSource": "filename"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-01-11T00:00:00.000Z",
+    "payload": {
+      "category": "qa",
+      "label": "QA_REPORT_2026-01-11.md",
+      "summary": "Relevant project artifact discovered at QA_REPORT_2026-01-11.md",
+      "confidence": "strong",
+      "evidenceRefs": ["QA_REPORT_2026-01-11.md"],
+      "sourceEventId": "artifact:qa-report-2026-01-11-md",
+      "metadata": {
+        "path": "QA_REPORT_2026-01-11.md",
+        "dateSource": "filename"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-01-15T17:06:38-05:00",
+    "payload": {
+      "category": "qa",
+      "label": "COMPREHENSIVE_TEST_REPORT.md",
+      "summary": "Relevant project artifact discovered at COMPREHENSIVE_TEST_REPORT.md",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "COMPREHENSIVE_TEST_REPORT.md",
+        "f394ace9634bbc7e242c628179d938f59613aa4a"
+      ],
+      "sourceEventId": "artifact:comprehensive-test-report-md",
+      "metadata": {
+        "path": "COMPREHENSIVE_TEST_REPORT.md",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-02-11T09:32:54-05:00",
+    "payload": {
+      "category": "strategy_doc",
+      "label": "TNF_OPENCLAW_CLOUDFLARE_MIRROR_PLAN.md",
+      "summary": "Relevant project artifact discovered at TNF_OPENCLAW_CLOUDFLARE_MIRROR_PLAN.md",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "TNF_OPENCLAW_CLOUDFLARE_MIRROR_PLAN.md",
+        "182b70397e601a6a087f06e217fc5a3ba403b2ba"
+      ],
+      "sourceEventId": "artifact:tnf-openclaw-cloudflare-mirror-plan-md",
+      "metadata": {
+        "path": "TNF_OPENCLAW_CLOUDFLARE_MIRROR_PLAN.md",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-03T00:00:00.000Z",
+    "payload": {
+      "category": "strategy_doc",
+      "label": "thenewfuse-api-triage-2026-03-03.txt",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-api-triage-2026-03-03.txt",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-api-triage-2026-03-03.txt"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-api-triage-2026-03-03-txt",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-api-triage-2026-03-03.txt",
+        "dateSource": "filename"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-03T00:00:00.000Z",
+    "payload": {
+      "category": "strategy_doc",
+      "label": "thenewfuse-frontend-check-summary-2026-03-03.json",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-frontend-check-summary-2026-03-03.json",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-frontend-check-summary-2026-03-03.json"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-frontend-check-summary-2026-03-03-json",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-frontend-check-summary-2026-03-03.json",
+        "dateSource": "filename"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-03T00:00:00.000Z",
+    "payload": {
+      "category": "strategy_doc",
+      "label": "thenewfuse-verification-2026-03-03.txt",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-verification-2026-03-03.txt",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-verification-2026-03-03.txt"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-verification-2026-03-03-txt",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-verification-2026-03-03.txt",
+        "dateSource": "filename"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-03T00:00:00.000Z",
+    "payload": {
+      "category": "strategy_doc",
+      "label": "RELEASE_WAR_ROOM_2026-03-03.md",
+      "summary": "Relevant project artifact discovered at RELEASE_WAR_ROOM_2026-03-03.md",
+      "confidence": "strong",
+      "evidenceRefs": ["RELEASE_WAR_ROOM_2026-03-03.md"],
+      "sourceEventId": "artifact:release-war-room-2026-03-03-md",
+      "metadata": {
+        "path": "RELEASE_WAR_ROOM_2026-03-03.md",
+        "dateSource": "filename"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-03T02:14:20.000Z",
+    "payload": {
+      "category": "strategy_doc",
+      "label": "thenewfuse-fix-matrix-20260303-021420.md",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-fix-matrix-20260303-021420.md",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-fix-matrix-20260303-021420.md"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-fix-matrix-20260303-021420-md",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-fix-matrix-20260303-021420.md",
+        "dateSource": "filename"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-04T23:03:35.603Z",
+    "payload": {
+      "category": "strategy_doc",
+      "label": "release-gate-output.log",
+      "summary": "Relevant project artifact discovered at release-gate-output.log",
+      "confidence": "moderate",
+      "evidenceRefs": ["release-gate-output.log"],
+      "sourceEventId": "artifact:release-gate-output-log",
+      "metadata": {
+        "path": "release-gate-output.log",
+        "dateSource": "birthtime"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-05T22:10:05-05:00",
+    "payload": {
+      "category": "qa",
+      "label": "report.json",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-audit-20260303-025153/report.json",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-audit-20260303-025153/report.json",
+        "c20f940cb38be5101ecd1822f02082e660e04e7e"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-audit-20260303-025153-report-json",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-audit-20260303-025153/report.json",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-05T22:10:05-05:00",
+    "payload": {
+      "category": "qa",
+      "label": "report.md",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-audit-20260303-025153/report.md",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-audit-20260303-025153/report.md",
+        "c20f940cb38be5101ecd1822f02082e660e04e7e"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-audit-20260303-025153-report-md",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-audit-20260303-025153/report.md",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-05T22:10:05-05:00",
+    "payload": {
+      "category": "qa",
+      "label": "report.json",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-audit-20260303-025300/report.json",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-audit-20260303-025300/report.json",
+        "c20f940cb38be5101ecd1822f02082e660e04e7e"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-audit-20260303-025300-report-json",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-audit-20260303-025300/report.json",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-05T22:10:05-05:00",
+    "payload": {
+      "category": "qa",
+      "label": "report.md",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-audit-20260303-025300/report.md",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-audit-20260303-025300/report.md",
+        "c20f940cb38be5101ecd1822f02082e660e04e7e"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-audit-20260303-025300-report-md",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-audit-20260303-025300/report.md",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-05T22:10:05-05:00",
+    "payload": {
+      "category": "qa",
+      "label": "action-plan.md",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-audit-20260303-030110/action-plan.md",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-audit-20260303-030110/action-plan.md",
+        "c20f940cb38be5101ecd1822f02082e660e04e7e"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-audit-20260303-030110-action-plan-md",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-audit-20260303-030110/action-plan.md",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-05T22:10:05-05:00",
+    "payload": {
+      "category": "qa",
+      "label": "customer-facing-report.md",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-audit-20260303-030110/customer-facing-report.md",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-audit-20260303-030110/customer-facing-report.md",
+        "c20f940cb38be5101ecd1822f02082e660e04e7e"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-audit-20260303-030110-customer-facing-report-md",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-audit-20260303-030110/customer-facing-report.md",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-05T22:10:05-05:00",
+    "payload": {
+      "category": "qa",
+      "label": "report.json",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-audit-20260303-030110/report.json",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-audit-20260303-030110/report.json",
+        "c20f940cb38be5101ecd1822f02082e660e04e7e"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-audit-20260303-030110-report-json",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-audit-20260303-030110/report.json",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-05T22:10:05-05:00",
+    "payload": {
+      "category": "qa",
+      "label": "report.md",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-audit-20260303-030110/report.md",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-audit-20260303-030110/report.md",
+        "c20f940cb38be5101ecd1822f02082e660e04e7e"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-audit-20260303-030110-report-md",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-audit-20260303-030110/report.md",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-05T22:10:05-05:00",
+    "payload": {
+      "category": "qa",
+      "label": "report.json",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-audit-20260303-074313/report.json",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-audit-20260303-074313/report.json",
+        "c20f940cb38be5101ecd1822f02082e660e04e7e"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-audit-20260303-074313-report-json",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-audit-20260303-074313/report.json",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-05T22:10:05-05:00",
+    "payload": {
+      "category": "qa",
+      "label": "report.md",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-audit-20260303-074313/report.md",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-audit-20260303-074313/report.md",
+        "c20f940cb38be5101ecd1822f02082e660e04e7e"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-audit-20260303-074313-report-md",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-audit-20260303-074313/report.md",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-05T22:10:05-05:00",
+    "payload": {
+      "category": "qa",
+      "label": "filtered-findings.md",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-audit-20260303-074505/filtered-findings.md",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-audit-20260303-074505/filtered-findings.md",
+        "c20f940cb38be5101ecd1822f02082e660e04e7e"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-audit-20260303-074505-filtered-findings-md",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-audit-20260303-074505/filtered-findings.md",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-05T22:10:05-05:00",
+    "payload": {
+      "category": "qa",
+      "label": "report.json",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-audit-20260303-074505/report.json",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-audit-20260303-074505/report.json",
+        "c20f940cb38be5101ecd1822f02082e660e04e7e"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-audit-20260303-074505-report-json",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-audit-20260303-074505/report.json",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-05T22:10:05-05:00",
+    "payload": {
+      "category": "qa",
+      "label": "report.md",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-audit-20260303-074505/report.md",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-audit-20260303-074505/report.md",
+        "c20f940cb38be5101ecd1822f02082e660e04e7e"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-audit-20260303-074505-report-md",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-audit-20260303-074505/report.md",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-05T22:10:05-05:00",
+    "payload": {
+      "category": "qa",
+      "label": "report.json",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-audit-20260303-082531/report.json",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-audit-20260303-082531/report.json",
+        "c20f940cb38be5101ecd1822f02082e660e04e7e"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-audit-20260303-082531-report-json",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-audit-20260303-082531/report.json",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-05T22:10:05-05:00",
+    "payload": {
+      "category": "qa",
+      "label": "report.md",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-audit-20260303-082531/report.md",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-audit-20260303-082531/report.md",
+        "c20f940cb38be5101ecd1822f02082e660e04e7e"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-audit-20260303-082531-report-md",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-audit-20260303-082531/report.md",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-05T22:10:05-05:00",
+    "payload": {
+      "category": "qa",
+      "label": "report.json",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-audit-20260303-084717/report.json",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-audit-20260303-084717/report.json",
+        "c20f940cb38be5101ecd1822f02082e660e04e7e"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-audit-20260303-084717-report-json",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-audit-20260303-084717/report.json",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-05T22:10:05-05:00",
+    "payload": {
+      "category": "qa",
+      "label": "report.md",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-audit-20260303-084717/report.md",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-audit-20260303-084717/report.md",
+        "c20f940cb38be5101ecd1822f02082e660e04e7e"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-audit-20260303-084717-report-md",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-audit-20260303-084717/report.md",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-05T22:10:05-05:00",
+    "payload": {
+      "category": "qa",
+      "label": "report-ui-focused.json",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-audit-20260303-084717/report-ui-focused.json",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-audit-20260303-084717/report-ui-focused.json",
+        "c20f940cb38be5101ecd1822f02082e660e04e7e"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-audit-20260303-084717-report-ui-focused-json",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-audit-20260303-084717/report-ui-focused.json",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-05T22:10:05-05:00",
+    "payload": {
+      "category": "qa",
+      "label": "report-ui-focused.md",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-audit-20260303-084717/report-ui-focused.md",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-audit-20260303-084717/report-ui-focused.md",
+        "c20f940cb38be5101ecd1822f02082e660e04e7e"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-audit-20260303-084717-report-ui-focused-md",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-audit-20260303-084717/report-ui-focused.md",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-05T22:10:05-05:00",
+    "payload": {
+      "category": "qa",
+      "label": "auth-report.json",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-auth-audit-20260303-030651/auth-report.json",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-auth-audit-20260303-030651/auth-report.json",
+        "c20f940cb38be5101ecd1822f02082e660e04e7e"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-auth-audit-20260303-030651-auth-report-json",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-auth-audit-20260303-030651/auth-report.json",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-05T22:10:05-05:00",
+    "payload": {
+      "category": "qa",
+      "label": "auth-report.md",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-auth-audit-20260303-030651/auth-report.md",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-auth-audit-20260303-030651/auth-report.md",
+        "c20f940cb38be5101ecd1822f02082e660e04e7e"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-auth-audit-20260303-030651-auth-report-md",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-auth-audit-20260303-030651/auth-report.md",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-05T22:10:05-05:00",
+    "payload": {
+      "category": "strategy_doc",
+      "label": "thenewfuse-external-links.txt",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-external-links.txt",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-external-links.txt",
+        "c20f940cb38be5101ecd1822f02082e660e04e7e"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-external-links-txt",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-external-links.txt",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-05T22:10:05-05:00",
+    "payload": {
+      "category": "strategy_doc",
+      "label": "thenewfuse-playwright-sweep.txt",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-playwright-sweep.txt",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-playwright-sweep.txt",
+        "c20f940cb38be5101ecd1822f02082e660e04e7e"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-playwright-sweep-txt",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-playwright-sweep.txt",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-05T22:10:05-05:00",
+    "payload": {
+      "category": "strategy_doc",
+      "label": "thenewfuse-route-http.txt",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-route-http.txt",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-route-http.txt",
+        "c20f940cb38be5101ecd1822f02082e660e04e7e"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-route-http-txt",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-route-http.txt",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-05T22:10:05-05:00",
+    "payload": {
+      "category": "qa",
+      "label": "report.json",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-viewport-audit-20260303-070620/report.json",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-viewport-audit-20260303-070620/report.json",
+        "c20f940cb38be5101ecd1822f02082e660e04e7e"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-viewport-audit-20260303-070620-report-json",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-viewport-audit-20260303-070620/report.json",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-05T22:10:05-05:00",
+    "payload": {
+      "category": "qa",
+      "label": "report.md",
+      "summary": "Relevant project artifact discovered at output/playwright/thenewfuse-viewport-audit-20260303-070620/report.md",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "output/playwright/thenewfuse-viewport-audit-20260303-070620/report.md",
+        "c20f940cb38be5101ecd1822f02082e660e04e7e"
+      ],
+      "sourceEventId": "artifact:output-playwright-thenewfuse-viewport-audit-20260303-070620-report-md",
+      "metadata": {
+        "path": "output/playwright/thenewfuse-viewport-audit-20260303-070620/report.md",
+        "dateSource": "git_first_commit"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-18T21:51:04.136Z",
+    "payload": {
+      "category": "strategy_doc",
+      "label": "tnf-cron-federation-gates.md",
+      "summary": "Relevant project artifact discovered at docs/protocols/bridges/reports/tnf-cron-federation-gates.md",
+      "confidence": "moderate",
+      "evidenceRefs": [
+        "docs/protocols/bridges/reports/tnf-cron-federation-gates.md"
+      ],
+      "sourceEventId": "artifact:docs-protocols-bridges-reports-tnf-cron-federation-gates-md",
+      "metadata": {
+        "path": "docs/protocols/bridges/reports/tnf-cron-federation-gates.md",
+        "dateSource": "birthtime"
+      }
+    }
+  },
+  {
+    "eventType": "historical_event",
+    "actor": "tnf_journey_reconstruction",
+    "timestamp": "2026-03-19T00:00:00.000Z",
+    "payload": {
+      "category": "strategy_doc",
+      "label": "tnf-development-journey-reconstruction-2026-03-19.md",
+      "summary": "Relevant project artifact discovered at docs/protocols/reports/tnf-development-journey-reconstruction-2026-03-19.md",
+      "confidence": "strong",
+      "evidenceRefs": [
+        "docs/protocols/reports/tnf-development-journey-reconstruction-2026-03-19.md"
+      ],
+      "sourceEventId": "artifact:docs-protocols-reports-tnf-development-journey-reconstruction-2026-03-19-md",
+      "metadata": {
+        "path": "docs/protocols/reports/tnf-development-journey-reconstruction-2026-03-19.md",
+        "dateSource": "filename"
+      }
+    }
+  }
+]

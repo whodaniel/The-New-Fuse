@@ -46,6 +46,9 @@ export declare class TNFRelayServer extends EventEmitter {
     private port;
     private bridge;
     private bridgeSubscribedAgents;
+    private pendingBridgeAgents;
+    private approvedBridgeAgents;
+    private bridgeGateEnabled;
     private authService;
     private stallDetector;
     private logger;
@@ -80,6 +83,27 @@ export declare class TNFRelayServer extends EventEmitter {
     private syncAgentChannelMembership;
     private syncBridgeSubscriptions;
     private ensureBridgeSubscription;
+    /**
+     * Approve an agent for bridge access (operator action)
+     */
+    approveBridgeAccess(agentId: string): boolean;
+    /**
+     * Deny an agent bridge access (operator action)
+     */
+    denyBridgeAccess(agentId: string, reason?: string): boolean;
+    /**
+     * Get list of pending bridge access requests
+     */
+    getPendingBridgeRequests(): Array<{
+        agentId: string;
+        name: string;
+        platform: string;
+        requestedAt: number;
+    }>;
+    /**
+     * Toggle bridge gate on/off
+     */
+    setBridgeGateEnabled(enabled: boolean): void;
     /**
      * Send a recovery message to wake up stalled conversations
      */

@@ -23,6 +23,20 @@ understand and utilize our advanced AI-powered workflow automation system.
 - [Architecture Overview](architecture/ARCHITECTURE.md) - System architecture
   and technical specifications
 
+### ⚙️ Operations & Launch
+
+- [Federated Director-Orchestration Runbook](operations/TNF_FEDERATED_DIRECTOR_ORCHESTRATION_RUNBOOK_2026-03-18.md) -
+  operational contract for Local Director, Orchestrator, Broker, and Master
+  Clock execution flow.
+- [Super Admin Chronological Process Control Plane](operations/super-admin-chronological-processes.md) -
+  unified canonical + procedural schedule governance surface for reading and
+  controlling all recurring processes.
+- [Managed Federated Offerings Launch Matrix](roadmaps/TNF_MANAGED_FEDERATED_OFFERINGS_2026-03-18.md) -
+  GTM packaging plan for hosted, cloneable, policy-governed agent environments.
+- [Federated Control Plane Plan Outline](roadmaps/TNF_FEDERATED_CONTROL_PLANE_OUTLINE_2026-03-18.md) -
+  trackable execution outline for local director polling, federation channels,
+  orchestration gates, and cloud runtime rollout.
+
 ### 🧪 Testing
 
 - [Testing Guide](TESTING_GUIDE.md) - A comprehensive guide to testing The New
@@ -37,6 +51,9 @@ understand and utilize our advanced AI-powered workflow automation system.
 - [Workspace & Poker Realignment (March 2026)](milestones/2026-03-15-WORKSPACE-POKER-REALIGNMENT.md) -
   Full integration of poker ecosystem with the platform's multi-tenant
   architecture and visual overhaul.
+- [Federated Orchestration GTM Plan (March 18, 2026)](roadmaps/TNF_FEDERATED_ORCHESTRATION_GTM_PLAN_2026-03-18.md) -
+  72-hour launch plan for federation completion, cron governance, and managed
+  multi-tenant agent packaging.
 
 ## 🛠️ Development Tools
 

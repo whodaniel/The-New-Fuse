@@ -1,0 +1,89 @@
+bridge:
+  name: tnf-development-journey-timeline-reconstruction
+  version: 1
+  status: proposed
+  source_skills:
+    - orchestrator-agent
+    - tnf-execution-audit-trail
+    - agent-relationship-autopilot
+  target_skills:
+    - tnf-skill-bridging
+  objective: >
+    Reconstruct the historical development journey of TNF from durable
+    evidence, normalize it into a TNF-native evidence ledger, and prepare it
+    for ingestion into TNF timeline surfaces without collapsing hard evidence
+    and inferred narrative into the same confidence tier.
+  handoff_contract:
+    inputs:
+      - name: repository_metadata
+        format: json
+        producers:
+          - GitHub repository API metadata
+          - local git repository identity and refs
+      - name: git_history
+        format: git_log_stream
+        producers:
+          - local git commit history
+          - file-scoped git history for milestone documents
+      - name: dated_artifacts
+        format: file_inventory
+        producers:
+          - dated reports under docs/protocols/reports
+          - dated QA, release, migration, and session summary documents
+          - trajectory and audit log directories
+      - name: historical_context
+        format: prose_and_markdown
+        producers:
+          - mirror plans
+          - migration summaries
+          - handoff and memory artifacts
+    outputs:
+      - name: evidence_ledger
+        format: json_array
+        schema:
+          eventId: string
+          timestamp: string
+          label: string
+          category: repo_created|commit_milestone|strategy_doc|migration|qa|execution|inference
+          confidence: hard|strong|moderate|inferred
+          summary: string
+          evidence:
+            - type: github_api|git_commit|document|log|report
+              ref: string
+      - name: timeline_ingestion_batch
+        format: json_array
+        schema:
+          type: historical_event
+          timestamp: string
+          actor: string
+          payload:
+            category: string
+            label: string
+            summary: string
+            confidence: string
+            evidenceRefs: string[]
+      - name: reconstruction_report
+        format: markdown
+        required_sections:
+          - anchor_dates
+          - strongest_evidence_sources
+          - timeline_gaps
+          - inferred_phases
+  validation:
+    success_criteria:
+      - Every reconstructed event must carry at least one evidence reference.
+      - Hard-evidence events must be backed by GitHub metadata, git history, or dated primary artifacts.
+      - Inferred phases must be explicitly labeled as inferred and must cite the source evidence they summarize.
+      - The resulting batch must be mappable to TNF timeline or unified-ledger historical event surfaces.
+    failure_handling:
+      - If two sources disagree on date, preserve both and mark the event disputed.
+      - If an event lacks durable evidence, keep it out of the hard-evidence ledger and place it in inferred history only.
+      - If current git history does not reach the true origin, mark the timeline as partial and continue from the earliest verified anchor.
+  migration_guidance:
+    principle: >
+      TNF should treat reconstructed history as an evidence-backed timeline,
+      not a retrospective narrative. Every future ingestion path should preserve
+      provenance, confidence, and source references.
+    nativeization_rule: >
+      Use existing unified-ledger and timeline surfaces where possible before
+      inventing a separate history subsystem.

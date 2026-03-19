@@ -1,0 +1,396 @@
+{
+  "spec": "tnf/chronological-process-catalog/0.1",
+  "generated_at": "2026-03-19T10:00:00.000Z",
+  "entries": {
+    "tnf-master-clock-super-cycle": {
+      "title": "TNF Master Clock Super Cycle",
+      "cadence": "*/15 * * * *",
+      "timezone": "UTC",
+      "description": "Canonical system-wide federation and orchestration gate verification cycle for the TNF control plane.",
+      "runNow": {
+        "command": "node",
+        "args": [
+          "scripts/protocols/synthetic-federation-gate-check.cjs",
+          "--json"
+        ],
+        "timeoutMs": 45000
+      },
+      "docs": {
+        "protocol": "docs/protocols/tnf-cron-governance-protocol-v0.1.md",
+        "runbook": "docs/operations/TNF_FEDERATED_DIRECTOR_ORCHESTRATION_RUNBOOK_2026-03-18.md"
+      }
+    },
+    "tnf-self-improvement-scorecard": {
+      "title": "TNF Self Improvement Scorecard",
+      "cadence": "0 */6 * * *",
+      "timezone": "UTC",
+      "description": "Protocol and schema conformance loop that keeps the canonical reliability and self-improvement envelope healthy.",
+      "runNow": {
+        "command": "node",
+        "args": ["scripts/validate-protocol-schemas.cjs"],
+        "timeoutMs": 30000
+      },
+      "docs": {
+        "protocol": "docs/operations/tnf-self-improvement-cycle.md",
+        "runbook": "docs/protocols/reports/cron-governance-review-2026-03-18.md"
+      }
+    },
+    "tnf-twip-macro-board-refresh": {
+      "title": "TWIP Macro Board Refresh",
+      "cadence": "*/10 * * * *",
+      "timezone": "UTC",
+      "description": "Procedural scan and refresh loop that updates terminal macro-board state and visualization artifacts.",
+      "runNow": {
+        "command": "node",
+        "args": ["scripts/protocols/twip-macro-board.cjs", "--json"],
+        "timeoutMs": 60000
+      },
+      "docs": {
+        "protocol": "docs/protocols/twip-terminal-macro-board.md",
+        "runbook": "docs/protocols/reports/twip-terminal-context-capture-2026-03-19.md"
+      }
+    },
+    "tnf-terminal-awareness-reminder": {
+      "title": "Terminal Awareness Reminder",
+      "cadence": "*/30 * * * *",
+      "timezone": "UTC",
+      "description": "Procedural frontload and terminal context reminder loop that validates handoff and shell-start context hygiene.",
+      "runNow": {
+        "command": "bash",
+        "args": ["scripts/verify_frontload_state.sh", "--json"],
+        "timeoutMs": 20000
+      },
+      "docs": {
+        "protocol": "docs/TNF_SESSION_ONBOARDING.md",
+        "runbook": "docs/operations/super-admin-chronological-processes.md"
+      }
+    },
+    "tenant-terminal-awareness-default": {
+      "title": "Tenant Terminal Awareness Default",
+      "cadence": "0 * * * *",
+      "timezone": "UTC",
+      "description": "Tenant-scoped default reminder loop for user and tenant-agent terminal context continuity.",
+      "runNow": null,
+      "docs": {
+        "protocol": "docs/protocols/tnf-cron-governance-protocol-v0.1.md"
+      }
+    },
+    "tenant-personal-archaeology-master-loop": {
+      "title": "Personal Archaeology Master Loop",
+      "cadence": "*/30 * * * *",
+      "timezone": "UTC",
+      "description": "Master Orchestrator supervision loop for the personal archaeology fleet, team health, and blocker counts.",
+      "runNow": {
+        "command": "node",
+        "args": [
+          "scripts/timeline/personal-archaeology-orchestrator.mjs",
+          "master-loop"
+        ],
+        "timeoutMs": 30000
+      },
+      "docs": {
+        "protocol": "docs/protocols/bridges/tnf-personal-archaeology-orchestration.yml",
+        "runbook": "docs/operations/tnf-personal-archaeology-runbook.md"
+      }
+    },
+    "tenant-personal-archaeology-investigator-pulse": {
+      "title": "Personal Archaeology Investigator Pulse",
+      "cadence": "15 */2 * * *",
+      "timezone": "UTC",
+      "description": "Periodic heartbeat refresh for archaeology investigators and sentinels based on findings-state continuity.",
+      "runNow": {
+        "command": "node",
+        "args": [
+          "scripts/timeline/personal-archaeology-orchestrator.mjs",
+          "investigator-pulse"
+        ],
+        "timeoutMs": 30000
+      },
+      "docs": {
+        "protocol": "docs/protocols/bridges/tnf-personal-archaeology-orchestration.yml",
+        "runbook": "docs/operations/tnf-personal-archaeology-runbook.md"
+      }
+    },
+    "tenant-personal-archaeology-digest": {
+      "title": "Personal Archaeology Digest",
+      "cadence": "0 */12 * * *",
+      "timezone": "UTC",
+      "description": "Narrative reconstruction digest summarizing current findings, progress, and pending human actions.",
+      "runNow": {
+        "command": "node",
+        "args": [
+          "scripts/timeline/personal-archaeology-orchestrator.mjs",
+          "digest"
+        ],
+        "timeoutMs": 30000
+      },
+      "docs": {
+        "protocol": "docs/protocols/bridges/tnf-personal-archaeology-orchestration.yml",
+        "runbook": "docs/operations/tnf-personal-archaeology-runbook.md"
+      }
+    },
+    "tenant-personal-archaeology-blocker-watch": {
+      "title": "Personal Archaeology Blocker Watch",
+      "cadence": "*/15 * * * *",
+      "timezone": "UTC",
+      "description": "Human-escalation sentinel that monitors blocked archaeology work and relays pending actions through TNF channels.",
+      "runNow": {
+        "command": "node",
+        "args": [
+          "scripts/timeline/personal-archaeology-orchestrator.mjs",
+          "blocker-watch"
+        ],
+        "timeoutMs": 30000
+      },
+      "docs": {
+        "protocol": "docs/protocols/bridges/tnf-personal-archaeology-orchestration.yml",
+        "runbook": "docs/operations/tnf-personal-archaeology-runbook.md"
+      }
+    },
+    "tenant-daily-priority-plan": {
+      "title": "Daily Priority Plan",
+      "cadence": "0 9 * * *",
+      "timezone": "America/New_York",
+      "description": "TNF-native assimilation of the legacy OpenClaw daily priority planning loop.",
+      "runNow": {
+        "command": "node",
+        "args": [
+          "scripts/protocols/chronological-dispatch.cjs",
+          "--process-id",
+          "tenant-daily-priority-plan"
+        ],
+        "timeoutMs": 15000
+      },
+      "docs": {
+        "protocol": "docs/protocols/bridges/tnf-openclaw-schedule-assimilation.yml",
+        "runbook": "docs/operations/super-admin-chronological-processes.md"
+      },
+      "metadata": {
+        "legacySource": {
+          "system": "openclaw",
+          "jobName": "TNF Daily Priority Plan"
+        }
+      }
+    },
+    "tenant-nightly-maintenance": {
+      "title": "Nightly Maintenance",
+      "cadence": "30 3 * * *",
+      "timezone": "America/New_York",
+      "description": "TNF-native assimilation of the legacy OpenClaw nightly maintenance loop.",
+      "runNow": {
+        "command": "node",
+        "args": [
+          "scripts/protocols/chronological-dispatch.cjs",
+          "--process-id",
+          "tenant-nightly-maintenance"
+        ],
+        "timeoutMs": 15000
+      },
+      "docs": {
+        "protocol": "docs/protocols/bridges/tnf-openclaw-schedule-assimilation.yml",
+        "runbook": "docs/operations/super-admin-chronological-processes.md"
+      },
+      "metadata": {
+        "legacySource": {
+          "system": "openclaw",
+          "jobName": "TNF Nightly Maintenance"
+        }
+      }
+    },
+    "tenant-orchestrator-pulse": {
+      "title": "Orchestrator Pulse",
+      "cadence": "*/30 * * * *",
+      "timezone": "UTC",
+      "description": "TNF-native assimilation of the legacy OpenClaw portfolio orchestration pulse.",
+      "runNow": {
+        "command": "node",
+        "args": [
+          "scripts/protocols/chronological-dispatch.cjs",
+          "--process-id",
+          "tenant-orchestrator-pulse"
+        ],
+        "timeoutMs": 15000
+      },
+      "docs": {
+        "protocol": "docs/protocols/bridges/tnf-openclaw-schedule-assimilation.yml",
+        "runbook": "docs/operations/super-admin-chronological-processes.md"
+      },
+      "metadata": {
+        "legacySource": {
+          "system": "openclaw",
+          "jobName": "TNF Orchestrator Pulse"
+        }
+      }
+    },
+    "tenant-self-improvement-loop": {
+      "title": "Self Improvement Loop",
+      "cadence": "0 */2 * * *",
+      "timezone": "UTC",
+      "description": "TNF-native assimilation of the legacy OpenClaw self-improvement loop.",
+      "runNow": {
+        "command": "node",
+        "args": [
+          "scripts/protocols/chronological-dispatch.cjs",
+          "--process-id",
+          "tenant-self-improvement-loop"
+        ],
+        "timeoutMs": 15000
+      },
+      "docs": {
+        "protocol": "docs/protocols/bridges/tnf-openclaw-schedule-assimilation.yml",
+        "runbook": "docs/operations/super-admin-chronological-processes.md"
+      },
+      "metadata": {
+        "legacySource": {
+          "system": "openclaw",
+          "jobName": "TNF Self-Improve Loop"
+        }
+      }
+    },
+    "tenant-continuous-qa-loop": {
+      "title": "Continuous QA Loop",
+      "cadence": "0 */6 * * *",
+      "timezone": "UTC",
+      "description": "TNF-native assimilation of the legacy OpenClaw continuous QA loop.",
+      "runNow": {
+        "command": "node",
+        "args": [
+          "scripts/protocols/chronological-dispatch.cjs",
+          "--process-id",
+          "tenant-continuous-qa-loop"
+        ],
+        "timeoutMs": 15000
+      },
+      "docs": {
+        "protocol": "docs/protocols/bridges/tnf-openclaw-schedule-assimilation.yml",
+        "runbook": "docs/operations/super-admin-chronological-processes.md"
+      },
+      "metadata": {
+        "legacySource": {
+          "system": "openclaw",
+          "jobName": "TNF Continuous QA Loop"
+        }
+      }
+    },
+    "tenant-hourly-attribution-audit": {
+      "title": "Hourly Attribution Audit",
+      "cadence": "0 * * * *",
+      "timezone": "UTC",
+      "description": "TNF-native assimilation of the legacy OpenClaw hourly attribution audit.",
+      "runNow": {
+        "command": "node",
+        "args": [
+          "scripts/protocols/chronological-dispatch.cjs",
+          "--process-id",
+          "tenant-hourly-attribution-audit"
+        ],
+        "timeoutMs": 15000
+      },
+      "docs": {
+        "protocol": "docs/protocols/bridges/tnf-openclaw-schedule-assimilation.yml",
+        "runbook": "docs/operations/super-admin-chronological-processes.md"
+      },
+      "metadata": {
+        "legacySource": {
+          "system": "openclaw",
+          "jobName": "TNF Hourly Attribution Audit"
+        }
+      }
+    },
+    "tenant-knowledge-scout-sprint": {
+      "title": "Knowledge Scout Sprint",
+      "cadence": "0 */4 * * *",
+      "timezone": "UTC",
+      "description": "TNF-native assimilation of the legacy OpenClaw knowledge scout sprint.",
+      "runNow": {
+        "command": "node",
+        "args": [
+          "scripts/protocols/chronological-dispatch.cjs",
+          "--process-id",
+          "tenant-knowledge-scout-sprint"
+        ],
+        "timeoutMs": 15000
+      },
+      "docs": {
+        "protocol": "docs/protocols/bridges/tnf-openclaw-schedule-assimilation.yml",
+        "runbook": "docs/operations/super-admin-chronological-processes.md"
+      },
+      "metadata": {
+        "legacySource": {
+          "system": "openclaw",
+          "jobName": "TNF Knowledge Scout Sprint"
+        }
+      }
+    },
+    "tenant-loop-watchdog": {
+      "title": "Loop Watchdog",
+      "cadence": "*/15 * * * *",
+      "timezone": "UTC",
+      "description": "TNF-native assimilation of the legacy OpenClaw watchdog loop.",
+      "runNow": {
+        "command": "node",
+        "args": [
+          "scripts/protocols/chronological-dispatch.cjs",
+          "--process-id",
+          "tenant-loop-watchdog"
+        ],
+        "timeoutMs": 15000
+      },
+      "docs": {
+        "protocol": "docs/protocols/bridges/tnf-openclaw-schedule-assimilation.yml",
+        "runbook": "docs/operations/super-admin-chronological-processes.md"
+      },
+      "metadata": {
+        "legacySource": {
+          "system": "openclaw",
+          "jobName": "TNF Loop Watchdog"
+        }
+      }
+    },
+    "tenant-launch-validation": {
+      "title": "Launch Validation",
+      "cadence": "manual",
+      "timezone": "UTC",
+      "description": "Manual TNF-native assimilation of the legacy one-shot OpenClaw launch validation jobs.",
+      "runNow": {
+        "command": "node",
+        "args": [
+          "scripts/protocols/chronological-dispatch.cjs",
+          "--process-id",
+          "tenant-launch-validation"
+        ],
+        "timeoutMs": 15000
+      },
+      "docs": {
+        "protocol": "docs/protocols/bridges/tnf-openclaw-schedule-assimilation.yml",
+        "runbook": "docs/operations/super-admin-chronological-processes.md"
+      },
+      "metadata": {
+        "legacySource": {
+          "system": "openclaw",
+          "jobName": "TNF Launch Validation"
+        }
+      }
+    },
+    "tnf-openclaw-runtime-sync": {
+      "title": "OpenClaw Runtime Sync",
+      "cadence": "*/15 * * * *",
+      "timezone": "UTC",
+      "description": "Sync live OpenClaw config and cron state into TNF control-plane records for imported schedule visibility and governance.",
+      "runNow": {
+        "command": "node",
+        "args": [
+          "scripts/openclaw/tnf-openclaw-control.cjs",
+          "sync-control-plane",
+          "--actor",
+          "master-clock"
+        ],
+        "timeoutMs": 30000
+      },
+      "docs": {
+        "protocol": "docs/protocols/bridges/tnf-openclaw-command-assimilation.yml",
+        "runbook": "docs/operations/super-admin-chronological-processes.md"
+      }
+    }
+  }
+}

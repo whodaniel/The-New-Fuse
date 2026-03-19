@@ -29,7 +29,16 @@ ensure you are fully aligned with the TNF ecosystem.
 4. **Synchronize Memories**:
    - Read `.agent/memories.md` to load accumulated wisdom and codebase patterns.
 
-5. **Verify Context**:
+5. **Confirm Operator Policy**:
+   - For OpenClaw or other Claw-type agent operations, use `tnf` as the control
+     plane.
+   - Prefer native TNF commands first.
+   - If a native TNF surface does not exist yet, use `tnf openclaw ...` or
+     `tnf claw ...`.
+   - Avoid raw `openclaw ...` unless debugging TNF/OpenClaw compatibility or
+     explicitly instructed to use the raw OpenClaw CLI.
+
+6. **Verify Context**:
    - Confirm you understand:
      - ❓ Current Task (from `task_plan.md`)
      - ❓ Available Skills (from `resource-map.md`)
@@ -45,6 +54,7 @@ After running this command, the agent will:
 - Know exactly WHO they are (TNF Agent)
 - Know exactly WHERE they are (Current task phase)
 - Know exactly WHAT they can do (Available skills)
+- Know exactly HOW to operate Claw systems (through `tnf` first)
 - Be ready to execute with "Fresh Context" reliability.
 
 ---

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.HandoffAck = exports.HandoffAckInput = exports.HandoffPacket = exports.HandoffPacketInput = exports.HandoffTargets = exports.HandoffScope = exports.HandoffPayload = exports.MasterCumulativeId = exports.FederationGateDecision = exports.HandoffStatus = exports.HandoffPriority = void 0;
+exports.HandoffAck = exports.HandoffAckInput = exports.HandoffPacket = exports.HandoffPacketVersion = exports.HandoffPacketInput = exports.HandoffTargets = exports.HandoffScope = exports.HandoffPayload = exports.MasterCumulativeId = exports.FederationGateDecision = exports.HandoffStatus = exports.HandoffPriority = void 0;
 const zod_1 = require("zod");
 const isoDateTime = zod_1.z.string().datetime();
 exports.HandoffPriority = zod_1.z.enum(['low', 'normal', 'high', 'critical']);
@@ -16,6 +16,7 @@ exports.MasterCumulativeId = zod_1.z.object({
     id: zod_1.z.string().uuid(),
     scope: zod_1.z.object({
         tenant_id: zod_1.z.string().min(1),
+        cron_namespace: zod_1.z.string().nullable().optional(),
         session_key: zod_1.z.string().nullable().optional(),
         workflow_id: zod_1.z.string().nullable().optional(),
         channel_id: zod_1.z.string().nullable().optional(),
@@ -27,6 +28,8 @@ exports.MasterCumulativeId = zod_1.z.object({
         handoff_packet_id: zod_1.z.string().uuid().nullable().optional(),
         twid: zod_1.z.string().uuid().nullable().optional(),
         task_id: zod_1.z.string().nullable().optional(),
+        schedule_id: zod_1.z.string().nullable().optional(),
+        schedule_run_id: zod_1.z.string().nullable().optional(),
     }),
     federation: zod_1.z
         .object({
@@ -85,12 +88,35 @@ exports.HandoffPacketInput = zod_1.z.object({
     expiresAt: isoDateTime.optional(),
     tags: zod_1.z.array(zod_1.z.string()).default([]),
 });
-exports.HandoffPacket = exports.HandoffPacketInput.extend({
+exports.HandoffPacketVersion = zod_1.z.enum(['1.0', '1.1']);
+exports.HandoffPacket = exports.HandoffPacketInput.partial({
+    cumulativeId: true,
+    gateDecisions: true,
+})
+    .extend({
     id: zod_1.z.string().uuid(),
-    version: zod_1.z.literal('1.0'),
+    version: exports.HandoffPacketVersion.default('1.0'),
     createdAt: isoDateTime,
     expiresAt: isoDateTime,
     status: exports.HandoffStatus.default('pending'),
+})
+    .superRefine((packet, ctx) => {
+    if (packet.version === '1.1') {
+        if (!packet.cumulativeId) {
+            ctx.addIssue({
+                code: zod_1.z.ZodIssueCode.custom,
+                path: ['cumulativeId'],
+                message: 'cumulativeId is required for handoff packet version 1.1',
+            });
+        }
+        if (!Array.isArray(packet.gateDecisions) || packet.gateDecisions.length === 0) {
+            ctx.addIssue({
+                code: zod_1.z.ZodIssueCode.custom,
+                path: ['gateDecisions'],
+                message: 'gateDecisions is required for handoff packet version 1.1',
+            });
+        }
+    }
 });
 exports.HandoffAckInput = zod_1.z.object({
     packetId: zod_1.z.string().uuid(),

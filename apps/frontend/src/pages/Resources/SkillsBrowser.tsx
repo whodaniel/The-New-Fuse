@@ -60,8 +60,20 @@ export default function SkillsBrowser() {
         }
         break;
       case 'share':
-        toast.success('Share link copied to clipboard!');
-        navigator.clipboard.writeText(`${window.location.origin}/resources/skills/${skill.id}`);
+        try {
+          const toAgentId = window.prompt('Share to agent id');
+          if (!toAgentId) return;
+          const notes = window.prompt('Optional note (leave blank to skip)') || undefined;
+          await resourcesService.shareResource({
+            resourceId: skill.id,
+            toAgentId,
+            fromUserId: user?.id,
+            notes,
+          });
+          toast.success('Resource shared');
+        } catch {
+          toast.error('Failed to share resource');
+        }
         break;
       case 'view-details':
         setSelectedSkill(skill);

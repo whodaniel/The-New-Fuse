@@ -54,3 +54,5 @@ From `2026-03-18T21:11:28.655Z` (`scripts/protocols/twip-macro-board.cjs`):
 1. Mirror self-edit allow/deny outcomes into first-class Task Detail filters.
 2. Add CI fixtures that validate both allow and deny self-edit examples.
 3. Add rate-limit/approval telemetry counters to macro orchestration dashboards.
+4. Apply equivalent first-class filtering for cron governance allow/deny events
+   (`cron_governance_gate` category).

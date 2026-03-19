@@ -1,149 +1,192 @@
 # @the-new-fuse/tnf-cli
 
-TNF CLI - Unified command surface for TNF operations.
+Unified command surface for TNF operations and agent orchestration.
 
-## 🚀 Overview
+## Installation
 
-The TNF CLI allows AI agents and operators to run TNF lifecycle commands under
-one prefix: `tnf ...`.
-
-## 📦 Installation
-
-This package is part of The New Fuse monorepo.
+### One-line install (remote)
 
 ```bash
-pnpm install
+curl -fsSL https://raw.githubusercontent.com/whodaniel/fuse/main/scripts/install-tnf-cli.sh | bash
 ```
 
-## 🛠 Usage
-
-You can run the CLI directly or via the root `pnpm` script:
-
-### Root Command
+### Install from a local clone
 
 ```bash
-pnpm run tnf -- <command>
-./tnf <command>
+pnpm run tnf:install:local
 ```
 
-### Commands
-
-#### TNF Lifecycle
+### Verify
 
 ```bash
-pnpm run tnf -- onboard
-pnpm run tnf -- doctor
-pnpm run tnf -- mcp generate
+tnf
+tnf --help
+tnf menu
 ```
 
-#### Register an Agent
+## Root behavior
 
-Connects to the network and enters interactive mode.
+Running `tnf` with no arguments now prints an organized command menu. The menu
+includes a themed TNF splash animation by default. It also prints
+command-surface totals and points to expanded discovery.
+
+Use full inventory mode when you need the entire command surface:
 
 ```bash
-pnpm run tnf -- register [name] [role] [platform]
-# Example:
-pnpm run tnf -- register gemini-worker worker gemini
+tnf menu --full
 ```
 
-#### List Agents
-
-Shows all agents registered in the Redis registry.
+## Splash and Color Options
 
 ```bash
-pnpm run tnf -- list
+tnf splash --theme fuse --animate on
+tnf splash --theme atri --animate on --speed 60
+tnf splash --theme neon --animate on --speed 70
+tnf splash --theme ember --animate off
+tnf menu --theme mono --compact
 ```
 
-#### Send a Message
+Themes: `fuse`, `atri`, `neon`, `ember`, `mono`. Animation mode: `auto`, `on`,
+`off`.
 
-Send a one-off message to the network.
+## Command Paths
+
+### Agent paths
 
 ```bash
-pnpm run tnf -- send "Hello World"
+tnf agents list
+tnf agents register [name] [role] [platform]
+tnf agents send <message>
+tnf agents orchestrate <workflow>
+tnf agents convo <start|join> [param]
 ```
 
-#### Orchestrate Workflows
-
-Trigger complex multi-agent workflows.
+### Taxonomy paths
 
 ```bash
-pnpm run tnf -- orchestrate <workflow>
-# Workflows: health-check, code-review, self-improvement
+tnf types list
+tnf traits list
+tnf paths
+tnf menu
+tnf menu --full
 ```
 
-#### Manage Conversations
-
-Start or join specific conversation rooms.
+### Core operations
 
 ```bash
-pnpm run tnf -- convo start code-review
-pnpm run tnf -- convo join <convo-id>
+tnf onboard
+tnf doctor
+tnf mcp generate
+tnf openclaw status
+tnf claw channels login
+tnf scripts list
+tnf scripts run <target> [args...]
 ```
 
-#### Jules Operations
+### Existing direct commands (still supported)
 
 ```bash
-pnpm run tnf -- jules loop --super-admin-token "<expected-secret>"
-pnpm run tnf -- jules supervisor-start --super-admin-token "<expected-secret>"
-pnpm run tnf -- jules supervisor-status
-pnpm run tnf -- jules supervisor-stop --super-admin-token "<expected-secret>"
-pnpm run tnf -- jules supervisor-migrate-from-cron --super-admin-token "<expected-secret>"
-pnpm run tnf -- jules merge-open --super-admin-token "<expected-secret>"
+tnf register [name] [role] [platform]
+tnf list
+tnf send <message>
+tnf orchestrate <workflow>
+tnf convo <start|join> [param]
+tnf jules supervisor-status
+tnf skills bank sync
+tnf reports status
 ```
 
-#### Skill Bank Operations
+## OpenClaw passthrough
+
+Use TNF as the entrypoint for any OpenClaw command:
 
 ```bash
-pnpm run tnf -- skills bank sync
-pnpm run tnf -- skills bank query jules
-pnpm run tnf -- skills bank ingest --dry-run
-pnpm run tnf -- skills bank retry-pending
-pnpm run tnf -- skills bank supervisor-start --super-admin-token "<expected-secret>"
-pnpm run tnf -- skills bank supervisor-status
+tnf openclaw --help
+tnf openclaw status
+tnf openclaw agents add work --workspace ~/.openclaw/workspace-work --model openai/gpt-5.2 --bind whatsapp:biz --non-interactive --json
+tnf claw doctor
 ```
 
-#### Discover and Run Repo Commands/Scripts
+`tnf openclaw ...` forwards the raw argument tail to `openclaw ...`, so it
+covers the full current and future OpenClaw CLI surface without separate TNF
+wrappers per subcommand.
+
+For lower-friction migration, TNF also auto-forwards non-conflicting OpenClaw
+top-level commands directly:
 
 ```bash
-pnpm run tnf -- scripts list
-pnpm run tnf -- scripts run skills:bank:status
-pnpm run tnf -- scripts run scripts/skills/skill-bank-query.cjs jules
-pnpm run tnf -- scripts run tools/port-manager/cli.js -- --help
+tnf channels login
+tnf gateway --port 18789
+tnf status
+tnf message send --target +15555550123 --message "Hi"
+tnf help channels
 ```
 
-## Super Admin Protected Commands
-
-High-impact system commands require Super Admin authentication.
-
-- Configure expected token in runtime env:
+When a command name overlaps with an existing TNF command, TNF keeps its own
+behavior and you use the explicit namespace instead:
 
 ```bash
-export TNF_SUPER_ADMIN_TOKEN="<expected-secret>"
+tnf doctor
+tnf openclaw doctor
+tnf agents list
+tnf openclaw agents list
+tnf skills bank sync
+tnf openclaw skills list
 ```
 
-- Provide auth per command:
+Audit current command-surface parity at any time:
 
 ```bash
-pnpm run tnf -- master-clock start --service tnf-master-clock --super-admin-token "<expected-secret>"
-pnpm run tnf -- super-cycle event --action heartbeat --process-id jules-autonomous-loop --super-admin-token "<expected-secret>"
+tnf compat openclaw
+tnf compat openclaw --mode implicit
+tnf compat openclaw --json
 ```
 
-Protected command families:
+Inspect and manage existing OpenClaw installations and instances through TNF
+without losing raw passthrough access:
 
+```bash
+tnf compat openclaw instances --json
+tnf compat openclaw inventory --json
+tnf compat openclaw inventory --all-instances --json
+tnf compat openclaw inventory --installation local-openclaw-cli --instance dev --json
+tnf compat openclaw config --path gateway.auth --json
+tnf compat openclaw config --path gateway.auth --all-instances --json
+tnf compat openclaw config-set gateway.mode local --installation local-openclaw-cli --instance main
+tnf compat openclaw config-unset channels.telegram.botToken
+tnf compat openclaw cron --all-instances --json
+tnf compat openclaw cron-disable "TNF Knowledge Scout Sprint" --installation local-openclaw-cli --instance main
+tnf compat openclaw cron-schedule "TNF Daily Priority Plan" --cron "0 8 * * *" --tz America/New_York --installation local-openclaw-cli --instance main
+tnf compat openclaw sync --all-instances
+tnf compat openclaw cleanup --disable-failing --all-instances --dry-run
+```
+
+These managed compatibility commands read and write the existing OpenClaw
+configuration files directly, with redaction applied to sensitive fields in read
+paths. They are intended to let TNF observe and govern OpenClaw settings and
+cron state while preserving the original `tnf openclaw ...` passthrough for full
+OpenClaw-native behavior. TNF resolves targets through
+`data/protocols/openclaw-installations.registry.json`, where one installation
+may expose many isolated instances and additional separate installations can be
+declared explicitly.
+
+## Super Admin protected commands
+
+These require `TNF_SUPER_ADMIN_TOKEN` configured in runtime and
+`--super-admin-token` on the command call.
+
+- `tnf relay start`
 - `tnf master-clock *`
 - `tnf super-cycle *`
 - `tnf jules loop|supervisor|supervisor-start|supervisor-stop|supervisor-migrate-from-cron|merge-open|cron-install`
 - `tnf skills bank supervisor|supervisor-start|supervisor-stop`
-- `tnf relay start`
 - `tnf run <script>`
 
-## 🏗 Architecture
+## Agent traits
 
-- **Communication**: Redis Pub/Sub (`tnf:conversations`, `tnf:agents`, etc.)
-- **Registry**: Redis Hashes (`tnf:agent-registry`)
-- **Heartbeat**: Automated heartbeat every 30s to maintain "Online" status.
+`tnf traits list` exposes:
 
-## 🎭 Roles & Platforms
-
-- **Roles**: `orchestrator`, `broker`, `worker`, `participant`
-- **Platforms**: `antigravity`, `gemini`, `claude`, `jules`, `vscode`, `browser`
+- roles: `orchestrator`, `broker`, `worker`, `participant`
+- platforms: `antigravity`, `gemini`, `claude`, `jules`, `vscode`, `browser`
+- command behavior groups: `super_admin_protected`, `redis_required`,
+  `cloud_first`

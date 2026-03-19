@@ -36,6 +36,20 @@ At session start, the agent should:
 4. Use MCP and specialized agents from the inventory printed by
    `pnpm run tnf:onboard`.
 
+## OpenClaw Operator Policy
+
+When a task involves OpenClaw or other Claw-type agents:
+
+1. Use `tnf` as the control plane.
+2. Prefer native TNF commands and implicit TNF-compatible routes first.
+3. If TNF has not yet assimilated a native surface, use `tnf openclaw ...` or
+   `tnf claw ...`.
+4. Do not invoke raw `openclaw ...` directly unless the task is explicitly about
+   debugging TNF/OpenClaw compatibility or the user explicitly asks for raw
+   OpenClaw CLI usage.
+
+Use `tnf compat openclaw` as the source of truth for current routing coverage.
+
 ## Operations Index
 
 Use these docs for day-2 operations and ongoing automation:

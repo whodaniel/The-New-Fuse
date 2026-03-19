@@ -146,7 +146,7 @@
 
       .row {
         display: grid;
-        grid-template-columns: 1.1fr 1.2fr 0.8fr 0.8fr;
+        grid-template-columns: 1.1fr 1.2fr 0.8fr 1.6fr 0.8fr;
         gap: 10px;
         padding: 9px 12px;
         border-top: 1px solid rgba(34, 52, 70, 0.5);
@@ -313,12 +313,15 @@
         const executables = Array.isArray(session.workExecutables)
           ? session.workExecutables.map(escapeHtml).join(', ')
           : 'none';
+        const contextPreview = session.contextPreview
+          ? `<span class="mono">${escapeHtml(session.contextPreview)}</span>`
+          : '<span class="mono">n/a</span>';
         const safety = [
           session.bypassApproval ? flag('approval bypass', 'danger') : flag('approval ok', 'ok'),
           session.usesRemoteMcp ? flag('remote mcp', 'warn') : flag('local mcp', 'ok'),
         ].join(' ');
 
-        return `<li class="row">\n  <div><strong>TTY:</strong> <span class="mono">${escapeHtml(session.tty || 'unknown')}</span></div>\n  <div><strong>Work:</strong> <span class="mono">${executables || 'none'}</span></div>\n  <div><strong>Pane:</strong> <span class="mono">${escapeHtml(session.paneId || 'n/a')}</span></div>\n  <div>${safety}</div>\n</li>`;
+        return `<li class="row">\n  <div><strong>TTY:</strong> <span class="mono">${escapeHtml(session.tty || 'unknown')}</span></div>\n  <div><strong>Work:</strong> <span class="mono">${executables || 'none'}</span></div>\n  <div><strong>Pane:</strong> <span class="mono">${escapeHtml(session.paneId || 'n/a')}</span></div>\n  <div><strong>Context:</strong> ${contextPreview}</div>\n  <div>${safety}</div>\n</li>`;
       }
 
       function setError(message) {
@@ -367,11 +370,12 @@
             ids.sessions.innerHTML = activeSessions.slice(0, 80).map(rowHtml).join('');
           }
 
-          ids.status.textContent = `Loaded ${activeSessions.length} active sessions.`;
+          const withContext = activeSessions.filter((session) => session.hasContext).length;
+          ids.status.textContent = `Loaded ${activeSessions.length} active sessions (${withContext} with context).`;
         } catch (error) {
           ids.status.textContent = 'Macro board unavailable.';
           setError(
-            `Unable to load state snapshot. Run: node scripts/protocols/twip-macro-board.cjs --tenant tnf-local --limit 1000 --include-commands --history` +
+            `Unable to load state snapshot. Run: node scripts/protocols/twip-macro-board.cjs --tenant tnf-local --limit 1000 --include-commands --include-content --history` +
               `\n\nDetails: ${error.message}`
           );
         }

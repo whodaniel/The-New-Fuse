@@ -4,7 +4,16 @@
   "owners": [
     {
       "owner_agent_id": "codex",
-      "allowed_paths": ["SOUL.md", ".agent/**", "docs/ai-orientation/**"],
+      "allowed_paths": [
+        "SOUL.md",
+        "IDENTITY.md",
+        "USER.md",
+        "HEARTBEAT.md",
+        ".agent/**",
+        ".memory/**",
+        "memory-bank/**",
+        "docs/ai-orientation/**"
+      ],
       "approval_required_paths": ["docs/protocols/**", "config/**"]
     },
     {

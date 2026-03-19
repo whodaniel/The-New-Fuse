@@ -58,6 +58,24 @@ Purpose:
 2. Enforce owner/path scope before writes.
 3. Reuse MCID lineage and federation gate chain for every write decision.
 
+## 5) Cron Governance Contract
+
+Schema: `docs/protocols/schemas/tnf-cron-governance.schema.json`  
+Bridge: `docs/protocols/bridges/tnf-cron-federation-gates.yml`  
+Registry: `data/protocols/cron-jobs.registry.json`  
+Gate evaluator: `scripts/protocols/cron-governance-gate.cjs`
+
+Purpose:
+
+1. Enforce that framework-level cron jobs are editable only by Super Admin (or
+   explicit delegated approval).
+2. Allow users and their tenant agents to manage tenant-owned cron jobs with
+   owner/scope checks.
+3. Attach scheduler lineage (`schedule_id`, `schedule_run_id`) to MCID for
+   audit-grade handoff/log continuity.
+4. Standardize terminal context reminder loops through dedicated categories:
+   `system_terminal_awareness` and `tenant_terminal_awareness`.
+
 ## Reference Packet Fragments
 
 Workstream signal fragment:
@@ -114,6 +132,9 @@ Required gate chain per federated hop:
 If any gate fails, packet must be quarantined and escalated instead of silently
 falling through to execution.
 
+Cron-specific federation bridge:
+`docs/protocols/bridges/tnf-cron-federation-gates.yml`
+
 ## Master Cumulative ID Protocol (MCID)
 
 Schema: `docs/protocols/schemas/tnf-master-cumulative-id.schema.json`
@@ -142,6 +163,7 @@ Purpose:
 3. Integration priority:
    - enforce MCID at assignment publish + handoff ack boundaries.
    - mirror gate decisions into execution audit trail views.
+   - enforce cron mutation RBAC/category gates before scheduler writes.
 
 Detailed assessment: `docs/protocols/twip-federation-state-2026-03-18.md`
 
@@ -159,3 +181,5 @@ without hardcoding TWIP internals.
 3. Enforce policy gates in assignment/handoff path.
 4. Emit audit trail records for every signal-consumed assignment decision.
 5. Keep default behavior read-only and tenant-scoped.
+6. Route all cron mutations through cron governance schema + gate checks before
+   scheduler writes.

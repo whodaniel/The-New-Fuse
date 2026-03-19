@@ -29,7 +29,7 @@ What it does:
 ## Usage
 
 ```bash
-node scripts/protocols/twip-macro-board.cjs --tenant tnf-local --limit 1000 --include-commands --history
+node scripts/protocols/twip-macro-board.cjs --tenant tnf-local --limit 1000 --include-commands --include-content --history
 ```
 
 Options:
@@ -37,17 +37,27 @@ Options:
 1. `--tenant` / `--tenant-id`
 2. `--limit` (max `1000`)
 3. `--include-commands` or `--no-include-commands`
-4. `--no-scan` (reuse existing snapshot)
-5. `--history` (write timestamped report copy)
-6. `--json` (machine-readable stdout)
+4. `--include-content` or `--no-include-content` (sanitized excerpt capture from
+   tmux panes or Terminal.app history fallback)
+5. `--content-lines` (default `80`, max `400`)
+6. `--content-max-chars` (default `8000`, max `24000`)
+7. `--no-scan` (reuse existing snapshot)
+8. `--history` (write timestamped report copy)
+9. `--json` (machine-readable stdout)
 
 ## Rolling Operation
 
 Recommended local cron for 5-minute cadence:
 
 ```cron
-*/5 * * * * cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse && /usr/bin/env node scripts/protocols/twip-macro-board.cjs --tenant tnf-local --limit 1000 --include-commands --history >> logs/twip-macro-board.log 2>&1
+*/5 * * * * cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse && /usr/bin/env node scripts/protocols/twip-macro-board.cjs --tenant tnf-local --limit 1000 --include-commands --include-content --content-lines 80 --content-max-chars 8000 --history >> logs/twip-macro-board.log 2>&1
 ```
+
+For networked TNF environments, route scheduler writes through cron governance:
+
+1. `docs/protocols/schemas/tnf-cron-governance.schema.json`
+2. `docs/protocols/bridges/tnf-cron-federation-gates.yml`
+3. `scripts/protocols/cron-governance-gate.cjs`
 
 ## UI Endpoints
 
@@ -59,10 +69,12 @@ Recommended local cron for 5-minute cadence:
 
 ## Safety Defaults
 
-1. Reports are sanitized to executable fingerprints, not full task payloads.
+1. Reports are sanitized to executable fingerprints and redacted terminal
+   excerpts (when enabled), not raw secret-bearing payloads.
 2. Terminal-level risk counters are explicit:
    - approval-bypass flag usage
    - remote MCP client usage
+   - excerpt redaction counts
 3. Intended as read-only orchestration telemetry, not command execution.
 
 ## Protocol Hooks

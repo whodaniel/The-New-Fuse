@@ -70,6 +70,12 @@ test("prints frontload checklist and marks required files as present", () => {
   );
   assert.match(result.stdout, /- \.agent\/workflows\/frontload\.md: present/);
   assert.match(result.stdout, /- \.agent\/handoff_notes\.txt: present/);
+  assert.match(result.stdout, /=== OpenClaw \/ Claw Operator Policy ===/);
+  assert.match(
+    result.stdout,
+    /Use TNF as the control plane for OpenClaw and other Claw-type agents/
+  );
+  assert.match(result.stdout, /tnf compat openclaw/);
 });
 
 test("skips runtime snapshot when cloud mode is required and DB URL is local", () => {

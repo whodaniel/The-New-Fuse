@@ -9,6 +9,26 @@ sessions.
 pnpm run tnf:onboard
 ```
 
+## OpenClaw / Claw Operator Policy
+
+Future TNF sessions should treat `tnf` as the operator entrypoint for OpenClaw
+and other Claw-type agents.
+
+- Prefer native TNF commands first.
+- Use implicit TNF-compatible routes when available, for example `tnf status` or
+  `tnf channels`.
+- When TNF has not yet assimilated a native route, use `tnf openclaw ...` or
+  `tnf claw ...`.
+- Avoid raw `openclaw ...` unless the task is explicitly about debugging the
+  TNF/OpenClaw bridge or the operator explicitly asks for direct OpenClaw CLI
+  usage.
+
+Audit current routing coverage with:
+
+```bash
+tnf compat openclaw
+```
+
 Cloud policy:
 
 - `tnf:onboard`, `tnf:doctor`, and `tnf:audit:synergy` are cloud-rooted by
@@ -25,6 +45,30 @@ This command prints:
 - Skills inventory
 - Specialized agent files
 - MCP config and server entrypoints
+
+## Frontload Health Checks
+
+Local verification:
+
+```bash
+pnpm run tnf:frontload:verify
+```
+
+Machine-readable status from your shell banner cache:
+
+```bash
+~/.tnf/tnf-status --json
+```
+
+This returns a compact JSON object with cache presence, task counts, cloud
+health, and stale-cache indicators.
+
+CI coverage:
+
+- `Frontload Nightly` runs fixture-based contract checks nightly.
+- The same workflow exposes an optional strict live probe job on
+  `workflow_dispatch`: set `run_live_probe=true` to run against a self-hosted
+  runner that has TNF frontload installed.
 
 ## Full Start Pipeline (recommended)
 
@@ -148,5 +192,5 @@ alias gemini-tnf='cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse && pnpm run 
 - MCP clients: point to `data/mcp_config.json` first; it has the broadest server
   set.
 - If a client supports project instructions, add:
-  `Run pnpm run tnf:onboard before task execution.`
+  `Run pnpm run tnf:onboard before task execution. Use tnf rather than raw openclaw for Claw operations.`
 - Generated per-client MCP configs are in `data/mcp.clients/`.

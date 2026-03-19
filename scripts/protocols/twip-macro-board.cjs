@@ -35,6 +35,9 @@ function parseArgs(argv) {
     tenantId: 'tnf-local',
     limit: 500,
     includeCommands: true,
+    includeContent: true,
+    contentMaxLines: 80,
+    contentMaxChars: 8000,
     scan: true,
     writeHistory: false,
     json: false,
@@ -50,6 +53,14 @@ function parseArgs(argv) {
       args.includeCommands = true;
     } else if (token === '--no-include-commands') {
       args.includeCommands = false;
+    } else if (token === '--include-content') {
+      args.includeContent = true;
+    } else if (token === '--no-include-content') {
+      args.includeContent = false;
+    } else if (token === '--content-lines') {
+      args.contentMaxLines = Number(argv[++i] || args.contentMaxLines);
+    } else if (token === '--content-max-chars') {
+      args.contentMaxChars = Number(argv[++i] || args.contentMaxChars);
     } else if (token === '--no-scan') {
       args.scan = false;
     } else if (token === '--history') {
@@ -67,8 +78,16 @@ function parseArgs(argv) {
   if (!Number.isFinite(args.limit) || args.limit <= 0) {
     throw new Error(`Invalid --limit value: ${args.limit}`);
   }
+  if (!Number.isFinite(args.contentMaxLines) || args.contentMaxLines <= 0) {
+    throw new Error(`Invalid --content-lines value: ${args.contentMaxLines}`);
+  }
+  if (!Number.isFinite(args.contentMaxChars) || args.contentMaxChars <= 0) {
+    throw new Error(`Invalid --content-max-chars value: ${args.contentMaxChars}`);
+  }
 
   args.limit = Math.min(1000, Math.floor(args.limit));
+  args.contentMaxLines = Math.min(400, Math.floor(args.contentMaxLines));
+  args.contentMaxChars = Math.min(24000, Math.floor(args.contentMaxChars));
   return args;
 }
 
@@ -83,6 +102,10 @@ function printUsage() {
       '  --limit <n>                  Max terminals to include (default: 500, max: 1000)',
       '  --include-commands           Include command fingerprints in scan (default: true)',
       '  --no-include-commands        Scan without active command fields',
+      '  --include-content            Include sanitized context excerpts from tmux panes (default: true)',
+      '  --no-include-content         Disable terminal context capture',
+      '  --content-lines <n>          Max context lines per terminal excerpt (default: 80, max: 400)',
+      '  --content-max-chars <n>      Max context chars per terminal excerpt (default: 8000, max: 24000)',
       '  --no-scan                    Reuse existing snapshot (skip relay scan)',
       '  --history                    Write timestamped history report in docs/protocols/reports',
       '  (always)                     Mirror latest state/report into apps/frontend/public/visualizations/terminals/data when present',
@@ -114,6 +137,17 @@ function normalizeExecutable(command) {
   return base.replace(/^-+/, '');
 }
 
+function buildContextPreview(excerpt) {
+  const text = String(excerpt?.text || '').trim();
+  if (!text) return '';
+  const fragments = text
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .slice(-2);
+  return fragments.join(' | ').slice(0, 220);
+}
+
 function summarizeTerminal(terminal) {
   const commandLines = Array.isArray(terminal.active_commands) ? terminal.active_commands : [];
   const executables = [...new Set(commandLines.map(normalizeExecutable).filter(Boolean))];
@@ -122,6 +156,9 @@ function summarizeTerminal(terminal) {
     String(line).includes('--dangerously-bypass-approvals-and-sandbox')
   );
   const usesRemoteMcp = commandLines.some((line) => /mcp-remote/i.test(String(line)));
+  const contextPreview = buildContextPreview(terminal?.context_excerpt);
+  const contextRedactions = Number(terminal?.context_excerpt?.redaction_count || 0);
+  const hasContext = contextPreview.length > 0;
 
   return {
     twid: terminal.twid,
@@ -133,6 +170,9 @@ function summarizeTerminal(terminal) {
     workExecutables,
     bypassApproval,
     usesRemoteMcp,
+    contextPreview,
+    contextRedactions,
+    hasContext,
   };
 }
 
@@ -156,6 +196,8 @@ function buildSummary(snapshot) {
   const safetySignals = {
     approvalsBypassTerminals: activeSessions.filter((s) => s.bypassApproval).length,
     remoteMcpTerminals: activeSessions.filter((s) => s.usesRemoteMcp).length,
+    contextCapturedTerminals: activeSessions.filter((s) => s.hasContext).length,
+    contextRedactions: activeSessions.reduce((acc, session) => acc + session.contextRedactions, 0),
   };
 
   return {
@@ -219,6 +261,7 @@ function renderReport(state, delta, args) {
   lines.push(`Tenant: \`${args.tenantId}\``);
   lines.push(`Source: \`${scanMeta.source || 'unknown'}\``);
   lines.push(`Snapshot: \`data/protocols/twip-inventory.snapshot.json\``);
+  lines.push(`Context capture: \`${args.includeContent ? 'enabled' : 'disabled'}\``);
   lines.push('');
   lines.push('## Current Macro View');
   lines.push('');
@@ -236,11 +279,18 @@ function renderReport(state, delta, args) {
   lines.push(
     `- Terminals using remote MCP clients: ${state.summary.safetySignals.remoteMcpTerminals}`
   );
+  lines.push(
+    `- Terminals with captured context: ${state.summary.safetySignals.contextCapturedTerminals}`
+  );
+  lines.push(`- Total redactions applied: ${state.summary.safetySignals.contextRedactions}`);
   lines.push('');
   lines.push('## Active Sessions (Sanitized)');
   lines.push('');
   for (const session of state.summary.activeSessions) {
-    lines.push(`- \`${session.tty}\` -> ${session.workExecutables.join(', ')}`);
+    const executables =
+      session.workExecutables.length > 0 ? session.workExecutables.join(', ') : 'none';
+    const contextLine = session.contextPreview ? ` | ctx: ${session.contextPreview}` : '';
+    lines.push(`- \`${session.tty}\` -> ${executables}${contextLine}`);
   }
   if (state.summary.activeSessions.length === 0) {
     lines.push('- none');
@@ -269,6 +319,9 @@ async function runScan(args) {
     tenant_id: args.tenantId,
     limit: args.limit,
     include_commands: args.includeCommands,
+    include_content: args.includeContent,
+    content_max_lines: args.contentMaxLines,
+    content_max_chars: args.contentMaxChars,
     publish_to_store: true,
   });
 }

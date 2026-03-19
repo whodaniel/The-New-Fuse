@@ -69,12 +69,47 @@ export interface ProcessRunHistoryEntry {
   outputPreview: string | null;
 }
 
+interface OpenClawIntegrationScheduleEntry {
+  scheduleId: string;
+  installationCount?: number;
+  instanceCount?: number;
+  jobCount: number;
+  duplicateCount: number;
+  enabledJobs: number;
+  disabledJobs: number;
+  anyEnabled: boolean;
+  worstStatus: string | null;
+  maxConsecutiveErrors: number;
+  nextRunAtMs: number | null;
+  liveJobs: Array<Record<string, unknown>>;
+  instances?: Array<Record<string, unknown>>;
+}
+
+interface OpenClawIntegrationSnapshot {
+  updatedAt?: string;
+  syncedBy?: string;
+  summary?: {
+    installationCount?: number;
+    instanceCount?: number;
+    totalJobs?: number;
+    enabledJobs?: number;
+    disabledJobs?: number;
+  };
+  installations?: Record<string, Record<string, unknown>>;
+  instances?: Record<string, Record<string, unknown>>;
+  mappedSchedules?: Record<string, OpenClawIntegrationScheduleEntry>;
+}
+
 interface ControlPlaneStateFile {
   spec: string;
   updated_at: string;
   overrides: Record<string, ProcessOverrideEntry>;
   runtime: Record<string, ProcessRuntimeEntry>;
   history: Record<string, ProcessRunHistoryEntry[]>;
+  integrations: {
+    openclaw?: OpenClawIntegrationSnapshot;
+    [key: string]: unknown;
+  };
 }
 
 interface ProcessCatalogEntry {
@@ -91,6 +126,12 @@ interface ProcessCatalogEntry {
     protocol?: string;
     runbook?: string;
   };
+}
+
+interface ProcessCatalogFile {
+  spec?: string;
+  generated_at?: string;
+  entries?: Record<string, ProcessCatalogEntry>;
 }
 
 interface ProcessActorContext {
@@ -174,6 +215,70 @@ const DEFAULT_PROCESS_CATALOG: Record<string, ProcessCatalogEntry> = {
       protocol: 'docs/protocols/tnf-cron-governance-protocol-v0.1.md',
     },
   },
+  'tenant-personal-archaeology-master-loop': {
+    title: 'Personal Archaeology Master Loop',
+    cadence: '*/30 * * * *',
+    timezone: 'UTC',
+    description:
+      'Master Orchestrator supervision loop for the personal archaeology fleet, team health, and blocker counts.',
+    runNow: {
+      command: 'node',
+      args: ['scripts/timeline/personal-archaeology-orchestrator.mjs', 'master-loop'],
+      timeoutMs: 30000,
+    },
+    docs: {
+      protocol: 'docs/protocols/bridges/tnf-personal-archaeology-orchestration.yml',
+      runbook: 'docs/operations/tnf-personal-archaeology-runbook.md',
+    },
+  },
+  'tenant-personal-archaeology-investigator-pulse': {
+    title: 'Personal Archaeology Investigator Pulse',
+    cadence: '15 */2 * * *',
+    timezone: 'UTC',
+    description:
+      'Periodic heartbeat refresh for archaeology investigators and sentinels based on findings-state continuity.',
+    runNow: {
+      command: 'node',
+      args: ['scripts/timeline/personal-archaeology-orchestrator.mjs', 'investigator-pulse'],
+      timeoutMs: 30000,
+    },
+    docs: {
+      protocol: 'docs/protocols/bridges/tnf-personal-archaeology-orchestration.yml',
+      runbook: 'docs/operations/tnf-personal-archaeology-runbook.md',
+    },
+  },
+  'tenant-personal-archaeology-digest': {
+    title: 'Personal Archaeology Digest',
+    cadence: '0 */12 * * *',
+    timezone: 'UTC',
+    description:
+      'Narrative reconstruction digest summarizing current findings, progress, and pending human actions.',
+    runNow: {
+      command: 'node',
+      args: ['scripts/timeline/personal-archaeology-orchestrator.mjs', 'digest'],
+      timeoutMs: 30000,
+    },
+    docs: {
+      protocol: 'docs/protocols/bridges/tnf-personal-archaeology-orchestration.yml',
+      runbook: 'docs/operations/tnf-personal-archaeology-runbook.md',
+    },
+  },
+  'tenant-personal-archaeology-blocker-watch': {
+    title: 'Personal Archaeology Blocker Watch',
+    cadence: '*/15 * * * *',
+    timezone: 'UTC',
+    description:
+      'Human-escalation sentinel that monitors blocked archaeology work and relays pending actions through TNF channels.',
+    runNow: {
+      command: 'node',
+      args: ['scripts/timeline/personal-archaeology-orchestrator.mjs', 'blocker-watch'],
+      timeoutMs: 30000,
+    },
+    docs: {
+      protocol: 'docs/protocols/bridges/tnf-personal-archaeology-orchestration.yml',
+      runbook: 'docs/operations/tnf-personal-archaeology-runbook.md',
+    },
+  },
 };
 
 @Injectable()
@@ -192,11 +297,18 @@ export class ChronologicalProcessesService {
     'protocols',
     'cron-jobs.control-plane-state.json'
   );
+  private readonly catalogPath = path.join(
+    this.repoRoot,
+    'data',
+    'protocols',
+    'chronological-process-catalog.json'
+  );
   private readonly dtfCache = new Map<string, Intl.DateTimeFormat>();
 
   async listProcesses() {
     const registry = await this.readRegistry();
     const state = await this.readState();
+    const catalogEntries = await this.readCatalogEntries();
     const categories = new Map(
       (registry.categories || []).map((category) => [category.category, category])
     );
@@ -216,7 +328,7 @@ export class ChronologicalProcessesService {
 
     const jobs = [...registryJobs, ...syntheticJobs];
     const processes = jobs.map((job) =>
-      this.buildProcess(job, categories.get(job.category), state)
+      this.buildProcess(job, categories.get(job.category), state, catalogEntries)
     );
 
     const summary = {
@@ -226,6 +338,7 @@ export class ChronologicalProcessesService {
       locked: processes.filter((process) => process.canonical.locked).length,
       healthy: processes.filter((process) => process.runtime.status === 'healthy').length,
       errored: processes.filter((process) => process.runtime.status === 'error').length,
+      externalRuntimes: this.buildExternalRuntimeSummary(state),
     };
 
     return {
@@ -418,10 +531,10 @@ export class ChronologicalProcessesService {
   private buildProcess(
     job: RegistryJob,
     category: RegistryCategory | undefined,
-    state: ControlPlaneStateFile
+    state: ControlPlaneStateFile,
+    catalogEntries: Record<string, ProcessCatalogEntry>
   ) {
-    const catalog =
-      DEFAULT_PROCESS_CATALOG[job.schedule_id] || this.buildFallbackCatalog(job.schedule_id);
+    const catalog = catalogEntries[job.schedule_id] || this.buildFallbackCatalog(job.schedule_id);
     const override = state.overrides[job.schedule_id] || {};
     const runtime = state.runtime[job.schedule_id] || {};
     const recentRuns = (state.history[job.schedule_id] || []).slice(0, 5);
@@ -436,6 +549,7 @@ export class ChronologicalProcessesService {
           timeoutMs: catalog.runNow.timeoutMs,
         }
       : null;
+    const openClaw = state.integrations?.openclaw?.mappedSchedules?.[job.schedule_id] || null;
 
     const status: ProcessStatus =
       runtime.status ||
@@ -499,8 +613,38 @@ export class ChronologicalProcessesService {
         protocol: catalog.docs?.protocol || null,
         runbook: catalog.docs?.runbook || null,
       },
+      integrations: {
+        openclaw: openClaw
+          ? {
+              updatedAt: state.integrations?.openclaw?.updatedAt || null,
+              syncedBy: state.integrations?.openclaw?.syncedBy || null,
+              installationCount: state.integrations?.openclaw?.summary?.installationCount || 0,
+              totalInstanceCount: state.integrations?.openclaw?.summary?.instanceCount || 0,
+              ...openClaw,
+            }
+          : null,
+      },
       updatedAt: override.updated_at || state.updated_at,
       updatedBy: override.updated_by || 'system',
+    };
+  }
+
+  private buildExternalRuntimeSummary(state: ControlPlaneStateFile) {
+    const openClaw = state.integrations?.openclaw;
+    if (!openClaw) return null;
+
+    const mappedSchedules = Object.values(openClaw.mappedSchedules || {});
+    return {
+      openclaw: {
+        updatedAt: openClaw.updatedAt || null,
+        syncedBy: openClaw.syncedBy || null,
+        installationCount: openClaw.summary?.installationCount || 0,
+        instanceCount: openClaw.summary?.instanceCount || 0,
+        totalJobs: openClaw.summary?.totalJobs || 0,
+        trackedSchedules: mappedSchedules.length,
+        duplicatedSchedules: mappedSchedules.filter((entry) => entry.duplicateCount > 0).length,
+        failingSchedules: mappedSchedules.filter((entry) => entry.worstStatus === 'error').length,
+      },
     };
   }
 
@@ -575,6 +719,19 @@ export class ChronologicalProcessesService {
     }
   }
 
+  private async readCatalogEntries(): Promise<Record<string, ProcessCatalogEntry>> {
+    try {
+      const raw = await fsPromises.readFile(this.catalogPath, 'utf8');
+      const parsed = JSON.parse(raw) as ProcessCatalogFile;
+      return {
+        ...DEFAULT_PROCESS_CATALOG,
+        ...(parsed.entries || {}),
+      };
+    } catch {
+      return { ...DEFAULT_PROCESS_CATALOG };
+    }
+  }
+
   private async readState(): Promise<ControlPlaneStateFile> {
     try {
       const raw = await fsPromises.readFile(this.statePath, 'utf8');
@@ -585,6 +742,8 @@ export class ChronologicalProcessesService {
         overrides: parsed.overrides || {},
         runtime: parsed.runtime || {},
         history: parsed.history || {},
+        integrations:
+          parsed.integrations && typeof parsed.integrations === 'object' ? parsed.integrations : {},
       };
     } catch {
       return {
@@ -593,6 +752,7 @@ export class ChronologicalProcessesService {
         overrides: {},
         runtime: {},
         history: {},
+        integrations: {},
       };
     }
   }

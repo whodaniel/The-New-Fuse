@@ -9,6 +9,12 @@ integrators
 Allow agents to safely update their own `SOUL.md` and other explicitly owned
 docs without weakening tenant isolation, gate governance, or auditability.
 
+Baseline personal-doc classes supported in owner registries include:
+
+1. identity docs (`SOUL.md`, `IDENTITY.md`, `USER.md`, `HEARTBEAT.md`)
+2. agent-local memory/workspace paths (`.agent/**`, `.memory/**`,
+   `memory-bank/**`)
+
 ## Core Contract
 
 Schema:

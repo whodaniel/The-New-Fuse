@@ -61,11 +61,14 @@ pathways, and architecture visibility stay synchronized over time.
 5. Update skill/reference docs when recurring new failure pattern appears.
 6. Commit with explicit evidence references.
 
-## Master Clock Sync (Next Phase)
+## Master Clock Sync
 
-Planned next step is wiring this same loop into TNF master clock cron
-orchestration so cadence, escalation, and ticketing are managed by TNF protocols
-instead of only GitHub schedule.
+Master clock cron governance is now protocolized with:
+
+1. `docs/protocols/schemas/tnf-cron-governance.schema.json`
+2. `docs/protocols/bridges/tnf-cron-federation-gates.yml`
+3. `data/protocols/cron-jobs.registry.json`
+4. `scripts/protocols/cron-governance-gate.cjs`
 
 ## Self-Prompt and Self-Edit Safety
 
@@ -76,3 +79,5 @@ instead of only GitHub schedule.
    - `docs/protocols/bridges/agent-self-edit-federation-gates.yml`
 3. Ownership/path gate checks run via:
    - `node scripts/protocols/agent-self-edit-gate.cjs --request <request.json>`
+4. Cron ownership/scope gate checks run via:
+   - `node scripts/protocols/cron-governance-gate.cjs --request <request.json>`

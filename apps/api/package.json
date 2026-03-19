@@ -74,6 +74,7 @@
     "yargs": "^18.0.0"
   },
   "scripts": {
+    "prebuild": "pnpm --filter @the-new-fuse/database build",
     "build": "tsc --skipLibCheck --noEmitOnError false || echo 'Build completed with warnings'",
     "build:watch": "tsc --watch --skipLibCheck --noEmitOnError false",
     "migrate:deploy": "SERVICE_PATH=api sh ./run-service.sh",

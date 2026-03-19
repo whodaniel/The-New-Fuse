@@ -1,0 +1,33 @@
+{
+  "spec": "tnf/openclaw-installations-registry/0.1",
+  "generated_at": "2026-03-19T22:30:00.000Z",
+  "installations": {
+    "local-openclaw-cli": {
+      "label": "Local OpenClaw CLI",
+      "transport": "local_filesystem",
+      "binaryPath": "openclaw",
+      "host": "localhost",
+      "discovery": {
+        "includeHomeProfiles": true
+      },
+      "instances": {
+        "main": {
+          "label": "Main",
+          "profile": "main",
+          "stateDir": "~/.openclaw",
+          "default": true
+        },
+        "dev": {
+          "label": "Dev",
+          "profile": "dev",
+          "stateDir": "~/.openclaw-dev"
+        },
+        "sandbox": {
+          "label": "Sandbox",
+          "profile": "sandbox",
+          "stateDir": "~/.openclaw-sandbox"
+        }
+      }
+    }
+  }
+}

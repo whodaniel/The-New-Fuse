@@ -30,8 +30,6 @@ flow:
 
 ### Out of scope
 
-- Full migration framework rollout for interaction tables across all
-  environments.
 - Broad UI redesign beyond search/trait metadata and interaction correctness.
 - Re-architecture of marketplace catalog data source.
 
@@ -56,16 +54,18 @@ flow:
 3. Favorite/share full implementation
 
 - Add a resources interaction service with DB-backed persistence.
-- Implement table bootstrap (`CREATE TABLE IF NOT EXISTS`) with idempotent
-  guards.
+- Add typed Drizzle schema for interaction tables and migration-managed DDL.
 - Implement real toggle favorite and share insert behavior.
 - Require authenticated identity for interaction endpoints.
 - Return meaningful endpoint payloads (`favorite` state, share record).
 - Update controller tests and frontend integration calls.
+- Add resource page share-action UX wiring to collect `toAgentId` and optional
+  notes before calling backend.
 
 4. Documentation and validation
 
 - Update docs to reflect behavior and contracts.
+- Add build-order guard so API isolated builds refresh database schema exports.
 - Run targeted lint/tests and API build.
 - Record validation results in final handoff.
 
@@ -80,6 +80,7 @@ flow:
 
 ## Validation Results
 
+- Database package build: `pnpm --filter @the-new-fuse/database build` passed.
 - API build: `pnpm --filter @the-new-fuse/api-server build` passed.
 - API resources tests passed:
   - `resources.controller.spec.ts`
@@ -88,3 +89,11 @@ flow:
   - `resource-interaction.service.spec.ts`
 - Frontend resources service tests passed:
   - `pnpm --filter @the-new-fuse/frontend-app exec vitest run src/services/resources.service.spec.ts`
+
+## Persistence Artifacts
+
+- New schema: `packages/database/src/drizzle/schema/resource-interactions.ts`
+- Schema export: `packages/database/src/drizzle/schema/index.ts`
+- Migration: `packages/database/drizzle/0008_add_resource_interactions.sql`
+- Migration journal entry: `packages/database/drizzle/meta/_journal.json`
+- API build guard: `apps/api/package.json` (`prebuild` -> database build)

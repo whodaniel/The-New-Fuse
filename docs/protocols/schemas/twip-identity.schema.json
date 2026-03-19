@@ -120,6 +120,31 @@
     "labels": {
       "type": "array",
       "items": { "type": "string" }
+    },
+    "context_excerpt": {
+      "type": "object",
+      "required": [
+        "source",
+        "captured_at",
+        "line_count",
+        "char_count",
+        "redaction_count",
+        "truncated",
+        "text"
+      ],
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": ["tmux-capture-pane", "terminal-history"]
+        },
+        "captured_at": { "type": "string", "format": "date-time" },
+        "line_count": { "type": "integer", "minimum": 0 },
+        "char_count": { "type": "integer", "minimum": 0 },
+        "redaction_count": { "type": "integer", "minimum": 0 },
+        "truncated": { "type": "boolean" },
+        "text": { "type": "string" }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false

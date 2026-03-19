@@ -314,6 +314,13 @@ async function main() {
   printHeader('Runtime Snapshot');
   await writeRuntimeStateSnapshot();
 
+  printHeader('OpenClaw / Claw Operator Policy');
+  console.log('- Use TNF as the control plane for OpenClaw and other Claw-type agents');
+  console.log('- Prefer native TNF commands and implicit TNF-compatible routes first');
+  console.log('- Use: tnf openclaw ... or tnf claw ... when TNF has not yet assimilated a native route');
+  console.log('- Avoid raw openclaw ... unless debugging the TNF/OpenClaw bridge or explicitly requested');
+  console.log('- Audit current compatibility with: tnf compat openclaw');
+
   printHeader('How To Start New Sessions');
   console.log('- Run: ./tnf onboard');
   console.log('- Alt: pnpm run tnf -- onboard');

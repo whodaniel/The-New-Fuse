@@ -1,0 +1,226 @@
+{
+  "spec": "tnf/cron-jobs-registry/0.1",
+  "generated_at": "2026-03-18T00:00:00Z",
+  "policies": {
+    "system_scope_edit_roles": ["SUPER_ADMIN"],
+    "delegated_system_scope_requires_approval": true,
+    "tenant_scope_edit_roles": ["USER", "ADMIN", "SUPER_ADMIN"],
+    "tenant_scope_requires_owner_match": true
+  },
+  "categories": [
+    {
+      "category": "system_framework",
+      "scope": "system_framework",
+      "description": "Core platform safety and framework-level recurring jobs.",
+      "requires_approval": true
+    },
+    {
+      "category": "orchestration_gate",
+      "scope": "system_framework",
+      "description": "Network-wide orchestration gate checks and enforcement loops.",
+      "requires_approval": true
+    },
+    {
+      "category": "federation_sync",
+      "scope": "system_framework",
+      "description": "Federation channel synchronization and MCID continuity checks.",
+      "requires_approval": true
+    },
+    {
+      "category": "self_improvement_core",
+      "scope": "system_framework",
+      "description": "Global self-improvement loops managed by platform governance.",
+      "requires_approval": true
+    },
+    {
+      "category": "observability",
+      "scope": "system_framework",
+      "description": "Read-only telemetry and health scan loops.",
+      "requires_approval": false
+    },
+    {
+      "category": "system_terminal_awareness",
+      "scope": "system_framework",
+      "description": "System-level reminders and scans that keep Director context aligned with active terminals.",
+      "requires_approval": false
+    },
+    {
+      "category": "tenant_automation",
+      "scope": "tenant",
+      "description": "Tenant-owned recurring automation jobs.",
+      "requires_approval": false
+    },
+    {
+      "category": "tenant_agent_loop",
+      "scope": "tenant",
+      "description": "Tenant-level agent reminder and follow-up loops.",
+      "requires_approval": false
+    },
+    {
+      "category": "tenant_experiment",
+      "scope": "tenant",
+      "description": "Tenant experimentation schedules with bounded blast radius.",
+      "requires_approval": false
+    },
+    {
+      "category": "tenant_terminal_awareness",
+      "scope": "tenant",
+      "description": "Tenant-level terminal context reminders for user and tenant-agent workflows.",
+      "requires_approval": false
+    }
+  ],
+  "jobs": [
+    {
+      "schedule_id": "tnf-master-clock-super-cycle",
+      "scope": "system_framework",
+      "category": "orchestration_gate",
+      "owner_agent_id": "master-clock",
+      "owner_user_id": "super-admin",
+      "locked": true
+    },
+    {
+      "schedule_id": "tnf-self-improvement-scorecard",
+      "scope": "system_framework",
+      "category": "self_improvement_core",
+      "owner_agent_id": "tnf-stack-self-improvement-loop",
+      "owner_user_id": "super-admin",
+      "locked": true
+    },
+    {
+      "schedule_id": "tnf-twip-macro-board-refresh",
+      "scope": "system_framework",
+      "category": "observability",
+      "owner_agent_id": "twip-orchestration-bridge",
+      "owner_user_id": "super-admin",
+      "locked": false
+    },
+    {
+      "schedule_id": "tnf-terminal-awareness-reminder",
+      "scope": "system_framework",
+      "category": "system_terminal_awareness",
+      "owner_agent_id": "tnf-agent-director",
+      "owner_user_id": "super-admin",
+      "locked": false
+    },
+    {
+      "schedule_id": "tenant-terminal-awareness-default",
+      "scope": "tenant",
+      "category": "tenant_terminal_awareness",
+      "owner_agent_id": "tenant-agent-default",
+      "owner_user_id": "tenant-admin",
+      "locked": false
+    },
+    {
+      "schedule_id": "tenant-personal-archaeology-master-loop",
+      "scope": "tenant",
+      "category": "tenant_agent_loop",
+      "owner_agent_id": "personal-archaeology-master-orchestrator",
+      "owner_user_id": "tenant-admin",
+      "locked": false
+    },
+    {
+      "schedule_id": "tenant-personal-archaeology-investigator-pulse",
+      "scope": "tenant",
+      "category": "tenant_agent_loop",
+      "owner_agent_id": "personal-archaeology-source-team-orchestrator",
+      "owner_user_id": "tenant-admin",
+      "locked": false
+    },
+    {
+      "schedule_id": "tenant-personal-archaeology-digest",
+      "scope": "tenant",
+      "category": "tenant_automation",
+      "owner_agent_id": "personal-archaeology-narrative-team-orchestrator",
+      "owner_user_id": "tenant-admin",
+      "locked": false
+    },
+    {
+      "schedule_id": "tenant-personal-archaeology-blocker-watch",
+      "scope": "tenant",
+      "category": "tenant_agent_loop",
+      "owner_agent_id": "auth-blocker-sentinel",
+      "owner_user_id": "tenant-admin",
+      "locked": false
+    },
+    {
+      "schedule_id": "tenant-daily-priority-plan",
+      "scope": "tenant",
+      "category": "tenant_automation",
+      "owner_agent_id": "tnf-agent-director",
+      "owner_user_id": "tenant-admin",
+      "locked": false
+    },
+    {
+      "schedule_id": "tenant-nightly-maintenance",
+      "scope": "tenant",
+      "category": "tenant_automation",
+      "owner_agent_id": "tnf-agent-director",
+      "owner_user_id": "tenant-admin",
+      "locked": false
+    },
+    {
+      "schedule_id": "tenant-orchestrator-pulse",
+      "scope": "tenant",
+      "category": "tenant_agent_loop",
+      "owner_agent_id": "tnf-agent-director",
+      "owner_user_id": "tenant-admin",
+      "locked": false
+    },
+    {
+      "schedule_id": "tenant-self-improvement-loop",
+      "scope": "tenant",
+      "category": "tenant_agent_loop",
+      "owner_agent_id": "tnf-stack-self-improvement-loop",
+      "owner_user_id": "tenant-admin",
+      "locked": false
+    },
+    {
+      "schedule_id": "tenant-continuous-qa-loop",
+      "scope": "tenant",
+      "category": "tenant_automation",
+      "owner_agent_id": "qa-swarm-supervisor",
+      "owner_user_id": "tenant-admin",
+      "locked": false
+    },
+    {
+      "schedule_id": "tenant-hourly-attribution-audit",
+      "scope": "tenant",
+      "category": "tenant_automation",
+      "owner_agent_id": "analytics-and-reporting-agent",
+      "owner_user_id": "tenant-admin",
+      "locked": false
+    },
+    {
+      "schedule_id": "tenant-knowledge-scout-sprint",
+      "scope": "tenant",
+      "category": "tenant_automation",
+      "owner_agent_id": "information-retrieval-agent",
+      "owner_user_id": "tenant-admin",
+      "locked": false
+    },
+    {
+      "schedule_id": "tenant-loop-watchdog",
+      "scope": "tenant",
+      "category": "tenant_agent_loop",
+      "owner_agent_id": "auth-blocker-sentinel",
+      "owner_user_id": "tenant-admin",
+      "locked": false
+    },
+    {
+      "schedule_id": "tenant-launch-validation",
+      "scope": "tenant",
+      "category": "tenant_experiment",
+      "owner_agent_id": "tnf-agent-director",
+      "owner_user_id": "tenant-admin",
+      "locked": false
+    },
+    {
+      "schedule_id": "tnf-openclaw-runtime-sync",
+      "scope": "system_framework",
+      "category": "observability",
+      "owner_agent_id": "master-clock",
+      "owner_user_id": "super-admin",
+      "locked": false
+    }
+  ]
+}

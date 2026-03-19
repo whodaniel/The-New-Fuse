@@ -13,7 +13,7 @@ import {
   ListToolsRequestSchema,
   ReadResourceRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
-import { execSync, spawn } from 'child_process';
+import { execSync, spawn, spawnSync } from 'child_process';
 import crypto from 'crypto';
 import fs from 'fs/promises';
 import fetch from 'node-fetch';
@@ -316,6 +316,24 @@ class TNFRelayMCPServer {
                   description:
                     'Include active process command samples (disabled by default for safety)',
                   default: false,
+                },
+                include_content: {
+                  type: 'boolean',
+                  description:
+                    'Include sanitized recent terminal content excerpts when available (tmux panes with Terminal.app history fallback on macOS)',
+                  default: false,
+                },
+                content_max_lines: {
+                  type: 'number',
+                  description:
+                    'Maximum number of recent lines captured per terminal when include_content=true',
+                  default: 80,
+                },
+                content_max_chars: {
+                  type: 'number',
+                  description:
+                    'Maximum captured characters per terminal excerpt when include_content=true',
+                  default: 8000,
                 },
                 publish_to_store: {
                   type: 'boolean',
@@ -1725,6 +1743,234 @@ class TNFRelayMCPServer {
     return map;
   }
 
+  getMacTerminalHistoryMap(maxChars = 24000) {
+    const map = new Map();
+    if (process.platform !== 'darwin') {
+      return map;
+    }
+
+    const boundedChars = Math.max(512, Math.min(24000, Number(maxChars || 24000)));
+    const script = [
+      'set rowSeparator to "<<<ROW>>>"',
+      'set fieldSeparator to "<<<FIELD>>>"',
+      `set maxChars to ${boundedChars}`,
+      'set recordsOut to ""',
+      'tell application "Terminal"',
+      'repeat with w in windows',
+      'repeat with t in tabs of w',
+      'set ttyValue to ""',
+      'set historyValue to ""',
+      'try',
+      'set ttyValue to (tty of t) as text',
+      'end try',
+      'if ttyValue is not "" then',
+      'try',
+      'set historyValue to (history of t) as text',
+      'if (length of historyValue) > maxChars then',
+      'set startOffset to (length of historyValue) - maxChars + 1',
+      'set historyValue to text startOffset thru -1 of historyValue',
+      'end if',
+      'end try',
+      'set recordsOut to recordsOut & ttyValue & fieldSeparator & historyValue & rowSeparator',
+      'end if',
+      'end repeat',
+      'end repeat',
+      'end tell',
+      'return recordsOut',
+    ];
+
+    try {
+      const result = spawnSync('osascript', script.flatMap((line) => ['-e', line]), {
+        encoding: 'utf8',
+        maxBuffer: 32 * 1024 * 1024,
+      });
+
+      if (result.status !== 0) {
+        return map;
+      }
+
+      const output = String(result.stdout || '');
+      for (const row of output.split('<<<ROW>>>')) {
+        const trimmed = row.trim();
+        if (!trimmed) continue;
+        const divider = trimmed.indexOf('<<<FIELD>>>');
+        if (divider < 0) continue;
+        const rawTty = trimmed.slice(0, divider).trim();
+        const rawHistory = trimmed.slice(divider + '<<<FIELD>>>'.length);
+        const tty = this.normalizeTty(rawTty);
+        if (!tty) continue;
+        map.set(tty, rawHistory);
+      }
+    } catch (_error) {
+      // osascript unavailable or blocked by permissions
+    }
+
+    return map;
+  }
+
+  stripAnsiControlSequences(value) {
+    return String(value || '')
+      .replace(/\u001b\[[0-9;?]*[A-Za-z]/g, '')
+      .replace(/\u001b\][^\u0007]*(?:\u0007|\u001b\\)/g, '')
+      .replace(/\u0000/g, '');
+  }
+
+  redactTerminalContext(value) {
+    let text = this.stripAnsiControlSequences(value).replace(/\r/g, '');
+    let redactionCount = 0;
+
+    const rules = [
+      {
+        pattern: /\b(Authorization:\s*Bearer\s+)([^\s]+)/gi,
+        replacement: (_match, prefix) => {
+          redactionCount += 1;
+          return `${prefix}[REDACTED]`;
+        },
+      },
+      {
+        pattern:
+          /\b([A-Z0-9_]*(?:TOKEN|SECRET|PASSWORD|PASS|API[_-]?KEY|AUTH(?:ORIZATION)?)\s*=\s*)([^\s"'`]+)/gi,
+        replacement: (_match, prefix) => {
+          redactionCount += 1;
+          return `${prefix}[REDACTED]`;
+        },
+      },
+      {
+        pattern: /\b(sk-[A-Za-z0-9]{16,})\b/g,
+        replacement: () => {
+          redactionCount += 1;
+          return '[REDACTED_OPENAI_KEY]';
+        },
+      },
+      {
+        pattern: /\b(ghp_[A-Za-z0-9]{20,})\b/g,
+        replacement: () => {
+          redactionCount += 1;
+          return '[REDACTED_GITHUB_TOKEN]';
+        },
+      },
+      {
+        pattern: /\b(AKIA[0-9A-Z]{16})\b/g,
+        replacement: () => {
+          redactionCount += 1;
+          return '[REDACTED_AWS_KEY]';
+        },
+      },
+      {
+        pattern: /\b(Bearer\s+)([A-Za-z0-9._-]{12,})\b/g,
+        replacement: (_match, prefix) => {
+          redactionCount += 1;
+          return `${prefix}[REDACTED]`;
+        },
+      },
+    ];
+
+    for (const rule of rules) {
+      text = text.replace(rule.pattern, rule.replacement);
+    }
+
+    return {
+      text: text.trimEnd(),
+      redactionCount,
+    };
+  }
+
+  buildContextExcerptFromRaw({ source, rawText, observedAt, contentMaxLines, contentMaxChars }) {
+    const maxLines = Math.max(10, Math.min(400, Number(contentMaxLines || 80)));
+    const maxChars = Math.max(512, Math.min(24000, Number(contentMaxChars || 8000)));
+    const redacted = this.redactTerminalContext(rawText);
+    if (!redacted.text) {
+      return null;
+    }
+
+    let lines = redacted.text
+      .split('\n')
+      .map((line) => line.trimEnd())
+      .filter((line) => line.length > 0);
+    let truncated = false;
+
+    if (lines.length > maxLines) {
+      lines = lines.slice(-maxLines);
+      truncated = true;
+    }
+
+    let text = lines.join('\n');
+    if (text.length > maxChars) {
+      text = text.slice(text.length - maxChars);
+      truncated = true;
+    }
+
+    return {
+      source,
+      captured_at: observedAt,
+      line_count: lines.length,
+      char_count: text.length,
+      redaction_count: redacted.redactionCount,
+      truncated,
+      text,
+    };
+  }
+
+  captureTerminalContext({
+    tmuxInfo,
+    tty,
+    terminalHistoryMap,
+    observedAt,
+    contentMaxLines,
+    contentMaxChars,
+  }) {
+    if (!tmuxInfo || tmuxInfo.kind !== 'tmux' || !tmuxInfo.pane_id) {
+      const fallbackRaw = terminalHistoryMap?.get(tty) || '';
+      if (!fallbackRaw) {
+        return null;
+      }
+      return this.buildContextExcerptFromRaw({
+        source: 'terminal-history',
+        rawText: fallbackRaw,
+        observedAt,
+        contentMaxLines,
+        contentMaxChars,
+      });
+    }
+
+    const paneId = String(tmuxInfo.pane_id || '').trim();
+    if (/^%?\d+$/.test(paneId)) {
+      const maxLines = Math.max(10, Math.min(400, Number(contentMaxLines || 80)));
+      try {
+        const quotedPaneId = paneId.startsWith('%') ? paneId : `%${paneId}`;
+        const raw = execSync(`tmux capture-pane -p -t ${quotedPaneId} -S -${maxLines}`, {
+          encoding: 'utf8',
+          maxBuffer: 2 * 1024 * 1024,
+        });
+
+        const excerpt = this.buildContextExcerptFromRaw({
+          source: 'tmux-capture-pane',
+          rawText: raw,
+          observedAt,
+          contentMaxLines,
+          contentMaxChars,
+        });
+        if (excerpt) {
+          return excerpt;
+        }
+      } catch (_error) {
+        // fall through to Terminal.app history fallback
+      }
+    }
+
+    const fallbackRaw = terminalHistoryMap?.get(tty) || '';
+    if (!fallbackRaw) {
+      return null;
+    }
+    return this.buildContextExcerptFromRaw({
+      source: 'terminal-history',
+      rawText: fallbackRaw,
+      observedAt,
+      contentMaxLines,
+      contentMaxChars,
+    });
+  }
+
   buildTerminalIdentity({
     tenantId,
     hostId,
@@ -1732,6 +1978,10 @@ class TNFRelayMCPServer {
     processes,
     tmuxInfo,
     includeCommands,
+    includeContent,
+    contentMaxLines,
+    contentMaxChars,
+    terminalHistoryMap,
     observedAt,
   }) {
     const shellPattern = /(^|\/|\s)(zsh|bash|fish|sh|nu|pwsh|ksh)(\s|$)/i;
@@ -1815,12 +2065,29 @@ class TNFRelayMCPServer {
       identity.active_commands = commands;
     }
 
+    if (includeContent) {
+      const contextExcerpt = this.captureTerminalContext({
+        tmuxInfo,
+        tty,
+        terminalHistoryMap,
+        observedAt,
+        contentMaxLines,
+        contentMaxChars,
+      });
+      if (contextExcerpt) {
+        identity.context_excerpt = contextExcerpt;
+      }
+    }
+
     return identity;
   }
 
   async twipScanTerminals(args = {}) {
     const tenantId = args.tenant_id || 'tnf-local';
     const includeCommands = args.include_commands === true;
+    const includeContent = args.include_content === true;
+    const contentMaxLines = Math.max(10, Math.min(400, Number(args.content_max_lines || 80)));
+    const contentMaxChars = Math.max(512, Math.min(24000, Number(args.content_max_chars || 8000)));
     const publishToStore = args.publish_to_store !== false;
     const limit = Math.max(1, Math.min(1000, Number(args.limit || 200)));
     const observedAt = new Date().toISOString();
@@ -1834,6 +2101,10 @@ class TNFRelayMCPServer {
     }
 
     const tmuxMap = this.getTmuxTtyMap();
+    const terminalHistoryMap = includeContent
+      ? this.getMacTerminalHistoryMap(contentMaxChars)
+      : new Map();
+    const hasTerminalHistory = terminalHistoryMap.size > 0;
     const identities = [];
     for (const [tty, processes] of byTty.entries()) {
       const sorted = [...processes].sort((a, b) => a.pid - b.pid);
@@ -1845,6 +2116,10 @@ class TNFRelayMCPServer {
           processes: sorted,
           tmuxInfo: tmuxMap.get(tty) || null,
           includeCommands,
+          includeContent,
+          contentMaxLines,
+          contentMaxChars,
+          terminalHistoryMap,
           observedAt,
         })
       );
@@ -1857,9 +2132,20 @@ class TNFRelayMCPServer {
       lastScanAt: observedAt,
       totalTerminals: identities.length,
       returned: limited.length,
-      source: 'ps+tmux',
+      source: includeContent
+        ? hasTerminalHistory
+          ? 'ps+tmux+capture+terminal-history'
+          : 'ps+tmux+capture'
+        : 'ps+tmux',
       tenant_id: tenantId,
       include_commands: includeCommands,
+      include_content: includeContent,
+      content_max_lines: includeContent ? contentMaxLines : 0,
+      content_max_chars: includeContent ? contentMaxChars : 0,
+      terminal_history_tabs: includeContent ? terminalHistoryMap.size : 0,
+      content_excerpts_captured: includeContent
+        ? limited.filter((identity) => Boolean(identity.context_excerpt?.text)).length
+        : 0,
     };
 
     if (publishToStore) {
@@ -1882,6 +2168,9 @@ class TNFRelayMCPServer {
       total_detected: identities.length,
       total_returned: limited.length,
       published_to_store: publishToStore,
+      include_commands: includeCommands,
+      include_content: includeContent,
+      content_excerpts_captured: this.twipInventoryMeta.content_excerpts_captured,
     });
     await this.persistTwipInventorySnapshot();
 
@@ -1899,6 +2188,7 @@ class TNFRelayMCPServer {
                 pane_id: identity.scope.pane_id,
                 shell_pid: identity.process.shell_pid,
                 multiplexer: identity.multiplexer?.kind || 'none',
+                has_context_excerpt: Boolean(identity.context_excerpt?.text),
               })),
             },
             null,

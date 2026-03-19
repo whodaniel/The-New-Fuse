@@ -46,7 +46,7 @@ describe('AgentHandoffService lifecycle audit logging', () => {
     } as any;
 
     const service = new AgentHandoffService(configService, unifiedLedgerService);
-    return { service, unifiedLedgerService };
+    return { service, unifiedLedgerService, configService };
   };
 
   it('emits timeline event when publishing a handoff packet', async () => {
@@ -166,7 +166,7 @@ describe('AgentHandoffService lifecycle audit logging', () => {
   });
 
   it('rejects publish when required federation gate is missing', async () => {
-    const { service } = createService();
+    const { service, unifiedLedgerService } = createService();
     (service as any).store = {
       publish: jest.fn(),
     };
@@ -190,6 +190,16 @@ describe('AgentHandoffService lifecycle audit logging', () => {
         'tnf-prod'
       )
     ).rejects.toThrow('Missing required federation gate decision');
+
+    expect(unifiedLedgerService.createTimelineEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        payload: expect.objectContaining({
+          category: 'handoff_gate_evaluation',
+          gateCategory: 'publish_validation',
+          outcome: 'deny',
+        }),
+      })
+    );
   });
 
   it('rejects publish when gate decisions diverge from cumulative federation lineage', async () => {
@@ -239,7 +249,7 @@ describe('AgentHandoffService lifecycle audit logging', () => {
   });
 
   it('rejects ack when cumulative lineage breaks correlation continuity', async () => {
-    const { service } = createService();
+    const { service, unifiedLedgerService } = createService();
     const packetId = '1ce0e5f1-e954-4d86-bd5e-5e18df3fcd6f';
     (service as any).store = {
       getPacket: jest.fn().mockResolvedValue({
@@ -268,5 +278,93 @@ describe('AgentHandoffService lifecycle audit logging', () => {
         'tnf-prod'
       )
     ).rejects.toThrow('Ack cumulativeId.lineage.correlation_id must match');
+
+    expect(unifiedLedgerService.createTimelineEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        payload: expect.objectContaining({
+          category: 'handoff_gate_evaluation',
+          gateCategory: 'ack_validation',
+          outcome: 'deny',
+        }),
+      })
+    );
+  });
+
+  it('logs external policy denial as warn telemetry in warn mode and still publishes', async () => {
+    const { service, unifiedLedgerService, configService } = createService();
+    configService.get = jest.fn((key: string) => {
+      if (key === 'HANDOFF_KEY_PREFIX') return 'tnf:handoff:test';
+      if (key === 'TNF_GATE_POLICY_MODE') return 'warn';
+      if (key === 'TNF_GATE_POLICY_ENDPOINT') return 'https://gate.example';
+      return undefined;
+    });
+
+    const packet = {
+      id: '9ad52c8e-cd80-4fb7-be52-b47e926eeb70',
+      version: '1.1',
+      createdAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 60_000).toISOString(),
+      status: 'pending',
+      fromAgentId: 'agent-alpha',
+      targets: { agentIds: ['agent-beta'], roles: [] },
+      scope: { tenantId: 'tnf-prod' },
+      payload: {
+        title: 'Task handoff',
+        summary: 'Send context to next agent',
+        prompt: 'Handle next stage',
+        acceptanceCriteria: [],
+        nextActions: [],
+        artifacts: [],
+      },
+      cumulativeId: buildCumulativeId(),
+      gateDecisions: baseGateDecisions,
+      priority: 'normal',
+      tags: ['triage'],
+    } as any;
+
+    (service as any).store = {
+      publish: jest.fn().mockResolvedValue(packet),
+    };
+
+    const originalFetch = global.fetch;
+    (global as any).fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      json: async () => ({
+        ok: false,
+        reasons: ['missing required gate: CHANNEL_MEMBERSHIP_GATE'],
+      }),
+    } as any);
+
+    try {
+      const result = await service.publishForTenant(
+        {
+          fromAgentId: 'agent-alpha',
+          targets: { agentIds: ['agent-beta'] },
+          scope: { tenantId: 'tnf-prod' },
+          payload: {
+            title: 'Task handoff',
+            summary: 'Send context to next agent',
+            prompt: 'Handle next stage',
+          },
+          cumulativeId: buildCumulativeId(),
+          gateDecisions: baseGateDecisions,
+        },
+        'tnf-prod'
+      );
+
+      expect(result.id).toBe(packet.id);
+      expect(unifiedLedgerService.createTimelineEvent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          payload: expect.objectContaining({
+            category: 'handoff_gate_evaluation',
+            gateCategory: 'external_policy',
+            outcome: 'warn',
+            mode: 'warn',
+          }),
+        })
+      );
+    } finally {
+      (global as any).fetch = originalFetch;
+    }
   });
 });

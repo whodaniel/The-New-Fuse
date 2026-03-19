@@ -59,6 +59,10 @@ Use the same TWIP payload with thin transport wrappers:
    `docs/protocols/schemas/tnf-agent-self-edit.schema.json` Gate bridge:
    `docs/protocols/bridges/agent-self-edit-federation-gates.yml`
 
+7. Cron Governance Profile Carry scoped cron mutation packets:
+   `docs/protocols/schemas/tnf-cron-governance.schema.json` Gate bridge:
+   `docs/protocols/bridges/tnf-cron-federation-gates.yml`
+
 ## 4) Translation Rules
 
 When moving between runtimes:
@@ -80,6 +84,8 @@ ID normalization rules (must be deterministic):
 7. `handoff.scope.channelId` -> `mcid.scope.channel_id`
 8. `handoff.id` -> `mcid.lineage.handoff_packet_id`
 9. `twip_ref.twid` -> `mcid.lineage.twid`
+10. `scheduler.scheduleId` -> `mcid.lineage.schedule_id`
+11. `scheduler.runId` -> `mcid.lineage.schedule_run_id`
 
 ## 5) Wrappability Rules
 
@@ -99,6 +105,7 @@ Required controls:
 4. Replay resistance using envelope nonce + created timestamp checks.
 5. Capability registration separated from identity mutation permissions.
 6. Agent self-edit writes must pass owner allowlist checks before execution.
+7. Scheduler writes must pass scope/category/ownership gates before mutation.
 
 ## 7) TNF Operational Pattern
 

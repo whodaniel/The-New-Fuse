@@ -48,6 +48,365 @@ function rid(prefix = 'rcpt') {
   return `${prefix}_${crypto.randomUUID()}`;
 }
 
+const DEFAULT_CRON_REGISTRY = {
+  policies: {
+    system_scope_edit_roles: ['SUPER_ADMIN'],
+    delegated_system_scope_requires_approval: true,
+    tenant_scope_edit_roles: ['USER', 'ADMIN', 'SUPER_ADMIN'],
+    tenant_scope_requires_owner_match: true,
+  },
+  categories: [
+    { category: 'system_framework', scope: 'system_framework', requires_approval: true },
+    { category: 'orchestration_gate', scope: 'system_framework', requires_approval: true },
+    { category: 'federation_sync', scope: 'system_framework', requires_approval: true },
+    { category: 'self_improvement_core', scope: 'system_framework', requires_approval: true },
+    { category: 'observability', scope: 'system_framework', requires_approval: false },
+    { category: 'tenant_automation', scope: 'tenant', requires_approval: false },
+    { category: 'tenant_agent_loop', scope: 'tenant', requires_approval: false },
+    { category: 'tenant_experiment', scope: 'tenant', requires_approval: false },
+  ],
+  jobs: [],
+};
+
+const DEFAULT_SELF_EDIT_REGISTRY = {
+  owners: [],
+};
+
+const CRON_REQUIRED_GATES = [
+  'TENANT_SCOPE_GATE',
+  'TRACE_CONTINUITY_GATE',
+  'CHANNEL_MEMBERSHIP_GATE',
+  'CRON_SCOPE_GATE',
+  'CRON_CATEGORY_GATE',
+  'CRON_OWNERSHIP_GATE',
+];
+
+const SELF_EDIT_REQUIRED_GATES = [
+  'TENANT_SCOPE_GATE',
+  'TRACE_CONTINUITY_GATE',
+  'CHANNEL_MEMBERSHIP_GATE',
+  'OWNERSHIP_GATE',
+  'PATH_SCOPE_GATE',
+  'CONTENT_POLICY_GATE',
+  'WRITE_RATE_LIMIT_GATE',
+];
+
+const CRON_APPROVAL_CATEGORIES = new Set([
+  'system_framework',
+  'orchestration_gate',
+  'federation_sync',
+  'self_improvement_core',
+]);
+
+function toUpperSet(items: unknown): Set<string> {
+  const set = new Set<string>();
+  if (!Array.isArray(items)) return set;
+  for (const value of items) {
+    if (typeof value === 'string' && value.trim()) set.add(value.trim().toUpperCase());
+  }
+  return set;
+}
+
+function hasPermission(request: any, permission: string): boolean {
+  const values = Array.isArray(request?.actor?.permissions) ? request.actor.permissions : [];
+  const normalized = permission.trim().toLowerCase();
+  return values.some(
+    (entry: unknown) =>
+      String(entry || '')
+        .trim()
+        .toLowerCase() === normalized
+  );
+}
+
+function gateMap(gateDecisions: unknown): Map<string, any> {
+  const map = new Map<string, any>();
+  if (!Array.isArray(gateDecisions)) return map;
+  for (const entry of gateDecisions) {
+    const gate = entry?.gate;
+    if (typeof gate === 'string' && gate.trim()) {
+      map.set(gate, entry);
+    }
+  }
+  return map;
+}
+
+function isSuperAdmin(request: any): boolean {
+  const roles = toUpperSet(request?.actor?.roles);
+  return roles.has('SUPER_ADMIN') || roles.has('SYSTEM') || hasPermission(request, 'system:access');
+}
+
+function hasTenantMutationRole(request: any, registry: any): boolean {
+  const roles = toUpperSet(request?.actor?.roles);
+  const allowed = new Set<string>(
+    Array.isArray(registry?.policies?.tenant_scope_edit_roles)
+      ? registry.policies.tenant_scope_edit_roles.map((entry: any) => String(entry).toUpperCase())
+      : []
+  );
+  for (const role of roles) {
+    if (allowed.has(role)) return true;
+  }
+  return false;
+}
+
+function cronExpressionLooksValid(value: unknown): boolean {
+  if (value === null || value === undefined) return true;
+  const text = String(value).trim();
+  if (!text) return false;
+  const parts = text.split(/\s+/);
+  return parts.length >= 5 && parts.length <= 7;
+}
+
+function evaluateCronGovernanceRequest(request: any, providedRegistry?: any) {
+  const registry = providedRegistry || DEFAULT_CRON_REGISTRY;
+  const reasons: string[] = [];
+  const target = request?.target || {};
+  const scheduleId = String(target.schedule_id || '');
+  const scope = String(target.scope || '');
+  const category = String(target.category || '');
+  const gates = gateMap(request?.gate_decisions);
+  const superAdmin = isSuperAdmin(request);
+  const categoryConfig = Array.isArray(registry?.categories)
+    ? registry.categories.find((entry: any) => entry.category === category)
+    : null;
+  const jobConfig = Array.isArray(registry?.jobs)
+    ? registry.jobs.find((entry: any) => entry.schedule_id === scheduleId)
+    : null;
+
+  if (!request || typeof request !== 'object') reasons.push('request must be an object');
+  if (!request?.tenant_id) reasons.push('tenant_id is required');
+  if (!target?.schedule_id) reasons.push('target.schedule_id is required');
+  if (!target?.scope) reasons.push('target.scope is required');
+  if (!target?.category) reasons.push('target.category is required');
+
+  if ((request?.tenant_id || '') !== (request?.cumulative_id?.scope?.tenant_id || '')) {
+    reasons.push('tenant mismatch between request and cumulative scope');
+  }
+  if (
+    request?.cumulative_id?.lineage?.schedule_id &&
+    request?.cumulative_id?.lineage?.schedule_id !== scheduleId
+  ) {
+    reasons.push('cumulative lineage schedule_id must match target.schedule_id');
+  }
+
+  for (const gateName of CRON_REQUIRED_GATES) {
+    const gate = gates.get(gateName);
+    if (!gate) reasons.push(`missing required gate: ${gateName}`);
+    else if (gate.decision !== 'allow') reasons.push(`required gate ${gateName} is not allow`);
+  }
+
+  if (!categoryConfig) {
+    reasons.push(`category ${category} is not registered`);
+  } else if (String(categoryConfig.scope || '') !== scope) {
+    reasons.push(`target.scope ${scope} does not match category scope ${categoryConfig.scope}`);
+  }
+
+  if (!cronExpressionLooksValid(target?.cron_expression)) {
+    reasons.push('target.cron_expression token pattern is invalid');
+  }
+
+  if (scope === 'system_framework') {
+    const delegated = Boolean(request?.delegation?.delegated_by_super_admin);
+    const approvalGate = gates.get('APPROVAL_GATE');
+    const approvalAllowed = Boolean(approvalGate && approvalGate.decision === 'allow');
+    if (!superAdmin && !(delegated && approvalAllowed)) {
+      reasons.push(
+        'system_framework scope requires SUPER_ADMIN or delegated_by_super_admin + APPROVAL_GATE=allow'
+      );
+    }
+  }
+
+  if (scope === 'tenant') {
+    if (!superAdmin && !hasTenantMutationRole(request, registry)) {
+      reasons.push('actor lacks tenant cron mutation role');
+    }
+
+    if (registry?.policies?.tenant_scope_requires_owner_match) {
+      if (
+        request?.actor?.kind === 'user' &&
+        target?.owner_user_id &&
+        request?.actor?.user_id !== target.owner_user_id
+      ) {
+        reasons.push('tenant user mutation requires owner_user_id match');
+      }
+      if (
+        request?.actor?.kind === 'agent' &&
+        target?.owner_agent_id &&
+        request?.actor?.agent_id !== target.owner_agent_id
+      ) {
+        reasons.push('tenant agent mutation requires owner_agent_id match');
+      }
+    }
+  }
+
+  if (jobConfig?.locked && !superAdmin) {
+    reasons.push(`schedule_id ${scheduleId} is locked and requires SUPER_ADMIN`);
+  }
+
+  const requiresApproval =
+    scope === 'system_framework' ||
+    CRON_APPROVAL_CATEGORIES.has(category) ||
+    Boolean(categoryConfig?.requires_approval);
+  if (requiresApproval) {
+    const approvalGate = gates.get('APPROVAL_GATE');
+    if (!approvalGate || approvalGate.decision !== 'allow') {
+      reasons.push('APPROVAL_GATE=allow is required for this scope/category');
+    }
+  }
+
+  return {
+    ok: reasons.length === 0,
+    decision: reasons.length === 0 ? 'allow' : 'deny',
+    reasons,
+    scope,
+    category,
+    schedule_id: scheduleId,
+  };
+}
+
+function escapeRegex(input: string): string {
+  return input.replace(/[|\\{}()[\]^$+?.]/g, '\\$&');
+}
+
+function globToRegex(globPattern: string): RegExp {
+  const normalized = globPattern.trim();
+  if (!normalized) return /^$/;
+  const placeholder = '__DOUBLE_STAR__';
+  const singleReplaced = normalized.replace(/\*\*/g, placeholder);
+  const escaped = escapeRegex(singleReplaced)
+    .replace(new RegExp(placeholder, 'g'), '.*')
+    .replace(/\\\*/g, '[^/]*');
+  return new RegExp(`^${escaped}$`);
+}
+
+function matchesPattern(value: string, patterns: unknown): boolean {
+  if (!Array.isArray(patterns) || patterns.length === 0) return false;
+  return patterns.some((pattern) => {
+    if (typeof pattern !== 'string') return false;
+    return globToRegex(pattern).test(value);
+  });
+}
+
+function evaluateAgentSelfEditRequest(request: any, providedRegistry?: any) {
+  const registry = providedRegistry || DEFAULT_SELF_EDIT_REGISTRY;
+  const reasons: string[] = [];
+  const target = request?.target || {};
+  const operation = request?.operation || {};
+  const gateByName = gateMap(request?.gate_decisions);
+  const pathValue = String(target?.path || '');
+  const ownerAgentId = String(target?.owner_agent_id || '');
+  const actorAgentId = String(request?.agent?.agent_id || '');
+
+  if (!request || typeof request !== 'object') reasons.push('request must be an object');
+  if (!request?.tenant_id) reasons.push('tenant_id is required');
+  if (!actorAgentId) reasons.push('agent.agent_id is required');
+  if (!pathValue) reasons.push('target.path is required');
+  if (!ownerAgentId) reasons.push('target.owner_agent_id is required');
+  if (!operation?.mode) reasons.push('operation.mode is required');
+
+  if ((request?.tenant_id || '') !== (request?.cumulative_id?.scope?.tenant_id || '')) {
+    reasons.push('tenant mismatch between request and cumulative scope');
+  }
+
+  if (ownerAgentId && actorAgentId && ownerAgentId !== actorAgentId) {
+    reasons.push('agent.agent_id must match target.owner_agent_id');
+  }
+
+  if (pathValue.startsWith('/') || pathValue.includes('..')) {
+    reasons.push('target.path must be relative and cannot traverse directories');
+  }
+
+  const ownerRecord = Array.isArray(registry?.owners)
+    ? registry.owners.find((entry: any) => entry?.owner_agent_id === ownerAgentId)
+    : null;
+
+  if (!ownerRecord) {
+    reasons.push(`owner registry entry missing for ${ownerAgentId || 'unknown_owner'}`);
+  } else {
+    if (!matchesPattern(pathValue, ownerRecord.allowed_paths)) {
+      reasons.push('target.path is outside allowed_paths for owner');
+    }
+  }
+
+  const needsApproval =
+    Boolean(request?.approval?.required) ||
+    Boolean(ownerRecord && matchesPattern(pathValue, ownerRecord.approval_required_paths));
+
+  const requiredGates = needsApproval
+    ? [...SELF_EDIT_REQUIRED_GATES, 'APPROVAL_GATE']
+    : [...SELF_EDIT_REQUIRED_GATES];
+
+  for (const gateName of requiredGates) {
+    const gate = gateByName.get(gateName);
+    if (!gate) reasons.push(`missing required gate: ${gateName}`);
+    else if (gate.decision !== 'allow') reasons.push(`required gate ${gateName} is not allow`);
+  }
+
+  if (needsApproval && !request?.approval?.approved) {
+    reasons.push('approval.required path is not approved');
+  }
+
+  return {
+    ok: reasons.length === 0,
+    decision: reasons.length === 0 ? 'allow' : 'deny',
+    reasons,
+    target_path: pathValue,
+    owner_agent_id: ownerAgentId,
+    approval_required: needsApproval,
+  };
+}
+
+function evaluateFederationPacket(request: any) {
+  const reasons: string[] = [];
+  const gates = gateMap(request?.gateDecisions ?? request?.gate_decisions);
+  const scopeTenant = String(request?.scope?.tenantId || request?.scope?.tenant_id || '');
+  const mcidTenant = String(
+    request?.cumulativeId?.scope?.tenant_id || request?.cumulative_id?.scope?.tenant_id || ''
+  );
+  const tags: string[] = Array.isArray(request?.tags)
+    ? request.tags.map((entry: any) => String(entry))
+    : [];
+  const twid =
+    request?.payload?.twipRef?.twid ||
+    request?.payload?.twip_ref?.twid ||
+    request?.cumulativeId?.lineage?.twid ||
+    request?.cumulative_id?.lineage?.twid ||
+    null;
+
+  if (!scopeTenant) reasons.push('scope tenant is required');
+  if (!mcidTenant) reasons.push('cumulative tenant is required');
+  if (scopeTenant && mcidTenant && scopeTenant !== mcidTenant) {
+    reasons.push('tenant mismatch between scope and cumulative_id');
+  }
+
+  for (const gateName of [
+    'TENANT_SCOPE_GATE',
+    'TRACE_CONTINUITY_GATE',
+    'TERMINAL_BINDING_GATE',
+    'HIGH_RISK_RUNTIME_GATE',
+    'CHANNEL_MEMBERSHIP_GATE',
+  ]) {
+    const gate = gates.get(gateName);
+    if (!gate) reasons.push(`missing required gate: ${gateName}`);
+    else if (gate.decision !== 'allow') reasons.push(`required gate ${gateName} is not allow`);
+  }
+
+  const terminalBound =
+    tags.includes('terminal-bound') ||
+    Boolean(request?.payload?.twipRef || request?.payload?.twip_ref);
+  if (terminalBound && !twid) {
+    reasons.push('terminal-bound packet requires twid');
+  }
+
+  return {
+    ok: reasons.length === 0,
+    decision: reasons.length === 0 ? 'allow' : 'deny',
+    reasons,
+    tenant_id: scopeTenant || mcidTenant || null,
+    terminal_bound: terminalBound,
+    twid,
+  };
+}
+
 function authorized(req: Request, env: Env) {
   // Hardening: Fail closed unless strictly in 'dev' environment
   if (!env.SHAREDSTATE_AUTH_TOKEN) {
@@ -239,6 +598,29 @@ export default {
 
     if (!authorized(req, env)) {
       return json({ ok: false, error: 'UNAUTHORIZED' }, { status: 401 });
+    }
+
+    if (url.pathname === '/gates/cron/evaluate' && req.method === 'POST') {
+      const body = await readJson(req);
+      const request = body?.request ?? body;
+      const registry = body?.registry ?? DEFAULT_CRON_REGISTRY;
+      const evaluation = evaluateCronGovernanceRequest(request, registry);
+      return json(evaluation, { status: evaluation.ok ? 200 : 422 });
+    }
+
+    if (url.pathname === '/gates/self-edit/evaluate' && req.method === 'POST') {
+      const body = await readJson(req);
+      const request = body?.request ?? body;
+      const registry = body?.registry ?? DEFAULT_SELF_EDIT_REGISTRY;
+      const evaluation = evaluateAgentSelfEditRequest(request, registry);
+      return json(evaluation, { status: evaluation.ok ? 200 : 422 });
+    }
+
+    if (url.pathname === '/gates/federation/evaluate' && req.method === 'POST') {
+      const body = await readJson(req);
+      const request = body?.request ?? body;
+      const evaluation = evaluateFederationPacket(request);
+      return json(evaluation, { status: evaluation.ok ? 200 : 422 });
     }
 
     // POST /deposit — canonical receipt deposit
@@ -514,6 +896,9 @@ export default {
         routes: [
           '/health',
           'POST /deposit',
+          'POST /gates/cron/evaluate',
+          'POST /gates/self-edit/evaluate',
+          'POST /gates/federation/evaluate',
           'PUT /mirror/:runtime',
           'GET /context/:runtime',
           'POST /withdraw',

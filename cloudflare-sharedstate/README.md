@@ -8,6 +8,10 @@ It provides:
 - taskboard projections
 - per-runtime context manifests
 - deposit/withdraw/mirror APIs
+- serverless policy gate evaluation APIs:
+  - `POST /gates/cron/evaluate`
+  - `POST /gates/self-edit/evaluate`
+  - `POST /gates/federation/evaluate`
 
 It is the cloud-native successor to `~/.tnf_sharedstate`.
 
@@ -24,3 +28,5 @@ Planned bindings:
 - Protect endpoints behind Cloudflare Access
 - Secrets via Wrangler secrets store
 - Strict redaction policy on mirror endpoints
+- Gate evaluation endpoints should run fail-closed and be consumed by broker
+  intake paths before execution dispatch.

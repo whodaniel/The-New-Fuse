@@ -21,6 +21,7 @@ export * from './jules';
 export * from './marketplace';
 export * from './mass';
 export * from './prompt-templates';
+export * from './resource-interactions';
 export * from './system';
 export * from './tasks';
 export * from './tnf'; // TNF Entity ID Taxonomy V2

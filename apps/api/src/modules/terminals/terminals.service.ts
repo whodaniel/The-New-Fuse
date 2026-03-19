@@ -153,7 +153,11 @@ export class TerminalsService {
         return [];
       }
       return parsed
-        .map((entry: any) => String(entry?.id || '').trim().toLowerCase())
+        .map((entry: any) =>
+          String(entry?.id || '')
+            .trim()
+            .toLowerCase()
+        )
         .filter((entry: string) => entry.length > 0);
     } catch (_error) {
       return [];
@@ -287,8 +291,13 @@ export class TerminalsService {
           data: {
             shellPid,
             pgid:
-              typeof sanitized.process?.pgid === 'number' ? sanitized.process.pgid : sanitized.process?.pgid,
-            sid: typeof sanitized.process?.sid === 'number' ? sanitized.process.sid : sanitized.process?.sid,
+              typeof sanitized.process?.pgid === 'number'
+                ? sanitized.process.pgid
+                : sanitized.process?.pgid,
+            sid:
+              typeof sanitized.process?.sid === 'number'
+                ? sanitized.process.sid
+                : sanitized.process?.sid,
           },
         });
         addEdge({ source: terminalNodeId, target: processId, type: 'terminal_shell_process' });
@@ -336,6 +345,7 @@ export class TerminalsService {
     const clone = JSON.parse(JSON.stringify(terminal || {})) as TwipTerminalIdentity;
     if (!includeCommands) {
       delete clone.active_commands;
+      delete clone.context_excerpt;
     }
     return clone;
   }
@@ -420,4 +430,3 @@ export class TerminalsService {
     return null;
   }
 }
-

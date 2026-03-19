@@ -155,11 +155,22 @@ export default function ResourceSearch() {
     }
   };
 
-  const handleShare = (resource: Resource) => {
-    toast.success('Share link copied to clipboard!');
-    navigator.clipboard.writeText(
-      `${window.location.origin}/resources/${resource.type}s/${resource.id}`
-    );
+  const handleShare = async (resource: Resource) => {
+    const toAgentId = window.prompt('Share to agent id');
+    if (!toAgentId) return;
+    const notes = window.prompt('Optional note (leave blank to skip)') || undefined;
+
+    try {
+      await resourcesService.shareResource({
+        resourceId: resource.id,
+        toAgentId,
+        fromUserId: user?.id,
+        notes,
+      });
+      toast.success('Resource shared');
+    } catch {
+      toast.error('Failed to share resource');
+    }
   };
 
   if (isLoading) {

@@ -13,6 +13,7 @@ const requiredFiles = [
   'sgp-payloads.schema.json',
   'tnf-master-cumulative-id.schema.json',
   'tnf-agent-self-edit.schema.json',
+  'tnf-cron-governance.schema.json',
 ];
 
 function fail(message) {
@@ -124,6 +125,45 @@ function validateAgentSelfEdit(schema) {
   });
 }
 
+function validateCronGovernance(schema) {
+  if (!schema) return;
+  const required = new Set(schema.required || []);
+  [
+    'spec',
+    'request_id',
+    'tenant_id',
+    'actor',
+    'target',
+    'cumulative_id',
+    'gate_decisions',
+    'created_at',
+  ].forEach((key) => {
+    assert(required.has(key), `tnf-cron-governance.schema.json: required must include ${key}`);
+  });
+
+  assert(
+    schema?.properties?.spec?.const === 'tnf/cron-governance/0.1',
+    'tnf-cron-governance.schema.json: spec const must be tnf/cron-governance/0.1'
+  );
+
+  const scopeEnum = schema?.properties?.target?.properties?.scope?.enum || [];
+  ['system_framework', 'tenant'].forEach((scope) => {
+    assert(scopeEnum.includes(scope), `tnf-cron-governance.schema.json: scope enum missing ${scope}`);
+  });
+
+  const gateEnum = schema?.properties?.gate_decisions?.items?.properties?.gate?.enum || [];
+  [
+    'TENANT_SCOPE_GATE',
+    'TRACE_CONTINUITY_GATE',
+    'CHANNEL_MEMBERSHIP_GATE',
+    'CRON_SCOPE_GATE',
+    'CRON_CATEGORY_GATE',
+    'CRON_OWNERSHIP_GATE',
+  ].forEach((gate) => {
+    assert(gateEnum.includes(gate), `tnf-cron-governance.schema.json: gate enum missing ${gate}`);
+  });
+}
+
 function main() {
   if (!fs.existsSync(schemaDir)) {
     fail(`Missing schema directory: ${schemaDir}`);
@@ -150,6 +190,7 @@ function main() {
   validateTwipIdentity(parsed['twip-identity.schema.json']);
   validateMasterCumulativeId(parsed['tnf-master-cumulative-id.schema.json']);
   validateAgentSelfEdit(parsed['tnf-agent-self-edit.schema.json']);
+  validateCronGovernance(parsed['tnf-cron-governance.schema.json']);
 
   if (process.exitCode) {
     process.exit(process.exitCode);

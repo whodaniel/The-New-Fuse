@@ -128,7 +128,41 @@ capabilities.
 - **Use When**: Needing document processing (PDF, XLSX, PPTX), web testing,
   artistic generation.
 
-### 11. **trait-antigravity** (Meta-Skill) ⭐⭐⭐
+### 10. **personal-historical-archaeology** ⭐⭐
+
+- **Location**: `.agent/skills/personal-historical-archaeology/SKILL.md`
+- **Purpose**: Reconstruct personal and project timelines from repos, notes,
+  media, and local evidence while preserving privacy.
+- **Use When**: Recovering predecessor project history, mapping pivots and
+  restarts, or preparing TNF timeline batches from scattered evidence.
+- **Key Features**:
+  - Privacy-first filtering for sensitive paths and content
+  - Supports repo roots, exported notes, screenshots, and videos
+  - Apple Notes MCP-aware workflow when available
+  - Emits TNF-compatible `historical_event` batches
+
+### 11. **personal-archaeology-orchestration** ⭐⭐
+
+- **Location**: `.agent/skills/personal-archaeology-orchestration/SKILL.md`
+- **Purpose**: Runs the personal archaeology fleet with Master Orchestrator,
+  Team Orchestrators, sub-skill taxonomy, heartbeat cadence, and human
+  escalation rules.
+- **Use When**: Operating archaeology teams continuously or formalizing titles,
+  sub-skills, and skill chains for historical reconstruction.
+- **Key Features**:
+  - Distinguishes `Master Director` from `Master Orchestrator`
+  - Treats classification and skill chaining as first-class sub-skills
+  - Defines cron and heartbeat contracts for the archaeology program
+
+### 12. **master-of-taxonomies** ⭐⭐
+
+- **Location**: `.agent/skills/master-of-taxonomies/SKILL.md`
+- **Purpose**: Owns definition-of-definitions, title hierarchy, skill
+  classification, and skill chaining semantics.
+- **Use When**: Formalizing roles, naming systems, sub-skills, or semantic
+  boundaries across TNF.
+
+### 13. **trait-antigravity** (Meta-Skill) ⭐⭐⭐
 
 - **Location**: `.agent/skills/antigravity/trait-antigravity/SKILL.md`
 - **Purpose**: Core Antigravity persona trait - rigor, aesthetics, autonomy.
@@ -137,12 +171,48 @@ capabilities.
 - **Key Features**: Ralph Wiggum technique, 3-Strike protocol, Premium
   Aesthetics, Janus planning.
 
-### 12. **tnf-cli-agent** (Specialized Agent) ⭐⭐⭐
+### 14. **tnf-cli-agent** (Specialized Agent) ⭐⭐⭐
 
 - **Location**: `.agent/agents/tnf-cli.md`
-- **Purpose**: The canonical CLI-optimized Antigravity agent for TNF.
+- **Purpose**: The canonical CLI-optimized Antigravity agent for TNF and the
+  current embodiment of the `Master Director` title.
 - **Use When**: Orchestrating workflows via CLI, managing system state.
 - **Key Features**: CLI-native, trait-aligned, autonomous orchestration.
+
+### 15. **master-of-taxonomies** (Specialized Agent) ⭐⭐
+
+- **Location**: `.agent/agents/master-of-taxonomies.md`
+- **Purpose**: Semantic authority for definitions of definitions.
+- **Use When**: TNF needs title, skill, sub-skill, or chain classification.
+
+### 16. **personal-historical-archaeologist** (Specialized Agent) ⭐⭐
+
+- **Location**: `.agent/agents/personal-historical-archaeologist.md`
+- **Purpose**: Rebuilds long-running technical and personal timelines from local
+  evidence with explicit privacy gates.
+- **Use When**: Timeline archaeology, origin-story reconstruction, or
+  predecessor-project mapping.
+- **Key Features**: Evidence tiering, narrative clustering, privacy-first local
+  scanning.
+
+### 17. **personal-archaeology-master-orchestrator** (Specialized Agent) ⭐⭐
+
+- **Location**: `.agent/agents/personal-archaeology-master-orchestrator.md`
+- **Purpose**: Bounded Master Orchestrator for the archaeology program.
+- **Use When**: Coordinating sub-fleets for repos, notes, media, code, and
+  synthesis under the TNF Master Director.
+- **Key Features**: Team delegation, cadence enforcement, blocked-state routing.
+
+### 18. **stitch-direct** ⭐⭐
+
+- **Location**: `.agent/skills/stitch-direct/SKILL.md`
+- **Purpose**: Direct programmatic interaction with Google Stitch via JSON-RPC.
+- **Use When**: High-level design tools fail or precise control over UI
+  generation is needed.
+- **Key Features**: Bypasses UI abstractions, direct code/image retrieval, 120s
+  timeout handling.
+- **Scripts**:
+  - `stitch_rpc.py` - Core JSON-RPC bridge for Stitch MCP.
 
 ---
 
@@ -323,19 +393,19 @@ Done (New skill now available)
 
 ### Keyword → Skill Mapping
 
-| Keywords                                         | Load This Skill      |
-| ------------------------------------------------ | -------------------- |
-| "browser", "chrome", "gemini", "webpage"         | browser-automation   |
-| "relay", "message", "channel", "broadcast"       | relay-communication  |
-| "port", "service", "status", "running"           | system-diagnostics   |
-| "news", "trend", "scout", "competitor"          | news-scouting        |
-| "audit", "tech debt", "improver"                | continuous-improvement|
-| "create skill", "new capability", "add function" | skill-builder (meta) |
-| "plan", "complex", "multi-step", "phases"        | planning-with-files  |
-| "findings", "progress", "handoff", "session"     | planning-with-files  |
-| "delegate", "jules", "async", "parallel"         | jules-delegation     |
-| "antigravity", "trait", "high-performance"       | trait-antigravity    |
-| "tnf cli", "cli agent", "orchestrate cli"        | tnf-cli-agent        |
+| Keywords                                         | Load This Skill        |
+| ------------------------------------------------ | ---------------------- |
+| "browser", "chrome", "gemini", "webpage"         | browser-automation     |
+| "relay", "message", "channel", "broadcast"       | relay-communication    |
+| "port", "service", "status", "running"           | system-diagnostics     |
+| "news", "trend", "scout", "competitor"           | news-scouting          |
+| "audit", "tech debt", "improver"                 | continuous-improvement |
+| "create skill", "new capability", "add function" | skill-builder (meta)   |
+| "plan", "complex", "multi-step", "phases"        | planning-with-files    |
+| "findings", "progress", "handoff", "session"     | planning-with-files    |
+| "delegate", "jules", "async", "parallel"         | jules-delegation       |
+| "antigravity", "trait", "high-performance"       | trait-antigravity      |
+| "tnf cli", "cli agent", "orchestrate cli"        | tnf-cli-agent          |
 
 ---
 
@@ -438,6 +508,7 @@ skill-builder (meta)
 
 ### Version History
 
+- **v1.1** (Mar 18, 2026): Added `stitch-direct` skill for granular UI control.
 - **v1.0** (Dec 28, 2025): Initial resource map
 - Skills: browser-automation, skill-builder (meta)
 - Contexts: browser-workflow, resource-map

@@ -14,6 +14,13 @@ cloud services.
 - pnpm 10.19.0+ (`npm install -g pnpm`)
 - Docker (for PostgreSQL + Redis)
 
+### Install TNF CLI (Direct Command Line)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/whodaniel/fuse/main/scripts/install-tnf-cli.sh | bash
+tnf
+```
+
 ### Setup
 
 ```bash
@@ -27,11 +34,26 @@ pnpm run dev              # All services
 ### Operator Commands (TNF CLI)
 
 ```bash
-./tnf onboard
-./tnf doctor
-./tnf jules supervisor-status
-./tnf skills bank sync
-./tnf scripts list
+tnf onboard
+tnf doctor
+tnf menu
+tnf menu --full
+tnf splash --theme neon --animate on
+tnf agents list
+tnf types list
+tnf traits list
+tnf paths
+tnf scripts list
+```
+
+### Full Command Discovery
+
+Use these when you need the complete TNF command universe:
+
+```bash
+tnf paths                 # All CLI command paths
+tnf menu --full           # Expanded organized menu (namespaces + paths + tnf:* scripts)
+tnf scripts list --json   # Root scripts + runnable script files
 ```
 
 Additional operations docs:
@@ -184,13 +206,13 @@ PicoClaw Fleet (cloud) <── Lightweight edge agents
 
 ### UI & Developer Tools
 
-| Package                            | Purpose                                                          |
-| ---------------------------------- | ---------------------------------------------------------------- |
-| `@the-new-fuse/ui-consolidated`    | Shared UI component library (tsup)                               |
-| `@the-new-fuse/tnf-cli`            | CLI binary (`tnf-agent`) for terminal agent messaging via Redis  |
-| `@the-new-fuse/security`           | Encryption, security middleware, rate limiting, audit logging    |
-| `@the-new-fuse/build-optimization` | Adaptive build system: detects RAM, adjusts concurrency/strategy |
-| `@the-new-fuse/port-management`    | Port assignment management across the monorepo                   |
+| Package                            | Purpose                                                                           |
+| ---------------------------------- | --------------------------------------------------------------------------------- |
+| `@the-new-fuse/ui-consolidated`    | Shared UI component library (tsup)                                                |
+| `@the-new-fuse/tnf-cli`            | CLI binaries (`tnf`, `tnf-agent`) for terminal agent messaging and TNF operations |
+| `@the-new-fuse/security`           | Encryption, security middleware, rate limiting, audit logging                     |
+| `@the-new-fuse/build-optimization` | Adaptive build system: detects RAM, adjusts concurrency/strategy                  |
+| `@the-new-fuse/port-management`    | Port assignment management across the monorepo                                    |
 
 ## Key Patterns
 

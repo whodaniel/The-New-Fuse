@@ -44,7 +44,7 @@ class HandoffStoreService {
         const packet = handoff_protocol_js_1.HandoffPacket.parse({
             ...input,
             id: crypto_1.default.randomUUID(),
-            version: '1.0',
+            version: '1.1',
             createdAt: now.toISOString(),
             expiresAt,
             status: 'pending',
@@ -167,6 +167,9 @@ class HandoffStoreService {
     parsePacket(raw) {
         try {
             const parsed = JSON.parse(raw);
+            if (parsed && typeof parsed === 'object' && !('version' in parsed)) {
+                parsed.version = '1.0';
+            }
             return handoff_protocol_js_1.HandoffPacket.parse(parsed);
         }
         catch {

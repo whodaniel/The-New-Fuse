@@ -37,6 +37,8 @@ Key fields:
 - `expiresAt`: lifecycle bound for cloud retention
 - `cumulativeId`: mandatory on `1.1` writes for cross-protocol lineage
 - `gateDecisions`: mandatory on `1.1` writes for federation gate attestations
+- `cumulativeId.lineage.schedule_id` / `schedule_run_id`: optional but
+  recommended for scheduler-triggered handoff chains
 
 ## Storage Model (Redis)
 
