@@ -11,11 +11,14 @@ to:
     input: cumulative lineage + gate decisions
   - skill: agent-registry-manager
     input: protocol capability profile updates
+  - skill: tnf-master-clock-sync
+    input: schedule-linked handoff packets requiring cron governance
 validate:
   - tenant scope must remain stable across all federation hops
   - every terminal-bound task includes twid and target agentIds
   - cumulative lineage validates against docs/protocols/schemas/tnf-master-cumulative-id.schema.json
   - channel handoff packets include explicit channelId and workflow/session context where available
+  - schedule-linked handoff packets validate against docs/protocols/schemas/tnf-cron-governance.schema.json when mutating scheduler state
 gates:
   - name: TENANT_SCOPE_GATE
     deny_code: TENANT_SCOPE_MISMATCH
@@ -24,7 +27,7 @@ gates:
   - name: TERMINAL_BINDING_GATE
     deny_code: TWID_REQUIRED
   - name: HIGH_RISK_RUNTIME_GATE
-    condition: approval_bypass=true OR remote_mcp=true
+    condition: approval_bypass=true OR remote_mcp=true OR twip_context_risk>=high OR twip_context_stale=true
     action: require_orchestrator_approval
   - name: CHANNEL_MEMBERSHIP_GATE
     deny_code: CHANNEL_NOT_AUTHORIZED

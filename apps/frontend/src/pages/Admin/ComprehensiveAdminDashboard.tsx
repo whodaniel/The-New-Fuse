@@ -93,6 +93,43 @@ interface RelayActivityEvent {
   metadata?: Record<string, unknown>;
 }
 
+interface FederationGateMetricsResponse {
+  window: {
+    hours: number;
+    dateFrom: string;
+    dateTo: string;
+    limit: number;
+  };
+  apiHandoff: {
+    total: number;
+    byOutcome: Record<string, number>;
+    byCategory: Record<string, number>;
+    byMode: Record<string, number>;
+    topReasons: Array<{ reason: string; count: number }>;
+  };
+  broker: {
+    available: boolean;
+    metricsKey: string;
+    counters: Record<string, number>;
+  };
+  timestamp: string;
+}
+
+type BrokerGateSummary = {
+  allow: number;
+  warn: number;
+  deny: number;
+  contextAvailable: number;
+  contextUnavailable: number;
+  contextStale: number;
+  contextFresh: number;
+  riskLow: number;
+  riskMedium: number;
+  riskHigh: number;
+  riskCritical: number;
+  riskHighOrCritical: number;
+};
+
 const defaultMetrics: SystemMetrics = {
   totalUsers: 0,
   activeUsers: 0,
@@ -128,6 +165,8 @@ const RelayMetricCard = ({
   </div>
 );
 
+const readCounter = (counters: Record<string, number>, key: string) => Number(counters[key] || 0);
+
 export default function ComprehensiveAdminDashboard() {
   const { isSuperAdmin, userRole } = useAuthorization();
   const relayHttpBase = useMemo(
@@ -159,6 +198,8 @@ export default function ComprehensiveAdminDashboard() {
   const [selectedChannelId, setSelectedChannelId] = useState('');
   const [channelQuery, setChannelQuery] = useState('');
   const [networkEventsCount, setNetworkEventsCount] = useState(0);
+  const [federationGateMetrics, setFederationGateMetrics] =
+    useState<FederationGateMetricsResponse | null>(null);
   const [actionBusy, setActionBusy] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
@@ -245,6 +286,36 @@ export default function ComprehensiveAdminDashboard() {
     return 500;
   };
 
+  const getHoursByRange = (range: '1h' | '24h' | '7d' | '30d') => {
+    if (range === '1h') return 1;
+    if (range === '24h') return 24;
+    if (range === '7d') return 24 * 7;
+    return 24 * 7;
+  };
+
+  const brokerGateSummary = useMemo<BrokerGateSummary | null>(() => {
+    if (!federationGateMetrics) return null;
+    const counters = federationGateMetrics.broker.counters || {};
+    const riskLow = readCounter(counters, 'twip_context_risk:low');
+    const riskMedium = readCounter(counters, 'twip_context_risk:medium');
+    const riskHigh = readCounter(counters, 'twip_context_risk:high');
+    const riskCritical = readCounter(counters, 'twip_context_risk:critical');
+    return {
+      allow: readCounter(counters, 'outcome:allow'),
+      warn: readCounter(counters, 'outcome:warn'),
+      deny: readCounter(counters, 'outcome:deny'),
+      contextAvailable: readCounter(counters, 'twip_context_available:true'),
+      contextUnavailable: readCounter(counters, 'twip_context_available:false'),
+      contextStale: readCounter(counters, 'twip_context_stale:true'),
+      contextFresh: readCounter(counters, 'twip_context_stale:false'),
+      riskLow,
+      riskMedium,
+      riskHigh,
+      riskCritical,
+      riskHighOrCritical: riskHigh + riskCritical,
+    };
+  }, [federationGateMetrics]);
+
   const loadDashboardData = useCallback(async () => {
     if (loadInFlightRef.current) return;
     loadInFlightRef.current = true;
@@ -256,14 +327,23 @@ export default function ComprehensiveAdminDashboard() {
       const activityCount = getCountByRange(timeRange);
       const activityUrl = `${relayHttpBase}/activity/recent?count=${activityCount}${selectedChannelId ? `&channel=${encodeURIComponent(selectedChannelId)}` : ''}`;
 
-      const [healthResult, channelsResult, agentsResult, activityResult, adminMetricsResult] =
-        await Promise.allSettled([
-          axios.get(`${relayHttpBase}/health`),
-          axios.get(`${relayHttpBase}/channels`),
-          axios.get(`${relayHttpBase}/agents`),
-          axios.get(activityUrl),
-          axios.get('/api/admin/metrics/dashboard'),
-        ]);
+      const [
+        healthResult,
+        channelsResult,
+        agentsResult,
+        activityResult,
+        adminMetricsResult,
+        federationGateResult,
+      ] = await Promise.allSettled([
+        axios.get(`${relayHttpBase}/health`),
+        axios.get(`${relayHttpBase}/channels`),
+        axios.get(`${relayHttpBase}/agents`),
+        axios.get(activityUrl),
+        axios.get('/api/admin/metrics/dashboard'),
+        axios.get(
+          `/api/admin/metrics/federation-gates?hours=${getHoursByRange(timeRange)}&limit=200`
+        ),
+      ]);
 
       const relayHealth: RelayHealthResponse | null =
         healthResult.status === 'fulfilled'
@@ -290,6 +370,11 @@ export default function ComprehensiveAdminDashboard() {
       let adminMetrics: any = null;
       if (adminMetricsResult.status === 'fulfilled') {
         adminMetrics = adminMetricsResult.value.data;
+      }
+      if (federationGateResult.status === 'fulfilled') {
+        setFederationGateMetrics(federationGateResult.value.data as FederationGateMetricsResponse);
+      } else {
+        setFederationGateMetrics(null);
       }
 
       const uptimeSeconds = relayHealth?.uptime;
@@ -373,6 +458,51 @@ export default function ComprehensiveAdminDashboard() {
           timestamp: new Date(),
           resolved: false,
         });
+      }
+      if (
+        federationGateResult.status === 'fulfilled' &&
+        Number(
+          (federationGateResult.value.data as FederationGateMetricsResponse)?.apiHandoff?.byOutcome
+            ?.deny || 0
+        ) > 0
+      ) {
+        const denyCount = Number(
+          (federationGateResult.value.data as FederationGateMetricsResponse)?.apiHandoff?.byOutcome
+            ?.deny || 0
+        );
+        derivedAlerts.push({
+          id: 'federation-gate-deny',
+          level: denyCount > 10 ? 'error' : 'warning',
+          message: `Federation gate deny events detected: ${denyCount} in selected window.`,
+          timestamp: new Date(),
+          resolved: false,
+        });
+      }
+      if (federationGateResult.status === 'fulfilled') {
+        const gatePayload = federationGateResult.value.data as FederationGateMetricsResponse;
+        const counters = gatePayload?.broker?.counters || {};
+        const highRiskCount =
+          Number(counters['twip_context_risk:high'] || 0) +
+          Number(counters['twip_context_risk:critical'] || 0);
+        if (highRiskCount > 0) {
+          derivedAlerts.push({
+            id: 'twip-context-risk-high',
+            level: highRiskCount > 20 ? 'error' : 'warning',
+            message: `Broker TWIP context high/critical risk signals detected: ${highRiskCount}.`,
+            timestamp: new Date(),
+            resolved: false,
+          });
+        }
+        const staleContextCount = Number(counters['twip_context_stale:true'] || 0);
+        if (staleContextCount > 0) {
+          derivedAlerts.push({
+            id: 'twip-context-stale',
+            level: staleContextCount > 20 ? 'error' : 'warning',
+            message: `Broker stale TWIP context signals detected: ${staleContextCount}.`,
+            timestamp: new Date(),
+            resolved: false,
+          });
+        }
       }
       setAlerts(derivedAlerts);
       setLastUpdated(new Date());
@@ -1087,6 +1217,130 @@ export default function ComprehensiveAdminDashboard() {
           )}
         </div>
       </div>
+
+      {federationGateMetrics && (
+        <div className="mb-8 grid grid-cols-1 xl:grid-cols-3 gap-4">
+          <div className="xl:col-span-2 bg-transparent rounded-md shadow-none-none border border-slate-200/70 p-4">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-xl font-semibold text-slate-900">Federation Gate Health</h2>
+                <p className="text-sm text-slate-500">
+                  API handoff gate outcomes for the selected time window.
+                </p>
+              </div>
+              <div className="text-xs text-slate-500">
+                Window: {federationGateMetrics.window.hours}h | Events:{' '}
+                {federationGateMetrics.apiHandoff.total}
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <RelayMetricCard
+                title="Allow"
+                value={federationGateMetrics.apiHandoff.byOutcome.allow || 0}
+                subtitle="handoff_gate_evaluation outcome=allow"
+              />
+              <RelayMetricCard
+                title="Warn"
+                value={federationGateMetrics.apiHandoff.byOutcome.warn || 0}
+                subtitle="handoff_gate_evaluation outcome=warn"
+              />
+              <RelayMetricCard
+                title="Deny"
+                value={federationGateMetrics.apiHandoff.byOutcome.deny || 0}
+                subtitle="handoff_gate_evaluation outcome=deny"
+              />
+            </div>
+            <div className="mt-4 text-xs text-slate-500">
+              Top reason:{' '}
+              {federationGateMetrics.apiHandoff.topReasons[0]
+                ? `${federationGateMetrics.apiHandoff.topReasons[0].reason} (${federationGateMetrics.apiHandoff.topReasons[0].count})`
+                : 'none'}
+            </div>
+          </div>
+          <div className="bg-transparent rounded-md shadow-none-none border border-slate-200/70 p-4">
+            <h3 className="text-lg font-semibold text-slate-900 mb-2">Broker Gate Counters</h3>
+            <p className="text-sm text-slate-500 mb-3">
+              Redis hash: {federationGateMetrics.broker.metricsKey}
+            </p>
+            <div className="space-y-2 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-slate-600">Redis status</span>
+                <span
+                  className={
+                    federationGateMetrics.broker.available ? 'text-emerald-600' : 'text-amber-600'
+                  }
+                >
+                  {federationGateMetrics.broker.available ? 'available' : 'unavailable'}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-600">Allow</span>
+                <span className="font-medium">{brokerGateSummary?.allow || 0}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-600">Warn</span>
+                <span className="font-medium">{brokerGateSummary?.warn || 0}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-600">Deny</span>
+                <span className="font-medium">{brokerGateSummary?.deny || 0}</span>
+              </div>
+              <div className="pt-2 mt-2 border-t border-slate-200/80 flex items-center justify-between">
+                <span className="text-slate-600">TWIP Context Available</span>
+                <span className="font-medium">{brokerGateSummary?.contextAvailable || 0}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-600">TWIP Context Missing</span>
+                <span className="font-medium">{brokerGateSummary?.contextUnavailable || 0}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-600">TWIP Context Fresh</span>
+                <span className="font-medium">{brokerGateSummary?.contextFresh || 0}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-600">TWIP Context Stale</span>
+                <span
+                  className={
+                    (brokerGateSummary?.contextStale || 0) > 0
+                      ? 'font-semibold text-amber-700'
+                      : 'font-medium text-slate-900'
+                  }
+                >
+                  {brokerGateSummary?.contextStale || 0}
+                </span>
+              </div>
+              <div className="pt-2 mt-2 border-t border-slate-200/80 flex items-center justify-between">
+                <span className="text-slate-600">Context Risk Low</span>
+                <span className="font-medium">{brokerGateSummary?.riskLow || 0}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-600">Context Risk Medium</span>
+                <span className="font-medium">{brokerGateSummary?.riskMedium || 0}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-600">Context Risk High</span>
+                <span className="font-medium">{brokerGateSummary?.riskHigh || 0}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-600">Context Risk Critical</span>
+                <span className="font-medium">{brokerGateSummary?.riskCritical || 0}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-600">High/Critical Total</span>
+                <span
+                  className={
+                    (brokerGateSummary?.riskHighOrCritical || 0) > 0
+                      ? 'font-semibold text-amber-700'
+                      : 'font-medium text-slate-900'
+                  }
+                >
+                  {brokerGateSummary?.riskHighOrCritical || 0}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 mb-8">
         <div className="xl:col-span-2 bg-transparent rounded-md shadow-none-none border border-slate-200/70 p-4">

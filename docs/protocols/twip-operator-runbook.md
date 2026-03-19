@@ -84,6 +84,31 @@ Operational sequence:
 2. Relay writes snapshot.
 3. Backend MCP serves mirrored snapshot for downstream agent access.
 
+Content-aware inventory options:
+
+1. `include_content=true` enables sanitized terminal excerpt capture.
+   - Primary source: tmux pane capture when pane mapping exists.
+   - macOS fallback: Terminal.app tab history mapped by tty.
+2. `content_max_lines` bounds line capture (`10..400`, default `80`).
+3. `content_max_chars` bounds excerpt size (`512..24000`, default `8000`).
+4. Excerpts are redacted before persistence; redaction counts are recorded per
+   terminal.
+
+Broker federation integration:
+
+1. Broker consumes TWIP snapshot context by `twid` when evaluating
+   terminal-bound tasks.
+2. `BROKER_CONTEXT_RISK_ESCALATION_LEVEL` controls risk threshold
+   (`low|medium|high|critical`, default `high`).
+3. `BROKER_TWIP_INVENTORY_SNAPSHOT_PATH` overrides snapshot path if broker
+   runtime does not share repo root.
+4. `BROKER_TWIP_SNAPSHOT_CACHE_MS` controls broker-side snapshot cache TTL
+   (default `15000`).
+5. `BROKER_MAX_TWIP_CONTEXT_AGE_MS` marks context as stale when capture age
+   exceeds threshold (default `900000`).
+6. `BROKER_REQUIRE_TWIP_CONTEXT_FOR_TERMINAL_BOUND=true` enforces context
+   availability for terminal-bound tasks.
+
 ## 6) Deny Reasons You Should Expect
 
 Policy:
@@ -124,8 +149,10 @@ UI entry points:
 Safety behavior:
 
 1. Command samples are redacted by default.
-2. Tenant filter is explicit and reflected in response `safety.tenantScopedFilter`.
-3. Graph projection is read-only and generated from snapshot + registry metadata.
+2. Tenant filter is explicit and reflected in response
+   `safety.tenantScopedFilter`.
+3. Graph projection is read-only and generated from snapshot + registry
+   metadata.
 
 ## 8) CI/Conformance Commands
 

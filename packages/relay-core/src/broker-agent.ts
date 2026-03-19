@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+import { readFile } from 'node:fs/promises';
+import * as path from 'node:path';
 import { createClient, type RedisClientType } from 'redis';
 import { createTNFEnvelope } from './protocol/tnf-envelope';
 
@@ -12,6 +14,13 @@ type QueueTask = {
   itinerary?: Record<string, unknown>;
   metadata?: Record<string, unknown>;
   [key: string]: unknown;
+};
+
+type GateDecision = {
+  gate: string;
+  decision: 'allow' | 'deny' | 'quarantine';
+  reason?: string;
+  at?: string;
 };
 
 type PolicyDecision = 'allow' | 'escalate' | 'deny';
@@ -31,6 +40,37 @@ type RegistryAgent = {
   lastSeen?: string;
   isOnline?: boolean;
   [key: string]: unknown;
+};
+
+type TwipIdentity = {
+  twid?: string | null;
+  active_commands?: string[];
+  context_excerpt?: {
+    source?: string;
+    captured_at?: string;
+    redaction_count?: number;
+    text?: string;
+  } | null;
+};
+
+type TwipInventorySnapshot = {
+  terminals?: TwipIdentity[];
+};
+
+type ContextRiskLevel = 'none' | 'low' | 'medium' | 'high' | 'critical';
+
+type TwipContextSignal = {
+  terminalBound: boolean;
+  twid: string | null;
+  available: boolean;
+  stale: boolean;
+  ageMs: number | null;
+  source: string;
+  riskLevel: ContextRiskLevel;
+  reasons: string[];
+  redactionCount: number;
+  capturedAt: string | null;
+  preview: string | null;
 };
 
 const CONFIG = {
@@ -55,12 +95,39 @@ const CONFIG = {
   HEARTBEAT_CHANNEL: process.env.BROKER_HEARTBEAT_CHANNEL || 'tnf:heartbeat',
   AGENT_REGISTRY_KEY: process.env.BROKER_AGENT_REGISTRY_KEY || 'tnf:agent-registry',
   DIRECTOR_REVIEW_QUEUE: process.env.BROKER_DIRECTOR_REVIEW_QUEUE || 'tnf:director:review:pending',
+  GATE_METRICS_HASH: process.env.BROKER_GATE_METRICS_HASH || 'tnf:broker:federation-gate:metrics',
   POLICY_MODE: process.env.BROKER_POLICY_MODE || 'strict',
+  FEDERATION_GATE_MODE:
+    process.env.BROKER_FEDERATION_GATE_MODE || process.env.TNF_GATE_POLICY_MODE || 'warn',
+  GATE_POLICY_ENDPOINT:
+    process.env.BROKER_GATE_POLICY_ENDPOINT || process.env.TNF_GATE_POLICY_ENDPOINT || '',
+  GATE_POLICY_TOKEN:
+    process.env.BROKER_GATE_POLICY_TOKEN || process.env.TNF_GATE_POLICY_TOKEN || '',
   ALLOW_CRITICAL_WITHOUT_DIRECTOR:
     (process.env.BROKER_ALLOW_CRITICAL_WITHOUT_DIRECTOR || 'false') === 'true',
   HEARTBEAT_INTERVAL_MS: parseInt(process.env.BROKER_HEARTBEAT_INTERVAL_MS || '', 10) || 3000,
   QUEUE_BLOCK_TIMEOUT_SEC: parseInt(process.env.BROKER_QUEUE_BLOCK_TIMEOUT_SEC || '', 10) || 5,
+  TWIP_INVENTORY_SNAPSHOT_PATH: path.resolve(
+    process.env.BROKER_TWIP_INVENTORY_SNAPSHOT_PATH ||
+      process.env.TWIP_INVENTORY_SNAPSHOT_PATH ||
+      path.join(process.cwd(), 'data', 'protocols', 'twip-inventory.snapshot.json')
+  ),
+  TWIP_SNAPSHOT_CACHE_MS: parseInt(process.env.BROKER_TWIP_SNAPSHOT_CACHE_MS || '', 10) || 15000,
+  MAX_TWIP_CONTEXT_AGE_MS: parseInt(process.env.BROKER_MAX_TWIP_CONTEXT_AGE_MS || '', 10) || 900000,
+  REQUIRE_TWIP_CONTEXT_FOR_TERMINAL_BOUND:
+    (process.env.BROKER_REQUIRE_TWIP_CONTEXT_FOR_TERMINAL_BOUND || 'false') === 'true',
+  CONTEXT_RISK_ESCALATION_LEVEL: String(
+    process.env.BROKER_CONTEXT_RISK_ESCALATION_LEVEL || 'high'
+  ).toLowerCase(),
 };
+
+const REQUIRED_FEDERATION_GATES = [
+  'TENANT_SCOPE_GATE',
+  'TRACE_CONTINUITY_GATE',
+  'TERMINAL_BINDING_GATE',
+  'HIGH_RISK_RUNTIME_GATE',
+  'CHANNEL_MEMBERSHIP_GATE',
+] as const;
 
 class BrokerAgent {
   private redis: RedisClientType;
@@ -68,6 +135,7 @@ class BrokerAgent {
   private heartbeatInterval: NodeJS.Timeout | null = null;
   private running = false;
   private readonly brokerId = process.env.BROKER_ID || `BROKER-${Date.now()}`;
+  private twipSnapshotCache: { loadedAt: number; byTwid: Map<string, TwipIdentity> } | null = null;
 
   constructor() {
     this.redis = createClient({ url: CONFIG.REDIS_URL });
@@ -186,14 +254,505 @@ class BrokerAgent {
     return String(CONFIG.POLICY_MODE || 'strict').toLowerCase() !== 'permissive';
   }
 
-  private evaluatePolicy(task: QueueTask, targetAgentId: string | null): PolicyResult {
+  private getFederationGateMode(): 'off' | 'warn' | 'enforce' {
+    const mode = String(CONFIG.FEDERATION_GATE_MODE || 'warn').toLowerCase();
+    if (mode === 'off' || mode === 'warn' || mode === 'enforce') return mode;
+    return 'warn';
+  }
+
+  private getTaskGateDecisions(task: QueueTask): GateDecision[] {
+    const direct = Array.isArray((task as any).gateDecisions)
+      ? (task as any).gateDecisions
+      : Array.isArray((task as any).gate_decisions)
+        ? (task as any).gate_decisions
+        : null;
+    if (direct) return direct as GateDecision[];
+
+    const metadata = (task.metadata || {}) as Record<string, unknown>;
+    const fromMetadata = Array.isArray(metadata.gateDecisions)
+      ? metadata.gateDecisions
+      : Array.isArray((metadata as any).gate_decisions)
+        ? (metadata as any).gate_decisions
+        : [];
+    return fromMetadata as GateDecision[];
+  }
+
+  private getTaskCumulativeId(task: QueueTask): Record<string, any> | null {
+    if ((task as any).cumulativeId && typeof (task as any).cumulativeId === 'object') {
+      return (task as any).cumulativeId as Record<string, any>;
+    }
+    if ((task as any).cumulative_id && typeof (task as any).cumulative_id === 'object') {
+      return (task as any).cumulative_id as Record<string, any>;
+    }
+    const metadata = (task.metadata || {}) as Record<string, unknown>;
+    if (metadata.cumulativeId && typeof metadata.cumulativeId === 'object') {
+      return metadata.cumulativeId as Record<string, any>;
+    }
+    if ((metadata as any).cumulative_id && typeof (metadata as any).cumulative_id === 'object') {
+      return (metadata as any).cumulative_id as Record<string, any>;
+    }
+    return null;
+  }
+
+  private getScopeTenant(task: QueueTask): string | null {
+    const scope = (task as any).scope as Record<string, any> | undefined;
+    const fromScope = String(scope?.tenantId || scope?.tenant_id || '').trim();
+    if (fromScope) return fromScope;
+
+    const metadata = (task.metadata || {}) as Record<string, any>;
+    const fromMetadata = String(metadata.tenantId || metadata.tenant_id || '').trim();
+    if (fromMetadata) return fromMetadata;
+    return null;
+  }
+
+  private isTerminalBoundTask(task: QueueTask): boolean {
+    const tags = Array.isArray((task as any).tags)
+      ? ((task as any).tags as unknown[]).map((tag) => String(tag).toLowerCase())
+      : [];
+    return (
+      tags.includes('terminal-bound') ||
+      Boolean((task as any).twipRef) ||
+      Boolean((task.metadata as any)?.twipRef)
+    );
+  }
+
+  private getTaskTwid(task: QueueTask, cumulativeId?: Record<string, any> | null): string | null {
+    const raw =
+      (task as any).twipRef?.twid ||
+      (task.metadata as any)?.twipRef?.twid ||
+      cumulativeId?.lineage?.twid ||
+      null;
+    const twid = String(raw || '').trim();
+    return twid || null;
+  }
+
+  private toRiskScore(level: ContextRiskLevel): number {
+    switch (level) {
+      case 'critical':
+        return 4;
+      case 'high':
+        return 3;
+      case 'medium':
+        return 2;
+      case 'low':
+        return 1;
+      default:
+        return 0;
+    }
+  }
+
+  private normalizeRiskLevel(value: string): ContextRiskLevel {
+    if (value === 'critical' || value === 'high' || value === 'medium' || value === 'low') {
+      return value;
+    }
+    return 'none';
+  }
+
+  private getContextRiskEscalationLevel(): ContextRiskLevel {
+    return this.normalizeRiskLevel(CONFIG.CONTEXT_RISK_ESCALATION_LEVEL);
+  }
+
+  private extractContextPreview(text: string): string {
+    return text
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .slice(-2)
+      .join(' | ')
+      .slice(0, 220);
+  }
+
+  private evaluateContextRisk(terminal: TwipIdentity): {
+    riskLevel: ContextRiskLevel;
+    reasons: string[];
+    preview: string | null;
+    redactionCount: number;
+    source: string;
+    capturedAt: string | null;
+  } {
+    const commands = Array.isArray(terminal.active_commands)
+      ? terminal.active_commands.map((entry) => String(entry || ''))
+      : [];
+    const excerpt = terminal.context_excerpt || null;
+    const text = String(excerpt?.text || '');
+    const normalizedText = text.toLowerCase();
+    const reasons: string[] = [];
+
+    let score = 0;
+    const add = (nextScore: number, reason: string) => {
+      score = Math.max(score, nextScore);
+      reasons.push(reason);
+    };
+
+    if (commands.some((line) => line.includes('--dangerously-bypass-approvals-and-sandbox'))) {
+      add(4, 'approval bypass flag detected in active command');
+    }
+    if (commands.some((line) => /mcp-remote/i.test(line))) {
+      add(2, 'remote MCP usage detected');
+    }
+    if (/(^|\s)sudo\s/.test(normalizedText)) {
+      add(3, 'sudo command detected in terminal context');
+    }
+    if (normalizedText.includes('rm -rf') || normalizedText.includes('mkfs')) {
+      add(4, 'destructive shell pattern detected in terminal context');
+    }
+    if (
+      normalizedText.includes('export ') &&
+      /(token|secret|password|api[_-]?key|authorization)/i.test(normalizedText)
+    ) {
+      add(3, 'sensitive env export pattern detected in terminal context');
+    }
+
+    const riskLevel: ContextRiskLevel =
+      score >= 4
+        ? 'critical'
+        : score === 3
+          ? 'high'
+          : score === 2
+            ? 'medium'
+            : score === 1
+              ? 'low'
+              : 'none';
+
+    return {
+      riskLevel,
+      reasons,
+      preview: text ? this.extractContextPreview(text) : null,
+      redactionCount: Number(excerpt?.redaction_count || 0),
+      source: String(excerpt?.source || 'unavailable'),
+      capturedAt: excerpt?.captured_at ? String(excerpt.captured_at) : null,
+    };
+  }
+
+  private async getTwipIdentityByTwid(twid: string): Promise<TwipIdentity | null> {
+    const now = Date.now();
+    if (
+      this.twipSnapshotCache &&
+      now - this.twipSnapshotCache.loadedAt <= Math.max(1000, CONFIG.TWIP_SNAPSHOT_CACHE_MS)
+    ) {
+      return this.twipSnapshotCache.byTwid.get(twid) || null;
+    }
+
+    try {
+      const raw = await readFile(CONFIG.TWIP_INVENTORY_SNAPSHOT_PATH, 'utf8');
+      const parsed = JSON.parse(raw) as TwipInventorySnapshot;
+      const identities = Array.isArray(parsed?.terminals) ? parsed.terminals : [];
+      const byTwid = new Map<string, TwipIdentity>();
+      for (const identity of identities) {
+        const key = String(identity?.twid || '').trim();
+        if (!key) continue;
+        byTwid.set(key, identity);
+      }
+      this.twipSnapshotCache = {
+        loadedAt: now,
+        byTwid,
+      };
+      return byTwid.get(twid) || null;
+    } catch (error) {
+      console.warn('[Broker] TWIP context lookup unavailable:', (error as Error).message);
+      this.twipSnapshotCache = {
+        loadedAt: now,
+        byTwid: new Map<string, TwipIdentity>(),
+      };
+      return null;
+    }
+  }
+
+  private async resolveTwipContextSignal(
+    task: QueueTask,
+    cumulativeId?: Record<string, any> | null
+  ): Promise<TwipContextSignal> {
+    const terminalBound = this.isTerminalBoundTask(task);
+    const twid = this.getTaskTwid(task, cumulativeId);
+
+    if (!terminalBound) {
+      return {
+        terminalBound: false,
+        twid,
+        available: false,
+        stale: false,
+        ageMs: null,
+        source: 'not-terminal-bound',
+        riskLevel: 'none',
+        reasons: [],
+        redactionCount: 0,
+        capturedAt: null,
+        preview: null,
+      };
+    }
+
+    if (!twid) {
+      return {
+        terminalBound: true,
+        twid: null,
+        available: false,
+        stale: false,
+        ageMs: null,
+        source: 'missing-twid',
+        riskLevel: 'none',
+        reasons: ['missing twid'],
+        redactionCount: 0,
+        capturedAt: null,
+        preview: null,
+      };
+    }
+
+    const identity = await this.getTwipIdentityByTwid(twid);
+    if (!identity) {
+      return {
+        terminalBound: true,
+        twid,
+        available: false,
+        stale: false,
+        ageMs: null,
+        source: 'snapshot-miss',
+        riskLevel: 'none',
+        reasons: ['twip identity not found in inventory snapshot'],
+        redactionCount: 0,
+        capturedAt: null,
+        preview: null,
+      };
+    }
+
+    const assessment = this.evaluateContextRisk(identity);
+    const capturedAtMs = assessment.capturedAt ? Date.parse(assessment.capturedAt) : Number.NaN;
+    const ageMs = Number.isFinite(capturedAtMs) ? Math.max(0, Date.now() - capturedAtMs) : null;
+    const stale = ageMs !== null && ageMs > Math.max(1000, CONFIG.MAX_TWIP_CONTEXT_AGE_MS);
+    return {
+      terminalBound: true,
+      twid,
+      available: true,
+      stale,
+      ageMs,
+      source: assessment.source,
+      riskLevel: assessment.riskLevel,
+      reasons: assessment.reasons,
+      redactionCount: assessment.redactionCount,
+      capturedAt: assessment.capturedAt,
+      preview: assessment.preview,
+    };
+  }
+
+  private localFederationGateCheck(
+    task: QueueTask,
+    contextSignal: TwipContextSignal
+  ): {
+    ok: boolean;
+    reasons: string[];
+    tenantId: string | null;
+  } {
+    const reasons: string[] = [];
+    const gateDecisions = this.getTaskGateDecisions(task);
+    const gateByName = new Map(
+      gateDecisions
+        .filter((entry) => entry && typeof entry.gate === 'string')
+        .map((entry) => [entry.gate, entry])
+    );
+
+    for (const gateName of REQUIRED_FEDERATION_GATES) {
+      const gate = gateByName.get(gateName);
+      if (!gate) {
+        reasons.push(`missing required gate: ${gateName}`);
+        continue;
+      }
+      if (gate.decision !== 'allow') {
+        reasons.push(`required gate ${gateName} is not allow`);
+      }
+    }
+
+    const cumulativeId = this.getTaskCumulativeId(task);
+    const scopeTenant = this.getScopeTenant(task);
+    const cumulativeTenant = String(cumulativeId?.scope?.tenant_id || '').trim() || null;
+    if (!scopeTenant) reasons.push('missing scope tenant');
+    if (!cumulativeTenant) reasons.push('missing cumulative tenant');
+    if (scopeTenant && cumulativeTenant && scopeTenant !== cumulativeTenant) {
+      reasons.push('tenant mismatch between scope tenant and cumulative tenant');
+    }
+
+    const terminalBound = contextSignal.terminalBound;
+    const twid = contextSignal.twid;
+    if (terminalBound && !twid) {
+      reasons.push('terminal-bound task missing twid');
+    }
+
+    if (terminalBound && twid) {
+      if (!contextSignal.available && CONFIG.REQUIRE_TWIP_CONTEXT_FOR_TERMINAL_BOUND) {
+        reasons.push('twip context signal unavailable for terminal-bound task');
+      }
+      if (contextSignal.available) {
+        if (contextSignal.stale) {
+          const maxAgeSec = Math.round(Math.max(1000, CONFIG.MAX_TWIP_CONTEXT_AGE_MS) / 1000);
+          const ageSec = Math.round((contextSignal.ageMs || 0) / 1000);
+          reasons.push(`twip context stale (${ageSec}s old, max ${maxAgeSec}s)`);
+        }
+        const threshold = this.getContextRiskEscalationLevel();
+        if (
+          this.toRiskScore(contextSignal.riskLevel) > 0 &&
+          this.toRiskScore(contextSignal.riskLevel) >= this.toRiskScore(threshold)
+        ) {
+          const detail =
+            contextSignal.reasons.length > 0
+              ? contextSignal.reasons.join('; ')
+              : 'high risk context patterns detected';
+          reasons.push(`twip context risk ${contextSignal.riskLevel}: ${detail}`);
+        }
+      }
+    }
+
+    return {
+      ok: reasons.length === 0,
+      reasons,
+      tenantId: scopeTenant || cumulativeTenant,
+    };
+  }
+
+  private async externalFederationGateCheck(
+    task: QueueTask,
+    contextSignal: TwipContextSignal
+  ): Promise<{ ok: boolean; reasons: string[] }> {
+    const endpoint = String(CONFIG.GATE_POLICY_ENDPOINT || '').trim();
+    const mode = this.getFederationGateMode();
+    if (!endpoint) {
+      if (mode === 'enforce') {
+        return {
+          ok: false,
+          reasons: ['external gate endpoint missing while BROKER_FEDERATION_GATE_MODE=enforce'],
+        };
+      }
+      return { ok: true, reasons: ['external gate endpoint not configured'] };
+    }
+
+    const url = `${endpoint.replace(/\/+$/, '')}/gates/federation/evaluate`;
+    const gateDecisions = this.getTaskGateDecisions(task);
+    const cumulativeId = this.getTaskCumulativeId(task);
+    const tenantId =
+      this.getScopeTenant(task) || String(cumulativeId?.scope?.tenant_id || '').trim();
+    const tags = Array.isArray((task as any).tags)
+      ? ((task as any).tags as unknown[]).map((tag) => String(tag))
+      : [];
+    const tagsWithContext = [
+      ...tags,
+      `twip-context-risk:${contextSignal.riskLevel}`,
+      `twip-context-available:${contextSignal.available ? 'true' : 'false'}`,
+      `twip-context-stale:${contextSignal.stale ? 'true' : 'false'}`,
+    ];
+    const twipRef = (task as any).twipRef || (task.metadata as any)?.twipRef || null;
+
+    const payload = {
+      request: {
+        scope: { tenantId, tenant_id: tenantId },
+        cumulativeId,
+        cumulative_id: cumulativeId,
+        gateDecisions,
+        gate_decisions: gateDecisions,
+        tags: tagsWithContext,
+        payload: {
+          twipRef,
+          twip_ref: twipRef,
+          twip_context_signal: {
+            terminal_bound: contextSignal.terminalBound,
+            twid: contextSignal.twid,
+            available: contextSignal.available,
+            stale: contextSignal.stale,
+            age_ms: contextSignal.ageMs,
+            source: contextSignal.source,
+            risk_level: contextSignal.riskLevel,
+            reasons: contextSignal.reasons,
+            redaction_count: contextSignal.redactionCount,
+            captured_at: contextSignal.capturedAt,
+            preview: contextSignal.preview,
+          },
+        },
+      },
+    };
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          ...(CONFIG.GATE_POLICY_TOKEN ? { 'x-auth-token': CONFIG.GATE_POLICY_TOKEN } : {}),
+        },
+        body: JSON.stringify(payload),
+      });
+      const body = (await response.json().catch(() => null)) as any;
+      const reasons = Array.isArray(body?.reasons)
+        ? body.reasons.map((entry: unknown) => String(entry))
+        : [];
+      return { ok: response.ok && body?.ok === true, reasons };
+    } catch (error) {
+      return { ok: false, reasons: [`external gate check failed: ${(error as Error).message}`] };
+    }
+  }
+
+  private async evaluatePolicy(
+    task: QueueTask,
+    targetAgentId: string | null
+  ): Promise<PolicyResult> {
     const lane = String((task.itinerary as any)?.lane || '').toLowerCase();
     const priority = this.normalizePriority(task.priority);
     const metadata = (task.metadata || {}) as Record<string, unknown>;
+    const cumulativeId = this.getTaskCumulativeId(task);
+    const contextSignal = await this.resolveTwipContextSignal(task, cumulativeId);
     const requiresDirectorApproval =
       metadata.requiresDirectorApproval === true ||
       metadata.policyGate === 'director_approval_required';
     const hasTarget = !!targetAgentId;
+    const gateMode = this.getFederationGateMode();
+
+    if (gateMode !== 'off') {
+      const localGate = this.localFederationGateCheck(task, contextSignal);
+      if (!localGate.ok) {
+        const reason = `Local federation gate check failed: ${localGate.reasons.join('; ')}`;
+        await this.recordFederationGateTelemetry(
+          task,
+          'local',
+          gateMode,
+          localGate.reasons,
+          contextSignal
+        );
+        if (gateMode === 'enforce') {
+          return {
+            decision: 'escalate',
+            reason,
+            riskLevel: 'high',
+          };
+        }
+        console.warn(`[Broker] WARN ${task.id}: ${reason}`);
+      } else {
+        await this.recordFederationGateTelemetry(task, 'local', gateMode, [], contextSignal);
+      }
+
+      const externalGate = await this.externalFederationGateCheck(task, contextSignal);
+      if (!externalGate.ok) {
+        const detail =
+          externalGate.reasons.length > 0 ? externalGate.reasons.join('; ') : 'no reason';
+        const reason = `External federation gate check failed: ${detail}`;
+        await this.recordFederationGateTelemetry(
+          task,
+          'external',
+          gateMode,
+          externalGate.reasons,
+          contextSignal
+        );
+        if (gateMode === 'enforce') {
+          return {
+            decision: 'escalate',
+            reason,
+            riskLevel: 'high',
+          };
+        }
+        console.warn(`[Broker] WARN ${task.id}: ${reason}`);
+      } else {
+        await this.recordFederationGateTelemetry(
+          task,
+          'external',
+          gateMode,
+          externalGate.reasons,
+          contextSignal
+        );
+      }
+    }
 
     if (!lane) {
       return {
@@ -338,7 +897,7 @@ class BrokerAgent {
     const targetAgentId = await this.selectTargetAgent(task);
     const priority = this.normalizePriority(task.priority);
     const channelId = String((task.itinerary as any)?.lane || 'realtime_broker_routing');
-    const policy = this.evaluatePolicy(task, targetAgentId);
+    const policy = await this.evaluatePolicy(task, targetAgentId);
 
     await this.publishPolicyDecision(task, policy, targetAgentId);
 
@@ -444,6 +1003,104 @@ class BrokerAgent {
     } catch (error) {
       console.warn('[Broker] Failed to persist dispatch:', (error as Error).message);
     }
+  }
+
+  private async recordFederationGateTelemetry(
+    task: QueueTask,
+    stage: 'local' | 'external',
+    mode: 'off' | 'warn' | 'enforce',
+    reasons: string[],
+    contextSignal: TwipContextSignal
+  ): Promise<void> {
+    if (mode === 'off') return;
+    const outcome: 'allow' | 'warn' | 'deny' =
+      reasons.length === 0 ? 'allow' : mode === 'enforce' ? 'deny' : 'warn';
+    const tenantId = this.getScopeTenant(task) || 'unknown';
+    const timestamp = new Date().toISOString();
+    const keys = new Set<string>([
+      'total',
+      `mode:${mode}`,
+      `stage:${stage}`,
+      `outcome:${outcome}`,
+      `stage:${stage}:outcome:${outcome}`,
+      `tenant:${tenantId}`,
+      `twip_context_available:${contextSignal.available ? 'true' : 'false'}`,
+      `twip_context_stale:${contextSignal.stale ? 'true' : 'false'}`,
+      `twip_context_risk:${contextSignal.riskLevel}`,
+    ]);
+
+    for (const reason of reasons) {
+      const reasonKey = this.toGateReasonKey(reason);
+      if (reasonKey) keys.add(`reason:${reasonKey}`);
+    }
+
+    try {
+      const tx = this.redis.multi();
+      for (const key of keys) {
+        tx.hIncrBy(CONFIG.GATE_METRICS_HASH, key, 1);
+      }
+      await tx.exec();
+      await this.redis.publish(
+        CONFIG.DECISION_CHANNEL,
+        JSON.stringify({
+          type: 'federation_gate_telemetry',
+          brokerId: this.brokerId,
+          taskId: task.id,
+          tenantId,
+          stage,
+          mode,
+          outcome,
+          reasons,
+          twipContextSignal: {
+            terminalBound: contextSignal.terminalBound,
+            twid: contextSignal.twid,
+            available: contextSignal.available,
+            stale: contextSignal.stale,
+            ageMs: contextSignal.ageMs,
+            source: contextSignal.source,
+            riskLevel: contextSignal.riskLevel,
+            reasons: contextSignal.reasons,
+            redactionCount: contextSignal.redactionCount,
+            capturedAt: contextSignal.capturedAt,
+            preview: contextSignal.preview,
+          },
+          at: timestamp,
+          metricsHash: CONFIG.GATE_METRICS_HASH,
+        })
+      );
+    } catch (error) {
+      console.warn(
+        '[Broker] Failed to record federation gate telemetry:',
+        (error as Error).message
+      );
+    }
+  }
+
+  private toGateReasonKey(reason: string): string {
+    const text = String(reason || '').trim();
+    if (!text) return 'unknown';
+    const missingMatch = text.match(/missing required gate:\s*([A-Z_]+)/i);
+    if (missingMatch?.[1]) return `missing_${missingMatch[1].toLowerCase()}`;
+    const denyMatch = text.match(/required gate\s+([A-Z_]+)\s+is not allow/i);
+    if (denyMatch?.[1]) return `deny_${denyMatch[1].toLowerCase()}`;
+
+    const normalized = text.toLowerCase();
+    if (normalized.includes('tenant mismatch')) return 'tenant_mismatch';
+    if (normalized.includes('missing scope tenant')) return 'missing_scope_tenant';
+    if (normalized.includes('missing cumulative tenant')) return 'missing_cumulative_tenant';
+    if (normalized.includes('missing twid')) return 'missing_twid';
+    if (normalized.includes('twip context signal unavailable')) return 'twip_context_unavailable';
+    if (normalized.includes('twip context stale')) return 'twip_context_stale';
+    if (normalized.includes('twip context risk critical')) return 'twip_context_risk_critical';
+    if (normalized.includes('twip context risk high')) return 'twip_context_risk_high';
+    if (normalized.includes('twip context risk medium')) return 'twip_context_risk_medium';
+    if (normalized.includes('twip context risk low')) return 'twip_context_risk_low';
+    if (normalized.includes('endpoint missing') || normalized.includes('endpoint not configured')) {
+      return 'endpoint_missing';
+    }
+    if (normalized.includes('external gate check failed')) return 'external_gate_check_failed';
+    if (normalized.includes('external gate check')) return 'external_gate_issue';
+    return 'other';
   }
 
   async shutdown(): Promise<void> {
