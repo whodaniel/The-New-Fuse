@@ -257,6 +257,8 @@ function EnhancedMultiAgentChatUI() {
   // Connection status component
   const ConnectionStatus = () => (
     <div
+      role="status"
+      aria-live="polite"
       className={cn(
         'flex items-center gap-2 px-3 py-1 rounded-full text-sm',
         connectionState.connected
@@ -305,7 +307,11 @@ function EnhancedMultiAgentChatUI() {
 
   if (!connectionState.connected && !connectionState.connecting) {
     return (
-      <div className="flex h-screen w-full flex-col items-center justify-center bg-gray-900 text-white">
+      <div
+        className="flex h-screen w-full flex-col items-center justify-center bg-gray-900 text-white"
+        role="status"
+        aria-live="polite"
+      >
         <div className="w-20 h-20 border-8 border-dashed rounded-full animate-spin border-blue-500 mb-6"></div>
         <h1 className="text-2xl font-bold mb-2">A2A Multi-Agent Chat</h1>
         <p className="text-gray-400 mb-4">Connecting to A2A protocol...</p>
@@ -322,7 +328,11 @@ function EnhancedMultiAgentChatUI() {
   return (
     <div className="grid grid-rows-[auto_1fr_auto] h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans">
       {isAutomating && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex flex-col justify-center items-center z-[100]">
+        <div
+          className="fixed inset-0 bg-black bg-opacity-75 flex flex-col justify-center items-center z-[100]"
+          role="status"
+          aria-live="polite"
+        >
           <div className="w-16 h-16 border-8 border-dashed rounded-full animate-spin border-blue-500"></div>
           <p className="text-white text-xl mt-4">Setting up A2A Agents...</p>
         </div>
