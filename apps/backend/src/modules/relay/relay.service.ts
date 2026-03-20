@@ -13,6 +13,7 @@ import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Cron } from '@nestjs/schedule';
 import { LRUCache } from 'lru-cache';
+import * as crypto from 'crypto';
 
 // Types for relay integration (we'll define these inline to avoid import issues)
 interface RelayConfig {
@@ -358,7 +359,8 @@ export class RelayService implements OnModuleInit, OnModuleDestroy {
   // ========================================
 
   private generateId(): string {
-    return `msg-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    // SECURITY: Use cryptographically secure random values instead of Math.random()
+    return `msg-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
   }
 
   async restart(): Promise<void> {
