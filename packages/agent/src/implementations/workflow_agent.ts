@@ -183,7 +183,7 @@ export class WorkflowAgent implements IAgent {
       throw new Error(`Workflow not found: ${workflowId}`);
     }
 
-    const executionId = `exec-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const executionId = `exec-${Date.now()}-${globalThis.crypto.randomUUID().split('-')[0]}`;
 
     const execution: WorkflowExecution = {
       workflowId,

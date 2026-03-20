@@ -356,7 +356,7 @@ export class ProtocolBridge extends BaseBridge {
     correlationId?: string
   ): A2AMessage {
     return {
-      id: `a2a-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `a2a-${Date.now()}-${globalThis.crypto.randomUUID().split('-')[0]}`,
       type,
       protocol: this.config.defaultProtocol,
       version: '0.3.0',
@@ -376,7 +376,7 @@ export class ProtocolBridge extends BaseBridge {
    */
   createResponse(originalMessage: A2AMessage, data: unknown, isError = false): A2AMessage {
     return {
-      id: `a2a-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `a2a-${Date.now()}-${globalThis.crypto.randomUUID().split('-')[0]}`,
       type: isError ? 'error' : 'response',
       protocol: originalMessage.protocol,
       version: '0.3.0',

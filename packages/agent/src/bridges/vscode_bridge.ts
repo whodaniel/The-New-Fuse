@@ -249,7 +249,7 @@ export class VSCodeBridge extends BaseBridge {
     edits: Array<{ range: { start: number; end: number }; text: string }>
   ): IDECommand {
     return {
-      id: `edit-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `edit-${Date.now()}-${globalThis.crypto.randomUUID().split('-')[0]}`,
       type: 'edit',
       payload: { file, edits },
       context: this.currentContext ?? undefined,
@@ -261,7 +261,7 @@ export class VSCodeBridge extends BaseBridge {
    */
   createNavigationCommand(file: string, line?: number, character?: number): IDECommand {
     return {
-      id: `nav-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `nav-${Date.now()}-${globalThis.crypto.randomUUID().split('-')[0]}`,
       type: 'navigate',
       payload: { file, line, character },
     };
@@ -272,7 +272,7 @@ export class VSCodeBridge extends BaseBridge {
    */
   createTerminalCommand(command: string, cwd?: string): IDECommand {
     return {
-      id: `term-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `term-${Date.now()}-${globalThis.crypto.randomUUID().split('-')[0]}`,
       type: 'terminal',
       payload: { command, cwd },
     };
@@ -292,7 +292,7 @@ export class VSCodeBridge extends BaseBridge {
     }
   ): IDECommand {
     return {
-      id: `search-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `search-${Date.now()}-${globalThis.crypto.randomUUID().split('-')[0]}`,
       type: 'search',
       payload: { query, ...options },
     };

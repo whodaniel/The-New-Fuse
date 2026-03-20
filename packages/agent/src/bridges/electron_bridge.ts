@@ -169,7 +169,7 @@ export class ElectronBridge extends BaseBridge {
     priority: Priority = Priority.MEDIUM
   ): Promise<void> {
     const ipcMessage: IPCMessage = {
-      id: `ipc-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `ipc-${Date.now()}-${globalThis.crypto.randomUUID().split('-')[0]}`,
       channel: (message.channel as string) || 'tnf:agent',
       payload: message,
       timestamp: new Date(),
@@ -217,7 +217,7 @@ export class ElectronBridge extends BaseBridge {
    */
   async sendAndWait(channel: string, payload: unknown, timeout = 30000): Promise<IPCResponse> {
     const message: IPCMessage = {
-      id: `ipc-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `ipc-${Date.now()}-${globalThis.crypto.randomUUID().split('-')[0]}`,
       channel,
       payload,
       timestamp: new Date(),

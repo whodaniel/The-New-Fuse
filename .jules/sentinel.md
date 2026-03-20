@@ -14,3 +14,7 @@
 **Vulnerability:** Found `Math.random().toString(36)` used for generating message IDs in the Redis Streams service.
 **Learning:** `Math.random()` generates pseudo-random numbers that are predictable and can be exploited to guess message IDs, which could potentially lead to session hijacking or spoofing in a multi-agent system relying on unique correlation IDs.
 **Prevention:** Always use cryptographically secure random number generators (CSPRNG) such as `crypto.randomBytes(4).toString('hex')` or UUIDv4 for generating sensitive identifiers.
+## 2024-03-24 - Weak Random Number Generation for IDs
+**Vulnerability:** Widespread use of `Math.random().toString(36).substr(2, 9)` to generate unique IDs across the `packages/agent/src` directory, including execution IDs, message IDs, and session IDs.
+**Learning:** This pattern was likely copy-pasted across multiple files during initial development for convenience. `Math.random()` is not cryptographically secure, making these IDs predictable and vulnerable to guessing attacks, which is especially concerning for session and execution IDs.
+**Prevention:** Always use cryptographically secure methods like `crypto.randomBytes(4).toString('hex')` or `crypto.randomUUID()` when generating unique identifiers for security-sensitive or session-related context.

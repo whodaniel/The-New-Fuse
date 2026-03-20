@@ -267,7 +267,7 @@ export class AgentSyncBridge extends BaseBridge {
     }
 
     const lock: Lock = {
-      id: `lock-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `lock-${Date.now()}-${globalThis.crypto.randomUUID().split('-')[0]}`,
       resource,
       holder,
       acquiredAt: new Date(),
@@ -378,7 +378,7 @@ export class AgentSyncBridge extends BaseBridge {
   ): SyncEvent {
     const state = this.states.get(agentId);
     return {
-      id: `event-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `event-${Date.now()}-${globalThis.crypto.randomUUID().split('-')[0]}`,
       agentId,
       type,
       path,

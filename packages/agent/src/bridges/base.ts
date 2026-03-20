@@ -140,7 +140,7 @@ export abstract class Bridge extends EventEmitter {
     priority: Priority = Priority.MEDIUM
   ): BridgeMessage {
     return {
-      id: `${this.name}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `${this.name}-${Date.now()}-${globalThis.crypto.randomUUID().split('-')[0]}`,
       type,
       priority,
       payload,

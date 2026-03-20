@@ -112,7 +112,7 @@ export class CommunicationBridge extends BaseBridge {
     priority: Priority = Priority.MEDIUM
   ): Message {
     return {
-      id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `msg-${Date.now()}-${globalThis.crypto.randomUUID().split('-')[0]}`,
       from,
       to,
       type,

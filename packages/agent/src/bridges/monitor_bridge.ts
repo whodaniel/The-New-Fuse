@@ -234,7 +234,7 @@ export class MonitorBridge extends BaseBridge {
    */
   private async triggerAlert(config: AlertConfig, agent: AgentMonitorData): Promise<void> {
     const alert: Alert = {
-      id: `alert-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `alert-${Date.now()}-${globalThis.crypto.randomUUID().split('-')[0]}`,
       configId: config.id,
       severity: config.severity,
       agentId: agent.agentId,

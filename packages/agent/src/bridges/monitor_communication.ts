@@ -75,7 +75,7 @@ export class MonitorCommunication extends EventEmitter {
 
     const fullMetric: MessageMetric = {
       ...metric,
-      id: `metric-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `metric-${Date.now()}-${globalThis.crypto.randomUUID().split('-')[0]}`,
       timestamp: new Date(),
     };
 

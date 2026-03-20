@@ -355,7 +355,7 @@ export class EnhancedCommunication extends EventEmitter {
     } = {}
   ): Promise<void> {
     const queuedMessage: QueuedMessage = {
-      id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `msg-${Date.now()}-${globalThis.crypto.randomUUID().split('-')[0]}`,
       message,
       priority,
       attempts: 0,

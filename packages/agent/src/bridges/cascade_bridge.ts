@@ -116,12 +116,12 @@ export class CascadeBridge extends BaseBridge {
     steps: Omit<CascadeStepDef, 'id'>[]
   ): CascadeWorkflow {
     const workflow: CascadeWorkflow = {
-      id: `cascade-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `cascade-${Date.now()}-${globalThis.crypto.randomUUID().split('-')[0]}`,
       name,
       mode,
       steps: steps.map((step, index) => ({
         ...step,
-        id: `step-${index}-${Math.random().toString(36).substr(2, 9)}`,
+        id: `step-${index}-${globalThis.crypto.randomUUID().split('-')[0]}`,
       })),
       createdAt: new Date(),
       status: 'pending',

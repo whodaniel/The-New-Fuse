@@ -195,7 +195,7 @@ export class CascadeAgent implements IAgent {
       throw new Error(`Pipeline not found: ${pipelineId}`);
     }
 
-    const executionId = `cascade-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const executionId = `cascade-${Date.now()}-${globalThis.crypto.randomUUID().split('-')[0]}`;
 
     const execution: CascadeExecution = {
       executionId,

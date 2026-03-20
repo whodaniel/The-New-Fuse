@@ -160,7 +160,7 @@ export class InteractiveAgent implements IAgent {
 
   // Interactive-specific methods
   async startSession(userId?: string): Promise<InteractiveSession> {
-    const sessionId = `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const sessionId = `session-${Date.now()}-${globalThis.crypto.randomUUID().split('-')[0]}`;
 
     const welcomeMessage: InteractiveMessage = {
       id: `msg-${Date.now()}`,

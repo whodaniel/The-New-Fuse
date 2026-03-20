@@ -559,7 +559,7 @@ export class UniversalBridge extends BaseBridge {
    * Generate a unique message ID
    */
   private generateMessageId(): string {
-    return `msg-${this.config.agentId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    return `msg-${this.config.agentId}-${Date.now()}-${globalThis.crypto.randomUUID().split('-')[0]}`;
   }
 
   /**
