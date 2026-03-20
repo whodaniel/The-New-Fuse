@@ -186,6 +186,8 @@ wiki
 *.db
 *.sql
 *.dump
+!packages/database/drizzle/*.sql
+!packages/database/migrations/*.sql
 
 # Database migration files (if not needed in container)
 # migrations/*.sql

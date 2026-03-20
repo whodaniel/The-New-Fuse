@@ -609,7 +609,7 @@ class BrokerAgent {
   private async externalFederationGateCheck(
     task: QueueTask,
     contextSignal: TwipContextSignal
-  ): Promise<{ ok: boolean; reasons: string[] }> {
+  ): Promise<{ ok: boolean; reasons: string[]; fallbackUsed?: boolean }> {
     const endpoint = String(CONFIG.GATE_POLICY_ENDPOINT || '').trim();
     const mode = this.getFederationGateMode();
     if (!endpoint) {
@@ -676,12 +676,37 @@ class BrokerAgent {
         body: JSON.stringify(payload),
       });
       const body = (await response.json().catch(() => null)) as any;
+      if (response.status >= 500) {
+        return {
+          ok: true,
+          reasons: [
+            `external gate worker unavailable (HTTP ${response.status}); local fallback used`,
+          ],
+          fallbackUsed: true,
+        };
+      }
+      if (response.ok && body === null) {
+        return {
+          ok: true,
+          reasons: [
+            `external gate worker returned invalid JSON (HTTP ${response.status}); local fallback used`,
+          ],
+          fallbackUsed: true,
+        };
+      }
       const reasons = Array.isArray(body?.reasons)
         ? body.reasons.map((entry: unknown) => String(entry))
         : [];
+      if (!response.ok && reasons.length === 0) {
+        reasons.push(`external gate returned HTTP ${response.status}`);
+      }
       return { ok: response.ok && body?.ok === true, reasons };
     } catch (error) {
-      return { ok: false, reasons: [`external gate check failed: ${(error as Error).message}`] };
+      return {
+        ok: true,
+        reasons: [`external gate check failed: ${(error as Error).message}; local fallback used`],
+        fallbackUsed: true,
+      };
     }
   }
 
@@ -749,8 +774,12 @@ class BrokerAgent {
           'external',
           gateMode,
           externalGate.reasons,
-          contextSignal
+          contextSignal,
+          externalGate.fallbackUsed ? 'warn' : undefined
         );
+        if (externalGate.fallbackUsed && externalGate.reasons.length > 0) {
+          console.warn(`[Broker] WARN ${task.id}: ${externalGate.reasons.join('; ')}`);
+        }
       }
     }
 
@@ -953,7 +982,16 @@ class BrokerAgent {
   ): Promise<void> {
     const base = CONFIG.LEDGER_API_BASE.replace(/\/$/, '');
     const patchUrl = `${base}/api/unified-ledger/records/${encodeURIComponent(task.id)}`;
-    const ingestUrl = `${base}/api/unified-ledger/ingest/orchestration`;
+    const ingestUrl =
+      process.env.LEDGER_INTERNAL_INGEST_URL ||
+      process.env.LEDGER_INGEST_URL ||
+      `${base}/api/unified-ledger/internal/ingest/orchestration`;
+    const internalSecret =
+      process.env.TNF_INTERNAL_INGEST_SECRET || process.env.UNIFIED_LEDGER_INTERNAL_SECRET;
+    const ingestHeaders: Record<string, string> = { 'content-type': 'application/json' };
+    if (internalSecret) {
+      ingestHeaders['x-tnf-internal-secret'] = internalSecret;
+    }
 
     const patchPayload = {
       status,
@@ -985,7 +1023,7 @@ class BrokerAgent {
     try {
       await fetch(ingestUrl, {
         method: 'POST',
-        headers: { 'content-type': 'application/json' },
+        headers: ingestHeaders,
         body: JSON.stringify({
           type: 'TASK_DISPATCH',
           action: status === 'queued' ? 'broker_dispatch' : 'broker_policy_gate',
@@ -1010,11 +1048,12 @@ class BrokerAgent {
     stage: 'local' | 'external',
     mode: 'off' | 'warn' | 'enforce',
     reasons: string[],
-    contextSignal: TwipContextSignal
+    contextSignal: TwipContextSignal,
+    outcomeOverride?: 'allow' | 'warn' | 'deny'
   ): Promise<void> {
     if (mode === 'off') return;
     const outcome: 'allow' | 'warn' | 'deny' =
-      reasons.length === 0 ? 'allow' : mode === 'enforce' ? 'deny' : 'warn';
+      outcomeOverride || (reasons.length === 0 ? 'allow' : mode === 'enforce' ? 'deny' : 'warn');
     const tenantId = this.getScopeTenant(task) || 'unknown';
     const timestamp = new Date().toISOString();
     const keys = new Set<string>([
@@ -1089,6 +1128,14 @@ class BrokerAgent {
     if (normalized.includes('missing scope tenant')) return 'missing_scope_tenant';
     if (normalized.includes('missing cumulative tenant')) return 'missing_cumulative_tenant';
     if (normalized.includes('missing twid')) return 'missing_twid';
+    if (normalized.includes('external gate worker unavailable')) {
+      return 'external_worker_unavailable';
+    }
+    if (normalized.includes('external gate worker returned invalid json')) {
+      return 'external_worker_invalid_json';
+    }
+    if (normalized.includes('external gate check failed')) return 'external_worker_request_failed';
+    if (normalized.includes('external gate returned http')) return 'external_worker_http_error';
     if (normalized.includes('twip context signal unavailable')) return 'twip_context_unavailable';
     if (normalized.includes('twip context stale')) return 'twip_context_stale';
     if (normalized.includes('twip context risk critical')) return 'twip_context_risk_critical';

@@ -26,6 +26,10 @@ const REQUIRED_GATE_CHAIN = [
 type GateDecision = { gate: string; decision: 'allow' | 'deny' | 'quarantine' };
 type ExternalGateMode = 'off' | 'warn' | 'enforce';
 type GateTelemetryOutcome = 'allow' | 'warn' | 'deny' | 'error';
+type ExternalGateEvaluationResult =
+  | { kind: 'allow' }
+  | { kind: 'deny'; reason: string }
+  | { kind: 'fallback'; reason: string };
 
 @Injectable()
 export class AgentHandoffService implements OnModuleDestroy {
@@ -391,46 +395,23 @@ export class AgentHandoffService implements OnModuleDestroy {
 
     const url = `${endpoint.replace(/\/+$/, '')}/gates/federation/evaluate`;
     const token = this.configService.get<string>('TNF_GATE_POLICY_TOKEN');
-    let response: Response;
+    const evaluation = await this.evaluateExternalFederationGatePolicy(url, token, parsed);
 
-    try {
-      response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/json',
-          ...(token ? { 'x-auth-token': token } : {}),
-        },
-        body: JSON.stringify({ request: parsed }),
-      });
-    } catch (error) {
-      const message = `External gate policy request failed: ${(error as Error).message}`;
+    if (evaluation.kind === 'fallback') {
+      const message = `${evaluation.reason}; local federation gate validation accepted request`;
       await this.emitGateTelemetryEvent({
         tenantId,
         category: 'external_policy',
-        outcome: mode === 'enforce' ? 'deny' : 'warn',
+        outcome: 'warn',
         mode,
         reason: message,
         correlationId,
       });
-      if (mode === 'enforce') throw new BadRequestException(message);
       this.logger.warn(message);
       return;
     }
 
-    let result: any = null;
-    try {
-      result = await response.json();
-    } catch {
-      result = null;
-    }
-
-    const deniedReasons = Array.isArray(result?.reasons)
-      ? result.reasons.map((entry: unknown) => String(entry))
-      : [];
-    const reasonText = deniedReasons.length > 0 ? deniedReasons.join('; ') : 'no reason provided';
-    const allowed = response.ok && result?.ok === true;
-
-    if (allowed) {
+    if (evaluation.kind === 'allow') {
       await this.emitGateTelemetryEvent({
         tenantId,
         category: 'external_policy',
@@ -442,7 +423,7 @@ export class AgentHandoffService implements OnModuleDestroy {
       return;
     }
 
-    const message = `External federation gate denied packet: ${reasonText}`;
+    const message = evaluation.reason;
     await this.emitGateTelemetryEvent({
       tenantId,
       category: 'external_policy',
@@ -456,6 +437,66 @@ export class AgentHandoffService implements OnModuleDestroy {
     }
 
     this.logger.warn(message);
+  }
+
+  private async evaluateExternalFederationGatePolicy(
+    url: string,
+    token: string | undefined,
+    parsed: ReturnType<typeof HandoffPacketInput.parse>
+  ): Promise<ExternalGateEvaluationResult> {
+    let response: Response;
+    try {
+      response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          ...(token ? { 'x-auth-token': token } : {}),
+        },
+        body: JSON.stringify({ request: parsed }),
+      });
+    } catch (error) {
+      return {
+        kind: 'fallback',
+        reason: `External gate policy request failed: ${(error as Error).message}`,
+      };
+    }
+
+    const statusLabel = `HTTP ${response.status}`;
+    let result: any = null;
+    let parsedJson = true;
+    try {
+      result = await response.json();
+    } catch {
+      parsedJson = false;
+      result = null;
+    }
+
+    if (response.status >= 500) {
+      return {
+        kind: 'fallback',
+        reason: `External gate policy worker unavailable (${statusLabel})`,
+      };
+    }
+
+    if (response.ok && (!parsedJson || result === null)) {
+      return {
+        kind: 'fallback',
+        reason: `External gate policy worker returned invalid JSON (${statusLabel})`,
+      };
+    }
+
+    if (response.ok && result?.ok === true) {
+      return { kind: 'allow' };
+    }
+
+    const deniedReasons = Array.isArray(result?.reasons)
+      ? result.reasons.map((entry: unknown) => String(entry))
+      : [];
+    const reasonText = deniedReasons.length > 0 ? deniedReasons.join('; ') : statusLabel;
+    return {
+      kind: 'deny',
+      reason: `External federation gate denied packet: ${reasonText}`,
+    };
   }
 
   private async emitGateTelemetryEvent(input: {

@@ -40,24 +40,20 @@ else
       cd "$DB_PKG_PATH"
 
       echo "Executing Drizzle migrations..."
-      # Use the script defined in database package.json
-      # We attempt to use pnpm if available, else npm
       if command -v pnpm >/dev/null 2>&1; then
         pnpm drizzle:migrate
       else
         npm run drizzle:migrate
       fi
 
-      MIGRATE_EXIT_CODE=$?
-      cd "$CURRENT_DIR"
+      echo "Drizzle migrations completed successfully."
+      echo "Verifying critical auth schema..."
+      node scripts/ensure-auth-schema.cjs
 
-      if [ $MIGRATE_EXIT_CODE -eq 0 ]; then
-        echo "Drizzle migrations completed successfully."
-      else
-        echo "WARNING: Drizzle migrations failed with exit code $MIGRATE_EXIT_CODE"
-      fi
+      cd "$CURRENT_DIR"
     else
-      echo "WARNING: Could not find packages/database directory. Skipping migrations."
+      echo "ERROR: Could not find packages/database directory. Cannot verify schema."
+      exit 1
     fi
   fi
 

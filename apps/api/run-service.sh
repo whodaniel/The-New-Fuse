@@ -39,23 +39,16 @@ else
       pwd
 
       echo "Executing Drizzle migrations..."
-      # Force use of pnpm to run migrations with proper environment
-      # Use push instead of migrate for simpler schema deployment
-      pnpm run drizzle:push
+      pnpm run drizzle:migrate
 
-      MIGRATE_EXIT_CODE=$?
+      echo "Drizzle migrations completed successfully."
+      echo "Verifying critical auth schema..."
+      node scripts/ensure-auth-schema.cjs
+
       cd "$CURRENT_DIR"
-
-      if [ $MIGRATE_EXIT_CODE -eq 0 ]; then
-        echo "Drizzle migrations completed successfully."
-      else
-        echo "WARNING: Drizzle migrations failed with exit code $MIGRATE_EXIT_CODE"
-        # We don't exit here to allow the service to attempt startup anyway,
-        # similar to how the previous script verified connectivity but didn't strictly block
-        # (though the previous script did try emergency repair).
-      fi
     else
-      echo "WARNING: Could not find packages/database directory. Skipping migrations."
+      echo "ERROR: Could not find packages/database directory. Cannot verify schema."
+      exit 1
     fi
   fi
 

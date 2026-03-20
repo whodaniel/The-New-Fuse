@@ -329,6 +329,7 @@ describe('AgentHandoffService lifecycle audit logging', () => {
     const originalFetch = global.fetch;
     (global as any).fetch = jest.fn().mockResolvedValue({
       ok: false,
+      status: 422,
       json: async () => ({
         ok: false,
         reasons: ['missing required gate: CHANNEL_MEMBERSHIP_GATE'],
@@ -360,6 +361,86 @@ describe('AgentHandoffService lifecycle audit logging', () => {
             gateCategory: 'external_policy',
             outcome: 'warn',
             mode: 'warn',
+          }),
+        })
+      );
+    } finally {
+      (global as any).fetch = originalFetch;
+    }
+  });
+
+  it('falls back to local federation validation when the external worker returns 500', async () => {
+    const { service, unifiedLedgerService, configService } = createService();
+    configService.get = jest.fn((key: string) => {
+      if (key === 'HANDOFF_KEY_PREFIX') return 'tnf:handoff:test';
+      if (key === 'TNF_GATE_POLICY_MODE') return 'enforce';
+      if (key === 'TNF_GATE_POLICY_ENDPOINT') return 'https://gate.example';
+      return undefined;
+    });
+
+    const packet = {
+      id: '0c2ff8f6-8c08-4de8-a7af-74659b289744',
+      version: '1.1',
+      createdAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 60_000).toISOString(),
+      status: 'pending',
+      fromAgentId: 'agent-alpha',
+      targets: { agentIds: ['agent-beta'], roles: [] },
+      scope: { tenantId: 'tnf-prod' },
+      payload: {
+        title: 'Task handoff',
+        summary: 'Send context to next agent',
+        prompt: 'Handle next stage',
+        acceptanceCriteria: [],
+        nextActions: [],
+        artifacts: [],
+      },
+      cumulativeId: buildCumulativeId(),
+      gateDecisions: baseGateDecisions,
+      priority: 'normal',
+      tags: ['triage'],
+    } as any;
+
+    (service as any).store = {
+      publish: jest.fn().mockResolvedValue(packet),
+    };
+
+    const originalFetch = global.fetch;
+    (global as any).fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      status: 500,
+      json: async () => ({
+        ok: false,
+        error: 'worker crashed',
+      }),
+    } as any);
+
+    try {
+      const result = await service.publishForTenant(
+        {
+          fromAgentId: 'agent-alpha',
+          targets: { agentIds: ['agent-beta'] },
+          scope: { tenantId: 'tnf-prod' },
+          payload: {
+            title: 'Task handoff',
+            summary: 'Send context to next agent',
+            prompt: 'Handle next stage',
+          },
+          cumulativeId: buildCumulativeId(),
+          gateDecisions: baseGateDecisions,
+        },
+        'tnf-prod'
+      );
+
+      expect(result.id).toBe(packet.id);
+      expect(unifiedLedgerService.createTimelineEvent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          payload: expect.objectContaining({
+            category: 'handoff_gate_evaluation',
+            gateCategory: 'external_policy',
+            outcome: 'warn',
+            mode: 'enforce',
+            reason: expect.stringContaining('local federation gate validation accepted request'),
           }),
         })
       );

@@ -26,7 +26,7 @@ const Login: React.FC = () => {
   const [cfTurnstileToken, setCfTurnstileToken] = useState<string | null>(null);
 
   const turnstileSiteKey = (import.meta.env.VITE_TURNSTILE_SITE_KEY || '').trim();
-  const requireTurnstile = isTruthy(import.meta.env.VITE_AUTH_REQUIRE_TURNSTILE) && false;
+  const requireTurnstile = isTruthy(import.meta.env.VITE_AUTH_REQUIRE_TURNSTILE);
 
   useEffect(() => {
     if (!isAuthLoading && isAuthenticated) {
