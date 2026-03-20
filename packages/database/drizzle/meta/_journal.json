@@ -50,6 +50,13 @@
       "when": 1773855000000,
       "tag": "0008_add_resource_interactions",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1774004000000,
+      "tag": "0009_add_user_verification_columns",
+      "breakpoints": true
     }
   ]
 }
