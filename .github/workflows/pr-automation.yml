@@ -25,7 +25,7 @@ jobs:
           fetch-depth: 0
 
       - name: Auto label based on files changed
-        uses: actions/labeler@v5
+        uses: actions/labeler@v4
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           configuration-path: .github/labeler.yml

@@ -158,11 +158,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Checkout base branch
         run: |
-          git fetch origin ${{ github.base_ref }}
-          git checkout origin/${{ github.base_ref }}
+          git fetch origin ${{ github.event.pull_request.base.sha }} --depth=1
+          git checkout ${{ github.event.pull_request.base.sha }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -188,7 +190,8 @@ jobs:
 
       - name: Checkout PR branch
         run: |
-          git checkout ${{ github.head_ref }}
+          git fetch ${{ github.event.pull_request.head.repo.clone_url }} ${{ github.event.pull_request.head.sha }} --depth=1
+          git checkout FETCH_HEAD
 
       - name: Clean and install dependencies (PR)
         run: |
