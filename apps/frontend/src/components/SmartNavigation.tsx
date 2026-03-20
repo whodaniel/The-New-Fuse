@@ -347,6 +347,7 @@ function SmartNavigation() {
                   <div key={menu.key} className="relative">
                     <button
                       onClick={() => toggleDropdown(menu.key)}
+                      aria-expanded={activeDropdown === menu.key}
                       className={`px-3 py-2 rounded-md text-sm font-medium flex items-center gap-2 transition-colors ${
                         isActive
                           ? menu.activeClassName
@@ -401,6 +402,8 @@ function SmartNavigation() {
               <div className="relative">
                 <button
                   onClick={() => toggleDropdown('admin')}
+                  aria-label="Admin Menu"
+                  aria-expanded={activeDropdown === 'admin'}
                   className="w-10 h-10 flex items-center justify-center rounded-md bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors border border-red-500/20"
                 >
                   <Shield className="w-5 h-5" />
@@ -441,6 +444,8 @@ function SmartNavigation() {
             <div className="relative">
               <button
                 onClick={() => toggleDropdown('user')}
+                aria-label="User Menu"
+                aria-expanded={activeDropdown === 'user'}
                 className="flex items-center gap-2 p-1.5 rounded-md bg-transparent/5 border border-white/10 hover:bg-transparent/10 transition-colors"
               >
                 <div className="w-7 h-7 bg-blue-500 rounded-md flex items-center justify-center text-[10px] font-bold">
@@ -481,7 +486,7 @@ function SmartNavigation() {
               )}
             </div>
 
-            <button className="lg:hidden w-10 h-10 flex items-center justify-center rounded-md bg-transparent/5 text-slate-400 hover:text-white transition-colors">
+            <button aria-label="Open mobile menu" className="lg:hidden w-10 h-10 flex items-center justify-center rounded-md bg-transparent/5 text-slate-400 hover:text-white transition-colors">
               <Menu className="w-6 h-6" />
             </button>
           </div>
