@@ -8,7 +8,6 @@
 
 import {
   AlertCircle,
-  AlertTriangle,
   Bug,
   ChevronDown,
   ChevronUp,
@@ -190,19 +189,6 @@ export const ErrorMonitoringDashboard: React.FC = () => {
   // Render helpers
   // ============================================================================
 
-  const getSeverityIcon = (severity: string) => {
-    switch (severity) {
-      case 'critical':
-        return <AlertCircle className="text-red-500" size={16} />;
-      case 'high':
-        return <AlertTriangle className="text-orange-500" size={16} />;
-      case 'medium':
-        return <AlertTriangle className="text-yellow-500" size={16} />;
-      default:
-        return <Info className="text-blue-500" size={16} />;
-    }
-  };
-
   const getTrendIcon = () => {
     if (!statistics?.trend) return null;
     switch (statistics.trend) {
@@ -237,9 +223,14 @@ export const ErrorMonitoringDashboard: React.FC = () => {
               <Filter size={16} />
               Filters
             </button>
-            <button onClick={fetchErrors} className="btn-secondary" aria-label="Refresh">
-              <RefreshCw size={16} />
-              Refresh
+            <button
+              onClick={fetchErrors}
+              className="btn-secondary"
+              aria-label="Refresh"
+              disabled={isLoading}
+            >
+              <RefreshCw size={16} className={isLoading ? 'animate-spin' : ''} />
+              {isLoading ? 'Refreshing...' : 'Refresh'}
             </button>
             <button
               onClick={handleExportErrors}
