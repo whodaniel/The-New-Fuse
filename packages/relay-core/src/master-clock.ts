@@ -65,6 +65,13 @@ import path from 'path';
 import { createClient } from 'redis';
 import { promisify } from 'util';
 import WebSocket from 'ws';
+import { attachAuditTrace, type TnfAuditTrace } from './contracts/audit';
+import {
+  buildCanonicalEntityId,
+  createAgentIdentityRecord,
+  type TnfAgentIdentityRecord,
+} from './contracts/identity';
+import { normalizeAgentLifecycleStatus, type TnfAgentLifecycleStatus } from './contracts/lifecycle';
 import { createTNFEnvelope } from './protocol/tnf-envelope';
 
 const execFileAsync = promisify(execFile);
@@ -184,16 +191,77 @@ async function logToFile(entry: LogEntry) {
 interface Agent {
   agentId: string;
   sourceId: string;
+  canonicalEntityId?: string | null;
+  operationalHandle: string;
+  runtimeSessionId?: string | null;
+  aliases: string[];
   platform: string;
   name: string;
   capabilities: string[];
   registeredAt: number;
   lastHeartbeat: number;
   lastActivity: number;
-  status: 'active' | 'stalled' | 'offline';
+  status: TnfAgentLifecycleStatus;
   messageCount: number;
   violations: number;
   channel: string | null;
+}
+
+function createMasterClockAgentIdentity(
+  sourceId: string,
+  info: any,
+  agentId: string,
+  ordinal: number
+): TnfAgentIdentityRecord {
+  let canonicalEntityId =
+    typeof info?.canonicalEntityId === 'string' ? info.canonicalEntityId : null;
+
+  if (!canonicalEntityId) {
+    try {
+      canonicalEntityId = buildCanonicalEntityId({
+        category: 'AGENT',
+        provider:
+          typeof info?.platform === 'string' && info.platform.trim() ? info.platform : 'unknown',
+        name: typeof info?.name === 'string' && info.name.trim() ? info.name : sourceId || agentId,
+        instance: ordinal,
+      });
+    } catch {
+      canonicalEntityId = null;
+    }
+  }
+
+  return createAgentIdentityRecord({
+    canonicalEntityId,
+    operationalHandle: agentId,
+    runtimeSessionId: sourceId,
+    aliases: [
+      sourceId,
+      typeof info?.name === 'string' ? info.name : null,
+      typeof info?.operationalHandle === 'string' ? info.operationalHandle : null,
+      ...(Array.isArray(info?.aliases) ? info.aliases : []),
+    ],
+  });
+}
+
+function createOrchestratorIdentity(sessionId: string): TnfAgentIdentityRecord {
+  let canonicalEntityId: string | null = null;
+  try {
+    canonicalEntityId = buildCanonicalEntityId({
+      category: 'AGENT',
+      provider: 'TNF',
+      name: 'MASTER_CLOCK',
+      instance: 1,
+    });
+  } catch {
+    canonicalEntityId = null;
+  }
+
+  return createAgentIdentityRecord({
+    canonicalEntityId,
+    operationalHandle: 'ORCHESTRATOR',
+    runtimeSessionId: sessionId,
+    aliases: [sessionId, 'master-clock', 'tnf-master-clock'],
+  });
 }
 
 class AgentRegistry {
@@ -218,17 +286,27 @@ class AgentRegistry {
     // Generate new ID
     const agentNum = String(this.nextAgentNumber++).padStart(2, '0');
     const agentId = `AGENT-${agentNum}`;
+    const identity = createMasterClockAgentIdentity(
+      sourceId,
+      info,
+      agentId,
+      this.nextAgentNumber - 1
+    );
 
     const agent: Agent = {
       agentId,
       sourceId,
+      canonicalEntityId: identity.canonicalEntityId,
+      operationalHandle: identity.operationalHandle,
+      runtimeSessionId: identity.runtimeSessionId,
+      aliases: identity.aliases,
       platform: info.platform || 'unknown',
       name: info.name || `Agent ${agentNum}`,
       capabilities: info.capabilities || [],
       registeredAt: Date.now(),
       lastHeartbeat: Date.now(),
       lastActivity: Date.now(),
-      status: 'active',
+      status: normalizeAgentLifecycleStatus('active') || 'active',
       messageCount: 0,
       violations: 0,
       channel: info.channel || null,
@@ -247,7 +325,7 @@ class AgentRegistry {
     const agent = this.agents.get(agentId);
     if (agent) {
       agent.lastHeartbeat = Date.now();
-      agent.status = 'active';
+      agent.status = normalizeAgentLifecycleStatus('active') || 'active';
     }
   }
 
@@ -256,7 +334,7 @@ class AgentRegistry {
     if (agent) {
       agent.lastActivity = Date.now();
       agent.messageCount++;
-      agent.status = 'active';
+      agent.status = normalizeAgentLifecycleStatus('active') || 'active';
     }
   }
 
@@ -299,7 +377,7 @@ class AgentRegistry {
   markOffline(agentId: string) {
     const agent = this.agents.get(agentId);
     if (agent) {
-      agent.status = 'offline';
+      agent.status = normalizeAgentLifecycleStatus('offline') || 'offline';
       log('warn', 'REGISTRY', `Agent marked offline: ${agentId}`, { agentId });
     }
   }
@@ -391,6 +469,7 @@ interface ChronologicalProcessSnapshot {
 
 class MasterClock {
   sessionId: string;
+  orchestratorIdentity: TnfAgentIdentityRecord;
   registry: AgentRegistry;
   ws: WebSocket | null;
   redis: ReturnType<typeof createClient> | null;
@@ -413,6 +492,7 @@ class MasterClock {
 
   constructor() {
     this.sessionId = `ORCHESTRATOR-${Date.now()}`;
+    this.orchestratorIdentity = createOrchestratorIdentity(this.sessionId);
     this.registry = new AgentRegistry();
     this.ws = null;
     this.redis = null;
@@ -554,11 +634,16 @@ class MasterClock {
   // --------------------------------------------------------------------------
 
   registerAsOrchestrator() {
+    const orchestrator = this.getOrchestratorEnvelopeIdentity();
     this.send({
       type: 'AGENT_REGISTER',
       payload: {
         agent: {
           id: this.sessionId,
+          canonicalEntityId: orchestrator.canonicalEntityId,
+          operationalHandle: orchestrator.operationalHandle,
+          runtimeSessionId: orchestrator.runtimeSessionId,
+          aliases: orchestrator.aliases,
           name: 'TNF Master Orchestrator',
           platform: 'orchestrator',
           role: 'ORCHESTRATOR',
@@ -632,12 +717,16 @@ class MasterClock {
     const now = Date.now();
     const stats = this.registry.getStats();
     const superCycleStats = this.getSuperCycleStats();
+    const orchestrator = this.getOrchestratorEnvelopeIdentity();
 
     // Heartbeat to relay
     this.send({
       type: 'HEARTBEAT',
       payload: {
         sessionId: this.sessionId,
+        canonicalEntityId: orchestrator.canonicalEntityId,
+        operationalHandle: orchestrator.operationalHandle,
+        runtimeSessionId: orchestrator.runtimeSessionId,
         role: 'ORCHESTRATOR',
         timestamp: now,
         stats,
@@ -905,6 +994,21 @@ class MasterClock {
     content: string,
     metadata: Record<string, unknown>
   ): Promise<void> {
+    const auditedMetadata = this.attachOrchestratorAudit(
+      {
+        isSystemMessage: true,
+        source: 'ORCHESTRATOR',
+        eventType,
+        activityChannel: 'General',
+        sessionId: this.sessionId,
+        ...metadata,
+      },
+      {
+        channelId: 'fuse-activity-log',
+        sessionId: this.sessionId,
+      }
+    );
+
     this.send({
       type: 'MESSAGE_SEND',
       channel: 'fuse-activity-log',
@@ -912,14 +1016,7 @@ class MasterClock {
         to: 'broadcast',
         content,
         messageType: 'event',
-        metadata: {
-          isSystemMessage: true,
-          source: 'ORCHESTRATOR',
-          eventType,
-          activityChannel: 'General',
-          sessionId: this.sessionId,
-          ...metadata,
-        },
+        metadata: auditedMetadata,
       },
     });
 
@@ -932,7 +1029,7 @@ class MasterClock {
           sessionId: this.sessionId,
           eventType,
           content,
-          metadata,
+          metadata: auditedMetadata,
         })
       );
       await this.redis.lTrim(CONFIG.REDIS_KEYS.LOGS, 0, 999);
@@ -1440,7 +1537,7 @@ class MasterClock {
 
       if (agent.status === 'active') {
         // First detection - mark as stalled
-        agent.status = 'stalled';
+        agent.status = normalizeAgentLifecycleStatus('stalled') || 'stalled';
         this.metrics.stallsDetected++;
         log(
           'warn',
@@ -1596,6 +1693,7 @@ class MasterClock {
         channel,
         platform: this.detectPlatform(content),
         capabilities: this.detectCapabilities(content),
+        aliases: [sourceId],
       });
 
       this.metrics.agentsOnboarded++;
@@ -1642,6 +1740,10 @@ class MasterClock {
 
     if (sourceId && sourceId !== this.sessionId) {
       const agentId = this.registry.assignAgentId(sourceId, {
+        canonicalEntityId: info.canonicalEntityId,
+        operationalHandle: info.operationalHandle,
+        runtimeSessionId: info.runtimeSessionId,
+        aliases: info.aliases,
         platform: info.platform,
         name: info.name,
         capabilities: info.capabilities,
@@ -1804,7 +1906,7 @@ class MasterClock {
       // Check if this agent needs onboarding
       const existingAgent = this.registry.getAgentBySource(agentId);
       if (!existingAgent && agentId !== this.sessionId) {
-        const newId = this.registry.assignAgentId(agentId, { channel });
+        const newId = this.registry.assignAgentId(agentId, { channel, aliases: [agentId] });
         this.broadcastToChannel(channel, this.createAssignmentMessage(newId));
       }
     }
@@ -1866,10 +1968,16 @@ class MasterClock {
         to: 'broadcast',
         content,
         messageType: 'text',
-        metadata: {
-          isSystemMessage: true,
-          source: 'ORCHESTRATOR',
-        },
+        metadata: this.attachOrchestratorAudit(
+          {
+            isSystemMessage: true,
+            source: 'ORCHESTRATOR',
+          },
+          {
+            channelId: channel,
+            sessionId: this.sessionId,
+          }
+        ),
       },
     });
   }
@@ -2085,7 +2193,7 @@ Acknowledge by sending: [${agentId}] Ready for duty!
 
     const broadcastEnvelope = createTNFEnvelope(
       'event',
-      { agentId: this.sessionId, role: 'orchestrator', platform: 'master-clock' },
+      this.getOrchestratorEnvelopeIdentity(),
       { broadcast: true },
       {
         eventType: 'SELF_PROMPT',
@@ -2099,6 +2207,12 @@ Acknowledge by sending: [${agentId}] Ready for duty!
       {
         channelId: params.channel,
         sessionId: this.sessionId,
+      },
+      {
+        audit: this.getOrchestratorAudit({
+          channelId: params.channel,
+          sessionId: this.sessionId,
+        }),
       }
     );
 
@@ -2121,8 +2235,8 @@ Acknowledge by sending: [${agentId}] Ready for duty!
     if (params.targetSourceId) {
       const directEnvelope = createTNFEnvelope(
         'task',
-        { agentId: this.sessionId, role: 'orchestrator', platform: 'master-clock' },
-        { agentId: params.targetSourceId, role: 'worker' },
+        this.getOrchestratorEnvelopeIdentity(),
+        this.getAgentEnvelopeIdentity(params.targetSourceId),
         {
           action: 'self_prompt_continue',
           parameters: {
@@ -2137,6 +2251,12 @@ Acknowledge by sending: [${agentId}] Ready for duty!
         {
           channelId: params.channel,
           sessionId: this.sessionId,
+        },
+        {
+          audit: this.getOrchestratorAudit({
+            channelId: params.channel,
+            sessionId: this.sessionId,
+          }),
         }
       );
 
@@ -2160,6 +2280,64 @@ Acknowledge by sending: [${agentId}] Ready for duty!
       targetProcessId: params.targetProcessId,
       reason: params.reason,
     });
+  }
+
+  private getOrchestratorAudit(
+    overrides: Partial<TnfAuditTrace> = {}
+  ): Partial<TnfAuditTrace> & Pick<TnfAuditTrace, 'source' | 'actor'> {
+    return {
+      source: 'master-clock',
+      actor: this.orchestratorIdentity.operationalHandle,
+      sessionId: this.sessionId,
+      canonicalEntityId: this.orchestratorIdentity.canonicalEntityId,
+      operationalHandle: this.orchestratorIdentity.operationalHandle,
+      runtimeSessionId: this.orchestratorIdentity.runtimeSessionId,
+      ...overrides,
+    };
+  }
+
+  private attachOrchestratorAudit(
+    metadata: Record<string, unknown> | undefined,
+    overrides: Partial<TnfAuditTrace> = {}
+  ): Record<string, unknown> {
+    return attachAuditTrace(metadata, this.getOrchestratorAudit(overrides));
+  }
+
+  private getOrchestratorEnvelopeIdentity() {
+    return {
+      agentId: this.sessionId,
+      canonicalEntityId: this.orchestratorIdentity.canonicalEntityId || undefined,
+      operationalHandle: this.orchestratorIdentity.operationalHandle,
+      runtimeSessionId: this.orchestratorIdentity.runtimeSessionId || undefined,
+      aliases: this.orchestratorIdentity.aliases,
+      role: 'orchestrator' as const,
+      platform: 'master-clock',
+    };
+  }
+
+  private getAgentEnvelopeIdentity(sourceOrAgentId: string) {
+    const agent =
+      this.registry.getAgent(sourceOrAgentId) || this.registry.getAgentBySource(sourceOrAgentId);
+
+    if (!agent) {
+      return {
+        agentId: sourceOrAgentId,
+        operationalHandle: sourceOrAgentId,
+        runtimeSessionId: sourceOrAgentId,
+        aliases: [sourceOrAgentId],
+        role: 'worker' as const,
+      };
+    }
+
+    return {
+      agentId: agent.sourceId,
+      canonicalEntityId: agent.canonicalEntityId || undefined,
+      operationalHandle: agent.operationalHandle,
+      runtimeSessionId: agent.runtimeSessionId || undefined,
+      aliases: agent.aliases,
+      role: 'worker' as const,
+      platform: agent.platform,
+    };
   }
 
   getSuperCycleStats() {

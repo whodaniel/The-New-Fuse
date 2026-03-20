@@ -15,6 +15,7 @@
 
 import { EventEmitter } from 'events';
 import { createClient, RedisClientType } from 'redis';
+import { createAgentIdentityRecord } from './contracts/identity';
 import { createTNFEnvelope, TNFEnvelope, validateTNFEnvelope } from './protocol/tnf-envelope';
 
 export interface RedisRelayBridgeConfig {
@@ -115,9 +116,16 @@ export class RedisRelayBridge extends EventEmitter {
 
     // Publish to ingress
     try {
-      await this.redisClient.publish(this.config.ingressChannel, JSON.stringify(envelope));
-      console.log(`[Redis-Bridge] Published to ${this.config.ingressChannel}:`, envelope.id);
-      this.emit('ingress', envelope);
+      const normalizedEnvelope = validateTNFEnvelope(envelope);
+      await this.redisClient.publish(
+        this.config.ingressChannel,
+        JSON.stringify(normalizedEnvelope)
+      );
+      console.log(
+        `[Redis-Bridge] Published to ${this.config.ingressChannel}:`,
+        normalizedEnvelope.id
+      );
+      this.emit('ingress', normalizedEnvelope);
     } catch (error) {
       console.error('[Redis-Bridge] Failed to publish:', error);
       this.emit('error', error);
@@ -160,9 +168,31 @@ export class RedisRelayBridge extends EventEmitter {
    * Wrap legacy message in TNF Envelope
    */
   private wrapLegacyMessage(rawMessage: any, agentId: string): TNFEnvelope {
+    const identity = createAgentIdentityRecord({
+      operationalHandle: agentId,
+      runtimeSessionId: agentId,
+      aliases: [agentId],
+    });
+    const payloadMetadata =
+      rawMessage?.payload && typeof rawMessage.payload === 'object'
+        ? ((rawMessage.payload as Record<string, unknown>).metadata as
+            | Record<string, unknown>
+            | undefined)
+        : undefined;
+    const metadata =
+      (typeof rawMessage?.metadata === 'object' ? rawMessage.metadata : payloadMetadata) ||
+      undefined;
+
     return createTNFEnvelope(
       'event',
-      { agentId, role: 'worker' },
+      {
+        agentId,
+        operationalHandle: identity.operationalHandle,
+        runtimeSessionId: identity.runtimeSessionId || undefined,
+        aliases: identity.aliases,
+        role: 'worker',
+        platform: typeof rawMessage?.platform === 'string' ? rawMessage.platform : undefined,
+      },
       { broadcast: true },
       {
         legacy: true,
@@ -170,6 +200,19 @@ export class RedisRelayBridge extends EventEmitter {
       },
       {
         channelId: rawMessage.channel,
+        sessionId: identity.runtimeSessionId || agentId,
+      },
+      {
+        metadata,
+        audit: {
+          source: 'redis-relay-bridge',
+          actor: identity.operationalHandle,
+          channelId: rawMessage.channel,
+          sessionId: identity.runtimeSessionId || agentId,
+          operationalHandle: identity.operationalHandle,
+          runtimeSessionId: identity.runtimeSessionId,
+          canonicalEntityId: identity.canonicalEntityId,
+        },
       }
     );
   }
@@ -182,8 +225,9 @@ export class RedisRelayBridge extends EventEmitter {
       throw new Error('Not connected to Redis');
     }
 
-    await this.redisClient.publish(this.config.ingressChannel, JSON.stringify(envelope));
-    console.log(`[Redis-Bridge] Published to ingress:`, envelope.id);
+    const normalizedEnvelope = validateTNFEnvelope(envelope);
+    await this.redisClient.publish(this.config.ingressChannel, JSON.stringify(normalizedEnvelope));
+    console.log(`[Redis-Bridge] Published to ingress:`, normalizedEnvelope.id);
   }
 
   /**
@@ -195,8 +239,9 @@ export class RedisRelayBridge extends EventEmitter {
     }
 
     const channel = `${this.config.egressChannelPrefix}:${agentId}`;
-    await this.redisClient.publish(channel, JSON.stringify(envelope));
-    console.log(`[Redis-Bridge] Published to ${channel}:`, envelope.id);
+    const normalizedEnvelope = validateTNFEnvelope(envelope);
+    await this.redisClient.publish(channel, JSON.stringify(normalizedEnvelope));
+    console.log(`[Redis-Bridge] Published to ${channel}:`, normalizedEnvelope.id);
   }
 
   /**
