@@ -132,3 +132,93 @@ test('bridge approval emits an audited activity event at the decision point', ()
   assert.equal(eventRecord.metadata.agentId, 'agent-bridge-1');
   assert.equal(eventRecord.operator.actor, 'local-super-admin');
 });
+
+test('task dispatch persistence uses internal ingest endpoint and shared secret header', async () => {
+  const relay = Object.create(TNFRelayServer.prototype);
+  const originalFetch = globalThis.fetch;
+  const originalIngestUrl = process.env.LEDGER_INTERNAL_INGEST_URL;
+  const originalSecret = process.env.TNF_INTERNAL_INGEST_SECRET;
+  const calls = [];
+
+  process.env.LEDGER_INTERNAL_INGEST_URL =
+    'http://localhost:3001/api/unified-ledger/internal/ingest/orchestration';
+  process.env.TNF_INTERNAL_INGEST_SECRET = 'relay-secret';
+  globalThis.fetch = async (url, options) => {
+    calls.push({ url, options });
+    return { ok: true };
+  };
+
+  try {
+    await relay.persistTaskDispatch(
+      {
+        id: 'task-1',
+        title: 'Dispatch task',
+        description: 'Validate internal ingest contract',
+      },
+      'General'
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+    process.env.LEDGER_INTERNAL_INGEST_URL = originalIngestUrl;
+    process.env.TNF_INTERNAL_INGEST_SECRET = originalSecret;
+  }
+
+  assert.equal(calls.length, 1);
+  assert.equal(
+    calls[0].url,
+    'http://localhost:3001/api/unified-ledger/internal/ingest/orchestration'
+  );
+  assert.equal(calls[0].options.method, 'POST');
+  assert.equal(calls[0].options.headers['x-tnf-internal-secret'], 'relay-secret');
+  const payload = JSON.parse(calls[0].options.body);
+  assert.equal(payload.type, 'TASK_DISPATCH');
+  assert.equal(payload.action, 'relay_dispatch');
+  assert.equal(payload.channelId, 'General');
+  assert.equal(payload.task.id, 'task-1');
+});
+
+test('relay activity timeline persistence uses internal endpoint and shared secret header', async () => {
+  const relay = Object.create(TNFRelayServer.prototype);
+  const originalFetch = globalThis.fetch;
+  const originalTimelineUrl = process.env.LEDGER_INTERNAL_TIMELINE_URL;
+  const originalSecret = process.env.TNF_INTERNAL_INGEST_SECRET;
+  const originalTimelineUser = process.env.TNF_INTERNAL_TIMELINE_USER_ID;
+  const calls = [];
+
+  process.env.LEDGER_INTERNAL_TIMELINE_URL = 'http://localhost:3001/api/timeline/internal/events';
+  process.env.TNF_INTERNAL_INGEST_SECRET = 'relay-secret';
+  process.env.TNF_INTERNAL_TIMELINE_USER_ID = 'tnf-relay-user';
+  globalThis.fetch = async (url, options) => {
+    calls.push({ url, options });
+    return { ok: true };
+  };
+
+  try {
+    await relay.persistRelayActivityTimelineEvent(
+      'bridge_access_approved',
+      'Approved bridge access for agent-bridge-1',
+      1700000000000,
+      {
+        bridgeDecision: 'approve',
+      },
+      {
+        actor: 'relay-admin-http',
+      }
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+    process.env.LEDGER_INTERNAL_TIMELINE_URL = originalTimelineUrl;
+    process.env.TNF_INTERNAL_INGEST_SECRET = originalSecret;
+    process.env.TNF_INTERNAL_TIMELINE_USER_ID = originalTimelineUser;
+  }
+
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].url, 'http://localhost:3001/api/timeline/internal/events');
+  assert.equal(calls[0].options.method, 'POST');
+  assert.equal(calls[0].options.headers['x-tnf-internal-secret'], 'relay-secret');
+  const payload = JSON.parse(calls[0].options.body);
+  assert.equal(payload.userId, 'tnf-relay-user');
+  assert.equal(payload.eventType, 'historical_event');
+  assert.equal(payload.actor, 'relay-admin-http');
+  assert.equal(payload.payload.relayEventType, 'bridge_access_approved');
+});
