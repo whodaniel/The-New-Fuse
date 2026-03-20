@@ -40,7 +40,7 @@ crashtest==0.4.1
 cycler==0.12.1
 dataclasses-json==0.6.7
 datamodel-code-generator==0.25.8
-deepdiff==8.6.1
+deepdiff==8.6.2
 Deprecated==1.2.14
 diff-match-patch==20230430
 dirtyjson==1.0.8
