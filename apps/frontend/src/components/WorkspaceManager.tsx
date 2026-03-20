@@ -4,6 +4,19 @@ import react_1 from 'react';
 import agent_llm_1 from '../../services/llm/agent-llm';
 import EnhancedChatBubble_1 from '../chat/EnhancedChatBubble';
 import ui_1 from '../ui';
+
+// ⚡ Bolt: Extract message item and wrap in React.memo to prevent O(n) re-renders
+// during frequent state updates like typing in the message input.
+const MessageItem = react_1.memo<{ message: any; workspace: any }>(({ message, workspace }) => (
+  <EnhancedChatBubble_1.EnhancedChatBubble
+    key={message.id}
+    message={message}
+    agents={workspace.agents}
+    workspace={workspace}
+  />
+));
+MessageItem.displayName = 'MessageItem';
+
 export function WorkspaceManager({ workspace, user }) {
   const [activeThread, setActiveThread] = (0, react_1.useState)(null);
   const [message, setMessage] = (0, react_1.useState)('');
@@ -103,12 +116,7 @@ export function WorkspaceManager({ workspace, user }) {
           <>
             <div className="flex-1 overflow-y-auto p-4">
               {activeThread.messages.map((message: any) => (
-                <EnhancedChatBubble_1.EnhancedChatBubble
-                  key={message.id}
-                  message={message}
-                  agents={workspace.agents}
-                  workspace={workspace}
-                />
+                <MessageItem key={message.id} message={message} workspace={workspace} />
               ))}
             </div>
             <div className="p-4 border-t border-gray-200 dark:border-gray-700">

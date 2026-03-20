@@ -13,6 +13,41 @@ import button_1 from './ui/button';
 import card_1 from './ui/card';
 import input_1 from './ui/input';
 import scroll_area_1 from './ui/scroll-area';
+// ⚡ Bolt: Extract message item and wrap in React.memo to prevent O(n) re-renders
+// during frequent state updates like typing in the message input.
+const MessageItem = react_1.memo<{ message: any, agents: any }>(({ message, agents }) => {
+  var _a;
+  return (
+    <EnhancedChatBubble_1.EnhancedChatBubble
+      key={message.id}
+      message={{
+        id: message.id,
+        content: message.content,
+        timestamp: message.timestamp,
+        sender: {
+          id: message.sender === 'User' ? 'user' : message.agentId || 'system',
+          type: message.sender === 'User' ? 'user' : 'agent',
+          name:
+            message.sender === 'User'
+              ? 'User'
+              : (_a = agents.find((a) => a.id === message.agentId)) === null ||
+                  _a === void 0
+                ? void 0
+                : _a.name,
+        },
+        metadata: {
+          agentId: message.agentId,
+          workspaceId: '',
+          llmProvider: '',
+        },
+      }}
+      agents={agents}
+      workspace={null}
+    />
+  );
+});
+MessageItem.displayName = 'MessageItem';
+
 export function ChatInterface() {
   var _a;
   const [input, setInput] = (0, react_1.useState)('');
@@ -95,37 +130,9 @@ export function ChatInterface() {
       <card_1.CardContent className="flex-grow flex flex-col p-4">
         <scroll_area_1.ScrollArea className="flex-grow pr-4">
           <div className="space-y-4">
-            {messages.map((message) => {
-              var _a;
-              return (
-                <EnhancedChatBubble_1.EnhancedChatBubble
-                  key={message.id}
-                  message={{
-                    id: message.id,
-                    content: message.content,
-                    timestamp: message.timestamp,
-                    sender: {
-                      id: message.sender === 'User' ? 'user' : message.agentId || 'system',
-                      type: message.sender === 'User' ? 'user' : 'agent',
-                      name:
-                        message.sender === 'User'
-                          ? 'User'
-                          : (_a = agents.find((a) => a.id === message.agentId)) === null ||
-                              _a === void 0
-                            ? void 0
-                            : _a.name,
-                    },
-                    metadata: {
-                      agentId: message.agentId,
-                      workspaceId: '',
-                      llmProvider: '',
-                    },
-                  }}
-                  agents={agents}
-                  workspace={null}
-                />
-              );
-            })}
+            {messages.map((message) => (
+              <MessageItem key={message.id} message={message} agents={agents} />
+            ))}
             {isTyping && <typing_indicator_1.TypingIndicator />}
             <div ref={scrollRef} />
           </div>

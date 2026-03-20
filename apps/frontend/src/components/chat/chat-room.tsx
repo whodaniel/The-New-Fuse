@@ -5,7 +5,7 @@ import { GlassCard as Card } from '@/components/ui/premium/GlassCard';
 import { PremiumButton as Button } from '@/components/ui/premium/PremiumButton';
 import { PremiumInput as Input } from '@/components/ui/premium/PremiumInput';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { webSocketService } from '../services/websocket';
 
 interface Message {
@@ -20,6 +20,22 @@ interface ChatRoomProps {
   roomId: string;
   agents: any[];
 }
+
+// ⚡ Bolt: Extract message item and wrap in React.memo to prevent O(n) re-renders
+// during frequent state updates like typing in the message input.
+const MessageItem = React.memo<{ msg: Message }>(({ msg }) => (
+  <div className="flex items-start space-x-2 mb-4">
+    <Avatar>
+      <AvatarImage src={msg.agent.avatar} alt={msg.agent.name} />
+      <AvatarFallback>{msg.agent.name[0]}</AvatarFallback>
+    </Avatar>
+    <div>
+      <p className="font-semibold text-white">{msg.agent.name}</p>
+      <p className="text-gray-300">{msg.content}</p>
+    </div>
+  </div>
+));
+MessageItem.displayName = 'MessageItem';
 
 export function ChatRoom({ roomId, agents }: ChatRoomProps) {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -50,16 +66,7 @@ export function ChatRoom({ roomId, agents }: ChatRoomProps) {
       <div className="flex-grow flex flex-col">
         <ScrollArea className="flex-grow mb-4">
           {messages.map((msg, index) => (
-            <div key={index} className="flex items-start space-x-2 mb-4">
-              <Avatar>
-                <AvatarImage src={msg.agent.avatar} alt={msg.agent.name} />
-                <AvatarFallback>{msg.agent.name[0]}</AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="font-semibold text-white">{msg.agent.name}</p>
-                <p className="text-gray-300">{msg.content}</p>
-              </div>
-            </div>
+            <MessageItem key={index} msg={msg} />
           ))}
         </ScrollArea>
         <div className="flex space-x-2">

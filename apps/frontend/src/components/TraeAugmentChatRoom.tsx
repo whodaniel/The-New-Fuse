@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { webSocketService } from '../services/websocket';
 import AgentMessage from './agent-message';
 
@@ -36,6 +36,29 @@ interface Message {
   status?: 'pending' | 'in_progress' | 'completed' | 'failed' | 'received';
   details?: Record<string, any>;
 }
+
+// ⚡ Bolt: Extract message item and wrap in React.memo to prevent O(n) re-renders
+// during frequent state updates like typing in the message input.
+const MessageItem = React.memo<{ message: Message }>(({ message }) => (
+  <AgentMessage
+    agent={message.agent}
+    message={{
+      id: message.id,
+      content: message.content,
+      timestamp: message.timestamp,
+      type: 'text',
+      agent: message.agent,
+      metadata: {
+        type: message.type,
+        status: message.status,
+        taskId: message.taskId,
+        ...message.metadata,
+      },
+    }}
+    isCurrentUser={false}
+  />
+));
+MessageItem.displayName = 'MessageItem';
 
 export function TraeAugmentChatRoom() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -117,24 +140,7 @@ export function TraeAugmentChatRoom() {
         <ScrollArea className="flex-grow pr-4">
           <div className="space-y-4">
             {messages.map((message) => (
-              <AgentMessage
-                key={message.id}
-                agent={message.agent}
-                message={{
-                  id: message.id,
-                  content: message.content,
-                  timestamp: message.timestamp,
-                  type: 'text',
-                  agent: message.agent,
-                  metadata: {
-                    type: message.type,
-                    status: message.status,
-                    taskId: message.taskId,
-                    ...message.metadata,
-                  },
-                }}
-                isCurrentUser={false}
-              />
+              <MessageItem key={message.id} message={message} />
             ))}
           </div>
         </ScrollArea>
