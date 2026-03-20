@@ -181,6 +181,15 @@ jobs:
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile --prefer-offline
 
+      - name: Prepare workspace package boundaries for type-check
+        run: |
+          set -euo pipefail
+          pnpm --filter @the-new-fuse/database exec tsc -b --force
+          pnpm --filter @the-new-fuse/core exec tsc -b --force
+          pnpm --filter @the-new-fuse/a2a-core exec tsc -b --force
+          pnpm --filter @the-new-fuse/n8n-workflows exec tsc -b --force
+          pnpm --filter @the-new-fuse/relay-core exec tsc -b --force
+
       - name: Cache Turbo
         uses: actions/cache@v4
         with:
