@@ -62,6 +62,22 @@ RUN if [ -n "${SERVICE_NAME}" ]; then \
       echo "Building target service ${SERVICE_NAME}"; \
       pnpm --filter "${SERVICE_NAME}" build || \
         (echo "WARN: Service package build failed for ${SERVICE_NAME}" && exit 1); \
+    elif [ "${SERVICE_ROOT}" = "apps" ] && [ "${SERVICE_PATH}" = "backend" ]; then \
+      echo "SERVICE_NAME not set; building backend app via fallback package filter"; \
+      pnpm --filter @the-new-fuse/backend-app build || \
+        (echo "WARN: Backend fallback build failed" && exit 1); \
+    elif [ "${SERVICE_ROOT}" = "apps" ] && [ "${SERVICE_PATH}" = "api" ]; then \
+      echo "SERVICE_NAME not set; building API app via fallback package filter"; \
+      pnpm --filter @the-new-fuse/api-server build || \
+        (echo "WARN: API fallback build failed" && exit 1); \
+    elif [ "${SERVICE_ROOT}" = "apps" ] && [ "${SERVICE_PATH}" = "api-gateway" ]; then \
+      echo "SERVICE_NAME not set; building API gateway app via fallback package filter"; \
+      pnpm --filter @the-new-fuse/api-gateway build || \
+        (echo "WARN: API gateway fallback build failed" && exit 1); \
+    elif [ "${SERVICE_ROOT}" = "apps" ] && [ "${SERVICE_PATH}" = "cloud-sandbox" ]; then \
+      echo "SERVICE_NAME not set; building cloud-sandbox app via fallback package filter"; \
+      pnpm --filter tnf-cloud-sandbox build || \
+        (echo "WARN: cloud-sandbox fallback build failed" && exit 1); \
     elif [ "${SERVICE_ROOT}" = "apps" ] && [ "${SERVICE_PATH}" = "frontend" ]; then \
       echo "SERVICE_NAME not set; building frontend app via fallback package filter"; \
       pnpm --filter @the-new-fuse/frontend-app build || \

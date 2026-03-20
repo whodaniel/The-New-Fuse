@@ -4,8 +4,6 @@ import * as crypto from 'crypto';
 import { createPublicClient, createWalletClient, http, namehash } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { polygon } from 'viem/chains';
-import { ConfigService } from '@nestjs/config';
-import * as crypto from 'crypto';
 
 @Injectable()
 export class IdentityService {

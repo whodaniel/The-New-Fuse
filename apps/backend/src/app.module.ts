@@ -1,10 +1,17 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import {
+  DynamicModule,
+  ForwardReference,
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+  Type,
+} from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { JwtModule } from '@nestjs/jwt';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { AGUIModule } from '@the-new-fuse/ag-ui-core';
 import { DrizzleModule } from '@the-new-fuse/database';
 import type { StringValue } from 'ms';
 import { ApiModule } from './api/api.module';
@@ -34,6 +41,21 @@ import { RequestLoggerMiddleware } from './middleware/request-logger.middleware'
 import { AdminModule } from './modules/admin/admin.module';
 import { LoggingService } from './services/logging.service';
 import { UsersModule } from './users/users.module';
+
+type NestImport = Type<unknown> | DynamicModule | Promise<DynamicModule> | ForwardReference;
+
+const optionalAGUIImports: NestImport[] = (() => {
+  try {
+    // AG-UI is an optional visualization layer. If Railway's runtime image prunes
+    // the built workspace package, the backend should still boot without it.
+    const agui = require('@the-new-fuse/ag-ui-core') as { AGUIModule?: NestImport };
+    return agui.AGUIModule ? [agui.AGUIModule] : [];
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.warn(`[AppModule] AG-UI disabled: ${message}`);
+    return [];
+  }
+})();
 
 // Create a comprehensive module to support all frontend routing expectations
 // TNF (The New Fuse) is the Master Agent that orchestrates all other agents
@@ -111,7 +133,7 @@ import { UsersModule } from './users/users.module';
     RelayModule, // Relay Core - Agent-to-Agent communication relay
     SelfImprovementModule, // Autonomous improvement loop
     SharedStateModule, // Cloudflare SharedState Integration
-    AGUIModule, // AG-UI Protocol - Real-time agent visualization pipeline
+    ...optionalAGUIImports, // AG-UI Protocol - optional real-time agent visualization pipeline
     UserBotsModule,
   ],
   controllers: [AppController, CacheController],

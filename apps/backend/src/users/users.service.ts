@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { db, drizzleUserRepository, users } from '@the-new-fuse/database';
-import { desc, eq } from 'drizzle-orm';
+import { desc, eq, inArray } from 'drizzle-orm';
 import { EventBus } from '../events/event-bus.service';
 import { LoggingService } from '../services/logging.service';
 import { hashPassword } from '../utils/auth.utils';
@@ -66,11 +66,17 @@ export class UsersService {
     });
 
     const total = await drizzleUserRepository.count();
-    const activeCount = await drizzleUserRepository.count({ isActive: true } as any);
-    // Count all admin-related roles
-    const adminCount =
-      (await drizzleUserRepository.count({ role: 'ADMIN' } as any)) +
-      (await drizzleUserRepository.count({ role: 'SUPER_ADMIN' } as any));
+    const activeCountRows = await db
+      .select({ count: db.$count(users) })
+      .from(users)
+      .where(eq(users.isActive, true));
+    const activeCount = activeCountRows[0]?.count ?? 0;
+
+    const adminCountRows = await db
+      .select({ count: db.$count(users) })
+      .from(users)
+      .where(inArray(users.role, ['ADMIN', 'SUPER_ADMIN'] as any));
+    const adminCount = adminCountRows[0]?.count ?? 0;
 
     const data = allUsers.map((user) => ({
       ...user,
