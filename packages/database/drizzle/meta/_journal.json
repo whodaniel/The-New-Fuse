@@ -57,6 +57,13 @@
       "when": 1774004000000,
       "tag": "0009_add_user_verification_columns",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1774006913835,
+      "tag": "0010_align_agent_registration_and_prompt_versions",
+      "breakpoints": true
     }
   ]
 }
