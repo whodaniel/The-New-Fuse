@@ -105,6 +105,12 @@ COPY --from=builder --chown=app-user:app-user /app/apps/cloud-sandbox ./apps/clo
 COPY --from=builder --chown=app-user:app-user /app/package.json ./
 COPY --from=builder --chown=app-user:app-user /app/pnpm-workspace.yaml ./
 
+# Copy identity, directives, and protocols
+COPY .agent ./.agent
+COPY .claude ./.claude
+COPY docs ./docs
+COPY data ./data
+
 # Verify critical files exist
 RUN test -f /app/apps/cloud-sandbox/dist/server.js || \
     (echo "ERROR: server.js not found!" && exit 1)
