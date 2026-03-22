@@ -13,6 +13,14 @@ import crypto from 'crypto';
 
 import { z } from 'zod';
 
+import {
+  attachAuditTrace,
+  createAuditTrace,
+  extractAuditTrace,
+  mergeAuditTrace,
+  type TnfAuditTrace,
+} from '../contracts/audit';
+import { createAgentIdentityRecord } from '../contracts/identity';
 import { ResourceStrategy } from './resource-protocol';
 
 /**
@@ -40,6 +48,10 @@ export type MessageType = z.infer<typeof MessageType>;
  */
 export const AgentIdentity = z.object({
   agentId: z.string().describe('Unique agent identifier'),
+  canonicalEntityId: z.string().optional().describe('Canonical TNF identity for this agent'),
+  operationalHandle: z.string().optional().describe('Operational routing handle for this agent'),
+  runtimeSessionId: z.string().optional().describe('Runtime session identifier for this agent'),
+  aliases: z.array(z.string()).optional().describe('Known aliases for this agent'),
   role: z.enum(['orchestrator', 'worker', 'coordinator', 'observer']).optional(),
   platform: z.string().optional().describe('Platform (e.g., "gemini", "claude", "terminal")'),
   capabilities: z.array(z.string()).optional().describe('Agent capabilities'),
@@ -68,7 +80,7 @@ export const TNFEnvelope = z.object({
   // Core metadata
   id: z.string().uuid().describe('Unique message ID'),
   version: z.string().default('1.0').describe('Protocol version'),
-  traceId: z.string().uuid().describe('Correlation ID for debugging/tracing'),
+  traceId: z.string().min(1).describe('Correlation ID for debugging/tracing'),
   timestamp: z.string().datetime().describe('ISO-8601 timestamp'),
 
   // Message classification
@@ -94,6 +106,12 @@ export const TNFEnvelope = z.object({
 });
 
 export type TNFEnvelope = z.infer<typeof TNFEnvelope>;
+
+export interface CreateTNFEnvelopeOptions {
+  metadata?: Record<string, unknown>;
+  traceId?: string;
+  audit?: Partial<TnfAuditTrace>;
+}
 
 /**
  * Specific Message Payloads
@@ -170,28 +188,143 @@ export type BidPayload = z.infer<typeof BidPayload>;
  * Helper Functions
  */
 
+function normalizeAgentIdentity(identity: AgentIdentity): AgentIdentity {
+  const aliases = Array.isArray(identity.aliases) ? identity.aliases : [];
+
+  try {
+    const record = createAgentIdentityRecord({
+      canonicalEntityId: identity.canonicalEntityId,
+      operationalHandle: identity.operationalHandle || identity.agentId,
+      runtimeSessionId: identity.runtimeSessionId || identity.agentId,
+      aliases: [...aliases, identity.agentId],
+    });
+
+    return {
+      ...identity,
+      canonicalEntityId: record.canonicalEntityId || undefined,
+      operationalHandle: record.operationalHandle,
+      runtimeSessionId: record.runtimeSessionId || undefined,
+      aliases: record.aliases,
+    };
+  } catch {
+    return {
+      ...identity,
+      aliases: [...new Set([identity.agentId, ...aliases].map((alias) => alias.trim()).filter(Boolean))],
+    };
+  }
+}
+
+function normalizeRecipient(
+  recipient: AgentIdentity | { broadcast: boolean }
+): AgentIdentity | { broadcast: boolean } {
+  if ('broadcast' in recipient) {
+    return recipient;
+  }
+
+  return normalizeAgentIdentity(recipient);
+}
+
+function resolveEnvelopeAuditTrace(
+  traceId: string,
+  from: AgentIdentity,
+  context?: MessageContext,
+  metadata?: Record<string, unknown>,
+  auditOverrides?: Partial<TnfAuditTrace>
+): TnfAuditTrace {
+  const actor = auditOverrides?.actor || from.operationalHandle || from.agentId;
+  const source = auditOverrides?.source || from.platform || 'relay-core';
+  const existing = extractAuditTrace(metadata?.audit);
+
+  return (
+    mergeAuditTrace(existing, auditOverrides, {
+      traceId,
+      source,
+      actor,
+      workflowId: context?.workflowId,
+      channelId: context?.channelId,
+      sessionId: context?.sessionId,
+      parentId: context?.parentMessageId,
+      canonicalEntityId: from.canonicalEntityId,
+      operationalHandle: from.operationalHandle || from.agentId,
+      runtimeSessionId: from.runtimeSessionId,
+    }) ||
+    createAuditTrace({
+      traceId,
+      source,
+      actor,
+      workflowId: context?.workflowId,
+      channelId: context?.channelId,
+      sessionId: context?.sessionId,
+      parentId: context?.parentMessageId,
+      canonicalEntityId: from.canonicalEntityId,
+      operationalHandle: from.operationalHandle || from.agentId,
+      runtimeSessionId: from.runtimeSessionId,
+    })
+  );
+}
+
+export function getTNFEnvelopeAuditTrace(envelope: Pick<TNFEnvelope, 'traceId' | 'from' | 'context' | 'metadata'>) {
+  return resolveEnvelopeAuditTrace(
+    envelope.traceId,
+    normalizeAgentIdentity(envelope.from),
+    envelope.context,
+    envelope.metadata
+  );
+}
+
+export function normalizeTNFEnvelope(envelope: TNFEnvelope): TNFEnvelope {
+  const from = normalizeAgentIdentity(envelope.from);
+  const to = normalizeRecipient(envelope.to);
+  const metadata = attachAuditTrace(envelope.metadata, getTNFEnvelopeAuditTrace({
+    traceId: envelope.traceId,
+    from,
+    context: envelope.context,
+    metadata: envelope.metadata,
+  }));
+
+  return TNFEnvelope.parse({
+    ...envelope,
+    from,
+    to,
+    metadata,
+  });
+}
+
 export function createTNFEnvelope(
   type: MessageType,
   from: AgentIdentity,
   to: AgentIdentity | { broadcast: boolean },
   payload: Record<string, unknown>,
-  context?: MessageContext
+  context?: MessageContext,
+  options?: CreateTNFEnvelopeOptions
 ): TNFEnvelope {
+  const normalizedFrom = normalizeAgentIdentity(from);
+  const normalizedTo = normalizeRecipient(to);
+  const traceId =
+    options?.traceId ||
+    options?.audit?.traceId ||
+    extractAuditTrace(options?.metadata?.audit)?.traceId ||
+    crypto.randomUUID();
+
   return {
     id: crypto.randomUUID(),
     version: '1.0',
-    traceId: crypto.randomUUID(),
+    traceId,
     timestamp: new Date().toISOString(),
     type,
-    from,
-    to,
+    from: normalizedFrom,
+    to: normalizedTo,
     payload,
     context,
+    metadata: attachAuditTrace(
+      options?.metadata,
+      resolveEnvelopeAuditTrace(traceId, normalizedFrom, context, options?.metadata, options?.audit)
+    ),
   };
 }
 
 export function validateTNFEnvelope(data: unknown): TNFEnvelope {
-  return TNFEnvelope.parse(data);
+  return normalizeTNFEnvelope(TNFEnvelope.parse(data));
 }
 
 export function isTaskMessage(envelope: TNFEnvelope): boolean {
@@ -253,6 +386,6 @@ export class TNFMessageBuilder {
   }
 
   build(): TNFEnvelope {
-    return TNFEnvelope.parse(this.envelope);
+    return validateTNFEnvelope(this.envelope);
   }
 }

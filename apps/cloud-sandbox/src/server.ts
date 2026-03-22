@@ -28,6 +28,8 @@ import { promisify } from 'util';
 // }
 
 import express from 'express';
+import * as pty from 'node-pty';
+import os from 'os';
 import { chromium } from 'playwright';
 import { Server as SocketIOServer } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
@@ -428,6 +430,23 @@ const tools: ToolHandler[] = [
         const err = error as { message: string };
         return { success: false, error: err.message };
       }
+    },
+  },
+  {
+    name: 'get_terminal_access',
+    description: 'Get the WebSocket URL for an interactive cloud terminal (PTY)',
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+    handler: async () => {
+      const publicUrl = process.env.RAILWAY_PUBLIC_DOMAIN || 'localhost:8080';
+      const protocol = publicUrl.includes('localhost') ? 'ws' : 'wss';
+      return {
+        success: true,
+        url: `${protocol}://${publicUrl}/ws/terminal`,
+        instructions: 'Connect using a WebSocket client. Send raw strings for input, receive ANSI data for output.'
+      };
     },
   },
   // -------------------------------------------------------------------------
@@ -1329,6 +1348,45 @@ function performHealthCheck(): void {
 // Start heartbeat monitoring
 setInterval(performHealthCheck, HEARTBEAT_CONFIG.intervalMs);
 console.log('💓 Heartbeat monitoring started');
+
+// ============================================================================
+// CLOUD TERMINAL SYSTEM (PTY-over-WebSocket)
+// ============================================================================
+
+const terminalWss = new WebSocketServer({ server, path: '/ws/terminal' });
+
+terminalWss.on('connection', (ws) => {
+  const shell = os.platform() === 'win32' ? 'powershell.exe' : 'bash';
+  console.log(`💻 Cloud Terminal session starting using ${shell}`);
+
+  const ptyProcess = pty.spawn(shell, [], {
+    name: 'xterm-color',
+    cols: 100,
+    rows: 30,
+    cwd: process.env.HOME || '/home/app-user',
+    env: process.env as Record<string, string>
+  });
+
+  ptyProcess.onData((data) => {
+    if (ws.readyState === 1) ws.send(data);
+  });
+
+  ws.on('message', (message) => {
+    ptyProcess.write(message.toString());
+  });
+
+  ws.on('close', () => {
+    console.log('💻 Cloud Terminal session ended');
+    ptyProcess.kill();
+  });
+
+  ws.on('error', (err) => {
+    console.error('💻 Cloud Terminal error:', err);
+    ptyProcess.kill();
+  });
+});
+
+console.log('💻 Cloud Terminal bridge active at /ws/terminal');
 
 // ============================================================================
 // MAIN WebSocket connection handling

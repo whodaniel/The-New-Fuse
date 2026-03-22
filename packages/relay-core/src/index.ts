@@ -24,6 +24,9 @@ export { TNFRelayServer } from './standalone-relay';
 export * from './services/stall-detector';
 
 // Protocol
+export * from './contracts/audit';
+export * from './contracts/identity';
+export * from './contracts/lifecycle';
 export * from './protocol/handoff-protocol';
 export * from './protocol/resource-protocol';
 export * from './protocol/task-protocol';
