@@ -42,6 +42,7 @@ const WorkflowEditorWrapper = lazy(() => import('./components/WorkflowEditor'));
 const Analytics = lazy(() => import('./pages/dashboard/Analytics'));
 const Dashboard = lazy(() => import('./pages/dashboard/TNFConsoleDashboard'));
 const Settings = lazy(() => import('./pages/Settings'));
+const SettingsGeneral = lazy(() => import('./pages/settings/General'));
 const SettingsAppearance = lazy(() => import('./pages/settings/Appearance'));
 const SettingsNotifications = lazy(() => import('./pages/settings/Notifications'));
 const SettingsSecurity = lazy(() => import('./pages/settings/Security'));
@@ -87,6 +88,7 @@ const PlansPage = lazy(() => import('./pages/Plans'));
 const PlanDetailPage = lazy(() => import('./pages/Plans/Detail'));
 const TimelinePage = lazy(() => import('./pages/Timeline'));
 const MacroTimelinePage = lazy(() => import('./pages/Timeline/MacroTimelinePage'));
+const TimelineModulePage = lazy(() => import('./pages/Timeline/TimelineModulePage'));
 
 // Additional Admin components
 const AdminUserManagement = lazy(() => import('./pages/Admin/UserManagement'));
@@ -869,7 +871,7 @@ export default function ComprehensiveRouter() {
                 path="/settings/general"
                 element={
                   <RequireMemberAccess>
-                    <GeneralSettings />
+                    <SettingsGeneral />
                   </RequireMemberAccess>
                 }
               />
@@ -1018,6 +1020,14 @@ export default function ComprehensiveRouter() {
                 element={
                   <RequireMemberAccess>
                     <MacroTimelinePage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/timeline/module"
+                element={
+                  <RequireMemberAccess>
+                    <TimelineModulePage />
                   </RequireMemberAccess>
                 }
               />

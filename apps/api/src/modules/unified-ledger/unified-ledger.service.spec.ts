@@ -4,6 +4,71 @@ import * as path from 'path';
 import { UnifiedLedgerService } from './unified-ledger.service';
 
 describe('UnifiedLedgerService personal timeline ownership', () => {
+  it('enforces owner scoping for unified records and aggregates', async () => {
+    const tmpStorePath = path.join(
+      '/tmp',
+      `tnf-unified-ledger-records-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.json`
+    );
+    process.env.UNIFIED_LEDGER_STORE_PATH = tmpStorePath;
+
+    const service = new UnifiedLedgerService();
+    await service.onModuleInit();
+
+    const recordA = await service.createRecord({
+      kind: 'task',
+      title: 'Owner A record',
+      description: 'Private to owner A',
+      owner: 'owner-a',
+    });
+    await service.createRecord({
+      kind: 'task',
+      title: 'Owner B record',
+      description: 'Private to owner B',
+      owner: 'owner-b',
+    });
+
+    const rowsA = await service.listRecords({ owner: 'owner-a' });
+    const rowsB = await service.listRecords({ owner: 'owner-b' });
+    expect(rowsA.length).toBe(1);
+    expect(rowsA[0].id).toBe(recordA.id);
+    expect(rowsB.length).toBe(1);
+    expect(rowsB[0].owner).toBe('owner-b');
+
+    const forbiddenRead = await service.getRecord(recordA.id, 'owner-b');
+    expect(forbiddenRead).toBeNull();
+
+    const allowedRead = await service.getRecord(recordA.id, 'owner-a');
+    expect(allowedRead?.id).toBe(recordA.id);
+
+    const forbiddenUpdate = await service.updateRecord(
+      recordA.id,
+      { title: 'should not update' },
+      'owner-b'
+    );
+    expect(forbiddenUpdate).toBeNull();
+
+    const allowedUpdate = await service.updateRecord(
+      recordA.id,
+      { title: 'updated by owner' },
+      'owner-a'
+    );
+    expect(allowedUpdate?.title).toBe('updated by owner');
+
+    const forbiddenVote = await service.voteRecord(recordA.id, 'up', 'owner-b');
+    expect(forbiddenVote).toBeNull();
+
+    const allowedVote = await service.voteRecord(recordA.id, 'up', 'owner-a');
+    expect(allowedVote?.votes.up).toBe(1);
+
+    const gridA = await service.getGrid('owner-a');
+    const gridB = await service.getGrid('owner-b');
+    expect(gridA.total).toBe(1);
+    expect(gridB.total).toBe(1);
+
+    delete process.env.UNIFIED_LEDGER_STORE_PATH;
+    await fs.rm(tmpStorePath, { force: true });
+  });
+
   it('enforces user ownership for timeline list/update/delete', async () => {
     const tmpStorePath = path.join(
       '/tmp',
@@ -154,6 +219,84 @@ describe('UnifiedLedgerService personal timeline ownership', () => {
     const scopedConnections = await service.getRecordConnections(record.id, 'user-a');
     expect(scopedConnections.goals.every((g) => g.owner === 'user-a')).toBe(true);
     expect(scopedConnections.plans.every((p) => p.owner === 'user-a')).toBe(true);
+
+    delete process.env.UNIFIED_LEDGER_STORE_PATH;
+    await fs.rm(tmpStorePath, { force: true });
+  });
+
+  it('bootstraps private personal timeline segments idempotently per user', async () => {
+    const tmpStorePath = path.join(
+      '/tmp',
+      `tnf-unified-ledger-bootstrap-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.json`
+    );
+    process.env.UNIFIED_LEDGER_STORE_PATH = tmpStorePath;
+
+    const service = new UnifiedLedgerService();
+    await service.onModuleInit();
+
+    const first = await service.bootstrapPersonalTimeline('user-daniel', {
+      email: 'owner@example.com',
+      name: 'Daniel Who',
+    });
+    expect(first.createdCount).toBeGreaterThan(1);
+    expect(first.events.every((event) => event.userId === 'user-daniel')).toBe(true);
+    expect(
+      first.events.some(
+        (event) =>
+          (event.payload as Record<string, unknown>).source === 'personal-timeline-bootstrap'
+      )
+    ).toBe(true);
+    expect(
+      first.events.some(
+        (event) => typeof (event.payload as Record<string, unknown>).category === 'string'
+      )
+    ).toBe(true);
+
+    const second = await service.bootstrapPersonalTimeline('user-daniel', {
+      email: 'owner@example.com',
+      name: 'Daniel Who',
+    });
+    expect(second.createdCount).toBe(0);
+    expect(second.totalCount).toBe(first.totalCount);
+
+    const otherUser = await service.bootstrapPersonalTimeline('user-other', {
+      email: 'other@example.com',
+      name: 'Other User',
+    });
+    expect(otherUser.events.every((event) => event.userId === 'user-other')).toBe(true);
+    expect(otherUser.totalCount).toBeGreaterThan(0);
+
+    const danielEvents = await service.listTimelineEvents({ userId: 'user-daniel' });
+    const otherEvents = await service.listTimelineEvents({ userId: 'user-other' });
+    expect(danielEvents.length).toBe(first.totalCount);
+    expect(otherEvents.length).toBe(otherUser.totalCount);
+
+    delete process.env.UNIFIED_LEDGER_STORE_PATH;
+    await fs.rm(tmpStorePath, { force: true });
+  });
+
+  it('applies Daniel-specific timeline bootstrap when email claim is missing but name matches', async () => {
+    const tmpStorePath = path.join(
+      '/tmp',
+      `tnf-unified-ledger-bootstrap-name-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.json`
+    );
+    process.env.UNIFIED_LEDGER_STORE_PATH = tmpStorePath;
+
+    const service = new UnifiedLedgerService();
+    await service.onModuleInit();
+
+    const result = await service.bootstrapPersonalTimeline('user-daniel-name-only', {
+      name: 'Daniel Who',
+    });
+
+    const birthEvent = result.events.find((event) => {
+      const payload = event.payload as Record<string, unknown>;
+      return payload.title === 'Birth: Daniel Adam Goldberg';
+    });
+
+    expect(result.createdCount).toBeGreaterThan(1);
+    expect(birthEvent).toBeDefined();
+    expect(result.events.every((event) => event.userId === 'user-daniel-name-only')).toBe(true);
 
     delete process.env.UNIFIED_LEDGER_STORE_PATH;
     await fs.rm(tmpStorePath, { force: true });

@@ -1,0 +1,56 @@
+{
+  "timestamp": "2026-03-22T16:54:44.540Z",
+  "frontend": {
+    "passed": 3,
+    "failed": 2,
+    "errors": [
+      {
+        "test": "type-check",
+        "error": "Command failed: pnpm exec tsc --noEmit"
+      },
+      {
+        "test": "build",
+        "error": "[plugin vite:resolve] Module \"http2\" has been externalized for browser compatibility, imported by \"/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/axios/lib/adapters/http.js\". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.\n✗ Build failed in 10.21s\nerror during build:\n[vite:load-fallback] Could not load /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/ui-consolidated/dist (imported by src"
+      },
+      {
+        "test": "critical-files",
+        "error": "Missing required groups: Vite HTML entry"
+      }
+    ]
+  },
+  "backend": {
+    "passed": 4,
+    "failed": 1,
+    "errors": [
+      {
+        "test": "build",
+        "error": "Command failed: pnpm run -s build"
+      }
+    ]
+  },
+  "integration": {
+    "passed": 5,
+    "failed": 0,
+    "errors": []
+  },
+  "overall": {
+    "status": "healthy",
+    "score": 80
+  },
+  "_metadata": {
+    "reportType": "test-report",
+    "domain": "Observe",
+    "lifecycle": "production",
+    "owner": "website-testing-agent",
+    "description": "Frontend/backend build, lint, type-check, and unit test results",
+    "canonicalJourney": "Detect -> Triage -> Execute",
+    "phaseRelevance": [
+      "Phase 1: Product Metadata Foundation",
+      "Phase 4: System Integrity"
+    ],
+    "generatedAt": "2026-03-22T16:57:26.431Z",
+    "cycleNumber": null,
+    "version": "1.0.0",
+    "schema": "tnf-report-lifecycle-v1"
+  }
+}

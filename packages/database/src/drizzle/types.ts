@@ -8,6 +8,8 @@ import {
   agentApiGrantUsage,
   agentCapabilityRegistry,
   agentDirectoryEntries,
+  agentManagedAccountGrants,
+  agentManagedAccounts,
   agentMemories,
   agentMetadata,
   agentMetrics,
@@ -258,6 +260,12 @@ export type NewErrorLog = InferInsertModel<typeof errorLogs>;
 
 export type ProviderApiKey = InferSelectModel<typeof providerApiKeys>;
 export type NewProviderApiKey = InferInsertModel<typeof providerApiKeys>;
+
+export type AgentManagedAccount = InferSelectModel<typeof agentManagedAccounts>;
+export type NewAgentManagedAccount = InferInsertModel<typeof agentManagedAccounts>;
+
+export type AgentManagedAccountGrant = InferSelectModel<typeof agentManagedAccountGrants>;
+export type NewAgentManagedAccountGrant = InferInsertModel<typeof agentManagedAccountGrants>;
 export type AgentApiGrant = InferSelectModel<typeof agentApiGrants>;
 export type NewAgentApiGrant = InferInsertModel<typeof agentApiGrants>;
 export type AgentApiGrantUsage = InferSelectModel<typeof agentApiGrantUsage>;

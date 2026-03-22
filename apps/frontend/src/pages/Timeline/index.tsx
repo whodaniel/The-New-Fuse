@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/providers/AuthProvider';
 import {
+  bootstrapPersonalTimeline,
   createTimelineEvent,
   deleteTimelineEvent,
   listTimelineEvents,
@@ -15,24 +16,36 @@ import { format } from 'date-fns';
 import { Calendar, Pencil, Plus, RefreshCw, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
+import { Link } from 'react-router-dom';
 
 type FormState = {
   title: string;
   description: string;
   point: number;
   when: string;
+  category: string;
+  sourcesText: string;
 };
 
-const ANON_TIMELINE_KEY = 'tnf_personal_timeline_user';
-
-function getAnonymousUserId(): string {
-  if (typeof window === 'undefined') return 'anon_server';
-  const existing = localStorage.getItem(ANON_TIMELINE_KEY);
-  if (existing) return existing;
-  const next = `anon_${Math.random().toString(36).slice(2, 10)}`;
-  localStorage.setItem(ANON_TIMELINE_KEY, next);
-  return next;
-}
+const TIMELINE_CATEGORY_OPTIONS = [
+  'Identity',
+  'Family',
+  'Relationships',
+  'Health & Wellness',
+  'Education',
+  'Career',
+  'Business & Projects',
+  'Finance',
+  'Creativity',
+  'Spirituality',
+  'Travel',
+  'Home',
+  'Community',
+  'Challenges',
+  'Breakthroughs',
+  'Legacy',
+  'Personal',
+] as const;
 
 function toFormDateTime(value: string): string {
   const d = new Date(value);
@@ -46,13 +59,43 @@ function clampPoint(value: unknown): number {
   return Math.min(100, Math.max(0, Math.round(num)));
 }
 
-function readPayload(event: TimelineEvent): { title: string; description: string; point: number } {
+function readPayload(event: TimelineEvent): {
+  title: string;
+  description: string;
+  point: number;
+  category: string;
+} {
   const payload = (event.payload || {}) as Record<string, unknown>;
   return {
     title: String(payload.title || payload.note || 'Untitled event'),
     description: String(payload.description || ''),
     point: clampPoint(payload.point),
+    category: String(payload.category || payload.segment || 'Personal'),
   };
+}
+
+function parseSourcesText(sourcesText: string): string[] {
+  return Array.from(
+    new Set(
+      sourcesText
+        .split('\n')
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0)
+    )
+  );
+}
+
+function readSources(event: TimelineEvent): string[] {
+  const payload = (event.payload || {}) as Record<string, unknown>;
+  const fromEvidenceRefs = Array.isArray(payload.evidenceRefs)
+    ? payload.evidenceRefs.filter((value): value is string => typeof value === 'string')
+    : [];
+  const fromSources = Array.isArray(payload.sources)
+    ? payload.sources.filter((value): value is string => typeof value === 'string')
+    : [];
+  const fromSourceField = typeof payload.source === 'string' ? [payload.source] : [];
+
+  return Array.from(new Set([...fromEvidenceRefs, ...fromSources, ...fromSourceField]));
 }
 
 export default function TimelinePage() {
@@ -60,14 +103,18 @@ export default function TimelinePage() {
   const [events, setEvents] = useState<TimelineEvent[]>([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [bootstrapping, setBootstrapping] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [categoryFilter, setCategoryFilter] = useState<string>('All');
 
   const [createForm, setCreateForm] = useState<FormState>({
     title: '',
     description: '',
     point: 50,
     when: toFormDateTime(new Date().toISOString()),
+    category: 'Identity',
+    sourcesText: '',
   });
 
   const [editForm, setEditForm] = useState<FormState>({
@@ -75,9 +122,11 @@ export default function TimelinePage() {
     description: '',
     point: 50,
     when: '',
+    category: 'Identity',
+    sourcesText: '',
   });
 
-  const userId = useMemo(() => user?.id || getAnonymousUserId(), [user?.id]);
+  const userId = useMemo(() => user?.id || null, [user?.id]);
 
   const sortedEvents = useMemo(
     () =>
@@ -90,18 +139,68 @@ export default function TimelinePage() {
     [events]
   );
 
-  const selectedEvent = useMemo(
-    () => sortedEvents.find((e) => e.id === selectedId) || null,
-    [sortedEvents, selectedId]
+  const selectableCategories = useMemo(() => {
+    const fromEvents = new Set(sortedEvents.map((event) => readPayload(event).category));
+    for (const category of TIMELINE_CATEGORY_OPTIONS) {
+      fromEvents.add(category);
+    }
+    return Array.from(fromEvents);
+  }, [sortedEvents]);
+
+  const availableCategories = useMemo(() => {
+    return ['All', ...selectableCategories];
+  }, [selectableCategories]);
+
+  const filteredEvents = useMemo(
+    () =>
+      categoryFilter === 'All'
+        ? sortedEvents
+        : sortedEvents.filter((event) => readPayload(event).category === categoryFilter),
+    [sortedEvents, categoryFilter]
   );
 
+  const selectedEvent = useMemo(
+    () => filteredEvents.find((e) => e.id === selectedId) || null,
+    [filteredEvents, selectedId]
+  );
+
+  const runBootstrap = async (auto = false) => {
+    if (!userId) return;
+    setBootstrapping(true);
+    try {
+      const result = await bootstrapPersonalTimeline();
+      setEvents(result.events || []);
+      if (result.events?.length) {
+        setSelectedId((prev) => prev || result.events[0]?.id || null);
+      }
+      if (!auto) {
+        toast.success(result.message || 'Personal timeline generated');
+      } else if (result.createdCount > 0) {
+        toast.success(`Generated ${result.createdCount} private timeline segments`);
+      }
+    } catch {
+      if (!auto) {
+        toast.error('Failed to generate your personal timeline');
+      }
+    } finally {
+      setBootstrapping(false);
+    }
+  };
+
   const load = async () => {
+    if (!userId) {
+      setEvents([]);
+      setSelectedId(null);
+      return;
+    }
     setLoading(true);
     try {
-      const rows = await listTimelineEvents({ userId });
+      const rows = await listTimelineEvents();
       setEvents(rows);
       if (rows.length && !selectedId) {
         setSelectedId(rows[0].id);
+      } else if (rows.length === 0) {
+        await runBootstrap(true);
       }
     } catch {
       toast.error('Failed to load your timeline');
@@ -115,6 +214,10 @@ export default function TimelinePage() {
   }, [userId]);
 
   const createItem = async () => {
+    if (!userId) {
+      toast.error('Please sign in to create timeline items');
+      return;
+    }
     if (!createForm.title.trim()) {
       toast.error('Title is required');
       return;
@@ -122,6 +225,7 @@ export default function TimelinePage() {
 
     setSaving(true);
     try {
+      const sources = parseSourcesText(createForm.sourcesText);
       const created = await createTimelineEvent({
         userId,
         actor: userId,
@@ -133,6 +237,10 @@ export default function TimelinePage() {
           title: createForm.title.trim(),
           description: createForm.description.trim(),
           point: createForm.point,
+          category: createForm.category,
+          segment: createForm.category,
+          evidenceRefs: sources,
+          sources,
           source: 'personal-timeline',
         },
       });
@@ -142,6 +250,8 @@ export default function TimelinePage() {
         description: '',
         point: createForm.point,
         when: toFormDateTime(new Date().toISOString()),
+        category: createForm.category,
+        sourcesText: '',
       });
       setSelectedId(created.id);
       await load();
@@ -160,11 +270,17 @@ export default function TimelinePage() {
       description: payload.description,
       point: payload.point,
       when: toFormDateTime(event.timestamp),
+      category: payload.category,
+      sourcesText: readSources(event).join('\n'),
     });
   };
 
   const saveEdit = async () => {
     if (!editingId) return;
+    if (!userId) {
+      toast.error('Please sign in to update timeline items');
+      return;
+    }
     if (!editForm.title.trim()) {
       toast.error('Title is required');
       return;
@@ -172,6 +288,7 @@ export default function TimelinePage() {
 
     setSaving(true);
     try {
+      const sources = parseSourcesText(editForm.sourcesText);
       const updated = await updateTimelineEvent(editingId, {
         userId,
         actor: userId,
@@ -180,6 +297,10 @@ export default function TimelinePage() {
           title: editForm.title.trim(),
           description: editForm.description.trim(),
           point: editForm.point,
+          category: editForm.category,
+          segment: editForm.category,
+          evidenceRefs: sources,
+          sources,
           source: 'personal-timeline',
         },
       });
@@ -200,9 +321,13 @@ export default function TimelinePage() {
   };
 
   const removeItem = async (id: string) => {
+    if (!userId) {
+      toast.error('Please sign in to delete timeline items');
+      return;
+    }
     setSaving(true);
     try {
-      const ok = await deleteTimelineEvent(id, userId);
+      const ok = await deleteTimelineEvent(id);
       if (!ok) {
         toast.error('You can only delete your own timeline items');
         return;
@@ -231,29 +356,90 @@ export default function TimelinePage() {
               Add milestones to your own horizontal timeline, then edit or remove them anytime.
             </p>
           </div>
-          <Button
-            onClick={load}
-            disabled={loading}
-            className="bg-amber-500 hover:bg-amber-600 text-black"
-          >
-            <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-            Refresh
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              onClick={() => runBootstrap(false)}
+              disabled={bootstrapping || saving || !userId}
+              variant="outline"
+              className="border-amber-500/60 text-amber-300 hover:bg-amber-500/10"
+            >
+              <Plus className={`w-4 h-4 mr-2 ${bootstrapping ? 'animate-pulse' : ''}`} />
+              {bootstrapping ? 'Generating...' : 'Generate Story Segments'}
+            </Button>
+            <Button
+              onClick={load}
+              disabled={loading}
+              className="bg-amber-500 hover:bg-amber-600 text-black"
+            >
+              <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+          </div>
         </header>
+
+        <Card className="bg-slate-900/50 border-slate-800 p-4 rounded-md">
+          <div className="flex flex-col gap-3">
+            <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
+              Related Timeline Views
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+              <Link
+                to="/timeline"
+                className="rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm font-semibold text-amber-200 hover:bg-amber-500/20"
+              >
+                Personal Timeline
+              </Link>
+              <Link
+                to="/macro-timeline"
+                className="rounded-md border border-sky-500/40 bg-sky-500/10 px-3 py-2 text-sm font-semibold text-sky-200 hover:bg-sky-500/20"
+              >
+                Macro Timeline (Multi-Track)
+              </Link>
+              <Link
+                to="/timeline/module"
+                className="rounded-md border border-emerald-500/40 bg-emerald-500/10 px-3 py-2 text-sm font-semibold text-emerald-200 hover:bg-emerald-500/20"
+              >
+                Timeline Module Lab
+              </Link>
+              <Link
+                to="/timeline-demo"
+                className="rounded-md border border-fuchsia-500/40 bg-fuchsia-500/10 px-3 py-2 text-sm font-semibold text-fuchsia-200 hover:bg-fuchsia-500/20"
+              >
+                Timeline Demo
+              </Link>
+            </div>
+          </div>
+        </Card>
 
         <Card
           data-testid="timeline-rail-card"
           className="bg-slate-900/50 border-slate-800 p-4 rounded-md space-y-5"
         >
-          <div className="flex items-center gap-2 text-slate-300 text-sm">
-            <Calendar className="w-4 h-4" />
-            Traditional horizontal timeline slider with node dots
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-center gap-2 text-slate-300 text-sm">
+              <Calendar className="w-4 h-4" />
+              Traditional horizontal timeline slider with node dots
+            </div>
+            <div className="flex items-center gap-2">
+              <Label className="text-xs text-slate-400">Category</Label>
+              <select
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                className="h-9 rounded-md border border-slate-700 bg-slate-950 px-2 text-sm"
+              >
+                {availableCategories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <div className="relative px-2 py-8 overflow-x-auto">
             <div className="min-w-[680px]">
               <div className="h-[2px] bg-slate-700 relative">
-                {sortedEvents.map((event) => {
+                {filteredEvents.map((event) => {
                   const payload = readPayload(event);
                   const active = selectedId === event.id;
                   return (
@@ -296,6 +482,21 @@ export default function TimelinePage() {
                   Point {readPayload(selectedEvent).point} •{' '}
                   {format(new Date(selectedEvent.timestamp), 'PPP p')}
                 </p>
+                <p className="text-xs text-amber-300 mt-1">
+                  Category: {readPayload(selectedEvent).category}
+                </p>
+                {readSources(selectedEvent).length > 0 ? (
+                  <div className="mt-2">
+                    <p className="text-xs text-slate-400 uppercase tracking-[0.18em]">Sources</p>
+                    <ul className="mt-1 space-y-1">
+                      {readSources(selectedEvent).map((source) => (
+                        <li key={source} className="text-xs text-sky-300 break-all">
+                          {source}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
               </div>
               <div className="flex items-center gap-2">
                 <Button
@@ -350,6 +551,29 @@ export default function TimelinePage() {
                 placeholder="What happened at this point?"
                 className="bg-slate-950 border-slate-700 min-h-[100px]"
               />
+            </div>
+            <div className="space-y-2">
+              <Label>Sources (one per line)</Label>
+              <Textarea
+                value={createForm.sourcesText}
+                onChange={(e) => setCreateForm((s) => ({ ...s, sourcesText: e.target.value }))}
+                placeholder="https://example.com/reference\nnotes: personal journal"
+                className="bg-slate-950 border-slate-700 min-h-[90px]"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Category</Label>
+              <select
+                value={createForm.category}
+                onChange={(e) => setCreateForm((s) => ({ ...s, category: e.target.value }))}
+                className="h-10 w-full rounded-md border border-slate-700 bg-slate-950 px-3 text-sm"
+              >
+                {selectableCategories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="space-y-2">
               <Label>Timeline Position: {createForm.point}</Label>
@@ -412,6 +636,28 @@ export default function TimelinePage() {
                     onChange={(e) => setEditForm((s) => ({ ...s, description: e.target.value }))}
                     className="bg-slate-950 border-slate-700 min-h-[100px]"
                   />
+                </div>
+                <div className="space-y-2">
+                  <Label>Sources (one per line)</Label>
+                  <Textarea
+                    value={editForm.sourcesText}
+                    onChange={(e) => setEditForm((s) => ({ ...s, sourcesText: e.target.value }))}
+                    className="bg-slate-950 border-slate-700 min-h-[90px]"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Category</Label>
+                  <select
+                    value={editForm.category}
+                    onChange={(e) => setEditForm((s) => ({ ...s, category: e.target.value }))}
+                    className="h-10 w-full rounded-md border border-slate-700 bg-slate-950 px-3 text-sm"
+                  >
+                    {selectableCategories.map((category) => (
+                      <option key={category} value={category}>
+                        {category}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="space-y-2">
                   <Label>Timeline Position: {editForm.point}</Label>

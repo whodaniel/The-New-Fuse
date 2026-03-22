@@ -33,6 +33,8 @@ export * as drizzleSchema from './drizzle/schema';
 export {
   agentCapabilityRegistry,
   agentDirectoryEntries,
+  agentManagedAccountGrants,
+  agentManagedAccounts,
   agentMetrics,
   agentNfts,
   agentOnboardingEvents,
@@ -54,17 +56,21 @@ export {
   users,
   workflowExecutions,
   workflows,
-  workspaces,
   workspaceMembers,
+  workspaces,
 } from './drizzle/schema';
 
 // Export Drizzle inferred types
 export type {
   Agent,
+  AgentManagedAccount,
+  AgentManagedAccountGrant,
   Chat,
   ChatMessage,
   Message,
   NewAgent,
+  NewAgentManagedAccount,
+  NewAgentManagedAccountGrant,
   NewChat,
   NewChatMessage,
   NewMessage,
@@ -75,6 +81,7 @@ export type {
   NewWorkflow,
   NewWorkflowExecution,
   NewWorkspace,
+  NewWorkspaceMember,
   Task,
   TaskExecution,
   User,
@@ -83,12 +90,12 @@ export type {
   WorkflowExecution,
   Workspace,
   WorkspaceMember,
-  NewWorkspaceMember,
 } from './drizzle/types';
 
 // Export Drizzle repositories
 export {
   DrizzleAgentApiGrantRepository,
+  DrizzleAgentManagedAccountRepository,
   DrizzleAgentRepository,
   DrizzleAuditLogsRepository,
   DrizzleChatRepository,
@@ -98,11 +105,12 @@ export {
   DrizzleTaskRepository,
   DrizzleUserRepository,
   DrizzleWorkflowRepository,
-  DrizzleWorkspaceRepository,
   DrizzleWorkspaceMemberRepository,
+  DrizzleWorkspaceRepository,
   agentNftRepository,
   agentPromptVersionRepository,
   drizzleAgentApiGrantRepository,
+  drizzleAgentManagedAccountRepository,
   drizzleAgentRepository,
   drizzleApiLogsRepository,
   drizzleAuditLogsRepository,
@@ -113,8 +121,8 @@ export {
   drizzleTaskRepository,
   drizzleUserRepository,
   drizzleWorkflowRepository,
-  drizzleWorkspaceRepository,
   drizzleWorkspaceMemberRepository,
+  drizzleWorkspaceRepository,
   fractionalShareRepository,
   optimizationJobRepository,
   revenueDistributionRepository,

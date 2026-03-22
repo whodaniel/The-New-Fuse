@@ -22,6 +22,8 @@ import { Database, db, queryClient } from './client';
 import {
   drizzleAgentApiGrantRepository,
   DrizzleAgentApiGrantRepository,
+  drizzleAgentManagedAccountRepository,
+  DrizzleAgentManagedAccountRepository,
   drizzleAgentRepository,
   DrizzleAgentRepository,
   drizzleApiLogsRepository,
@@ -44,10 +46,10 @@ import {
   DrizzleWebhookRepository,
   drizzleWorkflowRepository,
   DrizzleWorkflowRepository,
-  drizzleWorkspaceRepository,
-  DrizzleWorkspaceRepository,
   drizzleWorkspaceMemberRepository,
   DrizzleWorkspaceMemberRepository,
+  drizzleWorkspaceRepository,
+  DrizzleWorkspaceRepository,
 } from './repositories';
 
 @Injectable()
@@ -137,6 +139,13 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
    */
   get agentApiGrants(): DrizzleAgentApiGrantRepository {
     return drizzleAgentApiGrantRepository;
+  }
+
+  /**
+   * Agent managed account repository for encrypted credential vault + grants
+   */
+  get agentManagedAccounts(): DrizzleAgentManagedAccountRepository {
+    return drizzleAgentManagedAccountRepository;
   }
 
   /**

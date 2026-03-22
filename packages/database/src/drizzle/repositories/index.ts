@@ -5,6 +5,10 @@ export {
   DrizzleAgentApiGrantRepository,
   drizzleAgentApiGrantRepository,
 } from './agent-api-grant.repository';
+export {
+  DrizzleAgentManagedAccountRepository,
+  drizzleAgentManagedAccountRepository,
+} from './agent-managed-account.repository';
 export { DrizzleAgentRepository, drizzleAgentRepository } from './agent.repository';
 export { DrizzleApiLogsRepository, drizzleApiLogsRepository } from './api-logs.repository';
 export {
@@ -39,8 +43,8 @@ export { DrizzleUserRepository, drizzleUserRepository } from './user.repository'
 export { DrizzleWalletRepository, drizzleWalletRepository } from './wallet.repository';
 export { DrizzleWebhookRepository, drizzleWebhookRepository } from './webhook.repository';
 export { DrizzleWorkflowRepository, drizzleWorkflowRepository } from './workflow.repository';
-export { DrizzleWorkspaceRepository, drizzleWorkspaceRepository } from './workspace.repository';
 export {
   DrizzleWorkspaceMemberRepository,
   drizzleWorkspaceMemberRepository,
 } from './workspace-member.repository';
+export { DrizzleWorkspaceRepository, drizzleWorkspaceRepository } from './workspace.repository';

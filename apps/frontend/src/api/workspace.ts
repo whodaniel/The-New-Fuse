@@ -10,6 +10,26 @@ export interface Workspace {
   updatedAt?: string;
 }
 
+export type WorkspaceAccessRole = 'owner' | 'admin' | 'member' | 'viewer';
+export type WorkspaceManageableRole = Exclude<WorkspaceAccessRole, 'owner'>;
+
+export interface WorkspaceProject {
+  id: string;
+  name: string;
+  description?: string | null;
+  status?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface WorkspaceSubAccessMember {
+  userId: string;
+  email: string | null;
+  role: WorkspaceAccessRole;
+  accessLevel: WorkspaceAccessRole;
+  joinedAt: string;
+}
+
 export class WorkspaceApiService {
   private baseUrl: string;
 
@@ -169,6 +189,107 @@ export class WorkspaceApiService {
         success: false,
         error: this.toApiError(error, 'NETWORK_ERROR'),
         message: 'Failed to create workspace',
+      };
+    }
+  }
+
+  async getWorkspaceProjects(workspaceId: string): Promise<ApiResponse<WorkspaceProject[]>> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${workspaceId}/projects`, {
+        method: 'GET',
+        headers: this.getAuthHeaders(),
+        credentials: 'include',
+      });
+      return this.handleResponse<WorkspaceProject[]>(response);
+    } catch (error) {
+      return {
+        success: false,
+        error: this.toApiError(error, 'NETWORK_ERROR'),
+        message: `Failed to fetch projects for workspace ${workspaceId}`,
+      };
+    }
+  }
+
+  async listWorkspaceSubAccess(
+    workspaceId: string
+  ): Promise<ApiResponse<{ workspaceId: string; members: WorkspaceSubAccessMember[] }>> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${workspaceId}/sub-access`, {
+        method: 'GET',
+        headers: this.getAuthHeaders(),
+        credentials: 'include',
+      });
+      return this.handleResponse<{ workspaceId: string; members: WorkspaceSubAccessMember[] }>(
+        response
+      );
+    } catch (error) {
+      return {
+        success: false,
+        error: this.toApiError(error, 'NETWORK_ERROR'),
+        message: `Failed to fetch delegated access for workspace ${workspaceId}`,
+      };
+    }
+  }
+
+  async grantWorkspaceSubAccess(
+    workspaceId: string,
+    payload: { email?: string; userId?: string; role?: WorkspaceManageableRole }
+  ): Promise<ApiResponse<{ message: string; accessLevel: WorkspaceAccessRole }>> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${workspaceId}/sub-access`, {
+        method: 'POST',
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify(payload),
+        credentials: 'include',
+      });
+      return this.handleResponse<{ message: string; accessLevel: WorkspaceAccessRole }>(response);
+    } catch (error) {
+      return {
+        success: false,
+        error: this.toApiError(error, 'NETWORK_ERROR'),
+        message: `Failed to grant delegated access for workspace ${workspaceId}`,
+      };
+    }
+  }
+
+  async updateWorkspaceSubAccess(
+    workspaceId: string,
+    memberUserId: string,
+    payload: { role: WorkspaceManageableRole }
+  ): Promise<ApiResponse<{ message: string; accessLevel: WorkspaceAccessRole }>> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${workspaceId}/sub-access/${memberUserId}`, {
+        method: 'PATCH',
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify(payload),
+        credentials: 'include',
+      });
+      return this.handleResponse<{ message: string; accessLevel: WorkspaceAccessRole }>(response);
+    } catch (error) {
+      return {
+        success: false,
+        error: this.toApiError(error, 'NETWORK_ERROR'),
+        message: `Failed to update delegated access for workspace ${workspaceId}`,
+      };
+    }
+  }
+
+  async revokeWorkspaceSubAccess(
+    workspaceId: string,
+    memberUserId: string
+  ): Promise<ApiResponse<{ message: string; memberId: string }>> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${workspaceId}/sub-access/${memberUserId}`, {
+        method: 'DELETE',
+        headers: this.getAuthHeaders(),
+        credentials: 'include',
+      });
+      return this.handleResponse<{ message: string; memberId: string }>(response);
+    } catch (error) {
+      return {
+        success: false,
+        error: this.toApiError(error, 'NETWORK_ERROR'),
+        message: `Failed to revoke delegated access for workspace ${workspaceId}`,
       };
     }
   }

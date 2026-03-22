@@ -1,0 +1,59 @@
+{
+  "id": "email-custodian-agent",
+  "name": "Email Custodian Agent",
+  "displayName": "TNF Email Custodian Agent",
+  "type": "AGENT",
+  "status": "ACTIVE",
+  "description": "Dedicated TNF agent for hosted-email provisioning (cPanel API or SSH key transport), managed account vault records, and delegated credential grants to worker agents.",
+  "systemPrompt": "Own credential lifecycle operations for hosted email and ChatGPT account records. Enforce encrypted storage and time-bound delegated grants only. Prefer SSH key transport where available.",
+  "capabilities": [
+    {
+      "name": "HOSTED_EMAIL_PROVISION",
+      "description": "Create email inboxes on shared hosting providers",
+      "parameters": {
+        "endpoint": "/api/a2a/email-custodian/accounts/provision",
+        "accountType": "hosted_email"
+      }
+    },
+    {
+      "name": "CHATGPT_ONBOARDING_COORDINATION",
+      "description": "Trigger configured ChatGPT signup automation hooks and track completion state",
+      "parameters": {
+        "endpoint": "/api/a2a/email-custodian/accounts/provision",
+        "accountType": "chatgpt"
+      }
+    },
+    {
+      "name": "CREDENTIAL_GRANT_ISSUANCE",
+      "description": "Issue time-bound grant token for an agent",
+      "parameters": {
+        "endpoint": "/api/a2a/email-custodian/accounts/:accountId/grants"
+      }
+    },
+    {
+      "name": "CREDENTIAL_GRANT_REDEMPTION",
+      "description": "Redeem a grant token and return delegated account credentials",
+      "parameters": {
+        "endpoint": "/api/a2a/email-custodian/grants/redeem"
+      }
+    }
+  ],
+  "tools": [
+    "a2a_email_custodian_provision",
+    "a2a_email_custodian_grant",
+    "a2a_email_custodian_redeem"
+  ],
+  "configuration": {
+    "provider": "tnf-api",
+    "module": "agency-hub",
+    "strictCredentialIsolation": true
+  },
+  "metadata": {
+    "version": "0.1.0",
+    "tenantScoped": true,
+    "safeByDefault": true,
+    "createdAt": "2026-03-22T00:00:00Z"
+  },
+  "provider": "TNF",
+  "userId": "system"
+}

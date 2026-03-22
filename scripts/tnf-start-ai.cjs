@@ -71,6 +71,11 @@ console.log(`Client: ${client}`);
 let step = run("pnpm", ["run", "-s", "tnf:onboard"]);
 if (step.code !== 0) process.exit(step.code);
 
+console.log("📡 Booting Terminal Harness...");
+step = run("pnpm", ["run", "-s", "tnf:harness:boot"]);
+// We don't exit if harness boot fails, but we log it
+if (step.code !== 0) console.warn("⚠️ Terminal harness boot partial failure.");
+
 step = run("pnpm", ["run", "-s", "tnf:mcp:generate"]);
 if (step.code !== 0) process.exit(step.code);
 

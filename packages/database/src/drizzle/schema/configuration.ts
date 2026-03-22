@@ -103,3 +103,52 @@ export const agentApiGrantUsage = pgTable('agent_api_grant_usage', {
   error: text('error'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
+
+// =============================================================================
+// AGENT MANAGED ACCOUNTS (Credential vault records owned by a user)
+// =============================================================================
+
+export const agentManagedAccounts = pgTable(
+  'agent_managed_accounts',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    ownerUserId: uuid('owner_user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    accountType: varchar('account_type', { length: 50 }).notNull(), // hosted_email | chatgpt | external
+    provider: varchar('provider', { length: 100 }).notNull(), // cpanel | openai | ...
+    loginIdentifier: varchar('login_identifier', { length: 255 }).notNull(), // email / username
+    encryptedSecret: text('encrypted_secret').notNull(),
+    secretPreview: varchar('secret_preview', { length: 32 }),
+    metadata: jsonb('metadata').$type<Record<string, unknown>>().default({}).notNull(),
+    status: varchar('status', { length: 50 }).default('active').notNull(),
+    createdByAgent: varchar('created_by_agent', { length: 255 }),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  },
+  (table) => ({
+    ownerProviderLoginUnique: uniqueIndex('agent_managed_accounts_owner_provider_login_uq').on(
+      table.ownerUserId,
+      table.provider,
+      table.loginIdentifier
+    ),
+  })
+);
+
+export const agentManagedAccountGrants = pgTable('agent_managed_account_grants', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  accountId: uuid('account_id')
+    .notNull()
+    .references(() => agentManagedAccounts.id, { onDelete: 'cascade' }),
+  ownerUserId: uuid('owner_user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  granteeAgentId: varchar('grantee_agent_id', { length: 255 }).notNull(),
+  accessTokenHash: text('access_token_hash').notNull(),
+  scopes: jsonb('scopes').$type<string[]>().default([]).notNull(),
+  expiresAt: timestamp('expires_at').notNull(),
+  revoked: boolean('revoked').default(false).notNull(),
+  lastRedeemedAt: timestamp('last_redeemed_at'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});

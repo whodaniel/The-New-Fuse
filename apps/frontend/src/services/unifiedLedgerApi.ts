@@ -220,7 +220,6 @@ export async function listTimelineEvents(params?: {
   dateTo?: string;
 }): Promise<TimelineEvent[]> {
   const search = new URLSearchParams();
-  if (params?.userId) search.set('userId', params.userId);
   if (params?.recordId) search.set('recordId', params.recordId);
   if (params?.goalId) search.set('goalId', params.goalId);
   if (params?.planId) search.set('planId', params.planId);
@@ -233,8 +232,8 @@ export async function listTimelineEvents(params?: {
 }
 
 export async function getTimelineEvent(id: string, userId?: string): Promise<TimelineEvent | null> {
-  const suffix = userId ? `?userId=${encodeURIComponent(userId)}` : '';
-  return parse<TimelineEvent | null>(await apiFetch(`/api/timeline/events/${id}${suffix}`));
+  void userId;
+  return parse<TimelineEvent | null>(await apiFetch(`/api/timeline/events/${id}`));
 }
 
 export async function createTimelineEvent(input: {
@@ -270,10 +269,30 @@ export async function updateTimelineEvent(
 }
 
 export async function deleteTimelineEvent(id: string, userId?: string): Promise<boolean> {
-  const suffix = userId ? `?userId=${encodeURIComponent(userId)}` : '';
+  void userId;
   return parse<boolean>(
-    await apiFetch(`/api/timeline/events/${id}${suffix}`, {
+    await apiFetch(`/api/timeline/events/${id}`, {
       method: 'DELETE',
+    })
+  );
+}
+
+export async function bootstrapPersonalTimeline(): Promise<{
+  message: string;
+  createdCount: number;
+  totalCount: number;
+  events: TimelineEvent[];
+}> {
+  return parse<{
+    message: string;
+    createdCount: number;
+    totalCount: number;
+    events: TimelineEvent[];
+  }>(
+    await apiFetch('/api/timeline/personal/bootstrap', {
+      method: 'POST',
+      headers: JSON_HEADERS,
+      body: JSON.stringify({}),
     })
   );
 }

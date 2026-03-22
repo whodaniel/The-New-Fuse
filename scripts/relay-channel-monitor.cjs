@@ -1,303 +1,188 @@
 #!/usr/bin/env node
-/* eslint-disable no-console */
-const WebSocket = require('ws');
 
-const RELAY_URL = process.env.RELAY_URL || 'ws://localhost:3000/ws';
-const AGENT_ID = process.env.AGENT_ID || `codex-monitor-${Date.now()}`;
-const AGENT_NAME = process.env.AGENT_NAME || 'Codex Channel Monitor';
-const CHANNEL_MODE = process.env.CHANNEL_MODE || 'all'; // all | include | regex
-const CHANNEL_INCLUDE = (process.env.CHANNEL_INCLUDE || '')
-  .split(',')
-  .map((s) => s.trim())
-  .filter(Boolean);
-const CHANNEL_REGEX = process.env.CHANNEL_REGEX ? new RegExp(process.env.CHANNEL_REGEX, 'i') : null;
-const POST_INTRO = process.env.POST_INTRO !== 'false';
-const ENGAGE = process.env.ENGAGE === 'true';
-const HEARTBEAT_MS = Number(process.env.HEARTBEAT_MS || 25000);
-const REFRESH_CHANNELS_MS = Number(process.env.REFRESH_CHANNELS_MS || 30000);
-const IDLE_ALERT_MS = Number(process.env.IDLE_ALERT_MS || 120000);
-const MAX_ECHO_LEN = Number(process.env.MAX_ECHO_LEN || 220);
+/**
+ * TNF REDIS-NATIVE RELAY MONITOR (v6)
+ * 
+ * Subscribes directly to the Redis Bus to bypass WebSocket overhead.
+ * Performs verified Tab-then-Enter injections for terminal agents.
+ */
 
-let ws = null;
-let reconnectTimer = null;
-let heartbeatTimer = null;
-let refreshTimer = null;
-let idleTimer = null;
+const { RedisAgentClient } = require('/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/lib/redis-agent-client.cjs');
+const { execFile } = require('child_process');
+const fs = require('fs');
+const path = require('path');
+const { promisify } = require('util');
 
-const joined = new Set();
-const channelInfo = new Map();
-const lastSeenAt = new Map();
+const execFileAsync = promisify(execFile);
 
-function now() {
-  return Date.now();
+// Configuration
+const ALIAS_SOURCE_FILE = path.join(process.env.HOME, '.tnf', 'local-subdirector', 'state', 'local-subdirector-heartbeat.json');
+const DIRECT_PROMPT_VERIFY_MS = 500;
+
+function log(message, metadata = {}) {
+  const timestamp = new Date().toISOString();
+  console.log(JSON.stringify({ timestamp, message, role: 'Relay-Monitor', ...metadata }));
 }
 
-function build(type, payload = {}, channel) {
-  return {
-    id: `${now()}-${Math.random().toString(36).slice(2, 8)}`,
-    type,
-    source: AGENT_ID,
-    timestamp: now(),
-    channel,
-    payload,
-  };
+async function readTerminalContents(windowId) {
+  const { stdout } = await execFileAsync('osascript', [
+    '-e', `tell application "Terminal" to contents of selected tab of window id ${Number(windowId)}`,
+  ]);
+  return String(stdout || '');
 }
 
-function send(type, payload = {}, channel) {
-  if (!ws || ws.readyState !== WebSocket.OPEN) return;
-  ws.send(JSON.stringify(build(type, payload, channel)));
+async function pressTerminalKey(windowId, keyCode) {
+  await execFileAsync('osascript', [
+    '-e', 'tell application "Terminal" to activate',
+    '-e', `tell application "Terminal" to set frontmost of window id ${Number(windowId)} to true`,
+    '-e', 'delay 0.1',
+    '-e', `tell application "System Events" to tell process "Terminal" to key code ${Number(keyCode)}`,
+  ]);
 }
 
-function log(msg, meta) {
-  if (meta) {
-    console.log(`[monitor] ${msg}`, meta);
-  } else {
-    console.log(`[monitor] ${msg}`);
+async function submitPromptIfNeeded(windowId, marker, pendingPrefix) {
+  let contents = await readTerminalContents(windowId);
+  let hasQueueHint = contents.includes('tab to queue message');
+  let hasMarker = contents.includes(marker) || contents.includes(pendingPrefix);
+  let pending = hasMarker || hasQueueHint;
+
+  if (!pending) return { submitted: false, enterAttempts: 0, pending: false };
+
+  let submitted = false;
+  let enterAttempts = 0;
+
+  // satisfy composer
+  if (hasQueueHint) {
+    await pressTerminalKey(windowId, 48); // Tab
+    await new Promise(r => setTimeout(r, 250));
   }
-}
 
-function shouldJoinChannel(ch) {
-  if (!ch || !ch.id) return false;
-  if (CHANNEL_MODE === 'all') return true;
-  if (CHANNEL_MODE === 'include') {
-    return CHANNEL_INCLUDE.includes(ch.id) || CHANNEL_INCLUDE.includes((ch.name || '').toLowerCase());
-  }
-  if (CHANNEL_MODE === 'regex') {
-    if (!CHANNEL_REGEX) return false;
-    return CHANNEL_REGEX.test(ch.id) || CHANNEL_REGEX.test(ch.name || '');
-  }
-  return false;
-}
-
-function joinMatchingChannels(channels) {
-  for (const ch of channels) {
-    channelInfo.set(ch.id, ch);
-    if (!shouldJoinChannel(ch)) continue;
-    if (joined.has(ch.id)) continue;
-    joined.add(ch.id);
-    send('CHANNEL_JOIN', { channelId: ch.id });
-    lastSeenAt.set(ch.id, now());
-    log(`Joined channel`, { id: ch.id, name: ch.name });
-    if (POST_INTRO) {
-      send(
-        'MESSAGE_SEND',
-        {
-          messageId: `intro-${now()}`,
-          to: 'broadcast',
-          content: `Codex monitor online in ${ch.name || ch.id}.`,
-          messageType: 'text',
-          metadata: {
-            senderId: AGENT_ID,
-            senderHost: 'codex-cli',
-            senderUrl: 'local-monitor://codex',
-          },
-        },
-        ch.id
-      );
+  while (pending && enterAttempts < 3) {
+    await pressTerminalKey(windowId, 36); // Enter
+    submitted = true;
+    enterAttempts += 1;
+    await new Promise(r => setTimeout(r, 500));
+    contents = await readTerminalContents(windowId);
+    hasQueueHint = contents.includes('tab to queue message');
+    hasMarker = contents.includes(marker) || contents.includes(pendingPrefix);
+    pending = hasMarker || hasQueueHint;
+    
+    if (pending && hasQueueHint) {
+      await pressTerminalKey(windowId, 48); // Tab
+      await new Promise(r => setTimeout(r, 250));
     }
   }
+
+  return { submitted, enterAttempts, pending };
 }
 
-function extractWakePing(payload) {
-  const metadata = payload?.metadata || {};
-  const content = String(payload?.content || '');
-  if (metadata.eventType === 'wake_ping') {
-    return {
-      pingId: String(metadata.pingId || `wake-${now()}`),
-      reason: String(metadata.reason || 'wake-ping'),
-    };
-  }
-  const m = content.match(/\[WAKE_PING(?:\s+([^\]]+))?\]/i);
-  if (m) {
-    return {
-      pingId: (m[1] || `wake-${now()}`).trim(),
-      reason: 'wake-ping-content',
-    };
-  }
-  return null;
-}
+async function flushAnyPendingTnfPrompt(windowId) {
+  let contents = await readTerminalContents(windowId);
+  let pending =
+    contents.includes('› TNF wake') ||
+    contents.includes('› TNF heartbeat') ||
+    contents.includes('tab to queue message');
+  
+  if (!pending) return { enterAttempts: 0, pending: false };
 
-function ackWakePing(channelId, ping) {
-  send(
-    'MESSAGE_SEND',
-    {
-      messageId: `wake-ack-${now()}`,
-      to: 'broadcast',
-      content: `[WAKE_ACK ${ping.pingId}] ${AGENT_NAME} active in ${channelId}`,
-      messageType: 'event',
-      metadata: {
-        senderId: AGENT_ID,
-        eventType: 'wake_ack',
-        pingId: ping.pingId,
-        reason: ping.reason,
-      },
-    },
-    channelId
-  );
-  send('MESSAGE_SEND', {
-    messageId: `wake-ack-log-${now()}`,
-    to: 'broadcast',
-    channel: 'fuse-activity-log',
-    content: `[ACTIVITY] wake_ack`,
-    messageType: 'event',
-    metadata: {
-      senderId: AGENT_ID,
-      eventType: 'wake_ack',
-      activityChannel: channelId,
-      pingId: ping.pingId,
-      reason: ping.reason,
-    },
-  }, 'fuse-activity-log');
-}
-
-function maybeEngage(channelId, payload) {
-  if (!ENGAGE) return;
-  const text = String(payload?.content || '').replace(/\s+/g, ' ').trim();
-  if (!text) return;
-  if (text.includes('[monitor]') || text.includes('[WAKE_ACK')) return;
-  const clipped = text.length > MAX_ECHO_LEN ? `${text.slice(0, MAX_ECHO_LEN)}...` : text;
-  send(
-    'MESSAGE_SEND',
-    {
-      messageId: `engage-${now()}`,
-      to: 'broadcast',
-      content: `[monitor] Observed: ${clipped}`,
-      messageType: 'text',
-      metadata: {
-        senderId: AGENT_ID,
-        eventType: 'monitor_observation',
-      },
-    },
-    channelId
-  );
-}
-
-function onRelayMessage(msg) {
-  if (msg.type === 'CHANNEL_LIST') {
-    const channels = msg.payload?.channels || [];
-    joinMatchingChannels(channels);
-    return;
-  }
-
-  if (msg.type !== 'CHANNEL_MESSAGE' && msg.type !== 'MESSAGE_RECEIVE') return;
-  const payload = msg.payload || {};
-  const channelId = payload.channel;
-  if (!channelId || !joined.has(channelId)) return;
-  if (payload.from === AGENT_ID) return;
-
-  lastSeenAt.set(channelId, now());
-  const line = String(payload.content || '').replace(/\s+/g, ' ').slice(0, 250);
-  console.log(`[${channelInfo.get(channelId)?.name || channelId}] ${payload.from}: ${line}`);
-
-  const ping = extractWakePing(payload);
-  if (ping) {
-    ackWakePing(channelId, ping);
-    return;
-  }
-  maybeEngage(channelId, payload);
-}
-
-function startTimers() {
-  clearInterval(heartbeatTimer);
-  clearInterval(refreshTimer);
-  clearInterval(idleTimer);
-
-  heartbeatTimer = setInterval(() => {
-    send('HEARTBEAT', {});
-  }, HEARTBEAT_MS);
-
-  refreshTimer = setInterval(() => {
-    send('CHANNEL_LIST', {});
-  }, REFRESH_CHANNELS_MS);
-
-  idleTimer = setInterval(() => {
-    const t = now();
-    for (const channelId of joined) {
-      const last = lastSeenAt.get(channelId) || 0;
-      if (t - last < IDLE_ALERT_MS) continue;
-      const chName = channelInfo.get(channelId)?.name || channelId;
-      send('MESSAGE_SEND', {
-        messageId: `idle-log-${now()}`,
-        to: 'broadcast',
-        channel: 'fuse-activity-log',
-        content: `[ACTIVITY] monitor_idle`,
-        messageType: 'event',
-        metadata: {
-          senderId: AGENT_ID,
-          eventType: 'monitor_idle',
-          activityChannel: channelId,
-          idleMs: t - last,
-          channelName: chName,
-        },
-      }, 'fuse-activity-log');
-      lastSeenAt.set(channelId, t);
+  let enterAttempts = 0;
+  while (pending && enterAttempts < 3) {
+    if (contents.includes('tab to queue message')) {
+      await pressTerminalKey(windowId, 48); // Tab
+      await new Promise(r => setTimeout(r, 250));
     }
-  }, Math.min(IDLE_ALERT_MS, 30000));
+    await pressTerminalKey(windowId, 36); // Enter
+    enterAttempts += 1;
+    await new Promise(r => setTimeout(r, 500));
+    contents = await readTerminalContents(windowId);
+    pending =
+      contents.includes('› TNF wake') ||
+      contents.includes('› TNF heartbeat') ||
+      contents.includes('tab to queue message');
+  }
+  return { enterAttempts, pending };
 }
 
-function cleanup() {
-  if (reconnectTimer) clearTimeout(reconnectTimer);
-  if (heartbeatTimer) clearInterval(heartbeatTimer);
-  if (refreshTimer) clearInterval(refreshTimer);
-  if (idleTimer) clearInterval(idleTimer);
+async function inject(agentId, prompt, pingId) {
+  try {
+    if (!fs.existsSync(ALIAS_SOURCE_FILE)) {
+      log('Alias source file missing', { path: ALIAS_SOURCE_FILE });
+      return;
+    }
+    const raw = fs.readFileSync(ALIAS_SOURCE_FILE, 'utf8');
+    const sessions = JSON.parse(raw).sessions;
+    const session = sessions.find(s => s.agentId === agentId);
+    
+    if (session?.tty && session?.windowId) {
+      log('Injecting prompt', { agentId, tty: session.tty, pingId });
+      
+      // Pre-injection: aggressive line clear
+      await pressTerminalKey(session.windowId, 9); // Ctrl+C
+      await new Promise(r => setTimeout(r, 100));
+      await pressTerminalKey(session.windowId, 36); // Enter
+      await new Promise(r => setTimeout(r, 200));
+
+      // Injection
+      const escapedPrompt = prompt.replace(/[\\"]/g, '\\$&');
+      await execFileAsync('osascript', [
+        '-e', `tell application "Terminal" to do script "${escapedPrompt}\\n" in selected tab of window id ${Number(session.windowId)}`,
+      ]);
+      
+      await new Promise(r => setTimeout(r, 500));
+      const res = await submitPromptIfNeeded(session.windowId, prompt.slice(0, 20), '› TNF');
+      
+      if (res.pending) {
+        await flushAnyPendingTnfPrompt(session.windowId);
+      }
+    }
+  } catch (e) {
+    log('Injection failed', { error: e.message });
+  }
 }
 
-function connect() {
-  ws = new WebSocket(RELAY_URL);
-  ws.on('open', () => {
-    log('Connected to relay', { relay: RELAY_URL, agentId: AGENT_ID, channelMode: CHANNEL_MODE });
-    send('AGENT_REGISTER', {
-      agent: {
-        id: AGENT_ID,
-        name: AGENT_NAME,
-        platform: 'codex-cli',
-        status: 'active',
-        capabilities: ['monitoring', 'wake-ack', 'channel-discovery'],
-        channels: [],
-      },
-    });
-    send('CHANNEL_LIST', {});
-    startTimers();
-  });
+async function publishActivity(agentId, activityType, metadata) {
+  try {
+    const client = new RedisAgentClient();
+    await client.initialize();
+    await client.publisher.publish(
+      'agent:activity',
+      JSON.stringify({
+        agentId,
+        activityType,
+        metadata,
+        timestamp: new Date().toISOString(),
+      })
+    );
+    await client.cleanup();
+  } catch (_error) {
+    // Fail silently
+  }
+}
 
-  ws.on('message', (raw) => {
-    try {
-      onRelayMessage(JSON.parse(raw.toString()));
-    } catch (e) {
-      log('Failed to parse relay message');
+async function main() {
+  log('Starting Redis-Native Monitor');
+  const client = new RedisAgentClient();
+  await client.initialize();
+
+  // Subscribe to the ingress bus directly
+  client.onMessage('tnf:bus:ingress', async (envelope) => {
+    if (envelope.type === 'event' && envelope.payload?.eventType === 'wake_ping') {
+      const data = envelope.payload.data;
+      if (data.targetAgentId && data.customPrompt) {
+        await inject(data.targetAgentId, data.customPrompt, data.pingId);
+        
+        await publishActivity(data.targetAgentId, 'prompt_injected', {
+          pingId: data.pingId,
+          method: 'terminal-do-script'
+        });
+      }
     }
   });
 
-  ws.on('close', () => {
-    log('Disconnected; reconnecting in 2s');
-    cleanup();
-    reconnectTimer = setTimeout(connect, 2000);
-  });
-
-  ws.on('error', (err) => {
-    log('WebSocket error', { error: err?.message || String(err) });
-  });
+  log('Subscribed to tnf:bus:ingress');
 }
 
-process.on('SIGINT', () => {
-  cleanup();
-  if (ws && ws.readyState === WebSocket.OPEN) {
-    for (const channelId of joined) {
-      send(
-        'MESSAGE_SEND',
-        {
-          messageId: `offline-${now()}`,
-          to: 'broadcast',
-          content: `${AGENT_NAME} going offline.`,
-          messageType: 'text',
-          metadata: { senderId: AGENT_ID, eventType: 'monitor_offline' },
-        },
-        channelId
-      );
-    }
-  }
-  setTimeout(() => process.exit(0), 250);
+main().catch(err => {
+  log('Monitor Fatal Error', { error: err.message });
+  process.exit(1);
 });
-
-connect();
-
