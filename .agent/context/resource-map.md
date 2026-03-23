@@ -214,6 +214,48 @@ capabilities.
 - **Scripts**:
   - `stitch_rpc.py` - Core JSON-RPC bridge for Stitch MCP.
 
+### 19. **Kilo** (General Agent) ⭐⭐
+
+- **Location**: `.agent/agents/kilo.md`
+- **Purpose**: General-purpose software engineering agent.
+- **Use When**: Code development, debugging, code reviews.
+- **Key Features**: Multi-language support, file operations.
+
+### 20. **CodeQuality-Agent** (Specialized Agent) ⭐⭐
+
+- **Location**: `.agent/agents/codequality-agent.md`
+- **Purpose**: Code quality, testing, and linting.
+- **Use When**: Test coverage, lint enforcement.
+- **Key Features**: Test generation, TypeScript safety.
+
+### 21. **DocImprover-Agent** (Specialized Agent) ⭐⭐
+
+- **Location**: `.agent/agents/docimprover-agent.md`
+- **Purpose**: Documentation improvements and hygiene.
+- **Use When**: Doc completeness, link validation.
+- **Key Features**: API docs, README quality.
+
+### 22. **SecurityAgent** (Specialized Agent) ⭐⭐
+
+- **Location**: `.agent/agents/security-agent.md`
+- **Purpose**: Security auditing and vulnerability assessment.
+- **Use When**: Security audits, penetration testing.
+- **Key Features**: Secret detection, API security.
+
+### 23. **PerfAgent** (Specialized Agent) ⭐⭐
+
+- **Location**: `.agent/agents/perf-agent.md`
+- **Purpose**: Performance optimization.
+- **Use When**: Profiling, bundle analysis.
+- **Key Features**: Caching, DB optimization.
+
+### 24. **DevOpsAgent** (Specialized Agent) ⭐⭐
+
+- **Location**: `.agent/agents/devops-agent.md`
+- **Purpose**: DevOps and CI/CD automation.
+- **Use When**: Pipeline creation, deployments.
+- **Key Features**: GitHub Actions, Railway.
+
 ---
 
 ## 📄 Available Context Resources
