@@ -480,7 +480,7 @@ export default function ConnectExtensionPage() {
               Add to Chrome — Free
             </a>
             <a
-              href="https://github.com/whodaniel/fuse"
+              href="https://github.com/whodaniel/The-New-Fuse"
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-2.5 rounded-md border border-white/[0.12] bg-transparent/[0.04] px-8 py-2 text-base font-bold text-white backdrop-blur-sm transition-all hover:bg-transparent/[0.08] active:scale-[0.97]"
@@ -835,7 +835,7 @@ export default function ConnectExtensionPage() {
               { label: 'AI Studio', href: 'https://aistudio.google.com/', icon: Bot },
               { label: 'NotebookLM', href: 'https://notebooklm.google.com/', icon: BrainCircuit },
               { label: 'Documentation', href: 'https://thenewfuse.com/docs', icon: ExternalLink },
-              { label: 'GitHub', href: 'https://github.com/whodaniel/fuse', icon: Code2 },
+              { label: 'GitHub', href: 'https://github.com/whodaniel/The-New-Fuse', icon: Code2 },
             ].map((link, i) => (
               <a
                 key={i}
