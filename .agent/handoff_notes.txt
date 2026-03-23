@@ -203,3 +203,22 @@ PERPETUAL ENGINE — Built Today:
 - Next: zo-tnf-bridge → spaces-backend → multi-agent-chat → claude-mcp → ...
 
 The baton is always being held.
+
+=== 2026-03-23 Session ===
+- Sub-Director agent bootstrapped, working from /tmp/fuse (HTTPS git + GitHub PAT)
+- Railway CLI: authenticated locally on user's Mac, NOT available in sandbox (no browser OAuth)
+- Working around: push to GitHub, user deploys
+
+KEY PRODUCTION BUGS FIXED (pushed to GitHub):
+1. MCP endpoint 500: @Version('1') decorators broke ALL gateway routes. Removed from 11 gateway controllers (commit 83708b468)
+2. MCP gateway proxied to 'backend' (port 3004) instead of 'api' (port 3001). Fixed proxy target (commit 2497eb0fa)
+3. API service URL now defaults to http://api.railway.internal for Railway internal DNS
+
+ACTION REQUIRED (Railway dashboard):
+- Set `API_SERVICE_URL` env var in Railway for the api-gateway service
+
+NEXT PRIORITIES:
+- Phase 1 of workflow builder audit still open (pending auth to test production)
+- 76 GitHub security vulnerabilities need remediation
+- docs/blog/legal pages need static fallback or proper pre-rendering
+- Browser Hub service shows stopped — confirm if intended

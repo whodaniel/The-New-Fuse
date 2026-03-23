@@ -121,3 +121,42 @@
 - Files modified:
   - `apps/api/src/controllers/mcp.controller.ts` — full rewrite
   - `apps/api/src/app.module.ts` — updated import to `MCPServerController`
+
+## 2026-03-23 — Session 2 (Continued)
+
+### Critical Fixes — API Gateway
+
+**Root cause found for `/api/mcp/servers` returning 500 on production:**
+
+1. **Wrong proxy target**: `McpGatewayController` proxied to `'backend'` (port
+   3004 / backend-app) but `MCPServerController` is in the `api` service (port
+   3001). Fixed: changed all proxy targets from `'backend'` → `'api'`.
+
+2. **@Version('1') routing bug**: ALL 11 gateway controllers had `@Version('1')`
+   decorators. Frontend sends NO version headers → NestJS rejects all requests →
+   every API gateway route silently fails (404 or 500). Fixed: removed
+   `@Version('1')` from all gateway controllers. Keep `VERSION_NEUTRAL` which
+   means no version constraint.
+
+3. **API service URL**: The `api` service in proxy service now defaults to
+   `http://api.railway.internal` for Railway networking. Railway needs
+   `API_SERVICE_URL` env var in the API Gateway service.
+
+**Railway env var needed (must be set in Railway dashboard):**
+
+- `API_SERVICE_URL` = internal Railway URL for the `api` service (e.g.
+  `http://api.railway.internal`)
+
+### Also Fixed This Session
+
+- GitHub repo URL: `whodaniel/fuse` → `whodaniel/The-New-Fuse` in
+  ConnectExtension
+- Bundle analyzer: updated hardcoded TNF package data
+- Health errors: added `GET /health/errors?hours=N` endpoint for monitoring
+  dashboard
+
+### New Findings
+
+- 76 GitHub security vulnerabilities (run `gh dependabot review-suggestions`)
+- All @Version('1') decorators were breaking ALL gateway routes silently
+- MCP gateway proxied to wrong service (backend instead of api)
