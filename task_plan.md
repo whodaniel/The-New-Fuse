@@ -29,7 +29,7 @@ Phase 1 (Requirements & Discovery) - in progress
 - [ ] Identify all builder modules + their UI controls.
 - [ ] Map each module to backend endpoints/data models/execution paths.
 - [ ] Capture layout issues and missing wiring in `findings.md`.
-- [ ] Capture MCP Tool server-list gap and marketplace integration requirement.
+- [x] Capture MCP Tool server-list gap and marketplace integration requirement.
 - **Status:** in_progress
 - **Code Allowed:** ❌ NO
 

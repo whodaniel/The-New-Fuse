@@ -114,3 +114,35 @@
   `packages/database/scripts/register-tnf-entities-v2.ts`.
 - MCP server source switching now targets `/api/mcp/servers?source=registry` for
   Official MCP Registry listings.
+
+## MCP Controller Implementation (2026-03-23)
+
+### Status: ✅ COMPLETED
+
+Implemented `MCPServerController` (formerly `MCPController`) with full CRUD +
+execution endpoints:
+
+**Endpoints wired:**
+
+- `GET /api/mcp/servers` — List all MCP servers with `?source=tnf|registry|all`
+  and `?q=` search
+  - `tnf`: queries `tnf_mcpServers` DB table
+  - `registry`: queries Official MCP Registry via
+    `MarketplaceService.searchResearchMcpServers()`
+- `GET /api/mcp/servers/marketplace` — Dedicated marketplace route
+- `GET /api/mcp/servers/:id` — Get single server (handles TNF ID and `registry:`
+  prefix)
+- `POST /api/mcp/servers` — Create custom MCP server
+- `PUT /api/mcp/servers/:id` — Update server config
+- `DELETE /api/mcp/servers/:id` — Remove server
+- `POST/DELETE/GET /api/mcp/servers/:id/start|stop|restart|status|logs`
+- `GET/POST /api/mcp/servers/:serverId/tools` + tool execution
+- `GET /api/mcp/servers/:serverId/resources`, `prompts` + executions
+- `GET/DELETE /api/mcp/connections`
+- `GET/PUT /api/mcp/config`
+
+**Frontend usage:** `GET /api/mcp/servers?source=registry` for MCP Tool node
+server listing
+
+**Commit:** `52cf3894e` — "feat(api): wire MCP controller to database and
+marketplace"
