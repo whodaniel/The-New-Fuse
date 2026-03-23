@@ -27,5 +27,12 @@ export default () => ({
       maxTokens: parseInt(process.env.OPENCODE_CLI_MAX_TOKENS || '4000'),
       temperature: parseFloat(process.env.OPENCODE_CLI_TEMPERATURE || '0.7'),
     },
+    minimax: {
+      apiKey: process.env.MINIMAX_API_KEY,
+      model: process.env.MINIMAX_MODEL || 'MiniMax-Text-01',
+      groupId: process.env.MINIMAX_GROUP_ID,
+      maxTokens: parseInt(process.env.MINIMAX_MAX_TOKENS || '8000'),
+      temperature: parseFloat(process.env.MINIMAX_TEMPERATURE || '0.7'),
+    },
   },
 });

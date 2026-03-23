@@ -68,7 +68,7 @@ export class AiController {
     const provider = await this.getPreferredProvider();
     const providerName = provider.provider.trim().toLowerCase();
 
-    if (!this.isOpenAIProvider(providerName)) {
+    if (!this.isOpenAICompatible(providerName)) {
       throw new ServiceUnavailableException(
         'Image generation requires an OpenAI-compatible provider configured as default.'
       );
@@ -221,6 +221,9 @@ export class AiController {
     if (provider === 'groq') {
       return 'https://api.groq.com/openai/v1/chat/completions';
     }
+    if (provider === 'minimax') {
+      return 'https://api.minimax.chat/v1/chat/completions';
+    }
     return 'https://api.openai.com/v1/chat/completions';
   }
 
@@ -293,8 +296,9 @@ export class AiController {
     return modelName;
   }
 
-  private isOpenAIProvider(provider: string): boolean {
-    return provider === 'openai' || provider === 'openai-codex';
+  /** OpenAI-compatible providers support image generation via DALL-E proxy */
+  private isOpenAICompatible(provider: string): boolean {
+    return provider === 'openai' || provider === 'openai-codex' || provider === 'minimax';
   }
 
   private tryParseJson(text: string): any {
