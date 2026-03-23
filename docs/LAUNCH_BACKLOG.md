@@ -49,3 +49,12 @@
 
 *Last Updated: 2026-03-23*
 *CTO Agent — TNF Launchpad v1.0*
+
+| MiniMax MoE → TNF Agent Protocol Bridge | tnf-protocol-bridge | docs/MOE_LEARNING_QUESTIONS.md | ⏳ PENDING |
+| TNF emoji-launch-live (animated PAC-MAN UI) | frontend-specialist | docs/ANIMATED_EMOJI_SPEC.md | ⏳ PENDING |
+| Perpetual Swarm Orchestrator Dashboard | backend-specialist, frontend-specialist | docs/PERPETUAL_DASHBOARD.md | ⏳ PENDING |
+| TNF Memory Graph (pgvector integration) | backend-specialist | docs/FEATURE_PARITY_MATRIX.md | ⏳ PENDING |
+| Agent Self-Registration API (A2A v0.3) | backend-specialist | packages/a2a-core | ⏳ PENDING |
+| Real-time Collaborative Workspace | frontend-specialist | docs/FEDERATION_ARCHITECTURE.md | ⏳ PENDING |
+| TNF Super-Cycle Monitor Dashboard | frontend-specialist | docs/JULES_AUTONOMOUS_LOOP.md | ⏳ PENDING |
+| Zo ↔ TNF Bi-directional Relay | cto-agent | docs/ZO_AGENT_INTEGRATION.md | ⏳ PENDING |
