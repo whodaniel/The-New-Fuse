@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Version } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { IsObject, IsOptional } from 'class-validator';
 import { SgpEnvelopeDefaults, SgpNestjsTranslationService } from './sgp-nestjs-translation.service';
@@ -23,7 +23,6 @@ export class SgpGatewayController {
   constructor(private readonly translationService: SgpNestjsTranslationService) {}
 
   @Post('translate/to-nest')
-  @Version('1')
   @ApiOperation({ summary: 'Translate SGP envelope into NestJS ReadPacket format' })
   @ApiBody({ type: TranslateToNestDto })
   @ApiResponse({ status: 201, description: 'Translation completed successfully' })
@@ -33,7 +32,6 @@ export class SgpGatewayController {
   }
 
   @Post('translate/from-nest')
-  @Version('1')
   @ApiOperation({ summary: 'Translate NestJS ReadPacket into SGP envelope format' })
   @ApiBody({ type: TranslateFromNestDto })
   @ApiResponse({ status: 201, description: 'Translation completed successfully' })

@@ -178,7 +178,6 @@ export class SystemGatewayController {
 
   // Versioned path: /api/v1/system/master-clock
   @Get('master-clock')
-  @Version('1')
   @ApiOperation({ summary: 'Get Master Clock telemetry' })
   @ApiResponse({ status: 200, description: 'Master Clock telemetry retrieved successfully' })
   async getMasterClockV1(@Headers() headers: Record<string, string>, @Res() res: Response) {

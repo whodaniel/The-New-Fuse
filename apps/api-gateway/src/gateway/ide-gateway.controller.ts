@@ -3,7 +3,7 @@
  * Unified endpoint for Theia IDE operations
  */
 
-import { All, Controller, Get, Headers, HttpStatus, Req, Res, Version } from '@nestjs/common';
+import { All, Controller, Get, Headers, HttpStatus, Req, Res } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { ProxyService } from '../proxy/proxy.service';
@@ -14,7 +14,6 @@ export class IdeGatewayController {
   constructor(private readonly proxyService: ProxyService) {}
 
   @Get('health')
-  @Version('1')
   @ApiOperation({ summary: 'Check IDE health status' })
   @ApiResponse({ status: 200, description: 'IDE is healthy' })
   @ApiResponse({ status: 503, description: 'IDE is unavailable' })
@@ -33,7 +32,6 @@ export class IdeGatewayController {
   }
 
   @Get('status')
-  @Version('1')
   @ApiOperation({ summary: 'Get IDE status and capabilities' })
   @ApiResponse({ status: 200, description: 'IDE status retrieved successfully' })
   async getStatus(@Headers() headers: Record<string, string>, @Res() res: Response) {
@@ -69,7 +67,6 @@ export class IdeGatewayController {
   }
 
   @Get('config')
-  @Version('1')
   @ApiOperation({ summary: 'Get IDE configuration' })
   @ApiResponse({ status: 200, description: 'IDE configuration retrieved successfully' })
   async getConfig(@Headers() headers: Record<string, string>, @Res() res: Response) {
@@ -107,7 +104,6 @@ export class IdeGatewayController {
   }
 
   @All('*path')
-  @Version('1')
   @ApiOperation({ summary: 'Proxy all other requests to IDE' })
   @ApiResponse({ status: 200, description: 'Request proxied successfully' })
   async proxyToIde(

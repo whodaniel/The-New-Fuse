@@ -70,7 +70,6 @@ export class TerminalsGatewayController {
   }
 
   @Get('graph')
-  @Version('1')
   @ApiOperation({ summary: 'Get terminal topology graph' })
   @ApiResponse({ status: 200, description: 'Terminal graph retrieved successfully' })
   async getTerminalGraphV1(

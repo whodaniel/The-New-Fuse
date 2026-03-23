@@ -1,13 +1,4 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Get,
-  Post,
-  Req,
-  UseGuards,
-  Version,
-} from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
 import { Request } from 'express';
@@ -69,7 +60,6 @@ export class AuthController {
   constructor(private readonly authService: GatewayAuthService) {}
 
   @Post('login')
-  @Version('1')
   @ApiOperation({ summary: 'User login' })
   @ApiBody({ description: 'Login credentials' })
   @ApiResponse({ status: 200, description: 'Login successful' })
@@ -79,7 +69,6 @@ export class AuthController {
   }
 
   @Post('register')
-  @Version('1')
   @ApiOperation({ summary: 'User registration' })
   @ApiBody({ description: 'Registration data' })
   @ApiResponse({ status: 201, description: 'Registration successful' })
@@ -95,7 +84,6 @@ export class AuthController {
   }
 
   @Post('refresh')
-  @Version('1')
   @ApiOperation({ summary: 'Refresh authentication token' })
   @ApiBody({ description: 'Refresh token payload' })
   @ApiResponse({ status: 200, description: 'Token refreshed successfully' })
@@ -108,7 +96,6 @@ export class AuthController {
   }
 
   @Post('logout')
-  @Version('1')
   @UseGuards(GatewayAuthGuard)
   @ApiOperation({ summary: 'User logout' })
   @ApiResponse({ status: 200, description: 'Logout successful' })
@@ -121,7 +108,6 @@ export class AuthController {
   }
 
   @Get('me')
-  @Version('1')
   @UseGuards(GatewayAuthGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Get current user details' })
@@ -135,7 +121,6 @@ export class AuthController {
   }
 
   @Post('google')
-  @Version('1')
   @ApiOperation({ summary: 'Google sign-in with Firebase ID token' })
   async googleAuth(@Body() body: GoogleAuthDto) {
     if (!body.idToken) {
@@ -145,7 +130,6 @@ export class AuthController {
   }
 
   @Post('supabase')
-  @Version('1')
   @ApiOperation({ summary: 'Exchange Supabase access token for TNF JWT' })
   async supabaseAuth(@Body() body: SupabaseAuthDto) {
     if (!body.accessToken) {
@@ -155,7 +139,6 @@ export class AuthController {
   }
 
   @Get('session')
-  @Version('1')
   @ApiOperation({ summary: 'Get lightweight auth session status' })
   @ApiResponse({ status: 200, description: 'Session payload' })
   async session(@Req() req: any) {

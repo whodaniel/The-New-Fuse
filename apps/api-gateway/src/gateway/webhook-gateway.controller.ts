@@ -4,18 +4,17 @@
  */
 
 import {
+  Body,
   Controller,
   Get,
-  Post,
-  Param,
-  Body,
-  Query,
   Headers,
-  Res,
   HttpStatus,
-  Version,
+  Param,
+  Post,
+  Query,
+  Res,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { ProxyService } from '../proxy/proxy.service';
 
@@ -25,13 +24,12 @@ export class WebhookGatewayController {
   constructor(private readonly proxyService: ProxyService) {}
 
   @Post('register')
-  @Version('1')
   @ApiOperation({ summary: 'Register a new webhook configuration' })
   @ApiResponse({ status: 201, description: 'Webhook registered successfully' })
   async registerWebhook(
     @Body() body: any,
     @Headers() headers: Record<string, string>,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     try {
       const response = await this.proxyService.proxyRequest(
@@ -52,7 +50,6 @@ export class WebhookGatewayController {
   }
 
   @Post('incoming/:source')
-  @Version('1')
   @ApiOperation({ summary: 'Handle incoming webhook from integration source' })
   @ApiParam({ name: 'source', description: 'Integration source platform' })
   @ApiResponse({ status: 200, description: 'Webhook processed successfully' })
@@ -60,7 +57,7 @@ export class WebhookGatewayController {
     @Param('source') source: string,
     @Body() body: any,
     @Headers() headers: Record<string, string>,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     try {
       const response = await this.proxyService.proxyRequest(
@@ -81,14 +78,13 @@ export class WebhookGatewayController {
   }
 
   @Get('status/:id')
-  @Version('1')
   @ApiOperation({ summary: 'Get webhook configuration status' })
   @ApiParam({ name: 'id', description: 'Webhook configuration ID' })
   @ApiResponse({ status: 200, description: 'Webhook status retrieved successfully' })
   async getWebhookStatus(
     @Param('id') id: string,
     @Headers() headers: Record<string, string>,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     try {
       const response = await this.proxyService.proxyRequest(
@@ -108,7 +104,6 @@ export class WebhookGatewayController {
   }
 
   @Get('events/history')
-  @Version('1')
   @ApiOperation({ summary: 'Get event history for organization' })
   @ApiQuery({ name: 'start_date', required: true, description: 'Start date (ISO 8601)' })
   @ApiQuery({ name: 'end_date', required: true, description: 'End date (ISO 8601)' })
@@ -116,7 +111,7 @@ export class WebhookGatewayController {
   async getEventHistory(
     @Query() query: Record<string, string>,
     @Headers() headers: Record<string, string>,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     try {
       const response = await this.proxyService.proxyRequest(
@@ -138,14 +133,13 @@ export class WebhookGatewayController {
   }
 
   @Get('events/stream')
-  @Version('1')
   @ApiOperation({ summary: 'Stream real-time events via SSE' })
   @ApiQuery({ name: 'event_types', required: false, description: 'Event types filter' })
   @ApiResponse({ status: 200, description: 'SSE stream established' })
   async streamEvents(
     @Query() query: Record<string, string>,
     @Headers() headers: Record<string, string>,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     try {
       const response = await this.proxyService.proxyRequest(

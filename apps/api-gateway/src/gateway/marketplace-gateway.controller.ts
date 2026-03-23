@@ -1,4 +1,4 @@
-import { Controller, Get, Headers, HttpStatus, Query, Res, Version } from '@nestjs/common';
+import { Controller, Get, Headers, HttpStatus, Query, Res } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { ProxyService } from '../proxy/proxy.service';
@@ -47,7 +47,6 @@ export class MarketplaceGatewayController {
   }
 
   @Get('research/mcp/counts')
-  @Version('1')
   @ApiOperation({ summary: 'Get MCP research counts' })
   @ApiResponse({ status: 200, description: 'MCP research counts retrieved successfully' })
   async getResearchMcpCounts(@Headers() headers: Record<string, string>, @Res() res: Response) {
@@ -55,7 +54,6 @@ export class MarketplaceGatewayController {
   }
 
   @Get('research/mcp/sources')
-  @Version('1')
   @ApiOperation({ summary: 'List MCP research sources' })
   @ApiResponse({ status: 200, description: 'MCP research sources retrieved successfully' })
   async getResearchMcpSources(
@@ -67,7 +65,6 @@ export class MarketplaceGatewayController {
   }
 
   @Get('research/mcp/servers')
-  @Version('1')
   @ApiOperation({ summary: 'Search MCP research servers' })
   @ApiResponse({ status: 200, description: 'MCP research servers retrieved successfully' })
   async searchResearchMcpServers(
@@ -79,7 +76,6 @@ export class MarketplaceGatewayController {
   }
 
   @Get('research/skills/marketplace/counts')
-  @Version('1')
   @ApiOperation({ summary: 'Get mirrored skills marketplace counts' })
   @ApiResponse({
     status: 200,
@@ -97,7 +93,6 @@ export class MarketplaceGatewayController {
   }
 
   @Get('research/skills/marketplace/entries')
-  @Version('1')
   @ApiOperation({ summary: 'List mirrored skills marketplace entries' })
   @ApiResponse({
     status: 200,

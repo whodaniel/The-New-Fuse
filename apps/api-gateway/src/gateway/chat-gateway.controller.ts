@@ -3,18 +3,8 @@
  * Unified endpoint for chat and real-time communication
  */
 
-import {
-  Controller,
-  Get,
-  Post,
-  Param,
-  Body,
-  Headers,
-  Res,
-  HttpStatus,
-  Version,
-} from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { Body, Controller, Get, Headers, HttpStatus, Param, Post, Res } from '@nestjs/common';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { ProxyService } from '../proxy/proxy.service';
 
@@ -24,13 +14,9 @@ export class ChatGatewayController {
   constructor(private readonly proxyService: ProxyService) {}
 
   @Get('sessions')
-  @Version('1')
   @ApiOperation({ summary: 'Get chat sessions' })
   @ApiResponse({ status: 200, description: 'Chat sessions retrieved successfully' })
-  async getChatSessions(
-    @Headers() headers: Record<string, string>,
-    @Res() res: Response,
-  ) {
+  async getChatSessions(@Headers() headers: Record<string, string>, @Res() res: Response) {
     try {
       const response = await this.proxyService.proxyRequest(
         'backend',
@@ -49,13 +35,12 @@ export class ChatGatewayController {
   }
 
   @Post('sessions')
-  @Version('1')
   @ApiOperation({ summary: 'Create a new chat session' })
   @ApiResponse({ status: 201, description: 'Chat session created successfully' })
   async createChatSession(
     @Body() body: any,
     @Headers() headers: Record<string, string>,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     try {
       const response = await this.proxyService.proxyRequest(
@@ -76,14 +61,13 @@ export class ChatGatewayController {
   }
 
   @Get('sessions/:id/messages')
-  @Version('1')
   @ApiOperation({ summary: 'Get messages for a chat session' })
   @ApiParam({ name: 'id', description: 'Chat session ID' })
   @ApiResponse({ status: 200, description: 'Messages retrieved successfully' })
   async getChatMessages(
     @Param('id') id: string,
     @Headers() headers: Record<string, string>,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     try {
       const response = await this.proxyService.proxyRequest(
@@ -103,7 +87,6 @@ export class ChatGatewayController {
   }
 
   @Post('sessions/:id/messages')
-  @Version('1')
   @ApiOperation({ summary: 'Send a message to a chat session' })
   @ApiParam({ name: 'id', description: 'Chat session ID' })
   @ApiResponse({ status: 201, description: 'Message sent successfully' })
@@ -111,7 +94,7 @@ export class ChatGatewayController {
     @Param('id') id: string,
     @Body() body: any,
     @Headers() headers: Record<string, string>,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     try {
       const response = await this.proxyService.proxyRequest(

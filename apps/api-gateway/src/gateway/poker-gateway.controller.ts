@@ -1,4 +1,4 @@
-import { All, Body, Controller, HttpStatus, Query, Req, Res, Version } from '@nestjs/common';
+import { All, Body, Controller, HttpStatus, Query, Req, Res } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { ProxyService } from '../proxy/proxy.service';
@@ -9,7 +9,6 @@ export class PokerGatewayController {
   constructor(private readonly proxyService: ProxyService) {}
 
   @All('*path')
-  @Version('1')
   @ApiOperation({ summary: 'Proxy all poker and casino game requests' })
   async proxyPokerRequest(
     @Req() req: Request,
