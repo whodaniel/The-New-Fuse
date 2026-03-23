@@ -385,8 +385,25 @@ const WorkflowBuilderContent = () => {
   const [workflowName, setWorkflowName] = useState('Untitled Workflow');
   const [isExecuting, setIsExecuting] = useState(false);
   const [executionLog, setExecutionLog] = useState<string[]>([]);
+  const [availableTemplates, setAvailableTemplates] = useState<
+    { id: string; name: string; description?: string }[]
+  >([]);
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const { project, setCenter, getNodes } = useReactFlow();
+
+  // Load templates from API on mount
+  React.useEffect(() => {
+    fetch(`${apiBaseUrl}/api/workflows/templates`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setAvailableTemplates(
+            data.map((t: any) => ({ id: t.id, name: t.name, description: t.description }))
+          );
+        }
+      })
+      .catch(() => {});
+  }, [apiBaseUrl]);
 
   const onMiniMapClick = useCallback(
     (event: React.MouseEvent, position: { x: number; y: number }) => {
@@ -758,9 +775,20 @@ const WorkflowBuilderContent = () => {
             className="template-selector"
           >
             <option value="">Load Template...</option>
-            <option value="ai-research">AI Research Assistant</option>
-            <option value="content-creation">Content Creation Pipeline</option>
-            <option value="data-processing">Data Processing Workflow</option>
+            <optgroup label="Built-in">
+              <option value="ai-research">AI Research Assistant</option>
+              <option value="content-creation">Content Creation Pipeline</option>
+              <option value="data-processing">Data Processing Workflow</option>
+            </optgroup>
+            {availableTemplates.length > 0 && (
+              <optgroup label="From Server">
+                {availableTemplates.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.name}
+                  </option>
+                ))}
+              </optgroup>
+            )}
           </select>
           <button onClick={saveWorkflow} className="btn btn-secondary">
             💾 Save
