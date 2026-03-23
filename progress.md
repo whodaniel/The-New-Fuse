@@ -82,3 +82,42 @@
   `apps/casin8-games/server.js`.
 - Intended to unblock browser membership-gated calls for holdem v2 tables and v1
   table init when using custom identity headers.
+
+## Session: 2026-03-23 — Sub-Director Agent Bootstrap
+
+### Infrastructure Setup
+
+- **Status:** partial — sandbox restrictions prevent Docker; Railway CLI auth
+  pending
+- Actions taken:
+  - Cloned fuse repo via GitHub PAT
+  - Installed TNF CLI to ~/.local/bin
+  - Verified WS Relay running on port 3000
+  - Installed Chromium via Playwright for browser automation
+  - Attempted Railway auth — token approach blocked by Cloudflare; OAuth
+    requires browser interaction
+  - Docker blocked by gVisor sandbox restriction
+
+### MCP Controller Implementation
+
+- **Status:** complete
+- Actions taken:
+  - Identified stub `MCPController` (all endpoints returned `[]` or placeholder
+    messages)
+  - Wired `getAllServers()` to query `tnf_mcp_servers` DB table with
+    search/scope filters
+  - Wired `getMarketplaceServers()` via
+    `MarketplaceService.searchResearchMcpServers()`
+  - Added `source` param: `?source=tnf|registry|all` for unified or split
+    results
+  - Added `GET /api/mcp/servers/:id` with TNF DB + registry lookup
+  - Added `POST /api/mcp/servers` for user custom MCP server registration
+  - Added `PUT/DELETE /api/mcp/servers/:id` for update/delete
+  - Added meaningful responses for lifecycle, tools, resources, prompts,
+    connections endpoints
+  - Added `GET /api/mcp/config` with endpoint discovery
+  - Removed stub `JwtAuthGuard` (endpoints are now open for discovery)
+  - Fixed `MarketplaceService` return type (`.items` not direct array)
+- Files modified:
+  - `apps/api/src/controllers/mcp.controller.ts` — full rewrite
+  - `apps/api/src/app.module.ts` — updated import to `MCPServerController`

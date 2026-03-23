@@ -22,7 +22,7 @@ import { AgentProxyController } from './controllers/agent-proxy.controller';
 import { AiController } from './controllers/ai.controller';
 import { CommunityController } from './controllers/community.controller';
 import { HealthController } from './controllers/health.controller';
-import { MCPController } from './controllers/mcp.controller';
+import { MCPServerController } from './controllers/mcp.controller';
 import { ModelsController } from './controllers/models.controller';
 import { N8nWorkflowsController } from './controllers/n8n-workflows.controller';
 import { OnboardingController } from './controllers/onboarding.controller';
@@ -150,7 +150,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     A2AController,
     HealthController, // CRITICAL: Health checks for monitoring/K8s
     LLMProviderController,
-    MCPController, // MCP server management (20+ endpoints)
+    MCPServerController, // MCP server management (20+ endpoints)
     AgentGrantsController,
     AgentHandoffController,
     AgentProxyController,
