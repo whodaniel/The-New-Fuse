@@ -1,73 +1,52 @@
 import { motion } from 'framer-motion';
-import { FastForward, Info, Pause, Play, Rewind, SkipBack, SkipForward, X, Loader2 } from 'lucide-react';
+import { FastForward, Info, Pause, Play, Rewind, SkipBack, SkipForward, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { holdemV2Api } from '../api';
 
 interface HandReplayerProps {
   handId: string;
   onClose: () => void;
 }
 
-interface Action {
-  p: string;
-  act: string;
-  pot: number;
-}
+const MOCK_ACTIONS = [
+  { p: 'GHOST', act: 'posts SB $1', pot: 1 },
+  { p: 'CYBER-9', act: 'posts BB $2', pot: 3 },
+  { p: 'Neural_Knight', act: 'raises to $6', pot: 9 },
+  { p: 'GHOST', act: 'folds', pot: 9 },
+  { p: 'CYBER-9', act: 'calls $4', pot: 13 },
+  { p: 'DEALER', act: 'deals Flop [2c 7s Jd]', pot: 13 },
+  { p: 'CYBER-9', act: 'checks', pot: 13 },
+  { p: 'Neural_Knight', act: 'bets $8', pot: 21 },
+  { p: 'CYBER-9', act: 'calls $8', pot: 29 },
+  { p: 'DEALER', act: 'deals Turn [Qh]', pot: 29 },
+  { p: 'CYBER-9', act: 'checks', pot: 29 },
+  { p: 'Neural_Knight', act: 'bets $20', pot: 49 },
+  { p: 'CYBER-9', act: 'calls $20', pot: 69 },
+  { p: 'DEALER', act: 'deals River [Tc]', pot: 69 },
+  { p: 'CYBER-9', act: 'checks', pot: 69 },
+  { p: 'Neural_Knight', act: 'bets $45', pot: 114 },
+  { p: 'CYBER-9', act: 'calls $45', pot: 159 },
+  { p: 'DEALER', act: 'Showdown', pot: 159 },
+];
 
 export default function HandReplayer({ handId, onClose }: HandReplayerProps) {
   const [step, setStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
   const [showInfo, setShowInfo] = useState(false);
-  const [actions, setActions] = useState<Action[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [handData, setHandData] = useState<any>(null);
-
-  useEffect(() => {
-    async function fetchHand() {
-      try {
-        const res = await holdemV2Api.replay(handId);
-        if (res.ok && res.hand) {
-          setHandData(res.hand);
-          // Map actionLog to our internal Action format
-          // Server actionLog typically looks like { type, seat, action, amount, pot, ... }
-          const mapped = (res.hand.actionLog || []).map((a: any) => ({
-            p: a.playerName || `Seat ${a.seat}`,
-            act: `${a.action} ${a.amount ? `$${a.amount}` : ''}`.trim(),
-            pot: a.pot || 0
-          }));
-          setActions(mapped);
-        }
-      } catch (err) {
-        console.error('Failed to fetch hand replay:', err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchHand();
-  }, [handId]);
 
   useEffect(() => {
     let interval: any;
-    if (isPlaying && step < actions.length - 1) {
+    if (isPlaying && step < MOCK_ACTIONS.length - 1) {
       interval = setInterval(() => {
         setStep((s) => s + 1);
       }, 1000 / speed);
-    } else if (step >= actions.length - 1 && actions.length > 0) {
+    } else if (step >= MOCK_ACTIONS.length - 1) {
       setIsPlaying(false);
     }
     return () => clearInterval(interval);
-  }, [isPlaying, step, speed, actions.length]);
+  }, [isPlaying, step, speed]);
 
-  const currentAction = actions[step];
-
-  if (loading) {
-    return (
-      <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-[#020308]">
-        <Loader2 className="w-12 h-12 text-cyan-400 animate-spin" />
-      </div>
-    );
-  }
+  const currentAction = MOCK_ACTIONS[step];
 
   return (
     <div className="fixed inset-0 z-[1000] flex flex-col bg-[#020308] font-sans">
@@ -114,21 +93,60 @@ export default function HandReplayer({ handId, onClose }: HandReplayerProps) {
                 </div>
 
                 <div className="flex gap-2">
-                  {/* Real board cards if available */}
-                  {handData?.communityCards?.map((card: string, i: number) => {
-                    // Logic to show card only if we reached its deal street
-                    // Simplistic version for now:
-                    const street = i < 3 ? 'flop' : i === 3 ? 'turn' : 'river';
-                    const actionIndex = (handData.actionLog || []).findIndex((a: any) => a.action?.toLowerCase().includes(street));
-                    if (actionIndex === -1 || step >= actionIndex) {
-                       return (
-                        <div key={i} className={`w-10 h-14 bg-white rounded border border-slate-300 flex items-center justify-center font-black shadow-md ${card.endsWith('h') || card.endsWith('d') ? 'text-red-500' : 'text-slate-900'}`}>
-                          {card.replace('c', '♣').replace('s', '♠').replace('h', '♥').replace('d', '♦')}
-                        </div>
-                      );
-                    }
-                    return null;
-                  })}
+                  {/* Mock Board Cards based on step */}
+                  {step >= 5 && (
+                    <div className="w-10 h-14 bg-white rounded border border-slate-300 flex items-center justify-center font-black text-slate-900 shadow-md">
+                      2♣
+                    </div>
+                  )}
+                  {step >= 5 && (
+                    <div className="w-10 h-14 bg-white rounded border border-slate-300 flex items-center justify-center font-black text-slate-900 shadow-md">
+                      7♠
+                    </div>
+                  )}
+                  {step >= 5 && (
+                    <div className="w-10 h-14 bg-white rounded border border-slate-300 flex items-center justify-center font-black text-red-500 shadow-md">
+                      J♦
+                    </div>
+                  )}
+                  {step >= 9 && (
+                    <div className="w-10 h-14 bg-white rounded border border-slate-300 flex items-center justify-center font-black text-red-500 shadow-md">
+                      Q♥
+                    </div>
+                  )}
+                  {step >= 13 && (
+                    <div className="w-10 h-14 bg-white rounded border border-slate-300 flex items-center justify-center font-black text-slate-900 shadow-md">
+                      T♣
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Seats */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+                <div
+                  className={`w-12 h-12 rounded-full border-2 ${currentAction?.p === 'CYBER-9' ? 'border-cyan-400 shadow-[0_0_15px_rgba(0,242,255,0.5)]' : 'border-slate-700'} bg-[#0a0c1a] flex items-center justify-center overflow-hidden`}
+                >
+                  <img src="https://api.dicebear.com/7.x/bottts/svg?seed=CYBER-9" alt="P2" />
+                </div>
+                <div className="bg-black/80 px-2 py-1 rounded border border-slate-800 mt-1 text-center">
+                  <p className="text-[8px] font-black uppercase text-white">CYBER-9</p>
+                  <p className="text-[10px] font-mono text-cyan-400">$9,500</p>
+                </div>
+              </div>
+
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 flex flex-col items-center">
+                <div
+                  className={`w-12 h-12 rounded-full border-2 ${currentAction?.p === 'Neural_Knight' ? 'border-cyan-400 shadow-[0_0_15px_rgba(0,242,255,0.5)]' : 'border-slate-700'} bg-[#0a0c1a] flex items-center justify-center overflow-hidden`}
+                >
+                  <img
+                    src="https://api.dicebear.com/7.x/bottts/svg?seed=Neural_Knight"
+                    alt="Hero"
+                  />
+                </div>
+                <div className="bg-black/80 px-2 py-1 rounded border border-slate-800 mt-1 text-center">
+                  <p className="text-[8px] font-black uppercase text-cyan-400">Neural_Knight</p>
+                  <p className="text-[10px] font-mono text-white">$10,200</p>
                 </div>
               </div>
             </div>
@@ -136,14 +154,14 @@ export default function HandReplayer({ handId, onClose }: HandReplayerProps) {
 
           {/* Action Log */}
           <div className="h-48 bg-[#0a0c1a] border-t border-white/5 overflow-y-auto p-4 font-mono text-sm">
-            {actions.map((a, i) => (
+            {MOCK_ACTIONS.map((a, i) => (
               <div
                 key={i}
                 className={`py-1.5 px-4 rounded flex justify-between items-center transition-colors ${i === step ? 'bg-cyan-900/30 border-l-2 border-cyan-400 text-white' : i < step ? 'text-slate-400' : 'text-slate-700 hidden'}`}
               >
                 <div>
                   <span
-                    className={`font-bold ${a.p === 'DEALER' ? 'text-purple-400' : 'text-cyan-400'}`}
+                    className={`font-bold ${a.p === 'Neural_Knight' ? 'text-cyan-400' : a.p === 'DEALER' ? 'text-purple-400' : 'text-slate-300'}`}
                   >
                     {a.p}
                   </span>
@@ -206,7 +224,7 @@ export default function HandReplayer({ handId, onClose }: HandReplayerProps) {
 
               <button
                 onClick={() => {
-                  setStep(Math.min(actions.length - 1, step + 1));
+                  setStep(Math.min(MOCK_ACTIONS.length - 1, step + 1));
                   setIsPlaying(false);
                 }}
                 className="text-slate-400 hover:text-white transition-colors"
@@ -215,7 +233,7 @@ export default function HandReplayer({ handId, onClose }: HandReplayerProps) {
               </button>
               <button
                 onClick={() => {
-                  setStep(actions.length - 1);
+                  setStep(MOCK_ACTIONS.length - 1);
                   setIsPlaying(false);
                 }}
                 className="text-slate-400 hover:text-white transition-colors"
@@ -226,7 +244,7 @@ export default function HandReplayer({ handId, onClose }: HandReplayerProps) {
 
             <div className="w-32 text-right">
               <span className="text-xs font-mono text-cyan-400">
-                {step + 1} / {actions.length}
+                {step + 1} / {MOCK_ACTIONS.length}
               </span>
             </div>
           </div>
@@ -252,25 +270,31 @@ export default function HandReplayer({ handId, onClose }: HandReplayerProps) {
                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">
                   Date/Time
                 </p>
-                <p className="text-white">{handData?.timestamp}</p>
+                <p className="text-white">2026-03-06 10:15:22</p>
               </div>
               <div>
                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">
                   Table
                 </p>
-                <p className="text-white">{handData?.tableId}</p>
+                <p className="text-white">CYBER-NODE #1</p>
+              </div>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">
+                  Blinds
+                </p>
+                <p className="text-white">$1 / $2</p>
               </div>
               <div className="pt-4 border-t border-white/5">
                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">
                   Final Pot
                 </p>
-                <p className="text-xl text-[#10b981] font-bold">${handData?.payoutUnits}</p>
+                <p className="text-xl text-[#10b981] font-bold">$159</p>
               </div>
               <div>
                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">
-                  Winner Seat
+                  Winner
                 </p>
-                <p className="text-cyan-400">Seat {handData?.winnerSeat}</p>
+                <p className="text-cyan-400">Neural_Knight</p>
               </div>
             </div>
           </motion.div>
