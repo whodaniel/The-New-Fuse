@@ -61,11 +61,92 @@ export class AgentFactory {
           temperature: 0.1,
           model: 'gpt-3.5-turbo'
         };
+      // TNF-specific agent types
+      case 'CTO':
+        return {
+          maxTokens: 8000,
+          temperature: 0.4,
+          model: 'MiniMax-Text-01',
+          provider: 'minimax',
+          role: 'Chief Technology Officer',
+          expertise: ['architecture', 'feature-parity', 'assimilation', 'moe', 'llm-integration'],
+          sparseAttention: true,
+        };
+      case 'ORCHESTRATOR':
+        return {
+          maxTokens: 4000,
+          temperature: 0.5,
+          model: 'MiniMax-Text-01',
+          provider: 'minimax',
+          role: 'Multi-agent coordinator',
+          heartbeatInterval: 3000,
+        };
+      case 'SCOUT':
+        return {
+          maxTokens: 6000,
+          temperature: 0.6,
+          model: 'MiniMax-Text-01',
+          provider: 'minimax',
+          role: 'AI landscape researcher',
+          expertise: ['market-surveillance', 'trend-detection', 'competitor-analysis'],
+        };
+      case 'IMPROVER':
+        return {
+          maxTokens: 4000,
+          temperature: 0.3,
+          model: 'MiniMax-Text-01',
+          provider: 'minimax',
+          role: 'Continuous improvement engineer',
+          expertise: ['diagnostics', 'self-repair', 'security', 'code-quality'],
+        };
+      case 'SUB_DIRECTOR':
+        return {
+          maxTokens: 8000,
+          temperature: 0.5,
+          model: 'MiniMax-Text-01',
+          provider: 'minimax',
+          role: 'Local hub Sub-Director',
+          platform: 'zo',
+          relayHost: 'localhost',
+          relayPort: 3000,
+          infrastructure: true,
+        };
+      // Anthropic-powered agents
+      case 'CLAUDE_CODE':
+        return {
+          maxTokens: 8000,
+          temperature: 0.4,
+          model: 'claude-sonnet-4-5',
+          provider: 'anthropic',
+        };
+      case 'CLAUDE_OPUS':
+        return {
+          maxTokens: 8000,
+          temperature: 0.4,
+          model: 'claude-opus-4-6',
+          provider: 'anthropic',
+        };
+      // OpenAI-powered agents
+      case 'GPT_4':
+        return {
+          maxTokens: 4000,
+          temperature: 0.7,
+          model: 'gpt-4',
+          provider: 'openai',
+        };
+      case 'GPT_4O':
+        return {
+          maxTokens: 8000,
+          temperature: 0.7,
+          model: 'gpt-4o',
+          provider: 'openai',
+        };
       default:
         return {
           maxTokens: 2000,
           temperature: 0.5,
-          model: 'gpt-3.5-turbo'
+          model: 'MiniMax-Text-01',
+          provider: 'minimax',
         };
     }
   }
