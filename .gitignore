@@ -89,6 +89,7 @@ docs/project-management/*analysis*.md
 .agent/runtime-state/
 .agent/jules-logs/
 .agent/session-logs/
+.agent/test-reports/
 
 # Additional Private Data
 data/autobiography/
