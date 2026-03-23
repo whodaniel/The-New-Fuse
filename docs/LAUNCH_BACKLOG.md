@@ -58,3 +58,12 @@
 | Real-time Collaborative Workspace | frontend-specialist | docs/FEDERATION_ARCHITECTURE.md | ⏳ PENDING |
 | TNF Super-Cycle Monitor Dashboard | frontend-specialist | docs/JULES_AUTONOMOUS_LOOP.md | ⏳ PENDING |
 | Zo ↔ TNF Bi-directional Relay | cto-agent | docs/ZO_AGENT_INTEGRATION.md | ⏳ PENDING |
+
+## EMERGING ITEMS (auto-generated)
+| Priority | Name | Agents | Status | Spec |
+|----------|------|--------|--------|------|
+| P1 | TNF Relay Health API | backend-specialist | ⏳ PENDING | apps/api/src/controllers/relay-health.controller.ts |
+| P1 | TNF Launchpad Status Dashboard | frontend-specialist | ⏳ PENDING | apps/frontend/src/pages/LaunchpadDashboard.tsx |
+| P2 | TNF Agent Registry WebSocket | backend-specialist | ⏳ PENDING | packages/relay-core/src/agent-registry-ws.ts |
+| P2 | TNF Perpetual Status Page | frontend-specialist | ⏳ PENDING | apps/frontend/src/pages/PerpetualStatus.tsx |
+| P3 | TNF Feature Request Form | frontend-specialist | ⏳ PENDING | apps/frontend/src/pages/FeatureRequest.tsx |

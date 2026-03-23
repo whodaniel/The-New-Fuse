@@ -2,6 +2,8 @@ import { Suspense, lazy, type ReactNode } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { LEGACY_REDIRECTS } from './config/legacyRedirects';
 // Lazy load layouts for code splitting
+const PerpetualStatus = lazy(() => import('../pages/PerpetualStatus'));
+const LaunchpadDashboard = lazy(() => import('../pages/LaunchpadDashboard'));
 const PremiumLayout = lazy(() => import('./layouts/PremiumLayout'));
 const PublicLayout = lazy(() => import('./layouts/PublicLayout'));
 
@@ -371,7 +373,8 @@ export default function ComprehensiveRouter() {
                 }
               />
               <Route
-                path="/hub"
+                path="/launchpad" element={<LaunchpadDashboard />} />
+              <Route path="/hub"
                 element={
                   <RequireMemberAccess>
                     <Suspense fallback={<LoadingFallback name="Hub" />}>
@@ -791,7 +794,8 @@ export default function ComprehensiveRouter() {
                 }
               />
               <Route
-                path="/admin/workspaces"
+                path="/perpetual-status" element={<PerpetualStatus />} />
+              <Route path="/admin/workspaces"
                 element={
                   <RequirePermission roles={['SUPER_ADMIN']}>
                     <WorkspaceManagement />
