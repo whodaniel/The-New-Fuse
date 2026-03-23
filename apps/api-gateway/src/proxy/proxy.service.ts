@@ -64,15 +64,11 @@ export class ProxyService {
 
     // Explicit API service alias so controllers can fail over from specialized
     // agent endpoints to the core API service without assuming backend parity.
+    // Railway internal DNS: servicename.$PROJECTID.railway.internal
+    // railway.toml defines service as "api" → internal URL is http://api.railway.internal
     this.registerService({
       name: 'api',
-      baseUrl: this.configService.get(
-        'API_SERVICE_URL',
-        this.configService.get(
-          'API_URL',
-          this.configService.get('AGENTS_SERVICE_URL', 'http://localhost:3001')
-        )
-      ),
+      baseUrl: process.env.API_SERVICE_URL || process.env.API_URL || 'http://api.railway.internal',
       healthPath: '/health',
       timeout: 30000,
       retries: 3,
