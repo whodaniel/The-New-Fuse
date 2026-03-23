@@ -52,6 +52,8 @@ thinks, how it routes, how it attends — asking "why does this work?" and
 
 This is the difference between **mimicry** and **acquisition of skill**.
 
+**3. Practice, Not Reproduction.** We do not replicate teacher architectures. We practice the discipline that produced them. The student who copies a master's form has learned nothing; the one who practices the discipline has learned everything.
+
 ### Sparse Excellence — What We Learn from MiniMax MoE
 
 MiniMax 2.7 activates 45.9B of 456B parameters per token. This is not a
