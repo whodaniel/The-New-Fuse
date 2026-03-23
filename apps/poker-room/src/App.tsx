@@ -967,20 +967,23 @@ function AppContent() {
           String(playerId || '').startsWith('bot-') || String(playerId || '').startsWith('agent-')
             ? 'agent'
             : 'human';
+        const isHero =
+          playerId &&
+          user?.username &&
+          String(playerId).toLowerCase() === String(user.username).toLowerCase();
+
         return {
           id: playerId || `seat-${seatNo}`,
-          name:
-            playerId === user?.username ? user.username : botProfile?.name || playerId || 'EMPTY',
-          avatar:
-            playerId === user?.username
-              ? user.avatar
-              : botProfile?.avatar || BOT_PROFILES[i % BOT_PROFILES.length]?.avatar || '',
+          name: isHero ? user.username : botProfile?.name || playerId || 'EMPTY',
+          avatar: isHero
+            ? user.avatar
+            : botProfile?.avatar || BOT_PROFILES[i % BOT_PROFILES.length]?.avatar || '',
           style: botProfile?.style || '',
           stack: s.stack || 0,
           bet: Number(streetCommitted[String(seatNo)] || 0),
           cards:
             playerId && hand
-              ? playerId === user?.username && Array.isArray(holeCardsBySeat[String(seatNo)])
+              ? isHero && Array.isArray(holeCardsBySeat[String(seatNo)])
                 ? holeCardsBySeat[String(seatNo)]
                 : ['hidden', 'hidden']
               : [],
@@ -989,7 +992,7 @@ function AppContent() {
           isAllIn:
             allInSeats.includes(seatNo) ||
             (s.stack === 0 && Number(committedBySeat[String(seatNo)] || 0) > 0),
-          isHero: playerId === user?.username,
+          isHero: !!isHero,
           controlMode: s.controlMode || inferredMode,
         };
       }),
@@ -1043,31 +1046,32 @@ function AppContent() {
           String(s.playerId || '').startsWith('agent-')
             ? 'agent'
             : 'human';
+        const isHero =
+          s.playerId &&
+          user?.username &&
+          String(s.playerId).toLowerCase() === String(user.username).toLowerCase();
+
         return {
           id: s.playerId || `seat-${seatNo}`,
-          name:
-            s.playerId === user?.username
-              ? user.username
-              : BOT_PROFILES.find((b) => b.id === s.playerId)?.name || s.playerId || 'EMPTY',
-          avatar:
-            s.playerId === user?.username
-              ? user.avatar
-              : BOT_PROFILES.find((b) => b.id === s.playerId)?.avatar ||
-                BOT_PROFILES[i % BOT_PROFILES.length]?.avatar ||
-                '',
+          name: isHero
+            ? user.username
+            : BOT_PROFILES.find((b) => b.id === s.playerId)?.name || s.playerId || 'EMPTY',
+          avatar: isHero
+            ? user.avatar
+            : BOT_PROFILES.find((b) => b.id === s.playerId)?.avatar ||
+              BOT_PROFILES[i % BOT_PROFILES.length]?.avatar ||
+              '',
           style: BOT_PROFILES.find((b) => b.id === s.playerId)?.style || '',
           stack: s.stack || 0,
           bet: snapshot.streetBets?.[String(seatNo)] || 0,
           cards:
             snapshot.holeCards?.[String(seatNo)] ||
-            (s.playerId && s.playerId !== user?.username && snapshot.street
-              ? ['hidden', 'hidden']
-              : []),
+            (s.playerId && !isHero && snapshot.street ? ['hidden', 'hidden'] : []),
           active: !!s.playerId,
           folded: s.folded || false,
           isAllIn: s.stack === 0 && (snapshot.streetBets?.[String(seatNo)] || 0) > 0,
-          isHero: s.playerId === user?.username,
-          controlMode: s.playerId === user?.username ? user?.controlMode || 'human' : inferredMode,
+          isHero: !!isHero,
+          controlMode: isHero ? user?.controlMode || 'human' : inferredMode,
         };
       }),
       round: snapshot.street
