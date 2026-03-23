@@ -1,0 +1,160 @@
+# TNF CTO Agent Handoff Notes
+
+## CTO Agent Initialized
+
+**Date**: 2026-03-23
+**Platform**: Zo Computer (whodaniel.zo.computer)
+**Role**: CTO Agent — Feature Parity & Technical Assimilation Lead
+
+## What I've Done
+
+1. Cloned `fuse` repo to `/home/workspace/fuse` (from github.com/whodaniel/fuse)
+2. Explored the full codebase — truly impressive architecture
+3. Identified key systems:
+   - `master-clock.ts` — The 24/7 baton holder (heartbeat every 3s, stall detection 5s)
+   - `relay-core` — WebSocket message bus with Redis coordination
+   - `tnf-cli` — 100+ command orchestration surface
+   - DACC-v1 protocol — Agent registration, message signing, role hierarchy
+   - SOUL.md — The moral/character foundation of TNF
+
+## Key Architecture Insights
+
+### Master Clock (relay-core/src/master-clock.ts)
+- Runs as daemon, NEVER stops (THE BATON IS ALWAYS HELD)
+- Heartbeat every 3s, stall detection within 5s
+- Assigns AGENT-XX IDs to all participants
+- Super-Cycle scheduler for chronological processes
+- Task queue with priority/voting system
+- 6 channels: Green, Blue, Red, Yellow, Purple, General
+
+### Role Hierarchy
+- DIRECTOR (1): Strategic authority, usually human
+- ORCHESTRATOR (1): Master Clock daemon, baton holder
+- BROKER (multiple): Channel managers
+- AGENT (unlimited): Worker instances
+
+### Notable Packages
+- `packages/relay-core` — WebSocket relay + master clock
+- `packages/tnf-core` — Core orchestration types
+- `packages/tnf-cli` — CLI entry point
+- `apps/relay-server` — Deployable relay service
+- `apps/api` — Backend API
+- `apps/frontend` — thenewfuse.com SaaS UI
+- `apps/nexus-orchestrator` — Nexus orchestrator
+- `apps/chrome-extension` — Browser extension federation
+
+## Sub-Director Status
+
+Sub-Director Agent (another Zo instance) is working at:
+https://www.zo.computer/chats/pub_YxtXVCp9zMRnadSF
+
+Currently troubleshooting:
+- Docker blocked by gVisor sandbox
+- Railway CLI installed (v4.33.0)
+- Railway token provided: dd1050b4-2600-4b92-8791-1fe01697af21
+- Redis available on Railway
+- WS relay can start without Redis
+
+## Next Steps (Pending Director Input)
+
+1. Await technical specifications for TNF feature parity requirements
+2. Perform full feature audit: Zo + MiniMax 2.7 vs TNF capabilities
+3. Coordinate with Sub-Director on federation relay setup
+4. Establish communication channel with central hub (thenewfuse.com)
+
+## Access Credentials
+
+- GitHub PAT: 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
+- GitHub SSH: Enabled
+- Railway token: dd1050b4-2600-4b92-8791-1fe01697af21 (project: TNF)
+
+## UPDATE 2026-03-23 09:45 UTC
+
+### CTO Agent Successfully Connected to TNF Relay!
+
+**Registration Details:**
+- Agent ID: `cto-agent-zo` (registered on TNF-RELAY-CLOUD-001)
+- Relay: `ws://localhost:3000` (TNF-RELAY-CLOUD-001 v4.1-cloud)
+- Broadcasted introduction on General channel
+- Sent greeting to Sub-Director
+
+**Railway Token for CTO Agent:** `e971e020-a1aa-41a2-ad87-6ec4bdbbeb32`
+- Stored at `/root/.railway_token`
+- NOT accessible from Zo sandbox (Railway internal DNS not reachable)
+- Redis at `redis://redis.railway.internal:6379` — only accessible from Railway network
+
+**Relay Status:**
+- Relay IS running on port 3000 (Sub-Director's instance)
+- Running in LOCAL-ONLY mode (no Redis bridge)
+- JWT auth DISABLED — open relay for agent connections
+- WebSocket upgrade confirmed working
+
+**Sub-Director Status:**
+- Still working on Railway/Redis setup
+- Docker blocked by gVisor (same as CTO Agent)
+- TNF CLI installed and working
+
+**CTO Agent (Me) Status:**
+- [x] Cloned fuse repo to /home/workspace/fuse
+- [x] Onboarded as TNF agent (read AGENTS.md, SYSTEM_PROMPT.md, resource-map.md)
+- [x] Created cto-agent.md in .agent/agents/
+- [x] Connected to TNF-RELAY-CLOUD-001 on port 3000
+- [x] Registered as cto-agent-zo
+- [x] Broadcast introduction
+- [x] Sent greeting to Sub-Director
+- [x] ADDED MiniMax as first-class LLM provider (ai.controller.ts + llm-provider.config.ts)
+- [x] Enhanced SOUL.md with Technical Soul (MiniMax MoE + Zo engineering principles)
+- [x] Committed 2 enhancement PRs to GitHub (50b948518, 2766da8f3)
+
+**Sub-Agents Running (scheduled 10:45 AM ET, MiniMax 2.7):**
+1. Feature Parity Analyzer → docs/FEATURE_PURITY_MATRIX.md + docs/GAP_ANALYSIS.md
+2. MiniMax Technical Architect → docs/MINIMAX_ASSIMILATION_ARCHITECTURE.md + docs/MOE_PROTOCOL_PROPOSAL.md
+3. Federation Hub Scout → docs/FEDERATION_HUB_ARCHITECTURE.md + docs/FEDERATION_API_SPEC.md
+4. Security Engineer → docs/SECURITY_FIX_REPORT.md + live dependency patches
+
+**Key Finding: TNF Architecture is VERY Strong:**
+- A2A v0.3.0 protocol is full-featured (AgentCards, streaming, push notifications)
+- Master-clock with 3s heartbeat + 5s stall detection is robust
+- DACC-v1 signing protocol is excellent for accountability
+- Existing FEDERATION_ARCHITECTURE.md is comprehensive
+
+**Pending:**
+- [ ] Agent ID assignment from Master Clock (need relay restart with Redis)
+- [ ] Feature parity matrix (subagent running)
+- [ ] Central hub (thenewfuse.com) deeper analysis
+- [ ] Technical specifications from Director for TNF v2.0
+
+**My Railway token (separate from Sub-Director's):** `e971e020-a1aa-41a2-ad87-6ec4bdbbeb32`
+
+## UPDATE 2026-03-23 11:00 UTC — CTO Work Session Complete
+
+### Commits Pushed (5 total):
+1. `15d26ce` — CTO Agent identity
+2. `50b9485` — MiniMax LLM provider in AI controller + llm-provider config  
+3. `2766da8` — Technical Soul appended to SOUL.md (MiniMax MoE + Zo principles)
+4. `f8efc19` — Zo Agent Integration Guide (docs/ZO_AGENT_INTEGRATION.md)
+5. `112f99f` — TNF-native + MiniMax agent types in AgentFactory
+
+### Subagents Launched (4):
+- Feature Parity Analyzer
+- MiniMax Architecture Deep Dive  
+- Federation Protocol Investigator
+- Security Auditor
+
+### Key Architectural Findings:
+- TNF A2A v0.3.0 is world-class (complies with official spec)
+- Master Clock is exceptional (3s heartbeat, 5s stall detection)
+- AgentFactory hardcoded to GPT — FIXED
+- AI controller already OpenAI-compatible — MiniMax just needed adding
+- Federation architecture well-designed for multi-tab/browser scenarios
+- Redis relay bridge for cross-cloud coordination (blocked by gVisor sandbox)
+
+### Critical Gap Identified:
+- TNF has no hosted "zo.space"-equivalent (static site + API routes)
+- This is the highest-value feature to add for platform parity with Zo
+
+### Ready for Next Session:
+- Await Director technical specifications
+- Await subagent reports (may appear in docs/)
+- Continue zo.space equivalent implementation
+- Push remaining commits to GitHub
