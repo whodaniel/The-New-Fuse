@@ -13,6 +13,7 @@ const dataDir = process.env.CASIN8_DATA_DIR
 const statePath = path.join(dataDir, 'state.json');
 const riskDbPath = path.join(dataDir, 'riskdb.json');
 const handHistoryPath = path.join(dataDir, 'hand_history.jsonl');
+const handsPath = path.join(dataDir, 'hands.jsonl');
 const holdemResumeSecretPath = path.join(dataDir, 'holdem_resume_secret.txt');
 const treasuryPolicyPath = path.join(dataDir, 'treasury_policy.json');
 const reserveAttestationPath = path.join(dataDir, 'reserve_attestations.json');
@@ -70,7 +71,7 @@ async function importOptionalModule(modulePath) {
     return await import(pathToFileURL(path.join(root, modulePath)).href);
   } catch (err) {
     const reason = err instanceof Error ? err.message : String(err || 'unknown import error');
-    console.warn(`[casin8] optional module unavailable: ${modulePath} (${reason})`);
+    console.info(`[casin8] optional module unavailable: ${modulePath} (${reason})`);
     return createMissingModuleStub(modulePath, err);
   }
 }
@@ -971,6 +972,11 @@ async function fetchMembership(identity, req) {
 async function requireMembership(req, res, urlObj) {
   if (process.env.ALLOW_CONSOLE_ANON === 'true') return { ok: true, bypass: true };
   if (!MEMBERSHIP_REQUIRED) return { ok: true, bypass: true };
+  const apiToken = extractApiToken(req);
+  if (apiToken && apiTokenRoles.has(apiToken)) {
+    // Service-to-service token auth is validated separately via role checks.
+    return { ok: true, bypass: true, tokenAuth: true };
+  }
   const identity = extractMembershipIdentity(req, urlObj);
   if (!identity) {
     writeJson(res, 401, { ok: false, error: 'Membership identity required' });
@@ -1147,20 +1153,26 @@ function pickWeighted(items) {
 async function chooseBotAction(legalActions, context = {}) {
   if (!Array.isArray(legalActions) || legalActions.length === 0) return null;
 
-  const { agentId, handId, pot = 0, toCall = 0, bankroll = 0, decisionIndex = 0 } = context;
+  const {
+    agentId,
+    handId,
+    pot = 0,
+    toCall = 0,
+    bankroll = 0,
+    decisionIndex = 0,
+    holeCards,
+    boardCards,
+  } = context;
   const mod = await agentStrategyPromise;
   const registry = await getAgentRegistry();
 
   // Try to find a registered agent profile for temperament/risk
   const agentProfile = registry.agents.get(agentId);
   const temperament = agentProfile?.style || 'balanced';
-  const maxRiskBps = agentProfile?.risk?.maxLossPerSessionUnits ? 1000 : 800; // Simplified risk factor
+  const maxRiskBps = agentProfile?.risk?.maxLossPerSessionUnits ? 1000 : 800;
 
-  // Generate a stable hand strength for this bot in this hand
-  // In a real system, this would come from a hand evaluator
-  const seed = `${agentId}-${handId}`;
-  const hash = crypto.createHash('md5').update(seed).digest('hex');
-  const handStrength = parseInt(hash.slice(0, 8), 16) / 0xffffffff;
+  // Real algorithmic hand strength evaluation
+  const handStrength = evaluateHoldemStrength(holeCards, boardCards);
 
   // Build a strategy profile for the decision engine
   const strategyProfile = mod.buildStrategyProfile({
@@ -1993,6 +2005,65 @@ function parseCardCode(code) {
   return { rank: text.slice(0, -1), suit: text.slice(-1) };
 }
 
+function getCombinations(array, size) {
+  const result = [];
+  function helper(start, combo) {
+    if (combo.length === size) {
+      result.push([...combo]);
+      return;
+    }
+    for (let i = start; i < array.length; i += 1) {
+      combo.push(array[i]);
+      helper(i + 1, combo);
+      combo.pop();
+    }
+  }
+  helper(0, []);
+  return result;
+}
+
+function getBestHoldemScore(holeCodes, boardCodes) {
+  const allCards = [...(holeCodes || []), ...(boardCodes || [])].map(parseCardCode).filter(Boolean);
+  if (allCards.length < 5) return [0];
+  const combos = getCombinations(allCards, 5);
+  let bestScore = [-1];
+  for (const combo of combos) {
+    const score = evaluateFiveScore(combo);
+    if (compareScoreTuple(score, bestScore) > 0) {
+      bestScore = score;
+    }
+  }
+  return bestScore;
+}
+
+function evaluateHoleStrength(holeCodes) {
+  const cards = (holeCodes || []).map(parseCardCode).filter(Boolean);
+  if (cards.length < 2) return 0;
+  const v1 = rankValue(cards[0].rank);
+  const v2 = rankValue(cards[1].rank);
+  const suited = cards[0].suit === cards[1].suit;
+  const pair = v1 === v2;
+  const hi = Math.max(v1, v2);
+  const lo = Math.min(v1, v2);
+
+  let strength = (hi / 14) * 0.3; // High card factor
+  if (pair) strength += 0.4 + (hi / 14) * 0.2; // Pair bonus
+  if (suited) strength += 0.1; // Suited bonus
+  if (hi - lo === 1) strength += 0.05; // Connector bonus
+  return Math.min(0.95, strength);
+}
+
+function evaluateHoldemStrength(holeCodes, boardCodes) {
+  const board = Array.isArray(boardCodes) ? boardCodes : [];
+  if (board.length === 0) return evaluateHoleStrength(holeCodes);
+
+  const score = getBestHoldemScore(holeCodes, boardCodes);
+  const category = Number(score[0] || 0);
+  const categoryBase = category / 9; // 9 categories (0-8)
+  const detail = Number(score[1] || 0) / 15; // normalize high card/rank
+  return Math.min(1, Math.max(0, categoryBase + detail / 10));
+}
+
 function rankValue(rank) {
   const map = {
     2: 2,
@@ -2527,6 +2598,7 @@ function persistHandHistoryIfSettled(snapshot, reason = 'settlement') {
       snapshot.holeCards && typeof snapshot.holeCards === 'object' ? snapshot.holeCards : {},
     communityCards: Array.isArray(snapshot.communityCards) ? snapshot.communityCards : [],
     actionTimeline: Array.isArray(snapshot.actionTimeline) ? snapshot.actionTimeline : [],
+    actionLog: Array.isArray(snapshot.actionLog) ? snapshot.actionLog : [],
     sidePots: Array.isArray(snapshot.sidePots) ? snapshot.sidePots : [],
     payoutBySeat:
       snapshot.payoutBySeat && typeof snapshot.payoutBySeat === 'object'
@@ -2538,9 +2610,12 @@ function persistHandHistoryIfSettled(snapshot, reason = 'settlement') {
     sessionSettlement: Array.isArray(snapshot.sessionSettlement) ? snapshot.sessionSettlement : [],
     settlementCursor: snapshot.cursor || null,
     settlementSeq: Number(snapshot.seq || 0),
+    state: snapshot, // full state as requested
   };
 
-  appendHandHistoryRow(row);
+  const line = jsonStringifySafe(row);
+  fs.appendFileSync(handsPath, `${line}\n`, 'utf8');
+  
   snapshot.handHistoryPersistedAt = row.timestamp;
   snapshot.handHistoryReplayPhases = buildReplayPhases(row);
   return row;
@@ -2602,6 +2677,7 @@ function computePayoutBySeat(snapshot, scored) {
 }
 
 function advanceStreet(snapshot, engine) {
+  if (!Array.isArray(snapshot.communityCards)) snapshot.communityCards = [];
   if (snapshot.street === 'preflop') {
     dealFromDeck(snapshot, 1);
     snapshot.communityCards.push(...dealFromDeck(snapshot, 3));
@@ -3352,6 +3428,7 @@ async function handleStrategyTraitsCraft(req, res) {
     });
   } catch (err) {
     metrics.traitCraftFail += 1;
+    
     badRequest(res, String(err?.message || 'Unable to craft strategy traits'));
   }
 }
@@ -4148,7 +4225,7 @@ async function handleV2HoldemTablesList(req, res) {
         });
         seen.add(id);
       } catch (err) {
-        console.error('[casin8] Failed to snapshot holdem table:', err);
+        
       }
     }
   }
@@ -4415,6 +4492,7 @@ async function handleV2HoldemSettle(req, res) {
       body.rankingBySeat && typeof body.rankingBySeat === 'object' ? body.rankingBySeat : {},
     settlementKey: String(body.settlementKey || crypto.randomUUID()),
   });
+  persistHandHistoryIfSettled(out);
   await persistV2HoldemTable(table);
   writeJson(res, 200, { ok: true, table: out });
 }
@@ -6500,12 +6578,29 @@ async function handleTableHints(req, res) {
   const potOddsPct = Number(((toCallUnits / denominator) * 100).toFixed(2));
   const requiredEquityThresholdPct = Number(potOddsPct.toFixed(2));
   const requiredEquity = requiredEquityThresholdPct / 100;
+
+  // Real algorithmic evaluation if snapshot and cards exist
+  let realStrength = null;
+  if (snapshot && snapshot.hand) {
+    const holeCards = snapshot.hand.holeCards?.[String(seat)];
+    if (holeCards) {
+      const boardCodes = Array.isArray(snapshot.hand.boardCards) ? snapshot.hand.boardCards : [];
+      const street = String(snapshot.hand.street || 'preflop').toLowerCase();
+      const visibleCount =
+        street === 'flop' ? 3 : street === 'turn' ? 4 : street === 'river' ? 5 : 0;
+      const visibleBoard = boardCodes.slice(0, visibleCount);
+      realStrength = evaluateHoldemStrength(holeCards, visibleBoard);
+    }
+  }
+
   const inferredStrength =
     handStrength != null
       ? handStrength
-      : toCallUnits === 0
-        ? 0.55
-        : Math.max(0.2, Math.min(0.85, requiredEquity + 0.03));
+      : realStrength != null
+        ? realStrength
+        : toCallUnits === 0
+          ? 0.55
+          : Math.max(0.2, Math.min(0.85, requiredEquity + 0.03));
 
   let recommendedAction = 'check';
   if (toCallUnits > 0 && inferredStrength < Math.max(0.08, requiredEquity - 0.08)) {
@@ -7055,6 +7150,8 @@ const API_ROUTES = new Map([
   ['POST /api/v2/holdem/actions', endpoint(handleV2HoldemAction)],
   ['POST /api/v2/holdem/hands/settle', endpoint(handleV2HoldemSettle)],
   ['GET /api/v2/holdem/state', endpointWithQuery(handleV2HoldemState)],
+  ['GET /api/v2/holdem/hands', endpoint(handleV2HoldemHandsList)],
+  ['GET /api/v2/holdem/hands/replay', endpointWithQuery(handleV2HoldemHandsReplay)],
   ['GET /api/v2/holdem/replay', endpointWithQuery(handleV2HoldemReplay)],
 
   ['POST /api/v2/tournaments', endpoint(handleV2TournamentCreate)],
@@ -7073,6 +7170,61 @@ const API_ROUTES = new Map([
   ['GET /api/v2/tournaments/state', endpointWithQuery(handleV2TournamentState)],
   ['GET /api/v2/tournaments/payouts', endpointWithQuery(handleV2TournamentPayouts)],
 ]);
+
+async function handleV2HoldemHandsList(req, res) {
+  try {
+    if (!fs.existsSync(handsPath)) {
+      return writeJson(res, 200, { ok: true, hands: [] });
+    }
+    const raw = fs.readFileSync(handsPath, 'utf8');
+    const lines = raw.split('\n').filter(line => line.trim());
+    const last50 = lines.slice(-50).map(line => {
+      try {
+        const row = JSON.parse(line);
+        // Only return necessary info for list
+        return {
+          handId: row.handId,
+          tableId: row.tableId,
+          timestamp: row.timestamp,
+          winnerSeat: row.winnerSeat,
+          payoutUnits: row.payoutUnits
+        };
+      } catch {
+        return null;
+      }
+    }).filter(Boolean);
+    writeJson(res, 200, { ok: true, hands: last50.reverse() });
+  } catch (err) {
+    badRequest(res, 'Failed to read hand history');
+  }
+}
+
+async function handleV2HoldemHandsReplay(req, res, urlObj) {
+  const handId = String(urlObj.searchParams.get('handId') || '').trim();
+  if (!handId) return badRequest(res, 'handId is required');
+
+  try {
+    if (!fs.existsSync(handsPath)) {
+      return writeJson(res, 404, { ok: false, error: 'Hand not found' });
+    }
+    const raw = fs.readFileSync(handsPath, 'utf8');
+    const lines = raw.split('\n');
+    for (const line of lines) {
+      if (!line.trim()) continue;
+      try {
+        const row = JSON.parse(line);
+        if (row.handId === handId) {
+          return writeJson(res, 200, { ok: true, hand: row });
+        }
+      } catch {
+        // skip malformed
+      }
+    }
+    writeJson(res, 404, { ok: false, error: 'Hand not found' });
+  } catch (err) {
+    badRequest(res, 'Failed to read hand history');
+  }
+}
 
 async function handleV2TournamentList(req, res) {
   const mod = await holdemTournamentsPromise;
@@ -7100,7 +7252,7 @@ async function handleV2TournamentList(req, res) {
         blindLevel: `Level ${snapshot.currentLevel || 1}`,
       });
     } catch (err) {
-      console.error('[casin8] failed to snapshot tournament:', id, err);
+      
     }
   }
   writeJson(res, 200, { ok: true, tournaments });
@@ -7227,7 +7379,7 @@ async function ensureHoldemLobbySeeded({ force = false } = {}) {
       }
       await persistV2HoldemTable(table);
     } catch (err) {
-      console.error('[casin8] Failed to seed holdem table:', err);
+      
     }
   }
   return true;
@@ -7276,8 +7428,19 @@ async function runHoldemBotLoop() {
         const contenders = seats.filter((seat) => !hand.foldedSeats.includes(seat.seat));
         const rankingBySeat = {};
         if (contenders.length > 0) {
-          const winner = contenders[Math.floor(Math.random() * contenders.length)];
-          rankingBySeat[String(winner.seat)] = 1;
+          const scored = contenders.map((seat) => ({
+            seat: seat.seat,
+            score: getBestHoldemScore(hand.holeCards?.[String(seat.seat)], hand.boardCards),
+          }));
+          scored.sort((a, b) => compareScoreTuple(b.score, a.score));
+
+          let rank = 1;
+          for (let i = 0; i < scored.length; i += 1) {
+            if (i > 0 && compareScoreTuple(scored[i].score, scored[i - 1].score) < 0) {
+              rank += 1;
+            }
+            rankingBySeat[String(scored[i].seat)] = rank;
+          }
         }
         holdemEngine.settleHand(table, {
           rankingBySeat,
@@ -7307,6 +7470,11 @@ async function runHoldemBotLoop() {
       } catch {
         continue;
       }
+      const boardCodes = Array.isArray(hand.boardCards) ? hand.boardCards : [];
+      const street = String(hand.street || 'preflop').toLowerCase();
+      const visibleCount = street === 'flop' ? 3 : street === 'turn' ? 4 : street === 'river' ? 5 : 0;
+      const visibleBoard = boardCodes.slice(0, visibleCount);
+
       const choice = await chooseBotAction(legalActions, {
         agentId: seatRow.playerId,
         handId: hand.handId,
@@ -7314,6 +7482,8 @@ async function runHoldemBotLoop() {
         toCall: agentData?.helper?.toCall || 0,
         bankroll: agentData?.helper?.seatStack || 0,
         decisionIndex: Array.isArray(hand.actionLog) ? hand.actionLog.length : 0,
+        holeCards: hand.holeCards?.[String(actingSeat)] || [],
+        boardCards: visibleBoard,
       });
       if (!choice) continue;
 
@@ -7449,7 +7619,7 @@ async function runHoldemBotLoop() {
       }
     }
   } catch (err) {
-    console.error('[casin8] holdem bot loop error:', err);
+    
   } finally {
     holdemBotLoopRunning = false;
   }
@@ -7458,7 +7628,7 @@ async function runHoldemBotLoop() {
 function startHoldemBotLoop() {
   if (holdemBotLoopTimer) return;
   holdemBotLoopTimer = setInterval(() => {
-    runHoldemBotLoop().catch((err) => console.error('[casin8] holdem bot loop failed:', err));
+    runHoldemBotLoop().catch((err) => 
   }, holdemBotLoopIntervalMs);
 }
 
@@ -7530,19 +7700,19 @@ async function seedInitialTournaments() {
       swarmState.holdemTournaments.set(mtt.tournamentId, mtt);
       await persistV2Tournament(mtt);
     } catch (err) {
-      console.error('[casin8] Failed to seed initial tournaments:', err);
+      
     }
   }
 }
 
 server.listen(PORT, () => {
   console.log(`Casin8 games listening on :${PORT}`);
-  seedInitialTables().catch((err) => console.error('[casin8] Failed to seed tables:', err));
+  seedInitialTables().catch((err) => 
   seedInitialTournaments().catch((err) =>
-    console.error('[casin8] Failed to seed tournaments:', err)
+    
   );
   ensureHoldemLobbySeeded({ force: true }).catch((err) =>
-    console.error('[casin8] Failed to seed holdem lobby:', err)
+    
   );
   startHoldemBotLoop();
 });

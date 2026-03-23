@@ -67,7 +67,7 @@ export function AIAssistant() {
             <PremiumInput
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+              onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
               placeholder="Ask me anything..."
               className="flex-grow"
             />

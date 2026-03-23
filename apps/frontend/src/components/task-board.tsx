@@ -47,7 +47,7 @@ export function TaskBoard() {
           value={newTaskTitle}
           onChange={(e) => setNewTaskTitle(e.target.value)}
           placeholder="New task title"
-          onKeyPress={(e) => e.key === 'Enter' && handleAddTask()}
+          onKeyDown={(e) => e.key === 'Enter' && handleAddTask()}
         />
         <PremiumButton onClick={handleAddTask}>Add Task</PremiumButton>
       </div>

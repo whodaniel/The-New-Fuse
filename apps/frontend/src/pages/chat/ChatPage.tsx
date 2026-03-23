@@ -262,10 +262,13 @@ function ChatPage() {
   const [loading, setLoading] = useState(true);
   const [senderId, setSenderId] = useState('You');
   const [recipientAgentId, setRecipientAgentId] = useState('');
-  const [_isAgentModalOpen, setIsAgentModalOpen] = useState(false);
-  const [_isGoalModalOpen, setIsGoalModalOpen] = useState(false);
-  const [_isRuleModalOpen, setIsRuleModalOpen] = useState(false);
-  const [_isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
+  const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
+  const [isRuleModalOpen, setIsRuleModalOpen] = useState(false);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [newGoalInput, setNewGoalInput] = useState('');
+  const [newRuleSource, setNewRuleSource] = useState('');
+  const [newRuleTarget, setNewRuleTarget] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const context = useContext(ChatContext);
@@ -276,7 +279,10 @@ function ChatPage() {
     setAgents,
     messages,
     rules,
+    setRules,
+    synthesisJobs,
     conversationGoal,
+    setConversationGoal,
     isGenerating,
     setIsGenerating,
     isSynthesizing,
@@ -481,6 +487,22 @@ function ChatPage() {
       console.error('Error sending message:', error);
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  const handleAddRule = () => {
+    if (newRuleSource && newRuleTarget && newRuleSource !== newRuleTarget) {
+      setRules((prev) => [
+        ...prev,
+        {
+          id: `rule-${Date.now()}`,
+          sourceId: newRuleSource,
+          targetId: newRuleTarget,
+          condition: 'after_response',
+        },
+      ]);
+      setNewRuleSource('');
+      setNewRuleTarget('');
     }
   };
 
@@ -775,7 +797,7 @@ function ChatPage() {
                   type="text"
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                   placeholder={isGenerating ? 'Thinking...' : 'Type a message...'}
                   className="flex-1 px-4 py-2 border border-input bg-secondary text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"
                   disabled={isGenerating || !agents || agents.length === 0}
@@ -803,6 +825,169 @@ function ChatPage() {
           </div>
         </div>
       </div>
+
+      {/* ═══════════ AGENT MODAL ═══════════ */}
+      {isAgentModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setIsAgentModalOpen(false)}>
+          <div className="bg-card border border-border rounded-xl shadow-2xl w-full max-w-lg mx-4 max-h-[80vh] overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <div className="p-5 border-b border-border flex items-center justify-between">
+              <h2 className="text-lg font-bold text-foreground flex items-center gap-2"><Users size={20} /> Active Agents</h2>
+              <button onClick={() => setIsAgentModalOpen(false)} className="text-muted-foreground hover:text-foreground text-xl leading-none">&times;</button>
+            </div>
+            <div className="p-5 space-y-3 overflow-y-auto max-h-[60vh]">
+              {agents.map((agent) => (
+                <div key={agent.id} className="flex items-center gap-3 p-3 rounded-lg border border-border bg-secondary/30">
+                  <span className="text-2xl">{agent.avatar}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-foreground truncate">{agent.name}</div>
+                    <div className="text-xs text-muted-foreground">{agent.model} · {agent.type}</div>
+                  </div>
+                  <span className={`px-2 py-0.5 text-xs rounded-full border ${getStatusBadge(agent.status)}`}>
+                    {getStatusIcon(agent.status)} {agent.status}
+                  </span>
+                </div>
+              ))}
+              {agents.length === 0 && <p className="text-muted-foreground text-sm text-center py-4">No agents configured.</p>}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════ GOAL MODAL ═══════════ */}
+      {isGoalModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setIsGoalModalOpen(false)}>
+          <div className="bg-card border border-border rounded-xl shadow-2xl w-full max-w-md mx-4" onClick={(e) => e.stopPropagation()}>
+            <div className="p-5 border-b border-border flex items-center justify-between">
+              <h2 className="text-lg font-bold text-foreground flex items-center gap-2"><Lightbulb size={20} /> Conversation Goal</h2>
+              <button onClick={() => setIsGoalModalOpen(false)} className="text-muted-foreground hover:text-foreground text-xl leading-none">&times;</button>
+            </div>
+            <div className="p-5 space-y-4">
+              {conversationGoal && (
+                <div className="p-3 rounded-lg border border-orange-500/30 bg-orange-500/10">
+                  <p className="text-sm font-medium text-foreground">Current Goal:</p>
+                  <p className="text-sm text-muted-foreground mt-1">{conversationGoal}</p>
+                </div>
+              )}
+              <div>
+                <label className="text-sm font-medium text-foreground block mb-1">Set New Goal</label>
+                <textarea
+                  value={newGoalInput}
+                  onChange={(e) => setNewGoalInput(e.target.value)}
+                  placeholder="e.g. Brainstorm marketing ideas for the Q2 launch..."
+                  className="w-full p-3 border border-input bg-secondary text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground resize-none"
+                  rows={3}
+                />
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => { setConversationGoal(newGoalInput.trim()); setNewGoalInput(''); setIsGoalModalOpen(false); }}
+                  disabled={!newGoalInput.trim()}
+                  className="flex-1 bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition-colors disabled:opacity-50"
+                >
+                  Set Goal
+                </button>
+                {conversationGoal && (
+                  <button
+                    onClick={() => { setConversationGoal(''); setIsGoalModalOpen(false); }}
+                    className="px-4 py-2 rounded-md border border-border text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════ RULES MODAL ═══════════ */}
+      {isRuleModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setIsRuleModalOpen(false)}>
+          <div className="bg-card border border-border rounded-xl shadow-2xl w-full max-w-lg mx-4 max-h-[80vh] overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <div className="p-5 border-b border-border flex items-center justify-between">
+              <h2 className="text-lg font-bold text-foreground flex items-center gap-2"><Copy size={20} /> Conversation Rules</h2>
+              <button onClick={() => setIsRuleModalOpen(false)} className="text-muted-foreground hover:text-foreground text-xl leading-none">&times;</button>
+            </div>
+            <div className="p-5 space-y-4 overflow-y-auto max-h-[50vh]">
+              <p className="text-sm text-muted-foreground">Rules define how agents chain responses in Auto mode. When Agent A finishes, Agent B responds next.</p>
+              {rules.map((rule, idx) => {
+                const source = getAgentById(rule.sourceId);
+                const target = getAgentById(rule.targetId);
+                return (
+                  <div key={rule.id || idx} className="flex items-center gap-2 p-3 rounded-lg border border-border bg-secondary/30">
+                    <span className="text-lg">{source?.avatar || '❓'}</span>
+                    <span className="text-sm font-medium text-foreground">{source?.name || rule.sourceId}</span>
+                    <span className="text-muted-foreground">→</span>
+                    <span className="text-lg">{target?.avatar || '❓'}</span>
+                    <span className="text-sm font-medium text-foreground">{target?.name || rule.targetId}</span>
+                    <button
+                      onClick={() => setRules((prev) => prev.filter((r) => r !== rule))}
+                      className="ml-auto text-red-400 hover:text-red-300 text-sm"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                );
+              })}
+              {rules.length === 0 && <p className="text-muted-foreground text-sm text-center py-2">No rules defined yet.</p>}
+            </div>
+            <div className="p-5 border-t border-border space-y-3">
+              <p className="text-sm font-medium text-foreground">Add Rule</p>
+              <div className="flex gap-2 items-center">
+                <select value={newRuleSource} onChange={(e) => setNewRuleSource(e.target.value)} className="flex-1 p-2 border rounded-md bg-secondary text-secondary-foreground border-input text-sm">
+                  <option value="">Source Agent</option>
+                  {agents.map((a) => <option key={a.id} value={a.id}>{a.avatar} {a.name}</option>)}
+                </select>
+                <span className="text-muted-foreground font-bold">→</span>
+                <select value={newRuleTarget} onChange={(e) => setNewRuleTarget(e.target.value)} className="flex-1 p-2 border rounded-md bg-secondary text-secondary-foreground border-input text-sm">
+                  <option value="">Target Agent</option>
+                  {agents.map((a) => <option key={a.id} value={a.id}>{a.avatar} {a.name}</option>)}
+                </select>
+                <button onClick={handleAddRule} disabled={!newRuleSource || !newRuleTarget || newRuleSource === newRuleTarget} className="bg-yellow-500 text-black px-3 py-2 rounded-md hover:bg-yellow-600 transition-colors disabled:opacity-50 text-sm font-medium">
+                  Add
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════ SYNTHESIS GALLERY MODAL ═══════════ */}
+      {isGalleryOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setIsGalleryOpen(false)}>
+          <div className="bg-card border border-border rounded-xl shadow-2xl w-full max-w-2xl mx-4 max-h-[80vh] overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <div className="p-5 border-b border-border flex items-center justify-between">
+              <h2 className="text-lg font-bold text-foreground flex items-center gap-2"><Sparkles size={20} /> Synthesis Gallery</h2>
+              <button onClick={() => setIsGalleryOpen(false)} className="text-muted-foreground hover:text-foreground text-xl leading-none">&times;</button>
+            </div>
+            <div className="p-5 overflow-y-auto max-h-[65vh]">
+              {synthesisJobs.length > 0 ? (
+                <div className="space-y-4">
+                  {synthesisJobs.map((job) => (
+                    <div key={job.id} className="p-4 rounded-lg border border-border bg-secondary/30">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-foreground">{job.type || 'Synthesis'}</span>
+                        <span className={`px-2 py-0.5 text-xs rounded-full ${
+                          job.status === 'completed' ? 'bg-green-100 text-green-800 border border-green-200' :
+                          job.status === 'running' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
+                          'bg-gray-100 text-gray-800 border border-gray-200'
+                        }`}>{job.status}</span>
+                      </div>
+                      {job.result && <p className="text-sm text-muted-foreground whitespace-pre-wrap">{job.result}</p>}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <Sparkles size={48} className="mx-auto text-muted-foreground/40 mb-4" />
+                  <p className="text-muted-foreground">No synthesis jobs yet.</p>
+                  <p className="text-sm text-muted-foreground mt-1">Use Creative Synthesis to generate insights from conversations.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

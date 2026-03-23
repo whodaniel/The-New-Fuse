@@ -141,7 +141,7 @@ export function ChatInterface() {
           <input_1.Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyPress}
             placeholder={
               selectedAgent
                 ? `Message ${(_a = agents.find((a) => a.id === selectedAgent)) === null || _a === void 0 ? void 0 : _a.name}...`

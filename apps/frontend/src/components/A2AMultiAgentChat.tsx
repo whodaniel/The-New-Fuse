@@ -479,7 +479,7 @@ function EnhancedMultiAgentChatUI() {
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+              onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
               placeholder={
                 mode === 'direct'
                   ? selectedAgent

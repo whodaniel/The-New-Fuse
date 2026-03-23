@@ -197,6 +197,12 @@ export const holdemV2Api = {
     if (playerId) params.set('playerId', playerId);
     return api(`/api/v2/holdem/state?${params.toString()}`);
   },
+  async hands() {
+    return api('/api/v2/holdem/hands');
+  },
+  async replay(handId: string) {
+    return api(`/api/v2/holdem/hands/replay?handId=${encodeURIComponent(handId)}`);
+  },
 };
 
 // --- SNG Tournament APIs ---

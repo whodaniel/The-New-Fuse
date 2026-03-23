@@ -74,7 +74,7 @@ export function ChatRoom({ roomId, agents }: ChatRoomProps) {
             placeholder="Type a message..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
           />
           <Button onClick={handleSend} variant="primary">
             Send

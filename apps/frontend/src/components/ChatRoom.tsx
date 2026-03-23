@@ -212,7 +212,7 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({ roomId, title }) => {
           <Input
             value={newMessage}
             onChange={handleTyping}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyPress}
             placeholder="Type a message..."
             className="flex-1"
           />

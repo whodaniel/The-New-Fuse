@@ -61,7 +61,7 @@ export function ChatRoom({ roomId, agents: _agents }: { roomId: string; agents: 
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type a message..."
-            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
           />
           <PremiumButton onClick={handleSend}>Send</PremiumButton>
         </div>
