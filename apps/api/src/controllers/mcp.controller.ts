@@ -107,7 +107,7 @@ export class MCPServerController {
       }
     }
 
-    return results;
+    return { servers: results };
   }
 
   /**
