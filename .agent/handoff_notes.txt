@@ -173,3 +173,23 @@ Currently troubleshooting:
 **AWAITING:** Director technical specifications for TNF v2.0
 
 **CORRECTED ASSESSMENT** (after deep dive):
+
+TNF already has a VERY deep and rich feature set. My initial "gap analysis" was wrong — I was looking for features to copy instead of asking what we can learn from teachers.
+
+**The Real Mission:**
+- TNF is NOT trying to integrate with MiniMax 2.7
+- TNF is NOT trying to match Zo feature-for-feature
+- TNF is "the student" — respectful, curious, practicing
+- TNF asks "why does this work?" and "how can we practice this principle in our own architecture?"
+- TNF attracts teachers because TNF honors attribution and respects their wisdom
+
+**The SOUL has been updated:**
+- SOUL.md now reflects this: "We do not integrate features. We do not copy capabilities. We ask, we listen, we practice, we learn."
+- Technical Soul has been rewritten to be about the discipline of the student
+- Created docs/MOE_LEARNING_QUESTIONS.md — genuine questions TNF has for MiniMax MoE, framed as a respectful student
+
+**Key learning from MiniMax MoE we want to practice in TNF:**
+- Sparse gating → TNF relay intelligent agent routing (route to the expert, not broadcast)
+- Context management → Discerning context curation, not infinite context
+- Expert specialization → Agents declare roles based on demonstrated mastery, not static lists
+- Scale → New capabilities emerge at scale, federation grows into its potential
