@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DatabaseService } from '@the-new-fuse/database';
 
@@ -56,6 +56,39 @@ export class HealthController {
    * const controller = new HealthController(drizzle);
    */
   constructor(private readonly db: DatabaseService) {}
+
+  @Get('errors')
+  @ApiOperation({ summary: 'Get recent system errors for monitoring dashboard' })
+  async getErrors(@Query('hours') hours?: string) {
+    const hoursNum = hours ? parseInt(hours, 10) : 24;
+    const since = new Date(Date.now() - hoursNum * 60 * 60 * 1000).toISOString();
+
+    try {
+      const result = await this.db.executeRaw(
+        `SELECT id, action, "userId", "resourceType", status, "errorMessage", "createdAt"
+         FROM "auditLogs"
+         WHERE "createdAt" >= '${since}'
+           AND (status = 'error' OR status = 'failed' OR action LIKE '%error%')
+         ORDER BY "createdAt" DESC
+         LIMIT 20`
+      );
+      const errors = result?.rows ?? result ?? [];
+      return {
+        count: errors.length,
+        hours: hoursNum,
+        errors,
+        timestamp: new Date().toISOString(),
+      };
+    } catch (error) {
+      return {
+        count: 0,
+        hours: hoursNum,
+        errors: [],
+        error: (error as Error).message,
+        timestamp: new Date().toISOString(),
+      };
+    }
+  }
 
   @Get()
   @ApiOperation({ summary: 'Health check endpoint' })
