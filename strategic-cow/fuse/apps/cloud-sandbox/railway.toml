@@ -1,4 +1,0 @@
-[build]
-builder = "dockerfile"
-dockerfilePath = "./Dockerfile.railway"
-watchPatterns = ["src/**", "package.json", "tsconfig.json", "public/**", "../../packages/**"]

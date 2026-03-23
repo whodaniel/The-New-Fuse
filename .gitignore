@@ -5,6 +5,10 @@ node_modules/
 .pnp.js
 .yarn/install-state.gz
 
+# Legacy sub-repositories (monorepo separation remnants)
+strategic-cow/
+solid-shrimp/
+
 # Testing
 coverage/
 .nyc_output/
