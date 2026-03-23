@@ -34,6 +34,7 @@ const AgentIdentity = lazy(() => import('./pages/Agents/AgentIdentity'));
 const SystemObservatory = lazy(() => import('./pages/SystemObservatory'));
 const CommandCore = lazy(() => import('./pages/CommandCore'));
 const SystemHealth = lazy(() => import('./pages/Admin/SystemHealth'));
+const SpacesOverview = lazy(() => import('./pages/Spaces/SpacesOverview'));
 const AgentsPage = lazy(() => import('./pages/AgentsRevolution')); // REVOLUTIONARY NEW DESIGN
 const AgentDetail = lazy(() => import('./pages/Agents/Detail'));
 const Workflows = lazy(() => import('./pages/Workflows.tsx'));
@@ -761,6 +762,16 @@ export default function ComprehensiveRouter() {
                   <RequirePermission roles={['SUPER_ADMIN']}>
                     <SystemHealth />
                   </RequirePermission>
+                }
+              />
+
+              {/* TNF Hosted Spaces */}
+              <Route
+                path="/spaces"
+                element={
+                  <RequireMemberAccess>
+                    <SpacesOverview />
+                  </RequireMemberAccess>
                 }
               />
               <Route
