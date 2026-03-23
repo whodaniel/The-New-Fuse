@@ -191,6 +191,15 @@ Agents have defaults but no runtime personality or memory.
 No API rate limiting — security and cost risk.
 **Action**: Add rate-limit middleware to API gateway.
 
+### 3. Memory & Knowledge
+
+| Feature | Zo + MiniMax 2.7 | TNF | Status | Notes |
+|---------|-------------------|-----|--------|-------|
+| Vector storage | ✅ pgvector + embeddings | ✅ pgvector + `AgentProfileVectorService` | 🟢 MATCH | Full RAG pipeline with IVFFlat index, chunked agent profiles, semantic discovery via `screenInquiry()` |
+| Agent memory | ✅ Session + filesystem | ✅ `tnf_agent_definitions` + vectorized profile chunks (summary/capabilities/metadata/prompt) | 🟢 MATCH | TNF's agent memory is semantically queryable via cosine similarity |
+| Long-term context | ✅ 1M token (MoE) | ⚠️ Limited by context window | 🟡 GAP | Lightning Attention principles could extend TNF context |
+| Knowledge retrieval | ✅ Semantic search | ✅ `similaritySearch()` + `searchByText()` | 🟢 MATCH | gRPC vector store client, OpenAI embeddings |
+
 ---
 
 ## Subagent Reports Pending
