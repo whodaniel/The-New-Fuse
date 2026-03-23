@@ -7,6 +7,8 @@ if (process.env.TNF_ALLOW_PRIVATE_DOC_PUSH === "1") {
 }
 
 const blockedPathMatchers = [
+  /^reports\/personal-archaeology\//,
+  /^apps\/api\/data\/unified-task-ledger\.json$/,
   /^\.agent\/handoff_notes\.txt$/,
   /^\.agent\/memories\.md$/,
   /^\.agent\/runtime-state\.json$/,

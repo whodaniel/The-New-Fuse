@@ -90,6 +90,8 @@ docs/project-management/*analysis*.md
 data/autobiography/
 data/utp_events/
 documentation/scrapes/
+reports/personal-archaeology/
+apps/api/data/unified-task-ledger.json
 
 
 # OS
