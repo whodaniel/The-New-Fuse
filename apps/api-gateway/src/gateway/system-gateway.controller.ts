@@ -158,6 +158,47 @@ export class SystemGatewayController {
     });
   }
 
+  private async proxySystemCompatEndpoint(
+    upstreams: ReadonlyArray<{ service: string; path: string }>,
+    headers: Record<string, string>,
+    res: Response,
+    unavailableMessage: string
+  ) {
+    let lastFailure = 'No upstreams responded';
+    let lastStatus: number | null = null;
+    let lastPayload: unknown = null;
+
+    for (const upstream of upstreams) {
+      try {
+        const response = await this.proxyService.proxyRequest(
+          upstream.service,
+          upstream.path,
+          'GET',
+          headers
+        );
+
+        if (response.status >= 200 && response.status < 300) {
+          return res.status(response.status).json(response.data);
+        }
+
+        lastFailure = `${upstream.service} returned ${response.status}`;
+        lastStatus = response.status;
+        lastPayload = response.data;
+      } catch (error) {
+        lastFailure = error instanceof Error ? error.message : 'Unknown error';
+      }
+    }
+
+    if (lastStatus && lastStatus >= 400 && lastStatus < 500) {
+      return res.status(lastStatus).json(lastPayload);
+    }
+
+    return res.status(HttpStatus.BAD_GATEWAY).json({
+      message: unavailableMessage,
+      error: lastFailure,
+    });
+  }
+
   // Mesh Health
   @Get('mesh-health')
   @Version(VERSION_NEUTRAL)
@@ -182,5 +223,62 @@ export class SystemGatewayController {
   @ApiResponse({ status: 200, description: 'Master Clock telemetry retrieved successfully' })
   async getMasterClockV1(@Headers() headers: Record<string, string>, @Res() res: Response) {
     return this.proxyMasterClock(headers, res);
+  }
+
+  @Get('health')
+  @Version(VERSION_NEUTRAL)
+  @ApiOperation({ summary: 'Get system health compatibility view' })
+  @ApiResponse({ status: 200, description: 'System health retrieved successfully' })
+  async getSystemHealthCompat(@Headers() headers: Record<string, string>, @Res() res: Response) {
+    return this.proxySystemCompatEndpoint(
+      [
+        { service: 'api', path: '/api/system/health' },
+        { service: 'agents', path: '/api/system/health' },
+        { service: 'backend', path: '/api/system/health' },
+        { service: 'backend', path: '/system/health' },
+        { service: 'api', path: '/api/health' },
+        { service: 'agents', path: '/api/health' },
+        { service: 'backend', path: '/health' },
+      ],
+      headers,
+      res,
+      'System health service unavailable'
+    );
+  }
+
+  @Get('metrics')
+  @Version(VERSION_NEUTRAL)
+  @ApiOperation({ summary: 'Get system metrics compatibility view' })
+  @ApiResponse({ status: 200, description: 'System metrics retrieved successfully' })
+  async getSystemMetricsCompat(@Headers() headers: Record<string, string>, @Res() res: Response) {
+    return this.proxySystemCompatEndpoint(
+      [
+        { service: 'api', path: '/api/system/metrics' },
+        { service: 'agents', path: '/api/system/metrics' },
+        { service: 'backend', path: '/api/system/metrics' },
+        { service: 'backend', path: '/system/metrics' },
+      ],
+      headers,
+      res,
+      'System metrics service unavailable'
+    );
+  }
+
+  @Get('status')
+  @Version(VERSION_NEUTRAL)
+  @ApiOperation({ summary: 'Get system status compatibility view' })
+  @ApiResponse({ status: 200, description: 'System status retrieved successfully' })
+  async getSystemStatusCompat(@Headers() headers: Record<string, string>, @Res() res: Response) {
+    return this.proxySystemCompatEndpoint(
+      [
+        { service: 'api', path: '/api/system/status' },
+        { service: 'agents', path: '/api/system/status' },
+        { service: 'backend', path: '/api/system/status' },
+        { service: 'backend', path: '/system/status' },
+      ],
+      headers,
+      res,
+      'System status service unavailable'
+    );
   }
 }

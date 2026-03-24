@@ -12,6 +12,7 @@ import { ChatGatewayModule } from './gateway/chat-gateway.module';
 import { IdeGatewayModule } from './gateway/ide-gateway.module';
 import { MarketplaceGatewayModule } from './gateway/marketplace-gateway.module';
 import { McpGatewayModule } from './gateway/mcp-gateway.module';
+import { NexusObservabilityGatewayModule } from './gateway/nexus-observability-gateway.module';
 import { PokerGatewayModule } from './gateway/poker-gateway.module';
 import { SgpGatewayModule } from './gateway/sgp-gateway.module';
 import { SystemGatewayModule } from './gateway/system-gateway.module';
@@ -39,6 +40,7 @@ import { ProxyModule } from './proxy/proxy.module';
     ChatGatewayModule,
     McpGatewayModule,
     MarketplaceGatewayModule,
+    NexusObservabilityGatewayModule,
     IdeGatewayModule,
     PokerGatewayModule,
     SgpGatewayModule,
