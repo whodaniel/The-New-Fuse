@@ -31,6 +31,16 @@ type ProfileChunk = {
   metadata: Record<string, unknown>;
 };
 
+type EmbeddingProviderName = 'openai' | 'openrouter' | 'gemini';
+
+type EmbeddingProviderConfig = {
+  name: EmbeddingProviderName;
+  apiKey: string;
+  baseUrl: string;
+  models: string[];
+  supportsDimensions: boolean;
+};
+
 @Injectable()
 export class AgentProfileVectorService {
   private readonly logger = new Logger(AgentProfileVectorService.name);
@@ -43,10 +53,37 @@ export class AgentProfileVectorService {
   private readonly embeddingDimension = Number(
     process.env.AGENT_PROFILE_EMBEDDING_DIMENSION || this.getDefaultDimension(this.embeddingModel)
   );
+
+  // Provider and model fallback controls (adaptive, additive-safe).
+  // AGENT_PROFILE_EMBEDDING_PROVIDER_PRIORITY example: "openrouter,openai,gemini"
+  private readonly providerPriority = this.normalizeProviderPriority(
+    process.env.AGENT_PROFILE_EMBEDDING_PROVIDER_PRIORITY || 'openai,openrouter,gemini'
+  );
+  // AGENT_PROFILE_EMBEDDING_MODEL_FALLBACKS example: "text-embedding-3-small,text-embedding-ada-002"
+  private readonly embeddingModelFallbacks = this.parseCsv(
+    process.env.AGENT_PROFILE_EMBEDDING_MODEL_FALLBACKS || ''
+  );
+
   private readonly openAiBaseUrl = (process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1')
     .replace(/\/+$/, '')
     .trim();
-  private readonly openAiApiKey = process.env.OPENAI_API_KEY || '';
+  private readonly openAiApiKey =
+    process.env.OPENAI_API_KEY || process.env.OPENAI_CODEX_ACCESS_TOKEN || '';
+  private readonly openRouterBaseUrl = (
+    process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1'
+  )
+    .replace(/\/+$/, '')
+    .trim();
+  private readonly openRouterApiKey = process.env.OPENROUTER_API_KEY || '';
+  private readonly openRouterReferrer =
+    process.env.OPENROUTER_HTTP_REFERER || 'https://thenewfuse.com';
+  private readonly openRouterTitle = process.env.OPENROUTER_X_TITLE || 'The New Fuse';
+  private readonly geminiBaseUrl = (
+    process.env.GEMINI_BASE_URL || 'https://generativelanguage.googleapis.com/v1beta'
+  )
+    .replace(/\/+$/, '')
+    .trim();
+  private readonly geminiApiKey = process.env.GEMINI_API_KEY || '';
   private initialized = false;
 
   private rows(result: unknown): Record<string, any>[] {
@@ -77,8 +114,127 @@ export class AgentProfileVectorService {
       'text-embedding-3-small': 1536,
       'text-embedding-3-large': 3072,
       'text-embedding-ada-002': 1536,
+      'openai/text-embedding-3-small': 1536,
+      'openai/text-embedding-3-large': 3072,
+      'openai/text-embedding-ada-002': 1536,
+      'text-embedding-004': 768,
+      'models/text-embedding-004': 768,
     };
     return map[model] || 1536;
+  }
+
+  private parseCsv(input: string): string[] {
+    return input
+      .split(',')
+      .map((value) => value.trim())
+      .filter(Boolean);
+  }
+
+  private normalizeProviderPriority(input: string): EmbeddingProviderName[] {
+    const allowed = new Set<EmbeddingProviderName>(['openai', 'openrouter', 'gemini']);
+    const ordered = this.parseCsv(input)
+      .map((value) => value.toLowerCase())
+      .filter((value): value is EmbeddingProviderName =>
+        allowed.has(value as EmbeddingProviderName)
+      );
+
+    const fallbackOrder: EmbeddingProviderName[] = ['openai', 'openrouter', 'gemini'];
+    const result = [...ordered, ...fallbackOrder];
+    return Array.from(new Set(result));
+  }
+
+  private getProviderModel(provider: EmbeddingProviderName): string {
+    if (provider === 'openrouter') {
+      return (
+        process.env.AGENT_PROFILE_OPENROUTER_EMBEDDING_MODEL ||
+        process.env.OPENROUTER_EMBEDDING_MODEL ||
+        `openai/${this.embeddingModel}`
+      );
+    }
+    if (provider === 'gemini') {
+      return process.env.AGENT_PROFILE_GEMINI_EMBEDDING_MODEL || 'text-embedding-004';
+    }
+    return process.env.AGENT_PROFILE_OPENAI_EMBEDDING_MODEL || this.embeddingModel;
+  }
+
+  private getProviderModelFallbacks(provider: EmbeddingProviderName): string[] {
+    if (provider === 'openrouter') {
+      return this.parseCsv(process.env.AGENT_PROFILE_OPENROUTER_EMBEDDING_MODEL_FALLBACKS || '');
+    }
+    if (provider === 'gemini') {
+      return this.parseCsv(process.env.AGENT_PROFILE_GEMINI_EMBEDDING_MODEL_FALLBACKS || '');
+    }
+    return this.parseCsv(process.env.AGENT_PROFILE_OPENAI_EMBEDDING_MODEL_FALLBACKS || '');
+  }
+
+  private normalizeModelForProvider(model: string, provider: EmbeddingProviderName): string {
+    const trimmed = model.trim();
+    if (!trimmed) return '';
+
+    if (provider === 'openai' && trimmed.startsWith('openai/')) {
+      return trimmed.replace(/^openai\//, '');
+    }
+    if (provider === 'openrouter' && !trimmed.includes('/')) {
+      return `openai/${trimmed}`;
+    }
+    if (provider === 'gemini') {
+      return trimmed.replace(/^models\//, '');
+    }
+    return trimmed;
+  }
+
+  private buildModelCandidates(provider: EmbeddingProviderName): string[] {
+    const primary = this.normalizeModelForProvider(this.getProviderModel(provider), provider);
+    const providerFallbacks = this.getProviderModelFallbacks(provider).map((value) =>
+      this.normalizeModelForProvider(value, provider)
+    );
+    const globalFallbacks = this.embeddingModelFallbacks.map((value) =>
+      this.normalizeModelForProvider(value, provider)
+    );
+
+    const merged = [primary, ...providerFallbacks, ...globalFallbacks].filter(Boolean);
+    return Array.from(new Set(merged));
+  }
+
+  private resolveEmbeddingProviders(): EmbeddingProviderConfig[] {
+    const resolved: EmbeddingProviderConfig[] = [];
+
+    for (const provider of this.providerPriority) {
+      const models = this.buildModelCandidates(provider);
+      if (models.length === 0) continue;
+
+      if (provider === 'openai' && this.openAiApiKey) {
+        resolved.push({
+          name: 'openai',
+          apiKey: this.openAiApiKey,
+          baseUrl: this.openAiBaseUrl,
+          models,
+          supportsDimensions: true,
+        });
+      }
+
+      if (provider === 'openrouter' && this.openRouterApiKey) {
+        resolved.push({
+          name: 'openrouter',
+          apiKey: this.openRouterApiKey,
+          baseUrl: this.openRouterBaseUrl,
+          models,
+          supportsDimensions: true,
+        });
+      }
+
+      if (provider === 'gemini' && this.geminiApiKey) {
+        resolved.push({
+          name: 'gemini',
+          apiKey: this.geminiApiKey,
+          baseUrl: this.geminiBaseUrl,
+          models,
+          supportsDimensions: true,
+        });
+      }
+    }
+
+    return resolved;
   }
 
   private normalizeStringArray(input: unknown): string[] {
@@ -110,31 +266,92 @@ export class AgentProfileVectorService {
     return `[${values.join(',')}]`;
   }
 
-  private async generateEmbeddings(texts: string[]): Promise<number[][]> {
-    if (!this.openAiApiKey) {
-      throw new Error('OPENAI_API_KEY is required for agent profile vector indexing');
+  private errorMessage(error: unknown): string {
+    if (axios.isAxiosError(error)) {
+      const status = error.response?.status;
+      const payload =
+        typeof error.response?.data === 'string'
+          ? error.response?.data
+          : JSON.stringify(error.response?.data || {});
+      return status ? `status_${status}: ${payload}` : payload || error.message;
     }
+    return error instanceof Error ? error.message : String(error);
+  }
 
+  private isLikelyModelOrDimensionError(error: unknown): boolean {
+    if (!axios.isAxiosError(error)) return false;
+    const status = error.response?.status;
+    if (!status || ![400, 404, 422].includes(status)) return false;
+    const payload =
+      typeof error.response?.data === 'string'
+        ? error.response?.data
+        : JSON.stringify(error.response?.data || {});
+    const lower = payload.toLowerCase();
+    return (
+      lower.includes('model') ||
+      lower.includes('embedding') ||
+      lower.includes('dimension') ||
+      lower.includes('unsupported') ||
+      lower.includes('not found')
+    );
+  }
+
+  private shouldRetryWithoutDimensions(error: unknown): boolean {
+    if (!axios.isAxiosError(error)) return false;
+    const status = error.response?.status;
+    if (!status || ![400, 422].includes(status)) return false;
+    const payload =
+      typeof error.response?.data === 'string'
+        ? error.response?.data
+        : JSON.stringify(error.response?.data || {});
+    const lower = payload.toLowerCase();
+    return lower.includes('dimension') || lower.includes('dimensions');
+  }
+
+  private async openAiCompatibleEmbeddings(
+    provider: EmbeddingProviderConfig,
+    model: string,
+    texts: string[]
+  ): Promise<number[][]> {
     const batchSize = 96;
     const allEmbeddings: number[][] = [];
 
     for (let i = 0; i < texts.length; i += batchSize) {
       const batch = texts.slice(i, i + batchSize);
-      const response = await axios.post(
-        `${this.openAiBaseUrl}/embeddings`,
-        {
-          model: this.embeddingModel,
-          input: batch,
-          dimensions: this.embeddingDimension,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${this.openAiApiKey}`,
-            'Content-Type': 'application/json',
-          },
-          timeout: 60_000,
+      const requestBody: Record<string, unknown> = {
+        model,
+        input: batch,
+      };
+
+      if (provider.supportsDimensions && this.embeddingDimension > 0) {
+        requestBody.dimensions = this.embeddingDimension;
+      }
+
+      const headers: Record<string, string> = {
+        Authorization: `Bearer ${provider.apiKey}`,
+        'Content-Type': 'application/json',
+      };
+      if (provider.name === 'openrouter') {
+        headers['HTTP-Referer'] = this.openRouterReferrer;
+        headers['X-Title'] = this.openRouterTitle;
+      }
+
+      const endpoint = `${provider.baseUrl}/embeddings`;
+      const runRequest = async (body: Record<string, unknown>) =>
+        axios.post(endpoint, body, { headers, timeout: 60_000 });
+
+      let response;
+      try {
+        response = await runRequest(requestBody);
+      } catch (error) {
+        if (requestBody.dimensions && this.shouldRetryWithoutDimensions(error)) {
+          const fallbackBody = { ...requestBody };
+          delete fallbackBody.dimensions;
+          response = await runRequest(fallbackBody);
+        } else {
+          throw error;
         }
-      );
+      }
 
       const items = Array.isArray(response.data?.data) ? response.data.data : [];
       if (items.length !== batch.length) {
@@ -154,6 +371,137 @@ export class AgentProfileVectorService {
     }
 
     return allEmbeddings;
+  }
+
+  private toGeminiModelPath(model: string): string {
+    const normalized = model.replace(/^models\//, '').trim();
+    return `models/${normalized}`;
+  }
+
+  private async geminiEmbeddings(
+    provider: EmbeddingProviderConfig,
+    model: string,
+    texts: string[]
+  ): Promise<number[][]> {
+    const batchSize = 64;
+    const allEmbeddings: number[][] = [];
+    const modelPath = this.toGeminiModelPath(model);
+
+    for (let i = 0; i < texts.length; i += batchSize) {
+      const batch = texts.slice(i, i + batchSize);
+      const buildRequests = (includeDimensions: boolean) =>
+        batch.map((text) => ({
+          model: modelPath,
+          content: { parts: [{ text }] },
+          taskType: 'RETRIEVAL_DOCUMENT',
+          ...(includeDimensions && provider.supportsDimensions && this.embeddingDimension > 0
+            ? { outputDimensionality: this.embeddingDimension }
+            : {}),
+        }));
+
+      const endpoint = `${provider.baseUrl}/${modelPath}:batchEmbedContents?key=${encodeURIComponent(provider.apiKey)}`;
+      const runRequest = (includeDimensions: boolean) =>
+        axios.post(
+          endpoint,
+          { requests: buildRequests(includeDimensions) },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            timeout: 60_000,
+          }
+        );
+
+      let response;
+      try {
+        response = await runRequest(true);
+      } catch (error) {
+        if (this.shouldRetryWithoutDimensions(error)) {
+          response = await runRequest(false);
+        } else {
+          throw error;
+        }
+      }
+
+      const items = Array.isArray(response.data?.embeddings) ? response.data.embeddings : [];
+      if (items.length !== batch.length) {
+        throw new Error(
+          `Gemini embedding provider returned ${items.length} embeddings for ${batch.length} inputs`
+        );
+      }
+
+      allEmbeddings.push(
+        ...items.map((item: any) => {
+          const values = Array.isArray(item?.values)
+            ? item.values
+            : Array.isArray(item?.embedding?.values)
+              ? item.embedding.values
+              : null;
+          if (!values) {
+            throw new Error('Gemini embedding payload missing values');
+          }
+          return values as number[];
+        })
+      );
+    }
+
+    return allEmbeddings;
+  }
+
+  private async generateByProvider(
+    provider: EmbeddingProviderConfig,
+    texts: string[]
+  ): Promise<number[][]> {
+    const modelErrors: string[] = [];
+
+    for (const model of provider.models) {
+      try {
+        if (provider.name === 'gemini') {
+          return await this.geminiEmbeddings(provider, model, texts);
+        }
+        return await this.openAiCompatibleEmbeddings(provider, model, texts);
+      } catch (error) {
+        const message = this.errorMessage(error);
+        modelErrors.push(`${model}: ${message}`);
+        this.logger.warn(
+          `Embedding model attempt failed provider=${provider.name} model=${model}: ${message}`
+        );
+
+        if (!this.isLikelyModelOrDimensionError(error)) {
+          break;
+        }
+      }
+    }
+
+    throw new Error(
+      `No usable embedding model for provider ${provider.name}. Attempts: ${modelErrors.join(' | ')}`
+    );
+  }
+
+  private async generateEmbeddings(texts: string[]): Promise<number[][]> {
+    if (!texts.length) {
+      return [];
+    }
+
+    const providers = this.resolveEmbeddingProviders();
+    if (providers.length === 0) {
+      throw new Error(
+        'No embedding provider key configured. Set one of OPENAI_API_KEY/OPENAI_CODEX_ACCESS_TOKEN, OPENROUTER_API_KEY, or GEMINI_API_KEY.'
+      );
+    }
+
+    const providerErrors: string[] = [];
+    for (const provider of providers) {
+      try {
+        return await this.generateByProvider(provider, texts);
+      } catch (error) {
+        const message = this.errorMessage(error);
+        providerErrors.push(`${provider.name}: ${message}`);
+        this.logger.warn(`Embedding provider failed provider=${provider.name}: ${message}`);
+      }
+    }
+
+    throw new Error(`All embedding providers failed: ${providerErrors.join(' || ')}`);
   }
 
   private async ensureVectorStore(): Promise<void> {

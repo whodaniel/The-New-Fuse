@@ -153,10 +153,13 @@ export class AppConfigService implements OnModuleInit {
     // Warn about API keys (not a hard error to allow initial deployment)
     if (
       !this.configService.get<string>('ANTHROPIC_API_KEY') &&
-      !this.configService.get<string>('OPENAI_API_KEY')
+      !this.configService.get<string>('OPENAI_API_KEY') &&
+      !this.configService.get<string>('OPENAI_CODEX_ACCESS_TOKEN') &&
+      !this.configService.get<string>('OPENROUTER_API_KEY') &&
+      !this.configService.get<string>('GEMINI_API_KEY')
     ) {
       this.logger.warn(
-        'WARNING: No AI service API key (ANTHROPIC_API_KEY or OPENAI_API_KEY) is set. AI features may not work.'
+        'WARNING: No AI service API key is set (ANTHROPIC_API_KEY, OPENAI_API_KEY, OPENAI_CODEX_ACCESS_TOKEN, OPENROUTER_API_KEY, GEMINI_API_KEY). AI features may not work.'
       );
     }
   }
