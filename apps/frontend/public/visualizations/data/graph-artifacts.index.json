@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-24T15:46:45.570Z",
+  "generatedAt": "2026-03-24T16:10:35.463Z",
   "source": "scripts/visualizations/publish-graph-artifacts.cjs",
   "datasets": [
     {
@@ -155,6 +155,22 @@
       "reports": {},
       "temporal": {},
       "missingRequirements": []
+    }
+  ],
+  "discoveredGraphRoots": [
+    {
+      "id": "agent-relationship-graph",
+      "sourceRoot": "tools/agent-relationship-graph",
+      "hasNeo4jPackage": true,
+      "hasGraphJson": true,
+      "published": true
+    },
+    {
+      "id": "framework-master-graph",
+      "sourceRoot": "tools/framework-master-graph",
+      "hasNeo4jPackage": true,
+      "hasGraphJson": true,
+      "published": true
     }
   ],
   "missingImplementations": [],

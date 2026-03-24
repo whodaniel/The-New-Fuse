@@ -150,7 +150,18 @@ type GraphArtifactsIndex = {
     temporal?: Record<string, string | null>;
     missingRequirements?: string[];
   }>;
-  missingImplementations?: Array<{ datasetId: string; requirement: string }>;
+  discoveredGraphRoots?: Array<{
+    id: string;
+    sourceRoot: string;
+    hasNeo4jPackage?: boolean;
+    hasGraphJson?: boolean;
+    published?: boolean;
+  }>;
+  missingImplementations?: Array<{
+    datasetId: string;
+    requirement: string;
+    sourceRoot?: string;
+  }>;
   totals?: {
     datasets?: number;
     graphNodes?: number;
@@ -422,11 +433,15 @@ export const SystemObservatory: React.FC = () => {
       const missingImplementations = Array.isArray(payload.missingImplementations)
         ? payload.missingImplementations
         : [];
+      const discoveredGraphRoots = Array.isArray(payload.discoveredGraphRoots)
+        ? payload.discoveredGraphRoots
+        : [];
       const totals = payload.totals && typeof payload.totals === 'object' ? payload.totals : {};
 
       setGraphArtifacts({
         ...payload,
         datasets,
+        discoveredGraphRoots,
         missingImplementations,
         totals,
       });
@@ -989,6 +1004,28 @@ export const SystemObservatory: React.FC = () => {
                             className="text-xs text-red-200 font-mono"
                           >
                             {item.datasetId}: {item.requirement}
+                            {item.sourceRoot ? ` (${item.sourceRoot})` : ''}
+                          </div>
+                        ))}
+                      </div>
+                    </GlassCard>
+                  )}
+
+                  {!!graphArtifacts.discoveredGraphRoots?.length && (
+                    <GlassCard className="p-4 border-white/5 bg-black/40">
+                      <div className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">
+                        Discovered Graph Roots
+                      </div>
+                      <div className="space-y-1">
+                        {graphArtifacts.discoveredGraphRoots.map((item) => (
+                          <div
+                            key={`${item.id}:${item.sourceRoot}`}
+                            className="text-xs text-gray-300 font-mono flex flex-wrap gap-x-2"
+                          >
+                            <span>{item.id}</span>
+                            <span className="text-muted-foreground">{item.sourceRoot}</span>
+                            <span>{item.published ? 'published' : 'unpublished'}</span>
+                            <span>{item.hasNeo4jPackage ? 'neo4j:yes' : 'neo4j:no'}</span>
                           </div>
                         ))}
                       </div>

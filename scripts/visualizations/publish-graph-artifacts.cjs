@@ -100,6 +100,31 @@ function collectSubgraphs(subgraphsDir, publicRoot) {
     .sort((a, b) => a.domain.localeCompare(b.domain));
 }
 
+function discoverToolGraphRoots(repoRoot) {
+  const toolsRoot = path.join(repoRoot, 'tools');
+  if (!exists(toolsRoot)) return [];
+
+  return fs
+    .readdirSync(toolsRoot, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && entry.name.endsWith('-graph'))
+    .map((entry) => {
+      const absolutePath = path.join(toolsRoot, entry.name);
+      const relativePath = path.relative(repoRoot, absolutePath);
+      const hasNeo4jPackage = exists(path.join(absolutePath, 'neo4j-package'));
+      const hasGraphJson = fs
+        .readdirSync(absolutePath, { withFileTypes: true })
+        .some((child) => child.isFile() && child.name.endsWith('.json') && child.name.includes('graph'));
+
+      return {
+        id: entry.name,
+        absolutePath,
+        relativePath,
+        hasNeo4jPackage,
+        hasGraphJson,
+      };
+    });
+}
+
 function publishAgentRelationship(repoRoot, publicFsRoot, publicUrlRoot) {
   const sourceRoot = path.join(repoRoot, 'tools', 'agent-relationship-graph');
   const targetRoot = path.join(publicFsRoot, 'agent-relationship-graph');
@@ -325,10 +350,34 @@ function main() {
     }))
   );
 
+  const discoveredGraphRoots = discoverToolGraphRoots(repoRoot);
+  const publishedSourceRoots = new Set(datasets.map((dataset) => String(dataset.sourceRoot || '')));
+
+  for (const discovered of discoveredGraphRoots) {
+    if (publishedSourceRoots.has(discovered.relativePath)) {
+      continue;
+    }
+
+    missingImplementations.push({
+      datasetId: discovered.id,
+      requirement: discovered.hasNeo4jPackage
+        ? 'neo4j-dataset-not-published'
+        : 'graph-dataset-not-published',
+      sourceRoot: discovered.relativePath,
+    });
+  }
+
   const payload = {
     generatedAt: new Date().toISOString(),
     source: 'scripts/visualizations/publish-graph-artifacts.cjs',
     datasets,
+    discoveredGraphRoots: discoveredGraphRoots.map((item) => ({
+      id: item.id,
+      sourceRoot: item.relativePath,
+      hasNeo4jPackage: item.hasNeo4jPackage,
+      hasGraphJson: item.hasGraphJson,
+      published: publishedSourceRoots.has(item.relativePath),
+    })),
     missingImplementations,
     totals: {
       datasets: datasets.length,
