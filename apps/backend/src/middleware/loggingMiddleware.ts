@@ -7,6 +7,15 @@ import { LoggingService } from '../services/logging.service';
 export class LoggingMiddleware implements NestMiddleware {
   constructor(private readonly logger: LoggingService) {}
 
+  private toBufferChunk(chunk: unknown): Buffer | null {
+    if (chunk == null) return null;
+    if (Buffer.isBuffer(chunk)) return chunk;
+    if (typeof chunk === 'string') return Buffer.from(chunk);
+    if (chunk instanceof Uint8Array) return Buffer.from(chunk);
+    if (typeof chunk === 'object') return Buffer.from(JSON.stringify(chunk));
+    return Buffer.from(String(chunk));
+  }
+
   use(req: Request, res: Response, next: NextFunction) {
     const requestId = uuidv4();
     const startTime = Date.now();
@@ -31,15 +40,17 @@ export class LoggingMiddleware implements NestMiddleware {
     const chunks: Buffer[] = [];
 
     (res as any).write = (chunk: any) => {
-      if (chunk) {
-        chunks.push(Buffer.from(chunk));
+      const bufferChunk = this.toBufferChunk(chunk);
+      if (bufferChunk) {
+        chunks.push(bufferChunk);
       }
       return originalWrite.apply(res, arguments as any);
     };
 
     (res as any).end = (chunk: any) => {
-      if (chunk) {
-        chunks.push(Buffer.from(chunk));
+      const bufferChunk = this.toBufferChunk(chunk);
+      if (bufferChunk) {
+        chunks.push(bufferChunk);
       }
 
       const responseBody = Buffer.concat(chunks).toString('utf8');
