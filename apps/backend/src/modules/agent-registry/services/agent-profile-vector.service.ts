@@ -193,7 +193,15 @@ export class AgentProfileVectorService {
     );
 
     const merged = [primary, ...providerFallbacks, ...globalFallbacks].filter(Boolean);
-    return Array.from(new Set(merged));
+
+    if (provider !== 'openrouter') {
+      return Array.from(new Set(merged));
+    }
+
+    const expanded = merged.flatMap((model) =>
+      model.startsWith('openai/') ? [model, model.replace(/^openai\//, '')] : [model]
+    );
+    return Array.from(new Set(expanded));
   }
 
   private resolveEmbeddingProviders(): EmbeddingProviderConfig[] {
