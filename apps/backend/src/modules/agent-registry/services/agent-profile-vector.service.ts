@@ -31,7 +31,7 @@ type ProfileChunk = {
   metadata: Record<string, unknown>;
 };
 
-type EmbeddingProviderName = 'openai' | 'openrouter' | 'gemini';
+type EmbeddingProviderName = 'openai' | 'openrouter' | 'gemini' | 'local';
 
 type EmbeddingProviderConfig = {
   name: EmbeddingProviderName;
@@ -63,6 +63,9 @@ export class AgentProfileVectorService {
   private readonly embeddingModelFallbacks = this.parseCsv(
     process.env.AGENT_PROFILE_EMBEDDING_MODEL_FALLBACKS || ''
   );
+  private readonly allowLocalEmbeddingFallback =
+    String(process.env.AGENT_PROFILE_EMBEDDING_ALLOW_LOCAL_FALLBACK || 'true').toLowerCase() !==
+    'false';
 
   private readonly openAiBaseUrl = (process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1')
     .replace(/\/+$/, '')
@@ -131,14 +134,14 @@ export class AgentProfileVectorService {
   }
 
   private normalizeProviderPriority(input: string): EmbeddingProviderName[] {
-    const allowed = new Set<EmbeddingProviderName>(['openai', 'openrouter', 'gemini']);
+    const allowed = new Set<EmbeddingProviderName>(['openai', 'openrouter', 'gemini', 'local']);
     const ordered = this.parseCsv(input)
       .map((value) => value.toLowerCase())
       .filter((value): value is EmbeddingProviderName =>
         allowed.has(value as EmbeddingProviderName)
       );
 
-    const fallbackOrder: EmbeddingProviderName[] = ['openai', 'openrouter', 'gemini'];
+    const fallbackOrder: EmbeddingProviderName[] = ['openai', 'openrouter', 'gemini', 'local'];
     const result = [...ordered, ...fallbackOrder];
     return Array.from(new Set(result));
   }
@@ -154,6 +157,9 @@ export class AgentProfileVectorService {
     if (provider === 'gemini') {
       return process.env.AGENT_PROFILE_GEMINI_EMBEDDING_MODEL || 'text-embedding-004';
     }
+    if (provider === 'local') {
+      return process.env.AGENT_PROFILE_LOCAL_EMBEDDING_MODEL || 'local-hash-v1';
+    }
     return process.env.AGENT_PROFILE_OPENAI_EMBEDDING_MODEL || this.embeddingModel;
   }
 
@@ -163,6 +169,9 @@ export class AgentProfileVectorService {
     }
     if (provider === 'gemini') {
       return this.parseCsv(process.env.AGENT_PROFILE_GEMINI_EMBEDDING_MODEL_FALLBACKS || '');
+    }
+    if (provider === 'local') {
+      return this.parseCsv(process.env.AGENT_PROFILE_LOCAL_EMBEDDING_MODEL_FALLBACKS || '');
     }
     return this.parseCsv(process.env.AGENT_PROFILE_OPENAI_EMBEDDING_MODEL_FALLBACKS || '');
   }
@@ -179,6 +188,9 @@ export class AgentProfileVectorService {
     }
     if (provider === 'gemini') {
       return trimmed.replace(/^models\//, '');
+    }
+    if (provider === 'local') {
+      return trimmed;
     }
     return trimmed;
   }
@@ -236,6 +248,16 @@ export class AgentProfileVectorService {
           name: 'gemini',
           apiKey: this.geminiApiKey,
           baseUrl: this.geminiBaseUrl,
+          models,
+          supportsDimensions: true,
+        });
+      }
+
+      if (provider === 'local' && this.allowLocalEmbeddingFallback) {
+        resolved.push({
+          name: 'local',
+          apiKey: '',
+          baseUrl: 'local://embedding',
           models,
           supportsDimensions: true,
         });
@@ -456,6 +478,48 @@ export class AgentProfileVectorService {
     return allEmbeddings;
   }
 
+  private fnv1a(input: string): number {
+    let hash = 2166136261;
+    for (let i = 0; i < input.length; i += 1) {
+      hash ^= input.charCodeAt(i);
+      hash = Math.imul(hash, 16777619);
+    }
+    return hash >>> 0;
+  }
+
+  private localEmbedding(text: string): number[] {
+    const dimensions = Math.max(64, this.embeddingDimension || 1536);
+    const vector = new Array<number>(dimensions).fill(0);
+    const normalized = text.toLowerCase().replace(/[^a-z0-9\s]+/g, ' ');
+    const tokens = normalized.split(/\s+/).filter(Boolean);
+
+    if (!tokens.length) {
+      return vector;
+    }
+
+    for (const token of tokens) {
+      const h1 = this.fnv1a(token);
+      const h2 = this.fnv1a(`sign:${token}`);
+      const idx = h1 % dimensions;
+      const sign = h2 % 2 === 0 ? 1 : -1;
+      const magnitude = 1 + (token.length % 7) / 10;
+      vector[idx] += sign * magnitude;
+    }
+
+    const norm = Math.sqrt(vector.reduce((sum, value) => sum + value * value, 0));
+    if (!Number.isFinite(norm) || norm === 0) {
+      return vector;
+    }
+    return vector.map((value) => value / norm);
+  }
+
+  private async localEmbeddings(model: string, texts: string[]): Promise<number[][]> {
+    this.logger.warn(
+      `Using local embedding fallback provider (model=${model}). Remote embedding providers unavailable.`
+    );
+    return texts.map((text) => this.localEmbedding(text));
+  }
+
   private async generateByProvider(
     provider: EmbeddingProviderConfig,
     texts: string[]
@@ -466,6 +530,9 @@ export class AgentProfileVectorService {
       try {
         if (provider.name === 'gemini') {
           return await this.geminiEmbeddings(provider, model, texts);
+        }
+        if (provider.name === 'local') {
+          return await this.localEmbeddings(model, texts);
         }
         return await this.openAiCompatibleEmbeddings(provider, model, texts);
       } catch (error) {
@@ -494,7 +561,7 @@ export class AgentProfileVectorService {
     const providers = this.resolveEmbeddingProviders();
     if (providers.length === 0) {
       throw new Error(
-        'No embedding provider key configured. Set one of OPENAI_API_KEY/OPENAI_CODEX_ACCESS_TOKEN, OPENROUTER_API_KEY, or GEMINI_API_KEY.'
+        'No embedding provider configured. Set OPENAI_API_KEY/OPENAI_CODEX_ACCESS_TOKEN, OPENROUTER_API_KEY, GEMINI_API_KEY, or enable AGENT_PROFILE_EMBEDDING_ALLOW_LOCAL_FALLBACK.'
       );
     }
 
