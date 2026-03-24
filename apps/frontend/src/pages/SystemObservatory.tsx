@@ -236,6 +236,12 @@ export const SystemObservatory: React.FC = () => {
           validateStatus: () => true,
         });
         if (response.status < 200 || response.status >= 300) continue;
+        if (
+          typeof response.data === 'string' &&
+          /^<!doctype html|<html[\s>]/i.test(response.data.trim().slice(0, 64))
+        ) {
+          continue;
+        }
         if (usedAlternate) {
           console.warn(
             `[System Observatory] ${contextLabel} using alternate endpoint: ${paths[0]} -> ${path}`
@@ -390,8 +396,8 @@ export const SystemObservatory: React.FC = () => {
     try {
       const graphArtifactsResult = await fetchFirstJson(
         [
-          '/visualizations/data/graph-artifacts.index.json',
           '/api/visualizations/data/graph-artifacts.index.json',
+          '/visualizations/data/graph-artifacts.index.json',
         ],
         'graph artifacts index'
       );

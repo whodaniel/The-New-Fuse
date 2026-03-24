@@ -18,6 +18,7 @@ import securityConfig from './config/security.config';
 import { AdminOpenClawOAuthController } from './controllers/admin-openclaw-oauth.controller';
 import { AgentGrantsController } from './controllers/agent-grants.controller';
 import { AgentHandoffController } from './controllers/agent-handoff.controller';
+import { AgentPfpOverridesController } from './controllers/agent-pfp-overrides.controller';
 import { AgentProxyController } from './controllers/agent-proxy.controller';
 import { AiController } from './controllers/ai.controller';
 import { CommunityController } from './controllers/community.controller';
@@ -27,9 +28,11 @@ import { ModelsController } from './controllers/models.controller';
 import { N8nWorkflowsController } from './controllers/n8n-workflows.controller';
 import { OnboardingController } from './controllers/onboarding.controller';
 import { OrchestrationController } from './controllers/orchestration.controller';
+import { OrchestratorController } from './controllers/orchestrator.controller';
 import { ProviderKeysController } from './controllers/provider-keys.controller';
 import { SystemController } from './controllers/system.controller';
 import { UserManagementController } from './controllers/user-management.controller';
+import { VisualizationsController } from './controllers/visualizations.controller';
 import { WebSocketController } from './controllers/websocket.controller';
 import { WorkflowController } from './controllers/workflow.controller';
 import { WorkspaceController } from './controllers/workspace.controller';
@@ -62,6 +65,7 @@ import { WorkflowTemplatesModule } from './modules/workflow-templates.module';
 import { MonitoringModule } from './monitoring/monitoring.module';
 import { AgentApiGrantsService } from './services/agent-api-grants.service';
 import { AgentHandoffService } from './services/agent-handoff.service';
+import { AgentPfpOverridesService } from './services/agent-pfp-overrides.service';
 import { OpenClawOAuthRotationService } from './services/openclaw-oauth-rotation.service';
 import { ProviderKeysService } from './services/provider-keys.service';
 import { SmartAccountModule } from './smart-accounts/smart-account.module';
@@ -151,6 +155,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     HealthController, // CRITICAL: Health checks for monitoring/K8s
     LLMProviderController,
     MCPServerController, // MCP server management (20+ endpoints)
+    AgentPfpOverridesController,
     AgentGrantsController,
     AgentHandoffController,
     AgentProxyController,
@@ -164,6 +169,8 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     WorkspaceController, // Multi-workspace support
     ProviderKeysController, // Per-user provider API key management
     OrchestrationController, // Tenant-aware orchestration chat endpoint
+    OrchestratorController, // Observatory orchestrator compatibility endpoints
+    VisualizationsController, // JSON artifact endpoints for graph bundles
     AdminOpenClawOAuthController,
     N8nWorkflowsController,
     OnboardingController,
@@ -178,6 +185,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
       useClass: MockLLMRegistry,
     },
     LLMProviderService,
+    AgentPfpOverridesService,
     ProviderKeysService,
     OpenClawOAuthRotationService,
     AgentApiGrantsService,

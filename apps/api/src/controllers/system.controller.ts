@@ -44,7 +44,6 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
@@ -537,9 +536,25 @@ export class SystemController {
    *   "error": "Health check failed"
    * }
    */
-  async getHealth(req: Request, res: Response): Promise<void> {
+  @Get('health')
+  @RequireAuthLevel(AuthLevel.PUBLIC)
+  @SetRateLimitTier(RateLimitTier.HEALTH)
+  async getHealth(): Promise<{
+    status: string;
+    timestamp: string;
+    uptime: number;
+    version: string;
+    environment: string;
+    services: {
+      api: string;
+      database: string;
+      filesystem: string;
+      memory: string;
+    };
+    error?: string;
+  }> {
     try {
-      const health = {
+      return {
         status: 'healthy',
         timestamp: new Date().toISOString(),
         uptime: process.uptime(),
@@ -552,14 +567,22 @@ export class SystemController {
           memory: this.getMemoryStatus(),
         },
       };
-
-      res.json(health);
     } catch (error) {
       this.logger.error('Health check failed:', error);
-      res.status(500).json({
+      return {
         status: 'unhealthy',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+        version: process.version,
+        environment: process.env.NODE_ENV || 'development',
+        services: {
+          api: 'online',
+          database: 'offline',
+          filesystem: 'unknown',
+          memory: 'unknown',
+        },
         error: 'Health check failed',
-      });
+      };
     }
   }
 
@@ -894,9 +917,12 @@ export class SystemController {
    *   }
    * }
    */
-  async getMetrics(req: Request, res: Response): Promise<void> {
+  @Get('metrics')
+  @RequireAuthLevel(AuthLevel.PUBLIC)
+  @SetRateLimitTier(RateLimitTier.HEALTH)
+  async getMetrics(): Promise<any> {
     try {
-      const metrics = {
+      return {
         timestamp: new Date().toISOString(),
         system: {
           platform: os.platform(),
@@ -925,11 +951,9 @@ export class SystemController {
         },
         disk: await this.getDiskUsage(),
       };
-
-      res.json(metrics);
     } catch (error) {
       this.logger.error('Failed to get system metrics:', error);
-      res.status(500).json({ error: 'Failed to get system metrics' });
+      throw new InternalServerErrorException('Failed to get system metrics');
     }
   }
 
@@ -961,9 +985,12 @@ export class SystemController {
    *   "timestamp": "2025-11-05T02:17:55.000Z"
    * }
    */
-  async getStatus(req: Request, res: Response): Promise<void> {
+  @Get('status')
+  @RequireAuthLevel(AuthLevel.PUBLIC)
+  @SetRateLimitTier(RateLimitTier.HEALTH)
+  async getStatus(): Promise<any> {
     try {
-      const status = {
+      return {
         api: 'online',
         database: await this.checkDatabaseHealth(),
         websocket: 'unknown', // Will be updated by WebSocket controller
@@ -972,11 +999,9 @@ export class SystemController {
         mcp: await this.checkMCPHealth(),
         timestamp: new Date().toISOString(),
       };
-
-      res.json(status);
     } catch (error) {
       this.logger.error('Failed to get system status:', error);
-      res.status(500).json({ error: 'Failed to get system status' });
+      throw new InternalServerErrorException('Failed to get system status');
     }
   }
 
@@ -1006,22 +1031,25 @@ export class SystemController {
    *   "timestamp": "2025-11-05T02:17:55.000Z"
    * }
    */
-  async restart(req: Request, res: Response): Promise<void> {
+  @Post('restart')
+  @RequireAuthLevel(AuthLevel.ADMIN)
+  @SetRateLimitTier(RateLimitTier.ADMIN)
+  async restart(): Promise<{ message: string; timestamp: string }> {
     try {
       this.logger.warn('System restart requested');
-
-      res.json({
+      const response = {
         message: 'System restart initiated',
         timestamp: new Date().toISOString(),
-      });
+      };
 
       // Graceful shutdown and restart
       setTimeout(() => {
         process.exit(0);
       }, 1000);
+      return response;
     } catch (error) {
       this.logger.error('Failed to restart system:', error);
-      res.status(500).json({ error: 'Failed to restart system' });
+      throw new InternalServerErrorException('Failed to restart system');
     }
   }
 

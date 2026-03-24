@@ -82,4 +82,14 @@ export class AgentSwarmService implements OnModuleInit, OnModuleDestroy {
       agentsByCapability: capabilities,
     };
   }
+
+  getAgents() {
+    return Array.from(this.agents.values()).map((agent) => ({
+      id: agent.id,
+      name: agent.name,
+      capabilities: Array.isArray(agent.capabilities) ? [...agent.capabilities] : [],
+      status: agent.status,
+      lastHeartbeat: agent.lastHeartbeat,
+    }));
+  }
 }
