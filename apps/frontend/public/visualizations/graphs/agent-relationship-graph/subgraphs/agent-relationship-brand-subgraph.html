@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Brand Agent Subgraph</title>
+  <style>
+    :root { --bg:#0f172a; --panel:#111827; --text:#e5e7eb; --muted:#9ca3af; }
+    body { margin:0; font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial; background: radial-gradient(circle at 15% 20%, #1f2937, #0b1020 55%); color:var(--text); }
+    .wrap { display:grid; grid-template-columns: 320px 1fr; min-height:100vh; }
+    .side { background: rgba(17,24,39,0.95); border-right:1px solid #1f2937; padding:16px; }
+    .main { position:relative; }
+    h1 { font-size:18px; margin:0 0 8px; }
+    .meta { color:var(--muted); font-size:12px; margin-bottom:12px; }
+    .legend { font-size:12px; color:var(--muted); }
+    svg { width:100%; height:100vh; display:block; }
+    .tooltip { position:absolute; pointer-events:none; background:#0b1220; border:1px solid #334155; border-radius:6px; padding:6px 8px; font-size:12px; color:#e5e7eb; display:none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <aside class="side">
+      <h1>Brand Agent Subgraph</h1>
+      <div class="meta">Generated 2026-03-12 14:01:56Z</div>
+      <div class="legend" id="counts"></div>
+      <div class="legend" style="margin-top:10px">Drag nodes to reposition. Hover nodes for details.</div>
+    </aside>
+    <main class="main">
+      <svg id="graph"></svg>
+      <div class="tooltip" id="tip"></div>
+    </main>
+  </div>
+<script id="graph-data" type="application/json">
+{
+  "generated_at": "2026-03-03",
+  "domain": "brand",
+  "nodes": [
+    {
+      "id": "orchestrator-agent",
+      "kind": "primary",
+      "cluster": "orchestration"
+    },
+    {
+      "id": "task-agent-router",
+      "kind": "primary",
+      "cluster": "orchestration"
+    },
+    {
+      "id": "brand-identity-agent",
+      "kind": "sub",
+      "cluster": "brand"
+    },
+    {
+      "id": "brand-prospecting-agent",
+      "kind": "sub",
+      "cluster": "brand"
+    },
+    {
+      "id": "brand-outreach-agent",
+      "kind": "sub",
+      "cluster": "brand"
+    },
+    {
+      "id": "deal-negotiator-agent",
+      "kind": "sub",
+      "cluster": "brand"
+    },
+    {
+      "id": "contract-manager-agent",
+      "kind": "sub",
+      "cluster": "brand"
+    },
+    {
+      "id": "campaign-execution-agent",
+      "kind": "primary",
+      "cluster": "brand"
+    },
+    {
+      "id": "campaign-reporting-agent",
+      "kind": "sub",
+      "cluster": "brand"
+    },
+    {
+      "id": "legal-compliance-agent",
+      "kind": "primary",
+      "cluster": "ops"
+    }
+  ],
+  "edges": [
+    {
+      "source": "orchestrator-agent",
+      "target": "task-agent-router",
+      "type": "delegates",
+      "strength": 0.98
+    },
+    {
+      "source": "task-agent-router",
+      "target": "campaign-execution-agent",
+      "type": "routes_to",
+      "strength": 0.75
+    },
+    {
+      "source": "task-agent-router",
+      "target": "legal-compliance-agent",
+      "type": "routes_to",
+      "strength": 0.81
+    },
+    {
+      "source": "brand-prospecting-agent",
+      "target": "brand-outreach-agent",
+      "type": "feeds",
+      "strength": 0.9
+    },
+    {
+      "source": "brand-outreach-agent",
+      "target": "deal-negotiator-agent",
+      "type": "handoff",
+      "strength": 0.86
+    },
+    {
+      "source": "deal-negotiator-agent",
+      "target": "contract-manager-agent",
+      "type": "requires",
+      "strength": 0.92
+    },
+    {
+      "source": "contract-manager-agent",
+      "target": "campaign-execution-agent",
+      "type": "gates",
+      "strength": 0.91
+    },
+    {
+      "source": "campaign-execution-agent",
+      "target": "campaign-reporting-agent",
+      "type": "handoff",
+      "strength": 0.88
+    }
+  ]
+}
+</script>
+<script>
+const data = JSON.parse(document.getElementById('graph-data').textContent);
+const nodes = data.nodes.map(function(n){ return Object.assign({}, n, {x: Math.random()*900+100, y: Math.random()*600+100, vx:0, vy:0}); });
+const byId = new Map(nodes.map(function(n){ return [n.id, n]; }));
+const links = data.edges.map(function(e){ return Object.assign({}, e, {s: byId.get(e.source), t: byId.get(e.target)}); }).filter(function(e){ return e.s && e.t; });
+
+document.getElementById('counts').textContent = 'Nodes: ' + nodes.length + ' | Edges: ' + links.length;
+const svg = document.getElementById('graph');
+const tip = document.getElementById('tip');
+const NS = 'http://www.w3.org/2000/svg';
+const w = function(){ return svg.clientWidth; }, h = function(){ return svg.clientHeight; };
+
+function line(){ return document.createElementNS(NS,'line'); }
+function circle(){ return document.createElementNS(NS,'circle'); }
+function text(){ return document.createElementNS(NS,'text'); }
+
+const edgeEls = links.map(function(l){
+  const el = line();
+  el.setAttribute('stroke', '#475569');
+  el.setAttribute('stroke-width', String(Math.max(1, (l.strength||0.5)*3)));
+  el.setAttribute('opacity', '0.8');
+  svg.appendChild(el);
+  return el;
+});
+
+const nodeEls = nodes.map(function(n){
+  const el = circle();
+  el.setAttribute('r', n.kind === 'primary' ? '10' : '7');
+  el.setAttribute('fill', n.kind === 'primary' ? '#3b82f6' : '#64748b');
+  el.style.cursor = 'grab';
+  svg.appendChild(el);
+  const label = text();
+  label.textContent = n.id;
+  label.setAttribute('font-size','11');
+  label.setAttribute('fill','#e5e7eb');
+  svg.appendChild(label);
+  return {el: el, label: label};
+});
+
+let drag = null;
+for (let i=0;i<nodes.length;i++) {
+  const n = nodes[i];
+  const el = nodeEls[i].el;
+  el.addEventListener('pointerdown', function(e){ drag = n; el.setPointerCapture(e.pointerId); });
+  el.addEventListener('pointerup', function(){ drag = null; });
+  el.addEventListener('pointermove', function(e){
+    if (!drag) return;
+    const rect = svg.getBoundingClientRect();
+    n.x = e.clientX - rect.left;
+    n.y = e.clientY - rect.top;
+    n.vx = 0; n.vy = 0;
+  });
+  el.addEventListener('mousemove', function(e){
+    tip.style.display = 'block';
+    tip.style.left = (e.clientX + 12) + 'px';
+    tip.style.top = (e.clientY + 12) + 'px';
+    tip.textContent = n.id + ' | ' + n.kind + ' | ' + n.cluster;
+  });
+  el.addEventListener('mouseleave', function(){ tip.style.display = 'none'; });
+}
+
+function tick() {
+  const width = w(), height = h();
+  for (const n of nodes) {
+    n.vx += (width/2 - n.x) * 0.0007;
+    n.vy += (height/2 - n.y) * 0.0007;
+  }
+  for (const l of links) {
+    const dx = l.t.x - l.s.x, dy = l.t.y - l.s.y;
+    const d = Math.hypot(dx,dy) || 1;
+    const k = (d - 120) * 0.003;
+    const fx = (dx/d)*k, fy=(dy/d)*k;
+    l.s.vx += fx; l.s.vy += fy;
+    l.t.vx -= fx; l.t.vy -= fy;
+  }
+  for (let i=0;i<nodes.length;i++) {
+    for (let j=i+1;j<nodes.length;j++) {
+      const a = nodes[i], b = nodes[j];
+      const dx = b.x-a.x, dy = b.y-a.y;
+      const d2 = dx*dx + dy*dy;
+      if (d2 < 6400) {
+        const d = Math.sqrt(d2) || 1;
+        const rep = 0.08 / d;
+        const fx = dx*rep, fy = dy*rep;
+        a.vx -= fx; a.vy -= fy;
+        b.vx += fx; b.vy += fy;
+      }
+    }
+  }
+  for (const n of nodes) {
+    if (drag === n) continue;
+    n.vx *= 0.9; n.vy *= 0.9;
+    n.x += n.vx; n.y += n.vy;
+    n.x = Math.max(20, Math.min(width-20, n.x));
+    n.y = Math.max(20, Math.min(height-20, n.y));
+  }
+  links.forEach(function(l,i){
+    edgeEls[i].setAttribute('x1', l.s.x); edgeEls[i].setAttribute('y1', l.s.y);
+    edgeEls[i].setAttribute('x2', l.t.x); edgeEls[i].setAttribute('y2', l.t.y);
+  });
+  nodeEls.forEach(function(nv,i){
+    const n = nodes[i];
+    nv.el.setAttribute('cx', n.x); nv.el.setAttribute('cy', n.y);
+    nv.label.setAttribute('x', n.x + 12); nv.label.setAttribute('y', n.y + 4);
+  });
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>

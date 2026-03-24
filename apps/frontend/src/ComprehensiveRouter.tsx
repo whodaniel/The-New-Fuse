@@ -56,6 +56,9 @@ const WorkspaceChatPage = lazy(() => import('./pages/WorkspaceChat/index'));
 const NFTMarketplacePage = lazy(() => import('./pages/Agents/NFTMarketplacePage'));
 const RevenueDashboardPage = lazy(() => import('./pages/Agents/RevenueDashboardPage'));
 const UnifiedAgentCreator = lazy(() => import('./pages/Agents/UnifiedAgentCreator'));
+const PfpStudioPage = lazy(() => import('./pages/Agents/PfpStudio'));
+const PfpPromptCatalogPage = lazy(() => import('./pages/Agents/PfpPromptCatalog'));
+const CatalogProfilePage = lazy(() => import('./pages/Agents/CatalogProfile'));
 const SophisticatedTNFHub = lazy(() => import('./pages/Hub/SophisticatedTNFHub'));
 const ModernHub = lazy(() => import('./pages/Hub/ModernHub'));
 
@@ -372,9 +375,9 @@ export default function ComprehensiveRouter() {
                   </RequireMemberAccess>
                 }
               />
+              <Route path="/launchpad" element={<LaunchpadDashboard />} />
               <Route
-                path="/launchpad" element={<LaunchpadDashboard />} />
-              <Route path="/hub"
+                path="/hub"
                 element={
                   <RequireMemberAccess>
                     <Suspense fallback={<LoadingFallback name="Hub" />}>
@@ -536,6 +539,54 @@ export default function ComprehensiveRouter() {
                 element={
                   <RequireMemberAccess>
                     <RevenueDashboardPage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/agents/pfp-studio"
+                element={
+                  <RequireMemberAccess>
+                    <PfpStudioPage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/ai-portal/pfp-studio"
+                element={
+                  <RequireMemberAccess>
+                    <PfpStudioPage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/agents/pfp-prompts"
+                element={
+                  <RequireMemberAccess>
+                    <PfpPromptCatalogPage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/ai-portal/pfp-prompts"
+                element={
+                  <RequireMemberAccess>
+                    <PfpPromptCatalogPage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/agents/profiles"
+                element={
+                  <RequireMemberAccess>
+                    <PfpPromptCatalogPage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/agents/profiles/:slug"
+                element={
+                  <RequireMemberAccess>
+                    <CatalogProfilePage />
                   </RequireMemberAccess>
                 }
               />
@@ -793,9 +844,9 @@ export default function ComprehensiveRouter() {
                   </RequirePermission>
                 }
               />
+              <Route path="/perpetual-status" element={<PerpetualStatus />} />
               <Route
-                path="/perpetual-status" element={<PerpetualStatus />} />
-              <Route path="/admin/workspaces"
+                path="/admin/workspaces"
                 element={
                   <RequirePermission roles={['SUPER_ADMIN']}>
                     <WorkspaceManagement />

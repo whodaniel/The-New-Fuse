@@ -1,0 +1,106 @@
+{
+  "generated_at": "2026-03-03",
+  "domain": "brand",
+  "nodes": [
+    {
+      "id": "orchestrator-agent",
+      "kind": "primary",
+      "cluster": "orchestration"
+    },
+    {
+      "id": "task-agent-router",
+      "kind": "primary",
+      "cluster": "orchestration"
+    },
+    {
+      "id": "brand-identity-agent",
+      "kind": "sub",
+      "cluster": "brand"
+    },
+    {
+      "id": "brand-prospecting-agent",
+      "kind": "sub",
+      "cluster": "brand"
+    },
+    {
+      "id": "brand-outreach-agent",
+      "kind": "sub",
+      "cluster": "brand"
+    },
+    {
+      "id": "deal-negotiator-agent",
+      "kind": "sub",
+      "cluster": "brand"
+    },
+    {
+      "id": "contract-manager-agent",
+      "kind": "sub",
+      "cluster": "brand"
+    },
+    {
+      "id": "campaign-execution-agent",
+      "kind": "primary",
+      "cluster": "brand"
+    },
+    {
+      "id": "campaign-reporting-agent",
+      "kind": "sub",
+      "cluster": "brand"
+    },
+    {
+      "id": "legal-compliance-agent",
+      "kind": "primary",
+      "cluster": "ops"
+    }
+  ],
+  "edges": [
+    {
+      "source": "orchestrator-agent",
+      "target": "task-agent-router",
+      "type": "delegates",
+      "strength": 0.98
+    },
+    {
+      "source": "task-agent-router",
+      "target": "campaign-execution-agent",
+      "type": "routes_to",
+      "strength": 0.75
+    },
+    {
+      "source": "task-agent-router",
+      "target": "legal-compliance-agent",
+      "type": "routes_to",
+      "strength": 0.81
+    },
+    {
+      "source": "brand-prospecting-agent",
+      "target": "brand-outreach-agent",
+      "type": "feeds",
+      "strength": 0.90
+    },
+    {
+      "source": "brand-outreach-agent",
+      "target": "deal-negotiator-agent",
+      "type": "handoff",
+      "strength": 0.86
+    },
+    {
+      "source": "deal-negotiator-agent",
+      "target": "contract-manager-agent",
+      "type": "requires",
+      "strength": 0.92
+    },
+    {
+      "source": "contract-manager-agent",
+      "target": "campaign-execution-agent",
+      "type": "gates",
+      "strength": 0.91
+    },
+    {
+      "source": "campaign-execution-agent",
+      "target": "campaign-reporting-agent",
+      "type": "handoff",
+      "strength": 0.88
+    }
+  ]
+}

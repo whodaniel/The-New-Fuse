@@ -13,13 +13,17 @@ import {
   BarChart3,
   Bot,
   Brain,
+  FilePenLine,
   Filter,
   Grid,
+  Image as ImageIcon,
   List,
   MessageSquare,
   Plus,
   Search,
   Settings,
+  Sparkles,
+  Workflow,
   Zap,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
@@ -301,6 +305,80 @@ const AIAgentPortal: React.FC = () => {
               gradient="orange"
             />
           </motion.div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: 0.15 }}
+          className="mb-8"
+        >
+          <GlassCard className="p-4 border border-cyan-400/20 bg-gradient-to-r from-cyan-500/10 via-slate-950/30 to-fuchsia-500/10">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
+              <div>
+                <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/30 bg-cyan-400/10 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-cyan-100">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  Visual Identity Ops
+                </div>
+                <h2 className="mt-3 text-2xl font-bold text-white">Integrated from /ai-portal</h2>
+                <p className="text-sm text-gray-300 mt-1">
+                  Manage portrait regeneration, prompt strategy, and profile lookbook directly in
+                  the Agent Portal workflow.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Link to="/ai-portal/pfp-studio">
+                  <PremiumButton variant="gradient" icon={ImageIcon} iconPosition="left" size="sm">
+                    PFP Studio
+                  </PremiumButton>
+                </Link>
+                <Link to="/ai-portal/pfp-prompts">
+                  <PremiumButton variant="outline" icon={FilePenLine} iconPosition="left" size="sm">
+                    Prompt Catalog
+                  </PremiumButton>
+                </Link>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <Link to="/ai-portal/pfp-studio">
+                <div className="rounded-xl border border-white/10 bg-black/20 p-3 hover:border-cyan-300/40 transition-colors">
+                  <p className="text-sm font-semibold text-white flex items-center gap-2">
+                    <ImageIcon className="w-4 h-4 text-cyan-300" />
+                    Batch Portrait Ops
+                  </p>
+                  <p className="text-xs text-gray-300 mt-1">
+                    Select multiple agents, regenerate, drag/drop replacements, persist across
+                    refresh.
+                  </p>
+                </div>
+              </Link>
+              <Link to="/ai-portal/pfp-prompts">
+                <div className="rounded-xl border border-white/10 bg-black/20 p-3 hover:border-cyan-300/40 transition-colors">
+                  <p className="text-sm font-semibold text-white flex items-center gap-2">
+                    <FilePenLine className="w-4 h-4 text-cyan-300" />
+                    Prompt Workspace
+                  </p>
+                  <p className="text-xs text-gray-300 mt-1">
+                    Edit prompt specs, copy variants, and sync prompt overrides to portrait
+                    generation.
+                  </p>
+                </div>
+              </Link>
+              <Link to="/workflows/builder">
+                <div className="rounded-xl border border-white/10 bg-black/20 p-3 hover:border-cyan-300/40 transition-colors">
+                  <p className="text-sm font-semibold text-white flex items-center gap-2">
+                    <Workflow className="w-4 h-4 text-cyan-300" />
+                    Agent Factory Workflows
+                  </p>
+                  <p className="text-xs text-gray-300 mt-1">
+                    Jump into workflow orchestration and wire identity operations into production
+                    flows.
+                  </p>
+                </div>
+              </Link>
+            </div>
+          </GlassCard>
         </motion.div>
 
         {/* Search and Filters */}

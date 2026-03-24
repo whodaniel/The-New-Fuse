@@ -33,6 +33,16 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
   // AI & Agents
   { name: 'Multi-Agent Chat', path: '/multi-agent-chat', description: 'Main Chat Interface' },
   { name: 'AI Agent Portal', path: '/ai-portal', description: 'Agent Management' },
+  {
+    name: 'AI Portal PFP Studio',
+    path: '/ai-portal/pfp-studio',
+    description: 'Batch portrait generation and replacement control surface',
+  },
+  {
+    name: 'AI Portal Prompt Catalog',
+    path: '/ai-portal/pfp-prompts',
+    description: 'Prompt editing catalog connected to portrait generation',
+  },
   { name: 'AI Agent Portal Index', path: '/ai-agent-portal', description: 'Agent Portal Index' },
   { name: 'Chat', path: '/chat', description: 'Basic Chat Interface' },
   { name: 'Chat Page', path: '/chat-page', description: 'Dedicated Chat Page' },

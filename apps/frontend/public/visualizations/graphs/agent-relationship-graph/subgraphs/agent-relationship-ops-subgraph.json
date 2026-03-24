@@ -1,0 +1,93 @@
+{
+  "generated_at": "2026-03-03",
+  "domain": "ops",
+  "nodes": [
+    {
+      "id": "orchestrator-agent",
+      "kind": "primary",
+      "cluster": "orchestration"
+    },
+    {
+      "id": "task-agent-router",
+      "kind": "primary",
+      "cluster": "orchestration"
+    },
+    {
+      "id": "legal-compliance-agent",
+      "kind": "primary",
+      "cluster": "ops"
+    },
+    {
+      "id": "financial-manager-agent",
+      "kind": "primary",
+      "cluster": "ops"
+    },
+    {
+      "id": "tax-compliance-agent",
+      "kind": "sub",
+      "cluster": "ops"
+    },
+    {
+      "id": "reputation-management-agent",
+      "kind": "sub",
+      "cluster": "ops"
+    },
+    {
+      "id": "productivity-and-burnout-prevention-agent",
+      "kind": "sub",
+      "cluster": "ops"
+    },
+    {
+      "id": "analytics-and-reporting-agent",
+      "kind": "primary",
+      "cluster": "ops"
+    },
+    {
+      "id": "affiliate-link-manager-agent",
+      "kind": "sub",
+      "cluster": "ops"
+    },
+    {
+      "id": "asset-sourcer-agent",
+      "kind": "sub",
+      "cluster": "ops"
+    },
+    {
+      "id": "visual-asset-creator-agent",
+      "kind": "sub",
+      "cluster": "ops"
+    }
+  ],
+  "edges": [
+    {
+      "source": "orchestrator-agent",
+      "target": "task-agent-router",
+      "type": "delegates",
+      "strength": 0.98
+    },
+    {
+      "source": "task-agent-router",
+      "target": "legal-compliance-agent",
+      "type": "routes_to",
+      "strength": 0.81
+    },
+    {
+      "source": "legal-compliance-agent",
+      "target": "affiliate-link-manager-agent",
+      "type": "governs",
+      "strength": 0.90
+    },
+    {
+      "source": "legal-compliance-agent",
+      "target": "asset-sourcer-agent",
+      "type": "governs",
+      "strength": 0.89
+    },
+    {
+      "source": "asset-sourcer-agent",
+      "target": "visual-asset-creator-agent",
+      "type": "supplies",
+      "strength": 0.82
+    }
+  ]
+}

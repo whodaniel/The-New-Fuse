@@ -1,0 +1,132 @@
+{
+  "generated_at": "2026-03-03",
+  "domain": "seo",
+  "nodes": [
+    {
+      "id": "orchestrator-agent",
+      "kind": "primary",
+      "cluster": "orchestration"
+    },
+    {
+      "id": "task-agent-router",
+      "kind": "primary",
+      "cluster": "orchestration"
+    },
+    {
+      "id": "content-writer-agent",
+      "kind": "sub",
+      "cluster": "content"
+    },
+    {
+      "id": "content-calendar-agent",
+      "kind": "sub",
+      "cluster": "content"
+    },
+    {
+      "id": "content-calendar-orchestrator-agent",
+      "kind": "primary",
+      "cluster": "content"
+    },
+    {
+      "id": "keyword-research-agent",
+      "kind": "sub",
+      "cluster": "seo"
+    },
+    {
+      "id": "seo-optimizer-agent",
+      "kind": "sub",
+      "cluster": "seo"
+    },
+    {
+      "id": "technical-seo-auditor-agent",
+      "kind": "sub",
+      "cluster": "seo"
+    },
+    {
+      "id": "link-building-agent",
+      "kind": "sub",
+      "cluster": "seo"
+    }
+  ],
+  "edges": [
+    {
+      "source": "orchestrator-agent",
+      "target": "task-agent-router",
+      "type": "delegates",
+      "strength": 0.98
+    },
+    {
+      "source": "task-agent-router",
+      "target": "content-writer-agent",
+      "type": "routes_to",
+      "strength": 0.72
+    },
+    {
+      "source": "task-agent-router",
+      "target": "content-calendar-agent",
+      "type": "routes_to",
+      "strength": 0.74
+    },
+    {
+      "source": "task-agent-router",
+      "target": "content-calendar-orchestrator-agent",
+      "type": "routes_to",
+      "strength": 0.80
+    },
+    {
+      "source": "task-agent-router",
+      "target": "keyword-research-agent",
+      "type": "routes_to",
+      "strength": 0.73
+    },
+    {
+      "source": "task-agent-router",
+      "target": "seo-optimizer-agent",
+      "type": "routes_to",
+      "strength": 0.73
+    },
+    {
+      "source": "task-agent-router",
+      "target": "technical-seo-auditor-agent",
+      "type": "routes_to",
+      "strength": 0.68
+    },
+    {
+      "source": "content-calendar-agent",
+      "target": "keyword-research-agent",
+      "type": "depends_on",
+      "strength": 0.86
+    },
+    {
+      "source": "keyword-research-agent",
+      "target": "content-writer-agent",
+      "type": "feeds",
+      "strength": 0.88
+    },
+    {
+      "source": "content-writer-agent",
+      "target": "seo-optimizer-agent",
+      "type": "handoff",
+      "strength": 0.91
+    },
+    {
+      "source": "seo-optimizer-agent",
+      "target": "technical-seo-auditor-agent",
+      "type": "validated_by",
+      "strength": 0.79
+    },
+    {
+      "source": "technical-seo-auditor-agent",
+      "target": "content-calendar-agent",
+      "type": "feedback",
+      "strength": 0.71
+    },
+    {
+      "source": "content-calendar-orchestrator-agent",
+      "target": "content-calendar-agent",
+      "type": "overlaps_with",
+      "strength": 0.63,
+      "risk": "coordination_conflict"
+    }
+  ]
+}

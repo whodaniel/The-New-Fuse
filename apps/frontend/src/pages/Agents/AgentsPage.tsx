@@ -17,6 +17,7 @@ import {
   Edit3,
   Eye,
   Grid3X3,
+  Image as ImageIcon,
   LayoutList,
   MessageSquare,
   Play,
@@ -347,6 +348,24 @@ export default function AgentsPage() {
               </p>
             </div>
             <div className="flex gap-3">
+              <PremiumButton
+                variant="outline"
+                onClick={() => navigate('/agents/pfp-studio')}
+                icon={ImageIcon}
+                iconPosition="left"
+                size="md"
+              >
+                PFP Studio
+              </PremiumButton>
+              <PremiumButton
+                variant="outline"
+                onClick={() => navigate('/agents/pfp-prompts')}
+                icon={Edit3}
+                iconPosition="left"
+                size="md"
+              >
+                Prompt Catalog
+              </PremiumButton>
               <PremiumButton
                 onClick={() => navigate('/agents/new')}
                 icon={Plus}

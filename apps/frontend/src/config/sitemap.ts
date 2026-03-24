@@ -47,6 +47,18 @@ export const sitemap: SiteMapNode[] = [
           { path: '/agents', title: 'All Agents', requiresAuth: true },
           { path: '/agents/new', title: 'Create Agent', requiresAuth: true },
           { path: '/agents/:id', title: 'Agent Details', requiresAuth: true },
+          {
+            path: '/ai-portal/pfp-studio',
+            title: 'PFP Studio',
+            description: 'Batch portrait operations, regenerate, and image replacement',
+            requiresAuth: true,
+          },
+          {
+            path: '/ai-portal/pfp-prompts',
+            title: 'Prompt Catalog',
+            description: 'Prompt editing and prompt-to-image operations',
+            requiresAuth: true,
+          },
         ],
       },
       {

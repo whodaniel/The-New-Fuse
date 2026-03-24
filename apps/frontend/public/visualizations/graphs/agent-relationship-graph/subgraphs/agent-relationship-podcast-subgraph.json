@@ -1,0 +1,95 @@
+{
+  "generated_at": "2026-03-03",
+  "domain": "podcast",
+  "nodes": [
+    {
+      "id": "orchestrator-agent",
+      "kind": "primary",
+      "cluster": "orchestration"
+    },
+    {
+      "id": "task-agent-router",
+      "kind": "primary",
+      "cluster": "orchestration"
+    },
+    {
+      "id": "podcast-niche-analyst-agent",
+      "kind": "sub",
+      "cluster": "podcast"
+    },
+    {
+      "id": "podcast-format-designer-agent",
+      "kind": "sub",
+      "cluster": "podcast"
+    },
+    {
+      "id": "podcast-hosting-setup-agent",
+      "kind": "sub",
+      "cluster": "podcast"
+    },
+    {
+      "id": "podcast-distribution-agent",
+      "kind": "sub",
+      "cluster": "podcast"
+    },
+    {
+      "id": "podcast-promotion-agent",
+      "kind": "sub",
+      "cluster": "podcast"
+    },
+    {
+      "id": "podcast-analytics-agent",
+      "kind": "sub",
+      "cluster": "podcast"
+    },
+    {
+      "id": "analytics-and-reporting-agent",
+      "kind": "primary",
+      "cluster": "ops"
+    }
+  ],
+  "edges": [
+    {
+      "source": "orchestrator-agent",
+      "target": "task-agent-router",
+      "type": "delegates",
+      "strength": 0.98
+    },
+    {
+      "source": "task-agent-router",
+      "target": "podcast-promotion-agent",
+      "type": "routes_to",
+      "strength": 0.66
+    },
+    {
+      "source": "podcast-niche-analyst-agent",
+      "target": "podcast-format-designer-agent",
+      "type": "feeds",
+      "strength": 0.85
+    },
+    {
+      "source": "podcast-format-designer-agent",
+      "target": "podcast-hosting-setup-agent",
+      "type": "handoff",
+      "strength": 0.81
+    },
+    {
+      "source": "podcast-hosting-setup-agent",
+      "target": "podcast-distribution-agent",
+      "type": "handoff",
+      "strength": 0.93
+    },
+    {
+      "source": "podcast-distribution-agent",
+      "target": "podcast-promotion-agent",
+      "type": "enables",
+      "strength": 0.87
+    },
+    {
+      "source": "podcast-promotion-agent",
+      "target": "podcast-analytics-agent",
+      "type": "measured_by",
+      "strength": 0.84
+    }
+  ]
+}

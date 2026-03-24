@@ -1,0 +1,168 @@
+{
+  "generatedAt": "2026-03-24T10:10:55.297Z",
+  "source": "scripts/visualizations/publish-graph-artifacts.cjs",
+  "datasets": [
+    {
+      "id": "agent-relationship-graph",
+      "title": "Agent Relationship Graph",
+      "sourceRoot": "tools/agent-relationship-graph",
+      "publicRoot": "/agent-relationship-graph",
+      "copied": {
+        "files": 47,
+        "directories": 3
+      },
+      "graph": {
+        "file": "/agent-relationship-graph/agent-relationship-graph.json",
+        "nodes": 49,
+        "edges": 43
+      },
+      "subgraphs": [
+        {
+          "domain": "brand",
+          "nodes": 10,
+          "edges": 8,
+          "files": {
+            "json": "/agent-relationship-graph/subgraphs/agent-relationship-brand-subgraph.json",
+            "html": "/agent-relationship-graph/subgraphs/agent-relationship-brand-subgraph.html",
+            "markdown": "/agent-relationship-graph/subgraphs/agent-relationship-brand-subgraph.md",
+            "cypherNoApoc": "/agent-relationship-graph/subgraphs/agent-relationship-brand-subgraph.noapoc.cypher"
+          }
+        },
+        {
+          "domain": "content",
+          "nodes": 9,
+          "edges": 10,
+          "files": {
+            "json": "/agent-relationship-graph/subgraphs/agent-relationship-content-subgraph.json",
+            "html": "/agent-relationship-graph/subgraphs/agent-relationship-content-subgraph.html",
+            "markdown": "/agent-relationship-graph/subgraphs/agent-relationship-content-subgraph.md",
+            "cypherNoApoc": "/agent-relationship-graph/subgraphs/agent-relationship-content-subgraph.noapoc.cypher"
+          }
+        },
+        {
+          "domain": "funnel",
+          "nodes": 8,
+          "edges": 6,
+          "files": {
+            "json": "/agent-relationship-graph/subgraphs/agent-relationship-funnel-subgraph.json",
+            "html": "/agent-relationship-graph/subgraphs/agent-relationship-funnel-subgraph.html",
+            "markdown": "/agent-relationship-graph/subgraphs/agent-relationship-funnel-subgraph.md",
+            "cypherNoApoc": "/agent-relationship-graph/subgraphs/agent-relationship-funnel-subgraph.noapoc.cypher"
+          }
+        },
+        {
+          "domain": "ops",
+          "nodes": 11,
+          "edges": 5,
+          "files": {
+            "json": "/agent-relationship-graph/subgraphs/agent-relationship-ops-subgraph.json",
+            "html": "/agent-relationship-graph/subgraphs/agent-relationship-ops-subgraph.html",
+            "markdown": "/agent-relationship-graph/subgraphs/agent-relationship-ops-subgraph.md",
+            "cypherNoApoc": "/agent-relationship-graph/subgraphs/agent-relationship-ops-subgraph.noapoc.cypher"
+          }
+        },
+        {
+          "domain": "podcast",
+          "nodes": 9,
+          "edges": 7,
+          "files": {
+            "json": "/agent-relationship-graph/subgraphs/agent-relationship-podcast-subgraph.json",
+            "html": "/agent-relationship-graph/subgraphs/agent-relationship-podcast-subgraph.html",
+            "markdown": "/agent-relationship-graph/subgraphs/agent-relationship-podcast-subgraph.md",
+            "cypherNoApoc": "/agent-relationship-graph/subgraphs/agent-relationship-podcast-subgraph.noapoc.cypher"
+          }
+        },
+        {
+          "domain": "seo",
+          "nodes": 9,
+          "edges": 13,
+          "files": {
+            "json": "/agent-relationship-graph/subgraphs/agent-relationship-seo-subgraph.json",
+            "html": "/agent-relationship-graph/subgraphs/agent-relationship-seo-subgraph.html",
+            "markdown": "/agent-relationship-graph/subgraphs/agent-relationship-seo-subgraph.md",
+            "cypherNoApoc": "/agent-relationship-graph/subgraphs/agent-relationship-seo-subgraph.noapoc.cypher"
+          }
+        },
+        {
+          "domain": "social",
+          "nodes": 8,
+          "edges": 2,
+          "files": {
+            "json": "/agent-relationship-graph/subgraphs/agent-relationship-social-subgraph.json",
+            "html": "/agent-relationship-graph/subgraphs/agent-relationship-social-subgraph.html",
+            "markdown": "/agent-relationship-graph/subgraphs/agent-relationship-social-subgraph.md",
+            "cypherNoApoc": "/agent-relationship-graph/subgraphs/agent-relationship-social-subgraph.noapoc.cypher"
+          }
+        }
+      ],
+      "neo4j": {
+        "files": {
+          "nodesCsv": "/agent-relationship-graph/neo4j-package/nodes.csv",
+          "edgesCsv": "/agent-relationship-graph/neo4j-package/edges.csv",
+          "domainMembershipCsv": "/agent-relationship-graph/neo4j-package/domain_membership.csv",
+          "loadNoApocCypher": "/agent-relationship-graph/neo4j-package/load.noapoc.cypher",
+          "loadApocCypher": "/agent-relationship-graph/neo4j-package/load.apoc.cypher",
+          "readme": "/agent-relationship-graph/neo4j-package/README.md"
+        },
+        "rows": {
+          "nodes": 49,
+          "edges": 43,
+          "domainMembership": 64
+        }
+      },
+      "reports": {
+        "centralityJson": "/agent-relationship-graph/reports/agent-relationship-centrality-report.json",
+        "centralityMarkdown": "/agent-relationship-graph/reports/agent-relationship-centrality-report.md",
+        "hubsMarkdown": "/agent-relationship-graph/reports/agent-relationship-subgraph-hubs.md"
+      },
+      "temporal": {
+        "latestSnapshot": "/agent-relationship-graph/snapshots/latest-snapshot.json",
+        "latestDeltaJson": "/agent-relationship-graph/snapshots/latest-delta.json",
+        "latestDeltaMarkdown": "/agent-relationship-graph/snapshots/latest-delta.md",
+        "latestAlertJson": "/agent-relationship-graph/snapshots/latest-alert.json",
+        "latestAlertMarkdown": "/agent-relationship-graph/snapshots/latest-alert.md"
+      },
+      "missingRequirements": []
+    },
+    {
+      "id": "framework-master-graph",
+      "title": "Framework Master Graph",
+      "sourceRoot": "tools/framework-master-graph",
+      "publicRoot": "/framework-master-graph",
+      "copied": {
+        "files": 10,
+        "directories": 1
+      },
+      "graph": {
+        "file": "/framework-master-graph/master-framework-graph.json",
+        "nodes": 469,
+        "edges": 1266
+      },
+      "subgraphs": [],
+      "neo4j": {
+        "files": {
+          "nodesCsv": "/framework-master-graph/neo4j-package/nodes.csv",
+          "edgesCsv": "/framework-master-graph/neo4j-package/edges.csv",
+          "loadNoApocCypher": "/framework-master-graph/neo4j-package/load.noapoc.cypher",
+          "loadApocCypher": "/framework-master-graph/neo4j-package/load.apoc.cypher",
+          "readme": "/framework-master-graph/neo4j-package/README.md"
+        },
+        "rows": {
+          "nodes": 469,
+          "edges": 1266
+        }
+      },
+      "reports": {},
+      "temporal": {},
+      "missingRequirements": []
+    }
+  ],
+  "missingImplementations": [],
+  "totals": {
+    "datasets": 2,
+    "graphNodes": 518,
+    "graphEdges": 1309,
+    "subgraphs": 7,
+    "missingImplementations": 0
+  }
+}

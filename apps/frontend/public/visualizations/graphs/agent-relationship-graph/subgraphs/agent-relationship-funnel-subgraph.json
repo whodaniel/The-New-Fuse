@@ -1,0 +1,84 @@
+{
+  "generated_at": "2026-03-03",
+  "domain": "funnel",
+  "nodes": [
+    {
+      "id": "orchestrator-agent",
+      "kind": "primary",
+      "cluster": "orchestration"
+    },
+    {
+      "id": "task-agent-router",
+      "kind": "primary",
+      "cluster": "orchestration"
+    },
+    {
+      "id": "sales-funnel-architect-agent",
+      "kind": "sub",
+      "cluster": "funnel"
+    },
+    {
+      "id": "cro-process-agent",
+      "kind": "primary",
+      "cluster": "funnel"
+    },
+    {
+      "id": "ab-testing-optimizer-agent",
+      "kind": "sub",
+      "cluster": "funnel"
+    },
+    {
+      "id": "cognitive-bias-optimizer-agent",
+      "kind": "sub",
+      "cluster": "funnel"
+    },
+    {
+      "id": "value-ladder-architect-agent",
+      "kind": "primary",
+      "cluster": "funnel"
+    },
+    {
+      "id": "analytics-and-reporting-agent",
+      "kind": "primary",
+      "cluster": "ops"
+    }
+  ],
+  "edges": [
+    {
+      "source": "orchestrator-agent",
+      "target": "task-agent-router",
+      "type": "delegates",
+      "strength": 0.98
+    },
+    {
+      "source": "task-agent-router",
+      "target": "cro-process-agent",
+      "type": "routes_to",
+      "strength": 0.77
+    },
+    {
+      "source": "cro-process-agent",
+      "target": "ab-testing-optimizer-agent",
+      "type": "orchestrates",
+      "strength": 0.92
+    },
+    {
+      "source": "cro-process-agent",
+      "target": "cognitive-bias-optimizer-agent",
+      "type": "orchestrates",
+      "strength": 0.83
+    },
+    {
+      "source": "ab-testing-optimizer-agent",
+      "target": "analytics-and-reporting-agent",
+      "type": "measured_by",
+      "strength": 0.89
+    },
+    {
+      "source": "cognitive-bias-optimizer-agent",
+      "target": "analytics-and-reporting-agent",
+      "type": "measured_by",
+      "strength": 0.82
+    }
+  ]
+}

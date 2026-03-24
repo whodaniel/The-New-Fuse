@@ -1,0 +1,60 @@
+{
+  "generated_at": "2026-03-03",
+  "domain": "social",
+  "nodes": [
+    {
+      "id": "orchestrator-agent",
+      "kind": "primary",
+      "cluster": "orchestration"
+    },
+    {
+      "id": "task-agent-router",
+      "kind": "primary",
+      "cluster": "orchestration"
+    },
+    {
+      "id": "content-calendar-orchestrator-agent",
+      "kind": "primary",
+      "cluster": "content"
+    },
+    {
+      "id": "instagram-strategy-agent",
+      "kind": "sub",
+      "cluster": "social"
+    },
+    {
+      "id": "tiktok-strategy-agent",
+      "kind": "sub",
+      "cluster": "social"
+    },
+    {
+      "id": "x-strategy-agent",
+      "kind": "sub",
+      "cluster": "social"
+    },
+    {
+      "id": "facebook-strategy-agent",
+      "kind": "sub",
+      "cluster": "social"
+    },
+    {
+      "id": "audience-growth-agent",
+      "kind": "sub",
+      "cluster": "social"
+    }
+  ],
+  "edges": [
+    {
+      "source": "orchestrator-agent",
+      "target": "task-agent-router",
+      "type": "delegates",
+      "strength": 0.98
+    },
+    {
+      "source": "task-agent-router",
+      "target": "content-calendar-orchestrator-agent",
+      "type": "routes_to",
+      "strength": 0.80
+    }
+  ]
+}

@@ -6,28 +6,6 @@ This repository uses TNF frontloading. Start every new AI terminal session with:
 pnpm run tnf:onboard
 ```
 
-## ⚠️ Repository Architecture (CRITICAL)
-
-**TNF uses a combined monorepo for development with two downstream publication
-repos.** Read `docs/REPO_SEPARATION.md` for full details.
-
-```
-whodaniel/fuse              ← YOU ARE HERE (develop everything here)
-    ├──► fuse-open-runtime  ← 90% open-source (read-only, auto-synced)
-    └──► fuse-control-plane ← 10% proprietary (read-only, auto-synced)
-```
-
-**Rules:**
-
-1. **NEVER commit directly to `fuse-open-runtime` or `fuse-control-plane`.**
-2. Proprietary content is defined in `scripts/sync-repos.sh` (`PROPRIETARY_*`
-   arrays).
-3. Run `pnpm run sync:repos` to push changes to both downstream repos.
-4. `packages/control-plane-contracts/` is the PUBLIC API boundary between open
-   and closed source.
-5. Files marked 🔴 in `docs/REPO_SEPARATION.md` are proprietary — do not move
-   them to public-only packages.
-
 ## Mandatory Context Files
 
 1. `.agent/SYSTEM_PROMPT.md`
