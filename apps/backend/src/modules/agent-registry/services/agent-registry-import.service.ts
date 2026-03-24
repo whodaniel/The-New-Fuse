@@ -137,6 +137,7 @@ export class AgentRegistryImportService {
       imported: 0,
       skipped: 0,
       vectorReindex: null as unknown,
+      warnings: [] as { id: string; warning: string }[],
       errors: [] as { id: string; error: string }[],
     };
     const importedTnfIds: string[] = [];
@@ -273,10 +274,9 @@ export class AgentRegistryImportService {
       try {
         result.vectorReindex = await this.agentProfileVectorService.reindexByTnfIds(importedTnfIds);
       } catch (error: any) {
-        result.ok = false;
         const message = error?.message || String(error);
-        result.errors.push({ id: 'vector-reindex', error: message });
-        this.logger.error(`Vector reindex failed after snapshot import: ${message}`);
+        result.warnings.push({ id: 'vector-reindex', warning: message });
+        this.logger.warn(`Vector reindex failed after snapshot import: ${message}`);
       }
     }
 
