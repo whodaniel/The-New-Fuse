@@ -259,7 +259,11 @@
     "graph:alerts": "make -C tools/agent-relationship-graph alerts",
     "graph:html": "make -C tools/agent-relationship-graph html",
     "graph:help": "make -C tools/agent-relationship-graph help",
-    "viz:generate": "node visualizations/tools/cli.js"
+    "viz:generate": "node visualizations/tools/cli.js",
+    "sync:repos": "bash scripts/sync-repos.sh",
+    "sync:repos:open": "bash scripts/sync-repos.sh --open",
+    "sync:repos:control": "bash scripts/sync-repos.sh --control",
+    "sync:repos:dry-run": "bash scripts/sync-repos.sh --dry-run"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
