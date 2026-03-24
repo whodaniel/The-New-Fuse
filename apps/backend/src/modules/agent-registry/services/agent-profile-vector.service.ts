@@ -797,6 +797,7 @@ export class AgentProfileVectorService {
       const chunk = chunks[i];
       const embedding = embeddings[i];
       const vectorLiteral = this.toVectorLiteral(embedding);
+      const metadataJson = JSON.stringify(chunk.metadata ?? {});
 
       await db.execute(sql`
         INSERT INTO ${this.collectionSql()} (
@@ -814,7 +815,7 @@ export class AgentProfileVectorService {
           ${chunk.chunkType},
           ${chunk.chunkIndex},
           ${chunk.content},
-          ${chunk.metadata},
+          ${metadataJson}::jsonb,
           ${sql.raw(`'${vectorLiteral}'::vector`)}
         )
         ON CONFLICT (id) DO UPDATE SET
