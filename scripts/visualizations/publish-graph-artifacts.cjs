@@ -7,6 +7,11 @@ function ensureDir(dir) {
   fs.mkdirSync(dir, { recursive: true });
 }
 
+function resetDir(dir) {
+  fs.rmSync(dir, { recursive: true, force: true });
+  ensureDir(dir);
+}
+
 function exists(filePath) {
   return fs.existsSync(filePath);
 }
@@ -95,9 +100,10 @@ function collectSubgraphs(subgraphsDir, publicRoot) {
     .sort((a, b) => a.domain.localeCompare(b.domain));
 }
 
-function publishAgentRelationship(repoRoot, publicRoot) {
+function publishAgentRelationship(repoRoot, publicFsRoot, publicUrlRoot) {
   const sourceRoot = path.join(repoRoot, 'tools', 'agent-relationship-graph');
-  const targetRoot = path.join(publicRoot, 'agent-relationship-graph');
+  const targetRoot = path.join(publicFsRoot, 'agent-relationship-graph');
+  resetDir(targetRoot);
 
   const copied = {
     files: 0,
@@ -152,12 +158,12 @@ function publishAgentRelationship(repoRoot, publicRoot) {
   const neo4jRoot = path.join(targetRoot, 'neo4j-package');
   const neo4j = {
     files: {
-      nodesCsv: toPublicPath(path.join(neo4jRoot, 'nodes.csv'), publicRoot),
-      edgesCsv: toPublicPath(path.join(neo4jRoot, 'edges.csv'), publicRoot),
-      domainMembershipCsv: toPublicPath(path.join(neo4jRoot, 'domain_membership.csv'), publicRoot),
-      loadNoApocCypher: toPublicPath(path.join(neo4jRoot, 'load.noapoc.cypher'), publicRoot),
-      loadApocCypher: toPublicPath(path.join(neo4jRoot, 'load.apoc.cypher'), publicRoot),
-      readme: toPublicPath(path.join(neo4jRoot, 'README.md'), publicRoot),
+      nodesCsv: toPublicPath(path.join(neo4jRoot, 'nodes.csv'), publicUrlRoot),
+      edgesCsv: toPublicPath(path.join(neo4jRoot, 'edges.csv'), publicUrlRoot),
+      domainMembershipCsv: toPublicPath(path.join(neo4jRoot, 'domain_membership.csv'), publicUrlRoot),
+      loadNoApocCypher: toPublicPath(path.join(neo4jRoot, 'load.noapoc.cypher'), publicUrlRoot),
+      loadApocCypher: toPublicPath(path.join(neo4jRoot, 'load.apoc.cypher'), publicUrlRoot),
+      readme: toPublicPath(path.join(neo4jRoot, 'README.md'), publicUrlRoot),
     },
     rows: {
       nodes: csvRowCount(path.join(neo4jRoot, 'nodes.csv')),
@@ -175,17 +181,17 @@ function publishAgentRelationship(repoRoot, publicRoot) {
   if (!exists(path.join(neo4jRoot, 'load.apoc.cypher')))
     missingRequirements.push('neo4j-load-apoc-cypher');
 
-  const subgraphs = collectSubgraphs(path.join(targetRoot, 'subgraphs'), publicRoot);
+  const subgraphs = collectSubgraphs(path.join(targetRoot, 'subgraphs'), publicUrlRoot);
   if (subgraphs.length === 0) missingRequirements.push('subgraph-html-json-bundle');
 
   return {
     id: 'agent-relationship-graph',
     title: 'Agent Relationship Graph',
     sourceRoot: path.relative(repoRoot, sourceRoot),
-    publicRoot: toPublicPath(targetRoot, publicRoot),
+    publicRoot: toPublicPath(targetRoot, publicUrlRoot),
     copied,
     graph: {
-      file: toPublicPath(graphJsonPath, publicRoot),
+      file: toPublicPath(graphJsonPath, publicUrlRoot),
       nodes: nodeCount,
       edges: edgeCount,
     },
@@ -194,31 +200,32 @@ function publishAgentRelationship(repoRoot, publicRoot) {
     reports: {
       centralityJson: toPublicPath(
         path.join(targetRoot, 'reports', 'agent-relationship-centrality-report.json'),
-        publicRoot
+        publicUrlRoot
       ),
       centralityMarkdown: toPublicPath(
         path.join(targetRoot, 'reports', 'agent-relationship-centrality-report.md'),
-        publicRoot
+        publicUrlRoot
       ),
       hubsMarkdown: toPublicPath(
         path.join(targetRoot, 'reports', 'agent-relationship-subgraph-hubs.md'),
-        publicRoot
+        publicUrlRoot
       ),
     },
     temporal: {
-      latestSnapshot: toPublicPath(path.join(targetRoot, 'snapshots', 'latest-snapshot.json'), publicRoot),
-      latestDeltaJson: toPublicPath(path.join(targetRoot, 'snapshots', 'latest-delta.json'), publicRoot),
-      latestDeltaMarkdown: toPublicPath(path.join(targetRoot, 'snapshots', 'latest-delta.md'), publicRoot),
-      latestAlertJson: toPublicPath(path.join(targetRoot, 'snapshots', 'latest-alert.json'), publicRoot),
-      latestAlertMarkdown: toPublicPath(path.join(targetRoot, 'snapshots', 'latest-alert.md'), publicRoot),
+      latestSnapshot: toPublicPath(path.join(targetRoot, 'snapshots', 'latest-snapshot.json'), publicUrlRoot),
+      latestDeltaJson: toPublicPath(path.join(targetRoot, 'snapshots', 'latest-delta.json'), publicUrlRoot),
+      latestDeltaMarkdown: toPublicPath(path.join(targetRoot, 'snapshots', 'latest-delta.md'), publicUrlRoot),
+      latestAlertJson: toPublicPath(path.join(targetRoot, 'snapshots', 'latest-alert.json'), publicUrlRoot),
+      latestAlertMarkdown: toPublicPath(path.join(targetRoot, 'snapshots', 'latest-alert.md'), publicUrlRoot),
     },
     missingRequirements,
   };
 }
 
-function publishFrameworkMaster(repoRoot, publicRoot) {
+function publishFrameworkMaster(repoRoot, publicFsRoot, publicUrlRoot) {
   const sourceRoot = path.join(repoRoot, 'tools', 'framework-master-graph');
-  const targetRoot = path.join(publicRoot, 'framework-master-graph');
+  const targetRoot = path.join(publicFsRoot, 'framework-master-graph');
+  resetDir(targetRoot);
 
   const copied = {
     files: 0,
@@ -249,11 +256,11 @@ function publishFrameworkMaster(repoRoot, publicRoot) {
   const neo4jRoot = path.join(targetRoot, 'neo4j-package');
   const neo4j = {
     files: {
-      nodesCsv: toPublicPath(path.join(neo4jRoot, 'nodes.csv'), publicRoot),
-      edgesCsv: toPublicPath(path.join(neo4jRoot, 'edges.csv'), publicRoot),
-      loadNoApocCypher: toPublicPath(path.join(neo4jRoot, 'load.noapoc.cypher'), publicRoot),
-      loadApocCypher: toPublicPath(path.join(neo4jRoot, 'load.apoc.cypher'), publicRoot),
-      readme: toPublicPath(path.join(neo4jRoot, 'README.md'), publicRoot),
+      nodesCsv: toPublicPath(path.join(neo4jRoot, 'nodes.csv'), publicUrlRoot),
+      edgesCsv: toPublicPath(path.join(neo4jRoot, 'edges.csv'), publicUrlRoot),
+      loadNoApocCypher: toPublicPath(path.join(neo4jRoot, 'load.noapoc.cypher'), publicUrlRoot),
+      loadApocCypher: toPublicPath(path.join(neo4jRoot, 'load.apoc.cypher'), publicUrlRoot),
+      readme: toPublicPath(path.join(neo4jRoot, 'README.md'), publicUrlRoot),
     },
     rows: {
       nodes: csvRowCount(path.join(neo4jRoot, 'nodes.csv')),
@@ -274,10 +281,10 @@ function publishFrameworkMaster(repoRoot, publicRoot) {
     id: 'framework-master-graph',
     title: 'Framework Master Graph',
     sourceRoot: path.relative(repoRoot, sourceRoot),
-    publicRoot: toPublicPath(targetRoot, publicRoot),
+    publicRoot: toPublicPath(targetRoot, publicUrlRoot),
     copied,
     graph: {
-      file: toPublicPath(graphJsonPath, publicRoot),
+      file: toPublicPath(graphJsonPath, publicUrlRoot),
       nodes: nodeCount,
       edges: edgeCount,
     },
@@ -291,7 +298,8 @@ function publishFrameworkMaster(repoRoot, publicRoot) {
 
 function main() {
   const repoRoot = process.cwd();
-  const publicGraphRoot = path.join(repoRoot, 'apps', 'frontend', 'public', 'visualizations', 'graphs');
+  const frontendPublicRoot = path.join(repoRoot, 'apps', 'frontend', 'public');
+  const publicGraphRoot = path.join(frontendPublicRoot, 'visualizations', 'graphs');
   const outputPath = path.join(
     repoRoot,
     'apps',
@@ -306,8 +314,8 @@ function main() {
   ensureDir(path.dirname(outputPath));
 
   const datasets = [
-    publishAgentRelationship(repoRoot, publicGraphRoot),
-    publishFrameworkMaster(repoRoot, publicGraphRoot),
+    publishAgentRelationship(repoRoot, publicGraphRoot, frontendPublicRoot),
+    publishFrameworkMaster(repoRoot, publicGraphRoot, frontendPublicRoot),
   ];
 
   const missingImplementations = datasets.flatMap((dataset) =>

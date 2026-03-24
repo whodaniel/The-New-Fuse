@@ -107,6 +107,57 @@ type ObservatoryDataSources = {
   orchestratorHealth: string;
   systemHealth: string;
   systemMetrics: string;
+  graphArtifacts: string;
+};
+
+type GraphArtifactsIndex = {
+  generatedAt?: string;
+  source?: string;
+  datasets?: Array<{
+    id: string;
+    title?: string;
+    sourceRoot?: string;
+    publicRoot?: string;
+    copied?: { files?: number; directories?: number };
+    graph?: { file?: string; nodes?: number; edges?: number };
+    subgraphs?: Array<{
+      domain: string;
+      nodes?: number;
+      edges?: number;
+      files?: {
+        json?: string | null;
+        html?: string | null;
+        markdown?: string | null;
+        cypherNoApoc?: string | null;
+      };
+    }>;
+    neo4j?: {
+      files?: {
+        nodesCsv?: string | null;
+        edgesCsv?: string | null;
+        domainMembershipCsv?: string | null;
+        loadNoApocCypher?: string | null;
+        loadApocCypher?: string | null;
+        readme?: string | null;
+      };
+      rows?: {
+        nodes?: number;
+        edges?: number;
+        domainMembership?: number;
+      };
+    };
+    reports?: Record<string, string | null>;
+    temporal?: Record<string, string | null>;
+    missingRequirements?: string[];
+  }>;
+  missingImplementations?: Array<{ datasetId: string; requirement: string }>;
+  totals?: {
+    datasets?: number;
+    graphNodes?: number;
+    graphEdges?: number;
+    subgraphs?: number;
+    missingImplementations?: number;
+  };
 };
 
 const SOURCE_UNRESOLVED = 'unresolved';
@@ -135,7 +186,9 @@ function categorizeAgent(name: string): string {
 
 export const SystemObservatory: React.FC = () => {
   const { capabilities } = useFeatureCapabilities();
-  const [activeLayer, setActiveLayer] = useState<'topology' | 'semantic' | 'metrics'>('topology');
+  const [activeLayer, setActiveLayer] = useState<'topology' | 'semantic' | 'graphs' | 'metrics'>(
+    'topology'
+  );
   const [agentIndex, setAgentIndex] = useState<AgentIndex | null>(null);
   const [agentIndexLoading, setAgentIndexLoading] = useState(true);
   const [agentIndexError, setAgentIndexError] = useState<string | null>(null);
@@ -165,7 +218,11 @@ export const SystemObservatory: React.FC = () => {
     orchestratorHealth: SOURCE_UNRESOLVED,
     systemHealth: SOURCE_UNRESOLVED,
     systemMetrics: SOURCE_UNRESOLVED,
+    graphArtifacts: SOURCE_UNRESOLVED,
   });
+  const [graphArtifacts, setGraphArtifacts] = useState<GraphArtifactsIndex | null>(null);
+  const [graphArtifactsLoading, setGraphArtifactsLoading] = useState(true);
+  const [graphArtifactsError, setGraphArtifactsError] = useState<string | null>(null);
 
   const fetchFirstJson = async (
     paths: string[],
@@ -225,12 +282,13 @@ export const SystemObservatory: React.FC = () => {
 
       const formatSource = (result: EndpointResolution | null) =>
         result ? `${result.source}${result.usedAlternate ? ' (alt)' : ''}` : 'unavailable';
-      setDataSources({
+      setDataSources((prev) => ({
+        ...prev,
         orchestratorAgents: formatSource(agentsResult),
         orchestratorHealth: formatSource(orchestratorHealthResult),
         systemHealth: formatSource(systemHealthResult),
         systemMetrics: formatSource(systemMetricsResult),
-      });
+      }));
 
       const agentsData = unwrap(agentsResult?.data);
       const orchestratorHealth = unwrap(orchestratorHealthResult?.data);
@@ -326,6 +384,59 @@ export const SystemObservatory: React.FC = () => {
     }
   };
 
+  const loadGraphArtifacts = async () => {
+    setGraphArtifactsLoading(true);
+    setGraphArtifactsError(null);
+    try {
+      const graphArtifactsResult = await fetchFirstJson(
+        [
+          '/visualizations/data/graph-artifacts.index.json',
+          '/api/visualizations/data/graph-artifacts.index.json',
+        ],
+        'graph artifacts index'
+      );
+
+      setDataSources((prev) => ({
+        ...prev,
+        graphArtifacts: graphArtifactsResult
+          ? `${graphArtifactsResult.source}${graphArtifactsResult.usedAlternate ? ' (alt)' : ''}`
+          : 'unavailable',
+      }));
+
+      if (!graphArtifactsResult) {
+        setGraphArtifacts(null);
+        setGraphArtifactsError(
+          'Graph artifacts index unavailable. Run `pnpm run viz:graph:publish` to publish graph bundles.'
+        );
+        return;
+      }
+
+      const payload = unwrap(graphArtifactsResult.data);
+      const datasets = Array.isArray(payload.datasets) ? payload.datasets : [];
+      const missingImplementations = Array.isArray(payload.missingImplementations)
+        ? payload.missingImplementations
+        : [];
+      const totals = payload.totals && typeof payload.totals === 'object' ? payload.totals : {};
+
+      setGraphArtifacts({
+        ...payload,
+        datasets,
+        missingImplementations,
+        totals,
+      });
+      if (datasets.length === 0) {
+        setGraphArtifactsError('No graph datasets were published to static assets.');
+      }
+    } catch (error) {
+      setGraphArtifacts(null);
+      setGraphArtifactsError(
+        error instanceof Error ? error.message : 'Failed to load graph artifacts index'
+      );
+    } finally {
+      setGraphArtifactsLoading(false);
+    }
+  };
+
   useEffect(() => {
     setAgentIndexLoading(true);
     setAgentIndexError(null);
@@ -342,6 +453,10 @@ export const SystemObservatory: React.FC = () => {
         setAgentIndexError(error instanceof Error ? error.message : 'Failed to load agent index');
       })
       .finally(() => setAgentIndexLoading(false));
+  }, []);
+
+  useEffect(() => {
+    void loadGraphArtifacts();
   }, []);
 
   useEffect(() => {
@@ -616,6 +731,7 @@ export const SystemObservatory: React.FC = () => {
               <SourceBadge label="Orchestrator" value={dataSources.orchestratorHealth} />
               <SourceBadge label="System Health" value={dataSources.systemHealth} />
               <SourceBadge label="System Metrics" value={dataSources.systemMetrics} />
+              <SourceBadge label="Graph Index" value={dataSources.graphArtifacts} />
               <CapabilityBadge
                 label="Swarm API"
                 enabled={
@@ -644,6 +760,12 @@ export const SystemObservatory: React.FC = () => {
             icon={<Database className="w-4 h-4" />}
             label="Semantic"
             onClick={() => setActiveLayer('semantic')}
+          />
+          <TabButton
+            active={activeLayer === 'graphs'}
+            icon={<Layers className="w-4 h-4" />}
+            label="Graphs"
+            onClick={() => setActiveLayer('graphs')}
           />
           <TabButton
             active={activeLayer === 'metrics'}
@@ -804,6 +926,189 @@ export const SystemObservatory: React.FC = () => {
               </div>
             </div>
           )}
+          {activeLayer === 'graphs' && (
+            <div className="h-full overflow-auto pr-1 space-y-4">
+              {graphArtifactsLoading ? (
+                <div className="h-full rounded-md border border-white/10 bg-black/30 flex items-center justify-center text-gray-400 text-sm">
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Loading graph and Neo4j artifacts...
+                </div>
+              ) : graphArtifacts ? (
+                <>
+                  <GlassCard className="p-4 border-white/5 bg-black/40">
+                    <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+                      <div>
+                        <div className="text-xs font-black text-gray-400 uppercase tracking-widest">
+                          Graph Artifact Index
+                        </div>
+                        <div className="text-[10px] text-muted-foreground font-mono">
+                          {graphArtifacts.generatedAt
+                            ? `Generated ${new Date(graphArtifacts.generatedAt).toLocaleString()}`
+                            : 'Timestamp unavailable'}
+                        </div>
+                      </div>
+                      <div className="text-[10px] text-muted-foreground font-mono">
+                        {graphArtifacts.source ?? 'source unknown'}
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                      <MiniStat
+                        label="Datasets"
+                        value={String(graphArtifacts.totals?.datasets ?? 0)}
+                      />
+                      <MiniStat
+                        label="Nodes"
+                        value={String(graphArtifacts.totals?.graphNodes ?? 0)}
+                      />
+                      <MiniStat
+                        label="Edges"
+                        value={String(graphArtifacts.totals?.graphEdges ?? 0)}
+                      />
+                      <MiniStat
+                        label="Missing"
+                        value={String(graphArtifacts.totals?.missingImplementations ?? 0)}
+                      />
+                    </div>
+                  </GlassCard>
+
+                  {!!graphArtifacts.missingImplementations?.length && (
+                    <GlassCard className="p-4 border-red-500/30 bg-red-500/10">
+                      <div className="text-xs font-black text-red-300 uppercase tracking-widest mb-2">
+                        Missing Neo4j/Graph Implementations
+                      </div>
+                      <div className="space-y-1">
+                        {graphArtifacts.missingImplementations.map((item) => (
+                          <div
+                            key={`${item.datasetId}:${item.requirement}`}
+                            className="text-xs text-red-200 font-mono"
+                          >
+                            {item.datasetId}: {item.requirement}
+                          </div>
+                        ))}
+                      </div>
+                    </GlassCard>
+                  )}
+
+                  {(graphArtifacts.datasets ?? []).map((dataset) => (
+                    <GlassCard
+                      key={dataset.id}
+                      className="p-4 border-white/5 bg-black/40 space-y-4"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                          <div className="text-xs font-black text-gray-400 uppercase tracking-widest">
+                            {dataset.title ?? dataset.id}
+                          </div>
+                          <div className="text-[10px] text-muted-foreground font-mono">
+                            {dataset.sourceRoot ?? 'source unavailable'}
+                          </div>
+                        </div>
+                        <div className="text-[10px] text-muted-foreground font-mono">
+                          copied {dataset.copied?.files ?? 0} files
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                        <MiniStat label="Graph Nodes" value={String(dataset.graph?.nodes ?? 0)} />
+                        <MiniStat label="Graph Edges" value={String(dataset.graph?.edges ?? 0)} />
+                        <MiniStat
+                          label="Subgraphs"
+                          value={String((dataset.subgraphs ?? []).length)}
+                        />
+                        <MiniStat
+                          label="Missing"
+                          value={String((dataset.missingRequirements ?? []).length)}
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="rounded-md border border-white/10 bg-black/20 p-3">
+                          <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-2">
+                            Neo4j Package
+                          </div>
+                          <div className="space-y-1 mb-2 text-[10px] text-gray-300 font-mono">
+                            <div>nodes.csv rows: {dataset.neo4j?.rows?.nodes ?? 0}</div>
+                            <div>edges.csv rows: {dataset.neo4j?.rows?.edges ?? 0}</div>
+                            {typeof dataset.neo4j?.rows?.domainMembership === 'number' && (
+                              <div>
+                                domain_membership.csv rows:{' '}
+                                {dataset.neo4j?.rows?.domainMembership ?? 0}
+                              </div>
+                            )}
+                          </div>
+                          <div className="space-y-1">
+                            {Object.entries(dataset.neo4j?.files ?? {})
+                              .filter(([, value]) => typeof value === 'string' && value)
+                              .map(([key, value]) => (
+                                <ArtifactLink key={key} href={String(value)} label={key} />
+                              ))}
+                          </div>
+                        </div>
+
+                        <div className="rounded-md border border-white/10 bg-black/20 p-3">
+                          <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-2">
+                            Artifact Files
+                          </div>
+                          <div className="space-y-1">
+                            {dataset.graph?.file && (
+                              <ArtifactLink href={dataset.graph.file} label="graph.json" />
+                            )}
+                            {Object.entries(dataset.reports ?? {})
+                              .filter(([, value]) => typeof value === 'string' && value)
+                              .map(([key, value]) => (
+                                <ArtifactLink key={key} href={String(value)} label={key} />
+                              ))}
+                            {Object.entries(dataset.temporal ?? {})
+                              .filter(([, value]) => typeof value === 'string' && value)
+                              .map(([key, value]) => (
+                                <ArtifactLink key={key} href={String(value)} label={key} />
+                              ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      {!!dataset.subgraphs?.length && (
+                        <details className="rounded-md border border-white/10 bg-black/20 p-3">
+                          <summary className="cursor-pointer select-none list-none text-[10px] text-muted-foreground uppercase tracking-widest">
+                            Domain Subgraphs ({dataset.subgraphs.length})
+                          </summary>
+                          <div className="mt-3 space-y-2">
+                            {dataset.subgraphs.map((subgraph) => (
+                              <div
+                                key={subgraph.domain}
+                                className="rounded-md border border-white/10 bg-black/30 p-2"
+                              >
+                                <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
+                                  <div className="text-xs text-white font-semibold">
+                                    {subgraph.domain}
+                                  </div>
+                                  <div className="text-[10px] text-muted-foreground font-mono">
+                                    {subgraph.nodes ?? 0} nodes · {subgraph.edges ?? 0} edges
+                                  </div>
+                                </div>
+                                <div className="space-y-1">
+                                  {Object.entries(subgraph.files ?? {})
+                                    .filter(([, value]) => typeof value === 'string' && value)
+                                    .map(([key, value]) => (
+                                      <ArtifactLink key={key} href={String(value)} label={key} />
+                                    ))}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </details>
+                      )}
+                    </GlassCard>
+                  ))}
+                </>
+              ) : (
+                <div className="h-full rounded-md border border-white/10 bg-black/30 flex flex-col items-center justify-center text-gray-400 text-sm px-3 text-center">
+                  <AlertTriangle className="w-5 h-5 mb-2 text-amber-400" />
+                  <div>{graphArtifactsError ?? 'No graph artifact index available.'}</div>
+                </div>
+              )}
+            </div>
+          )}
           {activeLayer === 'metrics' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
               <MetricsCard
@@ -931,7 +1236,7 @@ export const SystemObservatory: React.FC = () => {
                             },
                           };
                           await navigator.clipboard.writeText(JSON.stringify(pack, null, 2));
-                        } catch (e) {
+                        } catch {
                           // swallow; clipboard may be unavailable depending on browser context
                         }
                       }}
@@ -1128,6 +1433,35 @@ export const SystemObservatory: React.FC = () => {
             </GlassCard>
           )}
 
+          {activeLayer === 'graphs' && (
+            <GlassCard className="p-4 border-white/5 bg-black/40">
+              <div className="text-xs font-black text-gray-400 uppercase tracking-widest mb-3">
+                Graph Coverage
+              </div>
+              <div className="space-y-2 text-xs text-gray-300">
+                <div className="flex items-center justify-between">
+                  <span>Datasets</span>
+                  <span className="font-mono">{graphArtifacts?.totals?.datasets ?? 0}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Total Subgraphs</span>
+                  <span className="font-mono">{graphArtifacts?.totals?.subgraphs ?? 0}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Missing Implementations</span>
+                  <span className="font-mono">
+                    {graphArtifacts?.totals?.missingImplementations ?? 0}
+                  </span>
+                </div>
+              </div>
+              {graphArtifactsError && (
+                <div className="mt-3 text-[10px] text-red-200 bg-red-500/10 border border-red-500/30 rounded-md p-2">
+                  {graphArtifactsError}
+                </div>
+              )}
+            </GlassCard>
+          )}
+
           <GlassCard className="p-4 bg-indigo-600/5 border-indigo-500/20">
             <h3 className="text-white font-bold mb-2 flex items-center gap-2">
               <RefreshCcw className="w-4 h-4 text-indigo-400 animate-spin-slow" />
@@ -1139,7 +1473,10 @@ export const SystemObservatory: React.FC = () => {
             <PremiumButton
               variant="outline"
               className="w-full text-[10px] py-1 h-8"
-              onClick={() => void loadTopologyAndMetrics()}
+              onClick={() => {
+                void loadTopologyAndMetrics();
+                void loadGraphArtifacts();
+              }}
             >
               Re-scan Fleet
             </PremiumButton>
@@ -1176,6 +1513,25 @@ const SourceBadge: React.FC<{ label: string; value: string }> = ({ label, value 
     </div>
   );
 };
+
+const MiniStat: React.FC<{ label: string; value: string }> = ({ label, value }) => (
+  <div className="rounded-md border border-white/10 bg-black/20 p-2">
+    <div className="text-[10px] text-muted-foreground uppercase tracking-widest">{label}</div>
+    <div className="text-sm font-black text-white">{value}</div>
+  </div>
+);
+
+const ArtifactLink: React.FC<{ href: string; label: string }> = ({ href, label }) => (
+  <a
+    href={href}
+    target="_blank"
+    rel="noreferrer"
+    className="block text-[10px] font-mono text-blue-300 hover:text-blue-200 underline truncate"
+    title={href}
+  >
+    {label}: {href}
+  </a>
+);
 
 const TabButton: React.FC<{
   active: boolean;
