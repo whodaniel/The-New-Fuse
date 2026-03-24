@@ -17,10 +17,26 @@ export class VisualizationsController {
     const candidates = [
       path.resolve(
         process.cwd(),
+        '../../apps/frontend/public/visualizations/data/graph-artifacts.index.json'
+      ),
+      path.resolve(
+        process.cwd(),
+        '../frontend/public/visualizations/data/graph-artifacts.index.json'
+      ),
+      path.resolve(
+        process.cwd(),
         'apps/frontend/public/visualizations/data/graph-artifacts.index.json'
       ),
       path.resolve(process.cwd(), 'public/visualizations/data/graph-artifacts.index.json'),
       path.resolve(process.cwd(), 'visualizations/data/graph-artifacts.index.json'),
+      path.resolve(
+        __dirname,
+        '../../../../apps/frontend/public/visualizations/data/graph-artifacts.index.json'
+      ),
+      path.resolve(
+        __dirname,
+        '../../../../apps/frontend/dist/visualizations/data/graph-artifacts.index.json'
+      ),
       path.resolve(
         process.cwd(),
         'apps/frontend/dist/visualizations/data/graph-artifacts.index.json'
