@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Headers,
-  HttpStatus,
-  Res,
-  Version,
-  VERSION_NEUTRAL,
-} from '@nestjs/common';
+import { Controller, Get, Headers, HttpStatus, Res, Version } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { ProxyService } from '../proxy/proxy.service';
@@ -201,24 +193,16 @@ export class SystemGatewayController {
 
   // Mesh Health
   @Get('mesh-health')
-  @Version(VERSION_NEUTRAL)
+  @Version('1')
   @ApiOperation({ summary: 'Get health status of all registered microservices' })
   @ApiResponse({ status: 200, description: 'Mesh health retrieved successfully' })
   async getMeshHealth() {
     return await this.proxyService.getAllServicesHealth();
   }
 
-  // Legacy path: /api/system/master-clock
-  @Get('master-clock')
-  @Version(VERSION_NEUTRAL)
-  @ApiOperation({ summary: 'Get Master Clock telemetry (legacy path)' })
-  @ApiResponse({ status: 200, description: 'Master Clock telemetry retrieved successfully' })
-  async getMasterClockLegacy(@Headers() headers: Record<string, string>, @Res() res: Response) {
-    return this.proxyMasterClock(headers, res);
-  }
-
   // Versioned path: /api/v1/system/master-clock
   @Get('master-clock')
+  @Version('1')
   @ApiOperation({ summary: 'Get Master Clock telemetry' })
   @ApiResponse({ status: 200, description: 'Master Clock telemetry retrieved successfully' })
   async getMasterClockV1(@Headers() headers: Record<string, string>, @Res() res: Response) {
@@ -226,7 +210,7 @@ export class SystemGatewayController {
   }
 
   @Get('health')
-  @Version(VERSION_NEUTRAL)
+  @Version('1')
   @ApiOperation({ summary: 'Get system health compatibility view' })
   @ApiResponse({ status: 200, description: 'System health retrieved successfully' })
   async getSystemHealthCompat(@Headers() headers: Record<string, string>, @Res() res: Response) {
@@ -247,7 +231,7 @@ export class SystemGatewayController {
   }
 
   @Get('metrics')
-  @Version(VERSION_NEUTRAL)
+  @Version('1')
   @ApiOperation({ summary: 'Get system metrics compatibility view' })
   @ApiResponse({ status: 200, description: 'System metrics retrieved successfully' })
   async getSystemMetricsCompat(@Headers() headers: Record<string, string>, @Res() res: Response) {
@@ -265,7 +249,7 @@ export class SystemGatewayController {
   }
 
   @Get('status')
-  @Version(VERSION_NEUTRAL)
+  @Version('1')
   @ApiOperation({ summary: 'Get system status compatibility view' })
   @ApiResponse({ status: 200, description: 'System status retrieved successfully' })
   async getSystemStatusCompat(@Headers() headers: Record<string, string>, @Res() res: Response) {

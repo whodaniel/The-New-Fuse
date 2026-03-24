@@ -1,13 +1,4 @@
-import {
-  Controller,
-  Get,
-  Headers,
-  HttpStatus,
-  Query,
-  Res,
-  Version,
-  VERSION_NEUTRAL,
-} from '@nestjs/common';
+import { Controller, Get, Headers, HttpStatus, Query, Res, Version } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { ProxyService } from '../proxy/proxy.service';
@@ -58,18 +49,7 @@ export class TerminalsGatewayController {
   }
 
   @Get('graph')
-  @Version(VERSION_NEUTRAL)
-  @ApiOperation({ summary: 'Get terminal topology graph (legacy path)' })
-  @ApiResponse({ status: 200, description: 'Terminal graph retrieved successfully' })
-  async getTerminalGraphLegacy(
-    @Query() query: Record<string, string>,
-    @Headers() headers: Record<string, string>,
-    @Res() res: Response
-  ) {
-    return this.proxyGraph(query, headers, res);
-  }
-
-  @Get('graph')
+  @Version('1')
   @ApiOperation({ summary: 'Get terminal topology graph' })
   @ApiResponse({ status: 200, description: 'Terminal graph retrieved successfully' })
   async getTerminalGraphV1(

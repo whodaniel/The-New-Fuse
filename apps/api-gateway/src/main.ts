@@ -52,6 +52,28 @@ async function bootstrap() {
     next();
   });
 
+  // Compatibility rewrites for legacy no-version endpoints that now map to v1 routes.
+  const legacyPathMap: Record<string, string> = {
+    '/api/system/mesh-health': '/api/v1/system/mesh-health',
+    '/api/system/master-clock': '/api/v1/system/master-clock',
+    '/api/system/health': '/api/v1/system/health',
+    '/api/system/metrics': '/api/v1/system/metrics',
+    '/api/system/status': '/api/v1/system/status',
+    '/api/terminals/graph': '/api/v1/terminals/graph',
+    '/api/orchestrator/health': '/api/v1/orchestrator/health',
+    '/api/orchestrator/agents': '/api/v1/orchestrator/agents',
+    '/api/visualizations/data/graph-artifacts.index.json':
+      '/api/v1/visualizations/data/graph-artifacts.index.json',
+  };
+  app.use((req, _res, next) => {
+    const [pathname, query = ''] = req.url.split('?');
+    const mapped = legacyPathMap[pathname];
+    if (mapped) {
+      req.url = query ? `${mapped}?${query}` : mapped;
+    }
+    next();
+  });
+
   // Global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
@@ -78,11 +100,14 @@ async function bootstrap() {
     defaultVersion: '1',
   });
 
-  // Setup unified Swagger documentation
-  const config = new DocumentBuilder()
-    .setTitle('The New Fuse - Unified API')
-    .setDescription(
-      `
+  // Setup unified Swagger documentation.
+  // If route introspection fails, keep the gateway available and continue without docs.
+  if (process.env.SWAGGER_ENABLED !== 'false') {
+    try {
+      const config = new DocumentBuilder()
+        .setTitle('The New Fuse - Unified API')
+        .setDescription(
+          `
       Unified API Gateway for The New Fuse Platform.
 
       This gateway consolidates all platform APIs including:
@@ -95,66 +120,66 @@ async function bootstrap() {
       All endpoints are now available through this single entry point with
       consistent authentication, versioning, and error handling.
     `
-    )
-    .setVersion('1.0.0')
-    .setContact(
-      'The New Fuse API Support',
-      'https://thenewfuse.com/support',
-      'api-support@thenewfuse.com'
-    )
-    .setLicense('Proprietary', 'https://thenewfuse.com/license')
-    .addTag('auth', 'Authentication and authorization')
-    .addTag('agents', 'AI Agent management and operations')
-    .addTag('chat', 'Real-time chat and communication')
-    .addTag('workflows', 'Task workflows and pipelines')
-    .addTag('webhooks', 'Webhook management and ingestion')
-    .addTag('sse', 'Server-Sent Events streaming')
-    .addTag('mcp', 'Model Context Protocol servers')
-    .addTag('sgp', 'Spreadsheet Graph Protocol translation bridge')
-    .addTag('health', 'Health checks and monitoring')
-    .addBearerAuth(
-      {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        name: 'JWT',
-        description: 'JWT token obtained from /auth/login',
-        in: 'header',
-      },
-      'JWT-auth'
-    )
-    .addApiKey(
-      {
-        type: 'apiKey',
-        name: 'x-api-key',
-        in: 'header',
-        description: 'API key for service-to-service communication',
-      },
-      'api-key'
-    )
-    .addServer('https://api.thenewfuse.com', 'Production server')
-    .addServer('https://staging-api.thenewfuse.com', 'Staging server')
-    .addServer('http://localhost:8080', 'Local API Gateway')
-    .build();
+        )
+        .setVersion('1.0.0')
+        .setContact(
+          'The New Fuse API Support',
+          'https://thenewfuse.com/support',
+          'api-support@thenewfuse.com'
+        )
+        .setLicense('Proprietary', 'https://thenewfuse.com/license')
+        .addTag('auth', 'Authentication and authorization')
+        .addTag('agents', 'AI Agent management and operations')
+        .addTag('chat', 'Real-time chat and communication')
+        .addTag('workflows', 'Task workflows and pipelines')
+        .addTag('webhooks', 'Webhook management and ingestion')
+        .addTag('sse', 'Server-Sent Events streaming')
+        .addTag('mcp', 'Model Context Protocol servers')
+        .addTag('sgp', 'Spreadsheet Graph Protocol translation bridge')
+        .addTag('health', 'Health checks and monitoring')
+        .addBearerAuth(
+          {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+            name: 'JWT',
+            description: 'JWT token obtained from /auth/login',
+            in: 'header',
+          },
+          'JWT-auth'
+        )
+        .addApiKey(
+          {
+            type: 'apiKey',
+            name: 'x-api-key',
+            in: 'header',
+            description: 'API key for service-to-service communication',
+          },
+          'api-key'
+        )
+        .addServer('https://api.thenewfuse.com', 'Production server')
+        .addServer('https://staging-api.thenewfuse.com', 'Staging server')
+        .addServer('http://localhost:8080', 'Local API Gateway')
+        .build();
 
-  const document = SwaggerModule.createDocument(app as any, config, {
-    deepScanRoutes: true,
-    operationIdFactory: (controllerKey: string, methodKey: string) => methodKey,
-  });
+      const document = SwaggerModule.createDocument(app as any, config, {
+        deepScanRoutes: true,
+        operationIdFactory: (controllerKey: string, methodKey: string) => methodKey,
+      });
 
-  SwaggerModule.setup('docs', app as any, document, {
-    swaggerOptions: {
-      persistAuthorization: true,
-      tagsSorter: 'alpha',
-      operationsSorter: 'alpha',
-      docExpansion: 'none',
-      filter: true,
-      showRequestDuration: true,
-      syntaxHighlight: {
-        theme: 'monokai',
-      },
-    },
-    customCss: `
+      SwaggerModule.setup('docs', app as any, document, {
+        swaggerOptions: {
+          persistAuthorization: true,
+          tagsSorter: 'alpha',
+          operationsSorter: 'alpha',
+          docExpansion: 'none',
+          filter: true,
+          showRequestDuration: true,
+          syntaxHighlight: {
+            theme: 'monokai',
+          },
+        },
+        customCss: `
       .swagger-ui .topbar { display: none }
       .swagger-ui .info { margin: 30px 0 }
       .swagger-ui .scheme-container { margin: 30px 0 }
@@ -165,9 +190,13 @@ async function bootstrap() {
       .swagger-ui .opblock.opblock-put { border-color: #fca130; }
       .swagger-ui .opblock.opblock-delete { border-color: #f93e3e; }
     `,
-    customSiteTitle: 'The New Fuse - Unified API Documentation',
-    customfavIcon: '/favicon.ico',
-  });
+        customSiteTitle: 'The New Fuse - Unified API Documentation',
+        customfavIcon: '/favicon.ico',
+      });
+    } catch (error) {
+      console.error('Swagger initialization failed; continuing without /docs:', error);
+    }
+  }
 
   const healthPayload = () => ({
     status: 'healthy',

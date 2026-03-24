@@ -1,17 +1,9 @@
-import {
-  Controller,
-  Get,
-  Headers,
-  HttpStatus,
-  Res,
-  Version,
-  VERSION_NEUTRAL,
-} from '@nestjs/common';
+import { Controller, Get, Headers, HttpStatus, Res, Version } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { ProxyService } from '../proxy/proxy.service';
 
-@Controller()
+@Controller('')
 @ApiTags('nexus-observability')
 export class NexusObservabilityGatewayController {
   constructor(private readonly proxyService: ProxyService) {}
@@ -58,7 +50,7 @@ export class NexusObservabilityGatewayController {
   }
 
   @Get('orchestrator/health')
-  @Version(VERSION_NEUTRAL)
+  @Version('1')
   @ApiOperation({ summary: 'Get orchestrator health compatibility view' })
   @ApiResponse({ status: 200, description: 'Orchestrator health retrieved successfully' })
   async getOrchestratorHealth(@Headers() headers: Record<string, string>, @Res() res: Response) {
@@ -76,7 +68,7 @@ export class NexusObservabilityGatewayController {
   }
 
   @Get('orchestrator/agents')
-  @Version(VERSION_NEUTRAL)
+  @Version('1')
   @ApiOperation({ summary: 'Get orchestrator agents compatibility view' })
   @ApiResponse({ status: 200, description: 'Orchestrator agents retrieved successfully' })
   async getOrchestratorAgents(@Headers() headers: Record<string, string>, @Res() res: Response) {
@@ -94,7 +86,7 @@ export class NexusObservabilityGatewayController {
   }
 
   @Get('visualizations/data/graph-artifacts.index.json')
-  @Version(VERSION_NEUTRAL)
+  @Version('1')
   @ApiOperation({ summary: 'Get graph artifacts index compatibility view' })
   @ApiResponse({ status: 200, description: 'Graph artifacts index retrieved successfully' })
   async getGraphArtifactsIndex(@Headers() headers: Record<string, string>, @Res() res: Response) {
