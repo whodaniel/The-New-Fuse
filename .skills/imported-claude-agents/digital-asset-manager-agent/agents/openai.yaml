@@ -1,0 +1,4 @@
+interface:
+  display_name: "Digital Asset Manager Agent"
+  short_description: "Help with Digital Asset Manager Agent tasks"
+  default_prompt: "Run the Digital Asset Manager Agent workflow using SKILL.md instructions."

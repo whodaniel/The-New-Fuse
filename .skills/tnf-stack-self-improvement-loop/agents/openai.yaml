@@ -1,0 +1,5 @@
+version: 1
+interface:
+  display_name: TNF Stack Self-Improvement Loop
+  short_description: Run TNF reliability audit loops continuously.
+  default_prompt: Run the TNF self-improvement loop: verify build, crawl links, validate auth routes, emit reports, and propose+apply hardening changes.

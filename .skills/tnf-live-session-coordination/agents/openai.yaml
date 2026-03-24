@@ -1,0 +1,4 @@
+interface:
+  display_name: "TNF Live Session Coordination"
+  short_description: "Coordinate live TNF agent sessions safely"
+  default_prompt: "Use $tnf-live-session-coordination to inspect active TNF/Codex sessions, establish lane splits, and coordinate without unsafe raw TTY injection."

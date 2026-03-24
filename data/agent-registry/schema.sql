@@ -7,6 +7,9 @@ CREATE TABLE IF NOT EXISTS agents (
   system_prompt TEXT,
   agent_type TEXT NOT NULL DEFAULT 'local',
   source_file TEXT,
+  categories_normalized TEXT[] DEFAULT '{}',
+  classification JSONB DEFAULT '{}'::jsonb,
+  metadata JSONB DEFAULT '{}'::jsonb,
   version TEXT DEFAULT '1.0.0',
   status TEXT DEFAULT 'active',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -36,3 +39,4 @@ CREATE TABLE IF NOT EXISTS agent_tags (
   tag_name TEXT NOT NULL,
   confidence_score NUMERIC(3,2) DEFAULT 1.00
 );
+

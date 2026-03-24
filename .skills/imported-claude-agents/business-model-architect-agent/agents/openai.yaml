@@ -1,0 +1,4 @@
+interface:
+  display_name: "Business Model Architect Agent"
+  short_description: "Help with Business Model Architect Agent tasks"
+  default_prompt: "Run the Business Model Architect Agent workflow using SKILL.md instructions."

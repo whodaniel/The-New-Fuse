@@ -1,0 +1,4 @@
+interface:
+  display_name: "Content Writer Agent"
+  short_description: "Help with Content Writer Agent tasks"
+  default_prompt: "Run the Content Writer Agent workflow using SKILL.md instructions."

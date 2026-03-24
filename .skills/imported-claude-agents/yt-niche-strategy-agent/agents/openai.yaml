@@ -1,0 +1,4 @@
+interface:
+  display_name: "Yt Niche Strategy Agent"
+  short_description: "Help with Yt Niche Strategy Agent tasks"
+  default_prompt: "Run the Yt Niche Strategy Agent workflow using SKILL.md instructions."

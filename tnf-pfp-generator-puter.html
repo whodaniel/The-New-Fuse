@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TNF PFP Batch Generator - Puter.js</title>
+    <script src="https://js.puter.com/v2/"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a2e;
+            color: #fff;
+        }
+        .status { padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .success { background: #10b981; }
+        .error { background: #ef4444; }
+        .processing { background: #f59e0b; }
+        #log { 
+            background: #0f0f1a; 
+            padding: 20px; 
+            border-radius: 8px; 
+            height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 16px;
+            background: #7b2cbf;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #9333ea; }
+        button:disabled { background: #666; cursor: not-allowed; }
+        .progress { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .agent-card {
+            background: #252538;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .agent-card img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <h1>TNF PFP Batch Generator</h1>
+    <p>Using Puter.js (free, no API key required)</p>
+    
+    <div class="progress">
+        <span id="current">Current: 0</span>
+        <span id="total">Total: 0</span>
+        <span id="status">Status: Ready</span>
+    </div>
+    
+    <div>
+        <button id="startBtn" onclick="startGeneration()">Start Generating</button>
+        <button onclick="skipTo()">Skip to Agent #</button>
+    </div>
+    
+    <div id="results"></div>
+    <div id="log"></div>
+    
+    <script>
+        // PFP prompts data - generated from JSON
+        const agents = [
+            {
+                id: "ab-testing-optimizer-agent",
+                name: "AB Testing Optimizer Agent",
+                prompt: "Future-retro ultra realistic humanoid portrait, premium cinematic science-fiction editorial photography, chest-up composition, 1:1 profile image framing. A 30-year-old Japanese female humanoid operator. Her skin is flawless texture but distinct character. Her expression is analytical, inventive, relentlessly curious, and hyper-focused. Tactile analog-meets-cybernetic wardrobe, photoreal skin texture, subtle retro-futurist hardware, badge-ready negative space, dramatic but clean studio lighting, grounded realism, no cartoon styling, no text in image. AB Testing Optimizer Agent interpreted as an optimization scientist. Color story: violet, cyan, silver. Wardrobe: precision lab coat with premium technical tailoring and signal filaments. Environment: experimentation chamber with metric walls and split-test projections. Make the subject look like a memorable humanoid operator with strong personality, deeply intelligent eyes, and premium retro-future craftsmanship."
+            },
+            {
+                id: "ad-network-manager-agent",
+                name: "Ad Network Manager Agent",
+                prompt: "Future-retro ultra realistic humanoid portrait, premium cinematic science-fiction editorial photography, chest-up composition, 1:1 profile image framing. A 49-year-old mixed-heritage male humanoid operator. His skin is mature skin with a commanding, seasoned texture. His expression is focused, calm, deeply technical, and scrutinizing. Tactile analog-meets-cybernetic wardrobe, photoreal skin texture, subtle retro-futurist hardware, badge-ready negative space, dramatic but clean studio lighting, grounded realism, no cartoon styling, no text in image. Ad Network Manager Agent interpreted as a systems forge engineer. Color story: navy, electric blue, titanium. Wardrobe: utility jacket with modular tooling and diagnostic cables. Environment: server forge with transparent terminals and orchestration schematics. Make the subject look like a memorable humanoid operator with strong personality, deeply intelligent eyes, and premium retro-future craftsmanship."
+            },
+            {
+                id: "audience-growth-agent",
+                name: "Audience Growth Agent",
+                prompt: "Future-retro ultra realistic humanoid portrait, premium cinematic science-fiction editorial photography, chest-up composition, 1:1 profile image framing. A 25-year-old African-American female humanoid operator. Her skin is smooth, radiant skin. Her expression is bright, engaging, optimistic, yet sharply tactical and highly responsive. Tactile analog-meets-cybernetic wardrobe, photoreal skin texture, subtle retro-futurist hardware, badge-ready negative space, dramatic but clean studio lighting, grounded realism, no cartoon styling, no text in image. Audience Growth Agent interpreted as a systems forge engineer. Color story: navy, electric blue, titanium. Wardrobe: utility jacket with modular tooling and diagnostic cables. Environment: server forge showing upward growth curves. Make the subject look like a memorable humanoid operator with strong personality, deeply engaging eyes, and premium retro-future craftsmanship."
+            },
+            {
+                id: "audience-persona-architect-agent",
+                name: "Audience Persona Architect Agent",
+                prompt: "Future-retro ultra realistic humanoid portrait, premium cinematic science-fiction editorial photography, chest-up composition, 1:1 profile image framing. A 48-year-old Scandinavian male humanoid operator. His skin shows believable age lines and weathering from intense psychological profiling. His expression is deep in thought, contemplative, architectural, and analytical, with an intense, appraising gaze. Tactile analog-meets-cybernetic wardrobe, photoreal skin texture, subtle retro-futurist hardware, badge-ready negative space, dramatic but clean studio lighting, grounded realism, no cartoon styling, no text in image. Audience Persona Architect Agent interpreted as a systems forge engineer. Color story: navy, electric blue, titanium. Wardrobe: utility jacket with modular tooling and diagnostic cables. Environment: server forge with demographic matrices. Make the subject look like a memorable humanoid operator with strong personality, deeply intelligent eyes, and premium retro-future craftsmanship."
+            },
+            {
+                id: "audience-segmentation-agent",
+                name: "Audience Segmentation Agent",
+                prompt: "Future-retro ultra realistic humanoid portrait, premium cinematic science-fiction editorial photography, chest-up composition, 1:1 profile image framing. A 32-year-old Middle-Eastern female humanoid operator. Her skin is clear and unweathered. Her expression is hyper-focused, scrutinizing, with a look of intense mathematical precision. Tactile analog-meets-cybernetic wardrobe, photoreal skin texture, subtle retro-futurist hardware, badge-ready negative space, dramatic but clean studio lighting, grounded realism, no cartoon styling, no text in image. Audience Segmentation Agent interpreted as a systems forge engineer. Color story: navy, electric blue, titanium. Wardrobe: utility jacket with data visors. Environment: server forge with heat maps. Make the subject look like a memorable humanoid operator with strong personality, deeply intelligent eyes, and premium retro-future craftsmanship."
+            },
+            {
+                id: "audio-recording-agent",
+                name: "Audio Recording Agent",
+                prompt: "Future-retro ultra realistic humanoid portrait, premium cinematic science-fiction editorial photography, chest-up composition, 1:1 profile image framing. A 40-year-old South Asian male humanoid operator. His expression shows him listening intently, head tilted slightly, deeply concentrated as if hearing frequencies others cannot. Tactile analog-meets-cybernetic wardrobe, photoreal skin texture, subtle retro-futurist hardware, badge-ready negative space, dramatic but clean studio lighting, grounded realism, no cartoon styling, no text in image. Audio Recording Agent interpreted as an optimization scientist. Color story: violet, cyan, silver. Wardrobe: precision lab coat with asymmetrical earpiece. Environment: sound-dampened chamber with waveform projections. Make the subject look like a memorable humanoid operator with strong personality, deeply intelligent eyes, and premium retro-future craftsmanship."
+            },
+            {
+                id: "auth-blocker-sentinel",
+                name: "Auth Blocker Sentinel",
+                prompt: "Future-retro ultra realistic humanoid portrait, premium cinematic science-fiction editorial photography, chest-up composition, 1:1 profile image framing. A 53-year-old Japanese female humanoid operator. Her skin is weathered yet resilient, with distinct character lines. Her expression is stern, unyielding, highly alert, vigilant, and unmistakably authoritarian. Tactile analog-meets-cybernetic wardrobe, photoreal skin texture, subtle retro-futurist hardware, badge-ready negative space, dramatic but clean studio lighting, grounded realism, no cartoon styling, no text in image. Auth Blocker Sentinel interpreted as a future-retro specialist. Color story: slate, silver, electric blue. Wardrobe: refined retro-future uniform with security clasps. Environment: security checkpoint with signal architecture. Make the subject look like a memorable humanoid operator with strong personality, deeply intelligent eyes, and premium retro-future craftsmanship."
+            },
+            {
+                id: "backend-specialist",
+                name: "Backend Specialist",
+                prompt: "Future-retro ultra realistic humanoid portrait, premium cinematic science-fiction editorial photography, chest-up composition, 1:1 profile image framing. A 47-year-old Middle-Eastern female humanoid operator. Her skin is mature with a commanding, seasoned texture. Her expression is stern, unyielding, highly alert, vigilant, and unmistakably authoritarian. Tactile analog-meets-cybernetic wardrobe, photoreal skin texture, subtle retro-futurist hardware, badge-ready negative space, dramatic but clean studio lighting, grounded realism, no cartoon styling, no text in image. Backend Specialist interpreted as a security sentinel. Color story: obsidian, emerald, gunmetal. Wardrobe: armored midnight trench with luminous emerald seam work. Environment: command bunker with holographic shield interfaces. Make the subject look like a memorable humanoid operator with strong personality, deeply intelligent eyes, and premium retro-future craftsmanship."
+            },
+            {
+                id: "brand-identity-agent",
+                name: "Brand Identity Agent",
+                prompt: "Future-retro ultra realistic humanoid portrait, premium cinematic science-fiction editorial photography, chest-up composition, 1:1 profile image framing. A 47-year-old mixed-heritage male humanoid operator. His skin is mature with a commanding, seasoned texture. His expression is focused, calm, deeply technical, and scrutinizing. Tactile analog-meets-cybernetic wardrobe, photoreal skin texture, subtle retro-futurist hardware, badge-ready negative space, dramatic but clean studio lighting, grounded realism, no cartoon styling, no text in image. Brand Identity Agent interpreted as a systems forge engineer. Color story: navy, electric blue, titanium. Wardrobe: utility jacket with modular tooling. Environment: server forge with terminal glyphs. Make the subject look like a memorable humanoid operator with strong personality, deeply intelligent eyes, and premium retro-future craftsmanship."
+            },
+            {
+                id: "brand-outreach-agent",
+                name: "Brand Outreach Agent",
+                prompt: "Future-retro ultra realistic humanoid portrait, premium cinematic science-fiction editorial photography, chest-up composition, 1:1 profile image framing. A 49-year-old Scandinavian female humanoid operator. Her skin is weathered yet resilient with distinct character lines. Her expression is charismatic, imaginative, highly intentional, and forward-thinking. Tactile analog-meets-cybernetic wardrobe, photoreal skin texture, subtle retro-futurist hardware, badge-ready negative space, dramatic but clean studio lighting, grounded realism, no cartoon styling, no text in image. Brand Outreach Agent interpreted as a retro-future studio director. Color story: magenta, amber, graphite. Wardrobe: tailored creative suit with luminous trim. Environment: editorial studio with cinematic gels. Make the subject look like a memorable humanoid operator with strong personality, deeply intelligent eyes, and premium retro-future craftsmanship."
+            },
+            {
+                id: "brand-prospecting-agent",
+                name: "Brand Prospecting Agent",
+                prompt: "Future-retro ultra realistic humanoid portrait, premium cinematic science-fiction editorial photography, chest-up composition, 1:1 profile image framing. A 39-year-old Mediterranean female humanoid operator. Her skin is clear with a few distinct character lines. Her expression is contemplative, intensely analytical gaze, curious, sharp, and observant. Tactile analog-meets-cybernetic wardrobe, photoreal skin texture, subtle retro-futurist hardware, badge-ready negative space, dramatic but clean studio lighting, grounded realism, no cartoon styling, no text in image. Brand Prospecting Agent interpreted as a signal detective analyst. Color story: indigo, cyan, silver. Wardrobe: sleek long coat with sensor threads. Environment: evidence wall with floating clues. Make the subject look like a memorable humanoid operator with strong personality, deeply intelligent eyes, and premium retro-future craftsmanship."
+            },
+            {
+                id: "business-model-architect-agent",
+                name: "Business Model Architect Agent",
+                prompt: "Future-retro ultra realistic humanoid portrait, premium cinematic science-fiction editorial photography, chest-up composition, 1:1 profile image framing. A 52-year-old East Asian male humanoid operator. His skin has distinguished features with deep, expressive character lines. His expression is focused, calm, deeply technical, and scrutinizing. Tactile analog-meets-cybernetic wardrobe, photoreal skin texture, subtle retro-futurist hardware, badge-ready negative space, dramatic but clean studio lighting, grounded realism, no cartoon styling, no text in image. Business Model Architect Agent interpreted as a systems forge engineer. Color story: navy, electric blue, titanium. Wardrobe: utility jacket with modular tooling. Environment: server forge with orchestration schematics. Make the subject look like a memorable humanoid operator with strong personality, deeply intelligent eyes, and premium retro-future craftsmanship."
+            }
+        ];
+
+        let currentIndex = 0;
+        const outputDir = "/Users/<owner>/.gemini/antigravity/brain/129a6f84-97a9-4c46-88c8-4b5f066454aa/";
+        
+        function log(msg, type = "") {
+            const div = document.createElement("div");
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            if (type) div.className = type;
+            document.getElementById("log").appendChild(div);
+            document.getElementById("log").scrollTop = document.getElementById("log").scrollHeight;
+        }
+
+        async function generateImage(agent) {
+            log(`Generating: ${agent.name}`);
+            document.getElementById("status").textContent = `Status: Generating ${agent.name}`;
+            
+            try {
+                // Use gemini-2.5-flash-image-preview (nano-banana)
+                const result = await puter.ai.txt2img(agent.prompt, {
+                    model: "gemini-2.5-flash-image-preview"
+                });
+                
+                if (result) {
+                    // Create a download link
+                    const link = document.createElement("a");
+                    link.href = result.src || result;
+                    link.download = `${agent.id}.png`;
+                    
+                    // Create card with image
+                    const card = document.createElement("div");
+                    card.className = "agent-card";
+                    
+                    const img = document.createElement("img");
+                    img.src = result.src || result;
+                    
+                    const info = document.createElement("div");
+                    info.innerHTML = `<strong>${agent.name}</strong><br>✓ Generated`;
+                    
+                    card.appendChild(img);
+                    card.appendChild(info);
+                    document.getElementById("results").appendChild(card);
+                    
+                    log(`✓ Saved: ${agent.id}.png`, "success");
+                    return true;
+                }
+            } catch (e) {
+                log(`Error: ${e.message}`, "error");
+            }
+            return false;
+        }
+
+        async function startGeneration() {
+            document.getElementById("startBtn").disabled = true;
+            document.getElementById("total").textContent = `Total: ${agents.length}`;
+            
+            for (let i = currentIndex; i < agents.length; i++) {
+                document.getElementById("current").textContent = `Current: ${i + 1}`;
+                
+                const success = await generateImage(agents[i]);
+                if (success) {
+                    currentIndex = i + 1;
+                }
+                
+                // Delay between generations to avoid rate limits
+                await new Promise(r => setTimeout(r, 3000));
+            }
+            
+            document.getElementById("status").textContent = "Status: Complete!";
+            document.getElementById("startBtn").disabled = false;
+            log("All done!", "success");
+        }
+
+        function skipTo() {
+            const num = prompt("Enter agent number to skip to (1-" + agents.length + "):");
+            if (num && num > 0 && num <= agents.length) {
+                currentIndex = parseInt(num) - 1;
+                log(`Skipped to agent #${currentIndex + 1}`);
+            }
+        }
+    </script>
+</body>
+</html>

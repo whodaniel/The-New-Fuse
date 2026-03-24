@@ -1,0 +1,4 @@
+interface:
+  display_name: "Podcast Distribution Agent"
+  short_description: "Help with Podcast Distribution Agent tasks"
+  default_prompt: "Run the Podcast Distribution Agent workflow using SKILL.md instructions."

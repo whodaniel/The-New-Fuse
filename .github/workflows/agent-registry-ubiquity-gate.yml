@@ -1,0 +1,50 @@
+name: Agent Registry Ubiquity Gate
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - ".agent/agents/**"
+      - ".claude/agents/**"
+      - "config/ai-agents/**"
+      - "config/agents/**"
+      - "scripts/agent-registry/**"
+      - "data/agent-registry/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/agent-registry-ubiquity-gate.yml"
+  push:
+    branches: [main, develop]
+    paths:
+      - ".agent/agents/**"
+      - ".claude/agents/**"
+      - "config/ai-agents/**"
+      - "config/agents/**"
+      - "scripts/agent-registry/**"
+      - "data/agent-registry/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/agent-registry-ubiquity-gate.yml"
+  workflow_dispatch:
+
+jobs:
+  registry-check:
+    name: Validate Agent Registry Artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile --prefer-offline
+
+      - name: Run agent registry drift check
+        run: pnpm run agents:registry:check

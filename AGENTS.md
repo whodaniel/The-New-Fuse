@@ -44,6 +44,7 @@ whodaniel/fuse              ← YOU ARE HERE (develop everything here)
   - `tnf-cli-agent`: CLI-optimized Antigravity agent
 - Claude specialized agents: `.claude/agents/*.md`
 - TNF skills: `.agent/skills/**/SKILL.md`
+- Skill-bank operations scripts (not skill definitions): `scripts/skills/*`
 - Claude skills: `.claude/skills/*.md`
 - Gemini workspace docs: `.gemini/*`
 - MCP config source of truth: `data/mcp_config.json`

@@ -29,6 +29,62 @@ export class AgentDirectoryService {
     return [];
   }
 
+  private normalizeMetadata(metadata: unknown): Record<string, any> {
+    if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) {
+      return {};
+    }
+    return metadata as Record<string, any>;
+  }
+
+  private normalizeCategoryValue(value: unknown): string | null {
+    if (typeof value !== 'string') return null;
+    const normalized = value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    return normalized || null;
+  }
+
+  private extractNormalizedCategories(metadata: Record<string, any>, fallbackAgentType?: unknown): string[] {
+    const topLevel = Array.isArray(metadata.categoriesNormalized) ? metadata.categoriesNormalized : [];
+    const nested = Array.isArray(metadata?.tnfRegistry?.categoriesNormalized)
+      ? metadata.tnfRegistry.categoriesNormalized
+      : [];
+    const fromMetadata = [...topLevel, ...nested]
+      .map((value) => this.normalizeCategoryValue(value))
+      .filter((value): value is string => Boolean(value));
+
+    if (fromMetadata.length > 0) {
+      return Array.from(new Set(fromMetadata));
+    }
+
+    const fallback = this.normalizeCategoryValue(fallbackAgentType);
+    return [fallback || 'general'];
+  }
+
+  private extractClassification(metadata: Record<string, any>) {
+    const source =
+      (metadata.classification && typeof metadata.classification === 'object'
+        ? metadata.classification
+        : metadata?.tnfRegistry?.classification) || {};
+
+    const domain = Array.isArray(source.domain)
+      ? source.domain
+          .map((value: unknown) => this.normalizeCategoryValue(value))
+          .filter((value): value is string => Boolean(value))
+      : [];
+
+    const workflowStage = Array.isArray(source.workflowStage)
+      ? source.workflowStage
+          .map((value: unknown) => this.normalizeCategoryValue(value))
+          .filter((value): value is string => Boolean(value))
+      : [];
+
+    return {
+      domain,
+      workflowStage,
+      complexity: typeof source.complexity === 'string' ? source.complexity : null,
+      riskTier: typeof source.riskTier === 'string' ? source.riskTier : null,
+    };
+  }
+
   /**
    * Search agents in the directory
    */
@@ -71,6 +127,7 @@ export class AgentDirectoryService {
         d.capabilities,
         d.skills,
         d.tags,
+        d.metadata,
         d.updated_at,
         d.created_at
       FROM tnf_agent_definitions d
@@ -82,8 +139,11 @@ export class AgentDirectoryService {
       const rowTags = Array.isArray(row.tags) ? row.tags : [];
       const rowSkills = Array.isArray(row.skills) ? row.skills : [];
       const rowCapabilities = Array.isArray(row.capabilities) ? row.capabilities : [];
-      const allTags = Array.from(new Set([...rowTags, ...rowSkills]));
-      const derivedCategory = String(row.agent_type || 'general').toLowerCase();
+      const metadata = this.normalizeMetadata(row.metadata);
+      const categoriesNormalized = this.extractNormalizedCategories(metadata, row.agent_type);
+      const classification = this.extractClassification(metadata);
+      const allTags = Array.from(new Set([...rowTags, ...rowSkills, ...categoriesNormalized]));
+      const derivedCategory = categoriesNormalized[0] || 'general';
       const isPublicDerived = ['guest', 'user', 'dev'].includes(
         String(row.access_level || '').toLowerCase()
       );
@@ -100,6 +160,8 @@ export class AgentDirectoryService {
         lastActiveAt: row.updated_at || row.created_at || new Date(),
         featured: Boolean(row.is_system),
         capabilities: rowCapabilities.map((c: any) => String(c)),
+        categoriesNormalized,
+        classification,
       };
     });
 
@@ -122,7 +184,11 @@ export class AgentDirectoryService {
 
     if (category) {
       const cat = category.toLowerCase();
-      filtered = filtered.filter((entry) => (entry.category || '').toLowerCase() === cat);
+      filtered = filtered.filter(
+        (entry) =>
+          (entry.category || '').toLowerCase() === cat ||
+          entry.categoriesNormalized.some((value: string) => value === cat)
+      );
     }
 
     if (verifiedOnly) {
@@ -341,19 +407,24 @@ export class AgentDirectoryService {
     const tags = Array.isArray(row.tags) ? row.tags : [];
     const skills = Array.isArray(row.skills) ? row.skills : [];
     const capabilities = Array.isArray(row.capabilities) ? row.capabilities : [];
+    const metadata = this.normalizeMetadata(row.metadata);
+    const categoriesNormalized = this.extractNormalizedCategories(metadata, row.agent_type);
+    const classification = this.extractClassification(metadata);
 
     return {
       id: row.tnf_id || row.id,
       displayName: row.name,
       description: row.description,
-      category: String(row.agent_type || 'general').toLowerCase(),
-      tags: Array.from(new Set([...tags, ...skills])),
+      category: categoriesNormalized[0] || 'general',
+      tags: Array.from(new Set([...tags, ...skills, ...categoriesNormalized])),
       isPublic: ['guest', 'user', 'dev'].includes(String(row.access_level || '').toLowerCase()),
       isVerified: true,
       rating: row.is_system ? 5 : 4,
       usageCount: 0,
       lastActiveAt: row.updated_at || row.created_at,
       featured: Boolean(row.is_system),
+      categoriesNormalized,
+      classification,
       status: 'ACTIVE',
       capabilities: capabilities.map((cap: any) => ({
         name: String(cap),
@@ -362,7 +433,11 @@ export class AgentDirectoryService {
         description: null,
         verified: true,
       })),
-      metadata: row.metadata || null,
+      metadata: {
+        ...metadata,
+        categoriesNormalized,
+        classification,
+      },
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };
@@ -447,6 +522,7 @@ export class AgentDirectoryService {
         d.capabilities,
         d.skills,
         d.tags,
+        d.metadata,
         d.updated_at
       FROM tnf_agent_definitions d
       ORDER BY d.is_system DESC, d.updated_at DESC
@@ -457,13 +533,16 @@ export class AgentDirectoryService {
       const tags = Array.isArray(row.tags) ? row.tags : [];
       const skills = Array.isArray(row.skills) ? row.skills : [];
       const capabilities = Array.isArray(row.capabilities) ? row.capabilities : [];
+      const metadata = this.normalizeMetadata(row.metadata);
+      const categoriesNormalized = this.extractNormalizedCategories(metadata, row.agent_type);
+      const classification = this.extractClassification(metadata);
 
       return {
         id: row.tnf_id || row.id,
         displayName: row.name,
         description: row.description || undefined,
-        category: String(row.agent_type || 'general').toLowerCase(),
-        tags: Array.from(new Set([...tags, ...skills])),
+        category: categoriesNormalized[0] || 'general',
+        tags: Array.from(new Set([...tags, ...skills, ...categoriesNormalized])),
         isPublic: ['guest', 'user', 'dev'].includes(String(row.access_level || '').toLowerCase()),
         isVerified: true,
         rating: row.is_system ? 5 : 4,
@@ -471,6 +550,8 @@ export class AgentDirectoryService {
         lastActiveAt: row.updated_at || new Date(),
         featured: Boolean(row.is_system),
         capabilities: capabilities.map((c: any) => String(c)),
+        categoriesNormalized,
+        classification,
       };
     });
   }

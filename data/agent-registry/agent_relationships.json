@@ -1,44 +1,3712 @@
 [
   {
-    "id": "d90ee234-2ff8-4117-b14a-00cacd4e682c",
-    "agentId": "agent-search-engine",
-    "relatedAgentId": "agent-tagger",
+    "id": "22f61a65-c3bb-0051-68c1-7952a687cf08",
+    "agentId": "brand-outreach-agent",
+    "relatedAgentId": "brand-prospecting-agent",
     "relationshipType": "similar",
-    "strengthScore": 0.25
+    "strengthScore": 1
   },
   {
-    "id": "0f55884a-ce40-4085-b9f0-39effa995223",
+    "id": "39ee144c-1ab0-7a48-4d2b-db33bb7a58e0",
+    "agentId": "brand-outreach-agent",
+    "relatedAgentId": "personal-brand-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 1
+  },
+  {
+    "id": "02236f1e-ddbb-4ff7-acbd-207eee430e8d",
+    "agentId": "brand-prospecting-agent",
+    "relatedAgentId": "personal-brand-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 1
+  },
+  {
+    "id": "552b5814-a6bc-ed00-7a2d-ef94855f9e0f",
+    "agentId": "business-model-architect-agent",
+    "relatedAgentId": "unitary-guardian",
+    "relationshipType": "similar",
+    "strengthScore": 1
+  },
+  {
+    "id": "dedd25ba-e381-878e-680e-6138432c0123",
+    "agentId": "episode-planner-agent",
+    "relatedAgentId": "equipment-recommendation-agent",
+    "relationshipType": "similar",
+    "strengthScore": 1
+  },
+  {
+    "id": "5eb3d6f2-d356-d315-20ce-8d9310528c07",
+    "agentId": "local-ai-claude-code-cli",
+    "relatedAgentId": "local-ai-gemini-cli",
+    "relationshipType": "similar",
+    "strengthScore": 1
+  },
+  {
+    "id": "acd51e8a-3305-08be-5cae-e229d78f6d98",
+    "agentId": "notes-ledger-investigator",
+    "relatedAgentId": "repo-lineage-investigator",
+    "relationshipType": "similar",
+    "strengthScore": 1
+  },
+  {
+    "id": "c28965c3-9a3a-ad3f-7f14-a7d649435ee0",
+    "agentId": "notes-ledger-investigator",
+    "relatedAgentId": "timeline-synthesis-investigator",
+    "relationshipType": "similar",
+    "strengthScore": 1
+  },
+  {
+    "id": "34ced74f-a594-5956-9fab-79639cb83526",
+    "agentId": "podcast-format-designer-agent",
+    "relatedAgentId": "twip-orchestration-bridge",
+    "relationshipType": "similar",
+    "strengthScore": 1
+  },
+  {
+    "id": "40ec902c-7134-7f6b-61fa-5a8c5a48d716",
+    "agentId": "repo-lineage-investigator",
+    "relatedAgentId": "timeline-synthesis-investigator",
+    "relationshipType": "similar",
+    "strengthScore": 1
+  },
+  {
+    "id": "9489713e-d216-76c6-0ae8-733802e7dd5f",
+    "agentId": "algorithm-adaptation-agent",
+    "relatedAgentId": "yt-niche-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.8
+  },
+  {
+    "id": "378a9bda-5745-a50a-9615-e29056ccfa2f",
+    "agentId": "keyword-research-agent",
+    "relatedAgentId": "niche-analyst-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.8
+  },
+  {
+    "id": "9304d36e-ce09-0691-4dd7-9b6fb97d34bf",
+    "agentId": "monetization-strategy-agent",
+    "relatedAgentId": "scriptwriter-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.8
+  },
+  {
+    "id": "c223457d-12c7-bbb9-0d8a-ef90ea0e0d2d",
+    "agentId": "oto-sequence-architect-agent",
+    "relatedAgentId": "value-ladder-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.8
+  },
+  {
+    "id": "aa39972e-3ac8-74c3-49d0-c75c1ad07e02",
+    "agentId": "podcast-affiliate-agent",
+    "relatedAgentId": "podcast-niche-analyst-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.8
+  },
+  {
+    "id": "b3d980d7-1051-24ef-1ea2-6db77faeae93",
+    "agentId": "code-fossil-investigator",
+    "relatedAgentId": "media-evidence-investigator",
+    "relationshipType": "similar",
+    "strengthScore": 0.75
+  },
+  {
+    "id": "e16cfbef-7f98-f5e3-089f-17459c7e5d7c",
+    "agentId": "code-fossil-investigator",
+    "relatedAgentId": "notes-ledger-investigator",
+    "relationshipType": "similar",
+    "strengthScore": 0.75
+  },
+  {
+    "id": "c303f72e-cf9c-8271-d97a-74c9a8aa7962",
+    "agentId": "code-fossil-investigator",
+    "relatedAgentId": "repo-lineage-investigator",
+    "relationshipType": "similar",
+    "strengthScore": 0.75
+  },
+  {
+    "id": "1413ffa8-8990-a4f8-7626-3e7a3799ffa0",
+    "agentId": "code-fossil-investigator",
+    "relatedAgentId": "timeline-synthesis-investigator",
+    "relationshipType": "similar",
+    "strengthScore": 0.75
+  },
+  {
+    "id": "e97522c5-b6cc-ddaa-4ae5-79d52b6f49a9",
+    "agentId": "facebook-strategy-agent",
+    "relatedAgentId": "social-selling-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.75
+  },
+  {
+    "id": "ba91fc04-4692-a62f-2020-531e87f97732",
+    "agentId": "media-evidence-investigator",
+    "relatedAgentId": "notes-ledger-investigator",
+    "relationshipType": "similar",
+    "strengthScore": 0.75
+  },
+  {
+    "id": "75b71abc-9878-e671-1bbc-b59dc1b4fac3",
+    "agentId": "media-evidence-investigator",
+    "relatedAgentId": "repo-lineage-investigator",
+    "relationshipType": "similar",
+    "strengthScore": 0.75
+  },
+  {
+    "id": "eb1994fa-ed6e-b087-0950-d60b32ba2160",
+    "agentId": "media-evidence-investigator",
+    "relatedAgentId": "timeline-synthesis-investigator",
+    "relationshipType": "similar",
+    "strengthScore": 0.75
+  },
+  {
+    "id": "7178a703-be04-3c70-dc36-7d78072e7cbf",
+    "agentId": "monetization-strategy-agent",
+    "relatedAgentId": "platform-selection-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.75
+  },
+  {
+    "id": "d8c54554-19c0-ee94-125a-9665d6b6f7c1",
+    "agentId": "monetization-strategy-agent",
+    "relatedAgentId": "yt-content-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.75
+  },
+  {
+    "id": "4c476a3c-3a29-4aac-e970-ceeb6e5e8ca9",
+    "agentId": "podcast-affiliate-agent",
+    "relatedAgentId": "podcast-monetization-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.75
+  },
+  {
+    "id": "e435df75-057c-ffad-c1f6-7cf41d962360",
+    "agentId": "competitive-intelligence-agent",
+    "relatedAgentId": "yt-niche-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.71
+  },
+  {
+    "id": "72a33d51-91b7-e6fc-92f8-488ecc92ff2c",
+    "agentId": "affiliate-link-manager-agent",
+    "relatedAgentId": "brand-identity-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.67
+  },
+  {
+    "id": "71d94b3f-0516-fdda-70a1-3550e1447113",
+    "agentId": "audience-growth-agent",
+    "relatedAgentId": "campaign-reporting-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.67
+  },
+  {
+    "id": "4a8ba1f9-2f67-479a-02ee-c8d882dd278a",
+    "agentId": "brand-outreach-agent",
+    "relatedAgentId": "influencer-niche-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.67
+  },
+  {
+    "id": "acf6ac7c-5cf7-b2f3-a5b7-9dfd872af2b2",
+    "agentId": "brand-outreach-agent",
+    "relatedAgentId": "platform-selection-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.67
+  },
+  {
+    "id": "3485f16b-44d6-cf83-137a-e4c178cb028c",
+    "agentId": "brand-outreach-agent",
+    "relatedAgentId": "podcast-monetization-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.67
+  },
+  {
+    "id": "8dfe7450-ba07-f8b0-e604-383b06434265",
+    "agentId": "brand-prospecting-agent",
+    "relatedAgentId": "influencer-niche-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.67
+  },
+  {
+    "id": "703ec1b3-92c4-0060-666e-5ae0efb25d3a",
+    "agentId": "brand-prospecting-agent",
+    "relatedAgentId": "platform-selection-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.67
+  },
+  {
+    "id": "08f7c42c-b521-97b1-0089-f6951d9b5345",
+    "agentId": "brand-prospecting-agent",
+    "relatedAgentId": "podcast-monetization-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.67
+  },
+  {
+    "id": "4f51f2f3-fedf-0aec-cc0d-b0efa0e42f31",
+    "agentId": "campaign-execution-agent",
+    "relatedAgentId": "yt-content-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.67
+  },
+  {
+    "id": "03f25124-b682-0092-249b-e039b7d4fe81",
+    "agentId": "content-refresh-agent",
+    "relatedAgentId": "podcast-seo-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.67
+  },
+  {
+    "id": "5b864c0c-550a-451d-a707-808500720f39",
+    "agentId": "content-writer-agent",
+    "relatedAgentId": "seo-optimizer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.67
+  },
+  {
+    "id": "60b84ebc-f69a-e472-e7b7-9e25295f765a",
+    "agentId": "episode-planner-agent",
+    "relatedAgentId": "podcast-equipment-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.67
+  },
+  {
+    "id": "0d699b3b-4527-cc09-feae-887d3994bf7e",
+    "agentId": "episode-planner-agent",
+    "relatedAgentId": "seo-optimizer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.67
+  },
+  {
+    "id": "769d148b-d3e0-f4ac-1d85-5872b71a4a5f",
+    "agentId": "equipment-recommendation-agent",
+    "relatedAgentId": "podcast-equipment-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.67
+  },
+  {
+    "id": "d7bb6c40-86ad-bd7c-d9a5-07a4f7c05dc2",
+    "agentId": "equipment-recommendation-agent",
+    "relatedAgentId": "seo-optimizer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.67
+  },
+  {
+    "id": "b6a9fe74-31e4-4200-58af-655830b6d629",
+    "agentId": "influencer-niche-agent",
+    "relatedAgentId": "personal-brand-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.67
+  },
+  {
+    "id": "ad342595-1563-a27b-8008-a403211846f7",
+    "agentId": "personal-archaeology-integrity-team-orchestrator",
+    "relatedAgentId": "personal-archaeology-master-orchestrator",
+    "relationshipType": "similar",
+    "strengthScore": 0.67
+  },
+  {
+    "id": "52abb0be-13f5-b3ad-e8ac-58d3d30b2051",
+    "agentId": "personal-archaeology-master-orchestrator",
+    "relatedAgentId": "personal-archaeology-narrative-team-orchestrator",
+    "relationshipType": "similar",
+    "strengthScore": 0.67
+  },
+  {
+    "id": "0ee85907-711a-d463-2cf6-805cc94f61f5",
+    "agentId": "personal-brand-architect-agent",
+    "relatedAgentId": "platform-selection-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.67
+  },
+  {
+    "id": "ad3a5da5-0d91-4b57-ca31-46600d034763",
+    "agentId": "personal-brand-architect-agent",
+    "relatedAgentId": "podcast-monetization-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.67
+  },
+  {
+    "id": "1ed0c746-4899-ae73-fbce-f1a0a4359343",
+    "agentId": "podcast-affiliate-agent",
+    "relatedAgentId": "sponsorship-outreach-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.67
+  },
+  {
+    "id": "da9514f7-aea4-608b-4dd6-1c434433add5",
+    "agentId": "podcast-equipment-agent",
+    "relatedAgentId": "podcast-monetization-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.67
+  },
+  {
+    "id": "34b1509a-a629-6792-bd40-c451207edaea",
+    "agentId": "tiktok-strategy-agent",
+    "relatedAgentId": "yt-seo-optimizer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.67
+  },
+  {
+    "id": "35c68d43-29e0-14d1-60d1-6313e44da196",
+    "agentId": "legal-compliance-agent",
+    "relatedAgentId": "yt-niche-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.63
+  },
+  {
+    "id": "476612bf-acab-d555-5432-bfe977b9e1d5",
+    "agentId": "personal-archaeology-integrity-team-orchestrator",
+    "relatedAgentId": "personal-archaeology-narrative-team-orchestrator",
+    "relationshipType": "similar",
+    "strengthScore": 0.63
+  },
+  {
+    "id": "9a6b0070-8834-d226-40bd-12c3b642bf68",
+    "agentId": "algorithm-adaptation-agent",
+    "relatedAgentId": "digital-product-creator-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.6
+  },
+  {
+    "id": "74a5560e-e00a-1d6d-7e2d-078123b8af78",
+    "agentId": "algorithm-adaptation-agent",
+    "relatedAgentId": "information-retrieval-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.6
+  },
+  {
+    "id": "08f598eb-8f5d-f80a-3e2c-e2db15baded6",
+    "agentId": "algorithm-adaptation-agent",
+    "relatedAgentId": "instagram-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.6
+  },
+  {
+    "id": "e3c37e80-04e3-ac2a-52ee-4cfe0ef42e7e",
+    "agentId": "algorithm-adaptation-agent",
+    "relatedAgentId": "keyword-research-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.6
+  },
+  {
+    "id": "c886818e-5ba5-6e9a-646f-d6224b945351",
+    "agentId": "algorithm-adaptation-agent",
+    "relatedAgentId": "monetization-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.6
+  },
+  {
+    "id": "8371d89c-a133-5a97-ab10-c0ce01ab4da5",
+    "agentId": "analytics-and-reporting-agent",
+    "relatedAgentId": "content-refresh-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.6
+  },
+  {
+    "id": "927b9c30-27e6-2172-4aa6-6bcf8b5e6bf3",
+    "agentId": "audience-growth-agent",
+    "relatedAgentId": "community-manager-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.6
+  },
+  {
+    "id": "9ac519eb-5728-6de0-cca0-397cd117df9e",
+    "agentId": "audience-persona-architect-agent",
+    "relatedAgentId": "monetization-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.6
+  },
+  {
+    "id": "46da21ec-c18b-dbe8-08c0-faefea3b8d79",
+    "agentId": "campaign-reporting-agent",
+    "relatedAgentId": "community-manager-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.6
+  },
+  {
+    "id": "e28b4a1c-818b-4c87-0ab4-67bb92da6c2b",
+    "agentId": "campaign-reporting-agent",
+    "relatedAgentId": "influencer-media-kit-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.6
+  },
+  {
+    "id": "e4c3a993-b38c-1ee4-42f3-2b372d036ac0",
+    "agentId": "community-engagement-agent",
+    "relatedAgentId": "community-manager-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.6
+  },
+  {
+    "id": "2af885ee-6b52-46ca-2be3-d48437a75ce9",
+    "agentId": "content-writer-agent",
+    "relatedAgentId": "link-building-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.6
+  },
+  {
+    "id": "6aaaec45-5aeb-50b8-7134-a7e0e9aee588",
+    "agentId": "digital-product-creator-agent",
+    "relatedAgentId": "keyword-research-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.6
+  },
+  {
+    "id": "c0a3fc44-9537-ed07-6f95-ad75f67d9436",
+    "agentId": "email-marketing-automation-agent",
+    "relatedAgentId": "lead-capture-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.6
+  },
+  {
+    "id": "bb2df1be-94d7-84d3-2705-fa1cc9b74e96",
+    "agentId": "episode-planner-agent",
+    "relatedAgentId": "scriptwriter-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.6
+  },
+  {
+    "id": "c0e4dbc5-4996-64fa-d1fc-e1afc1fa8805",
+    "agentId": "equipment-recommendation-agent",
+    "relatedAgentId": "scriptwriter-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.6
+  },
+  {
+    "id": "740d731f-b979-47ed-3e2a-094abf555520",
+    "agentId": "influencer-media-kit-agent",
+    "relatedAgentId": "lead-capture-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.6
+  },
+  {
+    "id": "0b2dcf63-c67c-28f9-ab00-594fd662899b",
+    "agentId": "link-building-agent",
+    "relatedAgentId": "talent-manager-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.6
+  },
+  {
+    "id": "cdce6231-79ae-8aba-a2e5-befe64200120",
+    "agentId": "platform-selection-agent",
+    "relatedAgentId": "scriptwriter-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.6
+  },
+  {
+    "id": "5ef736b9-d7af-1d79-3f22-d9a04fdc9af1",
+    "agentId": "podcast-affiliate-agent",
+    "relatedAgentId": "podcast-video-editor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.6
+  },
+  {
+    "id": "7166ea9c-de4c-cf0b-186f-c88853a6c958",
+    "agentId": "podcast-analytics-agent",
+    "relatedAgentId": "podcast-hosting-setup-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.6
+  },
+  {
+    "id": "da8a5782-74a9-b6f2-8ffe-f34a20e4aadf",
+    "agentId": "podcast-monetization-strategy-agent",
+    "relatedAgentId": "podcast-niche-analyst-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.6
+  },
+  {
+    "id": "23f68c9a-9ac8-62f8-f41f-a3d99b38c1db",
+    "agentId": "podcast-monetization-strategy-agent",
+    "relatedAgentId": "scriptwriter-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.6
+  },
+  {
+    "id": "882ceb93-23c9-0ede-a7e3-3d5afdcdf001",
+    "agentId": "podcast-video-editor-agent",
+    "relatedAgentId": "video-editor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.6
+  },
+  {
+    "id": "8ecda5eb-46fb-2258-5941-9320f2509006",
+    "agentId": "scriptwriter-agent",
+    "relatedAgentId": "yt-content-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.6
+  },
+  {
+    "id": "013a5230-96a7-31bc-0236-ebf696256e05",
+    "agentId": "x-strategy-agent",
+    "relatedAgentId": "yt-content-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.6
+  },
+  {
+    "id": "2c7c67ba-151c-a82d-9c5a-7f16d93f3f5b",
+    "agentId": "personal-archaeology-master-orchestrator",
+    "relatedAgentId": "personal-archaeology-source-team-orchestrator",
+    "relationshipType": "similar",
+    "strengthScore": 0.59
+  },
+  {
+    "id": "dbd4c21a-6d81-d23b-a1ad-7eb36df84a9e",
+    "agentId": "personal-archaeology-master-orchestrator",
+    "relatedAgentId": "personal-historical-archaeologist",
+    "relationshipType": "similar",
+    "strengthScore": 0.59
+  },
+  {
+    "id": "d60e20c0-489a-6fcd-6af6-8bf60757c7c0",
+    "agentId": "algorithm-adaptation-agent",
+    "relatedAgentId": "competitive-intelligence-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.57
+  },
+  {
+    "id": "dd42de14-3b0e-a092-fded-480620e1aaaf",
+    "agentId": "audience-segmentation-agent",
+    "relatedAgentId": "customer-journey-map-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.57
+  },
+  {
+    "id": "ddc4821f-c780-f51b-636d-1f9315fda2f8",
+    "agentId": "competitive-intelligence-agent",
+    "relatedAgentId": "monetization-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.57
+  },
+  {
+    "id": "2371e70d-d3d5-5abb-090d-b3dc7356e816",
+    "agentId": "content-repurposing-agent",
+    "relatedAgentId": "tiktok-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.57
+  },
+  {
+    "id": "940c91ed-7ba8-1763-cf9a-fbfa8e0b290b",
+    "agentId": "content-repurposing-agent",
+    "relatedAgentId": "yt-seo-optimizer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.57
+  },
+  {
+    "id": "f61c81a8-d57b-b555-19c1-6ee2932cc33e",
+    "agentId": "podcast-niche-analyst-agent",
+    "relatedAgentId": "sponsorship-outreach-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.57
+  },
+  {
+    "id": "a105e95d-e1b2-7db3-d690-dd9b4d3c86ee",
+    "agentId": "competitive-intelligence-agent",
+    "relatedAgentId": "traffic-generation-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.56
+  },
+  {
+    "id": "96e8df33-73aa-8730-d833-a1ec50d32cde",
+    "agentId": "personal-archaeology-integrity-team-orchestrator",
+    "relatedAgentId": "personal-archaeology-source-team-orchestrator",
+    "relationshipType": "similar",
+    "strengthScore": 0.56
+  },
+  {
+    "id": "f1e0a5f1-3c4a-5379-a37d-8581e3f0dccc",
+    "agentId": "personal-archaeology-narrative-team-orchestrator",
+    "relatedAgentId": "personal-archaeology-source-team-orchestrator",
+    "relationshipType": "similar",
+    "strengthScore": 0.56
+  },
+  {
+    "id": "0c15dec6-f412-5f6b-cf52-64f18c5f1ff4",
+    "agentId": "ab-testing-optimizer-agent",
+    "relatedAgentId": "email-marketing-automation-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "4a626d7a-f4ee-2c29-a63f-271ce4e83aec",
+    "agentId": "ad-network-manager-agent",
+    "relatedAgentId": "analytics-and-reporting-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "b673bc96-a4d8-49a5-31c1-38a3b9e74592",
+    "agentId": "ad-network-manager-agent",
+    "relatedAgentId": "ethical-bias-auditor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "add59f48-1264-127d-8c90-2bbe45789eb8",
+    "agentId": "ad-network-manager-agent",
+    "relatedAgentId": "user-feedback-analysis-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "6e39bb36-3cc9-4dc9-ce70-847a0cc95dd6",
+    "agentId": "affiliate-link-manager-agent",
+    "relatedAgentId": "algorithm-adaptation-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "40f261de-71aa-28e1-2fb0-e4ead657430b",
+    "agentId": "affiliate-link-manager-agent",
+    "relatedAgentId": "audience-persona-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "5a58a8ce-4ad5-4ebe-c80f-b6b20798a357",
+    "agentId": "affiliate-link-manager-agent",
+    "relatedAgentId": "competitive-intelligence-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "3462e079-a43d-13cc-7e7f-e0fda8cddebe",
+    "agentId": "affiliate-link-manager-agent",
+    "relatedAgentId": "digital-product-creator-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "62d31ca2-5e9f-3a51-aeed-b24e876a842c",
+    "agentId": "affiliate-link-manager-agent",
+    "relatedAgentId": "keyword-research-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "5ee94730-2d99-4cc6-a71c-4d5b77f347f1",
+    "agentId": "affiliate-link-manager-agent",
+    "relatedAgentId": "monetization-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "41fdb00d-9de6-183d-2aba-1f36450eff71",
+    "agentId": "affiliate-link-manager-agent",
+    "relatedAgentId": "podcast-affiliate-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "11050d94-bcce-1ef4-be36-d34edc62007d",
+    "agentId": "agent-traits",
+    "relatedAgentId": "business-model-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "a2eb43bf-ec39-efde-c94c-fbc850d154d5",
+    "agentId": "agent-traits",
+    "relatedAgentId": "unitary-guardian",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "fe7388ee-15f9-b486-274d-94089dff198e",
+    "agentId": "algorithm-adaptation-agent",
+    "relatedAgentId": "brand-identity-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "80134374-1a6d-b0e6-e08b-fc6529d64135",
+    "agentId": "algorithm-adaptation-agent",
+    "relatedAgentId": "community-engagement-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "74da5093-ca3b-da03-becd-2d4da6678ad4",
+    "agentId": "analytics-and-reporting-agent",
+    "relatedAgentId": "ethical-bias-auditor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "6385608e-2ad0-650c-0478-06d96952e298",
+    "agentId": "analytics-and-reporting-agent",
+    "relatedAgentId": "user-feedback-analysis-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "f549ba20-40a1-0a65-19ac-73856d14f29a",
+    "agentId": "audience-growth-agent",
+    "relatedAgentId": "competitive-intelligence-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "82d3d68a-ab7d-fb77-8968-53de20b71990",
+    "agentId": "audience-growth-agent",
+    "relatedAgentId": "podcast-promotion-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "89451872-f4f5-4fed-c63b-9e0d78038c70",
+    "agentId": "audience-growth-agent",
+    "relatedAgentId": "traffic-generation-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "3c5c2645-8053-370b-4150-538a30fddfe4",
+    "agentId": "audience-persona-architect-agent",
+    "relatedAgentId": "brand-identity-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "5298e60a-871d-3658-bfc7-ad25423a9e6b",
+    "agentId": "audience-persona-architect-agent",
+    "relatedAgentId": "brand-outreach-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "a3970907-085b-d96e-580a-ad4a68e0857a",
+    "agentId": "audience-persona-architect-agent",
+    "relatedAgentId": "brand-prospecting-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "91e365ad-47e2-19cc-72ec-e9c59f268ab1",
+    "agentId": "audience-persona-architect-agent",
+    "relatedAgentId": "campaign-execution-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "00698e15-ec22-2222-0ac2-a3caebc7acc4",
+    "agentId": "audience-persona-architect-agent",
+    "relatedAgentId": "personal-brand-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "cc56505d-2050-542f-c37a-38a1403d8c96",
+    "agentId": "audience-persona-architect-agent",
+    "relatedAgentId": "sales-funnel-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "56c0314c-7336-2044-b260-9f6a7796ce13",
+    "agentId": "audience-persona-architect-agent",
+    "relatedAgentId": "scriptwriter-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "b0558312-b94f-b7d7-98b0-ca1d0075d24c",
+    "agentId": "audience-persona-architect-agent",
+    "relatedAgentId": "seo-optimizer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "4b1ec01a-ce37-ad0e-0c37-f59b857de5e6",
+    "agentId": "audio-recording-agent",
+    "relatedAgentId": "digital-asset-manager-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "2ba0c3c0-4d57-394e-b42a-8c79e17f2408",
+    "agentId": "audio-recording-agent",
+    "relatedAgentId": "fan-funding-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "21f5a4f0-9530-534c-faf0-def787d53686",
+    "agentId": "audio-recording-agent",
+    "relatedAgentId": "podcast-ad-network-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "f9e55d62-bea1-81e0-bc09-cc80c167ef47",
+    "agentId": "audio-recording-agent",
+    "relatedAgentId": "podcast-audio-editor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "15c1ca50-4a2e-9f1d-854c-73f8fbd6abac",
+    "agentId": "audio-recording-agent",
+    "relatedAgentId": "podcast-hosting-setup-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "2c7547c0-dd86-0ff7-92b9-c63122106655",
+    "agentId": "audio-recording-agent",
+    "relatedAgentId": "storyboard-artist-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "f3ada96e-a5ad-f133-a330-e33844833c56",
+    "agentId": "brand-identity-agent",
+    "relatedAgentId": "competitive-intelligence-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "29321df6-c105-dee1-dde7-76f8c9c82644",
+    "agentId": "brand-identity-agent",
+    "relatedAgentId": "digital-product-creator-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "a22b51cd-a103-3722-45e3-4f0d92700544",
+    "agentId": "brand-identity-agent",
+    "relatedAgentId": "keyword-research-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "2c83bfe2-1330-616c-2936-4e4161e52b11",
+    "agentId": "brand-identity-agent",
+    "relatedAgentId": "monetization-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "dab537ad-4280-b4df-244d-5e909a08e9a9",
+    "agentId": "brand-identity-agent",
+    "relatedAgentId": "podcast-affiliate-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "9cc237ab-a574-d8ac-bb2d-4d69a3b69cbd",
+    "agentId": "brand-outreach-agent",
+    "relatedAgentId": "deal-negotiator-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "11267f69-5ed4-8e5c-9470-26c2c60f9768",
+    "agentId": "brand-outreach-agent",
+    "relatedAgentId": "monetization-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "9062b960-5db2-27c0-bd95-e2a11e3b9295",
+    "agentId": "brand-outreach-agent",
+    "relatedAgentId": "podcast-affiliate-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "42b10ce5-0bc2-6c23-ffb0-ae93e8a95104",
+    "agentId": "brand-prospecting-agent",
+    "relatedAgentId": "deal-negotiator-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "fa64f5f8-76c2-bdf2-757b-86ac0307f745",
+    "agentId": "brand-prospecting-agent",
+    "relatedAgentId": "monetization-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "e0f20f6d-b390-2a0d-078e-dbfa68e8c1e7",
+    "agentId": "brand-prospecting-agent",
+    "relatedAgentId": "podcast-affiliate-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "285e4010-1030-1597-8823-14583a9366b8",
+    "agentId": "business-model-architect-agent",
+    "relatedAgentId": "meta-agent-architect",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "b98e601c-3fe5-3fc3-dfce-8ff22d1def52",
+    "agentId": "campaign-execution-agent",
+    "relatedAgentId": "content-calendar-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "30737849-5752-2664-9742-647120063947",
+    "agentId": "campaign-execution-agent",
+    "relatedAgentId": "deal-negotiator-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "d1fe2def-f8c1-6fe4-087f-a07f5c3900d0",
+    "agentId": "campaign-reporting-agent",
+    "relatedAgentId": "competitive-intelligence-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "9caafe6a-1cd7-003e-2514-0f26df0c2f82",
+    "agentId": "campaign-reporting-agent",
+    "relatedAgentId": "podcast-promotion-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "50050e87-b2ec-c325-dcb1-3fa03003357f",
+    "agentId": "campaign-reporting-agent",
+    "relatedAgentId": "traffic-generation-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "ce8ab36e-9040-61f7-e217-86dfafb60b57",
+    "agentId": "community-engagement-agent",
+    "relatedAgentId": "competitive-intelligence-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "e7598de5-cb64-7c6a-9876-62585ca35c62",
+    "agentId": "community-engagement-agent",
+    "relatedAgentId": "instagram-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "5c27d015-b773-8926-bae3-114ac658f960",
+    "agentId": "community-engagement-agent",
+    "relatedAgentId": "traffic-generation-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "f4e64c68-ac1f-dca5-67c4-dcdde2395c4d",
+    "agentId": "community-manager-agent",
+    "relatedAgentId": "social-selling-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "69ca6fe1-8029-7909-5c7f-27a4f50324e0",
+    "agentId": "competitive-intelligence-agent",
+    "relatedAgentId": "legal-compliance-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "438fe776-4e47-8783-0210-470efca5b4f7",
+    "agentId": "content-calendar-agent",
+    "relatedAgentId": "seo-optimizer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "f624a675-10cd-4cd5-c8b0-7a0802973c25",
+    "agentId": "content-refresh-agent",
+    "relatedAgentId": "keyword-research-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "65edd66f-5fb6-1618-9967-a63b245232d4",
+    "agentId": "content-repurposing-agent",
+    "relatedAgentId": "live-stream-manager-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "90d76508-b210-9639-6a8f-2b04f1b6fdcc",
+    "agentId": "content-writer-agent",
+    "relatedAgentId": "episode-planner-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "829ad346-3be2-5133-8a28-6ba7d0720759",
+    "agentId": "content-writer-agent",
+    "relatedAgentId": "equipment-recommendation-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "a5454550-17f3-9fde-d6e4-c4be24a84661",
+    "agentId": "content-writer-agent",
+    "relatedAgentId": "influencer-niche-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "6282d34e-7192-f8fc-ff15-082e1dc7b1b7",
+    "agentId": "deal-negotiator-agent",
+    "relatedAgentId": "personal-brand-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "34b8daec-20e8-8ccf-6ef7-e3f3fa04c2b9",
+    "agentId": "deal-negotiator-agent",
+    "relatedAgentId": "sales-funnel-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "d734cc1b-c4af-f63d-996e-a77d5aa9ba32",
+    "agentId": "digital-asset-manager-agent",
+    "relatedAgentId": "fan-funding-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "edd6f14f-28b2-9199-51fa-ccbc7450cfca",
+    "agentId": "digital-asset-manager-agent",
+    "relatedAgentId": "podcast-ad-network-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "deb53bee-e9a3-3088-0c5e-6078fdfa8ea1",
+    "agentId": "digital-asset-manager-agent",
+    "relatedAgentId": "podcast-audio-editor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "ed0fecb8-116d-2e06-5462-de5b5752fd1c",
+    "agentId": "digital-asset-manager-agent",
+    "relatedAgentId": "podcast-hosting-setup-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "4f29cabe-2295-0231-a308-377e1fcfb8cb",
+    "agentId": "digital-asset-manager-agent",
+    "relatedAgentId": "storyboard-artist-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "f777ab97-9f38-503b-795a-6500f6fc91ba",
+    "agentId": "digital-product-creator-agent",
+    "relatedAgentId": "link-building-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "a868a2ca-ea77-6267-3f7e-2826a4abd7e6",
+    "agentId": "digital-product-creator-agent",
+    "relatedAgentId": "niche-analyst-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "7d1c4e59-fd54-8da0-6ef6-4d341f3a2b69",
+    "agentId": "digital-product-creator-agent",
+    "relatedAgentId": "seo-optimizer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "a7c4eed6-4664-06ba-3e36-baa31d4708c4",
+    "agentId": "digital-product-creator-agent",
+    "relatedAgentId": "yt-niche-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "59eaecc2-be7a-b2ff-45b9-8704c46552c6",
+    "agentId": "ecom-platform-manager-agent",
+    "relatedAgentId": "local-ai-claude-code-cli",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "80694e9e-a5a6-1069-b4db-2e99512f6bd4",
+    "agentId": "ecom-platform-manager-agent",
+    "relatedAgentId": "local-ai-gemini-cli",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "9755ed4a-ffd4-3b61-c097-a322f6530ae5",
+    "agentId": "ecom-platform-manager-agent",
+    "relatedAgentId": "print-on-demand-manager-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "7ef1fb3f-0745-3e14-4fd4-884fe38db366",
+    "agentId": "email-marketing-automation-agent",
+    "relatedAgentId": "financial-manager-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "6e0fe4e8-81a1-c7c4-b402-edaa22cdf8ba",
+    "agentId": "email-marketing-automation-agent",
+    "relatedAgentId": "influencer-media-kit-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "f79d496c-42ba-a5dc-580c-a5048d1cccc9",
+    "agentId": "episode-planner-agent",
+    "relatedAgentId": "podcast-monetization-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "07629f4c-c5c7-02f6-f62c-0d15f8f3b5ce",
+    "agentId": "equipment-recommendation-agent",
+    "relatedAgentId": "podcast-monetization-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "6faeb081-3f5f-10cc-07c2-bdd178728ee9",
+    "agentId": "ethical-bias-auditor-agent",
+    "relatedAgentId": "user-feedback-analysis-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "531f17f3-4a80-3bc4-e606-abcf5496443c",
+    "agentId": "facebook-strategy-agent",
+    "relatedAgentId": "tiktok-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "9a91bdec-9df3-9a59-84b0-e851349a4821",
+    "agentId": "facebook-strategy-agent",
+    "relatedAgentId": "yt-seo-optimizer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "681a2abf-011b-5a41-cd21-2e3cfa3172c9",
+    "agentId": "fan-funding-agent",
+    "relatedAgentId": "podcast-ad-network-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "7132eb2c-e687-d3cd-5dca-b9af2ae6c476",
+    "agentId": "fan-funding-agent",
+    "relatedAgentId": "podcast-audio-editor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "21a7c326-5d86-adf5-ca4b-b87615c98bec",
+    "agentId": "fan-funding-agent",
+    "relatedAgentId": "podcast-hosting-setup-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "566f41fd-8f07-f123-e1c9-e1301e94541d",
+    "agentId": "fan-funding-agent",
+    "relatedAgentId": "storyboard-artist-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "5808d80f-3b9d-87af-ecdc-217f58b86c27",
+    "agentId": "financial-manager-agent",
+    "relatedAgentId": "influencer-media-kit-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "8806b591-db53-36ca-d809-5b94a17d7bac",
+    "agentId": "guest-booking-agent",
+    "relatedAgentId": "sponsorship-outreach-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "98c5eb6b-a4d1-435e-510a-03baea5086e6",
+    "agentId": "guest-booking-agent",
+    "relatedAgentId": "talent-manager-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "5d055154-1031-949f-6b21-00204c2ed8ae",
+    "agentId": "influencer-media-kit-agent",
+    "relatedAgentId": "sponsorship-outreach-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "d33afc7a-dcea-f074-3122-9ae52677ae74",
+    "agentId": "influencer-niche-agent",
+    "relatedAgentId": "platform-selection-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "5115e543-c0e7-746e-bd1d-93b9106d877e",
+    "agentId": "influencer-niche-agent",
+    "relatedAgentId": "podcast-monetization-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "243e8b24-fc45-c6e2-2010-98ba5aef9344",
+    "agentId": "information-retrieval-agent",
+    "relatedAgentId": "yt-niche-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "f3165d08-c6b7-39df-412f-3218d361c250",
+    "agentId": "instagram-strategy-agent",
+    "relatedAgentId": "tiktok-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "24ce7a35-5824-fa3c-bf65-739a52620900",
+    "agentId": "instagram-strategy-agent",
+    "relatedAgentId": "x-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "58134bbf-98b6-9876-f523-28b926f37c09",
+    "agentId": "instagram-strategy-agent",
+    "relatedAgentId": "yt-niche-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "f74bfa3e-4ba2-56fd-1ecb-36d5c5754c73",
+    "agentId": "instagram-strategy-agent",
+    "relatedAgentId": "yt-seo-optimizer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "53b27bd6-521f-38db-86e4-6e24e1246504",
+    "agentId": "keyword-research-agent",
+    "relatedAgentId": "link-building-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "3213ef67-67ba-683f-5ee6-886710126097",
+    "agentId": "keyword-research-agent",
+    "relatedAgentId": "podcast-seo-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "2a319ed5-c2e2-ce48-7169-6c9f3848b6e9",
+    "agentId": "keyword-research-agent",
+    "relatedAgentId": "seo-optimizer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "02cdd06f-1d25-33bc-b1cd-c4e33c03f6f3",
+    "agentId": "keyword-research-agent",
+    "relatedAgentId": "yt-niche-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "a08a8deb-343a-bd05-d6af-6a81841105b3",
+    "agentId": "local-ai-claude-code-cli",
+    "relatedAgentId": "productivity-and-burnout-prevention-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "a0f16c29-bf8f-c8d5-fcbf-503ab23ce4ed",
+    "agentId": "local-ai-gemini-cli",
+    "relatedAgentId": "productivity-and-burnout-prevention-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "a9e484c3-c2b8-a8f7-64dd-5d7efbb2ee92",
+    "agentId": "meta-agent-architect",
+    "relatedAgentId": "unitary-guardian",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "e21f7fb6-d866-12c7-68d7-74185a80ed51",
+    "agentId": "orchestrator-agent",
+    "relatedAgentId": "twip-protocol-bridge",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "1897b5e3-c37c-686a-e953-446437fa3363",
+    "agentId": "personal-brand-architect-agent",
+    "relatedAgentId": "podcast-affiliate-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "69d657aa-bd3c-b6db-c3ef-0511d2dc901c",
+    "agentId": "platform-selection-agent",
+    "relatedAgentId": "yt-content-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "1b7d5237-4308-e538-927f-1bcfce3ca038",
+    "agentId": "podcast-ad-network-agent",
+    "relatedAgentId": "podcast-audio-editor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "ed6dbe82-44fb-61a3-27ce-067b6b336d00",
+    "agentId": "podcast-ad-network-agent",
+    "relatedAgentId": "podcast-hosting-setup-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "895c4ce9-28b1-7da3-437e-c358b23c873e",
+    "agentId": "podcast-ad-network-agent",
+    "relatedAgentId": "storyboard-artist-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "72255767-06f3-69f8-a184-1d87c50431e2",
+    "agentId": "podcast-affiliate-agent",
+    "relatedAgentId": "podcast-analytics-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "06555c65-2d83-60d7-8299-fbc8611c9e14",
+    "agentId": "podcast-analytics-agent",
+    "relatedAgentId": "podcast-video-editor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "e628e767-cfd6-29df-bcce-21b48389d18f",
+    "agentId": "podcast-audio-editor-agent",
+    "relatedAgentId": "podcast-hosting-setup-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "0fb58135-856c-3f69-5386-23d3ff3b3c73",
+    "agentId": "podcast-audio-editor-agent",
+    "relatedAgentId": "storyboard-artist-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "c74f51d6-e080-0ced-11f2-f9e64c581d1c",
+    "agentId": "podcast-equipment-agent",
+    "relatedAgentId": "podcast-format-designer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "b2938161-89a6-7a7e-5ea7-0cd0dd52f46d",
+    "agentId": "podcast-equipment-agent",
+    "relatedAgentId": "twip-orchestration-bridge",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "92e7c005-725e-a705-040b-be2f30e1a99c",
+    "agentId": "podcast-hosting-setup-agent",
+    "relatedAgentId": "storyboard-artist-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "3042a9ac-be39-118b-f4f5-27b37f68d507",
+    "agentId": "podcast-niche-analyst-agent",
+    "relatedAgentId": "podcast-video-editor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "fa8f3934-372b-b9fd-cc24-064cf55259dc",
+    "agentId": "sponsorship-outreach-agent",
+    "relatedAgentId": "talent-manager-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "0a744ef3-ea3a-5208-683a-057ce5bd0bd6",
+    "agentId": "traffic-generation-agent",
+    "relatedAgentId": "x-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "22ad80cf-9e5b-b0d5-d1e5-49226109d75a",
+    "agentId": "personal-archaeology-integrity-team-orchestrator",
+    "relatedAgentId": "personal-historical-archaeologist",
+    "relationshipType": "similar",
+    "strengthScore": 0.47
+  },
+  {
+    "id": "b4e1bb74-adc8-2e58-87f9-28ec5d95a68a",
+    "agentId": "personal-archaeology-narrative-team-orchestrator",
+    "relatedAgentId": "personal-historical-archaeologist",
+    "relationshipType": "similar",
+    "strengthScore": 0.47
+  },
+  {
+    "id": "0c9978a1-f791-650f-1473-31af28782e02",
+    "agentId": "auth-blocker-sentinel",
+    "relatedAgentId": "personal-archaeology-master-orchestrator",
+    "relationshipType": "similar",
+    "strengthScore": 0.47
+  },
+  {
+    "id": "449b293c-f6ef-ce16-f698-2569c3ad17ac",
+    "agentId": "code-fossil-investigator",
+    "relatedAgentId": "personal-archaeology-source-team-orchestrator",
+    "relationshipType": "similar",
+    "strengthScore": 0.47
+  },
+  {
+    "id": "94bc4b49-c4b3-d3c3-5d50-24d44de71ed2",
+    "agentId": "media-evidence-investigator",
+    "relatedAgentId": "personal-archaeology-source-team-orchestrator",
+    "relationshipType": "similar",
+    "strengthScore": 0.47
+  },
+  {
+    "id": "eb98e34e-1f69-fccf-4228-58a556c14c00",
+    "agentId": "code-fossil-investigator",
+    "relatedAgentId": "personal-archaeology-master-orchestrator",
+    "relationshipType": "similar",
+    "strengthScore": 0.46
+  },
+  {
+    "id": "e25b526c-9655-7a37-0de6-0f47261c0e2d",
+    "agentId": "media-evidence-investigator",
+    "relatedAgentId": "personal-archaeology-master-orchestrator",
+    "relationshipType": "similar",
+    "strengthScore": 0.46
+  },
+  {
+    "id": "fe0f1f1a-01df-c9bf-06f4-454b61a91909",
+    "agentId": "notes-ledger-investigator",
+    "relatedAgentId": "personal-archaeology-master-orchestrator",
+    "relationshipType": "similar",
+    "strengthScore": 0.46
+  },
+  {
+    "id": "f3b84b74-94ab-a176-107f-14a0ac371cbc",
+    "agentId": "personal-archaeology-master-orchestrator",
+    "relatedAgentId": "repo-lineage-investigator",
+    "relationshipType": "similar",
+    "strengthScore": 0.46
+  },
+  {
+    "id": "33b4feac-da54-e94d-ec69-95fda880355d",
+    "agentId": "personal-archaeology-master-orchestrator",
+    "relatedAgentId": "timeline-synthesis-investigator",
+    "relationshipType": "similar",
+    "strengthScore": 0.46
+  },
+  {
+    "id": "fbeaa8f8-0d23-469c-fb25-1806071a1ffd",
+    "agentId": "ab-testing-optimizer-agent",
+    "relatedAgentId": "traffic-generation-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.44
+  },
+  {
+    "id": "04054d10-c9e3-67e3-b137-c0227f0ad2bd",
+    "agentId": "asset-sourcer-agent",
+    "relatedAgentId": "legal-compliance-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.44
+  },
+  {
+    "id": "356d63d1-8344-c081-4e8f-87884f781f9e",
+    "agentId": "legal-compliance-agent",
+    "relatedAgentId": "link-building-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.44
+  },
+  {
+    "id": "301892f1-5fdf-3236-ce64-0c410ec901c0",
+    "agentId": "legal-compliance-agent",
+    "relatedAgentId": "tax-compliance-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.44
+  },
+  {
+    "id": "5748f69c-cf08-fd68-04fd-ef13eeaf7569",
+    "agentId": "podcast-promotion-agent",
+    "relatedAgentId": "sponsorship-outreach-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.44
+  },
+  {
+    "id": "3873099f-251f-2c52-4cd3-c2ef6fc0a3ee",
+    "agentId": "affiliate-link-manager-agent",
+    "relatedAgentId": "lead-magnet-funnel-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "fed019e4-b21d-bed1-1722-e04b0070632a",
+    "agentId": "affiliate-link-manager-agent",
+    "relatedAgentId": "link-building-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "26f5bdae-5429-aa8b-efb2-0a500c5c43c3",
+    "agentId": "asset-sourcer-agent",
+    "relatedAgentId": "link-building-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "b05dcb5e-474e-1ed8-9365-d86bb2c317dc",
+    "agentId": "asset-sourcer-agent",
+    "relatedAgentId": "tax-compliance-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "4e46928d-46cd-2899-5906-bc02802beb52",
+    "agentId": "audience-growth-agent",
+    "relatedAgentId": "community-engagement-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "a8517682-6d50-4bac-ef62-bda89f290c0a",
+    "agentId": "audience-growth-agent",
+    "relatedAgentId": "reputation-management-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "50ce8990-d605-1ccf-53fe-5b2406887a97",
+    "agentId": "audience-growth-agent",
+    "relatedAgentId": "x-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "a09f9549-2fbc-2890-1074-0e5d345c13bd",
+    "agentId": "audience-segmentation-agent",
+    "relatedAgentId": "funnel-economics-analyst-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "96ac5080-c456-36ca-e757-be68891b42ec",
+    "agentId": "brand-identity-agent",
+    "relatedAgentId": "lead-magnet-funnel-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "1f77e1c7-a7fd-26be-946c-cbadfea03039",
+    "agentId": "brand-identity-agent",
+    "relatedAgentId": "link-building-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "128a989c-0797-c86b-164f-5901ccf77a45",
+    "agentId": "campaign-reporting-agent",
+    "relatedAgentId": "community-engagement-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "98cf2487-3057-40f8-fbdc-c61d41a0b6cc",
+    "agentId": "campaign-reporting-agent",
+    "relatedAgentId": "lead-capture-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "b4463e69-552b-c91a-fffc-40e857335b68",
+    "agentId": "campaign-reporting-agent",
+    "relatedAgentId": "reputation-management-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "c41d17c7-e97f-31a0-555d-a604b4dd1aba",
+    "agentId": "campaign-reporting-agent",
+    "relatedAgentId": "x-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "fb24db39-316c-ffd7-ba16-262a6e999311",
+    "agentId": "code-fossil-investigator",
+    "relatedAgentId": "personal-archaeology-integrity-team-orchestrator",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "74db4daf-24d9-1a35-53b2-0da7b559d41a",
+    "agentId": "code-fossil-investigator",
+    "relatedAgentId": "personal-archaeology-narrative-team-orchestrator",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "d62f77f2-6af2-825b-742c-8bbe6496e981",
+    "agentId": "community-engagement-agent",
+    "relatedAgentId": "content-refresh-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "de7f3236-3711-c4e3-d4c5-552efe72cb24",
+    "agentId": "community-engagement-agent",
+    "relatedAgentId": "podcast-seo-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "211e0b83-2823-45d9-fe51-fe34e2e3dfe5",
+    "agentId": "community-engagement-agent",
+    "relatedAgentId": "tiktok-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "860bfcdc-fa22-0e15-e69d-bfd6632b17a0",
+    "agentId": "community-manager-agent",
+    "relatedAgentId": "podcast-promotion-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "58a4e70a-5ea9-220e-3ddd-8f8d2aeeaf97",
+    "agentId": "community-manager-agent",
+    "relatedAgentId": "traffic-generation-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "7b9a1611-adb8-a171-7cbc-211f471b0c4b",
+    "agentId": "content-calendar-orchestrator-agent",
+    "relatedAgentId": "guest-relationship-manager-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "1b1fe3ba-0211-b7ef-629e-1c8fa9790bce",
+    "agentId": "content-refresh-agent",
+    "relatedAgentId": "niche-analyst-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "2b31d601-7b8e-6e82-9d9f-d4282993c4a9",
+    "agentId": "content-repurposing-agent",
+    "relatedAgentId": "facebook-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "5f1b9621-6dc9-de27-5bb0-fa7f975eecdd",
+    "agentId": "content-repurposing-agent",
+    "relatedAgentId": "instagram-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "a6d886f1-ef49-855d-b6c1-5e112dcfbad2",
     "agentId": "digital-product-creator-agent",
     "relatedAgentId": "digital-product-factory-agent",
     "relationshipType": "similar",
-    "strengthScore": 0.37
+    "strengthScore": 0.43
   },
   {
-    "id": "d1b4ea78-49d3-41cd-b409-6bca30a3cfee",
+    "id": "384e060c-9257-d5b0-8715-8bf6a81526fa",
+    "agentId": "email-marketing-automation-agent",
+    "relatedAgentId": "traffic-generation-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "b8fe37ad-09b0-5ed7-509f-abdd7b6f8a9b",
+    "agentId": "facebook-strategy-agent",
+    "relatedAgentId": "podcast-distribution-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "e5596223-ea1d-e5eb-9841-1119927aaed0",
+    "agentId": "guest-relationship-manager-agent",
+    "relatedAgentId": "link-building-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "3fb5e043-e937-fa15-2080-5ba4a51c3c2f",
+    "agentId": "guest-relationship-manager-agent",
+    "relatedAgentId": "personalized-content-recommendation-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "93bfe917-2d7a-9dc5-86c8-08472f28484b",
+    "agentId": "guest-relationship-manager-agent",
+    "relatedAgentId": "podcast-analytics-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "4d995be3-09a0-f741-7637-a7c996c523f0",
+    "agentId": "guest-relationship-manager-agent",
+    "relatedAgentId": "podcast-seo-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "bfb5e066-ccd5-06ab-a992-9dddf2a31af8",
+    "agentId": "guest-relationship-manager-agent",
+    "relatedAgentId": "tiktok-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "8a76658d-dc12-9005-da91-3681eac24812",
+    "agentId": "guest-relationship-manager-agent",
+    "relatedAgentId": "yt-seo-optimizer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "9baa6f99-6571-119c-18a8-005ad0ce4c92",
+    "agentId": "lead-capture-agent",
+    "relatedAgentId": "lead-magnet-funnel-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "c9c279e6-c908-c0c0-5e95-7c876bc17771",
+    "agentId": "lead-magnet-funnel-agent",
+    "relatedAgentId": "podcast-analytics-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "5b1f4419-c1fe-1bf4-3bc9-448c05ce4b7d",
+    "agentId": "lead-magnet-funnel-agent",
+    "relatedAgentId": "x-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "7612853d-e125-b1c0-0f43-5b5323ee76cb",
+    "agentId": "link-building-agent",
+    "relatedAgentId": "niche-analyst-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "b6265d00-a170-7ed7-50ce-b827d459e794",
+    "agentId": "media-evidence-investigator",
+    "relatedAgentId": "personal-archaeology-integrity-team-orchestrator",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "8bd3565b-57df-75cf-27f0-9bd2ba46cfcb",
+    "agentId": "media-evidence-investigator",
+    "relatedAgentId": "personal-archaeology-narrative-team-orchestrator",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "901b8ad1-fd7c-d3ee-9d29-2904ffd4d2df",
+    "agentId": "niche-analyst-agent",
+    "relatedAgentId": "podcast-seo-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "c12a4a0c-8f2f-bad2-be7a-207a38defd85",
+    "agentId": "niche-analyst-agent",
+    "relatedAgentId": "yt-niche-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "7ea069b6-f6ad-49e6-e68a-8c546d909fc7",
+    "agentId": "notes-ledger-investigator",
+    "relatedAgentId": "personal-archaeology-integrity-team-orchestrator",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "20b2e854-060c-89bb-71cd-eb661baae094",
+    "agentId": "notes-ledger-investigator",
+    "relatedAgentId": "personal-archaeology-narrative-team-orchestrator",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "e27935d2-58c4-f5b6-226a-094a0db9415e",
+    "agentId": "personal-archaeology-integrity-team-orchestrator",
+    "relatedAgentId": "repo-lineage-investigator",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "3e94768d-1293-88ef-2bbd-f0d756ce904b",
+    "agentId": "personal-archaeology-integrity-team-orchestrator",
+    "relatedAgentId": "timeline-synthesis-investigator",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "59ce06d0-0cb2-c6b4-cef3-86a056aed8c3",
+    "agentId": "personal-archaeology-narrative-team-orchestrator",
+    "relatedAgentId": "repo-lineage-investigator",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "a4347bf8-9210-c114-4bf1-e4555f157acb",
+    "agentId": "personal-archaeology-narrative-team-orchestrator",
+    "relatedAgentId": "timeline-synthesis-investigator",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "833d8d66-54bc-df0c-19e1-cf16f959b9fe",
+    "agentId": "personal-archaeology-source-team-orchestrator",
+    "relatedAgentId": "personal-historical-archaeologist",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "5e5336aa-fe3d-a430-e491-861b0daee597",
+    "agentId": "personalized-content-recommendation-agent",
+    "relatedAgentId": "podcast-analytics-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "763d4456-0cc5-eb82-cd1c-06d90f9ff44f",
+    "agentId": "personalized-content-recommendation-agent",
+    "relatedAgentId": "podcast-seo-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "92b3d297-de08-0391-d6a5-6df8226e6d55",
+    "agentId": "personalized-content-recommendation-agent",
+    "relatedAgentId": "tiktok-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "7279d0ce-b1d0-3173-e470-07d2db958f54",
+    "agentId": "personalized-content-recommendation-agent",
+    "relatedAgentId": "yt-seo-optimizer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "5183df13-bccd-fa39-cd8f-92cd5a91cf5c",
+    "agentId": "podcast-analytics-agent",
+    "relatedAgentId": "podcast-niche-analyst-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "1f1254cf-6fee-d05a-ae24-c6e571aa7d92",
+    "agentId": "podcast-analytics-agent",
+    "relatedAgentId": "podcast-seo-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "d353f4b9-8289-ebe5-d184-b619ba4d34da",
+    "agentId": "podcast-analytics-agent",
+    "relatedAgentId": "scriptwriter-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "27be5f5e-3cc7-9e7e-20b8-6c941c123afd",
+    "agentId": "podcast-analytics-agent",
+    "relatedAgentId": "tiktok-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "99526e81-6386-40f1-ebe2-cfec129f5b3c",
+    "agentId": "podcast-niche-analyst-agent",
+    "relatedAgentId": "scriptwriter-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "6321a94f-e1fc-4d33-84c2-99729284ace5",
+    "agentId": "podcast-seo-agent",
+    "relatedAgentId": "tiktok-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "19c793d3-d2d4-7707-dcc4-209ecb2aa454",
+    "agentId": "podcast-seo-agent",
+    "relatedAgentId": "yt-seo-optimizer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "eb7f476f-657e-133e-303b-a3991f84f05d",
+    "agentId": "podcast-video-editor-agent",
+    "relatedAgentId": "sponsorship-outreach-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "43b3cee3-997c-456a-4534-ccc9470ebfa3",
+    "agentId": "reputation-management-agent",
+    "relatedAgentId": "x-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "362743c3-8ef5-23d9-573a-61515551e2cc",
+    "agentId": "scriptwriter-agent",
+    "relatedAgentId": "tiktok-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "4541145c-8fd6-984b-31dd-27c097bd4dd6",
+    "agentId": "traffic-generation-agent",
+    "relatedAgentId": "yt-content-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "170297c8-9ff6-5ef7-d366-471e3e49ccb7",
+    "agentId": "x-strategy-agent",
+    "relatedAgentId": "yt-niche-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "f92607fb-4f42-c723-06c3-2fe228b22340",
+    "agentId": "x-strategy-agent",
+    "relatedAgentId": "yt-seo-optimizer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "2a1c8184-4892-55be-cae9-49d573e23542",
+    "agentId": "yt-niche-strategy-agent",
+    "relatedAgentId": "yt-seo-optimizer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.43
+  },
+  {
+    "id": "3e3580f3-b0be-cfe1-b1e7-17732fa5d004",
+    "agentId": "auth-blocker-sentinel",
+    "relatedAgentId": "code-fossil-investigator",
+    "relationshipType": "similar",
+    "strengthScore": 0.42
+  },
+  {
+    "id": "aae80aab-8f6b-f22e-4912-943fa707f225",
+    "agentId": "auth-blocker-sentinel",
+    "relatedAgentId": "media-evidence-investigator",
+    "relationshipType": "similar",
+    "strengthScore": 0.42
+  },
+  {
+    "id": "968e9c43-4c16-8b63-d271-9f75ec2d8412",
+    "agentId": "auth-blocker-sentinel",
+    "relatedAgentId": "notes-ledger-investigator",
+    "relationshipType": "similar",
+    "strengthScore": 0.42
+  },
+  {
+    "id": "ef18a7bc-9f30-8484-949d-45ed96f5401a",
+    "agentId": "auth-blocker-sentinel",
+    "relatedAgentId": "repo-lineage-investigator",
+    "relationshipType": "similar",
+    "strengthScore": 0.42
+  },
+  {
+    "id": "e81eb966-6d44-0498-046d-aa8e457a1cc0",
+    "agentId": "auth-blocker-sentinel",
+    "relatedAgentId": "timeline-synthesis-investigator",
+    "relationshipType": "similar",
+    "strengthScore": 0.42
+  },
+  {
+    "id": "2a77e9c8-4833-df61-dc4e-a38fb2d27dd3",
+    "agentId": "ad-network-manager-agent",
+    "relatedAgentId": "digital-product-creator-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "238998ef-fbf4-4478-8636-575d298dd30a",
+    "agentId": "ad-network-manager-agent",
+    "relatedAgentId": "instagram-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "9d33136d-559a-1b2c-d2cc-630435332299",
+    "agentId": "ad-network-manager-agent",
+    "relatedAgentId": "visual-asset-creator-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "23d4d32a-5936-493b-4a9f-1699f1cb1c14",
+    "agentId": "analytics-and-reporting-agent",
+    "relatedAgentId": "instagram-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "632fa6bb-a813-bc70-062a-233d23ededfb",
+    "agentId": "analytics-and-reporting-agent",
+    "relatedAgentId": "visual-asset-creator-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "439ea1f9-941a-bf7b-7504-21163280b674",
+    "agentId": "audio-recording-agent",
+    "relatedAgentId": "facebook-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "ddb2be9e-87a6-6b5a-9850-74f9a0a5b155",
+    "agentId": "audio-recording-agent",
+    "relatedAgentId": "podcast-video-editor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "0671133c-3192-2093-6ee9-5d854945bd55",
+    "agentId": "audio-recording-agent",
+    "relatedAgentId": "video-editor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "e94468dc-23cb-1d1b-3a00-2917aa80fe55",
+    "agentId": "brand-outreach-agent",
+    "relatedAgentId": "podcast-niche-analyst-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "f24e18fb-e2f1-ae74-e4ae-45071efdc141",
+    "agentId": "brand-prospecting-agent",
+    "relatedAgentId": "podcast-niche-analyst-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "314cea58-2b4e-6352-077b-024d6b43ad15",
+    "agentId": "campaign-execution-agent",
+    "relatedAgentId": "lead-magnet-funnel-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "2327d3b2-36dc-e2e0-7459-3dc7dda860a9",
+    "agentId": "campaign-execution-agent",
+    "relatedAgentId": "x-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "a53818c9-10e1-fdec-4469-1f1f4589c527",
+    "agentId": "cognitive-bias-optimizer-agent",
+    "relatedAgentId": "email-marketing-automation-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "01f0894a-e918-38cb-8570-61488bea58b0",
+    "agentId": "cognitive-bias-optimizer-agent",
+    "relatedAgentId": "financial-manager-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "b83969cf-f3c4-e4d9-90fd-b5abea6d71bf",
+    "agentId": "cognitive-bias-optimizer-agent",
+    "relatedAgentId": "influencer-media-kit-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "e47d1373-d112-453d-7ac5-188c86150bd1",
+    "agentId": "community-manager-agent",
+    "relatedAgentId": "facebook-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "57c8f69d-5ea6-6812-3686-214fd3bb5eff",
+    "agentId": "community-manager-agent",
+    "relatedAgentId": "information-retrieval-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "8c718aa8-1fb5-c8ac-fb63-dcb8f0850644",
+    "agentId": "community-manager-agent",
+    "relatedAgentId": "instagram-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "3e584bef-ea82-467b-5672-047c5f119daa",
+    "agentId": "digital-asset-manager-agent",
+    "relatedAgentId": "facebook-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "72aa3818-7714-d998-9ed0-2f8dded6755d",
+    "agentId": "digital-asset-manager-agent",
+    "relatedAgentId": "podcast-video-editor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "deaedf81-ad27-7b6b-9615-82a9d21b6b70",
+    "agentId": "digital-asset-manager-agent",
+    "relatedAgentId": "video-editor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "09130e15-dc90-7638-565e-93a539cf29a0",
+    "agentId": "email-marketing-automation-agent",
+    "relatedAgentId": "funnel-economics-analyst-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "0c723e17-1699-60d4-77ea-94b2823f843d",
+    "agentId": "email-marketing-automation-agent",
+    "relatedAgentId": "oto-sequence-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "79474521-0a65-68ec-6072-e23699726053",
+    "agentId": "email-marketing-automation-agent",
+    "relatedAgentId": "podcast-video-editor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "ba7f6f94-3533-fdd8-e90c-c7f0ca9fd66e",
+    "agentId": "ethical-bias-auditor-agent",
+    "relatedAgentId": "visual-asset-creator-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "62764c9b-3314-6b66-6788-68f59d3cbccb",
+    "agentId": "facebook-strategy-agent",
+    "relatedAgentId": "fan-funding-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "148992b8-d0a9-fffd-909d-7eef444eae4e",
+    "agentId": "facebook-strategy-agent",
+    "relatedAgentId": "podcast-ad-network-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "3e502bc9-2886-4ae3-7eae-24a4b4920ebd",
+    "agentId": "fan-funding-agent",
+    "relatedAgentId": "podcast-video-editor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "c562a2f7-d924-6bea-81af-7109e3519394",
+    "agentId": "fan-funding-agent",
+    "relatedAgentId": "video-editor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "c6737b26-64b9-6c0a-4d08-2935cbb1e2df",
+    "agentId": "financial-manager-agent",
+    "relatedAgentId": "funnel-economics-analyst-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "cac84639-74f8-b409-5a45-f5836a79b798",
+    "agentId": "financial-manager-agent",
+    "relatedAgentId": "oto-sequence-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "d13d31b9-b2e9-50e4-e385-2f5a27b0ec9d",
+    "agentId": "financial-manager-agent",
+    "relatedAgentId": "podcast-video-editor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "313d5673-096e-bbc2-4e85-d10198f3fbb7",
+    "agentId": "funnel-economics-analyst-agent",
+    "relatedAgentId": "influencer-media-kit-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "2e762e1c-aa33-ba0d-4225-a067796f38ee",
+    "agentId": "influencer-media-kit-agent",
+    "relatedAgentId": "oto-sequence-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "ae7a20d1-8398-1041-2462-bdfd2835d423",
+    "agentId": "information-retrieval-agent",
+    "relatedAgentId": "platform-selection-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "04da096a-db9b-4194-c2f6-5c517c69b00b",
+    "agentId": "information-retrieval-agent",
+    "relatedAgentId": "social-selling-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "3e9edf1a-d812-da2f-560d-4421110e6800",
+    "agentId": "information-retrieval-agent",
+    "relatedAgentId": "talent-manager-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "c61ca6eb-66d6-81f2-96f5-472ae035a7d7",
+    "agentId": "niche-analyst-agent",
+    "relatedAgentId": "seo-optimizer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "79d1cee0-84a6-7c7c-b9cf-03ebca7c4a03",
+    "agentId": "personal-brand-architect-agent",
+    "relatedAgentId": "podcast-niche-analyst-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "217bd51e-aabd-ebe2-2e7b-1c3635ee3b99",
+    "agentId": "podcast-ad-network-agent",
+    "relatedAgentId": "video-editor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "68cb3865-279d-ce31-4913-d753b270d4e2",
+    "agentId": "podcast-audio-editor-agent",
+    "relatedAgentId": "video-editor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "2b7df5f3-3f74-cbfa-cb0c-e31544c0c9ca",
+    "agentId": "podcast-equipment-agent",
+    "relatedAgentId": "podcast-niche-analyst-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "e8217455-5d1a-4542-7ed4-f823ce6d57ba",
+    "agentId": "podcast-hosting-setup-agent",
+    "relatedAgentId": "video-editor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "90489af0-66b1-15a9-fb09-7b1a8f40aa35",
+    "agentId": "podcast-promotion-agent",
+    "relatedAgentId": "traffic-generation-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "44e497dd-45ac-b726-0fb4-9fa26546605e",
+    "agentId": "sales-funnel-architect-agent",
+    "relatedAgentId": "value-ladder-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "c2ca5d7a-72f3-4ae0-945f-01166caa6742",
+    "agentId": "storyboard-artist-agent",
+    "relatedAgentId": "video-editor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "6920498f-b44d-2c44-86dd-906d2985fbdc",
+    "agentId": "storyboard-artist-agent",
+    "relatedAgentId": "visual-asset-creator-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "d876ecfa-854e-6057-b5f1-5d36cfee0703",
+    "agentId": "user-feedback-analysis-agent",
+    "relatedAgentId": "visual-asset-creator-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "c01d406e-274e-e1e5-d135-d54d0fed54db",
+    "agentId": "ab-testing-optimizer-agent",
+    "relatedAgentId": "audience-growth-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.38
+  },
+  {
+    "id": "08663582-0cc6-02ff-980c-8a3323d6304f",
+    "agentId": "ab-testing-optimizer-agent",
+    "relatedAgentId": "lead-capture-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.38
+  },
+  {
+    "id": "e26ebfef-5e5b-389d-215c-07531ed0b782",
+    "agentId": "ab-testing-optimizer-agent",
+    "relatedAgentId": "reputation-management-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.38
+  },
+  {
+    "id": "96bf6ba3-574c-5270-3ab9-d47f2992815a",
+    "agentId": "audience-segmentation-agent",
+    "relatedAgentId": "value-ladder-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.38
+  },
+  {
+    "id": "ccb7b521-6b40-e6f4-2d82-91718223e999",
+    "agentId": "code-fossil-investigator",
+    "relatedAgentId": "personal-historical-archaeologist",
+    "relationshipType": "similar",
+    "strengthScore": 0.38
+  },
+  {
+    "id": "32ddc499-5673-cc19-8f7b-f4ab92c0d38b",
+    "agentId": "content-repurposing-agent",
+    "relatedAgentId": "guest-relationship-manager-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.38
+  },
+  {
+    "id": "07eb31d3-0daf-5c36-4856-5b80ddab5f4c",
+    "agentId": "content-repurposing-agent",
+    "relatedAgentId": "personalized-content-recommendation-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.38
+  },
+  {
+    "id": "84ba31e4-f7a9-16d7-5c97-08942075302b",
+    "agentId": "content-repurposing-agent",
+    "relatedAgentId": "podcast-seo-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.38
+  },
+  {
+    "id": "45dd3467-a4fe-df2a-aee7-396ffd3496d8",
+    "agentId": "content-writer-agent",
+    "relatedAgentId": "legal-compliance-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.38
+  },
+  {
+    "id": "ae65971c-c673-dd6a-8a11-4525ed253ff4",
+    "agentId": "digital-product-factory-agent",
+    "relatedAgentId": "niche-analyst-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.38
+  },
+  {
+    "id": "2d311fdd-75cc-9d13-65e2-4f65fa0e0f63",
+    "agentId": "guest-booking-agent",
+    "relatedAgentId": "guest-relationship-manager-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.38
+  },
+  {
+    "id": "b86a8d4c-76b6-a083-2883-c621f88c24da",
+    "agentId": "guest-relationship-manager-agent",
+    "relatedAgentId": "live-stream-manager-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.38
+  },
+  {
+    "id": "d42a3b97-3509-6240-3841-27b2807ceed0",
+    "agentId": "lead-capture-agent",
+    "relatedAgentId": "sponsorship-outreach-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.38
+  },
+  {
+    "id": "4e349e5c-a91d-b725-85c8-75d5156f03e5",
+    "agentId": "live-stream-manager-agent",
+    "relatedAgentId": "personalized-content-recommendation-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.38
+  },
+  {
+    "id": "68120289-0bb2-0410-68c3-f8a6eafb5703",
+    "agentId": "live-stream-manager-agent",
+    "relatedAgentId": "yt-seo-optimizer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.38
+  },
+  {
+    "id": "80b2cf0f-58ea-d77a-ba81-7ee61986fccc",
+    "agentId": "media-evidence-investigator",
+    "relatedAgentId": "personal-historical-archaeologist",
+    "relationshipType": "similar",
+    "strengthScore": 0.38
+  },
+  {
+    "id": "f5fa5771-1e44-f104-4139-b077146af968",
+    "agentId": "notes-ledger-investigator",
+    "relatedAgentId": "personal-archaeology-source-team-orchestrator",
+    "relationshipType": "similar",
+    "strengthScore": 0.38
+  },
+  {
+    "id": "7c4d3ce8-612b-610a-8dc3-f58084133c6d",
+    "agentId": "notes-ledger-investigator",
+    "relatedAgentId": "personal-historical-archaeologist",
+    "relationshipType": "similar",
+    "strengthScore": 0.38
+  },
+  {
+    "id": "696ed70d-3b92-272d-dc8a-cd539400ead2",
+    "agentId": "personal-archaeology-source-team-orchestrator",
+    "relatedAgentId": "repo-lineage-investigator",
+    "relationshipType": "similar",
+    "strengthScore": 0.38
+  },
+  {
+    "id": "9be9c74b-7a39-796c-b72a-33cea34a2afb",
+    "agentId": "personal-archaeology-source-team-orchestrator",
+    "relatedAgentId": "timeline-synthesis-investigator",
+    "relationshipType": "similar",
+    "strengthScore": 0.38
+  },
+  {
+    "id": "9e52885f-682d-aee0-b467-78a1e1772825",
+    "agentId": "personal-historical-archaeologist",
+    "relatedAgentId": "repo-lineage-investigator",
+    "relationshipType": "similar",
+    "strengthScore": 0.38
+  },
+  {
+    "id": "ea078beb-e25c-37c3-d401-9784a0195227",
+    "agentId": "personal-historical-archaeologist",
+    "relatedAgentId": "timeline-synthesis-investigator",
+    "relationshipType": "similar",
+    "strengthScore": 0.38
+  },
+  {
+    "id": "554b8e3b-579b-9267-6f64-d038a7fccb25",
+    "agentId": "auth-blocker-sentinel",
+    "relatedAgentId": "personal-archaeology-integrity-team-orchestrator",
+    "relationshipType": "similar",
+    "strengthScore": 0.35
+  },
+  {
+    "id": "4a92b89b-3be2-e64e-065e-24ba175084d7",
+    "agentId": "auth-blocker-sentinel",
+    "relatedAgentId": "personal-archaeology-narrative-team-orchestrator",
+    "relationshipType": "similar",
+    "strengthScore": 0.35
+  },
+  {
+    "id": "93fbe2b5-0036-940d-1a05-b944cc25926c",
+    "agentId": "ad-network-manager-agent",
+    "relatedAgentId": "asset-sourcer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "a5d0b27c-d572-2e3b-fe15-9ceb78bd783e",
+    "agentId": "ad-network-manager-agent",
+    "relatedAgentId": "content-calendar-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "ea2c8685-15d3-f1d3-924b-6f997ba3051c",
+    "agentId": "ad-network-manager-agent",
+    "relatedAgentId": "content-calendar-orchestrator-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "d8def74e-2ddb-f3ad-dbbe-529d0e046f94",
+    "agentId": "ad-network-manager-agent",
+    "relatedAgentId": "content-refresh-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "49605049-0dca-37af-a3e7-68dd8b50ef7e",
+    "agentId": "agent-traits",
+    "relatedAgentId": "meta-agent-architect",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "046101ec-2d67-58f4-1a1c-ef3fcb956a16",
+    "agentId": "analytics-and-reporting-agent",
+    "relatedAgentId": "asset-sourcer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "280a5abe-24b8-ab50-7bae-99c0c9ecdb18",
+    "agentId": "analytics-and-reporting-agent",
+    "relatedAgentId": "content-calendar-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "c5fafbdd-0f91-ca3f-7885-363cc6fe3b4b",
+    "agentId": "analytics-and-reporting-agent",
+    "relatedAgentId": "content-calendar-orchestrator-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "5d28ada7-3d83-409c-e755-507748bfc7a9",
+    "agentId": "analytics-and-reporting-agent",
+    "relatedAgentId": "lead-magnet-funnel-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "3dcebdfb-b8d1-4a12-5469-4d1009321277",
+    "agentId": "asset-sourcer-agent",
+    "relatedAgentId": "content-writer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "28239c4f-1bd3-c7af-c49a-bfa11a9cfd3e",
+    "agentId": "asset-sourcer-agent",
+    "relatedAgentId": "ethical-bias-auditor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "6e01ca58-f4fd-48da-0d79-e84f35a9f195",
+    "agentId": "asset-sourcer-agent",
+    "relatedAgentId": "user-feedback-analysis-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "58e17790-7358-a992-95e2-2192051c22b3",
+    "agentId": "audience-growth-agent",
+    "relatedAgentId": "email-marketing-automation-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "d3f30f02-79ba-b086-d0d0-2cffd5303e7f",
+    "agentId": "audience-segmentation-agent",
+    "relatedAgentId": "sales-funnel-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "e63328a9-a401-d024-6beb-1b966037cb6b",
+    "agentId": "audio-recording-agent",
+    "relatedAgentId": "local-ai-claude-code-cli",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "0abd66b7-c63a-dc9c-987b-cd8a0c854430",
+    "agentId": "auth-blocker-sentinel",
+    "relatedAgentId": "master-of-taxonomies",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "56c83375-2f56-ce30-b39a-d3a0c0b24222",
+    "agentId": "campaign-execution-agent",
+    "relatedAgentId": "personal-brand-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "d33e6448-7c4c-8f0e-36b3-b4380d581f82",
+    "agentId": "campaign-execution-agent",
+    "relatedAgentId": "sales-funnel-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "9918d04a-0672-5fe8-c631-1c3f7a10d100",
+    "agentId": "campaign-execution-agent",
+    "relatedAgentId": "seo-optimizer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "0427e1b9-149a-fdf3-49e1-1eb9a0fc3c1e",
+    "agentId": "cognitive-bias-optimizer-agent",
+    "relatedAgentId": "cro-process-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "5df6f9db-1fcf-8dde-d508-00038b241dec",
+    "agentId": "cognitive-bias-optimizer-agent",
+    "relatedAgentId": "funnel-economics-analyst-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "81752123-ce5c-a8ea-18e6-6c6d31001e82",
+    "agentId": "cognitive-bias-optimizer-agent",
+    "relatedAgentId": "oto-sequence-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "e4a2bdad-39f2-c1f9-b2c5-7d16201a422d",
+    "agentId": "community-manager-agent",
+    "relatedAgentId": "local-ai-claude-code-cli",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "135f9931-b9b3-eb41-88e4-437f56ea9ccc",
+    "agentId": "content-calendar-agent",
+    "relatedAgentId": "content-writer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "7a7be46e-785d-adb4-5cd5-e7d31f047a02",
+    "agentId": "content-calendar-agent",
+    "relatedAgentId": "episode-planner-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "e6e90e6e-ba9c-a746-af9b-bb8df5ff87ce",
+    "agentId": "content-calendar-agent",
+    "relatedAgentId": "equipment-recommendation-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "ad33dbdd-f0ad-9fd0-c35f-81328113d6c6",
+    "agentId": "content-calendar-agent",
+    "relatedAgentId": "ethical-bias-auditor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "5899036a-1a21-2203-4bc0-8be36ce7a54c",
+    "agentId": "content-calendar-agent",
+    "relatedAgentId": "user-feedback-analysis-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "0d41c37c-af1a-0111-1941-f8a3c0042268",
+    "agentId": "content-calendar-agent",
+    "relatedAgentId": "yt-content-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "80f2d184-2155-b35c-d8d9-6a94924fb8b6",
+    "agentId": "content-calendar-orchestrator-agent",
+    "relatedAgentId": "ethical-bias-auditor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "4760f826-77d0-0a9d-79fb-b86b6b4901c4",
+    "agentId": "content-calendar-orchestrator-agent",
+    "relatedAgentId": "user-feedback-analysis-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "a17cc3fd-c835-0ffa-e4a6-ff31141f2912",
+    "agentId": "content-refresh-agent",
+    "relatedAgentId": "ethical-bias-auditor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "c4e1e228-77ed-3b53-e47c-89e90e51b3fa",
+    "agentId": "content-refresh-agent",
+    "relatedAgentId": "user-feedback-analysis-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "4d7d381a-381f-f07a-77e5-67a0717b8940",
+    "agentId": "content-repurposing-agent",
+    "relatedAgentId": "podcast-distribution-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "5cb50339-5114-7947-a189-cf15398efeb0",
+    "agentId": "content-writer-agent",
+    "relatedAgentId": "niche-analyst-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "b19365b7-8476-63e4-7b47-8deacecaa60a",
+    "agentId": "contract-manager-agent",
+    "relatedAgentId": "legal-compliance-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "f236a584-21b0-910b-bced-e0b855eaedee",
+    "agentId": "cro-process-agent",
+    "relatedAgentId": "funnel-economics-analyst-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "dcef4be2-8003-6353-5ea2-d4c6f7781d12",
+    "agentId": "deal-negotiator-agent",
+    "relatedAgentId": "financial-manager-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "b6694d13-c6ee-d3fb-0fcc-d3588ff4d152",
+    "agentId": "deal-negotiator-agent",
+    "relatedAgentId": "influencer-media-kit-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "b6cbae07-2051-d143-3884-c46d3fbdf103",
+    "agentId": "deal-negotiator-agent",
+    "relatedAgentId": "influencer-niche-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "a743eb95-8b63-c4c8-00ea-57bfd68eed46",
+    "agentId": "deal-negotiator-agent",
+    "relatedAgentId": "platform-selection-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "5732f9a9-2080-f0c3-0449-10c1fb66b22b",
+    "agentId": "deal-negotiator-agent",
+    "relatedAgentId": "yt-content-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "3d1b0555-9c1e-4625-0937-55c3374a2f98",
+    "agentId": "digital-asset-manager-agent",
+    "relatedAgentId": "local-ai-claude-code-cli",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "36391448-1b9e-cb73-ddca-21299f818645",
+    "agentId": "digital-product-factory-agent",
+    "relatedAgentId": "seo-optimizer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "133205d1-f767-d2ff-b0cb-5fb34529a4b3",
+    "agentId": "digital-product-factory-agent",
+    "relatedAgentId": "sponsorship-outreach-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "a83760f1-3c74-0fd8-3025-b30ad91ec93a",
+    "agentId": "ecom-platform-manager-agent",
+    "relatedAgentId": "productivity-and-burnout-prevention-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "50c84b29-2ca8-33f6-6c5c-fda535e0bf1d",
+    "agentId": "episode-planner-agent",
+    "relatedAgentId": "niche-analyst-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "e8bc82eb-b3f6-51fb-c4c7-0aae365003a8",
+    "agentId": "episode-planner-agent",
+    "relatedAgentId": "personalized-content-recommendation-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "52312c64-27a8-b51f-ad79-59b3d4c85aae",
+    "agentId": "episode-planner-agent",
+    "relatedAgentId": "podcast-format-designer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "28fb2fa4-72f9-558c-502f-09e839178cd7",
     "agentId": "equipment-recommendation-agent",
+    "relatedAgentId": "personalized-content-recommendation-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "bdf6f0f1-55af-fe66-5ff2-5a849c026714",
+    "agentId": "equipment-recommendation-agent",
+    "relatedAgentId": "podcast-format-designer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "3a44f6f3-67cc-a652-3f4e-6a13ea396ebb",
+    "agentId": "equipment-recommendation-agent",
+    "relatedAgentId": "twip-orchestration-bridge",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "0548229d-82e1-76ef-4085-d02658e0e089",
+    "agentId": "ethical-bias-auditor-agent",
+    "relatedAgentId": "lead-magnet-funnel-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "13753933-eff5-3d69-6b0d-b1261ffe916a",
+    "agentId": "ethical-bias-auditor-agent",
+    "relatedAgentId": "local-ai-claude-code-cli",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "b21612a2-aa3b-aca6-a882-e9f4468bd974",
+    "agentId": "fan-funding-agent",
+    "relatedAgentId": "local-ai-claude-code-cli",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "2408ee26-cdf4-e892-ec29-7393724a8bd5",
+    "agentId": "financial-manager-agent",
+    "relatedAgentId": "lead-capture-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "b6310f8c-02cd-02bb-41de-677c678d5ad8",
+    "agentId": "financial-manager-agent",
+    "relatedAgentId": "lead-magnet-funnel-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "1d042621-38e0-ae17-62da-9c89bfad44c9",
+    "agentId": "financial-manager-agent",
+    "relatedAgentId": "local-ai-claude-code-cli",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "d8cb59d0-8136-558d-7938-59d47bb08c35",
+    "agentId": "funnel-economics-analyst-agent",
+    "relatedAgentId": "oto-sequence-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "a8a020e6-492c-4baa-b89f-b2b2abed8b9f",
+    "agentId": "guest-booking-agent",
     "relatedAgentId": "podcast-equipment-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "540e754e-3f1a-6d39-e792-c52efcccde49",
+    "agentId": "influencer-media-kit-agent",
+    "relatedAgentId": "lead-magnet-funnel-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "6dd00840-78e1-a4ed-5500-82bfa7efe199",
+    "agentId": "information-retrieval-agent",
+    "relatedAgentId": "legal-compliance-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "7a0822f1-3b5c-d761-1be6-527a20e2ef6b",
+    "agentId": "interoperability-protocol-agent",
+    "relatedAgentId": "local-ai-claude-code-cli",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "17076191-ef15-9ae8-c47b-c0e325cd0c7e",
+    "agentId": "interoperability-protocol-agent",
+    "relatedAgentId": "local-ai-gemini-cli",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "8392f44d-7c06-d1e6-8a9f-a42eb6310659",
+    "agentId": "local-ai-gemini-cli",
+    "relatedAgentId": "podcast-ad-network-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "52c3d70f-324a-46bc-071a-d9004005ba2a",
+    "agentId": "local-ai-gemini-cli",
+    "relatedAgentId": "podcast-audio-editor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "4790fb0b-f019-6da5-26b0-678b4cef30d9",
+    "agentId": "local-ai-gemini-cli",
+    "relatedAgentId": "podcast-hosting-setup-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "c24fc409-5973-0a14-6cc9-360d6f52c067",
+    "agentId": "local-ai-gemini-cli",
+    "relatedAgentId": "social-selling-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "cc89f1c2-8ebe-0226-73ad-100a7e30a184",
+    "agentId": "local-ai-gemini-cli",
+    "relatedAgentId": "storyboard-artist-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "5a3644f4-dc93-7e07-a6bc-8214baec3a4b",
+    "agentId": "local-ai-gemini-cli",
+    "relatedAgentId": "talent-manager-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "7f73a539-f87a-001d-897b-75483de071b3",
+    "agentId": "logical-reasoning-agent",
+    "relatedAgentId": "platform-selection-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "d5d01fc7-7e5c-4e1d-0b75-4d3ee22f3dd1",
+    "agentId": "logical-reasoning-agent",
+    "relatedAgentId": "social-selling-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "47dcfa25-0b92-0c33-aab5-b2440215b21a",
+    "agentId": "logical-reasoning-agent",
+    "relatedAgentId": "yt-content-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "9c306ef0-42ff-58d1-7826-1ff5fd55a210",
+    "agentId": "personalized-content-recommendation-agent",
+    "relatedAgentId": "podcast-ad-network-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "578583a6-ee5e-c570-afeb-534599d78e7b",
+    "agentId": "podcast-audio-editor-agent",
+    "relatedAgentId": "podcast-format-designer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "1cc20c93-0311-d24b-94f0-fbaf23b3a032",
+    "agentId": "podcast-audio-editor-agent",
+    "relatedAgentId": "twip-orchestration-bridge",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "4e0d772f-c3ba-3ee5-654c-2442f254f4c4",
+    "agentId": "podcast-equipment-agent",
+    "relatedAgentId": "sponsorship-outreach-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "408e0648-fa92-b2b5-d374-e1ed4571ee89",
+    "agentId": "podcast-format-designer-agent",
+    "relatedAgentId": "podcast-hosting-setup-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "74d0c30b-de82-ccfc-d910-86c11d9697b6",
+    "agentId": "podcast-format-designer-agent",
+    "relatedAgentId": "storyboard-artist-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "85dc47ce-c304-da9f-b642-c86244a7f0fc",
+    "agentId": "podcast-promotion-agent",
+    "relatedAgentId": "reputation-management-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "4eabe328-b21e-be5e-eade-dd969e6a7738",
+    "agentId": "reputation-management-agent",
+    "relatedAgentId": "social-selling-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "c01eef36-a84f-3a81-2764-b627dae70bf3",
+    "agentId": "reputation-management-agent",
+    "relatedAgentId": "yt-content-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "b09b74b3-ebc5-ed04-3b38-97e221dcbd91",
+    "agentId": "scout-llm-opportunities",
+    "relatedAgentId": "social-selling-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "69836c0f-f69c-a7bf-1727-ee9e433db6e3",
+    "agentId": "social-selling-agent",
+    "relatedAgentId": "tax-compliance-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "23ded9d2-535b-0f90-0e56-203cc63787a0",
+    "agentId": "social-selling-agent",
+    "relatedAgentId": "zeroclaw-sandbox",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "c1057892-3e19-8562-037e-c3b12200029f",
+    "agentId": "technical-setup-agent",
+    "relatedAgentId": "user-feedback-analysis-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "603b3cac-b8d4-e391-f20c-f29c177fc55b",
+    "agentId": "master-of-taxonomies",
+    "relatedAgentId": "personal-archaeology-source-team-orchestrator",
+    "relationshipType": "similar",
+    "strengthScore": 0.32
+  },
+  {
+    "id": "828a3b83-9d99-3836-b496-9b1318c965b3",
+    "agentId": "auth-blocker-sentinel",
+    "relatedAgentId": "temporal-agent-reclassifier",
+    "relationshipType": "similar",
+    "strengthScore": 0.32
+  },
+  {
+    "id": "35863591-763d-5bd7-c53c-94c676a0d103",
+    "agentId": "customer-support-agent",
+    "relatedAgentId": "podcast-promotion-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.31
+  },
+  {
+    "id": "a70bf559-4157-b3ba-5041-1be33ed697a5",
+    "agentId": "ab-testing-optimizer-agent",
+    "relatedAgentId": "podcast-promotion-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.3
+  },
+  {
+    "id": "51a3a57d-5886-4da3-8ad8-24d6feed6839",
+    "agentId": "content-repurposing-agent",
+    "relatedAgentId": "podcast-promotion-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.3
+  },
+  {
+    "id": "f1cb07b3-ab01-0df2-c2fb-6819fdac04c1",
+    "agentId": "guest-booking-agent",
+    "relatedAgentId": "podcast-promotion-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.3
+  },
+  {
+    "id": "8ccac5d8-6a07-5d87-62e7-0b66647957e7",
+    "agentId": "ab-testing-optimizer-agent",
+    "relatedAgentId": "social-selling-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.29
+  },
+  {
+    "id": "ad8b007f-b559-015e-5af7-ba967dd7c4dc",
+    "agentId": "asset-sourcer-agent",
+    "relatedAgentId": "contract-manager-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.29
+  },
+  {
+    "id": "6aabdebc-4e74-7775-a21a-f9ab6ced2572",
+    "agentId": "asset-sourcer-agent",
+    "relatedAgentId": "visual-asset-creator-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.29
+  },
+  {
+    "id": "9986f7e0-2b32-4a38-a660-32816e27510d",
+    "agentId": "cognitive-bias-optimizer-agent",
+    "relatedAgentId": "lead-capture-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.29
+  },
+  {
+    "id": "b7f5f14d-f058-3626-d9ad-084360c07122",
+    "agentId": "cognitive-bias-optimizer-agent",
+    "relatedAgentId": "reputation-management-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.29
+  },
+  {
+    "id": "e60e93a2-0f13-20fd-2be1-89dc563ca23b",
+    "agentId": "cognitive-bias-optimizer-agent",
+    "relatedAgentId": "value-ladder-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.29
+  },
+  {
+    "id": "e42be589-78de-ac12-b803-b602c0d732ff",
+    "agentId": "content-calendar-orchestrator-agent",
+    "relatedAgentId": "cro-process-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.29
+  },
+  {
+    "id": "a76f017b-5064-e61d-6825-6dd2d54da63c",
+    "agentId": "content-calendar-orchestrator-agent",
+    "relatedAgentId": "funnel-economics-analyst-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.29
+  },
+  {
+    "id": "ddcc61cd-bf27-c2a6-e289-539d2394042a",
+    "agentId": "content-calendar-orchestrator-agent",
+    "relatedAgentId": "print-on-demand-manager-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.29
+  },
+  {
+    "id": "0623c171-46ad-8245-6094-6c51f3d55c6c",
+    "agentId": "content-calendar-orchestrator-agent",
+    "relatedAgentId": "visual-asset-creator-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.29
+  },
+  {
+    "id": "5240d3c2-0ad3-38bd-93bb-7751d055a24a",
+    "agentId": "content-refresh-agent",
+    "relatedAgentId": "visual-asset-creator-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.29
+  },
+  {
+    "id": "2b5bc4c8-e238-1bf8-e416-9d2b8bc8a6ba",
+    "agentId": "content-writer-agent",
+    "relatedAgentId": "digital-product-factory-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.29
+  },
+  {
+    "id": "0f846147-684e-c32b-7ac0-6e1c14f3dfdf",
+    "agentId": "contract-manager-agent",
+    "relatedAgentId": "customer-journey-map-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.29
+  },
+  {
+    "id": "0a368b3b-e3b2-b642-5905-1367db6788f6",
+    "agentId": "contract-manager-agent",
+    "relatedAgentId": "tax-compliance-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.29
+  },
+  {
+    "id": "5e5d5a40-c99f-a04c-fcbc-b869bfc19a5e",
+    "agentId": "contract-manager-agent",
+    "relatedAgentId": "value-ladder-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.29
+  },
+  {
+    "id": "50beca5f-a8b2-2d8f-0ed2-955861338bff",
+    "agentId": "cro-process-agent",
+    "relatedAgentId": "customer-journey-map-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.29
+  },
+  {
+    "id": "eaafa94f-9c4c-83ea-d290-04e585f14956",
+    "agentId": "customer-journey-map-agent",
+    "relatedAgentId": "funnel-economics-analyst-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.29
+  },
+  {
+    "id": "f50ca3e0-11f1-a35e-3964-64485faced5a",
+    "agentId": "digital-product-factory-agent",
+    "relatedAgentId": "talent-manager-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.29
+  },
+  {
+    "id": "3e9b7f26-3ae1-6f3a-1cdd-b395b98b5075",
+    "agentId": "digital-product-factory-agent",
+    "relatedAgentId": "user-feedback-analysis-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.29
+  },
+  {
+    "id": "4d3bc98b-17f9-fbea-662e-27228e236633",
+    "agentId": "funnel-economics-analyst-agent",
+    "relatedAgentId": "lead-capture-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.29
+  },
+  {
+    "id": "31a513b6-0bc3-c2ec-48ea-7dda19a2bdea",
+    "agentId": "information-retrieval-agent",
+    "relatedAgentId": "reputation-management-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.29
+  },
+  {
+    "id": "5be2c7d0-9066-f6c8-3dbc-1c057e50648f",
+    "agentId": "information-retrieval-agent",
+    "relatedAgentId": "scout-llm-opportunities",
+    "relationshipType": "similar",
+    "strengthScore": 0.29
+  },
+  {
+    "id": "c855c04f-fd32-a6a4-e85a-fa15c0e841ff",
+    "agentId": "information-retrieval-agent",
+    "relatedAgentId": "tax-compliance-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.29
+  },
+  {
+    "id": "9e0fdb9b-e440-630b-bbe4-c998ce276f61",
+    "agentId": "lead-capture-agent",
+    "relatedAgentId": "oto-sequence-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.29
+  },
+  {
+    "id": "a6625662-812b-6f88-d197-f9879cace092",
+    "agentId": "oto-sequence-architect-agent",
+    "relatedAgentId": "reputation-management-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.29
+  },
+  {
+    "id": "9803c67c-403d-c7f5-3152-c2cca0e7408c",
+    "agentId": "technical-setup-agent",
+    "relatedAgentId": "visual-asset-creator-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.29
+  },
+  {
+    "id": "00ae4470-c44a-4c26-8a2c-3ae73bd8a06b",
+    "agentId": "ab-testing-optimizer-agent",
+    "relatedAgentId": "legal-compliance-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.27
+  },
+  {
+    "id": "95ec325d-a686-a514-0243-a4edd9cc1f2f",
+    "agentId": "digital-product-factory-agent",
+    "relatedAgentId": "legal-compliance-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.27
+  },
+  {
+    "id": "10c5ebfb-9c44-1121-e1d3-27c244ff8ddb",
+    "agentId": "master-of-taxonomies",
+    "relatedAgentId": "personal-historical-archaeologist",
     "relationshipType": "similar",
     "strengthScore": 0.26
   },
   {
-    "id": "e818e6e1-890b-4bc0-a491-1ec7cf4c9b87",
-    "agentId": "monetization-strategy-agent",
-    "relatedAgentId": "podcast-monetization-strategy-agent",
+    "id": "749338f1-ae25-42d8-edfa-953a2bf86e3a",
+    "agentId": "master-of-taxonomies",
+    "relatedAgentId": "temporal-agent-reclassifier",
     "relationshipType": "similar",
-    "strengthScore": 0.34
+    "strengthScore": 0.26
   },
   {
-    "id": "28eba664-3e45-4237-a1d7-332c11d20887",
-    "agentId": "orchestrator-agent-copy",
-    "relatedAgentId": "orchestrator-agent",
+    "id": "10f048e4-343f-7f1e-2c3a-6a5f3d22fc32",
+    "agentId": "ab-testing-optimizer-agent",
+    "relatedAgentId": "cognitive-bias-optimizer-agent",
     "relationshipType": "similar",
-    "strengthScore": 0.96
+    "strengthScore": 0.25
   },
   {
-    "id": "e1eb1ec0-903a-4528-9c48-977f892b79e1",
-    "agentId": "claude-code-cli",
-    "relatedAgentId": "gemini-cli",
+    "id": "1d348472-ac6c-a5f1-8f95-0dafe4f69120",
+    "agentId": "ab-testing-optimizer-agent",
+    "relatedAgentId": "oto-sequence-architect-agent",
     "relationshipType": "similar",
-    "strengthScore": 0.53
+    "strengthScore": 0.25
+  },
+  {
+    "id": "a54b4367-237a-bee8-4df3-e6138226c184",
+    "agentId": "audience-segmentation-agent",
+    "relatedAgentId": "contract-manager-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "8e440e53-cd74-5946-780a-deba93d52ef7",
+    "agentId": "audience-segmentation-agent",
+    "relatedAgentId": "cro-process-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "534cff7d-099e-591e-1b60-5eb2bb684423",
+    "agentId": "audience-segmentation-agent",
+    "relatedAgentId": "oto-sequence-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "1eeeb534-92b3-4e9b-a2d9-50f5043c8a3e",
+    "agentId": "business-model-architect-agent",
+    "relatedAgentId": "openclaw-fleet",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "02f2f6a4-6594-fde7-9473-39d23b51674c",
+    "agentId": "campaign-execution-agent",
+    "relatedAgentId": "influencer-niche-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "b4784a9a-d136-20ad-dadc-fd63b47058c8",
+    "agentId": "content-calendar-orchestrator-agent",
+    "relatedAgentId": "content-refresh-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "c964e75a-e9a7-3031-7826-f3ccd082d1f1",
+    "agentId": "contract-manager-agent",
+    "relatedAgentId": "guest-booking-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "bdfcb9aa-bb9c-e726-91bc-6ca5d68bf300",
+    "agentId": "contract-manager-agent",
+    "relatedAgentId": "technical-support-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "e6fd0b8c-dfd3-8b40-a8c7-7e46123dab80",
+    "agentId": "customer-journey-map-agent",
+    "relatedAgentId": "tax-compliance-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "a53bdd81-6499-99cf-c72d-eefd0d7c211a",
+    "agentId": "customer-journey-map-agent",
+    "relatedAgentId": "value-ladder-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "9658dab6-a187-f4e6-e8c1-734c7fde3ead",
+    "agentId": "customer-support-agent",
+    "relatedAgentId": "tax-compliance-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "cefda07d-2661-fb0d-e4c0-e08ca5a6effe",
+    "agentId": "digital-product-factory-agent",
+    "relatedAgentId": "visual-asset-creator-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "55a1d9d6-67ee-26ba-b010-0488fafe5bf2",
+    "agentId": "ecom-platform-manager-agent",
+    "relatedAgentId": "interoperability-protocol-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "d433b8d3-6c9b-d93a-d836-4cd2686587af",
+    "agentId": "ecom-platform-manager-agent",
+    "relatedAgentId": "talent-manager-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "22fd40a2-2ac9-6e82-7c0b-fbc777a8f192",
+    "agentId": "guest-booking-agent",
+    "relatedAgentId": "video-editor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "224f4baa-2824-9dad-2c15-fffb366080e5",
+    "agentId": "influencer-niche-agent",
+    "relatedAgentId": "podcast-equipment-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "48785dcd-8fbd-3f98-fb3e-42effd682a92",
+    "agentId": "influencer-niche-agent",
+    "relatedAgentId": "sales-funnel-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "7fd29692-7a93-d8ab-58fd-850c4e044054",
+    "agentId": "interoperability-protocol-agent",
+    "relatedAgentId": "productivity-and-burnout-prevention-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "d85556a5-86cb-1619-39ba-16f4e4a47975",
+    "agentId": "live-stream-manager-agent",
+    "relatedAgentId": "video-editor-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "61ca3b98-dfc3-e830-2b6d-1d88d36c3e40",
+    "agentId": "logical-reasoning-agent",
+    "relatedAgentId": "picoclaw-perplexity",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "54d4ca66-98a4-e926-33e2-596ab9c55311",
+    "agentId": "openclaw-fleet",
+    "relatedAgentId": "unitary-guardian",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "f7e14b50-2010-18e7-3fb8-ab854dfffd6c",
+    "agentId": "podcast-equipment-agent",
+    "relatedAgentId": "talent-manager-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "56fbf3da-1be3-5f6b-99e7-bb9872850a68",
+    "agentId": "print-on-demand-manager-agent",
+    "relatedAgentId": "twip-protocol-bridge",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "1592e9b0-76af-3142-0766-cf0fb1644975",
+    "agentId": "productivity-and-burnout-prevention-agent",
+    "relatedAgentId": "talent-manager-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "9e754276-101d-17a7-fbf5-7816882869f5",
+    "agentId": "scout-llm-opportunities",
+    "relatedAgentId": "tax-compliance-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "5deac8b5-3d71-cee5-ac42-965f9225c198",
+    "agentId": "scout-llm-opportunities",
+    "relatedAgentId": "zeroclaw-sandbox",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "f0392fbb-e0ac-3d78-6e36-d744254be0e9",
+    "agentId": "tax-compliance-agent",
+    "relatedAgentId": "value-ladder-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "d13c2c99-f4ec-241c-6fec-a818e5179b15",
+    "agentId": "tax-compliance-agent",
+    "relatedAgentId": "zeroclaw-sandbox",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "b72197a8-f504-7fa0-7dc8-cf50554249a5",
+    "agentId": "contract-manager-agent",
+    "relatedAgentId": "email-custodian-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.22
+  },
+  {
+    "id": "93549084-1d7e-e089-3f3f-a515c4a60491",
+    "agentId": "customer-journey-map-agent",
+    "relatedAgentId": "technical-support-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.22
+  },
+  {
+    "id": "ca98d6fd-f48c-9f2d-fb2f-fcbe2746de9b",
+    "agentId": "digital-product-factory-agent",
+    "relatedAgentId": "technical-setup-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.22
+  },
+  {
+    "id": "b12316a6-1e6a-e0d8-ddfc-700247edcba0",
+    "agentId": "email-custodian-agent",
+    "relatedAgentId": "print-on-demand-manager-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.22
+  },
+  {
+    "id": "c7ecedb7-5b32-f258-128c-02028ec208a4",
+    "agentId": "live-stream-manager-agent",
+    "relatedAgentId": "technical-setup-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.22
+  },
+  {
+    "id": "01b1d110-606b-6ea8-74f8-2266aa14013c",
+    "agentId": "podcast-distribution-agent",
+    "relatedAgentId": "scout-llm-opportunities",
+    "relationshipType": "similar",
+    "strengthScore": 0.22
+  },
+  {
+    "id": "b781e3ac-11eb-0f20-7ee3-a8dea71f1fbe",
+    "agentId": "podcast-distribution-agent",
+    "relatedAgentId": "zeroclaw-sandbox",
+    "relationshipType": "similar",
+    "strengthScore": 0.22
+  },
+  {
+    "id": "2849fc9a-a352-7ce9-c9ae-d0df258e3c5d",
+    "agentId": "technical-seo-auditor-agent",
+    "relatedAgentId": "technical-setup-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.22
+  },
+  {
+    "id": "91f97a22-ab31-75bf-8b08-231df60b0fcf",
+    "agentId": "technical-support-agent",
+    "relatedAgentId": "value-ladder-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.22
   }
 ]

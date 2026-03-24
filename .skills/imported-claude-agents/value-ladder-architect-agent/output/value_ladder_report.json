@@ -1,0 +1,156 @@
+{
+  "value_ladder_report": {
+    "assumptions": [
+      "Goal is maximizing LTV through ascension and retention.",
+      "Traffic assumed from organic channels, email, and retargeting."
+    ],
+    "product_and_service_catalog": [
+      {
+        "name": "Free Growth Playbook",
+        "type": "lead_magnet",
+        "price_usd": 0,
+        "description": "Quick-win framework to capture leads."
+      },
+      {
+        "name": "Starter Toolkit",
+        "type": "tripwire",
+        "price_usd": 27,
+        "description": "Templates and checklists for implementation."
+      },
+      {
+        "name": "Core Accelerator Program",
+        "type": "core_offer",
+        "price_usd": 997,
+        "description": "Flagship transformation program."
+      },
+      {
+        "name": "Insider Membership",
+        "type": "continuity",
+        "price_usd": 97,
+        "description": "Retention and recurring value."
+      },
+      {
+        "name": "Elite Advisory",
+        "type": "high_ticket",
+        "price_usd": 12000,
+        "description": "Premium strategic support."
+      }
+    ],
+    "value_ladder_rungs": [
+      {
+        "rung": 1,
+        "offer": "Free Growth Playbook",
+        "type": "lead_magnet",
+        "price_usd": 0,
+        "customer_goal": "Get a quick win and build trust."
+      },
+      {
+        "rung": 2,
+        "offer": "Starter Toolkit",
+        "type": "tripwire",
+        "price_usd": 27,
+        "customer_goal": "Make a low-risk first purchase."
+      },
+      {
+        "rung": 3,
+        "offer": "Core Accelerator Program",
+        "type": "core_offer",
+        "price_usd": 997,
+        "customer_goal": "Achieve core transformation."
+      },
+      {
+        "rung": 4,
+        "offer": "Insider Membership",
+        "type": "continuity",
+        "price_usd": 97,
+        "customer_goal": "Sustain progress and increase retention."
+      },
+      {
+        "rung": 5,
+        "offer": "Elite Advisory",
+        "type": "high_ticket",
+        "price_usd": 12000,
+        "customer_goal": "Scale with high-touch support."
+      }
+    ],
+    "funnel_mapping": {
+      "front_end": {
+        "funnel_type": "LeadMagnetFunnel",
+        "offer": "Free Growth Playbook",
+        "steps": [
+          "Traffic source",
+          "Opt-in page",
+          "Lead capture",
+          "Welcome sequence"
+        ],
+        "kpi_focus": [
+          "Opt-in rate",
+          "Cost per lead",
+          "Email click-through rate"
+        ]
+      },
+      "front_end_monetization": {
+        "funnel_type": "TripwireFunnel",
+        "offer": "Starter Toolkit",
+        "steps": [
+          "Thank-you page OTO",
+          "Checkout",
+          "Post-purchase onboarding",
+          "Segmentation trigger"
+        ],
+        "kpi_focus": [
+          "Tripwire take rate",
+          "AOV",
+          "Refund rate"
+        ]
+      },
+      "mid_tier": {
+        "funnel_type": "WebinarFunnel",
+        "offer": "Core Accelerator Program",
+        "steps": [
+          "Registration page",
+          "Reminder sequence",
+          "Webinar event",
+          "Offer close sequence"
+        ],
+        "kpi_focus": [
+          "Show-up rate",
+          "Webinar conversion rate",
+          "Sales conversion"
+        ]
+      },
+      "back_end": {
+        "funnel_type": "HighTicketFunnel",
+        "offer": "Elite Advisory",
+        "steps": [
+          "Ascension invite",
+          "Application",
+          "Qualification call",
+          "Enrollment"
+        ],
+        "kpi_focus": [
+          "Application rate",
+          "Call show rate",
+          "Close rate"
+        ]
+      },
+      "retention_and_ltv_extension": {
+        "funnel_type": "ContinuityRetentionLoop",
+        "offer": "Insider Membership",
+        "steps": [
+          "Continuity upsell",
+          "Monthly value delivery",
+          "Engagement loops",
+          "Referral trigger"
+        ],
+        "kpi_focus": [
+          "Monthly churn",
+          "Net revenue retention",
+          "Referral rate"
+        ]
+      }
+    },
+    "ecosystem_flowchart_mermaid": "graph TD\nA[Cold Traffic] --> B[Lead Magnet Opt-in]\nB --> C[Free Growth Playbook]\nC --> D[Tripwire OTO: Starter Toolkit]\nD --> E[Email Nurture + Segmentation]\nE --> F[Webinar Registration]\nF --> G[Webinar Event]\nG --> H[Core Offer: Core Accelerator Program]\nH --> I[Onboarding + Milestones]\nI --> J[Ascension Invite]\nJ --> K[High-Ticket Application]\nK --> L[Qualification Call]\nL --> M[Elite Advisory]\nH --> N[Insider Membership]\nN --> O[Retention + Community]\nM --> O\nO --> P[Referral Loop]\nP --> A",
+    "strategic_narrative": "This ecosystem acquires leads with a free quick-win asset, validates buyer intent with a low-ticket tripwire, and converts qualified prospects into the core offer through a webinar sequence. Customers with demonstrated progress ascend into a high-ticket application funnel, while continuity extends value delivery, improves retention, and increases lifetime value."
+  }
+}

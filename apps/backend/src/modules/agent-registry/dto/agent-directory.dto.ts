@@ -74,6 +74,9 @@ export class AgentDirectoryEntryDto {
   @ApiPropertyOptional({ description: 'Agent category' })
   category?: string;
 
+  @ApiPropertyOptional({ description: 'Normalized categories', type: [String] })
+  categoriesNormalized?: string[];
+
   @ApiProperty({ description: 'Agent tags', type: [String] })
   tags: string[];
 
@@ -97,6 +100,18 @@ export class AgentDirectoryEntryDto {
 
   @ApiProperty({ description: 'Agent capabilities', type: [String] })
   capabilities: string[];
+
+  @ApiPropertyOptional({
+    description: 'Normalized classification attributes',
+    type: 'object',
+    additionalProperties: true,
+  })
+  classification?: {
+    domain?: string[];
+    workflowStage?: string[];
+    complexity?: string | null;
+    riskTier?: string | null;
+  };
 }
 
 export class AgentDirectoryResponseDto {

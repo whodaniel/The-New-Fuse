@@ -155,6 +155,11 @@
         gap: 32px;
         margin-top: 24px;
       }
+      .hero-meta {
+        margin-top: 10px;
+        font-size: 12px;
+        color: var(--muted);
+      }
       .hero-stat {
         text-align: center;
       }
@@ -482,18 +487,19 @@
         </p>
         <div class="hero-stats">
           <div class="hero-stat">
-            <div class="number">113</div>
-            <div class="label">Agents</div>
+            <div class="number" id="metric-agent-personas">--</div>
+            <div class="label">Agent Personas</div>
           </div>
           <div class="hero-stat">
-            <div class="number">7</div>
+            <div class="number" id="metric-domains">--</div>
             <div class="label">Domains</div>
           </div>
           <div class="hero-stat">
-            <div class="number">13</div>
+            <div class="number" id="metric-visualizations">--</div>
             <div class="label">Visualizations</div>
           </div>
         </div>
+        <div class="hero-meta" id="metrics-meta">Metrics loading...</div>
       </div>
     </div>
 
@@ -513,7 +519,7 @@
         <div class="section-header">
           <div class="section-icon" style="background: var(--accent-dim)">🕸️</div>
           <h2 class="section-title">Agent Relationship Graphs</h2>
-          <span class="section-count">7 subgraphs</span>
+          <span class="section-count" id="graph-section-count">--</span>
         </div>
         <div class="grid" id="graph-grid"></div>
       </div>
@@ -523,7 +529,7 @@
         <div class="section-header">
           <div class="section-icon" style="background: var(--purple-dim)">📊</div>
           <h2 class="section-title">System Visualizations</h2>
-          <span class="section-count">6 tools</span>
+          <span class="section-count" id="system-section-count">--</span>
         </div>
         <div class="grid" id="system-grid"></div>
       </div>
@@ -533,7 +539,7 @@
         <div class="section-header">
           <div class="section-icon" style="background: var(--green-dim)">📖</div>
           <h2 class="section-title">Documentation & Guides</h2>
-          <span class="section-count">8 docs</span>
+          <span class="section-count" id="docs-section-count">--</span>
         </div>
         <div class="grid" id="docs-grid"></div>
       </div>
@@ -749,6 +755,49 @@
         cyan: { bg: 'var(--cyan-dim)', text: '#22d3ee', accent: 'var(--cyan)' },
       };
 
+      function setText(id, text) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+      }
+
+      function applyStaticCounts() {
+        setText('graph-section-count', `${subgraphs.length} subgraphs`);
+        setText('system-section-count', `${systemViz.length} tools`);
+        setText('docs-section-count', `${docs.length} docs`);
+        setText('metric-domains', String(subgraphs.length));
+        setText('metric-visualizations', String(subgraphs.length + systemViz.length));
+      }
+
+      async function hydrateLiveMetrics() {
+        try {
+          const response = await fetch('./data/dashboard-metrics.json', { cache: 'no-store' });
+          if (!response.ok) {
+            setText('metrics-meta', 'Using static dashboard counts');
+            return;
+          }
+          const payload = await response.json();
+          const personas = payload?.agents?.unique_names;
+          if (typeof personas === 'number') {
+            setText('metric-agent-personas', String(personas));
+          } else {
+            setText('metric-agent-personas', 'n/a');
+          }
+
+          const stamp = payload?.generated_at;
+          const graphNodes = payload?.graph?.relationship_nodes;
+          const parts = [];
+          if (stamp) {
+            const dt = new Date(stamp);
+            parts.push(`Updated ${Number.isNaN(dt.getTime()) ? stamp : dt.toLocaleString()}`);
+          }
+          if (typeof graphNodes === 'number') parts.push(`Graph scope: ${graphNodes} nodes`);
+          setText('metrics-meta', parts.length ? parts.join(' · ') : 'Using static dashboard counts');
+        } catch (_err) {
+          setText('metric-agent-personas', 'n/a');
+          setText('metrics-meta', 'Using static dashboard counts');
+        }
+      }
+
       // ---- Render ----
       function renderCards(containerId, items) {
         const el = document.getElementById(containerId);
@@ -772,9 +821,11 @@
         });
       }
 
+      applyStaticCounts();
       renderCards('graph-grid', subgraphs);
       renderCards('system-grid', systemViz);
       renderCards('docs-grid', docs);
+      hydrateLiveMetrics();
 
       // ---- Smooth scroll ----
       document.querySelectorAll('.nav-links a').forEach((a) => {
@@ -792,4 +843,3 @@
     </script>
   </body>
 </html>
-

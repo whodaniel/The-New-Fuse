@@ -26,6 +26,13 @@ type SnapshotEntry = {
   version?: string;
   status?: string;
   mcpIds?: string[];
+  categoriesNormalized?: string[];
+  categoriesRaw?: string[];
+  unknownTags?: string[];
+  classification?: Record<string, unknown>;
+  sourceVariants?: Record<string, unknown>[];
+  metadata?: Record<string, unknown>;
+  schemaVersion?: string;
 };
 
 @Injectable()
@@ -46,6 +53,43 @@ export class AgentRegistryImportService {
   private normalizeArray(input: unknown): string[] {
     if (!Array.isArray(input)) return [];
     return input.map((value) => String(value).trim()).filter(Boolean);
+  }
+
+  private normalizeObject(input: unknown): Record<string, unknown> | null {
+    if (!input || Array.isArray(input) || typeof input !== 'object') return null;
+    return input as Record<string, unknown>;
+  }
+
+  private normalizeClassification(input: unknown) {
+    const obj = this.normalizeObject(input);
+    if (!obj) return null;
+    const complexity = typeof obj.complexity === 'string' ? obj.complexity : null;
+    const riskTier = typeof obj.riskTier === 'string' ? obj.riskTier : null;
+    return {
+      domain: this.normalizeArray(obj.domain),
+      workflowStage: this.normalizeArray(obj.workflowStage),
+      complexity,
+      riskTier,
+    };
+  }
+
+  private normalizeSourceVariants(input: unknown) {
+    if (!Array.isArray(input)) return [];
+    return input
+      .map((item) => {
+        if (!item || typeof item !== 'object') return null;
+        const obj = item as Record<string, unknown>;
+        const sourceId = typeof obj.sourceId === 'string' ? obj.sourceId : null;
+        const sourceFile = typeof obj.sourceFile === 'string' ? obj.sourceFile : null;
+        const name = typeof obj.name === 'string' ? obj.name : null;
+        if (!sourceId && !sourceFile) return null;
+        return {
+          ...(sourceId ? { sourceId } : {}),
+          ...(sourceFile ? { sourceFile } : {}),
+          ...(name ? { name } : {}),
+        };
+      })
+      .filter((item): item is Record<string, string> => Boolean(item));
   }
 
   private mergeUnique(...inputs: unknown[]): string[] {
@@ -127,12 +171,36 @@ export class AgentRegistryImportService {
         typeof entry.personaSource === 'string' ? entry.personaSource : undefined;
       const avatarUrl = typeof entry.avatarUrl === 'string' ? entry.avatarUrl : undefined;
       const version = typeof entry.version === 'string' ? entry.version : undefined;
+      const schemaVersion = typeof entry.schemaVersion === 'string' ? entry.schemaVersion : null;
+      const categoriesNormalized = this.normalizeArray(entry.categoriesNormalized);
+      const categoriesRaw = this.normalizeArray(entry.categoriesRaw);
+      const unknownTags = this.normalizeArray(entry.unknownTags);
+      const classification = this.normalizeClassification(entry.classification);
+      const sourceVariants = this.normalizeSourceVariants(entry.sourceVariants);
+      const entryMetadata = this.normalizeObject(entry.metadata);
 
       const metadata = {
+        ...(entryMetadata || {}),
         sourceFile,
         tools: this.normalizeArray(entry.tools || []),
         inferredTools: this.normalizeArray(entry.inferredTools || []),
         status: entry.status || null,
+        categoriesNormalized,
+        categoriesRaw,
+        unknownTags,
+        classification,
+        sourceVariants,
+        tnfRegistry: {
+          schemaVersion,
+          sourceFile,
+          status: entry.status || null,
+          categoriesNormalized,
+          categoriesRaw,
+          unknownTags,
+          classification,
+          sourceVariants,
+          personaSource: personaSource || null,
+        },
       };
 
       const insertValues = {

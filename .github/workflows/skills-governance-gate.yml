@@ -1,0 +1,48 @@
+name: Skills Governance Gate
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - ".skills/**"
+      - ".agent/skills/**"
+      - ".agent/skill-bank/snapshots/**"
+      - ".skills/skill-catalog/**"
+      - "scripts/skills/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/skills-governance-gate.yml"
+  push:
+    branches: [main, develop]
+    paths:
+      - ".skills/**"
+      - ".agent/skills/**"
+      - ".agent/skill-bank/snapshots/**"
+      - ".skills/skill-catalog/**"
+      - "scripts/skills/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/skills-governance-gate.yml"
+  workflow_dispatch:
+
+jobs:
+  governance-check:
+    name: Validate Skill Governance
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile --prefer-offline
+
+      - name: Run skill governance checks
+        run: pnpm run skills:governance:check

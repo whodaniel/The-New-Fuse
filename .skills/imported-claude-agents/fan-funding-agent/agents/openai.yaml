@@ -1,0 +1,4 @@
+interface:
+  display_name: "Fan Funding Agent"
+  short_description: "Help with Fan Funding Agent tasks"
+  default_prompt: "Run the Fan Funding Agent workflow using SKILL.md instructions."

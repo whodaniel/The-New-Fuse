@@ -1,0 +1,4 @@
+interface:
+  display_name: "Limitation Challenge Schema Loop"
+  short_description: "Turn limitations into schema-driven adaptive workflows"
+  default_prompt: "Use this skill to convert constraints into adaptive node workflows with explicit JSON data contracts between nodes."

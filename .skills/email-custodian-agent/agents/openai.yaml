@@ -1,0 +1,4 @@
+interface:
+  display_name: "Email Custodian Agent"
+  short_description: "Create and link inbox and ChatGPT accounts"
+  default_prompt: "Use $email-custodian-agent to provision one new email and ChatGPT account pair with deterministic verification steps."
